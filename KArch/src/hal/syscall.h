@@ -1,10 +1,6 @@
 #ifndef _syscall_h_
 #define _syscall_h_  1
 
-#include <unistd.h>
-#include <sys/time.h>
-#include <cstdlib>
-
 class SysCall {
 
     public:
