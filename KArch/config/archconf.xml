@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<!-- General Configuration of the Architecture  -->
+
+<MessageLogFile>KourLog.txt</MessageLogFile>
+<LogFileVerbosityLevel>15</LogFileVerbosityLevel>
+
+<ThreadType>PThread</ThreadType>
+
+<AgentConfigurationFile>config/agents.xml</AgentConfigurationFile>
