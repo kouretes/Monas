@@ -11,8 +11,6 @@ if ( GENERIC_LINUX )
 endif ( GENERIC_LINUX )
 
 
-
-
 option ( TARGET_LINUX "set option to on if applicable" OFF )
 
 if ( TARGET_LINUX )
@@ -20,3 +18,4 @@ if ( TARGET_LINUX )
 endif ( TARGET_LINUX )
 
 
+add_subdirectory ( robot )
