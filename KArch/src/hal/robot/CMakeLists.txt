@@ -1,6 +1,6 @@
-message ( "" )
-message ( " _..::: Configuring Robot Abstraction Layer :::.._ " )
-message ( "" )
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring Robot Abstraction Layer :::.._ " )
+message ( STATUS "" )
 
 
 

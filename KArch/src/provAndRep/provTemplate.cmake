@@ -1,6 +1,6 @@
-message ( "" )
-message ( " _..::: Configuring ${ProviderName} :::.._ " )
-message ( "" )
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring ${ProviderName} :::.._ " )
+message ( STATUS "" )
 
 
 set ( TargetLinkLibraries ${TargetLinkLibraries} ${ProviderName} PARENT_SCOPE )

@@ -1,6 +1,6 @@
-message ( "" )
-message ( " _..::: Configuring Providers :::.._ " )
-message ( "" )
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring Providers :::.._ " )
+message ( STATUS "" )
 
 # AUTODETECT USER MODULES AND ADD THEM TO THE BUILDING TREE
 
@@ -9,7 +9,7 @@ file ( GLOB FilesInDir . * )
 foreach ( afile ${FilesInDir} )
     if ( IS_DIRECTORY ${afile} )
         set ( theSubDirs ${theSubDirs}  ${afile}  )
-        message ( "Module ${afile} detected and added to the building tree" )
+        message ( STATUS "Module ${afile} detected and added to the building tree" )
     endif ( IS_DIRECTORY ${afile} )
 endforeach ( afile )
 

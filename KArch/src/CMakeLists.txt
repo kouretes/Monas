@@ -1,8 +1,6 @@
-
-
-message ( "" )
-message ( " _..::: Configuring Sources :::.._ " )
-message ( "" )
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring Sources :::.._ " )
+message ( STATUS "" )
 
 include_directories ( AFTER ./ )
 

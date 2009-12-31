@@ -1,6 +1,6 @@
-message ( "" )
-message ( " _..::: Configuring for Generic Linux Platform :::.._ " )
-message ( "" )
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring for Generic Linux Platform :::.._ " )
+message ( STATUS "" )
 
 # TODO  Cmake find pthreads
 

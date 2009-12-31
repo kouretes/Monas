@@ -1,7 +1,6 @@
-
-message ("")
-message ( " _..::: TinyXml 2-5-3 :::.._ " )
-message ("")
+message ( STATUS "")
+message ( STATUS  " _..::: TinyXml 2-5-3 :::.._ " )
+message ( STATUS "")
 
 add_definitions ( -DTINYXML_USE_STL )
 

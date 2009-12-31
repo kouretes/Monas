@@ -2,9 +2,9 @@ project( Kouretes2009 )
 
 cmake_minimum_required( VERSION 2.6 )
 
-message( "" )
-message( " _..::: Configuring Architecture :::.._ " )
-message( "" )
+message( STATUS "" )
+message( STATUS " _..::: Configuring Architecture :::.._ " )
+message( STATUS "" )
 
 #set( cmake_verbose_makefile on )
 

@@ -1,6 +1,6 @@
-message ( "" )
-message ( " _..::: Configuring Hardware Abstraction Layer :::.._ " )
-message ( "" )
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring Hardware Abstraction Layer :::.._ " )
+message ( STATUS "" )
 
 
 
