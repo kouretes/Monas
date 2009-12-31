@@ -9,5 +9,5 @@ if ( "${ModuleBuildType}" STREQUAL "MODULE" )
   target_link_libraries ( kourarch dl )
 endif ( "${ModuleBuildType}" STREQUAL "MODULE" )
 
-target_link_libraries( kourarch tinyxml ${TargetLinkLibraries} )
+target_link_libraries( kourarch tinyxml ${TargetLinkLibraries} ${ModuleLibraries})
 

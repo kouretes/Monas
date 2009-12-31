@@ -56,7 +56,7 @@ endif ( "${ModuleBuildType}" STREQUAL "STATIC" )
 # Thus the library name is appended to the appropriate variable.
 
 if ( NOT "${ModuleBuildType}" STREQUAL "MODULE" )
-set ( TargetLinkLibraries ${TargetLinkLibraries} ${ProviderName} PARENT_SCOPE )
+set ( ModuleLibraries ${ModuleLibraries} ${ProviderName} PARENT_SCOPE )
 endif ( NOT "${ModuleBuildType}" STREQUAL "MODULE" )
 
 

@@ -65,7 +65,7 @@ endforeach ( subdir ${theSubDirs} )
 if ( ("${ModuleBuildType}" STREQUAL "STATIC") OR 
         ("${ModuleBuildType}" STREQUAL "SHARED") )
 
-    set ( TargetLinkLibraries ${TargetLinkLibraries} PARENT_SCOPE)
+    set ( ModuleLibraries ${ModuleLibraries} PARENT_SCOPE)
 
 endif ( ("${ModuleBuildType}" STREQUAL "STATIC") OR 
         ("${ModuleBuildType}" STREQUAL "SHARED") )
