@@ -1,5 +1,8 @@
 #include "MyProvider.h"
 
+namespace {
+    ProviderRegistrar<MyProvider>::Type temp("MyProvider");
+}
 
 
 void MyProvider::Update () { 

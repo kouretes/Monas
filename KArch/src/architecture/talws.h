@@ -12,6 +12,10 @@
 
 #include <vector>
 
+#ifdef DLIB_FUNCTIONALITY
+#include "hal/dlib_fnc.h"
+#endif // DLIB_FUNCTIONALITY
+
 #include "provAndRep/providerRegistry.h"
 //FIXME add thread registry
 
@@ -52,6 +56,12 @@ class Talws {
 
                 std::vector<std::string> providers;
                 for ( unsigned int i=0; i<ProviderNodes.size(); i++ ) {
+#ifdef DLIB_FUNCTIONALITY
+                    void* dlib_handler = DLibFnc::_open( ("lib"+ProviderNodes[i].value+".so").c_str());
+                    if ( ! dlib_handler ) {
+                        Logger::Instance()->WriteMsg("Talws", DLibFnc::_error(), Logger::Info );
+                    }
+#endif //DLIB_FUNCTIONALITY
                     providers.push_back( ProviderNodes[i].value );
                     Logger::Instance()->WriteMsg("Talws", "Agent: "+AgentName+" Registering module: "+providers[i], Logger::ExtraInfo );
                 }
