@@ -3,19 +3,21 @@ message ( STATUS " _..::: Configuring Hardware Abstraction Layer :::.._ " )
 message ( STATUS "" )
 
 
+set ( TargetPlatform linux CACHE STRING 
+        "select the targeted platform, available platforms are linux, windows, and robot" )
 
-option ( GENERIC_LINUX "set option to on if applicable" ON )
-
-if ( GENERIC_LINUX )
+if ( "x${TargetPlatform}x" STREQUAL "xx" )
+    message ( FATAL_ERROR "TargetPlatform can't be empty! Select an available platform: linux, windows or robot" )
+elseif ( "${TargetPlatform}" STREQUAL "windows" )
+    message ( FATAL_ERROR "Not supported yet!!!" )
+elseif ( "${TargetPlatform}" STREQUAL "linux" )
     add_subdirectory ( generic_linux )
-endif ( GENERIC_LINUX )
-
-
-option ( TARGET_LINUX "set option to on if applicable" OFF )
-
-if ( TARGET_LINUX )
     add_subdirectory ( target_linux )
-endif ( TARGET_LINUX )
+elseif ( "${TargetPlatform}" STREQUAL "robot" )
+    add_subdirectory ( generic_linux ) #if robotplatform == nao || aibo 
+    add_subdirectory ( robot )
+else ( "x${TargetPlatform}x" STREQUAL "xx" )
+    message ( FATAL_ERROR "Please select a valid platform: linux, windows or robot"  )
+endif ( "x${TargetPlatform}x" STREQUAL "xx" )
 
 
-add_subdirectory ( robot )

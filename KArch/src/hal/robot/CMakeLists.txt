@@ -4,18 +4,23 @@ message ( STATUS "" )
 
 
 
-option ( ROBOT_NAO "set option to on if applicable" ON )
+set ( RobotPlatform nao CACHE STRING
+        "Select robotic platform. Available platforms are nao and aibo" )
 
-if ( ROBOT_NAO )
+if ( "x${RobotPlatform}x" STREQUAL "xx" )
+    message ( FATAL_ERROR "RobotPlatform can't be empty! Select an available platform: nao or aibo" )
+elseif ( "${RobotPlatform}" STREQUAL "nao" )
+    set ( NaoQiVersion 1.3.17 CACHE STRING
+            "Set the NaoQi version" )
+    if ( "x${NaoQiVersion}x" STREQUAL "xx" )
+        message ( FATAL_ERROR "NaoQiVersion must be set" )
+    endif ( "x${NaoQiVersion}x" STREQUAL "xx" )
     add_subdirectory ( generic_nao )
-    add_subdirectory ( nao_1_3_17 )
-endif ( ROBOT_NAO )
-
-
-
-option ( ROBOT_AIBO "set option to on if applicable" OFF )
-
-if ( ROBOT_AIBO )
+    add_subdirectory ( "nao-${NaoQiVersion}" )
+elseif ( "${RobotPlatform}" STREQUAL "aibo" )
     add_subdirectory ( aibo )
-endif ( ROBOT_AIBO )
+else ( "x${RobotPlatform}x" STREQUAL "xx" )
+    message ( FATAL_ERROR "Please select a valid platform: nao or aibo"  )
+endif ( "x${RobotPlatform}x" STREQUAL "xx" )
+
 

@@ -1,1 +1,1 @@
-#TODO
+message ( STATUS "Nao robot" )
