@@ -10,3 +10,7 @@ target_link_libraries( GenLinux  pthread )
 
 set ( TargetLinkLibraries ${TargetLinkLibraries} GenLinux PARENT_SCOPE )
 
+install ( TARGETS GenLinux 
+        RUNTIME DESTINATION   bin
+        LIBRARY DESTINATION   lib
+        ARCHIVE DESTINATION   lib/static )

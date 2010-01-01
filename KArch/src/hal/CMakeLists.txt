@@ -6,6 +6,8 @@ message ( STATUS "" )
 set ( TargetPlatform linux CACHE STRING 
         "select the targeted platform, available platforms are linux, windows, and robot" )
 
+set ( CMAKE_INSTALL_PREFIX "${CMAKE_HOME_DIRECTORY}/binaries/${TargetPlatform}" CACHE PATH "Select the install directory" FORCE )
+
 if ( "x${TargetPlatform}x" STREQUAL "xx" )
     message ( FATAL_ERROR "TargetPlatform can't be empty! Select an available platform: linux, windows or robot" )
 elseif ( "${TargetPlatform}" STREQUAL "windows" )

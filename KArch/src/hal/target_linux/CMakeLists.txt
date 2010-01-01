@@ -11,3 +11,7 @@ endif ( "${ModuleBuildType}" STREQUAL "MODULE" )
 
 target_link_libraries( kourarch tinyxml ${TargetLinkLibraries} ${ModuleLibraries})
 
+install ( TARGETS kourarch 
+            RUNTIME DESTINATION   bin
+            LIBRARY DESTINATION   lib
+            ARCHIVE DESTINATION   lib/static )

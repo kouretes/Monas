@@ -9,3 +9,7 @@ add_library ( tinyxml  STATIC
         tinyxmlerror.cpp tinyxmlparser.cpp
         )
 
+install ( TARGETS tinyxml 
+            RUNTIME DESTINATION   bin
+            LIBRARY DESTINATION   lib
+            ARCHIVE DESTINATION   lib/static )

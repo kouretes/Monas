@@ -10,15 +10,21 @@ set ( RobotPlatform nao CACHE STRING
 if ( "x${RobotPlatform}x" STREQUAL "xx" )
     message ( FATAL_ERROR "RobotPlatform can't be empty! Select an available platform: nao or aibo" )
 elseif ( "${RobotPlatform}" STREQUAL "nao" )
+
     set ( NaoQiVersion 1.3.17 CACHE STRING
             "Set the NaoQi version" )
     if ( "x${NaoQiVersion}x" STREQUAL "xx" )
         message ( FATAL_ERROR "NaoQiVersion must be set" )
     endif ( "x${NaoQiVersion}x" STREQUAL "xx" )
+    set ( CMAKE_INSTALL_PREFIX "${CMAKE_HOME_DIRECTORY}/binaries/robot/nao/naoqi_${NaoQiVersion}" CACHE PATH "Select the install directory" FORCE )
     add_subdirectory ( generic_nao )
     add_subdirectory ( "nao-${NaoQiVersion}" )
+
 elseif ( "${RobotPlatform}" STREQUAL "aibo" )
+
+    set ( CMAKE_INSTALL_PREFIX "${CMAKE_HOME_DIRECTORY}/binaries/robot/aibo" CACHE PATH "Select the install directory" FORCE )
     add_subdirectory ( aibo )
+
 else ( "x${RobotPlatform}x" STREQUAL "xx" )
     message ( FATAL_ERROR "Please select a valid platform: nao or aibo"  )
 endif ( "x${RobotPlatform}x" STREQUAL "xx" )
