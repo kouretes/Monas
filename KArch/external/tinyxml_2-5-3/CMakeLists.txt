@@ -4,7 +4,7 @@ message ( STATUS "")
 
 add_definitions ( -DTINYXML_USE_STL )
 
-add_library ( tinyxml  STATIC
+add_library ( tinyxml ${ExternalSrcsBldType} 
         tinystr.cpp tinyxml.cpp 
         tinyxmlerror.cpp tinyxmlparser.cpp
         )
