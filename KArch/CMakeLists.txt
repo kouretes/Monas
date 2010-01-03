@@ -6,16 +6,9 @@ message( STATUS "" )
 message( STATUS " _..::: Configuring Architecture :::.._ " )
 message( STATUS "" )
 
-#set( cmake_verbose_makefile on )
+#set( CMAKE_VERBOSE_MAKEFILE on )
 
-option ( MAKE_DEBUG "Set to on to enable debugging symbols" OFF )
-
-
-if ( MAKE_DEBUG )
-    add_definitions( -DDEBUG -g )
-else ( MAKE_DEBUG )
-    add_definitions( -Wall -O3 )
-endif ( MAKE_DEBUG )
+set ( CMAKE_CXX_FLAGS -Wall )
 
 add_subdirectory( external ) 
 add_subdirectory( src )
