@@ -4,7 +4,7 @@ message ( STATUS "" )
 
 # TODO  Cmake find pthreads
 
-add_library( GenLinux STATIC pthread.cpp syscall.cpp dlib_fnc.cpp)
+add_library( GenLinux STATIC pthread.cpp syscall.cpp dlib_fnc.cpp mutex.cpp)
 
 target_link_libraries( GenLinux  pthread )
 
