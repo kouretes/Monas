@@ -6,6 +6,7 @@ namespace {
 
 void MyProvider2::Update () { 
     std::cout<<"Updating myProvider2"<<std::endl; 
+    usleep(30000);
     //SetTheX( 2 );
     //std::cout<<"The Asdf is :"<<theMyRep1->GetAsdf()<<std::endl;
 }
