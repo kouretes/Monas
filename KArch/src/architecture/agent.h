@@ -9,6 +9,10 @@
 #include "architecture/providerHandler.h"
 
 #include "hal/threadable.h"
+#include "hal/syscall.h"
+#include "tools/agentTiming.h"
+
+
 
 class Agent : public Threadable  {
 
@@ -20,13 +24,32 @@ class Agent : public Threadable  {
         }
 
         virtual ~Agent () {
+            std::cout<<"AgentTimings: Avg \t\t\t Var"<<std::endl;
+            std::cout<<"Agent       : "<<agentStats.GetAgentAvgExecTime()<<"\t\t "<<
+                agentStats.GetAgentVarExecTime()<<std::endl;
+
+            for ( ProvList::iterator it=providers.begin(); it != providers.end(); ++it ) 
+              std::cout<<(*it)->GetName()<<"\t"<<agentStats.GetProviderAvgExecTime(*it)<<
+                  "\t\t"<<agentStats.GetProviderVarExecTime(*it)<<std::endl;
             hand.UnloadProviders (blk); //,providers );
         }
 
-        int ThreadMain ( ) {
+        int ThreadMain () {
             //Update frame
-            for ( ProvList::iterator it=providers.begin(); it != providers.end(); ++it ) 
+            
+            
+            agentStats.StartAgentTiming();
+            
+
+            for ( ProvList::iterator it=providers.begin(); it != providers.end(); ++it ) {
+                agentStats.StartProviderTiming(*it);
                 (*it)->Update();
+                agentStats.StopProviderTiming(*it);
+            }
+
+            agentStats.StopAgentTiming();
+
+
             return 0;
         }
 
@@ -40,6 +63,8 @@ class Agent : public Threadable  {
         typedef std::vector<Provider *> ProvList;
 
         ProvList providers; //in execution order 
+
+        AgentTiming agentStats;
 
 };
 

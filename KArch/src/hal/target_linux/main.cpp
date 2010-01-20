@@ -28,7 +28,7 @@ int main () {
 
     std::cout<<"Main: Sleeping"<<std::endl;
 
-    usleep(10000000);
+    usleep(100000000);
 
     std::cout<<"Main: Stoping"<<std::endl;
 

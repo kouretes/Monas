@@ -18,6 +18,6 @@ class Mutex {
     private:
 
         mutable pthread_mutex_t mtex;
-}
+};
 
 #endif // _mutex_h_

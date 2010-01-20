@@ -101,6 +101,12 @@ class Talws {
                 (*it)->StopThread();
         }
 
+        ~Talws() {
+            for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
+                delete (*it);
+        }
+
+
     private:
 
         std::vector<Agent*> Agents;
