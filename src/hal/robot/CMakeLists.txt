@@ -11,7 +11,7 @@ if ( "x${RobotPlatform}x" STREQUAL "xx" )
     message ( FATAL_ERROR "RobotPlatform can't be empty! Select an available platform: nao or aibo" )
 elseif ( "${RobotPlatform}" STREQUAL "nao" )
 
-    set ( NaoQiVersion 1.3.17 CACHE STRING
+    set ( NaoQiVersion 1.6.0 CACHE STRING
             "Set the NaoQi version" )
     if ( "x${NaoQiVersion}x" STREQUAL "xx" )
         message ( FATAL_ERROR "NaoQiVersion must be set" )
