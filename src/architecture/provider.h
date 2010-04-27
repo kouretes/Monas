@@ -7,8 +7,8 @@
 #include <iostream>
 
 #include "architecture/blackboard.h"
-#include "architecture/genFactory.h"
-#include "architecture/genRegistrar.h"
+#include "tools/genFactory.h"
+#include "tools/genRegistrar.h"
 
 class Provider {
 

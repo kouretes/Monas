@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include "architecture/policies.h"
+#include "tools/errorPolicies.h"
 
 
 template

@@ -3,7 +3,7 @@
 
 #include "hal/threadable.h"
 #include "hal/threadconfig.h"
-#include "architecture/genFactory.h"
+#include "tools/genFactory.h"
 
 class Thread {
 
