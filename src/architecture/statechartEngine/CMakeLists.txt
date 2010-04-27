@@ -6,7 +6,6 @@ set ( statechartEngineSrcs  AndState.cpp
                             BasicState.cpp
                             EndState.cpp
                             IAction.cpp
-                            IActivity.cpp
                             ICondition.cpp
                             IEvent.cpp
                             IParameter.cpp

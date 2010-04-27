@@ -3,7 +3,6 @@
 
 #include "State.h"
 #include "IAction.h"
-#include "IActivity.h"
 #include "IEvent.h"
 #include "IParameter.h"
 #include "Transitions/TransitionSegment.h"

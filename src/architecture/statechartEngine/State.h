@@ -1,7 +1,6 @@
 #ifndef STATE_H_
 #define STATE_H_ 1
 
-#include "IActivity.h"
 #include "IAction.h"
 #include "Transitions/TransitionSegmentBase.h"
 #include "IEvent.h"

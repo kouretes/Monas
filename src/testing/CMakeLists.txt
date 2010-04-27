@@ -18,7 +18,7 @@ if ( BuildTests )
 
     add_executable ( stateTest statechartTest.cpp ../messages/planMsg.pb.cc )
 
-    target_link_libraries ( stateTest statechartEngine narukomlib )
+    target_link_libraries ( stateTest statechartEngine narukomlib ArchCore)
 
 endif ( BuildTests )
 

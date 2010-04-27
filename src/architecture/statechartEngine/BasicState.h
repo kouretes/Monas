@@ -3,7 +3,8 @@
 
 #include "State.h"
 #include "IAction.h"
-#include "IActivity.h"
+
+#include "architecture/IActivity.h"
 
 #include "hal/threadPool.h"
 
