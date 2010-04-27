@@ -1,0 +1,11 @@
+message PlanMsg{
+        required string host = 1 [default = "localhost"];
+        required string publisher = 2 [default = "Pub" ];
+        required string topic = 3 [default = "global"];
+        required int32 timeout = 4 [default = 0];
+        required string timestamp = 5 [default = "20101231T235959"];
+        optional int32 counter = 6 [default = 10];
+        //optional bool successful = 7 [default = false] ;
+}
+
+
