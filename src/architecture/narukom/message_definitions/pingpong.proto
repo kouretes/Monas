@@ -1,0 +1,20 @@
+message PingMessage{
+        required string host = 1 [default = "localhost"];
+        required string publisher = 2 [default = "" ];
+        required string topic = 3 [default = "global"];
+        required int32 timeout = 4 [default = 0];
+        required string timestamp = 5 [default = ""];
+optional int32 side = 6;
+	optional bool successful = 7 [default = false] ;
+}
+
+message PongMessage{
+        required string host = 1 [default = "localhost"];
+        required string publisher = 2 [default = "" ];
+        required string topic = 3 [default = "global"];
+        required int32 timeout = 4 [default = 0];
+        required string timestamp = 5 [default = ""];
+optional int32 side = 6;
+        optional bool successful = 7 [default = false] ;
+  
+}

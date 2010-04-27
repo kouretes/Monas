@@ -1,0 +1,241 @@
+#include <iostream>
+#include "src/message_queue.h"
+#include "src/publisher.h"
+#include "src/subscriber.h"
+#include <string>
+#include <vector>
+#include <sstream>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include "pinger.h"
+#include "ponger.h"
+#include "echo.h"
+#include "scorekeeper.h"
+#include "pingpong.pb.h"
+#include "src/blackboard.h"
+#include "Basic.pb.h"
+#include "trafficer.h"
+#include "src/networkpubsub.h"
+#include "image.pb.h"
+#include "src/network_message.h"
+#include "src/network_message_buffer.h"
+#include "src/udp_multicast_channel.h"
+using namespace std;
+using namespace google::protobuf;
+int main(int argc, char **argv) {
+   
+// 			Image im;
+// 			im.set_host("foo");
+// 			im.set_publisher("main");
+// 			im.set_timeout(100);
+// 			
+// 			boost::posix_time::ptime tt =boost::posix_time::microsec_clock::local_time();
+// 			string* s = new string();// boost::posix_time::to_iso_extended_string(tt);
+// 			cout << s << endl;
+// 			im.set_timestamp( "AAA"   );
+// 			im.set_topic("various");
+// 			im.set_resx(1);
+// 			im.set_resy(65535);
+// 			int sz = im.resx()*im.resy();
+// 			//string s;
+// 			
+// 			for(int i =0; i < sz; i++)
+// 				*s += (char)(i%49) + 49;
+// 			RepeatedPtrField<string>* dt = im.mutable_image();
+// 			dt->AddAllocated(s);
+// 			
+// // 			cout << (*s) <<  "\n" << im.image(0) << endl;;
+// 			dt->Reserve(sz);
+// 			uint32* foo,**poo;// =   dt->mutable_data();
+// 			foo		 =  new google::protobuf::uint32[sz];
+// 			vector<google::protobuf::uint32> t;
+// 			cout << "true" << endl;
+// 			cout << dt->size() << endl;
+// 				for(int i = 0; i < sz; i++)
+// 				{
+// //					im.add_image(i);
+// //					foo[i] = i*i;
+// 				}
+// 				for(int i =0; i < sz ; i++)
+// 				t.push_back(foo[i]);
+// // 				poo = &(dt->);
+// 			
+// 			boost::posix_time::ptime st = boost::posix_time::microsec_clock::local_time();
+// 			NetworkMessage* nmsg = new NetworkMessage(0,im);
+// 			stringstream *stream,stt;
+// 			google::protobuf::uint8* buf;
+// 			cout << "Image size " << im.ByteSize() << "Number of packets "  << nmsg->get_number_of_packets() << "Size of string: " << nmsg->get_data_stream()->size() << endl;
+//    		Image im2;
+// 			im2.ParseFromString(*nmsg->get_data_stream());
+// 		  stream = new stringstream;
+// 			fstream f("test",std::ios::out);
+// 			//im.SerializePartialToOstream(stream);
+// 			//*stream << "\n";
+// 			f.write(im.image(0).c_str(),im.image(0).size());
+// 			f.write("\n",1);
+// 			f.write(im2.image(0).c_str(),im2.image(0).size());
+// 			stream->clear();
+// 			im2.SerializePartialToOstream(stream);
+//  			NetworkMessageBuffer mb(udp;
+// 			
+// 			cout << "Reached " << std::endl;
+// 			mb.add_packet(nmsg->get_packet(0));
+// 			
+// 			mb.add_message(nmsg);
+// 			mb.add_message(nmsg);
+// 			
+// 			f.write("sec\n",5);
+// 			f.write(stream->str().c_str(),stream->str().size());
+//			buf = new google::protobuf::uint8*;
+			
+// 			*buf = new google::protobuf::uint8[nmsg->get_packet_size()];
+// 			unsigned int * b = new unsigned int;
+// 			UdpMulticastChannel* net_client= new UdpMulticastChannel;
+// 			
+// 			net_client->start();
+// 			net_client->join();
+/*			*b = nmsg->get_packet_size()*nmsg->get_number_of_packets();
+			 buf= new uint8[nmsg->get_number_of_packets()*nmsg->get_packet_size()];
+			for(unsigned int i =0; i < nmsg->get_number_of_packets();i++)
+			{
+				nmsg->get_packet(i,(buf) ,b);
+
+				(*stream) << buf;
+				
+			}
+			cout <<"aame" <<  stream->str().size() << endl;
+			NetworkHeader nh;
+			
+			
+			Image im2;
+			im2.ParseFromIstream(stream);
+			nh.ParseFromIstream(stream);
+			cout << im2.host() << endl;
+			
+			*/
+
+//			memcpy(buf,(stream.str().c_str() + 1,3));
+// 			cout << stream.str() <<" AAAND " << k << " " << (int)f[0] << " " << (int)f[1] <<  (int)p[0] << " " << (int)p[1] <<  endl;
+			// 			Image im2(im);
+				//memcpy(poo,t.data(),sz*sizeof(uint32));
+			 //poo=&foo;
+// 			im2.CopyFrom(im);
+// 			foo = dt->mutable_data();
+// 			for(int i = 0; i < sz; i++)
+// 				foo[i] = sz-i;
+// 			poo = dt->mutable_data();
+// 			
+// 			memcpy(poo,foo,sz*sizeof(google::protobuf::uint32));
+// 			im.add_image(123);
+// 			for(int i = 0; i <10; i++)
+// 				cout << im.image().Get(i) << " " << poo[i] <<  " " << foo[i] << endl;
+			
+/*			boost::posix_time::ptime end = boost::posix_time::microsec_clock::local_time();
+			cout << "took" <<  boost::posix_time::to_iso_string(end-st) << endl;*/
+			
+			
+//	    message queue code
+		 MessageQueue* mq = new MessageQueue();
+    std::cout << "Pinger Application" << std::endl;
+    std::vector<Publisher*> pubs;
+    std::vector<Subscriber*> subs;
+    std::vector<std::string*> names;
+//     std::stringstream s;
+    int num_of_modules = 10;
+    int num_of_msg = 1;
+    
+    mq->start();
+		
+//     Pinger* ping = new Pinger(false);
+   // mq->StartThread(mq);
+//   ping pong code
+  Ponger* ping = new Ponger(false);
+	UdpMulticastChannel* udp = new UdpMulticastChannel;
+  //Ponger* pong = new Ponger(false);
+ // ScoreKeeper* sc = new ScoreKeeper(false);
+  //Echo* echo = new Echo;
+/*
+	Blackboard code
+    Trafficer* tf = new Trafficer;
+     mq->add_publisher(tf);
+    cout << "AaAAAAAA" << endl;
+     Agent* agent = new Agent("foo");
+     cout << "AaAAAAAA" << endl;
+     mq->add_publisher(agent);
+     mq->add_subscriber(agent->getBlackboard());
+     mq->subscribe("global",agent->getBlackboard(),2);
+  */
+//  Trafficer* tf = new Trafficer;
+//      mq->add_publisher(tf);
+// Echo* echo = new Echo();
+// mq->add_publisher(echo);
+// mq->add_subscriber ( echo );
+
+
+// /NETWOR
+/*
+mq->add_publisher(udp);
+
+mq->add_publisher(ping);
+mq->add_subscriber ( ping );
+mq->add_subscriber(udp);
+mq->subscribe("motion",ping,0);
+mq->subscribe("global",udp,2);*/
+// mq->subscribe("global",echo,2);
+// mq->add_publisher(pong);
+// mq->add_subscriber ( pong );
+// mq->subscribe ( "score",pong,0 );
+  
+// ping pong code
+cout << "Adding publishers to message queue " << endl;
+  mq->add_publisher(ping);
+	//mq->add_publisher(pong);
+   mq->add_publisher(udp);
+
+  cout << "Adding subscribers to message queue" << endl;
+//   mq->add_subscriber(sc);
+//   mq->add_subscriber ( echo );
+   mq->add_subscriber ( udp );
+  mq->add_subscriber ( ping );
+//  mq->add_subscriber ( pong );
+	cout  << "Subscibing to topics" << endl;
+// 	mq->subscribe ( "score",sc,1 );
+   mq->subscribe ( "global",udp,2 );
+  mq->subscribe ( "motion",ping,0 );
+  // mq->subscribe ( "motion",pong,0 );
+    
+	cout << "Start Threads for all publishers and Subscribers" << endl;
+	ping->start();
+	udp->start();
+// pong->start();
+// 	echo->start();
+// 	sc->start();	
+// 	ping->start_service();
+//   */
+/*
+ping->start();
+ echo->start();
+sc->start();
+pong->start();*/
+//sleep(1);
+//  ping->start_service();
+// udp->start();
+//sleep(3);
+ping->join();
+//pong->join();
+/* ping pong Code    
+    cout << "Before join" << endl;
+  
+		ping->join();
+		cout << "after ping join() " << endl;
+		pong->join();	
+		cout << "after pong join() " << endl;
+*/
+		
+    
+  
+    
+    
+//     boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time());
+    cout << "After join " << endl;
+    return 0;
+}

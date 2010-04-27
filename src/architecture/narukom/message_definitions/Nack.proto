@@ -1,0 +1,10 @@
+message NackMessage{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32  timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	required string receiver = 6 [default = ""];
+	required uint32 message_num = 7;
+	repeated int32  missing_packets = 8;
+}

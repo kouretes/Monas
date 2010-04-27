@@ -1,0 +1,12 @@
+message Image{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32 timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	repeated bytes image = 6 ;
+        required uint32 resX = 7 [default = 640];
+	required uint32 resY = 8 [default = 480];
+
+
+}

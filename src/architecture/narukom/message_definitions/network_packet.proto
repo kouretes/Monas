@@ -1,0 +1,15 @@
+message NetworkHeader
+{
+required  uint32 message_num = 1 ;
+required uint32 packet_num =2  [default = 1];
+required uint32 number_of_packets = 3[default = 1];
+required string timestamp = 4 [default = ""];
+required uint32 timeout = 5 [default = 1000];
+required string host = 6;
+required string type =7;
+}
+
+message NetworkPacket{
+required NetworkHeader header = 1;
+required bytes byte_buffer =2;
+}

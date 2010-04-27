@@ -1,0 +1,53 @@
+#include <iostream>
+#include "src/message_queue.h"
+#include "src/publisher.h"
+#include "src/subscriber.h"
+#include <string>
+#include <vector>
+#include <sstream>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include "pinger.h"
+#include "ponger.h"
+#include "echo.h"
+#include "scorekeeper.h"
+#include "pingpong.pb.h"
+#include "src/blackboard.h"
+#include "Basic.pb.h"
+#include "trafficer.h"
+#include "src/networkpubsub.h"
+#include "image.pb.h"
+#include "src/network_message.h"
+#include "src/network_message_buffer.h"
+#include "src/udp_multicast_channel.h"
+#include "image_receiver.h"
+#include "image_sender.h"
+
+using namespace std;
+using namespace google::protobuf;
+int main(int argc, char **argv) {
+ 
+	
+	MessageQueue mq;
+ 	ImageReceiver ir;
+//	ImageSender is;
+	UdpMulticastChannel udp;
+cout << "Adding publishers to message queue " << endl;
+//  mq.add_publisher(&is);
+ mq.add_publisher(&udp);
+  cout << "Adding subscribers to message queue" << endl;
+ 	mq.add_subscriber(&udp);
+	mq.add_subscriber(&ir);
+	cout  << "Subscibing to topics" << endl;
+    mq.subscribe("global",&udp,2);
+		mq.subscribe("global",&ir,2);
+	cout << "Start Threads for all publishers and Subscribers" << endl;
+	mq.start();
+ 	udp.start();
+	ir.start();
+	cout << "before join" << endl;
+	mq.join();
+ 	udp.join();
+	ir.join();
+    cout << "After join " << endl;
+    return 0;
+}

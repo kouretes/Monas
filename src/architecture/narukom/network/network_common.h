@@ -1,0 +1,6 @@
+#ifndef NETWORK_COMMON_H
+#define NETWORK_COMMON_H	
+
+#define DEFAULT_PACKET_SIZE 32768
+#define MAX_PACKET_SIZE 65535
+#endif

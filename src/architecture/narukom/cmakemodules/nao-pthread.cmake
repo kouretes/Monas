@@ -1,0 +1,1 @@
+set( PTHREAD_LIBRARIES ${CTC_DIR}/usr/lib/libpthread.so)
