@@ -36,4 +36,4 @@ add_library(narukomlib SHARED narukom.cpp ${NARUKOM_SYSTEM_SRCS}  ${NARUKOM_PUB_
 link_libraries(${PROTOBUF_LIBRARIES} ${BOOST_LIBRARIES} ${ZLIB_LIBRARIES} ${PTHREAD_LIBRARIES})
 
 target_link_libraries(narukomlib ${PROTOBUF_LIBRARIES} ${BOOST_LIBRARIES} ${ZLIB_LIBRARIES} ${PTHREAD_LIBRARIES})
-add_subdirectory(demo)
+#add_subdirectory(demo)

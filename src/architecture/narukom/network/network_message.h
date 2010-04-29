@@ -27,7 +27,7 @@
 #include <cmath>
 #include "network_common.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <Basic.pb.h>
+#include "../messages/Basic.pb.h"
 class NetworkMessage {
 // 	friend class NetworkMessageBuffer;
 	public:

@@ -1,1 +1,13 @@
-../../../config/agents.xml
+<?xml version="1.0" ?>
+<!-- Modules to be loaded  -->
+
+<agent IsRealTime=1 Priority=1 ThreadFrequency=2 MultipleThreads=0>
+  <name> Agent1 </name>
+  <provider> MyProvider </provider>
+  <provider> MyProvider1 </provider>
+</agent>
+
+<agent IsRealTime=1 Priority=1 ThreadFrequency=4 MultipleThreads=0>
+  <name> Agent2 </name>
+  <provider> MyProvider2 </provider>
+</agent>

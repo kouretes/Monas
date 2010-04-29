@@ -1,6 +1,8 @@
 #ifndef _genRegistrar_h_
 #define _genRegistrar_h_ 1
 
+#include "tools/logger.h"
+
 template
 <
   class FactoryClass,
@@ -15,6 +17,7 @@ class Registrar {
     public:
 
         Registrar ( FactoryID id ) {
+            Logger::Instance()->WriteMsg("Registrar",id,Logger::ExtraInfo);
             FactoryClass::Instance()->Register( id, NewProviderFunc );
         }
 

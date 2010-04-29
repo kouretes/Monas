@@ -6,14 +6,14 @@
 
 
 
-#include "../../hal/generic_linux/pthread.h"
+//#include "../../hal/generic_linux/pthread.h"
 
-namespace {  //FIXME
-    Thread* CreatePThread(Threadable * obj, ThreadConfig cfg) {
-        return new PThread(obj,cfg);
-    }
-    const bool registered_pthread_temp = ThreadFactory::Instance()->Register("PThread", CreatePThread)  ;
-}
+//namespace {  //FIXME
+//    Thread* CreatePThread(Threadable * obj, ThreadConfig cfg) {
+//        return new PThread(obj,cfg);
+//    }
+//    const bool registered_pthread_temp = ThreadFactory::Instance()->Register("PThread", CreatePThread)  ;
+//}
 
 
 int main () {
@@ -28,7 +28,7 @@ int main () {
 
     std::cout<<"Main: Sleeping"<<std::endl;
 
-    usleep(100000000);
+    usleep(10000000);
 
     std::cout<<"Main: Stoping"<<std::endl;
 

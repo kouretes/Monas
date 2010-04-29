@@ -8,7 +8,7 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/composite_key.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "Basic.pb.h"
+#include "../messages/Basic.pb.h"
 using namespace boost::multi_index;
 using namespace boost::posix_time;
 struct Tuple{

@@ -6,8 +6,7 @@
 
 #include <vector>
 
-#include "provAndRep/providerRegistry.h"
-//FIXME add thread registry
+#include "activities/activityRegistry.h"
 
 class Talws {
 
@@ -26,6 +25,8 @@ class Talws {
         std::vector<Agent*> Agents;
 
         std::vector<Thread*> Threads;
+    
+        Narukom com;
 
 };
 

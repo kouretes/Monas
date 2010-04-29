@@ -23,7 +23,7 @@
 #include <google/protobuf/dynamic_message.h>
 #include <google/protobuf/message.h>
 #include <vector>
-#include "Mutex.h"
+#include "../system/Mutex.h"
 class MessageBuffer
 {
   public:

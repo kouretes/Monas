@@ -28,7 +28,7 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/composite_key.hpp>
 #include "network_channel.h"
-#include <Mutex.h>
+#include "../system/Mutex.h"
 // class NetworkChannel;
 
 typedef boost::multi_index::multi_index_container<

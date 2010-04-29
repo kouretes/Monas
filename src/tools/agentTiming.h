@@ -3,7 +3,7 @@
 
 
 #include "hal/syscall.h"
-#include "architecture/provider.h"
+#include "architecture/IActivity.h"
 
 #include <string>
 #include <map>
@@ -18,7 +18,7 @@ class AgentTiming
     public:
 
         AgentTiming () { 
-            // Get Alpha from XML
+            //TODO Get Alpha from XML
 
         }
 
@@ -39,27 +39,27 @@ class AgentTiming
             return agentStats.GetVar();
         }
 
-        void StartProviderTiming ( Provider * a ) {
-            providerStats[a].StartTiming();
+        void StartActivityTiming ( IActivity * a ) {
+            activityStats[a].StartTiming();
         }
 
-        double StopProviderTiming ( Provider * a ) {
-            return providerStats[a].StopTiming();
+        double StopActivityTiming ( IActivity * a ) {
+            return activityStats[a].StopTiming();
         }
 
-        double GetProviderAvgExecTime ( Provider * a ) {
-            return providerStats[a].GetAvg();
+        double GetActivityAvgExecTime ( IActivity * a ) {
+            return activityStats[a].GetAvg();
         }
 
-        double GetProviderVarExecTime ( Provider * a ) {
-            return providerStats[a].GetVar();
+        double GetActivityVarExecTime ( IActivity * a ) {
+            return activityStats[a].GetVar();
         }
 
     private:
 
         StopWatch<> agentStats;
 
-        std::map<Provider*,StopWatch<> > providerStats;
+        std::map<IActivity*,StopWatch<> > activityStats;
 
 }; 
 

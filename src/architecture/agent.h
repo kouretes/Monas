@@ -4,67 +4,96 @@
 #include <vector>
 #include <string>
 
-#include "architecture/blackboard.h"
-#include "architecture/provider.h"
-#include "architecture/providerHandler.h"
+#include "agentConfig.h"
+#include "tools/logger.h"
+
+#include "architecture/narukom/narukom.h"
+#include "architecture/narukom/pub_sub/blackboard.h"
+
+#include "architecture/IActivity.h"
 
 #include "hal/threadable.h"
 #include "hal/syscall.h"
 #include "tools/agentTiming.h"
 
 
-
-class Agent : public Threadable  {
+class Agent : public Thread {
 
     public:
 
-        Agent ( std::vector<std::string> providerList ) {
-            blk = new Blackboard;
-            providers = hand.LoadProviders ( blk , providerList );
+        Agent ( std::string name, AgentConfig cfg, Narukom* com, std::vector<std::string> activities ) :
+            _name(name),
+            _cfg(cfg),
+            _com(com),
+            _blk(name) {
+
+            for ( ActivityNameList::const_iterator it = activities.begin();
+                    it != activities.end(); it++ ) 
+                _activities.push_back( ActivityFactory::Instance()->CreateObject( (*it) ) );
+
+            for ( ActivList::iterator it = _activities.begin(); 
+                    it != _activities.end(); it++ )
+                (*it)->Initialize(_com,&_blk);
+            
+            Freq2Time = (1/(double) _cfg.ThreadFrequency)*1000000;
+
         }
 
         virtual ~Agent () {
-            std::cout<<"AgentTimings: Avg \t\t\t Var"<<std::endl;
+            std::cout<<"AgentTimings: Avg \t\t\t Var"<<std::endl; //TODO
             std::cout<<"Agent       : "<<agentStats.GetAgentAvgExecTime()<<"\t\t "<<
-                agentStats.GetAgentVarExecTime()<<std::endl;
+                agentStats.GetAgentVarExecTime()<<std::endl; //TODO
 
-            for ( ProvList::iterator it=providers.begin(); it != providers.end(); ++it ) 
-              std::cout<<(*it)->GetName()<<"\t"<<agentStats.GetProviderAvgExecTime(*it)<<
-                  "\t\t"<<agentStats.GetProviderVarExecTime(*it)<<std::endl;
-            hand.UnloadProviders (blk); //,providers );
+            //for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); ++it ) 
+            //  std::cout<<(*it)->GetName()<<"\t"<<agentStats.GetActivityAvgExecTime(*it)<<
+            //      "\t\t"<<agentStats.GetActivityVarExecTime(*it)<<std::endl;
+
+            //TODO delete...
         }
 
-        int ThreadMain () {
-            //Update frame
+        int Execute () {
             
+            unsigned long start = SysCall::_GetCurrentTimeInUSec();
             
             agentStats.StartAgentTiming();
-            
 
-            for ( ProvList::iterator it=providers.begin(); it != providers.end(); ++it ) {
-                agentStats.StartProviderTiming(*it);
-                (*it)->Update();
-                agentStats.StopProviderTiming(*it);
+            for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); it++ ) {
+                agentStats.StartActivityTiming(*it);
+                (*it)->Execute();
+                agentStats.StopActivityTiming(*it);
             }
 
             agentStats.StopAgentTiming();
+            
+            unsigned long ExecInterval = SysCall::_GetCurrentTimeInUSec() - start;
 
+            if ( ExecInterval > Freq2Time )
+                Logger::Instance()->WriteMsg(_name, "Decrease Freq!!!", Logger::ExtraInfo );
+            else
+                SysCall::_usleep( Freq2Time - ExecInterval );
 
             return 0;
         }
 
+        typedef std::vector<std::string> ActivityNameList;
+
 
     private:
 
-        ProviderHandler hand;
+        std::string _name;
 
-        Blackboard * blk;
+        AgentConfig _cfg;
 
-        typedef std::vector<Provider *> ProvList;
+        Narukom* _com;
+        Blackboard _blk;
 
-        ProvList providers; //in execution order 
+        typedef std::vector<IActivity*> ActivList;
+
+        ActivList _activities; //in execution order 
 
         AgentTiming agentStats;
+
+        double Freq2Time;
 
 };
 

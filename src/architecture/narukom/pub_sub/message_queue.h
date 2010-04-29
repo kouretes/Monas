@@ -29,8 +29,8 @@
 #include "publisher.h"
 
 #include "topic_tree.h"
-#include "Mutex.h"
-#include "Thread.h"
+#include "../system/Mutex.h"
+#include "hal/thread.h"
 //#include 
 //template<class Key = std::string, class Data = Subscriber>
 class Subscriber;
@@ -54,7 +54,7 @@ class MessageQueue : public Thread
     bool unsubscribe(std::string from_topic, Subscriber*  );
 /*    bool unsubscribe(const char* from_topic, Subscriber*  );*/
     void process_queued_msg();
-    virtual void run();
+    virtual int Execute();
     bool running;
     int delivered;
   private:

@@ -256,13 +256,17 @@ void MessageQueue::process_queued_msg()
 //TODO
 
 //void MessageQueue::finalize_queue(){}
-void MessageQueue::run()
+int MessageQueue::Execute()
 {
 cout << "Starting Thread Main" << endl;
 running = true;
-while(running)
+while(running) {
   process_queued_msg();
+  usleep(5000);
+}
 
 cout << "Ending Thread Main " << endl;
+
+return 0;
 
 }

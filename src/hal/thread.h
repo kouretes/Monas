@@ -1,40 +1,51 @@
 #ifndef _thread_h_
 #define _thread_h_ 1
 
-#include "hal/threadable.h"
-#include "hal/threadconfig.h"
-#include "tools/genFactory.h"
+#include "architecture/IExecutable.h"
 
-class Thread {
+#include <boost/thread.hpp>
+
+class Thread : public IExecutable {
 
     public:
 
-        Thread ( Threadable * obj, ThreadConfig  cfg ) : 
-            running(false),
-            object(obj),
-            config(cfg)
-        { ; }
+        Thread ( bool start = false ) : running(false) { 
+            if ( start )
+                StartThread(); 
+        }
 
         virtual ~Thread() { ; }
 
         bool IsRunning() const { return running; }
 
-        virtual void StartThread() =0;
+        virtual void StartThread() {
+            running = true;
+            bThread = boost::thread( &Thread::startHelper , this);
+        }
 
-        virtual void StopThread() =0;
+        virtual void StopThread() {
+            running = false;
+        }
 
-        virtual void KillThread() =0;
+        virtual void KillThread() {
+            StopThread(); //TODO
+        }
+
+        void JoinThread() {
+            bThread.join();
+        }
 
     protected:
 
         volatile bool running;
 
-        Threadable * object;
+        boost::thread bThread;
 
-        ThreadConfig  config;
+        void startHelper () {
+            while (running) 
+                this->Execute();
+        }
 
 };
-
-typedef GenericFactory<Thread,std::string,Thread * (*) (Threadable *, ThreadConfig ),Threadable*,ThreadConfig> ThreadFactory;
 
 #endif // _thread_h_ 

@@ -23,12 +23,12 @@
 
 #include "subscriber.h"
 
-#include "Mutex.h"
+#include "../system/Mutex.h"
 
 #include <string>
 
 //#include <auto_ptr.h>
-#include "Basic.pb.h"
+#include "../messages/Basic.pb.h"
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/member.hpp>
@@ -38,25 +38,6 @@
 #include <boost/concept_check.hpp>
 #include "tuple.h"
 class Blackboard;
-
-class Agent : public Thread, public Publisher{
-  public:
-
-    Agent();
-    Agent(std::string name) ;
-    Agent(const char* name );
-    std::string get_name() const {return agent_name;}
-    virtual void run();
-    virtual void publish(google::protobuf::Message* msg){
-      Publisher::publish(msg);
-    }
-    Blackboard* getBlackboard() const {return blk;}
-  private:
-    std::string agent_name;
-    Blackboard* blk;
-};
-
-
 
 
 typedef std::pair<boost::posix_time::ptime, google::protobuf::Message*> message_pair;
@@ -90,7 +71,7 @@ class Blackboard : public Subscriber
     Blackboard(const char* );
     Blackboard(const Subscriber& other);
     Blackboard(const Blackboard& other);
-    Blackboard(Agent* agent );
+    //Blackboard(Agent* agent );
     virtual ~Blackboard(){}
     virtual void process_messages();
 		
@@ -98,7 +79,7 @@ class Blackboard : public Subscriber
     google::protobuf::Message* in(const std::string& type, const std::string&  process,const std::string& host = "localhost" ,boost::posix_time::ptime* time_req = 0);
     google::protobuf::Message* read_nb(const std::string& type, const std::string&  process,const std::string& host = "localhost" ,boost::posix_time::ptime* time_req=0);
     google::protobuf::Message* in_nb(const std::string& type, const std::string&  process,const std::string& host = "localhost" ,boost::posix_time::ptime* time_req=0);
-    Agent* getAgent() const {return myagent;}
+    //Agent* getAgent() const {return myagent;}
     int add_tuple(Tuple*);
 
   private:
@@ -106,7 +87,7 @@ class Blackboard : public Subscriber
     boost::posix_time::ptime cur_tmsp;
 
 		boost::posix_time::time_duration period;
-    Agent*  myagent;
+    void*  myagent;
     DataStruct world_perception;
     Mutex data_struct_mx;
     int cleanup();

@@ -24,7 +24,7 @@
 #include "message_buffer.h"
 #include <google/protobuf/message.h>
 #include "message_queue.h"
-#include "Basic.pb.h"
+#include "../messages/Basic.pb.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>

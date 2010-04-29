@@ -29,9 +29,9 @@ SET(NARUKOM_MESSAGES_INCLUDE_DIR ${NARUKOM_DIR}/messages/)
 
 message(INFO "Include system files")
 set( NARUKOM_SYSTEM_SRCS 
-	${NARUKOM_DIR}/system/Thread.h
+#	${NARUKOM_DIR}/system/Thread.h
 	${NARUKOM_DIR}/system/Mutex.h
-	${NARUKOM_DIR}/system/Thread.cpp
+#	${NARUKOM_DIR}/system/Thread.cpp
 	${NARUKOM_DIR}/system/Mutex.cpp
 )
 

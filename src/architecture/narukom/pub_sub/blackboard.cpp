@@ -8,43 +8,43 @@ using boost::make_tuple;
 using std::string;
 
 
-Agent::Agent(): agent_name("Default Agent"), Publisher(agent_name), Thread(false) {} //{blk  = new Blackboard(this);}
-Agent::Agent(std::string name) : agent_name(name), Publisher(agent_name), Thread(false) {}// {blk = new Blackboard(this);}
-Agent::Agent(const char* name ) : agent_name(name) , Thread( false)
-{
-    cout << "Agent Constructor " << endl;
-    Publisher(agent_name) ;
-    blk = new Blackboard(this);
-}
-void Agent::run() {
-
-    cout << "Agent RRRRRRRRRRRUUUUUUUUUUUUUUUUUUUUUN " << endl;
-
-    static bool flag = true;
-    if (blk != NULL)
-        blk->process_messages();
-    else
-        cout << "Not Initialized " << endl;
-    BasicMessage* mb = (BasicMessage*)blk->read_nb("BasicMessage","Trafficer","localhost");
-    if (mb && flag)
-    {
-        cout << "From Blackboard no block" << mb->topic() << endl;
-        //mb = (BasicMessage*)blk->in_nb("BasicMessage","Trafficer","localhost");
-        int i ;
-        //std::cin >> i ;
-        flag = false;
-        cout << "From Blackboard inno block" << mb->topic() << endl;
-    }
-    else
-    {
-        cout << "adjflkajsdlfkjasldkfjalskdfjla;skjdf;laskjfd;alskjfd;alkjfd;lakjf;alkjf;laskjdf;laksjdfl;aksjfd;laskjl;fdkja;lksdf << " << endl;
-        mb = (BasicMessage*)blk->in("BasicMessage","Trafficer","localhost");
-        cout << "From Blackboard  block" << mb->topic() << endl;
-        cout << "adjflkajsdlfkjasldkfjalskdfjla;skjdf;laskjfd;alskjfd;alkjfd;lakjf;alkjf;laskjdf;laksjdfl;aksjfd;laskjl;fdkja;lksdf << " << endl;
-
-    }
-
-}
+//Agent::Agent(): agent_name("Default Agent"), Publisher(agent_name), Thread(false) {} //{blk  = new Blackboard(this);}
+//Agent::Agent(std::string name) : agent_name(name), Publisher(agent_name), Thread(false) {}// {blk = new Blackboard(this);}
+//Agent::Agent(const char* name ) : agent_name(name) , Thread( false)
+//{
+//    cout << "Agent Constructor " << endl;
+//    Publisher(agent_name) ;
+//    blk = new Blackboard(this);
+//}
+//void Agent::run() {
+//
+//    cout << "Agent RRRRRRRRRRRUUUUUUUUUUUUUUUUUUUUUN " << endl;
+//
+//    static bool flag = true;
+//    if (blk != NULL)
+//        blk->process_messages();
+//    else
+//        cout << "Not Initialized " << endl;
+//    BasicMessage* mb = (BasicMessage*)blk->read_nb("BasicMessage","Trafficer","localhost");
+//    if (mb && flag)
+//    {
+//        cout << "From Blackboard no block" << mb->topic() << endl;
+//        //mb = (BasicMessage*)blk->in_nb("BasicMessage","Trafficer","localhost");
+//        int i ;
+//        //std::cin >> i ;
+//        flag = false;
+//        cout << "From Blackboard inno block" << mb->topic() << endl;
+//    }
+//    else
+//    {
+//        cout << "adjflkajsdlfkjasldkfjalskdfjla;skjdf;laskjfd;alskjfd;alkjfd;lakjf;alkjf;laskjdf;laksjdfl;aksjfd;laskjl;fdkja;lksdf << " << endl;
+//        mb = (BasicMessage*)blk->in("BasicMessage","Trafficer","localhost");
+//        cout << "From Blackboard  block" << mb->topic() << endl;
+//        cout << "adjflkajsdlfkjasldkfjalskdfjla;skjdf;laskjfd;alskjfd;alkjfd;lakjf;alkjf;laskjdf;laksjdfl;aksjfd;laskjl;fdkja;lksdf << " << endl;
+//
+//    }
+//
+//}
 Blackboard::Blackboard() : Subscriber(), myagent(NULL)
 {
 
@@ -68,18 +68,18 @@ Blackboard::Blackboard(const char* name) : Subscriber(name), myagent(NULL)
 
 
 }
-Blackboard::Blackboard(Agent* agent ): Subscriber(agent->get_name()), myagent(agent) {
-
-
-}
+//Blackboard::Blackboard(Agent* agent ): Subscriber(agent->get_name()), myagent(agent) {
+//
+//
+//}
 //     BlBlackboard(const Subscriber& other);
-Blackboard::Blackboard(const Blackboard& other): Subscriber(Subscriber(other)),myagent(other.getAgent())
-{
-    //TODO
-    //message_pool.copyFrom(other.getMessagePool())	period = boost::posix_time::milliseconds(100);
-
-
-}
+//Blackboard::Blackboard(const Blackboard& other): Subscriber(Subscriber(other)),myagent(other.getAgent())
+//{
+//    //TODO
+//    //message_pool.copyFrom(other.getMessagePool())	period = boost::posix_time::milliseconds(100);
+//
+//
+//}
 
 void Blackboard::process_messages()
 {

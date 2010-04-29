@@ -17,5 +17,12 @@ include_directories ( AFTER narukom/
 add_library ( ArchCore   IActivity.cpp
                          talws.cpp )
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} ArchCore PARENT_SCOPE )
+    
+if ( "${ModuleBuildType}" STREQUAL "MODULE" )
+  add_definitions ( -DDLIB_FUNCTIONALITY )
+  target_link_libraries ( ArchCore dl )
+endif ( "${ModuleBuildType}" STREQUAL "MODULE" )
+
+set ( TargetLinkLibraries ${TargetLinkLibraries} ArchCore narukomlib tinyxml PARENT_SCOPE ) 
+#TODO add narukom link to cmake in narukom
    

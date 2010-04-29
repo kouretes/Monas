@@ -1,7 +1,7 @@
 #ifndef NARUKOM_H
 #define NARUKOM_H
-#include "message_queue.h"
-#include "udp_multicast_channel.h"
+#include "pub_sub/message_queue.h"
+#include "network/udp_multicast_channel.h"
 class Narukom{
 private:
     MessageQueue* mq;

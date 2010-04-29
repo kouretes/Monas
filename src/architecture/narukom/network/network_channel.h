@@ -21,9 +21,9 @@
 #ifndef NETWORK_CHANNEL_H
 #define NETWORK_CHANNEL_H
 #include "network_message.h"
-#include "publisher.h"
-#include "subscriber.h"
-#include "Mutex.h"
+#include "../pub_sub/publisher.h"
+#include "../pub_sub/subscriber.h"
+#include "../system/Mutex.h"
 // #include "network_message_buffer.h"
 #include <google/protobuf/message.h>
 #include <boost/asio/ip/host_name.hpp>
