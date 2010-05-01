@@ -4,9 +4,10 @@
 <agent IsRealTime=1 Priority=1 ThreadFrequency=20 MultipleThreads=0>
   <name> Agent1 </name>
   <activity> MyActivity </activity>
+  <activity> LedController </activity>
 </agent>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=4 MultipleThreads=0>
   <name> Agent2 </name>
-  <activity1> MyProvider2 </activity1>
+  <activity> HeadAnglePublisher </activity>
 </agent>
