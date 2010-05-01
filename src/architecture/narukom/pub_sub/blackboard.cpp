@@ -316,9 +316,9 @@ int Blackboard::cleanup()
 	if( it != time_out_index.end())
 	{
 		cout << "INF " << endl;
-		while( (*it)->get_timeout() < cur_tmsp && it != time_out_index.end())
+		while(  it != time_out_index.end() && (*it)->get_timeout() < cur_tmsp )
 		{
-		//	cout << "As of " << i << endl;
+			cout << "As of " << i++ << endl;
 			time_out_index.erase(it);
 			it = time_out_index.begin();
 		}
