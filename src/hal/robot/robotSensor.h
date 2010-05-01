@@ -7,17 +7,14 @@ class RobotSensor {
 
     public:
 
-        RobotSensor(std::string &name) 
-            name(name)
+        RobotSensor()
         {
             ;
         }
 
         virtual ~RobotSensor() { ; }
 
-    private:
 
-        std::string name;
 
 };
 
