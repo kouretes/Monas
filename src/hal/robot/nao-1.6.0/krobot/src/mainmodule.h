@@ -10,6 +10,7 @@
 #include <alptr.h>
 #include <almodule.h>
 
+#include "architecture/talws.h"
 
 namespace AL
 {
@@ -41,6 +42,14 @@ class mainModule : public AL::ALModule
      * @return an alvalue\n
      */
     AL::ALValue dummyFunction(const std::string& pMsg, const AL::ALValue& pFoo );
+    
+    void Start();
+    
+    void Stop();
+
+  private:
+
+    Talws tal;
 
 };
 

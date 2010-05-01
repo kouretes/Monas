@@ -14,7 +14,7 @@ IF ( "${TARGET_PLAT}" STREQUAL "")
 	set(TARGET_PLAT "generic")
 ENDIF( "${TARGET_PLAT}" STREQUAL "")
 
-include("${TARGET_PLAT}-config.cmake")
+#include("${TARGET_PLAT}-config.cmake")
 include(narukom_srcs.cmake)
 include(external_dependencies.cmake)
 

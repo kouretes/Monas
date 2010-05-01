@@ -12,6 +12,8 @@
 #include <almodule.h>
 #include "mainmodule.h"
 
+#include "hal/robot/generic_nao/kAlBroker.h"
+
 
 //______________________________________________
 // constructor
@@ -25,6 +27,14 @@ mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name )
   addParam( "foo", "Another parameter example" );
   setReturn( "return","Returns the foo param" );
   BIND_METHOD( mainModule::dummyFunction );
+  
+  functionName( "Start", "mainModule" ,  "Method to start Talws" );
+  BIND_METHOD( mainModule::Start );
+  
+  functionName( "Stop", "mainModule" ,  "Method to stop Talws" );
+  BIND_METHOD( mainModule::Stop );
+
+  KAlBroker::Instance()->SetBroker ( &(*broker) );
 }
 
 //______________________________________________
@@ -51,4 +61,12 @@ AL::ALValue mainModule::dummyFunction( const std::string& pMsg, const AL::ALValu
     std::cout << "The value you send me is invalid" << std::endl;
     
   return pFoo;
+}
+
+void mainModule::Start() {
+    tal.Start();
+}
+
+void mainModule::Stop() {
+    tal.Stop();
 }
