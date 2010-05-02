@@ -87,8 +87,8 @@ void Publisher::publish(Message* msg)
 			reflection->SetString(msg,string_field,publisher_name);
 			string_field = descriptor->FindFieldByName("timestamp");
 			reflection->SetString(msg,string_field,boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time() ));
-			
+		    //cout<<"Publisherrrrr"<<endl;	
 			pub_msg_buf->add(msg);
 		}
-//     cout << "Publsh: " << pub_msg_buf->size() << endl;
+     //cout << "Publsh: " << pub_msg_buf->size() << endl;
 }

@@ -1,0 +1,8 @@
+message TestMessage{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32 timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	required int32 counter =6 [default = 0];
+}

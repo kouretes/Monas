@@ -11,24 +11,17 @@ class KAlBroker {
 
     public:
 
-        void SetBroker( AL::ALBroker* broker) { _broker = broker; }
+        void SetBroker( AL::ALBroker* broker);
+        
+        AL::ALBroker* GetBroker () const; 
 
-        AL::ALBroker* GetBroker () const { return _broker; }
-
-        static KAlBroker* Instance() {
-            static KAlBroker br;
-            return &br;
-        }
+        static KAlBroker* Instance();
 
     private:
 
-        KAlBroker() {;}
+        KAlBroker();
 
         AL::ALBroker* _broker;
-
-
-
-
 
 };
 

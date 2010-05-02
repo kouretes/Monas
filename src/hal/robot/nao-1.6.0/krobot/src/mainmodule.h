@@ -49,7 +49,7 @@ class mainModule : public AL::ALModule
 
   private:
 
-    Talws tal;
+    Talws* tal;
 
 };
 

@@ -1,0 +1,52 @@
+message InertialSensorsMessage{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32 timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	repeated SensorPair SensorData   	= 6;
+}
+
+
+message FSRSensorsMessage{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32 timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	repeated SensorPair SensorData   	= 6;
+}
+
+message UltaSoundSensorsMessage{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32 timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	repeated SensorPair SensorData   	= 6;
+}
+
+message HeadJointSensorsMessage{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32 timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	repeated SensorPair SensorData   	= 6;
+}
+
+message BodyJointSensorsMessage{
+	required string host = 1 [default = "localhost"];
+	required string publisher = 2 [default = "" ];
+	required string topic = 3 [default = "global"];
+	required int32 timeout = 4 [default = 0];
+	required string timestamp = 5 [default = ""];
+	repeated SensorPair SensorData   	= 6;
+}
+
+message SensorPair {
+  required string SensorName = 1 [default = ""];
+  required float  SensorValue = 2;
+  optional float SensorValueDiff = 3;
+  optional uint32 SensorTimeDiff = 4; 
+}

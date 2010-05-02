@@ -36,5 +36,5 @@ configure_src_module( krobot ${KROBOT_SRCS} )
 use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE )
 
 
-target_link_libraries ( krobot ${TargetLinkLibraries} ${ModuleLibraries})
+target_link_libraries ( krobot ${TargetLinkLibraries} ${ModuleLibraries} GenericNao)
 

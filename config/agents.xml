@@ -1,13 +1,23 @@
 <?xml version="1.0" ?>
 <!-- Modules to be loaded  -->
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=20 MultipleThreads=0>
-  <name> Agent1 </name>
-  <activity> MyActivity </activity>
-  <activity> LedController </activity>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=6>
+  <name> KSensors </name>
+  <activity> Sensors </activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=4 MultipleThreads=0>
-  <name> Agent2 </name>
-  <activity> HeadAnglePublisher </activity>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=50 >
+  <name> Motion </name>
+  <activity> MotionController </activity>
 </agent>
+
+<agent IsRealTime=1 Priority=1 ThreadFrequency=10 >
+  <name> Vision  </name>
+  <activity> Vision </activity>
+</agent>
+
+<agent IsRealTime=1 Priority=1 ThreadFrequency=10 >
+  <name> Behavior </name>
+  <activity> Behavior </activity>
+</agent>
+

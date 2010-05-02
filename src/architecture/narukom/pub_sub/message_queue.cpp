@@ -19,18 +19,20 @@
 */
 
 #include "message_queue.h"
+#define TIXML_USE_TICPP
 #include <google/protobuf/descriptor.h>
+
 
 using std::map;
 using std::string;
 
-MessageQueue::MessageQueue() : Thread(false), type_string("topic") 
+MessageQueue::MessageQueue() : Thread(false), type_string("topic")
 {
   this->publishers_buf = new map<string,MessageBuffer*>();
   this->subscribers_buf = new map<string,MessageBuffer*>();
   this->topic_tree = new TopicTree<string,MessageBuffer>();
   running = false;
-  //TODO 
+  //TODO
   //Read Configuration and create the tree!
   create_tree(topic_tree, string("topic_tree.xml"));
 
@@ -43,7 +45,7 @@ MessageQueue::MessageQueue(string configuration_file)  : Thread(false), type_str
   this->subscribers_buf = new map<string,MessageBuffer*>();
   this->topic_tree = new TopicTree<string,MessageBuffer>();
   running = false;
-  //TODO 
+  //TODO
   //Read Configuration and create the tree!
   create_tree(topic_tree, configuration_file);
 
@@ -55,23 +57,81 @@ MessageQueue::MessageQueue(const char* configuration_file)  : Thread(false), typ
   this->subscribers_buf = new map<string,MessageBuffer*>();
   this->topic_tree = new TopicTree<string,MessageBuffer>();
   running = false;
-  //TODO 
+  //TODO
   //Read Configuration and create the tree!
   create_tree(topic_tree, string(configuration_file));
 
 }
 
-void MessageQueue::create_tree(TopicTree<string,MessageBuffer>* tree, string file_name)
+void MessageQueue::create_tree(TopicTree<string,MessageBuffer>* tree,const  string& file_name)
 {
-  topic_tree->add_topic(string("global"));
-  topic_tree->add_topic_under(string("global"),string("robot1"));
-  topic_tree->add_topic_under(string("global"),string("robot2"));
-  topic_tree->add_topic_under(string("robot1"),string("vision"));
-  //topic_tree->add_topic_under(string("robot2"),string("vision"));
-  topic_tree->add_topic_under(string("robot1"),string("motion"));
-  topic_tree->add_topic_under(string("motion"),string("score"));
-  
+//   topic_tree->add_topic(string("global"));
+//   topic_tree->add_topic_under(string("global"),string("robot1"));
+//   topic_tree->add_topic_under(string("global"),string("robot2"));
+//   topic_tree->add_topic_under(string("robot1"),string("vision"));
+//   //topic_tree->add_topic_under(string("robot2"),string("vision"));
+//   topic_tree->add_topic_under(string("robot1"),string("motion"));
+//   topic_tree->add_topic_under(string("motion"),string("score"));
+//
+   string parent = "";
+   string topic;
+  //  ticpp::Document doc;
+   // try {
+   //     doc.LoadFile(file_name.c_str());
+    //}
+    //catch (ticpp::Exception)
+    {
+        cout << "Could not load file " << file_name << endl;
+        topic_tree->add_topic(string("global"));
+        topic_tree->add_topic_under(string("global"),string("motion"));
+        topic_tree->add_topic_under(string("global"),string("sensors"));
+        topic_tree->add_topic_under(string("global"),string("vision"));
+        topic_tree->add_topic_under(string("global"),string("behavior"));
+        topic_tree->add_topic_under(string("global"),string("localization"));
+        topic_tree->add_topic_under(string("global"),string("communication"));
+        topic_tree->add_topic_under(string("motion"),string("score"));
+        return;
 
+    }
+//     doc.LoadFile();
+/*try{
+        cout << "File " << file_name << endl;
+     //   ticpp::Element* pElem  = doc.FirstChild("tree")->FirstChildElement();
+
+
+//	pElem->GetFirstChild("node");
+	(*pElem).GetAttribute("parent",&parent);
+
+	//ticpp::Iterator< ticpp::Element> pElem("");//("node");
+        while(pElem)
+        {
+	 // pElem = child;
+// 	  cout << "FORRRRRR" << (*pElem).GetText() << endl;
+	  (*pElem).GetAttribute("parent",&parent);
+	  topic = (*pElem).GetText();
+	  if(parent != ""  || parent == "none")
+	  {
+	    cout << "parent  " << parent << "--->" <<  topic << endl;
+	    topic_tree->add_topic_under(parent,topic);
+	  }
+	  else
+	  {
+	    cout << "topicless  " << topic << endl;
+	    topic_tree->add_topic(topic);
+	  }
+	  cout << "ooo" << parent  << endl;
+	  topic ="";
+	  parent ="";
+	  pElem = (ticpp::Element*)pElem->NextSibling(false);
+
+        }
+}
+catch(ticpp::Exception& ex)
+{
+  cout << ex.what();
+  cout << "EEEEEEEEEEEEEEXECEEEEEPTION" << endl;
+}
+*/
 }
 
     void MessageQueue::remove_publisher(Publisher* pub)
@@ -99,11 +159,11 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub)//{return NULL;}//TODO
 {
   pub_mutex.Lock();
     string owner_name = pub->getName();
-    
+
     map<string,MessageBuffer*>::iterator it = publishers_buf->find(owner_name);
       if(it != publishers_buf->end() )
 	return it->second;
-	
+
     MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name );
     pub->setQueue(this);
     publishers_buf->insert ( std::make_pair<std::string,MessageBuffer*> ( owner_name,new_msg_buf ) );
@@ -117,11 +177,11 @@ MessageBuffer* MessageQueue::add_subscriber ( Subscriber* sub ) //{return NULL;}
 {
   sub_mutex.Lock();
     string owner_name = sub->getName();
-    
+
     map<string,MessageBuffer*>::iterator it = subscribers_buf->find(owner_name);
       if(it != subscribers_buf->end() )
 	return it->second;
-    
+
     MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name );
     sub->setQueue(this);
     subscribers_buf->insert ( std::make_pair<std::string,MessageBuffer*> ( owner_name,new_msg_buf ) );
@@ -137,10 +197,10 @@ bool MessageQueue::subscribe ( const char* topic, Subscriber* sub,int where )
   string tmp_topic = string (topic);
   string owner = sub->getName();
   std::map<std::string,MessageBuffer*>::iterator sub_it = subscribers_buf->find ( owner );
-  
+
     if ( sub_it != subscribers_buf->end() )
     {
-  
+
       return subscribe(tmp_topic,sub,where);
     }
     return false;
@@ -175,7 +235,7 @@ bool MessageQueue::unsubscribe ( std::string from_topic, Subscriber*  sub   )
 }
 // bool unsubscribe(const char* from_topic, Subscriber* sub )
 // {
-// 
+//
 //   return unsubscribe(string(from_topic),sub);
 // }
 //TODO
@@ -184,9 +244,9 @@ void MessageQueue::process_queued_msg()
 {
   boost::posix_time::ptime start =  boost::posix_time::microsec_clock::local_time();
   pub_mutex.Lock();
-  
-//   cout << "SIZEEEEEEEEEEEEEE: " <<  publishers_buf->size()  <<endl;
-//   cout << "SIZEEEEEEEEEEEEEE: " <<  subscribers_buf->size()  <<endl;
+
+ //  cout << "SIZEE: " <<  publishers_buf->size()  <<endl;
+  // cout << "SIZEEEEEEEEEEEEEE: " <<  subscribers_buf->size()  <<endl;
 //    cout << "MessageQueue " << endl;
 //   bool flag = false;
   if(publishers_buf->size() > 0 )
@@ -194,22 +254,22 @@ void MessageQueue::process_queued_msg()
 //     flag = true;
     for(map<string,MessageBuffer*>::iterator it = publishers_buf->begin(); it != publishers_buf->end(); it++)
     {
-//       cout << "Message Size is " <<  endl; 
+      // cout << "Owner " <<  it->second->getOwner() <<  endl;
       if(it->second->size() < 1 )
       {
-//         cout << "Message Size is " << it->second->size() << endl; 
+       //  cout << "Message Size is " << it->second->size() << endl;
 				continue;
       }
-      
+
       google::protobuf::Message* cur = it->second->remove_head();
       /*const google::protobuf::Descriptor* descriptor = cur->GetDescriptor();
       const google::protobuf::FieldDescriptor* type_descriptor = descriptor->FindFieldByName(type_string);
       const google::protobuf::FieldDescriptor* sender_field = descriptor->FindFieldByName("sender");
-      string sender; 
+      string sender;
       const google::protobuf::Reflection* reflection = cur->GetReflection();
       string tmp;
       */
-			
+
       while(cur != 0)
       {
 				/*
@@ -226,10 +286,10 @@ void MessageQueue::process_queued_msg()
 	  if((*buf_it)->getOwner() == basic_msg->publisher() );
 	  else
 	  {
-//  	    cout << "MQ: " << (*buf_it)->getOwner() << " " <<  basic_msg->publisher() <<endl;
+  	  //  cout << "MQ: " << (*buf_it)->getOwner() << " " <<  basic_msg->publisher() <<endl;
 	    (*buf_it)->add(cur);
 	  }
-	}	
+	}
 	delete cur;
 	cur = it->second->remove_head();
 	if(cur == NULL)
@@ -251,7 +311,7 @@ void MessageQueue::process_queued_msg()
 
 //   sub_mutex.Unlock();
  // sleep(1);
-  
+
 }
 //TODO
 
@@ -260,13 +320,11 @@ int MessageQueue::Execute()
 {
 cout << "Starting Thread Main" << endl;
 running = true;
-while(running) {
-  process_queued_msg();
-  usleep(5000);
+while(running)
+{  process_queued_msg();
+    usleep(5000);
+	//boost::thread::yield();
 }
-
 cout << "Ending Thread Main " << endl;
-
-return 0;
 
 }

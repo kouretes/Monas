@@ -111,3 +111,16 @@ google::protobuf::Message* MessageBuffer::remove_head()
   mutex.Unlock();
   return tmp;
 } //TODO
+
+google::protobuf::Message* MessageBuffer::remove_tail()
+{ mutex.Lock();
+  google::protobuf::Message* tmp = 0;
+  if(msg_buf->size() > 0)
+  {
+    tmp = msg_buf->back();
+    msg_buf->pop_back();
+
+  }
+  mutex.Unlock();
+  return tmp;
+} //TODO

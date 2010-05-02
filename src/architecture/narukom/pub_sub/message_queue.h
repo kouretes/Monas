@@ -65,7 +65,7 @@ class MessageQueue : public Thread
     Mutex pub_mutex;
     Mutex sub_mutex;
     const std::string type_string;
-    void create_tree(TopicTree<std::string,MessageBuffer>* tree, std::string file_name);
+    void create_tree(TopicTree<std::string,MessageBuffer>* tree, const std::string& file_name);
 };
 
 #endif // MESSAGE_QUEUE_H

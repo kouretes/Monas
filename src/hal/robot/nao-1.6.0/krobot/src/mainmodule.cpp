@@ -35,6 +35,8 @@ mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name )
   BIND_METHOD( mainModule::Stop );
 
   KAlBroker::Instance()->SetBroker ( &(*broker) );
+
+  tal = new Talws();
 }
 
 //______________________________________________
@@ -42,7 +44,7 @@ mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name )
 //______________________________________________
 mainModule::~mainModule()
 {
-
+    delete tal;
 }
 
 
@@ -64,9 +66,9 @@ AL::ALValue mainModule::dummyFunction( const std::string& pMsg, const AL::ALValu
 }
 
 void mainModule::Start() {
-    tal.Start();
+    tal->Start();
 }
 
 void mainModule::Stop() {
-    tal.Stop();
+    tal->Stop();
 }
