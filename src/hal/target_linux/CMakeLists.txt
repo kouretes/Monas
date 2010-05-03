@@ -10,13 +10,13 @@ include_directories ( AFTER ../../architecture/narukom/
                             ../../architecture/narukom/pub_sub/
                             ../../architecture/narukom/system/ )
 
-add_executable ( kourarch main.cpp )
+
+add_executable ( Monad main.cpp )
 
 
+target_link_libraries( Monad M_tinyxml ${TargetLinkLibraries} ${ActivityLibraries} )
 
-target_link_libraries( kourarch tinyxml ${TargetLinkLibraries} ${ModuleLibraries})
-
-install ( TARGETS kourarch 
+install ( TARGETS Monad 
             RUNTIME DESTINATION   bin
             LIBRARY DESTINATION   lib
             ARCHIVE DESTINATION   lib/static )

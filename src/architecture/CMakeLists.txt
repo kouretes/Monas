@@ -14,15 +14,31 @@ include_directories ( AFTER narukom/
                             narukom/pub_sub/
                             narukom/system/ )
 
-add_library ( ArchCore   IActivity.cpp
-                         talws.cpp )
 
-    
-if ( "${ModuleBuildType}" STREQUAL "MODULE" )
+
+if ( "${ActivityBuildType}" STREQUAL "MODULE" )
   add_definitions ( -DDLIB_FUNCTIONALITY )
-  target_link_libraries ( ArchCore dl )
-endif ( "${ModuleBuildType}" STREQUAL "MODULE" )
+endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} ArchCore narukomlib tinyxml PARENT_SCOPE ) 
+add_library ( MonadCore ${LibBuildType}   
+                        IActivity.cpp
+                        talws.cpp 
+)
+
+if ( "${ActivityBuildType}" STREQUAL "MODULE" )
+  target_link_libraries ( MonadCore dl )
+endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
+
+
+
+
+target_link_libraries ( MonadCore M_tinyxml )
+
+install ( TARGETS MonadCore 
+        RUNTIME DESTINATION   bin
+        LIBRARY DESTINATION   lib
+        ARCHIVE DESTINATION   lib/static )   
+
+set ( TargetLinkLibraries ${TargetLinkLibraries} MonadCore narukomlib  PARENT_SCOPE ) 
 #TODO add narukom link to cmake in narukom
    

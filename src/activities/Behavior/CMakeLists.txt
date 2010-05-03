@@ -12,5 +12,5 @@ include ( ../activTemplate.cmake )
 
 use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS)
 
-target_link_libraries ( ${ActivityName} NaoQiVer )
+target_link_libraries ( ${ActivityName} NaoQiDep )
 

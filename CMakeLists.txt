@@ -9,6 +9,7 @@ message( STATUS "" )
 #set( CMAKE_VERBOSE_MAKEFILE on )
 
 add_definitions ( -Wall )
+add_definitions ( -m32 )
 
 add_subdirectory( external ) 
 add_subdirectory( src )

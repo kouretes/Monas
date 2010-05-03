@@ -3,7 +3,11 @@ message ( STATUS " _..::: Configuring for Generic Windows Platform :::.._ " )
 message ( STATUS "" )
 
 
-add_library( GenWindows STATIC winthread.cpp syscall.cpp dlib_fnc.cpp)
+add_library( GenWindows ${LibBuildType}
+                        winthread.cpp 
+                        syscall.cpp 
+                        dlib_fnc.cpp
+)
 
 set ( TargetLinkLibraries ${TargetLinkLibraries} GenWindows PARENT_SCOPE )
 

@@ -11,7 +11,7 @@ message ( STATUS "" )
 # registers normally the activity.
 
 
-if ( "${ModuleBuildType}" STREQUAL "STATIC" )
+if ( "${ActivityBuildType}" STREQUAL "STATIC" )
 
 
 # Check that the name of the Activity is the same with the header file 
@@ -44,7 +44,7 @@ file ( APPEND ../activityRegistry.h "}\n" )
 file ( APPEND ../activityRegistry.h "\n" )
 
 
-endif ( "${ModuleBuildType}" STREQUAL "STATIC" )
+endif ( "${ActivityBuildType}" STREQUAL "STATIC" )
 
 
 
@@ -53,13 +53,13 @@ endif ( "${ModuleBuildType}" STREQUAL "STATIC" )
 # linked library ), the library has to be linked with the executable.
 # Thus the library name is appended to the appropriate variable.
 
-if ( NOT "${ModuleBuildType}" STREQUAL "MODULE" )
-set ( ModuleLibraries ${ModuleLibraries} ${ActivityName} PARENT_SCOPE )
-endif ( NOT "${ModuleBuildType}" STREQUAL "MODULE" )
+if ( NOT "${ActivityBuildType}" STREQUAL "MODULE" )
+set ( ActivityLibraries ${ActivityLibraries} ${ActivityName} PARENT_SCOPE )
+endif ( NOT "${ActivityBuildType}" STREQUAL "MODULE" )
 
 
 
-add_library ( ${ActivityName} ${ModuleBuildType} ${ActivitySrcs} )
+add_library ( ${ActivityName} ${ActivityBuildType} ${ActivitySrcs} )
     
 install ( TARGETS ${ActivityName} 
             RUNTIME DESTINATION   bin

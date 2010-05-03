@@ -16,6 +16,9 @@
 #   see cmake help for more information
 # 3. Edit project option : ccmake .
 # 4. Build it : make 
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring KRobot :::.._ " )
+message ( STATUS "" )
 
 cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
 
@@ -36,5 +39,9 @@ configure_src_module( krobot ${KROBOT_SRCS} )
 use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE )
 
 
-target_link_libraries ( krobot ${TargetLinkLibraries} ${ModuleLibraries} GenericNao)
+target_link_libraries ( krobot ${TargetLinkLibraries} ${ActivityLibraries} )
 
+install ( TARGETS krobot 
+        RUNTIME DESTINATION   bin
+        LIBRARY DESTINATION   lib
+        ARCHIVE DESTINATION   lib/static )

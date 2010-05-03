@@ -5,4 +5,4 @@ set ( ActivitySrcs HeadAnglePublisher.cpp ../../messages/ledMsg.pb.cc )
 include ( ../activTemplate.cmake )
 
 
-target_link_libraries ( ${ActivityName} NaoQiVer )
+target_link_libraries ( ${ActivityName} NaoQiDep )

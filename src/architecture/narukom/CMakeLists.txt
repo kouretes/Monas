@@ -37,3 +37,8 @@ link_libraries(${PROTOBUF_LIBRARIES} ${BOOST_LIBRARIES} ${ZLIB_LIBRARIES} ${PTHR
 
 target_link_libraries(narukomlib ${PROTOBUF_LIBRARIES} ${BOOST_LIBRARIES} ${ZLIB_LIBRARIES} ${PTHREAD_LIBRARIES})
 #add_subdirectory(demo)
+
+install ( TARGETS narukomlib
+        RUNTIME DESTINATION   bin
+        LIBRARY DESTINATION   lib
+        ARCHIVE DESTINATION   lib/static ) 
