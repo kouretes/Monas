@@ -8,7 +8,7 @@ message( STATUS "" )
 
 #set( CMAKE_VERBOSE_MAKEFILE on )
 
-set ( CMAKE_CXX_FLAGS -Wall )
+add_definitions ( -Wall )
 
 add_subdirectory( external ) 
 add_subdirectory( src )
