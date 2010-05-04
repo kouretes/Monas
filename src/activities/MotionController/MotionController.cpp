@@ -68,8 +68,8 @@ void MotionController::process_messages() {
 		delete mm;
 	if (sub_buffer->size() > 0) {
 		mm = (MotionMessage*) sub_buffer->remove_tail();
-		cout << "I received a message from " << mm->publisher() << " sub_buffer->size()  " << sub_buffer->size()  << endl;
-        cout << "MotionController: Command : " << mm->command() <<" of type: "<< mm->GetTypeName() << endl;
+		//cout << "I received a message from " << mm->publisher() << " sub_buffer->size()  " << sub_buffer->size()  << endl;
+       // cout << "MotionController: Command : " << mm->command() <<" of type: "<< mm->GetTypeName() << endl;
 	} else
 		mm = NULL;
 	//boost::thread::yield();
@@ -173,7 +173,7 @@ void MotionController::mglrun() {
 	                walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3);
 	                std::cout << "   Walk ID: " << walkPID << std::endl;
 	                walkCommand = true;
-	            } 
+	            }
 	            else if (mm->command() == "setWalkTargetVelocity" && !walkCommand) {
 	                walkParam1 = mm->parameter(0);
 	                walkParam2 = mm->parameter(1);
@@ -183,7 +183,7 @@ void MotionController::mglrun() {
 	                walkPID = motion->post.setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
 	                std::cout << "   Walk ID: " << walkPID << std::endl;
 	                walkCommand = true;
-	            } 
+	            }
 	            else if (mm->command() == "setHead" && !headCommand) {
 	                headParam1 = mm->parameter(0);
 	                headParam2 = mm->parameter(1);
@@ -198,7 +198,7 @@ void MotionController::mglrun() {
 	                headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 	                std::cout << "   Head ID: " << headPID << std::endl;
 	                headCommand = true;
-	            } 
+	            }
 	            else if (mm->command() == "changeHead" && !headCommand) {
 	                headParam1 = mm->parameter(0);
 	                headParam2 = mm->parameter(1);
@@ -213,7 +213,7 @@ void MotionController::mglrun() {
 	                headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 	                std::cout << "   Head ID: " << headPID << std::endl;
 	                headCommand = true;
-	            } 
+	            }
 	            else if (!actionCommand) { /* Action command */
 	                if (headPID != 0) {
 	                    motion->post.killTask(headPID);
@@ -3065,10 +3065,10 @@ void MotionController::loadActions() {
 	LieDown_keys[20][4] = AL::ALValue::array(0.0, AL::ALValue::array(2, -0.333333, -0.0), AL::ALValue::array(2, 0.666667, 0.0));
 	LieDown_times[20][5] = 7;
 	LieDown_keys[20][5] = AL::ALValue::array(0.0, AL::ALValue::array(2, -0.666667, -0.0), AL::ALValue::array(2, 0.0, 0.0));
-	
-	
+
+
 	/************************* Left Kick *********************************/
-	
+
 	LeftKick_names.arraySetSize(25);
 	LeftKick_times.arraySetSize(25);
 	LeftKick_keys.arraySetSize(25);
@@ -3497,10 +3497,10 @@ void MotionController::loadActions() {
 	LeftKick_keys[24][4] = AL::ALValue::array(-0.315962, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.4, 0.0));
 	LeftKick_times[24][5] = 6.73333;
 	LeftKick_keys[24][5] = AL::ALValue::array(0.00771196, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
-	
-	
+
+
 	/************************* Right Kick *********************************/
-	
+
 	RightKick_names.arraySetSize(25);
 	RightKick_times.arraySetSize(25);
 	RightKick_keys.arraySetSize(25);

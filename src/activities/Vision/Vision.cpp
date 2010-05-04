@@ -16,6 +16,15 @@ namespace{
 
 int  Vision::Execute()
 {
+	static bool calibrated = false;
+	if(!calibrated){
+		cout<<"Start calibration"<<endl;
+		float scale= ext.calibrateCamera();
+		segbottom->setLumaScale(1/scale);
+		//    segtop->setLumaScale(1/scale);
+		cout<<"Calibration Done!"<<endl;
+		calibrated = true;
+	}
     //std::cout << " Vision run" << std::endl;
     testrun();
     return 0;
@@ -35,7 +44,7 @@ void Vision::testrun()
     cout << "ImageTimestamp:"<< t.tv_sec << " " << t.tv_nsec << endl;
 #endif
     //SleepMs(1000);
-    usleep(5000);
+    //usleep(500);
     gridScan(orange);
     if (cvHighgui)
         cvShowSegmented();
@@ -75,11 +84,12 @@ void Vision::UserInit() {
     }
     //memory = pbroker->getMemoryProxy();
 
-    ifstream *config = new ifstream("segbot.conf");
+    ifstream *config = new ifstream("config/segbot.conf");
     segbottom = new KSegmentator(*config);//TODO PATH!!!
     config->close();
     delete config;
-    config = new ifstream("segtop.conf");
+    config = new ifstream("config/segtop.conf");
+
     segtop = new KSegmentator(*config);//TODO PATH!!!
     config->close();
     delete config;
@@ -89,11 +99,7 @@ void Vision::UserInit() {
     
     _com->get_message_queue()->add_publisher(this);
 
-    cout<<"Start calibration"<<endl;
-    float scale= ext.calibrateCamera();
-    segbottom->setLumaScale(1/scale);
-//    segtop->setLumaScale(1/scale);
-    cout<<"Done!"<<endl;
+
 
 
 }
@@ -197,6 +203,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
         publish(&trckmsg);
 
 
+    }else{
+		trckmsg.set_cx(x);
+        trckmsg.set_cy(y);
+        trckmsg.set_radius(-1);
+        trckmsg.set_topic("vision");
+        publish(&trckmsg);
     }/* else {
 		memory->insertData("kouretes/Ball/found", .0f); // change
 	}*/

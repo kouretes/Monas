@@ -26,7 +26,7 @@ class Behavior : public IActivity, public Publisher {
 	private:
 		AL::ALPtr<AL::ALMotionProxy> motion;
 		AL::ALPtr<AL::ALMemoryProxy> memory;
-
+		short ballfound;
 		MotionMessage* mot;
 };
 
