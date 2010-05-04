@@ -1,0 +1,19 @@
+Some settings for running krobot executable automatically on the robot
+Only tested with remote on
+all the libs where copied to /opt/naoqi/lib as in the nao start scipts this is the pwd
+config folder was copied to /opt/naoqi/bin dont ask it just worked this is the curdir of /opt/naoqi/bin/naoqi scripts internal pwd
+
+in the crossbuilding for remote module
+the setings where
+
+  ActivityBuildType                SHARED
+  ExternalSrcsBldType              SHARED
+  KROBOT_IS_REMOTE                 ON
+  LibBuildType                     STATIC
+  TargetPlatform                   robot
+
+
+
+p.s. this was a nice command when runned under crossbuild folder
+ find ./ -iname  '*.so' -exec cp {} ~/Desktop/libs/ \;
+then this where copied to /opt/naoqi/lib
