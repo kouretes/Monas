@@ -1,17 +1,18 @@
 <?xml version="1.0" ?>
 <!-- Modules to be loaded  -->
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=6>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=8>
   <name> KSensors </name>
   <activity> Sensors </activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=50 >
+<agent IsRealTime=1 Priority=1 ThreadFrequency=8 >
   <name> Motion </name>
   <activity> MotionController </activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 >
+<agent IsRealTime=1 Priority=1 ThreadFrequency=4
+ >
   <name> Vision  </name>
   <activity> Vision </activity>
 </agent>

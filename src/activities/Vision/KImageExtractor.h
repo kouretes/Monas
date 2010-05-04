@@ -22,7 +22,7 @@
 #include <opencv/cv.h>
 #define VISION_RESOLUTION kQVGA
 #define VISION_CSPACE kYUV422InterlacedColorSpace
-#define VISON_FPS 15
+#define VISON_FPS 5
 #define VISION_GVMNAME "KImageExtractor"
 
 #define REMOTE_ON 1
