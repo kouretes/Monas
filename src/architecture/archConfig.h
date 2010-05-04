@@ -12,15 +12,20 @@ class ArchConfig {
 
     public:
 
-        const std::string GetMsgLogFile () { return MsgLogFile; }
+        const std::string GetMsgLogFile () const { return MsgLogFile; }
 
-        const std::string GetThreadType () { return ThreadType; }
+        const bool GetMsgLogCerrEnabled () const { return MsgLogCerrEnabled; }
+        
+        const int GetMsgLogVerbosityLevel () const { return MsgLogVerbosityLevel; }
+        
+        const std::vector<std::string> GetMsgLogFilter () const { return MsgLogFilter; }
 
-        const std::string GetAgentCfgFile () { return AgentCfgFile; }
+        const std::string GetThreadType () const { return ThreadType; }
 
-        const int GetVerbosityLevel () { return LoggerVerbosityLevel; }
+        const std::string GetAgentCfgFile () const { return AgentCfgFile; }
 
-        static ArchConfig * Instance () {
+
+        static ArchConfig* Instance () {
             static ArchConfig Ar;
             return &Ar;
         }
@@ -30,28 +35,46 @@ class ArchConfig {
         ArchConfig () {
             XMLConfig ConfFile( GlobalConf::Instance()->ConfigurationFile() );
             if ( ! ConfFile.IsLoadedSuccessfully() ) {
-                std::cerr<<"Can't find or parse initial configuration file @ "<<GlobalConf::Instance()->ConfigurationFile()<<std::endl<<std::flush;
+                std::cerr<<"Can't find or parse initial configuration file @ "<<GlobalConf::Instance()->ConfigurationFile()<<std::endl;
                 SysCall::_exit( 1 );
             }
 
-            bool found = ConfFile.QueryElement( "MessageLogFile", MsgLogFile );
-
-            found &= ConfFile.QueryElement( "LogFileVerbosityLevel", LoggerVerbosityLevel );
-            found &= ConfFile.QueryElement( "ThreadType", ThreadType );
-            found &= ConfFile.QueryElement( "AgentConfigurationFile", AgentCfgFile );
-
-            if ( ! found ) {
-                std::cerr<<"The initial configuration file is not accepted"<<std::endl<<std::flush;
+            if ( ! ConfFile.QueryElement( "AgentConfigurationFile", AgentCfgFile ) ) {
+                std::cerr<<"The initial configuration file is not accepted"<<std::endl;
+                std::cerr<<"AgentConfigurationFile is not set"<<std::endl;
                 SysCall::_exit(1);
             }
+
+            if ( ! ConfFile.QueryElement( "MessageLogFile", MsgLogFile ) ) {
+                std::cerr<<"MessageLogFile is not set"<<std::endl;
+                std::cerr<<"Defaulting to MonadLog.txt"<<std::endl;
+                MsgLogFile = "MonadLog.txt";
+            }
+            
+            if (! ConfFile.QueryElement( "LogFileVerbosityLevel", MsgLogVerbosityLevel ) )
+                MsgLogVerbosityLevel = 0;
+
+            if ( ! ConfFile.QueryElement( "ThreadType", ThreadType ) ) 
+                ThreadType = "PThread";
+
+            if ( ! ConfFile.QueryElement( "MessageLogCerr", MsgLogCerrEnabled ) )
+                MsgLogCerrEnabled = false;
+
+            ConfFile.QueryElement( "MessageLogFilter", MsgLogFilter );
 
         }         
 
         std::string MsgLogFile;
+        bool MsgLogCerrEnabled;
+        int MsgLogVerbosityLevel; 
+        std::vector<std::string> MsgLogFilter;
+
+
         std::string ThreadType;
         std::string AgentCfgFile;
 
-        int LoggerVerbosityLevel; 
+
+
 
 };
 
