@@ -16,7 +16,7 @@ template
   class ProductCreator = Product* (*)(),
   class T1 = bool,
   class T2 = bool,
-  class ErrorPolicy = RuntimeErrPolicy
+  class ErrorPolicy =PrintErrAndExitPolicy 
 >
 class GenericFactory
     : public ErrorPolicy

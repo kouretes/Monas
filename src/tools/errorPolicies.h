@@ -2,6 +2,9 @@
 #define _Policies_h_ 1
 
 #include <string>
+#include <iostream>
+
+#include "hal/syscall.h"
 
 class AbErrPolicy {
 
@@ -17,8 +20,19 @@ class RuntimeErrPolicy : public AbErrPolicy {
 
     public:
 
-        void Error( const std::string & er ) {
+        void Error( const std::string& er ) {
             throw std::runtime_error( "Error: "+er );
+        }
+
+};
+
+class PrintErrAndExitPolicy: public AbErrPolicy {
+    
+    public:
+
+        void Error( const std::string& er ) {
+            std::cerr<<er<<std::endl;
+            SysCall::_exit(1);
         }
 
 };
