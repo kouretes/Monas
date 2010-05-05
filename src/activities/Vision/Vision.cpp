@@ -24,9 +24,12 @@ int  Vision::Execute()
 		segtop->setLumaScale(1/scale);
 		cout<<"Calibration Done!"<<endl;
 		calibrated = true;
+
+	}else{
+		testrun();
 	}
     //std::cout << " Vision run" << std::endl;
-    testrun();
+
     return 0;
 }
 

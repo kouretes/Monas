@@ -35,18 +35,18 @@ void Sensors::UserInit() {
     
 
 	//Starting US Sensors
-	ALValue commands;
-
-	commands.arraySetSize(3);
-	commands[0] = string("Device/SubDeviceList/US/Actuator/Value");
-	commands[1] = string("Merge");
-	commands[2].arraySetSize(1);
-	commands[2][0].arraySetSize(2);
-	commands[2][0][0] = 68.0;
-	commands[2][0][1] = dcm->getTime(10);
-    
-
-	dcm->set(commands);
+//	ALValue commands;
+//
+//	commands.arraySetSize(3);
+//	commands[0] = string("Device/SubDeviceList/US/Actuator/Value");
+//	commands[1] = string("Merge");
+//	commands[2].arraySetSize(1);
+//	commands[2][0].arraySetSize(2);
+//	commands[2][0][0] = 68.0;
+//	commands[2][0][1] = dcm->getTime(10);
+//
+//
+//	dcm->set(commands);
     
 
 	initialisation();
@@ -90,51 +90,51 @@ int Sensors::Execute() {
 
 	unsigned int j = 0;
 
-	for (unsigned int i = 0; i < devicesInChains["LeftArm"].size(); i++) {
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftArm"][i]);
-		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftArm"][i]);
-
-		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftArm"][i] - devicesValues[counter]);
-		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-		devicesValues[counter] = Values["LeftArm"][i];
-		counter++;
-		j++;
-	}
-
-	for (unsigned int i = 0; i < devicesInChains["LeftLeg"].size(); i++) {
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftLeg"][i]);
-		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftLeg"][i]);
-
-		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftLeg"][i] - devicesValues[counter]);
-		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-		devicesValues[counter] = Values["LeftLeg"][i];
-		counter++;
-		j++;
-	}
-
-	for (unsigned int i = 0; i < devicesInChains["RightLeg"].size(); i++) {
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightLeg"][i]);
-		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightLeg"][i]);
-
-		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightLeg"][i] - devicesValues[counter]);
-		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-		devicesValues[counter] = Values["RightLeg"][i];
-		counter++;
-		j++;
-	}
-
-	for (unsigned int i = 0; i < devicesInChains["RightArm"].size(); i++) {
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightArm"][i]);
-		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightArm"][i]);
-
-		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightArm"][i] - devicesValues[counter]);
-		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-		devicesValues[counter] = Values["RightArm"][i];
-		counter++;
-		j++;
-	}
+//	for (unsigned int i = 0; i < devicesInChains["LeftArm"].size(); i++) {
+//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftArm"][i]);
+//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftArm"][i]);
+//
+//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftArm"][i] - devicesValues[counter]);
+//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+//		devicesValues[counter] = Values["LeftArm"][i];
+//		counter++;
+//		j++;
+//	}
+//
+//	for (unsigned int i = 0; i < devicesInChains["LeftLeg"].size(); i++) {
+//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftLeg"][i]);
+//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftLeg"][i]);
+//
+//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftLeg"][i] - devicesValues[counter]);
+//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+//		devicesValues[counter] = Values["LeftLeg"][i];
+//		counter++;
+//		j++;
+//	}
+//
+//	for (unsigned int i = 0; i < devicesInChains["RightLeg"].size(); i++) {
+//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightLeg"][i]);
+//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightLeg"][i]);
+//
+//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightLeg"][i] - devicesValues[counter]);
+//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+//		devicesValues[counter] = Values["RightLeg"][i];
+//		counter++;
+//		j++;
+//	}
+//
+//	for (unsigned int i = 0; i < devicesInChains["RightArm"].size(); i++) {
+//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightArm"][i]);
+//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightArm"][i]);
+//
+//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightArm"][i] - devicesValues[counter]);
+//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+//		devicesValues[counter] = Values["RightArm"][i];
+//		counter++;
+//		j++;
+//	}
 	publish(&HJSM);
-	publish(&BJSM);
+	//publish(&BJSM);
 	//	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
 	//		BJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Body"][i]);
 	//		BJSM.mutable_sensordata(i)->set_sensorvalue(Values[i]);
@@ -149,58 +149,58 @@ int Sensors::Execute() {
 	//	Values = memory->getListData(devicesInChains["Inertial"]);
 	//
 
-	if (period % 5 == 0) {
-		for (unsigned int i = 0; i < devicesInChains["Inertial"].size(); i++) {
-			ISM.mutable_sensordata(i)->set_sensorname(devicesNames["Inertial"][i]);
-			ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
-			//TODO ADD VALUEDIFF, TIMEDIFF
+//	if (period % 5 == 0) {
+//		for (unsigned int i = 0; i < devicesInChains["Inertial"].size(); i++) {
+//			ISM.mutable_sensordata(i)->set_sensorname(devicesNames["Inertial"][i]);
+//			ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
+//			//TODO ADD VALUEDIFF, TIMEDIFF
+//
+//			ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - devicesValues[counter]);
+//			ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
+//			devicesValues[counter] = Values["Inertial"][i];
+//			counter++;
+//		}
+//
+//		for (unsigned int i = 0; i < devicesInChains["FSR"].size(); i++) {
+//			FSM.mutable_sensordata(i)->set_sensorname(devicesNames["FSR"][i]);
+//			FSM.mutable_sensordata(i)->set_sensorvalue(Values["FSR"][i]);
+//			//TODO ADD VALUEDIFF, TIMEDIFF
+//
+//			FSM.mutable_sensordata(i)->set_sensorvaluediff(Values["FSR"][i] - devicesValues[counter]);
+//			FSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+//			devicesValues[counter] = Values["FSR"][i];
+//			counter++;
+//		}
+//
+//		for (unsigned int i = 0; i < devicesInChains["USoundLeft"].size(); i++) {
+//			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundLeft"][i]);
+//			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundLeft"][i]);
+//			//TODO ADD VALUEDIFF, TIMEDIFF
+//
+//			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundLeft"][i] - devicesValues[counter]);
+//			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+//			devicesValues[counter] = Values["USoundLeft"][i];
+//			counter++;
+//		}
+//
+//		for (unsigned int i = 0; i < devicesInChains["USoundRight"].size(); i++) {
+//			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundRight"][i]);
+//			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundRight"][i]);
+//			//TODO ADD VALUEDIFF, TIMEDIFF
+//
+//			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundRight"][i] - devicesValues[counter]);
+//			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+//			devicesValues[counter] = Values["USoundRight"][i];
+//			counter++;
+//		}
+//		publish(&ISM);
+//		publish(&FSM);
+//		publish(&USSM);
+//		period =0;
+//	}
 
-			ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - devicesValues[counter]);
-			ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
-			devicesValues[counter] = Values["Inertial"][i];
-			counter++;
-		}
 
-		for (unsigned int i = 0; i < devicesInChains["FSR"].size(); i++) {
-			FSM.mutable_sensordata(i)->set_sensorname(devicesNames["FSR"][i]);
-			FSM.mutable_sensordata(i)->set_sensorvalue(Values["FSR"][i]);
-			//TODO ADD VALUEDIFF, TIMEDIFF
-
-			FSM.mutable_sensordata(i)->set_sensorvaluediff(Values["FSR"][i] - devicesValues[counter]);
-			FSM.mutable_sensordata(i)->set_sensortimediff(timediff);
-			devicesValues[counter] = Values["FSR"][i];
-			counter++;
-		}
-
-		for (unsigned int i = 0; i < devicesInChains["USoundLeft"].size(); i++) {
-			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundLeft"][i]);
-			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundLeft"][i]);
-			//TODO ADD VALUEDIFF, TIMEDIFF
-
-			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundLeft"][i] - devicesValues[counter]);
-			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
-			devicesValues[counter] = Values["USoundLeft"][i];
-			counter++;
-		}
-
-		for (unsigned int i = 0; i < devicesInChains["USoundRight"].size(); i++) {
-			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundRight"][i]);
-			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundRight"][i]);
-			//TODO ADD VALUEDIFF, TIMEDIFF
-
-			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundRight"][i] - devicesValues[counter]);
-			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
-			devicesValues[counter] = Values["USoundRight"][i];
-			counter++;
-		}
-		publish(&ISM);
-		publish(&FSM);
-		publish(&USSM);
-		period =0;
-	}
-
-
-	period++;
+	//period++;
 
 	//cout << "Sended Values" << endl;
 	//SleepMs(150);

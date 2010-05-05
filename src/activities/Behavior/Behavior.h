@@ -7,13 +7,16 @@
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "messages/VisionObservations.pb.h"
+#include "messages/Gamecontroller.pb.h"
+
 
 #include "alptr.h"
 
 #define LIMITUP -0.22
 #define	LIMITDOWN 0.50
-#define	LIMITLEFT 0.60
-#define	LIMITRIGHT -0.60
+#define	LIMITLEFT 0.40
+#define	LIMITRIGHT -0.40
 
 namespace AL {
 	class ALMotionProxy;
@@ -50,8 +53,11 @@ class Behavior: public IActivity, public Publisher {
 		bool reachedlimitright;
 
 		short balllastseendirection;
+		HeadJointSensorsMessage* hjsm;
+		BallTrackMessage* bmsg;
 
-
+		bool calibrated;
+		bool play;
 };
 
 #endif  
