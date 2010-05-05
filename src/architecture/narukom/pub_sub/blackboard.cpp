@@ -311,11 +311,11 @@ int Blackboard::cleanup()
 {
 	DataStruct::nth_index<1>::type& time_out_index =  world_perception.get<1>();
  	DataStruct::nth_index<1>::type::iterator it = time_out_index.begin();
-	cout << "Cleaning " << endl;
+	//cout << "Cleaning " << endl;
 	int i =0;
 	if( it != time_out_index.end())
 	{
-		cout << "INF " << endl;
+	//	cout << "INF " << endl;
 		while(  it != time_out_index.end() && (*it)->get_timeout() < cur_tmsp )
 		{
 			cout << "As of " << i++ << endl;
@@ -324,8 +324,8 @@ int Blackboard::cleanup()
 		}
 	}
 	else{
-		cout << "AAAA" << endl;
+	//	cout << "AAAA" << endl;
 	}
-	cout << "FOO" << endl;
+	//cout << "FOO" << endl;
 	return 0; //Alex
 }
