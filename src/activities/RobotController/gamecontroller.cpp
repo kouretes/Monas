@@ -59,8 +59,9 @@ int GameController::Execute()
         }
     }
     else{
-
-       // cout << "Timeout occured! no messages received from gamecontroller" << endl;
+      static int i = 0;
+	if(i++ % 10)
+	  cout << "Timeout occured! no messages received from gamecontroller" << endl;
     }
     //usleep(499000);
 
@@ -70,11 +71,11 @@ bool GameController::check_data_and_copy(char* bytes, int size)
 
     if( (strncmp(bytes,GAMECONTROLLER_STRUCT_HEADER,4) == 0 ) && (size == sizeof(RoboCupGameControlData) ))
     {
-        cout << "Valid GameController packet" << endl;
+        //cout << "Valid GameController packet" << endl;
         memcpy(current_data,bytes,size);
         if(current_data->teams[0].teamNumber == team_number || current_data->teams[1].teamNumber== team_number)
             return true;
-        cout << "Packet is not for our team " << team_number << "teams " <<  current_data->teams[0].teamNumber << " " << current_data->teams[1].teamNumber << endl;
+        //cout << "Packet is not for our team " << team_number << "teams " <<  current_data->teams[0].teamNumber << " " << current_data->teams[1].teamNumber << endl;
     }
     return false;
 
