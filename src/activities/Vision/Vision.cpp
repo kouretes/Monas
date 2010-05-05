@@ -4,7 +4,7 @@
 #define inbounds(x,y) ( ((x)>0 &&(y)>0)&&((x)<rawImage->width-1&&(y)<rawImage->height-1) )
 #define CvDist(pa,pb) sqrt(((pa).x-(pb).x )*((pa).x-(pb).x )+((pa).y-(pb).y )*((pa).y-(pb).y ) )
 #define MAXSKIP 5
-#define GLOBALSKIP  15
+#define GLOBALSKIP  10
 
 using namespace AL;
 using namespace std;
@@ -21,7 +21,7 @@ int  Vision::Execute()
 		cout<<"Start calibration"<<endl;
 		float scale= ext.calibrateCamera();
 		segbottom->setLumaScale(1/scale);
-		//    segtop->setLumaScale(1/scale);
+		segtop->setLumaScale(1/scale);
 		cout<<"Calibration Done!"<<endl;
 		calibrated = true;
 	}
@@ -96,7 +96,7 @@ void Vision::UserInit() {
 
 
     cout<<"Add publisher"<<endl;
-    
+
     _com->get_message_queue()->add_publisher(this);
 
 
@@ -124,6 +124,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
     unsigned int goalposthreshold= 5;
     unsigned int cntwhitegreenpixels = 0;
     unsigned int cntwhitegreenorangepixels=0;
+    unsigned int cntother=0;
     int j;
     for (int i = 0; i < rawImage->width; i = i + step)
     {
@@ -131,6 +132,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
         cntwhitegreenpixels = 0;
         cntwhitegreenorangepixels=0;
+        cntother=0;
         // ballpixel = -1;
 
         for (j = rawImage->height - 2; j > 0; j = j - ystep)
@@ -143,9 +145,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
                 cntwhitegreenpixels++;
                 cntwhitegreenorangepixels++;
             }
-            if (tempcolor==orange)
+            else if (tempcolor==orange)
                 cntwhitegreenorangepixels++;
-
+            else
+                cntother++;
+            if(cntother>GLOBALSKIP)//No continuity
+                break;
             if (tempcolor == orange && cntwhitegreenpixels >= ballthreshold)
             {
                 tmpPoint.x = i;

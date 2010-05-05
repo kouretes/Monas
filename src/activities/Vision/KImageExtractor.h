@@ -47,7 +47,7 @@ public:
     struct timespec fetchImage(IplImage *img);
     //Create new space for image
     IplImage *allocateImage();
-    float calibrateCamera(int sleeptime=1500,int exp=30);
+    float calibrateCamera(int sleeptime=1500,int exp=18);
     int getCamera();
 private:
     AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi

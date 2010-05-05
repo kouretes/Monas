@@ -20,7 +20,7 @@ KImageExtractor::~KImageExtractor()
     }
 }
 
-KImageExtractor::KImageExtractor() :Publisher("KImageExtractor"),resolution(VISION_RESOLUTION),cSpace( VISION_CSPACE)  {;}
+KImageExtractor::KImageExtractor() :Publisher("KImageExtractor"),GVM_name(VISION_GVMNAME),resolution(VISION_RESOLUTION),cSpace( VISION_CSPACE)  {;}
 
 void KImageExtractor::Init(Narukom* com)
 {
@@ -41,7 +41,7 @@ void KImageExtractor::Init(Narukom* com)
         cout<<e.toString()<<endl;
         throw ALError("KImageExtractor", "Construct ", "Unable to create proxies and subscribe GVM");
     }
-    
+
     _com->get_message_queue()->add_publisher(this);
 }
 
