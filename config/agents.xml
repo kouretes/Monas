@@ -8,7 +8,7 @@
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10>
   <name>Motion</name>
-  <activity>Motion</activity>
+  <activity>MotionController</activity>
 </agent>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=4
