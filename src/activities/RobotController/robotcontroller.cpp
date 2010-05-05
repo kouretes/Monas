@@ -92,8 +92,8 @@ int RobotController::Execute()
             changed = true;
         }
         received_data = false;
-        cout << "COLOR: " << gm_state.team_color() << "st " << gm_state.game_state() << "pl " << gm_state.player_state()
-               << "kic " << gm_state.kickoff() << "pen " << gm_state.penalized()<< endl;
+   //     cout << "COLOR: " << gm_state.team_color() << "st " << gm_state.game_state() << "pl " << gm_state.player_state()
+   //            << "kic " << gm_state.kickoff() << "pen " << gm_state.penalized()<< endl;
         mx.Unlock();
     }
     else
@@ -103,12 +103,12 @@ int RobotController::Execute()
         chest_button_pressed = memory->getData("button_pressed");
         left_bumper_pressed = memory->getData("lbumper_pressed");
         right_bumper_pressed = memory->getData("rbumper_pressed");
-	cout << "chest " << chest_button_pressed << "lb " << left_bumper_pressed << "rb " << right_bumper_pressed << endl;
+	//cout << "chest " << chest_button_pressed << "lb " << left_bumper_pressed << "rb " << right_bumper_pressed << endl;
         mx.Unlock();
         //button_mx.Lock();
         if((chest_button_pressed+right_bumper_pressed+left_bumper_pressed) > 0)
         {
-            cout << "Not heere " << endl;
+     //       cout << "Not heere " << endl;
             changed = true;
             if((right_bumper_pressed) == 1)
             {

@@ -32,6 +32,7 @@ GameController::GameController(RoboCupGameControlData* game_data,bool* received_
 int GameController::Execute()
 {
   //  cout << " gm run " << endl;
+     static int i = 0;
     FD_SET(socket_fd,&rset);
     int tmpfd;
     timeout.tv_sec = 0  ;
@@ -59,8 +60,8 @@ int GameController::Execute()
         }
     }
     else{
-      static int i = 0;
-	if(i++ % 10)
+   
+	if(i++ % 20)
 	  cout << "Timeout occured! no messages received from gamecontroller" << endl;
     }
     //usleep(499000);
