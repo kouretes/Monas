@@ -41,7 +41,7 @@ void KImageExtractor::Init(Narukom* com)
         cout<<e.toString()<<endl;
         throw ALError("KImageExtractor", "Construct ", "Unable to create proxies and subscribe GVM");
     }
-    
+
     _com->get_message_queue()->add_publisher(this);
 }
 
