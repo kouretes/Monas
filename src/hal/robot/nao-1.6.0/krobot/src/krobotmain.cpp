@@ -19,6 +19,7 @@
 #include <altoolsmain.h>
 
 #include "mainmodule.h"
+#include "button_listener_module.h"
 
 
 
@@ -44,9 +45,8 @@ ALCALL int _createModule( AL::ALPtr<AL::ALBroker> pBroker )
   AL::ALBrokerManager::setInstance(pBroker->fBrokerManager.lock());
   AL::ALBrokerManager::getInstance()->addBroker(pBroker);
 
-    
   AL::ALModule::createModule<mainModule>( pBroker, "mainModule" );
-
+  AL::ALModule::createModule<ButtonListener>(pBroker,"ButtonListener");
 
   return 0;
 }

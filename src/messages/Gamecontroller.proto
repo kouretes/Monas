@@ -1,0 +1,35 @@
+message GameStateMessage{
+        required string host = 1 [default = "localhost"];
+        required string publisher = 2 [default = "" ];
+        required string topic = 3 [default = "global"];
+        required int32 timeout = 4 [default = 0];
+        required string timestamp = 5 [default = ""];
+        required int32 player =6 [default = 1];
+        required int32 team_color =7 [default =1];
+        required int32 player_state = 8 [default =0];
+        required int32 game_state = 9 [ default =0];
+	required bool penalized =11 [default = false];
+	required bool kickoff = 12 [default = true];
+}
+
+message LedValues{
+    required string chain = 1 [default = ""];
+    required string color = 2 [default = "off"];
+
+}
+message LedChangeMessage{
+    required string host = 1 [default = "localhost"];
+    required string publisher = 2 [default = "" ];
+    required string topic = 3 [default = "global"];
+    required int32 timeout = 4 [default = 0];
+    required string timestamp = 5 [default = ""];
+    repeated LedValues leds =6;
+}
+
+message ConfigMessage{
+    required int32 team_number = 1 [default = 1];
+    required int32 player_number = 2 [default = 1];
+    required int32 color = 4 [default = 0];
+    required int32 port =  3 [default = 6000];
+
+}
