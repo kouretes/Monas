@@ -6,6 +6,10 @@
   <activity>Sensors</activity>
 </agent>
 
+<agent IsRealTime=1 Priority=1 ThreadFrequency=10>
+  <name>Motion</name>
+  <activity>Motion</activity>
+</agent>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=4
  >
@@ -18,12 +22,12 @@
   <activity>Behavior</activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=3 >
+<agent IsRealTime=0 Priority=1 ThreadFrequency=3 >
   <name>RobotController</name>
   <activity>RobotController</activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=3 >
+<agent IsRealTime=0 Priority=1 ThreadFrequency=3 >
   <name>LedHandler</name>
   <activity>LedHandler</activity>
 </agent>
