@@ -81,6 +81,8 @@ void Behavior::process_messages() {
 			//cout << "Overshoot Value: " << overshootfix << endl;
 			float cx = bmsg->cx();
 			float cy = bmsg->cy();
+
+			balllastseendirection = HeadYaw.sensorvalue();
 			//cout << "I want the freaking head to move towards (cx,cy):" << 0.9f * (cx) << " " << -0.9f * (cy) << endl;
 
 			if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
@@ -121,15 +123,15 @@ void Behavior::process_messages() {
 		SensorPair HeadPitch = hjsm->sensordata(1);
 	}
 
-	if (hjsm != 0 && ballfound == 0 && (scanningforball == true)) {//start or continue scan
+	if ((hjsm != 0) && (ballfound == 0) && (scanningforball == true) ) {//start or continue scan
 		//
 		if (startscan) {
 			//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
 			if (HeadPitch.sensorvalue() < LIMITDOWN) { // first go down
 				scandirectionpitch = 1;
-			} else
+			} else {
 				scandirectionpitch = -1; // go up
-
+			}
 			reachedlimitup = false;
 			reachedlimitdown = false;
 			reachedlimitleft = false;
@@ -175,11 +177,9 @@ void Behavior::process_messages() {
 			mot->set_command("walkTo");
 			mot->set_parameter(0, 0.00001);
 			mot->set_parameter(1, 0.00001);
-			mot->set_parameter(2, (balllastseendirrection > 0) ? (1) : (-1) * 1.22); //turn 70 degrees?
+			mot->set_parameter(2, (balllastseendirection > 0) ? (1) : (-1) * 1.22); //turn 70 degrees?
 		}
-
 		Publisher::publish( mot);
-
 	}
 
 	if (hjsm != 0) { //We have seen a ball for sure and we should walk

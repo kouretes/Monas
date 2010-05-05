@@ -10,10 +10,10 @@
 
 #include "alptr.h"
 
-#define LIMITUP -0.22;
-#define	LIMITDOWN 0.50;
-#define	LIMITLEFT 0.60;
-#define	LIMITRIGHT -0.60;
+#define LIMITUP -0.22
+#define	LIMITDOWN 0.50
+#define	LIMITLEFT 0.60
+#define	LIMITRIGHT -0.60
 
 namespace AL {
 	class ALMotionProxy;
@@ -36,7 +36,7 @@ class Behavior: public IActivity, public Publisher {
 
 		int pitchdirection;
 		int yawdirection;
-		SensorPair HeadYaw
+		SensorPair HeadYaw;
 		SensorPair HeadPitch;
 
 		bool startscan;
