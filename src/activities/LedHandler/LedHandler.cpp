@@ -77,7 +77,6 @@
   void LedHandler::setLed(const std::string& device, const std::string& color)
   {
 
-
       if(device.compare("chest") == 0)
       {
 
