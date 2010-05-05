@@ -42,6 +42,13 @@ void Behavior::UserInit() {
 	mot->add_parameter(0.0f);
 
 	ballfound = 0;
+	balllastseendirection = 0;
+	reachedlimitup = false;
+	reachedlimitdown = false;
+	reachedlimitleft = false;
+	reachedlimitright = false;
+	startscan = false;
+
 	cout << "Behavior Controller Initialized" << endl;
 }
 
@@ -68,6 +75,7 @@ void Behavior::process_messages() {
 
 		//BallTrackMessage * bmsg = static_cast<BallTrackMessage*> (cur);
 		if (bmsg->radius() > 0) {
+			scanningforball = false;
 			float overshootfix = bmsg->radius();
 			overshootfix = 2 * (0.4f - overshootfix);
 			//cout << "Overshoot Value: " << overshootfix << endl;
@@ -89,69 +97,158 @@ void Behavior::process_messages() {
 		} else {
 			if (ballfound > 0) {
 				ballfound -= 1;
+
+				startscan = false;
+				scanningforball = false; // stop scanning
 			} else {
 				ballfound = 0;
+
+				startscan = true;
 			}
 		}
+		//just dont scan if ones you didn't saw the ball
+		if(ballfound > 2 )
+			ballfound =2 ;
+		if(ballfound < 0)
+			ballfound =0 ;
 		//cout << "At Cx " << (float) memory->getData("kouretes/Ball/cx") << " Cy: " << (float) memory->getData("kouretes/Ball/cy") << endl;
 
 	}
 
 	HeadJointSensorsMessage* hjsm = dynamic_cast<HeadJointSensorsMessage*> (_blk->in_nb("HeadJointSensorsMessage", "Sensors"));
-	if (hjsm != 0 && ballfound == 1) { //We have seen a ball for sure and we should walk
-
-		//if (cur->GetTypeName() == "HeadJointSensorsMessage") {
-		//cout << "Received HeadJointSensorMessage" << endl;
-		//HeadJointSensorsMessage * hjsm = static_cast<HeadJointSensorsMessage*> (cur);
-		//cout << "My headjoint  :" << hjsm->sensordata(0).sensorname() << " has value  " << hjsm->sensordata(0).sensorvalue() << endl;
+	if (hjsm != 0) {
 		SensorPair HeadYaw = hjsm->sensordata(0);
 		SensorPair HeadPitch = hjsm->sensordata(1);
+	}
+
+	if (hjsm != 0 && ballfound == 0 && (scanningforball == true)) {//start or continue scan
+		//
+		if (startscan) {
+			//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
+			if (HeadPitch.sensorvalue() < LIMITDOWN) { // first go down
+				scandirectionpitch = 1;
+			} else
+				scandirectionpitch = -1; // go up
+
+			reachedlimitup = false;
+			reachedlimitdown = false;
+			reachedlimitleft = false;
+			reachedlimitright = false;
+
+			scandirectionyaw = (HeadYaw.sensorvaluediff() > 0) ? 1 : -1;
+		} else {
+
+			//continue scan
+			if (HeadPitch.sensorvalue() < LIMITUP) { // upper position
+				reachedlimitup = true;
+				scandirectionpitch = 1;
+			}
+			if (HeadPitch.sensorvalue() < LIMITDOWN) {
+				reachedlimitdown = true;
+				scandirectionpitch = -1;
+			}
+			if (HeadYaw.sensorvalue() > LIMITLEFT) {
+				reachedlimitleft = true;
+				scandirectionyaw = -1;
+			}
+			if (HeadYaw.sensorvalue() < LIMITRIGHT) {
+				reachedlimitright = true;
+				scandirectionyaw = 1;
+			}
+
+		}
+		mot->set_topic("motion");
+		mot->set_command("changeHead");
+		mot->set_parameter(0, scandirectionpitch * 0.05); // Headyaw
+		mot->set_parameter(1, 0.0); // headPitch
+
+		if (reachedlimitleft || reachedlimitright) {
+			mot->set_parameter(1, scandirectionpitch * 0.19); // headPitch
+			reachedlimitright = false;
+			reachedlimitleft = false;
+		}
+		if (reachedlimitup && reachedlimitdown) {
+			startscan = true;
+			reachedlimitdown = false;
+			reachedlimitup = false;
+			///we should turn;
+			mot->set_command("walkTo");
+			mot->set_parameter(0, 0.00001);
+			mot->set_parameter(1, 0.00001);
+			mot->set_parameter(2, (balllastseendirrection > 0) ? (1) : (-1) * 1.22); //turn 70 degrees?
+		}
+
+		Publisher::publish( mot);
+
+	}
+
+	if (hjsm != 0) { //We have seen a ball for sure and we should walk
 
 		float X, Y, theta, freq;
 		//Calculate approach
 		X = 0;
 		Y = 0;
 		theta = 0;
-		bool readytokick = true;
-		//Check max values !
-		if (fabs(HeadYaw.sensorvalue()) > 0.06) {
-			theta = HeadYaw.sensorvalue() * 0.5 * (0.6 - fabs(HeadPitch.sensorvalue()));
-			readytokick = false;
-		}
-		if (fabs(HeadPitch.sensorvalue()) < 0.487) { //// Auto edw, to poso konta einai stin mpala gia na soutarei
-			X = 0.6 * (0.5 - HeadPitch.sensorvalue());
-			Y = HeadYaw.sensorvalue() * 0.6 * (1.4 - fabs(HeadYaw.sensorvalue()));
-			readytokick = false;
-		}
-
 		mot->set_topic("motion");
-		if (!readytokick) {
-			mot->set_command("setWalkTargetVelocity");
 
-			if (fabs(X) > 1.0)
-				X = (X > 0) ? 1 : -1;
-			if (fabs(Y) > 1.0)
-				Y = (Y > 0) ? 1 : -1;
-			if (fabs(theta) > 1.0)
-				theta = (theta > 0) ? 1 : -1;
-			freq = 1.3 - fabs(HeadPitch.sensorvalue());
-			if (fabs(freq) > 1.0)
-				freq = (freq > 0) ? 1 : -1;
+		if (ballfound == 2) {
+			scanningforball = false; //be sure to stop scanning
 
-			mot->set_parameter(0, X);
-			mot->set_parameter(1, Y);
-			mot->set_parameter(2, theta);
-			mot->set_parameter(3, freq);
-			cout << "Sending Walk Command  setWalkTargetVelocity " << endl;
+			bool readytokick = true;
+			//Check max values !
+			if (fabs(HeadYaw.sensorvalue()) > 0.06) {
+				theta = HeadYaw.sensorvalue() * 0.5 * (0.6 - fabs(HeadPitch.sensorvalue()));
+				readytokick = false;
+			}
+			if (fabs(HeadPitch.sensorvalue()) < 0.487) { //// Auto edw, to poso konta einai stin mpala gia na soutarei
+				X = 0.7 * (0.5 - HeadPitch.sensorvalue());
+				Y = HeadYaw.sensorvalue() * 0.6 * (1.4 - fabs(HeadYaw.sensorvalue()));
+				readytokick = false;
+			}
+
+			mot->set_topic("motion");
+			if (!readytokick) {
+				mot->set_command("setWalkTargetVelocity");
+
+				if (fabs(X) > 1.0)
+					X = (X > 0) ? 1 : -1;
+				if (fabs(Y) > 1.0)
+					Y = (Y > 0) ? 1 : -1;
+				if (fabs(theta) > 1.0)
+					theta = (theta > 0) ? 1 : -1;
+				freq = 1.3 - fabs(HeadPitch.sensorvalue());
+				if (fabs(freq) > 1.0)
+					freq = (freq > 0) ? 1 : -1;
+
+				mot->set_parameter(0, X);
+				mot->set_parameter(1, Y);
+				mot->set_parameter(2, theta);
+				mot->set_parameter(3, freq);
+				cout << "Sending Walk Command  setWalkTargetVelocity " << endl;
+
+			} else {
+				cout << "Kicking" << endl;
+				if (HeadYaw.sensorvalue() > 0)
+					mot->set_command("leftKick");
+				else
+					mot->set_command("rightKick");
+			}
+			Publisher::publish( mot);
 
 		} else {
-			cout << "Kicking" << endl;
-			if (HeadYaw.sensorvalue() > 0)
-				mot->set_command("leftKick");
-			else
-				mot->set_command("rightKick");
+			if (!scanningforball && ballfound == 0) { //stop when we don't see anything
+				scanningforball = true;
+				mot->set_command("setWalkTargetVelocity");
+				mot->set_parameter(0, X);
+				mot->set_parameter(1, 0);
+				mot->set_parameter(2, 0);
+				mot->set_parameter(3, 0);
+
+				Publisher::publish( mot);
+			}
+			//cout << "Sending Walk Command  setWalkTargetVelocity " << endl;
+
 		}
-		Publisher::publish( mot);
 	}
 	//delete cur;
 }
