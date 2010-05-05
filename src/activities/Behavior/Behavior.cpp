@@ -13,6 +13,9 @@
 #include "albrokermanager.h"
 #include "alvalue.h"
 
+#include "tools/logger.h"
+#include "tools/toString.h"
+
 namespace {
 	ActivityRegistrar<Behavior>::Type temp("Behavior");
 }
@@ -31,7 +34,8 @@ void Behavior::UserInit() {
 	try {
 		memory = KAlBroker::Instance()->GetBroker()->getMemoryProxy();
 	} catch (AL::ALError& e) {
-		cout << "Error in getting memory proxy" << std::endl;
+        Logger::Instance()->WriteMsg( "Behavior", "Error in getting memory proxy", Logger::Error );
+		//cout << "Error in getting memory proxy" << std::endl;
 	}
 
 	mot = new MotionMessage();
@@ -42,7 +46,8 @@ void Behavior::UserInit() {
 	mot->add_parameter(0.0f);
 
 	ballfound = 0;
-	cout << "Behavior Controller Initialized" << endl;
+    Logger::Instance()->WriteMsg( "Behavior", "Controller Initialized", Logger::Info );
+	//cout << "Behavior Controller Initialized" << endl;
 }
 
 int Behavior::Execute() {
@@ -61,6 +66,7 @@ void Behavior::process_messages() {
 
 	BallTrackMessage* bmsg = dynamic_cast<BallTrackMessage*> (_blk->in_nb("BallTrackMessage", "Vision"));
 	if (bmsg != 0) {
+        Logger::Instance()->WriteMsg( "Behavior", "ProcessMessages", Logger::ExtraInfo );
 		//cout<<"ProcessMessages"<<endl;
 		//if (cur != NULL) {
 		//cout << "ProcessMessages found message" << endl;
@@ -70,9 +76,11 @@ void Behavior::process_messages() {
 		if (bmsg->radius() > 0) {
 			float overshootfix = bmsg->radius();
 			overshootfix = 2 * (0.4f - overshootfix);
+            Logger::Instance()->WriteMsg( "Behavior", "Overshoot Value: " + _toString( overshootfix ), Logger::ExtraInfo );
 			//cout << "Overshoot Value: " << overshootfix << endl;
 			float cx = bmsg->cx();
 			float cy = bmsg->cy();
+            Logger::Instance()->WriteMsg( "Behavior", "I want the freaking head to move towards (cx,cy):"+_toString(0.9f*(cx))+_toString(-0.9f*(cy)), Logger::ExtraInfo );
 			//cout << "I want the freaking head to move towards (cx,cy):" << 0.9f * (cx) << " " << -0.9f * (cy) << endl;
 
 			if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
@@ -82,9 +90,11 @@ void Behavior::process_messages() {
 				mot->set_parameter(0, 0.9f * overshootfix * (cx));
 				mot->set_parameter(1, -0.9f * overshootfix * (cy));
 				Publisher::publish( mot);
-				cout << "I realy want the freaking head to move towards (cx,cy):" << 0.9f * (cx) << " " << -0.9f * (cy) << endl;
+                Logger::Instance()->WriteMsg( "Behavior", "I realy want the freaking head to move towards (cx,cy):"+_toString(0.9f*(cx))+_toString(-0.9f*(cy)), Logger::Info );
+				//cout << "I realy want the freaking head to move towards (cx,cy):" << 0.9f * (cx) << " " << -0.9f * (cy) << endl;
 			}
-			cout << "Ball Found ole " << endl;
+            Logger::Instance()->WriteMsg( "Behavior", "Ball Found ole ", Logger::Info );
+			//cout << "Ball Found ole " << endl;
 			ballfound += 1;
 		} else {
 			if (ballfound > 0) {
@@ -142,10 +152,12 @@ void Behavior::process_messages() {
 			mot->set_parameter(1, Y);
 			mot->set_parameter(2, theta);
 			mot->set_parameter(3, freq);
-			cout << "Sending Walk Command  setWalkTargetVelocity " << endl;
+            Logger::Instance()->WriteMsg( "Behavior", "Sending Walk Command  setWalkTargetVelocity ", Logger::Info );
+			//cout << "Sending Walk Command  setWalkTargetVelocity " << endl;
 
 		} else {
-			cout << "Kicking" << endl;
+            Logger::Instance()->WriteMsg( "Behavior", "Kicking", Logger::Info );
+			//cout << "Kicking" << endl;
 			if (HeadYaw.sensorvalue() > 0)
 				mot->set_command("leftKick");
 			else

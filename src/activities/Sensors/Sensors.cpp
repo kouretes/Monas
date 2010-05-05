@@ -2,6 +2,8 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 
+#include "tools/logger.h"
+#include "tools/toString.h"
 
 using namespace AL;
 using namespace std;
@@ -17,16 +19,18 @@ Sensors::Sensors() :
 void Sensors::UserInit() {
 
 
-    cout<<"Sensors UserInit"<<endl;
+    Logger::Instance()->WriteMsg("Sensors","Sensors UserInit",Logger::Info);
+    //cout<<"Sensors UserInit"<<endl;
 
 	try {
 		memory = KAlBroker::Instance()->GetBroker()->getMemoryProxy();
 		//dcm = new AL::DCMProxy(KAlBroker::Instance()->GetBroker());
 		dcm = KAlBroker::Instance()->GetBroker()->getDcmProxy();
 	} catch (AL::ALError& e) {
-		cout << "Error in getting memory proxy" << std::endl;
+        Logger::Instance()->WriteMsg("Sensors","Error in getting dcm proxy",Logger::FatalError);
+		//cout << "Error in getting dcm proxy" << std::endl;
 	}
-    
+   
     _com->get_message_queue()->add_publisher(this);
     
 
@@ -48,7 +52,8 @@ void Sensors::UserInit() {
 	initialisation();
 	rtm.start();
 	period = 0;
-	cout << "Sensor Controller Initialized" << endl;
+    Logger::Instance()->WriteMsg("Sensors","Sensor Controller Initialized",Logger::Info);
+	//cout << "Sensor Controller Initialized" << endl;
 }
 
 int Sensors::Execute() {
@@ -278,7 +283,8 @@ void Sensors::initialisation() {
 	devicesInChains["Body"].push_back(std::string("Device/SubDeviceList/RElbowYaw/Position/Sensor/Value"));
 	devicesInChains["Body"].push_back(std::string("Device/SubDeviceList/RElbowRoll/Position/Sensor/Value"));
 
-	cout << "Size of devicesInChains[\"Body\"]: " << devicesInChains["Body"].size() << endl;
+    Logger::Instance()->WriteMsg("Sensors","Size of devicesInChains[\"Body\"]: "+_toString(devicesInChains["Body"].size()),Logger::Info);
+	//cout << "Size of devicesInChains[\"Body\"]: " << devicesInChains["Body"].size() << endl;
 
 	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
 		BJSM.add_sensordata();
@@ -429,7 +435,8 @@ void Sensors::initialisation() {
 }
 
 void Sensors::process_messages() {
-	cout << "Sensor process messages" << endl;
+    Logger::Instance()->WriteMsg("Sensors","Sensor process messages",Logger::ExtraInfo);
+	//cout << "Sensor process messages" << endl;
 	//	MessageBuffer* sub_buf = Subscriber::getBuffer();
 	//	TestMessage* tm = (TestMessage*) sub_buf->remove_head();
 	//	cout << "I received a message from " << tm->publisher() << " with counter "

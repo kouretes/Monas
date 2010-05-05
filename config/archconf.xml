@@ -4,7 +4,7 @@
 
 
 <MessageLogFile>KourLog.txt</MessageLogFile>
-<MessageLogCerr>true</MessageLogCerr>
+<MessageLogCerr>1</MessageLogCerr>
 
 <!-- Activities that will reach the LogFile -->
 <!-- FatalError and Error directives can't be blocked -->
