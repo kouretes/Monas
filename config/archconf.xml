@@ -4,12 +4,12 @@
 
 
 <MessageLogFile>KourLog.txt</MessageLogFile>
-<MessageLogCerr>true</MessageLogCerr>
+<MessageLogCerr>1</MessageLogCerr>
 
 <!-- Activities that will reach the LogFile -->
 <!-- FatalError and Error directives can't be blocked -->
 <!-- Special keyword all will enable all activities -->
-<MessageLogFilter>all</MessageLogFile>
+<MessageLogFilter>all</MessageLogFilter>
 
 
 <!-- FatalError =0, Error, Info, ExtraInfo, ExtraExtraInfo -->

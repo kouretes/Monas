@@ -2,7 +2,8 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 
-
+#include "tools/logger.h"
+#include "tools/toString.h"
 
 namespace {
     ActivityRegistrar<MotionController>::Type temp("MotionController");
@@ -18,7 +19,8 @@ void MotionController::UserInit() {
 	try {
 		motion = KAlBroker::Instance()->GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
-		cout << "Error in getting motion proxy" << std::endl;
+        Logger::Instance()->WriteMsg("MotionController","Error in getting motion proxy",Logger::FatalError);
+		//cout << "Error in getting motion proxy" << std::endl;
 	}
 	motion->setStiffnesses("Body", 0.9);
 	motion->setWalkArmsEnable(true, true);
@@ -28,12 +30,13 @@ void MotionController::UserInit() {
 	try {
 		memory= KAlBroker::Instance()->GetBroker()->getMemoryProxy();
 	} catch (AL::ALError& e) {
-		cout << "Error in getting memory proxy" << std::endl;
+        Logger::Instance()->WriteMsg("MotionController","Error in getting memory proxy",Logger::FatalError);
+		//cout << "Error in getting memory proxy" << std::endl;
 	}
 
 	AccZ = (float*) memory->getDataPtr("Device/SubDeviceList/InertialSensor/AccZ/Sensor/Value");
 
-    cout << "Subcribing to motion" << endl;
+    Logger::Instance()->WriteMsg("MotionController", "Subcribing to motion", Logger::Info);
     _com->get_message_queue()->add_subscriber(_blk);
     _com->get_message_queue()->subscribe("motion", _blk, 0);
     _com->get_message_queue()->add_publisher(this);
@@ -48,7 +51,8 @@ void MotionController::UserInit() {
 	headPID = 0;
 	actionPID = 0;
 
-	cout << "Loading special actions!" << std::endl;
+    Logger::Instance()->WriteMsg("MotionController","Loading special actions!",Logger::Info);
+	//cout << "Loading special actions!" << std::endl;
 	loadActions();
 
 	counter = 0;
@@ -89,7 +93,8 @@ void MotionController::mglrun() {
 #else
 	if ((!robotDown) && (robotUp) && (AccZvalue > -45)) { // Robot
 #endif
-		cout << "Robot falling: Stiffness off" << std::endl;
+        Logger::Instance()->WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
+		//cout << "Robot falling: Stiffness off" << std::endl;
 		motion->setStiffnesses("Body", 0.0);
 		robotUp = false;
 		robotDown = true;
@@ -109,18 +114,20 @@ void MotionController::mglrun() {
 
 	/* Check if the robot is down and stand up */
 	if (robotDown) {
-		cout << "Will stand up now ... " << std::endl;
+        Logger::Instance()->WriteMsg("MotionController","Will stand up now...",Logger::ExtraInfo);
+		//cout << "Will stand up now ... " << std::endl;
 		motion->setStiffnesses("Body", 1.0);
 		robotDown = false;
 		ALstandUp();
-		std::cout << "   Action ID: " << actionPID << std::endl;
+		Logger::Instance()->WriteMsg( "MotionController", "Action ID: "+_toString(actionPID),Logger::ExtraInfo);
 		return;
 	}
 
 	/* Check if an Action command has been completed */
 	if ((actionPID != 0) && !motion->isRunning(actionPID)) {
 		actionPID = 0;
-		std::cout << "   Action command completed! Motion engine executed " << counter << " times. " << std::endl;
+        Logger::Instance()->WriteMsg("MotionController","Action command completed! Motion engine executed"+_toString(counter)+" times.",Logger::ExtraInfo);
+		//std::cout << "   Action command completed! Motion engine executed " << counter << " times. " << std::endl;
 	}
 
 	/* Check if the robot stood up after a stand up procedure */
@@ -131,7 +138,8 @@ void MotionController::mglrun() {
 		if (AccZvalue < -50) { // Robot
 #endif
 			robotUp = true;
-			cout << "Stood up ... " << std::endl;
+            Logger::Instance()->WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
+			//cout << "Stood up ... " << std::endl;
 		} else if (actionPID == 0)
 			robotDown = true;
 		return;
@@ -148,13 +156,15 @@ void MotionController::mglrun() {
 		/* Check if a Walk command has been completed */
 		if ((walkPID != 0) && !motion->isRunning(walkPID) && !motion->walkIsActive()) {
 			walkPID = 0;
-			std::cout << "   Walk command completed! Motion engine executed " << counter << " times. " << std::endl;
+            Logger::Instance()->WriteMsg("MotionController","Walk command completed! Motion engine executed"+_toString(counter)+" times.",Logger::ExtraInfo);
+			//std::cout << "   Walk command completed! Motion engine executed " << counter << " times. " << std::endl;
 		}
 
 		/* Check if a Head command has been completed */
 		if ((headPID != 0) && !motion->isRunning(headPID)) {
 			headPID = 0;
-			std::cout << "   Head command completed! Motion engine executed " << counter << " times. " << std::endl;
+            Logger::Instance()->WriteMsg("MotionController","Head command completed! Motion engine executed"+_toString(counter)+" times.",Logger::ExtraInfo);
+			//std::cout << "   Head command completed! Motion engine executed " << counter << " times. " << std::endl;
 		}
 
 		/* Check if there is a command to execute */
@@ -169,9 +179,9 @@ void MotionController::mglrun() {
 	                walkParam1 = mm->parameter(0);
 	                walkParam2 = mm->parameter(1);
 	                walkParam3 = mm->parameter(2);
-	                std::cout << mm->command() << " with parameters " << walkParam1 << " " << walkParam2 << " " << walkParam3 << std::endl;
+	                Logger::Instance()->WriteMsg("MotionController", mm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3),Logger::ExtraInfo);
 	                walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3);
-	                std::cout << "   Walk ID: " << walkPID << std::endl;
+	                Logger::Instance()->WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
 	                walkCommand = true;
 	            }
 	            else if (mm->command() == "setWalkTargetVelocity" && !walkCommand) {
@@ -179,15 +189,15 @@ void MotionController::mglrun() {
 	                walkParam2 = mm->parameter(1);
 	                walkParam3 = mm->parameter(2);
 	                walkParam4 = mm->parameter(3);
-	                std::cout << mm->command() << " with parameters " << walkParam1 << " " << walkParam2 << " " << walkParam3 << " " << walkParam4 << std::endl;
+	                Logger::Instance()->WriteMsg("MotionController", mm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3)+" "+_toString(walkParam4),Logger::ExtraInfo);
 	                walkPID = motion->post.setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
-	                std::cout << "   Walk ID: " << walkPID << std::endl;
+	                Logger::Instance()->WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
 	                walkCommand = true;
 	            }
 	            else if (mm->command() == "setHead" && !headCommand) {
 	                headParam1 = mm->parameter(0);
 	                headParam2 = mm->parameter(1);
-	                std::cout << mm->command() << " with parameters " << headParam1 << " " << headParam2 << std::endl;
+	                Logger::Instance()->WriteMsg( "MotionController", mm->command()+" with parameters "+_toString(headParam1)+" "+_toString(headParam2),Logger::ExtraInfo);
 	                names.arraySetSize(2);
 	                values.arraySetSize(2);
 	                names[0] = "HeadYaw";
@@ -196,14 +206,14 @@ void MotionController::mglrun() {
 	                values[1] = headParam2;
 	                float fractionMaxSpeed = 0.8;
 	                headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
-	                std::cout << "   Head ID: " << headPID << std::endl;
+	                Logger::Instance()->WriteMsg( "MotionController"," Head ID: "+_toString(headPID),Logger::ExtraInfo);
 	                headCommand = true;
 	            }
 	            else if (mm->command() == "changeHead" && !headCommand) {
 	                headParam1 = mm->parameter(0);
 	                headParam2 = mm->parameter(1);
-	                std::cout << mm->command() << " with parameters " << headParam1 << " " << headParam2 << std::endl;
-	                names.arraySetSize(2);
+	                Logger::Instance()->WriteMsg("MotionController", mm->command()+" with parameters "+_toString(headParam1)+" "+_toString(headParam2),Logger::ExtraInfo);
+                    names.arraySetSize(2);
 	                values.arraySetSize(2);
 	                names[0] = "HeadYaw";
 	                values[0] = headParam1;
@@ -211,7 +221,7 @@ void MotionController::mglrun() {
 	                values[1] = headParam2;
 	                float fractionMaxSpeed = 0.2;
 	                headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
-	                std::cout << "   Head ID: " << headPID << std::endl;
+	                Logger::Instance()->WriteMsg("MotionController", "   Head ID: " +_toString(headPID),Logger::ExtraInfo);
 	                headCommand = true;
 	            }
 	            else if (!actionCommand) { /* Action command */
@@ -297,10 +307,10 @@ void MotionController::commands() {
 void MotionController::ALstandUp() {
 
 	ALstandUpCross();
-	cout << "Stand Up 2009: Cross" << std::endl;
+	Logger::Instance()->WriteMsg("MotionController", "Stand Up 2009: Cross", Logger::ExtraInfo);
 
 	float AccXvalue = memory->getData("Device/SubDeviceList/InertialSensor/AccX/Sensor/Value");
-	cout << "AccXvalue " << AccXvalue << std::endl;
+	Logger::Instance()->WriteMsg("MotionController", "AccXvalue " +_toString(AccXvalue) ,Logger::ExtraInfo);
 
 #ifdef WEBOTS
 	if (AccXvalue > 1.0) { // Webots
@@ -308,16 +318,16 @@ void MotionController::ALstandUp() {
 	if (AccXvalue < 5.0) { // Robot
 #endif
 		ALstandUpBack();
-		cout << "Stand Up 2009: From Back" << std::endl;
-	}
+		Logger::Instance()->WriteMsg("MotionController", "Stand Up 2009: From Back", Logger::ExtraInfo);	
+    }
 #ifdef WEBOTS
 	else if (AccXvalue < -1.0) { // Webots
 #else
 	else if (AccXvalue > -5.0) { // Robot
 #endif
 		ALstandUpFront();
-		cout << "Stand Up 2009: From Front" << std::endl;
-	}
+		Logger::Instance()->WriteMsg("MotionController", "Stand Up 2009: From Front", Logger::ExtraInfo);	
+    }
 	return;
 }
 
@@ -1515,10 +1525,10 @@ void MotionController::ALstandUpCross() {
 void MotionController::ALstandUp2010() {
 
 	ALstandUpCross();
-	cout << "Stand Up 2009: Cross" << std::endl;
+	Logger::Instance()->WriteMsg("MotionController", "Stand Up 2009: Cross", Logger::ExtraInfo);
 
 	float AccXvalue = memory->getData("Device/SubDeviceList/InertialSensor/AccX/Sensor/Value");
-	cout << "AccXvalue " << AccXvalue << std::endl;
+	Logger::Instance()->WriteMsg("MotionController", "AccXvalue " +_toString(AccXvalue), Logger::ExtraInfo);
 
 #ifdef WEBOTS
 	if (AccXvalue > 1.0) { // Webots
@@ -1526,16 +1536,16 @@ void MotionController::ALstandUp2010() {
 	if (AccXvalue < 5.0) { // Robot
 #endif
 		ALstandUpBack2010();
-		cout << "Stand Up 2010: From Back" << std::endl;
-	}
+		Logger::Instance()->WriteMsg("MotionController", "Stand Up 2010: From Back", Logger::ExtraInfo);	
+    }
 #ifdef WEBOTS
 	else if (AccXvalue < -1.0) { // Webots
 #else
 	else if (AccXvalue > -5.0) { // Robot
 #endif
 		ALstandUpFront2010();
-		cout << "Stand Up 2010: From Front" << std::endl;
-	}
+		Logger::Instance()->WriteMsg("MotionController", "Stand Up 2010: From Front", Logger::ExtraInfo);	
+    }
 	return;
 }
 
