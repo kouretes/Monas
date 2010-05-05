@@ -20,7 +20,7 @@ KImageExtractor::~KImageExtractor()
     }
 }
 
-KImageExtractor::KImageExtractor() :Publisher("KImageExtractor"),resolution(VISION_RESOLUTION),cSpace( VISION_CSPACE)  {;}
+KImageExtractor::KImageExtractor() :Publisher("KImageExtractor"),GVM_name(VISION_GVMNAME),resolution(VISION_RESOLUTION),cSpace( VISION_CSPACE)  {;}
 
 void KImageExtractor::Init(Narukom* com)
 {
