@@ -1,6 +1,6 @@
 project( Kouretes2009 )
 
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 2.6.4 )
 
 message( STATUS "" )
 message( STATUS " _..::: Configuring Architecture :::.._ " )
