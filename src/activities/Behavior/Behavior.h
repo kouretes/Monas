@@ -29,7 +29,7 @@ class Behavior: public IActivity, public Publisher {
 		Behavior();
 		int Execute();
 		void UserInit();
-		void process_messages();
+		void read_messages();
 
 	private:
 		AL::ALPtr<AL::ALMotionProxy> motion;
@@ -43,7 +43,7 @@ class Behavior: public IActivity, public Publisher {
 		SensorPair HeadPitch;
 
 		bool startscan;
-		bool scanningforball;
+		bool scanforball;
 		short scandirectionpitch;
 		short scandirectionyaw;
 
@@ -55,9 +55,9 @@ class Behavior: public IActivity, public Publisher {
 		short balllastseendirection;
 		HeadJointSensorsMessage* hjsm;
 		BallTrackMessage* bmsg;
-
+		GameStateMessage* gsm;
 		bool calibrated;
 		bool play;
 };
 
-#endif  
+#endif

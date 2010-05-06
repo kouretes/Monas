@@ -12,6 +12,7 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
+#include "messages/RoboCupGameControlData.h"
 
 namespace {
 	ActivityRegistrar<Behavior>::Type temp("Behavior");
@@ -19,7 +20,6 @@ namespace {
 
 Behavior::Behavior() :
 	Publisher("Behavior") {
-
 }
 
 void Behavior::UserInit() {
@@ -64,94 +64,84 @@ int Behavior::Execute() {
 
 	MessageBuffer* sub_buf = _blk->getBuffer();
 	while (sub_buf->size() > 0) {
-		process_messages();
-	}
-	//SleepMs(100);
-}
-
-void Behavior::process_messages() {
-	_blk->process_messages();
-	//MessageBuffer* sub_buf = Subscriber::getBuffer();
-	//google::protobuf::Message* cur = sub_buf->remove_head();
-
-	GameStateMessage* gs = dynamic_cast<GameStateMessage*> (_blk->in_nb("GameStateMessage", "RobotController"));
-
-	if (gs != NULL) {
-		if (gs->player_state() == 3)
+		read_messages();
+	};
+	if (gsm != 0) {
+		gsm->GetTypeName();
+		return 0;
+		if (gsm->has_player_state() && gsm->player_state() == PLAYER_PLAYING) // this is the playing state
 			play = true;
 		else
 			play = false;
+	} else {
+		play = false;
 	}
-	if (play) {
-		bmsg = dynamic_cast<BallTrackMessage*> (_blk->in_nb("BallTrackMessage", "Vision"));
+	return 0;
+	if (play && calibrated) {
 		if (bmsg != 0) {
 			calibrated = true;
 			Logger::Instance()->WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraInfo);
-			//cout<<"ProcessMessages"<<endl;
-			//if (cur != NULL) {
-			//cout << "ProcessMessages found message" << endl;
-			//if (cur->GetTypeName() == "BallTrackMessage") {
 
-			//BallTrackMessage * bmsg = static_cast<BallTrackMessage*> (cur);
-			if (bmsg->radius() > 0) {
-				scanningforball = false;
+			if (bmsg->radius() > 0) { //This meens that a ball was found
+				scanforball = false; //if you are scanning for ball please stop now
 				float overshootfix = bmsg->radius();
 				overshootfix = 2 * (0.4f - overshootfix);
 				Logger::Instance()->WriteMsg("Behavior", "Overshoot Value: " + _toString(overshootfix), Logger::ExtraInfo);
-				//cout << "Overshoot Value: " << overshootfix << endl;
+
 				float cx = bmsg->cx();
 				float cy = bmsg->cy();
 
 				balllastseendirection = HeadYaw.sensorvalue();
 				Logger::Instance()->WriteMsg("Behavior", "I want the freaking head to move towards (cx,cy):" + _toString(0.9f * (cx)) + _toString(-0.9f * (cy)), Logger::ExtraInfo);
-				//cout << "I want the freaking head to move towards (cx,cy):" << 0.9f * (cx) << " " << -0.9f * (cy) << endl;
 
 				if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
-					//Sending command to motion
-					mot->set_topic("motion");
+					//Sending command to motion in order to move the head
+					//mot->set_topic("motion");
 					mot->set_command("changeHead");
 					mot->set_parameter(0, 0.9f * overshootfix * (cx));
 					mot->set_parameter(1, -0.9f * overshootfix * (cy));
 					Publisher::publish( mot);
-					Logger::Instance()->WriteMsg("Behavior", "I realy want the freaking head to move towards (cx,cy):" + _toString(0.9f * (cx)) + _toString(-0.9f * (cy)), Logger::Info);
-					//cout << "I realy want the freaking head to move towards (cx,cy):" << 0.9f * (cx) << " " << -0.9f * (cy) << endl;
+					Logger::Instance()->WriteMsg("Behavior", "I send motio to head to move towards (cx,cy):" + _toString(mot->parameter(0)) + "," + _toString(mot->parameter(1)), Logger::Info);
 				}
 				Logger::Instance()->WriteMsg("Behavior", "Ball Found ole ", Logger::Info);
-				//cout << "Ball Found ole " << endl;
-				ballfound += 1;
+
+				ballfound += 1; //Increase this value when we see the ball
 			} else {
 				if (ballfound > 0) {
-					ballfound -= 1;
-
+					ballfound -= 1; //Decrease it when we don't see the ball
 					startscan = false;
-					scanningforball = false; // stop scanning
+					scanforball = false; // stop scanning
 				} else {
 					ballfound = 0;
-
-					startscan = true;
+					if (!scanforball) { //Start the scan only when it is not scanning ... obviously
+						scanforball = true;
+						startscan = true;
+					}
 				}
 			}
 			//just dont scan if ones you didn't saw the ball
-			if (ballfound > 2)
-				ballfound = 2;
+			if (ballfound > 3)
+				ballfound = 3;
 			if (ballfound < 0)
 				ballfound = 0;
-			//cout << "At Cx " << (float) memory->getData("kouretes/Ball/cx") << " Cy: " << (float) memory->getData("kouretes/Ball/cy") << endl;
 
 		}
 
 		Logger::Instance()->WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
-		hjsm = dynamic_cast<HeadJointSensorsMessage*> (_blk->in_nb("HeadJointSensorsMessage", "Sensors"));
+		//Head joint related Behavior
+		//Under this block we use the head joint values to calculated
+		//1) the head scanning procedure
+		//2) the walk parameters (how much to turn, walk ..) and the kicks
 		if (hjsm != 0) {
 			HeadYaw = hjsm->sensordata(0);
 			HeadPitch = hjsm->sensordata(1);
-			Logger::Instance()->WriteMsg("Behavior", "hjsm !=0", Logger::ExtraInfo);
-
+			Logger::Instance()->WriteMsg("Behavior", "HeadJointSensorsMessage arrived", Logger::ExtraExtraInfo);
 		}
 
-		if ((hjsm != 0) && (ballfound == 0) && (scanningforball == true) && calibrated) {//start or continue scan
-			//
+		//HeadScan
+		if ((hjsm != 0) && (scanforball == true)) {//start or continue scan
+			Logger::Instance()->WriteMsg("Behavior", "HeadPitch.sensorvalue()" + _toString(HeadPitch.sensorvalue()) + "HeadYaw.sensorvalue()   " + _toString(HeadYaw.sensorvalue()), Logger::ExtraInfo);
 			if (startscan) {
 				//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
 				if (HeadPitch.sensorvalue() < LIMITDOWN) { // first go down
@@ -165,30 +155,31 @@ void Behavior::process_messages() {
 				reachedlimitright = false;
 
 				scandirectionyaw = (HeadYaw.sensorvaluediff() > 0) ? 1 : -1;
-			} else {
-
-				//continue scan
-				if (HeadPitch.sensorvalue() < LIMITUP) { // upper position
-					reachedlimitup = true;
-					scandirectionpitch = 1;
-				}
-				if (HeadPitch.sensorvalue() < LIMITDOWN) {
-					reachedlimitdown = true;
-					scandirectionpitch = -1;
-				}
-				if (HeadYaw.sensorvalue() > LIMITLEFT) {
-					reachedlimitleft = true;
-					scandirectionyaw = -1;
-				}
-				if (HeadYaw.sensorvalue() < LIMITRIGHT) {
-					reachedlimitright = true;
-					scandirectionyaw = 1;
-				}
-
+				startscan = false;
 			}
-			mot->set_topic("motion");
+
+			//continue scan
+			if (HeadPitch.sensorvalue() < LIMITUP) { // upper position
+				reachedlimitup = true;
+				scandirectionpitch = 1;
+			}
+			if (HeadPitch.sensorvalue() < LIMITDOWN) {
+				reachedlimitdown = true;
+				scandirectionpitch = -1;
+			}
+			if (HeadYaw.sensorvalue() > LIMITLEFT) {
+				reachedlimitleft = true;
+				scandirectionyaw = -1;
+			}
+
+			if (HeadYaw.sensorvalue() < LIMITRIGHT) {
+				reachedlimitright = true;
+				scandirectionyaw = 1;
+			}
+
+			//mot->set_topic("motion");
 			mot->set_command("changeHead");
-			mot->set_parameter(0, scandirectionpitch * 0.08); // Headyaw
+			mot->set_parameter(0, scandirectionyaw * 0.08); // Headyaw
 			mot->set_parameter(1, 0.0); // headPitch
 
 			if (reachedlimitleft || reachedlimitright) {
@@ -206,34 +197,35 @@ void Behavior::process_messages() {
 				mot->set_parameter(1, 0.00001);
 				mot->set_parameter(2, (balllastseendirection > 0) ? (1) : (-1) * 1.22); //turn 70 degrees?
 			}
-			Publisher::publish( mot);
+			Publisher::publish( mot); //Send the message to the motion Controller
 		}
 
-		if (hjsm != 0) { //We have seen a ball for sure and we should walk
-
+		//We have seen a ball for sure and we should walk
+		//or we should kick
+		if (hjsm != 0) {
 			float X, Y, theta, freq;
 			//Calculate approach
 			X = 0;
 			Y = 0;
 			theta = 0;
-			mot->set_topic("motion");
+			//mot->set_topic("motion");
 
-			if (ballfound == 2) {
-				scanningforball = false; //be sure to stop scanning
+			if (ballfound > 2) {
+				//scanforball = false; //be sure to stop scanning
 
 				bool readytokick = true;
 				//Check max values !
-				if (fabs(HeadYaw.sensorvalue()) > 0.06) {
+				if (fabs(HeadYaw.sensorvalue()) > 0.055) {
 					theta = HeadYaw.sensorvalue() * 0.5 * (0.6 - fabs(HeadPitch.sensorvalue()));
 					readytokick = false;
 				}
-				if (fabs(HeadPitch.sensorvalue()) < 0.487) { //// Auto edw, to poso konta einai stin mpala gia na soutarei
+				if (fabs(HeadPitch.sensorvalue()) < 0.491) { //// Auto edw, to poso konta einai stin mpala gia na soutarei
 					X = 0.7 * (0.5 - HeadPitch.sensorvalue());
 					Y = HeadYaw.sensorvalue() * 0.6 * (1.4 - fabs(HeadYaw.sensorvalue()));
 					readytokick = false;
 				}
 
-				mot->set_topic("motion");
+				//mot->set_topic("motion");
 				if (!readytokick) {
 					mot->set_command("setWalkTargetVelocity");
 
@@ -251,7 +243,9 @@ void Behavior::process_messages() {
 					mot->set_parameter(1, Y);
 					mot->set_parameter(2, theta);
 					mot->set_parameter(3, freq);
-					cout << "Sending Walk Command  setWalkTargetVelocity " << endl;
+					cout << "  setWalkTargetVelocity " << endl;
+					Logger::Instance()->WriteMsg("Behavior", "Walk Command" + _toString(mot->command()) + "X:  " + _toString(mot->parameter(0)) + "Y:  "
+							+ _toString(mot->parameter(1)) + "theta:  " + _toString(mot->parameter(2)), Logger::ExtraInfo);
 
 				} else {
 					cout << "Kicking" << endl;
@@ -259,34 +253,49 @@ void Behavior::process_messages() {
 						mot->set_command("leftKick");
 					else
 						mot->set_command("rightKick");
+					Logger::Instance()->WriteMsg("Behavior", "Kicking with " + _toString(mot->command()), Logger::ExtraInfo);
 				}
+
 				Publisher::publish( mot);
 
 			} else {
-				Logger::Instance()->WriteMsg("Behavior", "Scanningforball" + _toString(scanningforball) + "ballfound  " + _toString(ballfound), Logger::ExtraInfo);
+				Logger::Instance()->WriteMsg("Behavior", "Setting stop command", Logger::ExtraInfo);
 
-				if (!scanningforball && ballfound == 0) { //stop when we don't see anything
-					scanningforball = true;
+				if (ballfound == 0) { //stop when we don't see anything
+					scanforball = true;
 					mot->set_command("setWalkTargetVelocity");
 					mot->set_parameter(0, 0);
 					mot->set_parameter(1, 0);
 					mot->set_parameter(2, 0);
 					mot->set_parameter(3, 0);
-
 					Publisher::publish( mot);
 				}
-				//cout << "Sending Walk Command  setWalkTargetVelocity " << endl;
 			}
-
 		}
 	} else {
+		Logger::Instance()->WriteMsg("Behavior", "Setting stop command because of playing state ", Logger::ExtraExtraInfo);
+
 		mot->set_command("setWalkTargetVelocity");
 		mot->set_parameter(0, 0);
 		mot->set_parameter(1, 0);
 		mot->set_parameter(2, 0);
 		mot->set_parameter(3, 0);
-
 		Publisher::publish( mot);
 	}
-	//delete cur;
+	return 0;
+}
+
+void Behavior::read_messages() {
+	_blk->process_messages();
+	::google::protobuf::Message* msg;
+	msg = _blk->in_nb("GameStateMessage", "RobotController");
+	if ((msg != 0) && (strcmp(msg->GetTypeName().c_str(),"GameStateMessage")==0 ) )
+		gsm = dynamic_cast<GameStateMessage*> (msg);
+	else
+		gsm = 0;
+	//bmsg = dynamic_cast<BallTrackMessage*> (_blk->in_nb("BallTrackMessage", "Vision"));
+	//hjsm = dynamic_cast<HeadJointSensorsMessage*> (_blk->in_nb("HeadJointSensorsMessage", "Sensors"));
+
+	//Logger::Instance()->WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
+
 }
