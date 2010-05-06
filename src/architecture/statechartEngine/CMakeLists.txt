@@ -19,7 +19,6 @@ add_library ( statechartEngine  ${LibBuildType}
                                 IEvent.cpp
                                 IParameter.cpp
                                 OrState.cpp
-                                AndState.cpp
                                 StartState.cpp
                                 State.cpp
                                 Statechart.cpp
