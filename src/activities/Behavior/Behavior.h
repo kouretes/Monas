@@ -41,6 +41,7 @@ class Behavior: public IActivity, public Publisher {
 		int yawdirection;
 		SensorPair HeadYaw;
 		SensorPair HeadPitch;
+		BallTrackMessage lastballseen;
 
 		bool startscan;
 		bool scanforball;
@@ -58,6 +59,8 @@ class Behavior: public IActivity, public Publisher {
 		GameStateMessage* gsm;
 		bool calibrated;
 		bool play;
+
+		bool stopped;
 };
 
 #endif
