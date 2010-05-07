@@ -16,6 +16,12 @@ use_lib( NaoQiDep ALCOMMON ALMATH LIBCORE TOOLS ALVALUE)
 
 set ( TargetLinkLibraries ${TargetLinkLibraries} NaoQiDep) 
 
+if( "${SDK_ARCH}" STREQUAL "nao-geode" )
+  set ( CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}_cross" CACHE PATH "Select the install directory" FORCE )
+elseif( "${SDK_ARCH}" STREQUAL "linux" )
+  set ( CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}_linux" CACHE PATH "Select the install directory" FORCE )
+endif( "${SDK_ARCH}" STREQUAL "nao-geode" )
+
 install ( TARGETS NaoQiDep 
         RUNTIME DESTINATION   bin
         LIBRARY DESTINATION   lib

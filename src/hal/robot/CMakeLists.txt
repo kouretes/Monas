@@ -16,13 +16,13 @@ elseif ( "${RobotPlatform}" STREQUAL "nao" )
     if ( "x${NaoQiVersion}x" STREQUAL "xx" )
         message ( FATAL_ERROR "NaoQiVersion must be set" )
     endif ( "x${NaoQiVersion}x" STREQUAL "xx" )
-    set ( CMAKE_INSTALL_PREFIX "${CMAKE_HOME_DIRECTORY}/binaries/robot/nao/naoqi_${NaoQiVersion}" CACHE PATH "Select the install directory" FORCE )
+    set ( CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/naoqi_${NaoQiVersion}" CACHE PATH "Select the install directory" FORCE )
     add_subdirectory ( generic_nao )
     add_subdirectory ( "nao-${NaoQiVersion}" )
 
 elseif ( "${RobotPlatform}" STREQUAL "aibo" )
 
-    set ( CMAKE_INSTALL_PREFIX "${CMAKE_HOME_DIRECTORY}/binaries/robot/aibo" CACHE PATH "Select the install directory" FORCE )
+    set ( CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/aibo" CACHE PATH "Select the install directory" FORCE )
     add_subdirectory ( aibo )
 
 else ( "x${RobotPlatform}x" STREQUAL "xx" )
