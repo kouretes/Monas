@@ -37,6 +37,7 @@ void Behavior::UserInit() {
 	}
 
 	mot = new MotionMessage();
+	mot->set_topic("motion");
 	mot->add_parameter(0.0f);
 	mot->add_parameter(0.0f);
 	mot->add_parameter(0.0f);
@@ -50,85 +51,89 @@ void Behavior::UserInit() {
 	reachedlimitdown = false;
 	reachedlimitleft = false;
 	reachedlimitright = false;
-	startscan = false;
+
+	scanforball = true;
+	startscan = true;
 
 	calibrated = false;
 	Logger::Instance()->WriteMsg("Behavior", "Controller Initialized", Logger::Info);
 	//cout << "Behavior Controller Initialized" << endl;
 
-	hjsm = NULL;
-	bmsg = NULL;
+	hjsm = 0;
+	bmsg = 0;
+	gsm = 0;
 }
 
 int Behavior::Execute() {
 
-	MessageBuffer* sub_buf = _blk->getBuffer();
-	while (sub_buf->size() > 0) {
-		read_messages();
-	};
+	//MessageBuffer* sub_buf = _blk->getBuffer();
+	//while (sub_buf->size() > 0) {
+	read_messages();
+	//};
 	if (gsm != 0) {
-		gsm->GetTypeName();
-		return 0;
-		if (gsm->has_player_state() && gsm->player_state() == PLAYER_PLAYING) // this is the playing state
+		Logger::Instance()->WriteMsg("Behavior", " gsm->player_state() " + _toString(gsm->player_state()), Logger::ExtraInfo);
+		//return 0;
+		if (gsm->player_state() == 3) // this is the playing state
 			play = true;
 		else
 			play = false;
-	} else {
-		play = false;
+
+		delete gsm;
 	}
-	return 0;
-	if (play && calibrated) {
-		if (bmsg != 0) {
-			calibrated = true;
-			Logger::Instance()->WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraInfo);
+	//return 0;
 
-			if (bmsg->radius() > 0) { //This meens that a ball was found
-				scanforball = false; //if you are scanning for ball please stop now
-				float overshootfix = bmsg->radius();
-				overshootfix = 2 * (0.4f - overshootfix);
-				Logger::Instance()->WriteMsg("Behavior", "Overshoot Value: " + _toString(overshootfix), Logger::ExtraInfo);
+	if (bmsg != 0) {
+		calibrated = true;
+		Logger::Instance()->WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraInfo);
 
-				float cx = bmsg->cx();
-				float cy = bmsg->cy();
+		if (bmsg->radius() > 0) { //This meens that a ball was found
+			scanforball = false; //if you are scanning for ball please stop now
 
-				balllastseendirection = HeadYaw.sensorvalue();
-				Logger::Instance()->WriteMsg("Behavior", "I want the freaking head to move towards (cx,cy):" + _toString(0.9f * (cx)) + _toString(-0.9f * (cy)), Logger::ExtraInfo);
+			float overshootfix = bmsg->radius();
+			overshootfix = 2 * (0.4f - overshootfix);
+			Logger::Instance()->WriteMsg("Behavior", "Overshoot Value: " + _toString(overshootfix), Logger::ExtraInfo);
 
-				if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
-					//Sending command to motion in order to move the head
-					//mot->set_topic("motion");
-					mot->set_command("changeHead");
-					mot->set_parameter(0, 0.9f * overshootfix * (cx));
-					mot->set_parameter(1, -0.9f * overshootfix * (cy));
-					Publisher::publish( mot);
-					Logger::Instance()->WriteMsg("Behavior", "I send motio to head to move towards (cx,cy):" + _toString(mot->parameter(0)) + "," + _toString(mot->parameter(1)), Logger::Info);
-				}
-				Logger::Instance()->WriteMsg("Behavior", "Ball Found ole ", Logger::Info);
+			float cx = bmsg->cx();
+			float cy = bmsg->cy();
 
-				ballfound += 1; //Increase this value when we see the ball
+			balllastseendirection = HeadYaw.sensorvalue();
+			Logger::Instance()->WriteMsg("Behavior", "I want the freaking head to move towards (cx,cy):" + _toString(0.9f * (cx)) + _toString(-0.9f * (cy)), Logger::ExtraInfo);
+
+			if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
+				//Sending command to motion in order to move the head
+				//mot->set_topic("motion");
+				mot->set_command("changeHead");
+				mot->set_parameter(0, 0.9f * overshootfix * (cx));
+				mot->set_parameter(1, -0.9f * overshootfix * (cy));
+				Publisher::publish( mot);
+				Logger::Instance()->WriteMsg("Behavior", "I send motio to head to move towards (cx,cy):" + _toString(mot->parameter(0)) + "," + _toString(mot->parameter(1)), Logger::Info);
+			}
+			Logger::Instance()->WriteMsg("Behavior", "Ball Found ole ", Logger::Info);
+
+			ballfound += 2; //Increase this value when we see the ball
+		} else {
+			if (ballfound > 0) {
+				ballfound -= 1; //Decrease it when we don't see the ball
+				startscan = false;
+				scanforball = false; // stop scanning
 			} else {
-				if (ballfound > 0) {
-					ballfound -= 1; //Decrease it when we don't see the ball
-					startscan = false;
-					scanforball = false; // stop scanning
-				} else {
-					ballfound = 0;
-					if (!scanforball) { //Start the scan only when it is not scanning ... obviously
-						scanforball = true;
-						startscan = true;
-					}
+				ballfound = 0;
+				if (!scanforball) { //Start the scan only when it is not scanning ... obviously
+					scanforball = true;
+					startscan = true;
 				}
 			}
-			//just dont scan if ones you didn't saw the ball
-			if (ballfound > 3)
-				ballfound = 3;
-			if (ballfound < 0)
-				ballfound = 0;
-
 		}
+		//just dont scan if ones you didn't saw the ball
+		if (ballfound > 4)
+			ballfound = 4;
+		if (ballfound < 0)
+			ballfound = 0;
+		delete bmsg;
+	}
 
-		Logger::Instance()->WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
-
+	Logger::Instance()->WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
+	if (play && calibrated) {
 		//Head joint related Behavior
 		//Under this block we use the head joint values to calculated
 		//1) the head scanning procedure
@@ -157,46 +162,67 @@ int Behavior::Execute() {
 				scandirectionyaw = (HeadYaw.sensorvaluediff() > 0) ? 1 : -1;
 				startscan = false;
 			}
+			reachedlimitright = false;
+			reachedlimitleft = false;
 
 			//continue scan
 			if (HeadPitch.sensorvalue() < LIMITUP) { // upper position
+				Logger::Instance()->WriteMsg("Behavior", " LIMITUP ", Logger::ExtraExtraInfo);
 				reachedlimitup = true;
 				scandirectionpitch = 1;
 			}
-			if (HeadPitch.sensorvalue() < LIMITDOWN) {
+			if (HeadPitch.sensorvalue() > LIMITDOWN) {
+				Logger::Instance()->WriteMsg("Behavior", " LIMITDOWN ", Logger::ExtraExtraInfo);
 				reachedlimitdown = true;
 				scandirectionpitch = -1;
 			}
 			if (HeadYaw.sensorvalue() > LIMITLEFT) {
+				Logger::Instance()->WriteMsg("Behavior", "LIMITLEFT  ", Logger::ExtraExtraInfo);
 				reachedlimitleft = true;
 				scandirectionyaw = -1;
 			}
 
 			if (HeadYaw.sensorvalue() < LIMITRIGHT) {
+				Logger::Instance()->WriteMsg("Behavior", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
 				reachedlimitright = true;
 				scandirectionyaw = 1;
 			}
+			//			if (fabs(HeadYaw.sensorvalue()) > 0.40) {
+			//				Logger::Instance()->WriteMsg("Behavior", " fabs(HeadYaw.sensorvalue()) >  0.40  ", Logger::ExtraExtraInfo);
+			//				reachedlimitright = true;
+			//				reachedlimitleft = true;
+			//				scandirectionyaw *= -1; //change direction
+			//			}
 
-			//mot->set_topic("motion");
 			mot->set_command("changeHead");
-			mot->set_parameter(0, scandirectionyaw * 0.08); // Headyaw
+			mot->set_parameter(0, scandirectionyaw * 0.22); // Headyaw
 			mot->set_parameter(1, 0.0); // headPitch
 
 			if (reachedlimitleft || reachedlimitright) {
-				mot->set_parameter(1, scandirectionpitch * 0.19); // headPitch
-				reachedlimitright = false;
+				Logger::Instance()->WriteMsg("Behavior", " reachedlimitleft || reachedlimitright ", Logger::ExtraExtraInfo);
+				mot->set_parameter(1, scandirectionpitch * 0.28); // headPitch
+				//mot->set_parameter(0, 0.0); // headYaw
 				reachedlimitleft = false;
+				reachedlimitright = false;
 			}
+
+			Publisher::publish( mot);
 			if (reachedlimitup && reachedlimitdown) {
+				Logger::Instance()->WriteMsg("Behavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
 				startscan = true;
 				reachedlimitdown = false;
 				reachedlimitup = false;
+				reachedlimitright = false;
+				reachedlimitleft = false;
 				///we should turn;
 				mot->set_command("walkTo");
 				mot->set_parameter(0, 0.00001);
 				mot->set_parameter(1, 0.00001);
 				mot->set_parameter(2, (balllastseendirection > 0) ? (1) : (-1) * 1.22); //turn 70 degrees?
 			}
+			Logger::Instance()->WriteMsg("Behavior", "Command HeadScan" + _toString(mot->command()) + "1:  " + _toString(mot->parameter(0)) + "2:  " + _toString(mot->parameter(1))
+					+ "3:  " + _toString(mot->parameter(2)), Logger::ExtraInfo);
+
 			Publisher::publish( mot); //Send the message to the motion Controller
 		}
 
@@ -255,6 +281,8 @@ int Behavior::Execute() {
 						mot->set_command("rightKick");
 					Logger::Instance()->WriteMsg("Behavior", "Kicking with " + _toString(mot->command()), Logger::ExtraInfo);
 				}
+				Logger::Instance()->WriteMsg("Behavior", "Command" + _toString(mot->command()) + "1:  " + _toString(mot->parameter(0)) + "2:  " + _toString(mot->parameter(1))
+						+ "3:  " + _toString(mot->parameter(2)), Logger::ExtraInfo);
 
 				Publisher::publish( mot);
 
@@ -287,15 +315,10 @@ int Behavior::Execute() {
 
 void Behavior::read_messages() {
 	_blk->process_messages();
-	::google::protobuf::Message* msg;
-	msg = _blk->in_nb("GameStateMessage", "RobotController");
-	if ((msg != 0) && (strcmp(msg->GetTypeName().c_str(),"GameStateMessage")==0 ) )
-		gsm = dynamic_cast<GameStateMessage*> (msg);
-	else
-		gsm = 0;
-	//bmsg = dynamic_cast<BallTrackMessage*> (_blk->in_nb("BallTrackMessage", "Vision"));
-	//hjsm = dynamic_cast<HeadJointSensorsMessage*> (_blk->in_nb("HeadJointSensorsMessage", "Sensors"));
+	gsm = dynamic_cast<GameStateMessage*> (_blk->in_nb("GameStateMessage", "RobotController"));
+	bmsg = dynamic_cast<BallTrackMessage*> (_blk->in_nb("BallTrackMessage", "Vision"));
+	hjsm = dynamic_cast<HeadJointSensorsMessage*> (_blk->in_nb("HeadJointSensorsMessage", "Sensors"));
 
-	//Logger::Instance()->WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
+	Logger::Instance()->WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 
 }

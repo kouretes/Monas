@@ -14,7 +14,7 @@
 #include "alptr.h"
 
 #define LIMITUP -0.22
-#define	LIMITDOWN 0.50
+#define	LIMITDOWN 0.43
 #define	LIMITLEFT 0.40
 #define	LIMITRIGHT -0.40
 
