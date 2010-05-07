@@ -95,6 +95,9 @@ void Talws::Stop() {
     std::cout<<"Talws: Stoping..."<<std::endl; //TODO
     for ( std::vector<Thread*>::const_iterator it = Threads.begin(); it != Threads.end(); it++ )
         (*it)->StopThread();
+   for ( std::vector<Thread*>::const_iterator it = Threads.begin(); it != Threads.end(); it++ )
+        (*it)->JoinThread();
     com.get_message_queue()->StopThread();
+    com.get_message_queue()->JoinThread();
 }
 
