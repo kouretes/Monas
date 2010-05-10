@@ -1,23 +1,6 @@
 <?xml version="1.0" ?>
 <!-- General Configuration of the Architecture  -->
 
-
-
-<MessageLogFile>KourLog.txt</MessageLogFile>
-<MessageLogCerr>1</MessageLogCerr>
-
-<!-- Activities that will reach the LogFile -->
-<!-- FatalError and Error directives can't be blocked -->
-<!-- Special keyword all will enable all activities -->
-<MessageLogFilter>all</MessageLogFilter>
-
-
-<!-- FatalError =0, Error, Info, ExtraInfo, ExtraExtraInfo -->
-<!-- Verbosity level is limited to >= 0 thus FatalError cant be blocked-->
-<LogFileVerbosityLevel>15</LogFileVerbosityLevel>
-
-
-
 <ThreadType>PThread</ThreadType>
 
-<AgentConfigurationFile>config/agents.xml</AgentConfigurationFile>
+<AgentConfigurationFile>agents.xml</AgentConfigurationFile>

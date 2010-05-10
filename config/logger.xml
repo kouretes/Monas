@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!-- Configuration for logger module  -->
+
+
+
+<MessageLogFile>MonadLog.txt</MessageLogFile>
+
+<!-- MessageLogCerr set to '1' will print logger messages -->
+<!-- to standard error, '0' will not -->
+<MessageLogCerr>1</MessageLogCerr>
+
+<!-- Activities that will reach the LogFile -->
+<!-- FatalError and Error directives can't be blocked -->
+<!-- Special keyword 'all' will enable all activities -->
+<MessageLogFilter>all</MessageLogFilter>
+
+
+<!-- FatalError =0, Error, Info, ExtraInfo, ExtraExtraInfo -->
+<!-- Verbosity level is limited to >= 0 thus FatalError can't be blocked-->
+<LogFileVerbosityLevel>15</LogFileVerbosityLevel>
+

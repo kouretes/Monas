@@ -12,8 +12,14 @@ class GlobalConf {
             return &Cfg;
         }
 
+        // Implicit set of the configuration path!
+        // Configuration files expected at the same level as archconf
         std::string ConfigurationFile () {
             return "config/archconf.xml";
+        }
+
+        std::string ConfigurationFileAlter () {
+            return "/home/nao/naoqi/config/archconf.xml";
         }
 
     private:

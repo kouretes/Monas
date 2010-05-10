@@ -19,7 +19,7 @@ Talws::Talws () {
     ArchConfig::Instance();
     Logger::Instance();
 
-    XML AgentXmlFile( ArchConfig::Instance()->GetAgentCfgFile() );
+    XML AgentXmlFile( ArchConfig::Instance()->GetConfigPrefix()+ArchConfig::Instance()->GetAgentCfgFile() );
 
     if ( ! AgentXmlFile.IsLoadedSuccessfully() ) {
         std::string msg("Can't read or parse agent configuration file @ ");
