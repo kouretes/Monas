@@ -67,7 +67,6 @@ Talws::Talws () {
         Agent *a = new Agent(AgentName,tcfg,&com,activities);
 
         Agents.push_back( a );
-        Threads.push_back( a );
 
         std::ostringstream AgentInfo;
         AgentInfo<<AgentName<<" Attrb: IsRealTime="<<tcfg.IsRealTime<<" Priority="<<tcfg.Priority
@@ -80,25 +79,25 @@ Talws::Talws () {
 }
 
 Talws::~Talws() {
+    Stop();
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         delete (*it);
 }
 
 void Talws::Start() {
-    
     com.get_message_queue()->StartThread();
     std::cout<<"Talws: Starting..."<<std::endl; //TODO
-    for ( std::vector<Thread*>::const_iterator it = Threads.begin(); it != Threads.end(); it++ )
+    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StartThread();
 }
 
 void Talws::Stop() {
     std::cout<<"Talws: Stoping..."<<std::endl; //TODO
-    for ( std::vector<Thread*>::const_iterator it = Threads.begin(); it != Threads.end(); it++ )
+    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StopThread();
-   for ( std::vector<Thread*>::const_iterator it = Threads.begin(); it != Threads.end(); it++ )
-        (*it)->JoinThread();
     com.get_message_queue()->StopThread();
+    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
+        (*it)->JoinThread();
     com.get_message_queue()->JoinThread();
 }
 

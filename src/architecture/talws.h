@@ -21,8 +21,6 @@ class Talws {
     private:
 
         std::vector<Agent*> Agents;
-
-        std::vector<Thread*> Threads;
     
         Narukom com;
 
