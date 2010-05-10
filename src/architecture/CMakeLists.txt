@@ -25,13 +25,6 @@ add_library ( MonadCore ${LibBuildType}
                         talws.cpp 
 )
 
-if ( "${ActivityBuildType}" STREQUAL "MODULE" )
-  target_link_libraries ( MonadCore dl )
-endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
-
-
-
-
 target_link_libraries ( MonadCore M_tinyxml )
 
 install ( TARGETS MonadCore 

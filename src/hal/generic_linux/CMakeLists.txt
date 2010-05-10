@@ -11,7 +11,7 @@ add_library( GenLinux ${LibBuildType}
                       mutex.cpp
 )
 
-target_link_libraries( GenLinux pthread )
+target_link_libraries( GenLinux pthread dl )
 
 set ( TargetLinkLibraries ${TargetLinkLibraries} GenLinux PARENT_SCOPE )
 
