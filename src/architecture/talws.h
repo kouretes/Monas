@@ -6,8 +6,6 @@
 
 #include <vector>
 
-#include "activities/activityRegistry.h"
-
 class Talws {
 
     public:

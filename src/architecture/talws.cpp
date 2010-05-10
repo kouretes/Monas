@@ -13,6 +13,7 @@
 #include "hal/dlib_fnc.h"
 #endif // DLIB_FUNCTIONALITY
 
+#include "activities/activityRegistry.h"
 
 Talws::Talws () {
 
