@@ -1,5 +1,8 @@
+if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
+    return()
+endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
+
 include( ../../hal/robot/nao-1.6.0/bootstrap.cmake ) 
-use(NAOQI-PLUGINS-TOOLS)
 
 set ( ActivityName MotionController )
 
