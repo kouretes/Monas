@@ -26,5 +26,8 @@ add_subdirectory ( ./architecture/ )
 add_subdirectory ( ./activities/ )
 add_subdirectory ( ./hal/ )
 
-#TODO
-add_subdirectory ( ./testing/ )
+option ( BuildTests "Compile testing code" )
+
+if ( BuildTests )
+  add_subdirectory ( ./testing/ )
+endif ( BuildTests )
