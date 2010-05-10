@@ -19,4 +19,12 @@ unsigned long SysCall::_GetCurrentTimeInUSec () {
 void SysCall::_exit ( int status ) {
     exit( status ); 
 }
+
+bool SysCall::_GetCwd ( std::string& path ) {
+    char _cPath[300];
+    if ( ! getcwd ( _cPath, 300) )
+        return false;
+    path = _cPath;
+    return true;
+}
     

@@ -1,6 +1,8 @@
 #ifndef _syscall_h_
 #define _syscall_h_  1
 
+#include <string>
+
 class SysCall {
 
     public:
@@ -9,7 +11,9 @@ class SysCall {
 
         static unsigned long _GetCurrentTimeInUSec ( ) ;
 
-        static void _exit ( int status ); 
+        static void _exit ( int status );
+
+        static bool _GetCwd ( std::string& path );
 
 };
 
