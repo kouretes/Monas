@@ -61,7 +61,7 @@ int GameController::Execute()
     }
     else{
    
-	if(i++ % 20)
+	if(i++ % 20==0)
 	  cout << "Timeout occured! no messages received from gamecontroller" << endl;
     }
     //usleep(499000);

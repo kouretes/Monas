@@ -61,17 +61,17 @@ int Sensors::Execute() {
 
 	unsigned int counter = 0;
 	Values["Head"] = memory->getListData(devicesInChains["Head"]);
-	Values["LeftLeg"] = memory->getListData(devicesInChains["LeftLeg"]);
-	Values["RightLeg"] = memory->getListData(devicesInChains["RightLeg"]);
+//	Values["LeftLeg"] = memory->getListData(devicesInChains["LeftLeg"]);
+//	Values["RightLeg"] = memory->getListData(devicesInChains["RightLeg"]);
 	rtm.stop();
-	if (period % 5 == 0) {
-		Values["Inertial"] = memory->getListData(devicesInChains["Inertial"]);
-		Values["FSR"] = memory->getListData(devicesInChains["FSR"]);
-		Values["USoundLeft"] = memory->getListData(devicesInChains["USoundLeft"]);
-		Values["USoundRight"] = memory->getListData(devicesInChains["USoundRight"]);
-	}
-	Values["RightArm"] = memory->getListData(devicesInChains["RightArm"]);
-	Values["LeftArm"] = memory->getListData(devicesInChains["LeftArm"]);
+//	if (period % 5 == 0) {
+//		Values["Inertial"] = memory->getListData(devicesInChains["Inertial"]);
+//		Values["FSR"] = memory->getListData(devicesInChains["FSR"]);
+//		Values["USoundLeft"] = memory->getListData(devicesInChains["USoundLeft"]);
+//		Values["USoundRight"] = memory->getListData(devicesInChains["USoundRight"]);
+//	}
+//	Values["RightArm"] = memory->getListData(devicesInChains["RightArm"]);
+//	Values["LeftArm"] = memory->getListData(devicesInChains["LeftArm"]);
 
 	timediff = rtm.diffNs();
 	rtm.start();

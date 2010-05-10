@@ -14,7 +14,7 @@
 #include "alptr.h"
 
 #define LIMITUP -0.22
-#define	LIMITDOWN 0.50
+#define	LIMITDOWN 0.43
 #define	LIMITLEFT 0.40
 #define	LIMITRIGHT -0.40
 
@@ -41,6 +41,7 @@ class Behavior: public IActivity, public Publisher {
 		int yawdirection;
 		SensorPair HeadYaw;
 		SensorPair HeadPitch;
+		BallTrackMessage lastballseen;
 
 		bool startscan;
 		bool scanforball;
@@ -58,6 +59,8 @@ class Behavior: public IActivity, public Publisher {
 		GameStateMessage* gsm;
 		bool calibrated;
 		bool play;
+
+		bool stopped;
 };
 
 #endif

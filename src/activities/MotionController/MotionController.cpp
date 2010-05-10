@@ -241,7 +241,7 @@ void MotionController::mglrun() {
 	                    actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
 	               	}
 	               	else if (mm->command() == "rightKick") {
-	                    actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
+	                    actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
 	                }
 	                actionCommand = true;
 	                headCommand = true;
