@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <stdexcept>
 #include <sstream>
 
 #include "tools/errorPolicies.h"
