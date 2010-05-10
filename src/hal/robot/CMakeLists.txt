@@ -3,10 +3,6 @@ message ( STATUS " _..::: Configuring Robot Abstraction Layer :::.._ " )
 message ( STATUS "" )
 
 
-
-set ( RobotPlatform nao CACHE STRING
-        "Select robotic platform. Available platforms are nao and aibo" )
-
 if ( "x${RobotPlatform}x" STREQUAL "xx" )
     message ( FATAL_ERROR "RobotPlatform can't be empty! Select an available platform: nao or aibo" )
 elseif ( "${RobotPlatform}" STREQUAL "nao" )

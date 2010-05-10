@@ -11,5 +11,14 @@ message( STATUS "" )
 add_definitions ( -Wall )
 add_definitions ( -m32 )
 
+set ( TargetPlatform linux CACHE STRING 
+        "select the targeted platform, available platforms are linux, windows, and robot" )
+
+
+set ( RobotPlatform nao CACHE STRING
+        "Select robotic platform. Available platforms are nao and aibo" )
+
+
+
 add_subdirectory( external ) 
 add_subdirectory( src )
