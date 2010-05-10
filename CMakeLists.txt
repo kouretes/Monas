@@ -9,7 +9,6 @@ message( STATUS "" )
 #set( CMAKE_VERBOSE_MAKEFILE on )
 
 add_definitions ( -Wall )
-add_definitions ( -m32 )
 
 set ( TargetPlatform linux CACHE STRING 
         "select the targeted platform, available platforms are linux, windows, and robot" )
@@ -18,7 +17,9 @@ set ( TargetPlatform linux CACHE STRING
 set ( RobotPlatform nao CACHE STRING
         "Select robotic platform. Available platforms are nao and aibo" )
 
-
+if ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) 
+    add_definitions ( -m32 )
+endif ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) 
 
 add_subdirectory( external ) 
 add_subdirectory( src )
