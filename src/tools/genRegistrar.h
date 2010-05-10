@@ -17,8 +17,8 @@ class Registrar {
     public:
 
         Registrar ( FactoryID id ) {
-            Logger::Instance()->WriteMsg("Registrar",id,Logger::ExtraInfo);
-            FactoryClass::Instance()->Register( id, NewProviderFunc );
+            if ( FactoryClass::Instance()->Register( id, NewProviderFunc ) )
+                Logger::Instance()->WriteMsg("Registrar",id,Logger::ExtraInfo);
         }
 
         static AbstractProductClass * NewProviderFunc () {
