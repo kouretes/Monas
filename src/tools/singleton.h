@@ -6,9 +6,9 @@ class Singleton : public T {
 
     public:
 
-        static T* Instance() {
+        static T& Instance() {
             static T t;
-            return &t;
+            return t;
         }
 
     private:

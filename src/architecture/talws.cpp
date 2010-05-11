@@ -20,12 +20,12 @@ Talws::Talws () {
     ArchConfig::Instance();
     Logger::Instance();
 
-    XML AgentXmlFile( ArchConfig::Instance()->GetConfigPrefix()+ArchConfig::Instance()->GetAgentCfgFile() );
+    XML AgentXmlFile( ArchConfig::Instance().GetConfigPrefix()+ArchConfig::Instance().GetAgentCfgFile() );
 
     if ( ! AgentXmlFile.IsLoadedSuccessfully() ) {
         std::string msg("Can't read or parse agent configuration file @ ");
-        msg += ArchConfig::Instance()->GetAgentCfgFile();
-        Logger::Instance()->WriteMsg(std::string("Talws"),msg, Logger::FatalError );
+        msg += ArchConfig::Instance().GetAgentCfgFile();
+        Logger::Instance().WriteMsg(std::string("Talws"),msg, Logger::FatalError );
         SysCall::_exit(1);
     }
 
@@ -37,7 +37,7 @@ Talws::Talws () {
     std::ostringstream AgentNum;
     AgentNum<<"Found "<<AgentNodes.size()<<" agent(s)";
 
-    Logger::Instance()->WriteMsg("Talws",AgentNum.str(), Logger::Info );
+    Logger::Instance().WriteMsg("Talws",AgentNum.str(), Logger::Info );
 
     for ( NodeCont::iterator it = AgentNodes.begin(); it != AgentNodes.end(); it++ ) {
 
@@ -52,11 +52,11 @@ Talws::Talws () {
 #ifdef DLIB_FUNCTIONALITY
             void* dlib_handler = DLibFnc::_open( ("lib"+ActivityNodes[i].value+".so").c_str());
             if ( ! dlib_handler ) {
-                Logger::Instance()->WriteMsg("Talws", DLibFnc::_error(), Logger::Info );
+                Logger::Instance().WriteMsg("Talws", DLibFnc::_error(), Logger::Info );
             }
 #endif //DLIB_FUNCTIONALITY
             activities.push_back( ActivityNodes[i].value );
-            Logger::Instance()->WriteMsg("Talws", "Agent: "+AgentName+" Registering module: "+activities[i], Logger::ExtraInfo );
+            Logger::Instance().WriteMsg("Talws", "Agent: "+AgentName+" Registering module: "+activities[i], Logger::ExtraInfo );
         }
 
         AgentConfig tcfg;
@@ -71,7 +71,7 @@ Talws::Talws () {
         std::ostringstream AgentInfo;
         AgentInfo<<AgentName<<" Attrb: IsRealTime="<<tcfg.IsRealTime<<" Priority="<<tcfg.Priority
             <<" ThreadFrequency="<<tcfg.ThreadFrequency<<std::endl;
-        Logger::Instance()->WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
+        Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
 
 
     }

@@ -52,7 +52,7 @@ class LoggerClass {
 
         LoggerClass () {
 
-            std::string ConfFileStr( ArchConfig::Instance()->GetConfigPrefix()+"logger.xml" );
+            std::string ConfFileStr( ArchConfig::Instance().GetConfigPrefix()+"logger.xml" );
             XMLConfig ConfFile( ConfFileStr );
             if ( ! ConfFile.IsLoadedSuccessfully() ) {
                 std::cerr<<"Can't parse logger configuration file @ "<<ConfFileStr<<std::endl;

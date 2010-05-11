@@ -28,7 +28,7 @@ void KImageExtractor::Init(Narukom* com)
     doneSubscribe=false;
     try
     {
-        c = KAlBroker::Instance()->GetBroker()->getProxy( "ALVideoDevice" );
+        c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
         c->callVoid( "unsubscribe", GVM_name );
         GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
                                          cSpace,VISON_FPS );

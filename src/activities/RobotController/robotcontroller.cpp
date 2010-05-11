@@ -30,7 +30,7 @@ void RobotController::UserInit()
     // bc = new ButtonListener(pBroker,&chest_button_pressed,&left_bumper_pressed,&right_bumper_pressed,&button_mx);
   //  AL::ALModule::createModule<ButtonListener>( ((AL::ALPtr<AL::ALBroker>)KAlBroker::Instance()->GetBroker()),"ButtonListener");
     try {
-            memory = KAlBroker::Instance()->GetBroker()->getMemoryProxy();
+            memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
             memory->insertData("button_pressed",0);
             memory->insertData("lbumper_pressed",0);
             memory->insertData("rbumper_pressed",0);

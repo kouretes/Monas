@@ -19,15 +19,15 @@ Sensors::Sensors() :
 void Sensors::UserInit() {
 
 
-    Logger::Instance()->WriteMsg("Sensors","Sensors UserInit",Logger::Info);
+    Logger::Instance().WriteMsg("Sensors","Sensors UserInit",Logger::Info);
     //cout<<"Sensors UserInit"<<endl;
 
 	try {
-		memory = KAlBroker::Instance()->GetBroker()->getMemoryProxy();
+		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
 		//dcm = new AL::DCMProxy(KAlBroker::Instance()->GetBroker());
-		dcm = KAlBroker::Instance()->GetBroker()->getDcmProxy();
+		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
 	} catch (AL::ALError& e) {
-        Logger::Instance()->WriteMsg("Sensors","Error in getting dcm proxy",Logger::FatalError);
+        Logger::Instance().WriteMsg("Sensors","Error in getting dcm proxy",Logger::FatalError);
 		//cout << "Error in getting dcm proxy" << std::endl;
 	}
    
@@ -52,7 +52,7 @@ void Sensors::UserInit() {
 	initialisation();
 	rtm.start();
 	period = 0;
-    Logger::Instance()->WriteMsg("Sensors","Sensor Controller Initialized",Logger::Info);
+    Logger::Instance().WriteMsg("Sensors","Sensor Controller Initialized",Logger::Info);
 	//cout << "Sensor Controller Initialized" << endl;
 }
 
@@ -283,7 +283,7 @@ void Sensors::initialisation() {
 	devicesInChains["Body"].push_back(std::string("Device/SubDeviceList/RElbowYaw/Position/Sensor/Value"));
 	devicesInChains["Body"].push_back(std::string("Device/SubDeviceList/RElbowRoll/Position/Sensor/Value"));
 
-    Logger::Instance()->WriteMsg("Sensors","Size of devicesInChains[\"Body\"]: "+_toString(devicesInChains["Body"].size()),Logger::Info);
+    Logger::Instance().WriteMsg("Sensors","Size of devicesInChains[\"Body\"]: "+_toString(devicesInChains["Body"].size()),Logger::Info);
 	//cout << "Size of devicesInChains[\"Body\"]: " << devicesInChains["Body"].size() << endl;
 
 	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
@@ -435,7 +435,7 @@ void Sensors::initialisation() {
 }
 
 void Sensors::process_messages() {
-    Logger::Instance()->WriteMsg("Sensors","Sensor process messages",Logger::ExtraInfo);
+    Logger::Instance().WriteMsg("Sensors","Sensor process messages",Logger::ExtraInfo);
 	//cout << "Sensor process messages" << endl;
 	//	MessageBuffer* sub_buf = Subscriber::getBuffer();
 	//	TestMessage* tm = (TestMessage*) sub_buf->remove_head();

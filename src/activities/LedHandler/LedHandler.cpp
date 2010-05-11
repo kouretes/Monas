@@ -53,7 +53,7 @@
       try{
 	  
 	  //cout << "trying to get ALLeds Proxy " << KAlBroker::Instance()->GetBroker() << endl;
-	  leds =  KAlBroker::Instance()->GetBroker()->getProxy("ALLeds");
+	  leds =  KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
 	  cout << "Initialized" << endl;
       }
       catch(AL::ALError& e)

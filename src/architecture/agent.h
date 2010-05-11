@@ -68,7 +68,7 @@ class Agent : public Thread {
             unsigned long ExecInterval = SysCall::_GetCurrentTimeInUSec() - start;
 
             if ( ExecInterval > Freq2Time )
-                Logger::Instance()->WriteMsg(_name, "Decrease Freq!!!", Logger::ExtraInfo );
+                Logger::Instance().WriteMsg(_name, "Decrease Freq!!!", Logger::ExtraInfo );
             else
                 SysCall::_usleep( Freq2Time - ExecInterval );
 
