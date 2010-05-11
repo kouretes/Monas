@@ -8,17 +8,19 @@
 #include "architecture/archConfig.h"
 #include "tools/XMLConfig.h"
 
+#include "tools/singleton.h"
+
 //TODO mutex needed 
 //it's not thread safe but it is instantiated long before any thread creation
 
 
-class Logger { 
+class LoggerClass { 
 
     public:
 
         enum MsgType { FatalError=0 , Error, Info, ExtraInfo, ExtraExtraInfo };
         
-        ~Logger () { ErrorLog.close(); }
+        ~LoggerClass () { ErrorLog.close(); }
 
         template<class T>
         void WriteMsg ( std::string name, const T & msg, MsgType type ) {
@@ -42,15 +44,13 @@ class Logger {
         }
 
 
-        static Logger * Instance () {
-            static Logger L;
+        static LoggerClass * Instance () {
+            static LoggerClass L;
             return &L;
         }
 
 
-    private:
-
-        Logger () {
+        LoggerClass () {
 
             std::string ConfFileStr( ArchConfig::Instance()->GetConfigPrefix()+"logger.xml" );
             XMLConfig ConfFile( ConfFileStr );
@@ -95,6 +95,8 @@ class Logger {
             }
 
         }
+    
+    private:
 
         template< class T>
         void WriteMsgToBuffers ( std::string name, const T& msg ) {
@@ -115,5 +117,7 @@ class Logger {
         bool CerrEnabled;
 
 };
+
+typedef Singleton<LoggerClass> Logger;
 
 #endif // _logger_h_

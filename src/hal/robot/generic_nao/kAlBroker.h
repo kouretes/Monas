@@ -1,13 +1,13 @@
 #ifndef _kalbroker_h_
 #define _kalbroker_h_ 1
 
-//#include <albroker.h>
+#include "tools/singleton.h"
 
 namespace AL {
     class ALBroker;
 }
 
-class KAlBroker {
+class KAlBrokerClass {
 
     public:
 
@@ -15,14 +15,14 @@ class KAlBroker {
         
         AL::ALBroker* GetBroker () const; 
 
-        static KAlBroker* Instance();
-
+        KAlBrokerClass();
+    
     private:
-
-        KAlBroker();
 
         AL::ALBroker* _broker;
 
 };
+
+typedef Singleton<KAlBrokerClass> KAlBroker;
 
 #endif // _kalbroker_h_ 

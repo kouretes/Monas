@@ -3,14 +3,11 @@
 
 #include <string>
 
-class GlobalConf {
+#include "tools/singleton.h"
+
+class GlobalConfClass {
 
     public:
-
-        static GlobalConf * Instance() {
-            static GlobalConf Cfg;
-            return &Cfg;
-        }
 
         // Implicit set of the configuration path!
         // Configuration files expected at the same level as archconf
@@ -22,10 +19,8 @@ class GlobalConf {
             return "/home/nao/naoqi/config/archconf.xml";
         }
 
-    private:
-
-        GlobalConf() {;}
-
 };
+
+typedef Singleton<GlobalConfClass> GlobalConf;
 
 #endif // _config_h_

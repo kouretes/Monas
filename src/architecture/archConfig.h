@@ -9,7 +9,9 @@
 #include "../config/config.h"
 #include "hal/syscall.h"
 
-class ArchConfig {
+#include "tools/singleton.h"
+
+class ArchConfigClass {
 
     public:
         
@@ -20,14 +22,7 @@ class ArchConfig {
         const std::string GetAgentCfgFile () const { return AgentCfgFile; }
 
 
-        static ArchConfig* Instance () {
-            static ArchConfig Ar;
-            return &Ar;
-        }
-
-    private:
-
-        ArchConfig () {
+        ArchConfigClass () {
 
             std::string ConfFilePrefix;
 
@@ -72,6 +67,8 @@ class ArchConfig {
                 ThreadType = "PThread";
 
         }         
+    
+    private:
 
         std::string ConfigPrefix;
 
@@ -79,5 +76,8 @@ class ArchConfig {
         std::string AgentCfgFile;
 
 };
+
+
+typedef Singleton<ArchConfigClass> ArchConfig;
 
 #endif // _archConfig_h_
