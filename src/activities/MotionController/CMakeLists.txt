@@ -6,7 +6,8 @@ include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
 
 set ( ActivityName MotionController )
 
-set ( ActivitySrcs MotionController.cpp ../../messages/motion.pb.cc ) 
+set ( ActivitySrcs  MotionController.cpp 
+) 
 
 include ( ../activTemplate.cmake )
 

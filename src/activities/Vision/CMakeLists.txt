@@ -9,7 +9,6 @@ set ( ActivityName Vision )
 set ( ActivitySrcs  KImageExtractor.cpp 
                     KSegmentator.cpp
                     Vision.cpp
-                    ../../messages/VisionObservations.pb.cc 
 ) 
 
 include ( ../activTemplate.cmake )

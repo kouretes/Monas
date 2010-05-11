@@ -6,7 +6,8 @@ include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
 
 set ( ActivityName LedHandler )
 
-set ( ActivitySrcs LedHandler.cpp ../../messages/Gamecontroller.pb.cc )
+set ( ActivitySrcs LedHandler.cpp 
+)
 
 include ( ../activTemplate.cmake )
 

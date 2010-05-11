@@ -19,7 +19,7 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
 
-
+add_subdirectory ( ./messages/ )
 add_subdirectory ( ./architecture/ )
 
 #TODO comment: must be before target linux

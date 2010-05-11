@@ -5,7 +5,8 @@ endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "
 
 set ( ActivityName HeadAnglePublisher )
 
-set ( ActivitySrcs HeadAnglePublisher.cpp ../../messages/ledMsg.pb.cc )
+set ( ActivitySrcs HeadAnglePublisher.cpp 
+)
 
 include ( ../activTemplate.cmake )
 

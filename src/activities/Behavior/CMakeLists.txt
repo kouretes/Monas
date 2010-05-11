@@ -8,9 +8,8 @@ include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
 
 set ( ActivityName Behavior )
 
-set ( ActivitySrcs Behavior.cpp ../../messages/motion.pb.cc 
-                              ../../messages/VisionObservations.pb.cc 
-                              ../../messages/SensorsMessage.pb.cc )
+set ( ActivitySrcs  Behavior.cpp 
+)
 
 include ( ../activTemplate.cmake )
 

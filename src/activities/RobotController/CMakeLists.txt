@@ -6,7 +6,9 @@ include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
 
 set ( ActivityName RobotController )
 
-set ( ActivitySrcs gamecontroller.cpp robotcontroller.cpp   ../../messages/Gamecontroller.pb.cc) 
+set ( ActivitySrcs  gamecontroller.cpp 
+                    robotcontroller.cpp   
+) 
 
 include ( ../activTemplate.cmake )
 

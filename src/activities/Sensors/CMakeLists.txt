@@ -7,8 +7,7 @@ include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
 set ( ActivityName Sensors)
 
 set ( ActivitySrcs  Sensors.cpp 
-                    ../../messages/SensorsMessage.pb.cc 
-    )
+)
 
 include ( ../activTemplate.cmake )
 
