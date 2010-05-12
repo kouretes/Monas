@@ -22,6 +22,10 @@ class HeadAnglePublisher : public Publisher, public IActivity {
             _com->get_message_queue()->add_publisher(this);
         }
 
+        std::string GetName() {
+            return "HeadAnglePublisher";
+        }
+
 
         
         

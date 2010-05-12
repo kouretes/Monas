@@ -21,6 +21,9 @@ public:
     RobotController(/*AL::ALPtr<AL::ALBroker> pBroker,MessageQueue* mq, const std::string& configuration_file*/);
     int Execute();
     void UserInit();
+    std::string GetName () {
+        return "RobotController";
+    }
 private:
     void sendLedUpdate();
     bool readConfiguration(const std::string& file_name);

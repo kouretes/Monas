@@ -20,6 +20,10 @@ class LedController : public IActivity {
         
         int Execute () ;
 
+        std::string GetName() {
+            return "LedController";
+        }
+
     private:
 
         LedMsg* msg;

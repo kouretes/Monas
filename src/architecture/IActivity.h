@@ -9,6 +9,8 @@
 #include "tools/genFactory.h"
 #include "tools/genRegistrar.h"
 
+#include <string>
+
 class IActivity : public IExecutable {
 
     public:
@@ -16,6 +18,8 @@ class IActivity : public IExecutable {
         void Initialize ( Narukom*, Blackboard* );
 
         virtual void UserInit ()=0;
+
+        virtual std::string GetName ()=0;
 
     protected:
 

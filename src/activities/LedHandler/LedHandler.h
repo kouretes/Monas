@@ -26,6 +26,12 @@ public:
     int Execute();
     void process_messages();
     void UserInit();
+
+    std::string GetName() {
+        return "LedHandler";
+    }
+
+
 private:
     void initializeColorMap();
     int getColor(string);

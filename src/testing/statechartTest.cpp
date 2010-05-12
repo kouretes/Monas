@@ -36,6 +36,9 @@ class Print: public IActivity {
             return 0;
         }
         void UserInit () { }
+        string GetName() {
+            return "Print";
+        }
     private:
         string str;
 };

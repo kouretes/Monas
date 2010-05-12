@@ -10,6 +10,8 @@ class AgentConfig {
         int Priority;
 
         int ThreadFrequency; 
+
+        int StatsCycle;
 };
 
 #endif //_agentconfig_h_

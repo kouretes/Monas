@@ -63,6 +63,7 @@ Talws::Talws () {
         tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
         tcfg.Priority = it->attrb["Priority"];
         tcfg.ThreadFrequency = it->attrb["ThreadFrequency"];
+        tcfg.StatsCycle = it->attrb["StatsCycle"];
 
         Agent *a = new Agent(AgentName,tcfg,&com,activities);
 
@@ -70,7 +71,8 @@ Talws::Talws () {
 
         std::ostringstream AgentInfo;
         AgentInfo<<AgentName<<" Attrb: IsRealTime="<<tcfg.IsRealTime<<" Priority="<<tcfg.Priority
-            <<" ThreadFrequency="<<tcfg.ThreadFrequency<<std::endl;
+            <<" ThreadFrequency="<<tcfg.ThreadFrequency
+            <<" StatsCycle="<<tcfg.StatsCycle<<std::endl;
         Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
 
 

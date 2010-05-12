@@ -6,8 +6,8 @@ namespace {
 
 
 int MyActivity::Execute () { 
-    std::cout<<"Updating myActivity"<<std::endl; 
-    usleep(200000);
+    //std::cout<<"Updating myActivity"<<std::endl; 
+    usleep(2000);
 }
 
 

@@ -12,6 +12,12 @@ class MyActivity : public IActivity {//, public MyRep {
 
             std::cout<<"MyActivity: Initializing"<<std::endl;
         }
+
+        std::string GetName () {
+            return "MyActivity";
+        }
+
+      
         
         
         int Execute () ;

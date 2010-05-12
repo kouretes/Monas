@@ -31,6 +31,10 @@ class Behavior: public IActivity, public Publisher {
 		void UserInit();
 		void read_messages();
 
+        std::string GetName() {
+            return "Behavior";
+        }
+
 	private:
 		AL::ALPtr<AL::ALMotionProxy> motion;
 		AL::ALPtr<AL::ALMemoryProxy> memory;

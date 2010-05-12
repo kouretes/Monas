@@ -30,6 +30,10 @@ public:
 
     void UserInit();
 
+    std::string GetName() {
+        return "MotionController";
+    }
+
 
 private:
 

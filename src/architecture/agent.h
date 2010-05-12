@@ -15,6 +15,7 @@
 #include "hal/threadable.h"
 #include "hal/syscall.h"
 #include "tools/agentTiming.h"
+#include "tools/toString.h"
 
 
 class Agent : public Thread {
@@ -25,7 +26,8 @@ class Agent : public Thread {
             _name(name),
             _cfg(cfg),
             _com(com),
-            _blk(name) {
+            _blk(name),
+            _executions(0) {
 
             for ( ActivityNameList::const_iterator it = activities.begin();
                     it != activities.end(); it++ ) 
@@ -40,10 +42,8 @@ class Agent : public Thread {
         }
 
         virtual ~Agent () {
-            std::cout<<"AgentTimings: Avg \t\t\t Var"<<std::endl; //TODO
-            std::cout<<"Agent       : "<<agentStats.GetAgentAvgExecTime()<<"\t\t "<<
-                agentStats.GetAgentVarExecTime()<<std::endl; //TODO
-
+           PrintStatistics(); 
+            
             //for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); ++it ) 
             //  std::cout<<(*it)->GetName()<<"\t"<<agentStats.GetActivityAvgExecTime(*it)<<
             //      "\t\t"<<agentStats.GetActivityVarExecTime(*it)<<std::endl;
@@ -52,6 +52,8 @@ class Agent : public Thread {
         }
 
         int Execute () {
+
+            _executions++;
             
             unsigned long start = SysCall::_GetCurrentTimeInUSec();
             
@@ -72,6 +74,10 @@ class Agent : public Thread {
             else
                 SysCall::_usleep( Freq2Time - ExecInterval );
 
+            if ( ! (_executions % _cfg.StatsCycle) ){
+                PrintStatistics();
+            }
+
             return 0;
         }
 
@@ -79,6 +85,18 @@ class Agent : public Thread {
 
 
     private:
+
+        void PrintStatistics() {
+            std::string StatMessage( "Avg: "+_toString(agentStats.GetAgentAvgExecTime())
+                    +" Var: "+_toString(agentStats.GetAgentVarExecTime())+"\n"  );
+            for ( ActivList::const_iterator it = _activities.begin();
+                    it != _activities.end(); it++ ) {
+                StatMessage += "Activity: " + (*it)->GetName() ;
+                StatMessage += " Avg: " + _toString( agentStats.GetActivityAvgExecTime( (*it) ));
+                StatMessage += " Var: " + _toString( agentStats.GetActivityVarExecTime( (*it) ))+ "\n";
+            }
+            Logger::Instance().WriteMsg( _name, StatMessage, Logger::Info );
+        }
 
         std::string _name;
 
@@ -94,6 +112,8 @@ class Agent : public Thread {
         AgentTiming agentStats;
 
         double Freq2Time;
+
+        unsigned int _executions;
 
 };
 

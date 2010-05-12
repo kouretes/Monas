@@ -34,6 +34,9 @@ class Sensors : public IActivity, public Publisher/*, public Subscriber*/{
 		int Execute();
 		void process_messages();
         void UserInit();
+        std::string GetName() {
+            return "Sensors";
+        }
 		~Sensors() {
 			;
 

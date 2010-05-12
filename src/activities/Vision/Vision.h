@@ -34,6 +34,9 @@ public:
     void UserInit();
     void testrun();
     int Execute();
+    std::string GetName() {
+        return "Vision";
+    }
 
 
 private:
