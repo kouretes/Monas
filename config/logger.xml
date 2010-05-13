@@ -8,6 +8,7 @@
 <!-- MessageLogCerr set to '1' will print logger messages -->
 <!-- to standard error, '0' will not -->
 <MessageLogCerr>1</MessageLogCerr>
+<MessageLogCerrColor>1</MessageLogCerrColor>
 
 <!-- Activities that will reach the LogFile -->
 <!-- FatalError and Error directives can't be blocked -->

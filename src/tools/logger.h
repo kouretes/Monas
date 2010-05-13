@@ -31,22 +31,23 @@ class LoggerClass {
             switch (type) {
                 case FatalError: 
                 case Error:      
-                    WriteMsgToBuffers ( name, msg );
+                    WriteMsgToBuffers ( name, msg, "red" );
                     break;
-                case Info:
+
+                case Info:                    
                 case ExtraInfo:
+                    if ( ! ActivityFilterEnabled )
+                        WriteMsgToBuffers ( name, msg, "default" );
+                    else if ( ActivityFilter.find(name) != ActivityFilter.end() )
+                        WriteMsgToBuffers ( name, msg, "default" );
+                    break;
+
                 case ExtraExtraInfo: 
                     if ( ! ActivityFilterEnabled )
-                        WriteMsgToBuffers ( name, msg );
+                        WriteMsgToBuffers ( name, msg, "blue" );
                     else if ( ActivityFilter.find(name) != ActivityFilter.end() )
-                        WriteMsgToBuffers ( name, msg );
+                        WriteMsgToBuffers ( name, msg, "blue" );
             }
-        }
-
-
-        static LoggerClass * Instance () {
-            static LoggerClass L;
-            return &L;
         }
 
 
@@ -88,22 +89,37 @@ class LoggerClass {
                 }
             }
 
+            if ( ! ConfFile.QueryElement( "MessageLogCerrColor", ColorEnabled) )
+                ColorEnabled = false;
+
+
             ErrorLog.open( MsgLogFile.c_str() );
             if ( ! ErrorLog.is_open() ) {
                 std::cerr<<"Can't open MessageLog file: "<<MsgLogFile<<std::endl;
                 SysCall::_exit(1);
             }
 
+            ColorMap["red"]     = "\033[1;31m";
+            ColorMap["blue"]    = "\033[1;34m";
+            ColorMap["lBlue"]   = "\033[21;34m";
+            ColorMap["green"]   = "\033[1;32m";
+            ColorMap["default"] = "\033[0m";
+
         }
     
     private:
 
         template< class T>
-        void WriteMsgToBuffers ( std::string name, const T& msg ) {
+        void WriteMsgToBuffers ( std::string name, const T& msg, std::string color ) {
                 ErrorLog<<name<<" : "<<msg<<std::endl;
-                if ( CerrEnabled )
-                    std::cerr<<name<<" : "<<msg<<std::endl;
+                if ( CerrEnabled ) { 
+                    if ( ColorEnabled ) 
+                        std::cerr<<ColorMap[color]<<name<<" : "<<msg<<ColorMap["default"]<<std::endl;
+                    else
+                        std::cerr<<name<<" : "<<msg<<std::endl;
+                }
         }
+
 
 
         int VerbosityLevel;
@@ -115,6 +131,10 @@ class LoggerClass {
         bool ActivityFilterEnabled;
 
         bool CerrEnabled;
+
+        bool ColorEnabled;
+
+        std::map<std::string,std::string> ColorMap;
 
 };
 
