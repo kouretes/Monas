@@ -9,34 +9,31 @@
 #include <string>
 
 #include "architecture/IActivity.h"
-
+#include "almotionproxy.h"
 #include "almemoryproxy.h"
 #include "alptr.h"
 #include "alxplatform.h"
 #include <albroker.h>
 #include <alproxy.h>
 
-
 #include <rttime.h>
 #include "dcmproxy.h"
 
-
-#define NUMBER_OF_SENSORS 42//TODO Please check the number devices
+#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
 // Use DCM proxy
 
 //#define USE_POINTERS
 
 
-
-class Sensors : public IActivity, public Publisher/*, public Subscriber*/{
+class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
 	public:
 		Sensors();
 		int Execute();
 		void process_messages();
-        void UserInit();
-        std::string GetName() {
-            return "Sensors";
-        }
+		void UserInit();
+		std::string GetName() {
+			return "Sensors";
+		}
 		~Sensors() {
 			;
 
@@ -59,10 +56,11 @@ class Sensors : public IActivity, public Publisher/*, public Subscriber*/{
 		UltaSoundSensorsMessage USSM;
 		HeadJointSensorsMessage HJSM;
 		BodyJointSensorsMessage BJSM;
+		RobotPositionSensorMessage RPSM;
 
 	private:
-        AL::ALPtr<AL::DCMProxy> dcm;
-
+		AL::ALPtr<AL::DCMProxy> dcm;
+		AL::ALPtr<AL::ALMotionProxy> motion;
 		AL::ALPtr<AL::ALMemoryProxy> memory;
 
 		void initialisation();

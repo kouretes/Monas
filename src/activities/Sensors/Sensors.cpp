@@ -7,134 +7,133 @@
 
 using namespace AL;
 using namespace std;
+#define MODULO 2
 
 namespace {
-    ActivityRegistrar<Sensors>::Type temp("Sensors");
+	ActivityRegistrar<Sensors>::Type temp("Sensors");
 }
 
 Sensors::Sensors() :
-	 Publisher("Sensors")//,Subscriber("SensorsController")
-{;}
+	Publisher("Sensors")//,Subscriber("SensorsController")
+{
+	;
+}
 
 void Sensors::UserInit() {
-
-
-    Logger::Instance().WriteMsg("Sensors","Sensors UserInit",Logger::Info);
-    //cout<<"Sensors UserInit"<<endl;
+	Logger::Instance().WriteMsg("Sensors", "Sensors UserInit", Logger::Info);
 
 	try {
 		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
 		//dcm = new AL::DCMProxy(KAlBroker::Instance()->GetBroker());
 		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
 	} catch (AL::ALError& e) {
-        Logger::Instance().WriteMsg("Sensors","Error in getting dcm proxy",Logger::FatalError);
+		Logger::Instance().WriteMsg("Sensors", "Error in getting dcm proxy", Logger::FatalError);
 		//cout << "Error in getting dcm proxy" << std::endl;
 	}
-   
-    _com->get_message_queue()->add_publisher(this);
-    
+	try {
+		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
+	} catch (AL::ALError& e) {
+		Logger::Instance().WriteMsg("Sensors", "Error in getting motion proxy", Logger::FatalError);
+		//cout << "Error in getting motion proxy" << std::endl;
+	}
+
+	_com->get_message_queue()->add_publisher(this);
 
 	//Starting US Sensors
-//	ALValue commands;
-//
-//	commands.arraySetSize(3);
-//	commands[0] = string("Device/SubDeviceList/US/Actuator/Value");
-//	commands[1] = string("Merge");
-//	commands[2].arraySetSize(1);
-//	commands[2][0].arraySetSize(2);
-//	commands[2][0][0] = 68.0;
-//	commands[2][0][1] = dcm->getTime(10);
-//
-//
-//	dcm->set(commands);
-    
+	ALValue commands;
+
+	commands.arraySetSize(3);
+	commands[0] = string("Device/SubDeviceList/US/Actuator/Value");
+	commands[1] = string("Merge");
+	commands[2].arraySetSize(1);
+	commands[2][0].arraySetSize(2);
+	commands[2][0][0] = 68.0;
+	commands[2][0][1] = dcm->getTime(10);
+
+	dcm->set(commands);
 
 	initialisation();
 	rtm.start();
 	period = 0;
-    Logger::Instance().WriteMsg("Sensors","Sensor Controller Initialized",Logger::Info);
+	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 	//cout << "Sensor Controller Initialized" << endl;
 }
 
 int Sensors::Execute() {
-//	cout << "REading VAlues" << endl;
 
 	unsigned int counter = 0;
 	Values["Head"] = memory->getListData(devicesInChains["Head"]);
-//	Values["LeftLeg"] = memory->getListData(devicesInChains["LeftLeg"]);
-//	Values["RightLeg"] = memory->getListData(devicesInChains["RightLeg"]);
+	Values["LeftLeg"] = memory->getListData(devicesInChains["LeftLeg"]);
+	Values["RightLeg"] = memory->getListData(devicesInChains["RightLeg"]);
 	rtm.stop();
-//	if (period % 5 == 0) {
-//		Values["Inertial"] = memory->getListData(devicesInChains["Inertial"]);
-//		Values["FSR"] = memory->getListData(devicesInChains["FSR"]);
-//		Values["USoundLeft"] = memory->getListData(devicesInChains["USoundLeft"]);
-//		Values["USoundRight"] = memory->getListData(devicesInChains["USoundRight"]);
-//	}
-//	Values["RightArm"] = memory->getListData(devicesInChains["RightArm"]);
-//	Values["LeftArm"] = memory->getListData(devicesInChains["LeftArm"]);
+	if (period % MODULO == 0) {
+		Values["Inertial"] = memory->getListData(devicesInChains["Inertial"]);
+		Values["FSR"] = memory->getListData(devicesInChains["FSR"]);
+		Values["USoundLeft"] = memory->getListData(devicesInChains["USoundLeft"]);
+		Values["USoundRight"] = memory->getListData(devicesInChains["USoundRight"]);
+		Values["RobotPosition"] = motion->getRobotPosition(true);
+	}
+	Values["RightArm"] = memory->getListData(devicesInChains["RightArm"]);
+	Values["LeftArm"] = memory->getListData(devicesInChains["LeftArm"]);
 
 	timediff = rtm.diffNs();
 	rtm.start();
-	for (unsigned int i = 0; i < devicesInChains["Head"].size(); i++) {
-		//Values["Head"][i] = *(SensorDataPtr["Head"][i]);
+	for (unsigned int i = 0; i < devicesInChains["Head"].size(); i++) { //Values["Head"][i] = *(SensorDataPtr["Head"][i]);
 		HJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Head"][i]);
 		HJSM.mutable_sensordata(i)->set_sensorvalue(Values["Head"][i]);
-	//	cout << " VAlue " << Values["Head"][i] << "Message data " << HJSM.sensordata(i).sensorvalue() << endl;
-
-		devicesValues[counter] = Values["Head"][i];
-
 		HJSM.mutable_sensordata(i)->set_sensorvaluediff(Values["Head"][i] - devicesValues[counter]);
 		HJSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+		devicesValues[counter] = Values["Head"][i];
 		counter++;
 	}
 
 	unsigned int j = 0;
 
-//	for (unsigned int i = 0; i < devicesInChains["LeftArm"].size(); i++) {
-//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftArm"][i]);
-//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftArm"][i]);
-//
-//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftArm"][i] - devicesValues[counter]);
-//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-//		devicesValues[counter] = Values["LeftArm"][i];
-//		counter++;
-//		j++;
-//	}
-//
-//	for (unsigned int i = 0; i < devicesInChains["LeftLeg"].size(); i++) {
-//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftLeg"][i]);
-//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftLeg"][i]);
-//
-//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftLeg"][i] - devicesValues[counter]);
-//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-//		devicesValues[counter] = Values["LeftLeg"][i];
-//		counter++;
-//		j++;
-//	}
-//
-//	for (unsigned int i = 0; i < devicesInChains["RightLeg"].size(); i++) {
-//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightLeg"][i]);
-//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightLeg"][i]);
-//
-//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightLeg"][i] - devicesValues[counter]);
-//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-//		devicesValues[counter] = Values["RightLeg"][i];
-//		counter++;
-//		j++;
-//	}
-//
-//	for (unsigned int i = 0; i < devicesInChains["RightArm"].size(); i++) {
-//		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightArm"][i]);
-//		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightArm"][i]);
-//
-//		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightArm"][i] - devicesValues[counter]);
-//		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
-//		devicesValues[counter] = Values["RightArm"][i];
-//		counter++;
-//		j++;
-//	}
+	for (unsigned int i = 0; i < devicesInChains["LeftArm"].size(); i++) {
+		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftArm"][i]);
+		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftArm"][i]);
+
+		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftArm"][i] - devicesValues[counter]);
+		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+		devicesValues[counter] = Values["LeftArm"][i];
+		counter++;
+		j++;
+	}
+
+	for (unsigned int i = 0; i < devicesInChains["LeftLeg"].size(); i++) {
+		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftLeg"][i]);
+		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftLeg"][i]);
+
+		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftLeg"][i] - devicesValues[counter]);
+		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+		devicesValues[counter] = Values["LeftLeg"][i];
+		counter++;
+		j++;
+	}
+
+	for (unsigned int i = 0; i < devicesInChains["RightLeg"].size(); i++) {
+		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightLeg"][i]);
+		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightLeg"][i]);
+
+		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightLeg"][i] - devicesValues[counter]);
+		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+		devicesValues[counter] = Values["RightLeg"][i];
+		counter++;
+		j++;
+	}
+
+	for (unsigned int i = 0; i < devicesInChains["RightArm"].size(); i++) {
+		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightArm"][i]);
+		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightArm"][i]);
+
+		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightArm"][i] - devicesValues[counter]);
+		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
+		devicesValues[counter] = Values["RightArm"][i];
+		counter++;
+		j++;
+	}
 	publish(&HJSM);
-	//publish(&BJSM);
+	publish(&BJSM);
 	//	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
 	//		BJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Body"][i]);
 	//		BJSM.mutable_sensordata(i)->set_sensorvalue(Values[i]);
@@ -149,66 +148,66 @@ int Sensors::Execute() {
 	//	Values = memory->getListData(devicesInChains["Inertial"]);
 	//
 
-//	if (period % 5 == 0) {
-//		for (unsigned int i = 0; i < devicesInChains["Inertial"].size(); i++) {
-//			ISM.mutable_sensordata(i)->set_sensorname(devicesNames["Inertial"][i]);
-//			ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
-//			//TODO ADD VALUEDIFF, TIMEDIFF
-//
-//			ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - devicesValues[counter]);
-//			ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
-//			devicesValues[counter] = Values["Inertial"][i];
-//			counter++;
-//		}
-//
-//		for (unsigned int i = 0; i < devicesInChains["FSR"].size(); i++) {
-//			FSM.mutable_sensordata(i)->set_sensorname(devicesNames["FSR"][i]);
-//			FSM.mutable_sensordata(i)->set_sensorvalue(Values["FSR"][i]);
-//			//TODO ADD VALUEDIFF, TIMEDIFF
-//
-//			FSM.mutable_sensordata(i)->set_sensorvaluediff(Values["FSR"][i] - devicesValues[counter]);
-//			FSM.mutable_sensordata(i)->set_sensortimediff(timediff);
-//			devicesValues[counter] = Values["FSR"][i];
-//			counter++;
-//		}
-//
-//		for (unsigned int i = 0; i < devicesInChains["USoundLeft"].size(); i++) {
-//			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundLeft"][i]);
-//			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundLeft"][i]);
-//			//TODO ADD VALUEDIFF, TIMEDIFF
-//
-//			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundLeft"][i] - devicesValues[counter]);
-//			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
-//			devicesValues[counter] = Values["USoundLeft"][i];
-//			counter++;
-//		}
-//
-//		for (unsigned int i = 0; i < devicesInChains["USoundRight"].size(); i++) {
-//			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundRight"][i]);
-//			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundRight"][i]);
-//			//TODO ADD VALUEDIFF, TIMEDIFF
-//
-//			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundRight"][i] - devicesValues[counter]);
-//			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
-//			devicesValues[counter] = Values["USoundRight"][i];
-//			counter++;
-//		}
-//		publish(&ISM);
-//		publish(&FSM);
-//		publish(&USSM);
-//		period =0;
-//	}
+	if (period % MODULO == 0) {
+		for (unsigned int i = 0; i < devicesInChains["Inertial"].size(); i++) {
+			ISM.mutable_sensordata(i)->set_sensorname(devicesNames["Inertial"][i]);
+			ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
+			ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - devicesValues[counter]);
+			ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
+			devicesValues[counter] = Values["Inertial"][i];
+			counter++;
+		}
 
+		for (unsigned int i = 0; i < devicesInChains["FSR"].size(); i++) {
+			FSM.mutable_sensordata(i)->set_sensorname(devicesNames["FSR"][i]);
+			FSM.mutable_sensordata(i)->set_sensorvalue(Values["FSR"][i]);
+			FSM.mutable_sensordata(i)->set_sensorvaluediff(Values["FSR"][i] - devicesValues[counter]);
+			FSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+			devicesValues[counter] = Values["FSR"][i];
+			counter++;
+		}
 
-	//period++;
+		for (unsigned int i = 0; i < devicesInChains["USoundLeft"].size(); i++) {
+			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundLeft"][i]);
+			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundLeft"][i]);
+			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundLeft"][i] - devicesValues[counter]);
+			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+			devicesValues[counter] = Values["USoundLeft"][i];
+			counter++;
+		}
+
+		for (unsigned int i = 0; i < devicesInChains["USoundRight"].size(); i++) {
+			USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundRight"][i]);
+			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundRight"][i]);
+			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundRight"][i] - devicesValues[counter]);
+			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+			devicesValues[counter] = Values["USoundRight"][i];
+			counter++;
+		}
+		publish(&ISM);
+		publish(&FSM);
+		publish(&USSM);
+
+		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
+		for (unsigned int i = 0; i < Values["RobotPosition"].size(); i++) {
+			RPSM.mutable_sensordata(i)->set_sensorname(devicesNames["RobotPosition"][i]);
+			RPSM.mutable_sensordata(i)->set_sensorvalue(Values["RobotPosition"][i]);
+			RPSM.mutable_sensordata(i)->set_sensorvaluediff(Values["RobotPosition"][i] - devicesValues[counter]);
+			RPSM.mutable_sensordata(i)->set_sensortimediff(timediff);
+			devicesValues[counter] = Values["RobotPosition"][i];
+			counter++;
+		}
+
+		publish(&RPSM);
+		period = 0;
+	}
+
+	period++;
 
 	//cout << "Sended Values" << endl;
-	//SleepMs(150);
-
 	//cout << "Sensors: Counter " << counter << endl;
-	//boost::thread::yield();
-    //
-    return 0;
+
+	return 0;
 
 }
 
@@ -227,6 +226,17 @@ void Sensors::initialisation() {
 
 	USSM.set_topic("sensors"); //UltaSoundSensorsMessage
 	USSM.set_timeout(250);
+
+	RPSM.set_topic("sensors"); //RobotPositionMessage
+	RPSM.set_timeout(250);
+
+	RPSM.add_sensordata(); //X
+	RPSM.add_sensordata(); //Y
+	RPSM.add_sensordata(); //Angle
+
+	devicesNames["RobotPosition"].push_back(std::string("X"));
+	devicesNames["RobotPosition"].push_back(std::string("Y"));
+	devicesNames["RobotPosition"].push_back(std::string("Angle"));
 
 	devicesInChains["Head"].push_back(std::string("Device/SubDeviceList/HeadYaw/Position/Sensor/Value"));
 	devicesInChains["Head"].push_back(std::string("Device/SubDeviceList/HeadPitch/Position/Sensor/Value"));
@@ -283,7 +293,7 @@ void Sensors::initialisation() {
 	devicesInChains["Body"].push_back(std::string("Device/SubDeviceList/RElbowYaw/Position/Sensor/Value"));
 	devicesInChains["Body"].push_back(std::string("Device/SubDeviceList/RElbowRoll/Position/Sensor/Value"));
 
-    Logger::Instance().WriteMsg("Sensors","Size of devicesInChains[\"Body\"]: "+_toString(devicesInChains["Body"].size()),Logger::Info);
+	Logger::Instance().WriteMsg("Sensors", "Size of devicesInChains[\"Body\"]: " + _toString(devicesInChains["Body"].size()), Logger::Info);
 	//cout << "Size of devicesInChains[\"Body\"]: " << devicesInChains["Body"].size() << endl;
 
 	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
@@ -313,8 +323,6 @@ void Sensors::initialisation() {
 	for (unsigned int i = 0; i < devicesInChains["FSR"].size(); i++)
 		FSM.add_sensordata();
 
-	//UltaSoundSensorsMessage USSM;
-
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value"));
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value1"));
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value2"));
@@ -343,8 +351,6 @@ void Sensors::initialisation() {
 		USSM.add_sensordata();
 
 	///SMALL STRING NAMES
-
-
 	devicesNames["Head"].push_back(std::string("HeadYaw"));
 	devicesNames["Head"].push_back(std::string("HeadPitch"));
 	devicesNames["LeftArm"].push_back(std::string("LShoulderPitch"));
@@ -428,14 +434,12 @@ void Sensors::initialisation() {
 	devicesNames["USoundRight"].push_back(std::string("USoundRight8"));
 	devicesNames["USoundRight"].push_back(std::string("USoundRight9"));
 
-	//sleep(1);
-
 	memset(devicesValues, 0, sizeof devicesValues);
 
 }
 
 void Sensors::process_messages() {
-    Logger::Instance().WriteMsg("Sensors","Sensor process messages",Logger::ExtraInfo);
+	Logger::Instance().WriteMsg("Sensors", "Sensor process messages", Logger::ExtraInfo);
 	//cout << "Sensor process messages" << endl;
 	//	MessageBuffer* sub_buf = Subscriber::getBuffer();
 	//	TestMessage* tm = (TestMessage*) sub_buf->remove_head();
