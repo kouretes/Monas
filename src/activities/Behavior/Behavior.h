@@ -39,7 +39,9 @@ class Behavior: public IActivity, public Publisher {
 		AL::ALPtr<AL::ALMotionProxy> motion;
 		AL::ALPtr<AL::ALMemoryProxy> memory;
 		short ballfound;
-		MotionMessage* mot;
+		MotionWalkMessage* wmot;
+		MotionHeadMessage* hmot;
+		MotionActionMessage* amot;
 
 		int pitchdirection;
 		int yawdirection;

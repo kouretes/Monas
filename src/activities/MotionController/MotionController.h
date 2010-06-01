@@ -7,6 +7,7 @@
 
 
 #include "messages/motion.pb.h"
+#include "messages/SensorsMessage.pb.h"
 
 #include "alptr.h"
 #include "alvalue.h"
@@ -38,13 +39,13 @@ public:
 private:
 
 	AL::ALPtr<AL::ALMotionProxy> motion;
-	AL::ALPtr<AL::ALMemoryProxy> memory;
-
-	float *AccZ;
 
 	bool robotDown;
 	bool robotUp;
+	SensorPair AccZ;
+	SensorPair AccX;
 	float AccZvalue;
+	float AccXvalue;
 
 	int counter;
 
@@ -58,12 +59,19 @@ private:
 	
 	AL::ALValue names, values;
 
-	MessageBuffer* sub_buffer;
-	MotionMessage* mm;
+	MotionWalkMessage* wm;
+	MotionHeadMessage* hm;
+	MotionActionMessage* am;
+	InertialSensorsMessage* im;
 
 	void commands();
 	void mglrun();
-	void process_messages();
+	void read_messages();
+	
+	void stopWalkCommand();
+	void killWalkCommand();
+	void killHeadCommand();
+	void killActionCommand();
 
 	void ALstandUp();
 	void ALstandUpCross();
