@@ -132,20 +132,20 @@ void protobuf_AddDesc_motion_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\014motion.proto\"\247\001\n\021MotionWalkMessage\022\027\n\004"
+    "\n\014motion.proto\"\251\001\n\021MotionWalkMessage\022\027\n\004"
     "host\030\001 \002(\t:\tlocalhost\022\023\n\tpublisher\030\002 \002(\t"
-    ":\000\022\025\n\005topic\030\003 \002(\t:\006global\022\022\n\007timeout\030\004 \002"
-    "(\005:\0010\022\023\n\ttimestamp\030\005 \002(\t:\000\022\021\n\007command\030\006 "
-    "\002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\247\001\n\021MotionHeadM"
-    "essage\022\027\n\004host\030\001 \002(\t:\tlocalhost\022\023\n\tpubli"
-    "sher\030\002 \002(\t:\000\022\025\n\005topic\030\003 \002(\t:\006global\022\022\n\007t"
-    "imeout\030\004 \002(\005:\0010\022\023\n\ttimestamp\030\005 \002(\t:\000\022\021\n\007"
-    "command\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\251\001\n\023M"
-    "otionActionMessage\022\027\n\004host\030\001 \002(\t:\tlocalh"
-    "ost\022\023\n\tpublisher\030\002 \002(\t:\000\022\025\n\005topic\030\003 \002(\t:"
-    "\006global\022\022\n\007timeout\030\004 \002(\005:\0010\022\023\n\ttimestamp"
-    "\030\005 \002(\t:\000\022\021\n\007command\030\006 \002(\t:\000\022\021\n\tparameter"
-    "\030\007 \003(\002", 526);
+    ":\000\022\025\n\005topic\030\003 \002(\t:\006global\022\024\n\007timeout\030\004 \002"
+    "(\005:\003100\022\023\n\ttimestamp\030\005 \002(\t:\000\022\021\n\007command\030"
+    "\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\251\001\n\021MotionHea"
+    "dMessage\022\027\n\004host\030\001 \002(\t:\tlocalhost\022\023\n\tpub"
+    "lisher\030\002 \002(\t:\000\022\025\n\005topic\030\003 \002(\t:\006global\022\024\n"
+    "\007timeout\030\004 \002(\005:\003100\022\023\n\ttimestamp\030\005 \002(\t:\000"
+    "\022\021\n\007command\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\253"
+    "\001\n\023MotionActionMessage\022\027\n\004host\030\001 \002(\t:\tlo"
+    "calhost\022\023\n\tpublisher\030\002 \002(\t:\000\022\025\n\005topic\030\003 "
+    "\002(\t:\006global\022\024\n\007timeout\030\004 \002(\005:\003100\022\023\n\ttim"
+    "estamp\030\005 \002(\t:\000\022\021\n\007command\030\006 \002(\t:\000\022\021\n\tpar"
+    "ameter\030\007 \003(\002", 532);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "motion.proto", &protobuf_RegisterTypes);
   MotionWalkMessage::default_instance_ = new MotionWalkMessage();
@@ -201,7 +201,7 @@ void MotionWalkMessage::SharedCtor() {
   host_ = const_cast< ::std::string*>(&_default_host_);
   publisher_ = const_cast< ::std::string*>(&_default_publisher_);
   topic_ = const_cast< ::std::string*>(&_default_topic_);
-  timeout_ = 0;
+  timeout_ = 100;
   timestamp_ = const_cast< ::std::string*>(&_default_timestamp_);
   command_ = const_cast< ::std::string*>(&_default_command_);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -268,7 +268,7 @@ void MotionWalkMessage::Clear() {
         topic_->assign(_default_topic_);
       }
     }
-    timeout_ = 0;
+    timeout_ = 100;
     if (_has_bit(4)) {
       if (timestamp_ != &_default_timestamp_) {
         timestamp_->clear();
@@ -341,7 +341,7 @@ bool MotionWalkMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 timeout = 4 [default = 0];
+      // required int32 timeout = 4 [default = 100];
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -458,7 +458,7 @@ void MotionWalkMessage::SerializeWithCachedSizes(
       3, this->topic(), output);
   }
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   if (_has_bit(3)) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->timeout(), output);
   }
@@ -525,7 +525,7 @@ void MotionWalkMessage::SerializeWithCachedSizes(
         3, this->topic(), target);
   }
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   if (_has_bit(3)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->timeout(), target);
   }
@@ -588,7 +588,7 @@ int MotionWalkMessage::ByteSize() const {
           this->topic());
     }
     
-    // required int32 timeout = 4 [default = 0];
+    // required int32 timeout = 4 [default = 100];
     if (has_timeout()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -744,7 +744,7 @@ void MotionHeadMessage::SharedCtor() {
   host_ = const_cast< ::std::string*>(&_default_host_);
   publisher_ = const_cast< ::std::string*>(&_default_publisher_);
   topic_ = const_cast< ::std::string*>(&_default_topic_);
-  timeout_ = 0;
+  timeout_ = 100;
   timestamp_ = const_cast< ::std::string*>(&_default_timestamp_);
   command_ = const_cast< ::std::string*>(&_default_command_);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -811,7 +811,7 @@ void MotionHeadMessage::Clear() {
         topic_->assign(_default_topic_);
       }
     }
-    timeout_ = 0;
+    timeout_ = 100;
     if (_has_bit(4)) {
       if (timestamp_ != &_default_timestamp_) {
         timestamp_->clear();
@@ -884,7 +884,7 @@ bool MotionHeadMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 timeout = 4 [default = 0];
+      // required int32 timeout = 4 [default = 100];
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -1001,7 +1001,7 @@ void MotionHeadMessage::SerializeWithCachedSizes(
       3, this->topic(), output);
   }
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   if (_has_bit(3)) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->timeout(), output);
   }
@@ -1068,7 +1068,7 @@ void MotionHeadMessage::SerializeWithCachedSizes(
         3, this->topic(), target);
   }
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   if (_has_bit(3)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->timeout(), target);
   }
@@ -1131,7 +1131,7 @@ int MotionHeadMessage::ByteSize() const {
           this->topic());
     }
     
-    // required int32 timeout = 4 [default = 0];
+    // required int32 timeout = 4 [default = 100];
     if (has_timeout()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -1287,7 +1287,7 @@ void MotionActionMessage::SharedCtor() {
   host_ = const_cast< ::std::string*>(&_default_host_);
   publisher_ = const_cast< ::std::string*>(&_default_publisher_);
   topic_ = const_cast< ::std::string*>(&_default_topic_);
-  timeout_ = 0;
+  timeout_ = 100;
   timestamp_ = const_cast< ::std::string*>(&_default_timestamp_);
   command_ = const_cast< ::std::string*>(&_default_command_);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1354,7 +1354,7 @@ void MotionActionMessage::Clear() {
         topic_->assign(_default_topic_);
       }
     }
-    timeout_ = 0;
+    timeout_ = 100;
     if (_has_bit(4)) {
       if (timestamp_ != &_default_timestamp_) {
         timestamp_->clear();
@@ -1427,7 +1427,7 @@ bool MotionActionMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 timeout = 4 [default = 0];
+      // required int32 timeout = 4 [default = 100];
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -1544,7 +1544,7 @@ void MotionActionMessage::SerializeWithCachedSizes(
       3, this->topic(), output);
   }
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   if (_has_bit(3)) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->timeout(), output);
   }
@@ -1611,7 +1611,7 @@ void MotionActionMessage::SerializeWithCachedSizes(
         3, this->topic(), target);
   }
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   if (_has_bit(3)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->timeout(), target);
   }
@@ -1674,7 +1674,7 @@ int MotionActionMessage::ByteSize() const {
           this->topic());
     }
     
-    // required int32 timeout = 4 [default = 0];
+    // required int32 timeout = 4 [default = 100];
     if (has_timeout()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(

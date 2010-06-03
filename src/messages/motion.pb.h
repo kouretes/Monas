@@ -120,7 +120,7 @@ class MotionWalkMessage : public ::google::protobuf::Message {
   inline void set_topic(const char* value, size_t size);
   inline ::std::string* mutable_topic();
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   inline bool has_timeout() const;
   inline void clear_timeout();
   static const int kTimeoutFieldNumber = 4;
@@ -282,7 +282,7 @@ class MotionHeadMessage : public ::google::protobuf::Message {
   inline void set_topic(const char* value, size_t size);
   inline ::std::string* mutable_topic();
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   inline bool has_timeout() const;
   inline void clear_timeout();
   static const int kTimeoutFieldNumber = 4;
@@ -444,7 +444,7 @@ class MotionActionMessage : public ::google::protobuf::Message {
   inline void set_topic(const char* value, size_t size);
   inline ::std::string* mutable_topic();
   
-  // required int32 timeout = 4 [default = 0];
+  // required int32 timeout = 4 [default = 100];
   inline bool has_timeout() const;
   inline void clear_timeout();
   static const int kTimeoutFieldNumber = 4;
@@ -653,12 +653,12 @@ inline ::std::string* MotionWalkMessage::mutable_topic() {
   return topic_;
 }
 
-// required int32 timeout = 4 [default = 0];
+// required int32 timeout = 4 [default = 100];
 inline bool MotionWalkMessage::has_timeout() const {
   return _has_bit(3);
 }
 inline void MotionWalkMessage::clear_timeout() {
-  timeout_ = 0;
+  timeout_ = 100;
   _clear_bit(3);
 }
 inline ::google::protobuf::int32 MotionWalkMessage::timeout() const {
@@ -908,12 +908,12 @@ inline ::std::string* MotionHeadMessage::mutable_topic() {
   return topic_;
 }
 
-// required int32 timeout = 4 [default = 0];
+// required int32 timeout = 4 [default = 100];
 inline bool MotionHeadMessage::has_timeout() const {
   return _has_bit(3);
 }
 inline void MotionHeadMessage::clear_timeout() {
-  timeout_ = 0;
+  timeout_ = 100;
   _clear_bit(3);
 }
 inline ::google::protobuf::int32 MotionHeadMessage::timeout() const {
@@ -1163,12 +1163,12 @@ inline ::std::string* MotionActionMessage::mutable_topic() {
   return topic_;
 }
 
-// required int32 timeout = 4 [default = 0];
+// required int32 timeout = 4 [default = 100];
 inline bool MotionActionMessage::has_timeout() const {
   return _has_bit(3);
 }
 inline void MotionActionMessage::clear_timeout() {
-  timeout_ = 0;
+  timeout_ = 100;
   _clear_bit(3);
 }
 inline ::google::protobuf::int32 MotionActionMessage::timeout() const {
