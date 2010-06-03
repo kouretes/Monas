@@ -1,0 +1,18 @@
+
+
+
+message Envelope{
+	required string type        = 8 [ default = "default"];
+	required string host        = 1 [ default = "localhost"];
+	required string publisher   = 2 [ default = "" ];
+	required string topic       = 3 [ default = "global"];
+	required string destination = 6 [ default = ""];
+	required int32  timeout     = 4 [ default = 0];
+	required string timestamp   = 5 [ default = ""];
+	required bool   serialized  = 7 [ default = false];
+}
+message RawBytes{
+ required  bytes byte_stream = 1;
+ optional uint32 size = 2;
+
+}

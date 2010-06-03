@@ -8,10 +8,7 @@
 #ifndef TOPICTREENODE_H_
 #define TOPICTREENODE_H_
 #include <list>
-#define ON_TOPIC 0
-#define ABOVE_TOPIC 1
-#define BELOW_TOPIC 2
-#define ALL -1
+#include "../narukom_common.h"
 using std::list;
 
 template<class Key, class Data>
@@ -20,16 +17,16 @@ class TopicTreeNode
 public:
 	TopicTreeNode()
 	{
-		parent = NULL;
+		parent = 0;
 	}
-	TopicTreeNode(Key& k, TopicTreeNode<Key, Data>* par = NULL)
+	TopicTreeNode(const Key& k, TopicTreeNode<Key, Data>* par = 0)
 	{
 		key = Key(k);
 		parent = par;
 	}
-	TopicTreeNode(Key& k, Data& d , TopicTreeNode<Key, Data>* par = NULL)
+	TopicTreeNode(const Key& k, Data& d , TopicTreeNode<Key, Data>* par = 0)
 	{
-		key =Key(k);
+		key = Key(k);
 		this->data.push_back(d);
 		parent = par;
 
@@ -37,8 +34,20 @@ public:
 
 	~TopicTreeNode()
 	{
+	  on_topic.clear();
+	  above_topic.clear();
+	  below_topic.clear();
+
+	  for(; children.size() > 0; )
+	  {
+	    TopicTreeNode<Key, Data>* tmp = children.front();
+	    children.pop_front();
+	    delete tmp;
+	  }
+	  parent = 0;
 	}
-	//list<Data>&
+	///Get the Data of certain key
+
 	list<Data*>&
 	get_data(int where)
 	{
@@ -56,8 +65,7 @@ public:
 
 	}
 
-	Key&
-	get_key()
+	Key& get_key()
 	{
 		return  key;
 	}
@@ -75,7 +83,7 @@ public:
 	{
 		children.push_back(new_child);
 	}
-	void add_data(list<Data>& new_data, int where)
+	void add_data(list<Data*>& new_data, int where)
 	{
 		list<Data*>& val;
 		switch(where)
@@ -99,9 +107,9 @@ public:
 			val.insert(iter++);
 	}
 
-	void add_data(std::vector<Data>& new_data,int where)
+	void add_data(std::vector<Data*>& new_data,int where)
 	{
-		list<Data>& val;
+		list<Data*>& val;
 		switch(where)
 		{
 		case ON_TOPIC:
@@ -141,19 +149,31 @@ public:
 
 	}
 	
-	std::_List_iterator<Data*> find_in(list<Data*>* alist, Data* old_item)
+	typename std::list<Data*>::iterator find_in(list<Data*>* alist, Data* old_item)
 	{
-	  std::_List_iterator<Data> it = alist->begin();
+	  typename std::list<Data*>::iterator it = alist->begin();
 	  while(it != alist->end())
-	    if(*old_item == *it)
+	    if((*old_item) == (*((Data*)(*it))) )
 	      break;
 	    else
 	      it++;
 	  return it;
 	}
+	void remove_child(const Key& key)
+	{
+	  for(typename list<TopicTreeNode<Key, Data>*>::iterator it = children.begin(); it != children.end(); it++)
+	  {
+	    if(   (*it)->get_key() == key )
+	    {
+	      children.erase(it);
+	      break;
+	    }
+	  }
+	}
+	
 	
 	bool remove_from(Data* old_dat){
-	  std::_List_iterator<Data*> old_item_it = find_in(&on_topic,old_dat);
+	  typename std::list<Data*>::iterator old_item_it = find_in(&on_topic,old_dat);
 	  if(old_item_it != on_topic.end())
 	  {
 	    on_topic.erase(old_item_it);

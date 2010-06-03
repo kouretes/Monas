@@ -1,1 +1,0 @@
-set( ZLIB_LIBRARIES /usr/lib/libz.so)

@@ -132,8 +132,8 @@ int Sensors::Execute() {
 		counter++;
 		j++;
 	}
-	publish(&HJSM);
-	publish(&BJSM);
+	publish(&HJSM,"sensors");
+	publish(&BJSM,"sensors");
 	//	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
 	//		BJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Body"][i]);
 	//		BJSM.mutable_sensordata(i)->set_sensorvalue(Values[i]);
@@ -184,9 +184,9 @@ int Sensors::Execute() {
 			devicesValues[counter] = Values["USoundRight"][i];
 			counter++;
 		}
-		publish(&ISM);
-		publish(&FSM);
-		publish(&USSM);
+		publish(&ISM,"sensors");
+		publish(&FSM,"sensors");
+		publish(&USSM,"sensors");
 
 		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
 		for (unsigned int i = 0; i < Values["RobotPosition"].size(); i++) {
@@ -198,7 +198,7 @@ int Sensors::Execute() {
 			counter++;
 		}
 
-		publish(&RPSM);
+		publish(&RPSM,"sensors");
 		period = 0;
 	}
 

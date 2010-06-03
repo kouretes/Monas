@@ -4,7 +4,7 @@ message ( STATUS "" )
 
 include_directories ( AFTER ./ )
 
-include_directories ( AFTER ./architecture/narukom/external/protobuf/src/ )
+include_directories ( AFTER ../external/protobuf/src/ )
 #FIXME
 
 set ( LibBuildType SHARED CACHE STRING 
@@ -17,6 +17,7 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
          (NOT "${LibBuildType}" STREQUAL "MODULE") )
   message ( FATAL_ERROR "LibBuildType should be one of the following: STATIC, SHARED or MODULE" )
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
+
 
 
 add_subdirectory ( ./messages/ )

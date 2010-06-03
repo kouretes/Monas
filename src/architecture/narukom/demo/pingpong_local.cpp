@@ -1,7 +1,6 @@
 #include <iostream>
-#include "message_queue.h"
-#include "publisher.h"
-#include "subscriber.h"
+#include "pub_sub/message_queue.h"
+
 #include <string>
 #include <vector>
 #include <sstream>
@@ -29,7 +28,7 @@ int main(int argc, char **argv) {
     std::cout << "Pinger Application" << std::endl;
 //     std::stringstream s;
     
-    mq->start();
+   
 //     Pinger* ping = new Pinger(false);
    // mq->StartThread(mq);
 //   ping pong code
@@ -55,10 +54,10 @@ cout << "Adding publishers to message queue " << endl;
   mq->subscribe ( "motion",pong,0 );
     
 	cout << "Start Threads for all publishers and Subscribers" << endl;
-	ping->start();
-pong->start();
-	echo->start();
-	sc->start();	
+	ping->StartThread();
+	pong->StartThread();
+//	echo->StartThread();
+//	sc->StartThread();	
 	ping->start_service();
 //   */
 /*
@@ -70,8 +69,14 @@ pong->start();*/
 //  ping->start_service();
 // udp->start();
 //sleep(3);
-ping->join();
-pong->join();
+ping->JoinThread();
+pong->JoinThread();
+cout << "before mq join" << endl;
+//delete sc;
+delete echo;
+//delete ping;
+//delete pong;
+mq->JoinThread();
 /* ping pong Code    
     cout << "Before join" << endl;
   
@@ -83,7 +88,7 @@ pong->join();
 		
     
   
-    
+
     
 //     boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time());
     cout << "After join " << endl;

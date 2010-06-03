@@ -21,9 +21,9 @@
 #ifndef PINGER_H
 #define PINGER_H
 
-#include "Thread.h"
-#include "subscriber.h"
-#include "publisher.h"
+#include "system/thread.h"
+#include "pub_sub/subscriber.h"
+#include "pub_sub/publisher.h"
 #include "pingpong.pb.h"
 
 class Pinger : public Thread, public Subscriber, public Publisher
@@ -36,7 +36,7 @@ class Pinger : public Thread, public Subscriber, public Publisher
     void start_service();
     PingMessage* play(PongMessage*);
     void printGame(int,int);
-    virtual void run();
+    virtual int Execute();
     virtual void process_messages();
     virtual void publish ( google::protobuf::Message* msg );
 };

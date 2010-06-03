@@ -20,36 +20,45 @@
 
 #ifndef MESSAGE_BUFFER_H
 #define MESSAGE_BUFFER_H
-#include <google/protobuf/dynamic_message.h>
-#include <google/protobuf/message.h>
+#include <boost/thread/condition_variable.hpp>
 #include <vector>
+#include <google/protobuf/message.h>
 #include "../system/Mutex.h"
+#include "tuple.h"
+#include "filters/filter.h"
+#include <list>
+
 class MessageBuffer
 {
   public:
-    MessageBuffer();
+    MessageBuffer(boost::condition_variable* cv = 0);
     explicit
-    MessageBuffer(const std::string owner);
+    MessageBuffer(const std::string owner,boost::condition_variable* cv );
     MessageBuffer(const MessageBuffer&);
-    int size(){ return msg_buf->size();}
-    bool isEmpty(){ return !(msg_buf->size() > 0);}
-    void clear(){ msg_buf->clear();}
+    ~MessageBuffer();
+    int size() const;//{ return msg_buf->size();}
+    bool isEmpty() const ;//{ return !(msg_buf->size() > 0);}
+    void clear();//{ msg_buf->clear();}
     void copyFrom(const MessageBuffer&);
     void mergeFrom(const MessageBuffer&);
-    void add(google::protobuf::Message* msg);
-    
-    google::protobuf::Message* remove( std::vector< google::protobuf::Message* >::iterator );
-    google::protobuf::Message* remove_head();
-    google::protobuf::Message* remove_tail();
-    std::vector< google::protobuf::Message* >::iterator get_iterator();
-    std::vector< google::protobuf::Message* >::iterator end();
-    std::vector<google::protobuf::Message*>&   getBuffer() const   {return *msg_buf;}
-    std::string getOwner() const {return owner;}
-    
+    void add(Tuple* msg);
+    bool operator==(const MessageBuffer& other) const;
+    Tuple* remove( std::vector< Tuple* >::iterator );
+    Tuple* remove_head();
+    Tuple* remove_tail();
+    std::vector< Tuple* >::iterator get_iterator();
+    std::vector< Tuple* >::iterator end();
+    std::vector<Tuple*>&   getBuffer() const;//   {return *msg_buf;}
+    std::string getOwner() const;// {return owner;}
+    boost::condition_variable* get_condition_variable() const;
+    void add_filter(Filter* filter);
+    void remove_filter(const Filter& filter);
   private:
-    std::vector<google::protobuf::Message*>* msg_buf;
+    std::vector<Tuple*>* msg_buf;
+    std::list<Filter*> filters;
     std::string owner; 
     Mutex mutex;
+    boost::condition_variable* mq_cv;
   
 };
 

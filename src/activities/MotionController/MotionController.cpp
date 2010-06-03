@@ -65,10 +65,10 @@ void MotionController::read_messages() {
 	if (am != NULL) delete wm;
 	if (im != NULL) delete wm;
 	_blk->process_messages();
-	wm = dynamic_cast<MotionWalkMessage*> (_blk->in_nb("MotionWalkMessage", "Behavior"));
-	hm = dynamic_cast<MotionHeadMessage*> (_blk->in_nb("MotionHeadMessage", "Behavior"));
-	am = dynamic_cast<MotionActionMessage*> (_blk->in_nb("MotionActionMessage", "Behavior"));
-	im = dynamic_cast<InertialSensorsMessage*> (_blk->in_nb("InertialSensorsMessage", "Sensors"));
+	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
+	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
+	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
+	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
 	Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 
@@ -265,7 +265,7 @@ void MotionController::commands() {
 		hmot->add_parameter(x);
 		hmot->add_parameter(y);
 		//cout << "SEnding Demo Commands  changeHead " << endl;
-		Publisher::publish(hmot);
+		Publisher::publish(hmot,"motion");
 		delete hmot;
 	}
 
@@ -285,7 +285,7 @@ void MotionController::commands() {
 		wmot->add_parameter(z);
 		wmot->add_parameter(s);
 		//cout << "SEnding Demo Commands  setWalkTargetVelocity " << endl;
-		Publisher::publish(wmot);
+		Publisher::publish(wmot,"motion");
 		delete wmot;
 	}
 
@@ -294,7 +294,7 @@ void MotionController::commands() {
 		amot->set_topic("motion");
 		amot->set_command("lieDown");
 		//cout << "SEnding Demo Commands  setWalkTargetVelocity " << endl;
-		Publisher::publish(amot);
+		Publisher::publish(amot,"motion");
 		delete amot;
 	}
 

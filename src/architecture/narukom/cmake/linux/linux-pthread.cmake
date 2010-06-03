@@ -1,0 +1,1 @@
+set( PThreadLibrary  /usr/lib/libpthread.so)

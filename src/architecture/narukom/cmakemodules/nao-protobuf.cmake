@@ -1,1 +1,0 @@
-set( PROTOBUF_LIBRARIES ${NARUKOM_DIR}/external/nao/libprotobuf.a)

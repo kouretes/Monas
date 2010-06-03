@@ -114,7 +114,7 @@ int Behavior::Execute() {
 				hmot->set_command("changeHead");
 				hmot->set_parameter(0, 0.9f * overshootfix * (cx));
 				hmot->set_parameter(1, -0.9f * overshootfix * (cy));
-				Publisher::publish(hmot);
+				Publisher::publish(hmot,"motion");
 				Logger::Instance().WriteMsg("Behavior", "I send motion to head to move towards (cx,cy):" + _toString(hmot->parameter(0)) + "," + _toString(hmot->parameter(1)), Logger::ExtraInfo);
 			}
 			Logger::Instance().WriteMsg("Behavior", "Ball Found ole ", Logger::Info);
@@ -217,7 +217,7 @@ int Behavior::Execute() {
 				reachedlimitleft = false;
 				reachedlimitright = false;
 			}
-			Publisher::publish( hmot);
+			Publisher::publish( hmot,"motion");
 			
 			if (reachedlimitup && reachedlimitdown) {
 				Logger::Instance().WriteMsg("Behavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
@@ -234,7 +234,7 @@ int Behavior::Execute() {
 				Logger::Instance().WriteMsg("Behavior", "Command HeadScan" + _toString(wmot->command()) + "1:  " + _toString(wmot->parameter(0)) + "2:  " + _toString(wmot->parameter(1))
 					+ "3:  " + _toString(wmot->parameter(2)), Logger::Info);
 
-				Publisher::publish( wmot); //Send the message to the motion Controller
+				Publisher::publish( wmot,"motion"); //Send the message to the motion Controller
 			}
 			
 		}
@@ -288,7 +288,7 @@ int Behavior::Execute() {
 					cout << "  setWalkTargetVelocity " << endl;
 					Logger::Instance().WriteMsg("Behavior", "Walk Command" + _toString(wmot->command()) + "X:  " + _toString(wmot->parameter(0)) + "Y:  "
 							+ _toString(wmot->parameter(1)) + "theta:  " + _toString(wmot->parameter(2)), Logger::ExtraExtraInfo);
-					Publisher::publish( wmot);
+					Publisher::publish( wmot,"motion");
 
 				} else {
 					cout << "Kicking" << endl;
@@ -297,7 +297,7 @@ int Behavior::Execute() {
 					else
 						amot->set_command("rightKick");
 					Logger::Instance().WriteMsg("Behavior", "Kicking with " + _toString(amot->command()), Logger::Info);
-					Publisher::publish( amot);
+					Publisher::publish( amot,"motion");
 				}
 				stopped = false;
 
@@ -313,7 +313,7 @@ int Behavior::Execute() {
 						wmot->set_parameter(1, 0);
 						wmot->set_parameter(2, 0);
 						wmot->set_parameter(3, 0);
-						Publisher::publish( wmot);
+						Publisher::publish( wmot,"motion");
 					}
 				}
 			}
@@ -328,7 +328,7 @@ int Behavior::Execute() {
 			wmot->set_parameter(1, 0);
 			wmot->set_parameter(2, 0);
 			wmot->set_parameter(3, 0);
-			Publisher::publish( wmot);
+			Publisher::publish( wmot,"motion");
 		}
 	}
 	return 0;
@@ -336,9 +336,9 @@ int Behavior::Execute() {
 
 void Behavior::read_messages() {
 	_blk->process_messages();
-	gsm = dynamic_cast<GameStateMessage*> (_blk->in_nb("GameStateMessage", "RobotController"));
-	bmsg = dynamic_cast<BallTrackMessage*> (_blk->in_nb("BallTrackMessage", "Vision"));
-	hjsm = dynamic_cast<HeadJointSensorsMessage*> (_blk->in_nb("HeadJointSensorsMessage", "Sensors"));
+	gsm =  _blk->in_nb<GameStateMessage>("GameStateMessage", "RobotController");
+	bmsg = _blk->in_nb<BallTrackMessage>("BallTrackMessage", "Vision");
+	hjsm = _blk->in_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
 
 	Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 

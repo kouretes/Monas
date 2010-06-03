@@ -20,21 +20,23 @@
 
 #include "ratio.h"
 
-void Ratio::run()
+int Ratio::Execute()
 {
- 	  
+    cout << "start" << endl;
     b.process_messages();
-		cout << "Ratio Run" << endl;
-		SyncMessage* tmp = (SyncMessage*)b.in_nb("SyncMessage","Slow","localhost");
-		if(tmp != 0){
-			cout << "1234" << endl;
- 			boost::posix_time::ptime query = boost::posix_time::from_iso_string(tmp->timestamp());
- 				cout << "Ratio Run2" << endl;
- 			SyncMessage* tmp2 = (SyncMessage*)b.read_nb("SyncMessage","Fast","localhost",&query);
- 				cout << "Ratio Run3" << endl;
-			if(tmp2 != NULL)
-			cout << ""  <<  tmp2->counter() <<"," << tmp->counter() << "," << tmp2->counter() / (float)tmp ->counter() << endl;
-		}
- 		usleep(500000);
+    cout << "Ratio Run" << endl;
+    //SyncMessage* tmp = (SyncMessage*)b.in_nb("SyncMessage","Slow","localhost");
+    boost::posix_time::ptime time_of_query;
+    cout << "in" << endl;
+    SyncMessage* tmp = b.in<SyncMessage>("SyncMessage","Slow","localhost",false,&time_of_query);
+    cout << "read" << endl;
+    SyncMessage tmp2 = b.read<SyncMessage>("SyncMessage","Fast","localhost",0,&time_of_query);
+
+ 			
+    cout << ""  <<  tmp2.counter() <<"," << tmp->counter() << "," << tmp2.counter() / (float)tmp ->counter() << endl;
+
+    usleep(500000);
+    cout << "return " << endl;
+    return 0;
 }
 
