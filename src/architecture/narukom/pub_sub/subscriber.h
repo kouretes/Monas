@@ -36,17 +36,12 @@ class Subscriber
     virtual void process_messages();
     virtual ~Subscriber();
         
-    MessageBuffer* getBuffer() const  { return sub_msg_buf ; }
-    std::string getName() const { return subscriber_name;}
-    bool operator==(const Subscriber& sub_1)
-    {
-      return this->getName() == sub_1.getName();
-	
-    }
-    
-    MessageQueue* getQueue() const {return sub_msg_queue;}
-    void setBuffer(MessageBuffer* buf){ sub_msg_buf = buf;}
-    void setQueue(MessageQueue* val){sub_msg_queue = val;}
+    MessageBuffer* getBuffer() const;// const  { return sub_msg_buf ; }
+    std::string getName() const;// { return subscriber_name;}
+    bool operator==(const Subscriber& sub_1);
+    MessageQueue* getQueue() const;// {return sub_msg_queue;}
+    void setBuffer(MessageBuffer* buf);//{ sub_msg_buf = buf;}
+    void setQueue(MessageQueue* val);//{sub_msg_queue = val;}
     
 
   private:

@@ -14,7 +14,7 @@ public:
 	virtual void Unlock() ;
 
 private:
-  boost::mutex mx;
+  boost::mutex* mx;
 };
 
 

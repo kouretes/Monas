@@ -21,8 +21,8 @@
 #ifndef SLOW_H
 #define SLOW_H
 
-#include "src/publisher.h"
-#include "hal/Thread.h"
+#include "system/thread.h"
+#include "pub_sub/publisher.h"
 #include "sync.pb.h"
 
 class Slow : public Publisher, public Thread
@@ -31,8 +31,7 @@ class Slow : public Publisher, public Thread
 		Slow(const std::string& str = "Slow") :Publisher(str), Thread(false){
 			counter.set_counter(0);
 		}
-    virtual void publish(google::protobuf::Message* msg);
-    virtual void run();
+    virtual int Execute();
 	private:
 		SyncMessage counter;
 		

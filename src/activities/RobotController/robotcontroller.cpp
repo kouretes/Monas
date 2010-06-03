@@ -175,7 +175,7 @@ int RobotController::Execute()
     if(changed)
     {
         sendLedUpdate();
-        publish(&gm_state);
+        publish(&gm_state,"behavior");
     }
 
     return 0;
@@ -213,7 +213,7 @@ void RobotController::sendLedUpdate()
         lfoot_led->set_color("red");
 
 
-    publish(&leds);
+    publish(&leds,"communication");
     leds.clear_leds();
 }
 

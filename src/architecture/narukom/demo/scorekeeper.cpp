@@ -34,7 +34,7 @@ void ScoreKeeper::process_messages()
     cout << "SCOREKEEEPER " << endl;
     if(sub_buf == NULL)
       cout << "None Unprocessed Buffers" << endl;
-    google::protobuf::Message*  cur = sub_buf->remove_head();
+    Tuple*  cur = sub_buf->remove_head();
   
   
     while(cur != NULL )
@@ -51,25 +51,27 @@ void ScoreKeeper::process_messages()
 // 	msg->successful() == 1 ? ping++ : pong;
 // // 	cout << "Message received: pong" << delivered << endl;
 //       }
-    if(cur->GetTypeName() != "a")
+    if(cur->get_type() != "a")
     {
       PongMessage* msg = (PongMessage*)cur;
       if(msg->successful())
-	if(cur->GetTypeName() == "PingMessage")
-	  pong++;
-	
+      {
+	if(cur->get_msg_data()->GetTypeName() == "PingMessage")
+	{ pong++;
+	}
 	else
 	{
 // 	  cout << "Pong " << msg->foo() << endl;
 	  ping++;
 	}
+      }
     }
       else
-	cout << "Unknown Type " << cur->GetTypeName();
+	cout << "Unknown Type " << cur->get_msg_data()->GetTypeName();
       delete cur; 
       cur = sub_buf->remove_head();
-      if(delivered++ == 200)
-	Thread::stop();
+      if(delivered++ == 10)
+	Thread::StopThread();
     }
     
     cerr << "Score is: " << endl;
@@ -78,16 +80,12 @@ void ScoreKeeper::process_messages()
  
 }
 
-void ScoreKeeper::publish ( google::protobuf::Message* msg )
-{
-    Publisher::publish ( msg );
-}
-
-void ScoreKeeper::run()
+int ScoreKeeper::Execute()
 {
 //  cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS" << endl;
   if(Subscriber::getBuffer() != NULL )
     if ( Subscriber::getBuffer()->size() > 0)
     process_messages();
+  return 0;
 }
 

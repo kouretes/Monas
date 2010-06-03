@@ -2,7 +2,6 @@
 #define LED_HANDLER_H
 #include "hal/thread.h"
 #include "architecture/narukom/pub_sub/publisher.h"
-#include "architecture/narukom/pub_sub/subscriber.h"
 #include "alptr.h"
 #include "albroker.h"
 #include "alproxy.h"

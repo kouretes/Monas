@@ -208,7 +208,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
         trckmsg.set_cy(y);
         trckmsg.set_radius(r);
         trckmsg.set_topic("vision");
-        publish(&trckmsg);
+        publish(&trckmsg,"vision");
 
 
     }else{
@@ -216,7 +216,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
         trckmsg.set_cy(y);
         trckmsg.set_radius(-1);
         trckmsg.set_topic("vision");
-        publish(&trckmsg);
+        publish(&trckmsg,"vision");
     }/* else {
 		memory->insertData("kouretes/Ball/found", .0f); // change
 	}*/

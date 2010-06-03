@@ -86,47 +86,52 @@ PongMessage* Ponger::play(PingMessage* msg)
   
   return result;
 }
-void Ponger::run()
+int Ponger::Execute()
 {
-//   cout << "Ponger ---> RUN " << endl;
+   cout << "Ponger ---> RUN " << endl;
   if(Subscriber::getBuffer()->size() > 0)
     process_messages();
-  
+  return 0;
 }
 
 void Ponger::process_messages()
 {
-  static int delivered = 0;
+  
         MessageBuffer* sub_buf = Subscriber::getBuffer();
     cerr << "Ponger " << endl;
     if(sub_buf == NULL)
       cerr << "None Unprocessed Buffers" << endl;
-    google::protobuf::Message*  cur = sub_buf->remove_head();
+    Tuple*  cur = sub_buf->remove_head();
   
   
-    while(cur != NULL )
+    while(cur != 0 )
     {
-      if(cur->GetTypeName() ==  "PingMessage"  )
+      if(cur->get_msg_data()->GetTypeName() ==  "PingMessage"  )
       {
-	PingMessage* msg = (PingMessage*)cur;
+	PingMessage* msg = (PingMessage*)cur->get_msg_data();
 	PongMessage* pong_msg = play(msg);
 	publish(pong_msg);
       }
        else
       {
-	cerr << "Unknown Message Type: " << cur->GetTypeName() << endl; 
+	cerr << "Unknown Message Type: " << cur->get_msg_data()->GetTypeName() << endl; 
       }
       delete cur; 
       cur = sub_buf->remove_head();
       
     }
-    if(delivered++ == 5)
-      Thread::stop();
+
   //  sleep(2);
 }
 
 void Ponger::publish ( google::protobuf::Message* msg )
 {
-    Publisher::publish ( msg );
+    static int delivered = 0;
+    Publisher::publish ( msg,"motion" );
+    if(++delivered== 5)
+    {
+      cout << "Stopping Ponger " << endl;
+      Thread::StopThread();
+    }
 }
 

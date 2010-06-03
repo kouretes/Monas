@@ -84,13 +84,13 @@ void Pinger::start_service()
   
   //return result;
 }
-void Pinger::run()
+int Pinger::Execute()
 {
-//   cout << " Pinger---->Run " << Subscriber::getBuffer()->size() << endl;
+   cout << " Pinger---->Run " << Subscriber::getBuffer()->size() << endl;
   
   if(Subscriber::getBuffer()->size() > 0)
     process_messages();
-  
+  return 0;
 }
 
 void Pinger::process_messages()
@@ -98,39 +98,42 @@ void Pinger::process_messages()
   
         MessageBuffer* sub_buf = Subscriber::getBuffer();
     cout << "Pinger " << endl;
-    if(sub_buf == NULL)
+    if(sub_buf == 0)
       cout << "None Unprocessed Buffers" << endl;
-    google::protobuf::Message*  cur = sub_buf->remove_head();
+    Tuple*  cur = sub_buf->remove_head();
   
   
-    while(cur != NULL )
+    while(cur != 0 )
     {
-      if(cur->GetTypeName() ==  "PongMessage"  )
+      if(cur->get_msg_data()->GetTypeName() ==  "PongMessage"  )
       {
-	PongMessage* msg = (PongMessage*)cur;
+	PongMessage* msg = (PongMessage*)cur->get_msg_data();
 	PingMessage* ping_msg = play(msg);
 	//cout << "Before publishe Successful  " << ping_msg->successful() <<" " <<  ping_msg->side() << "address: " << ping_msg << endl;
 	publish(ping_msg);
       }
       else
       {
-	cout << "Unknown Message Type: " << cur->GetTypeName() << endl; 
+	cout << "Unknown Message Type: " << cur->get_msg_data()->GetTypeName() << endl; 
       }
       delete cur;
       cur = sub_buf->remove_head();
       
     }
-    sleep(1);
+//     sleep(1);
         
 }
 
 void Pinger::publish ( google::protobuf::Message* msg )
 {
+  cout << "Successful  " << "address: " << endl;
 	static int delivered = 0;
-    Publisher::publish ( msg );
-		if(++delivered == 20)
- 				Thread::stop();
-		PingMessage* p = (PingMessage*) msg;
-	//	cout << "Successful  " << p->successful() <<" " <<  p->side()<< "address: " << p<< endl;
+    Publisher::publish ( msg,"motion");
+    if(++delivered == 5)
+    {
+      cout << "Stop Pinger" <<endl;
+ 	Thread::StopThread();
+    }
+		
 }
 

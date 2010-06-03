@@ -13,7 +13,7 @@ add_library ( MessageLib ${LibBuildType}
                          ${MessageLibSrcs}   
 )
 
-target_link_libraries ( MessageLib narukomlib )
+target_link_libraries ( MessageLib narukom )
 #TODO link with protocol buffer lib instead of narukomlib   
 
 install ( TARGETS MessageLib 

@@ -21,19 +21,19 @@
 #ifndef SCOREKEEPER_H
 #define SCOREKEEPER_H
 
-#include "Thread.h"
-#include "subscriber.h"
+#include "system/thread.h"
+#include "pub_sub/subscriber.h"
 //#include "publisher.h"
 
 
-class ScoreKeeper : public Thread, public Subscriber, public Publisher
+class ScoreKeeper : public Thread, public Subscriber
 {
   public:
     int ping,pong;
-    ScoreKeeper (bool running = false  ): Thread(running),Subscriber("Score"),Publisher("Score"),ping(0),pong(0){}
-    virtual void run();
+    ScoreKeeper (bool running = false  ): Thread(running),Subscriber("Score"),ping(0),pong(0){}
+    virtual int Execute();
     virtual void process_messages();
-    virtual void publish ( google::protobuf::Message* msg );
+
 };
 
 #endif // SCOREKEEPER_H

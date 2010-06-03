@@ -24,7 +24,7 @@
 #include "message_buffer.h"
 #include <google/protobuf/message.h>
 #include "message_queue.h"
-#include "../messages/Basic.pb.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -37,19 +37,18 @@ class Publisher
     Publisher(const char* );
     Publisher(const Publisher&);
     virtual ~Publisher();
-    virtual void publish(google::protobuf::Message* msg);
+    virtual void publish(google::protobuf::Message* msg,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
+    virtual void publish(char* msg,unsigned size,const std::string type,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
+//    virtual void publish(Serializable* msg ,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
     
-    bool operator==(const Publisher& pub_1)
-    {
-      return this->getName() == pub_1.getName();
-	
-    }
+    bool operator==(const Publisher& pub_1);//
     
-    MessageBuffer* getBuffer()const { return pub_msg_buf ; }
-    std::string getName() const { return publisher_name;}
-    MessageQueue* getQueue() const {return pub_msg_queue;}
-   void setBuffer(MessageBuffer* buf){ pub_msg_buf = buf;} 
-    void setQueue(MessageQueue* val){pub_msg_queue = val;}
+    
+    MessageBuffer* getBuffer()const;// { return pub_msg_buf ; }
+    std::string getName() const;// { return publisher_name;}
+    MessageQueue* getQueue() const;// {return pub_msg_queue;}
+   void setBuffer(MessageBuffer* buf);//{ pub_msg_buf = buf;} 
+    void setQueue(MessageQueue* val);//{pub_msg_queue = val;}
    
   private:
     std::string publisher_name;

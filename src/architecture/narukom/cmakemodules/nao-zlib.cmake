@@ -1,1 +1,0 @@
-set( ZLIB_LIBRARIES ${CTC_DIR}/usr/lib/libz.so)

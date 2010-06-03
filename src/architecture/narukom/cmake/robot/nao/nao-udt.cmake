@@ -1,0 +1,1 @@
+set( UdtLibrary ${ConfigDir}/${TargetPlatform}/lib/libtudt.so)

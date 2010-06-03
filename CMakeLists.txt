@@ -21,5 +21,6 @@ if ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
     add_definitions ( -m32 )
 endif ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) 
 
+set(ExternalDir ./external)
 add_subdirectory( external ) 
 add_subdirectory( src )

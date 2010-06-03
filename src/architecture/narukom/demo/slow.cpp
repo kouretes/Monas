@@ -20,21 +20,20 @@
 
 #include "slow.h"
 
-void Slow::publish(google::protobuf::Message* msg)
-{
-    Publisher::publish(msg);
-}
 
-void Slow::run()
+
+int Slow::Execute()
 {
 // 	cout << "Slow run " << endl;
+// sleep(2);
     int c = counter.counter();
-		counter.set_counter(++c);
-		counter.set_topic("global");
-		counter.set_timeout(10);
-		publish(&counter);
-		usleep(30000);
-		if(c == 500)
-			Thread::stop();
+    counter.set_counter(++c);
+    counter.set_topic("foo");
+    counter.set_timeout(10);
+    publish(&counter,"global",10);
+    usleep(30000);
+    if (c == 500)
+        Thread::StopThread();
+    return 0;
 }
 

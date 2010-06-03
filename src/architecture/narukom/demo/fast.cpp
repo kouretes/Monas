@@ -20,17 +20,21 @@
 
 #include "fast.h"
 
-void Fast::run()
+
+
+int Fast::Execute()
 {
 // 	cout << "fast run" << endl;
-     int c = counter.counter();
-		counter.set_counter(++c);
-		counter.set_topic("global");
-		counter.set_timeout(10);
-		publish(&counter);
-		usleep(20000);
-		if(c == 800)
-			Thread::stop();
+ sleep(10);
+    int c = counter.counter();
+    counter.set_counter(++c);
+    counter.set_topic("bar");
+    counter.set_timeout(10);
+    publish(&counter,"global",3000000);
+    usleep(30000);
+    if (c == 800)
+        Thread::StopThread();
+    return 0;
 }
 
 

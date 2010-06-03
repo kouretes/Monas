@@ -1,1 +1,0 @@
-include(cmakemodules/${TARGET_PLAT}-pthread.cmake)

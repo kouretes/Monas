@@ -21,16 +21,16 @@
 #ifndef RATIO_H
 #define RATIO_H
 
-#include "hal/Thread.h"
-#include "src/blackboard.h"
+#include "system/thread.h"
+#include "pub_sub/blackboard.h"
 #include "sync.pb.h"
 
 class Ratio : public Thread
 {
 
 	public:
-	Ratio(const std::string& str = "Ratio") : Thread(false),b(str){}
-		virtual void run();
+	Ratio(const std::string& str = "Ratio") : b(str){}
+		virtual int Execute();
 	Blackboard* get_blackboard()  {return &b;}
 	private:
 		Blackboard b;

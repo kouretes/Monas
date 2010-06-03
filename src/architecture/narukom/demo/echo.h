@@ -21,9 +21,11 @@
 #ifndef ECHO_H
 #define ECHO_H
 
-#include "Thread.h"
-#include "subscriber.h"
-
+#include "system/thread.h"
+#include "pub_sub/subscriber.h"
+#include <iostream>
+using std::cout;
+using std::endl;
 
 
 class Echo : public Thread, public Subscriber
@@ -33,8 +35,9 @@ class Echo : public Thread, public Subscriber
     {
       
     }
-    virtual void run();
+    virtual int Execute();
     virtual void process_messages();
+    virtual ~Echo(){cout << "Deleting echoer " << endl;}
 };
 
 #endif // ECHO_H
