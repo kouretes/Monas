@@ -85,9 +85,8 @@ DataStruct::iterator Blackboard::get_tuple(const std::string& host, const std::s
     Tuple* tmp = (*it);
     if (!(tmp->get_host() == host && tmp->get_publisher() == process && tmp->get_type() == type))
     {
-        it--;
         tmp = (*it);
-        if ( tmp!=0 && !(tmp->get_host() == host && tmp->get_publisher() == process && tmp->get_type() == type))
+        if ( it == default_index.end() ||  !(tmp->get_host() == host && tmp->get_publisher() == process && tmp->get_type() == type))
         {
             data_struct_mx.Unlock();
             return world_perception.end();
@@ -103,7 +102,7 @@ DataStruct::iterator Blackboard::get_tuple(const std::string& host, const std::s
     DataStruct::iterator it2 = it;
     it--;
     tmp = (*it);
-    if ( tmp!= 0 &&  tmp->get_host() == host && (tmp->get_publisher() == process) && (tmp->get_type() == type) )
+    if ( it != default_index.end() &&  tmp->get_host() == host && (tmp->get_publisher() == process) && (tmp->get_type() == type) )
     {
         if (((*it2)->get_timestamp() - *time_req) < (*time_req - (*it)->get_timestamp() ) )
         {
