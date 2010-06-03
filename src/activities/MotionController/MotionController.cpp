@@ -3496,9 +3496,9 @@ void MotionController::loadActions() {
 	LeftKick_times[0][5] = 6.73333;
 	LeftKick_keys[0][5] = AL::ALValue::array(-0.358915, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
 
-	LeftKick_names[24] = "RAnkleRoll";
-	LeftKick_times[24].arraySetSize(6);
-	LeftKick_keys[24].arraySetSize(6);
+	LeftKick_names[1] = "RAnkleRoll";
+	LeftKick_times[1].arraySetSize(6);
+	LeftKick_keys[1].arraySetSize(6);
 
 	LeftKick_times[1][0] = 1.13333;
 	LeftKick_keys[1][0] = AL::ALValue::array(0.00762803, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.688889, 0.0));
