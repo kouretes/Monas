@@ -1,4 +1,7 @@
-#ifndef _thread_h_
+
+
+#include "hal/thread.h"
+/*#ifndef _thread_h_
 #define _thread_h_ 1
 
 #include <boost/thread.hpp>
@@ -49,4 +52,4 @@ virtual ~Thread() { cout << "Deleting thread " << endl; }
 
 };
 
-#endif // _thread_h_ 
+#endif // _thread_h_ */
