@@ -97,9 +97,10 @@ void Talws::Stop() {
     std::cout<<"Talws: Stoping..."<<std::endl; //TODO
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StopThread();
+    SysCall::_usleep(100000);
     com.get_message_queue()->StopThread();
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->JoinThread();
-    com.get_message_queue()->JoinThread();
+    //com.get_message_queue()->JoinThread();
 }
 
