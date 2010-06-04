@@ -19,30 +19,24 @@ void MotionController::UserInit() {
 	try {
 		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
-        Logger::Instance().WriteMsg("MotionController","Error in getting motion proxy",Logger::FatalError);
-		//cout << "Error in getting motion proxy" << std::endl;
+        	Logger::Instance().WriteMsg("MotionController","Error in getting motion proxy",Logger::FatalError);
 	}
 	motion->setStiffnesses("Body", 0.9);
 	motion->setWalkArmsEnable(true, true);
-	//TODO motion->setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION",True]]);
-	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",True]]);
 
-	try {
-		memory= KAlBroker::Instance().GetBroker()->getMemoryProxy();
-	} catch (AL::ALError& e) {
-        Logger::Instance().WriteMsg("MotionController","Error in getting memory proxy",Logger::FatalError);
-		//cout << "Error in getting memory proxy" << std::endl;
-	}
-
-	AccZ = (float*) memory->getDataPtr("Device/SubDeviceList/InertialSensor/AccZ/Sensor/Value");
-
-    Logger::Instance().WriteMsg("MotionController", "Subcribing to motion", Logger::Info);
-    _com->get_message_queue()->add_subscriber(_blk);
-    _com->get_message_queue()->subscribe("motion", _blk, 0);
-    _com->get_message_queue()->add_publisher(this);
-
-    sub_buffer = _blk->getBuffer();
-	mm = NULL;
+    	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
+    	_com->get_message_queue()->add_subscriber(_blk);
+    	_com->get_message_queue()->subscribe("motion", _blk, 0);
+    	_com->get_message_queue()->subscribe("sensors", _blk, 0);
+    	_com->get_message_queue()->add_publisher(this);
+    	
+	wm = NULL;
+	hm = NULL;
+	am = NULL;
+	im = NULL;
+	
+	AccZvalue = 0.0;
+	AccXvalue = 0.0;
 
 	robotDown = false;
 	robotUp = true;
@@ -51,8 +45,7 @@ void MotionController::UserInit() {
 	headPID = 0;
 	actionPID = 0;
 
-    Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
-	//cout << "Loading special actions!" << std::endl;
+    	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
 	loadActions();
 
 	counter = 0;
@@ -66,24 +59,29 @@ int MotionController::Execute() {
 	return 0;
 }
 
-void MotionController::process_messages() {
-	//cout << "Proccessing messages size " << sub_buffer->size() << endl;
-	if (mm != NULL)
-		delete mm;
-	if (sub_buffer->size() > 0) {
-		mm = (MotionMessage*) sub_buffer->remove_tail();
-		//cout << "I received a message from " << mm->publisher() << " sub_buffer->size()  " << sub_buffer->size()  << endl;
-       // cout << "MotionController: Command : " << mm->command() <<" of type: "<< mm->GetTypeName() << endl;
-	} else
-		mm = NULL;
-	//boost::thread::yield();
+void MotionController::read_messages() {
+	if (wm != NULL) delete wm;
+	if (hm != NULL) delete wm;
+	if (am != NULL) delete wm;
+	if (im != NULL) delete wm;
+	_blk->process_messages();
+	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
+	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
+	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
+	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
+
+	Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
+
 }
+
 
 void MotionController::mglrun() {
 
 	counter++;
-	//SleepMs(20);
-	AccZvalue = memory->getData("Device/SubDeviceList/InertialSensor/AccZ/Sensor/Value");
+	if (im != NULL) {
+		AccZ = im->sensordata(2);
+		AccZvalue = AccZ.sensorvalue();
+	}
 	//cout << counter << "  " << AccZvalue << "  " << robotUp << "  " << robotDown << " " << actionPID << std::endl;
 
 
@@ -91,43 +89,33 @@ void MotionController::mglrun() {
 #ifdef WEBOTS
 	if ( (!robotDown) && (robotUp) && (AccZvalue < 5.5) ) { // Webots
 #else
-	if ((!robotDown) && (robotUp) && (AccZvalue > -45)) { // Robot
+	if ( (!robotDown) && (robotUp) && (AccZvalue > -45)) { // Robot
 #endif
-        Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
-		//cout << "Robot falling: Stiffness off" << std::endl;
+        	Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 0.0);
 		robotUp = false;
 		robotDown = true;
-		motion->post.killWalk();
-		walkPID = 0;
-		if (headPID != 0) {
-			motion->post.killTask(headPID);
-			headPID = 0;
-		}
-		if (actionPID != 0) {
-			motion->post.killTask(actionPID);
-			actionPID = 0;
-		}
+		killWalkCommand();
+		killHeadCommand();
+		killActionCommand();
 		sleep(1);
 		return;
 	}
 
 	/* Check if the robot is down and stand up */
 	if (robotDown) {
-        Logger::Instance().WriteMsg("MotionController","Will stand up now...",Logger::ExtraInfo);
-		//cout << "Will stand up now ... " << std::endl;
+        	Logger::Instance().WriteMsg("MotionController", "Will stand up now...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 1.0);
 		robotDown = false;
 		ALstandUp();
-		Logger::Instance().WriteMsg( "MotionController", "Action ID: "+_toString(actionPID),Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Action ID: "+_toString(actionPID), Logger::ExtraInfo);
 		return;
 	}
 
 	/* Check if an Action command has been completed */
-	if ((actionPID != 0) && !motion->isRunning(actionPID)) {
+	if ( (actionPID != 0) && !motion->isRunning(actionPID) ) {
 		actionPID = 0;
-        Logger::Instance().WriteMsg("MotionController","Action command completed! Motion engine executed"+_toString(counter)+" times.",Logger::ExtraInfo);
-		//std::cout << "   Action command completed! Motion engine executed " << counter << " times. " << std::endl;
+        	Logger::Instance().WriteMsg("MotionController","Action completed! Motion executed "+_toString(counter)+" times.", Logger::ExtraInfo);
 	}
 
 	/* Check if the robot stood up after a stand up procedure */
@@ -138,16 +126,11 @@ void MotionController::mglrun() {
 		if (AccZvalue < -50) { // Robot
 #endif
 			robotUp = true;
-            Logger::Instance().WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
-			//cout << "Stood up ... " << std::endl;
+            		Logger::Instance().WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
 		} else if (actionPID == 0)
 			robotDown = true;
 		return;
 	}
-
-	/* Check if an Action is in progress and let it continue */
-	if (actionPID != 0)
-		return;
 
 	//cout << "The robot is up and ready to execute motions!" << std::endl;
 	/* The robot is up and ready to execute motions */
@@ -156,97 +139,86 @@ void MotionController::mglrun() {
 		/* Check if a Walk command has been completed */
 		if ((walkPID != 0) && !motion->isRunning(walkPID) && !motion->walkIsActive()) {
 			walkPID = 0;
-            Logger::Instance().WriteMsg("MotionController","Walk command completed! Motion engine executed"+_toString(counter)+" times.",Logger::ExtraInfo);
-			//std::cout << "   Walk command completed! Motion engine executed " << counter << " times. " << std::endl;
+            		Logger::Instance().WriteMsg("MotionController","Walk completed! Motion executed "+_toString(counter)+" times.",Logger::ExtraInfo);
 		}
 
 		/* Check if a Head command has been completed */
 		if ((headPID != 0) && !motion->isRunning(headPID)) {
 			headPID = 0;
-            Logger::Instance().WriteMsg("MotionController","Head command completed! Motion engine executed"+_toString(counter)+" times.",Logger::ExtraInfo);
-			//std::cout << "   Head command completed! Motion engine executed " << counter << " times. " << std::endl;
+            		Logger::Instance().WriteMsg("MotionController","Head completed! Motion executed "+_toString(counter)+" times.",Logger::ExtraInfo);
 		}
 
-		/* Check if there is a command to execute */
-		bool headCommand = false;
-		bool walkCommand = false;
-		bool actionCommand = false;
-		while (1) {
-			process_messages();
-            		if (mm == NULL) return;
+		/* Check if there is a command to execute */ 
 
-	            if (mm->command() == "walkTo" && !walkCommand) {
-	                walkParam1 = mm->parameter(0);
-	                walkParam2 = mm->parameter(1);
-	                walkParam3 = mm->parameter(2);
-	                Logger::Instance().WriteMsg("MotionController", mm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3),Logger::ExtraInfo);
-	                walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3);
-	                Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
-	                walkCommand = true;
-	            }
-	            else if (mm->command() == "setWalkTargetVelocity" && !walkCommand) {
-	                walkParam1 = mm->parameter(0);
-	                walkParam2 = mm->parameter(1);
-	                walkParam3 = mm->parameter(2);
-	                walkParam4 = mm->parameter(3);
-	                Logger::Instance().WriteMsg("MotionController", mm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3)+" "+_toString(walkParam4),Logger::ExtraInfo);
-	                walkPID = motion->post.setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
-	                Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
-	                walkCommand = true;
-	            }
-	            else if (mm->command() == "setHead" && !headCommand) {
-	                headParam1 = mm->parameter(0);
-	                headParam2 = mm->parameter(1);
-	                Logger::Instance().WriteMsg( "MotionController", mm->command()+" with parameters "+_toString(headParam1)+" "+_toString(headParam2),Logger::ExtraInfo);
-	                names.arraySetSize(2);
-	                values.arraySetSize(2);
-	                names[0] = "HeadYaw";
-	                values[0] = headParam1;
-	                names[1] = "HeadPitch";
-	                values[1] = headParam2;
-	                float fractionMaxSpeed = 0.8;
-	                headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
-	                Logger::Instance().WriteMsg( "MotionController"," Head ID: "+_toString(headPID),Logger::ExtraInfo);
-	                headCommand = true;
-	            }
-	            else if (mm->command() == "changeHead" && !headCommand) {
-	                headParam1 = mm->parameter(0);
-	                headParam2 = mm->parameter(1);
-	                Logger::Instance().WriteMsg("MotionController", mm->command()+" with parameters "+_toString(headParam1)+" "+_toString(headParam2),Logger::ExtraInfo);
-                    names.arraySetSize(2);
-	                values.arraySetSize(2);
-	                names[0] = "HeadYaw";
-	                values[0] = headParam1;
-	                names[1] = "HeadPitch";
-	                values[1] = headParam2;
-	                float fractionMaxSpeed = 0.2;
-	                headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
-	                Logger::Instance().WriteMsg("MotionController", "   Head ID: " +_toString(headPID),Logger::ExtraInfo);
-	                headCommand = true;
-	            }
-	            else if (!actionCommand) { /* Action command */
-	                if (headPID != 0) {
-	                    motion->post.killTask(headPID);
-	                    headPID = 0;
-	                }
-	                walkPID = motion->post.setWalkTargetVelocity(0.0, 0.0, 0.0, 0.0); // stop walk
-	                motion->waitUntilWalkIsFinished();
-	                walkPID = 0;
+		read_messages();
 
-	                //actionPID = motion->post.xxxxxxxxxxxxxx
-	                if (mm->command() == "lieDown") {
-	                    actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
-	                }
-	                else if (mm->command() == "leftKick") {
-	                    actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
-	               	}
-	               	else if (mm->command() == "rightKick") {
-	                    actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
-	                }
-	                actionCommand = true;
-	                headCommand = true;
-	                walkCommand = true;
-	            }
+		if ( (wm != NULL) && (actionPID==0) ) { 
+			if (wm->command() == "walkTo") {
+				walkParam1 = wm->parameter(0);
+				walkParam2 = wm->parameter(1);
+				walkParam3 = wm->parameter(2);
+				Logger::Instance().WriteMsg("MotionController", wm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3),Logger::ExtraInfo);
+				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3);
+				Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
+			}
+			else if (wm->command() == "setWalkTargetVelocity") {
+				walkParam1 = wm->parameter(0);
+				walkParam2 = wm->parameter(1);
+				walkParam3 = wm->parameter(2);
+				walkParam4 = wm->parameter(3);
+				Logger::Instance().WriteMsg("MotionController", wm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3)+" "+_toString(walkParam4),Logger::ExtraInfo);
+				walkPID = motion->post.setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
+				Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
+			}
+		}
+		
+		if (hm != NULL) {
+			if (hm->command() == "setHead") {
+				headParam1 = hm->parameter(0);
+				headParam2 = hm->parameter(1);
+				Logger::Instance().WriteMsg( "MotionController", hm->command()+" with parameters "+_toString(headParam1)+" "+_toString(headParam2),Logger::ExtraInfo);
+				names.arraySetSize(2);
+				values.arraySetSize(2);
+				names[0] = "HeadYaw";
+				values[0] = headParam1;
+				names[1] = "HeadPitch";
+				values[1] = headParam2;
+				float fractionMaxSpeed = 0.8;
+				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
+				Logger::Instance().WriteMsg( "MotionController"," Head ID: "+_toString(headPID),Logger::ExtraInfo);
+			}
+			else if (hm->command() == "changeHead") {
+				headParam1 = hm->parameter(0);
+				headParam2 = hm->parameter(1);
+				Logger::Instance().WriteMsg("MotionController", hm->command()+" with parameters "+_toString(headParam1)+" "+_toString(headParam2),Logger::ExtraInfo);
+				names.arraySetSize(2);
+				values.arraySetSize(2);
+				names[0] = "HeadYaw";
+				values[0] = headParam1;
+				names[1] = "HeadPitch";
+				values[1] = headParam2;
+				float fractionMaxSpeed = 0.2;
+				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
+				Logger::Instance().WriteMsg("MotionController", "   Head ID: " +_toString(headPID),Logger::ExtraInfo);
+			}
+		}
+		
+		if ( (am != NULL) && (actionPID==0) ) {
+		
+			//actionPID = motion->post.xxxxxxxxxxxxxx
+			if (am->command() == "lieDown") {
+				stopWalkCommand();
+				killHeadCommand();
+			        actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
+			}
+			else if (am->command() == "leftKick") {
+				stopWalkCommand();
+			        actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
+				}
+			else if (am->command() == "rightKick") {
+				stopWalkCommand();
+			        actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
+			}
 		}
 
 	}
@@ -254,26 +226,51 @@ void MotionController::mglrun() {
 	return;
 }
 
+void MotionController::killWalkCommand() {
+	motion->post.killWalk();
+	walkPID = 0;
+}
+
+void MotionController::stopWalkCommand() {
+	walkPID = motion->post.setWalkTargetVelocity(0.0, 0.0, 0.0, 0.0); // stop walk
+	motion->waitUntilWalkIsFinished();
+	walkPID = 0;
+}
+
+void MotionController::killHeadCommand() {
+	if (headPID != 0) {
+	        motion->post.killTask(headPID);
+	        headPID = 0;
+	}
+}
+
+void MotionController::killActionCommand() {
+	if (actionPID != 0) {
+	        motion->post.killTask(actionPID);
+	        actionPID = 0;
+	}
+}
+
 void MotionController::commands() {
 	//cout << "Commands " << counter << " headPid " << headPID << endl;
 
 	if ((headPID == 0) && (counter % 10 == 0)) {
-		MotionMessage* mot = new MotionMessage();
+		MotionHeadMessage* hmot = new MotionHeadMessage();
 		float x = rand() / ((float) RAND_MAX);
 		x = (x - 0.5) * 0.5;
 		float y = rand() / ((float) RAND_MAX);
 		y = (y - 0.5) * 0.5;
-		mot->set_topic("motion");
-		mot->set_command("changeHead");
-		mot->add_parameter(x);
-		mot->add_parameter(y);
+		hmot->set_topic("motion");
+		hmot->set_command("changeHead");
+		hmot->add_parameter(x);
+		hmot->add_parameter(y);
 		//cout << "SEnding Demo Commands  changeHead " << endl;
-		Publisher::publish(mot);
-		delete mot;
+		Publisher::publish(hmot,"motion");
+		delete hmot;
 	}
 
 	if ((counter % 500 == 0)) {
-		MotionMessage* mot = new MotionMessage();
+		MotionWalkMessage* wmot = new MotionWalkMessage();
 		float x = rand() / ((float) RAND_MAX);
 		x = (x - 0.5) * 2.0;
 		float y = rand() / ((float) RAND_MAX);
@@ -281,24 +278,24 @@ void MotionController::commands() {
 		float z = rand() / ((float) RAND_MAX);
 		z = (z - 0.5) * 2.0;
 		float s = rand() / ((float) RAND_MAX);
-		mot->set_topic("motion");
-		mot->set_command("setWalkTargetVelocity");
-		mot->add_parameter(x);
-		mot->add_parameter(y);
-		mot->add_parameter(z);
-		mot->add_parameter(s);
+		wmot->set_topic("motion");
+		wmot->set_command("setWalkTargetVelocity");
+		wmot->add_parameter(x);
+		wmot->add_parameter(y);
+		wmot->add_parameter(z);
+		wmot->add_parameter(s);
 		//cout << "SEnding Demo Commands  setWalkTargetVelocity " << endl;
-		Publisher::publish(mot);
-		delete mot;
+		Publisher::publish(wmot,"motion");
+		delete wmot;
 	}
 
 	if ((actionPID == 0) && (counter % 2000 == 0) && (counter > 0)) {
-		MotionMessage* mot = new MotionMessage();
-		mot->set_topic("motion");
-		mot->set_command("lieDown");
+		MotionActionMessage* amot = new MotionActionMessage();
+		amot->set_topic("motion");
+		amot->set_command("lieDown");
 		//cout << "SEnding Demo Commands  setWalkTargetVelocity " << endl;
-		Publisher::publish(mot);
-		delete mot;
+		Publisher::publish(amot,"motion");
+		delete amot;
 	}
 
 	return;
@@ -309,7 +306,10 @@ void MotionController::ALstandUp() {
 	ALstandUpCross();
 	Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: Cross", Logger::ExtraInfo);
 
-	float AccXvalue = memory->getData("Device/SubDeviceList/InertialSensor/AccX/Sensor/Value");
+	if (im != NULL) {
+		AccX = im->sensordata(0);
+		AccXvalue = AccX.sensorvalue();
+	}
 	Logger::Instance().WriteMsg("MotionController", "AccXvalue " +_toString(AccXvalue) ,Logger::ExtraInfo);
 
 #ifdef WEBOTS
@@ -1527,7 +1527,10 @@ void MotionController::ALstandUp2010() {
 	ALstandUpCross();
 	Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: Cross", Logger::ExtraInfo);
 
-	float AccXvalue = memory->getData("Device/SubDeviceList/InertialSensor/AccX/Sensor/Value");
+	if (im != NULL) {
+		AccX = im->sensordata(0);
+		AccXvalue = AccX.sensorvalue();
+	}
 	Logger::Instance().WriteMsg("MotionController", "AccXvalue " +_toString(AccXvalue), Logger::ExtraInfo);
 
 #ifdef WEBOTS
@@ -3079,10 +3082,11 @@ void MotionController::loadActions() {
 
 	/************************* Left Kick *********************************/
 
-	LeftKick_names.arraySetSize(25);
-	LeftKick_times.arraySetSize(25);
-	LeftKick_keys.arraySetSize(25);
+	LeftKick_names.arraySetSize(23);
+	LeftKick_times.arraySetSize(23);
+	LeftKick_keys.arraySetSize(23);
 
+/*
 	LeftKick_names[0] = "HeadYaw";
 	LeftKick_times[0].arraySetSize(6);
 	LeftKick_keys[0].arraySetSize(6);
@@ -3116,6 +3120,7 @@ void MotionController::loadActions() {
 	LeftKick_keys[1][4] = AL::ALValue::array(-0.030722, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.4, 0.0));
 	LeftKick_times[1][5] = 6.73333;
 	LeftKick_keys[1][5] = AL::ALValue::array(0.00762803, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
+*/
 
 	LeftKick_names[2] = "LShoulderPitch";
 	LeftKick_times[2].arraySetSize(6);
@@ -3474,47 +3479,48 @@ void MotionController::loadActions() {
 	LeftKick_times[22][5] = 6.73333;
 	LeftKick_keys[22][5] = AL::ALValue::array(0.70108, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
 
-	LeftKick_names[23] = "RAnklePitch";
-	LeftKick_times[23].arraySetSize(6);
-	LeftKick_keys[23].arraySetSize(6);
+	LeftKick_names[0] = "RAnklePitch";
+	LeftKick_times[0].arraySetSize(6);
+	LeftKick_keys[0].arraySetSize(6);
 
-	LeftKick_times[23][0] = 1.13333;
-	LeftKick_keys[23][0] = AL::ALValue::array(-0.352862, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.688889, 0.0));
-	LeftKick_times[23][1] = 3.2;
-	LeftKick_keys[23][1] = AL::ALValue::array(-0.566003, AL::ALValue::array(2, -0.688889, -0.0), AL::ALValue::array(2, 0.288889, 0.0));
-	LeftKick_times[23][2] = 4.06667;
-	LeftKick_keys[23][2] = AL::ALValue::array(-0.546063, AL::ALValue::array(2, -0.288889, -0.0), AL::ALValue::array(2, 0.111111, 0.0));
-	LeftKick_times[23][3] = 4.4;
-	LeftKick_keys[23][3] = AL::ALValue::array(-0.67952, AL::ALValue::array(2, -0.111111, -0.0), AL::ALValue::array(2, 0.377778, 0.0));
-	LeftKick_times[23][4] = 5.53333;
-	LeftKick_keys[23][4] = AL::ALValue::array(-0.553732, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.4, 0.0));
-	LeftKick_times[23][5] = 6.73333;
-	LeftKick_keys[23][5] = AL::ALValue::array(-0.358915, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
+	LeftKick_times[0][0] = 1.13333;
+	LeftKick_keys[0][0] = AL::ALValue::array(-0.352862, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.688889, 0.0));
+	LeftKick_times[0][1] = 3.2;
+	LeftKick_keys[0][1] = AL::ALValue::array(-0.566003, AL::ALValue::array(2, -0.688889, -0.0), AL::ALValue::array(2, 0.288889, 0.0));
+	LeftKick_times[0][2] = 4.06667;
+	LeftKick_keys[0][2] = AL::ALValue::array(-0.546063, AL::ALValue::array(2, -0.288889, -0.0), AL::ALValue::array(2, 0.111111, 0.0));
+	LeftKick_times[0][3] = 4.4;
+	LeftKick_keys[0][3] = AL::ALValue::array(-0.67952, AL::ALValue::array(2, -0.111111, -0.0), AL::ALValue::array(2, 0.377778, 0.0));
+	LeftKick_times[0][4] = 5.53333;
+	LeftKick_keys[0][4] = AL::ALValue::array(-0.553732, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.4, 0.0));
+	LeftKick_times[0][5] = 6.73333;
+	LeftKick_keys[0][5] = AL::ALValue::array(-0.358915, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
 
-	LeftKick_names[24] = "RAnkleRoll";
-	LeftKick_times[24].arraySetSize(6);
-	LeftKick_keys[24].arraySetSize(6);
+	LeftKick_names[1] = "RAnkleRoll";
+	LeftKick_times[1].arraySetSize(6);
+	LeftKick_keys[1].arraySetSize(6);
 
-	LeftKick_times[24][0] = 1.13333;
-	LeftKick_keys[24][0] = AL::ALValue::array(0.00762803, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.688889, 0.0));
-	LeftKick_times[24][1] = 3.2;
-	LeftKick_keys[24][1] = AL::ALValue::array(-0.314428, AL::ALValue::array(2, -0.688889, -0.0), AL::ALValue::array(2, 0.288889, 0.0));
-	LeftKick_times[24][2] = 4.06667;
-	LeftKick_keys[24][2] = AL::ALValue::array(-0.286815, AL::ALValue::array(2, -0.288889, -0.0), AL::ALValue::array(2, 0.111111, 0.0));
-	LeftKick_times[24][3] = 4.4;
-	LeftKick_keys[24][3] = AL::ALValue::array(-0.263807, AL::ALValue::array(2, -0.111111, -0.0), AL::ALValue::array(2, 0.377778, 0.0));
-	LeftKick_times[24][4] = 5.53333;
-	LeftKick_keys[24][4] = AL::ALValue::array(-0.315962, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.4, 0.0));
-	LeftKick_times[24][5] = 6.73333;
-	LeftKick_keys[24][5] = AL::ALValue::array(0.00771196, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
+	LeftKick_times[1][0] = 1.13333;
+	LeftKick_keys[1][0] = AL::ALValue::array(0.00762803, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.688889, 0.0));
+	LeftKick_times[1][1] = 3.2;
+	LeftKick_keys[1][1] = AL::ALValue::array(-0.314428, AL::ALValue::array(2, -0.688889, -0.0), AL::ALValue::array(2, 0.288889, 0.0));
+	LeftKick_times[1][2] = 4.06667;
+	LeftKick_keys[1][2] = AL::ALValue::array(-0.286815, AL::ALValue::array(2, -0.288889, -0.0), AL::ALValue::array(2, 0.111111, 0.0));
+	LeftKick_times[1][3] = 4.4;
+	LeftKick_keys[1][3] = AL::ALValue::array(-0.263807, AL::ALValue::array(2, -0.111111, -0.0), AL::ALValue::array(2, 0.377778, 0.0));
+	LeftKick_times[1][4] = 5.53333;
+	LeftKick_keys[1][4] = AL::ALValue::array(-0.315962, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.4, 0.0));
+	LeftKick_times[1][5] = 6.73333;
+	LeftKick_keys[1][5] = AL::ALValue::array(0.00771196, AL::ALValue::array(2, -0.4, -0.0), AL::ALValue::array(2, 0.0, 0.0));
 
 
 	/************************* Right Kick *********************************/
 
-	RightKick_names.arraySetSize(25);
-	RightKick_times.arraySetSize(25);
-	RightKick_keys.arraySetSize(25);
+	RightKick_names.arraySetSize(23);
+	RightKick_times.arraySetSize(23);
+	RightKick_keys.arraySetSize(23);
 
+/*
 	RightKick_names[0] = "HeadYaw";
 	RightKick_times[0].arraySetSize(6);
 	RightKick_keys[0].arraySetSize(6);
@@ -3548,6 +3554,8 @@ void MotionController::loadActions() {
 	RightKick_keys[1][4] = AL::ALValue::array(-0.030722, AL::ALValue::array(2, -0.355556, -0.0), AL::ALValue::array(2, 0.488889, 0.0));
 	RightKick_times[1][5] = 6.86667;
 	RightKick_keys[1][5] = AL::ALValue::array(0.00762803, AL::ALValue::array(2, -0.488889, -0.0), AL::ALValue::array(2, 0.0, 0.0));
+*/
+
 
 	RightKick_names[2] = "LShoulderPitch";
 	RightKick_times[2].arraySetSize(6);
@@ -3906,39 +3914,39 @@ void MotionController::loadActions() {
 	RightKick_times[22][5] = 6.86667;
 	RightKick_keys[22][5] = AL::ALValue::array(0.708667, AL::ALValue::array(2, -0.488889, -0.0), AL::ALValue::array(2, 0.0, 0.0));
 
-	RightKick_names[23] = "RAnklePitch";
-	RightKick_times[23].arraySetSize(6);
-	RightKick_keys[23].arraySetSize(6);
+	RightKick_names[0] = "RAnklePitch";
+	RightKick_times[0].arraySetSize(6);
+	RightKick_keys[0].arraySetSize(6);
 
-	RightKick_times[23][0] = 1.13333;
-	RightKick_keys[23][0] = AL::ALValue::array(-0.360449, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.755556, 0.0));
-	RightKick_times[23][1] = 3.4;
-	RightKick_keys[23][1] = AL::ALValue::array(-0.618244, AL::ALValue::array(2, -0.755556, -0.0), AL::ALValue::array(2, 0.222222, 0.0));
-	RightKick_times[23][2] = 4.06667;
-	RightKick_keys[23][2] = AL::ALValue::array(-1.15054, AL::ALValue::array(2, -0.222222, -0.0), AL::ALValue::array(2, 0.0888889, 0.0));
-	RightKick_times[23][3] = 4.33333;
-	RightKick_keys[23][3] = AL::ALValue::array(-0.150374, AL::ALValue::array(2, -0.0888889, -0.0), AL::ALValue::array(2, 0.355556, 0.0));
-	RightKick_times[23][4] = 5.4;
-	RightKick_keys[23][4] = AL::ALValue::array(-0.619779, AL::ALValue::array(2, -0.355556, -0.0), AL::ALValue::array(2, 0.488889, 0.0));
-	RightKick_times[23][5] = 6.86667;
-	RightKick_keys[23][5] = AL::ALValue::array(-0.358999, AL::ALValue::array(2, -0.488889, -0.0), AL::ALValue::array(2, 0.0, 0.0));
+	RightKick_times[0][0] = 1.13333;
+	RightKick_keys[0][0] = AL::ALValue::array(-0.360449, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.755556, 0.0));
+	RightKick_times[0][1] = 3.4;
+	RightKick_keys[0][1] = AL::ALValue::array(-0.618244, AL::ALValue::array(2, -0.755556, -0.0), AL::ALValue::array(2, 0.222222, 0.0));
+	RightKick_times[0][2] = 4.06667;
+	RightKick_keys[0][2] = AL::ALValue::array(-1.15054, AL::ALValue::array(2, -0.222222, -0.0), AL::ALValue::array(2, 0.0888889, 0.0));
+	RightKick_times[0][3] = 4.33333;
+	RightKick_keys[0][3] = AL::ALValue::array(-0.150374, AL::ALValue::array(2, -0.0888889, -0.0), AL::ALValue::array(2, 0.355556, 0.0));
+	RightKick_times[0][4] = 5.4;
+	RightKick_keys[0][4] = AL::ALValue::array(-0.619779, AL::ALValue::array(2, -0.355556, -0.0), AL::ALValue::array(2, 0.488889, 0.0));
+	RightKick_times[0][5] = 6.86667;
+	RightKick_keys[0][5] = AL::ALValue::array(-0.358999, AL::ALValue::array(2, -0.488889, -0.0), AL::ALValue::array(2, 0.0, 0.0));
 
-	RightKick_names[24] = "RAnkleRoll";
-	RightKick_times[24].arraySetSize(6);
-	RightKick_keys[24].arraySetSize(6);
+	RightKick_names[1] = "RAnkleRoll";
+	RightKick_times[1].arraySetSize(6);
+	RightKick_keys[1].arraySetSize(6);
 
-	RightKick_times[24][0] = 1.13333;
-	RightKick_keys[24][0] = AL::ALValue::array(0.00771196, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.755556, 0.0));
-	RightKick_times[24][1] = 3.4;
-	RightKick_keys[24][1] = AL::ALValue::array(0.141086, AL::ALValue::array(2, -0.755556, -0.0), AL::ALValue::array(2, 0.222222, 0.0));
-	RightKick_times[24][2] = 4.06667;
-	RightKick_keys[24][2] = AL::ALValue::array(0.0383081, AL::ALValue::array(2, -0.222222, -0.0), AL::ALValue::array(2, 0.0888889, 0.0));
-	RightKick_times[24][3] = 4.33333;
-	RightKick_keys[24][3] = AL::ALValue::array(0.12728, AL::ALValue::array(2, -0.0888889, -0.0), AL::ALValue::array(2, 0.355556, 0.0));
-	RightKick_times[24][4] = 5.4;
-	RightKick_keys[24][4] = AL::ALValue::array(0.138018, AL::ALValue::array(2, -0.355556, -0.0), AL::ALValue::array(2, 0.488889, 0.0));
-	RightKick_times[24][5] = 6.86667;
-	RightKick_keys[24][5] = AL::ALValue::array(-4.19617e-05, AL::ALValue::array(2, -0.488889, -0.0), AL::ALValue::array(2, 0.0, 0.0));
+	RightKick_times[1][0] = 1.13333;
+	RightKick_keys[1][0] = AL::ALValue::array(0.00771196, AL::ALValue::array(2, -0.377778, -0.0), AL::ALValue::array(2, 0.755556, 0.0));
+	RightKick_times[1][1] = 3.4;
+	RightKick_keys[1][1] = AL::ALValue::array(0.141086, AL::ALValue::array(2, -0.755556, -0.0), AL::ALValue::array(2, 0.222222, 0.0));
+	RightKick_times[1][2] = 4.06667;
+	RightKick_keys[1][2] = AL::ALValue::array(0.0383081, AL::ALValue::array(2, -0.222222, -0.0), AL::ALValue::array(2, 0.0888889, 0.0));
+	RightKick_times[1][3] = 4.33333;
+	RightKick_keys[1][3] = AL::ALValue::array(0.12728, AL::ALValue::array(2, -0.0888889, -0.0), AL::ALValue::array(2, 0.355556, 0.0));
+	RightKick_times[1][4] = 5.4;
+	RightKick_keys[1][4] = AL::ALValue::array(0.138018, AL::ALValue::array(2, -0.355556, -0.0), AL::ALValue::array(2, 0.488889, 0.0));
+	RightKick_times[1][5] = 6.86667;
+	RightKick_keys[1][5] = AL::ALValue::array(-4.19617e-05, AL::ALValue::array(2, -0.488889, -0.0), AL::ALValue::array(2, 0.0, 0.0));
 
 
 }

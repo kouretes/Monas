@@ -1,0 +1,1 @@
+set( PThreadLibrary  ${CTC_DIR}/libpthread.so)

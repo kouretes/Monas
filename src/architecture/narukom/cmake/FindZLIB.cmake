@@ -1,0 +1,5 @@
+if( "${TargetPlatform}" STREQUAL "robot")
+  include(${ConfigDir}/${TargetPlatform}/${RobotPlatform}/${RobotPlatform}-zlib.cmake)
+else( "${TargetPlatform}" STREQUAL "robot")
+  include(${ConfigDir}/${TargetPlatform}/${TargetPlatform}-zlib.cmake)
+endif( "${TargetPlatform}" STREQUAL "robot")

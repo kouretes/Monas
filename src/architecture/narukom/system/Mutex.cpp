@@ -4,25 +4,25 @@
 
 Mutex::Mutex()
 {
- mx.unlock();
+ mx = new boost::mutex;
+ mx->unlock();
 }
 
 
 Mutex::~Mutex()
 {
-
+ mx->unlock();
 }
-
 
 void Mutex::Lock() 
 {
-mx.lock();
+mx->lock();
 }
 
 
 void Mutex::Unlock() 
 {
-mx.unlock();
+mx->unlock();
 }
 
 

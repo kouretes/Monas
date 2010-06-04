@@ -18,10 +18,10 @@
   {
       MessageBuffer* buf = _blk->getBuffer();
     //  cout << "led process" <<endl;
-      google::protobuf::Message* cur = buf->remove_head();
+      Tuple* cur = buf->remove_head();
       while(cur != 0)
       {
-	  if(cur->GetTypeName() != "LedChangeMessage")
+	  if(cur->get_type() != "LedChangeMessage")
 	  {
 	      cout << "not led" << endl;
 	      delete cur;
@@ -29,25 +29,22 @@
 	      continue;
 	  }
 
-	  LedChangeMessage* led_change = (LedChangeMessage*)cur;
-
-	  for(int i = 0; i < led_change->leds_size(); i++)
+	  LedChangeMessage* led_change = _blk->extract_result_from_tuple<LedChangeMessage>(*cur);
+	  if(led_change != 0)
 	  {
-
-	      setLed(led_change->leds(i).chain(),led_change->leds(i).color());
-
+	    for(int i = 0; i < led_change->leds_size(); i++)
+	    {
+		setLed(led_change->leds(i).chain(),led_change->leds(i).color());
+	    }
 	  }
-
 	  delete cur;
 	  cur = buf->remove_head();
 
       }
-
-
   }
   void LedHandler::UserInit()
   {
-    cout << "aksjdflkasjdflkajsdlfkjasldkfjsa" << endl;
+    
     _com->get_message_queue()->add_subscriber(_blk);
       _com->get_message_queue()->subscribe("communication",_blk,0);
       try{

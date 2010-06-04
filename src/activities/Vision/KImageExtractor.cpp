@@ -213,15 +213,15 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
     int rchromaL,bchromaL,gainL,eL;
     int rchromaR,bchromaR,gainR,eR;
     //int expvalue=(e*510.8)/33.0;
-    MotionMessage mot;
-    mot.add_parameter(0.0f);
-    mot.add_parameter(0.0f);
-    mot.set_topic("motion");
-    mot.set_command("setHead");
+    MotionHeadMessage hmot;
+    hmot.add_parameter(0.0f);
+    hmot.add_parameter(0.0f);
+    hmot.set_topic("motion");
+    hmot.set_command("setHead");
 
-    //mot->set_parameter(0, 0.9f * overshootfix * (cx));
-    //mot->set_parameter(1, -0.9f * overshootfix * (cy));
-    //Publisher::publish( mot);
+    //hmot->set_parameter(0, 0.9f * overshootfix * (cx));
+    //hmot->set_parameter(1, -0.9f * overshootfix * (cy));
+    //Publisher::publish( hmot);
 
     float scale=1;
     cout<<"Calibrate Start:"<<endl;
@@ -235,9 +235,9 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
         SleepMs(1);
 
         //Move head to the left
-        mot.set_parameter(0,1.57);
-        mot.set_parameter(1,0.22);
-        publish(&mot);
+        hmot.set_parameter(0,1.57);
+        hmot.set_parameter(1,0.22);
+        publish(&hmot,"motion");
 
         SleepMs(100);
 
@@ -261,9 +261,9 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
         cout<<"Left settings:"<<" "<< gainL<< endl;
 
-        mot.set_parameter(0,-1.57);
-        mot.set_parameter(1,0.22);
-        publish(&mot);
+        hmot.set_parameter(0,-1.57);
+        hmot.set_parameter(1,0.22);
+        publish(&hmot,"motion");
         //m->callVoid("setAngles",names,pos,0.8);
         SleepMs(100);
 
@@ -330,9 +330,9 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 
         //Move head to the left
-        mot.set_parameter(0,1.57);
-        mot.set_parameter(1,0.22);
-        publish(&mot);
+        hmot.set_parameter(0,1.57);
+        hmot.set_parameter(1,0.22);
+        publish(&hmot,"motion");
 
         SleepMs(100);
         //wait for autoconf
@@ -401,9 +401,9 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
     //pos.push_back(0);
     //pos.push_back(-0.1);
     //m->callVoid("setAngles",names,pos,0.8);
-    mot.set_parameter(0,0);
-    mot.set_parameter(1,-0.1);
-    publish(&mot);
+    hmot.set_parameter(0,0);
+    hmot.set_parameter(1,-0.1);
+    publish(&hmot,"motion");
     return scale;
 }
 

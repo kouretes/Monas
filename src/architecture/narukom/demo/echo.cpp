@@ -21,14 +21,17 @@
 #include "echo.h"
 #include <iostream>
 #include <google/protobuf/descriptor.h>
-#include "Basic.pb.h"
+
 using std::cout;
 using std::endl;
-void Echo::run()
+int Echo::Execute()
 {
   if(Subscriber::getBuffer() != NULL)
+  { 
     if(Subscriber::getBuffer()->size() > 0)
-     return; //process_messages();
+    ;// process_messages();
+  }
+  return 0;
 }
 
 void Echo::process_messages()
@@ -39,26 +42,19 @@ void Echo::process_messages()
     cout << "Echoer " << endl;
     if(sub_buf == NULL)
       cout << "None Unprocessed Buffers" << endl;
-    google::protobuf::Message*  cur = sub_buf->remove_head();
-    const google::protobuf::Descriptor* descriptor = cur->GetDescriptor();
-    const google::protobuf::Reflection* reflection = cur->GetReflection();
-    const google::protobuf::FieldDescriptor* type_field;// = descriptor->FindFieldByName("type");
-    const google::protobuf::FieldDescriptor* topic_field;// = descriptor->FindFieldByName("topic");
-    const google::protobuf::FieldDescriptor* sender_field;// = descriptor->FindFieldByName("sender");
-    std::string type,topic,sender;
-		BasicMessage* basic_msg;
-    while(cur != NULL )
+    Tuple*  tcur = sub_buf->remove_head();
+
+    while(tcur != 0 )
     {
     //  cout << " current size = " << sub_buf->size() << endl;;
-			basic_msg = (BasicMessage*)cur;
       
-      cout << "Received Message  from: "  << basic_msg->publisher() << "   " << cur << endl;
-      cout << "Topic: " << topic << "  Type: " << cur->GetTypeName() <<endl;
-      delete cur;
-      cur = sub_buf->remove_head();
+      cout << "Received Message  from: "  << tcur->get_publisher() << "   " << tcur << endl;
+      cout << "Topic: " << tcur->get_topic() << "  Type: " << tcur->get_type() <<endl;
+      delete tcur;
+      tcur = sub_buf->remove_head();
       if(delivered++ == 20)
-	Thread::stop();
-      if(cur == NULL)
+	Thread::StopThread();
+      if(tcur == NULL)
 	break;
       
     }

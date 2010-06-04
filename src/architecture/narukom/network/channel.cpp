@@ -20,41 +20,35 @@
 
 #include "channel.h"
 
-std::vector<std::string>* Channel::available_messages()
+Channel::Channel(const std::string& channel_name) : Thread(false), Publisher(channel_name),Subscriber(channel_name) , name(channel_name)
 {
 }
-
-
-
-bool Channel::process_command(const ChannelCommand & cmd)
+std::string Channel::get_name() const
 {
+  return name;
 }
 
-
-
-std::vector<std::string>* Channel::available_peers()
+const std::vector< Host*>* Channel::get_hosts() const
 {
+  return &hosts;
 }
 
-
-
-void Channel::process_messages()
+void Channel::process_command(const ChannelCommand& cmd)
 {
+  //TODO
+  //switch(type)
+  //{ execute command
+  //
+  //}
 }
 
-
-
-void Channel::publish(google::protobuf::Message *msg)
+void Channel::start()
 {
+  Thread::StartThread();
 }
 
-
-
-void Channel::run()
+void Channel::stop()
 {
+  Thread::StopThread();
 }
-
-
-
-
 

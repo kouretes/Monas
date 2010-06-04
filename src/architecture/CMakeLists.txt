@@ -8,12 +8,7 @@ add_subdirectory ( ./statechartEngine/ )
 
 # TODO
 include_directories ( AFTER narukom/
-                            narukom/message_definitions/
-                            narukom/messages/
-                            narukom/network/
-                            narukom/pub_sub/
-                            narukom/system/ )
-
+		    )
 
 
 if ( "${ActivityBuildType}" STREQUAL "MODULE" )
@@ -32,6 +27,6 @@ install ( TARGETS MonadCore
         LIBRARY DESTINATION   lib
         ARCHIVE DESTINATION   lib/static )   
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} MonadCore narukomlib  PARENT_SCOPE ) 
+set ( TargetLinkLibraries ${TargetLinkLibraries} MonadCore narukom  PARENT_SCOPE ) 
 #TODO add narukom link to cmake in narukom
    

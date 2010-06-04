@@ -7,7 +7,7 @@ namespace {
 
 int LedController::Execute () { 
     _blk->process_messages();
-    msg = (LedMsg*) _blk->read("LedMsg","Pub");
+    msg = &(_blk->read<LedMsg>("LedMsg","Pub"));
 
     std::cout<<"Updating LedController "<<std::endl; 
     if ( msg->left() )

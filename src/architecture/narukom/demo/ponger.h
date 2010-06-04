@@ -21,21 +21,21 @@
 #ifndef PONGER_H
 #define PONGER_H
 
-#include "Thread.h"
-#include "subscriber.h"
-#include "publisher.h"
+#include "system/thread.h"
+#include "pub_sub/subscriber.h"
+#include "pub_sub/publisher.h"
 #include "pingpong.pb.h"
 
 class Ponger : public Thread, public Subscriber, public Publisher
 {
   public:
-    Ponger ( bool running = false ) : Thread(running),      Publisher("ponger"),     Subscriber("ponger")
+    Ponger ( bool running = false ) : Thread(running),Subscriber("ponger"), Publisher("ponger")     
     {
 
     }
     PongMessage* play(PingMessage*);
     void printGame(int,int);
-    virtual void run();
+    virtual int Execute();
     virtual void process_messages();
     virtual void publish ( google::protobuf::Message* msg );
 };

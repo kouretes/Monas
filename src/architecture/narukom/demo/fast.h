@@ -21,15 +21,16 @@
 #ifndef FAST_H
 #define FAST_H
 
-#include "hal/Thread.h"
-#include "src/publisher.h"
+#include "system/thread.h"
+#include "pub_sub/publisher.h"
 #include "sync.pb.h"
 
 
 class Fast : public Thread, public Publisher
 {	public:
-	Fast(const std::string & str = "Fast" ) : Publisher(str), Thread(false){counter.set_counter(0);}
-    virtual void run();
+	Fast(const std::string & str = "Fast" ) : Publisher(str){counter.set_counter(0);}
+    virtual int Execute();
+    
 	private:
 		SyncMessage counter;
 };
