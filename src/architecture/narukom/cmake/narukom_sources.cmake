@@ -46,7 +46,6 @@ ${NarukomDir}/network/host.cpp
 # 	${NarukomDir}/network/Nack.pb.h
 # 	${NarukomDir}/network/Nack.pb.cc
 	${NarukomDir}/network/host.h 	
-	${NarukomDir}/network/host.cpp
 	${NarukomDir}/network/channel.h
  	${NarukomDir}/network/channel.cpp
 	${NarukomDir}/network/unicast_channel.h
