@@ -1,6 +1,6 @@
 #include "narukom.h"
 //TOBE REMOVED
-#include "pub_sub/filters/content_filter.h"
+//#include "pub_sub/filters/content_filter.h"
 #include "pub_sub/tuple.h"
 ///////
 Narukom::Narukom()
@@ -10,9 +10,7 @@ Narukom::Narukom()
   // mq->add_subscriber(udp_multi);
   //   mq->subscribe("global",udp_multi,2);
   mq->StartThread();
-  ContentFilter<std::string> f("Contnet_foo","foo","bar");
-  Tuple t(new RawBytes,Envelope());
-  f.filter(t);
+
 }
 MessageQueue* Narukom::get_message_queue()
 {
