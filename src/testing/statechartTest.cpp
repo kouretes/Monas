@@ -85,11 +85,11 @@ class IncrAcccept: public IAction {
 
 class SetPlan: public Publisher, public IAction  {
     public:
-        SetPlan () : Publisher("Pub"),_planTuple(&_thePlan) { }
+        SetPlan () : Publisher("SetPlan"),_planTuple(&_thePlan) { }
         int Execute() {
             cout<<"Publish";
             _thePlan.set_counter(0);
-            publish(&_thePlan);
+            publish(&_thePlan,"behavior");
             cout<<" plan!"<<endl;
             return 0;
         }
@@ -115,7 +115,8 @@ class PlanASelected: public ICondition {
         bool Eval() {
             usleep(200000);
             _blk->process_messages();
-            _thePlan =(PlanMsg*)_blk->read_nb("PlanMsg","Pub");
+	    //_thePlan =0;
+            _thePlan =_blk->read_nb<PlanMsg>("PlanMsg","SetPlan");
             if ( !_thePlan )
                 return false;
             cout<<"Selected plan: "<<_thePlan->counter()<<endl;
@@ -123,7 +124,7 @@ class PlanASelected: public ICondition {
         }
         void UserInit () {
             _com->get_message_queue()->add_subscriber(_blk);
-            _com->get_message_queue()->subscribe("global",_blk,2);
+            _com->get_message_queue()->subscribe("behavior",_blk,2);
         }
     private:
         PlanMsg* _thePlan;
@@ -333,7 +334,8 @@ int main () {
 
 
     //_____________________________________________
-    TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new TimeoutEvent(80,"accept_timeout"), new PrintAction("NextFrame Comm"));
+//     TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new TimeoutEvent(80,"accept_timeout"), new PrintAction("NextFrame Comm"));
+    TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new PrintAction("NextFrame Comm"));
 
     TransitionSegment<State, State> tr43( &accept_notices_start, &accept_notices_state );
 
@@ -341,8 +343,7 @@ int main () {
     //new Transition(accept_notices_state, accept_notices_start,new TimeoutEvent(1000), new Print("NextFrame Comm"));
 
     // OK----
-    TransitionSegment<State, State> tr44( &accept_notices_state,
-            &accept_notices_final );
+    TransitionSegment<State, State> tr44( &accept_notices_state,&accept_notices_final );
 
 #endif
 
@@ -352,7 +353,7 @@ int main () {
 
     int i=100;
 
-    while ( rb_player.Step() && --i )
+    while ( rb_player.Step() && --i > 0 )
         ;
 
     usleep(3000000);
