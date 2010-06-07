@@ -13,9 +13,10 @@ namespace statechart_engine {
     }
 
     int AndState::Activate () {
+	State::Activate();
         for ( OrNodeContIter it = _subStates.begin(); it != _subStates.end(); it++ )
             (*it)->Activate();
-        return State::Activate();
+        return 0;
     }
 
     int AndState::DeActivate () {
