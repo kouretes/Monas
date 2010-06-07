@@ -1,19 +1,67 @@
-Some settings for running krobot executable automatically on the robot
-Only tested with remote on
-all the libs where copied to /opt/naoqi/lib as in the nao start scipts this is the pwd
-config folder was copied to /opt/naoqi/bin dont ask it just worked this is the curdir of /opt/naoqi/bin/naoqi scripts internal pwd
+If you are reading these lines, it means that you have successfully created 
+a clone of the Kouretes 2010 code from the Monad repository. 
 
-in the crossbuilding for remote module
-the setings where
+To proceed, please follow the instructions below. 
 
-  ActivityBuildType                SHARED
-  ExternalSrcsBldType              SHARED
-  KROBOT_IS_REMOTE                 ON
-  LibBuildType                     STATIC
-  TargetPlatform                   robot
+- Download and install Google protocol buffers from http://code.google.com/p/protobuf/
+
+- Download protobuf-X.X.X.zip from http://code.google.com/p/protobuf/downloads/list
+
+- Unpack and move the folder protobuf (with this name) under Monad/external
+
+BUILD
+
+- Create a folder named build under Monad/make
+
+- Enter folder build
+
+- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=$AL_DIR/toolchain-pc.cmake ../..
+
+- Execute: ccmake .
+
+- Change TargetPlatform to robot
+
+- Press c to configure
+
+- Check the values of KROBOT_IS_REMOTE, NaoQiVersion, RobotPlatform 
+
+  KROBOT_IS_REMOTE is ON, a library is produced, otherwise an executable is produced. 
+  NaoQiversion should be the latest. 
+  RobotPlatform must be Nao.
+  
+- Press c to configure again, then g to generate and exit. 
+
+- Execute: make -jk install, where k is the number of cores in your system. 
+
+- Get a coffee and be patient ... 
 
 
+CROSSBUILD 
 
-p.s. this was a nice command when runned under crossbuild folder
- find ./ -iname  '*.so' -exec cp {} ~/Desktop/libs/ \;
-then this where copied to /opt/naoqi/lib
+- Create a folder named crossbuild under Monad/make
+
+- Enter folder crossbuild
+
+- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=$CTC_DIR/toolchain-geode.cmake ../..
+
+- Execute: ccmake .
+
+- Change TargetPlatform to robot
+
+- Press c to configure
+
+- Check the values of KROBOT_IS_REMOTE, NaoQiVersion, RobotPlatform 
+
+  KROBOT_IS_REMOTE is ON, a library is produced, otherwise an executable is produced. 
+  NaoQiversion should be the latest. 
+  RobotPlatform must be Nao.
+  
+- Press c to configure again, then g to generate and exit. 
+
+- Execute: make -jk install, where k is the number of cores in your system. 
+
+- Get another coffee and be even more patient ... 
+
+That's all! Enjoy! 
+
+Kouretes 2010
