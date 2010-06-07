@@ -353,8 +353,12 @@ int main () {
 
     int i=100;
 
-    while ( rb_player.Step() && --i > 0 )
-        ;
+    while ( --i > 0 ) {
+      cout<<"i:"<<i<<endl;
+      while ( rb_player.Step() && --i > 0 )
+	;
+      usleep(1000);
+    }
 
     usleep(3000000);
 //    rb_player.Step();

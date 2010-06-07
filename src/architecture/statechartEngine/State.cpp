@@ -18,6 +18,9 @@ namespace statechart_engine {
             _blk = _parent->AddChild ( this );
 //            _blk = _parent->GetBlackboard ();//TODO const
 
+	    _isRunning = _parent->GetIsRunningRef();
+	    *_isRunning = 0;
+
             _com = _parent->GetCom();
 
             if ( _entryAction )
@@ -41,7 +44,7 @@ namespace statechart_engine {
     }
 
     bool State::isRunning() const{
-        return _isRunning;
+        return *_isRunning;
     }
 
     int State::Activate() {
@@ -62,8 +65,9 @@ namespace statechart_engine {
     }
 
     bool State::Step ( IEvent* ev, IParameter* param ) {
-        if ( _isRunning )
+        if ( *_isRunning ) {
             return false;
+	}
         for ( TransitionsContIter it = _transitions.begin(); it != _transitions.end(); it++ ) {
             if ( (*it)->Execute(ev,param) )
                 return true;
@@ -100,6 +104,10 @@ namespace statechart_engine {
 
     Blackboard* State::GetBlackboard () const { //TODO
         return _blk;
+    }
+    
+    volatile int* State::GetIsRunningRef () const {
+      return _isRunning;
     }
 
 }
