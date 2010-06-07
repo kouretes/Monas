@@ -1,2 +1,6 @@
 build
 crossbuild
+build-nao
+build_linux
+build_cross_nao
+build_linux32
