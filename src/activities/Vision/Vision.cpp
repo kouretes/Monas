@@ -4,7 +4,7 @@
 #define inbounds(x,y) ( ((x)>0 &&(y)>0)&&((x)<rawImage->width-1&&(y)<rawImage->height-1) )
 #define CvDist(pa,pb) sqrt(((pa).x-(pb).x )*((pa).x-(pb).x )+((pa).y-(pb).y )*((pa).y-(pb).y ) )
 #define MAXSKIP 5
-#define GLOBALSKIP  10
+#define GLOBALSKIP  60
 
 using namespace AL;
 using namespace std;

@@ -54,7 +54,7 @@ void KImageExtractor::Init(Narukom* com)
 struct timespec KImageExtractor::fetchImage(IplImage *img)
 {
     struct timespec rt;//Timestamp
-    cout<<"KImageExtractor::fetchimage():"<<endl;
+    //cout<<"KImageExtractor::fetchimage():"<<endl;
     if (doneSubscribe==false)
     {
         cout<<"KImageExtractor: Warning! fetchImage()  called although GVM Subscription has failed!"<<endl;
