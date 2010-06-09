@@ -43,6 +43,8 @@ namespace statechart_engine {
             Narukom* GetCom () const; //TODO add const
 
             Blackboard* GetBlackboard () const; //TODO add const
+            
+            virtual volatile int* GetIsRunningRef () const;
 
         protected:
 
@@ -53,7 +55,7 @@ namespace statechart_engine {
 
             bool _isActive;
 
-            volatile int _isRunning;
+            volatile int* _isRunning;
 
             typedef Containers::TransitionContainer TransitionsCont;
             typedef Containers::TransitionContainerIterator TransitionsContIter;

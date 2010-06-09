@@ -31,6 +31,8 @@ namespace statechart_engine {
             bool isRunning () const;
 
             Blackboard* GetBlackboard () const;
+	    
+	    volatile int* GetIsRunningRef () const;
 
         private:
 

@@ -13,9 +13,10 @@ namespace statechart_engine {
     }
 
     int AndState::Activate () {
+	State::Activate();
         for ( OrNodeContIter it = _subStates.begin(); it != _subStates.end(); it++ )
             (*it)->Activate();
-        return State::Activate();
+        return 0;
     }
 
     int AndState::DeActivate () {
@@ -34,9 +35,10 @@ namespace statechart_engine {
     }
 
     Blackboard* AndState::AddChild ( State* subState) {
+	cout<<"AndState: Producing blackboard!"<<endl; //TODO
         _subStates.push_back ( static_cast<OrState*>(subState) ); //FIXME dynamic_cast is not working!
-        char s[]="aa";
-        return new Blackboard(s);
+        char s[]="aa"; //FIXME get name 
+        return new Blackboard(s); //FIXME mem leak
     }
 
     bool AndState::isRunning () const {
@@ -49,6 +51,13 @@ namespace statechart_engine {
 
     Blackboard* AndState::GetBlackboard () const {
         return State::GetBlackboard();
+    }
+    
+    volatile int* AndState::GetIsRunningRef () const {
+      cout<<"AndState: Producing int!"<<endl; //TODO
+      volatile int* ret = new volatile int; //FIXME mem leak
+      *ret = 0;
+      return ret;
     }
 
 }

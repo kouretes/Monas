@@ -34,7 +34,9 @@ namespace statechart_engine {
         State::Activate();
 
         if ( _stateActivity ) {
-            if ( !_tp->Enqueue( _stateActivity ) ) {
+	    *_isRunning = 1;
+            if ( !_tp->Enqueue( _stateActivity, _isRunning ) ) {
+		*_isRunning = 0;
                 throw "BasicState: can't enqueue activity!";
             }
         }

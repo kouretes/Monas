@@ -3,12 +3,12 @@
 namespace statechart_engine {
 
     Statechart::Statechart ()
-    : OrState ( 0 ), _blackboard("StatechartBlakboard") {
+    : OrState ( 0 ), _blackboard("StatechartBlakboard") { //FIXME
         _com = &_narukom;
         _blk = &_blackboard;
-        _com->get_message_queue()->StartThread();
-        // TODO Auto-generated constructor stub
-
+        _com->get_message_queue()->StartThread(); //FIXME
+	_isRunning = new volatile int; //FIXME mem leak
+	*_isRunning = 0;
     }
 
     Statechart::~Statechart () {
@@ -20,7 +20,7 @@ namespace statechart_engine {
     int Statechart::Activate () {
 
         _activeState = _startState;
-        _isRunning = true;
+        //_isRunning = true; //FIXME
         _isActive = true;
 
         return 0;

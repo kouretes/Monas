@@ -87,7 +87,6 @@ Talws::~Talws() {
 }
 
 void Talws::Start() {
-    com.get_message_queue()->StartThread();
     std::cout<<"Talws: Starting..."<<std::endl; //TODO
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StartThread();
@@ -98,7 +97,7 @@ void Talws::Stop() {
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StopThread();
     SysCall::_usleep(100000);
-    com.get_message_queue()->StopThread();
+    //TODO stop somehow narukom
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->JoinThread();
     //com.get_message_queue()->JoinThread();
