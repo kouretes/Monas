@@ -46,8 +46,8 @@ namespace KMat
 			 **/
 			D<T,M,N>& add( D<T,M,N> const& rop)
 			{
-				for(int i=0;i<M;i++)
-					for(int j=0;j<N;j++)
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;j<N;j++)
 						data[i][j]+=rop.data[i][j];
 					
 				return static_cast< D<T,M,N> &> (*this);
@@ -58,8 +58,8 @@ namespace KMat
 			D<T,M,N>& sub( D<T,M,N> const& rop)
 			{
 				
-				for(int i=0;i<M;i++)
-					for(int j=0;j<N;j++)
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;j<N;j++)
 						data[i][j]-=rop.data[i][j];
 					
 				return static_cast< D<T,M,N> &> (*this);
@@ -74,14 +74,14 @@ namespace KMat
 				D<T,M,L> *res= new D<T,M,L>();
 				std::cout<<"SLOW"<<std::endl;
 				//For each line of the resulting array
-				for(int i=0;i<M;i++)
+				for(unsigned i=0;i<M;i++)
 				{
 					//For each element of this row
-					for(int j=0;j<L;j++)
+					for(unsigned j=0;j<L;j++)
 					{
 						//Clear value
 						res->data[i][j]=0;
-						for(int k=0;k<N;k++)
+						for(unsigned k=0;k<N;k++)
 						{
 							res->data[i][j]+=data[i][k]*rop.data[k][j];
 							
@@ -101,14 +101,14 @@ namespace KMat
 				D<T,M,N> *tmp= new D<T,M,N>();
 				std::cout<<"IN PLACE"<<std::endl;
 				//For each line of the resulting array
-				for(int i=0;i<M;i++)
+				for(unsigned i=0;i<M;i++)
 				{
 					//For each element of this row
-					for(int j=0;j<N;j++)
+					for(unsigned j=0;j<N;j++)
 					{
 						//Clear value
 						tmp->data[i][j]=0;
-						for(int k=0;k<N;k++)
+						for(unsigned k=0;k<N;k++)
 						{
 							tmp->data[i][j]+=data[i][k]*rop.data[k][j];
 							
@@ -117,8 +117,8 @@ namespace KMat
 
 				}
 				//Get Data back to *this
-				for(int i=0;i<M;i++)
-					for(int j=0;j<N;j++)
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;j<N;j++)
 						data[i][j]=tmp->data[i][j];
 				delete tmp;
 				return static_cast< D<T,M,N> &> (*this);
@@ -135,8 +135,8 @@ namespace KMat
 			D<T,M,N> & scalar_add(	const	 T	 scalar)
 			{
 					
-				for(int i=0;i<M;i++)
-					for(int j=0;j<N;j++)
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;j<N;j++)
 						data[i][j]+=scalar;
 					
 				return static_cast< D<T,M,N> &> (*this);
@@ -147,8 +147,8 @@ namespace KMat
 			D<T,M,N> & scalar_sub(const	T scalar)
 			{
 					
-				for(int i=0;i<M;i++)
-					for(int j=0;j<N;j++)
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;j<N;j++)
 						data[i][j]-=scalar;
 					
 				return static_cast< D<T,M,N> &> (*this);
@@ -159,8 +159,8 @@ namespace KMat
 			D<T,M,N> & scalar_mult(const	T scalar)
 			{
 					
-				for(int i=0;i<M;i++)
-					for(int j=0;j<N;j++)
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;j<N;j++)
 						data[i][j]*=scalar;
 					
 				return static_cast< D<T,M,N> &> (*this);
@@ -172,9 +172,9 @@ namespace KMat
 			D<T,N,M>& transp()
 			{
 				D<T,N,M> *ngen= new D<T,N,M>();
-				for(int i=0;i<M;i++)
+				for(unsigned i=0;i<M;i++)
 				{
-					for(int j=0;j<N;j++)
+					for(unsigned j=0;j<N;j++)
 					{
 						ngen->data[j][i]=data[i][j];
 					}
@@ -218,8 +218,8 @@ namespace KMat
 			{
 				memset(data ,0 , sizeof(T)*N*M);
 				//Fill main diagonal
-				//int l=M<N?M:N;
-				//for(int i=0;i<l;i++)
+				//unsigned l=M<N?M:N;
+				//for(unsigned i=0;i<l;i++)
 					//data[i][i]=1;
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -231,8 +231,8 @@ namespace KMat
 			{
 				memset(data ,0 , sizeof(T)*N*M);
 				//Fill main diagonal
-				int l=M<N?M:N;
-				for(int i=0;i<l;i++)
+				unsigned l=M<N?M:N;
+				for(unsigned i=0;i<l;i++)
 					data[i][i]=1;
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -260,15 +260,18 @@ namespace KMat
 				//Print header:
 				
 				cout<<"+";
-				for(int i=0;i<N;i++)
-					cout<<"		 -";
+				for(unsigned i=0;i<N;i++)
+					cout<<"   -   ";
 				cout<<"+"<<endl;
-				for(int i=0;i<M;i++)
+				
+				for(unsigned i=0;i<M;i++)
 				{
 					cout<<"|";
-					for(int j=0;j<N;j++)
+					for(unsigned j=0;j<N;j++)
 					{
-						cout<<setprecision(3)<<setw(6)<<data[i][j];
+						cout.width(7);
+						cout.precision(2);
+						cout<<fixed<<data[i][j]<<"";//setprecision(3)<<setw(6)<<
 					}
 					cout<<"|"<<endl;;
 				}
@@ -276,8 +279,8 @@ namespace KMat
 				
 				//Print footer:
 				cout<<"+";
-				for(int i=0;i<N;i++)
-					cout<<"		 -";
+				for(unsigned i=0;i<N;i++)
+					cout<<"   -   ";
 				cout<<"+"<<endl;
 				
 				return static_cast< D<T,M,N> &> (*this);
@@ -297,9 +300,9 @@ namespace KMat
 	 GenMatrix<A,S,S> & transpose_square_matrix(GenMatrix<A,S,S> & athis)
 	 {
 		 
-		 for(int i=0;i<S;i++)
+		 for(unsigned i=0;i<S;i++)
 				{
-					for(int j=0;j<i;j++)
+					for(unsigned j=0;j<i;j++)
 					{
 						A tempdata=athis.data[i][j];
 						athis.data[i][j]=athis.data[j][i];
@@ -583,7 +586,7 @@ namespace KMat
 			ATMatrix<T,S>& check()//Just update booleans
 			{
 				BisZero=true;
-				for(int i=1;i<S;i++)
+				for(unsigned i=1;i<S;i++)
 					if(B(i,1)!=0)
 					{
 						BisZero=false;
@@ -592,11 +595,11 @@ namespace KMat
 				
 				AisZero=true;
 				AisIdentity=true;
-					for(int i=1;i<S;i++)
+					for(unsigned i=1;i<S;i++)
 					{
 						if(A(i,i)!=1)
 							AisIdentity=false;
-						for(int j=1;j<S;j++)
+						for(unsigned j=1;j<S;j++)
 						{
 							if(A(i,j)!=0)
 								AisZero=false;
@@ -646,7 +649,7 @@ namespace KMat
 				{
 					m.identity();
 					m.AisIdentity=false;
-					for(int i=1;i<S-1;i++)
+					for(unsigned i=1;i<S-1;i++)
 						m.A(i,i)=t(i);
 					
 				}
@@ -683,6 +686,6 @@ namespace KMat
 				}
 		};
 		double rigid::PI=3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811;
-
+};
 
 #endif 
