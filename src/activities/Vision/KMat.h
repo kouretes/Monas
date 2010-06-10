@@ -683,54 +683,6 @@ namespace KMat
 				}
 		};
 		double rigid::PI=3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811;
-		
-	 /*template<typename T> class GenMatrix<T,2,2> : public BaseMatrix<GenMatrix,T,2,2> 
-	 {
-		 private:
-			using BaseMatrix< KMat :: template GenMatrix ,T,2,2> ::data;
-			
-			friend GenMatrix<T,2,2> & transpose_square_matrix<>(GenMatrix<T,2,2> & athis);
-		 public:
-			GenMatrix<T,2,2> & transp() { return transpose_square_matrix(*this) ; };//Override for square
-			//Invert 2x2 matrix!
-			GenMatrix<T,2,2> & invert()			{
-				
-			
-				
-			};
-			
-			
-	 };*/
-		
-	 //Ugly way to implement typedef templates :/
-	 //template<typename T,unsigned M,unsigned N>
-	 //struct RectMatrix{
-	//	 typedef KMat::GenMatrix<GenMatrix,T,M,N> type;
-		 
-	// }
-	 
-	 // template < typename T, unsigned M,unsigned N> class GenMatrix<T,M,N,GenMatrix<T,M,N,GenMatrix> >: public BaseMatrix<GenMatrix,T,M,N>{};
-//#define SquareMatrix$	SquareMatrix<T,S,S>
-//	//TODO: redefine T_* stuff and transp for in-place operation
-//	 template <typename T,unsigned S> class SquareMatrix: public BaseMatrix<T,S,S>
-//	 {
-//		/**
-//		*	Transpose , add rhs and transpose 
-//back : this'+rhs
-//		**/
-//		SquareMatrix<T,S,S> & T_add( const BaseMatrix<T,S,S> &rhs);
-//		 
-//		 
-//	 };
-	//typedef BaseMatrix<float,3,3> BaseMatrix3d;
-};
-
-
-
-//WTF!! C++ I REALLY HATE YOU!! WHY WHY WHY
-//#include "KMat.cc"
-
-
 
 
 #endif 
