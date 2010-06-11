@@ -67,11 +67,17 @@ void MotionController::read_messages() {
 	if (im != NULL) delete im;
 	_blk->process_messages();
 	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
-	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
-	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
 	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
-	//hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
+	
+	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Vision");
+	if (hm == NULL) {
+		hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
+		//hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
+	}
+	
+	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
 	//am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "MotionController");
+	
 	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
 	Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
