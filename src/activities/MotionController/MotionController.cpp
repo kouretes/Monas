@@ -19,16 +19,16 @@ void MotionController::UserInit() {
 	try {
 		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
-        	Logger::Instance().WriteMsg("MotionController","Error in getting motion proxy",Logger::FatalError);
+		Logger::Instance().WriteMsg("MotionController","Error in getting motion proxy",Logger::FatalError);
 	}
 	motion->setStiffnesses("Body", 0.9);
 	motion->setWalkArmsEnable(true, true);
 
-    	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
-    	_com->get_message_queue()->add_subscriber(_blk);
-    	_com->get_message_queue()->subscribe("motion", _blk, 0);
-    	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-    	_com->get_message_queue()->add_publisher(this);
+	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
+	_com->get_message_queue()->add_subscriber(_blk);
+	_com->get_message_queue()->subscribe("motion", _blk, 0);
+	_com->get_message_queue()->subscribe("sensors", _blk, 0);
+	_com->get_message_queue()->add_publisher(this);
     	
 	wm = NULL;
 	hm = NULL;
@@ -45,7 +45,7 @@ void MotionController::UserInit() {
 	headPID = 0;
 	actionPID = 0;
 
-    	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
+	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
 	loadActions();
 	
 	
@@ -67,8 +67,17 @@ void MotionController::read_messages() {
 	if (im != NULL) delete im;
 	_blk->process_messages();
 	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
-	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
+	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
+	
+	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Vision");
+	if (hm == NULL) {
+		hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
+		//hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
+	}
+	
 	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
+	//am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "MotionController");
+	
 	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
 	Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
@@ -92,9 +101,9 @@ void MotionController::mglrun() {
 #ifdef WEBOTS
 	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue < 5.5) ) { // Webots
 #else
-	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue > -45)) { // Robot
+	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue > -40)) { // Robot
 #endif
-        	Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 0.0);
 		robotUp = false;
 		robotDown = true;
@@ -107,18 +116,18 @@ void MotionController::mglrun() {
 
 	/* Check if the robot is down and stand up */
 	if (robotDown) {
-        	Logger::Instance().WriteMsg("MotionController", "Will stand up now...", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Will stand up now...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 1.0);
 		robotDown = false;
 		ALstandUp();
-		Logger::Instance().WriteMsg("MotionController", "Action ID: "+_toString(actionPID), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "StandUp ID: "+_toString(actionPID), Logger::ExtraInfo);
 		return;
 	}
 
 	/* Check if an Action command has been completed */
 	if ( (actionPID != 0) && !motion->isRunning(actionPID) ) {
 		actionPID = 0;
-        	Logger::Instance().WriteMsg("MotionController","Action completed! Motion executed "+_toString(counter)+" times.", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController","Action completed! Motion executed "+_toString(counter)+" times.", Logger::ExtraInfo);
 	}
 
 	/* Check if the robot stood up after a stand up procedure */
@@ -126,11 +135,11 @@ void MotionController::mglrun() {
 #ifdef WEBOTS
 		if (AccZvalue > 8.5) { // Webots
 #else
-		if (AccZvalue < -50) { // Robot
+		if (AccZvalue < -40) { // Robot
 #endif
 			robotUp = true;
 			sleep(1);
-            		Logger::Instance().WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
+			Logger::Instance().WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
 		} else if (actionPID == 0)
 			robotDown = true;
 		return;
@@ -143,13 +152,13 @@ void MotionController::mglrun() {
 		/* Check if a Walk command has been completed */
 		if ((walkPID != 0) && !motion->isRunning(walkPID) && !motion->walkIsActive()) {
 			walkPID = 0;
-            		Logger::Instance().WriteMsg("MotionController","Walk completed! Motion executed "+_toString(counter)+" times.",Logger::ExtraInfo);
+			Logger::Instance().WriteMsg("MotionController","Walk completed! Motion executed "+_toString(counter)+" times.",Logger::ExtraInfo);
 		}
 
 		/* Check if a Head command has been completed */
 		if ((headPID != 0) && !motion->isRunning(headPID)) {
 			headPID = 0;
-            		Logger::Instance().WriteMsg("MotionController","Head completed! Motion executed "+_toString(counter)+" times.",Logger::ExtraInfo);
+			Logger::Instance().WriteMsg("MotionController","Head completed! Motion executed "+_toString(counter)+" times.",Logger::ExtraInfo);
 		}
 
 		/* Check if there is a command to execute */ 
@@ -201,26 +210,30 @@ void MotionController::mglrun() {
 				values[1] = headParam2;
 				float fractionMaxSpeed = 0.2;
 				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
-				Logger::Instance().WriteMsg("MotionController", "   Head ID: " +_toString(headPID),Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", " Head ID: " +_toString(headPID),Logger::ExtraInfo);
 			}
 		}
 		
 		if ( (am != NULL) && (actionPID==0) ) {
+			
+			Logger::Instance().WriteMsg("MotionController", hm->command(),Logger::ExtraInfo);
 		
 			//actionPID = motion->post.xxxxxxxxxxxxxx
 			if (am->command() == "lieDown") {
 				stopWalkCommand();
 				killHeadCommand();
-			        actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
+				actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
 			}
 			else if (am->command() == "leftKick") {
 				stopWalkCommand();
-			        actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
+				actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
 				}
 			else if (am->command() == "rightKick") {
 				stopWalkCommand();
-			        actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
+				actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
 			}
+			
+			Logger::Instance().WriteMsg("MotionController", "  Action ID: " +_toString(actionPID),Logger::ExtraInfo);
 		}
 
 	}
@@ -266,12 +279,12 @@ void MotionController::commands() {
 		hmot->set_command("changeHead");
 		hmot->add_parameter(x);
 		hmot->add_parameter(y);
-		//cout << "SEnding Demo Commands  changeHead " << endl;
+		Logger::Instance().WriteMsg("MotionController","Sending Command: changeHead ", Logger::ExtraInfo);
 		Publisher::publish(hmot,"motion");
 		delete hmot;
 	}
 
-	if ((counter % 500 == 0)) {
+	if ((counter % 50 == 0)) {
 		MotionWalkMessage* wmot = new MotionWalkMessage();
 		float x = rand() / ((float) RAND_MAX);
 		x = (x - 0.5) * 2.0;
@@ -286,16 +299,16 @@ void MotionController::commands() {
 		wmot->add_parameter(y);
 		wmot->add_parameter(z);
 		wmot->add_parameter(s);
-		//cout << "SEnding Demo Commands  setWalkTargetVelocity " << endl;
+		Logger::Instance().WriteMsg("MotionController","Sending Command: setWalkTargetVelocity ", Logger::ExtraInfo);
 		Publisher::publish(wmot,"motion");
 		delete wmot;
 	}
 
-	if ((actionPID == 0) && (counter % 2000 == 0) && (counter > 0)) {
+	if ((actionPID == 0) && (counter % 200 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
-		amot->set_command("lieDown");
-		//cout << "SEnding Demo Commands  setWalkTargetVelocity " << endl;
+		amot->set_command("leftKick");
+		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
 		Publisher::publish(amot,"motion");
 		delete amot;
 	}
