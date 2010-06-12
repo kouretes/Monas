@@ -1,8 +1,8 @@
 #include "KImageExtractor.h"
 #include "messages/motion.pb.cc"
-
 #include "hal/robot/generic_nao/kAlBroker.h"
 
+static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970,1,1));
 
 using namespace AL;
 using namespace std;
@@ -29,11 +29,19 @@ void KImageExtractor::Init(Narukom* com)
     try
     {
         c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
+        dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
         c->callVoid( "unsubscribe", GVM_name );
         GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
                                          cSpace,VISON_FPS );
 
         doneSubscribe=true;
+        //Calculate Roundtrip time
+        ptime start = microsec_clock::local_time();
+        c->call<int>( "getParam", kCameraSelectID);
+        c->call<int>( "getParam", kCameraSelectID);
+        ptime end = microsec_clock::local_time();
+        rtt=(end-start).total_microseconds()/2;
+
 
     }
     catch (AL::ALError& e)
@@ -51,16 +59,14 @@ void KImageExtractor::Init(Narukom* com)
  * Use Allocate Image for an initial allocation of an image
  */
 
-struct timespec KImageExtractor::fetchImage(IplImage *img)
+boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 {
-    struct timespec rt;//Timestamp
     //cout<<"KImageExtractor::fetchimage():"<<endl;
+    boost::posix_time::ptime s=boost::posix_time::microsec_clock::local_time();
     if (doneSubscribe==false)
     {
         cout<<"KImageExtractor: Warning! fetchImage()  called although GVM Subscription has failed!"<<endl;
-        rt.tv_sec=0;
-        rt.tv_nsec=0;
-        return rt;
+        return boost::date_time::max_date_time;
     }
 
 #ifdef REMOTE_ON
@@ -88,7 +94,19 @@ struct timespec KImageExtractor::fetchImage(IplImage *img)
     // Set the buffer we received to our IplImage header.
     //fIplImageHeader->imageData = (char*) (results[6].GetBinary());
     //cout << "Size" << size << endl;
-
+    //cout<<"dcmtime"<<endl;
+    //int time=0 ;
+    //time = dcm->getTime(0);
+    //cout<<"dcm2"<<endl;
+    //alt.getLocalTime();
+    //cout<<alt.getHour()<<" "<<alt.getMinute()<<" "<<alt.getSecond()<<" "<<alt.getMs()<<endl;
+    //boost::posix_time::ptime e=boost::posix_time::microsec_clock::local_time();
+    boost::posix_time::time_duration exp=boost::posix_time::microsec(getExp()/2);
+    boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec((int)results[5])+boost::posix_time::seconds((int) results[4]));
+    boost::posix_time::time_duration dur=s-(stamp-exp);//TODO:: rtt - round trip time
+    dur-=boost::posix_time::seconds(dur.total_seconds());
+    //cout<<boost::posix_time::to_simple_string(dur)<<endl;
+    s-=dur;//True Timestamp !! Yeah!
 
 
     int width = (int) results[0];
@@ -97,14 +115,11 @@ struct timespec KImageExtractor::fetchImage(IplImage *img)
     int colorSpace = (int) results[3];
 
     int size =width*height*nChannels;
-
-    //Fetch TimeStamp;
-    rt.tv_sec=(time_t)((int) results[4]);
-    rt.tv_nsec=(int)  results[5]*1000L;
-
+    //cout<<time<<endl;//-((int) results[4]*1000)-(int)  results[5]<<endl;
     //Change of image data size
     assert(img!=NULL);
     //cout<<img->imageSize<<" "<<size<<endl;
+
     if (img->imageSize!=size )
     {
         //cout<<img->width<<" "<<img->height<<endl;
@@ -155,8 +170,11 @@ struct timespec KImageExtractor::fetchImage(IplImage *img)
     const int size = width*height*nChannels;
     // Set the buffer we received to our IplImage header.
     //Fetch TimeStamp;
-    rt.tv_sec=(time_t) (timeStamp / 1000000LL);
-    rt.tv_nsec=(long)  ((timeStamp-rt.tv_sec*1LL)*1000LL);
+    boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec(timeStamp)));
+    boost::posix_time::time_duration dur=s-stamp;
+    dur-=boost::posix_time::seconds(dur.total_seconds());
+   // cout<<boost::posix_time::to_simple_string(dur)<<endl;
+    s-=dur;//True Timestamp !! Yeah!
 
 
     //Change of image data size
@@ -183,7 +201,7 @@ struct timespec KImageExtractor::fetchImage(IplImage *img)
     // Now that you're done with the (local) image, you have to release it from the V.I.M.
     c->call<int> ("releaseImage", GVM_name);
 #endif
-    return rt;
+    return s;
 };
 
 IplImage *KImageExtractor::allocateImage()
@@ -412,3 +430,10 @@ int KImageExtractor::getCamera()
 {
     return c->call<int>( "getParam", kCameraSelectID);
 }
+
+float KImageExtractor::getExp()
+{
+    int a=c->call<int>( "getParam", kCameraExposureID);
+    return a*33.0/510.0;
+}
+

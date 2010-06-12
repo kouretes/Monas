@@ -9,6 +9,7 @@ set ( ActivityName Vision )
 set ( ActivitySrcs  KImageExtractor.cpp 
                     KSegmentator.cpp
                     Vision.cpp
+		    KCameraTransformation.cpp
 ) 
 
 include ( ../activTemplate.cmake )
