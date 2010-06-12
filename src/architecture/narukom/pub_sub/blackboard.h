@@ -73,7 +73,7 @@ class Blackboard : public Subscriber
     int add_tuple(Tuple*);
     unsigned get_cleanup_period();
     void set_cleanup_period(unsigned cleanup_period);
-    
+
     template<class Data>
     Data* extract_result_from_tuple(Tuple& t);
 private:
@@ -101,7 +101,7 @@ Data* Blackboard::extract_result_from_tuple( Tuple& t)
     new_data->ParsePartialFromString(serialized_msg->byte_stream());
     google::protobuf::Message* base_class = dynamic_cast<google::protobuf::Message*>(new_data);
     if(base_class != 0)
-    {  
+    {
       t.msg_data = new_data;
       t.meta_data.set_serialized(false);
       delete serialized_msg;
@@ -121,7 +121,7 @@ Data& Blackboard::read(const std::string& type, const std::string&  process,cons
   DataStruct::iterator data_it;
   if (time_req == 0)
   {
-    
+
     data_it = get_tuple(host,process,type);
     while (data_it == world_perception.end())
     {
@@ -139,7 +139,7 @@ Data& Blackboard::read(const std::string& type, const std::string&  process,cons
       process_messages();
       data_it = get_tuple(host,process,type,time_req);
     }
-    
+
   }
   result = extract_result_from_tuple<Data>(*(*data_it));
   if(tmsp !=0)
@@ -172,7 +172,7 @@ Data* Blackboard::in(const std::string& type, const std::string&  process,const 
       process_messages();
       data_it = get_tuple(host,process,type,time_req);
     }
-    
+
   }
   result = extract_result_from_tuple<Data>(*(*data_it));
   if(tmsp !=0)
@@ -181,7 +181,7 @@ Data* Blackboard::in(const std::string& type, const std::string&  process,const 
   world_perception.erase(data_it);
   data_struct_mx.Unlock();
   return result;
-  
+
 }
 
 template<class Data>
@@ -198,7 +198,7 @@ Data* Blackboard::read_nb(const std::string& type, const std::string&  process,c
     data_it = get_tuple(host,process,type,time_req);
   }
   if (data_it != world_perception.end())
-  {    
+  {
     result = extract_result_from_tuple<Data>(*(*data_it));
     if(tmsp !=0)
       *tmsp = (*data_it)->get_timestamp();
@@ -222,8 +222,8 @@ Data* Blackboard::in_nb(const std::string& type, const std::string&  process,con
   {
     data_it = get_tuple(host,process,type,time_req);
   }
-  
-  
+
+
   if (data_it != world_perception.end())
   {
     result = extract_result_from_tuple<Data>(*(*data_it));

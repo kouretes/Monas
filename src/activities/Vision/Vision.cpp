@@ -157,7 +157,7 @@ KSegmentator::colormask_t Vision::doSeg(int x, int y)
 }
 
 Vision::Vision() :Publisher("Vision"),
-        cvHighgui(true), type(VISION_CSPACE)
+        cvHighgui(false), type(VISION_CSPACE)
 {;}
 
 void Vision::UserInit() {

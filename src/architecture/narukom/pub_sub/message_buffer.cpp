@@ -42,7 +42,7 @@ MessageBuffer::MessageBuffer(const std::string owner,boost::condition_variable* 
     mutex.Unlock();
 }
 MessageBuffer::MessageBuffer(const MessageBuffer& other)
-{ 
+{
     mutex.Lock();
     owner = other.getOwner();
     copyFrom(other);
@@ -56,7 +56,7 @@ MessageBuffer::~MessageBuffer()
   mutex.Unlock();
   delete msg_buf;
   mutex.Unlock();
-  
+
 }
 
 boost::condition_variable* MessageBuffer::get_condition_variable() const{
@@ -122,7 +122,7 @@ void MessageBuffer::add(Tuple* tuple)
 	if((*it)->filter(*tuple) == Rejected)
 	  return;
 
-    msg_buf->push_back(tuple);
+    msg_buf->push_back( new Tuple(*tuple));
     mq_cv->notify_one();
     mutex.Unlock();
 

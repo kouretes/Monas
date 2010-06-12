@@ -21,7 +21,7 @@
 #include "message_queue.h"
 #include "../tools/XML.h"
 
- 
+
 using std::map;
 using std::string;
 
@@ -185,7 +185,7 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub , MessageBuffer* buf)
   }
   cout << " Either buffer or Publisher is null " << endl;
   return 0;
-  
+
 }
 
 
@@ -311,7 +311,7 @@ void MessageQueue::process_queued_msg()
                         (*buf_it)->add(cur);
                     }
                 }
-                
+                delete cur;
                 cur = it->second->remove_head();
                 if (cur == 0)
                     break;
@@ -323,10 +323,10 @@ void MessageQueue::process_queued_msg()
       pub_mutex.Unlock();
       boost::unique_lock<boost::mutex>  lock(cond_lock);
       cond.wait(lock);
-      
+
     }
-    
-    
+
+
     pub_mutex.Unlock();
 
 }
