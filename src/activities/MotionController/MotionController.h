@@ -19,6 +19,7 @@
 #include "almotionproxy.h"
 #include "almemoryproxy.h"
 #include "albrokermanager.h"
+#include "altexttospeechproxy.h"
 
 
 class MotionController : public IActivity, public Publisher{
@@ -38,6 +39,7 @@ public:
 
 private:
 
+	AL::ALPtr<AL::ALProxy> tts;
 	AL::ALPtr<AL::ALMotionProxy> motion;
 
 	bool robotDown;
@@ -72,7 +74,8 @@ private:
 	void killWalkCommand();
 	void killHeadCommand();
 	void killActionCommand();
-
+	void killCommands();
+	
 	void ALstandUp();
 	void ALstandUpCross();
 	void ALstandUpFront();

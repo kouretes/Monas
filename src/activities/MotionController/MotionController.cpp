@@ -12,10 +12,15 @@ namespace {
 
 MotionController::MotionController() :
 	Publisher("MotionController") {
-        ;
+		;
 }
 
 void MotionController::UserInit() {
+	try {
+		tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
+	} catch (AL::ALError& e) {
+		Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
+	}
 	try {
 		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
@@ -23,13 +28,19 @@ void MotionController::UserInit() {
 	}
 	motion->setStiffnesses("Body", 0.9);
 	motion->setWalkArmsEnable(true, true);
+	//AL::ALValue temp;
+	//temp.arraySetSize(2);
+	//temp[0] = "ENABLE_FOOT_CONTACT_PROTECTION";
+	//temp[1] = true;
+	//motion->setMotionConfig(temp);
+	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
 	_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("motion", _blk, 0);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->add_publisher(this);
-    	
+
 	wm = NULL;
 	hm = NULL;
 	am = NULL;
@@ -107,10 +118,8 @@ void MotionController::mglrun() {
 		motion->setStiffnesses("Body", 0.0);
 		robotUp = false;
 		robotDown = true;
-		killWalkCommand();
-		killHeadCommand();
-		killActionCommand();
-		sleep(1);
+		killCommands();
+		tts->pCall<AL::ALValue>("say", "Ouch!");
 		return;
 	}
 
@@ -138,7 +147,6 @@ void MotionController::mglrun() {
 		if ( (actionPID == 0) && (AccZvalue < -40) ) { // Robot
 #endif
 			robotUp = true;
-			sleep(1);
 			Logger::Instance().WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
 		} else if (actionPID == 0)
 			robotDown = true;
@@ -242,8 +250,9 @@ void MotionController::mglrun() {
 }
 
 void MotionController::killWalkCommand() {
-	motion->post.killWalk();
+	motion->killWalk();
 	walkPID = 0;
+	Logger::Instance().WriteMsg("MotionController","Killed Walk Command",Logger::ExtraInfo);
 }
 
 void MotionController::stopWalkCommand() {
@@ -254,20 +263,37 @@ void MotionController::stopWalkCommand() {
 
 void MotionController::killHeadCommand() {
 	if (headPID != 0) {
-	        motion->post.killTask(headPID);
-	        headPID = 0;
+		motion->killTask(headPID);
+		headPID = 0;
+		Logger::Instance().WriteMsg("MotionController","Killed Head Command",Logger::ExtraInfo);
 	}
 }
 
 void MotionController::killActionCommand() {
 	if (actionPID != 0) {
-	        motion->post.killTask(actionPID);
-	        actionPID = 0;
+		motion->post.killTask(actionPID);
+		actionPID = 0;
+		Logger::Instance().WriteMsg("MotionController","Killed Action Command",Logger::ExtraInfo);
 	}
 }
 
 
-
+void MotionController::killCommands() {
+	
+	motion->post.killAll();
+	//while ( motion->isRunning(walkPID) || motion->isRunning(headPID) || motion->isRunning(actionPID) ) {
+		//if ( motion->isRunning(walkPID) ) 
+			//Logger::Instance().WriteMsg("MotionController","Walk Command is running",Logger::ExtraInfo);
+		//if ( motion->isRunning(headPID) ) 
+			//Logger::Instance().WriteMsg("MotionController","Head Command is running",Logger::ExtraInfo);
+		//if ( motion->isRunning(actionPID) ) 
+			//Logger::Instance().WriteMsg("MotionController","Action Command is running",Logger::ExtraInfo);
+	//}
+	walkPID   = 0;
+	headPID   = 0;
+	actionPID = 0;
+	Logger::Instance().WriteMsg("MotionController","Killed All Commands",Logger::ExtraInfo);
+}
 
 
 
