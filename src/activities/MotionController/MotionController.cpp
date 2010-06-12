@@ -133,9 +133,9 @@ void MotionController::mglrun() {
 	/* Check if the robot stood up after a stand up procedure */
 	if (!robotUp && !robotDown) {
 #ifdef WEBOTS
-		if (AccZvalue > 8.5) { // Webots
+		if ( (actionPID == 0) && (AccZvalue > 8.5) ) { // Webots
 #else
-		if (AccZvalue < -40) { // Robot
+		if ( (actionPID == 0) && (AccZvalue < -40) ) { // Robot
 #endif
 			robotUp = true;
 			sleep(1);
@@ -216,7 +216,7 @@ void MotionController::mglrun() {
 		
 		if ( (am != NULL) && (actionPID==0) ) {
 			
-			Logger::Instance().WriteMsg("MotionController", hm->command(),Logger::ExtraInfo);
+			Logger::Instance().WriteMsg("MotionController", am->command(),Logger::ExtraInfo);
 		
 			//actionPID = motion->post.xxxxxxxxxxxxxx
 			if (am->command() == "lieDown") {
@@ -265,6 +265,18 @@ void MotionController::killActionCommand() {
 	        actionPID = 0;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 void MotionController::commands() {
 	//cout << "Commands " << counter << " headPid " << headPID << endl;
