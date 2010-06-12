@@ -68,16 +68,16 @@ void MotionController::read_messages() {
 	_blk->process_messages();
 	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
 	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
-	
-	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Vision");
+
+	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "KImageExtractor");
 	if (hm == NULL) {
 		hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
 		//hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
 	}
-	
+
 	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
 	//am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "MotionController");
-	
+
 	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
 	Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
