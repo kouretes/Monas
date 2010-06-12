@@ -4,6 +4,7 @@
 #include "architecture/narukom/pub_sub/publisher.h"
 #include "messages/TestMessage.pb.h"
 #include "messages/SensorsMessage.pb.h"
+
 #include <vector>
 #include <map>
 #include <string>
@@ -15,9 +16,10 @@
 
 #define N 36
 #define M 7
-#define RotAngle 360/N
-#define distance 10
 #define PI 3.14159f
+#define RotAngle 360/N
+#define RotAngleRad RotAngle*PI/180
+#define distance 10
 #define discount 1
 #define reward -0.05
 #define goal 10
@@ -46,6 +48,7 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 
 	private:
 		AL::ALPtr<AL::ALMemoryProxy> memory;
+		int flag;
 		double PolarGrid[M][N];
 		int MoveGrid[100][100];
 		int leftCounter, rightCounter;
@@ -66,15 +69,16 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		int shift, index[M*N], indey[M*N];
 		UltaSoundSensorsMessage * ussm;
 		RobotPositionSensorMessage * rpsm;
-		int countAge;
-		int countValid;
+		int countAge, countPos;
+		double countLeft;
+		double countRight;
 		
 		void smoothGrid(int smooth);
 		void updateGrid(double newValues2, double newValues1);
 		void ageGrid();
-		void findNewPosition(double gpsValx, double gpsValy);
+		void findNewPosition();
 		void straightMove(int distanceFront, int distanceSide);
-		void rotateGrid(int angle);
+		void rotateGrid(double angle);
 		void findCoordinates();
 		void initIndexes(int mm, int nn);
 		double iterationGridDir(int num, int mm, int nn);

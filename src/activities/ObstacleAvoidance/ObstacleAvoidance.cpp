@@ -16,11 +16,18 @@ void ObstacleAvoidance::UserInit() {
 	_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->subscribe("behavior", _blk, 0);
+
+	resX=0;
+	resY=0;
+	resAngle=0;
 	ussm =0;
 	rpsm=0;
 	shift = 100;  //shift==metatopish gia probolh grid sthn ekastote konsola
 	countAge=0;
-	countValid=0;
+	countLeft=0;
+	countRight=0;
+	countPos=0;
+	flag=0;
 	initGrid();
 	
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "Controller Initialized", Logger::Info);
@@ -29,39 +36,58 @@ void ObstacleAvoidance::UserInit() {
 int ObstacleAvoidance::Execute() {
 	read_messages();
 	countAge++;
+	countPos++;
+	countLeft=0;
+	countRight=0;
 	if(rpsm !=0){
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "robot position", Logger::Info);
 		PosX = rpsm->sensordata(0);
 		PosY = rpsm->sensordata(1);
 		Angle = rpsm->sensordata(2);
-		Logger::Instance().WriteMsg("ObstacleAvoidance", " Posx " + _toString(PosX.sensorvalue()) + " PosY " + _toString(PosY.sensorvalue()) + " ANGLE " + _toString(Angle.sensorvalue()) , Logger::Info);
+		if (flag ==0){
+			RobotPosition[0]=PosX.sensorvalue();
+			RobotPosition[1]=PosY.sensorvalue();
+			RobotPosition[2]=Angle.sensorvalue();
+			flag=1;
+		} 
+		else{
+			Logger::Instance().WriteMsg("ObstacleAvoidance", " Posx " + _toString(PosX.sensorvalue()) + " PosY " + _toString(PosY.sensorvalue()) + " ANGLE " + _toString(Angle.sensorvalue()) , Logger::Info);
+			//findNewPosition();
+		}
 		delete rpsm;
 	}
 	if (ussm != 0) {
-		LeftValue[0] = ussm->sensordata(0);
-		RightValue[0] = ussm->sensordata(1);
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[0].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[0].sensorvalue()), Logger::Info);
-		//for (int i=0;i<10;i++) {
-		//	RightValue[i] = ussm->sensordata(i);
-		//	LeftValue[i] = ussm->sensordata(i+10);
-		//	Logger::Instance().WriteMsg("ObstacleAvoidance", "aouts", Logger::Info);
-		//}
-		if (countValid == 2){
-			countValid =0;
-			rightArray[0] = rightArray[0]/2;
-			leftArray[0] = leftArray[0]/2;
-			updateGrid(rightArray[0],leftArray[0]);
-		} 
-		else{
-			rightArray[0] = rightArray[0]+RightValue[0].sensorvalue();
-			leftArray[0] = leftArray[0]+LeftValue[0].sensorvalue();
+		for (int j=9;j>=0;j--){
+			LeftValue[j] = ussm->sensordata(j);
+			RightValue[j] = ussm->sensordata(j+10);
+			countLeft = countLeft+LeftValue[j].sensorvalue();
+			countRight = countRight + RightValue[j].sensorvalue() ;
 		}
-		countValid++;
-		//updateGrid(RightValue[0].sensorvalue(), LeftValue[0].sensorvalue());
-		drawGrid();
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[0].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[0].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[1].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[1].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[2].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[2].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[3].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[3].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[4].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[4].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[5].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[5].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[6].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[6].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[7].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[7].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[8].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[8].sensorvalue()), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[9].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[9].sensorvalue()), Logger::Info);
+		//double newValue1, newValue2;
+		//if (countRight != 0){ //epairna mhdenikes times-la8os
+		//for (int i=9;i>=0;i--){
+		//	updateGrid(newValue1=(countRight!=0?RightValue[i].sensorvalue():0), newValue2=(countLeft!=0?LeftValue[i].sensorvalue():0));
+		//}
+		//drawGrid();
+		//}
 		delete ussm;
 	}
-	if(countAge == 15){
+	if (countPos == 10){
+		countPos=0;
+		//findNewPosition();
+	}
+	
+	if(countAge == 20){
 		countAge =0;
 		ageGrid();
 	}
@@ -96,6 +122,11 @@ void ObstacleAvoidance::initGrid(){
 	for(int i=0;i<M;i++)
 		for(int j=0;j<N;j++)
 			PolarGrid[i][j] = 0.5;
+	PolarGrid[2][13]=1.0;
+	PolarGrid[2][14]=1.0;
+	PolarGrid[2][15]=1.0;
+	PolarGrid[3][11]=0.789;
+	
 
 	for (int i=0;i<100;i++)
 		for (int j=0;j<100;j++){
@@ -104,21 +135,21 @@ void ObstacleAvoidance::initGrid(){
 			r = sqrt(pow(x, 2) + pow(y, 2));
 			theta = atan2(y, x)*180/PI;
 			if (theta<0) theta=360+theta;
-			//printf("X %f   Y %f   R %f    THETA %f\n", x, y, r, theta);
 			MoveGrid[i][j] = (int) (r/10)*N+(theta/10);
-			//printf("mm[%d][%d] %d \n",i, j, MoveGrid[i][j]);
 		}
 	
 	for(int i=0;i<3;i++)
 		for(int j=0;j<3;j++)
 			grid[i][j] = 1;
+			
+	findCoordinates();
 
 }
 
 
 void ObstacleAvoidance::smoothGrid(int smooth){
   if(smooth==1){
-	  //no obstacle right behind the robot
+	//no obstacle right behind the robot while it moves..
     for(int l=0;l<N/4;l++) {
       PolarGrid[0][l]=0.0;
       PolarGrid[0][l+3*N/4]=0.0;
@@ -136,44 +167,47 @@ void ObstacleAvoidance::smoothGrid(int smooth){
   }  
 }
 
-void ObstacleAvoidance::updateGrid(double newValues2, double newValues1){//right, left
+void ObstacleAvoidance::updateGrid(double newValues1, double newValues2){//right, left
 	int index, range=4;
 	double temp[2];
-	double counter = 0.9;
-	
-	temp[0]=(newValues1 < 0.69 && newValues1 > 0.2)?newValues1:0.0; //left
-	temp[1]=(newValues2 < 0.69 && newValues2 > 0.2)?newValues2:0.0; //right
-	Logger::Instance().WriteMsg("ObstacleAvoidance", "in_update new1 " + _toString(temp[0]) +  " new2 " + _toString(temp[1]) , Logger::ExtraExtraInfo);
+	//double counter = 0.9;
+	Logger::Instance().WriteMsg("ObstacleAvoidance", "in_update new1 " + _toString(newValues2) +  " new2 " + _toString(newValues1) , Logger::ExtraExtraInfo);
+	temp[0]=(newValues1 < 0.89 && newValues1 > 0.2)?newValues1:0.0; //left
+	temp[1]=(newValues2 < 0.89 && newValues2 > 0.2)?newValues2:0.0; //right
+	//Logger::Instance().WriteMsg("ObstacleAvoidance", "in_update new1 " + _toString(temp[0]) +  " new2 " + _toString(temp[1]) , Logger::ExtraExtraInfo);
 	for(int k=0;k<2;k++){
-		if(temp[k] > 0.0) {
-			index=(int)(temp[k]/0.1 - 1);
-			Logger::Instance().WriteMsg("ObstacleAvoidance", " in if " + _toString(index), Logger::ExtraExtraInfo);
+		if(temp[k] > 0.0) {  //alliws den mas endiaferei giati einai eite poly makrya eite poly konta
+			index=(int)(temp[k]/0.1 - 2); //-2 giati den mas endiaferei mexri ta 20 cm
+			//Logger::Instance().WriteMsg("ObstacleAvoidance", " in if " + _toString(index), Logger::ExtraExtraInfo);
 			for(int j=((k==0)?13:19);j<((k==0)?(13+range):(19+range));j++){
 				PolarGrid[index][j]=PolarGrid[index][j]*1.1>=1.0?1.0:PolarGrid[index][j]*1.1;
-				counter = 0.98;
-				for (int i=(index-1);i>=0;i--){
-					PolarGrid[i][j]=PolarGrid[i][j]*counter<=0.0?0.0:PolarGrid[i][j]*counter;
-					counter = counter * 0.95;
-				}
-				counter = 1.02;
-				for (int i=(index);i<M;i++){
-					PolarGrid[i][j]=PolarGrid[i][j]*1.1>=1.0?1.0:PolarGrid[i][j]*1.1;
-					counter = counter * 1.05;
-				}
+				//for (int i=(index-1);i>=0;i--){
+					//PolarGrid[i][j]=PolarGrid[i][j]*counter<=0.0?0.0:PolarGrid[i][j]*counter;
+				//	counter = counter * 0.95;
+				//}
+				if (index>0)
+					PolarGrid[index-1][j]=PolarGrid[index-1][j]*0.98<=0.0?0.0:PolarGrid[index-1][j]*0.98;
+				//for (int i=(index);i<M;i++){
+					//PolarGrid[i][j]=PolarGrid[i][j]*1.1>=1.0?1.0:PolarGrid[i][j]*1.1;
+				//	counter = counter * 1.05;
+				//}
+				if (index<5)
+					PolarGrid[index+1][j]=PolarGrid[index+1][j]*1.02>=1.0?1.0:PolarGrid[index+1][j]*1.02;
 			}  
-		}
+		}/*
 		else {
-			Logger::Instance().WriteMsg("ObstacleAvoidance", " in else " , Logger::ExtraExtraInfo);
+			//Logger::Instance().WriteMsg("ObstacleAvoidance", " in else " , Logger::ExtraExtraInfo);
 		for(int j=((k==0)?13:19);j<((k==0)?(13+range):(19+range));j++)
 		  for (int i=0;i<M;i++)
 			PolarGrid[i][j]=PolarGrid[i][j]<=0.0?0.0:PolarGrid[i][j]*0.98;
-		}
+		}*/
 	}
-	/*if(newValues1/0.1-3 < 3 && abs(newValues1 - newValues2)<0.06) return 2; 
+	/*if(temp[0]/0.1 < 3 && abs(temp[0] - temp[1])<0.1 && temp[0]>0) 
+		Logger::Instance().WriteMsg("ObstacleAvoidance", " mprosta " + _toString(temp[0]) , Logger::ExtraExtraInfo);
 	else {
-		if(newValues1/0.1-3 < 3 ) return 1;
-	else if(newValues2/0.1-3 < 3 ) return -1;
-	else return 0;
+		if(temp[0]/0.1 < 3 && temp[0]>0) Logger::Instance().WriteMsg("ObstacleAvoidance", " left " , Logger::ExtraExtraInfo);
+	else if(newValues2/0.1< 3 && temp[0]>0) Logger::Instance().WriteMsg("ObstacleAvoidance", " right " , Logger::ExtraExtraInfo);
+	else Logger::Instance().WriteMsg("ObstacleAvoidance", " no obstacle amesa " , Logger::ExtraExtraInfo);
 	}*/
 }
 
@@ -183,21 +217,48 @@ void ObstacleAvoidance::ageGrid(){
       PolarGrid[i][j] = (PolarGrid[i][j]-0.5)*0.9 + 0.5;
 }
 
-void ObstacleAvoidance::findNewPosition(double gpsValx, double gpsValy){
+void ObstacleAvoidance::findNewPosition(){
+	double temp[2];
+	double anglee;
+	temp[0] =(PosX.sensorvalue()-RobotPosition[0])*100;
+	temp[1] =(PosY.sensorvalue()-RobotPosition[1])*100;
+	Logger::Instance().WriteMsg("ObstacleAvoidance", "temp[0] " + _toString(PosX.sensorvalue()) +  " temp[1] " + _toString(PosY.sensorvalue()) , Logger::ExtraExtraInfo);
+	if (fabs(Angle.sensorvalue()-(RobotPosition[2]+resAngle)) > (PI/18) ){ //rotate
+		anglee =(RobotPosition[2]-Angle.sensorvalue())*180/PI;
+		rotateGrid(fabs(anglee));
+		Logger::Instance().WriteMsg("ObstacleAvoidance", "rotate " + _toString(anglee), Logger::ExtraExtraInfo);
+		resAngle = fmod(RobotPosition[2]-Angle.sensorvalue(), RotAngleRad);
+		RobotPosition[2]=Angle.sensorvalue();
+	}
+	if(temp[0]+resX>10){
+		straightMove(int(temp[0]+resX), 0);
+		RobotPosition[0]=PosX.sensorvalue();
+		resX = fmod(temp[0], 10);
+	}
+	if(temp[1]+resY>10){
+		straightMove(0, int(temp[1]+resY));
+		RobotPosition[1]=PosY.sensorvalue();
+		resY = fmod(temp[1], 10);
+	}
+}
+
+/*
+void ObstacleAvoidance::findNewPosition(){
 	double  temp[2];//r, theta,
-	
+	double anglee=0;
 	temp[0] =(PosX.sensorvalue()-RobotPosition[0])*100;
 	temp[1] =(PosY.sensorvalue()-RobotPosition[1])*100;
 	//printf("t0 %f   t1 %f valx %f   valy %f  angle %f\n", temp[0], temp[1], gpsValx*100, gpsValy*100, fabs(angle-robot_initial_angle));
-	if(fabs(Angle.sensorvalue()-RobotPosition[2]) > 30 && fabs(Angle.sensorvalue()-RobotPosition[2]) < 180){
+	if(fabs(Angle.sensorvalue()-RobotPosition[2]) > (PI/180) && fabs(Angle.sensorvalue()-RobotPosition[2]) < PI){
 		//printf("Rotate\n");
-		rotateGrid(RobotPosition[2]-Angle.sensorvalue());
+		anglee = (RobotPosition[2]-Angle.sensorvalue())*180/PI;
+		rotateGrid(anglee);
 		//printf("resanglejh %f\n", fmod(robot_initial_angle-angle, RotAngle));
-		resAngle = fmod(RobotPosition[2]-Angle.sensorvalue(), RotAngle);
+		resAngle = fmod(anglee, RotAngle);
 		RobotPosition[2]=Angle.sensorvalue();
 		//angleR=0;
 		//show_grid();
-	}else if(fabs(fabs(Angle.sensorvalue())-180)<15){//an koitaei mprosta 
+	}else if(fabs(fabs(Angle.sensorvalue())-PI)<PI/12){//an koitaei mprosta 
 		//printf("1\n");
 		if(fabs(temp[0])+resX>10){//ston x proxwraei mprosta
 			straightMove(fabs(temp[0])+resX, 0);
@@ -232,10 +293,12 @@ void ObstacleAvoidance::findNewPosition(double gpsValx, double gpsValy){
 		//printf("4\n");
 	}
 }
+*/
+
 
 void ObstacleAvoidance::straightMove(int distanceFront, int distanceSide){
 	double px[6], py[6], temp;
-	int index, indey;
+	int index=0, indey=0;
 
 	//initialize changed
 	for(int i=0;i<M;i++)
@@ -244,32 +307,35 @@ void ObstacleAvoidance::straightMove(int distanceFront, int distanceSide){
 		
 	for(int i=0;i<M;i++)
 		for(int j=0;j<N;j++){
-		  temp = PolarGrid[i][j];
-		  if (PolarGrid[i][j] > 0.35 && changed[i*N+j]==0){ //check only the cells with obstacles.
-			PolarGrid[i][j] = 0.0;
-			//syntetagmenes pou orizoun to keli
-			px[0] = x[N*i+j]+distanceFront;     py[0] = y[N*i+j]+distanceSide;
-			px[1] = x[N*i+j+N]+distanceFront;   py[1] = y[N*i+j+N]+distanceSide;
-			px[2] = x[N*i+j+1+N]+distanceFront; py[2] = y[N*i+j+1+N]+distanceSide;
-			px[3] = x[N*i+j+1]+distanceFront;   py[3] = y[N*i+j+1]+distanceSide;
-			px[4] = (px[0]+px[2])/2;            py[4] = (py[0]+py[2])/2;
-			px[5] = (px[1]+px[3])/2;            py[5] = (py[1]+py[3])/2;
-			
-			for (int k=0;k<6;k++){
-			  if(px[k]-50>=100 || py[k]-50>=100 || px[k]-50 <0 || py[k]-50 <0) continue; //check if out of MoveGrid(100x100) boundaries
-			  //printf("PX %f  PY %f\n", px[k]-50, py[k]-50);
-			  index=(int) MoveGrid[(int)px[k]-50][(int)py[k]-50]/N;
-			  indey=(int) fmod(MoveGrid[(int)px[k]-50][(int)py[k]-50], N);
-			  PolarGrid[index][indey] = temp;
-			  changed[index*N+indey] = 1;
+			temp = PolarGrid[i][j];
+			if (PolarGrid[i][j] > 0.35 && changed[i*N+j]==0){ //check only the cells with obstacles.
+				PolarGrid[i][j] = 0.0;
+				//syntetagmenes pou orizoun to keli
+				px[0] = x[N*i+j]+distanceFront;     py[0] = y[N*i+j]+distanceSide;
+				px[1] = x[N*i+j+N]+distanceFront;   py[1] = y[N*i+j+N]+distanceSide;
+				px[2] = x[N*i+j+1+N]+distanceFront; py[2] = y[N*i+j+1+N]+distanceSide;
+				px[3] = x[N*i+j+1]+distanceFront;   py[3] = y[N*i+j+1]+distanceSide;
+				px[4] = (px[0]+px[2])/2;            py[4] = (py[0]+py[2])/2;
+				px[5] = (px[1]+px[3])/2;            py[5] = (py[1]+py[3])/2;
+				
+				for (int k=0;k<6;k++){
+					if(px[k]-50>=100 || py[k]-50>=100 || px[k]-50 <0 || py[k]-50 <0) continue; //check if out of MoveGrid(100x100) boundaries
+					//printf("PX %f  PY %f\n", px[k]-50, py[k]-50);
+					index=(int) MoveGrid[(int)px[k]-50][(int)py[k]-50]/N;
+					indey=(int) fmod(MoveGrid[(int)px[k]-50][(int)py[k]-50], N);
+					PolarGrid[index][indey] = temp;
+					changed[index*N+indey] = 1;
+				}
+				Logger::Instance().WriteMsg("ObstacleAvoidance", "index " + _toString(index) +  " indey " + _toString(indey) , Logger::ExtraExtraInfo);
 			}
-		  }
 		}
 }
 
-void ObstacleAvoidance::rotateGrid(int angle){
+void ObstacleAvoidance::rotateGrid(double angle){
 	double temp[M][N];
-	int ll=(int)angle/RotAngle, change[N];
+	int ll=int(angle/10);
+	int change[N];
+	Logger::Instance().WriteMsg("ObstacleAvoidance", "rotateangle " + _toString(ll), Logger::ExtraExtraInfo);
 	for (int i=0;i<M;i++){
 		for(int j=0;j<N;j++) change[j] = 0;//init change for every ring
 		for(int j=0;j<N;j++){
@@ -339,7 +405,8 @@ double ObstacleAvoidance::iterationGridDir(int num, int mm, int nn){
 
 void ObstacleAvoidance::bestPath(int goalx, int goaly){
 	int initm=0, initn=17;      //intitialize as first cell in front of robot
-	int px[5], py[5], flag=0;
+	//int px[5], py[5], 
+	int flag=0;
 	double bigger=-10, temp;
 	initIndexes(initm, initn);
 	do{
@@ -424,3 +491,4 @@ void ObstacleAvoidance::drawGrid(){
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "    -----|-----|-----|-----|----- ", Logger::ExtraExtraInfo);
 		}
 }
+
