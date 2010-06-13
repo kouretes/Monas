@@ -6,7 +6,7 @@
 #include "tools/toString.h"
 
 namespace {
-    ActivityRegistrar<MotionController>::Type temp("MotionController");
+	ActivityRegistrar<MotionController>::Type temp("MotionController");
 }
 
 
@@ -104,6 +104,8 @@ void MotionController::mglrun() {
 	if (im != NULL) {
 		AccZ = im->sensordata(2);
 		AccZvalue = AccZ.sensorvalue();
+		AccX = im->sensordata(0);
+		AccXvalue = AccX.sensorvalue();
 	}
 	//cout << counter << "  " << AccZvalue << "  " << robotUp << "  " << robotDown << " " << actionPID << std::endl;
 
@@ -120,12 +122,16 @@ void MotionController::mglrun() {
 		robotDown = true;
 		killCommands();
 		tts->pCall<AL::ALValue>("say", "Ouch!");
+		sleep(1);
+		motion->setStiffnesses("Body", 0.7);
+		ALstandUpCross();
+		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 		return;
 	}
 
 	/* Check if the robot is down and stand up */
 	if (robotDown) {
-		Logger::Instance().WriteMsg("MotionController", "Will stand up now...", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 1.0);
 		robotDown = false;
 		ALstandUp();
@@ -277,7 +283,6 @@ void MotionController::killActionCommand() {
 	}
 }
 
-
 void MotionController::killCommands() {
 	
 	motion->post.killAll();
@@ -342,10 +347,10 @@ void MotionController::commands() {
 		delete wmot;
 	}
 
-	if ((actionPID == 0) && (counter % 200 == 0) && (counter > 0)) {
+	if ((actionPID == 0) && ((counter+20) % 200 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
-		amot->set_command("leftKick");
+		amot->set_command("rightKick");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
 		Publisher::publish(amot,"motion");
 		delete amot;
@@ -353,5 +358,3 @@ void MotionController::commands() {
 
 	return;
 }
-
-

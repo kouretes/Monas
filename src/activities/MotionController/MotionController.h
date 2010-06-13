@@ -30,11 +30,11 @@ public:
 
 	int Execute();
 
-    void UserInit();
+	void UserInit();
 
-    std::string GetName() {
-        return "MotionController";
-    }
+	std::string GetName() {
+		return "MotionController";
+	}
 
 
 private:
@@ -78,10 +78,8 @@ private:
 	
 	void ALstandUp();
 	void ALstandUpCross();
-	void ALstandUpFront();
-	void ALstandUpBack();
-
-	void ALstandUp2010();
+	void ALstandUpFront2009();
+	void ALstandUpBack2009();
 	void ALstandUpFront2010();
 	void ALstandUpBack2010();
 	
