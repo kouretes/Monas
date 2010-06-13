@@ -9,9 +9,11 @@ set ( ActivityName Vision )
 set ( ActivitySrcs  KImageExtractor.cpp 
                     KSegmentator.cpp
                     Vision.cpp
+		    KCameraTransformation.cpp
 ) 
 
 include ( ../activTemplate.cmake )
 
 
 use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS LIBCORE LIBVISION OPENCV)
+add_executable(KMat-testing KMat-testing.cpp KMat.h)

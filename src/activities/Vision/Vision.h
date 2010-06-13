@@ -2,6 +2,7 @@
 #define VISION_H
 #include <albroker.h>
 #include "alptr.h"
+#include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
@@ -15,9 +16,13 @@
 
 #include "architecture/narukom/pub_sub/publisher.h"
 #include "messages/VisionObservations.pb.h"
+#include "messages/SensorsMessage.pb.h"
 //#define DEBUGVISION
 
 #include <vector>
+
+
+
 
 class Vision : public IActivity, public Publisher
 {
@@ -42,6 +47,13 @@ public:
 private:
     bool cvHighgui;
     BallTrackMessage trckmsg;
+    //Incoming messages!
+    InertialSensorsMessage* im;
+    HeadJointSensorsMessage* hm;
+    //Camera transformation matrix
+    KMat::ATMatrix<float,3> ct;
+    KMat::HCoords<float,3> * ang,*Vang;//From tosro
+    cpose p;
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
     //Ball Detection related

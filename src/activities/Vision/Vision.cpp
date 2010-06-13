@@ -1,4 +1,7 @@
 #include "Vision.h"
+#include "architecture/archConfig.h"
+
+
 
 
 #define inbounds(x,y) ( ((x)>0 &&(y)>0)&&((x)<rawImage->width-1&&(y)<rawImage->height-1) )
@@ -8,6 +11,7 @@
 
 using namespace AL;
 using namespace std;
+//using namespace boost::posix_time;
 
 
 namespace{
@@ -17,6 +21,9 @@ namespace{
 int  Vision::Execute()
 {
 	static bool calibrated = false;
+	_blk->process_messages();
+
+
 	if(!calibrated){
 		cout<<"Start calibration"<<endl;
 		float scale= ext.calibrateCamera();
@@ -35,17 +42,94 @@ int  Vision::Execute()
 
 void Vision::testrun()
 {
+    if(im!=NULL) { delete im; im=NULL;};
+    if(hm!=NULL) { delete hm; hm=NULL;};
+    im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
+    if(im==NULL)//No sensor data!
+    {
+        cout<<"Warning!!! Vision has no sensor data!"<<endl;
+        return;
+    }
+    if(im->sensordata_size()<7)
+    {
+        cout<<"Warning!!! Vision has BAD sensor data!"<<endl;
+        return;
+    }
     //cout << "fetchImage" << endl;
-    struct timespec t = ext.fetchImage(rawImage);
+    boost::posix_time::ptime stamp = ext.fetchImage(rawImage);
     if (ext.getCamera()==1)//bottom cam
         seg=segbottom;
     else
         seg=segtop;
 
 #ifdef DEBUGVISION
-    cout << "ImageTimestamp:"<< t.tv_sec << " " << t.tv_nsec << endl;
+    cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 #endif
+    //boost::posix_time::ptime rtime =  time_t_epoch+(boost::posix_time::microsec(t.tv_nsec/1000)+boost::posix_time::seconds(t.tv_sec));//+sec(t.tv_sec));
+
+    hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors","localhost",&p.time,&stamp);//,&rtime);
+    if(hm==NULL)//No sensor data!
+    {
+        cout<<"Warning!!! Vision has no sensor data!"<<endl;
+        return;
+    }
+    if(hm->sensordata_size()<2)
+    {
+        cout<<"Warning!!! Vision has BAD sensor data!"<<endl;
+        return;
+    }
+    //TODO: create ct!;
+    p.yaw=hm->sensordata(0).sensorvalue();
+    p.pitch=hm->sensordata(1).sensorvalue();
+
+    p.Vyaw=hm->sensordata(0).sensorvaluediff();
+    p.Vpitch=hm->sensordata(1).sensorvaluediff();
+
+    p.angX=im->sensordata(5).sensorvalue();
+    p.angY=im->sensordata(6).sensorvalue();
+    p.VangX=im->sensordata(5).sensorvaluediff();//im->sensordata(5).sensortimediff();
+    p.VangY=im->sensordata(6).sensorvaluediff();//im->sensordata(6).sensortimediff();
+
+    p.timediff=hm->sensordata(0).sensortimediff();//Get time from headmessage
+    //p.time = time_t_epoch;
+
+    float exptime=ext.getExp();//Compensate for middle of image
+    //float imcomp=(exptime*1000.0)/p.timediff;
+    float imcomp=((stamp-p.time).total_microseconds()*1000.0)/p.timediff;
+    cout<<"imcomp:"<<imcomp<<endl;
+
+    cout<< p.timediff<<" "<<p.angX<<" "<<p.angY<<" "<<p.VangX<<" "<<p.VangY<< " "<<endl;
+    //Estimate the values at excactly the timestamp of the image
+    p.yaw+=p.Vyaw*imcomp;
+    p.pitch+=p.Vpitch*imcomp;
+    p.angX+=p.VangX*imcomp;
+    p.angY+=p.VangY*imcomp;
+
+    //Now use transformations to use the angX,angY values in the image
+    KMat::ATMatrix<float,4> y,z;
+    KMat::transformations::rotateY(y,p.pitch);
+    KMat::transformations::rotateZ(z,p.yaw);
+    y.mult(z).invert();
+
+    KMat::HCoords<float,3> angstart;
+    angstart.zero();
+    angstart(1)=p.angX;
+    angstart(2)=p.angY;
+
+    if(ang!=NULL){delete ang;ang=NULL;};
+    ang=&y.transform(angstart);
+    ang->prettyPrint();
+
+
+    angstart.zero();
+    angstart(1)=p.VangX;
+    angstart(2)=p.VangY;
+
+    if(Vang!=NULL){delete Vang;Vang=NULL;};
+    Vang=&y.transform(angstart);
+    Vang->prettyPrint();
+
     //SleepMs(1000);
     //usleep(500);
     gridScan(orange);
@@ -87,21 +171,21 @@ void Vision::UserInit() {
     }
     //memory = pbroker->getMemoryProxy();
 
-    ifstream *config = new ifstream("config/segbot.conf");
+    ifstream *config = new ifstream((ArchConfig::Instance().GetConfigPrefix()+"/segbot.conf").c_str());
     segbottom = new KSegmentator(*config);//TODO PATH!!!
     config->close();
     delete config;
-    config = new ifstream("config/segtop.conf");
+    config = new ifstream((ArchConfig::Instance().GetConfigPrefix()+"/segtop.conf").c_str());
 
     segtop = new KSegmentator(*config);//TODO PATH!!!
     config->close();
     delete config;
 
 
-    cout<<"Add publisher"<<endl;
-
+    cout<<"Add Subscriber-publisher"<<endl;
+    _com->get_message_queue()->add_subscriber(_blk);
+    _com->get_message_queue()->subscribe("sensors", _blk, 0);
     _com->get_message_queue()->add_publisher(this);
-
 
 
 
