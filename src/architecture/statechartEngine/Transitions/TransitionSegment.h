@@ -150,9 +150,16 @@ namespace statechart_engine {
             State* parent = _source->GetParent();
             srcAncesors.push_back(parent);
 
-            while ( parent != 0 ) {//TODO parent->GetParent() ) {
+            Statechart* s = 0;
+
+            while ( parent != 0 ) {
+                if ( parent->GetParent() == 0 ) {
+                  s = dynamic_cast<Statechart*>(parent);
+                  if ( s == 0 )
+                    throw "TRS: Can't find statechart";
+                }
                 parent=parent->GetParent();
-                srcAncesors.push_back(parent); //TODO FIXME
+                srcAncesors.push_back(parent);
             }
 
             StateCont trgAncesors;
@@ -160,9 +167,9 @@ namespace statechart_engine {
             parent = _target->GetParent();
             trgAncesors.push_front(parent);
 
-            while ( parent != 0 ) { //TODO parent->GetParent() ) {
+            while ( parent != 0 ) {
                 parent=parent->GetParent();
-                trgAncesors.push_front(parent); //FIXME
+                trgAncesors.push_front(parent);
             }
 
 
@@ -175,7 +182,7 @@ namespace statechart_engine {
                         _com = (*srcIter)->GetCom();
                         _blk = (*srcIter)->GetBlackboard();
                         if ( _action )
-                            _action->Initialize ( _com, _blk );
+                            _action->Initialize ( _com, _blk, s );
                         if ( _condition )
                             _condition->Initialize ( _com, _blk );
 //                        for ( StateContIter i = _deActivateList.begin(); i!=_deActivateList.end(); i++)

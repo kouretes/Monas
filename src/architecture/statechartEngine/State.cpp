@@ -1,5 +1,7 @@
 #include "State.h"
 
+#include "Statechart.h"
+
 #include <iostream>
 #include <typeinfo>
 //TODO
@@ -16,18 +18,24 @@ namespace statechart_engine {
         if ( _parent ) {
 
             _blk = _parent->AddChild ( this );
-//            _blk = _parent->GetBlackboard ();//TODO const
 
-	    _isRunning = _parent->GetIsRunningRef();
+            _isRunning = _parent->GetIsRunningRef();
 	    *_isRunning = 0;
 
             _com = _parent->GetCom();
+            while ( parent->GetParent() ) {
+              parent = parent->GetParent();
+            }
+
+            Statechart* s = dynamic_cast<Statechart*>(parent);
+            if ( s == 0 )
+              throw "State: can't find statechart"; //TODO
 
             if ( _entryAction )
-                _entryAction->Initialize ( _com, _blk );
+                _entryAction->Initialize ( _com, _blk, s );
 
             if ( _exitAction )
-                _exitAction->Initialize ( _com, _blk );
+                _exitAction->Initialize ( _com, _blk, s );
 
         }
       }
@@ -105,7 +113,7 @@ namespace statechart_engine {
     Blackboard* State::GetBlackboard () const { //TODO
         return _blk;
     }
-    
+
     volatile int* State::GetIsRunningRef () const {
       return _isRunning;
     }

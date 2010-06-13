@@ -43,7 +43,7 @@ namespace statechart_engine {
             Narukom* GetCom () const; //TODO add const
 
             Blackboard* GetBlackboard () const; //TODO add const
-            
+
             virtual volatile int* GetIsRunningRef () const;
 
         protected:
