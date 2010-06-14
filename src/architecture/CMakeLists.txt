@@ -15,18 +15,19 @@ if ( "${ActivityBuildType}" STREQUAL "MODULE" )
   add_definitions ( -DDLIB_FUNCTIONALITY )
 endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
 
-add_library ( MonadCore ${LibBuildType}   
+add_library ( MonadCore ${LibBuildType}
+                        statechartWrapper.cpp
                         IActivity.cpp
-                        talws.cpp 
+                        talws.cpp
 )
 
 target_link_libraries ( MonadCore M_tinyxml )
 
-install ( TARGETS MonadCore 
+install ( TARGETS MonadCore
         RUNTIME DESTINATION   bin
         LIBRARY DESTINATION   lib
-        ARCHIVE DESTINATION   lib/static )   
+        ARCHIVE DESTINATION   lib/static )
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} MonadCore narukom  PARENT_SCOPE ) 
+set ( TargetLinkLibraries ${TargetLinkLibraries} MonadCore narukom PARENT_SCOPE )
 #TODO add narukom link to cmake in narukom
-   
+

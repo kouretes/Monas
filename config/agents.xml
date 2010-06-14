@@ -33,3 +33,8 @@
   <name>LedHandler</name>
   <activity>LedHandler</activity>
 </agent>
+
+<!-- Statecharts to be loaded
+<statechart>KouretesAllConcurrentStatechartStatechart</statechart>
+-->
+
