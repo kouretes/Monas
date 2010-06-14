@@ -44,7 +44,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       "VisionObservations.proto");
   GOOGLE_CHECK(file != NULL);
   BallTrackMessage_descriptor_ = file->message_type(0);
-  static const int BallTrackMessage_offsets_[8] = {
+  static const int BallTrackMessage_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, host_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, publisher_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, topic_),
@@ -52,6 +52,8 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, cx_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, cy_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, referenceyaw_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, referencepitch_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, radius_),
   };
   BallTrackMessage_reflection_ =
@@ -225,29 +227,30 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\030VisionObservations.proto\"\261\001\n\020BallTrack"
+    "\n\030VisionObservations.proto\"\345\001\n\020BallTrack"
     "Message\022\027\n\004host\030\001 \002(\t:\tlocalhost\022\023\n\tpubl"
     "isher\030\002 \002(\t:\000\022\025\n\005topic\030\003 \002(\t:\006global\022\022\n\007"
     "timeout\030\004 \002(\005:\0010\022\023\n\ttimestamp\030\005 \002(\t:\000\022\r\n"
-    "\002cx\030\006 \002(\002:\0010\022\r\n\002cy\030\007 \002(\002:\0010\022\021\n\006radius\030\010 "
-    "\002(\002:\0010\"K\n\nBallObject\022\017\n\004dist\030\001 \002(\002:\0010\022\022\n"
-    "\007bearing\030\002 \002(\002:\0010\022\030\n\rball_diameter\030\003 \001(\002"
-    ":\0010\"O\n\013NamedObject\022\025\n\013object_name\030\001 \002(\t:"
-    "\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \002(\002"
-    ":\002-1\"V\n\022UnidentifiedObject\022\025\n\013object_typ"
-    "e\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010distan"
-    "ce\030\003 \001(\002:\002-1\"r\n\nLineObject\022\030\n\rstart_bear"
-    "ing\030\001 \002(\002:\0010\022\031\n\016start_distance\030\002 \002(\002:\0010\022"
-    "\026\n\013end_bearing\030\003 \002(\002:\0010\022\027\n\014end_distance\030"
-    "\004 \002(\002:\0010\"0\n\013PointObject\022\020\n\010distance\030\001 \002("
-    "\002\022\017\n\007bearing\030\002 \002(\002\"\222\002\n\022ObservationMessag"
-    "e\022\031\n\017image_timestamp\030\001 \002(\t:\000\022\031\n\004ball\030\002 \001"
-    "(\0132\013.BallObject\022%\n\017regular_objects\030\003 \003(\013"
-    "2\014.NamedObject\022*\n\radhoc_objects\030\004 \003(\0132\023."
-    "UnidentifiedObject\022$\n\016corner_objects\030\005 \003"
-    "(\0132\014.PointObject\022*\n\024intersection_objects"
-    "\030\006 \003(\0132\014.PointObject\022!\n\014line_objects\030\007 \003"
-    "(\0132\013.LineObject", 895);
+    "\002cx\030\006 \002(\002:\0010\022\r\n\002cy\030\007 \002(\002:\0010\022\027\n\014reference"
+    "Yaw\030\010 \002(\002:\0010\022\031\n\016referencePitch\030\t \002(\002:\0010\022"
+    "\021\n\006radius\030\n \002(\002:\0010\"K\n\nBallObject\022\017\n\004dist"
+    "\030\001 \002(\002:\0010\022\022\n\007bearing\030\002 \002(\002:\0010\022\030\n\rball_di"
+    "ameter\030\003 \001(\002:\0010\"O\n\013NamedObject\022\025\n\013object"
+    "_name\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010di"
+    "stance\030\003 \002(\002:\002-1\"V\n\022UnidentifiedObject\022\025"
+    "\n\013object_type\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:\002"
+    "-1\022\024\n\010distance\030\003 \001(\002:\002-1\"r\n\nLineObject\022\030"
+    "\n\rstart_bearing\030\001 \002(\002:\0010\022\031\n\016start_distan"
+    "ce\030\002 \002(\002:\0010\022\026\n\013end_bearing\030\003 \002(\002:\0010\022\027\n\014e"
+    "nd_distance\030\004 \002(\002:\0010\"0\n\013PointObject\022\020\n\010d"
+    "istance\030\001 \002(\002\022\017\n\007bearing\030\002 \002(\002\"\222\002\n\022Obser"
+    "vationMessage\022\031\n\017image_timestamp\030\001 \002(\t:\000"
+    "\022\031\n\004ball\030\002 \001(\0132\013.BallObject\022%\n\017regular_o"
+    "bjects\030\003 \003(\0132\014.NamedObject\022*\n\radhoc_obje"
+    "cts\030\004 \003(\0132\023.UnidentifiedObject\022$\n\016corner"
+    "_objects\030\005 \003(\0132\014.PointObject\022*\n\024intersec"
+    "tion_objects\030\006 \003(\0132\014.PointObject\022!\n\014line"
+    "_objects\030\007 \003(\0132\013.LineObject", 947);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "VisionObservations.proto", &protobuf_RegisterTypes);
   BallTrackMessage::default_instance_ = new BallTrackMessage();
@@ -289,6 +292,8 @@ const int BallTrackMessage::kTimeoutFieldNumber;
 const int BallTrackMessage::kTimestampFieldNumber;
 const int BallTrackMessage::kCxFieldNumber;
 const int BallTrackMessage::kCyFieldNumber;
+const int BallTrackMessage::kReferenceYawFieldNumber;
+const int BallTrackMessage::kReferencePitchFieldNumber;
 const int BallTrackMessage::kRadiusFieldNumber;
 #endif  // !_MSC_VER
 
@@ -315,6 +320,8 @@ void BallTrackMessage::SharedCtor() {
   timestamp_ = const_cast< ::std::string*>(&_default_timestamp_);
   cx_ = 0;
   cy_ = 0;
+  referenceyaw_ = 0;
+  referencepitch_ = 0;
   radius_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -385,6 +392,10 @@ void BallTrackMessage::Clear() {
     }
     cx_ = 0;
     cy_ = 0;
+    referenceyaw_ = 0;
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    referencepitch_ = 0;
     radius_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -508,19 +519,51 @@ bool BallTrackMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(69)) goto parse_radius;
+        if (input->ExpectTag(69)) goto parse_referenceYaw;
         break;
       }
       
-      // required float radius = 8 [default = 0];
+      // required float referenceYaw = 8 [default = 0];
       case 8: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_referenceYaw:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &referenceyaw_)));
+          _set_bit(7);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(77)) goto parse_referencePitch;
+        break;
+      }
+      
+      // required float referencePitch = 9 [default = 0];
+      case 9: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_referencePitch:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &referencepitch_)));
+          _set_bit(8);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(85)) goto parse_radius;
+        break;
+      }
+      
+      // required float radius = 10 [default = 0];
+      case 10: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
          parse_radius:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &radius_)));
-          _set_bit(7);
+          _set_bit(9);
         } else {
           goto handle_uninterpreted;
         }
@@ -597,9 +640,19 @@ void BallTrackMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->cy(), output);
   }
   
-  // required float radius = 8 [default = 0];
+  // required float referenceYaw = 8 [default = 0];
   if (_has_bit(7)) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->radius(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->referenceyaw(), output);
+  }
+  
+  // required float referencePitch = 9 [default = 0];
+  if (_has_bit(8)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->referencepitch(), output);
+  }
+  
+  // required float radius = 10 [default = 0];
+  if (_has_bit(9)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->radius(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -665,9 +718,19 @@ void BallTrackMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->cy(), target);
   }
   
-  // required float radius = 8 [default = 0];
+  // required float referenceYaw = 8 [default = 0];
   if (_has_bit(7)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->radius(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->referenceyaw(), target);
+  }
+  
+  // required float referencePitch = 9 [default = 0];
+  if (_has_bit(8)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->referencepitch(), target);
+  }
+  
+  // required float radius = 10 [default = 0];
+  if (_has_bit(9)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->radius(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -726,7 +789,19 @@ int BallTrackMessage::ByteSize() const {
       total_size += 1 + 4;
     }
     
-    // required float radius = 8 [default = 0];
+    // required float referenceYaw = 8 [default = 0];
+    if (has_referenceyaw()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // required float referencePitch = 9 [default = 0];
+    if (has_referencepitch()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float radius = 10 [default = 0];
     if (has_radius()) {
       total_size += 1 + 4;
     }
@@ -780,6 +855,14 @@ void BallTrackMessage::MergeFrom(const BallTrackMessage& from) {
       set_cy(from.cy());
     }
     if (from._has_bit(7)) {
+      set_referenceyaw(from.referenceyaw());
+    }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (from._has_bit(8)) {
+      set_referencepitch(from.referencepitch());
+    }
+    if (from._has_bit(9)) {
       set_radius(from.radius());
     }
   }
@@ -799,7 +882,7 @@ void BallTrackMessage::CopyFrom(const BallTrackMessage& from) {
 }
 
 bool BallTrackMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x000000ff) != 0x000000ff) return false;
+  if ((_has_bits_[0] & 0x000003ff) != 0x000003ff) return false;
   
   return true;
 }
@@ -813,6 +896,8 @@ void BallTrackMessage::Swap(BallTrackMessage* other) {
     std::swap(timestamp_, other->timestamp_);
     std::swap(cx_, other->cx_);
     std::swap(cy_, other->cy_);
+    std::swap(referenceyaw_, other->referenceyaw_);
+    std::swap(referencepitch_, other->referencepitch_);
     std::swap(radius_, other->radius_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);

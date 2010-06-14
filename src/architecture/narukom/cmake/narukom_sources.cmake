@@ -31,7 +31,6 @@ SET(NARUKOM_PUB_SUB_SRCS
  set( NARUKOM_SYSTEM_SRCS 
  	${NarukomDir}/system/thread.h
  	${NarukomDir}/system/Mutex.h
-# 	${NarukomDir}/system/Thread.cpp
  	${NarukomDir}/system/Mutex.cpp
  )
 # 
@@ -39,19 +38,25 @@ SET(NARUKOM_PUB_SUB_SRCS
 # 
 # 
  set(NARUKOM_NETWORK_SRCS
-${NarukomDir}/network/catalog.h
-${NarukomDir}/network/catalog.cpp
-${NarukomDir}/network/host.h
-${NarukomDir}/network/host.cpp
+#${NarukomDir}/network/catalog.h
+#${NarukomDir}/network/catalog.cpp
+#${NarukomDir}/network/host.h
+#${NarukomDir}/network/host.cpp
 # 	${NarukomDir}/network/Nack.pb.h
 # 	${NarukomDir}/network/Nack.pb.cc
-	${NarukomDir}/network/host.h 	
-	${NarukomDir}/network/channel.h
- 	${NarukomDir}/network/channel.cpp
-	${NarukomDir}/network/unicast_channel.h
- 	${NarukomDir}/network/broadcast_channel.h
- 	${NarukomDir}/network/unicast_channel.cpp
- 	${NarukomDir}/network/broadcast_channel.cpp
+#${NarukomDir}/network/unicast_channel.h
+#${NarukomDir}/network/broadcast_channel.h
+#${NarukomDir}/network/unicast_channel.cpp
+#${NarukomDir}/network/broadcast_channel.cpp
+#${NarukomDir}/network/channel.h
+#${NarukomDir}/network/channel.cpp
+#${NarukomDir}/network/network_common.h
+#${NarukomDir}/network/udp_network_channel.h
+#${NarukomDir}/network/udp_network_channel.cpp
+#${NarukomDir}/network/udp_receiver.h
+#${NarukomDir}/network/udp_receiver.cpp
+#${NarukomDir}/network/udp_sender.h
+#${NarukomDir}/network/udp_sender.cpp
 # 	${NarukomDir}/network/network_channel.h
 # 	${NarukomDir}/network/network_channel.cpp
 # 	${NarukomDir}/network/multicastsender_receiver.h
