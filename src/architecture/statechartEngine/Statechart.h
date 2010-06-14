@@ -16,7 +16,7 @@ namespace statechart_engine {
 
         public:
 
-            Statechart ();
+            Statechart ( Narukom* com );
 
             virtual ~Statechart ();
 
@@ -36,7 +36,7 @@ namespace statechart_engine {
 
         private:
 
-            Narukom _narukom;
+            Narukom* _narukom;
 
             Blackboard _blackboard;
 
