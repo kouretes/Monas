@@ -23,8 +23,8 @@ namespace statechart_engine {
     }
 
     bool OrState::Step ( IEvent* ev, IParameter* param ) {
-// 	if ( *_isRunning )
-// 	  return false;
+        if ( *_isRunning )
+          return false;
         return _activeState->Step(ev,param) ? true : State::Step(ev,param);
     }
 

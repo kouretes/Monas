@@ -19,10 +19,6 @@ class ThreadPool {
         bool Enqueue ( IExecutable* job ) {
             return _pool.schedule ( boost::bind ( &IExecutable::Execute, job ) );
         }
-        
-        bool Enqueue ( IActivity* job, volatile int* running ) {
-            return _pool.schedule ( boost::bind ( &IActivity::ExecuteWrapper, job, running ) );
-        }
 
     private:
 

@@ -26,18 +26,18 @@ namespace statechart_engine {
     }
 
     bool AndState::Step ( IEvent* ev = 0, IParameter* param = 0) {
+        bool running = isRunning();
         bool stepTaken = false;
         for ( OrNodeContIter it = _subStates.begin(); it != _subStates.end(); it++ ) {
             if ( (*it)->Step(ev,param) )
                 stepTaken = true;
         }
-        return stepTaken ? true : isRunning() ? false : State::Step(ev,param);
+        return stepTaken ? true : running ? false : State::Step(ev,param);
     }
 
     Blackboard* AndState::AddChild ( State* subState) {
-	cout<<"AndState: Producing blackboard!"<<endl; //TODO
         _subStates.push_back ( static_cast<OrState*>(subState) ); //FIXME dynamic_cast is not working!
-        char s[]="aa"; //FIXME get name 
+        char s[]="aa"; //FIXME get name
         return new Blackboard(s); //FIXME mem leak
     }
 
@@ -52,9 +52,8 @@ namespace statechart_engine {
     Blackboard* AndState::GetBlackboard () const {
         return State::GetBlackboard();
     }
-    
+
     volatile int* AndState::GetIsRunningRef () const {
-      cout<<"AndState: Producing int!"<<endl; //TODO
       volatile int* ret = new volatile int; //FIXME mem leak
       *ret = 0;
       return ret;

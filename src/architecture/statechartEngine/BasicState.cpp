@@ -1,12 +1,10 @@
 #include "BasicState.h"
 
-#include "architecture/statechartEngine/Statechart.h"
-
 namespace statechart_engine {
 
     BasicState::BasicState ( State* parent, IAction* entryAction, IAction* exitAction )
     : State(parent, entryAction, exitAction),
-      _stateActivity(0) {
+      _stateActivity(0){
         ;
     }
 
@@ -22,10 +20,12 @@ namespace statechart_engine {
         if ( !stc )
             throw "Aaaaaaaaaaa"; //TODO
 
-        _tp = stc->GetThreadPool();
+        _st = stc;
 
-        if ( _stateActivity )
+        if ( _stateActivity ) {
             _stateActivity->Initialize ( _com, _blk );
+            _actWrap.Init(_stateActivity,_isRunning,_st);
+        }
 
     }
 
@@ -34,20 +34,17 @@ namespace statechart_engine {
         State::Activate();
 
         if ( _stateActivity ) {
-	    *_isRunning = 1;
-            if ( !_tp->Enqueue( _stateActivity, _isRunning ) ) {
-		*_isRunning = 0;
+             *_isRunning = 1;
+            if ( !_st->GetThreadPool()->Enqueue( &_actWrap ) ) {
+                *_isRunning = 0;
                 throw "BasicState: can't enqueue activity!";
             }
         }
-//            _stateActivity->Execute(); //TODO
         return 0;
     }
 
     BasicState::~BasicState () {
         // TODO Auto-generated destructor stub
     }
-
-
 
 }

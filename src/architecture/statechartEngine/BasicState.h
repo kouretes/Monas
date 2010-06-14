@@ -5,8 +5,9 @@
 #include "IAction.h"
 
 #include "architecture/IActivity.h"
+#include "ActivityWrapper.h"
 
-#include "hal/threadPool.h"
+#include "architecture/statechartEngine/Statechart.h"
 
 namespace statechart_engine {
 
@@ -25,7 +26,9 @@ namespace statechart_engine {
 
             IActivity* _stateActivity;
 
-            ThreadPool* _tp;  //TODO namespace fix
+            ActivityWrapper _actWrap;
+
+            Statechart* _st;
     };
 
 }

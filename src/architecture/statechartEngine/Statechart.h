@@ -5,11 +5,14 @@
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
+#include "hal/thread.h"
 #include "hal/threadPool.h"
+
+#include <boost/thread/condition_variable.hpp>
 
 namespace statechart_engine {
 
-    class Statechart: public statechart_engine::OrState {
+    class Statechart: public statechart_engine::OrState, private Thread {
 
         public:
 
@@ -19,7 +22,17 @@ namespace statechart_engine {
 
             int Activate();
 
-           ThreadPool* GetThreadPool (); //TODO const
+            ThreadPool* GetThreadPool ();
+
+            ThreadPool* GetTimeoutThreadPool ();
+
+            void Start ();
+
+            void Stop ();
+
+            int Execute();
+
+           void AtomicNotify ();
 
         private:
 
@@ -27,7 +40,13 @@ namespace statechart_engine {
 
             Blackboard _blackboard;
 
-            ThreadPool _tp;  //TODO fix namespace
+            ThreadPool _tp;
+
+            ThreadPool _timeoutpool;
+
+            boost::condition_variable cond;
+            boost::mutex mut;
+            bool notified;
 
 
     };

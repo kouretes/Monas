@@ -16,12 +16,49 @@
 #include "architecture/narukom/pub_sub/publisher.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "architecture/statechartEngine/TimoutAciton.h"
 
 
 using namespace std;
 
 
 using namespace statechart_engine;
+
+class CondTimeout : public ICondition {
+  public:
+    CondTimeout(std::string var) {
+      _var = var;
+    }
+
+    void UserInit() {}
+
+    bool Eval() {
+      TimeoutMsg* msg  = _blk->read_nb<TimeoutMsg>("TimeoutMsg",_var,"localhost");
+      //       cout<<"Msg: "<<msg<<endl;
+      if ( msg == 0 )
+        return true;
+      std::string time = msg->wakeup();
+      if ( time == "")
+        return true;
+      //       std::cout<<"Condition time:"<<time<<std::endl;
+      int timeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(time) ).total_microseconds();
+      //       std::cout<<"Condition timeout:"<<timeout<<std::endl;
+      if ( timeout > 0)
+        return true;
+      return false;
+    }
+
+  private:
+    string _var;
+};
+
+unsigned int fibo ( unsigned int n) {
+  static int x;
+  x++;
+  if ( n < 2 )
+    return n;
+  return fibo(n-1) + fibo(n-2);
+}
 
 class Print: public IActivity {
 
@@ -31,8 +68,9 @@ class Print: public IActivity {
             ;
         }
         int Execute () {
-            usleep ( (rand()%10) * 100 );
-            cout << str << endl;
+            fibo(50);
+            //usleep ( (rand()%10) * 100 );
+            //cout << str << endl;
             return 0;
         }
         void UserInit () { }
@@ -51,7 +89,7 @@ class PrintAction: public IAction {
             ;
         }
         int Execute () {
-            cout << str << endl;
+            //cout << str << endl;
             return 0;
         }
         void UserInit () { }
@@ -61,36 +99,61 @@ class PrintAction: public IAction {
 
 class IncrThink: public IAction {
     public:
+      IncrThink() : t(0) {}
         int Execute() {
-            return 0;
+          t++;
+          return 0;
+        }
+        ~IncrThink() {
+          cout<<"Total Think: "<<t<<endl;
         }
         void UserInit () { }
+
+  private:
+    int t;
 };
 
 class IncrExec: public IAction {
     public:
+      IncrExec() :t(0) {}
         int Execute() {
+            t++;
             return 0;
         }
+        ~IncrExec() {
+          cout<<"Total Exec: "<<t<<endl;
+        }
         void UserInit () { }
+
+  private:
+    int t;
 };
 
 class IncrAcccept: public IAction {
     public:
+      IncrAcccept() :t(0){}
         int Execute() {
+            //cout<<"Incr Accept"<<endl;
+            t++;
             return 0;
         }
+        ~IncrAcccept() {
+          cout<<"Total Accept: "<<t<<endl;
+        }
         void UserInit () { }
+
+  private:
+    int t;
 };
 
 class SetPlan: public Publisher, public IAction  {
     public:
         SetPlan () : Publisher("SetPlan"),_planTuple(&_thePlan) { }
         int Execute() {
-            cout<<"Publish";
+            //cout<<"Publish";
             _thePlan.set_counter(0);
             publish(&_thePlan,"behavior");
-            cout<<" plan!"<<endl;
+            //cout<<" plan!"<<endl;
             return 0;
         }
         void UserInit () {
@@ -113,14 +176,17 @@ class TimeoutEvent: public IEvent {
 class PlanASelected: public ICondition {
     public:
         bool Eval() {
-            usleep(200000);
+            //usleep(200000);
             _blk->process_messages();
 	    //_thePlan =0;
             _thePlan =_blk->read_nb<PlanMsg>("PlanMsg","SetPlan");
             if ( !_thePlan )
                 return false;
-            cout<<"Selected plan: "<<_thePlan->counter()<<endl;
-            return _thePlan->counter()==0;
+            //cout<<"Selected plan: "<<_thePlan->counter()<<endl;
+            //return _thePlan->counter()==0;
+            bool ret = _thePlan->counter()==0;
+            delete _thePlan;
+            return ret;
         }
         void UserInit () {
             _com->get_message_queue()->add_subscriber(_blk);
@@ -268,12 +334,16 @@ int main () {
 
 
     TransitionSegment<State, State> tr1( &pl_start, &player );
-    TransitionSegment<State, State> tr2( &player, &pl_final ); //, new GameOver () ); TODO
+    //TransitionSegment<State, State> tr2( &player, &pl_final, new PrintAction ( "Statechart Problem" ) ); //, new GameOver () ); TODO
 
     //_____________________________________________
-    TransitionSegment<State, State> tr3( &think, &think, new TimeoutEvent ( 20, "think_timeout" ), new PrintAction ( "NextFrame Think" ) );
+    //TransitionSegment<State, State> tr3( &think, &think, new TimeoutEvent ( 20, "think_timeout" ), new PrintAction ( "NextFrame Think" ) );
 
-    TransitionSegment<State, State> tr4( &think_start, &get_objects );
+    TransitionSegment<State,State> tr3(&think, &think,new CondTimeout("Think_tout"),new TimeoutAction("Think_tout",35));
+
+
+    IncrThink ithink;
+    TransitionSegment<State, State> tr4( &think_start, &get_objects, &ithink );
 
     TransitionSegment<State, State> tr5( &get_objects_start, &segment );
     TransitionSegment<State, State> tr6( &segment, &detect );
@@ -293,10 +363,13 @@ int main () {
 
 
     //_____________________________________________
-    TransitionSegment<State, State> tr16( &execute, &execute );
+    //TransitionSegment<State, State> tr16( &execute, &execute );
 //            , new TimeoutEvent ( 40, "execute_timeout" ), new Print ( "NextFrame Execute" ) );
 
-    TransitionSegment<State, ConditionConnector> tr17( &execute_start, &execute_junction );
+TransitionSegment<State,State> tr16(&execute, &execute,new CondTimeout("Exec_tout"),new TimeoutAction("Exec_tout",25));
+
+    IncrExec incexec;
+    TransitionSegment<State, ConditionConnector> tr17( &execute_start, &execute_junction, &incexec );
 
     TransitionSegment<ConditionConnector, State> tr18( &execute_junction, &planA, new PlanASelected () );
     TransitionSegment<ConditionConnector, State> tr19( &execute_junction, &planB, new PlanBSelected () );
@@ -335,9 +408,11 @@ int main () {
 
     //_____________________________________________
 //     TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new TimeoutEvent(80,"accept_timeout"), new PrintAction("NextFrame Comm"));
-    TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new PrintAction("NextFrame Comm"));
 
-    TransitionSegment<State, State> tr43( &accept_notices_start, &accept_notices_state );
+    TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new CondTimeout("Comm_tout"),new TimeoutAction("Comm_tout",100));
+
+    IncrAcccept incAcc;
+    TransitionSegment<State, State> tr43( &accept_notices_start, &accept_notices_state,&incAcc );
 
     // works
     //new Transition(accept_notices_state, accept_notices_start,new TimeoutEvent(1000), new Print("NextFrame Comm"));
@@ -347,20 +422,25 @@ int main () {
 
 #endif
 
+     rb_player.Start();
 
 
-    rb_player.Activate();
-
-    int i=100;
-
-    while ( --i > 0 ) {
-      cout<<"i:"<<i<<endl;
-      while ( rb_player.Step() && --i > 0 )
-	;
-      usleep(1000);
-    }
-
+//     rb_player.Activate();
+//
+//     int i=100;
+//
+//     while ( --i > 0 ) {
+//       cout<<"i:"<<i<<endl;
+//       while ( rb_player.Step() && --i > 0 )
+// 	;
+//       usleep(1000);
+//     }
+// while(1)
     usleep(3000000);
+
+    rb_player.Stop();
+
+    usleep(1000000);
 //    rb_player.Step();
 //    rb_player.Step();
 //    rb_player.Step();
