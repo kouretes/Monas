@@ -163,7 +163,7 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub)//{return NULL;}//TODO
     map<string,MessageBuffer*>::iterator it = publishers_buf->find(owner_name);
     if (it != publishers_buf->end() )
     {
-	pub_mutex.UnLock();
+	pub_mutex.Unlock();
         return it->second;
     }
     MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name,&cond);
@@ -199,7 +199,7 @@ MessageBuffer* MessageQueue::add_subscriber ( Subscriber* sub ) //{return NULL;}
     map<string,MessageBuffer*>::iterator it = subscribers_buf->find(owner_name);
     if (it != subscribers_buf->end() )
     {
-       sub_mutex.UnLock();
+       sub_mutex.Unlock();
        return it->second;
     }
     MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name,&cond );
