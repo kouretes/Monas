@@ -37,7 +37,7 @@ void KSegmentator::yuv2hsy(unsigned char yuv[3], unsigned  int hsy[3])
 
 	float r,g,b;
 	float  mx,mn;
-	 int y,u,v;
+	int y,u,v;
 	const  double A=1.4075,B=0.3455,C=0.7169,D=1.7790;
 
 	y=yuv[0];//-16;//crop(yuv[0]-16);
@@ -60,20 +60,20 @@ void KSegmentator::yuv2hsy(unsigned char yuv[3], unsigned  int hsy[3])
 
 	//cout<<r<<" "<<g<<" "<< b<<endl;
 
-	if(mx==mn)
+	if (mx==mn)
 		hsy[0]=3800;//H is undefined return something off the scale
 	else
 	{
-	  if(mx==r)
-	  {
-		hsy[0]=(600.0*(g-b))/(mx-mn)+3600.0;
-		if(hsy[0]>3600.0)//wrap around
-		   hsy[0]-=3600.0;
-	  }
-	  else if(mx==g)
-	  	hsy[0]=(600.0*(b-r))/(mx-mn)+1200.0;
-	  else
-	  	hsy[0]=(600.0*(r-g))/(mx-mn)+2400.0;
+		if (mx==r)
+		{
+			hsy[0]=(600.0*(g-b))/(mx-mn)+3600.0;
+			if (hsy[0]>3600.0)//wrap around
+				hsy[0]-=3600.0;
+		}
+		else if (mx==g)
+			hsy[0]=(600.0*(b-r))/(mx-mn)+1200.0;
+		else
+			hsy[0]=(600.0*(r-g))/(mx-mn)+2400.0;
 
 
 	}
@@ -94,7 +94,8 @@ KSegmentator::colormask_t KSegmentator:: classifyPixel(unsigned char yuv[3])
 {
 	//return calculatePixel(yuv);fact
 	//cout<<(int)*(ctable+table_subscript((int)yuv[0]>>YRES,(int)yuv[1]>>URES,(int)yuv[2]>>VRES))<<":"<<(int)calculatePixel(yuv)<<endl;
-	if(ctable!=NULL){
+	if (ctable!=NULL)
+	{
 		unsigned char data[3];//TODO: Scaling should work on all YCbCr standards, given then the properties of multiplication! :)
 		int y=yuv[0]*lumascale;
 		y=y>255?255:y;
@@ -141,7 +142,7 @@ KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
 	//cout<<hsl[0]<<" "<<hsl[1]<<" "<<hsl[2]<<endl;
 	//Black
 
-	if(hsy[2]<blackRadius)
+	if (hsy[2]<blackRadius)
 		return blackMask;
 
 
@@ -149,14 +150,14 @@ KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
 	dists=24-hsy[1];
 	distl=128-hsy[2];//(0x80<hsy[2])?(hsy[2]-0x80):hsy[2];
 	//cout<<"colors.size():"<<colors.size()<<endl;
-	for(int i=0;i<colors.size();i++)
+	for (int i=0;i<colors.size();i++)
 	{
 		//cout<<colors[i].HueMin<<endl;
 
-		if(colors[i].HueMin < hsy[0] && hsy[0]<colors[i].HueMax && ( dists*dists+distl*distl)<colors[i].Radius)
+		if (colors[i].HueMin < hsy[0] && hsy[0]<colors[i].HueMax && ( dists*dists+distl*distl)<colors[i].Radius)
 		{
-				//cout<<" "<<((int)colors[i].HueMin)<< " ";
-				return colors[i].mask;
+			//cout<<" "<<((int)colors[i].HueMin)<< " ";
+			return colors[i].mask;
 		}
 
 	}
@@ -164,14 +165,14 @@ KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
 	//White Radius
 	dists=256-((int)hsy[1]);
 	distl=256-((int)hsy[2]);
-	if(dists*dists+distl*distl<whiteRadius)
+	if (dists*dists+distl*distl<whiteRadius)
 	{
 		//cout<<hsy[0]<<" "<<hsy[1]<<" "<<hsy[2]<<endl;
 		return whiteMask;
 	}
 
 	//Gray
-	if(hsy[1]>grayRadius)
+	if (hsy[1]>grayRadius)
 	{
 		//cout<<"g ";
 		//cout<<hsy[0]<<" "<<hsy[1]<<" "<<hsy[2]<<endl;
@@ -198,17 +199,17 @@ KSegmentator::colormask_t KSegmentator::  classifyPixel(IplImage*data, int i,int
 	//int colorSpace = (int) image[3];
 
 	const char* dataPointer= data->imageData;
-	if(type==AL::kYUV422InterlacedColorSpace)//YUYV nbLayers is 2, average 2 bytes per pixel
+	if (type==AL::kYUV422InterlacedColorSpace)//YUYV nbLayers is 2, average 2 bytes per pixel
 	{
 		unsigned char yuv[3];
 		yuv[0]=*(dataPointer+j*width*nbLayers+i*nbLayers);//Y is right where we want it
 
 		//a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
 		int startofBlock =j*(width*2)+((i/2)*4); //every 2 pixels (i/2) swap block (size of block=4)
-	   	// cout<<"sob"<<endl;
-	        yuv[1]=*(dataPointer+startofBlock+1);
-		  // cout<<"u"<<endl;
-	        yuv[2]= *(dataPointer+startofBlock+3);
+		// cout<<"sob"<<endl;
+		yuv[1]=*(dataPointer+startofBlock+1);
+		// cout<<"u"<<endl;
+		yuv[2]= *(dataPointer+startofBlock+3);
 
 
 
@@ -216,7 +217,7 @@ KSegmentator::colormask_t KSegmentator::  classifyPixel(IplImage*data, int i,int
 		return classifyPixel(yuv);
 
 	}
-	else if(type==AL::kYUVColorSpace)//YUV
+	else if (type==AL::kYUVColorSpace)//YUV
 	{
 		unsigned char yuv[3];
 		yuv[0]=*(dataPointer+j*width*nbLayers+i*nbLayers);
@@ -242,20 +243,20 @@ void KSegmentator::filluptable()
 	int y,u,v;
 	unsigned char data[3];
 	ctable =  (colormask_t*)malloc((256>>yres)*(256>>ures)*(256>>vres)*sizeof(colormask_t));
-	for(y=0;y<256>>yres;y++)
-		for(u=0;u<256>>ures;u++)
-			for(v=0;v<256>>vres;v++)
+	for (y=0;y<256>>yres;y++)
+		for (u=0;u<256>>ures;u++)
+			for (v=0;v<256>>vres;v++)
 			{
-			   //INTERESTING POINT: value to sample for that region is actually the MIDDLE value
-                           // so if Y is 0-16-32..YRES=4
-                           //Sampled values are  7 - 23- 39 etc
-			   // This is done in HOPE of representing better the region at hand
-			   data[0]=(y<<yres)+((1<<yres)-1)/2;
-			   data[1]=(u<<ures)+((1<<ures)-1)/2;
-			   data[2]=(v<<vres)+((1<<vres)-1)/2;
-			   *(ctable+table_subscript(y,u,v))=calculatePixel(data);
-			   if( *(ctable+table_subscript(y,u,v))!=calculatePixel(data) )
-				cout<<(int)data[0]<<","<<(int)data[1]<<","<<(int)data[2]<<":"<<(int)*(ctable+table_subscript(y,u,v))<<":"<< (int)calculatePixel(data)<<endl ;
+				//INTERESTING POINT: value to sample for that region is actually the MIDDLE value
+				// so if Y is 0-16-32..YRES=4
+				//Sampled values are  7 - 23- 39 etc
+				// This is done in HOPE of representing better the region at hand
+				data[0]=(y<<yres)+((1<<yres)-1)/2;
+				data[1]=(u<<ures)+((1<<ures)-1)/2;
+				data[2]=(v<<vres)+((1<<vres)-1)/2;
+				*(ctable+table_subscript(y,u,v))=calculatePixel(data);
+				if ( *(ctable+table_subscript(y,u,v))!=calculatePixel(data) )
+					cout<<(int)data[0]<<","<<(int)data[1]<<","<<(int)data[2]<<":"<<(int)*(ctable+table_subscript(y,u,v))<<":"<< (int)calculatePixel(data)<<endl ;
 			}
 
 
@@ -288,21 +289,21 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 	conf.read(reinterpret_cast<char *>(&set),sizeof(set));
 
 	//Check that file is indeed Segmentation configuration
-	if(set.ID[0]!='K' || set.ID[1]!='S')
+	if (set.ID[0]!='K' || set.ID[1]!='S')
 	{
 		cout<<"KSegmentator(): Invalid configuration file"<<endl;
 		return;
 	}
-	if(set.size-'0'>sizeof(colormask_t))
+	if (set.size-'0'>sizeof(colormask_t))
 	{
 		cout<<"KSegmentator(): Not enough length in colormask_t"<<endl;
 		return;
 	}
 	readCalibration(conf);
 	readColorInfo(conf);
-	if(set.ruletype=='R')
+	if (set.ruletype=='R')
 		readRulefile(conf);
-	else if(set.ruletype=='C')
+	else if (set.ruletype=='C')
 		readColorTable(conf);
 	lumascale=1;//Default setting;
 
@@ -310,19 +311,22 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 
 }
 
-void KSegmentator::readCalibration(ifstream & conf){
-	for(int i=0;i<set.calLines-'0';i++)
+void KSegmentator::readCalibration(ifstream & conf)
+{
+	for (int i=0;i<set.calLines-'0';i++)
 		conf.ignore(256,'\n');
 
 }
-void KSegmentator::readColorInfo(ifstream & conf){
-		for(int i=0;i<set.colorLines-'0';i++)
+void KSegmentator::readColorInfo(ifstream & conf)
+{
+	for (int i=0;i<set.colorLines-'0';i++)
 		conf.ignore(256,'\n');
 
 }
 
-void KSegmentator::readColorTable(ifstream & conf){
-	if(set.conf[0]=='Y')
+void KSegmentator::readColorTable(ifstream & conf)
+{
+	if (set.conf[0]=='Y')
 	{
 		colors.clear();
 		yres=set.conf[1]-'0';
@@ -333,13 +337,13 @@ void KSegmentator::readColorTable(ifstream & conf){
 		int y,u,v;
 
 		ctable =  (colormask_t*)malloc((256>>yres)*(256>>ures)*(256>>vres)*sizeof(colormask_t));
-		for(y=0;y<256>>yres;y++)
-			for(u=0;u<256>>ures;u++)
-				for(v=0;v<256>>vres;v++)
+		for (y=0;y<256>>yres;y++)
+			for (u=0;u<256>>ures;u++)
+				for (v=0;v<256>>vres;v++)
 				{
-				   conf.read(d,dsize);
+					conf.read(d,dsize);
 
-				   memcpy(ctable+table_subscript(y,u,v),d,sizeof(colormask_t));
+					memcpy(ctable+table_subscript(y,u,v),d,sizeof(colormask_t));
 
 				}
 
@@ -349,8 +353,9 @@ void KSegmentator::readColorTable(ifstream & conf){
 	else
 		cout<<"KSegmentator():Invalid or unknown rule file header"<<endl;
 }
-void KSegmentator::readRulefile(ifstream & conf){
-	if(set.conf[0]=='H' && set.conf[1]=='S' && set.conf[2]=='Y' && set.conf[3]=='\n')
+void KSegmentator::readRulefile(ifstream & conf)
+{
+	if (set.conf[0]=='H' && set.conf[1]=='S' && set.conf[2]=='Y' && set.conf[3]=='\n')
 	{
 		colors.clear();
 		yres=YRES;
@@ -360,20 +365,20 @@ void KSegmentator::readRulefile(ifstream & conf){
 		int c=0;
 		int white=0;//White=0 Gray=1 Black=2
 		int msk;
-		while(!conf.eof())
+		while (!conf.eof())
 		{
 			peek=conf.peek();
 
-			if(peek=='#'||peek=='\n')
+			if (peek=='#'||peek=='\n')
 			{
 				conf.ignore(128,'\n');
 				//cout<<"Comment"<<endl;
 			}
 			else
 			{
-				if(white==0)//STEP 1: White rules
-					{
-					if(conf>>skipws>>msk>>whiteRadius)
+				if (white==0)//STEP 1: White rules
+				{
+					if (conf>>skipws>>msk>>whiteRadius)
 					{
 						whiteMask=msk;
 						cout<<"Read White settings:"<<msk<<" "<<whiteRadius<<endl;
@@ -382,9 +387,9 @@ void KSegmentator::readRulefile(ifstream & conf){
 					}
 
 				}
-				else if(white==1)//STEP 2: Gray rules
-					{
-					if(conf>>skipws>>msk>>grayRadius)
+				else if (white==1)//STEP 2: Gray rules
+				{
+					if (conf>>skipws>>msk>>grayRadius)
 					{
 						grayMask=msk;
 						cout<<"Read Gray settings:"<<msk<<" "<<grayRadius<<endl;
@@ -393,9 +398,9 @@ void KSegmentator::readRulefile(ifstream & conf){
 					}
 
 				}
-				else if(white==2)//STEP 3: Black rules
-					{
-					if(conf>>skipws>>msk>>blackRadius)
+				else if (white==2)//STEP 3: Black rules
+				{
+					if (conf>>skipws>>msk>>blackRadius)
 					{
 						blackMask=msk;
 						cout<<"Read Black settings:"<<msk<<" "<<blackRadius<<endl;
@@ -408,7 +413,7 @@ void KSegmentator::readRulefile(ifstream & conf){
 				{
 					//cout<<"Expecting Color"<<endl;
 					cclass_t  *a=new   cclass_t();
-					if(conf>>msk>>a->HueMin>>a->HueMax>>a->Radius)
+					if (conf>>msk>>a->HueMin>>a->HueMax>>a->Radius)
 					{
 						a->mask=msk;
 
@@ -425,7 +430,7 @@ void KSegmentator::readRulefile(ifstream & conf){
 
 		}
 		//for(;c<MAXCOLORS;c++)//Zero out the rest
-			//colors[c].HueMin=colors[c].HueMax=colors[c].Radius=0;
+		//colors[c].HueMin=colors[c].HueMax=colors[c].Radius=0;
 		//Create color table to use from rules
 		filluptable();
 

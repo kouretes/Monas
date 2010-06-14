@@ -52,8 +52,13 @@ private:
     HeadJointSensorsMessage* hm;
     //Camera transformation matrix
     KMat::ATMatrix<float,3> ct;
-    KMat::HCoords<float,3> * ang,*Vang;//From tosro
-    cpose p;
+    KMat::HCoords<float,3> * ang,*Vang;//Corrections From tosro
+    float cameraH;//Height from ground
+    float cameraX;
+    float cameraY;
+    float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
+    cpose p;//Robot pose
+
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
     //Ball Detection related
@@ -68,6 +73,7 @@ private:
     };
     //Extractor Object, to get a new image
     KImageExtractor ext;
+    KCameraTranformation kinext;
     KSegmentator *seg;
     KSegmentator *segbottom;
     KSegmentator *segtop;
@@ -86,6 +92,8 @@ private:
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
+    KMat::HCoords<float,2> imageToObs(KMat::HCoords<float ,2> const& t);
+    KMat::HCoords<float,2> camToRobot(KMat::HCoords<float ,2> & t);
     void cvShowSegmented();
 };
 
