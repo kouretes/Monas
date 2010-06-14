@@ -18,7 +18,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "architecture/statechartEngine/TimoutAciton.h"
 
-
+// #include "StateTest/Robocup_player.h"
 using namespace std;
 
 
@@ -68,7 +68,7 @@ class Print: public IActivity {
             ;
         }
         int Execute () {
-            fibo(50);
+            fibo(15);
             //usleep ( (rand()%10) * 100 );
             //cout << str << endl;
             return 0;
@@ -232,7 +232,9 @@ int main () {
 
 #if 1
 
-    Statechart rb_player;
+    Narukom _com;
+
+    Statechart rb_player(&_com);
 
     StartState pl_start ( &rb_player );
     EndState pl_final ( &rb_player );
@@ -420,49 +422,28 @@ TransitionSegment<State,State> tr16(&execute, &execute,new CondTimeout("Exec_tou
     // OK----
     TransitionSegment<State, State> tr44( &accept_notices_state,&accept_notices_final );
 
+
+
 #endif
 
      rb_player.Start();
 
-
-//     rb_player.Activate();
-//
-//     int i=100;
-//
-//     while ( --i > 0 ) {
-//       cout<<"i:"<<i<<endl;
-//       while ( rb_player.Step() && --i > 0 )
-// 	;
-//       usleep(1000);
-//     }
 // while(1)
     usleep(3000000);
 
     rb_player.Stop();
 
     usleep(1000000);
-//    rb_player.Step();
-//    rb_player.Step();
-//    rb_player.Step();
-//    rb_player.Step();
-//    rb_player.Step();
 
-//    s.Step();
+
+
+
+  //Robocup_playerStatechart stc;
+
+//   stc.Start();
 //
-//    s.Step();
-//    s.Step();
-//
-//    s.Step();
-//    s.Step();
-//
-//    s.Step();
-//    s.Step();
-//    s.Step();
-//    s.Step();
-//    s.Step();
+//   usleep(10000000);
+//   stc.Stop();
 
-
-
-
-    return 0;
+  return 0;
 }

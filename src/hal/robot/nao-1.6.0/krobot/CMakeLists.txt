@@ -1,21 +1,21 @@
 ##############################
 #
-# WELCOME 
+# WELCOME
 #
-# This is the main cmake configuration file 
+# This is the main cmake configuration file
 # associated with your project
 # You can define specific compilation options here
-# 
+#
 # More about cmake : www.cmake.org
 #
-# Using cmake command line : 
+# Using cmake command line :
 # 1. Create a build directory : mkdir build
 # 2. Configure cmake project : cd build; cmake ..
-#   You can also generate project with your favorite IDE : 
+#   You can also generate project with your favorite IDE :
 #   Example : For Mac osx use "cmake .. -G XCode"
 #   see cmake help for more information
 # 3. Edit project option : ccmake .
-# 4. Build it : make 
+# 4. Build it : make
 message ( STATUS "" )
 message ( STATUS " _..::: Configuring KRobot :::.._ " )
 message ( STATUS "" )
@@ -43,7 +43,7 @@ use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE )
 
 target_link_libraries ( krobot ${TargetLinkLibraries} ${ActivityLibraries} )
 
-install ( TARGETS krobot 
+install ( TARGETS krobot
         RUNTIME DESTINATION   bin
-        LIBRARY DESTINATION   lib
+        LIBRARY DESTINATION   lib/naoqi
         ARCHIVE DESTINATION   lib/static )

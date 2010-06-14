@@ -118,11 +118,17 @@ void MessageBuffer::add(Tuple* tuple)
 {
     mutex.Lock();
     if(filters.size() > 0)
-      for(std::list<Filter*>::iterator it = filters.begin(); it != filters.end(); it++)
-	if((*it)->filter(*tuple) == Rejected)
-	  return;
-
-    msg_buf->push_back( new Tuple(*tuple));
+		{
+			for(std::list<Filter*>::iterator it = filters.begin(); it != filters.end(); it++)
+			{
+				if((*it)->filter(*tuple) == Rejected)
+				{
+					mutex.Unlock();
+					return;
+				}
+			}
+		}
+    msg_buf->push_back(tuple);
     mq_cv->notify_one();
     mutex.Unlock();
 
