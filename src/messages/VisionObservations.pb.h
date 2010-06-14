@@ -155,10 +155,24 @@ class BallTrackMessage : public ::google::protobuf::Message {
   inline float cy() const;
   inline void set_cy(float value);
   
-  // required float radius = 8 [default = 0];
+  // required float referenceYaw = 8 [default = 0];
+  inline bool has_referenceyaw() const;
+  inline void clear_referenceyaw();
+  static const int kReferenceYawFieldNumber = 8;
+  inline float referenceyaw() const;
+  inline void set_referenceyaw(float value);
+  
+  // required float referencePitch = 9 [default = 0];
+  inline bool has_referencepitch() const;
+  inline void clear_referencepitch();
+  static const int kReferencePitchFieldNumber = 9;
+  inline float referencepitch() const;
+  inline void set_referencepitch(float value);
+  
+  // required float radius = 10 [default = 0];
   inline bool has_radius() const;
   inline void clear_radius();
-  static const int kRadiusFieldNumber = 8;
+  static const int kRadiusFieldNumber = 10;
   inline float radius() const;
   inline void set_radius(float value);
   
@@ -178,12 +192,14 @@ class BallTrackMessage : public ::google::protobuf::Message {
   static const ::std::string _default_timestamp_;
   float cx_;
   float cy_;
+  float referenceyaw_;
+  float referencepitch_;
   float radius_;
   friend void  protobuf_AddDesc_VisionObservations_2eproto();
   friend void protobuf_AssignDesc_VisionObservations_2eproto();
   friend void protobuf_ShutdownFile_VisionObservations_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -1121,19 +1137,51 @@ inline void BallTrackMessage::set_cy(float value) {
   cy_ = value;
 }
 
-// required float radius = 8 [default = 0];
-inline bool BallTrackMessage::has_radius() const {
+// required float referenceYaw = 8 [default = 0];
+inline bool BallTrackMessage::has_referenceyaw() const {
   return _has_bit(7);
+}
+inline void BallTrackMessage::clear_referenceyaw() {
+  referenceyaw_ = 0;
+  _clear_bit(7);
+}
+inline float BallTrackMessage::referenceyaw() const {
+  return referenceyaw_;
+}
+inline void BallTrackMessage::set_referenceyaw(float value) {
+  _set_bit(7);
+  referenceyaw_ = value;
+}
+
+// required float referencePitch = 9 [default = 0];
+inline bool BallTrackMessage::has_referencepitch() const {
+  return _has_bit(8);
+}
+inline void BallTrackMessage::clear_referencepitch() {
+  referencepitch_ = 0;
+  _clear_bit(8);
+}
+inline float BallTrackMessage::referencepitch() const {
+  return referencepitch_;
+}
+inline void BallTrackMessage::set_referencepitch(float value) {
+  _set_bit(8);
+  referencepitch_ = value;
+}
+
+// required float radius = 10 [default = 0];
+inline bool BallTrackMessage::has_radius() const {
+  return _has_bit(9);
 }
 inline void BallTrackMessage::clear_radius() {
   radius_ = 0;
-  _clear_bit(7);
+  _clear_bit(9);
 }
 inline float BallTrackMessage::radius() const {
   return radius_;
 }
 inline void BallTrackMessage::set_radius(float value) {
-  _set_bit(7);
+  _set_bit(9);
   radius_ = value;
 }
 

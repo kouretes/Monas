@@ -11,6 +11,7 @@ include_directories ( AFTER ../narukom/
                             ../narukom/system/ )
 
 add_library ( statechartEngine  ${LibBuildType}
+                                ActivityWrapper.cpp
                                 AndState.cpp
                                 BasicState.cpp
                                 EndState.cpp
@@ -22,9 +23,12 @@ add_library ( statechartEngine  ${LibBuildType}
                                 StartState.cpp
                                 State.cpp
                                 Statechart.cpp
+                                TimoutAciton.cpp
                                 Transitions/ConditionConnector.cpp
-                                Transitions/TransitionConnector.cpp 
+                                Transitions/TransitionConnector.cpp
 )
+
+target_link_libraries ( statechartEngine MessageLib )
 
 install ( TARGETS statechartEngine
         RUNTIME DESTINATION   bin

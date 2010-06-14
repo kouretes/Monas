@@ -8,11 +8,13 @@
 
 namespace statechart_engine {
 
+    class Statechart;
+
     class IAction: public IExecutable {
 
         public:
 
-            void Initialize ( Narukom*, Blackboard* );
+            void Initialize ( Narukom*, Blackboard*, Statechart* );
 
             virtual void UserInit ()=0;
 
@@ -21,6 +23,8 @@ namespace statechart_engine {
             Narukom* _com;
 
             Blackboard* _blk;
+
+            Statechart* _s;
 
     };
 

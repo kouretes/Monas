@@ -16,8 +16,6 @@ class IActivity : public IExecutable {
     public:
 
         void Initialize ( Narukom*, Blackboard* );
-	
-	int ExecuteWrapper ( volatile int* running );
 
         virtual void UserInit ()=0;
 

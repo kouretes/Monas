@@ -8,35 +8,28 @@
 
 void MotionController::ALstandUp() {
 
-	ALstandUpCross();
-	Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: Cross", Logger::ExtraInfo);
-
-	if (im != NULL) {
-		AccX = im->sensordata(0);
-		AccXvalue = AccX.sensorvalue();
-	}
-	Logger::Instance().WriteMsg("MotionController", "AccXvalue " +_toString(AccXvalue) ,Logger::ExtraInfo);
-
 #ifdef WEBOTS
 	if (AccXvalue > 1.0) { // Webots
 #else
 	if (AccXvalue < 5.0) { // Robot
 #endif
-		ALstandUpBack();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: From Back", Logger::ExtraInfo);	
+		tts->pCall<AL::ALValue>("say", "Face Up!");
+		ALstandUpBack2010();
+		Logger::Instance().WriteMsg("MotionController", "Stand Up 2010: From Back", Logger::ExtraInfo);	
     }
 #ifdef WEBOTS
 	else if (AccXvalue < -1.0) { // Webots
 #else
 	else if (AccXvalue > -5.0) { // Robot
 #endif
-		ALstandUpFront();
+		tts->pCall<AL::ALValue>("say", "Face Down!");
+		ALstandUpFront2009();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: From Front", Logger::ExtraInfo);	
     }
 	return;
 }
 
-void MotionController::ALstandUpFront() {
+void MotionController::ALstandUpFront2009() {
 
 	AL::ALValue jointCodes, angles, times;
 	jointCodes.arraySetSize(21);
@@ -463,7 +456,7 @@ void MotionController::ALstandUpFront() {
 
 }
 
-void MotionController::ALstandUpBack() {
+void MotionController::ALstandUpBack2009() {
 
 	AL::ALValue jointCodes, angles, times;
 	jointCodes.arraySetSize(22);
@@ -1227,35 +1220,7 @@ void MotionController::ALstandUpCross() {
 
 }
 
-void MotionController::ALstandUp2010() {
 
-	ALstandUpCross();
-	Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: Cross", Logger::ExtraInfo);
-
-	if (im != NULL) {
-		AccX = im->sensordata(0);
-		AccXvalue = AccX.sensorvalue();
-	}
-	Logger::Instance().WriteMsg("MotionController", "AccXvalue " +_toString(AccXvalue), Logger::ExtraInfo);
-
-#ifdef WEBOTS
-	if (AccXvalue > 1.0) { // Webots
-#else
-	if (AccXvalue < 5.0) { // Robot
-#endif
-		ALstandUpBack2010();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up 2010: From Back", Logger::ExtraInfo);	
-    }
-#ifdef WEBOTS
-	else if (AccXvalue < -1.0) { // Webots
-#else
-	else if (AccXvalue > -5.0) { // Robot
-#endif
-		ALstandUpFront2010();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up 2010: From Front", Logger::ExtraInfo);	
-    }
-	return;
-}
 
 void MotionController::ALstandUpFront2010() {
 

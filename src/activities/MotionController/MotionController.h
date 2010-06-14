@@ -19,6 +19,7 @@
 #include "almotionproxy.h"
 #include "almemoryproxy.h"
 #include "albrokermanager.h"
+#include "altexttospeechproxy.h"
 
 
 class MotionController : public IActivity, public Publisher{
@@ -29,15 +30,16 @@ public:
 
 	int Execute();
 
-    void UserInit();
+	void UserInit();
 
-    std::string GetName() {
-        return "MotionController";
-    }
+	std::string GetName() {
+		return "MotionController";
+	}
 
 
 private:
 
+	AL::ALPtr<AL::ALProxy> tts;
 	AL::ALPtr<AL::ALMotionProxy> motion;
 
 	bool robotDown;
@@ -72,13 +74,12 @@ private:
 	void killWalkCommand();
 	void killHeadCommand();
 	void killActionCommand();
-
+	void killCommands();
+	
 	void ALstandUp();
 	void ALstandUpCross();
-	void ALstandUpFront();
-	void ALstandUpBack();
-
-	void ALstandUp2010();
+	void ALstandUpFront2009();
+	void ALstandUpBack2009();
 	void ALstandUpFront2010();
 	void ALstandUpBack2010();
 	

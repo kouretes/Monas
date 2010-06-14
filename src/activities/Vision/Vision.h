@@ -2,6 +2,7 @@
 #define VISION_H
 #include <albroker.h>
 #include "alptr.h"
+#include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
@@ -15,9 +16,13 @@
 
 #include "architecture/narukom/pub_sub/publisher.h"
 #include "messages/VisionObservations.pb.h"
+#include "messages/SensorsMessage.pb.h"
 //#define DEBUGVISION
 
 #include <vector>
+
+
+
 
 class Vision : public IActivity, public Publisher
 {
@@ -42,6 +47,18 @@ public:
 private:
     bool cvHighgui;
     BallTrackMessage trckmsg;
+    //Incoming messages!
+    InertialSensorsMessage* im;
+    HeadJointSensorsMessage* hm;
+    //Camera transformation matrix
+    KMat::ATMatrix<float,3> ct;
+    KMat::HCoords<float,3> * ang,*Vang;//Corrections From tosro
+    float cameraH;//Height from ground
+    float cameraX;
+    float cameraY;
+    float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
+    cpose p;//Robot pose
+
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
     //Ball Detection related
@@ -56,6 +73,7 @@ private:
     };
     //Extractor Object, to get a new image
     KImageExtractor ext;
+    KCameraTranformation kinext;
     KSegmentator *seg;
     KSegmentator *segbottom;
     KSegmentator *segtop;
@@ -74,6 +92,8 @@ private:
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
+    KMat::HCoords<float,2> imageToObs(KMat::HCoords<float ,2> const& t);
+    KMat::HCoords<float,2> camToRobot(KMat::HCoords<float ,2> & t);
     void cvShowSegmented();
 };
 

@@ -21,7 +21,7 @@
 #include "message_queue.h"
 #include "../tools/XML.h"
 
- 
+
 using std::map;
 using std::string;
 
@@ -162,8 +162,10 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub)//{return NULL;}//TODO
 
     map<string,MessageBuffer*>::iterator it = publishers_buf->find(owner_name);
     if (it != publishers_buf->end() )
+    {
+	pub_mutex.Unlock();
         return it->second;
-
+    }
     MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name,&cond);
     pub->setQueue(this);
     publishers_buf->insert ( std::make_pair<std::string,MessageBuffer*> ( owner_name,new_msg_buf ) );
@@ -185,7 +187,7 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub , MessageBuffer* buf)
   }
   cout << " Either buffer or Publisher is null " << endl;
   return 0;
-  
+
 }
 
 
@@ -196,8 +198,10 @@ MessageBuffer* MessageQueue::add_subscriber ( Subscriber* sub ) //{return NULL;}
 
     map<string,MessageBuffer*>::iterator it = subscribers_buf->find(owner_name);
     if (it != subscribers_buf->end() )
-        return it->second;
-
+    {
+       sub_mutex.Unlock();
+       return it->second;
+    }
     MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name,&cond );
     sub->setQueue(this);
     subscribers_buf->insert ( std::make_pair<std::string,MessageBuffer*> ( owner_name,new_msg_buf ) );
@@ -311,7 +315,7 @@ void MessageQueue::process_queued_msg()
                         (*buf_it)->add(cur);
                     }
                 }
-                
+                delete cur;
                 cur = it->second->remove_head();
                 if (cur == 0)
                     break;
@@ -323,10 +327,10 @@ void MessageQueue::process_queued_msg()
       pub_mutex.Unlock();
       boost::unique_lock<boost::mutex>  lock(cond_lock);
       cond.wait(lock);
-      
+
     }
-    
-    
+
+
     pub_mutex.Unlock();
 
 }
