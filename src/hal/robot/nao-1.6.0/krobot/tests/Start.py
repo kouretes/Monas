@@ -32,6 +32,7 @@ try:
   ret = mainModule_Proxy.Start(  )
 except Exception,e:
   print "STMOBJECT_NAME test Failed"
+  print str(e)
   exit(1)
 
 exit(0)

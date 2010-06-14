@@ -40,30 +40,30 @@
  */
 class KImageExtractor : public Publisher
 {
-public:
-    KImageExtractor();
+	public:
+		KImageExtractor();
 
-    void Init(Narukom* com);
+		void Init(Narukom* com);
 
-    ~KImageExtractor();
-    //Get new Image from hardware
-     boost::posix_time::ptime fetchImage(IplImage *img);
-    //Create new space for image
-    IplImage *allocateImage();
-    float calibrateCamera(int sleeptime=1500,int exp=18);
-    float getExp();
-    int getCamera();
-private:
-    AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi
-    AL::ALPtr<AL::DCMProxy> dcm;
+		~KImageExtractor();
+		//Get new Image from hardware
+		boost::posix_time::ptime fetchImage(IplImage *img);
+		//Create new space for image
+		IplImage *allocateImage();
+		float calibrateCamera(int sleeptime=1500,int exp=18);
+		float getExp();
+		int getCamera();
+	private:
+		AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi
+		AL::ALPtr<AL::DCMProxy> dcm;
 
-    //Name used when subscribing Generic Video Module
-    std::string GVM_name;
-    int resolution;//Current Resolution
-    int cSpace;// Current Colorspace
-    bool doneSubscribe;//Initializations done?
-    unsigned rtt;
-    Narukom* _com;
+		//Name used when subscribing Generic Video Module
+		std::string GVM_name;
+		int resolution;//Current Resolution
+		int cSpace;// Current Colorspace
+		bool doneSubscribe;//Initializations done?
+		unsigned rtt;
+		Narukom* _com;
 
 };
 

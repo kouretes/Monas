@@ -42,12 +42,12 @@ void Behavior::UserInit() {
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
-	
+
 	hmot = new MotionHeadMessage();
 	hmot->set_topic("motion");
 	hmot->add_parameter(0.0f);
 	hmot->add_parameter(0.0f);
-	
+
 	amot = new MotionActionMessage();
 	amot->set_topic("motion");
 
@@ -99,21 +99,23 @@ int Behavior::Execute() {
 		if (bmsg->radius() > 0) { //This meens that a ball was found
 			scanforball = false; //if you are scanning for ball please stop now
 
-			float overshootfix = bmsg->radius();
-			overshootfix = 2 * (0.4f - overshootfix);
-			Logger::Instance().WriteMsg("Behavior", "Overshoot Value: " + _toString(overshootfix), Logger::ExtraInfo);
+			float overshootfix = 1- fabs(bmsg->referencepitch())/(3.14/2);
+			//overshootfix = 2 * (0.4f - overshootfix);
+			//Logger::Instance().WriteMsg("Behavior", "Overshoot Value: " + _toString(overshootfix), Logger::ExtraInfo);
 
 			float cx = bmsg->cx();
 			float cy = bmsg->cy();
 
-			balllastseendirection = HeadYaw.sensorvalue();
+			balllastseendirection = bmsg->referenceyaw()-0.9f*cx;// HeadYaw.sensorvalue();
 			Logger::Instance().WriteMsg("Behavior", "I want the freaking head to move towards (cx,cy):" + _toString(0.9f * (cx)) + _toString(-0.9f * (cy)), Logger::ExtraInfo);
 
 			if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
 				//Sending command to motion in order to move the head
-				hmot->set_command("changeHead");
-				hmot->set_parameter(0, 0.9f * overshootfix * (cx));
-				hmot->set_parameter(1, -0.9f * overshootfix * (cy));
+				hmot->set_command("setHead");
+				hmot->set_parameter(0, bmsg->referenceyaw()-overshootfix*cx);
+				hmot->set_parameter(1, bmsg->referencepitch()-overshootfix*cy);
+				//hmot->set_parameter(0, 0.9f * overshootfix * (cx));
+				//hmot->set_parameter(1, -0.9f * overshootfix * (cy));
 				Publisher::publish(hmot,"motion");
 				Logger::Instance().WriteMsg("Behavior", "I send motion to head to move towards (cx,cy):" + _toString(hmot->parameter(0)) + "," + _toString(hmot->parameter(1)), Logger::ExtraInfo);
 			}
@@ -218,7 +220,7 @@ int Behavior::Execute() {
 				reachedlimitright = false;
 			}
 			Publisher::publish( hmot,"motion");
-			
+
 			if (reachedlimitup && reachedlimitdown) {
 				Logger::Instance().WriteMsg("Behavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
 				startscan = true;
@@ -236,7 +238,7 @@ int Behavior::Execute() {
 
 				Publisher::publish( wmot,"motion"); //Send the message to the motion Controller
 			}
-			
+
 		}
 
 		//We have seen a ball for sure and we should walk
