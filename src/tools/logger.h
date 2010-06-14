@@ -93,7 +93,7 @@ class LoggerClass {
                 ColorEnabled = false;
 
 
-            ErrorLog.open( MsgLogFile.c_str() );
+            ErrorLog.open( ( ArchConfig::Instance().GetConfigPrefix()+MsgLogFile ).c_str() );
             if ( ! ErrorLog.is_open() ) {
                 std::cerr<<"Can't open MessageLog file: "<<MsgLogFile<<std::endl;
                 SysCall::_exit(1);
