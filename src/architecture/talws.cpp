@@ -75,14 +75,14 @@ Talws::Talws () {
             <<" StatsCycle="<<tcfg.StatsCycle<<std::endl;
         Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
 
-        NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, int, std::string>( "statechart" );
-
-        Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
-
-        for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
-          StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
-
     }
+
+    NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, int, std::string>( "statechart" );
+
+    Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
+
+    for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
+        StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
 
 }
 
