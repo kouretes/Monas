@@ -45,10 +45,8 @@ private:
 
 	bool robotDown;
 	bool robotUp;
-	SensorPair AccZ;
-	SensorPair AccX;
-	float AccZvalue;
-	float AccXvalue;
+	SensorPair AccZ, AccX, AccY;
+	float AccZvalue, AccXvalue, AccYvalue;
 
 	int counter;
 
@@ -88,6 +86,10 @@ private:
 	AL::ALValue LieDown_names, LieDown_times, LieDown_keys;
 	AL::ALValue LeftKick_names, LeftKick_times, LeftKick_keys;
 	AL::ALValue RightKick_names, RightKick_times, RightKick_keys;
+	std::vector<std::string> RightDive_names;
+	AL::ALValue RightDive_times, RightDive_keys;
+	std::vector<std::string> LeftDive_names;
+	AL::ALValue LeftDive_times, LeftDive_keys;
 
 	void loadActionsKME();
 	struct motSequence {

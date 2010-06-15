@@ -111,6 +111,8 @@ void MotionController::mglrun() {
 		AccZvalue = AccZ.sensorvalue();
 		AccX = im->sensordata(0);
 		AccXvalue = AccX.sensorvalue();
+		AccY = im->sensordata(1);
+		AccXvalue = AccY.sensorvalue();
 	}
 	//cout << counter << "  " << AccZvalue << "  " << robotUp << "  " << robotDown << " " << actionPID << std::endl;
 
@@ -128,7 +130,7 @@ void MotionController::mglrun() {
 		killCommands();
 		tts->pCall<AL::ALValue>("say", "Ouch!");
 		sleep(1);
-		motion->setStiffnesses("Body", 0.7);
+		motion->setStiffnesses("Body", 0.6);
 		ALstandUpCross();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 		return;
@@ -238,18 +240,26 @@ void MotionController::mglrun() {
 			Logger::Instance().WriteMsg("MotionController", am->command(),Logger::ExtraInfo);
 		
 			//actionPID = motion->post.xxxxxxxxxxxxxx
-			if (am->command() == "lieDown") {
-				stopWalkCommand();
-				killHeadCommand();
-				actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
-			}
-			else if (am->command() == "leftKick") {
+			if (am->command() == "leftKick") {
 				stopWalkCommand();
 				actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
 				}
 			else if (am->command() == "rightKick") {
 				stopWalkCommand();
 				actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
+			}
+			else if (am->command() == "rightDive") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(RightDive_names, RightDive_times, RightDive_keys);
+			}
+			else if (am->command() == "leftDive") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(LeftDive_names, LeftDive_times, LeftDive_keys);
+			}
+			else if (am->command() == "lieDown") {
+				stopWalkCommand();
+				killHeadCommand();
+				actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
 			}
 			else {
 				stopWalkCommand();
@@ -355,20 +365,29 @@ void MotionController::commands() {
 		delete wmot;
 	}
 
-	if ((actionPID == 0) && ((counter+20) % 100 == 0) && (counter > 0)) {
+	if ((actionPID == 0) && ((counter+30) % 500 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
-		amot->set_command("rightFall.kme");
+		amot->set_command("rightKick");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
 		Publisher::publish(amot,"motion");
 		delete amot;
 	}
 	
 	
-	if ((actionPID == 0) && ((counter+70) % 100 == 0) && (counter > 0)) {
+	if ((actionPID == 0) && ((counter+130) % 500 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
 		amot->set_command("leftFall.kme");
+		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
+		Publisher::publish(amot,"motion");
+		delete amot;
+	}
+	
+	if ((actionPID == 0) && ((counter+330) % 500 == 0) && (counter > 0)) {
+		MotionActionMessage* amot = new MotionActionMessage();
+		amot->set_topic("motion");
+		amot->set_command("leftDive");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
 		Publisher::publish(amot,"motion");
 		delete amot;
