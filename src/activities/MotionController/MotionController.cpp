@@ -58,16 +58,20 @@ void MotionController::UserInit() {
 
 	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
 	loadActions();
-	
+	loadActionsKME();
+	printActionsKME();
+	jointNames = motion->getJointNames("Body");
 	
 	counter = 0;
 }
 
 int MotionController::Execute() {
-	//std::cout << " MotionController START" << std::endl;
+	Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
+	counter++;
 	//commands();
-	mglrun(); /* Uncomment for action! */
-	//std::cout << " MotionController END" << std::endl;
+	read_messages();
+	mglrun(); 
+	Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
 	return 0;
 }
 
@@ -76,30 +80,31 @@ void MotionController::read_messages() {
 	if (hm != NULL) delete hm;
 	if (am != NULL) delete am;
 	if (im != NULL) delete im;
+	
 	_blk->process_messages();
-	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
-	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
 
+	/* Messages for Calibration */
 	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "KImageExtractor");
-	if (hm == NULL) {
-		hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
-		//hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
-	}
-
+	
+	/* Messages from Behavior */
+	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
+	if (hm == NULL) hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
 	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
+	
+	/* Messages from MotionController */
+	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
+	//if (hm == NULL) hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
 	//am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "MotionController");
-
+	
+	/* Messages from Sensors */
 	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
-	Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
+	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 
 }
 
 
 void MotionController::mglrun() {
-
-	counter++;
-	read_messages();
 		
 	if (im != NULL) {
 		AccZ = im->sensordata(2);
@@ -246,7 +251,10 @@ void MotionController::mglrun() {
 				stopWalkCommand();
 				actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
 			}
-			
+			else {
+				stopWalkCommand();
+				actionPID = executeActionKME( am->command() );
+			}
 			Logger::Instance().WriteMsg("MotionController", "  Action ID: " +_toString(actionPID),Logger::ExtraInfo);
 		}
 
@@ -347,10 +355,20 @@ void MotionController::commands() {
 		delete wmot;
 	}
 
-	if ((actionPID == 0) && ((counter+20) % 200 == 0) && (counter > 0)) {
+	if ((actionPID == 0) && ((counter+20) % 100 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
-		amot->set_command("rightKick");
+		amot->set_command("rightFall.kme");
+		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
+		Publisher::publish(amot,"motion");
+		delete amot;
+	}
+	
+	
+	if ((actionPID == 0) && ((counter+70) % 100 == 0) && (counter > 0)) {
+		MotionActionMessage* amot = new MotionActionMessage();
+		amot->set_topic("motion");
+		amot->set_command("leftFall.kme");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
 		Publisher::publish(amot,"motion");
 		delete amot;

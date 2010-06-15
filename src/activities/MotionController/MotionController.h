@@ -21,6 +21,7 @@
 #include "albrokermanager.h"
 #include "altexttospeechproxy.h"
 
+#include <string>
 
 class MotionController : public IActivity, public Publisher{
 
@@ -88,6 +89,18 @@ private:
 	AL::ALValue LeftKick_names, LeftKick_times, LeftKick_keys;
 	AL::ALValue RightKick_names, RightKick_times, RightKick_keys;
 
+	void loadActionsKME();
+	struct motSequence {
+		std::string seqName;
+		std::vector< std::vector<float> > seqMotion;
+	};
+	std::vector<motSequence> spAct;
+	std::map<std::string, int> actionMap;
+	void printActionsKME();
+	
+	std::vector<std::string> jointNames;
+	int executeActionKME(std::string action);
+	int executeActionBodyKME(std::string action);
 };
 
 #endif

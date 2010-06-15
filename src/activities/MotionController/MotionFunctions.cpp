@@ -1,9 +1,162 @@
 #include "MotionController.h"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
-
 #include "tools/logger.h"
 #include "tools/toString.h"
+#include <vector>
+#include <dirent.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
+using namespace std;
+
+void MotionController::loadActionsKME() {
+	
+	ifstream fin;
+	string pose_str, ending = ".kme";
+	string fileName;
+	DIR * t =NULL;
+	motSequence tempMotSeq;
+	vector<float> row;
+	unsigned int pos = 0,i = 0 ;
+	int k;
+	string tempStr;	
+	
+	t = opendir((ArchConfig::Instance().GetConfigPrefix()+"kme").c_str());
+	
+	struct dirent * files = readdir(t);
+
+	while(files!=NULL)
+	{	
+		fileName = files->d_name;
+		
+		k = fileName.size()>4?fileName.compare( fileName.size() - 4 , 4, ending, 0 ,4):-1;
+		if( k==0 ){
+			spAct.push_back(tempMotSeq);
+			fin.open((ArchConfig::Instance().GetConfigPrefix()+"kme/"+fileName).c_str(),ios::in);
+			
+			if ( fin.is_open() ){
+
+				while(!(fin>>pose_str).eof()){
+					
+					spAct[i].seqName = fileName;
+					pos = pose_str.find_first_of("%");
+					pose_str.erase(0,pos+1);
+					pos = pose_str.find_first_of("%");
+					while( pos!= string::npos){
+						tempStr = pose_str.substr(0,pos);
+						row.push_back(atof(tempStr.c_str()));
+						pose_str.erase(0,pos+1);
+						pos = pose_str.find_first_of("%",1);
+					}				
+					tempStr = pose_str;
+					row.push_back(atof(tempStr.c_str()));
+					spAct[i].seqMotion.push_back(row);
+					row.clear();
+				}
+		
+				fin.close();
+				actionMap[fileName] = i;
+				std::cout<<"Special Action Succesfully Loaded : "<<fileName<<endl;		
+				i++;
+			}
+			else{
+				std::cout<<"WARNING SPECIAL ACTION IS NOT LOADED:"<<fileName<<endl;
+			}
+		}
+
+		files = readdir(t);
+	}		
+}
+
+void MotionController::printActionsKME() {
+
+	for(unsigned int v =0;v<spAct.size();v++){
+		cout<<"\n************\tSPECIAL ACTION : "<<spAct[v].seqName<<" Index: " << actionMap[spAct[v].seqName] <<"\t************"<<endl<<endl;
+		for(unsigned int i = 0; i< spAct[v].seqMotion.size();i++){
+			for(unsigned int j = 0;j<spAct[v].seqMotion[i].size();j++){
+				cout<<spAct[v].seqMotion[i][j]<<" ";
+			}
+			cout<<endl;
+		}
+	cout<<endl<<endl;	
+	}
+}
+
+
+int MotionController::executeActionKME(std::string action) {
+
+	map<string,int>::iterator it = actionMap.find(action);
+	if ( it == actionMap.end() ) {
+		cout << "Action not found" << endl;
+		return 0;
+	}
+	unsigned int i = it->second; 
+	cout << "Found action " << action << " with index " << i << endl;
+	
+	AL::ALValue actionNames, actionAngles, actionTimes;
+	unsigned int joints = 22;
+	actionNames.arraySetSize(joints);
+	actionAngles.arraySetSize(joints);
+	actionTimes.arraySetSize(joints);
+	
+	unsigned int poses = spAct[i].seqMotion.size();
+	for (unsigned int l = 0; l < joints; l++) {
+		actionAngles[l].arraySetSize(poses);
+		actionTimes[l].arraySetSize(poses);
+	}
+	
+	for (unsigned int l = 0; l < joints; l++) {
+		float time = 0.0;
+		actionNames[l] = jointNames[l];
+		for (unsigned int k = 0; k < poses; k++) {
+			actionAngles[l][k] = spAct[i].seqMotion[k][l];
+			time += spAct[i].seqMotion[k][22];
+			actionTimes[l][k] = time;
+			cout << jointNames[l] << "  " << l << "    " << k << " - " << spAct[i].seqMotion[k][l] << " " << time << endl;
+		}
+	}
+	
+	return motion->post.angleInterpolation(actionNames, actionAngles, actionTimes, 1);
+}
+
+
+
+
+int MotionController::executeActionBodyKME(std::string action) {
+
+	map<string,int>::iterator it = actionMap.find(action);
+	if ( it == actionMap.end() ) {
+		cout << "Action not found" << endl;
+		return 0;
+	}
+	unsigned int i = it->second; 
+	cout << "Found action " << action << " with index " << i << endl;
+	
+	AL::ALValue actionAngles, actionTimes;
+	
+	unsigned int poses = spAct[i].seqMotion.size();
+	actionAngles.arraySetSize(poses);
+	actionTimes.arraySetSize(poses);
+	
+	unsigned int joints = 22;
+	for (unsigned int k = 0; k < poses; k++) 
+		actionAngles[k].arraySetSize(joints);
+	
+	float time = 0.0;
+	for (unsigned int k = 0; k < poses; k++) {
+		for (unsigned int l = 0; l < joints; l++) {
+			actionAngles[k][l] = spAct[i].seqMotion[k][l];
+			cout << spAct[i].seqMotion[k][l] << " ";
+		}
+		time += spAct[i].seqMotion[k][22];
+		actionTimes[k] = time;
+		cout << time << endl;
+	}
+	
+	return motion->post.angleInterpolation("Body", actionAngles, actionTimes, 1);
+}
+
 
 
 void MotionController::ALstandUp() {
