@@ -128,7 +128,7 @@ void MessageBuffer::add(Tuple* tuple)
 				}
 			}
 		}
-    msg_buf->push_back(tuple);
+    msg_buf->push_back(new Tuple(*tuple) );
     mq_cv->notify_one();
     mutex.Unlock();
 
