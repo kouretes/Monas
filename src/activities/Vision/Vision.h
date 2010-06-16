@@ -47,16 +47,19 @@ public:
 private:
     bool cvHighgui;
     BallTrackMessage trckmsg;
+    BallObject ballpos;
     //Incoming messages!
     InertialSensorsMessage* im;
     HeadJointSensorsMessage* hm;
     //Camera transformation matrix
     KMat::ATMatrix<float,3> ct;
-    KMat::HCoords<float,3> * ang,*Vang;//Corrections From tosro
+    KMat::HCoords<float,3> *ang;
+    KMat::HCoords<float,3> *Vang;//Corrections From tosro
     float cameraH;//Height from ground
     float cameraX;
     float cameraY;
     float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
+    float horizonAlpha;
     cpose p;//Robot pose
 
     //AL::ALPtr<AL::ALMemoryProxy> memory;
@@ -67,6 +70,14 @@ private:
         float x, y;
         float r;//Observed radius
     } balldata_t;
+
+    typedef struct GoalPostdata
+    {
+        CvPoint ll;//Corners
+        CvPoint lr;//Corners
+        float height;//in pixels
+    } goalpostdata_t;
+
     enum colors
     {
         bad = 0, red = 1, blue = 2, green = 3, skyblue = 4, yellow = 5, orange = 6, white = 7, black = 8
@@ -87,13 +98,15 @@ private:
     std::vector<CvPoint> bgoalpost;
 
     void gridScan(const KSegmentator::colormask_t color);
+
     bool calculateValidBall(const CvPoint2D32f center, float radius, KSegmentator::colormask_t c);
     balldata_t locateBall(std::vector<CvPoint> cand);
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
-    KMat::HCoords<float,2> imageToObs(KMat::HCoords<float ,2> const& t);
-    KMat::HCoords<float,2> camToRobot(KMat::HCoords<float ,2> & t);
+    KMat::HCoords<float,2> & imageTocamera( KMat::HCoords<float,2>  & imagep);
+    KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
+    KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
     void cvShowSegmented();
 };
 
