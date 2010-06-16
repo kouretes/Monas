@@ -112,7 +112,7 @@ void MotionController::mglrun() {
 		AccX = im->sensordata(0);
 		AccXvalue = AccX.sensorvalue();
 		AccY = im->sensordata(1);
-		AccXvalue = AccY.sensorvalue();
+		AccYvalue = AccY.sensorvalue();
 	}
 	//cout << counter << "  " << AccZvalue << "  " << robotUp << "  " << robotDown << " " << actionPID << std::endl;
 
