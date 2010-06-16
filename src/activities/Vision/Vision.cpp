@@ -317,8 +317,8 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
         delete &b;
         //cout<<"distance:"<<d<<endl;
 
-        float thou=atan2(d+COVERDIST,cameraH);
-        float fou=atan2(d,cameraH);
+        float thou=atan2((double)d+COVERDIST,(dobule)cameraH);
+        float fou=atan2((double)d,(double)cameraH);
         float diff=thou-fou;
         ystep=cos((*ang)(1))*(diff/(VFov * TO_RAD)+0.5)*rawImage->height;//Crossyour fingers
         ystep=ystep/2;
