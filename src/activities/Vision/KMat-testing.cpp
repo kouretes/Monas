@@ -17,6 +17,21 @@ using namespace boost::posix_time;
 int main ()
 {
 
+
+    KMat::ATMatrix<float,4> y,z,f;
+	KMat::transformations::rotateY(y,0.69f);
+	KMat::transformations::rotateZ(z,(float)KMat::transformations::PI/2);
+
+	KMat::transformations::rotateX(f,0.04f);//4f);
+	f.mult(z).mult(y);
+	//chain
+	//y.mult(z);//.invert();
+	HCoords<float,3> p;
+	p(1)=1;
+	p(2)=0;//0;tan(0.14);
+	p(3)=0;//tan(0.14);
+    HCoords<float,3> &r=f.transform(p);
+    r.prettyPrint();
 	ATMatrix<float,4> t;
 	ATMatrix<float,4> a;
 	a.identity();
