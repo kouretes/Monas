@@ -17,7 +17,7 @@ namespace statechart_engine {
 
         public:
 
-            AndState ( State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+            AndState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
 
             virtual ~AndState ();
 
@@ -31,7 +31,7 @@ namespace statechart_engine {
             bool isRunning () const;
 
             Blackboard* GetBlackboard () const;
-	    
+
 	    volatile int* GetIsRunningRef () const;
 
         private:

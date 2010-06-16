@@ -2,9 +2,8 @@
 
 namespace statechart_engine {
 
-    TransitionConnector::TransitionConnector (State* parent)
-    : State(parent)
-    {
+    TransitionConnector::TransitionConnector (std::string name, State* parent)
+    : State(name, parent)    {
     }
 
     TransitionConnector::~TransitionConnector () {

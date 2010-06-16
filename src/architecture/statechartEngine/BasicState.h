@@ -15,8 +15,8 @@ namespace statechart_engine {
 
         public:
 
-            BasicState ( State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
-            BasicState ( State* parent, IActivity* activity, IAction* entryAction = 0, IAction* exitAction = 0 );
+            BasicState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+            BasicState ( std::string name, State* parent, IActivity* activity, IAction* entryAction = 0, IAction* exitAction = 0 );
 
             virtual ~BasicState ();
 

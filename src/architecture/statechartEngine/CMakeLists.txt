@@ -30,6 +30,10 @@ add_library ( statechartEngine  ${LibBuildType}
 
 target_link_libraries ( statechartEngine MessageLib )
 
+include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
+
+use_lib(statechartEngine ALCOMMON ALVALUE ALMATH LIBCORE TOOLS BOOST  )
+
 install ( TARGETS statechartEngine
         RUNTIME DESTINATION   bin
         LIBRARY DESTINATION   lib

@@ -9,7 +9,7 @@ namespace statechart_engine {
 
         public:
 
-            StartState ( State* parent );
+            StartState ( std::string name, State* parent );
 
             virtual ~StartState ();
     };

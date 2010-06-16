@@ -68,9 +68,9 @@ class Print: public IActivity {
             ;
         }
         int Execute () {
-            fibo(15);
+            //fibo(15);
             //usleep ( (rand()%10) * 100 );
-            //cout << str << endl;
+            cout << str << endl;
             return 0;
         }
         void UserInit () { }
@@ -89,7 +89,7 @@ class PrintAction: public IAction {
             ;
         }
         int Execute () {
-            //cout << str << endl;
+            cout << str << endl;
             return 0;
         }
         void UserInit () { }
@@ -232,107 +232,115 @@ int main () {
 
 #if 1
 
+cout<<"Before Narukom"<<endl;
+
     Narukom _com;
 
-    Statechart rb_player(&_com);
+cout<<"After Narukom"<<endl;
 
-    StartState pl_start ( &rb_player );
-    EndState pl_final ( &rb_player );
+usleep(1000000);
 
-    AndState player ( &rb_player, new PrintAction ( "Player" ) );
+
+
+    Statechart rb_player( "rb_player", &_com);
+
+    StartState pl_start ( "pl_start", &rb_player );
+    EndState pl_final ( "pl_final", &rb_player );
+
+    AndState player ( "player", &rb_player, new PrintAction ( "Player" ) );
 
     //______________________________________________________________________________________________________________
     //______________________________________________________________________________________________________________
     //______________________________________________________________________________________________________________
 
-    OrState think ( &player, new IncrThink () );
-    StartState think_start ( &think );
+    OrState think ( "think", &player, new IncrThink () );
+    StartState think_start ( "think_start", &think );
 
     //______________________________________________________________________________________________________________
-    OrState get_objects ( &think, new PrintAction ( "Get Objects HState" ) );
+    OrState get_objects ( "get_objects", &think, new PrintAction ( "Get Objects HState" ) );
 
-    StartState get_objects_start ( &get_objects );
+    StartState get_objects_start ( "get_objects_start", &get_objects );
 
-    BasicState segment ( &get_objects, new Print ( "Segment" ) );
-    BasicState detect ( &get_objects, new Print ( "Detect" ) );
-    BasicState publish_objs ( &get_objects, new Print ( "Publish Objs" ) );
+    BasicState segment ( "segment", &get_objects, new Print ( "Segment" ) );
+    BasicState detect ( "detect", &get_objects, new Print ( "Detect" ) );
+    BasicState publish_objs ( "publish_objs", &get_objects, new Print ( "Publish Objs" ) );
 
-    EndState get_objects_final ( &get_objects );
+    EndState get_objects_final ( "get_objects_final", &get_objects );
     //______________________________________________________________________________________________________________
 
 
 
-    BasicState self_localize ( &think, new Print ( "Self Localize" ) );
-    BasicState publish_self_pos ( &think, new Print ( "Publish Self Position" ) );
+    BasicState self_localize ( "self_localize", &think, new Print ( "Self Localize" ) );
+    BasicState publish_self_pos ( "publish_self_pos", &think, new Print ( "Publish Self Position" ) );
 
-    BasicState ball_localize ( &think, new Print ( "Ball Localize" ) );
-    BasicState publish_ball_pos ( &think, new Print ( "Publish Ball Position" ) );
+    BasicState ball_localize ( "ball_localize", &think, new Print ( "Ball Localize" ) );
+    BasicState publish_ball_pos ( "publish_ball_pos", &think, new Print ( "Publish Ball Position" ) );
 
-    BasicState select_plan ( &think, new Print ( "Select PLan" ) );
+    BasicState select_plan ( "select_plan", &think, new Print ( "Select PLan" ) );
     SetPlan SetThePlan;//TODO
-    BasicState publish_plan ( &think, &SetThePlan );
+    BasicState publish_plan ( "publish_plan", &think, &SetThePlan );
 
-    EndState think_final ( &think );
-
-    //______________________________________________________________________________________________________________
-    //______________________________________________________________________________________________________________
-    //______________________________________________________________________________________________________________
-
-
-
-    OrState execute ( &player, new PrintAction ( "Execute HState" ) );//IncrExec () );
-    StartState execute_start ( &execute );
-
-    ConditionConnector execute_junction ( &execute );
-
-    //______________________________________________________________________________________________________________
-    OrState planA ( &execute, new PrintAction ( "PlanA HState" ) );
-
-    StartState planA_start ( &planA );
-
-    BasicState planA_go_towards_ball ( &planA, new Print ( "PlanA Go Towards Ball" ) );
-    ConditionConnector planA_junction ( &planA );
-    BasicState planA_kick_ball ( &planA, new Print ( "PlanA Kick Ball" ) );
-
-    EndState planA_final ( &planA );
-
-    //______________________________________________________________________________________________________________
-    OrState planB ( &execute, new PrintAction ( "PlanB HState" ) );
-
-    StartState planB_start ( &planB );
-
-    BasicState planB_go_towards_ball ( &planB, new Print ( "PlanB Go Towards Ball" ) );
-    ConditionConnector planB_junction ( &planB );
-    BasicState planB_pass_ball ( &planB, new Print ( "PlanB Pass Ball" ) );
-
-    EndState planB_final ( &planB );
-
-    //______________________________________________________________________________________________________________
-    OrState planC ( &execute, new PrintAction ( "PlanC HState" ) );
-
-    StartState planC_start ( &planC );
-
-    BasicState planC_go_towards_goal ( &planC, new Print ( "PlanC Go Towards Goal" ) );
-    ConditionConnector planC_junction_A ( &planC );
-    BasicState planC_go_towards_ball ( &planC, new Print ( "PlanC Go Towards Ball" ) );
-    ConditionConnector planC_junction_B ( &planC );
-    BasicState planC_kick_ball ( &planC, new Print ( "planC Kick Ball" ) );
-
-    EndState planC_final ( &planC );
-
-    EndState execute_final ( &execute );
-
-
+    EndState think_final ( "think_final", &think );
 
     //______________________________________________________________________________________________________________
     //______________________________________________________________________________________________________________
     //______________________________________________________________________________________________________________
 
 
-    OrState accept_notices ( &player,  new PrintAction ( "Accept Notices HState") );//TODO new IncrAcccept () );
-    StartState accept_notices_start ( &accept_notices );
-    BasicState accept_notices_state ( &accept_notices,  new Print ( "Accept Notices" ) );
-    EndState accept_notices_final ( &accept_notices );
+
+    OrState execute ( "execute", &player, new PrintAction ( "Execute HState" ) );//IncrExec () );
+    StartState execute_start ( "execute_start", &execute );
+
+    ConditionConnector execute_junction ( "execute_junction", &execute );
+
+    //______________________________________________________________________________________________________________
+    OrState planA ( "planA", &execute, new PrintAction ( "PlanA HState" ) );
+
+    StartState planA_start ( "planA_start", &planA );
+
+    BasicState planA_go_towards_ball ( "planA_go_towards_ball", &planA, new Print ( "PlanA Go Towards Ball" ) );
+    ConditionConnector planA_junction ( "planA_junction", &planA );
+    BasicState planA_kick_ball ( "planA_kick_ball", &planA, new Print ( "PlanA Kick Ball" ) );
+
+    EndState planA_final ( "planA_final", &planA );
+
+    //______________________________________________________________________________________________________________
+    OrState planB ( "planB", &execute, new PrintAction ( "PlanB HState" ) );
+
+    StartState planB_start ( "planB_start", &planB );
+
+    BasicState planB_go_towards_ball ( "planB_go_towards_ball", &planB, new Print ( "PlanB Go Towards Ball" ) );
+    ConditionConnector planB_junction ( "planB_junction", &planB );
+    BasicState planB_pass_ball ( "planB_pass_ball", &planB, new Print ( "PlanB Pass Ball" ) );
+
+    EndState planB_final ( "planB_final", &planB );
+
+    //______________________________________________________________________________________________________________
+    OrState planC ( "planC", &execute, new PrintAction ( "PlanC HState" ) );
+
+    StartState planC_start ( "planC_start", &planC );
+
+    BasicState planC_go_towards_goal ( "planC_go_towards_goal", &planC, new Print ( "PlanC Go Towards Goal" ) );
+    ConditionConnector planC_junction_A ( "planC_junction_A", &planC );
+    BasicState planC_go_towards_ball ( "planC_go_towards_ball", &planC, new Print ( "PlanC Go Towards Ball" ) );
+    ConditionConnector planC_junction_B ( "planC_junction_B", &planC );
+    BasicState planC_kick_ball ( "planC_kick_ball", &planC, new Print ( "planC Kick Ball" ) );
+
+    EndState planC_final ( "planC_final", &planC );
+
+    EndState execute_final ( "execute_final", &execute );
+
+
+
+    //______________________________________________________________________________________________________________
+    //______________________________________________________________________________________________________________
+    //______________________________________________________________________________________________________________
+
+
+    OrState accept_notices ( "accept_notices", &player,  new PrintAction ( "Accept Notices HState") );//TODO new IncrAcccept () );
+    StartState accept_notices_start ( "accept_notices_start", &accept_notices );
+    BasicState accept_notices_state ( "accept_notices_state", &accept_notices,  new Print ( "Accept Notices" ) );
+    EndState accept_notices_final ( "accept_notices_final", &accept_notices );
 
 
     TransitionSegment<State, State> tr1( &pl_start, &player );
@@ -341,7 +349,7 @@ int main () {
     //_____________________________________________
     //TransitionSegment<State, State> tr3( &think, &think, new TimeoutEvent ( 20, "think_timeout" ), new PrintAction ( "NextFrame Think" ) );
 
-    TransitionSegment<State,State> tr3(&think, &think,new CondTimeout("Think_tout"),new TimeoutAction("Think_tout",35));
+    TransitionSegment<State,State> tr3(&think, &think,new CondTimeout("Think_tout"),new TimeoutAction("Think_tout",3500));
 
 
     IncrThink ithink;
@@ -368,7 +376,7 @@ int main () {
     //TransitionSegment<State, State> tr16( &execute, &execute );
 //            , new TimeoutEvent ( 40, "execute_timeout" ), new Print ( "NextFrame Execute" ) );
 
-TransitionSegment<State,State> tr16(&execute, &execute,new CondTimeout("Exec_tout"),new TimeoutAction("Exec_tout",25));
+TransitionSegment<State,State> tr16(&execute, &execute,new CondTimeout("Exec_tout"),new TimeoutAction("Exec_tout",2500));
 
     IncrExec incexec;
     TransitionSegment<State, ConditionConnector> tr17( &execute_start, &execute_junction, &incexec );
@@ -411,7 +419,7 @@ TransitionSegment<State,State> tr16(&execute, &execute,new CondTimeout("Exec_tou
     //_____________________________________________
 //     TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new TimeoutEvent(80,"accept_timeout"), new PrintAction("NextFrame Comm"));
 
-    TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new CondTimeout("Comm_tout"),new TimeoutAction("Comm_tout",100));
+    TransitionSegment<State,State> tr42(&accept_notices, &accept_notices,new CondTimeout("Comm_tout"),new TimeoutAction("Comm_tout",1000));
 
     IncrAcccept incAcc;
     TransitionSegment<State, State> tr43( &accept_notices_start, &accept_notices_state,&incAcc );
@@ -425,6 +433,10 @@ TransitionSegment<State,State> tr16(&execute, &execute,new CondTimeout("Exec_tou
 
 
 #endif
+
+cout<<"Before Start"<<endl;
+
+usleep ( 1000000 );
 
      rb_player.Start();
 

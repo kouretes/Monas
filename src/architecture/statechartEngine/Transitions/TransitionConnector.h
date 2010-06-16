@@ -9,7 +9,7 @@ namespace statechart_engine {
 
         public:
 
-            TransitionConnector (State* parent);
+            TransitionConnector (std::string name, statechart_engine::State* parent);
             virtual ~TransitionConnector ();
 
             int Activate ();

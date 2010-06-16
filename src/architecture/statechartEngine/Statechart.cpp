@@ -2,8 +2,8 @@
 
 namespace statechart_engine {
 
-    Statechart::Statechart ( Narukom* com )
-    : OrState ( 0 ), _blackboard("StatechartBlakboard") { //FIXME
+    Statechart::Statechart ( std::string name, Narukom* com )
+    : OrState ( name, 0 ), _blackboard("StatechartBlakboard"), notified(false) { //FIXME
         _com = com;
         _blk = &_blackboard;
         _isRunning = new volatile int; //FIXME mem leak
@@ -11,7 +11,7 @@ namespace statechart_engine {
     }
 
     Statechart::~Statechart () {
-        ;
+        usleep(1000000);
     }
 
     int Statechart::Activate () {

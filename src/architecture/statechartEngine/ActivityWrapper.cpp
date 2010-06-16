@@ -2,7 +2,8 @@
 
 namespace statechart_engine {
 
-  ActivityWrapper::ActivityWrapper () {
+  ActivityWrapper::ActivityWrapper ()
+  : _act(0), _running(0), _s(0){
       ;
   }
 

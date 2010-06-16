@@ -2,8 +2,8 @@
 
 namespace statechart_engine {
 
-    EndState::EndState ( State* parent )
-    : State ( parent ) {
+    EndState::EndState ( std::string name, statechart_engine::State* parent )
+    : State ( name, parent ) {
         ;
     }
 

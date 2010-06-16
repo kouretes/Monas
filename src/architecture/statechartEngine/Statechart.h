@@ -16,7 +16,7 @@ namespace statechart_engine {
 
         public:
 
-            Statechart ( Narukom* com );
+            Statechart ( std::string name, Narukom* com );
 
             virtual ~Statechart ();
 

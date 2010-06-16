@@ -2,8 +2,8 @@
 
 namespace statechart_engine {
 
-    ConditionConnector::ConditionConnector ( State* parent ) :
-        TransitionConnector ( parent ) {
+    ConditionConnector::ConditionConnector ( std::string name, statechart_engine::State* parent ) :
+        TransitionConnector ( name, parent ) {
     }
 
     ConditionConnector::~ConditionConnector () {

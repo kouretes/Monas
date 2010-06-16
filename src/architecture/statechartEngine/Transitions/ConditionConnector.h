@@ -9,7 +9,7 @@ namespace statechart_engine {
 
         public:
 
-            ConditionConnector ( State* parent );
+            ConditionConnector ( std::string name, State* parent );
 
             virtual ~ConditionConnector ();
 
