@@ -1,0 +1,1 @@
+"player=Sensorsω||MotionControllerω||Visionω||Behaviorω||RobotControllerω||LedHandlerω"
