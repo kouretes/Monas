@@ -20,7 +20,7 @@ Tuple::Tuple(google::protobuf::Message* msg, const std::string& host, const std:
     meta_data.set_serialized(false);
   msg_data = msg->New();
   msg_data->CopyFrom(*msg);
-
+  
   meta_data.set_timestamp( boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time()));
 }
 
@@ -58,8 +58,9 @@ Tuple::Tuple(const Tuple& other)
 }
 Tuple::~Tuple()
 {
-  delete msg_data;
-
+	if(msg_data != 0 )
+		delete msg_data;
+  
 }
 const Envelope& Tuple::get_envelope() const
 {
@@ -105,22 +106,23 @@ std::ostream& operator<<(std::ostream& os, const Tuple& t)
   return os;
 }
 
-
-
-
+void Tuple::set_host(const std::string& val)
+{
+	meta_data.set_host(val);
+}
 
 void Tuple::generate_timeout(bool from_now)
 {
-
+  
   if(from_now)
   {
     meta_data.set_timestamp( boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time()));
     timeout = boost::posix_time::from_iso_string(meta_data.timestamp()) + boost::posix_time::millisec(meta_data.timeout());
-
+  
   }
   else
   {
     timeout = boost::posix_time::from_iso_string(meta_data.timestamp()) + boost::posix_time::millisec(meta_data.timeout());
   }
-
+      
 }

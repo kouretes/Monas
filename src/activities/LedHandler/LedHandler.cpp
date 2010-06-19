@@ -13,6 +13,7 @@
      cout << "LedHandler run " << endl;
       if(_blk->getBuffer()->size() > 0)
 	  process_messages();
+		return 0;
   }
   void LedHandler::process_messages()
   {

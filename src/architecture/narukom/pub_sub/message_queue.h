@@ -77,8 +77,9 @@ class MessageQueue : public Thread
     Mutex pub_mutex;
     Mutex sub_mutex;
     const std::string type_string;
-    boost::condition_variable cond;
-    boost::mutex cond_lock;
+    boost::condition_variable_any cond;
+		boost::posix_time::time_duration condition_variable_period;
+    Mutex cond_lock;
     void create_tree(TopicTree<std::string,MessageBuffer>* tree, const std::string& file_name);
 };
 
