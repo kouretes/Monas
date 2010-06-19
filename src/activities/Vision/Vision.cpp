@@ -1,8 +1,8 @@
 #include "Vision.h"
 #include "architecture/archConfig.h"
 #include <cmath>
-
 #include "tools/logger.h"
+#include "tools/XMLConfig.h"
 
 #define trydelete(x) {if((x)!=NULL){delete (x);(x)=NULL;}}
 
@@ -35,6 +35,50 @@ namespace
 {
 	ActivityRegistrar<Vision>::Type temp("Vision");
 }
+
+
+
+//#include "kobserver_goalrecognition.cpp"
+bool FileExists(string strFilename) {
+  struct stat stFileInfo;
+  bool blnReturn;
+  int intStat;
+
+  // Attempt to get the file attributes
+  intStat = stat(strFilename.c_str(),&stFileInfo);
+  if(intStat == 0) {
+    // We were able to get the file attributes
+    // so the file obviously exists.
+    blnReturn = true;
+  } else {
+    // We were not able to get the file attributes.
+    // This may mean that we don't have permission to
+    // access the folder which contains this file. If you
+    // need to do that level of checking, lookup the
+    // return values of stat which will give you
+    // more details on why stat failed.
+    blnReturn = false;
+  }
+
+  return(blnReturn);
+}
+
+void saveFrame(IplImage *fIplImageHeader)
+{
+   static int filenum=0;
+
+   char fname[128];
+   do
+   {
+		sprintf(fname,(ArchConfig::Instance().GetConfigPrefix()+std::string("img%03d.yuyv")).c_str(),filenum++);
+   	}while(FileExists(fname));
+   	ofstream frame(fname,ios_base::binary);
+   	frame.write(reinterpret_cast<char *>(fIplImageHeader->imageData),fIplImageHeader->width*fIplImageHeader->height*fIplImageHeader->nChannels);
+   	frame.close();
+
+
+}
+
 
 int  Vision::Execute()
 {
@@ -213,15 +257,21 @@ KSegmentator::colormask_t Vision::doSeg(int x, int y)
 
 }
 
-Vision::Vision() :Publisher("Vision"),
-		cvHighgui(false), type(VISION_CSPACE),ang(NULL),Vang(NULL),im(NULL),hm(NULL)
+Vision::Vision() :Publisher("Vision"),cvHighgui(false), type(VISION_CSPACE),ang(NULL),Vang(NULL),im(NULL),hm(NULL)
 {
-	im=NULL;
-	hm=NULL;
+
 }
 
 void Vision::UserInit()
 {
+    config = new XMLConfig(ArchConfig::Instance().GetConfigPrefix()+"/vision.xml");
+    if(config->IsLoadedSuccessfully()==false)
+        Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
+    config->QueryElement("cvHighgui",cvHighgui);
+    if(cvHighgui==true)
+        Logger::Instance().WriteMsg("Vision", "Enable highgui", Logger::Info);
+
+
 	ext.Init(_com);
 	kinext.Init();
     Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
@@ -953,5 +1003,16 @@ void Vision::cvShowSegmented()
 	 pos[0]=pos[0]+0.1;
 	 pos[1]=pos[1]+0.1;
 	 m->callVoid("setAngles",names,pos,0.8);*/
-	cvWaitKey(10);
+	int k=cvWaitKey(10);
+	if(k=='s')
+	{
+		saveFrame(rawImage);
+		Logger::Instance().WriteMsg("Vision", "Save frame", Logger::Error);
+	}
+	 if(k=='c')
+	 {
+		 Logger::Instance().WriteMsg("Vision", "Change Cam", Logger::Info);
+			ext.swapCamera();
+
+	  }
 }

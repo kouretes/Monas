@@ -59,7 +59,7 @@ void MotionController::UserInit() {
 	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
 	loadActions();
 	loadActionsKME();
-	printActionsKME();
+	//printActionsKME();
 	jointNames = motion->getJointNames("Body");
 	
 	counter = 0;
@@ -114,7 +114,6 @@ void MotionController::mglrun() {
 		AccY = im->sensordata(1);
 		AccYvalue = AccY.sensorvalue();
 	}
-	//cout << counter << "  " << AccZvalue << "  " << robotUp << "  " << robotDown << " " << actionPID << std::endl;
 
 
 	/* Check if the robot is falling and remove stiffness, kill all motions */
@@ -166,7 +165,6 @@ void MotionController::mglrun() {
 		return;
 	}
 
-	//cout << "The robot is up and ready to execute motions!" << std::endl;
 	/* The robot is up and ready to execute motions */
 	if (robotUp) {
 
@@ -328,7 +326,6 @@ void MotionController::killCommands() {
 
 
 void MotionController::commands() {
-	//cout << "Commands " << counter << " headPid " << headPID << endl;
 
 	if ((headPID == 0) && (counter % 10 == 0)) {
 		MotionHeadMessage* hmot = new MotionHeadMessage();

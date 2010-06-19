@@ -53,6 +53,7 @@ class KImageExtractor : public Publisher
 		float calibrateCamera(int sleeptime=1500,int exp=18);
 		float getExp();
 		int getCamera();
+		int swapCamera();
 	private:
 		AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi
 		AL::ALPtr<AL::DCMProxy> dcm;
