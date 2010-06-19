@@ -2,9 +2,10 @@
 
 namespace statechart_engine {
 
-    OrState::OrState ( State* parent, IAction* entryAction, IAction* exitAction )
-    : State ( parent, entryAction, exitAction ),
-      _activeState(0) {
+    OrState::OrState ( std::string name, statechart_engine::State* parent, statechart_engine::IAction* entryAction, statechart_engine::IAction* exitAction )
+    : State ( name, parent, entryAction, exitAction ),
+      _activeState(0),
+      _startState(0) {
         ;
       }
 

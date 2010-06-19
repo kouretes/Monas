@@ -8,8 +8,9 @@
 
 namespace statechart_engine {
 
-    State::State (State* parent, IAction* entryAction, IAction* exitAction )
-    : _entryAction(entryAction),
+    State::State (std::string name, statechart_engine::State* parent, statechart_engine::IAction* entryAction, statechart_engine::IAction* exitAction )
+    : _name(name),
+      _entryAction(entryAction),
       _exitAction(exitAction),
       _parent(parent),
       _isActive(false),
@@ -117,5 +118,10 @@ namespace statechart_engine {
     volatile int* State::GetIsRunningRef () const {
       return _isRunning;
     }
+
+    const std::string State::GetName() const {
+        return _name;
+    }
+
 
 }

@@ -143,3 +143,20 @@ void Publisher::publish(char* msg, unsigned int size, const std::string type, co
     pub_msg_buf->add(new_tuple);
   }
 }
+void Publisher::publish(Tuple* t)
+{
+  if (pub_msg_buf == 0)
+  {
+    if (pub_msg_queue == 0)
+    {
+      cout <<  "publisher: " << getName() << " with neither buffer nor queue " << endl;
+      return;
+    }
+    else
+    {
+      pub_msg_queue->add_publisher(this);
+    }
+  }
+  if(t != 0)
+		pub_msg_buf->add(t);
+}

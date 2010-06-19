@@ -10,9 +10,9 @@ public:
 	Mutex();
 	~Mutex();
 
-	virtual void Lock() ;
-	virtual void Unlock() ;
-
+	virtual void lock() ;
+	virtual void unlock() ;
+  virtual bool try_lock();
 private:
   boost::mutex* mx;
 };

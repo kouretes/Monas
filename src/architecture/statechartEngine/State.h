@@ -11,6 +11,7 @@
 
 #include "Containers.h"
 
+#include <string>
 #include <vector>
 
 namespace statechart_engine {
@@ -19,7 +20,7 @@ namespace statechart_engine {
 
         public:
 
-            State ( State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+            State ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
 
             virtual ~State ();
 
@@ -46,7 +47,11 @@ namespace statechart_engine {
 
             virtual volatile int* GetIsRunningRef () const;
 
+            virtual const std::string GetName () const;
+
         protected:
+
+            std::string _name;
 
             IAction* _entryAction;
             IAction* _exitAction;

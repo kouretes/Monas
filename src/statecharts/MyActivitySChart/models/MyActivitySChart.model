@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:IAC="http://mi.parisdescartes.fr/ASEME/metamodels/IAC">
+  <IAC:Node name="MyActivity" type="BASIC" label="0.2.1.2.2" activity="null"/>
+  <IAC:Node name="0.2.1.3" type="END" label="0.2.1.3" activity="null"/>
+  <IAC:Node name="0.2.1.2.1" type="START" label="0.2.1.2.1" activity="null"/>
+  <IAC:Node name="MyActivity_forever_" type="OR" label="0.2.1.2" activity="null"/>
+  <IAC:Node name="0.3" type="END" label="0.3" activity="null"/>
+  <IAC:Node name="0.2.1.1" type="START" label="0.2.1.1" activity="null"/>
+  <IAC:Node name="0.2" type="AND" label="0.2" activity="null"/>
+  <IAC:Node name="0.1" type="START" label="0.1" activity="null"/>
+  <IAC:Node name="0.2.2.3" type="END" label="0.2.2.3" activity="null"/>
+  <IAC:Node name="MyActivity_forever_" type="OR" label="0.2.2.2" activity="null"/>
+  <IAC:Node name="0.2.2.1" type="START" label="0.2.2.1" activity="null"/>
+  <IAC:Node name="0.2.2" type="OR" label="0.2.2" activity="null"/>
+  <IAC:Node name="0.2.1" type="OR" label="0.2.1" activity="null"/>
+  <IAC:Node name="player" type="OR" label="0" activity="null"/>
+  <IAC:Transition TE="null" source="#/6" target="#/4" name="0.2TO0.3"/>
+  <IAC:Transition TE="null" source="#/2" target="#/0" name="0.2.1.2.1TO0.2.1.2.2"/>
+  <IAC:Transition TE="null" source="#/9" target="#/8" name="0.2.2.2TO0.2.2.3"/>
+  <IAC:Transition TE="null" source="#/10" target="#/9" name="0.2.2.1TO0.2.2.2"/>
+  <IAC:Transition TE="null" source="#/3" target="#/1" name="0.2.1.2TO0.2.1.3"/>
+  <IAC:Transition TE="null" source="#/5" target="#/3" name="0.2.1.1TO0.2.1.2"/>
+  <IAC:Transition TE="null" source="#/7" target="#/6" name="0.1TO0.2"/>
+  <IAC:Transition TE="null" source="#/0" target="#/0" name="0.2.1.2.2TO0.2.1.2.2"/>
+  <IAC:Model nodes="#/0 #/1 #/2 #/3 #/4 #/5 #/6 #/7 #/8 #/9 #/10 #/11 #/12 #/13" transitions="#/14 #/15 #/16 #/17 #/18 #/19 #/20 #/21"
+      name="MyActivitySChart"/>
+</xmi:XMI>

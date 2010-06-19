@@ -2,14 +2,14 @@
 
 namespace statechart_engine {
 
-    BasicState::BasicState ( State* parent, IAction* entryAction, IAction* exitAction )
-    : State(parent, entryAction, exitAction),
-      _stateActivity(0){
+    BasicState::BasicState ( std::string name, State* parent, IAction* entryAction, IAction* exitAction )
+    : State(name, parent, entryAction, exitAction),
+      _stateActivity(0), _st(0) {
         ;
     }
 
-    BasicState::BasicState ( State* parent, IActivity* activity, IAction* entryAction, IAction* exitAction )
-    : State(parent, entryAction, exitAction),
+    BasicState::BasicState ( std::string name, statechart_engine::State* parent, IActivity* activity, statechart_engine::IAction* entryAction, statechart_engine::IAction* exitAction )
+    : State(name, parent, entryAction, exitAction),
       _stateActivity(activity) {
 
         State* p = parent;

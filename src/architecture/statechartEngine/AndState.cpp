@@ -3,8 +3,8 @@
 namespace statechart_engine {
 
 
-    AndState::AndState ( State* parent, IAction* entryAction, IAction* exitAction )
-    : State(parent, entryAction, exitAction) {
+    AndState::AndState ( std::string name, statechart_engine::State* parent, statechart_engine::IAction* entryAction, statechart_engine::IAction* exitAction )
+    : State(name, parent, entryAction, exitAction) {
         ;
     }
 
@@ -37,8 +37,7 @@ namespace statechart_engine {
 
     Blackboard* AndState::AddChild ( State* subState) {
         _subStates.push_back ( static_cast<OrState*>(subState) ); //FIXME dynamic_cast is not working!
-        char s[]="aa"; //FIXME get name
-        return new Blackboard(s); //FIXME mem leak
+        return new Blackboard(subState->GetName()); //FIXME mem leak
     }
 
     bool AndState::isRunning () const {

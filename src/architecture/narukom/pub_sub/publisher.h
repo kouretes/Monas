@@ -39,6 +39,7 @@ class Publisher
     virtual ~Publisher();
     virtual void publish(google::protobuf::Message* msg,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
     virtual void publish(char* msg,unsigned size,const std::string type,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
+		virtual void publish(Tuple* t);
 //    virtual void publish(Serializable* msg ,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
     
     bool operator==(const Publisher& pub_1);//
