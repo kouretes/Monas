@@ -327,7 +327,7 @@ void MessageQueue::process_queued_msg()
             }
 						
             Tuple* cur = it->second->remove_head();
-// 																					cout << "deliver " << cur->get_type() << " from " << cur->get_publisher() << " topic  " << cur->get_topic() << endl;
+// 																					//cout << "deliver " << cur->get_type() << " from " << cur->get_publisher() << " topic  " << cur->get_topic() << endl;
             while (cur != 0)
             {
 							  new_messages_to_deliver = true;
@@ -348,7 +348,7 @@ void MessageQueue::process_queued_msg()
 								}
 								else
 								{
-									cout << "empty list of receivers " << endl;
+// 									cout << "empty list of receivers " << endl;
 								}
 								delete cur;
                 cur = it->second->remove_head();
