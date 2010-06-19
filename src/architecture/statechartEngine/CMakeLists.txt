@@ -3,12 +3,12 @@ message ( STATUS " _..::: Configuring Statechart Engine :::.._ " )
 message ( STATUS "" )
 
 # TODO
-include_directories ( AFTER ../narukom/
-                            ../narukom/message_definitions/
-                            ../narukom/messages/
-                            ../narukom/network/
-                            ../narukom/pub_sub/
-                            ../narukom/system/ )
+# include_directories ( AFTER ../narukom/
+#                             ../narukom/message_definitions/
+#                             ../narukom/messages/
+#                             ../narukom/network/
+#                             ../narukom/pub_sub/
+#                             ../narukom/system/ )
 
 add_library ( statechartEngine  ${LibBuildType}
                                 ActivityWrapper.cpp
@@ -30,9 +30,19 @@ add_library ( statechartEngine  ${LibBuildType}
 
 target_link_libraries ( statechartEngine MessageLib )
 
-include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
+# TODO
+if ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
 
-use_lib(statechartEngine ALCOMMON ALVALUE ALMATH LIBCORE TOOLS BOOST  )
+  message ( STATUS " _..::: Configuring Statechart Engine for Nao robot :::.._ " )
+
+  include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
+
+  use_lib(statechartEngine ALCOMMON ALVALUE ALMATH LIBCORE TOOLS BOOST  )
+
+endif ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
+
+
+
 
 install ( TARGETS statechartEngine
         RUNTIME DESTINATION   bin
