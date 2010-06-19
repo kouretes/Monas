@@ -220,7 +220,7 @@ IplImage *KImageExtractor::allocateImage()
 	int width;
 	int height;
 	getSizeFromResolution(resolution,width,height);
-	cout<<"cvCreteImage"<<endl;
+	//cout<<"cvCreteImage"<<endl;
 	cout<<width<<" "<<height << " "<< nChannels<<endl;
 	return cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,nChannels);
 }
@@ -428,10 +428,17 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	return scale;
 }
 
-
 int KImageExtractor::getCamera()
 {
 	return c->call<int>( "getParam", kCameraSelectID);
+}
+
+int KImageExtractor::swapCamera()
+{
+	int old=c->call<int>( "getParam", kCameraSelectID);
+	old=(old==1)?0:1;
+	c->callVoid( "setParam", kCameraSelectID,old);
+	return old;
 }
 
 float KImageExtractor::getExp()

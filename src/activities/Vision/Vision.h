@@ -46,6 +46,7 @@ public:
 
 private:
     bool cvHighgui;
+    XMLConfig *config;
     BallTrackMessage trckmsg;
     BallObject ballpos;
     //Incoming messages!
