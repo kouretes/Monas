@@ -57,11 +57,11 @@ void MotionController::loadActionsKME() {
 		
 				fin.close();
 				actionMap[fileName] = i;
-				std::cout<<"Special Action Succesfully Loaded : "<<fileName<<endl;		
+				Logger::Instance().WriteMsg("MotionController","Special Action Succesfully Loaded : "+fileName,Logger::ExtraInfo);
 				i++;
 			}
 			else{
-				std::cout<<"WARNING SPECIAL ACTION IS NOT LOADED:"<<fileName<<endl;
+				Logger::Instance().WriteMsg("MotionController","Special Action Failed to Load : "+fileName,Logger::ExtraInfo);
 			}
 		}
 
@@ -88,11 +88,11 @@ int MotionController::executeActionKME(std::string action) {
 
 	map<string,int>::iterator it = actionMap.find(action);
 	if ( it == actionMap.end() ) {
-		cout << "Action not found" << endl;
+		Logger::Instance().WriteMsg("MotionController","Special Action Not Found : "+action,Logger::ExtraInfo);
 		return 0;
 	}
 	unsigned int i = it->second; 
-	cout << "Found action " << action << " with index " << i << endl;
+	Logger::Instance().WriteMsg("MotionController","Special Action Found : "+action,Logger::ExtraInfo);
 	
 	AL::ALValue actionNames, actionAngles, actionTimes;
 	unsigned int joints = 22;
@@ -113,7 +113,6 @@ int MotionController::executeActionKME(std::string action) {
 			actionAngles[l][k] = spAct[i].seqMotion[k][l];
 			time += spAct[i].seqMotion[k][22];
 			actionTimes[l][k] = time;
-			cout << jointNames[l] << "  " << l << "    " << k << " - " << spAct[i].seqMotion[k][l] << " " << time << endl;
 		}
 	}
 	
@@ -127,11 +126,11 @@ int MotionController::executeActionBodyKME(std::string action) {
 
 	map<string,int>::iterator it = actionMap.find(action);
 	if ( it == actionMap.end() ) {
-		cout << "Action not found" << endl;
+		Logger::Instance().WriteMsg("MotionController","Special Action Not Found : "+action,Logger::ExtraInfo);
 		return 0;
 	}
 	unsigned int i = it->second; 
-	cout << "Found action " << action << " with index " << i << endl;
+	Logger::Instance().WriteMsg("MotionController","Special Action Found : "+action,Logger::ExtraInfo);
 	
 	AL::ALValue actionAngles, actionTimes;
 	
@@ -147,11 +146,9 @@ int MotionController::executeActionBodyKME(std::string action) {
 	for (unsigned int k = 0; k < poses; k++) {
 		for (unsigned int l = 0; l < joints; l++) {
 			actionAngles[k][l] = spAct[i].seqMotion[k][l];
-			cout << spAct[i].seqMotion[k][l] << " ";
 		}
 		time += spAct[i].seqMotion[k][22];
 		actionTimes[k] = time;
-		cout << time << endl;
 	}
 	
 	return motion->post.angleInterpolation("Body", actionAngles, actionTimes, 1);
