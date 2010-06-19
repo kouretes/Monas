@@ -4,12 +4,12 @@
 
 using std::cout;
 using std::endl;
-GameController::GameController(RoboCupGameControlData* game_data,bool* received_data,Mutex* mx,int port,int team_number): game_data(game_data),received_data(received_data),mx(mx),port(port),team_number(team_number){
-    mx->Lock();
+GameController::GameController(RoboCupGameControlData* game_data,bool* received_data,Mutex* mx,int port,int team_number): game_data(game_data),received_data(received_data),mx(mx),port(port),team_number(team_number) {
+    mx->lock();
 //    initialize_data(game_data);
-     cout << "Initialize gm" << endl;
+    cout << "Initialize gm" << endl;
     *received_data = false;
-    mx->Unlock();
+    mx->unlock();
     current_data = new RoboCupGameControlData;
     cout << "socket create" << endl;
     socket_fd = socket(PF_INET, SOCK_DGRAM, 0); //socket creation
@@ -31,50 +31,50 @@ GameController::GameController(RoboCupGameControlData* game_data,bool* received_
 
 int GameController::Execute()
 {
-  //  cout << " gm run " << endl;
-     static int i = 0;
+    //  cout << " gm run " << endl;
+    static int i = 0;
     FD_SET(socket_fd,&rset);
     int tmpfd;
     timeout.tv_sec = 0  ;
     timeout.tv_usec = 300000;
-  //  int number_of_bites = 0;
+    //  int number_of_bites = 0;
     tmpfd = select(socket_fd+1,&rset,NULL,NULL,&timeout);
     int bytes;
     socklen_t addr_len=sizeof(addr);
-    if(tmpfd > 0){
-        if(FD_ISSET(socket_fd,&rset))
+    if (tmpfd > 0) {
+        if (FD_ISSET(socket_fd,&rset))
         {
             bytes =  recvfrom(socket_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
             //bytes = read(sd,buffer,sizeof(buffer));
-            if(check_data_and_copy(buffer,bytes))
+            if (check_data_and_copy(buffer,bytes))
             {
-                mx->Lock();
+                mx->lock();
                 RoboCupGameControlData* tmp_ptr = game_data;
                 game_data = current_data;
                 current_data = tmp_ptr;
                 *received_data = true;
                 //cout << "ptr " << (int)received_data << endl;
-                mx->Unlock();
+                mx->unlock();
             }
             bzero(&buffer,sizeof(buffer));
         }
     }
-    else{
-   
-	if(i++ % 20==0)
-	  cout << "Timeout occured! no messages received from gamecontroller" << endl;
+    else {
+
+        if (i++ % 20==0)
+            cout << "Timeout occured! no messages received from gamecontroller" << endl;
     }
     //usleep(499000);
-
+    return 0;
 }
 bool GameController::check_data_and_copy(char* bytes, int size)
 {
 
-    if( (strncmp(bytes,GAMECONTROLLER_STRUCT_HEADER,4) == 0 ) && (size == sizeof(RoboCupGameControlData) ))
+    if ( (strncmp(bytes,GAMECONTROLLER_STRUCT_HEADER,4) == 0 ) && (size == sizeof(RoboCupGameControlData) ))
     {
         //cout << "Valid GameController packet" << endl;
         memcpy(current_data,bytes,size);
-        if(current_data->teams[0].teamNumber == team_number || current_data->teams[1].teamNumber== team_number)
+        if (current_data->teams[0].teamNumber == team_number || current_data->teams[1].teamNumber== team_number)
             return true;
         //cout << "Packet is not for our team " << team_number << "teams " <<  current_data->teams[0].teamNumber << " " << current_data->teams[1].teamNumber << endl;
     }
@@ -83,10 +83,10 @@ bool GameController::check_data_and_copy(char* bytes, int size)
 }
 
 
-GameController::~GameController(){
+GameController::~GameController() {
 
     delete current_data;
-    mx->Unlock();
+    mx->unlock();
     cout << " Shutting down gamecontroller " << endl;
     close(socket_fd);
 }

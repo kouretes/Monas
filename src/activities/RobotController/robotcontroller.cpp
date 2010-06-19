@@ -63,7 +63,7 @@ int RobotController::Execute()
     // cout <<"add: "<< (int)(&received_data) <<  " rd: " << received_data << " cbp " << chest_button_pressed << " rfb " << right_bumper_pressed << " lfb " << left_bumper_pressed << endl;
     cout << "RC RUN" << endl;
     bool changed = false;
-    mx.Lock();
+    mx.lock();
     if(received_data)
     {
         //changed = true;
@@ -94,7 +94,7 @@ int RobotController::Execute()
         received_data = false;
    //     cout << "COLOR: " << gm_state.team_color() << "st " << gm_state.game_state() << "pl " << gm_state.player_state()
    //            << "kic " << gm_state.kickoff() << "pen " << gm_state.penalized()<< endl;
-        mx.Unlock();
+        mx.unlock();
     }
     else
     {
@@ -104,7 +104,7 @@ int RobotController::Execute()
         left_bumper_pressed = memory->getData("lbumper_pressed");
         right_bumper_pressed = memory->getData("rbumper_pressed");
 	//cout << "chest " << chest_button_pressed << "lb " << left_bumper_pressed << "rb " << right_bumper_pressed << endl;
-        mx.Unlock();
+        mx.unlock();
         //button_mx.Lock();
         if((chest_button_pressed+right_bumper_pressed+left_bumper_pressed) > 0)
         {
@@ -170,7 +170,7 @@ int RobotController::Execute()
           //      button_mx.Unlock();
             }
         }
-        //button_mx.Unlock();
+        //button_mx.unlock();
     }
     if(changed)
     {

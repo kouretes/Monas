@@ -8,7 +8,7 @@ namespace statechart_engine {
     class OrState: public State {
 
         public:
-            OrState ( State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+            OrState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
 
             virtual ~OrState ();
 

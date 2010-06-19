@@ -18,9 +18,10 @@ Tuple class is the container for exchaning data between publishers and subscribe
 */
 using namespace boost::multi_index;
 using namespace boost::posix_time;
+
 class Blackboard;
 class Tuple{
-  friend class Blackboard;
+	friend class Blackboard;
   public:
 explicit
 Tuple(google::protobuf::Message* msg,const std::string& host = "localhost",const std::string pub_name = "", const std::string topic = "global", const std::string& destination = "",int timeout = 100);
@@ -36,6 +37,7 @@ Tuple(const Tuple& other);
   const std::string& get_topic() const;// {return meta_data.topic();}
   boost::posix_time::ptime get_timestamp() const;// {return boost::posix_time::from_iso_string(meta_data.timestamp());}
   boost::posix_time::ptime get_timeout() const;// {return timeout;}
+  void set_host(const std::string& val);
   google::protobuf::Message* get_msg_data() const;// {return msg_data; }
   const Envelope& get_envelope() const;//{return meta_data;}
   friend std::ostream&  operator<<(std::ostream& os, const Tuple& t);
@@ -60,6 +62,12 @@ struct standard_key : composite_key<
 	BOOST_MULTI_INDEX_CONST_MEM_FUN(Tuple,boost::posix_time::ptime, get_timestamp)
 >{};
 
+struct secondary_key : composite_key<
+	Tuple,
+	BOOST_MULTI_INDEX_CONST_MEM_FUN(Tuple,const std::string&, get_host),
+	BOOST_MULTI_INDEX_CONST_MEM_FUN(Tuple,std::string, get_type),
+	BOOST_MULTI_INDEX_CONST_MEM_FUN(Tuple,boost::posix_time::ptime, get_timestamp)
+>{};
 
 
 #endif

@@ -6,6 +6,7 @@ Mutex::Mutex()
 {
  mx = new boost::mutex;
  mx->unlock();
+ 
 }
 
 
@@ -14,13 +15,17 @@ Mutex::~Mutex()
  mx->unlock();
 }
 
-void Mutex::Lock() 
+bool Mutex::try_lock()
+{
+	return mx->try_lock();
+}
+void Mutex::lock()
 {
 mx->lock();
 }
 
 
-void Mutex::Unlock() 
+void Mutex::unlock()
 {
 mx->unlock();
 }
