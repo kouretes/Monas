@@ -70,9 +70,10 @@ int Sensors::Execute() {
 	Values["Head"] = memory->getListData(devicesInChains["Head"]);
 	Values["LeftLeg"] = memory->getListData(devicesInChains["LeftLeg"]);
 	Values["RightLeg"] = memory->getListData(devicesInChains["RightLeg"]);
+	Values["Inertial"] = memory->getListData(devicesInChains["Inertial"]);
 	rtm.stop();
 	if (period % MODULO == 0) {
-		Values["Inertial"] = memory->getListData(devicesInChains["Inertial"]);
+
 		Values["FSR"] = memory->getListData(devicesInChains["FSR"]);
 		Values["USoundLeft"] = memory->getListData(devicesInChains["USoundLeft"]);
 		Values["USoundRight"] = memory->getListData(devicesInChains["USoundRight"]);
@@ -84,7 +85,6 @@ int Sensors::Execute() {
 	timediff = rtm.diffNs();
 	rtm.start();
 	for (i = 0; i < devicesInChains["Head"].size(); i++) { //Values["Head"][i] = *(SensorDataPtr["Head"][i]);
-
 		HJSM.mutable_sensordata(i)->set_sensorvalue(Values["Head"][i]);
 		HJSM.mutable_sensordata(i)->set_sensorvaluediff(Values["Head"][i] - devicesValues[counter]);
 		HJSM.mutable_sensordata(i)->set_sensortimediff(timediff);
@@ -142,15 +142,16 @@ int Sensors::Execute() {
 	//		devicesValues[counter] = Values[i];
 	//		counter++;
 	//	}
+	for (i = 0; i < devicesInChains["Inertial"].size(); i++) {
+		ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
+		ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - devicesValues[counter]);
+		ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
+		devicesValues[counter] = Values["Inertial"][i];
+		counter++;
+	}
+	publish(&ISM, "sensors");
 
 	if (period % MODULO == 0) {
-		for (i = 0; i < devicesInChains["Inertial"].size(); i++) {
-			ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
-			ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - devicesValues[counter]);
-			ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
-			devicesValues[counter] = Values["Inertial"][i];
-			counter++;
-		}
 
 		for (i = 0; i < devicesInChains["FSR"].size(); i++) {
 			FSM.mutable_sensordata(i)->set_sensorvalue(Values["FSR"][i]);
@@ -176,7 +177,7 @@ int Sensors::Execute() {
 			counter++;
 			i++;
 		}
-		publish(&ISM, "sensors");
+
 		publish(&FSM, "sensors");
 		publish(&USSM, "sensors");
 		//
@@ -460,7 +461,13 @@ void Sensors::initialisation() {
 		USSM.add_sensordata();
 		USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundRight"][j]);
 	}
-	memset(devicesValues, 0, sizeof devicesValues);
+	int allchainsSize = 0;
+
+	for (std::map<std::string, std::vector<std::string> >::const_iterator iter = devicesInChains.begin(); iter != devicesInChains.end(); ++iter) {
+		allchainsSize += (iter->second).size();
+	}
+	devicesValues.assign(allchainsSize, 0);
+	cout << " Number of devices distibuted " << allchainsSize << endl;
 }
 
 void Sensors::process_messages() {

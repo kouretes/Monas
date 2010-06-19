@@ -19,7 +19,7 @@
 #include <rttime.h>
 #include "dcmproxy.h"
 
-#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
+//#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
 // Use DCM proxy
 
 //#define USE_POINTERS
@@ -77,7 +77,7 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
 
 		unsigned int period;
 		//Indexing according initialization
-		float devicesValues[NUMBER_OF_SENSORS];
+		std::vector<float> devicesValues;
 };
 
 #endif  
