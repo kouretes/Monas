@@ -37,6 +37,10 @@ ButtonListener::ButtonListener(AL::ALPtr<AL::ALBroker> pbroker, const std::strin
     functionName("RBumperPressed","ButtonListener", "right bumber pressed");
     BIND_METHOD(ButtonListener::RBumperPressed);
     cout << "Button Listener start of constructor" << endl;
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+		ctime = boost::posix_time::microsec_clock::local_time();
+		rtime = boost::posix_time::microsec_clock::local_time();
+		ltime = boost::posix_time::microsec_clock::local_time();
     try {
         sentinel = getParentBroker()->getProxy("ALSentinel");
         memory  = getParentBroker()->getMemoryProxy();
@@ -72,20 +76,47 @@ sentinel->pCall<bool>("enableDefaultActionSimpleClick",true);
 
 void ButtonListener::buttonPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage)
 {
-    cout << "Button Pressed" << endl;
+	 static boost::posix_time::time_duration dur = boost::posix_time::millisec(300);
+	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+	 
    // mx->Lock();
-    memory->insertData("button_pressed",1);
+		if((now - ctime) > dur )
+		{
+			cout << "Button Pressed" << endl;
+			memory->insertData("button_pressed",1);
+			ctime = now;
+		}
+		else
+			cout << "ignore event" << endl;
    // mx->Unlock();
     //memory->raiseEvent("LBumperPressed",1.0f);
 }
 void ButtonListener::LBumperPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage)
 {
-    cout << "Left Pressed" << endl;
-    memory->insertData("lbumper_pressed",1);
+	static boost::posix_time::time_duration dur = boost::posix_time::millisec(300);
+	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+
+   // mx->Lock();
+		if((now - ctime) > dur )
+		{
+			 cout << "Left Pressed" << endl;
+			 memory->insertData("lbumper_pressed",1);
+		}
+		else
+			cout << "ignore event" << endl;
 }
 void ButtonListener::RBumperPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage)
 {
-    cout << "Right Pressed" << endl;
-    memory->insertData("rbumper_pressed",1);
+	static boost::posix_time::time_duration dur = boost::posix_time::millisec(300);
+	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+
+   // mx->Lock();
+		if((now - ctime) > dur )
+		{
+			   cout << "Right Pressed" << endl;
+				memory->insertData("rbumper_pressed",1);
+		}
+		else
+			cout << "ignore event" << endl;
 }
 
