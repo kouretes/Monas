@@ -51,6 +51,7 @@ private:
     XMLConfig *config;
     BallTrackMessage trckmsg;
     BallObject ballpos;
+    ObservationMessage obs;
     //Incoming messages!
     InertialSensorsMessage* im;
     HeadJointSensorsMessage* hm;
@@ -64,7 +65,7 @@ private:
     float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
     float horizonAlpha;
     cpose p;//Robot pose
-		
+
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
     //Ball Detection related
@@ -82,6 +83,8 @@ private:
         CvPoint bottom;
         CvPoint top;
         int height;//in pixels
+        float d;//Distance
+        float conf;
     } goalpostdata_t;
 
     enum colors
@@ -106,6 +109,7 @@ private:
     void gridScan(const KSegmentator::colormask_t color);
 
     bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c);
+    bool calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask_t c);
     balldata_t locateBall(std::vector<CvPoint> cand);
     goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);

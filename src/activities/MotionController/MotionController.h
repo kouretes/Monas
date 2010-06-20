@@ -21,7 +21,6 @@
 #include "albrokermanager.h"
 #include "altexttospeechproxy.h"
 
-#include "architecture/narukom/pub_sub/filters/type_filter.h"
 #include <string>
 
 class MotionController : public IActivity, public Publisher{
@@ -65,7 +64,7 @@ private:
 	MotionHeadMessage* hm;
 	MotionActionMessage* am;
 	InertialSensorsMessage* im;
-  TypeFilter* type_filter;
+
 	void commands();
 	void mglrun();
 	void read_messages();

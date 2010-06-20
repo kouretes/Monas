@@ -29,6 +29,7 @@
 #define apparentDistance(Hr,Ho,rad) ( sqrt ( ( (((Ho)*(Ho) ) -((Hr)*(Hr)*tan(rad)*tan(rad)))*kinext.cot(rad)*kinext.cot(rad)    )  ))
 
 #define BALLRADIUS 0.03f
+#define GOALHEIGHT 0.8f
 
 
 using namespace AL;
@@ -186,6 +187,8 @@ void Vision::testrun()
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has BAD sensor (HS) data!", Logger::Error);
 		return;
 	}
+	//Clear result message
+    obs.Clear();
 	//TODO: create ct!;
 	p.yaw=hm->sensordata(0).sensorvalue();
 	p.pitch=hm->sensordata(1).sensorvalue();
@@ -207,7 +210,7 @@ void Vision::testrun()
 	float imcomp=((stamp-p.time).total_microseconds()*1000.0)/p.timediff;
 	//cout<<"imcomp:"<<imcomp<<endl;
 
-	//cout<< p.timediff<<" "<<p.angX<<" "<<p.angY<<" "<<p.VangX<<" "<<p.VangY<< " "<<endl;
+	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<imcomp*p.Vyaw<< " "<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw+=p.Vyaw*imcomp;
 	p.pitch+=p.Vpitch*imcomp;
@@ -252,6 +255,12 @@ void Vision::testrun()
 	//SleepMs(1000);
 	//usleep(500);
 	gridScan(orange);
+	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
+
+	if(obs.has_ball()||obs.regular_objects_size()>0 || obs.adhoc_objects_size()>0
+                   ||obs.corner_objects_size()>0  || obs.intersection_objects_size()>0
+                   ||obs.line_objects_size()>0)
+        publish(&obs,"vision");
 	if (cvHighgui)
 		cvShowSegmented();
 
@@ -417,7 +426,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 
 
-		for (j = rawImage->height - BORDERSKIP-ystep; j > hory&& j> BORDERSKIP; j = j - ystep)
+		for (j = rawImage->height - BORDERSKIP-1; j > hory&& j> BORDERSKIP; j = j - ystep)
 		{
 			//cout<<"inner"<<endl;
 			//image start from top left
@@ -528,7 +537,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	{
 
 		KMat::HCoords<float,2> t,target,o;
-		t(1)=x-p.yaw;//-(*ang)(3);
+		t(1)=x;//-(*ang)(3);
 		t(2)=y;//-horizonAlpha;
 		//ball=ct.transform(t);
 		KMat::HCoords<float,2> & ball=cameraToObs(t);
@@ -561,10 +570,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		trckmsg.set_radius(r);
 		//trckmsg.set_topic("vision");
 		publish(&trckmsg,"vision");
+
 		ballpos.set_dist(w(1));
 		ballpos.set_bearing(w(2));
 		ballpos.set_ball_diameter(b.r);
-		publish(&ballpos,"vision");
+		obs.mutable_ball()->CopyFrom(ballpos);
+
 		delete &ball;
 		delete &w;
 
@@ -673,11 +684,39 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
     //cout<<appdist<<endl;
     if(fabs((ball.d-appdist)/ball.d) > 0.25)//Wtf
       return false;
-    cout<<"ball accepted"<<ball.r<<endl;
+    //cout<<"ball accepted"<<ball.r<<endl;
 	return true;
 
 }
+bool Vision::calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask_t c)
+{
+    int width =goal.lr.x-goal.ll.x+1;
+    unsigned int ttl = 0, gd = 0;
+	float ratio;
+    for(int i=goal.ll.x;i<=goal.lr.x;i++)
+    {
+        for(int j=goal.bottom.y+width;j>goal.bottom.y;j--)
+        {
+            if (!inbounds(i,j))
+				continue;
+			if (doSeg(i, j) == green)
+				gd++;
+			ttl++;
+        }
+    }
+    ratio=gd/ttl;
+    if(ratio<0.5)
+        return false;
 
+
+    if(goal.height>0)
+    {
+        goal.conf=1;
+
+    }
+    else
+        goal.conf=0;
+}
 Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 {
     CvPoint2D32f Vup;//Vertical velocity
@@ -852,11 +891,28 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
         if (!inbounds(latestValid.x,latestValid.y))
             newpost.height=-1;
         else
-        newpost.top=latestValid;
-        newpost.height=CvDist(newpost.bottom,latestValid);
+        {
+            newpost.top=latestValid;
+            newpost.height=CvDist(newpost.bottom,latestValid);
+        }
 
 
-        history.push_back(newpost);
+
+        KMat::HCoords<float,2> point;
+        point(1)=newpost.bottom.x;
+        point(2)=newpost.bottom.y;
+        KMat::HCoords<float,2> &a=imageTocamera(point);
+        KMat::HCoords<float,2> & b=cameraToObs(a);
+        delete &a;
+		newpost.d=angularDistance(cameraH,BALLRADIUS,point(1),b(2));
+		delete &b;
+		//cout<<"ball dist:"<<newdata.d<<endl;
+
+		if(newpost.d<=0||newpost.d>=LONGESTDIST)
+            continue;
+
+        if(calculateValidGoalPost(newpost,c))
+            history.push_back(newpost);
 
 	}
 
