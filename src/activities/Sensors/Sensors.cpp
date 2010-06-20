@@ -183,7 +183,7 @@ int Sensors::Execute() {
 		//
 		//		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
 		for (unsigned int i = 0; i < Values["RobotPosition"].size(); i++) {
-			RPSM.mutable_sensordata(i)->set_sensorname(devicesNames["RobotPosition"][i]);
+			//RPSM.mutable_sensordata(i)->set_sensorname(devicesNames["RobotPosition"][i]);
 			RPSM.mutable_sensordata(i)->set_sensorvalue(Values["RobotPosition"][i]);
 			RPSM.mutable_sensordata(i)->set_sensorvaluediff(Values["RobotPosition"][i] - devicesValues[counter]);
 			RPSM.mutable_sensordata(i)->set_sensortimediff(timediff);
@@ -241,7 +241,7 @@ void Sensors::initialisation() {
 
 	for (i = 0; i < devicesInChains["Head"].size(); i++) {
 		HJSM.add_sensordata();
-		HJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Head"][i]);
+		//HJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Head"][i]);
 
 		//SensorDataPtr["Head"].push_back((float *) memory->getDataPtr(devicesInChains["Head"][i]));
 		//cout << " dsfsdf " << (float)(*(SensorDataPtr["Head"][i])) << endl;
@@ -352,22 +352,22 @@ void Sensors::initialisation() {
 	j = 0;
 	for (i = 0; i < devicesInChains["LeftArm"].size(); i++) {
 		BJSM.add_sensordata();
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftArm"][i]);
+		//BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftArm"][i]);
 		j++;
 	}
 	for (i = 0; i < devicesInChains["LeftLeg"].size(); i++) {
 		BJSM.add_sensordata();
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftLeg"][i]);
+		//BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["LeftLeg"][i]);
 		j++;
 	}
 	for (i = 0; i < devicesInChains["RightLeg"].size(); i++) {
 		BJSM.add_sensordata();
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightLeg"][i]);
+		//BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightLeg"][i]);
 		j++;
 	}
 	for (i = 0; i < devicesInChains["RightArm"].size(); i++) {
 		BJSM.add_sensordata();
-		BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightArm"][i]);
+		//BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightArm"][i]);
 		j++;
 	}
 
@@ -389,7 +389,7 @@ void Sensors::initialisation() {
 
 	for (i = 0; i < devicesInChains["Inertial"].size(); i++) {
 		ISM.add_sensordata();
-		ISM.mutable_sensordata(i)->set_sensorname(devicesNames["Inertial"][i]);
+		//ISM.mutable_sensordata(i)->set_sensorname(devicesNames["Inertial"][i]);
 	}
 	//TODO This is not real FSR
 	devicesInChains["FSR"].push_back(std::string("Device/SubDeviceList/LFoot/FSR/CenterOfPressure/X/Sensor/Value"));
@@ -407,7 +407,7 @@ void Sensors::initialisation() {
 
 	for (i = 0; i < devicesInChains["FSR"].size(); i++) {
 		FSM.add_sensordata();
-		FSM.mutable_sensordata(i)->set_sensorname(devicesNames["FSR"][i]);
+		//FSM.mutable_sensordata(i)->set_sensorname(devicesNames["FSR"][i]);
 	}
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value"));
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value1"));
@@ -455,11 +455,11 @@ void Sensors::initialisation() {
 
 	for (i = 0; i < devicesInChains["USoundLeft"].size(); i++) {
 		USSM.add_sensordata();
-		USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundLeft"][i]);
+		//USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundLeft"][i]);
 	}
 	for (j = 0; j < devicesInChains["USoundRight"].size(); j++) {
 		USSM.add_sensordata();
-		USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundRight"][j]);
+		//USSM.mutable_sensordata(i)->set_sensorname(devicesNames["USoundRight"][j]);
 	}
 	int allchainsSize = 0;
 
