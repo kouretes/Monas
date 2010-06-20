@@ -4,6 +4,7 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
+#include "architecture/narukom/pub_sub/filters/special_filters.h"
 
 namespace {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
@@ -45,7 +46,12 @@ void MotionController::UserInit() {
 	hm = NULL;
 	am = NULL;
 	im = NULL;
-	
+	type_filter = new TypeFilter("type_filter");
+	type_filter->add_type("InertialSensorsMessage");
+	type_filter->add_type("MotionHeadMessage");
+	type_filter->add_type("MotionWalkMessage");
+	type_filter->add_type("MotionActionMessage");
+	_blk->getBuffer()->add_filter(type_filter);
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
 
@@ -128,9 +134,12 @@ void MotionController::mglrun() {
 		robotDown = true;
 		killCommands();
 //		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
-		sleep(1);
+		//sleep(1);
+		RejectAllFilter reject_filter("RejectFilter");
+		_blk->getBuffer()->add_filter(&reject_filter);
 		motion->setStiffnesses("Body", 0.6);
 		ALstandUpCross();
+		_blk->getBuffer()->remove_filter(&reject_filter);
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 		return;
 	}
