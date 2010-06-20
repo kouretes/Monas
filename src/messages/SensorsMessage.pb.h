@@ -994,7 +994,7 @@ class SensorPair : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string SensorName = 1 [default = ""];
+  // optional string SensorName = 1 [default = ""];
   inline bool has_sensorname() const;
   inline void clear_sensorname();
   static const int kSensorNameFieldNumber = 1;
@@ -1025,6 +1025,13 @@ class SensorPair : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 sensortimediff() const;
   inline void set_sensortimediff(::google::protobuf::uint32 value);
   
+  // optional int32 SensorID = 5 [default = -1];
+  inline bool has_sensorid() const;
+  inline void clear_sensorid();
+  static const int kSensorIDFieldNumber = 5;
+  inline ::google::protobuf::int32 sensorid() const;
+  inline void set_sensorid(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:SensorPair)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
@@ -1035,11 +1042,12 @@ class SensorPair : public ::google::protobuf::Message {
   float sensorvalue_;
   float sensorvaluediff_;
   ::google::protobuf::uint32 sensortimediff_;
+  ::google::protobuf::int32 sensorid_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -2340,7 +2348,7 @@ RobotPositionSensorMessage::mutable_sensordata() {
 
 // SensorPair
 
-// required string SensorName = 1 [default = ""];
+// optional string SensorName = 1 [default = ""];
 inline bool SensorPair::has_sensorname() const {
   return _has_bit(0);
 }
@@ -2428,6 +2436,22 @@ inline ::google::protobuf::uint32 SensorPair::sensortimediff() const {
 inline void SensorPair::set_sensortimediff(::google::protobuf::uint32 value) {
   _set_bit(3);
   sensortimediff_ = value;
+}
+
+// optional int32 SensorID = 5 [default = -1];
+inline bool SensorPair::has_sensorid() const {
+  return _has_bit(4);
+}
+inline void SensorPair::clear_sensorid() {
+  sensorid_ = -1;
+  _clear_bit(4);
+}
+inline ::google::protobuf::int32 SensorPair::sensorid() const {
+  return sensorid_;
+}
+inline void SensorPair::set_sensorid(::google::protobuf::int32 value) {
+  _set_bit(4);
+  sensorid_ = value;
 }
 
 
