@@ -15,6 +15,9 @@ namespace {
 const ::google::protobuf::Descriptor* BallTrackMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   BallTrackMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CalibrateCam_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CalibrateCam_reflection_ = NULL;
 const ::google::protobuf::Descriptor* BallObject_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   BallObject_reflection_ = NULL;
@@ -67,7 +70,25 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(BallTrackMessage));
-  BallObject_descriptor_ = file->message_type(1);
+  CalibrateCam_descriptor_ = file->message_type(1);
+  static const int CalibrateCam_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCam, status_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCam, sleeptime_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCam, exp_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCam, exposure_comp_),
+  };
+  CalibrateCam_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CalibrateCam_descriptor_,
+      CalibrateCam::default_instance_,
+      CalibrateCam_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCam, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCam, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CalibrateCam));
+  BallObject_descriptor_ = file->message_type(2);
   static const int BallObject_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallObject, dist_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallObject, bearing_),
@@ -84,7 +105,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(BallObject));
-  NamedObject_descriptor_ = file->message_type(2);
+  NamedObject_descriptor_ = file->message_type(3);
   static const int NamedObject_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, object_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, bearing_),
@@ -101,7 +122,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(NamedObject));
-  UnidentifiedObject_descriptor_ = file->message_type(3);
+  UnidentifiedObject_descriptor_ = file->message_type(4);
   static const int UnidentifiedObject_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnidentifiedObject, object_type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnidentifiedObject, bearing_),
@@ -118,7 +139,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(UnidentifiedObject));
-  LineObject_descriptor_ = file->message_type(4);
+  LineObject_descriptor_ = file->message_type(5);
   static const int LineObject_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LineObject, start_bearing_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LineObject, start_distance_),
@@ -136,7 +157,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LineObject));
-  PointObject_descriptor_ = file->message_type(5);
+  PointObject_descriptor_ = file->message_type(6);
   static const int PointObject_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PointObject, distance_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PointObject, bearing_),
@@ -152,7 +173,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PointObject));
-  ObservationMessage_descriptor_ = file->message_type(6);
+  ObservationMessage_descriptor_ = file->message_type(7);
   static const int ObservationMessage_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, image_timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, ball_),
@@ -188,6 +209,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     BallTrackMessage_descriptor_, &BallTrackMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CalibrateCam_descriptor_, &CalibrateCam::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     BallObject_descriptor_, &BallObject::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     NamedObject_descriptor_, &NamedObject::default_instance());
@@ -206,6 +229,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_VisionObservations_2eproto() {
   delete BallTrackMessage::default_instance_;
   delete BallTrackMessage_reflection_;
+  delete CalibrateCam::default_instance_;
+  delete CalibrateCam_reflection_;
   delete BallObject::default_instance_;
   delete BallObject_reflection_;
   delete NamedObject::default_instance_;
@@ -233,27 +258,31 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
     "timeout\030\004 \002(\005:\0010\022\023\n\ttimestamp\030\005 \002(\t:\000\022\r\n"
     "\002cx\030\006 \002(\002:\0010\022\r\n\002cy\030\007 \002(\002:\0010\022\027\n\014reference"
     "Yaw\030\010 \002(\002:\0010\022\031\n\016referencePitch\030\t \002(\002:\0010\022"
-    "\021\n\006radius\030\n \002(\002:\0010\"K\n\nBallObject\022\017\n\004dist"
-    "\030\001 \002(\002:\0010\022\022\n\007bearing\030\002 \002(\002:\0010\022\030\n\rball_di"
-    "ameter\030\003 \001(\002:\0010\"O\n\013NamedObject\022\025\n\013object"
-    "_name\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010di"
-    "stance\030\003 \002(\002:\002-1\"V\n\022UnidentifiedObject\022\025"
-    "\n\013object_type\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:\002"
-    "-1\022\024\n\010distance\030\003 \001(\002:\002-1\"r\n\nLineObject\022\030"
-    "\n\rstart_bearing\030\001 \002(\002:\0010\022\031\n\016start_distan"
-    "ce\030\002 \002(\002:\0010\022\026\n\013end_bearing\030\003 \002(\002:\0010\022\027\n\014e"
-    "nd_distance\030\004 \002(\002:\0010\"0\n\013PointObject\022\020\n\010d"
-    "istance\030\001 \002(\002\022\017\n\007bearing\030\002 \002(\002\"\222\002\n\022Obser"
-    "vationMessage\022\031\n\017image_timestamp\030\001 \002(\t:\000"
-    "\022\031\n\004ball\030\002 \001(\0132\013.BallObject\022%\n\017regular_o"
-    "bjects\030\003 \003(\0132\014.NamedObject\022*\n\radhoc_obje"
-    "cts\030\004 \003(\0132\023.UnidentifiedObject\022$\n\016corner"
-    "_objects\030\005 \003(\0132\014.PointObject\022*\n\024intersec"
-    "tion_objects\030\006 \003(\0132\014.PointObject\022!\n\014line"
-    "_objects\030\007 \003(\0132\013.LineObject", 947);
+    "\021\n\006radius\030\n \002(\002:\0010\"b\n\014CalibrateCam\022\016\n\006st"
+    "atus\030\001 \002(\005\022\027\n\tsleeptime\030\002 \002(\005:\0041500\022\017\n\003e"
+    "xp\030\003 \002(\005:\00215\022\030\n\rexposure_comp\030\004 \002(\002:\0011\"K"
+    "\n\nBallObject\022\017\n\004dist\030\001 \002(\002:\0010\022\022\n\007bearing"
+    "\030\002 \002(\002:\0010\022\030\n\rball_diameter\030\003 \001(\002:\0010\"O\n\013N"
+    "amedObject\022\025\n\013object_name\030\001 \002(\t:\000\022\023\n\007bea"
+    "ring\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \002(\002:\002-1\"V\n\022"
+    "UnidentifiedObject\022\025\n\013object_type\030\001 \002(\t:"
+    "\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \001(\002"
+    ":\002-1\"r\n\nLineObject\022\030\n\rstart_bearing\030\001 \002("
+    "\002:\0010\022\031\n\016start_distance\030\002 \002(\002:\0010\022\026\n\013end_b"
+    "earing\030\003 \002(\002:\0010\022\027\n\014end_distance\030\004 \002(\002:\0010"
+    "\"0\n\013PointObject\022\020\n\010distance\030\001 \002(\002\022\017\n\007bea"
+    "ring\030\002 \002(\002\"\222\002\n\022ObservationMessage\022\031\n\017ima"
+    "ge_timestamp\030\001 \002(\t:\000\022\031\n\004ball\030\002 \001(\0132\013.Bal"
+    "lObject\022%\n\017regular_objects\030\003 \003(\0132\014.Named"
+    "Object\022*\n\radhoc_objects\030\004 \003(\0132\023.Unidenti"
+    "fiedObject\022$\n\016corner_objects\030\005 \003(\0132\014.Poi"
+    "ntObject\022*\n\024intersection_objects\030\006 \003(\0132\014"
+    ".PointObject\022!\n\014line_objects\030\007 \003(\0132\013.Lin"
+    "eObject", 1047);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "VisionObservations.proto", &protobuf_RegisterTypes);
   BallTrackMessage::default_instance_ = new BallTrackMessage();
+  CalibrateCam::default_instance_ = new CalibrateCam();
   BallObject::default_instance_ = new BallObject();
   NamedObject::default_instance_ = new NamedObject();
   UnidentifiedObject::default_instance_ = new UnidentifiedObject();
@@ -261,6 +290,7 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
   PointObject::default_instance_ = new PointObject();
   ObservationMessage::default_instance_ = new ObservationMessage();
   BallTrackMessage::default_instance_->InitAsDefaultInstance();
+  CalibrateCam::default_instance_->InitAsDefaultInstance();
   BallObject::default_instance_->InitAsDefaultInstance();
   NamedObject::default_instance_->InitAsDefaultInstance();
   UnidentifiedObject::default_instance_->InitAsDefaultInstance();
@@ -910,6 +940,332 @@ void BallTrackMessage::Swap(BallTrackMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = BallTrackMessage_descriptor_;
   metadata.reflection = BallTrackMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int CalibrateCam::kStatusFieldNumber;
+const int CalibrateCam::kSleeptimeFieldNumber;
+const int CalibrateCam::kExpFieldNumber;
+const int CalibrateCam::kExposureCompFieldNumber;
+#endif  // !_MSC_VER
+
+CalibrateCam::CalibrateCam()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CalibrateCam::InitAsDefaultInstance() {
+}
+
+CalibrateCam::CalibrateCam(const CalibrateCam& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CalibrateCam::SharedCtor() {
+  _cached_size_ = 0;
+  status_ = 0;
+  sleeptime_ = 1500;
+  exp_ = 15;
+  exposure_comp_ = 1;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CalibrateCam::~CalibrateCam() {
+  SharedDtor();
+}
+
+void CalibrateCam::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void CalibrateCam::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CalibrateCam::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CalibrateCam_descriptor_;
+}
+
+const CalibrateCam& CalibrateCam::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_VisionObservations_2eproto();  return *default_instance_;
+}
+
+CalibrateCam* CalibrateCam::default_instance_ = NULL;
+
+CalibrateCam* CalibrateCam::New() const {
+  return new CalibrateCam;
+}
+
+void CalibrateCam::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    status_ = 0;
+    sleeptime_ = 1500;
+    exp_ = 15;
+    exposure_comp_ = 1;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CalibrateCam::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required int32 status = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &status_)));
+          _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_sleeptime;
+        break;
+      }
+      
+      // required int32 sleeptime = 2 [default = 1500];
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_sleeptime:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &sleeptime_)));
+          _set_bit(1);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_exp;
+        break;
+      }
+      
+      // required int32 exp = 3 [default = 15];
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_exp:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &exp_)));
+          _set_bit(2);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(37)) goto parse_exposure_comp;
+        break;
+      }
+      
+      // required float exposure_comp = 4 [default = 1];
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_exposure_comp:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &exposure_comp_)));
+          _set_bit(3);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CalibrateCam::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required int32 status = 1;
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->status(), output);
+  }
+  
+  // required int32 sleeptime = 2 [default = 1500];
+  if (_has_bit(1)) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->sleeptime(), output);
+  }
+  
+  // required int32 exp = 3 [default = 15];
+  if (_has_bit(2)) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->exp(), output);
+  }
+  
+  // required float exposure_comp = 4 [default = 1];
+  if (_has_bit(3)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->exposure_comp(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CalibrateCam::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required int32 status = 1;
+  if (_has_bit(0)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->status(), target);
+  }
+  
+  // required int32 sleeptime = 2 [default = 1500];
+  if (_has_bit(1)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->sleeptime(), target);
+  }
+  
+  // required int32 exp = 3 [default = 15];
+  if (_has_bit(2)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->exp(), target);
+  }
+  
+  // required float exposure_comp = 4 [default = 1];
+  if (_has_bit(3)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->exposure_comp(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CalibrateCam::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required int32 status = 1;
+    if (has_status()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->status());
+    }
+    
+    // required int32 sleeptime = 2 [default = 1500];
+    if (has_sleeptime()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->sleeptime());
+    }
+    
+    // required int32 exp = 3 [default = 15];
+    if (has_exp()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->exp());
+    }
+    
+    // required float exposure_comp = 4 [default = 1];
+    if (has_exposure_comp()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CalibrateCam::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CalibrateCam* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CalibrateCam*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CalibrateCam::MergeFrom(const CalibrateCam& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_status(from.status());
+    }
+    if (from._has_bit(1)) {
+      set_sleeptime(from.sleeptime());
+    }
+    if (from._has_bit(2)) {
+      set_exp(from.exp());
+    }
+    if (from._has_bit(3)) {
+      set_exposure_comp(from.exposure_comp());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CalibrateCam::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CalibrateCam::CopyFrom(const CalibrateCam& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CalibrateCam::IsInitialized() const {
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  
+  return true;
+}
+
+void CalibrateCam::Swap(CalibrateCam* other) {
+  if (other != this) {
+    std::swap(status_, other->status_);
+    std::swap(sleeptime_, other->sleeptime_);
+    std::swap(exp_, other->exp_);
+    std::swap(exposure_comp_, other->exposure_comp_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CalibrateCam::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CalibrateCam_descriptor_;
+  metadata.reflection = CalibrateCam_reflection_;
   return metadata;
 }
 
