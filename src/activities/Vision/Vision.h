@@ -71,13 +71,16 @@ private:
     {
         float x, y;
         float r;//Observed radius
+        float d;//Observed distance;
     } balldata_t;
 
     typedef struct GoalPostdata
     {
         CvPoint ll;//Corners
         CvPoint lr;//Corners
-        float height;//in pixels
+        CvPoint bottom;
+        CvPoint top;
+        int height;//in pixels
     } goalpostdata_t;
 
     enum colors
@@ -101,8 +104,9 @@ private:
 
     void gridScan(const KSegmentator::colormask_t color);
 
-    bool calculateValidBall(const CvPoint2D32f center, float radius, KSegmentator::colormask_t c);
+    bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c);
     balldata_t locateBall(std::vector<CvPoint> cand);
+    goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
