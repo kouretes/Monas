@@ -84,12 +84,12 @@ void MotionController::read_messages() {
 	_blk->process_messages();
 
 	/* Messages for Calibration */
-	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "KImageExtractor");
+	hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
 	
 	/* Messages from Behavior */
-	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
-	if (hm == NULL) hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
-	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
+	wm = _blk->in_msg_nb<MotionWalkMessage>("MotionWalkMessage");
+	if (hm == NULL) hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
+	am = _blk->in_msg_nb<MotionActionMessage>("MotionActionMessage");
 	
 	/* Messages from MotionController */
 	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
@@ -97,7 +97,7 @@ void MotionController::read_messages() {
 	//am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "MotionController");
 	
 	/* Messages from Sensors */
-	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
+	im = _blk->in_msg_nb<InertialSensorsMessage>("InertialSensorsMessage");
 
 	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 
