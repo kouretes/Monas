@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <!-- team_number -->
-<team_number>17</team_number>
+<team_number>9</team_number>
 <!-- player number -->
 <team_color>blue</team_color><!-- Color that the game starts ?-->
 <!-- gamecontroller port>
-<gm_port>3838</gm_port>
--->
+<gm_port>3838</gm_port>-->
+
 

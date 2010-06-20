@@ -7,6 +7,7 @@ audioout
 [extra]
 devicecommunicationmanager
 motion
+sensors
 leds
 videoinput
 pythonbridge
