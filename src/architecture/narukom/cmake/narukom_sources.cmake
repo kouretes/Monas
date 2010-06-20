@@ -23,7 +23,9 @@ SET(NARUKOM_PUB_SUB_SRCS
    ${NarukomDir}/pub_sub/filters/time_filter.cpp
    ${NarukomDir}/pub_sub/filters/time_filter.h
    ${NarukomDir}/pub_sub/filters/topic_filter.h
-   ${NarukomDir}/pub_sub/filters/topic_filter.cpp
+	${NarukomDir}/pub_sub/filters/topic_filter.cpp
+	${NarukomDir}/pub_sub/filters/type_filter.h
+   ${NarukomDir}/pub_sub/filters/type_filter.cpp
 )
 # SET(NARUKOM_PUB_SUB_INCLUDE_DIR ${NarukomDir}/pub_sub/)
 # 

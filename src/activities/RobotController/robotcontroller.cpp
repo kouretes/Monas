@@ -4,6 +4,7 @@
 #include <string>
 #include "almodule.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
+#include "architecture/archConfig.h"
 using std::cout;
 using std::endl;
 using std::string;
@@ -19,7 +20,7 @@ void RobotController::UserInit()
 {
 //   cout << "Initialize Robotcontroller" << endl;
     _com->get_message_queue()->add_publisher(this);
-    readConfiguration("config/team_config.xml");
+    readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
     gm = new GameController(&game_data,&received_data,&mx,conf.port(),conf.team_number());
     gm->StartThread();
     gm_state.set_player(conf.player_number());

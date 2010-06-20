@@ -127,7 +127,7 @@ void MotionController::mglrun() {
 		robotUp = false;
 		robotDown = true;
 		killCommands();
-		tts->pCall<AL::ALValue>("say", "Ouch!");
+//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
 		sleep(1);
 		motion->setStiffnesses("Body", 0.6);
 		ALstandUpCross();
