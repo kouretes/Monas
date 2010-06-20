@@ -62,10 +62,10 @@ void Behavior::UserInit() {
 	scanforball = true;
 	startscan = true;
 
-	calibrated = false;
+	calibrated = 0;
 
 	stopped = false;
-	play = true;
+	play = false;
 	Logger::Instance().WriteMsg("Behavior", "Controller Initialized", Logger::Info);
 	//cout << "Behavior Controller Initialized" << endl;
 
@@ -82,18 +82,27 @@ int Behavior::Execute() {
 	//};
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
-		//return 0;
-		if (gsm->player_state() == 3) // this is the playing state
+		//return 0
+
+		if (gsm->player_state() == 3&& calibrated==2) // this is the playing state
 			play = true;
 		else
 			play = false;
+        if((gsm->player_state()!=3&&calibrated==0)||gsm->player_state()==1 )
+        {
+                CalibrateCam v;
+                v.set_status(0);
+                publish(&v,"vision");
+                //cout<<"calibrate cam now!"<<endl;
+                calibrated=1;
+        }
 
 		delete gsm;
 	}
 	//return 0;
 
 	if (bmsg != 0) {
-		calibrated = true;
+
 		Logger::Instance().WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 
 		if (bmsg->radius() > 0) { //This meens that a ball was found
@@ -147,7 +156,7 @@ int Behavior::Execute() {
 	}
 
 	Logger::Instance().WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
-	if (play && calibrated) {
+	if (play ) {
 		//Head joint related Behavior
 		//Under this block we use the head joint values to calculated
 		//1) the head scanning procedure
@@ -343,5 +352,13 @@ void Behavior::read_messages() {
 	hjsm = _blk->in_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
 
 	Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
+	CalibrateCam *c=_blk->in_msg_nb<CalibrateCam>("CalibrateCam");
+	if(c!=NULL)
+	{
+	    if(c->status()==1)
+            calibrated=2;
 
+	    delete c;
+	}
+    cout<<"calibrated:"<<calibrated<<endl;
 }

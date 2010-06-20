@@ -15,6 +15,7 @@
 #include "KSegmentator.h"
 
 #include "architecture/narukom/pub_sub/publisher.h"
+#include "architecture/narukom/pub_sub/subscriber.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "architecture/narukom/pub_sub/filters/type_filter.h"
@@ -25,7 +26,7 @@
 
 
 
-class Vision : public IActivity, public Publisher
+class Vision : public IActivity, public Publisher, public Subscriber
 {
 
 public:
