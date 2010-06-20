@@ -95,14 +95,22 @@ elif string.find(sys.argv[0] , "upload_game.py") > -1 :
 		usage();
 
 	SSID = sys.argv[1]
-	players = sys.argv[3:len(sys.argv):2]
-	robotsIP = sys.argv[2:len(sys.argv):2]
+	print sys.argv
+
+	players = sys.argv[2:len(sys.argv):2]
+	print players
+	for p in players:
+		if(int(p) > 3 or int(p) < 1) :
+			print "ERROR: A Player num is not valid, Quiting "
+			exit(-1)
+
+	robotsIP = sys.argv[3:len(sys.argv):2]
 	if(len(players)!=len(robotsIP)):
 		usage()
-	print "Ip addresses are valid, dont know if reachable "
+
 	game = 1 #
 else:
-	print "Please check the filename of the script, must be upload_work.py or upload_game.py "
+	print "ERROR: Please check the filename of the script, must be upload_work.py or upload_game.py, Quiting "
 	#usage()
 	exit(-1)
 
@@ -110,13 +118,14 @@ for ip in robotsIP:
 		if(not is_valid_ipv4(ip)):
 			print "Ip address " + ip + " is not valid "
 			exit(-1)
-
+		else:
+			print "info:  Ip addresses are valid, don't know if reachable "
 #check that your are one level down from the make folder when you execute  the script
 pwd = os.getcwd()
 pwdfolders =  pwd.split("/")
 if(pwdfolders[-2] != "make"):
-	print "You are trying to execute upload in different folder than under Monad/make/yourebuildfolder"
-	print "Your pwd : " + pwd + "\n Try again from the correct path"
+	print "ERROR: You are trying to execute upload in different folder than under Monad/make/yourebuildfolder"
+	print "Your pwd : " + pwd + "\n Try again from the correct path, Quiting"
 	exit(-1)
 
 print "Working directory " + pwd
@@ -144,24 +153,11 @@ os.system('cp ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
 print "Lenght of arguments " + str(len(sys.argv))
 
 if(partial_configuration_dir	== "" ):
-	print("Please define partial_configuration_dir")
+	print("ERROR:  Please define partial_configuration_dir")
 	exit(-1)
 
 playerscounter = 0;
 for	ip in robotsIP:
-
-	print("Setting autoload.ini")
-	if game == 0:
-		autoload_src = partial_configuration_dir + "autoload.ini_work"
-	else:
-		autoload_src = partial_configuration_dir + "autoload.ini_game"
-
-
-	os.system("mkdir -p " + binaries_dir + "/preferences")
-	autoload_dest = binaries_dir +"preferences/autoload.ini"
-	autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
-	os.system(autoload_cmd)
-	print(autoload_cmd)
 
 	if game == 1 :
 		print "Stopping naoqi "
@@ -186,15 +182,23 @@ for	ip in robotsIP:
 
 	if game == 0:
 		playerstr = raw_input("1: Goalkeeper 2: Defender 3: Attacker \n	Set player num or press enter to continue: ")
-		if(playerstr != ""):
+		while(playerstr != ""):
 			player = int(playerstr)
-			print "Setting player number " + player
-			print ("Creating parameters for player " + player )
-			copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
+			if(player <= 3 and player >=1):
+				print "Setting player number " + playerstr
+				print ("Creating parameters for player " + playerstr )
+				copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
 
-			playerconf = open(binaries_dir +"config/team_config.xml", 'a')
-			playerconf.write("<player>"+ player+"</player>")
-			playerconf.close()
+				playerconf = open(binaries_dir +"config/team_config.xml", 'a')
+				playerconf.write("<player>"+ playerstr+"</player>")
+				playerconf.close()
+				break
+			else:
+				print "Wrong playernum, player"
+				playerstr = raw_input("1: Goalkeeper 2: Defender 3: Attacker \n	Set player num or press enter to continue: ")
+				if(playerstr == ""):
+					break
+
 
 		if(raw_input("Enter y to Restart Naoqi or press enter to continue: ")=='y'):
 			print( "Restarting naoqi")
@@ -207,7 +211,30 @@ for	ip in robotsIP:
 
   # rsync_cmd = "rync  --rsh=\"sshpass -p myPassword ssh -l t\" "
 	#exit(0)
-	rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
+	if(game==1):
+
+		autoload_src = partial_configuration_dir + "autoload.ini_game"
+
+
+		os.system("mkdir -p " + binaries_dir + "/preferences")
+		autoload_dest = binaries_dir +"preferences/autoload.ini"
+		autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
+		os.system(autoload_cmd)
+		print(autoload_cmd)
+
+
+		rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
+	else:
+		if(raw_input("Do you want to upload autoload.ini_work(no krobot)? or press enter to continue:  ")=='y'):
+			print("Setting autoload.ini")
+			autoload_src = partial_configuration_dir + "autoload.ini_work"
+			autoload_dest = binaries_dir +"preferences/autoload.ini"
+			autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
+			os.system(autoload_cmd)
+			print(autoload_cmd)
+			rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
+		else:
+			rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
 
 	#~ rsync_cmd = "rsync	-av "+ binaries_dir +"bin	"+ binaries_dir	+"lib "+ binaries_dir +"config	"+ binaries_dir +"preferences	"+" nao@" + ip+ ":naoqi/"
 
@@ -223,12 +250,14 @@ for	ip in robotsIP:
 	if game == 1 :
 		os.system(' ssh nao@'+ip + " 'chmod 777 /home/nao/naoqi/bin/autostartkrobot'")
 
-		print( "Starting naoqi")
+		print( "Sending naoqi start command")
 		nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi start ' "
 		os.system(nao_start_stop_cmd)
 
-		wifi_conf_cp_cmd ='ssh nao@'+ip  + " 'cp naoqi/config/wpa_supplicant.conf /etc/wpa_supplicant.conf' "
-		os.system(nao_start_stop_cmd)
-		print nao_start_stop_cmd
-		os.system('ssh root@'+ip + " 'ifdown wlan0 '")
-		os.system('ssh root@'+ip + " 'ifup wlan0 '")
+		wifi_conf_cp_cmd ='ssh root@'+ip  + " 'cp /home/nao/naoqi/config/wpa_supplicant.conf /etc/wpa_supplicant.conf' "
+		os.system(wifi_conf_cp_cmd)
+		print wifi_conf_cp_cmd
+		os.system('ssh root@'+ip + " '/etc/init.d/wpa_supplicant.sh '")
+
+		#~ os.system('ssh root@'+ip + " 'ifdown wlan0 '")
+		#~ os.system('ssh root@'+ip + " 'ifup wlan0 '")

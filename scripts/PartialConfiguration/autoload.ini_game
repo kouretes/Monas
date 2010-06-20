@@ -6,7 +6,7 @@ audioout
 
 [extra]
 devicecommunicationmanager
-#sensors
+sensors
 motion
 #motionrecorder
 leds
@@ -30,4 +30,4 @@ albonjour
 krobot
 [remote]
 #naoqi-autolaunch
-autostartkrobot
+../../../home/nao/naoqi/bin/autostartkrobot
