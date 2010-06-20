@@ -319,7 +319,7 @@ void Vision::UserInit()
 	_com->get_message_queue()->subscribe("vision", _blk, 0);
 	_com->get_message_queue()->add_publisher(this);
 	type_filter = new TypeFilter("SensorMsgFilter");
-	
+
 	_blk->getBuffer()->add_filter(type_filter);
 	type_filter->add_type("InertialSensorsMessage");
 	type_filter->add_type("HeadJointSensorsMessage");
@@ -381,11 +381,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		cntwhitegreenpixels = 0;
 		cntwhitegreenorangepixels=0;
 		cntother=0;
+		int ballskip=0;
 		// ballpixel = -1;
 
 		//TOOD ystep
         point(1)=i;
-        point(2)=rawImage->height - BORDERSKIP;
+        point(2)=rawImage->height - BORDERSKIP-1;
         KMat::HCoords<float,2> &a=imageTocamera(point);
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
@@ -416,7 +417,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 
 
-		for (j = rawImage->height - BORDERSKIP-ystep/2; j > hory&& j> BORDERSKIP; j = j - ystep)
+		for (j = rawImage->height - BORDERSKIP-ystep; j > hory&& j> BORDERSKIP; j = j - ystep)
 		{
 			//cout<<"inner"<<endl;
 			//image start from top left
@@ -429,7 +430,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			if (havehorizon)
 			{
 
-				if (hory+2>=j)//Found horizon
+				if (hory>=j)//Found horizon
 				{
                     //cout<<"Horizon"<<hory+2<<endl;
 				    tempcolor = doSeg(i, hory-1);
@@ -459,31 +460,37 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				cntwhitegreenpixels++;
 				cntwhitegreenorangepixels++;
 				cntother=0;
+				ballskip=0;
 			}
 			else if (tempcolor==orange)
 			{
 				cntwhitegreenorangepixels++;
 				cntother=0;
-			}
+
+            }
 			else
+			{
+			    //ballskip=0;
 				cntother++;
+			}
 			if (cntother>SCANSKIP)//No continuity, break
 			{
 			    //cout<<"break"<<endl;
 				break;
 			}
-			if (tempcolor == orange && cntwhitegreenpixels >= ballthreshold)
+			if (tempcolor == orange && cntwhitegreenpixels >= ballthreshold&&ballskip==0)
 			{
 				tmpPoint.x = i;
 				tmpPoint.y = j;
 				ballpixels.push_back(tmpPoint);
 				cntwhitegreenpixels=0;
+				ballskip=1;
 				//continue;
 				//ballpixel = j;
 			}
 
 
-			ystep=(ystep*2)/3;
+			ystep=ystep>>1;
 			//cout<<ystep<<endl;
 			if(ystep<=0) ystep=1;
 
