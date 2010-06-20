@@ -68,11 +68,11 @@ class Filter;
 class Blackboard : public Subscriber
 {
 public:
-    Blackboard(unsigned cleanup_period = 100);
+    Blackboard(unsigned cleanup_period = 300);
     explicit
-    Blackboard(const std::string&,unsigned cleanup_period = 100 );
+    Blackboard(const std::string&,unsigned cleanup_period = 300 );
     explicit
-    Blackboard(const char*,unsigned cleanup_period = 100 );
+    Blackboard(const char*,unsigned cleanup_period = 300 );
 //     Blackboard(const Blackboard& other);
     virtual ~Blackboard() {}
     virtual void process_messages();

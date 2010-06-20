@@ -106,27 +106,33 @@ Blackboard::Blackboard(const char* sub_name, unsigned int cleanup_period): Subsc
 
 void Blackboard::process_messages()
 {
-
-
 	MessageBuffer* sub_buf = Subscriber::getBuffer();
     if (sub_buf == 0)
         return;
 		if (sub_buf->size() < 1)
 			return;
     boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
-    if ( (now - cur_tmsp ) > period)
+
+		std::vector<Tuple*> tmp_v;
+    unsigned int s = 0;
+		if ( (now - cur_tmsp ) > period)
     {
+				cur_tmsp = now;
         cleanup();
-        cur_tmsp = now;
+    }    
+    while (sub_buf->size() > 0 )
+    {
+        tmp_v.push_back(sub_buf->remove_tail());
+				
     }
 
-    Tuple* cur = sub_buf->remove_head();
-    while (cur != 0 )
-    {
-        DataStruct::nth_index<0>::type& default_index = world_perception.get<0>();
-        default_index.insert(cur);
-        cur = sub_buf->remove_head();
-    }
+    while(s < tmp_v.size())
+		{
+// 			cout << "timeout " << tmp_v[s]->get_timeout() << endl;
+			world_perception.insert(tmp_v[s]);
+			s++;
+		}
+//      cout << "SIZE OF BLACKBOARD " << Subscriber::getName() << world_perception.size() << endl;
 }
 
 unsigned int Blackboard::get_cleanup_period()
@@ -300,16 +306,21 @@ int Blackboard::cleanup()
     DataStruct::nth_index<1>::type::iterator it = time_out_index.begin();
     int i =0;
 		Tuple* t = 0;
+// 		cout << "Inside cleanup " << endl;
     if( it != time_out_index.end())
     {
+// 			cout << "if cleanup " << endl;
+// 			cout << "timeout " << (*it)->get_timeout() << " -----  " << cur_tmsp << endl;
         while (  it != time_out_index.end() && (*it)->get_timeout() < cur_tmsp )
         {
+// 						cout << " CLEANUP  " << --i << endl;
 						t = (*it);
             time_out_index.erase(it);
 						delete t;
             it = time_out_index.begin();
         }
     }
+//     cout << "finished cleanup " << endl;
     return i;
 }
 

@@ -4,8 +4,7 @@
 #include "sys/stat.h"
 #include "tools/logger.h"
 #include "tools/XMLConfig.h"
-
-
+#include "architecture/narukom/pub_sub/filters/special_filters.h"
 
 #define LONGESTDIST 6.0
 #define COVERDIST 0.03
@@ -97,7 +96,10 @@ int  Vision::Execute()
         {
             //cout<<"Start calibration"<<endl;
             Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
+	    RejectAllFilter f("CalibrateFilter");
+            _blk->getBuffer()->add_filter(&f);
             float scale= ext.calibrateCamera(cal->sleeptime(),cal->exp());
+	    _blk->getBuffer()->remove_filter(&f);
             segbottom->setLumaScale(1/scale);
             segtop->setLumaScale(1/scale);
             Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
@@ -172,8 +174,8 @@ void Vision::testrun()
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 #endif
 	//boost::posix_time::ptime rtime =  time_t_epoch+(boost::posix_time::microsec(t.tv_nsec/1000)+boost::posix_time::seconds(t.tv_sec));//+sec(t.tv_sec));
-
-	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors","localhost",&p.time,&stamp);//,&rtime);
+	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
+// 	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors","localhost",&p.time,&stamp);//,&rtime);
 	if (hm==NULL)//No sensor data!
 	{
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no sensor (HS) data!", Logger::Error);
@@ -316,9 +318,12 @@ void Vision::UserInit()
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->subscribe("vision", _blk, 0);
 	_com->get_message_queue()->add_publisher(this);
-
-
-
+	type_filter = new TypeFilter("SensorMsgFilter");
+	
+	_blk->getBuffer()->add_filter(type_filter);
+	type_filter->add_type("InertialSensorsMessage");
+	type_filter->add_type("HeadJointSensorsMessage");
+	type_filter->add_type("CalibrateCam");
 
 }
 void Vision::gridScan(const KSegmentator::colormask_t color)

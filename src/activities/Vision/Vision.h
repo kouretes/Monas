@@ -18,6 +18,7 @@
 #include "architecture/narukom/pub_sub/subscriber.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "architecture/narukom/pub_sub/filters/type_filter.h"
 //#define DEBUGVISION
 
 #include <vector>
@@ -63,7 +64,7 @@ private:
     float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
     float horizonAlpha;
     cpose p;//Robot pose
-
+		
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
     //Ball Detection related
@@ -113,6 +114,7 @@ private:
     KMat::HCoords<float,2> & imageTocamera( KMat::HCoords<float,2>  & imagep);
     KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
     KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
+		TypeFilter* type_filter;
     void cvShowSegmented();
 };
 

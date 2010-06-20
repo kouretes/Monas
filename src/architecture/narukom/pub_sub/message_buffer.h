@@ -46,16 +46,16 @@ class MessageBuffer
     Tuple* remove( std::vector< Tuple* >::iterator );
     Tuple* remove_head();
     Tuple* remove_tail();
-    std::vector< Tuple* >::iterator get_iterator();
-    std::vector< Tuple* >::iterator end();
-    std::vector<Tuple*>&   getBuffer() ;//   {return *msg_buf;}
+    std::list< Tuple* >::iterator get_iterator();
+    std::list< Tuple* >::iterator end();
+    std::list<Tuple*>&   getBuffer() ;//   {return *msg_buf;}
     std::string getOwner() ;// {return owner;}
     boost::condition_variable_any* get_condition_variable() ;
 		Mutex* get_queue_mutex() ;
     void add_filter(Filter* filter);
-    void remove_filter(const Filter& filter);
+    void remove_filter(Filter* filter);
   private:
-    std::vector<Tuple*>* msg_buf;
+    std::list<Tuple*>* msg_buf;
     std::list<Filter*> filters;
     std::string owner; 
     Mutex mutex;

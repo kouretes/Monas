@@ -28,7 +28,7 @@ MessageBuffer::MessageBuffer(Mutex* queue_mx ,boost::condition_variable_any* cv)
 {
     boost::unique_lock<Mutex> lock(mutex);
     owner = "";
-    msg_buf = new std::vector<Tuple*>();
+    msg_buf = new std::list<Tuple*>();
     mq_cv = cv;
 		mq_mutex = queue_mx;
 }
@@ -41,7 +41,7 @@ MessageBuffer::MessageBuffer(const std::string owner,Mutex* queue_mx ,boost::con
 {
     boost::unique_lock<Mutex> data_lock(mutex);
     this->owner = owner;
-    msg_buf = new std::vector<Tuple*>();
+    msg_buf = new std::list<Tuple*>();
     mq_cv =cv;
     mq_mutex = queue_mx;
 
@@ -64,7 +64,7 @@ boost::unique_lock<Mutex> data_lock(mutex);
 	return mq_cv;
 }
 
-std::vector< Tuple* >& MessageBuffer::getBuffer()
+std::list< Tuple* >& MessageBuffer::getBuffer()
 {
 boost::unique_lock<Mutex> data_lock(mutex);
   return *msg_buf;
@@ -110,8 +110,8 @@ void MessageBuffer::copyFrom(   MessageBuffer& other)
 		if(msg_buf != 0)
 			msg_buf->clear();
 		else
-			msg_buf =  new std::vector<Tuple*>();
-    std::vector<Tuple*>& tmp = other.getBuffer();
+			msg_buf =  new std::list<Tuple*>();
+    std::list<Tuple*>& tmp = other.getBuffer();
     msg_buf->insert(msg_buf->begin(),tmp.begin(),tmp.end());
 // 		mq_mutex->lock();
     mq_cv->notify_one();
@@ -125,7 +125,7 @@ void MessageBuffer::mergeFrom( MessageBuffer& other)
 		
     boost::unique_lock<Mutex> data_lock(mutex);
 	
-    std::vector<Tuple*>& tmp = other.getBuffer();
+    std::list<Tuple*>& tmp = other.getBuffer();
     msg_buf->insert(msg_buf->end(),tmp.begin(),tmp.end());
     data_lock.unlock();
     mq_mutex->lock();
@@ -146,7 +146,7 @@ void MessageBuffer::add(Tuple* tuple)
 			{
 				if((*it)->filter(*tuple) == Rejected)
 				{
-					
+// 					cout << "filtered " << tuple->get_type() << endl;
 					return;
 				}
 			}
@@ -162,14 +162,15 @@ void MessageBuffer::add(Tuple* tuple)
 
 Tuple* MessageBuffer::remove_head()
 {
-    boost::unique_lock<Mutex> data_lock(mutex);
+    if(!mutex.try_lock())
+			return 0;
     Tuple* tmp = 0;
     if (msg_buf->size() > 0)
     {
-        tmp = msg_buf->at(0);
+        tmp = msg_buf->front();
         msg_buf->erase(msg_buf->begin());
     }
-    
+    mutex.unlock();
     return tmp;
 }
 
@@ -192,14 +193,14 @@ void MessageBuffer::add_filter(Filter* filter)
   filters.push_back(filter);
   
 }
-void MessageBuffer::remove_filter(const Filter& filter)
+void MessageBuffer::remove_filter(Filter* filter)
 {
   boost::unique_lock<Mutex> data_lock(mutex);
   for(list<Filter*>::iterator it = filters.begin(); it != filters.end(); it++)
-    if(filter == (*(*it)))
-    {Filter* tmp = (*it);
+    if(*filter == (*(*it)))
+    {
       filters.erase(it);
-      delete tmp;
+      
       return;
     }
 }

@@ -163,7 +163,7 @@ void MotionController::ALstandUp() {
 #else
 	if (AccXvalue < 5.0) { // Robot
 #endif
-		tts->pCall<AL::ALValue>("say", "Face Up!");
+		//tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Up!"));
 		ALstandUpBack2010();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up 2010: From Back", Logger::ExtraInfo);	
     }
@@ -172,7 +172,7 @@ void MotionController::ALstandUp() {
 #else
 	else if (AccXvalue > -5.0) { // Robot
 #endif
-		tts->pCall<AL::ALValue>("say", "Face Down!");
+//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Down!"));
 		ALstandUpFront2009();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: From Front", Logger::ExtraInfo);	
     }
