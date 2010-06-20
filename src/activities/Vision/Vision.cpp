@@ -3,9 +3,9 @@
 #include <cmath>
 #include "tools/logger.h"
 #include "tools/XMLConfig.h"
-
+#include <sys/stat.h>
 #define trydelete(x) {if((x)!=NULL){delete (x);(x)=NULL;}}
-
+#include "architecture/narukom/pub_sub/filters/special_filters.h"
 #define inbounds(x,y) ( ((x)>0 &&(y)>0)&&((x)<rawImage->width-1&&(y)<rawImage->height-1) )
 #define CvDist(pa,pb) sqrt(((pa).x-(pb).x )*((pa).x-(pb).x )+((pa).y-(pb).y )*((pa).y-(pb).y ) )
 //Distance from observation angle
@@ -88,9 +88,14 @@ int  Vision::Execute()
 
 	if (!calibrated)
 	{
+		RejectAllFilter f("CalibrateFilter");
 		//cout<<"Start calibration"<<endl;
 		Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
+		
+		_blk->getBuffer()->add_filter(&f);
 		float scale= ext.calibrateCamera();
+		_blk->getBuffer()->remove_filter(&f);
+		
 		segbottom->setLumaScale(1/scale);
 		segtop->setLumaScale(1/scale);
 		Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
@@ -299,8 +304,11 @@ void Vision::UserInit()
 	_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->add_publisher(this);
-
-
+	type_filter = new TypeFilter("SensorMsgFilter");
+	
+	_blk->getBuffer()->add_filter(type_filter);
+	type_filter->add_type("InertialSensorsMessage");
+	type_filter->add_type("HeadJointSensorsMessage");
 
 }
 void Vision::gridScan(const KSegmentator::colormask_t color)

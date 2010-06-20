@@ -17,6 +17,7 @@
 #include "architecture/narukom/pub_sub/publisher.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "architecture/narukom/pub_sub/filters/type_filter.h"
 //#define DEBUGVISION
 
 #include <vector>
@@ -62,7 +63,8 @@ private:
     float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
     float horizonAlpha;
     cpose p;//Robot pose
-
+		TypeFilter* type_filter;
+		
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
     //Ball Detection related
