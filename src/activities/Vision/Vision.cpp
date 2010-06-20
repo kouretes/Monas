@@ -1,6 +1,7 @@
 #include "Vision.h"
 #include "architecture/archConfig.h"
 #include <cmath>
+#include "sys/stat.h"
 #include "tools/logger.h"
 #include "tools/XMLConfig.h"
 
@@ -84,24 +85,34 @@ int  Vision::Execute()
 {
 	static bool calibrated = false;
 	_blk->process_messages();
+    CalibrateCam *cal= _blk->in_msg_nb<CalibrateCam>("CalibrateCam");
+    if(cal!=NULL)
+    {
+        if( cal->status()==0)
+        {
+            //cout<<"Start calibration"<<endl;
+            Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
+            float scale= ext.calibrateCamera(cal->sleeptime(),cal->exp());
+            segbottom->setLumaScale(1/scale);
+            segtop->setLumaScale(1/scale);
+            Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
+            //cout<<"Calibration Done!"<<endl;
+            calibrated = true;
+            cal->set_status(1);
+            cal->set_exposure_comp(scale);
+            publish(cal,"vision");
+            delete cal;
+            return 0;
 
+        }
+        else
+        {
+            delete cal;
+            Logger::Instance().WriteMsg("Vision", "WTF", Logger::FatalError);
+        }
+    }
 
-	if (!calibrated)
-	{
-		//cout<<"Start calibration"<<endl;
-		Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
-		float scale= ext.calibrateCamera();
-		segbottom->setLumaScale(1/scale);
-		segtop->setLumaScale(1/scale);
-		Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
-		//cout<<"Calibration Done!"<<endl;
-		calibrated = true;
-
-	}
-	else
-	{
-		testrun();
-	}
+	testrun();
 	//std::cout << " Vision run" << std::endl;
 
 	return 0;
@@ -257,7 +268,7 @@ KSegmentator::colormask_t Vision::doSeg(int x, int y)
 
 }
 
-Vision::Vision() :Publisher("Vision"),cvHighgui(false), type(VISION_CSPACE),ang(NULL),Vang(NULL),im(NULL),hm(NULL)
+Vision::Vision() :Publisher("Vision"),Subscriber("Vision"),cvHighgui(false), type(VISION_CSPACE),ang(NULL),Vang(NULL),im(NULL),hm(NULL)
 {
 
 }
@@ -298,7 +309,9 @@ void Vision::UserInit()
 	cout<<"Add Subscriber-publisher"<<endl;
 	_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
+	_com->get_message_queue()->subscribe("vision", _blk, 0);
 	_com->get_message_queue()->add_publisher(this);
+
 
 
 
@@ -388,7 +401,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 
 
-		for (j = rawImage->height - BORDERSKIP; j > hory&& j> BORDERSKIP; j = j - ystep)
+		for (j = rawImage->height - BORDERSKIP-ystep; j > hory&& j> BORDERSKIP; j = j - ystep)
 		{
 			//cout<<"inner"<<endl;
 			//image start from top left
@@ -404,7 +417,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				if (hory+2>=j)//Found horizon
 				{
                     cout<<"Horizon"<<hory+2<<endl;
-				    tempcolor = doSeg(i, hory-2);
+				    tempcolor = doSeg(i, hory-1);
 					if (tempcolor==yellow && cntwhitegreenorangepixels >= goalposthreshold)
 					{
 						tmpPoint.x = i;
@@ -422,9 +435,6 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 					break;
 				}
-
-
-
 
 
 			}
@@ -551,7 +561,6 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 }
 
 
-
 KMat::HCoords<float,2> & Vision::imageTocamera( KMat::HCoords<float,2>  & imagep)
 {
 	KMat::HCoords<float,2> &t= *(new KMat::HCoords<float,2> ());
@@ -612,6 +621,7 @@ bool Vision::calculateValidBall(const CvPoint2D32f center, float radius, KSegmen
 		for (int j = center.y - radius; j <= center.y + radius; j++)
 		{
 
+
 			if (!inbounds(i,j))
 				continue;
 			if (i > center.x - innerrad && i < center.x + innerrad)
@@ -632,9 +642,9 @@ bool Vision::calculateValidBall(const CvPoint2D32f center, float radius, KSegmen
 
 }
 /*
-Vision::balldata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c))
+Vision::balldata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 {
-    CvPoint2D32f Vup;
+    CvPoint2D32f Vup;//Vertical velocity
     Vup.y=-1;
     Vup.x=KCameraTranformation::cot((*ang)(1));
 
@@ -650,7 +660,7 @@ Vision::balldata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::co
 
 		    float left=(-(*i).y+(*hi).ll.y)*Vup.x + (*hi).ll.x-1;
 		    float right=(-(*i).y+(*hi).lr.y)*Vup.x + (*hi).lr.x+1;
-		    if((*i).>=left&&(*i).x<=right)
+		    if((*i).>=left&&(*i).x<=right)//inside possible goalpost
 		    {
 		        i++;//Skip pixel
 		        if (i == cand.end())
@@ -667,8 +677,22 @@ Vision::balldata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::co
 			continue;
 
         //===============TRACE DOWN=======
-        CvPoint pleft=   sizeTrace((*i), cvPoint(-1, 0), c);
-        CvPoint pright = sizeTrace((*i), cvPoint(+1, 0), c);
+        CvPoint pleft=   traceline((*i), cvPoint(-1, 0), c);
+        CvPoint pright = traceline((*i), cvPoint(+1, 0), c);
+        if(pleft.x==-1&&pright.x==-1)//WHAT THE HELL
+            break;
+        if(pleft.x==-1)
+        {
+            pleft.x=BORDERSKIP;
+            pleft.y=(*i).y;
+        }
+
+        if(pright.x==-1)
+        {
+            pright.x=rawImage->width - BORDERSKIP;
+            pright.y=(*i).y;
+        }
+
         Cvpoint middle;
         middle.x= (pleft.x+pright)/2;
         middle.y=(*i).y;

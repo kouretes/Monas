@@ -63,7 +63,7 @@ class Behavior: public IActivity, public Publisher {
 		HeadJointSensorsMessage* hjsm;
 		BallTrackMessage* bmsg;
 		GameStateMessage* gsm;
-		bool calibrated;
+		int calibrated;
 		bool play;
 
 		bool stopped;
