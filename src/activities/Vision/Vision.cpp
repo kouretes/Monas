@@ -6,12 +6,12 @@
 #include "tools/XMLConfig.h"
 #include "architecture/narukom/pub_sub/filters/special_filters.h"
 
-
+#define LONGESTDIST 6.0
 #define COVERDIST 0.03
-#define TRACESKIP 5
+#define TRACESKIP 8
 #define GLOBALTRACESKIP 25
 //x COVERDIST=15*0.05m
-#define SCANSKIP  3
+#define SCANSKIP  4
 #define BORDERSKIP 2
 
 #define  VFov 34.8f
@@ -25,7 +25,7 @@
 #define inbounds(x,y) ( ((x)>BORDERSKIP &&(y)>BORDERSKIP)&&((x)<rawImage->width-BORDERSKIP-1&&(y)<rawImage->height-BORDERSKIP-1) )
 #define CvDist(pa,pb) sqrt(((pa).x-(pb).x )*((pa).x-(pb).x )+((pa).y-(pb).y )*((pa).y-(pb).y ) )
 //Distance from observation angle
-#define angularDistance(Hr,Ho,pitch,yaw) ( sqrt(1+sin(yaw)*sin(yaw))*((Hr)-(Ho))*kinext.cot(pitch) )
+#define angularDistance(Hr,Ho,yaw,pitch) ( sqrt(1+sin(yaw)*sin(yaw))*((Hr)-(Ho))*kinext.cot(pitch) )
 #define apparentDistance(Hr,Ho,rad) ( sqrt ( ( (((Ho)*(Ho) ) -((Hr)*(Hr)*tan(rad)*tan(rad)))*kinext.cot(rad)*kinext.cot(rad)    )  ))
 
 #define BALLRADIUS 0.03f
@@ -204,16 +204,16 @@ void Vision::testrun()
 	//float exptime=ext.getExp();//Compensate for middle of image
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
-	float imcomp=((stamp-p.time).total_microseconds()*250.0)/p.timediff;
-	cout<<"imcomp:"<<imcomp<<endl;
+	float imcomp=((stamp-p.time).total_microseconds()*1000.0)/p.timediff;
+	//cout<<"imcomp:"<<imcomp<<endl;
 
-	cout<< p.timediff<<" "<<p.angX<<" "<<p.angY<<" "<<p.VangX<<" "<<p.VangY<< " "<<endl;
+	//cout<< p.timediff<<" "<<p.angX<<" "<<p.angY<<" "<<p.VangX<<" "<<p.VangY<< " "<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw+=p.Vyaw*imcomp;
 	p.pitch+=p.Vpitch*imcomp;
 	p.angX+=p.VangX*imcomp;
 	p.angY+=p.VangY*imcomp;
-	cout<< p.timediff<<" "<<p.angX<<" "<<p.angY<<" "<<p.VangX<<" "<<p.VangY<< " "<<endl;
+	//cout<< p.timediff<<" "<<p.angX<<" "<<p.angY<<" "<<p.VangX<<" "<<p.VangY<< " "<<endl;
 	//Now use transformations to use the angX,angY values in the image
 	KMat::ATMatrix<float,4> y,z;
 	KMat::transformations::rotateY(y,p.pitch+cameraPitch);
@@ -319,7 +319,7 @@ void Vision::UserInit()
 	_com->get_message_queue()->subscribe("vision", _blk, 0);
 	_com->get_message_queue()->add_publisher(this);
 	type_filter = new TypeFilter("SensorMsgFilter");
-	
+
 	_blk->getBuffer()->add_filter(type_filter);
 	type_filter->add_type("InertialSensorsMessage");
 	type_filter->add_type("HeadJointSensorsMessage");
@@ -344,7 +344,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	KSegmentator::colormask_t tempcolor;
 	//int ballpixel = -1;
-	unsigned int ballthreshold = 1;
+	unsigned int ballthreshold = 0;
 	unsigned int goalposthreshold= 2;
 	unsigned int cntwhitegreenpixels = 0;
 	unsigned int cntwhitegreenorangepixels=0;
@@ -375,16 +375,18 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//cout<<"loop"<<endl;
 	for (int i = BORDERSKIP+startx; i < rawImage->width-BORDERSKIP-1; i = i + step)
 	{
+	    //cout<<"wtf"<<endl;
 		//Thru Horizon Possibly someday
 		//cout<<"outer"<<endl;
 		cntwhitegreenpixels = 0;
 		cntwhitegreenorangepixels=0;
 		cntother=0;
+		int ballskip=0;
 		// ballpixel = -1;
 
 		//TOOD ystep
         point(1)=i;
-        point(2)=rawImage->height - BORDERSKIP;
+        point(2)=rawImage->height - BORDERSKIP-1;
         KMat::HCoords<float,2> &a=imageTocamera(point);
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
@@ -428,9 +430,9 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			if (havehorizon)
 			{
 
-				if (hory+2>=j)//Found horizon
+				if (hory>=j)//Found horizon
 				{
-                    cout<<"Horizon"<<hory+2<<endl;
+                    //cout<<"Horizon"<<hory+2<<endl;
 				    tempcolor = doSeg(i, hory-1);
 					if (tempcolor==yellow && cntwhitegreenorangepixels >= goalposthreshold)
 					{
@@ -458,28 +460,37 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				cntwhitegreenpixels++;
 				cntwhitegreenorangepixels++;
 				cntother=0;
+				ballskip=0;
 			}
 			else if (tempcolor==orange)
 			{
 				cntwhitegreenorangepixels++;
 				cntother=0;
-			}
+
+            }
 			else
+			{
+			    //ballskip=0;
 				cntother++;
+			}
 			if (cntother>SCANSKIP)//No continuity, break
+			{
+			    //cout<<"break"<<endl;
 				break;
-			if (tempcolor == orange && cntwhitegreenpixels >= ballthreshold)
+			}
+			if (tempcolor == orange && cntwhitegreenpixels >= ballthreshold&&ballskip==0)
 			{
 				tmpPoint.x = i;
 				tmpPoint.y = j;
 				ballpixels.push_back(tmpPoint);
 				cntwhitegreenpixels=0;
+				ballskip=1;
 				//continue;
 				//ballpixel = j;
 			}
 
 
-			ystep=(ystep/2);
+			ystep=ystep>>1;
 			//cout<<ystep<<endl;
 			if(ystep<=0) ystep=1;
 
@@ -500,6 +511,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	}
 
 	balldata_t b = locateBall(ballpixels);
+	//cout<<b.r<<endl;
 
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
@@ -527,16 +539,16 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		o(1)=angularDistance(cameraH,BALLRADIUS,ball(1),ball(2));//From angle to distance;
 
         KMat::HCoords<float,2> & w=camToRobot(o);
-#ifdef DEBUGVISION
+//#ifdef DEBUGVISION
         //KMat::HCoords<float,2> & w=camToRobot(o);
 		cout<<"Distance bearing"<<endl;
 		w.prettyPrint();
 
 		cout<<"Bearing:"<<ball(2)<<endl;
-		cout<<"AngularDistance: "<< angularDistance(cameraH,BALLRADIUS,ball(2))<< " "<<ball(2)<<endl;
+		cout<<"AngularDistance: "<< angularDistance(cameraH,BALLRADIUS,ball(1),ball(2))<< " "<<ball(2)<<endl;
 		cout<<"ApparentDistance"<<apparentDistance(cameraH,BALLRADIUS , ((b.r+0.5)*  HFov * TO_RAD )/((float)rawImage->width ))<<endl;
 
-#endif
+//#endif
 		//Fill message and publish
 #ifdef DEBUGVISION
 		cout<<"Vision:Publish Message"<<endl;
@@ -627,8 +639,9 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 			ttl++;
 		}
 	ratio = ((float) gd) / ttl;
-	if (ratio < 0.8)
-		return false;
+	//cout<<ratio<<endl;
+	if (ratio < 0.6)
+        return false;
 	//Outer circle
 	gd = 0;
 	ttl = 0;
@@ -650,13 +663,17 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 			ttl++;
 		}
 	ratio = ((float) gd) / ttl;
-	if (ratio < 0.35 || ratio > 0.65)
+	//cout<<ratio<<endl;
+	if (ratio < 0.30 || ratio > 0.7)
 		return false;
 
-    float appdist=apparentDistance(cameraH,BALLRADIUS,((ball.r+0.5)*  HFov * TO_RAD )/((float)rawImage->width ));
-    if(fabs((ball.d-appdist)/ball.d) > 0.25)//Wtf
-        return false;
 
+
+    float appdist=apparentDistance(cameraH,BALLRADIUS,((ball.r+0.5)*  HFov * TO_RAD )/((float)rawImage->width ));
+    //cout<<appdist<<endl;
+    if(fabs((ball.d-appdist)/ball.d) > 0.25)//Wtf
+      return false;
+    cout<<"ball accepted"<<ball.r<<endl;
 	return true;
 
 }
@@ -862,7 +879,7 @@ CvPoint Vision::sizeTrace(CvPoint start, CvPoint vel, KSegmentator::colormask_t 
 		}
 		else
 		{
-			latestValid = curr;
+			latest3 = curr;
 			skipcount = 0;
 		};
 
@@ -889,9 +906,9 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 	{
 		vector<CvPoint> points;
 		vector<balldata_t>::iterator bd = history.begin();
-		while (bd != history.end() && i != cand.end())
+		while (bd != history.end() )
 		{
-			if (CvDist(*bd,*i) < (*bd).r)
+			if (CvDist(*bd,*i) <= (*bd).r+1)
 			{
 				i++;//Skip pixels
 				if (i == cand.end())
@@ -963,34 +980,41 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 			//center.y+=points[i].y;
 		}
 		radius /= points.size();
+		//cout<<radius<<endl;
 		/////cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
 		newdata.y = center.y;
 		newdata.r = radius;
+
 		point(1)=center.x;
         point(2)=center.y;
         KMat::HCoords<float,2> &a=imageTocamera(point);
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
-		newdata.d=angularDistance(cameraH,BALLRADIUS,b(1),b(2));
+		newdata.d=angularDistance(cameraH,BALLRADIUS,center.x,b(2));
 		delete &b;
+		//cout<<"ball dist:"<<newdata.d<<endl;
+		if(newdata.d<=0||newdata.d>=LONGESTDIST)
+            continue;
 		if(calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
             history.push_back(newdata);
+        //cout<<history<<endl;
 
 	}
 	vector<balldata_t>::iterator bd = history.begin();
 	balldata_t best;
 	best.r = 0;
+	best.d=100;
 	///debugcout << "BEST found" << endl;
 	while (bd != history.end())
 	{
-		CvPoint2D32f t;
-		t.x = (*bd).x;
-		t.y = (*bd).y;
+	    //cout << best.x << " " << best.y << " "<<best.d<< endl;
+	    //cout << (*bd).x << " " << (*bd).y << " "<<(*bd).d<< endl;
+	    //cout<<(*bd).d<<endl;
 		if ((*bd).d < best.d )
 			best = *bd;
-		//cout << best.x << " " << best.y << " " << endl;
+		//cout << best.x << " " << best.y << " "<<best.d<< endl;
 		bd++;
 	}
 	return best;
