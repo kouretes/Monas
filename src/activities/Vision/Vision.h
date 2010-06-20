@@ -64,7 +64,6 @@ private:
     float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
     float horizonAlpha;
     cpose p;//Robot pose
-		TypeFilter* type_filter;
 		
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
@@ -115,6 +114,7 @@ private:
     KMat::HCoords<float,2> & imageTocamera( KMat::HCoords<float,2>  & imagep);
     KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
     KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
+		TypeFilter* type_filter;
     void cvShowSegmented();
 };
 
