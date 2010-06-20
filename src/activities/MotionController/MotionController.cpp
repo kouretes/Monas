@@ -17,11 +17,11 @@ MotionController::MotionController() :
 }
 
 void MotionController::UserInit() {
-	try {
-		tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
-	} catch (AL::ALError& e) {
-		Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
-	}
+	//try {
+		//tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
+	//} catch (AL::ALError& e) {
+		//Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
+	//}
 	try {
 		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
@@ -72,8 +72,8 @@ void MotionController::UserInit() {
 }
 
 int MotionController::Execute() {
-	Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	counter++;
+	Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//commands();
 	read_messages();
 	mglrun(); 
@@ -134,9 +134,9 @@ void MotionController::mglrun() {
 		robotDown = true;
 		killCommands();
 //		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
-		//sleep(1);
 		RejectAllFilter reject_filter("RejectFilter");
 		_blk->getBuffer()->add_filter(&reject_filter);
+		sleep(1);
 		motion->setStiffnesses("Body", 0.6);
 		ALstandUpCross();
 		_blk->getBuffer()->remove_filter(&reject_filter);
