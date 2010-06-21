@@ -79,6 +79,7 @@ void MessageQueue::create_tree(TopicTree<string,MessageBuffer>* tree,const  stri
         topic_tree->add_topic_under(string("global"),string("behavior"));
         topic_tree->add_topic_under(string("global"),string("localization"));
         topic_tree->add_topic_under(string("global"),string("communication"));
+        topic_tree->add_topic_under(string("global"),string("obstacle"));
         topic_tree->add_topic_under(string("motion"),string("score"));
         return;
     }

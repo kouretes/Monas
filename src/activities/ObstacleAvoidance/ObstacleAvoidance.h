@@ -79,6 +79,7 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		UltaSoundSensorsMessage* ussm;
 		RobotPositionSensorMessage* rpsm;
 		ObstacleMessage* obavm;
+		
 		int countAge;
 		int countValid;
 		void publishObstacleMessage();
