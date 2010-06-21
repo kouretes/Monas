@@ -1,14 +1,13 @@
 #ifndef OBSTACLEAVOIDANCE_H
 #define OBSTACLEAVOIDANCE_H
 #include "architecture/narukom/pub_sub/publisher.h"
-#include "architecture/narukom/pub_sub/publisher.h"
 #include "messages/TestMessage.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "messages/ObstacleAvoidanceMessage.pb.h"
 #include <vector>
 #include <map>
 #include <string>
 #include "architecture/IActivity.h"
-#include "architecture/narukom/pub_sub/publisher.h"
 
 #include "alptr.h"
 
@@ -21,8 +20,8 @@
 #define PI 3.14159f
 #define discount 1
 #define reward -0.05
-#define goal 10
-#define obstacle -50
+#define goal 1
+#define obstacle -1
 #define NEIGHBOURS 8
 #define ITERATIONS 7
 
@@ -49,6 +48,7 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		AL::ALPtr<AL::ALMemoryProxy> memory;
 		double PolarGrid[M][N];
 		int MoveGrid[100][100];
+		int goalX, goalY;
 		int leftCounter, rightCounter;
 		SensorPair RightValue[10];
 		SensorPair LeftValue[10];
@@ -63,15 +63,26 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		int countLeft, countRight, countPos, flag;
 		int x[(M+1)*N];
 		int y[(M+1)*N];
+		bool mprosta ;
+		double mprostaDist;
+		double mprostaCert;
+		bool dexia ;
+		double dexiaDist;
+		double dexiaCert;
+		bool aristera;
+		double aristeraCert;
+		double aristeraDist;
 		double changed[M*N];
 		int shift, index[M*N], indey[M*N];
 		double possibilities[NEIGHBOURS+1], value[NEIGHBOURS+1] ;
-		int indexx[NEIGHBOURS+1], indexy[NEIGHBOURS+1] ;
-		UltaSoundSensorsMessage * ussm;
-		RobotPositionSensorMessage * rpsm;
+		int indexx[NEIGHBOURS+1], indexy[NEIGHBOURS+1] ;//gia path planning
+		UltaSoundSensorsMessage* ussm;
+		RobotPositionSensorMessage* rpsm;
+		ObstacleMessage* obavm;
 		int countAge;
 		int countValid;
-		
+		void publishObstacleMessage();
+		void printIterationGrid();
 		void smoothGrid(int smooth);
 		void updateGrid(double (&newValues1)[10], double (&newValues2)[10]);
 		void ageGrid();
