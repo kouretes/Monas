@@ -431,7 +431,7 @@ void ObstacleAvoidance::rotateGrid(double angle){
 		}
 	}
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "---------------------------------------------------------", Logger::Info);
-	drawGrid();
+	//drawGrid();
 }
 
 void ObstacleAvoidance::findCoordinates(){
