@@ -43,6 +43,7 @@ private:
 
 	AL::ALPtr<AL::ALProxy> tts;
 	AL::ALPtr<AL::ALMotionProxy> motion;
+	TypeFilter* type_filter;
 
 	bool robotDown;
 	bool robotUp;
@@ -65,7 +66,7 @@ private:
 	MotionHeadMessage* hm;
 	MotionActionMessage* am;
 	InertialSensorsMessage* im;
-  TypeFilter* type_filter;
+
 	void commands();
 	void mglrun();
 	void read_messages();

@@ -9,7 +9,7 @@ using namespace AL;
 using namespace std;
 #define MODULO 2
 
-#define UNNEEDED
+//#define UNNEEDED
 
 namespace {
 	ActivityRegistrar<Sensors>::Type temp("Sensors");

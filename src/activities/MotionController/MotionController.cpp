@@ -46,14 +46,17 @@ void MotionController::UserInit() {
 	hm = NULL;
 	am = NULL;
 	im = NULL;
+	
 	type_filter = new TypeFilter("type_filter");
 	type_filter->add_type("InertialSensorsMessage");
 	type_filter->add_type("MotionHeadMessage");
 	type_filter->add_type("MotionWalkMessage");
 	type_filter->add_type("MotionActionMessage");
 	_blk->getBuffer()->add_filter(type_filter);
+
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
+	AccYvalue = 0.0;
 
 	robotDown = false;
 	robotUp = true;
@@ -92,17 +95,12 @@ void MotionController::read_messages() {
 	/* Messages for Calibration */
 	hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
 	
-	/* Messages from Behavior */
+	/* Messages for Walk, Head, Action */
 	wm = _blk->in_msg_nb<MotionWalkMessage>("MotionWalkMessage");
 	if (hm == NULL) hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
 	am = _blk->in_msg_nb<MotionActionMessage>("MotionActionMessage");
 	
-	/* Messages from MotionController */
-	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
-	//if (hm == NULL) hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
-	//am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "MotionController");
-	
-	/* Messages from Sensors */
+	/* Messages for Intertial Readings */
 	im = _blk->in_msg_nb<InertialSensorsMessage>("InertialSensorsMessage");
 
 	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
@@ -128,15 +126,15 @@ void MotionController::mglrun() {
 #else
 	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue > -40)) { // Robot
 #endif
-		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 0.0);
+		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
+		RejectAllFilter reject_filter("RejectFilter");
+		_blk->getBuffer()->add_filter(&reject_filter);
+		sleep(1);
 		robotUp = false;
 		robotDown = true;
 		killCommands();
 //		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
-		RejectAllFilter reject_filter("RejectFilter");
-		_blk->getBuffer()->add_filter(&reject_filter);
-		sleep(1);
 		motion->setStiffnesses("Body", 0.6);
 		ALstandUpCross();
 		_blk->getBuffer()->remove_filter(&reject_filter);

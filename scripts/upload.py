@@ -97,14 +97,14 @@ elif string.find(sys.argv[0] , "upload_game.py") > -1 :
 	SSID = sys.argv[1]
 	print sys.argv
 
-	players = sys.argv[2:len(sys.argv):2]
+	players = sys.argv[3:len(sys.argv):2]
 	print players
 	for p in players:
 		if(int(p) > 3 or int(p) < 1) :
 			print "ERROR: A Player num is not valid, Quiting "
 			exit(-1)
 
-	robotsIP = sys.argv[3:len(sys.argv):2]
+	robotsIP = sys.argv[2:len(sys.argv):2]
 	if(len(players)!=len(robotsIP)):
 		usage()
 
@@ -146,6 +146,10 @@ else:
 	print "Cant find any folder naoqi under ./binaries/robot/"
 	exit(-1)
 
+os.system("mkdir -p " + binaries_dir + "/preferences")
+os.system("mkdir -p " + binaries_dir + "/bin")
+os.system("mkdir -p " + binaries_dir + "/lib")
+
 os.system('cp ' + scripts_dir +'Start.py ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
@@ -167,7 +171,7 @@ for	ip in robotsIP:
 
 		player = players[playerscounter]
 		#print("Good luck with the game")
-		print("You are going to create network files for the player " + player +" the " + playersdef[int(player)] + " for the field " + SSID)
+		print("You are going to create network files for the player " + player +" the " + playersdef[int(player)-1] + " for the field " + SSID)
 
 		#Copy network configuration file to /config just for backup
 		copy_cmd = "cp " + partial_configuration_dir + "/FieldsWlan/" + SSID    + "_wpa_supplicant.conf  " + binaries_dir +"config/wpa_supplicant.conf"
@@ -175,7 +179,7 @@ for	ip in robotsIP:
 
 		print ("Creating parameters for player " + player )
 		copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
-
+		os.system(copy_cmd)
 		playerconf = open(binaries_dir +"config/team_config.xml", 'a')
 		playerconf.write("<player>"+ player+"</player>")
 		playerconf.close()
@@ -188,7 +192,7 @@ for	ip in robotsIP:
 				print "Setting player number " + playerstr
 				print ("Creating parameters for player " + playerstr )
 				copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
-
+				os.system(copy_cmd)
 				playerconf = open(binaries_dir +"config/team_config.xml", 'a')
 				playerconf.write("<player>"+ playerstr+"</player>")
 				playerconf.close()
@@ -215,7 +219,7 @@ for	ip in robotsIP:
 
 		autoload_src = partial_configuration_dir + "autoload.ini_game"
 
-		os.system("mkdir -p " + binaries_dir + "/preferences")
+
 		autoload_dest = binaries_dir +"preferences/autoload.ini"
 		autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 		os.system(autoload_cmd)
