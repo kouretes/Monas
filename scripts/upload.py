@@ -199,10 +199,10 @@ for	ip in robotsIP:
 				if(playerstr == ""):
 					break
 
-
-		if(raw_input("Enter y to Restart Naoqi or press enter to continue: ")=='y'):
-			print( "Restarting naoqi")
-			nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi restart ' "
+		naoqirestart = raw_input("Enter y to Restart Naoqi or press enter to continue: ")
+		if(naoqirestart=='y'):
+			print( "Stopping naoqi, will start it after binaries upload")
+			nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
 			os.system(nao_start_stop_cmd)
 
 	if(raw_input("Enter y to Change hostname or press enter to continue: ")=='y'):
@@ -214,7 +214,6 @@ for	ip in robotsIP:
 	if(game==1):
 
 		autoload_src = partial_configuration_dir + "autoload.ini_game"
-
 
 		os.system("mkdir -p " + binaries_dir + "/preferences")
 		autoload_dest = binaries_dir +"preferences/autoload.ini"
@@ -259,5 +258,9 @@ for	ip in robotsIP:
 		print wifi_conf_cp_cmd
 		os.system('ssh root@'+ip + " '/etc/init.d/wpa_supplicant.sh '")
 
+	if (game == 0 and naoqirestart=="y" ):
+		print( "Sending naoqi start command")
+		nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi start ' "
+		os.system(nao_start_stop_cmd)
 		#~ os.system('ssh root@'+ip + " 'ifdown wlan0 '")
 		#~ os.system('ssh root@'+ip + " 'ifup wlan0 '")

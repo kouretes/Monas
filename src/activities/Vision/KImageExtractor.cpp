@@ -150,13 +150,16 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	}
 #else
 	//cout << "Remote method off" << endl;
+
 	//sleep(1);
 	ALImage* imageIn = NULL;
 	// Now you can get the pointer to the video structure.
 #ifdef RAW
-	imageIn = (ALImage*) (c->call<int> ("getDirectRawImage", GVM_name));
+	imageIn = (ALImage*) (c->call<int> ("getDirectRawImageLocal", GVM_name));
+	//cout << "GEt getDirectRawImageLocal " << endl;
 #else
 	imageIn = (ALImage*) (c->call<int> ("getImageLocal", GVM_name));
+	//cout << "GEt getImageLocal " << endl;
 #endif
 	if (!imageIn)
 	{
@@ -173,7 +176,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	const int size = width*height*nChannels;
 	// Set the buffer we received to our IplImage header.
 	//Fetch TimeStamp;
-	boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec(timeStamp)));
+	boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec(timeStamp));
 	boost::posix_time::time_duration dur=s-stamp;
 	dur-=boost::posix_time::seconds(dur.total_seconds());
 	// cout<<boost::posix_time::to_simple_string(dur)<<endl;
@@ -202,7 +205,13 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	//fIplImageHeader->imageData = (char*) imageIn->getFrame();
 	//saveIplImage(fIplImageHeader, name, pImageFormat, seconds);
 	// Now that you're done with the (local) image, you have to release it from the V.I.M.
+#ifdef RAW
+	c->call<int> ("releaseDirectRawImage", GVM_name);
+	//cout << "releaseDirectRawImage " << endl;
+#else
 	c->call<int> ("releaseImage", GVM_name);
+	//cout << "releaseImage " << endl;
+#endif
 #endif
 	return s;
 };

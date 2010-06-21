@@ -9,6 +9,8 @@ using namespace AL;
 using namespace std;
 #define MODULO 2
 
+#define UNNEEDED
+
 namespace {
 	ActivityRegistrar<Sensors>::Type temp("Sensors");
 }
@@ -68,19 +70,24 @@ int Sensors::Execute() {
 	unsigned int i = 0;
 	unsigned int j = 0;
 	Values["Head"] = memory->getListData(devicesInChains["Head"]);
+#ifdef UNNEEDED
 	Values["LeftLeg"] = memory->getListData(devicesInChains["LeftLeg"]);
 	Values["RightLeg"] = memory->getListData(devicesInChains["RightLeg"]);
+#endif
 	Values["Inertial"] = memory->getListData(devicesInChains["Inertial"]);
 	rtm.stop();
 	if (period % MODULO == 0) {
-
+#ifdef UNNEEDED
 		Values["FSR"] = memory->getListData(devicesInChains["FSR"]);
+#endif
 		Values["USoundLeft"] = memory->getListData(devicesInChains["USoundLeft"]);
 		Values["USoundRight"] = memory->getListData(devicesInChains["USoundRight"]);
 		Values["RobotPosition"] = motion->getRobotPosition(true);
 	}
+#ifdef UNNEEDED
 	Values["RightArm"] = memory->getListData(devicesInChains["RightArm"]);
 	Values["LeftArm"] = memory->getListData(devicesInChains["LeftArm"]);
+#endif
 
 	timediff = rtm.diffNs();
 	rtm.start();
@@ -91,7 +98,8 @@ int Sensors::Execute() {
 		devicesValues[counter] = Values["Head"][i];
 		counter++;
 	}
-
+	publish(&HJSM, "sensors");
+#ifdef UNNEEDED
 	j = 0;
 	for (i = 0; i < devicesInChains["LeftArm"].size(); i++) {
 		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftArm"][i]);
@@ -132,8 +140,8 @@ int Sensors::Execute() {
 		counter++;
 		j++;
 	}
-	publish(&HJSM, "sensors");
 	publish(&BJSM, "sensors");
+#endif
 	//	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
 	//		BJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Body"][i]);
 	//		BJSM.mutable_sensordata(i)->set_sensorvalue(Values[i]);
@@ -152,7 +160,7 @@ int Sensors::Execute() {
 	publish(&ISM, "sensors");
 
 	if (period % MODULO == 0) {
-
+#ifdef UNNEEDED
 		for (i = 0; i < devicesInChains["FSR"].size(); i++) {
 			FSM.mutable_sensordata(i)->set_sensorvalue(Values["FSR"][i]);
 			FSM.mutable_sensordata(i)->set_sensorvaluediff(Values["FSR"][i] - devicesValues[counter]);
@@ -160,7 +168,8 @@ int Sensors::Execute() {
 			devicesValues[counter] = Values["FSR"][i];
 			counter++;
 		}
-
+		publish(&FSM, "sensors");
+#endif
 		for (i = 0; i < devicesInChains["USoundLeft"].size(); i++) {
 			USSM.mutable_sensordata(i)->set_sensorvalue(Values["USoundLeft"][i]);
 			USSM.mutable_sensordata(i)->set_sensorvaluediff(Values["USoundLeft"][i] - devicesValues[counter]);
@@ -177,13 +186,11 @@ int Sensors::Execute() {
 			counter++;
 			i++;
 		}
-
-		publish(&FSM, "sensors");
 		publish(&USSM, "sensors");
-		//
-		//		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
+
+		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
 		for (unsigned int i = 0; i < Values["RobotPosition"].size(); i++) {
-			//RPSM.mutable_sensordata(i)->set_sensorname(devicesNames["RobotPosition"][i]);
+			RPSM.mutable_sensordata(i)->set_sensorname(devicesNames["RobotPosition"][i]);
 			RPSM.mutable_sensordata(i)->set_sensorvalue(Values["RobotPosition"][i]);
 			RPSM.mutable_sensordata(i)->set_sensorvaluediff(Values["RobotPosition"][i] - devicesValues[counter]);
 			RPSM.mutable_sensordata(i)->set_sensortimediff(timediff);
@@ -197,11 +204,7 @@ int Sensors::Execute() {
 	////
 	period++;
 
-	//cout << "Sended Values" << endl;
-	//cout << "Sensors: Counter " << counter << endl;
-
 	return 0;
-
 }
 
 void Sensors::initialisation() {
@@ -210,14 +213,15 @@ void Sensors::initialisation() {
 	HJSM.set_topic("sensors"); //HeadJointSensorsMessage
 	HJSM.set_timeout(250);
 
+#ifdef UNNEEDED
 	BJSM.set_topic("sensors"); //BodyJointSensorsMessage
 	BJSM.set_timeout(250);
 
-	ISM.set_topic("sensors"); //InertialSensorsMessage
-	ISM.set_timeout(250);
-
 	FSM.set_topic("sensors"); //FSRSensorsMessage
 	FSM.set_timeout(250);
+#endif
+	ISM.set_topic("sensors"); //InertialSensorsMessage
+	ISM.set_timeout(250);
 
 	USSM.set_topic("sensors"); //UltraSoundSensorsMessage
 	USSM.set_timeout(250);
@@ -248,6 +252,7 @@ void Sensors::initialisation() {
 		//Values["Head"].push_back(*(SensorDataPtr["Head"][i]));
 	}
 
+#ifdef UNNEEDED
 	devicesInChains["LeftArm"].push_back(std::string("Device/SubDeviceList/LShoulderPitch/Position/Sensor/Value"));
 	devicesInChains["LeftArm"].push_back(std::string("Device/SubDeviceList/LShoulderRoll/Position/Sensor/Value"));
 	devicesInChains["LeftArm"].push_back(std::string("Device/SubDeviceList/LElbowYaw/Position/Sensor/Value"));
@@ -370,7 +375,7 @@ void Sensors::initialisation() {
 		//BJSM.mutable_sensordata(j)->set_sensorname(devicesNames["RightArm"][i]);
 		j++;
 	}
-
+#endif
 	devicesInChains["Inertial"].push_back(std::string("Device/SubDeviceList/InertialSensor/AccX/Sensor/Value"));
 	devicesInChains["Inertial"].push_back(std::string("Device/SubDeviceList/InertialSensor/AccY/Sensor/Value"));
 	devicesInChains["Inertial"].push_back(std::string("Device/SubDeviceList/InertialSensor/AccZ/Sensor/Value"));
@@ -391,6 +396,8 @@ void Sensors::initialisation() {
 		ISM.add_sensordata();
 		//ISM.mutable_sensordata(i)->set_sensorname(devicesNames["Inertial"][i]);
 	}
+
+#ifdef UNNEEDED
 	//TODO This is not real FSR
 	devicesInChains["FSR"].push_back(std::string("Device/SubDeviceList/LFoot/FSR/CenterOfPressure/X/Sensor/Value"));
 	devicesInChains["FSR"].push_back(std::string("Device/SubDeviceList/LFoot/FSR/CenterOfPressure/Y/Sensor/Value"));
@@ -409,6 +416,8 @@ void Sensors::initialisation() {
 		FSM.add_sensordata();
 		//FSM.mutable_sensordata(i)->set_sensorname(devicesNames["FSR"][i]);
 	}
+#endif
+
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value"));
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value1"));
 	devicesInChains["USoundLeft"].push_back(std::string("Device/SubDeviceList/US/Left/Sensor/Value2"));

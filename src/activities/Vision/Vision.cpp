@@ -215,8 +215,8 @@ void Vision::testrun()
 	p.yaw+=p.Vyaw*imcomp;
 	p.pitch+=p.Vpitch*imcomp;
 	p.angX+=p.VangX*imcomp;
+	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<imcomp*p.Vyaw<< " "<<endl;
 	p.angY+=p.VangY*imcomp;
-	//cout<< p.timediff<<" "<<p.angX<<" "<<p.angY<<" "<<p.VangX<<" "<<p.VangY<< " "<<endl;
 	//Now use transformations to use the angX,angY values in the image
 	KMat::ATMatrix<float,4> y,z;
 	KMat::transformations::rotateY(y,p.pitch+cameraPitch);

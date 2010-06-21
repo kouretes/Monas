@@ -24,7 +24,7 @@ def main():
       try:
         proxy = ALProxy("mainModule", IP, PORT)
         proxy.post.Start()
-        break
+        return
       except:
         time.sleep(0.5)
 
