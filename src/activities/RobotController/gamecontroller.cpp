@@ -86,16 +86,22 @@ bool GameController::check_data_and_copy(char* bytes, int size)
         //cout << "Valid GameController packet" << endl;
         memcpy(current_data,bytes,size);
         if (current_data->teams[0].teamNumber == team_number || current_data->teams[1].teamNumber== team_number)
-            return true;
-//         cout << "Packet is not for our team " << team_number << "teams " <<  (int)current_data->teams[0].teamNumber << " " << (int)current_data->teams[1].teamNumber << endl;
-    }
+        {  
+//         cout << "Packet is  for our team " << team_number << "teams " <<  (int)current_data->teams[0].teamNumber << " " << (int)current_data->teams[1].teamNumber << endl;
+     return true; }
     else
     {
-        cout << "Size: " << size << " sizeof " << sizeof(RoboCupGameControlData) << endl;
-        cout << "Header " << GAMECONTROLLER_STRUCT_HEADER << bytes[0] << bytes[1] << bytes[2] << bytes[3] << endl;
+	
+     //    cout << "Not  for our team " << team_number << "teams " <<  (int)current_data->teams[0].teamNumber << " " << (int)current_data->teams[1].teamNumber << endl;
+    }
+}
+    else
+    {
+  //      cout << "Size: " << size << " sizeof " << sizeof(RoboCupGameControlData) << endl;
+   //     cout << "Header " << GAMECONTROLLER_STRUCT_HEADER << bytes[0] << bytes[1] << bytes[2] << bytes[3] << endl;
         return false;
     }
-//     return true;
+     return false;
 }
 
 
