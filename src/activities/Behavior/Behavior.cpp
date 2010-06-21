@@ -105,7 +105,7 @@ int Behavior::MakeTrackBallAction() {
 }
 
 int Behavior::Execute() {
-/*
+
 	//MessageBuffer* sub_buf = _blk->getBuffer();
 	//while (sub_buf->size() > 0) {
 	read_messages();
@@ -371,14 +371,8 @@ void Behavior::HeadScanStep() {
 				+ "3:  " + _toString(wmot->parameter(2)), Logger::Info);
 		stopped=false;
 		Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-	}*/
+	}
 	
-		wmot->set_command("setWalkTargetVelocity");
-	wmot->set_parameter(0,0.1);
-					wmot->set_parameter(1, 0.0);
-					wmot->set_parameter(2, 0.0);
-					wmot->set_parameter(3, 0.1);
-					Publisher::publish(wmot, "motion");
 
 }
 
