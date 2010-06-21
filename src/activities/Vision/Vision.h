@@ -18,6 +18,7 @@
 #include "architecture/narukom/pub_sub/subscriber.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "messages/Gamecontroller.pb.h"
 #include "architecture/narukom/pub_sub/filters/type_filter.h"
 //#define DEBUGVISION
 
@@ -52,6 +53,7 @@ private:
     BallTrackMessage trckmsg;
     BallObject ballpos;
     ObservationMessage obs;
+    LedChangeMessage leds;
     //Incoming messages!
     InertialSensorsMessage* im;
     HeadJointSensorsMessage* hm;

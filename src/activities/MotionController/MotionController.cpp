@@ -130,12 +130,13 @@ void MotionController::mglrun() {
 		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
 		RejectAllFilter reject_filter("RejectFilter");
 		_blk->getBuffer()->add_filter(&reject_filter);
-		sleep(1);
+		usleep(800000);
 		robotUp = false;
 		robotDown = true;
 		killCommands();
 //		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
-		motion->setStiffnesses("Body", 0.6);
+		motion->setStiffnesses("Body", 0.5);
+		usleep(300000);
 		ALstandUpCross();
 		_blk->getBuffer()->remove_filter(&reject_filter);
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
@@ -167,9 +168,17 @@ void MotionController::mglrun() {
 #endif
 			robotUp = true;
 			Logger::Instance().WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
-		} else if (actionPID == 0)
+		} else if (actionPID == 0) {
+			RejectAllFilter reject_filter("RejectFilter");
+			_blk->getBuffer()->add_filter(&reject_filter);
 			robotDown = true;
-		return;
+			motion->setStiffnesses("Body", 0.5);
+			usleep(300000);
+			ALstandUpCross();
+			_blk->getBuffer()->remove_filter(&reject_filter);
+			Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
+			return;
+		}
 	}
 
 	/* The robot is up and ready to execute motions */
@@ -207,6 +216,8 @@ void MotionController::mglrun() {
 				walkPID = motion->post.setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
 				Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
 			}
+			else 
+				Logger::Instance().WriteMsg("MotionController","Invalid Walk Command: "+wm->command(),Logger::ExtraInfo);
 		}
 		
 		if (hm != NULL) {
@@ -238,6 +249,8 @@ void MotionController::mglrun() {
 				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " +_toString(headPID),Logger::ExtraInfo);
 			}
+			else 
+				Logger::Instance().WriteMsg("MotionController","Invalid Head Command: "+hm->command(),Logger::ExtraInfo);
 		}
 		
 		if ( (am != NULL) && (actionPID==0) ) {

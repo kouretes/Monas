@@ -114,11 +114,11 @@ int Behavior::Execute() {
 		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		//return 0
 
-		if (gsm->player_state() == 3 && calibrated == 2) // this is the playing state
+		if (gsm->player_state() == PLAYER_PLAYING && calibrated == 2) // this is the playing state
 			play = true;
 		else
 			play = false;
-		if ((gsm->player_state() != 3 && calibrated == 0) || gsm->player_state() == 1) {
+		if ((gsm->player_state() != PLAYER_PLAYING && calibrated == 0) || gsm->player_state() == PLAYER_READY) {
 			CalibrateCam v;
 			v.set_status(0);
 			publish(&v, "vision");
@@ -138,7 +138,7 @@ int Behavior::Execute() {
 			MakeTrackBallAction();
 			Logger::Instance().WriteMsg("Behavior", "Ball Found ole ", Logger::Info);
 
-			ballfound += 2; //Increase this value when we see the ball
+			ballfound += 5; //Increase this value when we see the ball
 		} else {
 			if (ballfound > 0) {
 				ballfound -= 1; //Decrease it when we don't see the ball
@@ -153,8 +153,8 @@ int Behavior::Execute() {
 			}
 		}
 		//just dont scan if ones you didn't saw the ball
-		if (ballfound > 4)
-			ballfound = 4;
+		if (ballfound > 10)
+			ballfound = 10;
 		if (ballfound < 0)
 			ballfound = 0;
 
@@ -310,21 +310,9 @@ void Behavior::HeadScanStep() {
 		scandirectionyaw = (HeadYaw.sensorvaluediff() > 0) ? 1 : -1;
 		startscan = false;
 
-//		if (!stopped) {
-//			stopped = true;
-			Logger::Instance().WriteMsg("Behavior", "Setting stop command because of playing state ", Logger::ExtraExtraInfo);
-
-			wmot->set_command("setWalkTargetVelocity");
-			wmot->set_parameter(0, 0);
-			wmot->set_parameter(1, 0);
-			wmot->set_parameter(2, 0);
-			wmot->set_parameter(3, 0);
-			Publisher::publish(wmot, "motion");
-//		}
-
 	}
-	reachedlimitright = false;
-	reachedlimitleft = false;
+//	reachedlimitright = false;
+//	reachedlimitleft = false;
 
 	//continue scan
 	if (HeadPitch.sensorvalue() < LIMITUP) { // upper position
@@ -358,7 +346,7 @@ void Behavior::HeadScanStep() {
 	hmot->set_parameter(0, scandirectionyaw * 0.18); // Headyaw
 	hmot->set_parameter(1, 0.0); // headPitch
 
-	if (reachedlimitleft || reachedlimitright) {
+	if (reachedlimitleft && reachedlimitright) {
 		Logger::Instance().WriteMsg("Behavior", " reachedlimitleft || reachedlimitright ", Logger::ExtraExtraInfo);
 		hmot->set_parameter(1, scandirectionpitch * 0.23); // headPitch
 		//hmot->set_parameter(0, 0.0); // headYaw
@@ -384,6 +372,7 @@ void Behavior::HeadScanStep() {
 		stopped=false;
 		Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
 	}
+	
 
 }
 
