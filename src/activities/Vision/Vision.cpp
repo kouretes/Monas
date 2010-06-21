@@ -177,8 +177,8 @@ void Vision::testrun()
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 #endif
 	//boost::posix_time::ptime rtime =  time_t_epoch+(boost::posix_time::microsec(t.tv_nsec/1000)+boost::posix_time::seconds(t.tv_sec));//+sec(t.tv_sec));
-	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
-// 	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors","localhost",&p.time,&stamp);//,&rtime);
+//	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
+ 	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors","localhost",&p.time,&stamp);//,&rtime);
 	if (hm==NULL)//No sensor data!
 	{
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no sensor (HS) data!", Logger::Error);
