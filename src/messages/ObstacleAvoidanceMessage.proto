@@ -1,0 +1,7 @@
+message ObstacleMessage{
+	required int32 direction = 1 [default = 0];
+	required float distance = 2 [default = 0.0 ];
+	required float certainty = 3 [default = 0.0];
+	
+}
+
