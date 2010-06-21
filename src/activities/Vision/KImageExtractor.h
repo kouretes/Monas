@@ -28,7 +28,7 @@
 #define VISION_GVMNAME "KImageExtractor"
 
 
-#define REMOTE_ON 1
+//#define REMOTE_ON 1
 #define  RAW
 
 

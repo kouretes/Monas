@@ -11,7 +11,7 @@
 #define TRACESKIP 8
 #define GLOBALTRACESKIP 25
 //x COVERDIST=15*0.05m
-#define SCANSKIP  4
+#define SCANSKIP  8
 #define BORDERSKIP 2
 
 #define  VFov 34.8f
@@ -680,10 +680,10 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 
 
 
-    float appdist=apparentDistance(cameraH,BALLRADIUS,((ball.r+0.5)*  HFov * TO_RAD )/((float)rawImage->width ));
+    //float appdist=apparentDistance(cameraH,BALLRADIUS,((ball.r+0.5)*  HFov * TO_RAD )/((float)rawImage->width ));
     //cout<<appdist<<endl;
-    if(fabs((ball.d-appdist)/ball.d) > 0.25)//Wtf
-      return false;
+    //if(fabs((ball.d-appdist)/ball.d) > 0.50)//Wtf
+      //return false;
     //cout<<"ball accepted"<<ball.r<<endl;
 	return true;
 
