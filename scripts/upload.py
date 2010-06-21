@@ -146,6 +146,10 @@ else:
 	print "Cant find any folder naoqi under ./binaries/robot/"
 	exit(-1)
 
+os.system("mkdir -p " + binaries_dir + "/preferences")
+os.system("mkdir -p " + binaries_dir + "/bin")
+os.system("mkdir -p " + binaries_dir + "/lib")
+
 os.system('cp ' + scripts_dir +'Start.py ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
@@ -215,7 +219,7 @@ for	ip in robotsIP:
 
 		autoload_src = partial_configuration_dir + "autoload.ini_game"
 
-		os.system("mkdir -p " + binaries_dir + "/preferences")
+
 		autoload_dest = binaries_dir +"preferences/autoload.ini"
 		autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 		os.system(autoload_cmd)
