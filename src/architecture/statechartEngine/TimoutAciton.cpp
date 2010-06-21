@@ -44,11 +44,11 @@ namespace statechart_engine {
           throw "TimeoutWorker msg null";
         std::string time = msg->wakeup();
         int timeout = (boost::posix_time::from_iso_string(time) - boost::posix_time::microsec_clock::local_time() ).total_microseconds();
-//         cout<<"AAA: "<<time<<" timeout "<<timeout<<endl;
+//          cout<<"AAA: "<<time<<" timeout "<<timeout<<endl; // TODO
         if ( timeout > 0)
           SysCall::_usleep( timeout );
+//         cout<<"Statechart Notified!!!"<<endl; //TODO
         _s->AtomicNotify();
-//         cout<<"Statechart Notified!!!";
         return 0;
     }
 
