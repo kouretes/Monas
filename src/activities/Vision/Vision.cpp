@@ -130,6 +130,8 @@ void Vision::testrun()
 {
 	trydelete(im);
 	trydelete(hm);
+
+	leds.Clear();
 	im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
 	if (im==NULL)//No sensor data!
@@ -210,12 +212,12 @@ void Vision::testrun()
 	float imcomp=((stamp-p.time).total_microseconds()*1000.0)/p.timediff;
 	//cout<<"imcomp:"<<imcomp<<endl;
 
-	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<imcomp*p.Vyaw<< " "<<endl;
+	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw+=p.Vyaw*imcomp;
 	p.pitch+=p.Vpitch*imcomp;
 	p.angX+=p.VangX*imcomp;
-	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<imcomp*p.Vyaw<< " "<<endl;
+	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
 	p.angY+=p.VangY*imcomp;
 	//Now use transformations to use the angX,angY values in the image
 	KMat::ATMatrix<float,4> y,z;
@@ -261,6 +263,18 @@ void Vision::testrun()
                    ||obs.corner_objects_size()>0  || obs.intersection_objects_size()>0
                    ||obs.line_objects_size()>0)
         publish(&obs,"vision");
+    LedValues* l=leds.add_leds();
+    if(obs.has_ball())
+    {
+        l->set_chain("leye");
+        l->set_color("red");
+    }
+    else
+    {
+        l->set_chain("leye");
+        l->set_color("red");
+    }
+     publish(&leds,"communication");
 	if (cvHighgui)
 		cvShowSegmented();
 
@@ -333,6 +347,15 @@ void Vision::UserInit()
 	type_filter->add_type("InertialSensorsMessage");
 	type_filter->add_type("HeadJointSensorsMessage");
 	type_filter->add_type("CalibrateCam");
+
+	//Turn off leds
+	leds.Clear();
+	LedValues* l=leds.add_leds();
+	l->set_chain("leye");
+	l->set_color("off");
+	LedValues* r=leds.add_leds();
+	r->set_chain("reye");
+	r->set_color("off");
 
 }
 void Vision::gridScan(const KSegmentator::colormask_t color)
@@ -548,7 +571,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		o(1)=angularDistance(cameraH,BALLRADIUS,ball(1),ball(2));//From angle to distance;
 
         KMat::HCoords<float,2> & w=camToRobot(o);
-//#ifdef DEBUGVISION
+#ifdef DEBUGVISION
         //KMat::HCoords<float,2> & w=camToRobot(o);
 		cout<<"Distance bearing"<<endl;
 		w.prettyPrint();
@@ -557,7 +580,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		cout<<"AngularDistance: "<< angularDistance(cameraH,BALLRADIUS,ball(1),ball(2))<< " "<<ball(2)<<endl;
 		cout<<"ApparentDistance"<<apparentDistance(cameraH,BALLRADIUS , ((b.r+0.5)*  HFov * TO_RAD )/((float)rawImage->width ))<<endl;
 
-//#endif
+#endif
 		//Fill message and publish
 #ifdef DEBUGVISION
 		cout<<"Vision:Publish Message"<<endl;
