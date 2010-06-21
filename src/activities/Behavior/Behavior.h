@@ -30,7 +30,8 @@ class Behavior: public IActivity, public Publisher {
 		int Execute();
 		void UserInit();
 		void read_messages();
-
+		int MakeTrackBallAction();
+		void HeadScanStep();
         std::string GetName() {
             return "Behavior";
         }
