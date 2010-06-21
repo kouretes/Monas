@@ -15,8 +15,10 @@
 #include "KSegmentator.h"
 
 #include "architecture/narukom/pub_sub/publisher.h"
+#include "architecture/narukom/pub_sub/subscriber.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "architecture/narukom/pub_sub/filters/type_filter.h"
 //#define DEBUGVISION
 
 #include <vector>
@@ -24,7 +26,7 @@
 
 
 
-class Vision : public IActivity, public Publisher
+class Vision : public IActivity, public Publisher, public Subscriber
 {
 
 public:
@@ -49,6 +51,7 @@ private:
     XMLConfig *config;
     BallTrackMessage trckmsg;
     BallObject ballpos;
+    ObservationMessage obs;
     //Incoming messages!
     InertialSensorsMessage* im;
     HeadJointSensorsMessage* hm;
@@ -70,13 +73,18 @@ private:
     {
         float x, y;
         float r;//Observed radius
+        float d;//Observed distance;
     } balldata_t;
 
     typedef struct GoalPostdata
     {
         CvPoint ll;//Corners
         CvPoint lr;//Corners
-        float height;//in pixels
+        CvPoint bottom;
+        CvPoint top;
+        int height;//in pixels
+        float d;//Distance
+        float conf;
     } goalpostdata_t;
 
     enum colors
@@ -100,14 +108,17 @@ private:
 
     void gridScan(const KSegmentator::colormask_t color);
 
-    bool calculateValidBall(const CvPoint2D32f center, float radius, KSegmentator::colormask_t c);
+    bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c);
+    bool calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask_t c);
     balldata_t locateBall(std::vector<CvPoint> cand);
+    goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
     KMat::HCoords<float,2> & imageTocamera( KMat::HCoords<float,2>  & imagep);
     KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
     KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
+		TypeFilter* type_filter;
     void cvShowSegmented();
 };
 

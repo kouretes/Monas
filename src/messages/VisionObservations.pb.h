@@ -31,6 +31,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto();
 void protobuf_ShutdownFile_VisionObservations_2eproto();
 
 class BallTrackMessage;
+class CalibrateCam;
 class BallObject;
 class NamedObject;
 class UnidentifiedObject;
@@ -214,6 +215,119 @@ class BallTrackMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static BallTrackMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CalibrateCam : public ::google::protobuf::Message {
+ public:
+  CalibrateCam();
+  virtual ~CalibrateCam();
+  
+  CalibrateCam(const CalibrateCam& from);
+  
+  inline CalibrateCam& operator=(const CalibrateCam& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CalibrateCam& default_instance();
+  
+  void Swap(CalibrateCam* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CalibrateCam* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CalibrateCam& from);
+  void MergeFrom(const CalibrateCam& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required int32 status = 1;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 1;
+  inline ::google::protobuf::int32 status() const;
+  inline void set_status(::google::protobuf::int32 value);
+  
+  // required int32 sleeptime = 2 [default = 1500];
+  inline bool has_sleeptime() const;
+  inline void clear_sleeptime();
+  static const int kSleeptimeFieldNumber = 2;
+  inline ::google::protobuf::int32 sleeptime() const;
+  inline void set_sleeptime(::google::protobuf::int32 value);
+  
+  // required int32 exp = 3 [default = 15];
+  inline bool has_exp() const;
+  inline void clear_exp();
+  static const int kExpFieldNumber = 3;
+  inline ::google::protobuf::int32 exp() const;
+  inline void set_exp(::google::protobuf::int32 value);
+  
+  // required float exposure_comp = 4 [default = 1];
+  inline bool has_exposure_comp() const;
+  inline void clear_exposure_comp();
+  static const int kExposureCompFieldNumber = 4;
+  inline float exposure_comp() const;
+  inline void set_exposure_comp(float value);
+  
+  // @@protoc_insertion_point(class_scope:CalibrateCam)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::int32 status_;
+  ::google::protobuf::int32 sleeptime_;
+  ::google::protobuf::int32 exp_;
+  float exposure_comp_;
+  friend void  protobuf_AddDesc_VisionObservations_2eproto();
+  friend void protobuf_AssignDesc_VisionObservations_2eproto();
+  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static CalibrateCam* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1183,6 +1297,74 @@ inline float BallTrackMessage::radius() const {
 inline void BallTrackMessage::set_radius(float value) {
   _set_bit(9);
   radius_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CalibrateCam
+
+// required int32 status = 1;
+inline bool CalibrateCam::has_status() const {
+  return _has_bit(0);
+}
+inline void CalibrateCam::clear_status() {
+  status_ = 0;
+  _clear_bit(0);
+}
+inline ::google::protobuf::int32 CalibrateCam::status() const {
+  return status_;
+}
+inline void CalibrateCam::set_status(::google::protobuf::int32 value) {
+  _set_bit(0);
+  status_ = value;
+}
+
+// required int32 sleeptime = 2 [default = 1500];
+inline bool CalibrateCam::has_sleeptime() const {
+  return _has_bit(1);
+}
+inline void CalibrateCam::clear_sleeptime() {
+  sleeptime_ = 1500;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 CalibrateCam::sleeptime() const {
+  return sleeptime_;
+}
+inline void CalibrateCam::set_sleeptime(::google::protobuf::int32 value) {
+  _set_bit(1);
+  sleeptime_ = value;
+}
+
+// required int32 exp = 3 [default = 15];
+inline bool CalibrateCam::has_exp() const {
+  return _has_bit(2);
+}
+inline void CalibrateCam::clear_exp() {
+  exp_ = 15;
+  _clear_bit(2);
+}
+inline ::google::protobuf::int32 CalibrateCam::exp() const {
+  return exp_;
+}
+inline void CalibrateCam::set_exp(::google::protobuf::int32 value) {
+  _set_bit(2);
+  exp_ = value;
+}
+
+// required float exposure_comp = 4 [default = 1];
+inline bool CalibrateCam::has_exposure_comp() const {
+  return _has_bit(3);
+}
+inline void CalibrateCam::clear_exposure_comp() {
+  exposure_comp_ = 1;
+  _clear_bit(3);
+}
+inline float CalibrateCam::exposure_comp() const {
+  return exposure_comp_;
+}
+inline void CalibrateCam::set_exposure_comp(float value) {
+  _set_bit(3);
+  exposure_comp_ = value;
 }
 
 // -------------------------------------------------------------------

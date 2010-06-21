@@ -260,7 +260,13 @@ bool MessageQueue::subscribe (const  std::string& topic, Subscriber* sub,int whe
 		boost::unique_lock<Mutex> tree_lock(tree_mutex);
     string owner = sub->getName();
     bool result;
-    
+    std::list<MessageBuffer*> * already_subscribed = topic_tree->message_arrived(topic);
+		if(already_subscribed != 0)
+			for(std::list<MessageBuffer*>::iterator it = already_subscribed->begin(); it != already_subscribed->end(); it++)
+			{
+				if((*it)->getOwner() == sub->getBuffer()->getOwner() )
+					return true;
+			}
     std::map<std::string,MessageBuffer*>::iterator sub_it = subscribers_buf->find ( owner );
     
     if ( sub_it != subscribers_buf->end() )
@@ -327,7 +333,7 @@ void MessageQueue::process_queued_msg()
             }
 						
             Tuple* cur = it->second->remove_head();
-// 																					cout << "deliver " << cur->get_type() << " from " << cur->get_publisher() << " topic  " << cur->get_topic() << endl;
+//   						cout << "deliver " << cur->get_type() << " from " << cur->get_publisher() << " topic  " << cur->get_topic() << " Buffer size: " << it->first.size() << endl;
             while (cur != 0)
             {
 							  new_messages_to_deliver = true;
@@ -342,13 +348,14 @@ void MessageQueue::process_queued_msg()
 											if ((*buf_it)->getOwner() == cur->get_publisher() );
 											else
 											{
+//   													cout << "Delivering to " << (*buf_it)->getOwner()<< " the " << cur->get_type() << " size: " << (*buf_it)->size() << endl;
 													(*buf_it)->add(cur);
 											}
 									}
 								}
 								else
 								{
-									cout << "empty list of receivers " << endl;
+// 									cout << "empty list of receivers " << endl;
 								}
 								delete cur;
                 cur = it->second->remove_head();

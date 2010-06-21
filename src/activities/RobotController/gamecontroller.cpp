@@ -12,7 +12,7 @@ GameController::GameController(RoboCupGameControlData* game_data,bool* received_
     mx->unlock();
     current_data = new RoboCupGameControlData;
     cout << "socket create" << endl;
-    socket_fd = socket(PF_INET, SOCK_DGRAM, 0); //socket creation
+    socket_fd = socket(AF_INET, SOCK_DGRAM, 0); //socket creation
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -36,27 +36,38 @@ int GameController::Execute()
     FD_SET(socket_fd,&rset);
     int tmpfd;
     timeout.tv_sec = 0  ;
-    timeout.tv_usec = 300000;
+    timeout.tv_usec = 30000000;
     //  int number_of_bites = 0;
     tmpfd = select(socket_fd+1,&rset,NULL,NULL,&timeout);
     int bytes;
     socklen_t addr_len=sizeof(addr);
+// 		cout << "after select !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
     if (tmpfd > 0) {
+// 			cout << "tmpfd descriptor ============================================" << endl;
         if (FD_ISSET(socket_fd,&rset))
         {
+//             cout << "Clear READSET " << endl;
             bytes =  recvfrom(socket_fd, buffer, sizeof(buffer), 0, (struct sockaddr*)&addr, &addr_len);
             //bytes = read(sd,buffer,sizeof(buffer));
+// 						cout << "reading bytes-----------------------------" << endl;
             if (check_data_and_copy(buffer,bytes))
             {
+//                 cout << "True Checking Data " << endl;
                 mx->lock();
                 RoboCupGameControlData* tmp_ptr = game_data;
                 game_data = current_data;
                 current_data = tmp_ptr;
                 *received_data = true;
-                //cout << "ptr " << (int)received_data << endl;
+//                 cout << "ptr " << (int)received_data << endl;
                 mx->unlock();
             }
+            else
+            {
+//                 cout << "check data failed " << endl;
+//                 cout << "VR: " <<  (int)current_data->version << endl;
+            }
             bzero(&buffer,sizeof(buffer));
+// 						cout << "Closing if read set clear ()()()()()()" << endl;
         }
     }
     else {
@@ -75,11 +86,22 @@ bool GameController::check_data_and_copy(char* bytes, int size)
         //cout << "Valid GameController packet" << endl;
         memcpy(current_data,bytes,size);
         if (current_data->teams[0].teamNumber == team_number || current_data->teams[1].teamNumber== team_number)
-            return true;
-        //cout << "Packet is not for our team " << team_number << "teams " <<  current_data->teams[0].teamNumber << " " << current_data->teams[1].teamNumber << endl;
+        {  
+//         cout << "Packet is  for our team " << team_number << "teams " <<  (int)current_data->teams[0].teamNumber << " " << (int)current_data->teams[1].teamNumber << endl;
+     return true; }
+    else
+    {
+	
+     //    cout << "Not  for our team " << team_number << "teams " <<  (int)current_data->teams[0].teamNumber << " " << (int)current_data->teams[1].teamNumber << endl;
     }
-    return false;
-
+}
+    else
+    {
+  //      cout << "Size: " << size << " sizeof " << sizeof(RoboCupGameControlData) << endl;
+   //     cout << "Header " << GAMECONTROLLER_STRUCT_HEADER << bytes[0] << bytes[1] << bytes[2] << bytes[3] << endl;
+        return false;
+    }
+     return false;
 }
 
 

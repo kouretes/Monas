@@ -11,37 +11,37 @@
   int LedHandler::Execute()
   {
      cout << "LedHandler run " << endl;
-      if(_blk->getBuffer()->size() > 0)
-	  process_messages();
+			process_messages();
 		return 0;
   }
   void LedHandler::process_messages()
   {
-      MessageBuffer* buf = _blk->getBuffer();
+//       MessageBuffer* buf = _blk->getBuffer();
     //  cout << "led process" <<endl;
-      Tuple* cur = buf->remove_head();
-      while(cur != 0)
-      {
-	  if(cur->get_type() != "LedChangeMessage")
-	  {
-	      cout << "not led" << endl;
-	      delete cur;
-	      cur = buf->remove_head();
-	      continue;
-	  }
+		  _blk->process_messages();
+      LedChangeMessage* led_change = _blk->in_msg<LedChangeMessage>("LedChangeMessage");
+//       while(cur != 0)
+//       {
+// 	  if(cur->get_type() != "LedChangeMessage")
+// 	  {
+// 	      cout << "not led" << endl;
+// 	      delete cur;
+// 	      cur = buf->remove_head();
+// 	      continue;
+// 	  }
 
-	  LedChangeMessage* led_change = _blk->extract_result_from_tuple<LedChangeMessage>(*cur);
+// 	  LedChangeMessage* led_change = _blk->extract_result_from_tuple<LedChangeMessage>(*cur);
 	  if(led_change != 0)
 	  {
 	    for(int i = 0; i < led_change->leds_size(); i++)
 	    {
-		setLed(led_change->leds(i).chain(),led_change->leds(i).color());
+				setLed(led_change->leds(i).chain(),led_change->leds(i).color());
 	    }
 	  }
-	  delete cur;
-	  cur = buf->remove_head();
+	  delete led_change;
+// 	  cur = buf->remove_head();
 
-      }
+//       }
   }
   void LedHandler::UserInit()
   {

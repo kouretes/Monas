@@ -164,11 +164,12 @@ void protobuf_AssignDesc_SensorsMessage_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RobotPositionSensorMessage));
   SensorPair_descriptor_ = file->message_type(6);
-  static const int SensorPair_offsets_[4] = {
+  static const int SensorPair_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorname_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorvalue_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorvaluediff_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensortimediff_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorid_),
   };
   SensorPair_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -261,9 +262,10 @@ void protobuf_AddDesc_SensorsMessage_2eproto() {
     "alhost\022\023\n\tpublisher\030\002 \002(\t:\000\022\025\n\005topic\030\003 \002"
     "(\t:\006global\022\022\n\007timeout\030\004 \002(\005:\0010\022\023\n\ttimest"
     "amp\030\005 \002(\t:\000\022\037\n\nSensorData\030\006 \003(\0132\013.Sensor"
-    "Pair\"h\n\nSensorPair\022\024\n\nSensorName\030\001 \002(\t:\000"
+    "Pair\"~\n\nSensorPair\022\024\n\nSensorName\030\001 \001(\t:\000"
     "\022\023\n\013SensorValue\030\002 \002(\002\022\027\n\017SensorValueDiff"
-    "\030\003 \001(\002\022\026\n\016SensorTimeDiff\030\004 \001(\r", 1150);
+    "\030\003 \001(\002\022\026\n\016SensorTimeDiff\030\004 \001(\r\022\024\n\010Sensor"
+    "ID\030\005 \001(\005:\002-1", 1172);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "SensorsMessage.proto", &protobuf_RegisterTypes);
   InertialSensorsMessage::default_instance_ = new InertialSensorsMessage();
@@ -3197,6 +3199,7 @@ const int SensorPair::kSensorNameFieldNumber;
 const int SensorPair::kSensorValueFieldNumber;
 const int SensorPair::kSensorValueDiffFieldNumber;
 const int SensorPair::kSensorTimeDiffFieldNumber;
+const int SensorPair::kSensorIDFieldNumber;
 #endif  // !_MSC_VER
 
 SensorPair::SensorPair()
@@ -3219,6 +3222,7 @@ void SensorPair::SharedCtor() {
   sensorvalue_ = 0;
   sensorvaluediff_ = 0;
   sensortimediff_ = 0u;
+  sensorid_ = -1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -3264,6 +3268,7 @@ void SensorPair::Clear() {
     sensorvalue_ = 0;
     sensorvaluediff_ = 0;
     sensortimediff_ = 0u;
+    sensorid_ = -1;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -3275,7 +3280,7 @@ bool SensorPair::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string SensorName = 1 [default = ""];
+      // optional string SensorName = 1 [default = ""];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -3335,6 +3340,22 @@ bool SensorPair::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(40)) goto parse_SensorID;
+        break;
+      }
+      
+      // optional int32 SensorID = 5 [default = -1];
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_SensorID:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &sensorid_)));
+          _set_bit(4);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -3357,7 +3378,7 @@ bool SensorPair::MergePartialFromCodedStream(
 
 void SensorPair::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string SensorName = 1 [default = ""];
+  // optional string SensorName = 1 [default = ""];
   if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->sensorname().data(), this->sensorname().length(),
@@ -3381,6 +3402,11 @@ void SensorPair::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->sensortimediff(), output);
   }
   
+  // optional int32 SensorID = 5 [default = -1];
+  if (_has_bit(4)) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->sensorid(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -3389,7 +3415,7 @@ void SensorPair::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* SensorPair::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string SensorName = 1 [default = ""];
+  // optional string SensorName = 1 [default = ""];
   if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->sensorname().data(), this->sensorname().length(),
@@ -3414,6 +3440,11 @@ void SensorPair::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->sensortimediff(), target);
   }
   
+  // optional int32 SensorID = 5 [default = -1];
+  if (_has_bit(4)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->sensorid(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -3425,7 +3456,7 @@ int SensorPair::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string SensorName = 1 [default = ""];
+    // optional string SensorName = 1 [default = ""];
     if (has_sensorname()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -3447,6 +3478,13 @@ int SensorPair::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->sensortimediff());
+    }
+    
+    // optional int32 SensorID = 5 [default = -1];
+    if (has_sensorid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->sensorid());
     }
     
   }
@@ -3488,6 +3526,9 @@ void SensorPair::MergeFrom(const SensorPair& from) {
     if (from._has_bit(3)) {
       set_sensortimediff(from.sensortimediff());
     }
+    if (from._has_bit(4)) {
+      set_sensorid(from.sensorid());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -3505,7 +3546,7 @@ void SensorPair::CopyFrom(const SensorPair& from) {
 }
 
 bool SensorPair::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if ((_has_bits_[0] & 0x00000002) != 0x00000002) return false;
   
   return true;
 }
@@ -3516,6 +3557,7 @@ void SensorPair::Swap(SensorPair* other) {
     std::swap(sensorvalue_, other->sensorvalue_);
     std::swap(sensorvaluediff_, other->sensorvaluediff_);
     std::swap(sensortimediff_, other->sensortimediff_);
+    std::swap(sensorid_, other->sensorid_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

@@ -4,6 +4,7 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
+#include "architecture/narukom/pub_sub/filters/special_filters.h"
 
 namespace {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
@@ -16,11 +17,11 @@ MotionController::MotionController() :
 }
 
 void MotionController::UserInit() {
-	try {
-		tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
-	} catch (AL::ALError& e) {
-		Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
-	}
+	//try {
+		//tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
+	//} catch (AL::ALError& e) {
+		//Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
+	//}
 	try {
 		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
@@ -46,8 +47,16 @@ void MotionController::UserInit() {
 	am = NULL;
 	im = NULL;
 	
+	type_filter = new TypeFilter("type_filter");
+	type_filter->add_type("InertialSensorsMessage");
+	type_filter->add_type("MotionHeadMessage");
+	type_filter->add_type("MotionWalkMessage");
+	type_filter->add_type("MotionActionMessage");
+	_blk->getBuffer()->add_filter(type_filter);
+
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
+	AccYvalue = 0.0;
 
 	robotDown = false;
 	robotUp = true;
@@ -66,8 +75,8 @@ void MotionController::UserInit() {
 }
 
 int MotionController::Execute() {
-	Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	counter++;
+	Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//commands();
 	read_messages();
 	mglrun(); 
@@ -84,20 +93,15 @@ void MotionController::read_messages() {
 	_blk->process_messages();
 
 	/* Messages for Calibration */
-	hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "KImageExtractor");
+	hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
 	
-	/* Messages from Behavior */
-	wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "Behavior");
-	if (hm == NULL) hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "Behavior");
-	am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "Behavior");
+	/* Messages for Walk, Head, Action */
+	wm = _blk->in_msg_nb<MotionWalkMessage>("MotionWalkMessage");
+	if (hm == NULL) hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
+	am = _blk->in_msg_nb<MotionActionMessage>("MotionActionMessage");
 	
-	/* Messages from MotionController */
-	//wm = _blk->in_nb<MotionWalkMessage>("MotionWalkMessage", "MotionController");
-	//if (hm == NULL) hm = _blk->in_nb<MotionHeadMessage>("MotionHeadMessage", "MotionController");
-	//am = _blk->in_nb<MotionActionMessage>("MotionActionMessage", "MotionController");
-	
-	/* Messages from Sensors */
-	im = _blk->in_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
+	/* Messages for Intertial Readings */
+	im = _blk->in_msg_nb<InertialSensorsMessage>("InertialSensorsMessage");
 
 	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 
@@ -122,15 +126,18 @@ void MotionController::mglrun() {
 #else
 	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue > -40)) { // Robot
 #endif
-		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 0.0);
+		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
+		RejectAllFilter reject_filter("RejectFilter");
+		_blk->getBuffer()->add_filter(&reject_filter);
+		sleep(1);
 		robotUp = false;
 		robotDown = true;
 		killCommands();
-		tts->pCall<AL::ALValue>("say", "Ouch!");
-		sleep(1);
+//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
 		motion->setStiffnesses("Body", 0.6);
 		ALstandUpCross();
+		_blk->getBuffer()->remove_filter(&reject_filter);
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 		return;
 	}

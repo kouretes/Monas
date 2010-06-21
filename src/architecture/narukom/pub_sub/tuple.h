@@ -24,10 +24,10 @@ class Tuple{
 	friend class Blackboard;
   public:
 explicit
-Tuple(google::protobuf::Message* msg,const std::string& host = "localhost",const std::string pub_name = "", const std::string topic = "global", const std::string& destination = "",int timeout = 100);
+Tuple(google::protobuf::Message* msg,const std::string& host = "localhost",const std::string pub_name = "", const std::string topic = "global", const std::string& destination = "",int timeout = 500);
 Tuple(google::protobuf::Message* msg,const Envelope& metadata);
 Tuple(char* bytes,unsigned int size,
-      const std::string& host = "localhost",const std::string pub_name = "", const std::string topic = "global", const std::string& destination = "",int timeout = 100);
+      const std::string& host = "localhost",const std::string pub_name = "", const std::string topic = "global", const std::string& destination = "",int timeout = 500);
 Tuple(char* bytes,unsigned size, const Envelope& metadata);      
 Tuple(const Tuple& other);
   

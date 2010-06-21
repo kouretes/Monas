@@ -44,7 +44,7 @@ include_directories( ${NarukomDir}
 		     ${BoostIncludeDir}
 		     )
 add_subdirectory( narukom_messages)
-add_library(narukom SHARED narukom.cpp ${NARUKOM_SYSTEM_SRCS}  ${NARUKOM_PUB_SUB_SRCS}  ${NARUKOM_NETWORK_SRCS}  ${NARUKOM_MESSAGES_SRCS}  )
+add_library(narukom  SHARED narukom.cpp ${NARUKOM_SYSTEM_SRCS}  ${NARUKOM_PUB_SUB_SRCS}  ${NARUKOM_NETWORK_SRCS}  ${NARUKOM_MESSAGES_SRCS}  )
 
 install ( TARGETS narukom
 RUNTIME DESTINATION   bin

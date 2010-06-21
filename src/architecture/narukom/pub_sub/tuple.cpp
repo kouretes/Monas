@@ -22,6 +22,7 @@ Tuple::Tuple(google::protobuf::Message* msg, const std::string& host, const std:
   msg_data->CopyFrom(*msg);
   
   meta_data.set_timestamp( boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time()));
+	generate_timeout(true);
 }
 
 Tuple::Tuple(char* bytes, unsigned int size, const std::string& host, const std::string pub_name, const std::string topic, const std::string& destination, int timeout)
@@ -38,6 +39,8 @@ Tuple::Tuple(char* bytes, unsigned int size, const std::string& host, const std:
   meta_data.set_serialized(true);
   msg_data = serialized_msg;
   meta_data.set_timestamp( boost::posix_time::to_iso_string(boost::posix_time::microsec_clock::local_time()));
+	generate_timeout(true);
+// 	std::cout << "In constructor char " << this->timeout << std::endl;
 }
 Tuple::Tuple(char* bytes, unsigned int size, const Envelope& metadata)
 {
@@ -47,6 +50,7 @@ Tuple::Tuple(char* bytes, unsigned int size, const Envelope& metadata)
   meta_data.CopyFrom(metadata);
   meta_data.set_serialized(true);
   msg_data = serialized_msg;
+	generate_timeout(true);
 }
 Tuple::Tuple(const Tuple& other)
 {

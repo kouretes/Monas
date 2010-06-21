@@ -21,6 +21,7 @@
 #include "albrokermanager.h"
 #include "altexttospeechproxy.h"
 
+#include "architecture/narukom/pub_sub/filters/type_filter.h"
 #include <string>
 
 class MotionController : public IActivity, public Publisher{
@@ -42,6 +43,7 @@ private:
 
 	AL::ALPtr<AL::ALProxy> tts;
 	AL::ALPtr<AL::ALMotionProxy> motion;
+	TypeFilter* type_filter;
 
 	bool robotDown;
 	bool robotUp;
