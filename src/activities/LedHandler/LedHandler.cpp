@@ -45,11 +45,11 @@
   }
   void LedHandler::UserInit()
   {
-    
+
     _com->get_message_queue()->add_subscriber(_blk);
       _com->get_message_queue()->subscribe("communication",_blk,0);
       try{
-	  
+
 	  //cout << "trying to get ALLeds Proxy " << KAlBroker::Instance()->GetBroker() << endl;
 	  leds =  KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
 	  cout << "Initialized" << endl;
@@ -68,7 +68,7 @@
 
   LedHandler::LedHandler(): Publisher("LedHandler")
   {
-      
+
     cout << "LedHandler " << " Constructor" << endl;
   }
 
@@ -98,7 +98,7 @@
 	  setDcmEarColor(device,color);
 	  return;
       }
-      if(device.compare("eye") == 0)
+      if(device.find("eye") == 0)
       {
 	  setDcmEyeColor(device,color);
       }
