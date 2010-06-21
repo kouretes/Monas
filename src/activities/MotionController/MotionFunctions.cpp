@@ -161,7 +161,7 @@ void MotionController::ALstandUp() {
 #ifdef WEBOTS
 	if (AccXvalue > 1.0) { // Webots
 #else
-	if (AccXvalue < 5.0) { // Robot
+	if (AccXvalue < 0.0) { // Robot
 #endif
 		//tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Up!"));
 		ALstandUpBack2010();
@@ -170,7 +170,7 @@ void MotionController::ALstandUp() {
 #ifdef WEBOTS
 	else if (AccXvalue < -1.0) { // Webots
 #else
-	else if (AccXvalue > -5.0) { // Robot
+	else if (AccXvalue > 0.0) { // Robot
 #endif
 //		tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Down!"));
 		ALstandUpFront2009();
