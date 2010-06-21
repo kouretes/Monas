@@ -29,7 +29,7 @@
   <activity>RobotController</activity>
 </agent>
 
-<agent IsRealTime=0 Priority=1 ThreadFrequency=3  StatsCycle=15>
+<agent IsRealTime=0 Priority=1 ThreadFrequency=20  StatsCycle=15>
   <name>LedHandler</name>
   <activity>LedHandler</activity>
 </agent>
