@@ -130,7 +130,8 @@ void Vision::testrun()
 {
 	trydelete(im);
 	trydelete(hm);
-
+	static unsigned delay = 0;
+	static bool has_ball = false;
 	leds.Clear();
 	im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
@@ -264,17 +265,40 @@ void Vision::testrun()
                    ||obs.line_objects_size()>0)
         publish(&obs,"vision");
     LedValues* l=leds.add_leds();
-    if(obs.has_ball())
+    if(has_ball != obs.has_ball())
     {
-        l->set_chain("leye");
+			has_ball = obs.has_ball();
+			if(has_ball)
+			{
+        l->set_chain("l_eye");
         l->set_color("red");
-    }
+			}
+			else
+			{
+				l->set_chain("l_eye");
+        l->set_color("green");
+				
+			}
+			publish(&leds,"communication");
+		}
     else
     {
-        l->set_chain("leye");
-        l->set_color("red");
-    }
-     publish(&leds,"communication");
+			if(++delay %= 20)
+			{
+				if(has_ball)
+				{
+					l->set_chain("l_eye");
+					l->set_color("red");
+				}
+				else
+				{
+					l->set_chain("l_eye");
+					l->set_color("green");
+
+				}
+			}
+		}
+    
 	if (cvHighgui)
 		cvShowSegmented();
 
@@ -349,14 +373,8 @@ void Vision::UserInit()
 	type_filter->add_type("CalibrateCam");
 
 	//Turn off leds
-	leds.Clear();
-	LedValues* l=leds.add_leds();
-	l->set_chain("leye");
-	l->set_color("off");
-	LedValues* r=leds.add_leds();
-	r->set_chain("reye");
-	r->set_color("off");
 
+// 	publish(&leds,"communication");
 }
 void Vision::gridScan(const KSegmentator::colormask_t color)
 {

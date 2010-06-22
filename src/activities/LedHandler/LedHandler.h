@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include "architecture/IActivity.h"
+#include "architecture/narukom/pub_sub/filters/time_filter.h"
 using std::string;
 using std::vector;
 class LedHandler :  public IActivity,public Publisher
@@ -32,6 +33,8 @@ public:
 
 
 private:
+
+// 	  TimeFilter* tm;
     void initializeColorMap();
     int getColor(string);
     AL::ALPtr<AL::ALProxy> leds; //proxy to handle led colors

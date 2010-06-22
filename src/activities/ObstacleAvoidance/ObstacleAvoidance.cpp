@@ -10,14 +10,15 @@ namespace {
 
 ObstacleAvoidance::ObstacleAvoidance() :
 	Publisher("ObstacleAvoidance") {
+		;
 }
 
 void ObstacleAvoidance::UserInit() {
-	_com->get_message_queue()->add_publisher(this);
+	
 	_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->subscribe("behavior", _blk, 0);
-
+	_com->get_message_queue()->add_publisher(this);
 	obavm = new ObstacleMessage();
 
 	resX=0.0;
@@ -25,6 +26,7 @@ void ObstacleAvoidance::UserInit() {
 	resAngle=0.0;
 	ussm =0;
 	rpsm=0;
+	
 	shift = 0;  //shift==metatopish gia probolh grid sthn ekastote konsola
 	countAge=0;
 	countLeft=0;
@@ -114,8 +116,8 @@ int ObstacleAvoidance::Execute() {
 
 void ObstacleAvoidance::read_messages() {
 	_blk->process_messages();
-	ussm = dynamic_cast<UltaSoundSensorsMessage*> (_blk->in_nb<UltaSoundSensorsMessage>("UltaSoundSensorsMessage", "Sensors"));
-	rpsm = dynamic_cast<RobotPositionSensorMessage*> (_blk->in_nb<RobotPositionSensorMessage>("RobotPositionSensorMessage", "Sensors"));
+	ussm = _blk->in_msg_nb<UltaSoundSensorsMessage>("UltaSoundSensorsMessage");
+	rpsm = _blk->in_msg_nb<RobotPositionSensorMessage>("RobotPositionSensorMessage");
 	//targetX = _blk->in_nb<RobotPositionSensorMessage>("targetX", "Behavior");
 	//targetY = _blk->in_nb<RobotPositionSensorMessage>("targetY", "Behavior");
 }
@@ -123,33 +125,33 @@ void ObstacleAvoidance::read_messages() {
 void ObstacleAvoidance::publishObstacleMessage(){
 	if (mprosta ==true){
 		mprosta = false;
-		obavm->set_direction(1);
+		obavm->set_direction(0);
 		obavm->set_distance(mprostaDist);
 		obavm->set_certainty(mprostaCert);
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "mprosta dist " + _toString(mprostaDist) + "cert "+_toString(mprostaCert) , Logger::ExtraExtraInfo);
 	}
 	else if (dexia) {
 		dexia=false;
-		obavm->set_direction(2);
+		obavm->set_direction(1);
 		obavm->set_distance(dexiaDist);
 		obavm->set_certainty(dexiaCert);
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "dexia dist " + _toString(dexiaDist) + "cert "+_toString(dexiaCert) , Logger::ExtraExtraInfo);
 	}
 	else if (aristera) {
 		aristera=false;
-		obavm->set_direction(3);
+		obavm->set_direction(2);
 		obavm->set_distance(aristeraDist);
 		obavm->set_certainty(aristeraCert);
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "aristera dist " + _toString(aristeraDist) + "cert "+_toString(aristeraCert) , Logger::ExtraExtraInfo);
 	}
 	else {
 		//no obstacle
-		obavm->set_direction(4);
+		obavm->set_direction(3);
 		obavm->set_distance(0.0);
 		obavm->set_certainty(0.0);
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "no obstacle!! "  , Logger::ExtraExtraInfo);
 	}
-	Publisher::publish(obavm,"behavior", 100);
+	Publisher::publish(obavm,"obstacle");
 }
 
 void ObstacleAvoidance::initGrid(){
@@ -228,7 +230,7 @@ void ObstacleAvoidance::updateGrid(double (&newValues1)[10], double (&newValues2
 			if (int(temp[0]/0.1) == int(temp[1]/0.1)) { //apenanti
 				///////////////mnm gia empodio akribws mprosta se apostash temp[0]/0.1
 				mprosta = true;
-				mprostaDist = temp[0]/0.1;
+				mprostaDist = temp[0];
 				
 				if (temp[0]/0.1 <= 3 && PolarGrid[0][17]>0.8){
 					Logger::Instance().WriteMsg("ObstacleAvoidance", "STOOOOOOOOOOOOOOOP" , Logger::ExtraExtraInfo);
@@ -271,11 +273,11 @@ void ObstacleAvoidance::updateGrid(double (&newValues1)[10], double (&newValues2
 				}
 				if (k == 0){
 					dexia = true;
-					dexiaDist = temp[k]/0.1;
+					dexiaDist = temp[k];
 					dexiaCert = PolarGrid[(int)(temp[k]/0.1 - 3)][14];
 				}else{
 					aristera = true;
-					aristeraDist = temp[k]/0.1;
+					aristeraDist = temp[k];
 					aristeraCert = PolarGrid[(int)(temp[k]/0.1 - 3)][20];
 				}
 			}

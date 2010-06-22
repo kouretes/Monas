@@ -61,6 +61,7 @@ int  RobotController::extract_player_state(RoboCupGameControlData* data)
 
 int RobotController::Execute()
 {
+	static int delay;
     // cout <<"add: "<< (int)(&received_data) <<  " rd: " << received_data << " cbp " << chest_button_pressed << " rfb " << right_bumper_pressed << " lfb " << left_bumper_pressed << endl;
     cout << "RC RUN" << endl;
     bool changed = false;
@@ -174,16 +175,22 @@ int RobotController::Execute()
         //button_mx.unlock();
     }
     if(changed)
-    {
-        sendLedUpdate();
-        publish(&gm_state,"behavior");
-    }
+		{
+			sendLedUpdate();
+			publish(&gm_state,"behavior");
+		}
+		else
+		{
+				if(delay++ % 100 == 0)
+				sendLedUpdate();
+		}
 
     return 0;
 }
 
 void RobotController::sendLedUpdate()
 {
+	  
     LedValues* chest_led = leds.add_leds();
     LedValues* rfoot_led = leds.add_leds();
     LedValues* lfoot_led = leds.add_leds();
