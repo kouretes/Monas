@@ -28,6 +28,8 @@
 #define angularDistance(Hr,Ho,yaw,pitch) ( sqrt(1+sin(yaw)*sin(yaw))*((Hr)-(Ho))*kinext.cot(pitch) )
 #define apparentDistance(Hr,Ho,rad) ( sqrt ( ( (((Ho)*(Ho) ) -((Hr)*(Hr)*tan(rad)*tan(rad)))*kinext.cot(rad)*kinext.cot(rad)    )  ))
 
+
+
 #define BALLRADIUS 0.03f
 #define GOALHEIGHT 0.8f
 
@@ -277,7 +279,7 @@ void Vision::testrun()
 			{
 				l->set_chain("l_eye");
         l->set_color("green");
-				
+
 			}
 			publish(&leds,"communication");
 		}
@@ -298,7 +300,7 @@ void Vision::testrun()
 				}
 			}
 		}
-    
+
 	if (cvHighgui)
 		cvShowSegmented();
 
@@ -405,6 +407,9 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	bool havehorizon=true;
 	float tantheta,beta;
 	float d=1;//Ray distance
+
+	//
+	CvPoint lastpoint;
 	float hory;
 	if (abs((*ang)(1))==KMat::transformations::PI/2.0)//90 angle!!!!!
 	{
@@ -464,7 +469,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
         }
         if(hory<=0) hory=-BORDERSKIP;
 
-
+        lastpoint.x=-1;//Invalidate first
 
 
 		for (j = rawImage->height - BORDERSKIP-1; j > hory&& j> BORDERSKIP; j = j - ystep)
@@ -511,6 +516,8 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				cntwhitegreenorangepixels++;
 				cntother=0;
 				ballskip=0;
+				lastpoint.x=i;
+				lastpoint.y=j;
 			}
 			else if (tempcolor==orange)
 			{
@@ -526,6 +533,8 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			if (cntother>SCANSKIP)//No continuity, break
 			{
 			    //cout<<"break"<<endl;
+			    if(lastpoint.x!=-1)
+                    obstacles.push_back(lastpoint);
 				break;
 			}
 			if (tempcolor == orange && cntwhitegreenpixels >= ballthreshold&&ballskip==0)
@@ -538,7 +547,6 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				//continue;
 				//ballpixel = j;
 			}
-
 
 			ystep=ystep>>1;
 			//cout<<ystep<<endl;
@@ -559,7 +567,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		//cout<<"xstep"<<step<<endl;
 		//TODO xstep;
 	}
-
+    publishObstacles(obstacles);
 	balldata_t b = locateBall(ballpixels);
 	//cout<<b.r<<endl;
 
@@ -639,6 +647,52 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	}*/
 }
 
+
+void Vision::publishObstacles(std::vector<CvPoint> points)
+{
+    vector<CvPoint>::iterator i;//candidate iterator
+    VisionObstacleMessage result;
+
+    for (i = points.begin(); i != points.end(); i++)
+    {
+
+        KMat::HCoords<float,2> point;
+        point(1)=(*i).x;
+        point(2)=(*i).y;
+        KMat::HCoords<float,2> &a=imageTocamera(point);
+
+        KMat::HCoords<float,2> & b=cameraToObs(a);
+        delete &a;
+        float d=angularDistance(cameraH,BALLRADIUS,point(1),b(2));
+        b(2)=b(1);
+        b(1)=d;
+        //Distance bearing
+        KMat::HCoords<float,2> & w=camToRobot(b);
+        delete &b;
+
+
+		if(d>=0.3&&d<=0.9)
+		{
+            float bearing=w(1)/TO_RAD+180;
+            if(w(1)>360)
+                w(1)=w(1)-360;
+            w(2)=w(2)*100;
+            ObstacleMessage *o=result.add_obstacles();
+            o->set_direction(w(1));
+            o->set_distance(w(2));
+
+
+
+
+		}
+        delete &w;
+
+
+
+    }
+    if(result.obstacles_size()>2)
+        publish(&result,"obstacle");
+}
 
 KMat::HCoords<float,2> & Vision::imageTocamera( KMat::HCoords<float,2>  & imagep)
 {

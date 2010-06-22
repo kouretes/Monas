@@ -19,6 +19,7 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/Gamecontroller.pb.h"
+#include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "architecture/narukom/pub_sub/filters/type_filter.h"
 //#define DEBUGVISION
 
@@ -71,6 +72,12 @@ private:
     //AL::ALPtr<AL::ALMemoryProxy> memory;
 
     //Ball Detection related
+    typedef struct PointProjection
+    {
+        float distance;
+        float bearing;
+    } pointprojection_t;
+
     typedef struct balldata
     {
         float x, y;
@@ -107,12 +114,14 @@ private:
     std::vector<CvPoint> ballpixels;
     std::vector<CvPoint> ygoalpost;
     std::vector<CvPoint> bgoalpost;
+    std::vector<CvPoint>  obstacles;
 
     void gridScan(const KSegmentator::colormask_t color);
 
     bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c);
     bool calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask_t c);
     balldata_t locateBall(std::vector<CvPoint> cand);
+    void publishObstacles(std::vector<CvPoint> points);
     goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
