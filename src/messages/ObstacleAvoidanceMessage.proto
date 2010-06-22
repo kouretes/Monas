@@ -5,3 +5,6 @@ message ObstacleMessage{
 	
 }
 
+message VisionObstacleMessage{
+	repeated ObstacleMessage obstacles =1 ;	
+}

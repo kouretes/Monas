@@ -31,6 +31,7 @@ void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
 void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
 
 class ObstacleMessage;
+class VisionObstacleMessage;
 
 // ===================================================================
 
@@ -137,6 +138,100 @@ class ObstacleMessage : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static ObstacleMessage* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class VisionObstacleMessage : public ::google::protobuf::Message {
+ public:
+  VisionObstacleMessage();
+  virtual ~VisionObstacleMessage();
+  
+  VisionObstacleMessage(const VisionObstacleMessage& from);
+  
+  inline VisionObstacleMessage& operator=(const VisionObstacleMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const VisionObstacleMessage& default_instance();
+  
+  void Swap(VisionObstacleMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  VisionObstacleMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const VisionObstacleMessage& from);
+  void MergeFrom(const VisionObstacleMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .ObstacleMessage obstacles = 1;
+  inline int obstacles_size() const;
+  inline void clear_obstacles();
+  static const int kObstaclesFieldNumber = 1;
+  inline const ::ObstacleMessage& obstacles(int index) const;
+  inline ::ObstacleMessage* mutable_obstacles(int index);
+  inline ::ObstacleMessage* add_obstacles();
+  inline const ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >&
+      obstacles() const;
+  inline ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >*
+      mutable_obstacles();
+  
+  // @@protoc_insertion_point(class_scope:VisionObstacleMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::RepeatedPtrField< ::ObstacleMessage > obstacles_;
+  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static VisionObstacleMessage* default_instance_;
+};
 // ===================================================================
 
 
@@ -190,6 +285,35 @@ inline float ObstacleMessage::certainty() const {
 inline void ObstacleMessage::set_certainty(float value) {
   _set_bit(2);
   certainty_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// VisionObstacleMessage
+
+// repeated .ObstacleMessage obstacles = 1;
+inline int VisionObstacleMessage::obstacles_size() const {
+  return obstacles_.size();
+}
+inline void VisionObstacleMessage::clear_obstacles() {
+  obstacles_.Clear();
+}
+inline const ::ObstacleMessage& VisionObstacleMessage::obstacles(int index) const {
+  return obstacles_.Get(index);
+}
+inline ::ObstacleMessage* VisionObstacleMessage::mutable_obstacles(int index) {
+  return obstacles_.Mutable(index);
+}
+inline ::ObstacleMessage* VisionObstacleMessage::add_obstacles() {
+  return obstacles_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >&
+VisionObstacleMessage::obstacles() const {
+  return obstacles_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >*
+VisionObstacleMessage::mutable_obstacles() {
+  return &obstacles_;
 }
 
 
