@@ -24,7 +24,7 @@
 
 #define VISION_RESOLUTION kQVGA
 #define VISION_CSPACE kYUV422InterlacedColorSpace
-#define VISON_FPS 5
+#define VISON_FPS 10
 #define VISION_GVMNAME "KImageExtractor"
 
 

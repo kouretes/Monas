@@ -47,7 +47,16 @@ public:
         return "Vision";
     }
 
-
+     typedef struct GoalPostdata
+    {
+        CvPoint ll;//Corners
+        CvPoint lr;//Corners
+        CvPoint bottom;
+        CvPoint top;
+        int height;//in pixels
+        float d;//Distance
+        float conf;
+    } goalpostdata_t;
 private:
     bool cvHighgui;
     XMLConfig *config;
@@ -85,16 +94,7 @@ private:
         float d;//Observed distance;
     } balldata_t;
 
-    typedef struct GoalPostdata
-    {
-        CvPoint ll;//Corners
-        CvPoint lr;//Corners
-        CvPoint bottom;
-        CvPoint top;
-        int height;//in pixels
-        float d;//Distance
-        float conf;
-    } goalpostdata_t;
+
 
     enum colors
     {

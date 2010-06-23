@@ -212,7 +212,10 @@ void Vision::testrun()
 	//float exptime=ext.getExp();//Compensate for middle of image
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
-	float imcomp=((stamp-p.time).total_microseconds()*1000.0)/p.timediff;
+
+	float imcomp=((stamp-p.time).total_microseconds()*1000.0*1/4)/p.timediff;
+	//cout<<boost::posix_time::to_iso_string(stamp)<<endl;
+	//cout<<boost::posix_time::to_iso_string(p.time)<<endl;
 	//cout<<"imcomp:"<<imcomp<<endl;
 
 	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
@@ -384,6 +387,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	ballpixels.clear();
 	ygoalpost.clear();
 	bgoalpost.clear();
+	obstacles.clear();
 
 
 	CvPoint tmpPoint;
@@ -650,8 +654,16 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 void Vision::publishObstacles(std::vector<CvPoint> points)
 {
+    static int period=0;
+    period++;
+    if(period>5)
+        period=0;
     vector<CvPoint>::iterator i;//candidate iterator
     VisionObstacleMessage result;
+    if(!(result.obstacles_size()>2&&period==0))
+        return;
+
+
 
     for (i = points.begin(); i != points.end(); i++)
     {
@@ -690,8 +702,8 @@ void Vision::publishObstacles(std::vector<CvPoint> points)
 
 
     }
-    if(result.obstacles_size()>2)
-        publish(&result,"obstacle");
+    publish(&result,"obstacle");
+
 }
 
 KMat::HCoords<float,2> & Vision::imageTocamera( KMat::HCoords<float,2>  & imagep)
@@ -812,8 +824,16 @@ bool Vision::calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask
     else
         goal.conf=0;
 }
+
+bool cmpgoalpostdata_t (Vision::goalpostdata_t a,  Vision::goalpostdata_t b)
+{
+    return a.d < b.d;
+}
+
 Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 {
+
+
     CvPoint2D32f Vup;//Vertical velocity
     Vup.y=-1;
     Vup.x=-tan((*ang)(1));
@@ -1000,7 +1020,12 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
 		newpost.d=angularDistance(cameraH,BALLRADIUS,point(1),b(2));
+
 		delete &b;
+
+
+
+		newpost.d=angularDistance(cameraH,BALLRADIUS,point(1),b(2));
 		//cout<<"ball dist:"<<newdata.d<<endl;
 
 		if(newpost.d<=0||newpost.d>=LONGESTDIST)
@@ -1010,6 +1035,14 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
             history.push_back(newpost);
 
 	}
+	std::sort (history.begin(), history.end(), cmpgoalpostdata_t);
+	//if(history.size()==2)
+	//{
+	   // NamedObject *gp=obs->add_regular_objects();
+	    //if(c==yellow)
+         //   gp->set_
+
+	//}
 
 }
 /*
