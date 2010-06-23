@@ -135,20 +135,7 @@ void Vision::testrun()
 	static unsigned delay = 0;
 	static bool has_ball = false;
 	leds.Clear();
-	im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
 
-	if (im==NULL)//No sensor data!
-	{
-	    Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no sensor (IS) data!", Logger::Error);
-		//cout<<"Warning!!! Vision has no sensor data!"<<endl;
-		return;
-	}
-	if (im->sensordata_size()<7)
-	{
-		//cout<<"Warning!!! Vision has BAD sensor data!"<<endl;
-		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has BA sensor (IS) data!", Logger::Error);
-		return;
-	}
 
 	//cout << "fetchImage" << endl;
 	boost::posix_time::ptime stamp = ext.fetchImage(rawImage);
@@ -181,6 +168,20 @@ void Vision::testrun()
 #endif
 	//boost::posix_time::ptime rtime =  time_t_epoch+(boost::posix_time::microsec(t.tv_nsec/1000)+boost::posix_time::seconds(t.tv_sec));//+sec(t.tv_sec));
 //	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
+    im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
+
+	if (im==NULL)//No sensor data!
+	{
+	    Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no sensor (IS) data!", Logger::Error);
+		//cout<<"Warning!!! Vision has no sensor data!"<<endl;
+		return;
+	}
+	if (im->sensordata_size()<7)
+	{
+		//cout<<"Warning!!! Vision has BAD sensor data!"<<endl;
+		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has BA sensor (IS) data!", Logger::Error);
+		return;
+	}
  	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors","localhost",&p.time,&stamp);//,&rtime);
 	if (hm==NULL)//No sensor data!
 	{
