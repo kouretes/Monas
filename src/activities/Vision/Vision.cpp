@@ -140,7 +140,6 @@ void Vision::testrun()
 	//cout << "fetchImage" << endl;
 	boost::posix_time::ptime stamp = ext.fetchImage(rawImage);
 
-
 	if (ext.getCamera()==1)//bottom cam
 	{
 		cameraPitch=(KMat::transformations::PI*40.0)/180.0;
@@ -168,7 +167,8 @@ void Vision::testrun()
 #endif
 	//boost::posix_time::ptime rtime =  time_t_epoch+(boost::posix_time::microsec(t.tv_nsec/1000)+boost::posix_time::seconds(t.tv_sec));//+sec(t.tv_sec));
 //	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
-    im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors");
+    //im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors",&p.time,&stamp);
+    im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors","localhost",&p.time,&stamp);
 
 	if (im==NULL)//No sensor data!
 	{
@@ -447,7 +447,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		//TOOD ystep
         point(1)=i;
         point(2)=rawImage->height - BORDERSKIP-1;
-        KMat::HCoords<float,2> &a=imageTocamera(point);
+        KMat::HCoords<float,2> &a=imageToCameraAngles(point);
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
         //tempcolor = doSeg(i, rawImage->height - BORDERSKIP);
@@ -466,7 +466,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
         //cout<<ystep<<endl;
         if (havehorizon)
         {
-            KMat::HCoords<float,2> &c= imageTocamera(point);
+            KMat::HCoords<float,2> &c= imageToCameraAngles(point);
             hory=-(tantheta*c(1)+beta);
             hory=(hory/(VFov * TO_RAD)+0.5)*rawImage->height;
             //cout<<"hory"<<hory<<endl;
@@ -561,7 +561,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 
 		}
-		//KMat::HCoords<float,2> &=imageTocamera(point);
+		//KMat::HCoords<float,2> &=imageToCameraAngles(point);
 		//KMat::HCoords<float,2> & a=cameraToObs(point);
 
 		//float xdist=angularDistance(cameraH,0,a(2));
@@ -672,7 +672,7 @@ void Vision::publishObstacles(std::vector<CvPoint> points)
         KMat::HCoords<float,2> point;
         point(1)=(*i).x;
         point(2)=(*i).y;
-        KMat::HCoords<float,2> &a=imageTocamera(point);
+        KMat::HCoords<float,2> &a=imageToCameraAngles(point);
 
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
@@ -707,11 +707,16 @@ void Vision::publishObstacles(std::vector<CvPoint> points)
 
 }
 
-KMat::HCoords<float,2> & Vision::imageTocamera( KMat::HCoords<float,2>  & imagep)
+KMat::HCoords<float,2> & Vision::imageToCameraAngles( KMat::HCoords<float,2>  & imagep)
 {
+    static float horb=1/(2*tan((HFov* TO_RAD)/2));
+    static float verb=1/(2*tan((VFov*TO_RAD)/2));
+
 	KMat::HCoords<float,2> &t= *(new KMat::HCoords<float,2> ());
-	t(1)=(-0.5 + (double) (imagep(1)-0.5f) / (double) rawImage->width) * HFov * TO_RAD;
-	t(2)=(0.5 - (double) (imagep(2)-0.5f) / (double) rawImage->height) * VFov * TO_RAD;
+    t(1)=atan( (-0.5 + (double) (imagep(1)-0.5f) / (double) rawImage->width) / horb );
+    t(2)=atan( (0.5 - (double) (imagep(2)-0.5f) / (double) rawImage->height) / verb );
+	//t(1)=(-0.5 + (double) (imagep(1)-0.5f) / (double) rawImage->width) * HFov * TO_RAD;
+	//t(2)=(0.5 - (double) (imagep(2)-0.5f) / (double) rawImage->height) * VFov * TO_RAD;
 	return t;
 }
 
@@ -720,6 +725,7 @@ KMat::HCoords<float,2> & Vision::imageTocamera( KMat::HCoords<float,2>  & imagep
 KMat::HCoords<float,2> & Vision::cameraToObs(KMat::HCoords<float ,2> const& t)
 {
 	KMat::HCoords<float,2> &res=ct.transform(t);
+
 	res(1)=-res(1)+p.yaw+(*ang)(3);
 	res(2)=-res(2)+horizonAlpha;//p.pitch+(*ang)(2)+cameraPitch;
 
@@ -1017,7 +1023,7 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
         KMat::HCoords<float,2> point;
         point(1)=newpost.bottom.x;
         point(2)=newpost.bottom.y;
-        KMat::HCoords<float,2> &a=imageTocamera(point);
+        KMat::HCoords<float,2> &a=imageToCameraAngles(point);
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
 		newpost.d=angularDistance(cameraH,BALLRADIUS,point(1),b(2));
@@ -1174,7 +1180,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 		point(1)=center.x;
         point(2)=center.y;
-        KMat::HCoords<float,2> &a=imageTocamera(point);
+        KMat::HCoords<float,2> &a=imageToCameraAngles(point);
         KMat::HCoords<float,2> & b=cameraToObs(a);
         delete &a;
 		newdata.d=angularDistance(cameraH,BALLRADIUS,center.x,b(2));

@@ -126,7 +126,7 @@ private:
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
-    KMat::HCoords<float,2> & imageTocamera( KMat::HCoords<float,2>  & imagep);
+    KMat::HCoords<float,2> & imageToCameraAngles( KMat::HCoords<float,2>  & imagep);
     KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
     KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
 		TypeFilter* type_filter;
