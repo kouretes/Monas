@@ -92,6 +92,8 @@ private:
 	AL::ALValue RightDive_times, RightDive_keys;
 	std::vector<std::string> LeftDive_names;
 	AL::ALValue LeftDive_times, LeftDive_keys;
+	std::vector<std::string> PuntKick_names;
+	AL::ALValue PuntKick_times, PuntKick_keys;
 
 	void loadActionsKME();
 	struct motSequence {

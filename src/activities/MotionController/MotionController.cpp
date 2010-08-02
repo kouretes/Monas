@@ -124,7 +124,7 @@ void MotionController::mglrun() {
 #ifdef WEBOTS
 	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue < 5.5) ) { // Webots
 #else
-	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue > -40)) { // Robot
+	if ( (im != NULL) && (!robotDown) && (robotUp) && (AccZvalue > -40) ) { // Robot
 #endif
 		motion->setStiffnesses("Body", 0.0);
 		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
@@ -231,7 +231,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.8;
+				float fractionMaxSpeed = 0.6;
 				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg( "MotionController"," Head ID: "+_toString(headPID),Logger::ExtraInfo);
 			}
@@ -278,6 +278,12 @@ void MotionController::mglrun() {
 				stopWalkCommand();
 				killHeadCommand();
 				actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
+			}
+			else if (am->command() == "puntKick") {
+				stopWalkCommand();
+				killHeadCommand();
+				actionPID = motion->post.angleInterpolationBezier(PuntKick_names, PuntKick_times, PuntKick_keys);
+				robotUp = false;
 			}
 			else {
 				stopWalkCommand();

@@ -1,5 +1,5 @@
-#ifndef BEHAVIOR_H
-#define BEHAVIOR_H
+#ifndef BEHAVIORPASSING_H
+#define BEHAVIORPASSING_H
 
 #include "architecture/IActivity.h"
 
@@ -9,8 +9,7 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
-#include "messages/VisionObservations.pb.h"
-
+#include "messages/ObstacleAvoidanceMessage.pb.h"
 
 #include "alptr.h"
 
@@ -24,18 +23,19 @@ namespace AL {
 	class ALMemoryProxy;
 }
 
-class BehaviorGoalie: public IActivity, public Publisher {
+class BehaviorPassing: public IActivity, public Publisher {
 
 	public:
-		BehaviorGoalie();
+		BehaviorPassing();
 		int Execute();
 		void UserInit();
 		void read_messages();
 		int MakeTrackBallAction();
 		void HeadScanStep();
         std::string GetName() {
-            return "BehaviorGoalie";
+            return "BehaviorPassing";
         }
+        void mgltest();
 
 	private:
 		AL::ALPtr<AL::ALMotionProxy> motion;
@@ -49,7 +49,6 @@ class BehaviorGoalie: public IActivity, public Publisher {
 		int yawdirection;
 		SensorPair HeadYaw;
 		SensorPair HeadPitch;
-		BallTrackMessage lastballseen;
 
 		bool startscan;
 		bool scanforball;
@@ -64,8 +63,9 @@ class BehaviorGoalie: public IActivity, public Publisher {
 		short balllastseendirection;
 		HeadJointSensorsMessage* hjsm;
 		BallTrackMessage* bmsg;
-		GameStateMessage* gsm;
 		ObservationMessage* obsm;
+		GameStateMessage* gsm;
+		ObstacleMessage* om;
 		int calibrated;
 		bool play;
 

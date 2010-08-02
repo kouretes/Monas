@@ -8,3 +8,17 @@ message ObstacleMessage{
 message VisionObstacleMessage{
 	repeated ObstacleMessage obstacles =1 ;	
 }
+
+
+message PathPlanningRequestMessage{
+	required float goToX = 1 [default = 0.0];
+	required float goToY = 2 [default = 0.0];
+	required float goToAngle = 3 [default = 0.0];
+}
+
+message PathPlanningResultMessage{
+	required float moveToX = 1 [default = 0.0];
+	required float moveToY = 2 [default = 0.0];
+	required float moveToAngle = 3 [default = 0.0];
+}
+

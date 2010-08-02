@@ -18,6 +18,12 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* VisionObstacleMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   VisionObstacleMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PathPlanningRequestMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  PathPlanningRequestMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PathPlanningResultMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  PathPlanningResultMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -60,6 +66,40 @@ void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(VisionObstacleMessage));
+  PathPlanningRequestMessage_descriptor_ = file->message_type(2);
+  static const int PathPlanningRequestMessage_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, gotox_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, gotoy_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, gotoangle_),
+  };
+  PathPlanningRequestMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      PathPlanningRequestMessage_descriptor_,
+      PathPlanningRequestMessage::default_instance_,
+      PathPlanningRequestMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(PathPlanningRequestMessage));
+  PathPlanningResultMessage_descriptor_ = file->message_type(3);
+  static const int PathPlanningResultMessage_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningResultMessage, movetox_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningResultMessage, movetoy_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningResultMessage, movetoangle_),
+  };
+  PathPlanningResultMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      PathPlanningResultMessage_descriptor_,
+      PathPlanningResultMessage::default_instance_,
+      PathPlanningResultMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningResultMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningResultMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(PathPlanningResultMessage));
 }
 
 namespace {
@@ -76,6 +116,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     ObstacleMessage_descriptor_, &ObstacleMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     VisionObstacleMessage_descriptor_, &VisionObstacleMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    PathPlanningRequestMessage_descriptor_, &PathPlanningRequestMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    PathPlanningResultMessage_descriptor_, &PathPlanningResultMessage::default_instance());
 }
 
 }  // namespace
@@ -85,6 +129,10 @@ void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto() {
   delete ObstacleMessage_reflection_;
   delete VisionObstacleMessage::default_instance_;
   delete VisionObstacleMessage_reflection_;
+  delete PathPlanningRequestMessage::default_instance_;
+  delete PathPlanningRequestMessage_reflection_;
+  delete PathPlanningResultMessage::default_instance_;
+  delete PathPlanningResultMessage_reflection_;
 }
 
 void protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto() {
@@ -98,13 +146,21 @@ void protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto() {
     "acleMessage\022\024\n\tdirection\030\001 \002(\005:\0010\022\023\n\010dis"
     "tance\030\002 \002(\002:\0010\022\024\n\tcertainty\030\003 \002(\002:\0010\"<\n\025"
     "VisionObstacleMessage\022#\n\tobstacles\030\001 \003(\013"
-    "2\020.ObstacleMessage", 178);
+    "2\020.ObstacleMessage\"V\n\032PathPlanningReques"
+    "tMessage\022\020\n\005goToX\030\001 \002(\002:\0010\022\020\n\005goToY\030\002 \002("
+    "\002:\0010\022\024\n\tgoToAngle\030\003 \002(\002:\0010\"[\n\031PathPlanni"
+    "ngResultMessage\022\022\n\007moveToX\030\001 \002(\002:\0010\022\022\n\007m"
+    "oveToY\030\002 \002(\002:\0010\022\026\n\013moveToAngle\030\003 \002(\002:\0010", 359);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ObstacleAvoidanceMessage.proto", &protobuf_RegisterTypes);
   ObstacleMessage::default_instance_ = new ObstacleMessage();
   VisionObstacleMessage::default_instance_ = new VisionObstacleMessage();
+  PathPlanningRequestMessage::default_instance_ = new PathPlanningRequestMessage();
+  PathPlanningResultMessage::default_instance_ = new PathPlanningResultMessage();
   ObstacleMessage::default_instance_->InitAsDefaultInstance();
   VisionObstacleMessage::default_instance_->InitAsDefaultInstance();
+  PathPlanningRequestMessage::default_instance_->InitAsDefaultInstance();
+  PathPlanningResultMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto);
 }
 
@@ -601,6 +657,570 @@ void VisionObstacleMessage::Swap(VisionObstacleMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = VisionObstacleMessage_descriptor_;
   metadata.reflection = VisionObstacleMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int PathPlanningRequestMessage::kGoToXFieldNumber;
+const int PathPlanningRequestMessage::kGoToYFieldNumber;
+const int PathPlanningRequestMessage::kGoToAngleFieldNumber;
+#endif  // !_MSC_VER
+
+PathPlanningRequestMessage::PathPlanningRequestMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void PathPlanningRequestMessage::InitAsDefaultInstance() {
+}
+
+PathPlanningRequestMessage::PathPlanningRequestMessage(const PathPlanningRequestMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void PathPlanningRequestMessage::SharedCtor() {
+  _cached_size_ = 0;
+  gotox_ = 0;
+  gotoy_ = 0;
+  gotoangle_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+PathPlanningRequestMessage::~PathPlanningRequestMessage() {
+  SharedDtor();
+}
+
+void PathPlanningRequestMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void PathPlanningRequestMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PathPlanningRequestMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return PathPlanningRequestMessage_descriptor_;
+}
+
+const PathPlanningRequestMessage& PathPlanningRequestMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();  return *default_instance_;
+}
+
+PathPlanningRequestMessage* PathPlanningRequestMessage::default_instance_ = NULL;
+
+PathPlanningRequestMessage* PathPlanningRequestMessage::New() const {
+  return new PathPlanningRequestMessage;
+}
+
+void PathPlanningRequestMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    gotox_ = 0;
+    gotoy_ = 0;
+    gotoangle_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool PathPlanningRequestMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required float goToX = 1 [default = 0];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &gotox_)));
+          _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_goToY;
+        break;
+      }
+      
+      // required float goToY = 2 [default = 0];
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_goToY:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &gotoy_)));
+          _set_bit(1);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_goToAngle;
+        break;
+      }
+      
+      // required float goToAngle = 3 [default = 0];
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_goToAngle:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &gotoangle_)));
+          _set_bit(2);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void PathPlanningRequestMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required float goToX = 1 [default = 0];
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->gotox(), output);
+  }
+  
+  // required float goToY = 2 [default = 0];
+  if (_has_bit(1)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->gotoy(), output);
+  }
+  
+  // required float goToAngle = 3 [default = 0];
+  if (_has_bit(2)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->gotoangle(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* PathPlanningRequestMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required float goToX = 1 [default = 0];
+  if (_has_bit(0)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->gotox(), target);
+  }
+  
+  // required float goToY = 2 [default = 0];
+  if (_has_bit(1)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->gotoy(), target);
+  }
+  
+  // required float goToAngle = 3 [default = 0];
+  if (_has_bit(2)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->gotoangle(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int PathPlanningRequestMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required float goToX = 1 [default = 0];
+    if (has_gotox()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float goToY = 2 [default = 0];
+    if (has_gotoy()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float goToAngle = 3 [default = 0];
+    if (has_gotoangle()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PathPlanningRequestMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const PathPlanningRequestMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const PathPlanningRequestMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void PathPlanningRequestMessage::MergeFrom(const PathPlanningRequestMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_gotox(from.gotox());
+    }
+    if (from._has_bit(1)) {
+      set_gotoy(from.gotoy());
+    }
+    if (from._has_bit(2)) {
+      set_gotoangle(from.gotoangle());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void PathPlanningRequestMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PathPlanningRequestMessage::CopyFrom(const PathPlanningRequestMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PathPlanningRequestMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  
+  return true;
+}
+
+void PathPlanningRequestMessage::Swap(PathPlanningRequestMessage* other) {
+  if (other != this) {
+    std::swap(gotox_, other->gotox_);
+    std::swap(gotoy_, other->gotoy_);
+    std::swap(gotoangle_, other->gotoangle_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata PathPlanningRequestMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = PathPlanningRequestMessage_descriptor_;
+  metadata.reflection = PathPlanningRequestMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int PathPlanningResultMessage::kMoveToXFieldNumber;
+const int PathPlanningResultMessage::kMoveToYFieldNumber;
+const int PathPlanningResultMessage::kMoveToAngleFieldNumber;
+#endif  // !_MSC_VER
+
+PathPlanningResultMessage::PathPlanningResultMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void PathPlanningResultMessage::InitAsDefaultInstance() {
+}
+
+PathPlanningResultMessage::PathPlanningResultMessage(const PathPlanningResultMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void PathPlanningResultMessage::SharedCtor() {
+  _cached_size_ = 0;
+  movetox_ = 0;
+  movetoy_ = 0;
+  movetoangle_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+PathPlanningResultMessage::~PathPlanningResultMessage() {
+  SharedDtor();
+}
+
+void PathPlanningResultMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void PathPlanningResultMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PathPlanningResultMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return PathPlanningResultMessage_descriptor_;
+}
+
+const PathPlanningResultMessage& PathPlanningResultMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();  return *default_instance_;
+}
+
+PathPlanningResultMessage* PathPlanningResultMessage::default_instance_ = NULL;
+
+PathPlanningResultMessage* PathPlanningResultMessage::New() const {
+  return new PathPlanningResultMessage;
+}
+
+void PathPlanningResultMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    movetox_ = 0;
+    movetoy_ = 0;
+    movetoangle_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool PathPlanningResultMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required float moveToX = 1 [default = 0];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &movetox_)));
+          _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_moveToY;
+        break;
+      }
+      
+      // required float moveToY = 2 [default = 0];
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_moveToY:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &movetoy_)));
+          _set_bit(1);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_moveToAngle;
+        break;
+      }
+      
+      // required float moveToAngle = 3 [default = 0];
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_moveToAngle:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &movetoangle_)));
+          _set_bit(2);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void PathPlanningResultMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required float moveToX = 1 [default = 0];
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->movetox(), output);
+  }
+  
+  // required float moveToY = 2 [default = 0];
+  if (_has_bit(1)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->movetoy(), output);
+  }
+  
+  // required float moveToAngle = 3 [default = 0];
+  if (_has_bit(2)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->movetoangle(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* PathPlanningResultMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required float moveToX = 1 [default = 0];
+  if (_has_bit(0)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->movetox(), target);
+  }
+  
+  // required float moveToY = 2 [default = 0];
+  if (_has_bit(1)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->movetoy(), target);
+  }
+  
+  // required float moveToAngle = 3 [default = 0];
+  if (_has_bit(2)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->movetoangle(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int PathPlanningResultMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required float moveToX = 1 [default = 0];
+    if (has_movetox()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float moveToY = 2 [default = 0];
+    if (has_movetoy()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float moveToAngle = 3 [default = 0];
+    if (has_movetoangle()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PathPlanningResultMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const PathPlanningResultMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const PathPlanningResultMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void PathPlanningResultMessage::MergeFrom(const PathPlanningResultMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_movetox(from.movetox());
+    }
+    if (from._has_bit(1)) {
+      set_movetoy(from.movetoy());
+    }
+    if (from._has_bit(2)) {
+      set_movetoangle(from.movetoangle());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void PathPlanningResultMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PathPlanningResultMessage::CopyFrom(const PathPlanningResultMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PathPlanningResultMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  
+  return true;
+}
+
+void PathPlanningResultMessage::Swap(PathPlanningResultMessage* other) {
+  if (other != this) {
+    std::swap(movetox_, other->movetox_);
+    std::swap(movetoy_, other->movetoy_);
+    std::swap(movetoangle_, other->movetoangle_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata PathPlanningResultMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = PathPlanningResultMessage_descriptor_;
+  metadata.reflection = PathPlanningResultMessage_reflection_;
   return metadata;
 }
 

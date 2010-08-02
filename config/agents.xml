@@ -21,7 +21,7 @@
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10  StatsCycle=15>
   <name>Behavior</name>
-  <activity>Behavior</activity>
+  <activity>BehaviorPassing</activity>
 </agent>
 
 <agent IsRealTime=0 Priority=1 ThreadFrequency=3  StatsCycle=15>
@@ -33,7 +33,12 @@
   <name>LedHandler</name>
   <activity>LedHandler</activity>
 </agent>
-
+<!--
+<agent IsRealTime=0 Priority=1 ThreadFrequency=10  StatsCycle=15>
+  <name>ObstacleAvoidance</name>
+  <activity>ObstacleAvoidance</activity>
+</agent>
+-->
 <!-- Statecharts to be loaded
 <statechart>KouretesAllConcurrentStatechartStatechart</statechart>
 -->

@@ -47,7 +47,7 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 	private:
 		AL::ALPtr<AL::ALMemoryProxy> memory;
 		double PolarGrid[M][N];
-		int MoveGrid[100][100];
+		//int MoveGrid[100][100];
 		int goalX, goalY;
 		int leftCounter, rightCounter;
 		SensorPair RightValue[10];
@@ -79,7 +79,10 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		UltaSoundSensorsMessage* ussm;
 		RobotPositionSensorMessage* rpsm;
 		ObstacleMessage* obavm;
-		
+		ObstacleMessage* DataFromVision;
+		PathPlanningResultMessage* ppresm;
+		PathPlanningRequestMessage* ppreqm;
+		double Right[10], Left[10], empty[10];
 		int countAge;
 		int countValid;
 		void publishObstacleMessage();

@@ -32,6 +32,8 @@ void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
 
 class ObstacleMessage;
 class VisionObstacleMessage;
+class PathPlanningRequestMessage;
+class PathPlanningResultMessage;
 
 // ===================================================================
 
@@ -232,6 +234,216 @@ class VisionObstacleMessage : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static VisionObstacleMessage* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class PathPlanningRequestMessage : public ::google::protobuf::Message {
+ public:
+  PathPlanningRequestMessage();
+  virtual ~PathPlanningRequestMessage();
+  
+  PathPlanningRequestMessage(const PathPlanningRequestMessage& from);
+  
+  inline PathPlanningRequestMessage& operator=(const PathPlanningRequestMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PathPlanningRequestMessage& default_instance();
+  
+  void Swap(PathPlanningRequestMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  PathPlanningRequestMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PathPlanningRequestMessage& from);
+  void MergeFrom(const PathPlanningRequestMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float goToX = 1 [default = 0];
+  inline bool has_gotox() const;
+  inline void clear_gotox();
+  static const int kGoToXFieldNumber = 1;
+  inline float gotox() const;
+  inline void set_gotox(float value);
+  
+  // required float goToY = 2 [default = 0];
+  inline bool has_gotoy() const;
+  inline void clear_gotoy();
+  static const int kGoToYFieldNumber = 2;
+  inline float gotoy() const;
+  inline void set_gotoy(float value);
+  
+  // required float goToAngle = 3 [default = 0];
+  inline bool has_gotoangle() const;
+  inline void clear_gotoangle();
+  static const int kGoToAngleFieldNumber = 3;
+  inline float gotoangle() const;
+  inline void set_gotoangle(float value);
+  
+  // @@protoc_insertion_point(class_scope:PathPlanningRequestMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  float gotox_;
+  float gotoy_;
+  float gotoangle_;
+  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static PathPlanningRequestMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class PathPlanningResultMessage : public ::google::protobuf::Message {
+ public:
+  PathPlanningResultMessage();
+  virtual ~PathPlanningResultMessage();
+  
+  PathPlanningResultMessage(const PathPlanningResultMessage& from);
+  
+  inline PathPlanningResultMessage& operator=(const PathPlanningResultMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PathPlanningResultMessage& default_instance();
+  
+  void Swap(PathPlanningResultMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  PathPlanningResultMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PathPlanningResultMessage& from);
+  void MergeFrom(const PathPlanningResultMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float moveToX = 1 [default = 0];
+  inline bool has_movetox() const;
+  inline void clear_movetox();
+  static const int kMoveToXFieldNumber = 1;
+  inline float movetox() const;
+  inline void set_movetox(float value);
+  
+  // required float moveToY = 2 [default = 0];
+  inline bool has_movetoy() const;
+  inline void clear_movetoy();
+  static const int kMoveToYFieldNumber = 2;
+  inline float movetoy() const;
+  inline void set_movetoy(float value);
+  
+  // required float moveToAngle = 3 [default = 0];
+  inline bool has_movetoangle() const;
+  inline void clear_movetoangle();
+  static const int kMoveToAngleFieldNumber = 3;
+  inline float movetoangle() const;
+  inline void set_movetoangle(float value);
+  
+  // @@protoc_insertion_point(class_scope:PathPlanningResultMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  float movetox_;
+  float movetoy_;
+  float movetoangle_;
+  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static PathPlanningResultMessage* default_instance_;
+};
 // ===================================================================
 
 
@@ -314,6 +526,110 @@ VisionObstacleMessage::obstacles() const {
 inline ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >*
 VisionObstacleMessage::mutable_obstacles() {
   return &obstacles_;
+}
+
+// -------------------------------------------------------------------
+
+// PathPlanningRequestMessage
+
+// required float goToX = 1 [default = 0];
+inline bool PathPlanningRequestMessage::has_gotox() const {
+  return _has_bit(0);
+}
+inline void PathPlanningRequestMessage::clear_gotox() {
+  gotox_ = 0;
+  _clear_bit(0);
+}
+inline float PathPlanningRequestMessage::gotox() const {
+  return gotox_;
+}
+inline void PathPlanningRequestMessage::set_gotox(float value) {
+  _set_bit(0);
+  gotox_ = value;
+}
+
+// required float goToY = 2 [default = 0];
+inline bool PathPlanningRequestMessage::has_gotoy() const {
+  return _has_bit(1);
+}
+inline void PathPlanningRequestMessage::clear_gotoy() {
+  gotoy_ = 0;
+  _clear_bit(1);
+}
+inline float PathPlanningRequestMessage::gotoy() const {
+  return gotoy_;
+}
+inline void PathPlanningRequestMessage::set_gotoy(float value) {
+  _set_bit(1);
+  gotoy_ = value;
+}
+
+// required float goToAngle = 3 [default = 0];
+inline bool PathPlanningRequestMessage::has_gotoangle() const {
+  return _has_bit(2);
+}
+inline void PathPlanningRequestMessage::clear_gotoangle() {
+  gotoangle_ = 0;
+  _clear_bit(2);
+}
+inline float PathPlanningRequestMessage::gotoangle() const {
+  return gotoangle_;
+}
+inline void PathPlanningRequestMessage::set_gotoangle(float value) {
+  _set_bit(2);
+  gotoangle_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// PathPlanningResultMessage
+
+// required float moveToX = 1 [default = 0];
+inline bool PathPlanningResultMessage::has_movetox() const {
+  return _has_bit(0);
+}
+inline void PathPlanningResultMessage::clear_movetox() {
+  movetox_ = 0;
+  _clear_bit(0);
+}
+inline float PathPlanningResultMessage::movetox() const {
+  return movetox_;
+}
+inline void PathPlanningResultMessage::set_movetox(float value) {
+  _set_bit(0);
+  movetox_ = value;
+}
+
+// required float moveToY = 2 [default = 0];
+inline bool PathPlanningResultMessage::has_movetoy() const {
+  return _has_bit(1);
+}
+inline void PathPlanningResultMessage::clear_movetoy() {
+  movetoy_ = 0;
+  _clear_bit(1);
+}
+inline float PathPlanningResultMessage::movetoy() const {
+  return movetoy_;
+}
+inline void PathPlanningResultMessage::set_movetoy(float value) {
+  _set_bit(1);
+  movetoy_ = value;
+}
+
+// required float moveToAngle = 3 [default = 0];
+inline bool PathPlanningResultMessage::has_movetoangle() const {
+  return _has_bit(2);
+}
+inline void PathPlanningResultMessage::clear_movetoangle() {
+  movetoangle_ = 0;
+  _clear_bit(2);
+}
+inline float PathPlanningResultMessage::movetoangle() const {
+  return movetoangle_;
+}
+inline void PathPlanningResultMessage::set_movetoangle(float value) {
+  _set_bit(2);
+  movetoangle_ = value;
 }
 
 
