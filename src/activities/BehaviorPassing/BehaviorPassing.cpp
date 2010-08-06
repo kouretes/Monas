@@ -182,13 +182,14 @@ int BehaviorPassing::Execute() {
 			
 			/* Passing */
 			double gain = 0.8;
+            double gainTheta = 0.5;
 			if (obsm->ball().dist() <= 8) {
 				float posx=0.16, posy=0.05;
 				if (bd > 0.40) { 
 					X = gain * bx;
 					Y = gain * by;
 					if (fabs(bb) > 0.055) 
-						theta = gain * bb;
+						theta = gainTheta * bb;
 					readytokick = false;
 				} else if (bd > 0.25) { 
 					X = gain * (bx - posx);
@@ -214,7 +215,7 @@ int BehaviorPassing::Execute() {
 				X = gain * bx;
 				Y = gain * by;
 				if (fabs(bb) > 0.055) 
-					theta = gain * bb;
+					theta = gainTheta * bb;
 				readytokick = false;
 			} else if (bd > 0.30) { 
 				X = gain * (bx - posx);
@@ -240,7 +241,7 @@ int BehaviorPassing::Execute() {
 					X = gain * bx;
 					Y = gain * by;
 					if (fabs(bb) > 0.055) 
-						theta = gain * bb;
+						theta = gainTheta * bb;
 					readytokick = false;
 				} else if (bd > 0.30) { 
 					X = gain * (bx - posx);
