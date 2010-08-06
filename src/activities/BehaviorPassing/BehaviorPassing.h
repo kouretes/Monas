@@ -15,8 +15,10 @@
 
 #define LIMITUP -0.22
 #define	LIMITDOWN 0.43
-#define	LIMITLEFT 0.40
-#define	LIMITRIGHT -0.40
+//#define	LIMITLEFT 0.40
+//#define	LIMITRIGHT -0.40
+#define	LIMITLEFT 0.30
+#define	LIMITRIGHT -0.30
 
 namespace AL {
 	class ALMotionProxy;

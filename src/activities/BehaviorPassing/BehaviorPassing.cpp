@@ -78,7 +78,7 @@ void BehaviorPassing::UserInit() {
 
 int BehaviorPassing::MakeTrackBallAction() {
 
-	float overshootfix = 0.2;
+	float overshootfix = 0.14;
 	float cx = bmsg->cx();
 	float cy = bmsg->cy();
 	if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
@@ -390,33 +390,33 @@ void BehaviorPassing::HeadScanStep() {
 
 	//continue scan
 	if (HeadPitch.sensorvalue() < LIMITUP) {
-		Logger::Instance().WriteMsg("BehaviorPassing", " LIMITUP ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("BehaviorPassing", " LIMITUP ", Logger::ExtraExtraInfo);
 		reachedlimitup = true;
 		scandirectionpitch = 1;
 	}
 	if (HeadPitch.sensorvalue() > LIMITDOWN) {
-		Logger::Instance().WriteMsg("BehaviorPassing", " LIMITDOWN ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("BehaviorPassing", " LIMITDOWN ", Logger::ExtraExtraInfo);
 		reachedlimitdown = true;
 		scandirectionpitch = -1;
 	}
 	if (HeadYaw.sensorvalue() > LIMITLEFT) {
-		Logger::Instance().WriteMsg("BehaviorPassing", "LIMITLEFT  ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("BehaviorPassing", "LIMITLEFT  ", Logger::ExtraExtraInfo);
 		reachedlimitleft = true;
 		scandirectionyaw = -1;
 	}
 	if (HeadYaw.sensorvalue() < LIMITRIGHT) {
-		Logger::Instance().WriteMsg("BehaviorPassing", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("BehaviorPassing", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
 		reachedlimitright = true;
 		scandirectionyaw = 1;
 	}
 
 	hmot->set_command("changeHead");
-	hmot->set_parameter(0, scandirectionyaw * 0.18); // Headyaw
+	hmot->set_parameter(0, scandirectionyaw * 0.27); // Headyaw
 	hmot->set_parameter(1, 0.0); // headPitch
 
 	if (reachedlimitleft && reachedlimitright) {
 		Logger::Instance().WriteMsg("BehaviorPassing", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
-		hmot->set_parameter(1, scandirectionpitch * 0.23); // headPitch
+		hmot->set_parameter(1, scandirectionpitch * 0.35); // headPitch
 		reachedlimitleft = false;
 		reachedlimitright = false;
 	}
@@ -438,7 +438,7 @@ void BehaviorPassing::HeadScanStep() {
 			wmot->set_parameter(1, 0.0);
 			wmot->set_parameter(2, 0.0);
 			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-			sleep(6);
+			sleep(5);
 			_blk->getBuffer()->remove_filter(&reject_filter);
 			back--; 
 		} else {
@@ -447,9 +447,9 @@ void BehaviorPassing::HeadScanStep() {
 			wmot->set_command("walkTo");
 			wmot->set_parameter(0, 0.0);
 			wmot->set_parameter(1, 0.0);
-			wmot->set_parameter(2, direction * 1.04); //turn 60 degrees?
+			wmot->set_parameter(2, direction * 0.78); //turn ~45 degrees? (==> is pi/4 == 0.78)
 			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-			sleep(6);
+			sleep(5);
 			_blk->getBuffer()->remove_filter(&reject_filter);
 			//direction = - direction;
 		}
