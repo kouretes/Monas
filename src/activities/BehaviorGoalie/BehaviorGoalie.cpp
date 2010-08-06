@@ -138,6 +138,7 @@ int BehaviorGoalie::Execute() {
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
 		double gain = 0.8;
+		double gainTheta = 0.5;
 		if ((obsm != 0) && !turning) {
 			scanforball = false; //be sure to stop scanning
 			int side=1;
@@ -156,7 +157,7 @@ int BehaviorGoalie::Execute() {
 				    X = gain * bx;
 				    Y = gain * by;
 				    if (fabs(bb) > 0.055) 
-					    theta = gain * bb;
+					    theta = gainTheta * bb;
 				    readytokick = false;
 			    } else if (bd > 0.25) { 
 				    X = gain * (bx - posx);
@@ -173,22 +174,22 @@ int BehaviorGoalie::Execute() {
 				    }
 			    }
 			}
-			else if ( (bb > +35*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the left
+			else if ( (bb > +30*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the left
 			    amot->set_command("leftFall.kme");
 			    Publisher::publish(amot, "motion");
 			    stopped = false;
 			}
-			else if ( (bb < -35*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the right
+			else if ( (bb < -30*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the right
 			    amot->set_command("rightFall.kme");
 			    Publisher::publish(amot, "motion");
 			    stopped = false;
 			}
-			else if ( (bb > +50*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the left
+			else if ( (bb > +40*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the left
 			    amot->set_command("leftDive");
 			    Publisher::publish(amot, "motion");
 			    stopped = false;
 			}
-			else if ( (bb < -50*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the right
+			else if ( (bb < -40*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the right
 			    amot->set_command("rightDive");
 			    Publisher::publish(amot, "motion");
 			    stopped = false;
