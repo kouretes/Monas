@@ -72,6 +72,8 @@ void MotionController::UserInit() {
 	jointNames = motion->getJointNames("Body");
 	
 	counter = 0;
+
+    walkingWithVelocity = false;
 }
 
 int MotionController::Execute() {
@@ -214,6 +216,7 @@ void MotionController::mglrun() {
 				walkParam4 = wm->parameter(3);
 				Logger::Instance().WriteMsg("MotionController", wm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3)+" "+_toString(walkParam4),Logger::ExtraInfo);
 				walkPID = motion->post.setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
+                walkingWithVelocity = true;
 				Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
 			}
 			else 
@@ -304,8 +307,11 @@ void MotionController::killWalkCommand() {
 }
 
 void MotionController::stopWalkCommand() {
-	walkPID = motion->post.setWalkTargetVelocity(0.0, 0.0, 0.0, 0.0); // stop walk
-	motion->waitUntilWalkIsFinished();
+    if ( motion->isRunning(walkPID) || walkingWithVelocity ) {
+	  walkPID = motion->post.setWalkTargetVelocity(0.0, 0.0, 0.0, 0.0); // stop walk
+	  motion->waitUntilWalkIsFinished(); 
+      walkingWithVelocity = false;
+    }
 	walkPID = 0;
 }
 

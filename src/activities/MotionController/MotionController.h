@@ -44,6 +44,8 @@ private:
 	AL::ALPtr<AL::ALProxy> tts;
 	AL::ALPtr<AL::ALMotionProxy> motion;
 	TypeFilter* type_filter;
+    
+    bool walkingWithVelocity;
 
 	bool robotDown;
 	bool robotUp;
