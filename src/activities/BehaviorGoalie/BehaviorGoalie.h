@@ -11,6 +11,8 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/VisionObservations.pb.h"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 
 #include "alptr.h"
 
@@ -26,55 +28,64 @@ namespace AL {
 
 class BehaviorGoalie: public IActivity, public Publisher {
 
-	public:
-		BehaviorGoalie();
-		int Execute();
-		void UserInit();
-		void read_messages();
-		int MakeTrackBallAction();
-		void HeadScanStep();
+      public:
+        BehaviorGoalie();
+        int Execute();
+        void UserInit();
+        void read_messages();
+        int MakeTrackBallAction();
+        void HeadScanStep();
+        void CalculateBallSpeed();
         std::string GetName() {
             return "BehaviorGoalie";
         }
 
-	private:
-		AL::ALPtr<AL::ALMotionProxy> motion;
-		AL::ALPtr<AL::ALMemoryProxy> memory;
-		short ballfound;
-		MotionWalkMessage* wmot;
-		MotionHeadMessage* hmot;
-		MotionActionMessage* amot;
+      private:
 
-		int pitchdirection;
-		int yawdirection;
-		SensorPair HeadYaw;
-		SensorPair HeadPitch;
-		BallTrackMessage lastballseen;
+        AL::ALPtr<AL::ALMotionProxy> motion;
+        AL::ALPtr<AL::ALMemoryProxy> memory;
+        short ballfound;
+        MotionWalkMessage* wmot;
+        MotionHeadMessage* hmot;
+        MotionActionMessage* amot;
 
-		bool startscan;
-		bool scanforball;
-		short scandirectionpitch;
-		short scandirectionyaw;
+        int pitchdirection;
+        int yawdirection;
+        SensorPair HeadYaw;
+        SensorPair HeadPitch;
+        BallTrackMessage lastballseen;
 
-		bool reachedlimitup;
-		bool reachedlimitdown;
-		bool reachedlimitleft;
-		bool reachedlimitright;
+        bool startscan;
+        bool scanforball;
+        short scandirectionpitch;
+        short scandirectionyaw;
 
-		short balllastseendirection;
-		HeadJointSensorsMessage* hjsm;
-		BallTrackMessage* bmsg;
-		GameStateMessage* gsm;
-		ObservationMessage* obsm;
-		int calibrated;
-		bool play;
+        bool reachedlimitup;
+        bool reachedlimitdown;
+        bool reachedlimitleft;
+        bool reachedlimitright;
 
-		bool stopped;
-		bool readytokick;
-		int back;
-		int direction;
-		bool turning; 
-		int count;
+        short balllastseendirection;
+        HeadJointSensorsMessage* hjsm;
+        BallTrackMessage* bmsg;
+        GameStateMessage* gsm;
+        ObservationMessage* obsm;
+        int calibrated;
+        bool play;
+
+        bool stopped;
+        bool readytokick;
+        int back;
+        int direction;
+        bool turning;
+        int count;
+
+        double ballSpeedX;
+        double ballSpeedY;
+        bool speedIsValid;
+        boost::posix_time::ptime prevTimestamp;
+        double prevX;
+        double prevY;
 };
 
 #endif

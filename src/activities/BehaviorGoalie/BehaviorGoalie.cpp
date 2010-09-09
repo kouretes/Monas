@@ -14,7 +14,9 @@
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
 
+#ifndef TO_RAD
 #define TO_RAD 0.01745329f
+#endif
 
 namespace {
 	ActivityRegistrar<BehaviorGoalie>::Type temp("BehaviorGoalie");
@@ -69,17 +71,25 @@ void BehaviorGoalie::UserInit() {
 	bmsg = 0;
 	gsm = 0;
         obsm = 0;
-	
+
 	readytokick = false;
 	back = 0;
 	direction = 1;
-	turning = false; 
-	count = 0; 
+	turning = false;
+	count = 0;
+
+        ballSpeedX = 0;
+        ballSpeedY = 0;
+        prevX = 0;
+        prevY = 0;
+        prevTimestamp = boost::posix_time::from_time_t(0);
+        speedIsValid = false;
+
 }
 
 int BehaviorGoalie::MakeTrackBallAction() {
 
-	float overshootfix = 0.3;
+	float overshootfix = 0.14;
 	float cx = bmsg->cx();
 	float cy = bmsg->cy();
 	if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
@@ -94,12 +104,40 @@ int BehaviorGoalie::MakeTrackBallAction() {
 	return 1;
 }
 
+void BehaviorGoalie::CalculateBallSpeed () {
+    boost::posix_time::ptime timestamp = boost::posix_time::from_iso_string( obsm->image_timestamp() );
+
+    float bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
+    float by = obsm->ball().dist() * sin( obsm->ball().bearing() );
+
+    if ( (timestamp - prevTimestamp) < boost::posix_time::millisec(150) ) {
+      speedIsValid = false;
+      ballSpeedX = 0.0;
+      ballSpeedY = 0.0;
+    }
+    else {
+      speedIsValid = true;
+
+      double newSpeedX = ( fabs(bx - prevX) ) / ( ( timestamp - prevTimestamp ).total_seconds() );
+      double newSpeedY = ( fabs(by - prevY) ) / ( ( timestamp - prevTimestamp ).total_seconds() );
+
+      float alpha = 0.8;
+      ballSpeedX = alpha * newSpeedX + (1-alpha) * ballSpeedX;
+      ballSpeedY = alpha * newSpeedY + (1-alpha) * ballSpeedY;
+
+
+    }
+    prevX = bx;
+    prevY = by;
+    prevTimestamp = timestamp;
+}
+
 
 
 int BehaviorGoalie::Execute() {
 
 	read_messages();
-	
+
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("BehaviorGoalie", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 
@@ -108,7 +146,7 @@ int BehaviorGoalie::Execute() {
 			play = true;
 		else
 			play = false;
-		
+
 		/* Calibration */
 		if ( (gsm->player_state() == PLAYER_PENALISED) || (gsm->player_state() == PLAYER_READY) ) {
 			CalibrateCam v;
@@ -125,45 +163,46 @@ int BehaviorGoalie::Execute() {
 				scanforball = false; //if you are scanning for ball please stop now
 				MakeTrackBallAction();
 				ballfound += 5;
-				if (ballfound > 10) 
+				if (ballfound > 10)
 					ballfound = 10; //Increase this value when we see the ball
 			}
 			else {
-				if (ballfound > 0) 
+				if (ballfound > 0)
 					ballfound -= 1; //Decrease it when we don't see the ball
 			}
 		}
 		Logger::Instance().WriteMsg("BehaviorGoalie", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
-	
+
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
 		double gain = 0.8;
 		double gainTheta = 0.5;
 		if ((obsm != 0) && !turning) {
 			scanforball = false; //be sure to stop scanning
+			CalculateBallSpeed();
 			int side=1;
 			bd = obsm->ball().dist();
 			bb = obsm->ball().bearing();
 			bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
 			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
-			side = (bb > 0) ? 1 : -1; 
+			side = (bb > 0) ? 1 : -1;
 			Logger::Instance().WriteMsg("BehaviorGoalie", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
 
 			theta = 0;
-			if ( bd < 0.5 ) {	// If distance is small, approach and kick ball 
+			if ( bd < 0.5  ) {	// If distance is small, approach and kick ball
 			    readytokick = true;
 			    float posx=0.16, posy=0.05;
-			    if (bd > 0.40) { 
+			    if (bd > 0.40) {
 				    X = gain * bx;
 				    Y = gain * by;
-				    if (fabs(bb) > 0.055) 
+				    if (fabs(bb) > 0.055)
 					    theta = gainTheta * bb;
 				    readytokick = false;
-			    } else if (bd > 0.25) { 
+			    } else if (bd > 0.25) {
 				    X = gain * (bx - posx);
 				    Y = gain * ( by - (side*posy) );
 				    readytokick = false;
-			    } else { 
+			    } else {
 				    if ( fabs( bx - posx ) > 0.02) {
 					    X = gain * (bx - posx);
 					    readytokick = false;
@@ -184,12 +223,12 @@ int BehaviorGoalie::Execute() {
 			    Publisher::publish(amot, "motion");
 			    stopped = false;
 			}
-			else if ( (bb > +40*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the left
+			else if ( (bb > +45*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the left
 			    amot->set_command("leftDive");
 			    Publisher::publish(amot, "motion");
 			    stopped = false;
 			}
-			else if ( (bb < -40*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the right
+			else if ( (bb < -45*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the right
 			    amot->set_command("rightDive");
 			    Publisher::publish(amot, "motion");
 			    stopped = false;
@@ -202,7 +241,7 @@ int BehaviorGoalie::Execute() {
 				Y = (Y > 0.0) ? 1.0 : -1.0;
 			if (fabs(theta) > 1.0)
 				theta = (theta > 0.0) ? 1.0 : -1.0;
-			
+
 			if (!readytokick) {
 				wmot->set_command("setWalkTargetVelocity");
 				wmot->set_parameter(0, X);
@@ -212,7 +251,7 @@ int BehaviorGoalie::Execute() {
 				Publisher::publish(wmot, "motion");
 			}
 		}
-		
+
 		/* Ready to take action */
 		if (readytokick && !turning) {
 			if (by > 0.0)
@@ -223,7 +262,7 @@ int BehaviorGoalie::Execute() {
 			back = 1;
 			readytokick = false;
 		}
-		
+
 		if ( (ballfound == 0) && !readytokick && !turning ) {
 			if (!scanforball) {
 				startscan = true;
@@ -236,13 +275,13 @@ int BehaviorGoalie::Execute() {
 			}
 			scanforball = true;
 		}
-			
+
 		if (scanforball && !readytokick && !turning && (hjsm != 0) ) {
 			HeadYaw = hjsm->sensordata(0);
 			HeadPitch = hjsm->sensordata(1);
 			HeadScanStep();
 		}
-		
+
 	} else if (!play) {   // Non-Play state
 		wmot->set_command("setWalkTargetVelocity");
 		wmot->set_parameter(0, 0);
@@ -250,13 +289,13 @@ int BehaviorGoalie::Execute() {
 		wmot->set_parameter(2, 0);
 		wmot->set_parameter(3, 0);
 		Publisher::publish(wmot, "motion");
-		
+
 		//hmot->set_command("setHead");
 		//hmot->set_parameter(0, 0.0);
 		//hmot->set_parameter(1, 0.0);
 		//Publisher::publish(hmot, "motion");
 	}
-	
+
 	return 0;
 }
 
@@ -312,9 +351,9 @@ void BehaviorGoalie::HeadScanStep() {
 	}
 
 	hmot->set_command("changeHead");
-	hmot->set_parameter(0, scandirectionyaw * 0.18); // headYaw
+	hmot->set_parameter(0, scandirectionyaw * 0.24); // headYaw
 	if (reachedlimitleft || reachedlimitright) {
-		hmot->set_parameter(1, scandirectionpitch * 0.23); // headPitch
+		hmot->set_parameter(1, scandirectionpitch * 0.30); // headPitch
 		reachedlimitleft = false;
 		reachedlimitright = false;
 	}
@@ -334,14 +373,14 @@ void BehaviorGoalie::HeadScanStep() {
 
 
 void BehaviorGoalie::read_messages() {
-	
+
 	if (gsm != 0) delete gsm;
 	if (bmsg != 0) delete bmsg;
 	if (hjsm != 0) delete hjsm;
 	if (obsm != 0) delete obsm;
-	
+
 	_blk->process_messages();
-	
+
 	gsm  = _blk->in_msg_nb<GameStateMessage> ("GameStateMessage");
 	bmsg = _blk->in_msg_nb<BallTrackMessage> ("BallTrackMessage");
 	hjsm = _blk->in_msg_nb<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
