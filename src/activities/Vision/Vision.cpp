@@ -354,16 +354,22 @@ void Vision::UserInit()
 		cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
 	}
 	//memory = pbroker->getMemoryProxy();
+    std::string fname;
+    config->QueryElement("SegmentationBottom",fname);
+	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix()+
+                                    "colortables/"+fname).c_str());
+	segbottom = new KSegmentator(*conffile);
+	conffile->close();
+	delete conffile;
 
-	ifstream *config = new ifstream((ArchConfig::Instance().GetConfigPrefix()+"/segbot.conf").c_str());
-	segbottom = new KSegmentator(*config);//TODO PATH!!!
-	config->close();
-	delete config;
-	config = new ifstream((ArchConfig::Instance().GetConfigPrefix()+"/segtop.conf").c_str());
+	config->QueryElement("SegmentationTop",fname);
+	conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix()+
+                                    "colortables/"+fname).c_str());
 
-	segtop = new KSegmentator(*config);//TODO PATH!!!
-	config->close();
-	delete config;
+
+	segtop = new KSegmentator(*conffile);
+	conffile->close();
+	delete conffile;
 
 
 	cout<<"Add Subscriber-publisher"<<endl;
