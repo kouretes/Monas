@@ -68,12 +68,12 @@ void BehaviorPassing::UserInit() {
 	gsm = 0;
 	obsm = 0;
 	om = 0;
-	
+
 	readytokick = false;
 	back = 0;
 	direction = 1;
-	turning = false; 
-	count = 0; 
+	turning = false;
+	count = 0;
 }
 
 int BehaviorPassing::MakeTrackBallAction() {
@@ -95,13 +95,13 @@ int BehaviorPassing::MakeTrackBallAction() {
 
 
 void BehaviorPassing::mgltest() {
-	
+
 	wmot->set_command("setWalkTargetVelocity");
 	wmot->set_parameter(0, 1.0);
 	wmot->set_parameter(1, 0.0);
 	wmot->set_parameter(2, 0.0);
 	wmot->set_parameter(3, 1.0);
-	
+
 	if (om!=0) {
 		Logger::Instance().WriteMsg("BehaviorPassing", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
 		if (om->direction() == 0) {
@@ -127,7 +127,7 @@ int BehaviorPassing::Execute() {
 			play = true;
 		else
 			play = false;
-		
+
 		/* Calibration */
 		if ( (gsm->player_state() == PLAYER_PENALISED) || (gsm->player_state() == PLAYER_READY) ) {
 			CalibrateCam v;
@@ -135,7 +135,7 @@ int BehaviorPassing::Execute() {
 			publish(&v, "vision");
 			calibrated = 1;
 		}
-		
+
 		/* Open Challenge */
 		//if ( gsm->player_state() == PLAYER_SET ) {
 			//cout << "Punt Kick" << endl;
@@ -143,10 +143,10 @@ int BehaviorPassing::Execute() {
 			//Publisher::publish(amot, "motion");
 		//}
 	}
-	
+
 	//if (play) mgltest();
 	//return 1;
-	
+
 	if (play) {
 
 		if (bmsg != 0) {
@@ -155,19 +155,19 @@ int BehaviorPassing::Execute() {
 				scanforball = false; //if you are scanning for ball please stop now
 				MakeTrackBallAction();
 				ballfound += 5;
-				if (ballfound > 10) 
+				if (ballfound > 10)
 					ballfound = 10; //Increase this value when we see the ball
 			}
 			else {
-				if (ballfound > 0) 
+				if (ballfound > 0)
 					ballfound -= 1; //Decrease it when we don't see the ball
 			}
 		}
 		Logger::Instance().WriteMsg("BehaviorPassing", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
-	
+
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		
+
 		if ((obsm != 0) && !turning) {
 
 			readytokick = true;
@@ -177,25 +177,25 @@ int BehaviorPassing::Execute() {
 			bb = obsm->ball().bearing();
 			bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
 			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
-			side = (bb > 0) ? 1 : -1; 
+			side = (bb > 0) ? 1 : -1;
 			Logger::Instance().WriteMsg("BehaviorPassing", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
-			
+
 			/* Passing */
 			double gain = 0.8;
             double gainTheta = 0.5;
 			if (obsm->ball().dist() <= 8) {
 				float posx=0.16, posy=0.05;
-				if (bd > 0.40) { 
+				if (bd > 0.40) {
 					X = gain * bx;
 					Y = gain * by;
-					if (fabs(bb) > 0.055) 
+					if (fabs(bb) > 0.055)
 						theta = gainTheta * bb;
 					readytokick = false;
-				} else if (bd > 0.25) { 
+				} else if (bd > 0.25) {
 					X = gain * (bx - posx);
 					Y = gain * ( by - (side*posy) );
 					readytokick = false;
-				} else { 
+				} else {
 					if ( fabs( bx - posx ) > 0.02) {
 						X = gain * (bx - posx);
 						readytokick = false;
@@ -206,22 +206,22 @@ int BehaviorPassing::Execute() {
 					}
 				}
 			}
-			
-			
+
+
 			/* Open */
 			/*
 			float posx=0.205, posy=-0.05;
-			if (bd > 0.40) { 
+			if (bd > 0.40) {
 				X = gain * bx;
 				Y = gain * by;
-				if (fabs(bb) > 0.055) 
+				if (fabs(bb) > 0.055)
 					theta = gainTheta * bb;
 				readytokick = false;
-			} else if (bd > 0.30) { 
+			} else if (bd > 0.30) {
 				X = gain * (bx - posx);
 				Y = gain * (by - posy);
 				readytokick = false;
-			} else { 
+			} else {
 				if ( fabs( bx - posx ) > 0.005) {
 					X = gain * (bx - posx);
 					readytokick = false;
@@ -232,22 +232,22 @@ int BehaviorPassing::Execute() {
 				}
 			}
 			*/
-			
+
 			/* Dribbling */
 			/*
 			float posx=0.2, posy=0.00;
 			if (!turning) {
-				if (bd > 0.40) { 
+				if (bd > 0.40) {
 					X = gain * bx;
 					Y = gain * by;
-					if (fabs(bb) > 0.055) 
+					if (fabs(bb) > 0.055)
 						theta = gainTheta * bb;
 					readytokick = false;
-				} else if (bd > 0.30) { 
+				} else if (bd > 0.30) {
 					X = gain * (bx - posx);
 					Y = gain * (by - posy);
 					readytokick = false;
-				} else { 
+				} else {
 					if ( fabs( bx - posx ) > 0.03) {
 						X = gain * (bx - posx);
 						readytokick = false;
@@ -266,7 +266,7 @@ int BehaviorPassing::Execute() {
 				Y = (Y > 0.0) ? 1.0 : -1.0;
 			if (fabs(theta) > 1.0)
 				theta = (theta > 0.0) ? 1.0 : -1.0;
-			
+
 			if (!readytokick) {
 				wmot->set_command("setWalkTargetVelocity");
 				wmot->set_parameter(0, X);
@@ -276,7 +276,7 @@ int BehaviorPassing::Execute() {
 				Publisher::publish(wmot, "motion");
 			}
 		}
-		
+
 		/* Dribbling */
 		/*
 		if (readytokick || turning) { // Check if we need to turn
@@ -303,35 +303,51 @@ int BehaviorPassing::Execute() {
 			}
 		}
 		*/
-		
+
 		/* Ready to take action */
 		if (readytokick && !turning) {
-			/* Passing */
-			if (by > 0.0)
-				amot->set_command("leftKick");
-			else
-				amot->set_command("rightKick");
-			Publisher::publish(amot, "motion");
-			back = 1;
-			
-			/* Open */
-			//amot->set_command("puntKick");
-			//Publisher::publish(amot, "motion");
-			
-			/* Dribbling */
-			//RejectAllFilter reject_filter("RejectFilter");
-			//_blk->getBuffer()->add_filter(&reject_filter);
-			//wmot->set_command("walkTo");
-			//wmot->set_parameter(0, 0.4);
-			//wmot->set_parameter(1, 0.0);
-			//wmot->set_parameter(2, 0.0);
-			//Publisher::publish(wmot, "motion");
-			//sleep(6);
-			//_blk->getBuffer()->remove_filter(&reject_filter);
-			
-			readytokick = false;
+                        static bool kickoff = true;
+                        if ( kickoff ) {
+                          RejectAllFilter reject_filter("RejectFilter");
+                          _blk->getBuffer()->add_filter(&reject_filter);
+                          wmot->set_command("walkTo");
+                          wmot->set_parameter(0, 0.4);
+                          wmot->set_parameter(1, 0.0);
+                          wmot->set_parameter(2, 0.0);
+                          Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
+                          sleep(4);
+                          _blk->getBuffer()->remove_filter(&reject_filter);
+                          kickoff = false;
+                        }
+                        else {
+                          /* Passing */
+                          if (by > 0.0)
+                                  amot->set_command("leftKick");
+                          else
+                                  amot->set_command("rightKick");
+                          Publisher::publish(amot, "motion");
+                          back = 1;
+
+                          /* Open */
+                          //amot->set_command("puntKick");
+                          //Publisher::publish(amot, "motion");
+
+                          /* Dribbling */
+                          //RejectAllFilter reject_filter("RejectFilter");
+                          //_blk->getBuffer()->add_filter(&reject_filter);
+                          //wmot->set_command("walkTo");
+                          //wmot->set_parameter(0, 0.4);
+                          //wmot->set_parameter(1, 0.0);
+                          //wmot->set_parameter(2, 0.0);
+                          //Publisher::publish(wmot, "motion");
+                          //sleep(6);
+                          //_blk->getBuffer()->remove_filter(&reject_filter);
+
+
+                        }
+                        readytokick = false;
 		}
-		
+
 		if ( (ballfound == 0) && !readytokick && !turning ) {
 			if (!scanforball) {
 				startscan = true;
@@ -344,13 +360,13 @@ int BehaviorPassing::Execute() {
 			}
 			scanforball = true;
 		}
-			
+
 		if (scanforball && !readytokick && !turning && (hjsm != 0) ) {
 			HeadYaw = hjsm->sensordata(0);
 			HeadPitch = hjsm->sensordata(1);
 			HeadScanStep();
 		}
-		
+
 	} else if (!play) {   // Non-Play state
 		wmot->set_command("setWalkTargetVelocity");
 		wmot->set_parameter(0, 0);
@@ -358,13 +374,13 @@ int BehaviorPassing::Execute() {
 		wmot->set_parameter(2, 0);
 		wmot->set_parameter(3, 0);
 		Publisher::publish(wmot, "motion");
-		
+
 		//hmot->set_command("setHead");
 		//hmot->set_parameter(0, 0.0);
 		//hmot->set_parameter(1, 0.0);
 		//Publisher::publish(hmot, "motion");
 	}
-	
+
 	return 0;
 }
 
@@ -440,7 +456,7 @@ void BehaviorPassing::HeadScanStep() {
 			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
 			sleep(5);
 			_blk->getBuffer()->remove_filter(&reject_filter);
-			back--; 
+			back--;
 		} else {
 			RejectAllFilter reject_filter("RejectFilter");
 			_blk->getBuffer()->add_filter(&reject_filter);
@@ -449,25 +465,25 @@ void BehaviorPassing::HeadScanStep() {
 			wmot->set_parameter(1, 0.0);
 			wmot->set_parameter(2, direction * 0.78); //turn ~45 degrees? (==> is pi/4 == 0.78)
 			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-			sleep(5);
+			sleep(4);
 			_blk->getBuffer()->remove_filter(&reject_filter);
 			//direction = - direction;
 		}
 	}
-	
+
 
 }
 
 void BehaviorPassing::read_messages() {
-	
+
 	if (gsm != 0) delete gsm;
 	if (bmsg != 0) delete bmsg;
 	if (hjsm != 0) delete hjsm;
 	if (obsm != 0) delete obsm;
 	if (om != 0) delete om;
-	
+
 	_blk->process_messages();
-	
+
 	gsm  = _blk->in_msg_nb<GameStateMessage> ("GameStateMessage");
 	bmsg = _blk->in_msg_nb<BallTrackMessage> ("BallTrackMessage");
 	hjsm = _blk->in_msg_nb<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
