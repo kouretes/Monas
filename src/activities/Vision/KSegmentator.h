@@ -86,6 +86,7 @@ class KSegmentator{
 
 		//Scale up Y component to compensate for exposure or lighting
 		float lumascale;
+		void readComment(std::ifstream &conf);
 		void readCalibration(std::ifstream &conf);
 		void readColorInfo(std::ifstream &conf);
 		void readRulefile(std::ifstream & conf);
