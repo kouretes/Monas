@@ -11,13 +11,7 @@ motion
 #motionrecorder
 leds
 videoinput
-#facedetection
-#logodetection
-#landmarkdetection
-#visiontoolbox
-#coloredtoysdetection
 #audioin
-#movementdetection
 #sensorlog
 #mecalogger
 pythonbridge

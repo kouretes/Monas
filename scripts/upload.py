@@ -54,31 +54,47 @@ def is_valid_ipv4(ip):
 
 def usage():
 
-	game = string.find(sys.argv[0] , "upload_work.py")
+	#game = string.find(sys.argv[0] , "upload_work.py")
 
-	if game > -1:
+
+	#if game > -1:
+	if (sys.argv[0] == "upload_work.py"):
 		if	 len(sys.argv) < 2 :
 			print """
-		usage: upload_work.py Ip1 Ip2 Ip3 etc
+		usage: (python) ../../scripts/upload_work.py Ip1 Ip2 Ip3 etc
 					Ip1...: Ips of the robots you want to upload the same configuration!!!
 		THE SCRIPT MUST BE NAMED AS upload_work.py or upload_game.py to work
+
+		CAUTION must run the script inside Monad/make/yourebuildfolder
 			"""
 			exit(1)
 		else:
 			return
+	elif(sys.argv[0] == "upload_game.py"):
+		print """
+		usage: (python) ../../scripts/upload_game.py SSID Ip1 player1num Ip2 player2num Ip3 player2num etc
+		num_of_player: 1: Goalkeeper 2: Defender 3: Attacker
+		SSID: name of field the script will look into the config directory
+		for a directory field_name_of_field to upload the network files
+		files must be under the same path as on robot i.e. etc/network/interfaces.cof :)
+		Ip1...: Ips of the robots you want to upload the same configuration!!!
 
+		example upload_game.py Field_D 172.18.9.12 1 172.18.9.13 4 172.18.9.87 3
 
-	print """
-	usage: upload_game.py SSID Ip1 player1num Ip2 player2num Ip3 player2num etc
-	num_of_player: 1: Goalkeeper 2: Defender 3: Attacker
-	SSID: name of field the script will look into the config directory
-	for a directory field_name_of_field to upload the network files
-	files must be under the same path as on robot i.e. etc/network/interfaces.cof :)
-	Ip1...: Ips of the robots you want to upload the same configuration!!!
+		CAUTION must run the script inside Monad/make/yourebuildfolder
+		"""
+	else:
+		print """
+		You cannot run simply this script. Filename must be upload_work.py or upload_game.py
+		Just create links.
+		CAUTION must run the script inside Monad/make/yourebuildfolder
+		For help just run upload_work.py or upload_game.py
 
-	example upload_game.py D 172.18.9.12 1 172.18.9.13 4 172.18.9.87 3
+		examples:
+		usage: (python) ../../scripts/upload_work.py Ip1 Ip2 Ip3 etc
+		usage: (python) ../../scripts/upload_game.py SSID Ip1 player1num Ip2 player2num Ip3 player2num etc
 
-	"""
+		"""
 	exit(-1)
 
 playersdef = ['Goalkeeper', 'Defender', 'Attacker']
@@ -111,7 +127,7 @@ elif string.find(sys.argv[0] , "upload_game.py") > -1 :
 	game = 1 #
 else:
 	print "ERROR: Please check the filename of the script, must be upload_work.py or upload_game.py, Quiting "
-	#usage()
+	usage()
 	exit(-1)
 
 for ip in robotsIP:
@@ -228,7 +244,7 @@ for	ip in robotsIP:
 
 		rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 	else:
-		if(raw_input("Do you want to upload autoload.ini_work(no krobot)? or press enter to continue:  ")=='y'):
+		if(raw_input("Enter y to upload a clean autoload.ini_work(no krobot)? or press enter to continue:  ")=='y'):
 			print("Setting autoload.ini")
 			autoload_src = partial_configuration_dir + "autoload.ini_work"
 			autoload_dest = binaries_dir +"preferences/autoload.ini"
