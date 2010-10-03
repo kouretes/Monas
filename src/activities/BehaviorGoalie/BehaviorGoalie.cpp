@@ -84,15 +84,18 @@ void BehaviorGoalie::UserInit() {
         prevY = 0;
         prevTimestamp = boost::posix_time::from_time_t(0);
         speedIsValid = false;
-
+	
+	prevbd=1.5;
+	prevbb=0.0;
+	go=0; 
 }
 
 int BehaviorGoalie::MakeTrackBallAction() {
 
-	float overshootfix = 0.14;
+	float overshootfix = 0.5;
 	float cx = bmsg->cx();
 	float cy = bmsg->cy();
-	if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
+	if (fabs(cx) > 0.02 || fabs(cy) > 0.02) {
 		//hmot->set_command("setHead");
 		//hmot->set_parameter(0, bmsg->referenceyaw() - overshootfix * cx);
 		//hmot->set_parameter(1, bmsg->referencepitch() - overshootfix * cy);
@@ -142,8 +145,12 @@ int BehaviorGoalie::Execute() {
 		Logger::Instance().WriteMsg("BehaviorGoalie", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 
 		/* PLAY state */
-		if (gsm->player_state() == PLAYER_PLAYING && calibrated == 2)
+		if (gsm->player_state() == PLAYER_PLAYING && calibrated == 2) {
 			play = true;
+			prevbd=1.5;
+			prevbb=0.0;
+			go=0;
+		}
 		else
 			play = false;
 
@@ -163,8 +170,8 @@ int BehaviorGoalie::Execute() {
 				scanforball = false; //if you are scanning for ball please stop now
 				MakeTrackBallAction();
 				ballfound += 5;
-				if (ballfound > 10)
-					ballfound = 10; //Increase this value when we see the ball
+				if (ballfound > 20)
+					ballfound = 20; //Increase this value when we see the ball
 			}
 			else {
 				if (ballfound > 0)
@@ -175,27 +182,31 @@ int BehaviorGoalie::Execute() {
 
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		double gain = 0.8;
-		double gainTheta = 0.5;
 		if ((obsm != 0) && !turning) {
 			scanforball = false; //be sure to stop scanning
-			CalculateBallSpeed();
+			//CalculateBallSpeed();
 			int side=1;
-			bd = obsm->ball().dist();
-			bb = obsm->ball().bearing();
-			bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
-			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
+			double smoothing = 0.2; 
+			bd = (1.0-smoothing)*obsm->ball().dist() + smoothing*prevbd;
+			prevbd = obsm->ball().dist();
+			bb = (1.0-smoothing)*obsm->ball().bearing()+ smoothing*prevbb;
+			prevbb = obsm->ball().bearing();
+			bx = bd * cos( bb );
+			by = bd * sin( bb );
 			side = (bb > 0) ? 1 : -1;
 			Logger::Instance().WriteMsg("BehaviorGoalie", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
 
 			theta = 0;
-			if ( bd < 0.5  ) {	// If distance is small, approach and kick ball
+			double gain = 0.8;
+			double gainTheta = 0.6;
+			double gainFine = 1.0;
+			if ( (fabs(bb) < +30*TO_RAD) && (bd < 0.4)  ) {	// If distance is small, approach and kick ball
 			    readytokick = true;
-			    float posx=0.16, posy=0.05;
-			    if (bd > 0.40) {
+			    float posx=0.17, posy=0.05;
+			    if (bd > 0.25) {
 				    X = gain * bx;
 				    Y = gain * by;
-				    if (fabs(bb) > 0.055)
+				    if (fabs(bb) > 3*TO_RAD)
 					    theta = gainTheta * bb;
 				    readytokick = false;
 			    } else if (bd > 0.25) {
@@ -203,46 +214,45 @@ int BehaviorGoalie::Execute() {
 				    Y = gain * ( by - (side*posy) );
 				    readytokick = false;
 			    } else {
-				    if ( fabs( bx - posx ) > 0.02) {
-					    X = gain * (bx - posx);
+				    if ( fabs( bx - posx ) > 0.025) {
+					    X = gainFine * (bx - posx);
 					    readytokick = false;
 				    }
-				    if ( fabs( by - (side*posy) ) > 0.02) {
-					    Y = gain * ( by - (side*posy) );
+				    if ( fabs( by - (side*posy) ) > 0.025) {
+					    Y = gainFine * ( by - (side*posy) );
 					    readytokick = false;
 				    }
 			    }
 			}
-			else if ( (bb > +30*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the left
-			    amot->set_command("leftFall.kme");
-			    Publisher::publish(amot, "motion");
-			    stopped = false;
+			//else if ( (bb > +30*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the left
+			    //amot->set_command("leftFall.kme");
+			    //Publisher::publish(amot, "motion");
+			    //stopped = false;
+			//}
+			//else if ( (bb < -30*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the right
+			    //amot->set_command("rightFall.kme");
+			    //Publisher::publish(amot, "motion");
+			    //stopped = false;
+			//}
+			else if ( (bb>5) && (bb-prevbb > +3*TO_RAD) && (bd > 0.4) && (bd < 1.5) ) {		// Ball is not too far and head to the left
+			    go--;
 			}
-			else if ( (bb < -30*TO_RAD) && (bd < 0.8) ) {		// Ball is close and head to the right
-			    amot->set_command("rightFall.kme");
-			    Publisher::publish(amot, "motion");
-			    stopped = false;
+			else if ( (bb<-5) && (bb-prevbb < -3*TO_RAD) && (bd > 0.4) && (bd < 1.5) ) {		// Ball is not too far and head to the right
+			    go++;
 			}
-			else if ( (bb > +45*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the left
-			    amot->set_command("leftDive");
-			    Publisher::publish(amot, "motion");
-			    stopped = false;
+			else {
+				readytokick = false;
 			}
-			else if ( (bb < -45*TO_RAD) && (bd < 1.5) ) {		// Ball is not too far and head to the right
-			    amot->set_command("rightDive");
-			    Publisher::publish(amot, "motion");
-			    stopped = false;
-			}
-
-
-			if (fabs(X) > 1.0)
-				X = (X > 0.0) ? 1.0 : -1.0;
-			if (fabs(Y) > 1.0)
-				Y = (Y > 0.0) ? 1.0 : -1.0;
-			if (fabs(theta) > 1.0)
-				theta = (theta > 0.0) ? 1.0 : -1.0;
-
+			
 			if (!readytokick) {
+			    
+				if (fabs(X) > 1.0)
+					X = (X > 0.0) ? 1.0 : -1.0;
+				if (fabs(Y) > 1.0)
+					Y = (Y > 0.0) ? 1.0 : -1.0;
+				if (fabs(theta) > 1.0)
+					theta = (theta > 0.0) ? 1.0 : -1.0;
+			    
 				wmot->set_command("setWalkTargetVelocity");
 				wmot->set_parameter(0, X);
 				wmot->set_parameter(1, Y);
@@ -253,7 +263,18 @@ int BehaviorGoalie::Execute() {
 		}
 
 		/* Ready to take action */
-		if (readytokick && !turning) {
+		if ( abs(go) > 10 ) {
+			if ( go < -10 ) 
+			    amot->set_command("leftDive");
+			else
+			    amot->set_command("rightDive");
+			Publisher::publish(amot, "motion");
+			stopped = false;
+			go = 0;
+			prevbd=1.5;
+			prevbb=0.0;
+		}
+		else if (readytokick && !turning) {
 			if (by > 0.0)
 				amot->set_command("leftKick");
 			else

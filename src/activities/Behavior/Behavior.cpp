@@ -13,6 +13,11 @@
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
+#include "architecture/narukom/pub_sub/filters/special_filters.h"
+
+#ifndef TO_RAD
+#define TO_RAD 0.01745329f
+#endif
 
 namespace {
 	ActivityRegistrar<Behavior>::Type temp("Behavior");
@@ -29,12 +34,7 @@ void Behavior::UserInit() {
 	_com->get_message_queue()->subscribe("vision", _blk, 0);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->subscribe("behavior", _blk, 0);
-	try {
-		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
-	} catch (AL::ALError& e) {
-		Logger::Instance().WriteMsg("Behavior", "Error in getting memory proxy", Logger::Error);
-		//cout << "Error in getting memory proxy" << std::endl;
-	}
+	_com->get_message_queue()->subscribe("obstacle", _blk, 0);
 
 	wmot = new MotionWalkMessage();
 	wmot->set_topic("motion");
@@ -53,7 +53,6 @@ void Behavior::UserInit() {
 
 	ballfound = 0;
 
-	balllastseendirection = -0.02;
 	reachedlimitup = false;
 	reachedlimitdown = false;
 	reachedlimitleft = false;
@@ -64,235 +63,233 @@ void Behavior::UserInit() {
 
 	calibrated = 0;
 
-	stopped = false;
+	stopped = true;
 	play = false;
-	Logger::Instance().WriteMsg("Behavior", "Controller Initialized", Logger::Info);
-	//cout << "Behavior Controller Initialized" << endl;
+	Logger::Instance().WriteMsg("Behavior", "Initialized", Logger::Info);
 
 	hjsm = 0;
 	bmsg = 0;
 	gsm = 0;
+	obsm = 0;
+	om = 0;
+
+	readytokick = false;
+	back = 0;
+	direction = 1;
+	turning = false;
+	count = 0;
 }
 
 int Behavior::MakeTrackBallAction() {
-	scanforball = false; //if you are scanning for ball please stop now
 
-	float overshootfix = 1 - fabs(bmsg->referencepitch()) / (3.14 / 2.0);
-	//overshootfix = 2 * (0.4f - overshootfix);
-	Logger::Instance().WriteMsg("Behavior", "bmsg->referencepitch() Value: " + _toString(bmsg->referencepitch()), Logger::ExtraInfo);
-
-	Logger::Instance().WriteMsg("Behavior", "Overshoot Value: " + _toString(overshootfix), Logger::ExtraInfo);
-
+	float overshootfix = 0.25;
 	float cx = bmsg->cx();
 	float cy = bmsg->cy();
-
-	balllastseendirection = bmsg->referenceyaw() - 0.9f * cx;// HeadYaw.sensorvalue();
-	Logger::Instance().WriteMsg("Behavior", "I want the freaking head to move towards (cx,cy):" + _toString(0.9f * (cx)) + "," + _toString(-0.9f * (cy)), Logger::ExtraInfo);
-
 	if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
-		//Sending command to motion in order to move the head
-		hmot->set_command("setHead");
-		hmot->set_parameter(0, bmsg->referenceyaw() - overshootfix * cx);
-		Logger::Instance().WriteMsg("Behavior", "bmsg->referenceyaw(): " + _toString(bmsg->referenceyaw()), Logger::ExtraInfo);
-
-		hmot->set_parameter(1, bmsg->referencepitch() - overshootfix * cy);
-		//hmot->set_parameter(0, 0.9f * overshootfix * (cx));
-		//hmot->set_parameter(1, -0.9f * overshootfix * (cy));
+		//hmot->set_command("setHead");
+		//hmot->set_parameter(0, bmsg->referenceyaw() - overshootfix * cx);
+		//hmot->set_parameter(1, bmsg->referencepitch() - overshootfix * cy);
+		hmot->set_command("changeHead");
+		hmot->set_parameter(0, - overshootfix * cx);
+		hmot->set_parameter(1, - overshootfix * cy);
 		Publisher::publish(hmot, "motion");
-		Logger::Instance().WriteMsg("Behavior", "I send motion to head to move towards (cx,cy):" + _toString(hmot->parameter(0)) + "," + _toString(hmot->parameter(1)), Logger::ExtraInfo);
 	}
 	return 1;
 }
 
+
+void Behavior::mgltest() {
+
+	wmot->set_command("setWalkTargetVelocity");
+	wmot->set_parameter(0, 1.0);
+	wmot->set_parameter(1, 0.0);
+	wmot->set_parameter(2, 0.0);
+	wmot->set_parameter(3, 1.0);
+
+	if (om!=0) {
+		Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
+		if (om->direction() == 0) {
+			wmot->set_command("setWalkTargetVelocity");
+			wmot->set_parameter(0, 0.0);
+			wmot->set_parameter(1, 0.0);
+			wmot->set_parameter(2, 1.0);
+			wmot->set_parameter(3, 1.0);
+		}
+	}
+	Publisher::publish(wmot, "motion");
+}
+
 int Behavior::Execute() {
 
-	//MessageBuffer* sub_buf = _blk->getBuffer();
-	//while (sub_buf->size() > 0) {
 	read_messages();
-	//};
+
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
-		//return 0
 
-		if (gsm->player_state() == PLAYER_PLAYING && calibrated == 2) // this is the playing state
+		/* PLAY state */
+		if (gsm->player_state() == PLAYER_PLAYING && calibrated == 2)
 			play = true;
 		else
 			play = false;
-		if ((gsm->player_state() != PLAYER_PLAYING && calibrated == 0) || gsm->player_state() == PLAYER_READY) {
+
+		/* Calibration */
+		if ( (gsm->player_state() == PLAYER_PENALISED) || (gsm->player_state() == PLAYER_READY) ) {
 			CalibrateCam v;
 			v.set_status(0);
 			publish(&v, "vision");
-			//cout<<"calibrate cam now!"<<endl;
 			calibrated = 1;
 		}
 
-		delete gsm;
 	}
-	//return 0;
 
-	if (bmsg != 0) {
+	//if (play) mgltest();
+	//return 1;
 
-		Logger::Instance().WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraExtraInfo);
+	if (play) {
 
-		if (bmsg->radius() > 0) { //This meens that a ball was found
-			MakeTrackBallAction();
-			Logger::Instance().WriteMsg("Behavior", "Ball Found ole ", Logger::Info);
-
-			ballfound += 5; //Increase this value when we see the ball
-		} else {
-			if (ballfound > 0) {
-				ballfound -= 1; //Decrease it when we don't see the ball
-				startscan = false;
-				scanforball = false; // stop scanning
-			} else {
-				ballfound = 0;
-				if (!scanforball) { //Start the scan only when it is not scanning ... obviously
-					scanforball = true;
-					startscan = true;
-				}
+		if (bmsg != 0) {
+			Logger::Instance().WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraExtraInfo);
+			if (bmsg->radius() > 0) { //This means that a ball was found
+				scanforball = false; //if you are scanning for ball please stop now
+				MakeTrackBallAction();
+				ballfound += 5;
+				if (ballfound > 10)
+					ballfound = 10; //Increase this value when we see the ball
+			}
+			else {
+				if (ballfound > 0)
+					ballfound -= 1; //Decrease it when we don't see the ball
 			}
 		}
-		//just dont scan if ones you didn't saw the ball
-		if (ballfound > 10)
-			ballfound = 10;
-		if (ballfound < 0)
-			ballfound = 0;
+		Logger::Instance().WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
-		lastballseen = *bmsg;
+		float X=0.0, Y=0.0, theta=0.0;
+		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
 
-		delete bmsg;
-	}
+		if ((obsm != 0) && !turning) {
 
-	Logger::Instance().WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
-	if (play) {
-		//Head joint related Behavior
-		//Under this block we use the head joint values to calculated
-		//1) the head scanning procedure
-		//2) the walk parameters (how much to turn, walk ..) and the kicks
-		if (hjsm != 0) {
-			HeadYaw = hjsm->sensordata(0);
-			HeadPitch = hjsm->sensordata(1);
-			Logger::Instance().WriteMsg("Behavior", "HeadJointSensorsMessage arrived", Logger::ExtraExtraInfo);
-			Logger::Instance().WriteMsg("Behavior", "HeadPitch.sensorvalue()" + _toString(HeadPitch.sensorvalue()) + "HeadYaw.sensorvalue()   " + _toString(HeadYaw.sensorvalue()), Logger::ExtraInfo);
-		}
+			readytokick = true;
+			scanforball = false; //be sure to stop scanning
+			int side=1;
+			bd = obsm->ball().dist();
+			bb = obsm->ball().bearing();
+			bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
+			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
+			side = (bb > 0) ? 1 : -1;
+			Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
 
-		//HeadScan
-		if ((hjsm != 0) && (scanforball == true)) {//start or continue scan
-			HeadScanStep();
-		}
-		//if(Obstacle in front)
-		//{
-		//					if (!stopped) {
-//		Logger::Instance().WriteMsg("Behavior", "Setting stop command Obstacle in front!!!", Logger::ExtraInfo);
-//		stopped = true;
-//		wmot->set_command("setWalkTargetVelocity");
-//		wmot->set_parameter(0, 0);
-//		wmot->set_parameter(1, 0);
-//		wmot->set_parameter(2, 0);
-//		wmot->set_parameter(3, 0);
-//		Publisher::publish(wmot, "motion");
-	//	return;
-//	}
-		//
-		//
-		//
-		//
-		//
-
-		//We have seen a ball for sure and we should walk
-		//or we should kick
-		if (hjsm != 0) { //ActionDesision
-			float X, Y, theta, freq;
-			//Calculate approach
-			X = 0;
-			Y = 0;
-			theta = 0;
-
-			if (ballfound > 1) {
-				//scanforball = false; //be sure to stop scanning
-
-				bool readytokick = true;
-				//Check max values !
-				if (fabs(HeadYaw.sensorvalue()) > 0.055) {
-					theta = HeadYaw.sensorvalue() * 0.5 * (0.6 - fabs(HeadPitch.sensorvalue()));
+			double gain = 0.8;
+            double gainTheta = 0.4;
+            double gainFine = 1.0;
+			if (obsm->ball().dist() <= 8.0) {
+				float posx=0.17, posy=0.05;
+				if (bd > 0.25) {
+					X = gain * bx;
+					Y = gain * by;
+					if (fabs(bb) > 3*TO_RAD)
+						theta = gainTheta * bb;
 					readytokick = false;
-				}
-				if ((HeadPitch.sensorvalue()) < 0.51) { //// Auto edw, to poso konta einai stin mpala gia na soutarei
-					X = 0.75 * (0.5 - HeadPitch.sensorvalue());
-					Y = HeadYaw.sensorvalue() * 0.6 * (1.4 - fabs(HeadYaw.sensorvalue()));
+				} else if (bd > 0.25) {
+					X = gain * (bx - posx);
+					Y = gain * ( by - (side*posy) );
 					readytokick = false;
-				}
-
-				if (fabs(HeadYaw.sensorvalue()) < 0.025) {
-					Y = (HeadYaw.sensorvalue());
-					readytokick = false;
-				}
-
-				if (!readytokick) {
-					wmot->set_command("setWalkTargetVelocity");
-
-					if (fabs(X) > 1.0)
-						X = (X > 0) ? 1 : -1;
-					if (fabs(Y) > 1.0)
-						Y = (Y > 0) ? 1 : -1;
-					if (fabs(theta) > 1.0)
-						theta = (theta > 0) ? 1 : -1;
-					freq = 1.4 - fabs(HeadPitch.sensorvalue());
-					if (fabs(freq) > 1.0)
-						freq = (freq > 0) ? 1 : -1;
-
-					wmot->set_parameter(0, X);
-					wmot->set_parameter(1, Y);
-					wmot->set_parameter(2, theta);
-					wmot->set_parameter(3, freq);
-					cout << "  setWalkTargetVelocity " << endl;
-					Logger::Instance().WriteMsg("Behavior", "Walk Command" + _toString(wmot->command()) + "X:  " + _toString(wmot->parameter(0)) + "Y:  "
-							+ _toString(wmot->parameter(1)) + "theta:  " + _toString(wmot->parameter(2)), Logger::ExtraExtraInfo);
-					Publisher::publish(wmot, "motion");
-
 				} else {
-					cout << "Kicking" << endl;
-					if (HeadYaw.sensorvalue() > 0.0)
-						amot->set_command("leftKick");
-					else
-						amot->set_command("rightKick");
-					Logger::Instance().WriteMsg("Behavior", "Kicking with " + _toString(amot->command()), Logger::Info);
-					Publisher::publish(amot, "motion");
-				}
-				stopped = false;
-
-			} else {
-
-				if (ballfound == 0) { //stop when we don't see anything
-					scanforball = true;
-					if (!stopped) {
-						Logger::Instance().WriteMsg("Behavior", "Setting stop command", Logger::ExtraInfo);
-						stopped = true;
-						wmot->set_command("setWalkTargetVelocity");
-						wmot->set_parameter(0, 0);
-						wmot->set_parameter(1, 0);
-						wmot->set_parameter(2, 0);
-						wmot->set_parameter(3, 0);
-						Publisher::publish(wmot, "motion");
+					if ( fabs( bx - posx ) > 0.025) {
+						X = gainFine * (bx - posx);
+						readytokick = false;
+					}
+					if ( fabs( by - (side*posy) ) > 0.025) {
+						Y = gainFine * ( by - (side*posy) );
+						readytokick = false;
 					}
 				}
 			}
-		}
-	} else {
-		if (!stopped) {
-			stopped = true;
-			Logger::Instance().WriteMsg("Behavior", "Setting stop command because of playing state ", Logger::ExtraExtraInfo);
 
-			wmot->set_command("setWalkTargetVelocity");
-			wmot->set_parameter(0, 0);
-			wmot->set_parameter(1, 0);
-			wmot->set_parameter(2, 0);
-			wmot->set_parameter(3, 0);
-			Publisher::publish(wmot, "motion");
+			if (fabs(X) > 1.0)
+				X = (X > 0.0) ? 1.0 : -1.0;
+			if (fabs(Y) > 1.0)
+				Y = (Y > 0.0) ? 1.0 : -1.0;
+			if (fabs(theta) > 1.0)
+				theta = (theta > 0.0) ? 1.0 : -1.0;
+
+			if (!readytokick) {
+				wmot->set_command("setWalkTargetVelocity");
+				wmot->set_parameter(0, X);
+				wmot->set_parameter(1, Y);
+				wmot->set_parameter(2, theta);
+				wmot->set_parameter(3, 1.0);
+				Publisher::publish(wmot, "motion");
+			}
 		}
+
+
+		/* Ready to take action */
+		if (readytokick && !turning) {
+                        static bool kickoff = false;
+                        if ( kickoff ) {
+                          RejectAllFilter reject_filter("RejectFilter");
+                          _blk->getBuffer()->add_filter(&reject_filter);
+                          wmot->set_command("walkTo");
+                          wmot->set_parameter(0, 0.4);
+                          wmot->set_parameter(1, 0.0);
+                          wmot->set_parameter(2, 0.0);
+                          Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
+                          sleep(4);
+                          _blk->getBuffer()->remove_filter(&reject_filter);
+                          kickoff = false;
+                        }
+                        else {
+                          /* Passing */
+                          if (by > 0.0)
+                                  amot->set_command("leftKick");
+                          else
+                                  amot->set_command("rightKick");
+                          Publisher::publish(amot, "motion");
+                          back = 1;
+
+                        }
+                        readytokick = false;
+		}
+
+		if ( (ballfound == 0) && !readytokick && !turning ) {
+			if (!scanforball) {
+				startscan = true;
+				wmot->set_command("setWalkTargetVelocity");
+				wmot->set_parameter(0, 0);
+				wmot->set_parameter(1, 0);
+				wmot->set_parameter(2, 0);
+				wmot->set_parameter(3, 0);
+				Publisher::publish(wmot, "motion");
+			}
+			scanforball = true;
+		}
+
+		if (scanforball && !readytokick && !turning && (hjsm != 0) ) {
+			HeadYaw = hjsm->sensordata(0);
+			HeadPitch = hjsm->sensordata(1);
+			HeadScanStep();
+		}
+
+	} else if (!play) {   // Non-Play state
+		wmot->set_command("setWalkTargetVelocity");
+		wmot->set_parameter(0, 0);
+		wmot->set_parameter(1, 0);
+		wmot->set_parameter(2, 0);
+		wmot->set_parameter(3, 0);
+		Publisher::publish(wmot, "motion");
+
+		//hmot->set_command("setHead");
+		//hmot->set_parameter(0, 0.0);
+		//hmot->set_parameter(1, 0.0);
+		//Publisher::publish(hmot, "motion");
 	}
+
 	return 0;
 }
+
+
+
+
 void Behavior::HeadScanStep() {
 
 	if (startscan) {
@@ -306,89 +303,102 @@ void Behavior::HeadScanStep() {
 		reachedlimitdown = false;
 		reachedlimitleft = false;
 		reachedlimitright = false;
-
 		scandirectionyaw = (HeadYaw.sensorvaluediff() > 0) ? 1 : -1;
 		startscan = false;
-
 	}
-//	reachedlimitright = false;
-//	reachedlimitleft = false;
 
 	//continue scan
-	if (HeadPitch.sensorvalue() < LIMITUP) { // upper position
-		Logger::Instance().WriteMsg("Behavior", " LIMITUP ", Logger::ExtraExtraInfo);
+	if (HeadPitch.sensorvalue() < LIMITUP) {
+		//Logger::Instance().WriteMsg("Behavior", " LIMITUP ", Logger::ExtraExtraInfo);
 		reachedlimitup = true;
 		scandirectionpitch = 1;
 	}
 	if (HeadPitch.sensorvalue() > LIMITDOWN) {
-		Logger::Instance().WriteMsg("Behavior", " LIMITDOWN ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("Behavior", " LIMITDOWN ", Logger::ExtraExtraInfo);
 		reachedlimitdown = true;
 		scandirectionpitch = -1;
 	}
 	if (HeadYaw.sensorvalue() > LIMITLEFT) {
-		Logger::Instance().WriteMsg("Behavior", "LIMITLEFT  ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("Behavior", "LIMITLEFT  ", Logger::ExtraExtraInfo);
 		reachedlimitleft = true;
 		scandirectionyaw = -1;
 	}
 	if (HeadYaw.sensorvalue() < LIMITRIGHT) {
-		Logger::Instance().WriteMsg("Behavior", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("Behavior", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
 		reachedlimitright = true;
 		scandirectionyaw = 1;
 	}
-	//			if (fabs(HeadYaw.sensorvalue()) > 0.40) {
-	//				Logger::Instance()->WriteMsg("Behavior", " fabs(HeadYaw.sensorvalue()) >  0.40  ", Logger::ExtraExtraInfo);
-	//				reachedlimitright = true;
-	//				reachedlimitleft = true;
-	//				scandirectionyaw *= -1; //change direction
-	//			}
 
 	hmot->set_command("changeHead");
-	hmot->set_parameter(0, scandirectionyaw * 0.18); // Headyaw
+	hmot->set_parameter(0, scandirectionyaw * 0.27); // Headyaw
 	hmot->set_parameter(1, 0.0); // headPitch
 
 	if (reachedlimitleft && reachedlimitright) {
-		Logger::Instance().WriteMsg("Behavior", " reachedlimitleft || reachedlimitright ", Logger::ExtraExtraInfo);
-		hmot->set_parameter(1, scandirectionpitch * 0.23); // headPitch
-		//hmot->set_parameter(0, 0.0); // headYaw
+		Logger::Instance().WriteMsg("Behavior", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
+		hmot->set_parameter(1, scandirectionpitch * 0.35); // headPitch
 		reachedlimitleft = false;
 		reachedlimitright = false;
 	}
 	Publisher::publish(hmot, "motion");
 
-	if (reachedlimitup && reachedlimitdown) {
+	if (reachedlimitup && reachedlimitdown) { //scanning completed
 		Logger::Instance().WriteMsg("Behavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
 		startscan = true;
 		reachedlimitdown = false;
 		reachedlimitup = false;
 		reachedlimitright = false;
 		reachedlimitleft = false;
-		///we should turn;
-		wmot->set_command("walkTo");
-		wmot->set_parameter(0, 0.00001);
-		wmot->set_parameter(1, 0.00001);
-		wmot->set_parameter(2, (balllastseendirection > 0) ? (1) : (-1) * 0.52); //turn 30 degrees?
-		Logger::Instance().WriteMsg("Behavior", "Command HeadScan" + _toString(wmot->command()) + "1:  " + _toString(wmot->parameter(0)) + "2:  " + _toString(wmot->parameter(1))
-				+ "3:  " + _toString(wmot->parameter(2)), Logger::Info);
-		stopped=false;
-		Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
+		///we should do something;
+		if (back>0) {
+			RejectAllFilter reject_filter("RejectFilter");
+			_blk->getBuffer()->add_filter(&reject_filter);
+			wmot->set_command("walkTo");
+			wmot->set_parameter(0, -0.5);
+			wmot->set_parameter(1, 0.0);
+			wmot->set_parameter(2, 0.0);
+			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
+			sleep(5);
+			_blk->getBuffer()->remove_filter(&reject_filter);
+			back--;
+		} else {
+			RejectAllFilter reject_filter("RejectFilter");
+			_blk->getBuffer()->add_filter(&reject_filter);
+			wmot->set_command("walkTo");
+			wmot->set_parameter(0, 0.0);
+			wmot->set_parameter(1, 0.0);
+			wmot->set_parameter(2, direction * 0.78); //turn ~45 degrees? (==> is pi/4 == 0.78)
+			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
+			sleep(4);
+			_blk->getBuffer()->remove_filter(&reject_filter);
+			//direction = - direction;
+		}
 	}
-	
+
 
 }
 
 void Behavior::read_messages() {
+
+	if (gsm != 0) delete gsm;
+	if (bmsg != 0) delete bmsg;
+	if (hjsm != 0) delete hjsm;
+	if (obsm != 0) delete obsm;
+	if (om != 0) delete om;
+
 	_blk->process_messages();
-	gsm = _blk->in_nb<GameStateMessage> ("GameStateMessage", "RobotController");
-	bmsg = _blk->in_nb<BallTrackMessage> ("BallTrackMessage", "Vision");
-	hjsm = _blk->in_nb<HeadJointSensorsMessage> ("HeadJointSensorsMessage", "Sensors");
+
+	gsm  = _blk->in_msg_nb<GameStateMessage> ("GameStateMessage");
+	bmsg = _blk->in_msg_nb<BallTrackMessage> ("BallTrackMessage");
+	hjsm = _blk->in_msg_nb<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
+	obsm = _blk->in_msg_nb<ObservationMessage> ("ObservationMessage");
+	om   = _blk->in_msg_nb<ObstacleMessage> ("ObstacleMessage");
 
 	Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 	CalibrateCam *c = _blk->in_msg_nb<CalibrateCam> ("CalibrateCam");
 	if (c != NULL) {
 		if (c->status() == 1)
 			calibrated = 2;
-
 		delete c;
+		cout << "calibrated:" << calibrated << endl;
 	}
-	cout << "calibrated:" << calibrated << endl;
 }

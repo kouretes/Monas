@@ -21,7 +21,7 @@
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10  StatsCycle=15>
   <name>Behavior</name>
-  <activity>BehaviorPassing</activity>
+  <activity>BehaviorGoalie</activity>
 </agent>
 
 <agent IsRealTime=0 Priority=1 ThreadFrequency=3  StatsCycle=15>

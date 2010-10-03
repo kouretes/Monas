@@ -306,7 +306,7 @@ int BehaviorPassing::Execute() {
 
 		/* Ready to take action */
 		if (readytokick && !turning) {
-                        static bool kickoff = true;
+                        static bool kickoff = false;
                         if ( kickoff ) {
                           RejectAllFilter reject_filter("RejectFilter");
                           _blk->getBuffer()->add_filter(&reject_filter);
