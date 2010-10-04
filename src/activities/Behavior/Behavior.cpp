@@ -225,27 +225,37 @@ int Behavior::Execute() {
 
 		/* Ready to take action */
 		if (readytokick && !turning) {
-                        static bool kickoff = false;
+                        static bool kickoff = true;
                         if ( kickoff ) {
-                          RejectAllFilter reject_filter("RejectFilter");
-                          _blk->getBuffer()->add_filter(&reject_filter);
-                          wmot->set_command("walkTo");
-                          wmot->set_parameter(0, 0.4);
-                          wmot->set_parameter(1, 0.0);
-                          wmot->set_parameter(2, 0.0);
-                          Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-                          sleep(4);
-                          _blk->getBuffer()->remove_filter(&reject_filter);
-                          kickoff = false;
+                          //RejectAllFilter reject_filter("RejectFilter");
+                          //_blk->getBuffer()->add_filter(&reject_filter);
+                          //wmot->set_command("walkTo");
+                          //wmot->set_parameter(0, 0.4);
+                          //wmot->set_parameter(1, 0.0);
+                          //wmot->set_parameter(2, 0.0);
+                          //Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
+                          //sleep(4);
+                          //_blk->getBuffer()->remove_filter(&reject_filter);
+                          
+							if (by > 0.0) {
+								amot->set_command("softLeftSideKick");
+							}
+							else {
+								amot->set_command("softRightSideKick");
+							}
+							kickoff = false;
                         }
                         else {
-                          /* Passing */
-                          if (by > 0.0)
-                                  amot->set_command("leftKick");
-                          else
-                                  amot->set_command("rightKick");
+                          if (by > 0.0) {
+                                  //amot->set_command("leftKick");
+                                  amot->set_command("hardLeftSideKick");
+						  }
+                          else {
+                                  //amot->set_command("rightKick");
+                                  amot->set_command("hardRightSideKick");
+						  }
                           Publisher::publish(amot, "motion");
-                          back = 1;
+                          back = 0;
 
                         }
                         readytokick = false;
