@@ -106,10 +106,12 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(BallObject));
   NamedObject_descriptor_ = file->message_type(3);
-  static const int NamedObject_offsets_[3] = {
+  static const int NamedObject_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, object_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, bearing_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, distance_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, bearing_dev_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, distance_dev_),
   };
   NamedObject_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -174,7 +176,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PointObject));
   ObservationMessage_descriptor_ = file->message_type(7);
-  static const int ObservationMessage_offsets_[7] = {
+  static const int ObservationMessage_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, image_timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, ball_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, regular_objects_),
@@ -182,6 +184,9 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, corner_objects_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, intersection_objects_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, line_objects_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, covered_distance_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, bearing_limit_left_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, bearing_limit_right_),
   };
   ObservationMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -262,23 +267,26 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
     "atus\030\001 \002(\005\022\027\n\tsleeptime\030\002 \002(\005:\0041500\022\017\n\003e"
     "xp\030\003 \002(\005:\00215\022\030\n\rexposure_comp\030\004 \002(\002:\0011\"K"
     "\n\nBallObject\022\017\n\004dist\030\001 \002(\002:\0010\022\022\n\007bearing"
-    "\030\002 \002(\002:\0010\022\030\n\rball_diameter\030\003 \001(\002:\0010\"O\n\013N"
-    "amedObject\022\025\n\013object_name\030\001 \002(\t:\000\022\023\n\007bea"
-    "ring\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \002(\002:\002-1\"V\n\022"
-    "UnidentifiedObject\022\025\n\013object_type\030\001 \002(\t:"
-    "\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \001(\002"
-    ":\002-1\"r\n\nLineObject\022\030\n\rstart_bearing\030\001 \002("
-    "\002:\0010\022\031\n\016start_distance\030\002 \002(\002:\0010\022\026\n\013end_b"
-    "earing\030\003 \002(\002:\0010\022\027\n\014end_distance\030\004 \002(\002:\0010"
-    "\"0\n\013PointObject\022\020\n\010distance\030\001 \002(\002\022\017\n\007bea"
-    "ring\030\002 \002(\002\"\222\002\n\022ObservationMessage\022\031\n\017ima"
-    "ge_timestamp\030\001 \002(\t:\000\022\031\n\004ball\030\002 \001(\0132\013.Bal"
-    "lObject\022%\n\017regular_objects\030\003 \003(\0132\014.Named"
-    "Object\022*\n\radhoc_objects\030\004 \003(\0132\023.Unidenti"
-    "fiedObject\022$\n\016corner_objects\030\005 \003(\0132\014.Poi"
-    "ntObject\022*\n\024intersection_objects\030\006 \003(\0132\014"
-    ".PointObject\022!\n\014line_objects\030\007 \003(\0132\013.Lin"
-    "eObject", 1047);
+    "\030\002 \002(\002:\0010\022\030\n\rball_diameter\030\003 \001(\002:\0010\"\202\001\n\013"
+    "NamedObject\022\025\n\013object_name\030\001 \002(\t:\000\022\023\n\007be"
+    "aring\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \002(\002:\002-1\022\027\n"
+    "\013bearing_dev\030\004 \002(\002:\002-1\022\030\n\014distance_dev\030\005"
+    " \002(\002:\002-1\"V\n\022UnidentifiedObject\022\025\n\013object"
+    "_type\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010di"
+    "stance\030\003 \001(\002:\002-1\"r\n\nLineObject\022\030\n\rstart_"
+    "bearing\030\001 \002(\002:\0010\022\031\n\016start_distance\030\002 \002(\002"
+    ":\0010\022\026\n\013end_bearing\030\003 \002(\002:\0010\022\027\n\014end_dista"
+    "nce\030\004 \002(\002:\0010\"0\n\013PointObject\022\020\n\010distance\030"
+    "\001 \002(\002\022\017\n\007bearing\030\002 \002(\002\"\345\002\n\022ObservationMe"
+    "ssage\022\031\n\017image_timestamp\030\001 \002(\t:\000\022\031\n\004ball"
+    "\030\002 \001(\0132\013.BallObject\022%\n\017regular_objects\030\003"
+    " \003(\0132\014.NamedObject\022*\n\radhoc_objects\030\004 \003("
+    "\0132\023.UnidentifiedObject\022$\n\016corner_objects"
+    "\030\005 \003(\0132\014.PointObject\022*\n\024intersection_obj"
+    "ects\030\006 \003(\0132\014.PointObject\022!\n\014line_objects"
+    "\030\007 \003(\0132\013.LineObject\022\030\n\020covered_distance\030"
+    "\010 \002(\002\022\032\n\022bearing_limit_left\030\t \002(\002\022\033\n\023bea"
+    "ring_limit_right\030\n \002(\002", 1182);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "VisionObservations.proto", &protobuf_RegisterTypes);
   BallTrackMessage::default_instance_ = new BallTrackMessage();
@@ -1559,6 +1567,8 @@ const ::std::string NamedObject::_default_object_name_;
 const int NamedObject::kObjectNameFieldNumber;
 const int NamedObject::kBearingFieldNumber;
 const int NamedObject::kDistanceFieldNumber;
+const int NamedObject::kBearingDevFieldNumber;
+const int NamedObject::kDistanceDevFieldNumber;
 #endif  // !_MSC_VER
 
 NamedObject::NamedObject()
@@ -1580,6 +1590,8 @@ void NamedObject::SharedCtor() {
   object_name_ = const_cast< ::std::string*>(&_default_object_name_);
   bearing_ = -1;
   distance_ = -1;
+  bearing_dev_ = -1;
+  distance_dev_ = -1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1624,6 +1636,8 @@ void NamedObject::Clear() {
     }
     bearing_ = -1;
     distance_ = -1;
+    bearing_dev_ = -1;
+    distance_dev_ = -1;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1679,6 +1693,38 @@ bool NamedObject::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(37)) goto parse_bearing_dev;
+        break;
+      }
+      
+      // required float bearing_dev = 4 [default = -1];
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_bearing_dev:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &bearing_dev_)));
+          _set_bit(3);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(45)) goto parse_distance_dev;
+        break;
+      }
+      
+      // required float distance_dev = 5 [default = -1];
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_distance_dev:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &distance_dev_)));
+          _set_bit(4);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1720,6 +1766,16 @@ void NamedObject::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->distance(), output);
   }
   
+  // required float bearing_dev = 4 [default = -1];
+  if (_has_bit(3)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->bearing_dev(), output);
+  }
+  
+  // required float distance_dev = 5 [default = -1];
+  if (_has_bit(4)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->distance_dev(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1748,6 +1804,16 @@ void NamedObject::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->distance(), target);
   }
   
+  // required float bearing_dev = 4 [default = -1];
+  if (_has_bit(3)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->bearing_dev(), target);
+  }
+  
+  // required float distance_dev = 5 [default = -1];
+  if (_has_bit(4)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->distance_dev(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -1773,6 +1839,16 @@ int NamedObject::ByteSize() const {
     
     // required float distance = 3 [default = -1];
     if (has_distance()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float bearing_dev = 4 [default = -1];
+    if (has_bearing_dev()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float distance_dev = 5 [default = -1];
+    if (has_distance_dev()) {
       total_size += 1 + 4;
     }
     
@@ -1812,6 +1888,12 @@ void NamedObject::MergeFrom(const NamedObject& from) {
     if (from._has_bit(2)) {
       set_distance(from.distance());
     }
+    if (from._has_bit(3)) {
+      set_bearing_dev(from.bearing_dev());
+    }
+    if (from._has_bit(4)) {
+      set_distance_dev(from.distance_dev());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1829,7 +1911,7 @@ void NamedObject::CopyFrom(const NamedObject& from) {
 }
 
 bool NamedObject::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
   
   return true;
 }
@@ -1839,6 +1921,8 @@ void NamedObject::Swap(NamedObject* other) {
     std::swap(object_name_, other->object_name_);
     std::swap(bearing_, other->bearing_);
     std::swap(distance_, other->distance_);
+    std::swap(bearing_dev_, other->bearing_dev_);
+    std::swap(distance_dev_, other->distance_dev_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -2731,6 +2815,9 @@ const int ObservationMessage::kAdhocObjectsFieldNumber;
 const int ObservationMessage::kCornerObjectsFieldNumber;
 const int ObservationMessage::kIntersectionObjectsFieldNumber;
 const int ObservationMessage::kLineObjectsFieldNumber;
+const int ObservationMessage::kCoveredDistanceFieldNumber;
+const int ObservationMessage::kBearingLimitLeftFieldNumber;
+const int ObservationMessage::kBearingLimitRightFieldNumber;
 #endif  // !_MSC_VER
 
 ObservationMessage::ObservationMessage()
@@ -2752,6 +2839,9 @@ void ObservationMessage::SharedCtor() {
   _cached_size_ = 0;
   image_timestamp_ = const_cast< ::std::string*>(&_default_image_timestamp_);
   ball_ = NULL;
+  covered_distance_ = 0;
+  bearing_limit_left_ = 0;
+  bearing_limit_right_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2798,6 +2888,11 @@ void ObservationMessage::Clear() {
     if (_has_bit(1)) {
       if (ball_ != NULL) ball_->::BallObject::Clear();
     }
+    covered_distance_ = 0;
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    bearing_limit_left_ = 0;
+    bearing_limit_right_ = 0;
   }
   regular_objects_.Clear();
   adhoc_objects_.Clear();
@@ -2915,6 +3010,54 @@ bool ObservationMessage::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(58)) goto parse_line_objects;
+        if (input->ExpectTag(69)) goto parse_covered_distance;
+        break;
+      }
+      
+      // required float covered_distance = 8;
+      case 8: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_covered_distance:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &covered_distance_)));
+          _set_bit(7);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(77)) goto parse_bearing_limit_left;
+        break;
+      }
+      
+      // required float bearing_limit_left = 9;
+      case 9: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_bearing_limit_left:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &bearing_limit_left_)));
+          _set_bit(8);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(85)) goto parse_bearing_limit_right;
+        break;
+      }
+      
+      // required float bearing_limit_right = 10;
+      case 10: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_bearing_limit_right:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &bearing_limit_right_)));
+          _set_bit(9);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2982,6 +3125,21 @@ void ObservationMessage::SerializeWithCachedSizes(
       7, this->line_objects(i), output);
   }
   
+  // required float covered_distance = 8;
+  if (_has_bit(7)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->covered_distance(), output);
+  }
+  
+  // required float bearing_limit_left = 9;
+  if (_has_bit(8)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->bearing_limit_left(), output);
+  }
+  
+  // required float bearing_limit_right = 10;
+  if (_has_bit(9)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->bearing_limit_right(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -3042,6 +3200,21 @@ void ObservationMessage::SerializeWithCachedSizes(
         7, this->line_objects(i), target);
   }
   
+  // required float covered_distance = 8;
+  if (_has_bit(7)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->covered_distance(), target);
+  }
+  
+  // required float bearing_limit_left = 9;
+  if (_has_bit(8)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->bearing_limit_left(), target);
+  }
+  
+  // required float bearing_limit_right = 10;
+  if (_has_bit(9)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->bearing_limit_right(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -3065,6 +3238,23 @@ int ObservationMessage::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->ball());
+    }
+    
+    // required float covered_distance = 8;
+    if (has_covered_distance()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // required float bearing_limit_left = 9;
+    if (has_bearing_limit_left()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float bearing_limit_right = 10;
+    if (has_bearing_limit_right()) {
+      total_size += 1 + 4;
     }
     
   }
@@ -3145,6 +3335,17 @@ void ObservationMessage::MergeFrom(const ObservationMessage& from) {
     if (from._has_bit(1)) {
       mutable_ball()->::BallObject::MergeFrom(from.ball());
     }
+    if (from._has_bit(7)) {
+      set_covered_distance(from.covered_distance());
+    }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (from._has_bit(8)) {
+      set_bearing_limit_left(from.bearing_limit_left());
+    }
+    if (from._has_bit(9)) {
+      set_bearing_limit_right(from.bearing_limit_right());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -3162,7 +3363,7 @@ void ObservationMessage::CopyFrom(const ObservationMessage& from) {
 }
 
 bool ObservationMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  if ((_has_bits_[0] & 0x00000381) != 0x00000381) return false;
   
   if (has_ball()) {
     if (!this->ball().IsInitialized()) return false;
@@ -3194,6 +3395,9 @@ void ObservationMessage::Swap(ObservationMessage* other) {
     corner_objects_.Swap(&other->corner_objects_);
     intersection_objects_.Swap(&other->intersection_objects_);
     line_objects_.Swap(&other->line_objects_);
+    std::swap(covered_distance_, other->covered_distance_);
+    std::swap(bearing_limit_left_, other->bearing_limit_left_);
+    std::swap(bearing_limit_right_, other->bearing_limit_right_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

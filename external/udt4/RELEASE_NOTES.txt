@@ -1,0 +1,8 @@
+version 4.7a
+
+fix timeout bug introduced in 4.7
+iniatilize CHandShake
+
+version 4.7
+
+Fix several related bugs that can cause hang/memory leak/segmentation fault during cleanup()

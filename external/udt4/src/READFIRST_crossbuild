@@ -67,7 +67,7 @@ export CFLAGS="--sysroot ${CTC_DIR}/staging/geode-linux/ \
 -I${CTC_DIR}/cross/geode/lib/gcc/i586-linux/4.3.3/include "
 
 export LDFLAGS="--sysroot ${CTC_DIR}/staging/geode-linux/ \
--lgcc -L${CTC_DIR}/cross/geode/lib/ -lc -lstdc++ -ldl"
+-lgcc -L${CTC_DIR}/cross/geode/lib/ -L${CTC_DIR}/staging/geode-linux/usr/lib -lc -lstdc++ -ldl"
 
 
 #check if we build in a build folder

@@ -514,6 +514,20 @@ class NamedObject : public ::google::protobuf::Message {
   inline float distance() const;
   inline void set_distance(float value);
   
+  // required float bearing_dev = 4 [default = -1];
+  inline bool has_bearing_dev() const;
+  inline void clear_bearing_dev();
+  static const int kBearingDevFieldNumber = 4;
+  inline float bearing_dev() const;
+  inline void set_bearing_dev(float value);
+  
+  // required float distance_dev = 5 [default = -1];
+  inline bool has_distance_dev() const;
+  inline void clear_distance_dev();
+  static const int kDistanceDevFieldNumber = 5;
+  inline float distance_dev() const;
+  inline void set_distance_dev(float value);
+  
   // @@protoc_insertion_point(class_scope:NamedObject)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
@@ -523,11 +537,13 @@ class NamedObject : public ::google::protobuf::Message {
   static const ::std::string _default_object_name_;
   float bearing_;
   float distance_;
+  float bearing_dev_;
+  float distance_dev_;
   friend void  protobuf_AddDesc_VisionObservations_2eproto();
   friend void protobuf_AssignDesc_VisionObservations_2eproto();
   friend void protobuf_ShutdownFile_VisionObservations_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -995,6 +1011,27 @@ class ObservationMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::LineObject >*
       mutable_line_objects();
   
+  // required float covered_distance = 8;
+  inline bool has_covered_distance() const;
+  inline void clear_covered_distance();
+  static const int kCoveredDistanceFieldNumber = 8;
+  inline float covered_distance() const;
+  inline void set_covered_distance(float value);
+  
+  // required float bearing_limit_left = 9;
+  inline bool has_bearing_limit_left() const;
+  inline void clear_bearing_limit_left();
+  static const int kBearingLimitLeftFieldNumber = 9;
+  inline float bearing_limit_left() const;
+  inline void set_bearing_limit_left(float value);
+  
+  // required float bearing_limit_right = 10;
+  inline bool has_bearing_limit_right() const;
+  inline void clear_bearing_limit_right();
+  static const int kBearingLimitRightFieldNumber = 10;
+  inline float bearing_limit_right() const;
+  inline void set_bearing_limit_right(float value);
+  
   // @@protoc_insertion_point(class_scope:ObservationMessage)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
@@ -1008,11 +1045,14 @@ class ObservationMessage : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::PointObject > corner_objects_;
   ::google::protobuf::RepeatedPtrField< ::PointObject > intersection_objects_;
   ::google::protobuf::RepeatedPtrField< ::LineObject > line_objects_;
+  float covered_distance_;
+  float bearing_limit_left_;
+  float bearing_limit_right_;
   friend void  protobuf_AddDesc_VisionObservations_2eproto();
   friend void protobuf_AssignDesc_VisionObservations_2eproto();
   friend void protobuf_ShutdownFile_VisionObservations_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -1497,6 +1537,38 @@ inline void NamedObject::set_distance(float value) {
   distance_ = value;
 }
 
+// required float bearing_dev = 4 [default = -1];
+inline bool NamedObject::has_bearing_dev() const {
+  return _has_bit(3);
+}
+inline void NamedObject::clear_bearing_dev() {
+  bearing_dev_ = -1;
+  _clear_bit(3);
+}
+inline float NamedObject::bearing_dev() const {
+  return bearing_dev_;
+}
+inline void NamedObject::set_bearing_dev(float value) {
+  _set_bit(3);
+  bearing_dev_ = value;
+}
+
+// required float distance_dev = 5 [default = -1];
+inline bool NamedObject::has_distance_dev() const {
+  return _has_bit(4);
+}
+inline void NamedObject::clear_distance_dev() {
+  distance_dev_ = -1;
+  _clear_bit(4);
+}
+inline float NamedObject::distance_dev() const {
+  return distance_dev_;
+}
+inline void NamedObject::set_distance_dev(float value) {
+  _set_bit(4);
+  distance_dev_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // UnidentifiedObject
@@ -1865,6 +1937,54 @@ ObservationMessage::line_objects() const {
 inline ::google::protobuf::RepeatedPtrField< ::LineObject >*
 ObservationMessage::mutable_line_objects() {
   return &line_objects_;
+}
+
+// required float covered_distance = 8;
+inline bool ObservationMessage::has_covered_distance() const {
+  return _has_bit(7);
+}
+inline void ObservationMessage::clear_covered_distance() {
+  covered_distance_ = 0;
+  _clear_bit(7);
+}
+inline float ObservationMessage::covered_distance() const {
+  return covered_distance_;
+}
+inline void ObservationMessage::set_covered_distance(float value) {
+  _set_bit(7);
+  covered_distance_ = value;
+}
+
+// required float bearing_limit_left = 9;
+inline bool ObservationMessage::has_bearing_limit_left() const {
+  return _has_bit(8);
+}
+inline void ObservationMessage::clear_bearing_limit_left() {
+  bearing_limit_left_ = 0;
+  _clear_bit(8);
+}
+inline float ObservationMessage::bearing_limit_left() const {
+  return bearing_limit_left_;
+}
+inline void ObservationMessage::set_bearing_limit_left(float value) {
+  _set_bit(8);
+  bearing_limit_left_ = value;
+}
+
+// required float bearing_limit_right = 10;
+inline bool ObservationMessage::has_bearing_limit_right() const {
+  return _has_bit(9);
+}
+inline void ObservationMessage::clear_bearing_limit_right() {
+  bearing_limit_right_ = 0;
+  _clear_bit(9);
+}
+inline float ObservationMessage::bearing_limit_right() const {
+  return bearing_limit_right_;
+}
+inline void ObservationMessage::set_bearing_limit_right(float value) {
+  _set_bit(9);
+  bearing_limit_right_ = value;
 }
 
 

@@ -28,6 +28,8 @@ message NamedObject {
 	required string object_name=1 [default =""];
 	required float bearing=2 [default=-1];
 	required float distance=3 [default=-1];
+	required float bearing_dev = 4 [default = -1];
+	required float distance_dev = 5 [default = -1];
 }
 
 /* IE BlueGoalPost - at 45 deg right*/
@@ -62,5 +64,7 @@ message ObservationMessage {
 	repeated PointObject corner_objects=5;
 	repeated PointObject intersection_objects=6;
 	repeated LineObject line_objects=7;
-
+	required float covered_distance = 8;
+	required float bearing_limit_left = 9;
+	required float bearing_limit_right = 10;
 }
