@@ -490,8 +490,15 @@ void Sensors::initialisation() {
 	for (std::map<std::string, std::vector<std::string> >::const_iterator iter = devicesInChains.begin(); iter != devicesInChains.end(); ++iter) {
 		allchainsSize += (iter->second).size();
 	}
-	devicesValues.assign(allchainsSize, 0);
-	cout << " Number of devices distibuted " << allchainsSize << endl;
+	cout << " Number of devices in chains " << allchainsSize << endl;
+
+	int allDevicesSize = 0;
+
+	for (std::map<std::string, std::vector<std::string> >::const_iterator iter = devicesNames.begin(); iter != devicesNames.end(); ++iter) {
+		allDevicesSize += (iter->second).size();
+	}
+	devicesValues.assign(allDevicesSize, 0);
+	cout << " Number of devices distibuted " << allDevicesSize << endl;
 }
 
 void Sensors::process_messages() {

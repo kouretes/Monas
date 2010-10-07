@@ -94,7 +94,7 @@ int Localization::Execute() {
 
 	}
 
-	LocalizationStepSIR(robotmovement,currentObservation, maxrangeleft, maxrangeright);
+	//LocalizationStepSIR(robotmovement,currentObservation, maxrangeleft, maxrangeright);
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
@@ -104,9 +104,9 @@ int Localization::Execute() {
 
 	if (debugmode) {
 		LocalizationData_Load(SIRParticles, currentObservation, robotmovement);
-
+		Send_LocalizationData();
 	}
-	Send_LocalizationData();
+
 	return 0;
 }
 
@@ -115,17 +115,15 @@ void Localization::Send_LocalizationData() {
 	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
 	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
 
-
-
 	int sendsize; //= DebugData.ByteSize();
 
 	int rsize = 0;
 	int rs;
 	//send a header
 	sendsize = outgoingheader.ByteSize();
-	//outgoingheader.SerializeToArray(data, sendsize);
+	outgoingheader.SerializeToArray(data, sendsize);
 
-	cout << "imgheader.ByteSize() sendsize " << sendsize << endl;
+	//cout << "imgheader.ByteSize() sendsize " << sendsize << endl;
 
 	while (rsize < sendsize) {
 		if (UDT::ERROR == (rs = UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
