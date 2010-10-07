@@ -67,6 +67,7 @@ void MotionController::UserInit() {
 
 	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
 	loadActions();
+	loadBackKicks();
 	loadActionsKME();
 	//printActionsKME();
 	jointNames = motion->getJointNames("Body");
@@ -284,6 +285,14 @@ void MotionController::mglrun() {
 			else if (am->command() == "softRightSideKick") {
 				stopWalkCommand();
 				actionPID = motion->post.angleInterpolationBezier(SoftRightSideKick_names, SoftRightSideKick_times, SoftRightSideKick_keys);
+			}
+			else if (am->command() == "leftBackKick") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(LeftBackKick_names, LeftBackKick_times, LeftBackKick_keys);
+				}
+			else if (am->command() == "rightBackKick") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(RightBackKick_names, RightBackKick_times, RightBackKick_keys);
 			}
 			else if (am->command() == "rightDive") {
 				stopWalkCommand();

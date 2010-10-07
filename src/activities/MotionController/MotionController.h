@@ -104,8 +104,13 @@ private:
 	AL::ALValue HardRightSideKick_times, HardRightSideKick_keys;
 	std::vector<std::string> SoftRightSideKick_names;
 	AL::ALValue SoftRightSideKick_times, SoftRightSideKick_keys;
+	std::vector<std::string> LeftBackKick_names;
+	AL::ALValue LeftBackKick_times, LeftBackKick_keys;
+	std::vector<std::string> RightBackKick_names;
+	AL::ALValue RightBackKick_times, RightBackKick_keys;
 
 	void loadActionsKME();
+	void loadBackKicks();
 	struct motSequence {
 		std::string seqName;
 		std::vector< std::vector<float> > seqMotion;
