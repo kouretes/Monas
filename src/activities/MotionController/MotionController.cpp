@@ -269,6 +269,22 @@ void MotionController::mglrun() {
 				stopWalkCommand();
 				actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
 			}
+			else if (am->command() == "hardLeftSideKick") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(HardLeftSideKick_names, HardLeftSideKick_times, HardLeftSideKick_keys);
+				}
+			else if (am->command() == "hardRightSideKick") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(HardRightSideKick_names, HardRightSideKick_times, HardRightSideKick_keys);
+			}
+			else if (am->command() == "softLeftSideKick") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(SoftLeftSideKick_names, SoftLeftSideKick_times, SoftLeftSideKick_keys);
+				}
+			else if (am->command() == "softRightSideKick") {
+				stopWalkCommand();
+				actionPID = motion->post.angleInterpolationBezier(SoftRightSideKick_names, SoftRightSideKick_times, SoftRightSideKick_keys);
+			}
 			else if (am->command() == "rightDive") {
 				stopWalkCommand();
 				actionPID = motion->post.angleInterpolationBezier(RightDive_names, RightDive_times, RightDive_keys);

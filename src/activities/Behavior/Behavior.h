@@ -9,14 +9,14 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
-
+#include "messages/ObstacleAvoidanceMessage.pb.h"
 
 #include "alptr.h"
 
 #define LIMITUP -0.22
 #define	LIMITDOWN 0.43
-#define	LIMITLEFT 0.40
-#define	LIMITRIGHT -0.40
+#define	LIMITLEFT 0.30
+#define	LIMITRIGHT -0.30
 
 namespace AL {
 	class ALMotionProxy;
@@ -35,6 +35,7 @@ class Behavior: public IActivity, public Publisher {
         std::string GetName() {
             return "Behavior";
         }
+        void mgltest();
 
 	private:
 		AL::ALPtr<AL::ALMotionProxy> motion;
@@ -48,7 +49,6 @@ class Behavior: public IActivity, public Publisher {
 		int yawdirection;
 		SensorPair HeadYaw;
 		SensorPair HeadPitch;
-		BallTrackMessage lastballseen;
 
 		bool startscan;
 		bool scanforball;
@@ -63,11 +63,18 @@ class Behavior: public IActivity, public Publisher {
 		short balllastseendirection;
 		HeadJointSensorsMessage* hjsm;
 		BallTrackMessage* bmsg;
+		ObservationMessage* obsm;
 		GameStateMessage* gsm;
+		ObstacleMessage* om;
 		int calibrated;
 		bool play;
 
 		bool stopped;
+		bool readytokick;
+		int back;
+		int direction;
+		bool turning; 
+		int count;
 };
 
 #endif

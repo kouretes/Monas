@@ -86,6 +86,11 @@ class BehaviorGoalie: public IActivity, public Publisher {
         boost::posix_time::ptime prevTimestamp;
         double prevX;
         double prevY;
+        
+        double prevbd;
+        double prevbb;
+        
+        int go; 
 };
 
 #endif
