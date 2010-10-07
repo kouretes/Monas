@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<Beta>0.900000</Beta>
+<max_observation_distance>6500</max_observation_distance>
+<max_observation_distance_deviation>133.333</max_observation_distance_deviation>
+<min_observation_distance_deviation>26.6667</min_observation_distance_deviation>
+<max_observation_bearing_deviation>0.174533</max_observation_bearing_deviation>
+<min_observation_bearing_deviation>0.00872665</min_observation_bearing_deviation>
+<robustmean>10</robustmean>
+<P_observe_NotVisible>0.3</P_observe_NotVisible>
+<P_Notobserve_NotVisible>0.7</P_Notobserve_NotVisible>
+<numofparticlesfromObservation>4</numofparticlesfromObservation>
+<partclsNum>4</partclsNum>
+<SpreadParticlesDeviation>300</SpreadParticlesDeviation>
+<rotation_deviation>0.174533</rotation_deviation>
+<PercentParticlesSpread>20</PercentParticlesSpread>

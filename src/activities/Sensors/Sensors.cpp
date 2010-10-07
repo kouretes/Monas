@@ -69,6 +69,7 @@ int Sensors::Execute() {
 	unsigned int counter = 0;
 	unsigned int i = 0;
 	unsigned int j = 0;
+	float smoothed_value = 0;
 	Values["Head"] = memory->getListData(devicesInChains["Head"]);
 #ifdef UNNEEDED
 	Values["LeftLeg"] = memory->getListData(devicesInChains["LeftLeg"]);
@@ -93,9 +94,11 @@ int Sensors::Execute() {
 	rtm.start();
 	for (i = 0; i < devicesInChains["Head"].size(); i++) { //Values["Head"][i] = *(SensorDataPtr["Head"][i]);
 		HJSM.mutable_sensordata(i)->set_sensorvalue(Values["Head"][i]);
+		//HJSM.mutable_sensordata(i)->set_sensorvalue( smoothness*Values["Head"][i]+(1-smoothness)*devicesValues[counter]);
 		HJSM.mutable_sensordata(i)->set_sensorvaluediff(Values["Head"][i] - devicesValues[counter]);
 		HJSM.mutable_sensordata(i)->set_sensortimediff(timediff);
 		devicesValues[counter] = Values["Head"][i];
+
 		counter++;
 	}
 	publish(&HJSM, "sensors");
@@ -103,7 +106,7 @@ int Sensors::Execute() {
 	j = 0;
 	for (i = 0; i < devicesInChains["LeftArm"].size(); i++) {
 		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftArm"][i]);
-
+		//BJSM.mutable_sensordata(j)->set_sensorvalue(smoothness*Values["LeftArm"][i]+(1-smoothness)*devicesValues[counter]);
 		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftArm"][i] - devicesValues[counter]);
 		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
 		devicesValues[counter] = Values["LeftArm"][i];
@@ -113,6 +116,7 @@ int Sensors::Execute() {
 
 	for (i = 0; i < devicesInChains["LeftLeg"].size(); i++) {
 		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["LeftLeg"][i]);
+		//BJSM.mutable_sensordata(j)->set_sensorvalue(smoothness*Values["LeftLeg"][i]+(1-smoothness)*devicesValues[counter]);
 
 		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["LeftLeg"][i] - devicesValues[counter]);
 		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
@@ -123,6 +127,7 @@ int Sensors::Execute() {
 
 	for (i = 0; i < devicesInChains["RightLeg"].size(); i++) {
 		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightLeg"][i]);
+		//BJSM.mutable_sensordata(j)->set_sensorvalue(smoothness*Values["RightLeg"][i]+(1-smoothness)*devicesValues[counter]);
 
 		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightLeg"][i] - devicesValues[counter]);
 		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
@@ -133,6 +138,7 @@ int Sensors::Execute() {
 
 	for (i = 0; i < devicesInChains["RightArm"].size(); i++) {
 		BJSM.mutable_sensordata(j)->set_sensorvalue(Values["RightArm"][i]);
+		//BJSM.mutable_sensordata(j)->set_sensorvalue(smoothness*Values["RightArm"][i]+(1-smoothness)*devicesValues[counter]);
 
 		BJSM.mutable_sensordata(j)->set_sensorvaluediff(Values["RightArm"][i] - devicesValues[counter]);
 		BJSM.mutable_sensordata(j)->set_sensortimediff(timediff);
@@ -151,10 +157,14 @@ int Sensors::Execute() {
 	//		counter++;
 	//	}
 	for (i = 0; i < devicesInChains["Inertial"].size(); i++) {
-		ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
+		//ISM.mutable_sensordata(i)->set_sensorvalue(Values["Inertial"][i]);
+		smoothed_value = smoothness * Values["Inertial"][i] + (1 - smoothness) * devicesValues[counter];
+		ISM.mutable_sensordata(i)->set_sensorvalue(smoothed_value);
+
 		ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - devicesValues[counter]);
 		ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
-		devicesValues[counter] = Values["Inertial"][i];
+		//devicesValues[counter] = Values["Inertial"][i];
+		devicesValues[counter] = smoothed_value;
 		counter++;
 	}
 	publish(&ISM, "sensors");
@@ -162,8 +172,11 @@ int Sensors::Execute() {
 	if (period % MODULO == 0) {
 #ifdef UNNEEDED
 		for (i = 0; i < devicesInChains["FSR"].size(); i++) {
+			//FSM.mutable_sensordata(i)->set_sensorvalue(smoothness*Values["FSR"][i]+(1-smoothness)*devicesValues[counter]);
+
 			FSM.mutable_sensordata(i)->set_sensorvalue(Values["FSR"][i]);
 			FSM.mutable_sensordata(i)->set_sensorvaluediff(Values["FSR"][i] - devicesValues[counter]);
+
 			FSM.mutable_sensordata(i)->set_sensortimediff(timediff);
 			devicesValues[counter] = Values["FSR"][i];
 			counter++;
@@ -209,6 +222,8 @@ int Sensors::Execute() {
 
 void Sensors::initialisation() {
 	unsigned int i, j;
+
+	smoothness = 0.9;
 
 	HJSM.set_topic("sensors"); //HeadJointSensorsMessage
 	HJSM.set_timeout(250);
@@ -475,8 +490,15 @@ void Sensors::initialisation() {
 	for (std::map<std::string, std::vector<std::string> >::const_iterator iter = devicesInChains.begin(); iter != devicesInChains.end(); ++iter) {
 		allchainsSize += (iter->second).size();
 	}
-	devicesValues.assign(allchainsSize, 0);
-	cout << " Number of devices distibuted " << allchainsSize << endl;
+	cout << " Number of devices in chains " << allchainsSize << endl;
+
+	int allDevicesSize = 0;
+
+	for (std::map<std::string, std::vector<std::string> >::const_iterator iter = devicesNames.begin(); iter != devicesNames.end(); ++iter) {
+		allDevicesSize += (iter->second).size();
+	}
+	devicesValues.assign(allDevicesSize, 0);
+	cout << " Number of devices distibuted " << allDevicesSize << endl;
 }
 
 void Sensors::process_messages() {

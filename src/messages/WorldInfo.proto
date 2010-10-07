@@ -1,0 +1,49 @@
+import "VisionObservations.proto";
+
+message WorldInfo{
+	required RobotPose myPosition = 1 ;
+	repeated Ball Balls = 2;
+	repeated RobotPose OtherRobots = 3;
+	repeated UnknownObjects UFOs =4 ;
+}
+
+
+message RobotPose{
+	required float X = 1 [default = -100000];
+	required float Y = 2 [default = -100000];
+	required float phi = 3 [default = -100000];
+	required float confidence = 4 [default = -100000];
+}
+
+message Ball{
+	required float relativeX = 1 [default = -100000];
+	required float relativeY = 2 [default = -100000];
+	required float relativeXspeed = 3 [default = -100000];
+	required float relativeYspeed = 4 [default = -100000];
+	
+	required float varianceX = 5 [default = -100000];
+	required float varianceY = 6 [default = -100000];
+	required float varianceXspeed = 7 [default = -100000];
+	required float varianceYspeed = 8 [default = -100000];
+}
+
+message UnknownObjects{
+	optional float relativeX = 1 [default = -100000];
+	optional float relativeY = 2 [default = -100000];
+	optional float height = 3 [default = -100000];
+	optional float relativeXspeed = 4 [default = -100000];
+	optional float relativeYspeed = 5 [default = -100000];
+}
+
+
+message LocalizationData{
+	required WorldInfo World= 1;
+	repeated RobotPose Particles = 2;
+	required RobotPose RobotPosition = 3; //NaoqiRobotPosition
+	required ObservationMessage Observations = 4; 
+}
+
+message header{
+	required sint32 NextMsgByteSize =1 [default = -1];
+	required string NextMsgName = 2 [default = "Undefined" ];
+}

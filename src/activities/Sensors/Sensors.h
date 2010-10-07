@@ -76,6 +76,8 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
 		unsigned int timediff;
 
 		unsigned int period;
+
+		float smoothness; //sensordata = 90%*newvalue + 10%*oldvalue
 		//Indexing according initialization
 		std::vector<float> devicesValues;
 };

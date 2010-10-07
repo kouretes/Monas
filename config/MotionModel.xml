@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<Walk>Walk
+	<NumOFSteps_-3>
+		<Distance Val="188.1881" Emean="0.0" EDev="7.4636" />
+		<Direction Val="-3.1226" Emean="0.0" EDev="0.0150" />
+		<Rotation Val="-0.0012" Emean="0.0" EDev="0.0450" />
+	</NumOFSteps_-3>
+	<NumOFSteps_-2>
+		<Distance Val="125.3070" Emean="0.0" EDev="0.8143" />
+		<Direction Val="3.1347" Emean="0.0" EDev="0.0151" />
+		<Rotation Val="0.0116" Emean="0.0" EDev="0.1071" />
+	</NumOFSteps_-2>
+	<NumOFSteps_-1>
+		<Distance Val="64.8789" Emean="0.0" EDev="0.2994" />
+		<Direction Val="-3.0471" Emean="0.0" EDev="0.0249" />
+		<Rotation Val="0.0032" Emean="0.0" EDev="0.0103" />
+	</NumOFSteps_-1>
+	<NumOFSteps_0>
+		<Distance Val="4.0515" Emean="0.0" EDev="2.0559" />
+		<Direction Val="-1.5499" Emean="0.0" EDev="0.0608" />
+		<Rotation Val="0.0001" Emean="0.0" EDev="0.0001" />
+	</NumOFSteps_0>
+	<NumOFSteps_1>
+		<Distance Val="65.1548" Emean="0.0" EDev="0.2867" />
+		<Direction Val="-0.0753" Emean="0.0" EDev="0.0276" />
+		<Rotation Val="-0.0450" Emean="0.0" EDev="0.0063" />
+	</NumOFSteps_1>
+	<NumOFSteps_2>
+		<Distance Val="125.7328" Emean="0.0" EDev="0.4897" />
+		<Direction Val="0.0036" Emean="0.0" EDev="0.0356" />
+		<Rotation Val="-0.0035" Emean="0.0" EDev="0.0109" />
+	</NumOFSteps_2>
+	<NumOFSteps_3>
+		<Distance Val="187.8976" Emean="0.0" EDev="0.5355" />
+		<Direction Val="0.0042" Emean="0.0" EDev="0.0227" />
+		<Rotation Val="-0.0018" Emean="0.0" EDev="0.0358" />
+	</NumOFSteps_3>
+	<NumOFSteps_4>
+		<Distance Val="249.6968" Emean="0.0" EDev="0.6620" />
+		<Direction Val="-0.0184" Emean="0.0" EDev="0.0095" />
+		<Rotation Val="-0.0281" Emean="0.0" EDev="0.0144" />
+	</NumOFSteps_4>
+</Walk>
+<Turn>Turn
+	<NumOFSteps_-3>
+		<Distance Val="18.5648" Emean="0.0" EDev="1.7663" />
+		<Direction Val="1.4139" Emean="0.0" EDev="0.0414" />
+		<Rotation Val="0.2551" Emean="0.0" EDev="0.0153" />
+	</NumOFSteps_-3>
+	<NumOFSteps_-2>
+		<Distance Val="7.9798" Emean="0.0" EDev="2.2698" />
+		<Direction Val="1.5394" Emean="0.0" EDev="0.0404" />
+		<Rotation Val="0.1996" Emean="0.0" EDev="0.0070" />
+	</NumOFSteps_-2>
+	<NumOFSteps_-1>
+		<Distance Val="8.5229" Emean="0.0" EDev="0.8688" />
+		<Direction Val="1.2102" Emean="0.0" EDev="0.0458" />
+		<Rotation Val="0.0799" Emean="0.0" EDev="0.0048" />
+	</NumOFSteps_-1>
+	<NumOFSteps_0>
+		<Distance Val="4.2620" Emean="0.0" EDev="1.8202" />
+		<Direction Val="-1.5553" Emean="0.0" EDev="0.2836" />
+		<Rotation Val="0.0001" Emean="0.0" EDev="0.0001" />
+	</NumOFSteps_0>
+	<NumOFSteps_1>
+		<Distance Val="8.0998" Emean="0.0" EDev="1.1722" />
+		<Direction Val="-1.1967" Emean="0.0" EDev="0.2061" />
+		<Rotation Val="-0.0795" Emean="0.0" EDev="0.0048" />
+	</NumOFSteps_1>
+	<NumOFSteps_2>
+		<Distance Val="6.2731" Emean="0.0" EDev="1.7983" />
+		<Direction Val="-1.5637" Emean="0.0" EDev="0.1110" />
+		<Rotation Val="-0.1910" Emean="0.0" EDev="0.0116" />
+	</NumOFSteps_2>
+	<NumOFSteps_3>
+		<Distance Val="13.7271" Emean="0.0" EDev="4.3579" />
+		<Direction Val="-1.4817" Emean="0.0" EDev="0.0493" />
+		<Rotation Val="-0.2435" Emean="0.0" EDev="0.0218" />
+	</NumOFSteps_3>
+	<NumOFSteps_4>
+		<Distance Val="18.4769" Emean="0.0" EDev="2.2435" />
+		<Direction Val="-1.5448" Emean="0.0" EDev="0.0280" />
+		<Rotation Val="-0.3093" Emean="0.0" EDev="0.0087" />
+	</NumOFSteps_4>
+</Turn>
+<SideStep>SideStep
+	<NumOFSteps_-3>
+		<Distance Val="250.3311" Emean="0.0" EDev="2.9877" />
+		<Direction Val="-1.5699" Emean="0.0" EDev="0.0002" />
+		<Rotation Val="-0.0017" Emean="0.0" EDev="0.0006" />
+	</NumOFSteps_-3>
+	<NumOFSteps_-2>
+		<Distance Val="173.0909" Emean="0.0" EDev="2.5489" />
+		<Direction Val="-1.5705" Emean="0.0" EDev="0.0001" />
+		<Rotation Val="-0.0010" Emean="0.0" EDev="0.0003" />
+	</NumOFSteps_-2>
+	<NumOFSteps_-1>
+		<Distance Val="86.2852" Emean="0.0" EDev="1.5636" />
+		<Direction Val="-1.5708" Emean="0.0" EDev="0.0001" />
+		<Rotation Val="-0.0003" Emean="0.0" EDev="0.0002" />
+	</NumOFSteps_-1>
+	<NumOFSteps_0>
+		<Distance Val="4.5775" Emean="0.0" EDev="1.7583" />
+		<Direction Val="-1.5601" Emean="0.0" EDev="0.0150" />
+		<Rotation Val="0.0001" Emean="0.0" EDev="0.0001" />
+	</NumOFSteps_0>
+	<NumOFSteps_1>
+		<Distance Val="86.9549" Emean="0.0" EDev="1.7026" />
+		<Direction Val="1.5700" Emean="0.0" EDev="0.0001" />
+		<Rotation Val="0.0007" Emean="0.0" EDev="0.0002" />
+	</NumOFSteps_1>
+	<NumOFSteps_2>
+		<Distance Val="173.5724" Emean="0.0" EDev="2.3339" />
+		<Direction Val="1.5697" Emean="0.0" EDev="0.0001" />
+		<Rotation Val="0.0018" Emean="0.0" EDev="0.0003" />
+	</NumOFSteps_2>
+ </SideStep>
