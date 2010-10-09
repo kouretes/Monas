@@ -13,10 +13,16 @@
 
 #include "alptr.h"
 
-#define LIMITUP -0.22
+#ifndef TO_RAD
+#define TO_RAD 0.01745329f
+#endif
+
+#define LIMITUP -0.40
 #define	LIMITDOWN 0.43
 #define	LIMITLEFT 0.30
 #define	LIMITRIGHT -0.30
+#define STEPVER 0.35
+#define STEPHOR 0.35
 
 namespace AL {
 	class ALMotionProxy;
@@ -68,6 +74,7 @@ class Behavior: public IActivity, public Publisher {
 		ObstacleMessage* om;
 		int calibrated;
 		bool play;
+		bool kickoff;
 
 		bool stopped;
 		bool readytokick;
@@ -77,6 +84,9 @@ class Behavior: public IActivity, public Publisher {
 		int count;
 		bool obstacleFront;
 		int gameState;
+		
+		int teamColor; 
+		double orientation; 
 		
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);

@@ -15,10 +15,6 @@
 #include "messages/RoboCupGameControlData.h"
 #include "architecture/narukom/pub_sub/filters/special_filters.h"
 
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
-
 namespace {
 	ActivityRegistrar<BehaviorGoalie>::Type temp("BehaviorGoalie");
 }
@@ -283,7 +279,7 @@ int BehaviorGoalie::Execute() {
 					if (go<0)
 						go++;
 					if (fabs(bb) > 5*TO_RAD)
-						theta = gainTheta * bb;
+						theta = 0.5 * gainTheta * bb;
 					readytokick = false;
 				}
 				
@@ -418,12 +414,12 @@ void BehaviorGoalie::HeadScanStep() {
 	}
 
 	hmot->set_command("changeHead");
-	hmot->set_parameter(0, scandirectionyaw * 0.27); // Headyaw
+	hmot->set_parameter(0, scandirectionyaw * STEPHOR); // Headyaw
 	hmot->set_parameter(1, 0.0); // headPitch
 
 	if (reachedlimitleft && reachedlimitright) {
 		Logger::Instance().WriteMsg("BehaviorGoalie", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
-		hmot->set_parameter(1, scandirectionpitch * 0.35); // headPitch
+		hmot->set_parameter(1, scandirectionpitch * STEPVER); // headPitch
 		reachedlimitleft = false;
 		reachedlimitright = false;
 	}
@@ -442,7 +438,7 @@ void BehaviorGoalie::HeadScanStep() {
 			back--;
 		} 
 		else {
-			littleWalk(0.0, 0.0, direction * 90 * TO_RAD, 4);
+			littleWalk(0.0, 0.0, direction * 90 * TO_RAD, 1);
 			//direction = - direction;
 		}
 	}

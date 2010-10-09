@@ -15,10 +15,6 @@
 #include "messages/RoboCupGameControlData.h"
 #include "architecture/narukom/pub_sub/filters/special_filters.h"
 
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
-
 namespace {
 	ActivityRegistrar<Behavior>::Type temp("Behavior");
 }
@@ -65,7 +61,7 @@ void Behavior::UserInit() {
 
 	stopped = true;
 	play = false;
-	Logger::Instance().WriteMsg("Behavior", "Initialized", Logger::Info);
+	kickoff = false; 
 
 	hjsm = 0;
 	bmsg = 0;
@@ -81,7 +77,12 @@ void Behavior::UserInit() {
 	obstacleFront = false;
 	gameState = PLAYER_INITIAL;
 	
+	teamColor = TEAM_BLUE;
+	orientation = 0; 
+	
 	srand(time(0));
+
+	Logger::Instance().WriteMsg("Behavior", "Initialized", Logger::Info);
 }
 
 int Behavior::MakeTrackBallAction() {
@@ -126,6 +127,7 @@ int Behavior::Execute() {
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		gameState = gsm->player_state();
+		teamColor = gsm->team_color();
 		
 		if (gameState == PLAYER_PLAYING) {
 			if (calibrated == 2) {
@@ -148,6 +150,7 @@ int Behavior::Execute() {
 		else if (gameState == PLAYER_SET) {
 			play = false;
 			calibrate();
+			kickoff = gsm->kickoff();
 		}
 		else if (gameState == PLAYER_FINISHED) {
 			play = false;
@@ -206,9 +209,11 @@ int Behavior::Execute() {
 			if (!readytokick) {
 				readytokick = true;
 				double gain = 1.0;
+				if (bd>0.4)
+					gain = 1.5;
 	            double gainTheta = 0.3;
 	            double gainFine = 1.0;
-				if (obsm->ball().dist() <= 8.0) {
+				if (bd <= 8.0) {
 					float posx=0.17, posy=0.05;
 					if (bd > 0.25) {
 						X = gain * bx;
@@ -260,7 +265,6 @@ int Behavior::Execute() {
 				if (om->direction() == 0) 
 					obstacleFront = true; 
 			
-			static bool kickoff = true;
 			if ( kickoff ) {
 				//if (mglRand()<0.5) {
 				if ( (mglRand()<1.0) && !obstacleFront ) {
@@ -306,6 +310,8 @@ int Behavior::Execute() {
 				back = 0;
 			}
 			readytokick = false;
+			scanforball = true;
+			startscan = true;
 		}
 
 		if ( (ballfound == 0) && !readytokick && !turning ) {
@@ -335,6 +341,7 @@ int Behavior::Execute() {
 void Behavior::HeadScanStep() {
 
 	if (startscan) {
+		littleWalk(0.0, 0.0, +2*TO_RAD, 0);
 		//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
 		if (HeadPitch.sensorvalue() < LIMITDOWN) { // first go down
 			scandirectionpitch = 1;
@@ -372,12 +379,12 @@ void Behavior::HeadScanStep() {
 	}
 
 	hmot->set_command("changeHead");
-	hmot->set_parameter(0, scandirectionyaw * 0.27); // Headyaw
+	hmot->set_parameter(0, scandirectionyaw * STEPHOR); // Headyaw
 	hmot->set_parameter(1, 0.0); // headPitch
 
 	if (reachedlimitleft && reachedlimitright) {
 		Logger::Instance().WriteMsg("Behavior", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
-		hmot->set_parameter(1, scandirectionpitch * 0.35); // headPitch
+		hmot->set_parameter(1, scandirectionpitch * STEPVER); // headPitch
 		reachedlimitleft = false;
 		reachedlimitright = false;
 	}
@@ -396,7 +403,7 @@ void Behavior::HeadScanStep() {
 			back--;
 		} 
 		else {
-			littleWalk(0.0, 0.0, direction * 90 * TO_RAD, 4);
+			littleWalk(0.0, 0.0, direction * 90 * TO_RAD, 1);
 			//direction = - direction;
 		}
 	}

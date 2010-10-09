@@ -12,13 +12,18 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-
 #include "alptr.h"
 
-#define LIMITUP -0.27
+#ifndef TO_RAD
+#define TO_RAD 0.01745329f
+#endif
+
+#define LIMITUP -0.40
 #define	LIMITDOWN 0.43
-#define	LIMITLEFT 0.40
-#define	LIMITRIGHT -0.40
+#define	LIMITLEFT 0.30
+#define	LIMITRIGHT -0.30
+#define STEPVER 0.35
+#define STEPHOR 0.35
 
 namespace AL {
 	class ALMotionProxy;
