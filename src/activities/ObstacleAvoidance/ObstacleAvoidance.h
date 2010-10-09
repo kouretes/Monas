@@ -9,15 +9,29 @@
 #include <string>
 #include "architecture/IActivity.h"
 
-#include "alptr.h"
+//#include "alptr.h"
 
 
 #define N 36
 #define M 7
-#define RotAngle 360/N
-#define RotAngleRad RotAngle*PI/180
+#define RotationAngle (360/N)  //10
+#define FRONT ((N/2)-1)
+#define SonarAngleRange 30
+#define RobotDirections 3
+#define RotationAngleRad ((RotationAngle)*PI/180)
+#define SonarCellRange (SonarAngleRange/(RotationAngle))
+#define ToDegrees (180/PI)
+
+#define HighObstaclePossibility 0.8
+
+#define TooClose 0.2
+#define TooFar (TooClose+(M*0.1))
+
+#define NoKnowledge 0.5
 #define distance 10
+#define SOnARsNum 10
 #define PI 3.14159f
+
 #define discount 1
 #define reward -0.05
 #define goal 1
@@ -25,11 +39,17 @@
 #define NEIGHBOURS 8
 #define ITERATIONS 7
 
+#define UsePossibilityDown 0.98
+#define UsePossibilityUp 1.02
 
-namespace AL {
-	class ALMotionProxy;
-	class ALMemoryProxy;
-}
+
+
+
+
+//namespace AL {
+//	class ALMotionProxy;
+//	class ALMemoryProxy;
+//}
 
 class ObstacleAvoidance: public IActivity, public Publisher {
 	
@@ -45,7 +65,7 @@ class ObstacleAvoidance: public IActivity, public Publisher {
         }
 
 	private:
-		AL::ALPtr<AL::ALMemoryProxy> memory;
+//		AL::ALPtr<AL::ALMemoryProxy> memory;
 		double PolarGrid[M][N];
 		//int MoveGrid[100][100];
 		int goalX, goalY;
@@ -60,9 +80,11 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		double IterationGrid[M][N];
 		double resX, resY, resAngle;
 		double rightArray[10], leftArray[10];
-		int countLeft, countRight, countPos, flag;
+		int countLeft, countRight, countPos, firstTimeInitializeOdometry;
 		int x[(M+1)*N];
 		int y[(M+1)*N];
+		
+
 		bool mprosta ;
 		double mprostaDist;
 		double mprostaCert;
@@ -72,16 +94,21 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		bool aristera;
 		double aristeraCert;
 		double aristeraDist;
+		
+		
+		
 		double changed[M*N];
 		int shift, index[M*N], indey[M*N];
 		double possibilities[NEIGHBOURS+1], value[NEIGHBOURS+1] ;
 		int indexx[NEIGHBOURS+1], indexy[NEIGHBOURS+1] ;//gia path planning
+		
 		UltaSoundSensorsMessage* ussm;
 		RobotPositionSensorMessage* rpsm;
-		ObstacleMessage* obavm;
+		ObstacleMessageArray obavm;
 		ObstacleMessage* DataFromVision;
 		PathPlanningResultMessage* ppresm;
 		PathPlanningRequestMessage* ppreqm;
+		
 		double Right[10], Left[10], empty[10];
 		int countAge;
 		int countValid;
@@ -101,7 +128,7 @@ class ObstacleAvoidance: public IActivity, public Publisher {
 		void bestPath(int goalx, int goaly);
 		void fillIterationGrid();
 		void pathPlanningInit(int goalx, int goaly);
-
+		void printSonarValues();
 		void drawGrid();
 };
 

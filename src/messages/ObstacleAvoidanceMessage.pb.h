@@ -31,6 +31,7 @@ void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
 void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
 
 class ObstacleMessage;
+class ObstacleMessageArray;
 class VisionObstacleMessage;
 class PathPlanningRequestMessage;
 class PathPlanningResultMessage;
@@ -91,7 +92,7 @@ class ObstacleMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required int32 direction = 1 [default = 0];
+  // required int32 direction = 1 [default = -1];
   inline bool has_direction() const;
   inline void clear_direction();
   static const int kDirectionFieldNumber = 1;
@@ -139,6 +140,126 @@ class ObstacleMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static ObstacleMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ObstacleMessageArray : public ::google::protobuf::Message {
+ public:
+  ObstacleMessageArray();
+  virtual ~ObstacleMessageArray();
+  
+  ObstacleMessageArray(const ObstacleMessageArray& from);
+  
+  inline ObstacleMessageArray& operator=(const ObstacleMessageArray& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ObstacleMessageArray& default_instance();
+  
+  void Swap(ObstacleMessageArray* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ObstacleMessageArray* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ObstacleMessageArray& from);
+  void MergeFrom(const ObstacleMessageArray& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated int32 direction = 1;
+  inline int direction_size() const;
+  inline void clear_direction();
+  static const int kDirectionFieldNumber = 1;
+  inline ::google::protobuf::int32 direction(int index) const;
+  inline void set_direction(int index, ::google::protobuf::int32 value);
+  inline void add_direction(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      direction() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_direction();
+  
+  // repeated float distance = 2;
+  inline int distance_size() const;
+  inline void clear_distance();
+  static const int kDistanceFieldNumber = 2;
+  inline float distance(int index) const;
+  inline void set_distance(int index, float value);
+  inline void add_distance(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      distance() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_distance();
+  
+  // repeated float certainty = 3;
+  inline int certainty_size() const;
+  inline void clear_certainty();
+  static const int kCertaintyFieldNumber = 3;
+  inline float certainty(int index) const;
+  inline void set_certainty(int index, float value);
+  inline void add_certainty(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      certainty() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_certainty();
+  
+  // @@protoc_insertion_point(class_scope:ObstacleMessageArray)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > direction_;
+  ::google::protobuf::RepeatedField< float > distance_;
+  ::google::protobuf::RepeatedField< float > certainty_;
+  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static ObstacleMessageArray* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -451,12 +572,12 @@ class PathPlanningResultMessage : public ::google::protobuf::Message {
 
 // ObstacleMessage
 
-// required int32 direction = 1 [default = 0];
+// required int32 direction = 1 [default = -1];
 inline bool ObstacleMessage::has_direction() const {
   return _has_bit(0);
 }
 inline void ObstacleMessage::clear_direction() {
-  direction_ = 0;
+  direction_ = -1;
   _clear_bit(0);
 }
 inline ::google::protobuf::int32 ObstacleMessage::direction() const {
@@ -497,6 +618,85 @@ inline float ObstacleMessage::certainty() const {
 inline void ObstacleMessage::set_certainty(float value) {
   _set_bit(2);
   certainty_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ObstacleMessageArray
+
+// repeated int32 direction = 1;
+inline int ObstacleMessageArray::direction_size() const {
+  return direction_.size();
+}
+inline void ObstacleMessageArray::clear_direction() {
+  direction_.Clear();
+}
+inline ::google::protobuf::int32 ObstacleMessageArray::direction(int index) const {
+  return direction_.Get(index);
+}
+inline void ObstacleMessageArray::set_direction(int index, ::google::protobuf::int32 value) {
+  direction_.Set(index, value);
+}
+inline void ObstacleMessageArray::add_direction(::google::protobuf::int32 value) {
+  direction_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ObstacleMessageArray::direction() const {
+  return direction_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ObstacleMessageArray::mutable_direction() {
+  return &direction_;
+}
+
+// repeated float distance = 2;
+inline int ObstacleMessageArray::distance_size() const {
+  return distance_.size();
+}
+inline void ObstacleMessageArray::clear_distance() {
+  distance_.Clear();
+}
+inline float ObstacleMessageArray::distance(int index) const {
+  return distance_.Get(index);
+}
+inline void ObstacleMessageArray::set_distance(int index, float value) {
+  distance_.Set(index, value);
+}
+inline void ObstacleMessageArray::add_distance(float value) {
+  distance_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+ObstacleMessageArray::distance() const {
+  return distance_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+ObstacleMessageArray::mutable_distance() {
+  return &distance_;
+}
+
+// repeated float certainty = 3;
+inline int ObstacleMessageArray::certainty_size() const {
+  return certainty_.size();
+}
+inline void ObstacleMessageArray::clear_certainty() {
+  certainty_.Clear();
+}
+inline float ObstacleMessageArray::certainty(int index) const {
+  return certainty_.Get(index);
+}
+inline void ObstacleMessageArray::set_certainty(int index, float value) {
+  certainty_.Set(index, value);
+}
+inline void ObstacleMessageArray::add_certainty(float value) {
+  certainty_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+ObstacleMessageArray::certainty() const {
+  return certainty_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+ObstacleMessageArray::mutable_certainty() {
+  return &certainty_;
 }
 
 // -------------------------------------------------------------------

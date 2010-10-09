@@ -1,7 +1,14 @@
 message ObstacleMessage{
-	required int32 direction = 1 [default = 0];
+	required int32 direction = 1 [default = -1];
 	required float distance = 2 [default = 0.0 ];
 	required float certainty = 3 [default = 0.0];
+	
+}
+
+message ObstacleMessageArray{
+	repeated int32 direction = 1 ;
+	repeated float distance = 2 ;
+	repeated float certainty = 3 ;
 	
 }
 
@@ -21,4 +28,3 @@ message PathPlanningResultMessage{
 	required float moveToY = 2 [default = 0.0];
 	required float moveToAngle = 3 [default = 0.0];
 }
-

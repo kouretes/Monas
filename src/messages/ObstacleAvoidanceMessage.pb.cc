@@ -15,6 +15,9 @@ namespace {
 const ::google::protobuf::Descriptor* ObstacleMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ObstacleMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ObstacleMessageArray_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ObstacleMessageArray_reflection_ = NULL;
 const ::google::protobuf::Descriptor* VisionObstacleMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   VisionObstacleMessage_reflection_ = NULL;
@@ -51,7 +54,24 @@ void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ObstacleMessage));
-  VisionObstacleMessage_descriptor_ = file->message_type(1);
+  ObstacleMessageArray_descriptor_ = file->message_type(1);
+  static const int ObstacleMessageArray_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObstacleMessageArray, direction_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObstacleMessageArray, distance_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObstacleMessageArray, certainty_),
+  };
+  ObstacleMessageArray_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ObstacleMessageArray_descriptor_,
+      ObstacleMessageArray::default_instance_,
+      ObstacleMessageArray_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObstacleMessageArray, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObstacleMessageArray, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ObstacleMessageArray));
+  VisionObstacleMessage_descriptor_ = file->message_type(2);
   static const int VisionObstacleMessage_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VisionObstacleMessage, obstacles_),
   };
@@ -66,7 +86,7 @@ void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(VisionObstacleMessage));
-  PathPlanningRequestMessage_descriptor_ = file->message_type(2);
+  PathPlanningRequestMessage_descriptor_ = file->message_type(3);
   static const int PathPlanningRequestMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, gotox_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, gotoy_),
@@ -83,7 +103,7 @@ void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PathPlanningRequestMessage));
-  PathPlanningResultMessage_descriptor_ = file->message_type(3);
+  PathPlanningResultMessage_descriptor_ = file->message_type(4);
   static const int PathPlanningResultMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningResultMessage, movetox_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningResultMessage, movetoy_),
@@ -115,6 +135,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ObstacleMessage_descriptor_, &ObstacleMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ObstacleMessageArray_descriptor_, &ObstacleMessageArray::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     VisionObstacleMessage_descriptor_, &VisionObstacleMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     PathPlanningRequestMessage_descriptor_, &PathPlanningRequestMessage::default_instance());
@@ -127,6 +149,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto() {
   delete ObstacleMessage::default_instance_;
   delete ObstacleMessage_reflection_;
+  delete ObstacleMessageArray::default_instance_;
+  delete ObstacleMessageArray_reflection_;
   delete VisionObstacleMessage::default_instance_;
   delete VisionObstacleMessage_reflection_;
   delete PathPlanningRequestMessage::default_instance_;
@@ -142,22 +166,26 @@ void protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\036ObstacleAvoidanceMessage.proto\"R\n\017Obst"
-    "acleMessage\022\024\n\tdirection\030\001 \002(\005:\0010\022\023\n\010dis"
-    "tance\030\002 \002(\002:\0010\022\024\n\tcertainty\030\003 \002(\002:\0010\"<\n\025"
-    "VisionObstacleMessage\022#\n\tobstacles\030\001 \003(\013"
-    "2\020.ObstacleMessage\"V\n\032PathPlanningReques"
-    "tMessage\022\020\n\005goToX\030\001 \002(\002:\0010\022\020\n\005goToY\030\002 \002("
-    "\002:\0010\022\024\n\tgoToAngle\030\003 \002(\002:\0010\"[\n\031PathPlanni"
-    "ngResultMessage\022\022\n\007moveToX\030\001 \002(\002:\0010\022\022\n\007m"
-    "oveToY\030\002 \002(\002:\0010\022\026\n\013moveToAngle\030\003 \002(\002:\0010", 359);
+    "\n\036ObstacleAvoidanceMessage.proto\"S\n\017Obst"
+    "acleMessage\022\025\n\tdirection\030\001 \002(\005:\002-1\022\023\n\010di"
+    "stance\030\002 \002(\002:\0010\022\024\n\tcertainty\030\003 \002(\002:\0010\"N\n"
+    "\024ObstacleMessageArray\022\021\n\tdirection\030\001 \003(\005"
+    "\022\020\n\010distance\030\002 \003(\002\022\021\n\tcertainty\030\003 \003(\002\"<\n"
+    "\025VisionObstacleMessage\022#\n\tobstacles\030\001 \003("
+    "\0132\020.ObstacleMessage\"V\n\032PathPlanningReque"
+    "stMessage\022\020\n\005goToX\030\001 \002(\002:\0010\022\020\n\005goToY\030\002 \002"
+    "(\002:\0010\022\024\n\tgoToAngle\030\003 \002(\002:\0010\"[\n\031PathPlann"
+    "ingResultMessage\022\022\n\007moveToX\030\001 \002(\002:\0010\022\022\n\007"
+    "moveToY\030\002 \002(\002:\0010\022\026\n\013moveToAngle\030\003 \002(\002:\0010", 440);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ObstacleAvoidanceMessage.proto", &protobuf_RegisterTypes);
   ObstacleMessage::default_instance_ = new ObstacleMessage();
+  ObstacleMessageArray::default_instance_ = new ObstacleMessageArray();
   VisionObstacleMessage::default_instance_ = new VisionObstacleMessage();
   PathPlanningRequestMessage::default_instance_ = new PathPlanningRequestMessage();
   PathPlanningResultMessage::default_instance_ = new PathPlanningResultMessage();
   ObstacleMessage::default_instance_->InitAsDefaultInstance();
+  ObstacleMessageArray::default_instance_->InitAsDefaultInstance();
   VisionObstacleMessage::default_instance_->InitAsDefaultInstance();
   PathPlanningRequestMessage::default_instance_->InitAsDefaultInstance();
   PathPlanningResultMessage::default_instance_->InitAsDefaultInstance();
@@ -196,7 +224,7 @@ ObstacleMessage::ObstacleMessage(const ObstacleMessage& from)
 
 void ObstacleMessage::SharedCtor() {
   _cached_size_ = 0;
-  direction_ = 0;
+  direction_ = -1;
   distance_ = 0;
   certainty_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -233,7 +261,7 @@ ObstacleMessage* ObstacleMessage::New() const {
 
 void ObstacleMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    direction_ = 0;
+    direction_ = -1;
     distance_ = 0;
     certainty_ = 0;
   }
@@ -247,7 +275,7 @@ bool ObstacleMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 direction = 1 [default = 0];
+      // required int32 direction = 1 [default = -1];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -312,7 +340,7 @@ bool ObstacleMessage::MergePartialFromCodedStream(
 
 void ObstacleMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 direction = 1 [default = 0];
+  // required int32 direction = 1 [default = -1];
   if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->direction(), output);
   }
@@ -335,7 +363,7 @@ void ObstacleMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* ObstacleMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required int32 direction = 1 [default = 0];
+  // required int32 direction = 1 [default = -1];
   if (_has_bit(0)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->direction(), target);
   }
@@ -361,7 +389,7 @@ int ObstacleMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 direction = 1 [default = 0];
+    // required int32 direction = 1 [default = -1];
     if (has_direction()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -452,6 +480,306 @@ void ObstacleMessage::Swap(ObstacleMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ObstacleMessage_descriptor_;
   metadata.reflection = ObstacleMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int ObstacleMessageArray::kDirectionFieldNumber;
+const int ObstacleMessageArray::kDistanceFieldNumber;
+const int ObstacleMessageArray::kCertaintyFieldNumber;
+#endif  // !_MSC_VER
+
+ObstacleMessageArray::ObstacleMessageArray()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ObstacleMessageArray::InitAsDefaultInstance() {
+}
+
+ObstacleMessageArray::ObstacleMessageArray(const ObstacleMessageArray& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ObstacleMessageArray::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ObstacleMessageArray::~ObstacleMessageArray() {
+  SharedDtor();
+}
+
+void ObstacleMessageArray::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void ObstacleMessageArray::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ObstacleMessageArray::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ObstacleMessageArray_descriptor_;
+}
+
+const ObstacleMessageArray& ObstacleMessageArray::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();  return *default_instance_;
+}
+
+ObstacleMessageArray* ObstacleMessageArray::default_instance_ = NULL;
+
+ObstacleMessageArray* ObstacleMessageArray::New() const {
+  return new ObstacleMessageArray;
+}
+
+void ObstacleMessageArray::Clear() {
+  direction_.Clear();
+  distance_.Clear();
+  certainty_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ObstacleMessageArray::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated int32 direction = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_direction:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 1, 8, input, this->mutable_direction())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_direction())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(8)) goto parse_direction;
+        if (input->ExpectTag(21)) goto parse_distance;
+        break;
+      }
+      
+      // repeated float distance = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_distance:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 21, input, this->mutable_distance())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_distance())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_distance;
+        if (input->ExpectTag(29)) goto parse_certainty;
+        break;
+      }
+      
+      // repeated float certainty = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_certainty:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 29, input, this->mutable_certainty())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_certainty())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_certainty;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ObstacleMessageArray::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // repeated int32 direction = 1;
+  for (int i = 0; i < this->direction_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(
+      1, this->direction(i), output);
+  }
+  
+  // repeated float distance = 2;
+  for (int i = 0; i < this->distance_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      2, this->distance(i), output);
+  }
+  
+  // repeated float certainty = 3;
+  for (int i = 0; i < this->certainty_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      3, this->certainty(i), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ObstacleMessageArray::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // repeated int32 direction = 1;
+  for (int i = 0; i < this->direction_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt32ToArray(1, this->direction(i), target);
+  }
+  
+  // repeated float distance = 2;
+  for (int i = 0; i < this->distance_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(2, this->distance(i), target);
+  }
+  
+  // repeated float certainty = 3;
+  for (int i = 0; i < this->certainty_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(3, this->certainty(i), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ObstacleMessageArray::ByteSize() const {
+  int total_size = 0;
+  
+  // repeated int32 direction = 1;
+  {
+    int data_size = 0;
+    for (int i = 0; i < this->direction_size(); i++) {
+      data_size += ::google::protobuf::internal::WireFormatLite::
+        Int32Size(this->direction(i));
+    }
+    total_size += 1 * this->direction_size() + data_size;
+  }
+  
+  // repeated float distance = 2;
+  {
+    int data_size = 0;
+    data_size = 4 * this->distance_size();
+    total_size += 1 * this->distance_size() + data_size;
+  }
+  
+  // repeated float certainty = 3;
+  {
+    int data_size = 0;
+    data_size = 4 * this->certainty_size();
+    total_size += 1 * this->certainty_size() + data_size;
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ObstacleMessageArray::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ObstacleMessageArray* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ObstacleMessageArray*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ObstacleMessageArray::MergeFrom(const ObstacleMessageArray& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  direction_.MergeFrom(from.direction_);
+  distance_.MergeFrom(from.distance_);
+  certainty_.MergeFrom(from.certainty_);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ObstacleMessageArray::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ObstacleMessageArray::CopyFrom(const ObstacleMessageArray& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ObstacleMessageArray::IsInitialized() const {
+  
+  return true;
+}
+
+void ObstacleMessageArray::Swap(ObstacleMessageArray* other) {
+  if (other != this) {
+    direction_.Swap(&other->direction_);
+    distance_.Swap(&other->distance_);
+    certainty_.Swap(&other->certainty_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ObstacleMessageArray::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ObstacleMessageArray_descriptor_;
+  metadata.reflection = ObstacleMessageArray_reflection_;
   return metadata;
 }
 
