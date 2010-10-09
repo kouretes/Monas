@@ -32,10 +32,10 @@ class Behavior: public IActivity, public Publisher {
 		void read_messages();
 		int MakeTrackBallAction();
 		void HeadScanStep();
-        std::string GetName() {
-            return "Behavior";
-        }
-        void mgltest();
+		std::string GetName() {
+			return "Behavior";
+		}
+		void mgltest();
 
 	private:
 		AL::ALPtr<AL::ALMotionProxy> motion;
@@ -63,8 +63,8 @@ class Behavior: public IActivity, public Publisher {
 		short balllastseendirection;
 		HeadJointSensorsMessage* hjsm;
 		BallTrackMessage* bmsg;
-		ObservationMessage* obsm;
 		GameStateMessage* gsm;
+		ObservationMessage* obsm;
 		ObstacleMessage* om;
 		int calibrated;
 		bool play;
@@ -73,8 +73,16 @@ class Behavior: public IActivity, public Publisher {
 		bool readytokick;
 		int back;
 		int direction;
-		bool turning; 
+		bool turning;
 		int count;
+		bool obstacleFront;
+		int gameState;
+		
+		double mglRand();
+		void velocityWalk(double x, double y, double th, double f);
+		void littleWalk(double x, double y, double th, int s);
+		void calibrate();
+
 };
 
 #endif

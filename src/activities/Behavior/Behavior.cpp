@@ -78,11 +78,15 @@ void Behavior::UserInit() {
 	direction = 1;
 	turning = false;
 	count = 0;
+	obstacleFront = false;
+	gameState = PLAYER_INITIAL;
+	
+	srand(time(0));
 }
 
 int Behavior::MakeTrackBallAction() {
 
-	float overshootfix = 0.25;
+	float overshootfix = 0.50;
 	float cx = bmsg->cx();
 	float cy = bmsg->cy();
 	if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
@@ -90,8 +94,14 @@ int Behavior::MakeTrackBallAction() {
 		//hmot->set_parameter(0, bmsg->referenceyaw() - overshootfix * cx);
 		//hmot->set_parameter(1, bmsg->referencepitch() - overshootfix * cy);
 		hmot->set_command("changeHead");
-		hmot->set_parameter(0, - overshootfix * cx);
-		hmot->set_parameter(1, - overshootfix * cy);
+		if (fabs(cx) > 0.015)
+			hmot->set_parameter(0, - overshootfix * cx);
+		else
+			hmot->set_parameter(0, 0.0);
+		if (fabs(cy) > 0.015)
+			hmot->set_parameter(1, - overshootfix * cy);
+		else
+			hmot->set_parameter(1, 0.0);
 		Publisher::publish(hmot, "motion");
 	}
 	return 1;
@@ -100,23 +110,13 @@ int Behavior::MakeTrackBallAction() {
 
 void Behavior::mgltest() {
 
-	wmot->set_command("setWalkTargetVelocity");
-	wmot->set_parameter(0, 1.0);
-	wmot->set_parameter(1, 0.0);
-	wmot->set_parameter(2, 0.0);
-	wmot->set_parameter(3, 1.0);
-
 	if (om!=0) {
 		Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
-		if (om->direction() == 0) {
-			wmot->set_command("setWalkTargetVelocity");
-			wmot->set_parameter(0, 0.0);
-			wmot->set_parameter(1, 0.0);
-			wmot->set_parameter(2, 1.0);
-			wmot->set_parameter(3, 1.0);
-		}
+		if (om->direction() == 0) 
+			velocityWalk(0.0, 0.0, 1.0, 1.0);
 	}
-	Publisher::publish(wmot, "motion");
+	else
+		velocityWalk(1.0, 0.0, 0.0, 1.0);
 }
 
 int Behavior::Execute() {
@@ -125,21 +125,46 @@ int Behavior::Execute() {
 
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
-
-		/* PLAY state */
-		if (gsm->player_state() == PLAYER_PLAYING && calibrated == 2)
-			play = true;
-		else
-			play = false;
-
-		/* Calibration */
-		if ( (gsm->player_state() == PLAYER_PENALISED) || (gsm->player_state() == PLAYER_READY) ) {
-			CalibrateCam v;
-			v.set_status(0);
-			publish(&v, "vision");
-			calibrated = 1;
+		gameState = gsm->player_state();
+		
+		if (gameState == PLAYER_PLAYING) {
+			if (calibrated == 2) {
+				play = true;
+				littleWalk(0.01,0.0,0.0,1);
+			}
+			else if (calibrated == 0) {
+				calibrate();
+			}
+			else if (calibrated == 1) {
+				// wait
+			}
 		}
-
+		else if (gameState == PLAYER_INITIAL) {
+			play = false;
+		}
+		else if (gameState == PLAYER_READY) {
+			play = false;
+		}
+		else if (gameState == PLAYER_SET) {
+			play = false;
+			calibrate();
+		}
+		else if (gameState == PLAYER_FINISHED) {
+			play = false;
+		}
+		else if (gameState == PLAYER_PENALISED) {
+			play = false;
+			calibrate();
+		}
+	}
+	
+	if (gameState == PLAYER_PLAYING) {
+		if (calibrated == 2) {
+			play = true;
+		}
+		else if (calibrated == 0) {
+			calibrate();
+		}
 	}
 
 	//if (play) mgltest();
@@ -151,10 +176,11 @@ int Behavior::Execute() {
 			Logger::Instance().WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 			if (bmsg->radius() > 0) { //This means that a ball was found
 				scanforball = false; //if you are scanning for ball please stop now
+				back = 0;
 				MakeTrackBallAction();
 				ballfound += 5;
-				if (ballfound > 10)
-					ballfound = 10; //Increase this value when we see the ball
+				if (ballfound > 20)
+					ballfound = 20; //Increase this value when we see the ball
 			}
 			else {
 				if (ballfound > 0)
@@ -167,8 +193,7 @@ int Behavior::Execute() {
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
 
 		if ((obsm != 0) && !turning) {
-
-			readytokick = true;
+			
 			scanforball = false; //be sure to stop scanning
 			int side=1;
 			bd = obsm->ball().dist();
@@ -178,98 +203,115 @@ int Behavior::Execute() {
 			side = (bb > 0) ? 1 : -1;
 			Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
 
-			double gain = 0.8;
-            double gainTheta = 0.4;
-            double gainFine = 1.0;
-			if (obsm->ball().dist() <= 8.0) {
-				float posx=0.17, posy=0.05;
-				if (bd > 0.25) {
-					X = gain * bx;
-					Y = gain * by;
-					if (fabs(bb) > 3*TO_RAD)
-						theta = gainTheta * bb;
-					readytokick = false;
-				} else if (bd > 0.25) {
-					X = gain * (bx - posx);
-					Y = gain * ( by - (side*posy) );
-					readytokick = false;
-				} else {
-					if ( fabs( bx - posx ) > 0.025) {
-						X = gainFine * (bx - posx);
+			if (!readytokick) {
+				readytokick = true;
+				double gain = 1.0;
+	            double gainTheta = 0.3;
+	            double gainFine = 1.0;
+				if (obsm->ball().dist() <= 8.0) {
+					float posx=0.17, posy=0.05;
+					if (bd > 0.25) {
+						X = gain * bx;
+						Y = gain * by;
+						if (fabs(bb) > 3*TO_RAD)
+							theta = gainTheta * bb;
 						readytokick = false;
-					}
-					if ( fabs( by - (side*posy) ) > 0.025) {
-						Y = gainFine * ( by - (side*posy) );
+					} else if (bd > 0.25) {
+						X = gain * (bx - posx);
+						Y = gain * ( by - (side*posy) );
 						readytokick = false;
+					} else {
+						if ( fabs( bx - posx ) > 0.025) {
+							X = gainFine * (bx - posx);
+							readytokick = false;
+						}
+						if ( fabs( by - (side*posy) ) > 0.025) {
+							Y = gainFine * ( by - (side*posy) );
+							readytokick = false;
+						}
 					}
 				}
-			}
-
-			if (fabs(X) > 1.0)
-				X = (X > 0.0) ? 1.0 : -1.0;
-			if (fabs(Y) > 1.0)
-				Y = (Y > 0.0) ? 1.0 : -1.0;
-			if (fabs(theta) > 1.0)
-				theta = (theta > 0.0) ? 1.0 : -1.0;
-
-			if (!readytokick) {
-				wmot->set_command("setWalkTargetVelocity");
-				wmot->set_parameter(0, X);
-				wmot->set_parameter(1, Y);
-				wmot->set_parameter(2, theta);
-				wmot->set_parameter(3, 1.0);
-				Publisher::publish(wmot, "motion");
+	
+				if (!readytokick) {
+					
+					if (fabs(X) > 1.0)
+						X = (X > 0.0) ? 1.0 : -1.0;
+					if (fabs(Y) > 1.0)
+						Y = (Y > 0.0) ? 1.0 : -1.0;
+					if (fabs(theta) > 1.0)
+						theta = (theta > 0.0) ? 1.0 : -1.0;
+					
+					velocityWalk(X, Y, theta, 1.0);
+				}
+				else {
+					velocityWalk(0.0, 0.0, 0.0, 1.0); 
+					return 1;
+				}
 			}
 		}
-
+		else {
+			readytokick = false;
+		}
 
 		/* Ready to take action */
 		if (readytokick && !turning) {
-                        static bool kickoff = true;
-                        if ( kickoff ) {
-                          //RejectAllFilter reject_filter("RejectFilter");
-                          //_blk->getBuffer()->add_filter(&reject_filter);
-                          //wmot->set_command("walkTo");
-                          //wmot->set_parameter(0, 0.4);
-                          //wmot->set_parameter(1, 0.0);
-                          //wmot->set_parameter(2, 0.0);
-                          //Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-                          //sleep(4);
-                          //_blk->getBuffer()->remove_filter(&reject_filter);
-                          
-							if (by > 0.0) {
-								amot->set_command("softLeftSideKick");
-							}
-							else {
-								amot->set_command("softRightSideKick");
-							}
-							kickoff = false;
-                        }
-                        else {
-                          if (by > 0.0) {
-                                  //amot->set_command("leftKick");
-                                  amot->set_command("hardLeftSideKick");
-						  }
-                          else {
-                                  //amot->set_command("rightKick");
-                                  amot->set_command("hardRightSideKick");
-						  }
-                          Publisher::publish(amot, "motion");
-                          back = 0;
-
-                        }
-                        readytokick = false;
+			obstacleFront = false; 
+			if (om!=0) 
+				if (om->direction() == 0) 
+					obstacleFront = true; 
+			
+			static bool kickoff = true;
+			if ( kickoff ) {
+				//if (mglRand()<0.5) {
+				if ( (mglRand()<1.0) && !obstacleFront ) {
+					littleWalk(0.2, 0.0, 0.0, 2);
+				} else {
+					if (by > 0.0) {
+						amot->set_command("softLeftSideKick");
+						direction = -1;
+					}
+					else {
+						amot->set_command("softRightSideKick");
+						direction = +1;
+					}
+					Publisher::publish(amot, "motion");
+				}
+				kickoff = false;
+			}
+			else {
+				if (mglRand()<0.6) {
+				//if ( (mglRand()<1.0) && !obstacleFront ) {
+					if (by > 0.0) 
+						amot->set_command("leftKick");
+					else 
+						amot->set_command("rightKick");
+				}
+				else if (mglRand()<0.5) {
+					if (by > 0.0) {
+						amot->set_command("hardLeftSideKick");
+						direction = -1;
+					}
+					else {
+						amot->set_command("hardRightSideKick");
+						direction = +1;
+					}
+				}
+				else {
+					if (by > 0.0)
+						amot->set_command("leftBackKick");
+					else 
+						amot->set_command("rightBackKick");
+				}
+				Publisher::publish(amot, "motion");
+				back = 0;
+			}
+			readytokick = false;
 		}
 
 		if ( (ballfound == 0) && !readytokick && !turning ) {
 			if (!scanforball) {
 				startscan = true;
-				wmot->set_command("setWalkTargetVelocity");
-				wmot->set_parameter(0, 0);
-				wmot->set_parameter(1, 0);
-				wmot->set_parameter(2, 0);
-				wmot->set_parameter(3, 0);
-				Publisher::publish(wmot, "motion");
+				velocityWalk(0.0, 0.0, 0.0, 1.0);
 			}
 			scanforball = true;
 		}
@@ -281,17 +323,7 @@ int Behavior::Execute() {
 		}
 
 	} else if (!play) {   // Non-Play state
-		wmot->set_command("setWalkTargetVelocity");
-		wmot->set_parameter(0, 0);
-		wmot->set_parameter(1, 0);
-		wmot->set_parameter(2, 0);
-		wmot->set_parameter(3, 0);
-		Publisher::publish(wmot, "motion");
-
-		//hmot->set_command("setHead");
-		//hmot->set_parameter(0, 0.0);
-		//hmot->set_parameter(1, 0.0);
-		//Publisher::publish(hmot, "motion");
+		velocityWalk(0.0, 0.0, 0.0, 1.0);
 	}
 
 	return 0;
@@ -360,31 +392,14 @@ void Behavior::HeadScanStep() {
 		reachedlimitleft = false;
 		///we should do something;
 		if (back>0) {
-			RejectAllFilter reject_filter("RejectFilter");
-			_blk->getBuffer()->add_filter(&reject_filter);
-			wmot->set_command("walkTo");
-			wmot->set_parameter(0, -0.5);
-			wmot->set_parameter(1, 0.0);
-			wmot->set_parameter(2, 0.0);
-			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-			sleep(5);
-			_blk->getBuffer()->remove_filter(&reject_filter);
+			littleWalk(-0.2, 0.0, 0.0, 2);
 			back--;
-		} else {
-			RejectAllFilter reject_filter("RejectFilter");
-			_blk->getBuffer()->add_filter(&reject_filter);
-			wmot->set_command("walkTo");
-			wmot->set_parameter(0, 0.0);
-			wmot->set_parameter(1, 0.0);
-			wmot->set_parameter(2, direction * 0.78); //turn ~45 degrees? (==> is pi/4 == 0.78)
-			Publisher::publish(wmot, "motion"); //Send the message to the motion Controller
-			sleep(4);
-			_blk->getBuffer()->remove_filter(&reject_filter);
+		} 
+		else {
+			littleWalk(0.0, 0.0, direction * 90 * TO_RAD, 4);
 			//direction = - direction;
 		}
 	}
-
-
 }
 
 void Behavior::read_messages() {
@@ -409,6 +424,42 @@ void Behavior::read_messages() {
 		if (c->status() == 1)
 			calibrated = 2;
 		delete c;
-		cout << "calibrated:" << calibrated << endl;
 	}
 }
+
+double Behavior::mglRand()
+{
+    return rand() / double(RAND_MAX);
+}
+
+void Behavior::velocityWalk(double x, double y, double th, double f)
+{
+	wmot->set_command("setWalkTargetVelocity");
+	wmot->set_parameter(0, x);
+	wmot->set_parameter(1, y);
+	wmot->set_parameter(2, th);
+	wmot->set_parameter(3, f);
+	Publisher::publish(wmot, "motion");
+}
+
+void Behavior::littleWalk(double x, double y, double th, int s)
+{
+	RejectAllFilter reject_filter("RejectFilter");
+	_blk->getBuffer()->add_filter(&reject_filter);
+	wmot->set_command("walkTo");
+	wmot->set_parameter(0, x);
+	wmot->set_parameter(1, y);
+	wmot->set_parameter(2, th);
+	Publisher::publish(wmot, "motion");
+	sleep(s);
+	_blk->getBuffer()->remove_filter(&reject_filter);
+}
+
+void Behavior::calibrate()
+{
+	CalibrateCam v;
+	v.set_status(0);
+	publish(&v, "vision");
+	calibrated = 1;
+}
+
