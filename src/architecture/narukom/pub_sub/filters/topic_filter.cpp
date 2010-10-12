@@ -15,9 +15,9 @@
 */
 
 #include "topic_filter.h"
-FilterState TopicFilter::filter(const Tuple& a_tuple)
+FilterState TopicFilter::filter(const msgentry& a_tuple)
 {
-  if(a_tuple.get_topic() == topic && Filter::get_complement())
+  if(a_tuple.topic == topic && Filter::get_complement())
     return Accepted;
   return Rejected;
 }

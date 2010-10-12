@@ -7,6 +7,9 @@
 #include <limits>
 #include <math.h>
 
+
+//#define KMAT_INSANE_MODE
+
 /**
  * KMat (koimat`) :: Kouretes Matrix Library!
  * Provides a templated statically binded (sounds exotic :P )
@@ -240,7 +243,8 @@ namespace KMat
 			//Accessor
 			T& get(unsigned i,unsigned j)
 			{
-				if (i<1 || j<1 ||i>M ||j>N)
+#ifndef KMAT_INSANE_MODE
+				if (i<0 || j<0 ||i>M-1||j>N-1)
 				{
 					std::string d("BaseMatrix.get() ");
 
@@ -248,8 +252,27 @@ namespace KMat
 					//throw MatrixIndexOutOfBoundsException(d);
 					return data[0][0];
 				}
-				return data[i-1][j-1];
+#endif
+				return data[i][j];
 			};
+
+			//Const accessor//Accessor
+			const T& get(unsigned i,unsigned j) const
+			{
+#ifndef KMAT_INSANE_MODE
+				if (i<0 || j<0 ||i>M-1||j>N-1)
+				{
+					std::string d("BaseMatrix.get() ");
+
+					throw MatrixIndexOutOfBoundsException(d);
+					//throw MatrixIndexOutOfBoundsException(d);
+					return data[0][0];
+				}
+#endif
+				return data[i][j];
+			};
+
+
 
 			/**
 			 * For debuging mainly
@@ -291,6 +314,15 @@ namespace KMat
 			T& operator() (unsigned i,unsigned j)
 			{
 				return get(i,j);
+			};
+			//Const accessor
+			const T& operator() (unsigned i,unsigned j) const
+			{
+				return get(i,j);
+			};
+			D<T,M,N> & operator= (const D<T,M,N> & d)
+			{
+			  return copyFrom(d);
 			};
 
 		protected:
@@ -425,7 +457,12 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			//=== Operator overloading========
 			T& operator() (unsigned i)
 			{
-				return get(i,1);
+				return get(i,0);
+			};
+			//Const
+			const T& operator() (unsigned i) const
+			{
+				return get(i,0);
 			};
 
 	};
@@ -633,22 +670,22 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			{
 				m.identity();
 				m.AisIdentity=false;
+				m.A(0,0)=cos(theta);
+				m.A(0,1)=-sin(theta);
+				m.A(1,0)=sin(theta);
 				m.A(1,1)=cos(theta);
-				m.A(1,2)=-sin(theta);
-				m.A(2,1)=sin(theta);
-				m.A(2,2)=cos(theta);
 			}
 			template<typename T> static void shearX(ATMatrix<T,3> & m, T factor)
 			{
 				m.identity();
 				m.AisIdentity=false;
-				m.A(1,2)=factor;
+				m.A(0,1)=factor;
 			};
 			template<typename T> static void shearY(ATMatrix<T,3> & m, T factor)
 			{
 				m.identity();
 				m.AisIdentity=false;
-				m.A(2,1)=factor;
+				m.A(1,0)=factor;
 			};
 
 			template<typename T,unsigned S> static void translate(ATMatrix<T,S> & m, HCoords<T,S-1> t)
@@ -672,20 +709,20 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			{
 				m.identity();
 				m.AisIdentity=false;
+				m.A(0,0)=cos(theta);
+				m.A(0,1)=-sin(theta);
+				m.A(1,0)=sin(theta);
 				m.A(1,1)=cos(theta);
-				m.A(1,2)=-sin(theta);
-				m.A(2,1)=sin(theta);
-				m.A(2,2)=cos(theta);
 
 			}
 			template<typename T> static void rotateY(ATMatrix<T,4> & m, T theta)
 			{
 				m.identity();
 				m.AisIdentity=false;
-				m.A(1,1)=cos(theta);
-				m.A(1,3)=sin(theta);
-				m.A(3,1)=-sin(theta);
-				m.A(3,3)=cos(theta);
+				m.A(0,0)=cos(theta);
+				m.A(0,2)=sin(theta);
+				m.A(2,0)=-sin(theta);
+				m.A(2,2)=cos(theta);
 
 
 			}
@@ -694,10 +731,10 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 				m.identity();
 				m.AisIdentity=false;
 
+				m.A(1,1)=cos(theta);
+				m.A(1,2)=-sin(theta);
+				m.A(2,1)=sin(theta);
 				m.A(2,2)=cos(theta);
-				m.A(2,3)=-sin(theta);
-				m.A(3,2)=sin(theta);
-				m.A(3,3)=cos(theta);
 			}
 	};
 

@@ -35,27 +35,24 @@ class Publisher
     Publisher();
     Publisher(std::string str);
     Publisher(const char* );
-    Publisher(const Publisher&);
     virtual ~Publisher();
-    virtual void publish(google::protobuf::Message* msg,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
-    virtual void publish(char* msg,unsigned size,const std::string type,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
-		virtual void publish(Tuple* t);
-//    virtual void publish(Serializable* msg ,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
-    
+    virtual void publish(const  msgentry & msg);
+	virtual void publish(std::vector<msgentry> vec);
+	//    virtual void publish(Serializable* msg ,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
+
     bool operator==(const Publisher& pub_1);//
-    
-    
-    MessageBuffer* getBuffer()const;// { return pub_msg_buf ; }
+
+
     std::string getName() const;// { return publisher_name;}
-    MessageQueue* getQueue() const;// {return pub_msg_queue;}
-   void setBuffer(MessageBuffer* buf);//{ pub_msg_buf = buf;} 
+    void setBuffer(MessageBuffer* buf);//{ pub_msg_buf = buf;}
     void setQueue(MessageQueue* val);//{pub_msg_queue = val;}
-   
+
   private:
     std::string publisher_name;
     MessageBuffer* pub_msg_buf;
+  protected:
     MessageQueue* pub_msg_queue; // in order to keep it sane
-  
+
 };
 
 #endif // PUBLISHER_H

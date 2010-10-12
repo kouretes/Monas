@@ -4,7 +4,7 @@ Filter::Filter(const std::string& type_name, bool value) : type(type_name), comp
 {
 
 }
-FilterState Filter::filter(const Tuple& a_tuple)
+FilterState Filter::filter(const msgentry & a_tuple)
 {
   return Unknown;
 }

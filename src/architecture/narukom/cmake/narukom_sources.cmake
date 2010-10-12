@@ -5,8 +5,7 @@ SET(NARUKOM_PUB_SUB_SRCS
    ${NarukomDir}/pub_sub/topic_tree.h
    ${NarukomDir}/pub_sub/topic_tree_node.h
    ${NarukomDir}/pub_sub/blackboard.h
-   ${NarukomDir}/pub_sub/tuple.h
-   ${NarukomDir}/pub_sub/tuple.cpp
+   ${NarukomDir}/pub_sub/msg.h
    ${NarukomDir}/pub_sub/subscriber.h
    ${NarukomDir}/pub_sub/publisher.h
    ${NarukomDir}/pub_sub/publisher.cpp

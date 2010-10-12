@@ -6,8 +6,8 @@
 #include <albroker.h>
 #include <alproxy.h>
 
-#include "architecture/narukom/narukom.h"
-#include "architecture/narukom/pub_sub/publisher.h"
+#include "architecture/narukom/pub_sub/blackboard.h"
+
 
 #include "alxplatform.h"
 
@@ -24,7 +24,7 @@
 
 #define VISION_RESOLUTION kQVGA
 #define VISION_CSPACE kYUV422InterlacedColorSpace
-#define VISON_FPS 10
+#define VISON_FPS 30
 #define VISION_GVMNAME "KImageExtractor"
 
 
@@ -38,12 +38,12 @@
  * Automatically deals with naoqi related stuff, and handles gracefully image size changes
  * TODO: Provide functionality to change resolution/framerate on the fly
  */
-class KImageExtractor : public Publisher
+class KImageExtractor
 {
 	public:
 		KImageExtractor();
 
-		void Init(Narukom* com);
+		void Init(Blackboard *blk);
 
 		~KImageExtractor();
 		//Get new Image from hardware
@@ -56,15 +56,16 @@ class KImageExtractor : public Publisher
 		int swapCamera();
 	private:
 		AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi
-		AL::ALPtr<AL::DCMProxy> dcm;
+#ifndef REMOTE_ON
+        boost::posix_time::ptime timecorr;
+#endif
 
 		//Name used when subscribing Generic Video Module
 		std::string GVM_name;
 		int resolution;//Current Resolution
 		int cSpace;// Current Colorspace
 		bool doneSubscribe;//Initializations done?
-		unsigned rtt;
-		Narukom* _com;
+		Blackboard *_blk;
 
 };
 

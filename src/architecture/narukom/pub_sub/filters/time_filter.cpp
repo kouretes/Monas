@@ -21,7 +21,7 @@ TimeFilter::TimeFilter(const std::string& type_name,unsigned int period):Filter(
   last_accepted = boost::posix_time::min_date_time;
 }
 
-FilterState TimeFilter::filter(const Tuple& a_tuple)
+FilterState TimeFilter::filter(const msgentry& a_tuple)
 {
   if(last_accepted == boost::posix_time::min_date_time)
   {

@@ -25,7 +25,7 @@
 //#define USE_POINTERS
 
 
-class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
+class Sensors: public IActivity/*, public Subscriber*/{
 	public:
 		Sensors();
 		int Execute();
@@ -77,10 +77,10 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
 
 		unsigned int period;
 
-		float smoothness; //sensordata = 90%*newvalue + 10%*oldvalue
+		float smoothness; //sensordata = 90%*value + 10%*oldvalue
 		//Indexing according initialization
 		std::vector<float> devicesValues;
 };
 
-#endif  
+#endif
 

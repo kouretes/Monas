@@ -24,44 +24,35 @@
 #include <vector>
 #include <google/protobuf/message.h>
 #include "../system/Mutex.h"
-#include "tuple.h"
+#include "msg.h"
 #include "filters/filter.h"
+#include <queue>
 #include <list>
 
+class MessageQueue;
 class MessageBuffer
 {
   public:
-    MessageBuffer(Mutex* mx = 0,boost::condition_variable_any* cv = 0);
+    MessageBuffer(MessageQueue *amq);
     explicit
-    MessageBuffer(const std::string owner,Mutex* mx,boost::condition_variable_any* cv );
-    MessageBuffer(MessageBuffer&);
+    MessageBuffer(const std::string owner,MessageQueue *amq );
     ~MessageBuffer();
-    int size() ;//{ return msg_buf->size();}
-    bool isEmpty()  ;//{ return !(msg_buf->size() > 0);}
-    void clear();//{ msg_buf->clear();}
-    void copyFrom( MessageBuffer&);
-    void mergeFrom( MessageBuffer&);
-    void add(Tuple* msg);
+    void add( std::vector<msgentry> & tuples);
+    void add(const msgentry & t);
+    std::vector<msgentry> remove();
     bool operator==( MessageBuffer& other) ;
-    Tuple* remove( std::vector< Tuple* >::iterator );
-    Tuple* remove_head();
-    Tuple* remove_tail();
-    std::list< Tuple* >::iterator get_iterator();
-    std::list< Tuple* >::iterator end();
-    std::list<Tuple*>&   getBuffer() ;//   {return *msg_buf;}
     std::string getOwner() ;// {return owner;}
-    boost::condition_variable_any* get_condition_variable() ;
-		Mutex* get_queue_mutex() ;
     void add_filter(Filter* filter);
     void remove_filter(Filter* filter);
+    static bool cmpentryTimeStamps(const msgentry &a,const msgentry & b) {return a.timestamp<b.timestamp;};
   private:
-    std::list<Tuple*>* msg_buf;
+    //Use GT comparator to ensure top() is always the oldest timestamped msg
+    std::vector<msgentry> msg_buf;
     std::list<Filter*> filters;
-    std::string owner; 
+    std::string owner;
     Mutex mutex;
-		Mutex *mq_mutex;
-    boost::condition_variable_any* mq_cv;
-  
+    MessageQueue *mq;
+
 };
 
 #endif // MESSAGE_BUFFER_H

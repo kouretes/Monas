@@ -1,7 +1,6 @@
 #include "narukom.h"
 //TOBE REMOVED
 //#include "pub_sub/filters/content_filter.h"
-#include "pub_sub/tuple.h"
 ///////
 Narukom::Narukom()
 {
@@ -17,6 +16,6 @@ MessageQueue* Narukom::get_message_queue()
   if(mq == 0)
     mq = new MessageQueue();
   return mq;
-  
-  
+
+
 }

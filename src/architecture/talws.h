@@ -4,8 +4,6 @@
 #include "architecture/agent.h"
 #include "hal/thread.h"
 
-#include "statechartWrapper.h"
-
 #include <vector>
 
 class Talws {
@@ -24,7 +22,6 @@ class Talws {
 
         std::vector<Agent*> Agents;
 
-        std::vector<StatechartWrapper*> StatechartPlans;
 
         Narukom com;
 

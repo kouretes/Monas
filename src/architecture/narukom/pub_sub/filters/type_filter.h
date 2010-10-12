@@ -25,7 +25,7 @@ class TypeFilter : public Filter
 {
 	public:
 		TypeFilter(const std::string& filter_name);
-		FilterState filter( const Tuple& t);
+		FilterState filter( const msgentry& t);
 		void add_type(const std::string& new_type);
 	private:
 		std::vector<std::string> type_vector;

@@ -11,9 +11,15 @@
 #include "almotionproxy.h"
 
 
+#define sqrd(x) ( (x)*(x) )
 //#include "boost/date_time/local_time/local_time.hpp"
+typedef struct measurement_struct
+{
+    float mean;
+    float var;
+} measurement;
 
-
+typedef   measurement (*measurement2)[2];
 class CameraT : public KMat::transformations
 {
 
@@ -48,8 +54,13 @@ typedef struct cameraPose
 	float pitch;
 	float Vyaw;
 	float Vpitch;
+	float cameraPitch;
 	unsigned  timediff;
 	boost::posix_time::ptime time;//time of sensors
+    float focallength;//in pixels
+    float cameraX;
+    float cameraY;
+    float cameraZ;
 	//float imcomp;//Image compensation time in ms;
 
 } cpose;
@@ -60,9 +71,33 @@ class KCameraTranformation
 	public:
 		KCameraTranformation();
         void Init();
+
+        void setPose(cpose p);
+        //float getPitch();
+        //float getRoll();
+
+
+
+
 		std::vector<float>  getKinematics(const std::string toAsk);
 		float cot(float theta);
+		KMat::HCoords<float,3>  camera2dTo3d(const KMat::HCoords<float,2> & coords);
+		KMat::HCoords<float,2>  camera3dTo2d(const KMat::HCoords<float,3> & coords);
+		KMat::HCoords<float,3>  cameraToGround(const KMat::HCoords<float,3> & c3d);
+		KMat::HCoords<float,3>  camera2dToTorso(const KMat::HCoords<float,2> & coords);
+		KMat::HCoords<float,3>  camera2dToGround(const KMat::HCoords<float,2>& c2d);
+        KMat::HCoords<float,3>  cameraToGroundProjection(const KMat::HCoords<float,3> & c3d,float height);
+		KMat::HCoords<float,3>  camera2dToGroundProjection(const KMat::HCoords<float,2>& c2d,float height);
+		KMat::HCoords<float,2>  groundToCamera2d(const KMat::HCoords<float,3>& g);
+		float vectorAngle(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2);
+        measurement angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
+        measurement2 projectionDistance(KMat::HCoords<float,2> &v,float height);
+
 	private:
+        cpose thepose;
+        KMat::ATMatrix<float,4> cameraChain;//Camera to ground transformation
+        KMat::ATMatrix<float,4> cameraTorsoChain;//CameraToTorso;
+        KMat::ATMatrix<float,4> cameraChainInv;//Inverse
 		AL::ALPtr<AL::ALMotionProxy> motion;
 
 };

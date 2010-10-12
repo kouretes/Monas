@@ -21,7 +21,7 @@
 #include "message_queue.h"
 #include "../tools/XML.h"
 
- 
+
 using std::map;
 using std::string;
 
@@ -34,7 +34,6 @@ MessageQueue::MessageQueue() : Thread(false), type_string("topic")
     this->subscribers_buf = new map<string,MessageBuffer*>();
     this->topic_tree = new TopicTree<string,MessageBuffer>();
     create_tree(topic_tree, string("topic_tree.xml"));
-		condition_variable_period = boost::posix_time::millisec(5);
 
 
 }
@@ -48,22 +47,19 @@ MessageQueue::MessageQueue(string configuration_file)  : Thread(false), type_str
     this->subscribers_buf = new map<string,MessageBuffer*>();
     this->topic_tree = new TopicTree<string,MessageBuffer>();
     create_tree(topic_tree, configuration_file);
-		condition_variable_period = boost::posix_time::millisec(5);
 
 }
 
 MessageQueue::MessageQueue(const char* configuration_file)  : Thread(false), type_string("topic")
 {
-		boost::unique_lock<Mutex> sub_lock(sub_mutex);
-		boost::unique_lock<Mutex> pub_lock(pub_mutex);
-		boost::unique_lock<Mutex> tree_lock(tree_mutex);
+    boost::unique_lock<Mutex> sub_lock(sub_mutex);
+    boost::unique_lock<Mutex> pub_lock(pub_mutex);
+    boost::unique_lock<Mutex> tree_lock(tree_mutex);
     this->publishers_buf = new map<string,MessageBuffer*>();
     this->subscribers_buf = new map<string,MessageBuffer*>();
     this->topic_tree = new TopicTree<string,MessageBuffer>();
     create_tree(topic_tree, string(configuration_file));
-		condition_variable_period = boost::posix_time::millisec(5);
 }
-
 void MessageQueue::create_tree(TopicTree<string,MessageBuffer>* tree,const  string& file_name)
 {
     string parent = "";
@@ -154,7 +150,7 @@ bool MessageQueue::remove_topic(const std::string& old_topic)
 }
 bool MessageQueue::remove_topic(const char* old_topic)
 {
-	
+
 		boost::unique_lock<Mutex> tree_lock(tree_mutex);
 	 std::string tmp_old_topic(old_topic);
   bool result =  topic_tree->delete_topic(tmp_old_topic);
@@ -174,26 +170,26 @@ void MessageQueue::remove_publisher(Publisher* pub)
 void MessageQueue::remove_subscriber(Subscriber* sub)
 {
 boost::unique_lock<Mutex> sub_lock(sub_mutex);
-		
+
 	cout << "Remove Subscriber" << endl;
     string sub_name = sub->getName();
     map<string,MessageBuffer*>::iterator it = subscribers_buf->find(sub_name);
     if (it != subscribers_buf->end() )
         subscribers_buf->erase(it);
-    
+
 }
 
 MessageBuffer* MessageQueue::add_publisher(Publisher* pub)//{return NULL;}//TODO};
 {
 		boost::unique_lock<Mutex> pub_lock(pub_mutex);
-		
+
     string owner_name = pub->getName();
 
     map<string,MessageBuffer*>::iterator it = publishers_buf->find(owner_name);
     if (it != publishers_buf->end() )
         return it->second;
 
-    MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name,&cond_lock, &cond);
+    MessageBuffer* new_msg_buf = new MessageBuffer ( this);
     pub->setQueue(this);
     publishers_buf->insert ( std::make_pair<std::string,MessageBuffer*> ( owner_name,new_msg_buf ) );
     pub->setBuffer(new_msg_buf);
@@ -204,7 +200,7 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub)//{return NULL;}//TODO
 MessageBuffer* MessageQueue::add_publisher(Publisher* pub , MessageBuffer* buf)
 {
 	boost::unique_lock<Mutex> pub_lock(pub_mutex);
-		
+
   if(pub != 0 && buf !=0)
   {
     pub->setQueue(this);
@@ -213,7 +209,7 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub , MessageBuffer* buf)
   }
   cout << " Either buffer or Publisher is null " << endl;
   return 0;
-  
+
 }
 
 
@@ -226,7 +222,7 @@ MessageBuffer* MessageQueue::add_subscriber ( Subscriber* sub ) //{return NULL;}
     if (it != subscribers_buf->end() )
         return it->second;
 
-    MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name,&cond_lock,&cond );
+    MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name, this );
     sub->setQueue(this);
     subscribers_buf->insert ( std::make_pair<std::string,MessageBuffer*> ( owner_name,new_msg_buf ) );
     sub->setBuffer(new_msg_buf);
@@ -237,7 +233,7 @@ MessageBuffer* MessageQueue::add_subscriber ( Subscriber* sub ) //{return NULL;}
 MessageBuffer* MessageQueue::add_subscriber(Subscriber* sub, MessageBuffer* buf )
 {
 boost::unique_lock<Mutex> sub_lock(sub_mutex);
-		
+
 	if(sub != 0 && buf !=0)
   {
     sub->setQueue(this);
@@ -265,17 +261,17 @@ bool MessageQueue::subscribe (const  std::string& topic, Subscriber* sub,int whe
 		if(already_subscribed != 0)
 			for(std::list<MessageBuffer*>::iterator it = already_subscribed->begin(); it != already_subscribed->end(); it++)
 			{
-				if((*it)->getOwner() == sub->getBuffer()->getOwner() )
+				if((*it)->getOwner() == owner )
 					return true;
 			}
     std::map<std::string,MessageBuffer*>::iterator sub_it = subscribers_buf->find ( owner );
-    
+
     if ( sub_it != subscribers_buf->end() )
     {
-    
+
         MessageBuffer* subscriber = sub_it->second;
         result =  topic_tree->subscribe ( topic,subscriber,where );
-    
+
         return result;
         //        return true;
     }
@@ -286,7 +282,7 @@ bool MessageQueue::subscribe (const  std::string& topic, Subscriber* sub,int whe
         this->add_subscriber(sub);
 				sub_lock.lock();
         result =  topic_tree->subscribe ( topic,sub->getBuffer(),where );
-    
+
         return result;
 
 
@@ -298,13 +294,13 @@ bool MessageQueue::subscribe (const  std::string& topic, Subscriber* sub,int whe
 bool MessageQueue::unsubscribe (const std::string& from_topic, Subscriber*  sub   )
 {
 	boost::unique_lock<Mutex> sub_lock(sub_mutex);
-		
+
 		boost::unique_lock<Mutex> tree_lock(tree_mutex);
     bool result;
-    
+
     cout << "!MessageQueue unsubscribe!" << endl;
     result =  topic_tree->unsubscribe( from_topic,sub->getBuffer() );
-    
+
     return result;
 }
  bool MessageQueue::unsubscribe(const char* from_topic, Subscriber* sub )
@@ -317,67 +313,45 @@ bool MessageQueue::unsubscribe (const std::string& from_topic, Subscriber*  sub 
 
 void MessageQueue::process_queued_msg()
 {
-		boost::unique_lock<Mutex> sub_lock(sub_mutex);
-		boost::unique_lock<Mutex> pub_lock(pub_mutex);
-		boost::unique_lock<Mutex> tree_lock(tree_mutex);
-	bool new_messages_to_deliver = false;
-   if (publishers_buf->size() > 0 )
-    {
-// 				cout << "publishers size > 0 " << endl;
-        for(map<string,MessageBuffer*>::iterator it = publishers_buf->begin(); it != publishers_buf->end(); it++)
-        {
-            if (it->second->size() < 1 )
-            {
-// 							cout << "no messages in the buffer of " << it->first << endl;
 
-                continue;
-            }
-						
-            Tuple* cur = it->second->remove_head();
-//   						cout << "deliver " << cur->get_type() << " from " << cur->get_publisher() << " topic  " << cur->get_topic() << " Buffer size: " << it->first.size() << endl;
-            while (cur != 0)
+    std::vector<MessageBuffer *> toprocess;
+    boost::unique_lock<Mutex> cond_lock(cond_mutex);
+
+    while(cond_publishers.size()==0)
+        cond.wait(cond_lock);
+        toprocess=cond_publishers;
+        cond_publishers.clear();
+    cond_lock.unlock();
+    //cout<<"Queue up!"<<endl;
+    boost::unique_lock<Mutex> sub_lock(sub_mutex);
+    boost::unique_lock<Mutex> pub_lock(pub_mutex);
+    boost::unique_lock<Mutex> tree_lock(tree_mutex);
+
+    for(std::vector<MessageBuffer *>::iterator pit=toprocess.begin();pit!=toprocess.end();++pit)
+    {
+        std::vector<msgentry> mtp=(*pit)->remove();
+        for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
+        {
+            list<MessageBuffer*>* alist =  topic_tree->message_arrived((*mit).topic);
+
+            if(alist != 0)
             {
-							  new_messages_to_deliver = true;
-                
-                list<MessageBuffer*>* alist =  topic_tree->message_arrived(cur->get_topic());
-                
-								if(alist != 0)
-								{
-									for ( list<MessageBuffer*>::iterator buf_it = alist->begin(); buf_it != alist->end(); buf_it++)
-									{
-										
-											if ((*buf_it)->getOwner() == cur->get_publisher() );
-											else
-											{
-//   													cout << "Delivering to " << (*buf_it)->getOwner()<< " the " << cur->get_type() << " size: " << (*buf_it)->size() << endl;
-													(*buf_it)->add(cur);
-											}
-									}
-								}
-								else
-								{
-// 									cout << "empty list of receivers " << endl;
-								}
-								delete cur;
-                cur = it->second->remove_head();
-                if (cur == 0)
-                    break;
+                for ( list<MessageBuffer*>::iterator buf_it = alist->begin(); buf_it != alist->end(); buf_it++)
+                {
+
+                        //cout<<"dest"<<endl;
+
+                        if ((*buf_it)->getOwner() != (*mit).publisher )
+                        {
+                                //cout << "Delivering to " << (*buf_it)->getOwner()<< " the " << (*mit).msg->GetTypeName() << " size: " << endl;
+                                (*buf_it)->add(*mit);
+                        }
+                }
             }
         }
+
     }
-    if(!new_messages_to_deliver)
-    {
-      
-      boost::unique_lock<Mutex>  lock(cond_lock);
-			sub_lock.unlock();
-			pub_lock.unlock();
-			tree_lock.unlock();
-			
-			cond.timed_wait<boost::unique_lock<Mutex>,boost::posix_time::time_duration >(lock,condition_variable_period);
-    }
-    
-    
-    
+
 
 }
 

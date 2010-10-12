@@ -15,8 +15,7 @@ namespace {
 	ActivityRegistrar<Sensors>::Type temp("Sensors");
 }
 
-Sensors::Sensors() :
-	Publisher("Sensors")//,Subscriber("SensorsController")
+Sensors::Sensors() //,Subscriber("SensorsController")
 {
 	;
 }
@@ -42,7 +41,7 @@ void Sensors::UserInit() {
 		Logger::Instance().WriteMsg("Sensors", "Error in getting motion proxy", Logger::FatalError);
 	}
 
-	_com->get_message_queue()->add_publisher(this);
+	//_com->get_message_queue()->add_publisher(this);
 
 	//Starting US Sensors
 	ALValue commands;
@@ -101,7 +100,7 @@ int Sensors::Execute() {
 
 		counter++;
 	}
-	publish(&HJSM, "sensors");
+	_blk->publish_data(HJSM, "sensors");
 #ifdef UNNEEDED
 	j = 0;
 	for (i = 0; i < devicesInChains["LeftArm"].size(); i++) {
@@ -146,7 +145,7 @@ int Sensors::Execute() {
 		counter++;
 		j++;
 	}
-	publish(&BJSM, "sensors");
+	_blk->publish_msg(BJSM, "sensors");
 #endif
 	//	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
 	//		BJSM.mutable_sensordata(i)->set_sensorname(devicesNames["Body"][i]);
@@ -167,7 +166,7 @@ int Sensors::Execute() {
 		devicesValues[counter] = smoothed_value;
 		counter++;
 	}
-	publish(&ISM, "sensors");
+	_blk->publish_data(ISM, "sensors");
 
 	if (period % MODULO == 0) {
 #ifdef UNNEEDED
@@ -199,7 +198,7 @@ int Sensors::Execute() {
 			counter++;
 			i++;
 		}
-		publish(&USSM, "sensors");
+		_blk->publish_data(USSM, "sensors");
 
 		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
 		for (unsigned int i = 0; i < Values["RobotPosition"].size(); i++) {
@@ -211,7 +210,7 @@ int Sensors::Execute() {
 			counter++;
 		}
 		////
-		publish(&RPSM, "sensors");
+		_blk->publish_data(RPSM, "sensors");
 		period = 0;
 	}
 	////

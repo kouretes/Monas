@@ -27,7 +27,7 @@ void RobotController::UserInit()
     gm_state.set_timeout(500);
     gm_state.set_topic("behavior");
     leds.set_topic("communication");
-    
+
     // bc = new ButtonListener(pBroker,&chest_button_pressed,&left_bumper_pressed,&right_bumper_pressed,&button_mx);
   //  AL::ALModule::createModule<ButtonListener>( ((AL::ALPtr<AL::ALBroker>)KAlBroker::Instance()->GetBroker()),"ButtonListener");
     try {
@@ -37,7 +37,7 @@ void RobotController::UserInit()
             memory->insertData("rbumper_pressed",0);
 
 
-            
+
 
             //cout << "value " << chest_button_pressed << endl;
 
@@ -101,7 +101,7 @@ int RobotController::Execute()
     else
     {
 
-  
+
         chest_button_pressed = memory->getData("button_pressed");
         left_bumper_pressed = memory->getData("lbumper_pressed");
         right_bumper_pressed = memory->getData("rbumper_pressed");
@@ -177,7 +177,8 @@ int RobotController::Execute()
     if(changed)
 		{
 			sendLedUpdate();
-			publish(&gm_state,"behavior");
+
+			_blk->publish_state(gm_state,"behavior");
 		}
 		else
 		{
@@ -190,7 +191,7 @@ int RobotController::Execute()
 
 void RobotController::sendLedUpdate()
 {
-	  
+
     LedValues* chest_led = leds.add_leds();
     LedValues* rfoot_led = leds.add_leds();
     LedValues* lfoot_led = leds.add_leds();
@@ -221,7 +222,7 @@ void RobotController::sendLedUpdate()
         lfoot_led->set_color("red");
 
 
-    publish(&leds,"communication");
+    _blk->publish_signal(leds,"communication");
     leds.clear_leds();
 }
 

@@ -21,18 +21,18 @@
 #include "type_filter.h"
 TypeFilter::TypeFilter(const std::string& filter_name) : Filter(filter_name)
 {
-	
+
 }
 
-FilterState TypeFilter::filter(const Tuple& t)
+FilterState TypeFilter::filter(const msgentry& t)
 {
 	unsigned int i = 0;
 	if(!Filter::get_complement())
 	{
-		
+
 		while( i < type_vector.size())
 		{
-			if(t.get_type() ==  type_vector[i])
+			if(t.msg->GetTypeName() ==  type_vector[i])
 				return Accepted;
 			i++;
 		}
@@ -42,13 +42,13 @@ FilterState TypeFilter::filter(const Tuple& t)
 	{
 		while( i < type_vector.size())
 		{
-			if(t.get_type() ==  type_vector[i])
+			if(t.msg->GetTypeName() ==  type_vector[i])
 				return Rejected;
 			i++;
 		}
 		return Accepted;
 	}
-    
+
 }
 
 void TypeFilter::add_type(const std::string& new_type)

@@ -30,21 +30,22 @@ class Agent : public Thread {
             _executions(0) {
 
             for ( ActivityNameList::const_iterator it = activities.begin();
-                    it != activities.end(); it++ ) 
+                    it != activities.end(); it++ )
                 _activities.push_back( ActivityFactory::Instance()->CreateObject( (*it) ) );
 
-            for ( ActivList::iterator it = _activities.begin(); 
+            for ( ActivList::iterator it = _activities.begin();
                     it != _activities.end(); it++ )
                 (*it)->Initialize(_com,&_blk);
-            
             Freq2Time = (1/(double) _cfg.ThreadFrequency)*1000000;
+            com->get_message_queue()->add_subscriber(&_blk);
+            com->get_message_queue()->add_publisher(&_blk);
 
         }
 
         virtual ~Agent () {
-           PrintStatistics(); 
-            
-            //for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); ++it ) 
+           PrintStatistics();
+
+            //for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); ++it )
             //  std::cout<<(*it)->GetName()<<"\t"<<agentStats.GetActivityAvgExecTime(*it)<<
             //      "\t\t"<<agentStats.GetActivityVarExecTime(*it)<<std::endl;
 
@@ -54,19 +55,21 @@ class Agent : public Thread {
         int Execute () {
 
             _executions++;
-            
+
             unsigned long start = SysCall::_GetCurrentTimeInUSec();
-            
+
+
             agentStats.StartAgentTiming();
 
             for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); it++ ) {
                 agentStats.StartActivityTiming(*it);
+                _blk.process_messages();
                 (*it)->Execute();
+                _blk.publish_all();
                 agentStats.StopActivityTiming(*it);
             }
 
             agentStats.StopAgentTiming();
-            
             unsigned long ExecInterval = SysCall::_GetCurrentTimeInUSec() - start;
 
             if ( ExecInterval > Freq2Time )
@@ -107,7 +110,7 @@ class Agent : public Thread {
 
         typedef std::vector<IActivity*> ActivList;
 
-        ActivList _activities; //in execution order 
+        ActivList _activities; //in execution order
 
         AgentTiming agentStats;
 

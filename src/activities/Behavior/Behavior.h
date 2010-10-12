@@ -29,7 +29,7 @@ namespace AL {
 	class ALMemoryProxy;
 }
 
-class Behavior: public IActivity, public Publisher {
+class Behavior: public IActivity {
 
 	public:
 		Behavior();
@@ -67,11 +67,11 @@ class Behavior: public IActivity, public Publisher {
 		bool reachedlimitright;
 
 		short balllastseendirection;
-		HeadJointSensorsMessage* hjsm;
-		BallTrackMessage* bmsg;
-		GameStateMessage* gsm;
-		ObservationMessage* obsm;
-		ObstacleMessage* om;
+		boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
+		boost::shared_ptr<const BallTrackMessage>  bmsg;
+		boost::shared_ptr<const GameStateMessage>  gsm;
+		boost::shared_ptr<const ObservationMessage>  obsm;
+		boost::shared_ptr<const ObstacleMessage>  om;
 		int calibrated;
 		bool play;
 		bool kickoff;
@@ -84,10 +84,10 @@ class Behavior: public IActivity, public Publisher {
 		int count;
 		bool obstacleFront;
 		int gameState;
-		
-		int teamColor; 
-		double orientation; 
-		
+
+		int teamColor;
+		double orientation;
+
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);
 		void littleWalk(double x, double y, double th, int s);

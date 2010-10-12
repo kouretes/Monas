@@ -45,13 +45,6 @@ Subscriber::Subscriber(const char* sb_name)
   sub_msg_buf = 0;
   cout << "Initialize subscriber" << endl;
 }
-Subscriber::Subscriber(const Subscriber& other)
-{
-  subscriber_name = other.getName();
-  sub_msg_buf = new MessageBuffer();
-  sub_msg_buf->copyFrom(*other.getBuffer());
-}
- 
 
 Subscriber::~Subscriber()
 {
@@ -60,21 +53,14 @@ Subscriber::~Subscriber()
     sub_msg_queue->remove_subscriber(this);
   if(sub_msg_buf != 0)
     delete sub_msg_buf;
-  
+
 }
-MessageBuffer* Subscriber::getBuffer() const
-{
-  return sub_msg_buf;
-}
+
 string Subscriber::getName() const
 {
   return subscriber_name;
 }
 
-MessageQueue* Subscriber::getQueue() const
-{
-  return sub_msg_queue;
-}
 
 bool Subscriber::operator==(const Subscriber& sub_1)
 {
@@ -92,7 +78,7 @@ void Subscriber::setQueue(MessageQueue* val)
 }
 
 void Subscriber::process_messages(){
-   // cout << "Subscriber Process_msg  called " << endl;
+    cout << "Subscriber Process_msg  called " << endl;
     if(sub_msg_buf == 0)
     {
       if( sub_msg_queue == 0)
@@ -101,12 +87,7 @@ void Subscriber::process_messages(){
 	return;
       }
       sub_msg_queue->add_subscriber(this);
-    }  
-      
-    while(sub_msg_buf->size() > 0)
-    {
-      Tuple *t = (sub_msg_buf->remove_head());
-      cout  << *t << endl; 
-      delete t;
     }
+    std::vector<msgentry> data=sub_msg_buf->remove();
+
 }

@@ -25,7 +25,6 @@ add_subdirectory ( ./architecture/ )
 
 #TODO comment: must be before target linux
 add_subdirectory ( ./activities/ )
-add_subdirectory ( ./statecharts/ )
 add_subdirectory ( ./hal/ )
 
 option ( BuildTests "Compile testing code" )

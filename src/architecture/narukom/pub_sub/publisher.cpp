@@ -45,13 +45,7 @@ Publisher::Publisher(const char* pub_name)
     pub_msg_buf = 0;
     pub_msg_queue = 0;
 }
-Publisher::Publisher(const Publisher& other)
-{
-    publisher_name = other.getName();
-    pub_msg_buf->copyFrom(*(other.getBuffer()) );
-    pub_msg_queue = other.getQueue();
-    pub_msg_queue->add_publisher(this,pub_msg_buf);
-}
+
 Publisher::~Publisher()
 {
   cout << "Deleting publisher " << endl;
@@ -60,19 +54,9 @@ Publisher::~Publisher()
     if (pub_msg_buf != 0)
         delete pub_msg_buf;
 }
-MessageBuffer* Publisher::getBuffer() const
-{
-  return this->pub_msg_buf;
-}
-
 string Publisher::getName() const
 {
   return publisher_name;
-}
-
-MessageQueue* Publisher::getQueue() const
-{
-  return pub_msg_queue;
 }
 
 bool Publisher::operator==(const Publisher& pub_1)
@@ -90,9 +74,8 @@ void Publisher::setQueue(MessageQueue* val)
 }
 
 
-void Publisher::publish(google::protobuf::Message* msg,const std::string& topic,unsigned timeout, const std::string& destination)
+void Publisher::publish(const msgentry & msg)
 {
-    Tuple *new_tuple;
 
     if (pub_msg_buf == 0)
     {
@@ -106,14 +89,11 @@ void Publisher::publish(google::protobuf::Message* msg,const std::string& topic,
             pub_msg_queue->add_publisher(this);
         }
     }
-    if (msg != 0)
-    {
-      new_tuple  = new Tuple(msg,"localhost",publisher_name,topic,destination,timeout);
-      pub_msg_buf->add(new_tuple);
-    }
+      pub_msg_buf->add(msg);
 }
 
-void Publisher::publish(char* msg, unsigned int size, const std::string type, const std::string& topic, unsigned int timeout, const std::string& destination)
+
+void Publisher::publish(std::vector<msgentry> vec)
 {
   if (pub_msg_buf == 0)
   {
@@ -127,36 +107,5 @@ void Publisher::publish(char* msg, unsigned int size, const std::string type, co
       pub_msg_queue->add_publisher(this);
     }
   }
-  if (msg != 0 && size > 0)
-  {
-    Envelope metadata;
-    metadata.set_destination(destination);
-    metadata.set_host("localhost");
-    metadata.set_publisher(publisher_name);
-    metadata.set_timeout(timeout);
-    metadata.set_type(type);
-    metadata.set_topic(topic);
-    metadata.set_serialized(true);
-    RawBytes* byte_msg = new RawBytes();
-    byte_msg->set_byte_stream(msg,size);
-    Tuple *new_tuple = new Tuple(byte_msg,metadata);
-    pub_msg_buf->add(new_tuple);
-  }
-}
-void Publisher::publish(Tuple* t)
-{
-  if (pub_msg_buf == 0)
-  {
-    if (pub_msg_queue == 0)
-    {
-      cout <<  "publisher: " << getName() << " with neither buffer nor queue " << endl;
-      return;
-    }
-    else
-    {
-      pub_msg_queue->add_publisher(this);
-    }
-  }
-  if(t != 0)
-		pub_msg_buf->add(t);
+  pub_msg_buf->add(vec);
 }

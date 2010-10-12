@@ -21,16 +21,17 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "architecture/narukom/pub_sub/filters/type_filter.h"
-//#define DEBUGVISION
+
+
+#define DEBUGVISION
 
 #include <vector>
 
 
 
 
-class Vision : public IActivity, public Publisher, public Subscriber
+class Vision : public IActivity
 {
-
 public:
     /**
     * The only available constructor: I need:
@@ -58,24 +59,15 @@ public:
         float conf;
     } goalpostdata_t;
 private:
-    bool cvHighgui;
+    //bool cvHighgui;//
     XMLConfig *config;
     BallTrackMessage trckmsg;
-    BallObject ballpos;
     ObservationMessage obs;
     LedChangeMessage leds;
     //Incoming messages!
-    InertialSensorsMessage* im;
-    HeadJointSensorsMessage* hm;
+    boost::shared_ptr<const InertialSensorsMessage>  im;
+    boost::shared_ptr<const HeadJointSensorsMessage>  hm;
     //Camera transformation matrix
-    KMat::ATMatrix<float,3> ct;
-    KMat::HCoords<float,3> *ang;
-    KMat::HCoords<float,3> *Vang;//Corrections From tosro
-    float cameraH;//Height from ground
-    float cameraX;
-    float cameraY;
-    float cameraPitch;//=0 for Top cam, 40 deg for bottom on the nao
-    float horizonAlpha;
     cpose p;//Robot pose
 
     //AL::ALPtr<AL::ALMemoryProxy> memory;
@@ -89,9 +81,12 @@ private:
 
     typedef struct balldata
     {
-        float x, y;
-        float r;//Observed radius
-        float d;//Observed distance;
+        float x,y;
+        float cr;
+        measurement bearing;
+        measurement distance;
+        float ballradius;
+
     } balldata_t;
 
 
@@ -126,10 +121,13 @@ private:
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
-    KMat::HCoords<float,2> & imageToCameraAngles( KMat::HCoords<float,2>  & imagep);
-    KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
-    KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
-		TypeFilter* type_filter;
+    bool validpixel(int x,int y);
+    KMat::HCoords<float,2>  imageToCamera( const KMat::HCoords<int,2>  & imagep);
+    KMat::HCoords<int,2>  cameraToImage( const KMat::HCoords<float,2>  & c);
+    //KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
+    //KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
+    KMat::HCoords<float,2>  camToRobot(KMat::HCoords<float ,2> & t);
+    TypeFilter* type_filter;
     void cvShowSegmented();
 };
 

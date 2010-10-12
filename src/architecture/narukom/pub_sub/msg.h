@@ -14,18 +14,33 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef TIME_FILTER_H
-#define TIME_FILTER_H
-#include "filter.h"
+#ifndef MSG_H
+#define MSG_H
+
+#include <boost/shared_ptr.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-class TimeFilter : public Filter
+#include <google/protobuf/message.h>
+
+typedef struct msgentry_{
+        enum msgclass_t{ DATA, SIGNAL,STATE};
+        boost::shared_ptr<const google::protobuf::Message > msg;
+        boost::posix_time::ptime timestamp;
+        boost::posix_time::ptime timeoutstamp;
+        std::string topic;
+        std::string host;
+        std::string publisher;
+        msgclass_t msgclass;
+        bool operator== (const struct msgentry_ & b){ return msg==b.msg;};
+    } msgentry;
+
+struct msgentrytimestampComparator
 {
-  public:
-    TimeFilter(const std::string& type_name,unsigned period = 100);
-    virtual FilterState filter(const msgentry& a_tuple);
-  private:
-    boost::posix_time::time_duration period;
-    boost::posix_time::ptime last_accepted;
+
+   bool operator()(const msgentry &a,const msgentry &b) {return a.timestamp < b.timestamp;};
 };
 
-#endif // TIME_FILTER_H
+
+
+
+
+#endif /* MSG_H */

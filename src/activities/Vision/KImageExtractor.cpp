@@ -1,7 +1,8 @@
 #include "KImageExtractor.h"
-#include "messages/motion.pb.cc"
+#include "messages/motion.pb.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
-
+#include "dcmproxy.h"
+using boost::posix_time::ptime;
 static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970,1,1));
 
 using namespace AL;
@@ -20,31 +21,31 @@ KImageExtractor::~KImageExtractor()
 	}
 }
 
-KImageExtractor::KImageExtractor() :Publisher("KImageExtractor"),GVM_name(VISION_GVMNAME),resolution(VISION_RESOLUTION),cSpace( VISION_CSPACE)
+KImageExtractor::KImageExtractor() :GVM_name(VISION_GVMNAME),resolution(VISION_RESOLUTION),cSpace( VISION_CSPACE)
 {
 	;
 }
 
-void KImageExtractor::Init(Narukom* com)
+void KImageExtractor::Init(Blackboard *blk)
 {
-	_com = com;
+	_blk = blk;
 	doneSubscribe=false;
 	try
 	{
 		c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
-		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+
 		c->callVoid( "unsubscribe", GVM_name );
 		GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
 										 cSpace,VISON_FPS );
 
 		doneSubscribe=true;
 		//Calculate Roundtrip time
-		ptime start = microsec_clock::local_time();
-		c->call<int>( "getParam", kCameraSelectID);
-		c->call<int>( "getParam", kCameraSelectID);
-		ptime end = microsec_clock::local_time();
-		rtt=(end-start).total_microseconds()/2;
-
+#ifndef REMOTE_ON
+		AL::ALPtr<AL::DCMProxy> dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+        const long  dcmoffset=dcm->getTime(0);
+		ptime l = boost::posix_time::microsec_clock::local_time();
+		timecorr=l-boost::posix_time::microsec(dcmoffset);
+#endif
 
 	}
 	catch (AL::ALError& e)
@@ -53,7 +54,7 @@ void KImageExtractor::Init(Narukom* com)
 		throw ALError("KImageExtractor", "Construct ", "Unable to create proxies and subscribe GVM");
 	}
 
-	_com->get_message_queue()->add_publisher(this);
+	//_com->get_message_queue()->add_publisher(this);
 }
 
 
@@ -61,7 +62,7 @@ void KImageExtractor::Init(Narukom* com)
  * Fetch a new Image from the hardware, it automatically fixs IplImage and enclosed binary space when needed
  * Use Allocate Image for an initial allocation of an image
  */
-
+#ifdef REMOTE_ON
 boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 {
 	//cout<<"KImageExtractor::fetchimage():"<<endl;
@@ -72,7 +73,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 		return boost::date_time::max_date_time;
 	}
 
-#ifdef REMOTE_ON
+
 	//		cout << "Remote method on" << endl;
 	//		sleep(1);
 	ALValue results;
@@ -148,7 +149,12 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 		img->imageData = new char[img->imageSize];
 		memcpy(img->imageData, (char*) (results[6].GetBinary()), results[6].getSize() * sizeof(char));
 	}
+	return s;s
+};
+
 #else
+boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
+{
 	//cout << "Remote method off" << endl;
 
 	//sleep(1);
@@ -176,15 +182,9 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	const int size = width*height*nChannels;
 	// Set the buffer we received to our IplImage header.
 	//Fetch TimeStamp;
-	boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec(timeStamp));
-	boost::posix_time::time_duration dur=s-stamp;
-	dur-=boost::posix_time::seconds(dur.total_seconds());
-	// cout<<boost::posix_time::to_simple_string(dur)<<endl;
-	s-=dur;//True Timestamp !! Yeah!
-
 
 	//Change of image data size
-	if (img->imageSize!=size*sizeof(char) )
+	if ((unsigned)img->imageSize!=size*sizeof(char) )//Cast to remove compiler warning
 	{
 		free(img->imageData);
 		cvInitImageHeader(img,  cvSize(width,height),IPL_DEPTH_8U, nChannels);
@@ -212,9 +212,18 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	c->call<int> ("releaseImage", GVM_name);
 	//cout << "releaseImage " << endl;
 #endif
-#endif
-	return s;
+    //apply correction factor to timestamp
+//    std::cout<<"img:"<<timeStamp<<endl;
+    const long long secsonly=(timeStamp / 1000000LL);
+    const long long microsecsonly=timeStamp-(secsonly*1000000LL);
+//    cout<<"secsonly:"<<secsonly<<endl;
+
+    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)-boost::posix_time::millisec(getExp()/2);;
+
+
 };
+#endif
+
 
 IplImage *KImageExtractor::allocateImage()
 {
@@ -267,7 +276,8 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//Move head to the left
 		hmot.set_parameter(0,1.57);
 		hmot.set_parameter(1,0.22);
-		publish(&hmot,"motion");
+		_blk->publish_signal(hmot,"motion");
+		_blk->publish_all();
 
 		SleepMs(100);
 
@@ -293,7 +303,8 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 		hmot.set_parameter(0,-1.57);
 		hmot.set_parameter(1,0.22);
-		publish(&hmot,"motion");
+		_blk->publish_signal(hmot,"motion");
+        _blk->publish_all();
 		//m->callVoid("setAngles",names,pos,0.8);
 		SleepMs(100);
 
@@ -362,7 +373,8 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//Move head to the left
 		hmot.set_parameter(0,1.57);
 		hmot.set_parameter(1,0.22);
-		publish(&hmot,"motion");
+		_blk->publish_signal(hmot,"motion");
+        _blk->publish_all();
 
 		SleepMs(100);
 		//wait for autoconf
@@ -433,7 +445,8 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	//m->callVoid("setAngles",names,pos,0.8);
 	hmot.set_parameter(0,0);
 	hmot.set_parameter(1,-0.1);
-	publish(&hmot,"motion");
+	_blk->publish_signal(hmot,"motion");
+    _blk->publish_all();
 	return scale;
 }
 

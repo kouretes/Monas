@@ -8,10 +8,11 @@ using std::string;
 namespace {
 ActivityRegistrar<LedHandler>::Type temp("LedHandler");
 }
+
 int LedHandler::Execute()
 {
 	static bool firstRun = true;
-	
+
 	if(firstRun)
 	{
 		leds->callVoid<string,int,float>("fadeRGB","AllLeds",colors["off"],0.001);
@@ -23,82 +24,59 @@ int LedHandler::Execute()
 }
 void LedHandler::process_messages()
 {
-    MessageBuffer* buf = _blk->getBuffer();
-		if(buf == 0)
-			return;
-// 		cout << "SIZE OF BUFFER = " << buf->size() << endl;
-//     _blk->process_messages();
-//     cout << "After returns " << endl;
-    LedChangeMessage* led_change =0;// _blk->in_msg_nb<LedChangeMessage>("LedChangeMessage");
-    Tuple* cur = 0;
-		cur = buf->remove_head();
-// 		cout << "remove head " << endl;
-    while ( cur != 0)
+
+
+
+    boost::shared_ptr<const LedChangeMessage> led_change=_blk->read_signal<LedChangeMessage>("LedChangeMessage");
+    if(led_change==NULL)
+        return;
+    for (int i = 0; i < led_change->leds_size(); i++)
     {
-// 			cout << "in while " << endl;
-        if (cur->get_type() != "LedChangeMessage")
+    // 						cout << "In for " << i << " " << led_change->leds_size() <<  endl;
+    // 						/*` << led_change->leds(i).chain()<< "   " << led_change->leds(i).color() << endl;
+            setLed(led_change->leds(i).chain(),led_change->leds(i).color());
+
+    }
+    /*
+
+    for(;it!=msg.end();++it)
+    {
+
+        if ((*it)->get_type() != "LedChangeMessage")
         {
 //             cout << "not led" << endl;
-            delete cur;
-            cur = buf->remove_head();
+            delete *it;
             continue;
         }
 // 				cout << cur << endl;
-        led_change = _blk->extract_result_from_tuple<LedChangeMessage>(*cur);
-				if(led_change != 0)
-				{
-					for (int i = 0; i < led_change->leds_size(); i++)
-					{
+        led_change =  _blk->extract_result_from_tuple<LedChangeMessage>(**it);
+        if(led_change != 0)
+        {
+            for (int i = 0; i < led_change->leds_size(); i++)
+            {
 // 						cout << "In for " << i << " " << led_change->leds_size() <<  endl;
 // 						/*` << led_change->leds(i).chain()<< "   " << led_change->leds(i).color() << endl;
-							setLed(led_change->leds(i).chain(),led_change->leds(i).color());
+                    setLed(led_change->leds(i).chain(),led_change->leds(i).color());
 
-					}
-		   }
-// 				led_change->Clear();
-				if( cur != 0)
-				{
-// 					cout << " deleiting cur " << endl;
-					delete cur;
-				}
-				
-        
-				
-
-//  				cout << "led_chjange deleted " << endl;
-				cur = buf->remove_head();
-//  				cout << " cur re inited " << endl;
-//       }
-//       led_change = _blk->in_msg_nb<LedChangeMessage>("LedChangeMessage");
-    }
-//       while(cur != 0)
-//       {
-// 	  if(cur->get_type() != "LedChangeMessage")
-// 	  {
-// 	      cout << "not led" << endl;
-// 	      delete cur;
-// 	      cur = buf->remove_head();
-// 	      continue;
-// 	  }
-
-// 	  LedChangeMessage* led_change = _blk->extract_result_from_tuple<LedChangeMessage>(*cur);
+            }
+        }
+        delete *it;
 
 
-// 	  cur = buf->remove_head();
 
-//       }
+    }*/
 }
+
 void LedHandler::UserInit()
 {
 //      tm = new TimeFilter("periodic_filter",1);
-    _com->get_message_queue()->add_subscriber(_blk);
     _com->get_message_queue()->subscribe("communication",_blk,0);
     try {
 
         cout << "trying to get ALLeds Proxy "  << endl;;//<< KAlBroker::Instance()->GetBroker() << endl;
         leds =  KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
          cout << "Initialized" << endl;
-				
+
 		}
     catch (AL::ALError& e)
     {
@@ -140,7 +118,7 @@ void LedHandler::setLed(const std::string& device, const std::string& color)
         return;
     }
     if ((device.compare("r_ear") == 0) || (device.compare("l_ear") == 0))
-    {	  
+    {
         setDcmEarColor(device,color);
         return;
     }
@@ -160,7 +138,7 @@ void LedHandler::setDcmChestColor(const string& color)
 
 void LedHandler::setDcmFootColor(const string& device , const string& color)
 {
-    
+
 //     cout << device << " " << colors[color] << endl;
 // 		std::cout << "Foot COLOR:  " << color  <<endl;
 // 		std::cout << "Foot COLOR:  " << device[0] << endl;
@@ -169,7 +147,7 @@ void LedHandler::setDcmFootColor(const string& device , const string& color)
 			leds->callVoid<string,int,float>("fadeRGB","LeftFootLeds",colors[color],0.01);
 		}
     else
-		{ 
+		{
         leds->callVoid<string,int,float>("fadeRGB","RightFootLeds",colors[color],0.01);
 		}
 // 		cout << "Change color " << endl;

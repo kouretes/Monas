@@ -3,9 +3,6 @@
 
 #include "architecture/IActivity.h"
 
-#include "architecture/narukom/pub_sub/publisher.h"
-
-
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 
@@ -24,7 +21,7 @@
 #include "architecture/narukom/pub_sub/filters/type_filter.h"
 #include <string>
 
-class MotionController : public IActivity, public Publisher{
+class MotionController : public IActivity {
 
 public:
 
@@ -64,10 +61,11 @@ private:
 	
 	AL::ALValue names, values;
 
-	MotionWalkMessage* wm;
-	MotionHeadMessage* hm;
-	MotionActionMessage* am;
-	InertialSensorsMessage* im;
+	boost::shared_ptr<const MotionWalkMessage> wm;
+	boost::shared_ptr<const MotionHeadMessage> hm;
+	boost::shared_ptr<const MotionActionMessage> am;
+	boost::shared_ptr<const InertialSensorsMessage> im;
+	
 
 	void commands();
 	void mglrun();

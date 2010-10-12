@@ -77,12 +77,6 @@ Talws::Talws () {
 
     }
 
-    NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, int, std::string>( "statechart" );
-
-    Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
-
-    for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
-        StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
 
 }
 
@@ -90,24 +84,19 @@ Talws::~Talws() {
     Stop();
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         delete (*it);
-    for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
-      delete (*it);
+
 }
 
 void Talws::Start() {
     std::cout<<"Talws: Starting..."<<std::endl; //TODO
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StartThread();
-    for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
-        (*it)->Start();
 }
 
 void Talws::Stop() {
     std::cout<<"Talws: Stoping..."<<std::endl; //TODO
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StopThread();
-    for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
-      (*it)->Stop();
     SysCall::_usleep(100000);
     //TODO stop somehow narukom
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )

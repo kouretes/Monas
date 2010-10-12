@@ -24,6 +24,7 @@
 #include "message_buffer.h"
 #include <string>
 #include <map>
+#include <vector>
 #include <utility>
 #include "subscriber.h"
 #include "publisher.h"
@@ -44,11 +45,11 @@ This class is responsible for dispatching published messages to the interested s
 class MessageQueue : public Thread
 {
   public:
-    
+    friend class MessageBuffer;
     MessageQueue();
     MessageQueue(std::string conf);
     MessageQueue(const char*);
-    
+
     void remove_publisher(Publisher*);
     void remove_subscriber( Subscriber*);
     MessageBuffer* add_publisher(Publisher*);
@@ -56,7 +57,7 @@ class MessageQueue : public Thread
     MessageBuffer* add_subscriber(Subscriber*);
     MessageBuffer* add_subscriber(Subscriber*,MessageBuffer*);
     bool subscribe(const std::string& , Subscriber* ,int );
- 
+
     bool subscribe(const char* topic, Subscriber* owner,int where);
     bool unsubscribe(const std::string& from_topic, Subscriber*  );
     bool unsubscribe(const char* from_topic, Subscriber*  );
@@ -69,6 +70,9 @@ class MessageQueue : public Thread
     void process_queued_msg();
     virtual int Execute();
 
+
+
+
   private:
     TopicTree<std::string,MessageBuffer>* topic_tree;
     std::map<std::string,MessageBuffer*>* publishers_buf;
@@ -77,9 +81,12 @@ class MessageQueue : public Thread
     Mutex pub_mutex;
     Mutex sub_mutex;
     const std::string type_string;
+
+    Mutex cond_mutex;
+    std::vector<MessageBuffer*> cond_publishers;
     boost::condition_variable_any cond;
-		boost::posix_time::time_duration condition_variable_period;
-    Mutex cond_lock;
+
+
     void create_tree(TopicTree<std::string,MessageBuffer>* tree, const std::string& file_name);
 };
 

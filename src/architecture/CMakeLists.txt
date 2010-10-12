@@ -4,7 +4,6 @@ message ( STATUS "" )
 
 
 add_subdirectory ( ./narukom/ )
-add_subdirectory ( ./statechartEngine/ )
 
 # TODO
 include_directories ( AFTER narukom/
@@ -16,7 +15,6 @@ if ( "${ActivityBuildType}" STREQUAL "MODULE" )
 endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
 
 add_library ( MonadCore ${LibBuildType}
-                        statechartWrapper.cpp
                         IActivity.cpp
                         talws.cpp
 )

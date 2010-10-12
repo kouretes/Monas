@@ -4,42 +4,22 @@
 <!-- ThreadFrequency in Hz
      StatsCycle=n every n repetitions the agent will log statistics
 -->
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=15>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=75 StatsCycle=100>
   <name>KSensors</name>
   <activity>Sensors</activity>
-</agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=15>
-  <name>Motion</name>
-  <activity>MotionController</activity>
-</agent>
-
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10  StatsCycle=15>
-  <name>Vision</name>
-  <activity>Vision</activity>
-</agent>
-
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10  StatsCycle=15>
-  <name>Behavior</name>
-  <activity>Behavior</activity>
-</agent>
-
-<agent IsRealTime=0 Priority=1 ThreadFrequency=3  StatsCycle=15>
-  <name>RobotController</name>
-  <activity>RobotController</activity>
-</agent>
-
-<agent IsRealTime=0 Priority=1 ThreadFrequency=10  StatsCycle=15>
-  <name>LedHandler</name>
   <activity>LedHandler</activity>
 </agent>
-<!--
-<agent IsRealTime=0 Priority=1 ThreadFrequency=10  StatsCycle=15>
-  <name>ObstacleAvoidance</name>
-  <activity>ObstacleAvoidance</activity>
-</agent>
--->
-<!-- Statecharts to be loaded
-<statechart>KouretesAllConcurrentStatechartStatechart</statechart>
--->
 
+<agent IsRealTime=1 Priority=1 ThreadFrequency=30 StatsCycle=100>
+  <name>KMC</name>
+   <activity>MotionController</activity>
+   <activity>RobotController</activity>
+</agent>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=20 StatsCycle=50>
+  <name>KVision</name>
+  
+  <activity>Vision</activity>
+  <activity>Behavior</activity>
+  
+</agent>

@@ -11,8 +11,7 @@ namespace {
 }
 
 
-MotionController::MotionController() :
-	Publisher("MotionController") {
+MotionController::MotionController()  {
 		;
 }
 
@@ -40,19 +39,6 @@ void MotionController::UserInit() {
 	_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("motion", _blk, 0);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-	_com->get_message_queue()->add_publisher(this);
-
-	wm = NULL;
-	hm = NULL;
-	am = NULL;
-	im = NULL;
-	
-	type_filter = new TypeFilter("type_filter");
-	type_filter->add_type("InertialSensorsMessage");
-	type_filter->add_type("MotionHeadMessage");
-	type_filter->add_type("MotionWalkMessage");
-	type_filter->add_type("MotionActionMessage");
-	_blk->getBuffer()->add_filter(type_filter);
 
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
@@ -71,7 +57,7 @@ void MotionController::UserInit() {
 	loadActionsKME();
 	//printActionsKME();
 	jointNames = motion->getJointNames("Body");
-	
+
 	counter = 0;
 
     walkingWithVelocity = false;
@@ -82,37 +68,31 @@ int MotionController::Execute() {
 	Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//commands();
 	read_messages();
-	mglrun(); 
+	mglrun();
 	Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
 	return 0;
 }
 
 void MotionController::read_messages() {
-	if (wm != NULL) delete wm;
-	if (hm != NULL) delete hm;
-	if (am != NULL) delete am;
-	if (im != NULL) delete im;
-	
-	_blk->process_messages();
 
 	/* Messages for Calibration */
-	hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
-	
-	/* Messages for Walk, Head, Action */
-	wm = _blk->in_msg_nb<MotionWalkMessage>("MotionWalkMessage");
-	if (hm == NULL) hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
-	am = _blk->in_msg_nb<MotionActionMessage>("MotionActionMessage");
-	
-	/* Messages for Intertial Readings */
-	im = _blk->in_msg_nb<InertialSensorsMessage>("InertialSensorsMessage");
+	hm = _blk->read_signal<MotionHeadMessage>("MotionHeadMessage");
 
-	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
+	/* Messages for Walk, Head, Action */
+	wm = _blk->read_signal<MotionWalkMessage>("MotionWalkMessage");
+	if (hm == NULL) hm = _blk->read_signal<MotionHeadMessage>("MotionHeadMessage");
+	am = _blk->read_signal<MotionActionMessage>("MotionActionMessage");
+
+	/* Messages for Intertial Readings */
+	im = _blk->read_data<InertialSensorsMessage>("InertialSensorsMessage");
+
+    Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 
 }
 
 
 void MotionController::mglrun() {
-		
+
 	if (im != NULL) {
 		AccZ = im->sensordata(2);
 		AccZvalue = AccZ.sensorvalue();
@@ -199,9 +179,9 @@ void MotionController::mglrun() {
 			Logger::Instance().WriteMsg("MotionController","Head completed! Motion executed "+_toString(counter)+" times.",Logger::ExtraInfo);
 		}
 
-		/* Check if there is a command to execute */ 
+		/* Check if there is a command to execute */
 
-		if ( (wm != NULL) && (actionPID==0) ) { 
+		if ( (wm != NULL) && (actionPID==0) ) {
 			if (wm->command() == "walkTo") {
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
@@ -220,10 +200,10 @@ void MotionController::mglrun() {
                 walkingWithVelocity = true;
 				Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
 			}
-			else 
+			else
 				Logger::Instance().WriteMsg("MotionController","Invalid Walk Command: "+wm->command(),Logger::ExtraInfo);
 		}
-		
+
 		if (hm != NULL) {
 			if (hm->command() == "setHead") {
 				headParam1 = hm->parameter(0);
@@ -253,14 +233,14 @@ void MotionController::mglrun() {
 				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " +_toString(headPID),Logger::ExtraInfo);
 			}
-			else 
+			else
 				Logger::Instance().WriteMsg("MotionController","Invalid Head Command: "+hm->command(),Logger::ExtraInfo);
 		}
-		
+
 		if ( (am != NULL) && (actionPID==0) ) {
-			
+
 			Logger::Instance().WriteMsg("MotionController", am->command(),Logger::ExtraInfo);
-		
+
 			//actionPID = motion->post.xxxxxxxxxxxxxx
 			if (am->command() == "leftKick") {
 				stopWalkCommand();
@@ -334,7 +314,7 @@ void MotionController::killWalkCommand() {
 void MotionController::stopWalkCommand() {
     if ( motion->isRunning(walkPID) || walkingWithVelocity ) {
 	  walkPID = motion->post.setWalkTargetVelocity(0.0, 0.0, 0.0, 0.0); // stop walk
-	  motion->waitUntilWalkIsFinished(); 
+	  motion->waitUntilWalkIsFinished();
       walkingWithVelocity = false;
     }
 	walkPID = 0;
@@ -357,14 +337,14 @@ void MotionController::killActionCommand() {
 }
 
 void MotionController::killCommands() {
-	
+
 	motion->post.killAll();
 	//while ( motion->isRunning(walkPID) || motion->isRunning(headPID) || motion->isRunning(actionPID) ) {
-		//if ( motion->isRunning(walkPID) ) 
+		//if ( motion->isRunning(walkPID) )
 			//Logger::Instance().WriteMsg("MotionController","Walk Command is running",Logger::ExtraInfo);
-		//if ( motion->isRunning(headPID) ) 
+		//if ( motion->isRunning(headPID) )
 			//Logger::Instance().WriteMsg("MotionController","Head Command is running",Logger::ExtraInfo);
-		//if ( motion->isRunning(actionPID) ) 
+		//if ( motion->isRunning(actionPID) )
 			//Logger::Instance().WriteMsg("MotionController","Action Command is running",Logger::ExtraInfo);
 	//}
 	walkPID   = 0;
@@ -395,7 +375,7 @@ void MotionController::commands() {
 		hmot->add_parameter(x);
 		hmot->add_parameter(y);
 		Logger::Instance().WriteMsg("MotionController","Sending Command: changeHead ", Logger::ExtraInfo);
-		Publisher::publish(hmot,"motion");
+		_blk->publish_signal(*hmot,"motion");
 		delete hmot;
 	}
 
@@ -415,7 +395,7 @@ void MotionController::commands() {
 		wmot->add_parameter(z);
 		wmot->add_parameter(s);
 		Logger::Instance().WriteMsg("MotionController","Sending Command: setWalkTargetVelocity ", Logger::ExtraInfo);
-		Publisher::publish(wmot,"motion");
+		_blk->publish_signal(*wmot,"motion");
 		delete wmot;
 	}
 
@@ -424,26 +404,26 @@ void MotionController::commands() {
 		amot->set_topic("motion");
 		amot->set_command("rightKick");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-		Publisher::publish(amot,"motion");
+		_blk->publish_signal(*amot,"motion");
 		delete amot;
 	}
-	
-	
+
+
 	if ((actionPID == 0) && ((counter+130) % 500 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
 		amot->set_command("leftFall.kme");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-		Publisher::publish(amot,"motion");
+		_blk->publish_signal(*amot,"motion");
 		delete amot;
 	}
-	
+
 	if ((actionPID == 0) && ((counter+330) % 500 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
 		amot->set_command("leftDive");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-		Publisher::publish(amot,"motion");
+		_blk->publish_signal(*amot,"motion");
 		delete amot;
 	}
 

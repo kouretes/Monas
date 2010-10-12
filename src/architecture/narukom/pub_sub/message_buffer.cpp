@@ -19,31 +19,25 @@
 */
 
 #include "message_buffer.h"
+#include "message_queue.h"
 
 #include <iostream>
 using namespace std;
 using google::protobuf::Message;
 
-MessageBuffer::MessageBuffer(Mutex* queue_mx ,boost::condition_variable_any* cv)
+MessageBuffer::MessageBuffer(MessageQueue *amq)
 {
     boost::unique_lock<Mutex> lock(mutex);
     owner = "";
-    msg_buf = new std::list<Tuple*>();
-    mq_cv = cv;
-		mq_mutex = queue_mx;
+    mq=amq;
+
 }
 
-Mutex* MessageBuffer::get_queue_mutex()
-{
-	return mq_mutex;
-}
-MessageBuffer::MessageBuffer(const std::string owner,Mutex* queue_mx ,boost::condition_variable_any* cv)
+MessageBuffer::MessageBuffer(const std::string owner,MessageQueue *amq)
 {
     boost::unique_lock<Mutex> data_lock(mutex);
     this->owner = owner;
-    msg_buf = new std::list<Tuple*>();
-    mq_cv =cv;
-    mq_mutex = queue_mx;
+    mq=amq;
 
 }
 
@@ -51,47 +45,16 @@ MessageBuffer::~MessageBuffer()
 {
 boost::unique_lock<Mutex> data_lock(mutex);
   cout << "Destroy msg_buffer" << endl;
-	if(msg_buf != 0)
-	{
-		msg_buf->clear();
-	  delete msg_buf;
-	}
-  
+
+
 }
 
-boost::condition_variable_any* MessageBuffer::get_condition_variable() {
-boost::unique_lock<Mutex> data_lock(mutex);
-	return mq_cv;
-}
-
-std::list< Tuple* >& MessageBuffer::getBuffer()
+std::string MessageBuffer::getOwner()
 {
-boost::unique_lock<Mutex> data_lock(mutex);
-  return *msg_buf;
-}
-std::string MessageBuffer::getOwner() 
-{
-boost::unique_lock<Mutex> data_lock(mutex);
+  boost::unique_lock<Mutex> data_lock(mutex);
   return owner;
 }
-bool MessageBuffer::isEmpty()
-{
-boost::unique_lock<Mutex> data_lock(mutex);
-  return msg_buf != 0 ? msg_buf->size() == 0 : true;
-}
 
-int MessageBuffer::size()
-{
-    boost::unique_lock<Mutex>  mx_lock(mutex);
-  int result = msg_buf!=0 ? msg_buf->size() : 0;
-	return result;
-}
-
-void MessageBuffer::clear()
-{
-	boost::unique_lock<Mutex> data_lock(mutex);
-  msg_buf->clear();
-}
 
 
 bool MessageBuffer::operator==( MessageBuffer& other)
@@ -103,95 +66,70 @@ bool MessageBuffer::operator==( MessageBuffer& other)
 
 }
 
-void MessageBuffer::copyFrom(   MessageBuffer& other)
-{
-    boost::unique_lock<Mutex> data_lock(mutex);
-		boost::lock_guard<Mutex>  mx_lock(*mq_mutex);
-		if(msg_buf != 0)
-			msg_buf->clear();
-		else
-			msg_buf =  new std::list<Tuple*>();
-    std::list<Tuple*>& tmp = other.getBuffer();
-    msg_buf->insert(msg_buf->begin(),tmp.begin(),tmp.end());
-// 		mq_mutex->lock();
-    mq_cv->notify_one();
-// 		mq_mutex->unlock();
-    
-    
-}
-
-void MessageBuffer::mergeFrom( MessageBuffer& other)
-{
-		
-    boost::unique_lock<Mutex> data_lock(mutex);
-	
-    std::list<Tuple*>& tmp = other.getBuffer();
-    msg_buf->insert(msg_buf->end(),tmp.begin(),tmp.end());
-    data_lock.unlock();
-    mq_mutex->lock();
-    mq_cv->notify_one();
-		mq_mutex->unlock();
-    
-    
-}
-
-void MessageBuffer::add(Tuple* tuple)
+void MessageBuffer::add( std::vector<msgentry> & tuples)
 {
 
     boost::unique_lock<Mutex> data_lock(mutex);
-    boost::lock_guard<Mutex>  mx_lock(*mq_mutex);
-    if(filters.size() > 0)
+    std::vector<msgentry>::iterator it= tuples.begin();
+    for(;it!=tuples.end();++it)
+    {
+        if(filters.size() > 0)
 		{
-			for(std::list<Filter*>::iterator it = filters.begin(); it != filters.end(); it++)
+			for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
 			{
-				if((*it)->filter(*tuple) == Rejected)
+			    if((*fit)->filter(*it) == Rejected)
 				{
 // 					cout << "filtered " << tuple->get_type() << endl;
-					return;
+					continue;
 				}
 			}
 		}
-		Tuple* tmp = new Tuple(*tuple);
-    msg_buf->push_back(tmp);
-    
-    mq_cv->notify_one();
-		
-    
+		//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
 
-}
+		google::protobuf::Message * newptr=(*it).msg->New();
+        newptr->CopyFrom(*((*it).msg));
+		msgentry newm= *it;
+		newm.msg.reset(newptr);
+        msg_buf.push_back(newm);
 
-Tuple* MessageBuffer::remove_head()
-{
-    if(!mutex.try_lock())
-			return 0;
-    Tuple* tmp = 0;
-    if (msg_buf->size() > 0)
-    {
-        tmp = msg_buf->front();
-        msg_buf->erase(msg_buf->begin());
     }
-    mutex.unlock();
-    return tmp;
+    if(tuples.size()>0)
+    {
+        boost::unique_lock<Mutex> cvlock(mq->cond_mutex);
+
+        mq->cond_publishers.push_back(this);
+        mq->cond.notify_one();
+    }
+
+
+
 }
 
-Tuple* MessageBuffer::remove_tail()
+
+void MessageBuffer::add(const msgentry & t)
+{
+
+    boost::unique_lock<Mutex> data_lock(mutex);
+    msg_buf.push_back(t);
+
+
+
+
+}
+std::vector<msgentry> MessageBuffer::remove()
 {
     boost::unique_lock<Mutex> data_lock(mutex);
-    Tuple* tmp = 0;
-    if (msg_buf->size() > 0)
-    {
-        tmp = msg_buf->back();
-        msg_buf->pop_back();
+    std::vector<msgentry> oldtupples=msg_buf;
+    msg_buf.clear();
+    return oldtupples;
 
-    }
-    
-    return tmp;
 }
+
 void MessageBuffer::add_filter(Filter* filter)
 {
   boost::unique_lock<Mutex> data_lock(mutex);
   filters.push_back(filter);
-  
+
 }
 void MessageBuffer::remove_filter(Filter* filter)
 {
@@ -200,7 +138,7 @@ void MessageBuffer::remove_filter(Filter* filter)
     if(*filter == (*(*it)))
     {
       filters.erase(it);
-      
+
       return;
     }
 }

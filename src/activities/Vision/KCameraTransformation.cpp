@@ -5,6 +5,7 @@
 
 #include <vector>
 
+
 using namespace std;
 
 KCameraTranformation::KCameraTranformation(){}
@@ -38,3 +39,224 @@ std::vector<float>  KCameraTranformation::getKinematics(const std::string toAsk)
 
 
 }
+
+void  KCameraTranformation::setPose(cpose p)
+{
+    thepose=p;
+    KMat::ATMatrix<float,4> temp,h,t;
+    KMat::transformations::rotateZ(h,thepose.yaw);
+
+    KMat::transformations::rotateY(temp,thepose.pitch+thepose.cameraPitch);
+    h.mult(temp);//Fixed head chain!
+    cameraTorsoChain=h;//Copy half Part
+    KMat::transformations::rotateY(cameraChain,thepose.angY);
+    KMat::transformations::rotateX(temp,thepose.angX);
+    cameraChain.mult(temp);//Fixed Torso chain;
+
+    cameraChain.mult(h);//Single Chain
+
+    cameraChainInv=cameraChain;
+    cameraChainInv.invert();//Invert and we are done
+}
+
+
+KMat::HCoords<float,3>  KCameraTranformation::camera2dTo3d(const KMat::HCoords<float,2> & coords)
+{
+    KMat::HCoords<float,3>  res;
+    res(0)=thepose.focallength;
+    //cout<<"fpixels:"<<thepose.focallength;
+    res(1)=-coords(0);
+    res(2)=coords(1);
+    return res;
+
+
+}
+
+
+KMat::HCoords<float,2>  KCameraTranformation::camera3dTo2d(const KMat::HCoords<float,3> & coords)
+{
+    KMat::HCoords<float,3>  a;
+    KMat::HCoords<float,2>  res;
+
+    a.copyFrom(coords);//Copy and modify
+    a.scalar_mult(thepose.focallength/a(0));//Set x to focal distance
+    res(0)=-a(1);
+    res(1)=a(2);
+    return res;
+}
+
+KMat::HCoords<float,3>  KCameraTranformation::camera2dToTorso(const KMat::HCoords<float,2> & coords)
+{
+     KMat::HCoords<float,3>  & gc=cameraTorsoChain.transform(camera2dTo3d(coords));
+    KMat::HCoords<float,3>  res;
+    res.copyFrom(gc);
+    delete  &gc;
+    return res;
+
+}
+
+KMat::HCoords<float,3> KCameraTranformation::cameraToGround(const KMat::HCoords<float,3> & c3d)
+{
+    KMat::HCoords<float,3>  & gc=cameraChain.transform(c3d);
+    KMat::HCoords<float,3>  res;
+    res.copyFrom(gc);
+    delete  &gc;
+    return res;
+
+}
+
+KMat::HCoords<float,3>  KCameraTranformation::camera2dToGround(const KMat::HCoords<float,2> & c2d)
+{
+    return cameraToGround(camera2dTo3d(c2d));
+
+}
+KMat::HCoords<float,3>  KCameraTranformation::cameraToGroundProjection(const KMat::HCoords<float,3> & c3d,float height)
+{
+    KMat::HCoords<float,3>  & gc=cameraChain.transform(c3d);
+    KMat::HCoords<float,3>  res;
+    gc.scalar_mult((-thepose.cameraZ+height)/gc(2));
+    res.copyFrom(gc);
+    delete  &gc;
+    return res;
+}
+
+
+KMat::HCoords<float,3>  KCameraTranformation::camera2dToGroundProjection(const KMat::HCoords<float,2> & c2d,float height)
+{
+    return cameraToGroundProjection(camera2dTo3d(c2d),height);
+}
+
+
+
+
+KMat::HCoords<float,2>  KCameraTranformation::groundToCamera2d(const KMat::HCoords<float,3> & g)
+{
+    KMat::HCoords<float,3>  & c=cameraChainInv.transform(g);
+    KMat::HCoords<float,3>  res;
+    res.copyFrom(c);
+    delete &c;
+    return camera3dTo2d(res);
+}
+
+
+float KCameraTranformation::vectorAngle(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2)
+{
+    float sqrdf=sqrd(thepose.focallength);
+    float nom= v1(0)*v2(0)+v1(1)*v1(1)+sqrdf;
+    float den= sqrt( (sqrd(v1(0))+sqrd(v1(1)) + sqrdf )*(sqrd(v2(0))+sqrd(v2(1)) + sqrdf ) );
+    return acos( nom/den);
+
+}
+/* Estimate a distance from observed angular size, create also a  estimate of variance, by assuming +/-1 pixel error
+*/
+measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize)
+{
+
+    float xs=min(v1(0),v2(0));
+    float xl=max(v1(0),v2(0));
+    float ys=min(v1(1),v2(1));
+    float yl=max(v1(1),v2(1));
+    float sqrdf=sqrd(thepose.focallength);
+    float angs,angl,nom,norm1,norm2;
+    //Fail large
+    nom=(xs-1)*(xl+1) +(ys-1)*(yl+1)+sqrdf;//Nominator
+    if(xs==v1(0)&&ys==v1(1))// v1 is all small
+    {
+        norm1=sqrd(xs-1)+sqrd(ys-1)+sqrdf;
+        norm2=sqrd(xl+1)+sqrd(yl+1)+sqrdf;
+    }
+    else//V1 is small large or large small
+    {
+        norm1=sqrd(xl+1)+sqrd(ys-1)+sqrdf;
+        norm2=sqrd(xs-1)+sqrd(yl+1)+sqrdf;
+    }
+
+    angl=acos(nom/ sqrt(norm1*norm2));
+
+
+    //Fail small
+
+    nom=(xs+1)*(xl-1) +(ys+1)*(yl-1)+sqrdf;//Nom
+    if(xs==v1(0)&&ys==v1(1))// v1 is all small
+    {
+        norm1=sqrd(xs+1)+sqrd(ys+1)+sqrdf;
+        norm2=sqrd(xl-1)+sqrd(yl-1)+sqrdf;
+    }
+    else//V1 is small large or large small
+    {
+        norm1=sqrd(xl-1)+sqrd(ys+1)+sqrdf;
+        norm2=sqrd(xs+1)+sqrd(yl-1)+sqrdf;
+    }
+
+    angs=acos(nom/ sqrt(norm1*norm2));
+
+    float dists,distl;//Large distance comes from small angularDistance
+    dists=realsize/(2*tan(angl/2));
+    distl=realsize/(2*tan(angs/2));
+    //Project to ground...
+    dists=sqrt(sqrd(dists)-sqrd(thepose.cameraZ-realsize/2));
+    distl=sqrt(sqrd(distl)-sqrd(thepose.cameraZ-realsize/2));
+    measurement m;
+    m.mean=(dists+distl)/2;
+    m.var=(sqrd(dists-m.mean)+sqrd(distl-m.mean))/2;
+    return m;
+
+}
+//Heght:: Point distance from ground plane
+measurement2 KCameraTranformation::projectionDistance(KMat::HCoords<float,2> &v,float height)
+{
+    measurement2 res=(measurement (*)[2])new measurement[2];
+    KMat::HCoords<float,2> t;
+    KMat::HCoords<float,3>  s[4];
+    KMat::HCoords<float,2>  p[4];//Polar
+    t=v;
+    t(0)-=1;
+    t(1)-=1;
+    s[0]=camera2dToGroundProjection(t,height);
+    t=v;
+    t(0)+=1;
+    t(1)-=1;
+    s[1]=camera2dToGroundProjection(t,height);
+    t=v;
+    t(0)+=1;
+    t(1)+=1;
+    s[2]=camera2dToGroundProjection(t,height);
+    t=v;
+    t(0)-=1;
+    t(1)+=1;
+    s[3]=camera2dToGroundProjection(t,height);
+
+
+    for(int i=0;i<4;i++)
+    {
+        p[i](0)=sqrt( sqrd(s[0](0))+sqrd(s[0](1)));
+        p[i](1)=atan2(s[0](1),s[0](0));//y/x
+    }
+    (*res)[0].mean=(p[0](0)+p[1](0)+p[2](0)+p[3](0))/4;
+    (*res)[0].var=sqrd(p[0](0)-(*res)[0].var)+sqrd(p[1](0)-(*res)[0].var)+sqrd(p[2](0)-(*res)[0].var)+sqrd(p[3](0)-(*res)[0].var);
+    (*res)[0].var/=4;
+
+    (*res)[1].mean=(p[0](1)+p[1](1)+p[2](1)+p[3](1))/4;
+    (*res)[1].var=sqrd(p[0](1)-(*res)[1].var)+sqrd(p[1](1)-(*res)[1].var)+sqrd(p[2](1)-(*res)[1].var)+sqrd(p[3](1)-(*res)[1].var);
+    (*res)[1].var/=4;
+
+    return res;
+
+
+}
+/*
+float KCameraTranformation::getPitch()
+{
+
+    //TODO::
+    return 0;
+}
+
+float KCameraTranformation::getRoll()
+{
+
+    //TODO::
+    return 0;
+
+
+}*/
