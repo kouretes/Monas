@@ -92,12 +92,15 @@ class KCameraTranformation
 		float vectorAngle(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2);
         measurement angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
         measurement2 projectionDistance(KMat::HCoords<float,2> &v,float height);
+        float getPitch();
+        float getRoll();
 
 	private:
         cpose thepose;
         KMat::ATMatrix<float,4> cameraChain;//Camera to ground transformation
         KMat::ATMatrix<float,4> cameraTorsoChain;//CameraToTorso;
         KMat::ATMatrix<float,4> cameraChainInv;//Inverse
+        //KMat::ATMatrix<float,4> cameraYawless;
 		AL::ALPtr<AL::ALMotionProxy> motion;
 
 };

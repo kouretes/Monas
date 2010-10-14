@@ -441,6 +441,7 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 	{
 		public:
 			using GenMatrix<T,S,1>::get;
+			//using GenMatrix<T,S,1>::operator=;
 			//using GenMatrix<T,S,1>::clone;
 			HCoords() {};
 			//Constructor from a GenMatrix<T,S,1>
@@ -464,6 +465,11 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			{
 				return get(i,0);
 			};
+			HCoords<T,S> & operator= (const HCoords<T,S> & other)
+			{
+                    copyFrom(other);
+                    return *this;
+			}
 
 	};
 	/*
@@ -660,6 +666,20 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 				}
 
 			}
+            T& operator() (unsigned i,unsigned j)
+			{
+			    if(j==S)
+                    return B(i,0);
+                else
+                    return A(i,j);
+			};
+			const T& operator() (unsigned i,unsigned j) const
+			{
+			    if(j==S)
+                    return B(i,0);
+                else
+                    return A(i,j);
+			};
 
 	};
 	class transformations

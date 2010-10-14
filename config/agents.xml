@@ -4,19 +4,19 @@
 <!-- ThreadFrequency in Hz
      StatsCycle=n every n repetitions the agent will log statistics
 -->
-<agent IsRealTime=1 Priority=1 ThreadFrequency=75 StatsCycle=100>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=100 StatsCycle=100>
   <name>KSensors</name>
   <activity>Sensors</activity>
 
   <activity>LedHandler</activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=30 StatsCycle=100>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=20 StatsCycle=100>
   <name>KMC</name>
    <activity>MotionController</activity>
-   <activity>RobotController</activity>
+  <activity>RobotController</activity>
 </agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=20 StatsCycle=50>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=15 StatsCycle=50>
   <name>KVision</name>
   
   <activity>Vision</activity>

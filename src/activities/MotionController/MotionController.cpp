@@ -65,11 +65,11 @@ void MotionController::UserInit() {
 
 int MotionController::Execute() {
 	counter++;
-	Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
+	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//commands();
 	read_messages();
 	mglrun();
-	Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
+	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
 	return 0;
 }
 
@@ -86,7 +86,7 @@ void MotionController::read_messages() {
 	/* Messages for Intertial Readings */
 	im = _blk->read_data<InertialSensorsMessage>("InertialSensorsMessage");
 
-    Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
+    //Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 
 }
 
@@ -215,7 +215,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.6;
+				float fractionMaxSpeed = 0.8;
 				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg( "MotionController"," Head ID: "+_toString(headPID),Logger::ExtraInfo);
 			}

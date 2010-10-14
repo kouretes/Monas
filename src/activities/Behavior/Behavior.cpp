@@ -86,21 +86,16 @@ int Behavior::MakeTrackBallAction() {
 	float overshootfix = 0.50;
 	float cx = bmsg->cx();
 	float cy = bmsg->cy();
-	if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
+	//if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
 		//hmot->set_command("setHead");
 		//hmot->set_parameter(0, bmsg->referenceyaw() - overshootfix * cx);
 		//hmot->set_parameter(1, bmsg->referencepitch() - overshootfix * cy);
-		hmot->set_command("changeHead");
-		if (fabs(cx) > 0.015)
-			hmot->set_parameter(0, - overshootfix * cx);
-		else
-			hmot->set_parameter(0, 0.0);
-		if (fabs(cy) > 0.015)
-			hmot->set_parameter(1, - overshootfix * cy);
-		else
-			hmot->set_parameter(1, 0.0);
+		hmot->set_command("setHead");
+        hmot->set_parameter(0, bmsg->referenceyaw());
+		hmot->set_parameter(1,  bmsg->referencepitch());
 		_blk->publish_signal(*hmot, "motion");
-	}
+		cout<<"Track step"<<endl;
+	//}
 	return 1;
 }
 
@@ -177,6 +172,7 @@ int Behavior::Execute() {
 				scanforball = false; //if you are scanning for ball please stop now
 				back = 0;
 				MakeTrackBallAction();
+
 				ballfound += 5;
 				if (ballfound > 20)
 					ballfound = 20; //Increase this value when we see the ball
@@ -190,6 +186,7 @@ int Behavior::Execute() {
 
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
+		 float posx=0.19, posy=0.05;
 
 		if ((obsm != 0) && !turning) {
 
@@ -203,46 +200,32 @@ int Behavior::Execute() {
 			Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
 
 			if (!readytokick) {
+
 				readytokick = true;
-				double gain = 1.0;
-				if (bd>0.4)
-					gain = 1.5;
-	            double gainTheta = 0.3;
-	            double gainFine = 1.0;
-				if (bd <= 8.0) {
-					float posx=0.17, posy=0.05;
-					if (bd > 0.25) {
-						X = gain * bx;
-						Y = gain * by;
-						if (fabs(bb) > 3*TO_RAD)
-							theta = gainTheta * bb;
-						readytokick = false;
-					} else if (bd > 0.25) {
-						X = gain * (bx - posx);
-						Y = gain * ( by - (side*posy) );
-						readytokick = false;
-					} else {
-						if ( fabs( bx - posx ) > 0.025) {
-							X = gainFine * (bx - posx);
-							readytokick = false;
-						}
-						if ( fabs( by - (side*posy) ) > 0.025) {
-							Y = gainFine * ( by - (side*posy) );
-							readytokick = false;
-						}
-					}
-				}
+
+                if ( fabs( bx - posx ) > 0.025  || fabs( by - (side*posy) ) > 0.025) {
+                    //Y = gainFine * ( by - (side*posy) );
+                    readytokick = false;
+                }
+
+
+
 
 				if (!readytokick) {
+                    if(bd>0.4){
+                        float X=0,Y=0,th=0;
+                        if(fabs(bx)>0.15) X=1;
+                        if(fabs(by)>0.15) Y=side;
+                        velocityWalk(X,Y,0.011*side,1);
 
-					if (fabs(X) > 1.0)
-						X = (X > 0.0) ? 1.0 : -1.0;
-					if (fabs(Y) > 1.0)
-						Y = (Y > 0.0) ? 1.0 : -1.0;
-					if (fabs(theta) > 1.0)
-						theta = (theta > 0.0) ? 1.0 : -1.0;
 
-					velocityWalk(X, Y, theta, 1.0);
+                    }
+                    else
+                    {
+                        float offsety=side*posy;
+                        float g=0.9;
+                        littleWalk((bx-posx)*g,(by-offsety)*0.9,0,1.0);
+                    }
 				}
 				else {
 					velocityWalk(0.0, 0.0, 0.0, 1.0);
@@ -266,7 +249,7 @@ int Behavior::Execute() {
 				if ( (mglRand()<1.0) && !obstacleFront ) {
 					littleWalk(0.2, 0.0, 0.0, 2);
 				} else {
-					if (by > 0.0) {
+					if (bb > 0.0) {
 						amot->set_command("softLeftSideKick");
 						direction = -1;
 					}
@@ -444,15 +427,11 @@ void Behavior::velocityWalk(double x, double y, double th, double f)
 
 void Behavior::littleWalk(double x, double y, double th, int s)
 {
-	RejectAllFilter reject_filter("RejectFilter");
-	_blk->getBuffer()->add_filter(&reject_filter);
 	wmot->set_command("walkTo");
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
 	_blk->publish_signal(*wmot, "motion");
-	sleep(s);
-	_blk->getBuffer()->remove_filter(&reject_filter);
 }
 
 void Behavior::calibrate()

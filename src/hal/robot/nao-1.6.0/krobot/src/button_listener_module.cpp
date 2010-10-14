@@ -38,9 +38,9 @@ ButtonListener::ButtonListener(AL::ALPtr<AL::ALBroker> pbroker, const std::strin
     BIND_METHOD(ButtonListener::RBumperPressed);
     cout << "Button Listener start of constructor" << endl;
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-		ctime = boost::posix_time::microsec_clock::local_time();
-		rtime = boost::posix_time::microsec_clock::local_time();
-		ltime = boost::posix_time::microsec_clock::local_time();
+		ctime = boost::posix_time::microsec_clock::universal_time();
+		rtime = boost::posix_time::microsec_clock::universal_time();
+		ltime = boost::posix_time::microsec_clock::universal_time();
     try {
         sentinel = getParentBroker()->getProxy("ALSentinel");
         memory  = getParentBroker()->getMemoryProxy();
@@ -77,8 +77,8 @@ sentinel->pCall<bool>("enableDefaultActionSimpleClick",true);
 void ButtonListener::buttonPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage)
 {
 	 static boost::posix_time::time_duration dur = boost::posix_time::millisec(300);
-	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
-	 
+	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+
    // mx->Lock();
 		if((now - ctime) > dur )
 		{
@@ -94,7 +94,7 @@ void ButtonListener::buttonPressed(const std::string& pDataName, const ALValue& 
 void ButtonListener::LBumperPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage)
 {
 	static boost::posix_time::time_duration dur = boost::posix_time::millisec(300);
-	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
 
    // mx->Lock();
 		if((now - ctime) > dur )
@@ -108,7 +108,7 @@ void ButtonListener::LBumperPressed(const std::string& pDataName, const ALValue&
 void ButtonListener::RBumperPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage)
 {
 	static boost::posix_time::time_duration dur = boost::posix_time::millisec(300);
-	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+	 boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
 
    // mx->Lock();
 		if((now - ctime) > dur )

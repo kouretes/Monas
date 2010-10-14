@@ -117,7 +117,7 @@ boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, con
                     continue;
                }
 
-        if(timestampComparatorFunc(*time_req,(*it).timestamp))
+        if(*time_req<(*it).timestamp)
             ++it;
         else
             break;

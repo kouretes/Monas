@@ -25,10 +25,10 @@ FilterState TimeFilter::filter(const msgentry& a_tuple)
 {
   if(last_accepted == boost::posix_time::min_date_time)
   {
-    last_accepted = boost::posix_time::microsec_clock::local_time();
+    last_accepted = boost::posix_time::microsec_clock::universal_time();
     return Accepted;
   }
-  boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
   if(now - last_accepted > period)
   {
     last_accepted = now;

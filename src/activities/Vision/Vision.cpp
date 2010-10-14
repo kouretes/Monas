@@ -13,7 +13,7 @@
 #define TRACESKIP 8
 #define GLOBALTRACESKIP 25
 //x COVERDIST=15*0.05m
-#define SCANSKIP  3
+#define SCANSKIP  4
 #define TO_RAD 0.01745329f
 
 
@@ -126,10 +126,13 @@ void Vision::testrun()
 	static bool has_ball = false;
 	leds.Clear();
 
+	int sensordelay;
+	config->QueryElement("sensordelay",sensordelay);
+
 
 	//cout << "fetchImage" << endl;
 	boost::posix_time::ptime stamp = ext.fetchImage(rawImage);
-
+    stamp+=boost::posix_time::millisec(sensordelay);
 	if (ext.getCamera()==1)//bottom cam
 	{
 		p.cameraPitch=(KMat::transformations::PI*40.0)/180.0;
@@ -197,8 +200,8 @@ void Vision::testrun()
 	p.Vyaw=hm->sensordata(0).sensorvaluediff();
 	p.Vpitch=hm->sensordata(1).sensorvaluediff();
 
-	p.angX=im->sensordata(5).sensorvalue();
-	p.angY=im->sensordata(6).sensorvalue();
+	p.angX=0;//im->sensordata(5).sensorvalue();
+	p.angY=0;//im->sensordata(6).sensorvalue();
 	p.VangX=im->sensordata(5).sensorvaluediff();//im->sensordata(5).sensortimediff();
 	p.VangY=im->sensordata(6).sensorvaluediff();//im->sensordata(6).sensortimediff();
 
@@ -215,12 +218,13 @@ void Vision::testrun()
 	cout<<boost::posix_time::to_iso_string(p.time)<<endl;
 	cout<<"imcomp:"<<imcomp<<endl;
 #endif
-	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
+    //imcomp=imcomp;
+	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw+=p.Vyaw*imcomp;
 	p.pitch+=p.Vpitch*imcomp;
 	p.angX+=p.VangX*imcomp;
-	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
+
 	p.angY+=p.VangY*imcomp;
 	//Now use transformations to use the angX,angY values in the image
 	float Dfov;
@@ -392,7 +396,8 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	startx++;
 	startx=startx%step;
-
+	float stepy=-step,stepx=-step*tan(-kinext.getRoll());//TODO :: is this correct?
+    cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
 
 	//cout<<"loop"<<endl;
 	for (int i = borderskip+startx; i < rawImage->width-borderskip-1; i = i + step)
@@ -405,38 +410,29 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		cntother=0;
 		bool ballfound=false;
 		// ballpixel = -1;
-		int ci,cj;
-		ci=i;
-		cj= rawImage->height - borderskip-1;
-
-        im(0)=ci;
-        im(1)=cj;
+		//int ci,cj;
+		im(0)=i;
+		im(1)= rawImage->height - borderskip-1;
         c=imageToCamera(im);
         //c.prettyPrint();
         c3d=kinext.camera2dToGroundProjection(c,0);
-        if(c3d(0)<0)//Looking backwards :p
-            c3d(0)=0;
-        c=kinext.groundToCamera2d(c3d);
-        im=cameraToImage(c);
-        //c3d.prettyPrint();
         //Hit maximum "see" distance
         if(sqrd(c3d(0))+sqrd(c3d(1))>=sqrd(seedistance))//Looking way too far
             continue;
 
+        KMat::HCoords<int,2> lastpoint;
+        lastpoint=im;//Copy first point
 
-        CvPoint lastpoint;
-        lastpoint.x=-1;
-        while(validpixel(ci,cj))
+        while(validpixel(im(0),im(1)))
         {
             //cout<<"doseg"<<endl;
-            tempcolor = doSeg(ci, cj);
+            tempcolor = doSeg(im(0), im(1));
             if (tempcolor == green)//tempcolor == white ||
 			{
 				cntwhitegreenpixels++;
 				cntwhitegreenorangepixels++;
 				cntother=0;
-				lastpoint.x=ci;
-				lastpoint.y=cj;
+				lastpoint=im;
 			}
 			else if (tempcolor==orange)
 			{
@@ -451,41 +447,50 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			}
 			if (cntother>SCANSKIP)//No continuity, break
 			{
-			    cout<<"break"<<endl;
-			    if(lastpoint.x!=-1)
-                    obstacles.push_back(lastpoint);
-				break;
+			    cntother=0;
+                c=imageToCamera(lastpoint);
+                c3d=kinext.camera2dToGroundProjection(c,0);
+                float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+                c=imageToCamera(im);
+                c3d=kinext.camera2dToGroundProjection(c,0);
+                float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+
+                if(abs(d1-d2)>skipdistance)
+                {
+                    //cout<<"break"<<endl;
+                    CvPoint tmpPoint;
+                    tmpPoint.x = lastpoint(0);
+                    tmpPoint.y = lastpoint(1);
+                    obstacles.push_back(tmpPoint);
+                    break;
+                }
 			}
 			if (tempcolor == orange &&ballfound==false)
 			{
 			    CvPoint tmpPoint;
-				tmpPoint.x = ci;
-				tmpPoint.y = cj;
+				tmpPoint.x = im(0);
+				tmpPoint.y = im(1);
 				ballpixels.push_back(tmpPoint);
 				cntwhitegreenpixels=0;
 				ballfound=true;
 				//continue;
 				//ballpixel = j;
 			}
-            im(0)=ci;
-            im(1)=cj;
+			//Find next pixel
+
+            im(0)+=stepx;
+            im(1)+=stepy;
+
+            //cout<<ci<<","<<cj<<endl;
             c=imageToCamera(im);
             c3d=kinext.camera2dToGroundProjection(c,0);
-
-            c3d(0)=c3d(0)+skipdistance;
-            c3d(1)=c3d(1);
-            c=kinext.camera3dTo2d(c3d);
-            im=cameraToImage(c);
-            ci=im(0);
-            cj=im(1);
-            //cout<<ci<<","<<cj<<endl;
-             float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+            float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
             //float corr=1+ skipdistance/d;
 
             if(d>=sqrd(seedistance))//Looking way too far
             {
-                cout<<"Seedistance reached"<<endl;
-                c3d.prettyPrint();
+                //cout<<"Seedistance reached"<<endl;
+                //c3d.prettyPrint();
                 break;
             }
 
@@ -502,7 +507,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		//cout<<"xstep"<<step<<endl;
 		//TODO xstep;
 	}
-    publishObstacles(obstacles);
+    //publishObstacles(obstacles);
 	balldata_t b = locateBall(ballpixels);
 	//cout<<b.r<<endl;
 
@@ -529,15 +534,18 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		trckmsg.set_cx(0);
 		trckmsg.set_cy(0);
 		KMat::HCoords<int,2> im;
+		im(0)=b.x;
+		im(1)=b.y;
 		KMat::HCoords<float,2> c;
 		KMat::HCoords<float,3> c3d;
 		c=imageToCamera(im);
 		c3d=kinext.camera2dToTorso(c);
+		//c3d(0)+p.cameraX;c3d(1)+cameraY;
         float pitch,yaw;
-        pitch=atan(sqrt(sqrd(c3d(0))+sqrd(c3d(1)))/abs(c3d(2)));
-        yaw=atan2(c3d(0),c3d(1));
+        pitch=atan(abs(c3d(2))/sqrt(sqrd(c3d(0))+sqrd(c3d(1))));
+        yaw=atan2(c3d(1),c3d(0));
         trckmsg.set_referenceyaw(yaw);
-		trckmsg.set_referencepitch(pitch);//-ball(2)
+		trckmsg.set_referencepitch(pitch-p.cameraPitch);//-ball(2)
 		trckmsg.set_radius(b.cr);
 		//trckmsg.set_topic("vision");
 		_blk->publish_signal(trckmsg,"vision");
@@ -647,7 +655,7 @@ KMat::HCoords<float,2> & Vision::cameraToObs(KMat::HCoords<float ,2> const& t)
 KMat::HCoords<float,2>  Vision::camToRobot(KMat::HCoords<float ,2> & t)
 {
 	KMat::HCoords<float,2>  res ;
-	float a=cos(t(1))*t(01);
+	float a=cos(t(1))*t(0);
 	float b=sin(t(1))*t(0);
 	res(0)=sqrt((a+p.cameraX)*(a+p.cameraX)+(b+p.cameraY)*(b+p.cameraY));
 	res(1)=atan2(b+p.cameraY,a+p.cameraX);
@@ -1083,7 +1091,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 			//center.y+=points[i].y;
 		}
 		radius /= points.size();
-		cout<<radius<<endl;
+		//cout<<radius<<endl;
 		/////cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
@@ -1102,11 +1110,11 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         KMat::HCoords<int,2> im1,im2;
         im1(0)=center.x;
         im1(1)=center.y;
-        im2(0)=center.x+radius*0.707;
-        im2(1)=center.y+radius*0.707;
+        im2(0)=center.x+(radius)*0.707;
+        im2(1)=center.y+(radius)*0.707;
         c1=imageToCamera(im1);
         c2=imageToCamera(im2);
-        float tantths=kinext.vectorAngle(c1,c2)/2;
+        float tantths=kinext.vectorAngle(c1,c2);
         c3d=kinext.camera2dToGround(c1);//Transform center vector  to ground coordinates
         double par=tantths*tantths*( (sqrd(c3d(0))+sqrd(c3d(1)))/sqrd(c3d(2)))+tantths*tantths;
         if(par>1)//Something is terribly wrong!
@@ -1127,11 +1135,14 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         }
 
         measurement d1=kinext.angularDistance(c1,c2,rest);
+        cout<<"angular:"<<d1.mean<<" "<<d1.var<<endl;
         measurement2 a=kinext.projectionDistance(c1,rest);
-        measurement d2=*a[0];
-        measurement bearing=*a[1];
+        measurement d2=(*a)[0];
+        cout<<"projection:"<<d2.mean<<" "<<d2.var<<endl;
+        measurement bearing=(*a)[1];
+        cout<<"proj bearing:"<<bearing.mean<<" "<<bearing.var<<endl;
         measurement distance;
-        delete[] a;
+
         distance.mean=(d1.mean*d2.var+d2.mean*d1.var)/(d1.var+d2.var);
         distance.var=d1.var*d2.var/(d1.var+d2.var);
         KMat::HCoords<float,2> polar;
@@ -1143,6 +1154,8 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         newdata.distance=distance;
         newdata.bearing=bearing;
         history.push_back(newdata);
+
+         delete[] a;
         //cout<<history<<endl;
 
 	}

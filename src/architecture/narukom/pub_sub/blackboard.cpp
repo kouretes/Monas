@@ -22,7 +22,7 @@ Blackboard::Blackboard(const char* sub_name): Subscriber(sub_name),Publisher(sub
 
 void Blackboard::process_messages()
 {
-    cur_tmsp = boost::posix_time::microsec_clock::local_time();
+    cur_tmsp = boost::posix_time::microsec_clock::universal_time();
 
     cleanup();
 
@@ -86,7 +86,7 @@ int Blackboard::cleanup()
 	    historyqueue::iterator qit= q.begin();
 	    //cout<<(*it).first<<endl;
 	    //int i=0;
-	    while(qit!=q.end() && timestampComparatorFunc((*qit).timeoutstamp,cur_tmsp))
+	    while(qit!=q.end() && (*qit).timeoutstamp<cur_tmsp)
 	    {
             ++qit;
             //i++;
@@ -135,7 +135,7 @@ void Blackboard::publish_data(const google::protobuf::Message & msg,std::string 
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
-    boost::posix_time::ptime now=boost::posix_time::microsec_clock::local_time();
+    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
     nmsg.timestamp=now;
     nmsg.topic=topic;
@@ -164,7 +164,7 @@ void Blackboard::publish_signal(const google::protobuf::Message & msg,std::strin
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
-    boost::posix_time::ptime now=boost::posix_time::microsec_clock::local_time();
+    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     nmsg.timeoutstamp=now;//Signal, no timeout
     nmsg.timestamp=now;
     nmsg.topic=topic;
@@ -193,7 +193,7 @@ void Blackboard::publish_state(const google::protobuf::Message & msg,std::string
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
-    boost::posix_time::ptime now=boost::posix_time::microsec_clock::local_time();
+    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     nmsg.timeoutstamp=now;//State, no timeout :)
     nmsg.timestamp=now;
     nmsg.topic=topic;

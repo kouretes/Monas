@@ -56,9 +56,6 @@ class KImageExtractor
 		int swapCamera();
 	private:
 		AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi
-#ifndef REMOTE_ON
-        boost::posix_time::ptime timecorr;
-#endif
 
 		//Name used when subscribing Generic Video Module
 		std::string GVM_name;

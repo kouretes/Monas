@@ -55,7 +55,7 @@ int main ()
 			testS(i,k)=i+k;
 	//testS.identity();
 	//cout<<sizeof(GenMatrix<char,3,3>)<<endl;
-	ptime start = microsec_clock::local_time();
+	ptime start = microsec_clock::universal_time();
 	for (int i=0;i<100000;i++)
 	{
 		//for (int j=0;j<10;j++)
@@ -63,7 +63,7 @@ int main ()
 		//test(1,1)=0;
 		testS.mult(testS);
 	}
-	ptime end = microsec_clock::local_time();
+	ptime end = microsec_clock::universal_time();
 
 	cout << "1000000 m*m took " << (end-start).total_microseconds()/(float)100 << " microseconds " << endl;
 
@@ -76,10 +76,10 @@ int main ()
 		for (int k = 0; k < 3; k++)
 			m.insert_element(i,k,(float)i+k);
 
-	start = microsec_clock::local_time();
+	start = microsec_clock::universal_time();
 	for (int j =0; j < 100000; j++)
 		*foo=prod(m,m);
-	end = microsec_clock::local_time();
+	end = microsec_clock::universal_time();
 
 	cout << "1000000 m*m took " << (end-start).total_microseconds()/(float)100 << " microseconds " << endl;
 

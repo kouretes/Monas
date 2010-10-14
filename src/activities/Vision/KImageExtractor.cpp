@@ -40,12 +40,7 @@ void KImageExtractor::Init(Blackboard *blk)
 
 		doneSubscribe=true;
 		//Calculate Roundtrip time
-#ifndef REMOTE_ON
-		AL::ALPtr<AL::DCMProxy> dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
-        const long  dcmoffset=dcm->getTime(0);
-		ptime l = boost::posix_time::microsec_clock::local_time();
-		timecorr=l-boost::posix_time::microsec(dcmoffset);
-#endif
+
 
 	}
 	catch (AL::ALError& e)
@@ -66,7 +61,7 @@ void KImageExtractor::Init(Blackboard *blk)
 boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 {
 	//cout<<"KImageExtractor::fetchimage():"<<endl;
-	boost::posix_time::ptime s=boost::posix_time::microsec_clock::local_time();
+	boost::posix_time::ptime s=boost::posix_time::microsec_clock::universal_time();
 	if (doneSubscribe==false)
 	{
 		cout<<"KImageExtractor: Warning! fetchImage()  called although GVM Subscription has failed!"<<endl;
@@ -104,7 +99,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	//cout<<"dcm2"<<endl;
 	//alt.getLocalTime();
 	//cout<<alt.getHour()<<" "<<alt.getMinute()<<" "<<alt.getSecond()<<" "<<alt.getMs()<<endl;
-	//boost::posix_time::ptime e=boost::posix_time::microsec_clock::local_time();
+	//boost::posix_time::ptime e=boost::posix_time::microsec_clock::universal_time();
 	boost::posix_time::time_duration exp=boost::posix_time::microsec(getExp()/2);
 	boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec((int)results[5])+boost::posix_time::seconds((int) results[4]));
 	boost::posix_time::time_duration dur=s-(stamp-exp);//TODO:: rtt - round trip time
@@ -218,7 +213,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
     const long long microsecsonly=timeStamp-(secsonly*1000000LL);
 //    cout<<"secsonly:"<<secsonly<<endl;
 
-    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)-boost::posix_time::millisec(getExp()/2);;
+    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)-boost::posix_time::millisec(getExp()/2);
 
 
 };

@@ -158,14 +158,14 @@ void LedHandler::setDcmEyeColor(const string& device ,const string& color)
 //     std::cout << "Eye COLOR:  " << color << endl;
     if (device.find("l") != device.npos)
     {
-        leds->callVoid<string,int,float>("fadeRGB","FaceLedsLeftExternal",colors[color],0.1);
-        leds->callVoid<string,int,float>("fadeRGB","FaceLedsLeftInternal",colors[color],0.1);
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsLeftExternal",colors[color],0.01);
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsLeftInternal",colors[color],0.01);
 
     }
     else
     {
-        leds->callVoid<string,int,float>("fadeRGB","FaceLedsRightExternal",colors[color],0.1);
-        leds->callVoid<string,int,float>("fadeRGB","FaceLedsRightInternal",colors[color],0.1);
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsRightExternal",colors[color],0.01);
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsRightInternal",colors[color],0.01);
     }
 }
 
@@ -182,9 +182,9 @@ void LedHandler::setDcmEarColor(const string& device,const string& color)
         return;
     }
     if (device.find("l") != device.npos)
-        leds->callVoid<string,int,float>("fadeRGB","LeftEarLeds",colors[color.c_str()],0.1);
+        leds->callVoid<string,int,float>("fadeRGB","LeftEarLeds",colors[color.c_str()],0.01);
     else
-        leds->callVoid<string,int,float>("fadeRGB","RightEarLeds",colors[color.c_str()],0.1);
+        leds->callVoid<string,int,float>("fadeRGB","RightEarLeds",colors[color.c_str()],0.01);
 }
 
 void LedHandler::setDcmIndividualEarColor(const string& device,const string& color)
