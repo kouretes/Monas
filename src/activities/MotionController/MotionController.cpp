@@ -292,63 +292,6 @@ void MotionController::mglrun() {
                           Logger::Instance().WriteMsg("MotionController", "SpAction " +am->command()+ " not found!",Logger::Error);
                         else
                           actionPID = it->second->ExecutePost();
-
-			//actionPID = motion->post.xxxxxxxxxxxxxx
-// 			if (am->command() == "leftKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(LeftKick_names, LeftKick_times, LeftKick_keys);
-// 				}
-// 			else if (am->command() == "rightKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(RightKick_names, RightKick_times, RightKick_keys);
-// 			}
-// 			else if (am->command() == "hardLeftSideKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(HardLeftSideKick_names, HardLeftSideKick_times, HardLeftSideKick_keys);
-// 				}
-// 			else if (am->command() == "hardRightSideKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(HardRightSideKick_names, HardRightSideKick_times, HardRightSideKick_keys);
-// 			}
-// 			else if (am->command() == "softLeftSideKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(SoftLeftSideKick_names, SoftLeftSideKick_times, SoftLeftSideKick_keys);
-// 				}
-// 			else if (am->command() == "softRightSideKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(SoftRightSideKick_names, SoftRightSideKick_times, SoftRightSideKick_keys);
-// 			}
-// 			else if (am->command() == "leftBackKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(LeftBackKick_names, LeftBackKick_times, LeftBackKick_keys);
-// 				}
-// 			else if (am->command() == "rightBackKick") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(RightBackKick_names, RightBackKick_times, RightBackKick_keys);
-// 			}
-// 			else if (am->command() == "rightDive") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(RightDive_names, RightDive_times, RightDive_keys);
-// 			}
-// 			else if (am->command() == "leftDive") {
-// 				stopWalkCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(LeftDive_names, LeftDive_times, LeftDive_keys);
-// 			}
-// 			else if (am->command() == "lieDown") {
-// 				stopWalkCommand();
-// 				killHeadCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(LieDown_names, LieDown_times, LieDown_keys);
-// 			}
-// 			else if (am->command() == "puntKick") {
-// 				stopWalkCommand();
-// 				killHeadCommand();
-// 				actionPID = motion->post.angleInterpolationBezier(PuntKick_names, PuntKick_times, PuntKick_keys);
-// 				robotUp = false;
-// 			}
-// 			else {
-// 				stopWalkCommand();
-// 				actionPID = executeActionKME( am->command() );
-// 			}
 			Logger::Instance().WriteMsg("MotionController", "  Action ID: " +_toString(actionPID),Logger::ExtraInfo);
 		}
 
