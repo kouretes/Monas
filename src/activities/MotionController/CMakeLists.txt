@@ -7,8 +7,6 @@ include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
 set ( ActivityName MotionController )
 
 set ( ActivitySrcs  MotionController.cpp
-                    MotionFunctions.cpp
-                    MotionFunctionsBackKicks.cpp
                     KmeManager.cpp
                     KmeAction.cpp
 )
