@@ -310,9 +310,9 @@ int BehaviorGoalie::Execute() {
 		/* Ready to take action */
 		if ( abs(go) >= 5 ) {
 			if ( go <= -5 ) 
-				amot->set_command("leftDive");
+				amot->set_command("LeftDive");
 			else
-				amot->set_command("rightDive");
+				amot->set_command("RightDive");
 			Publisher::publish(amot, "motion");
 			stopped = false;
 			go = 0;
@@ -333,15 +333,15 @@ int BehaviorGoalie::Execute() {
 		else if (readytokick && !turning) {
 			if (mglRand()<0.8) {
 				if (by > 0.0) 
-					amot->set_command("leftKick");
+					amot->set_command("LeftKick");
 				else 
-					amot->set_command("rightKick");
+					amot->set_command("RightKick");
 			}
 			else {
 				if (by > 0.0)
-					amot->set_command("hardLeftSideKick");
+					amot->set_command("HardLeftSideKick");
 				else 
-					amot->set_command("hardRightSideKick");
+					amot->set_command("HardRightSideKick");
 			}
 			Publisher::publish(amot, "motion");
 			back = 1;

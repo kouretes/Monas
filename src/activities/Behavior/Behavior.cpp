@@ -271,11 +271,11 @@ int Behavior::Execute() {
 					littleWalk(0.2, 0.0, 0.0, 2);
 				} else {
 					if (by > 0.0) {
-						amot->set_command("softLeftSideKick");
+						amot->set_command("SoftLeftSideKick");
 						direction = -1;
 					}
 					else {
-						amot->set_command("softRightSideKick");
+						amot->set_command("SoftRightSideKick");
 						direction = +1;
 					}
 					Publisher::publish(amot, "motion");
@@ -286,25 +286,25 @@ int Behavior::Execute() {
 				if (mglRand()<0.6) {
 				//if ( (mglRand()<1.0) && !obstacleFront ) {
 					if (by > 0.0) 
-						amot->set_command("leftKick");
+						amot->set_command("LeftKick");
 					else 
-						amot->set_command("rightKick");
+						amot->set_command("RightKick");
 				}
 				else if (mglRand()<0.5) {
 					if (by > 0.0) {
-						amot->set_command("hardLeftSideKick");
+						amot->set_command("HardLeftSideKick");
 						direction = -1;
 					}
 					else {
-						amot->set_command("hardRightSideKick");
+						amot->set_command("HardRightSideKick");
 						direction = +1;
 					}
 				}
 				else {
 					if (by > 0.0)
-						amot->set_command("leftBackKick");
+						amot->set_command("LeftBackKick");
 					else 
-						amot->set_command("rightBackKick");
+						amot->set_command("RightBackKick");
 				}
 				Publisher::publish(amot, "motion");
 				back = 0;

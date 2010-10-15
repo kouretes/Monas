@@ -139,7 +139,7 @@ int BehaviorPassing::Execute() {
 		/* Open Challenge */
 		//if ( gsm->player_state() == PLAYER_SET ) {
 			//cout << "Punt Kick" << endl;
-			//amot->set_command("puntKick");
+			//amot->set_command("PuntKick");
 			//Publisher::publish(amot, "motion");
 		//}
 	}
@@ -322,14 +322,14 @@ int BehaviorPassing::Execute() {
                         else {
                           /* Passing */
                           if (by > 0.0)
-                                  amot->set_command("leftKick");
+                                  amot->set_command("LeftKick");
                           else
-                                  amot->set_command("rightKick");
+                                  amot->set_command("RightKick");
                           Publisher::publish(amot, "motion");
                           back = 1;
 
                           /* Open */
-                          //amot->set_command("puntKick");
+                          //amot->set_command("PuntKick");
                           //Publisher::publish(amot, "motion");
 
                           /* Dribbling */
