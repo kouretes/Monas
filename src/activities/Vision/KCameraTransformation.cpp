@@ -156,15 +156,15 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
     float angs,angl;
     KMat::HCoords<float,2> v=v2;
     //Fail small : move v towards v1 by 1 pixel
-    v1(0)<v(0)?--v(0):++v(0);
-    v1(1)<v(1)?--v(1):++v(1);
+    v1(0)<v(0)?v(0)-=0.5:v(0)+=0.5;
+    v1(1)<v(1)?v(1)-=0.5:v(1)+=0.5;
     angs=vectorAngle(v1,v);
 
     v=v2;
 
      //Fail large : move v away from v1 by 1 pixel
-    v1(0)<v(0)?++v(0):--v(0);
-    v1(1)<v(1)?++v(1):--v(1);
+    v1(0)<v(0)?v(0)+=0.5:v(0)-=0.5;
+    v1(1)<v(1)?v(1)+=0.5:v(1)-=0.5;
     angl=vectorAngle(v1,v);
 
 /*
@@ -209,8 +209,8 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
     */
 
     float dists,distl;//Large distance comes from small angularDistance
-    dists=realsize/(tan(angl));
-    distl=realsize/(tan(angs));
+    dists=realsize/(sin(angl));
+    distl=realsize/(sin(angs));
     //Project to ground...
 
     dists=sqrt(sqrd(dists)-sqrd(thepose.cameraZ-realsize));
@@ -264,7 +264,7 @@ measurement2 KCameraTranformation::projectionDistance(KMat::HCoords<float,2> &v,
 
     (*res)[1].var=sqrd(p[0](1)-(*res)[1].mean)+sqrd(p[1](1)-(*res)[1].mean)+sqrd(p[2](1)-(*res)[1].mean)+sqrd(p[3](1)-(*res)[1].mean);
     (*res)[1].var/=4;
-    cout<<"bearing mean:"<<(*res)[1].mean<<endl;
+    //cout<<"bearing mean:"<<(*res)[1].mean<<endl;
     return res;
 
 

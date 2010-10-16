@@ -215,7 +215,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.8;
+				float fractionMaxSpeed = 0.6;
 				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg( "MotionController"," Head ID: "+_toString(headPID),Logger::ExtraInfo);
 			}

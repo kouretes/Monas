@@ -66,8 +66,9 @@ private:
     boost::posix_time::ptime cur_tmsp;
     std::vector<msgentry> topublish;
     int cleanup();
-    static bool timestampComparatorFunc( const  boost::posix_time::ptime a, const  boost::posix_time::ptime b) { return a< b  ;};
-
+    static bool timestampComparatorFunc( const  boost::posix_time::ptime &a, const  boost::posix_time::ptime& b) { return a< b  ;};
+    static bool timestampComparatorFunc( const msgentry &a, const  boost::posix_time::ptime & b) { return a.timestamp< b  ;};
+    static bool timestampComparatorFunc(  const  boost::posix_time::ptime &a,const msgentry &b) { return a< b.timestamp  ;};
 
 };
 
@@ -105,42 +106,45 @@ boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, con
         return boost::shared_ptr<const Data>();//NOT found
     }
 
-
-
-    while(it!=q.rend())
+    historyqueue::const_iterator fit=q.begin();
+    while(fit!=q.end())
     {
         //Skip
        // if( !(process==""||(*it).publisher==process) ||
-             if(  ! ((*it).host==host||host=="") )
+             if(  ! ((*fit).host==host||host=="") )
                {
-                   ++it;
+                   ++fit;
                     continue;
                }
 
-        if(*time_req<(*it).timestamp)
-            ++it;
+        if(*time_req>(*fit).timestamp)
+            ++fit;
         else
             break;
     }
-    if(it==q.rend())
-        --it;
 
-    //if( !(process==""||(*it).publisher==process) ||
-          if( ! ((*it).host==host||host=="") )
-        return boost::shared_ptr<const Data>();//;
-
-    if(it==q.rend())
+    if(fit==q.end())
+        --fit;
+    if(fit==q.end())
     {
         return boost::shared_ptr<const Data>();
     }
+
+
+
+    //if( !(process==""||(*it).publisher==process) ||
+    if( ! ((*fit).host==host||host=="") )
+        return boost::shared_ptr<const Data>();//;
+
+
     if(tmp!=NULL)
-        *tmp=(*it).timestamp;
+        *tmp=(*fit).timestamp;
         /*
     Data *p=static_cast<Data *>((*it).msg);
     Data *cp=p->New();
     cp->CopyFrom(*p);
     return cp;*/
-    return  boost::static_pointer_cast<const Data>( (*it).msg);
+    return  boost::static_pointer_cast<const Data>( (*fit).msg);
 }
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::read_signal(const std::string& type, const std::string&  host ,boost::posix_time::ptime* tmp )

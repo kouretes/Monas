@@ -19,7 +19,7 @@ namespace {
 	ActivityRegistrar<Behavior>::Type temp("Behavior");
 }
 
-Behavior::Behavior(){
+Behavior::Behavior()        {
 }
 
 void Behavior::UserInit() {
@@ -123,7 +123,7 @@ int Behavior::Execute() {
 		if (gameState == PLAYER_PLAYING) {
 			if (calibrated == 2) {
 				play = true;
-				littleWalk(0.01,0.0,0.0,1);
+				//littleWalk(0.01,0.0,0.0,1);
 			}
 			else if (calibrated == 0) {
 				calibrate();
@@ -173,7 +173,7 @@ int Behavior::Execute() {
 				back = 0;
 				MakeTrackBallAction();
 
-				ballfound += 5;
+				ballfound += 1;
 				if (ballfound > 20)
 					ballfound = 20; //Increase this value when we see the ball
 			}
@@ -182,11 +182,12 @@ int Behavior::Execute() {
 					ballfound -= 1; //Decrease it when we don't see the ball
 			}
 		}
+		return 0;
 		Logger::Instance().WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		 float posx=0.19, posy=0.05;
+		 float posx=0.16, posy=0.05;
 
 		if ((obsm != 0) && !turning) {
 
@@ -199,11 +200,11 @@ int Behavior::Execute() {
 			side = (bb > 0) ? 1 : -1;
 			Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
 
-			if (!readytokick) {
+			if (!readytokick&&ballfound>=2) {
 
 				readytokick = true;
 
-                if ( fabs( bx - posx ) > 0.025  || fabs( by - (side*posy) ) > 0.025) {
+                if ( fabs( bx - posx ) > 0.015  || fabs( by - (side*posy) ) > 0.015) {
                     //Y = gainFine * ( by - (side*posy) );
                     readytokick = false;
                 }
@@ -212,23 +213,23 @@ int Behavior::Execute() {
 
 
 				if (!readytokick) {
-                    if(bd>0.4){
+                    if(bd>0.5){
                         float X=0,Y=0,th=0;
                         if(fabs(bx)>0.15) X=1;
                         if(fabs(by)>0.15) Y=side;
-                        velocityWalk(X,Y,0.011*side,1);
+                        velocityWalk(X,Y,0.01*side,1);
 
 
                     }
                     else
                     {
                         float offsety=side*posy;
-                        float g=0.9;
-                        littleWalk((bx-posx)*g,(by-offsety)*0.9,0,1.0);
+                        float g=0.3;
+                        littleWalk((bx-posx)*g,(by-offsety)*g,0,g);
                     }
 				}
 				else {
-					velocityWalk(0.0, 0.0, 0.0, 1.0);
+					//velocityWalk(0.0, 0.0, 0.0, 1.0);
 					return 1;
 				}
 			}

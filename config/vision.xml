@@ -6,15 +6,15 @@
 <SegmentationTop>2-Robocup2010-segall.conf</SegmentationTop>
 <Dfov>58></Dfov>
 <!-- Ball Detection -->
-<ballsize>0.06</ballsize>
-<balltolerance>0.25</balltolerance>
+<ballsize>0.065</ballsize>
+<balltolerance>0.20</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.1</skipdistance>
 <seedistance>7</seedistance>
 <!-- Image Scanning parameters -->
-<scanstep>8</scanstep>
+<scanstep>4</scanstep>
 <borderskip>2</borderskip>
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>20</sensordelay>
+<sensordelay>35</sensordelay>

@@ -5,7 +5,7 @@
 #include "tools/logger.h"
 #include "tools/XMLConfig.h"
 #include "tools/toString.h"
-
+#include "hal/syscall.h"
 
 #include "messages/motion.pb.h"
 //#define LONGESTDIST 6.0
@@ -14,6 +14,7 @@
 #define GLOBALTRACESKIP 25
 //x COVERDIST=15*0.05m
 #define SCANSKIP  4
+#define SPARSENESS 3
 #define TO_RAD 0.01745329f
 
 
@@ -131,7 +132,11 @@ void Vision::testrun()
 
 
 	//cout << "fetchImage" << endl;
+    unsigned long startt = SysCall::_GetCurrentTimeInUSec();
+
 	boost::posix_time::ptime stamp = ext.fetchImage(rawImage);
+    unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
+    cout<<"Fetch image takes:"<<endt<<endl;
     stamp+=boost::posix_time::millisec(sensordelay);
 	if (ext.getCamera()==1)//bottom cam
 	{
@@ -156,17 +161,17 @@ void Vision::testrun()
 		p.cameraY=val[1];
 		p.cameraZ=val[2];//3rd element
 	}
-#ifdef DEBUGVISION
-	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
-#endif
+//#ifdef DEBUGVISION
+//	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
+//#endif
 	//boost::posix_time::ptime rtime =  time_t_epoch+(boost::posix_time::microsec(t.tv_nsec/1000)+boost::posix_time::seconds(t.tv_sec));//+sec(t.tv_sec));
 //	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
     //im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors",&p.time,&stamp);
     im = _blk->read_data<InertialSensorsMessage>("InertialSensorsMessage", "localhost",&p.time,&stamp);
-#ifdef DEBUGVISION
-	cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
-	cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
-#endif
+//#ifdef DEBUGVISION
+//	cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
+//	cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
+//#endif
 
 	if (im==NULL)//No sensor data!
 	{
@@ -213,13 +218,13 @@ void Vision::testrun()
 
 
 	float imcomp=((stamp-p.time).total_microseconds()*1000.0)/p.timediff;
-#ifdef DEBUGVISION
-	cout<<boost::posix_time::to_iso_string(stamp)<<endl;
-	cout<<boost::posix_time::to_iso_string(p.time)<<endl;
-	cout<<"imcomp:"<<imcomp<<endl;
-#endif
+//#ifdef DEBUGVISION
+//	cout<<boost::posix_time::to_iso_string(stamp)<<endl;
+//	cout<<boost::posix_time::to_iso_string(p.time)<<endl;
+//	cout<<"imcomp:"<<imcomp<<endl;
+//#endif
     //imcomp=imcomp;
-	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
+	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw+=p.Vyaw*imcomp;
 	p.pitch+=p.Vpitch*imcomp;
@@ -232,7 +237,7 @@ void Vision::testrun()
 
 	p.focallength=sqrt(rawImage-> width*rawImage-> width+rawImage-> height*rawImage-> height)/(2*tan(Dfov*TO_RAD/2));
 
-	Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
+	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
 
 	gridScan(orange);
@@ -397,7 +402,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	startx++;
 	startx=startx%step;
 	float stepy=-step,stepx=-step*tan(-kinext.getRoll());//TODO :: is this correct?
-    cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
+    //cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
 
 	//cout<<"loop"<<endl;
 	for (int i = borderskip+startx; i < rawImage->width-borderskip-1; i = i + step)
@@ -413,12 +418,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		//int ci,cj;
 		im(0)=i;
 		im(1)= rawImage->height - borderskip-1;
-        c=imageToCamera(im);
+        //c=imageToCamera(im);
         //c.prettyPrint();
         c3d=kinext.camera2dToGroundProjection(c,0);
         //Hit maximum "see" distance
-        if(sqrd(c3d(0))+sqrd(c3d(1))>=sqrd(seedistance))//Looking way too far
-            continue;
+        //if(sqrd(c3d(0))+sqrd(c3d(1))>=sqrd(seedistance))//Looking way too far
+        //    continue;
 
         KMat::HCoords<int,2> lastpoint;
         lastpoint=im;//Copy first point
@@ -427,7 +432,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
         {
             //cout<<"doseg"<<endl;
             tempcolor = doSeg(im(0), im(1));
-            if (tempcolor == green)//tempcolor == white ||
+            if (tempcolor == white ||tempcolor == green)//
 			{
 				cntwhitegreenpixels++;
 				cntwhitegreenorangepixels++;
@@ -451,6 +456,13 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
                 c=imageToCamera(lastpoint);
                 c3d=kinext.camera2dToGroundProjection(c,0);
                 float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+
+                if(d1>=sqrd(seedistance))//Looking way too far
+                {
+                    //cout<<"Seedistance reached"<<endl;
+                    //c3d.prettyPrint();
+                    break;
+                }
                 c=imageToCamera(im);
                 c3d=kinext.camera2dToGroundProjection(c,0);
                 float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
@@ -480,19 +492,21 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
             im(0)+=stepx;
             im(1)+=stepy;
+            //stepx=2;
+            //stepy-=2;
 
             //cout<<ci<<","<<cj<<endl;
-            c=imageToCamera(im);
-            c3d=kinext.camera2dToGroundProjection(c,0);
-            float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+            //c=imageToCamera(im);
+           // c3d=kinext.camera2dToGroundProjection(c,0);
+           // float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
             //float corr=1+ skipdistance/d;
 
-            if(d>=sqrd(seedistance))//Looking way too far
-            {
+            //if(d>=sqrd(seedistance))//Looking way too far
+            //{
                 //cout<<"Seedistance reached"<<endl;
                 //c3d.prettyPrint();
-                break;
-            }
+               // break;
+            //}
 
         }
 
@@ -508,7 +522,10 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		//TODO xstep;
 	}
     //publishObstacles(obstacles);
+    //unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 	balldata_t b = locateBall(ballpixels);
+	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
+	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
 
 #ifdef DEBUGVISION
@@ -517,20 +534,19 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 #endif
 
 
-
-	if (b.cr > 0)
-	{
-
 #ifdef DEBUGVISION
         //KMat::HCoords<float,2> & w=camToRobot(o)
         cout<<"Bearing:"<<b.bearing.mean<<" "<<b.bearing.var<<endl;
         cout<<"Distance:"<<b.distance.mean<<" "<<b.distance.var<<endl;
 
 #endif
+
+
+	if (b.cr > 0)
+	{
+
+
 		//Fill message and publish
-#ifdef DEBUGVISION
-		cout<<"Vision:Publish Message"<<endl;
-#endif
 		trckmsg.set_cx(0);
 		trckmsg.set_cy(0);
 		KMat::HCoords<int,2> im;
@@ -668,14 +684,25 @@ KMat::HCoords<float,2>  Vision::camToRobot(KMat::HCoords<float ,2> & t)
 /**
  * Hard Decision: Is it good enough for a ball?
  */
+
 bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 {
 	unsigned int ttl = 0, gd = 0;
 	float innerrad = ball.cr * 0.707;
 	float ratio;
 	//Inner circle
-	for (int i = ball.x - innerrad; i <= ball.x + innerrad; i++)
-		for (int j =ball. y - innerrad; j <= ball.y + innerrad; j++)
+	for (int i = ball.x - innerrad; i <= ball.x + innerrad; i+=SPARSENESS)
+		for (int j =ball. y - innerrad; j <= ball.y ; j+=SPARSENESS)
+		{
+			if (!validpixel(i,j))
+				continue;
+			if (doSeg(i, j) == c)
+				gd+=3;
+			ttl+=3;
+		}
+
+    for (int i = ball.x - innerrad; i <= ball.x + innerrad; i+=SPARSENESS)
+		for (int j =ball. y ; j <= ball.y + innerrad; j+=SPARSENESS)
 		{
 			if (!validpixel(i,j))
 				continue;
@@ -683,34 +710,11 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 				gd++;
 			ttl++;
 		}
-	ratio = ((float) gd) / ttl;
-	//cout<<ratio<<endl;
-	if (ratio < 0.6)
+
+	ratio = ((float) gd+1) / (ttl+1);
+	//<<ratio<<endl;
+	if (ratio < 0.5)
         return false;
-	//Outer circle
-	gd = 0;
-	ttl = 0;
-	for (int i = ball.x -  ball.cr; i <= ball.x + ball.cr; i++)
-		for (int j = ball.y -  ball.cr; j <= ball.y +  ball.cr; j++)
-		{
-
-
-			if (!validpixel(i,j))
-				continue;
-			if (i > ball.x - innerrad && i < ball.x + innerrad)
-				continue;
-
-			if (j > ball.y - innerrad && j < ball.y + innerrad)
-				continue;
-
-			if (doSeg(i, j) == c)
-				gd++;
-			ttl++;
-		}
-	ratio = ((float) gd) / ttl;
-	//cout<<ratio<<endl;
-	if (ratio < 0.30 || ratio > 0.7)
-		return false;
 
 
 
@@ -1019,8 +1023,9 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		vector<balldata_t>::iterator bd = history.begin();
 		while (bd != history.end() )
 		{
-			if (CvDist(*bd,*i) <= (*bd).cr+1)
+			if (CvDist(*bd,*i) <= sqrd((*bd).cr))
 			{
+                //cout<<"skip"<<endl;
 				i++;//Skip pixels
 				if (i == cand.end())
 					break;
@@ -1033,8 +1038,44 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 			break;
 		if (!validpixel((*i).x,(*i).y))
 			continue;
-		CvPoint bottom = traceline((*i), cvPoint(0, 1), orange);
 
+		CvPoint bottom = traceline((*i), cvPoint(0, 1), orange);
+		if (!validpixel(bottom.x,bottom.y))
+            continue; //No top pixel :)
+		CvPoint t = traceline((*i), cvPoint(0, -1), orange);
+		if (!validpixel(t.x,t.y))
+            continue; //No top pixel :)
+
+		CvPoint r = traceline(bottom, cvPoint(1, 0), orange);//Prefer  r
+		if (!validpixel(r.x,r.y))
+            r = traceline(bottom, cvPoint(1, -1), orange);
+
+        if (!validpixel(r.x,r.y))// No right pixel available?!?
+            continue;
+        CvPoint l = traceline(bottom, cvPoint(-1, 0), orange);//Prefer top l
+		if (!validpixel(l.x,l.y))
+            l = traceline(bottom, cvPoint(-1, -1), orange);
+
+        if (!validpixel(l.x,l.y))// No left pixel available?!?
+            continue;
+
+        CvPoint2D32f center;
+        //cout<<t.x<<" "<<t.y<<endl;
+        //cout<<l.x<<" "<<l.y<<endl;
+        //cout<<r.x<<" "<<r.y<<endl;
+        if(t.x==l.x||t.x==r.x)
+            continue;
+        float ma=(t.y-r.y)/(t.x-l.x);
+        float mb=(r.y-t.y)/(r.x-t.x);
+        if(mb==ma)
+            continue;
+        center.x= ( ma*mb*(l.y-r.y)+mb*(l.x+t.x)-ma*(t.x+r.x) ) / (2.0*(mb-ma));
+        //cout<<center.x<<endl;
+        //-1*(m_Center.x() - (pt1->x()+pt2->x())/2)/aSlope +  (pt1->y()+pt2->y())/2;
+        center.y=-(center.x -(l.x+t.x)/2)/ma+(l.y+t.y)/2.0;
+        //cout<<center.y<<endl;
+        float radius = CvDist(center,t)-1;
+/*
 		CvPoint top = traceline((*i), cvPoint(0, -1), orange);
 		if (!validpixel(top.x,top.y))
 			continue;
@@ -1091,15 +1132,15 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 			//center.y+=points[i].y;
 		}
 		radius /= points.size();
-		//cout<<radius<<endl;
-		/////cout << "Wtf" << endl;
+*/
+		cout<<radius<<endl;
+		//cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
 		newdata.y = center.y;
 		newdata.cr = radius;
         //Looks like a ball?
-		if(!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
-            continue;
+
 
 		point(0)=center.x;
         point(1)=center.y;
@@ -1127,20 +1168,21 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         config->QueryElement("balltolerance",balltolerance);
         config->QueryElement("ballsize",ballsize);
         newdata.ballradius=rest;
-        cout<<"rest:"<<rest<<endl;
+        //cout<<"rest:"<<rest<<endl;
         if(abs( (rest*2-ballsize)/ballsize)>balltolerance)//Wrong diameter ball
         {
-            Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Error);
+            //Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Error);
             continue;
         }
-
+		if(!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
+            continue;
         measurement d1=kinext.angularDistance(c1,c2,rest);
-        cout<<"angular:"<<d1.mean<<" "<<d1.var<<endl;
+        //cout<<"angular:"<<d1.mean<<" "<<d1.var<<endl;
         measurement2 a=kinext.projectionDistance(c1,rest);
         measurement d2=(*a)[0];
-        cout<<"projection:"<<d2.mean<<" "<<d2.var<<endl;
+        //cout<<"projection:"<<d2.mean<<" "<<d2.var<<endl;
         measurement bearing=(*a)[1];
-        cout<<"proj bearing:"<<bearing.mean<<" "<<bearing.var<<endl;
+        //cout<<"proj bearing:"<<bearing.mean<<" "<<bearing.var<<endl;
         measurement distance;
 
         distance.mean=(d1.mean*d2.var+d2.mean*d1.var)/(d1.var+d2.var);
@@ -1153,6 +1195,8 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         bearing.mean=polar(1);
         newdata.distance=distance;
         newdata.bearing=bearing;
+
+
         history.push_back(newdata);
 
          delete[] a;
@@ -1174,7 +1218,16 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		//cout << best.x << " " << best.y << " "<<best.d<< endl;
 		bd++;
 	}
+/*
+#ifdef DEBUGVISION
+        //KMat::HCoords<float,2> & w=camToRobot(o)
+        cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
+        cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
+
+#endif*/
 	return best;
+
+
 }
 
 CvPoint Vision::traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c)

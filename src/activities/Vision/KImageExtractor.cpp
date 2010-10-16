@@ -186,8 +186,8 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 		img->imageData=NULL;
 		//img->imageData=(char*)malloc(img->imageSize);
 	}
-
-	if (img->imageData!=NULL)
+    img->imageData=(char*) imageIn->getFrame();
+	/*if (img->imageData!=NULL)
 {
 	//free( fIplImageHeader->imageData);
 	memcpy ( img->imageData, (char*) imageIn->getFrame(), size*sizeof(char) );
@@ -196,7 +196,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	{
 		img->imageData = new char[size];
 		memcpy ( img->imageData, (char*) imageIn->getFrame(), size*sizeof(char) );
-	}
+	}*/
 	//fIplImageHeader->imageData = (char*) imageIn->getFrame();
 	//saveIplImage(fIplImageHeader, name, pImageFormat, seconds);
 	// Now that you're done with the (local) image, you have to release it from the V.I.M.
@@ -213,7 +213,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
     const long long microsecsonly=timeStamp-(secsonly*1000000LL);
 //    cout<<"secsonly:"<<secsonly<<endl;
 
-    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)-boost::posix_time::millisec(getExp()/2);
+    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly);//+boost::posix_time::millisec(getExp()/2);
 
 
 };

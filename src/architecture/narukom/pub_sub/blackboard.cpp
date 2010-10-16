@@ -1,5 +1,4 @@
 #include "blackboard.h"
-#include <boost/tuple/tuple.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 using google::protobuf::Message;
 using boost::posix_time::ptime;

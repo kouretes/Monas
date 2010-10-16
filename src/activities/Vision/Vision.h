@@ -121,7 +121,7 @@ private:
     CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
-    bool validpixel(int x,int y);
+    inline bool validpixel(int x,int y);
     KMat::HCoords<float,2>  imageToCamera( const KMat::HCoords<int,2>  & imagep);
     KMat::HCoords<int,2>  cameraToImage( const KMat::HCoords<float,2>  & c);
     //KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);

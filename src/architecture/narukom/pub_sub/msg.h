@@ -37,6 +37,7 @@ struct msgentrytimestampComparator
 {
 
    bool operator()(const msgentry &a,const msgentry &b) {return a.timestamp < b.timestamp;};
+   bool operator()(const msgentry &a, const boost::posix_time::ptime &b) {return a.timestamp < b;};
 };
 
 

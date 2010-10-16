@@ -102,11 +102,12 @@ KSegmentator::colormask_t KSegmentator:: classifyPixel(unsigned char yuv[3])
 		y=y>255?255:y;
 		data[0]=y;
 		data[1]=(yuv[1]-128)*lumascale+128;
-		data[2]=(yuv[2]-128)*lumascale+128;
+        data[2]=(yuv[2]-128)*lumascale+128;
 
 		//data[1]=data[1]>255?255:data[1];
 		//data[2]=data2]>255?255:data[2];
 		//cout<<(int)data[0]<<" ";
+		//return *(ctable+table_subscript((int)yuv[0]>>yres,(int)yuv[1]>>ures,(int)yuv[2]>>vres));
 		return *(ctable+table_subscript((int)data[0]>>yres,(int)data[1]>>ures,(int)data[2]>>vres));
 	}
 	else
