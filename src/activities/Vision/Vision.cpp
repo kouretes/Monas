@@ -5,6 +5,7 @@
 #include "tools/logger.h"
 #include "tools/XMLConfig.h"
 #include "architecture/narukom/pub_sub/filters/special_filters.h"
+#include "tools/toString.h"
 
 #define LONGESTDIST 6.0
 #define COVERDIST 0.03
@@ -265,12 +266,50 @@ void Vision::testrun()
 	//usleep(500);
 	gridScan(orange);
 	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
+	
+	
+	// Beginning of goal detection 
+	
+	gridScanGoals();
+	NamedObject Bluegoal, YellowGoal;
+	NamedObject * goal;
+	
+	double BlueGoalratio = GoalDetection(bgoalpost);
+	//tcout << "Blue goal ratio " << BlueGoalratio << endl;
+	Bluegoal.set_object_name("BlueGoal");
+	Bluegoal.set_bearing(p.yaw  - cx * HFov * TO_RAD);
+
+	double YellowGoalratio = GoalDetection(ygoalpost);
+	//cout << "Yellow goal ratio " << YellowGoalratio << endl;
+	YellowGoal.set_object_name("YellowGoal");
+	YellowGoal.set_bearing(p.yaw  - cx * HFov * TO_RAD);
+	
+	LedValues* l=leds.add_leds();
+	l->set_chain("r_eye");
+	if (YellowGoalratio>0.002 || BlueGoalratio>0.002)
+	{
+		goal=obs.add_regular_objects();
+		if (YellowGoalratio>BlueGoalratio) {
+			l->set_color("red");
+			goal->CopyFrom(YellowGoal);
+		}
+		else{
+			l->set_color("blue");
+			goal->CopyFrom(Bluegoal);
+		}
+		Logger::Instance().WriteMsg("Vision", "Goal "+goal->object_name()+" found at "+_toString(goal->bearing()*(1.0/TO_RAD))+" Ratios: B: "+_toString(BlueGoalratio)+" Y: "+_toString(YellowGoalratio), Logger::Info);
+	}
+	else
+		l->set_color("green");
+
+	// End of goal detection
+
 
 	if(obs.has_ball()||obs.regular_objects_size()>0 || obs.adhoc_objects_size()>0
                    ||obs.corner_objects_size()>0  || obs.intersection_objects_size()>0
                    ||obs.line_objects_size()>0)
         publish(&obs,"vision");
-    LedValues* l=leds.add_leds();
+    l=leds.add_leds();
     if(has_ball != obs.has_ball())
     {
 			has_ball = obs.has_ball();
@@ -656,6 +695,94 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	}/* else {
 		memory->insertData("kouretes/Ball/found", .0f); // change
 	}*/
+}
+void Vision::gridScanGoals()
+{
+	pixelcount = 0;
+	ygoalpost.clear();
+	bgoalpost.clear();
+	CvPoint tmpPoint;
+	static int startx=0;
+	int xstep = 4;
+	int ystep = 5;
+	KSegmentator::colormask_t tempcolor;
+
+	startx++;
+	startx=startx%xstep;
+
+	for (int i = BORDERSKIP+startx; i < rawImage->width-BORDERSKIP-1; i = i + xstep)
+	{
+		for (int j = rawImage->height - BORDERSKIP-1; j> BORDERSKIP; j = j - ystep)
+		{
+			tempcolor = doSeg(i, j);
+			pixelcount++;
+
+			if (tempcolor==yellow)
+			{
+				tmpPoint.x = i;
+				tmpPoint.y = j;
+				ygoalpost.push_back(tmpPoint);
+			}
+			if (tempcolor==skyblue )
+			{
+				tmpPoint.x = i;
+				tmpPoint.y = j;
+				bgoalpost.push_back(tmpPoint);
+			}
+		}
+	}
+}
+
+double Vision::GoalDetection(std::vector<CvPoint> points){
+
+	long x = 0, y = 0;//, xx = 0, yy = 0, xy = 0;
+	//int	size = 0;
+
+	cx = -1.0;
+	cy = -1.0;
+	cxp = -1;
+	cyp = -1;
+
+	int w = 320;
+	int h=240;
+	bool	found = false;
+	orientation = 0.0;
+	elongation = 0.0;
+	ratio = 0.0;
+	//int pixelcount = 320*240;
+	int size = points.size();
+	vector<CvPoint>::iterator i;//candidate iterator
+
+	for (i = points.begin(); i != points.end(); i++)
+    {
+		//x_+(*i).x,
+		//size++;
+		x += (*i).x; //points[];
+		y += (*i).y;//j;
+		//				xx += (*i).x * (*i).x;
+		//				yy += (*i).y * (*i).y;
+		//				xy += (*i).x * (*i).y;
+		//if ((*i).y > hlower)
+			//hlower = (*i).y;
+
+    }
+
+	ratio = ((double) size) / ((double) (pixelcount));
+
+	if (ratio > 0.0) {
+		found = true;
+		cx = 0.5 - ((double) x / ((double) size * (double) w));
+		cy = 0.5 - ((double) y / ((double) size * (double) h));
+		//clower = 0.5 - ((double) hlower / (double) h);
+		cxp = (int) round((double) x / (double) size);
+		cyp = (int) round((double) y / (double) size);
+	}
+	//
+
+
+
+				//(p.yaw - (0.5 - (double) (hpostWidth / 2 + vpostWidth[0][0]) / (double) 320) * HFov * TO_RAD);
+	return ratio;
 }
 
 
