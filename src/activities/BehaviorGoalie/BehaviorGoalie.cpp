@@ -153,7 +153,7 @@ int BehaviorGoalie::Execute() {
 				prevbd=1.5;
 				prevbb=0.0;
 				go=0;
-				littleWalk(0.02,0.0,0.0,1);
+				littleWalk(0.01,0.0,0.0,1);
 			}
 			else if (calibrated == 0) {
 				calibrate();
@@ -211,7 +211,7 @@ int BehaviorGoalie::Execute() {
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
 		
-		if ((obsm != 0) && !turning) {
+		if ((obsm != 0) && (obsm->has_ball()) && !turning) {
 			
 			scanforball = false; //be sure to stop scanning
 			//CalculateBallSpeed();
@@ -278,8 +278,8 @@ int BehaviorGoalie::Execute() {
 						go--;
 					if (go<0)
 						go++;
-					if (fabs(bb) > 5*TO_RAD)
-						theta = 0.5 * gainTheta * bb;
+					if (fabs(bb) > 10*TO_RAD)
+						theta = 0.8 * gainTheta * bb;
 					readytokick = false;
 				}
 				
@@ -308,8 +308,8 @@ int BehaviorGoalie::Execute() {
 
 		Logger::Instance().WriteMsg("BehaviorGoalie", "go: " + _toString(go), Logger::ExtraInfo);
 		/* Ready to take action */
-		if ( abs(go) >= 5 ) {
-			if ( go <= -5 ) 
+		if ( abs(go) >= 4 ) {
+			if ( go <= -4 ) 
 				amot->set_command("LeftDive");
 			else
 				amot->set_command("RightDive");
@@ -319,8 +319,8 @@ int BehaviorGoalie::Execute() {
 			prevbd=1.5;
 			prevbb=0.0;
 		}
-		else if ( (abs(go) >= 3) && (fabs(bb)>15*TO_RAD) && (fabs(bb)<25*TO_RAD) && (bd<0.8) ) {
-			if ( go <= -3 ) 
+		else if ( (abs(go) >= 2) && (fabs(bb)>15*TO_RAD) && (fabs(bb)<25*TO_RAD) && (bd<0.8) ) {
+			if ( go <= -2 ) 
 				amot->set_command("leftFall.kme");
 			else
 				amot->set_command("rightFall.kme");

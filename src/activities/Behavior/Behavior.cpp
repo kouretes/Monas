@@ -109,16 +109,16 @@ int Behavior::MakeTrackBallAction() {
 }
 
 
-void Behavior::mgltest() {
+//void Behavior::mgltest() {
 
-	if (om!=0) {
-		Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
-		if (om->direction() == 0) 
-			velocityWalk(0.0, 0.0, 1.0, 1.0);
-	}
-	else
-		velocityWalk(1.0, 0.0, 0.0, 1.0);
-}
+	//if (om!=0) {
+		//Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
+		//if (om->direction(0) == 0) 
+			//velocityWalk(0.0, 0.0, 1.0, 1.0);
+	//}
+	//else
+		//velocityWalk(1.0, 0.0, 0.0, 1.0);
+//}
 
 int Behavior::Execute() {
 
@@ -127,7 +127,7 @@ int Behavior::Execute() {
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		gameState = gsm->player_state();
-		teamColor = gsm->team_color();
+		//teamColor = gsm->team_color();
 		
 		if (gameState == PLAYER_PLAYING) {
 			if (calibrated == 2) {
@@ -151,6 +151,7 @@ int Behavior::Execute() {
 			play = false;
 			calibrate();
 			kickoff = gsm->kickoff();
+			orientation = 0; 
 		}
 		else if (gameState == PLAYER_FINISHED) {
 			play = false;
@@ -197,60 +198,119 @@ int Behavior::Execute() {
 
 		if ((obsm != 0) && !turning) {
 			
-			scanforball = false; //be sure to stop scanning
-			int side=1;
-			bd = obsm->ball().dist();
-			bb = obsm->ball().bearing();
-			bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
-			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
-			side = (bb > 0) ? 1 : -1;
-			Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
-
-			if (!readytokick) {
-				readytokick = true;
-				double gain = 1.0;
-				if (bd>0.4)
-					gain = 1.5;
-	            double gainTheta = 0.3;
-	            double gainFine = 1.0;
-				if (bd <= 8.0) {
-					float posx=0.17, posy=0.05;
-					if (bd > 0.25) {
-						X = gain * bx;
-						Y = gain * by;
-						if (fabs(bb) > 3*TO_RAD)
-							theta = gainTheta * bb;
-						readytokick = false;
-					} else if (bd > 0.25) {
-						X = gain * (bx - posx);
-						Y = gain * ( by - (side*posy) );
-						readytokick = false;
-					} else {
-						if ( fabs( bx - posx ) > 0.025) {
-							X = gainFine * (bx - posx);
-							readytokick = false;
+			if (obsm->regular_objects_size()>0) {
+				if ( ( (obsm->regular_objects(0).object_name() == "BlueGoal") && (teamColor == TEAM_RED) ) ||
+					 ( (obsm->regular_objects(0).object_name() == "YellowGoal") && (teamColor == TEAM_BLUE) )  ) {
+						double ogb = obsm->regular_objects(0).bearing();
+						if (fabs(ogb)<+45*TO_RAD) {
+							orientation = 0; 
 						}
-						if ( fabs( by - (side*posy) ) > 0.025) {
-							Y = gainFine * ( by - (side*posy) );
-							readytokick = false;
+						else if (ogb>+45*TO_RAD) {
+							orientation = 1;
 						}
-					}
-				}
+						else if (ogb<-45*TO_RAD) {
+							orientation = 3; 
+						}
+					 }
+				
+				if ( ( (obsm->regular_objects(0).object_name() == "YellowGoal") && (teamColor == TEAM_RED) ) ||
+					 ( (obsm->regular_objects(0).object_name() == "BlueGoal") && (teamColor == TEAM_BLUE) )  ) {
+						double mgb = obsm->regular_objects(0).bearing();
+						if (fabs(mgb)<+45*TO_RAD) {
+							orientation = 2; 
+						}
+						else if (mgb>+45*TO_RAD) {
+							orientation = 3;
+						}
+						else if (mgb<-45*TO_RAD) {
+							orientation = 1; 
+						}
+					 }
+				Logger::Instance().WriteMsg("Behavior", "Orientation: " + _toString(orientation) + " Team Color " + _toString(teamColor), Logger::Info);
+			}
+			
+			if (obsm->has_ball()) { 
+				
+				scanforball = false; //be sure to stop scanning
+				int side=1;
+				bd = obsm->ball().dist();
+				bb = obsm->ball().bearing();
+				bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
+				by = obsm->ball().dist() * sin( obsm->ball().bearing() );
+				//side = (bb > 0) ? 1 : -1;
+				if (orientation==1)
+					side = -1;
+				else if (orientation==3)
+					side = +1;
+				else 
+					side = (bb > 0) ? 1 : -1;
+					
+				Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
 	
 				if (!readytokick) {
-					
-					if (fabs(X) > 1.0)
-						X = (X > 0.0) ? 1.0 : -1.0;
-					if (fabs(Y) > 1.0)
-						Y = (Y > 0.0) ? 1.0 : -1.0;
-					if (fabs(theta) > 1.0)
-						theta = (theta > 0.0) ? 1.0 : -1.0;
-					
-					velocityWalk(X, Y, theta, 1.0);
-				}
-				else {
-					velocityWalk(0.0, 0.0, 0.0, 1.0); 
-					return 1;
+					readytokick = true;
+					double gain = 1.0;
+					if (bd>0.4)
+						gain = 1.5;
+		            double gainTheta = 0.3;
+		            double gainFine = 1.0;
+					if (bd <= 8.0) {
+						float posx=0.17, posy=0.05;
+						if (bd > 0.25) {
+							X = gain * bx;
+							Y = gain * by;
+							if (fabs(bb) > 3*TO_RAD)
+								theta = gainTheta * bb;
+							readytokick = false;
+						} else if (bd > 0.25) {
+							X = gain * (bx - posx);
+							Y = gain * ( by - (side*posy) );
+							readytokick = false;
+						} else {
+							if ( fabs( bx - posx ) > 0.025) {
+								X = gainFine * (bx - posx);
+								readytokick = false;
+							}
+							if ( fabs( by - (side*posy) ) > 0.025) {
+								Y = gainFine * ( by - (side*posy) );
+								readytokick = false;
+							}
+						}
+					}
+		
+					if (!readytokick) {
+						
+						if (fabs(X) > 1.0)
+							X = (X > 0.0) ? 1.0 : -1.0;
+						if (fabs(Y) > 1.0)
+							Y = (Y > 0.0) ? 1.0 : -1.0;
+						if (fabs(theta) > 1.0)
+							theta = (theta > 0.0) ? 1.0 : -1.0;
+							
+						if (om!=0) {
+							if (om->direction(1)==1) {
+								X = 0.0;
+							}
+							else if ( (om->direction(0)==1) && (Y>0) ) {
+								Y = 0.0;
+							}
+							else if ( (om->direction(0)==1) && (theta>0) ) {
+								theta = 0.0;
+							}
+							else if ( (om->direction(2)==1) && (Y<0) ) {
+								Y = 0.0; 
+							}
+							else if ( (om->direction(2)==1) && (theta<0) ) {
+								theta = 0.0; 
+							}
+						}
+						
+						velocityWalk(X, Y, theta, 1.0);
+					}
+					else {
+						velocityWalk(0.0, 0.0, 0.0, 1.0); 
+						return 1;
+					}
 				}
 			}
 		}
@@ -258,11 +318,12 @@ int Behavior::Execute() {
 			readytokick = false;
 		}
 
+
 		/* Ready to take action */
 		if (readytokick && !turning) {
 			obstacleFront = false; 
 			if (om!=0) 
-				if (om->direction() == 0) 
+				if (om->direction(1) == 1) 
 					obstacleFront = true; 
 			
 			if ( kickoff ) {
@@ -283,32 +344,68 @@ int Behavior::Execute() {
 				kickoff = false;
 			}
 			else {
-				if (mglRand()<0.6) {
-				//if ( (mglRand()<1.0) && !obstacleFront ) {
+				
+				/* **************** Targetted Kicks ********************** */
+				if (orientation == 0) {
 					if (by > 0.0) 
 						amot->set_command("LeftKick");
 					else 
 						amot->set_command("RightKick");
 				}
-				else if (mglRand()<0.5) {
-					if (by > 0.0) {
-						amot->set_command("HardLeftSideKick");
-						direction = -1;
-					}
-					else {
-						amot->set_command("HardRightSideKick");
-						direction = +1;
-					}
+				else if (orientation == 1) {
+					amot->set_command("HardLeftSideKick");
+					direction = -1;
 				}
-				else {
+				else if (orientation == 3) {
+					amot->set_command("HardRightSideKick");
+					direction = +1;
+				} 
+				else if (orientation == 2) {
 					if (by > 0.0)
 						amot->set_command("LeftBackKick");
 					else 
 						amot->set_command("RightBackKick");
+				} 
+				else {
+					if (by > 0.0) 
+						amot->set_command("SoftLeftSideKick");
+					else 
+						amot->set_command("SoftRightSideKick");
 				}
+				
 				Publisher::publish(amot, "motion");
 				back = 0;
+				/* **************** End of Targetted Kicks ********************** */
+				
+				/* **************** Randomized Kicks ********************** */
+				//if (mglRand()<0.6) {
+				////if ( (mglRand()<1.0) && !obstacleFront ) {
+					//if (by > 0.0) 
+						//amot->set_command("LeftKick");
+					//else 
+						//amot->set_command("RightKick");
+				//}
+				//else if (mglRand()<0.5) {
+					//if (by > 0.0) {
+						//amot->set_command("HardLeftSideKick");
+						//direction = -1;
+					//}
+					//else {
+						//amot->set_command("HardRightSideKick");
+						//direction = +1;
+					//}
+				//}
+				//else {
+					//if (by > 0.0)
+						//amot->set_command("LeftBackKick");
+					//else 
+						//amot->set_command("RightBackKick");
+				//}
+				//Publisher::publish(amot, "motion");
+				//back = 0;
+				/* **************** End of Randomized Kicks ********************** */
 			}
+			
 			readytokick = false;
 			scanforball = true;
 			startscan = true;
@@ -423,7 +520,7 @@ void Behavior::read_messages() {
 	bmsg = _blk->in_msg_nb<BallTrackMessage> ("BallTrackMessage");
 	hjsm = _blk->in_msg_nb<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
 	obsm = _blk->in_msg_nb<ObservationMessage> ("ObservationMessage");
-	om   = _blk->in_msg_nb<ObstacleMessage> ("ObstacleMessage");
+	om   = _blk->in_msg_nb<ObstacleMessageArray> ("ObstacleMessageArray");
 
 	Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 	CalibrateCam *c = _blk->in_msg_nb<CalibrateCam> ("CalibrateCam");

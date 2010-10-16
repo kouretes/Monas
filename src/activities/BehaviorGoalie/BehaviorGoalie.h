@@ -18,7 +18,7 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.40
+#define LIMITUP -0.63
 #define	LIMITDOWN 0.43
 #define	LIMITLEFT 0.30
 #define	LIMITRIGHT -0.30

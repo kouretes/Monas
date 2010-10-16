@@ -17,7 +17,7 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.40
+#define LIMITUP -0.63
 #define	LIMITDOWN 0.43
 #define	LIMITLEFT 0.30
 #define	LIMITRIGHT -0.30
@@ -71,7 +71,7 @@ class Behavior: public IActivity, public Publisher {
 		BallTrackMessage* bmsg;
 		GameStateMessage* gsm;
 		ObservationMessage* obsm;
-		ObstacleMessage* om;
+		ObstacleMessageArray* om;
 		int calibrated;
 		bool play;
 		bool kickoff;
@@ -86,7 +86,7 @@ class Behavior: public IActivity, public Publisher {
 		int gameState;
 		
 		int teamColor; 
-		double orientation; 
+		int orientation; 
 		
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);
