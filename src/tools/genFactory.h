@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include <vector>
 
 #include "tools/errorPolicies.h"
 
@@ -34,6 +35,14 @@ class GenericFactory
             return assoc.eraser(id) == 1;
 
         }
+        
+        std::vector<IdType> GetRegisteredProducts() {
+	    std::vector<IdType> result;
+	    typename Id2TypeMap::const_iterator it;
+	    for (  it = assoc.begin(); it != assoc.end(); it++ )
+		result.push_back(it->first);
+	    return result;
+	}  
 
         Product* CreateObject(const IdType& id ) {
 
