@@ -530,7 +530,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
-	cout << b.x << " " << b.y << " " << b.cr << endl;
+	//cout << b.x << " " << b.y << " " << b.cr << endl;
 #endif
 
 
@@ -1052,7 +1052,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
         if (!validpixel(r.x,r.y))// No right pixel available?!?
             continue;
-        CvPoint l = traceline(bottom, cvPoint(-1, 0), orange);//Prefer top l
+        CvPoint l = traceline(bottom, cvPoint(-1,0), orange);//Prefer  l
 		if (!validpixel(l.x,l.y))
             l = traceline(bottom, cvPoint(-1, -1), orange);
 
@@ -1133,7 +1133,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		}
 		radius /= points.size();
 */
-		cout<<radius<<endl;
+		//cout<<"pixel radius:"<<radius<<endl;
 		//cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
@@ -1168,12 +1168,13 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         config->QueryElement("balltolerance",balltolerance);
         config->QueryElement("ballsize",ballsize);
         newdata.ballradius=rest;
-        //cout<<"rest:"<<rest<<endl;
         if(abs( (rest*2-ballsize)/ballsize)>balltolerance)//Wrong diameter ball
         {
             //Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Error);
             continue;
         }
+        rest=(rest+ballsize/2)/2;
+        //cout<<"rest:"<<rest<<endl;
 		if(!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
             continue;
         measurement d1=kinext.angularDistance(c1,c2,rest);
@@ -1218,13 +1219,13 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		//cout << best.x << " " << best.y << " "<<best.d<< endl;
 		bd++;
 	}
-/*
+
 #ifdef DEBUGVISION
         //KMat::HCoords<float,2> & w=camToRobot(o)
-        cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
-        cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
+        //cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
+        //cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
 
-#endif*/
+#endif
 	return best;
 
 

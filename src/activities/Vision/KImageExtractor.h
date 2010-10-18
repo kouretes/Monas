@@ -62,6 +62,7 @@ class KImageExtractor
 		int resolution;//Current Resolution
 		int cSpace;// Current Colorspace
 		bool doneSubscribe;//Initializations done?
+		float expms;//Local variable to store the result :)
 		Blackboard *_blk;
 
 };
