@@ -24,6 +24,7 @@ Behavior::Behavior() :
 }
 
 void Behavior::UserInit() {
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
 	_com->get_message_queue()->add_publisher(this);
 	_com->get_message_queue()->add_subscriber(_blk);
@@ -567,3 +568,24 @@ void Behavior::calibrate()
 	calibrated = 1;
 }
 
+bool Behavior::readConfiguration(const std::string& file_name) {
+	XMLConfig config(file_name);
+
+	int playernum=-1;
+	if (!config.QueryElement("player", playernum))
+		Logger::Instance().WriteMsg("Behavior", "Configuration file has no player, setting to default value: " + _toString(playernum), Logger::Error);
+
+	//If color is changed default configuration color does need to be changed
+	std::string color = "blue";
+	teamColor =TEAM_BLUE;
+	if (!config.QueryElement("default_team_color", color))
+		Logger::Instance().WriteMsg("Behavior", "Configuration file has no team_color, setting to default value: " + color, Logger::Error);
+	if (color == "blue")
+		teamColor =TEAM_BLUE;
+	else if (color == "red")
+		teamColor = TEAM_RED;
+	else
+		Logger::Instance().WriteMsg("Behavior", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
+
+	return true;
+}

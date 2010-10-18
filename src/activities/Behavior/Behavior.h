@@ -2,7 +2,7 @@
 #define BEHAVIOR_H
 
 #include "architecture/IActivity.h"
-
+#include "architecture/archConfig.h"
 #include "architecture/narukom/pub_sub/publisher.h"
 
 #include "messages/motion.pb.h"
@@ -86,13 +86,14 @@ class Behavior: public IActivity, public Publisher {
 		int gameState;
 		
 		int teamColor; 
+		int playernum;
 		int orientation; 
 		
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);
 		void littleWalk(double x, double y, double th, int s);
 		void calibrate();
-
+		bool readConfiguration(const std::string& file_name);
 };
 
 #endif
