@@ -14,7 +14,7 @@ namespace {
 }
 
 
-MotionController::MotionController() {
+MotionController::MotionController(){
 }
 
 void MotionController::UserInit() {
@@ -38,16 +38,15 @@ void MotionController::UserInit() {
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
-	_com->get_message_queue()->add_subscriber(_blk);
+	//_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("motion", _blk, 0);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	//_com->get_message_queue()->add_publisher(this);
-/*
-	wm = NULL;
-	hm = NULL;
-	am = NULL;
-	im = NULL;*/
 
+	//wm = NULL;
+	//hm = NULL;
+	//am = NULL;
+	//im = NULL;
 
 
 	AccZvalue = 0.0;
@@ -100,18 +99,14 @@ int MotionController::Execute() {
 }
 
 void MotionController::read_messages() {
-	/*if (wm != NULL) delete wm;
-	if (hm != NULL) delete hm;
-	if (am != NULL) delete am;
-	if (im != NULL) delete im;*/
 
-	_blk->process_messages();
 
 	/* Messages for Calibration */
 	hm = _blk->read_signal<MotionHeadMessage>("MotionHeadMessage");
 
 	/* Messages for Walk, Head, Action */
 	wm = _blk->read_signal<MotionWalkMessage>("MotionWalkMessage");
+	//dif (hm == NULL) hm = _blk->in_msg_nb<MotionHeadMessage>("MotionHeadMessage");
 	am = _blk->read_signal<MotionActionMessage>("MotionActionMessage");
 
 	/* Messages for Intertial Readings */
@@ -246,7 +241,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.6;
+				float fractionMaxSpeed = 0.8;
 				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg( "MotionController"," Head ID: "+_toString(headPID),Logger::ExtraInfo);
 			}
@@ -260,7 +255,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.35;
+				float fractionMaxSpeed = 0.6;
 				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " +_toString(headPID),Logger::ExtraInfo);
 			}

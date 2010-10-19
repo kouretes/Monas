@@ -2,6 +2,10 @@
 #define MOTION_CONTROLLER_H
 
 #include "architecture/IActivity.h"
+
+#include "architecture/narukom/pub_sub/publisher.h"
+
+
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 
@@ -17,6 +21,7 @@
 #include "albrokermanager.h"
 #include "altexttospeechproxy.h"
 
+#include "architecture/narukom/pub_sub/filters/type_filter.h"
 #include <string>
 
 #include "ISpecialAction.h"
@@ -40,6 +45,7 @@ private:
 
 	AL::ALPtr<AL::ALProxy> tts;
 	AL::ALPtr<AL::ALMotionProxy> motion;
+	TypeFilter* type_filter;
 
 	bool walkingWithVelocity;
 
@@ -60,10 +66,10 @@ private:
 
 	AL::ALValue names, values;
 
-	boost::shared_ptr<const MotionWalkMessage> wm;
-	boost::shared_ptr<const MotionHeadMessage> hm;
-	boost::shared_ptr<const MotionActionMessage> am;
-	boost::shared_ptr<const InertialSensorsMessage> im;
+	boost::shared_ptr<const  MotionWalkMessage> wm;
+	boost::shared_ptr<const  MotionHeadMessage> hm;
+	boost::shared_ptr<const  MotionActionMessage> am;
+	boost::shared_ptr<const  InertialSensorsMessage> im;
 
 	void commands();
 	void mglrun();

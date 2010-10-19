@@ -212,8 +212,8 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
     const long long secsonly=(timeStamp / 1000000LL);
     const long long microsecsonly=timeStamp-(secsonly*1000000LL);
 //    cout<<"secsonly:"<<secsonly<<endl;
-    //cout<<"exposure:"<<expms<<endl;
-    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)+boost::posix_time::millisec(expms/2);
+
+    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly);//+boost::posix_time::millisec(getExp()/2);
 
 
 };
@@ -235,8 +235,7 @@ IplImage *KImageExtractor::allocateImage()
 	getSizeFromResolution(resolution,width,height);
 	//cout<<"cvCreteImage"<<endl;
 	cout<<width<<" "<<height << " "<< nChannels<<endl;
-	IplImage * res= new IplImage;
-	return cvInitImageHeader(res,cvSize(width,height),IPL_DEPTH_8U,nChannels);
+	return cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,nChannels);
 }
 
 
@@ -443,7 +442,6 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	hmot.set_parameter(1,-0.1);
 	_blk->publish_signal(hmot,"motion");
     _blk->publish_all();
-    getExp();
 	return scale;
 }
 
@@ -463,7 +461,6 @@ int KImageExtractor::swapCamera()
 float KImageExtractor::getExp()
 {
 	int a=c->call<int>( "getParam", kCameraExposureID);
-	expms=a*33.0/510.0;
-	return expms;
+	return a*33.0/510.0;
 }
 
