@@ -7,7 +7,8 @@
 <Dfov>58></Dfov>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.20</balltolerance>
+<balltolerance>0.25</balltolerance>
+<balltolerance>0.25</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.1</skipdistance>
 <seedistance>7</seedistance>
@@ -17,4 +18,4 @@
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>35</sensordelay>
+<sensordelay>25</sensordelay>

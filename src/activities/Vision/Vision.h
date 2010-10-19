@@ -42,7 +42,7 @@ public:
     Vision() ;
 
     void UserInit();
-    void testrun();
+    void fetchandprocess();
     int Execute();
     std::string GetName() {
         return "Vision";
@@ -52,11 +52,14 @@ public:
     {
         CvPoint ll;//Corners
         CvPoint lr;//Corners
+        CvPoint ul;
+        CvPoint ur;
         CvPoint bottom;
         CvPoint top;
         int height;//in pixels
-        float d;//Distance
-        float conf;
+        measurement bearing;
+        measurement distance;
+
     } goalpostdata_t;
 private:
     //bool cvHighgui;//
@@ -118,7 +121,8 @@ private:
     balldata_t locateBall(std::vector<CvPoint> cand);
     void publishObstacles(std::vector<CvPoint> points);
     goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
-    CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
+    //CvPoint sizeTrace(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c);
+    CvPoint traceline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
     inline bool validpixel(int x,int y);
