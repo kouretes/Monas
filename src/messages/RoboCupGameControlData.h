@@ -6,7 +6,7 @@ typedef unsigned int   uint32;
 
 #define GAMECONTROLLER_PORT             3838
 
-#define GAMECONTROLLER_STRUCT_VERSION   7
+#define GAMECONTROLLER_STRUCT_VERSION   7 //Unofficial Version
 
 #define GAMECONTROLLER_STRUCT_HEADER    "RGme"
 
@@ -26,7 +26,7 @@ typedef unsigned int   uint32;
 #define STATE_PLAYING               3
 #define STATE_FINISHED              4
 
-
+//DEPRICATED, THESE ARE NOT INCLUDED ANY MORE
 #define PLAYER_INITIAL               0 
 #define PLAYER_READY                 1 
 #define PLAYER_SET                   2 

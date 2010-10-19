@@ -91,66 +91,19 @@ class GameStateMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
-  // required int32 player = 6 [default = 1];
-  inline bool has_player() const;
-  inline void clear_player();
-  static const int kPlayerFieldNumber = 6;
-  inline ::google::protobuf::int32 player() const;
-  inline void set_player(::google::protobuf::int32 value);
-  
-  // required int32 team_color = 7 [default = 1];
+  // required int32 team_color = 7 [default = -1];
   inline bool has_team_color() const;
   inline void clear_team_color();
   static const int kTeamColorFieldNumber = 7;
   inline ::google::protobuf::int32 team_color() const;
   inline void set_team_color(::google::protobuf::int32 value);
+  
+  // required int32 own_goal_color = 5 [default = -1];
+  inline bool has_own_goal_color() const;
+  inline void clear_own_goal_color();
+  static const int kOwnGoalColorFieldNumber = 5;
+  inline ::google::protobuf::int32 own_goal_color() const;
+  inline void set_own_goal_color(::google::protobuf::int32 value);
   
   // required int32 player_state = 8 [default = 0];
   inline bool has_player_state() const;
@@ -166,12 +119,33 @@ class GameStateMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 game_state() const;
   inline void set_game_state(::google::protobuf::int32 value);
   
+  // required int32 sec_game_state = 10 [default = 0];
+  inline bool has_sec_game_state() const;
+  inline void clear_sec_game_state();
+  static const int kSecGameStateFieldNumber = 10;
+  inline ::google::protobuf::int32 sec_game_state() const;
+  inline void set_sec_game_state(::google::protobuf::int32 value);
+  
   // required bool penalized = 11 [default = false];
   inline bool has_penalized() const;
   inline void clear_penalized();
   static const int kPenalizedFieldNumber = 11;
   inline bool penalized() const;
   inline void set_penalized(bool value);
+  
+  // required bool firstHalf = 3 [default = true];
+  inline bool has_firsthalf() const;
+  inline void clear_firsthalf();
+  static const int kFirstHalfFieldNumber = 3;
+  inline bool firsthalf() const;
+  inline void set_firsthalf(bool value);
+  
+  // required int32 penalty = 13 [default = 0];
+  inline bool has_penalty() const;
+  inline void clear_penalty();
+  static const int kPenaltyFieldNumber = 13;
+  inline ::google::protobuf::int32 penalty() const;
+  inline void set_penalty(::google::protobuf::int32 value);
   
   // required bool kickoff = 12 [default = true];
   inline bool has_kickoff() const;
@@ -180,26 +154,36 @@ class GameStateMessage : public ::google::protobuf::Message {
   inline bool kickoff() const;
   inline void set_kickoff(bool value);
   
+  // required int32 our_score = 14 [default = 0];
+  inline bool has_our_score() const;
+  inline void clear_our_score();
+  static const int kOurScoreFieldNumber = 14;
+  inline ::google::protobuf::int32 our_score() const;
+  inline void set_our_score(::google::protobuf::int32 value);
+  
+  // required int32 otherteam_score = 15 [default = 0];
+  inline bool has_otherteam_score() const;
+  inline void clear_otherteam_score();
+  static const int kOtherteamScoreFieldNumber = 15;
+  inline ::google::protobuf::int32 otherteam_score() const;
+  inline void set_otherteam_score(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:GameStateMessage)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
-  ::google::protobuf::int32 player_;
   ::google::protobuf::int32 team_color_;
+  ::google::protobuf::int32 own_goal_color_;
   ::google::protobuf::int32 player_state_;
   ::google::protobuf::int32 game_state_;
+  ::google::protobuf::int32 sec_game_state_;
   bool penalized_;
+  bool firsthalf_;
+  ::google::protobuf::int32 penalty_;
   bool kickoff_;
+  ::google::protobuf::int32 our_score_;
+  ::google::protobuf::int32 otherteam_score_;
   friend void  protobuf_AddDesc_Gamecontroller_2eproto();
   friend void protobuf_AssignDesc_Gamecontroller_2eproto();
   friend void protobuf_ShutdownFile_Gamecontroller_2eproto();
@@ -381,53 +365,6 @@ class LedChangeMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
   // repeated .LedValues leds = 6;
   inline int leds_size() const;
   inline void clear_leds();
@@ -445,21 +382,12 @@ class LedChangeMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::RepeatedPtrField< ::LedValues > leds_;
   friend void  protobuf_AddDesc_Gamecontroller_2eproto();
   friend void protobuf_AssignDesc_Gamecontroller_2eproto();
   friend void protobuf_ShutdownFile_Gamecontroller_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -531,7 +459,7 @@ class ConfigMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required int32 team_number = 1 [default = 1];
+  // required int32 team_number = 1 [default = 9];
   inline bool has_team_number() const;
   inline void clear_team_number();
   static const int kTeamNumberFieldNumber = 1;
@@ -545,14 +473,14 @@ class ConfigMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 player_number() const;
   inline void set_player_number(::google::protobuf::int32 value);
   
-  // required int32 color = 4 [default = 0];
-  inline bool has_color() const;
-  inline void clear_color();
-  static const int kColorFieldNumber = 4;
-  inline ::google::protobuf::int32 color() const;
-  inline void set_color(::google::protobuf::int32 value);
+  // required int32 default_color = 4 [default = 0];
+  inline bool has_default_color() const;
+  inline void clear_default_color();
+  static const int kDefaultColorFieldNumber = 4;
+  inline ::google::protobuf::int32 default_color() const;
+  inline void set_default_color(::google::protobuf::int32 value);
   
-  // required int32 port = 3 [default = 6000];
+  // required int32 port = 3 [default = 3838];
   inline bool has_port() const;
   inline void clear_port();
   static const int kPortFieldNumber = 3;
@@ -566,7 +494,7 @@ class ConfigMessage : public ::google::protobuf::Message {
   
   ::google::protobuf::int32 team_number_;
   ::google::protobuf::int32 player_number_;
-  ::google::protobuf::int32 color_;
+  ::google::protobuf::int32 default_color_;
   ::google::protobuf::int32 port_;
   friend void  protobuf_AddDesc_Gamecontroller_2eproto();
   friend void protobuf_AssignDesc_Gamecontroller_2eproto();
@@ -595,284 +523,180 @@ class ConfigMessage : public ::google::protobuf::Message {
 
 // GameStateMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool GameStateMessage::has_host() const {
+// required int32 team_color = 7 [default = -1];
+inline bool GameStateMessage::has_team_color() const {
   return _has_bit(0);
 }
-inline void GameStateMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& GameStateMessage::host() const {
-  return *host_;
-}
-inline void GameStateMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void GameStateMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void GameStateMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* GameStateMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool GameStateMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void GameStateMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& GameStateMessage::publisher() const {
-  return *publisher_;
-}
-inline void GameStateMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void GameStateMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void GameStateMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* GameStateMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool GameStateMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void GameStateMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& GameStateMessage::topic() const {
-  return *topic_;
-}
-inline void GameStateMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void GameStateMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void GameStateMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* GameStateMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool GameStateMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void GameStateMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 GameStateMessage::timeout() const {
-  return timeout_;
-}
-inline void GameStateMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool GameStateMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void GameStateMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& GameStateMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void GameStateMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void GameStateMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void GameStateMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* GameStateMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
-// required int32 player = 6 [default = 1];
-inline bool GameStateMessage::has_player() const {
-  return _has_bit(5);
-}
-inline void GameStateMessage::clear_player() {
-  player_ = 1;
-  _clear_bit(5);
-}
-inline ::google::protobuf::int32 GameStateMessage::player() const {
-  return player_;
-}
-inline void GameStateMessage::set_player(::google::protobuf::int32 value) {
-  _set_bit(5);
-  player_ = value;
-}
-
-// required int32 team_color = 7 [default = 1];
-inline bool GameStateMessage::has_team_color() const {
-  return _has_bit(6);
-}
 inline void GameStateMessage::clear_team_color() {
-  team_color_ = 1;
-  _clear_bit(6);
+  team_color_ = -1;
+  _clear_bit(0);
 }
 inline ::google::protobuf::int32 GameStateMessage::team_color() const {
   return team_color_;
 }
 inline void GameStateMessage::set_team_color(::google::protobuf::int32 value) {
-  _set_bit(6);
+  _set_bit(0);
   team_color_ = value;
+}
+
+// required int32 own_goal_color = 5 [default = -1];
+inline bool GameStateMessage::has_own_goal_color() const {
+  return _has_bit(1);
+}
+inline void GameStateMessage::clear_own_goal_color() {
+  own_goal_color_ = -1;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 GameStateMessage::own_goal_color() const {
+  return own_goal_color_;
+}
+inline void GameStateMessage::set_own_goal_color(::google::protobuf::int32 value) {
+  _set_bit(1);
+  own_goal_color_ = value;
 }
 
 // required int32 player_state = 8 [default = 0];
 inline bool GameStateMessage::has_player_state() const {
-  return _has_bit(7);
+  return _has_bit(2);
 }
 inline void GameStateMessage::clear_player_state() {
   player_state_ = 0;
-  _clear_bit(7);
+  _clear_bit(2);
 }
 inline ::google::protobuf::int32 GameStateMessage::player_state() const {
   return player_state_;
 }
 inline void GameStateMessage::set_player_state(::google::protobuf::int32 value) {
-  _set_bit(7);
+  _set_bit(2);
   player_state_ = value;
 }
 
 // required int32 game_state = 9 [default = 0];
 inline bool GameStateMessage::has_game_state() const {
-  return _has_bit(8);
+  return _has_bit(3);
 }
 inline void GameStateMessage::clear_game_state() {
   game_state_ = 0;
-  _clear_bit(8);
+  _clear_bit(3);
 }
 inline ::google::protobuf::int32 GameStateMessage::game_state() const {
   return game_state_;
 }
 inline void GameStateMessage::set_game_state(::google::protobuf::int32 value) {
-  _set_bit(8);
+  _set_bit(3);
   game_state_ = value;
+}
+
+// required int32 sec_game_state = 10 [default = 0];
+inline bool GameStateMessage::has_sec_game_state() const {
+  return _has_bit(4);
+}
+inline void GameStateMessage::clear_sec_game_state() {
+  sec_game_state_ = 0;
+  _clear_bit(4);
+}
+inline ::google::protobuf::int32 GameStateMessage::sec_game_state() const {
+  return sec_game_state_;
+}
+inline void GameStateMessage::set_sec_game_state(::google::protobuf::int32 value) {
+  _set_bit(4);
+  sec_game_state_ = value;
 }
 
 // required bool penalized = 11 [default = false];
 inline bool GameStateMessage::has_penalized() const {
-  return _has_bit(9);
+  return _has_bit(5);
 }
 inline void GameStateMessage::clear_penalized() {
   penalized_ = false;
-  _clear_bit(9);
+  _clear_bit(5);
 }
 inline bool GameStateMessage::penalized() const {
   return penalized_;
 }
 inline void GameStateMessage::set_penalized(bool value) {
-  _set_bit(9);
+  _set_bit(5);
   penalized_ = value;
+}
+
+// required bool firstHalf = 3 [default = true];
+inline bool GameStateMessage::has_firsthalf() const {
+  return _has_bit(6);
+}
+inline void GameStateMessage::clear_firsthalf() {
+  firsthalf_ = true;
+  _clear_bit(6);
+}
+inline bool GameStateMessage::firsthalf() const {
+  return firsthalf_;
+}
+inline void GameStateMessage::set_firsthalf(bool value) {
+  _set_bit(6);
+  firsthalf_ = value;
+}
+
+// required int32 penalty = 13 [default = 0];
+inline bool GameStateMessage::has_penalty() const {
+  return _has_bit(7);
+}
+inline void GameStateMessage::clear_penalty() {
+  penalty_ = 0;
+  _clear_bit(7);
+}
+inline ::google::protobuf::int32 GameStateMessage::penalty() const {
+  return penalty_;
+}
+inline void GameStateMessage::set_penalty(::google::protobuf::int32 value) {
+  _set_bit(7);
+  penalty_ = value;
 }
 
 // required bool kickoff = 12 [default = true];
 inline bool GameStateMessage::has_kickoff() const {
-  return _has_bit(10);
+  return _has_bit(8);
 }
 inline void GameStateMessage::clear_kickoff() {
   kickoff_ = true;
-  _clear_bit(10);
+  _clear_bit(8);
 }
 inline bool GameStateMessage::kickoff() const {
   return kickoff_;
 }
 inline void GameStateMessage::set_kickoff(bool value) {
-  _set_bit(10);
+  _set_bit(8);
   kickoff_ = value;
+}
+
+// required int32 our_score = 14 [default = 0];
+inline bool GameStateMessage::has_our_score() const {
+  return _has_bit(9);
+}
+inline void GameStateMessage::clear_our_score() {
+  our_score_ = 0;
+  _clear_bit(9);
+}
+inline ::google::protobuf::int32 GameStateMessage::our_score() const {
+  return our_score_;
+}
+inline void GameStateMessage::set_our_score(::google::protobuf::int32 value) {
+  _set_bit(9);
+  our_score_ = value;
+}
+
+// required int32 otherteam_score = 15 [default = 0];
+inline bool GameStateMessage::has_otherteam_score() const {
+  return _has_bit(10);
+}
+inline void GameStateMessage::clear_otherteam_score() {
+  otherteam_score_ = 0;
+  _clear_bit(10);
+}
+inline ::google::protobuf::int32 GameStateMessage::otherteam_score() const {
+  return otherteam_score_;
+}
+inline void GameStateMessage::set_otherteam_score(::google::protobuf::int32 value) {
+  _set_bit(10);
+  otherteam_score_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -967,190 +791,6 @@ inline ::std::string* LedValues::mutable_color() {
 
 // LedChangeMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool LedChangeMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void LedChangeMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& LedChangeMessage::host() const {
-  return *host_;
-}
-inline void LedChangeMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void LedChangeMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void LedChangeMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* LedChangeMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool LedChangeMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void LedChangeMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& LedChangeMessage::publisher() const {
-  return *publisher_;
-}
-inline void LedChangeMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void LedChangeMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void LedChangeMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* LedChangeMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool LedChangeMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void LedChangeMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& LedChangeMessage::topic() const {
-  return *topic_;
-}
-inline void LedChangeMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void LedChangeMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void LedChangeMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* LedChangeMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool LedChangeMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void LedChangeMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 LedChangeMessage::timeout() const {
-  return timeout_;
-}
-inline void LedChangeMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool LedChangeMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void LedChangeMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& LedChangeMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void LedChangeMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void LedChangeMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void LedChangeMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* LedChangeMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
 // repeated .LedValues leds = 6;
 inline int LedChangeMessage::leds_size() const {
   return leds_.size();
@@ -1180,12 +820,12 @@ LedChangeMessage::mutable_leds() {
 
 // ConfigMessage
 
-// required int32 team_number = 1 [default = 1];
+// required int32 team_number = 1 [default = 9];
 inline bool ConfigMessage::has_team_number() const {
   return _has_bit(0);
 }
 inline void ConfigMessage::clear_team_number() {
-  team_number_ = 1;
+  team_number_ = 9;
   _clear_bit(0);
 }
 inline ::google::protobuf::int32 ConfigMessage::team_number() const {
@@ -1212,28 +852,28 @@ inline void ConfigMessage::set_player_number(::google::protobuf::int32 value) {
   player_number_ = value;
 }
 
-// required int32 color = 4 [default = 0];
-inline bool ConfigMessage::has_color() const {
+// required int32 default_color = 4 [default = 0];
+inline bool ConfigMessage::has_default_color() const {
   return _has_bit(2);
 }
-inline void ConfigMessage::clear_color() {
-  color_ = 0;
+inline void ConfigMessage::clear_default_color() {
+  default_color_ = 0;
   _clear_bit(2);
 }
-inline ::google::protobuf::int32 ConfigMessage::color() const {
-  return color_;
+inline ::google::protobuf::int32 ConfigMessage::default_color() const {
+  return default_color_;
 }
-inline void ConfigMessage::set_color(::google::protobuf::int32 value) {
+inline void ConfigMessage::set_default_color(::google::protobuf::int32 value) {
   _set_bit(2);
-  color_ = value;
+  default_color_ = value;
 }
 
-// required int32 port = 3 [default = 6000];
+// required int32 port = 3 [default = 3838];
 inline bool ConfigMessage::has_port() const {
   return _has_bit(3);
 }
 inline void ConfigMessage::clear_port() {
-  port_ = 6000;
+  port_ = 3838;
   _clear_bit(3);
 }
 inline ::google::protobuf::int32 ConfigMessage::port() const {

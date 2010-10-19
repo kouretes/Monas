@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import sys, os, time
-import re;
+import re, socket;
 from subprocess import Popen, list2cmdline
+
+
 
 def exec_commands(cmds):
     ''' Exec commands in parallel in multiple process
@@ -86,21 +88,57 @@ if len(sys.argv) < 2 :
 		"""
 	exit(1)
 
-robotsIP = sys.argv[1:len(sys.argv)]
+robotsIP = sys.argv[2:len(sys.argv)]
+input_command = sys.argv[1]
 
 for ip in robotsIP:
-		if(not is_valid_ipv4(ip)):
-			print "Ip address " + ip + " is not valid "
-			exit(-1)
-		else:
-			print "info:  Ip addresses are valid, don't know if reachable "
+	if(not is_valid_ipv4(ip)):
+		print "Ip address " + ip + " is not valid "
+		exit(-1)
+	else:
+		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		timeouttime= 2
+		sock.settimeout(timeouttime)
+		reachable = True
+		try:
+			print "Trying to connect to " + ip
+			sock.connect((ip, 22))
+		except socket.error, msg:
 
+			print '\033[1;31m Waited ' + str(timeouttime) +  ' second Robot with ip ' + ip + ' unreachable \033[1;m'
+			reachable = False
+		sock.close()
+
+		if(reachable):
+			print "\033[1;32m Robot " + ip + " reachable\033[1;m (ssh ok)"
+
+#Check the command!
+if(input_command=="start" or input_command=="stop" or input_command=="restart" ):
+	final_command = '/etc/init.d/naoqi ' + input_command
+elif(input_command == "shutdown"):
+	final_command = 'shutdown -r -n now'
+elif(input_command == "dance"):
+	final_command = './BillyJean/start_local_billyjean.py'
+elif(input_command == "dance_stop"):
+	final_command = './BillyJean/stop_all_local_behaviors.py'
+elif(input_command == "stiffnesson"):
+	final_command = './BillyJean/stiffnesson.py'
+elif(input_command == "stiffnessoff"):
+	final_command = './BillyJean/stiffnessoff.py'
+else:
+  #print "Wrong command " + input_command
+  final_command = input_command
+  #exit(0)
+
+print "Ready to execute "+ final_command
 
 commands = [];
 for	ip in robotsIP:
-	print "Restarting naoqi "
-	nao_start_stop_cmd = 'nao@'+ip + " ' /etc/init.d/naoqi restart ' "
+
+
+	#print "Restarting naoqi "
+	#nao_start_stop_cmd = 'nao@'+ip +" /etc/init.d/naoqi restart "
 	#os.system(nao_start_stop_cmd)
-	commands.append(['ssh', nao_start_stop_cmd])
+	commands.append(['ssh', 'nao@'+ip, final_command])
 
 exec_commands(commands)

@@ -2,7 +2,7 @@
 <!-- team_number -->
 <team_number>9</team_number>
 <!-- player number -->
-<team_color>blue</team_color>
+<default_team_color>blue</default_team_color>
 <!-- gamecontroller port>
 <gm_port>3838</gm_port>-->
 <player>1</player>
