@@ -1,163 +1,219 @@
 #include "LedHandler.h"
+#include "messages/Gamecontroller.pb.h"
+#include <iostream>
 #include "hal/robot/generic_nao/kAlBroker.h"
 using std::cout;
 using std::endl;
 using std::string;
 namespace {
-	ActivityRegistrar<LedHandler>::Type temp("LedHandler");
+ActivityRegistrar<LedHandler>::Type temp("LedHandler");
 }
 
-int LedHandler::Execute() {
+int LedHandler::Execute()
+{
 	static bool firstRun = true;
 
-	if (firstRun) {
-		leds->callVoid<string, int, float> ("fadeRGB", "AllLeds", colors["off"], 0.0);
+	if(firstRun)
+	{
+		leds->callVoid<string,int,float>("fadeRGB","AllLeds",colors["off"],0.001);
 		firstRun = false;
 	}
-	process_messages();
+//     cout << "LedHandler run " << endl;
+    process_messages();
+    return 0;
+}
+void LedHandler::process_messages()
+{
 
-	if (led_change != 0) {
-		for (int i = 0; i < led_change->leds_size(); i++) {
-			setLed(led_change->leds(i).chain(), led_change->leds(i).color());
+
+
+    boost::shared_ptr<const LedChangeMessage> led_change=_blk->read_signal<LedChangeMessage>("LedChangeMessage");
+    if(led_change==NULL)
+        return;
+    for (int i = 0; i < led_change->leds_size(); i++)
+    {
+    // 						cout << "In for " << i << " " << led_change->leds_size() <<  endl;
+    // 						/*` << led_change->leds(i).chain()<< "   " << led_change->leds(i).color() << endl;
+            setLed(led_change->leds(i).chain(),led_change->leds(i).color());
+
+    }
+    /*
+
+    for(;it!=msg.end();++it)
+    {
+
+        if ((*it)->get_type() != "LedChangeMessage")
+        {
+//             cout << "not led" << endl;
+            delete *it;
+            continue;
+        }
+// 				cout << cur << endl;
+        led_change =  _blk->extract_result_from_tuple<LedChangeMessage>(**it);
+        if(led_change != 0)
+        {
+            for (int i = 0; i < led_change->leds_size(); i++)
+            {
+// 						cout << "In for " << i << " " << led_change->leds_size() <<  endl;
+// 						/*` << led_change->leds(i).chain()<< "   " << led_change->leds(i).color() << endl;
+                    setLed(led_change->leds(i).chain(),led_change->leds(i).color());
+
+            }
+        }
+        delete *it;
+
+
+
+    }*/
+}
+
+void LedHandler::UserInit()
+{
+//      tm = new TimeFilter("periodic_filter",1);
+    _com->get_message_queue()->subscribe("communication",_blk,0);
+    try {
+
+        cout << "trying to get ALLeds Proxy "  << endl;;//<< KAlBroker::Instance()->GetBroker() << endl;
+        leds =  KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
+         cout << "Initialized" << endl;
+
 		}
-	}
-	return 0;
+    catch (AL::ALError& e)
+    {
+        cout << "Could not create DCM or ALLEds Proxy" << endl;
+
+    }
+//     cout << "LedHandler " << " init before " << endl;
+    initializeColorMap();
+//     cout << " Leaving Constructor" << endl;
 }
 
-void LedHandler::process_messages() {
-	_blk->process_messages();
 
-	if (led_change != 0)
-		delete led_change;
 
-	led_change = _blk->in_msg_nb<LedChangeMessage> ("LedChangeMessage");
+LedHandler::LedHandler(): Publisher("LedHandler")
+{
+
+//     cout << "LedHandler " << " Constructor" << endl;
 }
 
-void LedHandler::UserInit() {
-	led_change = 0;
+void LedHandler::setLed(const std::string& device, const std::string& color)
+{
+// 		cout << "Set " << device <<" to " << color << endl;
+    if (device.compare("chest") == 0)
+    {
 
-	_com->get_message_queue()->add_subscriber(_blk);
-	_com->get_message_queue()->subscribe("communication", _blk, 0);
-	try {
+        setDcmChestColor(color);
+        return ;
+    }
+    if (device.compare("l_foot") == 0)
+    {
 
-		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
+        setDcmFootColor(device,color); //cout << "SETTING " + device + " " + color<<endl;
+        return;
+    }
+    if (device.compare("r_foot") == 0)
+    {
 
-	} catch (AL::ALError& e) {
-		Logger::Instance().WriteMsg("LedHandler", "Could not create ALLEds Proxy", Logger::FatalError);
-	}
-	initializeColorMap();
-
-	setChestColor("on");
-	setFootColor("r_foot", "on");
-	setFootColor("l_foot", "on");
-
-	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
+        setDcmFootColor(device,color);//cout << "SETTING " + device + " " + color<<endl;
+        return;
+    }
+    if ((device.compare("r_ear") == 0) || (device.compare("l_ear") == 0))
+    {
+        setDcmEarColor(device,color);
+        return;
+    }
+    if ((device.compare("r_eye") == 0) || (device.compare("l_eye") == 0 ))
+    {
+// 			cout << "EYYYYYYYYYYYYYEEEEEEEEEEEEEEe " << endl;
+        setDcmEyeColor(device,color);
+    }
 }
 
-LedHandler::LedHandler() {
-
+void LedHandler::setDcmChestColor(const string& color)
+{
+    // cout << "chest to " << colors[color] << endl;
+    leds->callVoid<string,int,float>("fadeRGB","ChestLeds",colors[color],0.01);
 }
 
-void LedHandler::setLed(const std::string& device, const std::string& color) {
-	if (device.compare("chest") == 0) {
-		setChestColor(color);
-		return;
-	}
-	if (device.compare("l_foot") == 0) {
-		setFootColor(device, color);
-		return;
-	}
-	if (device.compare("r_foot") == 0) {
-		setFootColor(device, color);
-		return;
-	}
-	if ((device.compare("r_ear") == 0) || (device.compare("l_ear") == 0)) {
-		setIndividualEarColor(device, color);
-		return;
-	}
-	if ((device.compare("r_eye") == 0) || (device.compare("l_eye") == 0)) {
-		setIndividualEyeColor(device, color);
-		return;
-	}
-	if (device.compare("eyes") == 0) {
-		setEyesColor(color);
-		return;
-	}
-	if (device.compare("ears") == 0) {
-		setEarsColor(color);
-		return;
-	}
+
+void LedHandler::setDcmFootColor(const string& device , const string& color)
+{
+
+//     cout << device << " " << colors[color] << endl;
+// 		std::cout << "Foot COLOR:  " << color  <<endl;
+// 		std::cout << "Foot COLOR:  " << device[0] << endl;
+		if (device.find("l") != device.npos)
+		{
+			leds->callVoid<string,int,float>("fadeRGB","LeftFootLeds",colors[color],0.01);
+		}
+    else
+		{
+        leds->callVoid<string,int,float>("fadeRGB","RightFootLeds",colors[color],0.01);
+		}
+// 		cout << "Change color " << endl;
 }
 
-void LedHandler::setChestColor(const string& color) {
-	leds->callVoid<string, int, float> ("fadeRGB", "ChestLeds", colors[color], 0.0);
+void LedHandler::setDcmEyeColor(const string& device ,const string& color)
+{
+//     std::cout << "Eye COLOR:  " << color << endl;
+    if (device.find("l") != device.npos)
+    {
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsLeftExternal",colors[color],0.01);
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsLeftInternal",colors[color],0.01);
+
+    }
+    else
+    {
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsRightExternal",colors[color],0.01);
+        leds->callVoid<string,int,float>("fadeRGB","FaceLedsRightInternal",colors[color],0.01);
+    }
 }
 
-void LedHandler::setFootColor(const string& device, const string& color) {
-	if (device.find("l") != device.npos) {
-		leds->callVoid<string, int, float> ("fadeRGB", "LeftFootLeds", colors[color], 0.0);
-	} else {
-		leds->callVoid<string, int, float> ("fadeRGB", "RightFootLeds", colors[color], 0.0);
-	}
+void LedHandler::setDcmIndividualEyeColor(const string& device,const string& color)
+{
+    return;
+}
+void LedHandler::setDcmEarColor(const string& device,const string& color)
+{
+    //std::cout << "Ear COLOR:  " << color << endl;
+    if ( color.compare("off") != 0 && color.compare("blue") != 0)
+    {
+        //cout << "Invalid color for Ears \n Please use only blue and off" << endl;
+        return;
+    }
+    if (device.find("l") != device.npos)
+        leds->callVoid<string,int,float>("fadeRGB","LeftEarLeds",colors[color.c_str()],0.01);
+    else
+        leds->callVoid<string,int,float>("fadeRGB","RightEarLeds",colors[color.c_str()],0.01);
 }
 
-void LedHandler::setEyesColor(const string& color) {
-	leds->callVoid<string, int, float> ("fadeRGB", "FaceLeds", colors[color], 0.0);
+void LedHandler::setDcmIndividualEarColor(const string& device,const string& color)
+{
+    return;
 }
 
-void LedHandler::setIndividualEyeColor(const string& device, const string& color) {
-	if (device.find("l") != device.npos) {
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsLeftExternal", colors[color], 0.0);
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsLeftInternal", colors[color], 0.0);
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsLeftBottom", colors[color], 0.0);
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsLeftTop", colors[color], 0.0);
+void LedHandler::initializeColorMap()
+{
+    //add off to color map
+    colors["off"] = 0x00000000;
+    //add on = white to color map
+    colors["on"] = 0x00FFFFFF   ;
+    //add red to color map
+    colors["red"] = 0x00FF0000;
+    //add green to color map
+    colors["green"] = 0x0000FF00;
+    //add blue to color map
+    colors["blue"] = 0x000000FF;
+    //add yellow to color map
+    colors["yellow"] = 0x00FFF52C;
 
-	} else {
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsRightExternal", colors[color], 0.0);
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsRightInternal", colors[color], 0.0);
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsRightBottom", colors[color], 0.0);
-		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsRightTop", colors[color], 0.0);
-	}
 
-}
-void LedHandler::setEarsColor(const string& color) {
-
-	if (color.compare("off") != 0 && color.compare("blue") != 0) {
-		return;
-	}
-	leds->callVoid<string, int, float> ("fadeRGB", "EarLeds", colors[color.c_str()], 0.0);
-}
-
-void LedHandler::setIndividualEarColor(const string& device, const string& color) {
-	if (color.compare("off") != 0 && color.compare("blue") != 0) {
-		//cout << "Invalid color for Ears \n Please use only blue and off" << endl;
-		return;
-	}
-	if (device.find("l") != device.npos)
-		leds->callVoid<string, int, float> ("fadeRGB", "LeftEarLeds", colors[color.c_str()], 0.0);
-	else
-		leds->callVoid<string, int, float> ("fadeRGB", "RightEarLeds", colors[color.c_str()], 0.0);
-}
-
-void LedHandler::initializeColorMap() {
-	//add off to color map
-	colors["off"] = 0x00000000;
-	//add on = white to color map
-	colors["on"] = 0x00FFFFFF;
-	//add red to color map
-	colors["red"] = 0x00FF0000;
-	//add green to color map
-	colors["green"] = 0x0000FF00;
-	//add blue to color map
-	colors["blue"] = 0x000000FF;
-	//add yellow to color map
-	colors["yellow"] = 0x00FFE000;//FFF52C;
-
-	//add orange to color map
-	colors["orange"] = 0x00FFFF00;
-	colors["purple"] = 0x00FF00FF;
+    //add orange to color map
+    colors["orange"] = 0x00FFFF00;
+    colors["purple"] = 0x00FF00FF;
 
 }
-int LedHandler::getColor(string color) {
-	return colors[color];
+int LedHandler::getColor(string color)
+{
+    return colors[color];
 }
