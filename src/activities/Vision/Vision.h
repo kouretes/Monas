@@ -133,11 +133,6 @@ private:
     KMat::HCoords<float,2>  camToRobot(KMat::HCoords<float ,2> & t);
     TypeFilter* type_filter;
     void cvShowSegmented();
-
-    unsigned int cxp, cyp, size, hlower, pixelcount;
-    double cx, cy, clower, ratio, orientation, elongation;
-    void gridScanGoals();
-    double GoalDetection(std::vector<CvPoint> points);
 };
 
 #endif
