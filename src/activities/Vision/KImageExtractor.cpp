@@ -144,7 +144,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 		img->imageData = new char[img->imageSize];
 		memcpy(img->imageData, (char*) (results[6].GetBinary()), results[6].getSize() * sizeof(char));
 	}
-	return s;s
+	return s;
 };
 
 #else
