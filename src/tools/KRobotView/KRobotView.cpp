@@ -162,13 +162,13 @@ int Displayimage(const char * dataPointer, int width, int height, int type) {
 
 	cvShowImage("Image", rgb);
 
-	char c = cvWaitKey(10);
+	char c = cvWaitKey(25);
 	keypressed = c;
 
 	if ((char) c == 27) {
 
 		cvDestroyAllWindows();
-		exit(0);
+		//exit(0);
 	}
 	switch ((char) c) {
 	case 'c':
@@ -277,7 +277,7 @@ int receive_and_send_loop( TCPSocket *sock) {
 	int headersize = maxheadersize;
 	int alreadyparsedbytes = 0;
 
-	char * data = new char[253604];
+	char * data = new char[953604];
 
 	int count = 0;
 	while (true) {

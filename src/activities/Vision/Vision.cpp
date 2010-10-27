@@ -10,11 +10,11 @@
 #include "messages/motion.pb.h"
 //#define LONGESTDIST 6.0
 //#define COVERDIST 0.03
-#define TRACESKIP 4
-#define GLOBALTRACESKIP 12
+#define TRACESKIP 3
+#define GLOBALTRACESKIP 9
 //x COVERDIST=15*0.05m
 #define SCANSKIP  4
-#define SPARSENESS 4
+#define SPARSENESS 3
 #define TO_RAD 0.01745329f
 
 
@@ -73,7 +73,7 @@ struct inttracer_s{
         };
         e=0;
     };
-    void setScale(int scale) { s=s*scale;c=c*scale;};
+    void setScale(int scale) { s=(s<0?-1:1)*scale;c=(c<0?-1:1)*scale;};
     void step()
     {
         e+=i;
@@ -174,7 +174,7 @@ int  Vision::Execute()
             CalibrateCam res;
             Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
 
-            float scale= ext.calibrateCamera(cal->sleeptime());
+            float scale= ext.calibrateCamera(cal->sleeptime(),cal->exp());
             segbottom->setLumaScale(1/scale);
             segtop->setLumaScale(1/scale);
             Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
@@ -211,44 +211,49 @@ void Vision::recv_and_send()
 		size = 200; //////////#################################################################
 
 		incommingheader.Clear();
-		cout << "Waiting for " << size << " Bytes " << endl;
+		//cout << "Waiting for " << size << " Bytes " << endl;
 		if (ssize < size)
 		{
 			if ((ss = sock->recv(data + ssize, size - ssize)) < 0)
 			{
-				cout << "receive error" << endl;
+				//cout << "receive error" << endl;
 				break;
 			}
 			ssize += ss;
 		}
-		cout << "Arrived " << ssize << " Bytes " << endl;
+		//cout << "Arrived " << ssize << " Bytes " << endl;
 		headersize = atoi(data);
 		if(headersize<1){
-			cout<< "error there is no header < " << headersize << endl;
+			//cout<< "error there is no header < " << headersize << endl;
 		}
 		if(headersize > size)
 		{
-			cout << " oups you must read more bytes in order to read the header " << headersize << endl;
+			//cout << " oups you must read more bytes in order to read the header " << headersize << endl;
 		}
 
 		headerparsed = incommingheader.ParseFromArray(data+10, headersize);
 
 		if (!headerparsed)
 		{
-			cout << " Unable to parse i was expecting" << endl;
+			//cout << " Unable to parse i was expecting" << endl;
 			continue;
 		}
 
 		incommingheader.DiscardUnknownFields();
 		int alreadyparsedbytes = incommingheader.ByteSize()+10;
 
-		cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
+		//cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
 	}
 	if(headerparsed) {
 		string command = incommingheader.nextmsgname();
 		if (command == "Stop") {
 			debugmode = false;
-			cout << " Stopping Debug ########################" << endl;
+            delete sock;
+			sock=NULL;
+			return;
+
+
+			//cout << " Stopping Debug ########################" << endl;
 		}
 		if (command == "seg")
 			sendtype = -1; // meand segmented
@@ -267,14 +272,14 @@ void Vision::recv_and_send()
 				}
 				ssize += ss;
 			}
-			cout << "Arrived " << ssize << " Bytes Do something" << endl;
+			//cout << "Arrived " << ssize << " Bytes Do something" << endl;
 		}
 	}
 	img.Clear();
 	if(sendtype == kYUV422InterlacedColorSpace){
 		img.set_imagerawdata(rawImage->imageData,rawImage->imageSize );
 		img.set_bytes(rawImage->imageSize);
-		cout << " Raw image  size " << img.bytes() << endl;
+		//cout << " Raw image  size " << img.bytes() << endl;
 		img.set_height(rawImage->height);
 		img.set_width(rawImage->width);
 		img.set_type(kYUV422InterlacedColorSpace);
@@ -287,15 +292,22 @@ void Vision::recv_and_send()
 			for (int j = 0; j < rawImage->height ; j++)
 				segmended[j][i] = doSeg(i, j);
 
+        vector<CvPoint>::iterator i;
+        //For all detected points
+        //cout << "locateball" << endl;
+        for (i = ballpixels.begin(); i != ballpixels.end(); i++)
+        {
+            segmended[(*i).y][(*i).x]=red;
+        };
 		img.set_imagerawdata(segmended,rawImage->width*rawImage->height);
 		img.set_bytes(rawImage->width*rawImage->height);
-		cout << " Seg image  size " << img.bytes() << endl;
+		//cout << " Seg image  size " << img.bytes() << endl;
 		img.set_height(rawImage->height);
 		img.set_width(rawImage->width);
 		img.set_type(-1);
 	}
 	outgoingheader.set_nextmsgbytesize(img.ByteSize());
-	cout << " Kimage size " << outgoingheader.nextmsgbytesize() << endl ;
+	//cout << " Kimage size " << outgoingheader.nextmsgbytesize() << endl ;
 	outgoingheader.set_nextmsgname(img.GetTypeName());
 
 	int sendsize;
@@ -308,7 +320,7 @@ void Vision::recv_and_send()
 		outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
 	}
 	outgoingheader.SerializeToArray(data+10, sendsize);
-	cout << "outgoingheader sendsize " << sendsize << endl;
+	//cout << "outgoingheader sendsize " << sendsize << endl;
 
 	memset(data,0,10);
 	strncpy(data,_toString(sendsize).c_str(),9);
@@ -607,7 +619,7 @@ void Vision::UserInit()
 	int max_bytedata_size = 1000000;
 	sendtype = kYUV422InterlacedColorSpace;
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
-	
+
 	pthread_create(&acceptthread, NULL, &Vision::StartServer, this);
 	pthread_detach( acceptthread);
 
@@ -626,9 +638,9 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	KMat::HCoords<float,3> c3d;
 	static int startx=0;
 	float  skipdistance,seedistance,obstacledistance;
-	int  step,borderskip;
+	int  scanstep,step,borderskip;
 	//config->QueryElement("ballsize",ballsize);
-	config->QueryElement("scanstep",step);
+	config->QueryElement("scanstep",scanstep);
 	config->QueryElement("skipdistance",skipdistance);
 	config->QueryElement("borderskip",borderskip);
 	config->QueryElement("seedistance",seedistance);
@@ -643,15 +655,16 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	unsigned int cntother=0;
 
 	startx++;
-	startx=startx%step;
+	startx=startx%(scanstep>>1);
 	//float stepy=-1,stepx=-tan(-kinext.getRoll());//TODO :: is this correct?
 	tracer_t gtrc;
 	gtrc.initVelocity(-tan(-kinext.getRoll()),-1);
+	step=scanstep;
 	gtrc.setScale(step);
     //cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
 
 	//cout<<"loop"<<endl;
-	for (int i = borderskip+startx; i < rawImage->width-borderskip-1; i = i + step)
+	for (int i = borderskip+startx; i < rawImage->width-borderskip-1; i = i + (scanstep>>1))
 	{
 		//cout<<"wtf"<<endl;
 		//Thru Horizon Possibly someday
@@ -662,7 +675,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		bool ballfound=false;
 		// ballpixel = -1;
 		//int ci,cj;
-		gtrc.init(i,rawImage->height - borderskip-1);
+		gtrc.init(i,rawImage->height - borderskip-1-startx);
 
 
 		//im(0)=i;
@@ -719,7 +732,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
                 c3d=kinext.camera2dToGroundProjection(c,0);
                 float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
 
-                if(abs(d1-d2)>skipdistance)
+                if(abs(d1-d2)>skipdistance||d1>=sqrd(seedistance))
                 {
                     //cout<<"break"<<endl;
                     CvPoint tmpPoint;
@@ -742,6 +755,9 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			}
 			//Find next pixel
 			gtrc.step();
+			step--;
+			if(step<3) step=3;
+			gtrc.setScale(step);
             //stepx=2;
             //stepy-=2;
 
@@ -950,8 +966,8 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 	float innerrad = ball.cr * 0.707;
 	float ratio;
 	//Inner circle
-	for (int i = ball.x - innerrad; i <= ball.x + innerrad; i+=SPARSENESS)
-		for (int j =ball. y - innerrad; j <= ball.y ; j+=SPARSENESS)
+	for (int i = ball.x - innerrad+1; i <= ball.x + innerrad-1; i+=SPARSENESS)
+		for (int j =ball. y - innerrad+1; j <= ball.y ; j++)
 		{
 			if (!validpixel(i,j))
 				continue;
@@ -960,8 +976,8 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 			ttl+=3;
 		}
 
-	for (int i = ball.x - innerrad; i <= ball.x + innerrad; i+=SPARSENESS)
-		for (int j =ball. y ; j <= ball.y + innerrad; j+=SPARSENESS)
+	for (int i = ball.x+1; i <= ball.x + innerrad-1; i++)
+		for (int j =ball. y+1 ; j <= ball.y + innerrad-1; j+=SPARSENESS)
 		{
 			if (!validpixel(i,j))
 				continue;
@@ -972,6 +988,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 
 	ratio = ((float) gd+1) / (ttl+1);
 	//<<ratio<<endl;
+	//cout<<"Validratio:"<<ratio<<endl;
 	if (ratio < 0.5)
 		return false;
 
@@ -1336,7 +1353,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         if (!validpixel(l.x,l.y))// No left pixel available?!?
             continue;
         //cout<<"l:"<<l.x<<","<<l.y<<endl;
-        //cout<<"done!"<<endl;
+        //cout<<"done tracing!"<<endl;
 
         CvPoint2D32f center;
         //cout<<t.x<<" "<<t.y<<endl;
@@ -1344,12 +1361,12 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         //cout<<r.x<<" "<<r.y<<endl;
         if(t.x==l.x||t.x==r.x)
             continue;
-        float ma=(t.y-l.y)/(t.x-l.x);
-        float mb=(r.y-t.y)/(r.x-t.x);
+        float ma=((float)(t.y-l.y))/((float)(t.x-l.x));
+        float mb=((float)(r.y-t.y))/((float)(r.x-t.x));
         if(mb==ma||ma==0)
             continue;
-        center.x= ( ma*mb*(l.y-r.y)+mb*(l.x+t.x)-ma*(t.x+r.x) ) / (2.0*(mb-ma));
-        center.y=-(center.x -(l.x+t.x)/2)/ma+(l.y+t.y)/2.0;
+        center.x= ( ma*mb*((float)(l.y-r.y))+mb*((float)(l.x+t.x))-ma*((float)(t.x+r.x)) )/ (2.0*(mb-ma));
+        center.y=-(center.x -((float)(l.x+t.x))/2)/ma+((float)(l.y+t.y))/2.0;
         //center.y=-(center.x -(l.x+t.x)/2)/ma+(l.y+t.y)/2.0;
         //cout<<center.y<<endl;
         //cout<<center.x<<","<<center.y<<endl;
@@ -1394,19 +1411,26 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
         config->QueryElement("ballsize",ballsize);
         newdata.ballradius=rest;
 
-        Logger::Instance().WriteMsg("Vision", "rest:"+_toString(rest), Logger::Info);
+
         //cout<<"rest:"<<rest<<endl;
+
+        //float w=d2.mean;
+        //w=w<1?1:w;
+        //rest= rest/w+((ballsize/2)*(w-1))/w;
+        //Logger::Instance().WriteMsg("Vision", "rest:"+_toString(rest), Logger::Info);
+
         if(abs( (rest*2-ballsize)/ballsize)>balltolerance)//Wrong diameter ball
         {
-            Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
+           Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
             continue;
         }
-		//if(!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
-        //    continue;
+		if(!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
+            continue;
         measurement d1=kinext.angularDistance(c1,c2,rest);
         //cout<<"angular:"<<d1.mean<<" "<<d1.var<<endl;
         measurement2 a=kinext.projectionDistance(c1,rest);
         measurement d2=(*a)[0];
+
         //cout<<"projection:"<<d2.mean<<" "<<d2.var<<endl;
         measurement bearing=(*a)[1];
         //cout<<"proj bearing:"<<bearing.mean<<" "<<bearing.var<<endl;
@@ -1448,7 +1472,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 //#ifdef DEBUGVISION
         //KMat::HCoords<float,2> & w=camToRobot(o)
-         Logger::Instance().WriteMsg("Vision", "Distance:"+_toString(best.distance.mean), Logger::Info);
+         //Logger::Instance().WriteMsg("Vision", "Distance:"+_toString(best.distance.mean), Logger::Info);
         //cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
         //cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
 

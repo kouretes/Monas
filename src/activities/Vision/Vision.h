@@ -131,7 +131,7 @@ private:
     void cvShowSegmented();
 
 
-    		//For Debug!
+    //For Debug!
 	static void * StartServer(void * kati);
 	pthread_t acceptthread;
 	static TCPSocket *sock;
