@@ -24,7 +24,7 @@
 #include "messages/Kimage.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "PracticalSocket.h"
-#define DEBUGVISION
+//#define DEBUGVISION
 
 #include <vector>
 
@@ -140,7 +140,7 @@ private:
 	KRawImage img;
 	KRawImageHeader imgheader;
 		//void Send_Image();
-
+	int sendtype;
 	static bool debugmode;
 
 	header incommingheader;

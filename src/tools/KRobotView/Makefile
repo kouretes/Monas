@@ -9,9 +9,9 @@ endif
 
 CXXFLAGS =	-O3 -g -Wall -fmessage-length=0 -D$(os)  -finline-functions
 
-LDFLAGS = -L -lstdc++ -lpthread -lm
+LDFLAGS = -L -lstdc++ -lpthread -lm `pkg-config --cflags --libs opencv protobuf`
 
-OBJS =	KRobotView.o Kimage.pb.o
+OBJS =	KRobotView.o
 
 TARGET = KRobotView
 
@@ -27,7 +27,7 @@ all:	$(TARGET)
 	$(C++) $(CCFLAGS) $< -c
 
 KRobotView: KRobotView.o
-	$(CXX) -o KRobotView KRobotView.o  PracticalSocket.cpp Kimage.pb.cc VisionObservations.pb.cc WorldInfo.pb.cc  $(LDFLAGS) `pkg-config --cflags --libs opencv protobuf`
+	$(CXX) -o KRobotView KRobotView.o  ../../../external/PracticalSocket/PracticalSocket.cpp ../../messages/Kimage.pb.cc ../../messages/VisionObservations.pb.cc ../../messages/WorldInfo.pb.cc  $(LDFLAGS)
 
 
 

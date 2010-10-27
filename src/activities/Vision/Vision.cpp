@@ -134,6 +134,7 @@ int  Vision::Execute()
 void Vision::recv_and_send()
 {
 	bool headerparsed = false;
+
 	int headersize = 10;
 	while (!headerparsed)
 	{
@@ -182,6 +183,11 @@ void Vision::recv_and_send()
 			debugmode = false;
 			cout << " Stopping Debug ########################" << endl;
 		}
+		if (command == "seg")
+			sendtype = -1; // meand segmented
+		if (command == "yuyv")
+			sendtype = kYUV422InterlacedColorSpace;
+
 		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
 		{
 			int ssize;
@@ -197,14 +203,32 @@ void Vision::recv_and_send()
 			cout << "Arrived " << ssize << " Bytes Do something" << endl;
 		}
 	}
+	img.Clear();
+	if(sendtype == kYUV422InterlacedColorSpace){
+		img.set_imagerawdata(rawImage->imageData,rawImage->imageSize );
+		img.set_bytes(rawImage->imageSize);
+		cout << " Raw image  size " << img.bytes() << endl;
+		img.set_height(rawImage->height);
+		img.set_width(rawImage->width);
+		img.set_type(kYUV422InterlacedColorSpace);
+	}
 
-	img.set_imagerawdata(rawImage->imageData );
-	img.set_bytes(rawImage->imageSize);
-	img.set_height(rawImage->height);
-	img.set_width(rawImage->width);
-	img.set_type(kYUV422InterlacedColorSpace);
+	if(sendtype == -1) // segmented image
+	{
+		char segmended[rawImage->height][rawImage->width];
+		for (int i = 0; i < rawImage->width ; i++)
+			for (int j = 0; j < rawImage->height ; j++)
+				segmended[j][i] = doSeg(i, j);
 
+		img.set_imagerawdata(segmended,rawImage->width*rawImage->height);
+		img.set_bytes(rawImage->width*rawImage->height);
+		cout << " Seg image  size " << img.bytes() << endl;
+		img.set_height(rawImage->height);
+		img.set_width(rawImage->width);
+		img.set_type(-1);
+	}
 	outgoingheader.set_nextmsgbytesize(img.ByteSize());
+	cout << " Kimage size " << outgoingheader.nextmsgbytesize() << endl ;
 	outgoingheader.set_nextmsgname(img.GetTypeName());
 
 	int sendsize;
@@ -242,7 +266,7 @@ void Vision::recv_and_send()
 		img.SerializeToString(&buf);
 		sendsize = buf.length();
 		rsize = 0;
-		cout << "Will send Data" << sendsize << " " << img.GetTypeName() << endl;
+		cout << "Will send Data " << sendsize << " " << img.GetTypeName() << endl;
 
 		while (rsize < sendsize) {
 			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);// UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
@@ -252,6 +276,7 @@ void Vision::recv_and_send()
 	} catch (SocketException &e) {
 		cerr << e.what() << endl;
 		cout << "Disconnecting !!!" << endl;
+		exit(0);
 		debugmode = false;
 	}
 
@@ -507,8 +532,8 @@ void Vision::UserInit()
 
 	debugmode = false;
 
-	int max_bytedata_size = 100000;
-
+	int max_bytedata_size = 1000000;
+	sendtype = kYUV422InterlacedColorSpace;
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 	//Turn off leds
 	pthread_create(&acceptthread, NULL, &Vision::StartServer, this);
@@ -1279,7 +1304,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 				}
 				radius /= points.size();
 		*/
-		cout<<radius<<endl;
+		//cout<<radius<<endl;
 		//cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;

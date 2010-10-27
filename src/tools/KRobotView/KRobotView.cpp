@@ -19,138 +19,139 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "Kimage.pb.h"
-#include "WorldInfo.pb.h"
+#include "../../messages/Kimage.pb.h"
+#include "../../messages/WorldInfo.pb.h"
 
 
 
 #include <iostream>
 #include <fstream>
-#include "PracticalSocket.h"
-#include "toString.h"
+#include "../../../external/PracticalSocket/PracticalSocket.h"
+#include "../toString.h"
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include "opencv/cvaux.hpp"
 
 
 IplImage* fIplImageHeader = NULL;
+IplImage* fIplSegImageHeader = NULL;
+
 char * imageDeinterlaced = NULL;
+char * segImage = NULL;
 
 int receive_and_send_loop( TCPSocket *sock);
 using namespace std;
 ofstream myfile;
-
+char keypressed;
 char fname[80];
-int Displayimage(char * dataPointer, int size, bool isYUV) {
+
+int Displayimage(const char * dataPointer, int width, int height, int type) {
 	int count = 0;
-	int width = 320;//640;//
-	int height = 240;//480;//
+	//int width = 320;//640;//
+	//int height = 240;//480;//
 
-	if (size == 921600 || size == 614400) //640*480*3
-	{
-		width = 640;
-		height = 480;
-	} else if (size == 230400 || size == 153600) {
-		width = 320;
-		height = 240;
-	}
-
+	//~ if (size == 921600 || size == 614400) //640*480*3
+	//~ {
+		//~ width = 640;
+		//~ height = 480;
+	//~ } else if (size == 230400 || size == 153600) {
+		//~ width = 320;
+		//~ height = 240;
+	//~ }
+	CvImage  rgb;
 	int index, indexD;
 	fIplImageHeader = cvCreateImageHeader(cvSize(width, height), 8, 3);
 
-	if (isYUV == 0) {
-		if (imageDeinterlaced == NULL)
-			imageDeinterlaced = new char[width * height * 3];
+	if (type == 9 || type == 10) {
+		CvImage yuv;
+		if(type == 9){
+			if (imageDeinterlaced == NULL)
+				imageDeinterlaced = new char[width * height * 3];
 
-		for (int j = 0; j < height; j++)
-			for (int i = 0; i < width; i++) {
-				index = j * 3 * width + i * 3;
-				indexD = j * 2 * (width);
-				imageDeinterlaced[index] = dataPointer[indexD + i * 2]; //Y
-				imageDeinterlaced[index + 1] = dataPointer[indexD + (i / 2) * 4 + 1]; //U
-				imageDeinterlaced[index + 2] = dataPointer[indexD + (i / 2) * 4 + 3]; //V
-			}
-		fIplImageHeader->imageData = imageDeinterlaced;
-	} else {
-		fIplImageHeader->imageData = dataPointer;
-	}
-
-	CvImage yuv, rgb;
-	yuv.attach(fIplImageHeader, true);
-	rgb = yuv.clone();
-
-	cvCvtColor(yuv, rgb, CV_YCrCb2RGB); // simply call OpenCV functions and pass the class instances there
-//cvCvtColor(yuv, rgb, CV_BGR2RGB); // simply call OpenCV functions and pass the class instances there
-	cvShowImage("Image", rgb);
-
-#ifdef SEGCOMPLETED
-	char sImage[height][width];
-//	cout << "Starting Segmentation " << endl;
-
-	for (int j = 1; j < (height - 2); j++) {
-		for (int i = 1; i < width - 1; i++) {
-
-			sImage[j][i] = sgm->getColor(j, i, (uInt8 *) dataPointer, true);
-
-			char k = sImage[j][i];
-
-			switch (k) {
-//	Red, Blue, Green, Cyan, Yellow, Orange, White, Black
-			case 0:
-				segImage[j * 3 * width + i * 3 + 2] = 0;
-				segImage[j * 3 * width + i * 3 + 1] = 0;
-				segImage[j * 3 * width + i * 3] = 0;
-				break;
-			case 1://RED
-				segImage[j * 3 * width + i * 3 + 2] = 255;
-				segImage[j * 3 * width + i * 3 + 1] = 0;
-				segImage[j * 3 * width + i * 3] = 0;
-				break;
-			case 2://BlUE
-				segImage[j * 3 * width + i * 3 + 2] = 0;
-				segImage[j * 3 * width + i * 3 + 1] = 0;
-				segImage[j * 3 * width + i * 3] = 255;
-				break;
-			case 3://GREEN
-				segImage[j * 3 * width + i * 3 + 2] = 0;
-				segImage[j * 3 * width + i * 3 + 1] = 255;
-				segImage[j * 3 * width + i * 3] = 0;
-				break;
-			case 4://SkyBlue
-				segImage[j * 3 * width + i * 3 + 2] = 0;
-				segImage[j * 3 * width + i * 3 + 1] = 107;
-				segImage[j * 3 * width + i * 3] = 228;
-				break;
-			case 5://Yellow
-				segImage[j * 3 * width + i * 3 + 2] = 255;
-				segImage[j * 3 * width + i * 3 + 1] = 255;
-				segImage[j * 3 * width + i * 3] = 0;
-				break;
-			case 6://Orange
-				segImage[j * 3 * width + i * 3 + 2] = 255;
-				segImage[j * 3 * width + i * 3 + 1] = 180;
-				segImage[j * 3 * width + i * 3] = 0;
-				break;
-			case 7:
-				segImage[j * 3 * width + i * 3 + 2] = 255;
-				segImage[j * 3 * width + i * 3 + 1] = 255;
-				segImage[j * 3 * width + i * 3] = 255;
-				break;
-			case 8:
-				segImage[j * 3 * width + i * 3 + 2] = 0;
-				segImage[j * 3 * width + i * 3 + 1] = 0;
-				segImage[j * 3 * width + i * 3] = 0;
-			default:
-				segImage[j * 3 * width + i * 3 + 2] = 0;
-				segImage[j * 3 * width + i * 3 + 1] = 0;
-				segImage[j * 3 * width + i * 3] = 0;
-
-			}
-////if (savesegmented == true)
-//	putc(sImage[j][i] * 30 + 10, fp2);
+			for (int j = 0; j < height; j++)
+				for (int i = 0; i < width; i++) {
+					index = j * 3 * width + i * 3;
+					indexD = j * 2 * (width);
+					imageDeinterlaced[index] = dataPointer[indexD + i * 2]; //Y
+					imageDeinterlaced[index + 1] = dataPointer[indexD + (i / 2) * 4 + 1]; //U
+					imageDeinterlaced[index + 2] = dataPointer[indexD + (i / 2) * 4 + 3]; //V
+				}
+			fIplImageHeader->imageData = imageDeinterlaced;
+		} else if(type == 10) {
+			fIplImageHeader->imageData = (char *)dataPointer;
 		}
 
+		yuv.attach(fIplImageHeader, true);
+		rgb = yuv.clone();
+		cvCvtColor(yuv, rgb, CV_YCrCb2RGB); // simply call OpenCV functions and pass the class instances there
+	} else if (type == -1)
+	{
+		if (segImage == NULL)
+			segImage = new char[(height) * (width) * 3];
+		for (int j = 1; j < (height - 2); j++) {
+			for (int i = 1; i < width - 1; i++) {
+				//sImage[j][i] = sgm->getColor(j, i,, true);
+
+				//char k =  (uInt8 *) ;
+				switch (dataPointer[i +j*width]) {
+				//	Red, Blue, Green, Cyan, Yellow, Orange, White, Black
+				case 0:
+					segImage[j * 3 * width + i * 3 + 2] = 0;
+					segImage[j * 3 * width + i * 3 + 1] = 0;
+					segImage[j * 3 * width + i * 3] = 0;
+					break;
+				case 1://RED
+					segImage[j * 3 * width + i * 3 + 2] = 255;
+					segImage[j * 3 * width + i * 3 + 1] = 0;
+					segImage[j * 3 * width + i * 3] = 0;
+					break;
+				case 2://BlUE
+					segImage[j * 3 * width + i * 3 + 2] = 0;
+					segImage[j * 3 * width + i * 3 + 1] = 0;
+					segImage[j * 3 * width + i * 3] = 255;
+					break;
+				case 3://GREEN
+					segImage[j * 3 * width + i * 3 + 2] = 0;
+					segImage[j * 3 * width + i * 3 + 1] = 255;
+					segImage[j * 3 * width + i * 3] = 0;
+					break;
+				case 4://SkyBlue
+					segImage[j * 3 * width + i * 3 + 2] = 0;
+					segImage[j * 3 * width + i * 3 + 1] = 107;
+					segImage[j * 3 * width + i * 3] = 228;
+					break;
+				case 5://Yellow
+					segImage[j * 3 * width + i * 3 + 2] = 255;
+					segImage[j * 3 * width + i * 3 + 1] = 255;
+					segImage[j * 3 * width + i * 3] = 0;
+					break;
+				case 6://Orange
+					segImage[j * 3 * width + i * 3 + 2] = 255;
+					segImage[j * 3 * width + i * 3 + 1] = 180;
+					segImage[j * 3 * width + i * 3] = 0;
+					break;
+				case 7:
+					segImage[j * 3 * width + i * 3 + 2] = 255;
+					segImage[j * 3 * width + i * 3 + 1] = 255;
+					segImage[j * 3 * width + i * 3] = 255;
+					break;
+				case 8:
+					segImage[j * 3 * width + i * 3 + 2] = 0;
+					segImage[j * 3 * width + i * 3 + 1] = 0;
+					segImage[j * 3 * width + i * 3] = 0;
+				default:
+					segImage[j * 3 * width + i * 3 + 2] = 0;
+					segImage[j * 3 * width + i * 3 + 1] = 0;
+					segImage[j * 3 * width + i * 3] = 0;
+				}
+			}
+		}
+		fIplSegImageHeader = cvCreateImageHeader(cvSize(width, height), IPL_DEPTH_8U, 3);
+		fIplSegImageHeader->imageData = (char *) segImage;
+		cvShowImage("Segmented image",fIplSegImageHeader );
 	}
+
+
 //std::cout << "Segmentation Completed... pray!\n";
 
 //if (savesegmented == true) {
@@ -159,18 +160,10 @@ int Displayimage(char * dataPointer, int size, bool isYUV) {
 //	savesegmented = false;
 //}
 
-	fIplSegImageHeader = cvCreateImageHeader(cvSize(width, height), IPL_DEPTH_8U, 3);
-	fIplSegImageHeader->imageData = (char *) segImage;
-
-	CvImage seg(fIplSegImageHeader), colorseg;
-
-//colorseg = seg.clone();
-//cvCvtColor(seg, colorseg, CV_GRAY2RGB); // simply call OpenCV functions and pass the class instances there
-	seg.show("SegmentationTest");
-
-#endif
+	cvShowImage("Image", rgb);
 
 	char c = cvWaitKey(10);
+	keypressed = c;
 
 	if ((char) c == 27) {
 
@@ -226,8 +219,11 @@ int Displayimage(char * dataPointer, int size, bool isYUV) {
 		myfile.close();
 		} else
 		cout << "Unable to open file";
-		break;*/
-	case 'r':
+		*/
+		break;
+	case 's':
+		break;
+
 
 	default:
 		;
@@ -238,7 +234,7 @@ int Displayimage(char * dataPointer, int size, bool isYUV) {
 
 int main(int argc, char* argv[]) {
 	puts("Hello World!!!");
-
+	keypressed =0;
 	if ((3 != argc) || (0 == atoi(argv[2]))) {
 		cout << "usage: appclient server_ip server_port" << endl;
 		return 0;
@@ -270,7 +266,7 @@ int main(int argc, char* argv[]) {
 
 int receive_and_send_loop( TCPSocket *sock) {
 
-	char * newdata;
+	//char * newdata;
 
 	header incommingheader;
 	header outgoingheader;
@@ -293,8 +289,18 @@ int receive_and_send_loop( TCPSocket *sock) {
 //Get key pressed and decide witch command to send! ...
 
 		outgoingheader.set_nextmsgname("Just A command");
-		//if(keypressed==27)
-		//	outgoingheader.set_nextmsgname("Stop");
+		if(keypressed==27){
+			outgoingheader.set_nextmsgname("Stop");
+		}
+		if(keypressed=='y'){
+			outgoingheader.set_nextmsgname("yuyv");
+			keypressed =0;
+		}
+		if(keypressed=='s'){
+			outgoingheader.set_nextmsgname("seg");
+			keypressed =0;
+		}
+
 		outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
 		outgoingheader.set_mysize(size = outgoingheader.ByteSize());
 		while (size != outgoingheader.ByteSize()) {
@@ -318,8 +324,8 @@ int receive_and_send_loop( TCPSocket *sock) {
  		for (int j = 0; j < ssize; j++) {
 			cout << (int) data[j] << " ";
 		}
-		//if(KLocView->keypressed==27)
-		//	return 0;
+		if(keypressed==27)
+			return 0;
 
 
 //Now its time to receive!
@@ -387,10 +393,10 @@ int receive_and_send_loop( TCPSocket *sock) {
 				else {
 					parsed = true;
 					cout << " Parsed message " << img.ByteSize() << " bytes " << endl;
-					if (count < 1)
-						newdata = new char[img.width() * img.height() * 2];
-					img.imagerawdata().copy(newdata, img.width() * img.height() * 2);
-					Displayimage(newdata, size, false);
+					//if (count < 1)
+						//newdata = new char[img.width() * img.height() * 2];
+					//img.imagerawdata().copy(newdata, img.width() * img.height() * 2);
+					Displayimage(img.mutable_imagerawdata()->data(),  img.width(),  img.height(), img.type());
 				}
 			}
 		}
