@@ -7,6 +7,7 @@
 
 
 using namespace std;
+//ing KSegmentator::colormask_t;
 //YUV to RGB STANDARD constants, all are integer aproximated with 8 bit precision :)
 //#define A 359 //1.402<<8
 //#define B 89 //0.344<<8
@@ -31,6 +32,17 @@ void KSegmentator::setLumaScale(float s)
 {
 	lumascale=s;
 	cout<<"KSegmentator:setLumaScale():"<<s<<endl;
+	for(int i=0;i<256;i++)
+	{
+	    int r=i*lumascale;
+	    r=r>255?255:r;
+	    YLookup[i]=r>>yres;
+	    int r2=(i-128)*lumascale+128;
+	    r2=r2>255?255:r2;
+	    r2=r2<0?0:r2;
+	    UVLookp[i]=r2;
+	}
+
 }
 void KSegmentator::yuv2hsy(unsigned char yuv[3], unsigned  int hsy[3])
 {
@@ -98,17 +110,22 @@ KSegmentator::colormask_t KSegmentator:: classifyPixel(unsigned char yuv[3])
 	if (ctable!=NULL)
 	{
 		unsigned char data[3];//TODO: Scaling should work on all YCbCr standards, given then the properties of multiplication! :)
-		int y=yuv[0]*lumascale;
-		y=y>255?255:y;
-		data[0]=y;
-		data[1]=(yuv[1]-128)*lumascale+128;
-        data[2]=(yuv[2]-128)*lumascale+128;
+		//int y=yuv[0]*lumascale;
+		//y=y>255?255:y;
+		//data[0]=y;
+		//data[1]=(yuv[1]-128)*lumascale+128;
+        //data[2]=(yuv[2]-128)*lumascale+128;
 
 		//data[1]=data[1]>255?255:data[1];
 		//data[2]=data2]>255?255:data[2];
 		//cout<<(int)data[0]<<" ";
+		//Prelookup: convert yuv values to reference luminance YUVS :)
+		data[0]=YLookup[yuv[0]];
+		data[1]=UVLookp[yuv[1]];
+		data[2]=UVLookp[yuv[2]];
+
 		//return *(ctable+table_subscript((int)yuv[0]>>yres,(int)yuv[1]>>ures,(int)yuv[2]>>vres));
-		return *(ctable+table_subscript((int)data[0]>>yres,(int)data[1]>>ures,(int)data[2]>>vres));
+		return *(ctable+table_subscript((int)data[0],(int)data[1]>>ures,(int)data[2]>>vres));
 	}
 	else
 		return 0;
@@ -134,7 +151,7 @@ KSegmentator::colormask_t KSegmentator:: classifyPixel(unsigned char yuv[3])
  * White is excluded, since no other things overlap with this
  * gray is excluded last, since the TOP part of the gray cylinder represend white!
  */
-KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
+KSegmentator::colormask_t KSegmentator:: calculatePixelFromRules(unsigned char yuv[3])
 {
 	unsigned int hsy[3];
 	int dists,distl;
@@ -144,7 +161,7 @@ KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
 	//cout<<hsl[0]<<" "<<hsl[1]<<" "<<hsl[2]<<endl;
 	//Black
 
-	if (hsy[2]<blackRadius)
+	if ((int)hsy[2]<blackRadius)
 		return blackMask;
 
 
@@ -152,11 +169,11 @@ KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
 	dists=24-hsy[1];
 	distl=128-hsy[2];//(0x80<hsy[2])?(hsy[2]-0x80):hsy[2];
 	//cout<<"colors.size():"<<colors.size()<<endl;
-	for (int i=0;i<colors.size();i++)
+	for (int i=0;i<(int)colors.size();i++)
 	{
 		//cout<<colors[i].HueMin<<endl;
 
-		if (colors[i].HueMin < hsy[0] && hsy[0]<colors[i].HueMax && ( dists*dists+distl*distl)<colors[i].Radius)
+		if (colors[i].HueMin < (int) hsy[0] && (int) hsy[0]<colors[i].HueMax && ( dists*dists+distl*distl)<colors[i].Radius)
 		{
 			//cout<<" "<<((int)colors[i].HueMin)<< " ";
 			return colors[i].mask;
@@ -174,7 +191,7 @@ KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
 	}
 
 	//Gray
-	if (hsy[1]>grayRadius)
+	if ((int)hsy[1]>grayRadius)
 	{
 		//cout<<"g ";
 		//cout<<hsy[0]<<" "<<hsy[1]<<" "<<hsy[2]<<endl;
@@ -191,51 +208,60 @@ KSegmentator::colormask_t KSegmentator:: calculatePixel(unsigned char yuv[3])
  *Clasify a pixel of the image: i is row and j is column, ie i is 0-640 and j is 0-480 in a 640x480 image
 		 * type is KYUVColorspace or KYUV422InterlacedColorspace ONLY
  */
-KSegmentator::colormask_t KSegmentator::  classifyPixel(IplImage*data, int i,int j,int type)
+KSegmentator::colormask_t KSegmentator::  classifyPixel( int i,int j)
 {
 
-	// You can get some informations about the image.
-	int width = data->width;
-	int height =  data->height;
-	int nbLayers = data->nChannels;
-	//int colorSpace = (int) image[3];
+	if (classifyFunc==NULL)
+        return 0;
+    return ((*this).*(classifyFunc))(i,j);
+}
+void KSegmentator::attachToIplImage(IplImage *data, int type)
+{
+    dataPointer= data->imageData;
+    widthmult2=data->width*2;
+    width=data->width;
+    if(type==AL::kYUV422InterlacedColorSpace)
+        classifyFunc= &KSegmentator::classifyYUV422;
+    else if (type==AL::kYUVColorSpace)//YUV
+        classifyFunc=&KSegmentator::classifyYUV;
+    else
+    {
+        classifyFunc=NULL;
+        Logger::Instance().WriteMsg("KSegmentator", "ONLY YUV422 AND YUV IMPLEMENTED :P",Logger::Error);
+    }
 
-	const char* dataPointer= data->imageData;
-	if (type==AL::kYUV422InterlacedColorSpace)//YUYV nbLayers is 2, average 2 bytes per pixel
-	{
-		unsigned char yuv[3];
-		yuv[0]=*(dataPointer+j*width*nbLayers+i*nbLayers);//Y is right where we want it
 
-		//a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
-		int startofBlock =j*(width*2)+((i/2)*4); //every 2 pixels (i/2) swap block (size of block=4)
-		// cout<<"sob"<<endl;
-		yuv[1]=*(dataPointer+startofBlock+1);
-		// cout<<"u"<<endl;
-		yuv[2]= *(dataPointer+startofBlock+3);
+}
 
+KSegmentator::colormask_t KSegmentator::classifyYUV(int i,int j)
+{
+    static unsigned char yuv[3];
+    yuv[0]=*(dataPointer+j*width*3+i*3);
+    yuv[1]=*(dataPointer+j*width*3+i*3+1);
+    yuv[2]=*(dataPointer+j*width*3+i*3+2);
+    //if(i==j)
+    return classifyPixel(yuv);
 
 
-		//if(i==j)
-		return classifyPixel(yuv);
+}
 
-	}
-	else if (type==AL::kYUVColorSpace)//YUV
-	{
-		unsigned char yuv[3];
-		yuv[0]=*(dataPointer+j*width*nbLayers+i*nbLayers);
-		yuv[1]=*(dataPointer+j*width*nbLayers+i*nbLayers+1);
-		yuv[2]=*(dataPointer+j*width*nbLayers+i*nbLayers+2);
-		//if(i==j)
-		return classifyPixel(yuv);
 
-	}
-	else
-	{
-		Logger::Instance().WriteMsg("KSegmentator", "ONLY YUV422 AND YUV IMPLEMENTED :P",Logger::Error);
+KSegmentator::colormask_t KSegmentator::classifyYUV422(int i, int j)
+{
+    static unsigned char yuv[3];
 
-	}
+    //widthStep
+    yuv[0]=*(dataPointer+j*widthmult2+(i<<1));//Y is right where we want it
 
-	return 0;
+    //a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
+    int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
+    // cout<<"sob"<<endl;
+    yuv[1]=*(dataPointer+startofBlock+1);
+    // cout<<"u"<<endl;
+    yuv[2]= *(dataPointer+startofBlock+3);
+
+    return classifyPixel(yuv);
+
 }
 /**
  * Create a colortable and store it in ctable
@@ -256,31 +282,14 @@ void KSegmentator::filluptable()
 				data[0]=(y<<yres)+((1<<yres)-1)/2;
 				data[1]=(u<<ures)+((1<<ures)-1)/2;
 				data[2]=(v<<vres)+((1<<vres)-1)/2;
-				*(ctable+table_subscript(y,u,v))=calculatePixel(data);
-				if ( *(ctable+table_subscript(y,u,v))!=calculatePixel(data) )
-					cout<<(int)data[0]<<","<<(int)data[1]<<","<<(int)data[2]<<":"<<(int)*(ctable+table_subscript(y,u,v))<<":"<< (int)calculatePixel(data)<<endl ;
+				*(ctable+table_subscript(y,u,v))=calculatePixelFromRules(data);
+				//if ( *(ctable+table_subscript(y,u,v))!=calculatePixelFromRules(data) )
+					//cout<<(int)data[0]<<","<<(int)data[1]<<","<<(int)data[2]<<":"<<(int)*(ctable+table_subscript(y,u,v))<<":"<< (int)calculatePixel(data)<<endl ;
 			}
 
 
 
 }
-/*
-dists=hsl[1];
-		distl=(0x80<hsl[2])?(hsl[2]-0x80):hsl[2];
-
-		if(i==j)
-		 //cout<< hsl[0]<<","<<hsl[1]<<","<<hsl[2]<<endl<<endl;
-		 cout<< hsl[0]<< " ";
-		if(huemin<=hsl[0] && hsl[0]<src$=huemax && (dists*dists + distl+distl)< radius )//&& hsl[1]>0x8000&& hsl[2]<0x8000&& hsl[2]>0x1000)
-		{
-                   avgi+=i;
-                   avgj+=j;
-	           cnt++;
-		   *(imgA+i*width+j)=250;
-		}
-		else
-		  *(imgA+i*width+j)=hsl[0]*0.02;
-*/
 
 /**
  * Load up a configuration file
@@ -297,7 +306,7 @@ KSegmentator::KSegmentator(std::ifstream &conf)
         Logger::Instance().WriteMsg("KSegmentator", "Invalid configuration file",Logger::Error);
 		return;
 	}
-	if (set.size-'0'>sizeof(colormask_t))
+	if (set.size-'0'>(int)sizeof(colormask_t))
 	{
 		cout<<"KSegmentator(): Not enough length in colormask_t"<<endl;
         Logger::Instance().WriteMsg("KSegmentator", "Not enough length in colormask_t",Logger::Error);
@@ -311,6 +320,13 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 	else if (set.ruletype=='C')
 		readColorTable(conf);
 	lumascale=1;//Default setting;
+	//Default prelookup tables :)
+	for(int i=0;i<256;i++)
+	{
+	    YLookup[i]=i>>yres;
+	    UVLookp[i]=i;
+
+	};
 
 
 

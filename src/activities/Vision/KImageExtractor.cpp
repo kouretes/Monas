@@ -23,7 +23,7 @@ KImageExtractor::~KImageExtractor()
 
 KImageExtractor::KImageExtractor() :GVM_name(VISION_GVMNAME),resolution(VISION_RESOLUTION),cSpace( VISION_CSPACE)
 {
-	;
+	lastcam=-1;
 }
 
 void KImageExtractor::Init(Blackboard *blk)
@@ -67,10 +67,16 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 		cout<<"KImageExtractor: Warning! fetchImage()  called although GVM Subscription has failed!"<<endl;
 		return boost::date_time::max_date_time;
 	}
+	// Now that you're done with the PREVIOUS  image, you have to release it from the V.I.M.
+
+#ifdef RAW
+
+	results = (c->call<ALValue> ("releaseDirectRawImageRemote", GVM_name));
+#else
+	results = (c->call<ALValue> ("releaseImageRemote", GVM_name));
+#endif
 
 
-	//		cout << "Remote method on" << endl;
-	//		sleep(1);
 	ALValue results;
 #ifdef RAW
 
@@ -80,26 +86,9 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 #endif
 	if (results.getType() != ALValue::TypeArray && results.getSize() != 7)
 	{
-		throw ALError("KImageExtractor", "saveImageRemote", "Invalid image returned.");
+		throw ALError("KImageExtractor", "ImageRemote", "Invalid image returned.");
 	}
-	//const int size = results[6].getSize();
-	// You can get some image information that you may find useful.
-	//	const int width = (int) results[0];
-	//	const int height = (int) results[1];
-	//	const int nbLayers = (int) results[2];
-	//	const int colorSpace = (int) results[3];
-	//const long long timeStamp = ((long long) (int) results[4]) * 1000000LL + ((long long) (int) results[5]);
-	//	const int seconds = (int) (timeStamp / 1000000LL);
-	// Set the buffer we received to our IplImage header.
-	//fIplImageHeader->imageData = (char*) (results[6].GetBinary());
-	//cout << "Size" << size << endl;
-	//cout<<"dcmtime"<<endl;
-	//int time=0 ;
-	//time = dcm->getTime(0);
-	//cout<<"dcm2"<<endl;
-	//alt.getLocalTime();
-	//cout<<alt.getHour()<<" "<<alt.getMinute()<<" "<<alt.getSecond()<<" "<<alt.getMs()<<endl;
-	//boost::posix_time::ptime e=boost::posix_time::microsec_clock::universal_time();
+
 	boost::posix_time::time_duration exp=boost::posix_time::microsec(getExp()/2);
 	boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec((int)results[5])+boost::posix_time::seconds((int) results[4]));
 	boost::posix_time::time_duration dur=s-(stamp-exp);//TODO:: rtt - round trip time
@@ -111,7 +100,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	int width = (int) results[0];
 	int height = (int) results[1];
 	int nChannels = (int) results[2];
-	int colorSpace = (int) results[3];
+	//int colorSpace = (int) results[3];
 
 	int size =width*height*nChannels;
 	//cout<<time<<endl;//-((int) results[4]*1000)-(int)  results[5]<<endl;
@@ -121,11 +110,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 
 	if (img->imageSize!=size )
 	{
-		//cout<<img->width<<" "<<img->height<<endl;
-		cout<<"KImageExtractor::fetchImage():allocating new imagedata"<<endl;
-		//cout<<"Delete old"<<endl;
-		//delete img->imageData;
-		//img->imageData=NULL;
+
 		cout<<"cvInitImage"<<endl;
 		cvInitImageHeader(img,  cvSize(width,height),IPL_DEPTH_8U, nChannels);
 		//img->imageData=NULL;
@@ -133,24 +118,23 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 		//img->imageData=(char*)malloc(img->imageSize);
 	}
 
-
-	if (img->imageData != NULL)
-	{
-		//free( fIplImageHeader->imageData)
-		memcpy(img->imageData, (char*) (results[6].GetBinary()), results[6].getSize() * sizeof(unsigned char));
-	}
-	else
-	{
-		img->imageData = new char[img->imageSize];
-		memcpy(img->imageData, (char*) (results[6].GetBinary()), results[6].getSize() * sizeof(char));
-	}
-	return s;s
+    img->imageData= (char*) (results[6].GetBinary());
+	return s;
 };
 
 #else
 boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 {
 	//cout << "Remote method off" << endl;
+
+	// Now that you're done with the PREVIOUS (local) image, you have to release it from the V.I.M.
+#ifdef RAW
+	c->call<int> ("releaseDirectRawImage", GVM_name);
+	//cout << "releaseDirectRawImage " << endl;
+#else
+	c->call<int> ("releaseImage", GVM_name);
+	//cout << "releaseImage " << endl;
+#endif
 
 	//sleep(1);
 	ALImage* imageIn = NULL;
@@ -187,26 +171,8 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 		//img->imageData=(char*)malloc(img->imageSize);
 	}
     img->imageData=(char*) imageIn->getFrame();
-	/*if (img->imageData!=NULL)
-{
-	//free( fIplImageHeader->imageData);
-	memcpy ( img->imageData, (char*) imageIn->getFrame(), size*sizeof(char) );
-	}
-	else
-	{
-		img->imageData = new char[size];
-		memcpy ( img->imageData, (char*) imageIn->getFrame(), size*sizeof(char) );
-	}*/
-	//fIplImageHeader->imageData = (char*) imageIn->getFrame();
-	//saveIplImage(fIplImageHeader, name, pImageFormat, seconds);
-	// Now that you're done with the (local) image, you have to release it from the V.I.M.
-#ifdef RAW
-	c->call<int> ("releaseDirectRawImage", GVM_name);
-	//cout << "releaseDirectRawImage " << endl;
-#else
-	c->call<int> ("releaseImage", GVM_name);
-	//cout << "releaseImage " << endl;
-#endif
+
+
     //apply correction factor to timestamp
 //    std::cout<<"img:"<<timeStamp<<endl;
     const long long secsonly=(timeStamp / 1000000LL);
@@ -326,26 +292,17 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		// Final Exposure  settings!
 		//============================
 
-		if (eL<eR)
-		{
-			gain=gainL;
-			e=eL;
-		}
-		else
-		{
-			gain=gainR;
-			e=eR;
-		}
+		e=(eL+eR)/2;
 
 
-		if ((exp*510)/33 <e)
+		if ((exp*510.0)/33.0 <e)
 		{
-			scale=log((exp*510)/33)/log(e);
-			cout<<"Scaling  exposure:"<<(exp*510)/33<<" "<<e<<endl;
-			e=(exp*510)/33;
+			scale=log((exp*510.0)/33.0)/log(e);
+			cout<<"Scaling  exposure:"<<(exp*510.0)/33.0<<" "<<e<<endl;
+			e=(exp*510.0)/33.0;
 
 		}
-		cout<<"Scaling  exposure:"<<(exp*510)/33<<" "<<e<<endl;
+		//cout<<"Scaling  exposure:"<<(exp*510)/33<<" "<<e<<endl;
 		gain=gainL<gainR?gainL:gainR;
 
 		//redchroma=128-((128.0-redchroma)*0.95);
@@ -432,6 +389,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		std::cout << e.toString() << std::endl;
 		//exit(0);
 	}
+	lastcam=1;
 	//seg->setLumaScale(0.338914);
 	cout<<"done"<<endl;
 	//pos.clear();
@@ -447,7 +405,11 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 int KImageExtractor::getCamera()
 {
-	return c->call<int>( "getParam", kCameraSelectID);
+    if(lastcam==-1)
+        return lastcam=c->call<int>( "getParam", kCameraSelectID);
+
+    return lastcam;
+	//return c->call<int>( "getParam", kCameraSelectID);
 }
 
 int KImageExtractor::swapCamera()
@@ -455,6 +417,7 @@ int KImageExtractor::swapCamera()
 	int old=c->call<int>( "getParam", kCameraSelectID);
 	old=(old==1)?0:1;
 	c->callVoid( "setParam", kCameraSelectID,old);
+	lastcam=old;
 	return old;
 }
 

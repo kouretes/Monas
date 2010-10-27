@@ -50,7 +50,7 @@ class KImageExtractor
 		boost::posix_time::ptime fetchImage(IplImage *img);
 		//Create new space for image
 		IplImage *allocateImage();
-		float calibrateCamera(int sleeptime=1500,int exp=18);
+		float calibrateCamera(int sleeptime=1500,int exp=15);
 		float getExp();
 		int getCamera();
 		int swapCamera();
@@ -63,6 +63,7 @@ class KImageExtractor
 		int cSpace;// Current Colorspace
 		bool doneSubscribe;//Initializations done?
 		Blackboard *_blk;
+		int lastcam;
 
 };
 

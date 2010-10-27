@@ -46,7 +46,11 @@ class KSegmentator{
                  *Clasify a pixel of the image: i is row and j is column, ie i is 0-640 and j is 0-480 in a 640x480 image
 		 * type is KYUVColorspace or KYUV422InterlacedColorspace ONLY
                  */
-		colormask_t classifyPixel(IplImage*data, int i,int j,int type);
+        void attachToIplImage(IplImage *data,int type);
+        colormask_t classifyYUV422(int i,int j);
+        colormask_t classifyYUV(int,int j);
+        colormask_t classifyPixel(int i,int j);
+		//colormask_t classifyPixel(IplImage*data, int i,int j,int type);
 		//Inform segmentator of Luma in environment;
 		void setLumaScale(float s);
 	private:
@@ -79,9 +83,10 @@ class KSegmentator{
 		//User color classes, represent a "slice" in the HSL cylinder, and a radius is defined as a distance from s=0,l=1 in the cylinder
 		std::vector<cclass_t> colors;
 		//Use the RULES (not the table) to classify a pixel
-		colormask_t calculatePixel(unsigned char yuv[3]);
+		colormask_t calculatePixelFromRules(unsigned char yuv[3]);
 		//Fill up a color table from the rules (uses only calculatePixel())
 		void filluptable();
+
 		colormask_t *ctable;//The colortable
 
 		//Scale up Y component to compensate for exposure or lighting
@@ -92,7 +97,18 @@ class KSegmentator{
 		void readRulefile(std::ifstream & conf);
 		void readColorTable(std::ifstream & conf);
 
+		//pointer to classifierfuncUsed by classifyPixel
 
+		typedef colormask_t (KSegmentator::*classFncPtr)(int, int);
+
+		classFncPtr classifyFunc;
+		//Pointer to attached IplImage data
+		char *dataPointer;
+		int widthmult2;//width*2 :D
+		int width;//:)
+		//Value prelookup
+		char YLookup[256];
+		char UVLookp[256];
 
 };
 

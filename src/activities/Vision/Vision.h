@@ -23,7 +23,7 @@
 #include "architecture/narukom/pub_sub/filters/type_filter.h"
 
 
-#define DEBUGVISION
+//#define DEBUGVISION
 
 #include <vector>
 
@@ -42,7 +42,7 @@ public:
     Vision() ;
 
     void UserInit();
-    void testrun();
+    void fetchAndProcess();
     int Execute();
     std::string GetName() {
         return "Vision";
@@ -118,16 +118,15 @@ private:
     balldata_t locateBall(std::vector<CvPoint> cand);
     void publishObstacles(std::vector<CvPoint> points);
     goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
-    CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
+    CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c,bool stupid);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
     inline bool validpixel(int x,int y);
-    KMat::HCoords<float,2>  imageToCamera( const KMat::HCoords<int,2>  & imagep);
+    KMat::HCoords<float,2>  imageToCamera( const KMat::HCoords<float,2>  & imagep);
     KMat::HCoords<int,2>  cameraToImage( const KMat::HCoords<float,2>  & c);
     //KMat::HCoords<float,2> & cameraToObs(KMat::HCoords<float ,2> const& t);
     //KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
     KMat::HCoords<float,2>  camToRobot(KMat::HCoords<float ,2> & t);
-    TypeFilter* type_filter;
     void cvShowSegmented();
 };
 
