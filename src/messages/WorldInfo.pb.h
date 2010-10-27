@@ -726,14 +726,21 @@ class header : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 nextmsgbytesize() const;
   inline void set_nextmsgbytesize(::google::protobuf::int32 value);
   
-  // required string NextMsgName = 2 [default = "Undefined"];
+  // required int32 mysize = 2 [default = -1];
+  inline bool has_mysize() const;
+  inline void clear_mysize();
+  static const int kMysizeFieldNumber = 2;
+  inline ::google::protobuf::int32 mysize() const;
+  inline void set_mysize(::google::protobuf::int32 value);
+  
+  // required bytes NextMsgName = 3 [default = "Undef"];
   inline bool has_nextmsgname() const;
   inline void clear_nextmsgname();
-  static const int kNextMsgNameFieldNumber = 2;
+  static const int kNextMsgNameFieldNumber = 3;
   inline const ::std::string& nextmsgname() const;
   inline void set_nextmsgname(const ::std::string& value);
   inline void set_nextmsgname(const char* value);
-  inline void set_nextmsgname(const char* value, size_t size);
+  inline void set_nextmsgname(const void* value, size_t size);
   inline ::std::string* mutable_nextmsgname();
   
   // @@protoc_insertion_point(class_scope:header)
@@ -742,13 +749,14 @@ class header : public ::google::protobuf::Message {
   mutable int _cached_size_;
   
   ::google::protobuf::int32 nextmsgbytesize_;
+  ::google::protobuf::int32 mysize_;
   ::std::string* nextmsgname_;
   static const ::std::string _default_nextmsgname_;
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
   friend void protobuf_ShutdownFile_WorldInfo_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -1247,42 +1255,58 @@ inline void header::set_nextmsgbytesize(::google::protobuf::int32 value) {
   nextmsgbytesize_ = value;
 }
 
-// required string NextMsgName = 2 [default = "Undefined"];
-inline bool header::has_nextmsgname() const {
+// required int32 mysize = 2 [default = -1];
+inline bool header::has_mysize() const {
   return _has_bit(1);
+}
+inline void header::clear_mysize() {
+  mysize_ = -1;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 header::mysize() const {
+  return mysize_;
+}
+inline void header::set_mysize(::google::protobuf::int32 value) {
+  _set_bit(1);
+  mysize_ = value;
+}
+
+// required bytes NextMsgName = 3 [default = "Undef"];
+inline bool header::has_nextmsgname() const {
+  return _has_bit(2);
 }
 inline void header::clear_nextmsgname() {
   if (nextmsgname_ != &_default_nextmsgname_) {
     nextmsgname_->assign(_default_nextmsgname_);
   }
-  _clear_bit(1);
+  _clear_bit(2);
 }
 inline const ::std::string& header::nextmsgname() const {
   return *nextmsgname_;
 }
 inline void header::set_nextmsgname(const ::std::string& value) {
-  _set_bit(1);
+  _set_bit(2);
   if (nextmsgname_ == &_default_nextmsgname_) {
     nextmsgname_ = new ::std::string;
   }
   nextmsgname_->assign(value);
 }
 inline void header::set_nextmsgname(const char* value) {
-  _set_bit(1);
+  _set_bit(2);
   if (nextmsgname_ == &_default_nextmsgname_) {
     nextmsgname_ = new ::std::string;
   }
   nextmsgname_->assign(value);
 }
-inline void header::set_nextmsgname(const char* value, size_t size) {
-  _set_bit(1);
+inline void header::set_nextmsgname(const void* value, size_t size) {
+  _set_bit(2);
   if (nextmsgname_ == &_default_nextmsgname_) {
     nextmsgname_ = new ::std::string;
   }
   nextmsgname_->assign(reinterpret_cast<const char*>(value), size);
 }
 inline ::std::string* header::mutable_nextmsgname() {
-  _set_bit(1);
+  _set_bit(2);
   if (nextmsgname_ == &_default_nextmsgname_) {
     nextmsgname_ = new ::std::string(_default_nextmsgname_);
   }

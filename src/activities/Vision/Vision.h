@@ -21,8 +21,9 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "architecture/narukom/pub_sub/filters/type_filter.h"
-
-
+#include "messages/Kimage.pb.h"
+#include "messages/WorldInfo.pb.h"
+#include "PracticalSocket.h"
 //#define DEBUGVISION
 
 #include <vector>
@@ -128,6 +129,25 @@ private:
     //KMat::HCoords<float,2> & camToRobot(KMat::HCoords<float ,2> & t);
     KMat::HCoords<float,2>  camToRobot(KMat::HCoords<float ,2> & t);
     void cvShowSegmented();
+
+
+    		//For Debug!
+	static void * StartServer(void * kati);
+	pthread_t acceptthread;
+	static TCPSocket *sock;
+	void recv_and_send();
+	KRawImage img;
+	KRawImageHeader imgheader;
+		//void Send_Image();
+	int sendtype;
+	static bool debugmode;
+
+	header incommingheader;
+	header outgoingheader;
+
+	int size;
+	char *data;
+
 };
 
 #endif

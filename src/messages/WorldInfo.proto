@@ -20,7 +20,7 @@ message Ball{
 	required float relativeY = 2 [default = -100000];
 	required float relativeXspeed = 3 [default = -100000];
 	required float relativeYspeed = 4 [default = -100000];
-	
+
 	required float varianceX = 5 [default = -100000];
 	required float varianceY = 6 [default = -100000];
 	required float varianceXspeed = 7 [default = -100000];
@@ -40,10 +40,12 @@ message LocalizationData{
 	required WorldInfo World= 1;
 	repeated RobotPose Particles = 2;
 	required RobotPose RobotPosition = 3; //NaoqiRobotPosition
-	required ObservationMessage Observations = 4; 
+	required ObservationMessage Observations = 4;
 }
 
 message header{
 	required sint32 NextMsgByteSize =1 [default = -1];
-	required string NextMsgName = 2 [default = "Undefined" ];
+	required int32 mysize = 2 [default = -1];
+	required bytes NextMsgName = 3 [default = "Undef" ];
+	
 }
