@@ -13,8 +13,8 @@
 #define TO_RAD 0.01745329f
 
 #define TO_DEG 1.0/TO_RAD
-#define DISTANCE(x1,x2,y1,y2) (sqrt(pow(x1-x2,2) + pow(y1-y2,2)))
-#define DISTANCE_2(dx,dy) (sqrt(pow(dx,2) + pow(dy,2)))
+#define DISTANCE(x1,x2,y1,y2) (sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)))
+#define DISTANCE_2(dx,dy) (sqrt(dx * dx + dy*dy)) //(sqrt(pow(dx,2) + pow(dy,2)))
 
 //char ptr
 class Kutils {

@@ -4,6 +4,13 @@
 #include "messages/RoboCupGameControlData.h"
 #include <pthread.h>
 
+#include <csignal>
+
+
+void termination_handler(int signum) {
+	cout << " SIGPIPE " << endl;
+}
+
 using namespace std;
 namespace {
 	ActivityRegistrar<Localization>::Type temp("Localization");
@@ -11,10 +18,19 @@ namespace {
 
 Localization::Localization()  {
 }
+
 bool Localization::debugmode = false;
-UDTSOCKET Localization::recver;
+TCPSocket * Localization::sock;
+
 void Localization::UserInit() {
 
+	sigset_t  sigs;
+	const int how = SIG_SETMASK;
+	sigfillset (&sigs);
+	sigaddset( &sigs, SIGPIPE );
+
+
+	pthread_sigmask (how, &sigs, 0);
 	//_com->get_message_queue()->add_publisher(this);
 	//_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("vision", _blk, 0);
@@ -31,14 +47,14 @@ void Localization::UserInit() {
 
 	debugmode = false;
 
-	pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
-	pthread_detach( acceptthread);
-
 	int max_bytedata_size = 100000;
 
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
+
+	pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
+	pthread_detach( acceptthread);
 }
 //void CallStarTServer(Localization * obj)
 
@@ -47,50 +63,90 @@ int Localization::Execute() {
 	read_messages();
 	bool headerparsed = false;
 	if (debugmode) {
-		while (!headerparsed) {
-			int ssize;
-			int ss;
-			ssize = 0;
-			size = 64; //////////#################################################################
+		try {
+			while (!headerparsed) {
+				int ssize;
+				int ss;
+				ssize = 0;
+				size = 164; //////////#################################################################
 
-			incommingheader.Clear();
-			//cout << "Waiting for " << size << " Bytes " << endl;
-			while (ssize < size) {
-				if (UDT::ERROR == (ss = UDT::recv(recver, data + ssize, size - ssize, 0))) {
-					cout << "recv:" << UDT::getlasterror().getErrorMessage() << endl;
-					break;
+				incommingheader.Clear();
+				cout << "Waiting for " << size << " Bytes " << endl;
+				if (ssize < size) {
+					if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
+						cout << "receive error" << endl;
+						break;
+					}
+					ssize += ss;
 				}
-				ssize += ss;
+				cout << "Arrived " << ssize << " Bytes " << endl;
+				headerparsed = incommingheader.ParsePartialFromArray(data, ssize);
+				for (int j = 0; j < ssize; j++) {
+					cout << (int) data[j] << " ";
+				}
+				cout << endl;
+				if (!headerparsed) {
+					cout << " Unable to parse i was expecting" << endl;
+					//				header outgoingheader;
+					//
+					//				outgoingheader.set_nextmsgname("Just A command");
+					//				outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
+					//				size = outgoingheader.ByteSize();
+					//
+					//				outgoingheader.SerializeToArray(data, size);
+					//				for(int j =0; j<ssize; j++ ){
+					//					cout << (int)data[j] << " ";
+					//				}
+					//
+					//
+					//				bool headerparsed = outgoingheader.ParseFromArray(data, size);
+					//				if(headerparsed)
+					//					cout << " able to parse " << endl;
+					//				cout << endl;
+					continue;
+				}
+
+				incommingheader.DiscardUnknownFields();
+				int alreadyparsedbytes = incommingheader.ByteSize();
+
+				cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
 			}
-			cout << "Arrived " << ssize << " Bytes " << endl;
-			headerparsed = incommingheader.ParseFromArray(data, size);
-			if (!headerparsed)
-				continue;
+		} catch (SocketException &e) {
+			cerr << e.what() << endl;
+			cout << "Disconnecting !!!" << endl;
+			debugmode = false;
+			cout << " Stopping Debug ########################" << endl;
 
-			incommingheader.DiscardUnknownFields();
-			int alreadyparsedbytes = incommingheader.ByteSize();
-
-			cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
 		}
 
 		string command = incommingheader.nextmsgname();
-		if (command == "Stop")
+		if (command == "Stop"){
 			debugmode = false;
-		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
-		{
-			int ssize;
-			int ss;
-			ssize = 0;
-			while (ssize < size) {
-				if (UDT::ERROR == (ss = UDT::recv(recver, data + ssize, size - ssize, 0))) {
-					cout << "recv:" << UDT::getlasterror().getErrorMessage() << endl;
-					break;
-				}
-				ssize += ss;
-			}
-			cout << "Arrived " << ssize << " Bytes Do something" << endl;
-		}
+			cout << " Stopping Debug ########################" << endl;
 
+		}
+		try {
+			if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
+			{
+				int ssize;
+				int ss;
+				ssize = 0;
+				while (ssize < size) {
+					if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
+						cout << "receive error" << endl;
+						break;
+					}
+					ssize += ss;
+				}
+				cout << "Arrived " << ssize << " Bytes Do something" << endl;
+			}
+		} catch (SocketException &e) {
+			cerr << e.what() << endl;
+			cout << "Disconnecting !!!" << endl;
+			debugmode = false;
+			cout << " Stopping Debug ########################" << endl;
+
+		}
 	}
 
 	//LocalizationStepSIR(robotmovement,currentObservation, maxrangeleft, maxrangeright);
@@ -100,12 +156,11 @@ int Localization::Execute() {
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
 
-
 	if (debugmode) {
 		LocalizationData_Load(SIRParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
-
+	count++;
 	return 0;
 }
 
@@ -119,37 +174,38 @@ void Localization::Send_LocalizationData() {
 	int rsize = 0;
 	int rs;
 	//send a header
-	sendsize = outgoingheader.ByteSize();
+	outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
+	while (sendsize != outgoingheader.ByteSize()) {
+		outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
+	}
+
 	outgoingheader.SerializeToArray(data, sendsize);
-
-	//cout << "imgheader.ByteSize() sendsize " << sendsize << endl;
-
-	while (rsize < sendsize) {
-		if (UDT::ERROR == (rs = UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
-			cout << "recv:" << UDT::getlasterror().getErrorMessage() << endl;
-			break;
+	cout << "outgoingheader sendsize " << sendsize << endl;
+	try {
+		while (rsize < sendsize) {
+			rs = sock->send(data + rsize, sendsize - rsize);// UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
+			rsize += rs;
 		}
-		rsize += rs;
-	}
+		cout << "Sended outgoingheader " << rsize << endl;
+		//send the image bytes
+		sendsize = DebugData.ByteSize();
 
-	//send the image bytes
-	sendsize = DebugData.ByteSize();
+		std::string buf;
+		DebugData.SerializeToString(&buf);
+		sendsize = buf.length();
+		signal(SIGPIPE, termination_handler);
+		rsize = 0;
+		cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
 
-	std::string buf;
-	DebugData.SerializeToString(&buf);
-	sendsize = buf.length();
-
-	rsize = 0;
-	cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
-
-	while (rsize < sendsize) {
-		if (UDT::ERROR == (rs = UDT::send(recver, (char *) buf.data(), sendsize - rsize, 0))) {
-			cout << "recv:" << UDT::getlasterror().getErrorMessage() << endl;
-			break;
+		while (rsize < sendsize) {
+			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);// UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
+			rsize += rs;
 		}
-		rsize += rs;
+		cout << "Sended " << rsize << endl;
+	} catch (SocketException &e) {
+		cerr << e.what() << endl;
+		cout << "Disconnecting !!!" << endl;
 	}
-	cout << "Sended " << rsize << endl;
 }
 
 void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
@@ -462,17 +518,24 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	//Fill the world with data!
 	WorldInfo *WI = DebugData.mutable_world();
 
+
 	//Setting my position
 	WI->mutable_myposition()->set_x(AgentPosition.x);
 	WI->mutable_myposition()->set_y(AgentPosition.y);
 	WI->mutable_myposition()->set_phi(AgentPosition.theta);
 	WI->mutable_myposition()->set_confidence(AgentPosition.confidence);
 
+
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
 
-	DebugData.mutable_robotposition()->set_x(MotionModel.Distance.val);
-	DebugData.mutable_robotposition()->set_y(MotionModel.Direction.val);
-	DebugData.mutable_robotposition()->set_phi(MotionModel.Rotation.val);
+	//	DebugData.mutable_robotposition()->set_x(MotionModel.Distance.val);
+	//	DebugData.mutable_robotposition()->set_y(MotionModel.Direction.val);
+	//	DebugData.mutable_robotposition()->set_phi(MotionModel.Rotation.val);
+	DebugData.mutable_robotposition()->set_x(TrackPointRobotPosition.x);
+	DebugData.mutable_robotposition()->set_y(TrackPointRobotPosition.y);
+	DebugData.mutable_robotposition()->set_phi(TrackPointRobotPosition.phi);
+
+
 	//	DebugData.mutable_myposition()->set_confidence(AgentPosition.confidence );
 
 	RobotPose prtcl;
@@ -496,80 +559,37 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 }
 
 void * Localization::StartServer(void * astring) {
-	// use this function to initialize the UDT library
-	UDT::startup();
 
-	addrinfo hints;
-	addrinfo* res;
+	unsigned short port = 9000;
 
-	memset(&hints, 0, sizeof(struct addrinfo));
+	TCPServerSocket servSock(port);
 
-	hints.ai_flags = AI_PASSIVE;
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	//hints.ai_socktype = SOCK_DGRAM;
-
-	string service("9000");
-
-	if (0 != getaddrinfo(NULL, service.c_str(), &hints, &res)) {
-		cout << "illegal port number or port is busy.\n" << endl;
-		return NULL;
-	}
-
-	UDTSOCKET serv = UDT::socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-
-	// UDT Options
-	//UDT::setsockopt(serv, 0, UDT_CC, new CCCFactory<CUDPBlast> , sizeof(CCCFactory<CUDPBlast> ));
-	//iUDT::setsockopt(serv, 0, UDT_MSS, new int(9000), sizeof(int));
-	//UDT::setsockopt(serv, 0, UDT_RCVBUF, new int(10000000), sizeof(int));
-	//UDT::setsockopt(serv, 0, UDP_RCVBUF, new int(10000000), sizeof(int));
-
-	if (UDT::ERROR == UDT::bind(serv, res->ai_addr, res->ai_addrlen)) {
-		cout << "bind: " << UDT::getlasterror().getErrorMessage() << endl;
-		return NULL;
-	}
-
-	freeaddrinfo(res);
-
-	cout << "Localization server is ready at port: " << service << endl;
-
-	if (UDT::ERROR == UDT::listen(serv, 10)) {
-		cout << "listen: " << UDT::getlasterror().getErrorMessage() << endl;
-		return NULL;
-	}
-
-	sockaddr_storage clientaddr;
-	int addrlen = sizeof(clientaddr);
-
-	//UDTSOCKET recver;
+	cout << "Localization server is ready at port: " << port << endl;
 
 	while (true) {
 		if (!debugmode) {
-			if (UDT::INVALID_SOCK == (recver = UDT::accept(serv, (sockaddr*) &clientaddr, &addrlen))) {
-				cout << "accept: " << UDT::getlasterror().getErrorMessage() << endl;
+			if ((sock = servSock.accept()) < 0) {
+				cout << " REturned null";
 				return NULL;
 			}
+			cout << "Handling client ";
+			try {
+				cout << sock->getForeignAddress() << ":";
+			} catch (SocketException e) {
+				cerr << "Unable to get foreign address" << endl;
+			}
+			try {
+				cout << sock->getForeignPort();
+			} catch (SocketException e) {
+				cerr << "Unable to get foreign port" << endl;
+			}
+			cout << endl;
+			debugmode = true;
 
-			char clienthost[NI_MAXHOST];
-			char clientservice[NI_MAXSERV];
-			getnameinfo((sockaddr *) &clientaddr, addrlen, clienthost, sizeof(clienthost), clientservice, sizeof(clientservice), NI_NUMERICHOST | NI_NUMERICSERV);
-			cout << "new connection: " << clienthost << ":" << clientservice << endl;
 		} else {
 			sleep(5);
 		}
-		//#ifndef WIN32
-		//		pthread_t rcvthread;
-		//		pthread_create(&rcvthread, NULL, senddata, new UDTSOCKET(recver));
-		//		pthread_detach(rcvthread);
-		//#else
-		//		CreateThread(NULL, 0, senddata, new UDTSOCKET(recver), 0, NULL);
-		//#endif
 	}
-
-	UDT::close(serv);
-
-	// use this function to release the UDT library
-	UDT::cleanup();
 
 	return NULL;
 }
