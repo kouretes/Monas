@@ -35,69 +35,79 @@ using namespace std;
 
 namespace
 {
-ActivityRegistrar<Vision>::Type temp("Vision");
+	ActivityRegistrar<Vision>::Type temp("Vision");
 }
-struct inttracer_s{
-    int x,y;
-    int s,c;
-    int e,t,i;
-    bool steep;
-    //int idx,idy;
+struct inttracer_s
+{
+	int x,y;
+	int s,c;
+	int e,t,i;
+	bool steep;
+	//int idx,idy;
 
-    void init(int a,int b) { x=a;y=b;e=0;};
-    void initVelocity(float dx,float dy)
-    {
-        int idx=abs(dx*2048);
-        int idy=abs(dy*2048);
-        if(abs(dx)>=abs(dy))
-            steep=false;
-        else
-            steep=true;
-        if(!steep)
-        {
-            s= dx>0?1:-1;
-            c=dy>0?1:-1;
-            t=idx;
-            i=2*idy;
-            //Correction
+	void init(int a,int b)
+	{
+		x=a;
+		y=b;
+		e=0;
+	};
+	void initVelocity(float dx,float dy)
+	{
+		int idx=abs(dx*2048);
+		int idy=abs(dy*2048);
+		if (abs(dx)>=abs(dy))
+			steep=false;
+		else
+			steep=true;
+		if (!steep)
+		{
+			s= dx>0?1:-1;
+			c=dy>0?1:-1;
+			t=idx;
+			i=2*idy;
+			//Correction
 
 
-        }
-        else
-        {
-            s= dy>0?1:-1;
-            c=dx>0?1:-1;
-            t=idy;
-            i=2*idx;
+		}
+		else
+		{
+			s= dy>0?1:-1;
+			c=dx>0?1:-1;
+			t=idy;
+			i=2*idx;
 
-        };
-        e=0;
-    };
-    void setScale(int scale) { s=(s<0?-1:1)*scale;c=(c<0?-1:1)*scale;};
-    void step()
-    {
-        e+=i;
-        if(!steep)
-        {
-            x+=s;
-            if(e>t)
-            {
-                y+=c;
-                e-=t;
-            }
+		};
+		e=0;
+	};
+	void setScale(int scale)
+	{
+		s=(s<0?-1:1)*scale;
+		c=(c<0?-1:1)*scale;
+	};
+	void step()
+	{
+		e+=i;
+		if (!steep)
+		{
+			x+=s;
+			if (e>t)
+			{
+				y+=c;
+				e-=t;
+			}
 
-        }
-        else
-        {
-            y+=s;
-            if(e>t)
-            {
-                x+=c;
-                e-=t;
-            }
+		}
+		else
+		{
+			y+=s;
+			if (e>t)
+			{
+				x+=c;
+				e-=t;
+			}
 
-        }
-    }
+		}
+	}
 
 };
 
@@ -117,7 +127,7 @@ bool FileExists(string strFilename)
 
 	// Attempt to get the file attributes
 	intStat = stat(strFilename.c_str(),&stFileInfo);
-	if(intStat == 0)
+	if (intStat == 0)
 	{
 		// We were able to get the file attributes
 		// so the file obviously exists.
@@ -139,16 +149,17 @@ bool FileExists(string strFilename)
 
 void saveFrame(IplImage *fIplImageHeader)
 {
-   static int filenum=0;
+	static int filenum=0;
 
-   char fname[128];
-   do
-   {
+	char fname[128];
+	do
+	{
 		sprintf(fname,(ArchConfig::Instance().GetConfigPrefix()+"images/"+std::string("img%03d.yuyv")).c_str(),filenum++);
-   	}while(FileExists(fname));
-   	ofstream frame(fname,ios_base::binary);
-   	frame.write(reinterpret_cast<char *>(fIplImageHeader->imageData),fIplImageHeader->width*fIplImageHeader->height*fIplImageHeader->nChannels);
-   	frame.close();
+	}
+	while (FileExists(fname));
+	ofstream frame(fname,ios_base::binary);
+	frame.write(reinterpret_cast<char *>(fIplImageHeader->imageData),fIplImageHeader->width*fIplImageHeader->height*fIplImageHeader->nChannels);
+	frame.close();
 
 
 }
@@ -156,41 +167,41 @@ void saveFrame(IplImage *fIplImageHeader)
 
 int  Vision::Execute()
 {
-    //cout<<"Vision Execute"<<endl;
+	//cout<<"Vision Execute"<<endl;
 	static bool calibrated = false;
 	boost::shared_ptr<const CalibrateCam>  cal= _blk->read_signal<CalibrateCam>("CalibrateCam");
-	if(_blk->read_state<CalibrateCam>("CalibrateCam")==NULL)
+	if (_blk->read_state<CalibrateCam>("CalibrateCam")==NULL)
 	{
 		CalibrateCam res;
 		res.set_status(0);
 		_blk->publish_state(res,"vision");
 	}
-    if(cal==NULL) cal= _blk->read_state<CalibrateCam>("CalibrateCam");
-    if(cal!=NULL)
-    {
-        if( cal->status()==0)
-        {
-            //cout<<"Start calibration"<<endl;
-            CalibrateCam res;
-            Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
+	if (cal==NULL) cal= _blk->read_state<CalibrateCam>("CalibrateCam");
+	if (cal!=NULL)
+	{
+		if ( cal->status()==0)
+		{
+			//cout<<"Start calibration"<<endl;
+			CalibrateCam res;
+			Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
 
-            float scale= ext.calibrateCamera(cal->sleeptime(),cal->exp());
-            segbottom->setLumaScale(1/scale);
-            segtop->setLumaScale(1/scale);
-            Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
-            //cout<<"Calibration Done!"<<endl;
-            calibrated = true;
-            res.set_status(1);
-            res.set_exposure_comp(scale);
-            _blk->publish_state(res,"vision");
-            return 0;
+			float scale= ext.calibrateCamera(cal->sleeptime(),cal->exp());
+			segbottom->setLumaScale(1/scale);
+			segtop->setLumaScale(1/scale);
+			Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
+			//cout<<"Calibration Done!"<<endl;
+			calibrated = true;
+			res.set_status(1);
+			res.set_exposure_comp(scale);
+			_blk->publish_state(res,"vision");
+			return 0;
 
-        }
-    }
+		}
+	}
 
 	fetchAndProcess();
 	//std::cout << " Vision run" << std::endl;
-	if(debugmode)
+	if (debugmode)
 	{
 		//cout << "DEbug mode " << endl;
 		recv_and_send();
@@ -223,10 +234,11 @@ void Vision::recv_and_send()
 		}
 		//cout << "Arrived " << ssize << " Bytes " << endl;
 		headersize = atoi(data);
-		if(headersize<1){
+		if (headersize<1)
+		{
 			//cout<< "error there is no header < " << headersize << endl;
 		}
-		if(headersize > size)
+		if (headersize > size)
 		{
 			//cout << " oups you must read more bytes in order to read the header " << headersize << endl;
 		}
@@ -244,11 +256,13 @@ void Vision::recv_and_send()
 
 		//cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
 	}
-	if(headerparsed) {
+	if (headerparsed)
+	{
 		string command = incommingheader.nextmsgname();
-		if (command == "Stop") {
+		if (command == "Stop")
+		{
 			debugmode = false;
-            delete sock;
+			delete sock;
 			sock=NULL;
 			return;
 
@@ -265,8 +279,10 @@ void Vision::recv_and_send()
 			int ssize;
 			int ss;
 			ssize = 0;
-			while (ssize < size) {
-				if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
+			while (ssize < size)
+			{
+				if ((ss = sock->recv(data + ssize, size - ssize)) < 0)
+				{
 					cout << "receive error" << endl;
 					break;
 				}
@@ -276,7 +292,8 @@ void Vision::recv_and_send()
 		}
 	}
 	img.Clear();
-	if(sendtype == kYUV422InterlacedColorSpace){
+	if (sendtype == kYUV422InterlacedColorSpace)
+	{
 		img.set_imagerawdata(rawImage->imageData,rawImage->imageSize );
 		img.set_bytes(rawImage->imageSize);
 		//cout << " Raw image  size " << img.bytes() << endl;
@@ -285,20 +302,20 @@ void Vision::recv_and_send()
 		img.set_type(kYUV422InterlacedColorSpace);
 	}
 
-	if(sendtype == -1) // segmented image
+	if (sendtype == -1) // segmented image
 	{
 		char segmended[rawImage->height][rawImage->width];
 		for (int i = 0; i < rawImage->width ; i++)
 			for (int j = 0; j < rawImage->height ; j++)
 				segmended[j][i] = doSeg(i, j);
 
-        vector<CvPoint>::iterator i;
-        //For all detected points
-        //cout << "locateball" << endl;
-        for (i = ballpixels.begin(); i != ballpixels.end(); i++)
-        {
-            segmended[(*i).y][(*i).x]=red;
-        };
+		vector<CvPoint>::iterator i;
+		//For all detected points
+		//cout << "locateball" << endl;
+		for (i = ballpixels.begin(); i != ballpixels.end(); i++)
+		{
+			segmended[(*i).y][(*i).x]=red;
+		};
 		img.set_imagerawdata(segmended,rawImage->width*rawImage->height);
 		img.set_bytes(rawImage->width*rawImage->height);
 		//cout << " Seg image  size " << img.bytes() << endl;
@@ -316,7 +333,8 @@ void Vision::recv_and_send()
 	int rs;
 	//send a header
 	outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
-	while (sendsize != outgoingheader.ByteSize()) {
+	while (sendsize != outgoingheader.ByteSize())
+	{
 		outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
 	}
 	outgoingheader.SerializeToArray(data+10, sendsize);
@@ -325,8 +343,10 @@ void Vision::recv_and_send()
 	memset(data,0,10);
 	strncpy(data,_toString(sendsize).c_str(),9);
 	sendsize+=10; // add 10 more bytes for the header
-	try {
-		while (rsize < sendsize) {
+	try
+	{
+		while (rsize < sendsize)
+		{
 			rs = sock->send(data + rsize, sendsize - rsize);
 			rsize += rs;
 		}
@@ -347,12 +367,15 @@ void Vision::recv_and_send()
 		rsize = 0;
 		cout << "Will send Data " << sendsize << " " << img.GetTypeName() << endl;
 
-		while (rsize < sendsize) {
+		while (rsize < sendsize)
+		{
 			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);// UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
 			rsize += rs;
 		}
 		cout << "Sended " << rsize << endl;
-	} catch (SocketException &e) {
+	}
+	catch (SocketException &e)
+	{
 		cerr << e.what() << endl;
 		cout << "Disconnecting !!!" << endl;
 		exit(0);
@@ -372,12 +395,12 @@ void Vision::fetchAndProcess()
 
 
 	//cout << "fetchImage" << endl;
-    //unsigned long startt = SysCall::_GetCurrentTimeInUSec();
+	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 
 	boost::posix_time::ptime stamp = ext.fetchImage(rawImage);
-    //unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
-    //cout<<"Fetch image takes:"<<endt<<endl;
-    stamp+=boost::posix_time::millisec(sensordelay);
+	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
+	//cout<<"Fetch image takes:"<<endt<<endl;
+	stamp+=boost::posix_time::millisec(sensordelay);
 	if (ext.getCamera()==1)//bottom cam
 	{
 		p.cameraPitch=(KMat::transformations::PI*40.0)/180.0;
@@ -411,8 +434,8 @@ void Vision::fetchAndProcess()
 //#endif
 	//boost::posix_time::ptime rtime =  time_t_epoch+(boost::posix_time::microsec(t.tv_nsec/1000)+boost::posix_time::seconds(t.tv_sec));//+sec(t.tv_sec));
 //	hm = _blk->read_nb<HeadJointSensorsMessage>("HeadJointSensorsMessage", "Sensors");
-    //im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors",&p.time,&stamp);
-    im = _blk->read_data<InertialSensorsMessage>("InertialSensorsMessage", "localhost",&p.time,&stamp);
+	//im = _blk->read_nb<InertialSensorsMessage>("InertialSensorsMessage", "Sensors",&p.time,&stamp);
+	im = _blk->read_data<InertialSensorsMessage>("InertialSensorsMessage", "localhost",&p.time,&stamp);
 //#ifdef DEBUGVISION
 //	cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
 //	cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
@@ -488,15 +511,15 @@ void Vision::fetchAndProcess()
 	gridScan(orange);
 	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
 
-	if(obs.has_ball()||obs.regular_objects_size()>0 || obs.adhoc_objects_size()>0
+	if (obs.has_ball()||obs.regular_objects_size()>0 || obs.adhoc_objects_size()>0
 			||obs.corner_objects_size()>0  || obs.intersection_objects_size()>0
 			||obs.line_objects_size()>0)
 		_blk->publish_signal(obs,"vision");
 	LedValues* l=leds.add_leds();
-	if(has_ball != obs.has_ball())
+	if (has_ball != obs.has_ball())
 	{
 		has_ball = obs.has_ball();
-		if(has_ball)
+		if (has_ball)
 		{
 			l->set_chain("l_eye");
 			l->set_color("red");
@@ -511,9 +534,9 @@ void Vision::fetchAndProcess()
 	}
 	else
 	{
-		if(++delay %= 20)
+		if (++delay %= 20)
 		{
-			if(has_ball)
+			if (has_ball)
 			{
 				l->set_chain("l_eye");
 				l->set_color("red");
@@ -538,7 +561,7 @@ void Vision::fetchAndProcess()
 
 bool Vision::validpixel(int x,int y)
 {
-	if((x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height)))
+	if ((x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height)))
 		return true;
 	else
 		return false;
@@ -570,12 +593,12 @@ Vision::Vision() : type(VISION_CSPACE)
 void Vision::UserInit()
 {
 	config = new XMLConfig(ArchConfig::Instance().GetConfigPrefix()+"/vision.xml");
-	if(config->IsLoadedSuccessfully()==false)
+	if (config->IsLoadedSuccessfully()==false)
 		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
 	bool cvHighgui;
 	config->QueryElement("cvHighgui",cvHighgui);
 
-	if(cvHighgui==true)
+	if (cvHighgui==true)
 		Logger::Instance().WriteMsg("Vision", "Enable highgui", Logger::Info);
 
 
@@ -661,7 +684,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	gtrc.initVelocity(-tan(-kinext.getRoll()),-1);
 	step=scanstep;
 	gtrc.setScale(step);
-    //cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
+	//cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
 
 	//cout<<"loop"<<endl;
 	for (int i = borderskip+startx; i < rawImage->width-borderskip-1; i = i + (scanstep>>1))
@@ -680,27 +703,29 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 		//im(0)=i;
 		//im(1)= rawImage->height - borderskip-1;
-        //c=imageToCamera(im);
-        //c.prettyPrint();
-        //c3d=kinext.camera2dToGroundProjection(c,0);
-        //Hit maximum "see" distance
-        //if(sqrd(c3d(0))+sqrd(c3d(1))>=sqrd(seedistance))//Looking way too far
-        //    continue;
+		//c=imageToCamera(im);
+		//c.prettyPrint();
+		//c3d=kinext.camera2dToGroundProjection(c,0);
+		//Hit maximum "see" distance
+		//if(sqrd(c3d(0))+sqrd(c3d(1))>=sqrd(seedistance))//Looking way too far
+		//    continue;
 
-        KMat::HCoords<int,2> lastpoint;
-        lastpoint(0)=gtrc.x;lastpoint(1)=gtrc.y;//Copy first point
-        //cout<<"================================================"<<endl;
-        while(validpixel(gtrc.x,gtrc.y))
-        {
-            //cout<<"doseg"<<endl;
-            tempcolor = doSeg(gtrc.x,gtrc.y);
-            //cout<<"doseg:"<<(int)tempcolor<<endl;
-            if (tempcolor == white ||tempcolor == green)//
+		KMat::HCoords<int,2> lastpoint;
+		lastpoint(0)=gtrc.x;
+		lastpoint(1)=gtrc.y;//Copy first point
+		//cout<<"================================================"<<endl;
+		while (validpixel(gtrc.x,gtrc.y))
+		{
+			//cout<<"doseg"<<endl;
+			tempcolor = doSeg(gtrc.x,gtrc.y);
+			//cout<<"doseg:"<<(int)tempcolor<<endl;
+			if (tempcolor == white ||tempcolor == green)//
 			{
 				cntwhitegreenpixels++;
 				cntwhitegreenorangepixels++;
 				cntother=0;
-				lastpoint(0)=gtrc.x;lastpoint(1)=gtrc.y;
+				lastpoint(0)=gtrc.x;
+				lastpoint(1)=gtrc.y;
 			}
 			else if (tempcolor==orange)
 			{
@@ -715,36 +740,38 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			}
 			if (cntother>SCANSKIP)//No continuity, break
 			{
-			    cntother=0;
-			    im(0)=lastpoint(0);im(1)=lastpoint(1);
-                c=imageToCamera(im);
-                c3d=kinext.camera2dToGroundProjection(c,0);
-                float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+				cntother=0;
+				im(0)=lastpoint(0);
+				im(1)=lastpoint(1);
+				c=imageToCamera(im);
+				c3d=kinext.camera2dToGroundProjection(c,0);
+				float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
 
-                if(d1>=sqrd(seedistance))//Looking way too far
-                {
-                    //cout<<"Seedistance reached"<<endl;
-                    //c3d.prettyPrint();
-                    break;
-                }
-                im(0)=gtrc.x;im(1)=gtrc.y;
-                c=imageToCamera(im);
-                c3d=kinext.camera2dToGroundProjection(c,0);
-                float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+				if (d1>=sqrd(seedistance))//Looking way too far
+				{
+					//cout<<"Seedistance reached"<<endl;
+					//c3d.prettyPrint();
+					break;
+				}
+				im(0)=gtrc.x;
+				im(1)=gtrc.y;
+				c=imageToCamera(im);
+				c3d=kinext.camera2dToGroundProjection(c,0);
+				float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
 
-                if(abs(d1-d2)>skipdistance||d1>=sqrd(seedistance))
-                {
-                    //cout<<"break"<<endl;
-                    CvPoint tmpPoint;
-                    tmpPoint.x = gtrc.x;
-                    tmpPoint.y = gtrc.y;
-                    obstacles.push_back(tmpPoint);
-                    break;
-                }
+				if (abs(d1-d2)>skipdistance||d1>=sqrd(seedistance))
+				{
+					//cout<<"break"<<endl;
+					CvPoint tmpPoint;
+					tmpPoint.x = gtrc.x;
+					tmpPoint.y = gtrc.y;
+					obstacles.push_back(tmpPoint);
+					break;
+				}
 			}
 			if (tempcolor == orange &&ballfound==false)
 			{
-			    CvPoint tmpPoint;
+				CvPoint tmpPoint;
 				tmpPoint.x = gtrc.x;
 				tmpPoint.y = gtrc.y;
 				ballpixels.push_back(tmpPoint);
@@ -756,25 +783,25 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			//Find next pixel
 			gtrc.step();
 			step--;
-			if(step<3) step=3;
+			if (step<3) step=3;
 			gtrc.setScale(step);
-            //stepx=2;
-            //stepy-=2;
+			//stepx=2;
+			//stepy-=2;
 
-            //cout<<ci<<","<<cj<<endl;
-            //c=imageToCamera(im);
-           // c3d=kinext.camera2dToGroundProjection(c,0);
-           // float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
-            //float corr=1+ skipdistance/d;
+			//cout<<ci<<","<<cj<<endl;
+			//c=imageToCamera(im);
+			// c3d=kinext.camera2dToGroundProjection(c,0);
+			// float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+			//float corr=1+ skipdistance/d;
 
-            //if(d>=sqrd(seedistance))//Looking way too far
-            //{
-                //cout<<"Seedistance reached"<<endl;
-                //c3d.prettyPrint();
-               // break;
-            //}
+			//if(d>=sqrd(seedistance))//Looking way too far
+			//{
+			//cout<<"Seedistance reached"<<endl;
+			//c3d.prettyPrint();
+			// break;
+			//}
 
-        }
+		}
 
 		//KMat::HCoords<float,2> &=imageToCameraAngles(point);
 		//KMat::HCoords<float,2> & a=cameraToObs(point);
@@ -823,20 +850,20 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		c=imageToCamera(im);
 		c3d=kinext.camera2dToTorso(c);
 		//c3d(0)+p.cameraX;c3d(1)+cameraY;
-        float pitch,yaw;
-        pitch=atan(abs(c3d(2))/sqrt(sqrd(c3d(0))+sqrd(c3d(1))));
-        yaw=atan2(c3d(1),c3d(0));
-        if(b.distance.mean<0.25)
-        {
-             trckmsg.set_referenceyaw(yaw/2);
+		float pitch,yaw;
+		pitch=atan(abs(c3d(2))/sqrt(sqrd(c3d(0))+sqrd(c3d(1))));
+		yaw=atan2(c3d(1),c3d(0));
+		if (b.distance.mean<0.25)
+		{
+			trckmsg.set_referenceyaw(yaw/2);
 
-        }
-        else
-        {
-            trckmsg.set_referenceyaw(yaw);
-            //trckmsg.set_referencepitch(pitch-p.cameraPitch);//-ball(2)
-        }
-        trckmsg.set_referencepitch(pitch-p.cameraPitch);
+		}
+		else
+		{
+			trckmsg.set_referenceyaw(yaw);
+			//trckmsg.set_referencepitch(pitch-p.cameraPitch);//-ball(2)
+		}
+		trckmsg.set_referencepitch(pitch-p.cameraPitch);
 		trckmsg.set_radius(b.cr);
 		//trckmsg.set_topic("vision");
 		_blk->publish_signal(trckmsg,"vision");
@@ -867,11 +894,11 @@ void Vision::publishObstacles(std::vector<CvPoint> points)
 {
 	static int period=0;
 	period++;
-	if(period>5)
+	if (period>5)
 		period=0;
 	vector<CvPoint>::iterator i;//candidate iterator
 	VisionObstacleMessage result;
-	if(!(result.obstacles_size()>2&&period==0))
+	if (!(result.obstacles_size()>2&&period==0))
 		return;
 
 
@@ -1007,9 +1034,9 @@ bool Vision::calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask
 	int width =goal.lr.x-goal.ll.x+1;
 	unsigned int ttl = 0, gd = 0;
 	float ratio;
-	for(int i=goal.ll.x; i<=goal.lr.x; i++)
+	for (int i=goal.ll.x; i<=goal.lr.x; i++)
 	{
-		for(int j=goal.bottom.y+width; j>goal.bottom.y; j--)
+		for (int j=goal.bottom.y+width; j>goal.bottom.y; j--)
 		{
 			if (!validpixel(i,j))
 				continue;
@@ -1019,11 +1046,11 @@ bool Vision::calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask
 		}
 	}
 	ratio=gd/ttl;
-	if(ratio<0.5)
+	if (ratio<0.5)
 		return false;
 
 
-	if(goal.height>0)
+	if (goal.height>0)
 	{
 		goal.conf=1;
 
@@ -1289,6 +1316,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 	//Skip first/last row/col
 	KMat::HCoords<float,2> point;
 	vector<balldata_t> history;
+	vector<balldata_t> banlist;
 
 	vector<CvPoint>::iterator i;
 	//For all detected points
@@ -1310,72 +1338,87 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 			else
 				bd++;
 		}
+
+		bd= banlist.begin();
+		while (bd != history.end() )
+		{
+			if (CvDist(*bd,*i) <= sqrd((*bd).cr))
+			{
+				//cout<<"skip"<<endl;
+				i++;//Skip pixels
+				if (i == cand.end())
+					break;
+				bd = history.begin();
+			}
+			else
+				bd++;
+		}
 		if (i == cand.end())
 			break;
 		if (!validpixel((*i).x,(*i).y))
 			continue;
-        //cout<<"Ball Tracing:";
+		//cout<<"Ball Tracing:";
 
 		CvPoint b = traceline((*i), cvPoint(0, 1), orange,true);
 		if (!validpixel(b.x,b.y))
-            continue; //No bottom pixel :)
+			continue; //No bottom pixel :)
 		CvPoint t = traceline((*i), cvPoint(0, -1), orange,false);
 		if (!validpixel(t.x,t.y))
-            continue; //No top pixel :)
-        //cout<<"T:"<<t.x<<","<<t.y<<endl;
-        CvPoint m;
-        m.x=(*i).x;
-        m.y=(b.y+t.y)/2;
+			continue; //No top pixel :)
+		//cout<<"T:"<<t.x<<","<<t.y<<endl;
+		CvPoint m;
+		m.x=(*i).x;
+		m.y=(b.y+t.y)/2;
 
-        CvPoint r = traceline(m, cvPoint(1, 0), orange,true);
-        if (!validpixel(r.x,r.y))// No right pixel available?!?
-            continue;
+		CvPoint r = traceline(m, cvPoint(1, 0), orange,true);
+		if (!validpixel(r.x,r.y))// No right pixel available?!?
+			continue;
 
-        CvPoint l = traceline(m, cvPoint(-1, 0), orange,true);//Prefer top l
-        if (!validpixel(l.x,l.y))// No left pixel available?!?
-            continue;
-        m.x=(l.x+r.x)/2;
+		CvPoint l = traceline(m, cvPoint(-1, 0), orange,true);//Prefer top l
+		if (!validpixel(l.x,l.y))// No left pixel available?!?
+			continue;
+		m.x=(l.x+r.x)/2;
 
 
 
 		r = traceline(m, cvPoint(1, -1), orange,false);//Prefer  r
 		//if (!validpixel(r.x,r.y))
-        //    r = traceline(m, cvPoint(1, 0), orange,false);
+		//    r = traceline(m, cvPoint(1, 0), orange,false);
 
-        if (!validpixel(r.x,r.y))// No right pixel available?!?
-            continue;
+		if (!validpixel(r.x,r.y))// No right pixel available?!?
+			continue;
 
-        //cout<<"R:"<<r.x<<","<<r.y<<endl;
-        l = traceline(m, cvPoint(-1, -1), orange,false);//Prefer top l
+		//cout<<"R:"<<r.x<<","<<r.y<<endl;
+		l = traceline(m, cvPoint(-1, -1), orange,false);//Prefer top l
 		//if (!validpixel(l.x,l.y))
-        //    l = traceline(m, cvPoint(-1, 0), orange,false);
+		//    l = traceline(m, cvPoint(-1, 0), orange,false);
 
-        if (!validpixel(l.x,l.y))// No left pixel available?!?
-            continue;
-        //cout<<"l:"<<l.x<<","<<l.y<<endl;
-        //cout<<"done tracing!"<<endl;
+		if (!validpixel(l.x,l.y))// No left pixel available?!?
+			continue;
+		//cout<<"l:"<<l.x<<","<<l.y<<endl;
+		//cout<<"done tracing!"<<endl;
 
-        CvPoint2D32f center;
-        //cout<<t.x<<" "<<t.y<<endl;
-        //cout<<l.x<<" "<<l.y<<endl;
-        //cout<<r.x<<" "<<r.y<<endl;
-        if(t.x==l.x||t.x==r.x)
-            continue;
-        float ma=((float)(t.y-l.y))/((float)(t.x-l.x));
-        float mb=((float)(r.y-t.y))/((float)(r.x-t.x));
-        if(mb==ma||ma==0)
-            continue;
-        center.x= ( ma*mb*((float)(l.y-r.y))+mb*((float)(l.x+t.x))-ma*((float)(t.x+r.x)) )/ (2.0*(mb-ma));
-        center.y=-(center.x -((float)(l.x+t.x))/2)/ma+((float)(l.y+t.y))/2.0;
-        //center.y=-(center.x -(l.x+t.x)/2)/ma+(l.y+t.y)/2.0;
-        //cout<<center.y<<endl;
-        //cout<<center.x<<","<<center.y<<endl;
-        //cout<<t.x<<","<<t.y<<endl;
+		CvPoint2D32f center;
+		//cout<<t.x<<" "<<t.y<<endl;
+		//cout<<l.x<<" "<<l.y<<endl;
+		//cout<<r.x<<" "<<r.y<<endl;
+		if (t.x==l.x||t.x==r.x)
+			continue;
+		float ma=((float)(t.y-l.y))/((float)(t.x-l.x));
+		float mb=((float)(r.y-t.y))/((float)(r.x-t.x));
+		if (mb==ma||ma==0)
+			continue;
+		center.x= ( ma*mb*((float)(l.y-r.y))+mb*((float)(l.x+t.x))-ma*((float)(t.x+r.x)) )/ (2.0*(mb-ma));
+		center.y=-(center.x -((float)(l.x+t.x))/2)/ma+((float)(l.y+t.y))/2.0;
+		//center.y=-(center.x -(l.x+t.x)/2)/ma+(l.y+t.y)/2.0;
+		//cout<<center.y<<endl;
+		//cout<<center.x<<","<<center.y<<endl;
+		//cout<<t.x<<","<<t.y<<endl;
 
-        float radius = CvDist(center,t);
+		float radius = CvDist(center,t);
 		//Logger::Instance().WriteMsg("Vision", _toString(center.x)+","+_toString(center.y), Logger::Info);
-        //Logger::Instance().WriteMsg("Vision", _toString(t.x)+","+_toString(t.y), Logger::Info);
-        //Logger::Instance().WriteMsg("Vision", _toString(radius), Logger::Info);
+		//Logger::Instance().WriteMsg("Vision", _toString(t.x)+","+_toString(t.y), Logger::Info);
+		//Logger::Instance().WriteMsg("Vision", _toString(radius), Logger::Info);
 		//cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
@@ -1385,73 +1428,75 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 
 		point(0)=center.x;
-        point(1)=center.y;
+		point(1)=center.y;
 
-        //Estimate Radius:
-        KMat::HCoords<float,3> c3d;
-        KMat::HCoords<float,2> c1,c2;
-        KMat::HCoords<float,2> im1,im2;
-        im1(0)=center.x;
-        im1(1)=center.y;
-        im2(0)=center.x+(radius)*0.707;
-        im2(1)=center.y+(radius)*0.707;
-        c1=imageToCamera(im1);
-        c2=imageToCamera(im2);
-        float tantths=kinext.vectorAngle(c1,c2);
-        c3d=kinext.camera2dToGround(c1);//Transform center vector  to ground coordinates
-        float par=tantths*tantths*( (sqrd(c3d(0))+sqrd(c3d(1)))/sqrd(c3d(2)))+tantths*tantths;
-        if(par>1)//Something is terribly wrong!
-        {
-            Logger::Instance().WriteMsg("Vision", "Ball size estimation went boggus!", Logger::Error);
-            continue;
-        }
-        float rest=p.cameraZ*(par-sqrt(par))/(par-1);
-        float balltolerance,ballsize;
-        config->QueryElement("balltolerance",balltolerance);
-        config->QueryElement("ballsize",ballsize);
-        newdata.ballradius=rest;
-
-
-        //cout<<"rest:"<<rest<<endl;
-
-        //float w=d2.mean;
-        //w=w<1?1:w;
-        //rest= rest/w+((ballsize/2)*(w-1))/w;
-        //Logger::Instance().WriteMsg("Vision", "rest:"+_toString(rest), Logger::Info);
-
-        if(abs( (rest*2-ballsize)/ballsize)>balltolerance)//Wrong diameter ball
-        {
-           Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
-            continue;
-        }
-		if(!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
-            continue;
-        measurement d1=kinext.angularDistance(c1,c2,rest);
-        //cout<<"angular:"<<d1.mean<<" "<<d1.var<<endl;
-        measurement2 a=kinext.projectionDistance(c1,rest);
-        measurement d2=(*a)[0];
-
-        //cout<<"projection:"<<d2.mean<<" "<<d2.var<<endl;
-        measurement bearing=(*a)[1];
-        //cout<<"proj bearing:"<<bearing.mean<<" "<<bearing.var<<endl;
-        measurement distance;
-
-        distance.mean=(d1.mean*d2.var+d2.mean*d1.var)/(d1.var+d2.var);
-        distance.var=d1.var*d2.var/(d1.var+d2.var);
-        KMat::HCoords<float,2> polar;
-        polar(0)=distance.mean;
-        polar(1)=bearing.mean;
-        KMat::HCoords<float,2> robotpolar=camToRobot(polar);
-        distance.mean=polar(0);
-        bearing.mean=polar(1);
-        newdata.distance=distance;
-        newdata.bearing=bearing;
+		//Estimate Radius:
+		KMat::HCoords<float,3> c3d;
+		KMat::HCoords<float,2> c1,c2;
+		KMat::HCoords<float,2> im1,im2;
+		im1(0)=center.x;
+		im1(1)=center.y;
+		im2(0)=center.x+(radius)*0.707;
+		im2(1)=center.y+(radius)*0.707;
+		c1=imageToCamera(im1);
+		c2=imageToCamera(im2);
+		float tantths=kinext.vectorAngle(c1,c2);
+		c3d=kinext.camera2dToGround(c1);//Transform center vector  to ground coordinates
+		float par=tantths*tantths*( (sqrd(c3d(0))+sqrd(c3d(1)))/sqrd(c3d(2)))+tantths*tantths;
+		if (par>1)//Something is terribly wrong!
+		{
+			Logger::Instance().WriteMsg("Vision", "Ball size estimation went boggus!", Logger::Error);
+			continue;
+		}
+		float rest=p.cameraZ*(par-sqrt(par))/(par-1);
+		float balltolerance,ballsize;
+		config->QueryElement("balltolerance",balltolerance);
+		config->QueryElement("ballsize",ballsize);
+		newdata.ballradius=rest;
 
 
-        history.push_back(newdata);
+		//cout<<"rest:"<<rest<<endl;
 
-         delete[] a;
-        //cout<<history<<endl;
+		//float w=d2.mean;
+		//w=w<1?1:w;
+		//rest= rest/w+((ballsize/2)*(w-1))/w;
+		//Logger::Instance().WriteMsg("Vision", "rest:"+_toString(rest), Logger::Info);
+
+		if (abs( (rest*2-ballsize)/ballsize)>balltolerance)//Wrong diameter ball
+		{
+			Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
+			banlist.push_back(newdata);
+			continue;
+		}
+		if (!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
+
+			continue;
+		measurement d1=kinext.angularDistance(c1,c2,rest);
+		//cout<<"angular:"<<d1.mean<<" "<<d1.var<<endl;
+		measurement2 a=kinext.projectionDistance(c1,rest);
+		measurement d2=(*a)[0];
+
+		//cout<<"projection:"<<d2.mean<<" "<<d2.var<<endl;
+		measurement bearing=(*a)[1];
+		//cout<<"proj bearing:"<<bearing.mean<<" "<<bearing.var<<endl;
+		measurement distance;
+
+		distance.mean=(d1.mean*d2.var+d2.mean*d1.var)/(d1.var+d2.var);
+		distance.var=d1.var*d2.var/(d1.var+d2.var);
+		KMat::HCoords<float,2> polar;
+		polar(0)=distance.mean;
+		polar(1)=bearing.mean;
+		KMat::HCoords<float,2> robotpolar=camToRobot(polar);
+		distance.mean=polar(0);
+		bearing.mean=polar(1);
+		newdata.distance=distance;
+		newdata.bearing=bearing;
+
+
+		history.push_back(newdata);
+
+		delete[] a;
+		//cout<<history<<endl;
 
 	}
 	vector<balldata_t>::iterator bd = history.begin();
@@ -1471,10 +1516,10 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 	}
 
 //#ifdef DEBUGVISION
-        //KMat::HCoords<float,2> & w=camToRobot(o)
-         //Logger::Instance().WriteMsg("Vision", "Distance:"+_toString(best.distance.mean), Logger::Info);
-        //cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
-        //cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
+	//KMat::HCoords<float,2> & w=camToRobot(o)
+	//Logger::Instance().WriteMsg("Vision", "Distance:"+_toString(best.distance.mean), Logger::Info);
+	//cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
+	//cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
 
 //#endif
 	return best;
@@ -1504,7 +1549,7 @@ CvPoint Vision::traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t 
 
 		if (skipcount > TRACESKIP || globalcount > GLOBALTRACESKIP)
 		{
-		    //curr=start;
+			//curr=start;
 			break;
 		}
 		curr.x += vel.x;
@@ -1590,21 +1635,14 @@ void Vision::cvShowSegmented()
 	}
 	cvShowImage("win1", segIpl);
 
-	/*std:: vector <std::string> names;
-	 std:: vector <float> pos;
-	 names.push_back("HeadYaw");
-	 names.push_back("HeadPitch");
-	 pos=m->call<vector<float> >("getAngles",names,true);
-	 pos[0]=pos[0]+0.1;
-	 pos[1]=pos[1]+0.1;
-	 m->callVoid("setAngles",names,pos,0.8);*/
+
 	int k=cvWaitKey(10);
-	if(k=='s')
+	if (k=='s')
 	{
 		saveFrame(rawImage);
 		Logger::Instance().WriteMsg("Vision", "Save frame", Logger::Error);
 	}
-	if(k=='c')
+	if (k=='c')
 	{
 		Logger::Instance().WriteMsg("Vision", "Change Cam", Logger::Info);
 		ext.swapCamera();
