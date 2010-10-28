@@ -11,15 +11,16 @@
   <activity>LedHandler</activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=30 StatsCycle=100>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=20 StatsCycle=1000>
   <name>KMC</name>
    <activity>MotionController</activity>
   <activity>RobotController</activity>
 </agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=15 StatsCycle=50>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=18 StatsCycle=50>
   <name>KVision</name>
   
   <activity>Vision</activity>
+  <!-- <activity>Localization </activity> -->
   <activity>Behavior</activity>
   
 </agent>

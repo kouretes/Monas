@@ -17,12 +17,12 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.40
-#define	LIMITDOWN 0.43
-#define	LIMITLEFT 0.30
-#define	LIMITRIGHT -0.30
-#define STEPVER 0.35
-#define STEPHOR 0.35
+#define LIMITUP -0.55
+#define	LIMITDOWN 0.19
+#define	LIMITLEFT 0.5
+#define	LIMITRIGHT -0.5
+#define STEPVER 0.6
+#define STEPHOR 0.5
 
 namespace AL {
 	class ALMotionProxy;

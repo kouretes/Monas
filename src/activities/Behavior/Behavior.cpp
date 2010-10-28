@@ -148,7 +148,7 @@ int Behavior::Execute() {
 		}
 		else if (gameState == PLAYER_PENALISED) {
 			play = false;
-			calibrate();
+			//calibrate();
 		}
 	}
 
@@ -182,12 +182,12 @@ int Behavior::Execute() {
 					ballfound -= 1; //Decrease it when we don't see the ball
 			}
 		}
-		return 0;
+		//return 0;
 		Logger::Instance().WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		 float posx=0.16, posy=0.05;
+		 float posx=0.14, posy=0.035;
 
 		if ((obsm != 0) && !turning) {
 
@@ -199,7 +199,7 @@ int Behavior::Execute() {
 			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
 			side = (bb > 0) ? 1 : -1;
 			Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
-
+            readytokick==true;
 			if (!readytokick&&ballfound>=2) {
 
 				readytokick = true;
@@ -224,7 +224,7 @@ int Behavior::Execute() {
                     else
                     {
                         float offsety=side*posy;
-                        float g=0.3;
+                        float g=0.6;
                         littleWalk((bx-posx)*g,(by-offsety)*g,0,g);
                     }
 				}
@@ -251,11 +251,11 @@ int Behavior::Execute() {
 					littleWalk(0.2, 0.0, 0.0, 2);
 				} else {
 					if (bb > 0.0) {
-						amot->set_command("softLeftSideKick");
+						amot->set_command("SoftLeftSideKick");
 						direction = -1;
 					}
 					else {
-						amot->set_command("softRightSideKick");
+						amot->set_command("SoftRightSideKick");
 						direction = +1;
 					}
 					_blk->publish_signal(*amot, "motion");
@@ -266,25 +266,25 @@ int Behavior::Execute() {
 				if (mglRand()<0.6) {
 				//if ( (mglRand()<1.0) && !obstacleFront ) {
 					if (by > 0.0)
-						amot->set_command("leftKick");
+						amot->set_command("LeftKick");
 					else
-						amot->set_command("rightKick");
+						amot->set_command("RightKick");
 				}
 				else if (mglRand()<0.5) {
 					if (by > 0.0) {
-						amot->set_command("hardLeftSideKick");
+						amot->set_command("HardLeftSideKick");
 						direction = -1;
 					}
 					else {
-						amot->set_command("hardRightSideKick");
+						amot->set_command("HardRightSideKick");
 						direction = +1;
 					}
 				}
 				else {
 					if (by > 0.0)
-						amot->set_command("leftBackKick");
+						amot->set_command("LeftBackKick");
 					else
-						amot->set_command("rightBackKick");
+						amot->set_command("RightBackKick");
 				}
 				_blk->publish_signal(*amot, "motion");
 				back = 0;

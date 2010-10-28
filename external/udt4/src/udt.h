@@ -46,6 +46,8 @@ written by
    #include <sys/types.h>
    #include <sys/socket.h>
    #include <netinet/in.h>
+   #include <netdb.h>
+
 #else
    #include <windows.h>
    #ifdef __MINGW__
