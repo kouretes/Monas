@@ -215,7 +215,7 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
 
     dists=sqrt(sqrd(dists)-sqrd(thepose.cameraZ-realsize));
     distl=sqrt(sqrd(distl)-sqrd(thepose.cameraZ-realsize));
-    cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
+    //cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
     measurement m;
     m.mean=(dists+distl)/2;
     m.var=(sqrd(dists-m.mean)+sqrd(distl-m.mean))/2;

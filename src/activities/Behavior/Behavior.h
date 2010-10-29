@@ -21,8 +21,8 @@
 #define	LIMITDOWN 0.19
 #define	LIMITLEFT 0.5
 #define	LIMITRIGHT -0.5
-#define STEPVER 0.6
-#define STEPHOR 0.5
+#define STEPVER 0.65
+#define STEPHOR 0.2
 
 namespace AL {
 	class ALMotionProxy;

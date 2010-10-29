@@ -31,5 +31,5 @@ clean:
 	rm -f $(OBJS) $(TARGET)
 
 
-msges: Kimage.pb.o  VisionObservations.pb.o   WorldInfo.pb.o
+msges:
 	$(CXX) -c  -I ../../../external/protobuf/src/ ../../messages/Kimage.pb.cc ../../messages/VisionObservations.pb.cc ../../messages/WorldInfo.pb.cc

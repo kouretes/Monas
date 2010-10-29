@@ -56,7 +56,11 @@ public:
         CvPoint bottom;
         CvPoint top;
         int height;//in pixels
-        float d;//Distance
+
+
+        measurement distance;
+        measurement bearing;
+
         float conf;
     } goalpostdata_t;
 private:
