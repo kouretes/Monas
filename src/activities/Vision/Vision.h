@@ -1,7 +1,5 @@
 #ifndef VISION_H
 #define VISION_H
-#include <albroker.h>
-#include "alptr.h"
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
@@ -24,21 +22,18 @@
 #include "messages/Kimage.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "PracticalSocket.h"
-//#define DEBUGVISION
+
 
 #include <vector>
 
-
+//#define DEBUGVISION
 
 
 class Vision : public IActivity
 {
 public:
     /**
-    * The only available constructor: I need:
-    * albroker: only to pass along to the KImageExtractor
-    * MessageQueue : a messageQueue to deliver messages to
-    * gui= enable debug gui? On the robot all cvhighigui calls should fail, so default is false
+    * The only available constructor:
     */
     Vision() ;
 
@@ -49,42 +44,36 @@ public:
         return "Vision";
     }
 
-     typedef struct GoalPostdata
+	typedef struct GoalPostdata
     {
-        CvPoint ll;//Corners
-        CvPoint lr;//Corners
-        CvPoint bottom;
-        CvPoint top;
+        CvPoint ll,lr,tl,tr;//Corners
+        CvPoint	top,bot;
         int height;//in pixels
-
-
         measurement distance;
         measurement bearing;
 
-        float conf;
+        bool contains(CvPoint p)
+		{
+			if(isLeft(lr,ll,p)>0)
+				return false;
+
+			if(isLeft(ll,tl,p)>0)
+				return false;
+			if(isLeft(tl,tr,p)>0)
+				return false;
+			if(isLeft(tr,lr,p)>0)
+				return false;
+
+			return true;
+
+		};
+		static int isLeft(CvPoint s, CvPoint e, CvPoint t)
+		{
+			 return (e.x - s.x) * (t.y - s.y)  - (t.x - s.x) * (e.y - s.y) ;
+		}
     } goalpostdata_t;
-private:
-    //bool cvHighgui;//
-    XMLConfig *config;
-    BallTrackMessage trckmsg;
-    ObservationMessage obs;
-    LedChangeMessage leds;
-    //Incoming messages!
-    boost::shared_ptr<const InertialSensorsMessage>  im;
-    boost::shared_ptr<const HeadJointSensorsMessage>  hm;
-    //Camera transformation matrix
-    cpose p;//Robot pose
 
-    //AL::ALPtr<AL::ALMemoryProxy> memory;
-
-    //Ball Detection related
-    typedef struct PointProjection
-    {
-        float distance;
-        float bearing;
-    } pointprojection_t;
-
-    typedef struct balldata
+	typedef struct balldata
     {
         float x,y;
         float cr;
@@ -94,7 +83,29 @@ private:
 
     } balldata_t;
 
+private:
+    //bool cvHighgui;//
+    struct
+    {
+    	bool cvHighgui;
+    	int sensordelay;
+    	float Dfov;
+    	std::string SegmentationBottom,SegmentationTop;
+    	int scanstep,borderskip;
+    	float skipdistance,seedistance,obstacledistance;
 
+    	float balltolerance,ballsize;
+
+    } config;
+    XMLConfig *xmlconfig;
+    BallTrackMessage trckmsg;
+    ObservationMessage obs;
+    LedChangeMessage leds;
+    //Incoming messages!
+    boost::shared_ptr<const InertialSensorsMessage>  im;
+    boost::shared_ptr<const HeadJointSensorsMessage>  hm;
+    //Camera transformation matrix
+    cpose p;//Robot pose
 
     enum colors
     {
@@ -116,14 +127,25 @@ private:
     std::vector<CvPoint> bgoalpost;
     std::vector<CvPoint>  obstacles;
 
+    void loadXMLConfig(std::string fname);
+
     void gridScan(const KSegmentator::colormask_t color);
 
     bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c);
     bool calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask_t c);
     balldata_t locateBall(std::vector<CvPoint> cand);
     void publishObstacles(std::vector<CvPoint> points);
+    CvPoint2D32f centerOfCircle(CvPoint l, CvPoint m, CvPoint r);
     goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
-    CvPoint traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c,bool stupid);
+
+    typedef struct traceresult_struct
+    {
+    	CvPoint p;
+    	bool smartsuccess;
+    } traceResult;
+
+    traceResult traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
+	traceResult traceline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);
     inline bool validpixel(int x,int y);

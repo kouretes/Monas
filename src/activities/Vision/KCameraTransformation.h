@@ -19,7 +19,6 @@ typedef struct measurement_struct
     float var;
 } measurement;
 
-typedef   measurement (*measurement2)[2];
 class CameraT : public KMat::transformations
 {
 
@@ -91,7 +90,7 @@ class KCameraTranformation
 		KMat::HCoords<float,2>  groundToCamera2d(const KMat::HCoords<float,3>& g);
 		float vectorAngle(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2);
         measurement angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
-        measurement2 projectionDistance(KMat::HCoords<float,2> &v,float height);
+        measurement* projectionDistance(KMat::HCoords<float,2> &v,float height);
         float getPitch();
         float getRoll();
 

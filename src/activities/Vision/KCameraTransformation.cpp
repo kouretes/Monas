@@ -156,65 +156,26 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
     float angs,angl;
     KMat::HCoords<float,2> v=v2;
     //Fail small : move v towards v1 by 1 pixel
-    v1(0)<v(0)?v(0)-=0.5:v(0)+=0.5;
-    v1(1)<v(1)?v(1)-=0.5:v(1)+=0.5;
+    v1(0)<v(0)?v(0)-=0.707:v(0)+=0.707;
+    v1(1)<v(1)?v(1)-=0.707:v(1)+=0.707;
     angs=vectorAngle(v1,v);
 
     v=v2;
 
      //Fail large : move v away from v1 by 1 pixel
-    v1(0)<v(0)?v(0)+=0.5:v(0)-=0.5;
-    v1(1)<v(1)?v(1)+=0.5:v(1)-=0.5;
+    v1(0)<v(0)?v(0)+=0.707:v(0)-=0.707;
+    v1(1)<v(1)?v(1)+=0.707:v(1)-=0.707;
     angl=vectorAngle(v1,v);
 
-/*
-
-    float xs=min(v1(0),v2(0));
-    float xl=max(v1(0),v2(0));
-    float ys=min(v1(1),v2(1));
-    float yl=max(v1(1),v2(1));
-    float sqrdf=sqrd(thepose.focallength);
-    float angs,angl,nom,norm1,norm2;
-    //Fail large
-    nom=(xs-1)*(xl+1) +(ys-1)*(yl+1)+sqrdf;//Nominator
-    if(xs==v1(0)&&ys==v1(1))// v1 is all small
-    {
-        norm1=sqrd(xs-1)+sqrd(ys-1)+sqrdf;
-        norm2=sqrd(xl+1)+sqrd(yl+1)+sqrdf;
-    }
-    else//V1 is small large or large small
-    {
-        norm1=sqrd(xl+1)+sqrd(ys-1)+sqrdf;
-        norm2=sqrd(xs-1)+sqrd(yl+1)+sqrdf;
-    }
-
-    angl=acos(nom/ sqrt(norm1*norm2));
-
-
-    //Fail small
-
-    nom=(xs+1)*(xl-1) +(ys+1)*(yl-1)+sqrdf;//Nom
-    if(xs==v1(0)&&ys==v1(1))// v1 is all small
-    {
-        norm1=sqrd(xs+1)+sqrd(ys+1)+sqrdf;
-        norm2=sqrd(xl-1)+sqrd(yl-1)+sqrdf;
-    }
-    else//V1 is small large or large small
-    {
-        norm1=sqrd(xl-1)+sqrd(ys+1)+sqrdf;
-        norm2=sqrd(xs+1)+sqrd(yl-1)+sqrdf;
-    }
-
-    angs=acos(nom/ sqrt(norm1*norm2));
-    */
 
     float dists,distl;//Large distance comes from small angularDistance
     dists=realsize/(sin(angl));
     distl=realsize/(sin(angs));
     //Project to ground...
-
+	//cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
     dists=sqrt(sqrd(dists)-sqrd(thepose.cameraZ-realsize));
     distl=sqrt(sqrd(distl)-sqrd(thepose.cameraZ-realsize));
+    if(isnan(dists)) dists=0;
     //cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
     measurement m;
     m.mean=(dists+distl)/2;
@@ -223,9 +184,9 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
 
 }
 //Heght:: Point distance from ground plane
-measurement2 KCameraTranformation::projectionDistance(KMat::HCoords<float,2> &v,float height)
+measurement* KCameraTranformation::projectionDistance(KMat::HCoords<float,2> &v,float height)
 {
-    measurement2 res=(measurement (*)[2])new measurement[2];
+    measurement* res=new measurement[2];
     KMat::HCoords<float,2> t;
     KMat::HCoords<float,3>  s[4];
     KMat::HCoords<float,2>  p[4];//Polar
@@ -252,19 +213,22 @@ measurement2 KCameraTranformation::projectionDistance(KMat::HCoords<float,2> &v,
     {
         //s[i].prettyPrint();
         p[i](0)=sqrt( sqrd(s[i](0))+sqrd(s[i](1)));
-        p[i](1)=atan2(s[i](1),s[i](0));//y/x
+        if(s[i](0)!=0)
+			p[i](1)=atan2(s[i](1),s[i](0));//y/x
+		else
+			p[i](1)=0;
        // cout<<"b:"<<p[i](1)<<endl;
     }
-    (*res)[0].mean=(p[0](0)+p[1](0)+p[2](0)+p[3](0))/4;
-    (*res)[0].var=sqrd(p[0](0)-(*res)[0].mean)+sqrd(p[1](0)-(*res)[0].mean)+sqrd(p[2](0)-(*res)[0].mean)+sqrd(p[3](0)-(*res)[0].mean);
-    (*res)[0].var/=4;
+    res[0].mean=(p[0](0)+p[1](0)+p[2](0)+p[3](0))/4;
+    res[0].var=sqrd(p[0](0)-res[0].mean)+sqrd(p[1](0)-res[0].mean)+sqrd(p[2](0)-res[0].mean)+sqrd(p[3](0)-res[0].mean);
+    res[0].var/=4;
 
-    (*res)[1].mean=(p[0](1)+p[1](1)+p[2](1)+p[3](1))/4;
+    res[1].mean=(p[0](1)+p[1](1)+p[2](1)+p[3](1))/4;
 
 
-    (*res)[1].var=sqrd(p[0](1)-(*res)[1].mean)+sqrd(p[1](1)-(*res)[1].mean)+sqrd(p[2](1)-(*res)[1].mean)+sqrd(p[3](1)-(*res)[1].mean);
-    (*res)[1].var/=4;
-    //cout<<"bearing mean:"<<(*res)[1].mean<<endl;
+    res[1].var=sqrd(p[0](1)-res[1].mean)+sqrd(p[1](1)-res[1].mean)+sqrd(p[2](1)-res[1].mean)+sqrd(p[3](1)-res[1].mean);
+    res[1].var/=4;
+    //cout<<"bearing mean:"<<res[1].mean<<endl;
     return res;
 
 

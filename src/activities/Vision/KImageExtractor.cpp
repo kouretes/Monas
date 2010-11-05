@@ -354,7 +354,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		c->callVoid( "setParam", kCameraRedChromaID,redchroma);
 		c->callVoid( "setParam", kCameraGainID,gain);
 		c->callVoid( "setParam", kCameraExposureID,e);
-		c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
+		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
 
 
 		//c->callVoid( "setParam", kCameraSelectID, 0);
@@ -373,7 +373,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		c->callVoid( "setParam", kCameraGainID,gain);
 		//c->callVoid( "setParam", kCameraAutoExpositionID,2);
 		c->callVoid( "setParam", kCameraExposureID,e);
-		c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
+		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
 
 
 

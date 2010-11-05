@@ -187,7 +187,7 @@ int Behavior::Execute() {
 
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		 float posx=0.14, posy=0.035;
+		 float posx=0.13, posy=0.035;
 
 		if ((obsm != 0) && !turning) {
 
@@ -210,8 +210,6 @@ int Behavior::Execute() {
                 }
 
 
-
-
 				if (!readytokick) {
                     if(bd>0.5){
                         float X=0,Y=0,th=0;
@@ -224,8 +222,8 @@ int Behavior::Execute() {
                     else
                     {
                         float offsety=side*posy;
-                        float g=0.6;
-                        littleWalk((bx-posx)*g,(by-offsety)*g,0,g);
+                        float g=0.3;
+                        littleWalk((bx-posx)*g,(by-offsety)*g,0,0.6);
                     }
 				}
 				else {
