@@ -319,8 +319,8 @@ void MessageQueue::process_queued_msg()
 
     while(cond_publishers.size()==0)
         cond.wait(cond_lock);
-        toprocess=cond_publishers;
-        cond_publishers.clear();
+	toprocess=cond_publishers;
+	cond_publishers.clear();
     cond_lock.unlock();
     //cout<<"Queue up!"<<endl;
     boost::unique_lock<Mutex> sub_lock(sub_mutex);

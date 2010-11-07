@@ -58,16 +58,16 @@ class Agent : public Thread {
 
             unsigned long start = SysCall::_GetCurrentTimeInUSec();
 
-
+			_blk.process_messages();
             agentStats.StartAgentTiming();
 
             for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); it++ ) {
+
                 agentStats.StartActivityTiming(*it);
-                _blk.process_messages();
                 (*it)->Execute();
-                _blk.publish_all();
                 agentStats.StopActivityTiming(*it);
             }
+            _blk.publish_all();
 
             agentStats.StopAgentTiming();
             unsigned long ExecInterval = SysCall::_GetCurrentTimeInUSec() - start;

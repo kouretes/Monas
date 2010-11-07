@@ -86,11 +86,12 @@ void MessageBuffer::add( std::vector<msgentry> & tuples)
 		}
 		//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
 
-		google::protobuf::Message * newptr=(*it).msg->New();
+		/*google::protobuf::Message * newptr=(*it).msg->New();
         newptr->CopyFrom(*((*it).msg));
 		msgentry newm= *it;
-		newm.msg.reset(newptr);
-        msg_buf.push_back(newm);
+		newm.msg.reset(newptr);*/
+		msgentry m=*it;
+        msg_buf.push_back(m);
 
     }
     if(tuples.size()>0)
@@ -108,8 +109,8 @@ void MessageBuffer::add( std::vector<msgentry> & tuples)
 
 void MessageBuffer::add(const msgentry & t)
 {
-
-    boost::unique_lock<Mutex> data_lock(mutex);
+	boost::unique_lock<Mutex> data_lock(mutex);
+	msgentry newm= t;
     msg_buf.push_back(t);
 
 
