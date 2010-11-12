@@ -19,6 +19,10 @@ class Localization: public IActivity, public KLocalization {
 
 	public:
 		Localization();
+		~Localization(){
+			if(serverpid!=-1)
+				pthread_cancel(serverpid);
+		}
 		int Execute();
 		void UserInit();
 		void read_messages();
@@ -31,7 +35,7 @@ class Localization: public IActivity, public KLocalization {
 	private:
 
 		int count;
-
+		int serverpid;
 		WorldInfo MyWorld;
 
 		//RtTime rtm;
@@ -66,7 +70,7 @@ class Localization: public IActivity, public KLocalization {
 
 		int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation,KMotionModel & MotionModel );
 		void Send_LocalizationData();
-
+		int DebugMode_Receive();
 		static bool debugmode;
 
 		header incommingheader;

@@ -18,12 +18,6 @@ MotionController::MotionController(){
 
 void MotionController::UserInit() {
 
-#ifdef WEBOTS
-	cout << "WEBOTSSSSSSSSSSSSSS";
-#endif
-
-
-
 	//try {
 		//tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
 	//} catch (AL::ALError& e) {
@@ -36,20 +30,20 @@ void MotionController::UserInit() {
 		Logger::Instance().WriteMsg("MotionController","Error in getting motion proxy",Logger::FatalError);
 	}
 	try {
-		pbroker =  AL::ALPtr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
+		pbroker = AL::ALPtr<AL::ALBroker>(KAlBroker::Instance().GetBroker ());
 		framemanager = AL::ALPtr<AL::ALFrameManagerProxy> ( new AL::ALFrameManagerProxy(pbroker));
 	} catch (AL::ALError& e) {
 		Logger::Instance().WriteMsg("MotionController","Error in getting frameManager proxy" + e.getDescription(),Logger::FatalError);
 	}
 
 
-	motion->setStiffnesses("Body", 0.95);
+	motion->setStiffnesses("Body", 0.9);
 	motion->setWalkArmsEnable(true, true);
-	//AL::ALValue temp;
-	//temp.arraySetSize(2);
-	//temp[0] = "ENABLE_FOOT_CONTACT_PROTECTION";
-	//temp[1] = true;
-	//motion->setMotionConfig(temp);
+//	AL::ALValue temp;
+//	temp.arraySetSize(2);
+//	temp[0] = "ENABLE_FOOT_CONTACT_PROTECTION";
+//	temp[1] = true;
+//	motion->setMotionConfig(temp);
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
@@ -79,38 +73,30 @@ void MotionController::UserInit() {
 
 	walkingWithVelocity = false;
 
-	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
+	Logger::Instance().WriteMsg("MotionController", "Loading special actions!", Logger::Info);
 
 	{
 		std::vector<std::string> registeredSpecialActions = SpecialActionFactory::Instance()->GetRegisteredProducts();
 		std::vector<std::string>::const_iterator it;
-		for ( it = registeredSpecialActions.begin(); it < registeredSpecialActions.end(); ++it) {
-			SpActions.insert(
-					SpAsoocElement(*it,boost::shared_ptr<ISpecialAction>(SpecialActionFactory::Instance()->CreateObject(*it)) )
-			);
+		for (it = registeredSpecialActions.begin(); it < registeredSpecialActions.end(); ++it) {
+			SpActions.insert(SpAsoocElement(*it, boost::shared_ptr<ISpecialAction>(SpecialActionFactory::Instance()->CreateObject(*it))));
 		}
 	}
 
 	{
 		std::vector<ISpecialAction*> kmeActions = KmeManager::LoadActionsKME();
 		std::vector<ISpecialAction*>::const_iterator it;
-		for ( it = kmeActions.begin(); it < kmeActions.end(); ++it) {
-			SpActions.insert(
-					SpAsoocElement((*it)->GetName(),boost::shared_ptr<ISpecialAction>(*it) )
-			);
+		for (it = kmeActions.begin(); it < kmeActions.end(); ++it) {
+			SpActions.insert(SpAsoocElement((*it)->GetName(), boost::shared_ptr<ISpecialAction>(*it)));
 		}
-
 	}
 
 	{
 		std::vector<ISpecialAction*> xarActions = XarManager::LoadActionsXAR(framemanager);
 		std::vector<ISpecialAction*>::const_iterator it;
-		for ( it = xarActions.begin(); it < xarActions.end(); ++it) {
-			SpActions.insert(
-					SpAsoocElement((*it)->GetName(),boost::shared_ptr<ISpecialAction>(*it) )
-			);
+		for (it = xarActions.begin(); it < xarActions.end(); ++it) {
+			SpActions.insert(SpAsoocElement((*it)->GetName(), boost::shared_ptr<ISpecialAction>(*it)));
 		}
-
 	}
 }
 
@@ -287,19 +273,18 @@ void MotionController::mglrun() {
 		}
 
 		if ( (am != NULL) && (actionPID==0) ) {
-
-			Logger::Instance().WriteMsg("MotionController", am->command(),Logger::ExtraInfo);
+			Logger::Instance().WriteMsg("MotionController", am->command(), Logger::ExtraInfo);
 			stopWalkCommand();
 			if (am->command() == "LieDown") {
 				killHeadCommand();
-			}
-			else if (am->command() == "PuntKick") {
-				killHeadCommand();
-				robotUp = false;
-			}
-			SpAssocCont::iterator it = SpActions.find( am->command() );
-			if ( it == SpActions.end() )
-				Logger::Instance().WriteMsg("MotionController", "SpAction " +am->command()+ " not found!",Logger::Error);
+			} else
+				if (am->command() == "PuntKick") {
+					killHeadCommand();
+					robotUp = false;
+				}
+			SpAssocCont::iterator it = SpActions.find(am->command());
+			if (it == SpActions.end())
+				Logger::Instance().WriteMsg("MotionController", "SpAction " + am->command() + " not found!", Logger::Error);
 			else
 				actionPID = it->second->ExecutePost();
 			Logger::Instance().WriteMsg("MotionController", "  Action ID: " +_toString(actionPID),Logger::ExtraInfo);
@@ -482,6 +467,18 @@ void MotionController::commands() {
 		_blk->publish_signal(*amot,"motion");
 		delete amot;
 	}
+
+
+	if ((actionPID == 0) && ((counter+130) % 10 == 0) && (counter > 0)) {
+		MotionActionMessage* amot = new MotionActionMessage();
+		amot->set_topic("motion");
+		amot->set_command("RightKick3.xar");
+		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
+		_blk->publish_signal(*amot,"motion");
+		delete amot;
+	}
+
+
 //	if (((counter+250) % 500 == 0) && (counter > 0)) {
 //		cout << "Killling alllll" << endl;
 //		killCommands();

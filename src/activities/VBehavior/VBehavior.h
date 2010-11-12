@@ -1,5 +1,5 @@
-#ifndef BEHAVIOR_H
-#define BEHAVIOR_H
+#ifndef VBEHAVIOR_H
+#define VBEHAVIOR_H
 
 #include "architecture/IActivity.h"
 
@@ -29,17 +29,17 @@ namespace AL {
 	class ALMemoryProxy;
 }
 
-class Behavior: public IActivity {
+class VBehavior: public IActivity {
 
 	public:
-		Behavior();
+		VBehavior();
 		int Execute();
 		void UserInit();
 		void read_messages();
 		int MakeTrackBallAction();
 		void HeadScanStep();
 		std::string GetName() {
-			return "Behavior";
+			return "VBehavior";
 		}
 		void mgltest();
 

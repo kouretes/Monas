@@ -6,9 +6,9 @@ endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "
 include( ../../hal/robot/nao-1.6.0/bootstrap.cmake ) 
 
 
-set ( ActivityName Behavior )
+set ( ActivityName HeadBehavior )
 
-set ( ActivitySrcs  Behavior.cpp 
+set ( ActivitySrcs  HeadBehavior.cpp 
 )
 
 include ( ../activTemplate.cmake )
