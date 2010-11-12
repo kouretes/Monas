@@ -4,11 +4,10 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "architecture/narukom/pub_sub/filters/special_filters.h"
 
 #include "ISpecialAction.h"
 #include "KmeManager.h"
-
+#include "XarManager.h"
 namespace {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
 }
@@ -18,17 +17,33 @@ MotionController::MotionController(){
 }
 
 void MotionController::UserInit() {
+
+#ifdef WEBOTS
+	cout << "WEBOTSSSSSSSSSSSSSS";
+#endif
+
+
+
 	//try {
 		//tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
 	//} catch (AL::ALError& e) {
 		//Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
 	//}
+
 	try {
 		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
 		Logger::Instance().WriteMsg("MotionController","Error in getting motion proxy",Logger::FatalError);
 	}
-	motion->setStiffnesses("Body", 0.9);
+	try {
+		pbroker =  AL::ALPtr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
+		framemanager = AL::ALPtr<AL::ALFrameManagerProxy> ( new AL::ALFrameManagerProxy(pbroker));
+	} catch (AL::ALError& e) {
+		Logger::Instance().WriteMsg("MotionController","Error in getting frameManager proxy" + e.getDescription(),Logger::FatalError);
+	}
+
+
+	motion->setStiffnesses("Body", 0.95);
 	motion->setWalkArmsEnable(true, true);
 	//AL::ALValue temp;
 	//temp.arraySetSize(2);
@@ -64,28 +79,39 @@ void MotionController::UserInit() {
 
 	walkingWithVelocity = false;
 
-        Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
+	Logger::Instance().WriteMsg("MotionController","Loading special actions!",Logger::Info);
 
-        {
-          std::vector<std::string> registeredSpecialActions = SpecialActionFactory::Instance()->GetRegisteredProducts();
-          std::vector<std::string>::const_iterator it;
-          for ( it = registeredSpecialActions.begin(); it < registeredSpecialActions.end(); ++it) {
-            SpActions.insert(
-                SpAsoocElement(*it,boost::shared_ptr<ISpecialAction>(SpecialActionFactory::Instance()->CreateObject(*it)) )
-            );
-          }
-        }
+	{
+		std::vector<std::string> registeredSpecialActions = SpecialActionFactory::Instance()->GetRegisteredProducts();
+		std::vector<std::string>::const_iterator it;
+		for ( it = registeredSpecialActions.begin(); it < registeredSpecialActions.end(); ++it) {
+			SpActions.insert(
+					SpAsoocElement(*it,boost::shared_ptr<ISpecialAction>(SpecialActionFactory::Instance()->CreateObject(*it)) )
+			);
+		}
+	}
 
-        {
-          std::vector<ISpecialAction*> kmeActions = KmeManager::LoadActionsKME();
-          std::vector<ISpecialAction*>::const_iterator it;
-          for ( it = kmeActions.begin(); it < kmeActions.end(); ++it) {
-            SpActions.insert(
-                SpAsoocElement((*it)->GetName(),boost::shared_ptr<ISpecialAction>(*it) )
-            );
-          }
+	{
+		std::vector<ISpecialAction*> kmeActions = KmeManager::LoadActionsKME();
+		std::vector<ISpecialAction*>::const_iterator it;
+		for ( it = kmeActions.begin(); it < kmeActions.end(); ++it) {
+			SpActions.insert(
+					SpAsoocElement((*it)->GetName(),boost::shared_ptr<ISpecialAction>(*it) )
+			);
+		}
 
-        }
+	}
+
+	{
+		std::vector<ISpecialAction*> xarActions = XarManager::LoadActionsXAR(framemanager);
+		std::vector<ISpecialAction*>::const_iterator it;
+		for ( it = xarActions.begin(); it < xarActions.end(); ++it) {
+			SpActions.insert(
+					SpAsoocElement((*it)->GetName(),boost::shared_ptr<ISpecialAction>(*it) )
+			);
+		}
+
+	}
 }
 
 int MotionController::Execute() {
@@ -137,8 +163,7 @@ void MotionController::mglrun() {
 #endif
 		motion->setStiffnesses("Body", 0.0);
 		Logger::Instance().WriteMsg("MotionController","Robot falling: Stiffness off",Logger::ExtraInfo);
-		RejectAllFilter reject_filter("RejectFilter");
-		_blk->getBuffer()->add_filter(&reject_filter);
+
 		usleep(800000);
 		robotUp = false;
 		robotDown = true;
@@ -147,7 +172,6 @@ void MotionController::mglrun() {
 		motion->setStiffnesses("Body", 0.5);
 		usleep(300000);
 		ALstandUpCross();
-		_blk->getBuffer()->remove_filter(&reject_filter);
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 		return;
 	}
@@ -163,7 +187,7 @@ void MotionController::mglrun() {
 	}
 
 	/* Check if an Action command has been completed */
-	if ( (actionPID != 0) && !motion->isRunning(actionPID) ) {
+	if ( (actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->call<bool >("isRunning" , actionPID) /*isRunning(actionPID)*/ ) {
 		actionPID = 0;
 		Logger::Instance().WriteMsg("MotionController","Action completed! Motion executed "+_toString(counter)+" times.", Logger::ExtraInfo);
 	}
@@ -178,13 +202,12 @@ void MotionController::mglrun() {
 			robotUp = true;
 			Logger::Instance().WriteMsg("MotionController","Stood up ...",Logger::ExtraInfo);
 		} else if (actionPID == 0) {
-			RejectAllFilter reject_filter("RejectFilter");
-			_blk->getBuffer()->add_filter(&reject_filter);
+
 			robotDown = true;
 			motion->setStiffnesses("Body", 0.5);
 			usleep(300000);
 			ALstandUpCross();
-			_blk->getBuffer()->remove_filter(&reject_filter);
+
 			Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 			return;
 		}
@@ -223,7 +246,7 @@ void MotionController::mglrun() {
 				walkParam4 = wm->parameter(3);
 				Logger::Instance().WriteMsg("MotionController", wm->command()+" with parameters "+_toString(walkParam1)+" "+_toString(walkParam2)+" "+_toString(walkParam3)+" "+_toString(walkParam4),Logger::ExtraInfo);
 				walkPID = motion->post.setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
-                walkingWithVelocity = true;
+				walkingWithVelocity = true;
 				Logger::Instance().WriteMsg("MotionController","Walk ID: "+_toString(walkPID),Logger::ExtraInfo);
 			}
 			else
@@ -266,19 +289,19 @@ void MotionController::mglrun() {
 		if ( (am != NULL) && (actionPID==0) ) {
 
 			Logger::Instance().WriteMsg("MotionController", am->command(),Logger::ExtraInfo);
-                        stopWalkCommand();
-                        if (am->command() == "LieDown") {
-                          killHeadCommand();
-                        }
-                        else if (am->command() == "PuntKick") {
-                          killHeadCommand();
-                          robotUp = false;
-                        }
-                        SpAssocCont::iterator it = SpActions.find( am->command() );
-                        if ( it == SpActions.end() )
-                          Logger::Instance().WriteMsg("MotionController", "SpAction " +am->command()+ " not found!",Logger::Error);
-                        else
-                          actionPID = it->second->ExecutePost();
+			stopWalkCommand();
+			if (am->command() == "LieDown") {
+				killHeadCommand();
+			}
+			else if (am->command() == "PuntKick") {
+				killHeadCommand();
+				robotUp = false;
+			}
+			SpAssocCont::iterator it = SpActions.find( am->command() );
+			if ( it == SpActions.end() )
+				Logger::Instance().WriteMsg("MotionController", "SpAction " +am->command()+ " not found!",Logger::Error);
+			else
+				actionPID = it->second->ExecutePost();
 			Logger::Instance().WriteMsg("MotionController", "  Action ID: " +_toString(actionPID),Logger::ExtraInfo);
 		}
 
@@ -320,6 +343,7 @@ void MotionController::killActionCommand() {
 
 void MotionController::killCommands() {
 
+	framemanager->pCall("cleanBehaviors");
 	motion->post.killAll();
 	//while ( motion->isRunning(walkPID) || motion->isRunning(headPID) || motion->isRunning(actionPID) ) {
 		//if ( motion->isRunning(walkPID) )
@@ -405,66 +429,70 @@ void MotionController::ALstandUpBack2010() {
 
 void MotionController::commands() {
 
-	if ((headPID == 0) && (counter % 10 == 0)) {
-		MotionHeadMessage* hmot = new MotionHeadMessage();
-		float x = rand() / ((float) RAND_MAX);
-		x = (x - 0.5) * 0.5;
-		float y = rand() / ((float) RAND_MAX);
-		y = (y - 0.5) * 0.5;
-		hmot->set_topic("motion");
-		hmot->set_command("changeHead");
-		hmot->add_parameter(x);
-		hmot->add_parameter(y);
-		Logger::Instance().WriteMsg("MotionController","Sending Command: changeHead ", Logger::ExtraInfo);
-		_blk->publish_signal(*hmot,"motion");
-		delete hmot;
-	}
+//	if ((headPID == 0) && (counter % 10 == 0)) {
+//		MotionHeadMessage* hmot = new MotionHeadMessage();
+//		float x = rand() / ((float) RAND_MAX);
+//		x = (x - 0.5) * 0.5;
+//		float y = rand() / ((float) RAND_MAX);
+//		y = (y - 0.5) * 0.5;
+//		hmot->set_topic("motion");
+//		hmot->set_command("changeHead");
+//		hmot->add_parameter(x);
+//		hmot->add_parameter(y);
+//		Logger::Instance().WriteMsg("MotionController","Sending Command: changeHead ", Logger::ExtraInfo);
+//		_blk->publish_signal(*hmot,"motion");
+//		delete hmot;
+//	}
+//
+//	if ((counter % 50 == 0)) {
+//		MotionWalkMessage* wmot = new MotionWalkMessage();
+//		float x = rand() / ((float) RAND_MAX);
+//		x = (x - 0.5) * 2.0;
+//		float y = rand() / ((float) RAND_MAX);
+//		y = (y - 0.5) * 2.0;
+//		float z = rand() / ((float) RAND_MAX);
+//		z = (z - 0.5) * 2.0;
+//		float s = rand() / ((float) RAND_MAX);
+//		wmot->set_topic("motion");
+//		wmot->set_command("setWalkTargetVelocity");
+//		wmot->add_parameter(x);
+//		wmot->add_parameter(y);
+//		wmot->add_parameter(z);
+//		wmot->add_parameter(s);
+//		Logger::Instance().WriteMsg("MotionController","Sending Command: setWalkTargetVelocity ", Logger::ExtraInfo);
+//		_blk->publish_signal(*wmot,"motion");
+//		delete wmot;
+//	}
+//
+//	if ((actionPID == 0) && ((counter+30) % 500 == 0) && (counter > 0)) {
+//		MotionActionMessage* amot = new MotionActionMessage();
+//		amot->set_topic("motion");
+//		amot->set_command("RightKick");
+//		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
+//		_blk->publish_signal(*amot,"motion");
+//		delete amot;
+//	}
 
-	if ((counter % 50 == 0)) {
-		MotionWalkMessage* wmot = new MotionWalkMessage();
-		float x = rand() / ((float) RAND_MAX);
-		x = (x - 0.5) * 2.0;
-		float y = rand() / ((float) RAND_MAX);
-		y = (y - 0.5) * 2.0;
-		float z = rand() / ((float) RAND_MAX);
-		z = (z - 0.5) * 2.0;
-		float s = rand() / ((float) RAND_MAX);
-		wmot->set_topic("motion");
-		wmot->set_command("setWalkTargetVelocity");
-		wmot->add_parameter(x);
-		wmot->add_parameter(y);
-		wmot->add_parameter(z);
-		wmot->add_parameter(s);
-		Logger::Instance().WriteMsg("MotionController","Sending Command: setWalkTargetVelocity ", Logger::ExtraInfo);
-		_blk->publish_signal(*wmot,"motion");
-		delete wmot;
-	}
 
-	if ((actionPID == 0) && ((counter+30) % 500 == 0) && (counter > 0)) {
+	if ((actionPID == 0) && ((counter+130) % 10 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_topic("motion");
-		amot->set_command("RightKick");
+		amot->set_command("RightSideKickSlow.xar");
 		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
 		_blk->publish_signal(*amot,"motion");
 		delete amot;
 	}
+//	if (((counter+250) % 500 == 0) && (counter > 0)) {
+//		cout << "Killling alllll" << endl;
+//		killCommands();
+//	}
 
-
-	if ((actionPID == 0) && ((counter+130) % 500 == 0) && (counter > 0)) {
-		MotionActionMessage* amot = new MotionActionMessage();
-		amot->set_topic("motion");
-		amot->set_command("leftFall.kme");
-		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-		_blk->publish_signal(*amot,"motion");
-		delete amot;
-	}
-
-	if ((actionPID == 0) && ((counter+330) % 500 == 0) && (counter > 0)) {
-		MotionActionMessage* amot = new MotionActionMessage();
-		amot->set_topic("motion");
-		amot->set_command("LeftDive");
-		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-		_blk->publish_signal(*amot,"motion");
-		delete amot;
-	}
+//	if ((actionPID == 0) && ((counter+330) % 500 == 0) && (counter > 0)) {
+//		MotionActionMessage* amot = new MotionActionMessage();
+//		amot->set_topic("motion");
+//		amot->set_command("LeftDive");
+//		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
+//		_blk->publish_signal(*amot,"motion");
+//		delete amot;
+//	}
 }

@@ -10,7 +10,7 @@ message( STATUS "" )
 
 add_definitions ( -Wall )
 
-set ( TargetPlatform linux CACHE STRING
+set ( TargetPlatform robot CACHE STRING
         "select the targeted platform, available platforms are linux, windows, and robot" )
 
 

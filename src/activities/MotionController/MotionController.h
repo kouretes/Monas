@@ -17,11 +17,12 @@
 #include <alproxy.h>
 #include <almemoryfastaccess.h>
 #include "almotionproxy.h"
+#include "alframemanagerproxy.h"
+
 #include "almemoryproxy.h"
 #include "albrokermanager.h"
 #include "altexttospeechproxy.h"
 
-#include "architecture/narukom/pub_sub/filters/type_filter.h"
 #include <string>
 
 #include "ISpecialAction.h"
@@ -43,9 +44,10 @@ public:
 
 private:
 
-	AL::ALPtr<AL::ALProxy> tts;
+	AL::ALPtr<AL::ALProxy> temp;
 	AL::ALPtr<AL::ALMotionProxy> motion;
-	TypeFilter* type_filter;
+	AL::ALPtr<AL::ALBroker> pbroker;
+	AL::ALPtr<AL::ALFrameManagerProxy> framemanager;
 
 	bool walkingWithVelocity;
 
