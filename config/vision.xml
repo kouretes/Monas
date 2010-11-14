@@ -4,10 +4,10 @@
 <!--  Configuration files for Segmentation-->
 <SegmentationBottom>5-KouretesLab-segall.conf</SegmentationBottom>
 <SegmentationTop>5-KouretesLab-segall.conf</SegmentationTop>
-<Dfov>56.9</Dfov>
+<Dfov>56.8</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.20</balltolerance>
+<balltolerance>0.30</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.1</skipdistance>
 <seedistance>8</seedistance>
@@ -17,4 +17,9 @@
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>28</sensordelay>
+<sensordelay>24</sensordelay>
+<!--- Goal posts --->
+<goalheight>0.8</goalheight>
+<goaldist>1.4</goaldist>
+<goaldiam>0.1</goaldiam>
+<goalslopetolerance>0.2</goalslopetolerance>
