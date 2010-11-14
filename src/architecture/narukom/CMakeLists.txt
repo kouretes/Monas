@@ -43,7 +43,6 @@ include_directories( ${NarukomDir}
 		     ${ProtobufIncludeDir}
 		     ${BoostIncludeDir}
 		     )
-add_subdirectory( narukom_messages)
 add_library(narukom  SHARED narukom.cpp ${NARUKOM_SYSTEM_SRCS}  ${NARUKOM_PUB_SUB_SRCS}  ${NARUKOM_NETWORK_SRCS}  ${NARUKOM_MESSAGES_SRCS}  )
 
 install ( TARGETS narukom
@@ -55,11 +54,11 @@ ARCHIVE DESTINATION   lib/static )
 if(${TargetPlatform} STREQUAL "robot")
  # use_lib(narukom ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST TINYXML)
   #target_link_libraries(narukom ${ProtobufLibrary} narukom_messages boost_system-mt boost_date_time-mt boost_thread-mt )# ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary})
-  use_lib(narukom ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST TINYXML)
-  target_link_libraries(narukom ${ProtobufLibrary} narukom_messages)
+  use_lib(narukom BOOST TINYXML)
+  target_link_libraries(narukom ${ProtobufLibrary})
 else (${TargetPlatform} STREQUAL "robot")
     message("!@#!@#!@#!#!${ProtobufLibrary} ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary}")
-    target_link_libraries(narukom ${ProtobufLibrary} narukom_messages ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary})
+    target_link_libraries(narukom ${ProtobufLibrary} ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary})
 endif(${TargetPlatform} STREQUAL "robot")
 
 if( "x${BUILD_EXTERNAL}x" STREQUAL "xONx")
