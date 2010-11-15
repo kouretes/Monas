@@ -3,20 +3,17 @@
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
 #include <pthread.h>
-
+#include <netinet/in.h>
 #include <csignal>
-
-
-void termination_handler(int signum) {
-	cout << " SIGPIPE " << endl;
-}
+#include <google/protobuf/message.h>
+#include <google/protobuf/descriptor.h>
 
 using namespace std;
 namespace {
 	ActivityRegistrar<Localization>::Type temp("Localization");
 }
 
-Localization::Localization()  {
+Localization::Localization() {
 }
 
 bool Localization::debugmode = false;
@@ -24,27 +21,14 @@ TCPSocket * Localization::sock;
 
 void Localization::UserInit() {
 
-	sigset_t  sigs;
-	const int how = SIG_SETMASK;
-	sigfillset (&sigs);
-	sigaddset( &sigs, SIGPIPE );
-
-
-	pthread_sigmask (how, &sigs, 0);
-	//_com->get_message_queue()->add_publisher(this);
-	//_com->get_message_queue()->add_subscriber(_blk);
 	_com->get_message_queue()->subscribe("vision", _blk, 0);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->subscribe("Localization", _blk, 0);
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
 
-	/*obsm = 0;
-	gsm = 0;
-	rpsm = 0;
-	*/
 	count = 0;
-
+	serverpid = -1;
 	debugmode = false;
 
 	int max_bytedata_size = 100000;
@@ -53,101 +37,116 @@ void Localization::UserInit() {
 
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
 
-	pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
-	pthread_detach( acceptthread);
+	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
+	pthread_detach(acceptthread);
 }
-//void CallStarTServer(Localization * obj)
 
+int Localization::DebugMode_Receive() {
+	///DEBUG MODE
+	bool headerparsed = false;
+	int ssize;
+	int ss;
+	try {
+		ssize = 0;
+		sock->recv(&size, sizeof(uint32_t));
+		size = ntohl(size);
+
+		cout << "Waiting for " << size << " Bytes " << endl;
+
+		if (size < 1) {
+			//Something went wrong ...
+			debugmode = false;
+			return -2;
+		}
+		//Receive the data header
+		while (ssize < size) {
+			if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
+				cout << "receive error" << endl;
+				break;
+			}
+			ssize += ss;
+		}
+
+		cout << "Arrived " << size << " Bytes " << endl;
+
+		incommingheader.Clear();
+		headerparsed = incommingheader.ParseFromArray(data, size);
+
+		if (!headerparsed) {
+			cout << " Unable to parse " << endl;
+			debugmode = false;
+			return -1;
+		}
+
+		incommingheader.DiscardUnknownFields();
+		int alreadyparsedbytes = incommingheader.ByteSize();
+
+		//cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
+
+
+		string command = incommingheader.nextmsgname();
+		//cout << "COMMAND " << command << endl;
+		if (command == "Stop") {
+			debugmode = false;
+			cout << " Stopping Debug ########################" << endl;
+			return 0;
+
+		}
+		google::protobuf::Message * incommingmsg = &incommingheader;
+		cout << "Next message " << incommingheader.nextmsgbytesize() << endl;
+
+		//const google::protobuf::FieldDescriptor* field = incommingmsg->GetDescriptor()->FindFieldByLowercaseName("nextmsgbytesize");
+		//if(field!=NULL || incommingheader.nextmsgbytesize()>0){
+		//cout << "Field !" << endl;
+		//const google::protobuf::Reflection* reflection =incommingmsg->GetReflection();
+
+		//if (((size = reflection->GetInt32(*incommingmsg,field)) > 0)|| incommingheader.nextmsgbytesize()>0) //must read next message
+		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
+		{
+			cout << "NextMessageSize " << size << endl;
+			int ssize;
+			int ss;
+			ssize = 0;
+			while (ssize < size) {
+				if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
+					cout << "receive error" << endl;
+					break;
+				}
+				ssize += ss;
+			}
+			RobotPose ticommingmsg;
+			ticommingmsg.ParseFromArray(data, size);
+			cout << ticommingmsg.GetTypeName() << endl;
+			//cout << "Arrived " << ssize << " $$$$$$$$$$$$$$$$%%%%%%%%%Bytes Do something" << endl;
+			if (ticommingmsg.GetTypeName() == "RobotPose") {
+				cout << "Incoming Pose" << endl;
+				if (command == "SetBelief") {
+					MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
+					AgentPosition.x = MyWorld.myposition().x();
+					AgentPosition.y = MyWorld.myposition().y();
+					AgentPosition.theta = MyWorld.myposition().phi();
+					AgentPosition.weightconfidence = MyWorld.myposition().confidence();
+					cout << "My World theta " << AgentPosition.theta;
+				}
+			}
+
+			//field = incommingmsg->GetDescriptor()->FindFieldByName("nextmsgbytesize");
+		}
+	} catch (SocketException &e) {
+		cerr << e.what() << endl;
+		cout << "Disconnecting !!!" << endl;
+		debugmode = false;
+		cout << " Stopping Debug ########################" << endl;
+
+	}
+	return 0;
+}
 int Localization::Execute() {
 
 	read_messages();
-	bool headerparsed = false;
-	if (debugmode) {
-		try {
-			while (!headerparsed) {
-				int ssize;
-				int ss;
-				ssize = 0;
-				size = 164; //////////#################################################################
 
-				incommingheader.Clear();
-				cout << "Waiting for " << size << " Bytes " << endl;
-				if (ssize < size) {
-					if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
-						cout << "receive error" << endl;
-						break;
-					}
-					ssize += ss;
-				}
-				cout << "Arrived " << ssize << " Bytes " << endl;
-				headerparsed = incommingheader.ParsePartialFromArray(data, ssize);
-				for (int j = 0; j < ssize; j++) {
-					cout << (int) data[j] << " ";
-				}
-				cout << endl;
-				if (!headerparsed) {
-					cout << " Unable to parse i was expecting" << endl;
-					//				header outgoingheader;
-					//
-					//				outgoingheader.set_nextmsgname("Just A command");
-					//				outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
-					//				size = outgoingheader.ByteSize();
-					//
-					//				outgoingheader.SerializeToArray(data, size);
-					//				for(int j =0; j<ssize; j++ ){
-					//					cout << (int)data[j] << " ";
-					//				}
-					//
-					//
-					//				bool headerparsed = outgoingheader.ParseFromArray(data, size);
-					//				if(headerparsed)
-					//					cout << " able to parse " << endl;
-					//				cout << endl;
-					continue;
-				}
-
-				incommingheader.DiscardUnknownFields();
-				int alreadyparsedbytes = incommingheader.ByteSize();
-
-				cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
-			}
-		} catch (SocketException &e) {
-			cerr << e.what() << endl;
-			cout << "Disconnecting !!!" << endl;
-			debugmode = false;
-			cout << " Stopping Debug ########################" << endl;
-
-		}
-
-		string command = incommingheader.nextmsgname();
-		if (command == "Stop"){
-			debugmode = false;
-			cout << " Stopping Debug ########################" << endl;
-
-		}
-		try {
-			if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
-			{
-				int ssize;
-				int ss;
-				ssize = 0;
-				while (ssize < size) {
-					if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
-						cout << "receive error" << endl;
-						break;
-					}
-					ssize += ss;
-				}
-				cout << "Arrived " << ssize << " Bytes Do something" << endl;
-			}
-		} catch (SocketException &e) {
-			cerr << e.what() << endl;
-			cout << "Disconnecting !!!" << endl;
-			debugmode = false;
-			cout << " Stopping Debug ########################" << endl;
-
-		}
-	}
+	if (debugmode)
+		DebugMode_Receive();
 
 	//LocalizationStepSIR(robotmovement,currentObservation, maxrangeleft, maxrangeright);
 
@@ -156,6 +155,7 @@ int Localization::Execute() {
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
 
+	///DEBUGMODE SEND RESULTS
 	if (debugmode) {
 		LocalizationData_Load(SIRParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
@@ -174,37 +174,41 @@ void Localization::Send_LocalizationData() {
 	int rsize = 0;
 	int rs;
 	//send a header
-	outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
-	while (sendsize != outgoingheader.ByteSize()) {
-		outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
-	}
 
-	outgoingheader.SerializeToArray(data, sendsize);
-	cout << "outgoingheader sendsize " << sendsize << endl;
+	sendsize = outgoingheader.ByteSize();
+	sendsize = htonl(sendsize);
+
 	try {
+		sock->send(&sendsize, sizeof(uint32_t));
+
+		sendsize = outgoingheader.ByteSize();
+		outgoingheader.SerializeToArray(data, sendsize);
+		cout << "outgoingheader sendsize " << sendsize << endl;
+
 		while (rsize < sendsize) {
-			rs = sock->send(data + rsize, sendsize - rsize);// UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
+			rs = sock->send(data + rsize, sendsize - rsize);
 			rsize += rs;
 		}
-		cout << "Sended outgoingheader " << rsize << endl;
+		//cout << "Sended outgoingheader " << rsize << endl;
 		//send the image bytes
 		sendsize = DebugData.ByteSize();
 
 		std::string buf;
 		DebugData.SerializeToString(&buf);
 		sendsize = buf.length();
-		signal(SIGPIPE, termination_handler);
+
 		rsize = 0;
 		cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
 
 		while (rsize < sendsize) {
-			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);// UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
+			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
 			rsize += rs;
 		}
-		cout << "Sended " << rsize << endl;
+		//cout << "Sended " << rsize << endl;
 	} catch (SocketException &e) {
 		cerr << e.what() << endl;
 		cout << "Disconnecting !!!" << endl;
+		debugmode = false;
 	}
 }
 
@@ -219,6 +223,7 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 
 		//cout << "Robots angle " << mypos.theta << endl;
 		//Gui->addTrackLine(mypos);
+		TrackPoint = TrackPointRobotPosition;
 	}
 	//TrackPoint RobotPositionAfter;
 	//std::vector<float> RobotPos = motion->getRobotPosition(true);
@@ -252,6 +257,10 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 	TrackPointRobotPosition.x = XA;
 	TrackPointRobotPosition.y = YA;
 	TrackPointRobotPosition.phi = AA;
+
+	TrackPoint.x += DX;
+	TrackPoint.y += DY;
+	TrackPoint.phi += DR;
 
 }
 
@@ -451,14 +460,14 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 void Localization::read_messages() {
 	_blk->process_messages();
-/*
-	if (gsm != 0)
-		delete gsm;
-	if (rpsm != 0)
-		delete rpsm;
-	if (obsm != 0)
-		delete obsm;
-*/
+	/*
+	 if (gsm != 0)
+	 delete gsm;
+	 if (rpsm != 0)
+	 delete rpsm;
+	 if (obsm != 0)
+	 delete obsm;
+	 */
 	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	rpsm = _blk->read_data<RobotPositionSensorMessage> ("RobotPositionSensorMessage");
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
@@ -468,7 +477,7 @@ void Localization::read_messages() {
 		PosY = rpsm->sensordata(1);
 		Angle = rpsm->sensordata(2);
 
-		RobotPositionMotionModel( robotmovement);
+		RobotPositionMotionModel(robotmovement);
 	}
 
 	if (obsm != 0) {
@@ -477,7 +486,7 @@ void Localization::read_messages() {
 		//Load observations
 		//ALValue ret = KObserver->call<ALValue> ("Observe");
 
-        const ::google::protobuf::RepeatedPtrField< ::NamedObject >& Objects = obsm->regular_objects();
+		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
 
 		maxrangeleft = obsm->bearing_limit_left();//(float) ret[i + 1];
@@ -518,23 +527,20 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	//Fill the world with data!
 	WorldInfo *WI = DebugData.mutable_world();
 
-
 	//Setting my position
 	WI->mutable_myposition()->set_x(AgentPosition.x);
 	WI->mutable_myposition()->set_y(AgentPosition.y);
 	WI->mutable_myposition()->set_phi(AgentPosition.theta);
 	WI->mutable_myposition()->set_confidence(AgentPosition.confidence);
 
-
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
 
 	//	DebugData.mutable_robotposition()->set_x(MotionModel.Distance.val);
 	//	DebugData.mutable_robotposition()->set_y(MotionModel.Direction.val);
 	//	DebugData.mutable_robotposition()->set_phi(MotionModel.Rotation.val);
-	DebugData.mutable_robotposition()->set_x(TrackPointRobotPosition.x);
-	DebugData.mutable_robotposition()->set_y(TrackPointRobotPosition.y);
-	DebugData.mutable_robotposition()->set_phi(TrackPointRobotPosition.phi);
-
+	DebugData.mutable_robotposition()->set_x(TrackPoint.x);
+	DebugData.mutable_robotposition()->set_y(TrackPoint.y);
+	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
 
 	//	DebugData.mutable_myposition()->set_confidence(AgentPosition.confidence );
 
@@ -551,16 +557,15 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
 	}
 
-
-//	if(osbm!=null){
-//		DebugData.Observations = obsm;
-//	}
+	if (obsm != NULL) {
+		(DebugData.mutable_observations())->CopyFrom(*obsm);
+	}
 	return 1;
 }
 
 void * Localization::StartServer(void * astring) {
 
-	unsigned short port = 9000;
+	unsigned short port = 9001;
 
 	TCPServerSocket servSock(port);
 

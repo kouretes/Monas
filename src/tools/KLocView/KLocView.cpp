@@ -23,6 +23,7 @@
 #include "../../messages/Kimage.pb.h"
 #include "../../messages/VisionObservations.pb.h"
 #include "../../messages/WorldInfo.pb.h"
+#include <netinet/in.h>
 
 #include <iostream>
 #include <fstream>
@@ -48,33 +49,41 @@ ofstream myfile;
 parts Particles;
 vector<KObservationModel> currentObservation;
 char fname[80];
-
+bool initialization = true;
 KfieldGui* KLocView;
 
 int update_field(LocalizationData & DebugData) {
 	WorldInfo *WI = DebugData.mutable_world();
 	belief Belief;
-	KLocView->RevertBackupField();
+	KLocView->CleanField();
 	//Setting my position
 	Belief.x = WI->myposition().x();
 	Belief.y = WI->myposition().y();
 	Belief.theta = WI->myposition().phi();
 	Belief.confidence = WI->myposition().confidence();
-	KLocView->addTrackLine(Belief);
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
 	partcl robotposition;
 	robotposition.x = DebugData.robotposition().x();
 	robotposition.y = DebugData.robotposition().y();
 	robotposition.phi = DebugData.robotposition().phi();
-	KLocView->addTrackLine(robotposition);
 
+	if (initialization) {
+		KLocView->KfieldInitTrackLine(robotposition);
+		KLocView->KfieldInitTrackLine(Belief);
+	} else {
+		KLocView->addTrackLine(robotposition);
+		KLocView->addTrackLine(Belief);
+	}
 	//Get The observations
 	if (DebugData.has_observations()) {
-		;//Write some thing here
+		if (DebugData.observations().has_ball())
+			KLocView->draw_ball(Belief, DebugData.observations().ball());
+		//else
+		//KLocView->CleanField();
 	}
-	KLocView->BackupField();
-	KLocView->display_Trackpoint(robotposition, 20*TO_RAD, -20*TO_RAD);
-	KLocView->display_belief(Belief,20*TO_RAD, -20*TO_RAD, 0);
+	//KLocView->BackupField();
+	KLocView->draw_Trackpoint(robotposition, 20 * TO_RAD, -20 * TO_RAD);
+	KLocView->draw_belief(Belief, 20 * TO_RAD, -20 * TO_RAD, 0);
 
 	//Get the particles !!!
 	if (DebugData.particles_size() > 0) {
@@ -105,127 +114,112 @@ int update_field(LocalizationData & DebugData) {
 	return 0;
 }
 
-int receive_and_send_loop( TCPSocket *sock) {
+int receive_and_send_loop(TCPSocket *sock) {
 
 	header incommingheader;
 	header outgoingheader;
-
-//	incommingheader.Clear();
-//	outgoingheader.Clear();
 	LocalizationData DebugData;
 
 	int size;
+	int ssize, rsize;
+	int ss,rs;
 
-	int maxheadersize = 200;
-	int headersize = maxheadersize;
+	//int maxheadersize = 200;
+	//int headersize = maxheadersize;
 	int alreadyparsedbytes = 0;
 
-	char * data = new char[253604];
+	char * data = new char[993604];
 
 	int count = 0;
 	while (true) {
-		int ssize;
-		int ss;
-		ssize = 0;
+
 
 		//Send A command First
 		//Get key pressed and decide witch command to send! ...
 
 		outgoingheader.set_nextmsgname("Just A command");
-		if(KLocView->keypressed==27)
-			outgoingheader.set_nextmsgname("Stop");
-		outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
-		outgoingheader.set_mysize(size = outgoingheader.ByteSize());
-		while (size != outgoingheader.ByteSize()) {
-			outgoingheader.set_mysize(size = outgoingheader.ByteSize());
+
+		if (KLocView->state == READY_TO_SEND_SINGLE) {
+			outgoingheader.set_nextmsgname("SetBelief");
+			outgoingheader.set_nextmsgbytesize(KfieldGui::pose1.ByteSize());
+		} else {
+			outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
 		}
 
-		outgoingheader.SerializeToArray(data, size);
+		if (KLocView->keypressed == 27)
+			outgoingheader.set_nextmsgname("Stop");
 
-		cout << "For send mesage Size " << size << endl;
-//		for (int j = 0; j < size; j++) {
-//			cout << (int) data[j] << " ";
-//		}
-//		cout << endl;
-//
-//		outgoingheader.SerializeToString(&buff2);
-//		cout << " Serilized string " << buff2 << "Size " << buff2.length() << endl;
-		while (ssize < size) {
-			if ((ss = sock->send(data + ssize, size - ssize))<0) {
-				cout << " Send  error "<< endl;
+		if (KLocView->keypressed == 'o')
+			KLocView->state = ONEPOINTSELECTION;
+		if (KLocView->keypressed == 't')
+			KLocView->state = TWOPOINTSELECTION_1;
+
+		size = outgoingheader.ByteSize();
+		cout << "Sended header mesage Size " << size << endl;
+		int sendsize = htonl(size);
+		sock->send(&sendsize, sizeof(uint32_t));
+		outgoingheader.SerializeToArray(data, size);
+		if (KfieldGui::state == READY_TO_SEND_SINGLE) {
+			KfieldGui::pose1.SerializeToArray(data + size, KfieldGui::pose1.ByteSize());
+			size += KfieldGui::pose1.ByteSize();
+			KfieldGui::state = FINISH;
+			KLocView->KfieldInitTrackLine(KLocView->tempparticl);
+			KLocView->draw_Trackpoint(KLocView->tempparticl, 0.5, -0.5);
+		}
+
+		for (ss = ssize = 0; ssize < size; ssize += ss)
+			if ((ss = sock->send(data + ssize, size - ssize)) < 0) {
+				cout << " Send  error " << endl;
 				break;
 			}
-			ssize += ss;
-		}
-		if(KLocView->keypressed==27)
+
+		if (KLocView->keypressed == 27)
 			return 0;
+
 		cout << "Sended mesage Size " << ssize << endl;
-		for (int j = 0; j < ssize; j++) {
-			cout << (int) data[j] << " ";
-		}
-		cout << endl;
 
 		//Now its time to receive!
-		ssize = 0;
-		size = maxheadersize;
 
-		cout << " Waiting for header size " << maxheadersize << endl;
 		incommingheader.Clear();
-		while (ssize < size) {
-			if ((ss=sock->recv( data + ssize, size - ssize)) < 0) {
-					cout << "receive error" << endl;
+		sock->recv(&size, sizeof(uint32_t));
+		size = ntohl(size);
+		//ssize = 0;
+		//while (ssize < size) {
+		for (rs = rsize = 0; rsize < size; rsize += rs)
+			if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
+				cout << "receive error" << endl;
 				break;
 			}
-			ssize += ss;
-			cout << "Arrived " << ssize  << "Try to parse "<< endl;
-			if (incommingheader.ParsePartialFromArray(data, ssize))//.ParseFromString(string(data, ssize)))
-			{
-				headersize = ssize;
-				break;
-			}
-		}
-		cout << "Arrived " << ssize << " Bytes header size must be "<<incommingheader.mysize() << " Reparsing "  << endl;
-		//incommingheader.ParseFromString(string(data, size))
+		//ssize += ss;
+
+		cout << "Arrived " << rsize << " Bytes header size must be " << incommingheader.mysize() << " Reparsing " << endl;
 
 		incommingheader.ParseFromArray(data, incommingheader.mysize());
 		incommingheader.DiscardUnknownFields();
 
 		alreadyparsedbytes = incommingheader.ByteSize();
 
-		cout << "already parsed bytes " << alreadyparsedbytes << " Bytes, Already image bytes arrived" << (headersize - alreadyparsedbytes) << endl;
+		cout << "already parsed bytes " << alreadyparsedbytes << endl;
 
-		size = incommingheader.nextmsgbytesize() - (headersize - alreadyparsedbytes);//(imgheader->width() * imgheader->height() * 2);
+		size = incommingheader.nextmsgbytesize();
 
-		cout << "Waiting for " << incommingheader.nextmsgname() << " Size " << size << " Bytes :" << size + (headersize - alreadyparsedbytes) << endl;
+		cout << "Waiting for " << incommingheader.nextmsgname() << " Size " << size << " Bytes :" << size << endl;
 
-		bool parsed = false;
-
-		std::string buf;
-
-		ssize = 0;
-		cout << " Needed to receive more " << size << " bytes" << endl;
-		while (ssize < size) {
-			if ((ss=sock->recv( data + headersize + ssize, size - ssize)) < 0) {
-					cout << "receive error" << endl;
+		for (rs = rsize = 0; rsize < size; rsize += rs)
+			if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
+				cout << "receive error" << endl;
 				break;
-			} else {
-				ssize += ss;
 			}
-		}
 
-		cout << "Received " << ssize << endl;
-		if (!parsed) {
-			DebugData.Clear();
-			if (!DebugData.ParsePartialFromString(string(data + alreadyparsedbytes, incommingheader.nextmsgbytesize()))) {
-				cout << "Unable to parse " << incommingheader.nextmsgbytesize() << endl;
-			} else {
-				parsed = true;
-				cout << " Parsed message " << DebugData.ByteSize() << " bytes " << endl;
-				update_field(DebugData);
-			}
-		}
+		cout << "Received " << rsize << endl;
 
-		//cout << "Display image size " << size << endl;
+		DebugData.Clear();
+		if (!DebugData.ParseFromArray(data, incommingheader.nextmsgbytesize())) {
+			cout << "Unable to parse " << incommingheader.nextmsgbytesize() << endl;
+		} else {
+//			cout << " Parsed message " << DebugData.ByteSize() << " bytes " << endl;
+			update_field(DebugData);
+		}
 
 		if (count < 1)
 			;
@@ -239,8 +233,6 @@ int receive_and_send_loop( TCPSocket *sock) {
 
 }
 
-
-
 int main(int argc, char* argv[]) {
 	puts("Hello World!!!");
 
@@ -250,8 +242,8 @@ int main(int argc, char* argv[]) {
 	}
 	string servAddress = argv[1];
 	//char *echoString = argv[2];   // Second arg: string to echo
-  //int echoStringLen = strlen(echoString);   // Determine input length
-  unsigned short echoServPort = (argc == 3) ? atoi(argv[2]) : 9000;
+	//int echoStringLen = strlen(echoString);   // Determine input length
+	unsigned short echoServPort = (argc == 3) ? atoi(argv[2]) : 9000;
 
 	//if (0 != getaddrinfo(argv[1], argv[2], &hints, &peer)) {
 	//	cout << "incorrect server/peer address. " << argv[1] << ":" << argv[2] << endl;
@@ -260,23 +252,22 @@ int main(int argc, char* argv[]) {
 
 	// connect to the server, implict bind
 	//if (UDT::ERROR == UDT::connect(client, peer->ai_addr, peer->ai_addrlen)) {
-		//cout << "connect: " << UDT::getlasterror().getErrorMessage() << endl;
-		//return 0;
+	//cout << "connect: " << UDT::getlasterror().getErrorMessage() << endl;
+	//return 0;
 	//}
 
-  try {
-    // Establish connection with the echo server
-    TCPSocket sock(servAddress, echoServPort);
+	try {
+		// Establish connection with the echo server
+		TCPSocket sock(servAddress, echoServPort);
 		KLocView = new KfieldGui();
 
 		KLocView->display_Gui();//Start the Gui
 		KLocView->BackupField();
 		receive_and_send_loop(&sock);
-  } catch(SocketException &e) {
-    cerr << e.what() << endl;
-    exit(1);
-  }
-
+	} catch (SocketException &e) {
+		cerr << e.what() << endl;
+		exit(1);
+	}
 
 	return EXIT_SUCCESS;
 }

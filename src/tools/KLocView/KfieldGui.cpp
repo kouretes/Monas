@@ -12,10 +12,17 @@
 #include <opencv/cxcore.h>
 
 IplImage * KfieldGui::field;
+IplImage * KfieldGui::screenfield;
+IplImage * KfieldGui::cleanfield;
+partcl KfieldGui::tempparticl;
+RobotPose KfieldGui::pose1;
+RobotPose KfieldGui::pose2;
 char KfieldGui::wndname[10];
 short KfieldGui::Waitingforkey;
 short KfieldGui::keypressed;
 pthread_mutex_t KfieldGui::lock;
+int KfieldGui::state;
+int KfieldGui::drawing, KfieldGui::last_x,KfieldGui::last_y;
 
 #define NAO_2008
 CvScalar KfieldGui::random_color() {
@@ -25,8 +32,85 @@ CvScalar KfieldGui::random_color() {
 }
 KfieldGui::KfieldGui(KLocalization & KLocObj) {
 	KfieldGui();
-	display_particles(KLocObj.SIRParticles);
+	draw_particles(KLocObj.SIRParticles);
 }
+
+void KfieldGui::drawCursor(int x, int y) {
+	//Get clean copy of image
+	pthread_mutex_lock(&lock);
+	cvCopy(field, screenfield);
+	cvCircle(screenfield, cvPoint(last_x, last_y), 5, CV_RGB(100,100,100), 1, CV_AA, 0);
+	//screenBuffer=cvCloneImage(imagen);
+	//Draw a circle where is the mouse
+	//cvCircle(screenBuffer, cvPoint(x,y), r, CV_RGB(0,0,0), 1, CV_AA, 0);
+	cvCircle(screenfield, cvPoint(last_x, last_y), sqrt((last_x - x) * (last_x - x) + (last_y - y) * (last_y - y)), CV_RGB(100,100,100), 1, CV_AA, 0);
+	cvLine(screenfield, cvPoint(last_x, last_y), cvPoint(x, y), CV_RGB(100,100,100), 1, 0, 0);
+
+	//cvCopy(imagen,screenBuffer);
+	pthread_mutex_unlock(&lock);
+}
+
+void KfieldGui::on_mouse(int event, int x, int y, int flags, void* param) {
+	if(state == FINISH)
+		return;
+	if(state == TWOPOINTSELECTION_2)
+		cvLine(screenfield, cvPoint(last_x, last_y), cvPoint(x, y), CV_RGB(100,100,100), 1, 0, 0);
+
+	//Select mouse Event
+	if (event == CV_EVENT_LBUTTONDOWN) {
+		last_x = x;
+		last_y = y;
+		drawing = 1;
+		//waitkey_time = 50;
+		//draw(x,y);
+	} else
+		if (event == CV_EVENT_LBUTTONUP) {
+			//drawing=!drawing;
+
+			cvLine(field, cvPoint(last_x,last_y), cvPoint(x,y),CV_RGB(100,100,100),1, CV_AA, 0);
+			//pthread_mutex_init(&lock, NULL);
+			cvLine(cleanfield, cvPoint(last_x, last_y), cvPoint(x, y), CV_RGB(100,100,100), 1, CV_AA, 0);
+			//pthread_mutex_unlock(&lock);
+			//cvCopy(cleanfield, screenBuffer);
+			//cvShowImage( "Demo", screenBuffer );
+			drawing = 0;
+			//			waitkey_time = 500;
+			std::cout << "X " << last_x << " Y " << last_y << " angle " << atan2f(-(y - last_y), x - last_x) * 180.0 / 3.141592653589793238 << std::endl;
+			if(state == ONEPOINTSELECTION || state==TWOPOINTSELECTION_1)
+			{
+				//	mypospoint_old.x = (0 + (2 * 675.0 + 6050) / 2.0) / SCALE;
+				//mypospoint_old.y = (0 + (2 * 675.0 + 4050) / 2.0) / SCALE;
+				KfieldGui::pose1.set_x(last_x*SCALE - (2 * 675.0 + 6050) / 2.0);
+				KfieldGui::pose1.set_y(-(last_y*SCALE - (2 * 675.0 + 4050) / 2.0));
+				KfieldGui::pose1.set_phi(atan2f(-(y - last_y), x - last_x) ) ;
+				KfieldGui::pose1.set_confidence(sqrt((last_x-x)*(last_x-x) + (last_y-y)*(last_y-y)));
+
+				std::cout << "X " << pose1.x() << " Y " << pose1.y() << " angle " << atan2f(-(y - last_y), x - last_x) * 180.0 / 3.141592653589793238 << std::endl;
+				tempparticl.x=pose1.x();
+				tempparticl.y=pose1.y();
+				tempparticl.phi=pose1.phi();
+				tempparticl.Weight=pose1.confidence();
+
+				if(state == ONEPOINTSELECTION){
+					state = READY_TO_SEND_SINGLE;
+					cout << "READY TO SENTTTTTTTTTTTTTTTT" << endl;
+				}else
+					state = TWOPOINTSELECTION_2;
+			}else if(state == TWOPOINTSELECTION_2){
+			//	KfieldGui::pose2.set_x(last_x);
+			//	KfieldGui::pose2.set_y(last_y);
+			//	KfieldGui::pose2.set_phi(atan2f(-(y - last_y), x - last_x) ) ;
+			//	state == READY_TO_SEND_TWO;
+			}
+
+
+		} else
+			if (event == CV_EVENT_MOUSEMOVE && flags & CV_EVENT_FLAG_LBUTTON) {
+				if (drawing)
+					drawCursor(x, y);//draw(x,y);
+			}
+}
+
 KfieldGui::KfieldGui() {
 
 	Waitingforkey = 0;
@@ -37,16 +121,19 @@ KfieldGui::KfieldGui() {
 	make_field(&cleanfield);
 	field = cvCreateImage(cvSize(cleanfield->width, cleanfield->height), 8, 3);
 	field2 = cvCreateImage(cvSize(cleanfield->width, cleanfield->height), 8, 3);
+	screenfield = cvCreateImage(cvSize(cleanfield->width, cleanfield->height), 8, 3);
 	thread_pid = -2;
 	cvCopy(cleanfield, field, NULL);
 
-	lock = PTHREAD_MUTEX_INITIALIZER;
+	//lock = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_init(&lock, NULL);
+
 	//cvNamedWindow(wndname, CV_WINDOW_AUTOSIZE);
 
 	//cvShowImage(wndname, field);
 	//cvWaitKey(0);
 	//cvInitFont(&font, CV_FONT_HERSHEY_PLAIN, hScale, vScale, 0, lineWidth, CV_AA);
-
+	state = FINISH;
 	mypospoint_old.x = (0 + (2 * 675.0 + 6050) / 2.0) / SCALE;
 	mypospoint_old.y = (0 + (2 * 675.0 + 4050) / 2.0) / SCALE;
 #ifdef WEBOTS
@@ -65,8 +152,9 @@ void KfieldGui::display_Gui() {
 		int *fps = new int();
 		*fps = 10;
 		cvNamedWindow(wndname, 1);
-		thread_pid = pthread_create(new pthread_t, NULL, KfieldGui::display_field, fps);
+		thread_pid = pthread_create(new pthread_t, NULL, KfieldGui::redraw_field, fps);
 	}
+	cvSetMouseCallback(wndname, &KfieldGui::on_mouse, 0);
 }
 
 void KfieldGui::DrawObservations(vector<KObservationModel> & currentObservation) {
@@ -118,7 +206,7 @@ void KfieldGui::addTrackLine(belief mypos) {
 	//cout << "Adder track line\n\n\n" << "mypospoint.x" << mypospoint.x <<"mypospoint.y" << mypospoint.y << endl;
 }
 
-void KfieldGui::DisplayErrors(float DistError, float RotError) {
+void KfieldGui::drawErrors(float DistError, float RotError) {
 	pthread_mutex_lock(&lock);
 
 	tmp = Kutils::to_string(DistError); // boost::lexical_cast<string>(Belief.confidence);
@@ -172,7 +260,7 @@ int KfieldGui::save_field_to_png(int aanumber) {
 	return cvSaveImage(fieldfilename, field);
 }
 
-void KfieldGui::display_belief(belief Belief, double maxrangeleft, double maxrangeright, int count) {
+void KfieldGui::draw_belief(belief Belief, double maxrangeleft, double maxrangeright, int count) {
 	pthread_mutex_lock(&lock);
 
 	IplImage* image = field;
@@ -215,7 +303,7 @@ void KfieldGui::display_belief(belief Belief, double maxrangeleft, double maxran
 
 }
 
-void KfieldGui::display_Trackpoint(partcl Belief, double maxrangeleft, double maxrangeright) {
+void KfieldGui::draw_Trackpoint(partcl Belief, double maxrangeleft, double maxrangeright) {
 	pthread_mutex_lock(&lock);
 
 	cout << " Belief X:" << Belief.x << " Y: " << Belief.y << " Theta " << Belief.phi << endl;
@@ -254,7 +342,7 @@ void KfieldGui::display_Trackpoint(partcl Belief, double maxrangeleft, double ma
 
 }
 
-void KfieldGui::display_particles(parts & Particles, bool unnormilised) {
+void KfieldGui::draw_particles(parts & Particles, bool unnormilised) {
 	pthread_mutex_lock(&lock);
 
 	//field;
@@ -307,20 +395,48 @@ void KfieldGui::display_particles(parts & Particles, bool unnormilised) {
 	cout << " Particles Drawn " << endl;
 }
 
-void* KfieldGui::display_field(void * fps) {
+void KfieldGui::draw_ball(belief Belief, BallObject Ball) {
+	pthread_mutex_lock(&lock);
+
+	CvPoint pt1, pt2;
+	int radius  = Ball.ball_diameter()/2*1000.0 / SCALE;
+
+	double max = 0;
+
+	pt1.x = Belief.x + Ball.dist()*1000 * cos((Belief.theta + Ball.bearing()));
+	pt1.y = Belief.y + Ball.dist()*1000 * sin((Belief.theta + Ball.bearing()));
+
+
+	pt2.x = (pt1.x + (2 * 675.0 + 6050) / 2.0) / SCALE;
+	pt2.y = (-pt1.y + (2 * 675.0 + 4050) / 2.0) / SCALE;
+
+	cout << "Ball Dist" << Ball.dist()<< " Ball diameter "<< Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
+	cvCopy(cleanfield,field);
+	cvCircle(field, pt2, radius, CV_RGB(254, 87, 0), CV_FILLED, CV_AA, 0);
+
+
+	pthread_mutex_unlock(&lock);
+	cout << " Ball Drawn " << endl;
+}
+
+void* KfieldGui::redraw_field(void * fps) {
 
 	int * FPS = (int *) fps;
 	int waittime = round(1000.0 / (double) (*FPS));
 	cout << "\033[22;32m Fps " << (*FPS) << " Waittime " << waittime << "\033[0m" << endl;
+
 	while ((keypressed = cvWaitKey(waittime)) != 27) {
 		pthread_mutex_lock(&lock);
-		cvShowImage(wndname, field);
+		if(!drawing)
+			cvShowImage(wndname, field);
+		else
+			cvShowImage(wndname, screenfield);
 		pthread_mutex_unlock(&lock);
 
 	}
 	cout << " Should Exit" << endl;
 	cvDestroyWindow(wndname);
-	pthread_exit( NULL);
+	pthread_exit(NULL);
 }
 
 void KfieldGui::make_field(IplImage** image) {

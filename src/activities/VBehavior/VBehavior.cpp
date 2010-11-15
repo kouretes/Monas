@@ -1,4 +1,4 @@
-#include "Behavior.h"
+#include "VBehavior.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
 
 #include "alxplatform.h"
@@ -16,13 +16,13 @@
 #include "architecture/narukom/pub_sub/filters/special_filters.h"
 
 namespace {
-	ActivityRegistrar<Behavior>::Type temp("Behavior");
+	ActivityRegistrar<VBehavior>::Type temp("VBehavior");
 }
 
-Behavior::Behavior()        {
+VBehavior::VBehavior()        {
 }
 
-void Behavior::UserInit() {
+void VBehavior::UserInit() {
 	_com->get_message_queue()->subscribe("vision", _blk, 0);
 	_com->get_message_queue()->subscribe("sensors", _blk, 0);
 	_com->get_message_queue()->subscribe("behavior", _blk, 0);
@@ -78,10 +78,10 @@ void Behavior::UserInit() {
 
 	srand(time(0));
 
-	Logger::Instance().WriteMsg("Behavior", "Initialized", Logger::Info);
+	Logger::Instance().WriteMsg("VBehavior", "Initialized", Logger::Info);
 }
 
-int Behavior::MakeTrackBallAction() {
+int VBehavior::MakeTrackBallAction() {
 
 	float overshootfix = 0.50;
 	float cx = bmsg->cx();
@@ -100,10 +100,10 @@ int Behavior::MakeTrackBallAction() {
 }
 
 
-void Behavior::mgltest() {
+void VBehavior::mgltest() {
 
 	if (om!=0) {
-		Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
+		Logger::Instance().WriteMsg("VBehavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
 		if (om->direction() == 0)
 			velocityWalk(0.0, 0.0, 1.0, 1.0);
 	}
@@ -111,12 +111,12 @@ void Behavior::mgltest() {
 		velocityWalk(1.0, 0.0, 0.0, 1.0);
 }
 
-int Behavior::Execute() {
+int VBehavior::Execute() {
 
 	read_messages();
 
 	if (gsm != 0) {
-		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
+		Logger::Instance().WriteMsg("VBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		gameState = gsm->player_state();
 		teamColor = gsm->team_color();
 
@@ -167,7 +167,7 @@ int Behavior::Execute() {
 	if (play) {
 
 		if (bmsg != 0) {
-			Logger::Instance().WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraExtraInfo);
+			Logger::Instance().WriteMsg("VBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 			if (bmsg->radius() > 0) { //This means that a ball was found
 				scanforball = false; //if you are scanning for ball please stop now
 				back = 0;
@@ -183,7 +183,7 @@ int Behavior::Execute() {
 			}
 		}
 		//return 0;
-		Logger::Instance().WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("VBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
 		float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
@@ -198,7 +198,7 @@ int Behavior::Execute() {
 			bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
 			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
 			side = (bb > 0) ? 1 : -1;
-			Logger::Instance().WriteMsg("Behavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
+			Logger::Instance().WriteMsg("VBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
             readytokick==true;
 			if (!readytokick&&ballfound>=2) {
 
@@ -316,7 +316,7 @@ int Behavior::Execute() {
 
 
 
-void Behavior::HeadScanStep() {
+void VBehavior::HeadScanStep() {
 
 	if (startscan) {
 		littleWalk(0.0, 0.0, +2*TO_RAD, 0);
@@ -336,22 +336,22 @@ void Behavior::HeadScanStep() {
 
 	//continue scan
 	if (HeadPitch.sensorvalue() < LIMITUP) {
-		//Logger::Instance().WriteMsg("Behavior", " LIMITUP ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("VBehavior", " LIMITUP ", Logger::ExtraExtraInfo);
 		reachedlimitup = true;
 		scandirectionpitch = 1;
 	}
 	if (HeadPitch.sensorvalue() > LIMITDOWN) {
-		//Logger::Instance().WriteMsg("Behavior", " LIMITDOWN ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("VBehavior", " LIMITDOWN ", Logger::ExtraExtraInfo);
 		reachedlimitdown = true;
 		scandirectionpitch = -1;
 	}
 	if (HeadYaw.sensorvalue() > LIMITLEFT) {
-		//Logger::Instance().WriteMsg("Behavior", "LIMITLEFT  ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("VBehavior", "LIMITLEFT  ", Logger::ExtraExtraInfo);
 		reachedlimitleft = true;
 		scandirectionyaw = -1;
 	}
 	if (HeadYaw.sensorvalue() < LIMITRIGHT) {
-		//Logger::Instance().WriteMsg("Behavior", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("VBehavior", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
 		reachedlimitright = true;
 		scandirectionyaw = 1;
 	}
@@ -361,7 +361,7 @@ void Behavior::HeadScanStep() {
 	hmot->set_parameter(1, 0.0); // headPitch
 
 	if (reachedlimitleft && reachedlimitright) {
-		Logger::Instance().WriteMsg("Behavior", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
+		Logger::Instance().WriteMsg("VBehavior", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
 		hmot->set_parameter(1, scandirectionpitch * STEPVER); // headPitch
 		reachedlimitleft = false;
 		reachedlimitright = false;
@@ -369,7 +369,7 @@ void Behavior::HeadScanStep() {
 	_blk->publish_signal(*hmot, "motion");
 
 	if (reachedlimitup && reachedlimitdown) { //scanning completed
-		Logger::Instance().WriteMsg("Behavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
+		Logger::Instance().WriteMsg("VBehavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
 		startscan = true;
 		reachedlimitdown = false;
 		reachedlimitup = false;
@@ -387,7 +387,7 @@ void Behavior::HeadScanStep() {
 	}
 }
 
-void Behavior::read_messages() {
+void VBehavior::read_messages() {
 
 	//if (gsm != 0) delete gsm;
 	//if (bmsg != 0) delete bmsg;
@@ -401,7 +401,7 @@ void Behavior::read_messages() {
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 	om   = _blk->read_signal<ObstacleMessage> ("ObstacleMessage");
 
-	Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
+	Logger::Instance().WriteMsg("VBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c= _blk->read_state<CalibrateCam> ("CalibrateCam");
 	if (c != NULL) {
 		if (c->status() == 1)
@@ -409,12 +409,12 @@ void Behavior::read_messages() {
 	}
 }
 
-double Behavior::mglRand()
+double VBehavior::mglRand()
 {
     return rand() / double(RAND_MAX);
 }
 
-void Behavior::velocityWalk(double x, double y, double th, double f)
+void VBehavior::velocityWalk(double x, double y, double th, double f)
 {
 	wmot->set_command("setWalkTargetVelocity");
 	wmot->set_parameter(0, x);
@@ -424,7 +424,7 @@ void Behavior::velocityWalk(double x, double y, double th, double f)
 	_blk->publish_signal(*wmot, "motion");
 }
 
-void Behavior::littleWalk(double x, double y, double th, int s)
+void VBehavior::littleWalk(double x, double y, double th, int s)
 {
 	wmot->set_command("walkTo");
 	wmot->set_parameter(0, x);
@@ -433,7 +433,7 @@ void Behavior::littleWalk(double x, double y, double th, int s)
 	_blk->publish_signal(*wmot, "motion");
 }
 
-void Behavior::calibrate()
+void VBehavior::calibrate()
 {
 	CalibrateCam v;
 	v.set_status(0);
