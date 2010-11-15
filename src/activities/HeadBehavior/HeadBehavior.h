@@ -8,9 +8,8 @@
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
-#include "messages/Gamecontroller.pb.h"
-#include "messages/ObstacleAvoidanceMessage.pb.h"
-#include "messages/HeadBehaviorMessage.pb.h"
+#include "messages/HeadToBMessage.pb.h"
+#include "messages/BToHeadMessage.pb.h"
 
 #include "tools/logger.h"
 #include "tools/toString.h"
@@ -26,6 +25,12 @@
 #define	LIMITRIGHT -0.30
 #define STEPVER 0.35
 #define STEPHOR 0.35
+
+#define DONOTHING 0
+#define CALIBRATE 1
+#define SCANFORBALL 2
+#define SCANFORPOST 3
+#define BALLTRACK 4
 
 class HeadBehavior: public IActivity {
 
@@ -44,16 +49,16 @@ class HeadBehavior: public IActivity {
 		short ballfound;
 
 		MotionHeadMessage* hmot;
-		HeadBehaviorMessage* hbmot;
+		HeadToBMessage* hbmsg;
 
 		int pitchdirection;
 		int yawdirection;
 		SensorPair HeadYaw;
 		SensorPair HeadPitch;
 
-		bool turnforscan;
+		int headaction;
+		bool scancompleted;
 		bool headstartscan;
-		bool scanforball;
 		short scandirectionpitch;
 		short scandirectionyaw;
 
@@ -64,14 +69,10 @@ class HeadBehavior: public IActivity {
 
 		boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
 		boost::shared_ptr<const BallTrackMessage> bmsg;
-		boost::shared_ptr<const GameStateMessage> gsm;
-		boost::shared_ptr<const ObservationMessage> obsm;
-
+		boost::shared_ptr<const BToHeadMessage> bhm;
+		
 		int calibrated;
-		bool play;
-
-		int gameState;
-
+		
 		void calibrate();
 
 };
