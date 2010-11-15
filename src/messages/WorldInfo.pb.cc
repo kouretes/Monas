@@ -136,9 +136,8 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationData));
   header_descriptor_ = file->message_type(5);
-  static const int header_offsets_[3] = {
+  static const int header_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgbytesize_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, mysize_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgname_),
   };
   header_reflection_ =
@@ -224,9 +223,9 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tParticles\030"
     "\002 \003(\0132\n.RobotPose\022!\n\rRobotPosition\030\003 \002(\013"
     "2\n.RobotPose\022)\n\014Observations\030\004 \002(\0132\023.Obs"
-    "ervationMessage\"U\n\006header\022\033\n\017NextMsgByte"
-    "Size\030\001 \002(\021:\002-1\022\022\n\006mysize\030\002 \002(\005:\002-1\022\032\n\013Ne"
-    "xtMsgName\030\003 \002(\014:\005Undef", 942);
+    "ervationMessage\"A\n\006header\022\033\n\017NextMsgByte"
+    "Size\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014:\005Und"
+    "ef", 922);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -2103,7 +2102,6 @@ void LocalizationData::Swap(LocalizationData* other) {
 const ::std::string header::_default_nextmsgname_("Undef");
 #ifndef _MSC_VER
 const int header::kNextMsgByteSizeFieldNumber;
-const int header::kMysizeFieldNumber;
 const int header::kNextMsgNameFieldNumber;
 #endif  // !_MSC_VER
 
@@ -2124,7 +2122,6 @@ header::header(const header& from)
 void header::SharedCtor() {
   _cached_size_ = 0;
   nextmsgbytesize_ = -1;
-  mysize_ = -1;
   nextmsgname_ = const_cast< ::std::string*>(&_default_nextmsgname_);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -2164,8 +2161,7 @@ header* header::New() const {
 void header::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     nextmsgbytesize_ = -1;
-    mysize_ = -1;
-    if (_has_bit(2)) {
+    if (_has_bit(1)) {
       if (nextmsgname_ != &_default_nextmsgname_) {
         nextmsgname_->assign(_default_nextmsgname_);
       }
@@ -2189,22 +2185,6 @@ bool header::MergePartialFromCodedStream(
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_SINT32>(
                  input, &nextmsgbytesize_)));
           _set_bit(0);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(16)) goto parse_mysize;
-        break;
-      }
-      
-      // required int32 mysize = 2 [default = -1];
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_mysize:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &mysize_)));
-          _set_bit(1);
         } else {
           goto handle_uninterpreted;
         }
@@ -2249,13 +2229,8 @@ void header::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteSInt32(1, this->nextmsgbytesize(), output);
   }
   
-  // required int32 mysize = 2 [default = -1];
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->mysize(), output);
-  }
-  
   // required bytes NextMsgName = 3 [default = "Undef"];
-  if (_has_bit(2)) {
+  if (_has_bit(1)) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       3, this->nextmsgname(), output);
   }
@@ -2273,13 +2248,8 @@ void header::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteSInt32ToArray(1, this->nextmsgbytesize(), target);
   }
   
-  // required int32 mysize = 2 [default = -1];
-  if (_has_bit(1)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->mysize(), target);
-  }
-  
   // required bytes NextMsgName = 3 [default = "Undef"];
-  if (_has_bit(2)) {
+  if (_has_bit(1)) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         3, this->nextmsgname(), target);
@@ -2301,13 +2271,6 @@ int header::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::SInt32Size(
           this->nextmsgbytesize());
-    }
-    
-    // required int32 mysize = 2 [default = -1];
-    if (has_mysize()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->mysize());
     }
     
     // required bytes NextMsgName = 3 [default = "Undef"];
@@ -2348,9 +2311,6 @@ void header::MergeFrom(const header& from) {
       set_nextmsgbytesize(from.nextmsgbytesize());
     }
     if (from._has_bit(1)) {
-      set_mysize(from.mysize());
-    }
-    if (from._has_bit(2)) {
       set_nextmsgname(from.nextmsgname());
     }
   }
@@ -2370,7 +2330,7 @@ void header::CopyFrom(const header& from) {
 }
 
 bool header::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
   
   return true;
 }
@@ -2378,7 +2338,6 @@ bool header::IsInitialized() const {
 void header::Swap(header* other) {
   if (other != this) {
     std::swap(nextmsgbytesize_, other->nextmsgbytesize_);
-    std::swap(mysize_, other->mysize_);
     std::swap(nextmsgname_, other->nextmsgname_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);

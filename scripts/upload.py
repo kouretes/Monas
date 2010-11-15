@@ -161,6 +161,12 @@ if(pwdfolders[-2] != "make"):
 	exit(-1)
 
 print "Working directory " + pwd
+ret=os.system("make install")
+if(ret!=0):
+	print '\033[1;31m Unsuccessfull compiling \033[1;m'
+	exit(-1)
+else:
+	print "\033[1;32m Compiling Complete Succesfully\033[1;m"
 
 #now we hope that we are inside the correct folder so the partial configuration is above
 partial_configuration_dir = "../../scripts/PartialConfiguration/"
@@ -241,9 +247,9 @@ for	ip in robotsIP:
 			nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
 			os.system(nao_start_stop_cmd)
 
-	if(raw_input("Enter y to Change hostname or press enter to continue: ")=='y'):
-		hostname = raw_input("Set hostname: ")
-		os.system('ssh root@'+ip + " 'echo "+ hostname+ " '")
+	#if(raw_input("Enter y to Change hostname or press enter to continue: ")=='y'):
+	#	hostname = raw_input("Set hostname: ")
+	#	os.system('ssh root@'+ip + " 'echo "+ hostname+ " '")
 
   # rsync_cmd = "rync  --rsh=\"sshpass -p myPassword ssh -l t\" "
 	#exit(0)

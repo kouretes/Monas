@@ -337,11 +337,12 @@ void Vision::recv_and_send()
 	int rsize = 0;
 	int rs;
 	//send a header
-	outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
-	while (sendsize != outgoingheader.ByteSize())
-	{
-		outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
-	}
+	//outgoingheader.set_mysize(sendsize = outgoingheader.ByteSize());
+	//while (sendsize != outgoingheader.ByteSize())
+	//{
+	//	outgoingheader.set_mysize();
+	//}
+	sendsize = outgoingheader.ByteSize();
 	outgoingheader.SerializeToArray(data+10, sendsize);
 	//cout << "outgoingheader sendsize " << sendsize << endl;
 

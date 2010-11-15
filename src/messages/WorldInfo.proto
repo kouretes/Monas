@@ -45,7 +45,6 @@ message LocalizationData{
 
 message header{
 	required sint32 NextMsgByteSize =1 [default = -1];
-	required int32 mysize = 2 [default = -1];
 	required bytes NextMsgName = 3 [default = "Undef" ];
 	
 }
