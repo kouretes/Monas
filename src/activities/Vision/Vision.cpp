@@ -10,10 +10,10 @@
 #include "messages/motion.pb.h"
 //#define LONGESTDIST 6.0
 //#define COVERDIST 0.03
-#define TRACESKIP 3
+#define TRACESKIP 5
 #define GLOBALTRACESKIP 9
 //x COVERDIST=15*0.05m
-#define SCANSKIP  4
+#define SCANSKIP  5
 #define SPARSENESS 4
 #define TO_RAD 0.017453293f
 
@@ -321,6 +321,11 @@ void Vision::recv_and_send()
 		{
 			segmended[(*i).y][(*i).x]=red;
 		};
+		for (i = ygoalpost.begin(); i != ygoalpost.end(); i++)
+		{
+			segmended[(*i).y][(*i).x]=blue;
+		};
+
 		img.set_imagerawdata(segmended,rawImage->width*rawImage->height);
 		img.set_bytes(rawImage->width*rawImage->height);
 		//cout << " Seg image  size " << img.bytes() << endl;
@@ -523,7 +528,7 @@ void Vision::fetchAndProcess()
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
-
+	locateGoalPost(ygoalpost,yellow);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	cout << b.x << " " << b.y << " " << b.cr << endl;
@@ -689,6 +694,12 @@ void Vision::loadXMLConfig(std::string fname)
 	xmlconfig->QueryElement("balltolerance",config.balltolerance);
     xmlconfig->QueryElement("ballsize",config.ballsize);
 
+    xmlconfig->QueryElement("goalheight",config.goalheight);
+    xmlconfig->QueryElement("goaldist",config.goaldist);
+    xmlconfig->QueryElement("goaldiam",config.goaldiam);
+    xmlconfig->QueryElement("goalslopetolerance",config.goalslopetolerance);
+
+
 }
 void Vision::gridScan(const KSegmentator::colormask_t color)
 {
@@ -731,6 +742,8 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		//cntwhitegreenorangepixels=0;
 		cntother=0;
 		bool ballfound=false;
+		bool yfound=false;
+		bool bfound=false;
 		// ballpixel = -1;
 		//int ci,cj;
 		gtrc.init(i,rawImage->height - config.borderskip-1-startx);
@@ -744,7 +757,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			//cout<<"doseg"<<endl;
 			tempcolor = doSeg(gtrc.x,gtrc.y);
 			//cout<<"doseg:"<<(int)tempcolor<<endl;
-			if (tempcolor == white ||tempcolor == green)//
+			if (tempcolor == green)//
 			{
 				//cntwhitegreenpixels++;
 				//cntwhitegreenorangepixels++;
@@ -752,17 +765,31 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				lastpoint(0)=gtrc.x;
 				lastpoint(1)=gtrc.y;
 				ballfound=false;
+				yfound=false;
+				bfound=false;
+			}
+			else if(tempcolor==white)
+			{
+				cntother++;//hmm... white? valid but test for distance
+				lastpoint(0)=gtrc.x;
+				lastpoint(1)=gtrc.y;
+				ballfound=false;
+				yfound=false;
+				bfound=false;
 			}
 			else if (tempcolor==orange)
 			{
 				//cntwhitegreenorangepixels++;
 				cntother=0;
+				yfound=false;
+				bfound=false;
 
 			}
 			else
 			{
 				//ballskip=0;
 				cntother++;
+				ballfound=false;
 			}
 			if (cntother>SCANSKIP)//No continuity, break
 			{
@@ -810,6 +837,16 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				//continue;
 				//ballpixel = j;
 			}
+			if(tempcolor==yellow&&yfound==false)
+			{
+				CvPoint tmpPoint;
+				tmpPoint.x = gtrc.x;
+				tmpPoint.y = gtrc.y;
+				//ballpixels.push_back(tmpPoint);
+				ygoalpost.push_back(tmpPoint);
+				yfound=true;
+			}
+
 			//Find next pixel
 			gtrc.step();
 			step--;
@@ -1015,11 +1052,12 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 
 			if((*hi).contains(*i))
 			{
+				cout<<"s";
 				i++;//Skip pixel
-				if (i == cand.end())
-					break;
 				hi = history.begin();
+
 			}
+			else
 				hi++;
 		}
 
@@ -1035,7 +1073,170 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 		trcrs=   traceline((*i), cvPoint(-1, 0), c);
 		CvPoint pleft=trcrs.p;
 		trcrs= traceline((*i), cvPoint(+1, 0), c);
+
 		CvPoint pright=trcrs.p;
+
+		CvPoint m;m.x=(pleft.x+pright.x)>>1;m.y=(pleft.y+pright.y)>>1;//middle point, avg x,y
+		//Up=============
+		trcrs= traceline(m,Vdn,c);
+		newpost.bot=trcrs.p;
+		newpost.haveBot=trcrs.smartsuccess;
+
+		trcrs= traceline(newpost.bot,cvPoint(-1,-1),c);
+		//trcrs= traceline(trcrs.p,Vdn,c);
+		newpost.ll=trcrs.p;
+
+		trcrs= traceline(newpost.bot,cvPoint(1,-1),c);
+		//trcrs= traceline(trcrs.p,Vdn,c);
+		newpost.lr=trcrs.p;
+		//Up=============
+
+		trcrs= traceline(m,Vup,c);
+		newpost.top=trcrs.p;
+		newpost.haveTop=trcrs.smartsuccess;
+
+		trcrs= traceline(newpost.top,cvPoint(-1,1),c);
+		//trcrs= traceline(trcrs.p,Vup,c);
+		newpost.tl=trcrs.p;
+
+		trcrs= traceline(newpost.top,cvPoint(1,1),c);
+		//trcrs= traceline(trcrs.p,Vup,c);
+		newpost.tr=trcrs.p;
+
+		//cout<<"Smarts:"<<newpost.haveBot<< " "<<newpost.haveTop<<endl;
+		if(newpost.tr.x-newpost.tl.x<SCANSKIP || newpost.lr.x-newpost.ll.x<SCANSKIP ||
+			newpost.ll.y-newpost.tl.y<SCANSKIP || newpost.lr.y-newpost.tr.y<SCANSKIP)
+		{
+			cout <<"Goal size test failed"<<endl;
+			continue;
+		}
+
+		/*
+		CvPoint2D32f avg;
+		avg.x=(newpost.tl.x-newpost.ll.x + newpost.tr.x-newpost.lr.x)/2;
+		avg.y=(newpost.tl.y-newpost.ll.y + newpost.tr.y-newpost.lr.y)/2;
+		avg.x/=sqrt(sqrd(avg.x)+sqrd(avg.y));
+		avg.y/=sqrt(sqrd(avg.x)+sqrd(avg.y));
+		//cout<<(avg.y/Vup.y)<<" "<<(Vup.x/avg.x)<<endl;
+		float th1=atan(avg.y/avg.x);
+		float th2=atan(Vup.y/Vup.x);
+		float dth=abs(th1-th2);
+		if(dth>1.5)dth-=1.5;
+		if(abs(dth/th2)>config.goalslopetolerance)
+		{
+			cout<<"Slope test failed"<<endl;
+			continue;
+		}*/
+		if(newpost.haveBot)
+		{
+			KMat::HCoords<float,2> c,i;
+			KMat::HCoords<float,3> c3d;
+			i(0)=newpost.bot.x;
+			i(1)=newpost.bot.y;
+			c=imageToCamera(i);
+			c3d=kinext.camera2dTo3d(c);
+			if(c3d(2)>=0)
+			{
+				newpost.haveBot=false;
+			}
+			else
+			{
+				measurement *a=kinext.projectionDistance(c,0);
+				newpost.distBot=a[0];
+				newpost.distBot.mean+=config.goaldiam/2.0;
+				newpost.bBot=a[1];
+				delete[] a;
+			}
+		}
+		if(newpost.haveTop)
+		{
+			KMat::HCoords<float,2> c,i;
+			KMat::HCoords<float,3> c3d;
+			i(0)=newpost.top.x;
+			i(1)=newpost.top.y;
+			c=imageToCamera(i);
+			c3d=kinext.camera2dTo3d(c);
+			if(c3d(2)<=0)
+			{
+				newpost.haveTop=false;
+			}
+			else
+			{
+				measurement *a=kinext.projectionDistance(c,config.goalheight);
+				newpost.distTop=a[0];
+				newpost.distTop.mean+=config.goaldiam/2.0;
+				newpost.bTop=a[1];
+				delete[] a;
+
+			}
+
+		}
+
+		if(newpost.haveTop&&newpost.haveBot)
+		{
+			KMat::HCoords<float,2> c1,c2,i1,i2;
+			i1(0)=newpost.bot.x;
+			i1(1)=newpost.bot.y;
+			i2(0)=newpost.top.x;
+			i2(1)=newpost.top.y;
+			c1=imageToCamera(i1);
+			c2=imageToCamera(i2);
+			float hAng=kinext.vectorAngle(c1,c2);
+
+			//Analytical solution: we know the angle of a triangle ,the oposite side and the parts that it is split by
+			//The corresponding triangle height. What is the height it self?
+
+			float t=tan(KMat::transformations::PI-hAng);
+			if(t>=0)
+			{
+				cout<<"Goal Post t failed"<<endl;
+				continue;
+			}
+			//Single solution of a  trionym
+			float g=config.goalheight;
+			float h=p.cameraZ;
+
+
+			//cout<<g<<" "<<h<<" "<<t<<endl;
+			newpost.distHeight.mean= - (g+sqrt( 4*t*t*h*(g-h)+g*g  ))/(2*t)+config.goaldiam/2;
+
+			if(  !(newpost.distBot.mean<newpost.distHeight.mean&&newpost.distTop.mean>newpost.distHeight.mean) &&
+				 !(newpost.distBot.mean>newpost.distHeight.mean&&newpost.distTop.mean<newpost.distHeight.mean)
+				)
+			{
+				cout<<"Distance logic test failed!"<<endl;
+				continue;
+			}
+		}
+		else
+			newpost.distHeight.mean=-1;
+
+
+		if(newpost.haveBot&&newpost.haveTop)
+		{
+
+			newpost.distance.mean=newpost.distHeight.mean;
+			newpost.distance.var=(newpost.distTop.var*newpost.distBot.var)/(newpost.distTop.var+newpost.distBot.var);
+			newpost.bearing.mean=(newpost.bBot.mean*newpost.bTop.var+newpost.bTop.mean*newpost.bBot.var)/(newpost.bBot.var+newpost.bTop.var);
+			newpost.bearing.var=newpost.bTop.var*newpost.bBot.var/(newpost.bBot.var+newpost.bTop.var);
+			cout<<"bwm:"<<newpost.bBot.mean<<" "<<newpost.bTop.mean<<" "<< newpost.bearing.mean<<endl;
+
+		}
+		else if(newpost.haveTop)
+			newpost.distance=newpost.distTop;
+		else if(newpost.haveBot)
+			newpost.distance=newpost.distBot;
+		else
+			continue;
+		cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
+		cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
+		cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
+
+
+
+
+
+
 
 		//if(!validpixel(pleft.x,pleft.y)||!validpixel(pright.x,pright.y))//WHAT THE HELL
 		//	continue;
@@ -1043,7 +1244,7 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 
 
 		//if(calculateValidGoalPost(newpost,c))
-			//history.push_back(newpost);
+		history.push_back(newpost);
 
 	}
 	std::sort (history.begin(), history.end(), cmpgoalpostdata_t);
@@ -1111,8 +1312,6 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 		trcrs = traceline((*i), cvPoint(0, 1), orange);//Stupid
 		CvPoint b=trcrs.p;
-		//if (!validpixel(b.x,b.y))
-		//	continue; //No bottom pixel :)
 		trcrs = traceline((*i), cvPoint(0, -1), orange);//smart
 		if(trcrs.smartsuccess==false)
 			continue;//No top
@@ -1123,20 +1322,15 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 		trcrs = traceline(m, cvPoint(1, 0), orange);//Stupid
 		CvPoint r=trcrs.p;
-		//if (!validpixel(r.x,r.y))// No right pixel available?!?
-		//	continue;
 
 		trcrs = traceline(m, cvPoint(-1, 0), orange);//Stupid
 		CvPoint l=trcrs.p;
-		//if (!validpixel(l.x,l.y))// No left pixel available?!?
-		//	continue;
+
 		m.x=(l.x+r.x)/2;
 
 		//Repeat up down :)
 		trcrs = traceline(m, cvPoint(0, 1), orange);//Stupid
 		b=trcrs.p;
-		//if (!validpixel(b.x,b.y))
-		//	continue; //No bottom pixel :)
 
 		trcrs = traceline(m, cvPoint(0, -1), orange);//Smart
 

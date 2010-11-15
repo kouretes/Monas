@@ -48,21 +48,29 @@ public:
     {
         CvPoint ll,lr,tl,tr;//Corners
         CvPoint	top,bot;
-        int height;//in pixels
+        //float angHeight;//in rads
+        bool haveBot,haveTop;
+        measurement distBot,distTop;
+        measurement bBot,bTop;
+        //measurement distWidthTop,distWidthBot;
+        measurement distHeight;
         measurement distance;
         measurement bearing;
 
         bool contains(CvPoint p)
 		{
-			if(isLeft(lr,ll,p)>0)
-				return false;
 
-			if(isLeft(ll,tl,p)>0)
+			if(p.x+(lr.x-ll.x)<ll.x && p.x+(tr.x-tl.x)<tl.x)
 				return false;
-			if(isLeft(tl,tr,p)>0)
+			if(p.x-(lr.x-ll.x)>lr.x && p.x-(tr.x-tl.x)>tr.x)
 				return false;
-			if(isLeft(tr,lr,p)>0)
+			/*if(isLeft(ll,lr,p)>0)
 				return false;
+			cout<<"1111"<<endl;
+
+			*/
+
+			//cout<<"contains"<<endl;
 
 			return true;
 
@@ -95,6 +103,7 @@ private:
     	float skipdistance,seedistance,obstacledistance;
 
     	float balltolerance,ballsize;
+    	float goalheight,goaldist,goaldiam,goalslopetolerance;
 
     } config;
     XMLConfig *xmlconfig;
