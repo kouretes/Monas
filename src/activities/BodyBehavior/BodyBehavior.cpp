@@ -30,7 +30,9 @@ void BodyBehavior::UserInit() {
 	kickoff = false;
 
 	scancompleted = false;
-
+	curraction = 0;
+	prevaction = 0;
+		
 	readytokick = false;
 	back = 0;
 	direction = 1;
@@ -38,7 +40,7 @@ void BodyBehavior::UserInit() {
 
 	obstacleFront = false;
 	gameState = PLAYER_INITIAL;
-
+	oldGameState = PLAYER_INITIAL;
 	teamColor = TEAM_BLUE;
 	orientation = 0;
 
@@ -48,8 +50,10 @@ void BodyBehavior::UserInit() {
 }
 
 int BodyBehavior::Execute() {
-
-	read_messages();
+	cout << "Execute" << endl;
+	prevaction = curraction;
+	oldGameState = gameState;
+	read_messages();	
 
 	if (hbm != 0) {
 		calibrated = hbm->calibrated();
@@ -67,7 +71,8 @@ int BodyBehavior::Execute() {
 				play = true;
 				littleWalk(0.01, 0.0, 0.0, 1);
 			} else if (calibrated == 0) {
-				bhmsg->set_headaction( CALIBRATE );
+				//bhmsg->set_headaction( CALIBRATE );
+				curraction = CALIBRATE;
 			} else if (calibrated == 1) {
 				// wait
 			}
@@ -75,7 +80,8 @@ int BodyBehavior::Execute() {
 			play = false;
 		} else if (gameState == PLAYER_READY) {
 			play = false;
-			bhmsg->set_headaction( CALIBRATE );
+			//bhmsg->set_headaction( CALIBRATE );
+			curraction = CALIBRATE;
 		} else if (gameState == PLAYER_SET) {
 			play = false;
 			//calibrate();
@@ -85,16 +91,19 @@ int BodyBehavior::Execute() {
 			play = false;
 		} else if (gameState == PLAYER_PENALISED) {
 			play = false;
-			bhmsg->set_headaction( CALIBRATE );
+			//bhmsg->set_headaction( CALIBRATE );
+			curraction = CALIBRATE;
 		}
 	}
 
 	if (gameState == PLAYER_PLAYING) {
 		if (calibrated == 2) {
 			play = true;
-			//	littleWalk(0.01,0.0,0.0,1);
+			littleWalk(0.01,0.0,0.0,1);
+			///TODO stand up 
 		}else if (calibrated == 0) {
-			bhmsg->set_headaction( CALIBRATE );
+			//bhmsg->set_headaction( CALIBRATE );
+			curraction = CALIBRATE;
 		}
 	}
 
@@ -105,10 +114,11 @@ int BodyBehavior::Execute() {
 
 		float X = 0.0, Y = 0.0, theta = 0.0;
 		float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
+		float posx=0.14, posy=0.035;
 
 		if (obsm != 0) {
 
-			if (obsm->regular_objects_size() > 0) {
+			/*if (obsm->regular_objects_size() > 0) {
 				if (((obsm->regular_objects(0).object_name() == "BlueGoal") && (teamColor == TEAM_RED)) || ((obsm->regular_objects(0).object_name() == "YellowGoal") && (teamColor
 						== TEAM_BLUE))) {
 					double ogb = obsm->regular_objects(0).bearing();
@@ -133,89 +143,42 @@ int BodyBehavior::Execute() {
 					}
 				}
 				Logger::Instance().WriteMsg("BodyBehavior", "Orientation: " + _toString(orientation) + " Team Color " + _toString(teamColor), Logger::Info);
-			}
+			}*/
 
 			if (obsm->has_ball() && ballfound > 0) {
-				bhmsg->set_headaction( BALLTRACK );/////////////
-				int side = 1;
+				//bhmsg->set_headaction( BALLTRACK );/////////////
+				curraction = BALLTRACK;
+				int side ;//= 1;
 				bd = obsm->ball().dist();
 				bb = obsm->ball().bearing();
 				bx = obsm->ball().dist() * cos(obsm->ball().bearing()); //kanw tracking me to swma
 				by = obsm->ball().dist() * sin(obsm->ball().bearing());
-				//side = (bb > 0) ? 1 : -1;
-				if (orientation == 1)
-					side = -1;
-				else if (orientation == 3)
-					side = +1;
-				else
-					side = (bb > 0) ? 1 : -1;
+				side = (bb > 0) ? 1 : -1;
 
 				Logger::Instance().WriteMsg("BodyBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: "
 						+ _toString(by), Logger::Info);
 
+			
+				readytokick=true;
+                if ( fabs( bx - posx ) > 0.015 || fabs( by - (side*posy) ) > 0.015) {
+                    //Y = gainFine * ( by - (side*posy) );
+                    readytokick = false;
+                }
+
+
 				if (!readytokick) {
-					readytokick = true;
-					double gain = 1.0;
-					if (bd > 0.4)
-						gain = 1.5;
-					double gainTheta = 0.3;
-					double gainFine = 1.0;
-					if (bd <= 8.0) {
-						float posx = 0.13, posy = 0.035;
-						if (bd > 0.25) {
-							X = gain * bx;
-							Y = gain * by;
-							if (fabs(bb) > 3 * TO_RAD)
-								theta = gainTheta * bb;
-							readytokick = false;
-						} else if (bd > 0.25) {
-							X = gain * (bx - posx);
-							Y = gain * (by - (side * posy));
-							readytokick = false;
-						} else {
-							if (fabs(bx - posx) > 0.025) {
-								X = gainFine * (bx - posx);
-								readytokick = false;
-							}
-							if (fabs(by - (side * posy)) > 0.025) {
-								Y = gainFine * (by - (side * posy));
-								readytokick = false;
-							}
-						}
-					}
-
-					if (!readytokick) {
-
-						if (fabs(X) > 1.0)
-							X = (X > 0.0) ? 1.0 : -1.0;
-						if (fabs(Y) > 1.0)
-							Y = (Y > 0.0) ? 1.0 : -1.0;
-						if (fabs(theta) > 1.0)
-							theta = (theta > 0.0) ? 1.0 : -1.0;
-
-						//if (om!=0) {
-						//if (om->direction(1)==1) {
-						//	X = 0.0;
-						//}
-						//else if ( (om->direction(0)==1) && (Y>0) ) {
-						//	Y = 0.0;
-						//}
-						//else if ( (om->direction(0)==1) && (theta>0) ) {
-						//	theta = 0.0;
-						//	}
-						//	else if ( (om->direction(2)==1) && (Y<0) ) {
-						///	Y = 0.0;
-						//	}
-						//	else if ( (om->direction(2)==1) && (theta<0) ) {
-						//	theta = 0.0;
-						//}
-						//}
-
-						velocityWalk(X, Y, theta, 1.0);
-					} else {
-						velocityWalk(0.0, 0.0, 0.0, 1.0);
-						return 1;
-					}
+                    if(bd>0.5){
+                        float X=0,Y=0,th=0;
+                        if(fabs(bx)>0.15) X=1;
+                        if(fabs(by)>0.15) Y=side;
+                        velocityWalk(X,Y,0.3*side,1);
+                    }
+                    else
+                    {
+                        float offsety=side*posy;
+                        float g=0.3;
+                        littleWalk((bx-posx)*g,(by-offsety)*g,0,1);
+                    }
 				}
 			}
 		} else {
@@ -247,7 +210,7 @@ int BodyBehavior::Execute() {
 			} else {
 
 				/* **************** Targetted Kicks ********************** */
-				if (orientation == 0) {
+				/*if (orientation == 0) {
 					if (by > 0.0)
 						amot->set_command("LeftKick");
 					else
@@ -270,16 +233,18 @@ int BodyBehavior::Execute() {
 						amot->set_command("SoftRightSideKick");
 				}
 
-				_blk->publish_signal(*amot, "motion");
+				_blk->publish_signal(*amot, "motion");*/
+				
 				/* **************** End of Targetted Kicks ********************** */
 
 				/* **************** Randomized Kicks ********************** */
 				//if (mglRand()<0.6) {
 				////if ( (mglRand()<1.0) && !obstacleFront ) {
-				//if (by > 0.0)
-				//amot->set_command("LeftKick");
-				//else
-				//amot->set_command("RightKick");
+				if (by > 0.0)
+					amot->set_command("LeftKick");
+				else
+					amot->set_command("RightKick");
+				_blk->publish_signal(*amot, "motion");
 				//}
 				//else if (mglRand()<0.5) {
 				//if (by > 0.0) {
@@ -307,19 +272,27 @@ int BodyBehavior::Execute() {
 
 		if (!readytokick && ballfound==0) {
 			velocityWalk(0.0, 0.0, 0.0, 1.0);
-			bhmsg->set_headaction( SCANFORBALL );
+			//bhmsg->set_headaction( SCANFORBALL );
+			curraction = SCANFORBALL;
 		}
 
 		if (!readytokick && scancompleted && ballfound==0) {
 			littleWalk(0.0, 0.0, direction * 30 * TO_RAD, 5);
-			bhmsg->set_headaction( SCANFORBALL );
+			//bhmsg->set_headaction( SCANFORBALL );
+			curraction = SCANFORBALL;
 		}
+
 
 	} else if (!play) { // Non-Play state
 		velocityWalk(0.0, 0.0, 0.0, 1.0);
-		bhmsg->set_headaction( DONOTHING );
+		//bhmsg->set_headaction( DONOTHING );
+		if (curraction!= CALIBRATE || (oldGameState==gameState && (gameState==PLAYER_PENALISED || gameState== PLAYER_READY)))
+			curraction = DONOTHING;
 	}
-	_blk->publish_signal(*bhmsg, "behavior");
+	//if (prevaction!=curraction){
+		bhmsg->set_headaction(curraction);
+		_blk->publish_signal(*bhmsg, "behavior");///signal or state???
+	//}
 	return 0;
 }
 
@@ -357,7 +330,9 @@ void BodyBehavior::littleWalk(double x, double y, double th, int s) {
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	sleep(s);
+
+	cout << s << endl;
+	//sleep(s);
 	_blk->publish_signal(*wmot, "motion");
 }
 

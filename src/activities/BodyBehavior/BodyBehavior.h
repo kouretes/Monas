@@ -67,10 +67,16 @@ class BodyBehavior: public IActivity {
 		int direction;
 		bool obstacleFront;
 		int gameState;
+		int oldGameState;
+		int curraction;
+		int prevaction;
 
 		int teamColor;
 		int playernum;
 		int orientation;
+
+		//bool waitforscan;////////////////////////////
+	//	time_t starttime;//////////////////////////////////////////////////
 
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);

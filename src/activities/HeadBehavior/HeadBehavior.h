@@ -10,7 +10,7 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/HeadToBMessage.pb.h"
 #include "messages/BToHeadMessage.pb.h"
-
+///#include "time.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
@@ -19,12 +19,12 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.63
-#define	LIMITDOWN 0.43
-#define	LIMITLEFT 0.30
-#define	LIMITRIGHT -0.30
-#define STEPVER 0.35
-#define STEPHOR 0.35
+#define LIMITUP -0.55
+#define	LIMITDOWN 0.19
+#define	LIMITLEFT 0.5
+#define	LIMITRIGHT -0.5
+#define STEPVER 0.65
+#define STEPHOR 0.2
 
 #define DONOTHING 0
 #define CALIBRATE 1
@@ -57,6 +57,8 @@ class HeadBehavior: public IActivity {
 		SensorPair HeadPitch;
 
 		int headaction;
+		int oldheadaction;
+		bool choosemyaction;
 		bool scancompleted;
 		bool headstartscan;
 		short scandirectionpitch;
@@ -70,9 +72,11 @@ class HeadBehavior: public IActivity {
 		boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
 		boost::shared_ptr<const BallTrackMessage> bmsg;
 		boost::shared_ptr<const BToHeadMessage> bhm;
-		
+		//boost::shared_ptr<const ObservationMessage> obsm;		
 		int calibrated;
-		
+		//bool counttime;
+		//time_t start;
+		//time_t end;
 		void calibrate();
 
 };
