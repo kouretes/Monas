@@ -9,7 +9,7 @@ class AgentConfig {
 
         int Priority;
 
-        int ThreadFrequency; 
+        float ThreadFrequency;
 
         int StatsCycle;
 };

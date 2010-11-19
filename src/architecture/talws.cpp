@@ -30,9 +30,9 @@ Talws::Talws () {
     }
 
 
-    typedef std::vector<XMLNode<std::string, int, std::string> > NodeCont;
+    typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 
-    NodeCont AgentNodes = AgentXmlFile.QueryElement<std::string, int, std::string>( "agent" );
+    NodeCont AgentNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "agent" );
 
     std::ostringstream AgentNum;
     AgentNum<<"Found "<<AgentNodes.size()<<" agent(s)";
@@ -41,11 +41,11 @@ Talws::Talws () {
 
     for ( NodeCont::iterator it = AgentNodes.begin(); it != AgentNodes.end(); it++ ) {
 
-        NodeCont AgentNameNode = AgentXmlFile.QueryElement<std::string, int, std::string>("name", &(*it) );
+        NodeCont AgentNameNode = AgentXmlFile.QueryElement<std::string, float, std::string>("name", &(*it) );
 
         std::string AgentName = AgentNameNode[0].value;
 
-        NodeCont ActivityNodes = AgentXmlFile.QueryElement<std::string, int, std::string>("activity", &(*it) );
+        NodeCont ActivityNodes = AgentXmlFile.QueryElement<std::string, float, std::string>("activity", &(*it) );
 
         std::vector<std::string> activities;
         for ( unsigned int i=0; i<ActivityNodes.size(); i++ ) {
