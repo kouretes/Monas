@@ -148,14 +148,14 @@ private:
     void gridScan(const KSegmentator::colormask_t color);
 
     bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c);
-    bool calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask_t c);
+    bool calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c);
     bool calculateValidGoalPostBase(const goalpostdata_t &goal, KSegmentator::colormask_t c);
     bool calculateValidGoalPostTop(goalpostdata_t &goal, KSegmentator::colormask_t c);
 
     balldata_t locateBall(std::vector<CvPoint> cand);
     void publishObstacles(std::vector<CvPoint> points);
     CvPoint2D32f centerOfCircle(CvPoint l, CvPoint m, CvPoint r);
-    goalpostdata_t locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
+    int locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
 
     typedef struct traceresult_struct
     {
