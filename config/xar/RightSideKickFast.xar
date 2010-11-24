@@ -3511,19 +3511,19 @@
                                             </Key>
                                             <Key>
                                                 <frame>8</frame>
-                                                <value>40.3447</value>
+                                                <value>52</value>
                                                 <Tangents>
                                                     <Tangent>
                                                         <side>left</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>-1.33333</abscissaParam>
-                                                        <ordinateParam>-0.263699</ordinateParam>
+                                                        <ordinateParam>-4.4865</ordinateParam>
                                                     </Tangent>
                                                     <Tangent>
                                                         <side>right</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>1.33333</abscissaParam>
-                                                        <ordinateParam>0.263699</ordinateParam>
+                                                        <ordinateParam>4.4865</ordinateParam>
                                                     </Tangent>
                                                 </Tangents>
                                                 <smooth>0</smooth>
@@ -3531,19 +3531,19 @@
                                             </Key>
                                             <Key>
                                                 <frame>12</frame>
-                                                <value>58.0061</value>
+                                                <value>67</value>
                                                 <Tangents>
                                                     <Tangent>
                                                         <side>left</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>-1.33333</abscissaParam>
-                                                        <ordinateParam>-5.59158</ordinateParam>
+                                                        <ordinateParam>0</ordinateParam>
                                                     </Tangent>
                                                     <Tangent>
                                                         <side>right</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>1</abscissaParam>
-                                                        <ordinateParam>4.19369</ordinateParam>
+                                                        <ordinateParam>0</ordinateParam>
                                                     </Tangent>
                                                 </Tangents>
                                                 <smooth>0</smooth>
@@ -3551,7 +3551,7 @@
                                             </Key>
                                             <Key>
                                                 <frame>15</frame>
-                                                <value>69.7005</value>
+                                                <value>64</value>
                                                 <Tangents>
                                                     <Tangent>
                                                         <side>left</side>

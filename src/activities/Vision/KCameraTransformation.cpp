@@ -147,9 +147,39 @@ float KCameraTranformation::vectorAngle(const KMat::HCoords<float,2> & v1,const 
     return acos( nom/den);
 
 }
+measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize)
+{
+
+    //Keep V1 Constant, and move v2
+    float angs,angl;
+    KMat::HCoords<float,2> v=v2;
+    //Fail small : move v towards v1 by 1 pixel
+    v1(0)<v(0)?v(0)-=0.707:v(0)+=0.707;
+    v1(1)<v(1)?v(1)-=0.707:v(1)+=0.707;
+    angs=vectorAngle(v1,v);
+
+    v=v2;
+
+     //Fail large : move v away from v1 by 1 pixel
+    v1(0)<v(0)?v(0)+=0.707:v(0)-=0.707;
+    v1(1)<v(1)?v(1)+=0.707:v(1)-=0.707;
+    angl=vectorAngle(v1,v);
+
+
+    float dists,distl;//Large distance comes from small angularDistance
+    dists=realsize/(sin(angl));
+    distl=realsize/(sin(angs));
+    //cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
+    measurement m;
+    m.mean=(dists+distl)/2;
+    m.var=(sqrd(dists-m.mean)+sqrd(distl-m.mean))/2;
+    return m;
+
+}
+
 /* Estimate a distance from observed angular size, create also a  estimate of variance, by assuming +/-1 pixel error
 */
-measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize)
+measurement KCameraTranformation::angularDistanceProjected(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize)
 {
 
     //Keep V1 Constant, and move v2
@@ -176,6 +206,7 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
     dists=sqrt(sqrd(dists)-sqrd(thepose.cameraZ-realsize));
     distl=sqrt(sqrd(distl)-sqrd(thepose.cameraZ-realsize));
     if(isnan(dists)) dists=0;
+    if(isnan(distl)) distl=0;
     //cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
     measurement m;
     m.mean=(dists+distl)/2;
@@ -217,7 +248,7 @@ measurement* KCameraTranformation::projectionDistance(KMat::HCoords<float,2> &v,
 			p[i](1)=atan2(s[i](1),s[i](0));//y/x
 		else
 			p[i](1)=0;
-       // cout<<"b:"<<p[i](1)<<endl;
+		//cout<<"b:"<<p[i](1)<<endl;
     }
     res[0].mean=(p[0](0)+p[1](0)+p[2](0)+p[3](0))/4;
     res[0].var=sqrd(p[0](0)-res[0].mean)+sqrd(p[1](0)-res[0].mean)+sqrd(p[2](0)-res[0].mean)+sqrd(p[3](0)-res[0].mean);

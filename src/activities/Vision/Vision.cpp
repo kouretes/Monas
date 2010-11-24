@@ -6,15 +6,14 @@
 #include "tools/XMLConfig.h"
 #include "tools/toString.h"
 #include "hal/syscall.h"
-
+#include <vector>
 #include "messages/motion.pb.h"
 //#define LONGESTDIST 6.0
 //#define COVERDIST 0.03
-#define TRACESKIP 5
-#define GLOBALTRACESKIP 9
+#define TRACESKIP 6
+#define GLOBALTRACESKIP 15
 //x COVERDIST=15*0.05m
 #define SCANSKIP  5
-#define SPARSENESS 4
 #define TO_RAD 0.017453293f
 
 
@@ -22,11 +21,6 @@
 #define trydelete(x) {if((x)!=NULL){delete (x);(x)=NULL;}}
 
 #define CvDist(pa,pb) sqrt(  ( ((pa).x-(pb).x )*((pa).x-(pb).x )  )+( ((pa).y-(pb).y )*((pa).y-(pb).y) )  )
-//Distance from observation angle
-//#define angularDistance(Hr,Ho,yaw,pitch) ( sqrt(1+sin(yaw)*sin(yaw))*((Hr)-(Ho))*kinext.cot(pitch) )
-//#define apparentDistance(Hr,Ho,rad) ( sqrt ( ( (((Ho)*(Ho) ) -((Hr)*(Hr)*tan(rad)*tan(rad)))*kinext.cot(rad)*kinext.cot(rad)    )  ))
-
-
 
 //using namespace AL;
 using namespace std;
@@ -53,8 +47,8 @@ struct inttracer_s
 	};
 	void initVelocity(float dx,float dy)
 	{
-		int idx=abs(dx*2048);
-		int idy=abs(dy*2048);
+		int idx=abs(dx*32768);
+		int idy=abs(dy*32768);
 		if (abs(dx)>=abs(dy))
 			steep=false;
 		else
@@ -111,6 +105,7 @@ struct inttracer_s
 
 };
 
+
 typedef struct inttracer_s tracer_t;
 
 
@@ -164,6 +159,40 @@ void saveFrame(IplImage *fIplImageHeader)
 
 }
 
+
+inline measurement mWeightedMean(measurement m1,measurement m2)
+{
+	measurement res;
+	/*
+	(d1.mean*d2.var+d2.mean*d1.var)/(d1.var+d2.var);
+		distance.var=d1.var*d2.var/(d1.var+d2.var);
+		*/
+	res.mean=(m1.mean*m2.var+m2.mean*m1.var)/(m1.var+m2.var);
+	res.var=(m1.var*m2.var)/(m1.var+m2.var)*(sqrd(m1.mean-res.mean)/m1.var+sqrd(m2.mean-res.mean)/m2.var);
+	return res;
+}
+inline measurement mWeightedMean(const std::vector<measurement> &l)
+{
+	float n=0,d=0,c=0;
+	measurement res;
+	if(l.size()==1)
+		return l[0];
+	for(int i=0;i<l.size();i++)
+	{
+		n+=l[i].mean/l[i].var;
+		d+=1.0f/l[i].var;
+		cout<<l[i].mean<<" "<<l[i].var<<endl;
+	}
+
+
+	res.mean=n/d;
+	for(int i=0;i<l.size();i++)
+		c+=sqrd(l[i].mean-res.mean)/l[i].var;
+	res.var=(c/d)/(l.size()-1);
+	return res;
+
+
+}
 
 int  Vision::Execute()
 {
@@ -311,8 +340,30 @@ void Vision::recv_and_send()
 	{
 		char segmended[rawImage->height][rawImage->width];
 		for (int i = 0; i < rawImage->width ; i++)
+		{
+
 			for (int j = 0; j < rawImage->height ; j++)
-				segmended[j][i] = doSeg(i, j);
+			{
+				KMat::HCoords<float,2> im;
+				KMat::HCoords<float,3> c3d;
+				im(0)=i;
+				im(1)=j;
+				im=imageToCamera(im);
+				c3d=kinext.camera2dToGround(im);
+				if(c3d(2)-1>=0&&abs(c3d(2)-1)<=1)
+				{
+					segmended[j][i] = orange;
+
+				}
+				else
+					segmended[j][i] = doSeg(i, j);
+
+				//c3d=kinext.camera2dToGroundProjection(im,p.cameraZ-0.1);
+				//if(sqrd(c3d(0))+sqrd(c3d(1))>100)
+				//	segmended[j][i]=red;
+			}
+		}
+
 
 		vector<CvPoint>::iterator i;
 		//For all detected points
@@ -323,8 +374,18 @@ void Vision::recv_and_send()
 		};
 		for (i = ygoalpost.begin(); i != ygoalpost.end(); i++)
 		{
-			segmended[(*i).y][(*i).x]=blue;
+			segmended[(*i).y][(*i).x]=red;
 		};
+
+		tracer_t t;
+		t.init(64,64);
+		t.initVelocity(Vlt.x,Vlt.y);
+		for(int k=0;k<16;k++)
+		{
+
+			segmended[t.y][t.x]=red;
+			t.step();
+		}
 
 		img.set_imagerawdata(segmended,rawImage->width*rawImage->height);
 		img.set_bytes(rawImage->width*rawImage->height);
@@ -470,15 +531,14 @@ void Vision::fetchAndProcess()
 	}
 	//Clear result message
 	obs.Clear();
-	//TODO: create ct!;
 	p.yaw=hm->sensordata(0).sensorvalue();
 	p.pitch=hm->sensordata(1).sensorvalue();
 
 	p.Vyaw=hm->sensordata(0).sensorvaluediff();
 	p.Vpitch=hm->sensordata(1).sensorvaluediff();
 
-	p.angX=0;//im->sensordata(5).sensorvalue();
-	p.angY=0;//im->sensordata(6).sensorvalue();
+	p.angX=im->sensordata(5).sensorvalue();
+	p.angY=im->sensordata(6).sensorvalue();
 	p.VangX=im->sensordata(5).sensorvaluediff();//im->sensordata(5).sensortimediff();
 	p.VangY=im->sensordata(6).sensorvaluediff();//im->sensordata(6).sensortimediff();
 
@@ -512,11 +572,27 @@ void Vision::fetchAndProcess()
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
 
+	Vup.y=-cos(-kinext.getRoll());
+	Vup.x=sin(-kinext.getRoll());
+
+	Vdn.x=-Vup.x;
+	Vdn.y=-Vup.y;
+
+	Vlt.x=Vup.y;//-Vup.x*cos(-45*TO_RAD)-Vup.y*sin(-45*TO_RAD);
+	Vlt.y=-Vup.x;//-Vup.x*sin(-45*TO_RAD)+Vup.y*sin(-45*TO_RAD);
+
+	Vrt.x=-Vup.y;
+	Vrt.y=Vup.x;
 	//unsigned long startt,endt;
 	//startt=SysCall::_GetCurrentTimeInUSec();
+	ballpixels.clear();
+	ygoalpost.clear();
+	bgoalpost.clear();
+	obstacles.clear();
+
 	gridScan(orange);
 	//endt = SysCall::_GetCurrentTimeInUSec()-startt;
-	//cout<<"gridscan takes:"<<endt<<endl;
+	//cout<<" takes:"<<endt<<endl;
 
 
 
@@ -529,6 +605,7 @@ void Vision::fetchAndProcess()
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
 	locateGoalPost(ygoalpost,yellow);
+	locateGoalPost(bgoalpost,skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	cout << b.x << " " << b.y << " " << b.cr << endl;
@@ -689,6 +766,7 @@ void Vision::loadXMLConfig(std::string fname)
 	xmlconfig->QueryElement("scanstep",config.scanstep);
 	xmlconfig->QueryElement("skipdistance",config.skipdistance);
 	xmlconfig->QueryElement("borderskip",config.borderskip);
+	xmlconfig->QueryElement("subsampling",config.subsampling);
 	xmlconfig->QueryElement("seedistance",config.seedistance);
 	xmlconfig->QueryElement("obstacledistance",config.obstacledistance);
 	xmlconfig->QueryElement("balltolerance",config.balltolerance);
@@ -699,15 +777,14 @@ void Vision::loadXMLConfig(std::string fname)
     xmlconfig->QueryElement("goaldiam",config.goaldiam);
     xmlconfig->QueryElement("goalslopetolerance",config.goalslopetolerance);
 
+	xmlconfig->QueryElement("widthestimateotolerance",config.widthestimateotolerance);
 
 }
+
 void Vision::gridScan(const KSegmentator::colormask_t color)
 {
 	//Horizontal + Vertical Scan
-	ballpixels.clear();
-	ygoalpost.clear();
-	bgoalpost.clear();
-	obstacles.clear();
+
 
 
 	KMat::HCoords<float,2> im;
@@ -721,19 +798,19 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//int ballpixel = -1;
 	unsigned int cntother=0;
 
-	startx+=SPARSENESS-1;//Skip min num of pixels that indicate the sparseness of new colored pixels
-	startx=startx%(config.scanstep>>1);
+	startx+=config.subsampling-1;//Skip min num of pixels that indicate the sparseness of new colored pixels
+	startx=startx%config.scanstep;
 	//float stepy=-1,stepx=-tan(-kinext.getRoll());//TODO :: is this correct?
 	tracer_t gtrc;
 	//	Vup.y=-cos(-kinext.getRoll());
 	//Vup.x=-sin(-kinext.getRoll());
-	gtrc.initVelocity(-sin(-kinext.getRoll()),-cos(-kinext.getRoll()));
+	gtrc.initVelocity(Vup.x,Vup.y);
 	step=config.scanstep;
 	gtrc.setScale(step);
 	//cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
 
 	//cout<<"loop"<<endl;
-	for (int i = config.borderskip+startx; i < rawImage->width-config.borderskip-1; i = i + (config.scanstep>>1))
+	for (int i = config.borderskip+startx; i < rawImage->width-config.borderskip; i = i + config.scanstep)
 	{
 		//cout<<"wtf"<<endl;
 		//Thru Horizon Possibly someday
@@ -746,7 +823,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		bool bfound=false;
 		// ballpixel = -1;
 		//int ci,cj;
-		gtrc.init(i,rawImage->height - config.borderskip-1-startx);
+		gtrc.init(i,rawImage->height - config.borderskip-1);
 
 		KMat::HCoords<int,2> lastpoint;
 		lastpoint(0)=gtrc.x;
@@ -777,7 +854,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				yfound=false;
 				bfound=false;
 			}
-			else if (tempcolor==orange)
+			else if (tempcolor==color)
 			{
 				//cntwhitegreenorangepixels++;
 				cntother=0;
@@ -799,7 +876,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				c=imageToCamera(im);
 
 				c3d=kinext.camera2dToGround(c);
-				if(c3d(2)>=0)//Looking up :)
+				if(c3d(2)>=1)//Looking up :)
 					break;
 				c3d=kinext.camera2dToGroundProjection(c,0);
 				float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
@@ -826,7 +903,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 					break;
 				}
 			}
-			if (tempcolor == orange &&ballfound==false)
+			if (tempcolor == color &&ballfound==false)
 			{
 				CvPoint tmpPoint;
 				tmpPoint.x = gtrc.x;
@@ -846,11 +923,20 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				ygoalpost.push_back(tmpPoint);
 				yfound=true;
 			}
+			if(tempcolor==skyblue&&yfound==false)
+			{
+				CvPoint tmpPoint;
+				tmpPoint.x = gtrc.x;
+				tmpPoint.y = gtrc.y;
+				//ballpixels.push_back(tmpPoint);
+				bgoalpost.push_back(tmpPoint);
+				yfound=true;
+			}
 
 			//Find next pixel
 			gtrc.step();
 			step--;
-			if (step<SPARSENESS-1) step=SPARSENESS-1;
+			if (step<config.subsampling-1) step=config.subsampling-1;
 			gtrc.setScale(step);
 			//stepx=2;
 
@@ -859,11 +945,6 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 
 	}
-	//publishObstacles(obstacles);
-	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
-/* else {
-		memory->insertData("kouretes/Ball/found", .0f); // change
-	}*/
 }
 
 
@@ -958,7 +1039,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 	float innerrad = ball.cr * 0.707;
 	float ratio;
 	//Inner circle
-	for (int i = ball.x - innerrad+1; i <= ball.x + innerrad-1; i+=SPARSENESS)
+	for (int i = ball.x - innerrad+1; i <= ball.x + innerrad-1; i+=config.subsampling-1)
 		for (int j =ball. y - innerrad+1; j <= ball.y ; j++)
 		{
 			if (!validpixel(i,j))
@@ -969,7 +1050,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 		}
 
 	for (int i = ball.x+1; i <= ball.x + innerrad-1; i++)
-		for (int j =ball. y+1 ; j <= ball.y + innerrad-1; j+=SPARSENESS)
+		for (int j =ball. y+1 ; j <= ball.y + innerrad-1; j+=config.subsampling-1)
 		{
 			if (!validpixel(i,j))
 				continue;
@@ -1018,6 +1099,75 @@ bool Vision::calculateValidGoalPost(goalpostdata_t goal, KSegmentator::colormask
 		*/
 }
 
+bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator::colormask_t c)
+{
+
+	int width =goal.lr.x-goal.ll.x+1;
+	unsigned int ttl = 0, gd = 0;
+	float ratio;
+	for (int i=goal.ll.x; i<=goal.lr.x; i+=3)
+	{
+		for (int j=goal.bot.y+width; j>goal.bot.y; j-=3)
+		{
+			if (!validpixel(i,j))
+				continue;
+			if (doSeg(i, j) == green)
+				gd++;
+			ttl++;
+		}
+	}
+	ratio=(float(gd+1))/(ttl+1);
+	//cout<<"ratio:"<<ratio<<endl;
+	if (ratio<0.5)
+		return false;
+	return true;
+}
+
+bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::colormask_t c)
+{
+	traceResult r;
+	CvPoint m,s;
+	s=goal.top;
+	//s.y+=1;
+	s.x=goal.tl.x;
+	r=traceline(s,cvPoint(-2,+1),c);
+	//cout<<"tp:"<<r.p.x<< " "<<r.p.y<<endl;
+	m.x=(r.p.x+s.x)>>1;
+	m.y=(r.p.y+s.y)>>1;
+	r=traceBlobEdge(m,Vlt,c);
+	//cout<<"r:"<<r.p.x<<r.p.y<<endl;
+	//cout<<"t:"<<goal.tl.x<<goal.tr.x<<endl;
+	goal.leftOrRight=0;
+	if(r.p.x<goal.tl.x)
+	{
+		goal.leftOrRight=1;
+		return true;
+	}
+
+	//cout<<"No lt proeks"<<endl;
+	s.x=goal.tr.x;
+	r=traceline(s,cvPoint(+2,+1),c);
+	//cout<<"tp:"<<r.p.x<< " "<<r.p.y<<endl;
+	m.x=(r.p.x+s.x)>>1;
+	m.y=(r.p.y+s.y)>>1;
+	r=traceBlobEdge(m,Vrt,c);
+
+	//cout<<"r:"<<r.p.x<<r.p.y<<endl;
+	//cout<<"t:"<<goal.tl.x<<goal.tr.x<<endl;
+	if(r.p.x>goal.tr.x)
+	{
+		goal.leftOrRight=2;//Left
+		return true;
+	}
+
+	//cout<<"No rt proeks"<<endl;
+	return false;
+
+
+
+}
+
+
 bool cmpgoalpostdata_t (Vision::goalpostdata_t a,  Vision::goalpostdata_t b)
 {
 	return a.distance.mean < b.distance.mean;
@@ -1026,22 +1176,9 @@ bool cmpgoalpostdata_t (Vision::goalpostdata_t a,  Vision::goalpostdata_t b)
 Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 {
 
-	CvPoint2D32f Vup,Vdn,Vlt,Vrt;//Vertical velocity
-	Vup.y=-cos(-kinext.getRoll());
-	Vup.x=-sin(-kinext.getRoll());
-
-	Vdn.x=-Vup.x;
-	Vdn.y=-Vup.y;
-
-	Vlt.x=Vup.y;
-	Vlt.y=-Vup.x;
-
-	Vrt.x=-Vup.y;
-	Vrt.y=Vup.x;
-
 
 	vector<goalpostdata_t> history;
-
+	tracer_t at;
 	vector<CvPoint>::iterator i;//candidate iterator
 	for (i = cand.begin(); i != cand.end(); i++)
 	{
@@ -1052,7 +1189,7 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 
 			if((*hi).contains(*i))
 			{
-				cout<<"s";
+				//cout<<"s";
 				i++;//Skip pixel
 				hi = history.begin();
 
@@ -1066,160 +1203,142 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 
 		if (!validpixel((*i).x,(*i).y))
 			continue;
+		//cout<<"GoalPOst new"<<endl;
 		GoalPostdata newpost;
 		traceResult trcrs;
 
-		//Find an initial width
-		trcrs=   traceline((*i), cvPoint(-1, 0), c);
-		CvPoint pleft=trcrs.p;
-		trcrs= traceline((*i), cvPoint(+1, 0), c);
-
-		CvPoint pright=trcrs.p;
-
-		CvPoint m;m.x=(pleft.x+pright.x)>>1;m.y=(pleft.y+pright.y)>>1;//middle point, avg x,y
-		//Up=============
-		trcrs= traceline(m,Vdn,c);
-		newpost.bot=trcrs.p;
+		trcrs = traceBlobEdge((*i),Vdn,c);
 		newpost.haveBot=trcrs.smartsuccess;
+		newpost.bot=trcrs.p;
 
-		trcrs= traceline(newpost.bot,cvPoint(-1,-1),c);
-		//trcrs= traceline(trcrs.p,Vdn,c);
-		newpost.ll=trcrs.p;
-
-		trcrs= traceline(newpost.bot,cvPoint(1,-1),c);
-		//trcrs= traceline(trcrs.p,Vdn,c);
-		newpost.lr=trcrs.p;
-		//Up=============
-
-		trcrs= traceline(m,Vup,c);
-		newpost.top=trcrs.p;
+		trcrs = traceBlobEdge((*i),Vup,c);
 		newpost.haveTop=trcrs.smartsuccess;
+		newpost.top=trcrs.p;
 
-		trcrs= traceline(newpost.top,cvPoint(-1,1),c);
-		//trcrs= traceline(trcrs.p,Vup,c);
-		newpost.tl=trcrs.p;
+		newpost.ll.y=newpost.bot.y;
+		newpost.lr.y=newpost.bot.y;
+		newpost.ll.x=rawImage->width;
+		newpost.lr.x=0;
 
-		trcrs= traceline(newpost.top,cvPoint(1,1),c);
-		//trcrs= traceline(trcrs.p,Vup,c);
-		newpost.tr=trcrs.p;
+		at.init(newpost.bot.x,newpost.bot.y);
+		at.initVelocity(newpost.top.x-newpost.bot.x,newpost.top.y-newpost.bot.y	);
+		for(int k=0;k<config.subsampling;k++)
+		{
+			trcrs=traceline(cvPoint(at.x,at.y),Vlt,c);
+			newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
+			trcrs=traceline(cvPoint(at.x,at.y),Vrt,c);
+			newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
+			at.step();
+
+		}
+
+
+		newpost.tl.y=newpost.top.y;
+		newpost.tr.y=newpost.top.y;
+		newpost.tl.x=rawImage->width;
+		newpost.tr.x=0;
+
+		at.init(newpost.top.x+(newpost.bot.x-newpost.top.x)/8,newpost.top.y+(newpost.bot.y-newpost.top.y)/8);
+		at.initVelocity(newpost.bot.x-newpost.top.x,newpost.bot.y-newpost.top.y	);
+		for(int k=0;k<config.subsampling;k++)
+		{
+			trcrs=traceline(cvPoint(at.x,at.y),Vlt,c);
+			newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
+			trcrs=traceline(cvPoint(at.x,at.y),Vrt,c);
+			newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
+			at.step();
+		}
+
+		//cout<<"post:"<<newpost.tl.x<<" " <<newpost.tl.y<<" "<<newpost.tr.x<<" " <<newpost.tr.y<<" "<<newpost.ll.x<<" " <<newpost.ll.y<<" "<<newpost.lr.x<<" " <<newpost.lr.y<<endl;
 
 		//cout<<"Smarts:"<<newpost.haveBot<< " "<<newpost.haveTop<<endl;
 		if(newpost.tr.x-newpost.tl.x<SCANSKIP || newpost.lr.x-newpost.ll.x<SCANSKIP ||
-			newpost.ll.y-newpost.tl.y<SCANSKIP || newpost.lr.y-newpost.tr.y<SCANSKIP)
+			newpost.ll.y-newpost.tl.y<GLOBALTRACESKIP || newpost.lr.y-newpost.tr.y<GLOBALTRACESKIP)
 		{
-			cout <<"Goal size test failed"<<endl;
+			//cout <<"Goal size test failed"<<endl;
 			continue;
 		}
 
-		/*
-		CvPoint2D32f avg;
-		avg.x=(newpost.tl.x-newpost.ll.x + newpost.tr.x-newpost.lr.x)/2;
-		avg.y=(newpost.tl.y-newpost.ll.y + newpost.tr.y-newpost.lr.y)/2;
-		avg.x/=sqrt(sqrd(avg.x)+sqrd(avg.y));
-		avg.y/=sqrt(sqrd(avg.x)+sqrd(avg.y));
-		//cout<<(avg.y/Vup.y)<<" "<<(Vup.x/avg.x)<<endl;
-		float th1=atan(avg.y/avg.x);
-		float th2=atan(Vup.y/Vup.x);
-		float dth=abs(th1-th2);
-		if(dth>1.5)dth-=1.5;
-		if(abs(dth/th2)>config.goalslopetolerance)
-		{
-			cout<<"Slope test failed"<<endl;
-			continue;
-		}*/
 		if(newpost.haveBot)
 		{
-			KMat::HCoords<float,2> c,i;
+			KMat::HCoords<float,2> ci,i;
 			KMat::HCoords<float,3> c3d;
 			i(0)=newpost.bot.x;
 			i(1)=newpost.bot.y;
-			c=imageToCamera(i);
-			c3d=kinext.camera2dTo3d(c);
-			if(c3d(2)>=0)
+			ci=imageToCamera(i);
+			c3d=kinext.camera2dToGround(ci);
+			if(c3d(2)>=0||calculateValidGoalPostBase(newpost,c)==false)//check for some green under:)
 			{
 				newpost.haveBot=false;
 			}
 			else
 			{
-				measurement *a=kinext.projectionDistance(c,0);
+				measurement *a=kinext.projectionDistance(ci,0);
 				newpost.distBot=a[0];
-				newpost.distBot.mean+=config.goaldiam/2.0;
+				newpost.distBot.mean+=config.goaldiam/2;
 				newpost.bBot=a[1];
 				delete[] a;
 			}
 		}
 		if(newpost.haveTop)
 		{
-			KMat::HCoords<float,2> c,i;
+			KMat::HCoords<float,2> ci,i;
 			KMat::HCoords<float,3> c3d;
 			i(0)=newpost.top.x;
 			i(1)=newpost.top.y;
-			c=imageToCamera(i);
-			c3d=kinext.camera2dTo3d(c);
-			if(c3d(2)<=0)
+			ci=imageToCamera(i);
+			c3d=kinext.camera2dToGround(ci);
+			if(c3d(2)<=1||calculateValidGoalPostTop(newpost,c)==false)
 			{
 				newpost.haveTop=false;
 			}
 			else
 			{
-				measurement *a=kinext.projectionDistance(c,config.goalheight);
+				measurement *a=kinext.projectionDistance(ci,config.goalheight);
 				newpost.distTop=a[0];
-				newpost.distTop.mean+=config.goaldiam/2.0;
+				newpost.distTop.mean+=config.goaldiam/2;
 				newpost.bTop=a[1];
 				delete[] a;
-
 			}
 
 		}
 
 		if(newpost.haveTop&&newpost.haveBot)
 		{
-			KMat::HCoords<float,2> c1,c2,i1,i2;
-			i1(0)=newpost.bot.x;
-			i1(1)=newpost.bot.y;
-			i2(0)=newpost.top.x;
-			i2(1)=newpost.top.y;
-			c1=imageToCamera(i1);
-			c2=imageToCamera(i2);
-			float hAng=kinext.vectorAngle(c1,c2);
-
-			//Analytical solution: we know the angle of a triangle ,the oposite side and the parts that it is split by
-			//The corresponding triangle height. What is the height it self?
-
-			float t=tan(KMat::transformations::PI-hAng);
-			if(t>=0)
-			{
-				cout<<"Goal Post t failed"<<endl;
-				continue;
-			}
-			//Single solution of a  trionym
-			float g=config.goalheight;
-			float h=p.cameraZ;
-
-
-			//cout<<g<<" "<<h<<" "<<t<<endl;
-			newpost.distHeight.mean= - (g+sqrt( 4*t*t*h*(g-h)+g*g  ))/(2*t)+config.goaldiam/2;
-
-			if(  !(newpost.distBot.mean<newpost.distHeight.mean&&newpost.distTop.mean>newpost.distHeight.mean) &&
-				 !(newpost.distBot.mean>newpost.distHeight.mean&&newpost.distTop.mean<newpost.distHeight.mean)
-				)
-			{
-				cout<<"Distance logic test failed!"<<endl;
-				continue;
-			}
+			measurement md=mWeightedMean(newpost.distBot,newpost.distTop);
+			newpost.dist.push_back(md);
+			measurement mb=mWeightedMean(newpost.bBot,newpost.bTop);
+			newpost.ber.push_back(mb);
+			fillGoalPostHeightMeasurments(newpost);
 		}
 		else
-			newpost.distHeight.mean=-1;
+		{
+			if(newpost.haveBot&&newpost.distBot.mean<=config.seedistance)
+			{
+				newpost.dist.push_back(newpost.distBot);
+
+			}
+			else if(newpost.haveTop&&newpost.distTop.mean<=config.seedistance)
+			{
+				newpost.dist.push_back(newpost.distTop);
+
+			}
+			newpost.ber.push_back(newpost.bBot);
+			newpost.ber.push_back(newpost.bTop);
+			newpost.haveHeight=false;
+		}
 
 
-		if(newpost.haveBot&&newpost.haveTop)
+
+
+		/*if(newpost.haveHeight)
 		{
 
 			newpost.distance.mean=newpost.distHeight.mean;
 			newpost.distance.var=(newpost.distTop.var*newpost.distBot.var)/(newpost.distTop.var+newpost.distBot.var);
 			newpost.bearing.mean=(newpost.bBot.mean*newpost.bTop.var+newpost.bTop.mean*newpost.bBot.var)/(newpost.bBot.var+newpost.bTop.var);
 			newpost.bearing.var=newpost.bTop.var*newpost.bBot.var/(newpost.bBot.var+newpost.bTop.var);
-			cout<<"bwm:"<<newpost.bBot.mean<<" "<<newpost.bTop.mean<<" "<< newpost.bearing.mean<<endl;
+			//cout<<"bwm:"<<newpost.bBot.mean<<" "<<newpost.bTop.mean<<" "<< newpost.bearing.mean<<endl;
 
 		}
 		else if(newpost.haveTop)
@@ -1227,10 +1346,19 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 		else if(newpost.haveBot)
 			newpost.distance=newpost.distBot;
 		else
-			continue;
-		cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
-		cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
-		cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
+			continue;*/
+		//cout<<"fill:"<<endl;
+		fillGoalPostWidthMeasurments(newpost,c);
+		//cout<<"mean:"<<endl;
+		newpost.distance=mWeightedMean(newpost.dist);
+		newpost.bearing=mWeightedMean(newpost.ber);
+		//if(newpost.haveWidth)
+		//	cout<<"WDistance"<<newpost.distWidth.mean<<" "<<newpost.distWidth.var<<endl;
+		//cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
+		//cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
+		//cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
+
+
 
 
 
@@ -1248,6 +1376,79 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 
 	}
 	std::sort (history.begin(), history.end(), cmpgoalpostdata_t);
+	goalpostdata_t t;
+	if(history.size()==0)
+		return t;
+	if(history.size()==1)
+	{
+		GoalPostdata d1=history[0];
+		NamedObject * o=obs.add_regular_objects();
+		o->set_bearing(d1.bearing.mean);
+		o->set_bearing_dev(sqrt(d1.bearing.var));
+		o->set_distance(d1.distance.mean);
+		o->set_distance_dev(sqrt(d1.distBot.var));
+		std::string name;
+		if(c==yellow)
+			name=="Yellow";
+		else
+			name="Skyblue";
+		if(d1.leftOrRight==1)
+			name+="Right";
+		else if(d1.leftOrRight==2)
+			name+="Left";
+		o->set_object_name(name);
+		return t;
+	}
+
+	GoalPostdata d1=history[0];
+	GoalPostdata d2=history[1];
+
+	float x1,x2,y1,y2;
+
+	x1=d1.distance.mean* cos( d1.bearing.mean);
+	y1=d1.distance.mean* sin( d1.bearing.mean);
+
+	x2=d2.distance.mean* cos( d2.bearing.mean);
+	y2=d2.distance.mean* sin( d2.bearing.mean);
+	float d=sqrt(sqrd(x1-x2)+sqrd(y1-y2));
+	if( abs(d-config.goaldiam)/config.goaldist> 0.4)
+		return t;
+
+	if(d1.bearing.mean>d2.bearing.mean)
+	{
+		d1=d2;
+		d2=history[0];
+	}
+	NamedObject * o=obs.add_regular_objects();
+	o->set_bearing(d1.bearing.mean);
+	o->set_bearing_dev(sqrt(d1.bearing.var));
+	o->set_distance(d1.distance.mean);
+	o->set_distance_dev(sqrt(d1.distBot.var));
+	std::string name;
+	if(c==yellow)
+		name=="Yellow";
+	else
+		name="Skyblue";
+	name+="Left";
+	o->set_object_name(name);
+
+
+	o=obs.add_regular_objects();
+	o->set_bearing(d2.bearing.mean);
+	o->set_bearing_dev(sqrt(d2.bearing.var));
+	o->set_distance(d2.distance.mean);
+	o->set_distance_dev(sqrt(d2.distBot.var));
+	//name;
+	if(c==yellow)
+		name=="Yellow";
+	else
+		name="Skyblue";
+	name+="Right";
+	o->set_object_name(name);
+	return t;
+
+	//Push Left;
+
 	//if(history.size()==2)
 	//{
 	   // NamedObject *gp=obs->add_regular_objects();
@@ -1256,6 +1457,192 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 
 	//}
 
+	return  t;
+
+}
+
+void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
+{
+	float t,g,h,dS,dL;
+	//Single solution of a  trionym
+	g=config.goalheight;
+	h=p.cameraZ;
+
+	KMat::HCoords<float,2> c1,c2,i1,i2;
+	i1(0)=newpost.bot.x;
+	i1(1)=newpost.bot.y;
+	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:),since
+	i2(1)=newpost.top.y-1;
+	c1=imageToCamera(i1);
+	c2=imageToCamera(i2);
+
+
+	float hAngL=kinext.vectorAngle(c1,c2);
+	t=tan(KMat::transformations::PI-hAngL);
+
+	//Analytical solution: we know the angle of a triangle ,the oposite side and the parts that it is split by
+	//The corresponding triangle height. What is the height it self?
+	if(t>=0)
+	{
+		cout<<"Goal Post t failed"<<endl;
+		newpost.haveHeight=false;
+		return ;
+	}
+	dL= - (g+sqrt( 4*t*t*h*(g-h)+g*g  ))/(2*t)+config.goaldiam/2;
+	//Single solution of a  trionym
+
+
+	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:),since
+	i2(1)=newpost.top.y+1;
+	c2=imageToCamera(i2);
+
+	float hAngS=kinext.vectorAngle(c1,c2);
+	t=tan(KMat::transformations::PI-hAngS);
+
+	//Analytical solution: we know the angle of a triangle ,the oposite side and the parts that it is split by
+	//The corresponding triangle height. What is the height it self?
+	if(t>=0)
+	{
+		//cout<<"Goal Post t failed"<<endl;
+		newpost.haveHeight=false;
+		return ;
+	}
+
+
+
+	//cout<<g<<" "<<h<<" "<<t<<endl;
+
+	dS= - (g+sqrt( 4*t*t*h*(g-h)+g*g  ))/(2*t)+config.goaldiam/2;
+	measurement m;
+	m.mean=(dS+dL)/2;
+	m.mean=(dS+dL)/2 ;
+	m.var=(sqrd(dS-m.mean)+sqrd(dL-m.mean))/2;
+
+	if(  !(newpost.distBot.mean<m.mean&&newpost.distTop.mean>m.mean) &&
+		 !(newpost.distBot.mean>m.mean&&newpost.distTop.mean<m.mean)
+		)
+	{
+		cout<<"Distance logic test failed!"<<endl;
+		newpost.haveHeight=false;
+		return ;
+	}
+	newpost.haveHeight=true;
+	newpost.dist.push_back(m);//add to vector of results:)
+
+}
+void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c)
+{
+
+	//traceResult trcrs;
+
+	//CvPoint l,r;
+	CvPoint3D32f mT,mB;
+	float angV;
+	measurement mrT,mrB,mr1,mr2;
+
+	KMat::HCoords<float,2> c1,c2,i1,i2;
+
+
+	//Find a width and mark measurements!
+
+
+
+	mT.x=(newpost.tl.x+newpost.tr.x)/2.0;
+	mT.y=(newpost.tl.y+newpost.tr.y)/2.0;
+	//For top. move 10% of estimated height down!
+
+	i1(0)=mT.x;
+	i1(1)=mT.y;
+	c1=imageToCamera(i1);
+
+	i2(0)=newpost.tl.x;
+	i2(1)=newpost.tl.y;
+	c2=imageToCamera(i2);
+	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
+
+	i2(0)=newpost.tr.x;
+	i2(1)=newpost.tr.y;
+	c2=imageToCamera(i2);
+	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
+	mrT=mWeightedMean(mr1,mr2);
+	//cout<<"mr1,mr2,mean:"<<mr1.mean<<" "<<mr2.mean<<mrT.mean<<endl;
+
+	mB.x=(newpost.ll.x+newpost.lr.x)/2.0f;
+	mB.y=(newpost.ll.y+newpost.lr.y)/2.0f;
+	//cout<<"l,r:"<<l.x<<","<<l.y<<" "<<r.x<<","<<r.y<<endl;
+	i1(0)=mB.x;
+	i1(1)=mB.y;
+	c1=imageToCamera(i1);
+
+	i2(0)=newpost.ll.x;
+	i2(1)=newpost.ll.y;
+	c2=imageToCamera(i2);
+	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
+
+	i2(0)=newpost.lr.x;
+	i2(1)=newpost.lr.y;
+	c2=imageToCamera(i2);
+	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
+
+
+	mrB=mWeightedMean(mr1,mr2);
+
+
+	//cout<<"mr1,mr2,mean:"<<mr1.mean<<" "<<mr2.mean<<mrB.mean<<endl;
+
+	i1(0)=mT.x;
+	i1(1)=mT.y;
+	i2(0)=mB.x;
+	i2(1)=mB.y;
+	c1=imageToCamera(i1);
+	c2=imageToCamera(i2);
+	angV=kinext.vectorAngle(c1,c2);
+
+	float a,b,cosG,dS,dL,ab,cest;
+
+	cosG=cos(angV);
+	cest=sqrt(sqrd(mrT.mean)+sqrd(mrB.mean)-2*mrT.mean*mrB.mean*cosG);
+
+
+	/*cout<<"Cest:"<<cest<<endl;
+	if(abs(cest-config.goalheight)/config.goalheight > config.widthestimateotolerance)
+	{
+		cout<<"check failed"<<endl;
+		newpost.haveWidth=false;
+		return ;
+	}*/
+
+	a=mrT.mean-sqrt(mrT.var);
+	b=mrB.mean-sqrt(mrB.var);
+	//cout<<"a,b:"<<a<<" "<<b<<endl;
+
+	ab=a*b;
+	//dS=sqrt((1.0f/sqrd(cosG) -1.0f)/( (sqrd(a)+sqrd(b)/sqrd(abcos)) - 2.0f/abcos ) );
+	dS=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) );//* (cest/config.goalheight);
+	a=mrT.mean+sqrt(mrT.var);
+	b=mrB.mean+sqrt(mrB.var);
+
+
+	//cout<<"a,b:"<<a<<" "<<b<<endl;
+	ab=a*b;
+	//dL=sqrt((1.0f/sqrd(cosG) -1.0f)/( (sqrd(a)+sqrd(b)/sqrd(abcos)) - 2.0f/abcos ) );
+	dL=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) );// * (cest/config.goalheight);
+	//cout<<"mT,mB"<<mrT.mean<<" "<<mrB.mean<<endl;
+	//cout<<"Ds,dl ang"<<dS<<" "<<dL<<" "<<angV/TO_RAD<<endl;
+	measurement m;
+	m.mean=(dS+dL)/2 ;
+	/*if(newpost.haveHeight)
+	{
+		if(abs(m.mean-newpost.dHeight)>config.widthestimateotolerance)
+		{
+			newpost.haveWidth=false;
+			return;
+		}
+	}*/
+	m.var=(sqrd(dS-m.mean)+sqrd(dL-m.mean))/2;
+	//cout<<"Width:"<<m.mean<<" "<<m.var<<endl;
+	newpost.haveWidth=true;
+	newpost.dist.push_back(m);
 }
 
 Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
@@ -1386,7 +1773,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		float rest=p.cameraZ*(par-sqrt(par))/(par-1);
 		//cout<<"rest:"<<rest<<endl;
 		newdata.ballradius=rest;
-		measurement d1=kinext.angularDistance(c1,c2,rest);
+		measurement d1=kinext.angularDistanceProjected(c1,c2,rest);//Find distance based on size and project to ground, at radius height
 		float w=d1.mean;
 		w=w<1?1:w;
 		rest= rest/w + (config.ballsize/2.0*(w-1))/w;
@@ -1405,8 +1792,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		delete[] a;
 		measurement distance;
 
-		distance.mean=(d1.mean*d2.var+d2.mean*d1.var)/(d1.var+d2.var);
-		distance.var=d1.var*d2.var/(d1.var+d2.var);
+		distance=mWeightedMean(d1,d2);
 		KMat::HCoords<float,2> polar;
 		//cout<<"ttldist:"<<distance.mean<<endl;
 		polar(0)=distance.mean;
@@ -1423,6 +1809,8 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 	vector<balldata_t>::iterator bd = history.begin();
 	balldata_t best;
 	best.cr = 0;
+	best.ballradius=1000;
+	best.distance.mean=1000;
 	best.distance.var =10000;
 	//debugcout << "BEST found" << endl;
 	while (bd != history.end())
@@ -1430,7 +1818,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		//cout << best.x << " " << best.y << " "<<best.d<< endl;
 		//cout << (*bd).x << " " << (*bd).y << " "<<(*bd).d<< endl;
 		//cout<<(*bd).d<<endl;
-		if ((*bd).distance.var*abs((*bd).ballradius*2.0-config.ballsize)/config.ballsize < best.distance.var*abs(best.ballradius*2.0-config.ballsize)/config.ballsize )
+		if ((*bd).distance.mean*abs((*bd).ballradius*2.0-config.ballsize)/config.ballsize < best.distance.mean*abs(best.ballradius*2.0-config.ballsize)/config.ballsize )
 			best = *bd;
 		//cout << best.x << " " << best.y << " "<<best.d<< endl;
 		bd++;
@@ -1544,6 +1932,75 @@ Vision::traceResult Vision::traceline(CvPoint start, CvPoint2D32f vel, KSegmenta
 			break;
 		}
 		curr.step();
+
+	}
+	traceResult r;
+	if (!validpixel(curr.x,curr.y))
+		r.smartsuccess=false;
+	else
+		r.smartsuccess=true;
+
+	//cout<<"ret"<<latestValid.x<<" "<<latestValid.y<<endl;
+
+	r.p=latestValid;
+
+	return r;
+}
+
+
+Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
+{
+	int skipcount = 0;
+	int globalcount = 0;
+	//CvPoint curr = start;
+	//CvPoint2D32f lt,rt;
+	//lt.x=-vel.y;lt.y=-vel.x;
+	//rt.x=-lt.x;rt.y=-lt.y;
+	/*CvPoint intVel;
+
+	intVel.x=floor(vel.x+0.5);//Round
+	intVel.y=floor(vel.y+0.5);//Round
+	cout<<"intvel:"<<intVel.x<<intVel.y<<endl;*/
+	CvPoint latestValid = start;
+	tracer_t curr;
+	curr.init(start.x,start.y);
+	curr.initVelocity(vel.x,vel.y);
+	/////cout << "traceline:"<<start.x<<" "<<start.y<<endl;
+	while (validpixel(curr.x,curr.y))
+	{
+		//cout<<curr.x<<" "<<curr.y<<endl;
+		if (doSeg(curr.x, curr.y) != c)
+		{
+
+			skipcount++;
+			globalcount++;
+		}
+		else
+		{
+			latestValid.x = curr.x;
+			latestValid.y = curr.y;
+			skipcount = 0;
+		};
+
+		if (skipcount > TRACESKIP || globalcount > GLOBALTRACESKIP)
+		{
+			//Ok, try some readaptation
+			traceResult trs=traceline(latestValid,cvPoint2D32f(vel.y,-vel.x),c);
+			CvPoint l=trs.p;
+			trs=traceline(latestValid,cvPoint2D32f(-vel.y,vel.x),c);
+			CvPoint m=trs.p;
+			m.x=(m.x+l.x)/2;
+			m.y=(m.y+l.y)/2;
+			latestValid.x= (latestValid.x*3+m.x)/4;
+			latestValid.y= (latestValid.y*3+m.y)/4;
+			skipcount--;
+			globalcount--;
+
+			//curr=start;
+			break;
+		}
+		curr.step();
+
 
 	}
 	traceResult r;
