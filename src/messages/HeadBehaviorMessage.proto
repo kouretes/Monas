@@ -1,6 +1,0 @@
-message HeadBehaviorMessage{
-	required bool turnforscan = 1 [default = false];
-	required int32 ballfound = 2 [default = 0];
-	required int32 calibrated = 3 [default = 0];
-	required bool scanforball = 4 [default = false];
-}

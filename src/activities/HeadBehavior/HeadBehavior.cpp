@@ -17,7 +17,7 @@ void HeadBehavior::UserInit() {
 	hmot->add_parameter(0.0f);
 	hmot->add_parameter(0.0f);
 
-	hbmot = new HeadBehaviorMessage();
+	hbmsg = new HeadToBMessage();
 
 	ballfound = 0;
 
@@ -26,16 +26,91 @@ void HeadBehavior::UserInit() {
 	reachedlimitleft = false;
 	reachedlimitright = false;
 
-	turnforscan = true;
+	scancompleted = false;
 	headstartscan = true;
-	scanforball = true;
 	calibrated = 0;
-
-	play = false;
-
-	gameState = PLAYER_INITIAL;
-
+	headaction = 0;
+	oldheadaction = 0;
+	choosemyaction = false;
+	//counttime = false;
+	//time(&start);
+	//time(&end);
 	Logger::Instance().WriteMsg("HeadBehavior", "Initialized", Logger::Info);
+}
+
+int HeadBehavior::Execute() {
+
+	oldheadaction = headaction;
+	read_messages();
+
+	if (bhm!=0)
+		headaction = bhm->headaction();
+	if (choosemyaction){
+			headaction = oldheadaction;
+			choosemyaction = false;
+	}
+		
+	switch(headaction){
+		
+		case (DONOTHING):
+		
+			break;
+		case (CALIBRATE):
+			calibrate();
+			calibrated = 1;
+			hbmsg->set_calibrated(calibrated);
+			//counttime = false;
+			headaction = DONOTHING;
+			choosemyaction = true;
+			break;
+		case (SCANFORBALL):
+			scancompleted =false;
+		//	if (obsm!=0 && obsm->has_ball()){
+			if(bmsg != 0 && bmsg->radius() > 0){
+				headaction = BALLTRACK;
+				ballfound += 5;
+				choosemyaction = true;
+				hbmsg->set_ballfound(ballfound);
+				//time_t(&start);
+				//counttime = true;
+			}else if (hjsm != 0 ) {
+				//counttime = false;
+				HeadYaw = hjsm->sensordata(0);
+				HeadPitch = hjsm->sensordata(1);
+				HeadScanStep();
+			}
+			break;
+		case (SCANFORPOST):
+			break;
+		case (BALLTRACK):
+			if (bmsg != 0) {
+				Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
+				if (bmsg->radius() > 0) { //This means that a ball was found
+					MakeTrackBallAction();
+					//time(&end);
+					
+					ballfound += 5;
+					if (ballfound > 20)
+						ballfound = 20; //Increase this value when we see the ball
+
+				} else {
+					if (ballfound > 0)
+						ballfound -= 1; //Decrease it when we don't see the ball
+					if (ballfound==0){
+						headstartscan=true;
+						//counttime = false;
+					}
+				}
+			}
+			hbmsg->set_ballfound(ballfound);
+			Logger::Instance().WriteMsg("HeadBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
+
+		break;
+		
+		}
+		//if (headaction == BALLTRACK || oldheadaction!=headaction || scancompleted)
+			_blk->publish_state(*hbmsg, "behavior"); ///signal or state
+	return 0;
 }
 
 int HeadBehavior::MakeTrackBallAction() {
@@ -55,98 +130,6 @@ int HeadBehavior::MakeTrackBallAction() {
 	//}
 
 	return 1;
-}
-
-int HeadBehavior::Execute() {
-
-	read_messages();
-
-	if (gsm != 0) {
-		Logger::Instance().WriteMsg("HeadBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
-		int oldgamestate = gameState;
-		gameState = gsm->player_state();
-
-		bool stateChanged = oldgamestate != gameState;
-
-		if (stateChanged) {
-
-			if (gameState == PLAYER_PLAYING) {
-				if (calibrated == 2) {
-					play = true;
-				} else if (calibrated == 0) {
-					calibrate();
-				}
-			} else if (gameState == PLAYER_INITIAL) {
-				play = false;
-			} else if (gameState == PLAYER_READY) {
-				calibrate();
-				play = false;
-			} else if (gameState == PLAYER_SET) {
-				play = false;
-
-			} else if (gameState == PLAYER_FINISHED) {
-				play = false;
-			} else if (gameState == PLAYER_PENALISED) {
-				play = false;
-				calibrate();
-			}
-		}
-	}
-
-	if (gameState == PLAYER_PLAYING) {
-		if (calibrated == 2) {
-			play = true;
-		} else if (calibrated == 0) {
-			calibrate();
-		}
-	}
-
-	hbmot->set_calibrated(calibrated);
-	turnforscan = false;
-
-	if (play) {
-
-		if (bmsg != 0) {
-			Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
-			if (bmsg->radius() > 0) { //This means that a ball was found
-				MakeTrackBallAction();
-				ballfound += 5;
-				scanforball = false;
-				if (ballfound > 20)
-					ballfound = 20; //Increase this value when we see the ball
-
-			} else {
-				if (ballfound > 0)
-					ballfound -= 1; //Decrease it when we don't see the ball
-			}
-		}
-		Logger::Instance().WriteMsg("HeadBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
-
-		if (ballfound == 0) {
-			if (!scanforball) {
-				headstartscan = true;
-				scanforball = true;
-				hbmot->set_ballfound(ballfound);
-				hbmot->set_turnforscan(turnforscan);
-				hbmot->set_scanforball(scanforball);
-				_blk->publish_state(*hbmot, "behavior");
-			}
-
-			if (hjsm != 0) {
-				HeadYaw = hjsm->sensordata(0);
-				HeadPitch = hjsm->sensordata(1);
-				HeadScanStep();
-			}
-		} else if (ballfound > 0) {
-			hbmot->set_ballfound(ballfound);
-			hbmot->set_turnforscan(turnforscan);
-			hbmot->set_scanforball(scanforball);
-			_blk->publish_state(*hbmot, "behavior");
-
-		}
-	}
-
-	return 0;
 }
 
 void HeadBehavior::HeadScanStep() {
@@ -208,11 +191,9 @@ void HeadBehavior::HeadScanStep() {
 		reachedlimitright = false;
 		reachedlimitleft = false;
 		///we should do something;
-		turnforscan = true;
-		hbmot->set_ballfound(ballfound);
-		hbmot->set_turnforscan(turnforscan);
-		hbmot->set_scanforball(scanforball);
-		_blk->publish_state(*hbmot, "behavior");
+		scancompleted = true;
+		hbmsg->set_scancompleted(scancompleted);
+
 	}
 
 	//startscan = false;
@@ -220,22 +201,20 @@ void HeadBehavior::HeadScanStep() {
 
 void HeadBehavior::read_messages() {
 
-	//if (gsm != 0) delete gsm;
 	//if (bmsg != 0) delete bmsg;
 	//if (hjsm != 0) delete hjsm;
-	//if (obsm != 0) delete obsm;
 
-	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
+	bhm = _blk->read_signal<BToHeadMessage> ("BToHeadMessage");
 	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
 	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
+	//obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 
 	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c = _blk->read_state<CalibrateCam> ("CalibrateCam");
 	if (c != NULL) {
 		if (c->status() == 1) {
 			calibrated = 2;
-			hbmot->set_calibrated(calibrated);
+			hbmsg->set_calibrated(calibrated);
 		}
 	}
 }
@@ -246,4 +225,3 @@ void HeadBehavior::calibrate() {
 	_blk->publish_signal(v, "vision");
 	calibrated = 1;
 }
-

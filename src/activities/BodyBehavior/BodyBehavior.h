@@ -10,7 +10,8 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
-#include "messages/HeadBehaviorMessage.pb.h"
+#include "messages/HeadToBMessage.pb.h"
+#include "messages/BToHeadMessage.pb.h"
 
 #include "tools/logger.h"
 #include "tools/toString.h"
@@ -20,12 +21,12 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.63
-#define	LIMITDOWN 0.43
-#define	LIMITLEFT 0.30
-#define	LIMITRIGHT -0.30
-#define STEPVER 0.35
-#define STEPHOR 0.35
+
+#define DONOTHING 0
+#define CALIBRATE 1
+#define SCANFORBALL 2
+#define SCANFORPOST 3
+#define BALLTRACK 4
 
 class BodyBehavior: public IActivity {
 
@@ -41,12 +42,11 @@ class BodyBehavior: public IActivity {
 	private:
 
 		short ballfound;
-		bool turnforscan;
-		bool scanforball;
-
+		bool scancompleted;
+	
 		MotionWalkMessage* wmot;
 		MotionActionMessage* amot;
-
+		BToHeadMessage* bhmsg;
 		int pitchdirection;
 		int yawdirection;
 		SensorPair HeadYaw;
@@ -56,7 +56,7 @@ class BodyBehavior: public IActivity {
 		boost::shared_ptr<const GameStateMessage> gsm;
 		boost::shared_ptr<const ObservationMessage> obsm;
 		//	boost::shared_ptr<const ObstacleMessage>  om;
-		boost::shared_ptr<const HeadBehaviorMessage> hbm;
+		boost::shared_ptr<const HeadToBMessage> hbm;
 
 		int calibrated;
 		bool play;
@@ -65,13 +65,18 @@ class BodyBehavior: public IActivity {
 		bool readytokick;
 		int back;
 		int direction;
-		bool turning;
 		bool obstacleFront;
 		int gameState;
+		int oldGameState;
+		int curraction;
+		int prevaction;
 
 		int teamColor;
 		int playernum;
 		int orientation;
+
+		//bool waitforscan;////////////////////////////
+	//	time_t starttime;//////////////////////////////////////////////////
 
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);
