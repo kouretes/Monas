@@ -1414,7 +1414,7 @@ Vision::goalpostdata_t Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator
 	if( abs(d-config.goaldiam)/config.goaldist> 0.4)
 		return t;
 
-	if(d1.bearing.mean>d2.bearing.mean)
+	if(d1.bearing.mean<d2.bearing.mean)
 	{
 		d1=d2;
 		d2=history[0];
