@@ -302,11 +302,8 @@ int receive_and_send_loop( TCPSocket *sock) {
 		}
 
 		outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
-		outgoingheader.set_mysize(size = outgoingheader.ByteSize());
-		while (size != outgoingheader.ByteSize()) {
-			outgoingheader.set_mysize(size = outgoingheader.ByteSize());
-		}
 
+		size = outgoingheader.ByteSize();
 		memset(data,0,10);
 		strncpy(data,_toString(size).c_str(),9);
 		//add 10 more bytes for the header

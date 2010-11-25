@@ -17,12 +17,12 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.55
-#define	LIMITDOWN 0.19
-#define	LIMITLEFT 0.5
-#define	LIMITRIGHT -0.5
-#define STEPVER 0.65
-#define STEPHOR 0.2
+#define LIMITUP -0.53
+#define	LIMITDOWN 0.15
+#define	LIMITLEFT 0.55
+#define	LIMITRIGHT -0.55
+#define STEPVER 0.34
+#define STEPHOR 0.24
 
 namespace AL {
 	class ALMotionProxy;
@@ -92,6 +92,7 @@ class VBehavior: public IActivity {
 		void velocityWalk(double x, double y, double th, double f);
 		void littleWalk(double x, double y, double th, int s);
 		void calibrate();
+		float cX,cY,cth;//Commanded
 
 };
 

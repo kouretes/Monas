@@ -14,6 +14,11 @@
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
 #include "architecture/narukom/pub_sub/filters/special_filters.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+
+using namespace boost::posix_time;
+
 
 namespace {
 	ActivityRegistrar<VBehavior>::Type temp("VBehavior");
@@ -58,6 +63,7 @@ void VBehavior::UserInit() {
 	stopped = true;
 	play = false;
 	kickoff = false;
+	cX=0;cY=0;cth=0;
 
 	//hjsm = 0;
 	//bmsg = 0;
@@ -163,7 +169,8 @@ int VBehavior::Execute() {
 
 	//if (play) mgltest();
 	//return 1;
-
+	static  int kickno=0;
+	static ptime lastkick=microsec_clock::universal_time()+seconds(4);
 	if (play) {
 
 		if (bmsg != 0) {
@@ -182,12 +189,13 @@ int VBehavior::Execute() {
 					ballfound -= 1; //Decrease it when we don't see the ball
 			}
 		}
-		//return 0;
+		return 0;
 		Logger::Instance().WriteMsg("VBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
 		float X=0.0, Y=0.0, theta=0.0;
-		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		 float posx=0.13, posy=0.035;
+		static float bd=0.0, bx=0.0, by=0.0, bb=0.0;
+		float posx=0.145, posy=0.026;
+		static float lastx=0,lasty=0;
 
 		if ((obsm != 0) && !turning) {
 
@@ -195,40 +203,65 @@ int VBehavior::Execute() {
 			int side=1;
 			bd = obsm->ball().dist();
 			bb = obsm->ball().bearing();
-			bx = obsm->ball().dist() * cos( obsm->ball().bearing() );
-			by = obsm->ball().dist() * sin( obsm->ball().bearing() );
+			bx = obsm->ball().dist() * cos( obsm->ball().bearing() )/2 + bx/2;
+			by = obsm->ball().dist() * sin( obsm->ball().bearing() )/2 + by/2;
 			side = (bb > 0) ? 1 : -1;
+			if(kickno==0||kickno==2)	side=-1;
+				else side=1;
 			Logger::Instance().WriteMsg("VBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
-            readytokick==true;
-			if (!readytokick&&ballfound>=2) {
+			if (ballfound>=1) {
 
 				readytokick = true;
 
-                if ( fabs( bx - posx ) > 0.015  || fabs( by - (side*posy) ) > 0.015) {
+                if ( fabs( bx - posx ) > 0.01  || fabs( by - (side*posy) ) > 0.009) {
                     //Y = gainFine * ( by - (side*posy) );
                     readytokick = false;
                 }
-
+				float offsety=side*posy;
 
 				if (!readytokick) {
-                    if(bd>0.5){
-                        float X=0,Y=0,th=0;
-                        if(fabs(bx)>0.15) X=1;
-                        if(fabs(by)>0.15) Y=side;
-                        velocityWalk(X,Y,0.01*side,1);
+                   // if(abs(bd>0.6))
+					//{
+
+						static float X=0,Y=0,th=0,f=0.2;
+						//X=(bx-posx)*2;
+						X=((bx-posx +  5*(bx-lastx)-5*cX*0.042)/0.042)*0.45;
+						X=X>0?X:X-0.04;
+						X=X>1?1:X;
+						X=X<-1?-1:X;
+						//Y=(by-offsety)*1.6;
+						Y=((by-offsety+5*(by-lasty)-5*cY*0.045)/0.045)*0.45;
+
+						lastx=bx;
+						lasty=by;
+
+						if(bd>0.26)
+							th=0.1 *Y;
+						else
+							th=-0.15*by*(Y>0?-1:1);
 
 
-                    }
+						Y=Y>0?Y+0.05:Y-0.05;
+						Y=Y>1?1:Y;
+						Y=Y<-1?-1:Y;
+						f=1;
+
+						th=th>1?1:th;
+						th=th<-1?-1:th;
+
+
+
+
+
+                        velocityWalk(X,Y,th,f);
+
+					/*}
                     else
                     {
-                        float offsety=side*posy;
+
                         float g=0.3;
-                        littleWalk((bx-posx)*g,(by-offsety)*g,0,0.6);
-                    }
-				}
-				else {
-					//velocityWalk(0.0, 0.0, 0.0, 1.0);
-					return 1;
+                        littleWalk((bx-posx)*g,(by-offsety)*g,side*0.01,0);
+                    }*/
 				}
 			}
 		}
@@ -246,7 +279,7 @@ int VBehavior::Execute() {
 			if ( kickoff ) {
 				//if (mglRand()<0.5) {
 				if ( (mglRand()<1.0) && !obstacleFront ) {
-					littleWalk(0.2, 0.0, 0.0, 2);
+					littleWalk(0.2, 0.0, 0.0, 1);
 				} else {
 					if (bb > 0.0) {
 						amot->set_command("SoftLeftSideKick");
@@ -260,30 +293,43 @@ int VBehavior::Execute() {
 				}
 				kickoff = false;
 			}
-			else {
-				if (mglRand()<0.6) {
+			else if(lastkick<=microsec_clock::universal_time()){
+
+				if(kickno==3){//if (mglRand()<0.6) {
 				//if ( (mglRand()<1.0) && !obstacleFront ) {
 					if (by > 0.0)
 						amot->set_command("LeftKick");
 					else
 						amot->set_command("RightKick");
+					kickno--;
 				}
-				else if (mglRand()<0.5) {
+				else if(kickno==0)
+				{
 					if (by > 0.0) {
-						amot->set_command("HardLeftSideKick");
+						amot->set_command("LefTak3.xar");
 						direction = -1;
 					}
 					else {
-						amot->set_command("HardRightSideKick");
+						amot->set_command("RightTak3.xar");
 						direction = +1;
 					}
+					kickno++;
+
 				}
-				else {
-					if (by > 0.0)
-						amot->set_command("LeftBackKick");
-					else
-						amot->set_command("RightBackKick");
+				else
+				{
+					if (by > 0.0) {
+						amot->set_command("LeftSideKickFast.xar");
+						direction = -1;
+					}
+					else {
+						amot->set_command("RightSideKickFast.xar");
+						direction = +1;
+					}
+					kickno++;
 				}
+				lastkick=microsec_clock::universal_time()+seconds(4);
+
 				_blk->publish_signal(*amot, "motion");
 				back = 0;
 			}
@@ -377,7 +423,7 @@ void VBehavior::HeadScanStep() {
 		reachedlimitleft = false;
 		///we should do something;
 		if (back>0) {
-			littleWalk(-0.2, 0.0, 0.0, 2);
+			littleWalk(-0.2, 0.0, 0.0, 1);
 			back--;
 		}
 		else {
@@ -417,9 +463,21 @@ double VBehavior::mglRand()
 void VBehavior::velocityWalk(double x, double y, double th, double f)
 {
 	wmot->set_command("setWalkTargetVelocity");
-	wmot->set_parameter(0, x);
-	wmot->set_parameter(1, y);
-	wmot->set_parameter(2, th);
+	x=x>1?1:x;
+	x=x<-1?-1:x;
+	y=y>1?1:y;
+	y=y<-1?-1:y;
+
+	th=th>1?1:th;
+	th=th<-1?-1:th;
+	cX=(cX+3*x)/4;
+	cY=(cY+3*y)/4;
+	cth=(cth+th)/2;
+
+
+	wmot->set_parameter(0, cX);
+	wmot->set_parameter(1, cY);
+	wmot->set_parameter(2, cth);
 	wmot->set_parameter(3, f);
 	_blk->publish_signal(*wmot, "motion");
 }
