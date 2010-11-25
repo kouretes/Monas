@@ -89,7 +89,8 @@ class KCameraTranformation
 		KMat::HCoords<float,3>  camera2dToGroundProjection(const KMat::HCoords<float,2>& c2d,float height);
 		KMat::HCoords<float,2>  groundToCamera2d(const KMat::HCoords<float,3>& g);
 		float vectorAngle(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2);
-        measurement angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
+		measurement  angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
+        measurement  angularDistanceProjected(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
         measurement* projectionDistance(KMat::HCoords<float,2> &v,float height);
         float getPitch();
         float getRoll();

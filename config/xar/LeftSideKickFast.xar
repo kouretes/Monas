@@ -83,8 +83,8 @@
                                 <bitmap>media/images/box/box-diagram.png</bitmap>
                             </Bitmaps>
                             <plugin></plugin>
-                            <x>247</x>
-                            <y>159</y>
+                            <x>556</x>
+                            <y>584</y>
                             <script>
                                 <content>
                                     <![CDATA[]]>
@@ -2466,19 +2466,19 @@
                                             </Key>
                                             <Key>
                                                 <frame>8</frame>
-                                                <value>40.3447</value>
+                                                <value>56</value>
                                                 <Tangents>
                                                     <Tangent>
                                                         <side>left</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>-1.33333</abscissaParam>
-                                                        <ordinateParam>-0.263699</ordinateParam>
+                                                        <ordinateParam>-4.65317</ordinateParam>
                                                     </Tangent>
                                                     <Tangent>
                                                         <side>right</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>1.33333</abscissaParam>
-                                                        <ordinateParam>0.263699</ordinateParam>
+                                                        <ordinateParam>4.65317</ordinateParam>
                                                     </Tangent>
                                                 </Tangents>
                                                 <smooth>0</smooth>
@@ -2486,19 +2486,19 @@
                                             </Key>
                                             <Key>
                                                 <frame>12</frame>
-                                                <value>58.0061</value>
+                                                <value>68</value>
                                                 <Tangents>
                                                     <Tangent>
                                                         <side>left</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>-1.33333</abscissaParam>
-                                                        <ordinateParam>-5.59158</ordinateParam>
+                                                        <ordinateParam>-2.0061</ordinateParam>
                                                     </Tangent>
                                                     <Tangent>
                                                         <side>right</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>1</abscissaParam>
-                                                        <ordinateParam>4.19369</ordinateParam>
+                                                        <ordinateParam>1.50457</ordinateParam>
                                                     </Tangent>
                                                 </Tangents>
                                                 <smooth>0</smooth>
@@ -2675,7 +2675,7 @@
                                             </Key>
                                             <Key>
                                                 <frame>8</frame>
-                                                <value>-23.4647</value>
+                                                <value>-29</value>
                                                 <Tangents>
                                                     <Tangent>
                                                         <side>left</side>
@@ -2701,13 +2701,13 @@
                                                         <side>left</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>-1.33333</abscissaParam>
-                                                        <ordinateParam>2.71208</ordinateParam>
+                                                        <ordinateParam>1.65773</ordinateParam>
                                                     </Tangent>
                                                     <Tangent>
                                                         <side>right</side>
                                                         <interpType>bezier auto</interpType>
                                                         <abscissaParam>1</abscissaParam>
-                                                        <ordinateParam>-2.03406</ordinateParam>
+                                                        <ordinateParam>-1.2433</ordinateParam>
                                                     </Tangent>
                                                 </Tangents>
                                                 <smooth>0</smooth>

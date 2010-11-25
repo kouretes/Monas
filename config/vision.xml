@@ -12,14 +12,16 @@
 <skipdistance>0.1</skipdistance>
 <seedistance>8</seedistance>
 <!-- Image Scanning parameters -->
-<scanstep>12</scanstep>
-<borderskip>2</borderskip>
+<scanstep>10</scanstep>
+<borderskip>4</borderskip>
+<subsampling>6</subsampling>
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
-<!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>24</sensordelay>
 <!--- Goal posts --->
 <goalheight>0.8</goalheight>
 <goaldist>1.4</goaldist>
 <goaldiam>0.1</goaldiam>
 <goalslopetolerance>0.2</goalslopetolerance>
+<widthestimateotolerance>0.4</widthestimateotolerance>
+<!-- How many ms does it take the sensor module to publish a message? -->
+<sensordelay>27</sensordelay>
