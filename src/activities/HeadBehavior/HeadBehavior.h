@@ -50,6 +50,7 @@ class HeadBehavior: public IActivity {
 
 		MotionHeadMessage* hmot;
 		HeadToBMessage* hbmsg;
+		ScanMessage* scmsg;
 
 		int pitchdirection;
 		int yawdirection;
@@ -63,7 +64,7 @@ class HeadBehavior: public IActivity {
 		bool headstartscan;
 		short scandirectionpitch;
 		short scandirectionyaw;
-
+		//bool vcalibrated;
 		bool reachedlimitup;
 		bool reachedlimitdown;
 		bool reachedlimitleft;

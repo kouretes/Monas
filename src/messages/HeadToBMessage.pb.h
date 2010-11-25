@@ -31,6 +31,7 @@ void protobuf_AssignDesc_HeadToBMessage_2eproto();
 void protobuf_ShutdownFile_HeadToBMessage_2eproto();
 
 class HeadToBMessage;
+class ScanMessage;
 
 // ===================================================================
 
@@ -102,13 +103,6 @@ class HeadToBMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 calibrated() const;
   inline void set_calibrated(::google::protobuf::int32 value);
   
-  // required bool scancompleted = 3 [default = false];
-  inline bool has_scancompleted() const;
-  inline void clear_scancompleted();
-  static const int kScancompletedFieldNumber = 3;
-  inline bool scancompleted() const;
-  inline void set_scancompleted(bool value);
-  
   // @@protoc_insertion_point(class_scope:HeadToBMessage)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
@@ -116,12 +110,11 @@ class HeadToBMessage : public ::google::protobuf::Message {
   
   ::google::protobuf::int32 ballfound_;
   ::google::protobuf::int32 calibrated_;
-  bool scancompleted_;
   friend void  protobuf_AddDesc_HeadToBMessage_2eproto();
   friend void protobuf_AssignDesc_HeadToBMessage_2eproto();
   friend void protobuf_ShutdownFile_HeadToBMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -136,6 +129,95 @@ class HeadToBMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static HeadToBMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ScanMessage : public ::google::protobuf::Message {
+ public:
+  ScanMessage();
+  virtual ~ScanMessage();
+  
+  ScanMessage(const ScanMessage& from);
+  
+  inline ScanMessage& operator=(const ScanMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ScanMessage& default_instance();
+  
+  void Swap(ScanMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ScanMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ScanMessage& from);
+  void MergeFrom(const ScanMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required bool scancompleted = 1 [default = false];
+  inline bool has_scancompleted() const;
+  inline void clear_scancompleted();
+  static const int kScancompletedFieldNumber = 1;
+  inline bool scancompleted() const;
+  inline void set_scancompleted(bool value);
+  
+  // @@protoc_insertion_point(class_scope:ScanMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  bool scancompleted_;
+  friend void  protobuf_AddDesc_HeadToBMessage_2eproto();
+  friend void protobuf_AssignDesc_HeadToBMessage_2eproto();
+  friend void protobuf_ShutdownFile_HeadToBMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static ScanMessage* default_instance_;
 };
 // ===================================================================
 
@@ -176,19 +258,23 @@ inline void HeadToBMessage::set_calibrated(::google::protobuf::int32 value) {
   calibrated_ = value;
 }
 
-// required bool scancompleted = 3 [default = false];
-inline bool HeadToBMessage::has_scancompleted() const {
-  return _has_bit(2);
+// -------------------------------------------------------------------
+
+// ScanMessage
+
+// required bool scancompleted = 1 [default = false];
+inline bool ScanMessage::has_scancompleted() const {
+  return _has_bit(0);
 }
-inline void HeadToBMessage::clear_scancompleted() {
+inline void ScanMessage::clear_scancompleted() {
   scancompleted_ = false;
-  _clear_bit(2);
+  _clear_bit(0);
 }
-inline bool HeadToBMessage::scancompleted() const {
+inline bool ScanMessage::scancompleted() const {
   return scancompleted_;
 }
-inline void HeadToBMessage::set_scancompleted(bool value) {
-  _set_bit(2);
+inline void ScanMessage::set_scancompleted(bool value) {
+  _set_bit(0);
   scancompleted_ = value;
 }
 

@@ -18,6 +18,7 @@ void HeadBehavior::UserInit() {
 	hmot->add_parameter(0.0f);
 
 	hbmsg = new HeadToBMessage();
+	scmsg = new ScanMessage();
 
 	ballfound = 0;
 
@@ -25,7 +26,7 @@ void HeadBehavior::UserInit() {
 	reachedlimitdown = false;
 	reachedlimitleft = false;
 	reachedlimitright = false;
-
+	//vcalibrated = false;
 	scancompleted = false;
 	headstartscan = true;
 	calibrated = 0;
@@ -43,37 +44,44 @@ int HeadBehavior::Execute() {
 	oldheadaction = headaction;
 	read_messages();
 
-	if (bhm!=0)
+	if (bhm != 0)
 		headaction = bhm->headaction();
-	if (choosemyaction){
-			headaction = oldheadaction;
-			choosemyaction = false;
+	if (choosemyaction) {
+		headaction = oldheadaction;
+		choosemyaction = false;
 	}
-		
-	switch(headaction){
-		
+
+	switch (headaction) {
+
 		case (DONOTHING):
-		
+			//vcalibrated=false;
 			break;
 		case (CALIBRATE):
-			calibrate();
-			calibrated = 1;
-			hbmsg->set_calibrated(calibrated);
-			//counttime = false;
+		//	if (!vcalibrated) {
+				calibrate();
+				calibrated = 1;
+				hbmsg->set_calibrated(calibrated);
+				//counttime = false;
+		//	}
 			headaction = DONOTHING;
 			choosemyaction = true;
+			//	_blk->publish_state(*hbmsg, "behavior"); ///signal or state
 			break;
 		case (SCANFORBALL):
-			scancompleted =false;
-		//	if (obsm!=0 && obsm->has_ball()){
-			if(bmsg != 0 && bmsg->radius() > 0){
+		//	vcalibrated = false;
+			scancompleted = false;
+			//	if (obsm!=0 && obsm->has_ball()){
+			if (bmsg != 0 && bmsg->radius() > 0) {
 				headaction = BALLTRACK;
 				ballfound += 5;
 				choosemyaction = true;
 				hbmsg->set_ballfound(ballfound);
+				cout << "ballfound " << ballfound << "HeadBehavior" << endl;
+
+				//	_blk->publish_state(*hbmsg, "behavior"); ///signal or state
 				//time_t(&start);
 				//counttime = true;
-			}else if (hjsm != 0 ) {
+			} else if (hjsm != 0) {
 				//counttime = false;
 				HeadYaw = hjsm->sensordata(0);
 				HeadPitch = hjsm->sensordata(1);
@@ -81,14 +89,16 @@ int HeadBehavior::Execute() {
 			}
 			break;
 		case (SCANFORPOST):
+		//	vcalibrated = false;
 			break;
 		case (BALLTRACK):
+			//vcalibrated = false;
 			if (bmsg != 0) {
 				Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 				if (bmsg->radius() > 0) { //This means that a ball was found
 					MakeTrackBallAction();
 					//time(&end);
-					
+
 					ballfound += 5;
 					if (ballfound > 20)
 						ballfound = 20; //Increase this value when we see the ball
@@ -96,20 +106,22 @@ int HeadBehavior::Execute() {
 				} else {
 					if (ballfound > 0)
 						ballfound -= 1; //Decrease it when we don't see the ball
-					if (ballfound==0){
-						headstartscan=true;
+					if (ballfound == 0) {
+						headstartscan = true;
 						//counttime = false;
 					}
 				}
 			}
+			cout << "ballfound " << ballfound << "HeadBehavior" << endl;
+
 			hbmsg->set_ballfound(ballfound);
 			Logger::Instance().WriteMsg("HeadBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
+			//_blk->publish_state(*hbmsg, "behavior"); ///signal or state
+			break;
 
-		break;
-		
-		}
-		//if (headaction == BALLTRACK || oldheadaction!=headaction || scancompleted)
-			_blk->publish_state(*hbmsg, "behavior"); ///signal or state
+	}
+	//if (headaction == BALLTRACK || oldheadaction!=headaction || scancompleted)
+	_blk->publish_state(*hbmsg, "behavior"); ///signal or state
 	return 0;
 }
 
@@ -192,8 +204,11 @@ void HeadBehavior::HeadScanStep() {
 		reachedlimitleft = false;
 		///we should do something;
 		scancompleted = true;
-		hbmsg->set_scancompleted(scancompleted);
 
+		cout << "scancompleted " << scancompleted << "HeadBehavior" << endl;
+
+		scmsg->set_scancompleted(scancompleted);
+		_blk->publish_signal(*scmsg, "behavior");
 	}
 
 	//startscan = false;
@@ -215,6 +230,7 @@ void HeadBehavior::read_messages() {
 		if (c->status() == 1) {
 			calibrated = 2;
 			hbmsg->set_calibrated(calibrated);
+		//	vcalibrated = true;
 		}
 	}
 }
