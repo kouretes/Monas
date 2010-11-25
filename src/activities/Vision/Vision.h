@@ -165,6 +165,7 @@ private:
 
     traceResult traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c);
 	traceResult traceline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c);
+	traceResult traceStrictline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c);
 	traceResult traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c);
     //Wrapper for seg object
     KSegmentator::colormask_t doSeg(int x, int y);

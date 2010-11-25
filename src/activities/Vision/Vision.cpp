@@ -210,7 +210,7 @@ void Vision::recv_and_send()
 			//cout << "Arrived " << ssize << " Bytes Do something" << endl;
 		}
 	}
-	img.Clear();
+	//img.Clear();
 	if (sendtype == AL::kYUV422InterlacedColorSpace)
 	{
 		img.set_imagerawdata(rawImage->imageData,rawImage->imageSize );
@@ -346,6 +346,7 @@ void Vision::fetchAndProcess()
 	leds.Clear();
 
 
+
 	//cout << "fetchImage" << endl;
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 
@@ -416,6 +417,7 @@ void Vision::fetchAndProcess()
 	}
 	//Clear result message
 	obs.Clear();
+	img.Clear();
 	p.yaw=hm->sensordata(0).sensorvalue();
 	p.pitch=hm->sensordata(1).sensorvalue();
 
@@ -556,28 +558,6 @@ void Vision::fetchAndProcess()
 		_blk->publish_signal(obs,"vision");
 
 
-
-}
-
-bool Vision::validpixel(int x,int y)
-{
-	if ((x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height)))
-		return true;
-	else
-		return false;
-
-}
-KSegmentator::colormask_t Vision::doSeg(int x, int y)
-{
-	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
-	{
-		//return seg->classifyPixel(rawImage, x, y, type);
-		return seg->classifyPixel(x,y);
-	}
-	else
-	{
-		return 0;
-	}
 
 }
 

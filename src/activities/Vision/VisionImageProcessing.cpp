@@ -481,12 +481,18 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		//cout<<"GoalPOst new"<<endl;
 		GoalPostdata newpost;
 		traceResult trcrs;
+		trcrs=traceStrictline((*i),Vlt,c);
+		CvPoint m=trcrs.p;
+		trcrs=traceStrictline((*i),Vrt,c);
+		m.x=(m.x+trcrs.p.x)/2;
+		m.y=(m.y+trcrs.p.y)/2;
 
-		trcrs = traceBlobEdge((*i),Vdn,c);
+
+		trcrs = traceBlobEdge(m,Vdn,c);
 		newpost.haveBot=trcrs.smartsuccess;
 		newpost.bot=trcrs.p;
 
-		trcrs = traceBlobEdge((*i),Vup,c);
+		trcrs = traceBlobEdge(m,Vup,c);
 		newpost.haveTop=trcrs.smartsuccess;
 		newpost.top=trcrs.p;
 
@@ -499,9 +505,9 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		at.initVelocity(newpost.top.x-newpost.bot.x,newpost.top.y-newpost.bot.y	);
 		for(int k=0;k<config.subsampling;k++)
 		{
-			trcrs=traceline(cvPoint(at.x,at.y),Vlt,c);
+			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
 			newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
-			trcrs=traceline(cvPoint(at.x,at.y),Vrt,c);
+			trcrs=traceStrictline(cvPoint(at.x,at.y),Vrt,c);
 			newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
 			at.step();
 
@@ -513,22 +519,23 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		newpost.tl.x=rawImage->width;
 		newpost.tr.x=0;
 
-		at.init(newpost.top.x+(newpost.bot.x-newpost.top.x)/8,newpost.top.y+(newpost.bot.y-newpost.top.y)/8);
+		at.init(newpost.top.x+(newpost.bot.x-newpost.top.x)/4,newpost.top.y+(newpost.bot.y-newpost.top.y)/4);
 		at.initVelocity(newpost.bot.x-newpost.top.x,newpost.bot.y-newpost.top.y	);
 		for(int k=0;k<config.subsampling;k++)
 		{
-			trcrs=traceline(cvPoint(at.x,at.y),Vlt,c);
+			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
 			newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
-			trcrs=traceline(cvPoint(at.x,at.y),Vrt,c);
+			trcrs=traceStrictline(cvPoint(at.x,at.y),Vrt,c);
 			newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
 			at.step();
 		}
+		newpost.top.x=(newpost.tl.x+newpost.tr.x)/2;
+		newpost.bot.x=(newpost.ll.x+newpost.lr.x)/2;
 
 		//cout<<"post:"<<newpost.tl.x<<" " <<newpost.tl.y<<" "<<newpost.tr.x<<" " <<newpost.tr.y<<" "<<newpost.ll.x<<" " <<newpost.ll.y<<" "<<newpost.lr.x<<" " <<newpost.lr.y<<endl;
 
 		//cout<<"Smarts:"<<newpost.haveBot<< " "<<newpost.haveTop<<endl;
-		if(newpost.tr.x-newpost.tl.x<SCANSKIP || newpost.lr.x-newpost.ll.x<SCANSKIP ||
-			newpost.ll.y-newpost.tl.y<GLOBALTRACESKIP || newpost.lr.y-newpost.tr.y<GLOBALTRACESKIP)
+		if(newpost.ll.y-newpost.tl.y<GLOBALTRACESKIP || newpost.lr.y-newpost.tr.y<GLOBALTRACESKIP)//newpost.tr.x-newpost.tl.x<SCANSKIP || newpost.lr.x-newpost.ll.x<SCANSKIP ||
 		{
 			//cout <<"Goal size test failed"<<endl;
 			continue;
@@ -615,7 +622,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		//cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
 
 
-		if(calculateValidGoalPost(newpost,c))
+		//if(calculateValidGoalPost(newpost,c))
 			history.push_back(newpost);
 
 	}
@@ -641,7 +648,20 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		else if(d1.leftOrRight==2)
 			name+="Left";
 		o->set_object_name(name);
+		Polygon *apoly=img.add_p();
+		point *p;
+		p=apoly->add_points();
+		p->set_x(d1.tl.x);p->set_y(d1.tl.y);
+		p=apoly->add_points();
+		p->set_x(d1.tr.x);p->set_y(d1.tr.y);
+		p=apoly->add_points();
+		p->set_x(d1.lr.x);p->set_y(d1.lr.y);
+		p=apoly->add_points();
+		p->set_x(d1.ll.x);p->set_y(d1.ll.y);
+		apoly->set_color(c);
+		apoly->set_confidence(1);
 		return 1;
+
 	}
 
 	GoalPostdata d1=history[0];
@@ -655,8 +675,8 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 	x2=d2.distance.mean* cos( d2.bearing.mean);
 	y2=d2.distance.mean* sin( d2.bearing.mean);
 	float d=sqrt(sqrd(x1-x2)+sqrd(y1-y2));
-	if( abs(d-config.goaldiam)/config.goaldist> 0.4)
-		return 0;
+	//if( abs(d-config.goaldiam)/config.goaldist> 0.4)
+		//return 0;
 
 	if(d1.bearing.mean<d2.bearing.mean)
 	{
@@ -689,6 +709,31 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		name="Skyblue";
 	name+="Right";
 	o->set_object_name(name);
+
+	Polygon *apoly=img.add_p();
+	point *p;
+	p=apoly->add_points();
+	p->set_x(d1.tl.x);p->set_y(d1.tl.y);
+	p=apoly->add_points();
+	p->set_x(d1.tr.x);p->set_y(d1.tr.y);
+	p=apoly->add_points();
+	p->set_x(d1.lr.x);p->set_y(d1.lr.y);
+	p=apoly->add_points();
+	p->set_x(d1.ll.x);p->set_y(d1.ll.y);
+	apoly->set_color(c);
+	apoly->set_confidence(1);
+
+	apoly=img.add_p();
+	p=apoly->add_points();
+	p->set_x(d2.tl.x);p->set_y(d2.tl.y);
+	p=apoly->add_points();
+	p->set_x(d2.tr.x);p->set_y(d2.tr.y);
+	p=apoly->add_points();
+	p->set_x(d2.lr.x);p->set_y(d2.lr.y);
+	p=apoly->add_points();
+	p->set_x(d2.ll.x);p->set_y(d2.ll.y);
+	apoly->set_color(c);
+	apoly->set_confidence(1);
 	return 2;
 
 }
@@ -1063,6 +1108,18 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 	cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
 
 #endif
+	bd=history.begin();
+	while(bd!=history.end())
+	{
+		BallCircle *bc=img.add_ball();
+		bc->mutable_center()->set_x((*bd).x);
+		bc->mutable_center()->set_y((*bd).y);
+		bc->set_radius((*bd).cr);
+		bc->set_valid((*bd).distance.mean==best.distance.mean);
+		bc->set_confidence(bc->valid());
+
+		bd++;
+	}
 	return best;
 
 
@@ -1179,11 +1236,56 @@ Vision::traceResult Vision::traceline(CvPoint start, CvPoint2D32f vel, KSegmenta
 	return r;
 }
 
+Vision::traceResult Vision::traceStrictline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
+{
+	int skipcount = 0;
+	int globalcount = 0;
+	//CvPoint curr = start;
+	CvPoint latestValid = start;
+	tracer_t curr;
+	curr.init(start.x,start.y);
+	curr.initVelocity(vel.x,vel.y);
+	/////cout << "traceline:"<<start.x<<" "<<start.y<<endl;
+	while (validpixel(curr.x,curr.y))
+	{
+		if (doSeg(curr.x, curr.y) != c)
+		{
+			skipcount++;
+			globalcount++;
+		}
+		else
+		{
+			latestValid.x = curr.x;
+			latestValid.y = curr.y;
+			skipcount = 0;
+		};
+
+		if (skipcount > TRACESKIP/4 || globalcount > GLOBALTRACESKIP/4)
+		{
+			//curr=start;
+			break;
+		}
+		curr.step();
+
+	}
+	traceResult r;
+	if (!validpixel(curr.x,curr.y))
+		r.smartsuccess=false;
+	else
+		r.smartsuccess=true;
+
+	//cout<<"ret"<<latestValid.x<<" "<<latestValid.y<<endl;
+
+	r.p=latestValid;
+
+	return r;
+}
+
 
 Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
 {
 	int skipcount = 0;
-	int globalcount = 0;
+	//int globalcount = 0;
 	//CvPoint curr = start;
 	//CvPoint2D32f lt,rt;
 	//lt.x=-vel.y;lt.y=-vel.x;
@@ -1197,6 +1299,7 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 	tracer_t curr;
 	curr.init(start.x,start.y);
 	curr.initVelocity(vel.x,vel.y);
+	int rebounce=0;
 	/////cout << "traceline:"<<start.x<<" "<<start.y<<endl;
 	while (validpixel(curr.x,curr.y))
 	{
@@ -1205,31 +1308,45 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 		{
 
 			skipcount++;
-			globalcount++;
+			//globalcount++;
 		}
 		else
 		{
 			latestValid.x = curr.x;
 			latestValid.y = curr.y;
 			skipcount = 0;
+			rebounce--;
 		};
 
-		if (skipcount > TRACESKIP || globalcount > GLOBALTRACESKIP)
+		if ( skipcount>TRACESKIP)
 		{
 			//Ok, try some readaptation
-			traceResult trs=traceline(latestValid,cvPoint2D32f(vel.y,-vel.x),c);
+			if(rebounce>0)
+				break;
+			traceResult trs=traceStrictline(latestValid,cvPoint2D32f(vel.y,-vel.x),c);
 			CvPoint l=trs.p;
-			trs=traceline(latestValid,cvPoint2D32f(-vel.y,vel.x),c);
+			trs=traceStrictline(latestValid,cvPoint2D32f(-vel.y,vel.x),c);
 			CvPoint m=trs.p;
 			m.x=(m.x+l.x)/2;
 			m.y=(m.y+l.y)/2;
-			latestValid.x= (latestValid.x*3+m.x)/4;
-			latestValid.y= (latestValid.y*3+m.y)/4;
-			skipcount--;
-			globalcount--;
+			float d=CvDist(m,curr);
+			if(d==0)
+				break;
+			if(vel.y<vel.x)
+			{
+				if(abs(latestValid.y-m.y)>=SCANSKIP)
+					break;
+			}
+			else
+				if(abs(latestValid.x-m.x)>=SCANSKIP)
+					break;
+			//latestValid.x= m.x;//(latestValid.x+m.x)/2;
+			//latestValid.y= m.y;//(latestValid.y+m.y)/2;
+			curr.init((m.x+curr.x)/2,(m.y+curr.y)/2);
+			skipcount=0;
+			rebounce=SCANSKIP;
 
 			//curr=start;
-			break;
 		}
 		curr.step();
 
@@ -1246,4 +1363,33 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 	r.p=latestValid;
 
 	return r;
+
+
+}
+
+
+//Vision::traceResult Vision::traceline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
+
+
+
+bool Vision::validpixel(int x,int y)
+{
+	if ((x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height)))
+		return true;
+	else
+		return false;
+
+}
+KSegmentator::colormask_t Vision::doSeg(int x, int y)
+{
+	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
+	{
+		//return seg->classifyPixel(rawImage, x, y, type);
+		return seg->classifyPixel(x,y);
+	}
+	else
+	{
+		return 0;
+	}
+
 }

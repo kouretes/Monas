@@ -148,6 +148,7 @@ int Displayimage(KRawImage &img) {
 	if (fIpl != NULL) {
 		// exoume dokaria
 		for (int g = 0; g < img.p_size(); g++) {
+			cout<<"p"<<endl;
 			CvPoint curve1[img.p(g).points_size()];
 
 			for (int p = 0; p < img.p(g).points_size(); p++) {
@@ -163,8 +164,9 @@ int Displayimage(KRawImage &img) {
 		}
 
 		for (int b = 0; b < img.ball_size(); b++) {
+			cout<<"ball"<<endl;
 
-			cvCircle(fIpl, cvPoint(img.ball(b).center().x(), img.ball(b).center().y()), img.ball(b).radius(), (img.ball(b).valid()) ? cvScalar(255, 0, 0) : cvScalar(100, 100, 100), 1, 1);
+			cvCircle(fIpl, cvPoint(img.ball(b).center().x(), img.ball(b).center().y()), img.ball(b).radius(), (img.ball(b).valid()) ? cvScalar(255, 128, 128) : cvScalar(100, 100, 100), 2, 1);
 		}
 	}
 

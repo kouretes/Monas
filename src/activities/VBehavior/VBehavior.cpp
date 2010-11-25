@@ -34,14 +34,14 @@ void VBehavior::UserInit() {
 	_com->get_message_queue()->subscribe("obstacle", _blk, 0);
 
 	wmot = new MotionWalkMessage();
-	wmot->set_topic("motion");
+	//wmot->set_topic("motion");
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
 
 	hmot = new MotionHeadMessage();
-	hmot->set_topic("motion");
+	//hmot->set_topic("motion");
 	hmot->add_parameter(0.0f);
 	hmot->add_parameter(0.0f);
 
