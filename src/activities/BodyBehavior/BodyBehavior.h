@@ -57,11 +57,12 @@ class BodyBehavior: public IActivity {
 		boost::shared_ptr<const ObservationMessage> obsm;
 		//	boost::shared_ptr<const ObstacleMessage>  om;
 		boost::shared_ptr<const HeadToBMessage> hbm;
+		boost::shared_ptr<const ScanMessage> scm;
 
 		int calibrated;
 		bool play;
 		bool kickoff;
-
+		bool isScaning;
 		bool readytokick;
 		int back;
 		int direction;

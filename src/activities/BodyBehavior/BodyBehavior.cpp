@@ -36,7 +36,7 @@ void BodyBehavior::UserInit() {
 	readytokick = false;
 	back = 0;
 	direction = 1;
-
+	isScaning = false;
 
 	obstacleFront = false;
 	gameState = PLAYER_INITIAL;
@@ -58,8 +58,15 @@ int BodyBehavior::Execute() {
 	if (hbm != 0) {
 		calibrated = hbm->calibrated();
 		ballfound = hbm->ballfound();
-		scancompleted = hbm->scancompleted();
 	}
+	if(scm != 0){
+		scancompleted = scm->scancompleted();
+	}else{
+		scancompleted = false;
+	}
+	cout << "calibrated " << calibrated << "BodyBehavior" << endl;
+	cout << "ballfound " << ballfound << "BodyBehavior" << endl;
+	cout << "scancompleted " << scancompleted << "BodyBehavior" << endl;
 
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("BodyBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
@@ -69,7 +76,7 @@ int BodyBehavior::Execute() {
 		if (gameState == PLAYER_PLAYING) {
 			if (calibrated == 2) {
 				play = true;
-				littleWalk(0.01, 0.0, 0.0, 1);
+				//littleWalk(0.01, 0.0, 0.0, 1);
 			} else if (calibrated == 0) {
 				//bhmsg->set_headaction( CALIBRATE );
 				curraction = CALIBRATE;
@@ -93,14 +100,15 @@ int BodyBehavior::Execute() {
 			play = false;
 			//bhmsg->set_headaction( CALIBRATE );
 			curraction = CALIBRATE;
+			littleWalk(0.0, 0.0, 0.0, 1);
 		}
 	}
 
 	if (gameState == PLAYER_PLAYING) {
 		if (calibrated == 2) {
 			play = true;
-			littleWalk(0.01,0.0,0.0,1);
-			///TODO stand up 
+			//littleWalk(0.01,0.0,0.0,1);
+			///TODO stand up
 		}else if (calibrated == 0) {
 			//bhmsg->set_headaction( CALIBRATE );
 			curraction = CALIBRATE;
@@ -115,7 +123,6 @@ int BodyBehavior::Execute() {
 		float X = 0.0, Y = 0.0, theta = 0.0;
 		float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 		float posx=0.14, posy=0.035;
-
 		if (obsm != 0) {
 
 			/*if (obsm->regular_objects_size() > 0) {
@@ -148,6 +155,7 @@ int BodyBehavior::Execute() {
 			if (obsm->has_ball() && ballfound > 0) {
 				//bhmsg->set_headaction( BALLTRACK );/////////////
 				curraction = BALLTRACK;
+				isScaning = false;
 				int side ;//= 1;
 				bd = obsm->ball().dist();
 				bb = obsm->ball().bearing();
@@ -170,8 +178,8 @@ int BodyBehavior::Execute() {
                     if(bd>0.5){
                         float X=0,Y=0,th=0;
                         if(fabs(bx)>0.15) X=1;
-                        if(fabs(by)>0.15) Y=side;
-                        velocityWalk(X,Y,0.3*side,1);
+                        if(fabs(by)>0.15) Y=0.3*side;
+                        velocityWalk(X,Y,0.2*bb,1);
                     }
                     else
                     {
@@ -270,14 +278,21 @@ int BodyBehavior::Execute() {
 			readytokick = false;
 		}
 
-		if (!readytokick && ballfound==0) {
+		if (!readytokick && ballfound==0 && !isScaning) {
 			velocityWalk(0.0, 0.0, 0.0, 1.0);
 			//bhmsg->set_headaction( SCANFORBALL );
 			curraction = SCANFORBALL;
+			isScaning = true;
+			cout << "GOUSTARO NA STAMATO RE" << endl;
+			Logger::Instance().WriteMsg("BodyBehavior", " GOUSTARO NA STAMATO RE", Logger::Info);
+
 		}
 
 		if (!readytokick && scancompleted && ballfound==0) {
-			littleWalk(0.0, 0.0, direction * 30 * TO_RAD, 5);
+			cout << "GOUSTARO NA stribo RE" << endl;
+			Logger::Instance().WriteMsg("BodyBehavior", " GOUSTARO NA stribo RE", Logger::Info);
+
+			littleWalk(0.0, 0.0, direction * 45 * TO_RAD, 5);
 			//bhmsg->set_headaction( SCANFORBALL );
 			curraction = SCANFORBALL;
 		}
@@ -285,12 +300,17 @@ int BodyBehavior::Execute() {
 
 	} else if (!play) { // Non-Play state
 		velocityWalk(0.0, 0.0, 0.0, 1.0);
+		isScaning = false;
+		cout << "STOPPLAYYYYYYYYYYYYYYY " << "BodyBehavior" << endl;
 		//bhmsg->set_headaction( DONOTHING );
 		if (curraction!= CALIBRATE || (oldGameState==gameState && (gameState==PLAYER_PENALISED || gameState== PLAYER_READY)))
 			curraction = DONOTHING;
 	}
 	//if (prevaction!=curraction){
 		bhmsg->set_headaction(curraction);
+
+		cout << "headAction " << curraction << "BodyBehavior" << endl;
+
 		_blk->publish_signal(*bhmsg, "behavior");///signal or state???
 	//}
 	return 0;
@@ -303,13 +323,10 @@ void BodyBehavior::read_messages() {
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 	//om   = _blk->read_signal<ObstacleMessage> ("ObstacleMessage");
 	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
+	scm = _blk->read_signal<ScanMessage> ("ScanMessage");
 
 	Logger::Instance().WriteMsg("BodyBehavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c = _blk->read_state<CalibrateCam> ("CalibrateCam");
-	if (c != NULL) {
-		if (c->status() == 1)
-			calibrated = 2;
-	}
+
 }
 
 double BodyBehavior::mglRand() {
@@ -326,6 +343,7 @@ void BodyBehavior::velocityWalk(double x, double y, double th, double f) {
 }
 
 void BodyBehavior::littleWalk(double x, double y, double th, int s) {
+	//cout << x << " y " << y << " th " << th<<endl;
 	wmot->set_command("walkTo");
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);

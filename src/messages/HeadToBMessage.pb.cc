@@ -15,6 +15,9 @@ namespace {
 const ::google::protobuf::Descriptor* HeadToBMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   HeadToBMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ScanMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ScanMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -26,10 +29,9 @@ void protobuf_AssignDesc_HeadToBMessage_2eproto() {
       "HeadToBMessage.proto");
   GOOGLE_CHECK(file != NULL);
   HeadToBMessage_descriptor_ = file->message_type(0);
-  static const int HeadToBMessage_offsets_[3] = {
+  static const int HeadToBMessage_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeadToBMessage, ballfound_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeadToBMessage, calibrated_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeadToBMessage, scancompleted_),
   };
   HeadToBMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -42,6 +44,21 @@ void protobuf_AssignDesc_HeadToBMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(HeadToBMessage));
+  ScanMessage_descriptor_ = file->message_type(1);
+  static const int ScanMessage_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScanMessage, scancompleted_),
+  };
+  ScanMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ScanMessage_descriptor_,
+      ScanMessage::default_instance_,
+      ScanMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScanMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScanMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ScanMessage));
 }
 
 namespace {
@@ -56,6 +73,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     HeadToBMessage_descriptor_, &HeadToBMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ScanMessage_descriptor_, &ScanMessage::default_instance());
 }
 
 }  // namespace
@@ -63,6 +82,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_HeadToBMessage_2eproto() {
   delete HeadToBMessage::default_instance_;
   delete HeadToBMessage_reflection_;
+  delete ScanMessage::default_instance_;
+  delete ScanMessage_reflection_;
 }
 
 void protobuf_AddDesc_HeadToBMessage_2eproto() {
@@ -72,13 +93,16 @@ void protobuf_AddDesc_HeadToBMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024HeadToBMessage.proto\"[\n\016HeadToBMessage"
+    "\n\024HeadToBMessage.proto\"=\n\016HeadToBMessage"
     "\022\024\n\tballfound\030\001 \002(\005:\0010\022\025\n\ncalibrated\030\002 \002"
-    "(\005:\0010\022\034\n\rscancompleted\030\003 \002(\010:\005false", 115);
+    "(\005:\0010\"+\n\013ScanMessage\022\034\n\rscancompleted\030\001 "
+    "\002(\010:\005false", 130);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "HeadToBMessage.proto", &protobuf_RegisterTypes);
   HeadToBMessage::default_instance_ = new HeadToBMessage();
+  ScanMessage::default_instance_ = new ScanMessage();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
+  ScanMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_HeadToBMessage_2eproto);
 }
 
@@ -95,7 +119,6 @@ struct StaticDescriptorInitializer_HeadToBMessage_2eproto {
 #ifndef _MSC_VER
 const int HeadToBMessage::kBallfoundFieldNumber;
 const int HeadToBMessage::kCalibratedFieldNumber;
-const int HeadToBMessage::kScancompletedFieldNumber;
 #endif  // !_MSC_VER
 
 HeadToBMessage::HeadToBMessage()
@@ -116,7 +139,6 @@ void HeadToBMessage::SharedCtor() {
   _cached_size_ = 0;
   ballfound_ = 0;
   calibrated_ = 0;
-  scancompleted_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -153,7 +175,6 @@ void HeadToBMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     ballfound_ = 0;
     calibrated_ = 0;
-    scancompleted_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -192,22 +213,6 @@ bool HeadToBMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(24)) goto parse_scancompleted;
-        break;
-      }
-      
-      // required bool scancompleted = 3 [default = false];
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_scancompleted:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &scancompleted_)));
-          _set_bit(2);
-        } else {
-          goto handle_uninterpreted;
-        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -240,11 +245,6 @@ void HeadToBMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->calibrated(), output);
   }
   
-  // required bool scancompleted = 3 [default = false];
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->scancompleted(), output);
-  }
-  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -261,11 +261,6 @@ void HeadToBMessage::SerializeWithCachedSizes(
   // required int32 calibrated = 2 [default = 0];
   if (_has_bit(1)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->calibrated(), target);
-  }
-  
-  // required bool scancompleted = 3 [default = false];
-  if (_has_bit(2)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->scancompleted(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -291,11 +286,6 @@ int HeadToBMessage::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->calibrated());
-    }
-    
-    // required bool scancompleted = 3 [default = false];
-    if (has_scancompleted()) {
-      total_size += 1 + 1;
     }
     
   }
@@ -331,9 +321,6 @@ void HeadToBMessage::MergeFrom(const HeadToBMessage& from) {
     if (from._has_bit(1)) {
       set_calibrated(from.calibrated());
     }
-    if (from._has_bit(2)) {
-      set_scancompleted(from.scancompleted());
-    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -351,7 +338,7 @@ void HeadToBMessage::CopyFrom(const HeadToBMessage& from) {
 }
 
 bool HeadToBMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
   
   return true;
 }
@@ -360,7 +347,6 @@ void HeadToBMessage::Swap(HeadToBMessage* other) {
   if (other != this) {
     std::swap(ballfound_, other->ballfound_);
     std::swap(calibrated_, other->calibrated_);
-    std::swap(scancompleted_, other->scancompleted_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -372,6 +358,212 @@ void HeadToBMessage::Swap(HeadToBMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = HeadToBMessage_descriptor_;
   metadata.reflection = HeadToBMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int ScanMessage::kScancompletedFieldNumber;
+#endif  // !_MSC_VER
+
+ScanMessage::ScanMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ScanMessage::InitAsDefaultInstance() {
+}
+
+ScanMessage::ScanMessage(const ScanMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ScanMessage::SharedCtor() {
+  _cached_size_ = 0;
+  scancompleted_ = false;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ScanMessage::~ScanMessage() {
+  SharedDtor();
+}
+
+void ScanMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void ScanMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ScanMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ScanMessage_descriptor_;
+}
+
+const ScanMessage& ScanMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_HeadToBMessage_2eproto();  return *default_instance_;
+}
+
+ScanMessage* ScanMessage::default_instance_ = NULL;
+
+ScanMessage* ScanMessage::New() const {
+  return new ScanMessage;
+}
+
+void ScanMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    scancompleted_ = false;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ScanMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required bool scancompleted = 1 [default = false];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &scancompleted_)));
+          _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ScanMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required bool scancompleted = 1 [default = false];
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->scancompleted(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ScanMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required bool scancompleted = 1 [default = false];
+  if (_has_bit(0)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->scancompleted(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ScanMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required bool scancompleted = 1 [default = false];
+    if (has_scancompleted()) {
+      total_size += 1 + 1;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ScanMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ScanMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ScanMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ScanMessage::MergeFrom(const ScanMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_scancompleted(from.scancompleted());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ScanMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ScanMessage::CopyFrom(const ScanMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ScanMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void ScanMessage::Swap(ScanMessage* other) {
+  if (other != this) {
+    std::swap(scancompleted_, other->scancompleted_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ScanMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ScanMessage_descriptor_;
+  metadata.reflection = ScanMessage_reflection_;
   return metadata;
 }
 

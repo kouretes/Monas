@@ -1,5 +1,8 @@
 message HeadToBMessage{
 	required int32 ballfound = 1 [default = 0];
 	required int32 calibrated = 2 [default = 0];
-	required bool scancompleted = 3 [default = false];
+}
+
+message ScanMessage{
+	required bool scancompleted = 1 [default = false];
 }
