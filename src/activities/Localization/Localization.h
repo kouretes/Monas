@@ -22,6 +22,7 @@ class Localization: public IActivity, public KLocalization {
 		~Localization(){
 			if(serverpid!=-1)
 				pthread_cancel(serverpid);
+			delete sock;
 		}
 		int Execute();
 		void UserInit();

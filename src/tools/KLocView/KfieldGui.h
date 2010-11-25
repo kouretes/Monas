@@ -14,48 +14,65 @@
 #include "../../activities/Localization/KLocalization.h"
 #include "../../messages/VisionObservations.pb.h"
 #include "../../messages/WorldInfo.pb.h"
+#include "../../messages/motion.pb.h"
 #include "stdio.h"
+#include <fstream>
+#include <time.h>
 
 #define DELAY 5
-#define SCALE 7.0
+#define SCALE 10
 
-enum states {ONEPOINTSELECTION, TWOPOINTSELECTION_1, TWOPOINTSELECTION_2, READY_TO_SEND_SINGLE, READY_TO_SEND_TWO, FINISH};
+#define gui2world_x(x) x * SCALE - (2 * margintoline + field_width) / 2.0f
+#define gui2world_y(y) -(y * SCALE - (2 * margintoline + field_height) / 2.0f)
+#define world2gui_x(x) (x + (2 * margintoline + field_width) / 2.0f) / SCALE
+#define world2gui_y(x) (-y + (2 * margintoline + field_height) / 2.0f) / SCALE
+
+enum states {
+	ONEPOINTSELECTION, TWOPOINTSELECTION_1, TWOPOINTSELECTION_2, TWOPOINTSELECTION_3, READY_TO_SEND_SINGLE, READY_TO_SEND_TWO, FINISH
+};
 
 class KfieldGui {
 	private:
 
 		static pthread_mutex_t lock;
 
-		CvFont font;
-		static short Waitingforkey;
+		static CvFont font;
+		short Waitingforkey;
 
-		const static int lineWidth = 1;
-		static char wndname[10];
+
+		char wndname[10];
 		char fieldfilename[100];
-		static IplImage* cleanfield;
-		static IplImage *screenfield;
-		static IplImage *field;
+		IplImage* cleanfield;
+		IplImage *screenfield;
+		IplImage *field;
 		IplImage *field2;
 		int thread_pid;
 		string tmp;
 		CvPoint mypospoint, mypospoint_old;
 		CvPoint trackpospoint, trackpospoint_old;
-		static int last_x, last_y;
-		void static drawCursor(int, int);
-		void static on_mouse(int, int, int, int, void*);
-	public:
-		static int drawing, state;
-		static RobotPose pose1, pose2;
-		static partcl tempparticl;
+		CvPoint last, point1;
 
-		const static double hScale = 3.0 / SCALE;
-		const static double vScale = 3.0 / SCALE;
-		static CvScalar random_color();
+		char buffer[80];
+	public:
+		void drawCursor(int, int);
+		void on_mouse(int, int, int, int, void*);
+		static MotionWalkMessage wmot;
+		int drawing;
+		static int state;
+		static RobotPose pose1, pose2;
+		static partcl tempparticl, robotStartpose, robotEndpose;
+		;
+
+		double hScale ;
+		double vScale ;
+		CvScalar random_color();
 		void KfieldInitTrackLine(partcl TrackPoint);
 		void KfieldInitTrackLine(belief mypos);
 		void addTrackLine(belief mypos);
 		void addTrackLine(partcl TrackPoint);
 		void drawErrors(float DistError, float RotError);
+
+		int record_data();
 
 		void CleanField();
 		void BackupField();
@@ -68,12 +85,28 @@ class KfieldGui {
 		virtual ~KfieldGui();
 		void draw_belief(belief Belief, double maxrangeleft, double maxrangeright, int step);
 		void draw_Trackpoint(partcl Belief, double maxrangeleft, double maxrangeright);
-		static void draw_particles(parts & Particles, bool unnormilized = false);
+		void draw_particles(parts & Particles, bool unnormilized = false);
 		void draw_ball(belief Belief, BallObject Ball);
-		static void* redraw_field(void * fps);
+		void* redraw_field(void * fps);
 		void make_field(IplImage** image);
 		static short keypressed;
-		static int GuiWaitKeyPress();
+		int GuiWaitKeyPress();
+
+		int linewidth;
+		int margintoline;
+		int field_width;
+		int field_height;
+
+		int goalarea_height;
+		int goalarea_width;
+		int center_circle_diam;
+
+		int goal_width;
+		int verticalgoalpost_diam;
+
+		int p_green_width; //in pixels
+		int p_green_height;
+
 };
 
 #endif /* KFIELDGUI_H_ */

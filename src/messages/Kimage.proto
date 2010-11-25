@@ -3,11 +3,33 @@ message KRawImage{
 	required int32 width = 2 [default = 0];
 	required int32 height = 3 [default = 0];
 	required int32 type = 4 [default = 4];
-	required bytes ImageRawData = 5;}
+	required bytes ImageRawData = 5;
+	repeated Polygon p = 6;
+	repeated BallCircle ball = 7;
+}
 
 message KRawImageHeader{
 	required int32 bytes = 1 [default=-1];
 	required int32 width = 2 [default = 0];
 	required int32 height = 3 [default = 0];
 	required int32 type = 4 [default = 4];
+}
+
+message Polygon{
+	repeated point points= 1;
+	required int32 color = 2 [default=-1];
+	required float confidence = 3 [default = -1];
+}
+
+message BallCircle{
+	required point center= 1 ;
+	required int32 radius = 2 [default=-1];
+	required int32 confidence = 3 [default=-1];
+	required bool valid = 4 [default=false];
+	optional int32 color = 5 [default=-1];
+}
+
+message point{
+	required int32 x= 1 [default=-1];
+	required int32 y= 2 [default=-1];
 }

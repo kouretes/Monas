@@ -23,6 +23,7 @@
 #include "../../messages/Kimage.pb.h"
 #include "../../messages/VisionObservations.pb.h"
 #include "../../messages/WorldInfo.pb.h"
+#include "../../messages/motion.pb.h"
 #include <netinet/in.h>
 
 #include <iostream>
@@ -51,6 +52,7 @@ vector<KObservationModel> currentObservation;
 char fname[80];
 bool initialization = true;
 KfieldGui* KLocView;
+partcl robotposition;
 
 int update_field(LocalizationData & DebugData) {
 	WorldInfo *WI = DebugData.mutable_world();
@@ -62,14 +64,19 @@ int update_field(LocalizationData & DebugData) {
 	Belief.theta = WI->myposition().phi();
 	Belief.confidence = WI->myposition().confidence();
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
-	partcl robotposition;
+
 	robotposition.x = DebugData.robotposition().x();
 	robotposition.y = DebugData.robotposition().y();
 	robotposition.phi = DebugData.robotposition().phi();
-
+	//cout << " X " << robotposition.x << " X " << robotposition.y << " X " << robotposition.phi << endl;
 	if (initialization) {
-		KLocView->KfieldInitTrackLine(robotposition);
+
 		KLocView->KfieldInitTrackLine(Belief);
+		robotposition.x = Belief.x;
+		robotposition.y = Belief.y;
+		robotposition.phi = Belief.theta;
+		KLocView->KfieldInitTrackLine(robotposition);
+		initialization = false;
 	} else {
 		KLocView->addTrackLine(robotposition);
 		KLocView->addTrackLine(Belief);
@@ -120,51 +127,112 @@ int receive_and_send_loop(TCPSocket *sock) {
 	header outgoingheader;
 	LocalizationData DebugData;
 
+	MotionWalkMessage wmot;
+	wmot.set_command("setWalkTargetVelocity");
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+
+	KfieldGui::wmot.CopyFrom(wmot);
 	int size;
 	int ssize, rsize;
-	int ss,rs;
-
-	//int maxheadersize = 200;
-	//int headersize = maxheadersize;
+	int ss, rs;
 	int alreadyparsedbytes = 0;
-
+	char response;
+	int lastmotioncounter = 0;
 	char * data = new char[993604];
-
 	int count = 0;
+	bool sendmotion = true;
+	float x, y, th, f;
+
 	while (true) {
-
-
+		sendmotion = false;
 		//Send A command First
 		//Get key pressed and decide witch command to send! ...
-
+		outgoingheader.Clear();
 		outgoingheader.set_nextmsgname("Just A command");
+		outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
 
 		if (KLocView->state == READY_TO_SEND_SINGLE) {
 			outgoingheader.set_nextmsgname("SetBelief");
 			outgoingheader.set_nextmsgbytesize(KfieldGui::pose1.ByteSize());
 		} else {
-			outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
+
+			if (KfieldGui::keypressed == 27)
+				outgoingheader.set_nextmsgname("Stop");
+
+			if (KfieldGui::state == FINISH) {
+				if (KfieldGui::keypressed == 'm') {
+					outgoingheader.set_nextmsgname("Walk");
+					std::cin.clear();
+					char nextChar;
+
+					//					while (nextChar != '\n' && nextChar != EOF) {
+					//						nextChar = cin.get();
+					//					}
+					cout << " Do you want to repeat the last motion " << endl;
+					cout << " X: " << x << " Y: " <<  y << " PHI " << th << " F " << f << " (type Y to repeat)" << endl;
+					string s;
+					cin >> ws; // skip any leading whitespace
+					getline(cin, s);
+
+					if (!(toupper(s[0]) == 'Y')) {
+						cout << "Please Give X Y Theta Frequency : " << flush;
+						cin >> x >> y >> th >> f;
+					}
+					cout << "X " << x << " Y " << y << " Th " << th << endl;
+					wmot.set_parameter(0, x);
+					wmot.set_parameter(1, y);
+					wmot.set_parameter(2, th);
+					wmot.set_parameter(3, f); //// frequency 1?
+					outgoingheader.set_nextmsgbytesize(wmot.ByteSize());
+					partcl tmp(0, 0, 0, 0);
+
+					KLocView->KfieldInitTrackLine(tmp);
+					KLocView->draw_Trackpoint(tmp, 0.5, -0.5);
+					robotposition = tmp;
+					KfieldGui::robotStartpose = tmp;
+					KfieldGui::wmot.CopyFrom(wmot);
+					sendmotion = true;
+
+				}
+				if (KfieldGui::keypressed == ' ') {
+					outgoingheader.set_nextmsgname("StopWalk");
+					wmot.set_parameter(0, 0);
+					wmot.set_parameter(1, 0);
+					wmot.set_parameter(2, 0);
+					wmot.set_parameter(3, 0);
+					outgoingheader.set_nextmsgbytesize(wmot.ByteSize());
+					KfieldGui::robotEndpose = robotposition;
+					sendmotion = true;
+				}
+			}
 		}
-
-		if (KLocView->keypressed == 27)
-			outgoingheader.set_nextmsgname("Stop");
-
-		if (KLocView->keypressed == 'o')
-			KLocView->state = ONEPOINTSELECTION;
-		if (KLocView->keypressed == 't')
-			KLocView->state = TWOPOINTSELECTION_1;
-
+		///Send header size in network byte order
 		size = outgoingheader.ByteSize();
-		cout << "Sended header mesage Size " << size << endl;
 		int sendsize = htonl(size);
 		sock->send(&sendsize, sizeof(uint32_t));
+		cout << " header size " << size << endl;
 		outgoingheader.SerializeToArray(data, size);
+		cout << " key " << (char) KfieldGui::keypressed << " State " << KfieldGui::state << endl;
 		if (KfieldGui::state == READY_TO_SEND_SINGLE) {
 			KfieldGui::pose1.SerializeToArray(data + size, KfieldGui::pose1.ByteSize());
 			size += KfieldGui::pose1.ByteSize();
 			KfieldGui::state = FINISH;
 			KLocView->KfieldInitTrackLine(KLocView->tempparticl);
 			KLocView->draw_Trackpoint(KLocView->tempparticl, 0.5, -0.5);
+			robotposition = KLocView->tempparticl;
+		} else {
+			if (KfieldGui::state == FINISH)
+				if (sendmotion) {
+					wmot.SerializeToArray(data + size, wmot.ByteSize());
+					size += wmot.ByteSize();
+					cout << " Send additionaly bytes " << wmot.ByteSize() << endl;
+					if (KfieldGui::keypressed == ' ')
+						KfieldGui::state = TWOPOINTSELECTION_1;
+				}
+
 		}
 
 		for (ss = ssize = 0; ssize < size; ssize += ss)
@@ -173,8 +241,10 @@ int receive_and_send_loop(TCPSocket *sock) {
 				break;
 			}
 
-		if (KLocView->keypressed == 27)
+		if (KfieldGui::keypressed == 27)
 			return 0;
+
+		KfieldGui::keypressed = -1;
 
 		cout << "Sended mesage Size " << ssize << endl;
 
@@ -183,41 +253,27 @@ int receive_and_send_loop(TCPSocket *sock) {
 		incommingheader.Clear();
 		sock->recv(&size, sizeof(uint32_t));
 		size = ntohl(size);
-		//ssize = 0;
-		//while (ssize < size) {
+
 		for (rs = rsize = 0; rsize < size; rsize += rs)
 			if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
 				cout << "receive error" << endl;
 				break;
 			}
-		//ssize += ss;
 
-		cout << "Arrived " << rsize << " Bytes header size must be " << incommingheader.mysize() << " Reparsing " << endl;
-
-		incommingheader.ParseFromArray(data, incommingheader.mysize());
-		incommingheader.DiscardUnknownFields();
-
-		alreadyparsedbytes = incommingheader.ByteSize();
-
-		cout << "already parsed bytes " << alreadyparsedbytes << endl;
-
+		incommingheader.ParseFromArray(data, size);
 		size = incommingheader.nextmsgbytesize();
 
-		cout << "Waiting for " << incommingheader.nextmsgname() << " Size " << size << " Bytes :" << size << endl;
-
 		for (rs = rsize = 0; rsize < size; rsize += rs)
 			if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
 				cout << "receive error" << endl;
 				break;
 			}
 
-		cout << "Received " << rsize << endl;
-
 		DebugData.Clear();
-		if (!DebugData.ParseFromArray(data, incommingheader.nextmsgbytesize())) {
+		if (!DebugData.ParsePartialFromArray(data, incommingheader.nextmsgbytesize())) {
 			cout << "Unable to parse " << incommingheader.nextmsgbytesize() << endl;
 		} else {
-//			cout << " Parsed message " << DebugData.ByteSize() << " bytes " << endl;
+			//			cout << " Parsed message " << DebugData.ByteSize() << " bytes " << endl;
 			update_field(DebugData);
 		}
 
@@ -234,27 +290,14 @@ int receive_and_send_loop(TCPSocket *sock) {
 }
 
 int main(int argc, char* argv[]) {
-	puts("Hello World!!!");
-
-	if ((3 != argc) || (0 == atoi(argv[2]))) {
+	if (2 != argc) {
 		cout << "usage: appclient server_ip server_port" << endl;
 		return 0;
 	}
 	string servAddress = argv[1];
 	//char *echoString = argv[2];   // Second arg: string to echo
 	//int echoStringLen = strlen(echoString);   // Determine input length
-	unsigned short echoServPort = (argc == 3) ? atoi(argv[2]) : 9000;
-
-	//if (0 != getaddrinfo(argv[1], argv[2], &hints, &peer)) {
-	//	cout << "incorrect server/peer address. " << argv[1] << ":" << argv[2] << endl;
-	//	return 0;
-	//}
-
-	// connect to the server, implict bind
-	//if (UDT::ERROR == UDT::connect(client, peer->ai_addr, peer->ai_addrlen)) {
-	//cout << "connect: " << UDT::getlasterror().getErrorMessage() << endl;
-	//return 0;
-	//}
+	unsigned short echoServPort = ((argc == 3) ? atoi(argv[2]) : 9001);
 
 	try {
 		// Establish connection with the echo server

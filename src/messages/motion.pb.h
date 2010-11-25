@@ -90,53 +90,6 @@ class MotionWalkMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 100];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
   // required string command = 6 [default = ""];
   inline bool has_command() const;
   inline void clear_command();
@@ -164,15 +117,6 @@ class MotionWalkMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::std::string* command_;
   static const ::std::string _default_command_;
   ::google::protobuf::RepeatedField< float > parameter_;
@@ -180,7 +124,7 @@ class MotionWalkMessage : public ::google::protobuf::Message {
   friend void protobuf_AssignDesc_motion_2eproto();
   friend void protobuf_ShutdownFile_motion_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -527,226 +471,42 @@ class MotionActionMessage : public ::google::protobuf::Message {
 
 // MotionWalkMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool MotionWalkMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void MotionWalkMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& MotionWalkMessage::host() const {
-  return *host_;
-}
-inline void MotionWalkMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void MotionWalkMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void MotionWalkMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* MotionWalkMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool MotionWalkMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void MotionWalkMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& MotionWalkMessage::publisher() const {
-  return *publisher_;
-}
-inline void MotionWalkMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void MotionWalkMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void MotionWalkMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* MotionWalkMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool MotionWalkMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void MotionWalkMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& MotionWalkMessage::topic() const {
-  return *topic_;
-}
-inline void MotionWalkMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void MotionWalkMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void MotionWalkMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* MotionWalkMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 100];
-inline bool MotionWalkMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void MotionWalkMessage::clear_timeout() {
-  timeout_ = 100;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 MotionWalkMessage::timeout() const {
-  return timeout_;
-}
-inline void MotionWalkMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool MotionWalkMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void MotionWalkMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& MotionWalkMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void MotionWalkMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void MotionWalkMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void MotionWalkMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* MotionWalkMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
 // required string command = 6 [default = ""];
 inline bool MotionWalkMessage::has_command() const {
-  return _has_bit(5);
+  return _has_bit(0);
 }
 inline void MotionWalkMessage::clear_command() {
   if (command_ != &_default_command_) {
     command_->clear();
   }
-  _clear_bit(5);
+  _clear_bit(0);
 }
 inline const ::std::string& MotionWalkMessage::command() const {
   return *command_;
 }
 inline void MotionWalkMessage::set_command(const ::std::string& value) {
-  _set_bit(5);
+  _set_bit(0);
   if (command_ == &_default_command_) {
     command_ = new ::std::string;
   }
   command_->assign(value);
 }
 inline void MotionWalkMessage::set_command(const char* value) {
-  _set_bit(5);
+  _set_bit(0);
   if (command_ == &_default_command_) {
     command_ = new ::std::string;
   }
   command_->assign(value);
 }
 inline void MotionWalkMessage::set_command(const char* value, size_t size) {
-  _set_bit(5);
+  _set_bit(0);
   if (command_ == &_default_command_) {
     command_ = new ::std::string;
   }
   command_->assign(reinterpret_cast<const char*>(value), size);
 }
 inline ::std::string* MotionWalkMessage::mutable_command() {
-  _set_bit(5);
+  _set_bit(0);
   if (command_ == &_default_command_) {
     command_ = new ::std::string;
   }

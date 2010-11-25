@@ -7,6 +7,7 @@
 #include <csignal>
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
+#include "../../messages/motion.pb.h"
 
 using namespace std;
 namespace {
@@ -36,7 +37,7 @@ void Localization::UserInit() {
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
-
+	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
 }
@@ -44,8 +45,9 @@ void Localization::UserInit() {
 int Localization::DebugMode_Receive() {
 	///DEBUG MODE
 	bool headerparsed = false;
-	int ssize;
-	int ss;
+	int size;
+	int ssize, rsize;
+	int ss, rs;
 	try {
 		ssize = 0;
 		sock->recv(&size, sizeof(uint32_t));
@@ -55,44 +57,37 @@ int Localization::DebugMode_Receive() {
 
 		if (size < 1) {
 			//Something went wrong ...
+			cout << " Unable to parse Disconnecting" << endl;
 			debugmode = false;
 			return -2;
 		}
 		//Receive the data header
-		while (ssize < size) {
-			if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
+		for (rs = rsize = 0; rsize < size; rsize += rs)
+			if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
 				cout << "receive error" << endl;
 				break;
 			}
-			ssize += ss;
-		}
 
-		cout << "Arrived " << size << " Bytes " << endl;
+		cout << "Arrived " << rsize << " Bytes " << endl;
 
 		incommingheader.Clear();
-		headerparsed = incommingheader.ParseFromArray(data, size);
-
+		headerparsed = incommingheader.ParsePartialFromArray(data, size);
 		if (!headerparsed) {
-			cout << " Unable to parse " << endl;
+			cout << " Unable to parse Disconnecting" << endl;
 			debugmode = false;
 			return -1;
 		}
 
 		incommingheader.DiscardUnknownFields();
-		int alreadyparsedbytes = incommingheader.ByteSize();
-
-		//cout << "alreadyparsedbytes " << alreadyparsedbytes << " Bytes" << endl;
-
 
 		string command = incommingheader.nextmsgname();
-		//cout << "COMMAND " << command << endl;
+		cout << "COMMAND " << command << endl;
 		if (command == "Stop") {
 			debugmode = false;
 			cout << " Stopping Debug ########################" << endl;
 			return 0;
-
 		}
-		google::protobuf::Message * incommingmsg = &incommingheader;
+		//google::protobuf::Message * incommingmsg = &incommingheader;
 		cout << "Next message " << incommingheader.nextmsgbytesize() << endl;
 
 		//const google::protobuf::FieldDescriptor* field = incommingmsg->GetDescriptor()->FindFieldByLowercaseName("nextmsgbytesize");
@@ -104,40 +99,52 @@ int Localization::DebugMode_Receive() {
 		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
 		{
 			cout << "NextMessageSize " << size << endl;
-			int ssize;
-			int ss;
-			ssize = 0;
-			while (ssize < size) {
-				if ((ss = sock->recv(data + ssize, size - ssize)) < 0) {
+			for (rs = rsize = 0; rsize < size; rsize += rs)
+				if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
 					cout << "receive error" << endl;
 					break;
 				}
-				ssize += ss;
-			}
-			RobotPose ticommingmsg;
-			ticommingmsg.ParseFromArray(data, size);
-			cout << ticommingmsg.GetTypeName() << endl;
-			//cout << "Arrived " << ssize << " $$$$$$$$$$$$$$$$%%%%%%%%%Bytes Do something" << endl;
-			if (ticommingmsg.GetTypeName() == "RobotPose") {
+
+			cout << "Arrived " << ssize << " $$$$$$$$$$$$$$$$%%%%%%%%%Bytes Do something" << endl;
+			//if (ticommingmsg.GetTypeName() == "RobotPose") {
+
+			if (command == "SetBelief") {
+				RobotPose ticommingmsg;
+				ticommingmsg.ParseFromArray(data, size);
+				cout << ticommingmsg.GetTypeName() << endl;
 				cout << "Incoming Pose" << endl;
-				if (command == "SetBelief") {
-					MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
-					AgentPosition.x = MyWorld.myposition().x();
-					AgentPosition.y = MyWorld.myposition().y();
-					AgentPosition.theta = MyWorld.myposition().phi();
-					AgentPosition.weightconfidence = MyWorld.myposition().confidence();
-					cout << "My World theta " << AgentPosition.theta;
+				MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
+				AgentPosition.x = MyWorld.myposition().x();
+				AgentPosition.y = MyWorld.myposition().y();
+				AgentPosition.theta = MyWorld.myposition().phi();
+				AgentPosition.weightconfidence = MyWorld.myposition().confidence();
+
+				TrackPoint.x = AgentPosition.x;
+				TrackPoint.y = AgentPosition.y;
+				TrackPoint.phi = AgentPosition.theta;
+
+				cout << "My World theta " << AgentPosition.theta;
+			} else if (command.find("Walk") != string::npos)/* == "Walk") */{
+				MotionWalkMessage wmot;
+				wmot.ParseFromArray(data, size);
+				cout << "Incoming WalkCommand" << endl;
+				if (command.find("Stop") == string::npos) { //Reset at the beggining
+					TrackPoint.x = 0;
+					TrackPoint.y = 0;
+					TrackPoint.phi = 0;
+					AgentPosition.theta = 0;
+					AgentPosition.x = 0;
+					AgentPosition.y = 0;
 				}
+				_blk->publish_signal(wmot, "motion");
 			}
 
 			//field = incommingmsg->GetDescriptor()->FindFieldByName("nextmsgbytesize");
 		}
 	} catch (SocketException &e) {
 		cerr << e.what() << endl;
-		cout << "Disconnecting !!!" << endl;
+		cout << "Stopping Debug ############# Disconnecting !!!" << endl;
 		debugmode = false;
-		cout << " Stopping Debug ########################" << endl;
-
 	}
 	return 0;
 }
@@ -207,7 +214,7 @@ void Localization::Send_LocalizationData() {
 		//cout << "Sended " << rsize << endl;
 	} catch (SocketException &e) {
 		cerr << e.what() << endl;
-		cout << "Disconnecting !!!" << endl;
+		cout << "Disconnecting !!!!!" << endl;
 		debugmode = false;
 	}
 }
@@ -573,6 +580,9 @@ void * Localization::StartServer(void * astring) {
 
 	while (true) {
 		if (!debugmode) {
+			if (sock != NULL)
+				delete sock;
+
 			if ((sock = servSock.accept()) < 0) {
 				cout << " REturned null";
 				return NULL;
