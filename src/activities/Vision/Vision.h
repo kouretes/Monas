@@ -154,7 +154,7 @@ private:
 
     balldata_t locateBall(std::vector<CvPoint> cand);
     void publishObstacles(std::vector<CvPoint> points);
-    CvPoint2D32f centerOfCircle(CvPoint l, CvPoint m, CvPoint r);
+    CvPoint2D32f centerOfCircle(CvPoint2D32f l, CvPoint2D32f m, CvPoint2D32f r);
     int locateGoalPost(std::vector<CvPoint> cand, KSegmentator::colormask_t c);
 
     typedef struct traceresult_struct

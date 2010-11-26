@@ -640,7 +640,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		o->set_distance_dev(sqrt(d1.distBot.var));
 		std::string name;
 		if(c==yellow)
-			name=="Yellow";
+			name="Yellow";
 		else
 			name="Skyblue";
 		if(d1.leftOrRight==1)
@@ -675,8 +675,8 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 	x2=d2.distance.mean* cos( d2.bearing.mean);
 	y2=d2.distance.mean* sin( d2.bearing.mean);
 	float d=sqrt(sqrd(x1-x2)+sqrd(y1-y2));
-	//if( abs(d-config.goaldiam)/config.goaldist> 0.4)
-		//return 0;
+	if( abs(d-config.goaldist)/config.goaldist> 0.4)
+		return 0;
 
 	if(d1.bearing.mean<d2.bearing.mean)
 	{
@@ -690,7 +690,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 	o->set_distance_dev(sqrt(d1.distBot.var));
 	std::string name;
 	if(c==yellow)
-		name=="Yellow";
+		name="Yellow";
 	else
 		name="Skyblue";
 	name+="Left";
@@ -704,7 +704,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 	o->set_distance_dev(sqrt(d2.distBot.var));
 	//name;
 	if(c==yellow)
-		name=="Yellow";
+		name="Yellow";
 	else
 		name="Skyblue";
 	name+="Right";
@@ -747,9 +747,9 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
 
 	KMat::HCoords<float,2> c1,c2,i1,i2;
 	i1(0)=newpost.bot.x;
-	i1(1)=newpost.bot.y;
-	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:),since
-	i2(1)=newpost.top.y-1;
+	i1(1)=newpost.bot.y+0.5+1;
+	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:), compensate for cmos skew the stupid way
+	i2(1)=newpost.top.y-0.5-1;
 	c1=imageToCamera(i1);
 	c2=imageToCamera(i2);
 
@@ -769,8 +769,11 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
 	//Single solution of a  trionym
 
 
-	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:),since
-	i2(1)=newpost.top.y+1;
+	i1(0)=newpost.bot.x;
+	i1(1)=newpost.bot.y+0.5-1;
+	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:), compensate for cmos skew the stupid way
+	i2(1)=newpost.top.y-0.5+1;
+	c1=imageToCamera(i1);
 	c2=imageToCamera(i2);
 
 	float hAngS=kinext.vectorAngle(c1,c2);
@@ -785,11 +788,10 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
 		return ;
 	}
 
-
-
 	//cout<<g<<" "<<h<<" "<<t<<endl;
 
 	dS= - (g+sqrt( 4*t*t*h*(g-h)+g*g  ))/(2*t)+config.goaldiam/2;
+
 	measurement m;
 	m.mean=(dS+dL)/2;
 	m.mean=(dS+dL)/2 ;
@@ -832,13 +834,13 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	i1(1)=mT.y;
 	c1=imageToCamera(i1);
 
-	i2(0)=newpost.tl.x;
-	i2(1)=newpost.tl.y;
+	i2(0)=newpost.tl.x+Vlt.x/2;
+	i2(1)=newpost.tl.y+Vlt.y/2;
 	c2=imageToCamera(i2);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
-	i2(0)=newpost.tr.x;
-	i2(1)=newpost.tr.y;
+	i2(0)=newpost.tr.x+Vrt.x/2;
+	i2(1)=newpost.tr.y+Vrt.y/2;
 	c2=imageToCamera(i2);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 	mrT=mWeightedMean(mr1,mr2);
@@ -851,13 +853,13 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	i1(1)=mB.y;
 	c1=imageToCamera(i1);
 
-	i2(0)=newpost.ll.x;
-	i2(1)=newpost.ll.y;
+	i2(0)=newpost.ll.x+Vlt.x/2;
+	i2(1)=newpost.ll.y+Vlt.y/2;
 	c2=imageToCamera(i2);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
-	i2(0)=newpost.lr.x;
-	i2(1)=newpost.lr.y;
+	i2(0)=newpost.lr.x+Vrt.x/2;
+	i2(1)=newpost.lr.y+Vrt.y/2;
 	c2=imageToCamera(i2);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
@@ -1003,7 +1005,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		t=trcrs.p;
         m.y=(b.y+t.y)/2;
 
-		trcrs = traceline(m, cvPoint(1, -1), orange);//Prefer  r
+		trcrs = traceline(m, cvPoint(1, -1), orange);//Prefer top r
 		if (trcrs.smartsuccess==false)
 			continue;
 		r=trcrs.p;
@@ -1013,8 +1015,8 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		if (trcrs.smartsuccess==false)
 			continue;
 		l=trcrs.p;
-
-		CvPoint2D32f center=centerOfCircle(l,t,r);
+		//Call centerOfCircle with the margins of ball color, not the pixels them selves
+		CvPoint2D32f center=centerOfCircle(cvPoint2D32f(l.x-0.5,l.y-0.5),cvPoint2D32f(t.x,t.y-0.5),cvPoint2D32f(r.x+0.5,r.y-0.5));
 		if(center.x==-1)
 			continue;
 		float radius = CvDist(center,t);
@@ -1124,13 +1126,13 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 
 }
-CvPoint2D32f Vision::centerOfCircle(CvPoint l, CvPoint m, CvPoint r)
+CvPoint2D32f Vision::centerOfCircle(CvPoint2D32f l, CvPoint2D32f m, CvPoint2D32f r)
 {
 	CvPoint2D32f center;
 	center.x=-1;
 	if (m.x==l.x||m.x==r.x)//Some points form  a vertical line, swap and retry
 	{
-		CvPoint tmp;
+		CvPoint2D32f tmp;
 		tmp=m;
 		m=l;
 		l=m;
@@ -1334,17 +1336,17 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 				break;
 			if(vel.y<vel.x)
 			{
-				if(abs(latestValid.y-m.y)>=SCANSKIP)
+				if(abs(latestValid.y-m.y)>=TRACESKIP)
 					break;
 			}
 			else
-				if(abs(latestValid.x-m.x)>=SCANSKIP)
+				if(abs(latestValid.x-m.x)>=TRACESKIP)
 					break;
 			//latestValid.x= m.x;//(latestValid.x+m.x)/2;
 			//latestValid.y= m.y;//(latestValid.y+m.y)/2;
 			curr.init((m.x+curr.x)/2,(m.y+curr.y)/2);
 			skipcount=0;
-			rebounce=SCANSKIP;
+			rebounce=TRACESKIP/2+1;
 
 			//curr=start;
 		}
