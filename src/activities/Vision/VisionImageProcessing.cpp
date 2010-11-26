@@ -341,7 +341,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c)
 {
 
-	unsigned int ttl = 0,bd=0;
+	unsigned int ttl = 0,bd=0,gd=0;
 	float ratio;
 
 	tracer_t l,r;
@@ -349,15 +349,15 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
 	r.init(goal.tr.x,goal.tr.y);
 	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
-	while(l.y<goal.top.y && r.y<goal.top.y)
+	while(l.y<goal.bot.y && r.y<goal.bot.y)
 	{
-		for(int x=l.x-config.subsampling+1;x<l.x;x+=2)
+		for(int x=l.x-(r.x-l.x)-1; x<l.x;x+=config.subsampling-1)
 		{
 			if(doSeg(x,l.y)==c)
 				bd++;
 			ttl++;
 		}
-		for(int x=r.x+1;x<r.x+config.subsampling;x+=2)
+		for(int x=r.x+1;x<r.x+(r.x-l.x)+1;x+=config.subsampling-1)
 		{
 			if(doSeg(x,r.y)==c)
 				bd++;
@@ -368,7 +368,28 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	ratio=(float (bd+1))/(ttl+1);
 	if(ratio>0.3)
 		return false;
+
+	ttl=0;gd=0;
+
+	l.init(goal.tl.x,goal.tl.y);
+	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
+	r.init(goal.tr.x,goal.tr.y);
+	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
+	while(l.y<goal.bot.y && r.y<goal.bot.y)
+	{
+
+		for(int x=l.x;x<=r.x;x++)
+			if(doSeg(x,r.y)==c)
+				gd++;
+			ttl++;
+	}
+
+	ratio=(float (gd+1))/(ttl+1);
+	if(ratio<0.5)
+		return false;
+
 	return true;
+
 
 
 }
@@ -379,9 +400,9 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 	int width =goal.lr.x-goal.ll.x+1;
 	unsigned int ttl = 0, gd = 0;
 	float ratio;
-	for (int i=goal.ll.x; i<=goal.lr.x; i+=2)
+	for (int i=goal.ll.x; i<=goal.lr.x; i+=config.subsampling-1)
 	{
-		for (int j=goal.bot.y+width; j>goal.bot.y; j-=2)
+		for (int j=goal.bot.y+width; j>goal.bot.y; j-=config.subsampling-1)
 		{
 			if (!validpixel(i,j))
 				continue;
@@ -622,7 +643,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		//cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
 
 
-		//if(calculateValidGoalPost(newpost,c))
+		if(calculateValidGoalPost(newpost,c))
 			history.push_back(newpost);
 
 	}
@@ -1346,7 +1367,7 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 			//latestValid.y= m.y;//(latestValid.y+m.y)/2;
 			curr.init((m.x+curr.x)/2,(m.y+curr.y)/2);
 			skipcount=0;
-			rebounce=TRACESKIP/2+1;
+			rebounce=TRACESKIP+1;
 
 			//curr=start;
 		}
