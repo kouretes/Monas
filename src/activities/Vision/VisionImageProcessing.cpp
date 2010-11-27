@@ -351,22 +351,24 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
 	while(l.y<goal.bot.y && r.y<goal.bot.y)
 	{
-		for(int x=l.x-(r.x-l.x)-1; x<l.x;x+=config.subsampling-1)
+		for(int x=l.x-(r.x-l.x)-1; x<l.x;x+=3)
 		{
 			if(doSeg(x,l.y)==c)
 				bd++;
 			ttl++;
 		}
-		for(int x=r.x+1;x<r.x+(r.x-l.x)+1;x+=config.subsampling-1)
+		for(int x=r.x+1;x<r.x+(r.x-l.x)+1;x+=3)
 		{
 			if(doSeg(x,r.y)==c)
 				bd++;
 			ttl++;
 		}
+		l.step();
+		r.step();
 
 	}
 	ratio=(float (bd+1))/(ttl+1);
-	if(ratio>0.3)
+	if(ratio>0.34)
 		return false;
 
 	ttl=0;gd=0;
@@ -378,14 +380,20 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	while(l.y<goal.bot.y && r.y<goal.bot.y)
 	{
 
-		for(int x=l.x;x<=r.x;x++)
+		for(int x=l.x;x<=r.x;x+=3)
+		{
 			if(doSeg(x,r.y)==c)
 				gd++;
 			ttl++;
+
+		}
+
+		l.step();
+		r.step();
 	}
 
 	ratio=(float (gd+1))/(ttl+1);
-	if(ratio<0.5)
+	if(ratio<0.7)
 		return false;
 
 	return true;
@@ -458,8 +466,6 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 	//cout<<"No rt proeks"<<endl;
 	return false;
 
-
-
 }
 
 
@@ -524,7 +530,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 
 		at.init(newpost.bot.x,newpost.bot.y);
 		at.initVelocity(newpost.top.x-newpost.bot.x,newpost.top.y-newpost.bot.y	);
-		for(int k=0;k<config.subsampling;k++)
+		for(int k=0;k<config.subsampling-1;k++)
 		{
 			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
 			newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
@@ -542,7 +548,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 
 		at.init(newpost.top.x+(newpost.bot.x-newpost.top.x)/4,newpost.top.y+(newpost.bot.y-newpost.top.y)/4);
 		at.initVelocity(newpost.bot.x-newpost.top.x,newpost.bot.y-newpost.top.y	);
-		for(int k=0;k<config.subsampling;k++)
+		for(int k=0;k<config.subsampling-1;k++)
 		{
 			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
 			newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
@@ -552,6 +558,19 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		}
 		newpost.top.x=(newpost.tl.x+newpost.tr.x)/2;
 		newpost.bot.x=(newpost.ll.x+newpost.lr.x)/2;
+
+		//Now find again bot and top
+		trcrs = traceStrictline(newpost.bot,Vdn,c);
+		newpost.haveBot=trcrs.smartsuccess;
+		newpost.bot=trcrs.p;
+
+		trcrs = traceStrictline(newpost.top,Vup,c);
+		newpost.haveTop=trcrs.smartsuccess;
+		newpost.top=trcrs.p;
+		newpost.ll.y=newpost.bot.y;
+		newpost.lr.y=newpost.bot.y;
+		newpost.tl.y=newpost.top.y;
+		newpost.tr.y=newpost.top.y;
 
 		//cout<<"post:"<<newpost.tl.x<<" " <<newpost.tl.y<<" "<<newpost.tr.x<<" " <<newpost.tr.y<<" "<<newpost.ll.x<<" " <<newpost.ll.y<<" "<<newpost.lr.x<<" " <<newpost.lr.y<<endl;
 
@@ -608,8 +627,8 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 
 		if(newpost.haveTop&&newpost.haveBot)
 		{
-			measurement md=mWeightedMean(newpost.distBot,newpost.distTop);
-			newpost.dist.push_back(md);
+			//measurement md=mWeightedMean(newpost.distBot,newpost.distTop);
+			//newpost.dist.push_back(md);
 			measurement mb=mWeightedMean(newpost.bBot,newpost.bTop);
 			newpost.ber.push_back(mb);
 			fillGoalPostHeightMeasurments(newpost);
@@ -619,32 +638,44 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 			if(newpost.haveBot&&newpost.distBot.mean<=config.seedistance)
 			{
 				newpost.dist.push_back(newpost.distBot);
-
 			}
 			else if(newpost.haveTop&&newpost.distTop.mean<=config.seedistance)
 			{
 				newpost.dist.push_back(newpost.distTop);
-
 			}
 			newpost.ber.push_back(newpost.bBot);
 			newpost.ber.push_back(newpost.bTop);
 			newpost.haveHeight=false;
 		}
+		//if(newpost.dist.size()==0)
+		//	continue;
+		//newpost.distance=mWeightedMean(newpost.dist);
+		if(newpost.haveHeight==false)
+			fillGoalPostWidthMeasurments(newpost,c);
 
-		//cout<<"fill:"<<endl;
-		fillGoalPostWidthMeasurments(newpost,c);
-		//cout<<"mean:"<<endl;
 		newpost.distance=mWeightedMean(newpost.dist);
 		newpost.bearing=mWeightedMean(newpost.ber);
+		if(newpost.distance.mean>=config.seedistance)
+			continue;
 		//if(newpost.haveWidth)
 		//	cout<<"WDistance"<<newpost.distWidth.mean<<" "<<newpost.distWidth.var<<endl;
 		//cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
-		//cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
-		//cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
+		cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
+		cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
 
 
-		if(calculateValidGoalPost(newpost,c))
-			history.push_back(newpost);
+
+		if(calculateValidGoalPost(newpost,c)==false)
+			continue;
+		KMat::HCoords<float,2> polar;
+		//cout<<"ttldist:"<<distance.mean<<endl;
+		polar(0)=newpost.distance.mean;
+		polar(1)=newpost.bearing.mean;
+		//Convert to robot space
+		KMat::HCoords<float,2> robotpolar=camToRobot(polar);
+		newpost.distance.mean=polar(0);
+		newpost.bearing.mean=polar(1);
+		history.push_back(newpost);
 
 	}
 	std::sort (history.begin(), history.end(), cmpgoalpostdata_t);
@@ -768,9 +799,9 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
 
 	KMat::HCoords<float,2> c1,c2,i1,i2;
 	i1(0)=newpost.bot.x;
-	i1(1)=newpost.bot.y+0.5+1;
+	i1(1)=newpost.bot.y+0.5;
 	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:), compensate for cmos skew the stupid way
-	i2(1)=newpost.top.y-0.5-1;
+	i2(1)=newpost.top.y-0.5;
 	c1=imageToCamera(i1);
 	c2=imageToCamera(i2);
 
@@ -791,9 +822,9 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
 
 
 	i1(0)=newpost.bot.x;
-	i1(1)=newpost.bot.y+0.5-1;
+	i1(1)=newpost.bot.y-0.5;
 	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:), compensate for cmos skew the stupid way
-	i2(1)=newpost.top.y-0.5+1;
+	i2(1)=newpost.top.y+0.5;
 	c1=imageToCamera(i1);
 	c2=imageToCamera(i2);
 
@@ -844,9 +875,6 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 
 
 	//Find a width and mark measurements!
-
-
-
 	mT.x=(newpost.tl.x+newpost.tr.x)/2.0;
 	mT.y=(newpost.tl.y+newpost.tr.y)/2.0;
 	//For top. move 10% of estimated height down!
@@ -855,13 +883,13 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	i1(1)=mT.y;
 	c1=imageToCamera(i1);
 
-	i2(0)=newpost.tl.x+Vlt.x/2;
-	i2(1)=newpost.tl.y+Vlt.y/2;
+	i2(0)=newpost.tl.x;//+Vlt.x/2;
+	i2(1)=newpost.tl.y;//+Vlt.y/2;
 	c2=imageToCamera(i2);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
-	i2(0)=newpost.tr.x+Vrt.x/2;
-	i2(1)=newpost.tr.y+Vrt.y/2;
+	i2(0)=newpost.tr.x;//+Vrt.x/2;
+	i2(1)=newpost.tr.y;//+Vrt.y/2;
 	c2=imageToCamera(i2);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 	mrT=mWeightedMean(mr1,mr2);
@@ -874,20 +902,18 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	i1(1)=mB.y;
 	c1=imageToCamera(i1);
 
-	i2(0)=newpost.ll.x+Vlt.x/2;
-	i2(1)=newpost.ll.y+Vlt.y/2;
+	i2(0)=newpost.ll.x;//+Vlt.x/2;
+	i2(1)=newpost.ll.y;//+Vlt.y/2;
 	c2=imageToCamera(i2);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
-	i2(0)=newpost.lr.x+Vrt.x/2;
-	i2(1)=newpost.lr.y+Vrt.y/2;
+	i2(0)=newpost.lr.x;//+Vrt.x/2;
+	i2(1)=newpost.lr.y;//+Vrt.y/2;
 	c2=imageToCamera(i2);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
 
 	mrB=mWeightedMean(mr1,mr2);
-
-
 	//cout<<"mr1,mr2,mean:"<<mr1.mean<<" "<<mr2.mean<<mrB.mean<<endl;
 
 	i1(0)=mT.x;
@@ -921,7 +947,6 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	dS=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) );//* (cest/config.goalheight);
 	a=mrT.mean+sqrt(mrT.var);
 	b=mrB.mean+sqrt(mrB.var);
-
 
 	//cout<<"a,b:"<<a<<" "<<b<<endl;
 	ab=a*b;
@@ -962,7 +987,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		vector<balldata_t>::iterator bd = history.begin();
 		while (bd != history.end() )
 		{
-			if (CvDist(*bd,*i) <= (*bd).cr+1)
+			if (CvDist(*bd,*i) <= (*bd).cr+TRACESKIP)
 			{
 				//cout<<"skip"<<endl;
 				i++;//Skip pixels
@@ -979,7 +1004,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		bd= banlist.begin();
 		while (bd != banlist.end() )
 		{
-			if (CvDist(*bd,*i) <= (*bd).cr+1)
+			if (CvDist(*bd,*i) <= (*bd).cr+TRACESKIP)
 			{
 				//cout<<"ban list"<<endl;
 				i++;//Skip pixels
@@ -1022,17 +1047,24 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		trcrs = traceline(m, cvPoint(0, -1), orange);//Smart
 
 		if (trcrs.smartsuccess==false)
+			trcrs = traceline(m, cvPoint(0, +1), orange);//try bottom
+		if (trcrs.smartsuccess==false)
 			continue;
+
 		t=trcrs.p;
         m.y=(b.y+t.y)/2;
 
-		trcrs = traceline(m, cvPoint(1, -1), orange);//Prefer top r
+		trcrs = traceline(m, cvPoint(1, 0), orange);//Prefer  r
+		if (trcrs.smartsuccess==false)
+			trcrs = traceline(m, cvPoint(1, -1), orange);// try top r
 		if (trcrs.smartsuccess==false)
 			continue;
 		r=trcrs.p;
 
 		//cout<<"R:"<<r.x<<","<<r.y<<endl;
-		trcrs = traceline(m, cvPoint(-1, -1), orange);//Prefer top l
+		trcrs = traceline(m, cvPoint(-1, 0), orange);//Prefer  l
+		if (trcrs.smartsuccess==false)
+			trcrs = traceline(m, cvPoint(-1, -1), orange);//try top l
 		if (trcrs.smartsuccess==false)
 			continue;
 		l=trcrs.p;
@@ -1056,8 +1088,8 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		KMat::HCoords<float,2> im1,im2;
 		im1(0)=center.x;
 		im1(1)=center.y;
-		im2(0)=center.x+(radius)*0.707;
-		im2(1)=center.y+(radius)*0.707;
+		im2(0)=center.x+(radius+1)*0.707;
+		im2(1)=center.y+(radius+1)*0.707;
 		//im1.prettyPrint();
 		//im2.prettyPrint();
 		c1=imageToCamera(im1);
@@ -1167,7 +1199,7 @@ CvPoint2D32f Vision::centerOfCircle(CvPoint2D32f l, CvPoint2D32f m, CvPoint2D32f
 		return center;
 	center.x= ( ma*mb*((float)(l.y-r.y))+mb*((float)(l.x+m.x))-ma*((float)(m.x+r.x)) )/ (2.0*(mb-ma));
 	center.y=-(center.x -((float)(l.x+m.x))/2)/ma+((float)(l.y+m.y))/2.0;
-
+	center.y+=0.707;
 	return center;
 }
 
@@ -1318,6 +1350,8 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 	intVel.x=floor(vel.x+0.5);//Round
 	intVel.y=floor(vel.y+0.5);//Round
 	cout<<"intvel:"<<intVel.x<<intVel.y<<endl;*/
+
+
 	CvPoint latestValid = start;
 	tracer_t curr;
 	curr.init(start.x,start.y);
@@ -1341,6 +1375,8 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 			rebounce--;
 		};
 
+
+		curr.step();
 		if ( skipcount>TRACESKIP)
 		{
 			//Ok, try some readaptation
@@ -1352,7 +1388,7 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 			CvPoint m=trs.p;
 			m.x=(m.x+l.x)/2;
 			m.y=(m.y+l.y)/2;
-			float d=CvDist(m,curr);
+			float d=CvDist(m,latestValid);
 			if(d==0)
 				break;
 			if(vel.y<vel.x)
@@ -1371,7 +1407,6 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 
 			//curr=start;
 		}
-		curr.step();
 
 
 	}

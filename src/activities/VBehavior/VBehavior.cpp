@@ -189,7 +189,7 @@ int VBehavior::Execute() {
 					ballfound -= 1; //Decrease it when we don't see the ball
 			}
 		}
-		return 0;
+		//eturn 0;
 		Logger::Instance().WriteMsg("VBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
 		float X=0.0, Y=0.0, theta=0.0;

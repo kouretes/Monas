@@ -436,7 +436,7 @@ void Vision::fetchAndProcess()
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
 
-	float imcomp=((stamp-p.time).total_microseconds()*1000.0)/p.timediff;
+	float imcomp=((stamp-p.time).total_microseconds()*500.0)/p.timediff;
 //#ifdef DEBUGVISION
 	//cout<<boost::posix_time::to_iso_string(stamp)<<endl;
 	//cout<<boost::posix_time::to_iso_string(p.time)<<endl;
@@ -548,6 +548,30 @@ void Vision::fetchAndProcess()
 		LedValues* l=leds.add_leds();
 		l->set_chain("l_eye");
 		l->set_color("green");
+	}
+	if(obs.regular_objects_size()>0)
+	{
+
+		if(obs.regular_objects(0).object_name().c_str()[0]=='Y')
+		{
+			LedValues* l=leds.add_leds();
+			l->set_chain("r_eye");
+			l->set_color("yellow");
+		}
+		else{
+			LedValues* l=leds.add_leds();
+			l->set_chain("r_eye");
+			l->set_color("blue");
+		}
+
+	}
+	else
+	{
+
+		LedValues* l=leds.add_leds();
+			l->set_chain("r_eye");
+			l->set_color("black");
+
 	}
 	_blk->publish_signal(trckmsg,"vision");
 	_blk->publish_signal(leds,"communication");
