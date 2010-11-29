@@ -320,7 +320,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 			ttl+=3;
 		}
 	for (int j =ball. y+1 ; j <= ball.y + innerrad-1; j+=config.subsampling-1)
-		for (int i = ball.x+1; i <= ball.x + innerrad-1; i+=config.subsampling-1)
+		for (int i = ball.x- innerrad+1; i <= ball.x + innerrad-1; i+=config.subsampling-1)
 		{
 			if (!validpixel(i,j))
 				continue;
@@ -334,19 +334,63 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 	if (ratio < 0.7)
 		return false;
 
-	gd=0;
-	for (int j =ball.y+ball.cr+1; j <= ball.y + ball.cr+ ball.cr/2;	j+=config.subsampling-1)
-		for (int i = ball.x - ball.cr; i <= ball.x + ball.cr; i+=config.subsampling-1)
+	gd=0;ttl=0;
+	KSegmentator::colormask_t r;
+	for (int j =ball.y+ball.cr+1; j <= ball.y + ball.cr+ ball.cr/2;	j+=3)
+		for (int i = ball.x - ball.cr; i <= ball.x + ball.cr; i+=3)
 		{
 			if (!validpixel(i,j))
 				continue;
-			if (doSeg(i, j) == green)
+			r=doSeg(i, j);
+			if (r == green||r==white)
 				gd++;
+			else if(r==c)
+				gd--;
 			ttl++;
 		}
+	for (int j =ball.y-ball.cr-ball.cr/2; j <= ball.y + ball.cr-1;	j+=3)
+		for (int i = ball.x - ball.cr; i <= ball.x + ball.cr; i+=3)
+		{
+			if (!validpixel(i,j))
+				continue;
+			r=doSeg(i, j);
+			if (r == green||r==white)
+				gd++;
+			else if(r==c)
+				gd--;
+			ttl++;
+		}
+
+	for (int j =ball.y-ball.cr; j <= ball.y + ball.cr;	j+=3)
+	{
+
+		for (int i = ball.x - ball.cr-ball.cr/2; i <= ball.x - ball.cr-2; i+=3)
+		{
+			if (!validpixel(i,j))
+				continue;
+			r=doSeg(i, j);
+			if (r == green||r==white)
+				gd++;
+			else if(r==c)
+				gd--;
+			ttl++;
+		}
+		for (int i = ball.x + ball.cr+2 i <= ball.x + ball.cr +ball.cr/2; i+=3)
+		{
+			if (!validpixel(i,j))
+				continue;
+			r=doSeg(i, j);
+			if (r == green||r==white)
+				gd++;
+			else if(r==c)
+				gd--;
+			ttl++;
+		}
+	}
+
 	ratio = ((float) gd+1) / (ttl+1);
-	//cout<<"Validratio:"<<ratio<<endl;
-	if (ratio < 0.7)
+	cout<<"Validratio2:"<<ratio<<endl;
+	if (ratio < 0.25)
 		return false;
 	return true;
 
@@ -1076,32 +1120,35 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 		CvPoint2D32f fl,fr,ft;
 
-		ft=cvPoint2D32f(t.x,t.y-0.5);
-		if (trcrs.smartsuccess==false&&bsuccess)//Top failed , use bottom
-			ft=cvPoint2D32f(b.x,b.y+0.5);//trcrs = traceline(m, cvPoint(0, +1), orange);//try bottom
-		else
-			continue;
-
+		ft=cvPoint2D32f(t.x,t.y);//-0.5);
+		if (trcrs.smartsuccess==false)
+		{
+			if(bsuccess)//Top failed , use bottom
+				ft=cvPoint2D32f(b.x,b.y);//+0.5);//trcrs = traceline(m, cvPoint(0, +1), orange);//try bottom
+			else
+				continue;
+		}
+		//cout<<"Got 3 points"<<endl;
 
 		trcrs = traceline(m, cvPoint(1, 0), orange);//Prefer  r
-		fr=cvPoint2D32f(trcrs.p.x+0.5,trcrs.p.y);
+		fr=cvPoint2D32f(trcrs.p.x,trcrs.p.y);;//cvPoint2D32f(trcrs.p.x+0.5,trcrs.p.y);
 		if (trcrs.smartsuccess==false)
 		{
 			trcrs = traceline(m, cvPoint(1, -1), orange);// try top r
 			if (trcrs.smartsuccess==false)
 				continue;
-			fr=cvPoint2D32f(trcrs.p.x+0.5,trcrs.p.y-0.5);
+			fr=cvPoint2D32f(trcrs.p.x,trcrs.p.y);//cvPoint2D32f(trcrs.p.x+0.5,trcrs.p.y-0.5);
 
 		}
 
 		trcrs = traceline(m, cvPoint(-1, 0), orange);//Prefer  r
-		fl=cvPoint2D32f(trcrs.p.x-0.5,trcrs.p.y);
+		fl=cvPoint2D32f(trcrs.p.x,trcrs.p.y);//cvPoint2D32f(trcrs.p.x-0.5,trcrs.p.y);
 		if (trcrs.smartsuccess==false)
 		{
 			trcrs = traceline(m, cvPoint(-1, -1), orange);// try top r
 			if (trcrs.smartsuccess==false)
 				continue;
-			fl=cvPoint2D32f(trcrs.p.x-0.5,trcrs.p.y-0.5);
+			fl=cvPoint2D32f(trcrs.p.x,trcrs.p.y);//cvPoint2D32f(trcrs.p.x-0.5,trcrs.p.y-0.5);
 
 		}
 		//Call centerOfCircle with the margins of ball color, not the pixels them selves
@@ -1113,7 +1160,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		balldata_t newdata;
 		newdata.x = center.x;
 		newdata.y = center.y;
-		newdata.cr = radius;
+		newdata.cr = radius;//0.35;
 		//Looks like a ball?
 		point(0)=center.x;
 		point(1)=center.y;
@@ -1139,7 +1186,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 			continue;
 		}
 		float rest=p.cameraZ*(par-sqrt(par))/(par-1);
-		//cout<<"rest:"<<rest<<endl;
+		cout<<"rest:"<<rest<<endl;
 		newdata.ballradius=rest;
 		measurement d1=kinext.angularDistanceProjected(c1,c2,rest);//Find distance based on size and project to ground, at radius height
 		float w=d1.mean;
@@ -1235,7 +1282,7 @@ CvPoint2D32f Vision::centerOfCircle(CvPoint2D32f l, CvPoint2D32f m, CvPoint2D32f
 		return center;
 	center.x= ( ma*mb*((float)(l.y-r.y))+mb*((float)(l.x+m.x))-ma*((float)(m.x+r.x)) )/ (2.0*(mb-ma));
 	center.y=-(center.x -((float)(l.x+m.x))/2)/ma+((float)(l.y+m.y))/2.0;
-	center.y+=0.707;
+	//center.y+=0.707;
 	return center;
 }
 
