@@ -375,7 +375,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 				gd--;
 			ttl++;
 		}
-		for (int i = ball.x + ball.cr+2 i <= ball.x + ball.cr +ball.cr/2; i+=3)
+		for (int i = ball.x + ball.cr+2 ;i <= ball.x + ball.cr +ball.cr/2; i+=3)
 		{
 			if (!validpixel(i,j))
 				continue;
