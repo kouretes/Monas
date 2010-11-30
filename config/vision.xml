@@ -6,7 +6,7 @@
 <SegmentationTop>5-KouretesLab-segall.conf</SegmentationTop>
 <Dfov>56.8</Dfov>
 <!-- Ball Detection -->
-<ballsize>0.065</ballsize>
+<ballsize>0.0664</ballsize>
 <balltolerance>0.30</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.1</skipdistance>
@@ -25,3 +25,5 @@
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>27</sensordelay>
+
+<pitchoffset>0.087</pitchoffset>

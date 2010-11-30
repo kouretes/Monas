@@ -378,6 +378,7 @@ void Vision::fetchAndProcess()
 		p.cameraY=val[1];
 		p.cameraZ=val[2];//3rd element
 	}
+	p.cameraPitch+= config.pitchoffset;
 	//cout<<"Attach to Image:"<<endl;
 	seg->attachToIplImage(rawImage,type);//Make segmentator aware of a new image
 	//saveFrame(rawImage);
@@ -551,17 +552,35 @@ void Vision::fetchAndProcess()
 	}
 	if(obs.regular_objects_size()>0)
 	{
-
-		if(obs.regular_objects(0).object_name().c_str()[0]=='Y')
+		bool yellow=false,blue=false;
+		::google::protobuf::RepeatedPtrField< const ::NamedObject >::const_iterator ptr= obs.regular_objects().begin();
+		while(ptr!= obs.regular_objects().end())
 		{
-			LedValues* l=leds.add_leds();
-			l->set_chain("r_eye");
+
+			if((*ptr).object_name().c_str()[0]=='Y')
+				yellow=true;
+			else if((*ptr).object_name().c_str()[0]=='S')
+				blue=true;
+			++ptr;
+
+		}
+		LedValues* l=leds.add_leds();
+		l->set_chain("r_eye");
+		if(yellow&&!blue)
+		{
+
+
 			l->set_color("yellow");
 		}
-		else{
-			LedValues* l=leds.add_leds();
-			l->set_chain("r_eye");
+		else if(!yellow&&blue)
+		{
+
 			l->set_color("blue");
+		}
+		else if(yellow&&blue)
+		{
+
+			l->set_color("purple");
 		}
 
 	}
@@ -668,6 +687,7 @@ void Vision::loadXMLConfig(std::string fname)
 
 	xmlconfig->QueryElement("widthestimateotolerance",config.widthestimateotolerance);
 
+	xmlconfig->QueryElement("pitchoffset",config.pitchoffset);
 }
 
 

@@ -110,6 +110,8 @@ private:
     	float balltolerance,ballsize;
     	float goalheight,goaldist,goaldiam,goalslopetolerance,widthestimateotolerance;
 
+    	float pitchoffset;
+
 
     } config;
     XMLConfig *xmlconfig;
