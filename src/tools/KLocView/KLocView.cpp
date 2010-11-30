@@ -37,13 +37,7 @@
 #include "opencv/cvaux.hpp"
 
 #define TO_RAD 0.01745329f
-
 #define TO_DEG 1.0/TO_RAD
-#ifndef WIN32
-void* monitor(void*);
-#else
-DWORD WINAPI monitor(LPVOID);
-#endif
 
 using namespace std;
 ofstream myfile;
@@ -86,6 +80,43 @@ int update_field(LocalizationData & DebugData) {
 		if (DebugData.observations().has_ball())
 			KLocView->draw_ball(Belief, DebugData.observations().ball());
 		//else
+		if (DebugData.observations().regular_objects_size() > 0) {
+			cout << "We have observations " << DebugData.observations().regular_objects_size() << endl;
+			vector<KObservationModel> currentObservation;
+			KObservationModel observation;
+			for (int o = 0; o < DebugData.observations().regular_objects_size(); o++) {
+				NamedObject *obj = DebugData.mutable_observations()->mutable_regular_objects(o);
+				cout << obj->object_name() << endl;
+				if (obj->object_name() == "YellowLeft") {// "YellowLeft"
+					observation.Feature.x = 3000;
+					observation.Feature.y = 700;
+				} else if (obj->object_name() == "YellowRight") { //"YellowRight"
+					observation.Feature.x = 3000;
+					observation.Feature.y = -700;
+				} else if (obj->object_name() == "Yellow") {
+					observation.Feature.x = 3000;
+					observation.Feature.y = 0;
+				} else if (obj->object_name() == "SkyblueLeft") {// "YellowLeft"
+					observation.Feature.x = -3000;
+					observation.Feature.y = -700;
+				} else if (obj->object_name() == "SkyblueRight") { //"YellowRight"
+					observation.Feature.x = -3000;
+					observation.Feature.y = 700;
+				} else if (obj->object_name() == "Skyblue") {
+					observation.Feature.x = -3000;
+					observation.Feature.y = 0;
+				} else {
+					continue;
+				}
+
+				observation.Feature.id = obj->object_name();
+				observation.Bearing.val = obj->bearing();
+				observation.Distance.val = obj->distance() * 1000;
+				observation.Distance.Edev = sqrt(obj->distance_dev()) * 1000;
+				currentObservation.push_back(observation);
+			}
+			KLocView->DrawObservations(currentObservation);
+		}
 		//KLocView->CleanField();
 	}
 	//KLocView->BackupField();
@@ -94,7 +125,7 @@ int update_field(LocalizationData & DebugData) {
 
 	//Get the particles !!!
 	if (DebugData.particles_size() > 0) {
-		if (DebugData.particles_size() != Particles.size) {
+		if ((unsigned int) DebugData.particles_size() != Particles.size) {
 			if (Particles.x)
 				delete Particles.x;
 			if (Particles.y)
@@ -138,9 +169,9 @@ int receive_and_send_loop(TCPSocket *sock) {
 	int size;
 	int ssize, rsize;
 	int ss, rs;
-	int alreadyparsedbytes = 0;
-	char response;
-	int lastmotioncounter = 0;
+	//int alreadyparsedbytes = 0;
+	//char response;
+	//int lastmotioncounter = 0;
 	char * data = new char[993604];
 	int count = 0;
 	bool sendmotion = true;
@@ -166,13 +197,13 @@ int receive_and_send_loop(TCPSocket *sock) {
 				if (KfieldGui::keypressed == 'm') {
 					outgoingheader.set_nextmsgname("Walk");
 					std::cin.clear();
-					char nextChar;
+					//char nextChar;
 
 					//					while (nextChar != '\n' && nextChar != EOF) {
 					//						nextChar = cin.get();
 					//					}
 					cout << " Do you want to repeat the last motion " << endl;
-					cout << " X: " << x << " Y: " <<  y << " PHI " << th << " F " << f << " (type Y to repeat)" << endl;
+					cout << " X: " << x << " Y: " << y << " PHI " << th << " F " << f << " (type Y to repeat)" << endl;
 					string s;
 					cin >> ws; // skip any leading whitespace
 					getline(cin, s);
@@ -290,8 +321,8 @@ int receive_and_send_loop(TCPSocket *sock) {
 }
 
 int main(int argc, char* argv[]) {
-	if (2 != argc) {
-		cout << "usage: appclient server_ip server_port" << endl;
+	if (2 > argc) {
+		cout << "usage: " << argv[0] << " IP (PORT)" << endl;
 		return 0;
 	}
 	string servAddress = argv[1];

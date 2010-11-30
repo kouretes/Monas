@@ -46,8 +46,11 @@ ALCALL int _createModule( AL::ALPtr<AL::ALBroker> pBroker )
   AL::ALBrokerManager::getInstance()->addBroker(pBroker);
 
   AL::ALModule::createModule<mainModule>( pBroker, "mainModule" );
+#ifndef WEBOTS
   AL::ALModule::createModule<ButtonListener>(pBroker,"ButtonListener");
-
+#else
+  cout << "Webots build" << endl;
+#endif
   return 0;
 }
 

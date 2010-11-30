@@ -18,7 +18,7 @@ class LoggerClass {
 
     public:
 
-        enum MsgType { FatalError=0 , Error, Info, ExtraInfo, ExtraExtraInfo };
+        enum MsgType { FatalError=0, Error, Warning, Info, ExtraInfo, ExtraExtraInfo };
         
         ~LoggerClass () { ErrorLog.close(); }
 
@@ -33,7 +33,9 @@ class LoggerClass {
                 case Error:      
                     WriteMsgToBuffers ( name, msg, "red" );
                     break;
-
+                case Warning:
+                    WriteMsgToBuffers ( name, msg, "yellow" );
+                    break;
                 case Info:                    
                 case ExtraInfo:
                     if ( ! ActivityFilterEnabled )
@@ -103,6 +105,7 @@ class LoggerClass {
             ColorMap["blue"]    = "\033[1;34m";
             ColorMap["lBlue"]   = "\033[21;34m";
             ColorMap["green"]   = "\033[1;32m";
+            ColorMap["yellow"]   = "\033[1;33m";
             ColorMap["default"] = "\033[0m";
 
         }

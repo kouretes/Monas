@@ -18,14 +18,15 @@
 #include "stdio.h"
 #include <fstream>
 #include <time.h>
+#include <map>
 
 #define DELAY 5
-#define SCALE 10
+#define SCALE 5
 
-#define gui2world_x(x) x * SCALE - (2 * margintoline + field_width) / 2.0f
-#define gui2world_y(y) -(y * SCALE - (2 * margintoline + field_height) / 2.0f)
-#define world2gui_x(x) (x + (2 * margintoline + field_width) / 2.0f) / SCALE
-#define world2gui_y(x) (-y + (2 * margintoline + field_height) / 2.0f) / SCALE
+#define gui2world_x(x) x * scale - (2 * margintoline + field_width) / 2.0f
+#define gui2world_y(y) -(y * scale - (2 * margintoline + field_height) / 2.0f)
+#define world2gui_x(x) (x + (2 * margintoline + field_width) / 2.0f) / scale
+#define world2gui_y(x) (-y + (2 * margintoline + field_height) / 2.0f) / scale
 
 enum states {
 	ONEPOINTSELECTION, TWOPOINTSELECTION_1, TWOPOINTSELECTION_2, TWOPOINTSELECTION_3, READY_TO_SEND_SINGLE, READY_TO_SEND_TWO, FINISH
@@ -51,8 +52,8 @@ class KfieldGui {
 		CvPoint mypospoint, mypospoint_old;
 		CvPoint trackpospoint, trackpospoint_old;
 		CvPoint last, point1;
-
-		char buffer[80];
+		bool filecreated;
+		char executiondate[80];
 	public:
 		void drawCursor(int, int);
 		void on_mouse(int, int, int, int, void*);
@@ -61,10 +62,10 @@ class KfieldGui {
 		static int state;
 		static RobotPose pose1, pose2;
 		static partcl tempparticl, robotStartpose, robotEndpose;
-		;
 
 		double hScale ;
 		double vScale ;
+		double scale;
 		CvScalar random_color();
 		void KfieldInitTrackLine(partcl TrackPoint);
 		void KfieldInitTrackLine(belief mypos);
@@ -72,7 +73,7 @@ class KfieldGui {
 		void addTrackLine(partcl TrackPoint);
 		void drawErrors(float DistError, float RotError);
 
-		int record_data();
+		int record_odometry_data();
 
 		void CleanField();
 		void BackupField();
@@ -92,6 +93,7 @@ class KfieldGui {
 		static short keypressed;
 		int GuiWaitKeyPress();
 
+		void Init(int scale);
 		int linewidth;
 		int margintoline;
 		int field_width;
@@ -106,6 +108,8 @@ class KfieldGui {
 
 		int p_green_width; //in pixels
 		int p_green_height;
+
+		std::map<string, CvScalar> color;
 
 };
 

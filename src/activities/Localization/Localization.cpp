@@ -7,7 +7,8 @@
 #include <csignal>
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
-#include "../../messages/motion.pb.h"
+
+#include "architecture/archConfig.h"
 
 using namespace std;
 namespace {
@@ -37,6 +38,7 @@ void Localization::UserInit() {
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
+
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
@@ -47,10 +49,13 @@ int Localization::DebugMode_Receive() {
 	bool headerparsed = false;
 	int size;
 	int ssize, rsize;
-	int ss, rs;
+	int rs;
 	try {
 		ssize = 0;
-		sock->recv(&size, sizeof(uint32_t));
+		if ((sock->recv(&size, sizeof(uint32_t))) == 0) {
+			cout << "Stopping Debug ############# Disconnecting !!!" << endl;
+			debugmode = false;
+		}
 		size = ntohl(size);
 
 		cout << "Waiting for " << size << " Bytes " << endl;
@@ -68,7 +73,7 @@ int Localization::DebugMode_Receive() {
 				break;
 			}
 
-		cout << "Arrived " << rsize << " Bytes " << endl;
+		//cout << "Arrived " << rsize << " Bytes " << endl;
 
 		incommingheader.Clear();
 		headerparsed = incommingheader.ParsePartialFromArray(data, size);
@@ -205,7 +210,7 @@ void Localization::Send_LocalizationData() {
 		sendsize = buf.length();
 
 		rsize = 0;
-		cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
+		//cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
 
 		while (rsize < sendsize) {
 			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
@@ -241,7 +246,7 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 	//	mypos.x = XA * 1000;
 	//	mypos.y = YA * 1000;
 	//	mypos.theta = AA;
-	cout << "          Robot Position X: " << XA << " Y: " << YA << " A(DEG): " << AA * TO_DEG << endl;
+	//cout << "          Robot Position X: " << XA << " Y: " << YA << " A(DEG): " << AA * TO_DEG << endl;
 
 	float DX = (XA - TrackPointRobotPosition.x);
 	float DY = (YA - TrackPointRobotPosition.y);
@@ -255,11 +260,11 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 
 	MModel.Rotation.val = DR;
 	MModel.Rotation.Edev = 0.5 * TO_RAD;
-	cout << "          Robot Position DX: " << DX << " DY: " << DY << " DR(DEG): " << DR * TO_DEG << endl;
+	//cout << "          Robot Position DX: " << DX << " DY: " << DY << " DR(DEG): " << DR * TO_DEG << endl;
 
-	cout << "Distance.val = " << MModel.Distance.val << " Distance.Edev = " << MModel.Distance.Edev << endl;
-	cout << " Direction.val(DEG) = " << MModel.Direction.val * TO_DEG << " Direction.Edev(DEG) = " << MModel.Direction.Edev * TO_DEG << endl;
-	cout << "  Rotation.val(DEG) = " << MModel.Rotation.val * TO_DEG << " Rotation.Edev(DEG) = " << MModel.Rotation.Edev * TO_DEG << endl;
+	//cout << "Distance.val = " << MModel.Distance.val << " Distance.Edev = " << MModel.Distance.Edev << endl;
+	//cout << " Direction.val(DEG) = " << MModel.Direction.val * TO_DEG << " Direction.Edev(DEG) = " << MModel.Direction.Edev * TO_DEG << endl;
+	//cout << "  Rotation.val(DEG) = " << MModel.Rotation.val * TO_DEG << " Rotation.Edev(DEG) = " << MModel.Rotation.Edev * TO_DEG << endl;
 
 	TrackPointRobotPosition.x = XA;
 	TrackPointRobotPosition.y = YA;
@@ -271,10 +276,9 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 
 }
 
-belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright) {
+belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, double rangemaxleft, double rangemaxright) {
 
 	cout << "SelfLocalize SIR" << endl;
-	char c;
 	int iterations = 1;
 	//KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
 
@@ -467,14 +471,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 void Localization::read_messages() {
 	_blk->process_messages();
-	/*
-	 if (gsm != 0)
-	 delete gsm;
-	 if (rpsm != 0)
-	 delete rpsm;
-	 if (obsm != 0)
-	 delete obsm;
-	 */
+
 	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	rpsm = _blk->read_data<RobotPositionSensorMessage> ("RobotPositionSensorMessage");
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
@@ -491,14 +488,13 @@ void Localization::read_messages() {
 		KObservationModel tempOM;
 		currentObservation.clear();
 		//Load observations
-		//ALValue ret = KObserver->call<ALValue> ("Observe");
 
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
 
 		maxrangeleft = obsm->bearing_limit_left();//(float) ret[i + 1];
 		maxrangeright = obsm->bearing_limit_right();//(float) ret[i + 2];
-		cout << "Range Angles maxleft: " << maxrangeleft << " max right: " << maxrangeright << endl;
+		//cout << "Range Angles maxleft: " << maxrangeleft << " max right: " << maxrangeright << endl;
 
 		for (int i = 0; i < Objects.size(); i++) {
 			id = Objects.Get(i).object_name();//  (string) ret[i];
@@ -511,7 +507,7 @@ void Localization::read_messages() {
 				tempOM.Distance.val = Objects.Get(i).distance();//ALValue::TALValueDouble(ret[i + 1]);
 				tempOM.Bearing.val = Objects.Get(i).bearing();//ALValue::TALValueDouble(ret[i + 2]);
 				currentObservation.push_back(tempOM);
-				cout << "Feature seen " << tempOM.Feature.id << " Distance " << tempOM.Distance.val << " Bearing " << tempOM.Bearing.val << endl;
+				//cout << "Feature seen " << tempOM.Feature.id << " Distance " << tempOM.Distance.val << " Bearing " << tempOM.Bearing.val << endl;
 				//			cout << "feature"
 			}
 			//			else {
@@ -529,7 +525,7 @@ void Localization::read_messages() {
 
 }
 
-int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation, KMotionModel & MotionModel) {
+int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel) {
 	bool addnewptrs = false;
 	//Fill the world with data!
 	WorldInfo *WI = DebugData.mutable_world();
@@ -553,7 +549,7 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 
 	RobotPose prtcl;
 
-	if (DebugData.particles_size() < Particles.size)
+	if ((unsigned int) DebugData.particles_size() < Particles.size)
 		addnewptrs = true;
 	for (unsigned int i = 0; i < Particles.size; i++) {
 		if (addnewptrs)
@@ -571,13 +567,22 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 }
 
 void * Localization::StartServer(void * astring) {
-
+	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
+	bool found = false;
 	unsigned short port = 9001;
+	float temp=0;
+	if (config.IsLoadedSuccessfully()) {
+		found = true;
+		found &= config.QueryElement("port", temp);
+	}
+	if (found)
+		port = temp;
+	else
+		Logger::Instance().WriteMsg("Localization", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml", Logger::Warning);
 
 	TCPServerSocket servSock(port);
 
-	cout << "Localization server is ready at port: " << port << endl;
-
+	Logger::Instance().WriteMsg("Localization", " Localization server is ready at port: " + _toString(port), Logger::Info);
 	while (true) {
 		if (!debugmode) {
 			if (sock != NULL)

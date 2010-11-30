@@ -16,6 +16,10 @@ set ( ActivitySrcs  MotionController.cpp
 include ( ../activTemplate.cmake )
 
 use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS)
+if(Webots)
+  message ( STATUS " _..::: Configuring MotionController for Webots :::.._ " )
+  add_definitions(" -DWEBOTS ")
+endif(Webots)
 
 add_subdirectory ( SpecialActions )
 

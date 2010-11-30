@@ -18,6 +18,9 @@ KLocalization.h KLocalization.cpp ../../../external/PracticalSocket/PracticalSoc
 include ( ../activTemplate.cmake )
 
 use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS )
-
+if(Webots)
+  message ( STATUS " _..::: Configuring Localization for Webots :::.._ " )
+  add_definitions(" -DWEBOTS ")
+endif(Webots)
 target_link_libraries ( ${ActivityName}   NaoQiDep )
 

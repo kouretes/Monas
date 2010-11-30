@@ -9,6 +9,7 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
+#include "messages/motion.pb.h"
 
 #include "KLocalization.h"
 #include "Kutils.h"

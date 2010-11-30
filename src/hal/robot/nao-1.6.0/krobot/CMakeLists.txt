@@ -36,6 +36,11 @@ SET ( KROBOT_SRCS
 
 )
 
+if(Webots)
+  message ( STATUS " _..::: Configuring Webots :::.._ " )
+  add_definitions(" -DWEBOTS ")
+endif(Webots)
+
 configure_src_module( krobot ${KROBOT_SRCS} )
 
 use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE )

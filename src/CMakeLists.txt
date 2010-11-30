@@ -18,7 +18,7 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
   message ( FATAL_ERROR "LibBuildType should be one of the following: STATIC, SHARED or MODULE" )
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
-
+option ( Webots "Webots ..." )
 
 add_subdirectory ( ./messages/ )
 add_subdirectory ( ./architecture/ )
@@ -28,6 +28,9 @@ add_subdirectory ( ./activities/ )
 add_subdirectory ( ./hal/ )
 
 option ( BuildTests "Compile testing code" )
+
+
+
 
 if ( BuildTests )
   add_subdirectory ( ./testing/ )
