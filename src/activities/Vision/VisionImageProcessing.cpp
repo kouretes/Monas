@@ -425,7 +425,7 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 
 	}
 	ratio=(float (bd+1))/(ttl+1);
-	if(ratio>0.25)
+	if(ratio>0.35)
 		return false;
 
 	ttl=0;gd=0;
@@ -592,11 +592,11 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		for(int k=0;k<config.subsampling-1;k++)
 		{
 			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
-			suml+=trcrs.p.x;
-			//newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
+			//suml+=trcrs.p.x;
+			newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
 			trcrs=traceStrictline(cvPoint(at.x,at.y),Vrt,c);
-			//newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
-			sumr+=trcrs.p.x;
+			newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
+			//sumr+=trcrs.p.x;
 			at.step();
 		}
 
@@ -615,11 +615,11 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		for(int k=0;k<config.subsampling-1;k++)
 		{
 			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
-			suml+=trcrs.p.x;
-			//newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
+			//suml+=trcrs.p.x;
+			newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
 			trcrs=traceStrictline(cvPoint(at.x,at.y),Vrt,c);
-			sumr+=trcrs.p.x;
-			//newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
+			//sumr+=trcrs.p.x;
+			newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
 			at.step();
 		}
 		newpost.tl.x=suml/(config.subsampling-1);
