@@ -1,5 +1,9 @@
 #include "HeadBehavior.h"
 
+
+using namespace boost::posix_time;
+
+
 namespace {
 	ActivityRegistrar<HeadBehavior>::Type temp("HeadBehavior");
 }
@@ -19,23 +23,20 @@ void HeadBehavior::UserInit() {
 
 	hbmsg = new HeadToBMessage();
 	scmsg = new ScanMessage();
-
+	ballLastSeen = microsec_clock::universal_time();
 	ballfound = 0;
 
 	reachedlimitup = false;
 	reachedlimitdown = false;
 	reachedlimitleft = false;
 	reachedlimitright = false;
-	//vcalibrated = false;
 	scancompleted = false;
 	headstartscan = true;
 	calibrated = 0;
 	headaction = 0;
 	oldheadaction = 0;
 	choosemyaction = false;
-	//counttime = false;
-	//time(&start);
-	//time(&end);
+
 	Logger::Instance().WriteMsg("HeadBehavior", "Initialized", Logger::Info);
 }
 
@@ -54,92 +55,71 @@ int HeadBehavior::Execute() {
 	switch (headaction) {
 
 		case (DONOTHING):
-			//vcalibrated=false;
+
 			break;
 		case (CALIBRATE):
-		//	if (!vcalibrated) {
-				calibrate();
-				calibrated = 1;
-				hbmsg->set_calibrated(calibrated);
-				//counttime = false;
-		//	}
+
+			calibrate();
+			calibrated = 1;
+			hbmsg->set_calibrated(calibrated);
 			headaction = DONOTHING;
 			choosemyaction = true;
-			//	_blk->publish_state(*hbmsg, "behavior"); ///signal or state
+
 			break;
 		case (SCANFORBALL):
-		//	vcalibrated = false;
+
 			scancompleted = false;
-			//	if (obsm!=0 && obsm->has_ball()){
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				headaction = BALLTRACK;
-				ballfound += 5;
+				ballfound =1;
+				ballLastSeen = microsec_clock::universal_time()+seconds(2);
 				choosemyaction = true;
 				hbmsg->set_ballfound(ballfound);
 				cout << "ballfound " << ballfound << "HeadBehavior" << endl;
-
-				//	_blk->publish_state(*hbmsg, "behavior"); ///signal or state
-				//time_t(&start);
-				//counttime = true;
 			} else if (hjsm != 0) {
-				//counttime = false;
 				HeadYaw = hjsm->sensordata(0);
 				HeadPitch = hjsm->sensordata(1);
 				HeadScanStep();
 			}
 			break;
 		case (SCANFORPOST):
-		//	vcalibrated = false;
+
 			break;
 		case (BALLTRACK):
-			//vcalibrated = false;
+
 			if (bmsg != 0) {
 				Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 				if (bmsg->radius() > 0) { //This means that a ball was found
 					MakeTrackBallAction();
-					//time(&end);
 
-					ballfound += 5;
-					if (ballfound > 20)
-						ballfound = 20; //Increase this value when we see the ball
+					ballfound = 1;
+					ballLastSeen = microsec_clock::universal_time()+seconds(2);
 
 				} else {
-					if (ballfound > 0)
-						ballfound -= 1; //Decrease it when we don't see the ball
-					if (ballfound == 0) {
+					if (ballLastSeen <=microsec_clock::universal_time())
+						ballfound = 1;
+					else{
+						ballfound = 0;
 						headstartscan = true;
-						//counttime = false;
 					}
 				}
 			}
 			cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 
 			hbmsg->set_ballfound(ballfound);
-			Logger::Instance().WriteMsg("HeadBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
-			//_blk->publish_state(*hbmsg, "behavior"); ///signal or state
 			break;
-
 	}
-	//if (headaction == BALLTRACK || oldheadaction!=headaction || scancompleted)
-	_blk->publish_state(*hbmsg, "behavior"); ///signal or state
+	_blk->publish_state(*hbmsg, "behavior");
 	return 0;
 }
 
 int HeadBehavior::MakeTrackBallAction() {
 
-	//float overshootfix = 0.50;
-	//float cx = bmsg->cx();
-	//float cy = bmsg->cy();
-	//if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
-	//hmot->set_command("setHead");
-	//hmot->set_parameter(0, bmsg->referenceyaw() - overshootfix * cx);
-	//hmot->set_parameter(1, bmsg->referencepitch() - overshootfix * cy);
 	hmot->set_command("setHead");
 	hmot->set_parameter(0, bmsg->referenceyaw());
 	hmot->set_parameter(1, bmsg->referencepitch());
 	_blk->publish_signal(*hmot, "motion");
 	cout << "Track step" << endl;
-	//}
 
 	return 1;
 }
@@ -210,19 +190,13 @@ void HeadBehavior::HeadScanStep() {
 		scmsg->set_scancompleted(scancompleted);
 		_blk->publish_signal(*scmsg, "behavior");
 	}
-
-	//startscan = false;
 }
 
 void HeadBehavior::read_messages() {
 
-	//if (bmsg != 0) delete bmsg;
-	//if (hjsm != 0) delete hjsm;
-
 	bhm = _blk->read_signal<BToHeadMessage> ("BToHeadMessage");
 	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
 	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
-	//obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 
 	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c = _blk->read_state<CalibrateCam> ("CalibrateCam");
@@ -230,7 +204,6 @@ void HeadBehavior::read_messages() {
 		if (c->status() == 1) {
 			calibrated = 2;
 			hbmsg->set_calibrated(calibrated);
-		//	vcalibrated = true;
 		}
 	}
 }
