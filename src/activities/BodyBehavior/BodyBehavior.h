@@ -59,6 +59,8 @@ class BodyBehavior: public IActivity {
 		boost::shared_ptr<const HeadToBMessage> hbm;
 		boost::shared_ptr<const ScanMessage> scm;
 
+		ObservationMessage* lastObsm;
+
 		int calibrated;
 		bool play;
 		bool kickoff;
@@ -76,8 +78,6 @@ class BodyBehavior: public IActivity {
 		int playernum;
 		int orientation;
 
-		//bool waitforscan;////////////////////////////
-	//	time_t starttime;//////////////////////////////////////////////////
 
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);

@@ -14,6 +14,9 @@
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -64,7 +67,6 @@ class HeadBehavior: public IActivity {
 		bool headstartscan;
 		short scandirectionpitch;
 		short scandirectionyaw;
-		//bool vcalibrated;
 		bool reachedlimitup;
 		bool reachedlimitdown;
 		bool reachedlimitleft;
@@ -75,9 +77,9 @@ class HeadBehavior: public IActivity {
 		boost::shared_ptr<const BToHeadMessage> bhm;
 		//boost::shared_ptr<const ObservationMessage> obsm;		
 		int calibrated;
-		//bool counttime;
-		//time_t start;
-		//time_t end;
+
+		boost::posix_time::ptime ballLastSeen;
+
 		void calibrate();
 
 };
