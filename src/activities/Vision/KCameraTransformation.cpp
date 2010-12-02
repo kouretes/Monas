@@ -152,7 +152,12 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
 
     //Keep V1 Constant, and move v2
     float angs,angl;
+    float dist,ang;
     KMat::HCoords<float,2> v=v2;
+	ang=vectorAngle(v1,v);
+	dist=realsize/(sin(ang));
+
+
     //Fail small : move v towards v1 by 1 pixel
     v1(0)<v(0)?v(0)-=0.707:v(0)+=0.707;
     v1(1)<v(1)?v(1)-=0.707:v(1)+=0.707;
@@ -171,8 +176,8 @@ measurement KCameraTranformation::angularDistance(const KMat::HCoords<float,2> &
     distl=realsize/(sin(angs));
     //cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
     measurement m;
-    m.mean=(dists+distl)/2;
-    m.var=(sqrd(dists-m.mean)+sqrd(distl-m.mean))/2;
+    m.mean=dist;
+    m.var=(sqrd(dists-dist)+sqrd(distl-dist))/2;
     return m;
 
 }
@@ -184,7 +189,11 @@ measurement KCameraTranformation::angularDistanceProjected(const KMat::HCoords<f
 
     //Keep V1 Constant, and move v2
     float angs,angl;
+	float dist,ang;
     KMat::HCoords<float,2> v=v2;
+	ang=vectorAngle(v1,v);
+	dist=realsize/(sin(ang));
+
     //Fail small : move v towards v1 by 1 pixel
     v1(0)<v(0)?v(0)-=0.707:v(0)+=0.707;
     v1(1)<v(1)?v(1)-=0.707:v(1)+=0.707;
@@ -203,13 +212,14 @@ measurement KCameraTranformation::angularDistanceProjected(const KMat::HCoords<f
     distl=realsize/(sin(angs));
     //Project to ground...
 	//cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
+	dist=sqrt(sqrd(dist)-sqrd(thepose.cameraZ-realsize));
     dists=sqrt(sqrd(dists)-sqrd(thepose.cameraZ-realsize));
     distl=sqrt(sqrd(distl)-sqrd(thepose.cameraZ-realsize));
     if(isnan(dists)) dists=0;
     if(isnan(distl)) distl=0;
     //cout<<"ds:"<<dists<<","<<"dl:"<<distl<<endl;
     measurement m;
-    m.mean=(dists+distl)/2;
+    m.mean=dist;//(dists+distl)/2;
     m.var=(sqrd(dists-m.mean)+sqrd(distl-m.mean))/2;
     return m;
 

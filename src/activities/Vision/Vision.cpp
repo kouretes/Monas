@@ -671,14 +671,20 @@ void Vision::loadXMLConfig(std::string fname)
 	xmlconfig->QueryElement("SegmentationTop",config.SegmentationTop);
 	xmlconfig->QueryElement("cvHighgui",config.cvHighgui);
 	xmlconfig->QueryElement("sensordelay",config.sensordelay);
-	xmlconfig->QueryElement("scanstep",config.scanstep);
+
+	//xmlconfig->QueryElement("scanstep",config.scanstep);
+	xmlconfig->QueryElement("scanV",config.scanV);
+	xmlconfig->QueryElement("scanH",config.scanH);
+	xmlconfig->QueryElement("minH",config.minH);
 	xmlconfig->QueryElement("skipdistance",config.skipdistance);
-	xmlconfig->QueryElement("borderskip",config.borderskip);
+	xmlconfig->QueryElement("bordersize",config.bordersize);
 	xmlconfig->QueryElement("subsampling",config.subsampling);
 	xmlconfig->QueryElement("seedistance",config.seedistance);
 	xmlconfig->QueryElement("obstacledistance",config.obstacledistance);
 	xmlconfig->QueryElement("balltolerance",config.balltolerance);
     xmlconfig->QueryElement("ballsize",config.ballsize);
+	xmlconfig->QueryElement("pixeltol",config.pixeltol);
+
 
     xmlconfig->QueryElement("goalheight",config.goalheight);
     xmlconfig->QueryElement("goaldist",config.goaldist);

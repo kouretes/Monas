@@ -104,7 +104,7 @@ private:
     	int sensordelay;
     	float Dfov;
     	std::string SegmentationBottom,SegmentationTop;
-    	int scanstep,subsampling,borderskip;
+    	int scanV,scanH,minH,subsampling,bordersize,pixeltol;
     	float skipdistance,seedistance,obstacledistance;
 
     	float balltolerance,ballsize;
