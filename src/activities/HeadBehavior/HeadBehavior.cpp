@@ -55,7 +55,9 @@ int HeadBehavior::Execute() {
 	switch (headaction) {
 
 		case (DONOTHING):
-
+			ballfound = 0;
+			hbmsg->set_ballfound(ballfound);
+			
 			break;
 		case (CALIBRATE):
 
@@ -63,7 +65,7 @@ int HeadBehavior::Execute() {
 			calibrated = 1;
 			hbmsg->set_calibrated(calibrated);
 			headaction = DONOTHING;
-			choosemyaction = true;
+			choosemyaction = true;			
 
 			break;
 		case (SCANFORBALL):
