@@ -36,9 +36,15 @@ void Localization::UserInit() {
 	int max_bytedata_size = 100000;
 
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
+	leftright = 1;
+	headpos = 0;
+	hmot.set_command("setHead");
+	hmot.add_parameter(0.0f);
+	hmot.add_parameter(-0.66322512);
 
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
-
+	KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
+	KLocalization::setBelief(0, 0, 0, 1);
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
@@ -58,7 +64,7 @@ int Localization::DebugMode_Receive() {
 		}
 		size = ntohl(size);
 
-		cout << "Waiting for " << size << " Bytes " << endl;
+		//cout << "Waiting for " << size << " Bytes " << endl;
 
 		if (size < 1) {
 			//Something went wrong ...
@@ -93,7 +99,7 @@ int Localization::DebugMode_Receive() {
 			return 0;
 		}
 		//google::protobuf::Message * incommingmsg = &incommingheader;
-		cout << "Next message " << incommingheader.nextmsgbytesize() << endl;
+		//cout << "Next message " << incommingheader.nextmsgbytesize() << endl;
 
 		//const google::protobuf::FieldDescriptor* field = incommingmsg->GetDescriptor()->FindFieldByLowercaseName("nextmsgbytesize");
 		//if(field!=NULL || incommingheader.nextmsgbytesize()>0){
@@ -153,14 +159,41 @@ int Localization::DebugMode_Receive() {
 	}
 	return 0;
 }
+
+void Localization::SimpleBehaviorStep() {
+
+	if(count%100 == 2){
+		hmot.set_command("setHead");
+		//hmot.set_parameter(0,0.0f);
+		hmot.set_parameter(1,-0.66322512);
+	}
+
+
+	if(fabs(headpos)>1.3)
+		leftright*=-1;
+
+	headpos +=0.13*leftright;
+
+	hmot.set_parameter(0,headpos);
+	hmot.set_parameter(1,(0.12307*abs(headpos))-0.66322512);
+
+	_blk->publish_signal(hmot,"motion");
+
+	//TRy to get the robot to the desired position ...
+
+
+}
+
 int Localization::Execute() {
 
-	read_messages();
+	process_messages();
 
 	if (debugmode)
 		DebugMode_Receive();
 
-	//LocalizationStepSIR(robotmovement,currentObservation, maxrangeleft, maxrangeright);
+	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
+
+	//SimpleBehaviorStep();
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
@@ -169,7 +202,7 @@ int Localization::Execute() {
 
 	///DEBUGMODE SEND RESULTS
 	if (debugmode) {
-		LocalizationData_Load(SIRParticles, currentObservation, robotmovement);
+		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
 	count++;
@@ -252,17 +285,29 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 	float DY = (YA - TrackPointRobotPosition.y);
 	float DR = anglediff2(AA, TrackPointRobotPosition.phi);
 
-	MModel.Distance.val = DISTANCE_2(DX, DY);
-	MModel.Direction.Edev = pow(MModel.Distance.val, 2);
+	float robot_dist = DISTANCE_2(DX, DY);
+	float robot_dir = anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
+	float robot_rot = DR;
 
-	MModel.Direction.val = anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
-	MModel.Direction.Edev = 1 * TO_RAD;
+	MModel.type = "ratio";
+	MModel.Distance.val = robot_dist;
+	MModel.Distance.ratiomean = 1.32;// -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155;
+	MModel.Distance.ratiodev = 0.002131 * (robot_dir + robot_rot) + 0.094058;
 
-	MModel.Rotation.val = DR;
-	MModel.Rotation.Edev = 0.5 * TO_RAD;
+	MModel.Direction.val = robot_dir;
+	cout << "MModel.Direction.val " << MModel.Direction.val;
+	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3) + 0.1086; // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ;
+	cout << "MModel.Direction.Emean " << MModel.Direction.Emean;
+	MModel.Direction.Edev = -0.019 * abs(robot_dir) + 0.059824;
+	// 0.0063971 * robot_dir + 0.090724 / abs(robot_dir);
+	cout << "MModel.Direction.Edev " << MModel.Direction.Edev;
+
+	MModel.Rotation.val = robot_rot;
+	MModel.Rotation.ratiomean = 0;// -1.9346*robot_dist + 10.041 *robot_dir + 173.24*robot_rot + 890.64;
+	MModel.Rotation.ratiodev = 0.0001;//5.67 *robot_dist + -69.009 *robot_dir +-359.19*robot_rot -2561.2;
 	//cout << "          Robot Position DX: " << DX << " DY: " << DY << " DR(DEG): " << DR * TO_DEG << endl;
 
-	//cout << "Distance.val = " << MModel.Distance.val << " Distance.Edev = " << MModel.Distance.Edev << endl;
+	cout << "Distance.val = " << MModel.Distance.val << " Distance.Edev = " << MModel.Distance.Edev << endl;
 	//cout << " Direction.val(DEG) = " << MModel.Direction.val * TO_DEG << " Direction.Edev(DEG) = " << MModel.Direction.Edev * TO_DEG << endl;
 	//cout << "  Rotation.val(DEG) = " << MModel.Rotation.val * TO_DEG << " Rotation.Edev(DEG) = " << MModel.Rotation.Edev * TO_DEG << endl;
 
@@ -294,31 +339,32 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 	//cin.ignore(10, '\n');
 	//cin.clear();
-	cout << "write something to predict particles " << endl;
+	//cout << "write something to predict particles " << endl;
 	//cin >> c;
 	//SpreadParticles
-	if (Observations.empty()) {
-		cout << "No observations ... spreading" << endl;
-		SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, 10);
-	}
-	if (depletions_counter > 1) {
-		cout << "Depletion Counter " << depletions_counter << endl;
-		SpreadParticlesCirc(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
-	}
+	//	if (Observations.empty()) {
+	//		cout << "No observations ... spreading" << endl;
+	//		SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, 10);
+	//	}
+	//	if (depletions_counter > 1) {
+	//		cout << "Depletion Counter " << depletions_counter << endl;
+	//		SpreadParticlesCirc(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
+	//	}
 
-	SpreadParticlesCirc(SIRParticles, 10.0 * depletions_counter, 10 * TO_RAD, 20);
-	SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 2 * TO_RAD, 100);
-	SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 45 * TO_RAD, 5);
+	//SpreadParticlesCirc(SIRParticles, 10.0 * depletions_counter, 10 * TO_RAD, 20);
+	//SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 2 * TO_RAD, 100);
+	//SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 45 * TO_RAD, 5);
 
 	//	if (Observations.size() > 1)
 	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
 
 #ifdef ADEBUG
+	cout << "\nPredict Iterations " << iterations << endl;
 	for (int i = 0; i < partclsNum / 10.0; i++)
 	cout << SIRParticles.Weight[i] << "  ";
 #endif
 	//SIR Filter
-	cout << "\nPredict Iterations " << iterations << endl;
+
 
 	//sleep(1);
 	//Predict - Move particles according the Prediction Model
@@ -329,32 +375,18 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//		SpreadParticlesCirc(SIRParticles, iterations * 100, 30 * TO_RAD, 100);
 	//	}
 	////#########################
-	//Gui->display_particles((*this).SIRParticles);
-	//Gui->save_field_to_png(count++);
 	//
 
-	//cin.ignore(10, '\n');
-	//cin.clear();
-	cout << "write something to display weighted - updated particles " << endl;
-	//cin >> c;
-	//	SleepMs(6500);
-	//
 	//Set semi-optimal bearing angle as the average bearing angle to the observations
 	if (Observations.size() > 0)
 		ForceBearing(SIRParticles, Observations);
 
-	//Update - Using incoming observation
+	cout << CircleIntersectionPossibleParticles(Observations, SIRParticles, 4) << endl;
 
+
+	//Update - Using incoming observation
 	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
-	////#########################
-	//	Gui->RevertBackupField();
-	//	Gui->display_particles((*this).SIRParticles, true);
-	//	Gui->save_field_to_png(count++);
-	//SleepMs(200);
-	//cin.ignore(10, '\n');
-	//cin.clear();
-	cout << "write something to display display normalized particles " << endl;
-	//cin >> c;
+
 
 #ifdef ADEBUG
 	cout << "\nUnnormalized SIR particles " << endl;
@@ -391,9 +423,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 #endif
 	////#########################
-	//	Gui->RevertBackupField();
-	//	Gui->display_particles((*this).SIRParticles);
-	//	Gui->save_field_to_png(count++);
 
 	//extract estimation
 	partcl maxprtcl;
@@ -434,10 +463,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
 
-	//cin.ignore(10, '\n');
-	//cin.clear();
-	cout << "write something to resample+propagate " << endl;
-	//cin >> c;
 	if ((ESS < Beta || AgentPosition.confidence > 150) && !Observations.empty()) {
 		Resample(SIRParticles, index, 0);
 		Propagate(SIRParticles, index);
@@ -448,28 +473,17 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	}
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
-	////#########################
-	//	Gui->RevertBackupField();
-	//	Gui->display_particles((*this).SIRParticles);
-	//	Gui->save_field_to_png(count++);
 
 	//cin.ignore(10, '\n');
 	//cin.clear();
-	cout << "write something to display belief " << endl;
+	//	cout << "write something to display belief " << endl;
 	//cin >> c;
-	////#########################
-	//Gui->display_belief(AgentPosition, rangemaxleft, rangemaxright, count);
-	//Gui->save_field_to_png(count++);
 
-	//cin.ignore(10, '\n');
-	//cin.clear();
-	cout << "write something to continue " << endl;
-	//cin >> c;
 	return AgentPosition;
-	//AgentPosition
+
 }
 
-void Localization::read_messages() {
+void Localization::process_messages() {
 	_blk->process_messages();
 
 	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
@@ -485,31 +499,35 @@ void Localization::read_messages() {
 	}
 
 	if (obsm != 0) {
-		KObservationModel tempOM;
+		KObservationModel tmpOM;
 		currentObservation.clear();
 		//Load observations
 
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
 
-		maxrangeleft = obsm->bearing_limit_left();//(float) ret[i + 1];
-		maxrangeright = obsm->bearing_limit_right();//(float) ret[i + 2];
+		maxrangeleft = obsm->bearing_limit_left();
+		maxrangeright = obsm->bearing_limit_right();
 		//cout << "Range Angles maxleft: " << maxrangeleft << " max right: " << maxrangeright << endl;
 
 		for (int i = 0; i < Objects.size(); i++) {
-			id = Objects.Get(i).object_name();//  (string) ret[i];
+			id = Objects.Get(i).object_name();
 			if ((this)->KFeaturesmap.count(id) != 0) {
-				tempOM.Feature = (this)->KFeaturesmap[id];
-
 				//Make the feature
+				tmpOM.Feature = (this)->KFeaturesmap[id];
+				//Distance
+				tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
+				tmpOM.Distance.Emean = 0;
+				tmpOM.Distance.Edev = sqrt(Objects.Get(i).distance_dev()) * 1000;
 
-				//tempOM.Feature =
-				tempOM.Distance.val = Objects.Get(i).distance();//ALValue::TALValueDouble(ret[i + 1]);
-				tempOM.Bearing.val = Objects.Get(i).bearing();//ALValue::TALValueDouble(ret[i + 2]);
-				currentObservation.push_back(tempOM);
-				//cout << "Feature seen " << tempOM.Feature.id << " Distance " << tempOM.Distance.val << " Bearing " << tempOM.Bearing.val << endl;
-				//			cout << "feature"
+				tmpOM.Bearing.val = Objects.Get(i).bearing();
+				tmpOM.Bearing.Emean = 0;
+				tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev());
+
+				currentObservation.push_back(tmpOM);
+				cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
 			}
+
 			//			else {
 			//				if (id.compare("HeadYawAngles") == 0) {
 			//					maxrangeleft = Objects->Get(i)->bearing_limit_left;//(float) ret[i + 1];
@@ -519,9 +537,14 @@ void Localization::read_messages() {
 			//					cout << "String i " << i << " Name " << (string) ret[i] << " unknown " << endl;
 			//			}
 		}
+		//		if(AgentPosition.confidence > 0.5){
+		//			tmpOM.Feature = "OldPose";
+		//			tmpOM.Distance.val = DISTANCE(AgentPosition.x,Particles.x[p],AgentPosition.y,Particles.y[p]);
+		//			tmpOM.Bearing.val = atan2(Particles .y[p] - AgentPosition.y, Particles.x[p] - AgentPosition.x);
+		//		}
 	}
 
-	Logger::Instance().WriteMsg("Localization", "read_messages ", Logger::ExtraExtraInfo);
+	Logger::Instance().WriteMsg("Localization", "process_messages ", Logger::ExtraExtraInfo);
 
 }
 
@@ -559,7 +582,7 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 		DebugData.mutable_particles(i)->set_phi(Particles.phi[i]);
 		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
 	}
-
+	cout << " added " << Particles.size << endl;
 	if (obsm != NULL) {
 		(DebugData.mutable_observations())->CopyFrom(*obsm);
 	}
@@ -570,7 +593,7 @@ void * Localization::StartServer(void * astring) {
 	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
 	bool found = false;
 	unsigned short port = 9001;
-	float temp=0;
+	float temp = 0;
 	if (config.IsLoadedSuccessfully()) {
 		found = true;
 		found &= config.QueryElement("port", temp);

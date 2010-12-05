@@ -160,8 +160,10 @@ if(pwdfolders[-2] != "make"):
 	print "Your pwd : " + pwd + "\n Try again from the correct path, Quiting"
 	exit(-1)
 
+
 print "Working directory " + pwd
 ret=os.system("make install")
+
 if(ret!=0):
 	print '\033[1;31m Unsuccessfull compiling \033[1;m'
 	exit(-1)
@@ -172,7 +174,7 @@ else:
 partial_configuration_dir = "../../scripts/PartialConfiguration/"
 scripts_dir = "../../scripts/"
 
-
+os.system('aplay -q '+ scripts_dir +'beep.wav')
  #= os.environ["partial_configuration_dir"]
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
@@ -190,8 +192,9 @@ os.system("mkdir -p " + binaries_dir + "/lib")
 
 os.system('cp ' + scripts_dir +'Start.py ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
+os.system('cp ' + scripts_dir +'start.sh ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
-
+os.system('cp ' + scripts_dir +'beep.wav ' + binaries_dir + "config/")
 print "Lenght of arguments " + str(len(sys.argv))
 
 if(partial_configuration_dir	== "" ):

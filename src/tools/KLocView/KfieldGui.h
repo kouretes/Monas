@@ -78,7 +78,7 @@ class KfieldGui {
 		void CleanField();
 		void BackupField();
 		void RevertBackupField();
-		void DrawObservations(vector<KObservationModel> & currentObservation);
+		void DrawObservations(belief Belief, vector<KObservationModel> & currentObservation);
 		int save_field_to_png(int save_field_to_file);
 		void display_Gui();
 		KfieldGui();
@@ -86,7 +86,7 @@ class KfieldGui {
 		virtual ~KfieldGui();
 		void draw_belief(belief Belief, double maxrangeleft, double maxrangeright, int step);
 		void draw_Trackpoint(partcl Belief, double maxrangeleft, double maxrangeright);
-		void draw_particles(parts & Particles, bool unnormilized = false);
+		void draw_particles(parts & Particles, bool leaveunnormilised = false);
 		void draw_ball(belief Belief, BallObject Ball);
 		void* redraw_field(void * fps);
 		void make_field(IplImage** image);

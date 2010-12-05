@@ -24,7 +24,7 @@
 //#define VISIBILITY_WEIGHTING
 #define DISTANCE_WEIGHTING
 #define BEARING_WEIGHTING
-#define PASTBELIEF
+//#define PASTBELIEF
 
 using namespace std;
 
@@ -179,11 +179,14 @@ typedef struct rvar {
 		double val;
 		double Emean;
 		double Edev;
-
+		double ratiomean;
+		double ratiodev;
 		rvar() {
 			val = 0;
 			Emean = 0;
 			Edev = 0;
+			ratiomean = 0;
+			ratiodev =0 ;
 		}
 
 		rvar(double val_, double mean_, double dev_) {
@@ -330,10 +333,12 @@ class KLocalization {
 		int * ResampleSWR(parts & Particles, int *Index);
 		int * multinomialR(parts & Particles, int *Index);
 
+		void setBelief(double x, double y, double phi, double confidence);
 		void setParticlesPose(parts & Particles, double x, double y, double phi);
 		void setParticlesPoseUniformly(parts & Particles);
-		int ObservationParticles(vector<KObservationModel> & Observation, parts &Paticles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright);
 
+		int ObservationParticles(vector<KObservationModel> & Observation, parts &Paticles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright);
+		int CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) ;
 		void SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 		void SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 

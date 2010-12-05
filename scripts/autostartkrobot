@@ -19,14 +19,17 @@ IP = "127.0.0.1"#"nao57.local"#
 PORT = 9559
 
 def main():
-
     while(True):
       try:
         proxy = ALProxy("mainModule", IP, PORT)
         proxy.post.Start()
+        os.system('aplay /home/nao/naoqi/config/beep.wav')
         return
       except:
         time.sleep(0.5)
+        if(os.system("ps | grep -v grep | grep naoqi") != 0 ):
+          return
+
 
 if __name__ == "__main__":
     main()

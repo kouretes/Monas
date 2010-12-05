@@ -230,10 +230,10 @@ void KfieldGui::display_Gui() {
 		Gui = this;
 		thread_pid = pthread_create(new pthread_t, NULL, &gui_redraw/* KfieldGui::redraw_field*/, fps);
 	}
-	cvSetMouseCallback(wndname, &gui_onmouse/*KfieldGui::on_mouse*/, 0);
+	cvSetMouseCallback(wndname, &gui_onmouse/*KfieldGcvui::on_mouse*/, 0);
 }
 
-void KfieldGui::DrawObservations(vector<KObservationModel> & currentObservation) {
+void KfieldGui::DrawObservations(belief Belief,vector<KObservationModel> & currentObservation) {
 	CvPoint pt1, pt2;
 	unsigned int i;
 	pthread_mutex_lock(&lock);
@@ -248,8 +248,8 @@ void KfieldGui::DrawObservations(vector<KObservationModel> & currentObservation)
 			cvCircle(field, pt1, (currentObservation[i].Distance.val + currentObservation[i].Distance.Edev) / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["lightyellow"] : color["lightblue"], 0, CV_AA, 0);
 		if ((currentObservation[i].Distance.val - currentObservation[i].Distance.Edev) > 0)
 			cvCircle(field, pt1, (currentObservation[i].Distance.val - currentObservation[i].Distance.Edev) / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["lightyellow"] : color["lightblue"], 0, CV_AA, 0);
-		pt2.x = pt1.x - (currentObservation[i].Distance.val / scale) * cos(-currentObservation[i].Bearing.val);
-		pt2.y = pt1.y - (currentObservation[i].Distance.val / scale) * sin(-currentObservation[i].Bearing.val);
+		pt2.x = pt1.x - (currentObservation[i].Distance.val / scale) * cos(-(currentObservation[i].Bearing.val+Belief.theta));
+		pt2.y = pt1.y - (currentObservation[i].Distance.val / scale) * sin(-(currentObservation[i].Bearing.val+Belief.theta));
 
 		cvLine(field, pt1, pt2, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
 
@@ -422,7 +422,7 @@ void KfieldGui::draw_Trackpoint(partcl Belief, double maxrangeleft, double maxra
 
 }
 
-void KfieldGui::draw_particles(parts & Particles, bool unnormilised) {
+void KfieldGui::draw_particles(parts & Particles, bool leaveunnormilised) {
 	unsigned int i;
 	pthread_mutex_lock(&lock);
 
@@ -432,7 +432,7 @@ void KfieldGui::draw_particles(parts & Particles, bool unnormilised) {
 	double max = 0;
 	//int p_green_width = (2 * margintoline + field_width) / scale;
 	//int p_green_height = (2 * margintoline + field_height) / scale;
-	if (unnormilised)
+	if (leaveunnormilised)
 		max = 1;
 	else {
 		for (i = 0; i < Particles.size; i++)
@@ -444,17 +444,17 @@ void KfieldGui::draw_particles(parts & Particles, bool unnormilised) {
 
 		pt1.x = (Particles.x[i] + (2 * margintoline + field_width) / 2.0) / scale;
 		pt1.y = (-Particles.y[i] + (2 * margintoline + field_height) / 2.0) / scale;
-		cvCircle(field, pt1, 20.0 / scale, CV_RGB(230, 254 * (1 - Particles.Weight[i] / max), 48), CV_FILLED, CV_AA, 0);
+		cvCircle(field, pt1, 20.0 / scale, CV_RGB(130, 254 * (1 - Particles.Weight[i] / max), 48), CV_FILLED, CV_AA, 0);
 		//cvCircle(image, pt1, 4, CV_RGB(0,0,100), 0, CV_AA, 0);
 		//cout << "X: "<<Particles.x[i] << " Y: " << Particles.y[i] << " Phi: " << Particles.phi[i] << endl;
-		//cout << "pt1.x " << pt1.x << " pt1.y "<<pt1.y << endl;
+		cout << "pt1.x " << pt1.x << " pt1.y "<<pt1.y << endl;
 		pt2.x = pt1.x + len * cos(-Particles.phi[i]);
 		pt2.y = pt1.y + len * sin(-Particles.phi[i]);
 		cvLine(field, pt1, pt2, CV_RGB(238, 254 * (1 - Particles.Weight[i] / max), 48), 1, CV_AA, 0);
 	}
 
 	//CvPoint pt3;
-	cout << "MAX(!?)  = " << max << endl;
+	//cout << "MAX(!?)  = " << max << endl;
 	if (max != 0)
 		for (i = 0; i < Particles.size; i++) {
 			pt1.x = field->width;
@@ -473,7 +473,7 @@ void KfieldGui::draw_particles(parts & Particles, bool unnormilised) {
 		}
 
 	pthread_mutex_unlock(&lock);
-	cout << " Particles Drawn " << endl;
+	cout << " Particles Drawn " << Particles.size << endl;
 }
 
 void KfieldGui::draw_ball(belief Belief, BallObject Ball) {
@@ -490,10 +490,11 @@ void KfieldGui::draw_ball(belief Belief, BallObject Ball) {
 	pt2.x = (pt1.x + (2 * margintoline + field_width) / 2.0) / scale;
 	pt2.y = (-pt1.y + (2 * margintoline + field_height) / 2.0) / scale;
 
-	//cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
+	cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
 	cvCopy(cleanfield, field);
 	cvCircle(field, pt2, radius, color["orange"], CV_FILLED, CV_AA, 0);
-
+	tmp = Kutils::to_string(Ball.dist());
+	cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 400) / scale, (2 * margintoline + field_height + 850) / scale), &font, color["orange"]);
 	pthread_mutex_unlock(&lock);
 	//cout << " Ball Drawn " << endl;
 }

@@ -115,7 +115,7 @@ int update_field(LocalizationData & DebugData) {
 				observation.Distance.Edev = sqrt(obj->distance_dev()) * 1000;
 				currentObservation.push_back(observation);
 			}
-			KLocView->DrawObservations(currentObservation);
+			KLocView->DrawObservations(Belief, currentObservation);
 		}
 		//KLocView->CleanField();
 	}
@@ -125,28 +125,33 @@ int update_field(LocalizationData & DebugData) {
 
 	//Get the particles !!!
 	if (DebugData.particles_size() > 0) {
+
 		if ((unsigned int) DebugData.particles_size() != Particles.size) {
 			if (Particles.x)
-				delete Particles.x;
+				delete [] Particles.x;
 			if (Particles.y)
-				delete Particles.y;
+				delete [] Particles.y;
 			if (Particles.phi)
-				delete Particles.phi;
+				delete [] Particles.phi;
 			if (Particles.Weight)
-				delete Particles.Weight;
+				delete [] Particles.Weight;
+			Particles.size = DebugData.particles_size();
 
-			Particles.x = new double(Particles.size);
-			Particles.y = new double(Particles.size);
-			Particles.Weight = new double(Particles.size);
-			Particles.phi = new double(Particles.size);
+			//		Particles.size = 4;
+			Particles.x = new double[Particles.size];
+			Particles.y = new double[Particles.size];
+			Particles.Weight = new double[Particles.size];
+			Particles.phi = new double[Particles.size];
+
 		}
 
 		for (unsigned int i = 0; i < Particles.size; i++) {
 			Particles.x[i] = DebugData.particles(i).x();
 			Particles.y[i] = DebugData.particles(i).y();
 			Particles.phi[i] = DebugData.particles(i).phi();
-			Particles.Weight[i] = DebugData.particles(i).confidence();
+			Particles.Weight[i] = 1;// DebugData.particles(i).confidence();
 		}
+		KLocView->draw_particles(Particles, false);
 	}
 
 	return 0;
@@ -176,6 +181,12 @@ int receive_and_send_loop(TCPSocket *sock) {
 	int count = 0;
 	bool sendmotion = true;
 	float x, y, th, f;
+
+//	Particles.size = 2;
+//	Particles.x = new double(Particles.size);
+//	Particles.y = new double(Particles.size);
+//	Particles.Weight = new double(Particles.size);
+//	Particles.phi = new double(Particles.size);
 
 	while (true) {
 		sendmotion = false;

@@ -27,7 +27,7 @@ class Localization: public IActivity, public KLocalization {
 		}
 		int Execute();
 		void UserInit();
-		void read_messages();
+		void process_messages();
 		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright) ;
 		void RobotPositionMotionModel(KMotionModel & MModel);
 		std::string GetName() {
@@ -49,6 +49,8 @@ class Localization: public IActivity, public KLocalization {
 		partcl TrackPoint;
 		partcl TrackPointRobotPosition;
 
+		int leftright;
+		float headpos;
 		LocalizationData DebugData;
 		float maxrangeleft;
 		float maxrangeright;
@@ -61,11 +63,14 @@ class Localization: public IActivity, public KLocalization {
 		SensorPair HeadPitch;
 		BallTrackMessage lastballseen;
 
+		MotionHeadMessage hmot;
+
 		boost::shared_ptr<const GameStateMessage> gsm;
 		boost::shared_ptr<const ObservationMessage> obsm;
 		boost::shared_ptr<const RobotPositionSensorMessage> rpsm;
 
 		//For Debug!
+		void SimpleBehaviorStep();
 		static void * StartServer(void * kati);
 		pthread_t acceptthread;
 		static TCPSocket *sock;
