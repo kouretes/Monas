@@ -249,7 +249,7 @@ int Localization::Execute() {
 
 	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
-	SimpleBehaviorStep();
+	//SimpleBehaviorStep();
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
@@ -564,8 +564,8 @@ void Localization::process_messages() {
 
 		for (int i = 0; i < Objects.size(); i++) {
 			id = Objects.Get(i).object_name();
-			if (id[0] == 'S')
-				continue;
+//			if (id[0] == 'S')
+//				continue;
 			if ((this)->KFeaturesmap.count(id) != 0) {
 				//Make the feature
 				tmpOM.Feature = (this)->KFeaturesmap[id];
