@@ -64,6 +64,8 @@ class Localization: public IActivity, public KLocalization {
 		BallTrackMessage lastballseen;
 
 		MotionHeadMessage hmot;
+		MotionWalkMessage wmot;
+		partcl target;
 
 		boost::shared_ptr<const GameStateMessage> gsm;
 		boost::shared_ptr<const ObservationMessage> obsm;

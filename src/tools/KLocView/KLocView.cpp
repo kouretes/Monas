@@ -65,20 +65,20 @@ int update_field(LocalizationData & DebugData) {
 	//cout << " X " << robotposition.x << " X " << robotposition.y << " X " << robotposition.phi << endl;
 	if (initialization) {
 
-		KLocView->KfieldInitTrackLine(Belief);
+		//KLocView->KfieldInitTrackLine(Belief);
 		robotposition.x = Belief.x;
 		robotposition.y = Belief.y;
 		robotposition.phi = Belief.theta;
-		KLocView->KfieldInitTrackLine(robotposition);
+		//KLocView->KfieldInitTrackLine(robotposition);
 		initialization = false;
 	} else {
-		KLocView->addTrackLine(robotposition);
-		KLocView->addTrackLine(Belief);
+		//KLocView->addTrackLine(robotposition);
+		//KLocView->addTrackLine(Belief);
 	}
 	//Get The observations
 	if (DebugData.has_observations()) {
 		if (DebugData.observations().has_ball())
-			KLocView->draw_ball(Belief, DebugData.observations().ball());
+			//KLocView->draw_ball(Belief, DebugData.observations().ball());
 		//else
 		if (DebugData.observations().regular_objects_size() > 0) {
 			cout << "We have observations " << DebugData.observations().regular_objects_size() << endl;
@@ -96,16 +96,18 @@ int update_field(LocalizationData & DebugData) {
 				} else if (obj->object_name() == "Yellow") {
 					observation.Feature.x = 3000;
 					observation.Feature.y = 0;
-				} else if (obj->object_name() == "SkyblueLeft") {// "YellowLeft"
-					observation.Feature.x = -3000;
-					observation.Feature.y = -700;
-				} else if (obj->object_name() == "SkyblueRight") { //"YellowRight"
-					observation.Feature.x = -3000;
-					observation.Feature.y = 700;
-				} else if (obj->object_name() == "Skyblue") {
-					observation.Feature.x = -3000;
-					observation.Feature.y = 0;
-				} else {
+				}
+//				else if (obj->object_name() == "SkyblueLeft") {// "YellowLeft"
+//					observation.Feature.x = -3000;
+//					observation.Feature.y = -700;
+//				} else if (obj->object_name() == "SkyblueRight") { //"YellowRight"
+//					observation.Feature.x = -3000;
+//					observation.Feature.y = 700;
+//				} else if (obj->object_name() == "Skyblue") {
+//					observation.Feature.x = -3000;
+//					observation.Feature.y = 0;
+//				}
+				else {
 					continue;
 				}
 
@@ -120,7 +122,7 @@ int update_field(LocalizationData & DebugData) {
 		//KLocView->CleanField();
 	}
 	//KLocView->BackupField();
-	KLocView->draw_Trackpoint(robotposition, 20 * TO_RAD, -20 * TO_RAD);
+	//KLocView->draw_Trackpoint(robotposition, 20 * TO_RAD, -20 * TO_RAD);
 	KLocView->draw_belief(Belief, 20 * TO_RAD, -20 * TO_RAD, 0);
 
 	//Get the particles !!!
@@ -149,11 +151,11 @@ int update_field(LocalizationData & DebugData) {
 			Particles.x[i] = DebugData.particles(i).x();
 			Particles.y[i] = DebugData.particles(i).y();
 			Particles.phi[i] = DebugData.particles(i).phi();
-			Particles.Weight[i] = 1;// DebugData.particles(i).confidence();
+			Particles.Weight[i] = DebugData.particles(i).confidence();
 		}
-		KLocView->draw_particles(Particles, false);
+		KLocView->draw_particles(Particles);
 	}
-
+	//KLocView->save_field_to_png(counter);
 	return 0;
 }
 
@@ -288,7 +290,7 @@ int receive_and_send_loop(TCPSocket *sock) {
 
 		KfieldGui::keypressed = -1;
 
-		cout << "Sended mesage Size " << ssize << endl;
+		//cout << "Sended mesage Size " << ssize << endl;
 
 		//Now its time to receive!
 

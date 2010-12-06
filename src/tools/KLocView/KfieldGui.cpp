@@ -447,14 +447,14 @@ void KfieldGui::draw_particles(parts & Particles, bool leaveunnormilised) {
 		cvCircle(field, pt1, 20.0 / scale, CV_RGB(130, 254 * (1 - Particles.Weight[i] / max), 48), CV_FILLED, CV_AA, 0);
 		//cvCircle(image, pt1, 4, CV_RGB(0,0,100), 0, CV_AA, 0);
 		//cout << "X: "<<Particles.x[i] << " Y: " << Particles.y[i] << " Phi: " << Particles.phi[i] << endl;
-		cout << "pt1.x " << pt1.x << " pt1.y "<<pt1.y << endl;
+		//cout << "pt1.x " << pt1.x << " pt1.y "<<pt1.y << endl;
 		pt2.x = pt1.x + len * cos(-Particles.phi[i]);
 		pt2.y = pt1.y + len * sin(-Particles.phi[i]);
 		cvLine(field, pt1, pt2, CV_RGB(238, 254 * (1 - Particles.Weight[i] / max), 48), 1, CV_AA, 0);
 	}
 
 	//CvPoint pt3;
-	//cout << "MAX(!?)  = " << max << endl;
+	cout << "MAX(!?)  = " << max << endl;
 	if (max != 0)
 		for (i = 0; i < Particles.size; i++) {
 			pt1.x = field->width;

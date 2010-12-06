@@ -982,6 +982,7 @@ bool KLocalization::isVisible(feature & Feature, partcl prtcl, double rangemaxle
 double KLocalization::normpdf(double diff, double dev) {
 
 	boost::math::normal dist = boost::math::normal_distribution<double>(0, dev);
+	//cout << " diff " << diff << " dev " << dev << endl;
 	return boost::math::pdf(dist, diff);
 	//return (exp(-pow(diff, 2) / (2 * pow(dev, 2))) / (riza2pi * dev));
 }
@@ -1005,14 +1006,14 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 			Circles[0][cy][1] = Observation[i].Feature.y;
 			Circles[0][cy][2] = Observation[i].Distance.val;
 			Circles[0][cy][3] = Observation[i].Bearing.val;
-			cout <<Circles[1][cb][2] << endl;
+			//cout <<Circles[1][cb][2] << endl;
 			cy++;
 		}else if (Observation[i].Feature.id[0] == 'S' && cb < 2) {
 			Circles[1][cb][0] = Observation[i].Feature.x;
 			Circles[1][cb][1] = Observation[i].Feature.y;
 			Circles[1][cb][2] = Observation[i].Distance.val;
 			Circles[1][cb][3] = Observation[i].Bearing.val;
-			cout <<Circles[1][cb][2] << endl;
+			//cout <<Circles[1][cb][2] << endl;
 			cb++;
 
 		}
@@ -1033,7 +1034,7 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 
 	if (n < 0)
 		n = (n * -1);
-	cout << " d " << d << " n "<< n << " m " << m << endl;
+	//cout << " d " << d << " n "<< n << " m " << m << endl;
 	//No solns
 	if (d > m)
 		return 0;
@@ -1090,14 +1091,14 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 		//		Particles.phi[index] = temp.phi;
 		float angles[2],ParticlePointBearingAngle;
 		for (unsigned int o = 0; o < 2; o++) {
-			 cout << " ci "<< ci << " o " << o << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
+			//cout << " ci "<< ci << " o " << o << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
 			ParticlePointBearingAngle = atan2(Circles[ci][o][1] - Particles .y[index],Circles[ci][o][0] - Particles.x[index]);
 			angles[o] = anglediff2(ParticlePointBearingAngle, Circles[ci][o][3]);
-			cout << "ParticlePointBearingAngle  " << ParticlePointBearingAngle << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
+			//cout << "ParticlePointBearingAngle  " << ParticlePointBearingAngle << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
 		}
 
 		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
-		cout << "index: " << index << " x: " << p.x << " y: " << p.y << " phi: " << Particles.phi[index] << endl;
+		//cout << "index: " << index << " x: " << p.x << " y: " << p.y << " phi: " << Particles.phi[index] << endl;
 
 	}
 
@@ -1287,6 +1288,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 #endif
 				OverallWeight = OverallWeight * normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
 #endif
+				cout << " ParticleAfterDist: " << OverallWeight << endl;
 				//					if(~isempty(ParticlesIn.phi))
 				//	TODO 			 FIX ME
 				//					ObservationAngle = atan2(LandMark(i).y - TrackPoint.y, LandMark(i).x - TrackPoint.x); // calculated 2nd time
@@ -1309,9 +1311,9 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				//Particles.phi[p] = ParticlePointBearingAngle  + Observation[0].Bearing.val;
 				//Particles.phi[p] -= anglediff2(Observation[i].Bearing.val, ParticleBearing);
 				//Particles.phi[p] = anglediff2(ParticlePointBearingAngle, Observation[i].Bearing.val);
-			//	cout << "Particle weight " << normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation) << "Observation " << i << endl;
+				cout << "Particle weight " << normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation) << "Observation " << i << endl;
 				OverallWeight = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
-
+				//cout << "Bearing  weight " <<
 #endif
 				//
 #ifdef VISIBILITY_WEIGHTING
@@ -1324,7 +1326,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 
 				//cout << " R: " << R << " Ow: " << OverallWeight;
 			}
-		//	cout << " Ow: " << OverallWeight << endl;
+		//
 		}
 #ifdef ALLVISIBILITY
 		else {
@@ -1350,9 +1352,9 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		ParticlePointBearingAngle = atan2(Particles .y[p] - AgentPosition.y, Particles.x[p] - AgentPosition.x);
 		DirectionFromPastBelief = anglediff2(ParticlePointBearingAngle, AgentPosition.theta);
 		//MotionModel.Direction
-		OverallWeight *= normpdf(DistanceFromPastBelief - MotionModel.Distance.val * MotionModel.Distance.ratiomean, (500 / (0.5 + AgentPosition.confidence)));
-		OverallWeight *= normpdf(DirectionFromPastBelief - (MotionModel.Direction.val + MotionModel.Direction.Emean), (MotionModel.Direction.Edev + AgentPosition.confidence) * 3);
-		OverallWeight *= normpdf(anglediff2(Particles.phi[p], AgentPosition.theta) - MotionModel.Rotation.val, (MotionModel.Rotation.Edev + AgentPosition.confidence));
+		OverallWeight *= normpdf(DistanceFromPastBelief - MotionModel.Distance.val * MotionModel.Distance.ratiomean, abs(2500 / (0.5 + AgentPosition.confidence))+0.01);
+		OverallWeight *= normpdf(DirectionFromPastBelief - (MotionModel.Direction.val + MotionModel.Direction.Emean), abs(MotionModel.Direction.Edev + AgentPosition.confidence) * 3+0.000001);
+		//OverallWeight *= normpdf(anglediff2(Particles.phi[p], AgentPosition.theta) - MotionModel.Rotation.val, abs(MotionModel.Rotation.Edev + AgentPosition.confidence)+0.00000001);
 #ifdef  DEBUGupdate
 		cout << " pastBelief Ow: " << OverallWeight << endl;
 #endif
@@ -1360,6 +1362,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		//cout << endl;
 		//set the weight
 #ifdef  DEBUGupdate
+		cout << " Ow: " << OverallWeight << endl;
 		if (OverallWeight == 0) {
 			cout << "\033[01;31m  Particle' s " << p << " Weight is Zero, a dead particle  \033[0m" << endl;
 		}
@@ -1367,6 +1370,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		Particles.Weight[p] = OverallWeight;
 	}
 #ifdef  DEBUG
+
 	cout << "Update Done " << endl;
 
 #endif

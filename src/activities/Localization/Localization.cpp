@@ -9,7 +9,7 @@
 #include <google/protobuf/descriptor.h>
 
 #include "architecture/archConfig.h"
-
+//#define ADEBUG
 using namespace std;
 namespace {
 	ActivityRegistrar<Localization>::Type temp("Localization");
@@ -42,9 +42,15 @@ void Localization::UserInit() {
 	hmot.add_parameter(0.0f);
 	hmot.add_parameter(-0.66322512);
 
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
 	KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
-	KLocalization::setBelief(0, 0, 0, 1);
+	KLocalization::setParticlesPoseUniformly(SIRParticles);
+	//KLocalization::setBelief(0, 0, 0, 0.1);
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
@@ -125,15 +131,18 @@ int Localization::DebugMode_Receive() {
 				cout << ticommingmsg.GetTypeName() << endl;
 				cout << "Incoming Pose" << endl;
 				MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
-				AgentPosition.x = MyWorld.myposition().x();
-				AgentPosition.y = MyWorld.myposition().y();
-				AgentPosition.theta = MyWorld.myposition().phi();
-				AgentPosition.weightconfidence = MyWorld.myposition().confidence();
+				//				AgentPosition.x = MyWorld.myposition().x();
+				//				AgentPosition.y = MyWorld.myposition().y();
+				//				AgentPosition.theta = MyWorld.myposition().phi();
+				//				AgentPosition.weightconfidence = MyWorld.myposition().confidence();
+				//
+				//				TrackPoint.x = AgentPosition.x;
+				//				TrackPoint.y = AgentPosition.y;
+				//				TrackPoint.phi = AgentPosition.theta;
 
-				TrackPoint.x = AgentPosition.x;
-				TrackPoint.y = AgentPosition.y;
-				TrackPoint.phi = AgentPosition.theta;
-
+				target.x = MyWorld.myposition().x();
+				target.y = MyWorld.myposition().y();
+				target.phi = MyWorld.myposition().phi();
 				cout << "My World theta " << AgentPosition.theta;
 			} else if (command.find("Walk") != string::npos)/* == "Walk") */{
 				MotionWalkMessage wmot;
@@ -162,25 +171,72 @@ int Localization::DebugMode_Receive() {
 
 void Localization::SimpleBehaviorStep() {
 
-	if(count%100 == 2){
+	if (count % 100 == 2) {
 		hmot.set_command("setHead");
 		//hmot.set_parameter(0,0.0f);
-		hmot.set_parameter(1,-0.66322512);
+		hmot.set_parameter(1, -0.66322512);
 	}
 
+	if (fabs(headpos) > 1.5) // 1.3
+		leftright *= -1;
 
-	if(fabs(headpos)>1.3)
-		leftright*=-1;
+	headpos += 0.1 * leftright;
 
-	headpos +=0.13*leftright;
+	hmot.set_parameter(0, headpos);
+	hmot.set_parameter(1, (0.12307 * abs(headpos)) - 0.66322512);
+	_blk->publish_signal(hmot, "motion");
 
-	hmot.set_parameter(0,headpos);
-	hmot.set_parameter(1,(0.12307*abs(headpos))-0.66322512);
+	float Robot2Target_bearing = anglediff2(atan2(target.y - AgentPosition.y, target.x - AgentPosition.x), AgentPosition.theta);
+	float Distance2Target = DISTANCE(target.x,AgentPosition.x,target.y,AgentPosition.y);
 
-	_blk->publish_signal(hmot,"motion");
+	cout << "Robot2Target_bearing*TO_DEG  " << Robot2Target_bearing * TO_DEG << endl;
+	cout << atan2(target.y - AgentPosition.y, target.x - AgentPosition.x) << endl;
+	cout << AgentPosition.theta << endl << endl;
+	float speed = 0.01;
+
+	if (AgentPosition.confidence > 20)
+		speed = 1;
+	else
+		speed = 0.8;
+
+	if (Distance2Target < 200)
+		speed *= 0.5;
+
+	float VelX, VelY, Rot, freq;
 
 	//TRy to get the robot to the desired position ...
 
+	VelX = speed * cos(Robot2Target_bearing);
+	VelY = speed * sin(Robot2Target_bearing);
+	Rot = anglediff2(target.phi, AgentPosition.theta) * 0.3;// Robot2Target_bearing * 0.3;
+	freq = 1;
+
+	if (Distance2Target < 300)
+		freq *= Distance2Target / 300;
+	//Limits checks
+	if (VelX > 1)
+		VelX = 1;
+	if (VelY > 1)
+		VelY = 1;
+	if (Rot > 1)
+		Rot = 1;
+	if (Rot < -1)
+		Rot = -1;
+	if (VelY < -1)
+		VelY = -1;
+	if (VelX < -1)
+		VelX = -1;
+
+	cout << VelX << endl;
+	cout << VelY << endl;
+	cout << Rot << endl;
+
+	wmot.set_command("setWalkTargetVelocity");
+	wmot.set_parameter(0, VelX);
+	wmot.set_parameter(1, VelY);
+	wmot.set_parameter(2, Rot);
+	wmot.set_parameter(3, freq);
+	_blk->publish_signal(wmot, "motion");
 
 }
 
@@ -193,7 +249,7 @@ int Localization::Execute() {
 
 	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
-	//SimpleBehaviorStep();
+	SimpleBehaviorStep();
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
@@ -290,15 +346,20 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 	float robot_rot = DR;
 
 	MModel.type = "ratio";
+	if (robot_dist > 500) {
+		robot_dist = 0.1;
+		robot_dir = 0.000001;
+		robot_rot = 0.00001;
+	}
 	MModel.Distance.val = robot_dist;
 	MModel.Distance.ratiomean = 1.32;// -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155;
-	MModel.Distance.ratiodev = 0.002131 * (robot_dir + robot_rot) + 0.094058;
+	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058);
 
 	MModel.Direction.val = robot_dir;
 	cout << "MModel.Direction.val " << MModel.Direction.val;
 	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3) + 0.1086; // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ;
 	cout << "MModel.Direction.Emean " << MModel.Direction.Emean;
-	MModel.Direction.Edev = -0.019 * abs(robot_dir) + 0.059824;
+	MModel.Direction.Edev = abs(-0.019 * abs(robot_dir) + 0.059824);
 	// 0.0063971 * robot_dir + 0.090724 / abs(robot_dir);
 	cout << "MModel.Direction.Edev " << MModel.Direction.Edev;
 
@@ -325,14 +386,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 	cout << "SelfLocalize SIR" << endl;
 	int iterations = 1;
-	//KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
-
-	//if (MotionModelptr == NULL) {
-	//cout << "Warning No maching Motion Model!!!!!!!!!" << endl;
-	//} else {
-	//KMotionModel MotionModel = *MotionModelptr;
-	//cout << "LocalizationStep MotionModel.Distance.Emean:  " << MotionModel.Distance.Emean << " MotionModel.Distance.Edev " << MotionModel.Distance.Edev << endl;
-	//}
 
 	int index[partclsNum];
 	//Simple initialization
@@ -342,19 +395,19 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//cout << "write something to predict particles " << endl;
 	//cin >> c;
 	//SpreadParticles
-	//	if (Observations.empty()) {
-	//		cout << "No observations ... spreading" << endl;
-	//		SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, 10);
-	//	}
+	if (Observations.empty()) {
+		//		cout << "No observations ... spreading" << endl;
+		//SpreadParticlesCirc(SIRParticles, 10, 0, 2);
+	}
 	//	if (depletions_counter > 1) {
 	//		cout << "Depletion Counter " << depletions_counter << endl;
 	//		SpreadParticlesCirc(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
 	//	}
 
 	//SpreadParticlesCirc(SIRParticles, 10.0 * depletions_counter, 10 * TO_RAD, 20);
-	//SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 2 * TO_RAD, 100);
+	//SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 1 * TO_RAD, 100);
 	//SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 45 * TO_RAD, 5);
-
+	SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
 	//	if (Observations.size() > 1)
 	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
 
@@ -383,15 +436,13 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 	cout << CircleIntersectionPossibleParticles(Observations, SIRParticles, 4) << endl;
 
-
 	//Update - Using incoming observation
 	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
 
-
 #ifdef ADEBUG
 	cout << "\nUnnormalized SIR particles " << endl;
-	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << SIRParticles.Weight[i] << "  ";
+	for (int i = 0; i < partclsNum / 5.0; i++)
+	cout << SIRParticles.Weight[i] << " \n ";
 #endif
 
 	//Normalize Particles  Weight in order to Resample later
@@ -409,7 +460,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 #ifdef ADEBUG
 	cout << "\nNormalized SIR particles  " << endl;
 	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << SIRParticles.Weight[i];
+	cout << SIRParticles.Weight[i] << " \n ";
 #endif
 	//Maybe Usefull for others
 	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
@@ -456,14 +507,13 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	AgentPosition.y = maxprtcl.y;
 	AgentPosition.theta = maxprtcl.phi;
 	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+	//AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
 
 	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
-
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
 
-	if ((ESS < Beta || AgentPosition.confidence > 150) && !Observations.empty()) {
+	if ((ESS < Beta || AgentPosition.confidence > 150)) {
 		Resample(SIRParticles, index, 0);
 		Propagate(SIRParticles, index);
 		if (depletions_counter > 4)
@@ -473,6 +523,8 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	}
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+
+	cout << "Agent Confidence " << AgentPosition.confidence << endl;
 
 	//cin.ignore(10, '\n');
 	//cin.clear();
@@ -512,20 +564,23 @@ void Localization::process_messages() {
 
 		for (int i = 0; i < Objects.size(); i++) {
 			id = Objects.Get(i).object_name();
+			if (id[0] == 'S')
+				continue;
 			if ((this)->KFeaturesmap.count(id) != 0) {
 				//Make the feature
 				tmpOM.Feature = (this)->KFeaturesmap[id];
 				//Distance
 				tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
 				tmpOM.Distance.Emean = 0;
-				tmpOM.Distance.Edev = sqrt(Objects.Get(i).distance_dev()) * 1000;
+				tmpOM.Distance.Edev = sqrt(Objects.Get(i).distance_dev()) * 1000 + 30;
 
 				tmpOM.Bearing.val = Objects.Get(i).bearing();
 				tmpOM.Bearing.Emean = 0;
-				tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev());
+				tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 560;
 
 				currentObservation.push_back(tmpOM);
 				cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
+				cout << " DistanceDev " << tmpOM.Distance.Edev << " BearingDev " << tmpOM.Bearing.Edev << endl;
 			}
 
 			//			else {

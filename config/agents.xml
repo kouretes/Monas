@@ -1,30 +1,31 @@
 <?xml version="1.0" ?>
-<!-- Modules to be loaded  -->
+<!-- Modules to be loaded -->
 
-<!-- ThreadFrequency in Hz
-     StatsCycle=n every n repetitions the agent will log statistics
--->
+<!-- ThreadFrequency in Hz StatsCycle=n every n repetitions the agent will 
+	log statistics -->
+
 <agent IsRealTime=1 Priority=1 ThreadFrequency=100 StatsCycle=1000>
-  <name>KSensors</name>
-  <activity>Sensors</activity>
+	<name>KSensors</name>
+	<activity>Sensors</activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=60 StatsCycle=1000>
-  <name>KMC</name>
-  <activity>MotionController</activity>
-  <activity>RobotController</activity>
-  <activity>LedHandler</activity>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=20 StatsCycle=1000>
+	<name>KMC</name>
+	<activity>MotionController</activity>
+	<activity>RobotController</activity>
+	<activity>LedHandler</activity>
 </agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=30 StatsCycle=50>
-  <name>KVision</name>
-  <activity>Vision</activity>
-  <!-- <activity>Localization </activity> -->
-  <activity>VBehavior</activity> 
-  <!-- <activity>HeadBehavior</activity> -->
+
+<agent IsRealTime=1 Priority=1 ThreadFrequency=18 StatsCycle=50>
+	<name>KVision</name>
+	<activity>Vision</activity>
+	<activity>Localization </activity>
+	<!--<activity>VBehavior</activity> -->
+	<!--  <activity>HeadBehavior</activity> -->
 </agent>
-<!--
+<!-- 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
-  <name>BodyBehavior</name>
-   <activity>BodyBehavior</activity>
-</agent>
--->
+	<name>BodyBehavior</name>
+	<activity>BodyBehavior</activity>
+</agent> 
+ -->

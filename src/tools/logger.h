@@ -4,7 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <set>
-
+#include <cstdio>
+#include "sys/stat.h"
 #include "architecture/archConfig.h"
 #include "tools/XMLConfig.h"
 
@@ -94,8 +95,18 @@ class LoggerClass {
             if ( ! ConfFile.QueryElement( "MessageLogCerrColor", ColorEnabled) )
                 ColorEnabled = false;
 
+            struct stat stFileInfo;
+            std::string fullfilename ;
+            fullfilename= (ArchConfig::Instance().GetConfigPrefix()+ MsgLogFile);
+            int intStat = stat((fullfilename+".0").c_str(),&stFileInfo);
+            	if (intStat == 0)
+            		if(stFileInfo.st_size > 512)
+            		{
+            			rename( (fullfilename + ".0").c_str() , (fullfilename + ".1").c_str() );
+            		}
 
-            ErrorLog.open( ( ArchConfig::Instance().GetConfigPrefix()+MsgLogFile ).c_str() );
+
+            ErrorLog.open( ( ArchConfig::Instance().GetConfigPrefix()+MsgLogFile+".0" ).c_str() );
             if ( ! ErrorLog.is_open() ) {
                 std::cerr<<"Can't open MessageLog file: "<<MsgLogFile<<std::endl;
                 SysCall::_exit(1);
