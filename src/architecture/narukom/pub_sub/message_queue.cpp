@@ -223,7 +223,7 @@ MessageBuffer* MessageQueue::add_subscriber ( Subscriber* sub ) //{return NULL;}
         return it->second;
 
     MessageBuffer* new_msg_buf = new MessageBuffer ( owner_name, this );
-    sub->setQueue(this);
+    sub->setQueue(NULL);
     subscribers_buf->insert ( std::make_pair<std::string,MessageBuffer*> ( owner_name,new_msg_buf ) );
     sub->setBuffer(new_msg_buf);
     return new_msg_buf;
@@ -236,7 +236,7 @@ boost::unique_lock<Mutex> sub_lock(sub_mutex);
 
 	if(sub != 0 && buf !=0)
   {
-    sub->setQueue(this);
+    sub->setQueue(NULL);
     subscribers_buf->insert(std::make_pair<std::string,MessageBuffer*> ( sub->getName(),buf ));
     return buf;
   }
@@ -332,6 +332,8 @@ void MessageQueue::process_queued_msg()
         std::vector<msgentry> mtp=(*pit)->remove();
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
         {
+        	//cout << "mit" << (*mit).publisher << endl;
+
             list<MessageBuffer*>* alist =  topic_tree->message_arrived((*mit).topic);
 
             if(alist != 0)

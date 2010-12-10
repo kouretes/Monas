@@ -37,6 +37,9 @@ class HeadJointSensorsMessage;
 class BodyJointSensorsMessage;
 class RobotPositionSensorMessage;
 class SensorPair;
+class SensorData;
+class ChainSensorSensorsMessage;
+class AllSensorValues;
 
 // ===================================================================
 
@@ -94,57 +97,10 @@ class InertialSensorsMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
-  // repeated .SensorPair SensorData = 6;
+  // repeated .SensorPair SensorData = 1;
   inline int sensordata_size() const;
   inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 6;
+  static const int kSensorDataFieldNumber = 1;
   inline const ::SensorPair& sensordata(int index) const;
   inline ::SensorPair* mutable_sensordata(int index);
   inline ::SensorPair* add_sensordata();
@@ -158,21 +114,12 @@ class InertialSensorsMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -244,57 +191,10 @@ class FSRSensorsMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
-  // repeated .SensorPair SensorData = 6;
+  // repeated .SensorPair SensorData = 1;
   inline int sensordata_size() const;
   inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 6;
+  static const int kSensorDataFieldNumber = 1;
   inline const ::SensorPair& sensordata(int index) const;
   inline ::SensorPair* mutable_sensordata(int index);
   inline ::SensorPair* add_sensordata();
@@ -308,21 +208,12 @@ class FSRSensorsMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -394,57 +285,10 @@ class UltaSoundSensorsMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
-  // repeated .SensorPair SensorData = 6;
+  // repeated .SensorPair SensorData = 1;
   inline int sensordata_size() const;
   inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 6;
+  static const int kSensorDataFieldNumber = 1;
   inline const ::SensorPair& sensordata(int index) const;
   inline ::SensorPair* mutable_sensordata(int index);
   inline ::SensorPair* add_sensordata();
@@ -458,21 +302,12 @@ class UltaSoundSensorsMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -544,57 +379,10 @@ class HeadJointSensorsMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
-  // repeated .SensorPair SensorData = 6;
+  // repeated .SensorPair SensorData = 1;
   inline int sensordata_size() const;
   inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 6;
+  static const int kSensorDataFieldNumber = 1;
   inline const ::SensorPair& sensordata(int index) const;
   inline ::SensorPair* mutable_sensordata(int index);
   inline ::SensorPair* add_sensordata();
@@ -608,21 +396,12 @@ class HeadJointSensorsMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -694,57 +473,10 @@ class BodyJointSensorsMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
-  // repeated .SensorPair SensorData = 6;
+  // repeated .SensorPair SensorData = 1;
   inline int sensordata_size() const;
   inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 6;
+  static const int kSensorDataFieldNumber = 1;
   inline const ::SensorPair& sensordata(int index) const;
   inline ::SensorPair* mutable_sensordata(int index);
   inline ::SensorPair* add_sensordata();
@@ -758,21 +490,12 @@ class BodyJointSensorsMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -844,57 +567,10 @@ class RobotPositionSensorMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
-  // repeated .SensorPair SensorData = 6;
+  // repeated .SensorPair SensorData = 1;
   inline int sensordata_size() const;
   inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 6;
+  static const int kSensorDataFieldNumber = 1;
   inline const ::SensorPair& sensordata(int index) const;
   inline ::SensorPair* mutable_sensordata(int index);
   inline ::SensorPair* add_sensordata();
@@ -908,21 +584,12 @@ class RobotPositionSensorMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -1063,6 +730,366 @@ class SensorPair : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static SensorPair* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class SensorData : public ::google::protobuf::Message {
+ public:
+  SensorData();
+  virtual ~SensorData();
+  
+  SensorData(const SensorData& from);
+  
+  inline SensorData& operator=(const SensorData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SensorData& default_instance();
+  
+  void Swap(SensorData* other);
+  
+  // implements Message ----------------------------------------------
+  
+  SensorData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SensorData& from);
+  void MergeFrom(const SensorData& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float SensorValue = 1;
+  inline bool has_sensorvalue() const;
+  inline void clear_sensorvalue();
+  static const int kSensorValueFieldNumber = 1;
+  inline float sensorvalue() const;
+  inline void set_sensorvalue(float value);
+  
+  // required float SensorValueDiff = 2;
+  inline bool has_sensorvaluediff() const;
+  inline void clear_sensorvaluediff();
+  static const int kSensorValueDiffFieldNumber = 2;
+  inline float sensorvaluediff() const;
+  inline void set_sensorvaluediff(float value);
+  
+  // @@protoc_insertion_point(class_scope:SensorData)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  float sensorvalue_;
+  float sensorvaluediff_;
+  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
+  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
+  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static SensorData* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ChainSensorSensorsMessage : public ::google::protobuf::Message {
+ public:
+  ChainSensorSensorsMessage();
+  virtual ~ChainSensorSensorsMessage();
+  
+  ChainSensorSensorsMessage(const ChainSensorSensorsMessage& from);
+  
+  inline ChainSensorSensorsMessage& operator=(const ChainSensorSensorsMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ChainSensorSensorsMessage& default_instance();
+  
+  void Swap(ChainSensorSensorsMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ChainSensorSensorsMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ChainSensorSensorsMessage& from);
+  void MergeFrom(const ChainSensorSensorsMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .SensorData SensorData = 1;
+  inline int sensordata_size() const;
+  inline void clear_sensordata();
+  static const int kSensorDataFieldNumber = 1;
+  inline const ::SensorData& sensordata(int index) const;
+  inline ::SensorData* mutable_sensordata(int index);
+  inline ::SensorData* add_sensordata();
+  inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+      sensordata() const;
+  inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+      mutable_sensordata();
+  
+  // @@protoc_insertion_point(class_scope:ChainSensorSensorsMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::RepeatedPtrField< ::SensorData > sensordata_;
+  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
+  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
+  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static ChainSensorSensorsMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AllSensorValues : public ::google::protobuf::Message {
+ public:
+  AllSensorValues();
+  virtual ~AllSensorValues();
+  
+  AllSensorValues(const AllSensorValues& from);
+  
+  inline AllSensorValues& operator=(const AllSensorValues& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AllSensorValues& default_instance();
+  
+  void Swap(AllSensorValues* other);
+  
+  // implements Message ----------------------------------------------
+  
+  AllSensorValues* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AllSensorValues& from);
+  void MergeFrom(const AllSensorValues& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional .InertialSensorsMessage ism = 1;
+  inline bool has_ism() const;
+  inline void clear_ism();
+  static const int kIsmFieldNumber = 1;
+  inline const ::InertialSensorsMessage& ism() const;
+  inline ::InertialSensorsMessage* mutable_ism();
+  
+  // optional .FSRSensorsMessage fsm = 2;
+  inline bool has_fsm() const;
+  inline void clear_fsm();
+  static const int kFsmFieldNumber = 2;
+  inline const ::FSRSensorsMessage& fsm() const;
+  inline ::FSRSensorsMessage* mutable_fsm();
+  
+  // optional .UltaSoundSensorsMessage ussm = 3;
+  inline bool has_ussm() const;
+  inline void clear_ussm();
+  static const int kUssmFieldNumber = 3;
+  inline const ::UltaSoundSensorsMessage& ussm() const;
+  inline ::UltaSoundSensorsMessage* mutable_ussm();
+  
+  // optional .ChainSensorSensorsMessage hjsm = 4;
+  inline bool has_hjsm() const;
+  inline void clear_hjsm();
+  static const int kHjsmFieldNumber = 4;
+  inline const ::ChainSensorSensorsMessage& hjsm() const;
+  inline ::ChainSensorSensorsMessage* mutable_hjsm();
+  
+  // optional .ChainSensorSensorsMessage rlsm = 5;
+  inline bool has_rlsm() const;
+  inline void clear_rlsm();
+  static const int kRlsmFieldNumber = 5;
+  inline const ::ChainSensorSensorsMessage& rlsm() const;
+  inline ::ChainSensorSensorsMessage* mutable_rlsm();
+  
+  // optional .ChainSensorSensorsMessage llsm = 6;
+  inline bool has_llsm() const;
+  inline void clear_llsm();
+  static const int kLlsmFieldNumber = 6;
+  inline const ::ChainSensorSensorsMessage& llsm() const;
+  inline ::ChainSensorSensorsMessage* mutable_llsm();
+  
+  // optional .ChainSensorSensorsMessage rasm = 7;
+  inline bool has_rasm() const;
+  inline void clear_rasm();
+  static const int kRasmFieldNumber = 7;
+  inline const ::ChainSensorSensorsMessage& rasm() const;
+  inline ::ChainSensorSensorsMessage* mutable_rasm();
+  
+  // optional .ChainSensorSensorsMessage lasm = 8;
+  inline bool has_lasm() const;
+  inline void clear_lasm();
+  static const int kLasmFieldNumber = 8;
+  inline const ::ChainSensorSensorsMessage& lasm() const;
+  inline ::ChainSensorSensorsMessage* mutable_lasm();
+  
+  // optional .BodyJointSensorsMessage bjsm = 9;
+  inline bool has_bjsm() const;
+  inline void clear_bjsm();
+  static const int kBjsmFieldNumber = 9;
+  inline const ::BodyJointSensorsMessage& bjsm() const;
+  inline ::BodyJointSensorsMessage* mutable_bjsm();
+  
+  // optional .RobotPositionSensorMessage rpsm = 10;
+  inline bool has_rpsm() const;
+  inline void clear_rpsm();
+  static const int kRpsmFieldNumber = 10;
+  inline const ::RobotPositionSensorMessage& rpsm() const;
+  inline ::RobotPositionSensorMessage* mutable_rpsm();
+  
+  // required uint32 TimeDiff = 11;
+  inline bool has_timediff() const;
+  inline void clear_timediff();
+  static const int kTimeDiffFieldNumber = 11;
+  inline ::google::protobuf::uint32 timediff() const;
+  inline void set_timediff(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:AllSensorValues)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::InertialSensorsMessage* ism_;
+  ::FSRSensorsMessage* fsm_;
+  ::UltaSoundSensorsMessage* ussm_;
+  ::ChainSensorSensorsMessage* hjsm_;
+  ::ChainSensorSensorsMessage* rlsm_;
+  ::ChainSensorSensorsMessage* llsm_;
+  ::ChainSensorSensorsMessage* rasm_;
+  ::ChainSensorSensorsMessage* lasm_;
+  ::BodyJointSensorsMessage* bjsm_;
+  ::RobotPositionSensorMessage* rpsm_;
+  ::google::protobuf::uint32 timediff_;
+  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
+  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
+  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(11 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static AllSensorValues* default_instance_;
+};
 // ===================================================================
 
 
@@ -1070,191 +1097,7 @@ class SensorPair : public ::google::protobuf::Message {
 
 // InertialSensorsMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool InertialSensorsMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void InertialSensorsMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& InertialSensorsMessage::host() const {
-  return *host_;
-}
-inline void InertialSensorsMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void InertialSensorsMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void InertialSensorsMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* InertialSensorsMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool InertialSensorsMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void InertialSensorsMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& InertialSensorsMessage::publisher() const {
-  return *publisher_;
-}
-inline void InertialSensorsMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void InertialSensorsMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void InertialSensorsMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* InertialSensorsMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool InertialSensorsMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void InertialSensorsMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& InertialSensorsMessage::topic() const {
-  return *topic_;
-}
-inline void InertialSensorsMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void InertialSensorsMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void InertialSensorsMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* InertialSensorsMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool InertialSensorsMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void InertialSensorsMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 InertialSensorsMessage::timeout() const {
-  return timeout_;
-}
-inline void InertialSensorsMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool InertialSensorsMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void InertialSensorsMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& InertialSensorsMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void InertialSensorsMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void InertialSensorsMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void InertialSensorsMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* InertialSensorsMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
-// repeated .SensorPair SensorData = 6;
+// repeated .SensorPair SensorData = 1;
 inline int InertialSensorsMessage::sensordata_size() const {
   return sensordata_.size();
 }
@@ -1283,191 +1126,7 @@ InertialSensorsMessage::mutable_sensordata() {
 
 // FSRSensorsMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool FSRSensorsMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void FSRSensorsMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& FSRSensorsMessage::host() const {
-  return *host_;
-}
-inline void FSRSensorsMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void FSRSensorsMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void FSRSensorsMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* FSRSensorsMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool FSRSensorsMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void FSRSensorsMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& FSRSensorsMessage::publisher() const {
-  return *publisher_;
-}
-inline void FSRSensorsMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void FSRSensorsMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void FSRSensorsMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* FSRSensorsMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool FSRSensorsMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void FSRSensorsMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& FSRSensorsMessage::topic() const {
-  return *topic_;
-}
-inline void FSRSensorsMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void FSRSensorsMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void FSRSensorsMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* FSRSensorsMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool FSRSensorsMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void FSRSensorsMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 FSRSensorsMessage::timeout() const {
-  return timeout_;
-}
-inline void FSRSensorsMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool FSRSensorsMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void FSRSensorsMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& FSRSensorsMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void FSRSensorsMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void FSRSensorsMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void FSRSensorsMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* FSRSensorsMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
-// repeated .SensorPair SensorData = 6;
+// repeated .SensorPair SensorData = 1;
 inline int FSRSensorsMessage::sensordata_size() const {
   return sensordata_.size();
 }
@@ -1496,191 +1155,7 @@ FSRSensorsMessage::mutable_sensordata() {
 
 // UltaSoundSensorsMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool UltaSoundSensorsMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void UltaSoundSensorsMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& UltaSoundSensorsMessage::host() const {
-  return *host_;
-}
-inline void UltaSoundSensorsMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* UltaSoundSensorsMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool UltaSoundSensorsMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void UltaSoundSensorsMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& UltaSoundSensorsMessage::publisher() const {
-  return *publisher_;
-}
-inline void UltaSoundSensorsMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* UltaSoundSensorsMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool UltaSoundSensorsMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void UltaSoundSensorsMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& UltaSoundSensorsMessage::topic() const {
-  return *topic_;
-}
-inline void UltaSoundSensorsMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* UltaSoundSensorsMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool UltaSoundSensorsMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void UltaSoundSensorsMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 UltaSoundSensorsMessage::timeout() const {
-  return timeout_;
-}
-inline void UltaSoundSensorsMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool UltaSoundSensorsMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void UltaSoundSensorsMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& UltaSoundSensorsMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void UltaSoundSensorsMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void UltaSoundSensorsMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* UltaSoundSensorsMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
-// repeated .SensorPair SensorData = 6;
+// repeated .SensorPair SensorData = 1;
 inline int UltaSoundSensorsMessage::sensordata_size() const {
   return sensordata_.size();
 }
@@ -1709,191 +1184,7 @@ UltaSoundSensorsMessage::mutable_sensordata() {
 
 // HeadJointSensorsMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool HeadJointSensorsMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void HeadJointSensorsMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& HeadJointSensorsMessage::host() const {
-  return *host_;
-}
-inline void HeadJointSensorsMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* HeadJointSensorsMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool HeadJointSensorsMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void HeadJointSensorsMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& HeadJointSensorsMessage::publisher() const {
-  return *publisher_;
-}
-inline void HeadJointSensorsMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* HeadJointSensorsMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool HeadJointSensorsMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void HeadJointSensorsMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& HeadJointSensorsMessage::topic() const {
-  return *topic_;
-}
-inline void HeadJointSensorsMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* HeadJointSensorsMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool HeadJointSensorsMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void HeadJointSensorsMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 HeadJointSensorsMessage::timeout() const {
-  return timeout_;
-}
-inline void HeadJointSensorsMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool HeadJointSensorsMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void HeadJointSensorsMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& HeadJointSensorsMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void HeadJointSensorsMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void HeadJointSensorsMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* HeadJointSensorsMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
-// repeated .SensorPair SensorData = 6;
+// repeated .SensorPair SensorData = 1;
 inline int HeadJointSensorsMessage::sensordata_size() const {
   return sensordata_.size();
 }
@@ -1922,191 +1213,7 @@ HeadJointSensorsMessage::mutable_sensordata() {
 
 // BodyJointSensorsMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool BodyJointSensorsMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void BodyJointSensorsMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& BodyJointSensorsMessage::host() const {
-  return *host_;
-}
-inline void BodyJointSensorsMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BodyJointSensorsMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool BodyJointSensorsMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void BodyJointSensorsMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& BodyJointSensorsMessage::publisher() const {
-  return *publisher_;
-}
-inline void BodyJointSensorsMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BodyJointSensorsMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool BodyJointSensorsMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void BodyJointSensorsMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& BodyJointSensorsMessage::topic() const {
-  return *topic_;
-}
-inline void BodyJointSensorsMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BodyJointSensorsMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool BodyJointSensorsMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void BodyJointSensorsMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 BodyJointSensorsMessage::timeout() const {
-  return timeout_;
-}
-inline void BodyJointSensorsMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool BodyJointSensorsMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void BodyJointSensorsMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& BodyJointSensorsMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void BodyJointSensorsMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void BodyJointSensorsMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BodyJointSensorsMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
-// repeated .SensorPair SensorData = 6;
+// repeated .SensorPair SensorData = 1;
 inline int BodyJointSensorsMessage::sensordata_size() const {
   return sensordata_.size();
 }
@@ -2135,191 +1242,7 @@ BodyJointSensorsMessage::mutable_sensordata() {
 
 // RobotPositionSensorMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool RobotPositionSensorMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void RobotPositionSensorMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& RobotPositionSensorMessage::host() const {
-  return *host_;
-}
-inline void RobotPositionSensorMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* RobotPositionSensorMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool RobotPositionSensorMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void RobotPositionSensorMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& RobotPositionSensorMessage::publisher() const {
-  return *publisher_;
-}
-inline void RobotPositionSensorMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* RobotPositionSensorMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool RobotPositionSensorMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void RobotPositionSensorMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& RobotPositionSensorMessage::topic() const {
-  return *topic_;
-}
-inline void RobotPositionSensorMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* RobotPositionSensorMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool RobotPositionSensorMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void RobotPositionSensorMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 RobotPositionSensorMessage::timeout() const {
-  return timeout_;
-}
-inline void RobotPositionSensorMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool RobotPositionSensorMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void RobotPositionSensorMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& RobotPositionSensorMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void RobotPositionSensorMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void RobotPositionSensorMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* RobotPositionSensorMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
-// repeated .SensorPair SensorData = 6;
+// repeated .SensorPair SensorData = 1;
 inline int RobotPositionSensorMessage::sensordata_size() const {
   return sensordata_.size();
 }
@@ -2452,6 +1375,261 @@ inline ::google::protobuf::int32 SensorPair::sensorid() const {
 inline void SensorPair::set_sensorid(::google::protobuf::int32 value) {
   _set_bit(4);
   sensorid_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// SensorData
+
+// required float SensorValue = 1;
+inline bool SensorData::has_sensorvalue() const {
+  return _has_bit(0);
+}
+inline void SensorData::clear_sensorvalue() {
+  sensorvalue_ = 0;
+  _clear_bit(0);
+}
+inline float SensorData::sensorvalue() const {
+  return sensorvalue_;
+}
+inline void SensorData::set_sensorvalue(float value) {
+  _set_bit(0);
+  sensorvalue_ = value;
+}
+
+// required float SensorValueDiff = 2;
+inline bool SensorData::has_sensorvaluediff() const {
+  return _has_bit(1);
+}
+inline void SensorData::clear_sensorvaluediff() {
+  sensorvaluediff_ = 0;
+  _clear_bit(1);
+}
+inline float SensorData::sensorvaluediff() const {
+  return sensorvaluediff_;
+}
+inline void SensorData::set_sensorvaluediff(float value) {
+  _set_bit(1);
+  sensorvaluediff_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ChainSensorSensorsMessage
+
+// repeated .SensorData SensorData = 1;
+inline int ChainSensorSensorsMessage::sensordata_size() const {
+  return sensordata_.size();
+}
+inline void ChainSensorSensorsMessage::clear_sensordata() {
+  sensordata_.Clear();
+}
+inline const ::SensorData& ChainSensorSensorsMessage::sensordata(int index) const {
+  return sensordata_.Get(index);
+}
+inline ::SensorData* ChainSensorSensorsMessage::mutable_sensordata(int index) {
+  return sensordata_.Mutable(index);
+}
+inline ::SensorData* ChainSensorSensorsMessage::add_sensordata() {
+  return sensordata_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+ChainSensorSensorsMessage::sensordata() const {
+  return sensordata_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+ChainSensorSensorsMessage::mutable_sensordata() {
+  return &sensordata_;
+}
+
+// -------------------------------------------------------------------
+
+// AllSensorValues
+
+// optional .InertialSensorsMessage ism = 1;
+inline bool AllSensorValues::has_ism() const {
+  return _has_bit(0);
+}
+inline void AllSensorValues::clear_ism() {
+  if (ism_ != NULL) ism_->::InertialSensorsMessage::Clear();
+  _clear_bit(0);
+}
+inline const ::InertialSensorsMessage& AllSensorValues::ism() const {
+  return ism_ != NULL ? *ism_ : *default_instance_->ism_;
+}
+inline ::InertialSensorsMessage* AllSensorValues::mutable_ism() {
+  _set_bit(0);
+  if (ism_ == NULL) ism_ = new ::InertialSensorsMessage;
+  return ism_;
+}
+
+// optional .FSRSensorsMessage fsm = 2;
+inline bool AllSensorValues::has_fsm() const {
+  return _has_bit(1);
+}
+inline void AllSensorValues::clear_fsm() {
+  if (fsm_ != NULL) fsm_->::FSRSensorsMessage::Clear();
+  _clear_bit(1);
+}
+inline const ::FSRSensorsMessage& AllSensorValues::fsm() const {
+  return fsm_ != NULL ? *fsm_ : *default_instance_->fsm_;
+}
+inline ::FSRSensorsMessage* AllSensorValues::mutable_fsm() {
+  _set_bit(1);
+  if (fsm_ == NULL) fsm_ = new ::FSRSensorsMessage;
+  return fsm_;
+}
+
+// optional .UltaSoundSensorsMessage ussm = 3;
+inline bool AllSensorValues::has_ussm() const {
+  return _has_bit(2);
+}
+inline void AllSensorValues::clear_ussm() {
+  if (ussm_ != NULL) ussm_->::UltaSoundSensorsMessage::Clear();
+  _clear_bit(2);
+}
+inline const ::UltaSoundSensorsMessage& AllSensorValues::ussm() const {
+  return ussm_ != NULL ? *ussm_ : *default_instance_->ussm_;
+}
+inline ::UltaSoundSensorsMessage* AllSensorValues::mutable_ussm() {
+  _set_bit(2);
+  if (ussm_ == NULL) ussm_ = new ::UltaSoundSensorsMessage;
+  return ussm_;
+}
+
+// optional .ChainSensorSensorsMessage hjsm = 4;
+inline bool AllSensorValues::has_hjsm() const {
+  return _has_bit(3);
+}
+inline void AllSensorValues::clear_hjsm() {
+  if (hjsm_ != NULL) hjsm_->::ChainSensorSensorsMessage::Clear();
+  _clear_bit(3);
+}
+inline const ::ChainSensorSensorsMessage& AllSensorValues::hjsm() const {
+  return hjsm_ != NULL ? *hjsm_ : *default_instance_->hjsm_;
+}
+inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_hjsm() {
+  _set_bit(3);
+  if (hjsm_ == NULL) hjsm_ = new ::ChainSensorSensorsMessage;
+  return hjsm_;
+}
+
+// optional .ChainSensorSensorsMessage rlsm = 5;
+inline bool AllSensorValues::has_rlsm() const {
+  return _has_bit(4);
+}
+inline void AllSensorValues::clear_rlsm() {
+  if (rlsm_ != NULL) rlsm_->::ChainSensorSensorsMessage::Clear();
+  _clear_bit(4);
+}
+inline const ::ChainSensorSensorsMessage& AllSensorValues::rlsm() const {
+  return rlsm_ != NULL ? *rlsm_ : *default_instance_->rlsm_;
+}
+inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_rlsm() {
+  _set_bit(4);
+  if (rlsm_ == NULL) rlsm_ = new ::ChainSensorSensorsMessage;
+  return rlsm_;
+}
+
+// optional .ChainSensorSensorsMessage llsm = 6;
+inline bool AllSensorValues::has_llsm() const {
+  return _has_bit(5);
+}
+inline void AllSensorValues::clear_llsm() {
+  if (llsm_ != NULL) llsm_->::ChainSensorSensorsMessage::Clear();
+  _clear_bit(5);
+}
+inline const ::ChainSensorSensorsMessage& AllSensorValues::llsm() const {
+  return llsm_ != NULL ? *llsm_ : *default_instance_->llsm_;
+}
+inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_llsm() {
+  _set_bit(5);
+  if (llsm_ == NULL) llsm_ = new ::ChainSensorSensorsMessage;
+  return llsm_;
+}
+
+// optional .ChainSensorSensorsMessage rasm = 7;
+inline bool AllSensorValues::has_rasm() const {
+  return _has_bit(6);
+}
+inline void AllSensorValues::clear_rasm() {
+  if (rasm_ != NULL) rasm_->::ChainSensorSensorsMessage::Clear();
+  _clear_bit(6);
+}
+inline const ::ChainSensorSensorsMessage& AllSensorValues::rasm() const {
+  return rasm_ != NULL ? *rasm_ : *default_instance_->rasm_;
+}
+inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_rasm() {
+  _set_bit(6);
+  if (rasm_ == NULL) rasm_ = new ::ChainSensorSensorsMessage;
+  return rasm_;
+}
+
+// optional .ChainSensorSensorsMessage lasm = 8;
+inline bool AllSensorValues::has_lasm() const {
+  return _has_bit(7);
+}
+inline void AllSensorValues::clear_lasm() {
+  if (lasm_ != NULL) lasm_->::ChainSensorSensorsMessage::Clear();
+  _clear_bit(7);
+}
+inline const ::ChainSensorSensorsMessage& AllSensorValues::lasm() const {
+  return lasm_ != NULL ? *lasm_ : *default_instance_->lasm_;
+}
+inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_lasm() {
+  _set_bit(7);
+  if (lasm_ == NULL) lasm_ = new ::ChainSensorSensorsMessage;
+  return lasm_;
+}
+
+// optional .BodyJointSensorsMessage bjsm = 9;
+inline bool AllSensorValues::has_bjsm() const {
+  return _has_bit(8);
+}
+inline void AllSensorValues::clear_bjsm() {
+  if (bjsm_ != NULL) bjsm_->::BodyJointSensorsMessage::Clear();
+  _clear_bit(8);
+}
+inline const ::BodyJointSensorsMessage& AllSensorValues::bjsm() const {
+  return bjsm_ != NULL ? *bjsm_ : *default_instance_->bjsm_;
+}
+inline ::BodyJointSensorsMessage* AllSensorValues::mutable_bjsm() {
+  _set_bit(8);
+  if (bjsm_ == NULL) bjsm_ = new ::BodyJointSensorsMessage;
+  return bjsm_;
+}
+
+// optional .RobotPositionSensorMessage rpsm = 10;
+inline bool AllSensorValues::has_rpsm() const {
+  return _has_bit(9);
+}
+inline void AllSensorValues::clear_rpsm() {
+  if (rpsm_ != NULL) rpsm_->::RobotPositionSensorMessage::Clear();
+  _clear_bit(9);
+}
+inline const ::RobotPositionSensorMessage& AllSensorValues::rpsm() const {
+  return rpsm_ != NULL ? *rpsm_ : *default_instance_->rpsm_;
+}
+inline ::RobotPositionSensorMessage* AllSensorValues::mutable_rpsm() {
+  _set_bit(9);
+  if (rpsm_ == NULL) rpsm_ = new ::RobotPositionSensorMessage;
+  return rpsm_;
+}
+
+// required uint32 TimeDiff = 11;
+inline bool AllSensorValues::has_timediff() const {
+  return _has_bit(10);
+}
+inline void AllSensorValues::clear_timediff() {
+  timediff_ = 0u;
+  _clear_bit(10);
+}
+inline ::google::protobuf::uint32 AllSensorValues::timediff() const {
+  return timediff_;
+}
+inline void AllSensorValues::set_timediff(::google::protobuf::uint32 value) {
+  _set_bit(10);
+  timediff_ = value;
 }
 
 

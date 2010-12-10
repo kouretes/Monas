@@ -94,7 +94,7 @@ void MessageBuffer::add( std::vector<msgentry> & tuples)
         msg_buf.push_back(m);
 
     }
-    if(tuples.size()>0)
+    if(tuples.size()>0&& mq!=NULL)
     {
         boost::unique_lock<Mutex> cvlock(mq->cond_mutex);
 
@@ -112,6 +112,13 @@ void MessageBuffer::add(const msgentry & t)
 	boost::unique_lock<Mutex> data_lock(mutex);
 	msgentry newm= t;
     msg_buf.push_back(t);
+    if( mq!=NULL)
+     {
+         boost::unique_lock<Mutex> cvlock(mq->cond_mutex);
+
+         mq->cond_publishers.push_back(this);
+         mq->cond.notify_one();
+     }
 
 
 

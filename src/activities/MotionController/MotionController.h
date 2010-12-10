@@ -53,7 +53,7 @@ private:
 
 	bool robotDown;
 	bool robotUp;
-	SensorPair AccZ, AccX, AccY;
+	//SensorPair AccZ, AccX, AccY;
 	float AccZvalue, AccXvalue, AccYvalue;
 
 	int counter;
@@ -71,7 +71,9 @@ private:
 	boost::shared_ptr<const  MotionWalkMessage> wm;
 	boost::shared_ptr<const  MotionHeadMessage> hm;
 	boost::shared_ptr<const  MotionActionMessage> am;
-	boost::shared_ptr<const  InertialSensorsMessage> im;
+
+	boost::shared_ptr<const AllSensorValues> allsm;
+
 
 	void commands();
 	void mglrun();

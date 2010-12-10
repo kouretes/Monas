@@ -1,57 +1,27 @@
 message InertialSensorsMessage{
-	required string host = 1 [default = "localhost"];
-	required string publisher = 2 [default = "" ];
-	required string topic = 3 [default = "global"];
-	required int32 timeout = 4 [default = 0];
-	required string timestamp = 5 [default = ""];
-	repeated SensorPair SensorData   	= 6;
+	repeated SensorPair SensorData   	= 1;
 }
 
-
 message FSRSensorsMessage{
-	required string host = 1 [default = "localhost"];
-	required string publisher = 2 [default = "" ];
-	required string topic = 3 [default = "global"];
-	required int32 timeout = 4 [default = 0];
-	required string timestamp = 5 [default = ""];
-	repeated SensorPair SensorData   	= 6;
+	repeated SensorPair SensorData   	= 1;
 }
 
 message UltaSoundSensorsMessage{
-	required string host = 1 [default = "localhost"];
-	required string publisher = 2 [default = "" ];
-	required string topic = 3 [default = "global"];
-	required int32 timeout = 4 [default = 0];
-	required string timestamp = 5 [default = ""];
-	repeated SensorPair SensorData   	= 6;
+	repeated SensorPair SensorData   	= 1;
 }
 
 message HeadJointSensorsMessage{
-	required string host = 1 [default = "localhost"];
-	required string publisher = 2 [default = "" ];
-	required string topic = 3 [default = "global"];
-	required int32 timeout = 4 [default = 0];
-	required string timestamp = 5 [default = ""];
-	repeated SensorPair SensorData   	= 6;
+	repeated SensorPair SensorData   	= 1;
 }
 
 message BodyJointSensorsMessage{
-	required string host = 1 [default = "localhost"];
-	required string publisher = 2 [default = "" ];
-	required string topic = 3 [default = "global"];
-	required int32 timeout = 4 [default = 0];
-	required string timestamp = 5 [default = ""];
-	repeated SensorPair SensorData   	= 6;
+	repeated SensorPair SensorData   	= 1;
 }
 
 message RobotPositionSensorMessage{
-	required string host = 1 [default = "localhost"];
-	required string publisher = 2 [default = "" ];
-	required string topic = 3 [default = "global"];
-	required int32 timeout = 4 [default = 0];
-	required string timestamp = 5 [default = ""];
-	repeated SensorPair SensorData   	= 6;
+	repeated SensorPair SensorData   	= 1;
 }
+
 
 message SensorPair {
 	optional string SensorName = 1 [default = ""];
@@ -59,4 +29,29 @@ message SensorPair {
 	optional float SensorValueDiff = 3;
 	optional uint32 SensorTimeDiff = 4; 
 	optional int32 SensorID = 5 [default = -1];
+}
+
+message SensorData {
+	required float  SensorValue = 1;
+	required float SensorValueDiff = 2;
+}
+
+message ChainSensorSensorsMessage{
+	repeated SensorData SensorData = 1;
+}
+
+message AllSensorValues{
+	optional InertialSensorsMessage ism=1;
+	optional FSRSensorsMessage fsm =2;
+	optional UltaSoundSensorsMessage ussm=3;
+	optional ChainSensorSensorsMessage hjsm=4;
+	optional ChainSensorSensorsMessage rlsm=5;
+	optional ChainSensorSensorsMessage llsm=6; 
+	optional ChainSensorSensorsMessage rasm=7;
+	optional ChainSensorSensorsMessage lasm=8;
+	
+	optional BodyJointSensorsMessage bjsm=9;
+	optional RobotPositionSensorMessage rpsm=10;
+	
+	required uint32 TimeDiff = 11; 
 }
