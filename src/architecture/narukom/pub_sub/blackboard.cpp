@@ -85,7 +85,7 @@ int Blackboard::cleanup()
 	    historyqueue::iterator qit= q.begin();
 	    //cout<<(*it).first<<endl;
 	    //int i=0;
-	    while(qit!=q.end() && (*qit).timeoutstamp<cur_tmsp)
+	    while(qit!=q.end() && (*qit).timeoutstamp<=cur_tmsp)
 	    {
             ++qit;
             //i++;

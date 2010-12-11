@@ -7,8 +7,7 @@ include_directories( ../../../external/PracticalSocket)
 
 set ( ActivityName Vision )
 
-set ( ActivitySrcs  KImageExtractor.cpp
-                    KSegmentator.cpp
+set ( ActivitySrcs  KSegmentator.cpp
                     Vision.cpp
 		    VisionImageProcessing.cpp
 		    KCameraTransformation.cpp ../../../external/PracticalSocket/PracticalSocket.cpp

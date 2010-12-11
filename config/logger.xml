@@ -18,5 +18,5 @@
 
 <!-- FatalError =0, Error, Info, ExtraInfo, ExtraExtraInfo -->
 <!-- Verbosity level is limited to >= 0 thus FatalError can't be blocked-->
-<LogFileVerbosityLevel>6</LogFileVerbosityLevel>
+<LogFileVerbosityLevel>8</LogFileVerbosityLevel>
 

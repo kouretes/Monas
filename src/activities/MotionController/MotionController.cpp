@@ -139,6 +139,9 @@ void MotionController::read_messages() {
 
 	/* Messages for Walk, Head, Action */
 	hm = _blk->read_signal<MotionHeadMessage> ("MotionHeadMessage");
+	if(hm!=NULL){
+			cout << "Pira minima gia kefali " << endl;
+		}
 	wm = _blk->read_signal<MotionWalkMessage> ("MotionWalkMessage");
 	am = _blk->read_signal<MotionActionMessage> ("MotionActionMessage");
 

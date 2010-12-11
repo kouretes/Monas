@@ -60,15 +60,20 @@ void Sensors::UserInit() {
 	initFastAccess();
 	_com->get_message_queue()->add_publisher(this);
 
-	dcm->getModule()->atPostProcess(AL::functional::bind(&Sensors::synchronisedDCMcallback , this));
+
 
 
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
 
 int Sensors::Execute() {
+static bool firstrun = true;
+	if(firstrun)
+	{	dcm->getModule()->atPostProcess(AL::functional::bind(&Sensors::synchronisedDCMcallback , this));
+		firstrun = false;
+	}
 
-
+	return 0;
 
 	//unsigned int counter = 0;
 	unsigned int i = 0;
@@ -243,7 +248,7 @@ void Sensors::synchronisedDCMcallback() {
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
-    nmsg.timeoutstamp=now+boost::posix_time::millisec(250);
+    nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
     nmsg.timestamp=now;
     nmsg.topic="sensors";
     nmsg.publisher=Publisher::getName();

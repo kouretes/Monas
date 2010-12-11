@@ -41,10 +41,14 @@ class MessageBuffer
     void add(const msgentry & t);
     std::vector<msgentry> remove();
     bool operator==( MessageBuffer& other) ;
-    std::string getOwner() ;// {return owner;}
+    const std::string getOwner() ;// {return owner;}
     void add_filter(Filter* filter);
     void remove_filter(Filter* filter);
     static bool cmpentryTimeStamps(const msgentry &a,const msgentry & b) {return a.timestamp<b.timestamp;};
+    bool operator < (const MessageBuffer  *rhs) const
+    {
+    	return this->owner < rhs->owner;
+    }
   private:
     //Use GT comparator to ensure top() is always the oldest timestamped msg
     std::vector<msgentry> msg_buf;

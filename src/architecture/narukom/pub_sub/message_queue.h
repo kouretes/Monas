@@ -25,6 +25,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <set>
 #include <utility>
 #include "subscriber.h"
 #include "publisher.h"
@@ -32,6 +33,10 @@
 #include "topic_tree.h"
 #include "../system/Mutex.h"
 #include "../system/thread.h"
+#include "tools/statMovingAverage.h"
+#include "hal/syscall.h"
+
+#include "tools/stopWatch.h"
 #ifndef TIXML_USE_STL
  #define TIXML_USE_STL
 #endif
@@ -83,9 +88,10 @@ class MessageQueue : public Thread
     const std::string type_string;
 
     Mutex cond_mutex;
-    std::vector<MessageBuffer*> cond_publishers;
+    std::set<MessageBuffer*> cond_publishers;
     boost::condition_variable_any cond;
 
+    StopWatch<> agentStats;
 
     void create_tree(TopicTree<std::string,MessageBuffer>* tree, const std::string& file_name);
 };

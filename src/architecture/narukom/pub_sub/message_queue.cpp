@@ -215,7 +215,7 @@ MessageBuffer* MessageQueue::add_publisher(Publisher* pub , MessageBuffer* buf)
 
 MessageBuffer* MessageQueue::add_subscriber ( Subscriber* sub ) //{return NULL;} //TODO};
 {
-    boost::unique_lock<Mutex> sub_lock(pub_mutex);
+    boost::unique_lock<Mutex> sub_lock(sub_mutex);
 		string owner_name = sub->getName();
 
     map<string,MessageBuffer*>::iterator it = subscribers_buf->find(owner_name);
@@ -271,7 +271,6 @@ bool MessageQueue::subscribe (const  std::string& topic, Subscriber* sub,int whe
 
         MessageBuffer* subscriber = sub_it->second;
         result =  topic_tree->subscribe ( topic,subscriber,where );
-
         return result;
         //        return true;
     }
@@ -313,9 +312,12 @@ bool MessageQueue::unsubscribe (const std::string& from_topic, Subscriber*  sub 
 
 void MessageQueue::process_queued_msg()
 {
-
-    std::vector<MessageBuffer *> toprocess;
+    std::set<MessageBuffer *> toprocess;
     boost::unique_lock<Mutex> cond_lock(cond_mutex);
+
+    static int _executions = 0;
+
+
 
     while(cond_publishers.size()==0)
         cond.wait(cond_lock);
@@ -323,34 +325,46 @@ void MessageQueue::process_queued_msg()
 	cond_publishers.clear();
     cond_lock.unlock();
     //cout<<"Queue up!"<<endl;
-    boost::unique_lock<Mutex> sub_lock(sub_mutex);
-    boost::unique_lock<Mutex> pub_lock(pub_mutex);
+    //boost::unique_lock<Mutex> pub_lock(pub_mutex);
+    //boost::unique_lock<Mutex> sub_lock(sub_mutex);
     boost::unique_lock<Mutex> tree_lock(tree_mutex);
 
-    for(std::vector<MessageBuffer *>::iterator pit=toprocess.begin();pit!=toprocess.end();++pit)
+    for(std::set<MessageBuffer *>::iterator pit=toprocess.begin();pit!=toprocess.end();++pit)
     {
+       	_executions ++;
+            	    //   cout << "Starting Thread Main" << endl;
+            	      agentStats.StartTiming();
         std::vector<msgentry> mtp=(*pit)->remove();
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
         {
-        	//cout << "mit" << (*mit).publisher << endl;
+//        	cout << "mit" << (*mit).publisher << endl;
 
-            list<MessageBuffer*>* alist =  topic_tree->message_arrived((*mit).topic);
+
+        	      list<MessageBuffer*>* alist =  topic_tree->message_arrived((*mit).topic);
+        	    //	agentStats.StopAgentTiming();
+
+
+
 
             if(alist != 0)
             {
                 for ( list<MessageBuffer*>::iterator buf_it = alist->begin(); buf_it != alist->end(); buf_it++)
                 {
 
-                        //cout<<"dest"<<endl;
+//                        cout<<"dest"<<endl;
 
                         if ((*buf_it)->getOwner() != (*mit).publisher )
                         {
-                                //cout << "Delivering to " << (*buf_it)->getOwner()<< " the " << (*mit).msg->GetTypeName() << " size: " << endl;
+//                                cout << "Delivering to " << (*buf_it)->getOwner()<< " the " << (*mit).msg->GetTypeName() << " size: " << endl;
                                 (*buf_it)->add(*mit);
                         }
                 }
             }
         }
+        if ( ! (_executions % 1000) ){
+             	                     cout << "                          publisher-sub time " << agentStats.StopTiming() << endl;
+             	                 }
+
 
     }
 
@@ -361,7 +375,16 @@ void MessageQueue::process_queued_msg()
 //void MessageQueue::finalize_queue(){}
 int MessageQueue::Execute()
 {
+	static int _executions = 0;
+
+
+	_executions ++;
 //   cout << "Starting Thread Main" << endl;
-  process_queued_msg();
+  agentStats.StartTiming();
+	process_queued_msg();
+//	agentStats.StopAgentTiming();
+  if ( ! (_executions % 1000) ){
+                 cout << "Narukom time " << agentStats.StopTiming() << endl;
+             }
   return 0;
 }

@@ -10,6 +10,7 @@ use(NAOQI-PLUGINS-TOOLS)
 add_library ( NaoQiDep  ${LibBuildType}
                         earLed.cpp
                         HeadAngleSensor.cpp
+                        KImageExtractor.cpp
 )
 
 use_lib( NaoQiDep ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST)

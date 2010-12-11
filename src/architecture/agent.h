@@ -58,8 +58,9 @@ class Agent : public Thread {
 
             unsigned long start = SysCall::_GetCurrentTimeInUSec();
 
-			_blk.process_messages();
+
             agentStats.StartAgentTiming();
+            _blk.process_messages();
 
             for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); it++ ) {
 

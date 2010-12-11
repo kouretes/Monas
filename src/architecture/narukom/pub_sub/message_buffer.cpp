@@ -49,9 +49,9 @@ boost::unique_lock<Mutex> data_lock(mutex);
 
 }
 
-std::string MessageBuffer::getOwner()
+const std::string MessageBuffer::getOwner()
 {
-  boost::unique_lock<Mutex> data_lock(mutex);
+  //boost::unique_lock<Mutex> data_lock(mutex);
   return owner;
 }
 
@@ -94,11 +94,12 @@ void MessageBuffer::add( std::vector<msgentry> & tuples)
         msg_buf.push_back(m);
 
     }
+    data_lock.unlock();
     if(tuples.size()>0&& mq!=NULL)
     {
         boost::unique_lock<Mutex> cvlock(mq->cond_mutex);
 
-        mq->cond_publishers.push_back(this);
+        mq->cond_publishers.insert(this);
         mq->cond.notify_one();
     }
 
@@ -112,11 +113,12 @@ void MessageBuffer::add(const msgentry & t)
 	boost::unique_lock<Mutex> data_lock(mutex);
 	msgentry newm= t;
     msg_buf.push_back(t);
+    data_lock.unlock();
     if( mq!=NULL)
      {
          boost::unique_lock<Mutex> cvlock(mq->cond_mutex);
 
-         mq->cond_publishers.push_back(this);
+         mq->cond_publishers.insert(this);
          mq->cond.notify_one();
      }
 

@@ -8,25 +8,27 @@
 #ifndef ROBOT_CONSTS_H_
 #define ROBOT_CONSTS_H_
 
-
-
-
-enum ChainHeadNames {
-	 YAW, PITCH, HEADSIZE
+enum ChainHeadNames
+{
+	YAW, PITCH, HEADSIZE
 };
-enum ChainLegNames {
+enum ChainLegNames
+{
 	HIP_YAW_PITCH, HIP_ROLL, HIP_PITCH, KNEE_PITCH, ANKLE_PITCH, ANKLE_ROLL, LEGSIZE
 };
 
-enum ChainArmNames {
+enum ChainArmNames
+{
 	SHOULDER_PITCH, SHOULDER_ROLL, ELBOW_ROLL, ELBOW_YAW, /*WRIST_YAW, HAND,*/ARMSIZE
 };
 
-enum ChainAccessNames {
+enum ChainAccessNames
+{
 	X, Y, Z
 };
 
-enum DeviceNames {
+enum DeviceNames
+{
 	HEAD, HEAD_YAW = HEAD, HEAD_PITCH,
 
 	L_LEG, L_HIP_YAW_PITCH = L_LEG,
@@ -51,13 +53,14 @@ enum DeviceNames {
 
 	R_COP_X, R_COP_Y, R_TOTAL_WEIGHT
 
+};
 
-} ;
+/// Returns a map from joint ids (enum Joint names) to almemory string "path" names
+namespace KDeviceLists
+{
 
-	/// Returns a map from joint ids (enum Joint names) to almemory string "path" names
-namespace KDeviceLists {
-
-	std::map<DeviceNames, std::string> fillSensorNames() {
+	std::map<DeviceNames, std::string> fillSensorNames()
+	{
 		std::map<DeviceNames, std::string> fSensorKeys;
 
 		// Joints Sensor list
@@ -105,7 +108,8 @@ namespace KDeviceLists {
 		fSensorKeys[R_TOTAL_WEIGHT] = std::string("Device/SubDeviceList/RFoot/FSR/TotalWeight/Sensor/Value");
 		return fSensorKeys;
 	}
-	const std::map<DeviceNames, std::string> SensorNames() {
+	const std::map<DeviceNames, std::string> SensorNames()
+	{
 		static std::map<DeviceNames, std::string> ret = fillSensorNames();
 		return ret;
 	}

@@ -3,16 +3,12 @@
 
 #include "architecture/IActivity.h"
 
-#include "architecture/narukom/pub_sub/publisher.h"
-
-
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 
 #include "alptr.h"
 #include "alvalue.h"
-//#define WEBOTS
-#include "alxplatform.h"
+
 #include <albroker.h>
 #include <alproxy.h>
 #include <almemoryfastaccess.h>
@@ -20,12 +16,13 @@
 #include "alframemanagerproxy.h"
 
 #include "almemoryproxy.h"
-#include "albrokermanager.h"
+
 #include "altexttospeechproxy.h"
 
 #include <string>
 
 #include "ISpecialAction.h"
+//#define WEBOTS
 
 class MotionController : public IActivity{
 
