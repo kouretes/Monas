@@ -3,9 +3,7 @@
 
 #include "../../ISpecialAction.h"
 
-#include "alptr.h"
-#include "alvalue.h"
-#include "almotionproxy.h"
+#include "hal/robot/aldebaran-kme.h"
 
 class HardLeftSideKick: public ISpecialAction {
   

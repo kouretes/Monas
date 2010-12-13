@@ -2,8 +2,6 @@
 #define HeadBehavior_H
 
 #include "architecture/IActivity.h"
-#include "architecture/archConfig.h"
-#include "architecture/narukom/pub_sub/publisher.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -11,9 +9,7 @@
 #include "messages/HeadToBMessage.pb.h"
 #include "messages/BToHeadMessage.pb.h"
 ///#include "time.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
-#include "messages/RoboCupGameControlData.h"
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 

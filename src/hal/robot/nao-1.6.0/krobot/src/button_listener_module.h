@@ -1,18 +1,16 @@
 #ifndef BUTTON_LISTENER_H
 #define BUTTON_LISTENER_H
-#include "almemoryproxy.h"
-#include "alproxy.h"
-#include "alsentinelproxy.h"
+#include <almemoryproxy.h>
+
 #include <albroker.h>
 #include <alproxy.h>
 #include <alptr.h>
 #include <alvalue.h>
 #include <almodule.h>
 #include <boost/date_time/posix_time/ptime.hpp>
-#include <boost/date_time.hpp>
+//#include <boost/date_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "tools/logger.h"
-#include "tools/toString.h"
+
 
 class ButtonListener: public AL::ALModule {
 	public:

@@ -5,9 +5,7 @@
 
 #include <string>
 
-#include "alptr.h"
-#include "alvalue.h"
-#include "almotionproxy.h"
+#include "hal/robot/aldebaran-kme.h"
 
 class KmeAction : public ISpecialAction {
 

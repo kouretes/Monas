@@ -1,15 +1,11 @@
 #ifndef LED_HANDLER_H
 #define LED_HANDLER_H
 #include "hal/thread.h"
-#include "alptr.h"
-#include "albroker.h"
-#include "alproxy.h"
-#include <vector>
+#include "hal/robot/aldebaran-proxy.h"
 #include <string>
 #include "messages/Gamecontroller.pb.h"
 #include "architecture/IActivity.h"
 using std::string;
-using std::vector;
 /**
  * \class LedHandler
 
@@ -31,7 +27,7 @@ public:
 	 * \param color. The color name.
 	 * Available colors "off", "on" (white), "red", "blue", "green", "yellow", "orange", "purple"
 	 */
-	void setLed(const std::string& device, const std::string& color);
+	void setLed(const string& device, const string& color);
 	/**
 	 * \brief setChestColor. Sets the color of the chest button
 	 * \param color. The desired color as described in SetLed
@@ -79,7 +75,7 @@ public:
 	 */
 	void UserInit();
 
-	std::string GetName() {
+	string GetName() {
 		return "LedHandler";
 	}
 

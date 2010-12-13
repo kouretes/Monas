@@ -1,5 +1,9 @@
 #include "BodyBehavior.h"
+#include "architecture/archConfig.h"
 
+#include "tools/logger.h"
+#include "tools/toString.h"
+#include "messages/RoboCupGameControlData.h"
 namespace {
 	ActivityRegistrar<BodyBehavior>::Type temp("BodyBehavior");
 }

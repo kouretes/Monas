@@ -104,9 +104,9 @@ int Blackboard::cleanup()
 	{
 	    if((*sigit).second.cleared==true)
 	    {
-	    	//signalstruct::iterator t=sigit++;
-	    	sigdata.erase(sigit);
-	    	sigit=sigdata.begin();
+	    	signalstruct::iterator t=sigit++;
+	    	sigdata.erase(t);
+	    	//sigit=sigdata.begin();
 	    }
 	    else
 			++sigit;

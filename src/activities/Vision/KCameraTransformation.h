@@ -3,13 +3,7 @@
 
 #include "KMat.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-#include "alxplatform.h"
-#include <albroker.h>
-#include <alproxy.h>
-#include <almemoryfastaccess.h>
-#include "almotionproxy.h"
-
+#include "hal/robot/aldebaran-kme.h"
 
 #define sqrd(x) ( (x)*(x) )
 //#include "boost/date_time/local_time/local_time.hpp"

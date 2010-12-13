@@ -1,25 +1,15 @@
 #ifndef SENSORS_H
 #define SENSORS_H
 #include "architecture/narukom/pub_sub/publisher.h"
-#include "messages/TestMessage.pb.h"
-#include "hal/robot/generic_nao/robot_consts.h"
 
+#include "hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/aldebaran-sensors.h"
 #include "messages/SensorsMessage.pb.h"
 #include <vector>
 #include <map>
 #include <string>
 
 #include "architecture/IActivity.h"
-#include "almotionproxy.h"
-#include "almemoryproxy.h"
-#include "almemoryfastaccess.h"
-#include "alptr.h"
-#include "alxplatform.h"
-#include <albroker.h>
-#include <alproxy.h>
-
-#include <rttime.h>
-#include "dcmproxy.h"
 
 //#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
 // Use DCM proxy
@@ -27,18 +17,19 @@
 //#define USE_POINTERS
 
 
-class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
+class Sensors: public IActivity, public Publisher/*, public Subscriber*/
+{
 	public:
 		Sensors();
 		int Execute();
 
 		void UserInit();
-		std::string GetName() {
+		std::string GetName()
+		{
 			return "Sensors";
 		}
-		~Sensors() {
-			;
-
+		~Sensors()
+		{
 			AL::ALValue commands;
 
 			commands.arraySetSize(3);
@@ -47,7 +38,7 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
 			commands[2].arraySetSize(1);
 			commands[2][0].arraySetSize(2);
 			commands[2][0][0] = 0.0;
-			commands[2][0][1] = dcm->getTime(10);
+			commands[2][0][1] = dcm->getTime(1000);
 
 			dcm->set(commands);
 
@@ -66,7 +57,7 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
 		AL::ALPtr<AL::DCMProxy> dcm;
 		AL::ALPtr<AL::ALMotionProxy> motion;
 		AL::ALPtr<AL::ALMemoryProxy> memory;
-		AL::ALPtr<AL::ALMemoryFastAccess> MemoryFastAccess;
+		//	AL::ALPtr<AL::ALMemoryFastAccess> MemoryFastAccess;
 
 		void initialisation();
 		void initFastAccess();
@@ -89,10 +80,8 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/{
 		float smoothness; //sensordata = 90%*value + 10%*oldvalue
 		//Indexing according initialization
 		std::vector<float> devicesValues;
-		template <typename T> void fillSensorMsg(T &msg, int start , int end);
+		template<typename T> void fillSensorMsg(T &msg, int start, int end);
 };
-
-
 
 #endif
 

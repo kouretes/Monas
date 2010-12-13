@@ -1,6 +1,11 @@
 #include "XarManager.h"
 
-
+#include <fstream>
+#include <dirent.h>
+#include "tools/logger.h"
+#include "hal/robot/generic_nao/kAlBroker.h"
+#include "ISpecialAction.h"
+#include "XarAction.h"
 
 using namespace std;
 

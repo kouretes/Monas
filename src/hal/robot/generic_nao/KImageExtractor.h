@@ -3,21 +3,11 @@
 
 #include <iostream>
 
-#include <albroker.h>
-#include <alproxy.h>
+
 
 #include "architecture/narukom/pub_sub/blackboard.h"
 
-
-#include "alxplatform.h"
-
-//#include <almemoryfastaccess.h>
-#include "almotionproxy.h"
-#include "alvideodeviceproxy.h"
-#include "alvision/alvisiondefinitions.h"
-#include "alvision/alimage.h"
-//#include "albrokermanager.h"
-#include "alptr.h"
+#include "hal/robot/aldebaran-vision.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <opencv/cv.h>

@@ -1,4 +1,6 @@
 #include "Localization.h"
+#include "Kutils.h"
+
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
