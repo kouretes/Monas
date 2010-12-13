@@ -3,8 +3,6 @@ if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao
 endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
 
 
-include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
-
 include_directories( ../../../external/PracticalSocket)
 
 set ( ActivityName Localization )

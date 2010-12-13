@@ -2,7 +2,7 @@
 #define _SoftRightSideKick_h_ 1
 
 #include "../../ISpecialAction.h"
-#include "hal/robot/aldebaran-kme.h"
+#include "hal/robot/generic_nao/aldebaran-kme.h"
 
 
 class SoftRightSideKick: public ISpecialAction {

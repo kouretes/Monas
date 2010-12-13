@@ -7,7 +7,7 @@
 
 
 
-#include "hal/robot/aldebaran-motion-extra.h"
+#include "hal/robot/generic_nao/aldebaran-motion-extra.h"
 
 
 

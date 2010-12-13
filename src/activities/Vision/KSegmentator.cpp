@@ -2,7 +2,7 @@
 #include "tools/logger.h"
 #include <iostream>
 
-#include "hal/robot/aldebaran-visiondefinitions.h"
+#include "hal/robot/generic_nao/aldebaran-visiondefinitions.h"
 
 
 

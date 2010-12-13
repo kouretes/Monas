@@ -2,12 +2,13 @@ if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao
     return()
 endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
 
-include( ../../hal/robot/nao-1.6.0/bootstrap.cmake ) 
-
 set ( ActivityName LedHandler )
 
 set ( ActivitySrcs LedHandler.cpp 
 )
+include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
+STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
+add_definitions(" -DNAOQI_${NaoQiVer} ")
 
 include ( ../activTemplate.cmake )
 

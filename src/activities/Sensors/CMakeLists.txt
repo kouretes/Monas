@@ -2,12 +2,15 @@ if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao
     return()
 endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
 
-include( ../../hal/robot/nao-1.6.0/bootstrap.cmake ) 
 
 set ( ActivityName Sensors)
 
 set ( ActivitySrcs  Sensors.cpp 
 )
+include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
+STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
+add_definitions(" -DNAOQI_${NaoQiVer} ")
+
 
 include ( ../activTemplate.cmake )
 

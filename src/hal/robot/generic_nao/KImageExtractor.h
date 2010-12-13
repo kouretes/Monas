@@ -7,7 +7,7 @@
 
 #include "architecture/narukom/pub_sub/blackboard.h"
 
-#include "hal/robot/aldebaran-vision.h"
+#include "hal/robot/generic_nao/aldebaran-vision.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <opencv/cv.h>

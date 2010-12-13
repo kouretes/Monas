@@ -3,7 +3,7 @@
 
 #include "KMat.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "hal/robot/aldebaran-kme.h"
+#include "hal/robot/generic_nao/aldebaran-kme.h"
 
 #define sqrd(x) ( (x)*(x) )
 //#include "boost/date_time/local_time/local_time.hpp"

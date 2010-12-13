@@ -3,7 +3,7 @@
 #include "architecture/narukom/pub_sub/publisher.h"
 
 #include "hal/robot/generic_nao/robot_consts.h"
-#include "hal/robot/aldebaran-sensors.h"
+#include "hal/robot/generic_nao/aldebaran-sensors.h"
 #include "messages/SensorsMessage.pb.h"
 #include <vector>
 #include <map>

@@ -69,7 +69,7 @@ void Sensors::UserInit() {
 int Sensors::Execute() {
 static bool firstrun = true;
 	if(firstrun)
-	{	dcm->getModule()->atPostProcess(AL::functional::bind(&Sensors::synchronisedDCMcallback , this));
+	{	dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
 		firstrun = false;
 	}
 

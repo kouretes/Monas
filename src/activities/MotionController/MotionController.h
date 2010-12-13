@@ -6,7 +6,7 @@
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 
-#include "hal/robot/aldebaran-motion.h"
+#include "hal/robot/generic_nao/aldebaran-motion.h"
 
 #include <string>
 

@@ -25,8 +25,9 @@ int XarAction::ExecutePost() {
 
 int XarAction::ExecuteActionXAR() {
 	cout << "playing behavior with id " << this->identifier << endl;
-	if(!frame->isRunning( this->identifier))
-		this->identifier = frame->newBehaviorFromFile(filename, string(""));
+//TODO find a way to see tha the behavior is running or not
+	//if(!frame->isRunning( this->identifier))
+		//this->identifier = frame->newBehaviorFromFile(filename, string(""));
 
 	//frame->post.gotoAndPlay(this->identifier,0);
 	//else

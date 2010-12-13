@@ -3,7 +3,7 @@
 
 #include "../../ISpecialAction.h"
 
-#include "hal/robot/aldebaran-kme.h"
+#include "hal/robot/generic_nao/aldebaran-kme.h"
 
 class HardLeftSideKick: public ISpecialAction {
   

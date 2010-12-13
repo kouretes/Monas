@@ -7,8 +7,11 @@
 
 #ifndef ALDEBARAN_VISIONDEFINITIONS_H_
 #define ALDEBARAN_VISIONDEFINITIONS_H_
-//#include "alvalue.h"
-#include "alvision/alvisiondefinitions.h"
+//#ifdef NAOQI_1_6_0
+#include <alvision/alvisiondefinitions.h>
 //#include "alvideodeviceproxy.h"
-
+//#elif NAOQI_1_8_16
+//#include <alvision/alvisiondefinitions.h>
+//
+//#endif
 #endif /* ALDEBARAN_VISIONDEFINITIONS_H_ */

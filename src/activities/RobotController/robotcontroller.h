@@ -16,7 +16,7 @@
 #include <iostream>
 #include <string>
 
-#include "hal/robot/aldebaran-robotcontroller.h"
+#include "hal/robot/generic_nao/aldebaran-robotcontroller.h"
 #include <architecture/IActivity.h>
 
 /**
