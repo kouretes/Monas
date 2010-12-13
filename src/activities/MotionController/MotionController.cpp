@@ -175,61 +175,52 @@ void MotionController::mglrun() {
 
 	/* Check if the robot is falling and remove stiffness, kill all motions */
 #ifdef WEBOTS
-	if ( (allsm != NULL&& allsm->has_ism()) && (!robotDown) && (robotUp) && (AccZvalue < 5.5) ) { // Webots
+	if ( (allsm != NULL&& allsm->has_ism()) &&  (robotUp) && (AccZvalue < 5.5) ) { // Webots
 #else
-	if ((allsm != NULL&& allsm->has_ism()) && (!robotDown) && (robotUp) && (AccZvalue > -40)) { // Robot
+	if ((allsm != NULL&& allsm->has_ism()) && (robotUp) && (AccZvalue > -40)) { // Robot
 #endif
 		motion->setStiffnesses("Body", 0.0);
 		Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
 
-		usleep(800000);
 		robotUp = false;
-		robotDown = true;
+		robotDown = false;
 		killCommands();
 		//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
 		motion->setStiffnesses("Body", 0.);
-		usleep(300000);
-		ALstandUpCross();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
+		usleep(800000);
+		//ALstandUpCross();
+
 		return;
 	}
-
-	/* Check if the robot is down and stand up */
-	if (robotDown) {
-		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
-		motion->setStiffnesses("Body", 1.0);
-		robotDown = false;
-		ALstandUp();
-		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
-		return;
-	}
-
 	/* Check if an Action command has been completed */
 	if ((actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->call<bool> ("isRunning", actionPID) /*isRunning(actionPID)*/) {
 		actionPID = 0;
 		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 	}
-
-	/* Check if the robot stood up after a stand up procedure */
-	if (!robotUp && !robotDown) {
-#ifdef WEBOTS
-		if ( (actionPID == 0) && (AccZvalue > 8.5) ) { // Webots
-#else
-		if ((actionPID == 0) && (AccZvalue < -40)) { // Robot
-#endif
-			robotUp = true;
-			Logger::Instance().WriteMsg("MotionController", "Stood up ...", Logger::ExtraInfo);
-		} else if (actionPID == 0) {
-
-			robotDown = true;
-			motion->setStiffnesses("Body", 0.5);
-			usleep(300000);
-			ALstandUpCross();
-
-			Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
-			return;
-		}
+	if(!robotDown&&!robotUp){
+		//Now execute an alstandupcross
+		motion->setStiffnesses("Body", 1.0);
+		usleep(100000);
+		ALstandUpCross();
+		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
+		robotDown=true;
+		return ;
 	}
+
+	/* Check if the robot is down and stand up */
+	if ((actionPID == 0) &&robotDown) {
+		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
+		motion->setStiffnesses("Body", 1.0);
+		robotDown = false;
+		robotUp=true;
+		ALstandUp();
+		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
+		usleep(5000000);
+		return;
+	}
+
+
+
 
 	/* The robot is up and ready to execute motions */
 	if (robotUp) {
