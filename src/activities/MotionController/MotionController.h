@@ -6,18 +6,7 @@
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 
-#include "alptr.h"
-#include "alvalue.h"
-
-#include <albroker.h>
-#include <alproxy.h>
-#include <almemoryfastaccess.h>
-#include "almotionproxy.h"
-#include "alframemanagerproxy.h"
-
-#include "almemoryproxy.h"
-
-#include "altexttospeechproxy.h"
+#include "hal/robot/aldebaran-motion.h"
 
 #include <string>
 

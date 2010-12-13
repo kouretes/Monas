@@ -19,6 +19,9 @@
  */
 
 #include "button_listener_module.h"
+#include "tools/logger.h"
+#include "tools/toString.h"
+//#include "alsentinelproxy.h"
 
 using AL::ALValue;
 
@@ -44,8 +47,8 @@ ButtonListener::ButtonListener(AL::ALPtr<AL::ALBroker> pbroker, const std::strin
 	sentinel->pCall<bool> ("enableDefaultActionSimpleClick", false);
 	//subscribe on chest button pressed
 	memory->subscribeToEvent("ChestButtonPressed", getName(),"buttonPressed");
-	memory->subscribeToMicroEvent("LeftBumperPressed", getName(),"","LBumperPressed");
-	memory->subscribeToMicroEvent("RightBumperPressed", getName(),"","RBumperPressed");
+	memory->subscribeToEvent("LeftBumperPressed", getName(),"LBumperPressed");
+	memory->subscribeToEvent("RightBumperPressed", getName(),"RBumperPressed");
 
 	//cout << "Button Listener end of constructor" << endl;
 	memory->insertData("button_pressed", 0);

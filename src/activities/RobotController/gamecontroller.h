@@ -7,11 +7,10 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
-#include <errno.h>
-#include "tools/logger.h"
-#include "tools/toString.h"
 
-class GameController: public Thread {
+
+class GameController: public Thread
+{
 	public:
 		GameController(RoboCupGameControlData* game_data, bool* received_data, Mutex* mx, int port = GAMECONTROLLER_PORT, int team_number = 1);
 		~GameController();
@@ -22,7 +21,6 @@ class GameController: public Thread {
 		RoboCupGameControlData* current_data;
 		bool* received_data;
 
-
 		Mutex* mx;
 
 		int port;
@@ -31,7 +29,6 @@ class GameController: public Thread {
 		char buffer[10024]; // maximum bytes per message
 		int socket_fd;
 		struct timeval timeout;
-
 
 		bool check_data_and_copy(char* bytes, int size);
 

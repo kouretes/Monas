@@ -1,5 +1,9 @@
 #include "HeadBehavior.h"
 
+#include "architecture/archConfig.h"
+#include "tools/logger.h"
+#include "tools/toString.h"
+#include "messages/RoboCupGameControlData.h"
 
 using namespace boost::posix_time;
 

@@ -2,8 +2,6 @@
 #define BODY_BEHAVIOR_H
 
 #include "architecture/IActivity.h"
-#include "architecture/archConfig.h"
-#include "architecture/narukom/pub_sub/publisher.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -13,9 +11,6 @@
 #include "messages/HeadToBMessage.pb.h"
 #include "messages/BToHeadMessage.pb.h"
 
-#include "tools/logger.h"
-#include "tools/toString.h"
-#include "messages/RoboCupGameControlData.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f

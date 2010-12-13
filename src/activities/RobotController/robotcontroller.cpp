@@ -1,4 +1,12 @@
 #include "robotcontroller.h"
+#include "hal/robot/generic_nao/kAlBroker.h"
+#include "architecture/archConfig.h"
+
+#include "tools/logger.h"
+#include "tools/toString.h"
+#include "tools/XMLConfig.h"
+
+using boost::posix_time::milliseconds;
 
 namespace {
 	ActivityRegistrar<RobotController>::Type temp("RobotController");

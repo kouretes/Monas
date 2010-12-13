@@ -3,8 +3,6 @@
 
 #include "architecture/IActivity.h"
 
-#include "architecture/narukom/pub_sub/publisher.h"
-
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
@@ -12,7 +10,6 @@
 #include "messages/motion.pb.h"
 
 #include "KLocalization.h"
-#include "Kutils.h"
 
 #include "PracticalSocket.h"
 #include <string>

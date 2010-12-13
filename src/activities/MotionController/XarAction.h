@@ -5,10 +5,7 @@
 
 #include <string>
 
-#include "alptr.h"
-#include <alproxy.h>
-#include "alvalue.h"
-#include "alframemanagerproxy.h"
+#include "hal/robot/aldebaran-motion-extra.h"
 
 class XarAction: public ISpecialAction {
 

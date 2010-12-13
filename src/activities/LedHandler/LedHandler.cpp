@@ -1,7 +1,6 @@
 #include "LedHandler.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
-using std::cout;
-using std::endl;
+
 using std::string;
 namespace {
 	ActivityRegistrar<LedHandler>::Type temp("LedHandler");
@@ -58,7 +57,7 @@ LedHandler::LedHandler() {
 
 }
 
-void LedHandler::setLed(const std::string& device, const std::string& color) {
+void LedHandler::setLed(const string& device, const string& color) {
 	if (device.compare("chest") == 0) {
 		setChestColor(color);
 		return;

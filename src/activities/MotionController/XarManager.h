@@ -5,18 +5,11 @@
 #include "ISpecialAction.h"
 
 
-#include <fstream>
-#include <dirent.h>
-#include "tools/logger.h"
 
-#include "alptr.h"
-#include <alproxy.h>
-#include "alvalue.h"
-#include "alframemanagerproxy.h"
 
-#include "hal/robot/generic_nao/kAlBroker.h"
-#include "ISpecialAction.h"
-#include "XarAction.h"
+#include "hal/robot/aldebaran-motion-extra.h"
+
+
 
 class XarManager {
 

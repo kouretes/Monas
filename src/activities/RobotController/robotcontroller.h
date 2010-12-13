@@ -7,32 +7,17 @@
 
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
-#include "hal/thread.h"
 #include "architecture/narukom/system/Mutex.h"
-#include "architecture/narukom/pub_sub/publisher.h"
 #include "gamecontroller.h"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "tools/XMLConfig.h"
 #include <iostream>
 #include <string>
-#include "almodule.h"
-#include "hal/robot/generic_nao/kAlBroker.h"
-#include "architecture/archConfig.h"
 
-#include "tools/logger.h"
-#include "tools/toString.h"
-#include "alptr.h"
-#include "albroker.h"
-#include "alproxy.h"
-#include "almemoryproxy.h"
+#include "hal/robot/aldebaran-robotcontroller.h"
 #include <architecture/IActivity.h>
-
-using boost::posix_time::ptime;
-using boost::posix_time::milliseconds;
-
 
 /**
 * \class RobotController

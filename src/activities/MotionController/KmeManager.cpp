@@ -4,10 +4,6 @@
 #include <dirent.h>
 #include "tools/logger.h"
 
-#include "alptr.h"
-#include "alvalue.h"
-#include "almotionproxy.h"
-
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "ISpecialAction.h"
 #include "KmeAction.h"

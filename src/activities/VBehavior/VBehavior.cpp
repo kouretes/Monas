@@ -1,15 +1,6 @@
 #include "VBehavior.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
 
-#include "alxplatform.h"
-#include <albroker.h>
-#include <alproxy.h>
-#include <almemoryfastaccess.h>
-#include "almotionproxy.h"
-#include "almemoryproxy.h"
-#include "albrokermanager.h"
-#include "alvalue.h"
-
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"

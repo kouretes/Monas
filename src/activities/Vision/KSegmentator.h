@@ -5,9 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "alvalue.h"
-#include "alvision/alvisiondefinitions.h"
-#include "alvideodeviceproxy.h"
+
 #include "opencv/cv.h"
 
 //Colortable resolution: every value represents how many bits to shift to the right on each dimension:
