@@ -8,8 +8,7 @@
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
 #include "hal/thread.h"
-#include "architecture/narukom/system/Mutex.h"
-#include "architecture/narukom/pub_sub/publisher.h"
+#include "hal/mutex.h"
 #include "gamecontroller.h"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"

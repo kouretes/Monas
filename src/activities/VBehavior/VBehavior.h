@@ -53,8 +53,8 @@ class VBehavior: public IActivity {
 
 		int pitchdirection;
 		int yawdirection;
-		SensorPair HeadYaw;
-		SensorPair HeadPitch;
+		SensorData HeadYaw;
+		SensorData HeadPitch;
 
 		bool startscan;
 		bool scanforball;
@@ -67,7 +67,7 @@ class VBehavior: public IActivity {
 		bool reachedlimitright;
 
 		short balllastseendirection;
-		boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
+		boost::shared_ptr<const AllSensorValues> allsm;
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
 		boost::shared_ptr<const ObservationMessage>  obsm;

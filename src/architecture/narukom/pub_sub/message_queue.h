@@ -31,7 +31,6 @@
 #include "publisher.h"
 
 #include "topic_tree.h"
-#include "../system/Mutex.h"
 #include "../system/thread.h"
 #include "tools/statMovingAverage.h"
 #include "hal/syscall.h"
@@ -50,7 +49,7 @@ This class is responsible for dispatching published messages to the interested s
 class MessageQueue : public Thread
 {
   public:
-    friend class MessageBuffer;
+    //friend class MessageBuffer;
     MessageQueue();
     MessageQueue(std::string conf);
     MessageQueue(const char*);
@@ -58,9 +57,9 @@ class MessageQueue : public Thread
     void remove_publisher(Publisher*);
     void remove_subscriber( Subscriber*);
     MessageBuffer* add_publisher(Publisher*);
-    MessageBuffer* add_publisher(Publisher*,MessageBuffer*);
+    //MessageBuffer* add_publisher(Publisher*,MessageBuffer*);
     MessageBuffer* add_subscriber(Subscriber*);
-    MessageBuffer* add_subscriber(Subscriber*,MessageBuffer*);
+    //MessageBuffer* add_subscriber(Subscriber*,MessageBuffer*);
     bool subscribe(const std::string& , Subscriber* ,int );
 
     bool subscribe(const char* topic, Subscriber* owner,int where);
@@ -74,6 +73,18 @@ class MessageQueue : public Thread
     bool remove_topic(const char* old_topic);
     void process_queued_msg();
     virtual int Execute();
+    inline void requestMailMan(MessageBuffer  * const m)
+    {
+		boost::unique_lock<boost::mutex > cvlock(cond_mutex);
+		if(cond_publishers.find(m)==cond_publishers.end())
+		{
+			cond_publishers.insert(m);
+			cond_publishers_queue.push_back(m);
+			cond.notify_one();
+		}
+
+
+    }
 
 
 
@@ -82,13 +93,14 @@ class MessageQueue : public Thread
     TopicTree<std::string,MessageBuffer>* topic_tree;
     std::map<std::string,MessageBuffer*>* publishers_buf;
     std::map<std::string,MessageBuffer*>* subscribers_buf;
-    Mutex tree_mutex;
-    Mutex pub_mutex;
-    Mutex sub_mutex;
+    boost::mutex tree_mutex;
+    boost::mutex  pub_mutex;
+    boost::mutex  sub_mutex;
     const std::string type_string;
 
-    Mutex cond_mutex;
+    boost::mutex  cond_mutex;
     std::set<MessageBuffer*> cond_publishers;
+    std::vector<MessageBuffer*> cond_publishers_queue;
     boost::condition_variable_any cond;
 
     StopWatch<> agentStats;

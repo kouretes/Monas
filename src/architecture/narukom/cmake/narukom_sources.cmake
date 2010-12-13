@@ -6,6 +6,7 @@ SET(NARUKOM_PUB_SUB_SRCS
    ${NarukomDir}/pub_sub/topic_tree_node.h
    ${NarukomDir}/pub_sub/blackboard.h
    ${NarukomDir}/pub_sub/msg.h
+   ${NarukomDir}/pub_sub/stringRegistry.h
    ${NarukomDir}/pub_sub/subscriber.h
    ${NarukomDir}/pub_sub/publisher.h
    ${NarukomDir}/pub_sub/publisher.cpp
@@ -31,8 +32,6 @@ SET(NARUKOM_PUB_SUB_SRCS
 # 
  set( NARUKOM_SYSTEM_SRCS 
  	${NarukomDir}/system/thread.h
- 	${NarukomDir}/system/Mutex.h
- 	${NarukomDir}/system/Mutex.cpp
  )
 # 
 # SET(NARUKOM_SYSTEM_INCLUDE_DIR ${NarukomDir}/system/)

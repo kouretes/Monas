@@ -1,4 +1,5 @@
 #include "VBehavior.h"
+/*
 #include "hal/robot/generic_nao/kAlBroker.h"
 
 #include "alxplatform.h"
@@ -8,13 +9,13 @@
 #include "almotionproxy.h"
 #include "almemoryproxy.h"
 #include "albrokermanager.h"
-#include "alvalue.h"
+#include "alvalue.h"*/
 
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
-#include "architecture/narukom/pub_sub/filters/special_filters.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "hal/robot/generic_nao/robot_consts.h"
 
 
 using namespace boost::posix_time;
@@ -346,9 +347,10 @@ int VBehavior::Execute() {
 			scanforball = true;
 		}
 
-		if (scanforball && !readytokick && !turning && (hjsm != 0) ) {
-			HeadYaw = hjsm->sensordata(0);
-			HeadPitch = hjsm->sensordata(1);
+		if (scanforball && !readytokick && !turning && (allsm != 0&&allsm->has_hjsm()) ) {
+
+			HeadYaw= allsm->hjsm().sensordata(YAW);
+			HeadPitch= allsm->hjsm().sensordata(PITCH);
 			HeadScanStep();
 		}
 
@@ -443,7 +445,7 @@ void VBehavior::read_messages() {
 
 	gsm  = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
-	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
+	allsm = _blk->read_data<AllSensorValues> ("AllSensorValues");
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 	om   = _blk->read_signal<ObstacleMessage> ("ObstacleMessage");
 
