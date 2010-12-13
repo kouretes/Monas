@@ -19,7 +19,7 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
 option ( Webots "Webots ..." )
-set ( NaoQiVersion 1.6.0 CACHE STRING "Set the NaoQi version" )
+set ( NaoQiVersion 1.8.16 CACHE STRING "Set the NaoQi version" )
 
 add_subdirectory ( ./messages/ )
 add_subdirectory ( ./architecture/ )

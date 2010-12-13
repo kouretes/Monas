@@ -31,7 +31,7 @@ mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name )
   functionName( "Stop", "mainModule" ,  "Method to stop Talws" );
   BIND_METHOD( mainModule::Stop );
 
-  KAlBroker::Instance().SetBroker ( &(*broker) );
+  KAlBroker::Instance().SetBroker ( broker );
 
   tal = new Talws();
 }

@@ -12,8 +12,8 @@ KImageExtractor::~KImageExtractor()
 {
 	try
 	{
-
-		c->callVoid( "unsubscribe", GVM_name );
+		xCamProxy->unsubscribe(GVM_name);
+//		c->callVoid( "unsubscribe", GVM_name );
 	}
 	catch (AL::ALError& e)
 	{
@@ -32,11 +32,15 @@ void KImageExtractor::Init(Blackboard *blk)
 	doneSubscribe=false;
 	try
 	{
-		c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
+		xCamProxy = ALPtr<ALVideoDeviceProxy>( new ALVideoDeviceProxy(KAlBroker::Instance().GetBroker()));
 
-		c->callVoid( "unsubscribe", GVM_name );
-		GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
-										 cSpace,VISON_FPS );
+		//c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
+
+		//c->callVoid( "unsubscribe", GVM_name );
+		xCamProxy->unsubscribe(GVM_name);
+		GVM_name= xCamProxy->subscribe(GVM_name, resolution, cSpace,VISON_FPS );
+//		GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
+//										 cSpace,VISON_FPS );
 
 		doneSubscribe=true;
 		//Calculate Roundtrip time
@@ -129,7 +133,8 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 
 	// Now that you're done with the PREVIOUS (local) image, you have to release it from the V.I.M.
 #ifdef RAW
-	c->call<int> ("releaseDirectRawImage", GVM_name);
+	xCamProxy->releaseDirectRawImage(GVM_name);
+//	c->call<int> ("releaseDirectRawImage", GVM_name);
 	//cout << "releaseDirectRawImage " << endl;
 #else
 	c->call<int> ("releaseImage", GVM_name);
@@ -140,7 +145,8 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	ALImage* imageIn = NULL;
 	// Now you can get the pointer to the video structure.
 #ifdef RAW
-	imageIn = (ALImage*) (c->call<int> ("getDirectRawImageLocal", GVM_name));
+	imageIn = (ALImage*)xCamProxy->getDirectRawImageLocal(GVM_name);
+//	imageIn = (ALImage*) (c->call<int> ("getDirectRawImageLocal", GVM_name));
 	//cout << "GEt getDirectRawImageLocal " << endl;
 #else
 	imageIn = (ALImage*) (c->call<int> ("getImageLocal", GVM_name));
@@ -230,8 +236,10 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	try
 	{
 
-		c->callVoid( "setParam", kCameraSelectID, 1);
-		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
+		xCamProxy->setParam( kCameraSelectID, 1);
+//		c->callVoid( "setParam", kCameraSelectID, 1);
+		xCamProxy->setParam( kCameraExposureCorrectionID,0);
+//		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
 		SleepMs(1);
 
 		//Move head to the left
@@ -241,24 +249,30 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		_blk->publish_all();
 
 		SleepMs(100);
-
-		c->callVoid( "setParam", kCameraAutoGainID, 1);
-		c->callVoid( "setParam", kCameraAutoExpositionID,1);
-		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,1);
+		xCamProxy->setParam(  kCameraAutoGainID, 1);
+//		c->callVoid( "setParam", kCameraAutoGainID, 1);
+		xCamProxy->setParam(  kCameraAutoExpositionID,1);
+//		c->callVoid( "setParam", kCameraAutoExpositionID,1);
+		xCamProxy->setParam(  kCameraAutoWhiteBalanceID,1);
+//		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,1);
 
 		//Wait for autoconf
 		SleepMs(sleeptime);
 
 		//Get Bottom camera settings
+		gainL=xCamProxy->getParam( kCameraGainID);
+//		gainL=xCamProxy->getParam(kCameraGainID);
+		eL=xCamProxy->getParam(kCameraExposureID);
 
-		gainL=c->call<int>( "getParam", kCameraGainID);
-		eL=c->call<int>( "getParam", kCameraExposureID);
+//		eL=xCamProxy->getParam(kCameraExposureID);
 
 
-		c->callVoid( "setParam", kCameraAutoGainID, 0);
-		c->callVoid( "setParam", kCameraAutoExpositionID,0);
-		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,0);
-
+		xCamProxy->setParam(  kCameraAutoGainID, 0);
+		xCamProxy->setParam(  kCameraAutoExpositionID,0);
+		xCamProxy->setParam(  kCameraAutoWhiteBalanceID,0);
+//		c->callVoid( "setParam", kCameraAutoGainID, 0);
+//		c->callVoid( "setParam", kCameraAutoExpositionID,0);
+//		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,0);
 
 		cout<<"Left settings:"<<" "<< gainL<< endl;
 
@@ -269,9 +283,12 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//m->callVoid("setAngles",names,pos,0.8);
 		SleepMs(100);
 
-		c->callVoid( "setParam", kCameraAutoGainID, 1);
-		c->callVoid( "setParam", kCameraAutoExpositionID,1);
-		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,1);
+//		c->callVoid( "setParam", kCameraAutoGainID, 1);
+//		c->callVoid( "setParam", kCameraAutoExpositionID,1);
+//		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,1);
+		xCamProxy->setParam(  kCameraAutoGainID, 1);
+		xCamProxy->setParam(  kCameraAutoExpositionID,1);
+		xCamProxy->setParam(  kCameraAutoWhiteBalanceID,1);
 		//wait for autoconf
 		SleepMs(sleeptime);
 
@@ -279,13 +296,13 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 		//GET BOTTOM CAMERA SETTINGS!!!
 
-		gainR=c->call<int>( "getParam", kCameraGainID);
-		eR=c->call<int>( "getParam", kCameraExposureID);
+		gainR=xCamProxy->getParam(kCameraGainID);
+		eR=xCamProxy->getParam(kCameraExposureID);
 
-		c->callVoid( "setParam", kCameraAutoGainID, 0);
-		c->callVoid( "setParam", kCameraAutoExpositionID,0);
+		xCamProxy->setParam( kCameraAutoGainID, 0);
+		xCamProxy->setParam( kCameraAutoExpositionID,0);
 		//Since now we`ll need again the wb correction, leave it on
-		//c->callVoid( "setParam", kCameraAutoWhiteBalanceID,0);
+		//xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
 
 		cout<<"Right settings:"<<" "<< gainR<< endl;
 		//============================
@@ -315,10 +332,10 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//wait for autoconf
 		SleepMs(sleeptime);
 
-		rchromaR=c->call<int>( "getParam", kCameraRedChromaID);
-		bchromaR=c->call<int>( "getParam", kCameraBlueChromaID);
+		rchromaR=xCamProxy->getParam(kCameraRedChromaID);
+		bchromaR=xCamProxy->getParam(kCameraBlueChromaID);
 
-//        c->callVoid( "setParam", kCameraAutoWhiteBalanceID,0);
+//        xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
 		cout<<"Right white balance settings:"<<rchromaR<<" "<<bchromaR<<endl;
 
 
@@ -331,10 +348,10 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		SleepMs(100);
 		//wait for autoconf
 		SleepMs(sleeptime);
-		rchromaL=c->call<int>( "getParam", kCameraRedChromaID);
-		bchromaL=c->call<int>( "getParam", kCameraBlueChromaID);
+		rchromaL=xCamProxy->getParam(kCameraRedChromaID);
+		bchromaL=xCamProxy->getParam(kCameraBlueChromaID);
 
-		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,0);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
 		cout<<"Left white balance settings:"<<rchromaL<<" "<<bchromaL<<endl;
 		redchroma=(rchromaL+rchromaR)/2;
 		bluechroma=(bchromaL+bchromaR)/2;
@@ -342,44 +359,44 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		cout<<"Final White Balance Settings"<<redchroma<<" "<<bluechroma;
 
 
-		c->callVoid( "setParam", kCameraSelectID, 1);
+		xCamProxy->setParam( kCameraSelectID, 1);
 		SleepMs(10);
 		//SET BOTTOM CAMERA SETTINGS
-		c->callVoid( "setParam", kCameraAutoGainID, 0);
-		c->callVoid( "setParam", kCameraAutoExpositionID, 0);
-		c->callVoid( "setParam", kCameraAutoWhiteBalanceID, 0);
+		xCamProxy->setParam( kCameraAutoGainID, 0);
+		xCamProxy->setParam( kCameraAutoExpositionID, 0);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
 
 
-		c->callVoid( "setParam", kCameraBlueChromaID,bluechroma);
-		c->callVoid( "setParam", kCameraRedChromaID,redchroma);
-		c->callVoid( "setParam", kCameraGainID,gain);
-		c->callVoid( "setParam", kCameraExposureID,e);
+		xCamProxy->setParam( kCameraBlueChromaID,bluechroma);
+		xCamProxy->setParam( kCameraRedChromaID,redchroma);
+		xCamProxy->setParam( kCameraGainID,gain);
+		xCamProxy->setParam( kCameraExposureID,e);
 		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
 
 
 		//c->callVoid( "setParam", kCameraSelectID, 0);
 		//SleepMs(10);
-		c->callVoid( "setParam", kCameraSelectID, 0);
+		xCamProxy->setParam( kCameraSelectID, 0);
 		SleepMs(100);
 		//SET TOP CAMERA SETTINGS
 
-		c->callVoid( "setParam", kCameraAutoGainID, 0);
-		c->callVoid( "setParam", kCameraAutoExpositionID, 0);
-		c->callVoid( "setParam", kCameraAutoWhiteBalanceID, 0);
+		xCamProxy->setParam( kCameraAutoGainID, 0);
+		xCamProxy->setParam( kCameraAutoExpositionID, 0);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
 
 
-		c->callVoid( "setParam", kCameraBlueChromaID,bluechroma);
-		c->callVoid( "setParam", kCameraRedChromaID,redchroma);
-		c->callVoid( "setParam", kCameraGainID,gain);
+		xCamProxy->setParam( kCameraBlueChromaID,bluechroma);
+		xCamProxy->setParam( kCameraRedChromaID,redchroma);
+		xCamProxy->setParam( kCameraGainID,gain);
 		//c->callVoid( "setParam", kCameraAutoExpositionID,2);
-		c->callVoid( "setParam", kCameraExposureID,e);
+		xCamProxy->setParam( kCameraExposureID,e);
 		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
 
 
 
 		SleepMs(100);
 		//Start with bottom cam
-		c->callVoid( "setParam", kCameraSelectID, 1);
+		xCamProxy->setParam( kCameraSelectID, 1);
 
 
 	}
@@ -406,24 +423,24 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 int KImageExtractor::getCamera()
 {
     if(lastcam==-1)
-        return lastcam=c->call<int>( "getParam", kCameraSelectID);
+        return lastcam=xCamProxy->getParam(kCameraSelectID);
 
     return lastcam;
-	//return c->call<int>( "getParam", kCameraSelectID);
+	//return xCamProxy->getParam(kCameraSelectID);
 }
 
 int KImageExtractor::swapCamera()
 {
-	int old=c->call<int>( "getParam", kCameraSelectID);
+	int old=xCamProxy->getParam(kCameraSelectID);
 	old=(old==1)?0:1;
-	c->callVoid( "setParam", kCameraSelectID,old);
+	xCamProxy->setParam( kCameraSelectID,old);
 	lastcam=old;
 	return old;
 }
 
 float KImageExtractor::getExp()
 {
-	int a=c->call<int>( "getParam", kCameraExposureID);
+	int a=xCamProxy->getParam(kCameraExposureID);
 	return a*33.0/510.0;
 }
 

@@ -1,25 +1,26 @@
 #ifndef _kalbroker_h_
 #define _kalbroker_h_ 1
-
+#include "hal/robot/generic_nao/aldebaran-proxy.h"
 #include "tools/singleton.h"
 
 namespace AL {
     class ALBroker;
+//    template <class T> class  ALPtr;
 }
 
 class KAlBrokerClass {
 
     public:
 
-        void SetBroker( AL::ALBroker* broker);
+        void SetBroker(AL::ALPtr<AL::ALBroker>  broker);
         
-        AL::ALBroker* GetBroker () const; 
+        AL::ALPtr<AL::ALBroker> GetBroker () const;
 
         KAlBrokerClass();
     
     private:
 
-        AL::ALBroker* _broker;
+        AL::ALPtr<AL::ALBroker>  _broker;
 
 };
 

@@ -46,6 +46,7 @@ class KImageExtractor
 		int swapCamera();
 	private:
 		AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi
+		AL::ALPtr<AL::ALVideoDeviceProxy> xCamProxy;
 
 		//Name used when subscribing Generic Video Module
 		std::string GVM_name;
