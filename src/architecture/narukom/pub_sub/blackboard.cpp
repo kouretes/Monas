@@ -2,7 +2,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 using google::protobuf::Message;
 using boost::posix_time::ptime;
-using  boost::posix_time::milliseconds;
+using boost::posix_time::milliseconds;
 using std::string;
 
 
@@ -104,11 +104,12 @@ int Blackboard::cleanup()
 	{
 	    if((*sigit).second.cleared==true)
 	    {
-            sigdata.erase(sigit);
-            sigit=sigdata.begin();
-            continue;
+	    	signalstruct::iterator t=sigit++;
+	    	sigdata.erase(t);
+	    	//sigit=sigdata.begin();
 	    }
-	    ++sigit;
+	    else
+			++sigit;
 	}
 
    return 0;

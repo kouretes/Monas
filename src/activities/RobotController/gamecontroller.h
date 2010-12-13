@@ -2,7 +2,7 @@
 #define GAMECONTROLLER_H
 #include "messages/RoboCupGameControlData.h"
 #include "hal/thread.h"
-#include "architecture/narukom/system/Mutex.h"
+#include "hal/mutex.h"
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>

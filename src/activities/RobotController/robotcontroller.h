@@ -7,7 +7,8 @@
 
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
-#include "architecture/narukom/system/Mutex.h"
+#include "hal/thread.h"
+#include "hal/mutex.h"
 #include "gamecontroller.h"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
@@ -18,6 +19,7 @@
 
 #include "hal/robot/generic_nao/aldebaran-robotcontroller.h"
 #include <architecture/IActivity.h>
+
 
 /**
 * \class RobotController

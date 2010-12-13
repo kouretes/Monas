@@ -11,6 +11,8 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 
+#include "alptr.h"
+
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif
@@ -22,6 +24,10 @@
 #define STEPVER 0.34
 #define STEPHOR 0.24
 
+namespace AL {
+	class ALMotionProxy;
+	class ALMemoryProxy;
+}
 
 class VBehavior: public IActivity {
 
@@ -38,7 +44,8 @@ class VBehavior: public IActivity {
 		void mgltest();
 
 	private:
-
+		AL::ALPtr<AL::ALMotionProxy> motion;
+		AL::ALPtr<AL::ALMemoryProxy> memory;
 		short ballfound;
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;
@@ -46,8 +53,8 @@ class VBehavior: public IActivity {
 
 		int pitchdirection;
 		int yawdirection;
-		SensorPair HeadYaw;
-		SensorPair HeadPitch;
+		SensorData HeadYaw;
+		SensorData HeadPitch;
 
 		bool startscan;
 		bool scanforball;
@@ -60,7 +67,7 @@ class VBehavior: public IActivity {
 		bool reachedlimitright;
 
 		short balllastseendirection;
-		boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
+		boost::shared_ptr<const AllSensorValues> allsm;
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
 		boost::shared_ptr<const ObservationMessage>  obsm;

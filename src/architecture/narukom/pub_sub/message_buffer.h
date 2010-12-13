@@ -23,7 +23,6 @@
 #include <boost/thread/condition_variable.hpp>
 #include <vector>
 #include <google/protobuf/message.h>
-#include "../system/Mutex.h"
 #include "msg.h"
 #include "filters/filter.h"
 #include <queue>
@@ -37,11 +36,13 @@ class MessageBuffer
     explicit
     MessageBuffer(const std::string owner,MessageQueue *amq );
     ~MessageBuffer();
-    void add( std::vector<msgentry> & tuples);
+    void add( std::vector<msgentry> const & tuples);
+    bool tryadd( std::vector<msgentry> const & tuples);
+
     void add(const msgentry & t);
     std::vector<msgentry> remove();
     bool operator==( MessageBuffer& other) ;
-    const std::string getOwner() ;// {return owner;}
+    const std::string getOwner() const;// {return owner;}
     void add_filter(Filter* filter);
     void remove_filter(Filter* filter);
     static bool cmpentryTimeStamps(const msgentry &a,const msgentry & b) {return a.timestamp<b.timestamp;};
@@ -54,7 +55,7 @@ class MessageBuffer
     std::vector<msgentry> msg_buf;
     std::list<Filter*> filters;
     std::string owner;
-    Mutex mutex;
+    boost::mutex  mutex;
     MessageQueue *mq;
 
 };

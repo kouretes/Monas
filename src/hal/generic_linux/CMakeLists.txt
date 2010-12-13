@@ -8,7 +8,6 @@ add_library( GenLinux ${LibBuildType}
                       pthread.cpp 
                       syscall.cpp 
                       dlib_fnc.cpp 
-                      mutex.cpp
 )
 
 target_link_libraries( GenLinux pthread dl )
