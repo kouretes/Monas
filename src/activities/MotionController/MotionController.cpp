@@ -65,15 +65,11 @@ void MotionController::UserInit() {
 	motion->setStiffnesses("Body", 0.7);
 	motion->setStiffnesses("Head", 0.5);
 	motion->setWalkArmsEnable(true, true);
-	//	AL::ALValue temp;
-	//	temp.arraySetSize(2);
-	//	temp[0] = "ENABLE_FOOT_CONTACT_PROTECTION";
-	//	temp[1] = true;
-	//	motion->setMotionConfig(temp);
+
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
 	AL::ALValue config;
-	config.arraySetSize(13);
-	for (int i = 0; i < 13; ++i)
+	config.arraySetSize(14);
+	for (int i = 0; i < 14; ++i)
 		config[i].arraySetSize(2);
 	config[0][0] = "WALK_MAX_TRAPEZOID";
 	config[0][1] = 4.5; // 4.5
@@ -101,6 +97,8 @@ void MotionController::UserInit() {
 	config[11][1] = 0.0; // 0
 	config[12][0] = "WALK_TORSO_ORIENTATION_Y";
 	config[12][1] = 0.0; // 0
+	config[13][0] = "ENABLE_FOOT_CONTACT_PROTECTION";
+	config[13][1] = true;
 	motion->setMotionConfig(config);
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
@@ -193,7 +191,7 @@ void MotionController::mglrun() {
 		return;
 	}
 	/* Check if an Action command has been completed */
-	if ((actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->call<bool> ("isRunning", actionPID) /*isRunning(actionPID)*/) {
+	if ((actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID) /*isRunning(actionPID)*/) {
 		actionPID = 0;
 		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 	}
