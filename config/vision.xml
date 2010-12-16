@@ -28,6 +28,6 @@
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>27</sensordelay>
+<sensordelay>0</sensordelay>
 
 <pitchoffset>0.09</pitchoffset>
