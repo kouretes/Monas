@@ -41,16 +41,13 @@ void Sensors::UserInit() {
 		Logger::Instance().WriteMsg("Sensors", "Error in getting motion proxy", Logger::FatalError);
 	}
 
-
-
 	initialisation();
 	rtm.start();
 	period = 0;
+#ifdef KROBOT_REMOTE_IS_REMOTE_OFF
 	initFastAccess();
+#endif
 	_com->get_message_queue()->add_publisher(this);
-
-
-
 
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
@@ -72,8 +69,9 @@ int Sensors::Execute() {
 		commands[2][0][1] = dcm->getTime(10);
 
 		dcm->set(commands);
-
+#ifdef KROBOT_REMOTE_IS_REMOTE_OFF
 		dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
+#endif
 		firstrun = false;
 	}
 

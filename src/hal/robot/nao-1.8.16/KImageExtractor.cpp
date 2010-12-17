@@ -61,7 +61,7 @@ void KImageExtractor::Init(Blackboard *blk)
  * Fetch a new Image from the hardware, it automatically fixs IplImage and enclosed binary space when needed
  * Use Allocate Image for an initial allocation of an image
  */
-#ifdef REMOTE_ON
+#ifdef KROBOT_IS_REMOTE_ON
 boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 {
 	//cout<<"KImageExtractor::fetchimage():"<<endl;
