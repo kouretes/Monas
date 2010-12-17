@@ -32,6 +32,45 @@ namespace KMat
 			SingularMatrixInvertionException(std::string m="") :	runtime_error(m.append( ": SingularMatrixInvertionException : attempted to invert a singular matrix") ) {}
 	};
 
+	template<typename AT,typename C> class COWRef
+	{
+		public:
+		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
+		//const AT& operator(){ return p.getFunc(i,j) ;} const;
+		AT& operator=(AT const v) { return  p.get(i,j)=v;};
+		private:
+			C & p;
+			int i,j;
+	};
+	template<typename C> class COWRef<float,C>
+	{
+		public:
+		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
+		operator float() const { return p.read(i,j) ;} ;
+		const float  operator=(const float  v) { return p.get(i,j)=v;};
+		const float operator+=(const float  v) { return p.get(i,j)+=v;};
+		const float operator-=(const float  v) { return p.get(i,j)-=v;};
+		const float operator*=(const float  v) { return p.get(i,j)*=v;};
+		const float operator/=(const float  v) { return p.get(i,j)/=v;};
+		private:
+			C & p;
+			int i,j;
+	};
+
+	template<typename C> class COWRef<int,C>
+	{
+		public:
+		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
+		operator int() const { return p.read(i,j) ;} ;
+		const int  operator=(const int  v) { return p.get(i,j)=v;};
+		const int operator+=(const int  v) { return p.get(i,j)+=v;};
+		const int operator-=(const int  v) { return p.get(i,j)-=v;};
+		const int operator*=(const int  v) { return p.get(i,j)*=v;};
+		const int operator/=(const int  v) { return p.get(i,j)/=v;};
+		private:
+			C & p;
+			int i,j;
+	};
 	/*
 	 * Base class, utilizes the CRTP idiom to provide a nice way of implementing static polymorphism
 	 *
@@ -41,7 +80,86 @@ namespace KMat
 	{
 			template <template<typename , unsigned , unsigned > class	AD,typename AT, unsigned AM,unsigned AN>	friend class BaseMatrix;
 
+
+			template <typename AT, unsigned AM , unsigned AN> class DataContainer
+			{
+				public:
+				AT data[AM][AN];
+				std::size_t counts;
+
+				DataContainer() : counts(0) {};
+				DataContainer(DataContainer<AT,AM,AN>&) :counts(0) {
+
+				}
+				void inc() {++counts;};
+				void dec() {--counts;};
+				bool isExclusive() {return counts==1;};
+				DataContainer<AT,AM,AN> *clone()
+				{
+					DataContainer<AT,AM,AN> *ngen= new DataContainer<AT,AM,AN>();
+					memcpy(ngen->data ,this->data, sizeof(AT[AM][AN])	);
+
+					return ngen;
+
+				}
+
+
+			};
+			typedef DataContainer<T,M,N> DataContainer_t;
+
+			bool makeExclusive() //Return true if a new object has been created
+			{
+				if(h==NULL)
+				{
+					h= new DataContainer_t;
+					//memset(h->data,0,sizeof(T[M][N]));
+					h->inc();
+					return true;
+				}
+				if(h->isExclusive())
+					return false;
+				h->dec();
+				h=h->clone();
+				h->inc();
+				return false;
+			}
+			void zeroOut()
+			{
+				if(h==NULL)
+				{
+					h= new DataContainer_t;
+					h->inc();
+				}
+
+				memset(h->data,0,sizeof(T[M][N]));
+			}
+			void cleanHandle()
+			{
+				if(h==NULL)
+					return;
+				if(h->isExclusive())
+					delete h;
+				else
+					h->dec();
+				h=NULL;
+			}
 		public:
+			BaseMatrix(): h(NULL)
+			{
+
+			};
+			BaseMatrix(BaseMatrix<D,T,M,N> const& o)
+			{
+				h=o.h;
+				if(h!=NULL)
+					h->inc();
+			}
+			~BaseMatrix()
+			{
+
+				cleanHandle();
+
+			}
 			typedef std::numeric_limits<T> Tlimits;
 
 			//============================	BASIC FUNCTIONS ============================
@@ -50,9 +168,10 @@ namespace KMat
 			 **/
 			D<T,M,N>& add( D<T,M,N> const& rop)
 			{
+				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						data[i][j]+=rop.data[i][j];
+						h->data[i][j]+=rop.h->data[i][j];
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -61,10 +180,10 @@ namespace KMat
 			 **/
 			D<T,M,N>& sub( D<T,M,N> const& rop)
 			{
-
+				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						data[i][j]-=rop.data[i][j];
+						h->data[i][j]-=h->rop.h->data[i][j];
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -73,9 +192,10 @@ namespace KMat
 			/** Generic Multiply with another matrix
 			 *	TODO: not faster than "slow" multiplication
 			 **/
-			template<unsigned L> D<T,M,L> & mult( D<T,N,L> const& rop)
+			template<unsigned L> D<T,M,L> & mult( D<T,N,L> const& rop) const
 			{
 				D<T,M,L> *res= new D<T,M,L>();
+				res->makeExclusive();
 				//std::cout<<"SLOW"<<std::endl;
 				//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
@@ -84,10 +204,11 @@ namespace KMat
 					for (unsigned j=0;j<L;j++)
 					{
 						//Clear value
-						res->data[i][j]=0;
+						res->h->data[i][j]=0;
 						for (unsigned k=0;k<N;k++)
+
 						{
-							res->data[i][j]+=data[i][k]*rop.data[k][j];
+							res->h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
 
 						}
 					}
@@ -103,6 +224,7 @@ namespace KMat
 			D<T,M,N>& mult( D<T,N,N> const& rop)//in place mult!!!
 			{
 				D<T,M,N> *tmp= new D<T,M,N>();
+				tmp->makeExclusive();
 				//std::cout<<"IN PLACE"<<std::endl;
 				//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
@@ -111,19 +233,20 @@ namespace KMat
 					for (unsigned j=0;j<N;j++)
 					{
 						//Clear value
-						tmp->data[i][j]=0;
+						tmp->h->data[i][j]=0;
 						for (unsigned k=0;k<N;k++)
 						{
-							tmp->data[i][j]+=data[i][k]*rop.data[k][j];
+							tmp->h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
 
 						}
 					}
 
 				}
+				makeExclusive();
 				//Get Data back to *this
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						data[i][j]=tmp->data[i][j];
+						h->data[i][j]=tmp->h->data[i][j];
 				delete tmp;
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -138,10 +261,10 @@ namespace KMat
 			 */
 			D<T,M,N> & scalar_add(	const	 T	 scalar)
 			{
-
+				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						data[i][j]+=scalar;
+						h->data[i][j]+=scalar;
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -150,10 +273,11 @@ namespace KMat
 			*/
 			D<T,M,N> & scalar_sub(const	T scalar)
 			{
+				makeExclusive();
 
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						data[i][j]-=scalar;
+						h->data[i][j]-=scalar;
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -162,10 +286,11 @@ namespace KMat
 			*/
 			D<T,M,N> & scalar_mult(const	T scalar)
 			{
+				makeExclusive();
 
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						data[i][j]*=scalar;
+						h->data[i][j]*=scalar;
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -173,14 +298,15 @@ namespace KMat
 			/**
 			 * Transpose Matrix
 			 */
-			D<T,N,M>& transp()
+			D<T,N,M>& transp() const
 			{
 				D<T,N,M> *ngen= new D<T,N,M>();
+				ngen->makeExclusive();
 				for (unsigned i=0;i<M;i++)
 				{
 					for (unsigned j=0;j<N;j++)
 					{
-						ngen->data[j][i]=data[i][j];
+						ngen->h->data[j][i]=h->data[i][j];
 					}
 				}
 				return *ngen;
@@ -190,29 +316,32 @@ namespace KMat
 			/**
 			 * Return a new copy of this
 			 **/
-			D<T,M,N> & clone()
+			D<T,M,N> & clone() const
 			{
-				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
-				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
-				D<T,M,N> *ngen= new D<T,M,N>();
-				memcpy(ngen ,this, sizeof(D<T,M,N>)	);
-				return static_cast< D<T,M,N> &> (*ngen);
+				return *(new D<T,M,N>(static_cast< D<T,M,N> const&> (*this))); //No biggie, COW
+
 			};
 			D<T,M,N> & copyTo(D<T,M,N> & dest ) const
 			{
 				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
 				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
 				//D<T,M,N> *ngen= new D<T,M,N>();
-				memcpy(dest.data ,this->data, sizeof(T)*M*N);
+				dest->cleanHandle();
+				if(h==NULL)
+					return;
+				dest->h=h;
+				assert(h!=NULL);
+				h->inc();
 				return static_cast< D<T,M,N> &> (*this);
 			};
 			D<T,M,N> & copyFrom(const D<T,M,N> & src )
 			{
-				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
-				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
-				//D<T,M,N> *ngen= new D<T,M,N>();
-				memcpy(this->data,src.data, sizeof(T)*M*N);
-				return static_cast< D<T,M,N> &> (*this);
+				cleanHandle();
+				if(src.h==NULL)
+					return static_cast< D<T,M,N> &> (*this);;
+				h=src.h;
+				h->inc();
+				return static_cast< D<T,M,N> &> (*this);;
 			};
 
 			/** Zero out matrix
@@ -220,7 +349,8 @@ namespace KMat
 			 **/
 			D<T,M,N>& zero()
 			{
-				memset(data ,0 , sizeof(T)*N*M);
+				makeExclusive();
+				zeroOut();
 				//Fill main diagonal
 				//unsigned l=M<N?M:N;
 				//for(unsigned i=0;i<l;i++)
@@ -233,43 +363,46 @@ namespace KMat
 			 **/
 			D<T,M,N>& identity()
 			{
-				memset(data ,0 , sizeof(T)*N*M);
+				makeExclusive();
+				zeroOut();
 				//Fill main diagonal
 				unsigned l=M<N?M:N;
 				for (unsigned i=0;i<l;i++)
-					data[i][i]=1;
+					h->data[i][i]=1;
 				return static_cast< D<T,M,N> &> (*this);
 			};
 			//Accessor
 			T& get(unsigned i,unsigned j)
 			{
+				makeExclusive();
 #ifndef KMAT_INSANE_MODE
-				if (i<0 || j<0 ||i>M-1||j>N-1)
+				if (i>M-1||j>N-1)
 				{
 					std::string d("BaseMatrix.get() ");
 
 					throw MatrixIndexOutOfBoundsException(d);
 					//throw MatrixIndexOutOfBoundsException(d);
-					return data[0][0];
+					return h->data[0][0];
 				}
 #endif
-				return data[i][j];
+				return h->data[i][j];
 			};
 
 			//Const accessor//Accessor
-			const T& get(unsigned i,unsigned j) const
+			const T& read(unsigned i,unsigned j) const
 			{
+
 #ifndef KMAT_INSANE_MODE
-				if (i<0 || j<0 ||i>M-1||j>N-1)
+				if (i>M-1||j>N-1)
 				{
 					std::string d("BaseMatrix.get() ");
 
 					throw MatrixIndexOutOfBoundsException(d);
 					//throw MatrixIndexOutOfBoundsException(d);
-					return data[0][0];
+					return h->data[0][0];
 				}
 #endif
-				return data[i][j];
+				return h->data[i][j];
 			};
 
 
@@ -282,6 +415,11 @@ namespace KMat
 				using namespace std;
 				cout<<M<<"x"<<N<<" Matrix"<<endl;
 				//Print header:
+				if(h==NULL)
+				{
+					cout<<"(Empty Matrix)"<<endl;
+					return static_cast< D<T,M,N> &> (*this);
+				}
 
 				cout<<"+";
 				for (unsigned i=0;i<N;i++)
@@ -295,7 +433,7 @@ namespace KMat
 					{
 						cout.width(7);
 						cout.precision(2);
-						cout<<fixed<<data[i][j]<<"";//setprecision(3)<<setw(6)<<
+						cout<<fixed<<h->data[i][j]<<"";//setprecision(3)<<setw(6)<<
 					}
 					cout<<"|"<<endl;;
 				}
@@ -311,14 +449,14 @@ namespace KMat
 
 			};
 			//=== Operator overloading========
-			T& operator() (unsigned i,unsigned j)
+			COWRef<T,D<T,M,N> > operator() (unsigned i,unsigned j)
 			{
-				return get(i,j);
+				return COWRef<float,D<T,M,N> > ( static_cast< D<T,M,N>  &> (*this),i,j);
 			};
 			//Const accessor
 			const T& operator() (unsigned i,unsigned j) const
 			{
-				return get(i,j);
+				return read(i,j);
 			};
 			D<T,M,N> & operator= (const D<T,M,N> & d)
 			{
@@ -326,7 +464,9 @@ namespace KMat
 			};
 
 		protected:
-			T data[M][N];
+
+			DataContainer_t *h;
+
 	};
 	//GenMatix: simply a BaseMatrix Instantation :)
 template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<GenMatrix,T,M,N>{ };
@@ -340,9 +480,9 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 		{
 			for (unsigned j=0;j<i;j++)
 			{
-				A tempdata=athis.data[i][j];
-				athis.data[i][j]=athis.data[j][i];
-				athis.data[j][i]=tempdata;
+				A tempdata=athis.h->data[i][j];
+				athis.h->data[i][j]=athis.h->data[j][i];
+				athis.h->data[j][i]=tempdata;
 			}
 		}
 
@@ -360,18 +500,18 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 	GenMatrix<A,2,2> & invert_square_matrix(GenMatrix<A,2,2> & athis)
 	{
 		//using BaseMatrix<typename GenMatrix,2,2>::data;
-		A determ=athis.data[0][0]*athis.data[1][1]-athis.data[0][1]*athis.data[1][0];
+		A determ=athis.h->data[0][0]*athis.h->data[1][1]-athis.h->data[0][1]*athis.h->data[1][0];
 		//std::cout<<"Det:"<<determ<<std::endl;
 		//std::cout<<"Eps:"<<std::numeric_limits<T>::epsilon()<<std::endl;
 		if (determ > std::numeric_limits<A>::epsilon()&& determ!=(A)0)//can invert
 		{
-			A temp1=athis.data[0][0];
-			athis.data[0][0]=athis.data[1][1]/determ;
-			athis.data[1][1]=temp1/determ;
+			A temp1=athis.h->data[0][0];
+			athis.h->data[0][0]=athis.h->data[1][1]/determ;
+			athis.h->data[1][1]=temp1/determ;
 
-			A temp2=athis.data[0][1];
-			athis.data[0][1]=-athis.data[1][0]/determ;
-			athis.data[1][0]=-temp2/determ;
+			A temp2=athis.h->data[0][1];
+			athis.h->data[0][1]=-athis.h->data[1][0]/determ;
+			athis.h->data[1][0]=-temp2/determ;
 			return athis;
 
 		}
@@ -384,11 +524,11 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 	{
 		//using BaseMatrix<typename GenMatrix,2,2>::data;
 		//Minor 1: based on 1,1
-		A m1=athis.data[0][0]*(athis.data[1][1]*athis.data[2][2]-athis.data[1][2]*athis.data[2][1]);
+		A m1=athis.h->data[0][0]*(athis.h->data[1][1]*athis.h->data[2][2]-athis.h->data[1][2]*athis.h->data[2][1]);
 		//Minor 2: based on 1,2
-		A m2=athis.data[0][1]*(athis.data[1][0]*athis.data[2][2]-athis.data[2][0]*athis.data[1][2]);
+		A m2=athis.h->data[0][1]*(athis.h->data[1][0]*athis.h->data[2][2]-athis.h->data[2][0]*athis.h->data[1][2]);
 		//Minor 2: based on 1,3
-		A m3=athis.data[0][2]*(athis.data[1][0]*athis.data[2][1]-athis.data[2][0]*athis.data[1][1]);
+		A m3=athis.h->data[0][2]*(athis.h->data[1][0]*athis.h->data[2][1]-athis.h->data[2][0]*athis.h->data[1][1]);
 		A determ=m1-m2+m3;
 
 		//std::cout<<"Det:"<<determ<<std::endl;
@@ -397,17 +537,17 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 		{
 			GenMatrix<A,3,3> & t=athis.clone();
 
-			athis.data[0][0]=(t.data[1][1]*t.data[2][2]-t.data[1][2]*t.data[2][1])/determ;
-			athis.data[0][1]=(t.data[0][2]*t.data[2][1]-t.data[0][1]*t.data[2][2])/determ;
-			athis.data[0][2]=(t.data[0][1]*t.data[1][2]-t.data[0][2]*t.data[1][1])/determ;
+			athis.h->data[0][0]=(t.h->data[1][1]*t.h->data[2][2]-t.h->data[1][2]*t.h->data[2][1])/determ;
+			athis.h->data[0][1]=(t.h->data[0][2]*t.h->data[2][1]-t.h->data[0][1]*t.h->data[2][2])/determ;
+			athis.h->data[0][2]=(t.h->data[0][1]*t.h->data[1][2]-t.h->data[0][2]*t.h->data[1][1])/determ;
 
-			athis.data[1][0]=(t.data[1][2]*t.data[2][0]-t.data[1][0]*t.data[2][2])/determ;
-			athis.data[1][1]=(t.data[0][0]*t.data[2][2]-t.data[0][2]*t.data[2][0])/determ;
-			athis.data[1][2]=(t.data[0][2]*t.data[1][0]-t.data[0][0]*t.data[1][2])/determ;
+			athis.h->data[1][0]=(t.h->data[1][2]*t.h->data[2][0]-t.h->data[1][0]*t.h->data[2][2])/determ;
+			athis.h->data[1][1]=(t.h->data[0][0]*t.h->data[2][2]-t.h->data[0][2]*t.h->data[2][0])/determ;
+			athis.h->data[1][2]=(t.h->data[0][2]*t.h->data[1][0]-t.h->data[0][0]*t.h->data[1][2])/determ;
 
-			athis.data[2][0]=(t.data[1][0]*t.data[2][1]-t.data[1][1]*t.data[2][0])/determ;
-			athis.data[2][1]=(t.data[0][1]*t.data[2][0]-t.data[0][0]*t.data[2][1])/determ;
-			athis.data[2][2]=(t.data[0][0]*t.data[1][1]-t.data[0][1]*t.data[1][0])/determ;
+			athis.h->data[2][0]=(t.h->data[1][0]*t.h->data[2][1]-t.h->data[1][1]*t.h->data[2][0])/determ;
+			athis.h->data[2][1]=(t.h->data[0][1]*t.h->data[2][0]-t.h->data[0][0]*t.h->data[2][1])/determ;
+			athis.h->data[2][2]=(t.h->data[0][0]*t.h->data[1][1]-t.h->data[0][1]*t.h->data[1][0])/determ;
 			delete	&t;
 			return athis;
 
@@ -441,6 +581,7 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 	{
 		public:
 			using GenMatrix<T,S,1>::get;
+			using GenMatrix<T,S,1>::read;
 			//using GenMatrix<T,S,1>::operator=;
 			//using GenMatrix<T,S,1>::clone;
 			HCoords() {};
@@ -456,14 +597,14 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 				return * (new HCoords<T,S>(*this));
 			}
 			//=== Operator overloading========
-			T& operator() (unsigned i)
+			COWRef<T, HCoords<T,S> > operator() (unsigned i)
 			{
-				return get(i,0);
+				return COWRef<T, HCoords<T,S> > (*this,i,0);
 			};
 			//Const
 			const T& operator() (unsigned i) const
 			{
-				return get(i,0);
+				return read(i,0);
 			};
 			HCoords<T,S> & operator= (const HCoords<T,S> & other)
 			{
@@ -666,14 +807,21 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 				}
 
 			}
-            T& operator() (unsigned i,unsigned j)
+            COWRef<T, ATMatrix<T,S> > operator() (unsigned i,unsigned j)
 			{
-			    if(j==S)
+			    return  COWRef<T, ATMatrix<T,S> >(*this,i,0);
+			}
+
+			const T& operator() (unsigned i,unsigned j) const { return read(i,j);}
+
+			T& get(unsigned i,unsigned j)
+			{
+				if(j==S)
                     return B(i,0);
                 else
                     return A(i,j);
-			};
-			const T& operator() (unsigned i,unsigned j) const
+			}
+			const T& read(unsigned i,unsigned j) const
 			{
 			    if(j==S)
                     return B(i,0);
