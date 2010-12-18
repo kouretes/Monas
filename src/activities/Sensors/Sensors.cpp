@@ -41,39 +41,39 @@ void Sensors::UserInit() {
 		Logger::Instance().WriteMsg("Sensors", "Error in getting motion proxy", Logger::FatalError);
 	}
 
-	//Starting US Sensors
-	ALValue commands;
-
-	commands.arraySetSize(3);
-	commands[0] = string("Device/SubDeviceList/US/Actuator/Value");
-	commands[1] = string("Merge");
-	commands[2].arraySetSize(1);
-	commands[2][0].arraySetSize(2);
-	commands[2][0][0] = 68.0;
-	commands[2][0][1] = dcm->getTime(10);
-
-	dcm->set(commands);
-
 	initialisation();
 	rtm.start();
 	period = 0;
+#ifdef KROBOT_REMOTE_IS_REMOTE_OFF
 	initFastAccess();
+#endif
 	_com->get_message_queue()->add_publisher(this);
-
-
-
 
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
 
 int Sensors::Execute() {
-static bool firstrun = true;
+
+	static bool firstrun = true;
 	if(firstrun)
-	{	dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
+	{
+		//Starting US Sensors
+		ALValue commands;
+
+		commands.arraySetSize(3);
+		commands[0] = string("Device/SubDeviceList/US/Actuator/Value");
+		commands[1] = string("Merge");
+		commands[2].arraySetSize(1);
+		commands[2][0].arraySetSize(2);
+		commands[2][0][0] = 68.0;
+		commands[2][0][1] = dcm->getTime(10);
+
+		dcm->set(commands);
+#ifdef KROBOT_REMOTE_IS_REMOTE_OFF
+		dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
+#endif
 		firstrun = false;
 	}
-
-	return 0;
 
 	//unsigned int counter = 0;
 	unsigned int i = 0;
@@ -205,7 +205,7 @@ static bool firstrun = true;
 		_blk->publish_data(USSM, "sensors");
 
 		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
-		for (unsigned int i = 0; i < Values["RobotPosition"].size(); i++) {
+		for (i = 0; i < Values["RobotPosition"].size(); i++) {
 			oldvalue = RPSM.mutable_sensordata(i)->sensorvalue();
 			RPSM.mutable_sensordata(i)->set_sensorname(devicesNames["RobotPosition"][i]);
 			RPSM.mutable_sensordata(i)->set_sensorvalue(Values["RobotPosition"][i]);

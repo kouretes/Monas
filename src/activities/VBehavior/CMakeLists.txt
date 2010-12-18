@@ -2,14 +2,11 @@ if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao
     return()
 endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
 
-
-include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
-
-
 set ( ActivityName VBehavior )
 
 set ( ActivitySrcs  VBehavior.cpp
 )
+include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
 
 include ( ../activTemplate.cmake )
 

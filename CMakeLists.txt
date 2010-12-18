@@ -8,7 +8,7 @@ message( STATUS "" )
 
 #set( CMAKE_VERBOSE_MAKEFILE on )
 
-add_definitions ( -Wall )
+add_definitions ( -Wextra )
 
 set ( TargetPlatform robot CACHE STRING
         "select the targeted platform, available platforms are linux, windows, and robot" )
