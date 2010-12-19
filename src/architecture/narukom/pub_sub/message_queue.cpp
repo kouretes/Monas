@@ -33,7 +33,7 @@ MessageQueue::MessageQueue() : Thread(false), type_string("topic")
     this->publishers_buf = new map<string,MessageBuffer*>();
     this->subscribers_buf = new map<string,MessageBuffer*>();
     this->topic_tree = new TopicTree<string,MessageBuffer>();
-    create_tree(topic_tree, string("topic_tree.xml"));
+    create_tree( string("topic_tree.xml"));
 
 
 }
@@ -46,7 +46,7 @@ MessageQueue::MessageQueue(string configuration_file)  : Thread(false), type_str
     this->publishers_buf = new map<string,MessageBuffer*>();
     this->subscribers_buf = new map<string,MessageBuffer*>();
     this->topic_tree = new TopicTree<string,MessageBuffer>();
-    create_tree(topic_tree, configuration_file);
+    create_tree( configuration_file);
 
 }
 
@@ -58,9 +58,9 @@ MessageQueue::MessageQueue(const char* configuration_file)  : Thread(false), typ
     this->publishers_buf = new map<string,MessageBuffer*>();
     this->subscribers_buf = new map<string,MessageBuffer*>();
     this->topic_tree = new TopicTree<string,MessageBuffer>();
-    create_tree(topic_tree, string(configuration_file));
+    create_tree(string(configuration_file));
 }
-void MessageQueue::create_tree(TopicTree<string,MessageBuffer>* tree,const  string& file_name)
+void MessageQueue::create_tree(const  string& file_name)
 {
     string parent = "";
     string topic;
@@ -319,9 +319,6 @@ void MessageQueue::process_queued_msg()
 {
     std::vector<MessageBuffer *> toprocess;
     boost::unique_lock<boost::mutex > cond_lock(cond_mutex);
-
-
-
 
     while(cond_publishers.size()==0)
         cond.wait(cond_lock);

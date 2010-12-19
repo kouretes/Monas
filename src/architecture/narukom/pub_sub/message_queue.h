@@ -105,7 +105,7 @@ class MessageQueue : public Thread
 
     StopWatch<> agentStats;
 
-    void create_tree(TopicTree<std::string,MessageBuffer>* tree, const std::string& file_name);
+    void create_tree(const std::string& file_name);
 };
 
 #endif // MESSAGE_QUEUE_H

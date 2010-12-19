@@ -152,6 +152,8 @@ boost::shared_ptr<const Data> Blackboard::read_signal(const std::string& type, c
     if(sigdata.find(type)==sigdata.end())
         return boost::shared_ptr<const Data>();
 
+	if( ! (sigdata[type].d.host==host||host=="") )
+        return boost::shared_ptr<const Data>();//;
 
     if(tmp!=NULL)
         *tmp=sigdata[type].d.timestamp;
@@ -164,7 +166,8 @@ boost::shared_ptr<const Data> Blackboard::read_state(const std::string& type, co
 {
     if(statedata.find(type)==statedata.end())
         return boost::shared_ptr<const Data>();
-
+	if( ! (statedata[type].host==host||host=="") )
+        return boost::shared_ptr<const Data>();//;
 
     if(tmp!=NULL)//Return timestamp :P
         *tmp=statedata[type].timestamp;
