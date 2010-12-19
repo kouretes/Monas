@@ -35,7 +35,7 @@ inline measurement mWeightedMean(const std::vector<measurement> &l)
 	measurement res;
 	if(l.size()==1)
 		return l[0];
-	for(int i=0;i<l.size();i++)
+	for(unsigned i=0;i<l.size();i++)
 	{
 		n+=l[i].mean/l[i].var;
 		d+=1.0f/l[i].var;
@@ -44,7 +44,7 @@ inline measurement mWeightedMean(const std::vector<measurement> &l)
 
 
 	res.mean=n/d;
-	for(int i=0;i<l.size();i++)
+	for(unsigned i=0;i<l.size();i++)
 		c+=sqrd(l[i].mean-res.mean)/l[i].var;
 	res.var=(c/d)/(l.size()-1);
 	return res;
@@ -53,14 +53,14 @@ inline measurement mWeightedMean(const std::vector<measurement> &l)
 }
 
 
-struct inttracer_s
+class inttracer_s: public KVecInt2
 {
-	int x,y;
 	int s,c;
 	int e,t,i;
 	bool steep;
 	//int idx,idy;
 
+	public:
 	void init(int a,int b)
 	{
 		x=a;
@@ -134,7 +134,7 @@ typedef struct inttracer_s tracer_t;
 typedef struct
 {
 	tracer_t gtrc;
-	KMat::HCoords<int,2> lastpoint ;
+	KVecInt2 lastpoint ;
 	bool ballfound,yfound,bfound;
 	int cntother; bool done;
 	int step;
@@ -145,21 +145,22 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//Horizontal + Vertical Scan
 
 
-	KMat::HCoords<float,2> im;
-	KMat::HCoords<float,2> c;
-	KMat::HCoords<float,3> c3d;
+	KVecFloat2 im;
+	KVecFloat2 c;
+	KVecFloat3 c3d;
 	KSegmentator::colormask_t tempcolor;
 	//static int startx=0;
 	int linestep=(rawImage->width-2*config.bordersize)/(config.scanV-1);
 	int align=(rawImage->width-linestep*(config.scanV-1) )>>1;
 
-	std::vector<linestruct> l(config.scanV);
+	std::vector<linestruct> l;
+	l.reserve((int)config.scanV);
 
 	int sx=config.bordersize+align;
 	int vstep=(sqrt(rawImage->height-2*config.bordersize-config.scanH*config.subsampling)-1)/2;
 	//Fix initial scanline positions :)
 	int linesdone=0;
-	for(int i=0 ; i< l.size();i++)
+	for(unsigned i=0 ; i< l.size();i++)
 	{
 		l[i].gtrc.init(sx,rawImage->height - config.bordersize-1);
 		sx+=linestep;
@@ -176,7 +177,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	while(linesdone<config.scanV)
 	{
-		for(int i=0 ; i< l.size();i++)
+		for(unsigned i=0 ; i< l.size();i++)
 		{
 			linestruct &thisl=l[i];
 			if(thisl.done==true)
@@ -198,8 +199,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				//cntwhitegreenpixels++;
 				//cntwhitegreenorangepixels++;
 				thisl.cntother=0;
-				thisl.lastpoint(0)=thisl.gtrc.x;
-				thisl.lastpoint(1)=thisl.gtrc.y;
+				thisl.lastpoint=thisl.gtrc;
 				thisl.ballfound=false;
 				thisl.yfound=false;
 				thisl.bfound=false;
@@ -207,8 +207,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			else if(tempcolor==white)
 			{
 				thisl.cntother++;//hmm... white? valid but test for distance
-				thisl.lastpoint(0)=thisl.gtrc.x;
-				thisl.lastpoint(1)=thisl.gtrc.y;
+				thisl.lastpoint=thisl.gtrc;
 				thisl.ballfound=false;
 				thisl.yfound=false;
 				thisl.bfound=false;
@@ -230,9 +229,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			if (thisl.cntother>config.pixeltol)//No continuity, break
 			{
 				//thisl.cntother=0;
-				im(0)=thisl.lastpoint(0);
-				im(1)=thisl.lastpoint(1);
-				c=imageToCamera(im);
+				c=imageToCamera(thisl.lastpoint);
 
 				c3d=kinext.camera2dToGround(c);
 				if(c3d(2)>=1)//Looking up :)
@@ -253,19 +250,14 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 					linesdone++;
 					continue;
 				}
-				im(0)=thisl.gtrc.x;
-				im(1)=thisl.gtrc.y;
-				c=imageToCamera(im);
+				c=imageToCamera(thisl.gtrc);
 				c3d=kinext.camera2dToGroundProjection(c,0);
 				float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
 
 				if (abs(d1-d2)>config.skipdistance||d1>=sqrd(config.seedistance))
 				{
 					//cout<<"break"<<endl;
-					CvPoint tmpPoint;
-					tmpPoint.x = thisl.gtrc.x;
-					tmpPoint.y = thisl.gtrc.y;
-					obstacles.push_back(tmpPoint);	//c3d.prettyPrint();
+					obstacles.push_back(thisl.gtrc);	//c3d.prettyPrint();
 					thisl.done=true;
 					linesdone++;
 					continue;
@@ -273,10 +265,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			}
 			if (tempcolor == color &&thisl.ballfound==false)
 			{
-				CvPoint tmpPoint;
-				tmpPoint.x = thisl.gtrc.x;
-				tmpPoint.y = thisl.gtrc.y;
-				ballpixels.push_back(tmpPoint);
+				ballpixels.push_back(thisl.gtrc);
 				//cntwhitegreenpixels=0;
 				thisl.ballfound=true;
 				//continue;
@@ -284,20 +273,14 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			}
 			if(tempcolor==yellow&&thisl.yfound==false)
 			{
-				CvPoint tmpPoint;
-				tmpPoint.x = thisl.gtrc.x;
-				tmpPoint.y = thisl.gtrc.y;
 				//ballpixels.push_back(tmpPoint);
-				ygoalpost.push_back(tmpPoint);
+				ygoalpost.push_back(thisl.gtrc);
 				thisl.yfound=true;
 			}
 			if(tempcolor==skyblue&&thisl.yfound==false)
 			{
-				CvPoint tmpPoint;
-				tmpPoint.x = thisl.gtrc.x;
-				tmpPoint.y = thisl.gtrc.y;
 				//ballpixels.push_back(tmpPoint);
-				bgoalpost.push_back(tmpPoint);
+				bgoalpost.push_back(thisl.gtrc);
 				thisl.yfound=true;
 			}
 
@@ -313,183 +296,8 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	}
 	//Now follow the lines
 
-
-
 }
 
-
-
-/*
-void Vision::gridScan(const KSegmentator::colormask_t color)
-{
-	//Horizontal + Vertical Scan
-
-
-
-	KMat::HCoords<float,2> im;
-	KMat::HCoords<float,2> c;
-	KMat::HCoords<float,3> c3d;
-	static int startx=0;
-	int  step;
-	//int points[rawImage->width];
-
-	KSegmentator::colormask_t tempcolor;
-	//int ballpixel = -1;
-	unsigned int cntother=0;
-
-	startx+=config.subsampling;//Skip min num of pixels that indicate the sparseness of new colored pixels
-	startx=startx%config.scanstep;
-	//float stepy=-1,stepx=-tan(-kinext.getRoll());//TODO :: is this correct?
-	tracer_t gtrc;
-	//	Vup.y=-cos(-kinext.getRoll());
-	//Vup.x=-sin(-kinext.getRoll());
-	gtrc.initVelocity(Vup.x,Vup.y);
-	step=config.scanstep;
-	gtrc.setScale(step);
-	//cout<<"Camera Roll:"<<-kinext.getRoll()<<endl;
-
-	//cout<<"loop"<<endl;
-	for (int i = config.bordersize+startx; i < rawImage->width-config.bordersize; i = i + config.scanstep)
-	{
-		//cout<<"wtf"<<endl;
-		//Thru Horizon Possibly someday
-		//cout<<"outer"<<endl;
-		//cntwhitegreenpixels = 0;
-		//cntwhitegreenorangepixels=0;
-		cntother=0;
-		bool ballfound=false;
-		bool yfound=false;
-		bool bfound=false;
-		// ballpixel = -1;
-		//int ci,cj;
-		gtrc.init(i,rawImage->height - config.bordersize-1);
-		gtrc.initVelocity(Vup.x,Vup.y);
-		step=config.scanstep;
-		gtrc.setScale(step);
-
-		KMat::HCoords<int,2> lastpoint;
-		lastpoint(0)=gtrc.x;
-		lastpoint(1)=gtrc.y;//Copy first point
-		//cout<<"================================================"<<endl;
-		while (validpixel(gtrc.x,gtrc.y))
-		{
-			//cout<<"doseg"<<endl;
-			tempcolor = doSeg(gtrc.x,gtrc.y);
-			//cout<<"doseg:"<<(int)tempcolor<<endl;
-			if (tempcolor == green)//
-			{
-				//cntwhitegreenpixels++;
-				//cntwhitegreenorangepixels++;
-				cntother=0;
-				lastpoint(0)=gtrc.x;
-				lastpoint(1)=gtrc.y;
-				ballfound=false;
-				yfound=false;
-				bfound=false;
-			}
-			else if(tempcolor==white)
-			{
-				cntother++;//hmm... white? valid but test for distance
-				lastpoint(0)=gtrc.x;
-				lastpoint(1)=gtrc.y;
-				ballfound=false;
-				yfound=false;
-				bfound=false;
-			}
-			else if (tempcolor==color)
-			{
-				//cntwhitegreenorangepixels++;
-				cntother=0;
-				yfound=false;
-				bfound=false;
-
-			}
-			else
-			{
-				//ballskip=0;
-				cntother++;
-				ballfound=false;
-			}
-			if (cntother>config.pixeltol)//No continuity, break
-			{
-				cntother=0;
-				im(0)=lastpoint(0);
-				im(1)=lastpoint(1);
-				c=imageToCamera(im);
-
-				c3d=kinext.camera2dToGround(c);
-				if(c3d(2)>=1)//Looking up :)
-					break;
-				c3d=kinext.camera2dToGroundProjection(c,0);
-				float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
-
-				if (d1>=sqrd(config.seedistance))//Looking way too far
-				{
-					//cout<<"Seedistance reached"<<endl;
-					//c3d.prettyPrint();
-					break;
-				}
-				im(0)=gtrc.x;
-				im(1)=gtrc.y;
-				c=imageToCamera(im);
-				c3d=kinext.camera2dToGroundProjection(c,0);
-				float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
-
-				if (abs(d1-d2)>config.skipdistance||d1>=sqrd(config.seedistance))
-				{
-					//cout<<"break"<<endl;
-					CvPoint tmpPoint;
-					tmpPoint.x = gtrc.x;
-					tmpPoint.y = gtrc.y;
-					obstacles.push_back(tmpPoint);
-					break;
-				}
-			}
-			if (tempcolor == color &&ballfound==false)
-			{
-				CvPoint tmpPoint;
-				tmpPoint.x = gtrc.x;
-				tmpPoint.y = gtrc.y;
-				ballpixels.push_back(tmpPoint);
-				//cntwhitegreenpixels=0;
-				ballfound=true;
-				//continue;
-				//ballpixel = j;
-			}
-			if(tempcolor==yellow&&yfound==false)
-			{
-				CvPoint tmpPoint;
-				tmpPoint.x = gtrc.x;
-				tmpPoint.y = gtrc.y;
-				//ballpixels.push_back(tmpPoint);
-				ygoalpost.push_back(tmpPoint);
-				yfound=true;
-			}
-			if(tempcolor==skyblue&&yfound==false)
-			{
-				CvPoint tmpPoint;
-				tmpPoint.x = gtrc.x;
-				tmpPoint.y = gtrc.y;
-				//ballpixels.push_back(tmpPoint);
-				bgoalpost.push_back(tmpPoint);
-				yfound=true;
-			}
-
-			//Find next pixel
-			gtrc.step();
-			step--;
-			if (step<config.bordersize) step=config.bordersize;
-			gtrc.setScale(step);
-			//stepx=2;
-
-
-		}
-
-
-	}
-}
-
-*/
 
 /**
  * Hard Decision: Is it good enough for a ball?
@@ -683,11 +491,11 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::colormask_t c)
 {
 	traceResult r;
-	CvPoint m,s;
+	KVecInt2 s;
 	//s=goal.top;
 	//s.y+=1;
 	s=goal.tl;
-	r=traceline(s,cvPoint(-2,+1),c);
+	r=traceline(s,KVecInt2(-2,+1),c);
 	//cout<<"tp:"<<r.p.x<< " "<<r.p.y<<endl;
 	//m.x=(r.p.x+s.x)/2;
 	//m.y=(r.p.y+s.y)/2;
@@ -703,7 +511,7 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 
 	//cout<<"No lt proeks"<<endl;
 	s=goal.tr;
-	r=traceline(s,cvPoint(+2,+1),c);
+	r=traceline(s,KVecInt2(+2,+1),c);
 	//cout<<"tp:"<<r.p.x<< " "<<r.p.y<<endl;
 	//m.x=(r.p.x+s.x)/2;
 	//m.y=(r.p.y+s.y)/2;
@@ -729,13 +537,13 @@ bool cmpgoalpostdata_t (Vision::goalpostdata_t a,  Vision::goalpostdata_t b)
 	return a.distance.mean < b.distance.mean;
 }
 
-int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
+int Vision::locateGoalPost(vector<KVecInt2> cand, KSegmentator::colormask_t c)
 {
 
 
 	vector<goalpostdata_t> history;
 	tracer_t at;
-	vector<CvPoint>::iterator i;//candidate iterator
+	vector<KVecInt2>::iterator i;//candidate iterator
 	for (i = cand.begin(); i != cand.end(); i++)
 	{
 
@@ -763,7 +571,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		GoalPostdata newpost;
 		traceResult trcrs;
 		trcrs=traceStrictline((*i),Vlt,c);
-		CvPoint m=trcrs.p;
+		KVecInt2 m=trcrs.p;
 		trcrs=traceStrictline((*i),Vrt,c);
 		m.x=(m.x+trcrs.p.x)/2;
 		m.y=(m.y+trcrs.p.y)/2;
@@ -787,10 +595,10 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		//int suml=0,sumr=0;
 		for(int k=0;k<config.subsampling;k++)
 		{
-			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
+			trcrs=traceStrictline(at,Vlt,c);
 			//suml+=trcrs.p.x;
 			newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
-			trcrs=traceStrictline(cvPoint(at.x,at.y),Vrt,c);
+			trcrs=traceStrictline(at,Vrt,c);
 			newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
 			//sumr+=trcrs.p.x;
 			at.step();
@@ -810,10 +618,10 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 		//suml=0,sumr=0;
 		for(int k=0;k<config.subsampling;k++)
 		{
-			trcrs=traceStrictline(cvPoint(at.x,at.y),Vlt,c);
+			trcrs=traceStrictline(at,Vlt,c);
 			//suml+=trcrs.p.x;
 			newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
-			trcrs=traceStrictline(cvPoint(at.x,at.y),Vrt,c);
+			trcrs=traceStrictline(at,Vrt,c);
 			//sumr+=trcrs.p.x;
 			newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
 			at.step();
@@ -846,11 +654,9 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 			//cout <<"Goal size test failed"<<endl;
 			continue;
 		}
-		KMat::HCoords<float,2> ci,i;
-		KMat::HCoords<float,3> c3d;
-		i(0)=newpost.bot.x;
-		i(1)=newpost.bot.y;
-		ci=imageToCamera(i);
+		KVecFloat2 ci,i;
+		KVecFloat3 c3d;
+		ci=imageToCamera(newpost.bot);
 		c3d=kinext.camera2dToGround(ci);
 		measurement *a=kinext.projectionDistance(ci,0);
 		newpost.distBot=a[0];
@@ -867,10 +673,7 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 
 		}
 
-
-		i(0)=newpost.top.x;
-		i(1)=newpost.top.y;
-		ci=imageToCamera(i);
+		ci=imageToCamera(newpost.top);
 		c3d=kinext.camera2dToGround(ci);
 		a=kinext.projectionDistance(ci,config.goalheight);
 		newpost.distTop=a[0];
@@ -942,12 +745,12 @@ int Vision::locateGoalPost(vector<CvPoint> cand, KSegmentator::colormask_t c)
 
 		if(calculateValidGoalPost(newpost,c)==false)
 			continue;
-		KMat::HCoords<float,2> polar;
+		KVecFloat2 polar;
 		//cout<<"ttldist:"<<distance.mean<<endl;
 		polar(0)=newpost.distance.mean;
 		polar(1)=newpost.bearing.mean;
 		//Convert to robot space
-		KMat::HCoords<float,2> robotpolar=camToRobot(polar);
+		KVecFloat2 robotpolar=camToRobot(polar);
 		newpost.distance.mean=polar(0);
 		newpost.bearing.mean=polar(1);
 		history.push_back(newpost);
@@ -1072,7 +875,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
 	g=config.goalheight;
 	h=p.cameraZ;
 
-	KMat::HCoords<float,2> c1,c2,i1,i2;
+	KVecFloat2 c1,c2,i1,i2;
 	i1(0)=newpost.bot.x;
 	i1(1)=newpost.bot.y+0.5;
 	i2(0)=newpost.bot.x-(newpost.top.y-newpost.bot.y)*sin(-kinext.getRoll());//No this is not a mistake:), compensate for cmos skew the stupid way
@@ -1142,11 +945,11 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	//traceResult trcrs;
 
 	//CvPoint l,r;
-	CvPoint3D32f mT,mB;
+	KVecFloat2 mT,mB;
 	float angV;
 	measurement mrT,mrB,mr1,mr2;
 
-	KMat::HCoords<float,2> c1,c2,i1,i2;
+	KVecFloat2 c1,c2;//i1,i2;
 	int lim=config.pixeltol;
 	newpost.haveWidth=false;
 
@@ -1166,18 +969,14 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	mT.y=(newpost.tl.y+newpost.tr.y)/2.0;
 	//For top. move 10% of estimated height down!
 
-	i1(0)=mT.x;
-	i1(1)=mT.y;
-	c1=imageToCamera(i1);
 
-	i2(0)=newpost.tl.x;//+Vlt.x/2;
-	i2(1)=newpost.tl.y;//+Vlt.y/2;
-	c2=imageToCamera(i2);
+	c1=imageToCamera(mT);
+
+	c2=imageToCamera(newpost.tl);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
-	i2(0)=newpost.tr.x;//+Vrt.x/2;
-	i2(1)=newpost.tr.y;//+Vrt.y/2;
-	c2=imageToCamera(i2);
+
+	c2=imageToCamera(newpost.tr);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 	mrT=mWeightedMean(mr1,mr2);
 	//cout<<"mr1,mr2,mean:"<<mr1.mean<<" "<<mr2.mean<<mrT.mean<<endl;
@@ -1185,30 +984,19 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	mB.x=(newpost.ll.x+newpost.lr.x)/2.0f;
 	mB.y=(newpost.ll.y+newpost.lr.y)/2.0f;
 	//cout<<"l,r:"<<l.x<<","<<l.y<<" "<<r.x<<","<<r.y<<endl;
-	i1(0)=mB.x;
-	i1(1)=mB.y;
-	c1=imageToCamera(i1);
-
-	i2(0)=newpost.ll.x;//+Vlt.x/2;
-	i2(1)=newpost.ll.y;//+Vlt.y/2;
-	c2=imageToCamera(i2);
+	c1=imageToCamera(mB);
+	c2=imageToCamera(newpost.ll);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
-	i2(0)=newpost.lr.x;//+Vrt.x/2;
-	i2(1)=newpost.lr.y;//+Vrt.y/2;
-	c2=imageToCamera(i2);
+	c2=imageToCamera(newpost.lr);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
 
 	mrB=mWeightedMean(mr1,mr2);
 	//cout<<"mr1,mr2,mean:"<<mr1.mean<<" "<<mr2.mean<<mrB.mean<<endl;
 
-	i1(0)=mT.x;
-	i1(1)=mT.y;
-	i2(0)=mB.x;
-	i2(1)=mB.y;
-	c1=imageToCamera(i1);
-	c2=imageToCamera(i2);
+	c1=imageToCamera(mT);
+	c2=imageToCamera(mB);
 	angV=kinext.vectorAngle(c1,c2);
 
 	float a,b,cosG,dS,dL,ab,cest;
@@ -1257,20 +1045,20 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	newpost.dist.push_back(m);
 }
 
-Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
+Vision::balldata_t Vision::locateBall(vector<KVecInt2> cand)
 {
 	//Skip first/last row/col
-	KMat::HCoords<float,2> point;
+	KVecFloat2 point;
 	vector<balldata_t> history;
 	vector<balldata_t> banlist;
 
 
-	vector<CvPoint>::iterator i;
+	vector<KVecInt2>::iterator i;
 	//For all detected points
 	//cout << "locateball" << endl;
 	for (i = cand.begin(); i != cand.end(); i++)
 	{
-		vector<CvPoint> points;
+		vector<KVecInt2> points;
 		vector<balldata_t>::iterator bd = history.begin();
 		while (bd != history.end() )
 		{
@@ -1309,67 +1097,67 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		//cout<<"Ball Tracing:";
 		traceResult trcrs;
 
-		trcrs = traceline((*i), cvPoint(0, 1), orange);//Stupid
-		CvPoint b=trcrs.p;
-		trcrs = traceline((*i), cvPoint(0, -1), orange);//stupid
-		CvPoint t=trcrs.p;
-		CvPoint m;
+		trcrs = traceline((*i), KVecInt2(0, 1), orange);//Stupid
+		KVecInt2 b=trcrs.p;
+		trcrs = traceline((*i), KVecInt2(0, -1), orange);//stupid
+		KVecInt2 t=trcrs.p;
+		KVecInt2 m;
 		m.x=(*i).x;
 		m.y=(b.y+t.y)/2;
 
-		trcrs = traceline(m, cvPoint(1, 0), orange);//Stupid
-		CvPoint r=trcrs.p;
+		trcrs = traceline(m, KVecInt2(1, 0), orange);//Stupid
+		KVecInt2 r=trcrs.p;
 
-		trcrs = traceline(m, cvPoint(-1, 0), orange);//Stupid
-		CvPoint l=trcrs.p;
+		trcrs = traceline(m, KVecInt2(-1, 0), orange);//Stupid
+		KVecInt2 l=trcrs.p;
 
 		m.x=(l.x+r.x)/2;
 
 		//Repeat up down :)
-		trcrs = traceline(m, cvPoint(0, 1), orange);//Smart?
+		trcrs = traceline(m, KVecInt2(0, 1), orange);//Smart?
 		b=trcrs.p;
 		bool bsuccess=trcrs.smartsuccess;
 
-		trcrs = traceline(m, cvPoint(0, -1), orange);//Smart
+		trcrs = traceline(m, KVecInt2(0, -1), orange);//Smart
 		t=trcrs.p;
         m.y=(b.y+t.y)/2;
 
 
-		CvPoint2D32f fl,fr,ft;
+		KVecFloat2 fl,fr,ft;
 
-		ft=cvPoint2D32f(t.x,t.y-0.5);
+		ft=KVecFloat2(t.x,t.y-0.5);
 		if (trcrs.smartsuccess==false)
 		{
 			if(bsuccess)//Top failed , use bottom
-				ft=cvPoint2D32f(b.x,b.y+0.5);//trcrs = traceline(m, cvPoint(0, +1), orange);//try bottom
+				ft=KVecFloat2(b.x,b.y+0.5);//trcrs = traceline(m, cvPoint(0, +1), orange);//try bottom
 			else
 				continue;
 		}
 		//cout<<"Got 3 points"<<endl;
 
-		trcrs = traceline(m, cvPoint(1, 0), orange);//Prefer  r
-		fr=cvPoint2D32f(trcrs.p.x+0.5,trcrs.p.y);//cvPoint2D32f(trcrs.p.x,trcrs.p.y);;//
+		trcrs = traceline(m, KVecInt2(1, 0), orange);//Prefer  r
+		fr=KVecFloat2(trcrs.p.x+0.5,trcrs.p.y);//KVecFloat2(trcrs.p.x,trcrs.p.y);;//
 		if (trcrs.smartsuccess==false)
 		{
-			trcrs = traceline(m, cvPoint(1, -1), orange);// try top r
+			trcrs = traceline(m, KVecInt2(1, -1), orange);// try top r
 			if (trcrs.smartsuccess==false)
 				continue;
-			fr=cvPoint2D32f(trcrs.p.x+0.5,trcrs.p.y-0.5);//cvPoint2D32f(trcrs.p.x,trcrs.p.y);//
+			fr=KVecFloat2(trcrs.p.x+0.5,trcrs.p.y-0.5);//KVecFloat2(trcrs.p.x,trcrs.p.y);//
 
 		}
 
-		trcrs = traceline(m, cvPoint(-1, 0), orange);//Prefer  r
-		fl=cvPoint2D32f(trcrs.p.x-0.5,trcrs.p.y);//cvPoint2D32f(trcrs.p.x,trcrs.p.y);//
+		trcrs = traceline(m, KVecInt2(-1, 0), orange);//Prefer  r
+		fl=KVecFloat2(trcrs.p.x-0.5,trcrs.p.y);//KVecFloat2(trcrs.p.x,trcrs.p.y);//
 		if (trcrs.smartsuccess==false)
 		{
-			trcrs = traceline(m, cvPoint(-1, -1), orange);// try top r
+			trcrs = traceline(m, KVecInt2(-1, -1), orange);// try top r
 			if (trcrs.smartsuccess==false)
 				continue;
-			fl=cvPoint2D32f(trcrs.p.x-0.5,trcrs.p.y-0.5);//cvPoint2D32f(trcrs.p.x,trcrs.p.y);//
+			fl=KVecFloat2(trcrs.p.x-0.5,trcrs.p.y-0.5);//KVecFloat2(trcrs.p.x,trcrs.p.y);//
 
 		}
 		//Call centerOfCircle with the margins of ball color, not the pixels them selves
-		CvPoint2D32f center=centerOfCircle(fl,ft,fr);
+		KVecFloat2 center=centerOfCircle(fl,ft,fr);
 		if(center.x==-1)
 			continue;
 
@@ -1381,21 +1169,18 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		newdata.y = center.y;
 		newdata.cr = radius;//0.35;
 		//Looks like a ball?
-		point(0)=center.x;
-		point(1)=center.y;
 
 		//Estimate Radius:
-		KMat::HCoords<float,3> c3d;
-		KMat::HCoords<float,2> c1,c2;
-		KMat::HCoords<float,2> im1,im2;
-		im1(0)=center.x;
-		im1(1)=center.y;
-		im2(0)=center.x +(radius)*0.707;
-		im2(1)=center.y +(radius)*0.707;
+		KVecFloat3 c3d;
+		KVecFloat2 c1,c2;
+		KVecFloat2 im1;
+
+		im1(0)=center.x +(radius)*0.707;
+		im1(1)=center.y +(radius)*0.707;
 		//im1.prettyPrint();
 		//im2.prettyPrint();
-		c1=imageToCamera(im1);
-		c2=imageToCamera(im2);
+		c1=imageToCamera(center);
+		c2=imageToCamera(im1);
 		float tantths=kinext.vectorAngle(c1,c2);
 		c3d=kinext.camera2dToGround(c1);//Transform center vector  to ground coordinates
 		float par=tantths*tantths*( (sqrd(c3d(0))+sqrd(c3d(1)))/sqrd(c3d(2)))+tantths*tantths;
@@ -1428,12 +1213,12 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 		measurement distance;
 
 		distance=mWeightedMean(d1,d2);
-		KMat::HCoords<float,2> polar;
+		KVecFloat2 polar;
 		//cout<<"ttldist:"<<distance.mean<<endl;
 		polar(0)=distance.mean;
 		polar(1)=bearing.mean;
 		//Convert to robot space
-		KMat::HCoords<float,2> robotpolar=camToRobot(polar);
+		KVecFloat2 robotpolar=camToRobot(polar);
 		distance.mean=polar(0);
 		bearing.mean=polar(1);
 		newdata.distance=distance;
@@ -1460,7 +1245,7 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 	}
 
 #ifdef DEBUGVISION
-	//KMat::HCoords<float,2> & w=camToRobot(o)
+	//KVecFloat2 & w=camToRobot(o)
 	Logger::Instance().WriteMsg("Vision", "Distance:"+_toString(best.distance.mean), Logger::Info);
 	cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
 	cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
@@ -1482,13 +1267,13 @@ Vision::balldata_t Vision::locateBall(vector<CvPoint> cand)
 
 
 }
-CvPoint2D32f Vision::centerOfCircle(CvPoint2D32f l, CvPoint2D32f m, CvPoint2D32f r)
+KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r)
 {
-	CvPoint2D32f center;
+	KVecFloat2 center;
 	center.x=-1;
 	if (m.x==l.x||m.x==r.x)//Some points form  a vertical line, swap and retry
 	{
-		CvPoint2D32f tmp;
+		KVecFloat2 tmp;
 		tmp=m;
 		m=l;
 		l=m;
@@ -1506,12 +1291,12 @@ CvPoint2D32f Vision::centerOfCircle(CvPoint2D32f l, CvPoint2D32f m, CvPoint2D32f
 	return center;
 }
 
-Vision::traceResult Vision::traceline(CvPoint start, CvPoint vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c)
 {
 	int skipcount = 0;
 	//int globalcount = 0;
-	CvPoint curr = start;
-	CvPoint latestValid = start;
+	KVecInt2 curr = start;
+	KVecInt2 latestValid = start;
 	/////cout << "traceline:"<<start.x<<" "<<start.y<<endl;
 	while (validpixel(curr.x,curr.y))
 	{
@@ -1531,8 +1316,7 @@ Vision::traceResult Vision::traceline(CvPoint start, CvPoint vel, KSegmentator::
 			//curr=start;
 			break;
 		}
-		curr.x += vel.x;
-		curr.y += vel.y;
+		curr.add(vel);
 
 	}
 	traceResult r;
@@ -1549,12 +1333,12 @@ Vision::traceResult Vision::traceline(CvPoint start, CvPoint vel, KSegmentator::
 }
 
 
-Vision::traceResult Vision::traceline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c)
 {
 	int skipcount = 0;
 	//int globalcount = 0;
 	//CvPoint curr = start;
-	CvPoint latestValid = start;
+	KVecInt2 latestValid = start;
 	tracer_t curr;
 	curr.init(start.x,start.y);
 	curr.initVelocity(vel.x,vel.y);
@@ -1594,12 +1378,12 @@ Vision::traceResult Vision::traceline(CvPoint start, CvPoint2D32f vel, KSegmenta
 	return r;
 }
 
-Vision::traceResult Vision::traceStrictline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c)
 {
 	int skipcount = 0;
 	//int globalcount = 0;
 	//CvPoint curr = start;
-	CvPoint latestValid = start;
+	KVecInt2 latestValid = start;
 	tracer_t curr;
 	curr.init(start.x,start.y);
 	curr.initVelocity(vel.x,vel.y);
@@ -1640,12 +1424,12 @@ Vision::traceResult Vision::traceStrictline(CvPoint start, CvPoint2D32f vel, KSe
 }
 
 
-Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c)
 {
 	int skipcount = 0;
 	//int globalcount = 0;
 	//CvPoint curr = start;
-	//CvPoint2D32f lt,rt;
+	//KVecFloat2 lt,rt;
 	//lt.x=-vel.y;lt.y=-vel.x;
 	//rt.x=-lt.x;rt.y=-lt.y;
 	/*CvPoint intVel;
@@ -1655,7 +1439,7 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 	cout<<"intvel:"<<intVel.x<<intVel.y<<endl;*/
 
 
-	CvPoint latestValid = start;
+	KVecInt2 latestValid = start;
 	tracer_t curr;
 	curr.init(start.x,start.y);
 	curr.initVelocity(vel.x,vel.y);
@@ -1685,10 +1469,10 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 			//Ok, try some readaptation
 			if(rebounce>0)
 				break;
-			traceResult trs=traceStrictline(latestValid,cvPoint2D32f(vel.y,-vel.x),c);
-			CvPoint l=trs.p;
-			trs=traceStrictline(latestValid,cvPoint2D32f(-vel.y,vel.x),c);
-			CvPoint m=trs.p;
+			traceResult trs=traceStrictline(latestValid,KVecFloat2(vel.y,-vel.x),c);
+			KVecInt2 l=trs.p;
+			trs=traceStrictline(latestValid,KVecFloat2(-vel.y,vel.x),c);
+			KVecInt2 m=trs.p;
 			m.x=(m.x+l.x)/2;
 			m.y=(m.y+l.y)/2;
 			float d=CvDist(m,latestValid);
@@ -1729,7 +1513,7 @@ Vision::traceResult Vision::traceBlobEdge(CvPoint start, CvPoint2D32f vel, KSegm
 }
 
 
-//Vision::traceResult Vision::traceline(CvPoint start, CvPoint2D32f vel, KSegmentator::colormask_t c)
+//Vision::traceResult Vision::traceline(CvPoint start, KVecFloat2 vel, KSegmentator::colormask_t c)
 
 
 

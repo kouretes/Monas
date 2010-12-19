@@ -219,8 +219,8 @@ void Vision::recv_and_send()
 
 			for (int j = 0; j < rawImage->height; j++)
 			{
-				KMat::HCoords<float, 2> im;
-				KMat::HCoords<float, 3> c3d;
+				KVecFloat2 im;
+				KVecFloat3 c3d;
 				im(0) = i;
 				im(1) = j;
 				im = imageToCamera(im);
@@ -238,7 +238,7 @@ void Vision::recv_and_send()
 			}
 		}
 
-		vector<CvPoint>::iterator i;
+		vector<KVecInt2>::iterator i;
 		//For all detected points
 		//cout << "locateball" << endl;
 		for (i = ballpixels.begin(); i != ballpixels.end(); i++)
@@ -467,7 +467,7 @@ void Vision::fetchAndProcess()
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	cout << b.x << " " << b.y << " " << b.cr << endl;
-	//KMat::HCoords<float,2> & w=camToRobot(o)
+	//KVecFloat2 & w=camToRobot(o)
 	cout<<"Bearing:"<<b.bearing.mean<<" "<<b.bearing.var<<endl;
 	cout<<"Distance:"<<b.distance.mean<<" "<<b.distance.var<<endl;
 
@@ -478,11 +478,11 @@ void Vision::fetchAndProcess()
 		//Fill message and publish
 		trckmsg.set_cx(0);
 		trckmsg.set_cy(0);
-		KMat::HCoords<float, 2> im;
+		KVecFloat2 im;
 		im(0) = b.x;
 		im(1) = b.y;
-		KMat::HCoords<float, 2> c;
-		KMat::HCoords<float, 3> c3d;
+		KVecFloat2 c;
+		KVecFloat3 c3d;
 		c = imageToCamera(im);
 		c3d = kinext.camera2dToTorso(c);
 		//c3d(0)+p.cameraX;c3d(1)+cameraY;
@@ -652,13 +652,13 @@ void Vision::loadXMLConfig(std::string fname)
 	xmlconfig->QueryElement("pitchoffset", config.pitchoffset);
 }
 
-void Vision::publishObstacles(std::vector<CvPoint> points)
+void Vision::publishObstacles(std::vector<KVecInt2> points)
 {
 	static int period = 0;
 	period++;
 	if (period > 5)
 		period = 0;
-	vector<CvPoint>::iterator i;//candidate iterator
+	vector<KVecInt2>::iterator i;//candidate iterator
 	VisionObstacleMessage result;
 	if (!(result.obstacles_size() > 2 && period == 0))
 		return;
@@ -666,7 +666,7 @@ void Vision::publishObstacles(std::vector<CvPoint> points)
 	for (i = points.begin(); i != points.end(); i++)
 	{
 
-		KMat::HCoords<float, 2> point;
+		KVecFloat2 point;
 		point(0) = (*i).x;
 		point(1) = (*i).y;
 
@@ -693,20 +693,30 @@ void Vision::publishObstacles(std::vector<CvPoint> points)
 
 }
 
-KMat::HCoords<float, 2> Vision::imageToCamera(const KMat::HCoords<float, 2> & imagep)
+
+KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep)
 {
 
-	KMat::HCoords<float, 2> res;
+	KVecFloat2 res;
 	res(0) = imagep(0) - rawImage->width / 2.0 + 0.5;
 	res(1) = -(imagep(1) - rawImage->height / 2.0 + 0.5);
 
 	return res;
 }
 
-KMat::HCoords<int, 2> Vision::cameraToImage(const KMat::HCoords<float, 2> & c)
+KVecFloat2 Vision::imageToCamera( KVecInt2 const & imagep)
 {
 
-	KMat::HCoords<int, 2> res;
+	KVecFloat2 res;
+	res(0) = imagep(0) - rawImage->width / 2.0 + 0.5;
+	res(1) = -(imagep(1) - rawImage->height / 2.0 + 0.5);
+
+	return res;
+}
+KVecInt2 Vision::cameraToImage( KVecFloat2 const& c)
+{
+
+	KVecInt2 res;
 
 	res(0) = (int) (c(0) + rawImage->width / 2.0 - 0.5);
 	res(1) = (int) (-c(1) + rawImage->height / 2.0 - 0.5);
@@ -715,9 +725,9 @@ KMat::HCoords<int, 2> Vision::cameraToImage(const KMat::HCoords<float, 2> & c)
 }
 
 //Input:  distance bearing
-KMat::HCoords<float, 2> Vision::camToRobot(KMat::HCoords<float, 2> & t)
+KVecFloat2 Vision::camToRobot(KVecFloat2 const & t)
 {
-	KMat::HCoords<float, 2> res;
+	KVecFloat2 res;
 	float a = cos(t(1)) * t(0) + p.cameraX;
 	float b = sin(t(1)) * t(0) + p.cameraY;
 	res(0) = sqrt((a) * (a) + (b) * (b));
@@ -808,7 +818,7 @@ void Vision::cvShowSegmented()
 	}
 }
 
-void * Vision::StartServer(void * astring)
+void * Vision::StartServer(void * s)
 {
 
 	unsigned short port = 9000;
@@ -823,7 +833,7 @@ void * Vision::StartServer(void * astring)
 		{
 			if ((sock = servSock.accept()) < 0)
 			{
-				cout << " REturned null";
+				//cout << " REturned null";
 				return NULL;
 			}
 			cout << "Handling client ";

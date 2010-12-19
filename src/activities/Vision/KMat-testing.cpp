@@ -26,11 +26,11 @@ int main ()
 	f.mult(z).mult(y);
 	//chain
 	//y.mult(z);//.invert();
-	HCoords<float,3> p;
-	p(1)=1;
-	p(2)=0;//0;tan(0.14);
-	p(3)=0;//tan(0.14);
-    HCoords<float,3> &r=f.transform(p);
+	KVecFloat3 p;
+	p(0)=1;
+	p(1)=0;//0;tan(0.14);
+	p(2)=0;//tan(0.14);
+    KVecFloat3 r=f.transform(p);
     r.prettyPrint();
 	ATMatrix<float,4> t;
 	ATMatrix<float,4> a;
@@ -39,11 +39,11 @@ int main ()
 	transformations::rotateY(t,-(float)transformations::PI/4);
 
 	a.mult(t);
-	HCoords<float,3> coords;
+	KVecFloat3 coords;
 	coords.zero();
 	coords(1)=transformations::PI/4;
 	coords.prettyPrint();
-	HCoords<float,3> &n=a.transform(coords);
+	KVecFloat3 n=a.transform(coords);
 	n.prettyPrint();
 
 

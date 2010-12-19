@@ -32,26 +32,37 @@ namespace KMat
 			SingularMatrixInvertionException(std::string m="") :	runtime_error(m.append( ": SingularMatrixInvertionException : attempted to invert a singular matrix") ) {}
 	};
 
-	template<typename AT,typename C> class COWRef
+	template<typename T,typename C> class COWRef
 	{
-		public:
+		/*public:
 		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
 		//const AT& operator(){ return p.getFunc(i,j) ;} const;
-		AT& operator=(AT const v) { return  p.get(i,j)=v;};
+		T& operator=(T const v) { return  p.get(i,j)=v;};
+		T& operator=(COWRef<T,C>  const &v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		template<typename AT,typename AC> T operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
 		private:
 			C & p;
-			int i,j;
+			int i,j;*/
 	};
+
 	template<typename C> class COWRef<float,C>
 	{
+		template <typename AT, typename AC>	friend class COWRef;
 		public:
 		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
 		operator float() const { return p.read(i,j) ;} ;
-		const float  operator=(const float  v) { return p.get(i,j)=v;};
-		const float operator+=(const float  v) { return p.get(i,j)+=v;};
-		const float operator-=(const float  v) { return p.get(i,j)-=v;};
-		const float operator*=(const float  v) { return p.get(i,j)*=v;};
-		const float operator/=(const float  v) { return p.get(i,j)/=v;};
+		template<typename AT,typename AC> float operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		float operator=(COWRef<float,C>  const &v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		float operator=(float  v) { return p.get(i,j)=v;};
+		template<typename AT> float operator+=(AT  v) { return p.get(i,j)+=v;};
+		template<typename AT> float operator-=(AT  v) { return p.get(i,j)-=v;};
+		template<typename AT> float operator*=(AT  v) { return p.get(i,j)*=v;};
+		template<typename AT> float operator/=(AT  v) { return p.get(i,j)/=v;};
+
+		template<typename AT> float operator+(AT  v) { return p.read(i,j)+v;};
+		template<typename AT> float operator-(AT  v) { return p.read(i,j)-v;};
+		template<typename AT> float operator*(AT  v) { return p.read(i,j)*v;};
+		template<typename AT> float operator/(AT  v) { return p.read(i,j)/v;};
 		private:
 			C & p;
 			int i,j;
@@ -59,14 +70,22 @@ namespace KMat
 
 	template<typename C> class COWRef<int,C>
 	{
+		template <typename AT, typename AC>	friend class COWRef;
 		public:
 		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
 		operator int() const { return p.read(i,j) ;} ;
-		const int  operator=(const int  v) { return p.get(i,j)=v;};
-		const int operator+=(const int  v) { return p.get(i,j)+=v;};
-		const int operator-=(const int  v) { return p.get(i,j)-=v;};
-		const int operator*=(const int  v) { return p.get(i,j)*=v;};
-		const int operator/=(const int  v) { return p.get(i,j)/=v;};
+		template<typename AT, typename AC> int operator=(COWRef<AT,AC> const & v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		int operator=(COWRef<int,C>  const &v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		int operator= (int  v) { return p.get(i,j)=v;};
+		template<typename AT> int operator+=(AT  v) { return p.get(i,j)+=v;};
+		template<typename AT> int operator-=(AT  v) { return p.get(i,j)-=v;};
+		template<typename AT> int operator*=(AT  v) { return p.get(i,j)*=v;};
+		template<typename AT> int operator/=(AT  v) { return p.get(i,j)/=v;};
+
+		template<typename AT> int operator+(AT  v) { return p.read(i,j)+v;};
+		template<typename AT> int operator-(AT  v) { return p.read(i,j)-v;};
+		template<typename AT> int operator*(AT  v) { return p.read(i,j)*v;};
+		template<typename AT> int operator/(AT  v) { return p.read(i,j)/v;};
 		private:
 			C & p;
 			int i,j;
@@ -106,7 +125,7 @@ namespace KMat
 
 			};
 			typedef DataContainer<T,M,N> DataContainer_t;
-
+			protected:
 			bool makeExclusive() //Return true if a new object has been created
 			{
 				if(h==NULL)
@@ -166,7 +185,7 @@ namespace KMat
 			/**
 			 *	In place add another matrix to this
 			 **/
-			D<T,M,N>& add( D<T,M,N> const& rop)
+			D<T,M,N>& add( BaseMatrix<D,T,M,N> const& rop)
 			{
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
@@ -175,10 +194,35 @@ namespace KMat
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
+
+			/**
+			 *	In place add another matrix to this, column wise add
+			 **/
+			D<T,M,N>& column_add( BaseMatrix<D,T,M,1> const& rop)
+			{
+				makeExclusive();
+				for (unsigned i=0;i<M;i++)
+					for (unsigned j=0;j<N;j++)
+						h->data[i][j]+=rop.h->data[i][0];
+
+				return static_cast< D<T,M,N> &> (*this);
+			};
+			/**
+			 *	In place add another matrix to this, row wise add
+			 **/
+			D<T,M,N>& row_add( BaseMatrix<D,T,1,N> const& rop)
+			{
+				makeExclusive();
+				for (unsigned i=0;i<M;i++)
+					for (unsigned j=0;j<N;j++)
+						h->data[i][j]+=rop.h->data[0][j];
+
+				return static_cast< D<T,M,N> &> (*this);
+			};
 			/**
 			 * In place subtract another matrix to this
 			 **/
-			D<T,M,N>& sub( D<T,M,N> const& rop)
+			D<T,M,N>& sub( BaseMatrix<D,T,M,N> const& rop)
 			{
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
@@ -192,10 +236,10 @@ namespace KMat
 			/** Generic Multiply with another matrix
 			 *	TODO: not faster than "slow" multiplication
 			 **/
-			template<unsigned L> D<T,M,L> & mult( D<T,N,L> const& rop) const
+			template<unsigned L> D<T,M,L>  mult( BaseMatrix<D,T,N,L> const& rop) const
 			{
-				D<T,M,L> *res= new D<T,M,L>();
-				res->makeExclusive();
+				D<T,M,L> res;
+				res.makeExclusive();
 				//std::cout<<"SLOW"<<std::endl;
 				//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
@@ -204,27 +248,26 @@ namespace KMat
 					for (unsigned j=0;j<L;j++)
 					{
 						//Clear value
-						res->h->data[i][j]=0;
+						res.h->data[i][j]=0;
 						for (unsigned k=0;k<N;k++)
 
 						{
-							res->h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
+							res.h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
 
 						}
 					}
 
 				}
-				return *res;
+				return res;
 			};
-
 			/** Generic Multiply with another square matrix, so result is same size as D<T,M,N>
 			 *	TODO: not faster than "slow" multiplication
 			 *	TODO: maybe "loose" the temp product space?
 			 **/
-			D<T,M,N>& mult( D<T,N,N> const& rop)//in place mult!!!
+			D<T,M,N> & mult( BaseMatrix<D,T,N,N> const& rop)//in place mult!!!
 			{
-				D<T,M,N> *tmp= new D<T,M,N>();
-				tmp->makeExclusive();
+				D<T,M,N> tmp;
+				tmp.makeExclusive();
 				//std::cout<<"IN PLACE"<<std::endl;
 				//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
@@ -233,45 +276,37 @@ namespace KMat
 					for (unsigned j=0;j<N;j++)
 					{
 						//Clear value
-						tmp->h->data[i][j]=0;
+						tmp.h->data[i][j]=0;
 						for (unsigned k=0;k<N;k++)
 						{
-							tmp->h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
+							tmp.h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
 
 						}
 					}
 
 				}
-				makeExclusive();
-				//Get Data back to *this
-				for (unsigned i=0;i<M;i++)
-					for (unsigned j=0;j<N;j++)
-						h->data[i][j]=tmp->h->data[i][j];
-				delete tmp;
+				this->copyFrom(tmp);//Share handle :)
+
 				return static_cast< D<T,M,N> &> (*this);
 			};
-
-
-
-
 
 			//============================	Scalar operations ============================
 			/**
 			 * Add a scalar
 			 */
-			D<T,M,N> & scalar_add(	const	 T	 scalar)
+			D<T,M,N>&  scalar_add(	const	 T	 scalar)
 			{
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
 						h->data[i][j]+=scalar;
 
-				return static_cast< D<T,M,N> &> (*this);
+				return static_cast< D<T,M,N>& > (*this);
 			};
 			/**
 			* Subtract a scalar
 			*/
-			D<T,M,N> & scalar_sub(const	T scalar)
+			D<T,M,N>&  scalar_sub(const	T scalar)
 			{
 				makeExclusive();
 
@@ -279,12 +314,12 @@ namespace KMat
 					for (unsigned j=0;j<N;j++)
 						h->data[i][j]-=scalar;
 
-				return static_cast< D<T,M,N> &> (*this);
+				return static_cast< D<T,M,N>& > (*this);
 			};
 			/**
 			* Multiply with	a scalar
 			*/
-			D<T,M,N> & scalar_mult(const	T scalar)
+			D<T,M,N>& scalar_mult(const	T scalar)
 			{
 				makeExclusive();
 
@@ -298,50 +333,50 @@ namespace KMat
 			/**
 			 * Transpose Matrix
 			 */
-			D<T,N,M>& transp() const
+			D<T,N,M> transp() const
 			{
-				D<T,N,M> *ngen= new D<T,N,M>();
-				ngen->makeExclusive();
+				D<T,N,M> ngen;
+				ngen.makeExclusive();
 				for (unsigned i=0;i<M;i++)
 				{
 					for (unsigned j=0;j<N;j++)
 					{
-						ngen->h->data[j][i]=h->data[i][j];
+						ngen.h->data[j][i]=h->data[i][j];
 					}
 				}
-				return *ngen;
+				return ngen;
 
 			};
 
 			/**
 			 * Return a new copy of this
 			 **/
-			D<T,M,N> & clone() const
+			D<T,M,N> clone() const
 			{
-				return *(new D<T,M,N>(static_cast< D<T,M,N> const&> (*this))); //No biggie, COW
+				return D<T,M,N>(static_cast< D<T,M,N> const&> (*this));
+				//return *(new D<T,M,N>(static_cast< D<T,M,N> const&> (*this))); //No biggie, COW
 
 			};
-			D<T,M,N> & copyTo(D<T,M,N> & dest ) const
+			D<T,M,N> & copyTo(BaseMatrix<D,T,M,N> & dest ) const
 			{
-				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
-				//std::cout<<sizeof(D<T,M,N>)<<std::endl;
-				//D<T,M,N> *ngen= new D<T,M,N>();
-				dest->cleanHandle();
+				dest.cleanHandle();
 				if(h==NULL)
 					return;
-				dest->h=h;
+				dest.h=h;
 				assert(h!=NULL);
 				h->inc();
 				return static_cast< D<T,M,N> &> (*this);
 			};
-			D<T,M,N> & copyFrom(const D<T,M,N> & src )
+			D<T,M,N> & copyFrom(BaseMatrix<D,T,M,N> const & src )
 			{
+				if(this==&src)
+					return static_cast< D<T,M,N> &> (*this);
 				cleanHandle();
 				if(src.h==NULL)
-					return static_cast< D<T,M,N> &> (*this);;
+					return static_cast< D<T,M,N> &> (*this);
 				h=src.h;
 				h->inc();
-				return static_cast< D<T,M,N> &> (*this);;
+				return static_cast< D<T,M,N> &> (*this);
 			};
 
 			/** Zero out matrix
@@ -405,8 +440,6 @@ namespace KMat
 				return h->data[i][j];
 			};
 
-
-
 			/**
 			 * For debuging mainly
 			 */
@@ -458,10 +491,15 @@ namespace KMat
 			{
 				return read(i,j);
 			};
-			D<T,M,N> & operator= (const D<T,M,N> & d)
+			D<T,M,N> & operator= (const BaseMatrix<D,T,M,N> & d)
 			{
 			  return copyFrom(d);
 			};
+			/*D<T,M,N> & operator= (const D<T,M,N> & d)
+			{
+			  return copyFrom(d);
+			};*/
+
 
 		protected:
 
@@ -469,7 +507,11 @@ namespace KMat
 
 	};
 	//GenMatix: simply a BaseMatrix Instantation :)
-template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<GenMatrix,T,M,N>{ };
+	template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<GenMatrix,T,M,N>
+	{
+		public:
+		using BaseMatrix<KMat::GenMatrix,T,M,N>::operator=;//Unhide  assignment operator
+	};
 	//========================================Square matrices====================================
 	//Transpose for square matrices
 	template <typename A,unsigned S>
@@ -535,7 +577,7 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 		//std::cout<<"Eps:"<<std::numeric_limits<A>::epsilon()<<std::endl;
 		if (determ > std::numeric_limits<A>::epsilon()&& determ!=(A)0)//can invert
 		{
-			GenMatrix<A,3,3> & t=athis.clone();
+			GenMatrix<A,3,3> t=athis.clone();
 
 			athis.h->data[0][0]=(t.h->data[1][1]*t.h->data[2][2]-t.h->data[1][2]*t.h->data[2][1])/determ;
 			athis.h->data[0][1]=(t.h->data[0][2]*t.h->data[2][1]-t.h->data[0][1]*t.h->data[2][2])/determ;
@@ -548,7 +590,7 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			athis.h->data[2][0]=(t.h->data[1][0]*t.h->data[2][1]-t.h->data[1][1]*t.h->data[2][0])/determ;
 			athis.h->data[2][1]=(t.h->data[0][1]*t.h->data[2][0]-t.h->data[0][0]*t.h->data[2][1])/determ;
 			athis.h->data[2][2]=(t.h->data[0][0]*t.h->data[1][1]-t.h->data[0][1]*t.h->data[1][0])/determ;
-			delete	&t;
+
 			return athis;
 
 		}
@@ -556,16 +598,13 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 		throw SingularMatrixInvertionException(d);
 	};
 
-
-
-
-
 	//Partial specialization for square matrices
 	template<typename T,unsigned S> class GenMatrix<T,S,S> : public BaseMatrix<GenMatrix,T,S,S>
 	{
 			friend GenMatrix<T,S,S> & transpose_square_matrix<>(GenMatrix<T,S,S> & athis);
 			friend GenMatrix<T,S,S> & invert_square_matrix<>(GenMatrix<T,S,S> &athis);
 		public:
+			using BaseMatrix<KMat::GenMatrix,T,S,S>::operator=;
 			GenMatrix<T,S,S> & transp()
 			{
 				return transpose_square_matrix(*this) ;
@@ -576,52 +615,63 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			};//Override for square
 	};
 
-	//A class to represent homogenous coordinates!
-	template<typename T,unsigned S> class HCoords : public GenMatrix<T,S,1>
+	template <typename T, unsigned S> class GenMatrix<T,S,1> : public BaseMatrix<GenMatrix,T,S,1>
 	{
+		//Add single dimentionall acess operator
 		public:
-			using GenMatrix<T,S,1>::get;
-			using GenMatrix<T,S,1>::read;
-			//using GenMatrix<T,S,1>::operator=;
-			//using GenMatrix<T,S,1>::clone;
-			HCoords() {};
-			//Constructor from a GenMatrix<T,S,1>
-			HCoords( GenMatrix<T,S,1> & m)
+		using BaseMatrix<KMat::GenMatrix ,T,S,1>::read;
+		using BaseMatrix<KMat::GenMatrix ,T,S,1>::operator();
+		using BaseMatrix<KMat::GenMatrix ,T,S,1>::operator=;
+
+		COWRef<T,GenMatrix<T,S,1> > operator() (unsigned i)
+		{
+			return COWRef<T,GenMatrix<T,S,1> > ( static_cast< GenMatrix<T,S,1>  &> (*this),i,0);
+		};
+		const T& operator() (unsigned i) const
+		{
+			return read(i,0);
+		};
+	};
+	//Vector of size 2
+	template <typename T> class GenMatrix<T,2,1> : public BaseMatrix<GenMatrix,T,2,1>
+	{
+		//Add single dimentionall acess operator
+		public:
+			GenMatrix<T,2,1>() :BaseMatrix<KMat::GenMatrix,T,2,1>(),x(*this,0,0),y(*this,1,0) {};
+
+			GenMatrix<T,2,1>(T ax,T ay) :BaseMatrix<KMat::GenMatrix,T,2,1>(),x(*this,0,0),y(*this,1,0)
 			{
-				copyFrom(m);//Simply use GenMatrix`s ability to copyitself :)
-			}
-			HCoords<T,S> & cloneCoords() const
-			{
-				//HCoords<T,S> *a=new HCoords<T,S>();
-				//a->copyFrom(*this);
-				return * (new HCoords<T,S>(*this));
-			}
-			//=== Operator overloading========
-			COWRef<T, HCoords<T,S> > operator() (unsigned i)
-			{
-				return COWRef<T, HCoords<T,S> > (*this,i,0);
+				this->makeExclusive();
+				this->h->data[0][0]=ax;
+				this->h->data[1][0]=ay;
 			};
-			//Const
-			const T& operator() (unsigned i) const
-			{
-				return read(i,0);
-			};
-			HCoords<T,S> & operator= (const HCoords<T,S> & other)
-			{
-                    copyFrom(other);
-                    return *this;
-			}
+			//To avoid modifying .x,.y
+			GenMatrix<T,2,1> (BaseMatrix<KMat::GenMatrix ,T,2,1> const& o):
+			BaseMatrix<KMat::GenMatrix ,T,2,1>(o),x(*this,0,0),y(*this,1,0)
+			{};
+			GenMatrix<T,2,1> (GenMatrix<T,2,1> const& o):
+			BaseMatrix<KMat::GenMatrix ,T,2,1>(o),x(*this,0,0),y(*this,1,0)
+			{};
+		using BaseMatrix<KMat::GenMatrix ,T,2,1>::read;
+		using BaseMatrix<KMat::GenMatrix ,T,2,1>::operator();
+		using BaseMatrix<KMat::GenMatrix ,T,2,1>::operator=;
+
+
+		GenMatrix<T,2,1> & operator=( GenMatrix<T,2,1> const & o)
+		{
+			return BaseMatrix<KMat::GenMatrix ,T,2,1>::operator=(o);
+		}
+		COWRef<T,GenMatrix<T,2,1> > operator() (unsigned i)
+		{
+			return COWRef<T,GenMatrix<T,2,1> > ( static_cast< GenMatrix<T,2,1>  &> (*this),i,0);
+		};
+		const T& operator() (unsigned i) const
+		{
+			return read(i,0);
+		};
+		COWRef<T,GenMatrix<T,2,1> > x,y;
 
 	};
-	/*
-	{
-	    protected:
-	   	GenMatrix<T,S,1> Coords;
-	   	T hpart;//Should be 1 :D
-	   public:
-	   	HCoords(){ Coords.zero(); hpart=1;};
-	   	HCoords<T,S> & zero() {Coords.zero(); hpart=1;};S
-	}*/
 
 	// Affine	transform matrix, using homogenous coordinates!!
 	/* Internal represantation is one S-1 X S-1 matrix A
@@ -688,7 +738,7 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			//Multiplication, optimized for HTMatrices!!
 			ATMatrix<T,S> & mult (ATMatrix<T,S> const& rop)
 			{
-				GenMatrix<T,S-1,1> & axd=A.mult(rop.B);
+				GenMatrix<T,S-1,1> axd=A.mult(rop.B);
 				//std::cout<<"WTF!"<<std::endl;
 				if (AisIdentity==true)//Mult with id , just copy
 				{
@@ -712,28 +762,28 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 			}
 
 			//Project a point !
-			HCoords<T,S-1>& transform(HCoords<T,S-1> const & c)
+			GenMatrix<T,S-1,1> transform(GenMatrix<T,S-1,1> const & c,T hom=1) const
 			{
-				HCoords<T,S-1> *nc;
+				GenMatrix<T,S-1,1> nc;
 				if (AisZero==true)//A matrix zero, dont try to do the math:p
 				{
-					nc=new  HCoords<T,S-1>();
-					nc->zero();//Result is definately zero
+					nc.zero();//Result is definately zero
 				}
 				else if ( AisIdentity==true)//A matrix id, no change in c
 				{
-					nc=& c.cloneCoords();//Just clone coords
+					nc=c;//Just clone coords
 				}
 				else//Just do the math :p
 				{
-					nc=new HCoords<T,S-1>();
-					GenMatrix<T,S-1,1> & a=A.mult(c);
-					nc->copyFrom(a);
-					delete &a;
+					nc=A.mult(c);
 				}
 				if (BisZero==false)//do some more math
-					nc->add(B);
-				return *nc;
+				{
+					GenMatrix<T,S-1,1> t=B;
+					t.scalar_mult(hom);
+					nc.add(t);
+				}
+				return nc;
 			}
 
 			ATMatrix<T,S> & invert()
@@ -744,10 +794,9 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 				{
 					if (AisIdentity==false&&AisZero==false)//Just do the math
 					{
-						GenMatrix<T,S-1,1> & newb=A.mult(B);
+						GenMatrix<T,S-1,1> newb=A.mult(B);
 						newb.scalar_mult(-1);
 						B=newb;
-						delete &newb;
 					}
 					else if (AisZero==true)//Result is def zero
 						B.zero();
@@ -805,11 +854,11 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 					if (AisIdentity==false&&AisZero==false)
 						break;
 				}
-
+				return this;
 			}
             COWRef<T, ATMatrix<T,S> > operator() (unsigned i,unsigned j)
 			{
-			    return  COWRef<T, ATMatrix<T,S> >(*this,i,0);
+			    return  COWRef<T, ATMatrix<T,S> >(*this,i,j);
 			}
 
 			const T& operator() (unsigned i,unsigned j) const { return read(i,j);}
@@ -829,6 +878,12 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
                     return A(i,j);
 			};
 
+	};
+	//Typedef vector type
+	template<typename T,unsigned S> struct Vector
+	{
+
+		typedef  GenMatrix<T,S,1> type;
 	};
 	class transformations
 	{
@@ -856,7 +911,7 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 				m.A(1,0)=factor;
 			};
 
-			template<typename T,unsigned S> static void translate(ATMatrix<T,S> & m, HCoords<T,S-1> t)
+			template<typename T,unsigned S> static void translate(ATMatrix<T,S> & m, GenMatrix<T,S-1,1> const& t)
 			{
 
 				m.identity();
@@ -865,7 +920,7 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 				m.BisZero=false;
 				m.B.copyFrom(t);
 			}
-			template<typename T, unsigned S> static void scale(ATMatrix<T,S> &m, HCoords<T,S-1> t)
+			template<typename T, unsigned S> static void scale(ATMatrix<T,S> &m, GenMatrix<T,S-1,1> const & t)
 			{
 				m.identity();
 				m.AisIdentity=false;
@@ -907,5 +962,12 @@ template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<G
 	};
 
 };
+
+//Short Definitions :)
+typedef KMat::Vector<float,2>::type KVecFloat2;
+typedef KMat::Vector<float,3>::type KVecFloat3;
+typedef KMat::Vector<int,2>::type KVecInt2;
+typedef KMat::Vector<int,3>::type KVecInt3;
+
 
 #endif

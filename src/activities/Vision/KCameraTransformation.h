@@ -19,7 +19,7 @@ class CameraT : public KMat::transformations
 		static const double TAU=33.33333333333333333333333333333333;//Skew constant of CMOS sensor in ms
 		//v is velocity components
 		//tau is time per line. constant of CMOS sensors
-		template<typename T> static void skew2d(KMat::ATMatrix<T,3> t,const KMat::HCoords<T,2>&  v,const T tau)
+		template<typename T> static void skew2d(KMat::ATMatrix<T,3> t,const KMat::GenMatrix<T,2,1>&  v,const T tau)
 		{
 			t.identity();
 			t.AisIdentity=false;
@@ -61,7 +61,9 @@ typedef struct cameraPose
 
 class KCameraTranformation
 {
+
 	public:
+
 		KCameraTranformation();
         void Init();
 
@@ -74,18 +76,18 @@ class KCameraTranformation
 
 		std::vector<float>  getKinematics(const std::string toAsk);
 		float cot(float theta);
-		KMat::HCoords<float,3>  camera2dTo3d(const KMat::HCoords<float,2> & coords);
-		KMat::HCoords<float,2>  camera3dTo2d(const KMat::HCoords<float,3> & coords);
-		KMat::HCoords<float,3>  cameraToGround(const KMat::HCoords<float,3> & c3d);
-		KMat::HCoords<float,3>  camera2dToTorso(const KMat::HCoords<float,2> & coords);
-		KMat::HCoords<float,3>  camera2dToGround(const KMat::HCoords<float,2>& c2d);
-        KMat::HCoords<float,3>  cameraToGroundProjection(const KMat::HCoords<float,3> & c3d,float height);
-		KMat::HCoords<float,3>  camera2dToGroundProjection(const KMat::HCoords<float,2>& c2d,float height);
-		KMat::HCoords<float,2>  groundToCamera2d(const KMat::HCoords<float,3>& g);
-		float vectorAngle(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2);
-		measurement  angularDistance(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
-        measurement  angularDistanceProjected(const KMat::HCoords<float,2> & v1,const KMat::HCoords<float,2> & v2,float realsize);
-        measurement* projectionDistance(KMat::HCoords<float,2> &v,float height);
+		KVecFloat3  camera2dTo3d(const KVecFloat2 & coords);
+		KVecFloat2  camera3dTo2d(const KVecFloat3 & coords);
+		KVecFloat3  cameraToGround(const KVecFloat3 & c3d);
+		KVecFloat3  camera2dToTorso(const KVecFloat2 & coords);
+		KVecFloat3  camera2dToGround(const KVecFloat2& c2d);
+        KVecFloat3  cameraToGroundProjection(const KVecFloat3 & c3d,float height);
+		KVecFloat3  camera2dToGroundProjection(const KVecFloat2& c2d,float height);
+		KVecFloat2  groundToCamera2d(const KVecFloat3& g);
+		float vectorAngle(const KVecFloat2 & v1,const KVecFloat2 & v2);
+		measurement  angularDistance(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize);
+        measurement  angularDistanceProjected(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize);
+        measurement* projectionDistance(KVecFloat2 &v,float height);
         float getPitch();
         float getRoll();
 
