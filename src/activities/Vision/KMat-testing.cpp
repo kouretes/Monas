@@ -9,79 +9,85 @@ using namespace std;
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-
+#include <cstdlib>
+#include <time.h>
 
 using namespace boost::math;
 using namespace boost::posix_time;
+using namespace boost::numeric::ublas;
 int main ()
 {
+	srand(time(NULL));
 
-
-    KMat::ATMatrix<float,4> y,z,f;
-	KMat::transformations::rotateY(y,0.69f);
-	KMat::transformations::rotateZ(z,(float)KMat::transformations::PI/2);
-
-	KMat::transformations::rotateX(f,0.04f);//4f);
-	f.mult(z).mult(y);
-	//chain
-	//y.mult(z);//.invert();
-	KVecFloat3 p;
-	p(0)=1;
-	p(1)=0;//0;tan(0.14);
-	p(2)=0;//tan(0.14);
-    KVecFloat3 r=f.transform(p);
-    r.prettyPrint();
-	ATMatrix<float,4> t;
-	ATMatrix<float,4> a;
-	a.identity();
-	//transformations::rotateZ(a,(float)transformations::PI/2);
-	transformations::rotateY(t,-(float)transformations::PI/4);
-
-	a.mult(t);
-	KVecFloat3 coords;
-	coords.zero();
-	coords(1)=transformations::PI/4;
-	coords.prettyPrint();
-	KVecFloat3 n=a.transform(coords);
-	n.prettyPrint();
-
-
-
-
-	GenMatrix<float,3,3> testS ;
-	for (int i = 1; i <= 3; i++)
-		for (int k = 1; k <= 3; k++)
-			testS(i,k)=i+k;
-	//testS.identity();
 	//cout<<sizeof(GenMatrix<char,3,3>)<<endl;
-	ptime start = microsec_clock::universal_time();
+	GenMatrix<float,4,4> testS,res,res2 ;
+
+	matrix<float> m(4,4), foo(4,4),foo2(4,4);
+
+	float sum=0;
+	ptime end,start;
+
+	for (int j = 0; j < 4; j++)
+		for (int k = 0; k < 4; k++)
+			m.insert_element(j,k,testS(j,k)=((rand()%11)-5)/8.0);
+
+	end = microsec_clock::universal_time();
+	start = microsec_clock::universal_time();
+
 	for (int i=0;i<100000;i++)
 	{
 		//for (int j=0;j<10;j++)
 		//test.identity().scalar_mult(3);
 		//test(1,1)=0;
-		testS.mult(testS);
+		res=testS;
+
+		res2=res;
+		//res2.prettyPrint();
+		for(int p=0;p<10;p++)
+		{
+			//for(int j=0;j<1;j++)
+				res*=testS;
+			//res.prettyPrint();
+		}
+		res2.add(res);
+		for (int j = 0; j < 4; j++)
+				for (int k = 0; k < 4; k++)
+					sum+=res2(j,k);
+//
+
 	}
-	ptime end = microsec_clock::universal_time();
+	//testS.prettyPrint();
 
-	cout << "1000000 m*m took " << (end-start).total_microseconds()/(float)100 << " microseconds " << endl;
-
-
-
-	using namespace boost::numeric::ublas;
-
-	matrix<float> m(3,3), *foo = new matrix<float>(3,3);
-	for (int i = 0; i < 3; i++)
-		for (int k = 0; k < 3; k++)
-			m.insert_element(i,k,(float)i+k);
-
-	start = microsec_clock::universal_time();
-	for (int j =0; j < 100000; j++)
-		*foo=prod(m,m);
 	end = microsec_clock::universal_time();
+	cout<<sum<<endl;
+	cout << "10000x1000 m=m*m took " << (end-start).total_microseconds() << " microseconds " << endl;
 
-	cout << "1000000 m*m took " << (end-start).total_microseconds()/(float)100 << " microseconds " << endl;
+
+
+
+	sum=0;
+	start = microsec_clock::universal_time();
+	for (int i=0;i<100000;i++)
+	{
+
+
+		foo=m;
+		foo2=foo;
+
+		for(int j=0;j<10;j++)
+			foo=prod(foo,m);
+
+		foo2+=foo;
+
+		for (int j = 0; j < 4; j++)
+			for (int k = 0; k < 4; k++)
+				sum+=foo2.at_element(j,k);
+
+
+	}
+	end = microsec_clock::universal_time();
+	cout<<sum<<endl;
+	cout << "10000x1000 m=m*m took " << (end-start).total_microseconds() << " microseconds " << endl;
 
 
 	return 0;

@@ -7,8 +7,10 @@
 #include <limits>
 #include <math.h>
 
+#ifdef NDEBUG
+#define KMAT_INSANE_MODE
+#endif
 
-//#define KMAT_INSANE_MODE
 
 /**
  * KMat (koimat`) :: Kouretes Matrix Library!
@@ -49,7 +51,7 @@ namespace KMat
 	{
 		template <typename AT, typename AC>	friend class COWRef;
 		public:
-		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
+		COWRef(C &obj,int a, int b): p(obj),i(a),j(b){};
 		operator float() const { return p.read(i,j) ;} ;
 		template<typename AT,typename AC> float operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
 		float operator=(COWRef<float,C>  const &v) { return p.get(i,j)=v.p.read(v.i,v.j);};
@@ -72,7 +74,7 @@ namespace KMat
 	{
 		template <typename AT, typename AC>	friend class COWRef;
 		public:
-		COWRef(C obj,int a, int b): p(obj),i(a),j(b){};
+		COWRef(C &obj,int a, int b): p(obj),i(a),j(b){};
 		operator int() const { return p.read(i,j) ;} ;
 		template<typename AT, typename AC> int operator=(COWRef<AT,AC> const & v) { return p.get(i,j)=v.p.read(v.i,v.j);};
 		int operator=(COWRef<int,C>  const &v) { return p.get(i,j)=v.p.read(v.i,v.j);};
@@ -104,7 +106,7 @@ namespace KMat
 			{
 				public:
 				AT data[AM][AN];
-				std::size_t counts;
+				unsigned counts;
 
 				DataContainer() : counts(0) {};
 				DataContainer(DataContainer<AT,AM,AN>&) :counts(0) {
@@ -112,33 +114,35 @@ namespace KMat
 				}
 				void inc() {++counts;};
 				void dec() {--counts;};
-				bool isExclusive() {return counts==1;};
+				bool isExclusive() {return counts<=1;};
 				DataContainer<AT,AM,AN> *clone()
 				{
 					DataContainer<AT,AM,AN> *ngen= new DataContainer<AT,AM,AN>();
 					memcpy(ngen->data ,this->data, sizeof(AT[AM][AN])	);
 
 					return ngen;
-
 				}
-
-
 			};
 			typedef DataContainer<T,M,N> DataContainer_t;
 			protected:
 			bool makeExclusive() //Return true if a new object has been created
 			{
+				//std::cout<<"m"<<std::endl;
 				if(h==NULL)
 				{
 					h= new DataContainer_t;
 					//memset(h->data,0,sizeof(T[M][N]));
 					h->inc();
+					//std::cout<<h->counts<<std::endl;
 					return true;
 				}
+				//std::cout<<"jc:"<<h->counts<<std::endl;
 				if(h->isExclusive())
 					return false;
 				h->dec();
+				//std::cout<<"hbef:"<<h<<std::endl;
 				h=h->clone();
+				//std::cout<<"haft:"<<h<<std::endl;
 				h->inc();
 				return false;
 			}
@@ -163,13 +167,10 @@ namespace KMat
 				h=NULL;
 			}
 		public:
-			BaseMatrix(): h(NULL)
+			BaseMatrix(): h(NULL){};
+			BaseMatrix(BaseMatrix<D,T,M,N> const& o):h(o.h)
 			{
 
-			};
-			BaseMatrix(BaseMatrix<D,T,M,N> const& o)
-			{
-				h=o.h;
 				if(h!=NULL)
 					h->inc();
 			}
@@ -185,8 +186,14 @@ namespace KMat
 			/**
 			 *	In place add another matrix to this
 			 **/
+			D<T,M,N>& operator+=( BaseMatrix<D,T,M,N> const& rop)
+			{
+				return add(rop);
+			}
 			D<T,M,N>& add( BaseMatrix<D,T,M,N> const& rop)
 			{
+				if(h==NULL||rop.h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
@@ -200,6 +207,8 @@ namespace KMat
 			 **/
 			D<T,M,N>& column_add( BaseMatrix<D,T,M,1> const& rop)
 			{
+				if(h==NULL||rop.h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
@@ -212,6 +221,8 @@ namespace KMat
 			 **/
 			D<T,M,N>& row_add( BaseMatrix<D,T,1,N> const& rop)
 			{
+				if(h==NULL||rop.h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
@@ -222,8 +233,14 @@ namespace KMat
 			/**
 			 * In place subtract another matrix to this
 			 **/
+			D<T,M,N>& operator-=( BaseMatrix<D,T,M,N> const& rop)
+			{
+				return sub(rop);
+			}
 			D<T,M,N>& sub( BaseMatrix<D,T,M,N> const& rop)
 			{
+				if(h==NULL||rop.h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
@@ -236,12 +253,19 @@ namespace KMat
 			/** Generic Multiply with another matrix
 			 *	TODO: not faster than "slow" multiplication
 			 **/
-			template<unsigned L> D<T,M,L>  mult( BaseMatrix<D,T,N,L> const& rop) const
+			template<unsigned L> D<T,M,L>  operator *( BaseMatrix<D,T,N,L> const& rop) const
+			{
+				return slow_mult(rop);
+			}
+			template<unsigned L> D<T,M,L>  slow_mult( BaseMatrix<D,T,N,L> const& rop) const
 			{
 				D<T,M,L> res;
-				res.makeExclusive();
+
 				//std::cout<<"SLOW"<<std::endl;
-				//For each line of the resulting array
+				if(h==NULL||rop.h==NULL)
+					return res;
+				res.makeExclusive();
+								//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
 				{
 					//For each element of this row
@@ -250,7 +274,6 @@ namespace KMat
 						//Clear value
 						res.h->data[i][j]=0;
 						for (unsigned k=0;k<N;k++)
-
 						{
 							res.h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
 
@@ -264,11 +287,23 @@ namespace KMat
 			 *	TODO: not faster than "slow" multiplication
 			 *	TODO: maybe "loose" the temp product space?
 			 **/
-			D<T,M,N> & mult( BaseMatrix<D,T,N,N> const& rop)//in place mult!!!
+			D<T,M,N> & operator *=( BaseMatrix<D,T,N,N> const& rop)
 			{
-				D<T,M,N> tmp;
-				tmp.makeExclusive();
-				//std::cout<<"IN PLACE"<<std::endl;
+				return fast_mult(rop);
+			}
+			D<T,M,N> & fast_mult( BaseMatrix<D,T,N,N> const& rop)//in place mult!!!
+			{
+
+				if(h==NULL||rop.h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
+				if(this->h==rop.h){
+					copyFrom(slow_mult(rop));
+					return static_cast< D<T,M,N> &> (*this);
+				}
+				makeExclusive();
+				T tmp[N];
+				//std::cout<<"IN PLACE"<<h->counts<<std::endl;
+
 				//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
 				{
@@ -276,16 +311,15 @@ namespace KMat
 					for (unsigned j=0;j<N;j++)
 					{
 						//Clear value
-						tmp.h->data[i][j]=0;
+						tmp[j]=0;
 						for (unsigned k=0;k<N;k++)
 						{
-							tmp.h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
+							tmp[j]+=h->data[i][k]*rop.h->data[k][j];
 
 						}
 					}
-
+					memcpy(h->data[i],tmp,sizeof(T[N]));
 				}
-				this->copyFrom(tmp);//Share handle :)
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -296,6 +330,8 @@ namespace KMat
 			 */
 			D<T,M,N>&  scalar_add(	const	 T	 scalar)
 			{
+				if(h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				makeExclusive();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
@@ -308,8 +344,9 @@ namespace KMat
 			*/
 			D<T,M,N>&  scalar_sub(const	T scalar)
 			{
+				if(h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				makeExclusive();
-
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
 						h->data[i][j]-=scalar;
@@ -321,8 +358,9 @@ namespace KMat
 			*/
 			D<T,M,N>& scalar_mult(const	T scalar)
 			{
+				if(h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				makeExclusive();
-
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
 						h->data[i][j]*=scalar;
@@ -335,7 +373,10 @@ namespace KMat
 			 */
 			D<T,N,M> transp() const
 			{
+
 				D<T,N,M> ngen;
+				if(h==NULL)
+					return static_cast< D<T,M,N> &> (*this);
 				ngen.makeExclusive();
 				for (unsigned i=0;i<M;i++)
 				{
@@ -359,6 +400,8 @@ namespace KMat
 			};
 			D<T,M,N> & copyTo(BaseMatrix<D,T,M,N> & dest ) const
 			{
+				if(this->h==dest.h)
+					return static_cast< D<T,M,N> &> (*this);
 				dest.cleanHandle();
 				if(h==NULL)
 					return;
@@ -369,13 +412,14 @@ namespace KMat
 			};
 			D<T,M,N> & copyFrom(BaseMatrix<D,T,M,N> const & src )
 			{
-				if(this==&src)
+				if(this->h==src.h)
 					return static_cast< D<T,M,N> &> (*this);
 				cleanHandle();
 				if(src.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
 				h=src.h;
 				h->inc();
+				//std::cout<<"sharing"<<h->counts<<std::endl;
 				return static_cast< D<T,M,N> &> (*this);
 			};
 
@@ -386,10 +430,6 @@ namespace KMat
 			{
 				makeExclusive();
 				zeroOut();
-				//Fill main diagonal
-				//unsigned l=M<N?M:N;
-				//for(unsigned i=0;i<l;i++)
-				//data[i][i]=1;
 				return static_cast< D<T,M,N> &> (*this);
 			};
 
@@ -493,6 +533,7 @@ namespace KMat
 			};
 			D<T,M,N> & operator= (const BaseMatrix<D,T,M,N> & d)
 			{
+			  //std::cout<<"copy"<<std::endl;
 			  return copyFrom(d);
 			};
 			/*D<T,M,N> & operator= (const D<T,M,N> & d)
@@ -517,7 +558,6 @@ namespace KMat
 	template <typename A,unsigned S>
 	GenMatrix<A,S,S> & transpose_square_matrix(GenMatrix<A,S,S> & athis)
 	{
-
 		for (unsigned i=0;i<S;i++)
 		{
 			for (unsigned j=0;j<i;j++)
@@ -605,12 +645,18 @@ namespace KMat
 			friend GenMatrix<T,S,S> & invert_square_matrix<>(GenMatrix<T,S,S> &athis);
 		public:
 			using BaseMatrix<KMat::GenMatrix,T,S,S>::operator=;
-			GenMatrix<T,S,S> & transp()
+			GenMatrix<T,S,S> & fast_transp()
 			{
+				if(this->h==NULL)
+					return (*this);
+				this->makeExclusive();
 				return transpose_square_matrix(*this) ;
 			};//Override for square
-			GenMatrix<T,S,S> & invert()
+			GenMatrix<T,S,S> & fast_invert()
 			{
+				if(this->h==NULL)
+					return (*this);
+				this->makeExclusive();
 				return invert_square_matrix(*this) ;
 			};//Override for square
 	};
@@ -697,6 +743,10 @@ namespace KMat
 			bool AisZero, AisIdentity,BisZero;
 		public:
 			ATMatrix():AisZero(false),AisIdentity(false),BisZero(false) {};
+			ATMatrix<T,S> & operator += ( ATMatrix<T,S> const& rop)
+			{
+				return add(rop);
+			}
 			ATMatrix<T,S> & add ( ATMatrix<T,S> const& rop)
 			{
 				A.add(rop.A);
@@ -715,6 +765,11 @@ namespace KMat
 					BisZero=rop.BisZero;
 				return *this;
 			};
+
+			ATMatrix<T,S> & operator -= ( ATMatrix<T,S> const& rop)
+			{
+				return sub(rop);
+			}
 
 			ATMatrix<T,S> & sub ( ATMatrix<T,S> const& rop)
 			{
@@ -736,24 +791,29 @@ namespace KMat
 			};
 
 			//Multiplication, optimized for HTMatrices!!
-			ATMatrix<T,S> & mult (ATMatrix<T,S> const& rop)
+			ATMatrix<T,S> & operator *= (ATMatrix<T,S> const& rop)
 			{
-				GenMatrix<T,S-1,1> axd=A.mult(rop.B);
+				return fast_mult ( rop);
+
+			}
+			ATMatrix<T,S> & fast_mult (ATMatrix<T,S> const& rop)
+			{
+				GenMatrix<T,S-1,1> axd=(A*rop.B);
 				//std::cout<<"WTF!"<<std::endl;
 				if (AisIdentity==true)//Mult with id , just copy
 				{
-					A.copyFrom(rop.A);
+					A=rop.A;
 					AisZero=rop.AisZero;
 					AisIdentity=rop.AisIdentity;
 				}
 				else if (AisZero==false)//Not id and not zero, just do the math
 				{
-					A.mult(rop.A);
+					A*=rop.A;
 					AisZero=rop.AisZero;
 					AisIdentity=rop.AisIdentity;
 				}
 
-				B.add(axd);
+				B+=axd;
 				if (BisZero==true)
 					BisZero=rop.BisZero;
 
@@ -775,26 +835,26 @@ namespace KMat
 				}
 				else//Just do the math :p
 				{
-					nc=A.mult(c);
+					nc=A*c;
 				}
-				if (BisZero==false)//do some more math
+				if (BisZero==false)//do some more math for the translatonal part
 				{
 					GenMatrix<T,S-1,1> t=B;
 					t.scalar_mult(hom);
-					nc.add(t);
+					nc+=t;
 				}
 				return nc;
 			}
 
-			ATMatrix<T,S> & invert()
+			ATMatrix<T,S> & fast_invert()
 			{
 				if (AisIdentity!=true)
-					A.invert();
+					A.fast_invert();
 				if (BisZero==false)
 				{
 					if (AisIdentity==false&&AisZero==false)//Just do the math
 					{
-						GenMatrix<T,S-1,1> newb=A.mult(B);
+						GenMatrix<T,S-1,1> newb=A*B;
 						newb.scalar_mult(-1);
 						B=newb;
 					}
@@ -833,8 +893,8 @@ namespace KMat
 			ATMatrix<T,S>& check()//Just update booleans
 			{
 				BisZero=true;
-				for (unsigned i=1;i<S;i++)
-					if (B(i,1)!=0)
+				for (unsigned i=0;i<S;i++)
+					if (B(i)!=0)
 					{
 						BisZero=false;
 						break;
@@ -842,11 +902,11 @@ namespace KMat
 
 				AisZero=true;
 				AisIdentity=true;
-				for (unsigned i=1;i<S;i++)
+				for (unsigned i=0;i<S;i++)
 				{
 					if (A(i,i)!=1)
 						AisIdentity=false;
-					for (unsigned j=1;j<S;j++)
+					for (unsigned j=0;j<S;j++)
 					{
 						if (A(i,j)!=0)
 							AisZero=false;
@@ -856,7 +916,7 @@ namespace KMat
 				}
 				return this;
 			}
-            COWRef<T, ATMatrix<T,S> > operator() (unsigned i,unsigned j)
+			COWRef<T, ATMatrix<T,S> > operator() (unsigned i,unsigned j)
 			{
 			    return  COWRef<T, ATMatrix<T,S> >(*this,i,j);
 			}
@@ -866,16 +926,16 @@ namespace KMat
 			T& get(unsigned i,unsigned j)
 			{
 				if(j==S)
-                    return B(i,0);
+                    return B.get(i,0);
                 else
-                    return A(i,j);
+                    return A.get(i,j);
 			}
 			const T& read(unsigned i,unsigned j) const
 			{
 			    if(j==S)
-                    return B(i,0);
+                    return B.read(i,0);
                 else
-                    return A(i,j);
+                    return A.read(i,j);
 			};
 
 	};
