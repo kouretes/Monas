@@ -90,7 +90,7 @@ class VBehavior: public IActivity {
 
 		double mglRand();
 		void velocityWalk(double x, double y, double th, double f);
-		void littleWalk(double x, double y, double th, int s);
+		void littleWalk(double x, double y, double th);
 		void calibrate();
 		float cX,cY,cth;//Commanded
 

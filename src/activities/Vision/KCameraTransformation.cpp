@@ -47,16 +47,15 @@ void  KCameraTranformation::setPose(cpose p)
     KMat::transformations::rotateZ(h,thepose.yaw);
 
     KMat::transformations::rotateY(temp,thepose.pitch+thepose.cameraPitch);
-    h.mult(temp);//Fixed head chain!
+    h*=temp;//Fixed head chain!
     cameraTorsoChain=h;//Copy half Part
     KMat::transformations::rotateY(cameraChain,thepose.angY);
     KMat::transformations::rotateX(temp,thepose.angX);
-    cameraChain.mult(temp);//Fixed Torso chain;
-
-    cameraChain.mult(h);//Single Chain
+    cameraChain*=temp;
+    cameraChain*=h;
 
     cameraChainInv=cameraChain;
-    cameraChainInv.invert();//Invert and we are done
+    cameraChainInv.fast_invert();//Invert and we are done
 }
 
 

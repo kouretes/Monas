@@ -90,9 +90,10 @@ void VBehavior::UserInit() {
 
 int VBehavior::MakeTrackBallAction() {
 
-	float overshootfix = 0.50;
+	/*float overshootfix = 0.50;
 	float cx = bmsg->cx();
 	float cy = bmsg->cy();
+	*/
 	//if (fabs(cx) > 0.015 || fabs(cy) > 0.015) {
 		//hmot->set_command("setHead");
 		//hmot->set_parameter(0, bmsg->referenceyaw() - overshootfix * cx);
@@ -193,7 +194,7 @@ int VBehavior::Execute() {
 		//eturn 0;
 		Logger::Instance().WriteMsg("VBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
-		float X=0.0, Y=0.0, theta=0.0;
+		//float X=0.0, Y=0.0, theta=0.0;
 		static float bd=0.0, bx=0.0, by=0.0, bb=0.0;
 		float posx=0.145, posy=0.026;
 		static float lastx=0,lasty=0;
@@ -280,7 +281,7 @@ int VBehavior::Execute() {
 			if ( kickoff ) {
 				//if (mglRand()<0.5) {
 				if ( (mglRand()<1.0) && !obstacleFront ) {
-					littleWalk(0.2, 0.0, 0.0, 1);
+					littleWalk(0.2, 0.0, 0.0);
 				} else {
 					if (bb > 0.0) {
 						amot->set_command("SoftLeftSideKick");
@@ -367,7 +368,7 @@ int VBehavior::Execute() {
 void VBehavior::HeadScanStep() {
 
 	if (startscan) {
-		littleWalk(0.0, 0.0, +2*TO_RAD, 0);
+		littleWalk(0.0, 0.0, +2*TO_RAD);
 		//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
 		if (HeadPitch.sensorvalue() < LIMITDOWN) { // first go down
 			scandirectionpitch = 1;
@@ -425,11 +426,11 @@ void VBehavior::HeadScanStep() {
 		reachedlimitleft = false;
 		///we should do something;
 		if (back>0) {
-			littleWalk(-0.2, 0.0, 0.0, 1);
+			littleWalk(-0.2, 0.0, 0.0);
 			back--;
 		}
 		else {
-			littleWalk(0.0, 0.0, direction * 90 * TO_RAD, 1);
+			littleWalk(0.0, 0.0, direction * 90 * TO_RAD);
 			//direction = - direction;
 		}
 	}
@@ -484,7 +485,7 @@ void VBehavior::velocityWalk(double x, double y, double th, double f)
 	_blk->publish_signal(*wmot, "motion");
 }
 
-void VBehavior::littleWalk(double x, double y, double th, int s)
+void VBehavior::littleWalk(double x, double y, double th)
 {
 	wmot->set_command("walkTo");
 	wmot->set_parameter(0, x);
