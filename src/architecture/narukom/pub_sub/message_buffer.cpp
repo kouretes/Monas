@@ -49,11 +49,6 @@ boost::unique_lock<boost::mutex > data_lock(mutex);
 
 }
 
-const std::string MessageBuffer::getOwner() const
-{
-  //boost::unique_lock<boost::mutex > data_lock(mutex);
-  return owner;
-}
 
 
 
@@ -153,9 +148,6 @@ void MessageBuffer::add(const msgentry & t)
 	{
 		mq->requestMailMan(this);
     }
-
-
-
 }
 std::vector<msgentry> MessageBuffer::remove()
 {

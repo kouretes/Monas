@@ -21,7 +21,6 @@ Blackboard::Blackboard(const char* sub_name): Subscriber(sub_name),Publisher(sub
 
 void Blackboard::process_messages()
 {
-    cur_tmsp = boost::posix_time::microsec_clock::universal_time();
 
     cleanup();
 
@@ -41,6 +40,7 @@ void Blackboard::process_messages()
 
         switch ((*it).msgclass)
         {
+			case msgentry::STATE:
             case msgentry::DATA:
 
                 if(blkdata[(*it).msg->GetTypeName()].size()>0)
@@ -55,9 +55,11 @@ void Blackboard::process_messages()
                 sigdata[(*it).msg->GetTypeName()]=newsig;
 
                 break;
+            /*
             case msgentry::STATE:
                 statedata[(*it).msg->GetTypeName()]=(*it);
                 break;
+			*/
 
         }
 
@@ -79,21 +81,35 @@ int Blackboard::cleanup()
     //Data structure
 	std::map<std::string,historyqueue>::iterator it= blkdata.begin();
     //cout<<"cleanup2!"<<endl;
+	boost::posix_time::time_duration t;
+	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
 	while(it!=blkdata.end())
 	{
 	    historyqueue &q=(*it).second;
-	    historyqueue::iterator qit= q.begin();
+
 	    //cout<<(*it).first<<endl;
 	    //int i=0;
-	    while(qit!=q.end() && (*qit).timeoutstamp<=cur_tmsp)
-	    {
-            ++qit;
-            //i++;
 
-	    }
-	    //cout<<i<<endl;
-	    //q.clear();
-	    q.erase(q.begin(),qit);
+	    if(blkdatatimeouts.find((*it).first)==blkdatatimeouts.end())
+		{
+			q.erase(q.begin(),--q.end());//Keep last only
+		}
+		else
+		{
+			boost::posix_time::ptime timeoutstamp=now-blkdatatimeouts[(*it).first];
+
+			historyqueue::iterator qit= q.begin();
+			while(qit!=q.end() && (*qit).timestamp<=timeoutstamp)
+			{
+				++qit;
+				//i++;
+
+			}
+			//cout<<i<<endl;
+			//q.clear();
+			q.erase(q.begin(),qit);
+
+		}
 
 	    ++it;
 	}
@@ -124,7 +140,7 @@ void Blackboard::publish_all()
 
 }
 
-void Blackboard::publish_data(const google::protobuf::Message & msg,std::string topic, int timeout)
+void Blackboard::publish_data(const google::protobuf::Message & msg,std::string const& topic)
 {
     msgentry nmsg;
 
@@ -136,10 +152,10 @@ void Blackboard::publish_data(const google::protobuf::Message & msg,std::string 
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
-    nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+    //nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
     nmsg.timestamp=now;
     nmsg.topic=topic;
-    nmsg.publisher=Publisher::getName();
+    //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::DATA;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
     if(blkdata[msg.GetTypeName()].size()>0)
@@ -152,8 +168,7 @@ void Blackboard::publish_data(const google::protobuf::Message & msg,std::string 
 
 }
 
-
-void Blackboard::publish_signal(const google::protobuf::Message & msg,std::string topic)
+void Blackboard::publish_signal(const google::protobuf::Message & msg,std::string const& topic)
 {
     msgentry nmsg;
 
@@ -165,10 +180,10 @@ void Blackboard::publish_signal(const google::protobuf::Message & msg,std::strin
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
-    nmsg.timeoutstamp=now;//Signal, no timeout
+    //nmsg.timeoutstamp=now;//Signal, no timeout
     nmsg.timestamp=now;
     nmsg.topic=topic;
-    nmsg.publisher=Publisher::getName();
+    //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::SIGNAL;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
     signalentry newsig;
@@ -182,8 +197,10 @@ void Blackboard::publish_signal(const google::protobuf::Message & msg,std::strin
 
 }
 
-void Blackboard::publish_state(const google::protobuf::Message & msg,std::string topic)
+void Blackboard::publish_state(const google::protobuf::Message & msg,std::string const& topic)
 {
+    publish_data(msg,topic);
+    /*
     msgentry nmsg;
 
     google::protobuf::Message * newptr=msg.New();
@@ -194,10 +211,10 @@ void Blackboard::publish_state(const google::protobuf::Message & msg,std::string
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
-    nmsg.timeoutstamp=now;//State, no timeout :)
+    //nmsg.timeoutstamp=now;//State, no timeout :)
     nmsg.timestamp=now;
     nmsg.topic=topic;
-    nmsg.publisher=Publisher::getName();
+    //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::STATE;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
     statedata[msg.GetTypeName()]=nmsg;//If exists replace
@@ -205,6 +222,7 @@ void Blackboard::publish_state(const google::protobuf::Message & msg,std::string
     topublish.push_back(nmsg);
 
     //cout<<blkdata[msg.GetTypeName()].size()<<endl;
+    */
 
 }
 

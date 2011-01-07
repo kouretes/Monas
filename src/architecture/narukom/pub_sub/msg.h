@@ -25,10 +25,10 @@ typedef struct msgentry_{
         enum msgclass_t{ DATA, SIGNAL,STATE};
         boost::shared_ptr<const google::protobuf::Message > msg;
         boost::posix_time::ptime timestamp;
-        boost::posix_time::ptime timeoutstamp;
+        //boost::posix_time::ptime timeoutstamp;
         std::string topic;
         std::string host;
-        std::string publisher;
+        //std::string publisher;
         msgclass_t msgclass;
         bool operator== (const struct msgentry_ & b){ return msg==b.msg;};
     } msgentry;

@@ -337,6 +337,7 @@ void MessageQueue::process_queued_msg()
         std::map<MessageBuffer *,std::vector<msgentry> > ready;
         //cout <<(*pit)->getOwner() << ":"<<mtp.size() << endl;
         tree_mutex.lock();
+        const std::string powner=(*pit)->getOwner();
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
         {
 
@@ -350,7 +351,7 @@ void MessageQueue::process_queued_msg()
                 {
 //                        cout<<"dest"<<endl;
 
-                        if ((*buf_it)->getOwner() != (*mit).publisher )
+                        if ((*buf_it)->getOwner() != powner  )
                         {
 //                                cout << "Delivering to " << (*buf_it)->getOwner()<< " the " << (*mit).msg->GetTypeName() << " size: " << endl;
                                ready[(*buf_it)].push_back(*mit);

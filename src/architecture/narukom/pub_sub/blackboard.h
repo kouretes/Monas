@@ -39,8 +39,9 @@ public:
 
 
     typedef std::set< msgentry,msgentrytimestampComparator > historyqueue;
+    typedef std::map<std::string,boost::posix_time::time_duration> datatimeouts;
     typedef std::map<std::string,historyqueue> datastruct;
-    typedef std::map<std::string,msgentry> simplestruct;
+    //typedef std::map<std::string,msgentry> simplestruct;
     typedef std::map<std::string,signalentry> signalstruct;
 
     explicit
@@ -51,32 +52,33 @@ public:
     void process_messages();
     void publish_all();
 		template<class Data>
-		boost::shared_ptr<const Data> read_data(const std::string& type,const std::string&  host = "localhost",boost::posix_time::ptime* tmp =0 ,boost::posix_time::ptime* time_req =0);
+		boost::shared_ptr<const Data> read_data(const std::string& type,const std::string&  host = "localhost",boost::posix_time::ptime* const tmp =0 , boost::posix_time::ptime const* const time_req =0);
 		template<class Data>
-        boost::shared_ptr<const Data> read_signal(const std::string& type, const std::string&  host = "localhost",boost::posix_time::ptime* tmp =0 );
+        boost::shared_ptr<const Data> read_signal(const std::string& type, const std::string&  host = "localhost",boost::posix_time::ptime* const tmp =0 );
         template<class Data>
-        boost::shared_ptr<const Data> read_state(const std::string& type, const std::string&  host = "localhost",boost::posix_time::ptime* tmp =0 );
-        void publish_data(const google::protobuf::Message & msg,std::string topic, int timeout=500);
-        void publish_signal(const google::protobuf::Message & msg,std::string topic);
-        void publish_state(const google::protobuf::Message &msg, std::string topic);
+        boost::shared_ptr<const Data> read_state(const std::string& type, const std::string&  host = "localhost",boost::posix_time::ptime* const tmp =0 );
+        void publish_data(const google::protobuf::Message & msg,std::string const& topic);
+        void publish_signal(const google::protobuf::Message & msg,std::string const& topic);
+        void publish_state(const google::protobuf::Message &msg, std::string const& topic);
 private:
+	datatimeouts blkdatatimeouts;
     datastruct blkdata;
     signalstruct sigdata;
-    simplestruct statedata;
-    boost::posix_time::ptime cur_tmsp;
+    //simplestruct statedata;
+    //boost::posix_time::ptime cur_tmsp;
     std::vector<msgentry> topublish;
     int cleanup();
     static bool timestampComparatorFunc( const  boost::posix_time::ptime &a, const  boost::posix_time::ptime& b) { return a< b  ;};
     static bool timestampComparatorFunc( const msgentry &a, const  boost::posix_time::ptime & b) { return a.timestamp< b  ;};
     static bool timestampComparatorFunc(  const  boost::posix_time::ptime &a,const msgentry &b) { return a< b.timestamp  ;};
-
+	static const float TIMEOUTSCALE=1.2;
 };
 
 
 
 
 template<class Data>
-boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, const std::string&  host,boost::posix_time::ptime* tmp  ,boost::posix_time::ptime* time_req )
+boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, const std::string&  host,boost::posix_time::ptime* const tmp  ,boost::posix_time::ptime const * const time_req )
 {
     if(blkdata.find(type)==blkdata.end())
         return boost::shared_ptr<const Data>();
@@ -105,6 +107,12 @@ boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, con
         }
         return boost::shared_ptr<const Data>();//NOT found
     }
+    boost::posix_time::time_duration nt=boost::posix_time::microsec_clock::universal_time()-*time_req;
+	nt*=TIMEOUTSCALE;
+    if(blkdatatimeouts.find(type)==blkdatatimeouts.end())
+		blkdatatimeouts[type]=nt;
+	else
+		blkdatatimeouts[type]= blkdatatimeouts[type]<nt?nt: blkdatatimeouts[type];
 
     historyqueue::const_iterator fit=q.begin();
     while(fit!=q.end())
@@ -129,8 +137,6 @@ boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, con
     {
         return boost::shared_ptr<const Data>();
     }
-
-
 
     //if( !(process==""||(*it).publisher==process) ||
     if( ! ((*fit).host==host||host=="") )
@@ -164,6 +170,8 @@ boost::shared_ptr<const Data> Blackboard::read_signal(const std::string& type, c
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::read_state(const std::string& type, const std::string&  host ,boost::posix_time::ptime* tmp )
 {
+	return read_data<Data>(type,host,tmp);
+/*
     if(statedata.find(type)==statedata.end())
         return boost::shared_ptr<const Data>();
 	if( ! (statedata[type].host==host||host=="") )
@@ -173,6 +181,7 @@ boost::shared_ptr<const Data> Blackboard::read_state(const std::string& type, co
         *tmp=statedata[type].timestamp;
 
     return  boost::static_pointer_cast<const Data>(statedata[type].msg);
+    */
 }
 
 

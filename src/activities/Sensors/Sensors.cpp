@@ -248,10 +248,10 @@ void Sensors::synchronisedDCMcallback() {
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
-    nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
+    //nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
     nmsg.timestamp=now;
     nmsg.topic="sensors";
-    nmsg.publisher=Publisher::getName();
+    //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::DATA;
 
     this->publish(nmsg);

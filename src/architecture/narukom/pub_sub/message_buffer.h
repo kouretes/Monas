@@ -42,7 +42,7 @@ class MessageBuffer
     void add(const msgentry & t);
     std::vector<msgentry> remove();
     bool operator==( MessageBuffer& other) ;
-    const std::string getOwner() const;// {return owner;}
+    const std::string getOwner() const {return owner;};
     void add_filter(Filter* filter);
     void remove_filter(Filter* filter);
     static bool cmpentryTimeStamps(const msgentry &a,const msgentry & b) {return a.timestamp<b.timestamp;};
