@@ -363,7 +363,7 @@ void Vision::fetchAndProcess()
 	}
 	p.cameraPitch += config.pitchoffset;
 	//cout<<"Attach to Image:"<<endl;
-	seg->attachToIplImage(rawImage, type);//Make segmentator aware of a new image
+	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
 	//saveFrame(rawImage);
 	//return;
 	//cout<<"Attached"<<endl;

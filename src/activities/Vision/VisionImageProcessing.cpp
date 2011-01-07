@@ -17,6 +17,7 @@
 //#define SCANSKIP  4
 
 #define CvDist(pa,pb) sqrt(  ( ((pa).x-(pb).x )*((pa).x-(pb).x )  )+( ((pa).y-(pb).y )*((pa).y-(pb).y) )  )
+#define colorIsA(x,y) (((x)&(y))!=0)
 
 inline measurement mWeightedMean(measurement m1,measurement m2)
 {
@@ -194,7 +195,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y);
 			//cout<<"doseg:"<<(int)tempcolor<<endl;
-			if (tempcolor == green)//
+			if (colorIsA(tempcolor,green))//
 			{
 				//cntwhitegreenpixels++;
 				//cntwhitegreenorangepixels++;
@@ -204,7 +205,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				thisl.yfound=false;
 				thisl.bfound=false;
 			}
-			else if(tempcolor==white)
+			else if(colorIsA(tempcolor,white))
 			{
 				thisl.cntother++;//hmm... white? valid but test for distance
 				thisl.lastpoint=thisl.gtrc;
@@ -212,7 +213,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				thisl.yfound=false;
 				thisl.bfound=false;
 			}
-			else if (tempcolor==color)
+			else if (colorIsA(tempcolor,color))
 			{
 				//cntwhitegreenorangepixels++;
 				thisl.cntother=0;
@@ -263,7 +264,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 					continue;
 				}
 			}
-			if (tempcolor == color &&thisl.ballfound==false)
+			if (colorIsA(tempcolor,color) &&thisl.ballfound==false)
 			{
 				ballpixels.push_back(thisl.gtrc);
 				//cntwhitegreenpixels=0;
@@ -271,13 +272,13 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				//continue;
 				//ballpixel = j;
 			}
-			if(tempcolor==yellow&&thisl.yfound==false)
+			if(colorIsA(tempcolor,yellow)&&thisl.yfound==false)
 			{
 				//ballpixels.push_back(tmpPoint);
 				ygoalpost.push_back(thisl.gtrc);
 				thisl.yfound=true;
 			}
-			if(tempcolor==skyblue&&thisl.yfound==false)
+			if(colorIsA(tempcolor,skyblue)&&thisl.yfound==false)
 			{
 				//ballpixels.push_back(tmpPoint);
 				bgoalpost.push_back(thisl.gtrc);
@@ -314,7 +315,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 		{
 			if (!validpixel(i,j))
 				continue;
-			if (doSeg(i, j) == c)
+			if (colorIsA(doSeg(i, j) , c))
 				gd+=3;
 			ttl+=3;
 		}
@@ -323,7 +324,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 		{
 			if (!validpixel(i,j))
 				continue;
-			if (doSeg(i, j) == c)
+			if (colorIsA(doSeg(i, j) , c))
 				gd++;
 			ttl++;
 		}
@@ -341,9 +342,9 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 			if (!validpixel(i,j))
 				continue;
 			r=doSeg(i, j);
-			if (r == green||r==white)
+			if (colorIsA(r,green | white))
 				gd++;
-			else if(r==c)
+			else if(colorIsA(r,c))
 				gd--;
 			ttl++;
 		}
@@ -412,13 +413,13 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	{
 		for(int x=l.x-(r.x-l.x)-1; x<l.x-1;x+=config.subsampling)
 		{
-			if(doSeg(x,l.y)==c)
+			if(colorIsA(doSeg(x,l.y),c))
 				bd++;
 			ttl++;
 		}
 		for(int x=r.x+2;x<r.x+(r.x-l.x)+1;x+=config.subsampling)
 		{
-			if(doSeg(x,r.y)==c)
+			if(colorIsA(doSeg(x,r.y),c))
 				bd++;
 			ttl++;
 		}
@@ -443,7 +444,7 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 
 		for(int x=l.x;x<=r.x;x+=config.subsampling)
 		{
-			if(doSeg(x,r.y)==c)
+			if(colorIsA(doSeg(x,r.y),c))
 				gd++;
 			ttl++;
 
@@ -476,7 +477,7 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 		{
 			if (!validpixel(i,j))
 				continue;
-			if (doSeg(i, j) == green)
+			if(colorIsA(doSeg(i,j),green))
 				gd++;
 			ttl++;
 		}
@@ -769,7 +770,7 @@ int Vision::locateGoalPost(vector<KVecInt2> cand, KSegmentator::colormask_t c)
 		o->set_distance(d1.distance.mean);
 		o->set_distance_dev(sqrt(d1.distBot.var));
 		std::string name;
-		if(c==yellow)
+		if(colorIsA(c,yellow))
 			name="Yellow";
 		else
 			name="Skyblue";
@@ -819,7 +820,7 @@ int Vision::locateGoalPost(vector<KVecInt2> cand, KSegmentator::colormask_t c)
 	o->set_distance(d1.distance.mean);
 	o->set_distance_dev(sqrt(d1.distBot.var));
 	std::string name;
-	if(c==yellow)
+	if(colorIsA(c,yellow))
 		name="Yellow";
 	else
 		name="Skyblue";
@@ -833,7 +834,7 @@ int Vision::locateGoalPost(vector<KVecInt2> cand, KSegmentator::colormask_t c)
 	o->set_distance(d2.distance.mean);
 	o->set_distance_dev(sqrt(d2.distBot.var));
 	//name;
-	if(c==yellow)
+	if(colorIsA(c,yellow))
 		name="Yellow";
 	else
 		name="Skyblue";

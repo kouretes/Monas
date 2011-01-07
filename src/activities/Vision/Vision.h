@@ -116,10 +116,7 @@ class Vision: public IActivity
 		//Camera transformation matrix
 		cpose p;//Robot pose
 
-		enum colors
-		{
-			bad = 0, red = 1, blue = 2, green = 3, skyblue = 4, yellow = 5, orange = 6, white = 7, black = 8
-		};
+
 		//Extractor Object, to get a new image
 		KImageExtractor ext;
 		KCameraTranformation kinext;

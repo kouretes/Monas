@@ -4,50 +4,38 @@
 
 #include "hal/robot/generic_nao/aldebaran-visiondefinitions.h"
 
-
-
 using namespace std;
-//ing KSegmentator::colormask_t;
-//YUV to RGB STANDARD constants, all are integer aproximated with 8 bit precision :)
-//#define A 359 //1.402<<8
-//#define B 89 //0.344<<8
-//#define C 183 //0.714<<8
-//#define D 452 //1.772<<8
-
 #define max(x,y) ((x)>(y))?(x):(y)
 #define min(x,y) ((x)<(y))?(x):(y)
-//#define crop(x) ( ((x)<0)?0:(x)) & 0xFFFF
 
-#define table_subscript(y,u,v) ( (y)*(256>>ures)*(256>>vres)*sizeof(colormask_t)+(u)*(256>>vres)*sizeof(colormask_t)+(v)*sizeof(colormask_t))
+typedef KSegmentator::colormask_t colormask_t;
+typedef struct cclass {
+	int HueMin,HueMax;
+	int Radius;
+	colormask_t mask;
+}  cclass_t;
 
-// uses S= 1-S of HSV  and L from HSL!!!! so saturation INCREASES as you move to the grayscale!!!
-// Done only from computational reasons!!!!!
-/**
- * h is an integer between 0-3600 (360.0 degrees, with .1 degree resolution)
- *  S and Y are 1 byte long
- *  Saturation comes from 1-S of HSI colorspace ,so saturation INCREASES as you move towards to grayscale
- */
-
-void KSegmentator::setLumaScale(float s)
+struct RuleSet
 {
-	lumascale=s;
-	cout<<"KSegmentator:setLumaScale():"<<s<<endl;
-	for(int i=0;i<256;i++)
-	{
-	    int r=i*lumascale;
-	    r=r>255?255:r;
-	    YLookup[i]=r>>yres;
-	    int r2=(i-128)*lumascale+128;
-	    r2=r2>255?255:r2;
-	    r2=r2<0?0:r2;
-	    UVLookp[i]=r2;
-	}
+	//White Region: radius^2 from s=256,l=256  so the center of a the sphere is at the top of HSL space
+	int whiteRadius;
+	//Value to return when color is in white sphere
+	colormask_t whiteMask;
+	//Gray cylinder a cylinder from the center of HSL space  (s=256 ,see notes above) to the exterior of the cylinder s=grayRadius
+	int grayRadius;
+	//Value to return upon detecting a gray pixel (in gray cylindrical region)
+	colormask_t grayMask;
+	//When l<blackRadius color is clasified as black. This is a slice of the whole HSL cylinder (a bottom part of the cylinder)
+	int blackRadius;
+	//Value to return for black
+	colormask_t blackMask;
+	//User color classes, represent a "slice" in the HSL cylinder, and a radius is defined as a distance from s=0,l=1 in the cylinder
+	std::vector<cclass_t> colors;
 
-}
-void KSegmentator::yuv2hsy(unsigned char yuv[3], unsigned  int hsy[3])
+};
+
+void yuv2hsy(const unsigned char yuv[3], unsigned  int hsy[3])
 {
-
-
 	float r,g,b;
 	float  mx,mn;
 	int y,u,v;
@@ -71,8 +59,6 @@ void KSegmentator::yuv2hsy(unsigned char yuv[3], unsigned  int hsy[3])
 	mx=max(max(r,g),b);
 	mn=min(min(r,g),b);
 
-	//cout<<r<<" "<<g<<" "<< b<<endl;
-
 	if (mx==mn)
 		hsy[0]=3800;//H is undefined return something off the scale
 	else
@@ -94,44 +80,35 @@ void KSegmentator::yuv2hsy(unsigned char yuv[3], unsigned  int hsy[3])
 	hsy[2]=yuv[0]; //Use luma from yuv as a great perceptually relevant estimate of luminance
 	hsy[1]=(mn*256)/yuv[0];
 
-
-
-
 }
 
-/*
- * Read corresponding value from ctable
- * the values are shifted (divided) by YRES URES VRES repsectively: colorspace compression!
- */
-KSegmentator::colormask_t KSegmentator:: classifyPixel(unsigned char yuv[3])
+
+inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
 {
-	//return calculatePixel(yuv);fact
-	//cout<<(int)*(ctable+table_subscript((int)yuv[0]>>YRES,(int)yuv[1]>>URES,(int)yuv[2]>>VRES))<<":"<<(int)calculatePixel(yuv)<<endl;
-	if (ctable!=NULL)
+	return 1<<(v-1);
+}
+
+
+void KSegmentator::setLumaScale(float s)
+{
+	lumascale=s;
+	cout<<"KSegmentator:setLumaScale():"<<s<<endl;
+	for(int i=0;i<256;i++)
 	{
-		unsigned char data[3];//TODO: Scaling should work on all YCbCr standards, given then the properties of multiplication! :)
-		//int y=yuv[0]*lumascale;
-		//y=y>255?255:y;
-		//data[0]=y;
-		//data[1]=(yuv[1]-128)*lumascale+128;
-        //data[2]=(yuv[2]-128)*lumascale+128;
-
-		//data[1]=data[1]>255?255:data[1];
-		//data[2]=data2]>255?255:data[2];
-		//cout<<(int)data[0]<<" ";
-		//Prelookup: convert yuv values to reference luminance YUVS :)
-		data[0]=YLookup[yuv[0]];
-		data[1]=UVLookp[yuv[1]];
-		data[2]=UVLookp[yuv[2]];
-
-		//return *(ctable+table_subscript((int)yuv[0]>>yres,(int)yuv[1]>>ures,(int)yuv[2]>>vres));
-		return *(ctable+table_subscript((int)data[0],(int)data[1]>>ures,(int)data[2]>>vres));
+	    int r=i*lumascale;
+	    r=r>255?255:r;
+	    r=r<0?0:r;
+	    YLUT[i]=rYLUT[r];
+	    r=(i-128)*lumascale+128;
+		r=r>255?255:r;
+	    r=r<0?0:r;
+	    ULUT[i]=rULUT[r];
+	    VLUT[i]=rVLUT[r];
 	}
-	else
-		return 0;
-
 
 }
+
+
 /**
  * Calculate a pixel value from the rules!
  * How it works?  First of all HSY  is NOT a standard colospace
@@ -151,32 +128,28 @@ KSegmentator::colormask_t KSegmentator:: classifyPixel(unsigned char yuv[3])
  * White is excluded, since no other things overlap with this
  * gray is excluded last, since the TOP part of the gray cylinder represend white!
  */
-KSegmentator::colormask_t KSegmentator:: calculatePixelFromRules(unsigned char yuv[3])
+KSegmentator::colormask_t ruleFileClassifyPixel(struct RuleSet const& r, unsigned char yuv[3])
 {
 	unsigned int hsy[3];
 	int dists,distl;
-	KSegmentator::yuv2hsy(yuv,hsy);
+	yuv2hsy(yuv,hsy);
 
-
-	//cout<<hsl[0]<<" "<<hsl[1]<<" "<<hsl[2]<<endl;
-	//Black
-
-	if ((int)hsy[2]<blackRadius)
-		return blackMask;
+	if ((int)hsy[2]<r.blackRadius)
+		return r.blackMask;
 
 
 	//Color Radius
 	dists=24-hsy[1];
 	distl=128-hsy[2];//(0x80<hsy[2])?(hsy[2]-0x80):hsy[2];
 	//cout<<"colors.size():"<<colors.size()<<endl;
-	for (int i=0;i<(int)colors.size();i++)
+	for (int i=0;i<(int)r.colors.size();i++)
 	{
 		//cout<<colors[i].HueMin<<endl;
 
-		if (colors[i].HueMin < (int) hsy[0] && (int) hsy[0]<colors[i].HueMax && ( dists*dists+distl*distl)<colors[i].Radius)
+		if (r.colors[i].HueMin < (int) hsy[0] && (int) hsy[0]<r.colors[i].HueMax && ( dists*dists+distl*distl)<r.colors[i].Radius)
 		{
 			//cout<<" "<<((int)colors[i].HueMin)<< " ";
-			return colors[i].mask;
+			return r.colors[i].mask;
 		}
 
 	}
@@ -184,116 +157,41 @@ KSegmentator::colormask_t KSegmentator:: calculatePixelFromRules(unsigned char y
 	//White Radius
 	dists=256-((int)hsy[1]);
 	distl=256-((int)hsy[2]);
-	if (dists*dists+distl*distl<whiteRadius)
+	if (dists*dists+distl*distl<r.whiteRadius)
 	{
 		//cout<<hsy[0]<<" "<<hsy[1]<<" "<<hsy[2]<<endl;
-		return whiteMask;
+		return r.whiteMask;
 	}
 
 	//Gray
-	if ((int)hsy[1]>grayRadius)
+	if ((int)hsy[1]>r.grayRadius)
 	{
 		//cout<<"g ";
 		//cout<<hsy[0]<<" "<<hsy[1]<<" "<<hsy[2]<<endl;
-		return grayMask;
+		return r.grayMask;
 	}
 	return 0;
 
-
-
 }
 
-
-/**
- *Clasify a pixel of the image: i is row and j is column, ie i is 0-640 and j is 0-480 in a 640x480 image
-		 * type is KYUVColorspace or KYUV422InterlacedColorspace ONLY
- */
-KSegmentator::colormask_t KSegmentator::  classifyPixel( int i,int j)
-{
-
-	if (classifyFunc==NULL)
-        return 0;
-    return ((*this).*(classifyFunc))(i,j);
-}
-void KSegmentator::attachToIplImage(IplImage *data, int type)
+void KSegmentator::attachToIplImage(IplImage *data)
 {
     dataPointer= data->imageData;
     widthmult2=data->width*2;
     width=data->width;
-    if(type==AL::kYUV422InterlacedColorSpace)
-        classifyFunc= &KSegmentator::classifyYUV422;
-    else if (type==AL::kYUVColorSpace)//YUV
-        classifyFunc=&KSegmentator::classifyYUV;
+    if(data->nChannels==2)//Imply 422
+        classifyFunc= &KSegmentator::classify422;
+    else if (data->nChannels==3)//444
+        classifyFunc=&KSegmentator::classify444;
     else
     {
         classifyFunc=NULL;
-        Logger::Instance().WriteMsg("KSegmentator", "ONLY YUV422 AND YUV IMPLEMENTED :P",Logger::Error);
+        Logger::Instance().WriteMsg("KSegmentator", "ONLY 422 AND 444 interleaving IMPLEMENTED :P",Logger::Error);
     }
 
 
 }
 
-KSegmentator::colormask_t KSegmentator::classifyYUV(int i,int j)
-{
-    static unsigned char yuv[3];
-    yuv[0]=*(dataPointer+j*width*3+i*3);
-    yuv[1]=*(dataPointer+j*width*3+i*3+1);
-    yuv[2]=*(dataPointer+j*width*3+i*3+2);
-    //if(i==j)
-    return classifyPixel(yuv);
-
-
-}
-
-
-KSegmentator::colormask_t KSegmentator::classifyYUV422(int i, int j)
-{
-    static unsigned char yuv[3];
-
-    //widthStep
-    yuv[0]=*(dataPointer+j*widthmult2+(i<<1));//Y is right where we want it
-
-    //a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
-    int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
-    // cout<<"sob"<<endl;
-    yuv[1]=*(dataPointer+startofBlock+1);
-    // cout<<"u"<<endl;
-    yuv[2]= *(dataPointer+startofBlock+3);
-
-    return classifyPixel(yuv);
-
-}
-/**
- * Create a colortable and store it in ctable
- */
-void KSegmentator::filluptable()
-{
-	int y,u,v;
-	unsigned char data[3];
-	ctable =  (colormask_t*)malloc((256>>yres)*(256>>ures)*(256>>vres)*sizeof(colormask_t));
-	for (y=0;y<256>>yres;y++)
-		for (u=0;u<256>>ures;u++)
-			for (v=0;v<256>>vres;v++)
-			{
-				//INTERESTING POINT: value to sample for that region is actually the MIDDLE value
-				// so if Y is 0-16-32..YRES=4
-				//Sampled values are  7 - 23- 39 etc
-				// This is done in HOPE of representing better the region at hand
-				data[0]=(y<<yres)+((1<<yres)-1)/2;
-				data[1]=(u<<ures)+((1<<ures)-1)/2;
-				data[2]=(v<<vres)+((1<<vres)-1)/2;
-				*(ctable+table_subscript(y,u,v))=calculatePixelFromRules(data);
-				//if ( *(ctable+table_subscript(y,u,v))!=calculatePixelFromRules(data) )
-					//cout<<(int)data[0]<<","<<(int)data[1]<<","<<(int)data[2]<<":"<<(int)*(ctable+table_subscript(y,u,v))<<":"<< (int)calculatePixel(data)<<endl ;
-			}
-
-
-
-}
-
-/**
- * Load up a configuration file
- */
 KSegmentator::KSegmentator(std::ifstream &conf)
 {
 
@@ -315,20 +213,22 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 	readComment(conf);
 	readCalibration(conf);
 	readColorInfo(conf);
+	for(int i=0 ;i<256;i++)
+	{
+		rYLUT[i]=rULUT[i]=rVLUT[i]=0;
+	}
 	if (set.ruletype=='R')
 		readRulefile(conf);
 	else if (set.ruletype=='C')
 		readColorTable(conf);
 	lumascale=1;//Default setting;
-	//Default prelookup tables :)
-	for(int i=0;i<256;i++)
+
+	for(int i=0 ;i<256;i++)
 	{
-	    YLookup[i]=i>>yres;
-	    UVLookp[i]=i;
-
-	};
-
-
+		YLUT[i]=rYLUT[i];
+		ULUT[i]=rULUT[i];
+		VLUT[i]=rVLUT[i];
+	}
 
 }
 
@@ -355,41 +255,54 @@ void KSegmentator::readColorInfo(ifstream & conf)
 
 void KSegmentator::readColorTable(ifstream & conf)
 {
+	int yres;
+	int ures;
+	int vres;
 	if (set.conf[0]=='Y')
 	{
-		colors.clear();
 		yres=set.conf[1]-'0';
 		ures=set.conf[2]-'0';
 		vres=set.conf[3]-'0';
 		int dsize=set.size-'0';
-		char* d=(char *)malloc(dsize);
+		colormask_t t,r;
+		memset(&t,0,sizeof(colormask_t));
+		char *dest=((char*)(&t))+sizeof(colormask_t)-dsize;//For little endian systems like x86 :)
 		int y,u,v;
 
-		ctable =  (colormask_t*)malloc((256>>yres)*(256>>ures)*(256>>vres)*sizeof(colormask_t));
+		colormask_t table[256>>yres][256>>ures][256>>vres];
 		for (y=0;y<256>>yres;y++)
 			for (u=0;u<256>>ures;u++)
 				for (v=0;v<256>>vres;v++)
 				{
-					conf.read(d,dsize);
-
-					memcpy(ctable+table_subscript(y,u,v),d,sizeof(colormask_t));
+					conf.read(dest,dsize);
+					r=ValueToBitMask(t);
+					table[y][u][v]=r;
 
 				}
 
-		free(d);
+		for (y=0;y<256;y++)
+			for (u=0;u<256;u++)
+				for (v=0;v<256;v++)
+				{
+					colormask_t val=table[y>>yres][u>>ures][v>>vres];
+					rYLUT[y]|=val;
+					rULUT[u]|=val;
+					rVLUT[v]|=val;
+				}
+
 		cout<<"Read Colortable:"<<yres<<"-"<<ures<<"-"<<vres<<endl;
 	}
 	else
 		cout<<"KSegmentator():Invalid or unknown colortable file header"<<endl;
 }
+
 void KSegmentator::readRulefile(ifstream & conf)
 {
 	if (set.conf[0]=='H' && set.conf[1]=='S' && set.conf[2]=='Y' && set.conf[3]=='\n')
 	{
-		colors.clear();
-		yres=YRES;
-		ures=URES;
-		vres=VRES;
+		struct RuleSet r;
+		r.colors.clear();
+
 		char peek;
 		int c=0;
 		int white=0;//White=0 Gray=1 Black=2
@@ -407,63 +320,63 @@ void KSegmentator::readRulefile(ifstream & conf)
 			{
 				if (white==0)//STEP 1: White rules
 				{
-					if (conf>>skipws>>msk>>whiteRadius)
+					if (conf>>skipws>>msk>>r.whiteRadius)
 					{
-						whiteMask=msk;
-						cout<<"Read White settings:"<<msk<<" "<<whiteRadius<<endl;
+						r.whiteMask=msk;
+						cout<<"Read White settings:"<<(msk)<<" "<<(r.whiteRadius)<<endl;
 						white++;
-
 					}
 
 				}
 				else if (white==1)//STEP 2: Gray rules
 				{
-					if (conf>>skipws>>msk>>grayRadius)
+					if (conf>>skipws>>msk>>r.grayRadius)
 					{
-						grayMask=msk;
-						cout<<"Read Gray settings:"<<msk<<" "<<grayRadius<<endl;
+						r.grayMask=msk;
+						cout<<"Read Gray settings:"<<msk<<" "<<(r.grayRadius)<<endl;
 						white++;
-
 					}
 
 				}
 				else if (white==2)//STEP 3: Black rules
 				{
-					if (conf>>skipws>>msk>>blackRadius)
+					if (conf>>skipws>>msk>>r.blackRadius)
 					{
-						blackMask=msk;
-						cout<<"Read Black settings:"<<msk<<" "<<blackRadius<<endl;
+						r.blackMask=msk;
+						cout<<"Read Black settings:"<<msk<<" "<<r.blackRadius<<endl;
 						white++;
-
 					}
 
 				}
 				else // STEP 4-.... Load specific colors
 				{
 					//cout<<"Expecting Color"<<endl;
-					cclass_t  *a=new   cclass_t();
-					if (conf>>msk>>a->HueMin>>a->HueMax>>a->Radius)
+					cclass_t  a;
+					if (conf>>msk>>a.HueMin>>a.HueMax>>a.Radius)
 					{
-						a->mask=msk;
-
-						cout<<"Read color settings:"<<msk<<" "<<a->HueMin<<" "<<a->HueMax<<" "<<a->Radius<<endl;
+						a.mask=msk;
+						cout<<"Read color settings:"<<msk<<" "<<a.HueMin<<" "<<a.HueMax<<" "<<a.Radius<<endl;
 						c++;
-						colors.push_back(*a);
-
+						r.colors.push_back(a);
 					}
-					//if(c==MAXCOLORS) break;
 				}
-
 			}
-
-
 		}
-		//for(;c<MAXCOLORS;c++)//Zero out the rest
-		//colors[c].HueMin=colors[c].HueMax=colors[c].Radius=0;
-		//Create color table to use from rules
-		filluptable();
 
-
+		unsigned char yuv[3];
+		for (int y=0;y<256;y++)
+			for (int u=0;u<256;u++)
+				for (int v=0;v<256;v++)
+				{
+					yuv[0]=y;
+					yuv[1]=u;
+					yuv[2]=v;
+					colormask_t val=ruleFileClassifyPixel(r,yuv);
+					val=ValueToBitMask(val);
+					rYLUT[y]|=val;
+					rULUT[u]|=val;
+					rVLUT[v]|=val;
+				}
 	}
 	else
 		cout<<"KSegmentator():Invalid or unknown rule file header"<<endl;
