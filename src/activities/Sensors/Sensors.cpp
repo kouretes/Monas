@@ -44,7 +44,7 @@ void Sensors::UserInit() {
 	initialisation();
 	rtm.start();
 	period = 0;
-#ifdef KROBOT_REMOTE_IS_REMOTE_OFF
+#ifdef KROBOT_IS_REMOTE_OFF
 	initFastAccess();
 #endif
 	_com->get_message_queue()->add_publisher(this);
@@ -69,7 +69,8 @@ int Sensors::Execute() {
 		commands[2][0][1] = dcm->getTime(10);
 
 		dcm->set(commands);
-#ifdef KROBOT_REMOTE_IS_REMOTE_OFF
+#ifdef KROBOT_IS_REMOTE_OFF
+		cout<<"BIND TO DCM postProcess!"<<endl;
 		dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
 #endif
 		firstrun = false;
