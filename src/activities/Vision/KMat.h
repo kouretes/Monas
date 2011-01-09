@@ -180,6 +180,7 @@ namespace KMat
 				cleanHandle();
 
 			}
+			bool isInitialized() {return h!=0;};
 			typedef std::numeric_limits<T> Tlimits;
 
 			//============================	BASIC FUNCTIONS ============================

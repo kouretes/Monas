@@ -77,13 +77,13 @@ class KSegmentator{
 		struct SegHeader set;
 
 		//Value lookup
-		char YLUT[256];
-		char ULUT[256];
-		char VLUT[256];
+		colormask_t YLUT[256];
+		colormask_t ULUT[256];
+		colormask_t VLUT[256];
 		//Same, prescaled :), reference values
-		char rYLUT[256];
-		char rULUT[256];
-		char rVLUT[256];
+		colormask_t rYLUT[256];
+		colormask_t rULUT[256];
+		colormask_t rVLUT[256];
 
 		void readComment(std::ifstream &conf);
 		void readCalibration(std::ifstream &conf);
@@ -121,6 +121,7 @@ class KSegmentator{
         //This does the job
         inline colormask_t classifyLUT(unsigned char y, unsigned char u , unsigned  char v)
         {
+        	//std::cout<<"LUTS:"<<(int)YLUT[y]<<" "<<(int)ULUT[u]<<" "<<(int)VLUT[v]<<" "<<((int)YLUT[y]&ULUT[u]&VLUT[v]);
 			return YLUT[y]&ULUT[u]&VLUT[v];
         }
 

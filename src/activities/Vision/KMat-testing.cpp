@@ -22,6 +22,7 @@ int main ()
 	//cout<<sizeof(GenMatrix<char,3,3>)<<endl;
 	GenMatrix<float,4,4> testS,res,res2 ;
 
+
 	matrix<float> m(4,4), foo(4,4),foo2(4,4);
 
 	float sum=0;

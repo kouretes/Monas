@@ -85,6 +85,8 @@ void yuv2hsy(const unsigned char yuv[3], unsigned  int hsy[3])
 
 inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
 {
+	if(v<1)
+		return 0;
 	return 1<<(v-1);
 }
 
@@ -265,7 +267,7 @@ void KSegmentator::readColorTable(ifstream & conf)
 		vres=set.conf[3]-'0';
 		int dsize=set.size-'0';
 		colormask_t t,r;
-		memset(&t,0,sizeof(colormask_t));
+		t=0;
 		char *dest=((char*)(&t))+sizeof(colormask_t)-dsize;//For little endian systems like x86 :)
 		int y,u,v;
 
@@ -275,7 +277,11 @@ void KSegmentator::readColorTable(ifstream & conf)
 				for (v=0;v<256>>vres;v++)
 				{
 					conf.read(dest,dsize);
+					//if(y==128>>yres)
+						//cout<<"t:"<<(int)t<<endl;
 					r=ValueToBitMask(t);
+					//if(y==128>>yres)
+						//cout<<"r:"<<(int)r<<endl;
 					table[y][u][v]=r;
 
 				}

@@ -452,7 +452,7 @@ void Vision::fetchAndProcess()
 
 	gridScan(orange);
 	//endt = SysCall::_GetCurrentTimeInUSec()-startt;
-	//cout<<" takes:"<<endt<<endl;
+	//cout<<"GridScan takes:"<<endt<<endl;
 
 
 	//startt=SysCall::_GetCurrentTimeInUSec();
@@ -462,8 +462,8 @@ void Vision::fetchAndProcess()
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
-	locateGoalPost(ygoalpost, yellow);
-	locateGoalPost(bgoalpost, skyblue);
+	//locateGoalPost(ygoalpost, yellow);
+	//locateGoalPost(bgoalpost, skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	cout << b.x << " " << b.y << " " << b.cr << endl;

@@ -144,7 +144,9 @@ typedef struct
 void Vision::gridScan(const KSegmentator::colormask_t color)
 {
 	//Horizontal + Vertical Scan
-
+#ifdef DEBUGVISION
+	cout<<"Starting Grid scan"<<endl;
+#endif
 
 	KVecFloat2 im;
 	KVecFloat2 c;
@@ -155,14 +157,17 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	int align=(rawImage->width-linestep*(config.scanV-1) )>>1;
 
 	std::vector<linestruct> l;
+	//((int)config.scanV);
 	l.reserve((int)config.scanV);
+	linestruct t;
 
 	int sx=config.bordersize+align;
 	int vstep=(sqrt(rawImage->height-2*config.bordersize-config.scanH*config.subsampling)-1)/2;
 	//Fix initial scanline positions :)
 	int linesdone=0;
-	for(unsigned i=0 ; i< l.size();i++)
+	for(unsigned i=0 ; i< config.scanV;i++)
 	{
+		l.push_back(t);
 		l[i].gtrc.init(sx,rawImage->height - config.bordersize-1);
 		sx+=linestep;
 		l[i].gtrc.initVelocity(Vup.x,Vup.y);
@@ -175,11 +180,14 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		l[i].step=config.subsampling+vstep;
 
 	}
+	//cout<<"init"<<endl;
 
 	while(linesdone<config.scanV)
 	{
+		//cout<<"while"<<endl;
 		for(unsigned i=0 ; i< l.size();i++)
 		{
+			//cout<<"for"<<endl;
 			linestruct &thisl=l[i];
 			if(thisl.done==true)
 				continue;
@@ -192,7 +200,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				linesdone++;
 				continue;
 			}
-
+			//cout<<"doseg"<<endl;
 			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y);
 			//cout<<"doseg:"<<(int)tempcolor<<endl;
 			if (colorIsA(tempcolor,green))//
@@ -227,9 +235,16 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				thisl.cntother++;
 				thisl.ballfound=false;
 			}
+
 			if (thisl.cntother>config.pixeltol)//No continuity, break
 			{
 				//thisl.cntother=0;
+				if(!thisl.lastpoint.isInitialized())//No good point, matrix uninitialized
+				{
+					thisl.done=true;
+					linesdone++;
+					continue;
+				}
 				c=imageToCamera(thisl.lastpoint);
 
 				c3d=kinext.camera2dToGround(c);
@@ -296,6 +311,10 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	}
 	//Now follow the lines
+
+#ifdef DEBUGVISION
+cout<<"End Grid scan"<<endl;
+#endif
 
 }
 
