@@ -34,7 +34,7 @@ CROSSBUILD
 
 - Enter folder crossbuild
 
-- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path to naoqi sdk>/toolchain-geode.cmake ../..
+- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path to naoqi ctc>/toolchain-geode.cmake ../..
 
 - Execute: ccmake .
 
