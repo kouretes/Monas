@@ -1,13 +1,5 @@
 If you are reading these lines, it means that you have successfully created 
-a clone of the Kouretes 2010 code from the Monad repository. 
-
-To proceed, please follow the instructions below. 
-
-- Download and install Google protocol buffers from http://code.google.com/p/protobuf/
-
-- Download protobuf-X.X.X.zip from http://code.google.com/p/protobuf/downloads/list
-
-- Unpack and move the folder protobuf (with this name) under Monad/external
+a clone of the Kouretes-Noxious 2011 code from the Monas repository. 
 
 BUILD
 
@@ -15,7 +7,7 @@ BUILD
 
 - Enter folder build
 
-- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=$AL_DIR/toolchain-pc.cmake ../..
+- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path to naoqi sdk>/toolchain-pc.cmake ../..
 
 - Execute: ccmake .
 
@@ -23,7 +15,7 @@ BUILD
 
 - Press c to configure
 
-- Check the values of KROBOT_IS_REMOTE, NaoQiVersion, RobotPlatform 
+- Check the values of KROBOT_IS_REMOTE, TargetPlatform, NaoQiVersion, RobotPlatform (if applicable)
 
   KROBOT_IS_REMOTE is ON, a library is produced, otherwise an executable is produced. 
   NaoQiversion should be the latest. 
@@ -42,7 +34,7 @@ CROSSBUILD
 
 - Enter folder crossbuild
 
-- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=$CTC_DIR/toolchain-geode.cmake ../..
+- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path to naoqi sdk>/toolchain-geode.cmake ../..
 
 - Execute: ccmake .
 
@@ -55,13 +47,19 @@ CROSSBUILD
   KROBOT_IS_REMOTE is ON, a library is produced, otherwise an executable is produced. 
   NaoQiversion should be the latest. 
   RobotPlatform must be Nao.
-  
+
+- Real-time execution for the nao requires the code to be compiled as a shared object at the moment.
+
 - Press c to configure again, then g to generate and exit. 
 
 - Execute: make -jk install, where k is the number of cores in your system. 
 
 - Get another coffee and be even more patient ... 
 
-That's all! Enjoy! 
 
-Kouretes 2010
+Use the python scripts in the script directory to upload the code to a robot.
+To do so , you need a valid config directory in /home/nao/naoqi/ (on the robot)
+and a valid autoload.ini in /home/nao/naoqi/preferences/autoload.ini (again, on the robot)
+to start the krobot module.
+
+That's all! Enjoy! 
