@@ -7,7 +7,7 @@
 
 #ifndef talws_H
 #define talws_H
-#include "monadwrapper.h"
+#include "monaswrapper.h"
 #include "alptr.h"
 #include "architecture/talws.h"
 

@@ -1,1 +1,1 @@
-add_subdirectory ( monadwrapper )
+add_subdirectory ( monaswrapper )

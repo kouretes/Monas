@@ -10,7 +10,7 @@ FIND_PACKAGE(Protobuf)
 #add_executable ( stateTest statechartTest.cpp ../messages/planMsg.pb.cc )
 #use_lib(KLocView LIBVISION OPENCV)
 #find(OPENCV NO_MODULE QUIET)
-#target_link_libraries ( stateTest statechartEngine narukom MonadCore GenLinux)
+#target_link_libraries ( stateTest statechartEngine narukom MonasCore GenLinux)
 
 
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR})

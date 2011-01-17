@@ -10,7 +10,7 @@ using std::string;
  * \class LedHandler
 
  * \file LedHandler.h
- * \brief A Monad Activity Intended to receive ledChangeMessages and
+ * \brief A Monas Activity Intended to receive ledChangeMessages and
  * controls the robots light (eye leds, ear leds, chest button leds, feet leds)
  */
 

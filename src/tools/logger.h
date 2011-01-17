@@ -65,8 +65,8 @@ class LoggerClass {
 
             if ( ! ConfFile.QueryElement( "MessageLogFile", MsgLogFile ) ) {
                 std::cerr<<"MessageLogFile is not set"<<std::endl;
-                std::cerr<<"Defaulting to MonadLog.txt"<<std::endl;
-                MsgLogFile = "MonadLog.txt";
+                std::cerr<<"Defaulting to MonasLog.txt"<<std::endl;
+                MsgLogFile = "MonasLog.txt";
             }
 
             if (! ConfFile.QueryElement( "LogFileVerbosityLevel", VerbosityLevel ) )
