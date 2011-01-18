@@ -155,6 +155,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//static int startx=0;
 	int linestep=(rawImage->width-2*config.bordersize)/(config.scanV-1);
 	int align=(rawImage->width-linestep*(config.scanV-1) )>>1;
+	float d;
 
 	std::vector<linestruct> l;
 	//((int)config.scanV);
@@ -165,7 +166,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	int vstep=(sqrt(rawImage->height-2*config.bordersize-config.scanH*config.subsampling)-1)/2;
 	//Fix initial scanline positions :)
 	int linesdone=0;
-	for(unsigned i=0 ; i< config.scanV;i++)
+	for(int i=0 ; i< config.scanV;i++)
 	{
 		l.push_back(t);
 		l[i].gtrc.init(sx,rawImage->height - config.bordersize-1);
@@ -200,8 +201,64 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				linesdone++;
 				continue;
 			}
+
+			//Check see distance
+
+
+
+			if (thisl.cntother>config.pixeltol)//No continuity, break
+			{
+				//thisl.cntother=0;
+				if(!thisl.lastpoint.isInitialized())//No good point, matrix uninitialized
+				{
+					thisl.done=true;
+					linesdone++;
+					continue;
+				}
+				c=imageToCamera(thisl.lastpoint);
+
+
+				c3d=kinext.camera2dToGround(c);
+				if(c3d(2)>=0)//Looking up :)
+				{
+					thisl.done=true;
+					linesdone++;
+					continue;
+				}
+				c=imageToCamera(thisl.gtrc);
+				c3d=kinext.camera2dToGroundProjection(c,0);
+				d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+
+				if (d>=sqrd(config.seedistance))
+				{
+					thisl.done=true;
+					linesdone++;
+					continue;
+				}
+
+
+				c3d=kinext.camera2dToGroundProjection(c,0);
+				float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+
+				/*if (d1>=sqrd(config.seedistance))//Looking way too far
+				{
+					//cout<<"Seedistance reached"<<endl;
+					//c3d.prettyPrint();
+					thisl.done=true;
+					linesdone++;
+					continue;
+				}*/
+				if (abs(d1-d)>config.skipdistance)
+				{
+					//cout<<"break"<<endl;
+					obstacles.push_back(thisl.gtrc);	//c3d.prettyPrint();
+					thisl.done=true;
+					linesdone++;
+					continue;
+				}
+			}
 			//cout<<"doseg"<<endl;
-			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y);
+			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y, white | orange | green| yellow |skyblue);
 			//cout<<"doseg:"<<(int)tempcolor<<endl;
 			if (colorIsA(tempcolor,green))//
 			{
@@ -235,50 +292,6 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				thisl.cntother++;
 				thisl.ballfound=false;
 			}
-
-			if (thisl.cntother>config.pixeltol)//No continuity, break
-			{
-				//thisl.cntother=0;
-				if(!thisl.lastpoint.isInitialized())//No good point, matrix uninitialized
-				{
-					thisl.done=true;
-					linesdone++;
-					continue;
-				}
-				c=imageToCamera(thisl.lastpoint);
-
-				c3d=kinext.camera2dToGround(c);
-				if(c3d(2)>=1)//Looking up :)
-				{
-					thisl.done=true;
-					linesdone++;
-					continue;
-				}
-
-				c3d=kinext.camera2dToGroundProjection(c,0);
-				float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
-
-				if (d1>=sqrd(config.seedistance))//Looking way too far
-				{
-					//cout<<"Seedistance reached"<<endl;
-					//c3d.prettyPrint();
-					thisl.done=true;
-					linesdone++;
-					continue;
-				}
-				c=imageToCamera(thisl.gtrc);
-				c3d=kinext.camera2dToGroundProjection(c,0);
-				float d2=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
-
-				if (abs(d1-d2)>config.skipdistance||d1>=sqrd(config.seedistance))
-				{
-					//cout<<"break"<<endl;
-					obstacles.push_back(thisl.gtrc);	//c3d.prettyPrint();
-					thisl.done=true;
-					linesdone++;
-					continue;
-				}
-			}
 			if (colorIsA(tempcolor,color) &&thisl.ballfound==false)
 			{
 				ballpixels.push_back(thisl.gtrc);
@@ -293,11 +306,11 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				ygoalpost.push_back(thisl.gtrc);
 				thisl.yfound=true;
 			}
-			if(colorIsA(tempcolor,skyblue)&&thisl.yfound==false)
+			if(colorIsA(tempcolor,skyblue)&&thisl.bfound==false)
 			{
 				//ballpixels.push_back(tmpPoint);
 				bgoalpost.push_back(thisl.gtrc);
-				thisl.yfound=true;
+				thisl.bfound=true;
 			}
 
 			//Find next pixel
@@ -323,7 +336,7 @@ cout<<"End Grid scan"<<endl;
  * Hard Decision: Is it good enough for a ball?
  */
 
-bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
+bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c) const
 {
 	unsigned int ttl = 0, gd = 0;
 	float innerrad = ball.cr * 0.707;
@@ -334,7 +347,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 		{
 			if (!validpixel(i,j))
 				continue;
-			if (colorIsA(doSeg(i, j) , c))
+			if (colorIsA(doSeg(i, j,c) , c))
 				gd+=3;
 			ttl+=3;
 		}
@@ -343,7 +356,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 		{
 			if (!validpixel(i,j))
 				continue;
-			if (colorIsA(doSeg(i, j) , c))
+			if (colorIsA(doSeg(i, j,c) , c))
 				gd++;
 			ttl++;
 		}
@@ -360,7 +373,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 		{
 			if (!validpixel(i,j))
 				continue;
-			r=doSeg(i, j);
+			r=doSeg(i, j,c|white|green);
 			if (colorIsA(r,green | white))
 				gd++;
 			else if(colorIsA(r,c))
@@ -415,7 +428,7 @@ bool Vision::calculateValidBall(balldata_t ball, KSegmentator::colormask_t c)
 	return true;
 
 }
-bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c)
+bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c) const
 {
 
 	unsigned int ttl = 0,bd=0,gd=0;
@@ -432,13 +445,13 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	{
 		for(int x=l.x-(r.x-l.x)-1; x<l.x-1;x+=config.subsampling)
 		{
-			if(colorIsA(doSeg(x,l.y),c))
+			if(colorIsA(doSeg(x,l.y,c),c))
 				bd++;
 			ttl++;
 		}
 		for(int x=r.x+2;x<r.x+(r.x-l.x)+1;x+=config.subsampling)
 		{
-			if(colorIsA(doSeg(x,r.y),c))
+			if(colorIsA(doSeg(x,r.y,c),c))
 				bd++;
 			ttl++;
 		}
@@ -463,7 +476,7 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 
 		for(int x=l.x;x<=r.x;x+=config.subsampling)
 		{
-			if(colorIsA(doSeg(x,r.y),c))
+			if(colorIsA(doSeg(x,r.y,c),c))
 				gd++;
 			ttl++;
 
@@ -483,7 +496,7 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 
 }
 
-bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator::colormask_t c)
+bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator::colormask_t c) const
 {
 
 	int width =goal.lr.x-goal.ll.x+1;
@@ -496,7 +509,7 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 		{
 			if (!validpixel(i,j))
 				continue;
-			if(colorIsA(doSeg(i,j),green))
+			if(colorIsA(doSeg(i,j,green),green))
 				gd++;
 			ttl++;
 		}
@@ -508,7 +521,7 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 	return true;
 }
 
-bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::colormask_t c)
+bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::colormask_t c) const
 {
 	traceResult r;
 	KVecInt2 s;
@@ -888,7 +901,7 @@ int Vision::locateGoalPost(vector<KVecInt2> cand, KSegmentator::colormask_t c)
 
 }
 
-void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
+void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 {
 	float t,g,h,dS,dL;
 	//Single solution of a  trionym
@@ -959,7 +972,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost)
 	newpost.dist.push_back(m);//add to vector of results:)
 
 }
-void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c)
+void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c) const
 {
 
 	//traceResult trcrs;
@@ -1287,7 +1300,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> cand)
 
 
 }
-KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r)
+KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) const
 {
 	KVecFloat2 center;
 	center.x=-1;
@@ -1311,7 +1324,7 @@ KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r)
 	return center;
 }
 
-Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const
 {
 	int skipcount = 0;
 	//int globalcount = 0;
@@ -1320,7 +1333,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator
 	/////cout << "traceline:"<<start.x<<" "<<start.y<<endl;
 	while (validpixel(curr.x,curr.y))
 	{
-		if (doSeg(curr.x, curr.y) != c)
+		if (doSeg(curr.x, curr.y,c) != c)
 		{
 			skipcount++;
 			//globalcount++;
@@ -1353,7 +1366,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator
 }
 
 
-Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const
 {
 	int skipcount = 0;
 	//int globalcount = 0;
@@ -1365,7 +1378,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentat
 	/////cout << "traceline:"<<start.x<<" "<<start.y<<endl;
 	while (validpixel(curr.x,curr.y))
 	{
-		if (doSeg(curr.x, curr.y) != c)
+		if (doSeg(curr.x, curr.y,c) != c)
 		{
 			skipcount++;
 			//globalcount++;
@@ -1398,7 +1411,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentat
 	return r;
 }
 
-Vision::traceResult Vision::traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const
 {
 	int skipcount = 0;
 	//int globalcount = 0;
@@ -1410,7 +1423,7 @@ Vision::traceResult Vision::traceStrictline(KVecInt2 start, KVecFloat2 vel, KSeg
 	/////cout << "traceline:"<<start.x<<" "<<start.y<<endl;
 	while (validpixel(curr.x,curr.y))
 	{
-		if (doSeg(curr.x, curr.y) != c)
+		if (doSeg(curr.x, curr.y,c) != c)
 		{
 			skipcount++;
 //			globalcount++;
@@ -1444,7 +1457,7 @@ Vision::traceResult Vision::traceStrictline(KVecInt2 start, KVecFloat2 vel, KSeg
 }
 
 
-Vision::traceResult Vision::traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c)
+Vision::traceResult Vision::traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const
 {
 	int skipcount = 0;
 	//int globalcount = 0;
@@ -1468,7 +1481,7 @@ Vision::traceResult Vision::traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegme
 	while (validpixel(curr.x,curr.y))
 	{
 		//cout<<curr.x<<" "<<curr.y<<endl;
-		if (doSeg(curr.x, curr.y) != c)
+		if (doSeg(curr.x, curr.y,c) != c)
 		{
 
 			skipcount++;
@@ -1537,7 +1550,7 @@ Vision::traceResult Vision::traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegme
 
 
 
-bool Vision::validpixel(int x,int y)
+bool Vision::validpixel(int x,int y) const
 {
 	if ((x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height)))
 		return true;
@@ -1545,12 +1558,12 @@ bool Vision::validpixel(int x,int y)
 		return false;
 
 }
-KSegmentator::colormask_t Vision::doSeg(int x, int y)
+KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmentator::colormask_t h ) const
 {
 	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
 	{
 		//return seg->classifyPixel(rawImage, x, y, type);
-		return seg->classifyPixel(x,y);
+		return seg->classifyPixel(x,y,h);
 	}
 	else
 	{

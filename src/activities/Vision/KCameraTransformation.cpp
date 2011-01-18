@@ -18,7 +18,7 @@ void KCameraTranformation::Init()
 	}
 
 }
-float  KCameraTranformation::cot(float theta)
+float  KCameraTranformation::cot(float theta) const
 {
     //float  t;
     //if(theta<KMat::transformations::PI/4.0)
@@ -28,7 +28,7 @@ float  KCameraTranformation::cot(float theta)
     //return t;
 };
 
-std::vector<float>  KCameraTranformation::getKinematics(const std::string toAsk)
+std::vector<float>  KCameraTranformation::getKinematics(const std::string toAsk) const
 {
     //Name, space, useSensors
     //TORSO=0
@@ -59,7 +59,7 @@ void  KCameraTranformation::setPose(cpose p)
 }
 
 
-KVecFloat3  KCameraTranformation::camera2dTo3d(const KVecFloat2 & coords)
+KVecFloat3  KCameraTranformation::camera2dTo3d(const KVecFloat2 & coords) const
 {
     KVecFloat3  res;
     res(0)=thepose.focallength;
@@ -72,7 +72,7 @@ KVecFloat3  KCameraTranformation::camera2dTo3d(const KVecFloat2 & coords)
 }
 
 
-KVecFloat2  KCameraTranformation::camera3dTo2d(const KVecFloat3 & coords)
+KVecFloat2  KCameraTranformation::camera3dTo2d(const KVecFloat3 & coords) const
 {
     KVecFloat3  a;
     KVecFloat2  res;
@@ -84,7 +84,7 @@ KVecFloat2  KCameraTranformation::camera3dTo2d(const KVecFloat3 & coords)
     return res;
 }
 
-KVecFloat3  KCameraTranformation::camera2dToTorso(const KVecFloat2 & coords)
+KVecFloat3  KCameraTranformation::camera2dToTorso(const KVecFloat2 & coords) const
 {
 	return cameraTorsoChain.transform(camera2dTo3d(coords));
     //KVecFloat3  res;
@@ -94,7 +94,7 @@ KVecFloat3  KCameraTranformation::camera2dToTorso(const KVecFloat2 & coords)
 
 }
 
-KVecFloat3 KCameraTranformation::cameraToGround(const KVecFloat3 & c3d)
+KVecFloat3 KCameraTranformation::cameraToGround(const KVecFloat3 & c3d) const
 {
     return cameraChain.transform(c3d);
     //KVecFloat3  res;
@@ -104,12 +104,12 @@ KVecFloat3 KCameraTranformation::cameraToGround(const KVecFloat3 & c3d)
 
 }
 
-KVecFloat3  KCameraTranformation::camera2dToGround(const KVecFloat2 & c2d)
+KVecFloat3  KCameraTranformation::camera2dToGround(const KVecFloat2 & c2d) const
 {
     return cameraToGround(camera2dTo3d(c2d));
 
 }
-KVecFloat3  KCameraTranformation::cameraToGroundProjection(const KVecFloat3 & c3d,float height)
+KVecFloat3  KCameraTranformation::cameraToGroundProjection(const KVecFloat3 & c3d,float height) const
 {
     KVecFloat3  res=cameraChain.transform(c3d);
     //KVecFloat3  res;
@@ -120,7 +120,7 @@ KVecFloat3  KCameraTranformation::cameraToGroundProjection(const KVecFloat3 & c3
 }
 
 
-KVecFloat3  KCameraTranformation::camera2dToGroundProjection(const KVecFloat2 & c2d,float height)
+KVecFloat3  KCameraTranformation::camera2dToGroundProjection(const KVecFloat2 & c2d,float height) const
 {
     return cameraToGroundProjection(camera2dTo3d(c2d),height);
 }
@@ -128,7 +128,7 @@ KVecFloat3  KCameraTranformation::camera2dToGroundProjection(const KVecFloat2 & 
 
 
 
-KVecFloat2  KCameraTranformation::groundToCamera2d(const KVecFloat3 & g)
+KVecFloat2  KCameraTranformation::groundToCamera2d(const KVecFloat3 & g) const
 {
     KVecFloat3  res=cameraChainInv.transform(g);
     //KVecFloat3  res;
@@ -138,7 +138,7 @@ KVecFloat2  KCameraTranformation::groundToCamera2d(const KVecFloat3 & g)
 }
 
 
-float KCameraTranformation::vectorAngle(const KVecFloat2 & v1,const KVecFloat2 & v2)
+float KCameraTranformation::vectorAngle(const KVecFloat2 & v1,const KVecFloat2 & v2) const
 {
     float sqrdf=sqrd(thepose.focallength);
     float nom= v1(0)*v2(0)+v1(1)*v2(1)+sqrdf;
@@ -146,7 +146,7 @@ float KCameraTranformation::vectorAngle(const KVecFloat2 & v1,const KVecFloat2 &
     return acos( nom/den);
 
 }
-measurement KCameraTranformation::angularDistance(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize)
+measurement KCameraTranformation::angularDistance(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize) const
 {
 
     //Keep V1 Constant, and move v2
@@ -183,7 +183,7 @@ measurement KCameraTranformation::angularDistance(const KVecFloat2 & v1,const KV
 
 /* Estimate a distance from observed angular size, create also a  estimate of variance, by assuming +/-1 pixel error
 */
-measurement KCameraTranformation::angularDistanceProjected(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize)
+measurement KCameraTranformation::angularDistanceProjected(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize) const
 {
 
     //Keep V1 Constant, and move v2
@@ -224,7 +224,7 @@ measurement KCameraTranformation::angularDistanceProjected(const KVecFloat2 & v1
 
 }
 //Heght:: Point distance from ground plane
-measurement* KCameraTranformation::projectionDistance(KVecFloat2 &v,float height)
+measurement* KCameraTranformation::projectionDistance(KVecFloat2 &v,float height) const
 {
     measurement* res=new measurement[2];
     KVecFloat2 t;
@@ -275,7 +275,7 @@ measurement* KCameraTranformation::projectionDistance(KVecFloat2 &v,float height
 }
 
 
-float KCameraTranformation::getPitch()
+float KCameraTranformation::getPitch() const
 {
 
     //TODO::
@@ -283,7 +283,7 @@ float KCameraTranformation::getPitch()
 }
 
 
-float KCameraTranformation::getRoll()
+float KCameraTranformation::getRoll() const
 {
 
 

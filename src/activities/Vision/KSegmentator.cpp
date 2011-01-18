@@ -8,6 +8,10 @@ using namespace std;
 #define max(x,y) ((x)>(y))?(x):(y)
 #define min(x,y) ((x)<(y))?(x):(y)
 
+#define DYRES 3
+#define DURES 2
+#define DVRES 2
+
 typedef KSegmentator::colormask_t colormask_t;
 typedef struct cclass {
 	int HueMin,HueMax;
@@ -33,6 +37,8 @@ struct RuleSet
 	std::vector<cclass_t> colors;
 
 };
+
+
 
 void yuv2hsy(const unsigned char yuv[3], unsigned  int hsy[3])
 {
@@ -95,7 +101,7 @@ void KSegmentator::setLumaScale(float s)
 {
 	lumascale=s;
 	cout<<"KSegmentator:setLumaScale():"<<s<<endl;
-	for(int i=0;i<256;i++)
+	/*for(int i=0;i<256;i++)
 	{
 	    int r=i*lumascale;
 	    r=r>255?255:r;
@@ -106,7 +112,7 @@ void KSegmentator::setLumaScale(float s)
 	    r=r<0?0:r;
 	    ULUT[i]=rULUT[r];
 	    VLUT[i]=rVLUT[r];
-	}
+	}*/
 
 }
 
@@ -178,9 +184,14 @@ KSegmentator::colormask_t ruleFileClassifyPixel(struct RuleSet const& r, unsigne
 
 void KSegmentator::attachToIplImage(IplImage *data)
 {
+	//string m="Seg times:"+_toString(fetch.tv_nsec)+" "+_toString(segment.tv_nsec);
+	//fetch.tv_nsec=0;
+	//segment.tv_nsec=0;
+	//Logger::Instance().WriteMsg("KSegmentator",m,Logger::Warning);
     dataPointer= data->imageData;
     widthmult2=data->width*2;
     width=data->width;
+    height=data->height;
     if(data->nChannels==2)//Imply 422
         classifyFunc= &KSegmentator::classify422;
     else if (data->nChannels==3)//444
@@ -215,7 +226,7 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 	readComment(conf);
 	readCalibration(conf);
 	readColorInfo(conf);
-	for(int i=0 ;i<256;i++)
+	for(int i=0 ;i<LUTsize;i++)
 	{
 		rYLUT[i]=rULUT[i]=rVLUT[i]=0;
 	}
@@ -225,12 +236,15 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 		readColorTable(conf);
 	lumascale=1;//Default setting;
 
-	for(int i=0 ;i<256;i++)
-	{
-		YLUT[i]=rYLUT[i];
-		ULUT[i]=rULUT[i];
-		VLUT[i]=rVLUT[i];
-	}
+	for (int v=0;v<256;v++)
+		for (int u=0;u<256;u++)
+			for (int y=0;y<256;y++)
+			{
+				colormask_t val=* (ctableAccess(v,u,y));
+				rYLUT[y>>LUTres]|=val;
+				rULUT[u>>LUTres]|=val;
+				rVLUT[v>>LUTres]|=val;
+			}
 
 }
 
@@ -257,46 +271,36 @@ void KSegmentator::readColorInfo(ifstream & conf)
 
 void KSegmentator::readColorTable(ifstream & conf)
 {
-	int yres;
-	int ures;
-	int vres;
 	if (set.conf[0]=='Y')
 	{
-		yres=set.conf[1]-'0';
-		ures=set.conf[2]-'0';
-		vres=set.conf[3]-'0';
+		yres=set.conf[1]-'0';ysize=256>>yres;
+		ures=set.conf[2]-'0';usize=256>>ures;
+		vres=set.conf[3]-'0';vsize=256>>vres;
 		int dsize=set.size-'0';
 		colormask_t t,r;
 		t=0;
 		char *dest=((char*)(&t))+sizeof(colormask_t)-dsize;//For little endian systems like x86 :)
 		int y,u,v;
 
-		colormask_t table[256>>yres][256>>ures][256>>vres];
-		for (y=0;y<256>>yres;y++)
-			for (u=0;u<256>>ures;u++)
-				for (v=0;v<256>>vres;v++)
+		colormask_t* nctable= (colormask_t *) malloc(sizeof(colormask_t)*ysize*usize*vsize);
+
+		for (y=0;y<ysize;y++)
+			for (u=0;u<usize;u++)
+				for (v=0;v<vsize;v++)
 				{
 					conf.read(dest,dsize);
 					//if(y==128>>yres)
 						//cout<<"t:"<<(int)t<<endl;
 					r=ValueToBitMask(t);
-					//if(y==128>>yres)
-						//cout<<"r:"<<(int)r<<endl;
-					table[y][u][v]=r;
+					//Store it :)
+					*(nctable+y+u*ysize+v*usize*ysize)=r;
 
 				}
+		ctable=nctable;
 
-		for (y=0;y<256;y++)
-			for (u=0;u<256;u++)
-				for (v=0;v<256;v++)
-				{
-					colormask_t val=table[y>>yres][u>>ures][v>>vres];
-					rYLUT[y]|=val;
-					rULUT[u]|=val;
-					rVLUT[v]|=val;
-				}
 
-		cout<<"Read Colortable:"<<yres<<"-"<<ures<<"-"<<vres<<endl;
+
+		cout<<"Read Colortable:"<<ysize<<"-"<<usize<<"-"<<vsize<<endl;
 	}
 	else
 		cout<<"KSegmentator():Invalid or unknown colortable file header"<<endl;
@@ -308,6 +312,9 @@ void KSegmentator::readRulefile(ifstream & conf)
 	{
 		struct RuleSet r;
 		r.colors.clear();
+		yres=DYRES;ysize=256>>yres;
+		ures=DYRES;usize=256>>ures;
+		vres=DYRES;vsize=256>>vres;
 
 		char peek;
 		int c=0;
@@ -369,20 +376,24 @@ void KSegmentator::readRulefile(ifstream & conf)
 			}
 		}
 
+
+		unsigned char * nctable= (unsigned char *) malloc(sizeof(colormask_t)*ysize*usize*vsize);
 		unsigned char yuv[3];
-		for (int y=0;y<256;y++)
-			for (int u=0;u<256;u++)
-				for (int v=0;v<256;v++)
+		for (int v=0;v<vsize;v++)
+			for (int u=0;u<usize;u++)
+				for (int y=0;y<ysize;y++)
 				{
 					yuv[0]=y;
 					yuv[1]=u;
 					yuv[2]=v;
 					colormask_t val=ruleFileClassifyPixel(r,yuv);
 					val=ValueToBitMask(val);
-					rYLUT[y]|=val;
-					rULUT[u]|=val;
-					rVLUT[v]|=val;
+					//Store it :)
+					*(nctable+y+(u+v*usize)*ysize)=val;
+
 				}
+		ctable=nctable;
+
 	}
 	else
 		cout<<"KSegmentator():Invalid or unknown rule file header"<<endl;

@@ -7,11 +7,11 @@
 
 #define sqrd(x) ( (x)*(x) )
 //#include "boost/date_time/local_time/local_time.hpp"
-typedef struct measurement_struct
+typedef  struct measurement_struct
 {
     float mean;
     float var;
-} measurement;
+}  measurement;
 
 class CameraT : public KMat::transformations
 {
@@ -59,7 +59,7 @@ typedef struct cameraPose
 } cpose;
 
 
-class KCameraTranformation
+class   KCameraTranformation
 {
 
 	public:
@@ -74,22 +74,22 @@ class KCameraTranformation
 
 
 
-		std::vector<float>  getKinematics(const std::string toAsk);
-		float cot(float theta);
-		KVecFloat3  camera2dTo3d(const KVecFloat2 & coords);
-		KVecFloat2  camera3dTo2d(const KVecFloat3 & coords);
-		KVecFloat3  cameraToGround(const KVecFloat3 & c3d);
-		KVecFloat3  camera2dToTorso(const KVecFloat2 & coords);
-		KVecFloat3  camera2dToGround(const KVecFloat2& c2d);
-        KVecFloat3  cameraToGroundProjection(const KVecFloat3 & c3d,float height);
-		KVecFloat3  camera2dToGroundProjection(const KVecFloat2& c2d,float height);
-		KVecFloat2  groundToCamera2d(const KVecFloat3& g);
-		float vectorAngle(const KVecFloat2 & v1,const KVecFloat2 & v2);
-		measurement  angularDistance(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize);
-        measurement  angularDistanceProjected(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize);
-        measurement* projectionDistance(KVecFloat2 &v,float height);
-        float getPitch();
-        float getRoll();
+		std::vector<float>  getKinematics(const std::string toAsk) const;
+		float cot(float theta) const;
+		KVecFloat3  camera2dTo3d(const KVecFloat2 & coords) const;
+		KVecFloat2  camera3dTo2d(const KVecFloat3 & coords) const;
+		KVecFloat3  cameraToGround(const KVecFloat3 & c3d) const;
+		KVecFloat3  camera2dToTorso(const KVecFloat2 & coords) const;
+		KVecFloat3  camera2dToGround(const KVecFloat2& c2d) const;
+        KVecFloat3  cameraToGroundProjection(const KVecFloat3 & c3d,float height) const;
+		KVecFloat3  camera2dToGroundProjection(const KVecFloat2& c2d,float height) const;
+		KVecFloat2  groundToCamera2d(const KVecFloat3& g) const;
+		float vectorAngle(const KVecFloat2 & v1,const KVecFloat2 & v2) const;
+		measurement  angularDistance(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize) const;
+        measurement  angularDistanceProjected(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize) const;
+        measurement* projectionDistance(KVecFloat2 &v,float height) const;
+        float getPitch() const;
+        float getRoll() const;
 
 	private:
         cpose thepose;

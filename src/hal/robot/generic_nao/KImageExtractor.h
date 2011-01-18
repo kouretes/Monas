@@ -41,7 +41,7 @@ class KImageExtractor
 		//Create new space for image
 		IplImage *allocateImage();
 		float calibrateCamera(int sleeptime=1500,int exp=18);
-		float getExp();
+		float getExpUs();
 		int getCamera();
 		int swapCamera();
 	private:
@@ -55,6 +55,7 @@ class KImageExtractor
 		bool doneSubscribe;//Initializations done?
 		Blackboard *_blk;
 		int lastcam;
+		float lastexpusec;
 
 };
 

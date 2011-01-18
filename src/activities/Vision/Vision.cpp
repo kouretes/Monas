@@ -652,7 +652,7 @@ void Vision::loadXMLConfig(std::string fname)
 	xmlconfig->QueryElement("pitchoffset", config.pitchoffset);
 }
 
-void Vision::publishObstacles(std::vector<KVecInt2> points)
+void Vision::publishObstacles(std::vector<KVecInt2> points) const
 {
 	static int period = 0;
 	period++;
@@ -694,7 +694,7 @@ void Vision::publishObstacles(std::vector<KVecInt2> points)
 }
 
 
-KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep)
+KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep) const
 {
 
 	KVecFloat2 res;
@@ -704,7 +704,7 @@ KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep)
 	return res;
 }
 
-KVecFloat2 Vision::imageToCamera( KVecInt2 const & imagep)
+KVecFloat2 Vision::imageToCamera( KVecInt2 const & imagep) const
 {
 
 	KVecFloat2 res;
@@ -713,7 +713,7 @@ KVecFloat2 Vision::imageToCamera( KVecInt2 const & imagep)
 
 	return res;
 }
-KVecInt2 Vision::cameraToImage( KVecFloat2 const& c)
+KVecInt2 Vision::cameraToImage( KVecFloat2 const& c) const
 {
 
 	KVecInt2 res;
@@ -725,7 +725,7 @@ KVecInt2 Vision::cameraToImage( KVecFloat2 const& c)
 }
 
 //Input:  distance bearing
-KVecFloat2 Vision::camToRobot(KVecFloat2 const & t)
+KVecFloat2 Vision::camToRobot(KVecFloat2 const & t) const
 {
 	KVecFloat2 res;
 	float a = cos(t(1)) * t(0) + p.cameraX;

@@ -12,9 +12,9 @@
 <skipdistance>0.1</skipdistance>
 <seedistance>7.2</seedistance>
 <!-- Image Scanning parameters -->
-<scanV>25</scanV>
-<scanH>23</scanH>
-<minH>10</minH>
+<scanV>40</scanV>
+<scanH>25</scanH>
+<minH>8</minH>
 <!--<scanstep>23</scanstep>-->
 <bordersize>8</bordersize>
 <pixeltol>4</pixeltol>
@@ -28,6 +28,6 @@
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>0</sensordelay>
+<sensordelay>16</sensordelay>
 
 <pitchoffset>0.09</pitchoffset>

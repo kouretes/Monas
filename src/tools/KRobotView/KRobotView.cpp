@@ -103,32 +103,32 @@ int Displayimage(KRawImage &img) {
 						segImage[j * 3 * width + i * 3 + 1] = 0;
 						segImage[j * 3 * width + i * 3] = 255;
 						break;
-					case 3://GREEN
+					case 4://GREEN
 						segImage[j * 3 * width + i * 3 + 2] = 0;
 						segImage[j * 3 * width + i * 3 + 1] = 255;
 						segImage[j * 3 * width + i * 3] = 0;
 						break;
-					case 4://SkyBlue
+					case 8://SkyBlue
 						segImage[j * 3 * width + i * 3 + 2] = 0;
 						segImage[j * 3 * width + i * 3 + 1] = 107;
 						segImage[j * 3 * width + i * 3] = 228;
 						break;
-					case 5://Yellow
+					case 16://Yellow
 						segImage[j * 3 * width + i * 3 + 2] = 255;
 						segImage[j * 3 * width + i * 3 + 1] = 255;
 						segImage[j * 3 * width + i * 3] = 0;
 						break;
-					case 6://Orange
+					case 32://Orange
 						segImage[j * 3 * width + i * 3 + 2] = 255;
 						segImage[j * 3 * width + i * 3 + 1] = 180;
 						segImage[j * 3 * width + i * 3] = 0;
 						break;
-					case 7:
+					case 64:
 						segImage[j * 3 * width + i * 3 + 2] = 255;
 						segImage[j * 3 * width + i * 3 + 1] = 255;
 						segImage[j * 3 * width + i * 3] = 255;
 						break;
-					case 8:
+					case 128:
 						segImage[j * 3 * width + i * 3 + 2] = 0;
 						segImage[j * 3 * width + i * 3 + 1] = 0;
 						segImage[j * 3 * width + i * 3] = 0;

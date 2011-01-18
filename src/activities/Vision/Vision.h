@@ -1,5 +1,6 @@
 #ifndef VISION_H
 #define VISION_H
+
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
@@ -21,6 +22,8 @@
 #include <vector>
 #include <iostream>
 //#define DEBUGVISION
+
+
 
 
 class Vision: public IActivity
@@ -138,14 +141,14 @@ class Vision: public IActivity
 
 		void gridScan(const KSegmentator::colormask_t color);
 
-		bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c);
-		bool calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c);
-		bool calculateValidGoalPostBase(const goalpostdata_t &goal, KSegmentator::colormask_t c);
-		bool calculateValidGoalPostTop(goalpostdata_t &goal, KSegmentator::colormask_t c);
+		bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c) const ;
+		bool calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c) const ;
+		bool calculateValidGoalPostBase(const goalpostdata_t &goal, KSegmentator::colormask_t c) const;
+		bool calculateValidGoalPostTop(goalpostdata_t &goal, KSegmentator::colormask_t c) const ;
 
 		balldata_t locateBall(std::vector<KVecInt2> cand);
-		void publishObstacles(std::vector<KVecInt2> points);
-		KVecFloat2 centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r);
+		void publishObstacles(std::vector<KVecInt2> points) const;
+		KVecFloat2 centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) const ;
 		int locateGoalPost(std::vector<KVecInt2> cand, KSegmentator::colormask_t c);
 
 		typedef struct traceresult_struct
@@ -154,22 +157,22 @@ class Vision: public IActivity
 				bool smartsuccess;
 		} traceResult;
 
-		traceResult traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c);
-		traceResult traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c);
-		traceResult traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c);
-		traceResult traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c);
+		traceResult traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const ;
+		traceResult traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const ;
+		traceResult traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const;
+		traceResult traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const ;
 		//Wrapper for seg object
-		KSegmentator::colormask_t doSeg(int x, int y);
-		inline bool validpixel(int x, int y);
-		KVecFloat2 imageToCamera( KVecFloat2 const & imagep);
-		KVecFloat2 imageToCamera( KVecInt2 const & imagep);
-		KVecInt2 cameraToImage( KVecFloat2 const & c);
+		KSegmentator::colormask_t doSeg(const int x, const int y,const KSegmentator::colormask_t h=0xFF ) const;
+		inline bool validpixel(int x, int y) const;
+		KVecFloat2 imageToCamera( KVecFloat2 const & imagep)const ;
+		KVecFloat2 imageToCamera( KVecInt2 const & imagep) const;
+		KVecInt2 cameraToImage( KVecFloat2 const & c) const;
 
-		void fillGoalPostHeightMeasurments(GoalPostdata & newpost);
-		void fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c);
+		void fillGoalPostHeightMeasurments(GoalPostdata & newpost) const;
+		void fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c) const;
 		//KVecFloat2 & cameraToObs(KMat::HCoords<float ,2> const& t);
 		//KVecFloat2 & camToRobot(KMat::HCoords<float ,2> & t);
-		KVecFloat2 camToRobot(KVecFloat2 const & t);
+		KVecFloat2 camToRobot(KVecFloat2 const & t) const;
 		void cvShowSegmented();
 
 		//For Debug!
