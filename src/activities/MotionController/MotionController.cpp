@@ -62,8 +62,8 @@ void MotionController::UserInit() {
 		}
 	}
 
-	motion->setStiffnesses("Body", 0.7);
-	motion->setStiffnesses("Head", 0.5);
+	motion->setStiffnesses("Body", 1.0);
+	motion->setStiffnesses("Head", 1.0);
 	motion->setWalkArmsEnable(true, true);
 
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
@@ -72,27 +72,27 @@ void MotionController::UserInit() {
 	for (int i = 0; i < 14; ++i)
 		config[i].arraySetSize(2);
 	config[0][0] = "WALK_MAX_TRAPEZOID";
-	config[0][1] = 4.5; // 4.5
+	config[0][1] = 3.5; // 4.5
 	config[1][0] = "WALK_MIN_TRAPEZOID";
-	config[1][1] = 3.5; // 3.5
+	config[1][1] = 2.6; // 3.5
 	config[2][0] = "WALK_STEP_MAX_PERIOD";
 	config[2][1] = 30; // 30
 	config[3][0] = "WALK_STEP_MIN_PERIOD";
-	config[3][1] = 21; // 21
+	config[3][1] = 17; // 21
 	config[4][0] = "WALK_MAX_STEP_X";
-	config[4][1] = 0.04; // 0.04
+	config[4][1] = 0.044; // 0.04
 	config[5][0] = "WALK_MAX_STEP_Y";
-	config[5][1] = 0.04; // 0.04
+	config[5][1] = 0.042; // 0.04
 	config[6][0] = "WALK_MAX_STEP_THETA";
-	config[6][1] = 20; // 20
+	config[6][1] = 24; // 20
 	config[7][0] = "WALK_STEP_HEIGHT";
-	config[7][1] = 0.015; // 0.015
+	config[7][1] = 0.017; // 0.015
 	config[8][0] = "WALK_FOOT_SEPARATION";
-	config[8][1] = 0.095; // 0.095
+	config[8][1] = 0.105; // 0.095
 	config[9][0] = "WALK_FOOT_ORIENTATION";
 	config[9][1] = 0; // 0
 	config[10][0] = "WALK_TORSO_HEIGHT";
-	config[10][1] = 0.31;
+	config[10][1] = 0.295;
 	config[11][0] = "WALK_TORSO_ORIENTATION_X";
 	config[11][1] = 0.0; // 0
 	config[12][0] = "WALK_TORSO_ORIENTATION_Y";
@@ -261,6 +261,7 @@ void MotionController::mglrun() {
 		}
 
 		if (hm != NULL) {
+			killHeadCommand();
 			if (hm->command() == "setHead") {
 				headParam1 = hm->parameter(0);
 				headParam2 = hm->parameter(1);
@@ -271,7 +272,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.8;
+				float fractionMaxSpeed =1.0;
 				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
 			} else if (hm->command() == "changeHead") {
@@ -284,7 +285,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.6;
+				float fractionMaxSpeed = 0.8;
 				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
 			} else

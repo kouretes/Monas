@@ -4,6 +4,14 @@
 
 #include "hal/robot/generic_nao/aldebaran-visiondefinitions.h"
 
+#ifdef __GNUC__
+#pragma GCC visibility push(hidden)
+#define VISIBLE __attribute__ ((visibility("default")))
+#else
+#define VISIBLE
+#endif
+
+
 using namespace std;
 #define max(x,y) ((x)>(y))?(x):(y)
 #define min(x,y) ((x)<(y))?(x):(y)
@@ -193,9 +201,18 @@ void KSegmentator::attachToIplImage(IplImage *data)
     width=data->width;
     height=data->height;
     if(data->nChannels==2)//Imply 422
-        classifyFunc= &KSegmentator::classify422;
+	{
+		classifyFunc= &KSegmentator::classify422;
+		type=INTERLEAVED;
+
+	}
     else if (data->nChannels==3)//444
-        classifyFunc=&KSegmentator::classify444;
+	{
+		classifyFunc=&KSegmentator::classify444;
+		type=FULL;
+
+	}
+
     else
     {
         classifyFunc=NULL;
@@ -399,3 +416,7 @@ void KSegmentator::readRulefile(ifstream & conf)
 		cout<<"KSegmentator():Invalid or unknown rule file header"<<endl;
 
 }
+
+#ifdef __GNUC__
+#pragma GCC visibility pop
+#endif

@@ -11,6 +11,15 @@
 #define KMAT_INSANE_MODE
 #endif
 
+#ifdef UNUSED
+#elif defined(__GNUC__)
+# define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+#elif defined(__LCLINT__)
+# define UNUSED(x) /*@unused@*/ x
+#else
+# define UNUSED(x) x
+#endif
+
 
 /**
  * KMat (koimat`) :: Kouretes Matrix Library!
@@ -49,11 +58,11 @@ namespace KMat
 
 	template<typename C> class COWRef<float,C>
 	{
-		template <typename AT, typename AC>	friend class COWRef;
+		//template <typename AT, typename AC>	friend class COWRef;
 		public:
 		COWRef(C &obj,int a, int b): p(obj),i(a),j(b){};
 		operator float() const { return p.read(i,j) ;} ;
-		template<typename AT,typename AC> float operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		//template<typename AT,typename AC> float operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
 		float operator=(COWRef<float,C>  const &v) { return p.get(i,j)=v.p.read(v.i,v.j);};
 		float operator=(float  v) { return p.get(i,j)=v;};
 		template<typename AT> float operator+=(AT  v) { return p.get(i,j)+=v;};
@@ -61,22 +70,18 @@ namespace KMat
 		template<typename AT> float operator*=(AT  v) { return p.get(i,j)*=v;};
 		template<typename AT> float operator/=(AT  v) { return p.get(i,j)/=v;};
 
-		template<typename AT> float operator+(AT  v) { return p.read(i,j)+v;};
-		template<typename AT> float operator-(AT  v) { return p.read(i,j)-v;};
-		template<typename AT> float operator*(AT  v) { return p.read(i,j)*v;};
-		template<typename AT> float operator/(AT  v) { return p.read(i,j)/v;};
 		private:
 			C & p;
-			int i,j;
+			const int i,j;
 	};
 
 	template<typename C> class COWRef<int,C>
 	{
-		template <typename AT, typename AC>	friend class COWRef;
+		//template <typename AT, typename AC>	friend class COWRef;
 		public:
 		COWRef(C &obj,int a, int b): p(obj),i(a),j(b){};
 		operator int() const { return p.read(i,j) ;} ;
-		template<typename AT, typename AC> int operator=(COWRef<AT,AC> const & v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		//template<typename AT, typename AC> int operator=(COWRef<AT,AC> const & v) { return p.get(i,j)=v.p.read(v.i,v.j);};
 		int operator=(COWRef<int,C>  const &v) { return p.get(i,j)=v.p.read(v.i,v.j);};
 		int operator= (int  v) { return p.get(i,j)=v;};
 		template<typename AT> int operator+=(AT  v) { return p.get(i,j)+=v;};
@@ -84,101 +89,251 @@ namespace KMat
 		template<typename AT> int operator*=(AT  v) { return p.get(i,j)*=v;};
 		template<typename AT> int operator/=(AT  v) { return p.get(i,j)/=v;};
 
-		template<typename AT> int operator+(AT  v) { return p.read(i,j)+v;};
-		template<typename AT> int operator-(AT  v) { return p.read(i,j)-v;};
-		template<typename AT> int operator*(AT  v) { return p.read(i,j)*v;};
-		template<typename AT> int operator/(AT  v) { return p.read(i,j)/v;};
 		private:
 			C & p;
-			int i,j;
+			const int i,j;
 	};
+/*
+	template<typename T,typename C, unsigned M, unsigned N>  class CTCOWRef {};
+
+	template<typename C, unsigned M, unsigned N> class CTCOWRef<float,C,M,N>
+	{
+		//template <typename AT, typename AC>	friend class COWRef;
+		//template <typename AT, typename AC, unsigned AM,unsigned AN>  friend class CTCOWRef;
+		public:
+		CTCOWRef(C &obj): p(obj){};
+		operator float() const  { return p.read(M,N);} ;
+		//template<typename AT,typename AC> float operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+
+		//template<typename AT,typename AC,unsigned AM,unsigned  AN>float operator=(CTCOWRef<AT,AC,AM,AN>  const &v) { return p.get(M,N)=v.p.read(AM,AN);};
+		float operator=(CTCOWRef<float,C,M,N>  &v) { return p.get(M,N)=v.p.read(M,N);};
+		template<typename AT> float operator=(AT  v) { return p.get(M,N)=v;};
+		template<typename AT> float operator+=(AT  v) { return p.get(M,N)+=v;};
+		template<typename AT> float operator-=(AT  v) { return p.get(M,N)-=v;};
+		template<typename AT> float operator*=(AT  v) { return p.get(M,N)*=v;};
+		template<typename AT> float operator/=(AT  v) { return p.get(M,N)/=v;};
+
+		template<typename AT> float operator+(AT  v) const { return p.read(M,N)+v;};
+		template<typename AT> float operator-(AT  v) const { return p.read(M,N)-v;};
+		template<typename AT> float operator*(AT  v) const { return p.read(M,N)*v;};
+		template<typename AT> float operator/(AT  v) const { return p.read(M,N)/v;};
+
+		private:
+			C & p;
+	};
+
+	template<typename C, unsigned M, unsigned N> class CTCOWRef<int,C,M,N>
+	{
+		//template <typename AT, typename AC>	friend class COWRef;
+		//template <typename AT, typename AC, unsigned AM,unsigned AN>  CTCOWRef;
+		public:
+		CTCOWRef(C &obj): p(obj){};
+		operator int() const { return p.read(M,N) ;} ;
+		//template<typename AT,typename AC> int operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
+		//template<typename AT,typename AC,unsigned AM,unsigned  AN>int operator=(CTCOWRef<AT,AC,AM,AN>  const &v) { return p.get(M,N)=v.p.read(AM,AN);};
+		int operator=(CTCOWRef<int,C,M,N>  &v) { return p.get(M,N)=v.p.read(M,N);};
+		template<typename AT> int operator=(AT  v) { return p.get(M,N)=v;};
+		template<typename AT> int operator+=(AT  v) { return p.get(M,N)+=v;};
+		template<typename AT> int operator-=(AT  v) { return p.get(M,N)-=v;};
+		template<typename AT> int operator*=(AT  v) { return p.get(M,N)*=v;};
+		template<typename AT> int operator/=(AT  v) { return p.get(M,N)/=v;};
+
+		template<typename AT> int operator+(AT  v) const { return p.read(M,N)+v;};
+		template<typename AT> int operator-(AT  v) const { return p.read(M,N)-v;};
+		template<typename AT> int operator*(AT  v) const { return p.read(M,N)*v;};
+		template<typename AT> int operator/(AT  v) const { return p.read(M,N)/v;};
+
+		private:
+			C & p;
+	};
+*/
+	template <template<typename , unsigned , unsigned > class	D,typename T, unsigned M,unsigned N>
+	class BaseMatrix;
+
+	template <typename AT, unsigned AM , unsigned AN> class DataContainer
+	{
+		private:
+		AT mem[AM][AN];
+
+		protected:
+
+		template <template<typename , unsigned , unsigned > class	D,typename T, unsigned M,unsigned N>
+		friend class BaseMatrix;
+
+
+		inline AT & data(unsigned i,unsigned j)  { return mem[i][j];};
+		inline AT *data(unsigned i)  { return mem[i];};
+		void zero() { memset(mem ,0 ,sizeof(mem));};
+		public:
+		DataContainer() {};
+
+	};
+
+	template<typename AT> class DataContainer<AT,1,1>
+	{
+
+		public:
+		AT x;
+		protected:
+		template <template<typename , unsigned , unsigned > class	D,typename T, unsigned M,unsigned N>
+		friend class BaseMatrix;
+
+		inline AT & data(unsigned i,unsigned  UNUSED(j) ) { return x;};
+		inline AT * data(unsigned i) { return &x;};
+		void zero() { x=0;};
+	};
+	template<typename AT> class DataContainer<AT,2,1>
+	{
+		public:
+		AT x,y;
+
+
+		protected:
+		template <template<typename , unsigned , unsigned > class	D,typename T, unsigned M,unsigned N>
+		friend class BaseMatrix;
+
+		inline AT & data(unsigned i,unsigned UNUSED(j) ) {
+			switch(i)
+			{
+			case 0:
+				return x;
+			default:
+				return y;
+			};
+		};
+
+		inline AT * data(unsigned i) {
+			switch(i)
+			{
+			case 0:
+				return &x;
+			default:
+				return &y;
+			};
+		};
+		void zero() { x=0;y=0;};
+	};
+
+	template<typename T> class RefCounted : public T
+	{
+		private:
+		unsigned counts;
+		public:
+		RefCounted() : T(),counts(0) {};
+		RefCounted(RefCounted<T> const & r):T(r),counts(0) {};
+		RefCounted<T> & operator=(RefCounted<T> const & c)
+		{
+			T::operator=(c);
+			counts=0;
+			return *this;
+		}
+		void inc() {++counts;};
+		void dec() {--counts;};
+		bool isExclusive() const {return counts<=1;};
+
+	};
+	template<typename T> class RefHandle
+	{
+		protected:
+		RefCounted<T> * h;
+		RefHandle() : h(0){};
+		RefHandle(RefHandle<T> const & o)
+		{
+			h=o.h;
+			if(h!=NULL)
+			h->inc();
+		}
+		RefHandle<T> & operator=(RefHandle<T> const& p)
+		{
+			if(h==p.h)
+				return *this;
+			cleanHandle();
+			h=p.h;
+			if(h!=NULL)
+				h->inc();
+
+			return *this;
+		}
+		~RefHandle() { cleanHandle();};
+		void cleanHandle()
+		{
+			if(h==NULL)
+				return;
+			if(h->isExclusive())
+				delete h;
+			else
+				h->dec();
+			h=NULL;
+		}
+		void inc() { h->inc();};
+		void dec() { h->dec();};
+		bool getHandle() //Return true if a new object has been created
+		{
+			if(h==NULL)
+			{
+				h= new RefCounted<T>();
+				h->inc();
+				return true;
+			}
+			//std::cout<<"jc:"<<h->counts<<std::endl;
+			if(h->isExclusive())
+				return false;
+			h->dec();
+			h=new RefCounted<T>(*h);
+
+			h->inc();
+			return false;
+		}
+	};
+	template<typename T> class LoopBackHandle :  public T
+	{
+		protected:
+		 T *const h;
+		LoopBackHandle() : T(),h(this){};
+		LoopBackHandle(LoopBackHandle<T> const &a ) :T(a),h(this)
+		{		};
+		LoopBackHandle<T> & operator=(LoopBackHandle<T> const & o)
+		{
+			T::operator=(o);
+			return *this;
+		}
+		void cleanHandle()
+		{
+		}
+		inline static void inc()  {};
+		inline static void dec()  {};
+		bool getHandle() //Return true if a new object has been created
+		{
+
+			return false;
+		}
+	};
+	//Use LoopBackHandle to implement COW-less 1x1 2x1 3x1 RefHandles
+	template<typename T> class RefHandle<DataContainer<T,1,1> > : public LoopBackHandle<DataContainer<T,1,1> >
+	{};
+	template<typename T> class RefHandle<DataContainer<T,2,1> > : public LoopBackHandle<DataContainer<T,2,1> >
+	{};
 	/*
 	 * Base class, utilizes the CRTP idiom to provide a nice way of implementing static polymorphism
 	 *
 	 */
 	template <template<typename , unsigned , unsigned > class	D,typename T, unsigned M,unsigned N>
-	class BaseMatrix
+	class BaseMatrix : public RefHandle<DataContainer<T,M,N> >
 	{
 			template <template<typename , unsigned , unsigned > class	AD,typename AT, unsigned AM,unsigned AN>	friend class BaseMatrix;
 
+		protected:
+			using RefHandle<DataContainer<T,M,N> >::h;
 
-			template <typename AT, unsigned AM , unsigned AN> class DataContainer
-			{
-				public:
-				AT data[AM][AN];
-				unsigned counts;
 
-				DataContainer() : counts(0) {};
-				DataContainer(DataContainer<AT,AM,AN>&) :counts(0) {
 
-				}
-				void inc() {++counts;};
-				void dec() {--counts;};
-				bool isExclusive() {return counts<=1;};
-				DataContainer<AT,AM,AN> *clone()
-				{
-					DataContainer<AT,AM,AN> *ngen= new DataContainer<AT,AM,AN>();
-					memcpy(ngen->data ,this->data, sizeof(AT[AM][AN])	);
-
-					return ngen;
-				}
-			};
-			typedef DataContainer<T,M,N> DataContainer_t;
-			protected:
-			bool makeExclusive() //Return true if a new object has been created
-			{
-				//std::cout<<"m"<<std::endl;
-				if(h==NULL)
-				{
-					h= new DataContainer_t;
-					//memset(h->data,0,sizeof(T[M][N]));
-					h->inc();
-					//std::cout<<h->counts<<std::endl;
-					return true;
-				}
-				//std::cout<<"jc:"<<h->counts<<std::endl;
-				if(h->isExclusive())
-					return false;
-				h->dec();
-				//std::cout<<"hbef:"<<h<<std::endl;
-				h=h->clone();
-				//std::cout<<"haft:"<<h<<std::endl;
-				h->inc();
-				return false;
-			}
-			void zeroOut()
-			{
-				if(h==NULL)
-				{
-					h= new DataContainer_t;
-					h->inc();
-				}
-
-				memset(h->data,0,sizeof(T[M][N]));
-			}
-			void cleanHandle()
-			{
-				if(h==NULL)
-					return;
-				if(h->isExclusive())
-					delete h;
-				else
-					h->dec();
-				h=NULL;
-			}
 		public:
-			BaseMatrix(): h(NULL){};
-			BaseMatrix(BaseMatrix<D,T,M,N> const& o):h(o.h)
+			BaseMatrix(){};
+			BaseMatrix(BaseMatrix<D,T,M,N> const& o) : RefHandle<DataContainer<T,M,N> >(o)
 			{
 
-				if(h!=NULL)
-					h->inc();
-			}
-			~BaseMatrix()
-			{
-
-				cleanHandle();
-
+				//if(h!=NULL)
+				//	RefCounter<DataContainer<T,M,N> >::inc();
 			}
 			bool isInitialized() {return h!=0;};
 			typedef std::numeric_limits<T> Tlimits;
@@ -195,10 +350,10 @@ namespace KMat
 			{
 				if(h==NULL||rop.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data[i][j]+=rop.h->data[i][j];
+						h->data(i,j)+=rop.h->data(i,j);
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -210,10 +365,10 @@ namespace KMat
 			{
 				if(h==NULL||rop.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data[i][j]+=rop.h->data[i][0];
+						h->data(i,j)+=rop.h->data(i,0);
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -224,10 +379,10 @@ namespace KMat
 			{
 				if(h==NULL||rop.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data[i][j]+=rop.h->data[0][j];
+						h->data(i,j)+=rop.h->data(0,j);
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -242,10 +397,10 @@ namespace KMat
 			{
 				if(h==NULL||rop.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data[i][j]-=h->rop.h->data[i][j];
+						h->data(i,j)-=h->rop.h->data(i,j);
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -265,7 +420,7 @@ namespace KMat
 				//std::cout<<"SLOW"<<std::endl;
 				if(h==NULL||rop.h==NULL)
 					return res;
-				res.makeExclusive();
+				res.getHandle();
 								//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
 				{
@@ -273,10 +428,10 @@ namespace KMat
 					for (unsigned j=0;j<L;j++)
 					{
 						//Clear value
-						res.h->data[i][j]=0;
+						res.h->data(i,j)=0;
 						for (unsigned k=0;k<N;k++)
 						{
-							res.h->data[i][j]+=h->data[i][k]*rop.h->data[k][j];
+							res.h->data(i,j)+=h->data(i,k)*rop.h->data(k,j);
 
 						}
 					}
@@ -301,7 +456,7 @@ namespace KMat
 					copyFrom(slow_mult(rop));
 					return static_cast< D<T,M,N> &> (*this);
 				}
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				T tmp[N];
 				//std::cout<<"IN PLACE"<<h->counts<<std::endl;
 
@@ -315,11 +470,11 @@ namespace KMat
 						tmp[j]=0;
 						for (unsigned k=0;k<N;k++)
 						{
-							tmp[j]+=h->data[i][k]*rop.h->data[k][j];
+							tmp[j]+=h->data(i,k)*rop.h->data(k,j);
 
 						}
 					}
-					memcpy(h->data[i],tmp,sizeof(T[N]));
+					memcpy(h->data(i),tmp,sizeof(T[N]));
 				}
 
 				return static_cast< D<T,M,N> &> (*this);
@@ -333,10 +488,10 @@ namespace KMat
 			{
 				if(h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data[i][j]+=scalar;
+						h->data(i,j)+=scalar;
 
 				return static_cast< D<T,M,N>& > (*this);
 			};
@@ -347,10 +502,10 @@ namespace KMat
 			{
 				if(h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data[i][j]-=scalar;
+						h->data(i,j)-=scalar;
 
 				return static_cast< D<T,M,N>& > (*this);
 			};
@@ -361,10 +516,10 @@ namespace KMat
 			{
 				if(h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data[i][j]*=scalar;
+						h->data(i,j) *=scalar;
 
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -401,25 +556,13 @@ namespace KMat
 			};
 			D<T,M,N> & copyTo(BaseMatrix<D,T,M,N> & dest ) const
 			{
-				if(this->h==dest.h)
-					return static_cast< D<T,M,N> &> (*this);
-				dest.cleanHandle();
-				if(h==NULL)
-					return;
-				dest.h=h;
-				assert(h!=NULL);
-				h->inc();
+				dest=this;
 				return static_cast< D<T,M,N> &> (*this);
 			};
 			D<T,M,N> & copyFrom(BaseMatrix<D,T,M,N> const & src )
 			{
-				if(this->h==src.h)
-					return static_cast< D<T,M,N> &> (*this);
-				cleanHandle();
-				if(src.h==NULL)
-					return static_cast< D<T,M,N> &> (*this);
-				h=src.h;
-				h->inc();
+
+				RefHandle<DataContainer<T,M,N> >::operator=(src);
 				//std::cout<<"sharing"<<h->counts<<std::endl;
 				return static_cast< D<T,M,N> &> (*this);
 			};
@@ -429,8 +572,8 @@ namespace KMat
 			 **/
 			D<T,M,N>& zero()
 			{
-				makeExclusive();
-				zeroOut();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
+				h->zero();
 				return static_cast< D<T,M,N> &> (*this);
 			};
 
@@ -439,18 +582,18 @@ namespace KMat
 			 **/
 			D<T,M,N>& identity()
 			{
-				makeExclusive();
-				zeroOut();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
+				h->zero();
 				//Fill main diagonal
 				unsigned l=M<N?M:N;
 				for (unsigned i=0;i<l;i++)
-					h->data[i][i]=1;
+					h->data(i,i)=1;
 				return static_cast< D<T,M,N> &> (*this);
 			};
 			//Accessor
 			T& get(unsigned i,unsigned j)
 			{
-				makeExclusive();
+				RefHandle<DataContainer<T,M,N> >::getHandle();
 #ifndef KMAT_INSANE_MODE
 				if (i>M-1||j>N-1)
 				{
@@ -458,16 +601,15 @@ namespace KMat
 
 					throw MatrixIndexOutOfBoundsException(d);
 					//throw MatrixIndexOutOfBoundsException(d);
-					return h->data[0][0];
+					return h->data(0,0);
 				}
 #endif
-				return h->data[i][j];
+				return h->data(i,j);
 			};
 
 			//Const accessor//Accessor
 			const T& read(unsigned i,unsigned j) const
 			{
-
 #ifndef KMAT_INSANE_MODE
 				if (i>M-1||j>N-1)
 				{
@@ -475,10 +617,10 @@ namespace KMat
 
 					throw MatrixIndexOutOfBoundsException(d);
 					//throw MatrixIndexOutOfBoundsException(d);
-					return h->data[0][0];
+					return h->data(0,0);
 				}
 #endif
-				return h->data[i][j];
+				return h->data(i,j);
 			};
 
 			/**
@@ -507,7 +649,7 @@ namespace KMat
 					{
 						cout.width(7);
 						cout.precision(2);
-						cout<<fixed<<h->data[i][j]<<"";//setprecision(3)<<setw(6)<<
+						cout<<fixed<<h->data(i,j)<<"";//setprecision(3)<<setw(6)<<
 					}
 					cout<<"|"<<endl;;
 				}
@@ -525,35 +667,22 @@ namespace KMat
 			//=== Operator overloading========
 			COWRef<T,D<T,M,N> > operator() (unsigned i,unsigned j)
 			{
-				return COWRef<float,D<T,M,N> > ( static_cast< D<T,M,N>  &> (*this),i,j);
+				return COWRef<T,D<T,M,N> > ( static_cast< D<T,M,N>  &> (*this),i,j);
 			};
 			//Const accessor
 			const T& operator() (unsigned i,unsigned j) const
 			{
 				return read(i,j);
 			};
-			D<T,M,N> & operator= (const BaseMatrix<D,T,M,N> & d)
-			{
-			  //std::cout<<"copy"<<std::endl;
-			  return copyFrom(d);
-			};
 			/*D<T,M,N> & operator= (const D<T,M,N> & d)
 			{
 			  return copyFrom(d);
 			};*/
 
-
-		protected:
-
-			DataContainer_t *h;
-
 	};
 	//GenMatix: simply a BaseMatrix Instantation :)
 	template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<GenMatrix,T,M,N>
-	{
-		public:
-		using BaseMatrix<KMat::GenMatrix,T,M,N>::operator=;//Unhide  assignment operator
-	};
+	{};
 	//========================================Square matrices====================================
 	//Transpose for square matrices
 	template <typename A,unsigned S>
@@ -583,18 +712,18 @@ namespace KMat
 	GenMatrix<A,2,2> & invert_square_matrix(GenMatrix<A,2,2> & athis)
 	{
 		//using BaseMatrix<typename GenMatrix,2,2>::data;
-		A determ=athis.h->data[0][0]*athis.h->data[1][1]-athis.h->data[0][1]*athis.h->data[1][0];
+		A determ=athis.read(0,0)*athis.read(1,1)-athis.read(0,1)*athis.read(1,0);
 		//std::cout<<"Det:"<<determ<<std::endl;
 		//std::cout<<"Eps:"<<std::numeric_limits<T>::epsilon()<<std::endl;
 		if (determ > std::numeric_limits<A>::epsilon()&& determ!=(A)0)//can invert
 		{
-			A temp1=athis.h->data[0][0];
-			athis.h->data[0][0]=athis.h->data[1][1]/determ;
-			athis.h->data[1][1]=temp1/determ;
+			A temp1=athis.read(0,0);
+			athis.get(0,0)=athis.read(1,1)/determ;
+			athis.get(1,1)=temp1/determ;
 
-			A temp2=athis.h->data[0][1];
-			athis.h->data[0][1]=-athis.h->data[1][0]/determ;
-			athis.h->data[1][0]=-temp2/determ;
+			A temp2=athis.read(0,1);
+			athis.get(0,1)=-athis.read(1,0)/determ;
+			athis.get(1,0)=-temp2/determ;
 			return athis;
 
 		}
@@ -607,11 +736,11 @@ namespace KMat
 	{
 		//using BaseMatrix<typename GenMatrix,2,2>::data;
 		//Minor 1: based on 1,1
-		A m1=athis.h->data[0][0]*(athis.h->data[1][1]*athis.h->data[2][2]-athis.h->data[1][2]*athis.h->data[2][1]);
+		A m1=athis.read(0,0)*(athis.read(1,1)*athis.read(2,2)-athis.read(1,2)*athis.read(2,1));
 		//Minor 2: based on 1,2
-		A m2=athis.h->data[0][1]*(athis.h->data[1][0]*athis.h->data[2][2]-athis.h->data[2][0]*athis.h->data[1][2]);
+		A m2=athis.read(0,1)*(athis.read(1,0)*athis.read(2,2)-athis.read(2,0)*athis.read(1,2));
 		//Minor 2: based on 1,3
-		A m3=athis.h->data[0][2]*(athis.h->data[1][0]*athis.h->data[2][1]-athis.h->data[2][0]*athis.h->data[1][1]);
+		A m3=athis.read(0,2)*(athis.read(1,0)*athis.read(2,1)-athis.read(2,0)*athis.read(1,1));
 		A determ=m1-m2+m3;
 
 		//std::cout<<"Det:"<<determ<<std::endl;
@@ -620,17 +749,17 @@ namespace KMat
 		{
 			GenMatrix<A,3,3> t=athis.clone();
 
-			athis.h->data[0][0]=(t.h->data[1][1]*t.h->data[2][2]-t.h->data[1][2]*t.h->data[2][1])/determ;
-			athis.h->data[0][1]=(t.h->data[0][2]*t.h->data[2][1]-t.h->data[0][1]*t.h->data[2][2])/determ;
-			athis.h->data[0][2]=(t.h->data[0][1]*t.h->data[1][2]-t.h->data[0][2]*t.h->data[1][1])/determ;
+			athis.get(0,0)=(t.read(1,1)*t.read(2,2)-t.read(1,2)*t.read(2,1))/determ;
+			athis.get(0,1)=(t.read(0,2)*t.read(2,1)-t.read(0,1)*t.read(2,2))/determ;
+			athis.get(0,2)=(t.read(0,1)*t.read(1,2)-t.read(0,2)*t.read(1,1))/determ;
 
-			athis.h->data[1][0]=(t.h->data[1][2]*t.h->data[2][0]-t.h->data[1][0]*t.h->data[2][2])/determ;
-			athis.h->data[1][1]=(t.h->data[0][0]*t.h->data[2][2]-t.h->data[0][2]*t.h->data[2][0])/determ;
-			athis.h->data[1][2]=(t.h->data[0][2]*t.h->data[1][0]-t.h->data[0][0]*t.h->data[1][2])/determ;
+			athis.get(1,0)=(t.read(1,2)*t.read(2,0)-t.read(1,0)*t.read(2,2))/determ;
+			athis.get(1,1)=(t.read(0,0)*t.read(2,2)-t.read(0,2)*t.read(2,0))/determ;
+			athis.get(1,2)=(t.read(0,2)*t.read(1,0)-t.read(0,0)*t.read(1,2))/determ;
 
-			athis.h->data[2][0]=(t.h->data[1][0]*t.h->data[2][1]-t.h->data[1][1]*t.h->data[2][0])/determ;
-			athis.h->data[2][1]=(t.h->data[0][1]*t.h->data[2][0]-t.h->data[0][0]*t.h->data[2][1])/determ;
-			athis.h->data[2][2]=(t.h->data[0][0]*t.h->data[1][1]-t.h->data[0][1]*t.h->data[1][0])/determ;
+			athis.get(2,0)=(t.read(1,0)*t.read(2,1)-t.read(1,1)*t.read(2,0))/determ;
+			athis.get(2,1)=(t.read(0,1)*t.read(2,0)-t.read(0,0)*t.read(2,1))/determ;
+			athis.get(2,2)=(t.read(0,0)*t.read(1,1)-t.read(0,1)*t.read(1,0))/determ;
 
 			return athis;
 
@@ -642,6 +771,7 @@ namespace KMat
 	//Partial specialization for square matrices
 	template<typename T,unsigned S> class GenMatrix<T,S,S> : public BaseMatrix<GenMatrix,T,S,S>
 	{
+			//using BaseMatrix<KMat:::GenMatrix,T,S,S>::data;
 			friend GenMatrix<T,S,S> & transpose_square_matrix<>(GenMatrix<T,S,S> & athis);
 			friend GenMatrix<T,S,S> & invert_square_matrix<>(GenMatrix<T,S,S> &athis);
 		public:
@@ -650,14 +780,14 @@ namespace KMat
 			{
 				if(this->h==NULL)
 					return (*this);
-				this->makeExclusive();
+				this->getHandle();
 				return transpose_square_matrix(*this) ;
 			};//Override for square
 			GenMatrix<T,S,S> & fast_invert()
 			{
 				if(this->h==NULL)
 					return (*this);
-				this->makeExclusive();
+				this->getHandle();
 				return invert_square_matrix(*this) ;
 			};//Override for square
 	};
@@ -679,35 +809,43 @@ namespace KMat
 			return read(i,0);
 		};
 	};
-	//Vector of size 2
+
+
+	template <typename T> class GenMatrix<T,1,1> : public BaseMatrix<GenMatrix,T,1,1>
+	{
+		//Add single dimentionall acess operator
+		public:
+		using BaseMatrix<KMat::GenMatrix ,T,1,1>::read;
+		using BaseMatrix<KMat::GenMatrix ,T,1,1>::operator();
+		using BaseMatrix<KMat::GenMatrix ,T,1,1>::operator=;
+		GenMatrix<T,1,1>() :BaseMatrix<KMat::GenMatrix,T,1,1>() {};
+		explicit GenMatrix<T,1,1>(T ax) :BaseMatrix<KMat::GenMatrix,T,1,1>()
+		{
+			this->get(0,0)=ax;
+		};
+		COWRef<T,GenMatrix<T,1,1> > operator() (unsigned i)
+		{
+			return COWRef<T,GenMatrix<T,1,1> > ( static_cast< GenMatrix<T,1,1>  &> (*this),i,0);
+		};
+		const T& operator() (unsigned i) const
+		{
+			return read(i,0);
+		};
+	};
+
 	template <typename T> class GenMatrix<T,2,1> : public BaseMatrix<GenMatrix,T,2,1>
 	{
 		//Add single dimentionall acess operator
 		public:
-			GenMatrix<T,2,1>() :BaseMatrix<KMat::GenMatrix,T,2,1>(),x(*this,0,0),y(*this,1,0) {};
-
-			GenMatrix<T,2,1>(T ax,T ay) :BaseMatrix<KMat::GenMatrix,T,2,1>(),x(*this,0,0),y(*this,1,0)
-			{
-				this->makeExclusive();
-				this->h->data[0][0]=ax;
-				this->h->data[1][0]=ay;
-			};
-			//To avoid modifying .x,.y
-			GenMatrix<T,2,1> (BaseMatrix<KMat::GenMatrix ,T,2,1> const& o):
-			BaseMatrix<KMat::GenMatrix ,T,2,1>(o),x(*this,0,0),y(*this,1,0)
-			{};
-			GenMatrix<T,2,1> (GenMatrix<T,2,1> const& o):
-			BaseMatrix<KMat::GenMatrix ,T,2,1>(o),x(*this,0,0),y(*this,1,0)
-			{};
 		using BaseMatrix<KMat::GenMatrix ,T,2,1>::read;
 		using BaseMatrix<KMat::GenMatrix ,T,2,1>::operator();
 		using BaseMatrix<KMat::GenMatrix ,T,2,1>::operator=;
-
-
-		GenMatrix<T,2,1> & operator=( GenMatrix<T,2,1> const & o)
+		GenMatrix<T,2,1>() :BaseMatrix<KMat::GenMatrix,T,2,1>() {};
+		explicit GenMatrix<T,2,1>(T ax,T ay) :BaseMatrix<KMat::GenMatrix,T,2,1>()
 		{
-			return BaseMatrix<KMat::GenMatrix ,T,2,1>::operator=(o);
-		}
+			this->get(0,0)=ax;
+			this->get(1,0)=ay;
+		};
 		COWRef<T,GenMatrix<T,2,1> > operator() (unsigned i)
 		{
 			return COWRef<T,GenMatrix<T,2,1> > ( static_cast< GenMatrix<T,2,1>  &> (*this),i,0);
@@ -716,9 +854,9 @@ namespace KMat
 		{
 			return read(i,0);
 		};
-		COWRef<T,GenMatrix<T,2,1> > x,y;
-
 	};
+
+
 
 	// Affine	transform matrix, using homogenous coordinates!!
 	/* Internal represantation is one S-1 X S-1 matrix A

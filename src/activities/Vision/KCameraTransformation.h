@@ -1,12 +1,23 @@
 #ifndef KCAMERA_TRANSFORMATION_H
 #define KCAMERA_TRANSFORMATION_H
 
-#include "KMat.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
+#ifdef __GNUC__
+#pragma GCC visibility push(hidden)
+#define VISIBLE __attribute__ ((visibility("default")))
+#else
+#define VISIBLE
+#endif
+
+#include "KMat.h"
+
+
 #define sqrd(x) ( (x)*(x) )
 //#include "boost/date_time/local_time/local_time.hpp"
+
+
 typedef  struct measurement_struct
 {
     float mean;
@@ -101,6 +112,10 @@ class   KCameraTranformation
 
 };
 
+
+#ifdef __GNUC__
+#pragma GCC visibility pop
+#endif
 
 
 #endif

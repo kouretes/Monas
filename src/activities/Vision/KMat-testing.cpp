@@ -21,16 +21,22 @@ int main ()
 
 	//cout<<sizeof(GenMatrix<char,3,3>)<<endl;
 	GenMatrix<float,4,4> testS,res,res2 ;
-
-
 	matrix<float> m(4,4), foo(4,4),foo2(4,4);
+
+
+	std::cout<<"Sizes:"<<sizeof(KVecInt2)<<" "<<sizeof(KVecFloat2)<<std::endl;
 
 	float sum=0;
 	ptime end,start;
 
 	for (int j = 0; j < 4; j++)
 		for (int k = 0; k < 4; k++)
-			m.insert_element(j,k,testS(j,k)=((rand()%11)-5)/8.0);
+		{
+			testS(j,k)=((rand()%11)-5)/8.0;
+
+			m.insert_element(j,k,testS(j,k));
+		}
+
 
 	end = microsec_clock::universal_time();
 	start = microsec_clock::universal_time();

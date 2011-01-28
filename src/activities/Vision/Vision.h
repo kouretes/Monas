@@ -23,8 +23,12 @@
 #include <iostream>
 //#define DEBUGVISION
 
-
-
+#ifdef __GNUC__
+#pragma GCC visibility push(hidden)
+#define VISIBLE __attribute__ ((visibility("default")))
+#else
+#define VISIBLE
+#endif
 
 class Vision: public IActivity
 {
@@ -32,12 +36,12 @@ class Vision: public IActivity
 		/**
 		 * The only available constructor:
 		 */
-		Vision();
+		VISIBLE Vision();
 
-		void UserInit();
+		void VISIBLE UserInit();
 		void fetchAndProcess();
-		int Execute();
-		std::string GetName()
+		int VISIBLE  Execute();
+		std::string VISIBLE  GetName()
 		{
 			return "Vision";
 		}
@@ -153,16 +157,18 @@ class Vision: public IActivity
 
 		typedef struct traceresult_struct
 		{
-				KVecInt2 p;
-				bool smartsuccess;
+			KVecInt2 p;
+			bool smartsuccess;
 		} traceResult;
 
 		traceResult traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const ;
 		traceResult traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const ;
-		traceResult traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const;
+		//traceResult traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const;
 		traceResult traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const ;
 		//Wrapper for seg object
 		KSegmentator::colormask_t doSeg(const int x, const int y,const KSegmentator::colormask_t h=0xFF ) const;
+		void prepSeg(const int x,const int y) const;//Prefetch
+
 		inline bool validpixel(int x, int y) const;
 		KVecFloat2 imageToCamera( KVecFloat2 const & imagep)const ;
 		KVecFloat2 imageToCamera( KVecInt2 const & imagep) const;
@@ -193,5 +199,11 @@ class Vision: public IActivity
 		char *data;
 
 };
+
+
+#ifdef __GNUC__
+#pragma GCC visibility pop
+#endif
+
 
 #endif

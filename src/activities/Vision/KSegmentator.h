@@ -10,13 +10,19 @@
 #include "opencv/cv.h"
 
 
-
+#ifdef __GNUC__
+#pragma GCC visibility push(hidden)
+#define VISIBLE __attribute__ ((visibility("default")))
+#else
+#define VISIBLE
+#endif
 
 /**
  * Basic segmentation class, loads up a custom configuration file in the constructor
  * and fills up a colortable using the rules defined there
  */
 
+#define CACHETAG 0x1F
 
 //Assign disjoint bits to the color values to compose colormasks
 enum colors
@@ -47,12 +53,33 @@ class KSegmentator{
 				return 0;
 			return ((*this).*(classifyFunc))(i,j,h);
         };
+        inline void prefetchPixelData(const int i, const int j)
+        {
+#ifdef __GNUC__
+			if(type==INTERLEAVED)
+        	{
+        		int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
+        		__builtin_prefetch(dataPointer+startofBlock);
+        		//How much luck do we NOT have :)
+        		if((unsigned(dataPointer+startofBlock) & ~(CACHETAG) )!=(unsigned(dataPointer+startofBlock+3)& ~(CACHETAG) ))
+					__builtin_prefetch(dataPointer+startofBlock+3);
+        	}
+        	else if(type==FULL)
+        	{
+        		__builtin_prefetch(dataPointer+j*width*3+i*3);
+
+        	}
+
+#endif
+        }
         /**
         * Set Luminace scale of the environtment, to account for
         * luminance variations (ie exposure differences from ideal)
         */
 		void setLumaScale(float s);
 	private:
+
+		enum {INTERLEAVED,FULL} type;
 		static const unsigned char LUTres=3,LUTsize=32;//Carefull. LUTSIZE=256>>LUTRES
 		//Pointer to attached IplImage data
 		char const *dataPointer;
@@ -154,7 +181,7 @@ class KSegmentator{
 			return * ctableAccess(v,u,y);
         }
 
-        inline  colormask_t const * ctableAccess( unsigned char v, unsigned char u, unsigned char y) const
+        inline  colormask_t const * ctableAccess( const unsigned char v, const unsigned char u, const unsigned char y) const
         {
         	//y>>=yres;u>>=ures;v>>=vres;
 			//return ctable + y + u*ysize+v*ysize*usize;
@@ -166,5 +193,9 @@ class KSegmentator{
 
 
 };
+
+#ifdef __GNUC__
+#pragma GCC visibility pop
+#endif
 
 #endif //KSegmentator_H__

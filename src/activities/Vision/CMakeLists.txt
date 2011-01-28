@@ -9,7 +9,7 @@ set ( ActivityName Vision )
 set ( ActivitySrcs  KSegmentator.cpp
                     Vision.cpp
 		    VisionImageProcessing.cpp
-		    KCameraTransformation.cpp ../../../external/PracticalSocket/PracticalSocket.cpp
+		    KCameraTransformation.cpp ../../../external/PracticalSocket/PracticalSocket.cpp 
 )
 include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
 STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
@@ -19,4 +19,4 @@ include ( ../activTemplate.cmake )
 
 
 use_lib(${ActivityName} ALCOMMON LIBVISION OPENCV)
-add_executable(KMat-testing KMat-testing.cpp KMat.h)
+add_executable(KMat-testing KMat-testing.cpp KMat.h )

@@ -24,6 +24,14 @@ namespace
 	ActivityRegistrar<Vision>::Type temp("Vision");
 }
 
+#ifdef __GNUC__
+#pragma GCC visibility push(hidden)
+#define VISIBLE __attribute__ ((visibility("default")))
+#else
+#define VISIBLE
+#endif
+
+
 bool Vision::debugmode = false;
 TCPSocket * Vision::sock;
 
@@ -69,7 +77,7 @@ void saveFrame(IplImage *fIplImageHeader)
 
 }
 
-int Vision::Execute()
+int VISIBLE Vision::Execute()
 {
 	//cout<<"Vision Execute"<<endl;
 	static bool calibrated = false;
@@ -367,14 +375,14 @@ void Vision::fetchAndProcess()
 	//saveFrame(rawImage);
 	//return;
 	//cout<<"Attached"<<endl;
-	#ifdef DEBUGVISION
-		cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
-	#endif
+#ifdef DEBUGVISION
+	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
+#endif
 	allsm = _blk->read_data<AllSensorValues> ("AllSensorValues", "localhost", &p.time, &stamp);
-	#ifdef DEBUGVISION
-		cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
-		cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
-	#endif
+#ifdef DEBUGVISION
+	cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
+	cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
+#endif
 
 	if (allsm == NULL || !allsm->has_hjsm())//No sensor data!
 	{
@@ -456,7 +464,7 @@ void Vision::fetchAndProcess()
 
 
 	//startt=SysCall::_GetCurrentTimeInUSec();
-	balldata_t b = locateBall(ballpixels);
+	balldata_t b =locateBall(ballpixels);
 	//endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"locateball takes:"<<endt<<endl;
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
@@ -489,13 +497,9 @@ void Vision::fetchAndProcess()
 		float pitch, yaw;
 		pitch = atan(abs(c3d(2)) / sqrt(sqrd(c3d(0)) + sqrd(c3d(1))));
 		yaw = atan2(c3d(1), c3d(0));
-		if (b.distance.mean < 0.25)
-		{
-			trckmsg.set_referenceyaw(yaw / 2);
-		} else
-		{
-			trckmsg.set_referenceyaw(yaw);
-		}
+		float w=b.distance.mean*3;
+		w=w>1?1:w;
+		trckmsg.set_referenceyaw(yaw*w);
 		trckmsg.set_referencepitch(pitch - p.cameraPitch);
 		trckmsg.set_radius(b.cr);
 		//trckmsg.set_topic("vision");
@@ -564,7 +568,7 @@ void Vision::fetchAndProcess()
 
 }
 
-Vision::Vision() :
+VISIBLE Vision::Vision() :
 	xmlconfig(NULL), type(VISION_CSPACE)
 {
 	debugmode = false;
@@ -574,7 +578,7 @@ Vision::Vision() :
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 }
 
-void Vision::UserInit()
+void VISIBLE Vision::UserInit()
 {
 	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
 	if (xmlconfig->IsLoadedSuccessfully() == false)
@@ -863,3 +867,6 @@ void * Vision::StartServer(void * s)
 	return NULL;
 }
 
+#ifdef __GNUC__
+#pragma GCC visibility pop
+#endif

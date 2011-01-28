@@ -17,12 +17,15 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.53
-#define	LIMITDOWN 0.15
-#define	LIMITLEFT 0.55
-#define	LIMITRIGHT -0.55
-#define STEPVER 0.34
-#define STEPHOR 0.24
+#define PITCHMIN -0.35
+#define	PITCHMAX 0.3
+#define YAWMIN  1.2
+#define	YAWMAX 1
+#define PITCHSTEP 0.2
+#define YAWSTEP 0.5
+
+#define OVERSH 0.1
+#define WAITFOR 20
 
 namespace AL {
 	class ALMotionProxy;
@@ -58,13 +61,10 @@ class VBehavior: public IActivity {
 
 		bool startscan;
 		bool scanforball;
-		short scandirectionpitch;
-		short scandirectionyaw;
-
-		bool reachedlimitup;
-		bool reachedlimitdown;
-		bool reachedlimitleft;
-		bool reachedlimitright;
+		float targetYaw;
+		float targetPitch;
+		float psign,ysign;
+		unsigned waiting;
 
 		short balllastseendirection;
 		boost::shared_ptr<const AllSensorValues> allsm;

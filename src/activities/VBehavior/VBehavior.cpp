@@ -51,10 +51,7 @@ void VBehavior::UserInit() {
 
 	ballfound = 0;
 
-	reachedlimitup = false;
-	reachedlimitdown = false;
-	reachedlimitleft = false;
-	reachedlimitright = false;
+
 
 	scanforball = true;
 	startscan = true;
@@ -173,6 +170,7 @@ int VBehavior::Execute() {
 	//return 1;
 	static  int kickno=0;
 	static ptime lastkick=microsec_clock::universal_time()+seconds(4);
+	static ptime lastball=microsec_clock::universal_time()-seconds(30);
 	if (play) {
 
 		if (bmsg != 0) {
@@ -181,14 +179,12 @@ int VBehavior::Execute() {
 				scanforball = false; //if you are scanning for ball please stop now
 				back = 0;
 				MakeTrackBallAction();
-
-				ballfound += 1;
-				if (ballfound > 20)
-					ballfound = 20; //Increase this value when we see the ball
+				lastball=microsec_clock::universal_time();
+				ballfound =20;
 			}
 			else {
-				if (ballfound > 0)
-					ballfound -= 1; //Decrease it when we don't see the ball
+				if (lastball+seconds(1)<microsec_clock::universal_time())
+					ballfound = 0; //Decrease it when we don't see the ball
 			}
 		}
 		//eturn 0;
@@ -196,7 +192,7 @@ int VBehavior::Execute() {
 
 		//float X=0.0, Y=0.0, theta=0.0;
 		static float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		float posx=0.145, posy=0.026;
+		float posx=0.105, posy=0.029;
 		static float lastx=0,lasty=0;
 
 		if ((obsm != 0) && !turning) {
@@ -215,7 +211,7 @@ int VBehavior::Execute() {
 
 				readytokick = true;
 
-                if ( fabs( bx - posx ) > 0.01  || fabs( by - (side*posy) ) > 0.009) {
+                if ( fabs( bx - posx ) > 0.005  || fabs( by - (side*posy) ) > 0.005) {
                     //Y = gainFine * ( by - (side*posy) );
                     readytokick = false;
                 }
@@ -227,12 +223,12 @@ int VBehavior::Execute() {
 
 						static float X=0,Y=0,th=0,f=0.2;
 						//X=(bx-posx)*2;
-						X=((bx-posx +  5*(bx-lastx)-5*cX*0.042)/0.042)*0.45;
+						X=(bx-posx )*3;
 						X=X>0?X:X-0.04;
 						X=X>1?1:X;
 						X=X<-1?-1:X;
 						//Y=(by-offsety)*1.6;
-						Y=((by-offsety+5*(by-lasty)-5*cY*0.045)/0.045)*0.45;
+						Y=(by-offsety)*3;
 
 						lastx=bx;
 						lasty=by;
@@ -336,8 +332,6 @@ int VBehavior::Execute() {
 				back = 0;
 			}
 			readytokick = false;
-			scanforball = true;
-			startscan = true;
 		}
 
 		if ( (ballfound == 0) && !readytokick && !turning ) {
@@ -348,7 +342,7 @@ int VBehavior::Execute() {
 			scanforball = true;
 		}
 
-		if (scanforball && !readytokick && !turning && (allsm != 0&&allsm->has_hjsm()) ) {
+		if (scanforball ) {
 
 			HeadYaw= allsm->hjsm().sensordata(YAW);
 			HeadPitch= allsm->hjsm().sensordata(PITCH);
@@ -367,73 +361,74 @@ int VBehavior::Execute() {
 
 void VBehavior::HeadScanStep() {
 
+	static float s=(YAWMAX-YAWMIN)/(PITCHMAX-PITCHMIN);
 	if (startscan) {
-		littleWalk(0.0, 0.0, +2*TO_RAD);
 		//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
-		if (HeadPitch.sensorvalue() < LIMITDOWN) { // first go down
-			scandirectionpitch = 1;
-		} else {
-			scandirectionpitch = -1; // go up
+		ysign=HeadYaw.sensorvalue()>0?1:-1; //Side
+		//Crop to limits
+		targetPitch=HeadPitch.sensorvalue();
+		targetYaw=HeadYaw.sensorvalue();
+		targetPitch=(targetPitch>=PITCHMAX)?PITCHMAX:targetPitch;
+		targetPitch=(targetPitch<=PITCHMIN)?PITCHMIN:targetPitch;
+
+
+		float yawlim=s*(targetPitch-PITCHMIN)+YAWMIN;
+
+		targetYaw+=ysign*YAWSTEP;
+		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
+
+		if(fabs(targetYaw)>=yawlim)
+		{
+			ysign=-ysign;
 		}
-		reachedlimitup = false;
-		reachedlimitdown = false;
-		reachedlimitleft = false;
-		reachedlimitright = false;
-		scandirectionyaw = (HeadYaw.sensorvaluediff() > 0) ? 1 : -1;
-		startscan = false;
-	}
+		psign=1;//Down
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, targetYaw);
+		hmot->set_parameter(1, targetPitch);
+		_blk->publish_signal(*hmot, "motion");
+		waiting=0;
 
-	//continue scan
-	if (HeadPitch.sensorvalue() < LIMITUP) {
-		//Logger::Instance().WriteMsg("VBehavior", " LIMITUP ", Logger::ExtraExtraInfo);
-		reachedlimitup = true;
-		scandirectionpitch = 1;
-	}
-	if (HeadPitch.sensorvalue() > LIMITDOWN) {
-		//Logger::Instance().WriteMsg("VBehavior", " LIMITDOWN ", Logger::ExtraExtraInfo);
-		reachedlimitdown = true;
-		scandirectionpitch = -1;
-	}
-	if (HeadYaw.sensorvalue() > LIMITLEFT) {
-		//Logger::Instance().WriteMsg("VBehavior", "LIMITLEFT  ", Logger::ExtraExtraInfo);
-		reachedlimitleft = true;
-		scandirectionyaw = -1;
-	}
-	if (HeadYaw.sensorvalue() < LIMITRIGHT) {
-		//Logger::Instance().WriteMsg("VBehavior", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
-		reachedlimitright = true;
-		scandirectionyaw = 1;
-	}
+		startscan=false;
 
-	hmot->set_command("changeHead");
-	hmot->set_parameter(0, scandirectionyaw * STEPHOR); // Headyaw
-	hmot->set_parameter(1, 0.0); // headPitch
-
-	if (reachedlimitleft && reachedlimitright) {
-		Logger::Instance().WriteMsg("VBehavior", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
-		hmot->set_parameter(1, scandirectionpitch * STEPVER); // headPitch
-		reachedlimitleft = false;
-		reachedlimitright = false;
 	}
-	_blk->publish_signal(*hmot, "motion");
+	waiting++;
+	if( (fabs(targetPitch-HeadPitch.sensorvalue())<=OVERSH &&fabs(targetYaw -HeadYaw.sensorvalue())<=OVERSH )
+		|| waiting>=WAITFOR)
+	{
 
-	if (reachedlimitup && reachedlimitdown) { //scanning completed
-		Logger::Instance().WriteMsg("VBehavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
-		startscan = true;
-		reachedlimitdown = false;
-		reachedlimitup = false;
-		reachedlimitright = false;
-		reachedlimitleft = false;
-		///we should do something;
-		if (back>0) {
-			littleWalk(-0.2, 0.0, 0.0);
-			back--;
+		waiting=0;
+		float yawlim=s*(targetPitch-PITCHMIN)+YAWMIN;
+		if(fabs(fabs(targetYaw)-yawlim)<=OVERSH)
+		{
+			targetPitch+=psign*PITCHSTEP;
+			targetPitch=(targetPitch>=PITCHMAX)?PITCHMAX:targetPitch;
+			targetPitch=(targetPitch<=PITCHMIN)?PITCHMIN:targetPitch;
+			if(targetPitch>=PITCHMAX)
+				psign=-1;
+			else if(targetPitch<=PITCHMIN)
+				psign=1;
+
+
 		}
-		else {
-			littleWalk(0.0, 0.0, direction * 90 * TO_RAD);
-			//direction = - direction;
+
+
+		targetYaw+=ysign*YAWSTEP;
+		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
+		if(fabs(targetYaw)>=yawlim)
+		{
+			ysign=-ysign;
 		}
+
+
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, targetYaw);
+		hmot->set_parameter(1, targetPitch);
+		_blk->publish_signal(*hmot, "motion");
+
+
 	}
+	return ;
+
 }
 
 void VBehavior::read_messages() {
@@ -473,8 +468,8 @@ void VBehavior::velocityWalk(double x, double y, double th, double f)
 
 	th=th>1?1:th;
 	th=th<-1?-1:th;
-	cX=(cX+3*x)/4;
-	cY=(cY+3*y)/4;
+	cX=(cX+2*x)/3;
+	cY=(cY+2*y)/3;
 	cth=(cth+th)/2;
 
 

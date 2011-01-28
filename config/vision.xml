@@ -7,18 +7,18 @@
 <Dfov>56.8</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.068</ballsize>
-<balltolerance>0.30</balltolerance>
+<balltolerance>0.18</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.1</skipdistance>
 <seedistance>7.2</seedistance>
 <!-- Image Scanning parameters -->
-<scanV>40</scanV>
-<scanH>25</scanH>
-<minH>8</minH>
+<scanV>36</scanV>
+<scanH>32</scanH>
+<minH>4</minH>
 <!--<scanstep>23</scanstep>-->
-<bordersize>8</bordersize>
-<pixeltol>4</pixeltol>
-<subsampling>7</subsampling>
+<bordersize>4</bordersize>
+<pixeltol>3</pixeltol>
+<subsampling>4</subsampling>
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
@@ -28,6 +28,6 @@
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>16</sensordelay>
+<sensordelay>12</sensordelay>
 
-<pitchoffset>0.09</pitchoffset>
+<pitchoffset>0.08</pitchoffset>
