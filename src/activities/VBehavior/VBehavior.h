@@ -11,7 +11,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 
-#include "alptr.h"
+//#include "alptr.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -24,10 +24,10 @@
 #define STEPVER 0.34
 #define STEPHOR 0.24
 
-namespace AL {
-	class ALMotionProxy;
-	class ALMemoryProxy;
-}
+//namespace AL {
+//	class ALMotionProxy;
+//	class ALMemoryProxy;
+//}
 
 class VBehavior: public IActivity {
 
@@ -44,8 +44,8 @@ class VBehavior: public IActivity {
 		void mgltest();
 
 	private:
-		AL::ALPtr<AL::ALMotionProxy> motion;
-		AL::ALPtr<AL::ALMemoryProxy> memory;
+//AL::ALPtr<AL::ALMotionProxy> motion;
+//		AL::ALPtr<AL::ALMemoryProxy> memory;
 		short ballfound;
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;

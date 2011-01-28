@@ -15,5 +15,9 @@
 #include <alcore/alptr.h>
 #include <alcommon/alproxy.h>
 #include <alproxies/almemoryproxy.h>
+#elif NAOQI_1_10_10
+#include <alcore/alptr.h>
+#include <alcommon/alproxy.h>
+#include <alproxies/almemoryproxy.h>
 #endif
 #endif /* ALDEBARAN_ROBOTCONTROLLER_H_ */

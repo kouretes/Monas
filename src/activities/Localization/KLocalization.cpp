@@ -12,7 +12,6 @@
 #include "newran/newran.h"
 #include "KLocalization.h"
 #include "Kxmlutils.h"
-#include "almotionproxy.h"
 #include <iomanip>
 #include <boost/lexical_cast.hpp>
 #include "Kutils.h"

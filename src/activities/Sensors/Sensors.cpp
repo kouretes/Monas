@@ -71,7 +71,8 @@ int Sensors::Execute() {
 		dcm->set(commands);
 #ifdef KROBOT_IS_REMOTE_OFF
 		cout<<"BIND TO DCM postProcess!"<<endl;
-		dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
+		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
+		//dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
 #endif
 		firstrun = false;
 	}
