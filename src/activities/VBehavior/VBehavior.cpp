@@ -171,6 +171,7 @@ int VBehavior::Execute() {
 	static  int kickno=0;
 	static ptime lastkick=microsec_clock::universal_time()+seconds(4);
 	static ptime lastball=microsec_clock::universal_time()-seconds(30);
+
 	if (play) {
 
 		if (bmsg != 0) {
@@ -191,9 +192,9 @@ int VBehavior::Execute() {
 		Logger::Instance().WriteMsg("VBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
 		//float X=0.0, Y=0.0, theta=0.0;
-		static float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		float posx=0.105, posy=0.029;
-		static float lastx=0,lasty=0;
+		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
+		float posx=0.117, posy=0.03;
+		//static float lastx=0,lasty=0;
 
 		if ((obsm != 0) && !turning) {
 
@@ -201,8 +202,8 @@ int VBehavior::Execute() {
 			int side=1;
 			bd = obsm->ball().dist();
 			bb = obsm->ball().bearing();
-			bx = obsm->ball().dist() * cos( obsm->ball().bearing() )/2 + bx/2;
-			by = obsm->ball().dist() * sin( obsm->ball().bearing() )/2 + by/2;
+			bx = obsm->ball().dist() * cos( obsm->ball().bearing() ) ;//+ bx/2;
+			by = obsm->ball().dist() * sin( obsm->ball().bearing() ) ;// + by/2;
 			side = (bb > 0) ? 1 : -1;
 			if(kickno==0||kickno==2)	side=-1;
 				else side=1;
@@ -211,7 +212,7 @@ int VBehavior::Execute() {
 
 				readytokick = true;
 
-                if ( fabs( bx - posx ) > 0.005  || fabs( by - (side*posy) ) > 0.005) {
+                if ( fabs( bx - posx ) > 0.01  || fabs( by - (side*posy) ) > 0.012) {
                     //Y = gainFine * ( by - (side*posy) );
                     readytokick = false;
                 }
@@ -224,22 +225,30 @@ int VBehavior::Execute() {
 						static float X=0,Y=0,th=0,f=0.2;
 						//X=(bx-posx)*2;
 						X=(bx-posx )*3;
-						X=X>0?X:X-0.04;
+						X=X>0?X:X-0.01;
 						X=X>1?1:X;
 						X=X<-1?-1:X;
 						//Y=(by-offsety)*1.6;
 						Y=(by-offsety)*3;
-
-						lastx=bx;
-						lasty=by;
+//
+//						lastx=bx;
+//						lasty=by;
 
 						if(bd>0.26)
-							th=0.1 *Y;
+						{
+							if(bx<0)
+								th=0.2 *Y;
+							else
+								th=0.1 *Y;
+
+							Y=Y/2.0;
+
+						}
 						else
-							th=-0.15*by*(Y>0?-1:1);
+							th=-0.06*by*(Y>0?-1:1);
 
 
-						Y=Y>0?Y+0.05:Y-0.05;
+						Y=Y>0?Y+0.01:Y-0.01;
 						Y=Y>1?1:Y;
 						Y=Y<-1?-1:Y;
 						f=1;
@@ -361,7 +370,8 @@ int VBehavior::Execute() {
 
 void VBehavior::HeadScanStep() {
 
-	static float s=(YAWMAX-YAWMIN)/(PITCHMAX-PITCHMIN);
+	static float s=(YAWMIN-YAWMAX)/(PITCHMIN-PITCHMAX);
+
 	if (startscan) {
 		//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
 		ysign=HeadYaw.sensorvalue()>0?1:-1; //Side
@@ -372,7 +382,9 @@ void VBehavior::HeadScanStep() {
 		targetPitch=(targetPitch<=PITCHMIN)?PITCHMIN:targetPitch;
 
 
-		float yawlim=s*(targetPitch-PITCHMIN)+YAWMIN;
+		float yawlim=s*(targetPitch-PITCHMAX)+YAWMAX;
+		//if(fabs(targetPitch)<PITCHSTEP) yawlim=YAWBACK;
+
 
 		targetYaw+=ysign*YAWSTEP;
 		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
@@ -397,7 +409,11 @@ void VBehavior::HeadScanStep() {
 	{
 
 		waiting=0;
-		float yawlim=s*(targetPitch-PITCHMIN)+YAWMIN;
+
+		float yawlim=s*(targetPitch-PITCHMAX)+YAWMAX;
+		//if(fabs(targetPitch)<PITCHSTEP) yawlim=YAWBACK;
+
+
 		if(fabs(fabs(targetYaw)-yawlim)<=OVERSH)
 		{
 			targetPitch+=psign*PITCHSTEP;

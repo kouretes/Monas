@@ -11,21 +11,20 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 
-#include "alptr.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif
 
-#define PITCHMIN -0.35
+#define PITCHMIN -0.55
 #define	PITCHMAX 0.3
-#define YAWMIN  1.2
-#define	YAWMAX 1
-#define PITCHSTEP 0.2
-#define YAWSTEP 0.5
+#define YAWMIN 0.8
+#define YAWMAX 1.3
+#define PITCHSTEP 0.22
+#define YAWSTEP 0.45
 
-#define OVERSH 0.1
-#define WAITFOR 20
+#define OVERSH 0.06
+#define WAITFOR 40
 
 namespace AL {
 	class ALMotionProxy;
@@ -47,8 +46,6 @@ class VBehavior: public IActivity {
 		void mgltest();
 
 	private:
-		AL::ALPtr<AL::ALMotionProxy> motion;
-		AL::ALPtr<AL::ALMemoryProxy> memory;
 		short ballfound;
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;
