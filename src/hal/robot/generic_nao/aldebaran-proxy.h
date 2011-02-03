@@ -13,5 +13,8 @@
 #elif NAOQI_1_8_16
 #include <alcore/alptr.h>
 #include <alcommon/alproxy.h>
+#elif NAOQI_1_10_10
+#include <alcore/alptr.h>
+#include <alcommon/alproxy.h>
 #endif
 #endif /* ALDEBARAN_PROXY_H_ */

@@ -17,9 +17,9 @@
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::: Platform variables :::..
 
-# define MONADWRAPPER_IS_REMOTE_ON
+# define MONASWRAPPER_IS_REMOTE_ON
 
-# define MONADWRAPPER_REVISION ""
+# define MONASWRAPPER_REVISION ""
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::: Options variables :::..
 

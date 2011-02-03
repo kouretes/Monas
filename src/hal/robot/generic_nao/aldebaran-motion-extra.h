@@ -18,6 +18,11 @@
 #include <alcommon/alproxy.h>
 #include <alvalue/alvalue.h>
 #include <alproxies/alframemanagerproxy.h>
+#elif NAOQI_1_10_10
+#include <alcore/alptr.h>
+#include <alcommon/alproxy.h>
+#include <alvalue/alvalue.h>
+#include <alproxies/alframemanagerproxy.h>
 
 #endif
 #endif /* ALDEBARAN_MOTION_EXTRA_H_ */

@@ -26,10 +26,10 @@
 #define OVERSH 0.06
 #define WAITFOR 40
 
-namespace AL {
-	class ALMotionProxy;
-	class ALMemoryProxy;
-}
+//namespace AL {
+//	class ALMotionProxy;
+//	class ALMemoryProxy;
+//}
 
 class VBehavior: public IActivity {
 

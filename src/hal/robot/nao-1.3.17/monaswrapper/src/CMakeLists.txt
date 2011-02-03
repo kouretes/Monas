@@ -12,7 +12,7 @@
 
 
 ############################ PROJECT NAME
-PROJECT( MONADWRAPPER )
+PROJECT( WRAPPER )
 
 
 
@@ -33,83 +33,83 @@ INCLUDE_DIRECTORIES( ${PROXIES_INCLUDE_DIR} ${ALCOMMON_INCLUDE_DIR} ${PTHREAD_IN
 
 ############################ PROJECT SOURCES FILES
 # Add source files needed to compile this project
-SET(MONADWRAPPER_SRCS
+SET(WRAPPER_SRCS
 
 #<FILES> don't remove this comment
 talws.cpp talws.h 
 #</FILES> don't remove this comment
 
-    monadwrapper.cpp monadwrapper.h
+    monaswrapper.cpp monaswrapper.h
   )
 
 
 
 ############################ CHECK LIBRARY / EXECUTABLE OPTION
 
-IF( MONADWRAPPER_IS_REMOTE STREQUAL "OFF" )
-    MESSAGE( STATUS "monadwrapper is compiled as a dynamic object" )
-    ADD_LIBRARY( monadwrapper SHARED ${MONADWRAPPER_SRCS} )
-ELSE( MONADWRAPPER_IS_REMOTE STREQUAL "OFF" )
-    MESSAGE( STATUS "monadwrapper is compiled as a remote object" )
-    ADD_EXECUTABLE( monadwrapper ${MONADWRAPPER_SRCS} )
-ENDIF( MONADWRAPPER_IS_REMOTE STREQUAL "OFF" )
+IF( WRAPPER_IS_REMOTE STREQUAL "OFF" )
+    MESSAGE( STATUS "monaswrapper is compiled as a dynamic object" )
+    ADD_LIBRARY( monaswrapper SHARED ${WRAPPER_SRCS} )
+ELSE( WRAPPER_IS_REMOTE STREQUAL "OFF" )
+    MESSAGE( STATUS "monaswrapper is compiled as a remote object" )
+    ADD_EXECUTABLE( monaswrapper ${WRAPPER_SRCS} )
+ENDIF( WRAPPER_IS_REMOTE STREQUAL "OFF" )
 
 
 
 
 ############################ SET LIBRARIES TO LINK WITH
-TARGET_LINK_LIBRARIES( monadwrapper GenLinux ${ModuleLibraries} ${TargetLinkLibraries} tinyxml 
+TARGET_LINK_LIBRARIES( monaswrapper GenLinux ${ModuleLibraries} ${TargetLinkLibraries} tinyxml 
         ${ALCOMMON_LIBRARIES} ${PTHREAD_LIBRARIES} ${NEWMAT_LIBRARIES}  ${TINYXML_LIBRARIES} ${BOOST_LIBRARIES}
         )
-install ( TARGETS monadwrapper 
+install ( TARGETS monaswrapper 
             RUNTIME DESTINATION   bin
             LIBRARY DESTINATION   lib
             ARCHIVE DESTINATION   lib/static )
 
 ############################ BINARY COPY
 # copy binaries in the output folder automatically
-GET_TARGET_PROPERTY( MONADWRAPPER_LOCATION monadwrapper LOCATION)
+GET_TARGET_PROPERTY( WRAPPER_LOCATION monaswrapper LOCATION)
 
 
 IF ( WIN32 )
-    STRING(REGEX REPLACE "monadwrapper.dll" "" MONADWRAPPER_LOCATION_SRC ${MONADWRAPPER_LOCATION})
+    STRING(REGEX REPLACE "monaswrapper.dll" "" WRAPPER_LOCATION_SRC ${WRAPPER_LOCATION})
     SET (OUTPUT_ROOT_DIR_LIB ${AL_DIR}/modules/lib/ )
-    FILE(TO_NATIVE_PATH ${MONADWRAPPER_LOCATION_SRC} MONADWRAPPER_LOCATION_SRC)
+    FILE(TO_NATIVE_PATH ${WRAPPER_LOCATION_SRC} WRAPPER_LOCATION_SRC)
     FILE(TO_NATIVE_PATH ${OUTPUT_ROOT_DIR_LIB} OUTPUT_ROOT_DIR_LIB)
 ENDIF ( WIN32 )
 
 
-IF( MONADWRAPPER_IS_REMOTE STREQUAL "OFF" )
+IF( WRAPPER_IS_REMOTE STREQUAL "OFF" )
 
 IF (WIN32)
 	  ADD_CUSTOM_COMMAND(
-	    TARGET monadwrapper
+	    TARGET monaswrapper
 	    POST_BUILD
-	    COMMAND echo ${MONADWRAPPER_LOCATION_SRC}*
+	    COMMAND echo ${WRAPPER_LOCATION_SRC}*
     	    COMMAND echo ${OUTPUT_ROOT_DIR_LIB}
-	    COMMAND xcopy  ${MONADWRAPPER_LOCATION_SRC}*.dll ${OUTPUT_ROOT_DIR_LIB} /Y /C
+	    COMMAND xcopy  ${WRAPPER_LOCATION_SRC}*.dll ${OUTPUT_ROOT_DIR_LIB} /Y /C
 	  )
 ELSE (WIN32)
 
   ADD_CUSTOM_COMMAND(
-    TARGET monadwrapper
+    TARGET monaswrapper
     POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy
-    ${MONADWRAPPER_LOCATION}
+    ${WRAPPER_LOCATION}
     ${OUTPUT_ROOT_DIR_LIB}
   )
  ENDIF (WIN32)
- ELSE( MONADWRAPPER_IS_REMOTE STREQUAL "OFF" )
+ ELSE( WRAPPER_IS_REMOTE STREQUAL "OFF" )
   ADD_CUSTOM_COMMAND(
-    TARGET monadwrapper
+    TARGET monaswrapper
     POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy
-    ${MONADWRAPPER_LOCATION}
+    ${WRAPPER_LOCATION}
     ${OUTPUT_ROOT_DIR_EXE}
   )
-ENDIF( MONADWRAPPER_IS_REMOTE STREQUAL "OFF" )
+ENDIF( WRAPPER_IS_REMOTE STREQUAL "OFF" )
 
 
 

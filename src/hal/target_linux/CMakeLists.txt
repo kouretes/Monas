@@ -11,12 +11,12 @@ include_directories ( AFTER ../../architecture/narukom/
                             ../../architecture/narukom/system/ )
 
 
-add_executable ( Monad main.cpp )
+add_executable ( Monas main.cpp )
 
 
-target_link_libraries( Monad M_tinyxml ${TargetLinkLibraries} ${ActivityLibraries} )
+target_link_libraries( Monas M_tinyxml ${TargetLinkLibraries} ${ActivityLibraries} )
 
-install ( TARGETS Monad 
+install ( TARGETS Monas 
             RUNTIME DESTINATION   bin
             LIBRARY DESTINATION   lib
             ARCHIVE DESTINATION   lib/static )

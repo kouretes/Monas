@@ -14,7 +14,7 @@ include_directories ( AFTER ../architecture/narukom/
 
 add_executable ( stateTest statechartTest.cpp ../messages/planMsg.pb.cc )
 
-target_link_libraries ( stateTest statechartEngine narukom MonadCore GenLinux)
+target_link_libraries ( stateTest statechartEngine narukom MonasCore GenLinux)
 
 install ( TARGETS stateTest 
             RUNTIME DESTINATION   bin

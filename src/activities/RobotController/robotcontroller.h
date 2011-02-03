@@ -1,5 +1,5 @@
 /*! \file robotcontroller.h
- *	\brief A Monad Activity that reads game_state and button events and publishes
+ *	\brief A Monas Activity that reads game_state and button events and publishes
  *	\brief messages to Behavior and Led Handler. RobotController Sets colors to Chest Button and Feet Leds.
  *
  * \bug No known bugs, Yeah realy!
@@ -25,7 +25,7 @@
 * \class RobotController
 *
 * \file RobotController.h
-* @brief A Monad Activity that receives the gamestate either from network interface either from buttor interfaces,
+* @brief A Monas Activity that receives the gamestate either from network interface either from buttor interfaces,
 *  publishes the gamestate ledchange messages regarding the current player state.
 */
 class RobotController: public IActivity {
