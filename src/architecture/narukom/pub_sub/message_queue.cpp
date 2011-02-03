@@ -19,7 +19,7 @@
 */
 
 #include "message_queue.h"
-#include "../tools/XML.h"
+#include "tools/XML.h"
 
 
 using std::map;

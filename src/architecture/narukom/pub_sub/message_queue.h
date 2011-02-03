@@ -31,7 +31,7 @@
 #include "publisher.h"
 
 #include "topic_tree.h"
-#include "../system/thread.h"
+#include "hal/thread.h"
 #include "tools/statMovingAverage.h"
 #include "hal/syscall.h"
 

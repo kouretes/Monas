@@ -10,10 +10,6 @@ set (CMAKE_MODULE_PATH ${NarukomDir}/cmake)
 #Setting the configuration Directory where all the .cmake are stored it's the same as CMAKE_MODULE_PATH
 set (ConfigDir ${NarukomDir}/cmake)
 
-#if narukom is not included in another project then setting the external
-if( "x${ExternalDir}x" STREQUAL "xx" )
-  set( ExternalDir ${NarukomDir}/external)
-endif("x${ExternalDir}x" STREQUAL "xx" )
 
 #if no targetplatform has been set then the default is linux
 if ( "x${TargetPlatform}x" STREQUAL "xx")
@@ -29,7 +25,7 @@ include(${ConfigDir}/external_dependencies.cmake)
 
 
 #include the specific configuration for the target platform
-include(${ConfigDir}/${TargetPlatform}/${TargetPlatform}-config.cmake)
+#include(${ConfigDir}/${TargetPlatform}/${TargetPlatform}-config.cmake)
 
 add_definitions(${ExternalDefinitions}
 	  "-Wall"
@@ -51,28 +47,15 @@ LIBRARY DESTINATION   lib
 ARCHIVE DESTINATION   lib/static )
 
 
-if(${TargetPlatform} STREQUAL "robot")
+if(${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
  # use_lib(narukom ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST TINYXML)
   #target_link_libraries(narukom ${ProtobufLibrary} narukom_messages boost_system-mt boost_date_time-mt boost_thread-mt )# ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary})
-  use_lib(narukom BOOST TINYXML)
-  target_link_libraries(narukom ${ProtobufLibrary})
-else (${TargetPlatform} STREQUAL "robot")
-    message("!@#!@#!@#!#!${ProtobufLibrary} ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary}")
-    target_link_libraries(narukom ${ProtobufLibrary} ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary})
-endif(${TargetPlatform} STREQUAL "robot")
+  include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
+  #set(CTC_DIR ${TOOLCHAIN_DIR})
+  use_lib(narukom BOOST TINYXML)#TINYXML
+  target_link_libraries(narukom ${ProtobufLibrary} )#{TinyxmlLibrary}
+else (${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
+    #message("!@#!@#!@#!#!${ProtobufLibrary} ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary}")
+    target_link_libraries(narukom ${ProtobufLibrary} ${Boost_LIBRARIES} ${PThreadLibrary} ${TinyxmlLibrary})#${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary}
+endif(${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
 
-if( "x${BUILD_EXTERNAL}x" STREQUAL "xONx")
-  add_subdirectory(external)
-endif( "x${BUILD_EXTERNAL}x" STREQUAL "xONx")
-
-if( "${BUILD_DEMO}" STREQUAL "ON")
-  add_subdirectory(demo)
- endif ( "${BUILD_DEMO}" STREQUAL "ON")
-
-if( "${BUILD_DEMO}" STREQUAL "")
-  set ( BUILD_DEMO "OFF" CACHE PATH "" FORCE)
-endif( "${BUILD_DEMO}" STREQUAL "")
-
-if( "${BUILD_EXTERNAL}" STREQUAL "")
-  set ( BUILD_EXTERNAL "OFF" CACHE PATH "" FORCE)
-endif( "${BUILD_EXTERNAL}" STREQUAL "")

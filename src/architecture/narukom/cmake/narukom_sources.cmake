@@ -16,28 +16,28 @@ SET(NARUKOM_PUB_SUB_SRCS
    ${NarukomDir}/pub_sub/message_buffer.cpp
    ${NarukomDir}/pub_sub/filters/filter.h
    ${NarukomDir}/pub_sub/filters/filter.cpp
-   ${NarukomDir}/pub_sub/filters/special_filters.cpp
-   #${NarukomDir}/pub_sub/filters/content_filter.cpp
-   ${NarukomDir}/pub_sub/filters/content_filter.h
-   ${NarukomDir}/pub_sub/filters/special_filters.h
-   ${NarukomDir}/pub_sub/filters/time_filter.cpp
-   ${NarukomDir}/pub_sub/filters/time_filter.h
-   ${NarukomDir}/pub_sub/filters/topic_filter.h
-	${NarukomDir}/pub_sub/filters/topic_filter.cpp
-	${NarukomDir}/pub_sub/filters/type_filter.h
-   ${NarukomDir}/pub_sub/filters/type_filter.cpp
+   #${NarukomDir}/pub_sub/filters/special_filters.cpp
+   ##${NarukomDir}/pub_sub/filters/content_filter.cpp
+   #${NarukomDir}/pub_sub/filters/content_filter.h
+   #${NarukomDir}/pub_sub/filters/special_filters.h
+   #${NarukomDir}/pub_sub/filters/time_filter.cpp
+   #${NarukomDir}/pub_sub/filters/time_filter.h
+   #${NarukomDir}/pub_sub/filters/topic_filter.h
+   #${NarukomDir}/pub_sub/filters/topic_filter.cpp
+   #${NarukomDir}/pub_sub/filters/type_filter.h
+   #${NarukomDir}/pub_sub/filters/type_filter.cpp
 )
 # SET(NARUKOM_PUB_SUB_INCLUDE_DIR ${NarukomDir}/pub_sub/)
 # 
 # 
- set( NARUKOM_SYSTEM_SRCS 
- 	${NarukomDir}/system/thread.h
- )
+# set( NARUKOM_SYSTEM_SRCS 
+# 	${NarukomDir}/system/thread.h
+# )
 # 
 # SET(NARUKOM_SYSTEM_INCLUDE_DIR ${NarukomDir}/system/)
 # 
 # 
- set(NARUKOM_NETWORK_SRCS
+# set(NARUKOM_NETWORK_SRCS
 #${NarukomDir}/network/catalog.h
 #${NarukomDir}/network/catalog.cpp
 #${NarukomDir}/network/host.h
@@ -69,6 +69,6 @@ SET(NARUKOM_PUB_SUB_SRCS
 # 	${NarukomDir}/network/udp_multicast_channel.cpp
 # 	${NarukomDir}/network/udp_multicast_channel.h
 #       
- )
+# )
 # 
 # SET(NARUKOM_NETWORK_INCLUDE_DIR ${NarukomDir}/network/)
