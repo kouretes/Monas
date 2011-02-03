@@ -58,6 +58,7 @@ class KSegmentator{
 #ifdef __GNUC__
 			if(type==INTERLEAVED)
         	{
+
         		int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
         		__builtin_prefetch(dataPointer+startofBlock);
         		//How much luck do we NOT have :)

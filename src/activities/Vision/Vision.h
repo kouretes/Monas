@@ -145,15 +145,15 @@ class Vision: public IActivity
 
 		void gridScan(const KSegmentator::colormask_t color);
 
-		bool calculateValidBall(balldata_t ball, KSegmentator::colormask_t c) const ;
+		bool calculateValidBall(balldata_t const ball, KSegmentator::colormask_t c) const ;
 		bool calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c) const ;
 		bool calculateValidGoalPostBase(const goalpostdata_t &goal, KSegmentator::colormask_t c) const;
 		bool calculateValidGoalPostTop(goalpostdata_t &goal, KSegmentator::colormask_t c) const ;
 
-		balldata_t locateBall(std::vector<KVecInt2> cand);
-		void publishObstacles(std::vector<KVecInt2> points) const;
+		balldata_t locateBall(std::vector<KVecInt2> const& cand);
+		void publishObstacles(std::vector<KVecInt2>  points) const;
 		KVecFloat2 centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) const ;
-		int locateGoalPost(std::vector<KVecInt2> cand, KSegmentator::colormask_t c);
+		int locateGoalPost(std::vector<KVecInt2> const& cand, KSegmentator::colormask_t c);
 
 		typedef struct traceresult_struct
 		{

@@ -20,7 +20,12 @@
 # define UNUSED(x) x
 #endif
 
-
+#ifdef __RESTRICTED
+#elif defined(__GNUC__)
+#define __RESTRICTED __restrict__
+#else
+#define __RESTRICTED
+#endif
 /**
  * KMat (koimat`) :: Kouretes Matrix Library!
  * Provides a templated statically binded (sounds exotic :P )
@@ -235,7 +240,7 @@ namespace KMat
 	template<typename T> class RefHandle
 	{
 		protected:
-		RefCounted<T> * h;
+		RefCounted<T> * __RESTRICTED h;
 		RefHandle() : h(0){};
 		RefHandle(RefHandle<T> const & o)
 		{
@@ -346,7 +351,7 @@ namespace KMat
 			{
 				return add(rop);
 			}
-			D<T,M,N>& add( BaseMatrix<D,T,M,N> const& rop)
+			D<T,M,N>& add( BaseMatrix<D,T,M,N> const& __RESTRICTED rop)
 			{
 				if(h==NULL||rop.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
@@ -361,7 +366,7 @@ namespace KMat
 			/**
 			 *	In place add another matrix to this, column wise add
 			 **/
-			D<T,M,N>& column_add( BaseMatrix<D,T,M,1> const& rop)
+			D<T,M,N>& column_add( BaseMatrix<D,T,M,1> const& __RESTRICTED rop)
 			{
 				if(h==NULL||rop.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
@@ -393,7 +398,7 @@ namespace KMat
 			{
 				return sub(rop);
 			}
-			D<T,M,N>& sub( BaseMatrix<D,T,M,N> const& rop)
+			D<T,M,N>& sub( BaseMatrix<D,T,M,N> const& __RESTRICTED rop)
 			{
 				if(h==NULL||rop.h==NULL)
 					return static_cast< D<T,M,N> &> (*this);
@@ -413,11 +418,11 @@ namespace KMat
 			{
 				return slow_mult(rop);
 			}
-			template<unsigned L> D<T,M,L>  slow_mult( BaseMatrix<D,T,N,L> const& rop) const
+			template<unsigned L> D<T,M,L>  slow_mult( BaseMatrix<D,T,N,L> const& __RESTRICTED rop) const
 			{
 				D<T,M,L> res;
 
-				//std::cout<<"SLOW"<<std::endl;
+				//std::cout<<"S";//<<std::endl;
 				if(h==NULL||rop.h==NULL)
 					return res;
 				res.getHandle();
@@ -429,11 +434,13 @@ namespace KMat
 					{
 						//Clear value
 						res.h->data(i,j)=0;
+						T r=0;
 						for (unsigned k=0;k<N;k++)
 						{
-							res.h->data(i,j)+=h->data(i,k)*rop.h->data(k,j);
+							r+=h->data(i,k)*rop.h->data(k,j);
 
 						}
+						res.h->data(i,j)=r;
 					}
 
 				}
@@ -447,7 +454,7 @@ namespace KMat
 			{
 				return fast_mult(rop);
 			}
-			D<T,M,N> & fast_mult( BaseMatrix<D,T,N,N> const& rop)//in place mult!!!
+			D<T,M,N> & fast_mult( BaseMatrix<D,T,N,N> const&  rop)//in place mult!!!
 			{
 
 				if(h==NULL||rop.h==NULL)
@@ -458,7 +465,7 @@ namespace KMat
 				}
 				RefHandle<DataContainer<T,M,N> >::getHandle();
 				T tmp[N];
-				//std::cout<<"IN PLACE"<<h->counts<<std::endl;
+				//std::cout<<"F";//<<h->counts<<std::endl;
 
 				//For each line of the resulting array
 				for (unsigned i=0;i<M;i++)
@@ -474,6 +481,8 @@ namespace KMat
 
 						}
 					}
+					//std::cout<<"wtf:"<<std::endl;
+					//prettyPrint();
 					memcpy(h->data(i),tmp,sizeof(T[N]));
 				}
 

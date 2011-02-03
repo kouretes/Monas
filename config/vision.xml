@@ -6,19 +6,19 @@
 <SegmentationTop>5-KouretesLab-segall.conf</SegmentationTop>
 <Dfov>56.8</Dfov>
 <!-- Ball Detection -->
-<ballsize>0.068</ballsize>
-<balltolerance>0.18</balltolerance>
+<ballsize>0.067</ballsize>
+<balltolerance>0.15</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.1</skipdistance>
 <seedistance>7.2</seedistance>
 <!-- Image Scanning parameters -->
-<scanV>36</scanV>
-<scanH>32</scanH>
-<minH>4</minH>
+<scanV>32</scanV>
+<scanH>36</scanH>
+<minH>6</minH>
 <!--<scanstep>23</scanstep>-->
-<bordersize>4</bordersize>
+<bordersize>12</bordersize>
 <pixeltol>3</pixeltol>
-<subsampling>4</subsampling>
+<subsampling>5</subsampling>
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
@@ -28,6 +28,6 @@
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>12</sensordelay>
+<sensordelay>13</sensordelay>
 
-<pitchoffset>0.08</pitchoffset>
+<pitchoffset>0.07</pitchoffset>

@@ -277,7 +277,6 @@ measurement* KCameraTranformation::projectionDistance(KVecFloat2 &v,float height
     //cout<<"bearing mean:"<<res[1].mean<<endl;
     return res;
 
-
 }
 
 
@@ -291,11 +290,7 @@ float KCameraTranformation::getPitch() const
 
 float KCameraTranformation::getRoll() const
 {
-
-
     return atan(cameraChain(2,1)/cameraChain(2,2));
-
-
 }
 
 #ifdef __GNUC__
