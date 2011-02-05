@@ -19,59 +19,39 @@
 */
 //#include "../pingpong.pb.h"
 #include "publisher.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "message_queue.h"
+#include "message_buffer.h"
 
 using std::string;
-using google::protobuf::Message;
-#include <google/protobuf/descriptor.h>
+using namespace std;
 
-Publisher::Publisher()
+
+Publisher::Publisher() :publisher_name("Default Publisher"),pub_msg_buf(NULL)
 {
-    publisher_name = string("Default Publisher");
-    pub_msg_buf = 0;
-    pub_msg_queue = 0;
+
 }
 
-Publisher::Publisher( std::string pub_name )
+Publisher::Publisher( std::string pub_name ):publisher_name(pub_name),pub_msg_buf(NULL)
 {
-    publisher_name = pub_name;
-    pub_msg_buf = 0;
-    pub_msg_queue = 0;
+
 }
 
-Publisher::Publisher(const char* pub_name)
-{
-    publisher_name = string (pub_name);
-    pub_msg_buf = 0;
-    pub_msg_queue = 0;
-}
 
 Publisher::~Publisher()
 {
   cout << "Deleting publisher " << endl;
-    if (pub_msg_buf != 0)
-        pub_msg_queue->remove_publisher(this);
-    if (pub_msg_buf != 0)
+    if (pub_msg_buf != NULL)
         delete pub_msg_buf;
 }
-string Publisher::getName() const
+
+
+
+void Publisher::attachPublisherToMessageQueue(MessageQueue & q)
 {
-  return publisher_name;
+	pub_msg_buf=q.attachPublisher(publisher_name);
 }
 
-bool Publisher::operator==(const Publisher& pub_1)
-{
-  return this->getName() == pub_1.getName();
-}
-void Publisher::setBuffer(MessageBuffer* buf)
-{
-  pub_msg_buf = buf;
-}
 
-void Publisher::setQueue(MessageQueue* val)
-{
-  pub_msg_queue = val;
-}
 
 
 void Publisher::publish(const msgentry & msg)
@@ -79,33 +59,19 @@ void Publisher::publish(const msgentry & msg)
 
     if (pub_msg_buf == 0)
     {
-        if (pub_msg_queue == 0)
-        {
-            cout <<  "publisher: " << getName() << " with neither buffer nor queue " << endl;
-            return;
-        }
-        else
-        {
-            pub_msg_queue->add_publisher(this);
-        }
+    	 cout <<  "Publisher::publish() : not attached to a messageQueue" << endl;
+    	 return;
     }
-      pub_msg_buf->add(msg);
+	pub_msg_buf->add(msg);
 }
 
 
-void Publisher::publish(std::vector<msgentry> vec)
+void Publisher::publish(std::vector<msgentry> const& vec)
 {
-  if (pub_msg_buf == 0)
-  {
-    if (pub_msg_queue == 0)
-    {
-      cout <<  "publisher: " << getName() << " with neither buffer nor queue " << endl;
-      return;
-    }
-    else
-    {
-      pub_msg_queue->add_publisher(this);
-    }
-  }
-  pub_msg_buf->add(vec);
+	if (pub_msg_buf == 0)
+	{
+		cout <<  "Publisher::publish() : not attached to a messageQueue" << endl;
+		return;
+	}
+	pub_msg_buf->add(vec);
 }

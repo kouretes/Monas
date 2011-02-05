@@ -247,7 +247,6 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	MotionHeadMessage hmot;
 	hmot.add_parameter(0.0f);
 	hmot.add_parameter(0.0f);
-	hmot.set_topic("motion");
 	hmot.set_command("setHead");
 
 	//hmot->set_parameter(0, 0.9f * overshootfix * (cx));

@@ -95,53 +95,6 @@ class BallTrackMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
   // required float cx = 6 [default = 0];
   inline bool has_cx() const;
   inline void clear_cx();
@@ -182,15 +135,6 @@ class BallTrackMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   float cx_;
   float cy_;
   float referenceyaw_;
@@ -200,7 +144,7 @@ class BallTrackMessage : public ::google::protobuf::Message {
   friend void protobuf_AssignDesc_VisionObservations_2eproto();
   friend void protobuf_ShutdownFile_VisionObservations_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -1075,267 +1019,83 @@ class ObservationMessage : public ::google::protobuf::Message {
 
 // BallTrackMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool BallTrackMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void BallTrackMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& BallTrackMessage::host() const {
-  return *host_;
-}
-inline void BallTrackMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void BallTrackMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void BallTrackMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BallTrackMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool BallTrackMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void BallTrackMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& BallTrackMessage::publisher() const {
-  return *publisher_;
-}
-inline void BallTrackMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void BallTrackMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void BallTrackMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BallTrackMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool BallTrackMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void BallTrackMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& BallTrackMessage::topic() const {
-  return *topic_;
-}
-inline void BallTrackMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void BallTrackMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void BallTrackMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BallTrackMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool BallTrackMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void BallTrackMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 BallTrackMessage::timeout() const {
-  return timeout_;
-}
-inline void BallTrackMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool BallTrackMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void BallTrackMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& BallTrackMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void BallTrackMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void BallTrackMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void BallTrackMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* BallTrackMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
 // required float cx = 6 [default = 0];
 inline bool BallTrackMessage::has_cx() const {
-  return _has_bit(5);
+  return _has_bit(0);
 }
 inline void BallTrackMessage::clear_cx() {
   cx_ = 0;
-  _clear_bit(5);
+  _clear_bit(0);
 }
 inline float BallTrackMessage::cx() const {
   return cx_;
 }
 inline void BallTrackMessage::set_cx(float value) {
-  _set_bit(5);
+  _set_bit(0);
   cx_ = value;
 }
 
 // required float cy = 7 [default = 0];
 inline bool BallTrackMessage::has_cy() const {
-  return _has_bit(6);
+  return _has_bit(1);
 }
 inline void BallTrackMessage::clear_cy() {
   cy_ = 0;
-  _clear_bit(6);
+  _clear_bit(1);
 }
 inline float BallTrackMessage::cy() const {
   return cy_;
 }
 inline void BallTrackMessage::set_cy(float value) {
-  _set_bit(6);
+  _set_bit(1);
   cy_ = value;
 }
 
 // required float referenceYaw = 8 [default = 0];
 inline bool BallTrackMessage::has_referenceyaw() const {
-  return _has_bit(7);
+  return _has_bit(2);
 }
 inline void BallTrackMessage::clear_referenceyaw() {
   referenceyaw_ = 0;
-  _clear_bit(7);
+  _clear_bit(2);
 }
 inline float BallTrackMessage::referenceyaw() const {
   return referenceyaw_;
 }
 inline void BallTrackMessage::set_referenceyaw(float value) {
-  _set_bit(7);
+  _set_bit(2);
   referenceyaw_ = value;
 }
 
 // required float referencePitch = 9 [default = 0];
 inline bool BallTrackMessage::has_referencepitch() const {
-  return _has_bit(8);
+  return _has_bit(3);
 }
 inline void BallTrackMessage::clear_referencepitch() {
   referencepitch_ = 0;
-  _clear_bit(8);
+  _clear_bit(3);
 }
 inline float BallTrackMessage::referencepitch() const {
   return referencepitch_;
 }
 inline void BallTrackMessage::set_referencepitch(float value) {
-  _set_bit(8);
+  _set_bit(3);
   referencepitch_ = value;
 }
 
 // required float radius = 10 [default = 0];
 inline bool BallTrackMessage::has_radius() const {
-  return _has_bit(9);
+  return _has_bit(4);
 }
 inline void BallTrackMessage::clear_radius() {
   radius_ = 0;
-  _clear_bit(9);
+  _clear_bit(4);
 }
 inline float BallTrackMessage::radius() const {
   return radius_;
 }
 inline void BallTrackMessage::set_radius(float value) {
-  _set_bit(9);
+  _set_bit(4);
   radius_ = value;
 }
 

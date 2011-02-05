@@ -560,7 +560,7 @@ void Vision::fetchAndProcess()
 
 	}
 	_blk->publish_signal(trckmsg, "vision");
-	_blk->publish_signal(leds, "communication");
+	_blk->publish_signal(leds, "leds");
 
 	if (obs.has_ball() || obs.regular_objects_size() > 0 || obs.adhoc_objects_size() > 0 || obs.corner_objects_size() > 0 || obs.intersection_objects_size() > 0
 			|| obs.line_objects_size() > 0)
@@ -606,10 +606,10 @@ void VISIBLE Vision::UserInit()
 	conffile->close();
 	delete conffile;
 
-	cout << "Add Subscriber-publisher" << endl;
+
 	//_com->get_message_queue()->add_subscriber(_blk);
-	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-	_com->get_message_queue()->subscribe("vision", _blk, 0);
+	_blk->subscribeTo("sensors", 0);
+	_blk->subscribeTo("vision", 0);
 	//_com->get_message_queue()->add_publisher(this);
 
 	debugmode = false;

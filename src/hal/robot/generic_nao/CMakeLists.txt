@@ -4,7 +4,21 @@ message ( STATUS "" )
 include( ../nao-${NaoQiVersion}/bootstrap.cmake ) 
 
 add_library ( GenericNao  ${LibBuildType}
-                          kAlBroker.cpp 
+			aldebaran-kme.h
+			aldebaran-robotcontroller.h
+			kAlBroker.h
+			aldebaran-motion-extra.h
+			aldebaran-sensors.h
+			earLed.h
+			KImageExtractor.h
+			aldebaran-motion.h
+			aldebaran-visiondefinitions.h
+			headAngleSensor.h
+			robot_consts.h
+			aldebaran-proxy.h
+			aldebaran-vision.h
+			kAlBroker.cpp
+
 )
 use_lib( GenericNao ALCOMMON)
 

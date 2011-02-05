@@ -46,8 +46,7 @@ public:
 
     explicit
     Blackboard(const std::string& );
-    explicit
-    Blackboard(const char* );
+
     virtual ~Blackboard() {}
     void process_messages();
     void publish_all();

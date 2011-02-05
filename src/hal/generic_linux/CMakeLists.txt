@@ -5,7 +5,6 @@ message ( STATUS "" )
 # TODO  Cmake find pthreads
 
 add_library( GenLinux ${LibBuildType} 
-                      pthread.cpp 
                       syscall.cpp 
                       dlib_fnc.cpp 
 )

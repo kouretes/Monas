@@ -7,16 +7,16 @@
 namespace {
 	ActivityRegistrar<BodyBehavior>::Type temp("BodyBehavior");
 }
-
+using namespace std;
 BodyBehavior::BodyBehavior() {
 }
 
 void BodyBehavior::UserInit() {
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
-	_com->get_message_queue()->subscribe("vision", _blk, 0);
-	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-	_com->get_message_queue()->subscribe("behavior", _blk, 0);
+	_blk->subscribeTo("vision", 0);
+	_blk->subscribeTo("sensors", 0);
+	_blk->subscribeTo("behavior", 0);
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
@@ -27,7 +27,7 @@ void BodyBehavior::UserInit() {
 	amot = new MotionActionMessage();
 	bhmsg = new BToHeadMessage();
 	lastObsm = new ObservationMessage();
-	
+
 	ballfound = 0;
 	calibrated = 0;
 
@@ -37,7 +37,7 @@ void BodyBehavior::UserInit() {
 	scancompleted = false;
 	curraction = 0;
 	prevaction = 0;
-		
+
 	readytokick = false;
 	back = 0;
 	direction = 1;
@@ -58,7 +58,7 @@ int BodyBehavior::Execute() {
 	cout << "Execute" << endl;
 	prevaction = curraction;
 	oldGameState = gameState;
-	read_messages();	
+	read_messages();
 
 	if (hbm != 0) {
 		calibrated = hbm->calibrated();
@@ -168,7 +168,7 @@ int BodyBehavior::Execute() {
 				Logger::Instance().WriteMsg("BodyBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: "
 						+ _toString(by), Logger::Info);
 
-			
+
 				readytokick=true;
                 if ( fabs( bx - posx ) > 0.015 || fabs( by - (side*posy) ) > 0.015) {
                     //Y = gainFine * ( by - (side*posy) );
@@ -197,7 +197,7 @@ int BodyBehavior::Execute() {
 		/* Ready to take action */
 		if (readytokick) {
 			obstacleFront = false;
-			//if (om!=0) 
+			//if (om!=0)
 			//if (om->direction(1) == 1)
 			//obstacleFront = true;
 
@@ -243,7 +243,7 @@ int BodyBehavior::Execute() {
 				}
 
 				_blk->publish_signal(*amot, "motion");*/
-				
+
 				/* **************** End of Targetted Kicks ********************** */
 
 				/* **************** Randomized Kicks ********************** */

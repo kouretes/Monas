@@ -88,53 +88,6 @@ class TestMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required string host = 1 [default = "localhost"];
-  inline bool has_host() const;
-  inline void clear_host();
-  static const int kHostFieldNumber = 1;
-  inline const ::std::string& host() const;
-  inline void set_host(const ::std::string& value);
-  inline void set_host(const char* value);
-  inline void set_host(const char* value, size_t size);
-  inline ::std::string* mutable_host();
-  
-  // required string publisher = 2 [default = ""];
-  inline bool has_publisher() const;
-  inline void clear_publisher();
-  static const int kPublisherFieldNumber = 2;
-  inline const ::std::string& publisher() const;
-  inline void set_publisher(const ::std::string& value);
-  inline void set_publisher(const char* value);
-  inline void set_publisher(const char* value, size_t size);
-  inline ::std::string* mutable_publisher();
-  
-  // required string topic = 3 [default = "global"];
-  inline bool has_topic() const;
-  inline void clear_topic();
-  static const int kTopicFieldNumber = 3;
-  inline const ::std::string& topic() const;
-  inline void set_topic(const ::std::string& value);
-  inline void set_topic(const char* value);
-  inline void set_topic(const char* value, size_t size);
-  inline ::std::string* mutable_topic();
-  
-  // required int32 timeout = 4 [default = 0];
-  inline bool has_timeout() const;
-  inline void clear_timeout();
-  static const int kTimeoutFieldNumber = 4;
-  inline ::google::protobuf::int32 timeout() const;
-  inline void set_timeout(::google::protobuf::int32 value);
-  
-  // required string timestamp = 5 [default = ""];
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 5;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  
   // required int32 counter = 6 [default = 0];
   inline bool has_counter() const;
   inline void clear_counter();
@@ -147,21 +100,12 @@ class TestMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::std::string* host_;
-  static const ::std::string _default_host_;
-  ::std::string* publisher_;
-  static const ::std::string _default_publisher_;
-  ::std::string* topic_;
-  static const ::std::string _default_topic_;
-  ::google::protobuf::int32 timeout_;
-  ::std::string* timestamp_;
-  static const ::std::string _default_timestamp_;
   ::google::protobuf::int32 counter_;
   friend void  protobuf_AddDesc_TestMessage_2eproto();
   friend void protobuf_AssignDesc_TestMessage_2eproto();
   friend void protobuf_ShutdownFile_TestMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -184,203 +128,19 @@ class TestMessage : public ::google::protobuf::Message {
 
 // TestMessage
 
-// required string host = 1 [default = "localhost"];
-inline bool TestMessage::has_host() const {
-  return _has_bit(0);
-}
-inline void TestMessage::clear_host() {
-  if (host_ != &_default_host_) {
-    host_->assign(_default_host_);
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& TestMessage::host() const {
-  return *host_;
-}
-inline void TestMessage::set_host(const ::std::string& value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void TestMessage::set_host(const char* value) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(value);
-}
-inline void TestMessage::set_host(const char* value, size_t size) {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string;
-  }
-  host_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* TestMessage::mutable_host() {
-  _set_bit(0);
-  if (host_ == &_default_host_) {
-    host_ = new ::std::string(_default_host_);
-  }
-  return host_;
-}
-
-// required string publisher = 2 [default = ""];
-inline bool TestMessage::has_publisher() const {
-  return _has_bit(1);
-}
-inline void TestMessage::clear_publisher() {
-  if (publisher_ != &_default_publisher_) {
-    publisher_->clear();
-  }
-  _clear_bit(1);
-}
-inline const ::std::string& TestMessage::publisher() const {
-  return *publisher_;
-}
-inline void TestMessage::set_publisher(const ::std::string& value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void TestMessage::set_publisher(const char* value) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(value);
-}
-inline void TestMessage::set_publisher(const char* value, size_t size) {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  publisher_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* TestMessage::mutable_publisher() {
-  _set_bit(1);
-  if (publisher_ == &_default_publisher_) {
-    publisher_ = new ::std::string;
-  }
-  return publisher_;
-}
-
-// required string topic = 3 [default = "global"];
-inline bool TestMessage::has_topic() const {
-  return _has_bit(2);
-}
-inline void TestMessage::clear_topic() {
-  if (topic_ != &_default_topic_) {
-    topic_->assign(_default_topic_);
-  }
-  _clear_bit(2);
-}
-inline const ::std::string& TestMessage::topic() const {
-  return *topic_;
-}
-inline void TestMessage::set_topic(const ::std::string& value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void TestMessage::set_topic(const char* value) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(value);
-}
-inline void TestMessage::set_topic(const char* value, size_t size) {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string;
-  }
-  topic_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* TestMessage::mutable_topic() {
-  _set_bit(2);
-  if (topic_ == &_default_topic_) {
-    topic_ = new ::std::string(_default_topic_);
-  }
-  return topic_;
-}
-
-// required int32 timeout = 4 [default = 0];
-inline bool TestMessage::has_timeout() const {
-  return _has_bit(3);
-}
-inline void TestMessage::clear_timeout() {
-  timeout_ = 0;
-  _clear_bit(3);
-}
-inline ::google::protobuf::int32 TestMessage::timeout() const {
-  return timeout_;
-}
-inline void TestMessage::set_timeout(::google::protobuf::int32 value) {
-  _set_bit(3);
-  timeout_ = value;
-}
-
-// required string timestamp = 5 [default = ""];
-inline bool TestMessage::has_timestamp() const {
-  return _has_bit(4);
-}
-inline void TestMessage::clear_timestamp() {
-  if (timestamp_ != &_default_timestamp_) {
-    timestamp_->clear();
-  }
-  _clear_bit(4);
-}
-inline const ::std::string& TestMessage::timestamp() const {
-  return *timestamp_;
-}
-inline void TestMessage::set_timestamp(const ::std::string& value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void TestMessage::set_timestamp(const char* value) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-}
-inline void TestMessage::set_timestamp(const char* value, size_t size) {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* TestMessage::mutable_timestamp() {
-  _set_bit(4);
-  if (timestamp_ == &_default_timestamp_) {
-    timestamp_ = new ::std::string;
-  }
-  return timestamp_;
-}
-
 // required int32 counter = 6 [default = 0];
 inline bool TestMessage::has_counter() const {
-  return _has_bit(5);
+  return _has_bit(0);
 }
 inline void TestMessage::clear_counter() {
   counter_ = 0;
-  _clear_bit(5);
+  _clear_bit(0);
 }
 inline ::google::protobuf::int32 TestMessage::counter() const {
   return counter_;
 }
 inline void TestMessage::set_counter(::google::protobuf::int32 value) {
-  _set_bit(5);
+  _set_bit(0);
   counter_ = value;
 }
 

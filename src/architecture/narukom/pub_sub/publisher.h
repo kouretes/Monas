@@ -21,37 +21,32 @@
 #ifndef PUBLISHER_H
 #define PUBLISHER_H
 #include <string>
-#include "message_buffer.h"
-#include <google/protobuf/message.h>
-#include "message_queue.h"
+#include <vector>
+#include "msg.h"
 
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
 class MessageQueue;
+class MessageBuffer;
 class Publisher
 {
   public:
     Publisher();
-    Publisher(std::string str);
-    Publisher(const char* );
+    Publisher(std::string const str);
     virtual ~Publisher();
-    virtual void publish(const  msgentry & msg);
-	virtual void publish(std::vector<msgentry> vec);
+    virtual void publish(  msgentry const& msg);
+	virtual void publish(std::vector<msgentry> const& vec);
 	//    virtual void publish(Serializable* msg ,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
 
-    bool operator==(const Publisher& pub_1);//
 
 
-    std::string getName() const;// { return publisher_name;}
-    void setBuffer(MessageBuffer* buf);//{ pub_msg_buf = buf;}
-    void setQueue(MessageQueue* val);//{pub_msg_queue = val;}
+
+    std::string const getName() const { return publisher_name;}
+    void attachPublisherToMessageQueue(MessageQueue & q);
+
 
   private:
     std::string publisher_name;
     MessageBuffer* pub_msg_buf;
-  protected:
-    MessageQueue* pub_msg_queue; // in order to keep it sane
+
 
 };
 

@@ -17,60 +17,41 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
-
 #ifndef MESSAGE_QUEUE_H
 #define MESSAGE_QUEUE_H
 #include <google/protobuf/message.h>
-#include "message_buffer.h"
 #include <string>
+#include "stringRegistry.h"
+
 #include <map>
 #include <vector>
 #include <set>
-#include <utility>
-#include "subscriber.h"
-#include "publisher.h"
-
-#include "topic_tree.h"
 #include "hal/thread.h"
-#include "tools/statMovingAverage.h"
 #include "hal/syscall.h"
 
+#include "tools/statMovingAverage.h"
 #include "tools/stopWatch.h"
+
 #ifndef TIXML_USE_STL
  #define TIXML_USE_STL
 #endif
-class Subscriber;
-class Publisher;
 /**
 MessageQueue class is the message broker of Narukom.
 This class is responsible for dispatching published messages to the interested subscribers.
 
 */
+class MessageBuffer;
 class MessageQueue : public Thread
 {
   public:
     //friend class MessageBuffer;
     MessageQueue();
-    MessageQueue(std::string conf);
-    MessageQueue(const char*);
+	MessageBuffer* attachPublisher(std::string const& s);
+	MessageBuffer* attachSubscriber(std::string const& s);
+	void subscribeTo(MessageBuffer *b, std::string const& topic , int where);
+	void unsubscribeFrom(MessageBuffer *b, std::string const& topic , int where);
+    void purgeBuffer( MessageBuffer *b);
 
-    void remove_publisher(Publisher*);
-    void remove_subscriber( Subscriber*);
-    MessageBuffer* add_publisher(Publisher*);
-    //MessageBuffer* add_publisher(Publisher*,MessageBuffer*);
-    MessageBuffer* add_subscriber(Subscriber*);
-    //MessageBuffer* add_subscriber(Subscriber*,MessageBuffer*);
-    bool subscribe(const std::string& , Subscriber* ,int );
-
-    bool subscribe(const char* topic, Subscriber* owner,int where);
-    bool unsubscribe(const std::string& from_topic, Subscriber*  );
-    bool unsubscribe(const char* from_topic, Subscriber*  );
-    bool add_topic(const std::string& new_topic);
-    bool add_topic(const char* new_topic);
-    bool add_topic_under(const std::string& parent,const std::string& new_topic);
-    bool add_topic_under(const char* parent,const char* new_topic);
-    bool remove_topic(const std::string& old_topic);
-    bool remove_topic(const char* old_topic);
     void process_queued_msg();
     virtual int Execute();
     inline void requestMailMan(MessageBuffer  * const m)
@@ -84,28 +65,36 @@ class MessageQueue : public Thread
 		}
 
 
-    }
-
-
-
-
+    };
   private:
-    TopicTree<std::string,MessageBuffer>* topic_tree;
-    std::map<std::string,MessageBuffer*>* publishers_buf;
-    std::map<std::string,MessageBuffer*>* subscribers_buf;
-    boost::mutex tree_mutex;
-    boost::mutex  pub_mutex;
-    boost::mutex  sub_mutex;
-    const std::string type_string;
+  	enum topicdir {ON_TOPIC, ABOVE_TOPIC, BELOW_TOPIC,ALL};
+  	//String hashers
+  	stringRegistry topicRegistry;
+  	stringRegistry pubsubRegistry;
+  	typedef struct topicdata_s{
+  		std::size_t parentid;
+  		std::set<std::size_t> children;
 
+  	} topicdata;
+	//Unlocked, stable and untouched while running
+  	std::map<std::size_t,topicdata > topictree;
+  	//Locked by pub_sub_mutex;
+  	std::map<std::size_t,std::set<MessageBuffer*> > subscriptions;
+
+    boost::mutex  pub_sub_mutex;
+	//Waking up stuff
     boost::mutex  cond_mutex;
     std::set<MessageBuffer*> cond_publishers;
     std::vector<MessageBuffer*> cond_publishers_queue;
     boost::condition_variable_any cond;
 
     StopWatch<> agentStats;
+    void create_tree();
+    void addTopic(std::string const& what,std::string const& under);
+    //Recursive call, UNLOCKED!
+    void subscribeBelow(MessageBuffer *b, size_t topicid);
+    void unsubscribeBelow(MessageBuffer *b, size_t topicid);
 
-    void create_tree(const std::string& file_name);
-};
+    };
 
 #endif // MESSAGE_QUEUE_H

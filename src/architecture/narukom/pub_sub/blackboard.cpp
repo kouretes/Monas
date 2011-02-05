@@ -13,24 +13,17 @@ Blackboard::Blackboard(const std::string& sub_name): Subscriber(sub_name),Publis
 
 }
 
-Blackboard::Blackboard(const char* sub_name): Subscriber(sub_name),Publisher(sub_name)
-{
-
-}
-
 
 void Blackboard::process_messages()
 {
 
     cleanup();
 
-    MessageBuffer* buf = Subscriber::getBuffer();
-		if(buf == 0)
-			return;
+
 // 		cout << "SIZE OF BUFFER = " << buf->size() << endl;
 //     _blk->process_messages();
 //     cout << "After returns " << endl
-    std::vector<msgentry> msg=buf->remove();
+    std::vector<msgentry> msg=Subscriber::remove();
     std::vector<msgentry>::iterator it=msg.begin();
     signalentry newsig;
 

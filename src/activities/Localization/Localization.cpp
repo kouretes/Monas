@@ -25,9 +25,9 @@ TCPSocket * Localization::sock;
 
 void Localization::UserInit() {
 
-	_com->get_message_queue()->subscribe("vision", _blk, 0);
-	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-	_com->get_message_queue()->subscribe("Localization", _blk, 0);
+	_blk->subscribeTo("vision", 0);
+	_blk->subscribeTo("sensors", 0);
+	_blk->subscribeTo("localization", 0);
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
 

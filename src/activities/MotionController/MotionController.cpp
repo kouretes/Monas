@@ -12,7 +12,7 @@
 namespace {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
 }
-
+using namespace std;
 MotionController::MotionController() {
 }
 
@@ -102,9 +102,8 @@ void MotionController::UserInit() {
 	motion->setMotionConfig(config);
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
-
-	_com->get_message_queue()->subscribe("motion", _blk, 0);
-	_com->get_message_queue()->subscribe("sensors", _blk, 0);
+	_blk->subscribeTo("motion",0);
+	_blk->subscribeTo("sensors",0);
 
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
@@ -475,7 +474,6 @@ void MotionController::commands() {
 
 	if ((actionPID == 0) && ((counter + 130) % 10 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
-		amot->set_topic("motion");
 		amot->set_command("RightSideKickSlow.xar");
 		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
 		_blk->publish_signal(*amot, "motion");
@@ -484,7 +482,6 @@ void MotionController::commands() {
 
 	if ((actionPID == 0) && ((counter + 130) % 10 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
-		amot->set_topic("motion");
 		amot->set_command("RightKick3.xar");
 		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
 		_blk->publish_signal(*amot, "motion");

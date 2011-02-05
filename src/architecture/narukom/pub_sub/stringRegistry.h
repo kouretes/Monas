@@ -17,7 +17,7 @@
 #ifndef STRINGREGISTRY_H
 #define STRINGREGISTRY_H
 
-/*
+
 #include <string>
 #include <boost/functional/hash.hpp>
 #include <map>
@@ -27,37 +27,67 @@ class stringRegistry {
 
 	public:
 
-	stringRegistry(){};
+	stringRegistry(){ nextid=1	;};
+	/**Register new string and return new id **/
 	std::size_t registerNew(std::string const& s)
 	{
+		std::size_t lookup=getId(s);
+		if(lookup!=0)
+			return lookup;
+		stringidpair p;
+		p.id=nextid++;
+		p.s=s;
 		std::size_t hashs=hasher(s);
-		fttype::iterator fit= ft.find(hashs);
-		if(fit!=
-
-		std::vector<stringidpair>::iterator fit;
-		for(fit= ft[hashs].begin();fit!=ft:end();
-
-		if
-
+		ft[hashs].insert(p);
+		rt[hashs]=s;
+		return p.id;
 
 	}
+	std::size_t getId(std::string const& s)
+	{
+		std::size_t hashs=hasher(s);
+		fttype::const_iterator ftit= ft.find(hashs);
+		if(ftit==ft.end())
+		{
 
+			return 0;
+		}
+		std::set<stringidpair>::const_iterator fit;
+		for(fit= (*ftit).second.begin();fit!=(*ftit).second.end();++fit)
+		{
+			if((*fit).s==s)
+				return (*fit).id;
+
+		}
+		return 0;
+
+	}
+	std::string getString(std::size_t id)
+	{
+		if(rt.find(id)==rt.end())
+			return "";
+		return rt[id];
+	}
 
 	private:
-	typedef struct {
+	typedef struct spair_s{
 		std::string s;
 		std::size_t id;
-		bool operator <(stringidpair const & a) { this.id < a.id;};
+		bool operator<(struct spair_s const & a) const { return id < a.id;};
+		bool operator==(struct spair_s const & a)const { return id == a.id;};
 	}stringidpair;
-	typename std::map<std::size_t,std::set<stringidpair>> fttype;
-	typename std::map<std::size_t, std::string> rttype;
-	boost:hash<std::string> hasher;
+	//From HASH to pair of ids,and strings for lookup
+	typedef std::map<std::size_t,std::set<stringidpair> > fttype;
+	//From id, to string
+	typedef std::map<std::size_t,std::string> rttype;
+	boost::hash<std::string> hasher;
 	fttype ft;//from hash to id;
 	rttype rt;//from id to string :)
+	std::size_t nextid;
 
-}
+};
 
 
-*/
+
 
 #endif /* STRINGREGISTRY_H */

@@ -12,7 +12,7 @@
 
 #include "architecture/IActivity.h"
 
-#include "hal/threadable.h"
+#include "hal/thread.h"
 #include "hal/syscall.h"
 #include "tools/agentTiming.h"
 #include "tools/toString.h"
@@ -29,6 +29,9 @@ class Agent : public Thread {
             _blk(name),
             _executions(0) {
 
+			_blk.attachSubscriberToMessageQueue(*com->get_message_queue());
+			_blk.attachPublisherToMessageQueue(*com->get_message_queue());
+
             for ( ActivityNameList::const_iterator it = activities.begin();
                     it != activities.end(); it++ )
                 _activities.push_back( ActivityFactory::Instance()->CreateObject( (*it) ) );
@@ -37,8 +40,6 @@ class Agent : public Thread {
                     it != _activities.end(); it++ )
                 (*it)->Initialize(_com,&_blk);
             Freq2Time = (1/(double) _cfg.ThreadFrequency)*1000000;
-            com->get_message_queue()->add_subscriber(&_blk);
-            com->get_message_queue()->add_publisher(&_blk);
 
         }
 

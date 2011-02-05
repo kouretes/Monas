@@ -21,34 +21,31 @@
 #ifndef SUBSCRIBER_H
 #define SUBSCRIBER_H
 #include <string>
-#include "message_buffer.h"
-#include "message_queue.h"
+#include <vector>
+#include "msg.h"
 
 class MessageQueue;
-
+class MessageBuffer;
 class Subscriber
 {
   public:
     Subscriber();
     Subscriber(const 	std::string& );
-    Subscriber(const char*);
-    Subscriber(const Subscriber& other);
+
     virtual void process_messages();
+    std::vector<msgentry> remove();
+
     virtual ~Subscriber();
 
-    MessageBuffer* getBuffer() const  { return sub_msg_buf ; }
-    std::string getName() const;// { return subscriber_name;}
-    bool operator==(const Subscriber& sub_1);
-    MessageQueue* getQueue() const;// {return sub_msg_queue;}
-    void setBuffer(MessageBuffer* buf);//{ sub_msg_buf = buf;}
-    void setQueue(MessageQueue* val);//{sub_msg_queue = val;}
+    std::string const getName() const { return subscriber_name;}
+    void attachSubscriberToMessageQueue(MessageQueue & q);
+    void subscribeTo(std::string const& topic , int where);
+    void unsubscribeFrom(std::string const& topic , int where);
 
 
   private:
     std::string subscriber_name;
     MessageBuffer* sub_msg_buf;
-    MessageQueue* sub_msg_queue;
-
 };
 
 #endif // SUBSCRIBER_H

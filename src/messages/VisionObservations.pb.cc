@@ -47,12 +47,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       "VisionObservations.proto");
   GOOGLE_CHECK(file != NULL);
   BallTrackMessage_descriptor_ = file->message_type(0);
-  static const int BallTrackMessage_offsets_[10] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, host_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, publisher_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, topic_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, timeout_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, timestamp_),
+  static const int BallTrackMessage_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, cx_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, cy_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, referenceyaw_),
@@ -257,36 +252,33 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\030VisionObservations.proto\"\345\001\n\020BallTrack"
-    "Message\022\027\n\004host\030\001 \002(\t:\tlocalhost\022\023\n\tpubl"
-    "isher\030\002 \002(\t:\000\022\025\n\005topic\030\003 \002(\t:\006global\022\022\n\007"
-    "timeout\030\004 \002(\005:\0010\022\023\n\ttimestamp\030\005 \002(\t:\000\022\r\n"
-    "\002cx\030\006 \002(\002:\0010\022\r\n\002cy\030\007 \002(\002:\0010\022\027\n\014reference"
-    "Yaw\030\010 \002(\002:\0010\022\031\n\016referencePitch\030\t \002(\002:\0010\022"
-    "\021\n\006radius\030\n \002(\002:\0010\"b\n\014CalibrateCam\022\016\n\006st"
-    "atus\030\001 \002(\005\022\027\n\tsleeptime\030\002 \002(\005:\0041500\022\017\n\003e"
-    "xp\030\003 \002(\005:\00215\022\030\n\rexposure_comp\030\004 \002(\002:\0011\"K"
-    "\n\nBallObject\022\017\n\004dist\030\001 \002(\002:\0010\022\022\n\007bearing"
-    "\030\002 \002(\002:\0010\022\030\n\rball_diameter\030\003 \001(\002:\0010\"\202\001\n\013"
-    "NamedObject\022\025\n\013object_name\030\001 \002(\t:\000\022\023\n\007be"
-    "aring\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \002(\002:\002-1\022\027\n"
-    "\013bearing_dev\030\004 \002(\002:\002-1\022\030\n\014distance_dev\030\005"
-    " \002(\002:\002-1\"V\n\022UnidentifiedObject\022\025\n\013object"
-    "_type\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010di"
-    "stance\030\003 \001(\002:\002-1\"r\n\nLineObject\022\030\n\rstart_"
-    "bearing\030\001 \002(\002:\0010\022\031\n\016start_distance\030\002 \002(\002"
-    ":\0010\022\026\n\013end_bearing\030\003 \002(\002:\0010\022\027\n\014end_dista"
-    "nce\030\004 \002(\002:\0010\"0\n\013PointObject\022\020\n\010distance\030"
-    "\001 \002(\002\022\017\n\007bearing\030\002 \002(\002\"\345\002\n\022ObservationMe"
-    "ssage\022\031\n\017image_timestamp\030\001 \002(\t:\000\022\031\n\004ball"
-    "\030\002 \001(\0132\013.BallObject\022%\n\017regular_objects\030\003"
-    " \003(\0132\014.NamedObject\022*\n\radhoc_objects\030\004 \003("
-    "\0132\023.UnidentifiedObject\022$\n\016corner_objects"
-    "\030\005 \003(\0132\014.PointObject\022*\n\024intersection_obj"
-    "ects\030\006 \003(\0132\014.PointObject\022!\n\014line_objects"
-    "\030\007 \003(\0132\013.LineObject\022\030\n\020covered_distance\030"
-    "\010 \002(\002\022\032\n\022bearing_limit_left\030\t \002(\002\022\033\n\023bea"
-    "ring_limit_right\030\n \002(\002", 1182);
+    "\n\030VisionObservations.proto\"w\n\020BallTrackM"
+    "essage\022\r\n\002cx\030\006 \002(\002:\0010\022\r\n\002cy\030\007 \002(\002:\0010\022\027\n\014"
+    "referenceYaw\030\010 \002(\002:\0010\022\031\n\016referencePitch\030"
+    "\t \002(\002:\0010\022\021\n\006radius\030\n \002(\002:\0010\"b\n\014Calibrate"
+    "Cam\022\016\n\006status\030\001 \002(\005\022\027\n\tsleeptime\030\002 \002(\005:\004"
+    "1500\022\017\n\003exp\030\003 \002(\005:\00215\022\030\n\rexposure_comp\030\004"
+    " \002(\002:\0011\"K\n\nBallObject\022\017\n\004dist\030\001 \002(\002:\0010\022\022"
+    "\n\007bearing\030\002 \002(\002:\0010\022\030\n\rball_diameter\030\003 \001("
+    "\002:\0010\"\202\001\n\013NamedObject\022\025\n\013object_name\030\001 \002("
+    "\t:\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \002"
+    "(\002:\002-1\022\027\n\013bearing_dev\030\004 \002(\002:\002-1\022\030\n\014dista"
+    "nce_dev\030\005 \002(\002:\002-1\"V\n\022UnidentifiedObject\022"
+    "\025\n\013object_type\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:"
+    "\002-1\022\024\n\010distance\030\003 \001(\002:\002-1\"r\n\nLineObject\022"
+    "\030\n\rstart_bearing\030\001 \002(\002:\0010\022\031\n\016start_dista"
+    "nce\030\002 \002(\002:\0010\022\026\n\013end_bearing\030\003 \002(\002:\0010\022\027\n\014"
+    "end_distance\030\004 \002(\002:\0010\"0\n\013PointObject\022\020\n\010"
+    "distance\030\001 \002(\002\022\017\n\007bearing\030\002 \002(\002\"\345\002\n\022Obse"
+    "rvationMessage\022\031\n\017image_timestamp\030\001 \002(\t:"
+    "\000\022\031\n\004ball\030\002 \001(\0132\013.BallObject\022%\n\017regular_"
+    "objects\030\003 \003(\0132\014.NamedObject\022*\n\radhoc_obj"
+    "ects\030\004 \003(\0132\023.UnidentifiedObject\022$\n\016corne"
+    "r_objects\030\005 \003(\0132\014.PointObject\022*\n\024interse"
+    "ction_objects\030\006 \003(\0132\014.PointObject\022!\n\014lin"
+    "e_objects\030\007 \003(\0132\013.LineObject\022\030\n\020covered_"
+    "distance\030\010 \002(\002\022\032\n\022bearing_limit_left\030\t \002"
+    "(\002\022\033\n\023bearing_limit_right\030\n \002(\002", 1071);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "VisionObservations.proto", &protobuf_RegisterTypes);
   BallTrackMessage::default_instance_ = new BallTrackMessage();
@@ -318,16 +310,7 @@ struct StaticDescriptorInitializer_VisionObservations_2eproto {
 
 // ===================================================================
 
-const ::std::string BallTrackMessage::_default_host_("localhost");
-const ::std::string BallTrackMessage::_default_publisher_;
-const ::std::string BallTrackMessage::_default_topic_("global");
-const ::std::string BallTrackMessage::_default_timestamp_;
 #ifndef _MSC_VER
-const int BallTrackMessage::kHostFieldNumber;
-const int BallTrackMessage::kPublisherFieldNumber;
-const int BallTrackMessage::kTopicFieldNumber;
-const int BallTrackMessage::kTimeoutFieldNumber;
-const int BallTrackMessage::kTimestampFieldNumber;
 const int BallTrackMessage::kCxFieldNumber;
 const int BallTrackMessage::kCyFieldNumber;
 const int BallTrackMessage::kReferenceYawFieldNumber;
@@ -351,11 +334,6 @@ BallTrackMessage::BallTrackMessage(const BallTrackMessage& from)
 
 void BallTrackMessage::SharedCtor() {
   _cached_size_ = 0;
-  host_ = const_cast< ::std::string*>(&_default_host_);
-  publisher_ = const_cast< ::std::string*>(&_default_publisher_);
-  topic_ = const_cast< ::std::string*>(&_default_topic_);
-  timeout_ = 0;
-  timestamp_ = const_cast< ::std::string*>(&_default_timestamp_);
   cx_ = 0;
   cy_ = 0;
   referenceyaw_ = 0;
@@ -369,18 +347,6 @@ BallTrackMessage::~BallTrackMessage() {
 }
 
 void BallTrackMessage::SharedDtor() {
-  if (host_ != &_default_host_) {
-    delete host_;
-  }
-  if (publisher_ != &_default_publisher_) {
-    delete publisher_;
-  }
-  if (topic_ != &_default_topic_) {
-    delete topic_;
-  }
-  if (timestamp_ != &_default_timestamp_) {
-    delete timestamp_;
-  }
   if (this != default_instance_) {
   }
 }
@@ -407,32 +373,9 @@ BallTrackMessage* BallTrackMessage::New() const {
 
 void BallTrackMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (host_ != &_default_host_) {
-        host_->assign(_default_host_);
-      }
-    }
-    if (_has_bit(1)) {
-      if (publisher_ != &_default_publisher_) {
-        publisher_->clear();
-      }
-    }
-    if (_has_bit(2)) {
-      if (topic_ != &_default_topic_) {
-        topic_->assign(_default_topic_);
-      }
-    }
-    timeout_ = 0;
-    if (_has_bit(4)) {
-      if (timestamp_ != &_default_timestamp_) {
-        timestamp_->clear();
-      }
-    }
     cx_ = 0;
     cy_ = 0;
     referenceyaw_ = 0;
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     referencepitch_ = 0;
     radius_ = 0;
   }
@@ -446,98 +389,14 @@ bool BallTrackMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string host = 1 [default = "localhost"];
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_host()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->host().data(), this->host().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_publisher;
-        break;
-      }
-      
-      // required string publisher = 2 [default = ""];
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_publisher:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_publisher()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->publisher().data(), this->publisher().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_topic;
-        break;
-      }
-      
-      // required string topic = 3 [default = "global"];
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_topic:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_topic()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->topic().data(), this->topic().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(32)) goto parse_timeout;
-        break;
-      }
-      
-      // required int32 timeout = 4 [default = 0];
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_timeout:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &timeout_)));
-          _set_bit(3);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(42)) goto parse_timestamp;
-        break;
-      }
-      
-      // required string timestamp = 5 [default = ""];
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_timestamp:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_timestamp()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->timestamp().data(), this->timestamp().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(53)) goto parse_cx;
-        break;
-      }
-      
       // required float cx = 6 [default = 0];
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_cx:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &cx_)));
-          _set_bit(5);
+          _set_bit(0);
         } else {
           goto handle_uninterpreted;
         }
@@ -553,7 +412,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &cy_)));
-          _set_bit(6);
+          _set_bit(1);
         } else {
           goto handle_uninterpreted;
         }
@@ -569,7 +428,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &referenceyaw_)));
-          _set_bit(7);
+          _set_bit(2);
         } else {
           goto handle_uninterpreted;
         }
@@ -585,7 +444,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &referencepitch_)));
-          _set_bit(8);
+          _set_bit(3);
         } else {
           goto handle_uninterpreted;
         }
@@ -601,7 +460,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &radius_)));
-          _set_bit(9);
+          _set_bit(4);
         } else {
           goto handle_uninterpreted;
         }
@@ -627,69 +486,28 @@ bool BallTrackMessage::MergePartialFromCodedStream(
 
 void BallTrackMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string host = 1 [default = "localhost"];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->host().data(), this->host().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->host(), output);
-  }
-  
-  // required string publisher = 2 [default = ""];
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->publisher().data(), this->publisher().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      2, this->publisher(), output);
-  }
-  
-  // required string topic = 3 [default = "global"];
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->topic().data(), this->topic().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->topic(), output);
-  }
-  
-  // required int32 timeout = 4 [default = 0];
-  if (_has_bit(3)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->timeout(), output);
-  }
-  
-  // required string timestamp = 5 [default = ""];
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      5, this->timestamp(), output);
-  }
-  
   // required float cx = 6 [default = 0];
-  if (_has_bit(5)) {
+  if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->cx(), output);
   }
   
   // required float cy = 7 [default = 0];
-  if (_has_bit(6)) {
+  if (_has_bit(1)) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->cy(), output);
   }
   
   // required float referenceYaw = 8 [default = 0];
-  if (_has_bit(7)) {
+  if (_has_bit(2)) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->referenceyaw(), output);
   }
   
   // required float referencePitch = 9 [default = 0];
-  if (_has_bit(8)) {
+  if (_has_bit(3)) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->referencepitch(), output);
   }
   
   // required float radius = 10 [default = 0];
-  if (_has_bit(9)) {
+  if (_has_bit(4)) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->radius(), output);
   }
   
@@ -701,73 +519,28 @@ void BallTrackMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* BallTrackMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string host = 1 [default = "localhost"];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->host().data(), this->host().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->host(), target);
-  }
-  
-  // required string publisher = 2 [default = ""];
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->publisher().data(), this->publisher().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->publisher(), target);
-  }
-  
-  // required string topic = 3 [default = "global"];
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->topic().data(), this->topic().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->topic(), target);
-  }
-  
-  // required int32 timeout = 4 [default = 0];
-  if (_has_bit(3)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->timeout(), target);
-  }
-  
-  // required string timestamp = 5 [default = ""];
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->timestamp(), target);
-  }
-  
   // required float cx = 6 [default = 0];
-  if (_has_bit(5)) {
+  if (_has_bit(0)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->cx(), target);
   }
   
   // required float cy = 7 [default = 0];
-  if (_has_bit(6)) {
+  if (_has_bit(1)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->cy(), target);
   }
   
   // required float referenceYaw = 8 [default = 0];
-  if (_has_bit(7)) {
+  if (_has_bit(2)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->referenceyaw(), target);
   }
   
   // required float referencePitch = 9 [default = 0];
-  if (_has_bit(8)) {
+  if (_has_bit(3)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->referencepitch(), target);
   }
   
   // required float radius = 10 [default = 0];
-  if (_has_bit(9)) {
+  if (_has_bit(4)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->radius(), target);
   }
   
@@ -782,41 +555,6 @@ int BallTrackMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string host = 1 [default = "localhost"];
-    if (has_host()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->host());
-    }
-    
-    // required string publisher = 2 [default = ""];
-    if (has_publisher()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->publisher());
-    }
-    
-    // required string topic = 3 [default = "global"];
-    if (has_topic()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->topic());
-    }
-    
-    // required int32 timeout = 4 [default = 0];
-    if (has_timeout()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->timeout());
-    }
-    
-    // required string timestamp = 5 [default = ""];
-    if (has_timestamp()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->timestamp());
-    }
-    
     // required float cx = 6 [default = 0];
     if (has_cx()) {
       total_size += 1 + 4;
@@ -832,8 +570,6 @@ int BallTrackMessage::ByteSize() const {
       total_size += 1 + 4;
     }
     
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     // required float referencePitch = 9 [default = 0];
     if (has_referencepitch()) {
       total_size += 1 + 4;
@@ -872,35 +608,18 @@ void BallTrackMessage::MergeFrom(const BallTrackMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from._has_bit(0)) {
-      set_host(from.host());
-    }
-    if (from._has_bit(1)) {
-      set_publisher(from.publisher());
-    }
-    if (from._has_bit(2)) {
-      set_topic(from.topic());
-    }
-    if (from._has_bit(3)) {
-      set_timeout(from.timeout());
-    }
-    if (from._has_bit(4)) {
-      set_timestamp(from.timestamp());
-    }
-    if (from._has_bit(5)) {
       set_cx(from.cx());
     }
-    if (from._has_bit(6)) {
+    if (from._has_bit(1)) {
       set_cy(from.cy());
     }
-    if (from._has_bit(7)) {
+    if (from._has_bit(2)) {
       set_referenceyaw(from.referenceyaw());
     }
-  }
-  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    if (from._has_bit(8)) {
+    if (from._has_bit(3)) {
       set_referencepitch(from.referencepitch());
     }
-    if (from._has_bit(9)) {
+    if (from._has_bit(4)) {
       set_radius(from.radius());
     }
   }
@@ -920,18 +639,13 @@ void BallTrackMessage::CopyFrom(const BallTrackMessage& from) {
 }
 
 bool BallTrackMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x000003ff) != 0x000003ff) return false;
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
   
   return true;
 }
 
 void BallTrackMessage::Swap(BallTrackMessage* other) {
   if (other != this) {
-    std::swap(host_, other->host_);
-    std::swap(publisher_, other->publisher_);
-    std::swap(topic_, other->topic_);
-    std::swap(timeout_, other->timeout_);
-    std::swap(timestamp_, other->timestamp_);
     std::swap(cx_, other->cx_);
     std::swap(cy_, other->cy_);
     std::swap(referenceyaw_, other->referenceyaw_);

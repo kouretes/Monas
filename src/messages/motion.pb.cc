@@ -48,12 +48,7 @@ void protobuf_AssignDesc_motion_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(MotionWalkMessage));
   MotionHeadMessage_descriptor_ = file->message_type(1);
-  static const int MotionHeadMessage_offsets_[7] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionHeadMessage, host_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionHeadMessage, publisher_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionHeadMessage, topic_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionHeadMessage, timeout_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionHeadMessage, timestamp_),
+  static const int MotionHeadMessage_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionHeadMessage, command_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionHeadMessage, parameter_),
   };
@@ -69,12 +64,7 @@ void protobuf_AssignDesc_motion_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(MotionHeadMessage));
   MotionActionMessage_descriptor_ = file->message_type(2);
-  static const int MotionActionMessage_offsets_[7] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionActionMessage, host_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionActionMessage, publisher_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionActionMessage, topic_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionActionMessage, timeout_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionActionMessage, timestamp_),
+  static const int MotionActionMessage_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionActionMessage, command_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionActionMessage, parameter_),
   };
@@ -128,16 +118,10 @@ void protobuf_AddDesc_motion_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\014motion.proto\"9\n\021MotionWalkMessage\022\021\n\007c"
-    "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\251\001\n\021Mo"
-    "tionHeadMessage\022\027\n\004host\030\001 \002(\t:\tlocalhost"
-    "\022\023\n\tpublisher\030\002 \002(\t:\000\022\025\n\005topic\030\003 \002(\t:\006gl"
-    "obal\022\024\n\007timeout\030\004 \002(\005:\003100\022\023\n\ttimestamp\030"
-    "\005 \002(\t:\000\022\021\n\007command\030\006 \002(\t:\000\022\021\n\tparameter\030"
-    "\007 \003(\002\"\253\001\n\023MotionActionMessage\022\027\n\004host\030\001 "
-    "\002(\t:\tlocalhost\022\023\n\tpublisher\030\002 \002(\t:\000\022\025\n\005t"
-    "opic\030\003 \002(\t:\006global\022\024\n\007timeout\030\004 \002(\005:\003100"
-    "\022\023\n\ttimestamp\030\005 \002(\t:\000\022\021\n\007command\030\006 \002(\t:\000"
-    "\022\021\n\tparameter\030\007 \003(\002", 419);
+    "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"9\n\021Mot"
+    "ionHeadMessage\022\021\n\007command\030\006 \002(\t:\000\022\021\n\tpar"
+    "ameter\030\007 \003(\002\";\n\023MotionActionMessage\022\021\n\007c"
+    "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002", 193);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "motion.proto", &protobuf_RegisterTypes);
   MotionWalkMessage::default_instance_ = new MotionWalkMessage();
@@ -430,17 +414,8 @@ void MotionWalkMessage::Swap(MotionWalkMessage* other) {
 
 // ===================================================================
 
-const ::std::string MotionHeadMessage::_default_host_("localhost");
-const ::std::string MotionHeadMessage::_default_publisher_;
-const ::std::string MotionHeadMessage::_default_topic_("global");
-const ::std::string MotionHeadMessage::_default_timestamp_;
 const ::std::string MotionHeadMessage::_default_command_;
 #ifndef _MSC_VER
-const int MotionHeadMessage::kHostFieldNumber;
-const int MotionHeadMessage::kPublisherFieldNumber;
-const int MotionHeadMessage::kTopicFieldNumber;
-const int MotionHeadMessage::kTimeoutFieldNumber;
-const int MotionHeadMessage::kTimestampFieldNumber;
 const int MotionHeadMessage::kCommandFieldNumber;
 const int MotionHeadMessage::kParameterFieldNumber;
 #endif  // !_MSC_VER
@@ -461,11 +436,6 @@ MotionHeadMessage::MotionHeadMessage(const MotionHeadMessage& from)
 
 void MotionHeadMessage::SharedCtor() {
   _cached_size_ = 0;
-  host_ = const_cast< ::std::string*>(&_default_host_);
-  publisher_ = const_cast< ::std::string*>(&_default_publisher_);
-  topic_ = const_cast< ::std::string*>(&_default_topic_);
-  timeout_ = 100;
-  timestamp_ = const_cast< ::std::string*>(&_default_timestamp_);
   command_ = const_cast< ::std::string*>(&_default_command_);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -475,18 +445,6 @@ MotionHeadMessage::~MotionHeadMessage() {
 }
 
 void MotionHeadMessage::SharedDtor() {
-  if (host_ != &_default_host_) {
-    delete host_;
-  }
-  if (publisher_ != &_default_publisher_) {
-    delete publisher_;
-  }
-  if (topic_ != &_default_topic_) {
-    delete topic_;
-  }
-  if (timestamp_ != &_default_timestamp_) {
-    delete timestamp_;
-  }
   if (command_ != &_default_command_) {
     delete command_;
   }
@@ -517,27 +475,6 @@ MotionHeadMessage* MotionHeadMessage::New() const {
 void MotionHeadMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (_has_bit(0)) {
-      if (host_ != &_default_host_) {
-        host_->assign(_default_host_);
-      }
-    }
-    if (_has_bit(1)) {
-      if (publisher_ != &_default_publisher_) {
-        publisher_->clear();
-      }
-    }
-    if (_has_bit(2)) {
-      if (topic_ != &_default_topic_) {
-        topic_->assign(_default_topic_);
-      }
-    }
-    timeout_ = 100;
-    if (_has_bit(4)) {
-      if (timestamp_ != &_default_timestamp_) {
-        timestamp_->clear();
-      }
-    }
-    if (_has_bit(5)) {
       if (command_ != &_default_command_) {
         command_->clear();
       }
@@ -554,94 +491,10 @@ bool MotionHeadMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string host = 1 [default = "localhost"];
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_host()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->host().data(), this->host().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_publisher;
-        break;
-      }
-      
-      // required string publisher = 2 [default = ""];
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_publisher:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_publisher()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->publisher().data(), this->publisher().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_topic;
-        break;
-      }
-      
-      // required string topic = 3 [default = "global"];
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_topic:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_topic()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->topic().data(), this->topic().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(32)) goto parse_timeout;
-        break;
-      }
-      
-      // required int32 timeout = 4 [default = 100];
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_timeout:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &timeout_)));
-          _set_bit(3);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(42)) goto parse_timestamp;
-        break;
-      }
-      
-      // required string timestamp = 5 [default = ""];
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_timestamp:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_timestamp()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->timestamp().data(), this->timestamp().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(50)) goto parse_command;
-        break;
-      }
-      
       // required string command = 6 [default = ""];
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_command:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_command()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
@@ -694,49 +547,8 @@ bool MotionHeadMessage::MergePartialFromCodedStream(
 
 void MotionHeadMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string host = 1 [default = "localhost"];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->host().data(), this->host().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->host(), output);
-  }
-  
-  // required string publisher = 2 [default = ""];
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->publisher().data(), this->publisher().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      2, this->publisher(), output);
-  }
-  
-  // required string topic = 3 [default = "global"];
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->topic().data(), this->topic().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->topic(), output);
-  }
-  
-  // required int32 timeout = 4 [default = 100];
-  if (_has_bit(3)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->timeout(), output);
-  }
-  
-  // required string timestamp = 5 [default = ""];
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      5, this->timestamp(), output);
-  }
-  
   // required string command = 6 [default = ""];
-  if (_has_bit(5)) {
+  if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -758,53 +570,8 @@ void MotionHeadMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* MotionHeadMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string host = 1 [default = "localhost"];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->host().data(), this->host().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->host(), target);
-  }
-  
-  // required string publisher = 2 [default = ""];
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->publisher().data(), this->publisher().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->publisher(), target);
-  }
-  
-  // required string topic = 3 [default = "global"];
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->topic().data(), this->topic().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->topic(), target);
-  }
-  
-  // required int32 timeout = 4 [default = 100];
-  if (_has_bit(3)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->timeout(), target);
-  }
-  
-  // required string timestamp = 5 [default = ""];
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->timestamp(), target);
-  }
-  
   // required string command = 6 [default = ""];
-  if (_has_bit(5)) {
+  if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -830,41 +597,6 @@ int MotionHeadMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string host = 1 [default = "localhost"];
-    if (has_host()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->host());
-    }
-    
-    // required string publisher = 2 [default = ""];
-    if (has_publisher()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->publisher());
-    }
-    
-    // required string topic = 3 [default = "global"];
-    if (has_topic()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->topic());
-    }
-    
-    // required int32 timeout = 4 [default = 100];
-    if (has_timeout()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->timeout());
-    }
-    
-    // required string timestamp = 5 [default = ""];
-    if (has_timestamp()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->timestamp());
-    }
-    
     // required string command = 6 [default = ""];
     if (has_command()) {
       total_size += 1 +
@@ -908,21 +640,6 @@ void MotionHeadMessage::MergeFrom(const MotionHeadMessage& from) {
   parameter_.MergeFrom(from.parameter_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from._has_bit(0)) {
-      set_host(from.host());
-    }
-    if (from._has_bit(1)) {
-      set_publisher(from.publisher());
-    }
-    if (from._has_bit(2)) {
-      set_topic(from.topic());
-    }
-    if (from._has_bit(3)) {
-      set_timeout(from.timeout());
-    }
-    if (from._has_bit(4)) {
-      set_timestamp(from.timestamp());
-    }
-    if (from._has_bit(5)) {
       set_command(from.command());
     }
   }
@@ -942,18 +659,13 @@ void MotionHeadMessage::CopyFrom(const MotionHeadMessage& from) {
 }
 
 bool MotionHeadMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   return true;
 }
 
 void MotionHeadMessage::Swap(MotionHeadMessage* other) {
   if (other != this) {
-    std::swap(host_, other->host_);
-    std::swap(publisher_, other->publisher_);
-    std::swap(topic_, other->topic_);
-    std::swap(timeout_, other->timeout_);
-    std::swap(timestamp_, other->timestamp_);
     std::swap(command_, other->command_);
     parameter_.Swap(&other->parameter_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
@@ -973,17 +685,8 @@ void MotionHeadMessage::Swap(MotionHeadMessage* other) {
 
 // ===================================================================
 
-const ::std::string MotionActionMessage::_default_host_("localhost");
-const ::std::string MotionActionMessage::_default_publisher_;
-const ::std::string MotionActionMessage::_default_topic_("global");
-const ::std::string MotionActionMessage::_default_timestamp_;
 const ::std::string MotionActionMessage::_default_command_;
 #ifndef _MSC_VER
-const int MotionActionMessage::kHostFieldNumber;
-const int MotionActionMessage::kPublisherFieldNumber;
-const int MotionActionMessage::kTopicFieldNumber;
-const int MotionActionMessage::kTimeoutFieldNumber;
-const int MotionActionMessage::kTimestampFieldNumber;
 const int MotionActionMessage::kCommandFieldNumber;
 const int MotionActionMessage::kParameterFieldNumber;
 #endif  // !_MSC_VER
@@ -1004,11 +707,6 @@ MotionActionMessage::MotionActionMessage(const MotionActionMessage& from)
 
 void MotionActionMessage::SharedCtor() {
   _cached_size_ = 0;
-  host_ = const_cast< ::std::string*>(&_default_host_);
-  publisher_ = const_cast< ::std::string*>(&_default_publisher_);
-  topic_ = const_cast< ::std::string*>(&_default_topic_);
-  timeout_ = 100;
-  timestamp_ = const_cast< ::std::string*>(&_default_timestamp_);
   command_ = const_cast< ::std::string*>(&_default_command_);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -1018,18 +716,6 @@ MotionActionMessage::~MotionActionMessage() {
 }
 
 void MotionActionMessage::SharedDtor() {
-  if (host_ != &_default_host_) {
-    delete host_;
-  }
-  if (publisher_ != &_default_publisher_) {
-    delete publisher_;
-  }
-  if (topic_ != &_default_topic_) {
-    delete topic_;
-  }
-  if (timestamp_ != &_default_timestamp_) {
-    delete timestamp_;
-  }
   if (command_ != &_default_command_) {
     delete command_;
   }
@@ -1060,27 +746,6 @@ MotionActionMessage* MotionActionMessage::New() const {
 void MotionActionMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (_has_bit(0)) {
-      if (host_ != &_default_host_) {
-        host_->assign(_default_host_);
-      }
-    }
-    if (_has_bit(1)) {
-      if (publisher_ != &_default_publisher_) {
-        publisher_->clear();
-      }
-    }
-    if (_has_bit(2)) {
-      if (topic_ != &_default_topic_) {
-        topic_->assign(_default_topic_);
-      }
-    }
-    timeout_ = 100;
-    if (_has_bit(4)) {
-      if (timestamp_ != &_default_timestamp_) {
-        timestamp_->clear();
-      }
-    }
-    if (_has_bit(5)) {
       if (command_ != &_default_command_) {
         command_->clear();
       }
@@ -1097,94 +762,10 @@ bool MotionActionMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string host = 1 [default = "localhost"];
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_host()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->host().data(), this->host().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_publisher;
-        break;
-      }
-      
-      // required string publisher = 2 [default = ""];
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_publisher:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_publisher()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->publisher().data(), this->publisher().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_topic;
-        break;
-      }
-      
-      // required string topic = 3 [default = "global"];
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_topic:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_topic()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->topic().data(), this->topic().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(32)) goto parse_timeout;
-        break;
-      }
-      
-      // required int32 timeout = 4 [default = 100];
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_timeout:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &timeout_)));
-          _set_bit(3);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(42)) goto parse_timestamp;
-        break;
-      }
-      
-      // required string timestamp = 5 [default = ""];
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_timestamp:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_timestamp()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->timestamp().data(), this->timestamp().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(50)) goto parse_command;
-        break;
-      }
-      
       // required string command = 6 [default = ""];
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_command:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_command()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
@@ -1237,49 +818,8 @@ bool MotionActionMessage::MergePartialFromCodedStream(
 
 void MotionActionMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string host = 1 [default = "localhost"];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->host().data(), this->host().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->host(), output);
-  }
-  
-  // required string publisher = 2 [default = ""];
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->publisher().data(), this->publisher().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      2, this->publisher(), output);
-  }
-  
-  // required string topic = 3 [default = "global"];
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->topic().data(), this->topic().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->topic(), output);
-  }
-  
-  // required int32 timeout = 4 [default = 100];
-  if (_has_bit(3)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->timeout(), output);
-  }
-  
-  // required string timestamp = 5 [default = ""];
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      5, this->timestamp(), output);
-  }
-  
   // required string command = 6 [default = ""];
-  if (_has_bit(5)) {
+  if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -1301,53 +841,8 @@ void MotionActionMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* MotionActionMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string host = 1 [default = "localhost"];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->host().data(), this->host().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->host(), target);
-  }
-  
-  // required string publisher = 2 [default = ""];
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->publisher().data(), this->publisher().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->publisher(), target);
-  }
-  
-  // required string topic = 3 [default = "global"];
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->topic().data(), this->topic().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->topic(), target);
-  }
-  
-  // required int32 timeout = 4 [default = 100];
-  if (_has_bit(3)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->timeout(), target);
-  }
-  
-  // required string timestamp = 5 [default = ""];
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->timestamp(), target);
-  }
-  
   // required string command = 6 [default = ""];
-  if (_has_bit(5)) {
+  if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -1373,41 +868,6 @@ int MotionActionMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string host = 1 [default = "localhost"];
-    if (has_host()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->host());
-    }
-    
-    // required string publisher = 2 [default = ""];
-    if (has_publisher()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->publisher());
-    }
-    
-    // required string topic = 3 [default = "global"];
-    if (has_topic()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->topic());
-    }
-    
-    // required int32 timeout = 4 [default = 100];
-    if (has_timeout()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->timeout());
-    }
-    
-    // required string timestamp = 5 [default = ""];
-    if (has_timestamp()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->timestamp());
-    }
-    
     // required string command = 6 [default = ""];
     if (has_command()) {
       total_size += 1 +
@@ -1451,21 +911,6 @@ void MotionActionMessage::MergeFrom(const MotionActionMessage& from) {
   parameter_.MergeFrom(from.parameter_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from._has_bit(0)) {
-      set_host(from.host());
-    }
-    if (from._has_bit(1)) {
-      set_publisher(from.publisher());
-    }
-    if (from._has_bit(2)) {
-      set_topic(from.topic());
-    }
-    if (from._has_bit(3)) {
-      set_timeout(from.timeout());
-    }
-    if (from._has_bit(4)) {
-      set_timestamp(from.timestamp());
-    }
-    if (from._has_bit(5)) {
       set_command(from.command());
     }
   }
@@ -1485,18 +930,13 @@ void MotionActionMessage::CopyFrom(const MotionActionMessage& from) {
 }
 
 bool MotionActionMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   return true;
 }
 
 void MotionActionMessage::Swap(MotionActionMessage* other) {
   if (other != this) {
-    std::swap(host_, other->host_);
-    std::swap(publisher_, other->publisher_);
-    std::swap(topic_, other->topic_);
-    std::swap(timeout_, other->timeout_);
-    std::swap(timestamp_, other->timestamp_);
     std::swap(command_, other->command_);
     parameter_.Swap(&other->parameter_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);

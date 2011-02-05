@@ -1,7 +1,7 @@
 #ifndef FILTER_H
 #define FILTER_H
 #include "../msg.h"
-#include "../../narukom_common.h"
+enum FilterState{ Rejected = 0, Accepted,Unknown};
 class Filter{
   public:
     Filter(const std::string & type_name,bool complement =false);// : type(type_name){}

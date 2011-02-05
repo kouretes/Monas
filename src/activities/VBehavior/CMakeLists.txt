@@ -8,5 +8,3 @@ include ( ../activTemplate.cmake )
 
 
 
-target_link_libraries ( ${ActivityName} )
-

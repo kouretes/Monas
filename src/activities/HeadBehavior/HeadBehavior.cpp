@@ -14,12 +14,13 @@ namespace {
 
 HeadBehavior::HeadBehavior() {
 }
+using namespace std;
 
 void HeadBehavior::UserInit() {
 
-	_com->get_message_queue()->subscribe("vision", _blk, 0);
-	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-	_com->get_message_queue()->subscribe("behavior", _blk, 0);
+	_blk->subscribeTo("vision", 0);
+	_blk->subscribeTo("sensors",0);
+	_blk->subscribeTo("behavior",0);
 
 	hmot = new MotionHeadMessage();
 	hmot->add_parameter(0.0f);
@@ -61,7 +62,7 @@ int HeadBehavior::Execute() {
 		case (DONOTHING):
 			ballfound = 0;
 			hbmsg->set_ballfound(ballfound);
-			
+
 			break;
 		case (CALIBRATE):
 
@@ -69,7 +70,7 @@ int HeadBehavior::Execute() {
 			calibrated = 1;
 			hbmsg->set_calibrated(calibrated);
 			headaction = DONOTHING;
-			choosemyaction = true;			
+			choosemyaction = true;
 
 			break;
 		case (SCANFORBALL):

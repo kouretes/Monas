@@ -47,8 +47,7 @@ void Sensors::UserInit() {
 #ifdef KROBOT_IS_REMOTE_OFF
 	initFastAccess();
 #endif
-	_com->get_message_queue()->add_publisher(this);
-
+	this->attachPublisherToMessageQueue(*_com->get_message_queue());
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
 

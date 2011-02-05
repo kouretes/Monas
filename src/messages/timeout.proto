@@ -1,3 +1,0 @@
-message TimeoutMsg {
-  required string wakeup = 1;
-}

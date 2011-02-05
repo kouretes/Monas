@@ -165,7 +165,7 @@ void RobotController::sendLedUpdate() {
 	else
 		lfoot_led->set_color("red");
 
-	_blk->publish_signal(leds, "communication");
+	_blk->publish_signal(leds, "leds");
 	leds.clear_leds();
 }
 

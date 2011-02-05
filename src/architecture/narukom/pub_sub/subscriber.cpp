@@ -19,75 +19,67 @@
 */
 
 #include "subscriber.h"
-#include <iostream>
-using std::string;
-using std::vector;
-using std::cout;
-using std::endl;
-using google::protobuf::Message;
+#include "message_queue.h"
+#include "message_buffer.h"
+using namespace std;
 
-Subscriber::Subscriber()
+Subscriber::Subscriber(): subscriber_name("Default Subscriber"),sub_msg_buf(NULL)
 {
-  subscriber_name = string("Default Subscriber");
-  sub_msg_buf = 0;
+
 }
 
-Subscriber::Subscriber(const string& sb_name)
+Subscriber::Subscriber(const string& sb_name):subscriber_name(sb_name),sub_msg_buf(NULL)
 {
- subscriber_name = sb_name;
- cout << "Initializesubscriber" << endl;
- sub_msg_buf = 0;
-}
 
-Subscriber::Subscriber(const char* sb_name)
-{
-  subscriber_name = string(sb_name);
-  sub_msg_buf = 0;
-  cout << "Initialize subscriber" << endl;
 }
 
 Subscriber::~Subscriber()
 {
   cout << "Deleting subscriber " << endl;
-  if(sub_msg_buf != 0)
-    sub_msg_queue->remove_subscriber(this);
+
   if(sub_msg_buf != 0)
     delete sub_msg_buf;
 
 }
 
-string Subscriber::getName() const
+
+void Subscriber::attachSubscriberToMessageQueue(MessageQueue & q)
 {
-  return subscriber_name;
+	sub_msg_buf=q.attachSubscriber(subscriber_name);
 }
 
-
-bool Subscriber::operator==(const Subscriber& sub_1)
+void Subscriber::subscribeTo(std::string const& topic , int where)
 {
-  return subscriber_name == sub_1.getName();
+	//cout<<"Check -2"<<endl;
+	if(sub_msg_buf==NULL)
+		return;
+	//cout<<"Check -1"<<endl;
+	sub_msg_buf->getQueue().subscribeTo(sub_msg_buf,topic,where);
 }
 
-void Subscriber::setBuffer(MessageBuffer* buf)
+void Subscriber::unsubscribeFrom(std::string const& topic , int where)
 {
-  sub_msg_buf = buf;
+	if(sub_msg_buf==NULL)
+		return;
+	sub_msg_buf->getQueue().unsubscribeFrom(sub_msg_buf,topic,where);
 }
 
-void Subscriber::setQueue(MessageQueue* val)
-{
-  sub_msg_queue = val;
-}
 
 void Subscriber::process_messages(){
-    cout << "Subscriber Process_msg  called " << endl;
+
+	cout << "Subscriber Process_msg  called " << endl;
+	remove();
+}
+std::vector<msgentry> Subscriber::remove()
+{
+    std::vector<msgentry> data;
     if(sub_msg_buf == 0)
     {
-      if( sub_msg_queue == 0)
-      {
-	cout << "Subscriber with no queue" << endl;
-	return;
-      }
-      sub_msg_queue->add_subscriber(this);
-    }
-    std::vector<msgentry> data=sub_msg_buf->remove();
+    	cout<<"Subscriber::process_messages() :not attached to a messageQueue"<<endl;
 
+    }
+    else
+		data=sub_msg_buf->remove();
+    return data;
 }
+

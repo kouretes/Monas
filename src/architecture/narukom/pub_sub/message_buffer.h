@@ -32,31 +32,28 @@ class MessageQueue;
 class MessageBuffer
 {
   public:
-    MessageBuffer(MessageQueue *amq);
+
     explicit
-    MessageBuffer(const std::string owner,MessageQueue *amq );
+    MessageBuffer(std::size_t nid,MessageQueue &amq , bool notifier);
     ~MessageBuffer();
     void add( std::vector<msgentry> const & tuples);
     bool tryadd( std::vector<msgentry> const & tuples);
 
     void add(const msgentry & t);
     std::vector<msgentry> remove();
-    bool operator==( MessageBuffer& other) ;
-    const std::string getOwner() const {return owner;};
+    //bool operator==( MessageBuffer& other) ;
+    std::size_t getOwnerID() const {return ownerId;};
+    MessageQueue & getQueue() {return  mq;};
     void add_filter(Filter* filter);
     void remove_filter(Filter* filter);
-    static bool cmpentryTimeStamps(const msgentry &a,const msgentry & b) {return a.timestamp<b.timestamp;};
-    bool operator < (const MessageBuffer  *rhs) const
-    {
-    	return this->owner < rhs->owner;
-    }
   private:
-    //Use GT comparator to ensure top() is always the oldest timestamped msg
+
     std::vector<msgentry> msg_buf;
     std::list<Filter*> filters;
-    std::string owner;
+    std::size_t ownerId;
     boost::mutex  mutex;
-    MessageQueue *mq;
+    MessageQueue &mq;
+    bool shouldNotify;
 
 };
 

@@ -36,7 +36,7 @@ void LedHandler::UserInit() {
 	//led_change = 0;
 
 	//_com->get_message_queue()->add_subscriber(_blk);
-	_com->get_message_queue()->subscribe("communication", _blk, 0);
+	_blk->subscribeTo("leds", 0);
 	try {
 
 		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");

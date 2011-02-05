@@ -13,23 +13,22 @@ ObstacleAvoidance::ObstacleAvoidance():
 }
 
 void ObstacleAvoidance::UserInit() {
-	
-	_com->get_message_queue()->add_subscriber(_blk);
-	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-	_com->get_message_queue()->subscribe("behavior", _blk, 0);
-	
-	
+
+	_blk->subscribeTo("sensors", 0);
+	_blk->subscribeTo("behavior", 0);
+
+
 	//obavm = new ObstacleMessage();
 
 	//ypoloipa metakinhsewn
 	resX=0.0;
 	resY=0.0;
 	resAngle=0.0;
-	
+
 	//mnmata pou diabazei
 	//ussm =0;
 	//rpsm=0;
-	
+
 	shiftConsole = 100;  //shift==metatopish gia probolh grid sthn ekastote konsola
 	countAge=0;
 	countLeft=0;
@@ -45,13 +44,13 @@ void ObstacleAvoidance::UserInit() {
 	mprostaCert = 0.0;
 	dexiaCert = 0.0;
 	aristeraCert = 0.0;
-	
+
 	firstTimeInitializeOdometry=0;		//xrhsh gia prwth anafora se odometry metrhseis
-	
+
 	//syntetagmenes stoxou
 	goalX=0;
 	goalY=0;
-	initGrid();		//arxikopoihsh twn pinakwn 
+	initGrid();		//arxikopoihsh twn pinakwn
 	//boh8htikos pinakas gia update
 	for(int i=0;i<SOnARsNum;i++)
 		empty[i]=2.0;
@@ -59,15 +58,15 @@ void ObstacleAvoidance::UserInit() {
 	obavm.add_direction(0);
 	obavm.add_direction(0);
 	obavm.add_direction(0);
-	
+
 	obavm.add_distance(0);
 	obavm.add_distance(0);
 	obavm.add_distance(0);
-	
+
 	obavm.add_certainty(0);
 	obavm.add_certainty(0);
 	obavm.add_certainty(0);
-	
+
 	white = cvScalar(255,255,255);
 	lightgrey = cvScalar(190,190,190);
 	grey = cvScalar(125,125,125);
@@ -75,12 +74,12 @@ void ObstacleAvoidance::UserInit() {
 	black = cvScalar(0,0,0);
 	blue = cvScalar(255, 0, 0);
 	paintColor = grey;
-	
+
 	nCurvePts=4;
 	nCurves=1;
 	isCurveClosed=1;
 	lineWidth=8;
-	
+
 	if (cvHighgui)
 	{
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "Enable highgui", Logger::Info);
@@ -99,11 +98,11 @@ int ObstacleAvoidance::Execute() {
 	//xrhsh gia elegxo ean to array me tis times twn sonars einai 0 = sfalma
 	countLeft=0;
 	countRight=0;
-	
-	
-	
-	double Right[SOnARsNum], Left[SOnARsNum];	
-	
+
+
+
+	double Right[SOnARsNum], Left[SOnARsNum];
+
 	//(RobotPositionSensorMessage) find current robot position
 	if(rpsm !=0){
 		PosX = rpsm->sensordata(0);
@@ -114,20 +113,20 @@ int ObstacleAvoidance::Execute() {
 			RobotPosition[1]=PosY.sensorvalue();
 			RobotPosition[2]=Angle.sensorvalue();
 			firstTimeInitializeOdometry=1;
-		} 
+		}
 		else{
 			findNewPosition();
-			//for path planning 
+			//for path planning
 			//goalX = int(targetX/distance);
 			//goalY = int(targetY/N);
-			//pathPlanningInit(goalX, goalY); 
+			//pathPlanningInit(goalX, goalY);
 			//paradeigma-test
-			//pathPlanningInit(6, 21); 
+			//pathPlanningInit(6, 21);
 		}
 		//delete rpsm;
 	}
-	
-	
+
+
 	//update the grid with the new sonar values
 	if (ussm != 0) {
 		for (int j=SOnARsNum-1;j>=0;j--){
@@ -145,13 +144,13 @@ int ObstacleAvoidance::Execute() {
 		else	updateGrid(countRight!=0?Right:empty, countLeft!=0?Left:empty);
 		//delete ussm;
 	}
-	
+
 	//aging grid every 3 seconds
 	//if(countAge == 30){
 	//	countAge =0;
 	//	ageGrid();
 	//}
-	
+
 	if (cvHighgui)
 		cvDrawGrid();
 
@@ -171,12 +170,12 @@ void ObstacleAvoidance::printSonarValues(){
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[7].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[7].sensorvalue()), Logger::Info);
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[8].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[8].sensorvalue()), Logger::Info);
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "rightSensor: " + _toString(RightValue[9].sensorvalue()) + "   leftSensor: " + _toString(LeftValue[9].sensorvalue()), Logger::Info);
-	
+
 }
 
 void ObstacleAvoidance::read_messages() {
-	
-	
+
+
 	ussm =  _blk->read_data<UltaSoundSensorsMessage>("UltaSoundSensorsMessage");
 	rpsm =  _blk->read_data<RobotPositionSensorMessage>("RobotPositionSensorMessage");
 	//targetX = _blk->in_msg_nb<RobotPositionSensorMessage>("targetX", "Behavior");
@@ -192,15 +191,15 @@ void ObstacleAvoidance::publishObstacleMessage(){
 	obavm.set_direction(0, aristera?1:0);
 	obavm.set_direction(1, mprosta?1:0);
 	obavm.set_direction(2, dexia?1:0);
-	
+
 	obavm.set_distance(0, aristera?aristeraDist:0);
 	obavm.set_distance(1, mprosta?mprostaDist:0);
 	obavm.set_distance(2, dexia?dexiaDist:0);
-	
+
 	obavm.set_certainty(0, aristera?aristeraCert:0);
 	obavm.set_certainty(1, mprosta?mprostaCert:0);
 	obavm.set_certainty(2, dexia?dexiaCert:0);
-	
+
 	_blk->publish_signal(obavm, "obstacle");
 }
 
@@ -209,27 +208,27 @@ void ObstacleAvoidance::initPolarGrid(){
 	for(int i=0;i<M;i++)
 		for(int j=0;j<N;j++)
 			PolarGrid[i][j] = NoKnowledge;
-	
+
 }
 
 void ObstacleAvoidance::initGrid(){
 	int xx=0, yy=0;
 	double r, theta;
 	int coord=0, counter=0;
-	
+
 	//oi syntetagmenes pou antistoixoun sta 4 shmeia pou orizoun to keli
 	findCoordinates();
-	
+
 	//initialize the variables of the robot position
 	for (int i=0;i<RobotDirections;i++)
 		RobotPosition[i]=0.0;
-		
+
 	//initialize arrays with sonar values
 	for (int i=0;i<SOnARsNum;i++){
 		rightArray[i]=0.0;
 		leftArray[i]=0.0;
 	}
-	
+
 	//initialize Polar grid
 	initPolarGrid();
 
@@ -244,7 +243,7 @@ void ObstacleAvoidance::initGrid(){
 			coord = xx*1000+yy;
 			//out << " coord: " << coord << " cell: " <<  (r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1) <<" xx: " <<xx << " yy: " << yy << "   r: " << r << " theta: " << theta  << endl;
 			MoveGrid[coord] =  r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1;
-			
+
 			xx = x[counter];
 			yy = y[counter]+10;
 			r = sqrt(pow((float)xx-shiftConsole, 2) + pow((float)shiftConsole-yy, 2) ) - (BodyCm/2);
@@ -253,7 +252,7 @@ void ObstacleAvoidance::initGrid(){
 			coord = xx*1000+yy;
 			//out << " coord: " << coord << " cell: " <<  (r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1) <<" xx: " <<xx << " yy: " << yy << "   r: " << r << " theta: " << theta  << endl;
 			MoveGrid[coord] =  r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1;
-			
+
 			xx = x[counter]+10;
 			yy = y[counter]+10;
 			r = sqrt(pow((float)xx-shiftConsole, 2) + pow((float)shiftConsole-yy, 2) ) - (BodyCm/2);
@@ -262,7 +261,7 @@ void ObstacleAvoidance::initGrid(){
 			coord = xx*1000+yy;
 			//out << " coord: " << coord << " cell: " <<  (r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1) <<" xx: " <<xx << " yy: " << yy << "   r: " << r << " theta: " << theta  << endl;
 			MoveGrid[coord] =  r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1;
-			
+
 			xx = x[counter]-10;
 			yy = y[counter];
 			r = sqrt(pow((float)xx-shiftConsole, 2) + pow((float)shiftConsole-yy, 2) ) - (BodyCm/2);
@@ -271,7 +270,7 @@ void ObstacleAvoidance::initGrid(){
 			coord = xx*1000+yy;
 			//out << " coord: " << coord << " cell: " <<  (r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1) <<" xx: " <<xx << " yy: " << yy << "   r: " << r << " theta: " << theta  << endl;
 			MoveGrid[coord] =  r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1;
-			
+
 			xx = x[counter];
 			yy = y[counter]-10;
 			r = sqrt(pow((float)xx-shiftConsole, 2) + pow((float)shiftConsole-yy, 2) ) - (BodyCm/2);
@@ -280,7 +279,7 @@ void ObstacleAvoidance::initGrid(){
 			coord = xx*1000+yy;
 			//out << " coord: " << coord << " cell: " <<  (r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1) <<" xx: " <<xx << " yy: " << yy << "   r: " << r << " theta: " << theta  << endl;
 			MoveGrid[coord] =  r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1;
-			
+
 			xx = x[counter]-10;
 			yy = y[counter]-10;
 			r = sqrt(pow((float)xx-shiftConsole, 2) + pow((float)shiftConsole-yy, 2) ) - (BodyCm/2);
@@ -289,7 +288,7 @@ void ObstacleAvoidance::initGrid(){
 			coord = xx*1000+yy;
 			//out << " coord: " << coord << " cell: " <<  (r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1) <<" xx: " <<xx << " yy: " << yy << "   r: " << r << " theta: " << theta  << endl;
 			MoveGrid[coord] =  r >= 0?(int(r/distance))*N+(int(theta/(RotationAngle))):-1;
-			
+
 			counter++;
 		}
 	}
@@ -348,7 +347,7 @@ void ObstacleAvoidance::smoothGrid(int smooth){
 		else if(smooth == -4)
 			for(int l=N/2;l<3*N/4;l++)
 				PolarGrid[0][l]=0.0;
-				
+
 		for (int k=0;k<M;k++)
 			for(int l=0;l<N;l++){
 			//horizontal : koitame keli para keli kai an exoun kolntinh pi8anothta 8etoume kai sto endiameso aythn thn pi8anothta
@@ -356,7 +355,7 @@ void ObstacleAvoidance::smoothGrid(int smooth){
 				PolarGrid[k][l+1<N?l+1:(l+2)%N] =  PolarGrid[k][l];
 			//vertical
 			if (PolarGrid[k][l] != NoKnowledge && PolarGrid[l+2<N?l+2:(l+2)%N][l]==PolarGrid[k][l])
-				PolarGrid[l+2<N?l+2:(l+2)%N][l] =  PolarGrid[k][l];      
+				PolarGrid[l+2<N?l+2:(l+2)%N][l] =  PolarGrid[k][l];
 			}
 		smooth=0;
 	}
@@ -364,7 +363,7 @@ void ObstacleAvoidance::smoothGrid(int smooth){
 
 void ObstacleAvoidance::updateFront(){
 	for(int i=0;i<3;i++)
-		if(abs(PolarGrid[i][15] - PolarGrid[i][21]) <= 0.1) 
+		if(abs(PolarGrid[i][15] - PolarGrid[i][21]) <= 0.1)
 			for(int k =16;k<19;k++)
 				PolarGrid[i][k] = (PolarGrid[i][15] + PolarGrid[i][21])/2;
 	for(int i=3;i<M;i++)
@@ -378,11 +377,11 @@ void ObstacleAvoidance::updateGrid(double (&left)[SOnARsNum], double (&right)[SO
 	mprosta=false;
 	dexia= false;
 	aristera = false;
-	
+
 	//Gia periptwsh eleipsis empodiou -> meiwsh pi8anothtas yparxis empodiou
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "countLeft " + _toString(countLeft) +  " countRight " + _toString(countRight) , Logger::ExtraExtraInfo);
-	
-	//in case of no obstacle reduce possibility in the front 
+
+	//in case of no obstacle reduce possibility in the front
 	if (countRight >= 19 || countRight ==0  ){
 		for(int i=0;i<M;i++){
 			for(int j=FRONT - SonarCellRange -1 ;j<FRONT  ;j++){ //13:16
@@ -393,13 +392,13 @@ void ObstacleAvoidance::updateGrid(double (&left)[SOnARsNum], double (&right)[SO
 	if (countLeft >= 19 || countLeft ==0 ){
 		for(int i=0;i<M;i++){
 			for(int j=FRONT +1 ;j<FRONT + SonarCellRange +range ;j++){ //18:21
-				PolarGrid[i][j]=PolarGrid[i][j]*PossibilityDiscountNoObst<=0.05?0.05:(PolarGrid[i][j]*PossibilityDiscountNoObst); 
+				PolarGrid[i][j]=PolarGrid[i][j]*PossibilityDiscountNoObst<=0.05?0.05:(PolarGrid[i][j]*PossibilityDiscountNoObst);
 			}PolarGrid[i][FRONT]=PolarGrid[i][FRONT]*PossibilityDiscountNoObst<=0.05?0.05:(PolarGrid[i][FRONT]*PossibilityDiscountNoObst); //17
 		}
 	}
-	
+
 	for (int i=SOnARsNum-1;i>=0;i--){
-		
+
 		left[i] = left[i] == 0.29?0.3:left[i] ;
 		right[i] = right[i] == 0.29?0.3:right[i] ;
 		left[i] = (left[i] < TooFar && left[i] > TooClose)?left[i]:0.0; //left
@@ -407,8 +406,8 @@ void ObstacleAvoidance::updateGrid(double (&left)[SOnARsNum], double (&right)[SO
 		if(left[i] == 0.0 && right[i] == 0.0) continue;
 		temp[0] = left[i];
 		temp[1] = right[i];
-		
-		
+
+
 		for(int k=0;k<2;k++){
 			index=(int)(temp[k]/0.1 - 3);//-2 giati den mas endiaferei mexri ta 20 cm
 			if(index < 0) continue;
@@ -421,7 +420,7 @@ void ObstacleAvoidance::updateGrid(double (&left)[SOnARsNum], double (&right)[SO
 					if (index-v>=0)
 						PolarGrid[index-v][j]=(PolarGrid[index-v][j]*UsePossibilityDown<=0.05)?0.05:PolarGrid[index-v][j]*UsePossibilityDown;
 					if (index+v<M)
-						if (v >= 2) 
+						if (v >= 2)
 							ageSpecGrid(index+v, j);
 						else
 							PolarGrid[index+v][j]=(gridValue*possibilityUp>=1.0)?1.0:(gridValue*possibilityUp  <= PolarGrid[index+v][j]?PolarGrid[index+v][j]:gridValue*possibilityUp);
@@ -431,10 +430,10 @@ void ObstacleAvoidance::updateGrid(double (&left)[SOnARsNum], double (&right)[SO
 			}
 		}
 	}
-	
+
 	updateFront();
 	ageRestGrid();
-	
+
 	for(int i=0;i<M;i++){
 		mprosta = PolarGrid[i][FRONT] >= 0.8?true:false;
 		mprostaDist = mprosta == true?(i+1):0;
@@ -478,7 +477,7 @@ void ObstacleAvoidance::findNewPosition(){
 		resAngle = fmod(RobotPosition[2]-Angle.sensorvalue(), (double)RotationAngleRad);
 		RobotPosition[2]=Angle.sensorvalue();
 	}
-	
+
 	value1 = int(temp[0] + resX);
 	value2 = int(temp[1] + resY);
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "value1 " + _toString(value1) +  " value2 " + _toString(value2) , Logger::Info);
@@ -491,7 +490,7 @@ void ObstacleAvoidance::findNewPosition(){
 		value2=0;
 		initPolarGrid();
 	}
-	
+
 	//Logger::Instance().WriteMsg("ObstacleAvoidance", "value1 " + _toString(value1) +  " value2 " + _toString(value2) , Logger::Info);
 	//cout << "value1: " << value1 << " value2: " << value2 << endl;
 	if(abs(value1) > distance && abs(value2) > distance){
@@ -539,19 +538,19 @@ void ObstacleAvoidance::straightMove(int distanceFront, int distanceSide){
 				px[3] = x[N*i+j+1]+distanceFront;		py[3] = y[N*i+j+1]+distanceSide;
 
 				/*for (int k=0;k<=5;k++){
-					
+
 					index = int((px[k] -1)/2);
 					indey = int((py[k] -1)/2);
-					
+
 					cellnum = MoveGrid[index*100+indey];
 					//cout << "index: " << index*100+indey << "cellnum: " <<  cellnum << endl;
-					
+
 					if (cellnum != -1 && cellnum ){
 						PolarGrid[int(cellnum/N)][int(cellnum%N)] = temp*0.95;
 						changed[cellnum] = 1;
 					}
 				}*/
-				
+
 				for (int k=0;k<=3;k++){
 					cellnum = MoveGrid[(px[k])*1000+py[k]];
 					if ((cellnum/N)<M && (cellnum/N) >=0){
@@ -578,7 +577,7 @@ void ObstacleAvoidance::straightMove(int distanceFront, int distanceSide){
 	}
 	else if(distanceSide > 0) smooth=3;
 	else smooth = -3;
-	
+
 	smoothGrid(smooth);
 }
 
@@ -592,10 +591,10 @@ void ObstacleAvoidance::rotateGrid(double angle){
 	for (int i=0;i<M;i++){
 		for(int j=0;j<N;j++) change[j] = 0;//init change for every ring
 		for(int j=0;j<N;j++){
-		  temp[i][(j+ll)%N] = PolarGrid[i][(j+ll)%N]; 
+		  temp[i][(j+ll)%N] = PolarGrid[i][(j+ll)%N];
 		  if(j+ll < 0) ll=N+ll;
 		  if(change[j]==0){
-			PolarGrid[i][(j+ll)%N] = PolarGrid[i][j]; 
+			PolarGrid[i][(j+ll)%N] = PolarGrid[i][j];
 			change[(j+ll)%N] = 1;
 		  }
 		  else{
@@ -633,13 +632,13 @@ void ObstacleAvoidance::initPossibilities(){
   possibilities[5]=0.005; //pd
   possibilities[6]=0.075;  //d
   possibilities[7]=0.1; //md
-  possibilities[8]=0.0;  //idio 
+  possibilities[8]=0.0;  //idio
 }
 
 //8 neighbour cells
 void ObstacleAvoidance::initIndexes(int mm, int nn){
-	indexx[0] = mm!=M-1?mm+1:mm; 
-	indexx[1] = mm!=M-1?mm+1:mm; 
+	indexx[0] = mm!=M-1?mm+1:mm;
+	indexx[1] = mm!=M-1?mm+1:mm;
 	indexx[2] = mm;
 	indexx[3] = mm!=0?mm-1:mm;
 	indexx[4] = mm!=0?mm-1:mm;
@@ -685,20 +684,20 @@ void ObstacleAvoidance::bestPath(int goalx, int goaly){
 	//Logger::Instance().WriteMsg("ObstacleAvoidance", "initm " + _toString(initm) +  " initn " + _toString(initn) , Logger::ExtraExtraInfo);
 	pathx[g] = initm;
 	pathy[g] = initn;
-  
+
   initIndexes(initm, initn);
   do{
-	
+
 	g++;
-    
+
 	bigger = IterationGrid[indexx[0]][indexy[0]]; //bigger prwto mprosta
     initm = indexx[0];
     initn = indexy[0];
-    
-    
+
+
 	  for (i=1;i<NEIGHBOURS;i++){
 		  temp=IterationGrid[indexx[i]][indexy[i]];//value[i];
-      
+
 		  if (temp>bigger){
 			  initm = indexx[i];
 			  initn = indexy[i];
@@ -711,18 +710,18 @@ void ObstacleAvoidance::bestPath(int goalx, int goaly){
 	  initIndexes(initm, initn);
 	  if(initm == pathx[g-1] && initn == pathy[g-1]) break;
 	}while(initm != goalx || initn!=goaly);
-	
+
 	for (i=0;i<g;i++)
 		IterationGrid[pathx[i]][pathy[i]] = 2.0;
 	printIterationGrid();
 }
 
 void ObstacleAvoidance::fillIterationGrid(){
-	
+
   //int  disc, k, a, i=0;
 	double sum=0.0, sumold = 0.0, max=0.0;
 	initPossibilities();
-	for(int it=0;it<20;it++){ 
+	for(int it=0;it<20;it++){
 	//do{
 		for(int mm=0;mm<M;mm++){
 		  for(int nn=0;nn<N;nn++){
@@ -737,7 +736,7 @@ void ObstacleAvoidance::fillIterationGrid(){
 			else if(IterationGrid[mm][nn] == goal)
 			  IterationGrid[mm][nn] = goal;
 			else{
-			  for(int a=0;a<NEIGHBOURS;a++){ 
+			  for(int a=0;a<NEIGHBOURS;a++){
 				sum=0.0;
 				for (int k=0;k<NEIGHBOURS;k++){
 					if(mm==0){
@@ -752,7 +751,7 @@ void ObstacleAvoidance::fillIterationGrid(){
 						else
 							sum = sum + IterationGrid[indexx[k]][indexy[k]]*possibilities[(k-a>0?k-a:NEIGHBOURS+k-a)%NEIGHBOURS];
 					}
-					else 
+					else
 						sum = sum + IterationGrid[indexx[k]][indexy[k]] * possibilities[((k-a>=0)?(k-a):(NEIGHBOURS+k-a))%NEIGHBOURS];
 				}
 				max = (sum>sumold)?sum:sumold;
@@ -772,7 +771,7 @@ void ObstacleAvoidance::fillIterationGrid(){
 
 void ObstacleAvoidance::printIterationGrid(){
 for (int i=5;i<25;i++){
-		Logger::Instance().WriteMsg("ObstacleAvoidance", " " + _toString(i) + " " + _toString(IterationGrid[0][i]) +" | " + _toString(IterationGrid[1][i]) + " | " + _toString(IterationGrid[2][i]) 
+		Logger::Instance().WriteMsg("ObstacleAvoidance", " " + _toString(i) + " " + _toString(IterationGrid[0][i]) +" | " + _toString(IterationGrid[1][i]) + " | " + _toString(IterationGrid[2][i])
 				+ " | " + _toString(IterationGrid[3][i])  + " | " + _toString(IterationGrid[4][i])
 				+ " | " + _toString(IterationGrid[5][i])  + " | " + _toString(IterationGrid[6][i]) , Logger::ExtraExtraInfo);
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "    ------------------------------------------ ", Logger::ExtraExtraInfo);
@@ -781,13 +780,13 @@ for (int i=5;i<25;i++){
 
 
 void ObstacleAvoidance::pathPlanningInit(int goalx, int goaly){
-	
+
 	/*int index, indey;
 	index = int(goalx/distance);
 	indey = int(goaly/N);
 	IterationGrid[index][indey] = goal;
 	*/
-	
+
 	//uncomment for path planning example
 	PolarGrid[5][16] = 1.0;
 	PolarGrid[5][15] = 1.0;
@@ -796,9 +795,9 @@ void ObstacleAvoidance::pathPlanningInit(int goalx, int goaly){
 	PolarGrid[2][21] = 1.0;
 	PolarGrid[2][22] = 1.0;
 	PolarGrid[2][23] = 1.0;
-	
+
 	//IterationGrid[6][21] = 0.0;
-	
+
 	//initialize iterationGrid to be same as PolarGrid
 	for (int i=0;i<M;i++)
 		for (int j=0;j<N;j++)
@@ -811,9 +810,9 @@ void ObstacleAvoidance::pathPlanningInit(int goalx, int goaly){
 
 void ObstacleAvoidance::drawGrid(){
 	//int val[M];
-	
+
 	for (int i=11;i<21;i++){
-		Logger::Instance().WriteMsg("ObstacleAvoidance", " " + _toString(i) + " " + _toString(PolarGrid[0][i]) +" | " + _toString(PolarGrid[1][i]) + " | " + _toString(PolarGrid[2][i]) 
+		Logger::Instance().WriteMsg("ObstacleAvoidance", " " + _toString(i) + " " + _toString(PolarGrid[0][i]) +" | " + _toString(PolarGrid[1][i]) + " | " + _toString(PolarGrid[2][i])
 				+ " | " + _toString(PolarGrid[3][i])  + " | " + _toString(PolarGrid[4][i])
 				+ " | " + _toString(PolarGrid[5][i])  + " | " + _toString(PolarGrid[6][i]) , Logger::ExtraExtraInfo);
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "    ------------------------------------------ ", Logger::ExtraExtraInfo);
@@ -821,7 +820,7 @@ void ObstacleAvoidance::drawGrid(){
 	/*for (int i=0;i<35;i++){
 		for (int j=0;j<M;j++)
 			val[j]=PolarGrid[j][i] > 0.6 ?1:0;
-		Logger::Instance().WriteMsg("ObstacleAvoidance", " " + _toString(i) + " " + _toString(val[0]) +" | " + _toString(val[1]) + " | " + _toString(val[2]) 
+		Logger::Instance().WriteMsg("ObstacleAvoidance", " " + _toString(i) + " " + _toString(val[0]) +" | " + _toString(val[1]) + " | " + _toString(val[2])
 				 + " | " + _toString(val[3])  + " | " + _toString(val[4])
 				 + " | " + _toString(val[5])  + " | " + _toString(val[6]) , Logger::ExtraExtraInfo);
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "    -------------------------------------------- ", Logger::ExtraExtraInfo);
@@ -830,12 +829,12 @@ void ObstacleAvoidance::drawGrid(){
 }
 
 void ObstacleAvoidance::cvDrawGrid(){
-	
+
 
 	int k=0, l=0;
 	CvPoint* curveArr={curve1};
-	
-	
+
+
 
 	for (k=0;k<M;k++){
 		for(l=0;l<N-1;l++){
@@ -856,7 +855,7 @@ void ObstacleAvoidance::cvDrawGrid(){
 		curve1[1].x =x[(k+1)*N+N-1]; curve1[1].y = y[(k+1)*N+N-1];
 		curve1[2].x =x[(k+1)*N];     curve1[2].y = y[(k+1)*N];
 		curve1[3].x =x[k*N];         curve1[3].y = y[k*N];
-		
+
 		if(PolarGrid[k][l] < 0.2)	paintColor = white;
 		else if(PolarGrid[k][l]  < 0.4)	paintColor = lightgrey;
 		else if(PolarGrid[k][l]  < 0.6)	paintColor = grey;
@@ -865,25 +864,25 @@ void ObstacleAvoidance::cvDrawGrid(){
 		else paintColor = grey;
 	    cvFillPoly( img,&curveArr,&nCurvePts, nCurves, paintColor);
 	    cvPolyLine( img,&curveArr,&nCurvePts, nCurves, isCurveClosed, white, 1, lineWidth, 0 );
-	} 
-	 
+	}
+
 	cvShowImage("img", img);
 	cvWaitKey(10);
 
 
 	return;
-	
+
 }
 
 void ObstacleAvoidance::drawIterationGrid(){
-					
+
 	CvPoint curve1[4];
 
 	int k=0, l=0;
 	CvPoint* curveArr={curve1};
 	int      nCurvePts=4;
 	int      nCurves=1;
-	
+
 	int      isCurveClosed=1;
 	int      lineWidth=8;
 	CvScalar white = cvScalar(255,255,255);
@@ -914,7 +913,7 @@ void ObstacleAvoidance::drawIterationGrid(){
 		curve1[1].x =x[(k+1)*N+N-1]; curve1[1].y = y[(k+1)*N+N-1];
 		curve1[2].x =x[(k+1)*N];     curve1[2].y = y[(k+1)*N];
 		curve1[3].x =x[k*N];         curve1[3].y = y[k*N];
-		
+
 		if(IterationGrid[k][N-1] < 0.2)	paintColor = white;
 		else if(IterationGrid[k][N-1]  < 0.4)	paintColor = lightgrey;
 		else if(IterationGrid[k][N-1]  < 0.6)	paintColor = grey;
@@ -924,12 +923,12 @@ void ObstacleAvoidance::drawIterationGrid(){
 		else paintColor = grey;
 	    cvFillPoly( img,&curveArr,&nCurvePts, nCurves, paintColor);
 	    cvPolyLine( img,&curveArr,&nCurvePts, nCurves, 1, white, isCurveClosed, lineWidth, 0 );
-	} 
-	 
+	}
+
 	cvNamedWindow("img", CV_WINDOW_AUTOSIZE);
 	cvShowImage("img", img);
 	cvWaitKey(0);
 	//printIterationGrid();
-	
+
 }
 

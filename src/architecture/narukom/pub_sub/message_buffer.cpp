@@ -25,41 +25,26 @@
 using namespace std;
 using google::protobuf::Message;
 
-MessageBuffer::MessageBuffer(MessageQueue *amq)
-{
-    boost::unique_lock<boost::mutex > lock(mutex);
-    owner = "";
-    mq=amq;
 
-}
 
-MessageBuffer::MessageBuffer(const std::string owner,MessageQueue *amq)
+MessageBuffer::MessageBuffer(std::size_t nid,MessageQueue &amq , bool notifier):
+	ownerId(nid),mq(amq),shouldNotify(notifier)
 {
     boost::unique_lock<boost::mutex > data_lock(mutex);
-    this->owner = owner;
-    mq=amq;
+
 
 }
 
 MessageBuffer::~MessageBuffer()
 {
-boost::unique_lock<boost::mutex > data_lock(mutex);
-  cout << "Destroy msg_buffer" << endl;
+  boost::unique_lock<boost::mutex > data_lock(mutex);
+  mq.purgeBuffer(this);
 
 
 }
 
 
 
-
-bool MessageBuffer::operator==( MessageBuffer& other)
-{
-	boost::unique_lock<boost::mutex > data_lock(mutex);
-    if (this->owner == other.getOwner())
-        return true;
-    return false;
-
-}
 
 void MessageBuffer::add( std::vector<msgentry> const & tuples)
 {
@@ -68,17 +53,18 @@ void MessageBuffer::add( std::vector<msgentry> const & tuples)
     std::vector<msgentry>::const_iterator it= tuples.begin();
     for(;it!=tuples.end();++it)
     {
-        if(filters.size() > 0)
+		bool filtered=false;
+
+        for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
 		{
-			for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
+			if((*fit)->filter(*it) == Rejected)
 			{
-			    if((*fit)->filter(*it) == Rejected)
-				{
 // 					cout << "filtered " << tuple->get_type() << endl;
-					continue;
-				}
+				filtered=true;
+				break;
 			}
 		}
+		if(filtered) continue;
 		//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
 
 		/*google::protobuf::Message * newptr=(*it).msg->New();
@@ -90,9 +76,9 @@ void MessageBuffer::add( std::vector<msgentry> const & tuples)
 
     }
     data_lock.unlock();
-    if(tuples.size()>0&& mq!=NULL)
+    if(tuples.size()>0&& shouldNotify)
     {
-       mq->requestMailMan(this);
+       mq.requestMailMan(this);
     }
 
 
@@ -108,17 +94,19 @@ bool MessageBuffer::tryadd( std::vector<msgentry> const & tuples)
     std::vector<msgentry>::const_iterator it= tuples.begin();
     for(;it!=tuples.end();++it)
     {
-        if(filters.size() > 0)
+    	bool filtered=false;
+
+        for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
 		{
-			for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
+			if((*fit)->filter(*it) == Rejected)
 			{
-			    if((*fit)->filter(*it) == Rejected)
-				{
 // 					cout << "filtered " << tuple->get_type() << endl;
-					continue;
-				}
+				filtered=true;
+				break;
 			}
 		}
+		if(filtered) continue;
+
 		//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
 
 		/*google::protobuf::Message * newptr=(*it).msg->New();
@@ -130,9 +118,9 @@ bool MessageBuffer::tryadd( std::vector<msgentry> const & tuples)
 
     }
     mutex.unlock();
-    if(tuples.size()>0&& mq!=NULL)
+    if(tuples.size()>0&& shouldNotify)
     {
-       mq->requestMailMan(this);
+       mq.requestMailMan(this);
     }
 	return true;
 }
@@ -142,11 +130,19 @@ void MessageBuffer::add(const msgentry & t)
 {
 	boost::unique_lock<boost::mutex > data_lock(mutex);
 	msgentry newm= t;
+	for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
+	{
+		if((*fit)->filter(t) == Rejected)
+		{
+// 					cout << "filtered " << tuple->get_type() << endl;
+			return;
+		}
+	}
     msg_buf.push_back(t);
     data_lock.unlock();
-    if( mq!=NULL)
+    if( shouldNotify)
 	{
-		mq->requestMailMan(this);
+		mq.requestMailMan(this);
     }
 }
 std::vector<msgentry> MessageBuffer::remove()

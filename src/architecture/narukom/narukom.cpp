@@ -1,10 +1,11 @@
 #include "narukom.h"
+#include "pub_sub/message_queue.h"
 //TOBE REMOVED
 //#include "pub_sub/filters/content_filter.h"
 ///////
 Narukom::Narukom()
 {
-  mq = new MessageQueue("/home/vagvaz/topic_tree.xml");
+  mq = new MessageQueue();
   //   udp_multi = new UdpMulticastChannel();
   // mq->add_subscriber(udp_multi);
   //   mq->subscribe("global",udp_multi,2);

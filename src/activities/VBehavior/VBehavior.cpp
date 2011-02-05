@@ -24,15 +24,16 @@ using namespace boost::posix_time;
 namespace {
 	ActivityRegistrar<VBehavior>::Type temp("VBehavior");
 }
+using namespace std;
 
 VBehavior::VBehavior()        {
 }
 
 void VBehavior::UserInit() {
-	_com->get_message_queue()->subscribe("vision", _blk, 0);
-	_com->get_message_queue()->subscribe("sensors", _blk, 0);
-	_com->get_message_queue()->subscribe("behavior", _blk, 0);
-	_com->get_message_queue()->subscribe("obstacle", _blk, 0);
+	_blk->subscribeTo("vision", 0);
+	_blk->subscribeTo("sensors", 0);
+	_blk->subscribeTo("behavior", 0);
+	_blk->subscribeTo("obstacle", 0);
 
 	wmot = new MotionWalkMessage();
 	//wmot->set_topic("motion");
@@ -47,7 +48,6 @@ void VBehavior::UserInit() {
 	hmot->add_parameter(0.0f);
 
 	amot = new MotionActionMessage();
-	amot->set_topic("motion");
 
 	ballfound = 0;
 
@@ -476,6 +476,9 @@ double VBehavior::mglRand()
 
 void VBehavior::velocityWalk(double x, double y, double th, double f)
 {
+	static ptime lastball=microsec_clock::universal_time();
+	if(microsec_clock::universal_time()-lastball<milliseconds(200))
+		return ;
 	wmot->set_command("setWalkTargetVelocity");
 	x=x>1?1:x;
 	x=x<-1?-1:x;
