@@ -75,6 +75,13 @@ Talws::Talws () {
             <<" StatsCycle="<<tcfg.StatsCycle<<std::endl;
         Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
 
+        NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
+
+        Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
+
+        for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
+          StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
+
     }
 
 
@@ -84,6 +91,8 @@ Talws::~Talws() {
     Stop();
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         delete (*it);
+    for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
+      delete (*it);
 
 }
 
@@ -91,6 +100,8 @@ void Talws::Start() {
     std::cout<<"Talws: Starting..."<<std::endl; //TODO
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StartThread();
+    for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
+      (*it)->Start();
 }
 
 void Talws::Stop() {
@@ -101,6 +112,8 @@ void Talws::Stop() {
     //TODO stop somehow narukom
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->JoinThread();
+    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
+      (*it)->JoinThread();
     //com.get_message_queue()->JoinThread();
 }
 
