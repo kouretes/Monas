@@ -6,8 +6,8 @@
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
-#include "messages/HeadToBMessage.pb.h"
-#include "messages/BToHeadMessage.pb.h"
+#include "messages/BehaviorMessages.pb.h"
+
 ///#include "time.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>

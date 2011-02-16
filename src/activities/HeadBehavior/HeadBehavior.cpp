@@ -60,21 +60,22 @@ int HeadBehavior::Execute() {
 	switch (headaction) {
 
 		case (DONOTHING):
+			std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
 			ballfound = 0;
 			hbmsg->set_ballfound(ballfound);
 
 			break;
 		case (CALIBRATE):
-
+			std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;			
 			calibrate();
 			calibrated = 1;
 			hbmsg->set_calibrated(calibrated);
 			headaction = DONOTHING;
-			choosemyaction = true;
-
+			choosemyaction = true;			
+			
 			break;
 		case (SCANFORBALL):
-
+			std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 			scancompleted = false;
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				headaction = BALLTRACK;
@@ -90,10 +91,10 @@ int HeadBehavior::Execute() {
 			}
 			break;
 		case (SCANFORPOST):
-
+			std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
-
+			std::cout << "HEADBEHAVIOR BALLTRACK" <<std::endl;
 			if (bmsg != 0) {
 				Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 				if (bmsg->radius() > 0) { //This means that a ball was found
