@@ -1,6 +1,8 @@
 
 #include "KickOff.h"
+#include <boost/date_time/posix_time/ptime.hpp>
 
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 namespace {
     ActivityRegistrar<KickOff>::Type temp("KickOff");
 }
@@ -14,8 +16,7 @@ int KickOff::Execute() {
 		//return 0;
 	//}
 	std::cout << "STATE KICKOFF" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time()+boost::posix_time::millisec(600);
-	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
+	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::millisec(2000);
 	_blk->publish_state(*tmsg, "behavior");
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 	if(obsm!=0){

@@ -5,13 +5,13 @@
 	log statistics -->
 
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=50 StatsCycle=1000>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>KMC</name>
 	<activity>MotionController</activity>
 	<activity>RobotController</activity>
 	<activity>LedHandler</activity>
 </agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=22 StatsCycle=50>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=12 StatsCycle=50>
 	<name>KVision</name>
 	<activity>Vision</activity>
 	<activity>HeadBehavior</activity> 
@@ -21,7 +21,7 @@
 -->
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=1000>
 	<name>KSensors</name>
 		
 	<activity>Sensors</activity>
@@ -29,36 +29,6 @@
 
 <statechart>simplebehavior</statechart>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=200>
-	<name>KInit</name>
-	<activity>Init</activity>
-
-</agent>
-
-<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=200>
-	<name>KNoPlay</name>
-	<activity>NoPlay</activity>	
-
-<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=200>
-	<name>KMyRightKick</name>
-	<activity>MyRightKick</activity>
-</agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=200>
-	<name>KMyLeftKick</name>
-	<activity>MyLeftKick</activity>	
-</agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=200>
-	<name>KKickOff</name>
-	<activity>KickOff</activity>
-	</agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=200>
-	<name>KScanForBall</name>
-	<activity>ScanForBall</activity>
-</agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=5 StatsCycle=200>
-	<name>KAproachBall</name>
-	<activity>AproachBall</activity>
-</agent>
 <!--
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>BodyBehavior</name>

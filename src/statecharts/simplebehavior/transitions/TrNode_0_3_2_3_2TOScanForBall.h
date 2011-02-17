@@ -19,6 +19,8 @@ public:
 	bool Eval() {
 		 boost::shared_ptr<const GameStateMessage> gsm ;
 		 gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
+		  if(gsm==0)
+			return false;
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->read_signal<HeadToBMessage> ("HeadToBMessage");
 		if (hbm==0){
 				std::cout<<"*************Transition ScanForBall FALSE*****************"<<std::endl;

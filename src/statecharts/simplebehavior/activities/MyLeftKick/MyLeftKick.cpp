@@ -1,6 +1,9 @@
 
 #include "MyLeftKick.h"
 #include "messages/RoboCupGameControlData.h"
+#include <boost/date_time/posix_time/ptime.hpp>
+
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 namespace {
     ActivityRegistrar<MyLeftKick>::Type temp("MyLeftKick");
 }
@@ -14,7 +17,7 @@ int MyLeftKick::Execute() {
 		//return 0;
 	//}
 	std::cout << "STATE MYLEFTKICK" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time()+boost::posix_time::millisec(600);
+	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::millisec(2000);
 	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
 	_blk->publish_state(*tmsg, "behavior");
 	amot->set_command("LeftKick");

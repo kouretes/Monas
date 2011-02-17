@@ -1,6 +1,9 @@
 
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/timeout.pb.h"				
+#include <boost/date_time/posix_time/ptime.hpp>
+
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 class TrCond_kickTO0_3_2_3_4_5 : public statechart_engine::ICondition {
 			
 public:

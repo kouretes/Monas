@@ -17,10 +17,10 @@ public:
 
 	bool Eval() {
 		
-		 std::cout<<"*************Transition TrCond_decisionTO0_3_3 TRUE*****************"<<std::endl;
+		 std::cout<<"*************Transition TrCond_decisionTO0_3_3 False*****************"<<std::endl;
 	
 		//boost::shared_ptr<const TimeoutMsg> tmsg = _blk->read_state<TimeoutMsg> ("TimeoutMsg");
-		//std::string stime = msg->wakeup();
+		//std::string stime = tmsg->wakeup();
 		//if (tmsg==0 || time=="")
 			//return false;
 		//int statetimeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(stime) ).total_microseconds();

@@ -19,6 +19,8 @@ public:
 	bool Eval() {
 		 boost::shared_ptr<const GameStateMessage> gsm ;
 		 gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
+		  if(gsm==0)
+			return false;
 		boost::shared_ptr<const KickOffMessage> kcm = _blk->read_signal<KickOffMessage> ("KickOffMessage");
 		if (kcm==0 && gsm->player_state()==PLAYER_PLAYING){
 				std::cout<<"*************Transition Kick TRUE*****************"<<std::endl;

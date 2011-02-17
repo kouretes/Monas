@@ -18,6 +18,8 @@ public:
 
 	bool Eval() {
 		 boost::shared_ptr<const GameStateMessage> gsm ;
+		  if(gsm==0)
+			return false;
 		 gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 		boost::shared_ptr<const KickOffMessage> kcm = _blk->read_signal<KickOffMessage> ("KickOffMessage");
 		if (kcm==0){

@@ -1,6 +1,9 @@
 
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/timeout.pb.h"
+#include <boost/date_time/posix_time/ptime.hpp>
+
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 			
 class TrCond_MyLeftKickTO0_3_2_3_4_4_5 : public statechart_engine::ICondition {
 			
@@ -13,7 +16,7 @@ public:
 	bool Eval() {
 		std::cout<<"*************Transition TrCond_MyLeftKickTO0_3_2_3_4_4_5 TRUE*****************"<<std::endl;
 		boost::shared_ptr<const TimeoutMsg> tmsg = _blk->read_state<TimeoutMsg> ("TimeoutMsg");
-		std::string stime = msg->wakeup();
+		std::string stime = tmsg->wakeup();
 		if (tmsg==0 || stime=="")
 			return false;
 		int statetimeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(stime) ).total_microseconds();
