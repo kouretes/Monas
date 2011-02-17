@@ -23,7 +23,7 @@ set ( NaoQiVersion 1.8.16 CACHE STRING "Set the NaoQi version" )
 
 add_subdirectory ( ./messages/ )
 add_subdirectory ( ./architecture/ )
-
+add_subdirectory ( ./statecharts/ )
 #TODO comment: must be before target linux
 add_subdirectory ( ./activities/ )
 add_subdirectory ( ./hal/ )
