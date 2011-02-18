@@ -13,12 +13,13 @@ namespace {
 
 int NoPlay::Execute() {
 	std::cout <<"STATE NOPLAY Entered"<<std::endl;
+	_blk->process_messages();
 	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	prevaction = curraction;
 	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time();
 	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
 	_blk->publish_state(*tmsg, "behavior");
-		if(gsm==0 ){
+		if(gsm.get()==0 ){
 			std::cout <<"STATE NOPLAY NO GSM "<<std::endl;
 			sleep(1);
 			bhmsg->set_headaction(DONOTHING);
