@@ -41,7 +41,7 @@ void HeadBehavior::UserInit() {
 	oldheadaction = 0;
 	choosemyaction = false;
 
-	Logger::Instance().WriteMsg("HeadBehavior", "Initialized", Logger::Info);
+//	Logger::Instance().WriteMsg("HeadBehavior", "Initialized", Logger::Info);
 }
 
 int HeadBehavior::Execute() {
@@ -59,13 +59,13 @@ int HeadBehavior::Execute() {
 	switch (headaction) {
 
 		case (DONOTHING):
-			std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
+		//	std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
 			ballfound = 0;
 			hbmsg->set_ballfound(ballfound);
 
 			break;
 		case (CALIBRATE):
-			std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;			
+		//	std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;			
 			calibrate();
 			calibrated = 1;
 			hbmsg->set_calibrated(calibrated);
@@ -82,21 +82,21 @@ int HeadBehavior::Execute() {
 				ballLastSeen = microsec_clock::universal_time()+seconds(2);
 				choosemyaction = true;
 				hbmsg->set_ballfound(ballfound);
-				cout << "ballfound " << ballfound << "HeadBehavior" << endl;
+			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 			} else if (allsm != 0) {
-				std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
+		//		std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 				HeadYaw= allsm->hjsm().sensordata(YAW);
 				HeadPitch= allsm->hjsm().sensordata(PITCH);
 				HeadScanStep();
 			}
 			break;
 		case (SCANFORPOST):
-			std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
+		//	std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
-			std::cout << "HEADBEHAVIOR BALLTRACK" <<std::endl;
+		//	std::cout << "HEADBEHAVIOR BALLTRACK" <<std::endl;
 			if (bmsg != 0) {
-				Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
+		//		Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 				if (bmsg->radius() > 0) { //This means that a ball was found
 					MakeTrackBallAction();
 
@@ -208,7 +208,7 @@ void HeadBehavior::HeadScanStep() {
 	if (microsec_clock::universal_time()>lastturn){
 		lastturn=microsec_clock::universal_time()+seconds(4);
 		scancompleted = true;
-		cout << "scancompleted " << scancompleted << "HeadBehavior" << endl;
+	//	cout << "scancompleted " << scancompleted << "HeadBehavior" << endl;
 		scmsg->set_scancompleted(scancompleted);
 		_blk->publish_signal(*scmsg, "behavior");
 	}
@@ -221,7 +221,7 @@ void HeadBehavior::read_messages() {
 	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
 //	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
 allsm = _blk->read_data<AllSensorValues> ("AllSensorValues");
-	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
+	//Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c = _blk->read_state<CalibrateCam> ("CalibrateCam");
 	if (c != NULL) {
 		if (c->status() == 1) {

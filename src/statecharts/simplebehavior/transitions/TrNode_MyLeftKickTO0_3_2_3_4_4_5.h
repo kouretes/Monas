@@ -15,16 +15,17 @@ public:
 
 	bool Eval() {
 		std::cout<<"*************Transition TrCond_MyLeftKickTO0_3_2_3_4_4_5 TRUE*****************"<<std::endl;
-		boost::shared_ptr<const TimeoutMsg> tmsg = _blk->read_state<TimeoutMsg> ("TimeoutMsg");
-		std::string stime = tmsg->wakeup();
-		if (tmsg==0 || stime=="")
-			return false;
-		int statetimeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(stime) ).total_microseconds();
+		//boost::shared_ptr<const TimeoutMsg> tmsg = _blk->read_state<TimeoutMsg> ("TimeoutMsg");
+		//std::string stime = tmsg->wakeup();
+		//if (tmsg==0 || stime=="")
+			//return false;
+		//int statetimeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(stime) ).total_microseconds();
 		
-		if(statetimeout>0)
-			return true;
-		return false;
+		//if(statetimeout>0)
+			//return true;
+		//return false;
 		/* TRUE */
+		return true;
     }
 };
 		

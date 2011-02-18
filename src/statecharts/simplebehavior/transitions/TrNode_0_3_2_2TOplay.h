@@ -19,7 +19,7 @@ public:
 		 boost::shared_ptr<const GameStateMessage> gsm ;
 		 gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
      if ( gsm == 0 ){
-		 std::cout<<"*************Transition Play FALSE*****************"<<std::endl;
+		 std::cout<<"*************Transition Play FALSE NO GSM*****************"<<std::endl;
 		 return false;
 		 }
      if( gsm->player_state()!=PLAYER_PLAYING){

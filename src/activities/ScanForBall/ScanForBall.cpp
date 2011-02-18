@@ -17,7 +17,7 @@ int ScanForBall::Execute() {
 		//return 0;
 	//}
 	std::cout << "STATE SCANFORBALL" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time()+boost::posix_time::millisec(2000);
+	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time();
 	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
 	_blk->publish_state(*tmsg, "behavior");
 	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");

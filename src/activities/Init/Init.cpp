@@ -7,6 +7,7 @@ namespace {
 
 int Init::Execute() {
 	/*  */
+	std::cout<<"STATE INIT executed "<<std::endl;
 	return 0;
 }
 
