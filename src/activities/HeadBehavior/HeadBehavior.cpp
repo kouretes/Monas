@@ -25,7 +25,6 @@ void HeadBehavior::UserInit() {
 	hmot = new MotionHeadMessage();
 	hmot->add_parameter(0.0f);
 	hmot->add_parameter(0.0f);
-
 	hbmsg = new HeadToBMessage();
 	scmsg = new ScanMessage();
 	ballLastSeen = microsec_clock::universal_time();
@@ -46,7 +45,7 @@ void HeadBehavior::UserInit() {
 }
 
 int HeadBehavior::Execute() {
-
+	 
 	oldheadaction = headaction;
 	read_messages();
 
@@ -75,7 +74,7 @@ int HeadBehavior::Execute() {
 			
 			break;
 		case (SCANFORBALL):
-			std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
+
 			scancompleted = false;
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				headaction = BALLTRACK;
@@ -84,9 +83,10 @@ int HeadBehavior::Execute() {
 				choosemyaction = true;
 				hbmsg->set_ballfound(ballfound);
 				cout << "ballfound " << ballfound << "HeadBehavior" << endl;
-			} else if (hjsm != 0) {
-				HeadYaw = hjsm->sensordata(0);
-				HeadPitch = hjsm->sensordata(1);
+			} else if (allsm != 0) {
+				std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
+				HeadYaw= allsm->hjsm().sensordata(YAW);
+				HeadPitch= allsm->hjsm().sensordata(PITCH);
 				HeadScanStep();
 			}
 			break;
@@ -109,10 +109,11 @@ int HeadBehavior::Execute() {
 					else{
 						ballfound = 0;
 						headstartscan = true;
+						lastturn=microsec_clock::universal_time()+seconds(4);
 					}
 				}
 			}
-			cout << "ballfound " << ballfound << "HeadBehavior" << endl;
+		//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 
 			hbmsg->set_ballfound(ballfound);
 			break;
@@ -127,85 +128,99 @@ int HeadBehavior::MakeTrackBallAction() {
 	hmot->set_parameter(0, bmsg->referenceyaw());
 	hmot->set_parameter(1, bmsg->referencepitch());
 	_blk->publish_signal(*hmot, "motion");
-	cout << "Track step" << endl;
+//	cout << "Track step" << endl;
 
 	return 1;
 }
 
 void HeadBehavior::HeadScanStep() {
-
+	
+	static float s=(YAWMIN-YAWMAX)/(PITCHMIN-PITCHMAX);
 	if (headstartscan) {
 		//BE CAREFULL the max sign is according to sensors values (max maybe negative! :p)
-		if (HeadPitch.sensorvalue() < LIMITDOWN) { // first go down
-			scandirectionpitch = 1;
-		} else {
-			scandirectionpitch = -1; // go up
+		ysign=HeadYaw.sensorvalue()>0?1:-1; //Side
+		//Crop to limits
+		targetPitch=HeadPitch.sensorvalue();
+		targetYaw=HeadYaw.sensorvalue();
+		targetPitch=(targetPitch>=PITCHMAX)?PITCHMAX:targetPitch;
+		targetPitch=(targetPitch<=PITCHMIN)?PITCHMIN:targetPitch;
+
+
+		float yawlim=s*(targetPitch-PITCHMAX)+YAWMAX;
+		//if(fabs(targetPitch)<PITCHSTEP) yawlim=YAWBACK;
+
+
+		targetYaw+=ysign*YAWSTEP;
+		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
+
+		if(fabs(targetYaw)>=yawlim)
+		{
+			ysign=-ysign;
 		}
-		reachedlimitup = false;
-		reachedlimitdown = false;
-		reachedlimitleft = false;
-		reachedlimitright = false;
-		scandirectionyaw = (HeadYaw.sensorvaluediff() > 0) ? 1 : -1;
-		headstartscan = false;
-	}
+		psign=1;//Down
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, targetYaw);
+		hmot->set_parameter(1, targetPitch);
+		_blk->publish_signal(*hmot, "motion");
+		waiting=0;
 
-	//continue scan
-	if (HeadPitch.sensorvalue() < LIMITUP) {
-		//Logger::Instance().WriteMsg("HeadBehavior", " LIMITUP ", Logger::ExtraExtraInfo);
-		reachedlimitup = true;
-		scandirectionpitch = 1;
-	}
-	if (HeadPitch.sensorvalue() > LIMITDOWN) {
-		//Logger::Instance().WriteMsg("HeadBehavior", " LIMITDOWN ", Logger::ExtraExtraInfo);
-		reachedlimitdown = true;
-		scandirectionpitch = -1;
-	}
-	if (HeadYaw.sensorvalue() > LIMITLEFT) {
-		//Logger::Instance().WriteMsg("HeadBehavior", "LIMITLEFT  ", Logger::ExtraExtraInfo);
-		reachedlimitleft = true;
-		scandirectionyaw = -1;
-	}
-	if (HeadYaw.sensorvalue() < LIMITRIGHT) {
-		//Logger::Instance().WriteMsg("HeadBehavior", " LIMITRIGHT  ", Logger::ExtraExtraInfo);
-		reachedlimitright = true;
-		scandirectionyaw = 1;
-	}
+		headstartscan=false;
 
-	hmot->set_command("changeHead");
-	hmot->set_parameter(0, scandirectionyaw * STEPHOR); // Headyaw
-	hmot->set_parameter(1, 0.0); // headPitch
-
-	if (reachedlimitleft && reachedlimitright) {
-		Logger::Instance().WriteMsg("HeadBehavior", " reachedlimitleft && reachedlimitright ", Logger::ExtraExtraInfo);
-		hmot->set_parameter(1, scandirectionpitch * STEPVER); // headPitch
-		reachedlimitleft = false;
-		reachedlimitright = false;
 	}
-	_blk->publish_signal(*hmot, "motion");
+	waiting++;
+	if( (fabs(targetPitch-HeadPitch.sensorvalue())<=OVERSH &&fabs(targetYaw -HeadYaw.sensorvalue())<=OVERSH )
+		|| waiting>=WAITFOR)
+	{
 
-	if (reachedlimitup && reachedlimitdown) { //scanning completed
-		Logger::Instance().WriteMsg("HeadBehavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
-		headstartscan = true;
-		reachedlimitdown = false;
-		reachedlimitup = false;
-		reachedlimitright = false;
-		reachedlimitleft = false;
-		///we should do something;
+		waiting=0;
+
+		float yawlim=s*(targetPitch-PITCHMAX)+YAWMAX;
+		//if(fabs(targetPitch)<PITCHSTEP) yawlim=YAWBACK;
+
+
+		if(fabs(fabs(targetYaw)-yawlim)<=OVERSH)
+		{
+			targetPitch+=psign*PITCHSTEP;
+			targetPitch=(targetPitch>=PITCHMAX)?PITCHMAX:targetPitch;
+			targetPitch=(targetPitch<=PITCHMIN)?PITCHMIN:targetPitch;
+			if(targetPitch>=PITCHMAX)
+				psign=-1;
+			else if(targetPitch<=PITCHMIN)
+				psign=1;
+
+
+		}
+
+
+		targetYaw+=ysign*YAWSTEP;
+		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
+		if(fabs(targetYaw)>=yawlim)
+		{
+			ysign=-ysign;
+		}
+
+
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, targetYaw);
+		hmot->set_parameter(1, targetPitch);
+		_blk->publish_signal(*hmot, "motion");
+	}
+	if (microsec_clock::universal_time()>lastturn){
+		lastturn=microsec_clock::universal_time()+seconds(4);
 		scancompleted = true;
-
 		cout << "scancompleted " << scancompleted << "HeadBehavior" << endl;
-
 		scmsg->set_scancompleted(scancompleted);
 		_blk->publish_signal(*scmsg, "behavior");
 	}
+	
 }
 
 void HeadBehavior::read_messages() {
 
 	bhm = _blk->read_signal<BToHeadMessage> ("BToHeadMessage");
 	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
-	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
-
+//	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
+allsm = _blk->read_data<AllSensorValues> ("AllSensorValues");
 	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c = _blk->read_state<CalibrateCam> ("CalibrateCam");
 	if (c != NULL) {
