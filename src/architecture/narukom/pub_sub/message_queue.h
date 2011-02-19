@@ -19,10 +19,11 @@
 */
 #ifndef MESSAGE_QUEUE_H
 #define MESSAGE_QUEUE_H
-#include <google/protobuf/message.h>
 #include <string>
 #include "stringRegistry.h"
-
+#include <boost/bind.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition_variable.hpp>
 #include <map>
 #include <vector>
 #include <set>
@@ -35,12 +36,20 @@
 #ifndef TIXML_USE_STL
  #define TIXML_USE_STL
 #endif
+
+struct msgentry_;
+typedef struct msgentry_ msgentry;
+template<typename T>class Buffer;
+
+typedef  Buffer<msgentry> MessageBuffer;
+class TopicTree;
+
+
 /**
 MessageQueue class is the message broker of Narukom.
 This class is responsible for dispatching published messages to the interested subscribers.
 
 */
-class MessageBuffer;
 class MessageQueue : public Thread
 {
   public:
@@ -54,7 +63,7 @@ class MessageQueue : public Thread
 
     void process_queued_msg();
     virtual int Execute();
-    inline void requestMailMan(MessageBuffer  * const m)
+    inline void requestMailMan( MessageBuffer  * m)
     {
 		boost::unique_lock<boost::mutex > cvlock(cond_mutex);
 		if(cond_publishers.find(m)==cond_publishers.end())
@@ -67,19 +76,13 @@ class MessageQueue : public Thread
 
     };
   private:
-  	enum topicdir {ON_TOPIC, ABOVE_TOPIC, BELOW_TOPIC,ALL};
-  	//String hashers
-  	stringRegistry topicRegistry;
+  	//String hasher
   	stringRegistry pubsubRegistry;
-  	typedef struct topicdata_s{
-  		std::size_t parentid;
-  		std::set<std::size_t> children;
 
-  	} topicdata;
-	//Unlocked, stable and untouched while running
-  	std::map<std::size_t,topicdata > topictree;
+  	TopicTree * tree;
+
   	//Locked by pub_sub_mutex;
-  	std::map<std::size_t,std::set<MessageBuffer*> > subscriptions;
+  	std::vector< std::set<MessageBuffer*> > subscriptions;
 
     boost::mutex  pub_sub_mutex;
 	//Waking up stuff
@@ -90,11 +93,8 @@ class MessageQueue : public Thread
 
     StopWatch<> agentStats;
     void create_tree();
-    void addTopic(std::string const& what,std::string const& under);
-    //Recursive call, UNLOCKED!
-    void subscribeBelow(MessageBuffer *b, size_t topicid);
-    void unsubscribeBelow(MessageBuffer *b, size_t topicid);
 
+    //Recursive call, UNLOCKED
     };
 
 #endif // MESSAGE_QUEUE_H

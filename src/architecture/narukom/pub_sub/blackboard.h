@@ -19,6 +19,7 @@
 #include "msg.h"
 #include "publisher.h"
 #include "subscriber.h"
+#include "stringRegistry.h"
 
 #include <string>
 #include <map>
@@ -39,10 +40,10 @@ public:
 
 
     typedef std::set< msgentry,msgentrytimestampComparator > historyqueue;
-    typedef std::map<std::string,boost::posix_time::time_duration> datatimeouts;
-    typedef std::map<std::string,historyqueue> datastruct;
+    typedef std::map<std::size_t,boost::posix_time::time_duration> datatimeouts;
+    typedef std::map<std::size_t,historyqueue> datastruct;
     //typedef std::map<std::string,msgentry> simplestruct;
-    typedef std::map<std::string,signalentry> signalstruct;
+    typedef std::map<std::size_t,signalentry> signalstruct;
 
     explicit
     Blackboard(const std::string& );
@@ -60,6 +61,7 @@ public:
         void publish_signal(const google::protobuf::Message & msg,std::string const& topic);
         void publish_state(const google::protobuf::Message &msg, std::string const& topic);
 private:
+	stringRegistry typeRegistry;
 	datatimeouts blkdatatimeouts;
     datastruct blkdata;
     signalstruct sigdata;
@@ -79,9 +81,10 @@ private:
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, const std::string&  host,boost::posix_time::ptime* const tmp  ,boost::posix_time::ptime const * const time_req )
 {
-    if(blkdata.find(type)==blkdata.end())
+	size_t atypeid=typeRegistry.getId(type);
+    if(blkdata.find(atypeid)==blkdata.end())
         return boost::shared_ptr<const Data>();
-    historyqueue q=blkdata[type];
+    historyqueue q=blkdata[atypeid];
     historyqueue::reverse_iterator it=q.rbegin();
     if(it==q.rend())
         return boost::shared_ptr<const Data>();
@@ -108,24 +111,30 @@ boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, con
     }
     boost::posix_time::time_duration nt=boost::posix_time::microsec_clock::universal_time()-*time_req;
 	nt*=TIMEOUTSCALE;
-    if(blkdatatimeouts.find(type)==blkdatatimeouts.end())
-		blkdatatimeouts[type]=nt;
+    if(blkdatatimeouts.find(atypeid)==blkdatatimeouts.end())
+		blkdatatimeouts[atypeid]=nt;
 	else
-		blkdatatimeouts[type]= blkdatatimeouts[type]<nt?nt: blkdatatimeouts[type];
+		blkdatatimeouts[atypeid]= blkdatatimeouts[atypeid]<nt?nt: blkdatatimeouts[atypeid];
 
     historyqueue::const_iterator fit=q.begin();
+    boost::posix_time::time_duration dist=boost::posix_time::hours(10),t;
     while(fit!=q.end())
     {
         //Skip
        // if( !(process==""||(*it).publisher==process) ||
-             if(  ! ((*fit).host==host||host=="") )
-               {
-                   ++fit;
-                    continue;
-               }
-
-        if(*time_req>(*fit).timestamp)
-            ++fit;
+		if(  ! ((*fit).host==host||host=="") )
+		{
+		   ++fit;
+			continue;
+		}
+		t=*time_req-(*fit).timestamp;
+		if(t. is_negative())
+			t=t.invert_sign();
+        if(t<dist)
+        {
+			++fit;
+			dist=t;
+		}
         else
             break;
     }
@@ -154,16 +163,17 @@ boost::shared_ptr<const Data> Blackboard::read_data(const std::string& type, con
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::read_signal(const std::string& type, const std::string&  host ,boost::posix_time::ptime* tmp )
 {
-    if(sigdata.find(type)==sigdata.end())
+	size_t atypeid=typeRegistry.getId(type);
+    if(sigdata.find(atypeid)==sigdata.end())
         return boost::shared_ptr<const Data>();
 
-	if( ! (sigdata[type].d.host==host||host=="") )
+	if( ! (sigdata[atypeid].d.host==host||host=="") )
         return boost::shared_ptr<const Data>();//;
 
     if(tmp!=NULL)
-        *tmp=sigdata[type].d.timestamp;
-    sigdata[type].cleared=true;
-    return  boost::static_pointer_cast<const Data>( sigdata[type].d.msg);
+        *tmp=sigdata[atypeid].d.timestamp;
+    sigdata[atypeid].cleared=true;
+    return  boost::static_pointer_cast<const Data>( sigdata[atypeid].d.msg);
 }
 
 template<class Data>

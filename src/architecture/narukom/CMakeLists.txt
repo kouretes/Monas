@@ -28,7 +28,7 @@ include(${ConfigDir}/external_dependencies.cmake)
 #include(${ConfigDir}/${TargetPlatform}/${TargetPlatform}-config.cmake)
 
 add_definitions(${ExternalDefinitions}
-	  "-Wall"
+	  "-Wextra"
 )
 
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")

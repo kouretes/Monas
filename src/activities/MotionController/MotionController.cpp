@@ -63,7 +63,7 @@ void MotionController::UserInit() {
 	}
 
 	motion->setStiffnesses("Body", 1.0);
-	motion->setStiffnesses("Head", 1.0);
+	motion->setStiffnesses("Head", 0.8);
 	motion->setWalkArmsEnable(true, true);
 
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
@@ -184,7 +184,7 @@ void MotionController::mglrun() {
 		killCommands();
 		//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
 		motion->setStiffnesses("Body", 0.);
-		usleep(800000);
+		usleep(1500000);
 		//ALstandUpCross();
 
 		return;
@@ -197,7 +197,7 @@ void MotionController::mglrun() {
 	if(!robotDown&&!robotUp){
 		//Now execute an alstandupcross
 		motion->setStiffnesses("Body", 1.0);
-		usleep(100000);
+		usleep(300000);
 		ALstandUpCross();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 		robotDown=true;
@@ -208,11 +208,12 @@ void MotionController::mglrun() {
 	if ((actionPID == 0) &&robotDown) {
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 1.0);
+		motion->setStiffnesses("Head", 0.8);
 		robotDown = false;
 		robotUp=true;
 		ALstandUp();
 		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
-		usleep(5000000);
+		usleep(7000000);
 		return;
 	}
 
@@ -271,7 +272,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed =1.0;
+				float fractionMaxSpeed =0.8;
 				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
 			} else if (hm->command() == "changeHead") {

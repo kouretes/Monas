@@ -1,17 +1,20 @@
 message(STATUS "Include Narukom Sources files")
 SET(NARUKOM_PUB_SUB_SRCS
-   ${NarukomDir}/pub_sub/message_queue.h
-   ${NarukomDir}/pub_sub/message_buffer.h
    ${NarukomDir}/pub_sub/blackboard.h
    ${NarukomDir}/pub_sub/msg.h
    ${NarukomDir}/pub_sub/stringRegistry.h
+   ${NarukomDir}/pub_sub/topicTree.h
+   ${NarukomDir}/pub_sub/topicTree.cpp
    ${NarukomDir}/pub_sub/subscriber.h
    ${NarukomDir}/pub_sub/publisher.h
    ${NarukomDir}/pub_sub/publisher.cpp
    ${NarukomDir}/pub_sub/subscriber.cpp
    ${NarukomDir}/pub_sub/blackboard.cpp
    ${NarukomDir}/pub_sub/message_queue.cpp
-   ${NarukomDir}/pub_sub/message_buffer.cpp
+   ${NarukomDir}/pub_sub/message_queue.h
+   ${NarukomDir}/pub_sub/buffer.cpp
+   ${NarukomDir}/pub_sub/buffer.h
+   ${NarukomDir}/pub_sub/message_buffer.h
    ${NarukomDir}/pub_sub/filters/filter.h
    ${NarukomDir}/pub_sub/filters/filter.cpp
    #${NarukomDir}/pub_sub/filters/special_filters.cpp

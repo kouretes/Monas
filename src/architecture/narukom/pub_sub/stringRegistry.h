@@ -22,12 +22,13 @@
 #include <boost/functional/hash.hpp>
 #include <map>
 #include <set>
+#include <vector>
 
 class stringRegistry {
 
 	public:
 
-	stringRegistry(){ nextid=1	;};
+	stringRegistry(){ nextid=1	; rt.push_back("");};
 	/**Register new string and return new id **/
 	std::size_t registerNew(std::string const& s)
 	{
@@ -39,11 +40,15 @@ class stringRegistry {
 		p.s=s;
 		std::size_t hashs=hasher(s);
 		ft[hashs].insert(p);
-		rt[hashs]=s;
+		rt.push_back(s);
+		boost::hash_combine(seed,hashs);
+
 		return p.id;
 
 	}
-	std::size_t getId(std::string const& s)
+	std::size_t registryHash() const { return seed; };
+	std::size_t size() const { return nextid;};
+	std::size_t getId(std::string const& s) const
 	{
 		std::size_t hashs=hasher(s);
 		fttype::const_iterator ftit= ft.find(hashs);
@@ -64,7 +69,7 @@ class stringRegistry {
 	}
 	std::string getString(std::size_t id)
 	{
-		if(rt.find(id)==rt.end())
+		if(id>rt.size())
 			return "";
 		return rt[id];
 	}
@@ -79,11 +84,12 @@ class stringRegistry {
 	//From HASH to pair of ids,and strings for lookup
 	typedef std::map<std::size_t,std::set<stringidpair> > fttype;
 	//From id, to string
-	typedef std::map<std::size_t,std::string> rttype;
+	typedef std::vector<std::string> rttype;
 	boost::hash<std::string> hasher;
 	fttype ft;//from hash to id;
 	rttype rt;//from id to string :)
 	std::size_t nextid;
+	std::size_t seed;
 
 };
 

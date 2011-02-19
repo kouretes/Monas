@@ -30,22 +30,21 @@ void Blackboard::process_messages()
    for(;it!=msg.end();++it)
     {
 
-
+		size_t newtypeid=typeRegistry.registerNew((*it).msg->GetTypeName());
         switch ((*it).msgclass)
         {
 			case msgentry::STATE:
             case msgentry::DATA:
-
-                if(blkdata[(*it).msg->GetTypeName()].size()>0)
-                    blkdata[(*it).msg->GetTypeName()].insert(--blkdata[(*it).msg->GetTypeName()].end(),*it);//Suggest last place to add it
+                if(blkdata[newtypeid].size()>0)
+                    blkdata[newtypeid].insert(--blkdata[newtypeid].end(),*it);//Suggest last place to add it
                 else
-                    blkdata[(*it).msg->GetTypeName()].insert(*it);
+                    blkdata[newtypeid].insert(*it);
                 break;
             case msgentry::SIGNAL:
 
                 newsig.d=(*it);
                 newsig.cleared=false;
-                sigdata[(*it).msg->GetTypeName()]=newsig;
+                sigdata[newtypeid]=newsig;
 
                 break;
             /*
@@ -72,7 +71,7 @@ int Blackboard::cleanup()
 {
 
     //Data structure
-	std::map<std::string,historyqueue>::iterator it= blkdata.begin();
+	std::map<std::size_t,historyqueue>::iterator it= blkdata.begin();
     //cout<<"cleanup2!"<<endl;
 	boost::posix_time::time_duration t;
 	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
@@ -100,6 +99,7 @@ int Blackboard::cleanup()
 			}
 			//cout<<i<<endl;
 			//q.clear();
+			if(qit==q.end())--qit;
 			q.erase(q.begin(),qit);
 
 		}
@@ -151,10 +151,11 @@ void Blackboard::publish_data(const google::protobuf::Message & msg,std::string 
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::DATA;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
-    if(blkdata[msg.GetTypeName()].size()>0)
-        blkdata[msg.GetTypeName()].insert(--blkdata[msg.GetTypeName()].end(),nmsg);//Suggest last place to add it
+	std::size_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
+    if(blkdata[newtypeid].size()>0)
+        blkdata[newtypeid].insert(--blkdata[newtypeid].end(),nmsg);//Suggest last place to add it
     else
-         blkdata[msg.GetTypeName()].insert(nmsg);
+         blkdata[newtypeid].insert(nmsg);
     topublish.push_back(nmsg);
 
     //cout<<blkdata[msg.GetTypeName()].size()<<endl;q
@@ -182,7 +183,7 @@ void Blackboard::publish_signal(const google::protobuf::Message & msg,std::strin
     signalentry newsig;
     newsig.d=nmsg;
     newsig.cleared=false;
-    sigdata[msg.GetTypeName()]=newsig;//If exists replace
+    sigdata[typeRegistry.registerNew(msg.GetTypeName())]=newsig;//If exists replace
 
     topublish.push_back(nmsg);
 

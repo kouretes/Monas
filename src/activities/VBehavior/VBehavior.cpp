@@ -153,7 +153,8 @@ int VBehavior::Execute() {
 		}
 		else if (gameState == PLAYER_PENALISED) {
 			play = false;
-			//calibrate();
+			velocityWalk(0.0,0.0,0.0,1);
+
 		}
 	}
 
@@ -164,6 +165,7 @@ int VBehavior::Execute() {
 		else if (calibrated == 0) {
 			calibrate();
 		}
+
 	}
 
 	//if (play) mgltest();
@@ -188,7 +190,7 @@ int VBehavior::Execute() {
 					ballfound = 0; //Decrease it when we don't see the ball
 			}
 		}
-		//eturn 0;
+		//return 0;
 		Logger::Instance().WriteMsg("VBehavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 
 		//float X=0.0, Y=0.0, theta=0.0;
@@ -256,19 +258,8 @@ int VBehavior::Execute() {
 						th=th>1?1:th;
 						th=th<-1?-1:th;
 
-
-
-
-
                         velocityWalk(X,Y,th,f);
 
-					/*}
-                    else
-                    {
-
-                        float g=0.3;
-                        littleWalk((bx-posx)*g,(by-offsety)*g,side*0.01,0);
-                    }*/
 				}
 			}
 		}
@@ -308,21 +299,9 @@ int VBehavior::Execute() {
 						amot->set_command("LeftKick");
 					else
 						amot->set_command("RightKick");
-					kickno--;
+					kickno=0;
 				}
-				else if(kickno==0)
-				{
-					if (by > 0.0) {
-						amot->set_command("LefTak3.xar");
-						direction = -1;
-					}
-					else {
-						amot->set_command("RightTak3.xar");
-						direction = +1;
-					}
-					kickno++;
 
-				}
 				else
 				{
 					if (by > 0.0) {
@@ -388,8 +367,7 @@ void VBehavior::HeadScanStep() {
 
 		targetYaw+=ysign*YAWSTEP;
 		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
-
-		if(fabs(targetYaw)>=yawlim)
+				if(fabs(targetYaw)>=yawlim)
 		{
 			ysign=-ysign;
 		}
@@ -424,17 +402,17 @@ void VBehavior::HeadScanStep() {
 			else if(targetPitch<=PITCHMIN)
 				psign=1;
 
-
 		}
-
-
-		targetYaw+=ysign*YAWSTEP;
-		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
-		if(fabs(targetYaw)>=yawlim)
+		else
 		{
-			ysign=-ysign;
-		}
+			targetYaw+=ysign*YAWSTEP;
+			targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
+			if(fabs(targetYaw)>=yawlim)
+			{
+				ysign=-ysign;
+			}
 
+		}
 
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
