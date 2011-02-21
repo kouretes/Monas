@@ -27,6 +27,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* StateEnd_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   StateEnd_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PlayerNumberMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  PlayerNumberMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -113,6 +116,21 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(StateEnd));
+  PlayerNumberMessage_descriptor_ = file->message_type(5);
+  static const int PlayerNumberMessage_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlayerNumberMessage, player_number_),
+  };
+  PlayerNumberMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      PlayerNumberMessage_descriptor_,
+      PlayerNumberMessage::default_instance_,
+      PlayerNumberMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlayerNumberMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PlayerNumberMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(PlayerNumberMessage));
 }
 
 namespace {
@@ -135,6 +153,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     ScanMessage_descriptor_, &ScanMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     StateEnd_descriptor_, &StateEnd::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    PlayerNumberMessage_descriptor_, &PlayerNumberMessage::default_instance());
 }
 
 }  // namespace
@@ -150,6 +170,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete ScanMessage_reflection_;
   delete StateEnd::default_instance_;
   delete StateEnd_reflection_;
+  delete PlayerNumberMessage::default_instance_;
+  delete PlayerNumberMessage_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -165,7 +187,8 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "ssage\022\024\n\tballfound\030\001 \002(\005:\0010\022\025\n\ncalibrate"
     "d\030\002 \002(\005:\0010\"+\n\013ScanMessage\022\034\n\rscancomplet"
     "ed\030\001 \002(\010:\005false\" \n\010StateEnd\022\024\n\005ended\030\001 \002"
-    "(\010:\005false", 249);
+    "(\010:\005false\"/\n\023PlayerNumberMessage\022\030\n\rplay"
+    "er_number\030\001 \002(\005:\0012", 298);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -173,11 +196,13 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   HeadToBMessage::default_instance_ = new HeadToBMessage();
   ScanMessage::default_instance_ = new ScanMessage();
   StateEnd::default_instance_ = new StateEnd();
+  PlayerNumberMessage::default_instance_ = new PlayerNumberMessage();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
   ScanMessage::default_instance_->InitAsDefaultInstance();
   StateEnd::default_instance_->InitAsDefaultInstance();
+  PlayerNumberMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -1259,6 +1284,214 @@ void StateEnd::Swap(StateEnd* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = StateEnd_descriptor_;
   metadata.reflection = StateEnd_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int PlayerNumberMessage::kPlayerNumberFieldNumber;
+#endif  // !_MSC_VER
+
+PlayerNumberMessage::PlayerNumberMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void PlayerNumberMessage::InitAsDefaultInstance() {
+}
+
+PlayerNumberMessage::PlayerNumberMessage(const PlayerNumberMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void PlayerNumberMessage::SharedCtor() {
+  _cached_size_ = 0;
+  player_number_ = 2;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+PlayerNumberMessage::~PlayerNumberMessage() {
+  SharedDtor();
+}
+
+void PlayerNumberMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void PlayerNumberMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PlayerNumberMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return PlayerNumberMessage_descriptor_;
+}
+
+const PlayerNumberMessage& PlayerNumberMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+PlayerNumberMessage* PlayerNumberMessage::default_instance_ = NULL;
+
+PlayerNumberMessage* PlayerNumberMessage::New() const {
+  return new PlayerNumberMessage;
+}
+
+void PlayerNumberMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    player_number_ = 2;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool PlayerNumberMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required int32 player_number = 1 [default = 2];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &player_number_)));
+          _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void PlayerNumberMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required int32 player_number = 1 [default = 2];
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->player_number(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* PlayerNumberMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required int32 player_number = 1 [default = 2];
+  if (_has_bit(0)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->player_number(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int PlayerNumberMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required int32 player_number = 1 [default = 2];
+    if (has_player_number()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->player_number());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PlayerNumberMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const PlayerNumberMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const PlayerNumberMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void PlayerNumberMessage::MergeFrom(const PlayerNumberMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_player_number(from.player_number());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void PlayerNumberMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PlayerNumberMessage::CopyFrom(const PlayerNumberMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PlayerNumberMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void PlayerNumberMessage::Swap(PlayerNumberMessage* other) {
+  if (other != this) {
+    std::swap(player_number_, other->player_number_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata PlayerNumberMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = PlayerNumberMessage_descriptor_;
+  metadata.reflection = PlayerNumberMessage_reflection_;
   return metadata;
 }
 

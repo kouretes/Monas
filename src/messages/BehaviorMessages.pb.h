@@ -35,6 +35,7 @@ class BToHeadMessage;
 class HeadToBMessage;
 class ScanMessage;
 class StateEnd;
+class PlayerNumberMessage;
 
 // ===================================================================
 
@@ -489,6 +490,95 @@ class StateEnd : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static StateEnd* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class PlayerNumberMessage : public ::google::protobuf::Message {
+ public:
+  PlayerNumberMessage();
+  virtual ~PlayerNumberMessage();
+  
+  PlayerNumberMessage(const PlayerNumberMessage& from);
+  
+  inline PlayerNumberMessage& operator=(const PlayerNumberMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PlayerNumberMessage& default_instance();
+  
+  void Swap(PlayerNumberMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  PlayerNumberMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PlayerNumberMessage& from);
+  void MergeFrom(const PlayerNumberMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required int32 player_number = 1 [default = 2];
+  inline bool has_player_number() const;
+  inline void clear_player_number();
+  static const int kPlayerNumberFieldNumber = 1;
+  inline ::google::protobuf::int32 player_number() const;
+  inline void set_player_number(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:PlayerNumberMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::int32 player_number_;
+  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static PlayerNumberMessage* default_instance_;
+};
 // ===================================================================
 
 
@@ -606,6 +696,26 @@ inline bool StateEnd::ended() const {
 inline void StateEnd::set_ended(bool value) {
   _set_bit(0);
   ended_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// PlayerNumberMessage
+
+// required int32 player_number = 1 [default = 2];
+inline bool PlayerNumberMessage::has_player_number() const {
+  return _has_bit(0);
+}
+inline void PlayerNumberMessage::clear_player_number() {
+  player_number_ = 2;
+  _clear_bit(0);
+}
+inline ::google::protobuf::int32 PlayerNumberMessage::player_number() const {
+  return player_number_;
+}
+inline void PlayerNumberMessage::set_player_number(::google::protobuf::int32 value) {
+  _set_bit(0);
+  player_number_ = value;
 }
 
 

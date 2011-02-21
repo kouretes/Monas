@@ -20,3 +20,7 @@ message ScanMessage{
 message StateEnd{
 	required bool ended = 1 [default = false];
 }
+
+message PlayerNumberMessage{
+	required int32 player_number = 1 [default = 2];
+}
