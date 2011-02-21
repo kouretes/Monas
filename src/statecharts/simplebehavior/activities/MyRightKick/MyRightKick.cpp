@@ -9,6 +9,7 @@ namespace {
 
 
 int MyRightKick::Execute() {
+	 _blk->process_messages();
 	//gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	//if (gsm==0)
 		//return 0;
@@ -17,7 +18,7 @@ int MyRightKick::Execute() {
 		//return 0;
 	//}
 	std::cout << "STATE MYRIGHTKICK" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::millisec(2000);
+	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time();
 	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
 	_blk->publish_state(*tmsg, "behavior");
 	amot->set_command("RightKick");

@@ -9,13 +9,13 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-#include "messages/timeout.pb.h"
 
 #define DONOTHING 0
 #define CALIBRATE 1
 #define SCANFORBALL 2
 #define SCANFORPOST 3
-#define BALLTRACK 4			
+#define BALLTRACK 4		
+	
 class NoPlay : public IActivity {
 			
 public:
@@ -25,7 +25,6 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	bool readConfiguration(const std::string& file_name);
 	
 private:
 
@@ -35,7 +34,6 @@ private:
 	KickOffMessage* kcm;
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage* wmot;
-	TimeoutMsg* tmsg;
 	int teamColor;
 	int playernum;
 	void velocityWalk(double x, double y, double th, double f);	

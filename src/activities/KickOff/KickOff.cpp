@@ -1,13 +1,13 @@
 
 #include "KickOff.h"
 #include <boost/date_time/posix_time/ptime.hpp>
-
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 namespace {
     ActivityRegistrar<KickOff>::Type temp("KickOff");
 }
 
 int KickOff::Execute() {
+	//sleep(1);	
 //gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	//if (gsm==0)
 		//return 0;
@@ -15,17 +15,22 @@ int KickOff::Execute() {
 		//std::cout <<"STATE KICKOFF NOT PLAYER_PLAYING "<<std::endl;
 		//return 0;
 	//}
-	std::cout << "STATE KICKOFF" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time();
+	//_blk->process_messages();
+	//std::cout << "STATE KICKOFF" <<std::endl;
+	//boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time();
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
-	if(obsm!=0){
-		std::cout << "STATE KICKOFF Kick" <<std::endl;
+	Logger::Instance().WriteMsg("KickOff",  " Execute", Logger::Info);
+	if(obsm.get()!=0){
+		//std::cout << "STATE KICKOFF Kick" <<std::endl;
+		Logger::Instance().WriteMsg("KickOff",  " Kicking", Logger::Info);
 		if (obsm->ball().dist() * sin(obsm->ball().bearing()) > 0.0) 
 			amot->set_command("SoftLeftSideKick");	
 		 else 
 			amot->set_command("SoftRightSideKick");	
 	}
 	_blk->publish_signal(*amot, "motion");
+	kcm->set_kickoff(false);
+	_blk->publish_state(*kcm, "behavior");
 	return 0;
 }
 
@@ -34,6 +39,7 @@ void KickOff::UserInit () {
 	_blk->subscribeTo("behavior",0);
 	amot = new MotionActionMessage();
 	tmsg = new TimeoutMsg();
+	kcm = new KickOffMessage();
 }
 
 std::string KickOff::GetName () {

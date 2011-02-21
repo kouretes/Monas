@@ -2,13 +2,14 @@
 #include "ScanForBall.h"
 #include "messages/RoboCupGameControlData.h"
 #include <boost/date_time/posix_time/ptime.hpp>
-
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+
 namespace {
     ActivityRegistrar<ScanForBall>::Type temp("ScanForBall");
 }
 
 int ScanForBall::Execute() {
+	 _blk->process_messages();
 	//gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	//if(gsm==0)
 		//return 0;
@@ -17,7 +18,7 @@ int ScanForBall::Execute() {
 		//return 0;
 	//}
 	std::cout << "STATE SCANFORBALL" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time()+boost::posix_time::millisec(2000);
+	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time();
 	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
 	_blk->publish_state(*tmsg, "behavior");
 	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");

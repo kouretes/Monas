@@ -8,6 +8,7 @@ namespace {
 }
 
 int KickOff::Execute() {
+	 _blk->process_messages();
 //gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	//if (gsm==0)
 		//return 0;
@@ -16,8 +17,7 @@ int KickOff::Execute() {
 		//return 0;
 	//}
 	std::cout << "STATE KICKOFF" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::millisec(2000);
-	_blk->publish_state(*tmsg, "behavior");
+	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time();
 	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 	if(obsm!=0){
 		std::cout << "STATE KICKOFF Kick" <<std::endl;

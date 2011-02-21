@@ -9,7 +9,7 @@ public:
 
 	bool Eval() {
 		/* TRUE */
-		std::cout<<"*************Transition TrCond_0_1TOInit TRUE*****************"<<std::endl;
+		//std::cout<<"*************Transition TrCond_0_1TOInit TRUE*****************"<<std::endl;
 		return true;
     }
 };

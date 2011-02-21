@@ -13,7 +13,7 @@ public:
 		}
 
 	bool Eval() {
-		std::cout<<"*************Transition TrCond_KickOffTO0_3_2_3_4_5 TRUE*****************"<<std::endl;
+		//std::cout<<"*************Transition TrCond_KickOffTO0_3_2_3_4_5 TRUE*****************"<<std::endl;
 		//boost::shared_ptr<const TimeoutMsg> tmsg = _blk->read_state<TimeoutMsg> ("TimeoutMsg");
 		//std::string stime = tmsg->wakeup();
 		//if (tmsg==0 || stime=="")

@@ -9,7 +9,8 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-#include "messages/timeout.pb.h"	
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -33,10 +34,9 @@ public:
 private:	
 		MotionWalkMessage* wmot;
 		BToHeadMessage* bhmsg;
-		TimeoutMsg* tmsg;
 		boost::shared_ptr<const HeadToBMessage> hbm;
-		boost::shared_ptr<const ScanMessage> scm;
 		boost::shared_ptr<const GameStateMessage> gsm;
+		boost::posix_time::ptime lastTurn;
 		int headaction;
 		void velocityWalk(double x, double y, double th, double f);
 		void littleWalk(double x, double y, double th, int s);	

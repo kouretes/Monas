@@ -1,44 +1,42 @@
 
 #include "ScanForBall.h"
 #include "messages/RoboCupGameControlData.h"
-#include <boost/date_time/posix_time/ptime.hpp>
+#include "tools/logger.h"
+#include "tools/toString.h"
 
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 namespace {
     ActivityRegistrar<ScanForBall>::Type temp("ScanForBall");
 }
 
 int ScanForBall::Execute() {
-	//gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-	//if(gsm==0)
-		//return 0;
-	//if(gsm!=0 && gsm->player_state()!=PLAYER_PLAYING){
-		//std::cout <<"STATE SCANFORBALL NOT PLAYER_PLAYING "<<std::endl;
-		//return 0;
-	//}
-	std::cout << "STATE SCANFORBALL" <<std::endl;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time();
-	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
-	_blk->publish_state(*tmsg, "behavior");
-	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
-	scm = _blk->read_signal<ScanMessage> ("ScanMessage");
 	
-	if( hbm!=0 ){
+	//Logger::Instance().WriteMsg("ScanForBall",  " Execute", Logger::Info);
+	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
+
+	
+	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
-			std::cout << "STATE SCANFORBALL publish balltrack" <<std::endl;
+			//Logger::Instance().WriteMsg("ScanForBall",  " BALLTRACK", Logger::Info);
 		}
 		else{		
-			if(scm!=0 && scm->scancompleted())
+		
+			if (lastTurn< boost::posix_time::microsec_clock::universal_time()){
 				littleWalk(0.0, 0.0, 45 * TO_RAD, 5);
-			else
-				velocityWalk(0.0, 0.0, 0.0, 1);			
+				lastTurn = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(6);
+			}else{
+				velocityWalk(0.0, 0.0, 0.0, 1);		
+			}
+			
+			
 			headaction = SCANFORBALL;
-			std::cout << "STATE SCANFORBALL publish scanforball" <<std::endl;
+			//Logger::Instance().WriteMsg("ScanForBall",  " SCANFORBALL", Logger::Info);
 		}
 	}
+	
 	bhmsg->set_headaction(headaction);
-	_blk->publish_signal(*bhmsg, "behavior");
+	_blk->publish_state(*bhmsg, "behavior");
+	
 	return 0;
 }
 
@@ -51,7 +49,7 @@ void ScanForBall::UserInit () {
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
-	tmsg = new TimeoutMsg();
+	lastTurn = boost::posix_time::microsec_clock::universal_time();
 }
 
 std::string ScanForBall::GetName () {

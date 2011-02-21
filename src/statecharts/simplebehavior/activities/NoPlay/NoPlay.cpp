@@ -5,19 +5,24 @@
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
 #include <boost/date_time/posix_time/ptime.hpp>
-
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+
 namespace {
     ActivityRegistrar<NoPlay>::Type temp("NoPlay");
 }
 
 int NoPlay::Execute() {
+	
+	 _blk->process_messages();
+	std::cout <<"STATE NOPLAY Entered"<<std::endl;
 	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 	prevaction = curraction;
-	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time()+boost::posix_time::millisec(2000);
+	boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::local_time();
 	tmsg->set_wakeup(boost::posix_time::to_iso_string(timeout));
 	_blk->publish_state(*tmsg, "behavior");
 		if(gsm==0 ){
+			std::cout <<"STATE NOPLAY NO GSM "<<std::endl;
+			sleep(1);
 			bhmsg->set_headaction(DONOTHING);
 			_blk->publish_signal(*bhmsg, "behavior");
 			return 0;

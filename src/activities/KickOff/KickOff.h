@@ -4,6 +4,7 @@
 
 #include "architecture/IActivity.h"
 #include "messages/motion.pb.h"
+#include "messages/BehaviorMessages.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/RoboCupGameControlData.h"
@@ -21,6 +22,7 @@ public:
 private:
 	boost::shared_ptr<const GameStateMessage> gsm;
 	MotionActionMessage* amot;
+	KickOffMessage* kcm;
 	TimeoutMsg* tmsg;
 	boost::shared_ptr<const ObservationMessage> obsm;	
 };

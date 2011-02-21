@@ -20,8 +20,7 @@ public:
 		 //boost::shared_ptr<const GameStateMessage> gsm ;
 		 //gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
      //if ( gsm == 0 ){
-		 std::cout<<"*************Transition TrCond_decision_one_or_more_times_TO0_4 FALSE*****************"<<std::endl;
-		 //return false;
+	//	 //return false;
 		 //}
      //if( gsm->player_state()!=PLAYER_FINISHED){
 		//std::cout<<"*************Transition TrCond_decision_one_or_more_times_TO0_4 FALSE*****************"<<std::endl;
