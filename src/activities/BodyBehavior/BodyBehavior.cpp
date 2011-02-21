@@ -1,6 +1,5 @@
 #include "BodyBehavior.h"
 #include "architecture/archConfig.h"
-
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
@@ -293,8 +292,8 @@ int BodyBehavior::Execute() {
 	} else if (!play) { // Non-Play state
 		velocityWalk(0.0, 0.0, 0.0, 1.0);
 		isScaning = false;
-		if (curraction!= CALIBRATE || (oldGameState==gameState && (gameState==PLAYER_PENALISED || gameState== PLAYER_READY)))
-			curraction = DONOTHING;
+	//	if (curraction!= CALIBRATE || (oldGameState==gameState && (gameState==PLAYER_PENALISED || gameState== PLAYER_READY)))
+		//	curraction = DONOTHING;
 	}
 	bhmsg->set_headaction(curraction);
 

@@ -45,8 +45,7 @@ void HeadBehavior::UserInit() {
 }
 
 int HeadBehavior::Execute() {
-	 
-	oldheadaction = headaction;
+
 	read_messages();
 
 	if (bhm != 0)
@@ -55,26 +54,32 @@ int HeadBehavior::Execute() {
 		headaction = oldheadaction;
 		choosemyaction = false;
 	}
-
+	
 	switch (headaction) {
 
 		case (DONOTHING):
-		//	std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
+			//std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
+			//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			ballfound = 0;
 			hbmsg->set_ballfound(ballfound);
 
 			break;
 		case (CALIBRATE):
-		//	std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;			
-			calibrate();
-			calibrated = 1;
-			hbmsg->set_calibrated(calibrated);
-			headaction = DONOTHING;
-			choosemyaction = true;			
-			
+			if(oldheadaction != CALIBRATE){
+				//std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;			
+				//Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
+				calibrate();
+				calibrated = 1;
+				hbmsg->set_calibrated(calibrated);
+				ballfound = 0;
+				hbmsg->set_ballfound(ballfound);
+				//headaction = DONOTHING;
+				//choosemyaction = true;			
+			}else
+				Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			break;
 		case (SCANFORBALL):
-
+			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			scancompleted = false;
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				headaction = BALLTRACK;
@@ -84,27 +89,33 @@ int HeadBehavior::Execute() {
 				hbmsg->set_ballfound(ballfound);
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 			} else if (allsm != 0) {
-		//		std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
+				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 				HeadYaw= allsm->hjsm().sensordata(YAW);
 				HeadPitch= allsm->hjsm().sensordata(PITCH);
 				HeadScanStep();
 			}
 			break;
 		case (SCANFORPOST):
-		//	std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
+			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
+			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
-		//	std::cout << "HEADBEHAVIOR BALLTRACK" <<std::endl;
+			//Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
+			//std::cout << "HEADBEHAVIOR BALLTRACK" <<std::endl;
+			scancompleted=false;
+			//scmsg->set_scancompleted(scancompleted);
+			//_blk->publish_state(*scmsg, "behavior");
+			ballfound=0;
 			if (bmsg != 0) {
 		//		Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 				if (bmsg->radius() > 0) { //This means that a ball was found
 					MakeTrackBallAction();
 
 					ballfound = 1;
-					ballLastSeen = microsec_clock::universal_time()+seconds(2);
+					ballLastSeen = microsec_clock::universal_time()+seconds(1);
 
 				} else {
-					if (ballLastSeen <=microsec_clock::universal_time())
+					if (ballLastSeen <= microsec_clock::universal_time())
 						ballfound = 1;
 					else{
 						ballfound = 0;
@@ -118,6 +129,7 @@ int HeadBehavior::Execute() {
 			hbmsg->set_ballfound(ballfound);
 			break;
 	}
+	oldheadaction = headaction;
 	_blk->publish_state(*hbmsg, "behavior");
 	return 0;
 }
@@ -217,11 +229,11 @@ void HeadBehavior::HeadScanStep() {
 
 void HeadBehavior::read_messages() {
 
-	bhm = _blk->read_signal<BToHeadMessage> ("BToHeadMessage");
+	bhm = _blk->read_state<BToHeadMessage> ("BToHeadMessage");
 	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
 //	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
 allsm = _blk->read_data<AllSensorValues> ("AllSensorValues");
-	//Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
+//	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c = _blk->read_state<CalibrateCam> ("CalibrateCam");
 	if (c != NULL) {
 		if (c->status() == 1) {
