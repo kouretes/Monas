@@ -116,7 +116,7 @@ int HeadBehavior::Execute() {
 			hbmsg->set_ballfound(ballfound);
 			break;
 	}
-	_blk->publish_state(*hbmsg, "behavior");
+	_blk->publishState(*hbmsg, "behavior");
 	return 0;
 }
 
@@ -125,7 +125,7 @@ int HeadBehavior::MakeTrackBallAction() {
 	hmot->set_command("setHead");
 	hmot->set_parameter(0, bmsg->referenceyaw());
 	hmot->set_parameter(1, bmsg->referencepitch());
-	_blk->publish_signal(*hmot, "motion");
+	_blk->publishSignal(*hmot, "motion");
 	cout << "Track step" << endl;
 
 	return 1;
@@ -180,7 +180,7 @@ void HeadBehavior::HeadScanStep() {
 		reachedlimitleft = false;
 		reachedlimitright = false;
 	}
-	_blk->publish_signal(*hmot, "motion");
+	_blk->publishSignal(*hmot, "motion");
 
 	if (reachedlimitup && reachedlimitdown) { //scanning completed
 		Logger::Instance().WriteMsg("HeadBehavior", " reachedlimitup && reachedlimitdown ", Logger::ExtraExtraInfo);
@@ -195,18 +195,18 @@ void HeadBehavior::HeadScanStep() {
 		cout << "scancompleted " << scancompleted << "HeadBehavior" << endl;
 
 		scmsg->set_scancompleted(scancompleted);
-		_blk->publish_signal(*scmsg, "behavior");
+		_blk->publishSignal(*scmsg, "behavior");
 	}
 }
 
 void HeadBehavior::read_messages() {
 
-	bhm = _blk->read_signal<BToHeadMessage> ("BToHeadMessage");
-	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
-	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
+	bhm = _blk->readSignal<BToHeadMessage> ("behavior");
+	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
+	hjsm = _blk->readData<HeadJointSensorsMessage> ("vision");
 
 	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c = _blk->read_state<CalibrateCam> ("CalibrateCam");
+	boost::shared_ptr<const CalibrateCam> c = _blk->readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1) {
 			calibrated = 2;
@@ -218,6 +218,6 @@ void HeadBehavior::read_messages() {
 void HeadBehavior::calibrate() {
 	CalibrateCam v;
 	v.set_status(0);
-	_blk->publish_signal(v, "vision");
+	_blk->publishState(v, "vision");
 	calibrated = 1;
 }

@@ -25,9 +25,11 @@ TCPSocket * Localization::sock;
 
 void Localization::UserInit() {
 
-	_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("localization", 0);
+	_blk->subscribeTo("vision", ON_TOPIC);
+	_blk->subscribeTo("sensors", ON_TOPIC);
+	_blk->subscribeTo("localization", ON_TOPIC);
+	_blk->subscribeTo("behavior", ON_TOPIC);
+
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
 
@@ -158,7 +160,7 @@ int Localization::DebugMode_Receive() {
 					AgentPosition.x = 0;
 					AgentPosition.y = 0;
 				}
-				_blk->publish_signal(wmot, "motion");
+				_blk->publishSignal(wmot, "motion");
 			}
 
 			//field = incommingmsg->GetDescriptor()->FindFieldByName("nextmsgbytesize");
@@ -186,7 +188,7 @@ void Localization::SimpleBehaviorStep() {
 
 	hmot.set_parameter(0, headpos);
 	hmot.set_parameter(1, (0.12307 * abs(headpos)) - 0.66322512);
-	_blk->publish_signal(hmot, "motion");
+	_blk->publishSignal(hmot, "motion");
 
 	float Robot2Target_bearing = anglediff2(atan2(target.y - AgentPosition.y, target.x - AgentPosition.x), AgentPosition.theta);
 	float Distance2Target = DISTANCE(target.x,AgentPosition.x,target.y,AgentPosition.y);
@@ -238,7 +240,7 @@ void Localization::SimpleBehaviorStep() {
 	wmot.set_parameter(1, VelY);
 	wmot.set_parameter(2, Rot);
 	wmot.set_parameter(3, freq);
-	_blk->publish_signal(wmot, "motion");
+	_blk->publishSignal(wmot, "motion");
 
 }
 
@@ -540,9 +542,9 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 void Localization::process_messages() {
 	_blk->process_messages();
 
-	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-	rpsm = _blk->read_data<RobotPositionSensorMessage> ("RobotPositionSensorMessage");
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
+	gsm = _blk->readState<GameStateMessage> ("behavior");
+	rpsm = _blk->readData<RobotPositionSensorMessage> ("sensors");
+	obsm = _blk->readSignal<ObservationMessage> ("vision");
 
 	if (rpsm != 0) {
 		PosX = rpsm->sensordata(0);

@@ -176,8 +176,8 @@ void ObstacleAvoidance::printSonarValues(){
 void ObstacleAvoidance::read_messages() {
 
 
-	ussm =  _blk->read_data<UltaSoundSensorsMessage>("UltaSoundSensorsMessage");
-	rpsm =  _blk->read_data<RobotPositionSensorMessage>("RobotPositionSensorMessage");
+	ussm =  _blk->readData<UltaSoundSensorsMessage>("sensors");
+	rpsm =  _blk->readData<RobotPositionSensorMessage>("sensors");
 	//targetX = _blk->in_msg_nb<RobotPositionSensorMessage>("targetX", "Behavior");
 	//targetY = _blk->in_msg_nb<RobotPositionSensorMessage>("targetY", "Behavior");
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "read messages " , Logger::ExtraExtraInfo);
@@ -200,7 +200,7 @@ void ObstacleAvoidance::publishObstacleMessage(){
 	obavm.set_certainty(1, mprosta?mprostaCert:0);
 	obavm.set_certainty(2, dexia?dexiaCert:0);
 
-	_blk->publish_signal(obavm, "obstacle");
+	_blk->publishSignal(obavm, "obstacle");
 }
 
 void ObstacleAvoidance::initPolarGrid(){

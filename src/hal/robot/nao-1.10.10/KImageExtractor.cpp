@@ -245,7 +245,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//Move head to the left
 		hmot.set_parameter(0,1.57);
 		hmot.set_parameter(1,0.22);
-		_blk->publish_signal(hmot,"motion");
+		_blk->publishSignal(hmot,"motion");
 		_blk->publish_all();
 
 		SleepMs(100);
@@ -278,7 +278,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 		hmot.set_parameter(0,-1.57);
 		hmot.set_parameter(1,0.22);
-		_blk->publish_signal(hmot,"motion");
+		_blk->publishSignal(hmot,"motion");
         _blk->publish_all();
 		//m->callVoid("setAngles",names,pos,0.8);
 		SleepMs(100);
@@ -342,7 +342,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//Move head to the left
 		hmot.set_parameter(0,1.57);
 		hmot.set_parameter(1,0.22);
-		_blk->publish_signal(hmot,"motion");
+		_blk->publishSignal(hmot,"motion");
         _blk->publish_all();
 
 		SleepMs(100);
@@ -415,7 +415,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	//m->callVoid("setAngles",names,pos,0.8);
 	hmot.set_parameter(0,0);
 	hmot.set_parameter(1,-0.1);
-	_blk->publish_signal(hmot,"motion");
+	_blk->publishSignal(hmot,"motion");
     _blk->publish_all();
 	return scale;
 }

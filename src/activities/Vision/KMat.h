@@ -678,6 +678,13 @@ namespace KMat
 			{
 				return COWRef<T,D<T,M,N> > ( static_cast< D<T,M,N>  &> (*this),i,j);
 			};
+			template<typename AT>D<T,M,N> &  operator= (BaseMatrix<D,AT,M,N> const & src)
+			{
+				for(unsigned i=0;i<M;i++ )
+					for(unsigned j=0;j<N;j++)
+						get(i,j)=src.read(i,j);
+				return static_cast< D<T,M,N>  &> (*this);
+			};
 			//Const accessor
 			const T& operator() (unsigned i,unsigned j) const
 			{
@@ -1101,11 +1108,17 @@ namespace KMat
 			{
 				m.identity();
 				m.AisIdentity=false;
-				m.A(0,0)=cos(theta);
-				m.A(0,1)=-sin(theta);
-				m.A(1,0)=sin(theta);
-				m.A(1,1)=cos(theta);
-			}
+				rotate(m.A,theta);
+
+			};
+			template<typename T> static void rotate(GenMatrix<T,2,2> &m,T theta)
+			{
+				m(0,0)=cos(theta);
+				m(0,1)=-sin(theta);
+				m(1,0)=sin(theta);
+				m(1,1)=cos(theta);
+			};
+
 			template<typename T> static void shearX(ATMatrix<T,3> & m, T factor)
 			{
 				m.identity();

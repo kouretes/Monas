@@ -135,17 +135,17 @@ int MotionController::Execute() {
 void MotionController::read_messages() {
 
 	/* Messages for Walk, Head, Action */
-	hm = _blk->read_signal<MotionHeadMessage> ("MotionHeadMessage");
+	hm = _blk->readSignal<MotionHeadMessage> ("motion");
 	if(hm!=NULL){
 			cout << "Pira minima gia kefali " << endl;
 		}
-	wm = _blk->read_signal<MotionWalkMessage> ("MotionWalkMessage");
-	am = _blk->read_signal<MotionActionMessage> ("MotionActionMessage");
+	wm = _blk->readSignal<MotionWalkMessage> ("motion");
+	am = _blk->readSignal<MotionActionMessage> ("motion");
 
 	/* Messages for Intertial Readings */
-	//im = _blk->read_data<InertialSensorsMessage>("InertialSensorsMessage");
+	//im = _blk->readData<InertialSensorsMessage>("sensors");
 //	im = NULL;
-	allsm = _blk->read_data<AllSensorValues> ("AllSensorValues");
+	allsm = _blk->readData<AllSensorValues> ("sensors");
 	if(allsm==NULL){
 		cout << "DEN PAIRNEI MINIMATA OLE " << endl;
 	}
@@ -439,7 +439,7 @@ void MotionController::commands() {
 	//		hmot->add_parameter(x);
 	//		hmot->add_parameter(y);
 	//		Logger::Instance().WriteMsg("MotionController","Sending Command: changeHead ", Logger::ExtraInfo);
-	//		_blk->publish_signal(*hmot,"motion");
+	//		_blk->publishSignal(*hmot,"motion");
 	//		delete hmot;
 	//	}
 	//
@@ -459,7 +459,7 @@ void MotionController::commands() {
 	//		wmot->add_parameter(z);
 	//		wmot->add_parameter(s);
 	//		Logger::Instance().WriteMsg("MotionController","Sending Command: setWalkTargetVelocity ", Logger::ExtraInfo);
-	//		_blk->publish_signal(*wmot,"motion");
+	//		_blk->publishSignal(*wmot,"motion");
 	//		delete wmot;
 	//	}
 	//
@@ -468,7 +468,7 @@ void MotionController::commands() {
 	//		amot->set_topic("motion");
 	//		amot->set_command("RightKick");
 	//		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-	//		_blk->publish_signal(*amot,"motion");
+	//		_blk->publishSignal(*amot,"motion");
 	//		delete amot;
 	//	}
 
@@ -477,7 +477,7 @@ void MotionController::commands() {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_command("RightSideKickSlow.xar");
 		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
-		_blk->publish_signal(*amot, "motion");
+		_blk->publishSignal(*amot, "motion");
 		delete amot;
 	}
 
@@ -485,7 +485,7 @@ void MotionController::commands() {
 		MotionActionMessage* amot = new MotionActionMessage();
 		amot->set_command("RightKick3.xar");
 		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
-		_blk->publish_signal(*amot, "motion");
+		_blk->publishSignal(*amot, "motion");
 		delete amot;
 	}
 
@@ -499,7 +499,7 @@ void MotionController::commands() {
 	//		amot->set_topic("motion");
 	//		amot->set_command("LeftDive");
 	//		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-	//		_blk->publish_signal(*amot,"motion");
+	//		_blk->publishSignal(*amot,"motion");
 	//		delete amot;
 	//	}
 }
