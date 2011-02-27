@@ -1,4 +1,0 @@
-message BToHeadMessage{
-	required int32 headaction = 1 [default = 0];
-
-}

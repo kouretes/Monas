@@ -8,8 +8,8 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
-#include "messages/HeadToBMessage.pb.h"
-#include "messages/BToHeadMessage.pb.h"
+#include "messages/BehaviorMessages.pb.h"
+
 
 
 #ifndef TO_RAD
