@@ -1,0 +1,26 @@
+message KickOffMessage{
+	required bool kickOff = 1 [default = false];
+
+}
+
+message BToHeadMessage{
+	required int32 headaction = 1 [default = 0];
+
+}
+
+message HeadToBMessage{
+	required int32 ballfound = 1 [default = 0];
+	required int32 calibrated = 2 [default = 0];
+}
+
+message ScanMessage{
+	required bool scancompleted = 1 [default = false];
+}
+
+message StateEnd{
+	required bool ended = 1 [default = false];
+}
+
+message PlayerNumberMessage{
+	required int32 player_number = 1 [default = 2];
+}
