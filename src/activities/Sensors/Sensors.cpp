@@ -259,23 +259,23 @@ void Sensors::synchronisedDCMcallback() {
 }
 
 void Sensors::initFastAccess() {
-	map<DeviceNames, std::string> SensorStrings = KDeviceLists::fillSensorNames();
+	map<DeviceNames, std::string> const & SensorStrings = KDeviceLists::SensorNames();
 
 	for (int i = HEAD; i < HEAD + HEADSIZE; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_hjsm()->add_sensordata();
 	}
 	for (int i = ACC; i <= ACC + Z; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_ism()->add_sensordata();
 	}
 
 	for (int i = GYR; i <= GYR + Y; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_ism()->add_sensordata();
 	}
 	for (int i = ANGLE; i <= ANGLE + Y; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_ism()->add_sensordata();
 	}
 }

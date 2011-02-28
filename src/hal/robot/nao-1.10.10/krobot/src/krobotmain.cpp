@@ -30,6 +30,8 @@
 #else
     #define ALCALL
 #endif
+#else
+#  define ALCALL
 #endif
 
 #ifdef __cplusplus
