@@ -11,25 +11,31 @@
 #include <google/protobuf/descriptor.h>
 
 #include "architecture/archConfig.h"
+
+#define SCANFORBALL 2
+#define SCANFORPOST 3
+
 //#define ADEBUG
 using namespace std;
-namespace {
+namespace
+{
 	ActivityRegistrar<Localization>::Type temp("Localization");
 }
 
-Localization::Localization() {
+Localization::Localization()
+{
 }
 
 bool Localization::debugmode = false;
 TCPSocket * Localization::sock;
 
-void Localization::UserInit() {
+void Localization::UserInit()
+{
 
 	_blk->subscribeTo("vision", ON_TOPIC);
 	_blk->subscribeTo("sensors", ON_TOPIC);
 	_blk->subscribeTo("localization", ON_TOPIC);
 	_blk->subscribeTo("behavior", ON_TOPIC);
-
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
 
@@ -51,6 +57,8 @@ void Localization::UserInit() {
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 
+	bhmsg = new BToHeadMessage();
+
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
 	KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
 	KLocalization::setParticlesPoseUniformly(SIRParticles);
@@ -60,15 +68,18 @@ void Localization::UserInit() {
 	pthread_detach(acceptthread);
 }
 
-int Localization::DebugMode_Receive() {
+int Localization::DebugMode_Receive()
+{
 	///DEBUG MODE
 	bool headerparsed = false;
 	int size;
 	int ssize, rsize;
 	int rs;
-	try {
+	try
+	{
 		ssize = 0;
-		if ((sock->recv(&size, sizeof(uint32_t))) == 0) {
+		if ((sock->recv(&size, sizeof(uint32_t))) == 0)
+		{
 			cout << "Stopping Debug ############# Disconnecting !!!" << endl;
 			debugmode = false;
 		}
@@ -76,7 +87,8 @@ int Localization::DebugMode_Receive() {
 
 		//cout << "Waiting for " << size << " Bytes " << endl;
 
-		if (size < 1) {
+		if (size < 1)
+		{
 			//Something went wrong ...
 			cout << " Unable to parse Disconnecting" << endl;
 			debugmode = false;
@@ -84,7 +96,8 @@ int Localization::DebugMode_Receive() {
 		}
 		//Receive the data header
 		for (rs = rsize = 0; rsize < size; rsize += rs)
-			if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
+			if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
+			{
 				cout << "receive error" << endl;
 				break;
 			}
@@ -93,7 +106,8 @@ int Localization::DebugMode_Receive() {
 
 		incommingheader.Clear();
 		headerparsed = incommingheader.ParsePartialFromArray(data, size);
-		if (!headerparsed) {
+		if (!headerparsed)
+		{
 			cout << " Unable to parse Disconnecting" << endl;
 			debugmode = false;
 			return -1;
@@ -103,7 +117,8 @@ int Localization::DebugMode_Receive() {
 
 		string command = incommingheader.nextmsgname();
 		cout << "COMMAND " << command << endl;
-		if (command == "Stop") {
+		if (command == "Stop")
+		{
 			debugmode = false;
 			cout << " Stopping Debug ########################" << endl;
 			return 0;
@@ -121,7 +136,8 @@ int Localization::DebugMode_Receive() {
 		{
 			cout << "NextMessageSize " << size << endl;
 			for (rs = rsize = 0; rsize < size; rsize += rs)
-				if ((rs = sock->recv(data + rsize, size - rsize)) < 0) {
+				if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
+				{
 					cout << "receive error" << endl;
 					break;
 				}
@@ -129,7 +145,8 @@ int Localization::DebugMode_Receive() {
 			cout << "Arrived " << ssize << " $$$$$$$$$$$$$$$$%%%%%%%%%Bytes Do something" << endl;
 			//if (ticommingmsg.GetTypeName() == "RobotPose") {
 
-			if (command == "SetBelief") {
+			if (command == "SetBelief")
+			{
 				RobotPose ticommingmsg;
 				ticommingmsg.ParseFromArray(data, size);
 				cout << ticommingmsg.GetTypeName() << endl;
@@ -148,11 +165,13 @@ int Localization::DebugMode_Receive() {
 				target.y = MyWorld.myposition().y();
 				target.phi = MyWorld.myposition().phi();
 				cout << "My World theta " << AgentPosition.theta;
-			} else if (command.find("Walk") != string::npos)/* == "Walk") */{
+			} else if (command.find("Walk") != string::npos)/* == "Walk") */
+			{
 				MotionWalkMessage wmot;
 				wmot.ParseFromArray(data, size);
 				cout << "Incoming WalkCommand" << endl;
-				if (command.find("Stop") == string::npos) { //Reset at the beggining
+				if (command.find("Stop") == string::npos)
+				{ //Reset at the beggining
 					TrackPoint.x = 0;
 					TrackPoint.y = 0;
 					TrackPoint.phi = 0;
@@ -165,7 +184,8 @@ int Localization::DebugMode_Receive() {
 
 			//field = incommingmsg->GetDescriptor()->FindFieldByName("nextmsgbytesize");
 		}
-	} catch (SocketException &e) {
+	} catch (SocketException &e)
+	{
 		cerr << e.what() << endl;
 		cout << "Stopping Debug ############# Disconnecting !!!" << endl;
 		debugmode = false;
@@ -173,23 +193,43 @@ int Localization::DebugMode_Receive() {
 	return 0;
 }
 
-void Localization::SimpleBehaviorStep() {
+void Localization::SimpleBehaviorStep()
+{
 
-	if (count % 100 == 2) {
-		hmot.set_command("setHead");
-		//hmot.set_parameter(0,0.0f);
-		hmot.set_parameter(1, -0.66322512);
+	// Head Scan simple step
+	bool headscan = false;
+	if (headscan)
+	{
+		if (count % 100 == 2)
+		{
+			hmot.set_command("setHead");
+			//hmot.set_parameter(0,0.0f);
+			hmot.set_parameter(1, -0.66322512);
+		}
+
+		if (fabs(headpos) > 1.5) // 1.3
+			leftright *= -1;
+
+		headpos += 0.1 * leftright;
+
+		hmot.set_parameter(0, headpos);
+		hmot.set_parameter(1, (0.12307 * abs(headpos)) - 0.66322512);
+		_blk->publishSignal(hmot, "motion");
+
+	} else
+	{
+		if (count % 100 == 0)
+		{
+			bhmsg->set_headaction(SCANFORPOST);
+			_blk->publishState(*bhmsg, "behavior");
+		}
+		if (count % 200 == 0)
+		{
+			bhmsg->set_headaction(SCANFORBALL);
+			_blk->publishState(*bhmsg, "behavior");
+		}
 	}
-
-	if (fabs(headpos) > 1.5) // 1.3
-		leftright *= -1;
-
-	headpos += 0.1 * leftright;
-
-	hmot.set_parameter(0, headpos);
-	hmot.set_parameter(1, (0.12307 * abs(headpos)) - 0.66322512);
-	_blk->publishSignal(hmot, "motion");
-
+	//Go to target simple behavior
 	float Robot2Target_bearing = anglediff2(atan2(target.y - AgentPosition.y, target.x - AgentPosition.x), AgentPosition.theta);
 	float Distance2Target = DISTANCE(target.x,AgentPosition.x,target.y,AgentPosition.y);
 
@@ -244,7 +284,8 @@ void Localization::SimpleBehaviorStep() {
 
 }
 
-int Localization::Execute() {
+int Localization::Execute()
+{
 
 	process_messages();
 
@@ -253,15 +294,18 @@ int Localization::Execute() {
 
 	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
-	//SimpleBehaviorStep();
+	SimpleBehaviorStep();
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
 
+	_blk->publishData(MyWorld, "behavior"); //Signal(wmot, "motion");
+
 	///DEBUGMODE SEND RESULTS
-	if (debugmode) {
+	if (debugmode)
+	{
 		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
@@ -269,7 +313,8 @@ int Localization::Execute() {
 	return 0;
 }
 
-void Localization::Send_LocalizationData() {
+void Localization::Send_LocalizationData()
+{
 
 	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
 	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
@@ -283,14 +328,16 @@ void Localization::Send_LocalizationData() {
 	sendsize = outgoingheader.ByteSize();
 	sendsize = htonl(sendsize);
 
-	try {
+	try
+	{
 		sock->send(&sendsize, sizeof(uint32_t));
 
 		sendsize = outgoingheader.ByteSize();
 		outgoingheader.SerializeToArray(data, sendsize);
 		cout << "outgoingheader sendsize " << sendsize << endl;
 
-		while (rsize < sendsize) {
+		while (rsize < sendsize)
+		{
 			rs = sock->send(data + rsize, sendsize - rsize);
 			rsize += rs;
 		}
@@ -305,21 +352,25 @@ void Localization::Send_LocalizationData() {
 		rsize = 0;
 		//cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
 
-		while (rsize < sendsize) {
+		while (rsize < sendsize)
+		{
 			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
 			rsize += rs;
 		}
 		//cout << "Sended " << rsize << endl;
-	} catch (SocketException &e) {
+	} catch (SocketException &e)
+	{
 		cerr << e.what() << endl;
 		cout << "Disconnecting !!!!!" << endl;
 		debugmode = false;
 	}
 }
 
-void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
+void Localization::RobotPositionMotionModel(KMotionModel & MModel)
+{
 
-	if (count == 0) {
+	if (count == 0)
+	{
 
 		TrackPointRobotPosition.x = PosX.sensorvalue() * 1000;
 		TrackPointRobotPosition.y = PosY.sensorvalue() * 1000;
@@ -350,7 +401,8 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 	float robot_rot = DR;
 
 	MModel.type = "ratio";
-	if (robot_dist > 500) {
+	if (robot_dist > 500)
+	{
 		robot_dist = 0.1;
 		robot_dir = 0.000001;
 		robot_rot = 0.00001;
@@ -386,7 +438,8 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel) {
 
 }
 
-belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, double rangemaxleft, double rangemaxright) {
+belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, double rangemaxleft, double rangemaxright)
+{
 
 	cout << "SelfLocalize SIR" << endl;
 	int iterations = 1;
@@ -399,7 +452,8 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//cout << "write something to predict particles " << endl;
 	//cin >> c;
 	//SpreadParticles
-	if (Observations.empty()) {
+	if (Observations.empty())
+	{
 		//		cout << "No observations ... spreading" << endl;
 		//SpreadParticlesCirc(SIRParticles, 10, 0, 2);
 	}
@@ -453,12 +507,14 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	float ESS = normalize(SIRParticles.Weight, partclsNum);
 	cout << "\033[01;32m \n ESS " << ESS << " Beta " << Beta << " Beta 2 " << *Beta2 << "\033[0m" << endl;
 
-	if (ESS < Beta * 0.8) {
+	if (ESS < Beta * 0.8)
+	{
 		cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
 		depletions_counter++;
 
 		cout << "Depletion Counter " << depletions_counter << endl;
-	} else {
+	} else
+	{
 		depletions_counter = 0;
 	}
 #ifdef ADEBUG
@@ -488,11 +544,13 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	maxprtcl.y = SIRParticles.y[0];
 	maxprtcl.phi = SIRParticles.phi[0];
 	SIRParticles.WeightSum = SIRParticles.Weight[0];
-	for (unsigned int i = 0; i < SIRParticles.size; i++) {
+	for (unsigned int i = 0; i < SIRParticles.size; i++)
+	{
 		//Particles_cx += SIRParticles.x[i];
 		//Particles_cy += SIRParticles.y[i];
 
-		if (SIRParticles.Weight[i] > maxprtcl.Weight) {
+		if (SIRParticles.Weight[i] > maxprtcl.Weight)
+		{
 			maxprtcl.x = SIRParticles.x[i];
 			maxprtcl.y = SIRParticles.y[i];
 			maxprtcl.phi = SIRParticles.phi[i];
@@ -517,12 +575,14 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
 
-	if ((ESS < Beta || AgentPosition.confidence > 150)) {
+	if ((ESS < Beta || AgentPosition.confidence > 150))
+	{
 		Resample(SIRParticles, index, 0);
 		Propagate(SIRParticles, index);
 		if (depletions_counter > 4)
 			depletions_counter -= 2;
-	} else {
+	} else
+	{
 		cout << "NO need of resampling" << endl;
 	}
 	//TODO only one value to determine confidance, Now its only distance confidence
@@ -539,14 +599,16 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 }
 
-void Localization::process_messages() {
+void Localization::process_messages()
+{
 	_blk->process_messages();
 
 	gsm = _blk->readState<GameStateMessage> ("behavior");
 	rpsm = _blk->readData<RobotPositionSensorMessage> ("sensors");
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 
-	if (rpsm != 0) {
+	if (rpsm != 0)
+	{
 		PosX = rpsm->sensordata(0);
 		PosY = rpsm->sensordata(1);
 		Angle = rpsm->sensordata(2);
@@ -554,7 +616,8 @@ void Localization::process_messages() {
 		RobotPositionMotionModel(robotmovement);
 	}
 
-	if (obsm != 0) {
+	if (obsm != 0)
+	{
 		KObservationModel tmpOM;
 		currentObservation.clear();
 		//Load observations
@@ -566,11 +629,13 @@ void Localization::process_messages() {
 		maxrangeright = obsm->bearing_limit_right();
 		//cout << "Range Angles maxleft: " << maxrangeleft << " max right: " << maxrangeright << endl;
 
-		for (int i = 0; i < Objects.size(); i++) {
+		for (int i = 0; i < Objects.size(); i++)
+		{
 			id = Objects.Get(i).object_name();
-//			if (id[0] == 'S')
-//				continue;
-			if ((this)->KFeaturesmap.count(id) != 0) {
+			//			if (id[0] == 'S')
+			//				continue;
+			if ((this)->KFeaturesmap.count(id) != 0)
+			{
 				//Make the feature
 				tmpOM.Feature = (this)->KFeaturesmap[id];
 				//Distance
@@ -607,7 +672,8 @@ void Localization::process_messages() {
 
 }
 
-int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel) {
+int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel)
+{
 	bool addnewptrs = false;
 	//Fill the world with data!
 	WorldInfo *WI = DebugData.mutable_world();
@@ -633,7 +699,8 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 
 	if ((unsigned int) DebugData.particles_size() < Particles.size)
 		addnewptrs = true;
-	for (unsigned int i = 0; i < Particles.size; i++) {
+	for (unsigned int i = 0; i < Particles.size; i++)
+	{
 		if (addnewptrs)
 			DebugData.add_particles();
 		DebugData.mutable_particles(i)->set_x(Particles.x[i]);
@@ -642,18 +709,21 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
 	}
 	cout << " added " << Particles.size << endl;
-	if (obsm != NULL) {
+	if (obsm != NULL)
+	{
 		(DebugData.mutable_observations())->CopyFrom(*obsm);
 	}
 	return 1;
 }
 
-void * Localization::StartServer(void * astring) {
+void * Localization::StartServer(void * astring)
+{
 	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
 	bool found = false;
 	unsigned short port = 9001;
 	float temp = 0;
-	if (config.IsLoadedSuccessfully()) {
+	if (config.IsLoadedSuccessfully())
+	{
 		found = true;
 		found &= config.QueryElement("port", temp);
 	}
@@ -665,30 +735,38 @@ void * Localization::StartServer(void * astring) {
 	TCPServerSocket servSock(port);
 
 	Logger::Instance().WriteMsg("Localization", " Localization server is ready at port: " + _toString(port), Logger::Info);
-	while (true) {
-		if (!debugmode) {
+	while (true)
+	{
+		if (!debugmode)
+		{
 			if (sock != NULL)
 				delete sock;
 
-			if ((sock = servSock.accept()) < 0) {
+			if ((sock = servSock.accept()) < 0)
+			{
 				cout << " REturned null";
 				return NULL;
 			}
 			cout << "Handling client ";
-			try {
+			try
+			{
 				cout << sock->getForeignAddress() << ":";
-			} catch (SocketException e) {
+			} catch (SocketException e)
+			{
 				cerr << "Unable to get foreign address" << endl;
 			}
-			try {
+			try
+			{
 				cout << sock->getForeignPort();
-			} catch (SocketException e) {
+			} catch (SocketException e)
+			{
 				cerr << "Unable to get foreign port" << endl;
 			}
 			cout << endl;
 			debugmode = true;
 
-		} else {
+		} else
+		{
 			sleep(5);
 		}
 	}
