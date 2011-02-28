@@ -62,8 +62,12 @@ void MotionController::UserInit() {
 		}
 	}
 
+
 	motion->setStiffnesses("Body", 1.0);
-	motion->setStiffnesses("Head", 0.8);
+	motion->setStiffnesses("Head", 0.95);
+	/*motion->setStiffnesses("LLeg", 0.0);
+	motion->setStiffnesses("RLeg", 0.0);*/
+
 	motion->setWalkArmsEnable(true, true);
 
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
@@ -208,7 +212,9 @@ void MotionController::mglrun() {
 	if ((actionPID == 0) &&robotDown) {
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 1.0);
-		motion->setStiffnesses("Head", 0.8);
+		motion->setStiffnesses("Head", 0.95);
+		/*motion->setStiffnesses("LLeg", 0.0);
+		motion->setStiffnesses("RLeg", 0.0);*/
 		robotDown = false;
 		robotUp=true;
 		ALstandUp();
@@ -272,7 +278,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed =0.8;
+				float fractionMaxSpeed =0.98;
 				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
 			} else if (hm->command() == "changeHead") {
@@ -285,7 +291,7 @@ void MotionController::mglrun() {
 				values[0] = headParam1;
 				names[1] = "HeadPitch";
 				values[1] = headParam2;
-				float fractionMaxSpeed = 0.8;
+				float fractionMaxSpeed = 0.98;
 				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
 			} else
