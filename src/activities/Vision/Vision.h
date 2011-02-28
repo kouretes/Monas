@@ -37,6 +37,15 @@ class Vision: public IActivity
 		 * The only available constructor:
 		 */
 		VISIBLE Vision();
+		VISIBLE ~Vision()
+		{
+			if(segtop==segbottom&&segbottom!=NULL)
+				delete segbottom;
+			else if(segbottom!=NULL)
+				delete segbottom;
+			else if(segtop!=NULL)
+				delete segtop;
+		};
 
 		void VISIBLE UserInit();
 		void fetchAndProcess();
@@ -44,7 +53,7 @@ class Vision: public IActivity
 		std::string VISIBLE  GetName()
 		{
 			return "Vision";
-		}
+		};
 
 		typedef struct GoalPostdata
 		{
@@ -172,7 +181,12 @@ class Vision: public IActivity
 		inline bool validpixel(int x, int y) const;
 		KVecFloat2 imageToCamera( KVecFloat2 const & imagep)const ;
 		KVecFloat2 imageToCamera( KVecInt2 const & imagep) const;
+
+		KVecFloat2 simpleRotation(KVecFloat2 const & i)const ;
+		KVecFloat2 simpleRotation(KVecInt2 const & i)const ;
+
 		KVecInt2 cameraToImage( KVecFloat2 const & c) const;
+		KMat::GenMatrix<float,2,2> simpleRot;
 
 		void fillGoalPostHeightMeasurments(GoalPostdata & newpost) const;
 		void fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c) const;
@@ -180,6 +194,7 @@ class Vision: public IActivity
 		//KVecFloat2 & camToRobot(KMat::HCoords<float ,2> & t);
 		KVecFloat2 camToRobot(KVecFloat2 const & t) const;
 		void cvShowSegmented();
+
 
 		//For Debug!
 		static void * StartServer(void *s);

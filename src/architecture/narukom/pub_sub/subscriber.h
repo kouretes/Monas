@@ -25,7 +25,10 @@
 #include "msg.h"
 
 class MessageQueue;
-class MessageBuffer;
+//Forward Decleration of MessageBuffer
+template<typename T>class Buffer;
+typedef  Buffer<msgentry> MessageBuffer;
+
 class Subscriber
 {
   public:
@@ -37,7 +40,8 @@ class Subscriber
 
     virtual ~Subscriber();
 
-    std::string const getName() const { return subscriber_name;}
+    std::string const getSubscriberName() const { return subscriber_name;}
+    MessageBuffer *getSubscriberBuffer() const { return sub_msg_buf;}
     void attachSubscriberToMessageQueue(MessageQueue & q);
     void subscribeTo(std::string const& topic , int where);
     void unsubscribeFrom(std::string const& topic , int where);
@@ -46,6 +50,7 @@ class Subscriber
   private:
     std::string subscriber_name;
     MessageBuffer* sub_msg_buf;
+    MessageQueue *mq;
 };
 
 #endif // SUBSCRIBER_H

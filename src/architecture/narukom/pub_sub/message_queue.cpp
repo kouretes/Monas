@@ -21,6 +21,7 @@
 
 #include "message_queue.h"
 #include "message_buffer.h"
+#include "topicTree.h"
 #include "tools/XML.h"
 
 
@@ -31,42 +32,41 @@ using namespace std;
 MessageQueue::MessageQueue() : Thread(false)
 {
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
+	tree=new TopicTree("global");
     create_tree();
 
 
 }
+/*
 void MessageQueue::addTopic(std::string const& what,std::string const& under)
 {
-	size_t underid=topicRegistry.getId(under);
-	size_t newid=topicRegistry.getId(what);
-	if(newid!=0)
-		return;
-	newid=topicRegistry.registerNew(what);
-	topictree[underid].children.insert(newid);
-	topictree[newid].parentid=underid;
-}
+	tree->addTopic(what,under);
+
+}*/
 void MessageQueue::create_tree()
 {
 	//cout << "Could not load file Default tree created" << file_name << endl;
-	topictree[0].parentid=0;
-	topictree[0].children.insert(topicRegistry.registerNew("global"));
-	addTopic(string("motion"),string("global"));
-	addTopic(string("leds"),string("global"));
-	addTopic(string("sensors"),string("global"));
-	addTopic(string("vision"),string("global"));
-	addTopic(string("behavior"),string("global"));
-	addTopic(string("localization"),string("global"));
-	addTopic(string("communication"),string("global"));
-	addTopic(string("obstacle"),string("global"));
+/*
+
+	*/
+	tree->addTopic(string("motion"),string("global"));
+	tree->addTopic(string("leds"),string("global"));
+	tree->addTopic(string("sensors"),string("global"));
+	tree->addTopic(string("vision"),string("global"));
+	tree->addTopic(string("behavior"),string("global"));
+	tree->addTopic(string("localization"),string("global"));
+	tree->addTopic(string("communication"),string("global"));
+	tree->addTopic(string("obstacle"),string("global"));
+	subscriptions.resize(tree->size());
 }
 
 void MessageQueue::purgeBuffer(MessageBuffer *b)
 {
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
-	std::map<std::size_t,std::set<MessageBuffer*> >::iterator mit=subscriptions.begin();
+	std::vector< std::set<MessageBuffer*> >::iterator mit=subscriptions.begin();
 	for(;mit!=subscriptions.end();++mit)
 	{
-		(*mit).second.erase(b);
+		(*mit).erase(b);
 	}
 
 
@@ -76,7 +76,9 @@ MessageBuffer* MessageQueue::attachPublisher(std::string const& s)
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
 
 	size_t newid=pubsubRegistry.registerNew(s);
-	MessageBuffer* new_msg_buf = new MessageBuffer ( newid,*this,true);
+	MessageBuffer* new_msg_buf = new MessageBuffer ( newid);
+	new_msg_buf->setNotifier(boost::bind(&MessageQueue::requestMailMan,this,_1));
+
     return new_msg_buf;
 }
 
@@ -85,7 +87,8 @@ MessageBuffer* MessageQueue::attachSubscriber(std::string const& s)
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
 
 	size_t newid=pubsubRegistry.registerNew(s);
-	MessageBuffer* new_msg_buf = new MessageBuffer ( newid,*this,false);//false siginifies no waking up to deliver these
+	MessageBuffer* new_msg_buf = new MessageBuffer ( newid);
+	new_msg_buf->setCleanUp(boost::bind(&MessageQueue::purgeBuffer,this,_1));
     return new_msg_buf;
 }
 
@@ -95,46 +98,15 @@ void MessageQueue::subscribeTo(MessageBuffer *b, std::string const& topic , int 
 	if(b==NULL)
 		return;
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
-	size_t topicId=topicRegistry.getId(topic);
-	//cout<<"Check 0"<<endl;
-	if(topicId==0)
-		return;
-	//cout<<"Check 1"<<endl;
-	std::map<std::size_t,topicdata >::const_iterator tit=topictree.find(topicId);
-	if(tit==topictree.end())
-			return;
-	//cout<<"Check 2"<<endl;
-	subscriptions[topicId].insert(b);
-	if(where==ABOVE_TOPIC||where==ALL)
+	std::set<std::size_t> r=tree->iterateTopics(topic,where);
+
+	std::set<std::size_t>::iterator tit=r.begin();
+
+	for(;tit!=r.end();++tit)
 	{
-
-		do
-		{
-			tit=topictree.find((*tit).second.parentid);
-			if(tit==topictree.end())
-				break;
-			subscriptions[(*tit).first].insert(b);
-		}
-		while((*tit).first!=(*tit).second.parentid);
+		//cout<<"sub:"<<*tit<<" "<< b<<endl;
+		subscriptions[*tit].insert(b);
 	}
-
-	if(where==BELOW_TOPIC||where==ALL)
-		subscribeBelow(b,topicId);
-}
-
-
-void MessageQueue::subscribeBelow(MessageBuffer *b, size_t topicid )
-{
-	if(b==NULL)
-		return;
-	std::map<std::size_t,topicdata >::const_iterator tit=topictree.find(topicid);
-	if(tit==topictree.end())
-			return ;
-	subscriptions[topicid].insert(b);
-	std::set<std::size_t>::const_iterator cit=(*tit).second.children.begin();
-	for(;cit!=(*tit).second.children.end();++cit)//Recursive calls
-		subscribeBelow(b,*cit);
-
 
 }
 
@@ -143,42 +115,14 @@ void MessageQueue::unsubscribeFrom(MessageBuffer *b, std::string const& topic , 
 	if(b==NULL)
 		return;
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
-	size_t topicId=topicRegistry.getId(topic);
-	if(topicId==0)
-		return;
-	std::map<std::size_t,topicdata >::const_iterator tit=topictree.find(topicId);
-	if(tit==topictree.end())
-			return;
-	subscriptions[topicId].erase(b);
-	if(where==ABOVE_TOPIC||where==ALL)
+	std::set<std::size_t> r=tree->iterateTopics(topic,where);
+
+	std::set<std::size_t>::iterator tit=r.begin();
+
+	for(;tit!=r.end();++tit)
 	{
-
-		do
-		{
-			tit=topictree.find((*tit).second.parentid);
-			if(tit==topictree.end())
-				break;
-			subscriptions[(*tit).first].erase(b);
-		}
-		while((*tit).first!=(*tit).second.parentid);
+		subscriptions[*tit].erase(b);
 	}
-
-	if(where==BELOW_TOPIC||where==ALL)
-		unsubscribeBelow(b,topicId);
-}
-void MessageQueue::unsubscribeBelow(MessageBuffer *b, size_t topicid )
-{
-	if(b==NULL)
-		return;
-	std::map<std::size_t,topicdata >::const_iterator tit=topictree.find(topicid);
-	if(tit==topictree.end())
-			return ;
-	subscriptions[topicid].erase(b);
-	std::set<std::size_t>::const_iterator cit=(*tit).second.children.begin();
-	for(;cit!=(*tit).second.children.end();++cit)//Recursive calls
-		subscribeBelow(b,*cit);
-
-
 }
 
 
@@ -194,7 +138,7 @@ void MessageQueue::process_queued_msg()
 	cond_publishers_queue.clear();
     cond_lock.unlock();
     /* LOCKING */
-   // cout<<"Queue up!"<<endl;
+	// cout<<"Queue up!"<<endl;
 
     //boost::unique_lock<boost::mutex > sub_lock(sub_mutex)
 	static int _executions = 0;
@@ -211,22 +155,21 @@ void MessageQueue::process_queued_msg()
 		boost::unique_lock<boost::mutex > pub_sub_mutexlock(pub_sub_mutex);
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
         {
-			size_t msgtopicId=topicRegistry.getId((*mit).topic);
-			//cout<<"Topic->id:"<<(*mit).topic<<msgtopicId<<endl;
-			if(subscriptions.find(msgtopicId)==subscriptions.end())
+			size_t msgtopicId=tree->getId((*mit).topic);
+			//cout<<"Topic->id:"<<(*mit).topic<<msgtopicId<<" "<<subscriptions.size()<<endl;
+			if(msgtopicId==0||subscriptions.size()<=msgtopicId)
 				continue;
 			std::set<MessageBuffer*>::const_iterator subit= subscriptions[msgtopicId].begin();
 			//cout<<"Subscribers:"<<subscriptions[msgtopicId].size()<<endl;
 
 			for ( ; subit!=subscriptions[msgtopicId].end(); ++subit)
 			{
-                      // cout<<"dest"<<endl;
-
+				//cout<<"dest"<<endl;
 				if ((*subit)->getOwnerID() != pownerid  )
 				{
 					//cout << "Delivering to " << (*subit)->getOwnerID()<< " the " << (*mit).msg->GetTypeName() << " size: " << endl;
-					   ready[(*subit)].push_back(*mit);
-					   msgs++;
+					ready[(*subit)].push_back(*mit);
+					msgs++;
 				}
 			}
         }
@@ -271,9 +214,6 @@ void MessageQueue::process_queued_msg()
 //void MessageQueue::finalize_queue(){}
 int MessageQueue::Execute()
 {
-
-
 	process_queued_msg();
-
-  return 0;
+	return 0;
 }

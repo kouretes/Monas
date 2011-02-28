@@ -19,34 +19,35 @@
 */
 
 #include "message_buffer.h"
-#include "message_queue.h"
+#include <queue>
+#include <list>
+//#include "message_queue.h"
 
 #include <iostream>
 using namespace std;
 using google::protobuf::Message;
 
 
-
-MessageBuffer::MessageBuffer(std::size_t nid,MessageQueue &amq , bool notifier):
-	ownerId(nid),mq(amq),shouldNotify(notifier)
+template<typename T>
+Buffer<T>::Buffer(std::size_t nid):
+	ownerId(nid),n(NULL),c(NULL)
 {
-    boost::unique_lock<boost::mutex > data_lock(mutex);
-
 
 }
-
-MessageBuffer::~MessageBuffer()
+template<typename T>
+Buffer<T>::~Buffer()
 {
   boost::unique_lock<boost::mutex > data_lock(mutex);
-  mq.purgeBuffer(this);
+  if(c!=NULL)
+		c(this);
 
 
 }
 
 
 
-
-void MessageBuffer::add( std::vector<msgentry> const & tuples)
+template<typename T>
+void Buffer<T>::add( std::vector<T> const & tuples)
 {
 
     boost::unique_lock<boost::mutex > data_lock(mutex);
@@ -76,22 +77,23 @@ void MessageBuffer::add( std::vector<msgentry> const & tuples)
 
     }
     data_lock.unlock();
-    if(tuples.size()>0&& shouldNotify)
+    if(tuples.size()>0&& n!=NULL)
     {
-       mq.requestMailMan(this);
+       //mq.requestMailMan(this);
+		n(this);//Call notifier
     }
 
 
 
 }
 
-
-bool MessageBuffer::tryadd( std::vector<msgentry> const & tuples)
+template<typename T>
+bool Buffer<T>::tryadd( std::vector<T> const & tuples)
 {
 
     if(!mutex.try_lock())
 		return false;
-    std::vector<msgentry>::const_iterator it= tuples.begin();
+    typename std::vector<T>::const_iterator it= tuples.begin();
     for(;it!=tuples.end();++it)
     {
     	bool filtered=false;
@@ -118,15 +120,16 @@ bool MessageBuffer::tryadd( std::vector<msgentry> const & tuples)
 
     }
     mutex.unlock();
-    if(tuples.size()>0&& shouldNotify)
+    if(tuples.size()>0&& n!=NULL)
     {
-       mq.requestMailMan(this);
+       //mq.requestMailMan(this);
+       n(this);//Call notifier
     }
 	return true;
 }
 
-
-void MessageBuffer::add(const msgentry & t)
+template<typename T>
+void Buffer<T>::add(const T & t)
 {
 	boost::unique_lock<boost::mutex > data_lock(mutex);
 	msgentry newm= t;
@@ -140,27 +143,30 @@ void MessageBuffer::add(const msgentry & t)
 	}
     msg_buf.push_back(t);
     data_lock.unlock();
-    if( shouldNotify)
+    if( n!=NULL)
 	{
-		mq.requestMailMan(this);
+		n(this);//Call notifier
+		//mq.requestMailMan(this);
     }
 }
-std::vector<msgentry> MessageBuffer::remove()
+template<typename T>
+std::vector<T> Buffer<T>::remove()
 {
     boost::unique_lock<boost::mutex > data_lock(mutex);
-    std::vector<msgentry> oldtupples=msg_buf;
+    std::vector<T> oldtupples=msg_buf;
     msg_buf.clear();
     return oldtupples;
 
 }
-
-void MessageBuffer::add_filter(Filter* filter)
+template<typename T>
+void Buffer<T>::add_filter(Filter* filter)
 {
   boost::unique_lock<boost::mutex > data_lock(mutex);
   filters.push_back(filter);
 
 }
-void MessageBuffer::remove_filter(Filter* filter)
+template<typename T>
+void Buffer<T>::remove_filter(Filter* filter)
 {
   boost::unique_lock<boost::mutex > data_lock(mutex);
   for(list<Filter*>::iterator it = filters.begin(); it != filters.end(); it++)
@@ -171,3 +177,5 @@ void MessageBuffer::remove_filter(Filter* filter)
       return;
     }
 }
+//Explicit template instantation for MessageBuffer :)
+template class Buffer<msgentry> ;

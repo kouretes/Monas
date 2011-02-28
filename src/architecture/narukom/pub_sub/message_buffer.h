@@ -20,41 +20,14 @@
 
 #ifndef MESSAGE_BUFFER_H
 #define MESSAGE_BUFFER_H
-#include <boost/thread/condition_variable.hpp>
-#include <vector>
-#include <google/protobuf/message.h>
+
 #include "msg.h"
-#include "filters/filter.h"
-#include <queue>
-#include <list>
+#include "buffer.h"
 
-class MessageQueue;
-class MessageBuffer
-{
-  public:
+typedef Buffer<msgentry> MessageBuffer;
 
-    explicit
-    MessageBuffer(std::size_t nid,MessageQueue &amq , bool notifier);
-    ~MessageBuffer();
-    void add( std::vector<msgentry> const & tuples);
-    bool tryadd( std::vector<msgentry> const & tuples);
 
-    void add(const msgentry & t);
-    std::vector<msgentry> remove();
-    //bool operator==( MessageBuffer& other) ;
-    std::size_t getOwnerID() const {return ownerId;};
-    MessageQueue & getQueue() {return  mq;};
-    void add_filter(Filter* filter);
-    void remove_filter(Filter* filter);
-  private:
 
-    std::vector<msgentry> msg_buf;
-    std::list<Filter*> filters;
-    std::size_t ownerId;
-    boost::mutex  mutex;
-    MessageQueue &mq;
-    bool shouldNotify;
 
-};
 
-#endif // MESSAGE_BUFFER_H
+#endif //MESSAGE_BUFFER_H

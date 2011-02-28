@@ -25,7 +25,9 @@
 #include "msg.h"
 
 class MessageQueue;
-class MessageBuffer;
+//MessageBuffer forward Decl
+template<typename T>class Buffer;
+typedef  Buffer<msgentry> MessageBuffer;
 class Publisher
 {
   public:
@@ -36,10 +38,8 @@ class Publisher
 	virtual void publish(std::vector<msgentry> const& vec);
 	//    virtual void publish(Serializable* msg ,const std::string& topic,unsigned timeout = 500, const std::string& destination = "");
 
-
-
-
-    std::string const getName() const { return publisher_name;}
+    std::string const getPublisherName() const { return publisher_name;}
+    MessageBuffer *getPublisherBuffer() const { return pub_msg_buf;}
     void attachPublisherToMessageQueue(MessageQueue & q);
 
 

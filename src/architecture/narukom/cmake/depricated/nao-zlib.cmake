@@ -1,0 +1,1 @@
+set( ZlibLibary ${CTC_DIR}/libz.so)
