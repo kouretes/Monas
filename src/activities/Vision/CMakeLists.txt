@@ -7,11 +7,15 @@ include_directories( ../../../external/PracticalSocket)
 set ( ActivityName Vision )
 
 set ( ActivitySrcs  KSegmentator.cpp
-                    Vision.cpp
+					KSegmentator.h
+					Vision.cpp
+                    Vision.h
+                    profiler.hpp
 		    VisionImageProcessing.cpp
-		    KCameraTransformation.cpp ../../../external/PracticalSocket/PracticalSocket.cpp 
+		    KCameraTransformation.cpp ../../../external/PracticalSocket/PracticalSocket.cpp
+
 )
-include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
+include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake )
 STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
 add_definitions(" -DNAOQI_${NaoQiVer} ")
 

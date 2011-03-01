@@ -1,4 +1,5 @@
 #include "blackboard.h"
+#include "msg.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 using google::protobuf::Message;
 using boost::posix_time::ptime;
@@ -26,26 +27,35 @@ void Blackboard::process_messages()
     std::vector<msgentry> msg=Subscriber::remove();
     std::vector<msgentry>::iterator it=msg.begin();
     signalentry newsig;
+    brecord nrec;
 
    for(;it!=msg.end();++it)
     {
 
-		size_t newtypeid=typeRegistry.registerNew((*it).msg->GetTypeName());
+		type_t newtypeid=typeRegistry.registerNew((*it).msg->GetTypeName());
+		region_index i;
+		i.tid=topicRegistry.registerNew((*it).topic);
+		i.hid=hostRegistry.registerNew((*it).host);
+		disjoint_region &r=allrecords[i];
+
+		nrec.msg=(*it).msg;
+		nrec.timestamp=(*it).timestamp;
         switch ((*it).msgclass)
         {
 			case msgentry::STATE:
+				r.blkstate[newtypeid]=nrec;
+				break;
             case msgentry::DATA:
-                if(blkdata[newtypeid].size()>0)
-                    blkdata[newtypeid].insert(--blkdata[newtypeid].end(),*it);//Suggest last place to add it
+                if(r.blkdata[newtypeid].size()>0)
+                    r.blkdata[newtypeid].insert(--r.blkdata[newtypeid].end(),nrec);//Suggest last place to add it
                 else
-                    blkdata[newtypeid].insert(*it);
+                    r.blkdata[newtypeid].insert(nrec);
                 break;
             case msgentry::SIGNAL:
 
-                newsig.d=(*it);
+                newsig.d=nrec;
                 newsig.cleared=false;
-                sigdata[newtypeid]=newsig;
-
+                r.blksignal[newtypeid]=newsig;
                 break;
             /*
             case msgentry::STATE:
@@ -70,56 +80,55 @@ void Blackboard::process_messages()
 int Blackboard::cleanup()
 {
 
-    //Data structure
-	std::map<std::size_t,historyqueue>::iterator it= blkdata.begin();
-    //cout<<"cleanup2!"<<endl;
+	regions::iterator rit=allrecords.begin();
+
 	boost::posix_time::time_duration t;
 	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
-	while(it!=blkdata.end())
+
+	for(;rit!=allrecords.end();++rit)
 	{
-	    historyqueue &q=(*it).second;
-
-	    //cout<<(*it).first<<endl;
-	    //int i=0;
-
-	    if(blkdatatimeouts.find((*it).first)==blkdatatimeouts.end())
+		disjoint_region &r=(*rit).second;
+		//Data Structure
+		datastruct::iterator it= r.blkdata.begin();
+		for(;it!=r.blkdata.end();++it)
 		{
-			q.erase(q.begin(),--q.end());//Keep last only
-		}
-		else
-		{
-			boost::posix_time::ptime timeoutstamp=now-blkdatatimeouts[(*it).first];
+			recordlist &q=(*it).second;
 
-			historyqueue::iterator qit= q.begin();
-			while(qit!=q.end() && (*qit).timestamp<=timeoutstamp)
+			if(r.blkdatatimeouts.find((*it).first)==r.blkdatatimeouts.end())
 			{
-				++qit;
-				//i++;
-
+				if(q.size()>1 )q.erase(q.begin(),--q.end());//Keep last only
 			}
-			//cout<<i<<endl;
-			//q.clear();
-			if(qit==q.end())--qit;
-			q.erase(q.begin(),qit);
-
+			else
+			{
+				boost::posix_time::ptime timeoutstamp=now-r.blkdatatimeouts[(*it).first];
+				brecord ar;
+				ar.timestamp=timeoutstamp;
+				recordlist::iterator qit= q.upper_bound(ar);
+				//cout<<i<<endl;
+				//q.clear();
+				if(qit==q.end()&&q.size()>0)--qit;
+				q.erase(q.begin(),qit);
+			}
+		}
+		//Signal structure
+		signalstruct::iterator sigit= r.blksignal.begin();
+		while(sigit!=r.blksignal.end())
+		{
+			if((*sigit).second.cleared==true)
+			{
+				signalstruct::iterator t=sigit++;
+				r.blksignal.erase(t);
+				//sigit=sigdata.begin();
+			}
+			else
+				++sigit;
 		}
 
-	    ++it;
+
+
+
 	}
 
-	//Signal structure
-	signalstruct::iterator sigit= sigdata.begin();
-	while(sigit!=sigdata.end())
-	{
-	    if((*sigit).second.cleared==true)
-	    {
-	    	signalstruct::iterator t=sigit++;
-	    	sigdata.erase(t);
-	    	//sigit=sigdata.begin();
-	    }
-	    else
-			++sigit;
-	}
 
    return 0;
 
@@ -133,42 +142,50 @@ void Blackboard::publish_all()
 
 }
 
-void Blackboard::publish_data(const google::protobuf::Message & msg,std::string const& topic)
+void Blackboard::publishData(const google::protobuf::Message & msg,std::string const& topic)
 {
     msgentry nmsg;
+    brecord  nrec;
 
     google::protobuf::Message * newptr=msg.New();
     newptr->CopyFrom(msg);
     nmsg.msg.reset(newptr);
-
+    nrec.msg=nmsg.msg;
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
     nmsg.timestamp=now;
+    nrec.timestamp=now;
     nmsg.topic=topic;
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::DATA;
-    //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
-	std::size_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
-    if(blkdata[newtypeid].size()>0)
-        blkdata[newtypeid].insert(--blkdata[newtypeid].end(),nmsg);//Suggest last place to add it
+
+	type_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
+	region_index i;
+	i.tid=topicRegistry.registerNew(topic);
+	i.hid=hostRegistry.registerNew("localhost");
+	disjoint_region &r=allrecords[i];
+    if(r.blkdata[newtypeid].size()>0)
+        r.blkdata[newtypeid].insert(--r.blkdata[newtypeid].end(),nrec);//Suggest last place to add it
     else
-         blkdata[newtypeid].insert(nmsg);
+		r.blkdata[newtypeid].insert(nrec);
     topublish.push_back(nmsg);
 
     //cout<<blkdata[msg.GetTypeName()].size()<<endl;q
 
 }
 
-void Blackboard::publish_signal(const google::protobuf::Message & msg,std::string const& topic)
+void Blackboard::publishSignal(const google::protobuf::Message & msg,std::string const& topic)
 {
     msgentry nmsg;
+    brecord  nrec;
 
     google::protobuf::Message * newptr=msg.New();
     newptr->CopyFrom(msg);
     nmsg.msg.reset(newptr);
+    nrec.msg=nmsg.msg;
 
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
@@ -176,14 +193,22 @@ void Blackboard::publish_signal(const google::protobuf::Message & msg,std::strin
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now;//Signal, no timeout
     nmsg.timestamp=now;
+	nrec.timestamp=now;
     nmsg.topic=topic;
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::SIGNAL;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
+
+    type_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
+	region_index i;
+	i.tid=topicRegistry.registerNew(topic);
+	i.hid=hostRegistry.registerNew("localhost");
+	disjoint_region &r=allrecords[i];
+
     signalentry newsig;
-    newsig.d=nmsg;
+    newsig.d=nrec;
     newsig.cleared=false;
-    sigdata[typeRegistry.registerNew(msg.GetTypeName())]=newsig;//If exists replace
+    r.blksignal[newtypeid]=newsig;//If exists replace
 
     topublish.push_back(nmsg);
 
@@ -191,32 +216,39 @@ void Blackboard::publish_signal(const google::protobuf::Message & msg,std::strin
 
 }
 
-void Blackboard::publish_state(const google::protobuf::Message & msg,std::string const& topic)
+void Blackboard::publishState(const google::protobuf::Message & msg,std::string const& topic)
 {
-    publish_data(msg,topic);
-    /*
     msgentry nmsg;
+    brecord  nrec;
 
     google::protobuf::Message * newptr=msg.New();
     newptr->CopyFrom(msg);
     nmsg.msg.reset(newptr);
-
+	nrec.msg=nmsg.msg;
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now;//State, no timeout :)
     nmsg.timestamp=now;
+	nrec.timestamp=now;
     nmsg.topic=topic;
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::STATE;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
-    statedata[msg.GetTypeName()]=nmsg;//If exists replace
+
+    type_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
+	region_index i;
+	i.tid=topicRegistry.registerNew(topic);
+	i.hid=hostRegistry.registerNew("localhost");
+	disjoint_region &r=allrecords[i];
+
+    r.blkstate[newtypeid]=nrec;//If exists replace
 
     topublish.push_back(nmsg);
 
     //cout<<blkdata[msg.GetTypeName()].size()<<endl;
-    */
+
 
 }
 

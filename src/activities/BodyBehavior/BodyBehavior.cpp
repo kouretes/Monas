@@ -51,11 +51,11 @@ void BodyBehavior::UserInit() {
 
 	srand(time(0));
 
-	Logger::Instance().WriteMsg("BodyBehavior", "Initialized", Logger::Info);
+	//Logger::Instance().WriteMsg("BodyBehavior", "Initialized", Logger::Info);
 }
 
 int BodyBehavior::Execute() {
-	cout << "Execute" << endl;
+	//cout << "Execute" << endl;
 	prevaction = curraction;
 	oldGameState = gameState;
 	read_messages();
@@ -75,12 +75,12 @@ int BodyBehavior::Execute() {
 	else
 		readytokick = false;
 
-	cout << "calibrated " << calibrated << "BodyBehavior" << endl;
-	cout << "ballfound " << ballfound << "BodyBehavior" << endl;
-	cout << "scancompleted " << scancompleted << "BodyBehavior" << endl;
+	//cout << "calibrated " << calibrated << "BodyBehavior" << endl;
+//	cout << "ballfound " << ballfound << "BodyBehavior" << endl;
+//	cout << "scancompleted " << scancompleted << "BodyBehavior" << endl;
 
 	if (gsm != 0) {
-		Logger::Instance().WriteMsg("BodyBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
+		//Logger::Instance().WriteMsg("BodyBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		gameState = gsm->player_state();
 		//teamColor = gsm->team_color();
 
@@ -123,9 +123,9 @@ int BodyBehavior::Execute() {
 
 	if (play) {
 
-		float X = 0.0, Y = 0.0, theta = 0.0;
+	//	float X = 0.0, Y = 0.0, theta = 0.0;
 		float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
-		float posx=0.14, posy=0.035;
+		float posx=0.117, posy=0.03;
 		//if (obsm != 0) {
 
 			/*if (obsm->regular_objects_size() > 0) {
@@ -165,29 +165,48 @@ int BodyBehavior::Execute() {
 				by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
 				side = (bb > 0) ? 1 : -1;
 
-				Logger::Instance().WriteMsg("BodyBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: "
-						+ _toString(by), Logger::Info);
+				//Logger::Instance().WriteMsg("BodyBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: "
+					//	+ _toString(by), Logger::Info);
 
 
 				readytokick=true;
-                if ( fabs( bx - posx ) > 0.015 || fabs( by - (side*posy) ) > 0.015) {
+                if ( fabs( bx - posx ) > 0.01 || fabs( by - (side*posy) ) > 0.01) {
                     //Y = gainFine * ( by - (side*posy) );
                     readytokick = false;
                 }
 
 				if (!readytokick) {
-                    if(bd>0.5){
-                        float X=0,Y=0,th=0;
-                        if(fabs(bx)>0.15) X=1;
-                        if(fabs(by)>0.15) Y=0.3*side;
-                        velocityWalk(X,Y,0.2*bb,1);
-                    }
-                    else
-                    {
-                        float offsety=side*posy;
-                        float g=0.3;
-                        littleWalk((bx-posx)*g,(by-offsety)*g,0,1);
-                    }
+                   	static float X=0,Y=0,th=0,f=0.2;
+						//X=(bx-posx)*2;
+						X=(bx-posx )*3;
+						X=X>0?X:X-0.01;
+						X=X>1?1:X;
+						X=X<-1?-1:X;
+						//Y=(by-offsety)*1.6;
+						float offsety=side*posy;
+						Y=(by-offsety)*3;
+						if(bd>0.26)
+						{
+							if(bx<0)
+								th=0.2 *Y;
+							else
+								th=0.1 *Y;
+
+							Y=Y/2.0;
+
+						}
+						else
+							th=-0.06*by*(Y>0?-1:1);
+
+
+						Y=Y>0?Y+0.01:Y-0.01;
+						Y=Y>1?1:Y;
+						Y=Y<-1?-1:Y;
+						f=1;
+
+						th=th>1?1:th;
+						th=th<-1?-1:th;
+						velocityWalk(X,Y,th,f);
 				}
 			}
 		//} else {
@@ -203,9 +222,9 @@ int BodyBehavior::Execute() {
 
 			if (kickoff) {
 				//if (mglRand()<0.5) {
-				if ((mglRand() < 1.0) && !obstacleFront) {
-					littleWalk(0.2, 0.0, 0.0, 2);
-				} else {
+			//	if ((mglRand() < 1.0) && !obstacleFront) {
+				//	littleWalk(0.2, 0.0, 0.0, 2);
+			//	} else {
 					if (by > 0.0) {
 						amot->set_command("SoftLeftSideKick");
 						direction = -1;
@@ -213,8 +232,8 @@ int BodyBehavior::Execute() {
 						amot->set_command("SoftRightSideKick");
 						direction = +1;
 					}
-					_blk->publish_signal(*amot, "motion");
-				}
+
+				_blk->publishSignal(*amot, "motion");
 				kickoff = false;
 			} else {
 
@@ -242,7 +261,7 @@ int BodyBehavior::Execute() {
 						amot->set_command("SoftRightSideKick");
 				}
 
-				_blk->publish_signal(*amot, "motion");*/
+				_blk->publishSignal(*amot, "motion");*/
 
 				/* **************** End of Targetted Kicks ********************** */
 
@@ -253,7 +272,7 @@ int BodyBehavior::Execute() {
 					amot->set_command("LeftKick");
 				else
 					amot->set_command("RightKick");
-				_blk->publish_signal(*amot, "motion");
+				_blk->publishSignal(*amot, "motion");
 				//}
 				//else if (mglRand()<0.5) {
 				//if (by > 0.0) {
@@ -293,26 +312,26 @@ int BodyBehavior::Execute() {
 	} else if (!play) { // Non-Play state
 		velocityWalk(0.0, 0.0, 0.0, 1.0);
 		isScaning = false;
-		if (curraction!= CALIBRATE || (oldGameState==gameState && (gameState==PLAYER_PENALISED || gameState== PLAYER_READY)))
-			curraction = DONOTHING;
+	//	if (curraction!= CALIBRATE || (oldGameState==gameState && (gameState==PLAYER_PENALISED || gameState== PLAYER_READY)))
+		//	curraction = DONOTHING;
 	}
 	bhmsg->set_headaction(curraction);
 
-	cout << "headAction " << curraction << "BodyBehavior" << endl;
+	//cout << "headAction " << curraction << "BodyBehavior" << endl;
+	_blk->publishState(*bhmsg, "behavior");
 
-	_blk->publish_signal(*bhmsg, "behavior");
 
 	return 0;
 }
 
 void BodyBehavior::read_messages() {
 
-	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
-	//om   = _blk->read_signal<ObstacleMessage> ("ObstacleMessage");
-	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
-	scm = _blk->read_signal<ScanMessage> ("ScanMessage");
+	gsm = _blk->readState<GameStateMessage> ("behavior");
+	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
+	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	//om   = _blk->readSignal<ObstacleMessage> ("obstacle");
+	hbm = _blk->readState<HeadToBMessage> ("behavior");
+	scm = _blk->readSignal<ScanMessage> ("behavior");
 
 	Logger::Instance().WriteMsg("BodyBehavior", "read_messages ", Logger::ExtraExtraInfo);
 
@@ -328,7 +347,7 @@ void BodyBehavior::velocityWalk(double x, double y, double th, double f) {
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
 	wmot->set_parameter(3, f);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 void BodyBehavior::littleWalk(double x, double y, double th, int s) {
@@ -337,7 +356,7 @@ void BodyBehavior::littleWalk(double x, double y, double th, int s) {
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 bool BodyBehavior::readConfiguration(const std::string& file_name) {

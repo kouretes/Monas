@@ -98,7 +98,7 @@ int VBehavior::MakeTrackBallAction() {
 		hmot->set_command("setHead");
         hmot->set_parameter(0, bmsg->referenceyaw());
 		hmot->set_parameter(1,  bmsg->referencepitch());
-		_blk->publish_signal(*hmot, "motion");
+		_blk->publishSignal(*hmot, "motion");
 		cout<<"Track step"<<endl;
 	//}
 	return 1;
@@ -153,6 +153,7 @@ int VBehavior::Execute() {
 		}
 		else if (gameState == PLAYER_PENALISED) {
 			play = false;
+			calibrate();
 			velocityWalk(0.0,0.0,0.0,1);
 
 		}
@@ -287,7 +288,7 @@ int VBehavior::Execute() {
 						amot->set_command("SoftRightSideKick");
 						direction = +1;
 					}
-					_blk->publish_signal(*amot, "motion");
+					_blk->publishSignal(*amot, "motion");
 				}
 				kickoff = false;
 			}
@@ -316,7 +317,7 @@ int VBehavior::Execute() {
 				}
 				lastkick=microsec_clock::universal_time()+seconds(4);
 
-				_blk->publish_signal(*amot, "motion");
+				_blk->publishSignal(*amot, "motion");
 				back = 0;
 			}
 			readytokick = false;
@@ -375,7 +376,7 @@ void VBehavior::HeadScanStep() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publish_signal(*hmot, "motion");
+		_blk->publishSignal(*hmot, "motion");
 		waiting=0;
 
 		startscan=false;
@@ -417,7 +418,7 @@ void VBehavior::HeadScanStep() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publish_signal(*hmot, "motion");
+		_blk->publishSignal(*hmot, "motion");
 
 
 	}
@@ -433,14 +434,14 @@ void VBehavior::read_messages() {
 	//if (obsm != 0) delete obsm;
 	//if (om != 0) delete om;
 
-	gsm  = _blk->read_state<GameStateMessage> ("GameStateMessage");
-	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
-	allsm = _blk->read_data<AllSensorValues> ("AllSensorValues");
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
-	om   = _blk->read_signal<ObstacleMessage> ("ObstacleMessage");
+	gsm  = _blk->readState<GameStateMessage> ("behavior");
+	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
+	allsm = _blk->readData<AllSensorValues> ("sensors");
+	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
 
 	Logger::Instance().WriteMsg("VBehavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c= _blk->read_state<CalibrateCam> ("CalibrateCam");
+	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1)
 			calibrated = 2;
@@ -474,7 +475,7 @@ void VBehavior::velocityWalk(double x, double y, double th, double f)
 	wmot->set_parameter(1, cY);
 	wmot->set_parameter(2, cth);
 	wmot->set_parameter(3, f);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 void VBehavior::littleWalk(double x, double y, double th)
@@ -483,14 +484,14 @@ void VBehavior::littleWalk(double x, double y, double th)
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 void VBehavior::calibrate()
 {
 	CalibrateCam v;
 	v.set_status(0);
-	_blk->publish_signal(v, "vision");
+	_blk->publishState(v, "vision");
 	calibrated = 1;
 }
 

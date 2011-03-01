@@ -8,6 +8,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
+#include "messages/BehaviorMessages.pb.h"
 
 #include "KLocalization.h"
 
@@ -67,6 +68,8 @@ class Localization: public IActivity, public KLocalization {
 		boost::shared_ptr<const GameStateMessage> gsm;
 		boost::shared_ptr<const ObservationMessage> obsm;
 		boost::shared_ptr<const RobotPositionSensorMessage> rpsm;
+
+		BToHeadMessage* bhmsg;
 
 		//For Debug!
 		void SimpleBehaviorStep();

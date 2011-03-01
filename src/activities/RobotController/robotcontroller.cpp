@@ -125,7 +125,7 @@ int RobotController::Execute() {
 
 	if (changed) {
 		sendLedUpdate();
-		_blk->publish_state(gm_state, "behavior");
+		_blk->publishState(gm_state, "behavior");
 	} else {
 		if (delay++ % 100 == 0)
 			sendLedUpdate();
@@ -165,7 +165,7 @@ void RobotController::sendLedUpdate() {
 	else
 		lfoot_led->set_color("red");
 
-	_blk->publish_signal(leds, "leds");
+	_blk->publishSignal(leds, "leds");
 	leds.clear_leds();
 }
 

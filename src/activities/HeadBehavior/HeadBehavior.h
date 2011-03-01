@@ -2,14 +2,14 @@
 #define HeadBehavior_H
 
 #include "architecture/IActivity.h"
-
+#include "architecture/narukom/pub_sub/publisher.h"
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
-#include "messages/HeadToBMessage.pb.h"
-#include "messages/BToHeadMessage.pb.h"
-///#include "time.h"
+#include "messages/BehaviorMessages.pb.h"
 
+///#include "time.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
@@ -18,18 +18,21 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.55
-#define	LIMITDOWN 0.19
-#define	LIMITLEFT 0.5
-#define	LIMITRIGHT -0.5
-#define STEPVER 0.65
-#define STEPHOR 0.2
-
 #define DONOTHING 0
 #define CALIBRATE 1
 #define SCANFORBALL 2
 #define SCANFORPOST 3
 #define BALLTRACK 4
+
+#define PITCHMIN -0.55
+#define	PITCHMAX 0.3
+#define YAWMIN 0.8
+#define YAWMAX 1.3
+#define PITCHSTEP 0.22
+#define YAWSTEP 0.45
+
+#define OVERSH 0.06
+#define WAITFOR 40
 
 class HeadBehavior: public IActivity {
 
@@ -39,42 +42,43 @@ class HeadBehavior: public IActivity {
 		void UserInit();
 		void read_messages();
 		int MakeTrackBallAction();
+		void MakeScanAction();
 		void HeadScanStep();
 		std::string GetName() {
 			return "HeadBehavior";
 		}
 
 	private:
-		short ballfound;
 
 		MotionHeadMessage* hmot;
 		HeadToBMessage* hbmsg;
 		ScanMessage* scmsg;
-
-		int pitchdirection;
-		int yawdirection;
-		SensorPair HeadYaw;
-		SensorPair HeadPitch;
+		SensorData HeadYaw;
+		SensorData HeadPitch;
 
 		int headaction;
-		int oldheadaction;
-		bool choosemyaction;
-		bool scancompleted;
-		bool headstartscan;
-		short scandirectionpitch;
-		short scandirectionyaw;
-		bool reachedlimitup;
-		bool reachedlimitdown;
-		bool reachedlimitleft;
-		bool reachedlimitright;
+		boost::posix_time::ptime lastturn;
 
-		boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
-		boost::shared_ptr<const BallTrackMessage> bmsg;
+		bool startscan;
+		bool scanforball;
+		float targetYaw;
+		float targetPitch;
+		float psign,ysign;
+		//bool pitchonly;
+		unsigned waiting;
+		float obsmbearing,lastbearing;
+		bool newBearing;
+
+		//boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
+		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
+
 		boost::shared_ptr<const BToHeadMessage> bhm;
-		//boost::shared_ptr<const ObservationMessage> obsm;		
+		boost::shared_ptr<const AllSensorValues> allsm;
+		boost::shared_ptr<const ObservationMessage> obsm;
 		int calibrated;
 
-		boost::posix_time::ptime ballLastSeen;
+		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
+		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
 		void calibrate();
 

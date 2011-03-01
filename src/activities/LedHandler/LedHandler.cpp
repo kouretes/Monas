@@ -29,14 +29,13 @@ void LedHandler::process_messages() {
 	//if (led_change != 0)
 	//	delete led_change;
 
-	led_change = _blk->read_signal<LedChangeMessage> ("LedChangeMessage");
+	led_change = _blk->readSignal<LedChangeMessage> ("leds");
 }
 
 void LedHandler::UserInit() {
 	//led_change = 0;
+	_blk->subscribeTo("leds", ON_TOPIC);
 
-	//_com->get_message_queue()->add_subscriber(_blk);
-	_blk->subscribeTo("leds", 0);
 	try {
 
 		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");

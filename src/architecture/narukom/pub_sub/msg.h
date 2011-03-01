@@ -40,8 +40,7 @@ struct msgentrytimestampComparator
    bool operator()(const msgentry &a, const boost::posix_time::ptime &b) {return a.timestamp < b;};
 };
 
-
-
+enum topicdir {ON_TOPIC, ABOVE_TOPIC, BELOW_TOPIC,ALL};
 
 
 #endif /* MSG_H */

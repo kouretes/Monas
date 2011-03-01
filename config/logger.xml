@@ -3,7 +3,7 @@
 
 
 
-<MessageLogFile>MonadLog.txt</MessageLogFile>
+<MessageLogFile>MonasLog.txt</MessageLogFile>
 
 <!-- MessageLogCerr set to '1' will print logger messages -->
 <!-- to standard error, '0' will not -->

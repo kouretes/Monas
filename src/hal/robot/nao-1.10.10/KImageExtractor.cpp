@@ -8,6 +8,8 @@ static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970
 using namespace AL;
 using namespace std;
 
+#define REFRESHRATE 120
+
 KImageExtractor::~KImageExtractor()
 {
 	try
@@ -80,6 +82,17 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	results = (c->call<ALValue> ("releaseImageRemote", GVM_name));
 #endif
 
+	static int framecount=0;
+
+	if(framecount%REFRESHRATE==0)
+	{
+		lastcam=c->call<int>("getParam",kCameraSelectID);
+		int a=c->call<int>("getParam",kCameraExposureID);
+		lastexpusec= a*33000.0/510.0;
+		framecount=1;
+	}
+	else
+		framecount++;
 
 	ALValue results;
 #ifdef RAW
@@ -141,7 +154,19 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	//cout << "releaseImage " << endl;
 #endif
 
-	//sleep(1);
+
+	static int framecount=0;
+
+	if(framecount%REFRESHRATE==0)
+	{
+		lastcam=xCamProxy->getParam(kCameraSelectID);
+		int a=xCamProxy->getParam(kCameraExposureID);
+		lastexpusec= a*33000.0/510.0;
+		framecount=1;
+	}
+	else
+		framecount++;
+
 	ALImage* imageIn = NULL;
 	// Now you can get the pointer to the video structure.
 #ifdef RAW
@@ -185,7 +210,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
     const long long microsecsonly=timeStamp-(secsonly*1000000LL);
 //    cout<<"secsonly:"<<secsonly<<endl;
 
-    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly);//+boost::posix_time::millisec(getExp()/2);
+    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)+boost::posix_time::microsec(lastexpusec);
 
 
 };
@@ -222,7 +247,6 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	MotionHeadMessage hmot;
 	hmot.add_parameter(0.0f);
 	hmot.add_parameter(0.0f);
-	hmot.set_topic("motion");
 	hmot.set_command("setHead");
 
 	//hmot->set_parameter(0, 0.9f * overshootfix * (cx));
@@ -245,7 +269,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//Move head to the left
 		hmot.set_parameter(0,1.57);
 		hmot.set_parameter(1,0.22);
-		_blk->publish_signal(hmot,"motion");
+		_blk->publishSignal(hmot,"motion");
 		_blk->publish_all();
 
 		SleepMs(100);
@@ -278,7 +302,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 		hmot.set_parameter(0,-1.57);
 		hmot.set_parameter(1,0.22);
-		_blk->publish_signal(hmot,"motion");
+		_blk->publishSignal(hmot,"motion");
         _blk->publish_all();
 		//m->callVoid("setAngles",names,pos,0.8);
 		SleepMs(100);
@@ -342,7 +366,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//Move head to the left
 		hmot.set_parameter(0,1.57);
 		hmot.set_parameter(1,0.22);
-		_blk->publish_signal(hmot,"motion");
+		_blk->publishSignal(hmot,"motion");
         _blk->publish_all();
 
 		SleepMs(100);
@@ -415,15 +439,16 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	//m->callVoid("setAngles",names,pos,0.8);
 	hmot.set_parameter(0,0);
 	hmot.set_parameter(1,-0.1);
-	_blk->publish_signal(hmot,"motion");
+	_blk->publishSignal(hmot,"motion");
     _blk->publish_all();
 	return scale;
 }
 
 int KImageExtractor::getCamera()
 {
-    if(lastcam==-1)
-        return lastcam=xCamProxy->getParam(kCameraSelectID);
+
+    //if(lastcam==-1)
+    //    return lastcam=xCamProxy->getParam(kCameraSelectID);
 
     return lastcam;
 	//return xCamProxy->getParam(kCameraSelectID);
@@ -438,9 +463,10 @@ int KImageExtractor::swapCamera()
 	return old;
 }
 
-float KImageExtractor::getExp()
+float KImageExtractor::getExpUs()
 {
-	int a=xCamProxy->getParam(kCameraExposureID);
-	return a*33.0/510.0;
+	return lastexpusec;
+	//int a=xCamProxy->getParam(kCameraExposureID);
+	//return a*33.0/510.0;
 }
 

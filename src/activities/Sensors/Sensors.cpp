@@ -111,7 +111,7 @@ int Sensors::Execute() {
 	//		HJSM.mutable_sensordata(i)->set_sensorvaluediff(Values["Head"][i] - oldvalue);
 	//		HJSM.mutable_sensordata(i)->set_sensortimediff(timediff);
 	//	}
-	//	_blk->publish_data(HJSM, "sensors");
+	//	_blk->publishData(HJSM, "sensors");
 #ifdef UNNEEDED
 	j = 0;
 	for (i = 0; i < devicesInChains["LeftArm"].size(); i++) {
@@ -156,7 +156,7 @@ int Sensors::Execute() {
 
 		j++;
 	}
-	_blk->publish_msg(BJSM, "sensors");
+	_blk->publishData(BJSM, "sensors");
 #endif
 	//	for (unsigned int i = 0; i < devicesInChains["Body"].size(); i++) {
 	//		oldvalue = BJSM.mutable_sensordata(i)->sensorvalue();
@@ -175,7 +175,7 @@ int Sensors::Execute() {
 	//		ISM.mutable_sensordata(i)->set_sensorvaluediff(Values["Inertial"][i] - oldvalue);
 	//		ISM.mutable_sensordata(i)->set_sensortimediff(timediff);
 	//	}
-	//	_blk->publish_data(ISM, "sensors");
+	//	_blk->publishData(ISM, "sensors");
 
 	if (period % MODULO == 0) {
 #ifdef UNNEEDED
@@ -203,7 +203,7 @@ int Sensors::Execute() {
 			USSM.mutable_sensordata(i)->set_sensortimediff(timediff);
 			i++;
 		}
-		_blk->publish_data(USSM, "sensors");
+		_blk->publishData(USSM, "sensors");
 
 		//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
 		for (i = 0; i < Values["RobotPosition"].size(); i++) {
@@ -213,7 +213,7 @@ int Sensors::Execute() {
 			RPSM.mutable_sensordata(i)->set_sensorvaluediff(Values["RobotPosition"][i] - oldvalue);
 			RPSM.mutable_sensordata(i)->set_sensortimediff(timediff);
 		}
-		_blk->publish_data(RPSM, "sensors");
+		_blk->publishData(RPSM, "sensors");
 		period = 0;
 	}
 	period++;
@@ -259,23 +259,23 @@ void Sensors::synchronisedDCMcallback() {
 }
 
 void Sensors::initFastAccess() {
-	map<DeviceNames, std::string> SensorStrings = KDeviceLists::fillSensorNames();
+	map<DeviceNames, std::string> const & SensorStrings = KDeviceLists::SensorNames();
 
 	for (int i = HEAD; i < HEAD + HEADSIZE; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_hjsm()->add_sensordata();
 	}
 	for (int i = ACC; i <= ACC + Z; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_ism()->add_sensordata();
 	}
 
 	for (int i = GYR; i <= GYR + Y; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_ism()->add_sensordata();
 	}
 	for (int i = ANGLE; i <= ANGLE + Y; i++) {
-		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings[(DeviceNames) i]);//MemoryFastAccess->getDataPtr()
+		SensorDataPtr[(DeviceNames) i] = (float *) memory->getDataPtr(SensorStrings.at((DeviceNames) i));//MemoryFastAccess->getDataPtr()
 		ASM.mutable_ism()->add_sensordata();
 	}
 }

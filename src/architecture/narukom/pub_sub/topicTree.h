@@ -16,12 +16,12 @@
 
 #ifndef TOPICTREE_H
 #define TOPICTREE_H
-
+#include "msg.h"
 #include "stringRegistry.h"
 #include <map>
 #include <set>
 #include <string>
-enum topicdir {ON_TOPIC, ABOVE_TOPIC, BELOW_TOPIC,ALL};
+
 class TopicTree: public stringRegistry
 {
 
