@@ -30,6 +30,7 @@ public:
 
 private:
 
+	AL::ALPtr<AL::DCMProxy> dcm;
 	AL::ALPtr<AL::ALProxy> temp;
 	AL::ALPtr<AL::ALMotionProxy> motion;
 	AL::ALPtr<AL::ALBroker> pbroker;
@@ -60,8 +61,9 @@ private:
 
 	boost::shared_ptr<const AllSensorValues> allsm;
 
+	AL::ALValue commands;
 
-	void commands();
+	//void commands();
 	void mglrun();
 	void read_messages();
 
@@ -77,7 +79,7 @@ private:
 	void ALstandUpBack2009();
 	void ALstandUpFront2010();
 	void ALstandUpBack2010();
-
+	void createHeadPositionActuatorAlias();
 	typedef std::map<std::string,
 		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
 	typedef std::pair<std::string,
