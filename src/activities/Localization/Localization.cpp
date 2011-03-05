@@ -1,6 +1,6 @@
 #include "Localization.h"
 #include "Kutils.h"
-
+#include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
@@ -294,14 +294,14 @@ int Localization::Execute()
 
 	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
-	//SimpleBehaviorStep();
+	SimpleBehaviorStep();
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
 
-	_blk->publishData(MyWorld, "behavior"); //Signal(wmot, "motion");
+	 //Signal(wmot, "motion");
 
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
@@ -309,6 +309,8 @@ int Localization::Execute()
 		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
+	_blk->publishData(MyWorld, "behavior");
+
 	count++;
 	return 0;
 }
@@ -601,17 +603,17 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 void Localization::process_messages()
 {
-	_blk->process_messages();
+	//_blk->process_messages();
 
 	gsm = _blk->readState<GameStateMessage> ("behavior");
-	rpsm = _blk->readData<RobotPositionSensorMessage> ("sensors");
+	rpsm = _blk->readData<RobotPositionMessage> ("sensors");
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 
 	if (rpsm != 0)
 	{
-		PosX = rpsm->sensordata(0);
-		PosY = rpsm->sensordata(1);
-		Angle = rpsm->sensordata(2);
+		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
+		PosY = rpsm->sensordata(KDeviceLists::ROBOT_Y);
+		Angle = rpsm->sensordata(KDeviceLists::ROBOT_ANGLE);
 
 		RobotPositionMotionModel(robotmovement);
 	}

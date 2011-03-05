@@ -260,15 +260,11 @@ void Vision::recv_and_send()
 			segmended[(*i).y][(*i).x] = red;
 		};
 
-		/*racer_t t;
-		 t.init(64,64);
-		 t.initVelocity(Vlt.x,Vlt.y);
 		 for(int k=0;k<16;k++)
 		 {
 
-		 segmended[t.y][t.x]=red;
-		 t.step();
-		 }*/
+		 segmended[int(64+k*Vup.y)][int(64+k*Vup.x)]=red;
+		 }
 
 		img.set_imagerawdata(segmended, rawImage->width * rawImage->height);
 		img.set_bytes(rawImage->width * rawImage->height);
@@ -380,19 +376,19 @@ void Vision::fetchAndProcess()
 #ifdef DEBUGVISION
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 #endif
-	allsm = _blk->readData<AllSensorValues> ("sensors", "localhost", &p.time, &stamp);
+	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", "localhost", &p.time, &stamp);
 #ifdef DEBUGVISION
 	cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
 	cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
 #endif
 
-	if (allsm == NULL || !allsm->has_hjsm())//No sensor data!
+	if (asvm.get() == NULL  )//No sensor data!
 	{
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no head joint msg in all sensor (allsm) data!", Logger::Error);
 		return;
 	}
 
-	if (allsm == NULL || !allsm->has_ism())//No sensor data!
+	if (asvm.get() == NULL )//No sensor data!
 	{
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no intertial msg in all sensor (allsm) data!", Logger::Error);
 		return;
@@ -401,18 +397,18 @@ void Vision::fetchAndProcess()
 	//Clear result message
 	obs.Clear();
 	img.Clear();
-	p.yaw = allsm->hjsm().sensordata(YAW).sensorvalue();
-	p.pitch = allsm->hjsm().sensordata(PITCH).sensorvalue();
+	p.yaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvalue();
+	p.pitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvalue();
 
-	p.Vyaw = allsm->hjsm().sensordata(YAW).sensorvaluediff();
-	p.Vpitch = allsm->hjsm().sensordata(PITCH).sensorvaluediff();
+	p.Vyaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvaluediff();
+	p.Vpitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvaluediff();
 
-	p.angX = allsm->ism().sensordata(ANGLE_X - ACC).sensorvalue();
-	p.angY = allsm->ism().sensordata(ANGLE_Y - ACC).sensorvalue();
-	p.VangX = allsm->ism().sensordata(ANGLE_X - ACC).sensorvaluediff();//im->sensordata(5).sensortimediff();
-	p.VangY = allsm->ism().sensordata(ANGLE_Y - ACC).sensorvaluediff();//im->sensordata(6).sensortimediff();
+	p.angX = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
+	p.angY = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
+	p.VangX = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvaluediff();//im->sensordata(5).sensortimediff();
+	p.VangY = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvaluediff();//im->sensordata(6).sensortimediff();
 
-	p.timediff = allsm->timediff();//Get time from headmessage
+	p.timediff = asvm->timediff();//Get time from headmessage
 	//p.time = time_t_epoch;
 
 	//float exptime=ext.getExp();//Compensate for middle of image

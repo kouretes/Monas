@@ -65,7 +65,7 @@ class VBehavior: public IActivity {
 		unsigned waiting;
 
 		short balllastseendirection;
-		boost::shared_ptr<const AllSensorValues> allsm;
+		boost::shared_ptr<const AllSensorValuesMessage> allsm;
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
 		boost::shared_ptr<const ObservationMessage>  obsm;

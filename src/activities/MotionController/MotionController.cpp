@@ -15,6 +15,7 @@ namespace
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
 }
 using namespace std;
+using namespace KDeviceLists;
 MotionController::MotionController()
 {
 }
@@ -83,8 +84,8 @@ void MotionController::UserInit()
 
 	motion->setStiffnesses("Body", 1.0);
 	motion->setStiffnesses("Head", 0.95);
-	/*motion->setStiffnesses("LLeg", 0.0);
-	 motion->setStiffnesses("RLeg", 0.0);*/
+	motion->setStiffnesses("LLeg", 0.0);
+	 motion->setStiffnesses("RLeg", 0.0);
 
 	motion->setWalkArmsEnable(true, true);
 
@@ -140,6 +141,8 @@ void MotionController::UserInit()
 
 	counter = 0;
 
+	createHeadPositionActuatorAlias();
+
 	walkingWithVelocity = false;
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
 }
@@ -170,7 +173,7 @@ void MotionController::read_messages()
 	/* Messages for Intertial Readings */
 	//im = _blk->readData<InertialSensorsMessage>("sensors");
 	//	im = NULL;
-	allsm = _blk->readData<AllSensorValues> ("sensors");
+	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
 	if (allsm == NULL)
 	{
 		cout << "DEN PAIRNEI MINIMATA OLE " << endl;
@@ -185,11 +188,11 @@ void MotionController::read_messages()
 void MotionController::mglrun()
 {
 
-	if (allsm != NULL && allsm->has_ism())
+	if (allsm != NULL && allsm->sensordata_size()>=ACC+AXIS_SIZE)//Has Accelerometers
 	{
-		AccZvalue = allsm->ism().sensordata(ACC_Z - ACC).sensorvalue();
-		AccXvalue = allsm->ism().sensordata(ACC_X - ACC).sensorvalue();
-		AccYvalue = allsm->ism().sensordata(ACC_Y - ACC).sensorvalue();
+		AccZvalue = allsm->sensordata(ACC+AXIS_Z).sensorvalue();
+		AccXvalue = allsm->sensordata(ACC+AXIS_X).sensorvalue();
+		AccYvalue = allsm->sensordata(ACC+AXIS_Y).sensorvalue();
 		//		AccZ = im->sensordata(2);
 		//		AccZvalue = AccZ.sensorvalue();
 		//		AccX = im->sensordata(0);
@@ -200,10 +203,10 @@ void MotionController::mglrun()
 
 	/* Check if the robot is falling and remove stiffness, kill all motions */
 #ifdef WEBOTS
-	if ( (allsm != NULL&& allsm->has_ism()) && (robotUp) && (AccZvalue < 5.5) )
+	if (allsm != NULL&& (robotUp) && (AccZvalue < 5.5) )
 	{ // Webots
 #else
-	if ((allsm != NULL && allsm->has_ism()) && (robotUp) && (AccZvalue > -40))
+	if (allsm != NULL && (robotUp) && (AccZvalue > -40) )
 	{ // Robot
 #endif
 		motion->setStiffnesses("Body", 0.0);
@@ -242,8 +245,8 @@ void MotionController::mglrun()
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 1.0);
 		motion->setStiffnesses("Head", 0.95);
-		/*motion->setStiffnesses("LLeg", 0.0);
-		 motion->setStiffnesses("RLeg", 0.0);*/
+		motion->setStiffnesses("LLeg", 0.0);
+		 motion->setStiffnesses("RLeg", 0.0);
 		robotDown = false;
 		robotUp = true;
 		ALstandUp();
@@ -301,7 +304,7 @@ void MotionController::mglrun()
 		if (hm != NULL)
 		{
 			killHeadCommand();
-			if (hm->command() == "setHead")
+			if (hm->command() == "NoDCMsetHead")
 			{
 				headParam1 = hm->parameter(0);
 				headParam2 = hm->parameter(1);
@@ -329,7 +332,7 @@ void MotionController::mglrun()
 				float fractionMaxSpeed = 0.98;
 				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
-			} else if (hm->command() == "DCMsetHead")
+			} else if (hm->command() == "setHead")
 			{
 				//				headParam1 = hm->parameter(0);
 				//				headParam2 = hm->parameter(1);
@@ -344,7 +347,7 @@ void MotionController::mglrun()
 				//				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
 				//				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
 
-				for (int p = 0; p < HEADSIZE; p++)
+				for (int p = 0; p < HEAD_SIZE; p++)
 					commands[5][(p)][0] = hm->parameter(p);
 
 				int DCMtime;
@@ -610,7 +613,7 @@ void MotionController::ALstandUpBack2010()
 void MotionController::createHeadPositionActuatorAlias()
 {
 	AL::ALValue jointAliasses;
-	map<DeviceNames, std::string> PosActuatorStrings = KDeviceLists::fillPositionActuatorNames();
+	vector<std::string> PosActuatorStrings = KDeviceLists::getPositionActuatorKeys();
 
 	jointAliasses.arraySetSize(2);
 	jointAliasses[0] = std::string("HeadjointActuator"); // Alias for all 25 joint actuators
@@ -618,8 +621,8 @@ void MotionController::createHeadPositionActuatorAlias()
 	jointAliasses[1].arraySetSize(2);
 
 	// Joints actuator list
-	jointAliasses[1][YAW] = PosActuatorStrings[HEAD_YAW];
-	jointAliasses[1][PITCH] = PosActuatorStrings[HEAD_PITCH];
+	jointAliasses[1][YAW] = PosActuatorStrings[HEAD+YAW];
+	jointAliasses[1][PITCH] = PosActuatorStrings[HEAD+PITCH];
 
 	// Create alias
 	try
@@ -640,9 +643,9 @@ void MotionController::createHeadPositionActuatorAlias()
 	commands[4].arraySetSize(1);
 	//commands[4][0]  Will be the new time
 
-	commands[5].arraySetSize(HEADSIZE); // For all joints
+	commands[5].arraySetSize(HEAD_SIZE); // For all joints
 
-	for (int i = 0; i < (HEADSIZE); i++)
+	for (int i = 0; i < (HEAD_SIZE); i++)
 	{
 		commands[5][i].arraySetSize(1);
 		//commands[5][i][0] will be the new angle

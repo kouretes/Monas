@@ -59,7 +59,7 @@ private:
 	boost::shared_ptr<const  MotionHeadMessage> hm;
 	boost::shared_ptr<const  MotionActionMessage> am;
 
-	boost::shared_ptr<const AllSensorValues> allsm;
+	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 
 	AL::ALValue commands;
 

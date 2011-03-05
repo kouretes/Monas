@@ -258,8 +258,7 @@ int VBehavior::Execute() {
 
 						th=th>1?1:th;
 						th=th<-1?-1:th;
-
-                        velocityWalk(X,Y,th,f);
+						velocityWalk(X,Y,th,f);
 
 				}
 			}
@@ -333,8 +332,8 @@ int VBehavior::Execute() {
 
 		if (scanforball ) {
 
-			HeadYaw= allsm->hjsm().sensordata(YAW);
-			HeadPitch= allsm->hjsm().sensordata(PITCH);
+			HeadYaw= allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
+			HeadPitch= allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
 			HeadScanStep();
 		}
 
@@ -436,7 +435,7 @@ void VBehavior::read_messages() {
 
 	gsm  = _blk->readState<GameStateMessage> ("behavior");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	allsm = _blk->readData<AllSensorValues> ("sensors");
+	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
 
