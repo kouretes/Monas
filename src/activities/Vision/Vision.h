@@ -127,7 +127,7 @@ class Vision: public IActivity
 		ObservationMessage obs;
 		LedChangeMessage leds;
 		//Incoming messages!
-		boost::shared_ptr<const AllSensorValues> allsm;
+		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 
 		//Camera transformation matrix
 		cpose p;//Robot pose

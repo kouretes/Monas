@@ -140,10 +140,10 @@ int HeadBehavior::Execute() {
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
-			} else if (allsm != 0&&ballLastSeen+milliseconds(500)<now) {
+			} else if (asvm != 0&&ballLastSeen+milliseconds(500)<now) {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
-				HeadYaw= allsm->hjsm().sensordata(YAW);
-				HeadPitch= allsm->hjsm().sensordata(PITCH);
+				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
+				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
 				HeadScanStep();
 
 			}
@@ -159,9 +159,10 @@ int HeadBehavior::Execute() {
 				cout << "Track step GOAL" << endl;
 
 			}
-			else if (allsm != 0&&GoalLastSeen+milliseconds(500)<now) {
+			else if (asvm != 0&&GoalLastSeen+milliseconds(500)<now) {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
-				float tYaw= allsm->hjsm().sensordata(YAW).sensorvalue()+ysign*YAWSTEP;
+				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
+				float tYaw= HeadYaw.sensorvalue()+ysign*YAWSTEP;
 				if(fabs(tYaw)>=YAWMIN)
 				{
 					ysign=-ysign;
@@ -297,7 +298,7 @@ void HeadBehavior::read_messages() {
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 //	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
-	allsm = _blk->readData<AllSensorValues> ("sensors");
+	asvm = _blk->readData<AllSensorValuesMessage> ("sensors");
 //	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c = _blk->readState<CalibrateCam> ("vision");
 	if (c != NULL) {

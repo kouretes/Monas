@@ -73,7 +73,7 @@ class HeadBehavior: public IActivity {
 		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
 
 		boost::shared_ptr<const BToHeadMessage> bhm;
-		boost::shared_ptr<const AllSensorValues> allsm;
+		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 		boost::shared_ptr<const ObservationMessage> obsm;
 		int calibrated;
 

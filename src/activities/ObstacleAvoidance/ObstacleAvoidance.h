@@ -1,5 +1,6 @@
 #ifndef OBSTACLEAVOIDANCE_H
 #define OBSTACLEAVOIDANCE_H
+#include "hal/robot/generic_nao/robot_consts.h"
 #include "messages/TestMessage.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
@@ -32,7 +33,7 @@
 
 #define NoKnowledge 0.5
 #define distance 10
-#define SOnARsNum 10
+#define SOnARsNum KDeviceLists::US_SIZE
 #define PI 3.14159f
 
 #define discount 1
@@ -61,7 +62,7 @@ using namespace  std;
 //}
 
 class ObstacleAvoidance: public IActivity {
-	
+
 	public:
 		ObstacleAvoidance();
 		int grid[3][3];
@@ -88,21 +89,21 @@ class ObstacleAvoidance: public IActivity {
 		int nCurves;
 		int isCurveClosed;
 		int lineWidth;
-		
-		
+
+
 //		AL::ALPtr<AL::ALMemoryProxy> memory;
 		double PolarGrid[M][N];
-				
+
 		typedef map<int, int> mapType;
 		mapType MoveGrid;
 		//int MoveGrid[100][100];
 		int goalX, goalY;
 		int leftCounter, rightCounter;
-		SensorPair RightValue[10];
-		SensorPair LeftValue[10];
-		SensorPair PosX;
-		SensorPair PosY;
-		SensorPair Angle;
+		SensorData RightValue[10];
+		SensorData LeftValue[10];
+		SensorData PosX;
+		SensorData PosY;
+		SensorData Angle;
 		//double grid[M][N];
 		double RobotPosition[3];
 		double IterationGrid[M][N];
@@ -111,7 +112,7 @@ class ObstacleAvoidance: public IActivity {
 		int countLeft, countRight, countPos, firstTimeInitializeOdometry;
 		int x[(M+1)*N];
 		int y[(M+1)*N];
-		
+
 
 		bool mprosta ;
 		double mprostaDist;
@@ -122,21 +123,21 @@ class ObstacleAvoidance: public IActivity {
 		bool aristera;
 		double aristeraCert;
 		double aristeraDist;
-		
-		
-		
+
+
+
 		double changed[M*N];
 		int shiftConsole, index[M*N], indey[M*N];
 		double possibilities[NEIGHBOURS+1], value[NEIGHBOURS+1] ;
 		int indexx[NEIGHBOURS+1], indexy[NEIGHBOURS+1] ;//gia path planning
-		
-		boost::shared_ptr<const UltaSoundSensorsMessage> ussm;
-		boost::shared_ptr<const RobotPositionSensorMessage> rpsm;
+
+		boost::shared_ptr<const AllSensorValuesMessage> asvm;
+		boost::shared_ptr<const RobotPositionMessage> rpm;
 		ObstacleMessageArray obavm;
 		boost::shared_ptr<const ObstacleMessage> DataFromVision;
 		PathPlanningResultMessage* ppresm;
 		PathPlanningRequestMessage* ppreqm;
-		
+
 		double Right[10], Left[10], empty[10];
 		int countAge;
 		int countValid;
@@ -147,13 +148,13 @@ class ObstacleAvoidance: public IActivity {
 		void updateGrid(double (&left)[SOnARsNum], double (&right)[SOnARsNum]);
 		void updateFront();
 		void ageRestGrid();
-		
+
 		void ageGrid();
 		void findNewPosition();
 		void straightMove(int distanceFront, int distanceSide);
 		void rotateGrid(double angle);
 		void findCoordinates();
-		
+
 		void initPossibilities();
 		void initIndexes(int mm, int nn);
 		void iterationGridDir(int mm, int nn);
@@ -166,8 +167,8 @@ class ObstacleAvoidance: public IActivity {
 		void initPolarGrid();
 		void drawIterationGrid();
 		void ageSpecGrid(int x, int y);
-		
+
 };
 
-#endif  
+#endif
 

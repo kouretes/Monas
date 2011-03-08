@@ -7,82 +7,86 @@
 
 #ifndef ROBOT_CONSTS_H_
 #define ROBOT_CONSTS_H_
+#include <vector>
 #include <map>
 #include <string>
-
-
-enum ChainHeadNames
-{
-	YAW, PITCH, HEADSIZE
-};
-enum ChainLegNames
-{
-	HIP_YAW_PITCH, HIP_ROLL, HIP_PITCH, KNEE_PITCH, ANKLE_PITCH, ANKLE_ROLL, LEGSIZE
-};
-
-enum ChainArmNames
-{
-	SHOULDER_PITCH, SHOULDER_ROLL, ELBOW_ROLL, ELBOW_YAW, /*WRIST_YAW, HAND,*/ARMSIZE
-};
-
-enum ChainAccessNames
-{
-	X, Y, Z
-};
-
-enum DeviceNames
-{
-	HEAD, HEAD_YAW = HEAD, HEAD_PITCH,
-
-	L_LEG, L_HIP_YAW_PITCH = L_LEG,
-
-	L_HIP_ROLL, L_HIP_PITCH, L_KNEE_PITCH, L_ANKLE_PITCH, L_ANKLE_ROLL,
-
-	R_LEG, R_HIP_YAW_PITCH = R_LEG,
-
-	R_HIP_ROLL, R_HIP_PITCH, R_KNEE_PITCH, R_ANKLE_PITCH, R_ANKLE_ROLL,
-
-	L_ARM, L_SHOULDER_PITCH = L_ARM, L_SHOULDER_ROLL, L_ELBOW_ROLL, L_ELBOW_YAW, /*L_WRIST_YAW, L_HAND,*/
-
-	R_ARM, R_SHOULDER_PITCH = R_ARM, R_SHOULDER_ROLL, R_ELBOW_ROLL, R_ELBOW_YAW, /*R_WRIST_YAW, R_HAND,*/
-
-	numofjoints,
-
-	ACC = numofjoints, ACC_X = numofjoints, ACC_Y, ACC_Z,
-
-	GYR, GYR_X = GYR, GYR_Y,
-
-	ANGLE, ANGLE_X = ANGLE, ANGLE_Y,
-
-	L_COP, L_COP_X = L_COP, L_COP_Y, L_TOTAL_WEIGHT,
-
-	R_COP, R_COP_X = R_COP, R_COP_Y, R_TOTAL_WEIGHT,
-
-	L_FSR, L_FSR_FL = L_FSR, L_FSR_FR, L_FSR_RL, L_FSR_RR,
-
-	R_FSR, R_FSR_FL = R_FSR, R_FSR_FR, R_FSR_RL, R_FSR_RR
-
-};
 
 /// Returns a map from joint ids (enum Joint names) to almemory string "path" names
 namespace KDeviceLists
 {
-	void fillJointNames(std::map<DeviceNames, std::string> &Keys, std::string arg1, std::string arg2, std::string arg3);
 
 
-	std::map<DeviceNames, std::string> fillHardnessActuatorNames();
+	enum ChainHeadNames
+	{
+		YAW=0, PITCH, HEAD_SIZE
+	};
+	enum ChainLegNames
+	{
+		HIP_YAW_PITCH=0, HIP_ROLL, HIP_PITCH, KNEE_PITCH, ANKLE_PITCH, ANKLE_ROLL, LEG_SIZE
+	};
 
-	std::map<DeviceNames, std::string> fillPositionActuatorNames();
+	enum ChainArmNames
+	{
+		SHOULDER_PITCH=0, SHOULDER_ROLL, ELBOW_ROLL, ELBOW_YAW, /*WRIST_YAW, HAND,*/ARM_SIZE
+	};
 
-	std::map<DeviceNames, std::string> fillSensorNames();
+	enum ChainAccessNames
+	{
+		AXIS_X=0, AXIS_Y, AXIS_Z , AXIS_SIZE
+	};
 
-	const std::map<DeviceNames, std::string> & SensorNames();
+	enum ChainFSRNames
+	{
+		FSR_FL=0, FSR_FR, FSR_RL,FSR_RR, COP_X, COP_Y,TOTAL_WEIGHT,FSR_SIZE
+	};
+	enum ChainUltraSonicNames
+	{
+		US_VALUE,US_VALUE1,US_VALUE2,US_VALUE3,US_VALUE4,US_VALUE5,US_VALUE6,US_VALUE7,US_VALUE8,US_VALUE9,US_SIZE
+	};
+	enum RobotPositionNames
+	{
+		ROBOT_X=0,ROBOT_Y,ROBOT_ANGLE,ROBOTPOSITION_SIZE
+	};
+	enum JointNames
+	{
+		HEAD=0,	L_LEG=HEAD_SIZE , R_LEG=L_LEG+LEG_SIZE,L_ARM=R_LEG+LEG_SIZE,R_ARM=L_ARM+ARM_SIZE ,
 
-	const std::map<DeviceNames, std::string> &PositionActuatorKeys();
+		NUMOFJOINTS=R_ARM+ARM_SIZE
 
-	const std::map<DeviceNames, std::string> &HardnessActuatorKeys();
+	};
 
-	//std::map<DeviceNames, std::string> ActuatorName;
+	enum SensorNames
+	{
+
+		ACC = 0,
+
+		GYR=ACC+AXIS_SIZE,
+
+		ANGLE=GYR+AXIS_Z,
+
+		L_FSR=ANGLE+AXIS_Z,
+		R_FSR=L_FSR+FSR_SIZE,
+
+		L_US=R_FSR+FSR_SIZE,
+		R_US=L_US+US_SIZE,
+
+		NUMOFSENSORS=R_US+US_SIZE
+
+	};
+
+	std::vector<std::string> const& getJointNames();
+
+	std::vector<std::string> const& getJointKeys();
+	std::vector<std::string> const& getPositionActuatorKeys();
+	std::vector<std::string> const& getHardnessActuatorKeys();
+
+	std::vector<std::string> const& getSensorNames();
+	std::vector<std::string> const& getSensorKeys();
+
+	std::map<std::string,JointNames> const& getJointIDs();
+	std::map<std::string,SensorNames> const& getSensorIDs();
+
+	//std::vector< std::string> ActuatorName;
 
 };
 

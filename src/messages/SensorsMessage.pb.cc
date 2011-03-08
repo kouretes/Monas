@@ -12,36 +12,15 @@
 
 namespace {
 
-const ::google::protobuf::Descriptor* InertialSensorsMessage_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* RobotPositionMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  InertialSensorsMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* FSRSensorsMessage_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  FSRSensorsMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* UltaSoundSensorsMessage_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  UltaSoundSensorsMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* HeadJointSensorsMessage_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  HeadJointSensorsMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* BodyJointSensorsMessage_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  BodyJointSensorsMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* RobotPositionSensorMessage_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  RobotPositionSensorMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* SensorPair_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  SensorPair_reflection_ = NULL;
+  RobotPositionMessage_reflection_ = NULL;
 const ::google::protobuf::Descriptor* SensorData_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   SensorData_reflection_ = NULL;
-const ::google::protobuf::Descriptor* ChainSensorSensorsMessage_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* AllSensorValuesMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  ChainSensorSensorsMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* AllSensorValues_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  AllSensorValues_reflection_ = NULL;
+  AllSensorValuesMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -52,116 +31,23 @@ void protobuf_AssignDesc_SensorsMessage_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "SensorsMessage.proto");
   GOOGLE_CHECK(file != NULL);
-  InertialSensorsMessage_descriptor_ = file->message_type(0);
-  static const int InertialSensorsMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InertialSensorsMessage, sensordata_),
+  RobotPositionMessage_descriptor_ = file->message_type(0);
+  static const int RobotPositionMessage_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPositionMessage, sensordata_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPositionMessage, timediff_),
   };
-  InertialSensorsMessage_reflection_ =
+  RobotPositionMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      InertialSensorsMessage_descriptor_,
-      InertialSensorsMessage::default_instance_,
-      InertialSensorsMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InertialSensorsMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(InertialSensorsMessage, _unknown_fields_),
+      RobotPositionMessage_descriptor_,
+      RobotPositionMessage::default_instance_,
+      RobotPositionMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPositionMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPositionMessage, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(InertialSensorsMessage));
-  FSRSensorsMessage_descriptor_ = file->message_type(1);
-  static const int FSRSensorsMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FSRSensorsMessage, sensordata_),
-  };
-  FSRSensorsMessage_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      FSRSensorsMessage_descriptor_,
-      FSRSensorsMessage::default_instance_,
-      FSRSensorsMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FSRSensorsMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FSRSensorsMessage, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(FSRSensorsMessage));
-  UltaSoundSensorsMessage_descriptor_ = file->message_type(2);
-  static const int UltaSoundSensorsMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UltaSoundSensorsMessage, sensordata_),
-  };
-  UltaSoundSensorsMessage_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      UltaSoundSensorsMessage_descriptor_,
-      UltaSoundSensorsMessage::default_instance_,
-      UltaSoundSensorsMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UltaSoundSensorsMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UltaSoundSensorsMessage, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(UltaSoundSensorsMessage));
-  HeadJointSensorsMessage_descriptor_ = file->message_type(3);
-  static const int HeadJointSensorsMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeadJointSensorsMessage, sensordata_),
-  };
-  HeadJointSensorsMessage_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      HeadJointSensorsMessage_descriptor_,
-      HeadJointSensorsMessage::default_instance_,
-      HeadJointSensorsMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeadJointSensorsMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeadJointSensorsMessage, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(HeadJointSensorsMessage));
-  BodyJointSensorsMessage_descriptor_ = file->message_type(4);
-  static const int BodyJointSensorsMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BodyJointSensorsMessage, sensordata_),
-  };
-  BodyJointSensorsMessage_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      BodyJointSensorsMessage_descriptor_,
-      BodyJointSensorsMessage::default_instance_,
-      BodyJointSensorsMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BodyJointSensorsMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BodyJointSensorsMessage, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(BodyJointSensorsMessage));
-  RobotPositionSensorMessage_descriptor_ = file->message_type(5);
-  static const int RobotPositionSensorMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPositionSensorMessage, sensordata_),
-  };
-  RobotPositionSensorMessage_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      RobotPositionSensorMessage_descriptor_,
-      RobotPositionSensorMessage::default_instance_,
-      RobotPositionSensorMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPositionSensorMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPositionSensorMessage, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(RobotPositionSensorMessage));
-  SensorPair_descriptor_ = file->message_type(6);
-  static const int SensorPair_offsets_[5] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorname_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorvalue_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorvaluediff_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensortimediff_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, sensorid_),
-  };
-  SensorPair_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      SensorPair_descriptor_,
-      SensorPair::default_instance_,
-      SensorPair_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorPair, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(SensorPair));
-  SensorData_descriptor_ = file->message_type(7);
+      sizeof(RobotPositionMessage));
+  SensorData_descriptor_ = file->message_type(1);
   static const int SensorData_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorData, sensorvalue_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SensorData, sensorvaluediff_),
@@ -177,46 +63,23 @@ void protobuf_AssignDesc_SensorsMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(SensorData));
-  ChainSensorSensorsMessage_descriptor_ = file->message_type(8);
-  static const int ChainSensorSensorsMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainSensorSensorsMessage, sensordata_),
+  AllSensorValuesMessage_descriptor_ = file->message_type(2);
+  static const int AllSensorValuesMessage_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValuesMessage, jointdata_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValuesMessage, sensordata_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValuesMessage, timediff_),
   };
-  ChainSensorSensorsMessage_reflection_ =
+  AllSensorValuesMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      ChainSensorSensorsMessage_descriptor_,
-      ChainSensorSensorsMessage::default_instance_,
-      ChainSensorSensorsMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainSensorSensorsMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainSensorSensorsMessage, _unknown_fields_),
+      AllSensorValuesMessage_descriptor_,
+      AllSensorValuesMessage::default_instance_,
+      AllSensorValuesMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValuesMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValuesMessage, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(ChainSensorSensorsMessage));
-  AllSensorValues_descriptor_ = file->message_type(9);
-  static const int AllSensorValues_offsets_[11] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, ism_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, fsm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, ussm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, hjsm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, rlsm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, llsm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, rasm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, lasm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, bjsm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, rpsm_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, timediff_),
-  };
-  AllSensorValues_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      AllSensorValues_descriptor_,
-      AllSensorValues::default_instance_,
-      AllSensorValues_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AllSensorValues, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(AllSensorValues));
+      sizeof(AllSensorValuesMessage));
 }
 
 namespace {
@@ -230,50 +93,22 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    InertialSensorsMessage_descriptor_, &InertialSensorsMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    FSRSensorsMessage_descriptor_, &FSRSensorsMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    UltaSoundSensorsMessage_descriptor_, &UltaSoundSensorsMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    HeadJointSensorsMessage_descriptor_, &HeadJointSensorsMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    BodyJointSensorsMessage_descriptor_, &BodyJointSensorsMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    RobotPositionSensorMessage_descriptor_, &RobotPositionSensorMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    SensorPair_descriptor_, &SensorPair::default_instance());
+    RobotPositionMessage_descriptor_, &RobotPositionMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     SensorData_descriptor_, &SensorData::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    ChainSensorSensorsMessage_descriptor_, &ChainSensorSensorsMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    AllSensorValues_descriptor_, &AllSensorValues::default_instance());
+    AllSensorValuesMessage_descriptor_, &AllSensorValuesMessage::default_instance());
 }
 
 }  // namespace
 
 void protobuf_ShutdownFile_SensorsMessage_2eproto() {
-  delete InertialSensorsMessage::default_instance_;
-  delete InertialSensorsMessage_reflection_;
-  delete FSRSensorsMessage::default_instance_;
-  delete FSRSensorsMessage_reflection_;
-  delete UltaSoundSensorsMessage::default_instance_;
-  delete UltaSoundSensorsMessage_reflection_;
-  delete HeadJointSensorsMessage::default_instance_;
-  delete HeadJointSensorsMessage_reflection_;
-  delete BodyJointSensorsMessage::default_instance_;
-  delete BodyJointSensorsMessage_reflection_;
-  delete RobotPositionSensorMessage::default_instance_;
-  delete RobotPositionSensorMessage_reflection_;
-  delete SensorPair::default_instance_;
-  delete SensorPair_reflection_;
+  delete RobotPositionMessage::default_instance_;
+  delete RobotPositionMessage_reflection_;
   delete SensorData::default_instance_;
   delete SensorData_reflection_;
-  delete ChainSensorSensorsMessage::default_instance_;
-  delete ChainSensorSensorsMessage_reflection_;
-  delete AllSensorValues::default_instance_;
-  delete AllSensorValues_reflection_;
+  delete AllSensorValuesMessage::default_instance_;
+  delete AllSensorValuesMessage_reflection_;
 }
 
 void protobuf_AddDesc_SensorsMessage_2eproto() {
@@ -283,55 +118,21 @@ void protobuf_AddDesc_SensorsMessage_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024SensorsMessage.proto\"9\n\026InertialSensor"
-    "sMessage\022\037\n\nSensorData\030\001 \003(\0132\013.SensorPai"
-    "r\"4\n\021FSRSensorsMessage\022\037\n\nSensorData\030\001 \003"
-    "(\0132\013.SensorPair\":\n\027UltaSoundSensorsMessa"
-    "ge\022\037\n\nSensorData\030\001 \003(\0132\013.SensorPair\":\n\027H"
-    "eadJointSensorsMessage\022\037\n\nSensorData\030\001 \003"
-    "(\0132\013.SensorPair\":\n\027BodyJointSensorsMessa"
-    "ge\022\037\n\nSensorData\030\001 \003(\0132\013.SensorPair\"=\n\032R"
-    "obotPositionSensorMessage\022\037\n\nSensorData\030"
-    "\001 \003(\0132\013.SensorPair\"~\n\nSensorPair\022\024\n\nSens"
-    "orName\030\001 \001(\t:\000\022\023\n\013SensorValue\030\002 \002(\002\022\027\n\017S"
-    "ensorValueDiff\030\003 \001(\002\022\026\n\016SensorTimeDiff\030\004"
-    " \001(\r\022\024\n\010SensorID\030\005 \001(\005:\002-1\":\n\nSensorData"
-    "\022\023\n\013SensorValue\030\001 \002(\002\022\027\n\017SensorValueDiff"
-    "\030\002 \002(\002\"<\n\031ChainSensorSensorsMessage\022\037\n\nS"
-    "ensorData\030\001 \003(\0132\013.SensorData\"\267\003\n\017AllSens"
-    "orValues\022$\n\003ism\030\001 \001(\0132\027.InertialSensorsM"
-    "essage\022\037\n\003fsm\030\002 \001(\0132\022.FSRSensorsMessage\022"
-    "&\n\004ussm\030\003 \001(\0132\030.UltaSoundSensorsMessage\022"
-    "(\n\004hjsm\030\004 \001(\0132\032.ChainSensorSensorsMessag"
-    "e\022(\n\004rlsm\030\005 \001(\0132\032.ChainSensorSensorsMess"
-    "age\022(\n\004llsm\030\006 \001(\0132\032.ChainSensorSensorsMe"
-    "ssage\022(\n\004rasm\030\007 \001(\0132\032.ChainSensorSensors"
-    "Message\022(\n\004lasm\030\010 \001(\0132\032.ChainSensorSenso"
-    "rsMessage\022&\n\004bjsm\030\t \001(\0132\030.BodyJointSenso"
-    "rsMessage\022)\n\004rpsm\030\n \001(\0132\033.RobotPositionS"
-    "ensorMessage\022\020\n\010TimeDiff\030\013 \002(\r", 1070);
+    "\n\024SensorsMessage.proto\"I\n\024RobotPositionM"
+    "essage\022\037\n\nsensorData\030\001 \003(\0132\013.SensorData\022"
+    "\020\n\010TimeDiff\030\002 \002(\r\":\n\nSensorData\022\023\n\013Senso"
+    "rValue\030\001 \002(\002\022\027\n\017SensorValueDiff\030\002 \002(\002\"k\n"
+    "\026AllSensorValuesMessage\022\036\n\tjointData\030\001 \003"
+    "(\0132\013.SensorData\022\037\n\nsensorData\030\002 \003(\0132\013.Se"
+    "nsorData\022\020\n\010TimeDiff\030\003 \002(\r", 266);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "SensorsMessage.proto", &protobuf_RegisterTypes);
-  InertialSensorsMessage::default_instance_ = new InertialSensorsMessage();
-  FSRSensorsMessage::default_instance_ = new FSRSensorsMessage();
-  UltaSoundSensorsMessage::default_instance_ = new UltaSoundSensorsMessage();
-  HeadJointSensorsMessage::default_instance_ = new HeadJointSensorsMessage();
-  BodyJointSensorsMessage::default_instance_ = new BodyJointSensorsMessage();
-  RobotPositionSensorMessage::default_instance_ = new RobotPositionSensorMessage();
-  SensorPair::default_instance_ = new SensorPair();
+  RobotPositionMessage::default_instance_ = new RobotPositionMessage();
   SensorData::default_instance_ = new SensorData();
-  ChainSensorSensorsMessage::default_instance_ = new ChainSensorSensorsMessage();
-  AllSensorValues::default_instance_ = new AllSensorValues();
-  InertialSensorsMessage::default_instance_->InitAsDefaultInstance();
-  FSRSensorsMessage::default_instance_->InitAsDefaultInstance();
-  UltaSoundSensorsMessage::default_instance_->InitAsDefaultInstance();
-  HeadJointSensorsMessage::default_instance_->InitAsDefaultInstance();
-  BodyJointSensorsMessage::default_instance_->InitAsDefaultInstance();
-  RobotPositionSensorMessage::default_instance_->InitAsDefaultInstance();
-  SensorPair::default_instance_->InitAsDefaultInstance();
+  AllSensorValuesMessage::default_instance_ = new AllSensorValuesMessage();
+  RobotPositionMessage::default_instance_->InitAsDefaultInstance();
   SensorData::default_instance_->InitAsDefaultInstance();
-  ChainSensorSensorsMessage::default_instance_->InitAsDefaultInstance();
-  AllSensorValues::default_instance_->InitAsDefaultInstance();
+  AllSensorValuesMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_SensorsMessage_2eproto);
 }
 
@@ -346,1398 +147,101 @@ struct StaticDescriptorInitializer_SensorsMessage_2eproto {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int InertialSensorsMessage::kSensorDataFieldNumber;
+const int RobotPositionMessage::kSensorDataFieldNumber;
+const int RobotPositionMessage::kTimeDiffFieldNumber;
 #endif  // !_MSC_VER
 
-InertialSensorsMessage::InertialSensorsMessage()
+RobotPositionMessage::RobotPositionMessage()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void InertialSensorsMessage::InitAsDefaultInstance() {
+void RobotPositionMessage::InitAsDefaultInstance() {
 }
 
-InertialSensorsMessage::InertialSensorsMessage(const InertialSensorsMessage& from)
+RobotPositionMessage::RobotPositionMessage(const RobotPositionMessage& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void InertialSensorsMessage::SharedCtor() {
+void RobotPositionMessage::SharedCtor() {
   _cached_size_ = 0;
+  timediff_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-InertialSensorsMessage::~InertialSensorsMessage() {
+RobotPositionMessage::~RobotPositionMessage() {
   SharedDtor();
 }
 
-void InertialSensorsMessage::SharedDtor() {
+void RobotPositionMessage::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void InertialSensorsMessage::SetCachedSize(int size) const {
+void RobotPositionMessage::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* InertialSensorsMessage::descriptor() {
+const ::google::protobuf::Descriptor* RobotPositionMessage::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return InertialSensorsMessage_descriptor_;
+  return RobotPositionMessage_descriptor_;
 }
 
-const InertialSensorsMessage& InertialSensorsMessage::default_instance() {
+const RobotPositionMessage& RobotPositionMessage::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
 }
 
-InertialSensorsMessage* InertialSensorsMessage::default_instance_ = NULL;
+RobotPositionMessage* RobotPositionMessage::default_instance_ = NULL;
 
-InertialSensorsMessage* InertialSensorsMessage::New() const {
-  return new InertialSensorsMessage;
+RobotPositionMessage* RobotPositionMessage::New() const {
+  return new RobotPositionMessage;
 }
 
-void InertialSensorsMessage::Clear() {
+void RobotPositionMessage::Clear() {
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    timediff_ = 0u;
+  }
   sensordata_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool InertialSensorsMessage::MergePartialFromCodedStream(
+bool RobotPositionMessage::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorPair SensorData = 1;
+      // repeated .SensorData sensorData = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_SensorData:
+         parse_sensorData:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                 input, add_sensordata()));
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(10)) goto parse_SensorData;
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectTag(10)) goto parse_sensorData;
+        if (input->ExpectTag(16)) goto parse_TimeDiff;
         break;
       }
       
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void InertialSensorsMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sensordata(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* InertialSensorsMessage::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->sensordata(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int InertialSensorsMessage::ByteSize() const {
-  int total_size = 0;
-  
-  // repeated .SensorPair SensorData = 1;
-  total_size += 1 * this->sensordata_size();
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->sensordata(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void InertialSensorsMessage::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const InertialSensorsMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const InertialSensorsMessage*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void InertialSensorsMessage::MergeFrom(const InertialSensorsMessage& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  sensordata_.MergeFrom(from.sensordata_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void InertialSensorsMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void InertialSensorsMessage::CopyFrom(const InertialSensorsMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool InertialSensorsMessage::IsInitialized() const {
-  
-  for (int i = 0; i < sensordata_size(); i++) {
-    if (!this->sensordata(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void InertialSensorsMessage::Swap(InertialSensorsMessage* other) {
-  if (other != this) {
-    sensordata_.Swap(&other->sensordata_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata InertialSensorsMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = InertialSensorsMessage_descriptor_;
-  metadata.reflection = InertialSensorsMessage_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int FSRSensorsMessage::kSensorDataFieldNumber;
-#endif  // !_MSC_VER
-
-FSRSensorsMessage::FSRSensorsMessage()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void FSRSensorsMessage::InitAsDefaultInstance() {
-}
-
-FSRSensorsMessage::FSRSensorsMessage(const FSRSensorsMessage& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void FSRSensorsMessage::SharedCtor() {
-  _cached_size_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-FSRSensorsMessage::~FSRSensorsMessage() {
-  SharedDtor();
-}
-
-void FSRSensorsMessage::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void FSRSensorsMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* FSRSensorsMessage::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return FSRSensorsMessage_descriptor_;
-}
-
-const FSRSensorsMessage& FSRSensorsMessage::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
-}
-
-FSRSensorsMessage* FSRSensorsMessage::default_instance_ = NULL;
-
-FSRSensorsMessage* FSRSensorsMessage::New() const {
-  return new FSRSensorsMessage;
-}
-
-void FSRSensorsMessage::Clear() {
-  sensordata_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool FSRSensorsMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorPair SensorData = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_SensorData:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_sensordata()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(10)) goto parse_SensorData;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void FSRSensorsMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sensordata(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* FSRSensorsMessage::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->sensordata(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int FSRSensorsMessage::ByteSize() const {
-  int total_size = 0;
-  
-  // repeated .SensorPair SensorData = 1;
-  total_size += 1 * this->sensordata_size();
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->sensordata(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void FSRSensorsMessage::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const FSRSensorsMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const FSRSensorsMessage*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void FSRSensorsMessage::MergeFrom(const FSRSensorsMessage& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  sensordata_.MergeFrom(from.sensordata_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void FSRSensorsMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void FSRSensorsMessage::CopyFrom(const FSRSensorsMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool FSRSensorsMessage::IsInitialized() const {
-  
-  for (int i = 0; i < sensordata_size(); i++) {
-    if (!this->sensordata(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void FSRSensorsMessage::Swap(FSRSensorsMessage* other) {
-  if (other != this) {
-    sensordata_.Swap(&other->sensordata_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata FSRSensorsMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = FSRSensorsMessage_descriptor_;
-  metadata.reflection = FSRSensorsMessage_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int UltaSoundSensorsMessage::kSensorDataFieldNumber;
-#endif  // !_MSC_VER
-
-UltaSoundSensorsMessage::UltaSoundSensorsMessage()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void UltaSoundSensorsMessage::InitAsDefaultInstance() {
-}
-
-UltaSoundSensorsMessage::UltaSoundSensorsMessage(const UltaSoundSensorsMessage& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void UltaSoundSensorsMessage::SharedCtor() {
-  _cached_size_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-UltaSoundSensorsMessage::~UltaSoundSensorsMessage() {
-  SharedDtor();
-}
-
-void UltaSoundSensorsMessage::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void UltaSoundSensorsMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* UltaSoundSensorsMessage::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return UltaSoundSensorsMessage_descriptor_;
-}
-
-const UltaSoundSensorsMessage& UltaSoundSensorsMessage::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
-}
-
-UltaSoundSensorsMessage* UltaSoundSensorsMessage::default_instance_ = NULL;
-
-UltaSoundSensorsMessage* UltaSoundSensorsMessage::New() const {
-  return new UltaSoundSensorsMessage;
-}
-
-void UltaSoundSensorsMessage::Clear() {
-  sensordata_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool UltaSoundSensorsMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorPair SensorData = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_SensorData:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_sensordata()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(10)) goto parse_SensorData;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void UltaSoundSensorsMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sensordata(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* UltaSoundSensorsMessage::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->sensordata(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int UltaSoundSensorsMessage::ByteSize() const {
-  int total_size = 0;
-  
-  // repeated .SensorPair SensorData = 1;
-  total_size += 1 * this->sensordata_size();
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->sensordata(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void UltaSoundSensorsMessage::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const UltaSoundSensorsMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const UltaSoundSensorsMessage*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void UltaSoundSensorsMessage::MergeFrom(const UltaSoundSensorsMessage& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  sensordata_.MergeFrom(from.sensordata_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void UltaSoundSensorsMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void UltaSoundSensorsMessage::CopyFrom(const UltaSoundSensorsMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool UltaSoundSensorsMessage::IsInitialized() const {
-  
-  for (int i = 0; i < sensordata_size(); i++) {
-    if (!this->sensordata(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void UltaSoundSensorsMessage::Swap(UltaSoundSensorsMessage* other) {
-  if (other != this) {
-    sensordata_.Swap(&other->sensordata_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata UltaSoundSensorsMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = UltaSoundSensorsMessage_descriptor_;
-  metadata.reflection = UltaSoundSensorsMessage_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int HeadJointSensorsMessage::kSensorDataFieldNumber;
-#endif  // !_MSC_VER
-
-HeadJointSensorsMessage::HeadJointSensorsMessage()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void HeadJointSensorsMessage::InitAsDefaultInstance() {
-}
-
-HeadJointSensorsMessage::HeadJointSensorsMessage(const HeadJointSensorsMessage& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void HeadJointSensorsMessage::SharedCtor() {
-  _cached_size_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-HeadJointSensorsMessage::~HeadJointSensorsMessage() {
-  SharedDtor();
-}
-
-void HeadJointSensorsMessage::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void HeadJointSensorsMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* HeadJointSensorsMessage::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return HeadJointSensorsMessage_descriptor_;
-}
-
-const HeadJointSensorsMessage& HeadJointSensorsMessage::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
-}
-
-HeadJointSensorsMessage* HeadJointSensorsMessage::default_instance_ = NULL;
-
-HeadJointSensorsMessage* HeadJointSensorsMessage::New() const {
-  return new HeadJointSensorsMessage;
-}
-
-void HeadJointSensorsMessage::Clear() {
-  sensordata_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool HeadJointSensorsMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorPair SensorData = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_SensorData:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_sensordata()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(10)) goto parse_SensorData;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void HeadJointSensorsMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sensordata(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* HeadJointSensorsMessage::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->sensordata(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int HeadJointSensorsMessage::ByteSize() const {
-  int total_size = 0;
-  
-  // repeated .SensorPair SensorData = 1;
-  total_size += 1 * this->sensordata_size();
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->sensordata(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void HeadJointSensorsMessage::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const HeadJointSensorsMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const HeadJointSensorsMessage*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void HeadJointSensorsMessage::MergeFrom(const HeadJointSensorsMessage& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  sensordata_.MergeFrom(from.sensordata_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void HeadJointSensorsMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void HeadJointSensorsMessage::CopyFrom(const HeadJointSensorsMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool HeadJointSensorsMessage::IsInitialized() const {
-  
-  for (int i = 0; i < sensordata_size(); i++) {
-    if (!this->sensordata(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void HeadJointSensorsMessage::Swap(HeadJointSensorsMessage* other) {
-  if (other != this) {
-    sensordata_.Swap(&other->sensordata_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata HeadJointSensorsMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = HeadJointSensorsMessage_descriptor_;
-  metadata.reflection = HeadJointSensorsMessage_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int BodyJointSensorsMessage::kSensorDataFieldNumber;
-#endif  // !_MSC_VER
-
-BodyJointSensorsMessage::BodyJointSensorsMessage()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void BodyJointSensorsMessage::InitAsDefaultInstance() {
-}
-
-BodyJointSensorsMessage::BodyJointSensorsMessage(const BodyJointSensorsMessage& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void BodyJointSensorsMessage::SharedCtor() {
-  _cached_size_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-BodyJointSensorsMessage::~BodyJointSensorsMessage() {
-  SharedDtor();
-}
-
-void BodyJointSensorsMessage::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void BodyJointSensorsMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* BodyJointSensorsMessage::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return BodyJointSensorsMessage_descriptor_;
-}
-
-const BodyJointSensorsMessage& BodyJointSensorsMessage::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
-}
-
-BodyJointSensorsMessage* BodyJointSensorsMessage::default_instance_ = NULL;
-
-BodyJointSensorsMessage* BodyJointSensorsMessage::New() const {
-  return new BodyJointSensorsMessage;
-}
-
-void BodyJointSensorsMessage::Clear() {
-  sensordata_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool BodyJointSensorsMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorPair SensorData = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_SensorData:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_sensordata()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(10)) goto parse_SensorData;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void BodyJointSensorsMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sensordata(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* BodyJointSensorsMessage::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->sensordata(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int BodyJointSensorsMessage::ByteSize() const {
-  int total_size = 0;
-  
-  // repeated .SensorPair SensorData = 1;
-  total_size += 1 * this->sensordata_size();
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->sensordata(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void BodyJointSensorsMessage::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const BodyJointSensorsMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const BodyJointSensorsMessage*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void BodyJointSensorsMessage::MergeFrom(const BodyJointSensorsMessage& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  sensordata_.MergeFrom(from.sensordata_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void BodyJointSensorsMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void BodyJointSensorsMessage::CopyFrom(const BodyJointSensorsMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool BodyJointSensorsMessage::IsInitialized() const {
-  
-  for (int i = 0; i < sensordata_size(); i++) {
-    if (!this->sensordata(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void BodyJointSensorsMessage::Swap(BodyJointSensorsMessage* other) {
-  if (other != this) {
-    sensordata_.Swap(&other->sensordata_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata BodyJointSensorsMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = BodyJointSensorsMessage_descriptor_;
-  metadata.reflection = BodyJointSensorsMessage_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int RobotPositionSensorMessage::kSensorDataFieldNumber;
-#endif  // !_MSC_VER
-
-RobotPositionSensorMessage::RobotPositionSensorMessage()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void RobotPositionSensorMessage::InitAsDefaultInstance() {
-}
-
-RobotPositionSensorMessage::RobotPositionSensorMessage(const RobotPositionSensorMessage& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void RobotPositionSensorMessage::SharedCtor() {
-  _cached_size_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-RobotPositionSensorMessage::~RobotPositionSensorMessage() {
-  SharedDtor();
-}
-
-void RobotPositionSensorMessage::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void RobotPositionSensorMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* RobotPositionSensorMessage::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return RobotPositionSensorMessage_descriptor_;
-}
-
-const RobotPositionSensorMessage& RobotPositionSensorMessage::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
-}
-
-RobotPositionSensorMessage* RobotPositionSensorMessage::default_instance_ = NULL;
-
-RobotPositionSensorMessage* RobotPositionSensorMessage::New() const {
-  return new RobotPositionSensorMessage;
-}
-
-void RobotPositionSensorMessage::Clear() {
-  sensordata_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool RobotPositionSensorMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorPair SensorData = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_SensorData:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_sensordata()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(10)) goto parse_SensorData;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void RobotPositionSensorMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sensordata(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* RobotPositionSensorMessage::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // repeated .SensorPair SensorData = 1;
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->sensordata(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int RobotPositionSensorMessage::ByteSize() const {
-  int total_size = 0;
-  
-  // repeated .SensorPair SensorData = 1;
-  total_size += 1 * this->sensordata_size();
-  for (int i = 0; i < this->sensordata_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->sensordata(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void RobotPositionSensorMessage::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const RobotPositionSensorMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const RobotPositionSensorMessage*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void RobotPositionSensorMessage::MergeFrom(const RobotPositionSensorMessage& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  sensordata_.MergeFrom(from.sensordata_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void RobotPositionSensorMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void RobotPositionSensorMessage::CopyFrom(const RobotPositionSensorMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool RobotPositionSensorMessage::IsInitialized() const {
-  
-  for (int i = 0; i < sensordata_size(); i++) {
-    if (!this->sensordata(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void RobotPositionSensorMessage::Swap(RobotPositionSensorMessage* other) {
-  if (other != this) {
-    sensordata_.Swap(&other->sensordata_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata RobotPositionSensorMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = RobotPositionSensorMessage_descriptor_;
-  metadata.reflection = RobotPositionSensorMessage_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-const ::std::string SensorPair::_default_sensorname_;
-#ifndef _MSC_VER
-const int SensorPair::kSensorNameFieldNumber;
-const int SensorPair::kSensorValueFieldNumber;
-const int SensorPair::kSensorValueDiffFieldNumber;
-const int SensorPair::kSensorTimeDiffFieldNumber;
-const int SensorPair::kSensorIDFieldNumber;
-#endif  // !_MSC_VER
-
-SensorPair::SensorPair()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void SensorPair::InitAsDefaultInstance() {
-}
-
-SensorPair::SensorPair(const SensorPair& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void SensorPair::SharedCtor() {
-  _cached_size_ = 0;
-  sensorname_ = const_cast< ::std::string*>(&_default_sensorname_);
-  sensorvalue_ = 0;
-  sensorvaluediff_ = 0;
-  sensortimediff_ = 0u;
-  sensorid_ = -1;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-SensorPair::~SensorPair() {
-  SharedDtor();
-}
-
-void SensorPair::SharedDtor() {
-  if (sensorname_ != &_default_sensorname_) {
-    delete sensorname_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void SensorPair::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* SensorPair::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return SensorPair_descriptor_;
-}
-
-const SensorPair& SensorPair::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
-}
-
-SensorPair* SensorPair::default_instance_ = NULL;
-
-SensorPair* SensorPair::New() const {
-  return new SensorPair;
-}
-
-void SensorPair::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (sensorname_ != &_default_sensorname_) {
-        sensorname_->clear();
-      }
-    }
-    sensorvalue_ = 0;
-    sensorvaluediff_ = 0;
-    sensortimediff_ = 0u;
-    sensorid_ = -1;
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool SensorPair::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional string SensorName = 1 [default = ""];
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_sensorname()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->sensorname().data(), this->sensorname().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(21)) goto parse_SensorValue;
-        break;
-      }
-      
-      // required float SensorValue = 2;
+      // required uint32 TimeDiff = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_SensorValue:
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_TimeDiff:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &sensorvalue_)));
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &timediff_)));
           _set_bit(1);
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(29)) goto parse_SensorValueDiff;
-        break;
-      }
-      
-      // optional float SensorValueDiff = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_SensorValueDiff:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &sensorvaluediff_)));
-          _set_bit(2);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(32)) goto parse_SensorTimeDiff;
-        break;
-      }
-      
-      // optional uint32 SensorTimeDiff = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_SensorTimeDiff:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, &sensortimediff_)));
-          _set_bit(3);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(40)) goto parse_SensorID;
-        break;
-      }
-      
-      // optional int32 SensorID = 5 [default = -1];
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_SensorID:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &sensorid_)));
-          _set_bit(4);
-        } else {
-          goto handle_uninterpreted;
-        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1758,35 +262,17 @@ bool SensorPair::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void SensorPair::SerializeWithCachedSizes(
+void RobotPositionMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional string SensorName = 1 [default = ""];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->sensorname().data(), this->sensorname().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->sensorname(), output);
+  // repeated .SensorData sensorData = 1;
+  for (int i = 0; i < this->sensordata_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->sensordata(i), output);
   }
   
-  // required float SensorValue = 2;
+  // required uint32 TimeDiff = 2;
   if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->sensorvalue(), output);
-  }
-  
-  // optional float SensorValueDiff = 3;
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->sensorvaluediff(), output);
-  }
-  
-  // optional uint32 SensorTimeDiff = 4;
-  if (_has_bit(3)) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->sensortimediff(), output);
-  }
-  
-  // optional int32 SensorID = 5 [default = -1];
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->sensorid(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->timediff(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1795,36 +281,18 @@ void SensorPair::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* SensorPair::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* RobotPositionMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // optional string SensorName = 1 [default = ""];
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->sensorname().data(), this->sensorname().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->sensorname(), target);
+  // repeated .SensorData sensorData = 1;
+  for (int i = 0; i < this->sensordata_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->sensordata(i), target);
   }
   
-  // required float SensorValue = 2;
+  // required uint32 TimeDiff = 2;
   if (_has_bit(1)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->sensorvalue(), target);
-  }
-  
-  // optional float SensorValueDiff = 3;
-  if (_has_bit(2)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->sensorvaluediff(), target);
-  }
-  
-  // optional uint32 SensorTimeDiff = 4;
-  if (_has_bit(3)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->sensortimediff(), target);
-  }
-  
-  // optional int32 SensorID = 5 [default = -1];
-  if (_has_bit(4)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->sensorid(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->timediff(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1834,42 +302,26 @@ void SensorPair::SerializeWithCachedSizes(
   return target;
 }
 
-int SensorPair::ByteSize() const {
+int RobotPositionMessage::ByteSize() const {
   int total_size = 0;
   
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional string SensorName = 1 [default = ""];
-    if (has_sensorname()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->sensorname());
-    }
-    
-    // required float SensorValue = 2;
-    if (has_sensorvalue()) {
-      total_size += 1 + 4;
-    }
-    
-    // optional float SensorValueDiff = 3;
-    if (has_sensorvaluediff()) {
-      total_size += 1 + 4;
-    }
-    
-    // optional uint32 SensorTimeDiff = 4;
-    if (has_sensortimediff()) {
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    // required uint32 TimeDiff = 2;
+    if (has_timediff()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt32Size(
-          this->sensortimediff());
-    }
-    
-    // optional int32 SensorID = 5 [default = -1];
-    if (has_sensorid()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->sensorid());
+          this->timediff());
     }
     
   }
+  // repeated .SensorData sensorData = 1;
+  total_size += 1 * this->sensordata_size();
+  for (int i = 0; i < this->sensordata_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->sensordata(i));
+  }
+  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -1881,10 +333,10 @@ int SensorPair::ByteSize() const {
   return total_size;
 }
 
-void SensorPair::MergeFrom(const ::google::protobuf::Message& from) {
+void RobotPositionMessage::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const SensorPair* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const SensorPair*>(
+  const RobotPositionMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RobotPositionMessage*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1893,64 +345,53 @@ void SensorPair::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void SensorPair::MergeFrom(const SensorPair& from) {
+void RobotPositionMessage::MergeFrom(const RobotPositionMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
-      set_sensorname(from.sensorname());
-    }
+  sensordata_.MergeFrom(from.sensordata_);
+  if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
     if (from._has_bit(1)) {
-      set_sensorvalue(from.sensorvalue());
-    }
-    if (from._has_bit(2)) {
-      set_sensorvaluediff(from.sensorvaluediff());
-    }
-    if (from._has_bit(3)) {
-      set_sensortimediff(from.sensortimediff());
-    }
-    if (from._has_bit(4)) {
-      set_sensorid(from.sensorid());
+      set_timediff(from.timediff());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void SensorPair::CopyFrom(const ::google::protobuf::Message& from) {
+void RobotPositionMessage::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void SensorPair::CopyFrom(const SensorPair& from) {
+void RobotPositionMessage::CopyFrom(const RobotPositionMessage& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool SensorPair::IsInitialized() const {
+bool RobotPositionMessage::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000002) != 0x00000002) return false;
   
+  for (int i = 0; i < sensordata_size(); i++) {
+    if (!this->sensordata(i).IsInitialized()) return false;
+  }
   return true;
 }
 
-void SensorPair::Swap(SensorPair* other) {
+void RobotPositionMessage::Swap(RobotPositionMessage* other) {
   if (other != this) {
-    std::swap(sensorname_, other->sensorname_);
-    std::swap(sensorvalue_, other->sensorvalue_);
-    std::swap(sensorvaluediff_, other->sensorvaluediff_);
-    std::swap(sensortimediff_, other->sensortimediff_);
-    std::swap(sensorid_, other->sensorid_);
+    sensordata_.Swap(&other->sensordata_);
+    std::swap(timediff_, other->timediff_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata SensorPair::GetMetadata() const {
+::google::protobuf::Metadata RobotPositionMessage::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = SensorPair_descriptor_;
-  metadata.reflection = SensorPair_reflection_;
+  metadata.descriptor = RobotPositionMessage_descriptor_;
+  metadata.reflection = RobotPositionMessage_reflection_;
   return metadata;
 }
 
@@ -2202,80 +643,118 @@ void SensorData::Swap(SensorData* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int ChainSensorSensorsMessage::kSensorDataFieldNumber;
+const int AllSensorValuesMessage::kJointDataFieldNumber;
+const int AllSensorValuesMessage::kSensorDataFieldNumber;
+const int AllSensorValuesMessage::kTimeDiffFieldNumber;
 #endif  // !_MSC_VER
 
-ChainSensorSensorsMessage::ChainSensorSensorsMessage()
+AllSensorValuesMessage::AllSensorValuesMessage()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void ChainSensorSensorsMessage::InitAsDefaultInstance() {
+void AllSensorValuesMessage::InitAsDefaultInstance() {
 }
 
-ChainSensorSensorsMessage::ChainSensorSensorsMessage(const ChainSensorSensorsMessage& from)
+AllSensorValuesMessage::AllSensorValuesMessage(const AllSensorValuesMessage& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void ChainSensorSensorsMessage::SharedCtor() {
+void AllSensorValuesMessage::SharedCtor() {
   _cached_size_ = 0;
+  timediff_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-ChainSensorSensorsMessage::~ChainSensorSensorsMessage() {
+AllSensorValuesMessage::~AllSensorValuesMessage() {
   SharedDtor();
 }
 
-void ChainSensorSensorsMessage::SharedDtor() {
+void AllSensorValuesMessage::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void ChainSensorSensorsMessage::SetCachedSize(int size) const {
+void AllSensorValuesMessage::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* ChainSensorSensorsMessage::descriptor() {
+const ::google::protobuf::Descriptor* AllSensorValuesMessage::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return ChainSensorSensorsMessage_descriptor_;
+  return AllSensorValuesMessage_descriptor_;
 }
 
-const ChainSensorSensorsMessage& ChainSensorSensorsMessage::default_instance() {
+const AllSensorValuesMessage& AllSensorValuesMessage::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
 }
 
-ChainSensorSensorsMessage* ChainSensorSensorsMessage::default_instance_ = NULL;
+AllSensorValuesMessage* AllSensorValuesMessage::default_instance_ = NULL;
 
-ChainSensorSensorsMessage* ChainSensorSensorsMessage::New() const {
-  return new ChainSensorSensorsMessage;
+AllSensorValuesMessage* AllSensorValuesMessage::New() const {
+  return new AllSensorValuesMessage;
 }
 
-void ChainSensorSensorsMessage::Clear() {
+void AllSensorValuesMessage::Clear() {
+  if (_has_bits_[2 / 32] & (0xffu << (2 % 32))) {
+    timediff_ = 0u;
+  }
+  jointdata_.Clear();
   sensordata_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool ChainSensorSensorsMessage::MergePartialFromCodedStream(
+bool AllSensorValuesMessage::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorData SensorData = 1;
+      // repeated .SensorData jointData = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_SensorData:
+         parse_jointData:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_jointdata()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(10)) goto parse_jointData;
+        if (input->ExpectTag(18)) goto parse_sensorData;
+        break;
+      }
+      
+      // repeated .SensorData sensorData = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_sensorData:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                 input, add_sensordata()));
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(10)) goto parse_SensorData;
+        if (input->ExpectTag(18)) goto parse_sensorData;
+        if (input->ExpectTag(24)) goto parse_TimeDiff;
+        break;
+      }
+      
+      // required uint32 TimeDiff = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_TimeDiff:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &timediff_)));
+          _set_bit(2);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2296,12 +775,23 @@ bool ChainSensorSensorsMessage::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void ChainSensorSensorsMessage::SerializeWithCachedSizes(
+void AllSensorValuesMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorData SensorData = 1;
+  // repeated .SensorData jointData = 1;
+  for (int i = 0; i < this->jointdata_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->jointdata(i), output);
+  }
+  
+  // repeated .SensorData sensorData = 2;
   for (int i = 0; i < this->sensordata_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->sensordata(i), output);
+      2, this->sensordata(i), output);
+  }
+  
+  // required uint32 TimeDiff = 3;
+  if (_has_bit(2)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->timediff(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2310,13 +800,25 @@ void ChainSensorSensorsMessage::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* ChainSensorSensorsMessage::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* AllSensorValuesMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // repeated .SensorData SensorData = 1;
+  // repeated .SensorData jointData = 1;
+  for (int i = 0; i < this->jointdata_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->jointdata(i), target);
+  }
+  
+  // repeated .SensorData sensorData = 2;
   for (int i = 0; i < this->sensordata_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        1, this->sensordata(i), target);
+        2, this->sensordata(i), target);
+  }
+  
+  // required uint32 TimeDiff = 3;
+  if (_has_bit(2)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->timediff(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2326,10 +828,27 @@ void ChainSensorSensorsMessage::SerializeWithCachedSizes(
   return target;
 }
 
-int ChainSensorSensorsMessage::ByteSize() const {
+int AllSensorValuesMessage::ByteSize() const {
   int total_size = 0;
   
-  // repeated .SensorData SensorData = 1;
+  if (_has_bits_[2 / 32] & (0xffu << (2 % 32))) {
+    // required uint32 TimeDiff = 3;
+    if (has_timediff()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->timediff());
+    }
+    
+  }
+  // repeated .SensorData jointData = 1;
+  total_size += 1 * this->jointdata_size();
+  for (int i = 0; i < this->jointdata_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->jointdata(i));
+  }
+  
+  // repeated .SensorData sensorData = 2;
   total_size += 1 * this->sensordata_size();
   for (int i = 0; i < this->sensordata_size(); i++) {
     total_size +=
@@ -2348,10 +867,10 @@ int ChainSensorSensorsMessage::ByteSize() const {
   return total_size;
 }
 
-void ChainSensorSensorsMessage::MergeFrom(const ::google::protobuf::Message& from) {
+void AllSensorValuesMessage::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const ChainSensorSensorsMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const ChainSensorSensorsMessage*>(
+  const AllSensorValuesMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const AllSensorValuesMessage*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -2360,728 +879,46 @@ void ChainSensorSensorsMessage::MergeFrom(const ::google::protobuf::Message& fro
   }
 }
 
-void ChainSensorSensorsMessage::MergeFrom(const ChainSensorSensorsMessage& from) {
+void AllSensorValuesMessage::MergeFrom(const AllSensorValuesMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
+  jointdata_.MergeFrom(from.jointdata_);
   sensordata_.MergeFrom(from.sensordata_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void ChainSensorSensorsMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void ChainSensorSensorsMessage::CopyFrom(const ChainSensorSensorsMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ChainSensorSensorsMessage::IsInitialized() const {
-  
-  for (int i = 0; i < sensordata_size(); i++) {
-    if (!this->sensordata(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void ChainSensorSensorsMessage::Swap(ChainSensorSensorsMessage* other) {
-  if (other != this) {
-    sensordata_.Swap(&other->sensordata_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata ChainSensorSensorsMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = ChainSensorSensorsMessage_descriptor_;
-  metadata.reflection = ChainSensorSensorsMessage_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int AllSensorValues::kIsmFieldNumber;
-const int AllSensorValues::kFsmFieldNumber;
-const int AllSensorValues::kUssmFieldNumber;
-const int AllSensorValues::kHjsmFieldNumber;
-const int AllSensorValues::kRlsmFieldNumber;
-const int AllSensorValues::kLlsmFieldNumber;
-const int AllSensorValues::kRasmFieldNumber;
-const int AllSensorValues::kLasmFieldNumber;
-const int AllSensorValues::kBjsmFieldNumber;
-const int AllSensorValues::kRpsmFieldNumber;
-const int AllSensorValues::kTimeDiffFieldNumber;
-#endif  // !_MSC_VER
-
-AllSensorValues::AllSensorValues()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void AllSensorValues::InitAsDefaultInstance() {
-  ism_ = const_cast< ::InertialSensorsMessage*>(&::InertialSensorsMessage::default_instance());
-  fsm_ = const_cast< ::FSRSensorsMessage*>(&::FSRSensorsMessage::default_instance());
-  ussm_ = const_cast< ::UltaSoundSensorsMessage*>(&::UltaSoundSensorsMessage::default_instance());
-  hjsm_ = const_cast< ::ChainSensorSensorsMessage*>(&::ChainSensorSensorsMessage::default_instance());
-  rlsm_ = const_cast< ::ChainSensorSensorsMessage*>(&::ChainSensorSensorsMessage::default_instance());
-  llsm_ = const_cast< ::ChainSensorSensorsMessage*>(&::ChainSensorSensorsMessage::default_instance());
-  rasm_ = const_cast< ::ChainSensorSensorsMessage*>(&::ChainSensorSensorsMessage::default_instance());
-  lasm_ = const_cast< ::ChainSensorSensorsMessage*>(&::ChainSensorSensorsMessage::default_instance());
-  bjsm_ = const_cast< ::BodyJointSensorsMessage*>(&::BodyJointSensorsMessage::default_instance());
-  rpsm_ = const_cast< ::RobotPositionSensorMessage*>(&::RobotPositionSensorMessage::default_instance());
-}
-
-AllSensorValues::AllSensorValues(const AllSensorValues& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void AllSensorValues::SharedCtor() {
-  _cached_size_ = 0;
-  ism_ = NULL;
-  fsm_ = NULL;
-  ussm_ = NULL;
-  hjsm_ = NULL;
-  rlsm_ = NULL;
-  llsm_ = NULL;
-  rasm_ = NULL;
-  lasm_ = NULL;
-  bjsm_ = NULL;
-  rpsm_ = NULL;
-  timediff_ = 0u;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-AllSensorValues::~AllSensorValues() {
-  SharedDtor();
-}
-
-void AllSensorValues::SharedDtor() {
-  if (this != default_instance_) {
-    delete ism_;
-    delete fsm_;
-    delete ussm_;
-    delete hjsm_;
-    delete rlsm_;
-    delete llsm_;
-    delete rasm_;
-    delete lasm_;
-    delete bjsm_;
-    delete rpsm_;
-  }
-}
-
-void AllSensorValues::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* AllSensorValues::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return AllSensorValues_descriptor_;
-}
-
-const AllSensorValues& AllSensorValues::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_SensorsMessage_2eproto();  return *default_instance_;
-}
-
-AllSensorValues* AllSensorValues::default_instance_ = NULL;
-
-AllSensorValues* AllSensorValues::New() const {
-  return new AllSensorValues;
-}
-
-void AllSensorValues::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (ism_ != NULL) ism_->::InertialSensorsMessage::Clear();
-    }
-    if (_has_bit(1)) {
-      if (fsm_ != NULL) fsm_->::FSRSensorsMessage::Clear();
-    }
-    if (_has_bit(2)) {
-      if (ussm_ != NULL) ussm_->::UltaSoundSensorsMessage::Clear();
-    }
-    if (_has_bit(3)) {
-      if (hjsm_ != NULL) hjsm_->::ChainSensorSensorsMessage::Clear();
-    }
-    if (_has_bit(4)) {
-      if (rlsm_ != NULL) rlsm_->::ChainSensorSensorsMessage::Clear();
-    }
-    if (_has_bit(5)) {
-      if (llsm_ != NULL) llsm_->::ChainSensorSensorsMessage::Clear();
-    }
-    if (_has_bit(6)) {
-      if (rasm_ != NULL) rasm_->::ChainSensorSensorsMessage::Clear();
-    }
-    if (_has_bit(7)) {
-      if (lasm_ != NULL) lasm_->::ChainSensorSensorsMessage::Clear();
-    }
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    if (_has_bit(8)) {
-      if (bjsm_ != NULL) bjsm_->::BodyJointSensorsMessage::Clear();
-    }
-    if (_has_bit(9)) {
-      if (rpsm_ != NULL) rpsm_->::RobotPositionSensorMessage::Clear();
-    }
-    timediff_ = 0u;
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool AllSensorValues::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .InertialSensorsMessage ism = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_ism()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_fsm;
-        break;
-      }
-      
-      // optional .FSRSensorsMessage fsm = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_fsm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_fsm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_ussm;
-        break;
-      }
-      
-      // optional .UltaSoundSensorsMessage ussm = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_ussm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_ussm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(34)) goto parse_hjsm;
-        break;
-      }
-      
-      // optional .ChainSensorSensorsMessage hjsm = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_hjsm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_hjsm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(42)) goto parse_rlsm;
-        break;
-      }
-      
-      // optional .ChainSensorSensorsMessage rlsm = 5;
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_rlsm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_rlsm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(50)) goto parse_llsm;
-        break;
-      }
-      
-      // optional .ChainSensorSensorsMessage llsm = 6;
-      case 6: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_llsm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_llsm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(58)) goto parse_rasm;
-        break;
-      }
-      
-      // optional .ChainSensorSensorsMessage rasm = 7;
-      case 7: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_rasm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_rasm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(66)) goto parse_lasm;
-        break;
-      }
-      
-      // optional .ChainSensorSensorsMessage lasm = 8;
-      case 8: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_lasm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_lasm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(74)) goto parse_bjsm;
-        break;
-      }
-      
-      // optional .BodyJointSensorsMessage bjsm = 9;
-      case 9: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_bjsm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_bjsm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(82)) goto parse_rpsm;
-        break;
-      }
-      
-      // optional .RobotPositionSensorMessage rpsm = 10;
-      case 10: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_rpsm:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_rpsm()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(88)) goto parse_TimeDiff;
-        break;
-      }
-      
-      // required uint32 TimeDiff = 11;
-      case 11: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_TimeDiff:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, &timediff_)));
-          _set_bit(10);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void AllSensorValues::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional .InertialSensorsMessage ism = 1;
-  if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->ism(), output);
-  }
-  
-  // optional .FSRSensorsMessage fsm = 2;
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->fsm(), output);
-  }
-  
-  // optional .UltaSoundSensorsMessage ussm = 3;
-  if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->ussm(), output);
-  }
-  
-  // optional .ChainSensorSensorsMessage hjsm = 4;
-  if (_has_bit(3)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->hjsm(), output);
-  }
-  
-  // optional .ChainSensorSensorsMessage rlsm = 5;
-  if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, this->rlsm(), output);
-  }
-  
-  // optional .ChainSensorSensorsMessage llsm = 6;
-  if (_has_bit(5)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, this->llsm(), output);
-  }
-  
-  // optional .ChainSensorSensorsMessage rasm = 7;
-  if (_has_bit(6)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, this->rasm(), output);
-  }
-  
-  // optional .ChainSensorSensorsMessage lasm = 8;
-  if (_has_bit(7)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      8, this->lasm(), output);
-  }
-  
-  // optional .BodyJointSensorsMessage bjsm = 9;
-  if (_has_bit(8)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      9, this->bjsm(), output);
-  }
-  
-  // optional .RobotPositionSensorMessage rpsm = 10;
-  if (_has_bit(9)) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      10, this->rpsm(), output);
-  }
-  
-  // required uint32 TimeDiff = 11;
-  if (_has_bit(10)) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(11, this->timediff(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* AllSensorValues::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // optional .InertialSensorsMessage ism = 1;
-  if (_has_bit(0)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->ism(), target);
-  }
-  
-  // optional .FSRSensorsMessage fsm = 2;
-  if (_has_bit(1)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, this->fsm(), target);
-  }
-  
-  // optional .UltaSoundSensorsMessage ussm = 3;
-  if (_has_bit(2)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        3, this->ussm(), target);
-  }
-  
-  // optional .ChainSensorSensorsMessage hjsm = 4;
-  if (_has_bit(3)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        4, this->hjsm(), target);
-  }
-  
-  // optional .ChainSensorSensorsMessage rlsm = 5;
-  if (_has_bit(4)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        5, this->rlsm(), target);
-  }
-  
-  // optional .ChainSensorSensorsMessage llsm = 6;
-  if (_has_bit(5)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        6, this->llsm(), target);
-  }
-  
-  // optional .ChainSensorSensorsMessage rasm = 7;
-  if (_has_bit(6)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        7, this->rasm(), target);
-  }
-  
-  // optional .ChainSensorSensorsMessage lasm = 8;
-  if (_has_bit(7)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        8, this->lasm(), target);
-  }
-  
-  // optional .BodyJointSensorsMessage bjsm = 9;
-  if (_has_bit(8)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        9, this->bjsm(), target);
-  }
-  
-  // optional .RobotPositionSensorMessage rpsm = 10;
-  if (_has_bit(9)) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        10, this->rpsm(), target);
-  }
-  
-  // required uint32 TimeDiff = 11;
-  if (_has_bit(10)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(11, this->timediff(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int AllSensorValues::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional .InertialSensorsMessage ism = 1;
-    if (has_ism()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->ism());
-    }
-    
-    // optional .FSRSensorsMessage fsm = 2;
-    if (has_fsm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->fsm());
-    }
-    
-    // optional .UltaSoundSensorsMessage ussm = 3;
-    if (has_ussm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->ussm());
-    }
-    
-    // optional .ChainSensorSensorsMessage hjsm = 4;
-    if (has_hjsm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->hjsm());
-    }
-    
-    // optional .ChainSensorSensorsMessage rlsm = 5;
-    if (has_rlsm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->rlsm());
-    }
-    
-    // optional .ChainSensorSensorsMessage llsm = 6;
-    if (has_llsm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->llsm());
-    }
-    
-    // optional .ChainSensorSensorsMessage rasm = 7;
-    if (has_rasm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->rasm());
-    }
-    
-    // optional .ChainSensorSensorsMessage lasm = 8;
-    if (has_lasm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->lasm());
-    }
-    
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    // optional .BodyJointSensorsMessage bjsm = 9;
-    if (has_bjsm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->bjsm());
-    }
-    
-    // optional .RobotPositionSensorMessage rpsm = 10;
-    if (has_rpsm()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->rpsm());
-    }
-    
-    // required uint32 TimeDiff = 11;
-    if (has_timediff()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt32Size(
-          this->timediff());
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void AllSensorValues::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const AllSensorValues* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const AllSensorValues*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void AllSensorValues::MergeFrom(const AllSensorValues& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
-      mutable_ism()->::InertialSensorsMessage::MergeFrom(from.ism());
-    }
-    if (from._has_bit(1)) {
-      mutable_fsm()->::FSRSensorsMessage::MergeFrom(from.fsm());
-    }
+  if (from._has_bits_[2 / 32] & (0xffu << (2 % 32))) {
     if (from._has_bit(2)) {
-      mutable_ussm()->::UltaSoundSensorsMessage::MergeFrom(from.ussm());
-    }
-    if (from._has_bit(3)) {
-      mutable_hjsm()->::ChainSensorSensorsMessage::MergeFrom(from.hjsm());
-    }
-    if (from._has_bit(4)) {
-      mutable_rlsm()->::ChainSensorSensorsMessage::MergeFrom(from.rlsm());
-    }
-    if (from._has_bit(5)) {
-      mutable_llsm()->::ChainSensorSensorsMessage::MergeFrom(from.llsm());
-    }
-    if (from._has_bit(6)) {
-      mutable_rasm()->::ChainSensorSensorsMessage::MergeFrom(from.rasm());
-    }
-    if (from._has_bit(7)) {
-      mutable_lasm()->::ChainSensorSensorsMessage::MergeFrom(from.lasm());
-    }
-  }
-  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    if (from._has_bit(8)) {
-      mutable_bjsm()->::BodyJointSensorsMessage::MergeFrom(from.bjsm());
-    }
-    if (from._has_bit(9)) {
-      mutable_rpsm()->::RobotPositionSensorMessage::MergeFrom(from.rpsm());
-    }
-    if (from._has_bit(10)) {
       set_timediff(from.timediff());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void AllSensorValues::CopyFrom(const ::google::protobuf::Message& from) {
+void AllSensorValuesMessage::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void AllSensorValues::CopyFrom(const AllSensorValues& from) {
+void AllSensorValuesMessage::CopyFrom(const AllSensorValuesMessage& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool AllSensorValues::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000400) != 0x00000400) return false;
+bool AllSensorValuesMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000004) != 0x00000004) return false;
   
-  if (has_ism()) {
-    if (!this->ism().IsInitialized()) return false;
+  for (int i = 0; i < jointdata_size(); i++) {
+    if (!this->jointdata(i).IsInitialized()) return false;
   }
-  if (has_fsm()) {
-    if (!this->fsm().IsInitialized()) return false;
-  }
-  if (has_ussm()) {
-    if (!this->ussm().IsInitialized()) return false;
-  }
-  if (has_hjsm()) {
-    if (!this->hjsm().IsInitialized()) return false;
-  }
-  if (has_rlsm()) {
-    if (!this->rlsm().IsInitialized()) return false;
-  }
-  if (has_llsm()) {
-    if (!this->llsm().IsInitialized()) return false;
-  }
-  if (has_rasm()) {
-    if (!this->rasm().IsInitialized()) return false;
-  }
-  if (has_lasm()) {
-    if (!this->lasm().IsInitialized()) return false;
-  }
-  if (has_bjsm()) {
-    if (!this->bjsm().IsInitialized()) return false;
-  }
-  if (has_rpsm()) {
-    if (!this->rpsm().IsInitialized()) return false;
+  for (int i = 0; i < sensordata_size(); i++) {
+    if (!this->sensordata(i).IsInitialized()) return false;
   }
   return true;
 }
 
-void AllSensorValues::Swap(AllSensorValues* other) {
+void AllSensorValuesMessage::Swap(AllSensorValuesMessage* other) {
   if (other != this) {
-    std::swap(ism_, other->ism_);
-    std::swap(fsm_, other->fsm_);
-    std::swap(ussm_, other->ussm_);
-    std::swap(hjsm_, other->hjsm_);
-    std::swap(rlsm_, other->rlsm_);
-    std::swap(llsm_, other->llsm_);
-    std::swap(rasm_, other->rasm_);
-    std::swap(lasm_, other->lasm_);
-    std::swap(bjsm_, other->bjsm_);
-    std::swap(rpsm_, other->rpsm_);
+    jointdata_.Swap(&other->jointdata_);
+    sensordata_.Swap(&other->sensordata_);
     std::swap(timediff_, other->timediff_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
@@ -3089,11 +926,11 @@ void AllSensorValues::Swap(AllSensorValues* other) {
   }
 }
 
-::google::protobuf::Metadata AllSensorValues::GetMetadata() const {
+::google::protobuf::Metadata AllSensorValuesMessage::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = AllSensorValues_descriptor_;
-  metadata.reflection = AllSensorValues_reflection_;
+  metadata.descriptor = AllSensorValuesMessage_descriptor_;
+  metadata.reflection = AllSensorValuesMessage_reflection_;
   return metadata;
 }
 
