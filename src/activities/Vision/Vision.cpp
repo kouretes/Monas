@@ -10,6 +10,8 @@
 #include <vector>
 //#include "messages/motion.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
+#include "tools/profiler.hpp"
+#include <vector>
 
 #define TO_RAD 0.017453293f
 
@@ -126,6 +128,9 @@ int VISIBLE Vision::Execute()
 	xmlconfig->QueryElement("cvHighgui", cvHighgui);
 	if (cvHighgui)
 		cvShowSegmented();
+#ifdef KPROFILING_ENABLED
+	vprof.generate_report();
+#endif
 	return 0;
 }
 
@@ -577,7 +582,7 @@ void Vision::fetchAndProcess()
 }
 
 VISIBLE Vision::Vision() :
-	xmlconfig(NULL), type(VISION_CSPACE)
+	xmlconfig(NULL), vprof("Vision"),type(VISION_CSPACE)
 {
 	debugmode = false;
 

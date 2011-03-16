@@ -1,8 +1,4 @@
 #include "Vision.h"
-#ifndef DEBUGVISION
-#define BOOST_PROFILING_OFF
-#endif
-#include "profiler.hpp"
 
 #include "architecture/archConfig.h"
 #include <cmath>
@@ -152,7 +148,6 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	//Horizontal + Vertical Scan
 #ifdef DEBUGVISION
-	boost::prof::profiler::generate_report();
 	cout<<"Starting Grid scan"<<endl;
 #endif
 
@@ -382,7 +377,7 @@ cout<<"End Grid scan"<<endl;
 
 bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("calculateValidBall");
+	KPROF_SCOPE(vprof,"calculateValidBall");
 
 	unsigned int  gd = 0,bd=0;
 //	float innerrad = ball.cr * 0.707;
@@ -534,7 +529,7 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 }
 bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("calculateValidGoalPost");
+	KPROF_SCOPE(vprof,"calculateValidGoalPost");
 
 	unsigned int ttl=0,bd=0,gd=0;
 	float ratio;
@@ -594,7 +589,7 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 
 bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("calculateValidGoalPostBase");
+	KPROF_SCOPE(vprof,"calculateValidGoalPostBase");
 	int width =goal.lr.x-goal.ll.x+1;
 	unsigned int ttl = 0, gd = 0;
 	float ratio;
@@ -619,7 +614,7 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 
 bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("calculateValidGoalPostTop");
+	KPROF_SCOPE(vprof,"calculateValidGoalPostTop");
 	traceResult r;
 	KVecInt2 s;
 	//s=goal.top;
@@ -669,7 +664,7 @@ bool cmpgoalpostdata_t (Vision::goalpostdata_t a,  Vision::goalpostdata_t b)
 
 int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask_t c)
 {
-	BOOST_PROFILER("locateGoalPost");
+	KPROF_SCOPE(vprof,"locateGoalPost");
 	vector<goalpostdata_t> history;
 	tracer_t at;
 	vector<KVecInt2>::const_iterator i;//candidate iterator
@@ -826,8 +821,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 		//cout<<"Smarts:"<<newpost.haveBot<< " "<<newpost.haveTop<<endl;
 		if(tr.x-tl.x<config.pixeltol || lr.x-ll.x<config.pixeltol ||
-		  -ll.y+tl.y<(tr.x-tl.x) ||
-		  -lr.y+tr.y<(lr.x-ll.x))//
+		  -ll.y+tl.y<(tr.x-tl.x) ||	  -lr.y+tr.y<(lr.x-ll.x))//
 		{
 			//cout <<"Goal size test failed"<<endl;
 			continue;
@@ -847,6 +841,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			if(c3d(2)>=0||calculateValidGoalPostBase(newpost,c)==false)//check for some green under:)
 			{
 				newpost.haveBot=false;
+				//cout<<"Goal no Base"<<endl;
 			}
 
 		}
@@ -864,6 +859,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			if(c3d(2)<=1||calculateValidGoalPostTop(newpost,c)==false)
 			{
 				newpost.haveTop=false;
+				//cout<<"Goal no top"<<endl;
 			}
 
 		}
@@ -888,6 +884,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			}
 
 			newpost.haveHeight=false;
+			//cout<<"Goal no Height"<<endl;
 			//fillGoalPostWidthMeasurments(newpost,c);
 		}
 		if(newpost.dist.size()==0)
@@ -922,7 +919,12 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 
 		if(calculateValidGoalPost(newpost,c)==false)
-			continue;
+		{
+
+			cout<<"Goal no Valid"<<endl;
+			//continue;
+		}
+
 		KVecFloat2 polar;
 		//cout<<"ttldist:"<<distance.mean<<endl;
 		polar(0)=newpost.distance.mean;
@@ -984,8 +986,10 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	y2=d2.distance.mean* sin( d2.bearing.mean);
 	float d=sqrt(sqrd(x1-x2)+sqrd(y1-y2));
 	if( abs(d-config.goaldist)/config.goaldist> 0.6)
-		return 0;
-
+	{
+		cout<<"Goalaaaaa"<<endl;
+		//return 0;
+	}
 	if(d1.bearing.mean<d2.bearing.mean)
 	{
 		d1=d2;
@@ -1048,7 +1052,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 {
-	BOOST_PROFILER("fillGoalPostHeightMeasurments");
+	KPROF_SCOPE(vprof,"fillGoalPostHeightMeasurments");
 	float t,g,h,dS,dL;
 	//Single solution of a  trionym
 	g=config.goalheight;
@@ -1120,7 +1124,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 }
 void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("fillGoalPostWidthMeasurments");
+	KPROF_SCOPE(vprof,"fillGoalPostWidthMeasurments");
 	//traceResult trcrs;
 
 	//CvPoint l,r;
@@ -1226,7 +1230,7 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 
 Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 {
-	BOOST_PROFILER("locateBall");
+	KPROF_SCOPE(vprof,"locateBall");
 	//Skip first/last row/col
 	KVecFloat2 point;
 	vector<balldata_t> history;
@@ -1449,7 +1453,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 }
 KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) const
 {
-	BOOST_PROFILER("centerOfCircle");
+	KPROF_SCOPE(vprof,"centerOfCircle");
 	KVecFloat2 center;
 	center.x=-1;
 	if (m.x==l.x||m.x==r.x)//Some points form  a vertical line, swap and retry
@@ -1474,7 +1478,7 @@ KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) cons
 
 Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("tracelineInt");
+	KPROF_SCOPE(vprof,"tracelineInt");
 	int skipcount = 0;
 	const int tol=config.pixeltol;
 	KVecInt2 curr = start,prftch;
@@ -1522,7 +1526,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator
 
 Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("tracelineFloat");
+	KPROF_SCOPE(vprof,"tracelineFloat");
 	int skipcount = 0;
 	const int tol=config.pixeltol;
 	KVecInt2 latestValid = start;
@@ -1576,7 +1580,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentat
 
 Vision::traceResult Vision::traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const
 {
-	BOOST_PROFILER("traceBlobEdge");
+	KPROF_SCOPE(vprof,"traceBlobEdge");
 	int skipcount = 0;
 
 	KVecInt2 latestValid = start;
@@ -1668,7 +1672,7 @@ bool Vision::validpixel(int x,int y) const
 }
 KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmentator::colormask_t h ) const
 {
-	BOOST_PROFILER("dopSeg");
+	KPROF_SCOPE(vprof,"dopSeg");
 	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
 	{
 		//return seg->classifyPixel(rawImage, x, y, type);
@@ -1683,7 +1687,7 @@ KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmenta
 
 void Vision::prepSeg(const int x,const int y) const
 {
-	BOOST_PROFILER("prepSeg");
+	KPROF_SCOPE(vprof,"prepSeg");
 
 	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
 	{

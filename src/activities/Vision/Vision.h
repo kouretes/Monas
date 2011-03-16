@@ -18,10 +18,12 @@
 #include "messages/WorldInfo.pb.h"
 
 #include "PracticalSocket.h"
+#include "tools/profiler.hpp"
 
 #include <vector>
 #include <iostream>
 //#define DEBUGVISION
+#define DEBUG
 
 #ifdef __GNUC__
 #pragma GCC visibility push(hidden)
@@ -126,6 +128,7 @@ class Vision: public IActivity
 		BallTrackMessage trckmsg;
 		ObservationMessage obs;
 		LedChangeMessage leds;
+		KProfiling::profiler vprof;
 		//Incoming messages!
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 
