@@ -10,7 +10,6 @@ set ( ActivitySrcs  KSegmentator.cpp
 					KSegmentator.h
 					Vision.cpp
                     Vision.h
-                    profiler.hpp
 		    VisionImageProcessing.cpp
 		    KCameraTransformation.cpp ../../../external/PracticalSocket/PracticalSocket.cpp
 
