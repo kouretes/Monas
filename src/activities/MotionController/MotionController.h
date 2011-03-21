@@ -11,6 +11,11 @@
 #include <string>
 
 #include "ISpecialAction.h"
+
+#ifndef TO_RAD
+#define TO_RAD 0.01745329f
+#endif
+
 //#define WEBOTS
 
 class MotionController : public IActivity{
@@ -60,6 +65,15 @@ private:
 	boost::shared_ptr<const  MotionActionMessage> am;
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
+	
+	MotionActionMessage  * pam;
+	
+	SensorData LHipRoll;
+	SensorData RHipPitch;
+	SensorData LHipPitch;
+	SensorData RHipRoll;
+	SensorData RKneePitch;
+	SensorData LKneePitch;
 
 	AL::ALValue commands;
 
@@ -79,6 +93,17 @@ private:
 	void ALstandUpBack2009();
 	void ALstandUpFront2010();
 	void ALstandUpBack2010();
+	void ALstandUpFront2011();
+	
+	void AngleCompare();
+	
+	int comp[20];
+	float RKickAng1 [6], RKickAng2 [6], RKickAng3 [6], RKickAng4 [6], RKickAng5 [6], RKickAng6 [6];
+	float LKickAng1 [6], LKickAng2 [6], LKickAng3 [6], LKickAng4 [6], LKickAng5 [6], LKickAng6 [6];
+	float walkPrevAng [6];
+	int diffRKick1 [6], diffRKick2 [6], diffRKick3 [6], diffRKick4 [6];
+	int diffLKick1 [6], diffLKick2 [6], diffLKick3 [6], diffLKick4 [6];
+		
 	void createHeadPositionActuatorAlias();
 	typedef std::map<std::string,
 		  boost::shared_ptr<ISpecialAction> > SpAssocCont;

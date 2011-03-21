@@ -11,13 +11,65 @@ KmeAction::KmeAction(std::string name, AL::ALValue actionNames,
   } catch (AL::ALError& e) {
     Logger::Instance().WriteMsg("KMEAction","Error in getting motion proxy",Logger::FatalError);
   }
+  
+  try {
+  		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+  } catch (AL::ALError& e) {
+  		Logger::Instance().WriteMsg("KMEAction", "Error in getting dcm proxy", Logger::FatalError);
+  }
 
   this->name = name;
   this->actionNames = actionNames;
   this->actionAngles = actionAngles;
   this->actionTimes = actionTimes;
+  
+	try{
+		//DCMProxy* dcm = new DCMProxy(pBroker);
+		//DCMProxy(*dcm pBroker);
+
+
+		commands.arraySetSize(4);
+		commands[0] = string("BodyWithoutHead");
+		commands[1] = string("ClearAll");
+		commands[2] = string("time-separate");
+		commands[3] = 0;
+		commands[5].arraySetSize(22);		//22 h actionAngles.getSize();;;;;;;;;;;;;;;;;
+
+
+		for(int i = 0; i<commands[5].getSize(); i++){
+			commands[5][i].arraySetSize(actionTimes[i].getSize());	//getSize ???pairnoume to sunolo apo pozes h tpt se sec ???
+			for(int j = 0; j<commands[5][i].getSize(); j++){
+				commands[5][i][j] = actionAngles[i][j];		//prob afou de 8eloume to head mhpos prepei na ksekiname apo 3-4 kai meta???to loop....
+			}
+		}
+
+	} catch (AL::ALError& e) {
+			Logger::Instance().WriteMsg("KMEAction","Error in getting motion proxy",Logger::FatalError);
+	}
 
 }
+
+boost::posix_time::ptime KmeAction::ExecuteDCM() {
+
+ 	try{
+		for(int i = 0; i<commands[5].getSize(); i++){
+			commands[4].arraySetSize(actionTimes[i].getSize());
+			for(int j = 0; j<commands[4].getSize(); j++){
+				commands[4][j] = dcm->getTime(round((float)actionTimes[i][j])*1000);
+			}
+		}
+
+		dcm->setAlias(commands);
+
+	} catch (AL::ALError& e) {
+		Logger::Instance().WriteMsg("KMEAction","Error in getting motion proxy",Logger::FatalError);
+	}
+	
+	float max_time = actionTimes[0][(actionTimes[0].getSize())-1];
+	
+	return boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(max_time);
+}
+
 
 
 int KmeAction::ExecutePost() {

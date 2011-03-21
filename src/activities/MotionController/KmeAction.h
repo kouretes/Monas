@@ -4,7 +4,7 @@
 #include "ISpecialAction.h"
 
 #include <string>
-
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
 class KmeAction : public ISpecialAction {
@@ -26,11 +26,14 @@ class KmeAction : public ISpecialAction {
 
     int ExecuteActionBodyKME();
 
-//     int PrintActionsKME();
+    boost::posix_time::ptime ExecuteDCM();
+   //     int PrintActionsKME();
+    AL::ALValue commands;
 
     std::string name;
 
     AL::ALPtr<AL::ALMotionProxy> motion;
+    AL::ALPtr<AL::DCMProxy> dcm;
 
     AL::ALValue actionNames, actionAngles, actionTimes;
 

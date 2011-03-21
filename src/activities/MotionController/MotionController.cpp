@@ -140,6 +140,143 @@ void MotionController::UserInit()
 	actionPID = 0;
 
 	counter = 0;
+	
+
+	pam = new MotionActionMessage();
+	pam->set_command("NULL");	
+	
+	for(int i=0; i<6; i++){
+		walkPrevAng [i] = 0;
+	}
+
+	for(int i=0; i<20; i++){
+		comp [i] = 0;
+	}
+	
+	RKickAng1 [0] = -20.1131;
+	RKickAng1 [1] = -0.90073;
+	RKickAng1 [2] = -15.9987;
+	RKickAng1 [3] = -1.40386;
+	RKickAng1 [4] = 53.2648;
+	RKickAng1 [5] = 50.7873;
+
+	RKickAng2 [0] = -26.453;
+	RKickAng2 [1] = -0.612838;
+	RKickAng2 [2] = -9.67049;
+	RKickAng2 [3] = -1.84332;
+	RKickAng2 [4] = 48.5186;
+	RKickAng2 [5] = 55.1057;
+
+	RKickAng3 [0] = -29.4413;
+	RKickAng3 [1] = -0.349163;
+	RKickAng3 [2] = -13.0983;
+	RKickAng3 [3] = 1.23289;
+	RKickAng3 [4] = 50.4523;
+	RKickAng3 [5] = 59.0608;
+
+	RKickAng4 [0] = -35.7695;
+	RKickAng4 [1] = -0.0854875;
+	RKickAng4 [2] = -19.2507;
+	RKickAng4 [3] = 6.33061;
+	RKickAng4 [4] = 55.9894;
+	RKickAng4 [5] = 67.2348;
+
+	RKickAng5 [0] = -49.4376;
+	RKickAng5 [1] = -0.173379;
+	RKickAng5 [2] = -32.1511;
+	RKickAng5 [3] = 8.4732;
+	RKickAng5 [4] = 76.9857;
+	RKickAng5 [5] = 80.1333;
+
+
+	LKickAng1 [0] = -15.9987;
+	LKickAng1 [1] = 1.40386;
+	LKickAng1 [2] = -20.1131;
+	LKickAng1 [3] = 0.70073;
+	LKickAng1 [4] = 50.7873;
+	LKickAng1 [5] = 53.2648;
+
+	LKickAng2 [0] = -9.67049;
+	LKickAng2 [1] = 1.84332;
+	LKickAng2 [2] = -26.453;
+	LKickAng2 [3] = 0.612838;
+	LKickAng2 [4] = 55.1057;
+	LKickAng2 [5] = 48.5186;
+
+	LKickAng3 [0] = -13.0983;
+	LKickAng3 [1] = -1.23289;
+	LKickAng3 [2] = -29.4413;
+	LKickAng3 [3] = 0.3491639;
+	LKickAng3 [4] = 59.0608;
+	LKickAng3 [5] = 50.4523;
+
+	LKickAng4 [0] = -19.2507;
+	LKickAng4 [1] = -6.33061;
+	LKickAng4 [2] = -35.7695;
+	LKickAng4 [3] = 0.0854875;
+	LKickAng4 [4] = 67.2348;
+	LKickAng4 [5] = 55.9894;
+
+	LKickAng5 [0] = -32.1511;
+	LKickAng5 [1] = -8.4732;
+	LKickAng5 [2] = -49.4376;
+	LKickAng5 [3] = 0.173379;
+	LKickAng5 [4] = 80.1333;
+	LKickAng5 [5] = 76.9857;
+
+//	LKickAng5 [0] = -22.1511;
+//	LKickAng5 [1] = -7.4732;
+//	LKickAng5 [2] = -45.4376;
+//	LKickAng5 [3] = 0.173379;
+//	LKickAng5 [4] = 78.1333;
+//	LKickAng5 [5] = 71.9857;
+
+
+	for(int i=0; i<6; i++){
+
+		if(RKickAng2[i] < RKickAng1[i])
+			diffRKick1[i] = -1;
+		else
+			diffRKick1[i] = 1;
+
+		if(RKickAng3[i] < RKickAng2[i])
+			diffRKick2[i] = -1;
+		else
+			diffRKick2[i] = 1;
+
+		if(RKickAng4[i] < RKickAng3[i])
+			diffRKick3[i] = -1;
+		else
+			diffRKick3[i] = 1;
+
+		if(RKickAng5[i] < RKickAng4[i])
+			diffRKick4[i] = -1;
+		else
+			diffRKick4[i] = 1;
+
+		if(LKickAng2[i] < LKickAng1[i])
+			diffLKick1[i] = -1;
+		else
+			diffLKick1[i] = 1;
+
+		if(LKickAng3[i] < LKickAng2[i])
+			diffLKick2[i] = -1;
+		else
+			diffLKick2[i] = 1;
+
+		if(LKickAng4[i] < LKickAng3[i])
+			diffLKick3[i] = -1;
+		else
+			diffLKick3[i] = 1;
+
+		if(LKickAng5[i] < LKickAng4[i])
+			diffLKick4[i] = -1;
+		else
+			diffLKick4[i] = 1;
+
+	}	
+	
+	
 
 	createHeadPositionActuatorAlias();
 
@@ -374,8 +511,105 @@ void MotionController::mglrun()
 				Logger::Instance().WriteMsg("MotionController", "Invalid Head Command: " + hm->command(), Logger::ExtraInfo);
 		}
 
-		if ((am != NULL) && (actionPID == 0))
-		{
+		if((actionPID == 0) && ((pam->command() != "NULL" && am == NULL) || (am != NULL && am->command() == "MyLeftKick") || (am != NULL && am->command() == "MyRightKick"))){
+
+			int readyToKick = 0;
+
+			if(am != NULL){
+				Logger::Instance().WriteMsg("MotionController","AM: " + am->command(), Logger::ExtraInfo);
+				pam->set_command(am->command());
+			}
+			Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command() , Logger::ExtraInfo);
+
+			if (pam->command() == "MyRightKick"){
+				//AngleCompare();
+
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]) , Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11])+ _toString(comp[16]) + _toString(comp[17]) , Logger::ExtraInfo);
+
+				if(comp[3] >= 3 && comp[11] >= 3 && comp[16]==1 && comp[17]==1){
+					Logger::Instance().WriteMsg("MotionController", "CASE1 " , Logger::ExtraInfo);
+
+					pam->set_command("rightKickD.xar");
+					readyToKick = 1;
+				}
+				else if(comp[2] >= 3 && comp[10] >= 3 && comp[16]==1 && comp[17]==1){
+					Logger::Instance().WriteMsg("MotionController", "CASE2 " , Logger::ExtraInfo);
+
+					pam->set_command("rightKickC.xar");
+					readyToKick = 1;
+				}
+				else if(comp[1] >= 2 && comp[9] >= 3 && comp[16]==1 ){
+					Logger::Instance().WriteMsg("MotionController", "CASE3 " , Logger::ExtraInfo);
+
+					pam->set_command("rightKickB.xar");
+					readyToKick = 1;
+				}
+				else if(comp[0] >= 2 && comp[8] >= 3 && comp[16]==1 ){
+					Logger::Instance().WriteMsg("MotionController", "CASE4 " , Logger::ExtraInfo);
+
+					pam->set_command("rightKickA.xar");
+					readyToKick = 1;
+				}
+
+				if(readyToKick == 1){
+					SpAssocCont::iterator it = SpActions.find(pam->command());
+					if (it == SpActions.end())
+						Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
+					else{
+						killWalkCommand();
+						actionPID = it->second->ExecutePost();
+					}
+					pam->set_command("NULL");
+					readyToKick = 0;
+				}
+			}else if (pam->command() == "MyLeftKick"){
+				//AngleCompare();
+
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]) , Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[12]) + _toString(comp[13]) + _toString(comp[14]) + _toString(comp[15])+ _toString(comp[18]) + _toString(comp[19]) , Logger::ExtraInfo);
+
+				if(comp[7] >= 3 && comp[15] >= 3 && comp[18]==1 && comp[19]==1){
+						Logger::Instance().WriteMsg("MotionController", "CASE5 " , Logger::ExtraInfo);
+
+						pam->set_command("leftKickD.xar");
+						readyToKick = 1;
+				}
+				else if(comp[6] >= 3 && comp[14] >= 3 && comp[18]==1 && comp[19]==1){
+					Logger::Instance().WriteMsg("MotionController", "CASE6 " , Logger::ExtraInfo);
+
+					pam->set_command("leftKickC.xar");
+					readyToKick = 1;
+				}
+				else if(comp[5] >= 2 && comp[13] >=3 && comp[19]==1){
+					Logger::Instance().WriteMsg("MotionController", "CASE7 " , Logger::ExtraInfo);
+
+					pam->set_command("leftKickB.xar");
+					readyToKick = 1;
+				}
+				else if(comp[4] >= 2 && comp[12] >= 3 && comp[19]==1){
+					Logger::Instance().WriteMsg("MotionController", "CASE8 " , Logger::ExtraInfo);
+
+					pam->set_command("leftKickA.xar");
+					readyToKick = 1;
+				}
+
+				if(readyToKick == 1){
+					SpAssocCont::iterator it = SpActions.find(pam->command());
+					if (it == SpActions.end())
+						Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
+					else{
+						killWalkCommand();
+						actionPID = it->second->ExecutePost();
+					}
+					pam->set_command("NULL");
+					readyToKick = 0;
+				}
+			}
+			Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
+			return;
+		}
+		else if ((am != NULL) && (actionPID == 0)) {
 			Logger::Instance().WriteMsg("MotionController", am->command(), Logger::ExtraInfo);
 			stopWalkCommand();
 			if (am->command() == "LieDown")
@@ -478,8 +712,8 @@ void MotionController::ALstandUp()
 	{ // Robot
 #endif
 		//              tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Down!"));
-		ALstandUpFront2009();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up 2009: From Front", Logger::ExtraInfo);
+		ALstandUpFront2011();
+		Logger::Instance().WriteMsg("MotionController", "Stand Up 2011: From Front", Logger::ExtraInfo);
 	}
 	return;
 }
@@ -525,6 +759,15 @@ void MotionController::ALstandUpBack2010()
 	SpAssocCont::iterator it = SpActions.find("ALstandUpBack2010");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpBack2010 not found!", Logger::Error);
+	else
+		actionPID = it->second->ExecutePost();
+}
+
+void MotionController::ALstandUpFront2011()
+{
+	SpAssocCont::iterator it = SpActions.find("ALstandUpFront2011");
+	if (it == SpActions.end())
+		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpFront2011 not found!", Logger::Error);
 	else
 		actionPID = it->second->ExecutePost();
 }
@@ -653,3 +896,226 @@ void MotionController::createHeadPositionActuatorAlias()
 
 	cout << " Head PositionActuatorAlias created " << endl;
 }
+
+void MotionController::AngleCompare(){
+
+	int diffW [6] = {0, 0, 0, 0, 0, 0};
+
+	int kR = 0, pR =0, vR = 0, v2R = 0, kL= 0, pL= 0, vL= 0, v2L= 0, lR= 0, qR= 0, wR= 0, w2R= 0, lL= 0, qL= 0, wL= 0, w2L= 0, xR= 0, zR= 0, xL= 0, zL= 0;
+	if(allsm == NULL){
+		cout << "DEN PAIRNEI MINIMATA OLE AngleCompare " << endl;
+		return;
+	}
+
+	LHipPitch = allsm->jointdata(L_LEG+HIP_PITCH);
+	LHipRoll = allsm->jointdata(L_LEG+HIP_ROLL);
+	RHipPitch = allsm->jointdata(R_LEG+HIP_PITCH);
+	RHipRoll = allsm->jointdata(R_LEG+HIP_ROLL);
+	RKneePitch = allsm->jointdata(R_LEG+KNEE_PITCH);
+	LKneePitch = allsm->jointdata(L_LEG+KNEE_PITCH);
+
+	float walkAngles[6] = {LHipPitch.sensorvalue()/TO_RAD, LHipRoll.sensorvalue()/TO_RAD, RHipPitch.sensorvalue()/TO_RAD, RHipRoll.sensorvalue()/TO_RAD, RKneePitch.sensorvalue()/TO_RAD, LKneePitch.sensorvalue()/TO_RAD};
+
+	//cout << "AR8ROSEISSSSSSSSSSSSSSSS" << endl;
+	for(int i=0; i<6; i++){
+		Logger::Instance().WriteMsg("MotionController", _toString(walkAngles[i]), Logger::ExtraInfo);
+	}
+
+
+	for(int i=0; i<6; i++){
+		if(walkAngles[i] < walkPrevAng[i])
+			diffW[i] = -1;
+		else
+			diffW[i] = 1;
+
+		if(RKickAng1[i] < RKickAng2[i]){
+			if((walkAngles[i] <= RKickAng2[i]) and (walkAngles[i] > RKickAng1[i])){
+				kR = kR+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}else{
+			if((walkAngles[i] <= RKickAng1[i]) and (walkAngles[i] > RKickAng2[i])){
+				kR = kR+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}
+
+		if(RKickAng2[i] < RKickAng3[i]){
+			if((walkAngles[i] <= RKickAng3[i]) and (walkAngles[i] > RKickAng2[i])){
+				pR = pR+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}else{
+			if((walkAngles[i] <= RKickAng2[i]) and (walkAngles[i] > RKickAng3[i])){
+				pR = pR+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}
+
+		if(RKickAng3[i] < RKickAng4[i]){
+			if((walkAngles[i] <= RKickAng4[i]) and (walkAngles[i] > RKickAng3[i])){
+				vR = vR+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}else{
+			if((walkAngles[i] <= RKickAng3[i]) and (walkAngles[i] > RKickAng4[i])){
+				vR = vR+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}
+
+		if(RKickAng4[i] < RKickAng5[i]){
+			if((walkAngles[i] <= RKickAng5[i]) and (walkAngles[i] > RKickAng4[i])){
+				v2R = v2R+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}else{
+			if((walkAngles[i] <= RKickAng4[i]) and (walkAngles[i] > RKickAng5[i])){
+				v2R = v2R+1;
+				if(i==0)
+					xR = 1;
+				if(i==2)
+					zR = 1;
+			}
+		}
+
+		if(LKickAng1[i] < LKickAng2[i]){
+			if((walkAngles[i] <= LKickAng2[i]) and (walkAngles[i] > LKickAng1[i])){
+				kL = kL+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}else{
+			if((walkAngles[i] <= LKickAng1[i]) and (walkAngles[i] > LKickAng2[i])){
+				kL = kL+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}
+
+		if(LKickAng2[i] < LKickAng3[i]){
+			if((walkAngles[i] <= LKickAng3[i]) and (walkAngles[i] > LKickAng2[i])){
+				pL = pL+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}else{
+			if((walkAngles[i] <= LKickAng2[i]) and (walkAngles[i] > LKickAng3[i])){
+				pL = pL+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}
+
+		if(LKickAng3[i] < LKickAng4[i]){
+			if((walkAngles[i] <= LKickAng4[i]) and (walkAngles[i] > LKickAng3[i])){
+				vL = vL+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}else{
+			if((walkAngles[i] <= LKickAng3[i]) and (walkAngles[i] > LKickAng4[i])){
+				vL = vL+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}
+
+		if(LKickAng4[i] < LKickAng5[i]){
+			if((walkAngles[i] <= LKickAng5[i]) and (walkAngles[i] > LKickAng4[i])){
+				v2L = v2L+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}else{
+			if((walkAngles[i] <= LKickAng4[i]) and (walkAngles[i] > LKickAng5[i])){
+				v2L = v2L+1;
+				if(i==0)
+					xL = 1;
+				if(i==2)
+					zL = 1;
+			}
+		}
+	}
+
+	for(int i=0; i<6; i++){
+		if(diffW[i] == diffRKick1[i])
+			lR = lR+1;
+		if(diffW[i] == diffRKick2[i])
+			qR = qR+1;
+		if(diffW[i] == diffRKick3[i])
+			wR = wR+1;
+		if(diffW[i] == diffRKick4[i])
+			w2R = w2R+1;
+
+		if(diffW[i] == diffLKick1[i])
+			lL = lL+1;
+		if(diffW[i] == diffLKick2[i])
+			qL = qL+1;
+		if(diffW[i] == diffLKick3[i])
+			wL = wL+1;
+		if(diffW[i] == diffLKick4[i])
+			w2L = w2L+1;
+	}
+
+	comp [0] = kR;
+	comp [1] = pR;
+	comp [2] = vR;
+	comp [3] = v2R;
+	comp [4] = kL;
+	comp [5] = pL;
+	comp [6] = vL;
+	comp [7] = v2L;
+	comp [8] = lR;
+	comp [9] = qR;
+	comp [10] = wR;
+	comp [11] = w2R;
+	comp [12] = lL;
+	comp [13] = qL;
+	comp [14] = wL;
+	comp [15] = w2L;
+	comp [16] = xR;
+	comp [17] = zR;
+	comp [18] = xL;
+	comp [19] = zL;
+
+	for(int i=0; i<6; i++){
+		walkPrevAng [i] = walkAngles [i];
+	}
+}
+
