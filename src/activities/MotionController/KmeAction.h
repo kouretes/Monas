@@ -20,13 +20,17 @@ class KmeAction : public ISpecialAction {
 
     int ExecutePost();
 
+    boost::posix_time::ptime ExecuteDCM();
+
   private:
 
     int ExecuteActionKME();
 
     int ExecuteActionBodyKME();
 
-    boost::posix_time::ptime ExecuteDCM();
+   void DcmInit();
+
+
    //     int PrintActionsKME();
     AL::ALValue commands;
 

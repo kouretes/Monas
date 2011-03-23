@@ -77,7 +77,7 @@ private:
 
 	AL::ALValue commands;
 
-	//void commands();
+	void testcommands();
 	void mglrun();
 	void read_messages();
 
@@ -89,11 +89,8 @@ private:
 
 	void ALstandUp();
 	void ALstandUpCross();
-	void ALstandUpFront2009();
-	void ALstandUpBack2009();
-	void ALstandUpFront2010();
-	void ALstandUpBack2010();
-	void ALstandUpFront2011();
+	void ALstandUpBack();
+	void ALstandUpFront();
 	
 	void AngleCompare();
 	
