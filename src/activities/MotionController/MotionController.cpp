@@ -735,7 +735,7 @@ void MotionController::testcommands() {
 	if ((actionPID == 0) && ((counter + 30) % 500 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		//amot->set_topic("motion");
-		amot->set_command("getup.kme");
+		amot->set_command("myZeroPos.kme");
 		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
 		_blk->publishSignal(*amot, "motion");
 		delete amot;
@@ -773,6 +773,7 @@ void MotionController::testcommands() {
 	//	//		delete amot;
 	//	//	}
 }
+
 void MotionController::createHeadPositionActuatorAlias()
 {
 	AL::ALValue jointAliasses;
@@ -816,6 +817,7 @@ void MotionController::createHeadPositionActuatorAlias()
 
 	cout << " Head PositionActuatorAlias created " << endl;
 }
+
 void MotionController::AngleCompare() {
 
 	int diffW[6] = { 0, 0, 0, 0, 0, 0 };
