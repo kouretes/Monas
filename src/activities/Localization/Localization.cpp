@@ -59,6 +59,8 @@ void Localization::UserInit()
 
 	bhmsg = new BToHeadMessage();
 
+	MyWorld.add_balls();
+
 	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
 	KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
 	KLocalization::setParticlesPoseUniformly(SIRParticles);
@@ -296,11 +298,25 @@ int Localization::Execute()
 
 	//SimpleBehaviorStep();
 
-	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
-	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
+	MyWorld.mutable_myposition()->set_x(AgentPosition.x/1000.0);
+	MyWorld.mutable_myposition()->set_y(AgentPosition.y/1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
+	Ball nearest_ball;
+	if(obsm.get())
+	if(obsm->has_ball()){
 
+		BallObject aball = obsm->ball();
+		nearest_ball.set_relativex(aball.dist()*cos(aball.bearing()));
+		nearest_ball.set_relativey(aball.dist()*sin(aball.bearing()));
+		if(MyWorld.balls_size()<1)
+			MyWorld.add_balls();
+		MyWorld.mutable_balls(0)->CopyFrom(nearest_ball);
+
+	}else{
+		;//Delete Ball?
+	}
+	//MyWorld.
 	 //Signal(wmot, "motion");
 
 	///DEBUGMODE SEND RESULTS

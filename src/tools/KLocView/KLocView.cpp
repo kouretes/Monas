@@ -77,8 +77,14 @@ int update_field(LocalizationData & DebugData) {
 	}
 	//Get The observations
 	if (DebugData.has_observations()) {
+		cout << "We have observations" << endl;
 		if (DebugData.observations().has_ball())
+		{
+			cout << "We have ball" << endl;
 			KLocView->draw_ball(Belief, DebugData.observations().ball());
+		}else{
+			cout << "No ball" << endl;
+		}
 		//else
 		if (DebugData.observations().regular_objects_size() > 0) {
 			cout << "We have observations " << DebugData.observations().regular_objects_size() << endl;
@@ -118,6 +124,8 @@ int update_field(LocalizationData & DebugData) {
 			KLocView->DrawObservations(Belief, currentObservation);
 		}
 		//KLocView->CleanField();
+	}else{
+		cout << "No Observations" <<endl;
 	}
 	//KLocView->BackupField();
 	KLocView->draw_Trackpoint(robotposition, 20 * TO_RAD, -20 * TO_RAD);
