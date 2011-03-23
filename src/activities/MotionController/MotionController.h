@@ -11,6 +11,12 @@
 #include <string>
 
 #include "ISpecialAction.h"
+
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+
+using namespace boost::posix_time;
+
 //#define WEBOTS
 
 class MotionController : public IActivity{
@@ -42,6 +48,7 @@ private:
 	bool robotUp;
 	//SensorPair AccZ, AccX, AccY;
 	float AccZvalue, AccXvalue, AccYvalue;
+	ptime waitfor;
 
 	int counter;
 

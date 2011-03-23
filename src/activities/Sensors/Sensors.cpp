@@ -1,5 +1,5 @@
 #include "Sensors.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+
 #include "hal/robot/generic_nao/kAlBroker.h"
 
 #include "tools/logger.h"
@@ -7,6 +7,7 @@
 
 using namespace AL;
 using namespace std;
+using namespace KDeviceLists;
 //#define UNNEEDED
 
 namespace {
@@ -88,11 +89,48 @@ int Sensors::Execute() {
 		ASM.mutable_jointdata(i)->set_sensorvaluediff(jointValues[i] - oldvalue);
 
 	}
+
 	sensorValues = memory->getListData(sensorKeys);
-	for(unsigned i=0;i<jointValues.size();i++)
+	//Detect inertialBoard Glitch
+	if(abs(sensorValues[GYR+AXIS_Z]-gyravg[AXIS_Z].read_mean())<sqrt(gyravg.read_var())||sc.i==0 )
+	{
+		sc.inc();
+		float accn=sqrt(sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_Y] *sensorValues[ACC+AXIS_Y] +sensorValues[ACC+AXIS_Z]*sensorValues[ACC+AXIS_Z]    );
+
+		accnorm.update(accn,sc);
+		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
+		float gyrgain=Interpret:GYR_OFFSET/sensorValues[ACC+AXIS_Z]*Interpret::GYR_GAIN;
+		for(unsigned i=0;i<GYR_SIZE-1;i++)//EXCLUDE GYR_REF/GYR_Z
+		{
+			oldvalue = ASM.sensordata(GYR+i).sensorvalue();
+			gyravg[i].update(sensorValues[GYR+i],sc);
+			newvalue=(sensorValues[GYR+i]-gyravg[i].read_mean())*gyrgain;
+			//newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
+			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newvalue);
+			ASM.mutable_sensordata(GYR+i)->set_sensorvaluediff(newvalue - oldvalue);
+
+		}
+		oldvalue = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
+		gyravg[AXIS_Z].update(sensorValues[AXIS_Z],sc);
+		newvalue=gyravg[AXIS_Z].read_mean();
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newvalue);
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newvalue - oldvalue);
+		for(unsigned i=0;i<ACC_SIZE;i++)//EXCLUDE GYR_REF/GYR_Z
+		{
+			oldvalue = ASM.sensordata(ACC+i).sensorvalue();
+			newvalue=sensorValues[ACC+i]*accgain;
+			//newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
+			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newvalue);
+			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newvalue - oldvalue);
+		}
+
+
+
+	}
+	for(unsigned i=ANGLE;i<sensorValues.size();i++)
 	{
 		oldvalue = ASM.sensordata(i).sensorvalue();
-		newvalue=smoothness*jointValues[i]+(1-smoothness)*oldvalue;
+		newvalue=smoothness*sensorValues[i]+(1-smoothness)*oldvalue;
 		ASM.mutable_sensordata(i)->set_sensorvalue(newvalue);
 		ASM.mutable_sensordata(i)->set_sensorvaluediff(newvalue - oldvalue);
 
@@ -133,7 +171,45 @@ void Sensors::synchronisedDCMcallback() {
 		ASM.mutable_jointdata(i)->set_sensorvaluediff(newval-oldval);
 	}
 	//All Sensors
-	for(unsigned i=0;i<sensorPtr.size();i++)
+	//cout<<fabs((*sensorPtr[GYR+AXIS_Z])-gyravg[AXIS_Z].read_mean())<<" "<<3*sqrt(gyravg[AXIS_Z].read_var())<<endl;
+	if(fabs((*sensorPtr[GYR+AXIS_Z])-gyravg[AXIS_Z].read_mean())/gyravg[AXIS_Z].read_mean()<0.05||sc.i<50 )
+	{
+		sc.inc();
+		float accn=sqrt((*sensorPtr[ACC+AXIS_X])*(*sensorPtr[ACC+AXIS_X]) +
+						(*sensorPtr[ACC+AXIS_Y])*(*sensorPtr[ACC+AXIS_Y]) +
+						(*sensorPtr[ACC+AXIS_Z])*(*sensorPtr[ACC+AXIS_Z])    );
+		accnorm.update(accn,sc);
+		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
+		float gyrgain=Interpret::GYR_OFFSET/(gyravg[AXIS_Z].read_mean())*Interpret::GYR_GAIN;
+
+		for(unsigned i=0;i<GYR_SIZE-1;i++)//EXCLUDE GYR_REF/GYR_Z
+		{
+			oldval = ASM.sensordata(GYR+i).sensorvalue();
+			gyravg[i].update(*sensorPtr[GYR+i],sc);
+			newval=(*sensorPtr[GYR+i]-gyravg[i].read_mean())*gyrgain;
+			//newval=smoothness*(newval)+(1-smoothness)*oldval;
+			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newval);
+			ASM.mutable_sensordata(GYR+i)->set_sensorvaluediff(newval - oldval);
+
+		}
+		oldval = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
+		gyravg[AXIS_Z].update(*sensorPtr[GYR+AXIS_Z],sc);
+		newval=gyravg[AXIS_Z].read_mean();
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newval);
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newval - oldval);
+		for(unsigned i=0;i<ACC_SIZE;i++)//EXCLUDE GYR_REF/GYR_Z
+		{
+			oldval = ASM.sensordata(ACC+i).sensorvalue();
+			newval=(*sensorPtr[ACC+i])*accgain;
+			//newval=smoothness*(newval)+(1-smoothness)*oldval;
+			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newval);
+			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newval - oldval);
+		}
+
+
+
+	}
+	for(unsigned i=L_FSR;i<sensorPtr.size();i++)
 	{
 		oldval=ASM.sensordata(i).sensorvalue();
 		newval=smoothness*(*sensorPtr[i])+(1-smoothness)*oldval;
@@ -175,13 +251,13 @@ void Sensors::initFastAccess() {
 	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);
 	for (int i = 0; i < KDeviceLists::NUMOFSENSORS; i++) {
 		sensorPtr[i] = (float *) memory->getDataPtr(sensorKeys[i]);
-		//cout<<sensorKeys[i]<<i<<" "<<sensorPtr[i] <<endl;
+		cout<<sensorKeys[i]<<i<<" "<<sensorPtr[i] <<endl;
 		ASM.add_sensordata();
 	}
 }
 #endif
 void Sensors::initialisation() {
-	smoothness = 0.75;
+	smoothness = 0.68;
 
 	//HeadJointSensorsMessage
 
@@ -194,11 +270,20 @@ void Sensors::initialisation() {
 	ASM.Clear();
 	jointKeys=KDeviceLists::getJointKeys();
 	for(unsigned i=0;i<jointKeys.size();i++)
+	{
 		ASM.add_jointdata();
+		ASM.mutable_jointdata(i)->set_sensorvalue(0);
+	}
 
 	sensorKeys=KDeviceLists::getSensorKeys();
 	for(unsigned i=0;i<sensorKeys.size();i++)
+	{
 		ASM.add_sensordata();
+		ASM.mutable_sensordata(i)->set_sensorvalue(0);
+
+	}
+
+
 
 	RPM.add_sensordata(); //X
 	RPM.add_sensordata(); //Y

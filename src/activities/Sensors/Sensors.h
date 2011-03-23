@@ -10,6 +10,8 @@
 #include <string>
 
 #include "architecture/IActivity.h"
+#include "tools/stat/cumulative.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 
 //#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
 // Use DCM proxy
@@ -56,6 +58,9 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/
 		void initialisation();
 
 		std::vector<std::string> jointKeys,sensorKeys;
+		sample_counter sc;
+		cumulative_central_moments<float> gyravg[KDeviceLists::GYR_SIZE];
+		cumulative_central_moments<float> accnorm;
 
 
 

@@ -206,6 +206,6 @@ void ALstandUpCross::Initialize() {
 }
 
 int ALstandUpCross::ExecutePost() {
-  motion->angleInterpolation(jointCodes, angles, times, 1);
+  motion->post.angleInterpolation(jointCodes, angles, times, 1);
   return 0;
 }

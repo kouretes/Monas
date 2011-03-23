@@ -35,6 +35,11 @@ namespace KDeviceLists
 		AXIS_X=0, AXIS_Y, AXIS_Z , AXIS_SIZE
 	};
 
+	enum ChainIniertialSizes
+	{
+		ACC_SIZE=AXIS_SIZE, GYR_SIZE=AXIS_SIZE,ANGLE_SIZE=AXIS_Z
+	};
+
 	enum ChainFSRNames
 	{
 		FSR_FL=0, FSR_FR, FSR_RL,FSR_RR, COP_X, COP_Y,TOTAL_WEIGHT,FSR_SIZE
@@ -60,11 +65,12 @@ namespace KDeviceLists
 
 		ACC = 0,
 
-		GYR=ACC+AXIS_SIZE,
+		GYR=ACC+ACC_SIZE,
 
-		ANGLE=GYR+AXIS_Z,
+		//ANGLE=GYR+GYR_SIZE,
 
-		L_FSR=ANGLE+AXIS_Z,
+		//L_FSR=ANGLE+ANGLE_SIZE,
+		L_FSR=GYR+GYR_SIZE,
 		R_FSR=L_FSR+FSR_SIZE,
 
 		L_US=R_FSR+FSR_SIZE,
@@ -74,6 +80,16 @@ namespace KDeviceLists
 
 	};
 
+	struct Interpret
+	{
+		static const float GRAVITY_PULL=9.81f; //(m/s^2)
+		static const float ACC_OFFSET=0;
+		static const float ACC_GAIN=9.81/55.555555f; //(56 Unites per g)
+
+		static const float GYR_OFFSET=22000;
+		static const float GYR_Z_REF=1230; //expected value of GYR_Z
+		static const float GYR_GAIN=(-1/2.0f)*0.017453; //(1 / (2mv/deg/sec))* gyr ref
+	};
 	std::vector<std::string> const& getJointNames();
 
 	std::vector<std::string> const& getJointKeys();
