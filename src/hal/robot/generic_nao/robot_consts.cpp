@@ -239,7 +239,7 @@ std::vector<std::string> const& KDeviceLists::getPositionActuatorKeys()
 
 std::vector<std::string> const& KDeviceLists::getHardnessActuatorKeys()
 {
-	static const std::vector< std::string> ret = generatePositionActuatorKeys();
+	static const std::vector< std::string> ret = generateHardnessActuatorKeys();
 	return ret;
 }
 

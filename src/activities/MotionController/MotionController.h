@@ -68,7 +68,7 @@ private:
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 
-	AL::ALValue commands;
+	AL::ALValue commands;//,stiffnessCommand;
 
 	//void commands();
 	void mglrun();
@@ -86,7 +86,9 @@ private:
 	void ALstandUpBack2009();
 	void ALstandUpFront2010();
 	void ALstandUpBack2010();
-	void createHeadPositionActuatorAlias();
+	void createDCMAlias();
+
+	void setStiffnessDCM(float s);
 	typedef std::map<std::string,
 		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
 	typedef std::pair<std::string,

@@ -424,15 +424,15 @@ void Vision::fetchAndProcess()
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
 
-	float imcomp = ((stamp - p.time).total_nanoseconds() * 0.25) / (p.timediff+1);
+	float imcomp = ((stamp - p.time).total_nanoseconds() * 0.5) / (p.timediff+1);
 	//#ifdef DEBUGVISIONſ
 	//cout<<boost::posix_time::to_iso_string(stamp)<<endl;
 	//cout<<boost::posix_time::to_iso_string(p.time)<<endl;
 	//cout<<"imcomp:"<<imcomp<<endl;
 	//#endif
 	//imcomp=imcomp;
-	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
-	cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
+	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
+	//cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw += p.Vyaw * imcomp;
 	p.pitch += p.Vpitch * imcomp;

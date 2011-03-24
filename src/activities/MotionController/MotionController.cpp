@@ -83,8 +83,9 @@ void MotionController::UserInit()
 		}
 	}
 
-	motion->setStiffnesses("Body", 1.0);
-	motion->setStiffnesses("Head", 0.95);
+	//motion->setStiffnesses("Body", 1.0);
+	//motion->setStiffnesses("Head", 0.95);
+	createDCMAlias();
 
 	motion->setWalkArmsEnable(true, true);
 
@@ -129,6 +130,7 @@ void MotionController::UserInit()
 	_blk->subscribeTo("motion", 0);
 	_blk->subscribeTo("sensors", 0);
 
+
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
 	AccYvalue = 0.0;
@@ -142,9 +144,10 @@ void MotionController::UserInit()
 
 	counter = 0;
 
-	createHeadPositionActuatorAlias();
+
 
 	walkingWithVelocity = false;
+	setStiffnessDCM(1);
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
 }
 
@@ -189,43 +192,44 @@ void MotionController::read_messages()
 void MotionController::mglrun()
 {
 
-	float accnorm,angX,angY;
+
 
 	if (allsm != NULL && allsm->sensordata_size()>=L_FSR)//Has Accelerometers
 	{
+		float accnorm,angX,angY,gyrX,gyrY;
 		AccZvalue = allsm->sensordata(ACC+AXIS_Z).sensorvalue();
 		AccXvalue = allsm->sensordata(ACC+AXIS_X).sensorvalue();
 		AccYvalue = allsm->sensordata(ACC+AXIS_Y).sensorvalue();
+		gyrX= allsm->sensordata(GYR+AXIS_X).sensorvalue();
+		gyrY= allsm->sensordata(GYR+AXIS_Y).sensorvalue();
 		accnorm=sqrt(AccZvalue*AccZvalue+AccYvalue*AccYvalue+AccXvalue*AccXvalue);
-		angX=atan(fabs(AccXvalue/AccZvalue));
-		angY=atan(fabs(AccYvalue/AccZvalue));
+		angX=atan(AccYvalue/AccZvalue)+gyrX*0.01744*0.05;//TO rad * 0.5 (integration for half a second  * 1/10 because its in 0.1 deg resolution)
+		angY=atan(-AccXvalue/AccZvalue)+gyrY*0.01744*0.05;
 
-		//		AccZ = im->sensordata(2);
-		//		AccZvalue = AccZ.sensorvalue();
-		//		AccX = im->sensordata(0);
-		//		AccXvalue = AccX.sensorvalue();
-		//		AccY = im->sensordata(1);
-		//		AccYvalue = AccY.sensorvalue();
+
+		/* Check if the robot is falling and remove stiffness, kill all motions */
+		//Logger::Instance().WriteMsg("MotionController", "Accnorm:"+_toString(accnorm), Logger::ExtraInfo);
+		//Logger::Instance().WriteMsg("MotionController", "angX:"+_toString(atan(-AccXvalue/AccZvalue))+ "angY:"+_toString(atan(AccYvalue/AccZvalue)), Logger::ExtraInfo);
+		//Logger::Instance().WriteMsg("MotionController", "GyrX:"+_toString(gyrX)+ "GyrY:"+_toString(gyrY), Logger::ExtraInfo);
+		float normdist=(accnorm-KDeviceLists::Interpret::GRAVITY_PULL)/KDeviceLists::Interpret::GRAVITY_PULL;
+		if ( (normdist<-0.35||normdist>0.75||fabs(gyrX)>600.0||fabs(gyrY)>600.0  ) && (fabs(angX)>0.75||fabs(angY)>0.75) )
+		{
+			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
+
+			robotUp = false;
+			robotDown = false;
+			killCommands();
+			//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
+			//motion->setStiffnesses("Body", 0.0);
+			setStiffnessDCM(0);
+			waitfor=microsec_clock::universal_time()+boost::posix_time::milliseconds(350);
+			//ALstandUpCross();
+
+			return;
+		}
 	}
 
-	/* Check if the robot is falling and remove stiffness, kill all motions */
-	//Logger::Instance().WriteMsg("MotionController", "Accz:"+_toString(accnorm), Logger::ExtraInfo);
-	float normdist=fabs(accnorm-KDeviceLists::Interpret::GRAVITY_PULL)/KDeviceLists::Interpret::GRAVITY_PULL;
-	if (allsm != NULL&&  (normdist>0.55 && (angX>0.9||angY>0.9)  ) )
 
-	{
-		Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
-
-		robotUp = false;
-		robotDown = false;
-		killCommands();
-		//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
-		motion->setStiffnesses("Body", 0.0);
-		waitfor=microsec_clock::universal_time()+boost::posix_time::milliseconds(200);
-		//ALstandUpCross();
-
-		return;
-	}
 	if(waitfor>microsec_clock::universal_time())
 		return;
 	/* Check if an Action command has been completed */
@@ -240,7 +244,8 @@ void MotionController::mglrun()
 	if (!robotDown && !robotUp)
 	{
 		//Now execute an alstandupcross
-		motion->setStiffnesses("Body", 0.5);
+		//motion->setStiffnesses("Body", 0.5);
+		setStiffnessDCM(0.5);
 		//usleep(300000);
 		ALstandUpCross();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
@@ -252,8 +257,9 @@ void MotionController::mglrun()
 	if ((actionPID == 0) && robotDown)
 	{
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
-		motion->setStiffnesses("Body", 1.0);
-		motion->setStiffnesses("Head", 0.95);
+		//motion->setStiffnesses("Body", 1.0);
+		//motion->setStiffnesses("Head", 0.95);
+		setStiffnessDCM(1);
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();
@@ -617,8 +623,9 @@ void MotionController::ALstandUpBack2010()
 //	//	}
 //}
 
-void MotionController::createHeadPositionActuatorAlias()
+void MotionController::createDCMAlias()
 {
+	cout<<"Creating DCM aliases"<<endl;
 	AL::ALValue jointAliasses;
 	vector<std::string> PosActuatorStrings = KDeviceLists::getPositionActuatorKeys();
 
@@ -657,6 +664,71 @@ void MotionController::createHeadPositionActuatorAlias()
 		commands[5][i].arraySetSize(1);
 		//commands[5][i][0] will be the new angle
 	}
-
 	cout << " Head PositionActuatorAlias created " << endl;
+/*
+	//STiffness Commands
+	vector<std::string> stiffnessactStrings = KDeviceLists::getHardnessActuatorKeys();
+	jointAliasses.arraySetSize(2);
+	jointAliasses[0] = std::string("AllHardnessActuators"); // Alias for all 25 joint actuators
+
+	jointAliasses[1].arraySetSize(stiffnessactStrings.size());
+	for(unsigned i=0;i<stiffnessactStrings.size();i++)
+		jointAliasses[1][i]=stiffnessactStrings[i];
+	try
+	{
+		dcm->createAlias(jointAliasses);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("mainModule", "createPositionActuatorAlias()", "Error when creating Alias : " + e.toString());
+	}
+
+	stiffnessCommand.arraySetSize(6);
+	stiffnessCommand[0] = std::string("AllHardnessActuators");
+	stiffnessCommand[1] = std::string("ClearAll"); // Erase all previous commands
+	stiffnessCommand[2] = std::string("time-separate");
+	stiffnessCommand[3] = 0;
+
+	stiffnessCommand[4].arraySetSize(1);
+	//commands[4][0]  Will be the new time
+
+	stiffnessCommand[5].arraySetSize(stiffnessactStrings.size()); // For all joints
+
+	for (unsigned i = 0; i < stiffnessactStrings.size(); i++)
+	{
+		stiffnessCommand[5][i].arraySetSize(1);
+		//commands[5][i][0] will be the new angle
+	}
+	cout << "  AllHardnessActuators  alias created " << endl;
+*/
+
+
+}
+
+void MotionController::setStiffnessDCM(float s)
+{
+	motion->setStiffnesses("Body", s);
+	/*for (int p = 0; p < NUMOFJOINTS; p++)
+		stiffnessCommand[5][(p)][0] = s;
+
+	int DCMtime;
+
+	try
+	{ // Get time in 0 ms
+		DCMtime = dcm->getTime(0);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
+	}
+
+	stiffnessCommand[4][0] = DCMtime;
+	//Send command
+	try
+	{
+		dcm->setAlias(stiffnessCommand);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("mainModule", "execute_action", "Error when sending command to DCM : " + e.toString());
+	}
+	motion->setStiffnesses("Body", s);
+	*/
 }
