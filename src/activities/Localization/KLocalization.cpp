@@ -999,7 +999,7 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 	cy = 0;
 	cb = 0;
 	for (unsigned int i = 0; i < Observation.size(); i++) {
-		cout << Observation[i].Feature.id[0] << endl;
+		//cout << Observation[i].Feature.id[0] << endl;
 		if (Observation[i].Feature.id[0] == 'Y' && cy < 2) {
 			Circles[0][cy][0] = Observation[i].Feature.x;
 			Circles[0][cy][1] = Observation[i].Feature.y;
@@ -1119,7 +1119,7 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 	// Scan a grid on the field
 	double OverallWeight, MinOverallWeight, R, ParticlePointBearingAngle, ParticleBearing, Deviation;
 
-	cout << "Observations size " << Observation.size() << endl;
+	//cout << "Observations size " << Observation.size() << endl;
 
 	double OverallWeight2;
 	double max_weight = 0;
@@ -1180,7 +1180,7 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 	//just replace random numofparticlesfromObservation particles
 	int index;
 
-	cout << "Observation Generated Particles " << particlesQueue.size() << endl;
+	//cout << "Observation Generated Particles " << particlesQueue.size() << endl;
 
 	for (int i = 0; i < numofparticlesfromObservation; i++) {
 		index = (rand() + i) % Particles.size;
@@ -1188,7 +1188,7 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 		//	Particles.x[index] = temp.x;
 		//		Particles.y[index] = temp.y;
 		//		Particles.phi[index] = temp.phi;
-		cout << "index: " << index << " x: " << temp.x << " y: " << temp.y << " phi: " << temp.phi << endl;
+		//cout << "index: " << index << " x: " << temp.x << " y: " << temp.y << " phi: " << temp.phi << endl;
 		particlesQueue.pop();
 	}
 	sleep(1);
@@ -1225,7 +1225,7 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size) {
 	for (unsigned int i = 0; i < size; i++) {
 		x += cos(angles[i]);
 		y += sin(angles[i]);
-		cout << "Angle " << i << " value: " << angles[i] * TO_DEG << endl;
+		//cout << "Angle " << i << " value: " << angles[i] * TO_DEG << endl;
 	}
 	//	for angle in angles:
 	//		x += math.cos(angle)
@@ -1237,7 +1237,7 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size) {
 	//	meanx = x/len(angles)
 	//	meany = y/len(angles)
 	//
-	cout << "Mean Angle " << atan2(y, x) * TO_DEG << endl;
+	//cout << "Mean Angle " << atan2(y, x) * TO_DEG << endl;
 	return atan2(y, x);
 	//	mean = math.atan2(meany, meanx)
 	//	R = math.sqrt(meanx**2 + meany**2)
@@ -1287,7 +1287,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 #endif
 				OverallWeight = OverallWeight * normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
 #endif
-				cout << " ParticleAfterDist: " << OverallWeight << endl;
+				//cout << " ParticleAfterDist: " << OverallWeight << endl;
 				//					if(~isempty(ParticlesIn.phi))
 				//	TODO 			 FIX ME
 				//					ObservationAngle = atan2(LandMark(i).y - TrackPoint.y, LandMark(i).x - TrackPoint.x); // calculated 2nd time
@@ -1310,7 +1310,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				//Particles.phi[p] = ParticlePointBearingAngle  + Observation[0].Bearing.val;
 				//Particles.phi[p] -= anglediff2(Observation[i].Bearing.val, ParticleBearing);
 				//Particles.phi[p] = anglediff2(ParticlePointBearingAngle, Observation[i].Bearing.val);
-				cout << "Particle weight " << normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation) << "Observation " << i << endl;
+				//cout << "Particle weight " << normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation) << "Observation " << i << endl;
 				OverallWeight = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
 				//cout << "Bearing  weight " <<
 #endif

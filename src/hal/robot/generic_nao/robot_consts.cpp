@@ -68,8 +68,9 @@ std::vector<std::string> KDeviceLists::generateSensorNames()
 	fSensorKeys[ACC+AXIS_Z] = "AccZ";
 	fSensorKeys[GYR+AXIS_X] = "GyrX";
 	fSensorKeys[GYR+AXIS_Y] = "GyrY";
-	fSensorKeys[ANGLE+AXIS_X] = "AngleX";
-	fSensorKeys[ANGLE+AXIS_Y] = "AngleY";
+	fSensorKeys[GYR+AXIS_Z] = "GyrRef";
+	//fSensorKeys[ANGLE+AXIS_X] = "AngleX";
+	//fSensorKeys[ANGLE+AXIS_Y] = "AngleY";
 
 	// Some FSR sensors
 
@@ -175,8 +176,9 @@ std::vector< std::string> KDeviceLists::generateSensorKeys()
 	fSensorKeys[ACC+AXIS_Z] = preFix+"InertialSensor/AccZ/Sensor/Value";
 	fSensorKeys[GYR+AXIS_X] = preFix+"InertialSensor/GyrX/Sensor/Value";
 	fSensorKeys[GYR+AXIS_Y] = preFix+"InertialSensor/GyrY/Sensor/Value";
-	fSensorKeys[ANGLE+AXIS_X] = preFix+"InertialSensor/AngleX/Sensor/Value";
-	fSensorKeys[ANGLE+AXIS_Y] = preFix+"InertialSensor/AngleY/Sensor/Value";
+	fSensorKeys[GYR+AXIS_Z] = preFix+"InertialSensor/GyrRef/Sensor/Value";
+	//fSensorKeys[ANGLE+AXIS_X] = preFix+"InertialSensor/AngleX/Sensor/Value";
+	//fSensorKeys[ANGLE+AXIS_Y] = preFix+"InertialSensor/AngleY/Sensor/Value";
 
 	// Some FSR sensors
 

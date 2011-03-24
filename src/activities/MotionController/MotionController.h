@@ -12,9 +12,13 @@
 
 #include "ISpecialAction.h"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif
+
+using namespace boost::posix_time;
 
 //#define WEBOTS
 
@@ -47,6 +51,7 @@ private:
 	bool robotUp;
 	//SensorPair AccZ, AccX, AccY;
 	float AccZvalue, AccXvalue, AccYvalue;
+	ptime waitfor;
 
 	int counter;
 

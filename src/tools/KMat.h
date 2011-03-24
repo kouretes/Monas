@@ -98,60 +98,7 @@ namespace KMat
 			C & p;
 			const int i,j;
 	};
-/*
-	template<typename T,typename C, unsigned M, unsigned N>  class CTCOWRef {};
 
-	template<typename C, unsigned M, unsigned N> class CTCOWRef<float,C,M,N>
-	{
-		//template <typename AT, typename AC>	friend class COWRef;
-		//template <typename AT, typename AC, unsigned AM,unsigned AN>  friend class CTCOWRef;
-		public:
-		CTCOWRef(C &obj): p(obj){};
-		operator float() const  { return p.read(M,N);} ;
-		//template<typename AT,typename AC> float operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
-
-		//template<typename AT,typename AC,unsigned AM,unsigned  AN>float operator=(CTCOWRef<AT,AC,AM,AN>  const &v) { return p.get(M,N)=v.p.read(AM,AN);};
-		float operator=(CTCOWRef<float,C,M,N>  &v) { return p.get(M,N)=v.p.read(M,N);};
-		template<typename AT> float operator=(AT  v) { return p.get(M,N)=v;};
-		template<typename AT> float operator+=(AT  v) { return p.get(M,N)+=v;};
-		template<typename AT> float operator-=(AT  v) { return p.get(M,N)-=v;};
-		template<typename AT> float operator*=(AT  v) { return p.get(M,N)*=v;};
-		template<typename AT> float operator/=(AT  v) { return p.get(M,N)/=v;};
-
-		template<typename AT> float operator+(AT  v) const { return p.read(M,N)+v;};
-		template<typename AT> float operator-(AT  v) const { return p.read(M,N)-v;};
-		template<typename AT> float operator*(AT  v) const { return p.read(M,N)*v;};
-		template<typename AT> float operator/(AT  v) const { return p.read(M,N)/v;};
-
-		private:
-			C & p;
-	};
-
-	template<typename C, unsigned M, unsigned N> class CTCOWRef<int,C,M,N>
-	{
-		//template <typename AT, typename AC>	friend class COWRef;
-		//template <typename AT, typename AC, unsigned AM,unsigned AN>  CTCOWRef;
-		public:
-		CTCOWRef(C &obj): p(obj){};
-		operator int() const { return p.read(M,N) ;} ;
-		//template<typename AT,typename AC> int operator=(COWRef<AT,AC> const& v) { return p.get(i,j)=v.p.read(v.i,v.j);};
-		//template<typename AT,typename AC,unsigned AM,unsigned  AN>int operator=(CTCOWRef<AT,AC,AM,AN>  const &v) { return p.get(M,N)=v.p.read(AM,AN);};
-		int operator=(CTCOWRef<int,C,M,N>  &v) { return p.get(M,N)=v.p.read(M,N);};
-		template<typename AT> int operator=(AT  v) { return p.get(M,N)=v;};
-		template<typename AT> int operator+=(AT  v) { return p.get(M,N)+=v;};
-		template<typename AT> int operator-=(AT  v) { return p.get(M,N)-=v;};
-		template<typename AT> int operator*=(AT  v) { return p.get(M,N)*=v;};
-		template<typename AT> int operator/=(AT  v) { return p.get(M,N)/=v;};
-
-		template<typename AT> int operator+(AT  v) const { return p.read(M,N)+v;};
-		template<typename AT> int operator-(AT  v) const { return p.read(M,N)-v;};
-		template<typename AT> int operator*(AT  v) const { return p.read(M,N)*v;};
-		template<typename AT> int operator/(AT  v) const { return p.read(M,N)/v;};
-
-		private:
-			C & p;
-	};
-*/
 	template <template<typename , unsigned , unsigned > class	D,typename T, unsigned M,unsigned N>
 	class BaseMatrix;
 

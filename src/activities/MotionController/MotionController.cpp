@@ -17,7 +17,9 @@ namespace {
 }
 using namespace std;
 using namespace KDeviceLists;
-MotionController::MotionController() {
+MotionController::MotionController()
+{
+	waitfor=microsec_clock::universal_time()-hours(1);
 }
 
 void MotionController::UserInit() {
@@ -79,8 +81,8 @@ void MotionController::UserInit() {
 
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
 	AL::ALValue config;
-	config.arraySetSize(14);
-	for (int i = 0; i < 14; ++i)
+	config.arraySetSize(15);
+	for (int i = 0; i < 15; ++i)
 		config[i].arraySetSize(2);
 	config[0][0] = "WALK_MAX_TRAPEZOID";
 	config[0][1] = 3.5; // 4.5
@@ -89,7 +91,7 @@ void MotionController::UserInit() {
 	config[2][0] = "WALK_STEP_MAX_PERIOD";
 	config[2][1] = 30; // 30
 	config[3][0] = "WALK_STEP_MIN_PERIOD";
-	config[3][1] = 18; // 21
+	config[3][1] = 17; // 21
 	config[4][0] = "WALK_MAX_STEP_X";
 	config[4][1] = 0.05; // 0.04
 	config[5][0] = "WALK_MAX_STEP_Y";
@@ -110,6 +112,8 @@ void MotionController::UserInit() {
 	config[12][1] = 0.0; // 0
 	config[13][0] = "ENABLE_FOOT_CONTACT_PROTECTION";
 	config[13][1] = true;
+	config[14][0] = "ENABLE_FALL_MANAGEMENT_PROTECTION";
+	config[14][1] = false;
 	motion->setMotionConfig(config);
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
@@ -307,13 +311,20 @@ void MotionController::read_messages() {
 	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 }
 
-void MotionController::mglrun() {
+void MotionController::mglrun()
+{
 
-	if (allsm != NULL && allsm->sensordata_size() >= ACC + AXIS_SIZE)//Has Accelerometers
+	float accnorm,angX,angY;
+
+	if (allsm != NULL && allsm->sensordata_size()>=L_FSR)//Has Accelerometers
 	{
-		AccZvalue = allsm->sensordata(ACC + AXIS_Z).sensorvalue();
-		AccXvalue = allsm->sensordata(ACC + AXIS_X).sensorvalue();
-		AccYvalue = allsm->sensordata(ACC + AXIS_Y).sensorvalue();
+		AccZvalue = allsm->sensordata(ACC+AXIS_Z).sensorvalue();
+		AccXvalue = allsm->sensordata(ACC+AXIS_X).sensorvalue();
+		AccYvalue = allsm->sensordata(ACC+AXIS_Y).sensorvalue();
+		accnorm=sqrt(AccZvalue*AccZvalue+AccYvalue*AccYvalue+AccXvalue*AccXvalue);
+		angX=atan(fabs(AccXvalue/AccZvalue));
+		angY=atan(fabs(AccYvalue/AccZvalue));
+
 		//		AccZ = im->sensordata(2);
 		//		AccZvalue = AccZ.sensorvalue();
 		//		AccX = im->sensordata(0);
@@ -323,34 +334,38 @@ void MotionController::mglrun() {
 	}
 
 	/* Check if the robot is falling and remove stiffness, kill all motions */
-#ifdef WEBOTS
-	if (allsm != NULL&& (robotUp) && (AccZvalue < 5.5) )
-	{ // Webots
-#else
-	if (allsm != NULL && (robotUp) && (AccZvalue > -30) && false) { // Robot
-#endif
-		motion->setStiffnesses("Body", 0.0);
+	//Logger::Instance().WriteMsg("MotionController", "Accz:"+_toString(accnorm), Logger::ExtraInfo);
+	float normdist=fabs(accnorm-KDeviceLists::Interpret::GRAVITY_PULL)/KDeviceLists::Interpret::GRAVITY_PULL;
+	if (allsm != NULL&&  (normdist>0.55 && (angX>0.9||angY>0.9)  ) )
+
+	{
 		Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
 
 		robotUp = false;
 		robotDown = false;
 		killCommands();
 		//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
-		motion->setStiffnesses("Body", 0.);
-		usleep(1500000);
+		motion->setStiffnesses("Body", 0.0);
+		waitfor=microsec_clock::universal_time()+boost::posix_time::milliseconds(200);
 		//ALstandUpCross();
 
 		return;
 	}
+	if(waitfor>microsec_clock::universal_time())
+		return;
 	/* Check if an Action command has been completed */
 	if ((actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID) /*isRunning(actionPID)*/) {
 		actionPID = 0;
+		if(robotDown){ robotDown=false;
+		robotUp=true;
+		}
 		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 	}
-	if (!robotDown && !robotUp) {
+	if (!robotDown && !robotUp)
+	{
 		//Now execute an alstandupcross
-		motion->setStiffnesses("Body", 0.6);
-		usleep(300000);
+		motion->setStiffnesses("Body", 0.5);
+		//usleep(300000);
 		ALstandUpCross();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
 		robotDown = true;
@@ -362,11 +377,11 @@ void MotionController::mglrun() {
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", 0.7);
 		motion->setStiffnesses("Head", 0.95);
-		robotDown = false;
-		robotUp = true;
+		robotDown = true;
+		robotUp = false;
 		ALstandUp();
 		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
-		usleep(7000000);
+		//uŔ(7000000);
 		return;
 	}
 
@@ -618,9 +633,11 @@ void MotionController::killHeadCommand() {
 	}
 }
 
-void MotionController::killActionCommand() {
-	if (actionPID != 0) {
-		motion->post.killTask(actionPID);
+void MotionController::killActionCommand()
+{
+	if (actionPID != 0)
+	{
+		motion->killTask(actionPID);
 		actionPID = 0;
 		Logger::Instance().WriteMsg("MotionController", "Killed Action Command", Logger::ExtraInfo);
 	}
@@ -629,7 +646,7 @@ void MotionController::killActionCommand() {
 void MotionController::killCommands() {
 
 	//TODO check if command stops !! framemanager->pCall("cleanBehaviors");
-	motion->post.killAll();
+	motion->killAll();
 	//while ( motion->isRunning(walkPID) || motion->isRunning(headPID) || motion->isRunning(actionPID) ) {
 	//if ( motion->isRunning(walkPID) )
 	//Logger::Instance().WriteMsg("MotionController","Walk Command is running",Logger::ExtraInfo);
@@ -640,7 +657,7 @@ void MotionController::killCommands() {
 	//}
 	walkPID = 0;
 	headPID = 0;
-	actionPID = 0;
+	actionPID= 0;
 	Logger::Instance().WriteMsg("MotionController", "Killed All Commands", Logger::ExtraInfo);
 }
 

@@ -11,7 +11,7 @@
 #define VISIBLE
 #endif
 
-#include "KMat.h"
+#include "tools/KMat.h"
 
 
 #define sqrd(x) ( (x)*(x) )

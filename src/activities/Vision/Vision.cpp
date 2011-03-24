@@ -407,11 +407,15 @@ void Vision::fetchAndProcess()
 
 	p.Vyaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvaluediff();
 	p.Vpitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvaluediff();
+	float AccX= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_X).sensorvalue();
+	float AccY= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_Y).sensorvalue();
+	float AccZ= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_Z).sensorvalue();
 
-	p.angX = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
-	p.angY = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
-	p.VangX = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvaluediff();//im->sensordata(5).sensortimediff();
-	p.VangY = asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvaluediff();//im->sensordata(6).sensortimediff();
+
+	p.angX = atan2(-AccY,-AccZ);//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
+	p.angY = atan2(AccX,-AccZ);//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
+	p.VangX = asvm->sensordata(KDeviceLists::GYR+KDeviceLists::AXIS_X).sensorvalue();//im->sensordata(5).sensortimediff();
+	p.VangY = asvm->sensordata(KDeviceLists::GYR+KDeviceLists::AXIS_Y).sensorvalue();//im->sensordata(6).sensortimediff();
 
 	p.timediff = asvm->timediff();//Get time from headmessage
 	//p.time = time_t_epoch;
@@ -427,12 +431,13 @@ void Vision::fetchAndProcess()
 	//cout<<"imcomp:"<<imcomp<<endl;
 	//#endif
 	//imcomp=imcomp;
-	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
+	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
+	cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw += p.Vyaw * imcomp;
 	p.pitch += p.Vpitch * imcomp;
-	p.angX += p.VangX * imcomp;
-	p.angY += p.VangY * imcomp;
+	p.angX += p.VangX * 0.25* ((stamp - p.time).total_nanoseconds() )/1000000000.0;
+	p.angY += p.VangY * 0.25* ((stamp - p.time).total_nanoseconds() )/1000000000.0;
 	float Dfov;
 	xmlconfig->QueryElement("Dfov", Dfov);
 
