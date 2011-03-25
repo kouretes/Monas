@@ -280,7 +280,7 @@ void MotionController::UserInit() {
 int MotionController::Execute() {
 	counter++;
 	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
-	//testcommands();
+	testcommands();
 	read_messages();
 	mglrun();
 	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
@@ -528,7 +528,6 @@ void MotionController::mglrun()
 					pam->set_command("rightKickA.xar");
 					readyToKick = 1;
 				}
-
 				if (readyToKick == 1) {
 					SpAssocCont::iterator it = SpActions.find(pam->command());
 					if (it == SpActions.end())
@@ -595,7 +594,7 @@ void MotionController::mglrun()
 			SpAssocCont::iterator it = SpActions.find(am->command());
 			if (it == SpActions.end())
 				Logger::Instance().WriteMsg("MotionController", "SpAction " + am->command() + " not found!", Logger::Error);
-			else if (false) {
+			else if (true) {
 
 				actionPID = it->second->ExecutePost();
 			} else {
@@ -685,7 +684,7 @@ void MotionController::ALstandUp() {
 }
 
 void MotionController::ALstandUpCross() {
-	SpAssocCont::iterator it = SpActions.find("ALstandUpCross");
+	SpAssocCont::iterator it = SpActions.find("cross.xar");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpCross not found!", Logger::Error);
 	else
@@ -752,7 +751,7 @@ void MotionController::testcommands() {
 	if ((actionPID == 0) && ((counter + 30) % 500 == 0) && (counter > 0)) {
 		MotionActionMessage* amot = new MotionActionMessage();
 		//amot->set_topic("motion");
-		amot->set_command("myZeroPos.kme");
+		amot->set_command("PenalizedZeroPos.xar");
 		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
 		_blk->publishSignal(*amot, "motion");
 		delete amot;
