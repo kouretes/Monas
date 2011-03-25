@@ -10,6 +10,7 @@
 #include "ISpecialAction.h"
 #include "KmeManager.h"
 #include "KmeAction.h"
+
 #include "XarManager.h"
 namespace {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
@@ -73,9 +74,14 @@ void MotionController::UserInit() {
 		}
 	}
 
+<<<<<<< HEAD
 	motion->setStiffnesses("Body", 0.7);
 	motion->setStiffnesses("Head", 0.95);
+=======
+	//motion->setStiffnesses("Body", 1.0);
+	//motion->setStiffnesses("Head", 0.95);
 	createDCMAlias();
+>>>>>>> a368e847f307200bc9d9529f887c85b2160e7272
 
 	motion->setWalkArmsEnable(true, true);
 
@@ -383,9 +389,14 @@ void MotionController::mglrun()
 	/* Check if the robot is down and stand up */
 	if ((actionPID == 0) && robotDown) {
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
+<<<<<<< HEAD
+		motion->setStiffnesses("Body", 0.7);
+		motion->setStiffnesses("Head", 0.95);
+=======
 		//motion->setStiffnesses("Body", 1.0);
 		//motion->setStiffnesses("Head", 0.95);
 		setStiffnessDCM(1);
+>>>>>>> a368e847f307200bc9d9529f887c85b2160e7272
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();

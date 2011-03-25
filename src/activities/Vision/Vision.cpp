@@ -424,7 +424,7 @@ void Vision::fetchAndProcess()
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
 
-	float imcomp = ((stamp - p.time).total_nanoseconds() * 0.25) / (p.timediff+1);
+	float imcomp = ((stamp - p.time).total_nanoseconds() * 0.5) / (p.timediff+1);
 	//#ifdef DEBUGVISIONſ
 	//cout<<boost::posix_time::to_iso_string(stamp)<<endl;
 	//cout<<boost::posix_time::to_iso_string(p.time)<<endl;

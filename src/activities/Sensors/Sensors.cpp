@@ -64,6 +64,10 @@ int Sensors::Execute() {
 
 		dcm->set(commands);
 		rtm.start();
+		//Init inertial statistics
+		sc.inc();
+		gyravg[AXIS_Z].update(Interpret::GYR_OFFSET,sc);
+
 #ifdef KROBOT_IS_REMOTE_OFF
 		rtmfast.start();
 		cout<<"BIND TO DCM postProcess!"<<endl;
@@ -97,6 +101,13 @@ int Sensors::Execute() {
 		sc.inc();
 		float accn=sqrt(sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_Y] *sensorValues[ACC+AXIS_Y] +sensorValues[ACC+AXIS_Z]*sensorValues[ACC+AXIS_Z]    );
 
+
+		oldvalue = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
+		gyravg[AXIS_Z].update(sensorValues[AXIS_Z],sc);
+		newvalue=gyravg[AXIS_Z].read_mean();
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newvalue);
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newvalue - oldvalue);
+
 		accnorm.update(accn,sc);
 		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
 		float gyrgain=Interpret:GYR_OFFSET/sensorValues[ACC+AXIS_Z]*Interpret::GYR_GAIN;
@@ -105,21 +116,17 @@ int Sensors::Execute() {
 			oldvalue = ASM.sensordata(GYR+i).sensorvalue();
 			gyravg[i].update(sensorValues[GYR+i],sc);
 			newvalue=(sensorValues[GYR+i]-gyravg[i].read_mean())*gyrgain;
-			//newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
+			newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
 			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newvalue);
 			ASM.mutable_sensordata(GYR+i)->set_sensorvaluediff(newvalue - oldvalue);
 
 		}
-		oldvalue = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
-		gyravg[AXIS_Z].update(sensorValues[AXIS_Z],sc);
-		newvalue=gyravg[AXIS_Z].read_mean();
-		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newvalue);
-		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newvalue - oldvalue);
+
 		for(unsigned i=0;i<ACC_SIZE;i++)//EXCLUDE GYR_REF/GYR_Z
 		{
 			oldvalue = ASM.sensordata(ACC+i).sensorvalue();
 			newvalue=sensorValues[ACC+i]*accgain;
-			//newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
+			newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
 			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newvalue);
 			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newvalue - oldvalue);
 		}
@@ -180,6 +187,12 @@ void Sensors::synchronisedDCMcallback() {
 						(*sensorPtr[ACC+AXIS_Z])*(*sensorPtr[ACC+AXIS_Z])    );
 		accnorm.update(accn,sc);
 		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
+		oldval = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
+		gyravg[AXIS_Z].update(*sensorPtr[GYR+AXIS_Z],sc);
+		newval=gyravg[AXIS_Z].read_mean();
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newval);
+		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newval - oldval);
+
 		float gyrgain=Interpret::GYR_OFFSET/(gyravg[AXIS_Z].read_mean())*Interpret::GYR_GAIN;
 
 		for(unsigned i=0;i<GYR_SIZE-1;i++)//EXCLUDE GYR_REF/GYR_Z
@@ -187,21 +200,18 @@ void Sensors::synchronisedDCMcallback() {
 			oldval = ASM.sensordata(GYR+i).sensorvalue();
 			gyravg[i].update(*sensorPtr[GYR+i],sc);
 			newval=(*sensorPtr[GYR+i]-gyravg[i].read_mean())*gyrgain;
-			//newval=smoothness*(newval)+(1-smoothness)*oldval;
+			newval=smoothness*(newval)+(1-smoothness)*oldval;
+
 			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newval);
 			ASM.mutable_sensordata(GYR+i)->set_sensorvaluediff(newval - oldval);
 
 		}
-		oldval = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
-		gyravg[AXIS_Z].update(*sensorPtr[GYR+AXIS_Z],sc);
-		newval=gyravg[AXIS_Z].read_mean();
-		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newval);
-		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newval - oldval);
+
 		for(unsigned i=0;i<ACC_SIZE;i++)//EXCLUDE GYR_REF/GYR_Z
 		{
 			oldval = ASM.sensordata(ACC+i).sensorvalue();
 			newval=(*sensorPtr[ACC+i])*accgain;
-			//newval=smoothness*(newval)+(1-smoothness)*oldval;
+			newval=smoothness*(newval)+(1-smoothness)*oldval;
 			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newval);
 			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newval - oldval);
 		}

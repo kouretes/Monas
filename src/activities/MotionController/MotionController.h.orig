@@ -94,7 +94,7 @@ private:
 
 	void ALstandUp();
 	void ALstandUpCross();
-
+<<<<<<< HEAD
 	void ALstandUpBack();
 	void ALstandUpFront();
 	
@@ -107,8 +107,16 @@ private:
 	int diffRKick1 [6], diffRKick2 [6], diffRKick3 [6], diffRKick4 [6];
 	int diffLKick1 [6], diffLKick2 [6], diffLKick3 [6], diffLKick4 [6];
 		
+	void createHeadPositionActuatorAlias();
+=======
+	void ALstandUpFront2009();
+	void ALstandUpBack2009();
+	void ALstandUpFront2010();
+	void ALstandUpBack2010();
 	void createDCMAlias();
+
 	void setStiffnessDCM(float s);
+>>>>>>> a368e847f307200bc9d9529f887c85b2160e7272
 	typedef std::map<std::string,
 		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
 	typedef std::pair<std::string,
