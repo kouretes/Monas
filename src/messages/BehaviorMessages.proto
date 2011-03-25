@@ -17,10 +17,17 @@ message ScanMessage{
 	required bool scancompleted = 1 [default = false];
 }
 
-message StateEnd{
-	required bool ended = 1 [default = false];
-}
-
 message PlayerNumberMessage{
 	required int32 player_number = 1 [default = 2];
+	required int32 team_side = 2 [default = 1];
+}
+
+message PositionMessage{
+	required int32 posX = 1 [default = 70];
+	required int32 posY = 2 [default = 70];
+	required float theta = 3 [default = 1];
+}
+
+message ReturnToPositionMessage{
+	required bool goalieToPos = 1 [default = false];
 }

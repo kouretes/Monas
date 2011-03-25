@@ -30,27 +30,20 @@ void  protobuf_AddDesc_SensorsMessage_2eproto();
 void protobuf_AssignDesc_SensorsMessage_2eproto();
 void protobuf_ShutdownFile_SensorsMessage_2eproto();
 
-class InertialSensorsMessage;
-class FSRSensorsMessage;
-class UltaSoundSensorsMessage;
-class HeadJointSensorsMessage;
-class BodyJointSensorsMessage;
-class RobotPositionSensorMessage;
-class SensorPair;
+class RobotPositionMessage;
 class SensorData;
-class ChainSensorSensorsMessage;
-class AllSensorValues;
+class AllSensorValuesMessage;
 
 // ===================================================================
 
-class InertialSensorsMessage : public ::google::protobuf::Message {
+class RobotPositionMessage : public ::google::protobuf::Message {
  public:
-  InertialSensorsMessage();
-  virtual ~InertialSensorsMessage();
+  RobotPositionMessage();
+  virtual ~RobotPositionMessage();
   
-  InertialSensorsMessage(const InertialSensorsMessage& from);
+  RobotPositionMessage(const RobotPositionMessage& from);
   
-  inline InertialSensorsMessage& operator=(const InertialSensorsMessage& from) {
+  inline RobotPositionMessage& operator=(const RobotPositionMessage& from) {
     CopyFrom(from);
     return *this;
   }
@@ -64,17 +57,17 @@ class InertialSensorsMessage : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const InertialSensorsMessage& default_instance();
+  static const RobotPositionMessage& default_instance();
   
-  void Swap(InertialSensorsMessage* other);
+  void Swap(RobotPositionMessage* other);
   
   // implements Message ----------------------------------------------
   
-  InertialSensorsMessage* New() const;
+  RobotPositionMessage* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const InertialSensorsMessage& from);
-  void MergeFrom(const InertialSensorsMessage& from);
+  void CopyFrom(const RobotPositionMessage& from);
+  void MergeFrom(const RobotPositionMessage& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -97,29 +90,37 @@ class InertialSensorsMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // repeated .SensorPair SensorData = 1;
+  // repeated .SensorData sensorData = 1;
   inline int sensordata_size() const;
   inline void clear_sensordata();
   static const int kSensorDataFieldNumber = 1;
-  inline const ::SensorPair& sensordata(int index) const;
-  inline ::SensorPair* mutable_sensordata(int index);
-  inline ::SensorPair* add_sensordata();
-  inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
+  inline const ::SensorData& sensordata(int index) const;
+  inline ::SensorData* mutable_sensordata(int index);
+  inline ::SensorData* add_sensordata();
+  inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
       sensordata() const;
-  inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
+  inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
       mutable_sensordata();
   
-  // @@protoc_insertion_point(class_scope:InertialSensorsMessage)
+  // required uint32 TimeDiff = 2;
+  inline bool has_timediff() const;
+  inline void clear_timediff();
+  static const int kTimeDiffFieldNumber = 2;
+  inline ::google::protobuf::uint32 timediff() const;
+  inline void set_timediff(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:RobotPositionMessage)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
+  ::google::protobuf::RepeatedPtrField< ::SensorData > sensordata_;
+  ::google::protobuf::uint32 timediff_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -133,602 +134,7 @@ class InertialSensorsMessage : public ::google::protobuf::Message {
   }
   
   void InitAsDefaultInstance();
-  static InertialSensorsMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class FSRSensorsMessage : public ::google::protobuf::Message {
- public:
-  FSRSensorsMessage();
-  virtual ~FSRSensorsMessage();
-  
-  FSRSensorsMessage(const FSRSensorsMessage& from);
-  
-  inline FSRSensorsMessage& operator=(const FSRSensorsMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const FSRSensorsMessage& default_instance();
-  
-  void Swap(FSRSensorsMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  FSRSensorsMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const FSRSensorsMessage& from);
-  void MergeFrom(const FSRSensorsMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .SensorPair SensorData = 1;
-  inline int sensordata_size() const;
-  inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 1;
-  inline const ::SensorPair& sensordata(int index) const;
-  inline ::SensorPair* mutable_sensordata(int index);
-  inline ::SensorPair* add_sensordata();
-  inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-      sensordata() const;
-  inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-      mutable_sensordata();
-  
-  // @@protoc_insertion_point(class_scope:FSRSensorsMessage)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
-  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
-  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
-  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static FSRSensorsMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class UltaSoundSensorsMessage : public ::google::protobuf::Message {
- public:
-  UltaSoundSensorsMessage();
-  virtual ~UltaSoundSensorsMessage();
-  
-  UltaSoundSensorsMessage(const UltaSoundSensorsMessage& from);
-  
-  inline UltaSoundSensorsMessage& operator=(const UltaSoundSensorsMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const UltaSoundSensorsMessage& default_instance();
-  
-  void Swap(UltaSoundSensorsMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  UltaSoundSensorsMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const UltaSoundSensorsMessage& from);
-  void MergeFrom(const UltaSoundSensorsMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .SensorPair SensorData = 1;
-  inline int sensordata_size() const;
-  inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 1;
-  inline const ::SensorPair& sensordata(int index) const;
-  inline ::SensorPair* mutable_sensordata(int index);
-  inline ::SensorPair* add_sensordata();
-  inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-      sensordata() const;
-  inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-      mutable_sensordata();
-  
-  // @@protoc_insertion_point(class_scope:UltaSoundSensorsMessage)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
-  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
-  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
-  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static UltaSoundSensorsMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class HeadJointSensorsMessage : public ::google::protobuf::Message {
- public:
-  HeadJointSensorsMessage();
-  virtual ~HeadJointSensorsMessage();
-  
-  HeadJointSensorsMessage(const HeadJointSensorsMessage& from);
-  
-  inline HeadJointSensorsMessage& operator=(const HeadJointSensorsMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const HeadJointSensorsMessage& default_instance();
-  
-  void Swap(HeadJointSensorsMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  HeadJointSensorsMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const HeadJointSensorsMessage& from);
-  void MergeFrom(const HeadJointSensorsMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .SensorPair SensorData = 1;
-  inline int sensordata_size() const;
-  inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 1;
-  inline const ::SensorPair& sensordata(int index) const;
-  inline ::SensorPair* mutable_sensordata(int index);
-  inline ::SensorPair* add_sensordata();
-  inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-      sensordata() const;
-  inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-      mutable_sensordata();
-  
-  // @@protoc_insertion_point(class_scope:HeadJointSensorsMessage)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
-  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
-  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
-  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static HeadJointSensorsMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class BodyJointSensorsMessage : public ::google::protobuf::Message {
- public:
-  BodyJointSensorsMessage();
-  virtual ~BodyJointSensorsMessage();
-  
-  BodyJointSensorsMessage(const BodyJointSensorsMessage& from);
-  
-  inline BodyJointSensorsMessage& operator=(const BodyJointSensorsMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const BodyJointSensorsMessage& default_instance();
-  
-  void Swap(BodyJointSensorsMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  BodyJointSensorsMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const BodyJointSensorsMessage& from);
-  void MergeFrom(const BodyJointSensorsMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .SensorPair SensorData = 1;
-  inline int sensordata_size() const;
-  inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 1;
-  inline const ::SensorPair& sensordata(int index) const;
-  inline ::SensorPair* mutable_sensordata(int index);
-  inline ::SensorPair* add_sensordata();
-  inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-      sensordata() const;
-  inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-      mutable_sensordata();
-  
-  // @@protoc_insertion_point(class_scope:BodyJointSensorsMessage)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
-  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
-  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
-  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static BodyJointSensorsMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class RobotPositionSensorMessage : public ::google::protobuf::Message {
- public:
-  RobotPositionSensorMessage();
-  virtual ~RobotPositionSensorMessage();
-  
-  RobotPositionSensorMessage(const RobotPositionSensorMessage& from);
-  
-  inline RobotPositionSensorMessage& operator=(const RobotPositionSensorMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const RobotPositionSensorMessage& default_instance();
-  
-  void Swap(RobotPositionSensorMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  RobotPositionSensorMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const RobotPositionSensorMessage& from);
-  void MergeFrom(const RobotPositionSensorMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .SensorPair SensorData = 1;
-  inline int sensordata_size() const;
-  inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 1;
-  inline const ::SensorPair& sensordata(int index) const;
-  inline ::SensorPair* mutable_sensordata(int index);
-  inline ::SensorPair* add_sensordata();
-  inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-      sensordata() const;
-  inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-      mutable_sensordata();
-  
-  // @@protoc_insertion_point(class_scope:RobotPositionSensorMessage)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  ::google::protobuf::RepeatedPtrField< ::SensorPair > sensordata_;
-  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
-  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
-  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static RobotPositionSensorMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class SensorPair : public ::google::protobuf::Message {
- public:
-  SensorPair();
-  virtual ~SensorPair();
-  
-  SensorPair(const SensorPair& from);
-  
-  inline SensorPair& operator=(const SensorPair& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const SensorPair& default_instance();
-  
-  void Swap(SensorPair* other);
-  
-  // implements Message ----------------------------------------------
-  
-  SensorPair* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const SensorPair& from);
-  void MergeFrom(const SensorPair& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // optional string SensorName = 1 [default = ""];
-  inline bool has_sensorname() const;
-  inline void clear_sensorname();
-  static const int kSensorNameFieldNumber = 1;
-  inline const ::std::string& sensorname() const;
-  inline void set_sensorname(const ::std::string& value);
-  inline void set_sensorname(const char* value);
-  inline void set_sensorname(const char* value, size_t size);
-  inline ::std::string* mutable_sensorname();
-  
-  // required float SensorValue = 2;
-  inline bool has_sensorvalue() const;
-  inline void clear_sensorvalue();
-  static const int kSensorValueFieldNumber = 2;
-  inline float sensorvalue() const;
-  inline void set_sensorvalue(float value);
-  
-  // optional float SensorValueDiff = 3;
-  inline bool has_sensorvaluediff() const;
-  inline void clear_sensorvaluediff();
-  static const int kSensorValueDiffFieldNumber = 3;
-  inline float sensorvaluediff() const;
-  inline void set_sensorvaluediff(float value);
-  
-  // optional uint32 SensorTimeDiff = 4;
-  inline bool has_sensortimediff() const;
-  inline void clear_sensortimediff();
-  static const int kSensorTimeDiffFieldNumber = 4;
-  inline ::google::protobuf::uint32 sensortimediff() const;
-  inline void set_sensortimediff(::google::protobuf::uint32 value);
-  
-  // optional int32 SensorID = 5 [default = -1];
-  inline bool has_sensorid() const;
-  inline void clear_sensorid();
-  static const int kSensorIDFieldNumber = 5;
-  inline ::google::protobuf::int32 sensorid() const;
-  inline void set_sensorid(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:SensorPair)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  ::std::string* sensorname_;
-  static const ::std::string _default_sensorname_;
-  float sensorvalue_;
-  float sensorvaluediff_;
-  ::google::protobuf::uint32 sensortimediff_;
-  ::google::protobuf::int32 sensorid_;
-  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
-  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
-  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static SensorPair* default_instance_;
+  static RobotPositionMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -829,14 +235,14 @@ class SensorData : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class ChainSensorSensorsMessage : public ::google::protobuf::Message {
+class AllSensorValuesMessage : public ::google::protobuf::Message {
  public:
-  ChainSensorSensorsMessage();
-  virtual ~ChainSensorSensorsMessage();
+  AllSensorValuesMessage();
+  virtual ~AllSensorValuesMessage();
   
-  ChainSensorSensorsMessage(const ChainSensorSensorsMessage& from);
+  AllSensorValuesMessage(const AllSensorValuesMessage& from);
   
-  inline ChainSensorSensorsMessage& operator=(const ChainSensorSensorsMessage& from) {
+  inline AllSensorValuesMessage& operator=(const AllSensorValuesMessage& from) {
     CopyFrom(from);
     return *this;
   }
@@ -850,17 +256,17 @@ class ChainSensorSensorsMessage : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ChainSensorSensorsMessage& default_instance();
+  static const AllSensorValuesMessage& default_instance();
   
-  void Swap(ChainSensorSensorsMessage* other);
+  void Swap(AllSensorValuesMessage* other);
   
   // implements Message ----------------------------------------------
   
-  ChainSensorSensorsMessage* New() const;
+  AllSensorValuesMessage* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ChainSensorSensorsMessage& from);
-  void MergeFrom(const ChainSensorSensorsMessage& from);
+  void CopyFrom(const AllSensorValuesMessage& from);
+  void MergeFrom(const AllSensorValuesMessage& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -883,10 +289,22 @@ class ChainSensorSensorsMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // repeated .SensorData SensorData = 1;
+  // repeated .SensorData jointData = 1;
+  inline int jointdata_size() const;
+  inline void clear_jointdata();
+  static const int kJointDataFieldNumber = 1;
+  inline const ::SensorData& jointdata(int index) const;
+  inline ::SensorData* mutable_jointdata(int index);
+  inline ::SensorData* add_jointdata();
+  inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+      jointdata() const;
+  inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+      mutable_jointdata();
+  
+  // repeated .SensorData sensorData = 2;
   inline int sensordata_size() const;
   inline void clear_sensordata();
-  static const int kSensorDataFieldNumber = 1;
+  static const int kSensorDataFieldNumber = 2;
   inline const ::SensorData& sensordata(int index) const;
   inline ::SensorData* mutable_sensordata(int index);
   inline ::SensorData* add_sensordata();
@@ -895,186 +313,26 @@ class ChainSensorSensorsMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
       mutable_sensordata();
   
-  // @@protoc_insertion_point(class_scope:ChainSensorSensorsMessage)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  ::google::protobuf::RepeatedPtrField< ::SensorData > sensordata_;
-  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
-  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
-  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static ChainSensorSensorsMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class AllSensorValues : public ::google::protobuf::Message {
- public:
-  AllSensorValues();
-  virtual ~AllSensorValues();
-  
-  AllSensorValues(const AllSensorValues& from);
-  
-  inline AllSensorValues& operator=(const AllSensorValues& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const AllSensorValues& default_instance();
-  
-  void Swap(AllSensorValues* other);
-  
-  // implements Message ----------------------------------------------
-  
-  AllSensorValues* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AllSensorValues& from);
-  void MergeFrom(const AllSensorValues& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // optional .InertialSensorsMessage ism = 1;
-  inline bool has_ism() const;
-  inline void clear_ism();
-  static const int kIsmFieldNumber = 1;
-  inline const ::InertialSensorsMessage& ism() const;
-  inline ::InertialSensorsMessage* mutable_ism();
-  
-  // optional .FSRSensorsMessage fsm = 2;
-  inline bool has_fsm() const;
-  inline void clear_fsm();
-  static const int kFsmFieldNumber = 2;
-  inline const ::FSRSensorsMessage& fsm() const;
-  inline ::FSRSensorsMessage* mutable_fsm();
-  
-  // optional .UltaSoundSensorsMessage ussm = 3;
-  inline bool has_ussm() const;
-  inline void clear_ussm();
-  static const int kUssmFieldNumber = 3;
-  inline const ::UltaSoundSensorsMessage& ussm() const;
-  inline ::UltaSoundSensorsMessage* mutable_ussm();
-  
-  // optional .ChainSensorSensorsMessage hjsm = 4;
-  inline bool has_hjsm() const;
-  inline void clear_hjsm();
-  static const int kHjsmFieldNumber = 4;
-  inline const ::ChainSensorSensorsMessage& hjsm() const;
-  inline ::ChainSensorSensorsMessage* mutable_hjsm();
-  
-  // optional .ChainSensorSensorsMessage rlsm = 5;
-  inline bool has_rlsm() const;
-  inline void clear_rlsm();
-  static const int kRlsmFieldNumber = 5;
-  inline const ::ChainSensorSensorsMessage& rlsm() const;
-  inline ::ChainSensorSensorsMessage* mutable_rlsm();
-  
-  // optional .ChainSensorSensorsMessage llsm = 6;
-  inline bool has_llsm() const;
-  inline void clear_llsm();
-  static const int kLlsmFieldNumber = 6;
-  inline const ::ChainSensorSensorsMessage& llsm() const;
-  inline ::ChainSensorSensorsMessage* mutable_llsm();
-  
-  // optional .ChainSensorSensorsMessage rasm = 7;
-  inline bool has_rasm() const;
-  inline void clear_rasm();
-  static const int kRasmFieldNumber = 7;
-  inline const ::ChainSensorSensorsMessage& rasm() const;
-  inline ::ChainSensorSensorsMessage* mutable_rasm();
-  
-  // optional .ChainSensorSensorsMessage lasm = 8;
-  inline bool has_lasm() const;
-  inline void clear_lasm();
-  static const int kLasmFieldNumber = 8;
-  inline const ::ChainSensorSensorsMessage& lasm() const;
-  inline ::ChainSensorSensorsMessage* mutable_lasm();
-  
-  // optional .BodyJointSensorsMessage bjsm = 9;
-  inline bool has_bjsm() const;
-  inline void clear_bjsm();
-  static const int kBjsmFieldNumber = 9;
-  inline const ::BodyJointSensorsMessage& bjsm() const;
-  inline ::BodyJointSensorsMessage* mutable_bjsm();
-  
-  // optional .RobotPositionSensorMessage rpsm = 10;
-  inline bool has_rpsm() const;
-  inline void clear_rpsm();
-  static const int kRpsmFieldNumber = 10;
-  inline const ::RobotPositionSensorMessage& rpsm() const;
-  inline ::RobotPositionSensorMessage* mutable_rpsm();
-  
-  // required uint32 TimeDiff = 11;
+  // required uint32 TimeDiff = 3;
   inline bool has_timediff() const;
   inline void clear_timediff();
-  static const int kTimeDiffFieldNumber = 11;
+  static const int kTimeDiffFieldNumber = 3;
   inline ::google::protobuf::uint32 timediff() const;
   inline void set_timediff(::google::protobuf::uint32 value);
   
-  // @@protoc_insertion_point(class_scope:AllSensorValues)
+  // @@protoc_insertion_point(class_scope:AllSensorValuesMessage)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::InertialSensorsMessage* ism_;
-  ::FSRSensorsMessage* fsm_;
-  ::UltaSoundSensorsMessage* ussm_;
-  ::ChainSensorSensorsMessage* hjsm_;
-  ::ChainSensorSensorsMessage* rlsm_;
-  ::ChainSensorSensorsMessage* llsm_;
-  ::ChainSensorSensorsMessage* rasm_;
-  ::ChainSensorSensorsMessage* lasm_;
-  ::BodyJointSensorsMessage* bjsm_;
-  ::RobotPositionSensorMessage* rpsm_;
+  ::google::protobuf::RepeatedPtrField< ::SensorData > jointdata_;
+  ::google::protobuf::RepeatedPtrField< ::SensorData > sensordata_;
   ::google::protobuf::uint32 timediff_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(11 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -1088,293 +346,54 @@ class AllSensorValues : public ::google::protobuf::Message {
   }
   
   void InitAsDefaultInstance();
-  static AllSensorValues* default_instance_;
+  static AllSensorValuesMessage* default_instance_;
 };
 // ===================================================================
 
 
 // ===================================================================
 
-// InertialSensorsMessage
+// RobotPositionMessage
 
-// repeated .SensorPair SensorData = 1;
-inline int InertialSensorsMessage::sensordata_size() const {
+// repeated .SensorData sensorData = 1;
+inline int RobotPositionMessage::sensordata_size() const {
   return sensordata_.size();
 }
-inline void InertialSensorsMessage::clear_sensordata() {
+inline void RobotPositionMessage::clear_sensordata() {
   sensordata_.Clear();
 }
-inline const ::SensorPair& InertialSensorsMessage::sensordata(int index) const {
+inline const ::SensorData& RobotPositionMessage::sensordata(int index) const {
   return sensordata_.Get(index);
 }
-inline ::SensorPair* InertialSensorsMessage::mutable_sensordata(int index) {
+inline ::SensorData* RobotPositionMessage::mutable_sensordata(int index) {
   return sensordata_.Mutable(index);
 }
-inline ::SensorPair* InertialSensorsMessage::add_sensordata() {
+inline ::SensorData* RobotPositionMessage::add_sensordata() {
   return sensordata_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-InertialSensorsMessage::sensordata() const {
+inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+RobotPositionMessage::sensordata() const {
   return sensordata_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-InertialSensorsMessage::mutable_sensordata() {
+inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+RobotPositionMessage::mutable_sensordata() {
   return &sensordata_;
 }
 
-// -------------------------------------------------------------------
-
-// FSRSensorsMessage
-
-// repeated .SensorPair SensorData = 1;
-inline int FSRSensorsMessage::sensordata_size() const {
-  return sensordata_.size();
-}
-inline void FSRSensorsMessage::clear_sensordata() {
-  sensordata_.Clear();
-}
-inline const ::SensorPair& FSRSensorsMessage::sensordata(int index) const {
-  return sensordata_.Get(index);
-}
-inline ::SensorPair* FSRSensorsMessage::mutable_sensordata(int index) {
-  return sensordata_.Mutable(index);
-}
-inline ::SensorPair* FSRSensorsMessage::add_sensordata() {
-  return sensordata_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-FSRSensorsMessage::sensordata() const {
-  return sensordata_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-FSRSensorsMessage::mutable_sensordata() {
-  return &sensordata_;
-}
-
-// -------------------------------------------------------------------
-
-// UltaSoundSensorsMessage
-
-// repeated .SensorPair SensorData = 1;
-inline int UltaSoundSensorsMessage::sensordata_size() const {
-  return sensordata_.size();
-}
-inline void UltaSoundSensorsMessage::clear_sensordata() {
-  sensordata_.Clear();
-}
-inline const ::SensorPair& UltaSoundSensorsMessage::sensordata(int index) const {
-  return sensordata_.Get(index);
-}
-inline ::SensorPair* UltaSoundSensorsMessage::mutable_sensordata(int index) {
-  return sensordata_.Mutable(index);
-}
-inline ::SensorPair* UltaSoundSensorsMessage::add_sensordata() {
-  return sensordata_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-UltaSoundSensorsMessage::sensordata() const {
-  return sensordata_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-UltaSoundSensorsMessage::mutable_sensordata() {
-  return &sensordata_;
-}
-
-// -------------------------------------------------------------------
-
-// HeadJointSensorsMessage
-
-// repeated .SensorPair SensorData = 1;
-inline int HeadJointSensorsMessage::sensordata_size() const {
-  return sensordata_.size();
-}
-inline void HeadJointSensorsMessage::clear_sensordata() {
-  sensordata_.Clear();
-}
-inline const ::SensorPair& HeadJointSensorsMessage::sensordata(int index) const {
-  return sensordata_.Get(index);
-}
-inline ::SensorPair* HeadJointSensorsMessage::mutable_sensordata(int index) {
-  return sensordata_.Mutable(index);
-}
-inline ::SensorPair* HeadJointSensorsMessage::add_sensordata() {
-  return sensordata_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-HeadJointSensorsMessage::sensordata() const {
-  return sensordata_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-HeadJointSensorsMessage::mutable_sensordata() {
-  return &sensordata_;
-}
-
-// -------------------------------------------------------------------
-
-// BodyJointSensorsMessage
-
-// repeated .SensorPair SensorData = 1;
-inline int BodyJointSensorsMessage::sensordata_size() const {
-  return sensordata_.size();
-}
-inline void BodyJointSensorsMessage::clear_sensordata() {
-  sensordata_.Clear();
-}
-inline const ::SensorPair& BodyJointSensorsMessage::sensordata(int index) const {
-  return sensordata_.Get(index);
-}
-inline ::SensorPair* BodyJointSensorsMessage::mutable_sensordata(int index) {
-  return sensordata_.Mutable(index);
-}
-inline ::SensorPair* BodyJointSensorsMessage::add_sensordata() {
-  return sensordata_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-BodyJointSensorsMessage::sensordata() const {
-  return sensordata_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-BodyJointSensorsMessage::mutable_sensordata() {
-  return &sensordata_;
-}
-
-// -------------------------------------------------------------------
-
-// RobotPositionSensorMessage
-
-// repeated .SensorPair SensorData = 1;
-inline int RobotPositionSensorMessage::sensordata_size() const {
-  return sensordata_.size();
-}
-inline void RobotPositionSensorMessage::clear_sensordata() {
-  sensordata_.Clear();
-}
-inline const ::SensorPair& RobotPositionSensorMessage::sensordata(int index) const {
-  return sensordata_.Get(index);
-}
-inline ::SensorPair* RobotPositionSensorMessage::mutable_sensordata(int index) {
-  return sensordata_.Mutable(index);
-}
-inline ::SensorPair* RobotPositionSensorMessage::add_sensordata() {
-  return sensordata_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::SensorPair >&
-RobotPositionSensorMessage::sensordata() const {
-  return sensordata_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::SensorPair >*
-RobotPositionSensorMessage::mutable_sensordata() {
-  return &sensordata_;
-}
-
-// -------------------------------------------------------------------
-
-// SensorPair
-
-// optional string SensorName = 1 [default = ""];
-inline bool SensorPair::has_sensorname() const {
-  return _has_bit(0);
-}
-inline void SensorPair::clear_sensorname() {
-  if (sensorname_ != &_default_sensorname_) {
-    sensorname_->clear();
-  }
-  _clear_bit(0);
-}
-inline const ::std::string& SensorPair::sensorname() const {
-  return *sensorname_;
-}
-inline void SensorPair::set_sensorname(const ::std::string& value) {
-  _set_bit(0);
-  if (sensorname_ == &_default_sensorname_) {
-    sensorname_ = new ::std::string;
-  }
-  sensorname_->assign(value);
-}
-inline void SensorPair::set_sensorname(const char* value) {
-  _set_bit(0);
-  if (sensorname_ == &_default_sensorname_) {
-    sensorname_ = new ::std::string;
-  }
-  sensorname_->assign(value);
-}
-inline void SensorPair::set_sensorname(const char* value, size_t size) {
-  _set_bit(0);
-  if (sensorname_ == &_default_sensorname_) {
-    sensorname_ = new ::std::string;
-  }
-  sensorname_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* SensorPair::mutable_sensorname() {
-  _set_bit(0);
-  if (sensorname_ == &_default_sensorname_) {
-    sensorname_ = new ::std::string;
-  }
-  return sensorname_;
-}
-
-// required float SensorValue = 2;
-inline bool SensorPair::has_sensorvalue() const {
+// required uint32 TimeDiff = 2;
+inline bool RobotPositionMessage::has_timediff() const {
   return _has_bit(1);
 }
-inline void SensorPair::clear_sensorvalue() {
-  sensorvalue_ = 0;
+inline void RobotPositionMessage::clear_timediff() {
+  timediff_ = 0u;
   _clear_bit(1);
 }
-inline float SensorPair::sensorvalue() const {
-  return sensorvalue_;
+inline ::google::protobuf::uint32 RobotPositionMessage::timediff() const {
+  return timediff_;
 }
-inline void SensorPair::set_sensorvalue(float value) {
+inline void RobotPositionMessage::set_timediff(::google::protobuf::uint32 value) {
   _set_bit(1);
-  sensorvalue_ = value;
-}
-
-// optional float SensorValueDiff = 3;
-inline bool SensorPair::has_sensorvaluediff() const {
-  return _has_bit(2);
-}
-inline void SensorPair::clear_sensorvaluediff() {
-  sensorvaluediff_ = 0;
-  _clear_bit(2);
-}
-inline float SensorPair::sensorvaluediff() const {
-  return sensorvaluediff_;
-}
-inline void SensorPair::set_sensorvaluediff(float value) {
-  _set_bit(2);
-  sensorvaluediff_ = value;
-}
-
-// optional uint32 SensorTimeDiff = 4;
-inline bool SensorPair::has_sensortimediff() const {
-  return _has_bit(3);
-}
-inline void SensorPair::clear_sensortimediff() {
-  sensortimediff_ = 0u;
-  _clear_bit(3);
-}
-inline ::google::protobuf::uint32 SensorPair::sensortimediff() const {
-  return sensortimediff_;
-}
-inline void SensorPair::set_sensortimediff(::google::protobuf::uint32 value) {
-  _set_bit(3);
-  sensortimediff_ = value;
-}
-
-// optional int32 SensorID = 5 [default = -1];
-inline bool SensorPair::has_sensorid() const {
-  return _has_bit(4);
-}
-inline void SensorPair::clear_sensorid() {
-  sensorid_ = -1;
-  _clear_bit(4);
-}
-inline ::google::protobuf::int32 SensorPair::sensorid() const {
-  return sensorid_;
-}
-inline void SensorPair::set_sensorid(::google::protobuf::int32 value) {
-  _set_bit(4);
-  sensorid_ = value;
+  timediff_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1415,220 +434,71 @@ inline void SensorData::set_sensorvaluediff(float value) {
 
 // -------------------------------------------------------------------
 
-// ChainSensorSensorsMessage
+// AllSensorValuesMessage
 
-// repeated .SensorData SensorData = 1;
-inline int ChainSensorSensorsMessage::sensordata_size() const {
+// repeated .SensorData jointData = 1;
+inline int AllSensorValuesMessage::jointdata_size() const {
+  return jointdata_.size();
+}
+inline void AllSensorValuesMessage::clear_jointdata() {
+  jointdata_.Clear();
+}
+inline const ::SensorData& AllSensorValuesMessage::jointdata(int index) const {
+  return jointdata_.Get(index);
+}
+inline ::SensorData* AllSensorValuesMessage::mutable_jointdata(int index) {
+  return jointdata_.Mutable(index);
+}
+inline ::SensorData* AllSensorValuesMessage::add_jointdata() {
+  return jointdata_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+AllSensorValuesMessage::jointdata() const {
+  return jointdata_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+AllSensorValuesMessage::mutable_jointdata() {
+  return &jointdata_;
+}
+
+// repeated .SensorData sensorData = 2;
+inline int AllSensorValuesMessage::sensordata_size() const {
   return sensordata_.size();
 }
-inline void ChainSensorSensorsMessage::clear_sensordata() {
+inline void AllSensorValuesMessage::clear_sensordata() {
   sensordata_.Clear();
 }
-inline const ::SensorData& ChainSensorSensorsMessage::sensordata(int index) const {
+inline const ::SensorData& AllSensorValuesMessage::sensordata(int index) const {
   return sensordata_.Get(index);
 }
-inline ::SensorData* ChainSensorSensorsMessage::mutable_sensordata(int index) {
+inline ::SensorData* AllSensorValuesMessage::mutable_sensordata(int index) {
   return sensordata_.Mutable(index);
 }
-inline ::SensorData* ChainSensorSensorsMessage::add_sensordata() {
+inline ::SensorData* AllSensorValuesMessage::add_sensordata() {
   return sensordata_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
-ChainSensorSensorsMessage::sensordata() const {
+AllSensorValuesMessage::sensordata() const {
   return sensordata_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
-ChainSensorSensorsMessage::mutable_sensordata() {
+AllSensorValuesMessage::mutable_sensordata() {
   return &sensordata_;
 }
 
-// -------------------------------------------------------------------
-
-// AllSensorValues
-
-// optional .InertialSensorsMessage ism = 1;
-inline bool AllSensorValues::has_ism() const {
-  return _has_bit(0);
-}
-inline void AllSensorValues::clear_ism() {
-  if (ism_ != NULL) ism_->::InertialSensorsMessage::Clear();
-  _clear_bit(0);
-}
-inline const ::InertialSensorsMessage& AllSensorValues::ism() const {
-  return ism_ != NULL ? *ism_ : *default_instance_->ism_;
-}
-inline ::InertialSensorsMessage* AllSensorValues::mutable_ism() {
-  _set_bit(0);
-  if (ism_ == NULL) ism_ = new ::InertialSensorsMessage;
-  return ism_;
-}
-
-// optional .FSRSensorsMessage fsm = 2;
-inline bool AllSensorValues::has_fsm() const {
-  return _has_bit(1);
-}
-inline void AllSensorValues::clear_fsm() {
-  if (fsm_ != NULL) fsm_->::FSRSensorsMessage::Clear();
-  _clear_bit(1);
-}
-inline const ::FSRSensorsMessage& AllSensorValues::fsm() const {
-  return fsm_ != NULL ? *fsm_ : *default_instance_->fsm_;
-}
-inline ::FSRSensorsMessage* AllSensorValues::mutable_fsm() {
-  _set_bit(1);
-  if (fsm_ == NULL) fsm_ = new ::FSRSensorsMessage;
-  return fsm_;
-}
-
-// optional .UltaSoundSensorsMessage ussm = 3;
-inline bool AllSensorValues::has_ussm() const {
+// required uint32 TimeDiff = 3;
+inline bool AllSensorValuesMessage::has_timediff() const {
   return _has_bit(2);
 }
-inline void AllSensorValues::clear_ussm() {
-  if (ussm_ != NULL) ussm_->::UltaSoundSensorsMessage::Clear();
+inline void AllSensorValuesMessage::clear_timediff() {
+  timediff_ = 0u;
   _clear_bit(2);
 }
-inline const ::UltaSoundSensorsMessage& AllSensorValues::ussm() const {
-  return ussm_ != NULL ? *ussm_ : *default_instance_->ussm_;
-}
-inline ::UltaSoundSensorsMessage* AllSensorValues::mutable_ussm() {
-  _set_bit(2);
-  if (ussm_ == NULL) ussm_ = new ::UltaSoundSensorsMessage;
-  return ussm_;
-}
-
-// optional .ChainSensorSensorsMessage hjsm = 4;
-inline bool AllSensorValues::has_hjsm() const {
-  return _has_bit(3);
-}
-inline void AllSensorValues::clear_hjsm() {
-  if (hjsm_ != NULL) hjsm_->::ChainSensorSensorsMessage::Clear();
-  _clear_bit(3);
-}
-inline const ::ChainSensorSensorsMessage& AllSensorValues::hjsm() const {
-  return hjsm_ != NULL ? *hjsm_ : *default_instance_->hjsm_;
-}
-inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_hjsm() {
-  _set_bit(3);
-  if (hjsm_ == NULL) hjsm_ = new ::ChainSensorSensorsMessage;
-  return hjsm_;
-}
-
-// optional .ChainSensorSensorsMessage rlsm = 5;
-inline bool AllSensorValues::has_rlsm() const {
-  return _has_bit(4);
-}
-inline void AllSensorValues::clear_rlsm() {
-  if (rlsm_ != NULL) rlsm_->::ChainSensorSensorsMessage::Clear();
-  _clear_bit(4);
-}
-inline const ::ChainSensorSensorsMessage& AllSensorValues::rlsm() const {
-  return rlsm_ != NULL ? *rlsm_ : *default_instance_->rlsm_;
-}
-inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_rlsm() {
-  _set_bit(4);
-  if (rlsm_ == NULL) rlsm_ = new ::ChainSensorSensorsMessage;
-  return rlsm_;
-}
-
-// optional .ChainSensorSensorsMessage llsm = 6;
-inline bool AllSensorValues::has_llsm() const {
-  return _has_bit(5);
-}
-inline void AllSensorValues::clear_llsm() {
-  if (llsm_ != NULL) llsm_->::ChainSensorSensorsMessage::Clear();
-  _clear_bit(5);
-}
-inline const ::ChainSensorSensorsMessage& AllSensorValues::llsm() const {
-  return llsm_ != NULL ? *llsm_ : *default_instance_->llsm_;
-}
-inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_llsm() {
-  _set_bit(5);
-  if (llsm_ == NULL) llsm_ = new ::ChainSensorSensorsMessage;
-  return llsm_;
-}
-
-// optional .ChainSensorSensorsMessage rasm = 7;
-inline bool AllSensorValues::has_rasm() const {
-  return _has_bit(6);
-}
-inline void AllSensorValues::clear_rasm() {
-  if (rasm_ != NULL) rasm_->::ChainSensorSensorsMessage::Clear();
-  _clear_bit(6);
-}
-inline const ::ChainSensorSensorsMessage& AllSensorValues::rasm() const {
-  return rasm_ != NULL ? *rasm_ : *default_instance_->rasm_;
-}
-inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_rasm() {
-  _set_bit(6);
-  if (rasm_ == NULL) rasm_ = new ::ChainSensorSensorsMessage;
-  return rasm_;
-}
-
-// optional .ChainSensorSensorsMessage lasm = 8;
-inline bool AllSensorValues::has_lasm() const {
-  return _has_bit(7);
-}
-inline void AllSensorValues::clear_lasm() {
-  if (lasm_ != NULL) lasm_->::ChainSensorSensorsMessage::Clear();
-  _clear_bit(7);
-}
-inline const ::ChainSensorSensorsMessage& AllSensorValues::lasm() const {
-  return lasm_ != NULL ? *lasm_ : *default_instance_->lasm_;
-}
-inline ::ChainSensorSensorsMessage* AllSensorValues::mutable_lasm() {
-  _set_bit(7);
-  if (lasm_ == NULL) lasm_ = new ::ChainSensorSensorsMessage;
-  return lasm_;
-}
-
-// optional .BodyJointSensorsMessage bjsm = 9;
-inline bool AllSensorValues::has_bjsm() const {
-  return _has_bit(8);
-}
-inline void AllSensorValues::clear_bjsm() {
-  if (bjsm_ != NULL) bjsm_->::BodyJointSensorsMessage::Clear();
-  _clear_bit(8);
-}
-inline const ::BodyJointSensorsMessage& AllSensorValues::bjsm() const {
-  return bjsm_ != NULL ? *bjsm_ : *default_instance_->bjsm_;
-}
-inline ::BodyJointSensorsMessage* AllSensorValues::mutable_bjsm() {
-  _set_bit(8);
-  if (bjsm_ == NULL) bjsm_ = new ::BodyJointSensorsMessage;
-  return bjsm_;
-}
-
-// optional .RobotPositionSensorMessage rpsm = 10;
-inline bool AllSensorValues::has_rpsm() const {
-  return _has_bit(9);
-}
-inline void AllSensorValues::clear_rpsm() {
-  if (rpsm_ != NULL) rpsm_->::RobotPositionSensorMessage::Clear();
-  _clear_bit(9);
-}
-inline const ::RobotPositionSensorMessage& AllSensorValues::rpsm() const {
-  return rpsm_ != NULL ? *rpsm_ : *default_instance_->rpsm_;
-}
-inline ::RobotPositionSensorMessage* AllSensorValues::mutable_rpsm() {
-  _set_bit(9);
-  if (rpsm_ == NULL) rpsm_ = new ::RobotPositionSensorMessage;
-  return rpsm_;
-}
-
-// required uint32 TimeDiff = 11;
-inline bool AllSensorValues::has_timediff() const {
-  return _has_bit(10);
-}
-inline void AllSensorValues::clear_timediff() {
-  timediff_ = 0u;
-  _clear_bit(10);
-}
-inline ::google::protobuf::uint32 AllSensorValues::timediff() const {
+inline ::google::protobuf::uint32 AllSensorValuesMessage::timediff() const {
   return timediff_;
 }
-inline void AllSensorValues::set_timediff(::google::protobuf::uint32 value) {
-  _set_bit(10);
+inline void AllSensorValuesMessage::set_timediff(::google::protobuf::uint32 value) {
+  _set_bit(2);
   timediff_ = value;
 }
 

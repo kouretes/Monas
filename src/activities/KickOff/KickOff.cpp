@@ -8,7 +8,7 @@ namespace {
 
 int KickOff::Execute() {
 	//sleep(1);	
-//gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
+//gsm = _blk->readState<GameStateMessage> ("behavior");
 	//if (gsm==0)
 		//return 0;
 	//if(gsm!=0 && gsm->player_state()!=PLAYER_PLAYING){
@@ -18,7 +18,7 @@ int KickOff::Execute() {
 	//_blk->process_messages();
 	//std::cout << "STATE KICKOFF" <<std::endl;
 	//boost::posix_time::ptime timeout = boost::posix_time::microsec_clock::universal_time();
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
+	obsm = _blk->readSignal<ObservationMessage> ("ObservationMessage");
 	Logger::Instance().WriteMsg("KickOff",  " Execute", Logger::Info);
 	if(obsm.get()!=0){
 		//std::cout << "STATE KICKOFF Kick" <<std::endl;
@@ -28,9 +28,9 @@ int KickOff::Execute() {
 		 else 
 			amot->set_command("SoftRightSideKick");	
 	}
-	_blk->publish_signal(*amot, "motion");
+	_blk->publishSignal(*amot, "motion");
 	kcm->set_kickoff(false);
-	_blk->publish_state(*kcm, "behavior");
+	_blk->publishState(*kcm, "behavior");
 	return 0;
 }
 

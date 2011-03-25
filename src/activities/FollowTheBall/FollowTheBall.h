@@ -11,16 +11,12 @@
 #include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "../BehaviorConst.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif	
 
-#define DONOTHING 0
-#define CALIBRATE 1
-#define SCANFORBALL 2
-#define SCANFORPOST 3
-#define BALLTRACK 4
 			
 class FollowTheBall : public IActivity {
 			
@@ -34,6 +30,7 @@ public:
 	
 private:	
 		bool first;
+		bool scancompleted;
 		MotionWalkMessage* wmot;
 		BToHeadMessage* bhmsg;
 		ObservationMessage* lastObsm;

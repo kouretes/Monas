@@ -10,12 +10,11 @@ namespace {
 int WalktoPost::Execute() {
 	
 	//Logger::Instance().WriteMsg("WalkToPost",  " Execute", Logger::Info);
-	sleep(3);
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
+	//sleep(3);
+	obsm = _blk->readSignal<ObservationMessage> ("vision");
 	float X = 0.0, Y = 0.0, theta = 0.0;
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
-	float posx=0.14, posy=0.035;
-	
+
 	headaction = BALLTRACK;
 	if (obsm.get()==0){
 		//Logger::Instance().WriteMsg("WalkToPost",  " NO OBSM", Logger::Info);
@@ -37,12 +36,12 @@ int WalktoPost::Execute() {
 	}
 	else
 	{
-		float offsety=side*posy;
+		float offsety=side*dDistBallY;
 		float g=0.3;
-		littleWalk((bx-posx-0.3)*g,(by-offsety-0.3)*g,0,1);
+		littleWalk((bx-dDistBallX)*g,(by-offsety)*g,0,1);
 	}
 	bhmsg->set_headaction(headaction);
-	_blk->publish_signal(*bhmsg, "behavior");
+	_blk->publishSignal(*bhmsg, "behavior");
 	return 0;
 }
 
@@ -71,7 +70,7 @@ void WalktoPost::velocityWalk(double x, double y, double th, double f) {
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
 	wmot->set_parameter(3, f);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 void WalktoPost::littleWalk(double x, double y, double th, int s) {
@@ -80,5 +79,5 @@ void WalktoPost::littleWalk(double x, double y, double th, int s) {
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }

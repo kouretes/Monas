@@ -9,16 +9,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif	
-
-#define DONOTHING 0
-#define CALIBRATE 1
-#define SCANFORBALL 2
-#define SCANFORPOST 3
-#define BALLTRACK 4
+#include "../BehaviorConst.h"
 			
 class WalktoPost : public IActivity {
 			

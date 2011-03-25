@@ -17,10 +17,11 @@ int FollowTheBall::Execute() {
 	//Logger::Instance().WriteMsg("FollowTheball",  " Execute", Logger::Info);
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	float posx=0.117, posy=0.03;
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
-	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
-	scm = _blk->read_state<ScanMessage> ("ScanMessage");
-	
+	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	hbm = _blk->readState<HeadToBMessage> ("behavior");
+	scm = _blk->readState<ScanMessage> ("behavior");
+	if(scm.get()!=0)
+		scancompleted = scm->scancompleted();
 	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
@@ -82,11 +83,12 @@ int FollowTheBall::Execute() {
 			
 		}
 		else{		
-			if(scm.get()!=0 && scm->scancompleted()){
+			if(scancompleted){
 				littleWalk(0.0, 0.0, 45 * TO_RAD, 5);
-				ScanMessage* sm = new ScanMessage();
-				sm->set_scancompleted(false);
-				_blk->publish_state(*sm, "behavior");
+				scancompleted = false;
+				//ScanMessage* sm = new ScanMessage();
+			//sm->set_scancompleted(false);
+				//_blk->publishState(*sm, "behavior");
 				//Logger::Instance().WriteMsg("ScanForBall",  " TURNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNn", Logger::Info);
 			}
 			else{
@@ -99,11 +101,12 @@ int FollowTheBall::Execute() {
 		}
 	}
 	bhmsg->set_headaction(headaction);
-	_blk->publish_state(*bhmsg, "behavior");
+	_blk->publishSignal(*bhmsg, "behavior");
 	return 0;
 }
 
 void FollowTheBall::UserInit () {
+	scancompleted = false;
 	first= true;
 	_blk->subscribeTo("vision", 0);
 	_blk->subscribeTo("sensors", 0);
@@ -129,7 +132,7 @@ void FollowTheBall::velocityWalk(double x, double y, double th, double f) {
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
 	wmot->set_parameter(3, f);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 void FollowTheBall::littleWalk(double x, double y, double th, int s) {
@@ -138,6 +141,6 @@ void FollowTheBall::littleWalk(double x, double y, double th, int s) {
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 	

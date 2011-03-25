@@ -15,14 +15,15 @@ int Init::Execute() {
 	_blk->process_messages();
 	_blk->subscribeTo("behavior", 0);		
 	//Logger::Instance().WriteMsg("Init",  " Execute "+ _toString(playernum), Logger::Info);
-	pnm->set_player_number(playernum);
-	_blk->publish_state(*pnm, "behavior");
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
+
 	return 0;
 }
 
 void Init::UserInit () {
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	pnm = new PlayerNumberMessage();
+
+
 }
 
 std::string Init::GetName () {
@@ -47,6 +48,8 @@ bool Init::readConfiguration(const std::string& file_name) {
 		teamColor = TEAM_RED;
 	else
 		Logger::Instance().WriteMsg("Init", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
-
+	pnm->set_team_side(teamColor);
+	pnm->set_player_number(playernum);
+	_blk->publishState(*pnm, "behavior");
 	return true;
 }

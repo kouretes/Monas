@@ -9,15 +9,17 @@ namespace {
 
 
 int MyRightKick::Execute() {
-	_blk->process_messages();
-	gsm = _blk->read_state<GameStateMessage>("GameStateMessage");
-	if(gsm!=0 && gsm->game_state()!=PLAYER_PLAYING)
+	//_blk->process_messages();
+	gsm = _blk->readState<GameStateMessage>("behavior");
+	if(gsm!=0 && gsm->game_state()!=PLAYER_PLAYING){
+		//Logger::Instance().WriteMsg("MyRightKick",  " No********************************", Logger::Info);
 		return 0;
+	}
 
-	//Logger::Instance().WriteMsg("MyRightKick",  " Execute", Logger::Info);
+	//Logger::Instance().WriteMsg("MyRightKick",  " Execute***************************", Logger::Info);
 
 	amot->set_command("RightKick");
-	_blk->publish_signal(*amot, "motion");
+	_blk->publishSignal(*amot, "motion");
 
 	return 0;
 }

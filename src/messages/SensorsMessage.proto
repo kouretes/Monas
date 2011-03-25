@@ -1,34 +1,8 @@
-message InertialSensorsMessage{
-	repeated SensorPair SensorData   	= 1;
-}
-
-message FSRSensorsMessage{
-	repeated SensorPair SensorData   	= 1;
-}
-
-message UltaSoundSensorsMessage{
-	repeated SensorPair SensorData   	= 1;
-}
-
-message HeadJointSensorsMessage{
-	repeated SensorPair SensorData   	= 1;
-}
-
-message BodyJointSensorsMessage{
-	repeated SensorPair SensorData   	= 1;
-}
-
-message RobotPositionSensorMessage{
-	repeated SensorPair SensorData   	= 1;
-}
 
 
-message SensorPair {
-	optional string SensorName = 1 [default = ""];
-	required float  SensorValue = 2;
-	optional float SensorValueDiff = 3;
-	optional uint32 SensorTimeDiff = 4; 
-	optional int32 SensorID = 5 [default = -1];
+message RobotPositionMessage{
+	repeated SensorData sensorData   	= 1;
+	required uint32 TimeDiff = 2;
 }
 
 message SensorData {
@@ -36,22 +10,8 @@ message SensorData {
 	required float SensorValueDiff = 2;
 }
 
-message ChainSensorSensorsMessage{
-	repeated SensorData SensorData = 1;
-}
-
-message AllSensorValues{
-	optional InertialSensorsMessage ism=1;
-	optional FSRSensorsMessage fsm =2;
-	optional UltaSoundSensorsMessage ussm=3;
-	optional ChainSensorSensorsMessage hjsm=4;
-	optional ChainSensorSensorsMessage rlsm=5;
-	optional ChainSensorSensorsMessage llsm=6; 
-	optional ChainSensorSensorsMessage rasm=7;
-	optional ChainSensorSensorsMessage lasm=8;
-	
-	optional BodyJointSensorsMessage bjsm=9;
-	optional RobotPositionSensorMessage rpsm=10;
-	
-	required uint32 TimeDiff = 11; 
+message AllSensorValuesMessage{
+	repeated SensorData jointData   	= 1;
+	repeated SensorData sensorData		= 2;
+	required uint32 TimeDiff = 3; 
 }

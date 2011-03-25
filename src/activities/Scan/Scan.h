@@ -11,16 +11,9 @@
 #include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif	
-
-#define DONOTHING 0
-#define CALIBRATE 1
-#define SCANFORBALL 2
-#define SCANFORPOST 3
-#define BALLTRACK 4					
+#include "../BehaviorConst.h"
+#include "../ApproachBall/ApproachBall.h"
+			
 class Scan : public IActivity {
 			
 public:
@@ -32,15 +25,16 @@ public:
 	std::string GetName ();
 	
 private:	
-		MotionWalkMessage* wmot;
-		BToHeadMessage* bhmsg;
-		boost::shared_ptr<const HeadToBMessage> hbm;
-		boost::shared_ptr<const GameStateMessage> gsm;
-		int headaction;
-		boost::posix_time::ptime lastTurn;
-		void velocityWalk(double x, double y, double th, double f);
-		void littleWalk(double x, double y, double th, int s);	
+	BToHeadMessage* bhmsg;
+	MotionWalkMessage wmot;
+	boost::shared_ptr<const HeadToBMessage> hbm;
+	boost::shared_ptr<const GameStateMessage> gsm;
+	int headaction;
+	boost::posix_time::ptime lastTurn;
+	ApproachBall ab;
 	
+	void velocityWalk( double x, double y, double th, double f);
+	void littleWalk(double x, double y, double th);	
 };
 
 #endif // _Scan_h_

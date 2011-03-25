@@ -214,7 +214,7 @@ int Play::Execute() {
 						amot->set_command("SoftRightSideKick");
 						direction = +1;
 					}
-					_blk->publish_signal(*amot, "motion");
+					_blk->publishSignal(*amot, "motion");
 				}
 				kickoff = false;
 			} else {
@@ -243,7 +243,7 @@ int Play::Execute() {
 						amot->set_command("SoftRightSideKick");
 				}
 
-				_blk->publish_signal(*amot, "motion");*/
+				_blk->publishSignal(*amot, "motion");*/
 
 				/* **************** End of Targetted Kicks ********************** */
 
@@ -254,7 +254,7 @@ int Play::Execute() {
 					amot->set_command("LeftKick");
 				else
 					amot->set_command("RightKick");
-				_blk->publish_signal(*amot, "motion");
+				_blk->publishSignal(*amot, "motion");
 				//}
 				//else if (mglRand()<0.5) {
 				//if (by > 0.0) {
@@ -301,19 +301,19 @@ int Play::Execute() {
 
 	cout << "headAction " << curraction << "Play" << endl;
 
-	_blk->publish_signal(*bhmsg, "behavior");
+	_blk->publishSignal(*bhmsg, "behavior");
 
 	return 0;
 }
 
 void Play::read_messages() {
 
-	gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-	bmsg = _blk->read_signal<BallTrackMessage> ("BallTrackMessage");
-	obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
-	//om   = _blk->read_signal<ObstacleMessage> ("ObstacleMessage");
-	hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
-	scm = _blk->read_signal<ScanMessage> ("ScanMessage");
+	gsm = _blk->readState<GameStateMessage> ("behavior");
+	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
+	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	//om   = _blk->readSignal<ObstacleMessage> ("ObstacleMessage");
+	hbm = _blk->readState<HeadToBMessage> ("behavior");
+	scm = _blk->readSignal<ScanMessage> ("behavior");
 
 	Logger::Instance().WriteMsg("Play", "read_messages ", Logger::ExtraExtraInfo);
 
@@ -329,7 +329,7 @@ void Play::velocityWalk(double x, double y, double th, double f) {
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
 	wmot->set_parameter(3, f);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 void Play::littleWalk(double x, double y, double th, int s) {
@@ -338,7 +338,7 @@ void Play::littleWalk(double x, double y, double th, int s) {
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publish_signal(*wmot, "motion");
+	_blk->publishSignal(*wmot, "motion");
 }
 
 bool Play::readConfiguration(const std::string& file_name) {

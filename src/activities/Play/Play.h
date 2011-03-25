@@ -45,8 +45,6 @@ class Play: public IActivity {
 		BToHeadMessage* bhmsg;
 		int pitchdirection;
 		int yawdirection;
-		SensorPair HeadYaw;
-		SensorPair HeadPitch;
 
 		boost::shared_ptr<const BallTrackMessage> bmsg;
 		boost::shared_ptr<const GameStateMessage> gsm;
