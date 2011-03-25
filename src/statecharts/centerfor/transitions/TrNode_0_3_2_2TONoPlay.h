@@ -16,7 +16,7 @@ void UserInit () {
 
 	bool Eval() {
 		_blk->process_messages();
-		 boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
+		 boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
      if ( gsm.get() == 0 ){		
 		// Logger::Instance().WriteMsg("TrCond_0_3_2_2TONoPlay",  " TRUE NO GSM", Logger::Info);
 		 return true;

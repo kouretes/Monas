@@ -5,34 +5,32 @@
 	log statistics -->
 
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=20 StatsCycle=1000>
+
+
+<agent IsRealTime=1 Priority=1 ThreadFrequency=50 StatsCycle=1000>
 	<name>KMC</name>
 	<activity>MotionController</activity>
 	<activity>RobotController</activity>
 	<activity>LedHandler</activity>
 </agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=12 StatsCycle=50>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=30 StatsCycle=50>
 	<name>KVision</name>
 	<activity>Vision</activity>
+<!--
+	<activity>Localization </activity>
+<activity>HeadBehavior</activity> 
 
-	<activity>HeadBehavior</activity> 
+	
 
-<!--	<activity>Localization </activity>
-	<activity>VBehavior</activity>
+<activity>VBehavior</activity>
 -->
 </agent>
-
-<agent IsRealTime=1 Priority=1 ThreadFrequency=6 StatsCycle=1000>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>KSensors</name>
-		
 	<activity>Sensors</activity>
 </agent>
-
-<statechart>centerfor</statechart>
-
 <!--
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>BodyBehavior</name>
 	<activity>BodyBehavior</activity>
-</agent>
--->
+</agent>-->

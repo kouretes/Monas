@@ -15,6 +15,7 @@ add_library ( GenericNao  ${LibBuildType}
 			aldebaran-visiondefinitions.h
 			headAngleSensor.h
 			robot_consts.h
+			robot_consts.cpp
 			aldebaran-proxy.h
 			aldebaran-vision.h
 			kAlBroker.cpp

@@ -14,7 +14,7 @@ public:
  }
 
 	bool Eval() {
-		boost::shared_ptr<const PlayerNumberMessage> pnm = _blk->read_state<PlayerNumberMessage> ("PlayerNumberMessage");
+		boost::shared_ptr<const PlayerNumberMessage> pnm = _blk->readState<PlayerNumberMessage> ("behavior");
 		if ( pnm.get() == 0 ){
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOcenter",  " FALSE NO PNM", Logger::Info);
 			return true;

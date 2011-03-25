@@ -2,7 +2,7 @@
 #define SENSORS_H
 #include "architecture/narukom/pub_sub/publisher.h"
 
-#include "hal/robot/generic_nao/robot_consts.h"
+
 #include "hal/robot/generic_nao/aldebaran-sensors.h"
 #include "messages/SensorsMessage.pb.h"
 #include <vector>
@@ -10,6 +10,8 @@
 #include <string>
 
 #include "architecture/IActivity.h"
+#include "tools/stat/cumulative.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 
 //#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
 // Use DCM proxy
@@ -43,15 +45,9 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/
 			dcm->set(commands);
 
 		}
+		RobotPositionMessage RPM;
 
-		InertialSensorsMessage ISM;
-		FSRSensorsMessage FSM;
-		UltaSoundSensorsMessage USSM;
-		HeadJointSensorsMessage HJSM;
-		BodyJointSensorsMessage BJSM;
-		RobotPositionSensorMessage RPSM;
-
-		AllSensorValues ASM;
+		AllSensorValuesMessage ASM;
 
 	private:
 		AL::ALPtr<AL::DCMProxy> dcm;
@@ -60,27 +56,30 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/
 		//	AL::ALPtr<AL::ALMemoryFastAccess> MemoryFastAccess;
 
 		void initialisation();
+
+		std::vector<std::string> jointKeys,sensorKeys;
+		sample_counter sc;
+		cumulative_central_moments<float> gyravg[KDeviceLists::GYR_SIZE];
+		cumulative_central_moments<float> accnorm;
+
+
+
+#ifdef KROBOT_IS_REMOTE_OFF
 		void initFastAccess();
 		void synchronisedDCMcallback();
-
-		std::map<DeviceNames, float *> SensorDataPtr;
-
-		std::map<std::string, std::vector<std::string> > devicesInChains;
-		std::map<std::string, std::vector<std::string> > devicesNames;
-
-		std::map<std::string, std::vector<float> > Values;
-
-		RtTime rtm;
+		std::vector<float *> jointPtr,sensorPtr;//Used by DCM callbacks
 		RtTime rtmfast;
-		unsigned int timediff;
 		unsigned int timedifffast;
+#else
 
-		unsigned int period;
+	std::vector<float> jointValues,sensorValues;
 
-		float smoothness; //sensordata = 90%*value + 10%*oldvalue
-		//Indexing according initialization
-		std::vector<float> devicesValues;
-		template<typename T> void fillSensorMsg(T &msg, int start, int end);
+#endif /* KROBOT_IS_REMOTE_OFF*/
+	RtTime rtm;
+	unsigned int timediff;
+
+	float smoothness; //sensordata = 90%*value + 10%*oldvalue
+
 };
 
 #endif

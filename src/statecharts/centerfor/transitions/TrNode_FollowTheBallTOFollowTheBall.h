@@ -17,20 +17,20 @@ public:
 
 	bool Eval() {
 		_blk->publish_all();
-		SysCall::_usleep(400000);
+		SysCall::_usleep(300000);
 		_blk->process_messages();
-		 boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-     if ( gsm.get() == 0 ){
-		 //std::cout<<"*************Transition NoPlay TRUE NO GSM*****************"<<std::endl;
-		// Logger::Instance().WriteMsg("TrCond_0_3_2_2TONoPlay",  " TRUE NO GSM", Logger::Info);
+		 boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
+     if (gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){
+		 
+		// Logger::Instance().WriteMsg("TrCond_0_3_2_2TONoPlay",  " TRUE !PLAYING", Logger::Info);
 		 return false;
 		 }
      if( gsm->player_state()!=PLAYER_PLAYING){
-		//std::cout<<"*************Transition NoPlay FALSE*****************"<<std::endl;
-		//Logger::Instance().WriteMsg("TrCond_0_3_2_2TONoPlay",  " FALSE PLAYING", Logger::Info);
+		
+	//	Logger::Instance().WriteMsg("TrCond_0_3_2_2TONoPlay",  " FALSE PLAYING", Logger::Info);
         return false;
 	}
-	 //std::cout<<"*************Transition NoPlay TRUE*****************"<<std::endl;
+	
 	// Logger::Instance().WriteMsg("TrCond_0_3_2_2TONoPlay",  " TRUE", Logger::Info);
 	 return true;
     }

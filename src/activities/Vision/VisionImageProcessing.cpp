@@ -1,4 +1,5 @@
 #include "Vision.h"
+
 #include "architecture/archConfig.h"
 #include <cmath>
 #include "sys/stat.h"
@@ -144,6 +145,7 @@ typedef struct
 
 void Vision::gridScan(const KSegmentator::colormask_t color)
 {
+
 	//Horizontal + Vertical Scan
 #ifdef DEBUGVISION
 	cout<<"Starting Grid scan"<<endl;
@@ -375,6 +377,8 @@ cout<<"End Grid scan"<<endl;
 
 bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t c) const
 {
+	KPROF_SCOPE(vprof,"calculateValidBall");
+
 	unsigned int  gd = 0,bd=0;
 //	float innerrad = ball.cr * 0.707;
 	int top,left,right,bot;
@@ -423,7 +427,7 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 	const int inside=floor(KMat::transformations::PI*cr*cr/4.0)/(sub*sub);
 	float ratio = ((float) gd) / (inside);
 	//cout<<"Validratio:"<<ratio<<endl;
-	if (ratio < 0.6)
+	if (ratio < 0.65)
 		return false;
 	ratio=((float) bd) / (ttl-inside);
 	//cout<<"Validratio2:"<<ratio<<endl;
@@ -525,8 +529,9 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 }
 bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c) const
 {
+	KPROF_SCOPE(vprof,"calculateValidGoalPost");
 
-	unsigned int ttl = 0,bd=0,gd=0;
+	unsigned int ttl=0,bd=0,gd=0;
 	float ratio;
 
 	tracer_t l,r;
@@ -536,69 +541,55 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	r.init(goal.tr.x,goal.tr.y);
 	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
 	r.setScale(config.subsampling);
+	const int w=(r.x-l.x)+1;
+	const int sub=config.subsampling;
+
+	for(int i=0;i<PREFETCH-1;++i)
+		prepSeg(l.x-w-1+sub*i,l.y);
+
 	while(l.y<goal.bot.y && r.y<goal.bot.y)
 	{
 
-		for(int x=l.x-(r.x-l.x)-1; x<l.x-1;x+=config.subsampling)
+		for(int x=l.x-w-1; x<r.x+w+1;x+=sub)
 		{
-			//prepSeg(x+config.subsampling,l.y);//Prefetching
+			if(x+PREFETCH*sub<=r.x+w+1)
+				prepSeg(x+PREFETCH*sub,l.y);//Prefetching
+
 			if(colorIsA(doSeg(x,l.y,c),c))
-				bd++;
-			ttl++;
-		}
-		for(int x=r.x+2;x<r.x+(r.x-l.x)+1;x+=config.subsampling)
-		{
-			//prepSeg(x+config.subsampling,r.y);//Prefetching
-			if(colorIsA(doSeg(x,r.y,c),c))
-				bd++;
-			ttl++;
+			{
+				if(x>l.x&&x<r.x)
+					gd++;
+				else
+					bd++;
+
+			}
+			if(x>l.x&&x<r.x)
+				ttl++;
 		}
 		l.step();
 		r.step();
+
+
 
 	}
 	ratio=(float (bd+1))/(ttl+1);
+	//cout<<"Bad ratio:"<<ratio<<endl;
 	if(ratio>0.35)
 		return false;
-
-	ttl=0;gd=0;
-
-	l.init(goal.tl.x,goal.tl.y);
-	//prepSeg(goal.tl.x,goal.tl.y);//Prefetching
-	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
-	l.setScale(config.subsampling);
-	r.init(goal.tr.x,goal.tr.y);
-	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
-	r.setScale(config.subsampling);
-	while(l.y<goal.bot.y && r.y<goal.bot.y)
-	{
-
-		for(int x=l.x;x<=r.x;x+=config.subsampling)
-		{
-			//prepSeg(x+config.subsampling,r.y);//Prefetching
-			if(colorIsA(doSeg(x,r.y,c),c))
-				gd++;
-			ttl++;
-
-		}
-
-		l.step();
-		r.step();
-	}
-
 	ratio=(float (gd+1))/(ttl+1);
-	if(ratio<0.75)
+	//cout<<"Goodratio:"<<ratio<<endl;
+	if(ratio<0.8)
 		return false;
-
+	//if((float (bd+1))/(float (gd+1)) > 0.35)
+	//	return false;
+	//cout<<"Accepted"<<ratio<<endl;
 	return true;
-
-
 
 }
 
 bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator::colormask_t c) const
 {
-
+	KPROF_SCOPE(vprof,"calculateValidGoalPostBase");
 	int width =goal.lr.x-goal.ll.x+1;
 	unsigned int ttl = 0, gd = 0;
 	float ratio;
@@ -623,6 +614,7 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 
 bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::colormask_t c) const
 {
+	KPROF_SCOPE(vprof,"calculateValidGoalPostTop");
 	traceResult r;
 	KVecInt2 s;
 	//s=goal.top;
@@ -672,8 +664,7 @@ bool cmpgoalpostdata_t (Vision::goalpostdata_t a,  Vision::goalpostdata_t b)
 
 int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask_t c)
 {
-
-
+	KPROF_SCOPE(vprof,"locateGoalPost");
 	vector<goalpostdata_t> history;
 	tracer_t at;
 	vector<KVecInt2>::const_iterator i;//candidate iterator
@@ -708,20 +699,31 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		trcrs=traceline((*i),Vrt,c);
 		m.x=(m.x+trcrs.p.x)/2;
 		m.y=(m.y+trcrs.p.y)/2;
+		KVecFloat2 b,t,ll,lr,tl,tr,temp;
 
 
 		trcrs = traceBlobEdge(m,Vdn,c);
 		newpost.haveBot=trcrs.smartsuccess;
 		newpost.bot=trcrs.p;
 
+
 		trcrs = traceBlobEdge(m,Vup,c);
 		newpost.haveTop=trcrs.smartsuccess;
 		newpost.top=trcrs.p;
 
+		b=simpleRotation(newpost.bot);
+		t=simpleRotation(newpost.top);
+
+		/*
 		newpost.ll.y=newpost.bot.y;
 		newpost.lr.y=newpost.bot.y;
 		newpost.ll.x=rawImage->width;
-		newpost.lr.x=0;
+		newpost.lr.x=0;*/
+		ll.y=b.y;
+		lr.y=b.y;
+		ll.x=4*rawImage->width;
+		lr.x=-4*rawImage->width;
+
 
 		at.init(newpost.bot.x,newpost.bot.y);
 		at.initVelocity(newpost.top.x-newpost.bot.x,newpost.top.y-newpost.bot.y	);
@@ -729,41 +731,66 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		for(int k=0;k<config.subsampling;k++)
 		{
 			trcrs=traceline(at,Vlt,c);
-			//suml+=trcrs.p.x;
-			newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
+			//cout<<at.x<<" "<<at.y<<endl;
+			temp=simpleRotation(trcrs.p);
+			ll.x=ll.x>temp.x?temp.x:ll.x;
+			//newpost.ll.x=newpost.ll.x>trcrs.p.x?trcrs.p.x :newpost.ll.x;
 			trcrs=traceline(at,Vrt,c);
-			newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
+
+			temp=simpleRotation(trcrs.p);
+			lr.x=lr.x<temp.x?temp.x:lr.x;
+
+			//newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
 			//sumr+=trcrs.p.x;
 			at.step();
+			at.step();
 		}
-
+		//Back to unrotated coords
+		newpost.ll=simpleRotation(ll);
+		newpost.lr=simpleRotation(lr);
 		//newpost.ll.x=suml/(config.subsampling);
 		//newpost.lr.x=sumr/(config.subsampling);
 
-		newpost.tl.y=newpost.top.y;
-		newpost.tr.y=newpost.top.y;
-		newpost.tl.x=rawImage->width;
-		newpost.tr.x=0;
+		tl.y=t.y;
+		tr.y=t.y;
+		tl.x=4*rawImage->width;
+		tr.x=-4*rawImage->width;
 
-		at.init(newpost.top.x+(newpost.bot.x-newpost.top.x)/4,newpost.top.y+(newpost.bot.y-newpost.top.y)/4);
+		at.init(newpost.top.x+(newpost.bot.x-newpost.top.x)/5,newpost.top.y+(newpost.bot.y-newpost.top.y)/5);
 		at.initVelocity(newpost.bot.x-newpost.top.x,newpost.bot.y-newpost.top.y	);
 
 		//suml=0,sumr=0;
 		for(int k=0;k<config.subsampling;k++)
 		{
 			trcrs=traceline(at,Vlt,c);
-			//suml+=trcrs.p.x;
-			newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
+			//cout<<at.x<<" "<<at.y<<endl;
+
+			temp=simpleRotation(trcrs.p);
+			tl.x=tl.x>temp.x?temp.x:tl.x;
+
+			//newpost.tl.x=newpost.tl.x>trcrs.p.x?trcrs.p.x :newpost.tl.x;
+
 			trcrs=traceline(at,Vrt,c);
-			//sumr+=trcrs.p.x;
-			newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
+
+			temp=simpleRotation(trcrs.p);
+			tr.x=tr.x<temp.x?temp.x:tr.x;
+
+			//newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
+			at.step();
 			at.step();
 		}
 		//newpost.tl.x=suml/(config.subsampling);
 		//newpost.tr.x=sumr/(config.subsampling);
 
+		//Back to unrotated coords
+		newpost.tl=simpleRotation(tl);
+		newpost.tr=simpleRotation(tr);
+
 		newpost.top.x=(newpost.tl.x+newpost.tr.x)/2;
+		newpost.top.y=(newpost.tl.y+newpost.tr.y)/2;
+
 		newpost.bot.x=(newpost.ll.x+newpost.lr.x)/2;
+		newpost.bot.y=(newpost.ll.y+newpost.lr.y)/2;
 
 		//Now find again bot and top
 		trcrs = traceline(newpost.bot,Vdn,c);
@@ -773,16 +800,28 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		trcrs = traceline(newpost.top,Vup,c);
 		newpost.haveTop=trcrs.smartsuccess;
 		newpost.top=trcrs.p;
+		t=simpleRotation(newpost.top);
+		b=simpleRotation(newpost.bot);
+
+		tl.y=t.y;
+		tr.y=t.y;
+		ll.y=b.y;
+		lr.y=b.y;
+		newpost.tl=simpleRotation(tl);
+		newpost.tr=simpleRotation(tr);
+		newpost.ll=simpleRotation(ll);
+		newpost.lr=simpleRotation(lr);
+		/*
 		newpost.ll.y=newpost.bot.y;
 		newpost.lr.y=newpost.bot.y;
 		newpost.tl.y=newpost.top.y;
-		newpost.tr.y=newpost.top.y;
+		newpost.tr.y=newpost.top.y;*/
 
 		//cout<<"post:"<<newpost.tl.x<<" " <<newpost.tl.y<<" "<<newpost.tr.x<<" " <<newpost.tr.y<<" "<<newpost.ll.x<<" " <<newpost.ll.y<<" "<<newpost.lr.x<<" " <<newpost.lr.y<<endl;
 
 		//cout<<"Smarts:"<<newpost.haveBot<< " "<<newpost.haveTop<<endl;
-		if(newpost.tr.x-newpost.tl.x<config.pixeltol || newpost.lr.x-newpost.ll.x<config.pixeltol ||
-		  newpost.ll.y-newpost.tl.y<config.bordersize || newpost.lr.y-newpost.tr.y<config.bordersize)//
+		if(tr.x-tl.x<config.pixeltol || lr.x-ll.x<config.pixeltol ||
+		  -ll.y+tl.y<(tr.x-tl.x) ||	  -lr.y+tr.y<(lr.x-ll.x))//
 		{
 			//cout <<"Goal size test failed"<<endl;
 			continue;
@@ -802,6 +841,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			if(c3d(2)>=0||calculateValidGoalPostBase(newpost,c)==false)//check for some green under:)
 			{
 				newpost.haveBot=false;
+				//cout<<"Goal no Base"<<endl;
 			}
 
 		}
@@ -819,6 +859,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			if(c3d(2)<=1||calculateValidGoalPostTop(newpost,c)==false)
 			{
 				newpost.haveTop=false;
+				//cout<<"Goal no top"<<endl;
 			}
 
 		}
@@ -843,13 +884,14 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			}
 
 			newpost.haveHeight=false;
+			//cout<<"Goal no Height"<<endl;
 			//fillGoalPostWidthMeasurments(newpost,c);
 		}
 		if(newpost.dist.size()==0)
 			continue;
 		newpost.ber.push_back(newpost.bBot);
 		newpost.ber.push_back(newpost.bTop);
-
+		//cout<<"LocateGoalPost"<<endl;
 
 		//newpost.distance=mWeightedMean(newpost.dist);
 		bool failed=false;
@@ -877,7 +919,12 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 
 		if(calculateValidGoalPost(newpost,c)==false)
-			continue;
+		{
+
+			cout<<"Goal no Valid"<<endl;
+			//continue;
+		}
+
 		KVecFloat2 polar;
 		//cout<<"ttldist:"<<distance.mean<<endl;
 		polar(0)=newpost.distance.mean;
@@ -939,8 +986,10 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	y2=d2.distance.mean* sin( d2.bearing.mean);
 	float d=sqrt(sqrd(x1-x2)+sqrd(y1-y2));
 	if( abs(d-config.goaldist)/config.goaldist> 0.6)
-		return 0;
-
+	{
+		cout<<"Goalaaaaa"<<endl;
+		//return 0;
+	}
 	if(d1.bearing.mean<d2.bearing.mean)
 	{
 		d1=d2;
@@ -1003,6 +1052,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 {
+	KPROF_SCOPE(vprof,"fillGoalPostHeightMeasurments");
 	float t,g,h,dS,dL;
 	//Single solution of a  trionym
 	g=config.goalheight;
@@ -1024,7 +1074,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 	//The corresponding triangle height. What is the height it self?
 	if(t>=0)
 	{
-		cout<<"Goal Post t failed"<<endl;
+		//cout<<"Goal Post t failed"<<endl;
 		newpost.haveHeight=false;
 		return ;
 	}
@@ -1064,7 +1114,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 		 !(newpost.distBot.mean>m.mean&&newpost.distTop.mean<m.mean)
 		)
 	{
-		cout<<"Distance logic test failed!"<<endl;
+		//cout<<"Distance logic test failed!"<<endl;
 		newpost.haveHeight=false;
 		return ;
 	}
@@ -1074,7 +1124,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 }
 void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c) const
 {
-
+	KPROF_SCOPE(vprof,"fillGoalPostWidthMeasurments");
 	//traceResult trcrs;
 
 	//CvPoint l,r;
@@ -1180,6 +1230,7 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 
 Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 {
+	KPROF_SCOPE(vprof,"locateBall");
 	//Skip first/last row/col
 	KVecFloat2 point;
 	vector<balldata_t> history;
@@ -1402,6 +1453,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 }
 KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) const
 {
+	KPROF_SCOPE(vprof,"centerOfCircle");
 	KVecFloat2 center;
 	center.x=-1;
 	if (m.x==l.x||m.x==r.x)//Some points form  a vertical line, swap and retry
@@ -1426,6 +1478,7 @@ KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) cons
 
 Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const
 {
+	KPROF_SCOPE(vprof,"tracelineInt");
 	int skipcount = 0;
 	const int tol=config.pixeltol;
 	KVecInt2 curr = start,prftch;
@@ -1473,6 +1526,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator
 
 Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const
 {
+	KPROF_SCOPE(vprof,"tracelineFloat");
 	int skipcount = 0;
 	const int tol=config.pixeltol;
 	KVecInt2 latestValid = start;
@@ -1526,6 +1580,7 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecFloat2 vel, KSegmentat
 
 Vision::traceResult Vision::traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const
 {
+	KPROF_SCOPE(vprof,"traceBlobEdge");
 	int skipcount = 0;
 
 	KVecInt2 latestValid = start;
@@ -1617,6 +1672,7 @@ bool Vision::validpixel(int x,int y) const
 }
 KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmentator::colormask_t h ) const
 {
+	KPROF_SCOPE(vprof,"dopSeg");
 	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
 	{
 		//return seg->classifyPixel(rawImage, x, y, type);
@@ -1631,6 +1687,7 @@ KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmenta
 
 void Vision::prepSeg(const int x,const int y) const
 {
+	KPROF_SCOPE(vprof,"prepSeg");
 
 	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
 	{

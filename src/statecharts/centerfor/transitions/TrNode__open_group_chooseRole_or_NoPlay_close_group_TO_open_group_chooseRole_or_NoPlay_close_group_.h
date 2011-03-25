@@ -12,7 +12,10 @@ class TrCond__open_group_chooseRole_or_NoPlay_close_group_TO_open_group_chooseRo
 			
 public:
 
-	void UserInit () { }
+	void UserInit () {
+		_blk->subscribeTo("behavior", 0); 
+		_blk->subscribeTo("vision", 0);
+		}
 
 	bool Eval() {
 		_blk->publish_all();

@@ -16,7 +16,7 @@ public:
 
 	bool Eval() {
 		_blk->process_messages();
-		 boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
+		 boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
      if ( gsm == 0 ){
 		// Logger::Instance().WriteMsg("TrCond_0_3_2_2TOchooseRole",  " FALSE NO GSM", Logger::Info);
 		 return false;

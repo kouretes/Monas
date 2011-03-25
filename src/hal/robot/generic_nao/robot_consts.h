@@ -7,115 +7,103 @@
 
 #ifndef ROBOT_CONSTS_H_
 #define ROBOT_CONSTS_H_
-
-enum ChainHeadNames
-{
-	YAW, PITCH, HEADSIZE
-};
-enum ChainLegNames
-{
-	HIP_YAW_PITCH, HIP_ROLL, HIP_PITCH, KNEE_PITCH, ANKLE_PITCH, ANKLE_ROLL, LEGSIZE
-};
-
-enum ChainArmNames
-{
-	SHOULDER_PITCH, SHOULDER_ROLL, ELBOW_ROLL, ELBOW_YAW, /*WRIST_YAW, HAND,*/ARMSIZE
-};
-
-enum ChainAccessNames
-{
-	X, Y, Z
-};
-
-enum DeviceNames
-{
-	HEAD, HEAD_YAW = HEAD, HEAD_PITCH,
-
-	L_LEG, L_HIP_YAW_PITCH = L_LEG,
-
-	L_HIP_ROLL, L_HIP_PITCH, L_KNEE_PITCH, L_ANKLE_PITCH, L_ANKLE_ROLL,
-
-	R_LEG, R_HIP_YAW_PITCH = R_LEG,
-
-	R_HIP_ROLL, R_HIP_PITCH, R_KNEE_PITCH, R_ANKLE_PITCH, R_ANKLE_ROLL,
-
-	L_ARM, L_SHOULDER_PITCH = L_ARM, L_SHOULDER_ROLL, L_ELBOW_ROLL, L_ELBOW_YAW, /*L_WRIST_YAW, L_HAND,*/
-
-	R_ARM, R_SHOULDER_PITCH = R_ARM, R_SHOULDER_ROLL, R_ELBOW_ROLL, R_ELBOW_YAW, /*R_WRIST_YAW, R_HAND,*/
-
-	ACC, ACC_X = ACC, ACC_Y, ACC_Z,
-
-	GYR, GYR_X = GYR, GYR_Y,
-
-	ANGLE, ANGLE_X = ANGLE, ANGLE_Y,
-
-	L_COP_X, L_COP_Y, L_TOTAL_WEIGHT,
-
-	R_COP_X, R_COP_Y, R_TOTAL_WEIGHT
-
-};
+#include <vector>
+#include <map>
+#include <string>
 
 /// Returns a map from joint ids (enum Joint names) to almemory string "path" names
 namespace KDeviceLists
 {
 
-	std::map<DeviceNames, std::string> fillSensorNames()
+
+	enum ChainHeadNames
 	{
-		std::map<DeviceNames, std::string> fSensorKeys;
-
-		// Joints Sensor list
-		fSensorKeys[HEAD_PITCH] = "Device/SubDeviceList/HeadPitch/Position/Sensor/Value";
-		fSensorKeys[HEAD_YAW] = std::string("Device/SubDeviceList/HeadYaw/Position/Sensor/Value");
-		fSensorKeys[L_ANKLE_PITCH] = std::string("Device/SubDeviceList/LAnklePitch/Position/Sensor/Value");
-		fSensorKeys[L_ANKLE_ROLL] = std::string("Device/SubDeviceList/LAnkleRoll/Position/Sensor/Value");
-		fSensorKeys[L_ELBOW_ROLL] = std::string("Device/SubDeviceList/LElbowRoll/Position/Sensor/Value");
-		fSensorKeys[L_ELBOW_YAW] = std::string("Device/SubDeviceList/LElbowYaw/Position/Sensor/Value");
-		//fSensorKeys[L_HAND] = std::string("Device/SubDeviceList/LHand/Position/Sensor/Value");
-		fSensorKeys[L_HIP_PITCH] = std::string("Device/SubDeviceList/LHipPitch/Position/Sensor/Value");
-		fSensorKeys[L_HIP_ROLL] = std::string("Device/SubDeviceList/LHipRoll/Position/Sensor/Value");
-		fSensorKeys[L_HIP_YAW_PITCH] = std::string("Device/SubDeviceList/LHipYawPitch/Position/Sensor/Value");
-		fSensorKeys[L_KNEE_PITCH] = std::string("Device/SubDeviceList/LKneePitch/Position/Sensor/Value");
-		fSensorKeys[L_SHOULDER_PITCH] = std::string("Device/SubDeviceList/LShoulderPitch/Position/Sensor/Value");
-		fSensorKeys[L_SHOULDER_ROLL] = std::string("Device/SubDeviceList/LShoulderRoll/Position/Sensor/Value");
-		//fSensorKeys[L_WRIST_YAW] = std::string("Device/SubDeviceList/LWristYaw/Position/Sensor/Value");
-		fSensorKeys[R_ANKLE_PITCH] = std::string("Device/SubDeviceList/RAnklePitch/Position/Sensor/Value");
-		fSensorKeys[R_ANKLE_ROLL] = std::string("Device/SubDeviceList/RAnkleRoll/Position/Sensor/Value");
-		fSensorKeys[R_ELBOW_ROLL] = std::string("Device/SubDeviceList/RElbowRoll/Position/Sensor/Value");
-		fSensorKeys[R_ELBOW_YAW] = std::string("Device/SubDeviceList/RElbowYaw/Position/Sensor/Value");
-		//fSensorKeys[R_HAND] = std::string("Device/SubDeviceList/RHand/Position/Sensor/Value");
-		fSensorKeys[R_HIP_PITCH] = std::string("Device/SubDeviceList/RHipPitch/Position/Sensor/Value");
-		fSensorKeys[R_HIP_ROLL] = std::string("Device/SubDeviceList/RHipRoll/Position/Sensor/Value");
-		fSensorKeys[R_KNEE_PITCH] = std::string("Device/SubDeviceList/RKneePitch/Position/Sensor/Value");
-		fSensorKeys[R_SHOULDER_PITCH] = std::string("Device/SubDeviceList/RShoulderPitch/Position/Sensor/Value");
-		fSensorKeys[R_SHOULDER_ROLL] = std::string("Device/SubDeviceList/RShoulderRoll/Position/Sensor/Value");
-		//fSensorKeys[R_WRIST_YAW] = std::string("Device/SubDeviceList/RWristYaw/Position/Sensor/Value");
-
-		// Inertial sensors
-		fSensorKeys[ACC_X] = std::string("Device/SubDeviceList/InertialSensor/AccX/Sensor/Value");
-		fSensorKeys[ACC_Y] = std::string("Device/SubDeviceList/InertialSensor/AccY/Sensor/Value");
-		fSensorKeys[ACC_Z] = std::string("Device/SubDeviceList/InertialSensor/AccZ/Sensor/Value");
-		fSensorKeys[GYR_X] = std::string("Device/SubDeviceList/InertialSensor/GyrX/Sensor/Value");
-		fSensorKeys[GYR_Y] = std::string("Device/SubDeviceList/InertialSensor/GyrY/Sensor/Value");
-		fSensorKeys[ANGLE_X] = std::string("Device/SubDeviceList/InertialSensor/AngleX/Sensor/Value");
-		fSensorKeys[ANGLE_Y] = std::string("Device/SubDeviceList/InertialSensor/AngleY/Sensor/Value");
-
-		// Some FSR sensors
-		fSensorKeys[L_COP_X] = std::string("Device/SubDeviceList/LFoot/FSR/CenterOfPressure/X/Sensor/Value");
-		fSensorKeys[L_COP_Y] = std::string("Device/SubDeviceList/LFoot/FSR/CenterOfPressure/Y/Sensor/Value");
-		fSensorKeys[L_TOTAL_WEIGHT] = std::string("Device/SubDeviceList/LFoot/FSR/TotalWeight/Sensor/Value");
-		fSensorKeys[R_COP_X] = std::string("Device/SubDeviceList/RFoot/FSR/CenterOfPressure/X/Sensor/Value");
-		fSensorKeys[R_COP_Y] = std::string("Device/SubDeviceList/RFoot/FSR/CenterOfPressure/Y/Sensor/Value");
-		fSensorKeys[R_TOTAL_WEIGHT] = std::string("Device/SubDeviceList/RFoot/FSR/TotalWeight/Sensor/Value");
-		return fSensorKeys;
-	}
-	const std::map<DeviceNames, std::string> SensorNames()
+		YAW=0, PITCH, HEAD_SIZE
+	};
+	enum ChainLegNames
 	{
-		static std::map<DeviceNames, std::string> ret = fillSensorNames();
-		return ret;
-	}
-	std::map<DeviceNames, std::string> ActuatorName;
+		HIP_YAW_PITCH=0, HIP_ROLL, HIP_PITCH, KNEE_PITCH, ANKLE_PITCH, ANKLE_ROLL, LEG_SIZE
+	};
 
-}
-;
+	enum ChainArmNames
+	{
+		SHOULDER_PITCH=0, SHOULDER_ROLL, ELBOW_ROLL, ELBOW_YAW, /*WRIST_YAW, HAND,*/ARM_SIZE
+	};
+
+	enum ChainAccessNames
+	{
+		AXIS_X=0, AXIS_Y, AXIS_Z , AXIS_SIZE
+	};
+
+	enum ChainIniertialSizes
+	{
+		ACC_SIZE=AXIS_SIZE, GYR_SIZE=AXIS_SIZE,ANGLE_SIZE=AXIS_Z
+	};
+
+	enum ChainFSRNames
+	{
+		FSR_FL=0, FSR_FR, FSR_RL,FSR_RR, COP_X, COP_Y,TOTAL_WEIGHT,FSR_SIZE
+	};
+	enum ChainUltraSonicNames
+	{
+		US_VALUE,US_VALUE1,US_VALUE2,US_VALUE3,US_VALUE4,US_VALUE5,US_VALUE6,US_VALUE7,US_VALUE8,US_VALUE9,US_SIZE
+	};
+	enum RobotPositionNames
+	{
+		ROBOT_X=0,ROBOT_Y,ROBOT_ANGLE,ROBOTPOSITION_SIZE
+	};
+	enum JointNames
+	{
+		HEAD=0,	L_LEG=HEAD_SIZE , R_LEG=L_LEG+LEG_SIZE,L_ARM=R_LEG+LEG_SIZE,R_ARM=L_ARM+ARM_SIZE ,
+
+		NUMOFJOINTS=R_ARM+ARM_SIZE
+
+	};
+
+	enum SensorNames
+	{
+
+		ACC = 0,
+
+		GYR=ACC+ACC_SIZE,
+
+		//ANGLE=GYR+GYR_SIZE,
+
+		//L_FSR=ANGLE+ANGLE_SIZE,
+		L_FSR=GYR+GYR_SIZE,
+		R_FSR=L_FSR+FSR_SIZE,
+
+		L_US=R_FSR+FSR_SIZE,
+		R_US=L_US+US_SIZE,
+
+		NUMOFSENSORS=R_US+US_SIZE
+
+	};
+
+	struct Interpret
+	{
+		static const float GRAVITY_PULL=9.81f; //(m/s^2)
+		static const float ACC_OFFSET=0;
+		static const float ACC_GAIN=9.81/55.555555f; //(56 Unites per g)
+
+		static const float GYR_OFFSET=22000;
+		static const float GYR_Z_REF=1230; //expected value of GYR_Z
+		static const float GYR_GAIN=(-1/2.0f)*0.017453; //(1 / (2mv/deg/sec))* gyr ref
+	};
+	std::vector<std::string> const& getJointNames();
+
+	std::vector<std::string> const& getJointKeys();
+	std::vector<std::string> const& getPositionActuatorKeys();
+	std::vector<std::string> const& getHardnessActuatorKeys();
+
+	std::vector<std::string> const& getSensorNames();
+	std::vector<std::string> const& getSensorKeys();
+
+	std::map<std::string,JointNames> const& getJointIDs();
+	std::map<std::string,SensorNames> const& getSensorIDs();
+
+	//std::vector< std::string> ActuatorName;
+
+};
 
 #endif /* ROBOT_CONSTS_H_ */

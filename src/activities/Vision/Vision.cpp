@@ -1,4 +1,5 @@
 #include "Vision.h"
+
 #include "architecture/archConfig.h"
 #include <cmath>
 #include "sys/stat.h"
@@ -9,6 +10,8 @@
 #include <vector>
 //#include "messages/motion.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
+#include "tools/profiler.hpp"
+#include <vector>
 
 #define TO_RAD 0.017453293f
 
@@ -81,17 +84,18 @@ int VISIBLE Vision::Execute()
 {
 	//cout<<"Vision Execute"<<endl;
 	static bool calibrated = false;
-	boost::shared_ptr<const CalibrateCam> cal = _blk->read_signal<CalibrateCam> ("CalibrateCam");
-	if (_blk->read_state<CalibrateCam> ("CalibrateCam") == NULL)
+	boost::shared_ptr<const CalibrateCam> cal = _blk->readState<CalibrateCam> ("vision");
+	if (cal == NULL)
 	{
 		CalibrateCam res;
 		res.set_status(0);
-		_blk->publish_state(res, "vision");
+		_blk->publishState(res, "vision");
+		//cout<<"---------Start calibration:"<<res.status()<<endl;
+		cal = _blk->readState<CalibrateCam> ("vision");
 	}
-	if (cal == NULL)
-		cal = _blk->read_state<CalibrateCam> ("CalibrateCam");
 	if (cal != NULL)
 	{
+		//cout<<"=======Start calibration:"<<cal->status()<<endl;
 		if (cal->status() == 0)
 		{
 			//cout<<"Start calibration"<<endl;
@@ -106,7 +110,7 @@ int VISIBLE Vision::Execute()
 			calibrated = true;
 			res.set_status(1);
 			res.set_exposure_comp(scale);
-			_blk->publish_state(res, "vision");
+			_blk->publishState(res, "vision");
 			return 0;
 
 		}
@@ -124,6 +128,9 @@ int VISIBLE Vision::Execute()
 	xmlconfig->QueryElement("cvHighgui", cvHighgui);
 	if (cvHighgui)
 		cvShowSegmented();
+#ifdef KPROFILING_ENABLED
+	vprof.generate_report();
+#endif
 	return 0;
 }
 
@@ -258,15 +265,11 @@ void Vision::recv_and_send()
 			segmended[(*i).y][(*i).x] = red;
 		};
 
-		/*racer_t t;
-		 t.init(64,64);
-		 t.initVelocity(Vlt.x,Vlt.y);
 		 for(int k=0;k<16;k++)
 		 {
 
-		 segmended[t.y][t.x]=red;
-		 t.step();
-		 }*/
+		 segmended[int(64+k*Vup.y)][int(64+k*Vup.x)]=red;
+		 }
 
 		img.set_imagerawdata(segmended, rawImage->width * rawImage->height);
 		img.set_bytes(rawImage->width * rawImage->height);
@@ -346,7 +349,7 @@ void Vision::fetchAndProcess()
 	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"Fetch image takes:"<<endt<<endl;
-	stamp += boost::posix_time::millisec(config.sensordelay);
+	stamp -= boost::posix_time::millisec(config.sensordelay);
 	if (ext.getCamera() == 1)//bottom cam
 	{
 		p.cameraPitch = (KMat::transformations::PI * 40.0) / 180.0;
@@ -378,19 +381,19 @@ void Vision::fetchAndProcess()
 #ifdef DEBUGVISION
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 #endif
-	allsm = _blk->read_data<AllSensorValues> ("AllSensorValues", "localhost", &p.time, &stamp);
+	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", "localhost", &p.time, &stamp);
 #ifdef DEBUGVISION
 	cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
 	cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
 #endif
 
-	if (allsm == NULL || !allsm->has_hjsm())//No sensor data!
+	if (asvm.get() == NULL  )//No sensor data!
 	{
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no head joint msg in all sensor (allsm) data!", Logger::Error);
 		return;
 	}
 
-	if (allsm == NULL || !allsm->has_ism())//No sensor data!
+	if (asvm.get() == NULL )//No sensor data!
 	{
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no intertial msg in all sensor (allsm) data!", Logger::Error);
 		return;
@@ -399,49 +402,62 @@ void Vision::fetchAndProcess()
 	//Clear result message
 	obs.Clear();
 	img.Clear();
-	p.yaw = allsm->hjsm().sensordata(YAW).sensorvalue();
-	p.pitch = allsm->hjsm().sensordata(PITCH).sensorvalue();
+	p.yaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvalue();
+	p.pitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvalue();
 
-	p.Vyaw = allsm->hjsm().sensordata(YAW).sensorvaluediff();
-	p.Vpitch = allsm->hjsm().sensordata(PITCH).sensorvaluediff();
+	p.Vyaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvaluediff();
+	p.Vpitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvaluediff();
+	float AccX= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_X).sensorvalue();
+	float AccY= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_Y).sensorvalue();
+	float AccZ= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_Z).sensorvalue();
 
-	p.angX = allsm->ism().sensordata(ANGLE_X - ACC).sensorvalue();
-	p.angY = allsm->ism().sensordata(ANGLE_Y - ACC).sensorvalue();
-	p.VangX = allsm->ism().sensordata(ANGLE_X - ACC).sensorvaluediff();//im->sensordata(5).sensortimediff();
-	p.VangY = allsm->ism().sensordata(ANGLE_Y - ACC).sensorvaluediff();//im->sensordata(6).sensortimediff();
 
-	p.timediff = allsm->timediff();//Get time from headmessage
+	p.angX = atan2(-AccY,-AccZ);//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
+	p.angY = atan2(AccX,-AccZ);//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
+	p.VangX = asvm->sensordata(KDeviceLists::GYR+KDeviceLists::AXIS_X).sensorvalue();//im->sensordata(5).sensortimediff();
+	p.VangY = asvm->sensordata(KDeviceLists::GYR+KDeviceLists::AXIS_Y).sensorvalue();//im->sensordata(6).sensortimediff();
+
+	p.timediff = asvm->timediff();//Get time from headmessage
 	//p.time = time_t_epoch;
 
 	//float exptime=ext.getExp();//Compensate for middle of image
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
 
-	float imcomp = ((stamp - p.time).total_microseconds() * 500.0) / p.timediff;
-	//#ifdef DEBUGVISION
+	float imcomp = ((stamp - p.time).total_nanoseconds() * 0.5) / (p.timediff+1);
+	//#ifdef DEBUGVISIONſ
 	//cout<<boost::posix_time::to_iso_string(stamp)<<endl;
 	//cout<<boost::posix_time::to_iso_string(p.time)<<endl;
 	//cout<<"imcomp:"<<imcomp<<endl;
 	//#endif
 	//imcomp=imcomp;
-	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" "<<imcomp<<" "<<imcomp*p.Vyaw<< " "<<endl;
+	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
+	//cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
 	//Estimate the values at excactly the timestamp of the image
 	p.yaw += p.Vyaw * imcomp;
 	p.pitch += p.Vpitch * imcomp;
-	p.angX += p.VangX * imcomp;
-
-	p.angY += p.VangY * imcomp;
-	//Now use transformations to use the angX,angY values in the image
+	p.angX += p.VangX * 0.25* ((stamp - p.time).total_nanoseconds() )/1000000000.0;
+	p.angY += p.VangY * 0.25* ((stamp - p.time).total_nanoseconds() )/1000000000.0;
 	float Dfov;
 	xmlconfig->QueryElement("Dfov", Dfov);
 
-	p.focallength = sqrt(rawImage-> width * rawImage-> width + rawImage-> height * rawImage-> height) / (2 * tan(Dfov * TO_RAD / 2));
+	p.focallength = sqrt(sqrd(rawImage-> width) + sqrd(rawImage-> height) ) / (2 * tan(Dfov * TO_RAD / 2));
 
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
 
-	Vup.y = -cos(-kinext.getRoll());
-	Vup.x = sin(-kinext.getRoll());
+	KMat::transformations::rotate(simpleRot,-kinext.getRoll());
+	//Now change y axis :)
+	simpleRot(0,1)=-simpleRot(0,1);
+	simpleRot(1,1)=-simpleRot(1,1);
+	//Weird stuff. simpleRot-^-1=simpleRot'=simpleRot. therefore translaton from raw image to rotated and axis inverted
+	//image and back is done by simpleRot
+
+//
+//		Vup.y = -cos(-kinext.getRoll());
+//		Vup.x = sin(-kinext.getRoll());
+	Vup=simpleRot.slow_mult(KVecFloat2(0,1));
+
 
 	Vdn.x = -Vup.x;
 	Vdn.y = -Vup.y;
@@ -470,8 +486,8 @@ void Vision::fetchAndProcess()
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
-	//locateGoalPost(ygoalpost, yellow);
-	//locateGoalPost(bgoalpost, skyblue);
+	locateGoalPost(ygoalpost, yellow);
+	locateGoalPost(bgoalpost, skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	cout << b.x << " " << b.y << " " << b.cr << endl;
@@ -494,6 +510,8 @@ void Vision::fetchAndProcess()
 		c = imageToCamera(im);
 		c3d = kinext.camera2dToTorso(c);
 		//c3d(0)+p.cameraX;c3d(1)+cameraY;
+		//if(sqrt(sqrd(c3d(0)) + sqrd(c3d(1)))<0.1)
+		//	c3d.scalar_mult(2);
 		float pitch, yaw;
 		pitch = atan(abs(c3d(2)) / sqrt(sqrd(c3d(0)) + sqrd(c3d(1))));
 		yaw = atan2(c3d(1), c3d(0));
@@ -559,17 +577,17 @@ void Vision::fetchAndProcess()
 		l->set_color("black");
 
 	}
-	_blk->publish_signal(trckmsg, "vision");
-	_blk->publish_signal(leds, "leds");
+	_blk->publishSignal(trckmsg, "vision");
+	_blk->publishSignal(leds, "leds");
 
 	if (obs.has_ball() || obs.regular_objects_size() > 0 || obs.adhoc_objects_size() > 0 || obs.corner_objects_size() > 0 || obs.intersection_objects_size() > 0
 			|| obs.line_objects_size() > 0)
-		_blk->publish_signal(obs, "vision");
+		_blk->publishSignal(obs, "vision");
 
 }
 
 VISIBLE Vision::Vision() :
-	xmlconfig(NULL), type(VISION_CSPACE)
+	xmlconfig(NULL), vprof("Vision"),type(VISION_CSPACE)
 {
 	debugmode = false;
 
@@ -600,11 +618,18 @@ void VISIBLE Vision::UserInit()
 	segbottom = new KSegmentator(*conffile);
 	conffile->close();
 	delete conffile;
+	if(config.SegmentationTop==config.SegmentationBottom)
+		segtop=segbottom;
+	else
+	{
+		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationTop).c_str());
+		segtop = new KSegmentator(*conffile);
+		conffile->close();
+		delete conffile;
 
-	conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationTop).c_str());
-	segtop = new KSegmentator(*conffile);
-	conffile->close();
-	delete conffile;
+	}
+
+
 
 
 	//_com->get_message_queue()->add_subscriber(_blk);
@@ -693,10 +718,23 @@ void Vision::publishObstacles(std::vector<KVecInt2> points) const
 		 */
 
 	}
-	_blk->publish_signal(result, "obstacle");
+	_blk->publishSignal(result, "obstacle");
 
 }
 
+KVecFloat2 Vision::simpleRotation(KVecFloat2 const& i) const
+{
+	return simpleRot.slow_mult(i);
+}
+
+
+KVecFloat2 Vision::simpleRotation(KVecInt2 const& i) const
+{
+	KVecFloat2 t;
+	t.x=i.x;
+	t.y=i.y;
+	return simpleRotation(t);
+}
 
 KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep) const
 {
@@ -717,6 +755,7 @@ KVecFloat2 Vision::imageToCamera( KVecInt2 const & imagep) const
 
 	return res;
 }
+
 KVecInt2 Vision::cameraToImage( KVecFloat2 const& c) const
 {
 

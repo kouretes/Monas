@@ -1,4 +1,5 @@
 #include "ObstacleAvoidance.h"
+
 #include "tools/toString.h"
 #include <iostream>
 
@@ -104,10 +105,10 @@ int ObstacleAvoidance::Execute() {
 	double Right[SOnARsNum], Left[SOnARsNum];
 
 	//(RobotPositionSensorMessage) find current robot position
-	if(rpsm !=0){
-		PosX = rpsm->sensordata(0);
-		PosY = rpsm->sensordata(1);
-		Angle = rpsm->sensordata(2);
+	if(rpm !=0){
+			PosX = rpm->sensordata(KDeviceLists::ROBOT_X);
+			PosY = rpm->sensordata(KDeviceLists::ROBOT_Y);
+			Angle = rpm->sensordata(KDeviceLists::ROBOT_ANGLE);
 		if (firstTimeInitializeOdometry ==0){
 			RobotPosition[0]=PosX.sensorvalue();
 			RobotPosition[1]=PosY.sensorvalue();
@@ -128,21 +129,22 @@ int ObstacleAvoidance::Execute() {
 
 
 	//update the grid with the new sonar values
-	if (ussm != 0) {
-		for (int j=SOnARsNum-1;j>=0;j--){
-			LeftValue[j] = ussm->sensordata(j);
+	if (asvm != 0) {
+		for (int j=KDeviceLists::US_SIZE-1;j>=0;j--){
+
+			LeftValue[j] = asvm->sensordata(KDeviceLists::L_US+j);
 			Left[j] = LeftValue[j].sensorvalue();
-			//Left[j] = (ussm->sensordata(j)).sensorvalue();
-			RightValue[j] = ussm->sensordata(j+SOnARsNum);
+			//Left[j] = (asvm->sensordata(j)).sensorvalue();
+			RightValue[j] = asvm->sensordata(KDeviceLists::R_US+j);
 			Right[j] = RightValue[j].sensorvalue();
-			//Right[j] = (ussm->sensordata(j+SOnARsNum)).sensorvalue();
+			//Right[j] = (asvm->sensordata(j+SOnARsNum)).sensorvalue();
 			countLeft = countLeft+LeftValue[j].sensorvalue();
 			countRight = countRight + RightValue[j].sensorvalue() ;
 		}
 		printSonarValues();
 		if(countLeft == 0 && countRight == 0){;}
 		else	updateGrid(countRight!=0?Right:empty, countLeft!=0?Left:empty);
-		//delete ussm;
+		//delete asvm;
 	}
 
 	//aging grid every 3 seconds
@@ -176,8 +178,8 @@ void ObstacleAvoidance::printSonarValues(){
 void ObstacleAvoidance::read_messages() {
 
 
-	ussm =  _blk->read_data<UltaSoundSensorsMessage>("UltaSoundSensorsMessage");
-	rpsm =  _blk->read_data<RobotPositionSensorMessage>("RobotPositionSensorMessage");
+	asvm =  _blk->readData<AllSensorValuesMessage>("sensors");
+	rpm =  _blk->readData<RobotPositionMessage>("sensors");
 	//targetX = _blk->in_msg_nb<RobotPositionSensorMessage>("targetX", "Behavior");
 	//targetY = _blk->in_msg_nb<RobotPositionSensorMessage>("targetY", "Behavior");
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "read messages " , Logger::ExtraExtraInfo);
@@ -200,7 +202,7 @@ void ObstacleAvoidance::publishObstacleMessage(){
 	obavm.set_certainty(1, mprosta?mprostaCert:0);
 	obavm.set_certainty(2, dexia?dexiaCert:0);
 
-	_blk->publish_signal(obavm, "obstacle");
+	_blk->publishSignal(obavm, "obstacle");
 }
 
 void ObstacleAvoidance::initPolarGrid(){

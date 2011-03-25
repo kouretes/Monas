@@ -8,6 +8,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
+#include "messages/BehaviorMessages.pb.h"
 
 #include "KLocalization.h"
 
@@ -51,13 +52,12 @@ class Localization: public IActivity, public KLocalization {
 		LocalizationData DebugData;
 		float maxrangeleft;
 		float maxrangeright;
+		SensorData PosX;
+		SensorData PosY;
+		SensorData Angle;
 
-		SensorPair PosX;
-		SensorPair PosY;
-		SensorPair Angle;
-
-		SensorPair HeadYaw;
-		SensorPair HeadPitch;
+		SensorData HeadYaw;
+		SensorData HeadPitch;
 		BallTrackMessage lastballseen;
 
 		MotionHeadMessage hmot;
@@ -66,7 +66,9 @@ class Localization: public IActivity, public KLocalization {
 
 		boost::shared_ptr<const GameStateMessage> gsm;
 		boost::shared_ptr<const ObservationMessage> obsm;
-		boost::shared_ptr<const RobotPositionSensorMessage> rpsm;
+		boost::shared_ptr<const RobotPositionMessage> rpsm;
+
+		BToHeadMessage* bhmsg;
 
 		//For Debug!
 		void SimpleBehaviorStep();

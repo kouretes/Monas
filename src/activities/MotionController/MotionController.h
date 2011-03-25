@@ -11,6 +11,12 @@
 #include <string>
 
 #include "ISpecialAction.h"
+
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+
+using namespace boost::posix_time;
+
 //#define WEBOTS
 
 class MotionController : public IActivity{
@@ -30,6 +36,7 @@ public:
 
 private:
 
+	AL::ALPtr<AL::DCMProxy> dcm;
 	AL::ALPtr<AL::ALProxy> temp;
 	AL::ALPtr<AL::ALMotionProxy> motion;
 	AL::ALPtr<AL::ALBroker> pbroker;
@@ -41,6 +48,7 @@ private:
 	bool robotUp;
 	//SensorPair AccZ, AccX, AccY;
 	float AccZvalue, AccXvalue, AccYvalue;
+	ptime waitfor;
 
 	int counter;
 
@@ -58,10 +66,11 @@ private:
 	boost::shared_ptr<const  MotionHeadMessage> hm;
 	boost::shared_ptr<const  MotionActionMessage> am;
 
-	boost::shared_ptr<const AllSensorValues> allsm;
+	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 
+	AL::ALValue commands;//,stiffnessCommand;
 
-	void commands();
+	//void commands();
 	void mglrun();
 	void read_messages();
 
@@ -77,7 +86,9 @@ private:
 	void ALstandUpBack2009();
 	void ALstandUpFront2010();
 	void ALstandUpBack2010();
+	void createDCMAlias();
 
+	void setStiffnessDCM(float s);
 	typedef std::map<std::string,
 		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
 	typedef std::pair<std::string,

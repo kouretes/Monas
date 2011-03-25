@@ -38,14 +38,14 @@ class BodyBehavior: public IActivity {
 
 		short ballfound;
 		bool scancompleted;
-	
+
 		MotionWalkMessage* wmot;
 		MotionActionMessage* amot;
 		BToHeadMessage* bhmsg;
 		int pitchdirection;
 		int yawdirection;
-		SensorPair HeadYaw;
-		SensorPair HeadPitch;
+		SensorData HeadYaw;
+		SensorData HeadPitch;
 
 		boost::shared_ptr<const BallTrackMessage> bmsg;
 		boost::shared_ptr<const GameStateMessage> gsm;

@@ -37,7 +37,7 @@ Subscriber::~Subscriber()
 {
   cout << "Deleting subscriber " << endl;
 
-  if(sub_msg_buf != 0)
+  if(sub_msg_buf != NULL)
     delete sub_msg_buf;
 
 }
@@ -45,6 +45,7 @@ Subscriber::~Subscriber()
 
 void Subscriber::attachSubscriberToMessageQueue(MessageQueue & q)
 {
+	mq=&q;
 	sub_msg_buf=q.attachSubscriber(subscriber_name);
 }
 
@@ -54,14 +55,14 @@ void Subscriber::subscribeTo(std::string const& topic , int where)
 	if(sub_msg_buf==NULL)
 		return;
 	//cout<<"Check -1"<<endl;
-	sub_msg_buf->getQueue().subscribeTo(sub_msg_buf,topic,where);
+	mq->subscribeTo(sub_msg_buf,topic,where);
 }
 
 void Subscriber::unsubscribeFrom(std::string const& topic , int where)
 {
 	if(sub_msg_buf==NULL)
 		return;
-	sub_msg_buf->getQueue().unsubscribeFrom(sub_msg_buf,topic,where);
+	mq->unsubscribeFrom(sub_msg_buf,topic,where);
 }
 
 

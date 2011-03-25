@@ -18,13 +18,6 @@
 #define TO_RAD 0.01745329f
 #endif
 
-#define LIMITUP -0.55
-#define	LIMITDOWN 0.19
-#define	LIMITLEFT 0.5
-#define	LIMITRIGHT -0.5
-#define STEPVER 0.65
-#define STEPHOR 0.2
-
 #define DONOTHING 0
 #define CALIBRATE 1
 #define SCANFORBALL 2
@@ -49,49 +42,43 @@ class HeadBehavior: public IActivity {
 		void UserInit();
 		void read_messages();
 		int MakeTrackBallAction();
+		void MakeScanAction();
 		void HeadScanStep();
 		std::string GetName() {
 			return "HeadBehavior";
 		}
 
 	private:
-		short ballfound;
 
 		MotionHeadMessage* hmot;
 		HeadToBMessage* hbmsg;
 		ScanMessage* scmsg;
-
-		int pitchdirection;
-		int yawdirection;
 		SensorData HeadYaw;
 		SensorData HeadPitch;
 
 		int headaction;
-		int oldheadaction;
-		bool choosemyaction;
-		bool scancompleted;
-		bool headstartscan;
-		short scandirectionpitch;
-		short scandirectionyaw;
-		bool reachedlimitup;
-		bool reachedlimitdown;
-		bool reachedlimitleft;
-		bool reachedlimitright;
 		boost::posix_time::ptime lastturn;
 
+		bool startscan;
+		bool scanforball;
 		float targetYaw;
 		float targetPitch;
 		float psign,ysign;
+		//bool pitchonly;
 		unsigned waiting;
-		
+		float obsmbearing,lastbearing;
+		bool newBearing;
+
 		//boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
-		boost::shared_ptr<const BallTrackMessage> bmsg;
+		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
+
 		boost::shared_ptr<const BToHeadMessage> bhm;
-		boost::shared_ptr<const AllSensorValues> allsm;
-		//boost::shared_ptr<const ObservationMessage> obsm;		
+		boost::shared_ptr<const AllSensorValuesMessage> asvm;
+		boost::shared_ptr<const ObservationMessage> obsm;
 		int calibrated;
 
-		boost::posix_time::ptime ballLastSeen;
+		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
+		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
 		void calibrate();
 

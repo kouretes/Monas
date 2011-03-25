@@ -17,11 +17,11 @@
 #endif
 
 #define PITCHMIN -0.55
-#define	PITCHMAX 0.3
+#define	PITCHMAX 0.33
 #define YAWMIN 0.8
-#define YAWMAX 1.3
-#define PITCHSTEP 0.22
-#define YAWSTEP 0.45
+#define YAWMAX 1.35
+#define PITCHSTEP 0.3
+#define YAWSTEP 0.4
 
 #define OVERSH 0.06
 #define WAITFOR 40
@@ -61,10 +61,11 @@ class VBehavior: public IActivity {
 		float targetYaw;
 		float targetPitch;
 		float psign,ysign;
+		//bool pitchonly;
 		unsigned waiting;
 
 		short balllastseendirection;
-		boost::shared_ptr<const AllSensorValues> allsm;
+		boost::shared_ptr<const AllSensorValuesMessage> allsm;
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
 		boost::shared_ptr<const ObservationMessage>  obsm;

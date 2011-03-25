@@ -28,7 +28,7 @@ include(${ConfigDir}/external_dependencies.cmake)
 #include(${ConfigDir}/${TargetPlatform}/${TargetPlatform}-config.cmake)
 
 add_definitions(${ExternalDefinitions}
-	  "-Wall"
+	  "-Wextra"
 )
 
 if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -50,9 +50,9 @@ ARCHIVE DESTINATION   lib/static )
 if(${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
  # use_lib(narukom ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST TINYXML)
   #target_link_libraries(narukom ${ProtobufLibrary} narukom_messages boost_system-mt boost_date_time-mt boost_thread-mt )# ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary})
-  include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake )
+  include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
   #set(CTC_DIR ${TOOLCHAIN_DIR})
-  use_lib(narukom BOOST)#TINYXML
+  use_lib(narukom BOOST TINYXML)#TINYXML
   target_link_libraries(narukom ${ProtobufLibrary} )#{TinyxmlLibrary}
 else (${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
     #message("!@#!@#!@#!#!${ProtobufLibrary} ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary}")
