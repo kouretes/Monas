@@ -192,11 +192,12 @@ namespace KProfiling {
 	public:
     	basic_profiling_scope(_profiler &p, char const *s) : pr(p) { pr.push(s); }
     	~basic_profiling_scope() { pr.pop(); }
-    	typedef basic_profiler<empty_logging_policy, default_stats_policy, smart_timer> profiler;
-		typedef basic_profiling_scope<profiler> profiling_scope;
-    };
 
-  #else
+    };
+    typedef basic_profiler<empty_logging_policy, default_stats_policy, smart_timer> profiler;
+	typedef basic_profiling_scope<profiler> profiling_scope;
+
+#else
 	struct nulltimer {};
     template<typename logging_policy, typename stats_policy, typename timer_t>
     class basic_profiler {

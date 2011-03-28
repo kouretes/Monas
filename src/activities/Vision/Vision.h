@@ -128,7 +128,7 @@ class Vision: public IActivity
 		BallTrackMessage trckmsg;
 		ObservationMessage obs;
 		LedChangeMessage leds;
-		KProfiling::profiler vprof;
+		mutable KProfiling::profiler vprof;
 		//Incoming messages!
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 
