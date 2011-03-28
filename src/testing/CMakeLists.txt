@@ -4,19 +4,21 @@ message ( STATUS "" )
 
 
 # TODO
-include_directories ( AFTER ../architecture/narukom/
-                            ../architecture/narukom/message_definitions/
-                            ../architecture/narukom/messages/
-                            ../architecture/narukom/network/
-                            ../architecture/narukom/pub_sub/
-                            ../architecture/narukom/system/ )
+#include_directories ( AFTER ../architecture/narukom/
+#                            ../architecture/narukom/message_definitions/
+#                            ../architecture/narukom/messages/
+#                            ../architecture/narukom/network/
+#                            ../architecture/narukom/pub_sub/
+#                            ../architecture/narukom/system/ )
+
+#add_executable ( stateTest statechartTest.cpp ../messages/planMsg.pb.cc )
+#target_link_libraries ( stateTest statechartEngine narukom MonasCore GenLinux)
+
+add_executable(KMat-testing KMat-testing.cpp )
+add_executable(Kalman-testing kalmantest.cpp )
 
 
-add_executable ( stateTest statechartTest.cpp ../messages/planMsg.pb.cc )
-
-target_link_libraries ( stateTest statechartEngine narukom MonasCore GenLinux)
-
-install ( TARGETS stateTest 
+install ( TARGETS  KMat-testing Kalman-testing #stateTest
             RUNTIME DESTINATION   bin
             LIBRARY DESTINATION   lib
             ARCHIVE DESTINATION   lib/static )

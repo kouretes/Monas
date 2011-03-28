@@ -2,9 +2,9 @@
 <!-- Show Segmented image using opencv -->
 <cvHighgui>0</cvHighgui>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>5-KouretesLab-segall.conf</SegmentationBottom>
-<SegmentationTop>5-KouretesLab-segall.conf</SegmentationTop>
-<Dfov>53.3</Dfov>
+<SegmentationBottom>6-KouretesLab2-segall.conf</SegmentationBottom>
+<SegmentationTop>6-KouretesLab2-segall.conf</SegmentationTop>
+<Dfov>53.7</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.066</ballsize>
 <balltolerance>0.2</balltolerance>
