@@ -1,19 +1,21 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/timeout.pb.h"			
+#include "messages/timeout.pb.h"		
 #include <boost/date_time/posix_time/ptime.hpp>
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-class TrCond_AproachBallTO0_3_2_3_6 : public statechart_engine::ICondition {
+			
+class TrCond_ScanTO0_3_2_3_6 : public statechart_engine::ICondition {
 			
 public:
+
 
 	void UserInit () {
 		_blk->subscribeTo("behavior",0); 
 		}
 
 	bool Eval() {
-	//	std::cout<<"*************Transition TrCond_AproachBallTO0_3_2_3_6*****************"<<std::endl;
+		//std::cout<<"*************Transition TrCond_ScanForBallTO0_3_2_3_6 *****************"<<std::endl;
 		//boost::shared_ptr<const TimeoutMsg> tmsg = _blk->read_state<TimeoutMsg> ("TimeoutMsg");
 		//std::string stime = tmsg->wakeup();
 		//if (tmsg==0 || stime=="")
@@ -25,9 +27,6 @@ public:
 			
 		//return false;
 		return true;
-		/* TRUE */
-
-	
     }
 };
 		

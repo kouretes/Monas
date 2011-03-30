@@ -56,9 +56,9 @@ simplebehavior::simplebehavior(Narukom* com) {
 	
 	
 
-	IActivity* NodeActivInst_0_3_2_3_3 = ActivityFactory::Instance()->CreateObject( "AproachBall" );
+	IActivity* NodeActivInst_0_3_2_3_3 = ActivityFactory::Instance()->CreateObject( "ApproachBall" );
 	_activities.push_back( NodeActivInst_0_3_2_3_3 );			
-	BasicState* Node_0_3_2_3_3 = new BasicState( "Node_AproachBall", Node_0_3_2_3, NodeActivInst_0_3_2_3_3 ); //Name:AproachBall
+	BasicState* Node_0_3_2_3_3 = new BasicState( "Node_ApproachBall", Node_0_3_2_3, NodeActivInst_0_3_2_3_3 ); //Name:ApproachBall
 	_states.push_back( Node_0_3_2_3_3 );
 
 	OrState* Node_0_3_2_3_4 = new OrState ( "Node_kickBall", Node_0_3_2_3 );	//Name:kickBall
@@ -120,9 +120,9 @@ simplebehavior::simplebehavior(Narukom* com) {
 	
 	
 
-	IActivity* NodeActivInst_0_3_2_3_5 = ActivityFactory::Instance()->CreateObject( "ScanForBall" );
+	IActivity* NodeActivInst_0_3_2_3_5 = ActivityFactory::Instance()->CreateObject( "Scan" );
 	_activities.push_back( NodeActivInst_0_3_2_3_5 );			
-	BasicState* Node_0_3_2_3_5 = new BasicState( "Node_ScanForBall", Node_0_3_2_3, NodeActivInst_0_3_2_3_5 ); //Name:ScanForBall
+	BasicState* Node_0_3_2_3_5 = new BasicState( "Node_Scan", Node_0_3_2_3, NodeActivInst_0_3_2_3_5 ); //Name:Scan
 	_states.push_back( Node_0_3_2_3_5 );
 
 	EndState* Node_0_3_2_3_6 = new EndState ( "Node_0_3_2_3_6", Node_0_3_2_3 ); //Name:0.3.2.3.6
@@ -242,12 +242,12 @@ simplebehavior::simplebehavior(Narukom* com) {
 
 		
 		
-	ICondition* TrCondInst_0_3_2_3_2TOAproachBall = new TrCond_0_3_2_3_2TOAproachBall;
-	_conditions.push_back( TrCondInst_0_3_2_3_2TOAproachBall );
+	ICondition* TrCondInst_0_3_2_3_2TOApproachBall = new TrCond_0_3_2_3_2TOApproachBall;
+	_conditions.push_back( TrCondInst_0_3_2_3_2TOApproachBall );
 
 		
 
-	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_3_2,Node_0_3_2_3_3  ,TrCondInst_0_3_2_3_2TOAproachBall  ) ); //0.3.2.3.2TOAproachBall
+	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_3_2,Node_0_3_2_3_3  ,TrCondInst_0_3_2_3_2TOApproachBall  ) ); //0.3.2.3.2TOApproachBall
 		
 
 		
@@ -262,22 +262,22 @@ simplebehavior::simplebehavior(Narukom* com) {
 
 		
 		
-	ICondition* TrCondInst_0_3_2_3_2TOScanForBall = new TrCond_0_3_2_3_2TOScanForBall;
-	_conditions.push_back( TrCondInst_0_3_2_3_2TOScanForBall );
+	ICondition* TrCondInst_0_3_2_3_2TOScan = new TrCond_0_3_2_3_2TOScan;
+	_conditions.push_back( TrCondInst_0_3_2_3_2TOScan );
 
 		
 
-	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_3_2,Node_0_3_2_3_5  ,TrCondInst_0_3_2_3_2TOScanForBall  ) ); //0.3.2.3.2TOScanForBall
+	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_3_2,Node_0_3_2_3_5  ,TrCondInst_0_3_2_3_2TOScan  ) ); //0.3.2.3.2TOScan
 		
 
 		
 		
-	ICondition* TrCondInst_ScanForBallTO0_3_2_3_6 = new TrCond_ScanForBallTO0_3_2_3_6;
-	_conditions.push_back( TrCondInst_ScanForBallTO0_3_2_3_6 );
+	ICondition* TrCondInst_ScanTO0_3_2_3_6 = new TrCond_ScanTO0_3_2_3_6;
+	_conditions.push_back( TrCondInst_ScanTO0_3_2_3_6 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_5,Node_0_3_2_3_6  ,TrCondInst_ScanForBallTO0_3_2_3_6  ) ); //ScanForBallTO0.3.2.3.6
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_5,Node_0_3_2_3_6  ,TrCondInst_ScanTO0_3_2_3_6  ) ); //ScanTO0.3.2.3.6
 		
 
 		
@@ -292,12 +292,12 @@ simplebehavior::simplebehavior(Narukom* com) {
 
 		
 		
-	ICondition* TrCondInst_AproachBallTO0_3_2_3_6 = new TrCond_AproachBallTO0_3_2_3_6;
-	_conditions.push_back( TrCondInst_AproachBallTO0_3_2_3_6 );
+	ICondition* TrCondInst_ApproachBallTO0_3_2_3_6 = new TrCond_ApproachBallTO0_3_2_3_6;
+	_conditions.push_back( TrCondInst_ApproachBallTO0_3_2_3_6 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3,Node_0_3_2_3_6  ,TrCondInst_AproachBallTO0_3_2_3_6  ) ); //AproachBallTO0.3.2.3.6
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3,Node_0_3_2_3_6  ,TrCondInst_ApproachBallTO0_3_2_3_6  ) ); //ApproachBallTO0.3.2.3.6
 		
 
 		

@@ -17,7 +17,7 @@ public:
 
 	bool Eval() {
 		//_blk->process_messages();
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("GameStateMessage");
 		
 		if ( gsm.get() == 0 ){
 			//std::cout<<"*************Transition Play FALSE NO GSM*****************"<<std::endl;

@@ -9,7 +9,7 @@
 #include "tools/logger.h"	
 #include "messages/BehaviorMessages.pb.h"	
 		
-class TrCond_0_3_2_3_2TOScanForBall : public statechart_engine::ICondition {
+class TrCond_0_3_2_3_2TOScan : public statechart_engine::ICondition {
 			
 public:
 
@@ -21,7 +21,7 @@ public:
 		bool cond;
 		//_blk->process_messages();
 		//boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-		boost::shared_ptr<const HeadToBMessage> hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
+		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage> ("HeadToBMessage");
 		//boost::shared_ptr<const ObservationMessage> obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 		
 	//	if(gsm.get()==0){

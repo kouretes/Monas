@@ -19,7 +19,7 @@ public:
 	bool Eval() {
 	//	_blk->process_messages();
 		//boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-		boost::shared_ptr<const ObservationMessage> obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
+		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage> ("ObservationMessage");
 		
 	//	if(gsm.get()==0){
 	//		Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_4_2TOMyLefttKick", "FALSE NO GSM", Logger::Info);

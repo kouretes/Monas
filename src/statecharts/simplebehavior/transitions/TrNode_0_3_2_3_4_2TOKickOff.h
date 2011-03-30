@@ -20,7 +20,7 @@ public:
 		bool cond;
 		//_blk->process_messages();
 		//boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-		boost::shared_ptr<const KickOffMessage> kcm = _blk->read_state<KickOffMessage> ("KickOffMessage");
+		boost::shared_ptr<const KickOffMessage> kcm = _blk->readState<KickOffMessage> ("KickOffMessage");
 		KickOffMessage* kkm =  new KickOffMessage();
 		//if(gsm.get()==0){
 		//	Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2TOKickOff", "FALSE NO GSM", Logger::Info);

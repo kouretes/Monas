@@ -17,17 +17,17 @@
 		
 #include "transitions/TrNode_0_3_2_3_1TO0_3_2_3_2.h"
 		
-#include "transitions/TrNode_0_3_2_3_2TOAproachBall.h"
+#include "transitions/TrNode_0_3_2_3_2TOApproachBall.h"
 		
 #include "transitions/TrNode_0_3_2_3_2TOkickBall.h"
 		
-#include "transitions/TrNode_0_3_2_3_2TOScanForBall.h"
+#include "transitions/TrNode_0_3_2_3_2TOScan.h"
 		
-#include "transitions/TrNode_ScanForBallTO0_3_2_3_6.h"
+#include "transitions/TrNode_ScanTO0_3_2_3_6.h"
 		
 #include "transitions/TrNode_kickBallTO0_3_2_3_6.h"
 		
-#include "transitions/TrNode_AproachBallTO0_3_2_3_6.h"
+#include "transitions/TrNode_ApproachBallTO0_3_2_3_6.h"
 		
 #include "transitions/TrNode_0_3_2_3_4_1TO0_3_2_3_4_2.h"
 		

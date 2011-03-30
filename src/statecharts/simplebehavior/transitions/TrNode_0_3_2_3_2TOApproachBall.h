@@ -8,7 +8,7 @@
 #include "tools/toString.h"
 #include "tools/logger.h"
 
-class TrCond_0_3_2_3_2TOAproachBall : public statechart_engine::ICondition {
+class TrCond_0_3_2_3_2TOApproachBall : public statechart_engine::ICondition {
 			
 public:
 
@@ -20,8 +20,8 @@ public:
 	bool Eval() {
 		//_blk->process_messages();
 		//boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-		boost::shared_ptr<const ObservationMessage> obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
-		boost::shared_ptr<const HeadToBMessage> hbm = _blk->read_state<HeadToBMessage> ("HeadToBMessage");
+		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage> ("ObservationMessage");
+		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage> ("HeadToBMessage");
 		if ( hbm.get()==0){
 			//std::cout<<"*************Transition AproachBall FALSE*****************"<<std::endl;
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOAproachBall", "FALSE NO OBSM, HBM", Logger::Info);
