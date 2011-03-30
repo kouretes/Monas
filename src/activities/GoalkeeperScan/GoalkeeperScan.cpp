@@ -9,7 +9,7 @@ int GoalkeeperScan::Execute() {
 	np.readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "robotConfig", false);
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
 	wimsg = _blk->readData<WorldInfo> ("behavior");
-	pm = _blk->readState<PositionMessage>("behavior");
+	pm = _blk->readState<PositionMessage> ("behavior");
 
 	headaction = SCANFORBALL;
 	float dist;
@@ -26,16 +26,16 @@ int GoalkeeperScan::Execute() {
 				
 	dist = ab.distance(posX, myPosX, posY, myPosY);
 	relativePhi = myPhi-theta;
-	relativeX = ab.rotation(posX, posY, relativePhi);
-	relativeY = ab.rotation(posY, posX, relativePhi);
+	relativeX = ab.rotation(posX, posY, relativePhi) + myPosX;
+	relativeY = ab.rotation(posY, posX, relativePhi) + myPosY;
 	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
-			//Logger::Instance().WriteMsg("Scan",  " BALLTRACK", Logger::Info);
+			//Logger::Instance().WriteMsg("GoalkeeperScan",  " BALLTRACK", Logger::Info);
 		}
 		else{		
 			
-			if(pm->posx() - locDeviation > wimsg->myposition().x() || wimsg->myposition().x() > pm->posx() + locDeviation || pm->posy() - locDeviation > wimsg->myposition().y() || wimsg->myposition().y() > pm->posy() + locDeviation){
+			if(posX - locDeviation > myPosX || myPosX > posX + locDeviation || posY - locDeviation > myPosY || myPosY > posY + locDeviation){
 				littleWalk(relativeX,relativeY, relativePhi);
 			}
 			if (lastTurn< boost::posix_time::microsec_clock::universal_time()){

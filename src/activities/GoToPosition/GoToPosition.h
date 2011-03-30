@@ -26,6 +26,8 @@ public:
 	
 	std::string GetName ();
 	
+	bool robotInPosition(float x1, float x2, float y1, float y2, float th1, float th2);
+	
 private:
 	boost::shared_ptr<const PositionMessage> pm;
 	boost::shared_ptr<const WorldInfo> wimsg;

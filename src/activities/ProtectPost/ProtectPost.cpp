@@ -15,34 +15,34 @@ int ProtectPost::Execute() {
 
 	//Logger::Instance().WriteMsg("ProtectPost",  " Execute", Logger::Info);
 	
-	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	wimsg = _blk->readData<WorldInfo>("behavior");
 	
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	
 	headaction = BALLTRACK;
-	if (obsm.get()==0){
+	if (wimsg->balls_size()!=0){
 		//Logger::Instance().WriteMsg("ProtectPost",  " No OBS", Logger::Info);
-		if (lastObsm==0)
+		if (lastObs->balls_size()!=0)
 			return 0;
-		if (rcvObsm < boost::posix_time::microsec_clock::universal_time() ){
+		if (rcvObs < boost::posix_time::microsec_clock::universal_time() ){
 			littleWalk(0.005,0.005,0);
 			headaction=SCANFORBALL;
 			lastPostScan = boost::posix_time::microsec_clock::universal_time()+ boost::posix_time::seconds(1);
 			return 0;
 		}
 	}else{
-		lastObsm->CopyFrom(*obsm);
-		rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
+		lastObs->CopyFrom(*wimsg);
+		rcvObs = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
 	}
-	int side ;//= 1;
+//	int side ;//= 1;
 	
-	bd = lastObsm->ball().dist();
-	bb = lastObsm->ball().bearing();
-	bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
-	by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
-	side = (bb > 0) ? 1 : -1;
+	//bd = ab.distance(lastObs->balls(0).relativex(), 0.0, lastObs->balls(0).relativey(), 0.0);
+	//bb = atan( lastObs->balls(0).relativex()/ lastObs->balls(0).relativey() );
+	//bx = lastObs->balls(0).relativex(); //kanw tracking me to swma
+	//by = lastObs->balls(0).relativey();
+	//side = (bb > 0) ? 1 : -1;
 	
-	if(bx<minDistGB && by<minDistGB){
+/*	if(bx<minDistGB && by<minDistGB){
 		if(fabs(bx-dDistBallX)>dDistBallOffset && fabs(by-dDistBallY)>dDistBallOffset)
 			littleWalk(bx-dDistBallX, by-dDistBallY, bb);
 		else{
@@ -54,6 +54,7 @@ int ProtectPost::Execute() {
 		}
 	}	
 	else
+	*/
 		blockBall();
 		
 	if(lastPostScan<boost::posix_time::microsec_clock::universal_time())
@@ -72,9 +73,9 @@ int ProtectPost::Execute() {
 void ProtectPost::UserInit () {
 	
 	amot = new MotionActionMessage();
-	rcvObsm = boost::posix_time::microsec_clock::universal_time();
+	rcvObs = boost::posix_time::microsec_clock::universal_time();
 	lastPostScan = boost::posix_time::microsec_clock::universal_time();
-	_blk->subscribeTo("vision", 0);
+	//_blk->subscribeTo("vision", 0);
 	_blk->subscribeTo("behavior", 0);
 	myPosY = 0.0;
 	myPosX = 2.6;
@@ -82,7 +83,7 @@ void ProtectPost::UserInit () {
 	estBallX = 0.0;
 	estBallY = 0.0;
 	bhmsg = new BToHeadMessage();
-	lastObsm = new ObservationMessage();
+	lastObs = new WorldInfo();
 	headaction= BALLTRACK;
 	//wmot = new MotionWalkMessage();
 	wmot.add_parameter(0.0f);
@@ -96,7 +97,7 @@ std::string ProtectPost::GetName () {
 }
 
 void ProtectPost::blockBall(){
-	wimsg = _blk->readData<WorldInfo>("behavior");
+	
 	
 	if(wimsg.get()!=0){
 		myPosX = wimsg->myposition().x();

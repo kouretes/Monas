@@ -29,9 +29,10 @@ public:
 private:	
 	ApproachBall ab;
 	BToHeadMessage* bhmsg;
-	ObservationMessage* lastObsm;
-	boost::posix_time::ptime rcvObsm, lastPostScan;
-	boost::shared_ptr<const ObservationMessage> obsm;
+	WorldInfo* lastObs;
+	//boost::shared_ptr<const WorldInfo> wimsg;
+	boost::posix_time::ptime rcvObs, lastPostScan;
+	//boost::shared_ptr<const ObservationMessage> obsm;
 	boost::shared_ptr<const WorldInfo> wimsg;
 	
 	int headaction;

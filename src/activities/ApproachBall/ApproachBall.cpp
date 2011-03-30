@@ -119,17 +119,23 @@ void ApproachBall::littleWalk(double x, double y, double th) {
 	wmot.set_parameter(2, th);
 	_blk->publishSignal(wmot, "motion");
 }
-bool ApproachBall::readyToKick(boost::shared_ptr<const ObservationMessage>  msg){
-		if (msg.get()!=0){
-			int side;
-						
-			side = (msg->ball().bearing() > 0) ? 1 : -1;
-			if ((fabs( msg->ball().dist() * cos(msg->ball().bearing()) - dDistBallX ) <= dDistBallOffset && fabs( msg->ball().dist() * sin(msg->ball().bearing()) - (side*dDistBallY) ) <= dDistBallY) ){				
-				Logger::Instance().WriteMsg("TrCond_ApproachBall_one_or_more_times_TO0_3_2_3_4_4_2_4", "TRUE", Logger::Info);
-				return true;
-			}
+bool ApproachBall::readyToKick(boost::shared_ptr<const ObservationMessage>  msg1,boost::shared_ptr<const WorldInfo> msg2){
+	int side;	
+	if ( msg1.get() != 0 ){					
+		side = (msg1->ball().bearing() > 0) ? 1 : -1;
+		if ((fabs( msg1->ball().dist() * cos(msg1->ball().bearing()) - dDistBallX ) <= dDistBallOffset && fabs( msg1->ball().dist() * sin(msg1->ball().bearing()) - (side*dDistBallY) ) <= dDistBallY) ){				
+			Logger::Instance().WriteMsg("TrCond_ApproachBall_one_or_more_times_TO0_3_2_3_4_4_2_4", "TRUE", Logger::Info);
+			return true;
 		}
-		return false;
+	}
+	if ( msg2.get() != 0 && msg2->balls_size() !=0 ){
+		
+		if ( fabs( msg2->balls(0).relativex() - dDistBallX ) <= dDistBallOffset && fabs(fabs( msg2->balls(0).relativey()) - dDistBallY ) <= dDistBallY ){				
+			Logger::Instance().WriteMsg("TrCond_ApproachBall_one_or_more_times_TO0_3_2_3_4_4_2_4", "TRUE", Logger::Info);
+			return true;
+		}
+	}
+	return false;
 
 }
 float ApproachBall::rotation(float a, float b, float theta){

@@ -24,7 +24,9 @@ static const float  lPost = 0.7,
 					locDeviation = 0.2,			//deviation of localization's measurments 
 					yellowPostCenterX = 3.0,	//Yellow Post's center in x axis in m
 					yellowPostCenterY = 0.0,	//Yellow Post's center in y axis in m
-					ballDistLimit = 0.26;
+					ballDistLimit = 0.26,
+					goalieX = 2.5,
+					goalieY = 0;
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f

@@ -56,7 +56,7 @@ int TargetedApproach::Execute() {
 		X=X>0?X:X-0.01;
 		X=X>1?1:X;
 		X=X<-1?-1:X;
-		bd = ab.distance(wimsg->balls(0).relativex(), 0.0,  wimsg->balls(0).relativey(), 0.0);
+		//bd = ab.distance(wimsg->balls(0).relativex(), 0.0,  wimsg->balls(0).relativey(), 0.0);
 
 		float offsety=side*dDistBallY;
 		Y=(wimsg->balls(0).relativey()-offsety)*3;

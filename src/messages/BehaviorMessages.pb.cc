@@ -213,8 +213,8 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "d\030\002 \002(\005:\0010\"+\n\013ScanMessage\022\034\n\rscancomplet"
     "ed\030\001 \002(\010:\005false\"E\n\023PlayerNumberMessage\022\030"
     "\n\rplayer_number\030\001 \002(\005:\0012\022\024\n\tteam_side\030\002 "
-    "\002(\005:\0011\"G\n\017PositionMessage\022\020\n\004posX\030\001 \002(\005:"
-    "\00270\022\020\n\004posY\030\002 \002(\005:\00270\022\020\n\005theta\030\003 \002(\002:\0011\""
+    "\002(\005:\0011\"G\n\017PositionMessage\022\020\n\004posX\030\001 \002(\002:"
+    "\00270\022\020\n\004posY\030\002 \002(\002:\00270\022\020\n\005theta\030\003 \002(\002:\0011\""
     "5\n\027ReturnToPositionMessage\022\032\n\013goalieToPo"
     "s\030\001 \002(\010:\005false", 414);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
@@ -1435,28 +1435,28 @@ bool PositionMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 posX = 1 [default = 70];
+      // required float posX = 1 [default = 70];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &posx_)));
           _set_bit(0);
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(16)) goto parse_posY;
+        if (input->ExpectTag(21)) goto parse_posY;
         break;
       }
       
-      // required int32 posY = 2 [default = 70];
+      // required float posY = 2 [default = 70];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
          parse_posY:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &posy_)));
           _set_bit(1);
         } else {
@@ -1500,14 +1500,14 @@ bool PositionMessage::MergePartialFromCodedStream(
 
 void PositionMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 posX = 1 [default = 70];
+  // required float posX = 1 [default = 70];
   if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->posx(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->posx(), output);
   }
   
-  // required int32 posY = 2 [default = 70];
+  // required float posY = 2 [default = 70];
   if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->posy(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->posy(), output);
   }
   
   // required float theta = 3 [default = 1];
@@ -1523,14 +1523,14 @@ void PositionMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* PositionMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required int32 posX = 1 [default = 70];
+  // required float posX = 1 [default = 70];
   if (_has_bit(0)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->posx(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->posx(), target);
   }
   
-  // required int32 posY = 2 [default = 70];
+  // required float posY = 2 [default = 70];
   if (_has_bit(1)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->posy(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->posy(), target);
   }
   
   // required float theta = 3 [default = 1];
@@ -1549,18 +1549,14 @@ int PositionMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 posX = 1 [default = 70];
+    // required float posX = 1 [default = 70];
     if (has_posx()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->posx());
+      total_size += 1 + 4;
     }
     
-    // required int32 posY = 2 [default = 70];
+    // required float posY = 2 [default = 70];
     if (has_posy()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->posy());
+      total_size += 1 + 4;
     }
     
     // required float theta = 3 [default = 1];

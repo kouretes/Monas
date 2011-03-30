@@ -8,6 +8,7 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "../BehaviorConst.h"
 #include <boost/date_time/posix_time/ptime.hpp>
@@ -25,7 +26,7 @@ public:
 	std::string GetName ();
 	
 
-	bool readyToKick( boost::shared_ptr<const ObservationMessage> msg );
+	bool readyToKick( boost::shared_ptr<const ObservationMessage> msg1, boost::shared_ptr<const WorldInfo> msg2 );
 	float distance(float x1, float x2, float y1, float y2);
 	float rotation(float x, float y, float theta);
 

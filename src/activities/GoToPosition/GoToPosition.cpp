@@ -23,8 +23,8 @@ int GoToPosition::Execute() {
 	
 	dist = ab.distance(posX, myPosX, posY, myPosY);
 	relativePhi = myPhi-theta;
-	relativeX = ab.rotation(posX, posY, relativePhi);
-	relativeY = ab.rotation(posY, posX, relativePhi);
+	relativeX = ab.rotation(posX, posY, relativePhi) - myPosX;
+	relativeY = ab.rotation(posY, posX, relativePhi) - myPosY;
 	
 	if(dist<minDistGB){
 		littleWalk( relativeX, relativeY, relativePhi);
@@ -64,6 +64,16 @@ void GoToPosition::UserInit () {
 
 std::string GoToPosition::GetName () {
 	return "GoToPosition";
+}
+
+bool GoToPosition::robotInPosition(float x1, float x2, float y1, float y2, float th1, float th2){
+	if( x1 - locDeviation > x2 || x2 > x1 + locDeviation )
+		return false;	
+	if( y1 - locDeviation > y2 || y2 > y1 + locDeviation )
+		return false;
+	if( th1 - 0.1*th1 > th2 || th2 > th1 + 0.1*th1  )
+		return false;
+	return true;
 }
 
 void GoToPosition::velocityWalk(double x, double y, double th, double f) {

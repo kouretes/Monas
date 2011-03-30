@@ -23,11 +23,12 @@ message PlayerNumberMessage{
 }
 
 message PositionMessage{
-	required int32 posX = 1 [default = 70];
-	required int32 posY = 2 [default = 70];
+	required float posX = 1 [default = 70];
+	required float posY = 2 [default = 70];
 	required float theta = 3 [default = 1];
 }
 
 message ReturnToPositionMessage{
 	required bool goalieToPos = 1 [default = false];
 }
+

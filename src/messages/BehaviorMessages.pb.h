@@ -555,19 +555,19 @@ class PositionMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required int32 posX = 1 [default = 70];
+  // required float posX = 1 [default = 70];
   inline bool has_posx() const;
   inline void clear_posx();
   static const int kPosXFieldNumber = 1;
-  inline ::google::protobuf::int32 posx() const;
-  inline void set_posx(::google::protobuf::int32 value);
+  inline float posx() const;
+  inline void set_posx(float value);
   
-  // required int32 posY = 2 [default = 70];
+  // required float posY = 2 [default = 70];
   inline bool has_posy() const;
   inline void clear_posy();
   static const int kPosYFieldNumber = 2;
-  inline ::google::protobuf::int32 posy() const;
-  inline void set_posy(::google::protobuf::int32 value);
+  inline float posy() const;
+  inline void set_posy(float value);
   
   // required float theta = 3 [default = 1];
   inline bool has_theta() const;
@@ -581,8 +581,8 @@ class PositionMessage : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::google::protobuf::int32 posx_;
-  ::google::protobuf::int32 posy_;
+  float posx_;
+  float posy_;
   float theta_;
   friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
   friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
@@ -832,7 +832,7 @@ inline void PlayerNumberMessage::set_team_side(::google::protobuf::int32 value) 
 
 // PositionMessage
 
-// required int32 posX = 1 [default = 70];
+// required float posX = 1 [default = 70];
 inline bool PositionMessage::has_posx() const {
   return _has_bit(0);
 }
@@ -840,15 +840,15 @@ inline void PositionMessage::clear_posx() {
   posx_ = 70;
   _clear_bit(0);
 }
-inline ::google::protobuf::int32 PositionMessage::posx() const {
+inline float PositionMessage::posx() const {
   return posx_;
 }
-inline void PositionMessage::set_posx(::google::protobuf::int32 value) {
+inline void PositionMessage::set_posx(float value) {
   _set_bit(0);
   posx_ = value;
 }
 
-// required int32 posY = 2 [default = 70];
+// required float posY = 2 [default = 70];
 inline bool PositionMessage::has_posy() const {
   return _has_bit(1);
 }
@@ -856,10 +856,10 @@ inline void PositionMessage::clear_posy() {
   posy_ = 70;
   _clear_bit(1);
 }
-inline ::google::protobuf::int32 PositionMessage::posy() const {
+inline float PositionMessage::posy() const {
   return posy_;
 }
-inline void PositionMessage::set_posy(::google::protobuf::int32 value) {
+inline void PositionMessage::set_posy(float value) {
   _set_bit(1);
   posy_ = value;
 }

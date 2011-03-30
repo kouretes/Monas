@@ -17,10 +17,9 @@ int NoPlay::Execute() {
 	Logger::Instance().WriteMsg("NoPlay",  " Execute", Logger::Info);
 
 	gsm = _blk->readState<GameStateMessage> ("behavior");
-		if(!readConf){
-					
-						readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml", kickOff);
-					}
+		if(!readConf)
+			readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml", kickOff);
+		
 		if(gsm.get()==0 ){
 			Logger::Instance().WriteMsg("NoPlay",  " NO GSM", Logger::Info);
 			bhmsg->set_headaction(DONOTHING);
@@ -48,9 +47,11 @@ int NoPlay::Execute() {
 				break;
 				case PLAYER_SET:
 					Logger::Instance().WriteMsg("NoPlay",  " playerset", Logger::Info);
+					velocityWalk(0,0,0,1);
 					curraction = DONOTHING;
 				break;
 				case PLAYER_READY:
+					
 					kickOff = gsm->kickoff();
 					kcm->set_kickoff(kickOff);
 					_blk->publishState(*kcm, "behavior");
