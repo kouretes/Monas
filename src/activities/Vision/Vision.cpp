@@ -101,8 +101,11 @@ int VISIBLE Vision::Execute()
 			//cout<<"Start calibration"<<endl;
 			CalibrateCam res;
 			Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
-
+#ifdef  CAPTURE_MODE
+			float scale = ext.calibrateCamera(cal->sleeptime(), 99999/*cal->exp()*/);
+#else
 			float scale = ext.calibrateCamera(cal->sleeptime(), cal->exp());
+#endif
 			segbottom->setLumaScale(1 / scale);
 			segtop->setLumaScale(1 / scale);
 			Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
@@ -115,6 +118,13 @@ int VISIBLE Vision::Execute()
 
 		}
 	}
+#ifdef  CAPTURE_MODE
+	if(frameNo++%20==0)
+		saveFrame(rawImage);
+#else
+	frameNo++;
+#endif
+
 
 	fetchAndProcess();
 	//std::cout << " Vision run" << std::endl;
@@ -486,8 +496,8 @@ void Vision::fetchAndProcess()
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
-	locateGoalPost(ygoalpost, yellow);
-	locateGoalPost(bgoalpost, skyblue);
+	//locateGoalPost(ygoalpost, yellow);
+	//locateGoalPost(bgoalpost, skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	cout << b.x << " " << b.y << " " << b.cr << endl;
@@ -598,6 +608,7 @@ VISIBLE Vision::Vision() :
 
 void VISIBLE Vision::UserInit()
 {
+	frameNo=0;
 	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
 	if (xmlconfig->IsLoadedSuccessfully() == false)
 		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
