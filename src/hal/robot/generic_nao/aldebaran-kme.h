@@ -10,15 +10,20 @@
 #ifdef NAOQI_1_6_0
 #include <alptr.h>
 #include <alvalue.h>
+#include <dcmproxy.h>
 #include <almotionproxy.h>
 #elif NAOQI_1_8_16
 #include <alcore/alptr.h>
 #include <alvalue/alvalue.h>
 #include <alproxies/almotionproxy.h>
+#include <alproxies/dcmproxy.h>
+
 #elif NAOQI_1_10_10
 #include <alcore/alptr.h>
 #include <alvalue/alvalue.h>
 #include <alproxies/almotionproxy.h>
+#include <alproxies/dcmproxy.h>
+
 #endif
 
 #endif /* ALDEBARAN_KME_H_ */
