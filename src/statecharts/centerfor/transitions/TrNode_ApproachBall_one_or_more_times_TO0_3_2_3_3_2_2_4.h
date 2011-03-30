@@ -1,6 +1,7 @@
 #include "messages/BehaviorMessages.pb.h"
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/VisionObservations.pb.h"
+#include "messages/WorldInfo.pb.h"
 #include "architecture/archConfig.h"		
 #include "tools/toString.h"
 #include "tools/logger.h"
