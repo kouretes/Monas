@@ -9,6 +9,7 @@
 #include "KmeAction.h"
 
 using namespace std;
+boost::posix_time::ptime KmeManager::future_time=boost::posix_time::microsec_clock::universal_time();
 
 std::vector<ISpecialAction*> KmeManager::LoadActionsKME() {
 
