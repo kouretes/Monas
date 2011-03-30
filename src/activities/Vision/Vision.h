@@ -32,6 +32,8 @@
 #define VISIBLE
 #endif
 
+//#define CAPTURE_MODE
+
 class Vision: public IActivity
 {
 	public:
@@ -129,6 +131,7 @@ class Vision: public IActivity
 		ObservationMessage obs;
 		LedChangeMessage leds;
 		mutable KProfiling::profiler vprof;
+		int frameNo;
 		//Incoming messages!
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 

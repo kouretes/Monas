@@ -51,6 +51,7 @@ private:
 	bool robotUp;
 	//SensorPair AccZ, AccX, AccY;
 	float AccZvalue, AccXvalue, AccYvalue;
+	float accnorm, angX, angY, gyrX, gyrY;
 	ptime waitfor;
 
 	int counter;

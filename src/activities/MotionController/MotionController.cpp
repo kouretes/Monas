@@ -18,7 +18,7 @@ using namespace std;
 using namespace KDeviceLists;
 MotionController::MotionController()
 {
-	waitfor=microsec_clock::universal_time()-hours(1);
+	waitfor = microsec_clock::universal_time() - hours(1);
 }
 
 void MotionController::UserInit() {
@@ -120,7 +120,6 @@ void MotionController::UserInit() {
 	_blk->subscribeTo("motion", 0);
 	_blk->subscribeTo("sensors", 0);
 
-
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
 	AccYvalue = 0.0;
@@ -134,15 +133,16 @@ void MotionController::UserInit() {
 
 	counter = 0;
 
-<<<<<<< HEAD
 	pam = new MotionActionMessage();
 	pam->set_command("NULL");
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
+	{
 		walkPrevAng[i] = 0;
 	}
 
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 20; i++)
+	{
 		comp[i] = 0;
 	}
 
@@ -230,7 +230,8 @@ void MotionController::UserInit() {
 	//	LKickAng5 [4] = 78.1333;
 	//	LKickAng5 [5] = 71.9857;
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
+	{
 
 		if (RKickAng2[i] < RKickAng1[i])
 			diffRKick1[i] = -1;
@@ -273,11 +274,6 @@ void MotionController::UserInit() {
 			diffLKick4[i] = 1;
 	}
 
-	createHeadPositionActuatorAlias();
-=======
-
->>>>>>> a368e847f307200bc9d9529f887c85b2160e7272
-
 	walkingWithVelocity = false;
 	setStiffnessDCM(1);
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
@@ -286,7 +282,7 @@ void MotionController::UserInit() {
 int MotionController::Execute() {
 	counter++;
 	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
-	testcommands();
+	//testcommands();
 	read_messages();
 	mglrun();
 	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
@@ -320,27 +316,24 @@ void MotionController::read_messages() {
 void MotionController::mglrun()
 {
 
-
-
-	if (allsm != NULL && allsm->sensordata_size()>=L_FSR)//Has Accelerometers
+	if (allsm != NULL && allsm->sensordata_size() >= L_FSR)//Has Accelerometers
 	{
-		float accnorm,angX,angY,gyrX,gyrY;
-		AccZvalue = allsm->sensordata(ACC+AXIS_Z).sensorvalue();
-		AccXvalue = allsm->sensordata(ACC+AXIS_X).sensorvalue();
-		AccYvalue = allsm->sensordata(ACC+AXIS_Y).sensorvalue();
-		gyrX= allsm->sensordata(GYR+AXIS_X).sensorvalue();
-		gyrY= allsm->sensordata(GYR+AXIS_Y).sensorvalue();
-		accnorm=sqrt(AccZvalue*AccZvalue+AccYvalue*AccYvalue+AccXvalue*AccXvalue);
-		angX=atan(AccYvalue/AccZvalue)+gyrX*0.01744*0.05;//TO rad * 0.5 (integration for half a second  * 1/10 because its in 0.1 deg resolution)
-		angY=atan(-AccXvalue/AccZvalue)+gyrY*0.01744*0.05;
 
+		AccZvalue = allsm->sensordata(ACC + AXIS_Z).sensorvalue();
+		AccXvalue = allsm->sensordata(ACC + AXIS_X).sensorvalue();
+		AccYvalue = allsm->sensordata(ACC + AXIS_Y).sensorvalue();
+		gyrX = allsm->sensordata(GYR + AXIS_X).sensorvalue();
+		gyrY = allsm->sensordata(GYR + AXIS_Y).sensorvalue();
+		accnorm = sqrt(AccZvalue * AccZvalue + AccYvalue * AccYvalue + AccXvalue * AccXvalue);
+		angX = atan(AccYvalue / AccZvalue) + gyrX * 0.01744 * 0.05;//TO rad * 0.5 (integration for half a second  * 1/10 because its in 0.1 deg resolution)
+		angY = atan(-AccXvalue / AccZvalue) + gyrY * 0.01744 * 0.05;
 
 		/* Check if the robot is falling and remove stiffness, kill all motions */
 		//Logger::Instance().WriteMsg("MotionController", "Accnorm:"+_toString(accnorm), Logger::ExtraInfo);
 		//Logger::Instance().WriteMsg("MotionController", "angX:"+_toString(atan(-AccXvalue/AccZvalue))+ "angY:"+_toString(atan(AccYvalue/AccZvalue)), Logger::ExtraInfo);
 		//Logger::Instance().WriteMsg("MotionController", "GyrX:"+_toString(gyrX)+ "GyrY:"+_toString(gyrY), Logger::ExtraInfo);
-		float normdist=(accnorm-KDeviceLists::Interpret::GRAVITY_PULL)/KDeviceLists::Interpret::GRAVITY_PULL;
-		if ( (normdist<-0.35||normdist>0.75||fabs(gyrX)>600.0||fabs(gyrY)>600.0  ) && (fabs(angX)>0.75||fabs(angY)>0.75) )
+		float normdist = (accnorm - KDeviceLists::Interpret::GRAVITY_PULL) / KDeviceLists::Interpret::GRAVITY_PULL;
+		if ((normdist < -0.35 || normdist > 0.75 || fabs(gyrX) > 600.0 || fabs(gyrY) > 600.0) && (fabs(angX) > 0.75 || fabs(angY) > 0.75))
 		{
 			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
 
@@ -350,33 +343,39 @@ void MotionController::mglrun()
 			//		tts->pCall<AL::ALValue>(std::string("say"), std::string("Ouch!"));
 			//motion->setStiffnesses("Body", 0.0);
 			setStiffnessDCM(0);
-			waitfor=microsec_clock::universal_time()+boost::posix_time::milliseconds(350);
+			waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 			//ALstandUpCross();
 
 			return;
 		}
 	}
 
-
-	if(waitfor>microsec_clock::universal_time())
+	if (waitfor > microsec_clock::universal_time())
 		return;
 	/* Check if an Action command has been completed */
-	if ((actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID) /*isRunning(actionPID)*/) {
+	if ((actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID) /*isRunning(actionPID)*/)
+	{
 		actionPID = 0;
-		if(robotDown){ robotDown=false;
-		robotUp=true;
+		if (robotDown)
+		{
+			robotDown = false;
+			robotUp = true;
+			if((fabs(angX) > 0.75 || fabs(angY) > 0.75)) robotUp=false;
+		}
+		if (!robotDown && !robotUp)
+		{
+			robotDown = true;
+			robotUp = false;
 		}
 		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 	}
-	if (!robotDown && !robotUp)
+	if ((actionPID == 0) && !robotDown && !robotUp)
 	{
 		//Now execute an alstandupcross
 		//motion->setStiffnesses("Body", 0.5);
-		setStiffnessDCM(0.5);
+		setStiffnessDCM(0.7);
 		//usleep(300000);
 		ALstandUpCross();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up: Cross", Logger::ExtraInfo);
-		robotDown = true;
 		return;
 	}
 
@@ -499,89 +498,105 @@ void MotionController::mglrun()
 				Logger::Instance().WriteMsg("MotionController", "Invalid Head Command: " + hm->command(), Logger::ExtraInfo);
 		}
 
-		if ((actionPID == 0) && ((pam->command() != "NULL" && am == NULL) || (am != NULL && am->command() == "MyLeftKick") || (am != NULL && am->command() == "MyRightKick"))) {
+		if ((actionPID == 0) && ((pam->command() != "NULL" && am == NULL) || (am != NULL && am->command() == "MyLeftKick") || (am != NULL && am->command() == "MyRightKick")))
+		{
 
 			int readyToKick = 0;
 
-			if (am != NULL) {
+			if (am != NULL)
+			{
 				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command(), Logger::ExtraInfo);
 				pam->set_command(am->command());
 			}
 			Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
 
-			if (pam->command() == "MyRightKick") {
+			if (pam->command() == "MyRightKick")
+			{
 				AngleCompare();
 
 				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
 				Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]) + _toString(comp[16])
 						+ _toString(comp[17]), Logger::ExtraInfo);
 
-				if (comp[3] >= 3 && comp[11] >= 3 && comp[16] == 1 && comp[17] == 1) {
+				if (comp[3] >= 3 && comp[11] >= 3 && comp[16] == 1 && comp[17] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE1 ", Logger::ExtraInfo);
 
 					pam->set_command("rightKickD.xar");
 					readyToKick = 1;
-				} else if (comp[2] >= 3 && comp[10] >= 3 && comp[16] == 1 && comp[17] == 1) {
+				} else if (comp[2] >= 3 && comp[10] >= 3 && comp[16] == 1 && comp[17] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE2 ", Logger::ExtraInfo);
 
 					pam->set_command("rightKickC.xar");
 					readyToKick = 1;
-				} else if (comp[1] >= 2 && comp[9] >= 3 && comp[16] == 1) {
+				} else if (comp[1] >= 2 && comp[9] >= 3 && comp[16] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE3 ", Logger::ExtraInfo);
 
 					pam->set_command("rightKickB.xar");
 					readyToKick = 1;
-				} else if (comp[0] >= 2 && comp[8] >= 3 && comp[16] == 1) {
+				} else if (comp[0] >= 2 && comp[8] >= 3 && comp[16] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE4 ", Logger::ExtraInfo);
 
 					pam->set_command("rightKickA.xar");
 					readyToKick = 1;
 				}
-				if (readyToKick == 1) {
+				if (readyToKick == 1)
+				{
 					SpAssocCont::iterator it = SpActions.find(pam->command());
 					if (it == SpActions.end())
 						Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
-					else {
+					else
+					{
 						killWalkCommand();
 						actionPID = it->second->ExecutePost();
 					}
 					pam->set_command("NULL");
 					readyToKick = 0;
 				}
-			} else if (pam->command() == "MyLeftKick") {
+			} else if (pam->command() == "MyLeftKick")
+			{
 				AngleCompare();
 
 				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]), Logger::ExtraInfo);
 				Logger::Instance().WriteMsg("MotionController", _toString(comp[12]) + _toString(comp[13]) + _toString(comp[14]) + _toString(comp[15]) + _toString(comp[18])
 						+ _toString(comp[19]), Logger::ExtraInfo);
 
-				if (comp[7] >= 3 && comp[15] >= 3 && comp[18] == 1 && comp[19] == 1) {
+				if (comp[7] >= 3 && comp[15] >= 3 && comp[18] == 1 && comp[19] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE5 ", Logger::ExtraInfo);
 
 					pam->set_command("leftKickD.xar");
 					readyToKick = 1;
-				} else if (comp[6] >= 3 && comp[14] >= 3 && comp[18] == 1 && comp[19] == 1) {
+				} else if (comp[6] >= 3 && comp[14] >= 3 && comp[18] == 1 && comp[19] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE6 ", Logger::ExtraInfo);
 
 					pam->set_command("leftKickC.xar");
 					readyToKick = 1;
-				} else if (comp[5] >= 2 && comp[13] >= 3 && comp[19] == 1) {
+				} else if (comp[5] >= 2 && comp[13] >= 3 && comp[19] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE7 ", Logger::ExtraInfo);
 
 					pam->set_command("leftKickB.xar");
 					readyToKick = 1;
-				} else if (comp[4] >= 2 && comp[12] >= 3 && comp[19] == 1) {
+				} else if (comp[4] >= 2 && comp[12] >= 3 && comp[19] == 1)
+				{
 					Logger::Instance().WriteMsg("MotionController", "CASE8 ", Logger::ExtraInfo);
 
 					pam->set_command("leftKickA.xar");
 					readyToKick = 1;
 				}
 
-				if (readyToKick == 1) {
+				if (readyToKick == 1)
+				{
 					SpAssocCont::iterator it = SpActions.find(pam->command());
 					if (it == SpActions.end())
 						Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
-					else {
+					else
+					{
 						killWalkCommand();
 						actionPID = it->second->ExecutePost();
 					}
@@ -591,7 +606,8 @@ void MotionController::mglrun()
 			}
 			Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 			return;
-		} else if ((am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning()) {
+		} else if ((am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning())
+		{
 			Logger::Instance().WriteMsg("MotionController", am->command(), Logger::ExtraInfo);
 			stopWalkCommand();
 			if (am->command() == "LieDown") {
@@ -603,10 +619,12 @@ void MotionController::mglrun()
 			SpAssocCont::iterator it = SpActions.find(am->command());
 			if (it == SpActions.end())
 				Logger::Instance().WriteMsg("MotionController", "SpAction " + am->command() + " not found!", Logger::Error);
-			else if (true) {
+			else if (true)
+			{
 
 				actionPID = it->second->ExecutePost();
-			} else {
+			} else
+			{
 
 				boost::shared_ptr<ISpecialAction> ptr = it->second;
 				KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
@@ -665,11 +683,13 @@ void MotionController::killCommands() {
 	//}
 	walkPID = 0;
 	headPID = 0;
-	actionPID= 0;
+	actionPID = 0;
 	Logger::Instance().WriteMsg("MotionController", "Killed All Commands", Logger::ExtraInfo);
 }
 
-void MotionController::ALstandUp() {
+void MotionController::ALstandUp()
+{
+	Logger::Instance().WriteMsg("MotionController", "Choose standUp", Logger::ExtraInfo);
 
 #ifdef WEBOTS
 	if (AccXvalue > 1.0)
@@ -679,6 +699,7 @@ void MotionController::ALstandUp() {
 #endif
 		//tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Up!"));
 		ALstandUpBack();
+		Logger::Instance().WriteMsg("MotionController", "Stand Up: From Back", Logger::ExtraInfo);
 	}
 #ifdef WEBOTS
 	else if (AccXvalue < -1.0)
@@ -688,39 +709,47 @@ void MotionController::ALstandUp() {
 #endif
 		//              tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Down!"));
 		ALstandUpFront();
+		Logger::Instance().WriteMsg("MotionController", "Stand Up: From Front", Logger::ExtraInfo);
 	}
 	return;
 }
 
-void MotionController::ALstandUpCross() {
-	SpAssocCont::iterator it = SpActions.find("cross.xar");
+void MotionController::ALstandUpCross()
+{
+	SpAssocCont::iterator it = SpActions.find("ALstandUpCross2011");//"cross.xar");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpCross not found!", Logger::Error);
 	else
 		actionPID = it->second->ExecutePost();
+	Logger::Instance().WriteMsg("MotionController", "Stand Up Cross ", Logger::ExtraInfo);
 }
 
-void MotionController::ALstandUpBack() {
-	SpAssocCont::iterator it = SpActions.find("ALstandUpBack2010");
+void MotionController::ALstandUpBack()
+{
+	SpAssocCont::iterator it = SpActions.find("ALstandUpBack2011");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpBack2010 not found!", Logger::Error);
-	else {
+	else
+	{
 		actionPID = it->second->ExecutePost();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up 2010: From Back", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Stand Up 2011: From Back", Logger::ExtraInfo);
 	}
 }
 
-void MotionController::ALstandUpFront() {
+void MotionController::ALstandUpFront()
+{
 	SpAssocCont::iterator it = SpActions.find("ALstandUpFront2011");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpFront2011 not found!", Logger::Error);
-	else {
+	else
+	{
 		actionPID = it->second->ExecutePost();
 		Logger::Instance().WriteMsg("MotionController", "Stand Up 2011: From Front", Logger::ExtraInfo);
 	}
 }
 
-void MotionController::testcommands() {
+void MotionController::testcommands()
+{
 
 	//	if ((headPID == 0) && (counter % 10 == 0)) {
 	//		MotionHeadMessage* hmot = new MotionHeadMessage();
@@ -757,14 +786,14 @@ void MotionController::testcommands() {
 	//		delete wmot;
 	//	}
 	//
-	if ((actionPID == 0) && ((counter + 30) % 500 == 0) && (counter > 0)) {
-		MotionActionMessage* amot = new MotionActionMessage();
-		//amot->set_topic("motion");
-		amot->set_command("PenalizedZeroPos.xar");
-		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
-		_blk->publishSignal(*amot, "motion");
-		delete amot;
-	}
+	//	if ((actionPID == 0) && ((counter + 30) % 500 == 0) && (counter > 0)) {
+	//		MotionActionMessage* amot = new MotionActionMessage();
+	//		//amot->set_topic("motion");
+	//		amot->set_command("PenalizedZeroPos.xar");
+	//		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
+	//		_blk->publishSignal(*amot, "motion");
+	//		delete amot;
+	//	}
 
 	//	if ((actionPID == 0) && ((counter + 130) % 10 == 0) && (counter > 0))
 	//	{
@@ -801,7 +830,7 @@ void MotionController::testcommands() {
 
 void MotionController::createDCMAlias()
 {
-	cout<<"Creating DCM aliases"<<endl;
+	cout << "Creating DCM aliases" << endl;
 	AL::ALValue jointAliasses;
 	vector<std::string> PosActuatorStrings = KDeviceLists::getPositionActuatorKeys();
 
@@ -811,8 +840,8 @@ void MotionController::createDCMAlias()
 	jointAliasses[1].arraySetSize(2);
 
 	// Joints actuator list
-	jointAliasses[1][YAW] = PosActuatorStrings[HEAD+YAW];
-	jointAliasses[1][PITCH] = PosActuatorStrings[HEAD+PITCH];
+	jointAliasses[1][YAW] = PosActuatorStrings[HEAD + YAW];
+	jointAliasses[1][PITCH] = PosActuatorStrings[HEAD + PITCH];
 
 	// Create alias
 	try
@@ -841,42 +870,41 @@ void MotionController::createDCMAlias()
 		//commands[5][i][0] will be the new angle
 	}
 	cout << " Head PositionActuatorAlias created " << endl;
-/*
-	//STiffness Commands
-	vector<std::string> stiffnessactStrings = KDeviceLists::getHardnessActuatorKeys();
-	jointAliasses.arraySetSize(2);
-	jointAliasses[0] = std::string("AllHardnessActuators"); // Alias for all 25 joint actuators
+	/*
+	 //STiffness Commands
+	 vector<std::string> stiffnessactStrings = KDeviceLists::getHardnessActuatorKeys();
+	 jointAliasses.arraySetSize(2);
+	 jointAliasses[0] = std::string("AllHardnessActuators"); // Alias for all 25 joint actuators
 
-	jointAliasses[1].arraySetSize(stiffnessactStrings.size());
-	for(unsigned i=0;i<stiffnessactStrings.size();i++)
-		jointAliasses[1][i]=stiffnessactStrings[i];
-	try
-	{
-		dcm->createAlias(jointAliasses);
-	} catch (const AL::ALError &e)
-	{
-		throw ALERROR("mainModule", "createPositionActuatorAlias()", "Error when creating Alias : " + e.toString());
-	}
+	 jointAliasses[1].arraySetSize(stiffnessactStrings.size());
+	 for(unsigned i=0;i<stiffnessactStrings.size();i++)
+	 jointAliasses[1][i]=stiffnessactStrings[i];
+	 try
+	 {
+	 dcm->createAlias(jointAliasses);
+	 } catch (const AL::ALError &e)
+	 {
+	 throw ALERROR("mainModule", "createPositionActuatorAlias()", "Error when creating Alias : " + e.toString());
+	 }
 
-	stiffnessCommand.arraySetSize(6);
-	stiffnessCommand[0] = std::string("AllHardnessActuators");
-	stiffnessCommand[1] = std::string("ClearAll"); // Erase all previous commands
-	stiffnessCommand[2] = std::string("time-separate");
-	stiffnessCommand[3] = 0;
+	 stiffnessCommand.arraySetSize(6);
+	 stiffnessCommand[0] = std::string("AllHardnessActuators");
+	 stiffnessCommand[1] = std::string("ClearAll"); // Erase all previous commands
+	 stiffnessCommand[2] = std::string("time-separate");
+	 stiffnessCommand[3] = 0;
 
-	stiffnessCommand[4].arraySetSize(1);
-	//commands[4][0]  Will be the new time
+	 stiffnessCommand[4].arraySetSize(1);
+	 //commands[4][0]  Will be the new time
 
-	stiffnessCommand[5].arraySetSize(stiffnessactStrings.size()); // For all joints
+	 stiffnessCommand[5].arraySetSize(stiffnessactStrings.size()); // For all joints
 
-	for (unsigned i = 0; i < stiffnessactStrings.size(); i++)
-	{
-		stiffnessCommand[5][i].arraySetSize(1);
-		//commands[5][i][0] will be the new angle
-	}
-	cout << "  AllHardnessActuators  alias created " << endl;
-*/
-
+	 for (unsigned i = 0; i < stiffnessactStrings.size(); i++)
+	 {
+	 stiffnessCommand[5][i].arraySetSize(1);
+	 //commands[5][i][0] will be the new angle
+	 }
+	 cout << "  AllHardnessActuators  alias created " << endl;
+	 */
 
 }
 
@@ -884,37 +912,39 @@ void MotionController::setStiffnessDCM(float s)
 {
 	motion->setStiffnesses("Body", s);
 	/*for (int p = 0; p < NUMOFJOINTS; p++)
-		stiffnessCommand[5][(p)][0] = s;
+	 stiffnessCommand[5][(p)][0] = s;
 
-	int DCMtime;
+	 int DCMtime;
 
-	try
-	{ // Get time in 0 ms
-		DCMtime = dcm->getTime(0);
-	} catch (const AL::ALError &e)
-	{
-		throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
-	}
+	 try
+	 { // Get time in 0 ms
+	 DCMtime = dcm->getTime(0);
+	 } catch (const AL::ALError &e)
+	 {
+	 throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
+	 }
 
-	stiffnessCommand[4][0] = DCMtime;
-	//Send command
-	try
-	{
-		dcm->setAlias(stiffnessCommand);
-	} catch (const AL::ALError &e)
-	{
-		throw ALERROR("mainModule", "execute_action", "Error when sending command to DCM : " + e.toString());
-	}
-	motion->setStiffnesses("Body", s);
-	*/
+	 stiffnessCommand[4][0] = DCMtime;
+	 //Send command
+	 try
+	 {
+	 dcm->setAlias(stiffnessCommand);
+	 } catch (const AL::ALError &e)
+	 {
+	 throw ALERROR("mainModule", "execute_action", "Error when sending command to DCM : " + e.toString());
+	 }
+	 motion->setStiffnesses("Body", s);
+	 */
 }
 
-void MotionController::AngleCompare() {
+void MotionController::AngleCompare()
+{
 
 	int diffW[6] = { 0, 0, 0, 0, 0, 0 };
 
 	int kR = 0, pR = 0, vR = 0, v2R = 0, kL = 0, pL = 0, vL = 0, v2L = 0, lR = 0, qR = 0, wR = 0, w2R = 0, lL = 0, qL = 0, wL = 0, w2L = 0, xR = 0, zR = 0, xL = 0, zL = 0;
-	if (allsm == NULL) {
+	if (allsm == NULL)
+	{
 		cout << "DEN PAIRNEI MINIMATA OLE AngleCompare " << endl;
 		return;
 	}
@@ -934,26 +964,32 @@ void MotionController::AngleCompare() {
 							RKneePitch.sensorvalue() / TO_RAD,
 							LKneePitch.sensorvalue() / TO_RAD };
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
+	{
 		Logger::Instance().WriteMsg("MotionController", _toString(walkAngles[i]), Logger::ExtraInfo);
 	}
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
+	{
 		if (walkAngles[i] < walkPrevAng[i])
 			diffW[i] = -1;
 		else
 			diffW[i] = 1;
 
-		if (RKickAng1[i] < RKickAng2[i]) {
-			if ((walkAngles[i] <= RKickAng2[i]) and (walkAngles[i] > RKickAng1[i])) {
+		if (RKickAng1[i] < RKickAng2[i])
+		{
+			if ((walkAngles[i] <= RKickAng2[i]) and (walkAngles[i] > RKickAng1[i]))
+			{
 				kR = kR + 1;
 				if (i == 0)
 					xR = 1;
 				if (i == 2)
 					zR = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= RKickAng1[i]) and (walkAngles[i] > RKickAng2[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= RKickAng1[i]) and (walkAngles[i] > RKickAng2[i]))
+			{
 				kR = kR + 1;
 				if (i == 0)
 					xR = 1;
@@ -962,16 +998,20 @@ void MotionController::AngleCompare() {
 			}
 		}
 
-		if (RKickAng2[i] < RKickAng3[i]) {
-			if ((walkAngles[i] <= RKickAng3[i]) and (walkAngles[i] > RKickAng2[i])) {
+		if (RKickAng2[i] < RKickAng3[i])
+		{
+			if ((walkAngles[i] <= RKickAng3[i]) and (walkAngles[i] > RKickAng2[i]))
+			{
 				pR = pR + 1;
 				if (i == 0)
 					xR = 1;
 				if (i == 2)
 					zR = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= RKickAng2[i]) and (walkAngles[i] > RKickAng3[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= RKickAng2[i]) and (walkAngles[i] > RKickAng3[i]))
+			{
 				pR = pR + 1;
 				if (i == 0)
 					xR = 1;
@@ -980,16 +1020,20 @@ void MotionController::AngleCompare() {
 			}
 		}
 
-		if (RKickAng3[i] < RKickAng4[i]) {
-			if ((walkAngles[i] <= RKickAng4[i]) and (walkAngles[i] > RKickAng3[i])) {
+		if (RKickAng3[i] < RKickAng4[i])
+		{
+			if ((walkAngles[i] <= RKickAng4[i]) and (walkAngles[i] > RKickAng3[i]))
+			{
 				vR = vR + 1;
 				if (i == 0)
 					xR = 1;
 				if (i == 2)
 					zR = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= RKickAng3[i]) and (walkAngles[i] > RKickAng4[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= RKickAng3[i]) and (walkAngles[i] > RKickAng4[i]))
+			{
 				vR = vR + 1;
 				if (i == 0)
 					xR = 1;
@@ -998,16 +1042,20 @@ void MotionController::AngleCompare() {
 			}
 		}
 
-		if (RKickAng4[i] < RKickAng5[i]) {
-			if ((walkAngles[i] <= RKickAng5[i]) and (walkAngles[i] > RKickAng4[i])) {
+		if (RKickAng4[i] < RKickAng5[i])
+		{
+			if ((walkAngles[i] <= RKickAng5[i]) and (walkAngles[i] > RKickAng4[i]))
+			{
 				v2R = v2R + 1;
 				if (i == 0)
 					xR = 1;
 				if (i == 2)
 					zR = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= RKickAng4[i]) and (walkAngles[i] > RKickAng5[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= RKickAng4[i]) and (walkAngles[i] > RKickAng5[i]))
+			{
 				v2R = v2R + 1;
 				if (i == 0)
 					xR = 1;
@@ -1016,16 +1064,20 @@ void MotionController::AngleCompare() {
 			}
 		}
 
-		if (LKickAng1[i] < LKickAng2[i]) {
-			if ((walkAngles[i] <= LKickAng2[i]) and (walkAngles[i] > LKickAng1[i])) {
+		if (LKickAng1[i] < LKickAng2[i])
+		{
+			if ((walkAngles[i] <= LKickAng2[i]) and (walkAngles[i] > LKickAng1[i]))
+			{
 				kL = kL + 1;
 				if (i == 0)
 					xL = 1;
 				if (i == 2)
 					zL = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= LKickAng1[i]) and (walkAngles[i] > LKickAng2[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= LKickAng1[i]) and (walkAngles[i] > LKickAng2[i]))
+			{
 				kL = kL + 1;
 				if (i == 0)
 					xL = 1;
@@ -1034,16 +1086,20 @@ void MotionController::AngleCompare() {
 			}
 		}
 
-		if (LKickAng2[i] < LKickAng3[i]) {
-			if ((walkAngles[i] <= LKickAng3[i]) and (walkAngles[i] > LKickAng2[i])) {
+		if (LKickAng2[i] < LKickAng3[i])
+		{
+			if ((walkAngles[i] <= LKickAng3[i]) and (walkAngles[i] > LKickAng2[i]))
+			{
 				pL = pL + 1;
 				if (i == 0)
 					xL = 1;
 				if (i == 2)
 					zL = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= LKickAng2[i]) and (walkAngles[i] > LKickAng3[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= LKickAng2[i]) and (walkAngles[i] > LKickAng3[i]))
+			{
 				pL = pL + 1;
 				if (i == 0)
 					xL = 1;
@@ -1052,16 +1108,20 @@ void MotionController::AngleCompare() {
 			}
 		}
 
-		if (LKickAng3[i] < LKickAng4[i]) {
-			if ((walkAngles[i] <= LKickAng4[i]) and (walkAngles[i] > LKickAng3[i])) {
+		if (LKickAng3[i] < LKickAng4[i])
+		{
+			if ((walkAngles[i] <= LKickAng4[i]) and (walkAngles[i] > LKickAng3[i]))
+			{
 				vL = vL + 1;
 				if (i == 0)
 					xL = 1;
 				if (i == 2)
 					zL = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= LKickAng3[i]) and (walkAngles[i] > LKickAng4[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= LKickAng3[i]) and (walkAngles[i] > LKickAng4[i]))
+			{
 				vL = vL + 1;
 				if (i == 0)
 					xL = 1;
@@ -1070,16 +1130,20 @@ void MotionController::AngleCompare() {
 			}
 		}
 
-		if (LKickAng4[i] < LKickAng5[i]) {
-			if ((walkAngles[i] <= LKickAng5[i]) and (walkAngles[i] > LKickAng4[i])) {
+		if (LKickAng4[i] < LKickAng5[i])
+		{
+			if ((walkAngles[i] <= LKickAng5[i]) and (walkAngles[i] > LKickAng4[i]))
+			{
 				v2L = v2L + 1;
 				if (i == 0)
 					xL = 1;
 				if (i == 2)
 					zL = 1;
 			}
-		} else {
-			if ((walkAngles[i] <= LKickAng4[i]) and (walkAngles[i] > LKickAng5[i])) {
+		} else
+		{
+			if ((walkAngles[i] <= LKickAng4[i]) and (walkAngles[i] > LKickAng5[i]))
+			{
 				v2L = v2L + 1;
 				if (i == 0)
 					xL = 1;
@@ -1089,7 +1153,8 @@ void MotionController::AngleCompare() {
 		}
 	}
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
+	{
 		if (diffW[i] == diffRKick1[i])
 			lR = lR + 1;
 		if (diffW[i] == diffRKick2[i])
@@ -1130,7 +1195,8 @@ void MotionController::AngleCompare() {
 	comp[18] = xL;
 	comp[19] = zL;
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++)
+	{
 		walkPrevAng[i] = walkAngles[i];
 	}
 }
