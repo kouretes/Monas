@@ -14,6 +14,9 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#ifndef TO_RAD
+#define TO_RAD 0.01745329f
+#endif
 
 using namespace boost::posix_time;
 
@@ -48,6 +51,7 @@ private:
 	bool robotUp;
 	//SensorPair AccZ, AccX, AccY;
 	float AccZvalue, AccXvalue, AccYvalue;
+	float accnorm, angX, angY, gyrX, gyrY;
 	ptime waitfor;
 
 	int counter;
@@ -67,10 +71,19 @@ private:
 	boost::shared_ptr<const  MotionActionMessage> am;
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
+	
+	MotionActionMessage  * pam;
+	
+	SensorData LHipRoll;
+	SensorData RHipPitch;
+	SensorData LHipPitch;
+	SensorData RHipRoll;
+	SensorData RKneePitch;
+	SensorData LKneePitch;
 
 	AL::ALValue commands;//,stiffnessCommand;
 
-	//void commands();
+	void testcommands();
 	void mglrun();
 	void read_messages();
 
@@ -82,12 +95,20 @@ private:
 
 	void ALstandUp();
 	void ALstandUpCross();
-	void ALstandUpFront2009();
-	void ALstandUpBack2009();
-	void ALstandUpFront2010();
-	void ALstandUpBack2010();
-	void createDCMAlias();
 
+	void ALstandUpBack();
+	void ALstandUpFront();
+	
+	void AngleCompare();
+	
+	int comp[20];
+	float RKickAng1 [6], RKickAng2 [6], RKickAng3 [6], RKickAng4 [6], RKickAng5 [6], RKickAng6 [6];
+	float LKickAng1 [6], LKickAng2 [6], LKickAng3 [6], LKickAng4 [6], LKickAng5 [6], LKickAng6 [6];
+	float walkPrevAng [6];
+	int diffRKick1 [6], diffRKick2 [6], diffRKick3 [6], diffRKick4 [6];
+	int diffLKick1 [6], diffLKick2 [6], diffLKick3 [6], diffLKick4 [6];
+		
+	void createDCMAlias();
 	void setStiffnessDCM(float s);
 	typedef std::map<std::string,
 		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
