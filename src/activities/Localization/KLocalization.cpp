@@ -274,7 +274,7 @@ double KLocalization::CalculateConfidence(parts & Particles, belief & blf) {
 	double WeigtConfidence = Particles.WeightSum; //
 	blf.confidence = DistConfidence;
 	blf.weightconfidence = WeigtConfidence;
-	cout << "\033[01;34m DistConfidence: " << setprecision(10) << DistConfidence << " WeigtConfidence: " << setprecision(10) << WeigtConfidence << "\033[0m " << endl;
+	//cout << "\033[01;34m DistConfidence: " << setprecision(10) << DistConfidence << " WeigtConfidence: " << setprecision(10) << WeigtConfidence << "\033[0m " << endl;
 	return DistConfidence;//* (WeigtConfidence + 1.0) + WeigtConfidence; // Max degree == 20 :p
 }
 

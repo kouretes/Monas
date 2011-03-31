@@ -7,7 +7,7 @@ include_directories( ../../../external/PracticalSocket)
 
 set ( ActivityName Localization )
 
-set ( ActivitySrcs  Localization
+set ( ActivitySrcs  Localization.h Localization.cpp BallFilter.h BallFilter.cpp 
 newran/newran.h newran/newran.cpp newran/include.h newran/boolean.h newran/extreal.h newran/extreal.cpp newran/myexcept.cpp newran/myexcept.h
 Kutils.h Kutils.cpp
 KLocalization.h KLocalization.cpp ../../../external/PracticalSocket/PracticalSocket.cpp
@@ -21,4 +21,3 @@ if(Webots)
   add_definitions(" -DWEBOTS ")
 endif(Webots)
 target_link_libraries ( ${ActivityName}   NaoQiDep )
-

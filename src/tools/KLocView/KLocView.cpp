@@ -59,6 +59,10 @@ int update_field(LocalizationData & DebugData) {
 	Belief.confidence = WI->myposition().confidence();
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
 
+	if(WI->balls_size()>0){
+		KLocView->draw_ball2(Belief, WI->balls(0));
+	}
+
 	robotposition.x = DebugData.robotposition().x();
 	robotposition.y = DebugData.robotposition().y();
 	robotposition.phi = DebugData.robotposition().phi();
@@ -75,6 +79,8 @@ int update_field(LocalizationData & DebugData) {
 		KLocView->addTrackLine(robotposition);
 		KLocView->addTrackLine(Belief);
 	}
+
+
 	//Get The observations
 	if (DebugData.has_observations()) {
 		cout << "We have observations" << endl;
