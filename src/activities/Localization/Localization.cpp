@@ -9,12 +9,13 @@
 #include <csignal>
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
+#include <math.h>
 
 #include "architecture/archConfig.h"
 
 #define SCANFORBALL 2
 #define SCANFORPOST 3
-
+#define MAX_TIME_TO_RESET 5000 //in milliseconds
 //#define ADEBUG
 using namespace std;
 namespace
@@ -68,6 +69,7 @@ void Localization::UserInit()
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
+	firstrun = true;
 }
 
 int Localization::DebugMode_Receive()
@@ -288,6 +290,13 @@ void Localization::SimpleBehaviorStep()
 
 int Localization::Execute()
 {
+	boost::posix_time::ptime newtime = boost::posix_time::from_iso_string(obsm->image_timestamp());
+
+	if (firstrun)
+	{
+		time = newtime;
+		firstrun = false;
+	}
 
 	process_messages();
 
@@ -298,26 +307,58 @@ int Localization::Execute()
 
 	//SimpleBehaviorStep();
 
-	MyWorld.mutable_myposition()->set_x(AgentPosition.x/1000.0);
-	MyWorld.mutable_myposition()->set_y(AgentPosition.y/1000.0);
+	MyWorld.mutable_myposition()->set_x(AgentPosition.x / 1000.0);
+	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
-	Ball nearest_ball;
-	if(obsm.get())
-	if(obsm->has_ball()){
 
-		BallObject aball = obsm->ball();
-		nearest_ball.set_relativex(aball.dist()*cos(aball.bearing()));
-		nearest_ball.set_relativey(aball.dist()*sin(aball.bearing()));
-		if(MyWorld.balls_size()<1)
-			MyWorld.add_balls();
-		MyWorld.mutable_balls(0)->CopyFrom(nearest_ball);
+	if (obsm.get())
+		if (obsm->has_ball())
+		{
+			Ball nearest_filtered_ball, nearest_nofilter_ball;
+			BallObject aball = obsm->ball();
+			nearest_nofilter_ball.set_relativex(aball.dist() * cos(aball.bearing()));
+			nearest_nofilter_ball.set_relativey(aball.dist() * sin(aball.bearing()));
 
-	}else{
-		;//Delete Ball?
-	}
+			duration = newtime - time;
+			time = newtime;
+			if (MyWorld.balls_size() < 1)
+			{
+				MyWorld.add_balls();
+				myBall.reset(aball.dist(), 0,aball.bearing(), 0);
+				//RESET
+				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
+			} else
+			{
+				float dt = duration.total_milliseconds();
+
+				float dist_var = 1.05 - tanh(1.8 / aball.dist());
+				nearest_filtered_ball = myBall.get_ball_estimate(aball.dist(), dist_var, aball.bearing(), 0.03, dt);
+
+				float distance =
+						DISTANCE_2(nearest_filtered_ball.relativex()-nearest_nofilter_ball.relativex(),nearest_filtered_ball.relativey()-nearest_nofilter_ball.relativey());
+
+				if (dt > MAX_TIME_TO_RESET && distance > 2) //dt > 5sec && distance > 2 m
+				{
+					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
+					//RESET
+					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
+				} else
+					MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
+			}
+		} else
+		{
+			duration = newtime - time;
+			float dt = duration.total_milliseconds();
+			if (dt > MAX_TIME_TO_RESET)
+			{
+				time = newtime;
+				if (MyWorld.balls_size() > 0)
+					MyWorld.clear_balls();
+			}
+		}
 	//MyWorld.
-	 //Signal(wmot, "motion");
+	//Signal(wmot, "motion");
 
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)

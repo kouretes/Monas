@@ -11,24 +11,27 @@
 #include "messages/BehaviorMessages.pb.h"
 
 #include "KLocalization.h"
-
+#include "BallFilter.h"
 #include "PracticalSocket.h"
 #include <string>
-class Localization: public IActivity, public KLocalization {
+class Localization: public IActivity, public KLocalization
+{
 
 	public:
 		Localization();
-		~Localization(){
-			if(serverpid!=-1)
+		~Localization()
+		{
+			if (serverpid != -1)
 				pthread_cancel(serverpid);
 			delete sock;
 		}
 		int Execute();
 		void UserInit();
 		void process_messages();
-		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright) ;
+		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright);
 		void RobotPositionMotionModel(KMotionModel & MModel);
-		std::string GetName() {
+		std::string GetName()
+		{
 			return "Localization";
 		}
 
@@ -59,6 +62,7 @@ class Localization: public IActivity, public KLocalization {
 		SensorData HeadYaw;
 		SensorData HeadPitch;
 		BallTrackMessage lastballseen;
+		BallFilter myBall;
 
 		MotionHeadMessage hmot;
 		MotionWalkMessage wmot;
@@ -69,6 +73,10 @@ class Localization: public IActivity, public KLocalization {
 		boost::shared_ptr<const RobotPositionMessage> rpsm;
 
 		BToHeadMessage* bhmsg;
+		bool firstrun;
+
+		boost::posix_time::ptime time;
+		boost::posix_time::time_duration duration;
 
 		//For Debug!
 		void SimpleBehaviorStep();
@@ -76,7 +84,7 @@ class Localization: public IActivity, public KLocalization {
 		pthread_t acceptthread;
 		static TCPSocket *sock;
 
-		int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation,KMotionModel & MotionModel );
+		int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation, KMotionModel & MotionModel);
 		void Send_LocalizationData();
 		int DebugMode_Receive();
 		static bool debugmode;
