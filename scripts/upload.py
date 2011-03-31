@@ -132,24 +132,22 @@ else:
 
 for ip in robotsIP:
 	if(not is_valid_ipv4(ip)):
-		print "Ip address " + ip + " is not valid "
-		exit(-1)
-	else:
-		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		timeouttime= 2
-		sock.settimeout(timeouttime)
-		reachable = True
-		try:
-			print "Trying to connect to " + ip
-			sock.connect((ip, 22))
-		except socket.error, msg:
+		print "\033[1;33m Ip address " + ip + " is not valid \033[1;m"
 
-			print '\033[1;31m Waited ' + str(timeouttime) +  ' second. Robot with ip ' + ip + ' unreachable \033[1;m'
-			reachable = False
-		sock.close()
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	timeouttime= 2
+	sock.settimeout(timeouttime)
+	reachable = True
+	try:
+		print "Trying to connect to " + ip
+		sock.connect((ip, 22))
+	except socket.error, msg:
+		print '\033[1;31m Waited ' + str(timeouttime) +  ' second. Robot with ip ' + ip + ' unreachable \033[1;m'
+		reachable = False
+	sock.close()
 
-		if(reachable):
-			print "\033[1;32m Robot " + ip + " reachable\033[1;m (ssh ok)"
+	if(reachable):
+		print "\033[1;32m Robot " + ip + " reachable\033[1;m (ssh ok)"
 
 
 #check that your are one level down from the make folder when you execute  the script
