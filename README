@@ -1,13 +1,19 @@
 If you are reading these lines, it means that you have successfully created 
 a clone of the Kouretes-Noxious 2011 code from the Monas repository. 
 
-BUILD
 
-- Create a folder named build under Monad/make
+REQUIRED PACKAGES
+
+libtinyxml-dev (only for BUILD)
+
+
+BUILD (for remote execution)
+
+- Create a folder named build under Monas/make
 
 - Enter folder build
 
-- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path to naoqi sdk>/toolchain-pc.cmake ../..
+- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<your-path-to-naoqi-sdk>/toolchain-pc.cmake ../..
 
 - Execute: ccmake .
 
@@ -15,11 +21,11 @@ BUILD
 
 - Press c to configure
 
-- Check the values of KROBOT_IS_REMOTE, TargetPlatform, NaoQiVersion, RobotPlatform (if applicable)
+- Check the values of KROBOT_IS_REMOTE, NaoQiVersion, RobotPlatform (if applicable)
 
-  KROBOT_IS_REMOTE is ON, a library is produced, otherwise an executable is produced. 
-  NaoQiversion should be the latest. 
-  RobotPlatform must be Nao.
+  KROBOT_IS_REMOTE can be OFF (a library is produced) or ON (an executable is produced) 
+  NaoQiVersion must be the latest NaoQi version, currently 1.10.XX 
+  RobotPlatform must be nao
   
 - Press c to configure again, then g to generate and exit. 
 
@@ -28,13 +34,13 @@ BUILD
 - Get a coffee and be patient ... 
 
 
-CROSSBUILD 
+CROSSBUILD (for on-board execution)
 
-- Create a folder named crossbuild under Monad/make
+- Create a folder named crossbuild under Monas/make
 
 - Enter folder crossbuild
 
-- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path to naoqi ctc>/toolchain-geode.cmake ../..
+- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<path-to-naoqi-ctc>/toolchain-geode.cmake ../..
 
 - Execute: ccmake .
 
@@ -44,9 +50,9 @@ CROSSBUILD
 
 - Check the values of KROBOT_IS_REMOTE, NaoQiVersion, RobotPlatform 
 
-  KROBOT_IS_REMOTE is ON, a library is produced, otherwise an executable is produced. 
-  NaoQiversion should be the latest. 
-  RobotPlatform must be Nao.
+  KROBOT_IS_REMOTE can be OFF (a library is produced) or ON (an executable is produced) 
+  NaoQiVersion must be the latest NaoQi version, currently 1.10.XX 
+  RobotPlatform must be nao
 
 - Real-time execution for the nao requires the code to be compiled as a shared object at the moment.
 
@@ -58,7 +64,7 @@ CROSSBUILD
 
 
 Use the python scripts in the script directory to upload the code to a robot.
-To do so , you need a valid config directory in /home/nao/naoqi/ (on the robot)
+To do so, you need a valid config directory in /home/nao/naoqi/ (on the robot)
 and a valid autoload.ini in /home/nao/naoqi/preferences/autoload.ini (again, on the robot)
 to start the krobot module.
 

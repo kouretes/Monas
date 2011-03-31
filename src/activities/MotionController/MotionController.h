@@ -5,6 +5,7 @@
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "messages/Gamecontroller.pb.h"
 
 #include "hal/robot/generic_nao/aldebaran-motion.h"
 
@@ -53,6 +54,8 @@ private:
 	float AccZvalue, AccXvalue, AccYvalue;
 	float accnorm, angX, angY, gyrX, gyrY;
 	ptime waitfor;
+	int gameState;
+	bool penalized;
 
 	int counter;
 
@@ -71,7 +74,9 @@ private:
 	boost::shared_ptr<const  MotionActionMessage> am;
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
+	boost::shared_ptr<const GameStateMessage>  gsm;
 	
+	MotionActionMessage  * mam;
 	MotionActionMessage  * pam;
 	
 	SensorData LHipRoll;
@@ -99,6 +104,7 @@ private:
 	void ALstandUpBack();
 	void ALstandUpFront();
 	
+	void MotionSkillsInit();
 	void AngleCompare();
 	
 	int comp[20];
