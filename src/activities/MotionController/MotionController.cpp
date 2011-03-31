@@ -86,7 +86,7 @@ void MotionController::UserInit()
 		}
 	}
 
-	motion->setStiffnesses("Body", 0.7);
+	motion->setStiffnesses("Body", 0.9);
 	motion->setStiffnesses("Head", 0.95);
 	createDCMAlias();
 
@@ -273,7 +273,7 @@ void MotionController::mglrun()
 	{
 		//Now execute an alstandupcross
 		//motion->setStiffnesses("Body", 0.5);
-		setStiffnessDCM(0.7);
+		setStiffnessDCM(0.9);
 		//usleep(300000);
 		ALstandUpCross();
 		return;
