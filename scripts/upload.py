@@ -56,44 +56,27 @@ def usage():
 
 	#game = string.find(sys.argv[0] , "upload_work.py")
 
-
 	#if game > -1:
-	if (sys.argv[0] == "upload_work.py"):
-		if	 len(sys.argv) < 2 :
-			print """
-		usage: (python) ../../scripts/upload_work.py Ip1 Ip2 Ip3 etc
-					Ip1...: Ips of the robots you want to upload the same configuration!!!
-		THE SCRIPT MUST BE NAMED AS upload_work.py or upload_game.py to work
-
-		CAUTION must run the script inside Monad/make/yourebuildfolder
-			"""
-			exit(1)
-		else:
-			return
-	elif(sys.argv[0] == "upload_game.py"):
+	if (string.find(sys.argv[0], "upload_work.py") > -1):
 		print """
-		usage: (python) ../../scripts/upload_game.py SSID Ip1 player1num Ip2 player2num Ip3 player2num etc
-		num_of_player: 1: Goalkeeper 2: Defender 3: Midfielder 4: Attacker
-		SSID: name of field the script will look into the config directory
-		for a directory field_name_of_field to upload the network files
-		files must be under the same path as on robot i.e. etc/network/interfaces.cof :)
-		Ip1...: Ips of the robots you want to upload the same configuration!!!
-
-		example upload_game.py Field_D 172.18.9.12 1 172.18.9.13 4 172.18.9.87 3
-
-		CAUTION must run the script inside Monad/make/yourebuildfolder
+		usage: (python) ../../scripts/upload_work.py IP1 IP2 IP3 ...
+		
+				IPi: IPs of the robots on which the same configuration will be uploaded
+				CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
+		"""
+	elif (string.find(sys.argv[0] , "upload_game.py") > -1):
+		print """
+		usage: (python) ../../scripts/upload_game.py SSID IP1 PL1num IP2 PL2num IP3 PL3num ...
+		
+			SSID: ssid of the field wifi, the script will look the corresponding network file  
+			IPi: IPs of the robots on which the same configuration will be uploaded
+			PLinum: 1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker
+			CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
 		"""
 	else:
 		print """
-		You cannot run simply this script. Filename must be upload_work.py or upload_game.py
-		Just create links.
-		CAUTION must run the script inside Monad/make/yourebuildfolder
-		For help just run upload_work.py or upload_game.py
-
-		examples:
-		usage: (python) ../../scripts/upload_work.py Ip1 Ip2 Ip3 etc
-		usage: (python) ../../scripts/upload_game.py SSID Ip1 player1num Ip2 player2num Ip3 player2num etc
-
+		ERROR: You can only run this script as upload_work.py or upload_game.py, use symbolic links
+		CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
 		"""
 	exit(-1)
 
@@ -101,13 +84,13 @@ playersdef = ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker']
 #### UPLOAD SCRIPT ####
 
 if string.find(sys.argv[0], "upload_work.py") > -1:
-	if(len(sys.argv) < 1 ):
+	if(len(sys.argv) < 2 ):
 		usage();
 
 	robotsIP = sys.argv[1:len(sys.argv)]
 	game = 0
 elif string.find(sys.argv[0] , "upload_game.py") > -1 :
-	if(len(sys.argv) < 3 ):
+	if(len(sys.argv) < 4 ):
 		usage();
 
 	SSID = sys.argv[1]
@@ -117,7 +100,7 @@ elif string.find(sys.argv[0] , "upload_game.py") > -1 :
 	print players
 	for p in players:
 		if(int(p) > 4 or int(p) < 1) :
-			print "ERROR: A Player num is not valid, Quiting "
+			print "ERROR: A player number is not valid! Quiting ..."
 			exit(-1)
 
 	robotsIP = sys.argv[2:len(sys.argv):2]
@@ -126,7 +109,6 @@ elif string.find(sys.argv[0] , "upload_game.py") > -1 :
 
 	game = 1 #
 else:
-	print "ERROR: Please check the filename of the script, must be upload_work.py or upload_game.py, Quiting "
 	usage()
 	exit(-1)
 
@@ -154,8 +136,8 @@ for ip in robotsIP:
 pwd = os.getcwd()
 pwdfolders =  pwd.split("/")
 if(pwdfolders[-2] != "make"):
-	print "ERROR: You are trying to execute upload in different folder than under Monad/make/yourebuildfolder"
-	print "Your pwd : " + pwd + "\n Try again from the correct path, Quiting"
+	print "ERROR: You are trying to execute upload in a folder different than Monas/make/[build|crossbuild]"
+	print "Your current path : " + pwd + "\n Try again from the correct path! Quiting ..."
 	exit(-1)
 
 
@@ -163,17 +145,17 @@ print "Working directory " + pwd
 ret=os.system("make install")
 
 if(ret!=0):
-	print '\033[1;31m Unsuccessfull compiling \033[1;m'
+	print '\033[1;31m Unsuccessful Compilation \033[1;m'
 	exit(-1)
 else:
-	print "\033[1;32m Compiling Complete Succesfully\033[1;m"
+	print "\033[1;32m Compilation Completed Successfully\033[1;m"
 
 #now we hope that we are inside the correct folder so the partial configuration is above
 partial_configuration_dir = "../../scripts/PartialConfiguration/"
 scripts_dir = "../../scripts/"
 
 os.system('aplay -q '+ scripts_dir +'beep.wav')
- #= os.environ["partial_configuration_dir"]
+#= os.environ["partial_configuration_dir"]
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
 #probable_binaries_path = "/binaries/robot/naoqi_1.6.0_cross/" #under make/buildfolder
@@ -181,7 +163,7 @@ naoqi_cross_folder = commands.getoutput("ls ./binaries/robot | grep naoqi")
 if(naoqi_cross_folder!=""):
 	binaries_dir = "./binaries/robot/" + naoqi_cross_folder +"/"
 else:
-	print "Cant find any folder naoqi under ./binaries/robot/"
+	print "Can't find any folder naoqi under ./binaries/robot/ Quiting ..."
 	exit(-1)
 
 os.system("mkdir -p " + binaries_dir + "/preferences")
@@ -193,7 +175,7 @@ os.system('cp ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'start.sh ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
 os.system('cp ' + scripts_dir +'beep.wav ' + binaries_dir + "config/")
-print "Lenght of arguments " + str(len(sys.argv))
+print "Length of arguments " + str(len(sys.argv))
 
 if(partial_configuration_dir	== "" ):
 	print("ERROR:  Please define partial_configuration_dir")
@@ -203,14 +185,14 @@ playerscounter = 0;
 for	ip in robotsIP:
 
 	if game == 1 :
-		print "Stopping naoqi "
+		print "Stopping NaoQi "
 		nao_start_stop_cmd = 'ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
 		os.system(nao_start_stop_cmd)
 		print nao_start_stop_cmd
 
 		player = players[playerscounter]
 		#print("Good luck with the game")
-		print("You are going to create network files for the player " + player +" the " + playersdef[int(player)-1] + " for the field " + SSID)
+		print("You are going to create network files for player " + player +" (the " + playersdef[int(player)-1] + ") for the field " + SSID)
 
 		#Copy network configuration file to /config just for backup
 		copy_cmd = "cp " + partial_configuration_dir + "/FieldsWlan/" + SSID    + "_wpa_supplicant.conf  " + binaries_dir +"config/wpa_supplicant.conf"
@@ -224,7 +206,7 @@ for	ip in robotsIP:
 		playerconf.close()
 
 	if game == 0:
-		playerstr = raw_input("1: Goalkeeper 2: Defender 3: Attacker \n	Set player num or press enter to continue: ")
+		playerstr = raw_input("1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker \n Set player number or press enter to continue: ")
 		while(playerstr != ""):
 			player = int(playerstr)
 			if(player <= 4 and player >=1):
@@ -238,13 +220,13 @@ for	ip in robotsIP:
 				break
 			else:
 				print "Wrong playernum, player"
-				playerstr = raw_input("1: Goalkeeper 2: Defender 3: Attacker \n	Set player num or press enter to continue: ")
+				playerstr = raw_input("1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker \n Set player number or press enter to continue: ")
 				if(playerstr == ""):
 					break
 
-		naoqirestart = raw_input("Enter y to Restart Naoqi or press enter to continue: ")
+		naoqirestart = raw_input("Enter y to Restart NaoQi or press enter to continue: ")
 		if(naoqirestart=='y'):
-			print( "Stopping naoqi, will start it after binaries upload")
+			print( "Stopping NaoQi, will start it again after all binaries have been uploaded")
 			nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
 			os.system(nao_start_stop_cmd)
 
@@ -267,7 +249,7 @@ for	ip in robotsIP:
 
 		rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 	else:
-		if(raw_input("Enter y to upload a clean autoload.ini_work(no krobot)? or press enter to continue:  ")=='y'):
+		if(raw_input("Enter y to upload a clean autoload.ini_work (no krobot) or press enter to continue:  ")=='y'):
 			print("Setting autoload.ini")
 			autoload_src = partial_configuration_dir + "autoload.ini_work"
 			autoload_dest = binaries_dir +"preferences/autoload.ini"
@@ -286,13 +268,13 @@ for	ip in robotsIP:
 	os.system(rsync_cmd)
 	print(rsync_cmd)
 
-	print("every file needed is copied");
-	print("TREAT THE ROBOT NICELY.... I know is sooooo difficult to do that")
+	print("All necessary files have been upload successfully!");
+	print("TREAT THE ROBOT NICELY.... I know this is sooooo difficult ...")
 
 	if game == 1 :
 		os.system(' ssh nao@'+ip + " 'chmod 777 /home/nao/naoqi/bin/autostartkrobot'")
 
-		print( "Sending naoqi start command")
+		print( "Sending NaoQi start command")
 		nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi start ' "
 		os.system(nao_start_stop_cmd)
 
@@ -302,7 +284,7 @@ for	ip in robotsIP:
 		os.system('ssh root@'+ip + " '/etc/init.d/wpa_supplicant.sh '")
 
 	if (game == 0 and naoqirestart=="y" ):
-		print( "Sending naoqi start command")
+		print( "Sending NaoQi start command")
 		nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi start ' "
 		os.system(nao_start_stop_cmd)
 		#~ os.system('ssh root@'+ip + " 'ifdown wlan0 '")
