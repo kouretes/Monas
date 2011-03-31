@@ -259,8 +259,17 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	cout<<"Auto:"<<endl;
 	try
 	{
-
+		xCamProxy->setParam( kCameraSelectID, 0);
+		xCamProxy->setParam( kCameraAutoGainID, 1);
+		xCamProxy->setParam( kCameraAutoExpositionID, 1);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 1);
+		SleepMs(100);
 		xCamProxy->setParam( kCameraSelectID, 1);
+		xCamProxy->setParam( kCameraAutoGainID, 1);
+		xCamProxy->setParam( kCameraAutoExpositionID, 1);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 1);
+
+		//xCamProxy->setParam( kCameraSelectID, 1);
 //		c->callVoid( "setParam", kCameraSelectID, 1);
 		xCamProxy->setParam( kCameraExposureCorrectionID,0);
 //		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
@@ -383,12 +392,17 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		cout<<"Final White Balance Settings"<<redchroma<<" "<<bluechroma;
 
 
-		xCamProxy->setParam( kCameraSelectID, 1);
-		SleepMs(10);
+		xCamProxy->setParam( kCameraSelectID, 0);
+		SleepMs(150);
 		//SET BOTTOM CAMERA SETTINGS
+		xCamProxy->setParam( kCameraAutoGainID,1);
+		xCamProxy->setParam( kCameraAutoExpositionID, 1);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 1);
+		SleepMs(150);
 		xCamProxy->setParam( kCameraAutoGainID, 0);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
+		SleepMs(150);
 
 
 		xCamProxy->setParam( kCameraBlueChromaID,bluechroma);
@@ -396,18 +410,20 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		xCamProxy->setParam( kCameraGainID,gain);
 		xCamProxy->setParam( kCameraExposureID,e);
 		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
-
-
+		SleepMs(150);
 		//c->callVoid( "setParam", kCameraSelectID, 0);
 		//SleepMs(10);
-		xCamProxy->setParam( kCameraSelectID, 0);
-		SleepMs(100);
+		xCamProxy->setParam( kCameraSelectID, 1);
+		SleepMs(150);
 		//SET TOP CAMERA SETTINGS
-
+		xCamProxy->setParam( kCameraAutoGainID,1);
+		xCamProxy->setParam( kCameraAutoExpositionID, 1);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 1);
+		SleepMs(150);
 		xCamProxy->setParam( kCameraAutoGainID, 0);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-
+		SleepMs(150);
 
 		xCamProxy->setParam( kCameraBlueChromaID,bluechroma);
 		xCamProxy->setParam( kCameraRedChromaID,redchroma);
@@ -418,9 +434,9 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 
 
-		SleepMs(100);
+		SleepMs(250);
 		//Start with bottom cam
-		xCamProxy->setParam( kCameraSelectID, 1);
+		//xCamProxy->setParam( kCameraSelectID, 1);
 
 
 	}
