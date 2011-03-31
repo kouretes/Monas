@@ -13,22 +13,23 @@
 	<activity>RobotController</activity>
 	<activity>LedHandler</activity>
 </agent>
+
+
 <agent IsRealTime=1 Priority=1 ThreadFrequency=30 StatsCycle=50>
 	<name>KVision</name>
 	<activity>Vision</activity>
+	<activity>VBehavior</activity>
 <!--
 	<activity>Localization </activity>
-<activity>HeadBehavior</activity> 
-
-	
-
-<activity>VBehavior</activity>
--->
+	<activity>HeadBehavior</activity> 
+-->	
 </agent>
+
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>KSensors</name>
 	<activity>Sensors</activity>
 </agent>
+
 <!--
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>BodyBehavior</name>
