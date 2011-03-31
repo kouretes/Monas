@@ -69,7 +69,7 @@ void Localization::UserInit()
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
-	firstrun = true;
+//	firstrun = true;
 }
 
 int Localization::DebugMode_Receive()
@@ -237,9 +237,9 @@ void Localization::SimpleBehaviorStep()
 	float Robot2Target_bearing = anglediff2(atan2(target.y - AgentPosition.y, target.x - AgentPosition.x), AgentPosition.theta);
 	float Distance2Target = DISTANCE(target.x,AgentPosition.x,target.y,AgentPosition.y);
 
-	cout << "Robot2Target_bearing*TO_DEG  " << Robot2Target_bearing * TO_DEG << endl;
-	cout << atan2(target.y - AgentPosition.y, target.x - AgentPosition.x) << endl;
-	cout << AgentPosition.theta << endl << endl;
+	//cout << "Robot2Target_bearing*TO_DEG  " << Robot2Target_bearing * TO_DEG << endl;
+	//cout << atan2(target.y - AgentPosition.y, target.x - AgentPosition.x) << endl;
+	//cout << AgentPosition.theta << endl << endl;
 	float speed = 0.01;
 
 	if (AgentPosition.confidence > 20)
@@ -290,13 +290,13 @@ void Localization::SimpleBehaviorStep()
 
 int Localization::Execute()
 {
-	boost::posix_time::ptime newtime = boost::posix_time::from_iso_string(obsm->image_timestamp());
+	//boost::posix_time::ptime newtime = boost::posix_time::from_iso_string(obsm->image_timestamp());
 
-	if (firstrun)
-	{
-		time = newtime;
-		firstrun = false;
-	}
+//	if (firstrun)
+//	{
+//		time = newtime;
+//		firstrun = false;
+//	}
 
 	process_messages();
 
@@ -320,42 +320,44 @@ int Localization::Execute()
 			nearest_nofilter_ball.set_relativex(aball.dist() * cos(aball.bearing()));
 			nearest_nofilter_ball.set_relativey(aball.dist() * sin(aball.bearing()));
 
-			duration = newtime - time;
-			time = newtime;
-			if (MyWorld.balls_size() < 1)
-			{
-				MyWorld.add_balls();
-				myBall.reset(aball.dist(), 0,aball.bearing(), 0);
-				//RESET
-				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-			} else
-			{
-				float dt = duration.total_milliseconds();
-
-				float dist_var = 1.05 - tanh(1.8 / aball.dist());
-				nearest_filtered_ball = myBall.get_ball_estimate(aball.dist(), dist_var, aball.bearing(), 0.03, dt);
-
-				float distance =
-						DISTANCE_2(nearest_filtered_ball.relativex()-nearest_nofilter_ball.relativex(),nearest_filtered_ball.relativey()-nearest_nofilter_ball.relativey());
-
-				if (dt > MAX_TIME_TO_RESET && distance > 2) //dt > 5sec && distance > 2 m
-				{
-					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
-					//RESET
-					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-				} else
-					MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
-			}
+			MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
+//
+//			duration = newtime - time;
+//			time = newtime;
+//			if (MyWorld.balls_size() < 1)
+//			{
+//				MyWorld.add_balls();
+//				myBall.reset(aball.dist(), 0,aball.bearing(), 0);
+//				//RESET
+//				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
+//			} else
+//			{
+//				float dt = duration.total_milliseconds();
+//
+//				float dist_var = 1.05 - tanh(1.8 / aball.dist());
+//				nearest_filtered_ball = myBall.get_ball_estimate(aball.dist(), dist_var, aball.bearing(), 0.03, dt);
+//
+//				float distance =
+//						DISTANCE_2(nearest_filtered_ball.relativex()-nearest_nofilter_ball.relativex(),nearest_filtered_ball.relativey()-nearest_nofilter_ball.relativey());
+//
+//				if (dt > MAX_TIME_TO_RESET && distance > 2) //dt > 5sec && distance > 2 m
+//				{
+//					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
+//					//RESET
+//					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
+//				} else
+//					MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
+//			}
 		} else
 		{
-			duration = newtime - time;
-			float dt = duration.total_milliseconds();
-			if (dt > MAX_TIME_TO_RESET)
-			{
-				time = newtime;
+//			duration = newtime - time;
+//			float dt = duration.total_milliseconds();
+//			if (dt > MAX_TIME_TO_RESET)
+//			{
+//				time = newtime;
 				if (MyWorld.balls_size() > 0)
 					MyWorld.clear_balls();
-			}
+//			}
 		}
 	//MyWorld.
 	//Signal(wmot, "motion");
@@ -393,7 +395,7 @@ void Localization::Send_LocalizationData()
 
 		sendsize = outgoingheader.ByteSize();
 		outgoingheader.SerializeToArray(data, sendsize);
-		cout << "outgoingheader sendsize " << sendsize << endl;
+		//cout << "outgoingheader sendsize " << sendsize << endl;
 
 		while (rsize < sendsize)
 		{
@@ -427,10 +429,8 @@ void Localization::Send_LocalizationData()
 
 void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 {
-
 	if (count == 0)
 	{
-
 		TrackPointRobotPosition.x = PosX.sensorvalue() * 1000;
 		TrackPointRobotPosition.y = PosY.sensorvalue() * 1000;
 		TrackPointRobotPosition.phi = Angle.sensorvalue();
@@ -471,19 +471,19 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058);
 
 	MModel.Direction.val = robot_dir;
-	cout << "MModel.Direction.val " << MModel.Direction.val;
+	//cout << "MModel.Direction.val " << MModel.Direction.val;
 	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3) + 0.1086; // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ;
-	cout << "MModel.Direction.Emean " << MModel.Direction.Emean;
+	//cout << "MModel.Direction.Emean " << MModel.Direction.Emean;
 	MModel.Direction.Edev = abs(-0.019 * abs(robot_dir) + 0.059824);
 	// 0.0063971 * robot_dir + 0.090724 / abs(robot_dir);
-	cout << "MModel.Direction.Edev " << MModel.Direction.Edev;
+	//cout << "MModel.Direction.Edev " << MModel.Direction.Edev;
 
 	MModel.Rotation.val = robot_rot;
 	MModel.Rotation.ratiomean = 0;// -1.9346*robot_dist + 10.041 *robot_dir + 173.24*robot_rot + 890.64;
 	MModel.Rotation.ratiodev = 0.0001;//5.67 *robot_dist + -69.009 *robot_dir +-359.19*robot_rot -2561.2;
 	//cout << "          Robot Position DX: " << DX << " DY: " << DY << " DR(DEG): " << DR * TO_DEG << endl;
 
-	cout << "Distance.val = " << MModel.Distance.val << " Distance.Edev = " << MModel.Distance.Edev << endl;
+	//cout << "Distance.val = " << MModel.Distance.val << " Distance.Edev = " << MModel.Distance.Edev << endl;
 	//cout << " Direction.val(DEG) = " << MModel.Direction.val * TO_DEG << " Direction.Edev(DEG) = " << MModel.Direction.Edev * TO_DEG << endl;
 	//cout << "  Rotation.val(DEG) = " << MModel.Rotation.val * TO_DEG << " Rotation.Edev(DEG) = " << MModel.Rotation.Edev * TO_DEG << endl;
 
@@ -500,7 +500,7 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, double rangemaxleft, double rangemaxright)
 {
 
-	cout << "SelfLocalize SIR" << endl;
+	//cout << "SelfLocalize SIR" << endl;
 	int iterations = 1;
 
 	int index[partclsNum];
@@ -551,7 +551,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	if (Observations.size() > 0)
 		ForceBearing(SIRParticles, Observations);
 
-	cout << CircleIntersectionPossibleParticles(Observations, SIRParticles, 4) << endl;
+	//cout << CircleIntersectionPossibleParticles(Observations, SIRParticles, 4) << endl;
 
 	//Update - Using incoming observation
 	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
@@ -564,14 +564,14 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 	//Normalize Particles  Weight in order to Resample later
 	float ESS = normalize(SIRParticles.Weight, partclsNum);
-	cout << "\033[01;32m \n ESS " << ESS << " Beta " << Beta << " Beta 2 " << *Beta2 << "\033[0m" << endl;
+	//cout << "\033[01;32m \n ESS " << ESS << " Beta " << Beta << " Beta 2 " << *Beta2 << "\033[0m" << endl;
 
 	if (ESS < Beta * 0.8)
 	{
-		cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
+		//cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
 		depletions_counter++;
 
-		cout << "Depletion Counter " << depletions_counter << endl;
+		//cout << "Depletion Counter " << depletions_counter << endl;
 	} else
 	{
 		depletions_counter = 0;
@@ -630,7 +630,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//TODO only one value to determine confidance, Now its only distance confidence
 	//AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
 
-	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
+	//cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
 
@@ -642,12 +642,12 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 			depletions_counter -= 2;
 	} else
 	{
-		cout << "NO need of resampling" << endl;
+		;//cout << "NO need of resampling" << endl;
 	}
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
 
-	cout << "Agent Confidence " << AgentPosition.confidence << endl;
+	//cout << "Agent Confidence " << AgentPosition.confidence << endl;
 
 	//cin.ignore(10, '\n');
 	//cin.clear();
@@ -767,7 +767,7 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 		DebugData.mutable_particles(i)->set_phi(Particles.phi[i]);
 		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
 	}
-	cout << " added " << Particles.size << endl;
+	//cout << " added " << Particles.size << endl;
 	if (obsm != NULL)
 	{
 		(DebugData.mutable_observations())->CopyFrom(*obsm);

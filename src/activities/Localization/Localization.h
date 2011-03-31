@@ -62,7 +62,7 @@ class Localization: public IActivity, public KLocalization
 		SensorData HeadYaw;
 		SensorData HeadPitch;
 		BallTrackMessage lastballseen;
-		BallFilter myBall;
+		//BallFilter myBall;
 
 		MotionHeadMessage hmot;
 		MotionWalkMessage wmot;
@@ -73,10 +73,10 @@ class Localization: public IActivity, public KLocalization
 		boost::shared_ptr<const RobotPositionMessage> rpsm;
 
 		BToHeadMessage* bhmsg;
-		bool firstrun;
+		//bool firstrun;
 
-		boost::posix_time::ptime time;
-		boost::posix_time::time_duration duration;
+		//boost::posix_time::ptime time;
+		//boost::posix_time::time_duration duration;
 
 		//For Debug!
 		void SimpleBehaviorStep();
