@@ -104,7 +104,7 @@ void MotionController::UserInit()
 	config[2][0] = "WALK_STEP_MAX_PERIOD";
 	config[2][1] = 30; // 30
 	config[3][0] = "WALK_STEP_MIN_PERIOD";
-	config[3][1] = 17; // 21
+	config[3][1] = 18; // 21
 	config[4][0] = "WALK_MAX_STEP_X";
 	config[4][1] = 0.05; // 0.04
 	config[5][0] = "WALK_MAX_STEP_Y";

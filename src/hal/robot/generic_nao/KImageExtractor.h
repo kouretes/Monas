@@ -40,7 +40,7 @@ class KImageExtractor
 		boost::posix_time::ptime fetchImage(IplImage *img);
 		//Create new space for image
 		IplImage *allocateImage();
-		float calibrateCamera(int sleeptime=1500,int exp=18);
+		float calibrateCamera(int sleeptime=500,int exp=18);
 		float getExpUs();
 		int getCamera();
 		int swapCamera();

@@ -921,8 +921,8 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		if(calculateValidGoalPost(newpost,c)==false)
 		{
 
-			cout<<"Goal no Valid"<<endl;
-			//continue;
+			//cout<<"Goal no Valid"<<endl;
+			continue;
 		}
 
 		KVecFloat2 polar;
