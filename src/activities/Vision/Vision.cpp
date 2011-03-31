@@ -102,9 +102,9 @@ int VISIBLE Vision::Execute()
 			CalibrateCam res;
 			Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
 #ifdef  CAPTURE_MODE
-			float scale = ext.calibrateCamera(cal->sleeptime(), 99999/*cal->exp()*/);
+			float scale = ext.calibrateCamera(500, 99999/*cal->exp()*/);
 #else
-			float scale = ext.calibrateCamera(cal->sleeptime(), cal->exp());
+			float scale = ext.calibrateCamera(500, cal->exp());
 #endif
 			segbottom->setLumaScale(1 / scale);
 			segtop->setLumaScale(1 / scale);
@@ -496,8 +496,8 @@ void Vision::fetchAndProcess()
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
-	//locateGoalPost(ygoalpost, yellow);
-	//locateGoalPost(bgoalpost, skyblue);
+	locateGoalPost(ygoalpost, yellow);
+	locateGoalPost(bgoalpost, skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	cout << b.x << " " << b.y << " " << b.cr << endl;
