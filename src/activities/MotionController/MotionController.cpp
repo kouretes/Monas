@@ -86,8 +86,6 @@ void MotionController::UserInit()
 		}
 	}
 
-	motion->setStiffnesses("Body", 0.9);
-	motion->setStiffnesses("Head", 0.95);
 	createDCMAlias();
 
 	motion->setWalkArmsEnable(true, true);
@@ -146,17 +144,16 @@ void MotionController::UserInit()
 	walkPID = 0;
 	headPID = 0;
 	actionPID = 0;
-
-	penalized = false;
+	currentstate=1000;
 	mam = new MotionActionMessage();
 	mam->set_command("NULL");
-	
+
 	counter = 0;
 
 	MotionSkillsInit();
 
 	walkingWithVelocity = false;
-	setStiffnessDCM(1);
+	//setStiffnessDCM(1);
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
 }
 
@@ -181,7 +178,7 @@ void MotionController::read_messages()
 
 	/* Messages for Intertial Readings */
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	
+
 	/* Messages from the Game Controller */
 	gsm = _blk->readState<GameStateMessage> ("behavior");
 
@@ -190,31 +187,6 @@ void MotionController::read_messages()
 
 void MotionController::mglrun()
 {
-	
-	if (gsm != 0) {
-		gameState = gsm->player_state();
-		if (gameState == PLAYER_PENALISED) {
-			if (!penalized) {
-				killHeadCommand();
-				killActionCommand();
-				stopWalkCommand();
-				mam->set_command("PenalizedZeroPos.xar");
-				SpAssocCont::iterator it = SpActions.find(mam->command());
-				if (it == SpActions.end())
-					Logger::Instance().WriteMsg("MotionController", "SpAction " + mam->command() + " not found!", Logger::Error);
-				else
-					actionPID = it->second->ExecutePost();
-				mam->set_command("NULL");
-			}
-			penalized = true;
-		}
-		else 
-			penalized = false;
-	}
-	
-	if (penalized)
-		return;
-	
 	if (allsm != NULL && allsm->sensordata_size() >= L_FSR)//Has Accelerometers
 	{
 
@@ -226,6 +198,71 @@ void MotionController::mglrun()
 		accnorm = sqrt(AccZvalue * AccZvalue + AccYvalue * AccYvalue + AccXvalue * AccXvalue);
 		angX = atan(AccYvalue / AccZvalue) + gyrX * 0.01744 * 0.05;//TO rad * 0.5 (integration for half a second  * 1/10 because it is in 0.1 deg resolution)
 		angY = atan(-AccXvalue / AccZvalue) + gyrY * 0.01744 * 0.05;
+	}
+
+	if (gsm != 0) {
+		gameState = gsm->player_state();
+	}
+	else
+		currentstate=PLAYER_PLAYING;
+
+	if(gameState==currentstate)
+	{
+
+	}
+	else if(gameState==PLAYER_INITIAL||gameState==PLAYER_FINISHED)
+	{
+		killCommands();
+		setStiffnessDCM(0.15);
+		if(fabs(angX) < 0.7 && fabs(angY) < 0.75)
+		{
+			mam->set_command("zeroToSeet.xar");
+			SpAssocCont::iterator it = SpActions.find(mam->command());
+			if (it == SpActions.end())
+				Logger::Instance().WriteMsg("MotionController", "SpAction " + mam->command() + " not found!", Logger::Error);
+			else
+				actionPID = it->second->ExecutePost();
+			mam->set_command("NULL");
+			currentstate=gameState;
+		}
+		else
+			currentstate=gameState==PLAYER_FINISHED?PLAYER_PENALISED:PLAYER_PENALISED;
+
+
+
+	}
+	else if (gameState == PLAYER_PENALISED)
+	{
+
+
+		killHeadCommand();
+		killActionCommand();
+		stopWalkCommand();
+		setStiffnessDCM(0.5);
+		mam->set_command("PenalizedZeroPos.xar");
+		SpAssocCont::iterator it = SpActions.find(mam->command());
+		if (it == SpActions.end())
+			Logger::Instance().WriteMsg("MotionController", "SpAction " + mam->command() + " not found!", Logger::Error);
+		else
+			actionPID = it->second->ExecutePost();
+		mam->set_command("NULL");
+		currentstate=gameState;
+
+	}
+	else
+	{
+		setStiffnessDCM(1);
+		currentstate=gameState;
+
+	}
+
+
+
+	if (currentstate!=PLAYER_PLAYING)
+		return;
+
+	if (allsm != NULL && allsm->sensordata_size() >= L_FSR)//Has Accelerometers
+	{
 
 		/* Check if the robot is falling and remove stiffness, kill all motions */
 		//Logger::Instance().WriteMsg("MotionController", "Accnorm:"+_toString(accnorm), Logger::ExtraInfo);
@@ -251,7 +288,7 @@ void MotionController::mglrun()
 	/* Return if waiting time has not expired yet */
 	if (waitfor > microsec_clock::universal_time())
 		return;
-		
+
 	/* Check if an Action command has been completed */
 	if ((actionPID != 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID) /*isRunning(actionPID)*/)
 	{
@@ -536,7 +573,7 @@ void MotionController::killWalkCommand()
 {
 	motion->killWalk();
 	walkPID = 0;
-	Logger::Instance().WriteMsg("MotionController", "Killed Walk Command", Logger::ExtraInfo);
+	//Logger::Instance().WriteMsg("MotionController", "Killed Walk Command", Logger::ExtraInfo);
 }
 
 void MotionController::stopWalkCommand()
@@ -556,7 +593,7 @@ void MotionController::killHeadCommand()
 	{
 		motion->killTask(headPID);
 		headPID = 0;
-		Logger::Instance().WriteMsg("MotionController", "Killed Head Command", Logger::ExtraInfo);
+		//Logger::Instance().WriteMsg("MotionController", "Killed Head Command", Logger::ExtraInfo);
 	}
 }
 
@@ -566,7 +603,7 @@ void MotionController::killActionCommand()
 	{
 		motion->killTask(actionPID);
 		actionPID = 0;
-		Logger::Instance().WriteMsg("MotionController", "Killed Action Command", Logger::ExtraInfo);
+		//Logger::Instance().WriteMsg("MotionController", "Killed Action Command", Logger::ExtraInfo);
 	}
 }
 
@@ -578,7 +615,7 @@ void MotionController::killCommands()
 	walkPID = 0;
 	headPID = 0;
 	actionPID = 0;
-	Logger::Instance().WriteMsg("MotionController", "Killed All Commands", Logger::ExtraInfo);
+	//Logger::Instance().WriteMsg("MotionController", "Killed All Commands", Logger::ExtraInfo);
 }
 
 void MotionController::ALstandUp()
@@ -976,7 +1013,7 @@ void MotionController::MotionSkillsInit()
 		else
 			diffLKick4[i] = 1;
 	}
-	
+
 	return;
 }
 

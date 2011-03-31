@@ -35,7 +35,7 @@ ButtonListener::ButtonListener(AL::ALPtr<AL::ALBroker> pbroker, const std::strin
 	functionName("RBumperPressed", "ButtonListener", "right bumber pressed");
 	BIND_METHOD(ButtonListener::RBumperPressed);
 
-	ctime = boost::posix_time::microsec_clock::universal_time();
+	timechest=timebumper = boost::posix_time::microsec_clock::universal_time();
 
 	try {
 		sentinel = getParentBroker()->getProxy("ALSentinel");
@@ -67,8 +67,8 @@ ButtonListener::~ButtonListener() {
 void ButtonListener::buttonPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage) {
 	now = boost::posix_time::microsec_clock::universal_time();
 
-	if ((now - ctime) > dur) {
-		ctime = now;
+	if ((now - timechest) > dur) {
+		timechest = now;
 		//cout << "Button Pressed" << endl;
 		memory->insertData("button_pressed", 1);
 	} else
@@ -81,8 +81,8 @@ void ButtonListener::buttonPressed(const std::string& pDataName, const ALValue& 
 void ButtonListener::LBumperPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage) {
 	now = boost::posix_time::microsec_clock::universal_time();
 
-	if ((now - ctime) > dur) {
-		ctime = now;
+	if ((now - timebumper) > dur) {
+		timebumper = now;
 		//cout << "Left Pressed" << endl;
 		memory->insertData("lbumper_pressed", 1);
 
@@ -95,8 +95,8 @@ void ButtonListener::LBumperPressed(const std::string& pDataName, const ALValue&
 void ButtonListener::RBumperPressed(const std::string& pDataName, const ALValue& pValue, const std::string& pMessage) {
 	now = boost::posix_time::microsec_clock::universal_time();
 
-	if ((now - ctime) > dur) {
-		ctime = now;
+	if ((now - timebumper) >  dur) {
+		timebumper = now;
 		//cout << "Right Pressed" << endl;
 		memory->insertData("rbumper_pressed", 1);
 	} else{
