@@ -2,9 +2,9 @@
 <!-- Show Segmented image using opencv -->
 <cvHighgui>0</cvHighgui>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>5-KouretesLab-segall.conf</SegmentationBottom>
-<SegmentationTop>5-KouretesLab-segall.conf</SegmentationTop>
-<Dfov>53.3</Dfov>
+<SegmentationBottom>7-GermanOpenAtLast-segall.conf</SegmentationBottom>
+<SegmentationTop>7-GermanOpenAtLast-segall.conf</SegmentationTop>
+<Dfov>53.7</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.066</ballsize>
 <balltolerance>0.2</balltolerance>
@@ -22,12 +22,12 @@
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
-<goalheight>0.802</goalheight>
+<goalheight>0.79</goalheight>
 <goaldist>1.4</goaldist>
-<goaldiam>0.096</goaldiam>
+<goaldiam>0.107</goaldiam>
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>-30</sensordelay>
+<sensordelay>-28</sensordelay>
 
 <pitchoffset>0.038</pitchoffset>

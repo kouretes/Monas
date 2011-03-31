@@ -280,11 +280,11 @@ int VBehavior::Execute() {
 					littleWalk(0.2, 0.0, 0.0);
 				} else {
 					if (bb > 0.0) {
-						amot->set_command("SoftLeftSideKick");
+						amot->set_command("LeftSideKickFast.xar");
 						direction = -1;
 					}
 					else {
-						amot->set_command("SoftRightSideKick");
+						amot->set_command("RightSideKickFast.xar");
 						direction = +1;
 					}
 					_blk->publishSignal(*amot, "motion");
@@ -293,7 +293,7 @@ int VBehavior::Execute() {
 			}
 			else if(lastkick<=microsec_clock::universal_time()){
 
-				if(kickno==3){//if (mglRand()<0.6) {
+				if(kickno>=0){//if (mglRand()<0.6) {
 				//if ( (mglRand()<1.0) && !obstacleFront ) {
 					if (by > 0.0)
 						amot->set_command("LeftKick");
@@ -418,7 +418,6 @@ void VBehavior::HeadScanStep() {
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
 		_blk->publishSignal(*hmot, "motion");
-
 
 	}
 	return ;

@@ -88,6 +88,7 @@ class KfieldGui {
 		void draw_Trackpoint(partcl Belief, double maxrangeleft, double maxrangeright);
 		void draw_particles(parts & Particles, bool leaveunnormilised = false);
 		void draw_ball(belief Belief, BallObject Ball);
+		void draw_ball2(belief Belief, Ball aBall);
 		void* redraw_field(void * fps);
 		void make_field(IplImage** image);
 		static short keypressed;

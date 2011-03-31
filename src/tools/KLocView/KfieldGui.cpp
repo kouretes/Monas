@@ -499,6 +499,30 @@ void KfieldGui::draw_ball(belief Belief, BallObject Ball) {
 	//cout << " Ball Drawn " << endl;
 }
 
+void KfieldGui::draw_ball2(belief Belief, Ball Ball) {
+	pthread_mutex_lock(&lock);
+
+	CvPoint pt1, pt2;
+	int radius = 60 / 2 * 1000.0 / scale;
+
+	//double max = 0;
+
+	pt1.x = Belief.x + Ball.relativex() * 1000*cos(Belief.theta);//Ball.dist() * 1000 * cos((Belief.theta + Ball.bearing()));
+	pt1.y = Belief.y + Ball.relativey() * 1000*sin(Belief.theta);//Ball.dist() * 1000 * sin((Belief.theta + Ball.bearing()));
+
+	pt2.x = (pt1.x + (2 * margintoline + field_width) / 2.0) / scale;
+	pt2.y = (-pt1.y + (2 * margintoline + field_height) / 2.0) / scale;
+
+	//cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
+	cvCopy(cleanfield, field);
+	cvCircle(field, pt2, radius, color["darkorange"], CV_FILLED, CV_AA, 0);
+	//tmp = Kutils::to_string(Ball.dist());
+	cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 400) / scale, (2 * margintoline + field_height + 850) / scale), &font, color["orange"]);
+	pthread_mutex_unlock(&lock);
+	//cout << " Ball Drawn " << endl;
+}
+
+
 void* KfieldGui::redraw_field(void * fps) {
 	int * FPS = (int *) fps;
 	Waitingforkey = round(1000.0 / (double) (*FPS));

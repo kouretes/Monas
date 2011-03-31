@@ -85,14 +85,14 @@ int VISIBLE Vision::Execute()
 	//cout<<"Vision Execute"<<endl;
 	static bool calibrated = false;
 	boost::shared_ptr<const CalibrateCam> cal = _blk->readState<CalibrateCam> ("vision");
-	if (cal == NULL)
-	{
-		CalibrateCam res;
-		res.set_status(0);
-		_blk->publishState(res, "vision");
+	//if (cal == NULL)
+	//{
+		//CalibrateCam res;
+		//res.set_status(0);
+		//_blk->publishState(res, "vision");
 		//cout<<"---------Start calibration:"<<res.status()<<endl;
-		cal = _blk->readState<CalibrateCam> ("vision");
-	}
+		//cal = _blk->readState<CalibrateCam> ("vision");
+	//}
 	if (cal != NULL)
 	{
 		//cout<<"=======Start calibration:"<<cal->status()<<endl;
@@ -101,8 +101,7 @@ int VISIBLE Vision::Execute()
 			//cout<<"Start calibration"<<endl;
 			CalibrateCam res;
 			Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
-
-			float scale = ext.calibrateCamera(cal->sleeptime(), cal->exp());
+			float scale = ext.calibrateCamera(1000, cal->exp());
 			segbottom->setLumaScale(1 / scale);
 			segtop->setLumaScale(1 / scale);
 			Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
@@ -115,6 +114,13 @@ int VISIBLE Vision::Execute()
 
 		}
 	}
+#ifdef  CAPTURE_MODE
+	if(frameNo++%20==0)
+		saveFrame(rawImage);
+#else
+	frameNo++;
+#endif
+
 
 	fetchAndProcess();
 	//std::cout << " Vision run" << std::endl;
@@ -195,8 +201,24 @@ void Vision::recv_and_send()
 		}
 		if (command == "seg")
 			sendtype = -1; // meand segmented
-		if (command == "yuyv")
+		else if (command == "yuyv")
 			sendtype = AL::kYUV422InterlacedColorSpace;
+		else if (command == "ReferenceCalibration")
+		{
+			CalibrateCam res;
+			res.set_status(0);
+			res.set_exp(100000);
+			_blk->publishState(res, "vision");
+
+		}
+		else if (command == "Calibration")
+		{
+			CalibrateCam res;
+			res.set_status(0);
+			//res.set_exp(100000);
+			_blk->publishState(res, "vision");
+
+		}
 
 		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
 		{
@@ -598,6 +620,7 @@ VISIBLE Vision::Vision() :
 
 void VISIBLE Vision::UserInit()
 {
+	frameNo=0;
 	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
 	if (xmlconfig->IsLoadedSuccessfully() == false)
 		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
