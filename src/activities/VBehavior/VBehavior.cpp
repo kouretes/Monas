@@ -419,7 +419,6 @@ void VBehavior::HeadScanStep() {
 		hmot->set_parameter(1, targetPitch);
 		_blk->publishSignal(*hmot, "motion");
 
-
 	}
 	return ;
 
