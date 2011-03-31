@@ -46,7 +46,7 @@ int HeadBehavior::Execute() {
 
 	if (bhm != 0)
 		curraction = bhm->headaction();
-	if(prevaction==CALIBRATE && curraction==CALIBRATE && calibrated!=1 &&calibrated!=2){
+	if(prevaction==CALIBRATE && curraction==CALIBRATE && (calibrated==1 || calibrated==2)){
 		headaction = DONOTHING;
 	}else
 		headaction = curraction;
