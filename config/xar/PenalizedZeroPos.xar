@@ -31,61 +31,61 @@
                                 <watches />
                                 <ActuatorList>
                                     <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="83.6705" />
+                                        <Key frame="10" value="83.6705" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LShoulderRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="-12.8346" />
+                                        <Key frame="10" value="-12.8346" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LElbowYaw" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="-69.7884" />
+                                        <Key frame="10" value="-69.7884" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LElbowRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="-28.0351" />
+                                        <Key frame="10" value="-28.0351" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="77.0835" />
+                                        <Key frame="10" value="77.0835" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RShoulderRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="16.5212" />
+                                        <Key frame="10" value="16.5212" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RElbowYaw" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="58.1819" />
+                                        <Key frame="10" value="58.1819" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RElbowRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="19.0749" />
+                                        <Key frame="10" value="19.0749" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LHipYawPitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LHipRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LHipPitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LKneePitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.0854875" />
+                                        <Key frame="10" value="0.0854875" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LAnklePitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="-0.00240423" />
+                                        <Key frame="10" value="-0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LAnkleRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RHipRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RHipPitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="-0.00240423" />
+                                        <Key frame="10" value="-0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RKneePitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RAnklePitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="RAnkleRoll" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="4" value="0.00240423" />
+                                        <Key frame="10" value="0.00240423" />
                                     </ActuatorCurve>
                                 </ActuatorList>
                             </Timeline>
