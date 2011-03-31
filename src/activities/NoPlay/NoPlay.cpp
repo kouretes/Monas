@@ -24,18 +24,16 @@ int NoPlay::Execute() {
 			Logger::Instance().WriteMsg("NoPlay",  " NO GSM", Logger::Info);
 			bhmsg->set_headaction(DONOTHING);
 		}else if(gsm->player_state()==PLAYER_PLAYING){
+			cal = false;
 			Logger::Instance().WriteMsg("NoPlay",  " PLAYER_PLAYING", Logger::Info);	
 			return 0;
 		}else{
 			switch(gsm->player_state()){
 				case PLAYER_PENALISED:
-				
-					Logger::Instance().WriteMsg("NoPlay",  " initX" + _toString(initX), Logger::Info);
 					Logger::Instance().WriteMsg("NoPlay",  " playerpenalised", Logger::Info);
 					//if(prevaction!=CALIBRATE)
 					velocityWalk(0.0, 0.0, 0.0, 1);
-					Logger::Instance().WriteMsg("NoPlay",  " playerpenalised", Logger::Info);
-					curraction = CALIBRATE;
+					curraction = CALIBRATE;						
 					pmsg->set_posx(initX);
 					pmsg->set_posy(initY);
 					pmsg->set_theta(initPhi);
@@ -51,28 +49,27 @@ int NoPlay::Execute() {
 					curraction = DONOTHING;
 				break;
 				case PLAYER_READY:
-					
 					kickOff = gsm->kickoff();
 					kcm->set_kickoff(kickOff);
 					_blk->publishState(*kcm, "behavior");
 					Logger::Instance().WriteMsg("NoPlay",  " playerready", Logger::Info);
-				
-				
-					curraction = SCANFORPOST;
+					curraction = CALIBRATE;
 				break;
 				case PLAYER_INITIAL:
 					Logger::Instance().WriteMsg("NoPlay",  " playerinitial", Logger::Info);
 					velocityWalk( 0,0,0,1);
-					curraction = DONOTHING;
+					curraction = CALIBRATE;
 				break;
 			}
 		
 						
 	}
-	prevaction = curraction;
+	
 	bhmsg->set_headaction(curraction);	
+
+	prevaction = curraction;
 	_blk->publishSignal(*bhmsg, "behavior");
-		Logger::Instance().WriteMsg("NoPlay",  " bgainw", Logger::Info);
+	Logger::Instance().WriteMsg("NoPlay",  " bgainw", Logger::Info);
 			return 0;
 
 }
@@ -81,6 +78,7 @@ void NoPlay::UserInit () {
 	_blk->subscribeTo("behavior", 0);
 	curraction = DONOTHING;
 	prevaction = DONOTHING;
+	cal = false;
 	kickOff = false;
 	readConf = false;
 	posX = 0.30;

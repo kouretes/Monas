@@ -32,7 +32,7 @@ void HeadBehavior::UserInit() {
 	GoalLastSeen =GoalFirstSeen= microsec_clock::universal_time()-hours(5);
 
 
-
+	prevaction = 0;
 	calibrated = 0;
 	headaction = 0;
 	lastbearing=obsmbearing=-1;
@@ -45,7 +45,11 @@ int HeadBehavior::Execute() {
 	read_messages();
 
 	if (bhm != 0)
-		headaction = bhm->headaction();
+		curraction = bhm->headaction();
+	if(prevaction==CALIBRATE && curraction==CALIBRATE && calibrated!=1 &&calibrated!=2){
+		headaction = DONOTHING;
+	}else
+		headaction = curraction;
 	ptime now=microsec_clock::universal_time();
 	newBearing=false;
 	if(obsm&&obsm->regular_objects_size() > 0)
@@ -147,7 +151,7 @@ int HeadBehavior::Execute() {
 				HeadScanStep();
 
 			}
-			break;
+			break;/*
 		case (SCANFORPOST):
 			if(obsmbearing!=-1)
 			{
@@ -179,11 +183,13 @@ int HeadBehavior::Execute() {
 			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
+			 */
 		case (BALLTRACK):
 			//Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
 			MakeTrackBallAction();
 			break;
 	}
+	prevaction = curraction;
 	_blk->publishState(*hbmsg, "behavior");
 	return 0;
 }
@@ -294,7 +300,7 @@ void HeadBehavior::HeadScanStep() {
 
 void HeadBehavior::read_messages() {
 
-	bhm = _blk->readState<BToHeadMessage> ("behavior");
+	bhm = _blk->readSignal<BToHeadMessage> ("behavior");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 //	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");

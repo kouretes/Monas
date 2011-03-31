@@ -1,8 +1,6 @@
 
 #include "Scan.h"
-#include "messages/RoboCupGameControlData.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
+
 
 namespace {
     ActivityRegistrar<Scan>::Type temp("Scan");

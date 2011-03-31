@@ -14,8 +14,9 @@ namespace {
 int Init::Execute() {
 	_blk->process_messages();
 	_blk->subscribeTo("behavior", 0);		
-	//Logger::Instance().WriteMsg("Init",  " Execute "+ _toString(playernum), Logger::Info);
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
+	Logger::Instance().WriteMsg("Init",  " Execute "+ _toString(playernum), Logger::Info);
+	
 
 	return 0;
 }

@@ -36,6 +36,7 @@ private:
 	KickOffMessage* kcm;
 	BToHeadMessage* bhmsg;
 	PositionMessage* pmsg;
+	bool cal;
 	int teamColor;
 	int playernum;
 	float posX;

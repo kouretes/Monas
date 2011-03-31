@@ -57,6 +57,8 @@ class HeadBehavior: public IActivity {
 		SensorData HeadPitch;
 
 		int headaction;
+		int prevaction;
+		int curraction;
 		boost::posix_time::ptime lastturn;
 
 		bool startscan;

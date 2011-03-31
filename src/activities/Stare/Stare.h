@@ -1,6 +1,6 @@
 
-#ifndef _Scan_h_
-#define _Scan_h_ 1
+#ifndef _Stare_h_
+#define _Stare_h_ 1
 
 #include "architecture/IActivity.h"
 #include "messages/motion.pb.h"
@@ -15,8 +15,9 @@
 #include "../ApproachBall/ApproachBall.h"
 #include "messages/RoboCupGameControlData.h"
 #include "tools/logger.h"
-#include "tools/toString.h"			
-class Scan : public IActivity {
+#include "tools/toString.h"	
+			
+class Stare : public IActivity {
 			
 public:
 	
@@ -26,18 +27,15 @@ public:
 	
 	std::string GetName ();
 	
-private:	
+private:
+	MotionWalkMessage wmot;	
 	BToHeadMessage* bhmsg;
-	MotionWalkMessage wmot;
-	boost::shared_ptr<const HeadToBMessage> hbm;
-	boost::shared_ptr<const GameStateMessage> gsm;
+	ObservationMessage* lastObsm;
+	boost::posix_time::ptime rcvObsm;
+	boost::shared_ptr<const ObservationMessage> obsm;
 	int headaction;
-	boost::posix_time::ptime lastTurn;
-	ApproachBall ab;
-	
 	void velocityWalk( double x, double y, double th, double f);
-	void littleWalk(double x, double y, double th);	
 };
 
-#endif // _Scan_h_
+#endif // _Stare_h_
 	

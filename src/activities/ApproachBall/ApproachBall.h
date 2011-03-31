@@ -26,7 +26,10 @@ public:
 	std::string GetName ();
 	
 
-	bool readyToKick( boost::shared_ptr<const ObservationMessage> msg1, boost::shared_ptr<const WorldInfo> msg2 );
+	bool readyToKick( boost::shared_ptr<const ObservationMessage> msg1 );
+	bool readyToKick( boost::shared_ptr<const WorldInfo> msg2 );
+	bool ballAway( boost::shared_ptr<const ObservationMessage> msg1 );
+	bool ballAway( boost::shared_ptr<const WorldInfo> msg2 );
 	float distance(float x1, float x2, float y1, float y2);
 	float rotation(float x, float y, float theta);
 

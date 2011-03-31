@@ -55,7 +55,7 @@ void BodyBehavior::UserInit() {
 }
 
 int BodyBehavior::Execute() {
-	//cout << "Execute" << endl;
+
 	prevaction = curraction;
 	oldGameState = gameState;
 	read_messages();
@@ -74,15 +74,10 @@ int BodyBehavior::Execute() {
 		lastObsm->CopyFrom(*obsm);
 	else
 		readytokick = false;
-
-	//cout << "calibrated " << calibrated << "BodyBehavior" << endl;
-//	cout << "ballfound " << ballfound << "BodyBehavior" << endl;
-//	cout << "scancompleted " << scancompleted << "BodyBehavior" << endl;
-
+		
 	if (gsm != 0) {
 		//Logger::Instance().WriteMsg("BodyBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		gameState = gsm->player_state();
-		//teamColor = gsm->team_color();
 
 		if (gameState == PLAYER_PLAYING) {
 			if (calibrated == 2) {
@@ -93,6 +88,7 @@ int BodyBehavior::Execute() {
 				// wait
 			}
 		} else if (gameState == PLAYER_INITIAL) {
+			curraction=CALIBRATE;
 			play = false;
 		} else if (gameState == PLAYER_READY) {
 			play = false;
@@ -101,6 +97,7 @@ int BodyBehavior::Execute() {
 			play = false;
 			kickoff = gsm->kickoff();
 			orientation = 0;
+			curraction = DONOTHING;
 		} else if (gameState == PLAYER_FINISHED) {
 			play = false;
 		} else if (gameState == PLAYER_PENALISED) {
@@ -171,7 +168,6 @@ int BodyBehavior::Execute() {
 
 				readytokick=true;
                 if ( fabs( bx - posx ) > 0.01 || fabs( by - (side*posy) ) > 0.01) {
-                    //Y = gainFine * ( by - (side*posy) );
                     readytokick = false;
                 }
 
@@ -318,7 +314,7 @@ int BodyBehavior::Execute() {
 	bhmsg->set_headaction(curraction);
 
 	//cout << "headAction " << curraction << "BodyBehavior" << endl;
-	_blk->publishState(*bhmsg, "behavior");
+	_blk->publishSignal(*bhmsg, "behavior");
 
 
 	return 0;
