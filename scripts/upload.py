@@ -73,7 +73,7 @@ def usage():
 	elif(sys.argv[0] == "upload_game.py"):
 		print """
 		usage: (python) ../../scripts/upload_game.py SSID Ip1 player1num Ip2 player2num Ip3 player2num etc
-		num_of_player: 1: Goalkeeper 2: Defender 3: Attacker
+		num_of_player: 1: Goalkeeper 2: Defender 3: Midfielder 4: Attacker
 		SSID: name of field the script will look into the config directory
 		for a directory field_name_of_field to upload the network files
 		files must be under the same path as on robot i.e. etc/network/interfaces.cof :)
@@ -97,7 +97,7 @@ def usage():
 		"""
 	exit(-1)
 
-playersdef = ['Goalkeeper', 'Defender', 'Attacker']
+playersdef = ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker']
 #### UPLOAD SCRIPT ####
 
 if string.find(sys.argv[0], "upload_work.py") > -1:
@@ -116,7 +116,7 @@ elif string.find(sys.argv[0] , "upload_game.py") > -1 :
 	players = sys.argv[3:len(sys.argv):2]
 	print players
 	for p in players:
-		if(int(p) > 3 or int(p) < 1) :
+		if(int(p) > 4 or int(p) < 1) :
 			print "ERROR: A Player num is not valid, Quiting "
 			exit(-1)
 
@@ -229,7 +229,7 @@ for	ip in robotsIP:
 		playerstr = raw_input("1: Goalkeeper 2: Defender 3: Attacker \n	Set player num or press enter to continue: ")
 		while(playerstr != ""):
 			player = int(playerstr)
-			if(player <= 3 and player >=1):
+			if(player <= 4 and player >=1):
 				print "Setting player number " + playerstr
 				print ("Creating parameters for player " + playerstr )
 				copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
