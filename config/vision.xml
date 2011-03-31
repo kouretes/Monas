@@ -2,8 +2,8 @@
 <!-- Show Segmented image using opencv -->
 <cvHighgui>0</cvHighgui>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>6-KouretesLab2-segall.conf</SegmentationBottom>
-<SegmentationTop>6-KouretesLab2-segall.conf</SegmentationTop>
+<SegmentationBottom>2-Robocup2010-segall.conf</SegmentationBottom>
+<SegmentationTop>2-Robocup2010-segall.conf</SegmentationTop>
 <Dfov>53.7</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.066</ballsize>
