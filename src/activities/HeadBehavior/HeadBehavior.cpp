@@ -46,10 +46,10 @@ int HeadBehavior::Execute() {
 
 	if (bhm != 0)
 		curraction = bhm->headaction();
-	if(prevaction==CALIBRATE && curraction==CALIBRATE && (calibrated==1 || calibrated==2)){
-		headaction = DONOTHING;
-	}else
-		headaction = curraction;
+	//if(prevaction==CALIBRATE && curraction==CALIBRATE && (calibrated==1 || calibrated==2)){
+	//	headaction = DONOTHING;
+//	}else
+	headaction = curraction;
 	ptime now=microsec_clock::universal_time();
 	newBearing=false;
 	if(obsm&&obsm->regular_objects_size() > 0)
@@ -114,7 +114,7 @@ int HeadBehavior::Execute() {
 
 	}
 
-	cout<<"-----action:"<<headaction<<endl;
+	//cout<<"-----action:"<<headaction<<endl;
 	//if(headaction!=CALIBRATE && headaction!=DONOTHING && (calibrated!=2 || calibrated!=1))
 		//headaction = CALIBRATE;
 	switch (headaction) {
@@ -128,10 +128,10 @@ int HeadBehavior::Execute() {
 		case (CALIBRATE):
 
 			//std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;
-			//Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
-			if(calibrated!=1)
+			Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
+			if(calibrated!=1 && calibrated!=2)
 				calibrate();
-			calibrated = 1;
+			//calibrated = 1;
 			hbmsg->set_calibrated(calibrated);
 			hbmsg->set_ballfound(0);
 			//headaction = DONOTHING;
@@ -140,6 +140,7 @@ int HeadBehavior::Execute() {
 				//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			break;
 		case (SCANFORBALL):
+			calibrated=0;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
@@ -153,6 +154,7 @@ int HeadBehavior::Execute() {
 			}
 			break;/*
 		case (SCANFORPOST):
+		* calibrated=0;
 			if(obsmbearing!=-1)
 			{
 
@@ -185,6 +187,7 @@ int HeadBehavior::Execute() {
 			break;
 			 */
 		case (BALLTRACK):
+		calibrated=0;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
 			MakeTrackBallAction();
 			break;
@@ -319,5 +322,6 @@ void HeadBehavior::calibrate() {
 	CalibrateCam v;
 	v.set_status(0);
 	_blk->publishState(v, "vision");
+	Logger::Instance().WriteMsg("HeadBehavior", "sendCalibrate ", Logger::Info);
 	calibrated = 1;
 }

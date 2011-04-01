@@ -21,16 +21,16 @@ int NoPlay::Execute() {
 			readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml", kickOff);
 		
 		if(gsm.get()==0 ){
-			Logger::Instance().WriteMsg("NoPlay",  " NO GSM", Logger::Info);
+			//Logger::Instance().WriteMsg("NoPlay",  " NO GSM", Logger::Info);
 			bhmsg->set_headaction(DONOTHING);
 		}else if(gsm->player_state()==PLAYER_PLAYING){
-			cal = false;
-			Logger::Instance().WriteMsg("NoPlay",  " PLAYER_PLAYING", Logger::Info);	
+		//	cal = false;
+		//	Logger::Instance().WriteMsg("NoPlay",  " PLAYER_PLAYING", Logger::Info);	
 			return 0;
 		}else{
 			switch(gsm->player_state()){
 				case PLAYER_PENALISED:
-					Logger::Instance().WriteMsg("NoPlay",  " playerpenalised", Logger::Info);
+				//	Logger::Instance().WriteMsg("NoPlay",  " playerpenalised", Logger::Info);
 					//if(prevaction!=CALIBRATE)
 					velocityWalk(0.0, 0.0, 0.0, 1);
 					curraction = CALIBRATE;						
@@ -38,22 +38,22 @@ int NoPlay::Execute() {
 					pmsg->set_posy(initY);
 					pmsg->set_theta(initPhi);
 					_blk->publishState(*pmsg, "behavior");
-					Logger::Instance().WriteMsg("NoPlay",  " publish pos", Logger::Info);
+				//	Logger::Instance().WriteMsg("NoPlay",  " publish pos", Logger::Info);
 					rpm->set_goalietopos(true);
 					_blk->publishSignal(*rpm, "behavior");
-					Logger::Instance().WriteMsg("NoPlay",  " publish return to pos", Logger::Info);
+				//	Logger::Instance().WriteMsg("NoPlay",  " publish return to pos", Logger::Info);
 				break;
 				case PLAYER_SET:
 					Logger::Instance().WriteMsg("NoPlay",  " playerset", Logger::Info);
 					velocityWalk(0,0,0,1);
-					curraction = DONOTHING;
+					curraction = CALIBRATE;
 				break;
 				case PLAYER_READY:
 					kickOff = gsm->kickoff();
 					kcm->set_kickoff(kickOff);
 					_blk->publishState(*kcm, "behavior");
 					Logger::Instance().WriteMsg("NoPlay",  " playerready", Logger::Info);
-					curraction = CALIBRATE;
+					curraction = SCANFORPOST;
 				break;
 				case PLAYER_INITIAL:
 					Logger::Instance().WriteMsg("NoPlay",  " playerinitial", Logger::Info);
@@ -69,7 +69,7 @@ int NoPlay::Execute() {
 
 	prevaction = curraction;
 	_blk->publishSignal(*bhmsg, "behavior");
-	Logger::Instance().WriteMsg("NoPlay",  " bgainw", Logger::Info);
+	//Logger::Instance().WriteMsg("NoPlay",  " bgainw", Logger::Info);
 			return 0;
 
 }

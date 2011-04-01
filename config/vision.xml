@@ -2,8 +2,8 @@
 <!-- Show Segmented image using opencv -->
 <cvHighgui>0</cvHighgui>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>7-GermanOpenAtLast-segall.conf</SegmentationBottom>
-<SegmentationTop>7-GermanOpenAtLast-segall.conf</SegmentationTop>
+<SegmentationBottom>8-GermanOpen11-segall.conf</SegmentationBottom>
+<SegmentationTop>8-GermanOpen11-segall.conf</SegmentationTop>
 <Dfov>53.7</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.066</ballsize>
