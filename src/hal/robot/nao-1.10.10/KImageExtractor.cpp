@@ -267,7 +267,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	cout<<"Auto:"<<endl;
 	try
 	{
-		xCamProxy->setParam( kCameraSelectID, 0);
+		xCamProxy->setParam( kCameraSelectID, 1);
 		SleepMs(5);
 		xCamProxy->setParam( kCameraAutoGainID, 1);
 		SleepMs(5);
