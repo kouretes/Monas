@@ -115,8 +115,8 @@ int HeadBehavior::Execute() {
 	}
 
 	cout<<"-----action:"<<headaction<<endl;
-
-
+	//if(headaction!=CALIBRATE && headaction!=DONOTHING && (calibrated!=2 || calibrated!=1))
+		//headaction = CALIBRATE;
 	switch (headaction) {
 
 		case (DONOTHING):
@@ -132,7 +132,7 @@ int HeadBehavior::Execute() {
 			if(calibrated!=1)
 				calibrate();
 			calibrated = 1;
-			hbmsg->set_calibrated(2);
+			hbmsg->set_calibrated(calibrated);
 			hbmsg->set_ballfound(0);
 			//headaction = DONOTHING;
 			//choosemyaction = true;

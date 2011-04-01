@@ -26,13 +26,14 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	
+	//float calculateBallSpeed(float x1, float y1, float, x2, float y2);
 private:
 	MotionWalkMessage wmot;	
 	BToHeadMessage* bhmsg;
 	ObservationMessage* lastObsm;
 	boost::posix_time::ptime rcvObsm;
 	boost::shared_ptr<const ObservationMessage> obsm;
+	float observations[2][2];
 	int headaction;
 	void velocityWalk( double x, double y, double th, double f);
 };

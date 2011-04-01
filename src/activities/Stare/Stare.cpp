@@ -17,7 +17,12 @@ int Stare::Execute() {
 		if (lastObsm==0)
 			return 0;
 	}else{
+		observations[0][0] = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //x;
+		observations[0][1] = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());	//y
 		lastObsm->CopyFrom(*obsm);
+		observations[1][0] = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //x
+		observations[1][1] = lastObsm->ball().dist() * sin(lastObsm->ball().bearing()); //y
+	
 		rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
 	}
 	int side ;//= 1;
@@ -28,7 +33,6 @@ int Stare::Execute() {
 	by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
 	side = (bb > 0) ? 1 : -1;
 
-  
 	static float X=0,Y=0,th=0,f=0.2;
 	//X=(bx-posx)*2;
 
@@ -66,7 +70,10 @@ void Stare::UserInit () {
 	_blk->subscribeTo("vision", 0);
 	_blk->subscribeTo("sensors", 0);
 	_blk->subscribeTo("behavior", 0);
-
+	observations[0][0]=0.0;
+	observations[0][1]=0.0;
+	observations[1][1]=0.0;
+	observations[1][0]=0.0;
 	//wmot = new MotionWalkMessage();
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -91,3 +98,12 @@ void Stare::velocityWalk(double x, double y, double th, double f) {
 	wmot.set_parameter(3, f);
 	_blk->publishSignal(wmot, "motion");
 }
+
+//float Stare::calculateBallSpeed(float x1, float y1, float, x2, float y2){
+	
+	
+	//return 0;
+	
+	
+	
+//}

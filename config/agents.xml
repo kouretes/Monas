@@ -7,13 +7,13 @@
 
 
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=35 StatsCycle=1000>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=50 StatsCycle=1000>
 	<name>KMC</name>
 	<activity>MotionController</activity>
 	<activity>RobotController</activity>
 	<activity>LedHandler</activity>
 </agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=12 StatsCycle=50>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=18 StatsCycle=50>
 	<name>KVision</name>
 	<activity>Vision</activity>
 	<activity>HeadBehavior</activity> 
@@ -26,7 +26,7 @@
 <activity>VBehavior</activity>
 -->
 </agent>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=8 StatsCycle=1000>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>KSensors</name>
 	<activity>Sensors</activity>
 </agent>
