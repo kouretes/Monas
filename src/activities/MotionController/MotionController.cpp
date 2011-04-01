@@ -254,10 +254,11 @@ void MotionController::mglrun()
 
 	}
 
+	bool canmovebody;
 
-
-	if (currentstate!=PLAYER_PLAYING)
+	if (currentstate!=PLAYER_PLAYING&&currentstate!=PLAYER_READY&&currentstate!=PLAYER_SET)
 		return;
+	canmovebody=currentstate==PLAYER_PLAYING||currentstate==PLAYER_READY;
 
 	if (allsm != NULL && allsm->sensordata_size() >= L_FSR)//Has Accelerometers
 	{
@@ -349,7 +350,7 @@ void MotionController::mglrun()
 
 		/* Check if there is a command to execute */
 
-		if ((wm != NULL) && (actionPID == 0))
+		if (canmovebody&&(wm != NULL) && (actionPID == 0))
 		{
 			if (wm->command() == "walkTo")
 			{
@@ -537,7 +538,7 @@ void MotionController::mglrun()
 			}
 			Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 			return;
-		} else if ((am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning())
+		} else if (canmovebody&&(am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning())
 		{
 			Logger::Instance().WriteMsg("MotionController", am->command(), Logger::ExtraInfo);
 			stopWalkCommand();
