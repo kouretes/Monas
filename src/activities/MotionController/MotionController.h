@@ -55,7 +55,7 @@ private:
 	float accnorm, angX, angY, gyrX, gyrY;
 	ptime waitfor;
 	int gameState;
-	bool penalized;
+	int currentstate;
 
 	int counter;
 
@@ -75,10 +75,10 @@ private:
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const GameStateMessage>  gsm;
-	
+
 	MotionActionMessage  * mam;
 	MotionActionMessage  * pam;
-	
+
 	SensorData LHipRoll;
 	SensorData RHipPitch;
 	SensorData LHipPitch;
@@ -103,17 +103,17 @@ private:
 
 	void ALstandUpBack();
 	void ALstandUpFront();
-	
+
 	void MotionSkillsInit();
 	void AngleCompare();
-	
+
 	int comp[20];
 	float RKickAng1 [6], RKickAng2 [6], RKickAng3 [6], RKickAng4 [6], RKickAng5 [6], RKickAng6 [6];
 	float LKickAng1 [6], LKickAng2 [6], LKickAng3 [6], LKickAng4 [6], LKickAng5 [6], LKickAng6 [6];
 	float walkPrevAng [6];
 	int diffRKick1 [6], diffRKick2 [6], diffRKick3 [6], diffRKick4 [6];
 	int diffLKick1 [6], diffLKick2 [6], diffLKick3 [6], diffLKick4 [6];
-		
+
 	void createDCMAlias();
 	void setStiffnessDCM(float s);
 	typedef std::map<std::string,

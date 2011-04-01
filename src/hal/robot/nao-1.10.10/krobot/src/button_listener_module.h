@@ -19,7 +19,7 @@ class ButtonListener: public AL::ALModule {
 		void RBumperPressed(const std::string& pDataName, const AL::ALValue& pValue, const std::string& pMessage); //
 		void LBumperPressed(const std::string& pDataName, const AL::ALValue& pValue, const std::string& pMessage); //
 	private:
-		boost::posix_time::ptime ctime;
+		boost::posix_time::ptime timechest,timebumper;
 
 		AL::ALPtr<AL::ALProxy> sentinel; //proxy to alsentinel for overriding default button press
 		AL::ALPtr<AL::ALMemoryProxy> memory; //proxy to almemory module to exchange data

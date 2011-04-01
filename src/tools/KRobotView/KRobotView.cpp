@@ -292,14 +292,24 @@ int receive_and_send_loop(TCPSocket *sock) {
 		if (keypressed == 27) {
 			outgoingheader.set_nextmsgname("Stop");
 		}
-		if (keypressed == 'y') {
+		else if (keypressed == 'y') {
 			outgoingheader.set_nextmsgname("yuyv");
 			keypressed = 0;
 		}
-		if (keypressed == 's') {
+		else if (keypressed == 's') {
 			outgoingheader.set_nextmsgname("seg");
 			keypressed = 0;
 		}
+		else if (keypressed == 'r') {
+			 outgoingheader.set_nextmsgname("ReferenceCalibration");
+			 keypressed=0;
+		 }
+		else if (keypressed == 'e') {
+			 outgoingheader.set_nextmsgname("Calibration");
+			 keypressed=0;
+		 }
+
+		
 
 		outgoingheader.set_nextmsgbytesize(-1); //-1 means nothing to send
 

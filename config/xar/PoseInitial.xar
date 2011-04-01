@@ -16,7 +16,7 @@
             <BehaviorLayer name="behavior_layer1" mute="0">
                 <BehaviorKeyframe name="keyframe1" index="1" bitmap="">
                     <Diagram scale="-1">
-                        <Box name="Enter name here" robot="" id="1" tooltip="Enter tooltip here" bitmap_expanded="1" plugin="" x="244" y="221">
+                        <Box name="Enter name here" robot="" id="1" tooltip="Enter tooltip here" bitmap_expanded="1" plugin="" x="243" y="221">
                             <bitmap>media/images/box/box-diagram.png</bitmap>
                             <script language="4">
                                 <content>
@@ -30,6 +30,12 @@
                             <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                 <watches />
                                 <ActuatorList>
+                                    <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
+                                        <Key frame="15" value="-4.48488" />
+                                    </ActuatorCurve>
+                                    <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
+                                        <Key frame="15" value="2.45856" />
+                                    </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                         <Key frame="15" value="85.8678" />
                                     </ActuatorCurve>
