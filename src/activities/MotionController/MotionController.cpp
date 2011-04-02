@@ -98,11 +98,11 @@ void MotionController::UserInit()
 	config[0][0] = "WALK_MAX_TRAPEZOID";
 	config[0][1] = 3.5; // 4.5
 	config[1][0] = "WALK_MIN_TRAPEZOID";
-	config[1][1] = 4.4; // 3.5
+	config[1][1] = 2.2; // 3.5
 	config[2][0] = "WALK_STEP_MAX_PERIOD";
 	config[2][1] = 30; // 30
 	config[3][0] = "WALK_STEP_MIN_PERIOD";
-	config[3][1] = 18; // 21
+	config[3][1] = 15; // 21
 	config[4][0] = "WALK_MAX_STEP_X";
 	config[4][1] = 0.05; // 0.04
 	config[5][0] = "WALK_MAX_STEP_Y";
@@ -110,13 +110,13 @@ void MotionController::UserInit()
 	config[6][0] = "WALK_MAX_STEP_THETA";
 	config[6][1] = 24; // 20
 	config[7][0] = "WALK_STEP_HEIGHT";
-	config[7][1] = 0.017; // 0.015
+	config[7][1] = 0.012; // 0.015
 	config[8][0] = "WALK_FOOT_SEPARATION";
 	config[8][1] = 0.105; // 0.095
 	config[9][0] = "WALK_FOOT_ORIENTATION";
 	config[9][1] = 0;// 0
 	config[10][0] = "WALK_TORSO_HEIGHT";
-	config[10][1] = 0.29;
+	config[10][1] = 0.298;
 	config[11][0] = "WALK_TORSO_ORIENTATION_X";
 	config[11][1] = 0.0; // 0
 	config[12][0] = "WALK_TORSO_ORIENTATION_Y";
@@ -210,7 +210,7 @@ void MotionController::mglrun()
 	{
 
 	}
-	else if(gameState==PLAYER_INITIAL||gameState==PLAYER_FINISHED)
+	else if(gameState==PLAYER_INITIAL)
 	{
 		killCommands();
 		setStiffnessDCM(0.15);
@@ -231,7 +231,7 @@ void MotionController::mglrun()
 
 
 	}
-	else if (gameState == PLAYER_PENALISED)
+	else if (gameState == PLAYER_PENALISED||gameState==PLAYER_FINISHED)
 	{
 
 		killActionCommand();
