@@ -99,7 +99,7 @@ int Behavior::Execute() {
 		if (ballfound==1) {
 
 			posx=0.12, posy=0.03; // Desired ball position for kick
-			double epsx = 0.015, epsy = 0.015; // Desired precision
+			double epsx = 0.02, epsy = 0.02; // Desired precision
 			if ( fabs( bx-posx ) < epsx  && fabs( by-(side*posy) ) < epsy ) {
 				readytokick = true;
 				Kick(side);
@@ -248,20 +248,15 @@ void Behavior::HeadScanStep() {
 }
 
 void Behavior::Kick(int side) {
-	
-	obstacleFront = false;
-	if (om!=0)
-		if (om->direction() == 0)
-			obstacleFront = true;
 
 	if ( kickoff ) {
 		if ( (mglRand()<0.5) && !obstacleFront ) {
 			littleWalk(0.2, 0.0, 0.0);
 		} else {
 			if (side == 1) 
-				amot->set_command("LeftSideKickFast.xar");
+				amot->set_command("KickSideLeft.xar");
 			else 
-				amot->set_command("RightSideKickFast.xar");
+				amot->set_command("KickSideRight.xar");
 			_blk->publishSignal(*amot, "motion");
 		}
 		kickoff = false;
@@ -290,12 +285,6 @@ void Behavior::Kick(int side) {
 				amot->set_command("KickSideRight.xar");
 		}
 		_blk->publishSignal(*amot, "motion");
-		
-		//if (side == 1)
-			//amot->set_command("LeftKick");
-		//else
-			//amot->set_command("RightKick");
-		//_blk->publishSignal(*amot, "motion");
 	}
 }
 
