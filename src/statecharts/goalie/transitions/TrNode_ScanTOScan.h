@@ -16,15 +16,22 @@ public:
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();
-		Logger::Instance().WriteMsg("TrCond_ScanTOScan", "FALSE NO OBSM", Logger::Info);
+		
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
-		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)
+		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){
+			Logger::Instance().WriteMsg("TrCond_ScanTOScan", "FALSE", Logger::Info);
 			return false;
-		if(hbm.get()==0)
+		}
+		if(hbm.get()==0){
+			Logger::Instance().WriteMsg("TrCond_ScanTOScan", "true", Logger::Info);
 			return true;
-		if(hbm.get()!=0 && hbm->ballfound()==0)
+		}
+		if(hbm.get()!=0 && hbm->ballfound()==0){
+			Logger::Instance().WriteMsg("TrCond_ScanTOScan", "true", Logger::Info);
 			return true;
+		}
+		Logger::Instance().WriteMsg("TrCond_ScanTOScan", "FALSE", Logger::Info);
 		return false;
     }
 };

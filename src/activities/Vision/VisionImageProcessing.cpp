@@ -1383,7 +1383,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		//rest= rest*(0.5-w)/w + (config.ballsize/2.0*(w-0.5))/w;
 		if (abs( (rest*2-config.ballsize)/config.ballsize)>config.balltolerance)//Wrong diameter ball
 		{
-			Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
+			//Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
 			banlist.push_back(newdata);
 			continue;
 		}

@@ -9,11 +9,16 @@ class TrCond_0_3_2_3_3_1TOScan : public statechart_engine::ICondition {
 public:
 
 	void UserInit () {
-		_blk->subscribeTo("behavior", 0);
 	}
 
 	bool Eval() {
-		
+		MotionWalkMessage wmot;
+		wmot.set_command("setWalkTargetVelocity");
+		wmot.set_parameter(0, 0.0f);
+		wmot.set_parameter(1, 0.0f);
+		wmot.set_parameter(2, 0.0f);
+		wmot.set_parameter(3, 1.0f);
+		_blk->publishSignal(wmot, "motion");
 		return true;
     }
 };

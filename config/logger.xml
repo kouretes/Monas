@@ -13,10 +13,10 @@
 <!-- Activities that will reach the LogFile -->
 <!-- FatalError and Error directives can't be blocked -->
 <!-- Special keyword 'all' will enable all activities -->
-<MessageLogFilter>all</MessageLogFilter>
+<MessageLogFilter>all_oxi</MessageLogFilter>
 
 
 <!-- FatalError =0, Error, Info, ExtraInfo, ExtraExtraInfo -->
 <!-- Verbosity level is limited to >= 0 thus FatalError can't be blocked-->
-<LogFileVerbosityLevel>8</LogFileVerbosityLevel>
+<LogFileVerbosityLevel>0</LogFileVerbosityLevel>
 

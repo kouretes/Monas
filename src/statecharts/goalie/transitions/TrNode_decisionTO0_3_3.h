@@ -18,8 +18,8 @@ public:
 		Logger::Instance().WriteMsg("decision forever", "!FINISHED ",Logger::Info);
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		
-		if(gsm.get()!=0 && gsm->player_state()==PLAYER_FINISHED)
-			return true;
+		//if(gsm.get()!=0 && gsm->player_state()==PLAYER_FINISHED)
+		//	return true;
 		return false;
     }
 };

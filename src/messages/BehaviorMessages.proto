@@ -31,4 +31,6 @@ message PositionMessage{
 message ReturnToPositionMessage{
 	required bool goalieToPos = 1 [default = false];
 }
-
+message RestartTurnMessage{
+	required bool restartNow = 1 [default = false];
+}

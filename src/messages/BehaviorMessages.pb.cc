@@ -33,6 +33,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* ReturnToPositionMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ReturnToPositionMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RestartTurnMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RestartTurnMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -152,6 +155,21 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ReturnToPositionMessage));
+  RestartTurnMessage_descriptor_ = file->message_type(7);
+  static const int RestartTurnMessage_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RestartTurnMessage, restartnow_),
+  };
+  RestartTurnMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RestartTurnMessage_descriptor_,
+      RestartTurnMessage::default_instance_,
+      RestartTurnMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RestartTurnMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RestartTurnMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RestartTurnMessage));
 }
 
 namespace {
@@ -178,6 +196,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     PositionMessage_descriptor_, &PositionMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ReturnToPositionMessage_descriptor_, &ReturnToPositionMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RestartTurnMessage_descriptor_, &RestartTurnMessage::default_instance());
 }
 
 }  // namespace
@@ -197,6 +217,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete PositionMessage_reflection_;
   delete ReturnToPositionMessage::default_instance_;
   delete ReturnToPositionMessage_reflection_;
+  delete RestartTurnMessage::default_instance_;
+  delete RestartTurnMessage_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -216,7 +238,8 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "\002(\005:\0011\"G\n\017PositionMessage\022\020\n\004posX\030\001 \002(\002:"
     "\00270\022\020\n\004posY\030\002 \002(\002:\00270\022\020\n\005theta\030\003 \002(\002:\0011\""
     "5\n\027ReturnToPositionMessage\022\032\n\013goalieToPo"
-    "s\030\001 \002(\010:\005false", 414);
+    "s\030\001 \002(\010:\005false\"/\n\022RestartTurnMessage\022\031\n\n"
+    "restartNow\030\001 \002(\010:\005false", 463);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -226,6 +249,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   PlayerNumberMessage::default_instance_ = new PlayerNumberMessage();
   PositionMessage::default_instance_ = new PositionMessage();
   ReturnToPositionMessage::default_instance_ = new ReturnToPositionMessage();
+  RestartTurnMessage::default_instance_ = new RestartTurnMessage();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
@@ -233,6 +257,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   PlayerNumberMessage::default_instance_->InitAsDefaultInstance();
   PositionMessage::default_instance_->InitAsDefaultInstance();
   ReturnToPositionMessage::default_instance_->InitAsDefaultInstance();
+  RestartTurnMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -1844,6 +1869,212 @@ void ReturnToPositionMessage::Swap(ReturnToPositionMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ReturnToPositionMessage_descriptor_;
   metadata.reflection = ReturnToPositionMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int RestartTurnMessage::kRestartNowFieldNumber;
+#endif  // !_MSC_VER
+
+RestartTurnMessage::RestartTurnMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RestartTurnMessage::InitAsDefaultInstance() {
+}
+
+RestartTurnMessage::RestartTurnMessage(const RestartTurnMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RestartTurnMessage::SharedCtor() {
+  _cached_size_ = 0;
+  restartnow_ = false;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RestartTurnMessage::~RestartTurnMessage() {
+  SharedDtor();
+}
+
+void RestartTurnMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void RestartTurnMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RestartTurnMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RestartTurnMessage_descriptor_;
+}
+
+const RestartTurnMessage& RestartTurnMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+RestartTurnMessage* RestartTurnMessage::default_instance_ = NULL;
+
+RestartTurnMessage* RestartTurnMessage::New() const {
+  return new RestartTurnMessage;
+}
+
+void RestartTurnMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    restartnow_ = false;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RestartTurnMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required bool restartNow = 1 [default = false];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &restartnow_)));
+          _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RestartTurnMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required bool restartNow = 1 [default = false];
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->restartnow(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RestartTurnMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required bool restartNow = 1 [default = false];
+  if (_has_bit(0)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->restartnow(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RestartTurnMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required bool restartNow = 1 [default = false];
+    if (has_restartnow()) {
+      total_size += 1 + 1;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RestartTurnMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RestartTurnMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RestartTurnMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RestartTurnMessage::MergeFrom(const RestartTurnMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_restartnow(from.restartnow());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RestartTurnMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RestartTurnMessage::CopyFrom(const RestartTurnMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RestartTurnMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void RestartTurnMessage::Swap(RestartTurnMessage* other) {
+  if (other != this) {
+    std::swap(restartnow_, other->restartnow_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RestartTurnMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RestartTurnMessage_descriptor_;
+  metadata.reflection = RestartTurnMessage_reflection_;
   return metadata;
 }
 

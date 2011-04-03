@@ -16,7 +16,7 @@ public:
 
 	bool Eval() {
 		/* ballfound==0 || !ballaway */
-		Logger::Instance().WriteMsg("TrCond_ScanTOScan", "FALSE NO OBSM", Logger::Info);
+		Logger::Instance().WriteMsg("TrCond_Stare_one_or_more_times_TO0_3_2_3_7", "FALSE NO OBSM", Logger::Info);
 		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 

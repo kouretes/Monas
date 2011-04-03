@@ -33,7 +33,7 @@ private:
 	ObservationMessage* lastObsm;
 	boost::posix_time::ptime rcvObsm;
 	boost::shared_ptr<const ObservationMessage> obsm;
-	float observations[2][2];
+//	float observations[2][2];
 	int headaction;
 	void velocityWalk( double x, double y, double th, double f);
 };

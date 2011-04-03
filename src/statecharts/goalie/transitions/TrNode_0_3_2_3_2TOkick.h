@@ -22,7 +22,7 @@ public:
 
 		ApproachBall ab;
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
-			if(obsm.get()!=0 && !ab.ballAway(obsm) && ab.readyToKick(obsm))
+			if(obsm.get()!=0 && ab.readyToKick(obsm))
 				return true;
 		}
 		return false;

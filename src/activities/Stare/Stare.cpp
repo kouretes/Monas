@@ -17,12 +17,7 @@ int Stare::Execute() {
 		if (lastObsm==0)
 			return 0;
 	}else{
-		observations[0][0] = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //x;
-		observations[0][1] = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());	//y
-		lastObsm->CopyFrom(*obsm);
-		observations[1][0] = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //x
-		observations[1][1] = lastObsm->ball().dist() * sin(lastObsm->ball().bearing()); //y
-	
+		lastObsm->CopyFrom(*obsm);	
 		rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
 	}
 	int side ;//= 1;
@@ -52,7 +47,7 @@ int Stare::Execute() {
 	else
 		th=-0.06*by*(Y>0?-1:1);
 
-	f=1;
+	f=0.8;
 
 	th=th>1?1:th;
 	th=th<-1?-1:th;
@@ -70,10 +65,7 @@ void Stare::UserInit () {
 	_blk->subscribeTo("vision", 0);
 	_blk->subscribeTo("sensors", 0);
 	_blk->subscribeTo("behavior", 0);
-	observations[0][0]=0.0;
-	observations[0][1]=0.0;
-	observations[1][1]=0.0;
-	observations[1][0]=0.0;
+
 	//wmot = new MotionWalkMessage();
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);

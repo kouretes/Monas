@@ -33,6 +33,7 @@ void HeadBehavior::UserInit() {
 
 
 	prevaction = 0;
+	curraction = 0;
 	calibrated = 0;
 	headaction = 0;
 	lastbearing=obsmbearing=-1;
@@ -41,15 +42,19 @@ void HeadBehavior::UserInit() {
 }
 
 int HeadBehavior::Execute() {
-
+Logger::Instance().WriteMsg("HeadBehavior", "start", Logger::Info);
 	read_messages();
 
-	if (bhm != 0)
+	if (bhm != 0){
 		curraction = bhm->headaction();
-	//if(prevaction==CALIBRATE && curraction==CALIBRATE && (calibrated==1 || calibrated==2)){
-	//	headaction = DONOTHING;
-//	}else
-	headaction = curraction;
+		headaction = curraction;
+	}
+	else{
+		if(prevaction!=CALIBRATE)
+			headaction = prevaction;
+		else
+			headaction = DONOTHING;
+	}
 	ptime now=microsec_clock::universal_time();
 	newBearing=false;
 	if(obsm&&obsm->regular_objects_size() > 0)
@@ -123,14 +128,14 @@ int HeadBehavior::Execute() {
 			//std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			hbmsg->set_ballfound(0);
-
+			//calibrated=0;
 			break;
 		case (CALIBRATE):
 
 			//std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;
 			Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
-			if(calibrated!=1 && calibrated!=2)
-				calibrate();
+			//if(calibrated!=1 && calibrated!=2)
+			calibrate();
 			//calibrated = 1;
 			hbmsg->set_calibrated(calibrated);
 			hbmsg->set_ballfound(0);
@@ -140,7 +145,7 @@ int HeadBehavior::Execute() {
 				//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			break;
 		case (SCANFORBALL):
-			calibrated=0;
+			//calibrated=0;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
@@ -187,13 +192,14 @@ int HeadBehavior::Execute() {
 			break;
 			 */
 		case (BALLTRACK):
-		calibrated=0;
+			//calibrated=0;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
 			MakeTrackBallAction();
 			break;
 	}
 	prevaction = curraction;
 	_blk->publishState(*hbmsg, "behavior");
+	Logger::Instance().WriteMsg("HeadBehavior", "end", Logger::Info);
 	return 0;
 }
 

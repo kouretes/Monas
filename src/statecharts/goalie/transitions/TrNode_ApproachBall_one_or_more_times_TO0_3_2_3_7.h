@@ -28,7 +28,7 @@ public:
 			return true;
 		if(obsm.get()!=0 && ab.readyToKick(obsm))
 				return true;
-			if(obsm.get()!=0 && ab.ballAway(obsm))
+		if(obsm.get()!=0 && ab.ballAway(obsm))
 				return true;
 		return false;
     }

@@ -2,7 +2,7 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"			
 #include "tools/toString.h"
-#include "tools/logger.h""
+#include "tools/logger.h"
 			
 class TrCond_Scan_one_or_more_times_TO0_3_2_3_7 : public statechart_engine::ICondition {
 			

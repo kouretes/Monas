@@ -20,9 +20,9 @@ public:
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 
 		ApproachBall ab;
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
-		if(gsm.get()==0)
-			return true;
+	//	boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+	//	if(gsm.get()==0)
+		//	return true;
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
 			if(obsm.get()!=0 && ab.ballAway(obsm))
 				return true;

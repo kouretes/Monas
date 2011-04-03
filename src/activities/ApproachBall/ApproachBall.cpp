@@ -150,7 +150,7 @@ bool ApproachBall::ballAway( boost::shared_ptr<const WorldInfo> msg2 ){
 	int side;	
 	if ( msg2.get() != 0 && msg2->balls_size() !=0 ){
 		
-		if ( fabs( msg2->balls(0).relativex() - dDistBallX ) >0.35 || fabs(fabs( msg2->balls(0).relativey()) - dDistBallY ) >0.35 ){				
+		if ( fabs( msg2->balls(0).relativex() - dDistBallX ) >0.5 || fabs(fabs( msg2->balls(0).relativey()) - dDistBallY ) >0.5 ){				
 			Logger::Instance().WriteMsg("TrCond_ApproachBall_one_or_more_times_TO0_3_2_3_4_4_2_4", "TRUE", Logger::Info);
 			return true;
 		}
@@ -162,7 +162,7 @@ bool ApproachBall::ballAway(boost::shared_ptr<const ObservationMessage> msg1 ){
 	int side;	
 	if ( msg1.get() != 0 ){					
 		side = (msg1->ball().bearing() > 0) ? 1 : -1;
-		if ((fabs( msg1->ball().dist() * cos(msg1->ball().bearing()) - dDistBallX ) > 0.35 || fabs( msg1->ball().dist() * sin(msg1->ball().bearing()) - (side*dDistBallY) ) > 0.35) ){				
+		if ((fabs( msg1->ball().dist() * cos(msg1->ball().bearing()) - dDistBallX ) > 0.5 || fabs( msg1->ball().dist() * sin(msg1->ball().bearing()) - (side*dDistBallY) ) > 0.5) ){				
 			Logger::Instance().WriteMsg("TrCond_ApproachBall_one_or_more_times_TO0_3_2_3_4_4_2_4", "TRUE", Logger::Info);
 			return true;
 		}
@@ -184,3 +184,4 @@ float ApproachBall::distance(float x1, float x2, float y1, float y2){
 	
 	return dis;
 }
+
