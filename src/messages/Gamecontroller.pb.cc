@@ -150,20 +150,20 @@ void protobuf_AddDesc_Gamecontroller_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024Gamecontroller.proto\"\241\002\n\020GameStateMess"
-    "age\022\026\n\nteam_color\030\007 \002(\005:\002-1\022\032\n\016own_goal_"
-    "color\030\005 \002(\005:\002-1\022\027\n\014player_state\030\010 \002(\005:\0010"
-    "\022\025\n\ngame_state\030\t \002(\005:\0010\022\031\n\016sec_game_stat"
-    "e\030\n \002(\005:\0010\022\030\n\tpenalized\030\013 \002(\010:\005false\022\027\n\t"
-    "firstHalf\030\003 \002(\010:\004true\022\022\n\007penalty\030\r \002(\005:\001"
-    "0\022\025\n\007kickoff\030\014 \002(\010:\004true\022\024\n\tour_score\030\016 "
-    "\002(\005:\0010\022\032\n\017otherteam_score\030\017 \002(\005:\0010\"0\n\tLe"
-    "dValues\022\017\n\005chain\030\001 \002(\t:\000\022\022\n\005color\030\002 \002(\t:"
-    "\003off\",\n\020LedChangeMessage\022\030\n\004leds\030\006 \003(\0132\n"
-    ".LedValues\"o\n\rConfigMessage\022\026\n\013team_numb"
-    "er\030\001 \002(\005:\0019\022\030\n\rplayer_number\030\002 \002(\005:\0011\022\030\n"
-    "\rdefault_color\030\004 \002(\005:\0010\022\022\n\004port\030\003 \002(\005:\0043"
-    "838", 523);
+    "\n\024Gamecontroller.proto\"\237\002\n\020GameStateMess"
+    "age\022\025\n\nteam_color\030\007 \002(\005:\0010\022\031\n\016own_goal_c"
+    "olor\030\005 \002(\005:\0010\022\027\n\014player_state\030\010 \002(\005:\0010\022\025"
+    "\n\ngame_state\030\t \002(\005:\0010\022\031\n\016sec_game_state\030"
+    "\n \002(\005:\0010\022\030\n\tpenalized\030\013 \002(\010:\005false\022\027\n\tfi"
+    "rstHalf\030\003 \002(\010:\004true\022\022\n\007penalty\030\r \002(\005:\0010\022"
+    "\025\n\007kickoff\030\014 \002(\010:\004true\022\024\n\tour_score\030\016 \002("
+    "\005:\0010\022\032\n\017otherteam_score\030\017 \002(\005:\0010\"0\n\tLedV"
+    "alues\022\017\n\005chain\030\001 \002(\t:\000\022\022\n\005color\030\002 \002(\t:\003o"
+    "ff\",\n\020LedChangeMessage\022\030\n\004leds\030\006 \003(\0132\n.L"
+    "edValues\"o\n\rConfigMessage\022\026\n\013team_number"
+    "\030\001 \002(\005:\0019\022\030\n\rplayer_number\030\002 \002(\005:\0011\022\030\n\rd"
+    "efault_color\030\004 \002(\005:\0010\022\022\n\004port\030\003 \002(\005:\004383"
+    "8", 521);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Gamecontroller.proto", &protobuf_RegisterTypes);
   GameStateMessage::default_instance_ = new GameStateMessage();
@@ -217,8 +217,8 @@ GameStateMessage::GameStateMessage(const GameStateMessage& from)
 
 void GameStateMessage::SharedCtor() {
   _cached_size_ = 0;
-  team_color_ = -1;
-  own_goal_color_ = -1;
+  team_color_ = 0;
+  own_goal_color_ = 0;
   player_state_ = 0;
   game_state_ = 0;
   sec_game_state_ = 0;
@@ -262,8 +262,8 @@ GameStateMessage* GameStateMessage::New() const {
 
 void GameStateMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    team_color_ = -1;
-    own_goal_color_ = -1;
+    team_color_ = 0;
+    own_goal_color_ = 0;
     player_state_ = 0;
     game_state_ = 0;
     sec_game_state_ = 0;
@@ -301,7 +301,7 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 own_goal_color = 5 [default = -1];
+      // required int32 own_goal_color = 5 [default = 0];
       case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -317,7 +317,7 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 team_color = 7 [default = -1];
+      // required int32 team_color = 7 [default = 0];
       case 7: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -484,12 +484,12 @@ void GameStateMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->firsthalf(), output);
   }
   
-  // required int32 own_goal_color = 5 [default = -1];
+  // required int32 own_goal_color = 5 [default = 0];
   if (_has_bit(1)) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->own_goal_color(), output);
   }
   
-  // required int32 team_color = 7 [default = -1];
+  // required int32 team_color = 7 [default = 0];
   if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->team_color(), output);
   }
@@ -547,12 +547,12 @@ void GameStateMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->firsthalf(), target);
   }
   
-  // required int32 own_goal_color = 5 [default = -1];
+  // required int32 own_goal_color = 5 [default = 0];
   if (_has_bit(1)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->own_goal_color(), target);
   }
   
-  // required int32 team_color = 7 [default = -1];
+  // required int32 team_color = 7 [default = 0];
   if (_has_bit(0)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->team_color(), target);
   }
@@ -608,14 +608,14 @@ int GameStateMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 team_color = 7 [default = -1];
+    // required int32 team_color = 7 [default = 0];
     if (has_team_color()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->team_color());
     }
     
-    // required int32 own_goal_color = 5 [default = -1];
+    // required int32 own_goal_color = 5 [default = 0];
     if (has_own_goal_color()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(

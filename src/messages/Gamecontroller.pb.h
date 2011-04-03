@@ -91,14 +91,14 @@ class GameStateMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required int32 team_color = 7 [default = -1];
+  // required int32 team_color = 7 [default = 0];
   inline bool has_team_color() const;
   inline void clear_team_color();
   static const int kTeamColorFieldNumber = 7;
   inline ::google::protobuf::int32 team_color() const;
   inline void set_team_color(::google::protobuf::int32 value);
   
-  // required int32 own_goal_color = 5 [default = -1];
+  // required int32 own_goal_color = 5 [default = 0];
   inline bool has_own_goal_color() const;
   inline void clear_own_goal_color();
   static const int kOwnGoalColorFieldNumber = 5;
@@ -523,12 +523,12 @@ class ConfigMessage : public ::google::protobuf::Message {
 
 // GameStateMessage
 
-// required int32 team_color = 7 [default = -1];
+// required int32 team_color = 7 [default = 0];
 inline bool GameStateMessage::has_team_color() const {
   return _has_bit(0);
 }
 inline void GameStateMessage::clear_team_color() {
-  team_color_ = -1;
+  team_color_ = 0;
   _clear_bit(0);
 }
 inline ::google::protobuf::int32 GameStateMessage::team_color() const {
@@ -539,12 +539,12 @@ inline void GameStateMessage::set_team_color(::google::protobuf::int32 value) {
   team_color_ = value;
 }
 
-// required int32 own_goal_color = 5 [default = -1];
+// required int32 own_goal_color = 5 [default = 0];
 inline bool GameStateMessage::has_own_goal_color() const {
   return _has_bit(1);
 }
 inline void GameStateMessage::clear_own_goal_color() {
-  own_goal_color_ = -1;
+  own_goal_color_ = 0;
   _clear_bit(1);
 }
 inline ::google::protobuf::int32 GameStateMessage::own_goal_color() const {
