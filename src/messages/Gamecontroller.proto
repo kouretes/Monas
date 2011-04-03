@@ -1,7 +1,7 @@
 message GameStateMessage{
 	//required int32 player =6 [default = 1];
-	required int32 team_color =7 [default =-1];
-	required int32 own_goal_color =5 [default =-1];
+	required int32 team_color =7 [default =0];
+	required int32 own_goal_color =5 [default =0];
 	required int32 player_state = 8 [default =0];
 	required int32 game_state = 9 [ default =0];
 	required int32 sec_game_state = 10 [ default =0];
