@@ -25,7 +25,8 @@ class BallFilter
 		BallFilter();
 		virtual ~BallFilter();
 
-		Ball get_ball_estimate(float new_dist, float dist_confidence, float new_dir, float dir_confidence, float dt); //dt milliseconds
+		Ball get_updated_ball_estimate(float new_dist, float dist_confidence, float new_dir, float dir_confidence, float dt); //dt milliseconds
+		Ball get_predicted_ball_estimate(float dt);
 		void reset(float new_dist, float dist_confidence, float new_dir, float dif_confidence);
 
 };

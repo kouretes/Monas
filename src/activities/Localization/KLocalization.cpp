@@ -1609,8 +1609,8 @@ void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, dou
 	if (numofrandom == 0)
 		return;
 
-	cout << "SpreadParticles Deviation " << Deviation << " Step (numofrandom): " << numofrandom << " " << ((double) Percent / 100.0) * (double) Particles.size << " % " << Percent
-			<< " Step: " << step << endl;
+	//cout << "SpreadParticles Deviation " << Deviation << " Step (numofrandom): " << numofrandom << " " << ((double) Percent / 100.0) * (double) Particles.size << " % " << Percent
+	//		<< " Step: " << step << endl;
 	float tmpDist, tmpDir;
 	int count = 0;
 
@@ -1624,7 +1624,7 @@ void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, dou
 		Particles.Weight[i] = 1.0;
 		count++;
 	}
-	cout << "Num of Particles Spreaded:  " << count << endl;
+	 //cout << "Num of Particles Spreaded:  " << count << endl;
 
 }
 
@@ -1641,8 +1641,8 @@ void KLocalization::SpreadParticles(parts & Particles, double Deviation, double 
 	if (numofrandom == 0)
 		return;
 
-	cout << "SpreadParticles Deviation " << Deviation << " Step (numofrandom): " << numofrandom << " " << ((double) Percent / 100.0) * (double) Particles.size << " % " << Percent
-			<< " Step: " << step << endl;
+//	cout << "SpreadParticles Deviation " << Deviation << " Step (numofrandom): " << numofrandom << " " << ((double) Percent / 100.0) * (double) Particles.size << " % " << Percent
+//			<< " Step: " << step << endl;
 
 	int count = 0;
 	for (unsigned int i = 0; i < Particles.size; i += step) {
@@ -1666,7 +1666,7 @@ void KLocalization::SpreadParticles(parts & Particles, double Deviation, double 
 	//			//
 	//			//	particles.Weight(particlesId) = 0.5;
 	//		}
-	cout << "Num of Particles Spreaded:  " << count << endl;
+	//cout << "Num of Particles Spreaded:  " << count << endl;
 
 }
 

@@ -9,6 +9,10 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
 #include "messages/BehaviorMessages.pb.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+//#define KPROFILING_ENABLED
+
+#include "tools/profiler.hpp"
 
 #include "KLocalization.h"
 #include "BallFilter.h"
@@ -40,6 +44,7 @@ class Localization: public IActivity, public KLocalization
 		int count;
 		int serverpid;
 		WorldInfo MyWorld;
+		mutable KProfiling::profiler vprof;
 
 		//RtTime rtm;
 		belief mypos;
@@ -62,7 +67,7 @@ class Localization: public IActivity, public KLocalization
 		SensorData HeadYaw;
 		SensorData HeadPitch;
 		BallTrackMessage lastballseen;
-		//BallFilter myBall;
+		BallFilter myBall;
 
 		MotionHeadMessage hmot;
 		MotionWalkMessage wmot;
@@ -73,10 +78,12 @@ class Localization: public IActivity, public KLocalization
 		boost::shared_ptr<const RobotPositionMessage> rpsm;
 
 		BToHeadMessage* bhmsg;
-		//bool firstrun;
+		bool firstrun;
 
-		//boost::posix_time::ptime time;
-		//boost::posix_time::time_duration duration;
+		boost::posix_time::ptime last_observation_time;
+		boost::posix_time::ptime last_filter_time;
+
+
 
 		//For Debug!
 		void SimpleBehaviorStep();

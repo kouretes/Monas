@@ -12,9 +12,11 @@
 #include <math.h>
 
 #include "architecture/archConfig.h"
-
+#define CALIBRATE 1
 #define SCANFORBALL 2
 #define SCANFORPOST 3
+#define BALLTRACK 4
+
 #define MAX_TIME_TO_RESET 5000 //in milliseconds
 //#define ADEBUG
 using namespace std;
@@ -23,7 +25,8 @@ namespace
 	ActivityRegistrar<Localization>::Type temp("Localization");
 }
 
-Localization::Localization()
+Localization::Localization() :
+	vprof("Localization")
 {
 }
 
@@ -69,7 +72,9 @@ void Localization::UserInit()
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
-//	firstrun = true;
+	firstrun = true;
+	last_observation_time = boost::posix_time::microsec_clock::universal_time();
+	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 }
 
 int Localization::DebugMode_Receive()
@@ -199,7 +204,6 @@ int Localization::DebugMode_Receive()
 
 void Localization::SimpleBehaviorStep()
 {
-
 	// Head Scan simple step
 	bool headscan = false;
 	if (headscan)
@@ -222,16 +226,17 @@ void Localization::SimpleBehaviorStep()
 
 	} else
 	{
-		if (count % 100 == 0)
-		{
-			bhmsg->set_headaction(SCANFORPOST);
-			_blk->publishState(*bhmsg, "behavior");
-		}
-		if (count % 200 == 0)
-		{
-			bhmsg->set_headaction(SCANFORBALL);
-			_blk->publishState(*bhmsg, "behavior");
-		}
+		if (count % 400 == 0)
+			if (count % 100 == 0)
+			{
+				bhmsg->set_headaction(SCANFORBALL);
+				_blk->publishState(*bhmsg, "behavior");
+			} else
+			{
+				bhmsg->set_headaction(SCANFORPOST);
+				_blk->publishState(*bhmsg, "behavior");
+			}
+
 	}
 	//Go to target simple behavior
 	float Robot2Target_bearing = anglediff2(atan2(target.y - AgentPosition.y, target.x - AgentPosition.x), AgentPosition.theta);
@@ -290,14 +295,13 @@ void Localization::SimpleBehaviorStep()
 
 int Localization::Execute()
 {
-	//boost::posix_time::ptime newtime = boost::posix_time::from_iso_string(obsm->image_timestamp());
+	KPROF_SCOPE(vprof,"Execute");
 
-//	if (firstrun)
-//	{
-//		time = newtime;
-//		firstrun = false;
-//	}
-
+	boost::posix_time::time_duration duration;
+	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+	boost::posix_time::ptime observation_time;
+	float dt;
+	Ball nearest_filtered_ball, nearest_nofilter_ball;
 	process_messages();
 
 	if (debugmode)
@@ -305,62 +309,102 @@ int Localization::Execute()
 
 	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
-	//SimpleBehaviorStep();
+	SimpleBehaviorStep();
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x / 1000.0);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
 
+	//	MyWorld.mutable_myposition()->set_x(0);
+	//	MyWorld.mutable_myposition()->set_y(0);
+	//	MyWorld.mutable_myposition()->set_phi(0);
+	//	MyWorld.mutable_myposition()->set_confidence(0);
+
+	bool ballseen = false;
+
 	if (obsm.get())
+	{
+		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
+		//used for removing the ball if exceeds a threshold
+
 		if (obsm->has_ball())
 		{
-			Ball nearest_filtered_ball, nearest_nofilter_ball;
+			ballseen = true;
+
 			BallObject aball = obsm->ball();
 			nearest_nofilter_ball.set_relativex(aball.dist() * cos(aball.bearing()));
 			nearest_nofilter_ball.set_relativey(aball.dist() * sin(aball.bearing()));
 
-			MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-//
-//			duration = newtime - time;
-//			time = newtime;
-//			if (MyWorld.balls_size() < 1)
-//			{
-//				MyWorld.add_balls();
-//				myBall.reset(aball.dist(), 0,aball.bearing(), 0);
-//				//RESET
-//				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-//			} else
-//			{
-//				float dt = duration.total_milliseconds();
-//
-//				float dist_var = 1.05 - tanh(1.8 / aball.dist());
-//				nearest_filtered_ball = myBall.get_ball_estimate(aball.dist(), dist_var, aball.bearing(), 0.03, dt);
-//
-//				float distance =
-//						DISTANCE_2(nearest_filtered_ball.relativex()-nearest_nofilter_ball.relativex(),nearest_filtered_ball.relativey()-nearest_nofilter_ball.relativey());
-//
-//				if (dt > MAX_TIME_TO_RESET && distance > 2) //dt > 5sec && distance > 2 m
-//				{
-//					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
-//					//RESET
-//					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-//				} else
-//					MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
-//			}
+			if (MyWorld.balls_size() < 1)
+			{
+				//Inserting new ball
+				MyWorld.add_balls();
+				myBall.reset(aball.dist(), 0, aball.bearing(), 0);
+				//cout << "RESETING_BALL" << endl;
+				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
+				last_filter_time = now;
+			} else
+			{
+				//Get estimate ball
+				//Update
+				duration = observation_time - last_filter_time;
+				last_filter_time = observation_time;
+				dt = duration.total_milliseconds();
+
+				float dist_var = 1.20 - tanh(1.8 / aball.dist()); //observation ... deviation ... leme twra
+				nearest_filtered_ball = myBall.get_updated_ball_estimate(aball.dist(), dist_var * dist_var, aball.bearing(), 0.03, dt/100);
+
+				//Predict
+				duration = now - last_filter_time;
+				last_filter_time = now;
+				dt = duration.total_milliseconds();
+				nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt/100);
+
+				float dx = nearest_filtered_ball.relativex() - nearest_nofilter_ball.relativex();
+				float dy = nearest_filtered_ball.relativey() - nearest_nofilter_ball.relativey();
+				float distance = dx + dy;
+				if (distance != 0)
+					distance = DISTANCE_2(dx,dy);
+
+				//Check if we must reset the ball
+				duration = observation_time - last_observation_time;
+				last_observation_time = observation_time;
+				dt = duration.total_milliseconds();
+
+				if (dt > MAX_TIME_TO_RESET && distance > 2) //etc... dt > 5sec && distance > 2 m
+				{
+					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
+					last_filter_time = now;
+					//RESET
+					//cout << "RESETING_BALL" << endl;
+					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
+				} else
+					MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
+			}
+			//cout << " relative x " << MyWorld.mutable_balls(0)->relativex() << " relative y " << MyWorld.mutable_balls(0)->relativey() << endl;
+		}
+	}
+
+	if (!ballseen)
+	{
+		//cout << " No ball !! reseting ?" << endl;
+		duration = now - last_observation_time;
+		float dt = duration.total_milliseconds();
+		if (dt > MAX_TIME_TO_RESET)
+		{
+			//time = newtime;
+			last_observation_time = now; //So it wont try to delete already delete ball
+			if (MyWorld.balls_size() > 0)
+				MyWorld.clear_balls();
 		} else
 		{
-//			duration = newtime - time;
-//			float dt = duration.total_milliseconds();
-//			if (dt > MAX_TIME_TO_RESET)
-//			{
-//				time = newtime;
-				if (MyWorld.balls_size() > 0)
-					MyWorld.clear_balls();
-//			}
+			duration = now - last_filter_time;
+			last_filter_time = now;
+			dt = duration.total_milliseconds();
+			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt/100);
 		}
-	//MyWorld.
-	//Signal(wmot, "motion");
+	}
 
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
@@ -371,6 +415,8 @@ int Localization::Execute()
 	_blk->publishData(MyWorld, "behavior");
 
 	count++;
+
+	vprof.generate_report(10);
 	return 0;
 }
 
@@ -551,7 +597,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	if (Observations.size() > 0)
 		ForceBearing(SIRParticles, Observations);
 
-	//cout << CircleIntersectionPossibleParticles(Observations, SIRParticles, 4) << endl;
+	CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 
 	//Update - Using incoming observation
 	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
@@ -727,7 +773,7 @@ void Localization::process_messages()
 		//		}
 	}
 
-	Logger::Instance().WriteMsg("Localization", "process_messages ", Logger::ExtraExtraInfo);
+//	Logger::Instance().WriteMsg("Localization", "process_messages ", Logger::ExtraExtraInfo);
 
 }
 
@@ -743,6 +789,7 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	WI->mutable_myposition()->set_phi(AgentPosition.theta);
 	WI->mutable_myposition()->set_confidence(AgentPosition.confidence);
 
+	WI->CopyFrom(MyWorld);
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
 
 	//	DebugData.mutable_robotposition()->set_x(MotionModel.Distance.val);
@@ -771,6 +818,9 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	if (obsm != NULL)
 	{
 		(DebugData.mutable_observations())->CopyFrom(*obsm);
+	} else
+	{
+		DebugData.clear_observations();
 	}
 	return 1;
 }

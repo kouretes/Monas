@@ -9,7 +9,7 @@
 <P_observe_NotVisible>0.3</P_observe_NotVisible>
 <P_Notobserve_NotVisible>0.7</P_Notobserve_NotVisible>
 <numofparticlesfromObservation>4</numofparticlesfromObservation>
-<partclsNum>50</partclsNum>
+<partclsNum>30</partclsNum>
 <SpreadParticlesDeviation>20</SpreadParticlesDeviation>
 <rotation_deviation>0.00174533</rotation_deviation>
 <PercentParticlesSpread>5</PercentParticlesSpread>
