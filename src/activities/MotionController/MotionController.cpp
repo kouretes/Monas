@@ -110,7 +110,7 @@ void MotionController::UserInit()
 	config[6][0] = "WALK_MAX_STEP_THETA";
 	config[6][1] = 24; // 20
 	config[7][0] = "WALK_STEP_HEIGHT";
-	config[7][1] = 0.0105; // 0.015
+	config[7][1] = 0.011; // 0.015
 	config[8][0] = "WALK_FOOT_SEPARATION";
 	config[8][1] = 0.085; // 0.095
 	config[9][0] = "WALK_FOOT_ORIENTATION";

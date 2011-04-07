@@ -30,4 +30,4 @@
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>0</sensordelay>
 
-<pitchoffset>0.028</pitchoffset>
+<pitchoffset>0.024</pitchoffset>
