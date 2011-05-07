@@ -96,27 +96,27 @@ void MotionController::UserInit()
 	for (int i = 0; i < 15; ++i)
 		config[i].arraySetSize(2);
 	config[0][0] = "WALK_MAX_TRAPEZOID";
-	config[0][1] = 3.4; // 4.5
+	config[0][1] = 4.5; // 4.5
 	config[1][0] = "WALK_MIN_TRAPEZOID";
-	config[1][1] = 2.1; // 3.5
+	config[1][1] = 3.5; // 3.5
 	config[2][0] = "WALK_STEP_MAX_PERIOD";
-	config[2][1] = 18; // 30
+	config[2][1] = 30; // 30
 	config[3][0] = "WALK_STEP_MIN_PERIOD";
-	config[3][1] = 14; // 21
+	config[3][1] = 25; // 21
 	config[4][0] = "WALK_MAX_STEP_X";
-	config[4][1] = 0.04; // 0.04
+	config[4][1] = 0.06; // 0.04
 	config[5][0] = "WALK_MAX_STEP_Y";
-	config[5][1] = 0.04; // 0.04
+	config[5][1] = 0.06; // 0.04
 	config[6][0] = "WALK_MAX_STEP_THETA";
 	config[6][1] = 24; // 20
 	config[7][0] = "WALK_STEP_HEIGHT";
-	config[7][1] = 0.011; // 0.015
+	config[7][1] = 0.016; // 0.015
 	config[8][0] = "WALK_FOOT_SEPARATION";
 	config[8][1] = 0.085; // 0.095
 	config[9][0] = "WALK_FOOT_ORIENTATION";
 	config[9][1] = 0;// 0
 	config[10][0] = "WALK_TORSO_HEIGHT";
-	config[10][1] = 0.32;
+	config[10][1] = 0.28;
 	config[11][0] = "WALK_TORSO_ORIENTATION_X";
 	config[11][1] = 0.0; // 0
 	config[12][0] = "WALK_TORSO_ORIENTATION_Y";
@@ -658,7 +658,7 @@ void MotionController::ALstandUpCross()
 
 void MotionController::ALstandUpBack()
 {
-	SpAssocCont::iterator it = SpActions.find("ALstandUpBack2011");
+	SpAssocCont::iterator it = SpActions.find("ALstandUpBack2011_2");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpBack2010 not found!", Logger::Error);
 	else
@@ -670,7 +670,7 @@ void MotionController::ALstandUpBack()
 
 void MotionController::ALstandUpFront()
 {
-	SpAssocCont::iterator it = SpActions.find("ALstandUpFront2011");
+	SpAssocCont::iterator it = SpActions.find("ALstandUpFront2011_2");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpFront2011 not found!", Logger::Error);
 	else
