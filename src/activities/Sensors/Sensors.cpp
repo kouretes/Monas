@@ -193,7 +193,8 @@ void Sensors::synchronisedDCMcallback() {
 		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newval - oldval);
 
-		float gyrgain=Interpret::GYR_OFFSET/(gyravg[AXIS_Z].read_mean())*Interpret::GYR_GAIN;
+		float gyrgain=(Interpret::GYR_Z_REF/gyravg[AXIS_Z].read_mean())*Interpret::GYR_GAIN;
+		//cout<<gyravg[AXIS_Z].read_mean()<<" "<<gyrgain<<endl;
 
 		for(unsigned i=0;i<GYR_SIZE-1;i++)//EXCLUDE GYR_REF/GYR_Z
 		{
