@@ -44,7 +44,37 @@ void Sensors::UserInit() {
 	this->attachPublisherToMessageQueue(*_com->get_message_queue());
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
+void Sensors::fillComputedData(unsigned int timediff)
+{
+	static bool firstrun=true;
 
+	//COMPUTED SENSORS AKA ANGLE
+	float AccZvalue = ASM.sensordata(ACC + AXIS_Z).sensorvalue();
+	float AccXvalue = ASM.sensordata(ACC + AXIS_X).sensorvalue();
+	float AccYvalue = ASM.sensordata(ACC + AXIS_Y).sensorvalue();
+	float gyrX = ASM.sensordata(GYR + AXIS_X).sensorvalue();
+	float gyrY = ASM.sensordata(GYR + AXIS_Y).sensorvalue();
+	float accnorm = sqrt(AccZvalue * AccZvalue + AccYvalue * AccYvalue + AccXvalue * AccXvalue);
+	float angX = atan2(-AccYvalue , -AccZvalue) ;//+ gyrX *GYRTOANG;
+	float angY = atan2(AccXvalue , -AccZvalue) ;//+ gyrY *GYRTOANG;
+	//cout<<gyrX<<" "<<gyrY<<" "<<angX<<" "<<angY<<endl;
+	if(firstrun)
+	{
+		angle[0].reset(angX,0.1);
+		angle[1].reset(angY,0.1);
+		firstrun=false;
+	}
+	angle[0].updateWithVel(angX,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.0003,gyrX,0.01*gyrX*gyrX+0.0003,timediff/1000000000.0);
+	angle[1].updateWithVel(angY,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.0003,gyrY,0.01*gyrY*gyrY+0.0003,timediff/1000000000.0);
+	for(int i=0;i<ANGLE_SIZE;i++)
+	{
+		ASM.mutable_computeddata(ANGLE+i)->set_sensorvalue((angle[i].read())(0));
+		ASM.mutable_computeddata(ANGLE+i)->set_sensorvaluediff((angle[i].read())(1)*timediff/1000000000.0);
+	}
+
+
+
+}
 int Sensors::Execute() {
 
 	static bool firstrun = true;
@@ -66,7 +96,7 @@ int Sensors::Execute() {
 		rtm.start();
 		//Init inertial statistics
 		sc.inc();
-		gyravg[AXIS_Z].update(Interpret::GYR_OFFSET,sc);
+		//gyravg[AXIS_Z].update(Interpret::GYR_OFFSET,sc);
 
 #ifdef KROBOT_IS_REMOTE_OFF
 		rtmfast.start();
@@ -96,7 +126,7 @@ int Sensors::Execute() {
 
 	sensorValues = memory->getListData(sensorKeys);
 	//Detect inertialBoard Glitch
-	if(abs(sensorValues[GYR+AXIS_Z]-gyravg[AXIS_Z].read_mean())<sqrt(gyravg.read_var())||sc.i==0 )
+	if(fabs(sensorValues[GYR+AXIS_Z]-gyravg[AXIS_Z].read_mean())/gyravg[AXIS_Z].read_mean()<0.1||sc.i<50 )
 	{
 		sc.inc();
 		float accn=sqrt(sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_Y] *sensorValues[ACC+AXIS_Y] +sensorValues[ACC+AXIS_Z]*sensorValues[ACC+AXIS_Z]    );
@@ -110,13 +140,13 @@ int Sensors::Execute() {
 
 		accnorm.update(accn,sc);
 		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
-		float gyrgain=Interpret:GYR_OFFSET/sensorValues[ACC+AXIS_Z]*Interpret::GYR_GAIN;
+		float gyrgain=(Interpret:GYR_Z_REF/sensorValues[ACC+AXIS_Z])*Interpret::GYR_GAIN;
 		for(unsigned i=0;i<GYR_SIZE-1;i++)//EXCLUDE GYR_REF/GYR_Z
 		{
 			oldvalue = ASM.sensordata(GYR+i).sensorvalue();
 			gyravg[i].update(sensorValues[GYR+i],sc);
 			newvalue=(sensorValues[GYR+i]-gyravg[i].read_mean())*gyrgain;
-			newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
+			//newvalue=(newvalue)+(1-smoothness)*oldvalue;
 			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newvalue);
 			ASM.mutable_sensordata(GYR+i)->set_sensorvaluediff(newvalue - oldvalue);
 
@@ -126,22 +156,19 @@ int Sensors::Execute() {
 		{
 			oldvalue = ASM.sensordata(ACC+i).sensorvalue();
 			newvalue=sensorValues[ACC+i]*accgain;
-			newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
+			//newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
 			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newvalue);
 			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newvalue - oldvalue);
 		}
-
-
+		fillComputedData(timediff);
 
 	}
-	for(unsigned i=ANGLE;i<sensorValues.size();i++)
+	for(unsigned i=L_FSR;i<sensorValues.size();i++)
 	{
-		oldvalue = ASM.sensordata(i).sensorvalue();
-		newvalue=smoothness*sensorValues[i]+(1-smoothness)*oldvalue;
-		ASM.mutable_sensordata(i)->set_sensorvalue(newvalue);
-		ASM.mutable_sensordata(i)->set_sensorvaluediff(newvalue - oldvalue);
-
-
+		oldval=ASM.sensordata(i).sensorvalue();
+		newval=smoothness*(sensorValues[i])+(1-smoothness)*oldval;
+		ASM.mutable_sensordata(i)->set_sensorvalue(newval);
+		ASM.mutable_sensordata(i)->set_sensorvaluediff(newval-oldval);
 	}
 
 	ASM.set_timediff(timediff);
@@ -154,8 +181,6 @@ int Sensors::Execute() {
 		oldvalue = RPM.sensordata(i).sensorvalue();
 		RPM.mutable_sensordata(i)->set_sensorvalue(RobotValues[i]);
 		RPM.mutable_sensordata(i)->set_sensorvaluediff(RobotValues[i] - oldvalue);
-
-
 	}
 	RPM.set_timediff(timediff);
 	_blk->publishData(RPM, "sensors");
@@ -179,7 +204,7 @@ void Sensors::synchronisedDCMcallback() {
 	}
 	//All Sensors
 	//cout<<fabs((*sensorPtr[GYR+AXIS_Z])-gyravg[AXIS_Z].read_mean())<<" "<<3*sqrt(gyravg[AXIS_Z].read_var())<<endl;
-	if(fabs((*sensorPtr[GYR+AXIS_Z])-gyravg[AXIS_Z].read_mean())/gyravg[AXIS_Z].read_mean()<0.05||sc.i<50 )
+	if(fabs((*sensorPtr[GYR+AXIS_Z])-gyravg[AXIS_Z].read_mean())/gyravg[AXIS_Z].read_mean()<0.1||sc.i<50 )
 	{
 		sc.inc();
 		float accn=sqrt((*sensorPtr[ACC+AXIS_X])*(*sensorPtr[ACC+AXIS_X]) +
@@ -201,7 +226,7 @@ void Sensors::synchronisedDCMcallback() {
 			oldval = ASM.sensordata(GYR+i).sensorvalue();
 			gyravg[i].update(*sensorPtr[GYR+i],sc);
 			newval=(*sensorPtr[GYR+i]-gyravg[i].read_mean())*gyrgain;
-			newval=smoothness*(newval)+(1-smoothness)*oldval;
+			//newval=(newval)+(1-smoothness)*oldval;
 
 			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newval);
 			ASM.mutable_sensordata(GYR+i)->set_sensorvaluediff(newval - oldval);
@@ -212,13 +237,12 @@ void Sensors::synchronisedDCMcallback() {
 		{
 			oldval = ASM.sensordata(ACC+i).sensorvalue();
 			newval=(*sensorPtr[ACC+i])*accgain;
-			newval=smoothness*(newval)+(1-smoothness)*oldval;
+			//newval=(newval)+(1-smoothness)*oldval;
 			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newval);
 			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newval - oldval);
 		}
 
-
-
+		fillComputedData(timedifffast);
 	}
 	for(unsigned i=L_FSR;i<sensorPtr.size();i++)
 	{
@@ -227,18 +251,16 @@ void Sensors::synchronisedDCMcallback() {
 		ASM.mutable_sensordata(i)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(i)->set_sensorvaluediff(newval-oldval);
 	}
+
 	ASM.set_timediff(timedifffast);
 
 	//========== PUBLISH MSG ===/
-
     msgentry nmsg;
 
     google::protobuf::Message * newptr=ASM.New();
     newptr->CopyFrom(ASM);
     nmsg.msg.reset(newptr);
 
-    //cout<<"In:"<<&msg;
-    //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host="localhost";
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
@@ -248,6 +270,30 @@ void Sensors::synchronisedDCMcallback() {
     nmsg.msgclass=msgentry::DATA;
 
     this->publish(nmsg);
+
+
+
+
+    commands[5][0][0] =-(angle[0].read())(0) - 0.0010*(angle[0].read())(1);//hm->parameter(p);
+	commands[5][1][0] = -(angle[1].read())(0)- 0.0010*(angle[1].read())(1);//hm->parameter(p);
+	//cout<<(angle[0].read())(0)<<" "<<(angle[1].read())(0)<<endl;
+	int DCMtime;
+	try
+	{ // Get time in 0 ms
+		DCMtime = dcm->getTime(0);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
+	}
+	commands[4][0] = DCMtime;
+	//Send command
+	try
+	{
+		//dcm->setAlias(commands);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("mainModule", "execute_action", "Error when sending command to DCM : " + e.toString());
+	}
 }
 
 void Sensors::initFastAccess() {
@@ -262,21 +308,61 @@ void Sensors::initFastAccess() {
 	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);
 	for (int i = 0; i < KDeviceLists::NUMOFSENSORS; i++) {
 		sensorPtr[i] = (float *) memory->getDataPtr(sensorKeys[i]);
-		cout<<sensorKeys[i]<<i<<" "<<sensorPtr[i] <<endl;
+		//cout<<sensorKeys[i]<<i<<" "<<sensorPtr[i] <<endl;
 		ASM.add_sensordata();
 	}
+
+	for (int i = 0; i < KDeviceLists::NUMOFCOMPUTEDSENSORS; i++) {
+		ASM.add_computeddata();
+	}
+
+	AL::ALValue jointAliasses;
+	vector<std::string> PosActuatorStrings = KDeviceLists::getPositionActuatorKeys();
+
+	jointAliasses.arraySetSize(2);
+	jointAliasses[0] = std::string("HeadjointActuator");
+
+	jointAliasses[1].arraySetSize(2);
+
+	// Joints actuator list
+	jointAliasses[1][YAW] = PosActuatorStrings[HEAD + YAW];
+	jointAliasses[1][PITCH] = PosActuatorStrings[HEAD + PITCH];
+
+	// Create alias
+	try
+	{
+		dcm->createAlias(jointAliasses);
+	} catch (const AL::ALError &e)
+	{
+		throw ALERROR("mainModule", "createPositionActuatorAlias()", "Error when creating Alias : " + e.toString());
+	}
+
+	// Create Commands
+	commands.arraySetSize(6);
+	commands[0] = std::string("HeadjointActuator");
+	commands[1] = std::string("ClearAll"); // Erase all previous commands
+	commands[2] = std::string("time-separate");
+	commands[3] = 0;
+
+	commands[4].arraySetSize(1);
+	//commands[4][0]  Will be the new time
+
+	commands[5].arraySetSize(HEAD_SIZE); // For all joints
+
+	for (int i = 0; i < (HEAD_SIZE); i++)
+	{
+		commands[5][i].arraySetSize(1);
+		//commands[5][i][0] will be the new angle
+	}
+	angle[0].init(60000);
+	angle[1].init(60000);
+	//angle[0].reset(0,10);
+	//angle[1].reset(0,10);
+
 }
 #endif
 void Sensors::initialisation() {
-	smoothness = 0.68;
-
-	//HeadJointSensorsMessage
-
-	//InertialSensorsMessage
-
-	//UltraSoundSensorsMessage
-
-	//RobotPositionMessage
+	smoothness = 0.75;
 
 	ASM.Clear();
 	jointKeys=KDeviceLists::getJointKeys();
@@ -294,15 +380,13 @@ void Sensors::initialisation() {
 
 	}
 
-
-
 	RPM.add_sensordata(); //X
 	RPM.add_sensordata(); //Y
 	RPM.add_sensordata(); //Angle
 
 #ifndef KROBOT_IS_REMOTE_OFF
-	jointValues.resize(jointKeys.size());//Robot Position
-	jointValues.resize(sensorKeys.size());//Robot Position
+	jointValues.resize(jointKeys.size());
+	jointValues.resize(sensorKeys.size());
 	jointValues.assign(jointKeys.size(), 0);
 	sensorValues.assign(sensorKeys.size(),0);
 #else

@@ -12,6 +12,7 @@
 #include "architecture/IActivity.h"
 #include "tools/stat/cumulative.h"
 #include "hal/robot/generic_nao/robot_consts.h"
+#include "tools/stat/kalman.h"
 
 //#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
 // Use DCM proxy
@@ -53,6 +54,8 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/
 		AL::ALPtr<AL::DCMProxy> dcm;
 		AL::ALPtr<AL::ALMotionProxy> motion;
 		AL::ALPtr<AL::ALMemoryProxy> memory;
+		Kalman1D<float> angle[2];
+		AL::ALValue commands;//,stiffnessCommand;
 		//	AL::ALPtr<AL::ALMemoryFastAccess> MemoryFastAccess;
 
 		void initialisation();
@@ -61,6 +64,7 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/
 		sample_counter sc;
 		cumulative_central_moments<float> gyravg[KDeviceLists::GYR_SIZE];
 		cumulative_central_moments<float> accnorm;
+		void fillComputedData(unsigned int timediff);
 
 
 

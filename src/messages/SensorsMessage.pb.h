@@ -31,6 +31,7 @@ void protobuf_AssignDesc_SensorsMessage_2eproto();
 void protobuf_ShutdownFile_SensorsMessage_2eproto();
 
 class RobotPositionMessage;
+class ButtonMessage;
 class SensorData;
 class AllSensorValuesMessage;
 
@@ -135,6 +136,108 @@ class RobotPositionMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static RobotPositionMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ButtonMessage : public ::google::protobuf::Message {
+ public:
+  ButtonMessage();
+  virtual ~ButtonMessage();
+  
+  ButtonMessage(const ButtonMessage& from);
+  
+  inline ButtonMessage& operator=(const ButtonMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ButtonMessage& default_instance();
+  
+  void Swap(ButtonMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ButtonMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ButtonMessage& from);
+  void MergeFrom(const ButtonMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .SensorData data = 3;
+  inline int data_size() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 3;
+  inline const ::SensorData& data(int index) const;
+  inline ::SensorData* mutable_data(int index);
+  inline ::SensorData* add_data();
+  inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+      data() const;
+  inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+      mutable_data();
+  
+  // required uint32 TimeDiff = 4;
+  inline bool has_timediff() const;
+  inline void clear_timediff();
+  static const int kTimeDiffFieldNumber = 4;
+  inline ::google::protobuf::uint32 timediff() const;
+  inline void set_timediff(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:ButtonMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::RepeatedPtrField< ::SensorData > data_;
+  ::google::protobuf::uint32 timediff_;
+  friend void  protobuf_AddDesc_SensorsMessage_2eproto();
+  friend void protobuf_AssignDesc_SensorsMessage_2eproto();
+  friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static ButtonMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -313,10 +416,22 @@ class AllSensorValuesMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
       mutable_sensordata();
   
-  // required uint32 TimeDiff = 3;
+  // repeated .SensorData computedData = 3;
+  inline int computeddata_size() const;
+  inline void clear_computeddata();
+  static const int kComputedDataFieldNumber = 3;
+  inline const ::SensorData& computeddata(int index) const;
+  inline ::SensorData* mutable_computeddata(int index);
+  inline ::SensorData* add_computeddata();
+  inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+      computeddata() const;
+  inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+      mutable_computeddata();
+  
+  // required uint32 TimeDiff = 4;
   inline bool has_timediff() const;
   inline void clear_timediff();
-  static const int kTimeDiffFieldNumber = 3;
+  static const int kTimeDiffFieldNumber = 4;
   inline ::google::protobuf::uint32 timediff() const;
   inline void set_timediff(::google::protobuf::uint32 value);
   
@@ -327,12 +442,13 @@ class AllSensorValuesMessage : public ::google::protobuf::Message {
   
   ::google::protobuf::RepeatedPtrField< ::SensorData > jointdata_;
   ::google::protobuf::RepeatedPtrField< ::SensorData > sensordata_;
+  ::google::protobuf::RepeatedPtrField< ::SensorData > computeddata_;
   ::google::protobuf::uint32 timediff_;
   friend void  protobuf_AddDesc_SensorsMessage_2eproto();
   friend void protobuf_AssignDesc_SensorsMessage_2eproto();
   friend void protobuf_ShutdownFile_SensorsMessage_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -392,6 +508,51 @@ inline ::google::protobuf::uint32 RobotPositionMessage::timediff() const {
   return timediff_;
 }
 inline void RobotPositionMessage::set_timediff(::google::protobuf::uint32 value) {
+  _set_bit(1);
+  timediff_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ButtonMessage
+
+// repeated .SensorData data = 3;
+inline int ButtonMessage::data_size() const {
+  return data_.size();
+}
+inline void ButtonMessage::clear_data() {
+  data_.Clear();
+}
+inline const ::SensorData& ButtonMessage::data(int index) const {
+  return data_.Get(index);
+}
+inline ::SensorData* ButtonMessage::mutable_data(int index) {
+  return data_.Mutable(index);
+}
+inline ::SensorData* ButtonMessage::add_data() {
+  return data_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+ButtonMessage::data() const {
+  return data_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+ButtonMessage::mutable_data() {
+  return &data_;
+}
+
+// required uint32 TimeDiff = 4;
+inline bool ButtonMessage::has_timediff() const {
+  return _has_bit(1);
+}
+inline void ButtonMessage::clear_timediff() {
+  timediff_ = 0u;
+  _clear_bit(1);
+}
+inline ::google::protobuf::uint32 ButtonMessage::timediff() const {
+  return timediff_;
+}
+inline void ButtonMessage::set_timediff(::google::protobuf::uint32 value) {
   _set_bit(1);
   timediff_ = value;
 }
@@ -486,19 +647,44 @@ AllSensorValuesMessage::mutable_sensordata() {
   return &sensordata_;
 }
 
-// required uint32 TimeDiff = 3;
+// repeated .SensorData computedData = 3;
+inline int AllSensorValuesMessage::computeddata_size() const {
+  return computeddata_.size();
+}
+inline void AllSensorValuesMessage::clear_computeddata() {
+  computeddata_.Clear();
+}
+inline const ::SensorData& AllSensorValuesMessage::computeddata(int index) const {
+  return computeddata_.Get(index);
+}
+inline ::SensorData* AllSensorValuesMessage::mutable_computeddata(int index) {
+  return computeddata_.Mutable(index);
+}
+inline ::SensorData* AllSensorValuesMessage::add_computeddata() {
+  return computeddata_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::SensorData >&
+AllSensorValuesMessage::computeddata() const {
+  return computeddata_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::SensorData >*
+AllSensorValuesMessage::mutable_computeddata() {
+  return &computeddata_;
+}
+
+// required uint32 TimeDiff = 4;
 inline bool AllSensorValuesMessage::has_timediff() const {
-  return _has_bit(2);
+  return _has_bit(3);
 }
 inline void AllSensorValuesMessage::clear_timediff() {
   timediff_ = 0u;
-  _clear_bit(2);
+  _clear_bit(3);
 }
 inline ::google::protobuf::uint32 AllSensorValuesMessage::timediff() const {
   return timediff_;
 }
 inline void AllSensorValuesMessage::set_timediff(::google::protobuf::uint32 value) {
-  _set_bit(2);
+  _set_bit(3);
   timediff_ = value;
 }
 

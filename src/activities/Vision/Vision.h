@@ -18,12 +18,13 @@
 #include "messages/WorldInfo.pb.h"
 
 #include "PracticalSocket.h"
+//#define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
 
 #include <vector>
 #include <iostream>
 //#define DEBUGVISION
-#define DEBUG
+//#define DEBUG
 
 #ifdef __GNUC__
 #pragma GCC visibility push(hidden)
