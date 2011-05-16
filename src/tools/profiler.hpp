@@ -5,9 +5,6 @@
 
 
 
-
-
-
 #ifdef DEBUG
 #define KPROFILING_ENABLED
 
@@ -23,7 +20,15 @@
 #endif
 
 
+#ifdef KPROFILING_ENABLED
 
+#include <vector>
+#include "smart_timer.hpp"
+#include "tools/logger.h"
+#include "toString.h"
+#include <sstream>
+
+#endif
 
 namespace KProfiling {
 
@@ -43,11 +48,6 @@ namespace KProfiling {
   };
 #ifdef KPROFILING_ENABLED
 
-#include <vector>
-#include "smart_timer.hpp"
-#include "tools/logger.h"
-#include "toString.h"
-#include <sstream>
 
   struct cerr_logging_policy
   {
