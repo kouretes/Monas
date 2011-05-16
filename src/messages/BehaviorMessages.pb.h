@@ -23,6 +23,7 @@
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_message_reflection.h>
+#include "VisionObservations.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Internal implementation detail -- do not call these.
@@ -37,7 +38,7 @@ class ScanMessage;
 class PlayerNumberMessage;
 class PositionMessage;
 class ReturnToPositionMessage;
-class RestartTurnMessage;
+class DoubleObsInfo;
 
 // ===================================================================
 
@@ -696,14 +697,14 @@ class ReturnToPositionMessage : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class RestartTurnMessage : public ::google::protobuf::Message {
+class DoubleObsInfo : public ::google::protobuf::Message {
  public:
-  RestartTurnMessage();
-  virtual ~RestartTurnMessage();
+  DoubleObsInfo();
+  virtual ~DoubleObsInfo();
   
-  RestartTurnMessage(const RestartTurnMessage& from);
+  DoubleObsInfo(const DoubleObsInfo& from);
   
-  inline RestartTurnMessage& operator=(const RestartTurnMessage& from) {
+  inline DoubleObsInfo& operator=(const DoubleObsInfo& from) {
     CopyFrom(from);
     return *this;
   }
@@ -717,17 +718,17 @@ class RestartTurnMessage : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const RestartTurnMessage& default_instance();
+  static const DoubleObsInfo& default_instance();
   
-  void Swap(RestartTurnMessage* other);
+  void Swap(DoubleObsInfo* other);
   
   // implements Message ----------------------------------------------
   
-  RestartTurnMessage* New() const;
+  DoubleObsInfo* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const RestartTurnMessage& from);
-  void MergeFrom(const RestartTurnMessage& from);
+  void CopyFrom(const DoubleObsInfo& from);
+  void MergeFrom(const DoubleObsInfo& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -750,24 +751,32 @@ class RestartTurnMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required bool restartNow = 1 [default = false];
-  inline bool has_restartnow() const;
-  inline void clear_restartnow();
-  static const int kRestartNowFieldNumber = 1;
-  inline bool restartnow() const;
-  inline void set_restartnow(bool value);
+  // required .ObservationMessage prev = 1;
+  inline bool has_prev() const;
+  inline void clear_prev();
+  static const int kPrevFieldNumber = 1;
+  inline const ::ObservationMessage& prev() const;
+  inline ::ObservationMessage* mutable_prev();
   
-  // @@protoc_insertion_point(class_scope:RestartTurnMessage)
+  // required .ObservationMessage last = 2;
+  inline bool has_last() const;
+  inline void clear_last();
+  static const int kLastFieldNumber = 2;
+  inline const ::ObservationMessage& last() const;
+  inline ::ObservationMessage* mutable_last();
+  
+  // @@protoc_insertion_point(class_scope:DoubleObsInfo)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  bool restartnow_;
+  ::ObservationMessage* prev_;
+  ::ObservationMessage* last_;
   friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
   friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
   friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -781,7 +790,7 @@ class RestartTurnMessage : public ::google::protobuf::Message {
   }
   
   void InitAsDefaultInstance();
-  static RestartTurnMessage* default_instance_;
+  static DoubleObsInfo* default_instance_;
 };
 // ===================================================================
 
@@ -992,22 +1001,40 @@ inline void ReturnToPositionMessage::set_goalietopos(bool value) {
 
 // -------------------------------------------------------------------
 
-// RestartTurnMessage
+// DoubleObsInfo
 
-// required bool restartNow = 1 [default = false];
-inline bool RestartTurnMessage::has_restartnow() const {
+// required .ObservationMessage prev = 1;
+inline bool DoubleObsInfo::has_prev() const {
   return _has_bit(0);
 }
-inline void RestartTurnMessage::clear_restartnow() {
-  restartnow_ = false;
+inline void DoubleObsInfo::clear_prev() {
+  if (prev_ != NULL) prev_->::ObservationMessage::Clear();
   _clear_bit(0);
 }
-inline bool RestartTurnMessage::restartnow() const {
-  return restartnow_;
+inline const ::ObservationMessage& DoubleObsInfo::prev() const {
+  return prev_ != NULL ? *prev_ : *default_instance_->prev_;
 }
-inline void RestartTurnMessage::set_restartnow(bool value) {
+inline ::ObservationMessage* DoubleObsInfo::mutable_prev() {
   _set_bit(0);
-  restartnow_ = value;
+  if (prev_ == NULL) prev_ = new ::ObservationMessage;
+  return prev_;
+}
+
+// required .ObservationMessage last = 2;
+inline bool DoubleObsInfo::has_last() const {
+  return _has_bit(1);
+}
+inline void DoubleObsInfo::clear_last() {
+  if (last_ != NULL) last_->::ObservationMessage::Clear();
+  _clear_bit(1);
+}
+inline const ::ObservationMessage& DoubleObsInfo::last() const {
+  return last_ != NULL ? *last_ : *default_instance_->last_;
+}
+inline ::ObservationMessage* DoubleObsInfo::mutable_last() {
+  _set_bit(1);
+  if (last_ == NULL) last_ = new ::ObservationMessage;
+  return last_;
 }
 
 

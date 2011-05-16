@@ -454,7 +454,7 @@ void KfieldGui::draw_particles(parts & Particles, bool leaveunnormilised) {
 	}
 
 	//CvPoint pt3;
-	cout << "MAX(!?)  = " << max << endl;
+	//cout << "MAX(!?)  = " << max << endl;
 	if (max != 0)
 		for (i = 0; i < Particles.size; i++) {
 			pt1.x = field->width;
@@ -473,7 +473,7 @@ void KfieldGui::draw_particles(parts & Particles, bool leaveunnormilised) {
 		}
 
 	pthread_mutex_unlock(&lock);
-	cout << " Particles Drawn " << Particles.size << endl;
+	//cout << " Particles Drawn " << Particles.size << endl;
 }
 
 void KfieldGui::draw_ball(belief Belief, BallObject Ball) {
@@ -491,6 +491,7 @@ void KfieldGui::draw_ball(belief Belief, BallObject Ball) {
 	pt2.y = (-pt1.y + (2 * margintoline + field_height) / 2.0) / scale;
 
 	cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
+	cout << " Points in the field pt2.x " << pt2.x << " pt2.y " << pt2.y << endl;
 	cvCopy(cleanfield, field);
 	cvCircle(field, pt2, radius, color["orange"], CV_FILLED, CV_AA, 0);
 	tmp = Kutils::to_string(Ball.dist());
@@ -503,19 +504,24 @@ void KfieldGui::draw_ball2(belief Belief, Ball Ball) {
 	pthread_mutex_lock(&lock);
 
 	CvPoint pt1, pt2;
-	int radius = 60 / 2 * 1000.0 / scale;
+	int radius = 0.065 / 2 * 1000.0 / scale;
 
 	//double max = 0;
+	float cos_theta = cos(Belief.theta);
+	float sin_theta = sin(Belief.theta);
 
-	pt1.x = Belief.x + Ball.relativex() * 1000*cos(Belief.theta);//Ball.dist() * 1000 * cos((Belief.theta + Ball.bearing()));
-	pt1.y = Belief.y + Ball.relativey() * 1000*sin(Belief.theta);//Ball.dist() * 1000 * sin((Belief.theta + Ball.bearing()));
+	pt1.x = Belief.x + 1000*(Ball.relativex()*cos_theta - Ball.relativey()*sin_theta);//Ball.dist() * 1000 * cos((Belief.theta + Ball.bearing()));
+	pt1.y = Belief.y + 1000*(Ball.relativex()*sin_theta + Ball.relativey()*cos_theta);//Ball.dist() * 1000 * sin((Belief.theta + Ball.bearing()));
+
+	cout << " ball relative X " << Ball.relativex() << " ball relative Y " << Ball.relativey() << endl;
 
 	pt2.x = (pt1.x + (2 * margintoline + field_width) / 2.0) / scale;
 	pt2.y = (-pt1.y + (2 * margintoline + field_height) / 2.0) / scale;
 
+	cout << " Points in the field pt2.x " << pt2.x << " pt2.y " << pt2.y << endl;
 	//cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
-	cvCopy(cleanfield, field);
-	cvCircle(field, pt2, radius, color["darkorange"], CV_FILLED, CV_AA, 0);
+	//cvCopy(cleanfield, field);
+	cvCircle(field, pt2, radius, color["red"], 0, CV_AA, 0);
 	//tmp = Kutils::to_string(Ball.dist());
 	cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 400) / scale, (2 * margintoline + field_height + 850) / scale), &font, color["orange"]);
 	pthread_mutex_unlock(&lock);

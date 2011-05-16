@@ -7,7 +7,9 @@ namespace {
 }
 
 int Scan::Execute() {
+	//Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
+	scnm = _blk->readSignal<ScanMessage> ("behavior");
 	headaction = SCANFORBALL;
 	
 //	rtm = _blk->readSignal<RestartTurnMessage> ("behavior");
@@ -19,16 +21,23 @@ int Scan::Execute() {
 			//Logger::Instance().WriteMsg("Scan",  " BALLTRACK", Logger::Info);
 		}
 		else{		
-			if (lastTurn+boost::posix_time::seconds(5)< boost::posix_time::microsec_clock::universal_time() ){//&& lastTurn+boost::posix_time::seconds(8)>boost::posix_time::microsec_clock::universal_time()){
+			//if (lastTurn+boost::posix_time::seconds(5)< boost::posix_time::microsec_clock::universal_time() ){//&& lastTurn+boost::posix_time::seconds(8)>boost::posix_time::microsec_clock::universal_time()){
 				
-				littleWalk(0.0, 0.0, 45* TO_RAD);
-				
+			//	littleWalk(0.0, 0.0, 45* TO_RAD);
+			//	velocityWalk(0.0f, 0.0f, 0.0f , 1.0f);
 				//if(times%2 ==0)
 				//	side = (-1)*side;
-				lastTurn = boost::posix_time::microsec_clock::universal_time();
+			//	lastTurn = boost::posix_time::microsec_clock::universal_time();
 				//times++;
 				//if(times==1)
 				//	times++;
+		//	}
+			if(scnm!=0 && scnm->scancompleted()){
+				littleWalk(0.0f, 0.0f, 45*TO_RAD);
+				lastTurn = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(4);
+			}else{
+				if(lastTurn<= boost::posix_time::microsec_clock::universal_time())
+					velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
 			}
 			headaction = SCANFORBALL;
 			//Logger::Instance().WriteMsg("Scan",  " SCANFORBALL", Logger::Info);

@@ -14,7 +14,7 @@ namespace {
 
 int NoPlay::Execute() {
 	
-	Logger::Instance().WriteMsg("NoPlay",  " Execute", Logger::Info);
+	//Logger::Instance().WriteMsg("NoPlay",  " Execute", Logger::Info);
 
 	gsm = _blk->readState<GameStateMessage> ("behavior");
 		if(!readConf)

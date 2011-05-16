@@ -33,9 +33,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* ReturnToPositionMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ReturnToPositionMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* RestartTurnMessage_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* DoubleObsInfo_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  RestartTurnMessage_reflection_ = NULL;
+  DoubleObsInfo_reflection_ = NULL;
 
 }  // namespace
 
@@ -155,21 +155,22 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ReturnToPositionMessage));
-  RestartTurnMessage_descriptor_ = file->message_type(7);
-  static const int RestartTurnMessage_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RestartTurnMessage, restartnow_),
+  DoubleObsInfo_descriptor_ = file->message_type(7);
+  static const int DoubleObsInfo_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleObsInfo, prev_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleObsInfo, last_),
   };
-  RestartTurnMessage_reflection_ =
+  DoubleObsInfo_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      RestartTurnMessage_descriptor_,
-      RestartTurnMessage::default_instance_,
-      RestartTurnMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RestartTurnMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RestartTurnMessage, _unknown_fields_),
+      DoubleObsInfo_descriptor_,
+      DoubleObsInfo::default_instance_,
+      DoubleObsInfo_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleObsInfo, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DoubleObsInfo, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(RestartTurnMessage));
+      sizeof(DoubleObsInfo));
 }
 
 namespace {
@@ -197,7 +198,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ReturnToPositionMessage_descriptor_, &ReturnToPositionMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    RestartTurnMessage_descriptor_, &RestartTurnMessage::default_instance());
+    DoubleObsInfo_descriptor_, &DoubleObsInfo::default_instance());
 }
 
 }  // namespace
@@ -217,8 +218,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete PositionMessage_reflection_;
   delete ReturnToPositionMessage::default_instance_;
   delete ReturnToPositionMessage_reflection_;
-  delete RestartTurnMessage::default_instance_;
-  delete RestartTurnMessage_reflection_;
+  delete DoubleObsInfo::default_instance_;
+  delete DoubleObsInfo_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -227,19 +228,22 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   already_here = true;
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+  ::protobuf_AddDesc_VisionObservations_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\026BehaviorMessages.proto\"(\n\016KickOffMessa"
-    "ge\022\026\n\007kickOff\030\001 \002(\010:\005false\"\'\n\016BToHeadMes"
-    "sage\022\025\n\nheadaction\030\001 \002(\005:\0010\"=\n\016HeadToBMe"
-    "ssage\022\024\n\tballfound\030\001 \002(\005:\0010\022\025\n\ncalibrate"
-    "d\030\002 \002(\005:\0010\"+\n\013ScanMessage\022\034\n\rscancomplet"
-    "ed\030\001 \002(\010:\005false\"E\n\023PlayerNumberMessage\022\030"
-    "\n\rplayer_number\030\001 \002(\005:\0012\022\024\n\tteam_side\030\002 "
-    "\002(\005:\0011\"G\n\017PositionMessage\022\020\n\004posX\030\001 \002(\002:"
-    "\00270\022\020\n\004posY\030\002 \002(\002:\00270\022\020\n\005theta\030\003 \002(\002:\0011\""
-    "5\n\027ReturnToPositionMessage\022\032\n\013goalieToPo"
-    "s\030\001 \002(\010:\005false\"/\n\022RestartTurnMessage\022\031\n\n"
-    "restartNow\030\001 \002(\010:\005false", 463);
+    "\n\026BehaviorMessages.proto\032\030VisionObservat"
+    "ions.proto\"(\n\016KickOffMessage\022\026\n\007kickOff\030"
+    "\001 \002(\010:\005false\"\'\n\016BToHeadMessage\022\025\n\nheadac"
+    "tion\030\001 \002(\005:\0010\"=\n\016HeadToBMessage\022\024\n\tballf"
+    "ound\030\001 \002(\005:\0010\022\025\n\ncalibrated\030\002 \002(\005:\0010\"+\n\013"
+    "ScanMessage\022\034\n\rscancompleted\030\001 \002(\010:\005fals"
+    "e\"E\n\023PlayerNumberMessage\022\030\n\rplayer_numbe"
+    "r\030\001 \002(\005:\0012\022\024\n\tteam_side\030\002 \002(\005:\0011\"G\n\017Posi"
+    "tionMessage\022\020\n\004posX\030\001 \002(\002:\00270\022\020\n\004posY\030\002 "
+    "\002(\002:\00270\022\020\n\005theta\030\003 \002(\002:\0011\"5\n\027ReturnToPos"
+    "itionMessage\022\032\n\013goalieToPos\030\001 \002(\010:\005false"
+    "\"U\n\rDoubleObsInfo\022!\n\004prev\030\001 \002(\0132\023.Observ"
+    "ationMessage\022!\n\004last\030\002 \002(\0132\023.Observation"
+    "Message", 527);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -249,7 +253,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   PlayerNumberMessage::default_instance_ = new PlayerNumberMessage();
   PositionMessage::default_instance_ = new PositionMessage();
   ReturnToPositionMessage::default_instance_ = new ReturnToPositionMessage();
-  RestartTurnMessage::default_instance_ = new RestartTurnMessage();
+  DoubleObsInfo::default_instance_ = new DoubleObsInfo();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
@@ -257,7 +261,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   PlayerNumberMessage::default_instance_->InitAsDefaultInstance();
   PositionMessage::default_instance_->InitAsDefaultInstance();
   ReturnToPositionMessage::default_instance_->InitAsDefaultInstance();
-  RestartTurnMessage::default_instance_->InitAsDefaultInstance();
+  DoubleObsInfo::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -1876,80 +1880,103 @@ void ReturnToPositionMessage::Swap(ReturnToPositionMessage* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int RestartTurnMessage::kRestartNowFieldNumber;
+const int DoubleObsInfo::kPrevFieldNumber;
+const int DoubleObsInfo::kLastFieldNumber;
 #endif  // !_MSC_VER
 
-RestartTurnMessage::RestartTurnMessage()
+DoubleObsInfo::DoubleObsInfo()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void RestartTurnMessage::InitAsDefaultInstance() {
+void DoubleObsInfo::InitAsDefaultInstance() {
+  prev_ = const_cast< ::ObservationMessage*>(&::ObservationMessage::default_instance());
+  last_ = const_cast< ::ObservationMessage*>(&::ObservationMessage::default_instance());
 }
 
-RestartTurnMessage::RestartTurnMessage(const RestartTurnMessage& from)
+DoubleObsInfo::DoubleObsInfo(const DoubleObsInfo& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void RestartTurnMessage::SharedCtor() {
+void DoubleObsInfo::SharedCtor() {
   _cached_size_ = 0;
-  restartnow_ = false;
+  prev_ = NULL;
+  last_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-RestartTurnMessage::~RestartTurnMessage() {
+DoubleObsInfo::~DoubleObsInfo() {
   SharedDtor();
 }
 
-void RestartTurnMessage::SharedDtor() {
+void DoubleObsInfo::SharedDtor() {
   if (this != default_instance_) {
+    delete prev_;
+    delete last_;
   }
 }
 
-void RestartTurnMessage::SetCachedSize(int size) const {
+void DoubleObsInfo::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* RestartTurnMessage::descriptor() {
+const ::google::protobuf::Descriptor* DoubleObsInfo::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return RestartTurnMessage_descriptor_;
+  return DoubleObsInfo_descriptor_;
 }
 
-const RestartTurnMessage& RestartTurnMessage::default_instance() {
+const DoubleObsInfo& DoubleObsInfo::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
 }
 
-RestartTurnMessage* RestartTurnMessage::default_instance_ = NULL;
+DoubleObsInfo* DoubleObsInfo::default_instance_ = NULL;
 
-RestartTurnMessage* RestartTurnMessage::New() const {
-  return new RestartTurnMessage;
+DoubleObsInfo* DoubleObsInfo::New() const {
+  return new DoubleObsInfo;
 }
 
-void RestartTurnMessage::Clear() {
+void DoubleObsInfo::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    restartnow_ = false;
+    if (_has_bit(0)) {
+      if (prev_ != NULL) prev_->::ObservationMessage::Clear();
+    }
+    if (_has_bit(1)) {
+      if (last_ != NULL) last_->::ObservationMessage::Clear();
+    }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool RestartTurnMessage::MergePartialFromCodedStream(
+bool DoubleObsInfo::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required bool restartNow = 1 [default = false];
+      // required .ObservationMessage prev = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &restartnow_)));
-          _set_bit(0);
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_prev()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_last;
+        break;
+      }
+      
+      // required .ObservationMessage last = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_last:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_last()));
         } else {
           goto handle_uninterpreted;
         }
@@ -1973,11 +2000,18 @@ bool RestartTurnMessage::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void RestartTurnMessage::SerializeWithCachedSizes(
+void DoubleObsInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required bool restartNow = 1 [default = false];
+  // required .ObservationMessage prev = 1;
   if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->restartnow(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->prev(), output);
+  }
+  
+  // required .ObservationMessage last = 2;
+  if (_has_bit(1)) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->last(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1986,11 +2020,20 @@ void RestartTurnMessage::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* RestartTurnMessage::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* DoubleObsInfo::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required bool restartNow = 1 [default = false];
+  // required .ObservationMessage prev = 1;
   if (_has_bit(0)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->restartnow(), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->prev(), target);
+  }
+  
+  // required .ObservationMessage last = 2;
+  if (_has_bit(1)) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->last(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2000,13 +2043,22 @@ void RestartTurnMessage::SerializeWithCachedSizes(
   return target;
 }
 
-int RestartTurnMessage::ByteSize() const {
+int DoubleObsInfo::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required bool restartNow = 1 [default = false];
-    if (has_restartnow()) {
-      total_size += 1 + 1;
+    // required .ObservationMessage prev = 1;
+    if (has_prev()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->prev());
+    }
+    
+    // required .ObservationMessage last = 2;
+    if (has_last()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->last());
     }
     
   }
@@ -2021,10 +2073,10 @@ int RestartTurnMessage::ByteSize() const {
   return total_size;
 }
 
-void RestartTurnMessage::MergeFrom(const ::google::protobuf::Message& from) {
+void DoubleObsInfo::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const RestartTurnMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const RestartTurnMessage*>(
+  const DoubleObsInfo* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const DoubleObsInfo*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -2033,48 +2085,58 @@ void RestartTurnMessage::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void RestartTurnMessage::MergeFrom(const RestartTurnMessage& from) {
+void DoubleObsInfo::MergeFrom(const DoubleObsInfo& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from._has_bit(0)) {
-      set_restartnow(from.restartnow());
+      mutable_prev()->::ObservationMessage::MergeFrom(from.prev());
+    }
+    if (from._has_bit(1)) {
+      mutable_last()->::ObservationMessage::MergeFrom(from.last());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void RestartTurnMessage::CopyFrom(const ::google::protobuf::Message& from) {
+void DoubleObsInfo::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void RestartTurnMessage::CopyFrom(const RestartTurnMessage& from) {
+void DoubleObsInfo::CopyFrom(const DoubleObsInfo& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool RestartTurnMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+bool DoubleObsInfo::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
   
+  if (has_prev()) {
+    if (!this->prev().IsInitialized()) return false;
+  }
+  if (has_last()) {
+    if (!this->last().IsInitialized()) return false;
+  }
   return true;
 }
 
-void RestartTurnMessage::Swap(RestartTurnMessage* other) {
+void DoubleObsInfo::Swap(DoubleObsInfo* other) {
   if (other != this) {
-    std::swap(restartnow_, other->restartnow_);
+    std::swap(prev_, other->prev_);
+    std::swap(last_, other->last_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata RestartTurnMessage::GetMetadata() const {
+::google::protobuf::Metadata DoubleObsInfo::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = RestartTurnMessage_descriptor_;
-  metadata.reflection = RestartTurnMessage_reflection_;
+  metadata.descriptor = DoubleObsInfo_descriptor_;
+  metadata.reflection = DoubleObsInfo_reflection_;
   return metadata;
 }
 

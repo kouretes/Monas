@@ -16,7 +16,7 @@ public:
 	}
 
 	bool Eval() {
-		Logger::Instance().WriteMsg("TrCond_ApproachBall_one_or_more_times_TO0_3_2_3_7", "FALSE NO OBSM", Logger::Info);
+		Logger::Instance().WriteMsg("TrCond_ApproachBall_one_or_more_times_TO0_3_2_3_7", " ",Logger::Info);
 		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 

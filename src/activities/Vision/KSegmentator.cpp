@@ -107,7 +107,7 @@ inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
 
 void KSegmentator::setLumaScale(float s)
 {
-	lumascale=s*1.1+0.1;
+	lumascale=s*1.01;
 	cout<<"KSegmentator:setLumaScale():"<<s<<endl;
 	/*for(int i=0;i<256;i++)
 	{

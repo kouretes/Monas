@@ -11,12 +11,15 @@
 #include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/time_duration.hpp>
 #include "../BehaviorConst.h"
 #include "../ApproachBall/ApproachBall.h"
 #include "messages/RoboCupGameControlData.h"
 #include "tools/logger.h"
 #include "tools/toString.h"	
-			
+#include <string.h>
+#include <string.h>
+#include <math.h>
 class Stare : public IActivity {
 			
 public:
@@ -26,14 +29,16 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	//float calculateBallSpeed(float x1, float y1, float, x2, float y2);
+	int toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi);
+	//int toFallOrNotToFall(DoubleObsInfo* doi);
 private:
 	MotionWalkMessage wmot;	
 	BToHeadMessage* bhmsg;
 	ObservationMessage* lastObsm;
+	DoubleObsInfo* doim;
 	boost::posix_time::ptime rcvObsm;
+	boost::posix_time::ptime lastMove;
 	boost::shared_ptr<const ObservationMessage> obsm;
-//	float observations[2][2];
 	int headaction;
 	void velocityWalk( double x, double y, double th, double f);
 };

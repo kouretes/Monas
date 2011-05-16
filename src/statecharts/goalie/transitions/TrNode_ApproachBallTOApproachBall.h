@@ -16,6 +16,7 @@ public:
 	}
 
 	bool Eval() {
+		Logger::Instance().WriteMsg("TrCond_ApproachBallTOApproachBall", " ", Logger::Info);
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();

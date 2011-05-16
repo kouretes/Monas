@@ -70,6 +70,7 @@ class RobotController: public IActivity {
 		int chest_button_pressed;
 		int left_bumper_pressed;
 		int right_bumper_pressed;
+		bool override;
 		LedChangeMessage leds;
 		GameStateMessage gm_state;
 		GameStateMessage new_gm_state;

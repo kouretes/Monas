@@ -42,7 +42,7 @@ void HeadBehavior::UserInit() {
 }
 
 int HeadBehavior::Execute() {
-Logger::Instance().WriteMsg("HeadBehavior", "start", Logger::Info);
+//Logger::Instance().WriteMsg("HeadBehavior", "start", Logger::Info);
 	read_messages();
 
 	if (bhm != 0){
@@ -199,7 +199,7 @@ Logger::Instance().WriteMsg("HeadBehavior", "start", Logger::Info);
 	}
 	prevaction = curraction;
 	_blk->publishState(*hbmsg, "behavior");
-	Logger::Instance().WriteMsg("HeadBehavior", "end", Logger::Info);
+	//Logger::Instance().WriteMsg("HeadBehavior", "end", Logger::Info);
 	return 0;
 }
 

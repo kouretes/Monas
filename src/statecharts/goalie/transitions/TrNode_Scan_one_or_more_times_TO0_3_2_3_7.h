@@ -14,7 +14,7 @@ public:
 
 	bool Eval() {
 		/* ballfound!=0 */
-		Logger::Instance().WriteMsg("TrCond_Scan_one_or_more_times_TO0_3_2_3_7", "FALSE NO OBSM", Logger::Info);
+		Logger::Instance().WriteMsg("TrCond_Scan_one_or_more_times_TO0_3_2_3_7", " ", Logger::Info);
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_PLAYING)

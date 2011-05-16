@@ -38,6 +38,7 @@ private:
 	BToHeadMessage* bhmsg;
 	ObservationMessage* lastObsm;
 	boost::posix_time::ptime rcvObsm;
+	boost::posix_time::ptime lastMove;
 	boost::shared_ptr<const ObservationMessage> obsm;
 	boost::shared_ptr<const GameStateMessage> gsm;
 	int headaction;

@@ -2,8 +2,8 @@
 <!-- Show Segmented image using opencv -->
 <cvHighgui>0</cvHighgui>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>9-GO20011_fullAB.conf</SegmentationBottom>
-<SegmentationTop>9-GO20011_fullAB.conf</SegmentationTop>
+<SegmentationBottom>11-IranOpen2011nobands-segall.conf</SegmentationBottom>
+<SegmentationTop>11-IranOpen2011nobands-segall.conf</SegmentationTop>
 <Dfov>53.3</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.066</ballsize>
@@ -30,4 +30,5 @@
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>0</sensordelay>
 
-<pitchoffset>0.038</pitchoffset>
+<pitchoffset>0.024</pitchoffset>
+

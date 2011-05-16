@@ -15,7 +15,7 @@ public:
 
 	bool Eval() {
 		/* PLAYER_FINISHED */
-		Logger::Instance().WriteMsg("decision forever", "!FINISHED ",Logger::Info);
+	//	Logger::Instance().WriteMsg("TrCond_decisionTO0_3_3", "!FINISHED ",Logger::Info);
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		
 		//if(gsm.get()!=0 && gsm->player_state()==PLAYER_FINISHED)

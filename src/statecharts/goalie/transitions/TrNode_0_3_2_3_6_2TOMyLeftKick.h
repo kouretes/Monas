@@ -15,7 +15,7 @@ public:
      }
 
 	bool Eval() {
-		Logger::Instance().WriteMsg("TrCond_0_3_2_3_6_2TOMyLeftKick", "FALSE NO OBSM", Logger::Info);
+		Logger::Instance().WriteMsg("TrCond_0_3_2_3_6_2TOMyLeftKick", " ", Logger::Info);
 		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage> ("vision");
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)

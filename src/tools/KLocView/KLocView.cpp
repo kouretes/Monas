@@ -59,9 +59,6 @@ int update_field(LocalizationData & DebugData) {
 	Belief.confidence = WI->myposition().confidence();
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
 
-	if(WI->balls_size()>0){
-		KLocView->draw_ball2(Belief, WI->balls(0));
-	}
 
 	robotposition.x = DebugData.robotposition().x();
 	robotposition.y = DebugData.robotposition().y();
@@ -133,6 +130,13 @@ int update_field(LocalizationData & DebugData) {
 	}else{
 		cout << "No Observations" <<endl;
 	}
+
+
+	if(WI->balls_size()>0){
+		cout << " we have relative ball ! " << endl;
+		KLocView->draw_ball2(Belief, WI->balls(0));
+	}
+
 	//KLocView->BackupField();
 	KLocView->draw_Trackpoint(robotposition, 20 * TO_RAD, -20 * TO_RAD);
 	KLocView->draw_belief(Belief, 20 * TO_RAD, -20 * TO_RAD, 0);
@@ -269,9 +273,9 @@ int receive_and_send_loop(TCPSocket *sock) {
 		size = outgoingheader.ByteSize();
 		int sendsize = htonl(size);
 		sock->send(&sendsize, sizeof(uint32_t));
-		cout << " header size " << size << endl;
+		//cout << " header size " << size << endl;
 		outgoingheader.SerializeToArray(data, size);
-		cout << " key " << (char) KfieldGui::keypressed << " State " << KfieldGui::state << endl;
+		//cout << " key " << (char) KfieldGui::keypressed << " State " << KfieldGui::state << endl;
 		if (KfieldGui::state == READY_TO_SEND_SINGLE) {
 			KfieldGui::pose1.SerializeToArray(data + size, KfieldGui::pose1.ByteSize());
 			size += KfieldGui::pose1.ByteSize();

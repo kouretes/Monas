@@ -13,6 +13,7 @@ public:
 
 	bool Eval() {
 		/* ballfound==0 */
+		Logger::Instance().WriteMsg("TrCond_ScanTOScan", " ", Logger::Info);
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();

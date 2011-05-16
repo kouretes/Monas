@@ -19,9 +19,7 @@
 	<activity>Vision</activity>
 	<activity>HeadBehavior</activity>
 <!--	<activity>VBehavior</activity> 
-
 	<activity>Localization </activity>
-	
 -->
 </agent>
 
@@ -30,7 +28,8 @@
 	<activity>Sensors</activity>
 </agent>
 
-<statechart>goalie</statechart>
+
+ <statechart>goalie</statechart> 
 <!--
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>BodyBehavior</name>

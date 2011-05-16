@@ -280,11 +280,11 @@ int VBehavior::Execute() {
 					littleWalk(0.2, 0.0, 0.0);
 				} else {
 					if (bb > 0.0) {
-						amot->set_command("LeftSideKickFast.xar");
+						amot->set_command("KickSideLeft_carpet.xar"); //"LeftSideKickFast.xar"
 						direction = -1;
 					}
 					else {
-						amot->set_command("RightSideKickFast.xar");
+						amot->set_command("KickSideRight_carpet.xar"); //"RightSideKickFast.xar"
 						direction = +1;
 					}
 					_blk->publishSignal(*amot, "motion");
@@ -296,20 +296,20 @@ int VBehavior::Execute() {
 				if(kickno>=0){//if (mglRand()<0.6) {
 				//if ( (mglRand()<1.0) && !obstacleFront ) {
 					if (by > 0.0)
-						amot->set_command("LeftKick");
+						amot->set_command("leftKickB.xar"); //"LeftKick"
 					else
-						amot->set_command("RightKick");
+						amot->set_command("rightKickB.xar"); //"RightKick"
 					kickno=0;
 				}
 
 				else
 				{
 					if (by > 0.0) {
-						amot->set_command("LeftSideKickFast.xar");
+						amot->set_command("KickSideLeft_carpet.xar"); //"LeftSideKickFast.xar"
 						direction = -1;
 					}
 					else {
-						amot->set_command("RightSideKickFast.xar");
+						amot->set_command("KickSideRight_carpet.xar"); //"RightSideKickFast.xar"
 						direction = +1;
 					}
 					kickno++;

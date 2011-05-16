@@ -31,11 +31,12 @@ private:
 	MotionWalkMessage wmot;
 	boost::shared_ptr<const HeadToBMessage> hbm;
 	boost::shared_ptr<const GameStateMessage> gsm;
+	boost::shared_ptr<const ScanMessage> scnm;
 	int headaction;
 	boost::posix_time::ptime lastTurn;
 	ApproachBall ab;
 	//int side, times;
-	boost::shared_ptr<const RestartTurnMessage> rtm;
+	//boost::shared_ptr<const RestartTurnMessage> rtm;
 	void velocityWalk( double x, double y, double th, double f);
 	void littleWalk(double x, double y, double th);	
 };

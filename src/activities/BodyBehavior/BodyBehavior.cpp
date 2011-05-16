@@ -4,6 +4,9 @@
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include "hal/robot/generic_nao/robot_consts.h"
+
 namespace {
 	ActivityRegistrar<BodyBehavior>::Type temp("BodyBehavior");
 }
@@ -17,6 +20,7 @@ void BodyBehavior::UserInit() {
 	_blk->subscribeTo("vision", 0);
 	_blk->subscribeTo("sensors", 0);
 	_blk->subscribeTo("behavior", 0);
+	_blk->subscribeTo("obstacle", 0);
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
@@ -50,12 +54,10 @@ void BodyBehavior::UserInit() {
 	orientation = 0;
 
 	srand(time(0));
-
-	//Logger::Instance().WriteMsg("BodyBehavior", "Initialized", Logger::Info);
 }
 
 int BodyBehavior::Execute() {
-
+	//cout << "Execute" << endl;
 	prevaction = curraction;
 	oldGameState = gameState;
 	read_messages();
@@ -74,10 +76,11 @@ int BodyBehavior::Execute() {
 		lastObsm->CopyFrom(*obsm);
 	else
 		readytokick = false;
-		
+
 	if (gsm != 0) {
 		//Logger::Instance().WriteMsg("BodyBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		gameState = gsm->player_state();
+		teamColor = gsm->team_color();
 
 		if (gameState == PLAYER_PLAYING) {
 			if (calibrated == 2) {
@@ -88,7 +91,6 @@ int BodyBehavior::Execute() {
 				// wait
 			}
 		} else if (gameState == PLAYER_INITIAL) {
-			curraction=CALIBRATE;
 			play = false;
 		} else if (gameState == PLAYER_READY) {
 			play = false;
@@ -97,13 +99,12 @@ int BodyBehavior::Execute() {
 			play = false;
 			kickoff = gsm->kickoff();
 			orientation = 0;
-			curraction = DONOTHING;
 		} else if (gameState == PLAYER_FINISHED) {
 			play = false;
 		} else if (gameState == PLAYER_PENALISED) {
 			play = false;
-			curraction = CALIBRATE;
-			littleWalk(0.0, 0.0, 0.0, 1);
+			//curraction = CALIBRATE;
+			//littleWalk(0.0, 0.0, 0.0, 1);
 		}
 	}
 
@@ -123,9 +124,9 @@ int BodyBehavior::Execute() {
 	//	float X = 0.0, Y = 0.0, theta = 0.0;
 		float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 		float posx=0.117, posy=0.03;
-		//if (obsm != 0) {
+		if (obsm != 0) {
 
-			/*if (obsm->regular_objects_size() > 0) {
+			if (obsm->regular_objects_size() > 0) {
 				if (((obsm->regular_objects(0).object_name() == "BlueGoal") && (teamColor == TEAM_RED)) || ((obsm->regular_objects(0).object_name() == "YellowGoal") && (teamColor
 						== TEAM_BLUE))) {
 					double ogb = obsm->regular_objects(0).bearing();
@@ -150,24 +151,23 @@ int BodyBehavior::Execute() {
 					}
 				}
 				Logger::Instance().WriteMsg("BodyBehavior", "Orientation: " + _toString(orientation) + " Team Color " + _toString(teamColor), Logger::Info);
-			}*/
+			}
 
 			if (ballfound > 0) {
 				curraction = BALLTRACK;
 				isScaning = false;
-				int side ;//= 1;
 				bd = lastObsm->ball().dist();
 				bb = lastObsm->ball().bearing();
 				bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
 				by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
-				side = (bb > 0) ? 1 : -1;
+				int side = (bb > 0) ? 1 : -1;
 
 				//Logger::Instance().WriteMsg("BodyBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: "
 					//	+ _toString(by), Logger::Info);
 
-
 				readytokick=true;
                 if ( fabs( bx - posx ) > 0.01 || fabs( by - (side*posy) ) > 0.01) {
+                    //Y = gainFine * ( by - (side*posy) );
                     readytokick = false;
                 }
 
@@ -187,27 +187,22 @@ int BodyBehavior::Execute() {
 								th=0.2 *Y;
 							else
 								th=0.1 *Y;
-
 							Y=Y/2.0;
-
 						}
 						else
 							th=-0.06*by*(Y>0?-1:1);
-
-
 						Y=Y>0?Y+0.01:Y-0.01;
 						Y=Y>1?1:Y;
 						Y=Y<-1?-1:Y;
 						f=1;
-
 						th=th>1?1:th;
 						th=th<-1?-1:th;
 						velocityWalk(X,Y,th,f);
 				}
 			}
-		//} else {
-		//	readytokick = false;
-	//	}
+		} else {
+			readytokick = false;
+		}
 
 		/* Ready to take action */
 		if (readytokick) {
@@ -234,7 +229,7 @@ int BodyBehavior::Execute() {
 			} else {
 
 				/* **************** Targetted Kicks ********************** */
-				/*if (orientation == 0) {
+				if (orientation == 0) {
 					if (by > 0.0)
 						amot->set_command("LeftKick");
 					else
@@ -257,18 +252,18 @@ int BodyBehavior::Execute() {
 						amot->set_command("SoftRightSideKick");
 				}
 
-				_blk->publishSignal(*amot, "motion");*/
+				_blk->publishSignal(*amot, "motion");
 
 				/* **************** End of Targetted Kicks ********************** */
 
 				/* **************** Randomized Kicks ********************** */
 				//if (mglRand()<0.6) {
 				////if ( (mglRand()<1.0) && !obstacleFront ) {
-				if (by > 0.0)
-					amot->set_command("LeftKick");
-				else
-					amot->set_command("RightKick");
-				_blk->publishSignal(*amot, "motion");
+				//if (by > 0.0)
+				//	amot->set_command("LeftKick");
+				//else
+				//	amot->set_command("RightKick");
+				//_blk->publishSignal(*amot, "motion");
 				//}
 				//else if (mglRand()<0.5) {
 				//if (by > 0.0) {
@@ -314,7 +309,7 @@ int BodyBehavior::Execute() {
 	bhmsg->set_headaction(curraction);
 
 	//cout << "headAction " << curraction << "BodyBehavior" << endl;
-	_blk->publishSignal(*bhmsg, "behavior");
+	_blk->publishState(*bhmsg, "behavior");
 
 
 	return 0;

@@ -12,13 +12,14 @@ public:
 	}
 
 	bool Eval() {
-		MotionWalkMessage wmot;
-		wmot.set_command("setWalkTargetVelocity");
-		wmot.set_parameter(0, 0.0f);
-		wmot.set_parameter(1, 0.0f);
-		wmot.set_parameter(2, 0.0f);
-		wmot.set_parameter(3, 1.0f);
-		_blk->publishSignal(wmot, "motion");
+		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_3_1TOScan", " publish velocitywalk ", Logger::Info);
+		//MotionWalkMessage* wmot = new MotionWalkMessage();
+		//wmot->set_command("setWalkTargetVelocity");
+		//wmot->set_parameter(0, 0.0f);
+		//wmot->set_parameter(1, 0.0f);
+		//wmot->set_parameter(2, 0.0f);
+		//wmot->set_parameter(3, 1.0f);
+		//_blk->publishSignal(*wmot, "motion");
 		return true;
     }
 };

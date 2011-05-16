@@ -363,7 +363,8 @@ void Vision::recv_and_send()
 void Vision::fetchAndProcess()
 {
 	leds.Clear();
-
+	obs.Clear();
+	img.Clear();
 	//cout << "fetchImage" << endl;
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 
@@ -422,8 +423,7 @@ void Vision::fetchAndProcess()
 	}
 
 	//Clear result message
-	obs.Clear();
-	img.Clear();
+
 	p.yaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvalue();
 	p.pitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvalue();
 

@@ -15,7 +15,7 @@ public:
 
 	bool Eval() {
 		/* !PLAYER_FINISHED */
-		Logger::Instance().WriteMsg("decision repeat", "!FINISHED ",Logger::Info);
+		//Logger::Instance().WriteMsg("TrCond_decisionTOdecision", "!FINISHED ",Logger::Info);
 		bool pen;
 		pen = false;
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
