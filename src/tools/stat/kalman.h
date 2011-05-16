@@ -32,6 +32,27 @@ class Kalman1D
     return r;
 
   }
+  Xbar const& predict_with_decel(V dt, V a)
+  {
+	r(1)= r(1) - a*((r(1)>0)?1:-1)*dt;
+	r(0)=r(0)+r(1)*dt;
+
+    KMat::GenMatrix<V,2,2> Pinc,Q;
+    Pinc.zero();
+    V dtd=dt*P.read(1,1);
+    Pinc.get(0,0)=dt*(P.read(1,0)+P.read(0,1))+dt*dtd;
+    Pinc.get(0,1)=dtd;
+    Pinc.get(1,0)=dtd;
+    //Pinc.prettyPrint();
+    P+=Pinc;
+    Q=produceQ(dt);
+    Q.scalar_mult(vara);
+    //Q.prettyPrint();
+    P+=Q;
+    //P.prettyPrint();
+    return r;
+
+  }
   void reset(V v, V L)
   {
     r(0)=v;r(1)=0;

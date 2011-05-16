@@ -297,18 +297,14 @@ void Localization::SimpleBehaviorStep()
 int Localization::Execute()
 {
 	KPROF_SCOPE(vprof, "Localization Execute");
+	now = boost::posix_time::microsec_clock::universal_time();
 
-	boost::posix_time::time_duration duration;
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	boost::posix_time::ptime observation_time;
-	float dt;
-	Ball nearest_filtered_ball, nearest_nofilter_ball;
 	process_messages();
 
 	if (debugmode)
 		DebugMode_Receive();
 
-	//LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
+	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
 	//SimpleBehaviorStep();
 
@@ -324,7 +320,81 @@ int Localization::Execute()
 //	MyWorld.mutable_myposition()->set_y(0);
 //	MyWorld.mutable_myposition()->set_phi(0);
 //	MyWorld.mutable_myposition()->set_confidence(0);
+	calculate_ball_estimate();
+	///DEBUGMODE SEND RESULTS
+	if (debugmode)
+	{
+		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
+		Send_LocalizationData();
+	}
+	_blk->publishData(MyWorld, "behavior");
 
+	count++;
+
+	vprof.generate_report(10);
+	return 0;
+}
+
+void Localization::Send_LocalizationData()
+{
+
+	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
+	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
+
+	int sendsize; //= DebugData.ByteSize();
+
+	int rsize = 0;
+	int rs;
+	//send a header
+
+	sendsize = outgoingheader.ByteSize();
+	sendsize = htonl(sendsize);
+
+	try
+	{
+		sock->send(&sendsize, sizeof(uint32_t));
+
+		sendsize = outgoingheader.ByteSize();
+		outgoingheader.SerializeToArray(data, sendsize);
+		//cout << "outgoingheader sendsize " << sendsize << endl;
+
+		while (rsize < sendsize)
+		{
+			rs = sock->send(data + rsize, sendsize - rsize);
+			rsize += rs;
+		}
+		//cout << "Sended outgoingheader " << rsize << endl;
+		//send the image bytes
+		sendsize = DebugData.ByteSize();
+
+		std::string buf;
+		DebugData.SerializeToString(&buf);
+		sendsize = buf.length();
+
+		rsize = 0;
+		//cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
+
+		while (rsize < sendsize)
+		{
+			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
+			rsize += rs;
+		}
+		//cout << "Sended " << rsize << endl;
+	} catch (SocketException &e)
+	{
+		cerr << e.what() << endl;
+		cout << "Disconnecting !!!!!" << endl;
+		debugmode = false;
+	}
+}
+
+void Localization::calculate_ball_estimate()
+{
+	boost::posix_time::time_duration duration;
+	boost::posix_time::ptime observation_time;
+	Ball nearest_filtered_ball, nearest_nofilter_ball;
+
+	float dt;
 	bool ballseen = false;
 
 	if (obsm.get())
@@ -410,72 +480,6 @@ int Localization::Execute()
 			if (MyWorld.balls_size() > 0)
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
 		}
-	}
-
-	///DEBUGMODE SEND RESULTS
-	if (debugmode)
-	{
-		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
-		Send_LocalizationData();
-	}
-	_blk->publishData(MyWorld, "behavior");
-
-	count++;
-
-	vprof.generate_report(10);
-	return 0;
-}
-
-void Localization::Send_LocalizationData()
-{
-
-	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
-	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
-
-	int sendsize; //= DebugData.ByteSize();
-
-	int rsize = 0;
-	int rs;
-	//send a header
-
-	sendsize = outgoingheader.ByteSize();
-	sendsize = htonl(sendsize);
-
-	try
-	{
-		sock->send(&sendsize, sizeof(uint32_t));
-
-		sendsize = outgoingheader.ByteSize();
-		outgoingheader.SerializeToArray(data, sendsize);
-		//cout << "outgoingheader sendsize " << sendsize << endl;
-
-		while (rsize < sendsize)
-		{
-			rs = sock->send(data + rsize, sendsize - rsize);
-			rsize += rs;
-		}
-		//cout << "Sended outgoingheader " << rsize << endl;
-		//send the image bytes
-		sendsize = DebugData.ByteSize();
-
-		std::string buf;
-		DebugData.SerializeToString(&buf);
-		sendsize = buf.length();
-
-		rsize = 0;
-		//cout << "Will send Data" << sendsize << " " << DebugData.GetTypeName() << endl;
-
-		while (rsize < sendsize)
-		{
-			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
-			rsize += rs;
-		}
-		//cout << "Sended " << rsize << endl;
-	} catch (SocketException &e)
-	{
-		cerr << e.what() << endl;
-		cout << "Disconnecting !!!!!" << endl;
-		debugmode = false;
 	}
 }
 
@@ -711,8 +715,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 void Localization::process_messages()
 {
-	//_blk->process_messages();
-
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
@@ -854,7 +856,7 @@ void * Localization::StartServer(void * astring)
 		if (!debugmode)
 		{
 			if (sock != NULL
-				)
+			)
 				delete sock;
 
 			if ((sock = servSock.accept()) < 0)
