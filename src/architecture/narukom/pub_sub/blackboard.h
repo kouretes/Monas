@@ -143,22 +143,25 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, con
 		(*rit).second.blkdatatimeouts[atypeid]= (*rit).second.blkdatatimeouts[atypeid]<nt?nt:(*rit).second.blkdatatimeouts[atypeid];
 
     recordlist::const_iterator fit=q.begin();
-    boost::posix_time::time_duration dist=boost::posix_time::hours(10),t;
+    boost::posix_time::time_duration dist,t;
+    t=*time_req-(*fit).timestamp;
+    dist=t;
     while(fit!=q.end())
     {
         //Skip
        // if( !(process==""||(*it).publisher==process) ||
+
 		t=*time_req-(*fit).timestamp;
+		//std::cout<<(*fit).timestamp<<" "<<t<<std::endl;
 		if(t. is_negative())
 			t=t.invert_sign();
-        if(t<dist)
-        {
-			++fit;
+        if(t<=dist)
 			dist=t;
-		}
         else
             break;
+		++fit; //advance for the next check
     }
+    if(fit!=q.begin()) --fit;//Go back one, t
 
     if(fit==q.end())
         --fit;
