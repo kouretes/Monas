@@ -372,7 +372,7 @@ void Vision::fetchAndProcess()
 	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"Fetch image takes:"<<endt<<endl;
-	stamp -= boost::posix_time::millisec(config.sensordelay);
+	stamp += boost::posix_time::millisec(config.sensordelay);
 	if (ext.getCamera() == 1)//bottom cam
 	{
 		p.cameraPitch = (KMat::transformations::PI * 40.0) / 180.0;
@@ -429,15 +429,12 @@ void Vision::fetchAndProcess()
 
 	p.Vyaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvaluediff();
 	p.Vpitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvaluediff();
-	float AccX= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_X).sensorvalue();
-	float AccY= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_Y).sensorvalue();
-	float AccZ= asvm->sensordata(KDeviceLists::ACC+KDeviceLists::AXIS_Z).sensorvalue();
 
 
-	p.angX = atan2(-AccY,-AccZ);//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
-	p.angY = atan2(AccX,-AccZ);//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
-	p.VangX = asvm->sensordata(KDeviceLists::GYR+KDeviceLists::AXIS_X).sensorvalue();//im->sensordata(5).sensortimediff();
-	p.VangY = asvm->sensordata(KDeviceLists::GYR+KDeviceLists::AXIS_Y).sensorvalue();//im->sensordata(6).sensortimediff();
+	p.angX = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
+	p.angY = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
+	p.VangX = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvaluediff();
+	p.VangY = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvaluediff();
 
 	p.timediff = asvm->timediff();//Get time from headmessage
 	//p.time = time_t_epoch;
@@ -446,20 +443,23 @@ void Vision::fetchAndProcess()
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
 
-	float imcomp = ((stamp - p.time).total_nanoseconds() * 0.5) / (p.timediff+1);
+	float imcomp = ((stamp - p.time).total_nanoseconds()*0.5 )/ (p.timediff);
 	//#ifdef DEBUGVISIONſ
 	//cout<<boost::posix_time::to_iso_string(stamp)<<endl;
 	//cout<<boost::posix_time::to_iso_string(p.time)<<endl;
 	//cout<<"imcomp:"<<imcomp<<endl;
 	//#endif
 	//imcomp=imcomp;
-	//cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
-	//cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
+#ifdef DEBUGVISION
+	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
+	cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
 	//Estimate the values at excactly the timestamp of the image
+	//Estimate the values at excactly the timestamp of the image
+#endif
 	p.yaw += p.Vyaw * imcomp;
 	p.pitch += p.Vpitch * imcomp;
-	p.angX += p.VangX * 0.25* ((stamp - p.time).total_nanoseconds() )/1000000000.0;
-	p.angY += p.VangY * 0.25* ((stamp - p.time).total_nanoseconds() )/1000000000.0;
+	p.angX += p.VangX * imcomp;
+	p.angY += p.VangY * imcomp;
 	float Dfov;
 	xmlconfig->QueryElement("Dfov", Dfov);
 
@@ -512,7 +512,7 @@ void Vision::fetchAndProcess()
 	locateGoalPost(bgoalpost, skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
-	cout << b.x << " " << b.y << " " << b.cr << endl;
+	//cout << b.x << " " << b.y << " " << b.cr << endl;
 	//KVecFloat2 & w=camToRobot(o)
 	cout<<"Bearing:"<<b.bearing.mean<<" "<<b.bearing.var<<endl;
 	cout<<"Distance:"<<b.distance.mean<<" "<<b.distance.var<<endl;

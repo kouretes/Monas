@@ -210,7 +210,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
     const long long microsecsonly=timeStamp-(secsonly*1000000LL);
 //    cout<<"secsonly:"<<secsonly<<endl;
 
-    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)+boost::posix_time::microsec(lastexpusec);
+    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)+boost::posix_time::microsec(lastexpusec/2)+boost::posix_time::milliseconds(33.3333);
 
 
 };

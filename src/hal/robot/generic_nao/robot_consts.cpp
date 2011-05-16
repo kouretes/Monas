@@ -6,7 +6,7 @@
  */
 #include "robot_consts.h"
 
-const std::string preFix("Device/SubDeviceList/");
+static const std::string preFix("Device/SubDeviceList/");
 
 namespace KDeviceLists
 {
@@ -19,8 +19,11 @@ namespace KDeviceLists
 
 
 	std::vector<std::string> generateSensorNames();
-
 	std::vector< std::string> generateSensorKeys();
+
+	std::vector< std::string> generateButtonKeys();
+
+
 }
 std::vector<std::string> KDeviceLists::generateJointNames()
 {
@@ -225,6 +228,23 @@ std::vector< std::string> KDeviceLists::generateSensorKeys()
 }
 
 
+std::vector< std::string> KDeviceLists::generateButtonKeys()
+{
+	std::vector<std::string> fKeys;
+	fKeys.resize(NUMOFBUTTONS);
+
+	fKeys[CHEST_BUTTON] = preFix+"ChestBoard/Button/Sensor";
+	fKeys[L_BUMPER_L] = preFix+"LFoot/Bumber/Left/Sensor";
+	fKeys[L_BUMPER_R] = preFix+"LFoot/Bumber/Right/Sensor";
+	fKeys[R_BUMPER_L] = preFix+"RFoot/Bumber/Left/Sensor";
+	fKeys[R_BUMPER_R] = preFix+"RFoot/Bumber/Right/Sensor";
+
+
+	return fKeys;
+}
+
+
+
 std::vector<std::string> const& KDeviceLists::getSensorKeys()
 {
 	static const std::vector< std::string> ret = generateSensorKeys();
@@ -248,5 +268,13 @@ std::vector<std::string> const& KDeviceLists::getJointKeys()
 	static const std::vector< std::string> ret = generateJointKeys();
 	return ret;
 }
+
+std::vector<std::string> const& KDeviceLists::getButtonKeys()
+{
+	static const std::vector< std::string> ret = generateButtonKeys();
+	return ret;
+}
+
+
 
 

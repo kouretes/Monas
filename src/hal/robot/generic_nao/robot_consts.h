@@ -52,6 +52,7 @@ namespace KDeviceLists
 	{
 		ROBOT_X=0,ROBOT_Y,ROBOT_ANGLE,ROBOTPOSITION_SIZE
 	};
+
 	enum JointNames
 	{
 		HEAD=0,	L_LEG=HEAD_SIZE , R_LEG=L_LEG+LEG_SIZE,L_ARM=R_LEG+LEG_SIZE,R_ARM=L_ARM+ARM_SIZE ,
@@ -59,6 +60,13 @@ namespace KDeviceLists
 		NUMOFJOINTS=R_ARM+ARM_SIZE
 
 	};
+
+	enum ButtonNames
+	{
+
+		CHEST_BUTTON=0,L_BUMPER_L,L_BUMPER_R,R_BUMPER_L,R_BUMPER_R, BUTTONS_SIZE,NUMOFBUTTONS=BUTTONS_SIZE
+	};
+
 
 	enum SensorNames
 	{
@@ -68,27 +76,33 @@ namespace KDeviceLists
 		GYR=ACC+ACC_SIZE,
 
 		//ANGLE=GYR+GYR_SIZE,
-
 		//L_FSR=ANGLE+ANGLE_SIZE,
 		L_FSR=GYR+GYR_SIZE,
 		R_FSR=L_FSR+FSR_SIZE,
-
 		L_US=R_FSR+FSR_SIZE,
 		R_US=L_US+US_SIZE,
+		//BUTTONS=BUTTONS_SIZE,
 
 		NUMOFSENSORS=R_US+US_SIZE
 
 	};
 
+	enum ComputedSensorsNames
+	{
+		ANGLE=0,
+		NUMOFCOMPUTEDSENSORS=ANGLE_SIZE
+	};
+
 	struct Interpret
 	{
 		static const float GRAVITY_PULL=9.81f; //(m/s^2)
-		static const float ACC_OFFSET=0;
-		static const float ACC_GAIN=9.81/55.555555f; //(56 Unites per g)
 
-		static const float GYR_OFFSET=22000;
 		static const float GYR_Z_REF=1230; //expected value of GYR_Z
 		static const float GYR_GAIN=(-1/2.0f)*0.017453; //(1 / (2mv/deg/sec))* gyr ref
+
+
+		static const float BUTTON_PRESSED=0.0;//Normally on switches
+		static const float BUTTON_RELEASED=1.0;//Normally on switches
 	};
 	std::vector<std::string> const& getJointNames();
 
@@ -99,8 +113,14 @@ namespace KDeviceLists
 	std::vector<std::string> const& getSensorNames();
 	std::vector<std::string> const& getSensorKeys();
 
+
+	//std::vector<std::string> const& getButtonNames();
+	std::vector<std::string> const& getButtonKeys();
+
+	/* Not Implemented yet :P
 	std::map<std::string,JointNames> const& getJointIDs();
 	std::map<std::string,SensorNames> const& getSensorIDs();
+	*/
 
 	//std::vector< std::string> ActuatorName;
 

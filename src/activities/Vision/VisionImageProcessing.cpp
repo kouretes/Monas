@@ -145,7 +145,7 @@ typedef struct
 
 void Vision::gridScan(const KSegmentator::colormask_t color)
 {
-
+	KPROF_SCOPE(vprof,"gridScan");
 	//Horizontal + Vertical Scan
 #ifdef DEBUGVISION
 	cout<<"Starting Grid scan"<<endl;
@@ -831,6 +831,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		ci=imageToCamera(newpost.bot);
 		c3d=kinext.camera2dToGround(ci);
 		measurement *a=kinext.projectionDistance(ci,0);
+		//cout<<"Camera X-Y-Z"<<p.cameraX<<" " <<p.cameraY<<" "<<p.cameraZ<<endl;
 		newpost.distBot=a[0];
 		newpost.distBot.mean+=config.goaldiam/2;
 		newpost.bBot=a[1];
@@ -913,6 +914,8 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		//if(newpost.haveWidth)
 		//	cout<<"WDistance"<<newpost.distWidth.mean<<" "<<newpost.distWidth.var<<endl;
 		//cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
+		//cout<<"Distance top-bot:"<<newpost.distTop.mean<<" "<<newpost.distBot.mean<<endl;
+
 		//cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
 		//cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
 
@@ -1119,6 +1122,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 		return ;
 	}
 	newpost.haveHeight=true;
+	cout<<"Height Only:"<<m.mean;
 	newpost.dist.push_back(m);//add to vector of results:)
 
 }
@@ -1430,9 +1434,9 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 
 #ifdef DEBUGVISION
 	//KVecFloat2 & w=camToRobot(o)
-	Logger::Instance().WriteMsg("Vision", "Distance:"+_toString(best.distance.mean), Logger::Info);
-	cout<<"Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
-	cout<<"Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
+	Logger::Instance().WriteMsg("Vision", "Ball Distance:"+_toString(best.distance.mean), Logger::Info);
+	cout<<"Ball Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
+	cout<<"Ball Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
 
 #endif
 	bd=history.begin();
