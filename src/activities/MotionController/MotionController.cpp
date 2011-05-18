@@ -431,7 +431,7 @@ void MotionController::mglrun()
 				Logger::Instance().WriteMsg("MotionController", "Invalid Head Command: " + hm->command(), Logger::ExtraInfo);
 		}
 
-		if ( canmovebody && (actionPID == 0) && ((am != NULL) || (am == NULL && pam->command()!="NULL")) )
+		if ((actionPID == 0) && ((am != NULL) || (am == NULL && pam->command()!="NULL")) )
 		{
 			int readyToKick = 0;
 			motionSkills = 0;
@@ -544,7 +544,7 @@ void MotionController::mglrun()
 			Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 			//return;
 		}
-		if (canmovebody && (am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning() && (motionSkills == 0))
+		if ((am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning() && (motionSkills == 0))
 		{
 			Logger::Instance().WriteMsg("MotionController", am->command(), Logger::ExtraInfo);
 			stopWalkCommand();

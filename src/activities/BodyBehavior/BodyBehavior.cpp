@@ -217,10 +217,10 @@ int BodyBehavior::Execute() {
 				//	littleWalk(0.2, 0.0, 0.0, 2);
 			//	} else {
 					if (by > 0.0) {
-						amot->set_command("SoftLeftSideKick");
+						amot->set_command("KickSideLeftSoft.xar");
 						direction = -1;
 					} else {
-						amot->set_command("SoftRightSideKick");
+						amot->set_command("KickSideRightSoft.xar");
 						direction = +1;
 					}
 
@@ -247,9 +247,9 @@ int BodyBehavior::Execute() {
 						amot->set_command("RightBackKick");
 				} else {
 					if (by > 0.0)
-						amot->set_command("SoftLeftSideKick");
+						amot->set_command("KickSideLeftSoft.xar");
 					else
-						amot->set_command("SoftRightSideKick");
+						amot->set_command("KickSideRightSoft.xar");
 				}
 
 				_blk->publishSignal(*amot, "motion");
