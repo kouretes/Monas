@@ -2,19 +2,19 @@
 <!-- Show Segmented image using opencv -->
 <cvHighgui>0</cvHighgui>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>11-IranOpen2011nobands-segall.conf</SegmentationBottom>
-<SegmentationTop>11-IranOpen2011nobands-segall.conf</SegmentationTop>
-<Dfov>53.3</Dfov>
+<SegmentationBottom>5-KouretesLab-segall.conf</SegmentationBottom>
+<SegmentationTop>5-KouretesLab-segall.conf</SegmentationTop>
+<Dfov>53.85</Dfov>
 <!-- Ball Detection -->
-<ballsize>0.066</ballsize>
-<balltolerance>0.2</balltolerance>
+<ballsize>0.065</ballsize>
+<balltolerance>0.15</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.1</skipdistance>
 <seedistance>7.2</seedistance>
 <!-- Image Scanning parameters -->
 <scanV>32</scanV>
-<scanH>42</scanH>
-<minH>6</minH>
+<scanH>32</scanH>
+<minH>8</minH>
 <!--<scanstep>23</scanstep>-->
 <bordersize>12</bordersize>
 <pixeltol>5</pixeltol>
@@ -24,10 +24,10 @@
 <!--- Goal posts --->
 <goalheight>0.79</goalheight>
 <goaldist>1.4</goaldist>
-<goaldiam>0.107</goaldiam>
+<goaldiam>0.098</goaldiam>
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>0</sensordelay>
+<sensordelay>1</sensordelay>
 
-<pitchoffset>0.028</pitchoffset>
+<pitchoffset>0.0565</pitchoffset>

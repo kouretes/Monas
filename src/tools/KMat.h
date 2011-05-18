@@ -352,7 +352,7 @@ namespace KMat
 				RefHandle<DataContainer<T,M,N> >::getHandle();
 				for (unsigned i=0;i<M;i++)
 					for (unsigned j=0;j<N;j++)
-						h->data(i,j)-=h->rop.h->data(i,j);
+						h->data(i,j)-=rop.h->data(i,j);
 
 				return static_cast< D<T,M,N> &> (*this);
 			};

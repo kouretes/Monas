@@ -1,35 +1,34 @@
-#include "ALstandUpBack2011.h"
+#include "ALstandUpBack2011_2.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 
 namespace {
-SpecialActionRegistrar<ALstandUpBack2011>::Type temp("ALstandUpBack2011");
+SpecialActionRegistrar<ALstandUpBack2011_2>::Type temp("ALstandUpBack2011_2");
 }
 
-ALstandUpBack2011::ALstandUpBack2011() {
+ALstandUpBack2011_2::ALstandUpBack2011_2() {
   Initialize();
-  Logger::Instance().WriteMsg("SP:ALstandUpBack2011","Initialized!",Logger::ExtraInfo);
-  
+  Logger::Instance().WriteMsg("SP:ALstandUpBack2011_2","Initialized!",Logger::ExtraInfo);
+
   try {
     motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
   } catch (AL::ALError& e) {
-    Logger::Instance().WriteMsg("SP:ALstandUpBack2011","Error in getting motion proxy",Logger::FatalError);
+    Logger::Instance().WriteMsg("SP:ALstandUpBack2011_2","Error in getting motion proxy",Logger::FatalError);
   }
-  
+
 }
 
 
 
 
-void ALstandUpBack2011::Initialize() {
-  
+void ALstandUpBack2011_2::Initialize() {
 	names.reserve(25);
 	times.arraySetSize(25);
 	keys.arraySetSize(25);
 
 	names.push_back("HeadYaw");
-	times[0].arraySetSize(11);
-	keys[0].arraySetSize(11);
+	times[0].arraySetSize(12);
+	keys[0].arraySetSize(12);
 
 	times[0][0] = 0.300000;
 	keys[0][0] = AL::ALValue::array(-0.0245859, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -48,15 +47,17 @@ void ALstandUpBack2011::Initialize() {
 	times[0][7] = 3.50000;
 	keys[0][7] = AL::ALValue::array(0.263545, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.166667, 0.00000));
 	times[0][8] = 4.00000;
-	keys[0][8] = AL::ALValue::array(0.120428, AL::ALValue::array(3, -0.166667, 0.0649872), AL::ALValue::array(3, 0.0666667, -0.0259949));
-	times[0][9] = 4.20000;
-	keys[0][9] = AL::ALValue::array(-0.00940132, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[0][10] = 5.10000;
-	keys[0][10] = AL::ALValue::array(0.0659200, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[0][8] = AL::ALValue::array(0.120428, AL::ALValue::array(3, -0.166667, 0.0413555), AL::ALValue::array(3, 0.200000, -0.0496266));
+	times[0][9] = 4.60000;
+	keys[0][9] = AL::ALValue::array(-0.00940132, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[0][10] = 5.40000;
+	keys[0][10] = AL::ALValue::array(-0.00940132, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[0][11] = 6.50000;
+	keys[0][11] = AL::ALValue::array(0.0659200, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("HeadPitch");
-	times[1].arraySetSize(11);
-	keys[1].arraySetSize(11);
+	times[1].arraySetSize(12);
+	keys[1].arraySetSize(12);
 
 	times[1][0] = 0.300000;
 	keys[1][0] = AL::ALValue::array(0.0628521, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -75,15 +76,17 @@ void ALstandUpBack2011::Initialize() {
 	times[1][7] = 3.50000;
 	keys[1][7] = AL::ALValue::array(0.0104720, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.166667, 0.00000));
 	times[1][8] = 4.00000;
-	keys[1][8] = AL::ALValue::array(0.0296706, AL::ALValue::array(3, -0.166667, -0.0191986), AL::ALValue::array(3, 0.0666667, 0.00767945));
-	times[1][9] = 4.20000;
-	keys[1][9] = AL::ALValue::array(0.378859, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[1][10] = 5.10000;
-	keys[1][10] = AL::ALValue::array(-0.0399260, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[1][8] = AL::ALValue::array(0.0296706, AL::ALValue::array(3, -0.166667, -0.0191986), AL::ALValue::array(3, 0.200000, 0.0230383));
+	times[1][9] = 4.60000;
+	keys[1][9] = AL::ALValue::array(0.378859, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[1][10] = 5.40000;
+	keys[1][10] = AL::ALValue::array(0.378859, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[1][11] = 6.50000;
+	keys[1][11] = AL::ALValue::array(-0.0399260, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LShoulderPitch");
-	times[2].arraySetSize(11);
-	keys[2].arraySetSize(11);
+	times[2].arraySetSize(12);
+	keys[2].arraySetSize(12);
 
 	times[2][0] = 0.300000;
 	keys[2][0] = AL::ALValue::array(2.08560, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -98,19 +101,21 @@ void ALstandUpBack2011::Initialize() {
 	times[2][5] = 2.40000;
 	keys[2][5] = AL::ALValue::array(2.08560, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.233333, 0.00000));
 	times[2][6] = 3.10000;
-	keys[2][6] = AL::ALValue::array(1.28698, AL::ALValue::array(3, -0.233333, 0.239363), AL::ALValue::array(3, 0.133333, -0.136779));
+	keys[2][6] = AL::ALValue::array(1.22522, AL::ALValue::array(3, -0.233333, 0.239363), AL::ALValue::array(3, 0.133333, -0.136779));
 	times[2][7] = 3.50000;
-	keys[2][7] = AL::ALValue::array(0.957173, AL::ALValue::array(3, -0.133333, 0.0820408), AL::ALValue::array(3, 0.166667, -0.102551));
+	keys[2][7] = AL::ALValue::array(0.957173, AL::ALValue::array(3, -0.133333, 0.0728906), AL::ALValue::array(3, 0.166667, -0.0911133));
 	times[2][8] = 4.00000;
-	keys[2][8] = AL::ALValue::array(0.733209, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[2][9] = 4.20000;
-	keys[2][9] = AL::ALValue::array(0.733209, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[2][10] = 5.10000;
-	keys[2][10] = AL::ALValue::array(1.59225, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[2][8] = AL::ALValue::array(0.733209, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[2][9] = 4.60000;
+	keys[2][9] = AL::ALValue::array(0.733209, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[2][10] = 5.40000;
+	keys[2][10] = AL::ALValue::array(0.733209, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[2][11] = 6.50000;
+	keys[2][11] = AL::ALValue::array(1.59225, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LShoulderRoll");
-	times[3].arraySetSize(11);
-	keys[3].arraySetSize(11);
+	times[3].arraySetSize(13);
+	keys[3].arraySetSize(13);
 
 	times[3][0] = 0.300000;
 	keys[3][0] = AL::ALValue::array(0.980184, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -123,21 +128,25 @@ void ALstandUpBack2011::Initialize() {
 	times[3][4] = 2.00000;
 	keys[3][4] = AL::ALValue::array(0.366519, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
 	times[3][5] = 2.40000;
-	keys[3][5] = AL::ALValue::array(0.00869999, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.233333, 0.00000));
-	times[3][6] = 3.10000;
-	keys[3][6] = AL::ALValue::array(0.0705221, AL::ALValue::array(3, -0.233333, -0.0547644), AL::ALValue::array(3, 0.133333, 0.0312939));
-	times[3][7] = 3.50000;
-	keys[3][7] = AL::ALValue::array(0.266875, AL::ALValue::array(3, -0.133333, -0.0634053), AL::ALValue::array(3, 0.166667, 0.0792566));
-	times[3][8] = 4.00000;
-	keys[3][8] = AL::ALValue::array(0.498508, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[3][9] = 4.20000;
-	keys[3][9] = AL::ALValue::array(0.498508, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[3][10] = 5.10000;
-	keys[3][10] = AL::ALValue::array(0.219320, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[3][5] = AL::ALValue::array(0.00869999, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
+	times[3][6] = 2.80000;
+	keys[3][6] = AL::ALValue::array(0.623083, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.100000, 0.00000));
+	times[3][7] = 3.10000;
+	keys[3][7] = AL::ALValue::array(0.0705221, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
+	times[3][8] = 3.50000;
+	keys[3][8] = AL::ALValue::array(0.266875, AL::ALValue::array(3, -0.133333, -0.0634053), AL::ALValue::array(3, 0.166667, 0.0792566));
+	times[3][9] = 4.00000;
+	keys[3][9] = AL::ALValue::array(0.498508, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[3][10] = 4.60000;
+	keys[3][10] = AL::ALValue::array(0.498508, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[3][11] = 5.40000;
+	keys[3][11] = AL::ALValue::array(0.498508, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[3][12] = 6.50000;
+	keys[3][12] = AL::ALValue::array(0.219320, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LElbowYaw");
-	times[4].arraySetSize(11);
-	keys[4].arraySetSize(11);
+	times[4].arraySetSize(12);
+	keys[4].arraySetSize(12);
 
 	times[4][0] = 0.300000;
 	keys[4][0] = AL::ALValue::array(-0.760906, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -152,19 +161,21 @@ void ALstandUpBack2011::Initialize() {
 	times[4][5] = 2.40000;
 	keys[4][5] = AL::ALValue::array(0.0872665, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.233333, 0.00000));
 	times[4][6] = 3.10000;
-	keys[4][6] = AL::ALValue::array(-0.854480, AL::ALValue::array(3, -0.233333, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
+	keys[4][6] = AL::ALValue::array(-1.48353, AL::ALValue::array(3, -0.233333, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
 	times[4][7] = 3.50000;
-	keys[4][7] = AL::ALValue::array(-0.250085, AL::ALValue::array(3, -0.133333, -0.138897), AL::ALValue::array(3, 0.166667, 0.173622));
+	keys[4][7] = AL::ALValue::array(-0.250085, AL::ALValue::array(3, -0.133333, -0.232090), AL::ALValue::array(3, 0.166667, 0.290112));
 	times[4][8] = 4.00000;
-	keys[4][8] = AL::ALValue::array(0.0830765, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[4][9] = 4.20000;
-	keys[4][9] = AL::ALValue::array(0.0830765, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[4][10] = 5.10000;
-	keys[4][10] = AL::ALValue::array(-1.03089, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[4][8] = AL::ALValue::array(0.0830765, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[4][9] = 4.60000;
+	keys[4][9] = AL::ALValue::array(0.0830765, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[4][10] = 5.40000;
+	keys[4][10] = AL::ALValue::array(0.0830765, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[4][11] = 6.50000;
+	keys[4][11] = AL::ALValue::array(-1.03089, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LElbowRoll");
-	times[5].arraySetSize(12);
-	keys[5].arraySetSize(12);
+	times[5].arraySetSize(13);
+	keys[5].arraySetSize(13);
 
 	times[5][0] = 0.300000;
 	keys[5][0] = AL::ALValue::array(-0.624296, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -179,17 +190,19 @@ void ALstandUpBack2011::Initialize() {
 	times[5][5] = 2.40000;
 	keys[5][5] = AL::ALValue::array(-0.0349066, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
 	times[5][6] = 2.80000;
-	keys[5][6] = AL::ALValue::array(-0.191986, AL::ALValue::array(3, -0.133333, 0.157080), AL::ALValue::array(3, 0.100000, -0.117810));
+	keys[5][6] = AL::ALValue::array(-0.0349066, AL::ALValue::array(3, -0.133333, 0.124001), AL::ALValue::array(3, 0.100000, -0.0930011));
 	times[5][7] = 3.10000;
-	keys[5][7] = AL::ALValue::array(-0.872804, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
+	keys[5][7] = AL::ALValue::array(-0.685914, AL::ALValue::array(3, -0.100000, 0.107953), AL::ALValue::array(3, 0.133333, -0.143937));
 	times[5][8] = 3.50000;
-	keys[5][8] = AL::ALValue::array(-0.829852, AL::ALValue::array(3, -0.133333, -0.00999259), AL::ALValue::array(3, 0.166667, 0.0124907));
+	keys[5][8] = AL::ALValue::array(-0.829852, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.166667, 0.00000));
 	times[5][9] = 4.00000;
-	keys[5][9] = AL::ALValue::array(-0.805354, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[5][10] = 4.20000;
-	keys[5][10] = AL::ALValue::array(-0.805354, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[5][11] = 5.10000;
-	keys[5][11] = AL::ALValue::array(-0.681054, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[5][9] = AL::ALValue::array(-0.805354, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[5][10] = 4.60000;
+	keys[5][10] = AL::ALValue::array(-0.805354, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[5][11] = 5.40000;
+	keys[5][11] = AL::ALValue::array(-0.805354, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[5][12] = 6.50000;
+	keys[5][12] = AL::ALValue::array(-0.681054, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LWristYaw");
 	times[6].arraySetSize(5);
@@ -202,9 +215,9 @@ void ALstandUpBack2011::Initialize() {
 	times[6][2] = 3.10000;
 	keys[6][2] = AL::ALValue::array(-0.719487, AL::ALValue::array(3, -0.666667, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
 	times[6][3] = 3.50000;
-	keys[6][3] = AL::ALValue::array(-0.722556, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.533333, 0.00000));
-	times[6][4] = 5.10000;
-	keys[6][4] = AL::ALValue::array(-0.711819, AL::ALValue::array(3, -0.533333, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[6][3] = AL::ALValue::array(-0.722556, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 1.00000, 0.00000));
+	times[6][4] = 6.50000;
+	keys[6][4] = AL::ALValue::array(-0.711819, AL::ALValue::array(3, -1.00000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LHand");
 	times[7].arraySetSize(5);
@@ -217,13 +230,13 @@ void ALstandUpBack2011::Initialize() {
 	times[7][2] = 3.10000;
 	keys[7][2] = AL::ALValue::array(0.00269144, AL::ALValue::array(3, -0.666667, -0.000435451), AL::ALValue::array(3, 0.133333, 8.70902e-05));
 	times[7][3] = 3.50000;
-	keys[7][3] = AL::ALValue::array(0.00290088, AL::ALValue::array(3, -0.133333, -0.000121008), AL::ALValue::array(3, 0.533333, 0.000484033));
-	times[7][4] = 5.10000;
-	keys[7][4] = AL::ALValue::array(0.00450656, AL::ALValue::array(3, -0.533333, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[7][3] = AL::ALValue::array(0.00290088, AL::ALValue::array(3, -0.133333, -7.11814e-05), AL::ALValue::array(3, 1.00000, 0.000533860));
+	times[7][4] = 6.50000;
+	keys[7][4] = AL::ALValue::array(0.00450656, AL::ALValue::array(3, -1.00000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RShoulderPitch");
-	times[8].arraySetSize(11);
-	keys[8].arraySetSize(11);
+	times[8].arraySetSize(12);
+	keys[8].arraySetSize(12);
 
 	times[8][0] = 0.300000;
 	keys[8][0] = AL::ALValue::array(2.08560, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -242,15 +255,17 @@ void ALstandUpBack2011::Initialize() {
 	times[8][7] = 3.50000;
 	keys[8][7] = AL::ALValue::array(1.44047, AL::ALValue::array(3, -0.133333, 0.169762), AL::ALValue::array(3, 0.166667, -0.212203));
 	times[8][8] = 4.00000;
-	keys[8][8] = AL::ALValue::array(0.891306, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[8][9] = 4.20000;
-	keys[8][9] = AL::ALValue::array(0.891306, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[8][10] = 5.10000;
-	keys[8][10] = AL::ALValue::array(1.46961, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[8][8] = AL::ALValue::array(0.891306, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[8][9] = 4.60000;
+	keys[8][9] = AL::ALValue::array(0.891306, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[8][10] = 5.40000;
+	keys[8][10] = AL::ALValue::array(0.891306, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[8][11] = 6.50000;
+	keys[8][11] = AL::ALValue::array(1.46961, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RShoulderRoll");
-	times[9].arraySetSize(11);
-	keys[9].arraySetSize(11);
+	times[9].arraySetSize(12);
+	keys[9].arraySetSize(12);
 
 	times[9][0] = 0.300000;
 	keys[9][0] = AL::ALValue::array(-1.07384, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -269,15 +284,17 @@ void ALstandUpBack2011::Initialize() {
 	times[9][7] = 3.50000;
 	keys[9][7] = AL::ALValue::array(-0.705682, AL::ALValue::array(3, -0.133333, 0.0456459), AL::ALValue::array(3, 0.166667, -0.0570574));
 	times[9][8] = 4.00000;
-	keys[9][8] = AL::ALValue::array(-0.872665, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[9][9] = 4.20000;
-	keys[9][9] = AL::ALValue::array(-0.680678, AL::ALValue::array(3, -0.0666667, -0.0437752), AL::ALValue::array(3, 0.300000, 0.196988));
-	times[9][10] = 5.10000;
-	keys[9][10] = AL::ALValue::array(-0.150374, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[9][8] = AL::ALValue::array(-0.872665, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[9][9] = 4.60000;
+	keys[9][9] = AL::ALValue::array(-0.680678, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[9][10] = 5.40000;
+	keys[9][10] = AL::ALValue::array(-0.680678, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[9][11] = 6.50000;
+	keys[9][11] = AL::ALValue::array(-0.150374, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RElbowYaw");
-	times[10].arraySetSize(11);
-	keys[10].arraySetSize(11);
+	times[10].arraySetSize(12);
+	keys[10].arraySetSize(12);
 
 	times[10][0] = 0.300000;
 	keys[10][0] = AL::ALValue::array(0.765425, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -296,15 +313,17 @@ void ALstandUpBack2011::Initialize() {
 	times[10][7] = 3.50000;
 	keys[10][7] = AL::ALValue::array(-0.0261199, AL::ALValue::array(3, -0.133333, -0.0103241), AL::ALValue::array(3, 0.166667, 0.0129051));
 	times[10][8] = 4.00000;
-	keys[10][8] = AL::ALValue::array(0.000615569, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[10][9] = 4.20000;
-	keys[10][9] = AL::ALValue::array(0.000615569, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[10][10] = 5.10000;
-	keys[10][10] = AL::ALValue::array(0.912689, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[10][8] = AL::ALValue::array(0.000615569, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[10][9] = 4.60000;
+	keys[10][9] = AL::ALValue::array(0.000615569, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[10][10] = 5.40000;
+	keys[10][10] = AL::ALValue::array(0.000615569, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[10][11] = 6.50000;
+	keys[10][11] = AL::ALValue::array(0.912689, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RElbowRoll");
-	times[11].arraySetSize(11);
-	keys[11].arraySetSize(11);
+	times[11].arraySetSize(12);
+	keys[11].arraySetSize(12);
 
 	times[11][0] = 0.300000;
 	keys[11][0] = AL::ALValue::array(0.710284, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -323,11 +342,13 @@ void ALstandUpBack2011::Initialize() {
 	times[11][7] = 3.50000;
 	keys[11][7] = AL::ALValue::array(0.190258, AL::ALValue::array(3, -0.133333, -0.0620562), AL::ALValue::array(3, 0.166667, 0.0775702));
 	times[11][8] = 4.00000;
-	keys[11][8] = AL::ALValue::array(0.453786, AL::ALValue::array(3, -0.166667, -0.0880224), AL::ALValue::array(3, 0.0666667, 0.0352089));
-	times[11][9] = 4.20000;
-	keys[11][9] = AL::ALValue::array(0.559952, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[11][10] = 5.10000;
-	keys[11][10] = AL::ALValue::array(0.380475, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[11][8] = AL::ALValue::array(0.453786, AL::ALValue::array(3, -0.166667, -0.0560142), AL::ALValue::array(3, 0.200000, 0.0672171));
+	times[11][9] = 4.60000;
+	keys[11][9] = AL::ALValue::array(0.559952, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[11][10] = 5.40000;
+	keys[11][10] = AL::ALValue::array(0.559952, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[11][11] = 6.50000;
+	keys[11][11] = AL::ALValue::array(0.380475, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RWristYaw");
 	times[12].arraySetSize(5);
@@ -340,9 +361,9 @@ void ALstandUpBack2011::Initialize() {
 	times[12][2] = 3.10000;
 	keys[12][2] = AL::ALValue::array(1.07836, AL::ALValue::array(3, -0.666667, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
 	times[12][3] = 3.50000;
-	keys[12][3] = AL::ALValue::array(1.07989, AL::ALValue::array(3, -0.133333, -0.000408991), AL::ALValue::array(3, 0.533333, 0.00163596));
-	times[12][4] = 5.10000;
-	keys[12][4] = AL::ALValue::array(1.08450, AL::ALValue::array(3, -0.533333, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[12][3] = AL::ALValue::array(1.07989, AL::ALValue::array(3, -0.133333, -0.000240583), AL::ALValue::array(3, 1.00000, 0.00180437));
+	times[12][4] = 6.50000;
+	keys[12][4] = AL::ALValue::array(1.08450, AL::ALValue::array(3, -1.00000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RHand");
 	times[13].arraySetSize(7);
@@ -359,13 +380,13 @@ void ALstandUpBack2011::Initialize() {
 	times[13][4] = 3.10000;
 	keys[13][4] = AL::ALValue::array(0.00299607, AL::ALValue::array(3, -0.366667, -0.000244350), AL::ALValue::array(3, 0.133333, 8.88547e-05));
 	times[13][5] = 3.50000;
-	keys[13][5] = AL::ALValue::array(0.00308492, AL::ALValue::array(3, -0.133333, -5.07728e-05), AL::ALValue::array(3, 0.533333, 0.000203091));
-	times[13][6] = 5.10000;
-	keys[13][6] = AL::ALValue::array(0.00375766, AL::ALValue::array(3, -0.533333, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[13][5] = AL::ALValue::array(0.00308492, AL::ALValue::array(3, -0.133333, -2.98663e-05), AL::ALValue::array(3, 1.00000, 0.000223998));
+	times[13][6] = 6.50000;
+	keys[13][6] = AL::ALValue::array(0.00375766, AL::ALValue::array(3, -1.00000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LHipYawPitch");
-	times[14].arraySetSize(10);
-	keys[14].arraySetSize(10);
+	times[14].arraySetSize(11);
+	keys[14].arraySetSize(11);
 
 	times[14][0] = 0.300000;
 	keys[14][0] = AL::ALValue::array(-0.470897, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -382,15 +403,17 @@ void ALstandUpBack2011::Initialize() {
 	times[14][6] = 3.50000;
 	keys[14][6] = AL::ALValue::array(-0.696386, AL::ALValue::array(3, -0.133333, -0.0676658), AL::ALValue::array(3, 0.166667, 0.0845822));
 	times[14][7] = 4.00000;
-	keys[14][7] = AL::ALValue::array(-0.402255, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[14][8] = 4.20000;
-	keys[14][8] = AL::ALValue::array(-0.402255, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[14][9] = 5.10000;
-	keys[14][9] = AL::ALValue::array(-0.230059, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[14][7] = AL::ALValue::array(-0.402255, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[14][8] = 4.60000;
+	keys[14][8] = AL::ALValue::array(-0.402255, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[14][9] = 5.40000;
+	keys[14][9] = AL::ALValue::array(-0.120428, AL::ALValue::array(3, -0.266667, -0.0564568), AL::ALValue::array(3, 0.366667, 0.0776281));
+	times[14][10] = 6.50000;
+	keys[14][10] = AL::ALValue::array(0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LHipRoll");
-	times[15].arraySetSize(11);
-	keys[15].arraySetSize(11);
+	times[15].arraySetSize(12);
+	keys[15].arraySetSize(12);
 
 	times[15][0] = 0.300000;
 	keys[15][0] = AL::ALValue::array(0.0445279, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -409,15 +432,17 @@ void ALstandUpBack2011::Initialize() {
 	times[15][7] = 3.50000;
 	keys[15][7] = AL::ALValue::array(0.00924597, AL::ALValue::array(3, -0.133333, -0.0543439), AL::ALValue::array(3, 0.166667, 0.0679298));
 	times[15][8] = 4.00000;
-	keys[15][8] = AL::ALValue::array(0.191986, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[15][9] = 4.20000;
-	keys[15][9] = AL::ALValue::array(0.174533, AL::ALValue::array(3, -0.0666667, 0.00242899), AL::ALValue::array(3, 0.300000, -0.0109305));
-	times[15][10] = 5.10000;
-	keys[15][10] = AL::ALValue::array(0.151908, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[15][8] = AL::ALValue::array(0.191986, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[15][9] = 4.60000;
+	keys[15][9] = AL::ALValue::array(0.174533, AL::ALValue::array(3, -0.200000, 0.0174533), AL::ALValue::array(3, 0.266667, -0.0232711));
+	times[15][10] = 5.40000;
+	keys[15][10] = AL::ALValue::array(-0.0296706, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[15][11] = 6.50000;
+	keys[15][11] = AL::ALValue::array(0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LHipPitch");
-	times[16].arraySetSize(11);
-	keys[16].arraySetSize(11);
+	times[16].arraySetSize(12);
+	keys[16].arraySetSize(12);
 
 	times[16][0] = 0.300000;
 	keys[16][0] = AL::ALValue::array(0.250085, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -436,15 +461,17 @@ void ALstandUpBack2011::Initialize() {
 	times[16][7] = 3.50000;
 	keys[16][7] = AL::ALValue::array(-0.455555, AL::ALValue::array(3, -0.133333, 0.118296), AL::ALValue::array(3, 0.166667, -0.147870));
 	times[16][8] = 4.00000;
-	keys[16][8] = AL::ALValue::array(-0.855211, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[16][9] = 4.20000;
-	keys[16][9] = AL::ALValue::array(-0.835988, AL::ALValue::array(3, -0.0666667, -0.0192230), AL::ALValue::array(3, 0.300000, 0.0865036));
-	times[16][10] = 5.10000;
-	keys[16][10] = AL::ALValue::array(0.213269, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[16][8] = AL::ALValue::array(-0.855211, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[16][9] = 4.60000;
+	keys[16][9] = AL::ALValue::array(-0.835988, AL::ALValue::array(3, -0.200000, -0.00448799), AL::ALValue::array(3, 0.266667, 0.00598398));
+	times[16][10] = 5.40000;
+	keys[16][10] = AL::ALValue::array(-0.823795, AL::ALValue::array(3, -0.266667, -0.0121929), AL::ALValue::array(3, 0.366667, 0.0167652));
+	times[16][11] = 6.50000;
+	keys[16][11] = AL::ALValue::array(0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LKneePitch");
-	times[17].arraySetSize(11);
-	keys[17].arraySetSize(11);
+	times[17].arraySetSize(12);
+	keys[17].arraySetSize(12);
 
 	times[17][0] = 0.300000;
 	keys[17][0] = AL::ALValue::array(0.0919980, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -463,15 +490,17 @@ void ALstandUpBack2011::Initialize() {
 	times[17][7] = 3.50000;
 	keys[17][7] = AL::ALValue::array(2.11253, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.166667, 0.00000));
 	times[17][8] = 4.00000;
-	keys[17][8] = AL::ALValue::array(2.11253, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[17][9] = 4.20000;
-	keys[17][9] = AL::ALValue::array(2.11253, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[17][10] = 5.10000;
-	keys[17][10] = AL::ALValue::array(-0.0890139, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[17][8] = AL::ALValue::array(2.11253, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[17][9] = 4.60000;
+	keys[17][9] = AL::ALValue::array(2.11253, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[17][10] = 5.40000;
+	keys[17][10] = AL::ALValue::array(2.07345, AL::ALValue::array(3, -0.266667, 0.0390779), AL::ALValue::array(3, 0.366667, -0.0537321));
+	times[17][11] = 6.50000;
+	keys[17][11] = AL::ALValue::array(-0.0890139, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LAnklePitch");
-	times[18].arraySetSize(11);
-	keys[18].arraySetSize(11);
+	times[18].arraySetSize(12);
+	keys[18].arraySetSize(12);
 
 	times[18][0] = 0.300000;
 	keys[18][0] = AL::ALValue::array(0.825249, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -490,15 +519,17 @@ void ALstandUpBack2011::Initialize() {
 	times[18][7] = 3.50000;
 	keys[18][7] = AL::ALValue::array(-1.18944, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.166667, 0.00000));
 	times[18][8] = 4.00000;
-	keys[18][8] = AL::ALValue::array(-1.18944, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[18][9] = 4.20000;
-	keys[18][9] = AL::ALValue::array(-1.18944, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[18][10] = 5.10000;
-	keys[18][10] = AL::ALValue::array(0.0812601, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[18][8] = AL::ALValue::array(-1.18944, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[18][9] = 4.60000;
+	keys[18][9] = AL::ALValue::array(-1.18944, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[18][10] = 5.40000;
+	keys[18][10] = AL::ALValue::array(-1.17635, AL::ALValue::array(3, -0.266667, -0.0130900), AL::ALValue::array(3, 0.366667, 0.0179987));
+	times[18][11] = 6.50000;
+	keys[18][11] = AL::ALValue::array(0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("LAnkleRoll");
-	times[19].arraySetSize(11);
-	keys[19].arraySetSize(11);
+	times[19].arraySetSize(12);
+	keys[19].arraySetSize(12);
 
 	times[19][0] = 0.300000;
 	keys[19][0] = AL::ALValue::array(-0.0337060, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -517,15 +548,17 @@ void ALstandUpBack2011::Initialize() {
 	times[19][7] = 3.50000;
 	keys[19][7] = AL::ALValue::array(0.0429939, AL::ALValue::array(3, -0.133333, -0.0322627), AL::ALValue::array(3, 0.166667, 0.0403283));
 	times[19][8] = 4.00000;
-	keys[19][8] = AL::ALValue::array(0.118105, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[19][9] = 4.20000;
-	keys[19][9] = AL::ALValue::array(0.0872665, AL::ALValue::array(3, -0.0666667, 0.0154296), AL::ALValue::array(3, 0.300000, -0.0694333));
-	times[19][10] = 5.10000;
-	keys[19][10] = AL::ALValue::array(-0.136484, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[19][8] = AL::ALValue::array(0.118105, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[19][9] = 4.60000;
+	keys[19][9] = AL::ALValue::array(0.0872665, AL::ALValue::array(3, -0.200000, 0.0201134), AL::ALValue::array(3, 0.266667, -0.0268179));
+	times[19][10] = 5.40000;
+	keys[19][10] = AL::ALValue::array(-0.0226893, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[19][11] = 6.50000;
+	keys[19][11] = AL::ALValue::array(0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RHipRoll");
-	times[20].arraySetSize(11);
-	keys[20].arraySetSize(11);
+	times[20].arraySetSize(12);
+	keys[20].arraySetSize(12);
 
 	times[20][0] = 0.300000;
 	keys[20][0] = AL::ALValue::array(-0.148756, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -544,15 +577,17 @@ void ALstandUpBack2011::Initialize() {
 	times[20][7] = 3.50000;
 	keys[20][7] = AL::ALValue::array(-0.626573, AL::ALValue::array(3, -0.133333, -0.00000), AL::ALValue::array(3, 0.166667, 0.00000));
 	times[20][8] = 4.00000;
-	keys[20][8] = AL::ALValue::array(-0.296706, AL::ALValue::array(3, -0.166667, -0.145029), AL::ALValue::array(3, 0.0666667, 0.0580114));
-	times[20][9] = 4.20000;
-	keys[20][9] = AL::ALValue::array(-0.0174533, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[20][10] = 5.10000;
-	keys[20][10] = AL::ALValue::array(-0.0628521, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[20][8] = AL::ALValue::array(-0.296706, AL::ALValue::array(3, -0.166667, -0.0922909), AL::ALValue::array(3, 0.200000, 0.110749));
+	times[20][9] = 4.60000;
+	keys[20][9] = AL::ALValue::array(-0.0174533, AL::ALValue::array(3, -0.200000, -0.0353429), AL::ALValue::array(3, 0.266667, 0.0471239));
+	times[20][10] = 5.40000;
+	keys[20][10] = AL::ALValue::array(0.0296706, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[20][11] = 6.50000;
+	keys[20][11] = AL::ALValue::array(-0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RHipPitch");
-	times[21].arraySetSize(11);
-	keys[21].arraySetSize(11);
+	times[21].arraySetSize(12);
+	keys[21].arraySetSize(12);
 
 	times[21][0] = 0.300000;
 	keys[21][0] = AL::ALValue::array(0.185572, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -571,15 +606,17 @@ void ALstandUpBack2011::Initialize() {
 	times[21][7] = 3.50000;
 	keys[21][7] = AL::ALValue::array(-1.02974, AL::ALValue::array(3, -0.133333, -0.0969325), AL::ALValue::array(3, 0.166667, 0.121166));
 	times[21][8] = 4.00000;
-	keys[21][8] = AL::ALValue::array(-0.905826, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[21][9] = 4.20000;
-	keys[21][9] = AL::ALValue::array(-0.905826, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[21][10] = 5.10000;
-	keys[21][10] = AL::ALValue::array(0.208583, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[21][8] = AL::ALValue::array(-0.905826, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[21][9] = 4.60000;
+	keys[21][9] = AL::ALValue::array(-0.905826, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.266667, 0.00000));
+	times[21][10] = 5.40000;
+	keys[21][10] = AL::ALValue::array(-0.823795, AL::ALValue::array(3, -0.266667, -0.0820305), AL::ALValue::array(3, 0.366667, 0.112792));
+	times[21][11] = 6.50000;
+	keys[21][11] = AL::ALValue::array(0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RKneePitch");
-	times[22].arraySetSize(11);
-	keys[22].arraySetSize(11);
+	times[22].arraySetSize(12);
+	keys[22].arraySetSize(12);
 
 	times[22][0] = 0.300000;
 	keys[22][0] = AL::ALValue::array(0.191792, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -598,15 +635,17 @@ void ALstandUpBack2011::Initialize() {
 	times[22][7] = 3.50000;
 	keys[22][7] = AL::ALValue::array(1.08385, AL::ALValue::array(3, -0.133333, 0.0160710), AL::ALValue::array(3, 0.166667, -0.0200888));
 	times[22][8] = 4.00000;
-	keys[22][8] = AL::ALValue::array(0.876155, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[22][9] = 4.20000;
-	keys[22][9] = AL::ALValue::array(1.76278, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[22][10] = 5.10000;
-	keys[22][10] = AL::ALValue::array(-0.0766580, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[22][8] = AL::ALValue::array(0.876155, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[22][9] = 4.60000;
+	keys[22][9] = AL::ALValue::array(1.76278, AL::ALValue::array(3, -0.200000, -0.171042), AL::ALValue::array(3, 0.266667, 0.228056));
+	times[22][10] = 5.40000;
+	keys[22][10] = AL::ALValue::array(2.07345, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[22][11] = 6.50000;
+	keys[22][11] = AL::ALValue::array(-0.0766580, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RAnklePitch");
-	times[23].arraySetSize(11);
-	keys[23].arraySetSize(11);
+	times[23].arraySetSize(12);
+	keys[23].arraySetSize(12);
 
 	times[23][0] = 0.300000;
 	keys[23][0] = AL::ALValue::array(0.466378, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -625,15 +664,17 @@ void ALstandUpBack2011::Initialize() {
 	times[23][7] = 3.50000;
 	keys[23][7] = AL::ALValue::array(0.441568, AL::ALValue::array(3, -0.133333, 0.0307178), AL::ALValue::array(3, 0.166667, -0.0383972));
 	times[23][8] = 4.00000;
-	keys[23][8] = AL::ALValue::array(0.403171, AL::ALValue::array(3, -0.166667, 0.0383972), AL::ALValue::array(3, 0.0666667, -0.0153589));
-	times[23][9] = 4.20000;
-	keys[23][9] = AL::ALValue::array(-0.579449, AL::ALValue::array(3, -0.0666667, -0.00000), AL::ALValue::array(3, 0.300000, 0.00000));
-	times[23][10] = 5.10000;
-	keys[23][10] = AL::ALValue::array(0.0813440, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+	keys[23][8] = AL::ALValue::array(0.403171, AL::ALValue::array(3, -0.166667, 0.0383972), AL::ALValue::array(3, 0.200000, -0.0460767));
+	times[23][9] = 4.60000;
+	keys[23][9] = AL::ALValue::array(-0.579449, AL::ALValue::array(3, -0.200000, 0.225646), AL::ALValue::array(3, 0.266667, -0.300862));
+	times[23][10] = 5.40000;
+	keys[23][10] = AL::ALValue::array(-1.17635, AL::ALValue::array(3, -0.266667, -0.00000), AL::ALValue::array(3, 0.366667, 0.00000));
+	times[23][11] = 6.50000;
+	keys[23][11] = AL::ALValue::array(0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
 
 	names.push_back("RAnkleRoll");
-	times[24].arraySetSize(11);
-	keys[24].arraySetSize(11);
+	times[24].arraySetSize(12);
+	keys[24].arraySetSize(12);
 
 	times[24][0] = 0.300000;
 	keys[24][0] = AL::ALValue::array(0.167248, AL::ALValue::array(3, -0.100000, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
@@ -650,16 +691,19 @@ void ALstandUpBack2011::Initialize() {
 	times[24][6] = 3.10000;
 	keys[24][6] = AL::ALValue::array(-0.0981341, AL::ALValue::array(3, -0.233333, -0.00000), AL::ALValue::array(3, 0.133333, 0.00000));
 	times[24][7] = 3.50000;
-	keys[24][7] = AL::ALValue::array(0.443314, AL::ALValue::array(3, -0.133333, -0.115220), AL::ALValue::array(3, 0.166667, 0.144025));
+	keys[24][7] = AL::ALValue::array(0.443314, AL::ALValue::array(3, -0.133333, -0.127791), AL::ALValue::array(3, 0.166667, 0.159739));
 	times[24][8] = 4.00000;
-	keys[24][8] = AL::ALValue::array(0.679603, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.0666667, 0.00000));
-	times[24][9] = 4.20000;
-	keys[24][9] = AL::ALValue::array(0.277507, AL::ALValue::array(3, -0.0666667, 0.0373738), AL::ALValue::array(3, 0.300000, -0.168182));
-	times[24][10] = 5.10000;
-	keys[24][10] = AL::ALValue::array(0.0629359, AL::ALValue::array(3, -0.300000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-  
+	keys[24][8] = AL::ALValue::array(0.764454, AL::ALValue::array(3, -0.166667, -0.00000), AL::ALValue::array(3, 0.200000, 0.00000));
+	times[24][9] = 4.60000;
+	keys[24][9] = AL::ALValue::array(0.277507, AL::ALValue::array(3, -0.200000, 0.105966), AL::ALValue::array(3, 0.266667, -0.141289));
+	times[24][10] = 5.40000;
+	keys[24][10] = AL::ALValue::array(0.0226893, AL::ALValue::array(3, -0.266667, 0.0165013), AL::ALValue::array(3, 0.366667, -0.0226893));
+	times[24][11] = 6.50000;
+	keys[24][11] = AL::ALValue::array(-0.00000, AL::ALValue::array(3, -0.366667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
+
+
 }
 
-int ALstandUpBack2011::ExecutePost() {
-  return  motion->post.angleInterpolationBezier(names, times, keys); 
-} 
+int ALstandUpBack2011_2::ExecutePost() {
+  return  motion->post.angleInterpolationBezier(names, times, keys);
+}

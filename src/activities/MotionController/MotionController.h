@@ -54,7 +54,7 @@ private:
 	bool robotUp;
 	//SensorPair AccZ, AccX, AccY;
 	float AccZvalue, AccXvalue, AccYvalue;
-	float accnorm, angX, angY, gyrX, gyrY;
+	float accnorm, angX, angY, VangX, VangY;
 	ptime waitfor;
 	int gameState;
 	int currentstate;
@@ -118,7 +118,7 @@ private:
 	int diffLKick [NUM_OF_POSES - 1][NUM_OF_ANGLES];
 
 	void createDCMAlias();
-	void setStiffnessDCM(float s);
+	//void setStiffnessDCM(float s);
 	typedef std::map<std::string,
 		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
 	typedef std::pair<std::string,

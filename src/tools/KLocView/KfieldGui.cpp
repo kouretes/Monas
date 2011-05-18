@@ -243,7 +243,9 @@ void KfieldGui::DrawObservations(belief Belief,vector<KObservationModel> & curre
 		pt1.y = (-currentObservation[i].Feature.y + (2 * margintoline + field_height) / 2.0) / scale;
 
 		cvCircle(field, pt1, currentObservation[i].Distance.val / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
-		cout << " " << currentObservation[i].Distance.val + currentObservation[i].Distance.Edev << endl;
+		cout << " Distance " << currentObservation[i].Distance.val / scale << endl;
+		cvCircle(field, pt1, rint(currentObservation[i].Distance.val / scale), (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
+		cout << "Real Distance " << currentObservation[i].Distance.val << endl;
 		if ((currentObservation[i].Distance.val + currentObservation[i].Distance.Edev) > 0)
 			cvCircle(field, pt1, (currentObservation[i].Distance.val + currentObservation[i].Distance.Edev) / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["lightyellow"] : color["lightblue"], 0, CV_AA, 0);
 		if ((currentObservation[i].Distance.val - currentObservation[i].Distance.Edev) > 0)
@@ -620,6 +622,7 @@ void KfieldGui::make_field(IplImage** image) {
 
 	//Vertical Line
 	pt1.x = /*pt3.x -*/rint((margintoline + field_width / 2.0 + (linewidth / 2.0f)) / scale);
+	cout << " Vertical Line x " << pt1.x << endl;
 	pt2.x = /* pt3.x +*/rint((margintoline + field_width / 2.0 - (linewidth / 2.0f)) / scale);
 	cvRectangle(*image, pt1, pt2, color["white"], CV_FILLED, 0, 0);
 

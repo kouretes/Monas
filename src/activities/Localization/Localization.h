@@ -10,7 +10,7 @@
 #include "messages/motion.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-//#define KPROFILING_ENABLED
+#define KPROFILING_ENABLED
 
 #include "tools/profiler.hpp"
 
@@ -38,7 +38,7 @@ class Localization: public IActivity, public KLocalization
 		{
 			return "Localization";
 		}
-
+		void calculate_ball_estimate();
 	private:
 
 		int count;
@@ -82,7 +82,7 @@ class Localization: public IActivity, public KLocalization
 
 		boost::posix_time::ptime last_observation_time;
 		boost::posix_time::ptime last_filter_time;
-
+		boost::posix_time::ptime now;
 
 
 		//For Debug!

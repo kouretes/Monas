@@ -63,11 +63,11 @@ int update_field(LocalizationData & DebugData) {
 	robotposition.x = DebugData.robotposition().x();
 	robotposition.y = DebugData.robotposition().y();
 	robotposition.phi = DebugData.robotposition().phi();
-	//cout << " X " << robotposition.x << " X " << robotposition.y << " X " << robotposition.phi << endl;
+	cout << " X: " << robotposition.x << " Y: " << robotposition.y << " phi " << robotposition.phi << endl;
 	if (initialization) {
 
 		KLocView->KfieldInitTrackLine(Belief);
-		robotposition.x = Belief.x;
+		robotposition.x =  Belief.x;
 		robotposition.y = Belief.y;
 		robotposition.phi = Belief.theta;
 		KLocView->KfieldInitTrackLine(robotposition);
