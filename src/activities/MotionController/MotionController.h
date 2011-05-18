@@ -18,6 +18,8 @@
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif
+#define NUM_OF_ANGLES 6
+#define NUM_OF_POSES 5
 
 using namespace boost::posix_time;
 
@@ -106,13 +108,14 @@ private:
 
 	void MotionSkillsInit();
 	void AngleCompare();
-
-	int comp[20];
-	float RKickAng1 [6], RKickAng2 [6], RKickAng3 [6], RKickAng4 [6], RKickAng5 [6], RKickAng6 [6];
-	float LKickAng1 [6], LKickAng2 [6], LKickAng3 [6], LKickAng4 [6], LKickAng5 [6], LKickAng6 [6];
-	float walkPrevAng [6];
-	int diffRKick1 [6], diffRKick2 [6], diffRKick3 [6], diffRKick4 [6];
-	int diffLKick1 [6], diffLKick2 [6], diffLKick3 [6], diffLKick4 [6];
+	void readRobotLegConfiguration(const std::string& file_name);
+	int motionSkills;
+	int comp [4*(NUM_OF_POSES - 1)+4];
+	float RKickAng [NUM_OF_POSES][NUM_OF_ANGLES];
+	float LKickAng [NUM_OF_POSES][NUM_OF_ANGLES];
+	float walkPrevAng [NUM_OF_ANGLES];
+	int diffRKick [NUM_OF_POSES - 1][NUM_OF_ANGLES];
+	int diffLKick [NUM_OF_POSES - 1][NUM_OF_ANGLES];
 
 	void createDCMAlias();
 	void setStiffnessDCM(float s);
