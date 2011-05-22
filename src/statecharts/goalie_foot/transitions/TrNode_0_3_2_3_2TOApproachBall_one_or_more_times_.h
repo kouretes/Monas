@@ -20,11 +20,11 @@ public:
 		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
-		Stare st;
+	//	Stare st;
 		ApproachBall ab;
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
 			if(obsm.get()!=0 && !ab.ballAway(obsm) && !ab.readyToKick(obsm)){
-				if(doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
+				//if(doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
 					return true;
 			}
 		}

@@ -19,6 +19,8 @@ int SpecialAction::Execute() {
 	
 	bhm->set_headaction(BALLTRACK);
 	_blk->publishSignal(*bhm, "behavior");
+	
+	sleep(2);
 	return 0;
 }
 

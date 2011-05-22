@@ -40,8 +40,8 @@ public:
 					if( ab.ballAway(obsm)) //ball is far away from the goalpost
 						return true;
 					//ball is not far away from the goalpost but goalkeeper can repulse the ball	
-					if(!ab.ballAway(obsm) && doi.get()!=0 && st.toFallOrNotToFall(doi)!=0 )
-						return true;
+				//	if(!ab.ballAway(obsm) && doi.get()!=0 && st.toFallOrNotToFall(doi)!=0 )
+				//		return true;
 				}
 			}
 		}

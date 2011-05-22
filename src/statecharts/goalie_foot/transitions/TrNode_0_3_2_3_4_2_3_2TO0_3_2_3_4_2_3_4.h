@@ -15,7 +15,7 @@ public:
 
 	bool Eval() {
 		/* checkballspeed Do not fall*/
-		Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TO0_3_2_3_4_2_3_4",  " enter", Logger::Info);
+		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TO0_3_2_3_4_2_3_4",  " enter", Logger::Info);
 		Stare st;
 		boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");

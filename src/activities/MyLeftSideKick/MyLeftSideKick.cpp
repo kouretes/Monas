@@ -13,12 +13,12 @@ namespace {
 int MyLeftSideKick::Execute() {
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	if(gsm.get()==0 || (gsm.get()!=0 && gsm->game_state()!=PLAYER_PLAYING)){
-		Logger::Instance().WriteMsg("MyLeftSoftSIDEKick",  " PLAYER NOT PLAYING", Logger::Info);
+		Logger::Instance().WriteMsg("MyLeftSIDEKick",  " PLAYER NOT PLAYING", Logger::Info);
 		return 0;
 	}
 	if(gsm->game_state()==PLAYER_PLAYING) {
-		Logger::Instance().WriteMsg("MyLeftSoftSIDEKick",  " ExecuteKICKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", Logger::Info);
-		amot->set_command("LeftSideKickFast.xar");
+		Logger::Instance().WriteMsg("MyLeftSIDEKick",  " ExecuteKICKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK", Logger::Info);
+		amot->set_command("KickSideLeftFast.xar");
 		_blk->publishSignal(*amot, "motion");
 		return 0;
 	}

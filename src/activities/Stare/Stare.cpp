@@ -116,7 +116,7 @@ int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
 	
 	//if(doi.get()==0){	//the two last observation messages
 	if(doi==0){	//the two last observation messages
-		Logger::Instance().WriteMsg("toFallOrNotToFall",  " no obs", Logger::Info);
+		//Logger::Instance().WriteMsg("toFallOrNotToFall",  " no obs", Logger::Info);
 		return 0;
 	}
 	float x1, x2, y1, y2, temp, dk;
@@ -134,13 +134,13 @@ int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
 	if(x1>x2){
 
 		ds = sqrt(pow((x1 - x2),2) + pow((y1 - y2),2));	// the distance between the last two ball positions
-		Logger::Instance().WriteMsg("toFallOrNotToFall",  " x1 > x2, ds = " + _toString(ds), Logger::Info);
+		//Logger::Instance().WriteMsg("toFallOrNotToFall",  " x1 > x2, ds = " + _toString(ds), Logger::Info);
 		if(ds!=0.0){
 			//time difference dt
 			
 			long dt = ((boost::posix_time::from_iso_string(t2) - boost::posix_time::from_iso_string(t1)).total_milliseconds());
 			if(dt == 0.0){
-				Logger::Instance().WriteMsg("toFallOrNotToFall",  " dt = 0", Logger::Info);
+				//Logger::Instance().WriteMsg("toFallOrNotToFall",  " dt = 0", Logger::Info);
 				return 0;
 			}
 			temp = ((x1-x2)/ds);
@@ -151,30 +151,30 @@ int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
 			
 		//		Logger::Instance().WriteMsg("toFallOrNotToFall",  " t1 = " + t1, Logger::Info);
 		//		Logger::Instance().WriteMsg("toFallOrNotToFall",  " t2 = " + t2, Logger::Info);
-				ur = 0.1/1400;
+				ur = 0.15/1400;
 				ub = ds/dt; // ball speed
-				ub  = ub - 0.7*ub;
+				ub  = ub - 0.3*ub;
 				ubx = (x2-x1)/dt;
-				ubx = ubx - 0.7*ubx;
+				ubx = ubx - 0.3*ubx;
 			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ur = " + _toString(ur), Logger::Info);
 			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ub = " + _toString(ub), Logger::Info);
 			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx = " + _toString(ubx), Logger::Info);
 			
 				if(fabs(ub)>ur){
 					if(ubx==0){
-						Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx = 0", Logger::Info);
+						//Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx = 0", Logger::Info);
 						return 0;
 					}
 					tk = fabs((x2/ubx)); //in milliseconds...................mallon
-					Logger::Instance().WriteMsg("toFallOrNotToFall",  " time to hit the robot" + _toString(tk), Logger::Info);
+					//Logger::Instance().WriteMsg("toFallOrNotToFall",  " time to hit the robot" + _toString(tk), Logger::Info);
 					if(300<tk && tk<4000){
-						Logger::Instance().WriteMsg("toFallOrNotToFall",  " 300<tk<4000 ", Logger::Info);
+						//Logger::Instance().WriteMsg("toFallOrNotToFall",  " 300<tk<4000 ", Logger::Info);
 						if(dk>0){
-							Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot", Logger::Info);
+						//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot", Logger::Info);
 							return 1;	//left	
 						}
 						else{
-							Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot", Logger::Info);
+						//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot", Logger::Info);
 							return -1;	//right
 						}
 					}
@@ -182,6 +182,6 @@ int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
 			}
 		}
 	}	
-	Logger::Instance().WriteMsg("toFallOrNotToFall",  " no foot", Logger::Info);
+	//Logger::Instance().WriteMsg("toFallOrNotToFall",  " no foot", Logger::Info);
 	return 0;		
 }

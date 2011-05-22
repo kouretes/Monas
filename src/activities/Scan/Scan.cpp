@@ -32,13 +32,13 @@ int Scan::Execute() {
 				//if(times==1)
 				//	times++;
 		//	}
-			if(scnm!=0 && scnm->scancompleted()){
-				littleWalk(0.0f, 0.0f, 45*TO_RAD);
-				lastTurn = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(4);
-			}else{
-				if(lastTurn<= boost::posix_time::microsec_clock::universal_time())
+			//if(scnm!=0 && scnm->scancompleted()){
+				//littleWalk(0.0f, 0.0f, 45*TO_RAD);
+				//lastTurn = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(4);
+			//}else{
+				//if(lastTurn<= boost::posix_time::microsec_clock::universal_time())
 					velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-			}
+			//}
 			headaction = SCANFORBALL;
 			//Logger::Instance().WriteMsg("Scan",  " SCANFORBALL", Logger::Info);
 		}

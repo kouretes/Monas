@@ -34,8 +34,8 @@ public:
 		if( obsm.get()!=0 && ab.readyToKick(obsm) ){
 			return true;
 		}
-		if(obsm.get()!=0 && !ab.ballAway(obsm) && doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
-			return true;
+	//	if(obsm.get()!=0 && !ab.ballAway(obsm) && doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
+	//		return true;
 		return false;
 	}
 };

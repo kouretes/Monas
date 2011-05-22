@@ -15,7 +15,7 @@ public:
 
 	bool Eval() {
 		/* check ballspeed Fall */
-		Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TOSpecialAction",  " enter", Logger::Info);
+	//	Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TOSpecialAction",  " enter", Logger::Info);
 		Stare st;
 		boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
 		 
