@@ -17,6 +17,8 @@
 #define VISIBLE
 #endif
 
+#define FORCEINTERLV
+
 /**
  * Basic segmentation class, loads up a custom configuration file in the constructor
  * and fills up a colortable using the rules defined there
@@ -49,27 +51,35 @@ class KSegmentator{
 		*/
         inline colormask_t classifyPixel(const int i,const int j,const colormask_t h) const
         {
+#ifndef FORCEINTERLV
         	if (classifyFunc==NULL)
 				return 0;
 			return ((*this).*(classifyFunc))(i,j,h);
+#else
+			return classify422(i,j,h);
+#endif
         };
         inline void prefetchPixelData(const int i, const int j)
         {
 #ifdef __GNUC__
+#ifndef FORCEINTERLV
 			if(type==INTERLEAVED)
         	{
+#endif
 
         		int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
         		__builtin_prefetch(dataPointer+startofBlock);
         		//How much luck do we NOT have :)
         		if((unsigned(dataPointer+startofBlock) & ~(CACHETAG) )!=(unsigned(dataPointer+startofBlock+3)& ~(CACHETAG) ))
 					__builtin_prefetch(dataPointer+startofBlock+3);
+#ifndef FORCEINTERLV
         	}
         	else if(type==FULL)
         	{
         		__builtin_prefetch(dataPointer+j*width*3+i*3);
 
         	}
+#endif
 
 #endif
         }
@@ -115,10 +125,11 @@ class KSegmentator{
 		//Based on header, one of these should do the trick :)
 		void readRulefile(std::ifstream & conf);
 		void readColorTable(std::ifstream & conf);
-
+#ifndef FORCEINTERLV
 		//pointer to classifierfuncUsed by classifyPixel
 		typedef colormask_t (KSegmentator::*classFncPtr)(const int, const int,const colormask_t) const;
 		classFncPtr classifyFunc;
+#endif
 
 
 		//Value prelookup

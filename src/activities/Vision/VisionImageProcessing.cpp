@@ -1693,10 +1693,10 @@ void Vision::prepSeg(const int x,const int y) const
 {
 	KPROF_SCOPE(vprof,"prepSeg");
 
-	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
-	{
+//	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
+//	{
 		seg->prefetchPixelData(x,y);
-	}
+//	}
 }
 
 #ifdef __GNUC__
