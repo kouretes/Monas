@@ -269,11 +269,11 @@ int VBehavior::Execute() {
 		/* Ready to take action */
 		if (readytokick && !turning) {
 			if (bb > 0.0) {
-				amot->set_command("leftKickB.xar"); //"LeftSideKickFast.xar"
+				amot->set_command("KickForwardLeftCutB.xar"); //"KickSideLeftFast.xar"
 				direction = -1;
 			}
 			else {
-				amot->set_command("rightKickB.xar"); //"RightSideKickFast.xar"
+				amot->set_command("KickForwardRightCutB.xar"); //"KickSideRightFast.xar"
 				direction = +1;
 			}
 			_blk->publishSignal(*amot, "motion");
