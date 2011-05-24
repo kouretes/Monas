@@ -20,28 +20,28 @@
 
 typedef  struct measurement_struct
 {
-    float mean;
-    float var;
+	float mean;
+	float var;
 }  measurement;
 
 class CameraT : public KMat::transformations
 {
 
-		static const double TAU=33.33333333333333333333333333333333;//Skew constant of CMOS sensor in ms
-		//v is velocity components
-		//tau is time per line. constant of CMOS sensors
-		template<typename T> static void skew2d(KMat::ATMatrix<T,3> t,const KMat::GenMatrix<T,2,1>&  v,const T tau)
-		{
-			t.identity();
-			t.AisIdentity=false;
-			t.BisZero=false;
-			t.A(1,2)=v(1)*tau;
-			t.A(2,2)=1+v(2)*tau;
-			t.B.copyFrom(v);
-			v.scalar_mult(tau);
-			v.scalar_mult((T)0.5);
+	static const double TAU=33.33333333333333333333333333333333;//Skew constant of CMOS sensor in ms
+	//v is velocity components
+	//tau is time per line. constant of CMOS sensors
+	template<typename T> static void skew2d(KMat::ATMatrix<T,3> t,const KMat::GenMatrix<T,2,1>&  v,const T tau)
+	{
+		t.identity();
+		t.AisIdentity=false;
+		t.BisZero=false;
+		t.A(1,2)=v(1)*tau;
+		t.A(2,2)=1+v(2)*tau;
+		t.B.copyFrom(v);
+		v.scalar_mult(tau);
+		v.scalar_mult((T)0.5);
 
-		};
+	};
 };
 //double KMat::TAU=33.33333333333333333333333333333333;//Skew constant of CMOS sensor in ms
 
@@ -61,10 +61,10 @@ typedef struct cameraPose
 	float cameraPitch;
 	unsigned  timediff;
 	boost::posix_time::ptime time;//time of sensors
-    float focallength;//in pixels
-    float cameraX;
-    float cameraY;
-    float cameraZ;
+	float focallength;//in pixels
+	float cameraX;
+	float cameraY;
+	float cameraZ;
 	//float imcomp;//Image compensation time in ms;
 
 } cpose;
@@ -73,42 +73,42 @@ typedef struct cameraPose
 class   KCameraTranformation
 {
 
-	public:
+public:
 
-		KCameraTranformation();
-        void Init();
+	KCameraTranformation();
+	void Init();
 
-        void setPose(cpose p);
-        //float getPitch();
-        //float getRoll();
-
-
+	void setPose(cpose p);
+	//float getPitch();
+	//float getRoll();
 
 
-		std::vector<float>  getKinematics(const std::string toAsk) const;
-		float cot(float theta) const;
-		KVecFloat3  camera2dTo3d(const KVecFloat2 & coords) const;
-		KVecFloat2  camera3dTo2d(const KVecFloat3 & coords) const;
-		KVecFloat3  cameraToGround(const KVecFloat3 & c3d) const;
-		KVecFloat3  camera2dToTorso(const KVecFloat2 & coords) const;
-		KVecFloat3  camera2dToGround(const KVecFloat2& c2d) const;
-        KVecFloat3  cameraToGroundProjection(const KVecFloat3 & c3d,float height) const;
-		KVecFloat3  camera2dToGroundProjection(const KVecFloat2& c2d,float height) const;
-		KVecFloat2  groundToCamera2d(const KVecFloat3& g) const;
-		float vectorAngle(const KVecFloat2 & v1,const KVecFloat2 & v2) const;
-		measurement  angularDistance(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize) const;
-        measurement  angularDistanceProjected(const KVecFloat2 & v1,const KVecFloat2 & v2,float realsize) const;
-        measurement* projectionDistance(KVecFloat2 &v,float height) const;
-        float getPitch() const;
-        float getRoll() const;
 
-	private:
-        cpose thepose;
-        KMat::ATMatrix<float,4> cameraChain;//Camera to ground transformation
-        KMat::ATMatrix<float,4> cameraTorsoChain;//CameraToTorso;
-        KMat::ATMatrix<float,4> cameraChainInv;//Inverse
-        //KMat::ATMatrix<float,4> cameraYawless;
-		AL::ALPtr<AL::ALMotionProxy> motion;
+
+	std::vector<float>  getKinematics(const std::string toAsk) const;
+	float cot(float theta) const;
+	KVecFloat3  camera2dTo3d(const KVecFloat2 &coords) const;
+	KVecFloat2  camera3dTo2d(const KVecFloat3 &coords) const;
+	KVecFloat3  cameraToGround(const KVecFloat3 &c3d) const;
+	KVecFloat3  camera2dToTorso(const KVecFloat2 &coords) const;
+	KVecFloat3  camera2dToGround(const KVecFloat2 &c2d) const;
+	KVecFloat3  cameraToGroundProjection(const KVecFloat3 &c3d,float height) const;
+	KVecFloat3  camera2dToGroundProjection(const KVecFloat2 &c2d,float height) const;
+	KVecFloat2  groundToCamera2d(const KVecFloat3 &g) const;
+	float vectorAngle(const KVecFloat2 &v1,const KVecFloat2 &v2) const;
+	measurement  angularDistance(const KVecFloat2 &v1,const KVecFloat2 &v2,float realsize) const;
+	measurement  angularDistanceProjected(const KVecFloat2 &v1,const KVecFloat2 &v2,float realsize) const;
+	measurement *projectionDistance(KVecFloat2 &v,float height) const;
+	float getPitch() const;
+	float getRoll() const;
+
+private:
+	cpose thepose;
+	KMat::ATMatrix<float,4> cameraChain;//Camera to ground transformation
+	KMat::ATMatrix<float,4> cameraTorsoChain;//CameraToTorso;
+	KMat::ATMatrix<float,4> cameraChainInv;//Inverse
+	//KMat::ATMatrix<float,4> cameraYawless;
+	AL::ALPtr<AL::ALMotionProxy> motion;
 
 };
 
