@@ -17,7 +17,15 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/robot_consts.h"
 
-
+/*
+ * Lefteri!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * 
+ * Oi Metavlhtes pou xreiazesai gia thn arxikh thesi
+ * einai initX, initY, initPhi typou float kai arxikopoiountai
+ * otan to robot mpainei se PLAYER_READY state.
+ * 
+ * 
+ * */
 using namespace boost::posix_time;
 
 
@@ -48,9 +56,11 @@ void VBehavior::UserInit() {
 	hmot->add_parameter(0.0f);
 
 	amot = new MotionActionMessage();
-
+	initX =0.0;
+	initY = 0.0;
+	initPhi = 0.0;
 	ballfound = 0;
-
+	readRobotConf = false;
 
 
 	scanforball = true;
@@ -82,6 +92,7 @@ void VBehavior::UserInit() {
 
 	srand(time(0));
 
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	Logger::Instance().WriteMsg("VBehavior", "Initialized", Logger::Info);
 }
 
@@ -141,12 +152,15 @@ int VBehavior::Execute() {
 			play = false;
 		}
 		else if (gameState == PLAYER_READY) {
+			kickoff = gsm->kickoff();
+			if(!readRobotConf)
+				readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml", kickoff);
 			play = false;
 		}
 		else if (gameState == PLAYER_SET) {
 			play = false;
 			calibrate();
-			kickoff = gsm->kickoff();
+			
 		}
 		else if (gameState == PLAYER_FINISHED) {
 			play = false;
@@ -457,4 +471,73 @@ void VBehavior::calibrate()
 	_blk->publishState(v, "vision");
 	calibrated = 1;
 }
+/*
+ * this function set's player number in global variable playernum
+ * and initial team color in global variable teamColor
+ * 
+ * This function is used in UserInit function
+ * 
+ * */
 
+bool VBehavior::readConfiguration(const std::string& file_name) {
+	XMLConfig config(file_name);
+
+	playernum = -1;
+	if (!config.QueryElement("player", playernum))
+		Logger::Instance().WriteMsg("VBehavior", "Configuration fitele has no player, setting to default value: " + _toString(playernum), Logger::Error);
+
+	//If color is changed default configuration color does need to be changed
+	std::string color = "blue";
+	teamColor = TEAM_BLUE;
+	if (!config.QueryElement("default_team_color", color))
+		Logger::Instance().WriteMsg("VBehavior", "Configuration file has no team_color, setting to default value: " + color, Logger::Error);
+	if (color == "blue")
+		teamColor = TEAM_BLUE;
+	else if (color == "red")
+		teamColor = TEAM_RED;
+	else
+		Logger::Instance().WriteMsg("VBehavior", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
+
+	return true;
+}
+
+/*
+ * this function set's initial robot's position:
+ * in x axis : initX in meters
+ * in y axis : initY in meters
+ * in rotation : initPhi in rads
+ * 
+ * 
+ * This function is used in PLAYER_READY state
+ *  */
+bool VBehavior::readRobotConfiguration(const std::string& file_name, bool kickoff) {
+	readRobotConf =true;
+	XML config(file_name);
+	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
+	NodeCont teamPositions, robotPosition ;
+	Logger::Instance().WriteMsg("VBehavior",  " readConf "  , Logger::Info);
+	int side = 1;
+
+	if (kickoff)
+		teamPositions = config.QueryElement<std::string, float, std::string>( "kickOff" );
+	else
+		teamPositions = config.QueryElement<std::string, float, std::string>( "noKickOff" );
+	if( teamPositions.size()!=0)
+		robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
+	Logger::Instance().WriteMsg("VBehavior",  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
+    for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
+		Logger::Instance().WriteMsg("VBehavior",  " it "  , Logger::Info);
+		if(it->attrb["number"] == playernum ){// pnm->player_number()){
+			if(teamColor==TEAM_BLUE){
+				side=-1;
+				initPhi = 180*TO_RAD;
+			}
+			initX = side*(it->attrb["posx"]);
+			initY = side*(it->attrb["posy"]);
+	Logger::Instance().WriteMsg("VBehavior",  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
+			return true;
+		}
+        
+	}
+	return true;
+}

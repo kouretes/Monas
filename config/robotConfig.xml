@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<!--noKickOff, team color is red, for blue team color multiply posx, posy with -1 -->
+
+<noKickOff>
+<!-- GoalKeeper-->
+	<robot number=1 posx=2.5 posy=0.0>
+	</robot>
+	<!-- Center-->
+	<robot number=2 posx=1.8 posy=0.2>
+	</robot>
+	<!-- Defender-->
+	<robot number=3 posx=1.8 posy=-1.4>
+	</robot>
+	<!-- Attacker-->
+	<robot number=4 posx=1.8 posy=1.4>
+	</robot>
+</noKickOff>
+
+<!--kickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
+<kickOff>
+	<robot number=1 posx=2.5 posy=0.0>
+	</robot>
+	<!-- Center-->
+	<robot number=2 posx=0.4 posy=0.0>
+	</robot>
+	<!-- Defender-->
+	<robot number=3 posx=0.7 posy=-0.7>
+	</robot>
+	<!-- Attacker-->
+	<robot number=4 posx=0.7 posy=0.7>
+	</robot>
+</kickOff>

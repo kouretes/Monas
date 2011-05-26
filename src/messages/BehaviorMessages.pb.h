@@ -36,6 +36,7 @@ class HeadToBMessage;
 class ScanMessage;
 class StateEnd;
 class PlayerNumberMessage;
+class PositionMessage;
 
 // ===================================================================
 
@@ -579,6 +580,111 @@ class PlayerNumberMessage : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static PlayerNumberMessage* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class PositionMessage : public ::google::protobuf::Message {
+ public:
+  PositionMessage();
+  virtual ~PositionMessage();
+  
+  PositionMessage(const PositionMessage& from);
+  
+  inline PositionMessage& operator=(const PositionMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PositionMessage& default_instance();
+  
+  void Swap(PositionMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  PositionMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PositionMessage& from);
+  void MergeFrom(const PositionMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float posX = 1 [default = 70];
+  inline bool has_posx() const;
+  inline void clear_posx();
+  static const int kPosXFieldNumber = 1;
+  inline float posx() const;
+  inline void set_posx(float value);
+  
+  // required float posY = 2 [default = 70];
+  inline bool has_posy() const;
+  inline void clear_posy();
+  static const int kPosYFieldNumber = 2;
+  inline float posy() const;
+  inline void set_posy(float value);
+  
+  // required float theta = 3 [default = 1];
+  inline bool has_theta() const;
+  inline void clear_theta();
+  static const int kThetaFieldNumber = 3;
+  inline float theta() const;
+  inline void set_theta(float value);
+  
+  // @@protoc_insertion_point(class_scope:PositionMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  float posx_;
+  float posy_;
+  float theta_;
+  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static PositionMessage* default_instance_;
+};
 // ===================================================================
 
 
@@ -716,6 +822,58 @@ inline ::google::protobuf::int32 PlayerNumberMessage::player_number() const {
 inline void PlayerNumberMessage::set_player_number(::google::protobuf::int32 value) {
   _set_bit(0);
   player_number_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// PositionMessage
+
+// required float posX = 1 [default = 70];
+inline bool PositionMessage::has_posx() const {
+  return _has_bit(0);
+}
+inline void PositionMessage::clear_posx() {
+  posx_ = 70;
+  _clear_bit(0);
+}
+inline float PositionMessage::posx() const {
+  return posx_;
+}
+inline void PositionMessage::set_posx(float value) {
+  _set_bit(0);
+  posx_ = value;
+}
+
+// required float posY = 2 [default = 70];
+inline bool PositionMessage::has_posy() const {
+  return _has_bit(1);
+}
+inline void PositionMessage::clear_posy() {
+  posy_ = 70;
+  _clear_bit(1);
+}
+inline float PositionMessage::posy() const {
+  return posy_;
+}
+inline void PositionMessage::set_posy(float value) {
+  _set_bit(1);
+  posy_ = value;
+}
+
+// required float theta = 3 [default = 1];
+inline bool PositionMessage::has_theta() const {
+  return _has_bit(2);
+}
+inline void PositionMessage::clear_theta() {
+  theta_ = 1;
+  _clear_bit(2);
+}
+inline float PositionMessage::theta() const {
+  return theta_;
+}
+inline void PositionMessage::set_theta(float value) {
+  _set_bit(2);
+  theta_ = value;
 }
 
 

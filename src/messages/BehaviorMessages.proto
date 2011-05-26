@@ -24,3 +24,10 @@ message StateEnd{
 message PlayerNumberMessage{
 	required int32 player_number = 1 [default = 2];
 }
+
+message PositionMessage{
+	required float posX = 1 [default = 70];
+	required float posY = 2 [default = 70];
+	required float theta = 3 [default = 1];
+}
+

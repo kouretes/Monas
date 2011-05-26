@@ -30,6 +30,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PlayerNumberMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PlayerNumberMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PositionMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  PositionMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -131,6 +134,23 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PlayerNumberMessage));
+  PositionMessage_descriptor_ = file->message_type(6);
+  static const int PositionMessage_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PositionMessage, posx_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PositionMessage, posy_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PositionMessage, theta_),
+  };
+  PositionMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      PositionMessage_descriptor_,
+      PositionMessage::default_instance_,
+      PositionMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PositionMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PositionMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(PositionMessage));
 }
 
 namespace {
@@ -155,6 +175,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     StateEnd_descriptor_, &StateEnd::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     PlayerNumberMessage_descriptor_, &PlayerNumberMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    PositionMessage_descriptor_, &PositionMessage::default_instance());
 }
 
 }  // namespace
@@ -172,6 +194,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete StateEnd_reflection_;
   delete PlayerNumberMessage::default_instance_;
   delete PlayerNumberMessage_reflection_;
+  delete PositionMessage::default_instance_;
+  delete PositionMessage_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -188,7 +212,9 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "d\030\002 \002(\005:\0010\"+\n\013ScanMessage\022\034\n\rscancomplet"
     "ed\030\001 \002(\010:\005false\" \n\010StateEnd\022\024\n\005ended\030\001 \002"
     "(\010:\005false\"/\n\023PlayerNumberMessage\022\030\n\rplay"
-    "er_number\030\001 \002(\005:\0012", 298);
+    "er_number\030\001 \002(\005:\0012\"G\n\017PositionMessage\022\020\n"
+    "\004posX\030\001 \002(\002:\00270\022\020\n\004posY\030\002 \002(\002:\00270\022\020\n\005the"
+    "ta\030\003 \002(\002:\0011", 371);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -197,12 +223,14 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   ScanMessage::default_instance_ = new ScanMessage();
   StateEnd::default_instance_ = new StateEnd();
   PlayerNumberMessage::default_instance_ = new PlayerNumberMessage();
+  PositionMessage::default_instance_ = new PositionMessage();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
   ScanMessage::default_instance_->InitAsDefaultInstance();
   StateEnd::default_instance_->InitAsDefaultInstance();
   PlayerNumberMessage::default_instance_->InitAsDefaultInstance();
+  PositionMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -1492,6 +1520,288 @@ void PlayerNumberMessage::Swap(PlayerNumberMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = PlayerNumberMessage_descriptor_;
   metadata.reflection = PlayerNumberMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int PositionMessage::kPosXFieldNumber;
+const int PositionMessage::kPosYFieldNumber;
+const int PositionMessage::kThetaFieldNumber;
+#endif  // !_MSC_VER
+
+PositionMessage::PositionMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void PositionMessage::InitAsDefaultInstance() {
+}
+
+PositionMessage::PositionMessage(const PositionMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void PositionMessage::SharedCtor() {
+  _cached_size_ = 0;
+  posx_ = 70;
+  posy_ = 70;
+  theta_ = 1;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+PositionMessage::~PositionMessage() {
+  SharedDtor();
+}
+
+void PositionMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void PositionMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PositionMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return PositionMessage_descriptor_;
+}
+
+const PositionMessage& PositionMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+PositionMessage* PositionMessage::default_instance_ = NULL;
+
+PositionMessage* PositionMessage::New() const {
+  return new PositionMessage;
+}
+
+void PositionMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    posx_ = 70;
+    posy_ = 70;
+    theta_ = 1;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool PositionMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required float posX = 1 [default = 70];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &posx_)));
+          _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_posY;
+        break;
+      }
+      
+      // required float posY = 2 [default = 70];
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_posY:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &posy_)));
+          _set_bit(1);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_theta;
+        break;
+      }
+      
+      // required float theta = 3 [default = 1];
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_theta:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &theta_)));
+          _set_bit(2);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void PositionMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required float posX = 1 [default = 70];
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->posx(), output);
+  }
+  
+  // required float posY = 2 [default = 70];
+  if (_has_bit(1)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->posy(), output);
+  }
+  
+  // required float theta = 3 [default = 1];
+  if (_has_bit(2)) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->theta(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* PositionMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required float posX = 1 [default = 70];
+  if (_has_bit(0)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->posx(), target);
+  }
+  
+  // required float posY = 2 [default = 70];
+  if (_has_bit(1)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->posy(), target);
+  }
+  
+  // required float theta = 3 [default = 1];
+  if (_has_bit(2)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->theta(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int PositionMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required float posX = 1 [default = 70];
+    if (has_posx()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float posY = 2 [default = 70];
+    if (has_posy()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float theta = 3 [default = 1];
+    if (has_theta()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PositionMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const PositionMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const PositionMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void PositionMessage::MergeFrom(const PositionMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_posx(from.posx());
+    }
+    if (from._has_bit(1)) {
+      set_posy(from.posy());
+    }
+    if (from._has_bit(2)) {
+      set_theta(from.theta());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void PositionMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PositionMessage::CopyFrom(const PositionMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PositionMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  
+  return true;
+}
+
+void PositionMessage::Swap(PositionMessage* other) {
+  if (other != this) {
+    std::swap(posx_, other->posx_);
+    std::swap(posy_, other->posy_);
+    std::swap(theta_, other->theta_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata PositionMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = PositionMessage_descriptor_;
+  metadata.reflection = PositionMessage_reflection_;
   return metadata;
 }
 
