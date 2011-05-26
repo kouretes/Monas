@@ -42,3 +42,10 @@ message DoubleObsInfo{
 message FallMessage{
 required int32 fall = 1 [default = 0];
 }
+
+message PositionMessage{
+	required float posX = 1 [default = 70];
+	required float posY = 2 [default = 70];
+	required float theta = 3 [default = 1];
+}
+
