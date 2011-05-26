@@ -60,11 +60,12 @@ int Stare::Execute() {
 	th=th>1?1:th;
 	th=th<-1?-1:th;
 
-	if(lastMove<= boost::posix_time::microsec_clock::universal_time()){//////////////////////////////
-		velocityWalk(0,0,th,f);
-		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
-	}
-	//toFallOrNotToFall(doim);
+	//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){//////////////////////////////
+		//velocityWalk(0,0,th,f);
+	//	lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
+//	}
+	fm->set_fall(toFallOrNotToFall(doim));
+	_blk->publishSignal(*fm, "behavior");
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 	//Logger::Instance().WriteMsg("Stare",  " end", Logger::Info);
@@ -74,6 +75,7 @@ int Stare::Execute() {
 void Stare::UserInit () {
 	rcvObsm = boost::posix_time::microsec_clock::universal_time();
 	lastMove = boost::posix_time::microsec_clock::universal_time();
+	fm = new FallMessage();
 	_blk->subscribeTo("vision", 0);
 	_blk->subscribeTo("sensors", 0);
 	_blk->subscribeTo("behavior", 0);
@@ -111,8 +113,9 @@ void Stare::velocityWalk(double x, double y, double th, double f) {
  * Time in milliseconds
  * Velocity in meters/milliseconds
  * */
-int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
-//int Stare::toFallOrNotToFall( DoubleObsInfo* doi){
+//int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
+
+int Stare::toFallOrNotToFall( DoubleObsInfo* doi){
 	
 	//if(doi.get()==0){	//the two last observation messages
 	if(doi==0){	//the two last observation messages
@@ -167,15 +170,15 @@ int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
 					}
 					tk = fabs((x2/ubx)); //in milliseconds...................mallon
 					//Logger::Instance().WriteMsg("toFallOrNotToFall",  " time to hit the robot" + _toString(tk), Logger::Info);
-					if(300<tk && tk<4000){
+					if(1500<tk && tk<6500){
 						//Logger::Instance().WriteMsg("toFallOrNotToFall",  " 300<tk<4000 ", Logger::Info);
 						if(dk>0){
-						//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot", Logger::Info);
-							return 1;	//left	
+							Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
+							return 1;	//right	
 						}
 						else{
-						//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot", Logger::Info);
-							return -1;	//right
+							Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
+							return -1;	//left
 						}
 					}
 				}

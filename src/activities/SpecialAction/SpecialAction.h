@@ -20,6 +20,7 @@ public:
 	boost::shared_ptr<const DoubleObsInfo> obs;
 	MotionActionMessage* amot;	
 	BToHeadMessage* bhm;
+	boost::shared_ptr<const FallMessage> fm;
 };
 
 #endif // _SpecialAction_h_

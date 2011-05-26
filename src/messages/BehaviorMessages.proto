@@ -38,3 +38,7 @@ message DoubleObsInfo{
 	required ObservationMessage  prev = 1;
 	required ObservationMessage  last = 2;
 }
+
+message FallMessage{
+required int32 fall = 1 [default = 0];
+}

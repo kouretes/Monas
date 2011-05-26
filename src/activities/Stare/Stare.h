@@ -29,11 +29,12 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	int toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi);
-	//int toFallOrNotToFall(DoubleObsInfo* doi);
+	//int toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi);
+	int toFallOrNotToFall(DoubleObsInfo* doi);
 private:
 	MotionWalkMessage wmot;	
 	BToHeadMessage* bhmsg;
+	FallMessage* fm;
 	ObservationMessage* lastObsm;
 	DoubleObsInfo* doim;
 	boost::posix_time::ptime rcvObsm;
