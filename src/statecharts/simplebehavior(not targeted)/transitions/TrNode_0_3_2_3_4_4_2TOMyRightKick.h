@@ -19,7 +19,7 @@ public:
 	bool Eval() {
 		//_blk->process_messages();
 		//boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage> ("ObservationMessage");
+		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage> ("vision");
 		
 	//	if(gsm.get()==0)
 	//		return false;

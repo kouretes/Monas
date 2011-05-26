@@ -17,10 +17,10 @@ public:
 
 	bool Eval() {
 		//_blk->process_messages();
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("GameStateMessage");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
 		
 		if ( gsm.get() == 0 ){
-			//std::cout<<"*************Transition Play FALSE NO GSM*****************"<<std::endl;
+		//	std::cout<<"*************Transition Play FALSE NO GSM*****************"<<std::endl;
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_2TOplay", "FALSE NO GSM", Logger::Info);
 			return false;
 		}else if( gsm->player_state()!=PLAYER_PLAYING){
@@ -28,8 +28,8 @@ public:
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_2TOplay", "FALSE !PLAYING", Logger::Info);
 			return false;
 		}else{
-			//std::cout<<"*************Transition Play TRUE*****************"<<std::endl;
-			//Logger::Instance().WriteMsg("TrCond_0_3_2_2TOplay", "TRUE", Logger::Info);
+		//	std::cout<<"*************Transition Play TRUE*****************"<<std::endl;
+		//	Logger::Instance().WriteMsg("TrCond_0_3_2_2TOplay", "TRUE", Logger::Info);
 			return true;
 		}
     }

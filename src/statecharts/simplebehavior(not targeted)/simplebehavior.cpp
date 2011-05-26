@@ -415,9 +415,9 @@ simplebehavior::simplebehavior(Narukom* com) {
 	ICondition* TrCondInst_decisionTOdecision = new TrCond_decisionTOdecision;
 	_conditions.push_back( TrCondInst_decisionTOdecision );
 
-		
+		IAction* babinos = new Mitsos;
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2,Node_0_3_2  ,TrCondInst_decisionTOdecision  ) ); //decisionTOdecision
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2,Node_0_3_2  ,TrCondInst_decisionTOdecision, babinos  ) ); //decisionTOdecision
 		
 
 		

@@ -21,7 +21,7 @@ public:
 		bool cond;
 		//_blk->process_messages();
 		//boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
-		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage> ("HeadToBMessage");
+		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage> ("behavior");
 		//boost::shared_ptr<const ObservationMessage> obsm = _blk->read_signal<ObservationMessage> ("ObservationMessage");
 		
 	//	if(gsm.get()==0){

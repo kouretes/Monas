@@ -2,10 +2,11 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/timeout.pb.h"		
 #include <boost/date_time/posix_time/ptime.hpp>
-
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "tools/logger.h"
-#include "tools/toString.h"
+#include "tools/toString.h"	
+#include "architecture/statechartEngine/IAction.h"
+#include "architecture/statechartEngine/TimoutAciton.h"	
 	
 class TrCond_decisionTOdecision : public statechart_engine::ICondition {
 			
@@ -15,7 +16,20 @@ void UserInit () {
 		}
 
 	bool Eval() {
-				//Logger::Instance().WriteMsg("TrCond_decisionTOdecision", "TRUE", Logger::Info);
+		Logger::Instance().WriteMsg("TrCond_decisionTOdecision", " ", Logger::Info);
+		boost::shared_ptr<const TimeoutMsg> msg  = _blk->readState<TimeoutMsg>("behavior");
+		std::string time;
+		if ( msg.get() != 0 ) {
+			time = msg->wakeup();
+			int timeout=-1;
+			if(time=="")
+				return false;
+			 timeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(time) ).total_microseconds();
+			if ( time != "" && timeout < 0) 
+				return false;
+		}
+
+		Logger::Instance().WriteMsg("TrCond_decisionTOdecision", "TRUE", Logger::Info);
 	//	boost::shared_ptr<const TimeoutMsg> tmsg = _blk->read_state<TimeoutMsg> ("TimeoutMsg");
 		//std::string stime = tmsg->wakeup();
 		//if (tmsg==0 || stime==""){
@@ -32,7 +46,7 @@ void UserInit () {
 		//return false;
 		//Refresh state
 		_blk->publish_all();
-		SysCall::_usleep(200000);
+		//SysCall::_usleep(250000);
 		_blk->process_messages();
 		/* TRUE */
 		return true;
@@ -41,4 +55,13 @@ void UserInit () {
     }
 	
 };
-		
+				
+class Mitsos : public statechart_engine::TimeoutAction {
+			
+public:
+
+  Mitsos() : statechart_engine::TimeoutAction("behavior",200) {
+    ;
+  }
+};
+

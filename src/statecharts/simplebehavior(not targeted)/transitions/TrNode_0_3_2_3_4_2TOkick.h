@@ -19,7 +19,7 @@ public:
 	bool Eval() {
 		bool cond;
 		//_blk->process_messages();
-		boost::shared_ptr<const KickOffMessage> kcm = _blk->readState<KickOffMessage> ("KickOffMessage");
+		boost::shared_ptr<const KickOffMessage> kcm = _blk->readState<KickOffMessage> ("behavior");
 	//	boost::shared_ptr<const GameStateMessage> gsm = _blk->read_state<GameStateMessage> ("GameStateMessage");
 		//if(gsm==0){
 		//	Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2TOKick", "FALSE", Logger::Info);
