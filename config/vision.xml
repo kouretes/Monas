@@ -2,8 +2,8 @@
 <!-- Show Segmented image using opencv -->
 <cvHighgui>0</cvHighgui>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>5-KouretesLab-segall.conf</SegmentationBottom>
-<SegmentationTop>5-KouretesLab-segall.conf</SegmentationTop>
+<SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
+<SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
 <Dfov>53.85</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
@@ -30,4 +30,4 @@
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>1</sensordelay>
 
-<pitchoffset>0.0565</pitchoffset>
+<pitchoffset>0.05</pitchoffset>
