@@ -20,9 +20,18 @@ public:
 		boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 
+		boost::shared_ptr<const FallMessage> fm = _blk->readSignal<FallMessage>("behavior");
+		int fall;
+		//fall = st.toFallOrNotToFall(doi);
+		if(fm.get()!=0)
+			fall = fm->fall();
+		else
+			fall =0;
+			
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)
 			return true;
-		return (st.toFallOrNotToFall(doi)==0);
+		//return (st.toFallOrNotToFall(doi)==0);
+		return (fall==0);
     }
 };
 		

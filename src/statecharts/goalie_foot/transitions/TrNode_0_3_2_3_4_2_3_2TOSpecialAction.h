@@ -18,9 +18,13 @@ public:
 	//	Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TOSpecialAction",  " enter", Logger::Info);
 		Stare st;
 		boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
-		 
+		boost::shared_ptr<const FallMessage> fm = _blk->readSignal<FallMessage>("behavior");
 		int fall;
-		fall = st.toFallOrNotToFall(doi);
+		//fall = st.toFallOrNotToFall(doi);
+		if(fm.get()!=0)
+			fall = fm->fall();
+		else
+			fall =0;
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_PLAYING){
