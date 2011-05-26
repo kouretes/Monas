@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
-<!-- Show Segmented image using opencv -->
-<cvHighgui>0</cvHighgui>
+<!-- Refresh Segmentation parameters based camera every : (millisec) -->
+<camerarefreshmillisec>5000</camerarefreshmillisec>
+
 <!--  Configuration files for Segmentation-->
 <SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
 <SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
