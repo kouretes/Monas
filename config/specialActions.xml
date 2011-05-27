@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+
+<KickForwardRight>
+<legsPose pose=0 angle1=-20.1131 angle2=-0.90073 angle3=-15.9987 angle4=-1.40386 angle5=53.2648 angle6=50.7873>
+</legsPose>
+
+<legsPose pose=1 angle1=-26.453 angle2=-0.612838 angle3=-9.67049 angle4=-1.843324 angle5=48.51865 angle6=55.1057>
+</legsPose>
+
+<legsPose pose=2 angle1=-29.4413 angle2=-0.349163 angle3=-13.0983 angle4=1.23289 angle5=50.4523 angle6=59.0608>
+</legsPose>
+
+<legsPose pose=3 angle1=-35.7695 angle2=-0.0854875 angle3=-19.2507 angle4=6.33061 angle5=55.9894 angle6=67.2348>
+</legsPose>
+
+<legsPose pose=4 angle1=-49.4376 angle2=-0.173379 angle3=-33.9511 angle4=8.4732 angle5=79.9857 angle6=80.1333>
+</legsPose>
+</KickForwardRight>
+
+
+<KickForwardLeft>
+<legsPose pose=0 angle1=-15.9987 angle2=1.40386 angle3=-20.1131 angle4=0.70073 angle5=50.7873 angle6=53.2648>
+</legsPose>
+
+<legsPose pose=1 angle1=-9.67049 angle2=1.84332 angle3=-26.453 angle4=0.612838 angle5=55.1057 angle6=48.5186>
+</legsPose>
+
+<legsPose pose=2 angle1=-13.0983 angle2=-1.23289 angle3=-29.4413 angle4=0.3491639 angle5=59.0608 angle6=50.4523>
+</legsPose>
+
+<legsPose pose=3 angle1=-19.2507 angle2=-6.33061 angle3=-35.7695 angle4=0.0854875 angle5=67.2348 angle6=55.9894>
+</legsPose>
+
+<legsPose pose=4 angle1=-33.9511 angle2=-8.4732 angle3=-49.4376 angle4=0.173379 angle5=80.1333 angle6=79.9857>
+</legsPose>
+</KickForwardLeft>
+
+
+<KickBackRight>
+<legsPose pose=0 angle1=-24.9588 angle2=0.090296 angle3=-16.8776 angle4=-0.788621 angle5=41.751 angle6=39.9883>
+</legsPose>
+
+<legsPose pose=1 angle1=-35.7695 angle2=-0.0854875 angle3=-19.2507 angle4=6.33061 angle5=55.9894 angle6=67.2348>
+</legsPose>
+</KickBackRight>

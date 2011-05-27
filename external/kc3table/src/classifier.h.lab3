@@ -1,0 +1,703 @@
+	if(Feature02<=116 & Feature03>170  )
+	   return 6;
+	if(Feature02<=108 & Feature03>160  )
+	   return 6;
+	if(Feature02<=100 & Feature03>156  )
+	   return 6;
+	if(Feature01<=109 & Feature02<=118 & Feature03>156  )
+	   return 6;
+	if(Feature01<=101 & Feature02<=119 & Feature03>156  )
+	   return 6;
+	if(Feature01<=116 & Feature02<=108 & Feature03>154  )
+	   return 6;
+	if(Feature01<=116 & Feature02<=104 & Feature03>149  )
+	   return 6;
+	if(Feature01<=109 & Feature02<=122 & Feature03>167  )
+	   return 6;
+	if(Feature01<=129 & Feature02>108 & Feature02<=116 & Feature03>158  )
+	   return 6;
+	if(Feature01>129 & Feature02<=112 & Feature03>158  )
+	   return 6;
+	if(Feature01>47 & Feature01<=73 & Feature02<=121 & Feature03>155  )
+	   return 6;
+	if(Feature01>47 & Feature01<=73 & Feature03>158  )
+	   return 6;
+	if(Feature01>109 & Feature02>113 & Feature02<=116 & Feature03>154 & Feature03<=156  )
+	   return 6;
+	if(Feature01<=149 & Feature02>116 & Feature02<=118 & Feature03>154 & Feature03<=155  )
+	   return 6;
+	if(Feature01>117 & Feature01<=124 & Feature02>113 & Feature02<=114 & Feature03>151 & Feature03<=152  )
+	   return 6;
+	if(Feature01>109 & Feature01<=131 & Feature02>119 & Feature02<=120 & Feature03>155 & Feature03<=159  )
+	   return 6;
+	if(Feature01<=70 & Feature02>154  )
+	   return 2;
+	if(Feature01<=109 & Feature02>155 & Feature03>116  )
+	   return 2;
+	if(Feature01<=109 & Feature02>160 & Feature03>113  )
+	   return 2;
+	if(Feature01<=90 & Feature02>149 & Feature03>113 & Feature03<=128  )
+	   return 2;
+	if(Feature01>40 & Feature01<=75 & Feature02>137 & Feature03>113 & Feature03<=116  )
+	   return 2;
+	if(Feature01<=111 & Feature02>155 & Feature03>120  )
+	   return 2;
+	if(Feature01>48 & Feature01<=85 & Feature02>145 & Feature03>113 & Feature03<=125  )
+	   return 2;
+	if(Feature01<=85 & Feature02>142 & Feature03>108 & Feature03<=113  )
+	   return 2;
+	if(Feature01>51 & Feature01<=94 & Feature02>146 & Feature03>123 & Feature03<=126  )
+	   return 2;
+	if(Feature01>62 & Feature01<=94 & Feature02>150 & Feature03>113 & Feature03<=132  )
+	   return 2;
+	if(Feature01<=122 & Feature02>162  )
+	   return 2;
+	if(Feature01<=97 & Feature02>144 & Feature03>116 & Feature03<=121  )
+	   return 2;
+	if(Feature01<=52 & Feature02>141 & Feature03<=121  )
+	   return 2;
+	if(Feature01<=97 & Feature02>140 & Feature03>116 & Feature03<=120  )
+	   return 2;
+	if(Feature01<=81 & Feature02>142 & Feature03>95 & Feature03<=113  )
+	   return 2;
+	if(Feature01<=48 & Feature02>145 & Feature03<=127  )
+	   return 2;
+	if(Feature01>72 & Feature01<=94 & Feature02>146 & Feature03>113  )
+	   return 2;
+	if(Feature01<=48 & Feature02>143 & Feature03<=124  )
+	   return 2;
+	if(Feature01>37 & Feature01<=43 & Feature02>136 & Feature03>116 & Feature03<=121  )
+	   return 2;
+	if(Feature01>45 & Feature01<=109 & Feature02>148 & Feature03>127 & Feature03<=128  )
+	   return 2;
+	if(Feature01<=39 & Feature02>142 & Feature03>123 & Feature03<=125  )
+	   return 2;
+	if(Feature01>81 & Feature02>142 & Feature02<=157 & Feature03>89 & Feature03<=97  )
+	   return 2;
+	if(Feature01>96 & Feature01<=107 & Feature02>145 & Feature02<=146 & Feature03>121  )
+	   return 2;
+	if(Feature01<=173 & Feature02<=142 & Feature03<=101  )
+	   return 3;
+	if(Feature02<=127 & Feature03<=106  )
+	   return 3;
+	if(Feature03<=95  )
+	   return 3;
+	if(Feature01<=127 & Feature02<=134 & Feature03<=111  )
+	   return 3;
+	if(Feature01<=97 & Feature02<=137 & Feature03<=116  )
+	   return 3;
+	if(Feature02<=131 & Feature03<=105  )
+	   return 3;
+	if(Feature01<=173 & Feature02<=138 & Feature03<=104  )
+	   return 3;
+	if(Feature01<=91 & Feature02<=142 & Feature03<=113  )
+	   return 3;
+	if(Feature01<=164 & Feature02<=132 & Feature03>104 & Feature03<=106  )
+	   return 3;
+	if(Feature01<=154 & Feature02<=129 & Feature03<=108  )
+	   return 3;
+	if(Feature01<=150 & Feature02>122 & Feature02<=130 & Feature03<=113  )
+	   return 3;
+	if(Feature01<=150 & Feature02<=135 & Feature03<=109  )
+	   return 3;
+	if(Feature01>159 & Feature02<=107 & Feature03<=140  )
+	   return 5;
+	if(Feature01>150 & Feature02<=101 & Feature03>145 & Feature03<=160  )
+	   return 5;
+	if(Feature01>117 & Feature02<=107 & Feature03>137 & Feature03<=140  )
+	   return 5;
+	if(Feature02<=106 & Feature03<=133  )
+	   return 5;
+	if(Feature01<=131 & Feature02<=108 & Feature03<=136  )
+	   return 5;
+	if(Feature01<=149 & Feature02<=107 & Feature03<=137  )
+	   return 5;
+	if(Feature01<=214 & Feature02<=102 & Feature03<=148  )
+	   return 5;
+	if(Feature02<=105 & Feature03<=145  )
+	   return 5;
+	if(Feature01>109 & Feature01<=125 & Feature02<=119 & Feature03>113 & Feature03<=127  )
+	   return 5;
+	if(Feature01>138 & Feature01<=146 & Feature02<=116 & Feature03>130 & Feature03<=131  )
+	   return 5;
+	if(Feature01>155 & Feature01<=172 & Feature02<=112 & Feature03>133 & Feature03<=136  )
+	   return 5;
+	if(Feature01<=172 & Feature02<=111 & Feature03<=128  )
+	   return 5;
+	if(Feature01>161 & Feature01<=162 & Feature02<=113 & Feature03>133 & Feature03<=140  )
+	   return 5;
+	if(Feature01>109 & Feature01<=121 & Feature02<=120 & Feature03>113 & Feature03<=127  )
+	   return 5;
+	if(Feature01>109 & Feature01<=146 & Feature02<=112 & Feature03>127 & Feature03<=132  )
+	   return 5;
+	if(Feature01>109 & Feature01<=146 & Feature02<=110 & Feature03<=135  )
+	   return 5;
+	if(Feature01>109 & Feature01<=146 & Feature02<=111 & Feature03<=133  )
+	   return 5;
+	if(Feature01>137 & Feature01<=146 & Feature02<=113 & Feature03<=132  )
+	   return 5;
+	if(Feature01>146 & Feature01<=172 & Feature02<=111 & Feature03>133 & Feature03<=140  )
+	   return 5;
+	if(Feature01>109 & Feature01<=146 & Feature02<=113 & Feature03>127 & Feature03<=131  )
+	   return 5;
+	if(Feature01>140 & Feature01<=146 & Feature02<=114 & Feature03<=133  )
+	   return 5;
+	if(Feature01>132 & Feature01<=146 & Feature02<=115 & Feature03>127 & Feature03<=130  )
+	   return 5;
+	if(Feature01>109 & Feature01<=146 & Feature02<=114 & Feature03>127 & Feature03<=130  )
+	   return 5;
+	if(Feature01>121 & Feature02<=111 & Feature03>133 & Feature03<=134  )
+	   return 5;
+	if(Feature01>109 & Feature01<=146 & Feature02<=116 & Feature03>127 & Feature03<=129  )
+	   return 5;
+	if(Feature01<=133 & Feature02<=118 & Feature03>124 & Feature03<=126  )
+	   return 5;
+	if(Feature01>109 & Feature01<=132 & Feature02<=119 & Feature03>124 & Feature03<=127  )
+	   return 5;
+	if(Feature01>109 & Feature01<=115 & Feature02<=117 & Feature03>113 & Feature03<=131  )
+	   return 5;
+	if(Feature01>103 & Feature01<=109 & Feature02<=117 & Feature03<=131  )
+	   return 5;
+	if(Feature01>130 & Feature01<=138 & Feature02<=120 & Feature03>127 & Feature03<=128  )
+	   return 5;
+	if(Feature01>115 & Feature01<=124 & Feature02<=120 & Feature03>113 & Feature03<=129  )
+	   return 5;
+	if(Feature01>114 & Feature01<=124 & Feature02<=119 & Feature03>113 & Feature03<=131  )
+	   return 5;
+	if(Feature01>112 & Feature01<=116 & Feature02<=118 & Feature03>113 & Feature03<=133  )
+	   return 5;
+	if(Feature01>96 & Feature01<=109 & Feature02<=123 & Feature03>121 & Feature03<=126  )
+	   return 5;
+	if(Feature01>132 & Feature01<=146 & Feature02>118 & Feature02<=119 & Feature03>123 & Feature03<=126  )
+	   return 5;
+	if(Feature01<=109 & Feature02<=122 & Feature03>113 & Feature03<=121  )
+	   return 5;
+	if(Feature01>130 & Feature01<=133 & Feature02<=124 & Feature03>113 & Feature03<=120  )
+	   return 5;
+	if(Feature01>131 & Feature02>116 & Feature03>155  )
+	   return 1;
+	if(Feature01>73 & Feature02>121 & Feature03>161  )
+	   return 1;
+	if(Feature01>149 & Feature02>116 & Feature03>154  )
+	   return 1;
+	if(Feature01>113 & Feature02>116 & Feature03>160  )
+	   return 1;
+	if(Feature01>73 & Feature02>124 & Feature03>155  )
+	   return 1;
+	if(Feature01>86 & Feature02>123 & Feature03>149  )
+	   return 1;
+	if(Feature01>129 & Feature02>112 & Feature03>158 & Feature03<=170  )
+	   return 1;
+	if(Feature01>109 & Feature02>118 & Feature03>152  )
+	   return 1;
+	if(Feature01>101 & Feature02>118 & Feature03>156  )
+	   return 1;
+	if(Feature01>149 & Feature01<=169 & Feature02>122 & Feature03>148  )
+	   return 1;
+	if(Feature01>163 & Feature02>120 & Feature02<=121 & Feature03>149  )
+	   return 1;
+	if(Feature01>67 & Feature02>125 & Feature03>155 & Feature03<=160  )
+	   return 1;
+	if(Feature01>149 & Feature02>121 & Feature03>149  )
+	   return 1;
+	if(Feature01>172 & Feature01<=186 & Feature02>117 & Feature02<=121 & Feature03>148  )
+	   return 1;
+	if(Feature01>159 & Feature02>121 & Feature02<=122 & Feature03>148  )
+	   return 1;
+	if(Feature01>109 & Feature01<=146 & Feature02>118 & Feature03>150  )
+	   return 1;
+	if(Feature01>109 & Feature02>112 & Feature03>156 & Feature03<=158  )
+	   return 1;
+	if(Feature01>85 & Feature02>119 & Feature03>150  )
+	   return 1;
+	if(Feature01>97 & Feature02>123 & Feature03>147  )
+	   return 1;
+	if(Feature01>109 & Feature01<=135 & Feature02>121 & Feature03>148  )
+	   return 1;
+	if(Feature01>142 & Feature01<=144 & Feature02>116 & Feature03>148  )
+	   return 1;
+	if(Feature01>71 & Feature02>127 & Feature03>148  )
+	   return 1;
+	if(Feature01>172 & Feature01<=182 & Feature02>120 & Feature03>146  )
+	   return 1;
+	if(Feature01>146 & Feature01<=160 & Feature02>125 & Feature03>143  )
+	   return 1;
+	if(Feature01>80 & Feature02>125 & Feature03>146  )
+	   return 1;
+	if(Feature01>177 & Feature01<=182 & Feature02>122 & Feature03>142  )
+	   return 1;
+	if(Feature01>120 & Feature01<=123 & Feature02>115 & Feature03>148  )
+	   return 1;
+	if(Feature01>146 & Feature01<=152 & Feature02>124 & Feature03>140  )
+	   return 1;
+	if(Feature01>138 & Feature01<=146 & Feature02>127 & Feature03>142  )
+	   return 1;
+	if(Feature01>146 & Feature01<=172 & Feature02>123 & Feature03>144  )
+	   return 1;
+	if(Feature01>63 & Feature02>128 & Feature03>147  )
+	   return 1;
+	if(Feature01>142 & Feature01<=144 & Feature02>124 & Feature03>140 & Feature03<=142  )
+	   return 1;
+	if(Feature01>82 & Feature02>127 & Feature03>143  )
+	   return 1;
+	if(Feature01>146 & Feature01<=152 & Feature02>127 & Feature02<=131 & Feature03>136  )
+	   return 1;
+	if(Feature01>138 & Feature01<=146 & Feature02>127 & Feature02<=130 & Feature03>136  )
+	   return 1;
+	if(Feature01>132 & Feature01<=138 & Feature02>129 & Feature03>138  )
+	   return 1;
+	if(Feature01>173 & Feature01<=179 & Feature02>123 & Feature02<=124 & Feature03>141  )
+	   return 1;
+	if(Feature01>63 & Feature01<=65 & Feature02>134 & Feature02<=135 & Feature03>142  )
+	   return 1;
+	if(Feature01>94 & Feature01<=96 & Feature02>134 & Feature03>140  )
+	   return 1;
+	if(Feature01>138 & Feature01<=142 & Feature02>125 & Feature02<=127 & Feature03>140 & Feature03<=141  )
+	   return 1;
+	if(Feature01>135 & Feature01<=136 & Feature02>127 & Feature02<=128 & Feature03>136  )
+	   return 1;
+	if(Feature01>125 & Feature01<=133 & Feature02>128 & Feature02<=129 & Feature03>134  )
+	   return 1;
+	if(Feature01>125 & Feature01<=128 & Feature02>128 & Feature02<=129 & Feature03>132  )
+	   return 1;
+	if(Feature01>82 & Feature01<=86 & Feature02>126 & Feature02<=130 & Feature03>143 & Feature03<=144  )
+	   return 1;
+	if(Feature01>63 & Feature01<=78 & Feature02>130 & Feature02<=135 & Feature03>145 & Feature03<=146  )
+	   return 1;
+	if(Feature01>95 & Feature01<=96 & Feature02>133 & Feature02<=134 & Feature03>113 & Feature03<=125  )
+	   return 1;
+	if(Feature01>99 & Feature01<=102 & Feature02>124 & Feature02<=126 & Feature03>127 & Feature03<=128  )
+	   return 1;
+	if(Feature01>82 & Feature01<=87 & Feature02>120 & Feature02<=121 & Feature03>147 & Feature03<=148  )
+	   return 1;
+	if(Feature01>128 & Feature01<=130 & Feature02>128 & Feature02<=131 & Feature03>134  )
+	   return 1;
+	if(Feature01>96 & Feature01<=97 & Feature02>134 & Feature03>138  )
+	   return 1;
+	if(Feature01>130 & Feature01<=133 & Feature02>124 & Feature02<=125 & Feature03>134 & Feature03<=135  )
+	   return 1;
+	if(Feature01>109 & Feature01<=160 & Feature02>143 & Feature03<=117  )
+	   return 4;
+	if(Feature01>138 & Feature01<=150 & Feature02>140 & Feature03<=123  )
+	   return 4;
+	if(Feature01>109 & Feature01<=165 & Feature02>143 & Feature02<=150 & Feature03>116 & Feature03<=124  )
+	   return 4;
+	if(Feature01>109 & Feature01<=171 & Feature02>143 & Feature02<=150 & Feature03>117 & Feature03<=124  )
+	   return 4;
+	if(Feature01>109 & Feature01<=138 & Feature02>142  )
+	   return 4;
+	if(Feature01>109 & Feature02>151  )
+	   return 4;
+	if(Feature01>109 & Feature02>150 & Feature03<=118  )
+	   return 4;
+	if(Feature01>118 & Feature01<=138 & Feature02>140 & Feature03<=129  )
+	   return 4;
+	if(Feature01>85 & Feature01<=164 & Feature02>142 & Feature02<=162 & Feature03>100 & Feature03<=113  )
+	   return 4;
+	if(Feature01>132 & Feature01<=143 & Feature02>137 & Feature03<=127  )
+	   return 4;
+	if(Feature01>94 & Feature01<=109 & Feature02>146 & Feature02<=155 & Feature03<=119  )
+	   return 4;
+	if(Feature01>109 & Feature01<=173 & Feature02>147  )
+	   return 4;
+	if(Feature01>123 & Feature01<=146 & Feature02>138 & Feature03<=122  )
+	   return 4;
+	if(Feature01>109 & Feature02>144 & Feature03>119 & Feature03<=120  )
+	   return 4;
+	if(Feature01>109 & Feature01<=177 & Feature02>147 & Feature03<=120  )
+	   return 4;
+	if(Feature01>109 & Feature01<=138 & Feature02>140 & Feature03>113 & Feature03<=121  )
+	   return 4;
+	if(Feature01>109 & Feature02>149 & Feature02<=151 & Feature03>120  )
+	   return 4;
+	if(Feature01>90 & Feature02>149 & Feature02<=160 & Feature03<=115  )
+	   return 4;
+	if(Feature01>98 & Feature01<=127 & Feature03>111 & Feature03<=113  )
+	   return 4;
+	if(Feature01>134 & Feature01<=136 & Feature02>136 & Feature03>113 & Feature03<=127  )
+	   return 4;
+	if(Feature01>109 & Feature01<=126 & Feature02>133 & Feature03>113 & Feature03<=116  )
+	   return 4;
+	if(Feature01>97 & Feature01<=109 & Feature02>143 & Feature02<=146 & Feature03<=121  )
+	   return 4;
+	if(Feature01>82 & Feature02>142 & Feature02<=163 & Feature03>101 & Feature03<=104  )
+	   return 4;
+	if(Feature01>80 & Feature02>142 & Feature02<=162 & Feature03>95 & Feature03<=107  )
+	   return 4;
+	if(Feature01>91 & Feature01<=128 & Feature02>135 & Feature02<=142 & Feature03>106 & Feature03<=113  )
+	   return 4;
+	if(Feature01>87 & Feature01<=109 & Feature02>146 & Feature02<=149 & Feature03<=126  )
+	   return 4;
+	if(Feature01>109 & Feature01<=132 & Feature02>135 & Feature03>113 & Feature03<=120  )
+	   return 4;
+	if(Feature01>97 & Feature01<=109 & Feature02>140 & Feature02<=146 & Feature03>113 & Feature03<=120  )
+	   return 4;
+	if(Feature01>97 & Feature01<=107 & Feature02>123 & Feature03>113 & Feature03<=114  )
+	   return 4;
+	if(Feature01>90 & Feature01<=118 & Feature02>134 & Feature02<=142 & Feature03>108 & Feature03<=113  )
+	   return 4;
+	if(Feature01>105 & Feature01<=109 & Feature02>138 & Feature03>113 & Feature03<=120  )
+	   return 4;
+	if(Feature01>97 & Feature01<=109 & Feature02>132 & Feature03>113 & Feature03<=118  )
+	   return 4;
+	if(Feature01>115 & Feature01<=132 & Feature02>135 & Feature03>113 & Feature03<=127  )
+	   return 4;
+	if(Feature01>85 & Feature01<=109 & Feature02>145 & Feature02<=146 & Feature03<=125  )
+	   return 4;
+	if(Feature01>117 & Feature01<=128 & Feature02>134 & Feature03>113 & Feature03<=127  )
+	   return 4;
+	if(Feature01>114 & Feature01<=115 & Feature02>135 & Feature03>113 & Feature03<=127  )
+	   return 4;
+	if(Feature01>120 & Feature01<=146 & Feature02>132 & Feature02<=136 & Feature03>127 & Feature03<=128  )
+	   return 4;
+	if(Feature01>96 & Feature01<=101 & Feature02>142 & Feature02<=143 & Feature03>127 & Feature03<=131  )
+	   return 4;
+	if(Feature01>111 & Feature01<=112 & Feature02>132 & Feature02<=134 & Feature03>120 & Feature03<=121  )
+	   return 4;
+	if(Feature01>122 & Feature01<=128 & Feature02>132 & Feature02<=133 & Feature03>127 & Feature03<=130  )
+	   return 4;
+	if(Feature01>132 & Feature01<=133 & Feature02>127 & Feature02<=133 & Feature03>125 & Feature03<=126  )
+	   return 4;
+	if(Feature01>123 & Feature01<=124 & Feature02>128 & Feature02<=132 & Feature03>129 & Feature03<=130  )
+	   return 4;
+	if(Feature01<=70 & Feature02<=154 & Feature03>128 & Feature03<=130  )
+	   return 8;
+	if(Feature01<=45 & Feature02<=149 & Feature03>127  )
+	   return 8;
+	if(Feature01<=105 & Feature02>138 & Feature02<=140 & Feature03>117  )
+	   return 8;
+	if(Feature01<=101 & Feature02<=137 & Feature03>121 & Feature03<=127  )
+	   return 8;
+	if(Feature01<=115 & Feature02>135 & Feature02<=138 & Feature03>117 & Feature03<=152  )
+	   return 8;
+	if(Feature01>43 & Feature01<=97 & Feature02>131 & Feature02<=140 & Feature03>116 & Feature03<=121  )
+	   return 8;
+	if(Feature01>43 & Feature01<=97 & Feature02<=140 & Feature03>119 & Feature03<=121  )
+	   return 8;
+	if(Feature01<=118 & Feature02>141 & Feature02<=142 & Feature03>125  )
+	   return 8;
+	if(Feature01<=109 & Feature02>133 & Feature02<=138 & Feature03>118 & Feature03<=121  )
+	   return 8;
+	if(Feature01<=117 & Feature02>133 & Feature02<=140 & Feature03>125 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=127 & Feature02>137 & Feature02<=138 & Feature03>121  )
+	   return 8;
+	if(Feature01<=146 & Feature02>132 & Feature02<=140 & Feature03>128 & Feature03<=136  )
+	   return 8;
+	if(Feature01<=72 & Feature02<=148 & Feature03>126 & Feature03<=128  )
+	   return 8;
+	if(Feature01<=47 & Feature02<=146  )
+	   return 8;
+	if(Feature01>52 & Feature01<=97 & Feature02>140 & Feature02<=144 & Feature03>120  )
+	   return 8;
+	if(Feature01>78 & Feature01<=80 & Feature02<=128 & Feature03>121 & Feature03<=155  )
+	   return 8;
+	if(Feature01<=94 & Feature02<=149 & Feature03>126 & Feature03<=127  )
+	   return 8;
+	if(Feature01<=117 & Feature02>134 & Feature02<=140 & Feature03>121 & Feature03<=152  )
+	   return 8;
+	if(Feature01>63 & Feature01<=86 & Feature02<=125 & Feature03>113 & Feature03<=154  )
+	   return 8;
+	if(Feature01<=63 & Feature02<=146 & Feature03>121 & Feature03<=155  )
+	   return 8;
+	if(Feature01<=112 & Feature02>140 & Feature02<=142 & Feature03>121  )
+	   return 8;
+	if(Feature01<=109 & Feature02>132 & Feature02<=143 & Feature03>120 & Feature03<=155  )
+	   return 8;
+	if(Feature01<=50 & Feature02>125 & Feature02<=146 & Feature03>113  )
+	   return 8;
+	if(Feature01<=113 & Feature02>132 & Feature02<=140 & Feature03>120 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=105 & Feature02<=146 & Feature03>125 & Feature03<=145  )
+	   return 8;
+	if(Feature01>87 & Feature01<=95 & Feature02>119 & Feature02<=121  )
+	   return 8;
+	if(Feature01<=113 & Feature02>130 & Feature02<=140 & Feature03>125 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=73 & Feature02>121 & Feature02<=146 & Feature03>113 & Feature03<=158  )
+	   return 8;
+	if(Feature01<=136 & Feature02>130 & Feature02<=140 & Feature03>128 & Feature03<=136  )
+	   return 8;
+	if(Feature01<=116 & Feature02>118 & Feature03>135 & Feature03<=138  )
+	   return 8;
+	if(Feature01<=121 & Feature02>130 & Feature02<=140 & Feature03>126 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=112 & Feature02>116 & Feature03>131 & Feature03<=138  )
+	   return 8;
+	if(Feature01<=111 & Feature03>137 & Feature03<=140  )
+	   return 8;
+	if(Feature01<=117 & Feature02>129 & Feature02<=140 & Feature03>126 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=116 & Feature02>123 & Feature02<=140 & Feature03>128 & Feature03<=136  )
+	   return 8;
+	if(Feature01<=115 & Feature02>119 & Feature03>131 & Feature03<=138  )
+	   return 8;
+	if(Feature01<=109 & Feature02>127 & Feature02<=146 & Feature03>121 & Feature03<=147  )
+	   return 8;
+	if(Feature01<=94 & Feature02<=147 & Feature03>122 & Feature03<=123  )
+	   return 8;
+	if(Feature01<=134 & Feature02>128 & Feature03>131 & Feature03<=136  )
+	   return 8;
+	if(Feature01<=120 & Feature02>117 & Feature03>138 & Feature03<=140  )
+	   return 8;
+	if(Feature01<=114 & Feature02>117 & Feature02<=140 & Feature03>127 & Feature03<=131  )
+	   return 8;
+	if(Feature01<=122 & Feature02>122 & Feature03>131 & Feature03<=136  )
+	   return 8;
+	if(Feature01<=143 & Feature02>125 & Feature03>136 & Feature03<=140  )
+	   return 8;
+	if(Feature01<=109 & Feature02>108 & Feature02<=119 & Feature03>113 & Feature03<=156  )
+	   return 8;
+	if(Feature01<=139 & Feature02>121 & Feature03>136 & Feature03<=139  )
+	   return 8;
+	if(Feature01<=128 & Feature02>121 & Feature03>135 & Feature03<=136  )
+	   return 8;
+	if(Feature01<=130 & Feature02>124 & Feature03>134 & Feature03<=136  )
+	   return 8;
+	if(Feature01<=72 & Feature02>146 & Feature02<=149 & Feature03>128  )
+	   return 8;
+	if(Feature01<=125 & Feature02>126 & Feature02<=140 & Feature03>127 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=128 & Feature02>121 & Feature03>132 & Feature03<=133  )
+	   return 8;
+	if(Feature01<=141 & Feature02<=121 & Feature03>145 & Feature03<=146  )
+	   return 8;
+	if(Feature01<=138 & Feature02>121 & Feature03>136 & Feature03<=146  )
+	   return 8;
+	if(Feature01<=134 & Feature02>119 & Feature03>138 & Feature03<=142  )
+	   return 8;
+	if(Feature01<=133 & Feature02>125 & Feature03>131 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=134 & Feature02>115 & Feature03>139 & Feature03<=142  )
+	   return 8;
+	if(Feature01<=146 & Feature02>121 & Feature02<=127 & Feature03>142 & Feature03<=146  )
+	   return 8;
+	if(Feature01<=146 & Feature02>120 & Feature02<=121 & Feature03>144 & Feature03<=146  )
+	   return 8;
+	if(Feature01<=164 & Feature02>125 & Feature03>140 & Feature03<=141  )
+	   return 8;
+	if(Feature01<=129 & Feature02>105 & Feature03>140 & Feature03<=148  )
+	   return 8;
+	if(Feature01<=165 & Feature02>122 & Feature03>142 & Feature03<=143  )
+	   return 8;
+	if(Feature01<=146 & Feature02>108 & Feature02<=121 & Feature03>146 & Feature03<=148  )
+	   return 8;
+	if(Feature01<=148 & Feature02>121 & Feature02<=126 & Feature03>140 & Feature03<=148  )
+	   return 8;
+	if(Feature01<=164 & Feature02>121 & Feature02<=122 & Feature03>144 & Feature03<=148  )
+	   return 8;
+	if(Feature01<=130 & Feature02>112 & Feature02<=115 & Feature03>142 & Feature03<=151  )
+	   return 8;
+	if(Feature01>146 & Feature01<=149 & Feature02>119 & Feature02<=121 & Feature03>144 & Feature03<=152  )
+	   return 8;
+	if(Feature01>109 & Feature01<=163 & Feature02>119 & Feature02<=121 & Feature03>149 & Feature03<=150  )
+	   return 8;
+	if(Feature01<=137 & Feature02>108 & Feature02<=121 & Feature03>142 & Feature03<=150  )
+	   return 8;
+	if(Feature01<=159 & Feature02>123 & Feature02<=125 & Feature03>141 & Feature03<=142  )
+	   return 8;
+	if(Feature01>153 & Feature01<=158 & Feature02>108 & Feature02<=111 & Feature03>144 & Feature03<=148  )
+	   return 8;
+	if(Feature01>132 & Feature01<=153 & Feature02>105 & Feature02<=108 & Feature03>140 & Feature03<=148  )
+	   return 8;
+	if(Feature01<=172 & Feature02>122 & Feature02<=123 & Feature03>144 & Feature03<=148  )
+	   return 8;
+	if(Feature01<=149 & Feature02>121 & Feature02<=123 & Feature03>143 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=149 & Feature02>111 & Feature02<=115 & Feature03>144 & Feature03<=150  )
+	   return 8;
+	if(Feature01<=116 & Feature02>104 & Feature02<=108 & Feature03>149 & Feature03<=154  )
+	   return 8;
+	if(Feature01<=158 & Feature02>108 & Feature02<=115 & Feature03>144 & Feature03<=147  )
+	   return 8;
+	if(Feature01<=150 & Feature02>112 & Feature02<=114 & Feature03>144 & Feature03<=151  )
+	   return 8;
+	if(Feature01>144 & Feature01<=146 & Feature02>119 & Feature02<=121 & Feature03>146 & Feature03<=152  )
+	   return 8;
+	if(Feature01<=163 & Feature02>119 & Feature02<=121 & Feature03>146 & Feature03<=147  )
+	   return 8;
+	if(Feature01>146 & Feature01<=151 & Feature02>115 & Feature02<=121 & Feature03>148 & Feature03<=152  )
+	   return 8;
+	if(Feature01>146 & Feature01<=172 & Feature02>116 & Feature02<=120 & Feature03>149 & Feature03<=152  )
+	   return 8;
+	if(Feature01>146 & Feature01<=163 & Feature02>108 & Feature02<=112 & Feature03>143 & Feature03<=144  )
+	   return 8;
+	if(Feature01>158 & Feature01<=163 & Feature02>116 & Feature02<=119 & Feature03>148 & Feature03<=152  )
+	   return 8;
+	if(Feature01>150 & Feature01<=153 & Feature02>112 & Feature02<=121 & Feature03>150 & Feature03<=152  )
+	   return 8;
+	if(Feature01>143 & Feature01<=146 & Feature02>111 & Feature02<=114 & Feature03>140 & Feature03<=141  )
+	   return 8;
+	if(Feature01>163 & Feature01<=167 & Feature02>116 & Feature02<=121 & Feature03>147 & Feature03<=149  )
+	   return 8;
+	if(Feature01>130 & Feature02>101 & Feature02<=105 & Feature03>148 & Feature03<=149  )
+	   return 8;
+	if(Feature01>109 & Feature01<=116 & Feature02>140 & Feature03>124 & Feature03<=125  )
+	   return 8;
+	if(Feature01>149 & Feature02>116 & Feature02<=118 & Feature03>152 & Feature03<=154  )
+	   return 8;
+	if(Feature01>214 & Feature02>101  )
+	   return 7;
+	if(Feature01>186 & Feature02>108 & Feature02<=121 & Feature03<=152  )
+	   return 7;
+	if(Feature01>222 & Feature01<=237 & Feature02>94  )
+	   return 7;
+	if(Feature01>173 & Feature02>108 & Feature02<=140 & Feature03>113 & Feature03<=146  )
+	   return 7;
+	if(Feature01>136 & Feature02>108 & Feature02<=137 & Feature03>113 & Feature03<=127  )
+	   return 7;
+	if(Feature01>173 & Feature02<=147 & Feature03>113 & Feature03<=119  )
+	   return 7;
+	if(Feature01>138 & Feature02>131 & Feature02<=138 & Feature03>106 & Feature03<=113  )
+	   return 7;
+	if(Feature01>136 & Feature02>132 & Feature02<=138 & Feature03>105 & Feature03<=113  )
+	   return 7;
+	if(Feature01>146 & Feature02>108 & Feature02<=140 & Feature03>113 & Feature03<=133  )
+	   return 7;
+	if(Feature01>177 & Feature02<=149 & Feature03<=119  )
+	   return 7;
+	if(Feature01>173 & Feature02>140 & Feature02<=144  )
+	   return 7;
+	if(Feature01>132 & Feature02<=137 & Feature03>113 & Feature03<=121  )
+	   return 7;
+	if(Feature01>164 & Feature02>108 & Feature02<=123 & Feature03>113 & Feature03<=148  )
+	   return 7;
+	if(Feature01>130 & Feature02<=136 & Feature03>113 & Feature03<=121  )
+	   return 7;
+	if(Feature01>150 & Feature02>140 & Feature02<=143 & Feature03>113  )
+	   return 7;
+	if(Feature01>161 & Feature02<=151 & Feature03>110 & Feature03<=113  )
+	   return 7;
+	if(Feature01>127 & Feature02>130 & Feature02<=135 & Feature03>109 & Feature03<=113  )
+	   return 7;
+	if(Feature01>175 & Feature02<=152 & Feature03>108 & Feature03<=110  )
+	   return 7;
+	if(Feature01>127 & Feature02<=137 & Feature03>113 & Feature03<=117  )
+	   return 7;
+	if(Feature01>154 & Feature02<=142 & Feature03>106 & Feature03<=113  )
+	   return 7;
+	if(Feature01>158 & Feature02>108 & Feature02<=116 & Feature03>140 & Feature03<=152  )
+	   return 7;
+	if(Feature01>131 & Feature02>132 & Feature02<=133 & Feature03>113 & Feature03<=128  )
+	   return 7;
+	if(Feature01>167 & Feature02<=153 & Feature03>113 & Feature03<=115  )
+	   return 7;
+	if(Feature01>152 & Feature02>121 & Feature02<=140 & Feature03>113 & Feature03<=142  )
+	   return 7;
+	if(Feature01>160 & Feature02<=150 & Feature03>113 & Feature03<=116  )
+	   return 7;
+	if(Feature01>141 & Feature02>121 & Feature02<=140 & Feature03>113 & Feature03<=136  )
+	   return 7;
+	if(Feature01>135 & Feature02>128 & Feature02<=132 & Feature03>113 & Feature03<=136  )
+	   return 7;
+	if(Feature01>153 & Feature02>105 & Feature02<=108 & Feature03>140 & Feature03<=160  )
+	   return 7;
+	if(Feature01>134 & Feature02>129 & Feature02<=132 & Feature03>113 & Feature03<=136  )
+	   return 7;
+	if(Feature01>149 & Feature02>120 & Feature02<=121 & Feature03>113 & Feature03<=146  )
+	   return 7;
+	if(Feature01>143 & Feature02>122 & Feature02<=140 & Feature03>113 & Feature03<=141  )
+	   return 7;
+	if(Feature01>146 & Feature02>112 & Feature02<=121 & Feature03>113 & Feature03<=144  )
+	   return 7;
+	if(Feature01>101 & Feature02>123 & Feature02<=127 & Feature03>113 & Feature03<=125  )
+	   return 7;
+	if(Feature01>107 & Feature02>123 & Feature02<=132 & Feature03>113 & Feature03<=121  )
+	   return 7;
+	if(Feature01>125 & Feature02>108 & Feature02<=119 & Feature03>113 & Feature03<=124  )
+	   return 7;
+	if(Feature01>105 & Feature02>130 & Feature02<=132 & Feature03>113 & Feature03<=121  )
+	   return 7;
+	if(Feature02>105 & Feature02<=108 & Feature03>148 & Feature03<=149  )
+	   return 7;
+	if(Feature01>116 & Feature02>100 & Feature02<=108 & Feature03>149 & Feature03<=160  )
+	   return 7;
+	if(Feature01>101 & Feature02>123 & Feature02<=128 & Feature03>113 & Feature03<=123  )
+	   return 7;
+	if(Feature01>104 & Feature02>123 & Feature02<=129 & Feature03>113 & Feature03<=124  )
+	   return 7;
+	if(Feature01>104 & Feature02>123 & Feature02<=128 & Feature03>113 & Feature03<=125  )
+	   return 7;
+	if(Feature01>125 & Feature02>121 & Feature02<=130 & Feature03>113 & Feature03<=131  )
+	   return 7;
+	if(Feature01>119 & Feature02>121 & Feature02<=128 & Feature03>113 & Feature03<=129  )
+	   return 7;
+	if(Feature01>107 & Feature02>123 & Feature02<=129 & Feature03>113 & Feature03<=127  )
+	   return 7;
+	if(Feature01>146 & Feature01<=150 & Feature02<=111 & Feature03>147 & Feature03<=152  )
+	   return 7;
+	if(Feature01>134 & Feature02>114 & Feature02<=116 & Feature03<=143  )
+	   return 7;
+	if(Feature01>109 & Feature02>108 & Feature02<=112 & Feature03>152 & Feature03<=158  )
+	   return 7;
+	if(Feature01>118 & Feature02>134 & Feature02<=135 & Feature03>108 & Feature03<=113  )
+	   return 7;
+	if(Feature01>137 & Feature02>108 & Feature02<=110 & Feature03>148 & Feature03<=152  )
+	   return 7;
+	if(Feature01>131 & Feature02<=122 & Feature03>108 & Feature03<=113  )
+	   return 7;
+	if(Feature01>128 & Feature02>121 & Feature02<=132 & Feature03>113 & Feature03<=134  )
+	   return 7;
+	if(Feature01>124 & Feature02>114 & Feature02<=121 & Feature03>129 & Feature03<=138  )
+	   return 7;
+	if(Feature01>109 & Feature02>108 & Feature02<=113 & Feature03>152 & Feature03<=154  )
+	   return 7;
+	if(Feature01>109 & Feature02<=113 & Feature03>153 & Feature03<=156  )
+	   return 7;
+	if(Feature01>122 & Feature02>122 & Feature02<=123 & Feature03>113 & Feature03<=135  )
+	   return 7;
+	if(Feature01>109 & Feature02>121 & Feature02<=128 & Feature03>113 & Feature03<=128  )
+	   return 7;
+	if(Feature01>118 & Feature02>113 & Feature02<=120 & Feature03>130 & Feature03<=138  )
+	   return 7;
+	if(Feature01>130 & Feature02>116 & Feature02<=121 & Feature03>127 & Feature03<=144  )
+	   return 7;
+	if(Feature01>110 & Feature02>121 & Feature02<=123 & Feature03>113 & Feature03<=132  )
+	   return 7;
+	if(Feature01>109 & Feature02>120 & Feature02<=135 & Feature03>113 & Feature03<=127  )
+	   return 7;
+	if(Feature01>109 & Feature02<=116 & Feature03>153 & Feature03<=154  )
+	   return 7;
+	if(Feature01>137 & Feature02>116 & Feature02<=119 & Feature03>113 & Feature03<=152  )
+	   return 7;
+	if(Feature01>115 & Feature02>113 & Feature02<=121 & Feature03>131 & Feature03<=135  )
+	   return 7;
+	if(Feature01>109 & Feature01<=135 & Feature02>108 & Feature02<=116 & Feature03>152 & Feature03<=153  )
+	   return 7;
+	if(Feature01>116 & Feature02>121 & Feature02<=124 & Feature03>113 & Feature03<=134  )
+	   return 7;
+	if(Feature01>128 & Feature02>108 & Feature02<=119 & Feature03>138 & Feature03<=142  )
+	   return 7;
+	if(Feature01>129 & Feature02>118 & Feature02<=120 & Feature03>127 & Feature03<=147  )
+	   return 7;
+	if(Feature01>109 & Feature02>108 & Feature02<=118 & Feature03>134 & Feature03<=138  )
+	   return 7;
+	if(Feature01>120 & Feature02>116 & Feature02<=121 & Feature03>127 & Feature03<=141  )
+	   return 7;
+	if(Feature01>109 & Feature02>111 & Feature02<=121 & Feature03>132 & Feature03<=138  )
+	   return 7;
+	if(Feature01>121 & Feature02>108 & Feature02<=122 & Feature03>136 & Feature03<=141  )
+	   return 7;
+	if(Feature01>128 & Feature02>140 & Feature02<=147 & Feature03>127  )
+	   return 7;
+	if(Feature01>109 & Feature02>119 & Feature02<=121 & Feature03>127 & Feature03<=134  )
+	   return 7;
+	if(Feature01>109 & Feature02>108 & Feature02<=117 & Feature03>138 & Feature03<=140  )
+	   return 7;
+	if(Feature01>116 & Feature02>108 & Feature02<=122 & Feature03>134 & Feature03<=136  )
+	   return 7;
+	if(Feature01>109 & Feature02>108 & Feature02<=114 & Feature03>150 & Feature03<=152  )
+	   return 7;
+	if(Feature01>125 & Feature01<=127 & Feature02>117 & Feature02<=121 & Feature03>123 & Feature03<=127  )
+	   return 7;
+	if(Feature01>123 & Feature01<=129 & Feature02<=110 & Feature03>148 & Feature03<=152  )
+	   return 7;
+	if(Feature01>150 & Feature01<=156 & Feature02>97 & Feature02<=108 & Feature03>135 & Feature03<=160  )
+	   return 7;
+	if(Feature01>109 & Feature01<=137 & Feature02>112 & Feature02<=113 & Feature03>131 & Feature03<=138  )
+	   return 7;
+	if(Feature01>117 & Feature01<=123 & Feature02<=113 & Feature03>148 & Feature03<=152  )
+	   return 7;
+	if(Feature01>149 & Feature01<=163 & Feature02<=119 & Feature03>147 & Feature03<=152  )
+	   return 7;
+		return 7;
