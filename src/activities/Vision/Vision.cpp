@@ -10,7 +10,7 @@
 #include <vector>
 //#include "messages/motion.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/profiler.hpp"
+
 #include <vector>
 
 #define TO_RAD 0.017453293f
@@ -83,7 +83,6 @@ void saveFrame(IplImage *fIplImageHeader)
 int VISIBLE Vision::Execute()
 {
 	//cout<<"Vision Execute"<<endl;
-	static bool calibrated = false;
 	boost::shared_ptr<const CalibrateCam> cal = _blk->readState<CalibrateCam> ("vision");
 	//if (cal == NULL)
 	//{
@@ -102,24 +101,45 @@ int VISIBLE Vision::Execute()
 			CalibrateCam res;
 			Logger::Instance().WriteMsg("Vision", "Start calibration", Logger::Info);
 			float scale = ext.calibrateCamera(1000, cal->exp());
-			segbottom->setLumaScale(1 / scale);
-			segtop->setLumaScale(1 / scale);
+			lastrefresh=boost::posix_time::microsec_clock::universal_time()-boost::posix_time::microseconds(config.camerarefreshmillisec+10);
 			Logger::Instance().WriteMsg("Vision", "Calibration Done", Logger::Info);
 			//cout<<"Calibration Done!"<<endl;
-			calibrated = true;
 			res.set_status(1);
 			res.set_exposure_comp(scale);
 			_blk->publishState(res, "vision");
-			return 0;
 
 		}
 	}
 #ifdef  CAPTURE_MODE
 	if(frameNo++%20==0)
 		saveFrame(rawImage);
-#else
-	frameNo++;
 #endif
+	//Reload camera state periodically
+	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
+	if(lastrefresh+boost::posix_time::millisec(config.camerarefreshmillisec)<now)
+	{
+		//cout<<"Refresh"<<endl;
+		ext.refreshValues();//Reload
+		if (ext.getCamera() == 1)//bottom cam
+		{
+			p.cameraPitch = (KMat::transformations::PI * 40.0) / 180.0;
+			//cout<<"CameraPitch:"<<cameraPitch<<endl;
+			seg = segbottom;
+
+		} else
+		{
+			p.cameraPitch = 0;
+			seg = segtop;
+		}
+		p.cameraPitch += config.pitchoffset;
+		seg->setLumaScale(1 / ext.getScale());
+		lastrefresh=now;
+
+
+	}
+
+
+
 
 
 	fetchAndProcess();
@@ -130,10 +150,6 @@ int VISIBLE Vision::Execute()
 		recv_and_send();
 	}
 
-	bool cvHighgui;
-	xmlconfig->QueryElement("cvHighgui", cvHighgui);
-	if (cvHighgui)
-		cvShowSegmented();
 #ifdef KPROFILING_ENABLED
 	vprof.generate_report();
 #endif
@@ -375,9 +391,6 @@ void Vision::fetchAndProcess()
 	stamp += boost::posix_time::millisec(config.sensordelay);
 	if (ext.getCamera() == 1)//bottom cam
 	{
-		p.cameraPitch = (KMat::transformations::PI * 40.0) / 180.0;
-		//cout<<"CameraPitch:"<<cameraPitch<<endl;
-		seg = segbottom;
 		//Get Kinematics first!
 		std::vector<float> val = kinext.getKinematics("CameraBottom");
 
@@ -387,27 +400,22 @@ void Vision::fetchAndProcess()
 
 	} else
 	{
-		p.cameraPitch = 0;
-		seg = segtop;
 		//Get Kinematics first!
 		std::vector<float> val = kinext.getKinematics("CameraTop");
 		p.cameraX = val[0];
 		p.cameraY = val[1];
 		p.cameraZ = val[2];//3rd element
 	}
-	p.cameraPitch += config.pitchoffset;
-	//cout<<"Attach to Image:"<<endl;
+
+	//cout<<"Attach to Image:"<<seg<<rawImage<<endl;
 	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
 	//saveFrame(rawImage);
 	//return;
 	//cout<<"Attached"<<endl;
-#ifdef DEBUGVISION
-	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
-#endif
 	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", "localhost", &p.time, &stamp);
 #ifdef DEBUGVISION
-	cout<<boost::posix_time::to_iso_extended_string(stamp)<<endl;
-	cout<<boost::posix_time::to_iso_extended_string(p.time)<<endl;
+	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
+	cout << "SensorTimestamp:"<< boost::posix_time::to_iso_string(p.time) << endl;
 #endif
 
 	if (asvm.get() == NULL  )//No sensor data!
@@ -444,18 +452,12 @@ void Vision::fetchAndProcess()
 
 
 	float imcomp = ((stamp - p.time).total_nanoseconds()*0.5 )/ (p.timediff);
-	//#ifdef DEBUGVISIONſ
-	//cout<<boost::posix_time::to_iso_string(stamp)<<endl;
-	//cout<<boost::posix_time::to_iso_string(p.time)<<endl;
-	//cout<<"imcomp:"<<imcomp<<endl;
-	//#endif
-	//imcomp=imcomp;
+
 #ifdef DEBUGVISION
 	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
 	cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
-	//Estimate the values at excactly the timestamp of the image
-	//Estimate the values at excactly the timestamp of the image
 #endif
+	//Estimate the values at excactly the timestamp of the image
 	p.yaw += p.Vyaw * imcomp;
 	p.pitch += p.Vpitch * imcomp;
 	p.angX += p.VangX * imcomp;
@@ -620,7 +622,9 @@ VISIBLE Vision::Vision() :
 
 void VISIBLE Vision::UserInit()
 {
+#ifdef CAPTURE_MODE
 	frameNo=0;
+#endif
 	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
 	if (xmlconfig->IsLoadedSuccessfully() == false)
 		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
@@ -632,16 +636,12 @@ void VISIBLE Vision::UserInit()
 	Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
 	//cout << "Vision():" ;//<< endl;
 	rawImage = ext.allocateImage();
-	if (config.cvHighgui)
-	{
-		segIpl = cvCreateImage(cvSize(rawImage->width, rawImage->height), IPL_DEPTH_8U, 3);
-		cvNamedWindow("win1", CV_WINDOW_AUTOSIZE);
-	}
+
 	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationBottom).c_str());
 	segbottom = new KSegmentator(*conffile);
 	conffile->close();
 	delete conffile;
-	if(config.SegmentationTop==config.SegmentationBottom)
+	if(config.SegmentationTop==config.SegmentationBottom)//Same file, do not load twice
 		segtop=segbottom;
 	else
 	{
@@ -651,7 +651,8 @@ void VISIBLE Vision::UserInit()
 		delete conffile;
 
 	}
-
+	lastrefresh=boost::posix_time::microsec_clock::universal_time()-boost::posix_time::microseconds(config.camerarefreshmillisec+10);
+	seg=segbottom;
 
 
 
@@ -676,10 +677,13 @@ void Vision::loadXMLConfig(std::string fname)
 	trydelete(xmlconfig);
 	xmlconfig = new XMLConfig(fname);//ArchConfig::Instance().GetConfigPrefix()+"/vision.xml");
 
+	xmlconfig->QueryElement("camerarefreshmillisec", config.camerarefreshmillisec);
+
 	xmlconfig->QueryElement("SegmentationBottom", config.SegmentationBottom);
 	xmlconfig->QueryElement("SegmentationTop", config.SegmentationTop);
-	xmlconfig->QueryElement("cvHighgui", config.cvHighgui);
 	xmlconfig->QueryElement("sensordelay", config.sensordelay);
+
+
 
 	//xmlconfig->QueryElement("scanstep",config.scanstep);
 	xmlconfig->QueryElement("scanV", config.scanV);
@@ -799,89 +803,6 @@ KVecFloat2 Vision::camToRobot(KVecFloat2 const & t) const
 	res(0) = sqrt((a) * (a) + (b) * (b));
 	res(1) = atan2(b, a);
 	return res;
-}
-
-void Vision::cvShowSegmented()
-{
-
-	char * segImage = segIpl->imageData;
-	for (int i = 2; i < rawImage->width - 2; i++)
-	{
-		for (int j = 2; j < rawImage->height - 2; j++)
-		{
-
-			//*(imgA+i*width+j)=seg->classifyPixel(yuv);
-
-
-			//segImage[j][i] = seg-/>classifyPixel(yuv);//classifyPixel(fIplImageHeader, i, j, type);
-			//cout<<"Test3"<<endl;
-			KSegmentator::colormask_t k = doSeg(i, j);//sImage[j][i];//fIplImageHeader,i,j,kYUVColorSpace
-			//				if (k == 5)
-			// cout << "Pixel at i " << i << " j " << j << " value " << (int) k << endl;
-			int width = rawImage->width;
-			switch (k)
-			{
-
-				case red://RED
-					segImage[j * 3 * width + i * 3 + 2] = 255;
-					segImage[j * 3 * width + i * 3 + 1] = 0;
-					segImage[j * 3 * width + i * 3] = 0;
-					break;
-				case blue://BlUE
-					segImage[j * 3 * width + i * 3 + 2] = 0;
-					segImage[j * 3 * width + i * 3 + 1] = 0;
-					segImage[j * 3 * width + i * 3] = 255;
-					break;
-				case green://GREEN
-					segImage[j * 3 * width + i * 3 + 2] = 60;
-					segImage[j * 3 * width + i * 3 + 1] = 120;
-					segImage[j * 3 * width + i * 3] = 60;
-					break;
-				case skyblue://SkyBlue
-					segImage[j * 3 * width + i * 3 + 2] = 0;
-					segImage[j * 3 * width + i * 3 + 1] = 107;
-					segImage[j * 3 * width + i * 3] = 228;
-					break;
-				case yellow://Yellow
-					segImage[j * 3 * width + i * 3 + 2] = 255;
-					segImage[j * 3 * width + i * 3 + 1] = 255;
-					segImage[j * 3 * width + i * 3] = 0;
-					break;
-				case orange://Orange
-					segImage[j * 3 * width + i * 3 + 2] = 255;
-					segImage[j * 3 * width + i * 3 + 1] = 180;
-					segImage[j * 3 * width + i * 3] = 0;
-					break;
-				case white://
-					segImage[j * 3 * width + i * 3 + 2] = 255;
-					segImage[j * 3 * width + i * 3 + 1] = 255;
-					segImage[j * 3 * width + i * 3] = 255;
-					break;
-				default:
-					segImage[j * 3 * width + i * 3 + 2] = 0;
-					segImage[j * 3 * width + i * 3 + 1] = 0;
-					segImage[j * 3 * width + i * 3] = 0;
-					break;
-			}
-			//cout<< hsl[0]<<","<<hsl[1]<<","<<hsl[2]<<endl<<endl;
-
-		}
-		//cout<<endl;
-	}
-	cvShowImage("win1", segIpl);
-
-	int k = cvWaitKey(10);
-	if (k == 's')
-	{
-		saveFrame(rawImage);
-		Logger::Instance().WriteMsg("Vision", "Save frame", Logger::Error);
-	}
-	if (k == 'c')
-	{
-		Logger::Instance().WriteMsg("Vision", "Change Cam", Logger::Info);
-		ext.swapCamera();
-
-	}
 }
 
 void * Vision::StartServer(void * s)

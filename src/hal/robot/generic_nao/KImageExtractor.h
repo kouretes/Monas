@@ -40,12 +40,13 @@ class KImageExtractor
 		boost::posix_time::ptime fetchImage(IplImage *img);
 		//Create new space for image
 		IplImage *allocateImage();
-		float calibrateCamera(int sleeptime=500,int exp=18);
-		float getExpUs();
-		int getCamera();
+		float calibrateCamera(int sleeptime=500,int exp=15);
+		float getExpUs() const;
+		int getCamera() const;
+		float getScale() const;
 		int swapCamera();
+		void refreshValues();
 	private:
-		AL::ALPtr<AL::ALProxy> c;//Camera proxy to naoqi
 		AL::ALPtr<AL::ALVideoDeviceProxy> xCamProxy;
 
 		//Name used when subscribing Generic Video Module
@@ -53,9 +54,8 @@ class KImageExtractor
 		int resolution;//Current Resolution
 		int cSpace;// Current Colorspace
 		bool doneSubscribe;//Initializations done?
+		float refexpusec,lastexpusec,lastcam;
 		Blackboard *_blk;
-		int lastcam;
-		float lastexpusec;
 
 };
 

@@ -4,8 +4,6 @@
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
-#include <opencv/highgui.h>
-
 #include "architecture/IActivity.h"
 #include "hal/robot/generic_nao/KImageExtractor.h"
 #include "KSegmentator.h"
@@ -24,7 +22,7 @@
 #include <vector>
 #include <iostream>
 //#define DEBUGVISION
-//#define DEBUG
+//#define CAPTURE_MODE
 
 #ifdef __GNUC__
 #pragma GCC visibility push(hidden)
@@ -33,7 +31,6 @@
 #define VISIBLE
 #endif
 
-//#define CAPTURE_MODE
 
 class Vision: public IActivity
 {
@@ -123,6 +120,7 @@ class Vision: public IActivity
 
 				float balltolerance, ballsize;
 				float goalheight, goaldist, goaldiam, goalslopetolerance, widthestimateotolerance;
+				int camerarefreshmillisec;
 
 				float pitchoffset;
 
@@ -132,7 +130,11 @@ class Vision: public IActivity
 		ObservationMessage obs;
 		LedChangeMessage leds;
 		mutable KProfiling::profiler vprof;
+#ifdef  CAPTURE_MODE
 		int frameNo;
+#endif
+		boost::posix_time::ptime lastrefresh;
+
 		//Incoming messages!
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 
@@ -149,7 +151,6 @@ class Vision: public IActivity
 		int type;//Colorspace fourCC
 		//Raw Input Image
 		IplImage *rawImage;
-		IplImage *segIpl;
 		//Ball Detection related
 		std::vector<KVecInt2> ballpixels;
 		std::vector<KVecInt2> ygoalpost;
@@ -200,7 +201,6 @@ class Vision: public IActivity
 		//KVecFloat2 & cameraToObs(KMat::HCoords<float ,2> const& t);
 		//KVecFloat2 & camToRobot(KMat::HCoords<float ,2> & t);
 		KVecFloat2 camToRobot(KVecFloat2 const & t) const;
-		void cvShowSegmented();
 
 
 		//For Debug!
