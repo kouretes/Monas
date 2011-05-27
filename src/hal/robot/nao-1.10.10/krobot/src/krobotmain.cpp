@@ -51,7 +51,7 @@ ALCALL int _createModule( AL::ALPtr<AL::ALBroker> pBroker )
 #ifndef WEBOTS
   AL::ALModule::createModule<ButtonListener>(pBroker,"ButtonListener");
 #else
-  cout << "Webots build" << endl;
+  std::cout << "Webots build" << std::endl;
 #endif
   return 0;
 }

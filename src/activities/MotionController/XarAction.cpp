@@ -31,7 +31,12 @@ int XarAction::ExecuteActionXAR() {
 
 	//frame->post.gotoAndPlay(this->identifier,0);
 	//else
-	frame->playBehavior(this->identifier);
+	try {
+		frame->playBehavior(this->identifier);
+	} catch (AL::ALError& e) {
+		Logger::Instance().WriteMsg("XARManager", "Error playing this->filename: " + this->filename + e.getDescription(), Logger::FatalError);
+	//	continue;
+	}
 	int ret = frame->post.completeBehavior(this->identifier);
 	//reload Motion
 	this->identifier = frame->newBehaviorFromFile(filename, string(""));
