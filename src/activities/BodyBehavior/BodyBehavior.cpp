@@ -231,20 +231,20 @@ int BodyBehavior::Execute() {
 				/* **************** Targetted Kicks ********************** */
 				if (orientation == 0) {
 					if (by > 0.0)
-						amot->set_command("LeftKick");
+						amot->set_command("KickForwardLeft.xar");
 					else
-						amot->set_command("RightKick");
+						amot->set_command("KickForwardRight.xar");
 				} else if (orientation == 1) {
-					amot->set_command("HardLeftSideKick");
+					amot->set_command("KickSideLeftFast.xar");
 					direction = -1;
 				} else if (orientation == 3) {
-					amot->set_command("HardRightSideKick");
+					amot->set_command("KickSideRightFast.xar");
 					direction = +1;
 				} else if (orientation == 2) {
 					if (by > 0.0)
-						amot->set_command("LeftBackKick");
+						amot->set_command("KickBackLeftHigh.xar");
 					else
-						amot->set_command("RightBackKick");
+						amot->set_command("KickBackRightHigh.xar");
 				} else {
 					if (by > 0.0)
 						amot->set_command("KickSideLeftSoft.xar");
