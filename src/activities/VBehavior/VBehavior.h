@@ -10,6 +10,7 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/WorldInfo.pb.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
@@ -75,8 +76,10 @@ class VBehavior: public IActivity {
 		boost::shared_ptr<const AllSensorValuesMessage> allsm;
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
-		boost::shared_ptr<const ObservationMessage>  obsm;
+		//boost::shared_ptr<const ObservationMessage>  obsm;
 		boost::shared_ptr<const ObstacleMessage>  om;
+		boost::shared_ptr<const WorldInfo>  wim;
+
 		int calibrated;
 		bool play;
 		bool kickoff;
