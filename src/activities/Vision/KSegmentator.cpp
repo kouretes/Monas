@@ -200,6 +200,7 @@ void KSegmentator::attachToIplImage(IplImage *data)
     widthmult2=data->width*2;
     width=data->width;
     height=data->height;
+#ifndef FORCEINTERLV
     if(data->nChannels==2)//Imply 422
 	{
 		classifyFunc= &KSegmentator::classify422;
@@ -218,6 +219,11 @@ void KSegmentator::attachToIplImage(IplImage *data)
         classifyFunc=NULL;
         Logger::Instance().WriteMsg("KSegmentator", "ONLY 422 AND 444 interleaving IMPLEMENTED :P",Logger::Error);
     }
+#else
+	if(data->nChannels!=2)//Imply 422
+		Logger::Instance().WriteMsg("KSegmentator", "ONLY 444 AND 422 interleaving IMPLEMENTED,422 only forced",Logger::Error);
+
+#endif
 
 
 }

@@ -11,6 +11,9 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/WorldInfo.pb.h"
+#include "tools/XML.h"
+#include "tools/XMLConfig.h"
+#include "architecture/archConfig.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -50,9 +53,14 @@ class VBehavior: public IActivity {
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;
 		MotionActionMessage* amot;
-
+		//////////////////////added by Aggeliki
+		float initX, initY, initPhi; //initial game position in the field!!!!
+		int playernum;
+		bool readRobotConf;
+		//////////////////////////
 		int pitchdirection;
 		int yawdirection;
+		
 		SensorData HeadYaw;
 		SensorData HeadPitch;
 
@@ -84,7 +92,6 @@ class VBehavior: public IActivity {
 		int count;
 		bool obstacleFront;
 		int gameState;
-
 		int teamColor;
 		double orientation;
 
@@ -92,6 +99,10 @@ class VBehavior: public IActivity {
 		void velocityWalk(double x, double y, double th, double f);
 		void littleWalk(double x, double y, double th);
 		void calibrate();
+		///////////////added by Aggeliki
+		bool readConfiguration(const std::string& file_name); //this function reads team's configuration info from XML file
+		bool readRobotConfiguration(const std::string& file_name, bool kickoff); //this function reads robot's initial position in the field from XML file
+		///////////////////////////////////////////////
 		float cX,cY,cth;//Commanded
 
 };

@@ -8,7 +8,7 @@ static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970
 using namespace AL;
 using namespace std;
 
-#define REFRESHRATE 120
+#define MAXEXPUS 33333.33333333f //1000/30
 
 KImageExtractor::~KImageExtractor()
 {
@@ -32,6 +32,7 @@ void KImageExtractor::Init(Blackboard *blk)
 {
 	_blk = blk;
 	doneSubscribe=false;
+	refexpusec=MAXEXPUS;
 	try
 	{
 		xCamProxy = ALPtr<ALVideoDeviceProxy>( new ALVideoDeviceProxy(KAlBroker::Instance().GetBroker()));
@@ -43,8 +44,9 @@ void KImageExtractor::Init(Blackboard *blk)
 		GVM_name= xCamProxy->subscribe(GVM_name, resolution, cSpace,VISON_FPS );
 //		GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
 //										 cSpace,VISON_FPS );
-
+		refreshValues();
 		doneSubscribe=true;
+
 		//Calculate Roundtrip time
 
 
@@ -81,18 +83,6 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 #else
 	results = (c->call<ALValue> ("releaseImageRemote", GVM_name));
 #endif
-
-	static int framecount=0;
-
-	if(framecount%REFRESHRATE==0)
-	{
-		lastcam=c->call<int>("getParam",kCameraSelectID);
-		int a=c->call<int>("getParam",kCameraExposureID);
-		lastexpusec= a*33000.0/510.0;
-		framecount=1;
-	}
-	else
-		framecount++;
 
 	ALValue results;
 #ifdef RAW
@@ -153,19 +143,6 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	c->call<int> ("releaseImage", GVM_name);
 	//cout << "releaseImage " << endl;
 #endif
-
-
-	static int framecount=0;
-
-	if(framecount%REFRESHRATE==0)
-	{
-		lastcam=xCamProxy->getParam(kCameraSelectID);
-		int a=xCamProxy->getParam(kCameraExposureID);
-		lastexpusec= a*33000.0/510.0;
-		framecount=1;
-	}
-	else
-		framecount++;
 
 	ALImage* imageIn = NULL;
 	// Now you can get the pointer to the video structure.
@@ -238,6 +215,9 @@ IplImage *KImageExtractor::allocateImage()
 
 float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 {
+#ifdef WEBOTS
+	return 1.0f;
+#endif
 	std:: vector <std::string> names;
 	std:: vector <float>pos;
 	int redchroma,bluechroma,gain,e;
@@ -257,14 +237,8 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	//cout << "releaseImage " << endl;
 #endif
 
-	//hmot->set_parameter(0, 0.9f * overshootfix * (cx));
-	//hmot->set_parameter(1, -0.9f * overshootfix * (cy));
-	//Publisher::publish( hmot);
 
-	float scale=1;
 	cout<<"Calibrate Start:"<<endl;
-
-	cout<<"Auto:"<<endl;
 	try
 	{
 		xCamProxy->setParam( kCameraSelectID, 1);
@@ -359,20 +333,21 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		e=(eL+eR)/2;
 
 
-		if ((exp*510.0)/33.0 <e)
+		if ((exp*510.0f)/33.33333333f <e)
 		{
-			scale=log((exp*510.0)/33.0)/log(e);
-			cout<<"Scaling  exposure:"<<(exp*510.0)/33.0<<" "<<e<<endl;
-			e=(exp*510.0)/33.0;
+			refexpusec=e*MAXEXPUS/510.0;
+			e=exp*510.0f/33.33333333f;
 
 		}
+		lastexpusec=e*MAXEXPUS/510.0f;
+		cout<<"Exposure Scaling:"<<getScale()<<", from"<<refexpusec<<"usec to "<<lastexpusec<<"usec"<<endl;
 		//cout<<"Scaling  exposure:"<<(exp*510)/33<<" "<<e<<endl;
 		gain=gainL<gainR?gainL:gainR;
 
 		//redchroma=128-((128.0-redchroma)*0.95);
 		//bluechroma=128-((128.0-bluechroma)*0.95);
 		//gain=((gain&31)/2)|(gain&32);
-		cout<<"Final Exposure settings:"<< exp<< gain<< endl;
+		cout<<"Final Exposure settings:"<<"Exposure Value:"<<e<<" Gain Value:"<<gain<< endl;
 
 
 		//Start white balance calibration
@@ -412,7 +387,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 		xCamProxy->setParam( kCameraSelectID, 0);
 		SleepMs(150);
-		//SET BOTTOM CAMERA SETTINGS
+		//SET TOP CAMERA SETTINGS
 		xCamProxy->setParam( kCameraAutoGainID, 0);
 		SleepMs(5);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
@@ -460,34 +435,34 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	}
 	catch (AL::ALError &e)
 	{
-		cout<<"No Autosettings available ... webots?"<<endl;
+		cout<<"No Autosettings available ... ?!?"<<endl;
 		std::cout << e.toString() << std::endl;
 		//exit(0);
 	}
 	lastcam=1;
 
-
-	//seg->setLumaScale(0.338914);
 	cout<<"done"<<endl;
-	//pos.clear();
-	//pos.push_back(0);
-	//pos.push_back(-0.1);
-	//m->callVoid("setAngles",names,pos,0.8);
+
 	hmot.set_parameter(0,0);
 	hmot.set_parameter(1,-0.1);
 	_blk->publishSignal(hmot,"motion");
     _blk->publish_all();
-	return scale;
+	return getScale();
 }
+void KImageExtractor::refreshValues()
+{
+	lastcam=xCamProxy->getParam(kCameraSelectID);
+#ifndef WEBOTS
 
-int KImageExtractor::getCamera()
+	int a=xCamProxy->getParam(kCameraExposureID);
+	lastexpusec= a*MAXEXPUS/510.0f;
+#endif
+
+}
+int KImageExtractor::getCamera() const
 {
 
-    //if(lastcam==-1)
-    //    return lastcam=xCamProxy->getParam(kCameraSelectID);
-
-    return lastcam;
-	//return xCamProxy->getParam(kCameraSelectID);
+	return lastcam;
 }
 
 int KImageExtractor::swapCamera()
@@ -495,14 +470,24 @@ int KImageExtractor::swapCamera()
 	int old=xCamProxy->getParam(kCameraSelectID);
 	old=(old==1)?0:1;
 	xCamProxy->setParam( kCameraSelectID,old);
-	lastcam=old;
 	return old;
 }
 
-float KImageExtractor::getExpUs()
+float KImageExtractor::getExpUs() const
 {
+#ifdef WEBOTS
+	return 1.0f;
+#else
 	return lastexpusec;
-	//int a=xCamProxy->getParam(kCameraExposureID);
-	//return a*33.0/510.0;
+#endif
 }
 
+
+float KImageExtractor::getScale() const
+{
+#ifdef WEBOTS
+	return 1.0f;
+#else
+	return log(lastexpusec)/log(refexpusec);
+#endif
+}

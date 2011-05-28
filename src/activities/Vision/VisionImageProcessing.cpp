@@ -379,9 +379,8 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 {
 	KPROF_SCOPE(vprof,"calculateValidBall");
 
-	unsigned int  gd = 0,bd=0;
-//	float innerrad = ball.cr * 0.707;
-	int top,left,right,bot;
+	int  gd = 0,bd=0,remin=0,remout=0;
+
 	const int sub=config.subsampling;
 
 	const int cr=floor(ball.cr*2+0.5);
@@ -389,142 +388,55 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 	const int cx=floor(ball.x+0.5);
 	const int cy=floor(ball.y+0.5);
 
-	top=ball.y-cr;
-	bot=ball.y+cr;
-	left=ball.x-cr;
-	right=ball.x+cr;
-	top=top<config.bordersize?config.bordersize:top;
-	left=left<config.bordersize?config.bordersize:left;
-	bot=bot>rawImage->height-1 -config.bordersize?rawImage->height-1 -config.bordersize:bot;
-	right=right>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:right;
+	const int top=ball.y-cr<config.bordersize?config.bordersize: ball.y-cr;
+	const int bot=ball.y+cr >rawImage->height-1 -config.bordersize?rawImage->height-1 -config.bordersize: ball.y+cr;
+	const int left=ball.x-cr<config.bordersize?config.bordersize:ball.x-cr;
+	const int right=ball.x+cr>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:ball.x+cr;
 
-	//cout<<"Ball:"<<cx<<","<<cy<<","<<cr<<endl;
-	//cout<<"Limits:"<<top<<","<<bot<<","<<left<<","<<right<<endl;
-	//cout<<"crs:"<<cr<<" "<<crd<<endl;
+	const int ttl = floor((bot-top+1)/(sub))*floor((right-left+1)/(sub));
+	const int inside=floor(KMat::transformations::PI*cr*cr/4.0)/(sub*sub);
+	const int bdlimit=(ttl-inside)*(0.25);
+	const int gdlimit=inside*(0.65);
 
-	for(int i=0;i<PREFETCH-1;++i)
-		prepSeg(left+sub*i,top);
+	remin=inside;remout=ttl-inside;
+
 	for(int y=top;y<=bot;y+=sub)
+	{
+		for(int i=0;i<PREFETCH-1;++i)
+			prepSeg(left+sub*i,y);
+
+		if(gd+remin<=gdlimit || bd>=bdlimit)//No hope
+			return false;
+		if(gd>=gdlimit && bd+remout<=bdlimit)// Certainty
+			return true;
+
 		for(int x=left;x<=right;x+=sub)
 		{
-			if(x+PREFETCH*sub<=right)
+			//if(x+PREFETCH*sub<=right)
 				prepSeg(x+PREFETCH*sub,y);
-			else
-				prepSeg(left+PREFETCH*sub-sub,y+sub);
+			//else
+			//	prepSeg(left+PREFETCH*sub-sub,y+sub);
 
 			bool iscolor=colorIsA(doSeg(x,y,c) , c);
-			//cout<<"x,y,c:"<<x<<","<<y<<","<<iscolor<<endl;
-			if(!iscolor)
-				continue;
-			if(sqrd(cx-x)+sqrd(cy-y)-2<=crd)
-				gd++;
+
+			if(sqrd(cx-x)+sqrd(cy-y)<=crd)
+			{
+				remin--;
+				if(iscolor) gd++;
+			}
 			else
-				bd++;
-
+			{
+				remout--;
+				if(iscolor) bd++;
+			}
 		}
 
-	const int ttl = floor((bot-top+1)/sub)*floor((right-left+1)/sub);
-	const int inside=floor(KMat::transformations::PI*cr*cr/4.0)/(sub*sub);
-	float ratio = ((float) gd) / (inside);
-	//cout<<"Validratio:"<<ratio<<endl;
-	if (ratio < 0.65)
-		return false;
-	ratio=((float) bd) / (ttl-inside);
-	//cout<<"Validratio2:"<<ratio<<endl;
-	if (ratio > 0.25)
-		return false;
-	return true;
-	//Inner circle
-	/*
-	for (int j =ball. y - innerrad+1; j <= ball.y ; j+=config.subsampling)
-		for (int i = ball.x - innerrad+1; i <= ball.x + innerrad-1; i+=config.subsampling)
-		{
-			//prepSeg(i+config.subsampling,j+config.subsampling);//Prefetching
-			if (!validpixel(i,j))
-				continue;
-			if (colorIsA(doSeg(i, j,c) , c))
-				gd+=3;
-			ttl+=3;
-		}
-	for (int j =ball. y+1 ; j <= ball.y + innerrad-1; j+=config.subsampling)
-		for (int i = ball.x- innerrad+1; i <= ball.x + innerrad-1; i+=config.subsampling)
-		{
-			//prepSeg(i+config.subsampling,j+config.subsampling);//Prefetching
-			if (!validpixel(i,j))
-				continue;
-			if (colorIsA(doSeg(i, j,c) , c))
-				gd++;
-			ttl++;
-		}
-		*/
-/*
-	ratio = ((float) gd+1) / (ttl+1);
-	//cout<<"Validratio:"<<ratio<<endl;
-	if (ratio < 0.75)
-		return false;
-		*/
-	/*
-	gd=0;ttl=0;
-	KSegmentator::colormask_t r;
-	for (int j =ball.y+ball.cr+1; j <= ball.y + ball.cr+ ball.cr/2;	j+=config.subsampling)
-		for (int i = ball.x - ball.cr; i <= ball.x + ball.cr; i+=config.subsampling)
-		{
-			//prepSeg(i+config.subsampling,j+config.subsampling);//Prefetching
-			if (!validpixel(i,j))
-				continue;
-			r=doSeg(i, j,c|white|green);
-			if (colorIsA(r,green | white))
-				gd++;
-			else if(colorIsA(r,c))
-				gd--;
-			ttl++;
-		}
-
-	for (int j =ball.y-ball.cr-ball.cr/2; j <= ball.y + ball.cr-1;	j+=3)
-		for (int i = ball.x - ball.cr; i <= ball.x + ball.cr; i+=3)
-		{
-			if (!validpixel(i,j))
-				continue;
-			r=doSeg(i, j);
-			if (r == green||r==white)
-				gd++;
-			else if(r==c)
-				gd--;
-			ttl++;
-		}
-
-	for (int j =ball.y-ball.cr; j <= ball.y + ball.cr;	j+=3)
-	{
-
-		for (int i = ball.x - ball.cr-ball.cr/2; i <= ball.x - ball.cr-2; i++)
-		{
-			if (!validpixel(i,j))
-				continue;
-			r=doSeg(i, j);
-			if (r == green||r==white)
-				gd++;
-			//lse if(r==c)
-			//	gd--;
-			ttl++;
-		}
-		for (int i = ball.x + ball.cr+2 ;i <= ball.x + ball.cr +ball.cr/2; i++)
-		{
-			if (!validpixel(i,j))
-				continue;
-			r=doSeg(i, j);
-			if (r == green||r==white)
-				gd++;
-			//else if(r==c)
-			//	gd--;
-			ttl++;
-		}
 	}
-
-	ratio = ((float) gd+1) / (ttl+1);
-	cout<<"Validratio2:"<<ratio<<endl;
-	//if (ratio < 0.25)
-	//	return false;*/
-	return true;
+	if(gd+remin<=gdlimit || bd>=bdlimit)//No hope
+		return false;
+	if(gd>=gdlimit && bd+remout<=bdlimit)// Certainty
+		return true;
+	return false;
 
 }
 bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colormask_t c) const
@@ -1693,10 +1605,10 @@ void Vision::prepSeg(const int x,const int y) const
 {
 	KPROF_SCOPE(vprof,"prepSeg");
 
-	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
-	{
+//	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
+//	{
 		seg->prefetchPixelData(x,y);
-	}
+//	}
 }
 
 #ifdef __GNUC__
