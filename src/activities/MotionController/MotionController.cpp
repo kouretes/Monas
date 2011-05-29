@@ -255,7 +255,7 @@ void MotionController::mglrun()
 	}
 	else
 	{
-		motion->setStiffnesses("Body", 0.8);
+		motion->setStiffnesses("Body", 1.0);
 		currentstate=gameState;
 
 	}
@@ -438,7 +438,7 @@ void MotionController::mglrun()
 
 			if (am != NULL)
 			{
-				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command(), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command() +" "+ to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::ExtraInfo);
 				pam->set_command(am->command());
 			}
 
@@ -541,7 +541,7 @@ void MotionController::mglrun()
 					readyToKick = 0;
 				}
 			}
-			Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
+			//Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 			//return;
 		}
 		if ((am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning() && (motionSkills == 0))
