@@ -17,15 +17,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/robot_consts.h"
 
-/*
- * Lefteri!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * 
- * Oi Metavlhtes pou xreiazesai gia thn arxikh thesi
- * einai initX, initY, initPhi typou float kai arxikopoiountai
- * otan to robot mpainei se PLAYER_READY state.
- * 
- * 
- * */
 using namespace boost::posix_time;
 
 
@@ -213,81 +204,85 @@ int VBehavior::Execute() {
 		float posx=0.115, posy=0.04;
 		//static float lastx=0,lasty=0;
 
-		if ((obsm != 0) && !turning) {
+		if(wim != 0 && !turning){
+			if (wim->balls_size() > 0 && ballfound>=1) {
+				scanforball = false; //be sure to stop scanning
+				int side=1;
+				bx = wim->balls(0).relativex();
+				by = wim->balls(0).relativey();
+				bd = sqrt(pow(bx,2)+pow(by,2));
+				bb = atan2(by,bx);
 
-			scanforball = false; //be sure to stop scanning
-			int side=1;
-			bd = obsm->ball().dist();
-			bb = obsm->ball().bearing();
-			bx = obsm->ball().dist() * cos( obsm->ball().bearing() ) ;//+ bx/2;
-			by = obsm->ball().dist() * sin( obsm->ball().bearing() ) ;// + by/2;
-			side = (bb > 0) ? 1 : -1;
-			Logger::Instance().WriteMsg("VBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
-			if (ballfound>=1) {
+				side = (bb > 0) ? 1 : -1;
+				Logger::Instance().WriteMsg("VBehavior", "Measurements - Distance: " + _toString(bd) + "  Bearing: " + _toString(bb) + "  BX: " + _toString(bx) + "  BY: " + _toString(by), Logger::Info);
+				if (ballfound>=1) {
 
-				readytokick = true;
+					readytokick = true;
 
-                if ( fabs( bx - posx ) > 0.01  || fabs( by - (side*posy) ) > 0.06) {
-                    //Y = gainFine * ( by - (side*posy) );
-                    readytokick = false;
-                }
-				float offsety=side*posy;
+					if ( fabs( bx - posx ) > 0.01  || fabs( by - (side*posy) ) > 0.06) {
+						//Y = gainFine * ( by - (side*posy) );
+						readytokick = false;
+					}
+					float offsety=side*posy;
 
-				if (!readytokick) {
-                   // if(abs(bd>0.6))
-					//{
+					if (!readytokick) {
+					   // if(abs(bd>0.6))
+						//{
 
-						static float X=0,Y=0,th=0,f=0.2;
-						//X=(bx-posx)*2;
-						X=(bx-posx )*3;
-						X=X>0?X:X-0.001;
-						X=X>1?1:X;
-						X=X<-1?-1:X;
-						//Y=(by-offsety)*1.6;
-						Y=(by-offsety)*3;
-//
-//						lastx=bx;
-//						lasty=by;
+							static float X=0,Y=0,th=0,f=0.2;
+							//X=(bx-posx)*2;
+							X=(bx-posx)*3;
+							X=X>0?X:X-0.001;
+							X=X>1?1:X;
+							X=X<-1?-1:X;
+							//Y=(by-offsety)*1.6;
+							Y=(by-offsety)*3;
+	//
+	//						lastx=bx;
+	//						lasty=by;
 
-						if(bd>0.30)
-						{
-							if(bx<0)
-								th=0.2 *Y;
+							if(bd>0.30)
+							{
+								if(bx<0)
+									th=0.2 *Y;
+								else
+									th=0.1 *Y;
+
+								Y=Y*2.0/3.0;
+								X=X*2.0/3.0;
+
+							}
 							else
-								th=0.1 *Y;
+							{
+								th=-0.06*by*(Y>0?-1:1);
+							}
 
-							Y=Y*2.0/3.0;
-							X=X*2.0/3.0;
+							Y=Y>0?Y+0.01:Y-0.01;
+							Y=Y>1?1:Y;
+							Y=Y<-1?-1:Y;
+							f=1;
 
-						}
-						else
-							th=-0.06*by*(Y>0?-1:1);
-
-
-						Y=Y>0?Y+0.01:Y-0.01;
-						Y=Y>1?1:Y;
-						Y=Y<-1?-1:Y;
-						f=1;
-
-						th=th>1?1:th;
-						th=th<-1?-1:th;
-						velocityWalk(X,Y,th,f);
-
+							th=th>1?1:th;
+							th=th<-1?-1:th;
+							velocityWalk(X,Y,th,f);
+					}
 				}
+			}else {
+				scanforball = true;
+				ballfound = 0;
 			}
-		}
-		else {
+		}else {
 			readytokick = false;
 		}
 
 		/* Ready to take action */
 		if (readytokick && !turning) {
-			if (bb > 0.0) {
-				amot->set_command("KickForwardLeftCutB.xar"); //"KickSideLeftFast.xar"
+			if (by > 0.0) {
+				amot->set_command("KickForwardLeft.xar"); //bb>0  "KickSideLeftFast.xar"
 				direction = -1;
 			}
 			else {
-				amot->set_command("KickForwardRightCutB.xar"); //"KickSideRightFast.xar"
+				amot->set_command("KickForwardRight.xar"); //"KickSideRightFast.xar"
 				direction = +1;
 			}
 			_blk->publishSignal(*amot, "motion");
@@ -296,7 +291,7 @@ int VBehavior::Execute() {
 
 			lastkick=microsec_clock::universal_time()+seconds(4);
 
-
+			scanforball = true;
 			readytokick = false;
 		}
 
@@ -413,8 +408,10 @@ void VBehavior::read_messages() {
 	gsm  = _blk->readState<GameStateMessage> ("behavior");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	//obsm = _blk->readSignal<ObservationMessage> ("vision");
 	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
+	wim  = _blk->readData<WorldInfo> ("behavior");
+
 
 	Logger::Instance().WriteMsg("VBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");

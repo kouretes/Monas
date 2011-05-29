@@ -446,30 +446,31 @@ void MotionController::mglrun()
 			{
 				motionSkills = 1;
 				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
-				AngleCompare();
+				AngleCompare(POSES_FORWKICK);
 
 				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]) + _toString(comp[16]) + _toString(comp[17]), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]), Logger::ExtraInfo);
 
-				if (comp[3] >= 4 && comp[11] >= 5 && comp[16] == 1 && comp[17] == 1)
+				if (comp[3] >= 4 && comp[7] >= 5 && comp[11] == 2)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE1 ", Logger::ExtraInfo);
 
 					pam->set_command("KickForwardRightCutD.xar");
 					readyToKick = 1;
-				} else if (comp[2] >= 3 && comp[10] >= 3 && comp[16] == 1 && comp[17] == 1)
+				} else if (comp[2] >= 3 && comp[6] >= 3 && comp[10] == 2)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE2 ", Logger::ExtraInfo);
 
 					pam->set_command("KickForwardRightCutC.xar");
 					readyToKick = 1;
-				} else if (comp[1] >= 2 && comp[9] >= 3 && comp[16] == 1)
+				} else if (comp[1] >= 2 && comp[5] >= 3 && comp[9] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE3 ", Logger::ExtraInfo);
 
 					pam->set_command("KickForwardRightCutB.xar");
 					readyToKick = 1;
-				} else if (comp[0] >= 2 && comp[8] >= 3 && comp[16] == 1)
+				} else if (comp[0] >= 2 && comp[4] >= 3 && comp[8] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE4 ", Logger::ExtraInfo);
 
@@ -478,47 +479,35 @@ void MotionController::mglrun()
 				}else
 					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
 
-				if (readyToKick == 1)
-				{
-					SpAssocCont::iterator it = SpActions.find(pam->command());
-					if (it == SpActions.end())
-						Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
-					else
-					{
-						killWalkCommand();
-						actionPID = it->second->ExecutePost();
-					}
-					pam->set_command("NULL");
-					readyToKick = 0;
-				}
 			} else if (pam->command() == "MyLeftKick")
 			{
 				motionSkills = 1;
 				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
-				AngleCompare();
+				AngleCompare(POSES_FORWKICK);
 
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
 				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[12]) + _toString(comp[13]) + _toString(comp[14]) + _toString(comp[15]) + _toString(comp[18]) + _toString(comp[19]), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]), Logger::ExtraInfo);
 
-				if (comp[7] >= 4 && comp[15] >= 5 && comp[18] == 1 && comp[19] == 1)
+				if (comp[3] >= 4 && comp[7] >= 5 && comp[11] == 2)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE5 ", Logger::ExtraInfo);
 
 					pam->set_command("KickForwardLeftCutD.xar");
 					readyToKick = 1;
-				} else if (comp[6] >= 3 && comp[14] >= 3 && comp[18] == 1 && comp[19] == 1)
+				} else if (comp[2] >= 3 && comp[6] >= 3 && comp[10] == 2)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE6 ", Logger::ExtraInfo);
 
 					pam->set_command("KickForwardLeftCutC.xar");
 					readyToKick = 1;
-				} else if (comp[5] >= 2 && comp[13] >= 3 && comp[19] == 1)
+				} else if (comp[1] >= 2 && comp[5] >= 3 && comp[9] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE7 ", Logger::ExtraInfo);
 
 					pam->set_command("KickForwardLeftCutB.xar");
 					readyToKick = 1;
-				} else if (comp[4] >= 2 && comp[12] >= 3 && comp[19] == 1)
+				} else if (comp[0] >= 2 && comp[4] >= 3 && comp[8] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE8 ", Logger::ExtraInfo);
 
@@ -527,19 +516,69 @@ void MotionController::mglrun()
 				}else
 					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
 
-				if (readyToKick == 1)
+			}else if (pam->command() == "MyBackRightKick")
+			{
+				motionSkills = 1;
+				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+				AngleCompare(POSES_BACKKICK);
+
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
+
+				if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
 				{
-					SpAssocCont::iterator it = SpActions.find(pam->command());
-					if (it == SpActions.end())
-						Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
-					else
-					{
-						killWalkCommand();
-						actionPID = it->second->ExecutePost();
-					}
-					pam->set_command("NULL");
-					readyToKick = 0;
+					Logger::Instance().WriteMsg("MotionController", "CASE9 ", Logger::ExtraInfo);
+
+					pam->set_command("KickBackRightCutB2.xar");
+					readyToKick = 1;
+				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
+				{
+					Logger::Instance().WriteMsg("MotionController", "CASE10 ", Logger::ExtraInfo);
+
+					pam->set_command("KickBackRightCutA2.xar");
+					readyToKick = 1;
+				}else
+					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+
+			}else if (pam->command() == "MyBackLeftKick")
+			{
+				motionSkills = 1;
+				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+				AngleCompare(POSES_BACKKICK);
+
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
+
+				if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
+				{
+					Logger::Instance().WriteMsg("MotionController", "CASE11 ", Logger::ExtraInfo);
+
+					pam->set_command("KickBackLeftCutB.xar");
+					readyToKick = 1;
+				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
+				{
+					Logger::Instance().WriteMsg("MotionController", "CASE12 ", Logger::ExtraInfo);
+
+					pam->set_command("KickBackLeftCutA.xar");
+					readyToKick = 1;
+				}else
+					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+			}
+
+			if (readyToKick == 1)
+			{
+				SpAssocCont::iterator it = SpActions.find(pam->command());
+				if (it == SpActions.end())
+					Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
+				else
+				{
+					killWalkCommand();
+					actionPID = it->second->ExecutePost();
 				}
+				pam->set_command("NULL");
+				readyToKick = 0;
 			}
 			//Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 			//return;
@@ -875,14 +914,14 @@ void MotionController::MotionSkillsInit()
 		walkPrevAng[i] = 0;
 	}
 
-	for (int i = 0; i < 4*(NUM_OF_POSES - 1)+4; i++)
+	for (int i = 0; i < 3*(POSES_FORWKICK - 1); i++)
 	{
 		comp[i] = 0;
 	}
 
 	readRobotLegConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/specialActions.xml");
 
-	for(int j = 0; j < NUM_OF_POSES-1; j++)
+	for(int j = 0; j < POSES_FORWKICK-1; j++)
 	{
 		for (int i = 0; i < NUM_OF_ANGLES; i++)
 		{
@@ -897,132 +936,192 @@ void MotionController::MotionSkillsInit()
 				diffLKick[j][i] = 1;
 		}
 	}
+	for(int j = 0; j < POSES_BACKKICK-1; j++)
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			if (RBackKickAng[j+1][i] < RBackKickAng[j][i])
+				diffRBackKick[j][i] = -1;
+			else
+				diffRBackKick[j][i] = 1;
+
+			if (LBackKickAng[j+1][i] < LBackKickAng[j][i])
+				diffLBackKick[j][i] = -1;
+			else
+				diffLBackKick[j][i] = 1;
+		}
+	}
 	return;
 }
 
 
-void MotionController::AngleCompare()
+void MotionController::AngleCompare(int numOfPoses)
 {
+	float CompAng[numOfPoses][NUM_OF_ANGLES];
+	int diffKick[numOfPoses - 1][NUM_OF_ANGLES];
+	int temp[3*(numOfPoses - 1)];
 	int diffW[NUM_OF_ANGLES];
-	int temp[4*(NUM_OF_POSES - 1)+4];
 	for (int i = 0; i < NUM_OF_ANGLES; i++)
 	{
 		diffW[i] = 0;
 	}
-	for (int i = 0; i < 4*(NUM_OF_POSES - 1)+4; i++)
+	for (int i = 0; i < 3*(numOfPoses - 1); i++)
 	{
 		temp[i] = 0;
+	}
+	for(int j = 0; j < numOfPoses; j++)
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			CompAng[j][i] = 0;
+		}
+	}
+	for(int j = 0; j < numOfPoses-1; j++)
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			diffKick[j][i] = 0;
+		}
 	}
 
 	if (allsm == NULL)
 		return;
 
-		LHipPitch = allsm->jointdata(L_LEG + HIP_PITCH);
-		LHipRoll = allsm->jointdata(L_LEG + HIP_ROLL);
-		RHipPitch = allsm->jointdata(R_LEG + HIP_PITCH);
-		RHipRoll = allsm->jointdata(R_LEG + HIP_ROLL);
-		RKneePitch = allsm->jointdata(R_LEG + KNEE_PITCH);
-		LKneePitch = allsm->jointdata(L_LEG + KNEE_PITCH);
+	LHipPitch = allsm->jointdata(L_LEG + HIP_PITCH);
+	LHipRoll = allsm->jointdata(L_LEG + HIP_ROLL);
+	RHipPitch = allsm->jointdata(R_LEG + HIP_PITCH);
+	RHipRoll = allsm->jointdata(R_LEG + HIP_ROLL);
+	RKneePitch = allsm->jointdata(R_LEG + KNEE_PITCH);
+	LKneePitch = allsm->jointdata(L_LEG + KNEE_PITCH);
 
-		float walkAngles[NUM_OF_ANGLES] = {
-								LHipPitch.sensorvalue() / TO_RAD,
-								LHipRoll.sensorvalue() / TO_RAD,
-								RHipPitch.sensorvalue() / TO_RAD,
-								RHipRoll.sensorvalue() / TO_RAD,
-								RKneePitch.sensorvalue() / TO_RAD,
-								LKneePitch.sensorvalue() / TO_RAD };
+	float walkAngles[NUM_OF_ANGLES] = {
+		LHipPitch.sensorvalue() / TO_RAD,
+		LHipRoll.sensorvalue() / TO_RAD,
+		RHipPitch.sensorvalue() / TO_RAD,
+		RHipRoll.sensorvalue() / TO_RAD,
+		RKneePitch.sensorvalue() / TO_RAD,
+		LKneePitch.sensorvalue() / TO_RAD };
 
-		for(int j = 0; j < NUM_OF_POSES-1; j++)
-		{
-			for (int i = 0; i < NUM_OF_ANGLES; i++)
-			{
-			//	Logger::Instance().WriteMsg("MotionController", _toString(walkAngles[i]), Logger::ExtraInfo);
-				if (walkAngles[i] < walkPrevAng[i])
-					diffW[i] = -1;
-				else
-					diffW[i] = 1;
+	for (int i = 0; i < NUM_OF_ANGLES; i++)
+	{
+		//Logger::Instance().WriteMsg("MotionController", _toString(walkAngles[i]), Logger::ExtraInfo);
+		if (walkAngles[i] < walkPrevAng[i])
+			diffW[i] = -1;
+		else
+			diffW[i] = 1;
+	}
 
-				if (RKickAng[j][i] < RKickAng[j+1][i])
-				{
-					if ((walkAngles[i] <= RKickAng[j+1][i]) and (walkAngles[i] > RKickAng[j][i]))
-					{
-						temp[j] = temp[j] + 1;
-						if (i == 0)
-							temp[4*(NUM_OF_POSES - 1)] = 1;
-						if (i == 2)
-							temp[4*(NUM_OF_POSES - 1)+1] = 1;
-					}
-				} else
-				{
-					if ((walkAngles[i] <= RKickAng[j][i]) and (walkAngles[i] > RKickAng[j+1][i]))
-					{
-						temp[j] = temp[j] + 1;
-						if (i == 0)
-							temp[4*(NUM_OF_POSES - 1)] = 1;
-						if (i == 2)
-							temp[4*(NUM_OF_POSES - 1)+1] = 1;
-					}
-				}
-
-				if (LKickAng[j][i] < LKickAng[j+1][i])
-				{
-					if ((walkAngles[i] <= LKickAng[j+1][i]) and (walkAngles[i] > LKickAng[j][i]))
-					{
-						temp[j+(NUM_OF_POSES - 1)] = temp[j+(NUM_OF_POSES - 1)] + 1;
-						if (i == 0)
-							temp[4*(NUM_OF_POSES - 1)+2] = 1;
-						if (i == 2)
-							temp[4*(NUM_OF_POSES - 1)+3] = 1;
-					}
-				} else
-				{
-					if ((walkAngles[i] <= LKickAng[j][i]) and (walkAngles[i] > LKickAng[j+1][i]))
-					{
-						temp[j+(NUM_OF_POSES - 1)] = temp[j+(NUM_OF_POSES - 1)] + 1;
-						if (i == 0)
-							temp[4*(NUM_OF_POSES - 1)+2] = 1;
-						if (i == 2)
-							temp[4*(NUM_OF_POSES - 1)+3] = 1;
-					}
-				}
-			}
-		}
-		for (int j = 0; j < NUM_OF_POSES-1; j++)
-		{
-			for (int i = 0; i < NUM_OF_ANGLES; i++)
-			{
-				if (diffW[i] == diffRKick[j][i])
-					temp[j+2*(NUM_OF_POSES - 1)] = temp[j+2*(NUM_OF_POSES - 1)] + 1;
-
-				if (diffW[i] == diffLKick[j][i])
-					temp[j+3*(NUM_OF_POSES - 1)] = temp[j+3*(NUM_OF_POSES - 1)] + 1;
-			}
-		}
-
-		for (int i = 0; i < 4*(NUM_OF_POSES - 1)+4; i++)
-		{
-			comp[i] = temp[i];
-		}
-
+	if(pam->command() == "MyRightKick")
+	{
 		for (int i = 0; i < NUM_OF_ANGLES; i++)
 		{
-			walkPrevAng[i] = walkAngles[i];
+			for(int j = 0; j < numOfPoses; j++)
+			{
+				CompAng[j][i] = RKickAng[j][i];
+			}
+
+			for(int k = 0; k < numOfPoses-1; k++)
+			{
+				diffKick[k][i] = diffRKick[k][i];
+			}
 		}
+	}else if(pam->command() == "MyLeftKick")
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			for(int j = 0; j < numOfPoses; j++)
+			{
+				CompAng[j][i] = LKickAng[j][i];
+			}
+
+			for(int k = 0; k < numOfPoses-1; k++)
+			{
+				diffKick[k][i] = diffLKick[k][i];
+			}
+		}
+	}else if(pam->command() == "MyBackRightKick")
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			for(int j = 0; j < numOfPoses; j++)
+			{
+				CompAng[j][i] = RBackKickAng[j][i];
+			}
+
+			for(int k = 0; k < numOfPoses-1; k++)
+			{
+				diffKick[k][i] = diffRBackKick[k][i];
+			}
+		}
+	}else if(pam->command() == "MyBackLeftKick")
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			for(int j = 0; j < numOfPoses; j++)
+			{
+				CompAng[j][i] = LBackKickAng[j][i];
+			}
+
+			for(int k = 0; k < numOfPoses-1; k++)
+			{
+				diffKick[k][i] = diffLBackKick[k][i];
+			}
+		}
+	}
+
+	for(int j = 0; j < numOfPoses-1; j++)
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			if (CompAng[j][i] < CompAng[j+1][i])
+			{
+				if ((walkAngles[i] <= CompAng[j+1][i]) and (walkAngles[i] > CompAng[j][i]))
+				{
+					temp[j] = temp[j] + 1;
+					if (i == 0)
+						temp[j+2*(numOfPoses - 1)] = temp[j+2*(numOfPoses - 1)]+1;
+					if (i == 2)
+						temp[j+2*(numOfPoses - 1)] = temp[j+2*(numOfPoses - 1)]+1;
+				}
+			} else
+			{
+				if ((walkAngles[i] <= CompAng[j][i]) and (walkAngles[i] > CompAng[j+1][i]))
+				{
+					temp[j] = temp[j] + 1;
+					if (i == 0)
+						temp[j+2*(numOfPoses - 1)] = temp[j+2*(numOfPoses - 1)]+1;;
+					if (i == 2)
+						temp[j+2*(numOfPoses - 1)] = temp[j+2*(numOfPoses - 1)]+1;;
+				}
+			}
+			if (diffW[i] == diffKick[j][i])
+				temp[j+(numOfPoses - 1)] = temp[j+(numOfPoses - 1)] + 1;
+		}
+	}
+	for (int i = 0; i < 3*(numOfPoses - 1); i++)
+	{
+		comp[i] = temp[i];
+	}
+	for (int i = 0; i < NUM_OF_ANGLES; i++)
+	{
+		walkPrevAng[i] = walkAngles[i];
+	}
 }
 
 void MotionController::readRobotLegConfiguration(const std::string& file_name)
 {
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont rightKickForwardPoses, leftKickForwardPoses, rightAngles, leftAngles;
+	NodeCont rightKickForwardPoses, leftKickForwardPoses, rightKickBackPoses, leftKickBackPoses, angles;
 	int j = 0;
 	rightKickForwardPoses = config.QueryElement<std::string, float, std::string>( "KickForwardRight" );
 	leftKickForwardPoses = config.QueryElement<std::string, float, std::string>( "KickForwardLeft" );
+	rightKickBackPoses = config.QueryElement<std::string, float, std::string>( "KickBackRight" );
+	leftKickBackPoses = config.QueryElement<std::string, float, std::string>( "KickBackLeft" );
 
 	if( rightKickForwardPoses.size()!=0)
-		rightAngles = config.QueryElement<std::string, float, std::string>( "legsPose", &(rightKickForwardPoses[0]) );
-
-	for ( NodeCont::iterator it = rightAngles.begin(); it != rightAngles.end(); it++ )
+		angles = config.QueryElement<std::string, float, std::string>( "legsPose", &(rightKickForwardPoses[0]) );
+	for ( NodeCont::iterator it = angles.begin(); it != angles.end(); it++ )
 	{
 		j = it->attrb["pose"];
 		RKickAng[j][0] = it->attrb["angle1"];
@@ -1037,10 +1136,10 @@ void MotionController::readRobotLegConfiguration(const std::string& file_name)
 //			Logger::Instance().WriteMsg("MotionController", "RKICKANG: " + _toString(RKickAng[test][l]), Logger::ExtraInfo);
 //	}
 
+	angles.clear();
 	if( leftKickForwardPoses.size()!=0)
-		leftAngles = config.QueryElement<std::string, float, std::string>( "legsPose", &(leftKickForwardPoses[0]) );
-
-	for ( NodeCont::iterator it = leftAngles.begin(); it != leftAngles.end(); it++ )
+		angles = config.QueryElement<std::string, float, std::string>( "legsPose", &(leftKickForwardPoses[0]) );
+	for ( NodeCont::iterator it = angles.begin(); it != angles.end(); it++ )
 	{
 		j = it->attrb["pose"];
 		LKickAng[j][0] = it->attrb["angle1"];
@@ -1053,5 +1152,41 @@ void MotionController::readRobotLegConfiguration(const std::string& file_name)
 //	for (int test = 0; test<5; test++){
 //		for(int l = 0; l<6; l++)
 //			Logger::Instance().WriteMsg("MotionController", "LKICKANG: " + _toString(LKickAng[test][l]), Logger::ExtraInfo);
+//	}
+
+	angles.clear();
+	if( rightKickBackPoses.size()!=0)
+		angles = config.QueryElement<std::string, float, std::string>( "legsPose", &(rightKickBackPoses[0]) );
+	for ( NodeCont::iterator it = angles.begin(); it != angles.end(); it++ )
+	{
+		j = it->attrb["pose"];
+		RBackKickAng[j][0] = it->attrb["angle1"];
+		RBackKickAng[j][1] = it->attrb["angle2"];
+		RBackKickAng[j][2] = it->attrb["angle3"];
+		RBackKickAng[j][3] = it->attrb["angle4"];
+		RBackKickAng[j][4] = it->attrb["angle5"];
+		RBackKickAng[j][5] = it->attrb["angle6"];
+	}
+//	for (int test = 0; test<3; test++){
+//		for(int l = 0; l<6; l++)
+//			Logger::Instance().WriteMsg("MotionController", "RBackKickAng: " + _toString(RBackKickAng[test][l]), Logger::ExtraInfo);
+//	}
+
+	angles.clear();
+	if( leftKickBackPoses.size()!=0)
+		angles = config.QueryElement<std::string, float, std::string>( "legsPose", &(leftKickBackPoses[0]) );
+	for ( NodeCont::iterator it = angles.begin(); it != angles.end(); it++ )
+	{
+		j = it->attrb["pose"];
+		LBackKickAng[j][0] = it->attrb["angle1"];
+		LBackKickAng[j][1] = it->attrb["angle2"];
+		LBackKickAng[j][2] = it->attrb["angle3"];
+		LBackKickAng[j][3] = it->attrb["angle4"];
+		LBackKickAng[j][4] = it->attrb["angle5"];
+		LBackKickAng[j][5] = it->attrb["angle6"];
+	}
+//	for (int test = 0; test<3; test++){
+//		for(int l = 0; l<6; l++)
+//			Logger::Instance().WriteMsg("MotionController", "LBackKickAng: " + _toString(LBackKickAng[test][l]), Logger::ExtraInfo);
 //	}
 }
