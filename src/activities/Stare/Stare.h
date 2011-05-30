@@ -9,6 +9,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
+#include "messages/WorldInfo.pb.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/date_time/time_duration.hpp>
@@ -31,16 +32,22 @@ public:
 	std::string GetName ();
 	//int toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi);
 	int toFallOrNotToFall(DoubleObsInfo* doi);
+	int toFallOrNotToFall(WorldInfo* doi);
 private:
+	ApproachBall ab;
 	MotionWalkMessage wmot;	
 	BToHeadMessage* bhmsg;
 	FallMessage* fm;
 	ObservationMessage* lastObsm;
+	WorldInfo* lastWimsg;
 	DoubleObsInfo* doim;
-	boost::posix_time::ptime rcvObsm;
+	boost::posix_time::ptime rcvObsm, rcvWimsg;
 	boost::posix_time::ptime lastMove;
 	boost::shared_ptr<const ObservationMessage> obsm;
+	boost::shared_ptr<const WorldInfo> wimsg;
 	int headaction;
+	int fall;
+	bool penaltyMode;
 	void velocityWalk( double x, double y, double th, double f);
 };
 

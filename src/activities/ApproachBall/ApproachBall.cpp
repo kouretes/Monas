@@ -16,6 +16,7 @@ int ApproachBall::Execute() {
 	//Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
 	
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	wimsg = _blk->readData<WorldInfo> ("behavior");
 	
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	
@@ -79,7 +80,7 @@ int ApproachBall::Execute() {
 	}
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
-	
+
 	return 0;
 }
 
@@ -90,7 +91,6 @@ void ApproachBall::UserInit () {
 	_blk->subscribeTo("sensors", 0);
 	_blk->subscribeTo("behavior", 0);
 
-	//wmot = new MotionWalkMessage();
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);

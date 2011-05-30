@@ -11,6 +11,7 @@
 #include "messages/BehaviorMessages.pb.h"
 #include "../BehaviorConst.h"
 #include "../ApproachBall/ApproachBall.h"
+#include "../Localization/KLocalization.h"
 	
 
 class NoPlay : public IActivity {
@@ -23,14 +24,21 @@ public:
 	
 	std::string GetName ();
 	bool readRobotConfiguration(const std::string& file_name, bool kickoff);	
-	float initX,initY, initPhi;
 	
 private:
 	ApproachBall ab;
 	bool kickOff;
-	int curraction, prevaction;	
+	
 	boost::shared_ptr<const GameStateMessage> gsm;
 	boost::shared_ptr<const PlayerNumberMessage> pnm;
+	boost::shared_ptr<const WorldInfo> wimsg;
+	boost::shared_ptr<const ObservationMessage> obsm;
+	
+	int curraction, prevaction;	
+	float myPosX, myPosY, myPhi;
+	boost::posix_time::ptime lastMove, lastObsm;
+	
+	
 	ReturnToPositionMessage* rpm;
 	MotionWalkMessage wmot;
 	KickOffMessage* kcm;
@@ -41,11 +49,16 @@ private:
 	int playernum;
 	float posX;
 	float posY;
+	float initX,initY, initPhi;
+	float initXK, initYK, initPhiK;	
+	
+
 	bool readConf;
 	std::string roleFName;
 	void velocityWalk(double x, double y, double th, double f);
 	void littleWalk(double x, double y, double th) ;
-
+	void goToPosition(float x, float y, float phi);
+	float rotation(float a, float b, float theta);
 };
 
 #endif // _NoPlay_h_

@@ -1,17 +1,29 @@
 
 #include "Stare.h"
-
+#include "hal/robot/generic_nao/robot_consts.h"
+#include "messages/Gamecontroller.pb.h"
 namespace {
     ActivityRegistrar<Stare>::Type temp("Stare");
 }
 
 int Stare::Execute() {
-	//Logger::Instance().WriteMsg("Stare",  " execute", Logger::Info);
-	obsm = _blk->readSignal<ObservationMessage> ("vision");
-	//velocityWalk(0.0, 0.0,0.0,1);
-	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	
+
+	Logger::Instance().WriteMsg("Stare",  " execute", Logger::Info);
+	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	wimsg = _blk->readData<WorldInfo> ("behavior");
+	velocityWalk(0.0f , 0.0f, 0.0f ,1.0f);
+	LedChangeMessage leds;
+	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
+	LedValues* l = leds.add_leds();
 	headaction = BALLTRACK;
+	l->set_chain("l_ear");
+	l->set_color( "off");
+	l = leds.add_leds();
+	l->set_chain("r_ear");
+	l->set_color( "off");
+	_blk->publishSignal(leds, "leds");
+	/*
 	if (obsm.get()==0){
 		//Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
 		if (lastObsm==0)
@@ -28,6 +40,7 @@ int Stare::Execute() {
 		}else
 			lastObsm->CopyFrom(*obsm);
 	}
+	
 	int side ;//= 1;
 	
 	bd = lastObsm->ball().dist();
@@ -35,7 +48,36 @@ int Stare::Execute() {
 	bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
 	by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
 	side = (bb > 0) ? 1 : -1;
+	*/
+	
+	int side = 1;
+	
 
+
+	if (wimsg.get()==0){
+		//Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
+		if (lastWimsg==0)
+			return 0;
+	}else{
+		if(lastWimsg!=0){
+		//	Logger::Instance().WriteMsg("Stare",  " prev time" + lastObsm->image_timestamp(), Logger::ExtraInfo);
+			lastWimsg->CopyFrom(*wimsg);
+		//	Logger::Instance().WriteMsg("Stare",  " last time" + obsm->image_timestamp(), Logger::ExtraInfo);
+			rcvWimsg = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
+		}else
+			lastWimsg->CopyFrom(*wimsg);
+	}
+	
+	if(lastWimsg->balls_size()!=0){
+		bx = lastWimsg->balls(0).relativex();
+		by = lastWimsg->balls(0).relativey();
+		bd = sqrt(bx*bx + by*by);
+		if(by!=0.0)
+			bb = atan(bx/by);
+			
+		
+		side = (bb > 0) ? 1 : -1;
+	
 	static float X=0,Y=0,th=0,f=0.2;
 	//X=(bx-posx)*2;
 
@@ -59,27 +101,60 @@ int Stare::Execute() {
 
 	th=th>1?1:th;
 	th=th<-1?-1:th;
-
+	}
 	//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){//////////////////////////////
 		//velocityWalk(0,0,th,f);
 	//	lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
 //	}
-	fm->set_fall(toFallOrNotToFall(doim));
+	//fm->set_fall(toFallOrNotToFall(doim));
+	fall = toFallOrNotToFall(lastWimsg);
+	//if (fall==0){
+		//if(fabs(bb)> 60*TO_RAD ){
+			//if(by>1)
+				//by=1;
+			//else if(by<-1)
+				//by=-1;
+			//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){//////////////////////////////
+				//velocityWalk(0.0f, by, 0.0f, 0.8);
+				//lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
+			//}
+		//}else{
+			//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){
+				//velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+				//lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
+			//}
+		//}
+	//}
+	if(penaltyMode){
+		if(bb>=0 && lastWimsg->balls_size()>0 && lastWimsg->balls(0).relativexspeed()<0)
+			fall = 1;
+		else if(bb<0 && lastWimsg->balls_size()>0 && lastWimsg->balls(0).relativexspeed()<0)
+			fall = -1;
+	}
+	fm->set_fall(fall);
 	_blk->publishSignal(*fm, "behavior");
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
+	
 	//Logger::Instance().WriteMsg("Stare",  " end", Logger::Info);
+	//if(wimsg!=0){
+		//ab.readyToKick(wimsg);
+		//ab.ballAway(wimsg);
+	//}
+
 	return 0;
 }
 
 void Stare::UserInit () {
 	rcvObsm = boost::posix_time::microsec_clock::universal_time();
+	rcvWimsg= boost::posix_time::microsec_clock::universal_time();
 	lastMove = boost::posix_time::microsec_clock::universal_time();
 	fm = new FallMessage();
 	_blk->subscribeTo("vision", 0);
 	_blk->subscribeTo("sensors", 0);
 	_blk->subscribeTo("behavior", 0);
-
+	fall = 0;
+	penaltyMode = false;	   ////////an eimaste se penalty to allazoume se true!!!!!!!!!!!!!!
 	//wmot = new MotionWalkMessage();
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -87,6 +162,7 @@ void Stare::UserInit () {
 	wmot.add_parameter(0.0f);
 	bhmsg = new BToHeadMessage();
 	lastObsm = new ObservationMessage();
+	lastWimsg = new WorldInfo();
 	doim = new DoubleObsInfo();
 	headaction= BALLTRACK;
 }
@@ -187,4 +263,70 @@ int Stare::toFallOrNotToFall( DoubleObsInfo* doi){
 	}	
 	//Logger::Instance().WriteMsg("toFallOrNotToFall",  " no foot", Logger::Info);
 	return 0;		
+}
+
+
+
+
+int Stare::toFallOrNotToFall( WorldInfo* doi){
+	
+	//if(doi.get()==0){	//the two last observation messages
+	if(doi==0){	//the two last observation messages
+		//Logger::Instance().WriteMsg("toFallOrNotToFall",  " no obs", Logger::Info);
+		return 0;
+	}
+	float x1, y1, temp, dk;
+	float ub, ubx, ur, uby;
+	if(doi->balls_size()==0  )
+		return 0;
+	x1 = doi->balls(0).relativex();	//the last b observation's x position
+	y1 = doi->balls(0).relativey();	//the last but one observation's y position
+	ubx = doi->balls(0).relativexspeed();
+	uby = doi->balls(0).relativeyspeed();
+	
+	float ds, dx,ws;
+	if(ubx<0.0){
+
+		//ds = sqrt(pow((x1 - x2),2) + pow((y1 - y2),2));	// the distance between the last two ball positions
+		Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx>0", Logger::Info);
+
+			//temp = ((x1-x2)/ds);
+			//ws = acos(temp);
+			dk = (ubx*y1 - uby*x1)/ubx ; // dk is the projection of the ball's route towards the robot/goalpost
+			//Logger::Instance().WriteMsg("toFallOrNotToFall",  " dk = " + _toString(dk), Logger::Info);
+			if(fabs(dk)<=0.3){ //if dk is shorter than the robot's foot can extend
+			
+		//		Logger::Instance().WriteMsg("toFallOrNotToFall",  " t1 = " + t1, Logger::Info);
+		//		Logger::Instance().WriteMsg("toFallOrNotToFall",  " t2 = " + t2, Logger::Info);
+				ur = 0.15/1.4;
+				ub = sqrt(ubx*ubx + uby*uby);
+				
+			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ur = " + _toString(ur), Logger::Info);
+			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ub = " + _toString(ub), Logger::Info);
+				Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx = " + _toString(ubx), Logger::Info);
+			
+				if(fabs(ub)>ur){
+					if(ubx==0){
+						Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx = 0", Logger::Info);
+						return 0;
+					}
+					long tk;
+					tk = fabs((x1/ubx)); //in seconds...................mallon
+					Logger::Instance().WriteMsg("toFallOrNotToFall",  " time to hit the robot" , Logger::Info);
+					if(1.5<tk && tk<6.5){
+						//Logger::Instance().WriteMsg("toFallOrNotToFall",  " 300<tk<4000 ", Logger::Info);
+						if(dk>0){
+							Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
+							return 1;	//left	
+						}
+						else{
+							Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
+							return -1;	//right
+						}
+					}
+				}
+			}
+	}	
+	Logger::Instance().WriteMsg("toFallOrNotToFall",  " no foot", Logger::Info);
+	return 0;	
 }

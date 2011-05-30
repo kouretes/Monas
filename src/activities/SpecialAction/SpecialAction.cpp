@@ -1,6 +1,7 @@
 
 #include "SpecialAction.h"
-
+#include "hal/robot/generic_nao/robot_consts.h"
+#include "messages/Gamecontroller.pb.h"
 namespace {
     ActivityRegistrar<SpecialAction>::Type temp("SpecialAction");
 }
@@ -11,17 +12,26 @@ int SpecialAction::Execute() {
 	obs = _blk->readData<DoubleObsInfo>("behavior");
 	//Stare st;
 	fm = _blk->readSignal<FallMessage>("behavior");
+	LedChangeMessage leds;
 	//if (st.toFallOrNotToFall(obs) ==-1)
-	if(fm!=0 && fm->fall()==1)
+	LedValues* l = leds.add_leds();
+
+	if(fm!=0 && fm->fall()==1){
+		l->set_chain("l_ear");
+		l->set_color( "blue");
 		amot->set_command("goalieLeftFootExtened.xar");
-	else
+	}
+	else{
+		l->set_chain("r_ear");
+		l->set_color( "blue");
 		amot->set_command("goalieRightFootExtened.xar");
+	}
 	_blk->publishSignal(*amot, "motion");
 	
 	bhm->set_headaction(BALLTRACK);
 	_blk->publishSignal(*bhm, "behavior");
-	
-	sleep(2);
+	_blk->publishSignal(leds, "leds");
+	//sleep(2);
 	return 0;
 }
 

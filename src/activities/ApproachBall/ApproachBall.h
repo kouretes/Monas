@@ -40,6 +40,7 @@ private:
 	boost::posix_time::ptime rcvObsm;
 	boost::posix_time::ptime lastMove;
 	boost::shared_ptr<const ObservationMessage> obsm;
+	boost::shared_ptr<const WorldInfo> wimsg;
 	boost::shared_ptr<const GameStateMessage> gsm;
 	int headaction;
 	void velocityWalk( double x, double y, double th, double f);

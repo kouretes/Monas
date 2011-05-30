@@ -16,14 +16,15 @@ public:
 
 	bool Eval() {
 		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_6_2TOMyRightKick", "FALSE NO OBSM", Logger::Info);
-		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage> ("vision");
+		//boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage> ("vision");
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo> ("behavior");
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)
 			return false;
-		if (obsm.get()==0){
+		if (wimsg.get()==0 || wimsg->balls_size()==0){
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_6_2TOMyLeftKick", "FALSE NO OBSM", Logger::Info);
 			return false;
-		}else if (obsm.get()!=0 && (obsm->ball().dist() * sin(obsm->ball().bearing()) <= -0.01) ){
+		}else if ( wimsg->balls(0).relativey() <= -0.01 ){
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_6_2TOMyLeftKick", "TRUE", Logger::Info);
 			return true;
 		}else{

@@ -251,21 +251,23 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::protobuf_AddDesc_VisionObservations_2eproto();
+  ::protobuf_AddDesc_WorldInfo_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\026BehaviorMessages.proto\032\030VisionObservat"
-    "ions.proto\"(\n\016KickOffMessage\022\026\n\007kickOff\030"
-    "\001 \002(\010:\005false\"\'\n\016BToHeadMessage\022\025\n\nheadac"
-    "tion\030\001 \002(\005:\0010\"=\n\016HeadToBMessage\022\024\n\tballf"
-    "ound\030\001 \002(\005:\0010\022\025\n\ncalibrated\030\002 \002(\005:\0010\"+\n\013"
-    "ScanMessage\022\034\n\rscancompleted\030\001 \002(\010:\005fals"
-    "e\"E\n\023PlayerNumberMessage\022\030\n\rplayer_numbe"
-    "r\030\001 \002(\005:\0012\022\024\n\tteam_side\030\002 \002(\005:\0011\"G\n\017Posi"
-    "tionMessage\022\020\n\004posX\030\001 \002(\002:\00270\022\020\n\004posY\030\002 "
-    "\002(\002:\00270\022\020\n\005theta\030\003 \002(\002:\0011\"5\n\027ReturnToPos"
-    "itionMessage\022\032\n\013goalieToPos\030\001 \002(\010:\005false"
-    "\"U\n\rDoubleObsInfo\022!\n\004prev\030\001 \002(\0132\023.Observ"
-    "ationMessage\022!\n\004last\030\002 \002(\0132\023.Observation"
-    "Message\"\036\n\013FallMessage\022\017\n\004fall\030\001 \002(\005:\0010", 559);
+    "ions.proto\032\017WorldInfo.proto\"(\n\016KickOffMe"
+    "ssage\022\026\n\007kickOff\030\001 \002(\010:\005false\"\'\n\016BToHead"
+    "Message\022\025\n\nheadaction\030\001 \002(\005:\0010\"=\n\016HeadTo"
+    "BMessage\022\024\n\tballfound\030\001 \002(\005:\0010\022\025\n\ncalibr"
+    "ated\030\002 \002(\005:\0010\"+\n\013ScanMessage\022\034\n\rscancomp"
+    "leted\030\001 \002(\010:\005false\"E\n\023PlayerNumberMessag"
+    "e\022\030\n\rplayer_number\030\001 \002(\005:\0012\022\024\n\tteam_side"
+    "\030\002 \002(\005:\0011\"G\n\017PositionMessage\022\020\n\004posX\030\001 \002"
+    "(\002:\00270\022\020\n\004posY\030\002 \002(\002:\00270\022\020\n\005theta\030\003 \002(\002:"
+    "\0011\"5\n\027ReturnToPositionMessage\022\032\n\013goalieT"
+    "oPos\030\001 \002(\010:\005false\"U\n\rDoubleObsInfo\022!\n\004pr"
+    "ev\030\001 \002(\0132\023.ObservationMessage\022!\n\004last\030\002 "
+    "\002(\0132\023.ObservationMessage\"\036\n\013FallMessage\022"
+    "\017\n\004fall\030\001 \002(\005:\0010", 576);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();

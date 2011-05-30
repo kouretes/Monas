@@ -16,14 +16,14 @@ public:
 	}
 
 	bool Eval() {
-		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOApproachBall_one_or_more_times_", "FALSE NO OBSM", Logger::Info);
-		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
+		Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOApproachBall_one_or_more_times_", "  ", Logger::Info);
+		//boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
 	//	Stare st;
 		ApproachBall ab;
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
-			if(obsm.get()!=0 && !ab.ballAway(obsm) && !ab.readyToKick(obsm)){
+			if(wimsg.get()!=0 && wimsg->balls_size()!=0 && !ab.ballAway(wimsg) && !ab.readyToKick(wimsg)){
 				//if(doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
 					return true;
 			}

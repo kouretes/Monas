@@ -15,6 +15,14 @@ int Scan::Execute() {
 //	rtm = _blk->readSignal<RestartTurnMessage> ("behavior");
 //	if(rtm.get()!=0 && rtm->restartnow()==true)
 //		times=0;
+	LedChangeMessage leds;
+	LedValues* l = leds.add_leds();
+	l->set_chain("l_ear");
+	l->set_color( "off");
+	l = leds.add_leds();
+	l->set_chain("r_ear");
+	l->set_color( "off");
+	_blk->publishSignal(leds, "leds");	
 	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
@@ -50,12 +58,13 @@ int Scan::Execute() {
 
 void Scan::UserInit () {
 	_blk->subscribeTo("behavior", 0);
+	_blk->subscribeTo("vision", 0);
 	headaction = SCANFORBALL;
 	//side = 1;
 	//times = 0;
 	bhmsg = new BToHeadMessage();
 	lastTurn = boost::posix_time::microsec_clock::universal_time();
-	//wmot = new MotionWalkMessage();
+
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);

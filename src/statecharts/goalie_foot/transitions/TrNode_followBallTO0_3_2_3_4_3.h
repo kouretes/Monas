@@ -17,13 +17,13 @@ public:
 
 	bool Eval() {
 		/* ballfound==0 or readyTokick or (!ballaway and toFallOrNotTOFall==0) */
-		//Logger::Instance().WriteMsg("TrCond_StareTOStare", "FALSE NO OBSM", Logger::Info);
+		Logger::Instance().WriteMsg("TrCond_followBallTO0_3_2_3_4_3", " ",Logger::Info);
 		boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
-
+		//boost::shared_ptr<const DoubleObsInfo> doi = _blk->readData<DoubleObsInfo>("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("behavior");
 		ApproachBall ab;
-		Stare st;
+		//Stare st;
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_PLAYING)
 			return true;
@@ -31,11 +31,14 @@ public:
 		//	if(obsm.get()!=0 && ab.ballAway(obsm))
 				return true;
 		}
-		if( obsm.get()!=0 && ab.readyToKick(obsm) ){
+		if( wimsg.get()!=0 && wimsg->balls_size()!=0 && ab.readyToKick(wimsg) ){
 			return true;
 		}
-	//	if(obsm.get()!=0 && !ab.ballAway(obsm) && doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
-	//		return true;
+		if( wimsg.get()!=0 && wimsg->balls_size()!=0 && !ab.ballAway(wimsg) ){
+			return true;
+		}		
+	////	if(obsm.get()!=0 && !ab.ballAway(obsm) && doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
+	////		return true;
 		return false;
 	}
 };

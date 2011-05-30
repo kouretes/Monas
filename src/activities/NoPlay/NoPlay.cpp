@@ -15,7 +15,6 @@ namespace {
 int NoPlay::Execute() {
 	
 	//Logger::Instance().WriteMsg("NoPlay",  " Execute", Logger::Info);
-
 	gsm = _blk->readState<GameStateMessage> ("behavior");
 		if(!readConf)
 			readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml", kickOff);
@@ -42,7 +41,9 @@ int NoPlay::Execute() {
 				//	Logger::Instance().WriteMsg("NoPlay",  " publish pos", Logger::Info);
 					rpm->set_goalietopos(true);
 					_blk->publishSignal(*rpm, "behavior");
-				//	Logger::Instance().WriteMsg("NoPlay",  " publish return to pos", Logger::Info);
+					Logger::Instance().WriteMsg("NoPlay",  " publish return to pos", Logger::Info);
+				
+			//	goToPosition(initX, initY, initPhi);
 				break;
 				case PLAYER_SET:
 					Logger::Instance().WriteMsg("NoPlay",  " playerset", Logger::Info);
@@ -60,6 +61,22 @@ int NoPlay::Execute() {
 					kickOff = gsm->kickoff();
 					kcm->set_kickoff(kickOff);
 					_blk->publishState(*kcm, "behavior");
+					
+					//if(kickOff)
+						//goToPosition(initXK, initYK, initPhiK);
+					//else
+						//goToPosition(initX, initY, initPhi);
+						
+					if(kickOff){
+						pmsg->set_posx(initXK);
+						pmsg->set_posy(initYK);
+						pmsg->set_theta(initPhiK); 
+					}else{
+						pmsg->set_posx(initX);
+						pmsg->set_posy(initY);
+						pmsg->set_theta(initPhi); 
+					}
+					_blk->publishState(*pmsg, "behavior");
 					Logger::Instance().WriteMsg("NoPlay",  " playerready", Logger::Info);
 					curraction = CALIBRATE;
 					if(prevaction!=CALIBRATE){
@@ -71,6 +88,8 @@ int NoPlay::Execute() {
 						bhmsg->set_headaction(DONOTHING);	
 						Logger::Instance().WriteMsg("NoPlay",  " donothinggggg", Logger::Info);
 					}
+
+					
 				break;
 				case PLAYER_INITIAL:
 					Logger::Instance().WriteMsg("NoPlay",  " playerinitial", Logger::Info);
@@ -81,9 +100,6 @@ int NoPlay::Execute() {
 		
 						
 	}
-	
-
-
 	prevaction = curraction;
 	_blk->publishSignal(*bhmsg, "behavior");
 	//Logger::Instance().WriteMsg("NoPlay",  " bgainw", Logger::Info);
@@ -93,6 +109,7 @@ int NoPlay::Execute() {
 
 void NoPlay::UserInit () {
 	_blk->subscribeTo("behavior", 0);
+	_blk->subscribeTo("vision", 0);
 	curraction = DONOTHING;
 	prevaction = DONOTHING;
 	cal = false;
@@ -112,6 +129,9 @@ void NoPlay::UserInit () {
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
+	
+	lastMove = boost::posix_time::microsec_clock::universal_time();
+	lastObsm = boost::posix_time::microsec_clock::universal_time();
 	}
 
 std::string NoPlay::GetName () {
@@ -119,6 +139,46 @@ std::string NoPlay::GetName () {
 }
 
 bool NoPlay::readRobotConfiguration(const std::string& file_name, bool kickoff) {
+	//readConf=true;
+	//XML config(file_name);
+	//typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
+	//NodeCont teamPositions, robotPosition ;
+	//pnm = _blk->readState<PlayerNumberMessage>("behavior");
+	//Logger::Instance().WriteMsg("NoPlay",  " readConf "  , Logger::Info);
+	//int side = 1;
+	//initPhi = 0;
+	//if (pnm.get()==0)
+		//return false;
+	
+	//if (kickoff)
+		//teamPositions = config.QueryElement<std::string, float, std::string>( "kickOff" );
+	//else
+		//teamPositions = config.QueryElement<std::string, float, std::string>( "noKickOff" );
+	//if( teamPositions.size()!=0)
+		//robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
+	//Logger::Instance().WriteMsg("NoPlay",  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
+    //for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
+		//Logger::Instance().WriteMsg("NoPlay",  " it "  , Logger::Info);
+		//if(it->attrb["number"] == 1 ){// pnm->player_number()){
+			//if(pnm->team_side()==TEAM_BLUE){
+				//side=-1;
+				//initPhi = 180*TO_RAD;
+			//}
+			//initX = side*(it->attrb["posx"]);
+			//initY = side*(it->attrb["posy"]);
+	//Logger::Instance().WriteMsg("NoPlay",  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
+			//pmsg->set_posx(initX);
+			//pmsg->set_posy(initY);
+			//pmsg->set_theta(initPhi); 
+			//_blk->publishState(*pmsg, "behavior");
+			//return true;
+		//}
+        
+	//}
+	//return true;
+
+	/////////////////////////////////////////////////////////////////////////////////////////
+	
 	readConf=true;
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
@@ -126,14 +186,27 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name, bool kickoff) 
 	pnm = _blk->readState<PlayerNumberMessage>("behavior");
 	Logger::Instance().WriteMsg("NoPlay",  " readConf "  , Logger::Info);
 	int side = 1;
+	initPhiK = 0.0;
 	initPhi = 0;
 	if (pnm.get()==0)
 		return false;
 	
-	if (kickoff)
-		teamPositions = config.QueryElement<std::string, float, std::string>( "kickOff" );
-	else
-		teamPositions = config.QueryElement<std::string, float, std::string>( "noKickOff" );
+	teamPositions = config.QueryElement<std::string, float, std::string>( "kickOff" );
+	if( teamPositions.size()!=0)
+		robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
+	Logger::Instance().WriteMsg("NoPlay",  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
+    for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
+		Logger::Instance().WriteMsg("NoPlay",  " it "  , Logger::Info);
+		if(it->attrb["number"] == 1 ){// pnm->player_number()){
+			if(pnm->team_side()==TEAM_BLUE){
+				side=-1;
+				initPhiK = 180*TO_RAD;
+			}
+			initXK = side*(it->attrb["posx"]);
+			initYK = side*(it->attrb["posy"]);
+	}
+}
+	teamPositions = config.QueryElement<std::string, float, std::string>( "nokickOff" );
 	if( teamPositions.size()!=0)
 		robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
 	Logger::Instance().WriteMsg("NoPlay",  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
@@ -145,17 +218,27 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name, bool kickoff) 
 				initPhi = 180*TO_RAD;
 			}
 			initX = side*(it->attrb["posx"]);
-			initY = side*(it->attrb["posy"]);
-	Logger::Instance().WriteMsg("NoPlay",  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
-			pmsg->set_posx(initX);
-			pmsg->set_posy(initY);
-			pmsg->set_theta(initPhi); 
-			_blk->publishState(*pmsg, "behavior");
-			return true;
+			initY = side*(it->attrb["posy"]);		
+			
+			Logger::Instance().WriteMsg("NoPlay",  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
 		}
-        
 	}
-	return true;
+	if(kickoff){
+		pmsg->set_posx(initXK);
+		pmsg->set_posy(initYK);
+		pmsg->set_theta(initPhiK); 
+		
+	}else{
+		pmsg->set_posx(initX);
+		pmsg->set_posy(initY);
+		pmsg->set_theta(initPhi); 
+	}
+	_blk->publishState(*pmsg, "behavior");
+	return true;	
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
 }
 
 void NoPlay::velocityWalk(double x, double y, double th, double f) {
@@ -175,4 +258,61 @@ void NoPlay::littleWalk(double x, double y, double th) {
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
 	_blk->publishSignal(wmot, "motion");
+}
+
+void NoPlay::goToPosition(float x, float y, float phi){
+	
+	curraction = SCANFORPOST;
+	wimsg = _blk->readData<WorldInfo>("behavior");
+	if(wimsg.get()!=0){
+		myPosX = wimsg->myposition().x();
+		myPosY = wimsg->myposition().y();
+		myPhi = wimsg->myposition().phi();
+	}
+	float relativeX, relativeY, relativePhi;
+	obsm = _blk->readSignal<ObservationMessage>("vision");
+	relativeX = rotation(x, -y, myPhi) - myPosX;
+	relativeY = rotation(y, y, myPhi) - myPosY;
+	KLocalization h;
+	float velx, vely;
+	float angle = h.anglediff2(atan2(y -myPosY, x - myPosX), myPhi);
+	relativePhi = h.anglediff2(phi,myPhi);
+	vely = 0.8*sin(angle);
+	velx = 0.8*cos(angle);
+		
+		if(velx>1)
+			velx=1;
+		else if(velx<-1)
+			velx = -1;
+			
+		if(vely>1)
+			vely=1;
+		else if(vely<-1)
+			vely = -1;
+	
+
+	if(lastMove <= boost::posix_time::microsec_clock::universal_time()){
+		if ( ( x - locDeviation > myPosX || myPosX > x + locDeviation ) || ( y - locDeviation > myPosY || myPosY > y + locDeviation ) || ( phi - 0.1*phi > myPhi || myPhi > phi + 0.1*phi  ) )
+			velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+		else
+			velocityWalk(velx, vely, 0.1*relativePhi, 1.0);
+		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
+	}
+
+	if(obsm&&obsm->regular_objects_size() > 0)
+		lastObsm = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(2);
+	
+	if(lastObsm<= boost::posix_time::microsec_clock::universal_time()){
+		curraction = SCANFORBALL;
+	}
+	bhmsg->set_headaction(curraction);	
+	return;
+}
+	
+	
+float NoPlay::rotation(float a, float b, float theta){
+	Logger::Instance().WriteMsg("Rotation",  " Entered", Logger::Info);
+	return a*cos(theta) + b*sin(theta);
+	
+	
 }

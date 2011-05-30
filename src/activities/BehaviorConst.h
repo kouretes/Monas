@@ -27,7 +27,8 @@ static const float  lPost = 0.7,
 					ballDistLimit = 0.26,
 					goalieX = 2.5,
 					goalieY = 0,
-					away = 1.0;
+					away = 0.6;					//Ball away distance for the goalkkeper usual value 1.0 meter
+												//Need change for penalties!!!!!!!!!!!!!!!!!!!!!!!!!! Suggested 0.40
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f

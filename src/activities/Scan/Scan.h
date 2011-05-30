@@ -32,9 +32,10 @@ private:
 	boost::shared_ptr<const HeadToBMessage> hbm;
 	boost::shared_ptr<const GameStateMessage> gsm;
 	boost::shared_ptr<const ScanMessage> scnm;
+	boost::shared_ptr<const ObservationMessage> obsm;
+	
 	int headaction;
 	boost::posix_time::ptime lastTurn;
-	ApproachBall ab;
 	//int side, times;
 	//boost::shared_ptr<const RestartTurnMessage> rtm;
 	void velocityWalk( double x, double y, double th, double f);
