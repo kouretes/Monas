@@ -7,17 +7,11 @@
 
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
-#include "hal/thread.h"
-#include "hal/mutex.h"
 #include "gamecontroller.h"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
-
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <iostream>
 #include <string>
-
-#include "hal/robot/generic_nao/aldebaran-robotcontroller.h"
 #include <architecture/IActivity.h>
 
 
@@ -62,23 +56,14 @@ class RobotController: public IActivity {
 		* @returns true at the moment
 		*/
 		bool readConfiguration(const std::string& file_name);
-		GameController* gm;
+		GameController gm;
 
 		RoboCupGameControlData game_data;
-		AL::ALPtr<AL::ALMemoryProxy> memory;
-		bool received_data;
-		int chest_button_pressed;
-		int left_bumper_pressed;
-		int right_bumper_pressed;
-		bool override;
 		LedChangeMessage leds;
 		GameStateMessage gm_state;
 		GameStateMessage new_gm_state;
 
 		ConfigMessage conf;
-		Mutex mx;
-
-		boost::posix_time::ptime start_timer, endwait;
 };
 
 #endif // ROBOTCONTROLLER_H

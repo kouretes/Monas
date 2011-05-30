@@ -2,15 +2,14 @@
 
 message RobotPositionMessage{
 	repeated SensorData sensorData   	= 1;
-	required uint32 TimeDiff = 2;
+	required int32 TimeDiff = 2;
 }
 message ButtonMessage{
-	repeated SensorData data	= 3;
-	required uint32 TimeDiff = 4; 
+	repeated uint32 data	= 1 ;
 }
 message SensorData {
-	required float SensorValue = 1;
-	required float SensorValueDiff = 2;
+	required float SensorValue = 1 [default = 0.0];
+	required float SensorValueDiff = 2 [default = 0.0];
 }
 
 message AllSensorValuesMessage{

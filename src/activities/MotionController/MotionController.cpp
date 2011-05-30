@@ -269,7 +269,7 @@ void MotionController::mglrun()
 		float normdist = (accnorm - KDeviceLists::Interpret::GRAVITY_PULL) / KDeviceLists::Interpret::GRAVITY_PULL;
 
 		if ((normdist < -0.35 || normdist > 0.75  ||( fabs(angX+VangX*INTTIME) > ANGLEHOR && fabs(angX)<LEANTOOMUCH) || (fabs(angY+VangY*INTTIME) > ANGLEHOR && fabs(angY)<LEANTOOMUCH) )
-			||(robotUp&& actionPID==0&&(fabs(angX) > LEANTOOMUCH || fabs(angY) >LEANTOOMUCH)) )
+			||(robotUp&& actionPID==0&&(fabs(angX) > LEANTOOMUCH || fabs(angY) >LEANTOOMUCH)) ||gsm->override_state()==OVERRIDE_DROPDEAD )
 		{
 			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
 

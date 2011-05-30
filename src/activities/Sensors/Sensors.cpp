@@ -10,6 +10,21 @@ using namespace std;
 using namespace KDeviceLists;
 //#define UNNEEDED
 
+
+template<typename T>
+T readVector(std::vector<T> const& v,int index )
+{
+	return v[index];
+
+}
+
+template<typename T>
+T readVector(std::vector<T*> const& v,int index )
+{
+	return *v[index];
+}
+
+
 namespace {
 	ActivityRegistrar<Sensors>::Type temp("Sensors");
 }
@@ -31,23 +46,20 @@ void Sensors::UserInit() {
 	try {
 		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
 	} catch (AL::ALError& e) {
-		Logger::Instance().WriteMsg("Sensors", "Error in getting ALmemory proxy", Logger::FatalError);
+		Logger::Instance().WriteMsg("Sensors", "Error in getting memory proxy", Logger::FatalError);
 	}
-
 	try {
 		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	} catch (AL::ALError& e) {
 		Logger::Instance().WriteMsg("Sensors", "Error in getting motion proxy", Logger::FatalError);
 	}
 
-	initialisation();
+	initialization();
 	this->attachPublisherToMessageQueue(*_com->get_message_queue());
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
 void Sensors::fillComputedData(unsigned int timediff)
 {
-	static bool firstrun=true;
-
 	//COMPUTED SENSORS AKA ANGLE
 	float AccZvalue = ASM.sensordata(ACC + AXIS_Z).sensorvalue();
 	float AccXvalue = ASM.sensordata(ACC + AXIS_X).sensorvalue();
@@ -58,11 +70,11 @@ void Sensors::fillComputedData(unsigned int timediff)
 	float angX = atan2(-AccYvalue , -AccZvalue) ;//+ gyrX *GYRTOANG;
 	float angY = atan2(AccXvalue , -AccZvalue) ;//+ gyrY *GYRTOANG;
 	//cout<<gyrX<<" "<<gyrY<<" "<<angX<<" "<<angY<<endl;
-	if(firstrun)
+	if(anglefilterreset)
 	{
 		angle[0].reset(angX,0.1);
 		angle[1].reset(angY,0.1);
-		firstrun=false;
+		anglefilterreset=false;
 	}
 	angle[0].updateWithVel(angX,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.0003,gyrX,0.01*gyrX*gyrX+0.0003,timediff/1000000000.0);
 	angle[1].updateWithVel(angY,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.0003,gyrY,0.01*gyrY*gyrY+0.0003,timediff/1000000000.0);
@@ -75,10 +87,10 @@ void Sensors::fillComputedData(unsigned int timediff)
 
 
 }
+
+
 int Sensors::Execute() {
 
-	static bool firstrun = true;
-	float oldvalue,newvalue;
 	if(firstrun)
 	{
 		//Starting US Sensors
@@ -94,86 +106,30 @@ int Sensors::Execute() {
 
 		dcm->set(commands);
 		rtm.start();
-		//Init inertial statistics
-		sc.inc();
-		//gyravg[AXIS_Z].update(Interpret::GYR_OFFSET,sc);
 
 #ifdef KROBOT_IS_REMOTE_OFF
-		rtmfast.start();
-		cout<<"BIND TO DCM postProcess!"<<endl;
 		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
 		//dcm->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
 #endif
 		firstrun = false;
 	}
 
-	rtm.stop();
-	timediff = rtm.diffNs();
-	rtm.start();
+
 
 #ifndef KROBOT_IS_REMOTE_OFF
-	//Values["Head"] = memory->getListData(devicesInChains["Head"]);
-
-
-	jointValues = memory->getListData(jointKeys);
-	for(unsigned i=0;i<jointValues.size();i++)
-	{
-		oldvalue = ASM.jointdata(i).sensorvalue();
-		ASM.mutable_jointdata(i)->set_sensorvalue(jointValues[i]);
-		ASM.mutable_jointdata(i)->set_sensorvaluediff(jointValues[i] - oldvalue);
-
-	}
-
-	sensorValues = memory->getListData(sensorKeys);
-	//Detect inertialBoard Glitch
-	if(fabs(sensorValues[GYR+AXIS_Z]-gyravg[AXIS_Z].read_mean())/gyravg[AXIS_Z].read_mean()<0.1||sc.i<50 )
-	{
-		sc.inc();
-		float accn=sqrt(sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_X] +sensorValues[ACC+AXIS_Y] *sensorValues[ACC+AXIS_Y] +sensorValues[ACC+AXIS_Z]*sensorValues[ACC+AXIS_Z]    );
-
-
-		oldvalue = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
-		gyravg[AXIS_Z].update(sensorValues[AXIS_Z],sc);
-		newvalue=gyravg[AXIS_Z].read_mean();
-		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newvalue);
-		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newvalue - oldvalue);
-
-		accnorm.update(accn,sc);
-		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
-		float gyrgain=(Interpret:GYR_Z_REF/sensorValues[ACC+AXIS_Z])*Interpret::GYR_GAIN;
-		for(unsigned i=0;i<GYR_SIZE-1;i++)//EXCLUDE GYR_REF/GYR_Z
-		{
-			oldvalue = ASM.sensordata(GYR+i).sensorvalue();
-			gyravg[i].update(sensorValues[GYR+i],sc);
-			newvalue=(sensorValues[GYR+i]-gyravg[i].read_mean())*gyrgain;
-			//newvalue=(newvalue)+(1-smoothness)*oldvalue;
-			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newvalue);
-			ASM.mutable_sensordata(GYR+i)->set_sensorvaluediff(newvalue - oldvalue);
-
-		}
-
-		for(unsigned i=0;i<ACC_SIZE;i++)//EXCLUDE GYR_REF/GYR_Z
-		{
-			oldvalue = ASM.sensordata(ACC+i).sensorvalue();
-			newvalue=sensorValues[ACC+i]*accgain;
-			//newvalue=smoothness*(newvalue)+(1-smoothness)*oldvalue;
-			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newvalue);
-			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newvalue - oldvalue);
-		}
-		fillComputedData(timediff);
-
-	}
-	for(unsigned i=L_FSR;i<sensorValues.size();i++)
-	{
-		oldval=ASM.sensordata(i).sensorvalue();
-		newval=smoothness*(sensorValues[i])+(1-smoothness)*oldval;
-		ASM.mutable_sensordata(i)->set_sensorvalue(newval);
-		ASM.mutable_sensordata(i)->set_sensorvaluediff(newval-oldval);
-	}
-
-	ASM.set_timediff(timediff);
+	//Fetch into vectors
+	jointaccess.GetValues(jointValues);
+	sensoraccess.GetValues(sensorValues);
+	fetchValues();
 	_blk->publishData(ASM, "sensors");
+
+	if(updateButtons())
+	{
+		_blk->publishSignal(BM,"buttonevents");
+	}
+
 #endif
+	float oldvalue;
 
 	vector<float> RobotValues=motion->getRobotPosition(true);
 	//A vector containing the World Absolute Robot Position. (Absolute Position X, Absolute Position Y, Absolute Angle Z)
@@ -185,35 +141,41 @@ int Sensors::Execute() {
 	RPM.set_timediff(timediff);
 	_blk->publishData(RPM, "sensors");
 
+
+
 	return 0;
 }
-#ifdef KROBOT_IS_REMOTE_OFF
-void Sensors::synchronisedDCMcallback() {
+
+void Sensors::fetchValues() {
 	//Fead data add to messages
-	rtmfast.stop();
-	timedifffast = rtmfast.diffNs();
-	rtmfast.start();
+	rtm.stop();
+	timediff = rtm.diffNs();
+	rtm.start();
 	float oldval,newval;
-	//All Joints
-	for(unsigned i=0;i<jointPtr.size();i++)
+	//All JointsjointValues
+
+
+	for(unsigned i=0;i<jointValues.size();i++)
 	{
 		oldval=ASM.jointdata(i).sensorvalue();
-		newval=*jointPtr[i];
+		newval=readVector(jointValues,i);
 		ASM.mutable_jointdata(i)->set_sensorvalue(newval);
 		ASM.mutable_jointdata(i)->set_sensorvaluediff(newval-oldval);
 	}
+
 	//All Sensors
-	//cout<<fabs((*sensorPtr[GYR+AXIS_Z])-gyravg[AXIS_Z].read_mean())<<" "<<3*sqrt(gyravg[AXIS_Z].read_var())<<endl;
-	if(fabs((*sensorPtr[GYR+AXIS_Z])-gyravg[AXIS_Z].read_mean())/gyravg[AXIS_Z].read_mean()<0.1||sc.i<50 )
+
+
+	if(fabs((readVector(sensorValues,GYR+AXIS_Z)-gyravg[AXIS_Z].read_mean())/gyravg[AXIS_Z].read_mean())<0.1||sc.i<50 )
 	{
 		sc.inc();
-		float accn=sqrt((*sensorPtr[ACC+AXIS_X])*(*sensorPtr[ACC+AXIS_X]) +
-						(*sensorPtr[ACC+AXIS_Y])*(*sensorPtr[ACC+AXIS_Y]) +
-						(*sensorPtr[ACC+AXIS_Z])*(*sensorPtr[ACC+AXIS_Z])    );
+		float accn=sqrt((readVector(sensorValues,ACC+AXIS_X))*(readVector(sensorValues,ACC+AXIS_X)) +
+						(readVector(sensorValues,ACC+AXIS_Y))*(readVector(sensorValues,ACC+AXIS_Y)) +
+						(readVector(sensorValues,ACC+AXIS_Z))*(readVector(sensorValues,ACC+AXIS_Z))    );
 		accnorm.update(accn,sc);
 		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
 		oldval = ASM.sensordata(GYR+AXIS_Z).sensorvalue();
-		gyravg[AXIS_Z].update(*sensorPtr[GYR+AXIS_Z],sc);
+		gyravg[AXIS_Z].update(readVector(sensorValues,GYR+AXIS_Z),sc);
 		newval=gyravg[AXIS_Z].read_mean();
 		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(GYR+AXIS_Z)->set_sensorvaluediff(newval - oldval);
@@ -224,8 +186,8 @@ void Sensors::synchronisedDCMcallback() {
 		for(unsigned i=0;i<GYR_SIZE-1;i++)//EXCLUDE GYR_REF/GYR_Z
 		{
 			oldval = ASM.sensordata(GYR+i).sensorvalue();
-			gyravg[i].update(*sensorPtr[GYR+i],sc);
-			newval=(*sensorPtr[GYR+i]-gyravg[i].read_mean())*gyrgain;
+			gyravg[i].update(readVector(sensorValues,GYR+i),sc);
+			newval=(readVector(sensorValues,GYR+i)-gyravg[i].read_mean())*gyrgain;
 			//newval=(newval)+(1-smoothness)*oldval;
 
 			ASM.mutable_sensordata(GYR+i)->set_sensorvalue(newval);
@@ -233,27 +195,35 @@ void Sensors::synchronisedDCMcallback() {
 
 		}
 
-		for(unsigned i=0;i<ACC_SIZE;i++)//EXCLUDE GYR_REF/GYR_Z
+		for(unsigned i=0;i<ACC_SIZE;i++)
 		{
 			oldval = ASM.sensordata(ACC+i).sensorvalue();
-			newval=(*sensorPtr[ACC+i])*accgain;
+			newval=(readVector(sensorValues,ACC+i))*accgain;
 			//newval=(newval)+(1-smoothness)*oldval;
 			ASM.mutable_sensordata(ACC+i)->set_sensorvalue(newval);
 			ASM.mutable_sensordata(ACC+i)->set_sensorvaluediff(newval - oldval);
 		}
 
-		fillComputedData(timedifffast);
+		fillComputedData(timediff);
 	}
-	for(unsigned i=L_FSR;i<sensorPtr.size();i++)
+	for(unsigned i=L_FSR;i<sensorValues.size();i++)
 	{
 		oldval=ASM.sensordata(i).sensorvalue();
-		newval=smoothness*(*sensorPtr[i])+(1-smoothness)*oldval;
+		newval=smoothness*(readVector(sensorValues,i))+(1-smoothness)*oldval;
 		ASM.mutable_sensordata(i)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(i)->set_sensorvaluediff(newval-oldval);
 	}
 
-	ASM.set_timediff(timedifffast);
+	ASM.set_timediff(timediff);
 
+
+}
+
+#ifdef KROBOT_IS_REMOTE_OFF
+void Sensors::synchronisedDCMcallback()
+{
+
+	fetchValues();
 	//========== PUBLISH MSG ===/
     msgentry nmsg;
 
@@ -270,45 +240,81 @@ void Sensors::synchronisedDCMcallback() {
     nmsg.msgclass=msgentry::DATA;
 
     this->publish(nmsg);
-
-
-
-
-    commands[5][0][0] =-(angle[0].read())(0) - 0.0010*(angle[0].read())(1);//hm->parameter(p);
-	commands[5][1][0] = -(angle[1].read())(0)- 0.0010*(angle[1].read())(1);//hm->parameter(p);
-	//cout<<(angle[0].read())(0)<<" "<<(angle[1].read())(0)<<endl;
-	int DCMtime;
-	try
-	{ // Get time in 0 ms
-		DCMtime = dcm->getTime(0);
-	} catch (const AL::ALError &e)
+    if(updateButtons())
 	{
-		throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
+		msgentry nmsg;
+
+		google::protobuf::Message * newptr=BM.New();
+		newptr->CopyFrom(BM);
+		nmsg.msg.reset(newptr);
+
+		nmsg.host="localhost";
+		boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
+		//nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
+		nmsg.timestamp=now;
+		nmsg.topic="buttonevents";
+		//nmsg.publisher=Publisher::getName();
+		nmsg.msgclass=msgentry::SIGNAL;
+		this->publish(nmsg);
+
 	}
-	commands[4][0] = DCMtime;
-	//Send command
-	try
-	{
-		//dcm->setAlias(commands);
-	} catch (const AL::ALError &e)
-	{
-		throw ALERROR("mainModule", "execute_action", "Error when sending command to DCM : " + e.toString());
-	}
+
 }
+#endif
+void Sensors::initialization() {
+	smoothness = 0.75;
+	firstrun=true;
+	anglefilterreset=true;
+	std::vector<std::string> jointKeys,sensorKeys,buttonKeys;
 
-void Sensors::initFastAccess() {
+	jointKeys=KDeviceLists::getJointKeys();
+	sensorKeys=KDeviceLists::getSensorKeys();
+	buttonKeys=KDeviceLists::getButtonKeys();
 
-	jointPtr.resize(KDeviceLists::NUMOFJOINTS);
-	for (int i = 0; i < KDeviceLists::NUMOFJOINTS; i++) {
 
-		jointPtr[i] = (float *) memory->getDataPtr(jointKeys[i]);
-		//cout<<jointKeys[i]<<i<<" "<<jointPtr[i] <<endl;
+	jointValues.resize(jointKeys.size());
+	sensorValues.resize(sensorKeys.size());
+	buttonValues.resize(buttonKeys.size());
+	buttonevnts.resize(buttonKeys.size());
+
+	jointValues.assign(jointKeys.size(), 0);
+	sensorValues.assign(sensorKeys.size(),0);
+	buttonValues.assign(buttonKeys.size(),0);
+	struct buttonstate t;
+	t.last_pressed=boost::posix_time::microsec_clock::universal_time();
+	t.last_val=KDeviceLists::Interpret::BUTTON_RELEASED;
+	t.count=0;
+	buttonevnts.assign(buttonKeys.size(),t);
+
+#ifdef KROBOT_IS_REMOTE_OFF
+
+
+	for (unsigned i = 0; i < jointKeys.size(); i++) {
+
+		jointValues[i] = (float *) memory->getDataPtr(jointKeys[i]);
+	}
+	for (unsigned i = 0; i < sensorKeys.size(); i++) {
+		sensorValues[i] = (float *) memory->getDataPtr(sensorKeys[i]);
+	}
+	for (unsigned i = 0; i < buttonKeys.size(); i++) {
+		buttonValues[i] = (float *) memory->getDataPtr(buttonKeys[i]);
+	}
+
+
+#endif
+
+	ASM.Clear();
+	RPM.Clear();
+	BM.Clear();
+
+	for(unsigned i=0;i<jointKeys.size();i++)
+	{
 		ASM.add_jointdata();
 	}
-	sensorPtr.resize(KDeviceLists::NUMOFSENSORS);
-	for (int i = 0; i < KDeviceLists::NUMOFSENSORS; i++) {
-		sensorPtr[i] = (float *) memory->getDataPtr(sensorKeys[i]);
-		//cout<<sensorKeys[i]<<i<<" "<<sensorPtr[i] <<endl;
+
+
+	for(unsigned i=0;i<sensorKeys.size();i++)
+	{
 		ASM.add_sensordata();
 	}
 
@@ -316,67 +322,11 @@ void Sensors::initFastAccess() {
 		ASM.add_computeddata();
 	}
 
-	AL::ALValue jointAliasses;
-	vector<std::string> PosActuatorStrings = KDeviceLists::getPositionActuatorKeys();
 
-	jointAliasses.arraySetSize(2);
-	jointAliasses[0] = std::string("HeadjointActuator");
-
-	jointAliasses[1].arraySetSize(2);
-
-	// Joints actuator list
-	jointAliasses[1][YAW] = PosActuatorStrings[HEAD + YAW];
-	jointAliasses[1][PITCH] = PosActuatorStrings[HEAD + PITCH];
-
-	// Create alias
-	try
+	for(unsigned i=0;i<buttonKeys.size();i++)
 	{
-		dcm->createAlias(jointAliasses);
-	} catch (const AL::ALError &e)
-	{
-		throw ALERROR("mainModule", "createPositionActuatorAlias()", "Error when creating Alias : " + e.toString());
-	}
+		BM.add_data(0);
 
-	// Create Commands
-	commands.arraySetSize(6);
-	commands[0] = std::string("HeadjointActuator");
-	commands[1] = std::string("ClearAll"); // Erase all previous commands
-	commands[2] = std::string("time-separate");
-	commands[3] = 0;
-
-	commands[4].arraySetSize(1);
-	//commands[4][0]  Will be the new time
-
-	commands[5].arraySetSize(HEAD_SIZE); // For all joints
-
-	for (int i = 0; i < (HEAD_SIZE); i++)
-	{
-		commands[5][i].arraySetSize(1);
-		//commands[5][i][0] will be the new angle
-	}
-	angle[0].init(60000);
-	angle[1].init(60000);
-	//angle[0].reset(0,10);
-	//angle[1].reset(0,10);
-
-}
-#endif
-void Sensors::initialisation() {
-	smoothness = 0.75;
-
-	ASM.Clear();
-	jointKeys=KDeviceLists::getJointKeys();
-	for(unsigned i=0;i<jointKeys.size();i++)
-	{
-		ASM.add_jointdata();
-		ASM.mutable_jointdata(i)->set_sensorvalue(0);
-	}
-
-	sensorKeys=KDeviceLists::getSensorKeys();
-	for(unsigned i=0;i<sensorKeys.size();i++)
-	{
-		ASM.add_sensordata();
-		ASM.mutable_sensordata(i)->set_sensorvalue(0);
 
 	}
 
@@ -384,15 +334,58 @@ void Sensors::initialisation() {
 	RPM.add_sensordata(); //Y
 	RPM.add_sensordata(); //Angle
 
+
+
+
+
+	angle[0].init(60000);
+	angle[1].init(60000);
 #ifndef KROBOT_IS_REMOTE_OFF
-	jointValues.resize(jointKeys.size());
-	jointValues.resize(sensorKeys.size());
-	jointValues.assign(jointKeys.size(), 0);
-	sensorValues.assign(sensorKeys.size(),0);
-#else
-	initFastAccess();
+	jointaccess.ConnectToVariables(KAlBroker::Instance().GetBroker(),jointKeys,false);
+	sensoraccess.ConnectToVariables(KAlBroker::Instance().GetBroker(),sensorKeys,false);
+	buttonaccess.ConnectToVariables(KAlBroker::Instance().GetBroker(),buttonKeys,false);
 #endif
 	cout << " Number of joints distibuted " <<  jointKeys.size() << endl;
 	cout << " Number of sensors distibuted " << sensorKeys.size() << endl;
+	cout << " Number of buttons captured " << buttonKeys.size() << endl;
 }
 
+bool Sensors::updateButtons()
+{
+	bool dispachevent=false;
+	boost::posix_time::ptime now,d,t;
+	now=boost::posix_time::microsec_clock::universal_time();
+	d=now-boost::posix_time::milliseconds(DEBOUNCE_MILLISEC);
+	t=now-boost::posix_time::milliseconds(MCLICKDISTANCE_MILLISEC);
+	for(unsigned i=0;i<buttonValues.size();++i)
+	{
+		if(buttonevnts[i].last_pressed<d) //Wait for switch debounce
+		{
+			float v=readVector(buttonValues,i);
+			if(buttonevnts[i].last_val!=v)//If there is a change
+			{
+				buttonevnts[i].last_val=v;
+				if(v==KDeviceLists::Interpret::BUTTON_PRESSED)
+				{
+					++buttonevnts[i].count;
+					buttonevnts[i].last_pressed=now;
+				}
+				else if(buttonevnts[i].count>0&& buttonevnts[i].last_pressed<t)
+					dispachevent=true;
+
+			}
+		}
+
+	}
+
+
+	if(dispachevent)
+	{
+		for(unsigned i=0;i<buttonValues.size();++i)
+		{
+			BM.set_data(i,buttonevnts[i].count);
+			buttonevnts[i].count=0;
+		}
+	}
+	return dispachevent;
+}

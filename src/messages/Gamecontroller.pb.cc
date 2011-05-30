@@ -41,12 +41,12 @@ void protobuf_AssignDesc_Gamecontroller_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, player_state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, game_state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, sec_game_state_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, penalized_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, firsthalf_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, penalty_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, kickoff_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, our_score_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, otherteam_score_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, override_state_),
   };
   GameStateMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -150,20 +150,20 @@ void protobuf_AddDesc_Gamecontroller_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024Gamecontroller.proto\"\237\002\n\020GameStateMess"
-    "age\022\025\n\nteam_color\030\007 \002(\005:\0010\022\031\n\016own_goal_c"
-    "olor\030\005 \002(\005:\0010\022\027\n\014player_state\030\010 \002(\005:\0010\022\025"
-    "\n\ngame_state\030\t \002(\005:\0010\022\031\n\016sec_game_state\030"
-    "\n \002(\005:\0010\022\030\n\tpenalized\030\013 \002(\010:\005false\022\027\n\tfi"
-    "rstHalf\030\003 \002(\010:\004true\022\022\n\007penalty\030\r \002(\005:\0010\022"
-    "\025\n\007kickoff\030\014 \002(\010:\004true\022\024\n\tour_score\030\016 \002("
-    "\005:\0010\022\032\n\017otherteam_score\030\017 \002(\005:\0010\"0\n\tLedV"
-    "alues\022\017\n\005chain\030\001 \002(\t:\000\022\022\n\005color\030\002 \002(\t:\003o"
-    "ff\",\n\020LedChangeMessage\022\030\n\004leds\030\006 \003(\0132\n.L"
-    "edValues\"o\n\rConfigMessage\022\026\n\013team_number"
-    "\030\001 \002(\005:\0019\022\030\n\rplayer_number\030\002 \002(\005:\0011\022\030\n\rd"
-    "efault_color\030\004 \002(\005:\0010\022\022\n\004port\030\003 \002(\005:\004383"
-    "8", 521);
+    "\n\024Gamecontroller.proto\"\240\002\n\020GameStateMess"
+    "age\022\025\n\nteam_color\030\007 \002(\r:\0010\022\031\n\016own_goal_c"
+    "olor\030\005 \002(\r:\0010\022\027\n\014player_state\030\010 \002(\r:\0010\022\025"
+    "\n\ngame_state\030\t \002(\r:\0010\022\031\n\016sec_game_state\030"
+    "\n \002(\r:\0010\022\027\n\tfirstHalf\030\003 \002(\010:\004true\022\022\n\007pen"
+    "alty\030\r \002(\r:\0010\022\025\n\007kickoff\030\014 \002(\010:\004true\022\024\n\t"
+    "our_score\030\016 \002(\r:\0010\022\032\n\017otherteam_score\030\017 "
+    "\002(\r:\0010\022\031\n\016override_state\030\020 \002(\r:\0010\"0\n\tLed"
+    "Values\022\017\n\005chain\030\001 \002(\t:\000\022\022\n\005color\030\002 \002(\t:\003"
+    "off\",\n\020LedChangeMessage\022\030\n\004leds\030\006 \003(\0132\n."
+    "LedValues\"o\n\rConfigMessage\022\026\n\013team_numbe"
+    "r\030\001 \002(\005:\0019\022\030\n\rplayer_number\030\002 \002(\005:\0011\022\030\n\r"
+    "default_color\030\004 \002(\005:\0010\022\022\n\004port\030\003 \002(\005:\00438"
+    "38", 522);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Gamecontroller.proto", &protobuf_RegisterTypes);
   GameStateMessage::default_instance_ = new GameStateMessage();
@@ -193,12 +193,12 @@ const int GameStateMessage::kOwnGoalColorFieldNumber;
 const int GameStateMessage::kPlayerStateFieldNumber;
 const int GameStateMessage::kGameStateFieldNumber;
 const int GameStateMessage::kSecGameStateFieldNumber;
-const int GameStateMessage::kPenalizedFieldNumber;
 const int GameStateMessage::kFirstHalfFieldNumber;
 const int GameStateMessage::kPenaltyFieldNumber;
 const int GameStateMessage::kKickoffFieldNumber;
 const int GameStateMessage::kOurScoreFieldNumber;
 const int GameStateMessage::kOtherteamScoreFieldNumber;
+const int GameStateMessage::kOverrideStateFieldNumber;
 #endif  // !_MSC_VER
 
 GameStateMessage::GameStateMessage()
@@ -217,17 +217,17 @@ GameStateMessage::GameStateMessage(const GameStateMessage& from)
 
 void GameStateMessage::SharedCtor() {
   _cached_size_ = 0;
-  team_color_ = 0;
-  own_goal_color_ = 0;
-  player_state_ = 0;
-  game_state_ = 0;
-  sec_game_state_ = 0;
-  penalized_ = false;
+  team_color_ = 0u;
+  own_goal_color_ = 0u;
+  player_state_ = 0u;
+  game_state_ = 0u;
+  sec_game_state_ = 0u;
   firsthalf_ = true;
-  penalty_ = 0;
+  penalty_ = 0u;
   kickoff_ = true;
-  our_score_ = 0;
-  otherteam_score_ = 0;
+  our_score_ = 0u;
+  otherteam_score_ = 0u;
+  override_state_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -262,19 +262,19 @@ GameStateMessage* GameStateMessage::New() const {
 
 void GameStateMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    team_color_ = 0;
-    own_goal_color_ = 0;
-    player_state_ = 0;
-    game_state_ = 0;
-    sec_game_state_ = 0;
-    penalized_ = false;
+    team_color_ = 0u;
+    own_goal_color_ = 0u;
+    player_state_ = 0u;
+    game_state_ = 0u;
+    sec_game_state_ = 0u;
     firsthalf_ = true;
-    penalty_ = 0;
+    penalty_ = 0u;
+    kickoff_ = true;
   }
   if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    kickoff_ = true;
-    our_score_ = 0;
-    otherteam_score_ = 0;
+    our_score_ = 0u;
+    otherteam_score_ = 0u;
+    override_state_ = 0u;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -293,7 +293,7 @@ bool GameStateMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &firsthalf_)));
-          _set_bit(6);
+          _set_bit(5);
         } else {
           goto handle_uninterpreted;
         }
@@ -301,13 +301,13 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 own_goal_color = 5 [default = 0];
+      // required uint32 own_goal_color = 5 [default = 0];
       case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_own_goal_color:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &own_goal_color_)));
           _set_bit(1);
         } else {
@@ -317,13 +317,13 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 team_color = 7 [default = 0];
+      // required uint32 team_color = 7 [default = 0];
       case 7: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_team_color:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &team_color_)));
           _set_bit(0);
         } else {
@@ -333,13 +333,13 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 player_state = 8 [default = 0];
+      // required uint32 player_state = 8 [default = 0];
       case 8: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_player_state:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &player_state_)));
           _set_bit(2);
         } else {
@@ -349,13 +349,13 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 game_state = 9 [default = 0];
+      // required uint32 game_state = 9 [default = 0];
       case 9: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_game_state:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &game_state_)));
           _set_bit(3);
         } else {
@@ -365,31 +365,15 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 sec_game_state = 10 [default = 0];
+      // required uint32 sec_game_state = 10 [default = 0];
       case 10: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_sec_game_state:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &sec_game_state_)));
           _set_bit(4);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(88)) goto parse_penalized;
-        break;
-      }
-      
-      // required bool penalized = 11 [default = false];
-      case 11: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_penalized:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &penalized_)));
-          _set_bit(5);
         } else {
           goto handle_uninterpreted;
         }
@@ -405,7 +389,7 @@ bool GameStateMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &kickoff_)));
-          _set_bit(8);
+          _set_bit(7);
         } else {
           goto handle_uninterpreted;
         }
@@ -413,15 +397,15 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 penalty = 13 [default = 0];
+      // required uint32 penalty = 13 [default = 0];
       case 13: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_penalty:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &penalty_)));
-          _set_bit(7);
+          _set_bit(6);
         } else {
           goto handle_uninterpreted;
         }
@@ -429,15 +413,15 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 our_score = 14 [default = 0];
+      // required uint32 our_score = 14 [default = 0];
       case 14: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_our_score:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &our_score_)));
-          _set_bit(9);
+          _set_bit(8);
         } else {
           goto handle_uninterpreted;
         }
@@ -445,14 +429,30 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 otherteam_score = 15 [default = 0];
+      // required uint32 otherteam_score = 15 [default = 0];
       case 15: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_otherteam_score:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &otherteam_score_)));
+          _set_bit(9);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(128)) goto parse_override_state;
+        break;
+      }
+      
+      // required uint32 override_state = 16 [default = 0];
+      case 16: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_override_state:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &override_state_)));
           _set_bit(10);
         } else {
           goto handle_uninterpreted;
@@ -480,58 +480,58 @@ bool GameStateMessage::MergePartialFromCodedStream(
 void GameStateMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required bool firstHalf = 3 [default = true];
-  if (_has_bit(6)) {
+  if (_has_bit(5)) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->firsthalf(), output);
   }
   
-  // required int32 own_goal_color = 5 [default = 0];
+  // required uint32 own_goal_color = 5 [default = 0];
   if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->own_goal_color(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->own_goal_color(), output);
   }
   
-  // required int32 team_color = 7 [default = 0];
+  // required uint32 team_color = 7 [default = 0];
   if (_has_bit(0)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->team_color(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->team_color(), output);
   }
   
-  // required int32 player_state = 8 [default = 0];
+  // required uint32 player_state = 8 [default = 0];
   if (_has_bit(2)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(8, this->player_state(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(8, this->player_state(), output);
   }
   
-  // required int32 game_state = 9 [default = 0];
+  // required uint32 game_state = 9 [default = 0];
   if (_has_bit(3)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(9, this->game_state(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(9, this->game_state(), output);
   }
   
-  // required int32 sec_game_state = 10 [default = 0];
+  // required uint32 sec_game_state = 10 [default = 0];
   if (_has_bit(4)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->sec_game_state(), output);
-  }
-  
-  // required bool penalized = 11 [default = false];
-  if (_has_bit(5)) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(11, this->penalized(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(10, this->sec_game_state(), output);
   }
   
   // required bool kickoff = 12 [default = true];
-  if (_has_bit(8)) {
+  if (_has_bit(7)) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(12, this->kickoff(), output);
   }
   
-  // required int32 penalty = 13 [default = 0];
-  if (_has_bit(7)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(13, this->penalty(), output);
+  // required uint32 penalty = 13 [default = 0];
+  if (_has_bit(6)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(13, this->penalty(), output);
   }
   
-  // required int32 our_score = 14 [default = 0];
+  // required uint32 our_score = 14 [default = 0];
+  if (_has_bit(8)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(14, this->our_score(), output);
+  }
+  
+  // required uint32 otherteam_score = 15 [default = 0];
   if (_has_bit(9)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(14, this->our_score(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(15, this->otherteam_score(), output);
   }
   
-  // required int32 otherteam_score = 15 [default = 0];
+  // required uint32 override_state = 16 [default = 0];
   if (_has_bit(10)) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(15, this->otherteam_score(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(16, this->override_state(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -543,58 +543,58 @@ void GameStateMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* GameStateMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required bool firstHalf = 3 [default = true];
-  if (_has_bit(6)) {
+  if (_has_bit(5)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->firsthalf(), target);
   }
   
-  // required int32 own_goal_color = 5 [default = 0];
+  // required uint32 own_goal_color = 5 [default = 0];
   if (_has_bit(1)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->own_goal_color(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->own_goal_color(), target);
   }
   
-  // required int32 team_color = 7 [default = 0];
+  // required uint32 team_color = 7 [default = 0];
   if (_has_bit(0)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->team_color(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(7, this->team_color(), target);
   }
   
-  // required int32 player_state = 8 [default = 0];
+  // required uint32 player_state = 8 [default = 0];
   if (_has_bit(2)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(8, this->player_state(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(8, this->player_state(), target);
   }
   
-  // required int32 game_state = 9 [default = 0];
+  // required uint32 game_state = 9 [default = 0];
   if (_has_bit(3)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(9, this->game_state(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(9, this->game_state(), target);
   }
   
-  // required int32 sec_game_state = 10 [default = 0];
+  // required uint32 sec_game_state = 10 [default = 0];
   if (_has_bit(4)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->sec_game_state(), target);
-  }
-  
-  // required bool penalized = 11 [default = false];
-  if (_has_bit(5)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(11, this->penalized(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(10, this->sec_game_state(), target);
   }
   
   // required bool kickoff = 12 [default = true];
-  if (_has_bit(8)) {
+  if (_has_bit(7)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(12, this->kickoff(), target);
   }
   
-  // required int32 penalty = 13 [default = 0];
-  if (_has_bit(7)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(13, this->penalty(), target);
+  // required uint32 penalty = 13 [default = 0];
+  if (_has_bit(6)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(13, this->penalty(), target);
   }
   
-  // required int32 our_score = 14 [default = 0];
+  // required uint32 our_score = 14 [default = 0];
+  if (_has_bit(8)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(14, this->our_score(), target);
+  }
+  
+  // required uint32 otherteam_score = 15 [default = 0];
   if (_has_bit(9)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(14, this->our_score(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(15, this->otherteam_score(), target);
   }
   
-  // required int32 otherteam_score = 15 [default = 0];
+  // required uint32 override_state = 16 [default = 0];
   if (_has_bit(10)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(15, this->otherteam_score(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(16, this->override_state(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -608,44 +608,39 @@ int GameStateMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 team_color = 7 [default = 0];
+    // required uint32 team_color = 7 [default = 0];
     if (has_team_color()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->team_color());
     }
     
-    // required int32 own_goal_color = 5 [default = 0];
+    // required uint32 own_goal_color = 5 [default = 0];
     if (has_own_goal_color()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->own_goal_color());
     }
     
-    // required int32 player_state = 8 [default = 0];
+    // required uint32 player_state = 8 [default = 0];
     if (has_player_state()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->player_state());
     }
     
-    // required int32 game_state = 9 [default = 0];
+    // required uint32 game_state = 9 [default = 0];
     if (has_game_state()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->game_state());
     }
     
-    // required int32 sec_game_state = 10 [default = 0];
+    // required uint32 sec_game_state = 10 [default = 0];
     if (has_sec_game_state()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->sec_game_state());
-    }
-    
-    // required bool penalized = 11 [default = false];
-    if (has_penalized()) {
-      total_size += 1 + 1;
     }
     
     // required bool firstHalf = 3 [default = true];
@@ -653,32 +648,39 @@ int GameStateMessage::ByteSize() const {
       total_size += 1 + 1;
     }
     
-    // required int32 penalty = 13 [default = 0];
+    // required uint32 penalty = 13 [default = 0];
     if (has_penalty()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->penalty());
     }
     
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     // required bool kickoff = 12 [default = true];
     if (has_kickoff()) {
       total_size += 1 + 1;
     }
     
-    // required int32 our_score = 14 [default = 0];
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // required uint32 our_score = 14 [default = 0];
     if (has_our_score()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->our_score());
     }
     
-    // required int32 otherteam_score = 15 [default = 0];
+    // required uint32 otherteam_score = 15 [default = 0];
     if (has_otherteam_score()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->otherteam_score());
+    }
+    
+    // required uint32 override_state = 16 [default = 0];
+    if (has_override_state()) {
+      total_size += 2 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->override_state());
     }
     
   }
@@ -724,24 +726,24 @@ void GameStateMessage::MergeFrom(const GameStateMessage& from) {
       set_sec_game_state(from.sec_game_state());
     }
     if (from._has_bit(5)) {
-      set_penalized(from.penalized());
-    }
-    if (from._has_bit(6)) {
       set_firsthalf(from.firsthalf());
     }
-    if (from._has_bit(7)) {
+    if (from._has_bit(6)) {
       set_penalty(from.penalty());
+    }
+    if (from._has_bit(7)) {
+      set_kickoff(from.kickoff());
     }
   }
   if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
     if (from._has_bit(8)) {
-      set_kickoff(from.kickoff());
-    }
-    if (from._has_bit(9)) {
       set_our_score(from.our_score());
     }
-    if (from._has_bit(10)) {
+    if (from._has_bit(9)) {
       set_otherteam_score(from.otherteam_score());
+    }
+    if (from._has_bit(10)) {
+      set_override_state(from.override_state());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -772,12 +774,12 @@ void GameStateMessage::Swap(GameStateMessage* other) {
     std::swap(player_state_, other->player_state_);
     std::swap(game_state_, other->game_state_);
     std::swap(sec_game_state_, other->sec_game_state_);
-    std::swap(penalized_, other->penalized_);
     std::swap(firsthalf_, other->firsthalf_);
     std::swap(penalty_, other->penalty_);
     std::swap(kickoff_, other->kickoff_);
     std::swap(our_score_, other->our_score_);
     std::swap(otherteam_score_, other->otherteam_score_);
+    std::swap(override_state_, other->override_state_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

@@ -91,47 +91,40 @@ class GameStateMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required int32 team_color = 7 [default = 0];
+  // required uint32 team_color = 7 [default = 0];
   inline bool has_team_color() const;
   inline void clear_team_color();
   static const int kTeamColorFieldNumber = 7;
-  inline ::google::protobuf::int32 team_color() const;
-  inline void set_team_color(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 team_color() const;
+  inline void set_team_color(::google::protobuf::uint32 value);
   
-  // required int32 own_goal_color = 5 [default = 0];
+  // required uint32 own_goal_color = 5 [default = 0];
   inline bool has_own_goal_color() const;
   inline void clear_own_goal_color();
   static const int kOwnGoalColorFieldNumber = 5;
-  inline ::google::protobuf::int32 own_goal_color() const;
-  inline void set_own_goal_color(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 own_goal_color() const;
+  inline void set_own_goal_color(::google::protobuf::uint32 value);
   
-  // required int32 player_state = 8 [default = 0];
+  // required uint32 player_state = 8 [default = 0];
   inline bool has_player_state() const;
   inline void clear_player_state();
   static const int kPlayerStateFieldNumber = 8;
-  inline ::google::protobuf::int32 player_state() const;
-  inline void set_player_state(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 player_state() const;
+  inline void set_player_state(::google::protobuf::uint32 value);
   
-  // required int32 game_state = 9 [default = 0];
+  // required uint32 game_state = 9 [default = 0];
   inline bool has_game_state() const;
   inline void clear_game_state();
   static const int kGameStateFieldNumber = 9;
-  inline ::google::protobuf::int32 game_state() const;
-  inline void set_game_state(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 game_state() const;
+  inline void set_game_state(::google::protobuf::uint32 value);
   
-  // required int32 sec_game_state = 10 [default = 0];
+  // required uint32 sec_game_state = 10 [default = 0];
   inline bool has_sec_game_state() const;
   inline void clear_sec_game_state();
   static const int kSecGameStateFieldNumber = 10;
-  inline ::google::protobuf::int32 sec_game_state() const;
-  inline void set_sec_game_state(::google::protobuf::int32 value);
-  
-  // required bool penalized = 11 [default = false];
-  inline bool has_penalized() const;
-  inline void clear_penalized();
-  static const int kPenalizedFieldNumber = 11;
-  inline bool penalized() const;
-  inline void set_penalized(bool value);
+  inline ::google::protobuf::uint32 sec_game_state() const;
+  inline void set_sec_game_state(::google::protobuf::uint32 value);
   
   // required bool firstHalf = 3 [default = true];
   inline bool has_firsthalf() const;
@@ -140,12 +133,12 @@ class GameStateMessage : public ::google::protobuf::Message {
   inline bool firsthalf() const;
   inline void set_firsthalf(bool value);
   
-  // required int32 penalty = 13 [default = 0];
+  // required uint32 penalty = 13 [default = 0];
   inline bool has_penalty() const;
   inline void clear_penalty();
   static const int kPenaltyFieldNumber = 13;
-  inline ::google::protobuf::int32 penalty() const;
-  inline void set_penalty(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 penalty() const;
+  inline void set_penalty(::google::protobuf::uint32 value);
   
   // required bool kickoff = 12 [default = true];
   inline bool has_kickoff() const;
@@ -154,36 +147,43 @@ class GameStateMessage : public ::google::protobuf::Message {
   inline bool kickoff() const;
   inline void set_kickoff(bool value);
   
-  // required int32 our_score = 14 [default = 0];
+  // required uint32 our_score = 14 [default = 0];
   inline bool has_our_score() const;
   inline void clear_our_score();
   static const int kOurScoreFieldNumber = 14;
-  inline ::google::protobuf::int32 our_score() const;
-  inline void set_our_score(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 our_score() const;
+  inline void set_our_score(::google::protobuf::uint32 value);
   
-  // required int32 otherteam_score = 15 [default = 0];
+  // required uint32 otherteam_score = 15 [default = 0];
   inline bool has_otherteam_score() const;
   inline void clear_otherteam_score();
   static const int kOtherteamScoreFieldNumber = 15;
-  inline ::google::protobuf::int32 otherteam_score() const;
-  inline void set_otherteam_score(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 otherteam_score() const;
+  inline void set_otherteam_score(::google::protobuf::uint32 value);
+  
+  // required uint32 override_state = 16 [default = 0];
+  inline bool has_override_state() const;
+  inline void clear_override_state();
+  static const int kOverrideStateFieldNumber = 16;
+  inline ::google::protobuf::uint32 override_state() const;
+  inline void set_override_state(::google::protobuf::uint32 value);
   
   // @@protoc_insertion_point(class_scope:GameStateMessage)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
-  ::google::protobuf::int32 team_color_;
-  ::google::protobuf::int32 own_goal_color_;
-  ::google::protobuf::int32 player_state_;
-  ::google::protobuf::int32 game_state_;
-  ::google::protobuf::int32 sec_game_state_;
-  bool penalized_;
+  ::google::protobuf::uint32 team_color_;
+  ::google::protobuf::uint32 own_goal_color_;
+  ::google::protobuf::uint32 player_state_;
+  ::google::protobuf::uint32 game_state_;
+  ::google::protobuf::uint32 sec_game_state_;
   bool firsthalf_;
-  ::google::protobuf::int32 penalty_;
+  ::google::protobuf::uint32 penalty_;
   bool kickoff_;
-  ::google::protobuf::int32 our_score_;
-  ::google::protobuf::int32 otherteam_score_;
+  ::google::protobuf::uint32 our_score_;
+  ::google::protobuf::uint32 otherteam_score_;
+  ::google::protobuf::uint32 override_state_;
   friend void  protobuf_AddDesc_Gamecontroller_2eproto();
   friend void protobuf_AssignDesc_Gamecontroller_2eproto();
   friend void protobuf_ShutdownFile_Gamecontroller_2eproto();
@@ -523,180 +523,180 @@ class ConfigMessage : public ::google::protobuf::Message {
 
 // GameStateMessage
 
-// required int32 team_color = 7 [default = 0];
+// required uint32 team_color = 7 [default = 0];
 inline bool GameStateMessage::has_team_color() const {
   return _has_bit(0);
 }
 inline void GameStateMessage::clear_team_color() {
-  team_color_ = 0;
+  team_color_ = 0u;
   _clear_bit(0);
 }
-inline ::google::protobuf::int32 GameStateMessage::team_color() const {
+inline ::google::protobuf::uint32 GameStateMessage::team_color() const {
   return team_color_;
 }
-inline void GameStateMessage::set_team_color(::google::protobuf::int32 value) {
+inline void GameStateMessage::set_team_color(::google::protobuf::uint32 value) {
   _set_bit(0);
   team_color_ = value;
 }
 
-// required int32 own_goal_color = 5 [default = 0];
+// required uint32 own_goal_color = 5 [default = 0];
 inline bool GameStateMessage::has_own_goal_color() const {
   return _has_bit(1);
 }
 inline void GameStateMessage::clear_own_goal_color() {
-  own_goal_color_ = 0;
+  own_goal_color_ = 0u;
   _clear_bit(1);
 }
-inline ::google::protobuf::int32 GameStateMessage::own_goal_color() const {
+inline ::google::protobuf::uint32 GameStateMessage::own_goal_color() const {
   return own_goal_color_;
 }
-inline void GameStateMessage::set_own_goal_color(::google::protobuf::int32 value) {
+inline void GameStateMessage::set_own_goal_color(::google::protobuf::uint32 value) {
   _set_bit(1);
   own_goal_color_ = value;
 }
 
-// required int32 player_state = 8 [default = 0];
+// required uint32 player_state = 8 [default = 0];
 inline bool GameStateMessage::has_player_state() const {
   return _has_bit(2);
 }
 inline void GameStateMessage::clear_player_state() {
-  player_state_ = 0;
+  player_state_ = 0u;
   _clear_bit(2);
 }
-inline ::google::protobuf::int32 GameStateMessage::player_state() const {
+inline ::google::protobuf::uint32 GameStateMessage::player_state() const {
   return player_state_;
 }
-inline void GameStateMessage::set_player_state(::google::protobuf::int32 value) {
+inline void GameStateMessage::set_player_state(::google::protobuf::uint32 value) {
   _set_bit(2);
   player_state_ = value;
 }
 
-// required int32 game_state = 9 [default = 0];
+// required uint32 game_state = 9 [default = 0];
 inline bool GameStateMessage::has_game_state() const {
   return _has_bit(3);
 }
 inline void GameStateMessage::clear_game_state() {
-  game_state_ = 0;
+  game_state_ = 0u;
   _clear_bit(3);
 }
-inline ::google::protobuf::int32 GameStateMessage::game_state() const {
+inline ::google::protobuf::uint32 GameStateMessage::game_state() const {
   return game_state_;
 }
-inline void GameStateMessage::set_game_state(::google::protobuf::int32 value) {
+inline void GameStateMessage::set_game_state(::google::protobuf::uint32 value) {
   _set_bit(3);
   game_state_ = value;
 }
 
-// required int32 sec_game_state = 10 [default = 0];
+// required uint32 sec_game_state = 10 [default = 0];
 inline bool GameStateMessage::has_sec_game_state() const {
   return _has_bit(4);
 }
 inline void GameStateMessage::clear_sec_game_state() {
-  sec_game_state_ = 0;
+  sec_game_state_ = 0u;
   _clear_bit(4);
 }
-inline ::google::protobuf::int32 GameStateMessage::sec_game_state() const {
+inline ::google::protobuf::uint32 GameStateMessage::sec_game_state() const {
   return sec_game_state_;
 }
-inline void GameStateMessage::set_sec_game_state(::google::protobuf::int32 value) {
+inline void GameStateMessage::set_sec_game_state(::google::protobuf::uint32 value) {
   _set_bit(4);
   sec_game_state_ = value;
 }
 
-// required bool penalized = 11 [default = false];
-inline bool GameStateMessage::has_penalized() const {
-  return _has_bit(5);
-}
-inline void GameStateMessage::clear_penalized() {
-  penalized_ = false;
-  _clear_bit(5);
-}
-inline bool GameStateMessage::penalized() const {
-  return penalized_;
-}
-inline void GameStateMessage::set_penalized(bool value) {
-  _set_bit(5);
-  penalized_ = value;
-}
-
 // required bool firstHalf = 3 [default = true];
 inline bool GameStateMessage::has_firsthalf() const {
-  return _has_bit(6);
+  return _has_bit(5);
 }
 inline void GameStateMessage::clear_firsthalf() {
   firsthalf_ = true;
-  _clear_bit(6);
+  _clear_bit(5);
 }
 inline bool GameStateMessage::firsthalf() const {
   return firsthalf_;
 }
 inline void GameStateMessage::set_firsthalf(bool value) {
-  _set_bit(6);
+  _set_bit(5);
   firsthalf_ = value;
 }
 
-// required int32 penalty = 13 [default = 0];
+// required uint32 penalty = 13 [default = 0];
 inline bool GameStateMessage::has_penalty() const {
-  return _has_bit(7);
+  return _has_bit(6);
 }
 inline void GameStateMessage::clear_penalty() {
-  penalty_ = 0;
-  _clear_bit(7);
+  penalty_ = 0u;
+  _clear_bit(6);
 }
-inline ::google::protobuf::int32 GameStateMessage::penalty() const {
+inline ::google::protobuf::uint32 GameStateMessage::penalty() const {
   return penalty_;
 }
-inline void GameStateMessage::set_penalty(::google::protobuf::int32 value) {
-  _set_bit(7);
+inline void GameStateMessage::set_penalty(::google::protobuf::uint32 value) {
+  _set_bit(6);
   penalty_ = value;
 }
 
 // required bool kickoff = 12 [default = true];
 inline bool GameStateMessage::has_kickoff() const {
-  return _has_bit(8);
+  return _has_bit(7);
 }
 inline void GameStateMessage::clear_kickoff() {
   kickoff_ = true;
-  _clear_bit(8);
+  _clear_bit(7);
 }
 inline bool GameStateMessage::kickoff() const {
   return kickoff_;
 }
 inline void GameStateMessage::set_kickoff(bool value) {
-  _set_bit(8);
+  _set_bit(7);
   kickoff_ = value;
 }
 
-// required int32 our_score = 14 [default = 0];
+// required uint32 our_score = 14 [default = 0];
 inline bool GameStateMessage::has_our_score() const {
-  return _has_bit(9);
+  return _has_bit(8);
 }
 inline void GameStateMessage::clear_our_score() {
-  our_score_ = 0;
-  _clear_bit(9);
+  our_score_ = 0u;
+  _clear_bit(8);
 }
-inline ::google::protobuf::int32 GameStateMessage::our_score() const {
+inline ::google::protobuf::uint32 GameStateMessage::our_score() const {
   return our_score_;
 }
-inline void GameStateMessage::set_our_score(::google::protobuf::int32 value) {
-  _set_bit(9);
+inline void GameStateMessage::set_our_score(::google::protobuf::uint32 value) {
+  _set_bit(8);
   our_score_ = value;
 }
 
-// required int32 otherteam_score = 15 [default = 0];
+// required uint32 otherteam_score = 15 [default = 0];
 inline bool GameStateMessage::has_otherteam_score() const {
-  return _has_bit(10);
+  return _has_bit(9);
 }
 inline void GameStateMessage::clear_otherteam_score() {
-  otherteam_score_ = 0;
-  _clear_bit(10);
+  otherteam_score_ = 0u;
+  _clear_bit(9);
 }
-inline ::google::protobuf::int32 GameStateMessage::otherteam_score() const {
+inline ::google::protobuf::uint32 GameStateMessage::otherteam_score() const {
   return otherteam_score_;
 }
-inline void GameStateMessage::set_otherteam_score(::google::protobuf::int32 value) {
-  _set_bit(10);
+inline void GameStateMessage::set_otherteam_score(::google::protobuf::uint32 value) {
+  _set_bit(9);
   otherteam_score_ = value;
+}
+
+// required uint32 override_state = 16 [default = 0];
+inline bool GameStateMessage::has_override_state() const {
+  return _has_bit(10);
+}
+inline void GameStateMessage::clear_override_state() {
+  override_state_ = 0u;
+  _clear_bit(10);
+}
+inline ::google::protobuf::uint32 GameStateMessage::override_state() const {
+  return override_state_;
+}
+inline void GameStateMessage::set_override_state(::google::protobuf::uint32 value) {
+  _set_bit(10);
+  override_state_ = value;
 }
 
 // -------------------------------------------------------------------

@@ -14,10 +14,9 @@
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/stat/kalman.h"
 
-//#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
-// Use DCM proxy
+#define DEBOUNCE_MILLISEC 20
+#define MCLICKDISTANCE_MILLISEC   250
 
-//#define USE_POINTERS
 
 
 class Sensors: public IActivity, public Publisher/*, public Subscriber*/
@@ -47,42 +46,54 @@ class Sensors: public IActivity, public Publisher/*, public Subscriber*/
 
 		}
 		RobotPositionMessage RPM;
-
+		ButtonMessage		BM;
 		AllSensorValuesMessage ASM;
 
 	private:
 		AL::ALPtr<AL::DCMProxy> dcm;
 		AL::ALPtr<AL::ALMotionProxy> motion;
-		AL::ALPtr<AL::ALMemoryProxy> memory;
 		Kalman1D<float> angle[2];
 		AL::ALValue commands;//,stiffnessCommand;
 		//	AL::ALPtr<AL::ALMemoryFastAccess> MemoryFastAccess;
 
-		void initialisation();
+		void initialization();
 
-		std::vector<std::string> jointKeys,sensorKeys;
 		sample_counter sc;
 		cumulative_central_moments<float> gyravg[KDeviceLists::GYR_SIZE];
 		cumulative_central_moments<float> accnorm;
+
 		void fillComputedData(unsigned int timediff);
+		void fetchValues();
+		bool updateButtons();
 
 
 
 #ifdef KROBOT_IS_REMOTE_OFF
-		void initFastAccess();
 		void synchronisedDCMcallback();
-		std::vector<float *> jointPtr,sensorPtr;//Used by DCM callbacks
-		RtTime rtmfast;
-		unsigned int timedifffast;
+		AL::ALPtr<AL::ALMemoryProxy> memory;
+		std::vector<float*> jointValues,sensorValues,buttonValues;
 #else
 
-	std::vector<float> jointValues,sensorValues;
-
+		AL::ALMemoryFastAccess jointaccess,sensoraccess,buttonaccess;
+		std::vector<float> jointValues,sensorValues,buttonValues;
 #endif /* KROBOT_IS_REMOTE_OFF*/
+
+		struct buttonstate{
+			boost::posix_time::ptime last_pressed;
+			unsigned char last_val,count;
+		};
+		std::vector<struct buttonstate> buttonevnts;
+
+
+
+
+
 	RtTime rtm;
 	unsigned int timediff;
 
-	float smoothness; //sensordata = 90%*value + 10%*oldvalue
+	bool firstrun,anglefilterreset;
+
+	float smoothness; //sensordata = smoothness*value + (1-smoothness)*oldvalue
 
 };
 
