@@ -16,17 +16,21 @@ void UserInit () {
 		}
 
 	bool Eval() {
-		Logger::Instance().WriteMsg("TrCond_decisionTOdecision", " ", Logger::Info);
+		Logger::Instance().WriteMsg("TrCond_decisionTOdecision", " enter", Logger::Info);
 		boost::shared_ptr<const TimeoutMsg> msg  = _blk->readState<TimeoutMsg>("behavior");
 		std::string time;
 		if ( msg.get() != 0 ) {
 			time = msg->wakeup();
 			int timeout=-1;
-			if(time=="")
-				return false;
+			if(time==""){
+				Logger::Instance().WriteMsg("TrCond_decisionTOdecision", " empty timeout", Logger::Info);
+			return false;
+			}
 			 timeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(time) ).total_microseconds();
-			if ( time != "" && timeout < 0) 
+			if ( time != "" && timeout < 0) {
+				Logger::Instance().WriteMsg("TrCond_decisionTOdecision", " Timeout not ended", Logger::Info);
 				return false;
+			}
 		}
 
 		Logger::Instance().WriteMsg("TrCond_decisionTOdecision", "TRUE", Logger::Info);
@@ -61,7 +65,7 @@ class Mitsos : public statechart_engine::TimeoutAction {
 public:
 
   Mitsos() : statechart_engine::TimeoutAction("behavior",200) {
-    ;
+    Logger::Instance().WriteMsg("Mitsos", "200 milliseconds", Logger::Info);
   }
 };
 
