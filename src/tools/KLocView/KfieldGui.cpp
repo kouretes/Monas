@@ -238,12 +238,12 @@ void KfieldGui::DrawObservations(belief Belief,vector<KObservationModel> & curre
 	unsigned int i;
 	pthread_mutex_lock(&lock);
 	for (i = 0; i < currentObservation.size(); i++) {
-		cout << "Plot  the " << currentObservation[i].Feature.id << "X " << currentObservation[i].Feature.x << " Y " << currentObservation[i].Feature.y << endl;
+		//cout << "Plot  the " << currentObservation[i].Feature.id << "X " << currentObservation[i].Feature.x << " Y " << currentObservation[i].Feature.y << endl;
 		pt1.x = (currentObservation[i].Feature.x + (2 * margintoline + field_width) / 2.0) / scale;
 		pt1.y = (-currentObservation[i].Feature.y + (2 * margintoline + field_height) / 2.0) / scale;
 
 		cvCircle(field, pt1, currentObservation[i].Distance.val / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
-		cout << " Distance " << currentObservation[i].Distance.val / scale << endl;
+		//cout << " Distance " << currentObservation[i].Distance.val / scale << endl;
 		cvCircle(field, pt1, rint(currentObservation[i].Distance.val / scale), (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
 		cout << "Real Distance " << currentObservation[i].Distance.val << endl;
 		if ((currentObservation[i].Distance.val + currentObservation[i].Distance.Edev) > 0)
@@ -292,7 +292,7 @@ void KfieldGui::addTrackLine(belief mypos) {
 	mypospoint_old = mypospoint;
 	pthread_mutex_unlock(&lock);
 
-	//cout << "Adder track line\n\n\n" << "mypospoint.x" << mypospoint.x <<"mypospoint.y" << mypospoint.y << endl;
+	cout << "Adder track line\n\n\n" << "mypospoint.x" << mypospoint.x <<"mypospoint.y" << mypospoint.y << endl;
 }
 
 void KfieldGui::drawErrors(float DistError, float RotError) {
@@ -524,6 +524,12 @@ void KfieldGui::draw_ball2(belief Belief, Ball Ball) {
 	//cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
 	//cvCopy(cleanfield, field);
 	cvCircle(field, pt2, radius, color["red"], 0, CV_AA, 0);
+
+
+	pt1.x = pt2.x + 100 *(Ball.relativexspeed()*cos_theta - Ball.relativeyspeed()*sin_theta);
+	pt1.y = pt2.y + 100 *(Ball.relativexspeed()*sin_theta + Ball.relativeyspeed()*cos_theta);
+	cvLine(field, pt1, pt2, CV_RGB(238, 254 , 348), 1, CV_AA, 0);
+
 	//tmp = Kutils::to_string(Ball.dist());
 	cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 400) / scale, (2 * margintoline + field_height + 850) / scale), &font, color["orange"]);
 	pthread_mutex_unlock(&lock);

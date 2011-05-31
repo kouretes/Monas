@@ -1,5 +1,5 @@
-#ifndef VBEHAVIOR_H
-#define VBEHAVIOR_H
+#ifndef LBEHAVIOR_H
+#define LBEHAVIOR_H
 
 #include "architecture/IActivity.h"
 
@@ -34,33 +34,33 @@
 //	class ALMemoryProxy;
 //}
 
-class VBehavior: public IActivity {
+class LBehavior: public IActivity {
 
 	public:
-		VBehavior();
+		LBehavior();
 		int Execute();
 		void UserInit();
 		void read_messages();
 		int MakeTrackBallAction();
 		void HeadScanStep();
 		std::string GetName() {
-			return "VBehavior";
+			return "LBehavior";
 		}
-		void mgltest();
+		void test();
 
 	private:
 		short ballfound;
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;
 		MotionActionMessage* amot;
-		//////////////////////added by Aggeliki
-		float initX, initY, initPhi; //initial game position in the field!!!!
+
+		float initX[2][2], initY[2][2], initPhi[2][2]; //initial game position in the field!!!!
 		int playernum;
 		bool readRobotConf;
-		//////////////////////////
+
 		int pitchdirection;
 		int yawdirection;
-		
+
 		SensorData HeadYaw;
 		SensorData HeadPitch;
 
@@ -95,14 +95,18 @@ class VBehavior: public IActivity {
 		int teamColor;
 		double orientation;
 
-		double mglRand();
+
+		int leftright;
+		float headpos;
+
+		double Rand();
 		void velocityWalk(double x, double y, double th, double f);
 		void littleWalk(double x, double y, double th);
 		void calibrate();
-		///////////////added by Aggeliki
+
 		bool readConfiguration(const std::string& file_name); //this function reads team's configuration info from XML file
-		bool readRobotConfiguration(const std::string& file_name, bool kickoff); //this function reads robot's initial position in the field from XML file
-		///////////////////////////////////////////////
+		bool readRobotConfiguration(const std::string& file_name); //this function reads robot's initial position in the field from XML file
+		void gotoPosition(float target_x,float target_y, float target_phi);
 		float cX,cY,cth;//Commanded
 
 };

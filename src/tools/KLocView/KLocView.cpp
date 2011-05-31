@@ -53,17 +53,17 @@ int update_field(LocalizationData & DebugData) {
 	belief Belief;
 	KLocView->CleanField();
 	//Setting my position
-	Belief.x = WI->myposition().x();
-	Belief.y = WI->myposition().y();
+	Belief.x = WI->myposition().x()*1000;
+	Belief.y = WI->myposition().y()*1000;
 	Belief.theta = WI->myposition().phi();
 	Belief.confidence = WI->myposition().confidence();
 	//Setting robotPositionField X = DX, Y = DY, phi = DF
-
+//	cout << "Belief X: " << Belief.x << " Y: " << Belief.y << " theta " << Belief.theta << endl;
 
 	robotposition.x = DebugData.robotposition().x();
 	robotposition.y = DebugData.robotposition().y();
 	robotposition.phi = DebugData.robotposition().phi();
-	cout << " X: " << robotposition.x << " Y: " << robotposition.y << " phi " << robotposition.phi << endl;
+//	cout << " X: " << robotposition.x << " Y: " << robotposition.y << " phi " << robotposition.phi << endl;
 	if (initialization) {
 
 		KLocView->KfieldInitTrackLine(Belief);
@@ -80,17 +80,17 @@ int update_field(LocalizationData & DebugData) {
 
 	//Get The observations
 	if (DebugData.has_observations()) {
-		cout << "We have observations" << endl;
+//		cout << "We have observations" << endl;
 		if (DebugData.observations().has_ball())
 		{
-			cout << "We have ball" << endl;
+			//cout << "We have ball" << endl;
 			KLocView->draw_ball(Belief, DebugData.observations().ball());
 		}else{
-			cout << "No ball" << endl;
+			//cout << "No ball" << endl;
 		}
 		//else
 		if (DebugData.observations().regular_objects_size() > 0) {
-			cout << "We have observations " << DebugData.observations().regular_objects_size() << endl;
+			//cout << "We have observations " << DebugData.observations().regular_objects_size() << endl;
 			vector<KObservationModel> currentObservation;
 			KObservationModel observation;
 			for (int o = 0; o < DebugData.observations().regular_objects_size(); o++) {
@@ -128,12 +128,12 @@ int update_field(LocalizationData & DebugData) {
 		}
 		//KLocView->CleanField();
 	}else{
-		cout << "No Observations" <<endl;
+		//cout << "No Observations" <<endl;
 	}
 
 
 	if(WI->balls_size()>0){
-		cout << " we have relative ball ! " << endl;
+	//	cout << " we have relative ball ! " << endl;
 		KLocView->draw_ball2(Belief, WI->balls(0));
 	}
 

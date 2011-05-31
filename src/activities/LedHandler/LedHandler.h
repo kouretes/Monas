@@ -83,6 +83,7 @@ private:
 
 	boost::shared_ptr<const LedChangeMessage> led_change;
 
+	std::vector<std::string> left_ear_names;
 	/**
 	 * \brief Inside this function rgb hex colors are scored in a <hex color, color name map>
 	 */
@@ -91,8 +92,12 @@ private:
 	 * \brief A color map wrapper
 	 * \return returns the HEX value of the RGB color, stored in the map
 	 */
+	float battery_level;
+
 	int getColor(string);
 	AL::ALPtr<AL::ALProxy> leds; ///proxy to handle led colors
+	AL::ALPtr<AL::ALMemoryProxy> memory;  ///proxy to read ALmemory values
+
 	std::map<string, int> colors; /// The map where the pairs of color and hex rgb value are storeds
 };
 
