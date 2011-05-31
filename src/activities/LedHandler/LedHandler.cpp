@@ -43,13 +43,15 @@ int LedHandler::Execute() {
 	if(new_battery_level >=left_ear_names.size())
 		new_battery_level = left_ear_names.size()-1;
 
-	Logger::Instance().WriteMsg("LedHandler", "Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
+	//Logger::Instance().WriteMsg("LedHandler", "Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
 
 	if(new_battery_level > battery_level ){
 		//Discharging so light up the next led
+		Logger::Instance().WriteMsg("LedHandler", "Discharging, Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
 		leds->callVoid<string>("on",left_ear_names[new_battery_level]);
 	}else if(new_battery_level < battery_level){
 		//Charging so light up the next led
+		Logger::Instance().WriteMsg("LedHandler", "Charging, Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
 		leds->callVoid<string>("off",left_ear_names[battery_level]);
 	}
 	battery_level = new_battery_level;

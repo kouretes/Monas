@@ -17,8 +17,8 @@
 <agent IsRealTime=1 Priority=1 ThreadFrequency=20 StatsCycle=50>
 	<name>KVision</name>
 	<activity>Vision</activity>
-	<activity>VBehavior</activity> 
 	<activity>Localization</activity>
+	<activity>LBehavior</activity>
 <!--
 	<activity>HeadBehavior</activity>
 -->

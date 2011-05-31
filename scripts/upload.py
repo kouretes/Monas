@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os;
+import subprocess;
 import sys;
 import string;
 import re;
 import commands,socket;
-
+from subprocess import call
 def newcmommand():
 	print("-------------------------------------------------------------------------------------------------------")
 def endcmommand():
@@ -124,8 +125,7 @@ else:
 	exit(-1)
 
 for ip in robotsIP:
-	if(not is_valid_ipv4(ip)):
-		print "\033[1;33m Ip address " + ip + " is not valid \033[1;m"
+
 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	timeouttime= 2
@@ -135,7 +135,9 @@ for ip in robotsIP:
 		print "Trying to connect to " + ip
 		sock.connect((ip, 22))
 	except socket.error, msg:
-		print '\033[1;31m Waited ' + str(timeouttime) +  ' second. Robot with ip ' + ip + ' unreachable \033[1;m'
+		print '\033[1;31m Waited ' + str(timeouttime) +  ' second. Robot with address ' + ip + ' unreachable \033[1;m'
+		if(not is_valid_ipv4(ip)):
+			print "\033[1;33m Ip address " + ip + " is not a valid IP4 address \033[1;m"
 		reachable = False
 	sock.close()
 
@@ -166,7 +168,10 @@ Ksystem("make install","Compilation", True)
 partial_configuration_dir = "../../scripts/PartialConfiguration/"
 scripts_dir = "../../scripts/"
 
-os.system('aplay -q '+ scripts_dir +'beep.wav')
+#call('aplay -q '+ scripts_dir +'beep.wav', shell=True)
+#p = subprocess.Popen('aplay -q '+ scripts_dir +'beep.wav',stdin=None,shell=True)
+
+os.system('aplay -q '+ scripts_dir +'beep.wav &')
 #= os.environ["partial_configuration_dir"]
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
@@ -187,7 +192,7 @@ os.system('rsync -u ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'start.sh ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'beep.wav ' + binaries_dir + "config/")
-print "Length of arguments " + str(len(sys.argv))
+#print "Length of arguments " + str(len(sys.argv))
 
 if(partial_configuration_dir	== "" ):
 	print("ERROR:  Please define partial_configuration_dir")
