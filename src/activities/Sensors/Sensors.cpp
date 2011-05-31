@@ -282,7 +282,7 @@ void Sensors::initialization() {
 	buttonValues.assign(buttonKeys.size(),0);
 	struct buttonstate t;
 	t.last_pressed=boost::posix_time::microsec_clock::universal_time();
-	t.last_val=KDeviceLists::Interpret::BUTTON_RELEASED;
+	t.last_val=KDeviceLists::Interpret::BUTTON_PRESSED;
 	t.count=0;
 	buttonevnts.assign(buttonKeys.size(),t);
 
@@ -298,6 +298,7 @@ void Sensors::initialization() {
 	}
 	for (unsigned i = 0; i < buttonKeys.size(); i++) {
 		buttonValues[i] = (float *) memory->getDataPtr(buttonKeys[i]);
+		cout<<buttonValues[i]<<endl;
 	}
 
 
@@ -359,9 +360,11 @@ bool Sensors::updateButtons()
 	t=now-boost::posix_time::milliseconds(MCLICKDISTANCE_MILLISEC);
 	for(unsigned i=0;i<buttonValues.size();++i)
 	{
+
 		if(buttonevnts[i].last_pressed<d) //Wait for switch debounce
 		{
 			float v=readVector(buttonValues,i);
+			//cout<<"i:"<<i<< " :"<<v<<endl;
 			if(buttonevnts[i].last_val!=v)//If there is a change
 			{
 				buttonevnts[i].last_val=v;
@@ -370,10 +373,9 @@ bool Sensors::updateButtons()
 					++buttonevnts[i].count;
 					buttonevnts[i].last_pressed=now;
 				}
-				else if(buttonevnts[i].count>0&& buttonevnts[i].last_pressed<t)
-					dispachevent=true;
-
 			}
+			else if(buttonevnts[i].count>0&& buttonevnts[i].last_pressed<t)
+				dispachevent=true;
 		}
 
 	}
@@ -381,8 +383,11 @@ bool Sensors::updateButtons()
 
 	if(dispachevent)
 	{
+		//cout<<"DISPATCH:"<<endl;
 		for(unsigned i=0;i<buttonValues.size();++i)
 		{
+			//cout<<i<<" : "<< buttonevnts[i].count<<endl;
+
 			BM.set_data(i,buttonevnts[i].count);
 			buttonevnts[i].count=0;
 		}

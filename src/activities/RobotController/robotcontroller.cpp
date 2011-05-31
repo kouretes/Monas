@@ -37,7 +37,7 @@ int RobotController::Execute() {
 	bool changed = false;
 	bool received=gm.poll();
 
-	if (received&&!gm_state.override_state()==OVERRIDE_DISABLED) {
+	if (received&&gm_state.override_state()==OVERRIDE_DISABLED) {
 		//teams[0] one team
 		//teams[1] other team
 		int teamindx = game_data.teams[0].teamNumber == conf.team_number() ? 0 : 1;
@@ -70,21 +70,29 @@ int RobotController::Execute() {
 	{
 		int lbump=bm->data(KDeviceLists::L_BUMPER_L)+bm->data(KDeviceLists::L_BUMPER_R);
 		int rbump=bm->data(KDeviceLists::R_BUMPER_L)+bm->data(KDeviceLists::R_BUMPER_R);
+
 		int chest=bm->data(KDeviceLists::CHEST_BUTTON);
 
 		if(chest==2)//DOUBLE CHEST CLICK
 		{
-			if(gm_state.override_state()==OVERRIDE_DISABLED)
+
+			if(gm_state.override_state()!=OVERRIDE_DROPDEAD)
 			{
+				gm_state.Clear();
 				gm_state.set_override_state(OVERRIDE_DROPDEAD);
 			}
 			else
+			{
+				gm_state.Clear();
 				gm_state.set_override_state(OVERRIDE_DISABLED);
+			}
+
+
 			changed = true;
 		}
 		else if((lbump+rbump)>0 && chest==1)
 		{
-			if(gm_state.override_state()!=OVERRIDE_ENABLED)
+			if(gm_state.override_state()==OVERRIDE_DISABLED)
 			{
 				gm_state.Clear();//TODO: FIX INITIAL VALUES
 				gm_state.set_override_state(OVERRIDE_ENABLED);
@@ -93,18 +101,18 @@ int RobotController::Execute() {
 				gm_state.set_override_state(OVERRIDE_DISABLED);
 			changed = true;
 		}
-		else if(lbump>0&&gm_state.player_state() != PLAYER_PLAYING)
+		else if(rbump>0&&gm_state.player_state() != PLAYER_PLAYING&&gm_state.override_state() != OVERRIDE_DROPDEAD)
 		{
 
 			gm_state.set_kickoff((gm_state.kickoff() + 1) % 2);
 			changed = true;
 		}
-		else if(rbump>0&&gm_state.player_state() != PLAYER_PLAYING)
+		else if(lbump>0&&gm_state.player_state() != PLAYER_PLAYING&&gm_state.override_state() != OVERRIDE_DROPDEAD)
 		{
 			gm_state.set_team_color((gm_state.team_color() + 1) % 2);
 			changed =true;
 		}
-		else if(chest==1)
+		else if(chest==1&&!(received&&gm_state.override_state() == OVERRIDE_DISABLED) )
 		{
 			switch (gm_state.player_state()) {
 				case PLAYER_INITIAL:
@@ -135,9 +143,10 @@ int RobotController::Execute() {
 		sendLedUpdate();
 		_blk->publishState(gm_state, "behavior");
 	} else {
-		if (delay++ % 100 == 0)
+		if (delay++ % 50 == 0)
 			sendLedUpdate();
 	}
+
 
 	return 0;
 }
@@ -150,7 +159,11 @@ void RobotController::sendLedUpdate() {
 	chest_led->set_chain("chest");
 	rfoot_led->set_chain("r_foot");
 	lfoot_led->set_chain("l_foot");
-	if (gm_state.player_state() == PLAYER_INITIAL || gm_state.player_state() == PLAYER_FINISHED)
+	if(showover&&gm_state.override_state()!=OVERRIDE_DISABLED)
+		chest_led->set_color("on");
+	else if(gm_state.override_state() == OVERRIDE_DROPDEAD)
+		chest_led->set_color("on");
+	else if (gm_state.player_state() == PLAYER_INITIAL || gm_state.player_state() == PLAYER_FINISHED)
 		chest_led->set_color("off");
 	else if (gm_state.player_state() == PLAYER_READY)
 		chest_led->set_color("blue");
@@ -162,7 +175,7 @@ void RobotController::sendLedUpdate() {
 		chest_led->set_color("red");
 	else
 		chest_led->set_color("on");
-
+	showover=!showover;
 	if (gm_state.kickoff())
 		rfoot_led->set_color("on");
 	else

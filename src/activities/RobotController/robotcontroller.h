@@ -57,7 +57,7 @@ class RobotController: public IActivity {
 		*/
 		bool readConfiguration(const std::string& file_name);
 		GameController gm;
-
+		bool showover;
 		RoboCupGameControlData game_data;
 		LedChangeMessage leds;
 		GameStateMessage gm_state;

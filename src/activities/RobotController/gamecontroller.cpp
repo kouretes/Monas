@@ -66,7 +66,7 @@ void GameController::connectTo(int port, int tn )
 
 void GameController::setNonBlock(bool nb)
 {
-	if(nb)
+	if(nb==true)
 		recvflag=MSG_DONTWAIT;
 	else
 		recvflag=0;
@@ -80,10 +80,10 @@ bool GameController::poll()
 		update=check_data_and_copy(buffer, bytes);
 	} else
 	{
-		if (runcnt++ % 500 == 0)
+		if (runcnt++ % 5000 == 0)
 		{
 			Logger::Instance().WriteMsg("GameController", "Is Game Controller Running? Cant Listen", Logger::Error);
-			runcnt=0;
+			runcnt=1;
 		}
 
 	}

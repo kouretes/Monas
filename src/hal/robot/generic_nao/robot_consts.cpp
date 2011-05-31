@@ -233,11 +233,11 @@ std::vector< std::string> KDeviceLists::generateButtonKeys()
 	std::vector<std::string> fKeys;
 	fKeys.resize(NUMOFBUTTONS);
 
-	fKeys[CHEST_BUTTON] = preFix+"ChestBoard/Button/Sensor";
-	fKeys[L_BUMPER_L] = preFix+"LFoot/Bumber/Left/Sensor";
-	fKeys[L_BUMPER_R] = preFix+"LFoot/Bumber/Right/Sensor";
-	fKeys[R_BUMPER_L] = preFix+"RFoot/Bumber/Left/Sensor";
-	fKeys[R_BUMPER_R] = preFix+"RFoot/Bumber/Right/Sensor";
+	fKeys[CHEST_BUTTON] = preFix+"ChestBoard/Button/Sensor/Value";
+	fKeys[L_BUMPER_L] = preFix+"LFoot/Bumper/Left/Sensor/Value";
+	fKeys[L_BUMPER_R] = preFix+"LFoot/Bumper/Right/Sensor/Value";
+	fKeys[R_BUMPER_L] = preFix+"RFoot/Bumper/Left/Sensor/Value";
+	fKeys[R_BUMPER_R] = preFix+"RFoot/Bumper/Right/Sensor/Value";
 
 
 	return fKeys;

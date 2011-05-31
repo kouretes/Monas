@@ -111,7 +111,6 @@ class Vision: public IActivity
 	private:
 		struct
 		{
-				bool cvHighgui;
 				int sensordelay;
 				float Dfov;
 				std::string SegmentationBottom, SegmentationTop;

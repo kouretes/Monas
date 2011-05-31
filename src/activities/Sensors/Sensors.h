@@ -15,7 +15,7 @@
 #include "tools/stat/kalman.h"
 
 #define DEBOUNCE_MILLISEC 20
-#define MCLICKDISTANCE_MILLISEC   250
+#define MCLICKDISTANCE_MILLISEC   300
 
 
 

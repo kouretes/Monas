@@ -628,8 +628,6 @@ void VISIBLE Vision::UserInit()
 	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
 	if (xmlconfig->IsLoadedSuccessfully() == false)
 		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
-	if (config.cvHighgui == true)
-		Logger::Instance().WriteMsg("Vision", "Enable highgui", Logger::Info);
 
 	ext.Init(_blk);
 	kinext.Init();
