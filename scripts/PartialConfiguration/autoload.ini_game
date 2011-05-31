@@ -6,7 +6,7 @@ audioout
 
 [extra]
 devicecommunicationmanager
-sensors
+#sensors #button events
 motion
 #motionrecorder
 leds
@@ -15,7 +15,7 @@ videoinput
 #sensorlog
 #mecalogger
 pythonbridge
-sentinel
+#sentinel #audio warnings about  battery and heat, auto shutdown
 launcher
 #allaser
 #behaviormanager
