@@ -93,12 +93,11 @@ void LBehavior::UserInit() {
 
 	amot = new MotionActionMessage();
 	for (int i = 0; i < 2; i++)
-
-		for (int j = 0; j < 2; i++){
-		initX[i][j] = 0.0;
-		initY[i][j] = 0.0;
-		initPhi[i][j] = 0.0;
-	}
+		for (int j = 0; j < 2; j++){
+			initX[i][j] = 0.0;
+			initY[i][j] = 0.0;
+			initPhi[i][j] = 0.0;
+		}
 	ballfound = 0;
 	readRobotConf = false;
 
@@ -599,7 +598,9 @@ bool LBehavior::readRobotConfiguration(const std::string& file_name) {
 				initX[i][TEAM_RED] = (it->attrb["posx"]);
 				initY[i][TEAM_RED] = (it->attrb["posy"]);
 
-				Logger::Instance().WriteMsg("LBehavior", " readConf INIT X "+ kickoff + " "+ _toString(initX[i]) + " INITY " + _toString(initY[i]) + " INITPHI " + _toString(initPhi[i]), Logger::Info);
+				Logger::Instance().WriteMsg("LBehavior", " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
+				Logger::Instance().WriteMsg("LBehavior", " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
+
 				found = true;
 			}
 		}
