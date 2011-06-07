@@ -89,8 +89,9 @@ class KSegmentator{
         */
 		void setLumaScale(float s);
 	private:
-
+#ifndef FORCEINTERLV
 		enum {INTERLEAVED,FULL} type;
+#endif
 		static const unsigned char LUTres=3,LUTsize=32;//Carefull. LUTSIZE=256>>LUTRES
 		//Pointer to attached IplImage data
 		char const *dataPointer;
@@ -99,7 +100,6 @@ class KSegmentator{
 		int height;
 		//Scale up Y component to compensate for exposure or lighting variations
 		float lumascale;
-
 		enum colorValues
 		{
 			red_ = 1, blue_ = 2, green_ = 3, skyblue_ = 4, yellow_ = 5, orange_ = 6, white_ = 7, black_  = 8

@@ -66,6 +66,11 @@ public:
 	 * */
 	int Execute();
 	/**
+	 * \brief Reads the raw battery level and displays the level in left ear led. Full Battery all leds off. Empty Battery All leds on.
+	 * Also last Level Leds flashes. As battery empties flash frequency increases.
+	 */
+	void SetBateryLevel();
+	/**
 	 * \brief Here is where incoming messages are received. In the first execution all the leds are setted off.
 	 */
 	void process_messages();
@@ -83,6 +88,7 @@ private:
 
 	boost::shared_ptr<const LedChangeMessage> led_change;
 
+	std::vector<std::string> left_ear_names;
 	/**
 	 * \brief Inside this function rgb hex colors are scored in a <hex color, color name map>
 	 */
@@ -91,8 +97,12 @@ private:
 	 * \brief A color map wrapper
 	 * \return returns the HEX value of the RGB color, stored in the map
 	 */
+	float battery_level;
+
 	int getColor(string);
 	AL::ALPtr<AL::ALProxy> leds; ///proxy to handle led colors
+	AL::ALPtr<AL::ALMemoryProxy> memory;  ///proxy to read ALmemory values
+
 	std::map<string, int> colors; /// The map where the pairs of color and hex rgb value are storeds
 };
 

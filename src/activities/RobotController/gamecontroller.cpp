@@ -7,18 +7,26 @@
 
 using std::cout;
 using std::endl;
-GameController::GameController(RoboCupGameControlData* game_data, bool* received_data, Mutex* mx, int port, int team_number) :
-	game_data(game_data), received_data(received_data), mx(mx), port(port), team_number(team_number)
+
+
+
+//, bool* received_data, Mutex* mx, int port, int team_number) :
+//	game_data(game_data), received_data(received_data), mx(mx), port(port), team_number(team_number)
+
+GameController::GameController(RoboCupGameControlData & storage ) : game_data(storage)
 {
-	mx->lock();
+
+	runcnt=0;
+	recvflag=0;
+
+}
+void GameController::connectTo(int port, int tn )
+{
+
+	team_number=tn;
 	//Initialize_data
 	Logger::Instance().WriteMsg("GameController", "Initialize GameController", Logger::Info);
-	*received_data = false;
-	mx->unlock();
 
-	current_data = new RoboCupGameControlData;
-
-	cout << "socket create" << endl;
 	socket_fd = socket(AF_INET, SOCK_DGRAM, 0); //socket creation
 
 	if ((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
@@ -55,32 +63,32 @@ GameController::GameController(RoboCupGameControlData* game_data, bool* received
 	Logger::Instance().WriteMsg("GameController", " Game controller Initialized", Logger::Info);
 }
 
-int GameController::Execute()
+
+void GameController::setNonBlock(bool nb)
 {
-	static int i = 0;
+	if(nb==true)
+		recvflag=MSG_DONTWAIT;
+	else
+		recvflag=0;
+}
+bool GameController::poll()
+{
 	int bytes;
-	if ((bytes = recv(socket_fd, buffer, sizeof(buffer), 0)) > 0)
+	bool update=false;
+	if ((bytes = recv(socket_fd, buffer, sizeof(buffer), recvflag)) > 0)
 	{
-		if (check_data_and_copy(buffer, bytes))
-		{
-			mx->lock();
-			RoboCupGameControlData* tmp_ptr = game_data;
-			game_data = current_data;
-			current_data = tmp_ptr;
-			*received_data = true;
-			mx->unlock();
-		} else
-		{
-			//                 cout << "check data failed " << endl;
-			//                 cout << "VR: " <<  (int)current_data->version << endl;
-		}
+		update=check_data_and_copy(buffer, bytes);
 	} else
 	{
-		if (i++ % 20 == 0)
+		if (runcnt++ % 5000 == 0)
+		{
 			Logger::Instance().WriteMsg("GameController", "Is Game Controller Running? Cant Listen", Logger::Error);
+			runcnt=1;
+		}
+
 	}
 
-	return 0;
+	return update;
 }
 bool GameController::check_data_and_copy(char* bytes, int size)
 {
@@ -88,14 +96,16 @@ bool GameController::check_data_and_copy(char* bytes, int size)
 	if ((strncmp(bytes, GAMECONTROLLER_STRUCT_HEADER, 4) == 0) && (size == sizeof(RoboCupGameControlData)))
 	{
 		// Valid GameController packet
-		memcpy(current_data, bytes, size);
-		if (current_data->teams[0].teamNumber == team_number || current_data->teams[1].teamNumber == team_number)
+		RoboCupGameControlData *c=(RoboCupGameControlData *)bytes;
+
+		if (c->teams[0].teamNumber == team_number || c->teams[1].teamNumber == team_number)
 		{
 			//Packet is  for our team
+			memcpy(&game_data, bytes, size);
 			return true;
 		} else
 		{
-			//Not  for our team "
+
 		}
 	} else
 	{
@@ -107,8 +117,6 @@ bool GameController::check_data_and_copy(char* bytes, int size)
 
 GameController::~GameController()
 {
-	delete current_data;
-	mx->unlock();
 	Logger::Instance().WriteMsg("GameController", "Shutting down gamecontroller", Logger::Info);
 	close(socket_fd);
 }

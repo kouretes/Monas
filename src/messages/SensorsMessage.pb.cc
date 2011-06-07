@@ -51,9 +51,8 @@ void protobuf_AssignDesc_SensorsMessage_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RobotPositionMessage));
   ButtonMessage_descriptor_ = file->message_type(1);
-  static const int ButtonMessage_offsets_[2] = {
+  static const int ButtonMessage_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ButtonMessage, data_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ButtonMessage, timediff_),
   };
   ButtonMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -144,14 +143,13 @@ void protobuf_AddDesc_SensorsMessage_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\024SensorsMessage.proto\"I\n\024RobotPositionM"
     "essage\022\037\n\nsensorData\030\001 \003(\0132\013.SensorData\022"
-    "\020\n\010TimeDiff\030\002 \002(\r\"<\n\rButtonMessage\022\031\n\004da"
-    "ta\030\003 \003(\0132\013.SensorData\022\020\n\010TimeDiff\030\004 \002(\r\""
-    ":\n\nSensorData\022\023\n\013SensorValue\030\001 \002(\002\022\027\n\017Se"
-    "nsorValueDiff\030\002 \002(\002\"\216\001\n\026AllSensorValuesM"
-    "essage\022\036\n\tjointData\030\001 \003(\0132\013.SensorData\022\037"
-    "\n\nsensorData\030\002 \003(\0132\013.SensorData\022!\n\014compu"
-    "tedData\030\003 \003(\0132\013.SensorData\022\020\n\010TimeDiff\030\004"
-    " \002(\r", 364);
+    "\020\n\010TimeDiff\030\002 \002(\005\"\035\n\rButtonMessage\022\014\n\004da"
+    "ta\030\001 \003(\r\"@\n\nSensorData\022\026\n\013SensorValue\030\001 "
+    "\002(\002:\0010\022\032\n\017SensorValueDiff\030\002 \002(\002:\0010\"\216\001\n\026A"
+    "llSensorValuesMessage\022\036\n\tjointData\030\001 \003(\013"
+    "2\013.SensorData\022\037\n\nsensorData\030\002 \003(\0132\013.Sens"
+    "orData\022!\n\014computedData\030\003 \003(\0132\013.SensorDat"
+    "a\022\020\n\010TimeDiff\030\004 \002(\r", 339);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "SensorsMessage.proto", &protobuf_RegisterTypes);
   RobotPositionMessage::default_instance_ = new RobotPositionMessage();
@@ -196,7 +194,7 @@ RobotPositionMessage::RobotPositionMessage(const RobotPositionMessage& from)
 
 void RobotPositionMessage::SharedCtor() {
   _cached_size_ = 0;
-  timediff_ = 0u;
+  timediff_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -231,7 +229,7 @@ RobotPositionMessage* RobotPositionMessage::New() const {
 
 void RobotPositionMessage::Clear() {
   if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    timediff_ = 0u;
+    timediff_ = 0;
   }
   sensordata_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -259,13 +257,13 @@ bool RobotPositionMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required uint32 TimeDiff = 2;
+      // required int32 TimeDiff = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_TimeDiff:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &timediff_)));
           _set_bit(1);
         } else {
@@ -299,9 +297,9 @@ void RobotPositionMessage::SerializeWithCachedSizes(
       1, this->sensordata(i), output);
   }
   
-  // required uint32 TimeDiff = 2;
+  // required int32 TimeDiff = 2;
   if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->timediff(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->timediff(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -319,9 +317,9 @@ void RobotPositionMessage::SerializeWithCachedSizes(
         1, this->sensordata(i), target);
   }
   
-  // required uint32 TimeDiff = 2;
+  // required int32 TimeDiff = 2;
   if (_has_bit(1)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->timediff(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->timediff(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -335,10 +333,10 @@ int RobotPositionMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    // required uint32 TimeDiff = 2;
+    // required int32 TimeDiff = 2;
     if (has_timediff()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->timediff());
     }
     
@@ -429,7 +427,6 @@ void RobotPositionMessage::Swap(RobotPositionMessage* other) {
 
 #ifndef _MSC_VER
 const int ButtonMessage::kDataFieldNumber;
-const int ButtonMessage::kTimeDiffFieldNumber;
 #endif  // !_MSC_VER
 
 ButtonMessage::ButtonMessage()
@@ -448,7 +445,6 @@ ButtonMessage::ButtonMessage(const ButtonMessage& from)
 
 void ButtonMessage::SharedCtor() {
   _cached_size_ = 0;
-  timediff_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -482,9 +478,6 @@ ButtonMessage* ButtonMessage::New() const {
 }
 
 void ButtonMessage::Clear() {
-  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    timediff_ = 0u;
-  }
   data_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -496,33 +489,24 @@ bool ButtonMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .SensorData data = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_data:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_data()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_data;
-        if (input->ExpectTag(32)) goto parse_TimeDiff;
-        break;
-      }
-      
-      // required uint32 TimeDiff = 4;
-      case 4: {
+      // repeated uint32 data = 1;
+      case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_TimeDiff:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+         parse_data:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, &timediff_)));
-          _set_bit(1);
+                 1, 8, input, this->mutable_data())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, this->mutable_data())));
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(8)) goto parse_data;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -545,15 +529,10 @@ bool ButtonMessage::MergePartialFromCodedStream(
 
 void ButtonMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .SensorData data = 3;
+  // repeated uint32 data = 1;
   for (int i = 0; i < this->data_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->data(i), output);
-  }
-  
-  // required uint32 TimeDiff = 4;
-  if (_has_bit(1)) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->timediff(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(
+      1, this->data(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -564,16 +543,10 @@ void ButtonMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* ButtonMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // repeated .SensorData data = 3;
+  // repeated uint32 data = 1;
   for (int i = 0; i < this->data_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        3, this->data(i), target);
-  }
-  
-  // required uint32 TimeDiff = 4;
-  if (_has_bit(1)) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->timediff(), target);
+      WriteUInt32ToArray(1, this->data(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -586,21 +559,14 @@ void ButtonMessage::SerializeWithCachedSizes(
 int ButtonMessage::ByteSize() const {
   int total_size = 0;
   
-  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    // required uint32 TimeDiff = 4;
-    if (has_timediff()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt32Size(
-          this->timediff());
+  // repeated uint32 data = 1;
+  {
+    int data_size = 0;
+    for (int i = 0; i < this->data_size(); i++) {
+      data_size += ::google::protobuf::internal::WireFormatLite::
+        UInt32Size(this->data(i));
     }
-    
-  }
-  // repeated .SensorData data = 3;
-  total_size += 1 * this->data_size();
-  for (int i = 0; i < this->data_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->data(i));
+    total_size += 1 * this->data_size() + data_size;
   }
   
   if (!unknown_fields().empty()) {
@@ -629,11 +595,6 @@ void ButtonMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void ButtonMessage::MergeFrom(const ButtonMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   data_.MergeFrom(from.data_);
-  if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    if (from._has_bit(1)) {
-      set_timediff(from.timediff());
-    }
-  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -650,18 +611,13 @@ void ButtonMessage::CopyFrom(const ButtonMessage& from) {
 }
 
 bool ButtonMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000002) != 0x00000002) return false;
   
-  for (int i = 0; i < data_size(); i++) {
-    if (!this->data(i).IsInitialized()) return false;
-  }
   return true;
 }
 
 void ButtonMessage::Swap(ButtonMessage* other) {
   if (other != this) {
     data_.Swap(&other->data_);
-    std::swap(timediff_, other->timediff_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -749,7 +705,7 @@ bool SensorData::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required float SensorValue = 1;
+      // required float SensorValue = 1 [default = 0];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -764,7 +720,7 @@ bool SensorData::MergePartialFromCodedStream(
         break;
       }
       
-      // required float SensorValueDiff = 2;
+      // required float SensorValueDiff = 2 [default = 0];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -798,12 +754,12 @@ bool SensorData::MergePartialFromCodedStream(
 
 void SensorData::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required float SensorValue = 1;
+  // required float SensorValue = 1 [default = 0];
   if (_has_bit(0)) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->sensorvalue(), output);
   }
   
-  // required float SensorValueDiff = 2;
+  // required float SensorValueDiff = 2 [default = 0];
   if (_has_bit(1)) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->sensorvaluediff(), output);
   }
@@ -816,12 +772,12 @@ void SensorData::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* SensorData::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required float SensorValue = 1;
+  // required float SensorValue = 1 [default = 0];
   if (_has_bit(0)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->sensorvalue(), target);
   }
   
-  // required float SensorValueDiff = 2;
+  // required float SensorValueDiff = 2 [default = 0];
   if (_has_bit(1)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->sensorvaluediff(), target);
   }
@@ -837,12 +793,12 @@ int SensorData::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required float SensorValue = 1;
+    // required float SensorValue = 1 [default = 0];
     if (has_sensorvalue()) {
       total_size += 1 + 4;
     }
     
-    // required float SensorValueDiff = 2;
+    // required float SensorValueDiff = 2 [default = 0];
     if (has_sensorvaluediff()) {
       total_size += 1 + 4;
     }

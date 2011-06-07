@@ -10,8 +10,8 @@
 
 #ifdef NAOQI_1_6_0
 #include <almotionproxy.h>
-#include <almemoryproxy.h>
-//#include <almemoryfastaccess.h>
+//#include <almemoryproxy.h>
+#include <almemoryfastaccess.h>
 #include <alptr.h>
 //#include <alxplatform.h>
 //#include <albroker.h>
@@ -26,6 +26,7 @@
 #include <alcore/alptr.h>
 #include <alcommon/alproxy.h>
 #include <alproxies/almemoryproxy.h>
+#include <almemoryfastaccess/almemoryfastaccess.h>
 #include <alproxies/almotionproxy.h>
 #include <alproxies/dcmproxy.h>
 #include <rttools/rttime.h>
@@ -39,6 +40,7 @@
 #include <alcommon/alproxy.h>
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/almotionproxy.h>
+#include <almemoryfastaccess/almemoryfastaccess.h>
 #include <alproxies/dcmproxy.h>
 #include <rttools/rttime.h>
 

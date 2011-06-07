@@ -32,9 +32,6 @@ SET ( KROBOT_SRCS
   src/krobotmain.cpp
   src/mainmodule.h
   src/mainmodule.cpp
-  src/button_listener_module.cpp
-  src/button_listener_module.h
-
 )
 
 if(Webots)

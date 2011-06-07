@@ -1,6 +1,8 @@
 #include "robotcontroller.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "architecture/archConfig.h"
+#include "messages/SensorsMessage.pb.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 
 #include "tools/logger.h"
 #include "tools/toString.h"
@@ -11,7 +13,7 @@ using boost::posix_time::milliseconds;
 namespace {
 	ActivityRegistrar<RobotController>::Type temp("RobotController");
 }
-RobotController::RobotController() {
+RobotController::RobotController() :gm(game_data) { //Initialize game controller with message pointer
 }
 
 void RobotController::UserInit() {
@@ -20,21 +22,12 @@ void RobotController::UserInit() {
 
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
-	gm = new GameController(&game_data, &received_data, &mx, conf.port(), conf.team_number());
+	gm.connectTo(conf.port(), conf.team_number());
+	gm.setNonBlock(true);
 
-	gm->StartThread();
-
-	try {
-		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
-		memory->insertData("button_pressed", 0);
-		memory->insertData("lbumper_pressed", 0);
-		memory->insertData("rbumper_pressed", 0);
-	} catch (AL::ALError& e) {
-		Logger::Instance().WriteMsg("RobotController", "Error in getting ALmemory proxy", Logger::FatalError);
-	}
 	gm_state.Clear();
-	endwait = boost::posix_time::microsec_clock::universal_time();
-	override=false;
+
+	_blk->subscribeTo("buttonevents", 0);
 	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);
 }
 
@@ -42,8 +35,9 @@ int RobotController::Execute() {
 	static int delay;
 
 	bool changed = false;
-	mx.lock();
-	if (received_data&&!override) {
+	bool received=gm.poll();
+
+	if (received&&gm_state.override_state()==OVERRIDE_DISABLED) {
 		//teams[0] one team
 		//teams[1] other team
 		int teamindx = game_data.teams[0].teamNumber == conf.team_number() ? 0 : 1;
@@ -57,80 +51,91 @@ int RobotController::Execute() {
 		new_gm_state.set_firsthalf(game_data.firstHalf == 1);
 		new_gm_state.set_kickoff(game_data.kickOffTeam == new_gm_state.team_color());
 		new_gm_state.set_penalty(game_data.teams[teamindx].players[conf.player_number() - 1].penalty);
-		new_gm_state.set_penalized(game_data.teams[teamindx].players[conf.player_number() - 1].penalty != 0);
+
 		//Depreciated PLAYER_PENALISED State does not exist any more!
 		new_gm_state.set_player_state((game_data.teams[teamindx].players[conf.player_number() - 1].penalty == 0) ? game_data.state : PLAYER_PENALISED);
-		//TODO add time if necessary !
 
-		received_data = false;
-		mx.unlock();
 		//Check if changed
 		if (gm_state.game_state() != new_gm_state.game_state() || gm_state.team_color() != new_gm_state.team_color() || gm_state.own_goal_color() != new_gm_state.own_goal_color()
-				|| gm_state.penalty() != new_gm_state.penalty() || gm_state.penalized() != new_gm_state.penalized() || gm_state.player_state() != new_gm_state.player_state()
+				|| gm_state.penalty() != new_gm_state.penalty() || gm_state.player_state() != new_gm_state.player_state()
 				|| gm_state.sec_game_state() != new_gm_state.sec_game_state() || gm_state.our_score() != new_gm_state.our_score() || gm_state.otherteam_score()
 				!= new_gm_state.otherteam_score() || gm_state.firsthalf() != new_gm_state.firsthalf() || gm_state.kickoff() != new_gm_state.kickoff()) {
 			changed = true;
 			gm_state.CopyFrom(new_gm_state);
 		}
-	} else {
-		mx.unlock();
-		chest_button_pressed = memory->getData("button_pressed");
-		left_bumper_pressed = memory->getData("lbumper_pressed");
-		right_bumper_pressed = memory->getData("rbumper_pressed");
+	}
 
-		if ((chest_button_pressed + right_bumper_pressed + left_bumper_pressed) > 0 && (start_timer = boost::posix_time::microsec_clock::universal_time()) > endwait) {
-			changed = true;
-			if((right_bumper_pressed|| left_bumper_pressed) && chest_button_pressed)
+	boost::shared_ptr<const ButtonMessage> bm=_blk->readSignal<ButtonMessage>("buttonevents");
+	if(bm.get()!= NULL)
+	{
+		int lbump=bm->data(KDeviceLists::L_BUMPER_L)+bm->data(KDeviceLists::L_BUMPER_R);
+		int rbump=bm->data(KDeviceLists::R_BUMPER_L)+bm->data(KDeviceLists::R_BUMPER_R);
+
+		int chest=bm->data(KDeviceLists::CHEST_BUTTON);
+
+		if(chest==2)//DOUBLE CHEST CLICK
+		{
+
+			if(gm_state.override_state()!=OVERRIDE_DROPDEAD)
 			{
-				memory->insertData("rbumper_pressed", 0);
-				memory->insertData("lbumper_pressed", 0);
-				memory->insertData("button_pressed", 0);
-				override=!override;
-				gm_state.Clear();//TODO: FIX INITIAL VALUES
+				gm_state.Clear();
+				gm_state.set_override_state(OVERRIDE_DROPDEAD);
 			}
 			else
 			{
-				if ((right_bumper_pressed) == 1) {
-					if (gm_state.player_state() != PLAYER_PLAYING) {
-						gm_state.set_kickoff((gm_state.kickoff() + 1) % 2);
-					}
-					memory->insertData("rbumper_pressed", 0);
-				}
-				if ((left_bumper_pressed) == 1) {
-					if (gm_state.player_state() != PLAYER_PLAYING) {
-						gm_state.set_team_color((gm_state.team_color() + 1) % 2);
-					}
-					memory->insertData("lbumper_pressed", 0);
-				}
-				if ((chest_button_pressed) == 1) {
-					memory->insertData("button_pressed", 0);
-					switch (gm_state.player_state()) {
-					case PLAYER_INITIAL:
-						gm_state.set_penalty(PENALTY_MANUAL);
-						gm_state.set_game_state(STATE_PLAYING);
-						gm_state.set_penalized(true);
-						gm_state.set_player_state(PLAYER_PENALISED);
-						break;
-					case PLAYER_PLAYING:
-						gm_state.set_penalty(PENALTY_MANUAL);
-						gm_state.set_penalized(true);
-						gm_state.set_player_state(PLAYER_PENALISED);
-						break;
-					case PLAYER_PENALISED:
-						gm_state.set_game_state(STATE_PLAYING);
-						gm_state.set_penalty(PENALTY_NONE);
-						gm_state.set_penalized(false);
-						gm_state.set_player_state(PLAYER_PLAYING);
-						break;
-					default:
-						gm_state.set_game_state(PENALTY_MANUAL);
-						gm_state.set_penalty(PENALTY_NONE);
-						gm_state.set_penalized(false);
-						gm_state.set_player_state(PLAYER_PLAYING);
-					}
-				}
+				gm_state.Clear();
+				gm_state.set_override_state(OVERRIDE_DISABLED);
 			}
-			endwait = start_timer + boost::posix_time::milliseconds(380);
+
+
+			changed = true;
+		}
+		else if((lbump+rbump)>0 && chest==1)
+		{
+			if(gm_state.override_state()==OVERRIDE_DISABLED)
+			{
+				gm_state.Clear();//TODO: FIX INITIAL VALUES
+				gm_state.set_override_state(OVERRIDE_ENABLED);
+			}
+			else
+				gm_state.set_override_state(OVERRIDE_DISABLED);
+			changed = true;
+		}
+		else if(rbump>0&&gm_state.player_state() != PLAYER_PLAYING&&gm_state.override_state() != OVERRIDE_DROPDEAD)
+		{
+
+			gm_state.set_kickoff((gm_state.kickoff() + 1) % 2);
+			changed = true;
+		}
+		else if(lbump>0&&gm_state.player_state() != PLAYER_PLAYING&&gm_state.override_state() != OVERRIDE_DROPDEAD)
+		{
+			gm_state.set_team_color((gm_state.team_color() + 1) % 2);
+			changed =true;
+		}
+		else if(chest==1&&!(received&&gm_state.override_state() == OVERRIDE_DISABLED) )
+		{
+			switch (gm_state.player_state()) {
+				case PLAYER_INITIAL:
+					gm_state.set_penalty(PENALTY_MANUAL);
+					gm_state.set_game_state(STATE_PLAYING);
+					gm_state.set_player_state(PLAYER_PENALISED);
+					break;
+				case PLAYER_PLAYING:
+					gm_state.set_penalty(PENALTY_MANUAL);
+					gm_state.set_game_state(STATE_PLAYING);
+					gm_state.set_player_state(PLAYER_PENALISED);
+					break;
+				case PLAYER_PENALISED:
+					gm_state.set_game_state(STATE_PLAYING);
+					gm_state.set_penalty(PENALTY_NONE);
+					gm_state.set_player_state(PLAYER_PLAYING);
+					break;
+				default:
+					gm_state.set_game_state(STATE_PLAYING);
+					gm_state.set_penalty(PENALTY_NONE);
+					gm_state.set_player_state(PLAYER_PLAYING);
+			}
+			changed=true;
 		}
 	}
 
@@ -138,9 +143,10 @@ int RobotController::Execute() {
 		sendLedUpdate();
 		_blk->publishState(gm_state, "behavior");
 	} else {
-		if (delay++ % 100 == 0)
+		if (delay++ % 50 == 0)
 			sendLedUpdate();
 	}
+
 
 	return 0;
 }
@@ -153,7 +159,11 @@ void RobotController::sendLedUpdate() {
 	chest_led->set_chain("chest");
 	rfoot_led->set_chain("r_foot");
 	lfoot_led->set_chain("l_foot");
-	if (gm_state.player_state() == PLAYER_INITIAL || gm_state.player_state() == PLAYER_FINISHED)
+	if(showover&&gm_state.override_state()!=OVERRIDE_DISABLED)
+		chest_led->set_color("on");
+	else if(gm_state.override_state() == OVERRIDE_DROPDEAD)
+		chest_led->set_color("on");
+	else if (gm_state.player_state() == PLAYER_INITIAL || gm_state.player_state() == PLAYER_FINISHED)
 		chest_led->set_color("off");
 	else if (gm_state.player_state() == PLAYER_READY)
 		chest_led->set_color("blue");
@@ -165,7 +175,7 @@ void RobotController::sendLedUpdate() {
 		chest_led->set_color("red");
 	else
 		chest_led->set_color("on");
-
+	showover=!showover;
 	if (gm_state.kickoff())
 		rfoot_led->set_color("on");
 	else

@@ -1,36 +1,33 @@
 #ifndef GAMECONTROLLER_H
 #define GAMECONTROLLER_H
 #include "messages/RoboCupGameControlData.h"
-#include "hal/thread.h"
-#include "hal/mutex.h"
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 
 
-class GameController: public Thread
+class GameController
 {
 	public:
-		GameController(RoboCupGameControlData* game_data, bool* received_data, Mutex* mx, int port = GAMECONTROLLER_PORT, int team_number = 1);
+		GameController(RoboCupGameControlData & storage );
 		~GameController();
-		int Execute();
+		void connectTo(int port = GAMECONTROLLER_PORT, int tn = 1);
+		bool poll();
+		void setNonBlock(bool nb);
 
 	private:
-		RoboCupGameControlData* game_data;
-		RoboCupGameControlData* current_data;
-		bool* received_data;
-
-		Mutex* mx;
+		RoboCupGameControlData & game_data;
+		int recvflag;
 
 		int port;
 		int team_number;
+		int runcnt;
 		struct sockaddr_in addr;
 		char buffer[10024]; // maximum bytes per message
 		int socket_fd;
-		struct timeval timeout;
-
 		bool check_data_and_copy(char* bytes, int size);
+
 
 };
 

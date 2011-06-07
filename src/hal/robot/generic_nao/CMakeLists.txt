@@ -5,7 +5,6 @@ include( ../nao-${NaoQiVersion}/bootstrap.cmake )
 
 add_library ( GenericNao  ${LibBuildType}
 			aldebaran-kme.h
-			aldebaran-robotcontroller.h
 			kAlBroker.h
 			aldebaran-motion-extra.h
 			aldebaran-sensors.h

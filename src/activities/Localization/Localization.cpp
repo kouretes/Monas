@@ -603,7 +603,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//
 
 	//Set semi-optimal bearing angle as the average bearing angle to the observations
-	if (Observations.size() > 0)
+	//if (Observations.size() > 0)
 		ForceBearing(SIRParticles, Observations);
 
 	CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);

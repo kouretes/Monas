@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os;
+import subprocess;
 import sys;
 import string;
 import re;
 import commands,socket;
-
+from subprocess import call
 def newcmommand():
 	print("-------------------------------------------------------------------------------------------------------")
 def endcmommand():
@@ -60,15 +61,15 @@ def usage():
 	if (string.find(sys.argv[0], "upload_work.py") > -1):
 		print """
 		usage: (python) ../../scripts/upload_work.py IP1 IP2 IP3 ...
-		
+
 				IPi: IPs of the robots on which the same configuration will be uploaded
 				CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
 		"""
 	elif (string.find(sys.argv[0] , "upload_game.py") > -1):
 		print """
 		usage: (python) ../../scripts/upload_game.py SSID IP1 PL1num IP2 PL2num IP3 PL3num ...
-		
-			SSID: ssid of the field wifi, the script will look the corresponding network file  
+
+			SSID: ssid of the field wifi, the script will look the corresponding network file
 			IPi: IPs of the robots on which the same configuration will be uploaded
 			PLinum: 1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker
 			CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
@@ -79,6 +80,17 @@ def usage():
 		CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
 		"""
 	exit(-1)
+
+def Ksystem(command, message, TerminateOnError):
+	ret=os.system(command)
+	if(ret!=0):
+		print '\033[1;31m Unsuccessful '+ message + '\033[1;m'
+		if(TerminateOnError):
+			exit(-1)
+	else:
+		print '\033[1;32m '+ message +' Completed Successfully\033[1;m'
+
+
 
 playersdef = ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker']
 #### UPLOAD SCRIPT ####
@@ -113,8 +125,7 @@ else:
 	exit(-1)
 
 for ip in robotsIP:
-	if(not is_valid_ipv4(ip)):
-		print "\033[1;33m Ip address " + ip + " is not valid \033[1;m"
+
 
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	timeouttime= 2
@@ -124,7 +135,9 @@ for ip in robotsIP:
 		print "Trying to connect to " + ip
 		sock.connect((ip, 22))
 	except socket.error, msg:
-		print '\033[1;31m Waited ' + str(timeouttime) +  ' second. Robot with ip ' + ip + ' unreachable \033[1;m'
+		print '\033[1;31m Waited ' + str(timeouttime) +  ' second. Robot with address ' + ip + ' unreachable \033[1;m'
+		if(not is_valid_ipv4(ip)):
+			print "\033[1;33m Ip address " + ip + " is not a valid IP4 address \033[1;m"
 		reachable = False
 	sock.close()
 
@@ -142,19 +155,23 @@ if(pwdfolders[-2] != "make"):
 
 
 print "Working directory " + pwd
-ret=os.system("make install")
+#ret=os.system("make install")
+Ksystem("make install","Compilation", True)
 
-if(ret!=0):
-	print '\033[1;31m Unsuccessful Compilation \033[1;m'
-	exit(-1)
-else:
-	print "\033[1;32m Compilation Completed Successfully\033[1;m"
+#if(ret!=0):
+	#print '\033[1;31m Unsuccessful Compilation \033[1;m'
+	#exit(-1)
+#else:
+	#print "\033[1;32m Compilation Completed Successfully\033[1;m"
 
 #now we hope that we are inside the correct folder so the partial configuration is above
 partial_configuration_dir = "../../scripts/PartialConfiguration/"
 scripts_dir = "../../scripts/"
 
-#os.system('aplay -q '+ scripts_dir +'beep.wav')
+#call('aplay -q '+ scripts_dir +'beep.wav', shell=True)
+#p = subprocess.Popen('aplay -q '+ scripts_dir +'beep.wav',stdin=None,shell=True)
+
+os.system('aplay -q '+ scripts_dir +'beep.wav &')
 #= os.environ["partial_configuration_dir"]
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
@@ -170,12 +187,12 @@ os.system("mkdir -p " + binaries_dir + "/preferences")
 os.system("mkdir -p " + binaries_dir + "/bin")
 os.system("mkdir -p " + binaries_dir + "/lib")
 
-os.system('cp ' + scripts_dir +'Start.py ' + binaries_dir + "bin/")
-os.system('cp ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
-os.system('cp ' + scripts_dir +'start.sh ' + binaries_dir + "bin/")
-os.system('cp ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
-os.system('cp ' + scripts_dir +'beep.wav ' + binaries_dir + "config/")
-print "Length of arguments " + str(len(sys.argv))
+os.system('rsync -u ' + scripts_dir +'Start.py ' + binaries_dir + "bin/")
+os.system('rsync -u ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
+os.system('rsync -u ' + scripts_dir +'start.sh ' + binaries_dir + "bin/")
+os.system('rsync -u ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
+os.system('rsync -u ' + scripts_dir +'beep.wav ' + binaries_dir + "config/")
+#print "Length of arguments " + str(len(sys.argv))
 
 if(partial_configuration_dir	== "" ):
 	print("ERROR:  Please define partial_configuration_dir")
@@ -265,7 +282,8 @@ for	ip in robotsIP:
 	print("Preparing to copy robot from ",binaries_dir)
 	print ""
 
-	os.system(rsync_cmd)
+	#os.system(rsync_cmd)
+	Ksystem(rsync_cmd, "Uploading ", True);
 	print(rsync_cmd)
 
 	print("All necessary files have been upload successfully!");
@@ -289,3 +307,6 @@ for	ip in robotsIP:
 		os.system(nao_start_stop_cmd)
 		#~ os.system('ssh root@'+ip + " 'ifdown wlan0 '")
 		#~ os.system('ssh root@'+ip + " 'ifup wlan0 '")
+
+
+

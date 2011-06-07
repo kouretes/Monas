@@ -1,18 +1,19 @@
 #include "LedHandler.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
+#include "tools/toString.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 using std::string;
+using namespace boost::posix_time;
+
 namespace {
 	ActivityRegistrar<LedHandler>::Type temp("LedHandler");
 }
 
 int LedHandler::Execute() {
-	static bool firstRun = true;
 
-	if (firstRun) {
-		leds->callVoid<string, int, float> ("fadeRGB", "AllLeds", colors["off"], 0.0);
-		firstRun = false;
-	}
+
+
 	process_messages();
 
 	if (led_change != 0) {
@@ -20,14 +21,66 @@ int LedHandler::Execute() {
 			setLed(led_change->leds(i).chain(), led_change->leds(i).color());
 		}
 	}
+
+	SetBateryLevel();
+
 	return 0;
 }
 
-void LedHandler::process_messages() {
-	//_blk->process_messages();
+void LedHandler::SetBateryLevel(){
+	static bool firstRun = true;
+	if (firstRun) {
+		Logger::Instance().WriteMsg("LedHandler", "Real Battery level: "+_toString(battery_level), Logger::Info);
+				//10 == empty , 0, == full
+		battery_level = rint((1-battery_level)*left_ear_names.size()); //scale and reverse the real value
+		if(battery_level >=left_ear_names.size())
+			battery_level = left_ear_names.size()-1;
 
-	//if (led_change != 0)
-	//	delete led_change;
+		Logger::Instance().WriteMsg("LedHandler", "Reversed Battery level: "+_toString(battery_level), Logger::Info);
+		for(int i=0; i < left_ear_names.size(); i++){
+			if(i<=battery_level)
+				leds->callVoid<string>("on",left_ear_names[i]);
+			else
+				leds->callVoid<string>("off",left_ear_names[i]);
+			Logger::Instance().WriteMsg("LedHandler", "Seting  Battery level: "+_toString(left_ear_names[i])+" "+_toString((i<=battery_level)?1:0), Logger::Info);
+		}
+
+		firstRun = false;
+	}
+
+
+	float new_battery_level = memory->getData("Device/SubDeviceList/Battery/Charge/Sensor/Value");
+	//10 == empty , 0, == full
+	new_battery_level = rint((1-new_battery_level)*left_ear_names.size()); //scale and reverse the real value
+	if(new_battery_level >=left_ear_names.size())
+		new_battery_level = left_ear_names.size()-1;
+
+	//Logger::Instance().WriteMsg("LedHandler", "Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
+
+	if(new_battery_level > battery_level ){
+		//Discharging so light up the next led
+		Logger::Instance().WriteMsg("LedHandler", "Discharging, Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
+		leds->callVoid<string>("on",left_ear_names[new_battery_level]);
+		if(battery_level>0)
+			leds->callVoid<string>("on",left_ear_names[battery_level-1]);
+	}else if(new_battery_level < battery_level){
+		//Charging so light up the next led
+		Logger::Instance().WriteMsg("LedHandler", "Charging, Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
+		leds->callVoid<string>("off",left_ear_names[battery_level]);
+
+	}
+	battery_level = new_battery_level;
+	static ptime last_ledchange=microsec_clock::universal_time();
+	if(microsec_clock::universal_time()-last_ledchange<milliseconds(2000/(1+battery_level)))
+		return ;
+	last_ledchange=microsec_clock::universal_time();
+	static bool ledonof = false;
+	ledonof=!ledonof;
+	leds->callVoid<string>((ledonof)?"on":"off",left_ear_names[battery_level]);
+
+}
+
+void LedHandler::process_messages() {
 
 	led_change = _blk->readSignal<LedChangeMessage> ("leds");
 }
@@ -37,18 +90,42 @@ void LedHandler::UserInit() {
 	_blk->subscribeTo("leds", ON_TOPIC);
 
 	try {
-
 		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
-
 	} catch (AL::ALError& e) {
 		Logger::Instance().WriteMsg("LedHandler", "Could not create ALLEds Proxy", Logger::FatalError);
 	}
+
+	try {
+		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
+	} catch (AL::ALError& e) {
+		Logger::Instance().WriteMsg("LedHandler", "Error in getting ALmemory proxy", Logger::FatalError);
+	}
+
 	initializeColorMap();
 
-	setChestColor("on");
-	setFootColor("r_foot", "on");
-	setFootColor("l_foot", "on");
+//	setChestColor("on");
+//	setFootColor("r_foot", "on");
+//	setFootColor("l_foot", "on");
 
+
+	left_ear_names.push_back("Ears/Led/Left/0Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/36Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/72Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/108Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/144Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/180Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/216Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/252Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/288Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/324Deg/Actuator/Value");
+
+	try {
+	battery_level = memory->getData("Device/SubDeviceList/Battery/Charge/Sensor/Value");
+	} catch (AL::ALError& e) {
+				Logger::Instance().WriteMsg("LedHandler", "Error somewhere here", Logger::FatalError);
+			}
+
+	leds->callVoid<string> ("off", "AllLeds");
 	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
 }
 

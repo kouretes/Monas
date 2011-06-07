@@ -19,7 +19,6 @@
 #include <alcommon/altoolsmain.h>
 
 #include "mainmodule.h"
-#include "button_listener_module.h"
 
 
 
@@ -41,18 +40,14 @@ extern "C"
 
 
 ALCALL int _createModule( AL::ALPtr<AL::ALBroker> pBroker )
-{      
-  // init broker with the main broker inctance 
+{
+  // init broker with the main broker inctance
   // from the parent executable
   AL::ALBrokerManager::setInstance(pBroker->fBrokerManager.lock());
   AL::ALBrokerManager::getInstance()->addBroker(pBroker);
 
   AL::ALModule::createModule<mainModule>( pBroker, "mainModule" );
-#ifndef WEBOTS
-  AL::ALModule::createModule<ButtonListener>(pBroker,"ButtonListener");
-#else
-  cout << "Webots build" << endl;
-#endif
+
   return 0;
 }
 

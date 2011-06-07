@@ -7,11 +7,11 @@ audioout
 [extra]
 devicecommunicationmanager
 motion
-sensors
+#sensors #button events
 leds
 videoinput
 pythonbridge
-sentinel
+#sentinel #audio warnings about  battery and heat, auto shutdown
 launcher
 albonjour
 #krobot

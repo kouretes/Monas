@@ -16,8 +16,8 @@
 	</robot>
 </noKickOff>
 
-<!--kickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
-<kickOff>
+<!--KickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
+<KickOff>
 	<robot number=1 posx=2.5 posy=0.0>
 	</robot>
 	<!-- Center-->
@@ -29,4 +29,4 @@
 	<!-- Attacker-->
 	<robot number=4 posx=0.7 posy=0.7>
 	</robot>
-</kickOff>
+</KickOff>

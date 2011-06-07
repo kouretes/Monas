@@ -1,16 +1,16 @@
 message GameStateMessage{
 	//required int32 player =6 [default = 1];
-	required int32 team_color =7 [default =0];
-	required int32 own_goal_color =5 [default =0];
-	required int32 player_state = 8 [default =0];
-	required int32 game_state = 9 [ default =0];
-	required int32 sec_game_state = 10 [ default =0];
-	required bool penalized =11 [default = false];
+	required uint32 team_color =7 [default =0];
+	required uint32 own_goal_color =5 [default =0];
+	required uint32 player_state = 8 [default =0];
+	required uint32 game_state = 9 [ default =0];
+	required uint32 sec_game_state = 10 [ default =0];
 	required bool firstHalf = 3 [default = true];
-	required int32 penalty = 13 [default = 0];
+	required uint32 penalty = 13 [default = 0];
 	required bool kickoff = 12 [default = true];
-	required int32 our_score = 14 [default = 0];
-	required int32 otherteam_score = 15 [default = 0];
+	required uint32 our_score = 14 [default = 0];
+	required uint32 otherteam_score = 15 [default = 0];
+	required uint32 override_state=16 [default = 0];
 }
 
 message LedValues{

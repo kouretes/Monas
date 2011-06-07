@@ -52,6 +52,7 @@ void MessageQueue::create_tree()
 	tree->addTopic(string("motion"),string("global"));
 	tree->addTopic(string("leds"),string("global"));
 	tree->addTopic(string("sensors"),string("global"));
+	tree->addTopic(string("buttonevents"),string("sensor"));
 	tree->addTopic(string("vision"),string("global"));
 	tree->addTopic(string("behavior"),string("global"));
 	tree->addTopic(string("localization"),string("global"));

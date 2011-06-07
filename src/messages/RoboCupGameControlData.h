@@ -27,11 +27,11 @@ typedef unsigned int   uint32;
 #define STATE_FINISHED              4
 
 //DEPRICATED, THESE ARE NOT INCLUDED ANY MORE
-#define PLAYER_INITIAL               0 
-#define PLAYER_READY                 1 
-#define PLAYER_SET                   2 
-#define PLAYER_PLAYING               3 
-#define PLAYER_FINISHED              4 
+#define PLAYER_INITIAL               0
+#define PLAYER_READY                 1
+#define PLAYER_SET                   2
+#define PLAYER_PLAYING               3
+#define PLAYER_FINISHED              4
 #define PLAYER_PENALISED             5
 #define PLAYER_DEAD                  6
 #define PLAYER_LOG                   7
@@ -64,6 +64,10 @@ typedef unsigned int   uint32;
 #define PENALTY_HL_TEEN_REQUEST_FOR_PICKUP  5
 
 #define PENALTY_MANUAL                      15
+
+#define OVERRIDE_DISABLED					0
+#define OVERRIDE_ENABLED					1
+#define OVERRIDE_DROPDEAD					2
 
 struct RobotInfo {
     uint16 penalty;             // penalty state of the player
