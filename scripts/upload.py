@@ -154,7 +154,7 @@ else:
 partial_configuration_dir = "../../scripts/PartialConfiguration/"
 scripts_dir = "../../scripts/"
 
-os.system('aplay -q '+ scripts_dir +'beep.wav')
+#os.system('aplay -q '+ scripts_dir +'beep.wav')
 #= os.environ["partial_configuration_dir"]
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
