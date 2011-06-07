@@ -17,7 +17,7 @@ int SpecialAction::Execute() {
 	LedValues* l = leds.add_leds();
 
 	if(fm!=0 && fm->fall()==1){
-		l->set_chain("l_ear");
+		l->set_chain("r_ear");
 		l->set_color( "blue");
 		amot->set_command("goalieLeftFootExtened.xar");
 	}

@@ -23,7 +23,7 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	bool readRobotConfiguration(const std::string& file_name, bool kickoff);	
+	bool readRobotConfiguration(const std::string& file_name);	
 	
 private:
 	ApproachBall ab;
@@ -49,8 +49,8 @@ private:
 	int playernum;
 	float posX;
 	float posY;
-	float initX,initY, initPhi;
-	float initXK, initYK, initPhiK;	
+	float initX[2][2], initY[2][2], initPhi[2][2];
+
 	
 
 	bool readConf;

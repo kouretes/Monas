@@ -6,7 +6,7 @@ namespace {
 }
 
 int GoalkeeperScan::Execute() {
-	np.readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "robotConfig", false);
+	np.readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "robotConfig");
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
 	wimsg = _blk->readData<WorldInfo> ("behavior");
 	pm = _blk->readState<PositionMessage> ("behavior");

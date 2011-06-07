@@ -17,9 +17,6 @@ int Scan::Execute() {
 //		times=0;
 	LedChangeMessage leds;
 	LedValues* l = leds.add_leds();
-	l->set_chain("l_ear");
-	l->set_color( "off");
-	l = leds.add_leds();
 	l->set_chain("r_ear");
 	l->set_color( "off");
 	_blk->publishSignal(leds, "leds");	
@@ -53,12 +50,30 @@ int Scan::Execute() {
 	}
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
+	
+	tmsg = _blk->readState<TimeoutMsg>("behavior");
+	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+	if(now >boost::posix_time::from_iso_string(tmsg->wakeup())+ boost::posix_time::seconds(15)  && now < boost::posix_time::from_iso_string(tmsg->wakeup())+ boost::posix_time::seconds(60)){
+		toPos = true;
+		rpm->set_goalietopos(toPos);
+		_blk->publishState(*rpm, "behavior");
+	}
+	else{
+		if(toPos){
+			toPos = false;
+			rpm->set_goalietopos(toPos);
+			_blk->publishState(*rpm, "behavior");
+		}
+	}
+	
 	return 0;
 }
 
 void Scan::UserInit () {
 	_blk->subscribeTo("behavior", 0);
 	_blk->subscribeTo("vision", 0);
+	rpm  = new ReturnToPositionMessage();
+	toPos = false;
 	headaction = SCANFORBALL;
 	//side = 1;
 	//times = 0;

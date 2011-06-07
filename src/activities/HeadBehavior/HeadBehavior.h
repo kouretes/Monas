@@ -25,11 +25,11 @@
 #define BALLTRACK 4
 
 #define PITCHMIN -0.55
-#define	PITCHMAX 0.3
+#define	PITCHMAX 0.33
 #define YAWMIN 0.8
-#define YAWMAX 1.3
-#define PITCHSTEP 0.22
-#define YAWSTEP 0.45
+#define YAWMAX 1.35
+#define PITCHSTEP 0.3
+#define YAWSTEP 0.4
 
 #define OVERSH 0.06
 #define WAITFOR 40
@@ -60,7 +60,9 @@ class HeadBehavior: public IActivity {
 		int prevaction;
 		int curraction;
 		boost::posix_time::ptime lastturn;
-
+		
+		float headpos;
+		int leftright;
 		bool startscan;
 		bool scanforball;
 		float targetYaw;

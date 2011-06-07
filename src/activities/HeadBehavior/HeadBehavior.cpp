@@ -31,9 +31,11 @@ void HeadBehavior::UserInit() {
 
 	GoalLastSeen =GoalFirstSeen= microsec_clock::universal_time()-hours(5);
 
-
-	prevaction = 0;
-	curraction = 0;
+	ysign = 1;
+	headpos = 0.0;
+	leftright = 1;
+	prevaction = SCANFORPOST;
+	curraction = SCANFORPOST;
 	calibrated = 0;
 	headaction = 0;
 	lastbearing=obsmbearing=-1;
@@ -157,32 +159,46 @@ int HeadBehavior::Execute() {
 				HeadScanStep();
 
 			}
-			break;/*
+			break;
 		case (SCANFORPOST):
-		* calibrated=0;
-			if(obsmbearing!=-1)
+			calibrated=0;
+			if(newBearing)
 			{
-
 				hmot->set_command("setHead");
 				hmot->set_parameter(0, obsmbearing);
 				hmot->set_parameter(1, -0.55);
 				_blk->publishSignal(*hmot, "motion");
 				cout << "Track step GOAL" << endl;
-
 			}
 			else if (asvm != 0&&GoalLastSeen+milliseconds(500)<now) {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
-				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
-				float tYaw= HeadYaw.sensorvalue()+ysign*YAWSTEP;
-				if(fabs(tYaw)>=YAWMIN)
-				{
-					ysign=-ysign;
-					//tYaw= allsm->hjsm().sensordata(YAW).sensorvalue()+ysign*YAWSTEP;
-					tYaw=tYaw>0?YAWMIN:-YAWMIN;
-				}
+				//HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
+				//float tYaw= HeadYaw.sensorvalue()+ysign*YAWSTEP;
+				//if(fabs(tYaw)>=YAWMIN)
+				//{
+					//ysign=-ysign;
+					////tYaw= allsm->hjsm().sensordata(YAW).sensorvalue()+ysign*YAWSTEP;
+					//tYaw=tYaw>0?YAWMIN:-YAWMIN;
+				//}
+				//hmot->set_command("setHead");
+				//hmot->set_parameter(0, tYaw);
+				//hmot->set_parameter(1, -0.55);
+				//_blk->publishSignal(*hmot, "motion");
+				
 				hmot->set_command("setHead");
-				hmot->set_parameter(0, tYaw);
-				hmot->set_parameter(1, -0.55);
+
+
+				if (fabs(headpos) > 2.08) // 1.3
+				leftright *= -1;
+
+				headpos += 0.1 * leftright;
+
+				hmot->set_parameter(0, headpos);
+				float abspos = fabs(headpos);
+				if(abspos<1.57)
+				hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
+				else
+				hmot->set_parameter(1, (-0.0698 * (fabs(headpos)-1.57)) - 0.52);
 				_blk->publishSignal(*hmot, "motion");
 
 
@@ -190,7 +206,6 @@ int HeadBehavior::Execute() {
 			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
-			 */
 		case (BALLTRACK):
 			//calibrated=0;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);

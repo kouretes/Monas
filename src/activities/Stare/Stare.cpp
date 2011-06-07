@@ -17,9 +17,6 @@ int Stare::Execute() {
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	LedValues* l = leds.add_leds();
 	headaction = BALLTRACK;
-	l->set_chain("l_ear");
-	l->set_color( "off");
-	l = leds.add_leds();
 	l->set_chain("r_ear");
 	l->set_color( "off");
 	_blk->publishSignal(leds, "leds");
@@ -298,7 +295,7 @@ int Stare::toFallOrNotToFall( WorldInfo* doi){
 			
 		//		Logger::Instance().WriteMsg("toFallOrNotToFall",  " t1 = " + t1, Logger::Info);
 		//		Logger::Instance().WriteMsg("toFallOrNotToFall",  " t2 = " + t2, Logger::Info);
-				ur = 0.15/1.4;
+				ur = 0.1/1.4;
 				ub = sqrt(ubx*ubx + uby*uby);
 				
 			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ur = " + _toString(ur), Logger::Info);
@@ -313,7 +310,7 @@ int Stare::toFallOrNotToFall( WorldInfo* doi){
 					long tk;
 					tk = fabs((x1/ubx)); //in seconds...................mallon
 					Logger::Instance().WriteMsg("toFallOrNotToFall",  " time to hit the robot" , Logger::Info);
-					if(1.5<tk && tk<6.5){
+					//if(1.5<tk && tk<6.5){
 						//Logger::Instance().WriteMsg("toFallOrNotToFall",  " 300<tk<4000 ", Logger::Info);
 						if(dk>0){
 							Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
@@ -323,7 +320,7 @@ int Stare::toFallOrNotToFall( WorldInfo* doi){
 							Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
 							return -1;	//right
 						}
-					}
+					//}
 				}
 			}
 	}	

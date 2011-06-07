@@ -14,87 +14,78 @@ namespace {
 
 int NoPlay::Execute() {
 	
-	//Logger::Instance().WriteMsg("NoPlay",  " Execute", Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
 	gsm = _blk->readState<GameStateMessage> ("behavior");
-		if(!readConf)
-			readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml", kickOff);
-		
+	pnm = _blk->readState<PlayerNumberMessage>("behavior");
+	
+	if(pnm!=0){
+		playernum = pnm->player_number();
+		teamColor = pnm->team_side();
+	}
+	if(!readConf)
+		readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	
 		if(gsm.get()==0 ){
-			//Logger::Instance().WriteMsg("NoPlay",  " NO GSM", Logger::Info);
+			//Logger::Instance().WriteMsg(GetName(),  " NO GSM", Logger::Info);
 			bhmsg->set_headaction(DONOTHING);
 		}else if(gsm->player_state()==PLAYER_PLAYING){
 		//	cal = false;
-		//	Logger::Instance().WriteMsg("NoPlay",  " PLAYER_PLAYING", Logger::Info);	
+		//	Logger::Instance().WriteMsg(GetName(),  " PLAYER_PLAYING", Logger::Info);	
 			return 0;
 		}else{
 			switch(gsm->player_state()){
 				case PLAYER_PENALISED:
-				//	Logger::Instance().WriteMsg("NoPlay",  " playerpenalised", Logger::Info);
+				//	Logger::Instance().WriteMsg(GetName(),  " playerpenalised", Logger::Info);
 					bhmsg->set_headaction(DONOTHING);	
 					curraction = DONOTHING;
-					//velocityWalk(0.0, 0.0, 0.0, 1);
+					velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
 										
-					pmsg->set_posx(initX);
-					pmsg->set_posy(initY);
-					pmsg->set_theta(initPhi);
-					_blk->publishState(*pmsg, "behavior");
-				//	Logger::Instance().WriteMsg("NoPlay",  " publish pos", Logger::Info);
+			//		pmsg->set_posx(initX);
+			//		pmsg->set_posy(initY);
+			//		pmsg->set_theta(initPhi);
+			//		_blk->publishState(*pmsg, "behavior");
+				//	Logger::Instance().WriteMsg(GetName(),  " publish pos", Logger::Info);
 					rpm->set_goalietopos(true);
 					_blk->publishSignal(*rpm, "behavior");
-					Logger::Instance().WriteMsg("NoPlay",  " publish return to pos", Logger::Info);
+				//	Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
 				
-			//	goToPosition(initX, initY, initPhi);
+				//goToPosition(initX, initY, initPhi);
 				break;
 				case PLAYER_SET:
-					Logger::Instance().WriteMsg("NoPlay",  " playerset", Logger::Info);
-					//velocityWalk(0,0,0,1);
-					curraction = CALIBRATE;
-					if(prevaction!=CALIBRATE){
-						bhmsg->set_headaction(curraction);	
-						
-					}
-					else{
-						bhmsg->set_headaction(DONOTHING);	
-					}
+					Logger::Instance().WriteMsg(GetName(),  " playerset", Logger::Info);
+					velocityWalk(0,0,0,1);
+					curraction = SCANFORPOST;
+					bhmsg->set_headaction(curraction);	
 				break;
 				case PLAYER_READY:
 					kickOff = gsm->kickoff();
 					kcm->set_kickoff(kickOff);
 					_blk->publishState(*kcm, "behavior");
-					
-					//if(kickOff)
-						//goToPosition(initXK, initYK, initPhiK);
-					//else
-						//goToPosition(initX, initY, initPhi);
-						
-					if(kickOff){
-						pmsg->set_posx(initXK);
-						pmsg->set_posy(initYK);
-						pmsg->set_theta(initPhiK); 
-					}else{
-						pmsg->set_posx(initX);
-						pmsg->set_posy(initY);
-						pmsg->set_theta(initPhi); 
+
+					if(kickOff){	//in 0 position of the table kickoff positions
+						pmsg->set_posx(initX[0][teamColor]);
+						pmsg->set_posy(initY[0][teamColor]);
+						pmsg->set_theta(initPhi[0][teamColor]); 
+					}else{	//in 1 position of the table not in kickoff positions
+						pmsg->set_posx(initX[1][teamColor]);
+						pmsg->set_posy(initY[1][teamColor]);
+						pmsg->set_theta(initPhi[1][teamColor]); 
 					}
 					_blk->publishState(*pmsg, "behavior");
-					Logger::Instance().WriteMsg("NoPlay",  " playerready", Logger::Info);
+					Logger::Instance().WriteMsg(GetName(),  " playerready", Logger::Info);
+					curraction = SCANFORPOST;
+					bhmsg->set_headaction(curraction);					
+				break;
+				case PLAYER_INITIAL:
+					Logger::Instance().WriteMsg(GetName(),  " playerinitial", Logger::Info);
+					velocityWalk(0,0,0,1);
 					curraction = CALIBRATE;
 					if(prevaction!=CALIBRATE){
 						bhmsg->set_headaction(curraction);	
-						
-						Logger::Instance().WriteMsg("NoPlay",  " callllllll", Logger::Info);
 					}
 					else{
 						bhmsg->set_headaction(DONOTHING);	
-						Logger::Instance().WriteMsg("NoPlay",  " donothinggggg", Logger::Info);
 					}
 
-					
-				break;
-				case PLAYER_INITIAL:
-					Logger::Instance().WriteMsg("NoPlay",  " playerinitial", Logger::Info);
-					//velocityWalk( 0,0,0,1);
-					curraction = DONOTHING;
 				break;
 			}
 		
@@ -102,7 +93,7 @@ int NoPlay::Execute() {
 	}
 	prevaction = curraction;
 	_blk->publishSignal(*bhmsg, "behavior");
-	//Logger::Instance().WriteMsg("NoPlay",  " bgainw", Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " bgainw", Logger::Info);
 			return 0;
 
 }
@@ -121,9 +112,13 @@ void NoPlay::UserInit () {
 	kcm = new KickOffMessage();
 	pmsg = new PositionMessage();
 	rpm = new ReturnToPositionMessage();
-	initX = 0.0;
-	initY = 0.0;
-	initPhi = 0.0; 
+	myPosX = 0.0;
+	myPosY = 0.0;
+	myPhi = 0.0;
+	teamColor = TEAM_BLUE;
+	playernum = -1;
+	lastMove =  boost::posix_time::microsec_clock::universal_time();
+	lastObsm =  boost::posix_time::microsec_clock::universal_time();
 	//wmot = new MotionWalkMessage();
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -138,13 +133,13 @@ std::string NoPlay::GetName () {
 	return "NoPlay";
 }
 
-bool NoPlay::readRobotConfiguration(const std::string& file_name, bool kickoff) {
+bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 	//readConf=true;
 	//XML config(file_name);
 	//typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 	//NodeCont teamPositions, robotPosition ;
 	//pnm = _blk->readState<PlayerNumberMessage>("behavior");
-	//Logger::Instance().WriteMsg("NoPlay",  " readConf "  , Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " readConf "  , Logger::Info);
 	//int side = 1;
 	//initPhi = 0;
 	//if (pnm.get()==0)
@@ -156,9 +151,9 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name, bool kickoff) 
 		//teamPositions = config.QueryElement<std::string, float, std::string>( "noKickOff" );
 	//if( teamPositions.size()!=0)
 		//robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
-	//Logger::Instance().WriteMsg("NoPlay",  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
     //for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
-		//Logger::Instance().WriteMsg("NoPlay",  " it "  , Logger::Info);
+		//Logger::Instance().WriteMsg(GetName(),  " it "  , Logger::Info);
 		//if(it->attrb["number"] == 1 ){// pnm->player_number()){
 			//if(pnm->team_side()==TEAM_BLUE){
 				//side=-1;
@@ -166,7 +161,7 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name, bool kickoff) 
 			//}
 			//initX = side*(it->attrb["posx"]);
 			//initY = side*(it->attrb["posy"]);
-	//Logger::Instance().WriteMsg("NoPlay",  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
 			//pmsg->set_posx(initX);
 			//pmsg->set_posy(initY);
 			//pmsg->set_theta(initPhi); 
@@ -176,69 +171,66 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name, bool kickoff) 
         
 	//}
 	//return true;
-
-	/////////////////////////////////////////////////////////////////////////////////////////
 	
-	readConf=true;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
+	playernum =-1;
+	if(pnm!=0)
+		playernum = pnm->player_number();
+	if(playernum==-1){
+		Logger::Instance().WriteMsg(GetName(), " Invalid player number " , Logger::Error);
+		return false;
+	}
+	readConf = true;
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 	NodeCont teamPositions, robotPosition ;
-	pnm = _blk->readState<PlayerNumberMessage>("behavior");
-	Logger::Instance().WriteMsg("NoPlay",  " readConf "  , Logger::Info);
-	int side = 1;
-	initPhiK = 0.0;
-	initPhi = 0;
-	if (pnm.get()==0)
-		return false;
-	
-	teamPositions = config.QueryElement<std::string, float, std::string>( "kickOff" );
-	if( teamPositions.size()!=0)
-		robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
-	Logger::Instance().WriteMsg("NoPlay",  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
-    for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
-		Logger::Instance().WriteMsg("NoPlay",  " it "  , Logger::Info);
-		if(it->attrb["number"] == 1 ){// pnm->player_number()){
-			if(pnm->team_side()==TEAM_BLUE){
-				side=-1;
-				initPhiK = 180*TO_RAD;
+	Logger::Instance().WriteMsg(GetName(), " readConf " , Logger::Info);
+
+		
+	for (int i = 0; i < 2; i++) //KICKOFF==0, NOKICKOFF == 1
+	{
+		string kickoff=(i==0)?"KickOff":"noKickOff";
+		bool found = false;
+
+		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
+
+		if (teamPositions.size() != 0)
+		robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
+
+		// Logger::Instance().WriteMsg(GetName(), " teamPo size" + _toString(teamPositions.size()) + "robotPos size" + _toString(robotPosition.size()), Logger::Info);
+
+		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++)
+		{
+		// Logger::Instance().WriteMsg(GetName(), " it ", Logger::Info);
+			if (it->attrb["number"] == playernum)///////////////////////////////////////////
+			{
+			initPhi[i][TEAM_BLUE] = 0;
+			initX[i][TEAM_BLUE] = -1*(it->attrb["posx"]);
+			initY[i][TEAM_BLUE] = -1*(it->attrb["posy"]);
+
+			initPhi[i][TEAM_RED] = 180 * TO_RAD;
+			initX[i][TEAM_RED] = (it->attrb["posx"]);
+			initY[i][TEAM_RED] = (it->attrb["posy"]);
+
+			Logger::Instance().WriteMsg(GetName(), " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
+			Logger::Instance().WriteMsg(GetName(), " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
+
+			found = true;
 			}
-			initXK = side*(it->attrb["posx"]);
-			initYK = side*(it->attrb["posy"]);
-	}
-}
-	teamPositions = config.QueryElement<std::string, float, std::string>( "nokickOff" );
-	if( teamPositions.size()!=0)
-		robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
-	Logger::Instance().WriteMsg("NoPlay",  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
-    for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
-		Logger::Instance().WriteMsg("NoPlay",  " it "  , Logger::Info);
-		if(it->attrb["number"] == 1 ){// pnm->player_number()){
-			if(pnm->team_side()==TEAM_BLUE){
-				side=-1;
-				initPhi = 180*TO_RAD;
-			}
-			initX = side*(it->attrb["posx"]);
-			initY = side*(it->attrb["posy"]);		
+		}
 			
-			Logger::Instance().WriteMsg("NoPlay",  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
+		if(!found)
+		{
+		Logger::Instance().WriteMsg(GetName(), " Unable to find initial " + kickoff+ " position for player number " + _toString(playernum) , Logger::Error);
+		readConf = false;
 		}
 	}
-	if(kickoff){
-		pmsg->set_posx(initXK);
-		pmsg->set_posy(initYK);
-		pmsg->set_theta(initPhiK); 
-		
-	}else{
-		pmsg->set_posx(initX);
-		pmsg->set_posy(initY);
-		pmsg->set_theta(initPhi); 
-	}
-	_blk->publishState(*pmsg, "behavior");
-	return true;	
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	return readConf;
 	
 	
+	///////////////////////////////////////////////////////////////////////////////////
 }
 
 void NoPlay::velocityWalk(double x, double y, double th, double f) {
@@ -268,6 +260,7 @@ void NoPlay::goToPosition(float x, float y, float phi){
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
 		myPhi = wimsg->myposition().phi();
+		Logger::Instance().WriteMsg(GetName(),  " X "+ _toString(myPosX) +" Y "+_toString(myPosY) + " PHI " + _toString(myPhi)  , Logger::Info);
 	}
 	float relativeX, relativeY, relativePhi;
 	obsm = _blk->readSignal<ObservationMessage>("vision");
@@ -290,21 +283,21 @@ void NoPlay::goToPosition(float x, float y, float phi){
 		else if(vely<-1)
 			vely = -1;
 	
-
+	Logger::Instance().WriteMsg(GetName(),  " velx" + _toString(velx)+ " vel y " + _toString(vely), Logger::Info);
 	if(lastMove <= boost::posix_time::microsec_clock::universal_time()){
-		if ( ( x - locDeviation > myPosX || myPosX > x + locDeviation ) || ( y - locDeviation > myPosY || myPosY > y + locDeviation ) || ( phi - 0.1*phi > myPhi || myPhi > phi + 0.1*phi  ) )
-			velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-		else
+		//if ( ( x - locDeviation > myPosX || myPosX > x + locDeviation ) || ( y - locDeviation > myPosY || myPosY > y + locDeviation ) || ( phi - 0.1*phi > myPhi || myPhi > phi + 0.1*phi  ) )
+	//		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+	//	else
 			velocityWalk(velx, vely, 0.1*relativePhi, 1.0);
 		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
 	}
 
-	if(obsm&&obsm->regular_objects_size() > 0)
-		lastObsm = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(2);
+//	if(obsm&&obsm->regular_objects_size() > 0)
+	//	lastObsm = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(5);
 	
-	if(lastObsm<= boost::posix_time::microsec_clock::universal_time()){
-		curraction = SCANFORBALL;
-	}
+	//if(lastObsm<= boost::posix_time::microsec_clock::universal_time()){
+		//curraction = SCANFORBALL;
+//	}
 	bhmsg->set_headaction(curraction);	
 	return;
 }
