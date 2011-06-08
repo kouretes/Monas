@@ -140,7 +140,6 @@ typedef struct
 	KVecInt2 lastpoint ;
 	bool ballfound,yfound,bfound;
 	int cntother; bool done;
-	int step;
 } linestruct;
 
 void Vision::gridScan(const KSegmentator::colormask_t color)
@@ -158,6 +157,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//static int startx=0;
 	int linestep=(rawImage->width-2*config.bordersize)/(config.scanV-1);
 	int align=(rawImage->width-linestep*(config.scanV-1) )>>1;
+	int step;
 	//float d;
 
 	std::vector<linestruct> l;
@@ -167,6 +167,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	int sx=config.bordersize+align;
 	int vstep=(sqrt(rawImage->height-2*config.bordersize-config.scanH*config.subsampling)-1)/2;
+	step=config.subsampling+vstep;
 	//Fix initial scanline positions :)
 	int linesdone=0;
 	//Prefetch first batch
@@ -183,19 +184,28 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		l[i].lastpoint=l[i].gtrc;
 		sx+=linestep;
 		l[i].gtrc.initVelocity(Vup.x,Vup.y);
-		l[i].gtrc.setScale(config.subsampling+vstep);
+		l[i].gtrc.setScale(step);
 		l[i].ballfound=false;
 		l[i].yfound=false;
 		l[i].bfound=false;
 		l[i].cntother=0;
 		l[i].done=false;
-		l[i].step=config.subsampling+vstep;
 
 	}
+
 	//cout<<"init"<<endl;
 
 	while(linesdone<config.scanV)
 	{
+
+		//Fix NEXT step length
+		//Find next pixel
+
+		step--;
+		if (step<config.minH) step=config.minH;
+
+			//std::cout<<"Step:"<<thisl.step<<endl;
+			//stepx=2;
 		//cout<<"while"<<endl;
 		for(unsigned i=0 ; i< l.size();i++)
 		{
@@ -349,17 +359,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				bgoalpost.push_back(thisl.gtrc);
 				thisl.bfound=true;
 			}
-
-
-			//Find next pixel
+			//Prepare for the next one
 			thisl.gtrc.step();
-			thisl.step--;
-			if (thisl.step<config.minH) thisl.step=config.minH;
-			thisl.gtrc.setScale(thisl.step);
-			//std::cout<<"Step:"<<thisl.step<<endl;
-			//stepx=2;
+			thisl.gtrc.setScale(step);
 
 		}
+
 
 	}
 	//Now follow the lines
