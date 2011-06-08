@@ -66,6 +66,11 @@ public:
 	 * */
 	int Execute();
 	/**
+	 * \brief Reads the raw battery level and displays the level in left ear led. Full Battery all leds off. Empty Battery All leds on.
+	 * Also last Level Leds flashes. As battery empties flash frequency increases.
+	 */
+	void SetBateryLevel();
+	/**
 	 * \brief Here is where incoming messages are received. In the first execution all the leds are setted off.
 	 */
 	void process_messages();

@@ -1,14 +1,34 @@
 #include "LedHandler.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "tools/toString.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 using std::string;
+using namespace boost::posix_time;
+
 namespace {
 	ActivityRegistrar<LedHandler>::Type temp("LedHandler");
 }
 
 int LedHandler::Execute() {
-	static bool firstRun = true;
 
+
+
+	process_messages();
+
+	if (led_change != 0) {
+		for (int i = 0; i < led_change->leds_size(); i++) {
+			setLed(led_change->leds(i).chain(), led_change->leds(i).color());
+		}
+	}
+
+	SetBateryLevel();
+
+	return 0;
+}
+
+void LedHandler::SetBateryLevel(){
+	static bool firstRun = true;
 	if (firstRun) {
 		Logger::Instance().WriteMsg("LedHandler", "Real Battery level: "+_toString(battery_level), Logger::Info);
 				//10 == empty , 0, == full
@@ -25,17 +45,9 @@ int LedHandler::Execute() {
 			Logger::Instance().WriteMsg("LedHandler", "Seting  Battery level: "+_toString(left_ear_names[i])+" "+_toString((i<=battery_level)?1:0), Logger::Info);
 		}
 
-
-
 		firstRun = false;
 	}
-	process_messages();
 
-	if (led_change != 0) {
-		for (int i = 0; i < led_change->leds_size(); i++) {
-			setLed(led_change->leds(i).chain(), led_change->leds(i).color());
-		}
-	}
 
 	float new_battery_level = memory->getData("Device/SubDeviceList/Battery/Charge/Sensor/Value");
 	//10 == empty , 0, == full
@@ -49,20 +61,26 @@ int LedHandler::Execute() {
 		//Discharging so light up the next led
 		Logger::Instance().WriteMsg("LedHandler", "Discharging, Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
 		leds->callVoid<string>("on",left_ear_names[new_battery_level]);
+		if(battery_level>0)
+			leds->callVoid<string>("on",left_ear_names[battery_level-1]);
 	}else if(new_battery_level < battery_level){
 		//Charging so light up the next led
 		Logger::Instance().WriteMsg("LedHandler", "Charging, Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
 		leds->callVoid<string>("off",left_ear_names[battery_level]);
+
 	}
 	battery_level = new_battery_level;
-	return 0;
+	static ptime last_ledchange=microsec_clock::universal_time();
+	if(microsec_clock::universal_time()-last_ledchange<milliseconds(2000/(1+battery_level)))
+		return ;
+	last_ledchange=microsec_clock::universal_time();
+	static bool ledonof = false;
+	ledonof=!ledonof;
+	leds->callVoid<string>((ledonof)?"on":"off",left_ear_names[battery_level]);
+
 }
 
 void LedHandler::process_messages() {
-	//_blk->process_messages();
-
-	//if (led_change != 0)
-	//	delete led_change;
 
 	led_change = _blk->readSignal<LedChangeMessage> ("leds");
 }
