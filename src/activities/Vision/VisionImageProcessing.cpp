@@ -58,9 +58,9 @@ inline measurement mWeightedMean(const std::vector<measurement> &l)
 
 class inttracer_s: public KVecInt2
 {
-	int s,c;
-	int e,t,i;
-	bool steep;
+	int idx,idy;
+	int e,l,k;//Error, lower limit, upperlimit
+	char sx,sy;//Steps : +/-1
 	//int idx,idy;
 
 	public:
@@ -70,61 +70,62 @@ class inttracer_s: public KVecInt2
 		y=b;
 		e=0;
 	};
+	void initVelocity(int dx,int dy)
+	{
+		sx=dx>0?1:-1; //if zero,
+		sy=dy>0?1:-1; //step is irrelavamt, step is never reached
+
+		idx=abs(dx);
+		idy=abs(dy);
+		l=-(-2*idy+idx);//=-2*L as in analysis
+		k=-(2*idx-idy);//=-2*K as in analysis
+		e=0;
+
+	}
 	void initVelocity(float dx,float dy)
 	{
-		int idx=abs(dx*32768);
-		int idy=abs(dy*32768);
-		if (abs(dx)>=abs(dy))
-			steep=false;
-		else
-			steep=true;
-		if (!steep)
-		{
-			s= dx>0?1:-1;
-			c=dy>0?1:-1;
-			t=idx;
-			i=2*idy;
-			//Correction
+		int idx=dx*32768;
+		int idy=dy*32768;
 
-
-		}
-		else
-		{
-			s= dy>0?1:-1;
-			c=dx>0?1:-1;
-			t=idy;
-			i=2*idx;
-
-		};
-		e=0;
-	};
-	void setScale(int scale)
-	{
-		s=(s<0?-1:1)*scale;
-		c=(c<0?-1:1)*scale;
+		initVelocity(idx,idy);
 	};
 	void step()
 	{
-		e+=i;
-		if (!steep)
+		int e2=e*2;
+		if(e2<=l)
 		{
-			x+=s;
-			if (e>t)
-			{
-				y+=c;
-				e-=t;
-			}
-
+			y+=sy;
+			e+=idx;
 		}
-		else
+		if(e2>=k)
 		{
-			y+=s;
-			if (e>t)
-			{
-				x+=c;
-				e-=t;
-			}
+			x+=sx;
+			e-=idy;
+		}
+	}
 
+	void r_step() //Reverse step
+	{
+		int e2=e*2;
+		if(e2>=-k)
+		{
+			y-=sy;
+			e-=idx;
+		}
+		if(e2<=-l)
+		{
+			x-=sx;
+			e+=idy;
+		}
+	}
+
+	void steps(unsigned s)
+	{
+
+		while(s>0)
+		{
+			step();
+			s--;
 		}
 	}
 
@@ -176,6 +177,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//Prefetch prologue
 	for(int i=0;i<PREFETCH-1;++i)
 		prepSeg(sx+i*linestep,rawImage->height - config.bordersize-1);
+	//std::cout<<"Vup:"<<Vup.x<<" "<<Vup.y<<std::endl;
 
 	for(int i=0 ; i< config.scanV;i++)
 	{
@@ -184,7 +186,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		l[i].lastpoint=l[i].gtrc;
 		sx+=linestep;
 		l[i].gtrc.initVelocity(Vup.x,Vup.y);
-		l[i].gtrc.setScale(step);
+		//l[i].gtrc.setScale(step);
 		l[i].ballfound=false;
 		l[i].yfound=false;
 		l[i].bfound=false;
@@ -198,15 +200,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	while(linesdone<config.scanV)
 	{
 
-		//Fix NEXT step length
-		//Find next pixel
 
-		step--;
-		if (step<config.minH) step=config.minH;
-
-			//std::cout<<"Step:"<<thisl.step<<endl;
+		//std::cout<<"Step:"<<step<<endl;
+		//std::cout<<l[0].gtrc.x<<" "<<l[0].gtrc.y <<std::endl;
 			//stepx=2;
 		//cout<<"while"<<endl;
+
 		for(unsigned i=0 ; i< l.size();i++)
 		{
 
@@ -360,10 +359,13 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				thisl.bfound=true;
 			}
 			//Prepare for the next one
-			thisl.gtrc.step();
-			thisl.gtrc.setScale(step);
-
+			thisl.gtrc.steps(step);
 		}
+
+		//Fix NEXT step length
+		//Find next pixel
+		step--;
+		if (step<config.minH) step=config.minH;
 
 
 	}
@@ -454,19 +456,21 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	tracer_t l,r;
 	l.init(goal.tl.x,goal.tl.y);
 	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
-	l.setScale(config.subsampling);
+	//l.setScale(config.subsampling);
 	r.init(goal.tr.x,goal.tr.y);
 	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
-	r.setScale(config.subsampling);
+	//r.setScale(config.subsampling);
 	const int w=(r.x-l.x)+1;
 	const int sub=config.subsampling;
 
+	//cout<<"Start:"<<goal.tl.x<<" "<<goal.tl.y<<endl;
+	//cout<<"End:"<<goal.ll.x<<" "<<goal.ll.y<<endl;
 	for(int i=0;i<PREFETCH-1;++i)
 		prepSeg(l.x-w-1+sub*i,l.y);
 
 	while(l.y<goal.bot.y && r.y<goal.bot.y)
 	{
-
+		//cout<<l.x<<" "<<l.y<<endl;
 		for(int x=l.x-w-1; x<r.x+w+1;x+=sub)
 		{
 			if(x+PREFETCH*sub<=r.x+w+1)
@@ -483,9 +487,10 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 			if(x>l.x&&x<r.x)
 				ttl++;
 		}
-		l.step();
-		r.step();
-
+		//cout<<"why oh why"<<endl;
+		l.steps(sub);
+		r.steps(sub);
+		//cout<<"why oh why not"<<endl;
 
 
 	}
@@ -1200,6 +1205,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		if (!validpixel((*i).x,(*i).y))
 			continue;
 		//cout<<"Ball Tracing:";
+		//cout<<(*i).x<<" "<<(*i).y<<endl;
 		traceResult trcrs;
 
 		trcrs = traceline((*i), KVecInt2(0, 1), orange);//Stupid

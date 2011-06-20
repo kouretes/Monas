@@ -16,6 +16,7 @@
 #include "messages/WorldInfo.pb.h"
 
 #include "PracticalSocket.h"
+
 //#define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
 
