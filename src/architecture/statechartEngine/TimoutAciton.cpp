@@ -44,7 +44,7 @@ namespace statechart_engine {
     }
 
     int TimeoutWorker::Execute() {
-        boost::shared_ptr<const TimeoutMsg> msg  = _blk->readData<TimeoutMsg>(_var);
+        boost::shared_ptr<const TimeoutMsg> msg  = _blk->readState<TimeoutMsg>(_var);
         if ( msg == 0 )
           throw "TimeoutWorker msg null";
         std::string time = msg->wakeup();
