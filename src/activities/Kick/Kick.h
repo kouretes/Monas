@@ -18,7 +18,7 @@ public:
 private:
 	MotionActionMessage* amot;	
 	boost::shared_ptr<const GameStateMessage> gsm;		
-	WorldInfo wimsg;
+	boost::shared_ptr<const WorldInfo> wimsg;
 };
 
 #endif // _Kick_h_

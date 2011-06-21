@@ -36,7 +36,7 @@ private:
 	
 	int curraction, prevaction;	
 	float myPosX, myPosY, myPhi;
-	boost::posix_time::ptime lastMove, lastObsm;
+	boost::posix_time::ptime lastMove, lastObsm, firstInit;
 	
 	
 	ReturnToPositionMessage* rpm;
@@ -52,7 +52,8 @@ private:
 	float initX[2][2], initY[2][2], initPhi[2][2];
 
 	
-
+	int prevstate, currstate;
+	
 	bool readConf;
 	std::string roleFName;
 	void velocityWalk(double x, double y, double th, double f);

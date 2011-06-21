@@ -290,6 +290,7 @@ int Stare::toFallOrNotToFall( WorldInfo* doi){
 			//temp = ((x1-x2)/ds);
 			//ws = acos(temp);
 			dk = (ubx*y1 - uby*x1)/ubx ; // dk is the projection of the ball's route towards the robot/goalpost
+										// y1 - x1/tan(θ), tan(θ)  =  ubx/uby
 			//Logger::Instance().WriteMsg("toFallOrNotToFall",  " dk = " + _toString(dk), Logger::Info);
 			if(fabs(dk)<=0.3){ //if dk is shorter than the robot's foot can extend
 			

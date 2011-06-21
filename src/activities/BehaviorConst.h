@@ -21,13 +21,15 @@ static const float  lPost = 0.7,
 					dDistBallY = 0.03,			//desired distance from the ball in y axis, aka posy
 					dDistBallOffset = 0.012,	//desired distance from the ball offset 
 					minDistGB = 0.2,			//minimum goalkeeper 's distance from ball while ProtectPost
-					locDeviation = 0.2,			//deviation of localization's measurments 
+					locDeviation = 0.1,			//deviation of localization's measurments 
 					yellowPostCenterX = 3.0,	//Yellow Post's center in x axis in m
 					yellowPostCenterY = 0.0,	//Yellow Post's center in y axis in m
 					ballDistLimit = 0.26,
 					goalieX = 2.5,
 					goalieY = 0,
-					away = 0.6;					//Ball away distance for the goalkkeper usual value 1.0 meter
+					away = 0.8,				//Ball away distance for the goalkkeper usual value 1.0 meter
+					goodConfidence = 10.0,
+					badConfidence = 5.0;					
 												//Need change for penalties!!!!!!!!!!!!!!!!!!!!!!!!!! Suggested 0.40
 
 #ifndef TO_RAD

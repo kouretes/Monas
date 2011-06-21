@@ -7,11 +7,17 @@ namespace {
 }
 
 int Scan::Execute() {
-	//Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
+	Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
 	scnm = _blk->readSignal<ScanMessage> ("behavior");
-	headaction = SCANFORBALL;
+	wimsg = _blk->readData<WorldInfo>("behavior");
+	pm = _blk->readState<PositionMessage>("behavior");
 	
+	//if(headaction== SCANFORBALL){
+		//lastScanForBall =  boost::posix_time::microsec_clock::universal_time();
+	//}
+	headaction = SCANFORBALL;
+	velocityWalk(0.0f,0.0f, 0.0f, 1.0f);
 //	rtm = _blk->readSignal<RestartTurnMessage> ("behavior");
 //	if(rtm.get()!=0 && rtm->restartnow()==true)
 //		times=0;
@@ -23,48 +29,33 @@ int Scan::Execute() {
 	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
-			//Logger::Instance().WriteMsg("Scan",  " BALLTRACK", Logger::Info);
+			//Logger::Instance().WriteMsg(GetName (),  " BALLTRACK", Logger::Info);
 		}
 		else{		
-			//if (lastTurn+boost::posix_time::seconds(5)< boost::posix_time::microsec_clock::universal_time() ){//&& lastTurn+boost::posix_time::seconds(8)>boost::posix_time::microsec_clock::universal_time()){
-				
-			//	littleWalk(0.0, 0.0, 45* TO_RAD);
-			//	velocityWalk(0.0f, 0.0f, 0.0f , 1.0f);
-				//if(times%2 ==0)
-				//	side = (-1)*side;
-			//	lastTurn = boost::posix_time::microsec_clock::universal_time();
-				//times++;
-				//if(times==1)
-				//	times++;
-		//	}
+
 			//if(scnm!=0 && scnm->scancompleted()){
 				//littleWalk(0.0f, 0.0f, 45*TO_RAD);
 				//lastTurn = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(4);
 			//}else{
-				//if(lastTurn<= boost::posix_time::microsec_clock::universal_time())
+				//if(lastTurn<= )
 					velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
 			//}
 			headaction = SCANFORBALL;
-			//Logger::Instance().WriteMsg("Scan",  " SCANFORBALL", Logger::Info);
+			//Logger::Instance().WriteMsg(GetName (),  " SCANFORBALL", Logger::Info);
 		}
 	}
+
+	if(wimsg!=0 && wimsg->myposition().confidence() <goodConfidence && pm!=0 && !g.robotInPosition(wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(), pm->posy(), wimsg->myposition().phi(), pm->theta() ) && robotInGoalPostArea(wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(), pm->posy(), wimsg->myposition().phi(), pm->theta() )){
+		//if(lastScanForBall + boost::posix_time::seconds(3)<boost::posix_time::microsec_clock::universal_time())
+		headaction = SCANFORPOST;
+		float vely = pm->posy() - wimsg->myposition().y();
+		vely = vely>1 ? 1:vely;
+		vely = vely<-1 ? -1:vely;
+		velocityWalk(0.0f, vely, 0.0, 0.8);
+	}
+		
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
-	
-	tmsg = _blk->readState<TimeoutMsg>("behavior");
-	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-	if(now >boost::posix_time::from_iso_string(tmsg->wakeup())+ boost::posix_time::seconds(15)  && now < boost::posix_time::from_iso_string(tmsg->wakeup())+ boost::posix_time::seconds(60)){
-		toPos = true;
-		rpm->set_goalietopos(toPos);
-		_blk->publishState(*rpm, "behavior");
-	}
-	else{
-		if(toPos){
-			toPos = false;
-			rpm->set_goalietopos(toPos);
-			_blk->publishState(*rpm, "behavior");
-		}
-	}
 	
 	return 0;
 }
@@ -79,6 +70,7 @@ void Scan::UserInit () {
 	//times = 0;
 	bhmsg = new BToHeadMessage();
 	lastTurn = boost::posix_time::microsec_clock::universal_time();
+	lastScanForBall = boost::posix_time::microsec_clock::universal_time();
 
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -91,7 +83,7 @@ std::string Scan::GetName () {
 }
 
 void Scan::velocityWalk(double x, double y, double th, double f) {
-	//Logger::Instance().WriteMsg("Aproachball",  " VelocityWalk", Logger::Info);
+	//Logger::Instance().WriteMsg(GetName (),  " VelocityWalk", Logger::Info);
 	wmot.set_command("setWalkTargetVelocity");
 	wmot.set_parameter(0, x);
 	wmot.set_parameter(1, y);
@@ -107,4 +99,20 @@ void Scan::littleWalk(double x, double y, double th) {
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
 	_blk->publishSignal(wmot, "motion");
+}
+
+
+bool Scan::robotInGoalPostArea(float rx, float x2, float ry, float y2, float rth, float th2){
+	
+	
+	Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
+	if( x2 - 0.3 > rx || rx > x2 + 0.3 )
+		return false;	
+	if( y2 - 1.1 > ry || ry > y2 + 1.1  )
+		return false;
+	if( th2 - th2*0.2 > rth || rth > th2 + th2*0.2  )
+		return false;
+	return true;
+	
+	
 }

@@ -9,7 +9,7 @@ namespace {
 
 int GoToPosition::Execute() {
 	/*  */
-//	Logger::Instance().WriteMsg("GoToPosition",  " Execute ", Logger::Info);
+//	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
 	pm = _blk->readState<PositionMessage>("behavior");
 	wimsg = _blk->readData<WorldInfo>("behavior");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
@@ -20,18 +20,30 @@ int GoToPosition::Execute() {
 		posY = pm->posy();
 		theta = pm->theta();
 	}
+	
 	if(wimsg.get()!=0){
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
 		myPhi = wimsg->myposition().phi();
+		confidence =  wimsg->myposition().confidence();
 	}
-	Logger::Instance().WriteMsg("GoToPosition",  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
-	Logger::Instance().WriteMsg("GoToPosition",  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi), Logger::Info);
-	if(robotInPosition(posX, myPosX, posY, myPosY, theta, myPhi)){
+	
+	Logger::Instance().WriteMsg(GetName(),  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
+	Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
+	if(robotInPosition(posX, myPosX, posY, myPosY, theta, myPhi) && confidence>=goodConfidence && lastMove <= boost::posix_time::microsec_clock::universal_time() ){
 		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
+		Logger::Instance().WriteMsg(GetName(), "Robot Is In Position", Logger::Info);
+		rpm->set_goalietopos(true);
+		_blk->publishState(*rpm, "behavior") ;
 		return 0;
 	}
 		
+	if(confidence<goodConfidence && lastMove <= boost::posix_time::microsec_clock::universal_time()){
+		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
+		//littleWalk(0.0f, 0.0f, 25*TO_RAD);
+		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 	if(obsm&&obsm->regular_objects_size() > 0)
 		lastObsm = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(2);
 		
@@ -54,20 +66,13 @@ int GoToPosition::Execute() {
 	vely = vely>1 ? 1:vely;
 	vely = vely<-1 ? -1:vely;
 
-	Logger::Instance().WriteMsg("GoToPosition",  " if", Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " if", Logger::Info);
 	if(lastMove <= boost::posix_time::microsec_clock::universal_time()){
-		Logger::Instance().WriteMsg("GoToPosition",  " walk", Logger::Info);
+		Logger::Instance().WriteMsg(GetName(),  " walk", Logger::Info);
 		velocityWalk(velx, vely, 0.1*angle, 1.0);
 		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
 	}
 	
-	if(lastObsm<= boost::posix_time::microsec_clock::universal_time()){
-		Logger::Instance().WriteMsg("GoToPosition",  " Scan for ball", Logger::Info);
-		bhmsg->set_headaction(SCANFORBALL);
-		_blk->publishSignal(*bhmsg, "behavior");
-		return 0;
-		}
-		
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 	return 0;
@@ -75,6 +80,7 @@ int GoToPosition::Execute() {
 
 void GoToPosition::UserInit () {
 	curr = prev = 0;
+	confidence = 0;
 	_blk->subscribeTo("behavior", 0);
 	_blk->subscribeTo("vision", 0);
 	int playernum, teamColor;
@@ -84,38 +90,39 @@ void GoToPosition::UserInit () {
 	theta = 0.0;
 	headaction = SCANFORPOST;
 	pmsg = new PositionMessage();
+	rpm =  new ReturnToPositionMessage();
 	posX = -2.50;
 	posY = 0.0;
 	dist = 0.0;
 	relativeX =0.0;
 	relativeY = 0.0; 
 	relativePhi = 0.0;
-	//wmot = new MotionWalkMessage();
+
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 
-	Logger::Instance().WriteMsg("GoToPosition",  " UserInit ", Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " UserInit ", Logger::Info);
 }
 
 std::string GoToPosition::GetName () {
 	return "GoToPosition";
 }
 
-bool GoToPosition::robotInPosition(float x1, float x2, float y1, float y2, float th1, float th2){
+bool GoToPosition::robotInPosition(float rx, float x2, float ry, float y2, float rth, float th2){
 	Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
-	if( x1 - locDeviation > x2 || x2 > x1 + locDeviation )
+	if( x2 - locDeviation > rx || rx > x2 + locDeviation )
 		return false;	
-	if( y1 - locDeviation > y2 || y2 > y1 + locDeviation )
+	if( y2 - locDeviation > ry || ry > y2 + locDeviation  )
 		return false;
-	if( th1 - 0.1*th1 > th2 || th2 > th1 + 0.1*th1  )
+	if( th2 - th2*0.2 > rth || rth > th2 + th2*0.2  )
 		return false;
 	return true;
 }
 
 void GoToPosition::velocityWalk(double x, double y, double th, double f) {
-	//Logger::Instance().WriteMsg("Approachball",  " VelocityWalk", Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " VelocityWalk", Logger::Info);
 	wmot.set_command("setWalkTargetVelocity");
 	wmot.set_parameter(0, x);
 	wmot.set_parameter(1, y);
@@ -134,14 +141,14 @@ void GoToPosition::littleWalk(double x, double y, double th) {
 }
 ///////////////////////////////////////
 float GoToPosition::rotation(float a, float b, float theta){
-	Logger::Instance().WriteMsg("Rotation",  " Entered", Logger::Info);
+	//Logger::Instance().WriteMsg("Rotation",  " Entered", Logger::Info);
 	return a*cos(theta) + b*sin(theta);
 	
 	
 }
 
 float GoToPosition::distance(float x1, float x2, float y1, float y2){
-	Logger::Instance().WriteMsg("Distance",  " Entered", Logger::Info);
+	//Logger::Instance().WriteMsg("Distance",  " Entered", Logger::Info);
 	float dis;
 	dis = sqrt(pow(x2-x1, 2)+ pow(y2-y1, 2));
 	

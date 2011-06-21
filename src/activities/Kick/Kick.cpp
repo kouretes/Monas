@@ -14,7 +14,7 @@ int Kick::Execute() {
 		return 0;
 	}
 	//Logger::Instance().WriteMsg("MyLeftKick",  " Execute********************************", Logger::Info);
-	if (wimsg.get()==0 || wimsg->balls_size()==0){
+	if (wimsg==0 || wimsg->balls_size()==0){
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_6_2TOMyLeftKick", "FALSE NO OBSM", Logger::Info);
 			return 0;
 	}else if ( wimsg->balls(0).relativey() > -0.01 ){

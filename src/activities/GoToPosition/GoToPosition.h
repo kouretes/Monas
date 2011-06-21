@@ -14,7 +14,6 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "../BehaviorConst.h"
 #include "../Localization/KLocalization.h"
-////////////////////////#include "../ApproachBall/ApproachBall.h"
 #include "architecture/archConfig.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
@@ -30,7 +29,7 @@ public:
 	
 	std::string GetName ();
 	
-	bool robotInPosition(float x1, float x2, float y1, float y2, float th1, float th2);
+	bool robotInPosition(float rx, float x2, float ry, float y2, float rth, float th2);
 	PositionMessage* pmsg;
 private:
 	boost::shared_ptr<const PositionMessage> pm;
@@ -42,12 +41,11 @@ private:
 	MotionWalkMessage wmot;
 	float posX, posY, theta;
 	float myPosX, myPosY, myPhi;
-	float relativeX, relativeY, relativePhi;
+	float relativeX, relativeY, relativePhi, confidence;
 	float dist;
 	int side;
 	int headaction;
-//	ApproachBall ab;
-
+	ReturnToPositionMessage* rpm;
 	boost::posix_time::ptime lastMove, lastObsm;
 	void velocityWalk( double x, double y, double th, double f);
 	void littleWalk(double x, double y, double th);	
