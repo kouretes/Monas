@@ -28,7 +28,7 @@
 #define	PITCHMAX 0.33
 #define YAWMIN 0.8
 #define YAWMAX 1.35
-#define PITCHSTEP 0.3
+#define PITCHSTEP 0.1
 #define YAWSTEP 0.4
 
 #define OVERSH 0.06
@@ -68,12 +68,10 @@ class HeadBehavior: public IActivity {
 		float targetYaw;
 		float targetPitch;
 		float psign,ysign;
-		//bool pitchonly;
 		unsigned waiting;
 		float obsmbearing,lastbearing;
 		bool newBearing;
 
-		//boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
 		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
 
 		boost::shared_ptr<const BToHeadMessage> bhm;

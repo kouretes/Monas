@@ -22,6 +22,7 @@ void HeadBehavior::UserInit() {
 	_blk->subscribeTo("sensors",0);
 	_blk->subscribeTo("behavior",0);
 
+
 	hmot = new MotionHeadMessage();
 	hmot->add_parameter(0.0f);
 	hmot->add_parameter(0.0f);
@@ -30,12 +31,11 @@ void HeadBehavior::UserInit() {
 	ballLastSeen =ballFirstSeen= microsec_clock::universal_time()-hours(5);
 
 	GoalLastSeen =GoalFirstSeen= microsec_clock::universal_time()-hours(5);
-
 	ysign = 1;
 	headpos = 0.0;
 	leftright = 1;
-	prevaction = SCANFORPOST;
-	curraction = SCANFORPOST;
+	prevaction = DONOTHING;
+	curraction = DONOTHING;
 	calibrated = 0;
 	headaction = 0;
 	lastbearing=obsmbearing=-1;
@@ -49,7 +49,10 @@ int HeadBehavior::Execute() {
 
 	if (bhm != 0){
 		curraction = bhm->headaction();
-		headaction = curraction;
+		if(prevaction==CALIBRATE)
+			headaction = DONOTHING;
+		else
+			headaction = curraction;
 	}
 	else{
 		if(prevaction!=CALIBRATE)
@@ -128,7 +131,7 @@ int HeadBehavior::Execute() {
 
 		case (DONOTHING):
 			//std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
-			//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
+			Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			hbmsg->set_ballfound(0);
 			//calibrated=0;
 			break;
@@ -144,11 +147,11 @@ int HeadBehavior::Execute() {
 			//headaction = DONOTHING;
 			//choosemyaction = true;
 
-				//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
+			//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			break;
 		case (SCANFORBALL):
 			//calibrated=0;
-			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
+			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
@@ -161,54 +164,63 @@ int HeadBehavior::Execute() {
 			}
 			break;
 		case (SCANFORPOST):
-			calibrated=0;
-			if(newBearing)
-			{
-				hmot->set_command("setHead");
-				hmot->set_parameter(0, obsmbearing);
-				hmot->set_parameter(1, -0.55);
+			//calibrated=0;
+			if (bmsg != 0 && bmsg->radius() > 0) {
+				MakeTrackBallAction();
+			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
+			hbmsg->set_ballfound(1);
+			}else{
+				if(newBearing)
+				{
+					hmot->set_command("setHead");
+					hmot->set_parameter(0, obsmbearing);	//yaw
+					hmot->set_parameter(1, -0.55);			//pitch
+					_blk->publishSignal(*hmot, "motion");
+					cout << "Track step GOAL" << endl;
+				}
+				else if (asvm != 0 && GoalLastSeen+milliseconds(500)<now) {
+					//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
+					HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
+					float tYaw= HeadYaw.sensorvalue()+ysign*YAWSTEP;
+					if(fabs(tYaw)>=YAWMIN)
+					{
+						ysign=-ysign;
+						tYaw=tYaw>0?YAWMIN:-YAWMIN;
+					}
+					hmot->set_command("setHead");
+					hmot->set_parameter(0, tYaw);
+					hmot->set_parameter(1, -0.55);
+					_blk->publishSignal(*hmot, "motion");
+					
+					hmot->set_command("setHead");
+
+					if (fabs(headpos) > 2.08) // 1.3
+						leftright *= -1;
+
+					headpos += 0.1 * leftright;
+
+					hmot->set_parameter(0, headpos);
+					float abspos = fabs(headpos);
+					if(abspos<1.57){
+						Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString((0.145 * fabs(headpos)) - 0.752), Logger::Info);
+						hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
+					}
+					else{
+						Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString((-0.0698 * (fabs(headpos)-1.57)) - 0.52), Logger::Info);
+						hmot->set_parameter(1, (-0.0698 * (fabs(headpos)-1.57)) - 0.52);
+					}
+				}
 				_blk->publishSignal(*hmot, "motion");
-				cout << "Track step GOAL" << endl;
-			}
-			else if (asvm != 0&&GoalLastSeen+milliseconds(500)<now) {
-				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
-				//HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
-				//float tYaw= HeadYaw.sensorvalue()+ysign*YAWSTEP;
-				//if(fabs(tYaw)>=YAWMIN)
-				//{
-					//ysign=-ysign;
-					////tYaw= allsm->hjsm().sensordata(YAW).sensorvalue()+ysign*YAWSTEP;
-					//tYaw=tYaw>0?YAWMIN:-YAWMIN;
-				//}
-				//hmot->set_command("setHead");
-				//hmot->set_parameter(0, tYaw);
-				//hmot->set_parameter(1, -0.55);
-				//_blk->publishSignal(*hmot, "motion");
 				
-				hmot->set_command("setHead");
-
-
-				if (fabs(headpos) > 2.08) // 1.3
-				leftright *= -1;
-
-				headpos += 0.1 * leftright;
-
-				hmot->set_parameter(0, headpos);
-				float abspos = fabs(headpos);
-				if(abspos<1.57)
-				hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
-				else
-				hmot->set_parameter(1, (-0.0698 * (fabs(headpos)-1.57)) - 0.52);
-				_blk->publishSignal(*hmot, "motion");
-
 
 			}
-			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
+			
+			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
 			//calibrated=0;
-			//Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
+			Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
 			MakeTrackBallAction();
 			break;
 	}
@@ -228,7 +240,7 @@ int HeadBehavior::MakeTrackBallAction() {
 			hmot->set_parameter(0, bmsg->referenceyaw());
 			hmot->set_parameter(1, bmsg->referencepitch());
 			_blk->publishSignal(*hmot, "motion");
-			cout << "Track step" << endl;
+			//cout << "Track step" << endl;
 
 		}
 	}
@@ -239,7 +251,6 @@ int HeadBehavior::MakeTrackBallAction() {
 
 
 void HeadBehavior::HeadScanStep() {
-
 	static float s=(YAWMIN-YAWMAX)/(PITCHMIN-PITCHMAX);
 
 	if (startscan) {
@@ -251,14 +262,12 @@ void HeadBehavior::HeadScanStep() {
 		targetPitch=(targetPitch>=PITCHMAX)?PITCHMAX:targetPitch;
 		targetPitch=(targetPitch<=PITCHMIN)?PITCHMIN:targetPitch;
 
-
 		float yawlim=s*(targetPitch-PITCHMAX)+YAWMAX;
 		//if(fabs(targetPitch)<PITCHSTEP) yawlim=YAWBACK;
 
-
 		targetYaw+=ysign*YAWSTEP;
 		targetYaw=fabs(targetYaw)>=yawlim?ysign*yawlim:targetYaw;
-				if(fabs(targetYaw)>=yawlim)
+		if(fabs(targetYaw)>=yawlim)
 		{
 			ysign=-ysign;
 		}
@@ -271,6 +280,12 @@ void HeadBehavior::HeadScanStep() {
 
 		startscan=false;
 
+	}
+	
+	if ((targetYaw>=YAWMAX || targetYaw<=YAWMIN) && (targetPitch>=PITCHMAX || targetPitch<=PITCHMIN)){
+		lastturn=microsec_clock::universal_time()+seconds(4);
+		scmsg->set_scancompleted(1);
+		_blk->publishSignal(*scmsg, "behavior");
 	}
 	waiting++;
 	if( (fabs(targetPitch-HeadPitch.sensorvalue())<=OVERSH &&fabs(targetYaw -HeadYaw.sensorvalue())<=OVERSH )
@@ -292,7 +307,6 @@ void HeadBehavior::HeadScanStep() {
 				psign=-1;
 			else if(targetPitch<=PITCHMIN)
 				psign=1;
-
 		}
 		else
 		{
@@ -309,12 +323,7 @@ void HeadBehavior::HeadScanStep() {
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
 		_blk->publishSignal(*hmot, "motion");
-		if (microsec_clock::universal_time()>lastturn){
-			lastturn=microsec_clock::universal_time()+seconds(4);
-		//	cout << "scancompleted " << scancompleted << "HeadBehavior" << endl;
-			scmsg->set_scancompleted(1);
-			_blk->publishSignal(*scmsg, "behavior");
-		}
+		
 
 
 	}
@@ -327,9 +336,7 @@ void HeadBehavior::read_messages() {
 	bhm = _blk->readSignal<BToHeadMessage> ("behavior");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
-//	hjsm = _blk->read_data<HeadJointSensorsMessage> ("HeadJointSensorsMessage");
 	asvm = _blk->readData<AllSensorValuesMessage> ("sensors");
-//	Logger::Instance().WriteMsg("HeadBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c = _blk->readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1) {
@@ -346,3 +353,4 @@ void HeadBehavior::calibrate() {
 	Logger::Instance().WriteMsg("HeadBehavior", "sendCalibrate ", Logger::Info);
 	calibrated = 1;
 }
+
