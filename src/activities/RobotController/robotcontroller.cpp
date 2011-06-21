@@ -19,7 +19,7 @@ RobotController::RobotController() :gm(game_data) { //Initialize game controller
 void RobotController::UserInit() {
 	//"Initialize Robot controller"
 	//_com->get_message_queue()->add_publisher(this);
-
+	firstRun =  true;
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
 	gm.connectTo(conf.port(), conf.team_number());
@@ -63,6 +63,8 @@ int RobotController::Execute() {
 			changed = true;
 			gm_state.CopyFrom(new_gm_state);
 		}
+		if(firstRun)
+			gm_state.CopyFrom(new_gm_state);
 	}
 
 	boost::shared_ptr<const ButtonMessage> bm=_blk->readSignal<ButtonMessage>("buttonevents");
@@ -147,6 +149,11 @@ int RobotController::Execute() {
 			sendLedUpdate();
 	}
 
+	if(received&&firstRun){
+		firstRun=false;
+		sendLedUpdate();
+		_blk->publishState(gm_state, "behavior");
+	}
 
 	return 0;
 }
