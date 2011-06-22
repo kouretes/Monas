@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IAC:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:IAC="http://www.amcl.tuc.gr/aseme/metamodels/IAC" name="goalie">
+  <variables name="checkballspeed" type="bool"/>
+  <nodes name="player" type="OR" label="0"/>
+  <nodes name="0.1" type="START" label="0.1" Father_of="//@nodes.0"/>
+  <nodes name="Init" type="BASIC" label="0.2" Father_of="//@nodes.0"/>
+  <nodes name="_open_group_decision_one_or_more_times__close_group_" type="OR" label="0.3" Father_of="//@nodes.0"/>
+  <nodes name="0.4" type="END" label="0.4" Father_of="//@nodes.0"/>
+  <nodes name="0.3.1" type="START" label="0.3.1" Father_of="//@nodes.3"/>
+  <nodes name="decision" type="OR" label="0.3.2" Father_of="//@nodes.3"/>
+  <nodes name="0.3.2.1" type="START" label="0.3.2.1" Father_of="//@nodes.6"/>
+  <nodes name="0.3.2.2" type="CONDITION" label="0.3.2.2" Father_of="//@nodes.6"/>
+  <nodes name="play" type="OR" label="0.3.2.3" Father_of="//@nodes.6"/>
+  <nodes name="NoPlay" type="BASIC" label="0.3.2.4" Father_of="//@nodes.6"/>
+  <nodes name="0.3.2.5" type="END" label="0.3.2.5" Father_of="//@nodes.6"/>
+  <nodes name="0.3.2.3.1" type="START" label="0.3.2.3.1" Father_of="//@nodes.9"/>
+  <nodes name="0.3.2.3.2" type="CONDITION" label="0.3.2.3.2" Father_of="//@nodes.9"/>
+  <nodes name="Scan_one_or_more_times_" type="OR" label="0.3.2.3.3" Father_of="//@nodes.9"/>
+  <nodes name="followBall_one_or_more_times_" type="OR" label="0.3.2.3.4" Father_of="//@nodes.9"/>
+  <nodes name="ApproachBall_one_or_more_times_" type="OR" label="0.3.2.3.5" Father_of="//@nodes.9"/>
+  <nodes name="kick" type="OR" label="0.3.2.3.6" Father_of="//@nodes.9"/>
+  <nodes name="0.3.2.3.7" type="END" label="0.3.2.3.7" Father_of="//@nodes.9"/>
+  <nodes name="0.3.2.3.3.1" type="START" label="0.3.2.3.3.1" Father_of="//@nodes.14"/>
+  <nodes name="Scan" type="BASIC" label="0.3.2.3.3.2" Father_of="//@nodes.14"/>
+  <nodes name="0.3.2.3.3.3" type="END" label="0.3.2.3.3.3" Father_of="//@nodes.14"/>
+  <nodes name="0.3.2.3.4.1" type="START" label="0.3.2.3.4.1" Father_of="//@nodes.15"/>
+  <nodes name="followBall" type="OR" label="0.3.2.3.4.2" variables="//@variables.0" Father_of="//@nodes.15"/>
+  <nodes name="0.3.2.3.4.2.1" type="START" label="0.3.2.3.4.2.1" Father_of="//@nodes.23"/>
+  <nodes name="Stare" type="BASIC" label="0.3.2.3.4.2.2" variables="//@variables.0" Father_of="//@nodes.23"/>
+  <nodes name="_open_option_SpecialAction_close_option_" type="OR" label="0.3.2.3.4.2.3" variables="//@variables.0" Father_of="//@nodes.23"/>
+  <nodes name="0.3.2.3.4.2.4" type="END" label="0.3.2.3.4.2.4" Father_of="//@nodes.23"/>
+  <nodes name="0.3.2.3.4.2.3.1" type="START" label="0.3.2.3.4.2.3.1" Father_of="//@nodes.26"/>
+  <nodes name="0.3.2.3.4.2.3.2" type="CONDITION" label="0.3.2.3.4.2.3.2" Father_of="//@nodes.26"/>
+  <nodes name="SpecialAction" type="BASIC" label="0.3.2.3.4.2.3.3" variables="//@variables.0" Father_of="//@nodes.26"/>
+  <nodes name="0.3.2.3.4.2.3.4" type="END" label="0.3.2.3.4.2.3.4" Father_of="//@nodes.26"/>
+  <nodes name="0.3.2.3.4.3" type="END" label="0.3.2.3.4.3" Father_of="//@nodes.15"/>
+  <nodes name="0.3.2.3.5.1" type="START" label="0.3.2.3.5.1" Father_of="//@nodes.16"/>
+  <nodes name="ApproachBall" type="BASIC" label="0.3.2.3.5.2" Father_of="//@nodes.16"/>
+  <nodes name="0.3.2.3.5.3" type="END" label="0.3.2.3.5.3" Father_of="//@nodes.16"/>
+  <nodes name="0.3.2.3.6.1" type="START" label="0.3.2.3.6.1" Father_of="//@nodes.17"/>
+  <nodes name="0.3.2.3.6.2" type="CONDITION" label="0.3.2.3.6.2" Father_of="//@nodes.17"/>
+  <nodes name="MyLeftKick" type="BASIC" label="0.3.2.3.6.3" Father_of="//@nodes.17"/>
+  <nodes name="MyRightKick" type="BASIC" label="0.3.2.3.6.4" Father_of="//@nodes.17"/>
+  <nodes name="0.3.2.3.6.5" type="END" label="0.3.2.3.6.5" Father_of="//@nodes.17"/>
+  <nodes name="0.3.3" type="END" label="0.3.3" Father_of="//@nodes.3"/>
+  <transitions source="//@nodes.1" target="//@nodes.2" name="0.1TOInit"/>
+  <transitions source="//@nodes.2" target="//@nodes.3" name="InitTO_open_group_decision_one_or_more_times__close_group_"/>
+  <transitions source="//@nodes.3" target="//@nodes.4" name="_open_group_decision_one_or_more_times__close_group_TO0.4"/>
+  <transitions source="//@nodes.7" target="//@nodes.8" name="0.3.2.1TO0.3.2.2"/>
+  <transitions TE="[PLAYER_PLAYING]" source="//@nodes.8" target="//@nodes.9" name="0.3.2.2TOplay"/>
+  <transitions TE="[!PLAYER_PLAYING]" source="//@nodes.8" target="//@nodes.10" name="0.3.2.2TONoPlay"/>
+  <transitions source="//@nodes.10" target="//@nodes.11" name="NoPlayTO0.3.2.5"/>
+  <transitions source="//@nodes.9" target="//@nodes.11" name="playTO0.3.2.5"/>
+  <transitions source="//@nodes.12" target="//@nodes.13" name="0.3.2.3.1TO0.3.2.3.2"/>
+  <transitions TE="[ballfound==0 ]" source="//@nodes.13" target="//@nodes.14" name="0.3.2.3.2TOScan_one_or_more_times_"/>
+  <transitions TE="[ballaway]" source="//@nodes.13" target="//@nodes.15" name="0.3.2.3.2TOfollowBall_one_or_more_times_"/>
+  <transitions TE="[ballfound!=0 &amp;&amp; !ballaway &amp;&amp; !readyTOkick]" source="//@nodes.13" target="//@nodes.16" name="0.3.2.3.2TOApproachBall_one_or_more_times_"/>
+  <transitions TE="[readyToKick]" source="//@nodes.13" target="//@nodes.17" name="0.3.2.3.2TOkick"/>
+  <transitions source="//@nodes.17" target="//@nodes.18" name="kickTO0.3.2.3.7"/>
+  <transitions source="//@nodes.16" target="//@nodes.18" name="ApproachBall_one_or_more_times_TO0.3.2.3.7"/>
+  <transitions source="//@nodes.15" target="//@nodes.18" name="followBall_one_or_more_times_TO0.3.2.3.7"/>
+  <transitions source="//@nodes.14" target="//@nodes.18" name="Scan_one_or_more_times_TO0.3.2.3.7"/>
+  <transitions source="//@nodes.19" target="//@nodes.20" name="0.3.2.3.3.1TOScan"/>
+  <transitions TE="[ballfound==0]" source="//@nodes.20" target="//@nodes.20" name="ScanTOScan"/>
+  <transitions TE="[ballfound!=0]" source="//@nodes.20" target="//@nodes.21" name="ScanTO0.3.2.3.3.3"/>
+  <transitions source="//@nodes.24" target="//@nodes.25" name="0.3.2.3.4.2.1TOStare"/>
+  <transitions source="//@nodes.25" target="//@nodes.26" name="StareTO_open_option_SpecialAction_close_option_"/>
+  <transitions source="//@nodes.26" target="//@nodes.27" name="_open_option_SpecialAction_close_option_TO0.3.2.3.4.2.4"/>
+  <transitions source="//@nodes.28" target="//@nodes.29" name="0.3.2.3.4.2.3.1TO0.3.2.3.4.2.3.2"/>
+  <transitions TE="[check ballspeed]" source="//@nodes.29" target="//@nodes.30" name="0.3.2.3.4.2.3.2TOSpecialAction"/>
+  <transitions TE="[checkballspeed]" source="//@nodes.29" target="//@nodes.31" name="0.3.2.3.4.2.3.2TO0.3.2.3.4.2.3.4"/>
+  <transitions source="//@nodes.30" target="//@nodes.31" name="SpecialActionTO0.3.2.3.4.2.3.4"/>
+  <transitions source="//@nodes.22" target="//@nodes.23" name="0.3.2.3.4.1TOfollowBall"/>
+  <transitions TE="[ballfound!=0 and ballaway]" source="//@nodes.23" target="//@nodes.23" name="followBallTOfollowBall"/>
+  <transitions TE="[ballfound==0 ]" source="//@nodes.23" target="//@nodes.32" name="followBallTO0.3.2.3.4.3"/>
+  <transitions source="//@nodes.33" target="//@nodes.34" name="0.3.2.3.5.1TOApproachBall"/>
+  <transitions TE="[ballfound!=0 and !readyToKick]" source="//@nodes.34" target="//@nodes.34" name="ApproachBallTOApproachBall"/>
+  <transitions TE="[ballfound==0 || readyToKick]" source="//@nodes.34" target="//@nodes.35" name="ApproachBallTO0.3.2.3.5.3"/>
+  <transitions source="//@nodes.36" target="//@nodes.37" name="0.3.2.3.6.1TO0.3.2.3.6.2"/>
+  <transitions TE="[ygt0]" source="//@nodes.37" target="//@nodes.38" name="0.3.2.3.6.2TOMyLeftKick"/>
+  <transitions TE="[ylt0]" source="//@nodes.37" target="//@nodes.39" name="0.3.2.3.6.2TOMyRightKick"/>
+  <transitions source="//@nodes.39" target="//@nodes.40" name="MyRightKickTO0.3.2.3.6.5"/>
+  <transitions source="//@nodes.38" target="//@nodes.40" name="MyLeftKickTO0.3.2.3.6.5"/>
+  <transitions source="//@nodes.5" target="//@nodes.6" name="0.3.1TOdecision"/>
+  <transitions TE="[!PLAYER_FINISHED]" source="//@nodes.6" target="//@nodes.6" name="decisionTOdecision"/>
+  <transitions TE="[PLAYER_FINISHED]" source="//@nodes.6" target="//@nodes.41" name="decisionTO0.3.3"/>
+</IAC:Model>
