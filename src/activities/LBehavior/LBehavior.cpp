@@ -16,7 +16,6 @@
 #include "messages/RoboCupGameControlData.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/robot_consts.h"
-#define DISTANCE_2(dx,dy) (sqrt(dx * dx + dy*dy))
 
 using namespace boost::posix_time;
 
@@ -673,32 +672,45 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 //	}
 	//Go to target simple behavior
 	float Robot2Target_bearing = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
-	float Distance2Target = DISTANCE_2(target_x-robot_x,target_y-robot_y);
+	float Distance2Target = sqrt((target_x-robot_x)*(target_x-robot_x)+(target_y-robot_y)*(target_y-robot_y));
+	cout<<"target_x:"<<target_x<<endl;
+	cout<<"target_y:"<<target_y<<endl;
+	cout<<"robot_x:"<<robot_x<<endl;
+	cout<<"robot_y:"<<robot_y<<endl;
+
+	cout<<"Distance2Target:"<<Distance2Target<<endl;
 
 	//cout << "Robot2Target_bearing*TO_DEG  " << Robot2Target_bearing * TO_DEG << endl;
 	//cout << atan2(target.y - AgentPosition.y, target.x - AgentPosition.x) << endl;
 	//cout << AgentPosition.theta << endl << endl;
-	float speed;
 
-	if (robot_confidence > 50)
-		speed = 1;
-	else
-		speed = 0.8;
 
-	if (Distance2Target < 0.2)
-		speed *= 0.2;
 
 	float VelX, VelY, Rot, freq;
 
 	//TRy to get the robot to the desired position ...
 
-	VelX = speed * cos(Robot2Target_bearing);
-	VelY = speed * sin(Robot2Target_bearing);
-	Rot = anglediff2(target_phi, robot_phi) * 0.3; // Robot2Target_bearing * 0.3;
-	freq = 1;
+	VelX =  cos(Robot2Target_bearing);
+	VelY =  sin(Robot2Target_bearing);
 
-	if (Distance2Target < 0.3)
-		freq *= Distance2Target / 0.3;
+	if(Distance2Target>1.0)
+	{
+		Rot=Robot2Target_bearing*0.3;
+		freq = 1;
+	}
+	else
+	{
+		Rot = anglediff2(target_phi, robot_phi)*0.5 ;
+		VelX/=2.0;
+		VelY/=2.0;
+		freq=Distance2Target;
+	}
+	if(Distance2Target<0.2)
+	{
+		VelX/=10.0;
+		VelY/=10.0;
+	}
+
 	//Limits checks
 	if (VelX > 1)
 		VelX = 1;
