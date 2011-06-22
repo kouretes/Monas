@@ -371,6 +371,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	}
 	//Now follow the lines
 
+
 #ifdef DEBUGVISION
 cout<<"End Grid scan"<<endl;
 #endif
@@ -390,23 +391,24 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 
 	const int sub=config.subsampling;
 
-	const int cr=floor(ball.cr*2+0.5);
+	const int cr=floor(ball.cr+0.5);
 	const int crd=floor(sqrd(ball.cr)+0.5);
 	const int cx=floor(ball.x+0.5);
 	const int cy=floor(ball.y+0.5);
+	const int margin=cr;///2<sub?sub:cr/2;
 
-	const int top=ball.y-cr<config.bordersize?config.bordersize: ball.y-cr;
-	const int bot=ball.y+cr >rawImage->height-1 -config.bordersize?rawImage->height-1 -config.bordersize: ball.y+cr;
-	const int left=ball.x-cr<config.bordersize?config.bordersize:ball.x-cr;
-	const int right=ball.x+cr>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:ball.x+cr;
+	const int top=ball.y-margin<config.bordersize?config.bordersize: ball.y-margin;
+	const int bot=ball.y+margin >rawImage->height-1 -config.bordersize?rawImage->height-1 -config.bordersize: ball.y+margin;
+	const int left=ball.x-margin<config.bordersize?config.bordersize:ball.x-margin;
+	const int right=ball.x+margin>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:ball.x+margin;
 
 	const int ttl = floor((bot-top+1)/(sub))*floor((right-left+1)/(sub));
-	const int inside=floor(KMat::transformations::PI*cr*cr/4.0)/(sub*sub);
+	const int inside=floor(KMat::transformations::PI*cr*cr)/(sub*sub);
 	const int bdlimit=(ttl-inside)*(0.25);
 	const int gdlimit=inside*(0.65);
-
 	remin=inside;remout=ttl-inside;
 
+	float insidelim=0;
 	for(int y=top;y<=bot;y+=sub)
 	{
 		for(int i=0;i<PREFETCH-1;++i)
@@ -417,16 +419,17 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 		if(gd>=gdlimit && bd+remout<=bdlimit)// Certainty
 			return true;
 
+		insidelim=crd-sqrd(cy-y);
 		for(int x=left;x<=right;x+=sub)
 		{
 			//if(x+PREFETCH*sub<=right)
-				prepSeg(x+PREFETCH*sub,y);
+			prepSeg(x+PREFETCH*sub,y);
 			//else
 			//	prepSeg(left+PREFETCH*sub-sub,y+sub);
 
 			bool iscolor=colorIsA(doSeg(x,y,c) , c);
 
-			if(sqrd(cx-x)+sqrd(cy-y)<=crd)
+			if(sqrd(cx-x)<=insidelim)
 			{
 				remin--;
 				if(iscolor) gd++;
@@ -515,6 +518,10 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 	int width =goal.lr.x-goal.ll.x+1;
 	unsigned int ttl = 0, gd = 0;
 	float ratio;
+
+
+
+
 
 	for (int j=goal.bot.y+width; j>goal.bot.y; j-=config.subsampling)
 	{
@@ -1044,7 +1051,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 		return ;
 	}
 	newpost.haveHeight=true;
-	cout<<"Height Only:"<<m.mean;
+	//cout<<"Height Only:"<<m.mean;
 	newpost.dist.push_back(m);//add to vector of results:)
 
 }
@@ -1273,7 +1280,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 			continue;
 
 		float radius = CvDist(center,ft);//-0.707;
-		center.y+=0.707;
+		center.y+=0.5;
 		//cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
@@ -1403,7 +1410,8 @@ KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) cons
 	return center;
 }
 
-Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const
+/*
+Vision::traceResult Vision::traceline(KVecInt2 const& start, KVecInt2 const& vel, KSegmentator::colormask_t c) const
 {
 	KPROF_SCOPE(vprof,"tracelineInt");
 	int skipcount = 0;
@@ -1446,6 +1454,69 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator
 		r.smartsuccess=true;
 
 	r.p=latestValid;
+
+	return r;
+}
+*/
+Vision::traceResult Vision::traceline(KVecInt2 const & start, KVecInt2 const& vel, KSegmentator::colormask_t c) const
+{
+	KPROF_SCOPE(vprof,"tracelineInt");
+	KVecInt2 curr = start, limit=start,prftch, ftch;
+	KVecInt2 fforward=vel;
+	fforward.scalar_mult(config.pixeltol);
+
+	prftch=curr;
+	prftch+=fforward;
+	ftch=prftch;
+
+	for(int i=0;i<PREFETCH-1;++i)
+	{
+		prepSeg(prftch.x,prftch.y);
+		prftch-=vel;
+	}
+
+	while (true)
+	{
+
+		if(colorIsA(doSeg(ftch.x, ftch.y,c) ,c) )
+		{
+			limit=curr;
+			limit+=fforward;
+			curr=ftch;
+			ftch+=fforward;
+			prftch=ftch;
+			if(!validpixel(ftch.x,ftch.y))
+				break;
+			for(int i=0;i<PREFETCH-1;++i)
+			{
+				prepSeg(prftch.x,prftch.y);
+				prftch-=vel;
+			}
+		}
+		else
+		{
+			ftch-=vel;
+			if(ftch==limit)
+				break;
+
+			if(limit!=prftch)
+			{
+				prepSeg(prftch.x,prftch.y);
+				prftch-=vel;
+			}
+		}
+
+
+
+
+	}
+	traceResult r;
+	if (!validpixel(ftch.x,ftch.y))
+		r.smartsuccess=false;
+	else
+		r.smartsuccess=true;
+
+	r.p=curr;
 
 	return r;
 }
