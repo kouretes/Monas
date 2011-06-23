@@ -96,7 +96,8 @@ class HeadBehavior: public IActivity {
 		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
 		void calibrate();
-//	void highheadscanstep(float limit);
+		void highheadscanstep(float );
+		void headmotion(float pitch, float yaw);
 
 };
 
