@@ -486,16 +486,17 @@ void LBehavior::velocityWalk(double x, double y, double th, double f)
 		return ;
 	wmot->set_command("setWalkTargetVelocity");
 	lastcommand=microsec_clock::universal_time();
-	x=x>1?1:x;
-	x=x<-1?-1:x;
-	y=y>1?1:y;
-	y=y<-1?-1:y;
+	x=x>1.0?1.0:x;
+	x=x<-1.0?-1.0:x;
+	y=y>1.0?1.0:y;
+	y=y<-1.0?-1.0:y;
 
-	th=th>1?1:th;
-	th=th<-1?-1:th;
-	cX=(2*cX+x)/3;
-	cY=(2*cY+y)/3;
-	cth=(cth+th)/2;
+	th=th>1.0?1.0:th;
+	th=th<-1.0?-1.0:th;
+
+	cX=(2.0*cX+x)/3.0;
+	cY=(2.0*cY+y)/3.0;
+	cth=(cth+th)/2.0;
 
 
 	wmot->set_parameter(0, cX);
@@ -693,48 +694,32 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 	VelX =  cos(Robot2Target_bearing);
 	VelY =  sin(Robot2Target_bearing);
 
-	if(Distance2Target>1.0)
+
+	if(Distance2Target<0.3)
 	{
-		Rot=Robot2Target_bearing*0.3;
-		freq = 1;
+		VelX/=2.0;
+		VelY/=2.0;
+		Rot = anglediff2(target_phi, robot_phi)*0.5 ;
+		freq=Distance2Target;
+	}
+	else if(fabs(Robot2Target_bearing)>1)
+	{
+		VelX/=4.0;
+		VelY/=4.0;
+		Rot=Robot2Target_bearing*0.4;
+		freq = 0.5;
 	}
 	else
 	{
-		Rot = anglediff2(target_phi, robot_phi)*0.5 ;
-		VelX/=2.0;
-		VelY/=2.0;
-		freq=Distance2Target;
-	}
-	if(Distance2Target<0.2)
-	{
-		VelX/=10.0;
-		VelY/=10.0;
+		Rot = Robot2Target_bearing*0.1 ;
+		freq=1;
 	}
 
-	//Limits checks
-	if (VelX > 1)
-		VelX = 1;
-	if (VelY > 1)
-		VelY = 1;
-	if (Rot > 1)
-		Rot = 1;
-	if (Rot < -1)
-		Rot = -1;
-	if (VelY < -1)
-		VelY = -1;
-	if (VelX < -1)
-		VelX = -1;
+
 
 	cout << VelX << endl;
 	cout << VelY << endl;
 	cout << Rot << endl;
-
-	wmot->set_command("setWalkTargetVelocity");
-	wmot->set_parameter(0, VelX);
-	wmot->set_parameter(1, VelY);
-	wmot->set_parameter(2, Rot);
-	wmot->set_parameter(3, freq);
-
-	_blk->publishSignal(*wmot, "motion");
+	velocityWalk(VelX,VelY,Rot,freq);
 
 }
