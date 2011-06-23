@@ -219,6 +219,10 @@ namespace KMat
 		}
 		void inc() { h->inc();};
 		void dec() { h->dec();};
+		bool validHandle() const
+		{
+			return h!=NULL;
+		}
 		bool getHandle() //Return true if a new object has been created
 		{
 			if(h==NULL)
@@ -249,12 +253,13 @@ namespace KMat
 			T::operator=(o);
 			return *this;
 		}
-		void cleanHandle()
+		inline static void cleanHandle()
 		{
 		}
 		inline static void inc()  {};
 		inline static void dec()  {};
-		bool getHandle() //Return true if a new object has been created
+		inline static bool validHandle() { return  true;};
+		inline static bool getHandle() //Return true if a new object has been created
 		{
 
 			return false;
@@ -564,9 +569,12 @@ namespace KMat
 			};
 
 			//Const accessor//Accessor
-			const T& read(unsigned i,unsigned j) const
+			const T read(unsigned i,unsigned j) const
 			{
+
 #ifndef KMAT_INSANE_MODE
+				if(!RefHandle<DataContainer<T,M,N> >::validHandle())
+					return 0;
 				if (i>M-1||j>N-1)
 				{
 					std::string d("BaseMatrix.get() ");
@@ -582,7 +590,7 @@ namespace KMat
 			/**
 			 * For debuging mainly
 			 */
-			D<T,M,N> & prettyPrint()
+			D<T,M,N> const& prettyPrint() const
 			{
 				using namespace std;
 				cout<<M<<"x"<<N<<" Matrix"<<endl;
@@ -590,7 +598,7 @@ namespace KMat
 				if(h==NULL)
 				{
 					cout<<"(Empty Matrix)"<<endl;
-					return static_cast< D<T,M,N> &> (*this);
+					return static_cast< D<T,M,N> const&> (*this);
 				}
 
 				cout<<"+";
@@ -603,11 +611,11 @@ namespace KMat
 					cout<<"|";
 					for (unsigned j=0;j<N;j++)
 					{
-						cout.width(7);
-						cout.precision(2);
-						cout<<fixed<<h->data(i,j)<<"";//setprecision(3)<<setw(6)<<
+						//cout.width(7);
+						//cout.precision(2);
+						cout<<setw(7)<<setprecision(2)<<fixed<<h->data(i,j)<<"";//setprecision(3)<<setw(6)<<
 					}
-					cout<<"|"<<endl;;
+					cout<<"|"<<endl;
 				}
 
 
@@ -617,7 +625,7 @@ namespace KMat
 					cout<<"   -   ";
 				cout<<"+"<<endl;
 
-				return static_cast< D<T,M,N> &> (*this);
+				return static_cast< D<T,M,N> const &> (*this);
 
 			};
 			//=== Operator overloading========
@@ -633,7 +641,7 @@ namespace KMat
 				return static_cast< D<T,M,N>  &> (*this);
 			};
 			//Const accessor
-			const T& operator() (unsigned i,unsigned j) const
+			const T operator() (unsigned i,unsigned j) const
 			{
 				return read(i,j);
 			};
@@ -641,7 +649,35 @@ namespace KMat
 			{
 			  return copyFrom(d);
 			};*/
+			//
+			T norm2()
+			{
+				if(!RefHandle<DataContainer<T,M,N> >::validHandle())
+					return 0;
+				T res=0,a;
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;i<N;j++)
+					{
+						a=h->data(i,j);
+						res+=a*a;
 
+					}
+				return res;
+			}
+			bool operator!=(BaseMatrix<D,T,M,N> const& other) const
+			{
+				for(unsigned i=0;i<M;i++)
+					for(unsigned j=0;j<N;j++)
+					{
+						if(read(i,j)!=other(i,j))
+							return true;
+					}
+				return false;
+			}
+			bool operator==(BaseMatrix<D,T,M,N> const& other) const
+			{
+				return !(operator!=(other));
+			}
 	};
 	//GenMatix: simply a BaseMatrix Instantation :)
 	template <typename T, unsigned M,unsigned N>class GenMatrix: public BaseMatrix<GenMatrix,T,M,N>
@@ -767,7 +803,7 @@ namespace KMat
 		{
 			return COWRef<T,GenMatrix<T,S,1> > ( static_cast< GenMatrix<T,S,1>  &> (*this),i,0);
 		};
-		const T& operator() (unsigned i) const
+		const T operator() (unsigned i) const
 		{
 			return read(i,0);
 		};
@@ -790,7 +826,7 @@ namespace KMat
 		{
 			return COWRef<T,GenMatrix<T,1,1> > ( static_cast< GenMatrix<T,1,1>  &> (*this),i,0);
 		};
-		const T& operator() (unsigned i) const
+		const T operator() (unsigned i) const
 		{
 			return read(i,0);
 		};
@@ -813,12 +849,11 @@ namespace KMat
 		{
 			return COWRef<T,GenMatrix<T,2,1> > ( static_cast< GenMatrix<T,2,1>  &> (*this),i,0);
 		};
-		const T& operator() (unsigned i) const
+		const T operator() (unsigned i) const
 		{
 			return read(i,0);
 		};
 	};
-
 
 
 	// Affine	transform matrix, using homogenous coordinates!!
@@ -1023,7 +1058,7 @@ namespace KMat
 			    return  COWRef<T, ATMatrix<T,S> >(*this,i,j);
 			}
 
-			const T& operator() (unsigned i,unsigned j) const { return read(i,j);}
+			const T operator() (unsigned i,unsigned j) const { return read(i,j);}
 
 			T& get(unsigned i,unsigned j)
 			{
@@ -1032,7 +1067,7 @@ namespace KMat
                 else
                     return A.get(i,j);
 			}
-			const T& read(unsigned i,unsigned j) const
+			const T read(unsigned i,unsigned j) const
 			{
 			    if(j==S)
                     return B.read(i,0);
@@ -1040,13 +1075,23 @@ namespace KMat
                     return A.read(i,j);
 			};
 
+
 	};
 	//Typedef vector type
 	template<typename T,unsigned S> struct Vector
 	{
 
 		typedef  GenMatrix<T,S,1> type;
+
+		static int isLeft(  typename KMat::Vector<T,2>::type const& s,
+							typename KMat::Vector<T,2>::type const& e,
+							typename KMat::Vector<T,2>::type  const& t)
+		{
+			return (e.x - s.x) * (t.y - s.y) - (t.x - s.x) * (e.y - s.y);
+		}
 	};
+
+
 	class transformations
 	{
 		public:
