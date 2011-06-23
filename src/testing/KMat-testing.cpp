@@ -23,6 +23,17 @@ int main ()
 	GenMatrix<float,4,4> testS,res,res2 ;
 	matrix<float> m(4,4), foo(4,4),foo2(4,4);
 
+	KVecInt2 a,b;
+	a.x=5;
+	a.y=7;
+	b=a;
+	std::cout<<(a==b)<<(a!=b)<<std::endl;
+	b.x=6;
+	std::cout<<(a==b)<<(a!=b)<<std::endl;
+	a.prettyPrint();
+	b.prettyPrint();
+	a-=b;
+	a.prettyPrint();
 	std::cout<<"Sizes:"<<sizeof(KVecInt2)<<" "<<sizeof(KVecFloat2)<<std::endl;
 
 	float sum=0;
