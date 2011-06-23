@@ -695,31 +695,17 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 	float Robot2Target_bearing = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
 	float Distance2Target = sqrt((target_x-robot_x)*(target_x-robot_x)+(target_y-robot_y)*(target_y-robot_y));
 
+	cout<<"Distance2Target:"<<Distance2Target<<endl;
+
 	//cout << "Robot2Target_bearing*TO_DEG  " << Robot2Target_bearing * TO_DEG << endl;
 	//cout << atan2(target.y - AgentPosition.y, target.x - AgentPosition.x) << endl;
 	//cout << AgentPosition.theta << endl << endl;
-	
-//	float speed;
-//
-//	if (robot_confidence > 50)
-//		speed = 1;
-//	else
-//		speed = 0.8;
-//
-//	if (Robot2Target_distance < 0.2)
-//		speed *= 0.2;
+
+
 
 	float VelX, VelY, Rot, freq;
 
 	//TRy to get the robot to the desired position ...
-
-//	VelX = speed * cos(Robot2Target_bearing);
-//	VelY = speed * sin(Robot2Target_bearing);
-//	if (Robot2Target_distance < 0.3)
-//		Rot = anglediff2(target_phi, robot_phi) * 0.3;
-//	else
-//		Rot = Robot2Target_bearing * 0.3;
-//	freq = 1;
 
 	VelX =  cos(Robot2Target_bearing);
 	VelY =  sin(Robot2Target_bearing);
@@ -736,16 +722,11 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 		VelY/=2.0;
 		freq=Distance2Target;
 	}
-
 	if(Distance2Target<0.2)
 	{
 		VelX/=10.0;
 		VelY/=10.0;
 	}
-
-//	if (Robot2Target_distance < 0.3)
-//		freq *= Robot2Target_distance / 0.3;
-		
 
 	velocityWalk(VelX, VelY, Rot, freq);
 }

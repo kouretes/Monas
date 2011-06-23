@@ -58,9 +58,9 @@ inline measurement mWeightedMean(const std::vector<measurement> &l)
 
 class inttracer_s: public KVecInt2
 {
-	int s,c;
-	int e,t,i;
-	bool steep;
+	int idx,idy;
+	int e,l,k;//Error, lower limit, upperlimit
+	char sx,sy;//Steps : +/-1
 	//int idx,idy;
 
 	public:
@@ -70,61 +70,62 @@ class inttracer_s: public KVecInt2
 		y=b;
 		e=0;
 	};
+	void initVelocity(int dx,int dy)
+	{
+		sx=dx>0?1:-1; //if zero,
+		sy=dy>0?1:-1; //step is irrelavamt, step is never reached
+
+		idx=abs(dx);
+		idy=abs(dy);
+		l=-(-2*idy+idx);//=-2*L as in analysis
+		k=-(2*idx-idy);//=-2*K as in analysis
+		e=0;
+
+	}
 	void initVelocity(float dx,float dy)
 	{
-		int idx=abs(dx*32768);
-		int idy=abs(dy*32768);
-		if (abs(dx)>=abs(dy))
-			steep=false;
-		else
-			steep=true;
-		if (!steep)
-		{
-			s= dx>0?1:-1;
-			c=dy>0?1:-1;
-			t=idx;
-			i=2*idy;
-			//Correction
+		int idx=dx*32768;
+		int idy=dy*32768;
 
-
-		}
-		else
-		{
-			s= dy>0?1:-1;
-			c=dx>0?1:-1;
-			t=idy;
-			i=2*idx;
-
-		};
-		e=0;
-	};
-	void setScale(int scale)
-	{
-		s=(s<0?-1:1)*scale;
-		c=(c<0?-1:1)*scale;
+		initVelocity(idx,idy);
 	};
 	void step()
 	{
-		e+=i;
-		if (!steep)
+		int e2=e*2;
+		if(e2<=l)
 		{
-			x+=s;
-			if (e>t)
-			{
-				y+=c;
-				e-=t;
-			}
-
+			y+=sy;
+			e+=idx;
 		}
-		else
+		if(e2>=k)
 		{
-			y+=s;
-			if (e>t)
-			{
-				x+=c;
-				e-=t;
-			}
+			x+=sx;
+			e-=idy;
+		}
+	}
 
+	void r_step() //Reverse step
+	{
+		int e2=e*2;
+		if(e2>=-k)
+		{
+			y-=sy;
+			e-=idx;
+		}
+		if(e2<=-l)
+		{
+			x-=sx;
+			e+=idy;
+		}
+	}
+
+	void steps(unsigned s)
+	{
+
+		while(s>0)
+		{
+			step();
+			s--;
 		}
 	}
 
@@ -140,7 +141,6 @@ typedef struct
 	KVecInt2 lastpoint ;
 	bool ballfound,yfound,bfound;
 	int cntother; bool done;
-	int step;
 } linestruct;
 
 void Vision::gridScan(const KSegmentator::colormask_t color)
@@ -158,6 +158,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//static int startx=0;
 	int linestep=(rawImage->width-2*config.bordersize)/(config.scanV-1);
 	int align=(rawImage->width-linestep*(config.scanV-1) )>>1;
+	int step;
 	//float d;
 
 	std::vector<linestruct> l;
@@ -167,6 +168,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	int sx=config.bordersize+align;
 	int vstep=(sqrt(rawImage->height-2*config.bordersize-config.scanH*config.subsampling)-1)/2;
+	step=config.subsampling+vstep;
 	//Fix initial scanline positions :)
 	int linesdone=0;
 	//Prefetch first batch
@@ -175,6 +177,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	//Prefetch prologue
 	for(int i=0;i<PREFETCH-1;++i)
 		prepSeg(sx+i*linestep,rawImage->height - config.bordersize-1);
+	//std::cout<<"Vup:"<<Vup.x<<" "<<Vup.y<<std::endl;
 
 	for(int i=0 ; i< config.scanV;i++)
 	{
@@ -183,20 +186,26 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 		l[i].lastpoint=l[i].gtrc;
 		sx+=linestep;
 		l[i].gtrc.initVelocity(Vup.x,Vup.y);
-		l[i].gtrc.setScale(config.subsampling+vstep);
+		//l[i].gtrc.setScale(step);
 		l[i].ballfound=false;
 		l[i].yfound=false;
 		l[i].bfound=false;
 		l[i].cntother=0;
 		l[i].done=false;
-		l[i].step=config.subsampling+vstep;
 
 	}
+
 	//cout<<"init"<<endl;
 
 	while(linesdone<config.scanV)
 	{
+
+
+		//std::cout<<"Step:"<<step<<endl;
+		//std::cout<<l[0].gtrc.x<<" "<<l[0].gtrc.y <<std::endl;
+			//stepx=2;
 		//cout<<"while"<<endl;
+
 		for(unsigned i=0 ; i< l.size();i++)
 		{
 
@@ -349,20 +358,19 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				bgoalpost.push_back(thisl.gtrc);
 				thisl.bfound=true;
 			}
-
-
-			//Find next pixel
-			thisl.gtrc.step();
-			thisl.step--;
-			if (thisl.step<config.minH) thisl.step=config.minH;
-			thisl.gtrc.setScale(thisl.step);
-			//std::cout<<"Step:"<<thisl.step<<endl;
-			//stepx=2;
-
+			//Prepare for the next one
+			thisl.gtrc.steps(step);
 		}
+
+		//Fix NEXT step length
+		//Find next pixel
+		step--;
+		if (step<config.minH) step=config.minH;
+
 
 	}
 	//Now follow the lines
+
 
 #ifdef DEBUGVISION
 cout<<"End Grid scan"<<endl;
@@ -383,23 +391,24 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 
 	const int sub=config.subsampling;
 
-	const int cr=floor(ball.cr*2+0.5);
+	const int cr=floor(ball.cr+0.5);
 	const int crd=floor(sqrd(ball.cr)+0.5);
 	const int cx=floor(ball.x+0.5);
 	const int cy=floor(ball.y+0.5);
+	const int margin=cr;///2<sub?sub:cr/2;
 
-	const int top=ball.y-cr<config.bordersize?config.bordersize: ball.y-cr;
-	const int bot=ball.y+cr >rawImage->height-1 -config.bordersize?rawImage->height-1 -config.bordersize: ball.y+cr;
-	const int left=ball.x-cr<config.bordersize?config.bordersize:ball.x-cr;
-	const int right=ball.x+cr>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:ball.x+cr;
+	const int top=ball.y-margin<config.bordersize?config.bordersize: ball.y-margin;
+	const int bot=ball.y+margin >rawImage->height-1 -config.bordersize?rawImage->height-1 -config.bordersize: ball.y+margin;
+	const int left=ball.x-margin<config.bordersize?config.bordersize:ball.x-margin;
+	const int right=ball.x+margin>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:ball.x+margin;
 
 	const int ttl = floor((bot-top+1)/(sub))*floor((right-left+1)/(sub));
-	const int inside=floor(KMat::transformations::PI*cr*cr/4.0)/(sub*sub);
+	const int inside=floor(KMat::transformations::PI*cr*cr)/(sub*sub);
 	const int bdlimit=(ttl-inside)*(0.25);
 	const int gdlimit=inside*(0.65);
-
 	remin=inside;remout=ttl-inside;
 
+	float insidelim=0;
 	for(int y=top;y<=bot;y+=sub)
 	{
 		for(int i=0;i<PREFETCH-1;++i)
@@ -410,16 +419,17 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 		if(gd>=gdlimit && bd+remout<=bdlimit)// Certainty
 			return true;
 
+		insidelim=crd-sqrd(cy-y);
 		for(int x=left;x<=right;x+=sub)
 		{
 			//if(x+PREFETCH*sub<=right)
-				prepSeg(x+PREFETCH*sub,y);
+			prepSeg(x+PREFETCH*sub,y);
 			//else
 			//	prepSeg(left+PREFETCH*sub-sub,y+sub);
 
 			bool iscolor=colorIsA(doSeg(x,y,c) , c);
 
-			if(sqrd(cx-x)+sqrd(cy-y)<=crd)
+			if(sqrd(cx-x)<=insidelim)
 			{
 				remin--;
 				if(iscolor) gd++;
@@ -449,19 +459,21 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	tracer_t l,r;
 	l.init(goal.tl.x,goal.tl.y);
 	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
-	l.setScale(config.subsampling);
+	//l.setScale(config.subsampling);
 	r.init(goal.tr.x,goal.tr.y);
 	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
-	r.setScale(config.subsampling);
+	//r.setScale(config.subsampling);
 	const int w=(r.x-l.x)+1;
 	const int sub=config.subsampling;
 
+	//cout<<"Start:"<<goal.tl.x<<" "<<goal.tl.y<<endl;
+	//cout<<"End:"<<goal.ll.x<<" "<<goal.ll.y<<endl;
 	for(int i=0;i<PREFETCH-1;++i)
 		prepSeg(l.x-w-1+sub*i,l.y);
 
 	while(l.y<goal.bot.y && r.y<goal.bot.y)
 	{
-
+		//cout<<l.x<<" "<<l.y<<endl;
 		for(int x=l.x-w-1; x<r.x+w+1;x+=sub)
 		{
 			if(x+PREFETCH*sub<=r.x+w+1)
@@ -478,9 +490,10 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 			if(x>l.x&&x<r.x)
 				ttl++;
 		}
-		l.step();
-		r.step();
-
+		//cout<<"why oh why"<<endl;
+		l.steps(sub);
+		r.steps(sub);
+		//cout<<"why oh why not"<<endl;
 
 
 	}
@@ -505,6 +518,10 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 	int width =goal.lr.x-goal.ll.x+1;
 	unsigned int ttl = 0, gd = 0;
 	float ratio;
+
+
+
+
 
 	for (int j=goal.bot.y+width; j>goal.bot.y; j-=config.subsampling)
 	{
@@ -1034,7 +1051,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 		return ;
 	}
 	newpost.haveHeight=true;
-	cout<<"Height Only:"<<m.mean;
+	//cout<<"Height Only:"<<m.mean;
 	newpost.dist.push_back(m);//add to vector of results:)
 
 }
@@ -1195,6 +1212,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		if (!validpixel((*i).x,(*i).y))
 			continue;
 		//cout<<"Ball Tracing:";
+		//cout<<(*i).x<<" "<<(*i).y<<endl;
 		traceResult trcrs;
 
 		trcrs = traceline((*i), KVecInt2(0, 1), orange);//Stupid
@@ -1262,7 +1280,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 			continue;
 
 		float radius = CvDist(center,ft);//-0.707;
-		center.y+=0.707;
+		center.y+=0.5;
 		//cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
@@ -1392,7 +1410,8 @@ KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) cons
 	return center;
 }
 
-Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const
+/*
+Vision::traceResult Vision::traceline(KVecInt2 const& start, KVecInt2 const& vel, KSegmentator::colormask_t c) const
 {
 	KPROF_SCOPE(vprof,"tracelineInt");
 	int skipcount = 0;
@@ -1435,6 +1454,69 @@ Vision::traceResult Vision::traceline(KVecInt2 start, KVecInt2 vel, KSegmentator
 		r.smartsuccess=true;
 
 	r.p=latestValid;
+
+	return r;
+}
+*/
+Vision::traceResult Vision::traceline(KVecInt2 const & start, KVecInt2 const& vel, KSegmentator::colormask_t c) const
+{
+	KPROF_SCOPE(vprof,"tracelineInt");
+	KVecInt2 curr = start, limit=start,prftch, ftch;
+	KVecInt2 fforward=vel;
+	fforward.scalar_mult(config.pixeltol);
+
+	prftch=curr;
+	prftch+=fforward;
+	ftch=prftch;
+
+	for(int i=0;i<PREFETCH-1;++i)
+	{
+		prepSeg(prftch.x,prftch.y);
+		prftch-=vel;
+	}
+
+	while (true)
+	{
+
+		if(colorIsA(doSeg(ftch.x, ftch.y,c) ,c) )
+		{
+			limit=curr;
+			limit+=fforward;
+			curr=ftch;
+			ftch+=fforward;
+			prftch=ftch;
+			if(!validpixel(ftch.x,ftch.y))
+				break;
+			for(int i=0;i<PREFETCH-1;++i)
+			{
+				prepSeg(prftch.x,prftch.y);
+				prftch-=vel;
+			}
+		}
+		else
+		{
+			ftch-=vel;
+			if(ftch==limit)
+				break;
+
+			if(limit!=prftch)
+			{
+				prepSeg(prftch.x,prftch.y);
+				prftch-=vel;
+			}
+		}
+
+
+
+
+	}
+	traceResult r;
+	if (!validpixel(ftch.x,ftch.y))
+		r.smartsuccess=false;
+	else
+		r.smartsuccess=true;
+
+	r.p=curr;
 
 	return r;
 }
