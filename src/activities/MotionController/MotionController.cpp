@@ -283,7 +283,7 @@ void MotionController::mglrun()
 		{
 			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
 
-			if(currentstate==PLAYER_PLAYING)
+			if(currentstate==PLAYER_PLAYING || currentstate == PLAYER_READY)
 			{
 				robotUp = false;
 				robotDown = false;
