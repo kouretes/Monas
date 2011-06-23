@@ -16,8 +16,8 @@ int Scan::Execute() {
 	//if(headaction== SCANFORBALL){
 		//lastScanForBall =  boost::posix_time::microsec_clock::universal_time();
 	//}
-	headaction = SCANFORBALL;
-	velocityWalk(0.0f,0.0f, 0.0f, 1.0f);
+	//headaction = SCANFORBALL;
+	
 //	rtm = _blk->readSignal<RestartTurnMessage> ("behavior");
 //	if(rtm.get()!=0 && rtm->restartnow()==true)
 //		times=0;
@@ -38,21 +38,32 @@ int Scan::Execute() {
 				//lastTurn = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(4);
 			//}else{
 				//if(lastTurn<= )
-					velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+			amot.set_command("Init.xar");
+			_blk->publishSignal(amot, "motion");
 			//}
-			headaction = SCANFORBALL;
+			scan++;
+			if(forball%51!=0 ){
+				headaction = SCANFORBALL;
+				forball++;
+			}else{
+				
+				headaction = HIGHSCANFORBALL;
+				forpost++;
+				if( forpost%9==0)
+					forball++;
+			}
 			//Logger::Instance().WriteMsg(GetName (),  " SCANFORBALL", Logger::Info);
 		}
 	}
 
-	if(wimsg!=0 && wimsg->myposition().confidence() <goodConfidence && pm!=0 && !g.robotInPosition(wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(), pm->posy(), wimsg->myposition().phi(), pm->theta() ) && robotInGoalPostArea(wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(), pm->posy(), wimsg->myposition().phi(), pm->theta() )){
-		//if(lastScanForBall + boost::posix_time::seconds(3)<boost::posix_time::microsec_clock::universal_time())
-		headaction = SCANFORPOST;
-		float vely = pm->posy() - wimsg->myposition().y();
-		vely = vely>1 ? 1:vely;
-		vely = vely<-1 ? -1:vely;
-		velocityWalk(0.0f, vely, 0.0, 0.8);
-	}
+	//if(wimsg!=0 && wimsg->myposition().confidence() <goodConfidence && pm!=0 && !g.robotInPosition(wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(), pm->posy(), wimsg->myposition().phi(), pm->theta() ) && robotInGoalPostArea(wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(), pm->posy(), wimsg->myposition().phi(), pm->theta() )){
+		////if(lastScanForBall + boost::posix_time::seconds(3)<boost::posix_time::microsec_clock::universal_time())
+		//headaction = SCANFORPOST;
+		//float vely = pm->posy() - wimsg->myposition().y();
+		//vely = vely>1 ? 1:vely;
+		//vely = vely<-1 ? -1:vely;
+		//velocityWalk(0.0f, vely, 0.0, 0.8);
+	//}
 		
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
@@ -71,7 +82,9 @@ void Scan::UserInit () {
 	bhmsg = new BToHeadMessage();
 	lastTurn = boost::posix_time::microsec_clock::universal_time();
 	lastScanForBall = boost::posix_time::microsec_clock::universal_time();
-
+	scan = 0;
+	forpost = 0;
+	forball = 0;
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);

@@ -8,7 +8,8 @@
 #define SCANFORBALL 2
 #define SCANFORPOST 3
 #define BALLTRACK 4
-
+#define HIGHSCANFORBALL 5
+#define SCANFIELD 6
 //*********************Positions and distances in the field!***********************
 
 static const int limitY = 2, 	//2m half of y axis

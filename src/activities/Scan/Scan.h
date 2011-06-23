@@ -33,6 +33,7 @@ public:
 private:	
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage wmot;
+	MotionActionMessage amot;
 	boost::shared_ptr<const HeadToBMessage> hbm;
 	boost::shared_ptr<const GameStateMessage> gsm;
 	boost::shared_ptr<const ScanMessage> scnm;
@@ -44,6 +45,7 @@ private:
 	GoToPosition g;
 	bool toPos;
 	int headaction;
+	int forpost, forball, scan;
 	boost::posix_time::ptime lastTurn;
 	boost::posix_time::ptime lastScanForBall;
 	//int side, times;
