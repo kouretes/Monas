@@ -133,30 +133,25 @@ int HeadBehavior::Execute() {
 	}
 	if(headaction!=SCANFORBALL)
 		startscan =true;
+	//headaction = DONOTHING;
+	
+	
 	switch (headaction) {
 
 		case (DONOTHING):
 			//std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
 			Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			hbmsg->set_ballfound(0);
-			//calibrated=0;
 			break;
 		case (CALIBRATE):
-
 			//std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;
 			Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
-			//if(calibrated!=1 && calibrated!=2)
 			calibrate();
-			//calibrated = 1;
 			hbmsg->set_calibrated(calibrated);
 			hbmsg->set_ballfound(0);
-			//headaction = DONOTHING;
-			//choosemyaction = true;
-
 			//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			break;
 		case (SCANFORBALL):
-			//calibrated=0;
 			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
@@ -176,8 +171,7 @@ int HeadBehavior::Execute() {
 				hbmsg->set_ballfound(1);
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 			} else{
-				highheadscanstep(1.8);
-	
+				highheadscanstep(1.8);	
 			}	
 			break;
 		
@@ -202,7 +196,6 @@ int HeadBehavior::Execute() {
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
-			//calibrated=0;
 			Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
 			MakeTrackBallAction();
 			break;
@@ -302,6 +295,7 @@ void HeadBehavior::HeadScanStep() {
 		waiting=0;
 
 		startscan=false;
+		return;
 
 	}
 	
@@ -318,8 +312,6 @@ void HeadBehavior::HeadScanStep() {
 		waiting=0;
 
 		float yawlim=s*(targetPitch-PITCHMAX)+YAWMAX;
-		//if(fabs(targetPitch)<PITCHSTEP) yawlim=YAWBACK;
-
 
 		if(fabs(fabs(targetYaw)-yawlim)<=OVERSH)
 		{
@@ -339,12 +331,9 @@ void HeadBehavior::HeadScanStep() {
 			{
 				ysign=-ysign;
 			}
-
 		}
 
 		headmotion(targetPitch, targetYaw);
-
-
 	}
 	return ;
 
@@ -375,25 +364,28 @@ void HeadBehavior::calibrate() {
 
 void HeadBehavior::highheadscanstep(float limit_yaw){
 	
-	
-	hmot->set_command("setHead");
+	float pitchd;
+	//hmot->set_command("setHead");
 	if (fabs(headpos) > limit_yaw) // 1.8 h 2.08
 		leftright *= -1;
 
 	headpos += 0.2 * leftright;
 
-	hmot->set_parameter(0, headpos);	//yaw
+	//hmot->set_parameter(0, headpos);	//yaw
 
 	if(fabs(headpos)<1.57){
 	//	Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString((0.145 * fabs(headpos)) - 0.752), Logger::Info);
-		hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);	//pitch
+	//	hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);	//pitch
+		pitchd =(0.145 * fabs(headpos)) - 0.752;
 	}
 	else{
 	//	Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString((-0.0698 * (fabs(headpos)-1.57)) - 0.52), Logger::Info);
-		hmot->set_parameter(1, (-0.0698 * (fabs(headpos)-1.57)) - 0.52);	//pitch
+		//hmot->set_parameter(1, (-0.0698 * (fabs(headpos)-1.57)) - 0.52);	//pitch
+		pitchd = (-0.0698 * (fabs(headpos)-1.57)) - 0.52;
 	}
 	
-	_blk->publishSignal(*hmot, "motion");
+	//_blk->publishSignal(*hmot, "motion");
+	headmotion(pitchd, headpos);
 }
 void HeadBehavior::headmotion(float pitch, float yaw){
 	hmot->set_command("setHead");

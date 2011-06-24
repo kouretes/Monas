@@ -29,6 +29,8 @@ int Scan::Execute() {
 	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
+			forball =0;
+			forpost =0;
 			//Logger::Instance().WriteMsg(GetName (),  " BALLTRACK", Logger::Info);
 		}
 		else{		
