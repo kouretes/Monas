@@ -40,8 +40,7 @@ int Scan::Execute() {
 				//lastTurn = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(4);
 			//}else{
 				//if(lastTurn<= )
-			amot.set_command("Init.xar");
-			_blk->publishSignal(amot, "motion");
+			velocityWalk(0.0,0.0, 0.0, 1.0);
 			//}
 			scan++;
 			if(forball%51!=0 ){
