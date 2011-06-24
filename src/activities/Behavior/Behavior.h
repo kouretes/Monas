@@ -10,6 +10,7 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/BehaviorMessages.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
@@ -43,8 +44,9 @@ class Behavior: public IActivity {
 		void GetGameState();
 		int MakeTrackBallAction();
 		void CheckForBall();
-		void CheckForGoals();
+		void UpdateOrientation();
 		void HeadScanStep();
+		void HighHeadScanStep(float yaw_limit);
 		void Kick(int side);
 		std::string GetName() {
 			return "Behavior";
@@ -56,8 +58,11 @@ class Behavior: public IActivity {
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;
 		MotionActionMessage* amot;
+		LocalizationResetMessage* locReset;
 
 		float initX[2][2], initY[2][2], initPhi[2][2]; //initial game position in the field!!!!
+		double blueGoalX, blueGoalY, yellowGoalX, yellowGoalY;
+		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 		int playernum;
 		bool readRobotConf;
 
@@ -83,10 +88,8 @@ class Behavior: public IActivity {
 
 
 		int calibrated;
-		bool play;
 		bool kickoff;
 
-		bool stopped;
 		bool readytokick;
 		int back;
 		int direction;
@@ -94,7 +97,10 @@ class Behavior: public IActivity {
 		bool obstacleFront;
 		int gameState;
 		
-		ptime lastmove, lastball, lastwalk;
+
+		int forball, forpost;
+
+		ptime lastmove, lastball, lastwalk, lastplay;
 
 		int teamColor;
 		int playerNumber;
@@ -109,11 +115,13 @@ class Behavior: public IActivity {
 		void calibrate();
 		bool readConfiguration(const std::string& file_name); //this function reads team's configuration info from XML file
 		bool readRobotConfiguration(const std::string& file_name); //this function reads robot's initial position in the field from XML file
+		bool LoadFeaturesXML(const std::string& file_name); 						//this function reads the position of the goals
+		void GetPosition();
 		void gotoPosition(float target_x,float target_y, float target_phi);
 		float cX,cY,ct;//Commanded
 		float bd, bb, bx, by, posx, posy;
 		int side;
-
+		float robot_x,robot_y,robot_phi,robot_confidence;
 };
 
 #endif

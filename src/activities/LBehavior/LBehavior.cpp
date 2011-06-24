@@ -731,12 +731,5 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 		freq=1;
 	}
 
-
-
-	cout << VelX << endl;
-	cout << VelY << endl;
-	cout << Rot << endl;
-	velocityWalk(VelX,VelY,Rot,freq);
-
 	velocityWalk(VelX, VelY, Rot, freq);
 }

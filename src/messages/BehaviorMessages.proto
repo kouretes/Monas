@@ -31,3 +31,6 @@ message PositionMessage{
 	required float theta = 3 [default = 1];
 }
 
+message LocalizationResetMessage{
+	
+}

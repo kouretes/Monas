@@ -713,13 +713,13 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 	for (int i = 0; i < iterations; i++)
 		Predict(SIRParticles, MotionModel);
 
-	//Update - Using incomming observation
+	//Update - Using incoming observation
 	Update(SIRParticles, Observations, *MotionModelptr, partclsNum, rangemaxleft, rangemaxright);
 
 	//Normalize Particles  Weight in order to Resample later
 	if ((SIRParticles.WeightSum = normalize(SIRParticles.Weight, partclsNum)) < 0.01) {
-		cerr << " Oups SIRParticles Population Dissapeared Maybe the Robot have changed position ...\nRespreading them over the field " << endl;
-		cout << " Oups SIRParticles Population Dissapeared Maybe the Robot have changed position ...\nRespreading them over the field" << endl;
+		cerr << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field " << endl;
+		cout << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field" << endl;
 		//setParticlesPoseUniformly(SIRParticles);
 		depletions_counter++;
 		if (depletions_counter > 1)
@@ -1505,8 +1505,17 @@ int * KLocalization::ResampleSWR(parts & Particles, int *Index) {
 
 //AUTHORS  : Arnaud Doucet and Nando de Freitas - for the acknowledgement.
 int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q);
-	double * cumDist = CumSum(Particles.Weight, Particles.size);
+	if (Particles.size <= 0)
+		return Index;
+
 	int N = partclsNum; //Number of particles
+	double * cumDist = CumSum(Particles.Weight, Particles.size);
+	if (cumDist[Particles.size-1] < 0.001) {
+		for (int i = 0; i < N; i++)
+			Index[i] = i;
+		return Index;
+	}
+
 	double t[N];
 	double N_babies[N];
 
