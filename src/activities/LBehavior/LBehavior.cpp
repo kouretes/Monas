@@ -710,23 +710,29 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 	VelX =  cos(Robot2Target_bearing);
 	VelY =  sin(Robot2Target_bearing);
 
-	if(Distance2Target>1.0)
+
+
+	if (Distance2Target < 0.3)
 	{
-		Rot=Robot2Target_bearing*0.3;
-		freq = 1;
+		VelX/=2.0;
+		VelY/=2.0;
+		Rot = anglediff2(target_phi, robot_phi)*0.5 ;
+		freq=Distance2Target;
+	}
+	else if(fabs(Robot2Target_bearing)>1)
+	{
+		VelX/=4.0;
+		VelY/=4.0;
+		Rot=Robot2Target_bearing*0.4;
+		freq=0.5;
+
 	}
 	else
 	{
-		Rot = anglediff2(target_phi, robot_phi)*0.5 ;
-		VelX/=2.0;
-		VelY/=2.0;
-		freq=Distance2Target;
+		Rot=Robot2Target_bearing*0.1;
+		freq = 1;
 	}
-	if(Distance2Target<0.2)
-	{
-		VelX/=10.0;
-		VelY/=10.0;
-	}
+
 
 	velocityWalk(VelX, VelY, Rot, freq);
 }
