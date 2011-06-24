@@ -23,13 +23,25 @@
 #define SCANFORBALL 2
 #define SCANFORPOST 3
 #define BALLTRACK 4
+#define HIGHSCANFORBALL 5
+#define SCANFIELD 6
 
 #define PITCHMIN -0.55
-#define	PITCHMAX 0.3
+#define	PITCHMAX 0.33
 #define YAWMIN 0.8
-#define YAWMAX 1.3
-#define PITCHSTEP 0.22
-#define YAWSTEP 0.45
+#define YAWMAX 1.35
+#define PITCHSTEP 0.1
+#define YAWSTEP 0.4
+#define YAWSTEP1 0.35
+#define PITCH1 -0.16
+#define PITCH2 -0.55
+#define PITCH3 -0.67
+
+#define YAW1 -0.86
+#define YAW2 0.86
+#define YAW3 0.66
+#define YAW4 0.0
+#define YAW5 -0.66
 
 #define OVERSH 0.06
 #define WAITFOR 40
@@ -57,19 +69,22 @@ class HeadBehavior: public IActivity {
 		SensorData HeadPitch;
 
 		int headaction;
+		int prevaction;
+		int curraction;
 		boost::posix_time::ptime lastturn;
-
+		bool field;
+		int state;
+		float headpos;
+		int leftright;
 		bool startscan;
 		bool scanforball;
 		float targetYaw;
 		float targetPitch;
 		float psign,ysign;
-		//bool pitchonly;
 		unsigned waiting;
 		float obsmbearing,lastbearing;
 		bool newBearing;
 
-		//boost::shared_ptr<const HeadJointSensorsMessage> hjsm;
 		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
 
 		boost::shared_ptr<const BToHeadMessage> bhm;
@@ -81,6 +96,8 @@ class HeadBehavior: public IActivity {
 		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
 		void calibrate();
+		void highheadscanstep(float );
+		void headmotion(float pitch, float yaw);
 
 };
 

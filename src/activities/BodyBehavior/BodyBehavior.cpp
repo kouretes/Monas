@@ -92,6 +92,7 @@ int BodyBehavior::Execute() {
 			}
 		} else if (gameState == PLAYER_INITIAL) {
 			play = false;
+			curraction = CALIBRATE;
 		} else if (gameState == PLAYER_READY) {
 			play = false;
 			curraction = CALIBRATE;
@@ -309,7 +310,7 @@ int BodyBehavior::Execute() {
 	bhmsg->set_headaction(curraction);
 
 	//cout << "headAction " << curraction << "BodyBehavior" << endl;
-	_blk->publishState(*bhmsg, "behavior");
+	_blk->publishSignal(*bhmsg, "behavior");
 
 
 	return 0;
@@ -323,8 +324,8 @@ void BodyBehavior::read_messages() {
 	//om   = _blk->readSignal<ObstacleMessage> ("obstacle");
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
 	scm = _blk->readSignal<ScanMessage> ("behavior");
-
-	Logger::Instance().WriteMsg("BodyBehavior", "read_messages ", Logger::ExtraExtraInfo);
+	if(gsm!=0)
+	Logger::Instance().WriteMsg("BodyBehavior", "gameState " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 
 }
 
