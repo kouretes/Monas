@@ -403,9 +403,9 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 	const int right=ball.x+margin>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:ball.x+margin;
 
 	const int ttl = floor((bot-top+1)/(sub))*floor((right-left+1)/(sub));
-	const int inside=floor(KMat::transformations::PI*cr*cr)/(sub*sub);
+	const int inside=floor((KMat::transformations::PI*cr*cr)/(sub*sub));
 	const int bdlimit=(ttl-inside)*(0.25);
-	const int gdlimit=inside*(0.65);
+	const int gdlimit=inside*(0.5);
 	remin=inside;remout=ttl-inside;
 
 	float insidelim=0;
@@ -1295,6 +1295,11 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 
 		im1(0)=center.x +(radius)*0.707;
 		im1(1)=center.y +(radius)*0.707;
+		cout<<"Ball positions:"<<endl;
+		/*fl.prettyPrint();
+		ft.prettyPrint();
+		fr.prettyPrint();
+		center.prettyPrint();*/
 		//im1.prettyPrint();
 		//im2.prettyPrint();
 		c1=imageToCamera(center);

@@ -6,13 +6,13 @@
 	<robot number=1 posx=2.7 posy=0.0>
 	</robot>
 	<!-- Center-->
-	<robot number=2 posx=1.8 posy=0.2>
+	<robot number=2 posx=1.8 posy=1.4>
 	</robot>
 	<!-- Defender-->
 	<robot number=3 posx=1.8 posy=-1.4>
 	</robot>
 	<!-- Attacker-->
-	<robot number=4 posx=1.8 posy=1.4>
+	<robot number=4 posx=1.8 posy=0.2>
 	</robot>
 </noKickOff>
 
@@ -21,12 +21,12 @@
 	<robot number=1 posx=2.7 posy=0.0>
 	</robot>
 	<!-- Center-->
-	<robot number=2 posx=0.4 posy=0.0>
+	<robot number=2 posx=0.7 posy=0.7>
 	</robot>
 	<!-- Defender-->
 	<robot number=3 posx=0.7 posy=-0.7>
 	</robot>
 	<!-- Attacker-->
-	<robot number=4 posx=0.7 posy=0.7>
+	<robot number=4 posx=0.4 posy=0.0>
 	</robot>
 </KickOff>
