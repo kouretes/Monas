@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- team_number -->
-<team_number>4</team_number>
+<team_number>15</team_number>
 <!-- player number -->
 <default_team_color>blue</default_team_color><!-- Color that the game starts ?-->
 <!-- gamecontroller port>

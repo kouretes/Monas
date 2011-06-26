@@ -8,7 +8,8 @@
 #define SCANFORBALL 2
 #define SCANFORPOST 3
 #define BALLTRACK 4
-
+#define HIGHSCANFORBALL 5
+#define SCANFIELD 6
 //*********************Positions and distances in the field!***********************
 
 static const int limitY = 2, 	//2m half of y axis
@@ -21,7 +22,7 @@ static const float  lPost = 0.7,
 					dDistBallY = 0.03,			//desired distance from the ball in y axis, aka posy
 					dDistBallOffset = 0.012,	//desired distance from the ball offset 
 					minDistGB = 0.2,			//minimum goalkeeper 's distance from ball while ProtectPost
-					locDeviation = 0.1,			//deviation of localization's measurments 
+					locDeviation = 0.05,			//deviation of localization's measurments 
 					yellowPostCenterX = 3.0,	//Yellow Post's center in x axis in m
 					yellowPostCenterY = 0.0,	//Yellow Post's center in y axis in m
 					ballDistLimit = 0.26,

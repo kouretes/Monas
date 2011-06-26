@@ -57,10 +57,10 @@ int NoPlay::Execute() {
 			pmsg->set_posy(initY[0][teamColor]);
 			pmsg->set_theta(initPhi[0][teamColor]);
 			_blk->publishState(*pmsg, "behavior");
-			Logger::Instance().WriteMsg(GetName(),  " publish pos", Logger::Info);
+	//		Logger::Instance().WriteMsg(GetName(),  " publish pos", Logger::Info);
 			rpm->set_goalietopos(true);
 			_blk->publishState(*rpm, "behavior");
-			Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
+//			Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
 		
 		//goToPosition(initX, initY, initPhi);
 		break;
@@ -98,12 +98,12 @@ int NoPlay::Execute() {
 			if(firstInit + boost::posix_time::seconds(3) <=boost::posix_time::microsec_clock::universal_time()){
 				curraction = CALIBRATE;
 				if(prevaction!=CALIBRATE){
-					Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+			//		Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
 					bhmsg->set_headaction(curraction);	
 				}
 				else{
 					bhmsg->set_headaction(DONOTHING);	
-					Logger::Instance().WriteMsg(GetName(),  " playerinitial DONOTHING", Logger::Info);
+		//			Logger::Instance().WriteMsg(GetName(),  " playerinitial DONOTHING", Logger::Info);
 				}
 			}else
 				curraction = DONOTHING;

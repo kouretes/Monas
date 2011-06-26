@@ -77,6 +77,13 @@ void Localization::UserInit()
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 }
 
+void Localization::Reset()
+{
+	//KLocalization::Initialize();
+	KLocalization::setParticlesPoseUniformly(SIRParticles);
+}
+
+
 int Localization::DebugMode_Receive()
 {
 	///DEBUG MODE
@@ -718,6 +725,12 @@ void Localization::process_messages()
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
+	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
+
+	if (lrm != 0){
+		Reset();
+		Logger::Instance().WriteMsg("Localization", "RESET ", Logger::Info);
+	}
 
 	if (rpsm != 0)
 	{

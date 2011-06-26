@@ -14,7 +14,8 @@
 
 #define TO_DEG 1.0/TO_RAD
 #define DISTANCE(x1,x2,y1,y2) (sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)))
-#define DISTANCE_2(dx,dy) (sqrt(dx * dx + dy*dy)) //(sqrt(pow(dx,2) + pow(dy,2)))
+template<typename T> inline T DISTANCE_2(T dx, T dy) {return sqrt((dx) * (dx) + (dy)*(dy));}
+//#define DISTANCE_2(dx,dy) () //(sqrt(pow(dx,2) + pow(dy,2)))
 
 //char ptr
 class Kutils {
