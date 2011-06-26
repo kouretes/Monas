@@ -31,6 +31,7 @@ message PositionMessage{
 	required float theta = 3 [default = 1];
 }
 
+
 message ReturnToPositionMessage{
 	required bool goalieToPos = 1 [default = false];
 }
@@ -42,4 +43,8 @@ message DoubleObsInfo{
 
 message FallMessage{
 required int32 fall = 1 [default = 0];
+}
+
+message LocalizationResetMessage{
+	
 }

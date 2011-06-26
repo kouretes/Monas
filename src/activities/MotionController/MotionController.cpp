@@ -540,13 +540,13 @@ void MotionController::mglrun()
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE9 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackRightCutB2.xar");
+					pam->set_command("KickBackRightCutB1.xar");
 					readyToKick = 1;
 				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE10 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackRightCutA2.xar");
+					pam->set_command("KickBackRightCutAc.xar");
 					readyToKick = 1;
 				}else
 					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
@@ -565,13 +565,13 @@ void MotionController::mglrun()
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE11 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackLeftCutB.xar");
+					pam->set_command("KickBackLeftCutB1.xar");
 					readyToKick = 1;
 				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE12 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackLeftCutA.xar");
+					pam->set_command("KickBackLeftCutAc.xar");
 					readyToKick = 1;
 				}else
 					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
