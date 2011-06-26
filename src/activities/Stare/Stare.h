@@ -36,6 +36,7 @@ public:
 private:
 	ApproachBall ab;
 	MotionWalkMessage wmot;	
+
 	BToHeadMessage* bhmsg;
 	FallMessage* fm;
 	ObservationMessage* lastObsm;

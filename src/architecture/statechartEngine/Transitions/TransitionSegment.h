@@ -206,8 +206,9 @@ namespace statechart_engine {
     template< class TSource, class TTarget>
     bool TransitionSegment<TSource,TTarget>::Execute ( Type2Type<TSource>, Type2Type<State>, IEvent* ev, IParameter* param ) {
 
-            if ( !CanExecute(ev) )
+            if ( !CanExecute(ev) ){
                 return false;
+			}
 
             _source->DeActivate();
 

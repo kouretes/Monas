@@ -12,7 +12,9 @@ int Stare::Execute() {
 	Logger::Instance().WriteMsg("Stare",  " execute", Logger::Info);
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 	wimsg = _blk->readData<WorldInfo> ("behavior");
-	velocityWalk(0.0f , 0.0f, 0.0f ,1.0f);
+
+	velocityWalk(0.0, 0.0, 0.0, 1.0);
+	
 	LedChangeMessage leds;
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	LedValues* l = leds.add_leds();
@@ -65,40 +67,40 @@ int Stare::Execute() {
 			lastWimsg->CopyFrom(*wimsg);
 	}
 	
-	if(lastWimsg->balls_size()!=0){
-		bx = lastWimsg->balls(0).relativex();
-		by = lastWimsg->balls(0).relativey();
-		bd = sqrt(bx*bx + by*by);
-		if(by!=0.0)
-			bb = atan(bx/by);
+	//if(lastWimsg->balls_size()!=0){
+		//bx = lastWimsg->balls(0).relativex();
+		//by = lastWimsg->balls(0).relativey();
+		//bd = sqrt(bx*bx + by*by);
+		//if(by!=0.0)
+			//bb = atan(bx/by);
 			
 		
-		side = (bb > 0) ? 1 : -1;
+		//side = (bb > 0) ? 1 : -1;
 	
-	static float X=0,Y=0,th=0,f=0.2;
-	//X=(bx-posx)*2;
+	//static float X=0,Y=0,th=0,f=0.2;
+	////X=(bx-posx)*2;
 
-	//Y=(by-offsety)*1.6;
-	float offsety=side*dDistBallY;
-	Y=(by-offsety)*3;
-	if(bd>0.26)
-	{
-		if(bx<0)
-			th=0.2 *Y;
-		else
-			th=0.1 *Y;
+	////Y=(by-offsety)*1.6;
+	//float offsety=side*dDistBallY;
+	//Y=(by-offsety)*3;
+	//if(bd>0.26)
+	//{
+		//if(bx<0)
+			//th=0.2 *Y;
+		//else
+			//th=0.1 *Y;
 
-		Y=Y/2.0;
+		//Y=Y/2.0;
 
-	}
-	else
-		th=-0.06*by*(Y>0?-1:1);
+	//}
+	//else
+		//th=-0.06*by*(Y>0?-1:1);
 
-	f=1;
+	//f=1;
 
-	th=th>1?1:th;
-	th=th<-1?-1:th;
-	}
+	//th=th>1?1:th;
+	//th=th<-1?-1:th;
+	//}
 	//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){//////////////////////////////
 		//velocityWalk(0,0,th,f);
 	//	lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);

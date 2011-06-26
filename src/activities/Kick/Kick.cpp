@@ -9,6 +9,9 @@ int Kick::Execute() {
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	wimsg  = _blk->readData<WorldInfo>("behavior");
 	
+	rpm->set_goalietopos(true);
+	_blk->publishSignal(*rpm, "behavior");
+	
 	if(gsm!=0 && gsm->game_state()!=PLAYER_PLAYING){
 	//	Logger::Instance().WriteMsg("MyLeftKick",  " No********************************", Logger::Info);
 		return 0;
@@ -34,6 +37,7 @@ int Kick::Execute() {
 void Kick::UserInit () {
 	_blk->subscribeTo("behavior",0);
 	amot = new MotionActionMessage();
+	rpm = new ReturnToPositionMessage();
 }
 
 std::string Kick::GetName () {

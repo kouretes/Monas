@@ -6,6 +6,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
+
 class Kick : public IActivity {
 			
 public:
@@ -19,6 +20,7 @@ private:
 	MotionActionMessage* amot;	
 	boost::shared_ptr<const GameStateMessage> gsm;		
 	boost::shared_ptr<const WorldInfo> wimsg;
+	ReturnToPositionMessage* rpm;
 };
 
 #endif // _Kick_h_

@@ -31,6 +31,8 @@ int SpecialAction::Execute() {
 	bhm->set_headaction(BALLTRACK);
 	_blk->publishSignal(*bhm, "behavior");
 	_blk->publishSignal(leds, "leds");
+	rpm->set_goalietopos(true);
+	_blk->publishSignal(*rpm, "behavior");
 	//sleep(2);
 	return 0;
 }
@@ -39,6 +41,7 @@ void SpecialAction::UserInit () {
 	_blk->subscribeTo("behavior",0);
 	amot = new MotionActionMessage();
 	bhm = new BToHeadMessage();
+	rpm = new ReturnToPositionMessage();
 }
 
 std::string SpecialAction::GetName () {

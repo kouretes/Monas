@@ -645,6 +645,7 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 		headpos += 0.1 * leftright;
 
 		hmot->set_parameter(0, headpos);
+		Logger::Instance().WriteMsg(GetName(), "pitch " + _toString(headpos), Logger::Info);
 		float abspos = fabs(headpos);
 		if(abspos<1.57)
 			hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
