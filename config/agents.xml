@@ -19,10 +19,6 @@
 	<activity>Vision</activity>
 	<activity>Localization </activity>
 	<activity>HeadBehavior</activity>
-<!--	<activity>GoToPosition</activity>
-	<activity>VBehavior</activity> 
-	<activity>Localization </activity>
--->
 </agent>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
@@ -31,13 +27,11 @@
 </agent>
 
 
- <statechart>goalie</statechart> 
- 
-
+ <statechart>goalie070611</statechart>  
 
 <!--
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
-	<name>BodyBehavior</name>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=50>
+	<name>KBehavior</name>
 	<activity>BodyBehavior</activity>
 </agent>
 -->
