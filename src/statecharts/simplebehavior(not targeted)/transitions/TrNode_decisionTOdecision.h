@@ -24,7 +24,10 @@ void UserInit () {
 			int timeout=-1;
 			if(time==""){
 				Logger::Instance().WriteMsg("TrCond_decisionTOdecision", " empty timeout", Logger::Info);
-			return false;
+				//_blk->publish_all();
+				//SysCall::_usleep(250000);
+			//	_blk->process_messages();
+				return true;
 			}
 			 timeout = (boost::posix_time::microsec_clock::local_time() - boost::posix_time::from_iso_string(time) ).total_microseconds();
 			if ( time != "" && timeout < 0) {
