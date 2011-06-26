@@ -18,6 +18,7 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 
+using namespace boost::posix_time;
 		
 class GoToPosition : public IActivity {
 			
@@ -30,23 +31,21 @@ public:
 	std::string GetName ();
 	
 	bool robotInPosition(float rx, float x2, float ry, float y2, float rth, float th2);
-	PositionMessage* pmsg;
+	
 private:
 	boost::shared_ptr<const PositionMessage> pm;
 	boost::shared_ptr<const WorldInfo> wimsg;
 	boost::shared_ptr<const ObservationMessage> obsm;
 	boost::shared_ptr<const GameStateMessage> gsm;
-	int curr, prev;
+
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage wmot;
 	float posX, posY, theta;
 	float myPosX, myPosY, myPhi;
-	float relativeX, relativeY, relativePhi, confidence;
+	float relativePhi, confidence;
 	float dist;
-	int side;
 	int headaction;
-	ReturnToPositionMessage* rpm;
-	boost::posix_time::ptime lastMove, lastObsm;
+	ptime lastMove, lastObsm;
 	void velocityWalk( double x, double y, double th, double f);
 	void littleWalk(double x, double y, double th);	
 	////////////////////////////////////////

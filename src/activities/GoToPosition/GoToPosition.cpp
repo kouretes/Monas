@@ -15,62 +15,75 @@ int GoToPosition::Execute() {
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	
 	headaction = SCANFORPOST;
-	if(pm.get()!=0){
+	if(pm.get()!=0){		///get my target
 		posX = pm->posx();
 		posY = pm->posy();
 		theta = pm->theta();
 	}
 	
-	if(wimsg.get()!=0){
+	if(wimsg.get()!=0){		///get my position
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
 		myPhi = wimsg->myposition().phi();
 		confidence =  wimsg->myposition().confidence();
 	}
 	
+	if(obsm&&obsm->regular_objects_size()>0)
+		lastObsm = microsec_clock::universal_time();
+	
 	Logger::Instance().WriteMsg(GetName(),  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
 	Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
-	if(robotInPosition(posX, myPosX, posY, myPosY, theta, myPhi) && confidence>=goodConfidence && lastMove <= boost::posix_time::microsec_clock::universal_time() ){
+
+	if(robotInPosition(posX, myPosX, posY, myPosY, theta, myPhi) && lastMove <= microsec_clock::universal_time() ){
 		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
+		lastMove = microsec_clock::universal_time() + milliseconds(500);
 		Logger::Instance().WriteMsg(GetName(), "Robot Is In Position", Logger::Info);
-		rpm->set_goalietopos(true);
-		_blk->publishState(*rpm, "behavior") ;
 		return 0;
 	}
 		
-	if(confidence<goodConfidence && lastMove <= boost::posix_time::microsec_clock::universal_time()){
-		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
-		//littleWalk(0.0f, 0.0f, 25*TO_RAD);
-		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+	if(confidence<goodConfidence && lastMove <= microsec_clock::universal_time()){
+		
+		if(lastObsm + seconds(20) <microsec_clock::universal_time() ){
+			littleWalk(0.0, 0.0, 120*TO_RAD);
+			lastMove = microsec_clock::universal_time() + seconds(2);
+		}else{
+			velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+			lastMove = microsec_clock::universal_time() + milliseconds(500);
+		}
+		return 0;
 	}
-	if(obsm&&obsm->regular_objects_size() > 0)
-		lastObsm = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(2);
 		
 	dist = distance(posX, myPosX, posY, myPosY);
 
-	relativeX = rotation(posX, -posY, myPhi) - myPosX;
-
-	relativeY = rotation(posY, posX, myPhi) - myPosY;
-
 	KLocalization h;
-	float angle = h.anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
+	float angleToTarget = h.anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
 	relativePhi = h.anglediff2(theta,myPhi);
-	
+	float rot = 0.0, f=1.0;
 	float velx, vely;
-	vely = 0.8*sin(angle);
-	velx = 0.8*cos(angle);
+	vely = sin(angleToTarget);
+	velx = cos(angleToTarget);
 		
-	velx = velx>1 ? 1:velx;
-	velx = velx<-1 ? -1:velx;
-	vely = vely>1 ? 1:vely;
-	vely = vely<-1 ? -1:vely;
+	if(dist <0.3){
+		velx/=2.0;
+		vely/=2.0;	
+		rot = relativePhi*0.5;
+		f = dist;
+	}else if(dist>1){
+		velx/=4.0;
+		vely/=4.0;	
+		rot = angleToTarget*0.4;
+		f = 0.5;
+	}else{
+		rot = angleToTarget*0.1;
+		f = 1;
+	}
 
 	//Logger::Instance().WriteMsg(GetName(),  " if", Logger::Info);
-	if(lastMove <= boost::posix_time::microsec_clock::universal_time()){
+	if(lastMove <= microsec_clock::universal_time()){
 		Logger::Instance().WriteMsg(GetName(),  " walk", Logger::Info);
-		velocityWalk(velx, vely, 0.1*angle, 1.0);
-		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
+		
+		velocityWalk(velx, vely, rot, f);
+		lastMove = microsec_clock::universal_time() + milliseconds(500);
 	}
 	
 	bhmsg->set_headaction(headaction);
@@ -79,23 +92,19 @@ int GoToPosition::Execute() {
 }
 
 void GoToPosition::UserInit () {
-	curr = prev = 0;
+
 	confidence = 0;
 	_blk->subscribeTo("behavior", 0);
 	_blk->subscribeTo("vision", 0);
 	int playernum, teamColor;
-	lastMove = boost::posix_time::microsec_clock::universal_time();
-	lastObsm = boost::posix_time::microsec_clock::universal_time();
+	lastMove = microsec_clock::universal_time();
+	lastObsm = microsec_clock::universal_time();
 	bhmsg = new BToHeadMessage();
 	theta = 0.0;
 	headaction = SCANFORPOST;
-	pmsg = new PositionMessage();
-	rpm =  new ReturnToPositionMessage();
 	posX = -2.50;
 	posY = 0.0;
 	dist = 0.0;
-	relativeX =0.0;
-	relativeY = 0.0; 
 	relativePhi = 0.0;
 
 	wmot.add_parameter(0.0f);
@@ -116,7 +125,7 @@ bool GoToPosition::robotInPosition(float rx, float x2, float ry, float y2, float
 		return false;	
 	if( y2 - locDeviation > ry || ry > y2 + locDeviation  )
 		return false;
-	if( th2 - th2*0.2 > rth || rth > th2 + th2*0.2  )
+	if( th2 - th2*0.1 > rth || rth > th2 + th2*0.1  )
 		return false;
 	return true;
 }
@@ -150,7 +159,7 @@ float GoToPosition::rotation(float a, float b, float theta){
 float GoToPosition::distance(float x1, float x2, float y1, float y2){
 	//Logger::Instance().WriteMsg("Distance",  " Entered", Logger::Info);
 	float dis;
-	dis = sqrt(pow(x2-x1, 2)+ pow(y2-y1, 2));
+	dis = sqrt(pow((x2-x1), 2)+ pow((y2-y1), 2));
 	
 	return dis;
 }
