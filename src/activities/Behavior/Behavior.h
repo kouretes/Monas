@@ -38,90 +38,91 @@ class Behavior: public IActivity {
 
 	public:
 		Behavior();
-		int Execute();
-		void UserInit();
-		void read_messages();
-		void GetGameState();
-		int MakeTrackBallAction();
-		void CheckForBall();
-		void UpdateOrientation();
-		void HeadScanStep();
-		void HighHeadScanStep(float yaw_limit);
-		void Kick(int side);
 		std::string GetName() {
 			return "Behavior";
 		}
-		void mgltest();
+		void UserInit();
+		int Execute();
+		
+		void read_messages();
+		
+		void GetGameState();
+		void GetPosition();
+		void UpdateOrientation();
+		void CheckForBall();
+		int MakeTrackBallAction();
+
+		void HeadScanStep();
+		void HighHeadScanStep(float yaw_limit);
+		
+		void Kick(int side);
 
 	private:
-		short ballfound;
-		MotionWalkMessage* wmot;
-		MotionHeadMessage* hmot;
-		MotionActionMessage* amot;
-		LocalizationResetMessage* locReset;
+		
+		void velocityWalk(double ix, double iy, double it, double f);
+		void littleWalk(double x, double y, double th);
+		void gotoPosition(float target_x,float target_y, float target_phi);
+		
+		void calibrate();
+		
+		bool readConfiguration(const std::string& file_name); 		//this function reads team's configuration info from XML file
+		bool readRobotConfiguration(const std::string& file_name); 	//this function reads robot's initial position in the field from XML file
+		bool readGoalConfiguration(const std::string& file_name); 	//this function reads the position of the goals
+		
+		void test();
 
-		float initX[2][2], initY[2][2], initPhi[2][2]; //initial game position in the field!!!!
-		double blueGoalX, blueGoalY, yellowGoalX, yellowGoalY;
-		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
-		int playernum;
-		bool readRobotConf;
-
-		int pitchdirection;
-		int yawdirection;
-		SensorData HeadYaw;
-		SensorData HeadPitch;
-
-		bool startscan;
-		bool scanforball;
-		float targetYaw;
-		float targetPitch;
-		float psign,ysign;
-		unsigned waiting;
-
-		short balllastseendirection;
+		/* Incoming Messages */
 		boost::shared_ptr<const AllSensorValuesMessage> allsm;
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
 		//boost::shared_ptr<const ObservationMessage>  obsm;
 		boost::shared_ptr<const ObstacleMessage>  om;
 		boost::shared_ptr<const WorldInfo>  wim;
-
-
-		int calibrated;
-		bool kickoff;
-
-		bool readytokick;
-		int back;
-		int direction;
-		int count;
-		bool obstacleFront;
-		int gameState;
 		
-
-		int forball, forpost;
-
-		ptime lastmove, lastball, lastwalk, lastplay;
-
-		int teamColor;
-		int playerNumber;
-		double orientation;
-
+		/* Outgoing Messages */
+		MotionWalkMessage* wmot;
+		MotionHeadMessage* hmot;
+		MotionActionMessage* amot;
+		LocalizationResetMessage* locReset;
+		
 		int leftright;
 		float headpos;
 
-		double mglRand();
-		void velocityWalk(double ix, double iy, double it, double f);
-		void littleWalk(double x, double y, double th);
-		void calibrate();
-		bool readConfiguration(const std::string& file_name); //this function reads team's configuration info from XML file
-		bool readRobotConfiguration(const std::string& file_name); //this function reads robot's initial position in the field from XML file
-		bool LoadFeaturesXML(const std::string& file_name); 						//this function reads the position of the goals
-		void GetPosition();
-		void gotoPosition(float target_x,float target_y, float target_phi);
-		float cX,cY,ct;//Commanded
+		short ballfound;
+		bool scanforball;
+		bool startscan;
+		float targetYaw;
+		float targetPitch;
+		SensorData HeadYaw;
+		SensorData HeadPitch;
+		float psign,ysign;
+		unsigned waiting;
+		int calibrated;
+		
+		int forball, forpost;
+
+		bool kickoff;
+		float initX[2][2], initY[2][2], initPhi[2][2]; //initial game position in the field!!!!
+		double blueGoalX, blueGoalY, yellowGoalX, yellowGoalY;
+		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
+		float cX, cY, ct;
 		float bd, bb, bx, by, posx, posy;
 		int side;
 		float robot_x,robot_y,robot_phi,robot_confidence;
+		
+		bool readytokick;
+		int back;
+		int direction;
+		bool obstacleFront;
+		double orientation;
+		
+		int gameState;
+		int teamColor;
+		int playerNumber;
+		
+		bool readRobotConf;
+
+		ptime lastmove, lastball, lastwalk, lastplay;
 };
 
 #endif

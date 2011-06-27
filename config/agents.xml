@@ -18,7 +18,7 @@
 	<name>KVision</name>
 	<activity>Vision</activity>
 	<activity>Localization</activity>
-	<activity>LBehavior</activity>
+	<activity>Behavior</activity>
 <!--
 	<activity>HeadBehavior</activity>
 -->
