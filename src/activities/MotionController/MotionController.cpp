@@ -17,7 +17,7 @@
 
 #define LEANTOOMUCH 0.7
 #define ANGLEHOR 1.6
-#define INTTIME 0.2 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
+#define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
 namespace
 {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
@@ -243,8 +243,16 @@ void MotionController::mglrun()
 
 		float normdist = (accnorm - KDeviceLists::Interpret::GRAVITY_PULL) / KDeviceLists::Interpret::GRAVITY_PULL;
 
-		if ((normdist < -0.35 || normdist > 0.75  ||( fabs(angX+VangX*INTTIME) > ANGLEHOR && fabs(angX)<LEANTOOMUCH) || (fabs(angY+VangY*INTTIME) > ANGLEHOR && fabs(angY)<LEANTOOMUCH) )
-			||(robotUp&& actionPID==0&&(fabs(angX) > LEANTOOMUCH || fabs(angY) >LEANTOOMUCH))  )
+		if (
+			(
+			 normdist < -0.65 || normdist > 0.65  ||
+			( fabs(angX+VangX*INTTIME) > ANGLEHOR && fabs(angX)<LEANTOOMUCH) ||
+			( fabs(angY+VangY*INTTIME) > ANGLEHOR && fabs(angY)<LEANTOOMUCH)
+			)
+
+			||
+			(robotUp&& actionPID==0&&(fabs(angX) > LEANTOOMUCH || fabs(angY) >LEANTOOMUCH))
+		   )
 		{
 			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
 
@@ -1215,21 +1223,36 @@ AL::ALValue config;
 	motion->setMotionConfig(config);
 	*/
 
-	AL::ALValue config;
-	config.arraySetSize(1);
-	config[0].arraySetSize(2);
+
+	std::vector<std::string> names;
+	std::vector<float> values;
+
 	const TiXmlElement *c=d.FirstChildElement();
 	while(c)
 	{
-		config[0][0]=c->Value();
+		names.push_back(c->Value());
+
 		std::istringstream strs( c->GetText() );
 		float v;
 		strs>>v;
-		config[0][1]=v;
-		motion->setMotionConfig(config);
+		values.push_back(v);
 
-		c=d.NextSiblingElement();
+
+		cout<<c->Value()<<":"<<v<<endl;
+
+		c=c->NextSiblingElement();
 	}
+	AL::ALValue config;
+	config.arraySetSize(names.size());
+
+	for(unsigned i=0;i<names.size();i++)
+	{
+		config[i].arraySetSize(2);
+		config[i][0]=names[i];
+		config[i][1]=values[i];
+
+	}
+		motion->setMotionConfig(config);
 
 
 
