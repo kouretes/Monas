@@ -34,8 +34,10 @@ class inttracer_s: public KVecInt2
 	};
 	void initVelocity(int dx,int dy)
 	{
-		sx=dx>0?1:-1; //if zero,
-		sy=dy>0?1:-1; //step is irrelavamt, step is never reached
+		sx=dx>0?1:-1; 
+		sy=dy>0?1:-1;
+		if(dx==0) sx=0;
+		if(dy==0) sy=0;
 
 		idx=abs(dx);
 		idy=abs(dy);
@@ -46,8 +48,8 @@ class inttracer_s: public KVecInt2
 	}
 	void initVelocity(float dx,float dy)
 	{
-		int idx=dx*32768;
-		int idy=dy*32768;
+		int idx=dx*1024;
+		int idy=dy*1024;
 
 		initVelocity(idx,idy);
 	};
@@ -69,12 +71,12 @@ class inttracer_s: public KVecInt2
 	void r_step() //Reverse step
 	{
 		int e2=e*2;
-		if(e2>=-l)
+		if(e2>-l)
 		{
 			y-=sy;
 			e-=idx;
 		}
-		if(e2<=-k)
+		if(e2<-k)
 		{
 			x-=sx;
 			e+=idy;
@@ -114,20 +116,35 @@ int main ()
 	GenMatrix<float,4,4> testS,res,res2 ;
 	matrix<float> m(4,4), foo(4,4),foo2(4,4);
 	
-	tracer_t t;
+	tracer_t t,t2;
 	t.init(0,0);
 	t.initVelocity(0.5f,0.5f);
+	
 	while(true)
 	{
-		float dx=rand()%6;
-		float dy=rand()%6;
+		float dx=rand()%1024;
+		float dy=rand()%1024;
+		int dist=rand()%2000;
+		int diff=rand()%500;
+			t.init(0,0);
 		t.initVelocity(dx,dy);
-		t.steps(100);
-		t.r_steps(100);
+		t2=t;
+		t.steps(dist);
+		t2.steps(dist+diff);
+		t2.r_steps(diff);
+		if(t2!=t)
+		{
+			cout<<"ERROR2:"<<dx<<","<<dy<<","<<dist<<","<<diff<<endl;
+			
+		}
+		t2.r_steps(dist);
+		t.r_steps(dist);
+		
 		if(t.x!=0||t.y!=0)
 		{
-			cout<<"ERROR:"<<dx<<","<<dy<<endl;
+			cout<<"ERROR:"<<dx<<","<<dy<<","<<dist<<","<<diff<<endl;
 		}
+		
 	}
 	
 	
