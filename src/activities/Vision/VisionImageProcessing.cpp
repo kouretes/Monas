@@ -1504,7 +1504,7 @@ Vision::traceResult Vision::traceline(KVecInt2 const & start, KVecInt2 const& ve
 		prftch-=vel;
 	}
 
-	while (validpixel(ftch.x,ftch.y))
+	while (true)
 	{
 
 		if(colorIsA(doSeg(ftch.x, ftch.y,c) ,c) )
@@ -1518,15 +1518,18 @@ Vision::traceResult Vision::traceline(KVecInt2 const & start, KVecInt2 const& ve
 				break;
 			for(int i=0;i<PREFETCH-1;++i)
 			{
-				prepSeg(prftch.x,prftch.y);
-				prftch-=vel;
+				if(limit!=prftch)
+				{
+					prepSeg(prftch.x,prftch.y);
+					prftch-=vel;
+				}
 			}
 		}
 		else
 		{
+			ftch-=vel;
 			if(ftch==limit)
 				break;
-			ftch-=vel;
 
 
 			if(limit!=prftch)
@@ -1577,7 +1580,7 @@ Vision::traceResult Vision::traceline(KVecInt2 const & start, KVecFloat2 const& 
 		//prftch.prettyPrint();
 	}
 
-	while (validpixel(ftch.x,ftch.y))
+	while (true)
 	{
 
 		if(colorIsA(doSeg(ftch.x, ftch.y,c) ,c) )
@@ -1600,9 +1603,10 @@ Vision::traceResult Vision::traceline(KVecInt2 const & start, KVecFloat2 const& 
 		}
 		else
 		{
+
+			ftch.r_step();
 			if(ftch==limit)
 				break;
-			ftch.r_step();
 
 
 			if(limit!=prftch)
