@@ -71,7 +71,6 @@ class HeadBehavior: public IActivity {
 		int headaction;
 		int prevaction;
 		int curraction;
-		boost::posix_time::ptime lastturn;
 		bool field;
 		int state;
 		float headpos;

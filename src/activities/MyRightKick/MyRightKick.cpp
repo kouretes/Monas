@@ -21,13 +21,16 @@ int MyRightKick::Execute() {
 	amot->set_command("RightKick");
 	_blk->publishSignal(*amot, "motion");
 
+	rpm->set_goalietopos(true);
+	_blk->publishSignal(*rpm, "behavior");
+	
 	return 0;
 }
 
 void MyRightKick::UserInit () {
 	_blk->subscribeTo("behavior",0);
 	amot = new MotionActionMessage();
-
+	rpm = new ReturnToPositionMessage();
 }
 
 std::string MyRightKick::GetName () {

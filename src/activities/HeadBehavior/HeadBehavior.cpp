@@ -72,14 +72,17 @@ int HeadBehavior::Execute() {
 	}
 	else
 		obsmbearing=-1;
-	if(headaction==SCANFORBALL)
+	if(headaction==SCANFORBALL || headaction == HIGHSCANFORBALL)
 	{
-		if(ballLastSeen+seconds(1) >= now &&ballFirstSeen+seconds(1) < now )
+		if(ballLastSeen+seconds(1) >= now &&ballFirstSeen+seconds(1) < now  && obsm && obsm->has_ball() && obsm->ball().dist()>=0.2)
 		{
 			headaction=SCANFORPOST;
 			if(obsmbearing==-1&&lastbearing!=-1) {obsmbearing=lastbearing;};
 		}
-		else if(!(bmsg != 0 &&bmsg->radius() > 0)&&lastgoodbmsg.get()) {bmsg=lastgoodbmsg;};
+		else if(!(bmsg != 0 &&bmsg->radius() > 0)&&lastgoodbmsg.get()) {
+			bmsg=lastgoodbmsg; 
+			headaction = BALLTRACK;
+		}
 
 	}
 	if (bmsg != 0 && bmsg->radius() > 0) { //This means that a ball was found
@@ -100,11 +103,10 @@ int HeadBehavior::Execute() {
 		hbmsg->set_ballfound(1);
 
 	} else {
-			if (ballLastSeen+seconds(1.5) > now){ //Lost
+			if (ballLastSeen+seconds(3) > now){ //Lost
 				startscan=true;
 
 				hbmsg->set_ballfound(0);
-				lastturn=now+seconds(4);
 			}
 	}
 	if(obsmbearing!=-1)
@@ -155,20 +157,21 @@ int HeadBehavior::Execute() {
 			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
+				//hbmsg->set_ballfound(1);
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 			} else if (asvm != 0&&ballLastSeen+milliseconds(500)<now) {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
 				HeadScanStep();
-
+				
 			}
 			break;
 		case (HIGHSCANFORBALL):
 			Logger::Instance().WriteMsg("HeadBehavior",  " HIGHSCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
-				hbmsg->set_ballfound(1);
+				//hbmsg->set_ballfound(1);
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 			} else{
 				highheadscanstep(1.8);	
@@ -177,20 +180,20 @@ int HeadBehavior::Execute() {
 		
 		case (SCANFORPOST):
 			if (bmsg != 0 && bmsg->radius() > 0) {
-				MakeTrackBallAction();
+				//MakeTrackBallAction();
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
 			hbmsg->set_ballfound(1);
-			}else{
-				if(newBearing)
-				{
-					headmotion(obsmbearing, -0.55);
-				}
-				else if (asvm != 0 && GoalLastSeen+milliseconds(500)<now) {
-					//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
-					highheadscanstep(2.08);
-				}
-
 			}
+			if(newBearing)
+			{
+				headmotion(-0.55,obsmbearing);
+			}
+			else if (asvm != 0 && GoalLastSeen+milliseconds(500)<now) {
+				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
+				highheadscanstep(2.08);
+			}
+
+			
 			
 			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
@@ -201,6 +204,9 @@ int HeadBehavior::Execute() {
 			break;
 			
 		case (SCANFIELD):
+			if (bmsg != 0 && bmsg->radius() > 0) {
+				hbmsg->set_ballfound(1);
+			}
 			if(asvm != 0){
 				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
@@ -300,7 +306,6 @@ void HeadBehavior::HeadScanStep() {
 	}
 	
 	if ((targetYaw>=YAWMAX || targetYaw<=YAWMIN) && (targetPitch>=PITCHMAX || targetPitch<=PITCHMIN)){
-		lastturn=microsec_clock::universal_time()+seconds(4);
 		scmsg->set_scancompleted(1);
 		_blk->publishSignal(*scmsg, "behavior");
 	}

@@ -330,3 +330,5 @@ int Stare::toFallOrNotToFall( WorldInfo* doi){
 	Logger::Instance().WriteMsg("toFallOrNotToFall",  " no foot", Logger::Info);
 	return 0;	
 }
+
+//void Stare::robotInGoalieArea()

@@ -41,15 +41,16 @@ int GoToPosition::Execute() {
 		return 0;
 	}
 		
-	if(confidence<goodConfidence && lastMove <= microsec_clock::universal_time()){
+	if(confidence<badConfidence && lastMove <= microsec_clock::universal_time()){
 		
-		if(lastObsm + seconds(20) <microsec_clock::universal_time() ){
-			littleWalk(0.0, 0.0, 120*TO_RAD);
-			lastMove = microsec_clock::universal_time() + seconds(2);
-		}else{
-			velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-			lastMove = microsec_clock::universal_time() + milliseconds(500);
+		if(lastObsm + seconds(10) <microsec_clock::universal_time() ){
+			velocityWalk(0.5, 0.5, 0.0, 0.7);
+			lastMove = microsec_clock::universal_time()+ milliseconds(500);
 		}
+		//else{
+			//velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+			//lastMove = microsec_clock::universal_time() + milliseconds(500);
+		//}
 		return 0;
 	}
 		
@@ -67,17 +68,22 @@ int GoToPosition::Execute() {
 		velx/=2.0;
 		vely/=2.0;	
 		rot = relativePhi*0.5;
-		f = dist;
+		f = dist*2;
 	}else if(dist>1){
 		velx/=4.0;
 		vely/=4.0;	
 		rot = angleToTarget*0.4;
-		f = 0.5;
+		f = 0.6;
 	}else{
 		rot = angleToTarget*0.1;
 		f = 1;
 	}
-
+		rot = rot>1.0 ? 1.0:rot;
+		rot = rot<-1.0 ? -1.0:rot;
+		velx = velx>1.0 ? 1.0: velx;
+		velx = velx<-1.0 ? -1.0 : velx;
+		vely = vely>1.0 ? 1.0: vely;
+		vely = vely<-1.0 ? -1.0 : vely;
 	//Logger::Instance().WriteMsg(GetName(),  " if", Logger::Info);
 	if(lastMove <= microsec_clock::universal_time()){
 		Logger::Instance().WriteMsg(GetName(),  " walk", Logger::Info);
@@ -159,7 +165,7 @@ float GoToPosition::rotation(float a, float b, float theta){
 float GoToPosition::distance(float x1, float x2, float y1, float y2){
 	//Logger::Instance().WriteMsg("Distance",  " Entered", Logger::Info);
 	float dis;
-	dis = sqrt(pow((x2-x1), 2)+ pow((y2-y1), 2));
+	dis = sqrt((pow((x2-x1), 2)+ pow((y2-y1), 2)));
 	
 	return dis;
 }

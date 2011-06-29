@@ -59,7 +59,7 @@ int NoPlay::Execute() {
 			_blk->publishState(*pmsg, "behavior");
 	//		Logger::Instance().WriteMsg(GetName(),  " publish pos", Logger::Info);
 			rpm->set_goalietopos(true);
-			_blk->publishState(*rpm, "behavior");
+			_blk->publishSignal(*rpm, "behavior");
 //			Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
 		
 		//goToPosition(initX, initY, initPhi);
@@ -99,10 +99,15 @@ int NoPlay::Execute() {
 				curraction = CALIBRATE;
 				if(prevaction!=CALIBRATE){
 			//		Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+					calibrate_time = boost::posix_time::microsec_clock::universal_time();
 					bhmsg->set_headaction(curraction);	
 				}
 				else{
-					bhmsg->set_headaction(DONOTHING);	
+					if(calibrate_time+boost::posix_time::seconds(15) >boost::posix_time::microsec_clock::universal_time()){
+						bhmsg->set_headaction(curraction);	
+						calibrate_time = boost::posix_time::microsec_clock::universal_time();
+					}else
+						bhmsg->set_headaction(DONOTHING);	
 		//			Logger::Instance().WriteMsg(GetName(),  " playerinitial DONOTHING", Logger::Info);
 				}
 			}else
@@ -140,6 +145,7 @@ void NoPlay::UserInit () {
 	lastMove =  boost::posix_time::microsec_clock::universal_time();
 	lastObsm =  boost::posix_time::microsec_clock::universal_time();
 	firstInit =  boost::posix_time::microsec_clock::universal_time();
+	calibrate_time =  boost::posix_time::microsec_clock::universal_time();
 	currstate = PLAYER_PENALISED;
 	prevstate = PLAYER_PENALISED;
 	//wmot = new MotionWalkMessage();

@@ -13,7 +13,7 @@ namespace {
 
 int ApproachBall::Execute() {
 
-	//Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
+	Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
 	
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 	wimsg = _blk->readData<WorldInfo> ("behavior");
@@ -81,6 +81,9 @@ int ApproachBall::Execute() {
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 
+	rpm->set_goalietopos(true);
+	_blk->publishSignal(*rpm, "behavior");
+	
 	return 0;
 }
 
@@ -97,6 +100,7 @@ void ApproachBall::UserInit () {
 	wmot.add_parameter(0.0f);
 	bhmsg = new BToHeadMessage();
 	lastObsm = new ObservationMessage();
+	rpm = new ReturnToPositionMessage();
 	headaction= BALLTRACK;
 }
 
