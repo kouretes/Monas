@@ -468,11 +468,11 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	float ratio;
 
 	tracer_t l,r;
-	l.init(goal.tl.x,goal.tl.y);
-	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
+	l.init(goal.tl.x,goal.top.y);
+	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.top.y);
 	//l.setScale(config.subsampling);
-	r.init(goal.tr.x,goal.tr.y);
-	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
+	r.init(goal.tr.x,goal.top.y);
+	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.top.y);
 	//r.setScale(config.subsampling);
 	const int w=(r.x-l.x)+1;
 	const int sub=config.subsampling;
@@ -665,7 +665,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		lr.x=0;
 
 
-		at.init(newpost.bot.x,newpost.bot.y);
+		at.init(newpost.bot.x+(newpost.top.x-newpost.bot.x)/5,newpost.bot.y+(newpost.top.y-newpost.bot.y)/5);
 		at.initVelocity(newpost.top.x-newpost.bot.x,newpost.top.y-newpost.bot.y	);
 		//int suml=0,sumr=0;
 		for(int k=0;k<config.subsampling;k++)
@@ -686,7 +686,8 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			at.step();
 		}
 		ll.x/=config.subsampling;
-		lr.y/=config.subsampling;
+		lr.x/=config.subsampling;
+
 		//Back to unrotated coords
 		newpost.ll=simpleRotation(ll);
 		newpost.lr=simpleRotation(lr);
@@ -722,7 +723,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			at.step();
 		}
 		tl.x/=config.subsampling;
-		tr.y/=config.subsampling;
+		tr.x/=config.subsampling;
 
 		//newpost.tl.x=suml/(config.subsampling);
 		//newpost.tr.x=sumr/(config.subsampling);
