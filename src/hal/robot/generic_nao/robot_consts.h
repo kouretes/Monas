@@ -98,6 +98,8 @@ namespace KDeviceLists
 		static const float GRAVITY_PULL=9.81f; //(m/s^2)
 
 		static const float GYR_Z_REF=1230; //expected value of GYR_Z
+		static const float GYR_Z_RAW=-1680; //expected value of GYR_Z_RAW
+		static const float ACC_NORM=58; //expected value of GYR_Z_RAW
 		static const float GYR_GAIN=(-1/2.0f)*0.017453; //(1 / (2mv/deg/sec))* gyr ref
 
 
