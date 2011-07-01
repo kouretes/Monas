@@ -17,6 +17,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/robot_consts.h"
 
+
 using namespace boost::posix_time;
 
 
@@ -133,7 +134,9 @@ void LBehavior::UserInit() {
 	srand(time(0));
 
 	lastwalk = microsec_clock::universal_time();
-	lastball = microsec_clock::universal_time();
+
+	lastrun  = lastball = lastwalk;
+	lastkick=lastrun-seconds(4);
 
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
@@ -175,30 +178,33 @@ int LBehavior::Execute() {
 
 	read_messages();
 
+	ptime now=microsec_clock::microsec_clock::universal_time();
+	ptime prelastrun=lastrun;
+	ptime lastrun=now;
 	if (gsm != 0) {
 		Logger::Instance().WriteMsg("LBehavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		gameState = gsm->player_state();
 		teamColor = gsm->team_color();
 
 		if (gameState == PLAYER_PLAYING) {
-//			if (calibrated == 2) {
-//				play = true;
-//				//littleWalk(0.01,0.0,0.0,1);
-//			}
-//			else if (calibrated == 0) {
-//				calibrate();
-//			}
-//			else if (calibrated == 1) {
-//				// wait
-//			}
-			if (calibrated == 0)
+			if (calibrated == 2) {
+				play = true;
+				//littleWalk(0.01,0.0,0.0,1);
+			}
+			else if (calibrated == 0) {
+				calibrate();
+			}
+			else if (calibrated == 1) {
+				// wait
+			}
+			/*if (calibrated == 0)
 			{
 				calibrate();
 			}
 			int p = ((kickoff = gsm->kickoff()))?0:1;
 			gotoPosition(initX[p][teamColor],initY[p][teamColor],initPhi[p][teamColor]);
 			play = false;
-			return 0;
+			return 0;*/
 
 		}
 		else if (gameState == PLAYER_INITIAL) {
@@ -240,12 +246,6 @@ int LBehavior::Execute() {
 		}
 
 	}
-
-	//if (play) test();
-	//return 1;
-	static  int kickno=0;
-	static ptime lastkick=microsec_clock::universal_time()+seconds(4);
-
 	if (play) {
 
 		if (bmsg != 0) {
@@ -254,10 +254,10 @@ int LBehavior::Execute() {
 				scanforball = false; //if you are scanning for ball please stop now
 				back = 0;
 				MakeTrackBallAction();
-				lastball = microsec_clock::universal_time();
+				lastball = now;
 				ballfound = 1;
 			} else {
-				if (lastball+seconds(4)<microsec_clock::universal_time())
+				if (lastball+seconds(4)<now)
 					ballfound = 0;
 			}
 		}
@@ -266,14 +266,14 @@ int LBehavior::Execute() {
 
 		//float X=0.0, Y=0.0, theta=0.0;
 		float bd=0.0, bx=0.0, by=0.0, bb=0.0;
-		float posx=0.115, posy=0.04;
+		float posx=0.117, posy=0.04;
 		//static float lastx=0,lasty=0;
 
 		if(wim != 0 && !turning){
 			if (wim->balls_size() > 0) {
 				int side=1;
-				bx = wim->balls(0).relativex();
-				by = wim->balls(0).relativey();
+				bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*(now-wimtime).total_milliseconds()/1000.0;
+				by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*(now-wimtime).total_milliseconds()/1000.0;
 				bd = sqrt(pow(bx,2)+pow(by,2));
 				bb = atan2(by,bx);
 
@@ -284,7 +284,7 @@ int LBehavior::Execute() {
 
 					readytokick = true;
 
-					if ( fabs( bx - posx ) > 0.01  || fabs( by - (side*posy) ) > 0.06) {
+					if ( fabs( bx - posx ) > 0.015  || fabs( by - (side*posy) ) > 0.015) {
 						//Y = gainFine * ( by - (side*posy) );
 						readytokick = false;
 					}
@@ -301,7 +301,7 @@ int LBehavior::Execute() {
 							X=X>1?1:X;
 							X=X<-1?-1:X;
 							//Y=(by-offsety)*1.6;
-							Y=(by-offsety)*3;
+							Y=(by-offsety)*4;
 	//
 	//						lastx=bx;
 	//						lasty=by;
@@ -312,9 +312,6 @@ int LBehavior::Execute() {
 									th=0.2 *Y;
 								else
 									th=0.1 *Y;
-
-								Y=Y*2.0/3.0;
-								X=X*2.0/3.0;
 
 							}
 							else
@@ -475,7 +472,7 @@ void LBehavior::read_messages() {
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
 	//obsm = _blk->readSignal<ObservationMessage> ("vision");
 	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
-	wim  = _blk->readData<WorldInfo> ("behavior");
+	wim  = _blk->readData<WorldInfo> ("behavior","localhost",&wimtime);
 
 
 	//Logger::Instance().WriteMsg("LBehavior", "read_messages ", Logger::ExtraExtraInfo);
@@ -497,14 +494,14 @@ void LBehavior::velocityWalk(double ix, double iy, double it, double f)
 	x = ix;
 	y = iy;
 	t = it;
-	
+
 	wmot->set_command("setWalkTargetVelocity");
-	
+
 	if ( (x==0.0) && (y==0.0) && (t==0.0) ) {
 		cX = 0.0;
 		cY = 0.0;
 		ct = 0.0;
-	} 
+	}
 	else {
 		if( lastwalk + milliseconds(200) > microsec_clock::universal_time() )
 			return;
@@ -514,9 +511,9 @@ void LBehavior::velocityWalk(double ix, double iy, double it, double f)
 		y = y<-1.0?-1.0:y;
 		t = t>+1.0?+1.0:t;
 		t = t<-1.0?-1.0:t;
-		cX = 0.25*cX+0.75*x;
-		cY = 0.25*cY+0.75*y;
-		ct = 0.25*ct+0.75*t;
+		cX = 0.75*cX+0.25*x;
+		cY = 0.75*cY+0.25*y;
+		ct = 0.75*ct+0.25*t;
 	}
 
 	wmot->set_parameter(0, cX);
@@ -695,7 +692,7 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 	float Robot2Target_bearing = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
 	float Distance2Target = sqrt((target_x-robot_x)*(target_x-robot_x)+(target_y-robot_y)*(target_y-robot_y));
 
-	cout<<"Distance2Target:"<<Distance2Target<<endl;
+//	cout<<"Distance2Target:"<<Distance2Target<<endl;
 
 	//cout << "Robot2Target_bearing*TO_DEG  " << Robot2Target_bearing * TO_DEG << endl;
 	//cout << atan2(target.y - AgentPosition.y, target.x - AgentPosition.x) << endl;

@@ -17,6 +17,9 @@ Behavior::Behavior() {
 
 }
 
+/* Utility Functions */ 
+/* TODO: remove and place in some common utilities file */
+
 double wrapToPi(double angle)
 {
 	while (angle > M_PI)
@@ -25,6 +28,7 @@ double wrapToPi(double angle)
 		angle += 2.0 * M_PI;
 	return angle;
 }
+
 double wrapTo2Pi(double angle)
 {
 	while (angle > 2.0 * M_PI)
@@ -33,11 +37,12 @@ double wrapTo2Pi(double angle)
 		angle += 2.0 * M_PI;
 	return angle;
 }
+
 double wrapTo0_2Pi(double angle)
 {
 	while (angle > 2.0 * M_PI)
 		angle -= 2.0 * M_PI;
-	while (angle < 0)
+	while (angle < 0.0)
 		angle += 2.0 * M_PI;
 	return angle;
 }
@@ -52,6 +57,13 @@ double anglediff(double a1, double a2)
 	return fabs(wrapTo0_2Pi(a1 + M_PI - a2) - M_PI);
 }
 
+double mglRand()
+{
+    return rand() / double(RAND_MAX);
+}
+
+
+/* Behavior Initialization */
 
 void Behavior::UserInit() {
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
@@ -66,32 +78,22 @@ void Behavior::UserInit() {
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
-	hmot = new MotionHeadMessage();
-	//hmot->set_topic("motion");
-	//hmot->add_parameter(0.0f);
-	//hmot->add_parameter(0.0f);
 
-	leftright = 1;
-	headpos = 0;
+	hmot = new MotionHeadMessage();
 	hmot->set_command("setHead");
 	hmot->add_parameter(0.0f);
 	hmot->add_parameter(-0.66322512);
 
 	amot = new MotionActionMessage();
-	for (int i = 0; i < 2; i++)     	// i: kick-off
-		for (int j = 0; j < 2; j++){	// j: team color
-			initX[i][j] = 0.0;
-			initY[i][j] = 0.0;
-			initPhi[i][j] = 0.0;
-		}
-	blueGoalX = 0.0, blueGoalY = 0.0, yellowGoalX = 0.0, yellowGoalY = 0.0;
 
 	locReset = new LocalizationResetMessage();
 
-
-	ballfound = 0;
 	readRobotConf = false;
 
+	leftright = 1;
+	headpos = 0;
+	
+	ballfound = 0;
 	scanforball = true;
 	startscan = true;
 	calibrated = 0;
@@ -100,18 +102,32 @@ void Behavior::UserInit() {
 	forpost = 0;
 
 	kickoff = false;
-	cX=0.0;cY=0.0;ct=0.0;
+	for (int i = 0; i < 2; i++)     	// i: kick-off
+		for (int j = 0; j < 2; j++){	// j: team color
+			initX[i][j] = 0.0;
+			initY[i][j] = 0.0;
+			initPhi[i][j] = 0.0;
+		}
+	blueGoalX = 0.0; blueGoalY = 0.0; yellowGoalX = 0.0; yellowGoalY = 0.0;
+	cX=0.0; cY=0.0; ct=0.0;
 	bd=0.0; bb=0.0; bx=0.0; by=0.0; posx=0.0; posy=0.0;
 	side = +1;
-	robot_x = 0.0, robot_y = 0.0, robot_phi = 0.0, robot_confidence = 1.0;
+	robot_x = 0.0; robot_y = 0.0; robot_phi = 0.0; robot_confidence = 1.0;
 
 	readytokick = false;
 	back = 0;
 	direction = 1;
-	count = 0;
 	obstacleFront = false;
+	orientation = 0;
+	
 	gameState = PLAYER_INITIAL;
 	teamColor = TEAM_BLUE;
+	playerNumber = 1;
+
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
+	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	// reads initX, initY, initPhi
+	readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");		// reads blueGoalX, blueGoalY, yellowGoalX, yellowGoalY
+	
 	if (teamColor == TEAM_BLUE){
 		oppGoalX = yellowGoalX;
 		oppGoalY = yellowGoalY;
@@ -124,32 +140,18 @@ void Behavior::UserInit() {
 		ownGoalX = yellowGoalX;
 		ownGoalY = yellowGoalY;
 	}
-	orientation = 0;
-
+	
 	srand(time(0));
-
 	lastmove = microsec_clock::universal_time();
 	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
 
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
-	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
-	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");
-
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
 
-void Behavior::mgltest() {
 
-	if (om!=0) {
-		Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
-		if (om->direction() == 0)
-			velocityWalk(0.0, 0.0, 1.0, 1.0);
-	}
-	else
-		velocityWalk(1.0, 0.0, 0.0, 1.0);
-}
+/* Behavior Main Execution Function */
 
 int Behavior::Execute() {
 
@@ -195,7 +197,7 @@ int Behavior::Execute() {
 				gain = fminf(1.0, 0.0+(maxd/0.5));
 				X = gain*(bx-posx)/maxd;
 				Y = gain*(by-side*posy)/maxd;
-				t = gain*(bb/3.14);
+				t = gain*(bb/M_PI);
 				velocityWalk(X,Y,t,f);
 			}
 		}
@@ -247,6 +249,113 @@ int Behavior::Execute() {
 }
 
 
+/* Read Incoming Messages */
+
+void Behavior::read_messages() 
+{
+	gsm  = _blk->readState<GameStateMessage> ("behavior");
+	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
+	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
+	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
+	wim  = _blk->readData<WorldInfo> ("behavior");
+
+	Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
+	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
+	if (c != NULL) {
+		if (c->status() == 1)
+			calibrated = 2;
+	}
+}
+
+
+/* Information Gathering Functions */
+
+void Behavior::GetGameState()
+{
+	if (gsm != 0) {
+		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
+		int prevGameState = gameState;
+		gameState = gsm->player_state();
+		teamColor = gsm->team_color();
+
+		if (teamColor == TEAM_BLUE){
+			oppGoalX = yellowGoalX;
+			oppGoalY = yellowGoalY;
+			ownGoalX = blueGoalX;
+			ownGoalY = blueGoalY;
+		}
+		else {
+			oppGoalX = blueGoalX;
+			oppGoalY = blueGoalY;
+			ownGoalX = yellowGoalX;
+			ownGoalY = yellowGoalY;
+		}
+
+		if (gameState == PLAYER_PLAYING) {
+			if (prevGameState == PLAYER_PENALISED){
+				calibrated = 0;
+				_blk->publishSignal(*locReset, "behavior");
+			}
+			if (prevGameState == PLAYER_SET)
+				lastplay = microsec_clock::universal_time();
+		}
+		else if (gameState == PLAYER_INITIAL) {
+			if (gameState != prevGameState)
+				calibrated = 0;
+		}
+		else if (gameState == PLAYER_READY) {
+			if (gameState != prevGameState) {
+				velocityWalk(0.0, 0.0, 0.0, 1.0);
+				calibrated = 0;
+			}
+		}
+		else if (gameState == PLAYER_SET) {
+			kickoff = gsm->kickoff();
+			if (gameState != prevGameState) 
+				velocityWalk(0.0, 0.0, 0.0, 1.0);
+		}
+		else if (gameState == PLAYER_FINISHED) {
+			;
+		}
+		else if (gameState == PLAYER_PENALISED) {
+			kickoff = gsm->kickoff();
+		}
+	}
+}
+
+
+void Behavior::GetPosition() {
+	if(wim.get() != 0){
+		robot_x = wim->myposition().x();
+		robot_y = wim->myposition().y();
+		robot_phi = wim->myposition().phi();
+		robot_confidence = wim->myposition().confidence();
+
+		Logger::Instance().WriteMsg("Behavior",  "MY POSITION x:" + _toString(robot_x) + " y:" + _toString(robot_y) + " phi:" + _toString(robot_phi/TO_RAD), Logger::Info);
+	}else{
+		Logger::Instance().WriteMsg("Behavior",  "No WorldInfo Message" , Logger::Error);
+		return;
+	}
+}
+
+
+void Behavior::UpdateOrientation()
+{
+	float ogb = anglediff2(atan2(oppGoalY - robot_y, oppGoalX - robot_x), robot_phi);
+
+	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
+		orientation = 0;
+	} else if ((fabs(ogb) > +45 * TO_RAD) && (fabs(ogb) <= +135 * TO_RAD)) {
+		orientation = 1;
+	} else if ((fabs(ogb) > +135 * TO_RAD) || (fabs(ogb) <= -135 * TO_RAD)) {
+		orientation = 2;
+	} else if ((fabs(ogb) <= -45 * TO_RAD) && (fabs(ogb) > -135 * TO_RAD)) {
+		orientation = 3;
+	}
+	Logger::Instance().WriteMsg("Behavior", "OPPGOALX " + _toString(oppGoalX) + "OPPGOALY " + _toString(oppGoalY) + "OGB " + _toString(ogb)+ "ORIENTATION " + _toString(orientation), Logger::Info);
+}
+
+
 void Behavior::CheckForBall() {
 
 	if (bmsg != 0) {
@@ -257,11 +366,10 @@ void Behavior::CheckForBall() {
 			lastball=microsec_clock::universal_time();
 			ballfound = 1;
 		} else {
-			if (lastball+seconds(4)<microsec_clock::universal_time())
+			if (lastball+seconds(3)<microsec_clock::universal_time())
 				ballfound = 0;
 		}
 	}
-	//Logger::Instance().WriteMsg("Behavior", "ballfound Value: " + _toString(ballfound), Logger::ExtraInfo);
 	
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
@@ -285,6 +393,9 @@ int Behavior::MakeTrackBallAction() {
 		
 	return 1;
 }
+
+
+/* Head Scanning Functions */
 
 void Behavior::HeadScanStep() {
 
@@ -345,6 +456,7 @@ void Behavior::HeadScanStep() {
 	return ;
 }
 
+
 void Behavior::HighHeadScanStep(float yaw_limit) {
 
 	hmot->set_command("setHead");
@@ -362,6 +474,9 @@ void Behavior::HighHeadScanStep(float yaw_limit) {
 		hmot->set_parameter(1, (-0.0698 * (fabs(headpos)-1.57)) - 0.52);
 	_blk->publishSignal(*hmot, "motion");
 }
+
+
+/* Kicking */
 
 void Behavior::Kick(int side) {
 
@@ -404,83 +519,7 @@ void Behavior::Kick(int side) {
 }
 
 
-void Behavior::GetGameState()
-{
-	if (gsm != 0) {
-		Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
-		int prevGameState = gameState;
-		gameState = gsm->player_state();
-		teamColor = gsm->team_color();
-
-		if (teamColor == TEAM_BLUE){
-			oppGoalX = yellowGoalX;
-			oppGoalY = yellowGoalY;
-			ownGoalX = blueGoalX;
-			ownGoalY = blueGoalY;
-		}
-		else {
-			oppGoalX = blueGoalX;
-			oppGoalY = blueGoalY;
-			ownGoalX = yellowGoalX;
-			ownGoalY = yellowGoalY;
-		}
-
-
-		if (gameState == PLAYER_PLAYING) {
-			if (prevGameState == PLAYER_PENALISED){
-				calibrated = 0;
-				_blk->publishSignal(*locReset, "behavior");
-			}
-			if (prevGameState == PLAYER_SET)
-				lastplay = microsec_clock::universal_time();
-		}
-		else if (gameState == PLAYER_INITIAL) {
-			if (gameState != prevGameState)
-				calibrated = 0;
-		}
-		else if (gameState == PLAYER_READY) {
-			if (gameState != prevGameState) {
-				velocityWalk(0.0, 0.0, 0.0, 1.0);
-				calibrated = 0;
-			}
-		}
-		else if (gameState == PLAYER_SET) {
-			kickoff = gsm->kickoff();
-			if (gameState != prevGameState) 
-				velocityWalk(0.0, 0.0, 0.0, 1.0);
-		}
-		else if (gameState == PLAYER_FINISHED) {
-			;
-		}
-		else if (gameState == PLAYER_PENALISED) {
-			kickoff = gsm->kickoff();
-		}
-	}
-}
-
-
-void Behavior::read_messages() 
-{
-	gsm  = _blk->readState<GameStateMessage> ("behavior");
-	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
-	wim  = _blk->readData<WorldInfo> ("behavior");
-
-	Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
-	if (c != NULL) {
-		if (c->status() == 1)
-			calibrated = 2;
-	}
-}
-
-
-double Behavior::mglRand()
-{
-    return rand() / double(RAND_MAX);
-}
-
+/* Locomotion Functions */
 
 void Behavior::velocityWalk(double ix, double iy, double it, double f)
 {
@@ -529,166 +568,7 @@ void Behavior::littleWalk(double x, double y, double th)
 }
 
 
-void Behavior::calibrate()
-{
-	CalibrateCam v;
-	v.set_status(0);
-	_blk->publishState(v, "vision");
-	calibrated = 1;
-}
-
-void Behavior::UpdateOrientation()
-{
-	float ogb = anglediff2(atan2(oppGoalY - robot_y, oppGoalX - robot_x), robot_phi);
-
-	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
-		orientation = 0;
-	} else if ((fabs(ogb) > +45 * TO_RAD) && (fabs(ogb) <= +135 * TO_RAD)) {
-		orientation = 1;
-	} else if ((fabs(ogb) > +135 * TO_RAD) || (fabs(ogb) <= -135 * TO_RAD)) {
-		orientation = 2;
-	} else if ((fabs(ogb) <= -45 * TO_RAD) && (fabs(ogb) > -135 * TO_RAD)) {
-		orientation = 3;
-	}
-	Logger::Instance().WriteMsg("Behavior", "OPPGOALX " + _toString(oppGoalX) + "OPPGOALY " + _toString(oppGoalY) + "OGB " + _toString(ogb)+ "ORIENTATION " + _toString(orientation), Logger::Info);
-}
-
-
-bool Behavior::readConfiguration(const std::string& file_name) {
-	XMLConfig config(file_name);
-
-	playernum = -1;
-	if (!config.QueryElement("player", playernum))
-		Logger::Instance().WriteMsg("LBehavior", "Configuration file has no player, setting to default value: " + _toString(playernum), Logger::Error);
-
-	//If color is changed default configuration color does need to be changed
-	std::string color = "blue";
-	teamColor = TEAM_BLUE;
-	if (!config.QueryElement("default_team_color", color))
-		Logger::Instance().WriteMsg("LBehavior", "Configuration file has no team_color, setting to default value: " + color, Logger::Error);
-	if (color == "blue")
-		teamColor = TEAM_BLUE;
-	else if (color == "red")
-		teamColor = TEAM_RED;
-	else
-		Logger::Instance().WriteMsg("LBehavior", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
-
-	return true;
-}
-
-/*
- * this function set's initial robot's position:
- * in x axis : initX in meters
- * in y axis : initY in meters
- * in rotation : initPhi in rads
- *
- *
- * This function is used in PLAYER_READY state
- *  */
-bool Behavior::readRobotConfiguration(const std::string& file_name) {
-	if(playernum==-1){
-		Logger::Instance().WriteMsg("LBehavior",  " Invalid player number "  , Logger::Error);
-		return false;
-	}
-	readRobotConf = true;
-	XML config(file_name);
-	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont teamPositions, robotPosition ;
-	Logger::Instance().WriteMsg("LBehavior",  " readConf "  , Logger::Info);
-
-	for (int i = 0; i < 2; i++)  //KICKOFF==0, NOKICKOFF == 1
-	{
-		string kickoff=(i==0)?"KickOff":"noKickOff";
-		bool found = false;
-
-		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
-
-		if (teamPositions.size() != 0)
-			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
-
-//		Logger::Instance().WriteMsg("LBehavior", " teamPo size" + _toString(teamPositions.size()) + "robotPos size" + _toString(robotPosition.size()), Logger::Info);
-
-		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++)
-		{
-//			Logger::Instance().WriteMsg("LBehavior", " it ", Logger::Info);
-			if (it->attrb["number"] == playernum)
-			{
-				initPhi[i][TEAM_BLUE] = 0;
-				initX[i][TEAM_BLUE] = -1*(it->attrb["posx"]);
-				initY[i][TEAM_BLUE] = -1*(it->attrb["posy"]);
-
-				initPhi[i][TEAM_RED] = 180 * TO_RAD;
-				initX[i][TEAM_RED] = (it->attrb["posx"]);
-				initY[i][TEAM_RED] = (it->attrb["posy"]);
-
-				Logger::Instance().WriteMsg("LBehavior", " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
-				Logger::Instance().WriteMsg("LBehavior", " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
-
-				found = true;
-			}
-		}
-		if(!found)
-		{
-			Logger::Instance().WriteMsg("LBehavior",  " Unable to find initial " + kickoff+ " position for player number " + _toString(playernum) , Logger::Error);
-			readRobotConf = false;
-		}
-	}
-	return readRobotConf;
-}
-
-
-bool Behavior::LoadFeaturesXML(const std::string& file_name) {
-	TiXmlDocument doc2(file_name.c_str());
-
-	bool loadOkay = doc2.LoadFile();
-	if (loadOkay) {
-		printf("\n%s:\n", file_name.c_str());
-		//dump_to_stdout(&doc2); // defined later in the tutorial
-	} else {
-		printf("Failed to load file \"%s\"\n", file_name.c_str());
-		return false;
-	}
-
-	TiXmlNode * Ftr;
-	TiXmlElement * Attr;
-	double x, y;
-	string ID;
-
-	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling()) {
-		Attr = Ftr->ToElement();
-		Attr->Attribute("x", &x);
-		Attr->Attribute("y", &y);
-		ID = Attr->Attribute("ID");
-
-		if (ID == "SkyblueGoal"){
-			blueGoalX = x/1000.0;
-			blueGoalY = y/1000.0;
-		}
-		if (ID == "YellowGoal"){
-			yellowGoalX = x/1000.0;
-			yellowGoalY = y/1000.0;
-		}
-	}
-
-	return true;
-}
-
-void Behavior::GetPosition() {
-	if(wim.get() != 0){
-		robot_x = wim->myposition().x();
-		robot_y = wim->myposition().y();
-		robot_phi = wim->myposition().phi();
-		robot_confidence = wim->myposition().confidence();
-
-		Logger::Instance().WriteMsg("Behavior",  "MY POSITION x:" + _toString(robot_x) + " y:" + _toString(robot_y) + " phi:" + _toString(robot_phi/TO_RAD), Logger::Info);
-	}else{
-		Logger::Instance().WriteMsg("Behavior",  "No WorldInfo Message" , Logger::Error);
-		return;
-	}
-}
-//Goes to position directly
-void Behavior::gotoPosition(float target_x,float target_y, float target_phi)
-{
+void Behavior::gotoPosition(float target_x,float target_y, float target_phi) {
 
 	HighHeadScanStep(2.08);
 
@@ -734,3 +614,143 @@ void Behavior::gotoPosition(float target_x,float target_y, float target_phi)
 	velocityWalk(VelX, VelY, Rot, freq);
 }
 
+
+/* Vision Calibration */
+
+void Behavior::calibrate()
+{
+	CalibrateCam v;
+	v.set_status(0);
+	_blk->publishState(v, "vision");
+	calibrated = 1;
+}
+
+
+/* Read Configuration Functions */
+
+bool Behavior::readConfiguration(const std::string& file_name) {
+
+	XMLConfig config(file_name);
+	
+	if (!config.QueryElement("player", playerNumber))
+		Logger::Instance().WriteMsg("Behavior", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
+
+	std::string color;
+	if (teamColor == TEAM_BLUE)
+		color = "blue";
+	else if (teamColor == TEAM_RED)
+		color = "red";
+	if (!config.QueryElement("default_team_color", color))
+		Logger::Instance().WriteMsg("Behavior", "Configuration file has no team_color, setting to default value: " + color, Logger::Error);
+	if (color == "blue")
+		teamColor = TEAM_BLUE;
+	else if (color == "red")
+		teamColor = TEAM_RED;
+	else
+		Logger::Instance().WriteMsg("Behavior", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
+
+	return true;
+}
+
+/*
+ * this function set's initial robot's position:
+ * in x axis : initX in meters
+ * in y axis : initY in meters
+ * in rotation : initPhi in rads
+ *
+ *
+ * This function is used in PLAYER_READY state
+ *  */
+bool Behavior::readRobotConfiguration(const std::string& file_name) {
+	
+	if ( (playerNumber < 1) || (4 < playerNumber) ) {
+		Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Invalid player number "  , Logger::Error);
+		return false;
+	}
+	
+	readRobotConf = true;
+	XML config(file_name);
+	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
+	NodeCont teamPositions, robotPosition ;
+	Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration "  , Logger::Info);
+
+	for (int i = 0; i < 2; i++) { 
+		string kickoff = (i==0)?"KickOff":"noKickOff";	//KICKOFF==0, NOKICKOFF == 1 
+		bool found = false;
+		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
+
+		if (teamPositions.size() != 0)
+			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
+
+		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++) {
+			if (it->attrb["number"] == playerNumber) {
+				initPhi[i][TEAM_BLUE] = 0.0;
+				initX[i][TEAM_BLUE] = -1.0*(it->attrb["posx"]);
+				initY[i][TEAM_BLUE] = -1.0*(it->attrb["posy"]);
+
+				initPhi[i][TEAM_RED] = M_PI;
+				initX[i][TEAM_RED] = (it->attrb["posx"]);
+				initY[i][TEAM_RED] = (it->attrb["posy"]);
+
+				Logger::Instance().WriteMsg("Behavior", " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
+				Logger::Instance().WriteMsg("Behavior", " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
+
+				found = true;
+			}
+		}
+		if (!found) {
+			Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Unable to find initial " + kickoff+ " position for player number " + _toString(playerNumber) , Logger::Error);
+			readRobotConf = false;
+		}
+	}
+	return readRobotConf;
+}
+
+
+bool Behavior::readGoalConfiguration(const std::string& file_name) {
+	
+	TiXmlDocument doc2(file_name.c_str());
+	bool loadOkay = doc2.LoadFile();
+	if (!loadOkay) {
+		Logger::Instance().WriteMsg("Behavior",  " readGoalConfiguration: cannot read file " + file_name , Logger::Info);
+		return false;
+	}
+
+	TiXmlNode * Ftr;
+	TiXmlElement * Attr;
+	double x, y;
+	string ID;
+
+	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling()) {
+		Attr = Ftr->ToElement();
+		Attr->Attribute("x", &x);
+		Attr->Attribute("y", &y);
+		ID = Attr->Attribute("ID");
+
+		if (ID == "SkyblueGoal"){
+			blueGoalX = x/1000.0;
+			blueGoalY = y/1000.0;
+		}
+		if (ID == "YellowGoal"){
+			yellowGoalX = x/1000.0;
+			yellowGoalY = y/1000.0;
+		}
+	}
+
+	return true;
+}
+
+
+
+/* Test Function */
+
+void Behavior::test() {
+
+	if (om!=0) {
+		Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
+		if (om->direction() == 0)
+			velocityWalk(0.0, 0.0, 1.0, 1.0);
+	}
+	else
+		velocityWalk(1.0, 0.0, 0.0, 1.0);
+}
