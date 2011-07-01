@@ -1,5 +1,6 @@
 #ifndef ROBOCUPGAMECONTROLLERDATA_H
 #define ROBOCUPGAMECONTROLLERDATA_H
+
 #include "RoboCupPlayerData.h"
 typedef unsigned char  uint8;
 typedef unsigned short uint16;
@@ -103,4 +104,5 @@ struct RoboCupGameControlReturnData {
     uint16  player;             // player number - 1 based
     uint32  message;
 };
+
 #endif
