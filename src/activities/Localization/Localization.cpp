@@ -523,12 +523,12 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	float robot_rot = DR;
 
 	MModel.type = "ratio";
-	if (robot_dist > 500)
-	{
-		robot_dist = 0.1;
-		robot_dir = 0.000001;
-		robot_rot = 0.00001;
-	}
+//	if (robot_dist > 500)
+//	{
+//		robot_dist = 0.1;
+//		robot_dir = 0.000001;
+//		robot_rot = 0.00001;
+//	}
 	MModel.Distance.val = robot_dist;
 	MModel.Distance.ratiomean = 1.32; // -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155;
 	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058);
@@ -741,10 +741,11 @@ void Localization::process_messages()
 		RobotPositionMotionModel(robotmovement);
 	}
 
+	currentObservation.clear();
 	if (obsm != 0)
 	{
 		KObservationModel tmpOM;
-		currentObservation.clear();
+
 		//Load observations
 
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
