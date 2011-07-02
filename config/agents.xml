@@ -18,7 +18,7 @@
 	<name>KVision</name>
 	<activity>Vision</activity>
 	<activity>Localization</activity>
-	<activity>Behavior</activity>
+	<activity>NoxOpenChallenge</activity>
 <!--
 	<activity>HeadBehavior</activity>
 -->
