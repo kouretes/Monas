@@ -1385,6 +1385,14 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 }
 
 void KLocalization::Propagate(parts & Particles, int *Index) {
+	if(Index <=  0 || !Particles.size>0)
+	{
+		if(Index <=0 )
+			cerr << "Cant propagate nothing check the index " << endl;
+		if(!Particles.size>0)
+			cerr << "Cant propagate nothing and particles existance" << endl;
+		return;
+	}
 	double tempX[partclsNum];
 	double tempY[partclsNum];
 	double tempPhi[partclsNum];
@@ -1514,17 +1522,8 @@ int * KLocalization::ResampleSWR(parts & Particles, int *Index) {
 
 //AUTHORS  : Arnaud Doucet and Nando de Freitas - for the acknowledgement.
 int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q);
-	if (Particles.size <= 0)
-		return Index;
-
-	int N = partclsNum; //Number of particles
 	double * cumDist = CumSum(Particles.Weight, Particles.size);
-	if (cumDist[Particles.size-1] < 0.001) {
-		for (int i = 0; i < N; i++)
-			Index[i] = i;
-		return Index;
-	}
-
+	int N = partclsNum; //Number of particles
 	double t[N];
 	double N_babies[N];
 

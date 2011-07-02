@@ -1,0 +1,28 @@
+Requirements:
+	libhighgui, lib,dev (opencv libs etc)
+	libprotobuf lib,dev 
+	
+Build:
+	mkdir build
+	cd build
+	cmake ..
+	make
+	
+Execution:
+	./KRobotView IP   ip not hostname
+	
+Usage:
+	Calibration: Press 'e' for normal calibration or 'r' for reference calibration
+	Press 's' to see segmentation 
+	Press 'y' to see original image
+	Press 'c' to capture yuyv image and save to a local .yuyv file
+	Press 'n' to capture in png the displayed original image
+	Press 'm' to capture current segmentation image to png
+	Video Recording:
+	Press 'v' to start repeated capturing current focused image (segmentation-original) to png files 
+	Press again 'v' to stop the recording 
+	Press esc to close
+	
+	Warning the filenames include a counter number, in each execution of the 
+	programm the counter is zero and increases after each image reception. So 
+	just backup captured data before starting capturing after new execution.

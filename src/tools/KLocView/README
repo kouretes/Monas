@@ -1,0 +1,16 @@
+Requirements:
+	libhighgui, lib,dev (opencv libs etc)
+	libprotobuf lib,dev 
+	
+Build:
+	mkdir build
+	cd build
+	cmake ..
+	make
+	
+Execution:
+	./KLocView IP   ip not hostname
+	
+Usage:
+	use key 1-9 to resize the window
+	Press esc to close
