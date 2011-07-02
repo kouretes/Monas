@@ -689,7 +689,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
 
-	if ((ESS < Beta || AgentPosition.confidence > 150))
+	if (ESS > 0 && (ESS < Beta || AgentPosition.confidence > 150))
 	{
 		Resample(SIRParticles, index, 0);
 		Propagate(SIRParticles, index);
@@ -727,11 +727,11 @@ void Localization::process_messages()
 
 		RobotPositionMotionModel(robotmovement);
 	}
-
+	currentObservation.clear();
 	if (obsm != 0)
 	{
 		KObservationModel tmpOM;
-		currentObservation.clear();
+
 		//Load observations
 
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
@@ -760,8 +760,8 @@ void Localization::process_messages()
 				tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 560;
 
 				currentObservation.push_back(tmpOM);
-				cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
-				cout << " DistanceDev " << tmpOM.Distance.Edev << " BearingDev " << tmpOM.Bearing.Edev << endl;
+				//cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
+				//cout << " DistanceDev " << tmpOM.Distance.Edev << " BearingDev " << tmpOM.Bearing.Edev << endl;
 			}
 
 			//			else {

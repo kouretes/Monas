@@ -1195,8 +1195,17 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 	return 1;
 }
 
-void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation) {
+void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation2) {
 	//Calculate the bearing from each particle from each Observation
+	//Force Bearing under some criteria
+	 vector<KObservationModel> Observation ;
+	for (unsigned int o = 0; o < Observation2.size(); o++) {
+		if(Observation2[o].Feature.id.find("Goal")==string::npos) //Its not a whole goal observation
+			Observation.push_back(Observation2[o]);
+		else if(Observation2[o].Distance.val > 3000) //Its a goal but i am far away ( about 3m ) from the whole goal
+			Observation.push_back(Observation[o]);
+	}
+
 	float ParticlePointBearingAngle;
 	if (Observation.size() > 1) {
 		float * angles = new float[Observation.size()];

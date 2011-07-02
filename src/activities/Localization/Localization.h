@@ -10,7 +10,7 @@
 #include "messages/motion.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-#define KPROFILING_ENABLED
+//#define KPROFILING_ENABLED
 
 #include "tools/profiler.hpp"
 
