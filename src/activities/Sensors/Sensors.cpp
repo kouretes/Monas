@@ -80,7 +80,7 @@ void Sensors::fillComputedData(unsigned int timediff)
 	angle[0].updateWithVel(angX,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.003,gyrX,0.01*gyrX*gyrX+0.003,timediff/1000000000.0);
 	angle[1].updateWithVel(angY,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.003,gyrY,0.01*gyrY*gyrY+0.003,timediff/1000000000.0);
 	} catch (...) {
-	  Logger::Instance().WriteMsg("SENSORS","TODO: Singular Matrix",Logger::Error);
+	  Logger::Instance().WriteMsg("SENSORS","Singular Matrix Exception on Kalman update",Logger::Error);
 	}
 	for(int i=0;i<ANGLE_SIZE;i++)
 	{
