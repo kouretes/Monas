@@ -40,7 +40,7 @@ int RobotController::Execute() {
 	bool received=gm.poll();
 	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
 
-	if(lastalive<now)
+	if(lastalive<now&& received&&gm_state.override_state()==OVERRIDE_DISABLED)
 	{
 		gm.SendAlive(conf.player_number() );
 		lastalive=now+milliseconds(ALIVEMS);
