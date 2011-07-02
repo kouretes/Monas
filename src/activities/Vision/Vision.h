@@ -16,6 +16,7 @@
 #include "messages/WorldInfo.pb.h"
 
 #include "PracticalSocket.h"
+
 //#define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
 
@@ -92,10 +93,7 @@ class Vision: public IActivity
 
 				}
 				;
-				static int isLeft(KVecInt2 s, KVecInt2 e, KVecInt2 t)
-				{
-					return (e.x - s.x) * (t.y - s.y) - (t.x - s.x) * (e.y - s.y);
-				}
+
 		} goalpostdata_t;
 
 		typedef struct balldata
@@ -177,10 +175,10 @@ class Vision: public IActivity
 			bool smartsuccess;
 		} traceResult;
 
-		traceResult traceline(KVecInt2 start, KVecInt2 vel, KSegmentator::colormask_t c) const ;
-		traceResult traceline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const ;
+		traceResult traceline(KVecInt2 const& start, KVecInt2 const&  vel, KSegmentator::colormask_t c) const ;
+		traceResult traceline(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
 		//traceResult traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const;
-		traceResult traceBlobEdge(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const ;
+		traceResult traceBlobEdge(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
 		//Wrapper for seg object
 		KSegmentator::colormask_t doSeg(const int x, const int y,const KSegmentator::colormask_t h=0xFF ) const;
 		void prepSeg(const int x,const int y) const;//Prefetch

@@ -10,10 +10,15 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/BehaviorMessages.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
+
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+using namespace boost::posix_time;
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -53,6 +58,7 @@ class LBehavior: public IActivity {
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;
 		MotionActionMessage* amot;
+		LocalizationResetMessage* locReset;
 
 		float initX[2][2], initY[2][2], initPhi[2][2]; //initial game position in the field!!!!
 		int playernum;
@@ -95,6 +101,7 @@ class LBehavior: public IActivity {
 		int teamColor;
 		double orientation;
 
+		ptime lastball, lastwalk,lastrun,lastkick,wimtime;
 
 		int leftright;
 		float headpos;
@@ -107,7 +114,7 @@ class LBehavior: public IActivity {
 		bool readConfiguration(const std::string& file_name); //this function reads team's configuration info from XML file
 		bool readRobotConfiguration(const std::string& file_name); //this function reads robot's initial position in the field from XML file
 		void gotoPosition(float target_x,float target_y, float target_phi);
-		float cX,cY,cth;//Commanded
+		float cX,cY,ct;//Commanded
 
 };
 

@@ -15,9 +15,11 @@
 #include "KmeAction.h"
 #include "XarManager.h"
 
+
+#define FULLSTIFFNESS 1.0
 #define LEANTOOMUCH 0.7
 #define ANGLEHOR 1.6
-#define INTTIME 0.2 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
+#define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
 namespace
 {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
@@ -93,46 +95,11 @@ void MotionController::UserInit()
 	}
 
 	createDCMAlias();
-
+	readWalkParameters();
 	motion->setWalkArmsEnable(true, true);
 
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
-	AL::ALValue config;
-	config.arraySetSize(15);
-	for (int i = 0; i < 15; ++i)
-		config[i].arraySetSize(2);
-	config[0][0] = "ENABLE_FOOT_CONTACT_PROTECTION";
-	config[0][1] = true;
-	config[1][0] = "ENABLE_FALL_MANAGEMENT_PROTECTION";
-	config[1][1] = false;
-	config[2][0] = "WALK_MAX_TRAPEZOID";
-	config[2][1] = 2.7; // 4.5
-	config[3][0] = "WALK_MIN_TRAPEZOID";
-	config[3][1] = 0.95; // 3.5
-	config[4][0] = "WALK_STEP_MAX_PERIOD";
-	config[4][1] = 28; // 30
-	config[5][0] = "WALK_STEP_MIN_PERIOD";
-	config[5][1] = 19; // 21
-	config[6][0] = "WALK_MAX_STEP_X";
-	config[6][1] = 0.046; // 0.04
-	config[7][0] = "WALK_MAX_STEP_Y";
-	config[7][1] = 0.042; // 0.04
-	config[8][0] = "WALK_MAX_STEP_THETA";
-	config[8][1] = 35; // 20
-	config[9][0] = "WALK_STEP_HEIGHT";
-	config[9][1] = 0.01; // 0.015
-	config[10][0] = "WALK_FOOT_SEPARATION";
-	config[10][1] = 0.095; // 0.095
-	config[11][0] = "WALK_FOOT_ORIENTATION";
-	config[11][1] = 5.0;// 0
-	config[12][0] = "WALK_TORSO_HEIGHT";
-	config[12][1] = 0.316;
-	config[13][0] = "WALK_TORSO_ORIENTATION_X";
-	config[13][1] = 0.0; // 0
-	config[14][0] = "WALK_TORSO_ORIENTATION_Y";
-	config[14][1] = 0.0; // 0
 
-	motion->setMotionConfig(config);
 
 
 	//motion->setMotionConfig(AL::ALValue::array(AL::ALValue::array("ENABLE_FOOT_CONTACT_PROTECTION", true)));
@@ -171,6 +138,8 @@ int MotionController::Execute()
 	counter++;
 	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//testcommands();
+	if(counter%100==0)
+		readWalkParameters();
 	read_messages();
 	mglrun();
 	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
@@ -255,7 +224,7 @@ void MotionController::mglrun()
 	}
 	else
 	{
-		motion->setStiffnesses("Body", 0.8);
+		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		currentstate=gameState;
 
 	}
@@ -278,12 +247,20 @@ void MotionController::mglrun()
 
 		float normdist = (accnorm - KDeviceLists::Interpret::GRAVITY_PULL) / KDeviceLists::Interpret::GRAVITY_PULL;
 
-		if ((normdist < -0.35 || normdist > 0.75  ||( fabs(angX+VangX*INTTIME) > ANGLEHOR && fabs(angX)<LEANTOOMUCH) || (fabs(angY+VangY*INTTIME) > ANGLEHOR && fabs(angY)<LEANTOOMUCH) )
-			||(robotUp&& actionPID==0&&(fabs(angX) > LEANTOOMUCH || fabs(angY) >LEANTOOMUCH))  )
+		if (
+			(
+			 normdist < -0.65 || normdist > 0.65  ||
+			( fabs(angX+VangX*INTTIME) > ANGLEHOR && fabs(angX)<LEANTOOMUCH) ||
+			( fabs(angY+VangY*INTTIME) > ANGLEHOR && fabs(angY)<LEANTOOMUCH)
+			)
+
+			||
+			(robotUp&& actionPID==0&&(fabs(angX) > LEANTOOMUCH || fabs(angY) >LEANTOOMUCH))
+		   )
 		{
 			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
 
-			if(currentstate==PLAYER_PLAYING)
+			if(currentstate==PLAYER_PLAYING || currentstate == PLAYER_READY)
 			{
 				robotUp = false;
 				robotDown = false;
@@ -328,7 +305,7 @@ void MotionController::mglrun()
 	if ((actionPID == 0) && robotDown)
 	{
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
-		motion->setStiffnesses("Body", 0.8);
+		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();
@@ -540,13 +517,13 @@ void MotionController::mglrun()
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE9 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackRightCutB2.xar");
+					pam->set_command("KickBackRightCutB1.xar");
 					readyToKick = 1;
 				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE10 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackRightCutA2.xar");
+					pam->set_command("KickBackRightCutAc.xar");
 					readyToKick = 1;
 				}else
 					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
@@ -565,13 +542,13 @@ void MotionController::mglrun()
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE11 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackLeftCutB.xar");
+					pam->set_command("KickBackLeftCutB1.xar");
 					readyToKick = 1;
 				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
 				{
 					Logger::Instance().WriteMsg("MotionController", "CASE12 ", Logger::ExtraInfo);
 
-					pam->set_command("KickBackLeftCutA.xar");
+					pam->set_command("KickBackLeftCutAc.xar");
 					readyToKick = 1;
 				}else
 					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
@@ -634,7 +611,7 @@ void MotionController::stopWalkCommand()
 {
 	if (walkingWithVelocity||walkPID!=0)
 	{
-		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 0.8); // stop walk
+		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 1.0); // stop walk
 		motion->waitUntilWalkIsFinished();
 		walkingWithVelocity = false;
 	}
@@ -929,7 +906,7 @@ void MotionController::MotionSkillsInit()
 		comp[i] = 0;
 	}
 
-	readRobotLegConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/specialActions.xml");
+	readRobotLegConfiguration(ArchConfig::Instance().GetConfigPrefix() + "specialActions.xml");
 
 	for(int j = 0; j < POSES_FORWKICK-1; j++)
 	{
@@ -1199,4 +1176,88 @@ void MotionController::readRobotLegConfiguration(const std::string& file_name)
 //		for(int l = 0; l<6; l++)
 //			Logger::Instance().WriteMsg("MotionController", "LBackKickAng: " + _toString(LBackKickAng[test][l]), Logger::ExtraInfo);
 //	}
+}
+
+void MotionController::readWalkParameters()
+{
+
+	std::string fname=ArchConfig::Instance().GetConfigPrefix() +"walk_parameters.xml";
+	TiXmlDocument d(fname);
+	if(!d.LoadFile())
+	{
+		Logger::Instance().WriteMsg("MotionController", "walk_parameters.xml cannot be parsed", Logger::Warning);
+		return;
+	}
+/*
+AL::ALValue config;
+	config.arraySetSize(15);
+	for (int i = 0; i < 15; ++i)
+		config[i].arraySetSize(2);
+	config[0][0] = "ENABLE_FOOT_CONTACT_PROTECTION";
+	config[0][1] = true;
+	config[1][0] = "ENABLE_FALL_MANAGEMENT_PROTECTION";
+	config[1][1] = false;
+	config[2][0] = "WALK_MAX_TRAPEZOID";
+	config[2][1] = 2.5; // 4.5
+	config[3][0] = "WALK_MIN_TRAPEZOID";
+	config[3][1] = 1.65; // 3.5
+	config[4][0] = "WALK_STEP_MAX_PERIOD";
+	config[4][1] = 28; // 30
+	config[5][0] = "WALK_STEP_MIN_PERIOD";
+	config[5][1] = 18; // 21
+	config[6][0] = "WALK_MAX_STEP_X";
+	config[6][1] = 0.044; // 0.04
+	config[7][0] = "WALK_MAX_STEP_Y";
+	config[7][1] = 0.04; // 0.04
+	config[8][0] = "WALK_MAX_STEP_THETA";
+	config[8][1] = 30; // 20
+	config[9][0] = "WALK_STEP_HEIGHT";
+	config[9][1] = 0.01; // 0.015
+	config[10][0] = "WALK_FOOT_SEPARATION";
+	config[10][1] = 0.095; // 0.095
+	config[11][0] = "WALK_FOOT_ORIENTATION";
+	config[11][1] = 5.0;// 0
+	config[12][0] = "WALK_TORSO_HEIGHT";
+	config[12][1] = 0.316;
+	config[13][0] = "WALK_TORSO_ORIENTATION_X";
+	config[13][1] = 0.0; // 0
+	config[14][0] = "WALK_TORSO_ORIENTATION_Y";
+	config[14][1] = 0.0; // 0
+
+	motion->setMotionConfig(config);
+	*/
+
+
+	std::vector<std::string> names;
+	std::vector<float> values;
+
+	const TiXmlElement *c=d.FirstChildElement();
+	while(c)
+	{
+		names.push_back(c->Value());
+
+		std::istringstream strs( c->GetText() );
+		float v;
+		strs>>v;
+		values.push_back(v);
+
+
+		cout<<c->Value()<<":"<<v<<endl;
+
+		c=c->NextSiblingElement();
+	}
+	AL::ALValue config;
+	config.arraySetSize(names.size());
+
+	for(unsigned i=0;i<names.size();i++)
+	{
+		config[i].arraySetSize(2);
+		config[i][0]=names[i];
+		config[i][1]=values[i];
+
+	}
+		motion->setMotionConfig(config);
+
+
+
 }

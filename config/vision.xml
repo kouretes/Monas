@@ -23,9 +23,9 @@
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
-<goalheight>0.79</goalheight>
+<goalheight>0.7995</goalheight>
 <goaldist>1.4</goaldist>
-<goaldiam>0.098</goaldiam>
+<goaldiam>0.0967</goaldiam>
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->

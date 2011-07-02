@@ -31,6 +31,7 @@ class Localization: public IActivity, public KLocalization
 		}
 		int Execute();
 		void UserInit();
+		void Reset();
 		void process_messages();
 		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright);
 		void RobotPositionMotionModel(KMotionModel & MModel);
@@ -76,6 +77,7 @@ class Localization: public IActivity, public KLocalization
 		boost::shared_ptr<const GameStateMessage> gsm;
 		boost::shared_ptr<const ObservationMessage> obsm;
 		boost::shared_ptr<const RobotPositionMessage> rpsm;
+		boost::shared_ptr<const LocalizationResetMessage> lrm;
 
 		BToHeadMessage* bhmsg;
 		bool firstrun;

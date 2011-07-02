@@ -131,6 +131,8 @@ private:
 		  boost::shared_ptr<ISpecialAction> > SpAsoocElement;
 	SpAssocCont SpActions;
 
+	void readWalkParameters();
+
 };
 
 #endif

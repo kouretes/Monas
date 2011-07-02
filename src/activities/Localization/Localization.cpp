@@ -77,6 +77,13 @@ void Localization::UserInit()
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 }
 
+void Localization::Reset()
+{
+	//KLocalization::Initialize();
+	KLocalization::setParticlesPoseUniformly(SIRParticles);
+}
+
+
 int Localization::DebugMode_Receive()
 {
 	///DEBUG MODE
@@ -303,6 +310,10 @@ int Localization::Execute()
 
 	if (debugmode)
 		DebugMode_Receive();
+	if (lrm != 0){
+		Reset();
+		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
+	}
 
 	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
@@ -516,12 +527,12 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	float robot_rot = DR;
 
 	MModel.type = "ratio";
-	if (robot_dist > 500)
-	{
-		robot_dist = 0.1;
-		robot_dir = 0.000001;
-		robot_rot = 0.00001;
-	}
+//	if (robot_dist > 500)
+//	{
+//		robot_dist = 0.1;
+//		robot_dir = 0.000001;
+//		robot_rot = 0.00001;
+//	}
 	MModel.Distance.val = robot_dist;
 	MModel.Distance.ratiomean = 1.32; // -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155;
 	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058);
@@ -718,7 +729,9 @@ void Localization::process_messages()
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
+	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
 
+	
 	if (rpsm != 0)
 	{
 		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
@@ -727,6 +740,7 @@ void Localization::process_messages()
 
 		RobotPositionMotionModel(robotmovement);
 	}
+
 	currentObservation.clear();
 	if (obsm != 0)
 	{

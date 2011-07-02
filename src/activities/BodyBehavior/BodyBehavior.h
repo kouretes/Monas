@@ -22,6 +22,8 @@
 #define SCANFORBALL 2
 #define SCANFORPOST 3
 #define BALLTRACK 4
+#define HIGHSCANFORBALL 5
+#define SCANFIELD 6
 
 class BodyBehavior: public IActivity {
 

@@ -1,5 +1,4 @@
 #include "robotcontroller.h"
-#include "hal/robot/generic_nao/kAlBroker.h"
 #include "architecture/archConfig.h"
 #include "messages/SensorsMessage.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -8,18 +7,19 @@
 #include "tools/toString.h"
 #include "tools/XMLConfig.h"
 
+
 using boost::posix_time::milliseconds;
 
 namespace {
 	ActivityRegistrar<RobotController>::Type temp("RobotController");
 }
 RobotController::RobotController() :gm(game_data) { //Initialize game controller with message pointer
+
 }
 
 void RobotController::UserInit() {
 	//"Initialize Robot controller"
 	//_com->get_message_queue()->add_publisher(this);
-
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
 	gm.connectTo(conf.port(), conf.team_number());
@@ -28,7 +28,9 @@ void RobotController::UserInit() {
 	gm_state.Clear();
 
 	_blk->subscribeTo("buttonevents", 0);
+	_blk->publishState(gm_state, "behavior");//Default state
 	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);
+	lastalive=boost::posix_time::microsec_clock::universal_time();
 }
 
 int RobotController::Execute() {
@@ -36,6 +38,13 @@ int RobotController::Execute() {
 
 	bool changed = false;
 	bool received=gm.poll();
+	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
+
+	if(lastalive<now&& received&&gm_state.override_state()==OVERRIDE_DISABLED)
+	{
+		gm.SendAlive(conf.player_number() );
+		lastalive=now+milliseconds(ALIVEMS);
+	}
 
 	if (received&&gm_state.override_state()==OVERRIDE_DISABLED) {
 		//teams[0] one team
@@ -142,12 +151,11 @@ int RobotController::Execute() {
 	if (changed) {
 		sendLedUpdate();
 		_blk->publishState(gm_state, "behavior");
-	} else {
-		if (delay++ % 50 == 0)
+	}
+	else if (delay++ % 50 == 0)
+	{
 			sendLedUpdate();
 	}
-
-
 	return 0;
 }
 

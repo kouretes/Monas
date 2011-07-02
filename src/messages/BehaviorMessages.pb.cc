@@ -33,6 +33,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PositionMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PositionMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  LocalizationResetMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -151,6 +154,20 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PositionMessage));
+  LocalizationResetMessage_descriptor_ = file->message_type(7);
+  static const int LocalizationResetMessage_offsets_[1] = {
+  };
+  LocalizationResetMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      LocalizationResetMessage_descriptor_,
+      LocalizationResetMessage::default_instance_,
+      LocalizationResetMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(LocalizationResetMessage));
 }
 
 namespace {
@@ -177,6 +194,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     PlayerNumberMessage_descriptor_, &PlayerNumberMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     PositionMessage_descriptor_, &PositionMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    LocalizationResetMessage_descriptor_, &LocalizationResetMessage::default_instance());
 }
 
 }  // namespace
@@ -196,6 +215,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete PlayerNumberMessage_reflection_;
   delete PositionMessage::default_instance_;
   delete PositionMessage_reflection_;
+  delete LocalizationResetMessage::default_instance_;
+  delete LocalizationResetMessage_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -214,7 +235,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "(\010:\005false\"/\n\023PlayerNumberMessage\022\030\n\rplay"
     "er_number\030\001 \002(\005:\0012\"G\n\017PositionMessage\022\020\n"
     "\004posX\030\001 \002(\002:\00270\022\020\n\004posY\030\002 \002(\002:\00270\022\020\n\005the"
-    "ta\030\003 \002(\002:\0011", 371);
+    "ta\030\003 \002(\002:\0011\"\032\n\030LocalizationResetMessage", 399);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -224,6 +245,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   StateEnd::default_instance_ = new StateEnd();
   PlayerNumberMessage::default_instance_ = new PlayerNumberMessage();
   PositionMessage::default_instance_ = new PositionMessage();
+  LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
@@ -231,6 +253,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   StateEnd::default_instance_->InitAsDefaultInstance();
   PlayerNumberMessage::default_instance_->InitAsDefaultInstance();
   PositionMessage::default_instance_->InitAsDefaultInstance();
+  LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -1802,6 +1825,161 @@ void PositionMessage::Swap(PositionMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = PositionMessage_descriptor_;
   metadata.reflection = PositionMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+#endif  // !_MSC_VER
+
+LocalizationResetMessage::LocalizationResetMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void LocalizationResetMessage::InitAsDefaultInstance() {
+}
+
+LocalizationResetMessage::LocalizationResetMessage(const LocalizationResetMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void LocalizationResetMessage::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+LocalizationResetMessage::~LocalizationResetMessage() {
+  SharedDtor();
+}
+
+void LocalizationResetMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void LocalizationResetMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* LocalizationResetMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return LocalizationResetMessage_descriptor_;
+}
+
+const LocalizationResetMessage& LocalizationResetMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+LocalizationResetMessage* LocalizationResetMessage::default_instance_ = NULL;
+
+LocalizationResetMessage* LocalizationResetMessage::New() const {
+  return new LocalizationResetMessage;
+}
+
+void LocalizationResetMessage::Clear() {
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool LocalizationResetMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+        ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+      return true;
+    }
+    DO_(::google::protobuf::internal::WireFormat::SkipField(
+          input, tag, mutable_unknown_fields()));
+  }
+  return true;
+#undef DO_
+}
+
+void LocalizationResetMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* LocalizationResetMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int LocalizationResetMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void LocalizationResetMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const LocalizationResetMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const LocalizationResetMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void LocalizationResetMessage::MergeFrom(const LocalizationResetMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void LocalizationResetMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void LocalizationResetMessage::CopyFrom(const LocalizationResetMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool LocalizationResetMessage::IsInitialized() const {
+  
+  return true;
+}
+
+void LocalizationResetMessage::Swap(LocalizationResetMessage* other) {
+  if (other != this) {
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata LocalizationResetMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = LocalizationResetMessage_descriptor_;
+  metadata.reflection = LocalizationResetMessage_reflection_;
   return metadata;
 }
 

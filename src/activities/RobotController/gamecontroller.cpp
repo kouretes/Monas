@@ -18,6 +18,9 @@ GameController::GameController(RoboCupGameControlData & storage ) : game_data(st
 
 	runcnt=0;
 	recvflag=0;
+	memcpy(rd.header,GAMECONTROLLER_RETURN_STRUCT_HEADER,strlen(GAMECONTROLLER_RETURN_STRUCT_HEADER));
+	rd.message=(GAMECONTROLLER_RETURN_MSG_ALIVE);
+	rd.version=(GAMECONTROLLER_RETURN_STRUCT_VERSION);
 
 }
 void GameController::connectTo(int port, int tn )
@@ -29,7 +32,7 @@ void GameController::connectTo(int port, int tn )
 
 	socket_fd = socket(AF_INET, SOCK_DGRAM, 0); //socket creation
 
-	if ((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+	if (socket_fd == -1)
 	{
 		Logger::Instance().WriteMsg("GameController", "Cannot create Socket ", Logger::FatalError);
 
@@ -42,6 +45,16 @@ void GameController::connectTo(int port, int tn )
 			close(socket_fd);
 		}
 	}
+
+	{
+		int reuse = 1;
+		if (setsockopt(socket_fd, SOL_SOCKET, SO_BROADCAST, (char *) &reuse, sizeof(reuse)) < 0)
+		{
+			Logger::Instance().WriteMsg("GameController", "Setting SO_BROADCAST error ", Logger::FatalError);
+			close(socket_fd);
+		}
+	}
+
 
 	struct timeval timeout;
 	timeout.tv_sec = 1;
@@ -61,6 +74,7 @@ void GameController::connectTo(int port, int tn )
 		Logger::Instance().WriteMsg("GameController", "Cannot Bind  ", Logger::FatalError);
 	}
 	Logger::Instance().WriteMsg("GameController", " Game controller Initialized", Logger::Info);
+	addr.sin_addr.s_addr = INADDR_BROADCAST;
 }
 
 
@@ -89,6 +103,18 @@ bool GameController::poll()
 	}
 
 	return update;
+}
+#include <errno.h>
+
+void GameController::SendAlive(int pnum)
+{
+
+
+	rd.team=(team_number);
+	rd.player=(pnum);
+
+	sendto(socket_fd,&rd,sizeof(rd),recvflag,(struct sockaddr*)  &addr,sizeof(addr));
+
 }
 bool GameController::check_data_and_copy(char* bytes, int size)
 {

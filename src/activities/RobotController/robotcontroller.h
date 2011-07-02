@@ -8,11 +8,15 @@
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
 #include "gamecontroller.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
 #include <iostream>
 #include <string>
 #include <architecture/IActivity.h>
+
+//Game Controller return data interval
+#define ALIVEMS 750
 
 
 /**
@@ -62,8 +66,7 @@ class RobotController: public IActivity {
 		LedChangeMessage leds;
 		GameStateMessage gm_state;
 		GameStateMessage new_gm_state;
-
+		boost::posix_time::ptime lastalive;
 		ConfigMessage conf;
 };
-
-#endif // ROBOTCONTROLLER_H
+#endif
