@@ -1195,8 +1195,17 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 	return 1;
 }
 
-void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation) {
+void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation2) {
 	//Calculate the bearing from each particle from each Observation
+	//Force Bearing under some criteria
+	 vector<KObservationModel> Observation ;
+	for (unsigned int o = 0; o < Observation2.size(); o++) {
+		if(Observation2[o].Feature.id.find("Goal")==string::npos) //Its not a whole goal observation
+			Observation.push_back(Observation2[o]);
+		else if(Observation2[o].Distance.val > 3000) //Its a goal but i am far away ( about 3m ) from the whole goal
+			Observation.push_back(Observation[o]);
+	}
+
 	float ParticlePointBearingAngle;
 	if (Observation.size() > 1) {
 		float * angles = new float[Observation.size()];
@@ -1376,6 +1385,14 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 }
 
 void KLocalization::Propagate(parts & Particles, int *Index) {
+	if(Index <=  0 || !Particles.size>0)
+	{
+		if(Index <=0 )
+			cerr << "Cant propagate nothing check the index " << endl;
+		if(!Particles.size>0)
+			cerr << "Cant propagate nothing and particles existance" << endl;
+		return;
+	}
 	double tempX[partclsNum];
 	double tempY[partclsNum];
 	double tempPhi[partclsNum];
@@ -1505,17 +1522,8 @@ int * KLocalization::ResampleSWR(parts & Particles, int *Index) {
 
 //AUTHORS  : Arnaud Doucet and Nando de Freitas - for the acknowledgement.
 int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q);
-	if (Particles.size <= 0)
-		return Index;
-
-	int N = partclsNum; //Number of particles
 	double * cumDist = CumSum(Particles.Weight, Particles.size);
-	if (cumDist[Particles.size-1] < 0.001) {
-		for (int i = 0; i < N; i++)
-			Index[i] = i;
-		return Index;
-	}
-
+	int N = partclsNum; //Number of particles
 	double t[N];
 	double N_babies[N];
 

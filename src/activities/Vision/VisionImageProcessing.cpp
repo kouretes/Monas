@@ -825,16 +825,20 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			if(newpost.haveBot&&newpost.distBot.mean<config.seedistance)
 			{
 				newpost.dist.push_back(newpost.distBot);
+				fillGoalPostWidthMeasurments(newpost,c);
 			}
 			else if(newpost.haveTop&&newpost.distTop.mean<config.seedistance)
 			{
 				newpost.dist.push_back(newpost.distTop);
+				fillGoalPostWidthMeasurments(newpost,c);
 			}
 
 			newpost.haveHeight=false;
 			//cout<<"Goal no Height"<<endl;
-			//fillGoalPostWidthMeasurments(newpost,c);
+
 		}
+
+
 		if(newpost.dist.size()==0)
 			continue;
 		newpost.ber.push_back(newpost.bBot);
@@ -1095,8 +1099,8 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	float angV;
 	measurement mrT,mrB,mr1,mr2;
 
-	KVecFloat2 c1,c2;//i1,i2;
-	int lim=config.pixeltol;
+	KVecFloat2 c1,c2,t1,t2;//i1,i2;
+	int lim=config.bordersize;
 	newpost.haveWidth=false;
 
 	//Some safe margin from image edge
@@ -1110,35 +1114,49 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 	if(newpost.tl.y>lim||newpost.tr.y>lim||newpost.ll.y>lim||newpost.lr.y>lim)
 		return;
 
+	t1=newpost.tl;
+	t2=newpost.tr;
+	t1+=Vlt;
+	t2+=Vrt;
 	//Find a width and mark measurements!
-	mT.x=(newpost.tl.x+newpost.tr.x)/2.0;
-	mT.y=(newpost.tl.y+newpost.tr.y)/2.0;
+	mT.x=(t1.x+t2.x)/2.0;
+	mT.y=(t1.y+t2.y)/2.0;
 	//For top. move 10% of estimated height down!
-
+	/*newpost.tl.prettyPrint();
+	newpost.tr.prettyPrint();
+	mT.prettyPrint();*/
 
 	c1=imageToCamera(mT);
 
-	c2=imageToCamera(newpost.tl);
+
+	c2=imageToCamera(t1);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
 
-	c2=imageToCamera(newpost.tr);
+	c2=imageToCamera(t2);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 	mrT=mWeightedMean(mr1,mr2);
+	mrT.mean-=config.goaldiam/2;
 	//cout<<"mr1,mr2,mean:"<<mr1.mean<<" "<<mr2.mean<<mrT.mean<<endl;
 
-	mB.x=(newpost.ll.x+newpost.lr.x)/2.0f;
-	mB.y=(newpost.ll.y+newpost.lr.y)/2.0f;
+	t1=newpost.ll;
+	t2=newpost.lr;
+	t1+=Vlt;
+	t2+=Vrt;
+
+	mB.x=(t1.x+t2.x)/2.0;
+	mB.y=(t1.y+t2.y)/2.0;
 	//cout<<"l,r:"<<l.x<<","<<l.y<<" "<<r.x<<","<<r.y<<endl;
 	c1=imageToCamera(mB);
-	c2=imageToCamera(newpost.ll);
+	c2=imageToCamera(t1);
 	mr1=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
-	c2=imageToCamera(newpost.lr);
+	c2=imageToCamera(t2);
 	mr2=kinext.angularDistance(c1,c2,config.goaldiam/2);
 
 
 	mrB=mWeightedMean(mr1,mr2);
+	mrB.mean-=config.goaldiam/2;
 	//cout<<"mr1,mr2,mean:"<<mr1.mean<<" "<<mr2.mean<<mrB.mean<<endl;
 
 	c1=imageToCamera(mT);
@@ -1149,9 +1167,20 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 
 	cosG=cos(angV);
 	cest=sqrt(sqrd(mrT.mean)+sqrd(mrB.mean)-2*mrT.mean*mrB.mean*cosG);
+	cout<<"Cest:"<<cest<<endl;
+
+	measurement m;
+	a=mrT.mean;
+	b=mrB.mean;
+	//cout<<"a,b:"<<a<<" "<<b<<endl;
 
 
-	/*cout<<"Cest:"<<cest<<endl;
+	ab=a*b;
+	//dS=sqrt((1.0f/sqrd(cosG) -1.0f)/( (sqrd(a)+sqrd(b)/sqrd(abcos)) - 2.0f/abcos ) );
+	m.mean=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) )+config.goaldiam/2;//* (cest/config.goalheight);
+
+
+	/*
 	if(abs(cest-config.goalheight)/config.goalheight > config.widthestimateotolerance)
 	{
 		cout<<"check failed"<<endl;
@@ -1165,18 +1194,18 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 
 	ab=a*b;
 	//dS=sqrt((1.0f/sqrd(cosG) -1.0f)/( (sqrd(a)+sqrd(b)/sqrd(abcos)) - 2.0f/abcos ) );
-	dS=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) );//* (cest/config.goalheight);
+	dS=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) )+config.goaldiam/2;//* (cest/config.goalheight);
 	a=mrT.mean+sqrt(mrT.var);
 	b=mrB.mean+sqrt(mrB.var);
 
 	//cout<<"a,b:"<<a<<" "<<b<<endl;
 	ab=a*b;
 	//dL=sqrt((1.0f/sqrd(cosG) -1.0f)/( (sqrd(a)+sqrd(b)/sqrd(abcos)) - 2.0f/abcos ) );
-	dL=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) );// * (cest/config.goalheight);
+	dL=sqrt((sqrd(a*b)-sqrd(ab*cosG))/(sqrd(a)+sqrd(b)-2*ab*cosG) )+config.goaldiam/2;// * (cest/config.goalheight);
 	//cout<<"mT,mB"<<mrT.mean<<" "<<mrB.mean<<endl;
 	//cout<<"Ds,dl ang"<<dS<<" "<<dL<<" "<<angV/TO_RAD<<endl;
-	measurement m;
-	m.mean=(dS+dL)/2 ;
+
+
 	/*if(newpost.haveHeight)
 	{
 		if(abs(m.mean-newpost.dHeight)>config.widthestimateotolerance)
@@ -1186,7 +1215,7 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 		}
 	}*/
 	m.var=(sqrd(dS-m.mean)+sqrd(dL-m.mean))/2;
-	//cout<<"Width:"<<m.mean<<" "<<m.var<<endl;
+	cout<<"Width:"<<m.mean<<" "<<m.var<<endl;
 	newpost.haveWidth=true;
 	newpost.dist.push_back(m);
 }

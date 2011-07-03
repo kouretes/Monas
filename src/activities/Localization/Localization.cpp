@@ -310,6 +310,10 @@ int Localization::Execute()
 
 	if (debugmode)
 		DebugMode_Receive();
+	if (lrm != 0){
+		Reset();
+		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
+	}
 
 	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
 
@@ -523,12 +527,12 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	float robot_rot = DR;
 
 	MModel.type = "ratio";
-	if (robot_dist > 500)
-	{
-		robot_dist = 0.1;
-		robot_dir = 0.000001;
-		robot_rot = 0.00001;
-	}
+//	if (robot_dist > 500)
+//	{
+//		robot_dist = 0.1;
+//		robot_dir = 0.000001;
+//		robot_rot = 0.00001;
+//	}
 	MModel.Distance.val = robot_dist;
 	MModel.Distance.ratiomean = 1.32; // -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155;
 	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058);
@@ -696,7 +700,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
 
-	if ((ESS < Beta || AgentPosition.confidence > 150))
+	if (ESS > 0 && (ESS < Beta || AgentPosition.confidence > 150))
 	{
 		Resample(SIRParticles, index, 0);
 		Propagate(SIRParticles, index);
@@ -727,11 +731,7 @@ void Localization::process_messages()
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
 
-	if (lrm != 0){
-		Reset();
-		Logger::Instance().WriteMsg("Localization", "RESET ", Logger::Info);
-	}
-
+	
 	if (rpsm != 0)
 	{
 		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
@@ -741,10 +741,11 @@ void Localization::process_messages()
 		RobotPositionMotionModel(robotmovement);
 	}
 
+	currentObservation.clear();
 	if (obsm != 0)
 	{
 		KObservationModel tmpOM;
-		currentObservation.clear();
+
 		//Load observations
 
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
@@ -773,8 +774,8 @@ void Localization::process_messages()
 				tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 560;
 
 				currentObservation.push_back(tmpOM);
-				cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
-				cout << " DistanceDev " << tmpOM.Distance.Edev << " BearingDev " << tmpOM.Bearing.Edev << endl;
+				//cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
+				//cout << " DistanceDev " << tmpOM.Distance.Edev << " BearingDev " << tmpOM.Bearing.Edev << endl;
 			}
 
 			//			else {

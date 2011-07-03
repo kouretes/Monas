@@ -76,8 +76,12 @@ void Sensors::fillComputedData(unsigned int timediff)
 		angle[1].reset(angY,0.1);
 		anglefilterreset=false;
 	}
+	try{
 	angle[0].updateWithVel(angX,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.003,gyrX,0.01*gyrX*gyrX+0.003,timediff/1000000000.0);
 	angle[1].updateWithVel(angY,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.003,gyrY,0.01*gyrY*gyrY+0.003,timediff/1000000000.0);
+	} catch (...) {
+	  Logger::Instance().WriteMsg("SENSORS","Singular Matrix Exception on Kalman update",Logger::Error);
+	}
 	for(int i=0;i<ANGLE_SIZE;i++)
 	{
 		ASM.mutable_computeddata(ANGLE+i)->set_sensorvalue((angle[i].read())(0));
@@ -164,34 +168,34 @@ void Sensors::fetchValues() {
 	}
 
 	//All Sensors
-	
+
 	float gyrRef = fabs((readVector(sensorValues,GYR+AXIS_Z)-Interpret::GYR_Z_RAW)/Interpret::GYR_Z_RAW);
-	
+
 // 	Logger::Instance().WriteMsg("SENSORS","Current: "
 // 				      +_toString(readVector(sensorValues,GYR+AXIS_Z))
 // 				      +" Avg: "+_toString(gyravg[AXIS_Z].read_mean())
 // 				      + " Res: "+_toString(gyrRef),
 // 						Logger::Error);
-	
-	
+
+
 	float accn=sqrt((readVector(sensorValues,ACC+AXIS_X))*(readVector(sensorValues,ACC+AXIS_X)) +
 						(readVector(sensorValues,ACC+AXIS_Y))*(readVector(sensorValues,ACC+AXIS_Y)) +
 						(readVector(sensorValues,ACC+AXIS_Z))*(readVector(sensorValues,ACC+AXIS_Z))    );
-	
+
 	float accRef = fabs((accn - Interpret::ACC_NORM))/Interpret::ACC_NORM;
 	bool isvalid = gyrRef<0.2 && accRef<0.5;
-	
-	
+
+
 // 	if ( !isvalid )
 // 	  Logger::Instance().WriteMsg("SENSORS","Invalid Data",Logger::Error);
-	
-	
+
+
 
 
 	if( isvalid )
 	{
 		sc.inc();
-		
+
 		accnorm.update(accn,sc);
 		float accgain=Interpret::GRAVITY_PULL/accnorm.read_mean();
 		oldval = ASM.sensordata(GYR+AXIS_Z).sensorvalue();

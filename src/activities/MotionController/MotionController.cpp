@@ -15,6 +15,8 @@
 #include "KmeAction.h"
 #include "XarManager.h"
 
+
+#define FULLSTIFFNESS 1.0
 #define LEANTOOMUCH 0.7
 #define ANGLEHOR 1.6
 #define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
@@ -136,6 +138,8 @@ int MotionController::Execute()
 	counter++;
 	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//testcommands();
+	if(counter%100==0)
+		readWalkParameters();
 	read_messages();
 	mglrun();
 	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
@@ -220,7 +224,7 @@ void MotionController::mglrun()
 	}
 	else
 	{
-		motion->setStiffnesses("Body", 1.0);
+		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		currentstate=gameState;
 
 	}
@@ -301,7 +305,7 @@ void MotionController::mglrun()
 	if ((actionPID == 0) && robotDown)
 	{
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
-		motion->setStiffnesses("Body", 0.8);
+		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();
@@ -607,7 +611,7 @@ void MotionController::stopWalkCommand()
 {
 	if (walkingWithVelocity||walkPID!=0)
 	{
-		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 0.8); // stop walk
+		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 1.0); // stop walk
 		motion->waitUntilWalkIsFinished();
 		walkingWithVelocity = false;
 	}
