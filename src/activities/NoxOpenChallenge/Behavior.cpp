@@ -164,7 +164,10 @@ void NoxOpenChallenge::UserInit() {
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
 	lastOpenConfRead = microsec_clock::universal_time();
+	lastWideWalk = microsec_clock::universal_time();
 
+	wideWalk = false;
+	
 	Logger::Instance().WriteMsg("NoxOpenChallenge", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
 
@@ -193,6 +196,11 @@ int NoxOpenChallenge::Execute() {
 
 		readytokick = false;
 
+		//if(ballfound == 1 && ( wideWalk && lastWideWalk + seconds(2) < microsec_clock::universal_time())){ // You've done the wide walk and the ball is still visible
+		//    wideWalk = false;
+		//}
+		
+		
 		if (ballfound==1) {
 
 			side = (bb > 0) ? 1 : -1;
@@ -207,7 +215,13 @@ int NoxOpenChallenge::Execute() {
 // 			epsy = 0.02; // Desired precision
 			if ( fabs( bx-posx ) < epsx  && fabs( by-(side*posy) ) < epsy ) {
 				readytokick = true;
-				Kick(side);
+				
+				if(lastWideWalk + seconds(3) < microsec_clock::universal_time() ){
+				    wideWalk = WideWalk();
+				    lastWideWalk = microsec_clock::universal_time();
+				
+				}
+				
 				direction = (side == +1)?-1:+1;
 			}
 
@@ -226,6 +240,16 @@ int NoxOpenChallenge::Execute() {
 				velocityWalk(X,Y,t,f);
 			}
 		}
+		
+
+		if (ballfound == 0 && wideWalk && lastWideWalk + seconds(3) < microsec_clock::universal_time()){
+		    
+		   //Kick(side);
+		    Logger::Instance().WriteMsg("NoxOpenChallenge", "I am going to kick!", Logger::ExtraExtraInfo);
+		    wideWalk = false;
+		}
+
+		//wideWalk = false;
 
 		if (ballfound == 0) {
 			if (!scanforball) {
@@ -383,14 +407,15 @@ void NoxOpenChallenge::GetGameState()
 void NoxOpenChallenge::CheckForBall() {
 
 	if (bmsg != 0) {
-		Logger::Instance().WriteMsg("NoxOpenChallenge", "BallTrackMessage", Logger::ExtraExtraInfo);
+		
 		if (bmsg->radius() > 0) {
+		    Logger::Instance().WriteMsg("NoxOpenChallenge", "BALL FOUND", Logger::ExtraExtraInfo);
 			scanforball = false;
 			MakeTrackBallAction();
 			lastball=microsec_clock::universal_time();
 			ballfound = 1;
 		} else {
-			if (lastball+seconds(3)<microsec_clock::universal_time())
+			if (lastball+milliseconds(1500)<microsec_clock::universal_time())
 				ballfound = 0;
 		}
 	}
@@ -546,6 +571,15 @@ void NoxOpenChallenge::Kick(int side) {
 }
 
 
+bool NoxOpenChallenge::WideWalk() {
+
+  amot->set_command(_wwName);
+  _blk->publishSignal(*amot, "motion");
+
+  return true;
+  
+}
+
 /* Locomotion Functions */
 
 void NoxOpenChallenge::velocityWalk(double ix, double iy, double it, double f)
@@ -691,7 +725,7 @@ bool NoxOpenChallenge::readOpenChallengeConf() {
 	if ( ok && isConfigValid ) {
 
 	  float conf_posx, conf_posy, conf_epsx, conf_epsy;
-	  std::string confSpName;
+	  std::string confSpName, confWWName;
 
 	  ok &= config.QueryElement("ball_pos_x",conf_posx);
 	  ok &= config.QueryElement("ball_pos_y",conf_posy);
@@ -700,6 +734,8 @@ bool NoxOpenChallenge::readOpenChallengeConf() {
 	  ok &= config.QueryElement("ball_eps_y",conf_epsy);
 
 	  ok &= config.QueryElement("spName",confSpName);
+	  
+	  ok &= config.QueryElement("wwName", confWWName);
 
 	  if ( ok ) {
 	    posx = conf_posx;
@@ -707,6 +743,7 @@ bool NoxOpenChallenge::readOpenChallengeConf() {
 	    epsx = conf_epsx;
 	    epsy = conf_epsy;
 	    _spName = confSpName;
+	    _wwName = confWWName;
 	  }
 
 	}

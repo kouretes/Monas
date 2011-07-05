@@ -45,6 +45,7 @@ class NoxOpenChallenge: public IActivity {
 		void HighHeadScanStep(float yaw_limit);
 
 		void Kick(int side);
+		bool WideWalk();
 
 	private:
 
@@ -113,9 +114,12 @@ class NoxOpenChallenge: public IActivity {
 
 		bool readRobotConf;
 
-		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastOpenConfRead;
+		
+		bool wideWalk;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastOpenConfRead, lastWideWalk;
 
 		std::string _spName;
+		std::string _wwName;
 };
 
 #endif
