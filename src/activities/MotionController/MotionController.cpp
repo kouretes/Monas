@@ -20,6 +20,9 @@
 #define LEANTOOMUCH 0.7
 #define ANGLEHOR 1.6
 #define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
+
+#define MAXHEADYAWSPEED 2.5
+#define MAXHEADPITCHSPEED 2.5
 namespace
 {
 	ActivityRegistrar<MotionController>::Type temp("MotionController");
@@ -363,43 +366,22 @@ void MotionController::mglrun()
 		if (hm != NULL)
 		{
 			killHeadCommand();
-			if (hm->command() == "NoDCMsetHead")
+			if (hm->command() == "setHeadInstant" ||hm->command() == "setHead")
 			{
-				headParam1 = hm->parameter(0);
-				headParam2 = hm->parameter(1);
-				Logger::Instance().WriteMsg("MotionController", hm->command() + " with parameters " + _toString(headParam1) + " " + _toString(headParam2), Logger::ExtraInfo);
-				names.arraySetSize(2);
-				values.arraySetSize(2);
-				names[0] = "HeadYaw";
-				values[0] = headParam1;
-				names[1] = "HeadPitch";
-				values[1] = headParam2;
-				float fractionMaxSpeed = 0.98;
-				headPID = motion->post.setAngles(names, values, fractionMaxSpeed);
-				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
-			} else if (hm->command() == "changeHead")
-			{
-				headParam1 = hm->parameter(0);
-				headParam2 = hm->parameter(1);
-				Logger::Instance().WriteMsg("MotionController", hm->command() + " with parameters " + _toString(headParam1) + " " + _toString(headParam2), Logger::ExtraInfo);
-				names.arraySetSize(2);
-				values.arraySetSize(2);
-				names[0] = "HeadYaw";
-				values[0] = headParam1;
-				names[1] = "HeadPitch";
-				values[1] = headParam2;
-				float fractionMaxSpeed = 0.98;
-				headPID = motion->post.changeAngles(names, values, fractionMaxSpeed);
-				Logger::Instance().WriteMsg("MotionController", " Head ID: " + _toString(headPID), Logger::ExtraInfo);
-			}
-			else if (hm->command() == "setHead")
-			{
+				float lastyaw=allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvalue();
+				float lastpitch=allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvalue();
+				float tyaw=fabs(hm->parameter(0)-lastyaw)/MAXHEADYAWSPEED;
+				float tpitch=fabs(hm->parameter(1)-lastpitch)/MAXHEADPITCHSPEED;
+				float t=tyaw>tpitch?tyaw:tpitch;
 				for (int p = 0; p < HEAD_SIZE; p++)
 					commands[5][(p)][0] = hm->parameter(p);
 				int DCMtime;
 				try
 				{ // Get time in 0 ms
-					DCMtime = dcm->getTime(100);
+					if(hm->command() == "setHeadInstant" )
+					DCMtime = dcm->getTime(10);
+					else
+						DCMtime = dcm->getTime(t*1000+10);
 				} catch (const AL::ALError &e)
 				{
 					throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
