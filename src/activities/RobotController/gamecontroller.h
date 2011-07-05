@@ -15,9 +15,10 @@ class GameController
 		void connectTo(int port = GAMECONTROLLER_PORT, int tn = 1);
 		bool poll();
 		void setNonBlock(bool nb);
-
+		void SendAlive(int pnum);
 	private:
 		RoboCupGameControlData & game_data;
+		RoboCupGameControlReturnData rd;
 		int recvflag;
 
 		int port;

@@ -100,8 +100,8 @@ class LBehavior: public IActivity {
 		int gameState;
 		int teamColor;
 		double orientation;
-		
-		ptime lastball, lastwalk;
+
+		ptime lastball, lastwalk,lastrun,lastkick,wimtime;
 
 		int leftright;
 		float headpos;
