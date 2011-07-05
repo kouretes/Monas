@@ -227,7 +227,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	MotionHeadMessage hmot;
 	hmot.add_parameter(0.0f);
 	hmot.add_parameter(0.0f);
-	hmot.set_command("setHead");
+	hmot.set_command("setHeadInstant");
 #ifdef RAW
 	xCamProxy->releaseDirectRawImage(GVM_name);
 //	c->call<int> ("releaseDirectRawImage", GVM_name);

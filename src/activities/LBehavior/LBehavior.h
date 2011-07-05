@@ -31,7 +31,7 @@ using namespace boost::posix_time;
 #define PITCHSTEP 0.3
 #define YAWSTEP 0.4
 
-#define OVERSH 0.06
+#define OVERSH 0.08
 #define WAITFOR 40
 
 //namespace AL {
