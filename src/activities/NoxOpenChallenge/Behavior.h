@@ -116,6 +116,7 @@ class NoxOpenChallenge: public IActivity {
 
 		
 		bool wideWalk;
+		bool possiblyKick;
 		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastOpenConfRead, lastWideWalk;
 
 		std::string _spName;
