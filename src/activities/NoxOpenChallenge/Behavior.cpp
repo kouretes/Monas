@@ -202,7 +202,7 @@ int NoxOpenChallenge::Execute() {
 		
 		
 		if (ballfound==1) {
-
+			//wideWalk = false;
 			side = (bb > 0) ? 1 : -1;
 			if ( lastOpenConfRead+seconds(2) < microsec_clock::universal_time() ) {
 			  readOpenChallengeConf();
@@ -242,7 +242,7 @@ int NoxOpenChallenge::Execute() {
 		}
 		
 
-		if (ballfound == 0 && wideWalk && lastWideWalk + seconds(3) < microsec_clock::universal_time()){
+		if (ballfound == 0 && wideWalk && lastWideWalk + seconds(6) < microsec_clock::universal_time()){
 		    
 		   //Kick(side);
 		    Logger::Instance().WriteMsg("NoxOpenChallenge", "I am going to kick!", Logger::ExtraExtraInfo);
@@ -415,7 +415,7 @@ void NoxOpenChallenge::CheckForBall() {
 			lastball=microsec_clock::universal_time();
 			ballfound = 1;
 		} else {
-			if (lastball+milliseconds(1500)<microsec_clock::universal_time())
+			if (lastball+milliseconds(1000)<microsec_clock::universal_time())
 				ballfound = 0;
 		}
 	}
