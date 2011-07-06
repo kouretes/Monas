@@ -19,19 +19,9 @@
 	<activity>Vision</activity>
 	<activity>Localization</activity>
 	<activity>Behavior</activity>
-<!--
-	<activity>HeadBehavior</activity>
--->
 </agent>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>KSensors</name>
 	<activity>Sensors</activity>
 </agent>
-
-<!--
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
-	<name>BodyBehavior</name>
-	<activity>BodyBehavior</activity>
-</agent>
--->
