@@ -554,7 +554,22 @@ void Behavior::HeadScanStepSmart() {
 /* Kicking */
 
 void Behavior::Kick(int side) {
+	
+	static int counter = 0;
 
+	if(counter++%2 == 0){
+                amot->set_command("RightBackHigh_carpet.xar");
+		_blk->publishSignal(*amot, "motion");
+	}
+	else{
+                amot->set_command("LeftBackHigh_carpet.xar");
+		_blk->publishSignal(*amot, "motion");
+
+	}
+
+	if(counter == 10000)
+		counter=0;
+/*
 	if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
 		if (mglRand() < 0.5) {
 			littleWalk(0.2, 0.0, 0.0);
@@ -591,6 +606,8 @@ void Behavior::Kick(int side) {
 		}
 		_blk->publishSignal(*amot, "motion");
 	}
+
+*/
 }
 
 
