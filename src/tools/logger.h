@@ -5,11 +5,13 @@
 #include <fstream>
 #include <set>
 #include <cstdio>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "sys/stat.h"
 #include "architecture/archConfig.h"
 #include "tools/XMLConfig.h"
 
 #include "tools/singleton.h"
+
 
 //TODO mutex needed
 //it's not thread safe but it is instantiated long before any thread creation
@@ -25,6 +27,10 @@ class LoggerClass {
 
         template<class T>
         void WriteMsg ( std::string name, const T & msg, MsgType type ) {
+
+	  if ( lastConfRead + boost::posix_time::seconds(reparsingPeriod)
+			    < boost::posix_time::microsec_clock::universal_time() )
+		ReadConfiguration();
 
             if ( type > VerbosityLevel )
                 return;
@@ -64,7 +70,43 @@ class LoggerClass {
 
         LoggerClass () {
 
-            std::string ConfFileStr( ArchConfig::Instance().GetConfigPrefix()+"logger.xml" );
+	    ReadConfiguration();
+
+	    lastConfRead = boost::posix_time::microsec_clock::universal_time();
+
+
+            struct stat stFileInfo;
+            std::string fullfilename ;
+            fullfilename= (ArchConfig::Instance().GetConfigPrefix()+ MsgLogFile);
+            int intStat = stat((fullfilename+".0").c_str(),&stFileInfo);
+            	if (intStat == 0)
+            		if(stFileInfo.st_size > 512)
+            		{
+            			rename( (fullfilename + ".0").c_str() , (fullfilename + ".1").c_str() );
+            		}
+
+
+            ErrorLog.open( ( ArchConfig::Instance().GetConfigPrefix()+MsgLogFile+".0" ).c_str() );
+            if ( ! ErrorLog.is_open() ) {
+                std::cerr<<"Can't open MessageLog file: "<<MsgLogFile<<std::endl;
+                SysCall::_exit(1);
+            }
+
+            ColorMap["red"]     = "\033[1;31m";
+            ColorMap["blue"]    = "\033[1;34m";
+            ColorMap["lBlue"]   = "\033[21;34m";
+            ColorMap["green"]   = "\033[1;32m";
+            ColorMap["yellow"]   = "\033[1;33m";
+            ColorMap["default"] = "\033[0m";
+
+        }
+
+    private:
+
+	void ReadConfiguration () {
+
+
+	    std::string ConfFileStr( ArchConfig::Instance().GetConfigPrefix()+"logger.xml" );
             XMLConfig ConfFile( ConfFileStr );
             if ( ! ConfFile.IsLoadedSuccessfully() ) {
                 std::cerr<<"Can't parse logger configuration file @ "<<ConfFileStr<<std::endl;
@@ -83,6 +125,10 @@ class LoggerClass {
 
             if ( ! ConfFile.QueryElement( "MessageLogCerr", CerrEnabled ) )
                 CerrEnabled = false;
+
+
+	    if ( ! ConfFile.QueryElement( "PollingPeriod", reparsingPeriod ) )
+                reparsingPeriod = 2;
 
 
 	    std::vector<std::string> ActFilterStr;
@@ -120,33 +166,10 @@ class LoggerClass {
             if ( ! ConfFile.QueryElement( "MessageLogCerrColor", ColorEnabled) )
                 ColorEnabled = false;
 
-            struct stat stFileInfo;
-            std::string fullfilename ;
-            fullfilename= (ArchConfig::Instance().GetConfigPrefix()+ MsgLogFile);
-            int intStat = stat((fullfilename+".0").c_str(),&stFileInfo);
-            	if (intStat == 0)
-            		if(stFileInfo.st_size > 512)
-            		{
-            			rename( (fullfilename + ".0").c_str() , (fullfilename + ".1").c_str() );
-            		}
 
+	    lastConfRead = boost::posix_time::microsec_clock::universal_time();
 
-            ErrorLog.open( ( ArchConfig::Instance().GetConfigPrefix()+MsgLogFile+".0" ).c_str() );
-            if ( ! ErrorLog.is_open() ) {
-                std::cerr<<"Can't open MessageLog file: "<<MsgLogFile<<std::endl;
-                SysCall::_exit(1);
-            }
-
-            ColorMap["red"]     = "\033[1;31m";
-            ColorMap["blue"]    = "\033[1;34m";
-            ColorMap["lBlue"]   = "\033[21;34m";
-            ColorMap["green"]   = "\033[1;32m";
-            ColorMap["yellow"]   = "\033[1;33m";
-            ColorMap["default"] = "\033[0m";
-
-        }
-
-    private:
+	}
 
         template< class T>
         void WriteMsgToBuffers ( std::string name, const T& msg, std::string color ) {
@@ -178,6 +201,9 @@ class LoggerClass {
 	bool DebugAll;
 
         std::map<std::string,std::string> ColorMap;
+
+	boost::posix_time::ptime lastConfRead;
+	float reparsingPeriod;
 
 };
 

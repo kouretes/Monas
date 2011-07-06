@@ -2,6 +2,8 @@
 <!-- Configuration for logger module  -->
 
 
+ <!-- Polling Period for reparsing this XML file in secs -->
+<PollingPeriod>3</PollingPeriod>
 
 <MessageLogFile>MonasLog.txt</MessageLogFile>
 
