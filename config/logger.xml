@@ -16,6 +16,11 @@
 <MessageLogFilter>all</MessageLogFilter>
 
 
+<!-- Debug messages from activities that will reach the LogFile -->
+<!-- Special keyword 'all' will enable all activities -->
+<!--DebugFilter>all</DebugFilter-->
+
+
 <!-- FatalError =0, Error, Info, ExtraInfo, ExtraExtraInfo -->
 <!-- Verbosity level is limited to >= 0 thus FatalError can't be blocked-->
 <LogFileVerbosityLevel>8</LogFileVerbosityLevel>

@@ -11,16 +11,16 @@
 
 #include "tools/singleton.h"
 
-//TODO mutex needed 
+//TODO mutex needed
 //it's not thread safe but it is instantiated long before any thread creation
 
 
-class LoggerClass { 
+class LoggerClass {
 
     public:
 
-        enum MsgType { FatalError=0, Error, Warning, Info, ExtraInfo, ExtraExtraInfo };
-        
+        enum MsgType { FatalError=0, Error, Warning, Info, ExtraInfo, ExtraExtraInfo, Debug };
+
         ~LoggerClass () { ErrorLog.close(); }
 
         template<class T>
@@ -30,14 +30,14 @@ class LoggerClass {
                 return;
 
             switch (type) {
-                case FatalError: 
-                case Error:      
+                case FatalError:
+                case Error:
                     WriteMsgToBuffers ( name, msg, "red" );
                     break;
                 case Warning:
                     WriteMsgToBuffers ( name, msg, "yellow" );
                     break;
-                case Info:                    
+                case Info:
                 case ExtraInfo:
                     if ( ! ActivityFilterEnabled )
                         WriteMsgToBuffers ( name, msg, "default" );
@@ -45,11 +45,19 @@ class LoggerClass {
                         WriteMsgToBuffers ( name, msg, "default" );
                     break;
 
-                case ExtraExtraInfo: 
+                case ExtraExtraInfo:
                     if ( ! ActivityFilterEnabled )
                         WriteMsgToBuffers ( name, msg, "blue" );
                     else if ( ActivityFilter.find(name) != ActivityFilter.end() )
                         WriteMsgToBuffers ( name, msg, "blue" );
+
+		case Debug:
+                    if ( DebuggingMode ) {
+		      if ( DebugAll )
+                        WriteMsgToBuffers ( name, msg, "red" );
+		      else if ( ActivityFilter.find(name) != ActivityFilter.end() )
+                        WriteMsgToBuffers ( name, msg, "red" );
+		    }
             }
         }
 
@@ -77,7 +85,24 @@ class LoggerClass {
                 CerrEnabled = false;
 
 
-            std::vector<std::string> ActFilterStr;
+	    std::vector<std::string> ActFilterStr;
+            ConfFile.QueryElement( "DebugFilter", ActFilterStr );
+            if ( ActFilterStr.size() == 0 )
+                DebuggingMode = false;
+            else {
+                DebuggingMode = true;
+		DebugAll = false;
+                for ( std::vector<std::string>::const_iterator it = ActFilterStr.begin(); it != ActFilterStr.end(); it++ ) {
+                    if ( (*it) == "all" ) {
+                        DebugAll = true;
+                        break;
+                    }
+                    DebugFilter.insert( (*it) );
+                }
+            }
+
+
+            ActFilterStr.clear();
             ConfFile.QueryElement( "MessageLogFilter", ActFilterStr );
             if ( ActFilterStr.size() == 0 )
                 ActivityFilterEnabled = false;
@@ -88,7 +113,7 @@ class LoggerClass {
                         ActivityFilterEnabled = false;
                         break;
                     }
-                    ActivityFilter.insert( (*it) ); 
+                    ActivityFilter.insert( (*it) );
                 }
             }
 
@@ -120,14 +145,14 @@ class LoggerClass {
             ColorMap["default"] = "\033[0m";
 
         }
-    
+
     private:
 
         template< class T>
         void WriteMsgToBuffers ( std::string name, const T& msg, std::string color ) {
                 ErrorLog<<name<<" : "<<msg<<std::endl;
-                if ( CerrEnabled ) { 
-                    if ( ColorEnabled ) 
+                if ( CerrEnabled ) {
+                    if ( ColorEnabled )
                         std::cerr<<ColorMap[color]<<name<<" : "<<msg<<ColorMap["default"]<<std::endl;
                     else
                         std::cerr<<name<<" : "<<msg<<std::endl;
@@ -147,6 +172,10 @@ class LoggerClass {
         bool CerrEnabled;
 
         bool ColorEnabled;
+
+	std::set<std::string> DebugFilter;
+	bool DebuggingMode;
+	bool DebugAll;
 
         std::map<std::string,std::string> ColorMap;
 
