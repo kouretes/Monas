@@ -2,6 +2,8 @@
 <!-- Configuration for logger module  -->
 
 
+ <!-- Polling Period for reparsing this XML file in secs -->
+<PollingPeriod>3</PollingPeriod>
 
 <MessageLogFile>MonasLog.txt</MessageLogFile>
 
@@ -14,6 +16,11 @@
 <!-- FatalError and Error directives can't be blocked -->
 <!-- Special keyword 'all' will enable all activities -->
 <MessageLogFilter>all</MessageLogFilter>
+
+
+<!-- Debug messages from activities that will reach the LogFile -->
+<!-- Special keyword 'all' will enable all activities -->
+<!--DebugFilter>all</DebugFilter-->
 
 
 <!-- FatalError =0, Error, Info, ExtraInfo, ExtraExtraInfo -->

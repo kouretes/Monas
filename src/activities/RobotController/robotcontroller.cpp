@@ -82,7 +82,15 @@ int RobotController::Execute() {
 
 		int chest=bm->data(KDeviceLists::CHEST_BUTTON);
 
-		if(chest==2)//DOUBLE CHEST CLICK
+		if((lbump+rbump)>0 && chest==2)
+		{
+		  Logger::Instance().WriteMsg("SysCall","Shutdown robot",LoggerClass::Info);
+		  gm_state.Clear();
+		  gm_state.set_override_state(OVERRIDE_DROPDEAD);
+		  SysCall::_Shutdown();
+		  changed = true;
+		}
+		else if(chest==2)//DOUBLE CHEST CLICK
 		{
 
 			if(gm_state.override_state()!=OVERRIDE_DROPDEAD)
