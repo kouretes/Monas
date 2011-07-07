@@ -65,8 +65,8 @@ void Localization::UserInit()
 
 	MyWorld.add_balls();
 
-	KLocalization::Initialize(); //TODO PUT IT BACK TO KLOCALIZATION!
-	KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
+	KLocalization::Initialize();
+	//KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
 	KLocalization::setParticlesPoseUniformly(SIRParticles);
 	//KLocalization::setBelief(0, 0, 0, 0.1);
 	sock = NULL;
@@ -315,7 +315,7 @@ int Localization::Execute()
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
 
-	LocalizationStepSIR(robotmovement, currentObservation, maxrangeleft, maxrangeright);
+	LocalizationStepSIR(robotmovement, currentObservation, currentAbigiusObservation, maxrangeleft, maxrangeright);
 
 	//SimpleBehaviorStep();
 
@@ -324,14 +324,7 @@ int Localization::Execute()
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
 
-	//AgentPosition.x = -3000;
-	//AgentPosition.y = 0;
-
-//	MyWorld.mutable_myposition()->set_x(-3);
-//	MyWorld.mutable_myposition()->set_y(0);
-//	MyWorld.mutable_myposition()->set_phi(0);
-//	MyWorld.mutable_myposition()->set_confidence(0);
-	calculate_ball_estimate();
+	calculate_ball_estimate(robotmovement);
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
 	{
@@ -399,7 +392,7 @@ void Localization::Send_LocalizationData()
 	}
 }
 
-void Localization::calculate_ball_estimate()
+void Localization::calculate_ball_estimate(KMotionModel const & robotModel)
 {
 	boost::posix_time::time_duration duration;
 	boost::posix_time::ptime observation_time;
@@ -437,14 +430,14 @@ void Localization::calculate_ball_estimate()
 				last_filter_time = observation_time;
 				dt = duration.total_microseconds() / 1000000.0f;
 
-				float dist_var = 1.20 - tanh(1.8 / aball.dist()); //observation ... deviation ... leme twra
+				float dist_var = 1.10 - tanh(1.8 / aball.dist()); //observation ... deviation ... leme twra
 				nearest_filtered_ball = myBall.get_updated_ball_estimate(aball.dist(), dist_var * dist_var, aball.bearing(), 0.03, dt);
 
 				//Predict
 				duration = now - last_filter_time;
 				last_filter_time = now;
 				dt = duration.total_microseconds() / 1000000.0f;
-				nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt);
+				nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt, robotModel);
 
 				float dx = nearest_filtered_ball.relativex() - nearest_nofilter_ball.relativex();
 				float dy = nearest_filtered_ball.relativey() - nearest_nofilter_ball.relativey();
@@ -487,7 +480,7 @@ void Localization::calculate_ball_estimate()
 			duration = now - last_filter_time;
 			last_filter_time = now;
 			dt = duration.total_microseconds() / 1000000.0f;
-			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt);
+			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
 			if (MyWorld.balls_size() > 0)
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
 		}
@@ -564,33 +557,22 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 
 }
 
-belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, double rangemaxleft, double rangemaxright)
+belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbigiusObservations, double rangemaxleft, double rangemaxright)
 {
-
-	//cout << "SelfLocalize SIR" << endl;
 	int iterations = 1;
-
 	int index[partclsNum];
-	//Simple initialization
 
-	//cin.ignore(10, '\n');
-	//cin.clear();
-	//cout << "write something to predict particles " << endl;
-	//cin >> c;
 	//SpreadParticles
-	if (Observations.empty())
-	{
-		//		cout << "No observations ... spreading" << endl;
-		//SpreadParticlesCirc(SIRParticles, 10, 0, 2);
-	}
+//	if (Observations.empty())
+//	{
+//		//		cout << "No observations ... spreading" << endl;
+//		//SpreadParticlesCirc(SIRParticles, 10, 0, 2);
+//	}
 	//	if (depletions_counter > 1) {
 	//		cout << "Depletion Counter " << depletions_counter << endl;
 	//		SpreadParticlesCirc(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
 	//	}
 
-	//SpreadParticlesCirc(SIRParticles, 10.0 * depletions_counter, 10 * TO_RAD, 20);
-	//SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 1 * TO_RAD, 100);
-	//SpreadParticlesCirc(SIRParticles, 20.0 * depletions_counter, 45 * TO_RAD, 5);
 	SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
 	//	if (Observations.size() > 1)
 	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
@@ -602,25 +584,21 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 #endif
 	//SIR Filter
 
-	//sleep(1);
 	//Predict - Move particles according the Prediction Model
-	//	if (MotionModelptr != NULL) {
+
 	for (int i = 0; i < iterations; i++)
 		Predict(SIRParticles, MotionModel);
-	//	} else {
-	//		SpreadParticlesCirc(SIRParticles, iterations * 100, 30 * TO_RAD, 100);
-	//	}
-	////#########################
-	//
 
 	//Set semi-optimal bearing angle as the average bearing angle to the observations
-	//if (Observations.size() > 0)
-		ForceBearing(SIRParticles, Observations);
+	ForceBearing(SIRParticles, Observations);
 
+	//Create some particles using Observation Intersection
 	CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 
 	//Update - Using incoming observation
 	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
+//	if(AmbigiusObservations.size()>0)
+//		Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
 
 #ifdef ADEBUG
 	cout << "\nUnnormalized SIR particles " << endl;
@@ -636,8 +614,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	{
 		//cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
 		depletions_counter++;
-
-		//cout << "Depletion Counter " << depletions_counter << endl;
 	} else
 	{
 		depletions_counter = 0;
@@ -730,7 +706,6 @@ void Localization::process_messages()
 	rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
-
 	
 	if (rpsm != 0)
 	{
@@ -742,12 +717,11 @@ void Localization::process_messages()
 	}
 
 	currentObservation.clear();
+	currentAbigiusObservation.clear();
 	if (obsm != 0)
 	{
 		KObservationModel tmpOM;
-
 		//Load observations
-
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
 
@@ -758,34 +732,39 @@ void Localization::process_messages()
 		for (int i = 0; i < Objects.size(); i++)
 		{
 			id = Objects.Get(i).object_name();
-			//			if (id[0] == 'S')
-			//				continue;
+
+			//Distance
+			tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
+			tmpOM.Distance.Emean = 0;
+			tmpOM.Distance.Edev = sqrt(Objects.Get(i).distance_dev()) * 1000 + 30;
+
+			//Bearing
+			tmpOM.Bearing.val = Objects.Get(i).bearing();
+			tmpOM.Bearing.Emean = 0;
+			tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 560;
+
+
 			if ((this)->KFeaturesmap.count(id) != 0)
 			{
 				//Make the feature
 				tmpOM.Feature = (this)->KFeaturesmap[id];
-				//Distance
-				tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
-				tmpOM.Distance.Emean = 0;
-				tmpOM.Distance.Edev = sqrt(Objects.Get(i).distance_dev()) * 1000 + 30;
-
-				tmpOM.Bearing.val = Objects.Get(i).bearing();
-				tmpOM.Bearing.Emean = 0;
-				tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 560;
-
 				currentObservation.push_back(tmpOM);
 				//cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
 				//cout << " DistanceDev " << tmpOM.Distance.Edev << " BearingDev " << tmpOM.Bearing.Edev << endl;
-			}
+			}else {
+				if( id.find("Skyblue")!=string::npos)
+				{
+					tmpOM.Feature = (this)->KFeaturesmap["SkyblueLeft"];
+					currentAbigiusObservation.push_back(tmpOM);
+				}
 
-			//			else {
-			//				if (id.compare("HeadYawAngles") == 0) {
-			//					maxrangeleft = Objects->Get(i)->bearing_limit_left;//(float) ret[i + 1];
-			//					maxrangeright = Objects->Get(i)->bearing_limit_right;//(float) ret[i + 2];
-			//					cout << "Range Angles maxleft: " << maxrangeleft << " max right: " << maxrangeright << endl;
-			//				} else
-			//					cout << "String i " << i << " Name " << (string) ret[i] << " unknown " << endl;
-			//			}
+				if( id.find("Yellow")!=string::npos){
+					tmpOM.Feature = (this)->KFeaturesmap["YellowLeft"];
+					currentAbigiusObservation.push_back(tmpOM);
+				}
+
+				Logger::Instance().WriteMsg("Localization", "Unmatched Observation: "+id, Logger::Info);
+			}
 		}
 		//		if(AgentPosition.confidence > 0.5){
 		//			tmpOM.Feature = "OldPose";
@@ -793,9 +772,6 @@ void Localization::process_messages()
 		//			tmpOM.Bearing.val = atan2(Particles .y[p] - AgentPosition.y, Particles.x[p] - AgentPosition.x);
 		//		}
 	}
-
-//	Logger::Instance().WriteMsg("Localization", "process_messages ", Logger::ExtraExtraInfo);
-
 }
 
 int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel)

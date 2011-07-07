@@ -33,13 +33,13 @@ class Localization: public IActivity, public KLocalization
 		void UserInit();
 		void Reset();
 		void process_messages();
-		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright);
+		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations, double rangemaxleft, double rangemaxright);
 		void RobotPositionMotionModel(KMotionModel & MModel);
 		std::string GetName()
 		{
 			return "Localization";
 		}
-		void calculate_ball_estimate();
+		void calculate_ball_estimate(KMotionModel const & MModel);
 	private:
 
 		int count;
@@ -51,6 +51,7 @@ class Localization: public IActivity, public KLocalization
 		belief mypos;
 
 		vector<KObservationModel> currentObservation;
+		vector<KObservationModel> currentAbigiusObservation;
 		KMotionModel robotmovement;
 
 		partcl TrackPoint;
