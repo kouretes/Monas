@@ -15,6 +15,8 @@ class SysCall {
 
         static bool _GetCwd ( std::string& path );
 
+	static void _Shutdown ( );
+
 };
 
 #endif // _syscall_h_
