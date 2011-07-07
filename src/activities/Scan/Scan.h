@@ -32,10 +32,10 @@ private:
 	boost::shared_ptr<const HeadToBMessage> hbm;
 	boost::shared_ptr<const ScanMessage> scnm;
 	
-	bool toPos;
+	//bool toPos;
 	int headaction;
-	int forpost, forball;
-	boost::posix_time::ptime lastTurn;
+	//int forpost, forball;
+	//boost::posix_time::ptime lastTurn;
 	void velocityWalk( double x, double y, double th, double f);
 	void littleWalk(double x, double y, double th);	
 

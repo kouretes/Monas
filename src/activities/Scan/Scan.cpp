@@ -20,8 +20,8 @@ int Scan::Execute() {
 	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
-			forball =0;
-			forpost =0;
+		//	forball =0;
+			//forpost =0;
 			//Logger::Instance().WriteMsg(GetName (),  " BALLTRACK", Logger::Info);
 		}
 		else{		
@@ -34,16 +34,16 @@ int Scan::Execute() {
 			velocityWalk(0.0,0.0, 0.0, 1.0);
 			//}
 
-			if(forball%51!=0 ){
+		//	if(forball%51!=0 ){
 				headaction = SCANFORBALL;
-				forball++;
-			}else{
+			//	forball++;
+			//}else{
 				
-				headaction = HIGHSCANFORBALL;
-				forpost++;
-				if( forpost%9==0)
-					forball++;
-			}
+			//	headaction = HIGHSCANFORBALL;
+				//forpost++;
+				//if( forpost%9==0)
+					//forball++;
+			//}
 			//Logger::Instance().WriteMsg(GetName (),  " SCANFORBALL", Logger::Info);
 		}
 	}
@@ -58,10 +58,10 @@ void Scan::UserInit () {
 	_blk->subscribeTo("behavior", 0);
 	headaction = SCANFORBALL;
 	bhmsg = new BToHeadMessage();
-	lastTurn = boost::posix_time::microsec_clock::universal_time();
+	//lastTurn = boost::posix_time::microsec_clock::universal_time();
 	
-	forpost = 0;
-	forball = 0;
+	//forpost = 0;
+	//forball = 0;
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);

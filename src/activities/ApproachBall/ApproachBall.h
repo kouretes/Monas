@@ -42,9 +42,11 @@ private:
 	boost::shared_ptr<const ObservationMessage> obsm;
 	boost::shared_ptr<const WorldInfo> wimsg;
 	boost::shared_ptr<const GameStateMessage> gsm;
+	ReturnToPositionMessage* rpm;
 	int headaction;
 	void velocityWalk( double x, double y, double th, double f);
 	void littleWalk(double x, double y, double th);	
+
 
 };
 

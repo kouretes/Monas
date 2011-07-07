@@ -160,8 +160,8 @@ int HeadBehavior::Execute() {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
-				HeadScanStep();
-
+			//	HeadScanStep();
+				HeadScanStepSmart();
 			}
 			break;
 		case (HIGHSCANFORBALL):
@@ -338,6 +338,114 @@ void HeadBehavior::HeadScanStep() {
 	return ;
 
 }
+
+
+void HeadBehavior::HeadScanStepSmart() {
+
+	float  blue1y, blue1p, blue2y, blue2p;
+	blue1y = +0.75;
+	blue1p = +0.38;
+	blue2y = +0.00;
+	blue2p = -0.55;
+	float green1y, green1p, green2y, green2p;
+	green1y = +1.45;
+	green1p = -0.42;
+	green2y = +0.00;
+	green2p = +0.35;
+	float red1y, red1p, red2y, red2p;
+	red1y = +1.80;
+	red1p = -0.39;
+	red2y = +0.00;
+	red2p = -0.60;
+	static enum {BLUE, RED, GREEN} state = BLUE;
+	static enum {START, MIDDLE, END} phase = START;
+	
+//	HeadYaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
+//	HeadPitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
+
+	if (startscan) {
+		ysign = HeadYaw.sensorvalue() > 0 ? +1 : -1; //Side
+		targetYaw = blue1y * ysign;
+		targetPitch = blue1p;
+		state = BLUE;
+		phase = START;
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, targetYaw);
+		hmot->set_parameter(1, targetPitch);
+		_blk->publishSignal(*hmot, "motion");
+		waiting = 0;
+		startscan = false;
+		return;
+	}
+	
+	waiting++;
+	
+	if ( ( (fabs(targetPitch - HeadPitch.sensorvalue()) <= OVERSH) && (fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH) ) || (waiting >= WAITFOR) ) {
+		waiting = 0;
+		if (phase == START) {
+			phase = MIDDLE;
+			switch (state) {
+			case BLUE:
+				targetYaw = blue2y;
+				targetPitch = blue2p;
+				break;
+			case GREEN:
+				targetYaw = green2y;
+				targetPitch = green2p;
+				break;
+			case RED:
+				targetYaw = red2y;
+				targetPitch = red2p;
+				break;
+			}
+		}
+		else if (phase == MIDDLE) {
+			ysign = -ysign;
+			phase = END;
+			switch (state) {
+			case BLUE:
+				targetYaw = blue1y*ysign;
+				targetPitch = blue1p;
+				break;
+			case GREEN:
+				targetYaw = green1y * ysign;
+				targetPitch = green1p;
+				break;
+			case RED:
+				targetYaw = red1y*ysign;
+				targetPitch = red1p;
+				break;
+			}
+		}
+		else {
+			phase = START;
+			switch (state) {
+			case BLUE:
+				state = GREEN;
+				targetYaw = green1y * ysign;
+				targetPitch = green1p;
+				break;
+			case GREEN:
+				state = RED;
+				targetYaw = red1y * ysign;
+				targetPitch = red1p;
+				break;
+			case RED:
+				state = BLUE;
+				targetYaw = blue1y * ysign;
+				targetPitch = blue1p;
+				break;
+			}
+		}
+
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, targetYaw);
+		hmot->set_parameter(1, targetPitch);
+		_blk->publishSignal(*hmot, "motion");
+	}
+	return;
+}
+
 
 void HeadBehavior::read_messages() {
 

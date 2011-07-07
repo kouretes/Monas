@@ -97,6 +97,8 @@ class HeadBehavior: public IActivity {
 
 		void calibrate();
 		void highheadscanstep(float );
+		
+		void HeadScanStepSmart();
 		void headmotion(float pitch, float yaw);
 
 };
