@@ -213,6 +213,41 @@ IplImage *KImageExtractor::allocateImage()
 }
 
 
+//In 16ths
+
+
+
+inline unsigned int decodeGain(unsigned char inValue)
+{
+    unsigned int c;
+    unsigned char v = inValue >> 4;
+
+    for(c = 0; v; c++)//Count bits
+    {
+        v &= v - 1;
+    }
+
+    return (((inValue&0x07) + 16) * (1 << c));
+}
+
+inline unsigned char encodeGain(unsigned int inValue)
+{
+    unsigned char y=0;
+
+	while(inValue>23)
+	{
+		y++;
+		inValue>>=1;
+	}
+	if(inValue>16)
+		inValue-=16;
+	else
+		inValue=0;
+
+	return (((1<<y)-1)<<3)|(inValue);
+}
+
+
 float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 {
 #ifdef WEBOTS
@@ -241,6 +276,22 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	cout<<"Calibrate Start:"<<endl;
 	try
 	{
+
+		xCamProxy->setParam( kCameraSelectID, 0);
+		SleepMs(5);
+		xCamProxy->setParam( kCameraAutoGainID, 0);
+		SleepMs(5);
+		xCamProxy->setParam( kCameraAutoExpositionID, 0);
+		SleepMs(5);
+		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
+		SleepMs(5);
+		//xCamProxy->setParam( kCameraSelectID, 1);
+//		c->callVoid( "setParam", kCameraSelectID, 1);
+		xCamProxy->setParam( kCameraExposureCorrectionID,0);
+//		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
+		SleepMs(10);
+
+
 		xCamProxy->setParam( kCameraSelectID, 1);
 		SleepMs(5);
 		xCamProxy->setParam( kCameraAutoGainID, 1);
@@ -262,12 +313,6 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		_blk->publish_all();
 
 		SleepMs(100);
-		xCamProxy->setParam(  kCameraAutoGainID, 1);
-//		c->callVoid( "setParam", kCameraAutoGainID, 1);
-		xCamProxy->setParam(  kCameraAutoExpositionID,1);
-//		c->callVoid( "setParam", kCameraAutoExpositionID,1);
-		xCamProxy->setParam(  kCameraAutoWhiteBalanceID,1);
-//		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,1);
 
 		//Wait for autoconf
 		SleepMs(sleeptime);
@@ -342,7 +387,8 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		lastexpusec=e*MAXEXPUS/510.0f;
 		cout<<"Exposure Scaling:"<<getScale()<<", from"<<refexpusec<<"usec to "<<lastexpusec<<"usec"<<endl;
 		//cout<<"Scaling  exposure:"<<(exp*510)/33<<" "<<e<<endl;
-		gain=gainL<gainR?gainL:gainR;
+
+		gain=encodeGain((decodeGain(gainL)+decodeGain(gainR))/2);
 
 		//redchroma=128-((128.0-redchroma)*0.95);
 		//bluechroma=128-((128.0-bluechroma)*0.95);
@@ -369,13 +415,13 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		_blk->publishSignal(hmot,"motion");
         _blk->publish_all();
 
-		SleepMs(100);
+
 		//wait for autoconf
 		SleepMs(sleeptime);
 		rchromaL=xCamProxy->getParam(kCameraRedChromaID);
 		SleepMs(5);
 		bchromaL=xCamProxy->getParam(kCameraBlueChromaID);
-
+		SleepMs(5);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
 		SleepMs(5);
 		cout<<"Left white balance settings:"<<rchromaL<<" "<<bchromaL<<endl;
@@ -387,7 +433,7 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 		xCamProxy->setParam( kCameraSelectID, 0);
 		SleepMs(150);
-		//SET TOP CAMERA SETTINGS
+		//SET BOTTOM CAMERA SETTINGS
 		xCamProxy->setParam( kCameraAutoGainID, 0);
 		SleepMs(5);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
