@@ -96,6 +96,7 @@ void Behavior::UserInit() {
 	ballfound = 0;
 	scanforball = true;
 	startscan = true;
+	scanOK = true;
 	calibrated = 0;
 
 	forball = 0;
@@ -136,6 +137,8 @@ void Behavior::UserInit() {
 	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
+	lastscan = microsec_clock::universal_time();
+	lasttrack = microsec_clock::universal_time();
 
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
@@ -181,22 +184,25 @@ int Behavior::Execute() {
 					side = -1;
 				else if (orientation == 3)
 					side = +1;
-				approachBall(posx, side*posy);
+				approachBallNewWalk(posx, side*posy);
 			}
 		}
 
-		if (ballfound == 0) {
-			if (!scanforball) {
-				startscan = true;
-				scanforball = true;
-				velocityWalk(0.0,0.0,0.0,1.0);
-				lastmove = microsec_clock::universal_time();
-			}
-			if (lastmove + seconds(5) < microsec_clock::universal_time()) {
-				littleWalk(direction * 0.20, 0.0, direction * 30 * TO_RAD);
-				lastmove = microsec_clock::universal_time();
+		if ( (ballfound == 0) || (scanOK) ) {
+			if (ballfound==0) {
+				if (!scanforball) {
+					startscan = true;
+					scanforball = true;
+					velocityWalk(0.0,0.0,0.0,1.0);
+					lastmove = microsec_clock::universal_time();
+				}
+				if (lastmove + seconds(5) < microsec_clock::universal_time()) {
+					littleWalk(direction * 0.20, 0.0, direction * M_PI_4);
+					lastmove = microsec_clock::universal_time();
+				}
 			}
 			HeadScanStepSmart();
+			lastscan = microsec_clock::universal_time();
 		}
 	} 
 	else if (gameState == PLAYER_READY) {
@@ -282,7 +288,7 @@ void Behavior::GetPosition() {
 	if(wim.get() != 0){
 		robot_x = wim->myposition().x();
 		robot_y = wim->myposition().y();
-		robot_phi = wim->myposition().phi();
+		robot_phi = wrapToPi( wim->myposition().phi() );
 		robot_confidence = wim->myposition().confidence();
 	}
 	return;
@@ -329,19 +335,6 @@ void Behavior::UpdateOrientationPlus()
 
 
 void Behavior::CheckForBall() {
-
-	if (bmsg != 0) {
-		//Logger::Instance().WriteMsg("Behavior", "BallTrackMessage", Logger::ExtraExtraInfo);
-		if (bmsg->radius() > 0) { 
-			scanforball = false; 
-			MakeTrackBallAction();
-			lastball = microsec_clock::universal_time();
-			ballfound = 1;
-		} else {
-			if (lastball+seconds(2)<microsec_clock::universal_time())
-				ballfound = 0;
-		}
-	}
 	
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
@@ -353,6 +346,32 @@ void Behavior::CheckForBall() {
 			ballfound = 0;
 		}
 	}
+
+	if (bmsg != 0) {
+		if (bmsg->radius() > 0) { 
+			if (bd < 5.7) {
+				MakeTrackBallAction();
+				lasttrack = microsec_clock::universal_time();
+				scanforball = false; 
+				scanOK = false;
+			}
+			else {
+				scanOK = true;
+			}
+			lastball = microsec_clock::universal_time();
+			ballfound = 1;
+		} else {
+			if (bd < 0.7) {
+				if (lastball+seconds(1)<microsec_clock::universal_time())
+					ballfound = 0;
+			} else {
+				if (lastball+seconds(3)<microsec_clock::universal_time())
+					ballfound = 0;
+			}
+		}
+	}
+
+	return;
 }
 
 
@@ -573,16 +592,16 @@ void Behavior::Kick(int side) {
 			else
 				amot->set_command("KickForwardRight.xar"); //RightKick
 		} else if (orientation == 3) {
-			amot->set_command("KickSideLeftFast.xar"); //"HardLeftSideKick"
+			amot->set_command("KickSideLeftFastPierris.xar"); //"HardLeftSideKick" KickSideLeftFast
 			direction = -1;
 		} else if (orientation == 1) {
-			amot->set_command("KickSideRightFast.xar"); //"HardRightSideKick"
+			amot->set_command("KickSideRightFastPierris.xar"); //"HardRightSideKick" KickSideRightFast
 			direction = +1;
 		} else if (orientation == 2) {
 			if (by > 0.0)
-				amot->set_command("KickBackLeft.xar"); //LeftBackHigh_carpet
+				amot->set_command("KickBackLeftPierris.xar"); //LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
 			else
-				amot->set_command("KickBackRight.xar"); //RightBackHigh_carpet
+				amot->set_command("KickBackRightPierris.xar"); //RightBackHigh_carpet KickBackRight KickBackRightPierris
 		} else {
 			if (by > 0.0)
 				amot->set_command("KickSideLeftFast.xar");
@@ -613,15 +632,15 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	else {
 		if( lastwalk + milliseconds(200) > microsec_clock::universal_time() )
 			return;
-		x = x>+1.0?+1.0:x;
-		x = x<-1.0?-1.0:x;
-		y = y>+1.0?+1.0:y;
-		y = y<-1.0?-1.0:y;
-		t = t>+1.0?+1.0:t;
-		t = t<-1.0?-1.0:t;
-		cX = 0.25*cX+0.75*x;
-		cY = 0.25*cY+0.75*y;
-		ct = 0.25*ct+0.75*t;
+		x = (x>+1.0) ? +1.0 : x;
+		x = (x<-1.0) ? -1.0 : x;
+		y = (y>+1.0) ? +1.0 : y;
+		y = (y<-1.0) ? -1.0 : y;
+		t = (t>+1.0) ? +1.0 : t;
+		t = (t<-1.0) ? -1.0 : t;
+		cX = 0.25 * cX + 0.75 * x;
+		cY = 0.25 * cY + 0.75 * y;
+		ct = 0.25 * ct + 0.75 * t;
 	}
 
 	wmot->set_parameter(0, cX);
@@ -645,15 +664,29 @@ void Behavior::littleWalk(double x, double y, double th)
 
 void Behavior::approachBall(double ballX, double ballY){
 
-	static double X=0.0, Y=0.0, t=0.0, f=1.0, gain = 1.0;
-	double maxd = fmaxf(fabs(bx-ballX),fabs(by-ballY));
+	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
+	double maxd = fmaxf( fabs(bx-ballX), fabs(by-ballY) );
 	f    = fminf(1.0, 0.4+(maxd/0.5));
 	gain = fminf(1.0, 0.0+(maxd/0.5));
-	X = gain*(bx-ballX)/maxd;
-	Y = gain*(by-ballY)/maxd;
-	t = gain*(bb/M_PI);
-	velocityWalk(X,Y,t,f);
+	X = gain * (bx-ballX)/maxd;
+	Y = gain * (by-ballY)/maxd;
+	t = gain * (bb/M_PI);
+	velocityWalk(X, Y, t, f);
 }
+
+
+void Behavior::approachBallNewWalk(double ballX, double ballY){
+
+	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
+	double maxd = fmaxf( fabs(bx-ballX), fabs(by-ballY) );
+	f    = fminf(1.0, 0.4+(maxd));
+	gain = fminf(1.0, 0.0+(maxd));
+	X = gain * (bx-ballX)/maxd;
+	Y = gain * (by-ballY)/maxd;
+	t = 0.5 * gain * (bb/M_PI);
+	velocityWalk(X, Y, t, f);
+}
+
 
 void Behavior::gotoPosition(float target_x,float target_y, float target_phi) {
 
