@@ -102,17 +102,17 @@ int update_field(LocalizationData & DebugData) {
 				} else if (obj->object_name() == "YellowRight") { //"YellowRight"
 					observation.Feature.x = 3000;
 					observation.Feature.y = -700;
-				} else if (obj->object_name() == "Yellow") {
-					observation.Feature.x = 3000;
-					observation.Feature.y = 0;
 				} else if (obj->object_name() == "SkyblueLeft") {// "YellowLeft"
 					observation.Feature.x = -3000;
 					observation.Feature.y = -700;
 				} else if (obj->object_name() == "SkyblueRight") { //"YellowRight"
 					observation.Feature.x = -3000;
 					observation.Feature.y = 700;
-				} else if (obj->object_name() == "Skyblue") {
+				} else if (obj->object_name() == "Skyblue") { //Ambigious GoalPost
 					observation.Feature.x = -3000;
+					observation.Feature.y = 700;
+				} else if (obj->object_name() == "Yellow") { //Ambigious GoalPost
+					observation.Feature.x = 3000;
 					observation.Feature.y = 0;
 				} else {
 					continue;

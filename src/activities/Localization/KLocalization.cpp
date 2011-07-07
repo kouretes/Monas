@@ -18,7 +18,7 @@
 #include "tools/XMLConfig.h"
 #include <boost/math/distributions/normal.hpp>
 #include "architecture/archConfig.h"
-
+#include "tools/logger.h"
 #define riza2pi (sqrt(2.0 * M_PI))
 //#undef  WEBOTS
 #undef  DEBUG
@@ -37,19 +37,23 @@ float HFov = 46.4;
 
 using namespace boost;
 
-KLocalization::KLocalization() {
+KLocalization::KLocalization()
+{
 	// TODO Auto-generated constructor stub
 	//Initialize();
 }
 
-int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap) {
+int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap)
+{
 	TiXmlDocument doc2(filename.c_str());
 
 	bool loadOkay = doc2.LoadFile();
-	if (loadOkay) {
+	if (loadOkay)
+	{
 		printf("\n%s:\n", filename.c_str());
 		//dump_to_stdout(&doc2); // defined later in the tutorial
-	} else {
+	} else
+	{
 		printf("Failed to load file \"%s\"\n", filename.c_str());
 		return -1;
 	}
@@ -67,7 +71,8 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 
 	string ID;
 	feature temp;
-	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling()) {
+	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
+	{
 		Attr = Ftr->ToElement();
 		Attr->Attribute("x", &x);
 		Attr->Attribute("y", &y);
@@ -75,9 +80,11 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 
 		Attr->Attribute("DistMeanParams", &CntDistErrorMeanParams);
 
-		if (CntDistErrorMeanParams > 0) {
+		if (CntDistErrorMeanParams > 0)
+		{
 			DistErrorMeanParams = new double[CntDistErrorMeanParams];
-			for (int p = 0; p < CntDistErrorMeanParams; p++) {
+			for (int p = 0; p < CntDistErrorMeanParams; p++)
+			{
 				tmp = "DistM";
 				tmp += boost::lexical_cast<string>(p);
 				Attr->Attribute(tmp.c_str(), DistErrorMeanParams + p);
@@ -86,9 +93,11 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 
 		Attr->Attribute("DistDevParams", &CntDistErrorDevParams);
 
-		if (CntDistErrorDevParams > 0) {
+		if (CntDistErrorDevParams > 0)
+		{
 			DistErrorDevParams = new double[CntDistErrorDevParams];
-			for (int p = 0; p < CntDistErrorDevParams; p++) {
+			for (int p = 0; p < CntDistErrorDevParams; p++)
+			{
 				tmp = "DistD";
 				tmp += boost::lexical_cast<string>(p);
 				Attr->Attribute(tmp.c_str(), DistErrorDevParams + p);
@@ -96,9 +105,11 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 		}
 
 		Attr->Attribute("BearMeanParams", &CntBearErrorMeanParams);
-		if (CntBearErrorMeanParams > 0) {
+		if (CntBearErrorMeanParams > 0)
+		{
 			BearignErrorMeanParams = new double[CntBearErrorMeanParams];
-			for (int p = 0; p < CntBearErrorMeanParams; p++) {
+			for (int p = 0; p < CntBearErrorMeanParams; p++)
+			{
 				tmp = "BearM";
 				tmp += boost::lexical_cast<string>(p);
 				Attr->Attribute(tmp.c_str(), BearignErrorMeanParams + p);
@@ -106,9 +117,11 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 		}
 
 		Attr->Attribute("BearDevParams", &CntBearErrorDevParams);
-		if (CntBearErrorDevParams > 0) {
+		if (CntBearErrorDevParams > 0)
+		{
 			BearignErrorDevParams = new double[CntBearErrorDevParams];
-			for (int p = 0; p < CntBearErrorDevParams; p++) {
+			for (int p = 0; p < CntBearErrorDevParams; p++)
+			{
 				tmp = "BearD";
 				tmp += boost::lexical_cast<string>(p);
 				Attr->Attribute(tmp.c_str(), BearignErrorDevParams + p);
@@ -119,20 +132,23 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 
 #ifdef DEBUGMXML
 
-		for (int p = 0; p < CntDistErrorMeanParams; p++) {
+		for (int p = 0; p < CntDistErrorMeanParams; p++)
+		{
 			tmp = "DistM";
 			tmp += boost::lexical_cast<string>(p);
 			cout << tmp << ":" << DistErrorMeanParams[p] << "\t";
 		}
 
-		for (int p = 0; p < CntDistErrorMeanParams; p++) {
+		for (int p = 0; p < CntDistErrorMeanParams; p++)
+		{
 			tmp = "DistP";
 			tmp += boost::lexical_cast<string>(p);
 			cout << tmp << ":" << DistErrorDevParams[p] << "\t";
 		}
 
 		cout << endl;
-		for (int p = 0; p < CntBearErrorDevParams; p++) {
+		for (int p = 0; p < CntBearErrorDevParams; p++)
+		{
 			tmp = "BearD";
 			tmp += boost::lexical_cast<string>(p);
 			cout << tmp << ":" << BearignErrorDevParams[p] << "\t";
@@ -148,14 +164,17 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 	return 0;
 }
 
-int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Motions, map<string, vector<KMotionModel> >& KMMmap) {
+int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Motions, map<string, vector<KMotionModel> >& KMMmap)
+{
 	TiXmlDocument doc2(filename.c_str());
 
 	bool loadOkay = doc2.LoadFile();
-	if (loadOkay) {
+	if (loadOkay)
+	{
 		printf("\nLoadMotionModel loading %s:\n", filename.c_str());
 		//dump_to_stdout(&doc2); // defined later in the tutorial
-	} else {
+	} else
+	{
 		printf("Failed to load file \"%s\"\n", filename.c_str());
 		return -1;
 	}
@@ -168,7 +187,8 @@ int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Mot
 	BasicMotion = BasicMotion->NextSibling();
 	vector<KMotionModel> tempVMM;
 	KMotionModel tempM;
-	for (BasicMotion->NextSibling(); BasicMotion != 0; BasicMotion = BasicMotion->NextSibling()) {
+	for (BasicMotion->NextSibling(); BasicMotion != 0; BasicMotion = BasicMotion->NextSibling())
+	{
 #ifdef DEBUGMXML
 		printf("BasicMotion [%s] \n", BasicMotion->Value());
 #endif
@@ -176,20 +196,23 @@ int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Mot
 #ifdef DEBUGMXML
 		printf("Motion Comment [%s]\n", BasicMotion->FirstChild()->Value());
 #endif
-		if (KMMmap.count(tempM.type) == 0) {
+		if (KMMmap.count(tempM.type) == 0)
+		{
 #ifdef DEBUGMXML
 			cout << "\nEmpty map for type: \t" << tempM.type << " Adding to Map " << endl;
 #endif
 
 			KMMmap[tempM.type] = tempVMM;
-		} else {
+		} else
+		{
 			;
 #ifdef DEBUGMXML
 			cout << "Exist mapping for type: " << tempM.type << endl;
 #endif
 		}
-		MotionStep = BasicMotion->FirstChild()->NextSibling();//Overide TextComment
-		while (MotionStep != 0) {
+		MotionStep = BasicMotion->FirstChild()->NextSibling(); //Overide TextComment
+		while (MotionStep != 0)
+		{
 #ifdef DEBUGMXML
 			printf("Motion Steps [%s] ", MotionStep->Value());
 #endif
@@ -201,7 +224,8 @@ int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Mot
 			cout << " STEPS " << tempM.Steps << endl;
 #endif
 			string name;
-			for (MotionData = MotionStep->FirstChild(); MotionData != 0; MotionData = MotionData->NextSibling()) {
+			for (MotionData = MotionStep->FirstChild(); MotionData != 0; MotionData = MotionData->NextSibling())
+			{
 #ifdef DEBUGMXML
 				printf("Motion Data about [%s]\n", MotionData->Value());
 #endif
@@ -229,7 +253,8 @@ int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Mot
 	return 0;
 }
 
-KLocalization::~KLocalization() {
+KLocalization::~KLocalization()
+{
 	// TODO Auto-generated destructor stub
 	//	delete[] Particles.x;
 	//	delete[] Particles.y;
@@ -243,7 +268,8 @@ KLocalization::~KLocalization() {
 
 }
 
-double KLocalization::CalculateConfidence(parts & Particles, belief & blf) {
+double KLocalization::CalculateConfidence(parts & Particles, belief & blf)
+{
 
 	/// DistSume must Be near zero and Weight Sum before normalization must be
 	/// Near 1 which means that all the particles are
@@ -252,14 +278,16 @@ double KLocalization::CalculateConfidence(parts & Particles, belief & blf) {
 	double DistSum = 0;
 	double DistMean;
 	//double WeightSum = 0;
-	for (unsigned int i = 0; i < Particles.size; i++) {
+	for (unsigned int i = 0; i < Particles.size; i++)
+	{
 		Distances[i] = DISTANCE(blf.x, Particles.x[i], blf.y, Particles.y[i]);
 		DistSum += Distances[i];
 		//WeightSum += Particles.Weight[i];
 	}
 	DistMean = DistSum / Particles.size;
 	DistSum = 0;
-	for (unsigned int i = 0; i < Particles.size; i++) {
+	for (unsigned int i = 0; i < Particles.size; i++)
+	{
 		DistSum += pow((Distances[i] - DistMean), 2);
 		//WeightSum += Particles.Weight[i];
 	}
@@ -275,19 +303,22 @@ double KLocalization::CalculateConfidence(parts & Particles, belief & blf) {
 	blf.confidence = DistConfidence;
 	blf.weightconfidence = WeigtConfidence;
 	//cout << "\033[01;34m DistConfidence: " << setprecision(10) << DistConfidence << " WeigtConfidence: " << setprecision(10) << WeigtConfidence << "\033[0m " << endl;
-	return DistConfidence;//* (WeigtConfidence + 1.0) + WeigtConfidence; // Max degree == 20 :p
+	return DistConfidence; //* (WeigtConfidence + 1.0) + WeigtConfidence; // Max degree == 20 :p
 }
 
-void KLocalization::setBelief(double x, double y, double phi, double confidence) {
+void KLocalization::setBelief(double x, double y, double phi, double confidence)
+{
 	AgentPosition.x = x;
 	AgentPosition.y = x;
 	AgentPosition.theta = phi;
 	AgentPosition.confidence = confidence;
 }
 
-void KLocalization::setParticlesPose(parts & Particles, double x, double y, double phi) {
+void KLocalization::setParticlesPose(parts & Particles, double x, double y, double phi)
+{
 
-	for (unsigned int i = 0; i < Particles.size; i++) {
+	for (unsigned int i = 0; i < Particles.size; i++)
+	{
 		Particles.x[i] = x;
 		Particles.y[i] = y;
 		Particles.phi[i] = phi;
@@ -297,13 +328,17 @@ void KLocalization::setParticlesPose(parts & Particles, double x, double y, doub
 	//cout << "\033[01;31m \n Setted particles Pose " << x << " "<< y << " " << phi << "\033[0m"<< endl;
 }
 
-void KLocalization::setParticlesPoseUniformly(parts & Particles) {
+void KLocalization::setParticlesPoseUniformly(parts & Particles)
+{
 	Uniform X, Y, P;
 
-	for (unsigned int i = 0; i < partclsNum; i++) {
-		Particles.x[i] = X.Next() * 6000 - 3000;//randdouble(-3000, 3000); //randX2();
-		Particles.y[i] = Y.Next() * 4000 - 2000;//randdouble(-2000, 2000); //randY2();
-		Particles.phi[i] = P.Next() * deg2rad(360);//randdouble(0, deg2rad(360)); //randTheta2();
+	float length = (FieldMaxX - FieldMinX);
+	float width = (FieldMaxY - FieldMinY);
+	for (unsigned int i = 0; i < partclsNum; i++)
+	{
+		Particles.x[i] = X.Next() * length + FieldMinX;
+		Particles.y[i] = Y.Next() * width + FieldMinY;
+		Particles.phi[i] = P.Next() * deg2rad(360);
 		Particles.Weight[i] = 1.0 / partclsNum;
 #ifdef DEBUGf
 		cout << "Particle[" << i << "] x: " << Particles.x[i] << " y: " << Particles.y[i] << " phi: " << Particles.phi[i] << " Weight " << Particles.Weight[i] << endl;
@@ -312,38 +347,46 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles) {
 	}
 }
 
-int KLocalization::Initialize() {
-	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
+int KLocalization::Initialize()
+{
+	XMLConfig * config = NULL;
+	string filename = ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml" ;
+	config= new XMLConfig(filename);
 
-	if (config.IsLoadedSuccessfully()) {
+	if (config->IsLoadedSuccessfully())
+	{
 		bool found = true;
 		float temp;
-		found &= config.QueryElement("Beta", temp);
+		found &= config->QueryElement("Beta", temp);
 		Beta = temp;
 		Beta2 = new float();
 		*Beta2 = temp;
-		//found &= config.QueryElement(" ",  );
+		//found &= config->QueryElement(" ",  );
 		///Parameters
-		found &= config.QueryElement("max_observation_distance", max_observation_distance);
-		found &= config.QueryElement("max_observation_distance_deviation", max_observation_distance_deviation);
-		found &= config.QueryElement("min_observation_distance_deviation", min_observation_distance_deviation);
+		found &= config->QueryElement("max_observation_distance", max_observation_distance);
+		found &= config->QueryElement("max_observation_distance_deviation", max_observation_distance_deviation);
+		found &= config->QueryElement("min_observation_distance_deviation", min_observation_distance_deviation);
 
-		found &= config.QueryElement("max_observation_bearing_deviation", max_observation_bearing_deviation);
-		found &= config.QueryElement("min_observation_bearing_deviation", min_observation_bearing_deviation);
-		found &= config.QueryElement("robustmean", robustmean);
-		found &= config.QueryElement("P_observe_NotVisible", P_observe_NotVisible);
-		found &= config.QueryElement("P_Notobserve_NotVisible", P_Notobserve_NotVisible);
-		found &= config.QueryElement("numofparticlesfromObservation", numofparticlesfromObservation);
+		found &= config->QueryElement("max_observation_bearing_deviation", max_observation_bearing_deviation);
+		found &= config->QueryElement("min_observation_bearing_deviation", min_observation_bearing_deviation);
+		found &= config->QueryElement("robustmean", robustmean);
+		found &= config->QueryElement("P_observe_NotVisible", P_observe_NotVisible);
+		found &= config->QueryElement("P_Notobserve_NotVisible", P_Notobserve_NotVisible);
+		found &= config->QueryElement("numofparticlesfromObservation", numofparticlesfromObservation);
 
-		found &= config.QueryElement("partclsNum", partclsNum); // 0.2 meters deviation
-		found &= config.QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
-		found &= config.QueryElement("rotation_deviation", rotation_deviation); // % of particles be spreaded
-		found &= config.QueryElement("PercentParticlesSpread", PercentParticlesSpread);
+		found &= config->QueryElement("partclsNum", partclsNum); // 0.2 meters deviation
+		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
+		found &= config->QueryElement("rotation_deviation", rotation_deviation); // % of particles be spreaded
+		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
 
-		if (found) {
-			cout << "All Localization parameters loaded successfully" << endl;
-		} else {
-			cerr << "Cant Find an attribute in the xml config file " << endl;
+		if (found)
+		{
+			//cout << "All Localization parameters loaded successfully" << endl;
+			Logger::Instance().WriteMsg("Localization", "All Localization parameters loaded successfully" , Logger::Info);
+		} else
+		{
+			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the xml config file " , Logger::Error);
+			//cerr << "Cant Find an attribute in the xml config file " << endl;
 		}
 		//		Beta = 0.7f;
 		//		///Parameters
@@ -363,9 +406,68 @@ int KLocalization::Initialize() {
 		//		SpreadParticlesDeviation = 150; // 0.2 meters deviation
 		//		rotation_deviation = (10 * TO_RAD);
 		//		PercentParticlesSpread = 20; // % of particles be spreaded
-	} else {
-		cerr << "Cant Find xml config file " << endl;
+	} else
+	{
+		Logger::Instance().WriteMsg("Localization", "Cant Find xml config file " + filename , Logger::Error);
+		cerr << "Cant Find xml config file " << filename << endl;
 	}
+	if(config)
+		delete config;
+	config = NULL;
+
+	filename = ArchConfig::Instance().GetConfigPrefix() + "/Field.xml" ;
+	config= new XMLConfig(filename);
+
+	if (config->IsLoadedSuccessfully())
+	{
+		bool found = true;
+		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
+		CarpetMaxX*=1000; //convert to mm
+		cout << " CarpetMaxX " <<  CarpetMaxX << endl;
+
+		found &= config->QueryElement("CarpetMinX", CarpetMinX);
+		CarpetMinX*=1000;
+		cout << " CarpetMinX " <<  CarpetMinX << endl;
+
+		found &= config->QueryElement("CarpetMaxY", CarpetMaxY);
+		CarpetMaxY*=1000;
+		cout << " CarpetMaxY " <<  CarpetMaxY << endl;
+
+		found &= config->QueryElement("CarpetMinY", CarpetMinY);
+		CarpetMinY*=1000;
+		cout << " CarpetMinY " <<  CarpetMinY << endl;
+
+
+		found &= config->QueryElement("FieldMaxX", FieldMaxX);
+		FieldMaxX*=1000;
+		cout << " FieldMaxX " <<  FieldMaxX << endl;
+
+		found &= config->QueryElement("FieldMinX", FieldMinX);
+		FieldMinX*=1000;
+		cout << " FieldMinX " <<  FieldMinX << endl;
+		found &= config->QueryElement("FieldMaxY", FieldMaxY);
+		FieldMaxY*=1000;
+		cout << " FieldMaxY " <<  FieldMaxY << endl;
+		found &= config->QueryElement("FieldMinY", FieldMinY);
+		FieldMinY*=1000;
+		cout << " FieldMinY " <<  FieldMinY << endl;
+
+		if (found)
+		{
+			//cout << "All Localization parameters loaded successfully" << endl;
+			Logger::Instance().WriteMsg("Localization", "All Field parameters loaded successfully", Logger::Info);
+		} else
+		{
+			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the Field xml config file ", Logger::Error);
+			//cerr << "Cant Find an attribute in the xml config file " << endl;
+		}
+
+	}else
+	{
+		Logger::Instance().WriteMsg("Localization", "Cant Find Field xml config file " + filename , Logger::Error);
+	}
+	if(config)
+	delete config;
 
 	P_observe_Visible = 1 - P_observe_NotVisible;
 	P_Notobserve_Visible = 1 - P_Notobserve_NotVisible;
@@ -397,7 +499,7 @@ int KLocalization::Initialize() {
 
 	//cout << " After Set" << endl;
 
-	setParticlesPoseUniformly(SIRParticles);
+	//setParticlesPoseUniformly(SIRParticles);
 
 	//Also Allocate Auxiliary particles
 
@@ -405,8 +507,8 @@ int KLocalization::Initialize() {
 	AUXParticles.x = new double[partclsNum];
 	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
 
-	AUXParticles.y = new double[partclsNum];// (double *) memcpy(Particles.y, new double[partclsNum], partclsNum * sizeof(double));
-	AUXParticles.phi = new double[partclsNum];// (double *) memcpy(Particles.phi, new double[partclsNum], partclsNum * sizeof(double));
+	AUXParticles.y = new double[partclsNum]; // (double *) memcpy(Particles.y, new double[partclsNum], partclsNum * sizeof(double));
+	AUXParticles.phi = new double[partclsNum]; // (double *) memcpy(Particles.phi, new double[partclsNum], partclsNum * sizeof(double));
 	AUXParticles.Weight = new double[partclsNum]; //(double *) memcpy(Particles.Weight, new double[partclsNum], partclsNum * sizeof(double));
 	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
 	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
@@ -427,7 +529,8 @@ int KLocalization::Initialize() {
 	AgentPosition.theta = 0;
 	AgentPosition.confidence = 100000;
 #ifdef  DEBUG
-	for (unsigned int i = 0; i < allfeatures.size(); i++) {
+	for (unsigned int i = 0; i < allfeatures.size(); i++)
+	{
 		cout << allfeatures[i].id << allfeatures[i].x << " " << allfeatures[i].y << " " << endl;
 	}
 #endif
@@ -437,58 +540,70 @@ int KLocalization::Initialize() {
 	return 1;
 }
 
-KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, vector<KMotionModel> & Motions, int *iterations) {
+KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, vector<KMotionModel> & Motions, int *iterations)
+{
 	KMotionModel *BestMotionModel;
 	KMotionModel *PositiveUnitMotionModel = NULL;
 	KMotionModel *NegativeUnitMotionModel = NULL;
 	KMotionModel tModel;
 	vector<KMotionModel> *tVector;
-	if (KMMmap.count(MotionType) == 0) {
+	if (KMMmap.count(MotionType) == 0)
+	{
 		cout << "Motion Type " << MotionType << " Unavailable" << endl;
 		return NULL;
-	} else {
+	} else
+	{
 		tVector = &KMMmap[MotionType];
-		if (tVector->empty()) {
+		if (tVector->empty())
+		{
 			cerr << "NO MOTION MODEL OF TYPE" << MotionType << endl;
 			return NULL;
 		}
 
 		BestMotionModel = &tVector->at(0);
 		cout << "Search for best Motion Model! " << endl;
-		for (unsigned int i = 0; i < tVector->size(); i++) {
+		for (unsigned int i = 0; i < tVector->size(); i++)
+		{
 
-			if (tVector->at(i).Steps == 1) {
+			if (tVector->at(i).Steps == 1)
+			{
 				PositiveUnitMotionModel = &tVector->at(1);
 			}
-			if (tVector->at(i).Steps == -1) {
+			if (tVector->at(i).Steps == -1)
+			{
 				NegativeUnitMotionModel = &tVector->at(1);
 			}
 			cout << "Examining " << tVector->at(i).type << " " << tVector->at(i).Steps << " ";
 			cout << "Distance.Emean:  " << tVector->at(i).Distance.Emean << " Distance.Edev " << tVector->at(i).Distance.Edev << endl;
 
-			if (abs((tVector->at(i).Steps - steps)) < abs(BestMotionModel->Steps - steps)) {
-				BestMotionModel = &tVector->at(i);
-				cout << "BestMotionModel " << BestMotionModel->type << " BestMotionModel->Steps " << BestMotionModel->Steps << endl;
-			}
-			//	allfeatures.erase(0);
+			if (abs((tVector->at(i).Steps - steps)) < abs(BestMotionModel->Steps - steps)){
+			BestMotionModel = &tVector->at(i);
+			cout << "BestMotionModel " << BestMotionModel->type << " BestMotionModel->Steps " << BestMotionModel->Steps << endl;
 		}
+		//	allfeatures.erase(0);
+	}
 
-		if ((BestMotionModel->Steps - steps) == 0) {
+		if ((BestMotionModel->Steps - steps) == 0)
+		{
 			cout << "Found Exact Motion Model" << endl;
 			cout << BestMotionModel->type << " " << BestMotionModel->Steps << " " << endl;
 			cout << "BestMotionModel->Distance.Emean:  " << BestMotionModel->Distance.Emean << " BestMotionModel->Distance.Edev " << BestMotionModel->Distance.Edev << endl;
 
 			//sleep(2);
-		} else {
+		} else
+		{
 			cerr << "Exact Motion Model" << MotionType << " Steps" << steps << " NOT Found Using: " << endl;
 
 			cout << BestMotionModel->type << " " << BestMotionModel->Steps << " " << endl;
 			//sleep(2);
-			if (steps > 0) {
+			if (steps > 0)
+			{
 				BestMotionModel = PositiveUnitMotionModel;
-			} else if (steps < 0) {
+			} else if (steps < 0)
+			{
 				BestMotionModel = NegativeUnitMotionModel;
-			} else {
+			} else
+			{
 				return NULL;
 			}
 
@@ -507,7 +622,8 @@ KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, 
 }
 
 //, rangemaxleft, rangemaxright
-belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright) {
+belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright)
+{
 
 	int iterations = 1;
 	//	KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
@@ -522,9 +638,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	int index[partclsNum];
 	//Simple initialization
 
-
 	//SpreadParticles
-	if (Observations.empty()) {
+	if (Observations.empty())
+	{
 		cout << "No observations ... spreading" << endl;
 		SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
 	}
@@ -558,14 +674,17 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 #endif
 
 	//Normalize Particles  Weight in order to Resample later
-	if (normalize(SIRParticles.Weight, partclsNum) < 0.001) {
+	if (normalize(SIRParticles.Weight, partclsNum) < 0.001)
+	{
 		cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
 		depletions_counter++;
-		if (depletions_counter > 1) {
+		if (depletions_counter > 1)
+		{
 			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
 		}
 		cout << "Depletion Counter " << depletions_counter << endl;
-	} else {
+	} else
+	{
 		depletions_counter = 0;
 
 		//		//Resample
@@ -600,11 +719,13 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	maxprtcl.y = SIRParticles.y[0];
 	maxprtcl.phi = SIRParticles.phi[0];
 	SIRParticles.WeightSum = SIRParticles.Weight[0];
-	for (unsigned int i = 0; i < SIRParticles.size; i++) {
+	for (unsigned int i = 0; i < SIRParticles.size; i++)
+	{
 		//Particles_cx += SIRParticles.x[i];
 		//Particles_cy += SIRParticles.y[i];
 
-		if (SIRParticles.Weight[i] > maxprtcl.Weight) {
+		if (SIRParticles.Weight[i] > maxprtcl.Weight)
+		{
 			maxprtcl.x = SIRParticles.x[i];
 			maxprtcl.y = SIRParticles.y[i];
 			maxprtcl.phi = SIRParticles.phi[i];
@@ -638,7 +759,8 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 }
 
 //, rangemaxleft, rangemaxright
-belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright) {
+belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright)
+{
 
 	int iterations = 1;
 	KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
@@ -681,12 +803,14 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 #endif
 
 	//Normalize Particles  Weight in order to Resample later
-	if (normalize(AUXParticles.Weight, partclsNum) < 0.01) {
+	if (normalize(AUXParticles.Weight, partclsNum) < 0.01)
+	{
 		cerr << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
 		cout << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
 		//setParticlesPoseUniformly(AUXParticles);
 		depletions_counter++;
-		if (depletions_counter > 1) {
+		if (depletions_counter > 1)
+		{
 			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 100);
 		}
 		cout << "Depletion Counter " << depletions_counter << endl;
@@ -694,7 +818,8 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 		//		if (Observations.size() > 1)
 		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
 
-	} else {
+	} else
+	{
 		depletions_counter = 0;
 #ifdef DEBUG
 		for (int i = 0; i < partclsNum / 10.0; i++)
@@ -717,7 +842,8 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 	Update(SIRParticles, Observations, *MotionModelptr, partclsNum, rangemaxleft, rangemaxright);
 
 	//Normalize Particles  Weight in order to Resample later
-	if ((SIRParticles.WeightSum = normalize(SIRParticles.Weight, partclsNum)) < 0.01) {
+	if ((SIRParticles.WeightSum = normalize(SIRParticles.Weight, partclsNum)) < 0.01)
+	{
 		cerr << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field " << endl;
 		cout << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field" << endl;
 		//setParticlesPoseUniformly(SIRParticles);
@@ -730,7 +856,8 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 		//		if (Observations.size() > 1)
 		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
 
-	} else {
+	} else
+	{
 		depletions_counter = 0;
 	}
 
@@ -752,11 +879,13 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 	temp.y = SIRParticles.y[0];
 	temp.phi = SIRParticles.phi[0];
 	SIRParticles.WeightSum = SIRParticles.Weight[0];
-	for (unsigned int i = 1; i < SIRParticles.size; i++) {
+	for (unsigned int i = 1; i < SIRParticles.size; i++)
+	{
 		//Particles_cx += SIRParticles.x[i];
 		//Particles_cy += SIRParticles.y[i];
 
-		if (SIRParticles.Weight[i] > temp.Weight) {
+		if (SIRParticles.Weight[i] > temp.Weight)
+		{
 			temp.x = SIRParticles.x[i];
 			temp.y = SIRParticles.y[i];
 			temp.phi = SIRParticles.phi[i];
@@ -788,7 +917,8 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 }
 
 //Function to find the best Belief using the average of the % of the "hevier" particles
-belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles) {
+belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles)
+{
 	belief RmeanAgentPosition;
 	///ROBUST MEAN ... .
 	unsigned int robustmean = round((double) Particles.size * ((double) PercenteOfParticles / 100.0));
@@ -798,7 +928,8 @@ belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles) {
 	//#endif
 	priority_queue<partcl> particlesQueue;
 	partcl temp;
-	for (unsigned int i = 0; i < Particles.size; i++) {
+	for (unsigned int i = 0; i < Particles.size; i++)
+	{
 		temp.x = Particles.x[i];
 		temp.y = Particles.y[i];
 		temp.phi = Particles.phi[i];
@@ -816,15 +947,18 @@ belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles) {
 	int countThetaPIto2PI = 0;
 
 	double tempTheta;
-	for (unsigned int i = 0; i < robustmean; i++) {
+	for (unsigned int i = 0; i < robustmean; i++)
+	{
 		temp = particlesQueue.top();
 		sumX += temp.x;
 		sumY += temp.y;
-		if ((tempTheta = wrapTo0_2Pi(temp.phi)) > M_PI) {
+		if ((tempTheta = wrapTo0_2Pi(temp.phi)) > M_PI)
+		{
 			sumThetaPIto2PI += tempTheta;
 			countThetaPIto2PI++;
 
-		} else {
+		} else
+		{
 			sumTheta0toPI += tempTheta;
 			countTheta0toPI++;
 		}
@@ -837,12 +971,14 @@ belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles) {
 	RmeanAgentPosition.y = sumY / (double) robustmean;
 
 	int bothsemicycles = 0;
-	if (countTheta0toPI > 0) {
+	if (countTheta0toPI > 0)
+	{
 		bothsemicycles++;
 
 		sumTheta0toPI = wrapToPi((double) sumTheta0toPI / (double) countTheta0toPI);
 	}
-	if (countThetaPIto2PI > 0) {
+	if (countThetaPIto2PI > 0)
+	{
 		sumThetaPIto2PI = wrapToPi(sumThetaPIto2PI / (double) countThetaPIto2PI);
 		bothsemicycles++;
 	}
@@ -852,7 +988,8 @@ belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles) {
 	return RmeanAgentPosition;
 }
 
-void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel) {
+void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
+{
 	double tmpDist, tmpDir, tmpRot;
 	Normal X, Y, P;
 	unsigned int i;
@@ -861,16 +998,19 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel) {
 	//	cout << "MotionModel.Direction.val:  " << MotionModel.Direction.val << "Direction.Emean:  " << MotionModel.Direction.Emean << " Direction.Edev " << MotionModel.Direction.Edev
 	//			<< endl;
 
-	for (i = 0; i < partclsNum; i++) {
+	for (i = 0; i < partclsNum; i++)
+	{
 #ifdef  DEBUGPredict
 		cout << "BEFORE Particles .x[i]" << Particles .x[i] << "Particles .y[i]" << Particles .y[i] << "Particles .phi[i]" << Particles .phi[i] << endl;
 #endif
-		if (MotionModel.type == "ratio") {
+		if (MotionModel.type == "ratio")
+		{
 			tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X.Next() * MotionModel.Distance.ratiodev);
 			tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
 			tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean + P.Next() * MotionModel.Rotation.Edev;
 
-		} else {
+		} else
+		{
 			tmpDist = MotionModel.Distance.val + MotionModel.Distance.Emean + X.Next() * MotionModel.Distance.Edev;
 			tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
 			tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean + P.Next() * MotionModel.Rotation.Edev;
@@ -880,7 +1020,7 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel) {
 
 		Particles.x[i] = Particles.x[i] + cos(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.y[i] = Particles.y[i] + sin(tmpDir + Particles.phi[i]) * tmpDist;
-		Particles .phi[i] = Particles.phi[i] + tmpRot;
+		Particles.phi[i] = Particles.phi[i] + tmpRot;
 
 #ifdef  DEBUGPredict
 		cout << "tmpDist:  " << tmpDist << " tmpDir " << tmpDir << endl;
@@ -895,7 +1035,8 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel) {
 #endif
 }
 
-bool KLocalization::isVisible(feature & Feature, parts &Particles, int pos, double rangemaxleft, double rangemaxright) {
+bool KLocalization::isVisible(feature & Feature, parts &Particles, int pos, double rangemaxleft, double rangemaxright)
+{
 
 	//	double anglesOfView[2] ;
 	//	anglesOfView[0] =  wrapTo2Pi(prtcl.phi+ halfrange );
@@ -913,10 +1054,12 @@ bool KLocalization::isVisible(feature & Feature, parts &Particles, int pos, doub
 
 	double fullrange = rangemaxleft - rangemaxright;
 
-	if (fullrange < M_PI) {
+	if (fullrange < M_PI)
+	{
 		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, phiright) > 0)
 			visible = 1;
-	} else {
+	} else
+	{
 		double middle = phileft - fullrange / 2.0;
 
 		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, middle) > 0)
@@ -932,13 +1075,13 @@ bool KLocalization::isVisible(feature & Feature, parts &Particles, int pos, doub
 	 %     end*/
 	//if(anglediff2(Particles.phi[pos]-rangemaxleft <= angleToFeature <=
 	//> Particles.phi[pos]+rangemaxright
-
 	//if (anglediff(angleToFeature, Particles.phi[pos]) <= halfrange)
 	//visible = 1;
 	return visible;
 }
 
-bool KLocalization::isVisible(feature & Feature, partcl prtcl, double rangemaxleft, double rangemaxright) {
+bool KLocalization::isVisible(feature & Feature, partcl prtcl, double rangemaxleft, double rangemaxright)
+{
 
 	//	double anglesOfView[2] ;
 	//	anglesOfView[0] =  wrapTo2Pi(prtcl.phi+ halfrange );
@@ -959,10 +1102,12 @@ bool KLocalization::isVisible(feature & Feature, partcl prtcl, double rangemaxle
 
 	double fullrange = rangemaxleft - rangemaxright;
 
-	if (fullrange < M_PI) {
+	if (fullrange < M_PI)
+	{
 		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, phiright) > 0)
 			visible = 1;
-	} else {
+	} else
+	{
 		double middle = phileft - fullrange / 2.0;
 
 		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, middle) > 0)
@@ -978,16 +1123,18 @@ bool KLocalization::isVisible(feature & Feature, partcl prtcl, double rangemaxle
 
 }
 
-double KLocalization::normpdf(double diff, double dev) {
+double KLocalization::normpdf(double diff, double dev)
+{
 
 	boost::math::normal dist = boost::math::normal_distribution<double>(0, dev);
 	//cout << " diff " << diff << " dev " << dev << endl;
 	return boost::math::pdf(dist, diff);
 	//return (exp(-pow(diff, 2) / (2 * pow(dev, 2))) / (riza2pi * dev));
 }
-int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) {
+int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation)
+{
 	//Just in case
-	if (Observation.size() < 2 || Particles.size < 1 || numofparticlesfromObservation < 1 || (unsigned int)numofparticlesfromObservation > Particles.size)
+	if (Observation.size() < 2 || Particles.size < 1 || numofparticlesfromObservation < 1 || (unsigned int) numofparticlesfromObservation > Particles.size)
 		return -2;
 	//-(int) findIntersectionOfCircle: (Circle *)c1 circle:(Circle *)c2 sol1:(CGPoint *)sol1 sol2:(CGPoint *)sol2
 	//Color, Circle, Value
@@ -998,16 +1145,19 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 	int cy, cb; //counter for yellow and blue goalpost
 	cy = 0;
 	cb = 0;
-	for (unsigned int i = 0; i < Observation.size(); i++) {
+	for (unsigned int i = 0; i < Observation.size(); i++)
+	{
 		//cout << Observation[i].Feature.id[0] << endl;
-		if (Observation[i].Feature.id[0] == 'Y' && cy < 2) {
+		if (Observation[i].Feature.id[0] == 'Y' && cy < 2)
+		{
 			Circles[0][cy][0] = Observation[i].Feature.x;
 			Circles[0][cy][1] = Observation[i].Feature.y;
 			Circles[0][cy][2] = Observation[i].Distance.val;
 			Circles[0][cy][3] = Observation[i].Bearing.val;
 			//cout <<Circles[1][cb][2] << endl;
 			cy++;
-		}else if (Observation[i].Feature.id[0] == 'S' && cb < 2) {
+		} else if (Observation[i].Feature.id[0] == 'S' && cb < 2)
+		{
 			Circles[1][cb][0] = Observation[i].Feature.x;
 			Circles[1][cb][1] = Observation[i].Feature.y;
 			Circles[1][cb][2] = Observation[i].Distance.val;
@@ -1060,9 +1210,11 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 
 	int nsol = 2;
 	//1 soln , circles are touching
-	if (d == c1r + c2r) {
+	if (d == c1r + c2r)
+	{
 		nsol = 1;
-	} else {
+	} else
+	{
 		//2solns
 		partcl p1;
 		//partcl p2;
@@ -1082,16 +1234,18 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 	Particles.x[index] = p.x;
 	Particles.y[index] = p.y;
 
-	for (int i = 0; i < numofparticlesfromObservation - 1; i++) {
+	for (int i = 0; i < numofparticlesfromObservation - 1; i++)
+	{
 		index = (rand() + i) % Particles.size;
 
 		Particles.x[index] = p.x;
 		Particles.y[index] = p.y;
 		//		Particles.phi[index] = temp.phi;
-		float angles[2],ParticlePointBearingAngle;
-		for (unsigned int o = 0; o < 2; o++) {
+		float angles[2], ParticlePointBearingAngle;
+		for (unsigned int o = 0; o < 2; o++)
+		{
 			//cout << " ci "<< ci << " o " << o << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
-			ParticlePointBearingAngle = atan2(Circles[ci][o][1] - Particles .y[index],Circles[ci][o][0] - Particles.x[index]);
+			ParticlePointBearingAngle = atan2(Circles[ci][o][1] - Particles.y[index], Circles[ci][o][0] - Particles.x[index]);
 			angles[o] = anglediff2(ParticlePointBearingAngle, Circles[ci][o][3]);
 			//cout << "ParticlePointBearingAngle  " << ParticlePointBearingAngle << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
 		}
@@ -1104,7 +1258,8 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 	return nsol;
 }
 
-int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, parts &Particles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright) {
+int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, parts &Particles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright)
+{
 
 	float Xstep = round((float) Xdim / (float) resolution);
 	//float Yresolution = round((float) Ydim / (float) resolution);
@@ -1125,12 +1280,14 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 	double max_weight = 0;
 	MinOverallWeight = 0;
 	for (float x = -Xdim / 2.0; x <= Xdim / 2; x = x + Xstep)
-		for (float y = -Ydim / 2.0; y <= Ydim / 2; y = y + Xstep) {
+		for (float y = -Ydim / 2.0; y <= Ydim / 2; y = y + Xstep)
+		{
 			temp.x = x;
 			temp.y = y;
 			OverallWeight = 1.0;
 			//cout << "Examining position x " << temp.x << " y: " << temp.y << endl;
-			for (unsigned int i = 0; i < Observation.size(); i++) {
+			for (unsigned int i = 0; i < Observation.size(); i++)
+			{
 
 				if (isVisible(Observation[i].Feature, temp, rangemaxleft, rangemaxright))
 					ratio = P_observe_Visible;
@@ -1148,14 +1305,16 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 				//Try to find out the best bearing angle
 
 				Deviation = CalcBearDev(Observation[i].Feature, R);
-				for (double test_phi = 0; test_phi < 2.0 * M_PI; test_phi = test_phi + M_PI_4 / 2.0) {
+				for (double test_phi = 0; test_phi < 2.0 * M_PI; test_phi = test_phi + M_PI_4 / 2.0)
+				{
 					ParticlePointBearingAngle = atan2(Observation[i].Feature.y - temp.y, Observation[i].Feature.x - temp.x);
 					ParticleBearing = anglediff2(ParticlePointBearingAngle, test_phi);
 
 					//Deviation = max_observation_bearing_deviation / max_observation_distance * Observation[i].Distance .val + min_observation_bearing_deviation;
 					OverallWeight2 = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
 
-					if (OverallWeight2 > max_weight) {
+					if (OverallWeight2 > max_weight)
+					{
 						max_weight = OverallWeight2;
 						temp.phi = test_phi;
 					}
@@ -1164,7 +1323,6 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 
 				//Add particles to the priority
 				//So the top particle to have the lower weight
-
 
 			}
 			temp.Weight = 1 - OverallWeight;
@@ -1182,7 +1340,8 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 
 	//cout << "Observation Generated Particles " << particlesQueue.size() << endl;
 
-	for (int i = 0; i < numofparticlesfromObservation; i++) {
+	for (int i = 0; i < numofparticlesfromObservation; i++)
+	{
 		index = (rand() + i) % Particles.size;
 		temp = particlesQueue.top();
 		//	Particles.x[index] = temp.x;
@@ -1195,43 +1354,42 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 	return 1;
 }
 
-void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation2) {
+void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation)
+{
 	//Calculate the bearing from each particle from each Observation
 	//Force Bearing under some criteria
-	 vector<KObservationModel> Observation ;
-	for (unsigned int o = 0; o < Observation2.size(); o++) {
-		if(Observation2[o].Feature.id.find("Goal")==string::npos) //Its not a whole goal observation
-			Observation.push_back(Observation2[o]);
-		else if(Observation2[o].Distance.val > 3000) //Its a goal but i am far away ( about 3m ) from the whole goal
-			Observation.push_back(Observation[o]);
-	}
 
 	float ParticlePointBearingAngle;
-	if (Observation.size() > 1) {
-		float * angles = new float[Observation.size()];
-		for (unsigned int p = 0; p < Particles.size; p++) {
-			for (unsigned int o = 0; o < Observation.size(); o++) {
+	if (Observation.size() > 1)
+	{
+		float * angles = new float[Observation.size()];for (unsigned int p = 0; p < Particles.size; p++)
+		{
+			for (unsigned int o = 0; o < Observation.size(); o++)
+			{
 				ParticlePointBearingAngle = atan2(Observation[o].Feature.y - Particles .y[p], Observation[o].Feature.x - Particles.x[p]);
 				angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
 			}
 			Particles.phi[p] = circular_mean_angle(angles, Observation.size());
 		}
 		delete angles;
-	} else if (Observation.size() == 1) {
-		for (unsigned int p = 0; p < Particles.size; p++) {
+	} else if (Observation.size() == 1)
+	{
+		for (unsigned int p = 0; p < Particles.size; p++)
+		{
 			ParticlePointBearingAngle = atan2(Observation[0].Feature.y - Particles .y[p], Observation[0].Feature.x - Particles.x[p]);
 			Particles.phi[p] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 		}
-		//Particles.phi[p] = circular_mean_angle(angles, Observation.size());
 	}
 }
 
-float KLocalization::circular_mean_angle(float *angles, unsigned int size) {
+float KLocalization::circular_mean_angle(float *angles, unsigned int size)
+{
 	//
 	float x = 0;
 	float y = 0;
 
-	for (unsigned int i = 0; i < size; i++) {
+	for (unsigned int i = 0; i < size; i++)
+	{
 		x += cos(angles[i]);
 		y += sin(angles[i]);
 		//cout << "Angle " << i << " value: " << angles[i] * TO_DEG << endl;
@@ -1255,7 +1413,8 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size) {
 	//	return mean, std
 }
 
-void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemaxleft, double rangemaxright) {
+void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemaxleft, double rangemaxright)
+{
 
 	//
 	//	 Function to update the weights of each particle regarding the ObservationDistance
@@ -1271,22 +1430,24 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 #endif
 
 	//float ratio = 1.0;
-	for (int p = 0; p < NumofParticles; p++) {
+	for (int p = 0; p < NumofParticles; p++)
+	{
 		OverallWeight = Particles.Weight[p];
 #ifdef DEBUGupdate
 		cout << " ParticleWeightBefore: " << OverallWeight << endl;
 #endif
-		if (!Observation.empty()) {// an landMark has been observed
+		if (!Observation.empty())
+		{ // an landMark has been observed
 			OverallWeight = 1.0;
 			//	cout << "Weighting prtl X" << Particles.x[p] << " Y: " << Particles.y[p] << " phi: " << Particles.phi[p] << endl;
-			for (unsigned int i = 0; i < Observation.size(); i++) {
+			for (unsigned int i = 0; i < Observation.size(); i++)
+			{
 #ifdef DISTANCE_WEIGHTING
 				// Distance
 				// R Distance the particle has from the LandMark
 				R = DISTANCE(Particles.x[p],Observation[i].Feature.x,Particles.y[p],Observation[i].Feature.y);
 				//				Deviation = (max_observation_distance_deviation / max_observation_distance) * Observation[i].Distance.val + min_observation_distance_deviation;
 				//				Deviation = (Deviation < min_observation_distance_deviation) ? min_observation_distance_deviation : Deviation;
-
 
 				Meanerror = Observation[i].Distance.Emean; // CalcDistMean(Observation[i].Feature, R);
 				Deviation = Observation[i].Distance.Edev; //CalcDistDev(Observation[i].Feature, R);
@@ -1309,11 +1470,11 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 
 				//Bearing
 #ifdef	BEARING_WEIGHTING
-				ParticlePointBearingAngle = atan2(Observation[i].Feature.y - Particles .y[p], Observation[i].Feature.x - Particles.x[p]);
+				ParticlePointBearingAngle = atan2(Observation[i].Feature.y - Particles.y[p], Observation[i].Feature.x - Particles.x[p]);
 				ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
 				Deviation = Observation[i].Bearing.Edev; //CalcBearDev(Observation[i].Feature, R);
 #ifdef DEBUGupdate
-				cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+						cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
 #endif
 				//cout << "Bearing Error " << anglediff2(Observation[i].Bearing.val, ParticleBearing) * 100 << " Deviation " << Deviation << endl;
 				//Particles.phi[p] = ParticlePointBearingAngle  + Observation[0].Bearing.val;
@@ -1334,19 +1495,23 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 
 				//cout << " R: " << R << " Ow: " << OverallWeight;
 			}
-		//
+			//
 		}
 #ifdef ALLVISIBILITY
-		else {
+		else
+		{
 			// Check if any particle sees LandMark
 			//cout << "Observation Empty checking if the particles sees Landmark" << endl;
 			OverallWeight = OverallWeight * P_Notobserve_NotVisible;
-			for (unsigned int f = 0; f < allfeatures.size(); f++) {
-				if (isVisible(allfeatures[f], Particles, p, rangemaxleft, rangemaxright)) {
+			for (unsigned int f = 0; f < allfeatures.size(); f++)
+			{
+				if (isVisible(allfeatures[f], Particles, p, rangemaxleft, rangemaxright))
+				{
 					OverallWeight = OverallWeight * P_Notobserve_Visible;
 					//cout << "Feature is visible from particle " << p << endl;
 					//break;
-				} else {
+				} else
+				{
 					//cout << "no Feature visible from particle " << p << endl;
 				}
 			}
@@ -1371,7 +1536,8 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		//set the weight
 #ifdef  DEBUGupdate
 		cout << " Ow: " << OverallWeight << endl;
-		if (OverallWeight == 0) {
+		if (OverallWeight == 0)
+		{
 			cout << "\033[01;31m  Particle' s " << p << " Weight is Zero, a dead particle  \033[0m" << endl;
 		}
 #endif
@@ -1384,12 +1550,89 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 #endif
 }
 
-void KLocalization::Propagate(parts & Particles, int *Index) {
-	if(Index <=  0 || !Particles.size>0)
+void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles)
+{
+
+	//
+	//	 Function to update the weights of each particle regarding the ObservationDistance
+	//	 from an object and the direction
+
+	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation;
+	double AdditiveWeight = 0;
+	double DistanceFromPastBelief, DirectionFromPastBelief;
+	double R;
+	double Meanerror = 0;
+
+#ifdef  DEBUG
+	cout << "Num Of Ambugius Observations: " << Observation.size() << endl;
+#endif
+
+	for (int p = 0; p < NumofParticles; p++)
 	{
-		if(Index <=0 )
+		OverallWeight = Particles.Weight[p];
+#ifdef DEBUGupdate
+		cout << " ParticleWeightBefore: " << OverallWeight << endl;
+#endif
+		if (!Observation.empty())
+		{ // an Ambigius landMark has been observed
+			for (unsigned int i = 0; i < Observation.size(); i++)
+			{
+				for (int j = -1; j <= 1; j = j + 2)
+				{
+#ifdef DISTANCE_WEIGHTING
+					// Distance
+					// R Distance the particle has from the LandMark
+					R = DISTANCE(Particles.x[p],Observation[i].Feature.x,Particles.y[p],Observation[i].Feature.y*j);
+
+					Meanerror = Observation[i].Distance.Emean;
+					Deviation = Observation[i].Distance.Edev;
+
+#ifdef DEBUGupdate
+					cout << " Distance Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+#endif
+					AdditiveWeight += normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
+#endif
+
+					//Bearing
+#ifdef	BEARING_WEIGHTING
+					ParticlePointBearingAngle = atan2(Observation[i].Feature.y - Particles.y[p] * j, Observation[i].Feature.x - Particles.x[p]);
+					ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
+					Deviation = Observation[i].Bearing.Edev; //CalcBearDev(Observation[i].Feature, R);
+#ifdef DEBUGupdate
+							cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+#endif
+
+					AdditiveWeight += normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
+#endif
+				}
+			}
+		}
+		OverallWeight *= AdditiveWeight;
+		AdditiveWeight=0;
+		//set the weight
+#ifdef  DEBUGupdate
+		cout << " Ow: " << OverallWeight << endl;
+		if (OverallWeight == 0)
+		{
+			cout << "\033[01;31m  Particle' s " << p << " Weight is Zero, a dead particle  \033[0m" << endl;
+		}
+#endif
+		Particles.Weight[p] = OverallWeight;
+	}
+#ifdef  DEBUG
+
+	cout << "Update Done " << endl;
+
+#endif
+}
+
+void KLocalization::Propagate(parts & Particles, int *Index)
+{
+	if (Index <= 0 || !Particles.size > 0)
+	{
+		if (Index <= 0)
 			cerr << "Cant propagate nothing check the index " << endl;
-		if(!Particles.size>0)
+		if (!Particles.size > 0)
 			cerr << "Cant propagate nothing and particles existance" << endl;
 		return;
 	}
@@ -1398,7 +1641,8 @@ void KLocalization::Propagate(parts & Particles, int *Index) {
 	double tempPhi[partclsNum];
 
 	// Make a copy of the particles
-	for (unsigned int i = 0; i < partclsNum; i++) {
+	for (unsigned int i = 0; i < partclsNum; i++)
+	{
 		tempX[i] = Particles.x[i];
 		tempY[i] = Particles.y[i];
 		tempPhi[i] = Particles.phi[i];
@@ -1406,7 +1650,8 @@ void KLocalization::Propagate(parts & Particles, int *Index) {
 	}
 
 	// lets propagate them
-	for (unsigned int i = 0; i < partclsNum; i++) {
+	for (unsigned int i = 0; i < partclsNum; i++)
+	{
 		Particles.phi[i] = tempPhi[Index[i]];
 		Particles.Weight[i] = 1.0 / partclsNum;
 		Particles.x[i] = tempX[Index[i]];
@@ -1418,14 +1663,17 @@ void KLocalization::Propagate(parts & Particles, int *Index) {
 #endif
 }
 
-double * KLocalization::CumSum(double * Table, int size) {
-	if (Table != NULL) {
+double * KLocalization::CumSum(double * Table, int size)
+{
+	if (Table != NULL)
+	{
 #ifdef  DEBUG
 		cout << " CumSum Table not Null  " << endl;
 #endif
 		double * cumsum = new double[size];
 		cumsum[0] = 0;
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++)
+		{
 			if (i == 0)
 				cumsum[0] = Table[0];
 			else
@@ -1433,7 +1681,8 @@ double * KLocalization::CumSum(double * Table, int size) {
 		}
 
 		return cumsum;
-	} else {
+	} else
+	{
 
 #ifdef  DEBUG
 		cout << "\033[22;31m  CumSum Table IS Null \033[01;32m" << endl;
@@ -1443,15 +1692,18 @@ double * KLocalization::CumSum(double * Table, int size) {
 	}
 }
 
-double * KLocalization::FlipCumProd(double * Table, int size) {
-	if (Table != NULL) {
+double * KLocalization::FlipCumProd(double * Table, int size)
+{
+	if (Table != NULL)
+	{
 #ifdef  DEBUG
 		cout << "CumProd Table not Null" << endl;
 #endif
 		double * Cumprod = new double[size];
 		double prod = 1.0;
 
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++)
+		{
 			prod *= Table[i];
 			Cumprod[size - 1 - i] = prod; ///saving in reverse order
 		}
@@ -1465,7 +1717,8 @@ double * KLocalization::FlipCumProd(double * Table, int size) {
 		return NULL;
 }
 
-int * KLocalization::ResampleSWR(parts & Particles, int *Index) {
+int * KLocalization::ResampleSWR(parts & Particles, int *Index)
+{
 #ifdef  DEBUG
 	cout << "ResampleSWR Started " << endl;
 #endif
@@ -1477,9 +1730,10 @@ int * KLocalization::ResampleSWR(parts & Particles, int *Index) {
 	double* t = new double[N + 1];
 	//	for (int i = 0; i < N + 1; i++)
 	//		t[i] = randfloat(1);
-	Uniform U;
-	for (int i = 0; i < N; i++) {
-		t[i] = U.Next();//randfloat(1);
+Uniform 	U;
+	for (int i = 0; i < N; i++)
+	{
+		t[i] = U.Next(); //randfloat(1);
 		Index[i] = i;
 	}
 	t[N] = U.Next();
@@ -1500,11 +1754,14 @@ int * KLocalization::ResampleSWR(parts & Particles, int *Index) {
 	 cout << "Qk[" << k << "] " << Q[k] << endl;
 	 }
 	 */
-	while (i < N && j < N) {
-		if (t[i] < Q[j]) {
+	while (i < N && j < N)
+	{
+		if (t[i] < Q[j])
+		{
 			Index[i] = j;
 			i++;
-		} else {
+		} else
+		{
 			j++;
 		}
 	}
@@ -1521,7 +1778,8 @@ int * KLocalization::ResampleSWR(parts & Particles, int *Index) {
 }
 
 //AUTHORS  : Arnaud Doucet and Nando de Freitas - for the acknowledgement.
-int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q);
+int * KLocalization::multinomialR(parts & Particles, int *Index)
+{ // (inIndex,q);
 	double * cumDist = CumSum(Particles.Weight, Particles.size);
 	int N = partclsNum; //Number of particles
 	double t[N];
@@ -1530,7 +1788,8 @@ int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q
 	// MULTINOMIAL SAMPLING
 	//generate N ordered random variables uniformly distributed in [0,1]
 	Uniform U;
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++)
+	{
 		t[i] = pow(U.Next(), 1.0 / double(N - i));
 		Index[i] = i;
 		N_babies[i] = 0;
@@ -1539,7 +1798,8 @@ int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q
 
 	int j = 0;
 
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++)
+	{
 		while (u[i] > cumDist[j])
 			j++;
 		N_babies[j] += 1;
@@ -1547,9 +1807,11 @@ int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q
 
 	//Copy Resampled Trajectories
 	int idx = 0;
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++)
+	{
 		if (N_babies[i] > 0)
-			for (j = idx; j < (idx + N_babies[i]); j++) { ///TODO check that 2
+			for (j = idx; j < (idx + N_babies[i]); j++)
+			{ ///TODO check that 2
 				Index[j] = i;
 			}
 		idx = idx + N_babies[i];
@@ -1564,12 +1826,14 @@ int * KLocalization::multinomialR(parts & Particles, int *Index) { // (inIndex,q
 	return Index;
 }
 //Only on Normalized particles!
-float KLocalization::ESS(parts &Particles) {
+float KLocalization::ESS(parts &Particles)
+{
 	unsigned int size = Particles.size;
 	double * Weights = Particles.Weight;
 	double cv;
 	cv = 0;
-	for (unsigned int i = 0; i < size; i++) {
+	for (unsigned int i = 0; i < size; i++)
+	{
 		cv += pow((Weights[i] * size - 1), 2);
 	}
 	cv = cv / (double) (size);
@@ -1578,31 +1842,37 @@ float KLocalization::ESS(parts &Particles) {
 
 }
 
-void KLocalization::Resample(parts & Particles, int *Index, int param) {
+void KLocalization::Resample(parts & Particles, int *Index, int param)
+{
 	//ResampleSWR(Particles, Index);
 
 	multinomialR(Particles, Index);
 }
 
 ///Normalizes and Returns ESS effective Sample size;
-double KLocalization::normalize(double * Weights, int size) {
+double KLocalization::normalize(double * Weights, int size)
+{
 
-	if (size < 1 || Weights == NULL) {
+	if (size < 1 || Weights == NULL)
+	{
 		cout << "\033[22;31m Size < 1  || Weights  == NULL  There are no particles ... to normalize \033[01;32m" << endl;
 		return -2;
 	}
 	double sum = 0;
 	double cv = 0;
 
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
+	{
 		sum += Weights[i];
 	}
-	if (sum == 0) {
+	if (sum == 0)
+	{
 		cout << "\033[22;31m Error All weights zero no normalize \033[01;32m";
 		return -1;
 	}
 	//normalize particles and calculate ESS
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
+	{
 		Weights[i] = Weights[i] / sum;
 		cv += pow((Weights[i] * size - 1), 2);
 	}
@@ -1612,7 +1882,8 @@ double KLocalization::normalize(double * Weights, int size) {
 	//return sum / size; // old method
 }
 
-void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent) {
+void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent)
+{
 
 	//Normal X, Y, P;
 	Uniform D, P;
@@ -1631,21 +1902,23 @@ void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, dou
 	float tmpDist, tmpDir;
 	int count = 0;
 
-	for (unsigned int i = rand() % step; i < Particles.size; i += step) {
+	for (unsigned int i = rand() % step; i < Particles.size; i += step)
+	{
 		tmpDist = D.Next() * Deviation;
 		tmpDir = R.Next() * deg2rad(360);
 
 		Particles.x[i] = Particles.x[i] + cos(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.y[i] = Particles.y[i] + sin(tmpDir + Particles.phi[i]) * tmpDist;
-		Particles .phi[i] = Particles.phi[i] + P.Next() * rotation_deviation;
+		Particles.phi[i] = Particles.phi[i] + P.Next() * rotation_deviation;
 		Particles.Weight[i] = 1.0;
 		count++;
 	}
-	 //cout << "Num of Particles Spreaded:  " << count << endl;
+	//cout << "Num of Particles Spreaded:  " << count << endl;
 
 }
 
-void KLocalization::SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent) {
+void KLocalization::SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent)
+{
 
 	//Normal X, Y, P;
 	Random X, Y, P;
@@ -1662,7 +1935,8 @@ void KLocalization::SpreadParticles(parts & Particles, double Deviation, double 
 //			<< " Step: " << step << endl;
 
 	int count = 0;
-	for (unsigned int i = 0; i < Particles.size; i += step) {
+	for (unsigned int i = 0; i < Particles.size; i += step)
+	{
 		count++;
 		Particles.x[i] += (X.Next() - 0.5) * Deviation;
 		Particles.y[i] += (Y.Next() - 0.5) * Deviation;
@@ -1687,11 +1961,13 @@ void KLocalization::SpreadParticles(parts & Particles, double Deviation, double 
 
 }
 
-double KLocalization::CalcDistMean(feature afeature, double Distance) {
+double KLocalization::CalcDistMean(feature afeature, double Distance)
+{
 	double ret = 0.0;
 	int p;
 
-	for (p = afeature.CntDistErrorMeanParams - 1; p >= 0; p--) {
+	for (p = afeature.CntDistErrorMeanParams - 1; p >= 0; p--)
+	{
 		ret = ret * Distance + afeature.DistErrorMeanParams[p];
 	}
 	//
@@ -1708,10 +1984,12 @@ double KLocalization::CalcDistMean(feature afeature, double Distance) {
 	return ret;
 }
 
-double KLocalization::CalcDistDev(feature afeature, double Distance) {
+double KLocalization::CalcDistDev(feature afeature, double Distance)
+{
 	double ret = 0.0;
 	int p;
-	for (p = afeature.CntDistErrorDevParams - 1; p >= 0; p--) {
+	for (p = afeature.CntDistErrorDevParams - 1; p >= 0; p--)
+	{
 		ret = ret * Distance + afeature.DistErrorDevParams[p];
 	}
 	//	if ((p = afeature.CntDistErrorDevParams) > 0)
@@ -1728,11 +2006,13 @@ double KLocalization::CalcDistDev(feature afeature, double Distance) {
 	return ret;
 }
 
-double KLocalization::CalcBearMean(feature afeature, double Distance) {
+double KLocalization::CalcBearMean(feature afeature, double Distance)
+{
 	double ret = 0.0;
 	int p;
 
-	for (p = afeature.CntBearErrorMeanParams - 1; p >= 0; p--) {
+	for (p = afeature.CntBearErrorMeanParams - 1; p >= 0; p--)
+	{
 		ret = ret * Distance + afeature.BearignErrorMeanParams[p];
 	}
 
@@ -1748,11 +2028,13 @@ double KLocalization::CalcBearMean(feature afeature, double Distance) {
 	return ret;
 }
 
-double KLocalization::CalcBearDev(feature afeature, double Distance) {
+double KLocalization::CalcBearDev(feature afeature, double Distance)
+{
 	double ret = 0.0;
 	int p;
 
-	for (p = afeature.CntBearErrorDevParams - 1; p >= 0; p--) {
+	for (p = afeature.CntBearErrorDevParams - 1; p >= 0; p--)
+	{
 		ret = ret * Distance + afeature.BearignErrorDevParams[p];
 	}
 

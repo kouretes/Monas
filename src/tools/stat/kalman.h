@@ -32,6 +32,17 @@ class Kalman1D
     return r;
 
   }
+
+
+  Xbar const& set(V r_new, V r_dot_new )
+    {
+      r(0)=r_new;
+      r(1)=r_dot_new;
+      return r;
+
+    }
+
+
   Xbar const& predict_with_decel(V dt, V a)
   {
 	r(1)= r(1) - a*((r(1)>0)?1:-1)*dt;

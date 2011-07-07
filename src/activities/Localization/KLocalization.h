@@ -281,6 +281,18 @@ class KLocalization {
 		double rotation_deviation;
 		int PercentParticlesSpread;
 
+
+		//Field
+		float CarpetMaxX;
+		float CarpetMinX;
+		float CarpetMaxY;
+		float CarpetMinY;
+		float FieldMaxX;
+		float FieldMinX;
+		float FieldMaxY;
+		float FieldMinY;
+
+
 		parts SIRParticles;
 		parts AUXParticles;
 		vector<feature> allfeatures;
@@ -298,6 +310,7 @@ class KLocalization {
 		///Basic SIR functions
 		void Predict(parts &Particles, KMotionModel & MotionModel);
 		void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemin, double rangemax);
+		void Update_Ambigius(parts &Particles, vector<KObservationModel> &Observation, int NumofParticles);
 
 		void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 		float ESS(parts &Particles); //Calculate Effective Sample Size

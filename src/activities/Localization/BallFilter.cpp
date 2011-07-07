@@ -59,11 +59,37 @@ Ball BallFilter::get_updated_ball_estimate(float new_dist, float dist_variance, 
 	return filtered_ball;
 }
 
-//Predict the position without observations
-Ball BallFilter::get_predicted_ball_estimate(float dt)
+//Predict the position without observations and robots Motion Model
+Ball BallFilter::get_predicted_ball_estimate(float dt, KMotionModel const & MM)
 {
-	Kalman1D<float>::Xbar x_dist = x_filter.predict_with_decel(dt,0.1);
-	Kalman1D<float>::Xbar y_dist = y_filter.predict_with_decel(dt,0.1);
+
+	double tmpDist, tmpDir, tmpRot, speedX, speedY, newx, newy, newx2, newy2;
+
+	tmpDist = MM.Distance.val * (MM.Distance.ratiomean);
+	tmpDist/=1000;
+	tmpDir = MM.Direction.val + MM.Direction.Emean;
+	tmpRot = - (MM.Rotation.val + MM.Rotation.Emean); //We turn on the other way the robot turns
+
+	Kalman1D<float>::Xbar x_dist = x_filter.read();
+	Kalman1D<float>::Xbar y_dist = y_filter.read();
+
+	//Translation
+	newx = x_dist(0) - cos(tmpDir)*tmpDist;
+	newy = y_dist(0) - sin(tmpDir)*tmpDist;
+
+	//Rotate point
+	newx2 = newx*cos(tmpRot) - newy*sin(tmpRot);
+	newy2 = newx*sin(tmpRot) + newy*cos(tmpRot);
+
+	//Rotate speed vector
+	speedX = x_dist(1)*cos(tmpRot) - y_dist(1)*sin(tmpRot);
+	speedY = x_dist(1)*sin(tmpRot) + y_dist(1)*cos(tmpRot);
+
+	x_filter.set(newx2, speedX);
+	y_filter.set(newy2, speedY);
+
+	x_dist = x_filter.predict_with_decel(dt,0.1);
+	y_dist = y_filter.predict_with_decel(dt,0.1);
 
 
 //	Kalman1D<float>::Xbar dist = dist_filter.predict(dt);

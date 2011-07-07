@@ -195,6 +195,7 @@ KfieldGui::KfieldGui() {
 	pthread_mutex_init(&lock, NULL);
 	cout << " Starting initialization" << endl;
 
+	color["darkyellow"] = CV_RGB(160,160,10);
 	color["yellow"] = CV_RGB(245,245,10);
 	color["lightyellow"] = CV_RGB(245,245,100);
 	color["blue"] = CV_RGB(20,20,250);
@@ -233,36 +234,60 @@ void KfieldGui::display_Gui() {
 	cvSetMouseCallback(wndname, &gui_onmouse/*KfieldGcvui::on_mouse*/, 0);
 }
 
-void KfieldGui::DrawObservations(belief Belief,vector<KObservationModel> & currentObservation) {
+void KfieldGui::DrawObservations(belief Belief,vector<KObservationModel> & Observation) {
 	CvPoint pt1, pt2;
 	unsigned int i;
+	CvScalar currentColor;
+	bool ambigius=false;
+
 	pthread_mutex_lock(&lock);
-	for (i = 0; i < currentObservation.size(); i++) {
-		//cout << "Plot  the " << currentObservation[i].Feature.id << "X " << currentObservation[i].Feature.x << " Y " << currentObservation[i].Feature.y << endl;
-		pt1.x = (currentObservation[i].Feature.x + (2 * margintoline + field_width) / 2.0) / scale;
-		pt1.y = (-currentObservation[i].Feature.y + (2 * margintoline + field_height) / 2.0) / scale;
+	for (i = 0; i < Observation.size(); i++) {
 
-		cvCircle(field, pt1, currentObservation[i].Distance.val / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
-		//cout << " Distance " << currentObservation[i].Distance.val / scale << endl;
-		cvCircle(field, pt1, rint(currentObservation[i].Distance.val / scale), (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
-		cout << "Real Distance " << currentObservation[i].Distance.val << endl;
-		if ((currentObservation[i].Distance.val + currentObservation[i].Distance.Edev) > 0)
-			cvCircle(field, pt1, (currentObservation[i].Distance.val + currentObservation[i].Distance.Edev) / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["lightyellow"] : color["lightblue"], 0, CV_AA, 0);
-		if ((currentObservation[i].Distance.val - currentObservation[i].Distance.Edev) > 0)
-			cvCircle(field, pt1, (currentObservation[i].Distance.val - currentObservation[i].Distance.Edev) / scale, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["lightyellow"] : color["lightblue"], 0, CV_AA, 0);
-		pt2.x = pt1.x - (currentObservation[i].Distance.val / scale) * cos(-(currentObservation[i].Bearing.val+Belief.theta));
-		pt2.y = pt1.y - (currentObservation[i].Distance.val / scale) * sin(-(currentObservation[i].Bearing.val+Belief.theta));
+		if (Observation[i].Feature.id == "YellowLeft") {// "YellowLeft"
+			currentColor = color["lightyellow"];
+		} else if (Observation[i].Feature.id == "YellowRight") { //"YellowRight"
+			currentColor = color["lightyellow"];
+		} else if (Observation[i].Feature.id == "SkyblueLeft") {// "YellowLeft"
+			currentColor = color["lightblue"];
+		} else if (Observation[i].Feature.id == "SkyblueRight") { //"YellowRight"
+			currentColor = color["lightblue"];
+		} else if (Observation[i].Feature.id == "Skyblue") { //Ambigious GoalPost
+			currentColor = color["darkblue"];
+			ambigius = true;
+		} else if (Observation[i].Feature.id == "Yellow") { //Ambigious GoalPost
+			currentColor = color["darkyellow"];
+			ambigius = true;
+		}
 
-		cvLine(field, pt1, pt2, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["yellow"] : color["blue"], 0, CV_AA, 0);
+
+		for(int j=1; j >(ambigius)?-2:0;j=j-2){ //If we have abigious goal then plot both goal posts
+			pt1.x = (Observation[i].Feature.x + (2 * margintoline + field_width) / 2.0) / scale;
+			pt1.y = (-Observation[i].Feature.y*j + (2 * margintoline + field_height) / 2.0) / scale;
+
+			cvCircle(field, pt1, Observation[i].Distance.val / scale, currentColor, 0, CV_AA, 0);
+			cvCircle(field, pt1, rint(Observation[i].Distance.val / scale), currentColor, 0, CV_AA, 0);
+
+			cout << "Real Distance " << Observation[i].Distance.val << endl;
+
+			if ((Observation[i].Distance.val + Observation[i].Distance.Edev) > 0)
+				cvCircle(field, pt1, (Observation[i].Distance.val + Observation[i].Distance.Edev) / scale, currentColor, 0, CV_AA, 0);
+			if ((Observation[i].Distance.val - Observation[i].Distance.Edev) > 0)
+				cvCircle(field, pt1, (Observation[i].Distance.val - Observation[i].Distance.Edev) / scale, currentColor, 0, CV_AA, 0);
+
+			pt2.x = pt1.x - (Observation[i].Distance.val / scale) * cos(-(Observation[i].Bearing.val+Belief.theta));
+			pt2.y = pt1.y - (Observation[i].Distance.val / scale) * sin(-(Observation[i].Bearing.val+Belief.theta));
+
+			cvLine(field, pt1, pt2, currentColor, 0, CV_AA, 0);
+		}
 
 		if (i == 0) {
-			string tmp = Kutils::to_string(currentObservation[i].Distance.val);
-			cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 200) / scale, (2 * margintoline + field_height + 650) / scale), &font, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["lightyellow"] : color["lightblue"]);
+			string tmp = Kutils::to_string(Observation[i].Distance.val);
+			cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 200) / scale, (2 * margintoline + field_height + 650) / scale), &font, currentColor);
 		}
 
 		if (i == 1) {
-			string tmp = Kutils::to_string(currentObservation[i].Distance.val);
-			cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 200) / scale, (2 * margintoline + field_height + 850) / scale), &font, (strchr(currentObservation[i].Feature.id.c_str(), 'Y')) ? color["lightyellow"] : color["lightblue"]);
+			string tmp = Kutils::to_string(Observation[i].Distance.val);
+			cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 200) / scale, (2 * margintoline + field_height + 850) / scale), &font, currentColor);
 		}
 	}
 	pthread_mutex_unlock(&lock);
@@ -292,7 +317,7 @@ void KfieldGui::addTrackLine(belief mypos) {
 	mypospoint_old = mypospoint;
 	pthread_mutex_unlock(&lock);
 
-	cout << "Adder track line\n\n\n" << "mypospoint.x" << mypospoint.x <<"mypospoint.y" << mypospoint.y << endl;
+	//cout << "Adder track line\n\n\n" << "mypospoint.x" << mypospoint.x <<"mypospoint.y" << mypospoint.y << endl;
 }
 
 void KfieldGui::drawErrors(float DistError, float RotError) {
