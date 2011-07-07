@@ -18,8 +18,6 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-using namespace boost::posix_time;
-
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif
@@ -31,7 +29,7 @@ using namespace boost::posix_time;
 #define PITCHSTEP 0.3
 #define YAWSTEP 0.4
 
-#define OVERSH 0.06
+#define OVERSH 0.08
 #define WAITFOR 40
 
 class Behavior: public IActivity {
@@ -49,11 +47,13 @@ class Behavior: public IActivity {
 		void GetGameState();
 		void GetPosition();
 		void UpdateOrientation();
+		void UpdateOrientationPlus();
 		void CheckForBall();
 		int MakeTrackBallAction();
 
-		void HeadScanStep();
-		void HighHeadScanStep(float yaw_limit);
+		void HeadScanStepRaster();
+		void HeadScanStepHigh(float yaw_limit);
+		void HeadScanStepSmart();
 		
 		void Kick(int side);
 
@@ -61,6 +61,8 @@ class Behavior: public IActivity {
 		
 		void velocityWalk(double ix, double iy, double it, double f);
 		void littleWalk(double x, double y, double th);
+		void approachBall(double ballX, double ballY);
+		void approachBallNewWalk(double ballX, double ballY);
 		void gotoPosition(float target_x,float target_y, float target_phi);
 		
 		void calibrate();
@@ -91,6 +93,7 @@ class Behavior: public IActivity {
 		short ballfound;
 		bool scanforball;
 		bool startscan;
+		bool scanOK;
 		float targetYaw;
 		float targetPitch;
 		SensorData HeadYaw;
@@ -103,8 +106,9 @@ class Behavior: public IActivity {
 
 		bool kickoff;
 		float initX[2][2], initY[2][2], initPhi[2][2]; //initial game position in the field!!!!
-		double blueGoalX, blueGoalY, yellowGoalX, yellowGoalY;
-		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
+		double oppGoalX[2], oppGoalY[2], ownGoalX[2], ownGoalY[2];
+		double oppGoalLeftX[2], oppGoalLeftY[2], oppGoalRightX[2], oppGoalRightY[2];
+		double ownGoalLeftX[2], ownGoalLeftY[2], ownGoalRightX[2], ownGoalRightY[2];
 		float cX, cY, ct;
 		float bd, bb, bx, by, posx, posy;
 		int side;
@@ -113,7 +117,6 @@ class Behavior: public IActivity {
 		bool readytokick;
 		int back;
 		int direction;
-		bool obstacleFront;
 		double orientation;
 		
 		int gameState;
@@ -122,7 +125,7 @@ class Behavior: public IActivity {
 		
 		bool readRobotConf;
 
-		ptime lastmove, lastball, lastwalk, lastplay;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastscan, lasttrack;
 };
 
 #endif
