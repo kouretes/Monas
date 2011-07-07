@@ -62,6 +62,7 @@ class Behavior: public IActivity {
 		void velocityWalk(double ix, double iy, double it, double f);
 		void littleWalk(double x, double y, double th);
 		void approachBall(double ballX, double ballY);
+		void approachBallNewWalk(double ballX, double ballY);
 		void gotoPosition(float target_x,float target_y, float target_phi);
 		
 		void calibrate();
@@ -92,6 +93,7 @@ class Behavior: public IActivity {
 		short ballfound;
 		bool scanforball;
 		bool startscan;
+		bool scanOK;
 		float targetYaw;
 		float targetPitch;
 		SensorData HeadYaw;
@@ -123,7 +125,7 @@ class Behavior: public IActivity {
 		
 		bool readRobotConf;
 
-		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastscan, lasttrack;
 };
 
 #endif
