@@ -244,7 +244,7 @@ int NoxOpenChallenge::Execute() {
 		
 
 		if (ballfound == 0 && wideWalk && lastWideWalk + seconds(6) < microsec_clock::universal_time()){
-		   //Kick(side);
+		   Kick(side);
 		    Logger::Instance().WriteMsg("NoxOpenChallenge", "I am going to kick!", Logger::ExtraExtraInfo);
 		    wideWalk = false;
 		}
