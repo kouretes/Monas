@@ -78,7 +78,7 @@ class Behavior: public IActivity {
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
 		//boost::shared_ptr<const ObservationMessage>  obsm;
-		boost::shared_ptr<const ObstacleMessage>  om;
+		boost::shared_ptr<const ObstacleMessageArray>  om;
 		boost::shared_ptr<const WorldInfo>  wim;
 		
 		/* Outgoing Messages */
