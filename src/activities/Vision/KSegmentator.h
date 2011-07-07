@@ -113,7 +113,7 @@ class KSegmentator{
             char calLines;
             char colorInfo;//A:Aliases
             char colorLines;
-            char conf[4];//HSY\n OR Y[yres][ures][vres]
+            char conf[4];
         };
 		struct SegHeader set;
 
@@ -179,10 +179,17 @@ class KSegmentator{
         	//colormask_t t=YLUT[y]&ULUT[u]&VLUT[v];
         	//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &e);
 			//segment.tv_nsec+=ttdiff(s,e).tv_nsec;
-			y=y*lumascale;
-			u=(((int)u)-128)*lumascale +128;
-			v=(((int)v)-128)*lumascale +128;
-
+			int yn=y*lumascale;
+			if(yn>255) yn=255;
+			y=yn;
+			int un=(((int)u)-128)*lumascale;
+			if(un<-128) un=-128;
+			if(un>127) un=127;
+			u=un+128;
+			int vn=(((int)v)-128)*lumascale;
+			if(vn<-128) vn=-128;
+			if(vn>127) vn=127;
+			v=vn+128;
 			//Precheck... Does it SEEM at lest to contain needed values?
 
 			if(!(rYLUT[y>>LUTres]&rULUT[u>>LUTres]&rVLUT[v>>LUTres]&hint))
