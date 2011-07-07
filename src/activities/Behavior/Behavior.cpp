@@ -172,7 +172,7 @@ int Behavior::Execute() {
 
 			side = (bb > 0) ? 1 : -1;
 			posx=0.12, posy=0.03; // Desired ball position for kick
-			double epsx = 0.02, epsy = 0.02; // Desired precision
+			double epsx = 0.03, epsy = 0.03; // Desired precision
 			if ( fabs( bx-posx ) < epsx  && fabs( by-(side*posy) ) < epsy ) {
 				readytokick = true;
 				Kick(side);
@@ -253,6 +253,7 @@ void Behavior::GetGameState()
 
 		if (gameState == PLAYER_PLAYING) {
 			if (prevGameState == PLAYER_PENALISED){
+				direction = 1;
 				calibrated = 0;
 				_blk->publishSignal(*locReset, "behavior");
 			}
@@ -336,6 +337,8 @@ void Behavior::UpdateOrientationPlus()
 
 void Behavior::CheckForBall() {
 	
+	double closeToBall = 0.9;
+	
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
 			bx = wim->balls(0).relativex();
@@ -349,7 +352,7 @@ void Behavior::CheckForBall() {
 
 	if (bmsg != 0) {
 		if (bmsg->radius() > 0) { 
-			if (bd < 1.0) {
+			if (bd < closeToBall) {
 				MakeTrackBallAction();
 				lasttrack = microsec_clock::universal_time();
 				scanforball = false; 
@@ -361,8 +364,8 @@ void Behavior::CheckForBall() {
 			lastball = microsec_clock::universal_time();
 			ballfound = 1;
 		} else {
-			if (bd < 1.0) {
-				if (lastball+seconds(1)<microsec_clock::universal_time())
+			if (bd < closeToBall) {
+				if (lastball+milliseconds(250)<microsec_clock::universal_time())
 					ballfound = 0;
 			} else {
 				if (lastball+seconds(3)<microsec_clock::universal_time())
@@ -574,7 +577,8 @@ void Behavior::HeadScanStepSmart() {
 
 void Behavior::Kick(int side) {
 
-	if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
+	//if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
+	if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(25)) ) {
 		if (mglRand() < 0.5) {
 			littleWalk(0.2, 0.0, 0.0);
 		} else {
