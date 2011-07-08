@@ -204,7 +204,6 @@ class ObstacleAvoidance: public IActivity {
 		void drawIterationGrid();		
 		void printSonarValues();
 		
-		void smoothGrid(int smooth);
 		void updateGrid(double (&left)[SOnARsNum], double (&right)[SOnARsNum]);
 		void updateFront();
 		
