@@ -45,28 +45,39 @@ int NoPlay::Execute() {
 	}
 	
 	currstate = gsm->player_state();
-	
+	teamColor = gsm->team_color();
 	switch(currstate){
 		case PLAYER_PENALISED:
 		//	Logger::Instance().WriteMsg(GetName(),  " playerpenalised", Logger::Info);
 			bhmsg->set_headaction(DONOTHING);	
 			curraction = DONOTHING;
-			velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+			if(lastMove<= boost::posix_time::microsec_clock::universal_time()){
+				velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+				lastMove = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(5);
+			}
 								
 			pmsg->set_posx(initX[0][teamColor]);
 			pmsg->set_posy(initY[0][teamColor]);
 			pmsg->set_theta(initPhi[0][teamColor]);
 			_blk->publishState(*pmsg, "behavior");
 	//		Logger::Instance().WriteMsg(GetName(),  " publish pos", Logger::Info);
+			#ifdef PENALTY_ON
+				;
+			#else
 			rpm->set_goalietopos(true);
-			_blk->publishState(*rpm, "behavior");
+			_blk->publishSignal(*rpm, "behavior");
+			#endif
 //			Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
 		
 		//goToPosition(initX, initY, initPhi);
 		break;
 		case PLAYER_SET:
 			Logger::Instance().WriteMsg(GetName(),  " playerset", Logger::Info);
-			velocityWalk(0,0,0,1);
+			
+			if(lastMove<= boost::posix_time::microsec_clock::universal_time()){
+				velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+				lastMove = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(5);
+			}
 			curraction = SCANFORPOST;
 			bhmsg->set_headaction(curraction);	
 		break;
@@ -99,10 +110,15 @@ int NoPlay::Execute() {
 				curraction = CALIBRATE;
 				if(prevaction!=CALIBRATE){
 			//		Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+					calibrate_time = boost::posix_time::microsec_clock::universal_time();
 					bhmsg->set_headaction(curraction);	
 				}
 				else{
-					bhmsg->set_headaction(DONOTHING);	
+					if(calibrate_time+boost::posix_time::seconds(15) <boost::posix_time::microsec_clock::universal_time()){
+						bhmsg->set_headaction(curraction);	
+						calibrate_time = boost::posix_time::microsec_clock::universal_time();
+					}else
+						bhmsg->set_headaction(DONOTHING);	
 		//			Logger::Instance().WriteMsg(GetName(),  " playerinitial DONOTHING", Logger::Info);
 				}
 			}else
@@ -140,6 +156,7 @@ void NoPlay::UserInit () {
 	lastMove =  boost::posix_time::microsec_clock::universal_time();
 	lastObsm =  boost::posix_time::microsec_clock::universal_time();
 	firstInit =  boost::posix_time::microsec_clock::universal_time();
+	calibrate_time =  boost::posix_time::microsec_clock::universal_time();
 	currstate = PLAYER_PENALISED;
 	prevstate = PLAYER_PENALISED;
 	//wmot = new MotionWalkMessage();
@@ -198,10 +215,12 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 	playernum =-1;
 	if(pnm!=0)
 		playernum = pnm->player_number();
+
 	if(playernum==-1){
 		Logger::Instance().WriteMsg(GetName(), " Invalid player number " , Logger::Error);
 		return false;
 	}
+	
 	readConf = true;
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
@@ -312,19 +331,10 @@ void NoPlay::goToPosition(float x, float y, float phi){
 	
 	Logger::Instance().WriteMsg(GetName(),  " velx" + _toString(velx)+ " vel y " + _toString(vely), Logger::Info);
 	if(lastMove <= boost::posix_time::microsec_clock::universal_time()){
-		//if ( ( x - locDeviation > myPosX || myPosX > x + locDeviation ) || ( y - locDeviation > myPosY || myPosY > y + locDeviation ) || ( phi - 0.1*phi > myPhi || myPhi > phi + 0.1*phi  ) )
-	//		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-	//	else
 			velocityWalk(velx, vely, 0.1*relativePhi, 1.0);
 		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
 	}
 
-//	if(obsm&&obsm->regular_objects_size() > 0)
-	//	lastObsm = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(5);
-	
-	//if(lastObsm<= boost::posix_time::microsec_clock::universal_time()){
-		//curraction = SCANFORBALL;
-//	}
 	bhmsg->set_headaction(curraction);	
 	return;
 }

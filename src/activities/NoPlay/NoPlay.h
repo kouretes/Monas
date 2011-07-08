@@ -36,7 +36,7 @@ private:
 	
 	int curraction, prevaction;	
 	float myPosX, myPosY, myPhi;
-	boost::posix_time::ptime lastMove, lastObsm, firstInit;
+	boost::posix_time::ptime lastMove, lastObsm, firstInit, calibrate_time;
 	
 	
 	ReturnToPositionMessage* rpm;
