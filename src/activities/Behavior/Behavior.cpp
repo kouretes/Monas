@@ -172,7 +172,7 @@ int Behavior::Execute() {
 
 			side = (bb > 0) ? 1 : -1;
 			posx=0.12, posy=0.03; // Desired ball position for kick
-			double epsx = 0.02, epsy = 0.02; // Desired precision
+			double epsx = 0.03, epsy = 0.03; // Desired precision
 			if ( fabs( bx-posx ) < epsx  && fabs( by-(side*posy) ) < epsy ) {
 				readytokick = true;
 				Kick(side);
@@ -229,7 +229,7 @@ void Behavior::read_messages()
 	gsm  = _blk->readState<GameStateMessage> ("behavior");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
+	om   = _blk->readState<ObstacleMessageArray> ("obstacle");
 	wim  = _blk->readData<WorldInfo> ("behavior");
 
 	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
@@ -253,6 +253,7 @@ void Behavior::GetGameState()
 
 		if (gameState == PLAYER_PLAYING) {
 			if (prevGameState == PLAYER_PENALISED){
+				direction = 1;
 				calibrated = 0;
 				_blk->publishSignal(*locReset, "behavior");
 			}
@@ -336,6 +337,8 @@ void Behavior::UpdateOrientationPlus()
 
 void Behavior::CheckForBall() {
 	
+	double closeToBall = 0.9;
+	
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
 			bx = wim->balls(0).relativex();
@@ -349,7 +352,7 @@ void Behavior::CheckForBall() {
 
 	if (bmsg != 0) {
 		if (bmsg->radius() > 0) { 
-			if (bd < 5.7) {
+			if (bd < closeToBall) {
 				MakeTrackBallAction();
 				lasttrack = microsec_clock::universal_time();
 				scanforball = false; 
@@ -361,8 +364,8 @@ void Behavior::CheckForBall() {
 			lastball = microsec_clock::universal_time();
 			ballfound = 1;
 		} else {
-			if (bd < 0.7) {
-				if (lastball+seconds(1)<microsec_clock::universal_time())
+			if (bd < closeToBall) {
+				if (lastball+milliseconds(250)<microsec_clock::universal_time())
 					ballfound = 0;
 			} else {
 				if (lastball+seconds(3)<microsec_clock::universal_time())
@@ -574,7 +577,8 @@ void Behavior::HeadScanStepSmart() {
 
 void Behavior::Kick(int side) {
 
-	if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
+	//if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
+	if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(25)) ) {
 		if (mglRand() < 0.5) {
 			littleWalk(0.2, 0.0, 0.0);
 		} else {
@@ -621,6 +625,22 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	x = ix;
 	y = iy;
 	t = it;
+	
+	//if (om!=0) { 
+		////Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
+		//if ( (om->direction(2) != 0) && (om->direction(0) == 0) ) {
+			//if (y>0) 
+		//}
+		//else if ( (om->direction(0) != 0) && (om->direction(2) == 0) ) {
+			//if (y
+		//}
+		//else if ( (om->direction(0) != 0) && (om->direction(2) != 0) ) {
+			//if (x>0.0) x=0.0;
+		//}
+		//else {
+			//velocityWalk(1.0, 0.0, 0.0, 1.0);
+		//}
+	//}
 	
 	wmot->set_command("setWalkTargetVelocity");
 	
@@ -679,11 +699,11 @@ void Behavior::approachBallNewWalk(double ballX, double ballY){
 
 	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
 	double maxd = fmaxf( fabs(bx-ballX), fabs(by-ballY) );
-	f    = fminf(1.0, 0.4+(maxd));
-	gain = fminf(1.0, 0.0+(maxd));
+	f    = fminf(1.0, 0.4+(maxd/0.5));
+	gain = fminf(1.0, 0.0+(maxd/0.5));
 	X = gain * (bx-ballX)/maxd;
 	Y = gain * (by-ballY)/maxd;
-	t = 0.5 * gain * (bb/M_PI);
+	t = 0.4 * gain * (bb/M_PI);
 	velocityWalk(X, Y, t, f);
 }
 
@@ -872,10 +892,20 @@ bool Behavior::readGoalConfiguration(const std::string& file_name) {
 
 void Behavior::test() {
 
-	if (om!=0) {
-		Logger::Instance().WriteMsg("Behavior", "Obstacle - Direction: " + _toString(om->direction()), Logger::Info);
-		if (om->direction() == 0)
+	if (om!=0) { 
+		Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
+		if ( (om->direction(2) != 0) && (om->direction(0) == 0) ) {
 			velocityWalk(0.0, 0.0, 1.0, 1.0);
+		}
+		else if ( (om->direction(0) != 0) && (om->direction(2) == 0) ) {
+			velocityWalk(0.0, 0.0, -1.0, 1.0);
+		}
+		else if ( (om->direction(0) != 0) && (om->direction(2) != 0) ) {
+			velocityWalk(0.0, 0.0, 0.0, 1.0);
+		}
+		else {
+			velocityWalk(1.0, 0.0, 0.0, 1.0);
+		}
 	}
 	else
 		velocityWalk(1.0, 0.0, 0.0, 1.0);
