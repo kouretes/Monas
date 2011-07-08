@@ -494,21 +494,14 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 		TrackPointRobotPosition.x = PosX.sensorvalue() * 1000;
 		TrackPointRobotPosition.y = PosY.sensorvalue() * 1000;
 		TrackPointRobotPosition.phi = Angle.sensorvalue();
-		//Gui->KfieldInitTrackLine(TrackPointRobotPosition);
 
-		//cout << "Robots angle " << mypos.theta << endl;
-		//Gui->addTrackLine(mypos);
 		TrackPoint = TrackPointRobotPosition;
 	}
-	//TrackPoint RobotPositionAfter;
-	//std::vector<float> RobotPos = motion->getRobotPosition(true);
-	float XA = PosX.sensorvalue() * 1000; //-RobotPos[0] * 1000;
-	float YA = PosY.sensorvalue() * 1000; //-RobotPos[1] * 1000;
-	float AA = Angle.sensorvalue(); //RobotPos[2]+M_PI;
 
-	//	mypos.x = XA * 1000;
-	//	mypos.y = YA * 1000;
-	//	mypos.theta = AA;
+	float XA = PosX.sensorvalue() * 1000;
+	float YA = PosY.sensorvalue() * 1000;
+	float AA = Angle.sensorvalue();
+
 	//cout << "          Robot Position X: " << XA << " Y: " << YA << " A(DEG): " << AA * TO_DEG << endl;
 
 	float DX = (XA - TrackPointRobotPosition.x);
@@ -702,19 +695,12 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 void Localization::process_messages()
 {
+	boost::posix_time::ptime observation_time;
+
 	gsm = _blk->readState<GameStateMessage>("behavior");
-	rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
 	
-	if (rpsm != 0)
-	{
-		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
-		PosY = rpsm->sensordata(KDeviceLists::ROBOT_Y);
-		Angle = rpsm->sensordata(KDeviceLists::ROBOT_ANGLE);
-
-		RobotPositionMotionModel(robotmovement);
-	}
 
 	currentObservation.clear();
 	currentAbigiusObservation.clear();
@@ -771,7 +757,22 @@ void Localization::process_messages()
 		//			tmpOM.Distance.val = DISTANCE(AgentPosition.x,Particles.x[p],AgentPosition.y,Particles.y[p]);
 		//			tmpOM.Bearing.val = atan2(Particles .y[p] - AgentPosition.y, Particles.x[p] - AgentPosition.x);
 		//		}
+
+		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
+		rpsm = _blk->readData<RobotPositionMessage> ("sensors", "localhost",NULL, &observation_time);
+	}else{
+		rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	}
+
+	if (rpsm != 0)
+	{
+		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
+		PosY = rpsm->sensordata(KDeviceLists::ROBOT_Y);
+		Angle = rpsm->sensordata(KDeviceLists::ROBOT_ANGLE);
+
+		RobotPositionMotionModel(robotmovement);
+	}
+
 }
 
 int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel)
@@ -874,7 +875,7 @@ void * Localization::StartServer(void * astring)
 
 		} else
 		{
-			sleep(5);
+			sleep(2);
 		}
 	}
 

@@ -1350,7 +1350,6 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 		//cout << "index: " << index << " x: " << temp.x << " y: " << temp.y << " phi: " << temp.phi << endl;
 		particlesQueue.pop();
 	}
-	sleep(1);
 	return 1;
 }
 
