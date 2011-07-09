@@ -72,7 +72,7 @@ int HeadBehavior::Execute() {
 	}
 	else
 		obsmbearing=-1;
-	if(headaction==SCANFORBALL || headaction == HIGHSCANFORBALL)
+	if(headaction==SCANFORBALL)
 	{
 		if(ballLastSeen+seconds(1) >= now &&ballFirstSeen+seconds(1) < now  && obsm && obsm->has_ball() && obsm->ball().dist()>=0.2)
 		{
@@ -163,9 +163,10 @@ int HeadBehavior::Execute() {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
+<<<
 				HeadScanStepSmart();
 				//HeadScanStep();
-				
+	
 			}
 			break;
 		case (HIGHSCANFORBALL):
@@ -375,6 +376,7 @@ void HeadBehavior::HeadScanStepSmart() {
 		targetPitch = blue1p;
 		state = BLUE;
 		phase = START;
+
 		headmotion(targetPitch, targetYaw);
 		waiting = 0;
 		startscan = false;
@@ -441,6 +443,7 @@ void HeadBehavior::HeadScanStepSmart() {
 			}
 		}
 
+
 		headmotion(targetPitch, targetYaw);
 	}
 	return;
@@ -501,7 +504,7 @@ void HeadBehavior::headmotion(float pitch, float yaw){
 	hmot->set_parameter(0, yaw);
 	hmot->set_parameter(1, pitch);
 	_blk->publishSignal(*hmot, "motion");
-		Logger::Instance().WriteMsg("HeadBehavior",  " YAW " + _toString(yaw), Logger::Info);
+	Logger::Instance().WriteMsg("HeadBehavior",  " YAW " + _toString(yaw), Logger::Info);
 	Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString(pitch), Logger::Info);
 	
 }

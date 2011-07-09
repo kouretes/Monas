@@ -26,7 +26,7 @@ int Kick::Execute() {
 		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_6_2TOMyLeftKick", "FALSE NO OBSM", Logger::Info);
 		return 0;
 	}
-	if (wimsg==0 || wimsg->balls_size()!=0)
+	if (wimsg && wimsg->balls_size()!=0)
 		by = wimsg->balls(0).relativey();
 	#ifdef PENALTY_ON
 		if (by > 0.0)
@@ -56,7 +56,7 @@ int Kick::Execute() {
 	} else if ((fabs(ogb) <= -45 * TO_RAD) && (fabs(ogb) > -135 * TO_RAD)) {
 		orientation = 3;
 	}
-	
+
 	if (orientation == 0) {
 		if (by > 0.0)
 			amot->set_command("KickForwardLeft.xar"); //LeftKick
@@ -67,6 +67,7 @@ int Kick::Execute() {
 	} else if (orientation == 1) {
 		amot->set_command("KickSideRightPierris.xar"); //"HardRightSideKick"
 	} else if (orientation == 2) {
+
 		if (by > 0.0){
 			amot->set_command("KickForwardLeft.xar"); //LeftKick
 		//	amot->set_command("KickBackLeftPierris.xar"); //LeftBackHigh_carpet
@@ -74,6 +75,7 @@ int Kick::Execute() {
 			amot->set_command("KickForwardRight.xar"); //LeftKick
 		//	amot->set_command("KickBackRightPierris.xar"); //RightBackHigh_carpet
 		}
+
 	} else {
 		if (by > 0.0)
 			amot->set_command("KickSideLeftFast.xar");

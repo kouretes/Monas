@@ -10,7 +10,7 @@ int Stare::Execute() {
 	
 
 	Logger::Instance().WriteMsg("Stare",  " execute", Logger::Info);
-	obsm = _blk->readSignal<ObservationMessage> ("vision");
+	//obsm = _blk->readSignal<ObservationMessage> ("vision");
 	wimsg = _blk->readData<WorldInfo> ("behavior");
 
 	velocityWalk(0.0, 0.0, 0.0, 1.0);
@@ -22,135 +22,39 @@ int Stare::Execute() {
 	l->set_chain("r_ear");
 	l->set_color( "off");
 	_blk->publishSignal(leds, "leds");
-	/*
-	if (obsm.get()==0){
-		//Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
-		if (lastObsm==0)
-			return 0;
-	}else{
-		if(lastObsm!=0){
-		//	Logger::Instance().WriteMsg("Stare",  " prev time" + lastObsm->image_timestamp(), Logger::ExtraInfo);
-			doim->mutable_prev()->CopyFrom(*lastObsm);
-			lastObsm->CopyFrom(*obsm);
-			doim->mutable_last()->CopyFrom(*obsm);
-		//	Logger::Instance().WriteMsg("Stare",  " last time" + obsm->image_timestamp(), Logger::ExtraInfo);
-			rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
-			_blk->publishData(*doim, "behavior");
-		}else
-			lastObsm->CopyFrom(*obsm);
-	}
-	
-	int side ;//= 1;
-	
-	bd = lastObsm->ball().dist();
-	bb = lastObsm->ball().bearing();
-	bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
-	by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
-	side = (bb > 0) ? 1 : -1;
-	*/
-	
-	int side = 1;
-	
-
 
 	if (wimsg.get()==0){
 		//Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
-		if (lastWimsg==0)
-			return 0;
+		return 0;
 	}else{
-		if(lastWimsg!=0){
-		//	Logger::Instance().WriteMsg("Stare",  " prev time" + lastObsm->image_timestamp(), Logger::ExtraInfo);
-			lastWimsg->CopyFrom(*wimsg);
-		//	Logger::Instance().WriteMsg("Stare",  " last time" + obsm->image_timestamp(), Logger::ExtraInfo);
-			rcvWimsg = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
-		}else
-			lastWimsg->CopyFrom(*wimsg);
+		if(wimsg->balls_size()!=0){
+			float by=0.0, bb=0.0;
+			by = wimsg->balls(0).relativey();
+			if(by!=0.0)
+				bb = atan(bx/by);
+
+			fall = toFallOrNotToFall(wimsg);
+			if(penaltyMode){
+				if(bb>=0 && wimsg->balls_size()>0 && wimsg->balls(0).relativexspeed()<0)
+					fall = 1;
+				else if(bb<0 && wimsg->balls_size()>0 && wimsg->balls(0).relativexspeed()<0)
+					fall = -1;
+			}
+			fm->set_fall(fall);
+			_blk->publishSignal(*fm, "behavior");
+		}
+
 	}
 	
-	//if(lastWimsg->balls_size()!=0){
-		//bx = lastWimsg->balls(0).relativex();
-		//by = lastWimsg->balls(0).relativey();
-		//bd = sqrt(bx*bx + by*by);
-		//if(by!=0.0)
-			//bb = atan(bx/by);
-			
-		
-		//side = (bb > 0) ? 1 : -1;
-	
-	//static float X=0,Y=0,th=0,f=0.2;
-	////X=(bx-posx)*2;
-
-	////Y=(by-offsety)*1.6;
-	//float offsety=side*dDistBallY;
-	//Y=(by-offsety)*3;
-	//if(bd>0.26)
-	//{
-		//if(bx<0)
-			//th=0.2 *Y;
-		//else
-			//th=0.1 *Y;
-
-		//Y=Y/2.0;
-
-	//}
-	//else
-		//th=-0.06*by*(Y>0?-1:1);
-
-	//f=1;
-
-	//th=th>1?1:th;
-	//th=th<-1?-1:th;
-	//}
-	//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){//////////////////////////////
-		//velocityWalk(0,0,th,f);
-	//	lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
-//	}
-	//fm->set_fall(toFallOrNotToFall(doim));
-	fall = toFallOrNotToFall(lastWimsg);
-	//if (fall==0){
-		//if(fabs(bb)> 60*TO_RAD ){
-			//if(by>1)
-				//by=1;
-			//else if(by<-1)
-				//by=-1;
-			//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){//////////////////////////////
-				//velocityWalk(0.0f, by, 0.0f, 0.8);
-				//lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
-			//}
-		//}else{
-			//if(lastMove<= boost::posix_time::microsec_clock::universal_time()){
-				//velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-				//lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
-			//}
-		//}
-	//}
-	if(penaltyMode){
-		if(bb>=0 && lastWimsg->balls_size()>0 && lastWimsg->balls(0).relativexspeed()<0)
-			fall = 1;
-		else if(bb<0 && lastWimsg->balls_size()>0 && lastWimsg->balls(0).relativexspeed()<0)
-			fall = -1;
-	}
-	fm->set_fall(fall);
-	_blk->publishSignal(*fm, "behavior");
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 	
-	//Logger::Instance().WriteMsg("Stare",  " end", Logger::Info);
-	//if(wimsg!=0){
-		//ab.readyToKick(wimsg);
-		//ab.ballAway(wimsg);
-	//}
-
 	return 0;
 }
 
 void Stare::UserInit () {
-	rcvObsm = boost::posix_time::microsec_clock::universal_time();
-	rcvWimsg= boost::posix_time::microsec_clock::universal_time();
-	lastMove = boost::posix_time::microsec_clock::universal_time();
+
 	fm = new FallMessage();
-	_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("sensors", 0);
 	_blk->subscribeTo("behavior", 0);
 	fall = 0;
 	penaltyMode = false;	   ////////an eimaste se penalty to allazoume se true!!!!!!!!!!!!!!
@@ -160,9 +64,8 @@ void Stare::UserInit () {
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	bhmsg = new BToHeadMessage();
-	lastObsm = new ObservationMessage();
-	lastWimsg = new WorldInfo();
-	doim = new DoubleObsInfo();
+	
+	//lastWimsg = new WorldInfo();
 	headaction= BALLTRACK;
 }
 
@@ -190,7 +93,7 @@ void Stare::velocityWalk(double x, double y, double th, double f) {
  * */
 //int Stare::toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi){
 
-int Stare::toFallOrNotToFall( DoubleObsInfo* doi){
+/*int Stare::toFallOrNotToFall( DoubleObsInfo* doi){
 	
 	//if(doi.get()==0){	//the two last observation messages
 	if(doi==0){	//the two last observation messages
@@ -266,8 +169,8 @@ int Stare::toFallOrNotToFall( DoubleObsInfo* doi){
 
 
 
-
-int Stare::toFallOrNotToFall( WorldInfo* doi){
+*/
+int Stare::toFallOrNotToFall( boost::shared_ptr<const WorldInfo>  doi){
 	
 	//if(doi.get()==0){	//the two last observation messages
 	if(doi==0){	//the two last observation messages
