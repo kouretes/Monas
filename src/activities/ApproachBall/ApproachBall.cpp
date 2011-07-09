@@ -21,28 +21,35 @@ int ApproachBall::Execute() {
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	
 	headaction = BALLTRACK;
-	if (obsm.get()==0){
-		//Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
-		if (lastObsm==0)
-			return 0;
-		if (rcvObsm < boost::posix_time::microsec_clock::universal_time() ){
-			velocityWalk(0,0,0,1);
-			headaction=SCANFORBALL;
-			return 0;
-		}
-	}else{
-		lastObsm->CopyFrom(*obsm);
-		rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
-	}
-	int side ;//= 1;
+	//if (obsm.get()==0){
+		////Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
+		//if (lastObsm==0)
+			//return 0;
+		//if (rcvObsm < boost::posix_time::microsec_clock::universal_time() ){
+			//velocityWalk(0,0,0,1);
+			//headaction=SCANFORBALL;
+			//return 0;
+		//}
+	//}else{
+		//lastObsm->CopyFrom(*obsm);
+		//rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
+	//}
+	//int side ;//= 1;
 	
-	bd = lastObsm->ball().dist();
-	bb = lastObsm->ball().bearing();
-	bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
-	by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
-	side = (bb > 0) ? 1 : -1;
+	//bd = lastObsm->ball().dist();
+	//bb = lastObsm->ball().bearing();
+	//bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
+	//by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
+	//side = (bb > 0) ? 1 : -1;
 
-   
+	int side = 1;
+	if(wimsg&&wimsg->balls_size()>0){
+	   bx = wimsg->balls(0).relativex();
+	   by = wimsg->balls(0).relativey();
+	   bd = sqrt((pow(bx,2)+pow(by,2)));
+	   side = (by>0.0)? 1:-1;
+	   
+	}
 	static float X=0,Y=0,th=0,f=0.2;
 	//X=(bx-posx)*2;
 	X=(bx-dDistBallX )*3;
@@ -52,20 +59,19 @@ int ApproachBall::Execute() {
 	//Y=(by-offsety)*1.6;
 	float offsety=side*dDistBallY;
 	Y=(by-offsety)*3;
-	if(bd>0.26)
-	{
+	if(bd<0.4){
+		X*=0.4;
+		Y*=0.4;
+		th=-0.06*by*(Y>0?-1:1);
+	}
+	else{
 		if(bx<0)
 			th=0.2 *Y;
 		else
 			th=0.1 *Y;
 
 		Y=Y/2.0;
-
 	}
-	else
-		th=-0.06*by*(Y>0?-1:1);
-
-
 	Y=Y>0?Y+0.01:Y-0.01;
 	Y=Y>1?1:Y;
 	Y=Y<-1?-1:Y;
@@ -81,8 +87,10 @@ int ApproachBall::Execute() {
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 
-	rpm->set_goalietopos(true);
-	_blk->publishSignal(*rpm, "behavior");
+//#ifdef RETURN_TO_POSITION
+		//rpm->set_goalietopos(true);
+		//_blk->publishSignal(*rpm, "behavior");
+//#endif
 	
 	return 0;
 }
