@@ -79,7 +79,6 @@ void Localization::UserInit()
 
 void Localization::Reset()
 {
-	//KLocalization::Initialize();
 	KLocalization::setParticlesPoseUniformly(SIRParticles);
 }
 
@@ -513,26 +512,26 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	float robot_rot = DR;
 
 	MModel.type = "ratio";
-//	if (robot_dist > 500)
-//	{
-//		robot_dist = 0.1;
-//		robot_dir = 0.000001;
-//		robot_rot = 0.00001;
-//	}
+	if (robot_dist > 500)
+	{
+		robot_dist = 0.0;
+		robot_dir = 0.000001;
+		robot_rot = 0.00001;
+	}
 	MModel.Distance.val = robot_dist;
 	MModel.Distance.ratiomean = 1.32; // -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155;
-	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058);
+	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058*robot_dist);
 
 	MModel.Direction.val = robot_dir;
 	//cout << "MModel.Direction.val " << MModel.Direction.val;
-	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3) + 0.1086; // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ;
+	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3); // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ;
 	//cout << "MModel.Direction.Emean " << MModel.Direction.Emean;
-	MModel.Direction.Edev = abs(-0.019 * abs(robot_dir) + 0.059824);
+	MModel.Direction.Edev = abs(-0.019 * abs(robot_dir) );
 	// 0.0063971 * robot_dir + 0.090724 / abs(robot_dir);
 	//cout << "MModel.Direction.Edev " << MModel.Direction.Edev;
 
 	MModel.Rotation.val = robot_rot;
-	MModel.Rotation.ratiomean = 0; // -1.9346*robot_dist + 10.041 *robot_dir + 173.24*robot_rot + 890.64;
+	MModel.Rotation.ratiomean = 0;//-1.9346*robot_dist + 10.041 *robot_dir + 173.24*robot_rot + 890.64;
 	MModel.Rotation.ratiodev = 0.0001; //5.67 *robot_dist + -69.009 *robot_dir +-359.19*robot_rot -2561.2;
 	//cout << "          Robot Position DX: " << DX << " DY: " << DY << " DR(DEG): " << DR * TO_DEG << endl;
 
@@ -614,7 +613,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 #ifdef ADEBUG
 	cout << "\nNormalized SIR particles  " << endl;
 	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << SIRParticles.Weight[i] << " \n ";
+		cout << SIRParticles.Weight[i] << " \n ";
 #endif
 	//Maybe Usefull for others
 	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
@@ -624,52 +623,62 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 #ifdef ADEBUG
 	cout << "\nAUX particles Before, SIR before Resample after memcpy" << endl;
 	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << AUXParticles.Weight[i];
-
+		cout << AUXParticles.Weight[i];
 #endif
 	////#########################
 
 	//extract estimation
 	partcl maxprtcl;
 
+	float max_weight=-1;
+	int max_weight_particle_index=0;
 	//Find Max Weight
-	maxprtcl.Weight = SIRParticles.Weight[0];
-	maxprtcl.x = SIRParticles.x[0];
-	maxprtcl.y = SIRParticles.y[0];
-	maxprtcl.phi = SIRParticles.phi[0];
-	SIRParticles.WeightSum = SIRParticles.Weight[0];
+//	maxprtcl.Weight = SIRParticles.Weight[0];
+//	maxprtcl.x = SIRParticles.x[0];
+//	maxprtcl.y = SIRParticles.y[0];
+//	maxprtcl.phi = SIRParticles.phi[0];
+	//SIRParticles.WeightSum = SIRParticles.Weight[0];
 	for (unsigned int i = 0; i < SIRParticles.size; i++)
 	{
-		//Particles_cx += SIRParticles.x[i];
-		//Particles_cy += SIRParticles.y[i];
-
-		if (SIRParticles.Weight[i] > maxprtcl.Weight)
+		if (SIRParticles.Weight[i] > max_weight)
 		{
-			maxprtcl.x = SIRParticles.x[i];
-			maxprtcl.y = SIRParticles.y[i];
-			maxprtcl.phi = SIRParticles.phi[i];
-			maxprtcl.Weight = SIRParticles.Weight[i];
+//			maxprtcl.x = SIRParticles.x[i];
+//			maxprtcl.y = SIRParticles.y[i];
+//			maxprtcl.phi = SIRParticles.phi[i];
+//			maxprtcl.Weight = SIRParticles.Weight[i];
+			max_weight = SIRParticles.Weight[i];
+			max_weight_particle_index = i;
 		}
 	}
 
-	//Find Center of particles population
-	//	double Particles_cx = 0;
-	//	double Particles_cy = 0;
-	//
-	//	Particles_cx = Particles_cx / SIRParticles.size;
-	//	Particles_cy = Particles_cy / SIRParticles.size;
+	//Swap best particle to the
+	maxprtcl.x = SIRParticles.x[0];
+	maxprtcl.y = SIRParticles.y[0];
+	maxprtcl.phi = SIRParticles.phi[0];
+	maxprtcl.Weight = SIRParticles.Weight[0];
 
-	AgentPosition.x = maxprtcl.x;
-	AgentPosition.y = maxprtcl.y;
-	AgentPosition.theta = maxprtcl.phi;
-	//TODO only one value to determine confidance, Now its only distance confidence
-	//AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+	SIRParticles.x[0] = SIRParticles.x[max_weight_particle_index];
+	SIRParticles.y[0] = SIRParticles.y[max_weight_particle_index];
+	SIRParticles.phi[0] = SIRParticles.phi[max_weight_particle_index];
+	SIRParticles.Weight[0] = SIRParticles.Weight[max_weight_particle_index];
+
+	SIRParticles.x[max_weight_particle_index] = maxprtcl.x;
+	SIRParticles.y[max_weight_particle_index] = maxprtcl.y;
+	SIRParticles.phi[max_weight_particle_index] = maxprtcl.phi;
+	SIRParticles.Weight[max_weight_particle_index] = maxprtcl.Weight;
+
+
+
+	AgentPosition.x =  SIRParticles.x[0];// maxprtcl.x;
+	AgentPosition.y = SIRParticles.y[0];//maxprtcl.y;
+	AgentPosition.theta = SIRParticles.phi[0];//maxprtcl.phi;
+
 
 	//cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
-
-	if (ESS > 0 && (ESS < Beta || AgentPosition.confidence > 150))
+	//Check last position confidence
+	if (ESS > 0 && (ESS < Beta ))
 	{
 		Resample(SIRParticles, index, 0);
 		Propagate(SIRParticles, index);
@@ -679,6 +688,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	{
 		; //cout << "NO need of resampling" << endl;
 	}
+
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
 

@@ -998,7 +998,28 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
 	//	cout << "MotionModel.Direction.val:  " << MotionModel.Direction.val << "Direction.Emean:  " << MotionModel.Direction.Emean << " Direction.Edev " << MotionModel.Direction.Edev
 	//			<< endl;
 
-	for (i = 0; i < partclsNum; i++)
+	//Just for the 1st particle use only the mean motionmodel without noise
+	if (MotionModel.type == "ratio")
+	{
+		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean);
+		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean;
+		tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean;
+
+	} else
+	{
+		tmpDist = MotionModel.Distance.val + MotionModel.Distance.Emean;
+		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean;
+		tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean;
+	}
+	if (abs(tmpDir) > 400 || isnan(tmpDir))
+		tmpDir = 0;
+
+	Particles.x[0] = Particles.x[0] + cos(tmpDir + Particles.phi[0]) * tmpDist;
+	Particles.y[0] = Particles.y[0] + sin(tmpDir + Particles.phi[0]) * tmpDist;
+	Particles.phi[0] = Particles.phi[0] + tmpRot;
+
+	//Move the others with noise
+	for (i = 1; i < partclsNum; i++)
 	{
 #ifdef  DEBUGPredict
 		cout << "BEFORE Particles .x[i]" << Particles .x[i] << "Particles .y[i]" << Particles .y[i] << "Particles .phi[i]" << Particles .phi[i] << endl;
@@ -1883,16 +1904,16 @@ double KLocalization::normalize(double * Weights, int size)
 
 void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent)
 {
-
+	//Spread random choosen particles except the 1st
 	//Normal X, Y, P;
 	Uniform D, P;
 	Normal R;
 	Percent = (Percent > 100) ? 100 : Percent;
 	Percent = (Percent <= 0) ? 0 : Percent;
 
-	float numofrandom = ((float) Particles.size * ((float) Percent / 100.0));
+	float numofrandom = ((float) (Particles.size-1) * ((float) Percent / 100.0));
 
-	int step = round((float) Particles.size / numofrandom);
+	int step = round((float) (Particles.size-1) / numofrandom);
 	if (numofrandom == 0)
 		return;
 
@@ -1901,7 +1922,8 @@ void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, dou
 	float tmpDist, tmpDir;
 	int count = 0;
 
-	for (unsigned int i = rand() % step; i < Particles.size; i += step)
+
+	for (unsigned int i = (rand() % step)+1; i < Particles.size; i += step)
 	{
 		tmpDist = D.Next() * Deviation;
 		tmpDir = R.Next() * deg2rad(360);
@@ -1909,7 +1931,7 @@ void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, dou
 		Particles.x[i] = Particles.x[i] + cos(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.y[i] = Particles.y[i] + sin(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.phi[i] = Particles.phi[i] + P.Next() * rotation_deviation;
-		Particles.Weight[i] = 1.0;
+		//Particles.Weight[i] = 1.0;
 		count++;
 	}
 	//cout << "Num of Particles Spreaded:  " << count << endl;

@@ -552,8 +552,8 @@ void KfieldGui::draw_ball2(belief Belief, Ball Ball) {
 
 
 	pt1.x = pt2.x + 100 *(Ball.relativexspeed()*cos_theta - Ball.relativeyspeed()*sin_theta);
-	pt1.y = pt2.y + 100 *(Ball.relativexspeed()*sin_theta + Ball.relativeyspeed()*cos_theta);
-	cvLine(field, pt1, pt2, CV_RGB(238, 254 , 348), 1, CV_AA, 0);
+	pt1.y = pt2.y - 100 *(Ball.relativexspeed()*sin_theta + Ball.relativeyspeed()*cos_theta);
+	cvLine(field, pt1, pt2, CV_RGB(238, 254 , 348), 2, CV_AA, 0);
 
 	//tmp = Kutils::to_string(Ball.dist());
 	cvPutText(field, tmp.c_str(), cvPoint((2 * margintoline + field_width - 400) / scale, (2 * margintoline + field_height + 850) / scale), &font, color["orange"]);

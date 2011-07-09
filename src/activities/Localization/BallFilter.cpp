@@ -14,8 +14,8 @@ BallFilter::BallFilter()
 //	dir_filter.init(KMat::transformations::PI);
 //	dir_filter.reset(0, KMat::transformations::PI);
 
-	x_filter.init(1.0f);
-	y_filter.init(1.0f);
+	x_filter.init(10.0f);
+	y_filter.init(10.0f);
 	x_filter.reset(3,10);
 	y_filter.reset(0,10);
 
