@@ -41,6 +41,7 @@ private:
 	
 	ReturnToPositionMessage* rpm;
 	MotionWalkMessage wmot;
+	MotionActionMessage amot; 
 	KickOffMessage* kcm;
 	BToHeadMessage* bhmsg;
 	PositionMessage* pmsg;

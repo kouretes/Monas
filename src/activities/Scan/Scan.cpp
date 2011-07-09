@@ -9,7 +9,7 @@ namespace {
 int Scan::Execute() {
 	Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
-	scnm = _blk->readSignal<ScanMessage> ("behavior");
+	//scnm = _blk->readSignal<ScanMessage> ("behavior");
 
 	
 	LedChangeMessage leds;
@@ -20,8 +20,8 @@ int Scan::Execute() {
 	if( hbm.get()!=0 ){
 		if( hbm->ballfound()>0){
 			headaction = BALLTRACK;
-			forball =0;
-			forpost =0;
+			//forball =0;
+			//forpost =0;
 			//Logger::Instance().WriteMsg(GetName (),  " BALLTRACK", Logger::Info);
 		}
 		else{		
@@ -34,16 +34,16 @@ int Scan::Execute() {
 			velocityWalk(0.0,0.0, 0.0, 1.0);
 			//}
 
-			if(forball%51!=0 ){
+		//	if(forball%51!=0 ){
 				headaction = SCANFORBALL;
-				forball++;
-			}else{
+			//	forball++;
+			//}else{
 				
-				headaction = HIGHSCANFORBALL;
-				forpost++;
-				if( forpost%9==0)
-					forball++;
-			}
+				//headaction = HIGHSCANFORBALL;
+				//forpost++;
+				//if( forpost%19==0)
+					//forball++;
+		//	}
 			//Logger::Instance().WriteMsg(GetName (),  " SCANFORBALL", Logger::Info);
 		}
 	}
@@ -58,10 +58,10 @@ void Scan::UserInit () {
 	_blk->subscribeTo("behavior", 0);
 	headaction = SCANFORBALL;
 	bhmsg = new BToHeadMessage();
-	lastTurn = boost::posix_time::microsec_clock::universal_time();
+//	lastTurn = boost::posix_time::microsec_clock::universal_time();
 	
-	forpost = 0;
-	forball = 0;
+//	forpost = 0;
+//	forball = 0;
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -92,17 +92,4 @@ void Scan::littleWalk(double x, double y, double th) {
 }
 
 
-bool Scan::robotInGoalPostArea(float rx, float x2, float ry, float y2, float rth, float th2){
-	
-	
-	Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
-	if( x2 - 0.3 > rx || rx > x2 + 0.3 )
-		return false;	
-	if( y2 - 1.1 > ry || ry > y2 + 1.1  )
-		return false;
-	if( th2 - th2*0.2 > rth || rth > th2 + th2*0.2  )
-		return false;
-	return true;
-	
-	
-}
+

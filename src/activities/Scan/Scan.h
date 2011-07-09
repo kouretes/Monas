@@ -23,19 +23,18 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	bool robotInGoalPostArea(float rx, float x2, float ry, float y2, float rth, float th2);
 	
 private:	
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage wmot;
 
 	boost::shared_ptr<const HeadToBMessage> hbm;
-	boost::shared_ptr<const ScanMessage> scnm;
+	//boost::shared_ptr<const ScanMessage> scnm;
 	
-	bool toPos;
+	//bool toPos;
 	int headaction;
-	int forpost, forball;
-	boost::posix_time::ptime lastTurn;
+	//int forpost, forball;
+	//boost::posix_time::ptime lastTurn;
 	void velocityWalk( double x, double y, double th, double f);
 	void littleWalk(double x, double y, double th);	
 

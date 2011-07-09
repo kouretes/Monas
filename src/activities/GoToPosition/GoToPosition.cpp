@@ -13,7 +13,7 @@ int GoToPosition::Execute() {
 	pm = _blk->readState<PositionMessage>("behavior");
 	wimsg = _blk->readData<WorldInfo>("behavior");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
-	
+	gsm =  _blk->readState<GameStateMessage>("behavior");
 	headaction = SCANFORPOST;
 	if(pm.get()!=0){		///get my target
 		posX = pm->posx();
@@ -64,16 +64,32 @@ int GoToPosition::Execute() {
 	vely = sin(angleToTarget);
 	velx = cos(angleToTarget);
 		
+		
 	if(dist <0.3){
 		velx/=2.0;
 		vely/=2.0;	
 		rot = relativePhi*0.5;
 		f = dist*2;
-	}else if(dist>1){
+	}else if(dist>1 && gsm!=0 && gsm->player_state()==PLAYER_PLAYING){
+		velx/=4.0;
+		vely/=4.0;	
+		rot = relativePhi*0.2;
+		f = 0.6;
+		if(confidence>goodConfidence){
+			f=1;
+			velx*=2;
+			vely*=2;
+		}
+	}else if(dist>1 &&(gsm==0 ||(gsm!=0 && gsm->player_state()!=PLAYER_PLAYING))){
 		velx/=4.0;
 		vely/=4.0;	
 		rot = angleToTarget*0.4;
 		f = 0.6;
+		if(confidence>goodConfidence){
+			f=1;
+			velx*=2;
+			vely*=2;
+		}
 	}else{
 		rot = angleToTarget*0.1;
 		f = 1;
