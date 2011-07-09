@@ -54,6 +54,9 @@ class Behavior: public IActivity {
 		void HeadScanStepRaster();
 		void HeadScanStepHigh(float yaw_limit);
 		void HeadScanStepSmart();
+		void HeadScanStepIntelligent();
+		float lookAtPointYaw(float x, float y);
+		float lookAtPointPitch(float x, float y);
 		
 		void Kick(int side);
 
@@ -125,7 +128,7 @@ class Behavior: public IActivity {
 		
 		bool readRobotConf;
 
-		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastscan, lasttrack;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay;
 };
 
 #endif
