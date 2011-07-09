@@ -22,7 +22,6 @@ void HeadBehavior::UserInit() {
 	_blk->subscribeTo("sensors",0);
 	_blk->subscribeTo("behavior",0);
 
-	field = true;
 	state =1;
 	hmot = new MotionHeadMessage();
 	hmot->add_parameter(0.0f);
@@ -47,7 +46,6 @@ void HeadBehavior::UserInit() {
 int HeadBehavior::Execute() {
 //Logger::Instance().WriteMsg("HeadBehavior", "start", Logger::Info);
 	read_messages();
-	float tpitch=0.0, tyaw=0.0;
 	if (bhm != 0){
 		curraction = bhm->headaction();
 		if(prevaction==CALIBRATE)
@@ -91,7 +89,7 @@ int HeadBehavior::Execute() {
 			ballFirstSeen=now;
 		ballLastSeen = now;
 
-		if(headaction==SCANFORBALL||headaction==HIGHSCANFORBALL||headaction==BALLTRACK)
+		if(headaction==SCANFORBALL||headaction==BALLTRACK)
 		{
 			if(lastgoodbmsg!=bmsg)
 				lastgoodbmsg=bmsg;
@@ -128,12 +126,10 @@ int HeadBehavior::Execute() {
 	}
 
 	//cout<<"-----action:"<<headaction<<endl;
-	//if(headaction!=CALIBRATE && headaction!=DONOTHING && (calibrated!=2 || calibrated!=1))
-		//headaction = CALIBRATE;
-	if(headaction!= SCANFIELD){
-		field = true;
-	}
-	if(headaction!=SCANFORBALL)
+
+	if(headaction==SCANFORBALL || headaction== SCANFIELD)
+		;
+	else
 		startscan =true;
 	//headaction = DONOTHING;
 	
@@ -163,7 +159,6 @@ int HeadBehavior::Execute() {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
-<<<
 				HeadScanStepSmart();
 				//HeadScanStep();
 	
@@ -194,8 +189,6 @@ int HeadBehavior::Execute() {
 				//std::cout << "HEADBEHAVIOR SCANFORBALL" <<std::endl;
 				highheadscanstep(2.08);
 			}
-
-			
 			
 			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
@@ -213,47 +206,7 @@ int HeadBehavior::Execute() {
 				HeadYaw= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
 			}
-			if(field){
-				tpitch = PITCH1;
-				tyaw = YAW1;
-				state = 1;
-				field = false;
-			}else{
-				if(state==1){
-					tpitch = PITCH1;
-					tyaw = HeadYaw.sensorvalue() + YAWSTEP1;
-					if(tyaw>=YAW2){
-						tyaw = YAW2;
-						state = 2;
-					}
-				}else if(state==2){
-					tpitch = PITCH2;
-					tyaw = YAW3;
-					state = 3;
-				}else if(state ==3){
-					tyaw = HeadYaw.sensorvalue() - YAWSTEP1;
-					if(tyaw<=YAW4){
-						tyaw = YAW4;
-						state = 4;
-					}
-					tpitch =  0.182*tyaw - 0.67;					
-				}else if(state==4){
-					tyaw = HeadYaw.sensorvalue() - YAWSTEP1;
-					if(tyaw<=YAW5){
-						tyaw = YAW5;
-						state = 5;
-					}
-					tpitch =  -0.182*tyaw - 0.67;
-				}else if(state ==5){
-					tyaw = HeadYaw.sensorvalue() - YAWSTEP1;
-					if(tyaw<=YAW1){
-						tyaw = YAW1;
-						field = true;
-					}
-					tpitch = -1.95*tyaw - 1.447;	
-				}
-			}	
-			headmotion(tpitch, tyaw);		
+			HeadScanStepSmart();
 			break;
 	}
 	prevaction = curraction;
@@ -497,7 +450,56 @@ void HeadBehavior::highheadscanstep(float limit_yaw){
 	
 	//_blk->publishSignal(*hmot, "motion");
 	headmotion(pitchd, headpos);
+	return;
 }
+
+
+
+void HeadBehavior::HeadScanStepFieldUntested(){
+		float tpitch=0.0, tyaw=0.0;
+		if(startscan){
+				tpitch = PITCH1;
+				tyaw = YAW1;
+				state = 1;
+				startscan = false;
+				return;
+			}
+			
+			if(state==1){
+				tpitch = PITCH1;
+				tyaw = HeadYaw.sensorvalue() + YAWSTEP1;
+				if(tyaw>=YAW2){
+					tyaw = YAW2;
+					state = 2;
+				}
+			}else if(state==2){
+				tpitch = PITCH2;
+				tyaw = YAW3;
+				state = 3;
+			}else if(state ==3){
+				tyaw = HeadYaw.sensorvalue() - YAWSTEP1;
+				if(tyaw<=YAW4){
+					tyaw = YAW4;
+					state = 4;
+				}
+				tpitch =  0.182*tyaw - 0.67;					
+			}else if(state==4){
+				tyaw = HeadYaw.sensorvalue() - YAWSTEP1;
+				if(tyaw<=YAW5){
+					tyaw = YAW5;
+					state = 5;
+				}
+				tpitch =  -0.182*tyaw - 0.67;
+			}else if(state ==5){
+				tyaw = HeadYaw.sensorvalue() - YAWSTEP1;
+				if(tyaw<=YAW1){
+					tyaw = YAW1;
+					startscan = true;
+				}
+				tpitch = -1.95*tyaw - 1.447;	
+			}
+			headmotion(tpitch, tyaw);		
+	}
 
 void HeadBehavior::headmotion(float pitch, float yaw){
 	hmot->set_command("setHead");

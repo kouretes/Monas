@@ -7,12 +7,8 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-
-///#include "time.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -52,10 +48,7 @@ class HeadBehavior: public IActivity {
 		HeadBehavior();
 		int Execute();
 		void UserInit();
-		void read_messages();
-		int MakeTrackBallAction();
-		void MakeScanAction();
-		void HeadScanStep();
+
 		std::string GetName() {
 			return "HeadBehavior";
 		}
@@ -71,7 +64,6 @@ class HeadBehavior: public IActivity {
 		int headaction;
 		int prevaction;
 		int curraction;
-		bool field;
 		int state;
 		float headpos;
 		int leftright;
@@ -92,9 +84,13 @@ class HeadBehavior: public IActivity {
 		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
 		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
+		void read_messages();
 		void calibrate();
+		void HeadScanStep();
 		void highheadscanstep(float limit_yaw);
 		void HeadScanStepSmart();
+		void HeadScanStepFieldUntested();
+		int MakeTrackBallAction();
 		void headmotion(float pitch, float yaw);
 
 };
