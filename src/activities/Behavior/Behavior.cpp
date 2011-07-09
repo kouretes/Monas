@@ -59,7 +59,8 @@ double anglediff(double a1, double a2)
 
 double mglRand()
 {
-    return rand() / double(RAND_MAX);
+    //return rand() / double(RAND_MAX);
+    return (rand()%100) / 100.0;
 }
 
 
@@ -137,8 +138,6 @@ void Behavior::UserInit() {
 	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
-	lastscan = microsec_clock::universal_time();
-	lasttrack = microsec_clock::universal_time();
 
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
@@ -166,14 +165,17 @@ int Behavior::Execute() {
 		CheckForBall();
 		UpdateOrientationPlus();
 		
+		//test();
+		//return 0;
+		
 		readytokick = false;
 		
 		if (ballfound==1) {
 
 			side = (bb > 0) ? 1 : -1;
 			posx=0.12, posy=0.03; // Desired ball position for kick
-			double epsx = 0.03, epsy = 0.03; // Desired precision
-			if ( fabs( bx-posx ) < epsx  && fabs( by-(side*posy) ) < epsy ) {
+			double epsx = 0.02, epsy = 0.02; // Desired precision
+			if ( (fabs( bx-posx ) < epsx)  && (fabs( by-(side*posy) ) < epsy) && (bmsg != 0) && (bmsg->radius() > 0) ) {
 				readytokick = true;
 				Kick(side);
 				direction = (side == +1)?-1:+1;
@@ -185,31 +187,42 @@ int Behavior::Execute() {
 				else if (orientation == 3)
 					side = +1;
 				approachBallNewWalk(posx, side*posy);
+				if (scanOK)
+					HeadScanStepSmart();
 			}
 		}
-
-		if ( (ballfound == 0) || (scanOK) ) {
-			if (ballfound==0) {
-				if (!scanforball) {
-					startscan = true;
-					scanforball = true;
-					velocityWalk(0.0,0.0,0.0,1.0);
-					lastmove = microsec_clock::universal_time();
-				}
-				if (lastmove + seconds(5) < microsec_clock::universal_time()) {
-					littleWalk(direction * 0.20, 0.0, direction * M_PI_4);
-					lastmove = microsec_clock::universal_time();
-				}
+		
+		if (ballfound==0) {
+			
+			/* New exploration */
+			if (!scanforball) {
+				startscan = true;
+				scanforball = true;
 			}
+			velocityWalk(bx*0.1, by*0.1, 0.3*(bb>0?+1:-1), 0.4);
+			/* End of New Exploration */
+			
+			/* Old exploration */
+			//if (!scanforball) {
+				//startscan = true;
+				//scanforball = true;
+				//velocityWalk(0.0,0.0,0.0,1.0);
+				//lastmove = microsec_clock::universal_time();
+			//}
+			//if (lastmove + seconds(5) < microsec_clock::universal_time()) {
+				//littleWalk(direction * 0.20, 0.0, direction * M_PI_4);
+				//lastmove = microsec_clock::universal_time();
+			//}
+			/* End of Old Exploration */
 			HeadScanStepSmart();
-			lastscan = microsec_clock::universal_time();
 		}
 	} 
 	else if (gameState == PLAYER_READY) {
 		if (calibrated == 0)
 			calibrate();
 		int p = (kickoff) ? 0 : 1;
-		gotoPosition( initX[p][teamColor], initY[p][teamColor], initPhi[p][teamColor] );
+		//gotoPosition( initX[p][teamColor], initY[p][teamColor], initPhi[p][teamColor] );
+		HeadScanStepSmart();
 		return 0;
 	}
 	else if (gameState == PLAYER_SET) {
@@ -337,16 +350,20 @@ void Behavior::UpdateOrientationPlus()
 
 void Behavior::CheckForBall() {
 	
-	double closeToBall = 0.9;
+	double closeToBall = 1.0;
 	
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
-			bx = wim->balls(0).relativex();
-			by = wim->balls(0).relativey();
+			bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
+			by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
 			bd = sqrt(pow(bx,2)+pow(by,2));
 			bb = atan2(by,bx);
 		} else {
 			ballfound = 0;
+			bx = 0.0;
+			by = 0.0;
+			bd = 0.0;
+			bb = M_PI;
 		}
 	}
 
@@ -354,7 +371,6 @@ void Behavior::CheckForBall() {
 		if (bmsg->radius() > 0) { 
 			if (bd < closeToBall) {
 				MakeTrackBallAction();
-				lasttrack = microsec_clock::universal_time();
 				scanforball = false; 
 				scanOK = false;
 			}
@@ -365,7 +381,7 @@ void Behavior::CheckForBall() {
 			ballfound = 1;
 		} else {
 			if (bd < closeToBall) {
-				if (lastball+milliseconds(250)<microsec_clock::universal_time())
+				if (lastball+milliseconds(1000)<microsec_clock::universal_time())
 					ballfound = 0;
 			} else {
 				if (lastball+seconds(3)<microsec_clock::universal_time())
@@ -573,13 +589,107 @@ void Behavior::HeadScanStepSmart() {
 }
 
 
+void Behavior::HeadScanStepIntelligent() {
+
+	float bearing;
+	static enum {BALL1, OPPG, BALL2, OWNG} state = BALL1;
+	static enum {LOOK, STARE} phase = LOOK;
+	
+	HeadYaw = allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
+	HeadPitch = allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
+	
+	waiting++;
+	
+	if ( ( (fabs(targetPitch - HeadPitch.sensorvalue()) <= OVERSH) && (fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH) ) || (waiting >= WAITFOR) ) {
+		waiting = 0;
+		switch (state) {
+			case BALL1:
+				targetYaw = lookAtPointYaw(bx, by);
+				targetPitch = lookAtPointPitch(bx, by);
+				break;
+			case OPPG:
+				targetYaw = lookAtPointYaw(oppGoalX[teamColor], oppGoalY[teamColor]);
+				//targetPitch = lookAtPointPitch(oppGoalX[teamColor], oppGoalY[teamColor]);
+				if (targetYaw < 1.57)
+					targetPitch = (0.145 * fabs(headpos)) - 0.752;
+				else
+					targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
+				break;
+			case BALL2:
+				targetYaw = lookAtPointYaw(bx, by);
+				targetPitch = lookAtPointPitch(bx, by);
+				break;
+			case OWNG:
+				targetYaw = lookAtPointYaw(ownGoalX[teamColor], ownGoalY[teamColor]);
+				//targetPitch = lookAtPointPitch(ownGoalX[teamColor], ownGoalY[teamColor]);
+				if (targetYaw < 1.57)
+					targetPitch = (0.145 * fabs(headpos)) - 0.752;
+				else
+					targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
+				break;
+		}
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, targetYaw);
+		hmot->set_parameter(1, targetPitch);
+		_blk->publishSignal(*hmot, "motion");
+		
+		if (phase == STARE) {
+			switch (state) {
+				case BALL1:
+					bearing = lookAtPointYaw(oppGoalX[teamColor], oppGoalY[teamColor]);
+					if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) ) 
+						state = OPPG;
+					else 
+						state = BALL2;
+					break;
+				case OPPG:
+					state = BALL2;
+					break;
+				case BALL2:
+					bearing = lookAtPointYaw(ownGoalX[teamColor], ownGoalY[teamColor]);
+					if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) ) 
+						state = OWNG;
+					else 
+						state = BALL1;
+					break;
+				case OWNG:
+					state = BALL1;
+					break;
+			}
+		}
+		switch (phase) {
+			case LOOK: 
+				phase = STARE;
+				break;
+			case STARE: 
+				phase = LOOK;
+				break;
+		}
+
+	}
+	return;
+}
+
+
+float Behavior::lookAtPointYaw(float x, float y) 
+{
+	return anglediff2(atan2(y - robot_y, x - robot_x), robot_phi);
+}
+
+
+float Behavior::lookAtPointPitch(float x, float y) 
+{
+	return atan2f( sqrt((x-robot_x)*(x-robot_x)+(y-robot_y)*(y-robot_y)), 0.6 ) - (50.0 * TO_RAD);
+}
+
+
 /* Kicking */
 
 void Behavior::Kick(int side) {
 
 	//if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
 	if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(25)) ) {
-		if (mglRand() < 0.5) {
+		if (mglRand() < 0.75) {
 			littleWalk(0.2, 0.0, 0.0);
 		} else {
 			if (side == 1) 
@@ -626,21 +736,28 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	y = iy;
 	t = it;
 	
-	//if (om!=0) { 
-		////Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
-		//if ( (om->direction(2) != 0) && (om->direction(0) == 0) ) {
-			//if (y>0) 
-		//}
-		//else if ( (om->direction(0) != 0) && (om->direction(2) == 0) ) {
-			//if (y
-		//}
-		//else if ( (om->direction(0) != 0) && (om->direction(2) != 0) ) {
-			//if (x>0.0) x=0.0;
-		//}
-		//else {
-			//velocityWalk(1.0, 0.0, 0.0, 1.0);
-		//}
-	//}
+	if ( (om!=0) && (playerNumber == 2) ) { 
+		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) ) {
+			if (x > 0.0) {
+				x = 0.0;
+				t = 0.0;
+			}
+		}
+		else if (om->distance(2) <= 0.4) {
+			if (x > 0.0) {
+				x = 0.0;
+				y = 0.5;
+				t = 0.0;
+			}
+		}
+		else if (om->distance(0) <= 0.4) {
+			if (x > 0.0) {
+				x = 0.0;
+				y = -0.5;
+				t = 0.0;
+			}
+		}
+	}
 	
 	wmot->set_command("setWalkTargetVelocity");
 	
@@ -703,7 +820,7 @@ void Behavior::approachBallNewWalk(double ballX, double ballY){
 	gain = fminf(1.0, 0.0+(maxd/0.5));
 	X = gain * (bx-ballX)/maxd;
 	Y = gain * (by-ballY)/maxd;
-	t = 0.4 * gain * (bb/M_PI);
+	t = 0.55 * gain * (bb/M_PI);
 	velocityWalk(X, Y, t, f);
 }
 

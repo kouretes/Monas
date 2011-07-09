@@ -24,9 +24,9 @@
 <UsePossibilityUp>1.1</UsePossibilityUp>
 <MinPossibility>0.005</MinPossibility>
 <MaxPossibility>1.0</MaxPossibility>
-<ObstaclePossibility>1.2</ObstaclePossibility>
+<ObstaclePossibility>1.6</ObstaclePossibility>
 <PossibilityDiscount>0.4</PossibilityDiscount>
-<PossibilityDiscountNoObst>0.8</PossibilityDiscountNoObst>
+<PossibilityDiscountNoObst>0.7</PossibilityDiscountNoObst>
 <MinimumDistanceValue>0.29</MinimumDistanceValue>
 <MinimumValidValue>0.3</MinimumValidValue>
 <!--path planning-->
@@ -43,7 +43,7 @@
 <!--debuging mode-->
 <debugModeCout>0</debugModeCout>
 <debugInstantResponce>0</debugInstantResponce>
-<debugWithMovement>0</debugWithMovement>
+<debugWithMovement>1</debugWithMovement>
 <debugPathPlannignDirect>0</debugPathPlannignDirect>
 <debugFullPathPlanning>0</debugFullPathPlanning>
 <debugModePublishMotion>0</debugModePublishMotion>
