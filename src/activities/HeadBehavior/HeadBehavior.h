@@ -76,7 +76,6 @@ class HeadBehavior: public IActivity {
 		float headpos;
 		int leftright;
 		bool startscan;
-		bool scanforball;
 		float targetYaw;
 		float targetPitch;
 		float psign,ysign;
@@ -85,7 +84,6 @@ class HeadBehavior: public IActivity {
 		bool newBearing;
 
 		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
-
 		boost::shared_ptr<const BToHeadMessage> bhm;
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 		boost::shared_ptr<const ObservationMessage> obsm;
@@ -95,7 +93,8 @@ class HeadBehavior: public IActivity {
 		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
 		void calibrate();
-		void highheadscanstep(float );
+		void highheadscanstep(float limit_yaw);
+		void HeadScanStepSmart();
 		void headmotion(float pitch, float yaw);
 
 };
