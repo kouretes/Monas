@@ -24,5 +24,4 @@
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>KSensors</name>
 	<activity>Sensors</activity>
-	<activity>ObstacleAvoidance</activity>
 </agent>

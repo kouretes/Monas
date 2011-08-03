@@ -16,7 +16,7 @@
 #include "XarManager.h"
 
 
-#define FULLSTIFFNESS 1.0
+#define FULLSTIFFNESS 0.9
 #define LEANTOOMUCH 0.7
 #define ANGLEHOR 1.6
 #define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
@@ -549,7 +549,7 @@ void MotionController::mglrun()
 				pam->set_command("NULL");
 				readyToKick = 0;
 			}
-			Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
+			//Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 			//return;
 		}
 		if ((am != NULL) && (actionPID == 0) && !KmeManager::isDCMKmeRunning() && (motionSkills == 0))
@@ -576,7 +576,7 @@ void MotionController::mglrun()
 				KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
 				KmeManager::set_end_time(ptrdcmkme->ExecuteDCM());
 			}
-			Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
+			//Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 		}
 	}
 	return;
