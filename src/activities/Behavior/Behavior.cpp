@@ -163,9 +163,6 @@ int Behavior::Execute() {
 
 	if (gameState == PLAYER_PLAYING) {
 
-		test();
-		return 0;
-
 		CheckForBall();
 		UpdateOrientationPlus();
 		
@@ -188,7 +185,7 @@ int Behavior::Execute() {
 					side = +1;
 				approachBallNewWalk(posx, side*posy);
 				if (scanOK)
-					HeadScanStepIntelligent();
+					HeadScanStepSmart();
 			}
 		}
 		
@@ -728,6 +725,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	y = iy;
 	t = it;
 	
+	/* BEGIN - Basic Obstacle Avoidance Code */
 	if ( (om!=0) && (playerNumber == 2) ) { 
 		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) ) {
 			if (x > 0.0) {
@@ -750,6 +748,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 			}
 		}
 	}
+	/* END - Basic Obstacle Avoidance Code */
 	
 	wmot->set_command("setWalkTargetVelocity");
 	
