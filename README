@@ -5,6 +5,7 @@ a clone of the Kouretes-Noxious 2011 code from the Monas repository.
 REQUIRED PACKAGES
 
 libtinyxml-dev (only for BUILD)
+OpenCV (only for TOOLS) [See https://help.ubuntu.com/community/OpenCV]
 
 
 BUILD (for remote execution)
@@ -61,6 +62,17 @@ CROSSBUILD (for on-board execution)
 - Execute: make -jk install, where k is the number of cores in your system. 
 
 - Get another coffee and be even more patient ... 
+
+
+TOOLS (for monitoring the robot remotely)
+
+- Create a folder named build under Monas/src/tools/<tool> where <tool> is the tool you care to compile
+
+- Enter folder build
+
+- Execute: cmake ..
+
+- Execute: make
 
 
 Use the python scripts in the script directory to upload the code to a robot.

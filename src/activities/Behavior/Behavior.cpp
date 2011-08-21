@@ -138,6 +138,7 @@ void Behavior::UserInit() {
 	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
+	ballseen = microsec_clock::universal_time();
 
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
@@ -165,16 +166,12 @@ int Behavior::Execute() {
 		CheckForBall();
 		UpdateOrientationPlus();
 		
-		//test();
-		//return 0;
-		
 		readytokick = false;
 		
 		if (ballfound==1) {
-
 			side = (bb > 0) ? 1 : -1;
 			posx=0.12, posy=0.03; // Desired ball position for kick
-			double epsx = 0.02, epsy = 0.02; // Desired precision
+			double epsx = 0.025, epsy = 0.025; // Desired precision
 			if ( (fabs( bx-posx ) < epsx)  && (fabs( by-(side*posy) ) < epsy) && (bmsg != 0) && (bmsg->radius() > 0) ) {
 				readytokick = true;
 				Kick(side);
@@ -361,17 +358,20 @@ void Behavior::CheckForBall() {
 		} else {
 			ballfound = 0;
 			bx = 0.0;
-			by = 0.0;
-			bd = 0.0;
-			bb = M_PI;
+			by = 1.1;
+			bd = 1.1;
+			bb = 0.0; // M_PI
 		}
 	}
 
 	if (bmsg != 0) {
 		if (bmsg->radius() > 0) { 
-			if (bd < closeToBall) {
+			if ( (bd < closeToBall) || (microsec_clock::universal_time()<ballseen+milliseconds(1500)) || (scanforball) ) {
 				MakeTrackBallAction();
-				scanforball = false; 
+				if (scanforball == true) {
+					scanforball = false; 
+					ballseen = microsec_clock::universal_time();
+				}
 				scanOK = false;
 			}
 			else {
@@ -593,7 +593,6 @@ void Behavior::HeadScanStepIntelligent() {
 
 	float bearing;
 	static enum {BALL1, OPPG, BALL2, OWNG} state = BALL1;
-	static enum {LOOK, STARE} phase = LOOK;
 	
 	HeadYaw = allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 	HeadPitch = allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
@@ -604,28 +603,28 @@ void Behavior::HeadScanStepIntelligent() {
 		waiting = 0;
 		switch (state) {
 			case BALL1:
-				targetYaw = lookAtPointYaw(bx, by);
-				targetPitch = lookAtPointPitch(bx, by);
+				targetYaw = lookAtPointYaw(robot_x+bx, robot_y+by);
+				targetPitch = lookAtPointPitch(robot_x+bx, robot_y+by);
 				break;
 			case OPPG:
 				targetYaw = lookAtPointYaw(oppGoalX[teamColor], oppGoalY[teamColor]);
-				//targetPitch = lookAtPointPitch(oppGoalX[teamColor], oppGoalY[teamColor]);
-				if (targetYaw < 1.57)
-					targetPitch = (0.145 * fabs(headpos)) - 0.752;
-				else
-					targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
+				targetPitch = lookAtPointPitch(oppGoalX[teamColor], oppGoalY[teamColor]);
+				//if (targetYaw < 1.57)
+					//targetPitch = (0.145 * fabs(headpos)) - 0.752;
+				//else
+					//targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
 				break;
 			case BALL2:
-				targetYaw = lookAtPointYaw(bx, by);
-				targetPitch = lookAtPointPitch(bx, by);
+				targetYaw = lookAtPointYaw(robot_x+bx, robot_y+by);
+				targetPitch = lookAtPointPitch(robot_x+bx, robot_y+by);
 				break;
 			case OWNG:
 				targetYaw = lookAtPointYaw(ownGoalX[teamColor], ownGoalY[teamColor]);
-				//targetPitch = lookAtPointPitch(ownGoalX[teamColor], ownGoalY[teamColor]);
-				if (targetYaw < 1.57)
-					targetPitch = (0.145 * fabs(headpos)) - 0.752;
-				else
-					targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
+				targetPitch = lookAtPointPitch(ownGoalX[teamColor], ownGoalY[teamColor]);
+				//if (targetYaw < 1.57)
+					//targetPitch = (0.145 * fabs(headpos)) - 0.752;
+				//else
+					//targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
 				break;
 		}
 		hmot->set_command("setHead");
@@ -633,36 +632,26 @@ void Behavior::HeadScanStepIntelligent() {
 		hmot->set_parameter(1, targetPitch);
 		_blk->publishSignal(*hmot, "motion");
 		
-		if (phase == STARE) {
-			switch (state) {
-				case BALL1:
-					bearing = lookAtPointYaw(oppGoalX[teamColor], oppGoalY[teamColor]);
-					if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) ) 
-						state = OPPG;
-					else 
-						state = BALL2;
-					break;
-				case OPPG:
+		switch (state) {
+			case BALL1:
+				bearing = lookAtPointYaw(oppGoalX[teamColor], oppGoalY[teamColor]);
+				//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) ) 
+					//state = OPPG;
+				//else 
 					state = BALL2;
-					break;
-				case BALL2:
-					bearing = lookAtPointYaw(ownGoalX[teamColor], ownGoalY[teamColor]);
-					if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) ) 
-						state = OWNG;
-					else 
-						state = BALL1;
-					break;
-				case OWNG:
-					state = BALL1;
-					break;
-			}
-		}
-		switch (phase) {
-			case LOOK: 
-				phase = STARE;
 				break;
-			case STARE: 
-				phase = LOOK;
+			case OPPG:
+				state = BALL2;
+				break;
+			case BALL2:
+				bearing = lookAtPointYaw(ownGoalX[teamColor], ownGoalY[teamColor]);
+				//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) ) 
+					//state = OWNG;
+				//else 
+					state = BALL1;
+				break;
+			case OWNG:
+				state = BALL1;
 				break;
 		}
 
@@ -679,7 +668,7 @@ float Behavior::lookAtPointYaw(float x, float y)
 
 float Behavior::lookAtPointPitch(float x, float y) 
 {
-	return atan2f( sqrt((x-robot_x)*(x-robot_x)+(y-robot_y)*(y-robot_y)), 0.6 ) - (50.0 * TO_RAD);
+	return (50.0 * TO_RAD) - atan2f( sqrt((x-robot_x)*(x-robot_x)+(y-robot_y)*(y-robot_y)), 0.45 );
 }
 
 
@@ -736,6 +725,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	y = iy;
 	t = it;
 	
+	/* BEGIN - Basic Obstacle Avoidance Code */
 	if ( (om!=0) && (playerNumber == 2) ) { 
 		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) ) {
 			if (x > 0.0) {
@@ -758,6 +748,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 			}
 		}
 	}
+	/* END - Basic Obstacle Avoidance Code */
 	
 	wmot->set_command("setWalkTargetVelocity");
 	
@@ -1008,22 +999,93 @@ bool Behavior::readGoalConfiguration(const std::string& file_name) {
 /* Test Function */
 
 void Behavior::test() {
-
-	if (om!=0) { 
-		Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
-		if ( (om->direction(2) != 0) && (om->direction(0) == 0) ) {
-			velocityWalk(0.0, 0.0, 1.0, 1.0);
-		}
-		else if ( (om->direction(0) != 0) && (om->direction(2) == 0) ) {
-			velocityWalk(0.0, 0.0, -1.0, 1.0);
-		}
-		else if ( (om->direction(0) != 0) && (om->direction(2) != 0) ) {
-			velocityWalk(0.0, 0.0, 0.0, 1.0);
-		}
+	
+	
+	/* OPEN CHALLENGE 2011 - PROJECTION KICK - START */
+	
+	if(wim != 0){
+		if (wim->balls_size() > 0) {
+			bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
+			by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
+			bd = sqrt(pow(bx,2)+pow(by,2));
+			bb = atan2(by,bx);
+		} 
 		else {
-			velocityWalk(1.0, 0.0, 0.0, 1.0);
+			ballfound = 0;
 		}
 	}
-	else
-		velocityWalk(1.0, 0.0, 0.0, 1.0);
+
+	if (bmsg != 0) {
+		if (bmsg->radius() > 0) { 
+			MakeTrackBallAction();
+			lastball = microsec_clock::universal_time();
+			ballfound = 1;
+		} else {
+			if (lastball+seconds(3)<microsec_clock::universal_time())
+				ballfound = 0;
+		}
+	}
+	
+	if (ballfound==1) {
+		Logger::Instance().WriteMsg("Behavior",  " timestamp " + to_simple_string(microsec_clock::universal_time()), Logger::Info);
+		float kickslope = -4;
+		float x1, y1;
+		float ubx, uby;
+		float x, y, slope, t;
+		
+		if(wim != 0){
+			if (wim->balls_size() > 0) {
+				x1 = wim->balls(0).relativex();	//the last b observation's x position
+				y1 = wim->balls(0).relativey();	//the last but one observation's y position
+				ubx = wim->balls(0).relativexspeed();
+				uby = wim->balls(0).relativeyspeed();
+				Logger::Instance().WriteMsg("Behavior",  "OP: x1 " + _toString(x1) + " y1 " + _toString(y1), Logger::Info);
+				Logger::Instance().WriteMsg("Behavior",  "OP: ubx " + _toString(ubx) + " uby " + _toString(uby), Logger::Info);
+		
+				if (fabs(uby) < 0.001) 
+					return;
+				slope = ubx / uby;
+				
+				if ( fabs(kickslope-slope) < 0.001 )
+					return;
+				
+				y = (x1-y1*slope) / (kickslope-slope);
+				x = kickslope * y;
+				t = fabs(x1-x) / fabs(ubx);
+				Logger::Instance().WriteMsg("Behavior", "OP: x "+_toString(x) + " y " +_toString(y) + "TIME: " + _toString(t), Logger::Info);
+				if ( (x >= 0.03) && (x <= 0.17) ) {		
+					if ( (t > 2.0) && (t < 5.0) ) {	
+						Logger::Instance().WriteMsg("Behavior",  "OP: Openchallenge FTW!!!!!!!!!!!!!! ", Logger::Info);
+						amot->set_command("KickForwardRightFast.xar");
+						_blk->publishSignal(*amot, "motion");
+					}
+				}
+			}
+		}
+	}
+	else {
+		HeadScanStepSmart();
+	}
+	
+	/* OPEN CHALLENGE 2011 - PROJECTION KICK - END */
+	
+	//HeadScanStepIntelligent();
+
+	//if (om!=0) { 
+		//Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
+		//if ( (om->direction(2) != 0) && (om->direction(0) == 0) ) {
+			//velocityWalk(0.0, 0.0, 1.0, 1.0);
+		//}
+		//else if ( (om->direction(0) != 0) && (om->direction(2) == 0) ) {
+			//velocityWalk(0.0, 0.0, -1.0, 1.0);
+		//}
+		//else if ( (om->direction(0) != 0) && (om->direction(2) != 0) ) {
+			//velocityWalk(0.0, 0.0, 0.0, 1.0);
+		//}
+		//else {
+			//velocityWalk(1.0, 0.0, 0.0, 1.0);
+		//}
+	//}
+	//else
+		//velocityWalk(1.0, 0.0, 0.0, 1.0);
 }
