@@ -243,7 +243,7 @@ void MotionController::mglrun()
 	}
 
 
-	if (allsm != NULL)//Has Accelerometers
+	if (allsm != NULL && 0 )//Has Accelerometers
 	{
 
 		/* Check if the robot is falling and remove stiffness, kill all motions */

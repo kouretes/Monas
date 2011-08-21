@@ -167,6 +167,7 @@ void NoxOpenChallenge::UserInit() {
 	lastWideWalk = microsec_clock::universal_time();
 
 	wideWalk = false;
+	possiblyKick = false;
 	
 	Logger::Instance().WriteMsg("NoxOpenChallenge", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
@@ -216,7 +217,7 @@ int NoxOpenChallenge::Execute() {
 			if ( fabs( bx-posx ) < epsx  && fabs( by-(side*posy) ) < epsy ) {
 				readytokick = true;
 				
-				if(lastWideWalk + seconds(3) < microsec_clock::universal_time() ){
+				if(lastWideWalk + seconds(6) < microsec_clock::universal_time() ){
 				    wideWalk = WideWalk();
 				    lastWideWalk = microsec_clock::universal_time();
 				
@@ -243,8 +244,7 @@ int NoxOpenChallenge::Execute() {
 		
 
 		if (ballfound == 0 && wideWalk && lastWideWalk + seconds(6) < microsec_clock::universal_time()){
-		    
-		   //Kick(side);
+		   Kick(side);
 		    Logger::Instance().WriteMsg("NoxOpenChallenge", "I am going to kick!", Logger::ExtraExtraInfo);
 		    wideWalk = false;
 		}

@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <valid>1</valid>
-<ball_pos_x>0.12</ball_pos_x>
-<ball_pos_y>0.00</ball_pos_y>
+<ball_pos_x>0.11</ball_pos_x>
+<ball_pos_y>0.005</ball_pos_y>
 <ball_eps_x>0.02</ball_eps_x>
-<ball_eps_y>0.02</ball_eps_y>
-<wwName>WideWalk.xar</wwName>
-<spName>SitAndKick.xar</spName>
+<ball_eps_y>0.015</ball_eps_y>
+<wwName>WideWalk2.xar</wwName>
+<spName>SitAndKickCBM.xar</spName>
