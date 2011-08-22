@@ -246,7 +246,7 @@ int NoxOpenChallenge::Execute() {
 		if (ballfound == 0 && wideWalk && lastWideWalk + seconds(6) < microsec_clock::universal_time()){
 		   Kick(side);
 		    Logger::Instance().WriteMsg("NoxOpenChallenge", "I am going to kick!", Logger::ExtraExtraInfo);
-		    wideWalk = false;
+		    wideWalk = true;
 		}
 
 		//wideWalk = false;
@@ -528,7 +528,7 @@ void NoxOpenChallenge::HighHeadScanStep(float yaw_limit) {
 /* Kicking */
 
 void NoxOpenChallenge::Kick(int side) {
-
+Logger::Instance().WriteMsg("NoxOpenChallenge",  "Kick executed..." + _spName, Logger::Info);
   amot->set_command(_spName);
   _blk->publishSignal(*amot, "motion");
 
@@ -744,6 +744,7 @@ bool NoxOpenChallenge::readOpenChallengeConf() {
 	    epsy = conf_epsy;
 	    _spName = confSpName;
 	    _wwName = confWWName;
+	     Logger::Instance().WriteMsg("NoxOpenChallenge",_spName, Logger::Info);
 	  }
 
 	}

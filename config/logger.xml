@@ -15,7 +15,7 @@
 <!-- Activities that will reach the LogFile -->
 <!-- FatalError and Error directives can't be blocked -->
 <!-- Special keyword 'all' will enable all activities -->
-<MessageLogFilter>NoxOpenChallenge</MessageLogFilter>
+<MessageLogFilter>MotionController</MessageLogFilter>
 
 
 <!-- Debug messages from activities that will reach the LogFile -->
