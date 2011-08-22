@@ -63,9 +63,9 @@ int Kick::Execute() {
 		else
 			amot->set_command("KickForwardRight.xar"); //RightKick
 	} else if (orientation == 3) {
-		amot->set_command("KickSideLeftPierris.xar"); //"HardLeftSideKick"
+		amot->set_command("KickSideLeftFast.xar"); //"HardLeftSideKick"
 	} else if (orientation == 1) {
-		amot->set_command("KickSideRightPierris.xar"); //"HardRightSideKick"
+		amot->set_command("KickSideRightFast.xar"); //"HardRightSideKick"
 	} else if (orientation == 2) {
 
 		if (by > 0.0){

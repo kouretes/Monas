@@ -59,19 +59,18 @@ int ApproachBall::Execute() {
 	//Y=(by-offsety)*1.6;
 	float offsety=side*dDistBallY;
 	Y=(by-offsety)*3;
-	if(bd<0.4){
-		X*=0.4;
-		Y*=0.4;
-		th=-0.06*by*(Y>0?-1:1);
-	}
-	else{
+	if(bd>0.26){
 		if(bx<0)
 			th=0.2 *Y;
 		else
 			th=0.1 *Y;
 
 		Y=Y/2.0;
+
 	}
+	else
+		th=-0.06*by*(Y>0?-1:1);
+		
 	Y=Y>0?Y+0.01:Y-0.01;
 	Y=Y>1?1:Y;
 	Y=Y<-1?-1:Y;
