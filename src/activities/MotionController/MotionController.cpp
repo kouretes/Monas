@@ -411,131 +411,7 @@ void MotionController::mglrun()
 				pam->set_command(am->command());
 			}
 
-			if (pam->command() == "MyRightKick")
-			{
-				motionSkills = 1;
-				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
-				AngleCompare(POSES_FORWKICK);
-
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]), Logger::ExtraInfo);
-
-				if (comp[3] >= 4 && comp[7] >= 5 && comp[11] == 2)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE1 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardRightCutD.xar");
-					readyToKick = 1;
-				} else if (comp[2] >= 3 && comp[6] >= 3 && comp[10] == 2)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE2 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardRightCutC.xar");
-					readyToKick = 1;
-				} else if (comp[1] >= 2 && comp[5] >= 3 && comp[9] >= 1)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE3 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardRightCutB.xar");
-					readyToKick = 1;
-				} else if (comp[0] >= 2 && comp[4] >= 3 && comp[8] >= 1)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE4 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardRightCutA.xar");
-					readyToKick = 1;
-				}else
-					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
-
-			} else if (pam->command() == "MyLeftKick")
-			{
-				motionSkills = 1;
-				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
-				AngleCompare(POSES_FORWKICK);
-
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]), Logger::ExtraInfo);
-
-				if (comp[3] >= 4 && comp[7] >= 5 && comp[11] == 2)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE5 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardLeftCutD.xar");
-					readyToKick = 1;
-				} else if (comp[2] >= 3 && comp[6] >= 3 && comp[10] == 2)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE6 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardLeftCutC.xar");
-					readyToKick = 1;
-				} else if (comp[1] >= 2 && comp[5] >= 3 && comp[9] >= 1)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE7 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardLeftCutB.xar");
-					readyToKick = 1;
-				} else if (comp[0] >= 2 && comp[4] >= 3 && comp[8] >= 1)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE8 ", Logger::ExtraInfo);
-
-					pam->set_command("KickForwardLeftCutA.xar");
-					readyToKick = 1;
-				}else
-					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
-
-			}else if (pam->command() == "MyBackRightKick")
-			{
-				motionSkills = 1;
-				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
-				AngleCompare(POSES_BACKKICK);
-
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
-
-				if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE9 ", Logger::ExtraInfo);
-
-					pam->set_command("KickBackRightCutB1.xar");
-					readyToKick = 1;
-				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE10 ", Logger::ExtraInfo);
-
-					pam->set_command("KickBackRightCutAc.xar");
-					readyToKick = 1;
-				}else
-					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
-
-			}else if (pam->command() == "MyBackLeftKick")
-			{
-				motionSkills = 1;
-				Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
-				AngleCompare(POSES_BACKKICK);
-
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
-				Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
-
-				if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE11 ", Logger::ExtraInfo);
-
-					pam->set_command("KickBackLeftCutB1.xar");
-					readyToKick = 1;
-				} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
-				{
-					Logger::Instance().WriteMsg("MotionController", "CASE12 ", Logger::ExtraInfo);
-
-					pam->set_command("KickBackLeftCutAc.xar");
-					readyToKick = 1;
-				}else
-					Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
-			}
-
+			readyToKick = SpCutActionsManager();
 			if (readyToKick == 1)
 			{
 				SpAssocCont::iterator it = SpActions.find(pam->command());
@@ -920,9 +796,207 @@ void MotionController::MotionSkillsInit()
 				diffLBackKick[j][i] = 1;
 		}
 	}
+	for(int j = 0; j < POSES_SIDEKICK-1; j++)
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			if (RSideKickAng[j+1][i] < RSideKickAng[j][i])
+				diffRSideKick[j][i] = -1;
+			else
+				diffRSideKick[j][i] = 1;
+
+			if (LSideKickAng[j+1][i] < LSideKickAng[j][i])
+				diffLSideKick[j][i] = -1;
+			else
+				diffLSideKick[j][i] = 1;
+		}
+	}
+
 	return;
 }
 
+
+int MotionController::SpCutActionsManager()
+{
+	int ready = 0;
+
+	if (pam->command() == "MyRightKick")
+	{
+		motionSkills = 1;
+		Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+		AngleCompare(POSES_FORWKICK);
+
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]), Logger::ExtraInfo);
+
+		if (comp[3] >= 4 && comp[7] >= 5 && comp[11] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE1 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardRightCutD.xar");
+			ready = 1;
+		} else if (comp[2] >= 3 && comp[6] >= 3 && comp[10] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE2 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardRightCutC.xar");
+			ready = 1;
+		} else if (comp[1] >= 2 && comp[5] >= 3 && comp[9] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE3 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardRightCutB.xar");
+			ready = 1;
+		} else if (comp[0] >= 2 && comp[4] >= 3 && comp[8] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE4 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardRightCutA.xar");
+			ready = 1;
+		}else
+			Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+
+	} else if (pam->command() == "MyLeftKick")
+	{
+		motionSkills = 1;
+		Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+		AngleCompare(POSES_FORWKICK);
+
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]) + _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]) + _toString(comp[6]) + _toString(comp[7]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[8]) + _toString(comp[9]) + _toString(comp[10]) + _toString(comp[11]), Logger::ExtraInfo);
+
+		if (comp[3] >= 4 && comp[7] >= 5 && comp[11] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE5 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardLeftCutD.xar");
+			ready = 1;
+		} else if (comp[2] >= 3 && comp[6] >= 3 && comp[10] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE6 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardLeftCutC.xar");
+			ready = 1;
+		} else if (comp[1] >= 2 && comp[5] >= 3 && comp[9] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE7 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardLeftCutB.xar");
+			ready = 1;
+		} else if (comp[0] >= 2 && comp[4] >= 3 && comp[8] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE8 ", Logger::ExtraInfo);
+
+			pam->set_command("KickForwardLeftCutA.xar");
+			ready = 1;
+		}else
+			Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+
+	}else if (pam->command() == "MyBackRightKick")
+	{
+		motionSkills = 1;
+		Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+		AngleCompare(POSES_BACKKICK);
+
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
+
+		if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE9 ", Logger::ExtraInfo);
+
+			pam->set_command("KickBackRightCutB1.xar");
+			ready = 1;
+		} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE10 ", Logger::ExtraInfo);
+
+			pam->set_command("KickBackRight26-8-2011.xar");
+			ready = 1;
+		}else
+			Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+
+	}else if (pam->command() == "MyBackLeftKick")
+	{
+		motionSkills = 1;
+		Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+		AngleCompare(POSES_BACKKICK);
+
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
+
+		if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE11 ", Logger::ExtraInfo);
+
+			pam->set_command("KickBackLeftCutB1.xar");
+			ready = 1;
+		} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE12 ", Logger::ExtraInfo);
+
+			pam->set_command("KickBackLeft26-8-2011.xar");
+			ready = 1;
+		}else
+			Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+	}
+	else if (pam->command() == "MySideRightKick")
+	{
+		motionSkills = 1;
+		Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+		AngleCompare(POSES_SIDEKICK);
+
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
+
+		if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE13 ", Logger::ExtraInfo);
+
+			pam->set_command("KickSideRightCutB.xar");
+			ready = 1;
+		} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE14 ", Logger::ExtraInfo);
+
+			pam->set_command("KickSideRightCut.xar");
+			ready = 1;
+		}else
+			Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+
+	}else if (pam->command() == "MySideLeftKick")
+	{
+		motionSkills = 1;
+		Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+		AngleCompare(POSES_SIDEKICK);
+
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[0]) + _toString(comp[1]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[2]) + _toString(comp[3]), Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", _toString(comp[4]) + _toString(comp[5]), Logger::ExtraInfo);
+
+		if (comp[1] >= 3 && comp[3] >= 4 && comp[5] == 2)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE15 ", Logger::ExtraInfo);
+
+			pam->set_command("KickSideLeftCutB.xar");
+			ready = 1;
+		} else if (comp[0] >= 2 && comp[2] >= 3 && comp[4] >= 1)
+		{
+			Logger::Instance().WriteMsg("MotionController", "CASE16 ", Logger::ExtraInfo);
+
+			pam->set_command("KickSideLeftCut.xar");
+			ready = 1;
+		}else
+			Logger::Instance().WriteMsg("MotionController", "MPA ", Logger::ExtraInfo);
+	}
+
+	return ready;
+}
 
 void MotionController::AngleCompare(int numOfPoses)
 {
@@ -1036,7 +1110,36 @@ void MotionController::AngleCompare(int numOfPoses)
 				diffKick[k][i] = diffLBackKick[k][i];
 			}
 		}
+	}else if(pam->command() == "MySideRightKick")
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			for(int j = 0; j < numOfPoses; j++)
+			{
+				CompAng[j][i] = RSideKickAng[j][i];
+			}
+
+			for(int k = 0; k < numOfPoses-1; k++)
+			{
+				diffKick[k][i] = diffRSideKick[k][i];
+			}
+		}
+	}else if(pam->command() == "MySideLeftKick")
+	{
+		for (int i = 0; i < NUM_OF_ANGLES; i++)
+		{
+			for(int j = 0; j < numOfPoses; j++)
+			{
+				CompAng[j][i] = LSideKickAng[j][i];
+			}
+
+			for(int k = 0; k < numOfPoses-1; k++)
+			{
+				diffKick[k][i] = diffLSideKick[k][i];
+			}
+		}
 	}
+
 
 	for(int j = 0; j < numOfPoses-1; j++)
 	{
@@ -1081,12 +1184,14 @@ void MotionController::readRobotLegConfiguration(const std::string& file_name)
 {
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont rightKickForwardPoses, leftKickForwardPoses, rightKickBackPoses, leftKickBackPoses, angles;
+	NodeCont rightKickForwardPoses, leftKickForwardPoses, rightKickBackPoses, leftKickBackPoses, rightKickSidePoses, leftKickSidePoses, angles;
 	int j = 0;
 	rightKickForwardPoses = config.QueryElement<std::string, float, std::string>( "KickForwardRight" );
 	leftKickForwardPoses = config.QueryElement<std::string, float, std::string>( "KickForwardLeft" );
 	rightKickBackPoses = config.QueryElement<std::string, float, std::string>( "KickBackRight" );
 	leftKickBackPoses = config.QueryElement<std::string, float, std::string>( "KickBackLeft" );
+	rightKickSidePoses = config.QueryElement<std::string, float, std::string>( "KickSideRight" );
+	leftKickSidePoses = config.QueryElement<std::string, float, std::string>( "KickSideLeft" );
 
 	if( rightKickForwardPoses.size()!=0)
 		angles = config.QueryElement<std::string, float, std::string>( "legsPose", &(rightKickForwardPoses[0]) );
@@ -1158,6 +1263,44 @@ void MotionController::readRobotLegConfiguration(const std::string& file_name)
 //		for(int l = 0; l<6; l++)
 //			Logger::Instance().WriteMsg("MotionController", "LBackKickAng: " + _toString(LBackKickAng[test][l]), Logger::ExtraInfo);
 //	}
+
+	angles.clear();
+	if( rightKickSidePoses.size()!=0)
+		angles = config.QueryElement<std::string, float, std::string>( "legsPose", &(rightKickSidePoses[0]) );
+	for ( NodeCont::iterator it = angles.begin(); it != angles.end(); it++ )
+	{
+		j = it->attrb["pose"];
+		RSideKickAng[j][0] = it->attrb["angle1"];
+		RSideKickAng[j][1] = it->attrb["angle2"];
+		RSideKickAng[j][2] = it->attrb["angle3"];
+		RSideKickAng[j][3] = it->attrb["angle4"];
+		RSideKickAng[j][4] = it->attrb["angle5"];
+		RSideKickAng[j][5] = it->attrb["angle6"];
+	}
+//	for (int test = 0; test<3; test++){
+//		for(int l = 0; l<6; l++)
+//			Logger::Instance().WriteMsg("MotionController", "RSideKickAng: " + _toString(RSideKickAng[test][l]), Logger::ExtraInfo);
+//	}
+
+	angles.clear();
+	if( leftKickSidePoses.size()!=0)
+		angles = config.QueryElement<std::string, float, std::string>( "legsPose", &(leftKickSidePoses[0]) );
+	for ( NodeCont::iterator it = angles.begin(); it != angles.end(); it++ )
+	{
+		j = it->attrb["pose"];
+		LSideKickAng[j][0] = it->attrb["angle1"];
+		LSideKickAng[j][1] = it->attrb["angle2"];
+		LSideKickAng[j][2] = it->attrb["angle3"];
+		LSideKickAng[j][3] = it->attrb["angle4"];
+		LSideKickAng[j][4] = it->attrb["angle5"];
+		LSideKickAng[j][5] = it->attrb["angle6"];
+	}
+//	for (int test = 0; test<3; test++){
+//		for(int l = 0; l<6; l++)
+//			Logger::Instance().WriteMsg("MotionController", "LSideKickAng: " + _toString(LSideKickAng[test][l]), Logger::ExtraInfo);
+//	}
+
+
 }
 
 void MotionController::readWalkParameters()

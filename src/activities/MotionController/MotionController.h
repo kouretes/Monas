@@ -21,6 +21,7 @@
 #define NUM_OF_ANGLES 6
 #define POSES_FORWKICK 5
 #define POSES_BACKKICK 3
+#define POSES_SIDEKICK 3
 
 using namespace boost::posix_time;
 
@@ -108,6 +109,7 @@ private:
 	void ALstandUpFront();
 
 	void MotionSkillsInit();
+	int SpCutActionsManager();
 	void AngleCompare(int numOfPoses);
 	void readRobotLegConfiguration(const std::string& file_name);
 	int motionSkills;
@@ -122,6 +124,11 @@ private:
 	float LBackKickAng [POSES_BACKKICK][NUM_OF_ANGLES];
 	int diffRBackKick [POSES_BACKKICK - 1][NUM_OF_ANGLES];
 	int diffLBackKick [POSES_BACKKICK - 1][NUM_OF_ANGLES];
+
+	float RSideKickAng [POSES_SIDEKICK][NUM_OF_ANGLES];
+	float LSideKickAng [POSES_SIDEKICK][NUM_OF_ANGLES];
+	int diffRSideKick [POSES_SIDEKICK - 1][NUM_OF_ANGLES];
+	int diffLSideKick [POSES_SIDEKICK - 1][NUM_OF_ANGLES];
 
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
