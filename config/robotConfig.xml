@@ -1,12 +1,14 @@
 <?xml version="1.0" ?>
 <!--noKickOff, team color is red, for blue team color multiply posx, posy with -1 -->
-
+<!-- Players Positions for field 6m x 4m-->
 <noKickOff>
 <!-- GoalKeeper-->
-	<robot number=1 posx=2.7 posy=0.0>
+	<!--<robot number=1 posx=2.7 posy=0.0> -->
+	<robot number=1 posx=2.7 posy=0.0>		<!-- For Field size 3m x 2m -->
 	</robot>
 	<!-- Center-->
-	<robot number=2 posx=1.8 posy=1.4>
+	<!-- <robot number=2 posx=1.8 posy=1.4> -->
+	<robot number=2 posx=0.5 posy=0.7> <!-- For Field size 3m x 2m -->
 	</robot>
 	<!-- Defender-->
 	<robot number=3 posx=1.8 posy=-1.4>
@@ -18,10 +20,12 @@
 
 <!--KickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
 <KickOff>
-	<robot number=1 posx=2.7 posy=0.0>
+	<!--<robot number=1 posx=2.7 posy=0.0> -->
+	<robot number=1 posx=2.7 posy=0.0>		<!-- For Field size 3m x 2m -->
 	</robot>
 	<!-- Center-->
-	<robot number=2 posx=0.7 posy=0.7>
+	<!--<robot number=2 posx=0.7 posy=0.7> -->
+	<robot number=2 posx=0.2 posy=0.0> <!-- For Field size 3m x 2m -->
 	</robot>
 	<!-- Defender-->
 	<robot number=3 posx=0.7 posy=-0.7>
