@@ -256,21 +256,21 @@ void Vision::recv_and_send()
 	//img.Clear();
 	if (sendtype == AL::kYUV422InterlacedColorSpace)
 	{
-		img.set_imagerawdata(rawImage->imageData, rawImage->imageSize);
-		img.set_bytes(rawImage->imageSize);
+		img.set_imagerawdata(rawImage.imageData, rawImage.imageSize());
+		img.set_bytes(rawImage.imageSize());
 		//cout << " Raw image  size " << img.bytes() << endl;
-		img.set_height(rawImage->height);
-		img.set_width(rawImage->width);
+		img.set_height(rawImage.height);
+		img.set_width(rawImage.width);
 		img.set_type(AL::kYUV422InterlacedColorSpace);
 	}
 
 	if (sendtype == -1) // segmented image
 	{
-		char segmended[rawImage->height][rawImage->width];
-		for (int i = 0; i < rawImage->width; i++)
+		char segmended[rawImage.height][rawImage.width];
+		for (int i = 0; i < rawImage.width; i++)
 		{
 
-			for (int j = 0; j < rawImage->height; j++)
+			for (int j = 0; j < rawImage.height; j++)
 			{
 				KVecFloat2 im;
 				KVecFloat3 c3d;
@@ -309,11 +309,11 @@ void Vision::recv_and_send()
 		 segmended[int(64+k*Vup.y)][int(64+k*Vup.x)]=red;
 		 }
 
-		img.set_imagerawdata(segmended, rawImage->width * rawImage->height);
-		img.set_bytes(rawImage->width * rawImage->height);
+		img.set_imagerawdata(segmended, rawImage.width * rawImage.height);
+		img.set_bytes(rawImage.width * rawImage.height);
 		//cout << " Seg image  size " << img.bytes() << endl;
-		img.set_height(rawImage->height);
-		img.set_width(rawImage->width);
+		img.set_height(rawImage.height);
+		img.set_width(rawImage.width);
 		img.set_type(-1);
 	}
 	outgoingheader.set_nextmsgbytesize(img.ByteSize());
@@ -465,7 +465,7 @@ void Vision::fetchAndProcess()
 	float Dfov;
 	xmlconfig->QueryElement("Dfov", Dfov);
 
-	p.focallength = sqrt(sqrd(rawImage-> width) + sqrd(rawImage-> height) ) / (2 * tan(Dfov * TO_RAD / 2));
+	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(Dfov * TO_RAD / 2));
 
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
@@ -633,7 +633,7 @@ void VISIBLE Vision::UserInit()
 	kinext.Init();
 	Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
 	//cout << "Vision():" ;//<< endl;
-	rawImage = ext.allocateImage();
+	//rawImage = ext.allocateImage();
 
 	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationBottom).c_str());
 	segbottom = new KSegmentator(*conffile);
@@ -765,8 +765,8 @@ KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep) const
 {
 
 	KVecFloat2 res;
-	res(0) = imagep(0) - rawImage->width / 2.0 + 0.5;
-	res(1) = -(imagep(1) - rawImage->height / 2.0 + 0.5);
+	res(0) = imagep(0) - rawImage.width / 2.0 + 0.5;
+	res(1) = -(imagep(1) - rawImage.height / 2.0 + 0.5);
 
 	return res;
 }
@@ -775,8 +775,8 @@ KVecFloat2 Vision::imageToCamera( KVecInt2 const & imagep) const
 {
 
 	KVecFloat2 res;
-	res(0) = imagep(0) - rawImage->width / 2.0 + 0.5;
-	res(1) = -(imagep(1) - rawImage->height / 2.0 + 0.5);
+	res(0) = imagep(0) - rawImage.width / 2.0 + 0.5;
+	res(1) = -(imagep(1) - rawImage.height / 2.0 + 0.5);
 
 	return res;
 }
@@ -786,8 +786,8 @@ KVecInt2 Vision::cameraToImage( KVecFloat2 const& c) const
 
 	KVecInt2 res;
 
-	res(0) = (int) (c(0) + rawImage->width / 2.0 - 0.5);
-	res(1) = (int) (-c(1) + rawImage->height / 2.0 - 0.5);
+	res(0) = (int) (c(0) + rawImage.width / 2.0 - 0.5);
+	res(1) = (int) (-c(1) + rawImage.height / 2.0 - 0.5);
 
 	return res;
 }
