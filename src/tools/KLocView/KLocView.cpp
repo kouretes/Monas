@@ -97,22 +97,22 @@ int update_field(LocalizationData & DebugData) {
 				NamedObject *obj = DebugData.mutable_observations()->mutable_regular_objects(o);
 				cout << obj->object_name() << endl;
 				if (obj->object_name() == "YellowLeft") {// "YellowLeft"
-					observation.Feature.x = 3000;
+					observation.Feature.x = 1500;
 					observation.Feature.y = 700;
 				} else if (obj->object_name() == "YellowRight") { //"YellowRight"
-					observation.Feature.x = 3000;
+					observation.Feature.x = 1500;
 					observation.Feature.y = -700;
 				} else if (obj->object_name() == "SkyblueLeft") {// "YellowLeft"
-					observation.Feature.x = -3000;
+					observation.Feature.x = -1500;
 					observation.Feature.y = -700;
 				} else if (obj->object_name() == "SkyblueRight") { //"YellowRight"
-					observation.Feature.x = -3000;
+					observation.Feature.x = -1500;
 					observation.Feature.y = 700;
 				} else if (obj->object_name() == "Skyblue") { //Ambigious GoalPost
-					observation.Feature.x = -3000;
-					observation.Feature.y = 700;
+					observation.Feature.x = -1500;
+					observation.Feature.y = 0;
 				} else if (obj->object_name() == "Yellow") { //Ambigious GoalPost
-					observation.Feature.x = 3000;
+					observation.Feature.x = 1500;
 					observation.Feature.y = 0;
 				} else {
 					continue;
@@ -349,7 +349,9 @@ int receive_and_send_loop(TCPSocket *sock) {
 
 }
 
+
 int main(int argc, char* argv[]) {
+
 	if (2 > argc) {
 		cout << "usage: " << argv[0] << " IP (PORT)" << endl;
 		return 0;

@@ -89,7 +89,7 @@ void KfieldGui::on_mouse(int event, int x, int y, int flags, void* param) {
 		cvLine(cleanfield, cvPoint(last.x, last.y), cvPoint(x, y), color["gray"], 1, CV_AA, 0);
 		cvCircle(cleanfield, cvPoint(last.x, last.y), 100 / scale/*sqrt((last.x - x) * (last.x - x) + (last.y - y) * (last.y - y))*/, CV_RGB(100, 100, 50), 1, CV_AA, 0);
 
-		std::cout << "X " << last.x << " Y " << last.y << " angle " << atan2f(-(y - last.y), x - last.x) * 180.0 / 3.141592653589793238 << std::endl;
+	//	std::cout << "X " << last.x << " Y " << last.y << " angle " << atan2f(-(y - last.y), x - last.x) * 180.0 / 3.141592653589793238 << std::endl;
 		if (state == ONEPOINTSELECTION || state == TWOPOINTSELECTION_1) {
 			point1 = last;
 			//			point1.y = last.y;
@@ -99,7 +99,7 @@ void KfieldGui::on_mouse(int event, int x, int y, int flags, void* param) {
 			KfieldGui::pose1.set_phi(atan2f(-(y - last.y), x - last.x));
 			KfieldGui::pose1.set_confidence(sqrt((last.x - x) * (last.x - x) + (last.y - y) * (last.y - y)));
 
-			std::cout << "X " << pose1.x() << " Y " << pose1.y() << " angle " << atan2f(-(y - last.y), x - last.x) * 180.0 / 3.141592653589793238 << std::endl;
+		//	std::cout << "X " << pose1.x() << " Y " << pose1.y() << " angle " << atan2f(-(y - last.y), x - last.x) * 180.0 / 3.141592653589793238 << std::endl;
 			tempparticl.x = pose1.x();
 			tempparticl.y = pose1.y();
 			tempparticl.phi = pose1.phi();
@@ -110,7 +110,7 @@ void KfieldGui::on_mouse(int event, int x, int y, int flags, void* param) {
 				drawing = 0;
 			} else {
 				state = TWOPOINTSELECTION_2;
-				cout << "Select Second Point " << endl;
+			//	cout << "Select Second Point " << endl;
 			}
 
 		} else if (state == TWOPOINTSELECTION_3) {
@@ -170,7 +170,7 @@ void KfieldGui::Init(int newscale) {
 	mypospoint_old.x = (0 + (2 * margintoline + field_width) / 2.0) / scale;
 	mypospoint_old.y = (0 + (2 * margintoline + field_height) / 2.0) / scale;
 	pthread_mutex_unlock(&lock);
-	cout << "Initialization Compelete " << scale << endl;
+//	cout << "Initialization Compelete " << scale << endl;
 }
 
 KfieldGui::KfieldGui() {
@@ -193,7 +193,7 @@ KfieldGui::KfieldGui() {
 	strftime(executiondate, 80, "%d-%m_%I.%M%p", timeinfo);
 
 	pthread_mutex_init(&lock, NULL);
-	cout << " Starting initialization" << endl;
+	//cout << " Starting initialization" << endl;
 
 	color["darkyellow"] = CV_RGB(160,160,10);
 	color["yellow"] = CV_RGB(245,245,10);
@@ -224,7 +224,7 @@ KfieldGui::~KfieldGui() {
 }
 void KfieldGui::display_Gui() {
 	if (thread_pid == -2) {
-		cout << "Creating GUI thread" << endl;
+	//	cout << "Creating GUI thread" << endl;
 		int *fps = new int();
 		*fps = 10;
 		cvNamedWindow(wndname, CV_WINDOW_AUTOSIZE);
@@ -267,7 +267,7 @@ void KfieldGui::DrawObservations(belief Belief,vector<KObservationModel> & Obser
 			cvCircle(field, pt1, Observation[i].Distance.val / scale, currentColor, 0, CV_AA, 0);
 			cvCircle(field, pt1, rint(Observation[i].Distance.val / scale), currentColor, 0, CV_AA, 0);
 
-			cout << "Real Distance " << Observation[i].Distance.val << endl;
+		//	cout << "Real Distance " << Observation[i].Distance.val << endl;
 
 			if ((Observation[i].Distance.val + Observation[i].Distance.Edev) > 0)
 				cvCircle(field, pt1, (Observation[i].Distance.val + Observation[i].Distance.Edev) / scale, currentColor, 0, CV_AA, 0);
@@ -517,8 +517,8 @@ void KfieldGui::draw_ball(belief Belief, BallObject Ball) {
 	pt2.x = (pt1.x + (2 * margintoline + field_width) / 2.0) / scale;
 	pt2.y = (-pt1.y + (2 * margintoline + field_height) / 2.0) / scale;
 
-	cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
-	cout << " Points in the field pt2.x " << pt2.x << " pt2.y " << pt2.y << endl;
+	//cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
+//	cout << " Points in the field pt2.x " << pt2.x << " pt2.y " << pt2.y << endl;
 	cvCopy(cleanfield, field);
 	cvCircle(field, pt2, radius, color["orange"], CV_FILLED, CV_AA, 0);
 	tmp = Kutils::to_string(Ball.dist());
@@ -540,12 +540,12 @@ void KfieldGui::draw_ball2(belief Belief, Ball Ball) {
 	pt1.x = Belief.x + 1000*(Ball.relativex()*cos_theta - Ball.relativey()*sin_theta);//Ball.dist() * 1000 * cos((Belief.theta + Ball.bearing()));
 	pt1.y = Belief.y + 1000*(Ball.relativex()*sin_theta + Ball.relativey()*cos_theta);//Ball.dist() * 1000 * sin((Belief.theta + Ball.bearing()));
 
-	cout << " ball relative X " << Ball.relativex() << " ball relative Y " << Ball.relativey() << endl;
+	//cout << " ball relative X " << Ball.relativex() << " ball relative Y " << Ball.relativey() << endl;
 
 	pt2.x = (pt1.x + (2 * margintoline + field_width) / 2.0) / scale;
 	pt2.y = (-pt1.y + (2 * margintoline + field_height) / 2.0) / scale;
 
-	cout << " Points in the field pt2.x " << pt2.x << " pt2.y " << pt2.y << endl;
+//	cout << " Points in the field pt2.x " << pt2.x << " pt2.y " << pt2.y << endl;
 	//cout << "Ball Dist" << Ball.dist() << " Ball diameter " << Ball.ball_diameter() << " Bearing " << Ball.bearing() << " pt x:" << pt1.x << " y: " << pt1.y << endl;
 	//cvCopy(cleanfield, field);
 	cvCircle(field, pt2, radius, color["red"], 0, CV_AA, 0);
@@ -565,7 +565,7 @@ void KfieldGui::draw_ball2(belief Belief, Ball Ball) {
 void* KfieldGui::redraw_field(void * fps) {
 	int * FPS = (int *) fps;
 	Waitingforkey = round(1000.0 / (double) (*FPS));
-	cout << "\033[22;32m Fps " << (*FPS) << " Waittime " << Waitingforkey << "\033[0m" << endl;
+	//cout << "\033[22;32m Fps " << (*FPS) << " Waittime " << Waitingforkey << "\033[0m" << endl;
 	int key;
 	cvShowImage(wndname, field);
 	while ((key = cvWaitKey(Waitingforkey)) != 27) {
@@ -581,19 +581,19 @@ void* KfieldGui::redraw_field(void * fps) {
 
 		if (keypressed == 'o') {
 			state = ONEPOINTSELECTION;
-			cout << " o " << endl;
+		//	cout << " o " << endl;
 			keypressed = -2;
 		}
 		if (keypressed == 't') {
 			state = TWOPOINTSELECTION_1;
-			cout << " t " << endl;
+		//	cout << " t " << endl;
 			keypressed = -2;
 		}
 		if (keypressed <= '9' && keypressed >= '1') {
 			char achar = (char) keypressed;
 			scale = atoi(&achar);
 			keypressed = -2;
-			cout << "Resizing window !!! " << endl;
+		//	cout << "Resizing window !!! " << endl;
 			Init(scale);
 		}
 
@@ -611,12 +611,12 @@ void KfieldGui::make_field(IplImage** image) {
 	///Values in mm
 	linewidth = 50;
 	margintoline = 700;
-	field_width = 6000;
-	field_height = 4000;
+	field_width = 3000;
+	field_height = 2000;
 
-	goalarea_height = 2200;
-	goalarea_width = 600;
-	center_circle_diam = 1200;
+	goalarea_height = 1600;
+	goalarea_width = 300;
+	center_circle_diam = 600;
 
 	goal_width = 1400;
 	verticalgoalpost_diam = 100;
