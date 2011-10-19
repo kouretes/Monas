@@ -190,24 +190,24 @@ KSegmentator::colormask_t ruleFileClassifyPixel(struct RuleSet const& r, unsigne
 
 }
 
-void KSegmentator::attachToIplImage(IplImage *data)
+void KSegmentator::attachToIplImage(KImage const& data)
 {
 	//string m="Seg times:"+_toString(fetch.tv_nsec)+" "+_toString(segment.tv_nsec);
 	//fetch.tv_nsec=0;
 	//segment.tv_nsec=0;
 	//Logger::Instance().WriteMsg("KSegmentator",m,Logger::Warning);
-    dataPointer= data->imageData;
-    widthmult2=data->width*2;
-    width=data->width;
-    height=data->height;
+    dataPointer= data.imageData;
+    widthmult2=data.width*2;
+    width=data.width;
+    height=data.height;
 #ifndef FORCEINTERLV
-    if(data->nChannels==2)//Imply 422
+    if(data.nChannels==2)//Imply 422
 	{
 		classifyFunc= &KSegmentator::classify422;
 		type=INTERLEAVED;
 
 	}
-    else if (data->nChannels==3)//444
+    else if (data.nChannels==3)//444
 	{
 		classifyFunc=&KSegmentator::classify444;
 		type=FULL;
@@ -220,7 +220,7 @@ void KSegmentator::attachToIplImage(IplImage *data)
         Logger::Instance().WriteMsg("KSegmentator", "ONLY 422 AND 444 interleaving IMPLEMENTED :P",Logger::Error);
     }
 #else
-	if(data->nChannels!=2)//Imply 422
+	if(data.nChannels!=2)//Imply 422
 		Logger::Instance().WriteMsg("KSegmentator", "ONLY 444 AND 422 interleaving IMPLEMENTED,422 only forced",Logger::Error);
 
 #endif
