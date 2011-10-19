@@ -2,7 +2,6 @@
 #define NoxOpenChallenge_H 1
 
 #include "architecture/IActivity.h"
-
 #include "architecture/narukom/pub_sub/publisher.h"
 
 #include "messages/motion.pb.h"
@@ -15,12 +14,7 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
-
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-
-
-
 
 class NoxOpenChallenge: public IActivity {
 
