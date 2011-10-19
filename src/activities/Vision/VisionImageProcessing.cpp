@@ -167,8 +167,8 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	KVecFloat3 c3d;
 	KSegmentator::colormask_t tempcolor;
 	//static int startx=0;
-	int linestep=(rawImage.width-2*config.bordersize)/(config.scanV-1);
-	int align=(rawImage.width-linestep*(config.scanV-1) )>>1;
+	int linestep=(rawImage->width-2*config.bordersize)/(config.scanV-1);
+	int align=(rawImage->width-linestep*(config.scanV-1) )>>1;
 	int step;
 	//float d;
 
@@ -178,7 +178,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 	linestruct t;
 
 	int sx=config.bordersize+align;
-	int vstep=(sqrt(rawImage.height-2*config.bordersize-config.scanH*config.subsampling)-1)/2;
+	int vstep=(sqrt(rawImage->height-2*config.bordersize-config.scanH*config.subsampling)-1)/2;
 	step=config.subsampling+vstep;
 	//Fix initial scanline positions :)
 	int linesdone=0;
@@ -187,13 +187,13 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 
 	//Prefetch prologue
 	for(int i=0;i<PREFETCH-1;++i)
-		prepSeg(sx+i*linestep,rawImage.height - config.bordersize-1);
+		prepSeg(sx+i*linestep,rawImage->height - config.bordersize-1);
 	//std::cout<<"Vup:"<<Vup.x<<" "<<Vup.y<<std::endl;
 
 	for(int i=0 ; i< config.scanV;i++)
 	{
 		l.push_back(t);
-		l[i].gtrc.init(sx,rawImage.height - config.bordersize-1);
+		l[i].gtrc.init(sx,rawImage->height - config.bordersize-1);
 		l[i].lastpoint=l[i].gtrc;
 		sx+=linestep;
 		l[i].gtrc.initVelocity(Vup.x,Vup.y);
@@ -230,7 +230,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 			if(thisl.done==true)
 				continue;
 			if(thisl.gtrc.x<config.bordersize||thisl.gtrc.y<config.bordersize||
-				thisl.gtrc.x>rawImage.width-1- config.bordersize ||thisl.gtrc.y>rawImage.height-1- config.bordersize ||
+				thisl.gtrc.x>rawImage->width-1- config.bordersize ||thisl.gtrc.y>rawImage->height-1- config.bordersize ||
 				!validpixel(thisl.gtrc.x,thisl.gtrc.y))
 			{
 
@@ -409,9 +409,9 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 	const int margin=cr+(cr/4<sub?sub:cr/4);
 
 	const int top=ball.y-margin<config.bordersize?config.bordersize: ball.y-margin;
-	const int bot=ball.y+margin >rawImage.height-1 -config.bordersize?rawImage.height-1 -config.bordersize: ball.y+margin;
+	const int bot=ball.y+margin >rawImage->height-1 -config.bordersize?rawImage->height-1 -config.bordersize: ball.y+margin;
 	const int left=ball.x-margin<config.bordersize?config.bordersize:ball.x-margin;
-	const int right=ball.x+margin>rawImage.width-1 - config.bordersize?rawImage.width -1 - config.bordersize:ball.x+margin;
+	const int right=ball.x+margin>rawImage->width-1 - config.bordersize?rawImage->width -1 - config.bordersize:ball.x+margin;
 
 	const int ttl = floor((bot-top+1)/(sub))*floor((right-left+1)/(sub));
 	const int inside=floor((KMat::transformations::PI*cr*cr)/(sub*sub));
@@ -1108,7 +1108,7 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 		return;
 	if(newpost.tl.y<lim||newpost.tr.y<lim||newpost.ll.y<lim||newpost.lr.y<lim)
 		return;
-	lim= rawImage.width-1 - lim;
+	lim= rawImage->width-1 - lim;
 	if(newpost.tl.x>lim||newpost.tr.x>lim||newpost.ll.x>lim||newpost.lr.x>lim)
 		return;
 	if(newpost.tl.y>lim||newpost.tr.y>lim||newpost.ll.y>lim||newpost.lr.y>lim)
@@ -1672,7 +1672,7 @@ Vision::traceResult Vision::traceBlobEdge(KVecInt2 const& start, KVecFloat2 cons
 
 bool Vision::validpixel(int x,int y) const
 {
-	if ((x >= 0 && x < (rawImage.width) && y >= 0 && y < (rawImage.height)))
+	if ((x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height)))
 		return true;
 	else
 		return false;
@@ -1681,7 +1681,7 @@ bool Vision::validpixel(int x,int y) const
 KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmentator::colormask_t h ) const
 {
 	KPROF_SCOPE(vprof,"dopSeg");
-	if (x >= 0 && x < (rawImage.width) && y >= 0 && y < (rawImage.height))
+	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
 	{
 		//return seg->classifyPixel(rawImage, x, y, type);
 		return seg->classifyPixel(x,y,h);
