@@ -107,7 +107,7 @@ MessageBuffer* MessageQueue::makeReadBuffer(std::string const& s)
 void MessageQueue::subscribeTo(std::size_t subid, std::string const& topic , int where)
 {
 
-	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
+
 	std::set<std::size_t> r=tree->iterateTopics(topic,where);
 
 	std::set<std::size_t>::iterator tit=r.begin();
@@ -125,7 +125,7 @@ void MessageQueue::subscribeTo(std::size_t subid, std::string const& topic , int
 
 void MessageQueue::unsubscribeFrom(std::size_t subid, std::string const& topic , int where)
 {
-	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
+
 	std::set<std::size_t> r=tree->iterateTopics(topic,where);
 
 	std::set<std::size_t>::iterator tit=r.begin();

@@ -57,8 +57,7 @@ class MessageQueue : public Thread
     MessageQueue();
 	MessageBuffer* makeWriteBuffer(std::string const& s);
 	MessageBuffer* makeReadBuffer(std::string const& s);
-	void subscribeTo(std::size_t subid, std::string const& topic , int where);
-	void unsubscribeFrom(std::size_t subid, std::string const& topic , int where);
+
     void purgeBuffer( MessageBuffer *b);
 
     void process_queued_msg();
@@ -96,6 +95,9 @@ class MessageQueue : public Thread
 
     StopWatch<> agentStats;
     void create_tree();
+
+    void subscribeTo(std::size_t subid, std::string const& topic , int where);
+	void unsubscribeFrom(std::size_t subid, std::string const& topic , int where);
 
     //Recursive call, UNLOCKED
     };
