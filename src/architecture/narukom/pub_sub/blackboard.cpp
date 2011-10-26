@@ -9,7 +9,7 @@ using std::string;
 
 
 
-Blackboard::Blackboard(const std::string& sub_name): Subscriber(sub_name),Publisher(sub_name)
+Blackboard::Blackboard(const std::string& sub_name): EndPoint(sub_name)
 {
 
 }
@@ -24,7 +24,7 @@ void Blackboard::process_messages()
 // 		cout << "SIZE OF BUFFER = " << buf->size() << endl;
 //     _blk->process_messages();
 //     cout << "After returns " << endl
-    std::vector<msgentry> msg=Subscriber::remove();
+    std::vector<msgentry> msg=EndPoint::remove();
     std::vector<msgentry>::iterator it=msg.begin();
     signalentry newsig;
     brecord nrec;
@@ -57,6 +57,8 @@ void Blackboard::process_messages()
                 newsig.cleared=false;
                 r.blksignal[newtypeid]=newsig;
                 break;
+			default:
+				break;
             /*
             case msgentry::STATE:
                 statedata[(*it).msg->GetTypeName()]=(*it);
@@ -137,7 +139,7 @@ int Blackboard::cleanup()
 
 void Blackboard::publish_all()
 {
-    Publisher::publish(topublish);
+    EndPoint::publish(topublish);
     topublish.clear();
 
 }

@@ -5,10 +5,8 @@ SET(NARUKOM_PUB_SUB_SRCS
    ${NarukomDir}/pub_sub/stringRegistry.h
    ${NarukomDir}/pub_sub/topicTree.h
    ${NarukomDir}/pub_sub/topicTree.cpp
-   ${NarukomDir}/pub_sub/subscriber.h
-   ${NarukomDir}/pub_sub/publisher.h
-   ${NarukomDir}/pub_sub/publisher.cpp
-   ${NarukomDir}/pub_sub/subscriber.cpp
+   ${NarukomDir}/pub_sub/endpoint.h
+   ${NarukomDir}/pub_sub/endpoint.cpp
    ${NarukomDir}/pub_sub/blackboard.cpp
    ${NarukomDir}/pub_sub/message_queue.cpp
    ${NarukomDir}/pub_sub/message_queue.h

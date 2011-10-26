@@ -17,8 +17,7 @@
 #ifndef BLACKBOARD_H
 #define BLACKBOARD_H
 #include "msg.h"
-#include "publisher.h"
-#include "subscriber.h"
+#include "endpoint.h"
 #include "stringRegistry.h"
 
 #include <string>
@@ -30,7 +29,7 @@
 
 
 
-class Blackboard : public Subscriber, public Publisher
+class Blackboard : public EndPoint
 {
 public:
 
@@ -111,7 +110,7 @@ private:
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, const std::string&  host,boost::posix_time::ptime* const tmp  ,boost::posix_time::ptime const * const time_req )
 {
-	const type_t atypeid=typeRegistry.getId(Data().GetTypeName());
+	const type_t atypeid=typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
 
 	i.tid=topicRegistry.getId(topic);
@@ -177,7 +176,7 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, con
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::string&  host ,boost::posix_time::ptime* tmp )
 {
-	const type_t atypeid=typeRegistry.getId(Data().GetTypeName());
+	const type_t atypeid=typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
 
 	i.tid=topicRegistry.getId(topic);
@@ -204,7 +203,7 @@ boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, c
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::readState(const std::string& topic, const std::string&  host ,boost::posix_time::ptime* tmp )
 {
-	const type_t atypeid=typeRegistry.getId(Data().GetTypeName());
+	const type_t atypeid=typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
 
 	i.tid=topicRegistry.getId(topic);

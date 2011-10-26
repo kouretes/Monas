@@ -16,7 +16,7 @@
 
 #ifndef TOPICTREE_H
 #define TOPICTREE_H
-#include "msg.h"
+
 #include "stringRegistry.h"
 #include <map>
 #include <set>

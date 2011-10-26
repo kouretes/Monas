@@ -38,9 +38,8 @@ namespace statechart_engine {
     Blackboard* AndState::AddChild ( State* subState) {
         _subStates.push_back ( static_cast<OrState*>(subState) ); //FIXME dynamic_cast is not working!
 	Blackboard* newBlk = new Blackboard(subState->GetName());
-	newBlk->attachPublisherToMessageQueue(*_com->get_message_queue());
-        newBlk->attachSubscriberToMessageQueue(*_com->get_message_queue());
-        return newBlk; //FIXME mem leak
+	newBlk->attachTo(*_com->get_message_queue());
+	return newBlk; //FIXME mem leak
     }
 
     bool AndState::isRunning () const {

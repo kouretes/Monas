@@ -55,10 +55,10 @@ class MessageQueue : public Thread
   public:
     //friend class MessageBuffer;
     MessageQueue();
-	MessageBuffer* attachPublisher(std::string const& s);
-	MessageBuffer* attachSubscriber(std::string const& s);
-	void subscribeTo(MessageBuffer *b, std::string const& topic , int where);
-	void unsubscribeFrom(MessageBuffer *b, std::string const& topic , int where);
+	MessageBuffer* makeWriteBuffer(std::string const& s);
+	MessageBuffer* makeReadBuffer(std::string const& s);
+	void subscribeTo(std::size_t subid, std::string const& topic , int where);
+	void unsubscribeFrom(std::size_t subid, std::string const& topic , int where);
     void purgeBuffer( MessageBuffer *b);
 
     void process_queued_msg();
@@ -79,12 +79,15 @@ class MessageQueue : public Thread
   	//String hasher
   	stringRegistry pubsubRegistry;
 
-  	TopicTree * tree;
 
+	boost::mutex  pub_sub_mutex;
   	//Locked by pub_sub_mutex;
-  	std::vector< std::set<MessageBuffer*> > subscriptions;
+  	TopicTree * tree;
+  	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
+  	std::vector<std::set<MessageBuffer*> > publisherbuffers,subscriberBuffers;//Maps pubsubregistry ids to Buffers
 
-    boost::mutex  pub_sub_mutex;
+
+
 	//Waking up stuff
     boost::mutex  cond_mutex;
     std::set<MessageBuffer*> cond_publishers;

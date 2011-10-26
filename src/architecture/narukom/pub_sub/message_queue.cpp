@@ -63,66 +63,80 @@ void MessageQueue::create_tree()
 
 void MessageQueue::purgeBuffer(MessageBuffer *b)
 {
+	if(b==NULL)
+			return;
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
 	std::vector< std::set<MessageBuffer*> >::iterator mit=subscriptions.begin();
 	for(;mit!=subscriptions.end();++mit)
 	{
 		(*mit).erase(b);
 	}
+	subscriberBuffers[b->getOwnerID()].erase(b);
+	publisherbuffers[b->getOwnerID()].erase(b);
 
 
 }
-MessageBuffer* MessageQueue::attachPublisher(std::string const& s)
+MessageBuffer* MessageQueue::makeWriteBuffer(std::string const& s)
 {
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
 
 	size_t newid=pubsubRegistry.registerNew(s);
+	publisherbuffers.resize(pubsubRegistry.size()+1);
 	MessageBuffer* new_msg_buf = new MessageBuffer ( newid);
 	new_msg_buf->setNotifier(boost::bind(&MessageQueue::requestMailMan,this,_1));
+	new_msg_buf->setCleanUp(boost::bind(&MessageQueue::purgeBuffer,this,_1));
+	publisherbuffers[newid].insert(new_msg_buf);
 
     return new_msg_buf;
 }
 
-MessageBuffer* MessageQueue::attachSubscriber(std::string const& s)
+MessageBuffer* MessageQueue::makeReadBuffer(std::string const& s)
 {
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
 
 	size_t newid=pubsubRegistry.registerNew(s);
+	subscriberBuffers.resize(pubsubRegistry.size()+1);
+	std::cout<<newid<<" "<<pubsubRegistry.size()<<std::endl;
 	MessageBuffer* new_msg_buf = new MessageBuffer ( newid);
 	new_msg_buf->setCleanUp(boost::bind(&MessageQueue::purgeBuffer,this,_1));
+	subscriberBuffers[newid].insert(new_msg_buf);
     return new_msg_buf;
 }
 
 
-void MessageQueue::subscribeTo(MessageBuffer *b, std::string const& topic , int where)
+void MessageQueue::subscribeTo(std::size_t subid, std::string const& topic , int where)
 {
-	if(b==NULL)
-		return;
+
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
 	std::set<std::size_t> r=tree->iterateTopics(topic,where);
 
 	std::set<std::size_t>::iterator tit=r.begin();
+	std::set<MessageBuffer *> & bset=subscriberBuffers[subid];
+	std::set<MessageBuffer *>::iterator bit;
 
 	for(;tit!=r.end();++tit)
 	{
 		//cout<<"sub:"<<*tit<<" "<< b<<endl;
-		subscriptions[*tit].insert(b);
+		for(bit=bset.begin();bit!=bset.end();++bit)
+			subscriptions[*tit].insert(*bit);
 	}
 
 }
 
-void MessageQueue::unsubscribeFrom(MessageBuffer *b, std::string const& topic , int where)
+void MessageQueue::unsubscribeFrom(std::size_t subid, std::string const& topic , int where)
 {
-	if(b==NULL)
-		return;
 	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
 	std::set<std::size_t> r=tree->iterateTopics(topic,where);
 
 	std::set<std::size_t>::iterator tit=r.begin();
 
+	std::set<MessageBuffer *> & bset=subscriberBuffers[subid];
+	std::set<MessageBuffer *>::iterator bit;
+
 	for(;tit!=r.end();++tit)
 	{
-		subscriptions[*tit].erase(b);
+		for(bit=bset.begin();bit!=bset.end();++bit)
+			subscriptions[*tit].erase(*bit);
 	}
 }
 
@@ -146,17 +160,32 @@ void MessageQueue::process_queued_msg()
 	static int msgs=0;
 	_executions ++;
     agentStats.StartTiming();
+     std::map<MessageBuffer *,std::vector<msgentry> > ready;
     for(std::vector<MessageBuffer *>::iterator pit=toprocess.begin();pit!=toprocess.end();++pit)
     {
 
         std::vector<msgentry> mtp=(*pit)->remove();
-        std::map<MessageBuffer *,std::vector<msgentry> > ready;
+
         //cout <<(*pit)->getOwnerID() << ":"<<mtp.size() << endl;
         const std::size_t pownerid=(*pit)->getOwnerID();
 		boost::unique_lock<boost::mutex > pub_sub_mutexlock(pub_sub_mutex);
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
         {
 			size_t msgtopicId=tree->getId((*mit).topic);
+
+			//===== Handle subscriptions
+			if((*mit).msgclass>=msgentry::SUBSCRIBE_ON_TOPIC && (*mit).msgclass<=msgentry::SUBSCRIBE_ALL_TOPIC)
+			{
+				subscribeTo(pownerid,(*mit).topic,(*mit).msgclass);
+				continue;
+			}
+			else if((*mit).msgclass>=msgentry::UNSUBSCRIBE_ON_TOPIC && (*mit).msgclass<=msgentry::UNSUBSCRIBE_ALL_TOPIC)
+			{
+				unsubscribeFrom(pownerid,(*mit).topic,(*mit).msgclass);
+				continue;
+			}
+
+
 			//cout<<"Topic->id:"<<(*mit).topic<<msgtopicId<<" "<<subscriptions.size()<<endl;
 			if(msgtopicId==0||subscriptions.size()<=msgtopicId)
 				continue;
@@ -182,24 +211,26 @@ void MessageQueue::process_queued_msg()
 				cout<<":"<<(*rit).second.size()<<endl;
 			}
         }*/
-		std::map<MessageBuffer *,std::vector<msgentry> >::iterator rit=ready.end();
-		while(ready.size()>0)
-		{
-			if(rit==ready.end())
-				rit=ready.begin();
-			if((*rit).first->tryadd((*rit).second))
-			{
-				std::map<MessageBuffer *,std::vector<msgentry> >::iterator t=rit++;
-				ready.erase(t);
 
-			}
-			else
-				rit++;
-		}
 
 
 
     }
+
+    std::map<MessageBuffer *,std::vector<msgentry> >::iterator rit=ready.end();
+	while(ready.size()>0)
+	{
+		if(rit==ready.end())
+			rit=ready.begin();
+		if((*rit).first->tryadd((*rit).second))
+		{
+			std::map<MessageBuffer *,std::vector<msgentry> >::iterator t=rit++;
+			ready.erase(t);
+
+		}
+		else
+			rit++;
+	}
     if ( ! (_executions % 10000) ){
                  cout << "Narukom time " << agentStats.StopTiming()/msgs << endl;
                  _executions=0;
