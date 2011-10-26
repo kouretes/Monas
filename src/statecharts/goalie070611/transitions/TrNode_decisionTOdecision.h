@@ -1,14 +1,14 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
+#include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
-#include "tools/logger.h"			
+#include "tools/logger.h"
 class TrCond_decisionTOdecision : public statechart_engine::ICondition {
-			
+
 public:
 
-	void UserInit () { 
-		_blk->subscribeTo("behavior", 0);
+	void UserInit () {
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -22,7 +22,7 @@ public:
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();
-		
+
 		gsm = _blk->readState<GameStateMessage> ("behavior");
 		if(gsm.get()==0)
 			return true;
@@ -43,4 +43,4 @@ public:
 		return false;
     }
 };
-		
+

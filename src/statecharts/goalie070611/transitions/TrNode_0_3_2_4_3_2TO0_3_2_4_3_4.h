@@ -1,15 +1,15 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
+#include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
-#include "tools/logger.h"			
+#include "tools/logger.h"
 
 class TrCond_0_3_2_4_3_2TO0_3_2_4_3_4 : public statechart_engine::ICondition {
-			
+
 public:
 
 	void UserInit () {
-		_blk->subscribeTo("behavior", 0);
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -23,4 +23,4 @@ public:
 		return true;
     }
 };
-		
+

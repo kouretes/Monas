@@ -1,16 +1,16 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
+#include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
 #include "activities/ApproachBall/ApproachBall.h"
-			
+
 class TrCond_StareTO0_3_2_3_6_2_3 : public statechart_engine::ICondition {
-			
+
 public:
 
-	void UserInit () { 
-		_blk->subscribeTo("behavior", 0);
+	void UserInit () {
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 		}
 
 	bool Eval() {
@@ -36,7 +36,7 @@ public:
 				return true;
 			}
 		}
-		
+
 		if(fm.get()!=0 && fm->fall()!=0){
 			Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " fall true ", Logger::Info);
 			return true;
@@ -44,4 +44,4 @@ public:
 		return false;
     }
 };
-		
+
