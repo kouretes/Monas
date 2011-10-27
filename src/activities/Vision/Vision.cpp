@@ -655,8 +655,8 @@ void VISIBLE Vision::UserInit()
 
 
 	//_com->get_message_queue()->add_subscriber(_blk);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("vision", 0);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	//_com->get_message_queue()->add_publisher(this);
 
 	debugmode = false;

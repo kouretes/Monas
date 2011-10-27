@@ -13,10 +13,10 @@ namespace {
 
 int Init::Execute() {
 	_blk->process_messages();
-	_blk->subscribeTo("behavior", 0);		
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	Logger::Instance().WriteMsg("Init",  " Execute "+ _toString(playernum), Logger::Info);
-	
+
 
 	return 0;
 }
@@ -30,7 +30,7 @@ void Init::UserInit () {
 std::string Init::GetName () {
 	return "Init";
 }
-	
+
 
 bool Init::readConfiguration(const std::string& file_name) {
 	XMLConfig config(file_name);

@@ -7,7 +7,7 @@ namespace {
 }
 
 int KickOff::Execute() {
-	//sleep(1);	
+	//sleep(1);
 //gsm = _blk->readState<GameStateMessage> ("behavior");
 	//if (gsm==0)
 		//return 0;
@@ -23,10 +23,10 @@ int KickOff::Execute() {
 	if(obsm.get()!=0){
 		//std::cout << "STATE KICKOFF Kick" <<std::endl;
 		Logger::Instance().WriteMsg("KickOff",  " Kicking", Logger::Info);
-		if (obsm->ball().dist() * sin(obsm->ball().bearing()) > 0.0) 
-			amot->set_command("SoftLeftSideKick");	
-		 else 
-			amot->set_command("SoftRightSideKick");	
+		if (obsm->ball().dist() * sin(obsm->ball().bearing()) > 0.0)
+			amot->set_command("SoftLeftSideKick");
+		 else
+			amot->set_command("SoftRightSideKick");
 	}
 	_blk->publishSignal(*amot, "motion");
 	kcm->set_kickoff(false);
@@ -35,8 +35,9 @@ int KickOff::Execute() {
 }
 
 void KickOff::UserInit () {
-	_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("behavior",0);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+
 	amot = new MotionActionMessage();
 	tmsg = new TimeoutMsg();
 	kcm = new KickOffMessage();
@@ -45,4 +46,4 @@ void KickOff::UserInit () {
 std::string KickOff::GetName () {
 	return "KickOff";
 }
-	
+

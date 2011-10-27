@@ -29,7 +29,7 @@ namespace {
 	ActivityRegistrar<Sensors>::Type temp("Sensors");
 }
 
-Sensors::Sensors():Publisher("RtSensors")
+Sensors::Sensors():EndPoint("RtSensors")
 {
 	;
 }
@@ -55,7 +55,7 @@ void Sensors::UserInit() {
 	}
 
 	initialization();
-	this->attachPublisherToMessageQueue(*_com->get_message_queue());
+	this->attachTo(*_com->get_message_queue());
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
 void Sensors::fillComputedData(unsigned int timediff)

@@ -20,17 +20,17 @@ int GoToPosition::Execute() {
 		posY = pm->posy();
 		theta = pm->theta();
 	}
-	
+
 	if(wimsg.get()!=0){		///get my position
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
 		myPhi = wimsg->myposition().phi();
 		confidence =  wimsg->myposition().confidence();
 	}
-	
+
 	if(obsm&&obsm->regular_objects_size()>0)
 		lastObsm = microsec_clock::universal_time();
-	
+
 	Logger::Instance().WriteMsg(GetName(),  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
 	Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
 
@@ -40,9 +40,9 @@ int GoToPosition::Execute() {
 		Logger::Instance().WriteMsg(GetName(), "Robot Is In Position", Logger::Info);
 		return 0;
 	}
-		
+
 	if(confidence<badConfidence && lastMove <= microsec_clock::universal_time()){
-		
+
 		if(lastObsm + seconds(10) <microsec_clock::universal_time() ){
 			velocityWalk(0.5, 0.5, 0.0, 0.7);
 			lastMove = microsec_clock::universal_time()+ milliseconds(500);
@@ -53,26 +53,25 @@ int GoToPosition::Execute() {
 		//}
 		return 0;
 	}
-		
+
 	dist = distance(posX, myPosX, posY, myPosY);
 
-	KLocalization h;
-	float angleToTarget = h.anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
-	relativePhi = h.anglediff2(theta,myPhi);
+	float angleToTarget = KLocalization::anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
+	relativePhi = KLocalization::anglediff2(theta,myPhi);
 	float rot = 0.0, f=1.0;
 	float velx, vely;
 	vely = sin(angleToTarget);
 	velx = cos(angleToTarget);
-		
-		
+
+
 	if(dist <0.3){
 		velx/=2.0;
-		vely/=2.0;	
+		vely/=2.0;
 		rot = relativePhi*0.5;
 		f = dist*2;
 	}else if(dist>1 && gsm!=0 && gsm->player_state()==PLAYER_PLAYING){
 		velx/=4.0;
-		vely/=4.0;	
+		vely/=4.0;
 		rot = relativePhi*0.2;
 		f = 0.6;
 		if(confidence>goodConfidence){
@@ -82,7 +81,7 @@ int GoToPosition::Execute() {
 		}
 	}else if(dist>1 &&(gsm==0 ||(gsm!=0 && gsm->player_state()!=PLAYER_PLAYING))){
 		velx/=4.0;
-		vely/=4.0;	
+		vely/=4.0;
 		rot = angleToTarget*0.4;
 		f = 0.6;
 		if(confidence>goodConfidence){
@@ -103,11 +102,11 @@ int GoToPosition::Execute() {
 	//Logger::Instance().WriteMsg(GetName(),  " if", Logger::Info);
 	if(lastMove <= microsec_clock::universal_time()){
 		Logger::Instance().WriteMsg(GetName(),  " walk", Logger::Info);
-		
+
 		velocityWalk(velx, vely, rot, f);
 		lastMove = microsec_clock::universal_time() + milliseconds(500);
 	}
-	
+
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 	return 0;
@@ -116,8 +115,8 @@ int GoToPosition::Execute() {
 void GoToPosition::UserInit () {
 
 	confidence = 0;
-	_blk->subscribeTo("behavior", 0);
-	_blk->subscribeTo("vision", 0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	int playernum, teamColor;
 	lastMove = microsec_clock::universal_time();
 	lastObsm = microsec_clock::universal_time();
@@ -144,7 +143,7 @@ std::string GoToPosition::GetName () {
 bool GoToPosition::robotInPosition(float rx, float x2, float ry, float y2, float rth, float th2){
 	Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
 	if( x2 - locDeviation > rx || rx > x2 + locDeviation )
-		return false;	
+		return false;
 	if( y2 - locDeviation > ry || ry > y2 + locDeviation  )
 		return false;
 	if( th2 - th2*0.1 > rth || rth > th2 + th2*0.1  )
@@ -174,14 +173,14 @@ void GoToPosition::littleWalk(double x, double y, double th) {
 float GoToPosition::rotation(float a, float b, float theta){
 	//Logger::Instance().WriteMsg("Rotation",  " Entered", Logger::Info);
 	return a*cos(theta) + b*sin(theta);
-	
-	
+
+
 }
 
 float GoToPosition::distance(float x1, float x2, float y1, float y2){
 	//Logger::Instance().WriteMsg("Distance",  " Entered", Logger::Info);
 	float dis;
 	dis = sqrt((pow((x2-x1), 2)+ pow((y2-y1), 2)));
-	
+
 	return dis;
 }

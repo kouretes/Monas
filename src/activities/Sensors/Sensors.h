@@ -1,6 +1,5 @@
 #ifndef SENSORS_H
 #define SENSORS_H
-#include "architecture/narukom/pub_sub/publisher.h"
 
 
 #include "hal/robot/generic_nao/aldebaran-sensors.h"
@@ -19,7 +18,7 @@
 
 
 
-class Sensors: public IActivity, public Publisher/*, public Subscriber*/
+class Sensors: public IActivity, public EndPoint
 {
 	public:
 		Sensors();

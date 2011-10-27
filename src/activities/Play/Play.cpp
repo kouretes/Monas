@@ -15,9 +15,10 @@ void Play::UserInit() {
 	 _blk->process_messages();
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
-	_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("behavior", 0);
+
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);

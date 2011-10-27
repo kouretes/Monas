@@ -16,17 +16,17 @@ int MyLeftKick::Execute() {
 		return 0;
 	}
 	//Logger::Instance().WriteMsg("MyLeftKick",  " Execute********************************", Logger::Info);
-	
+
 	amot->set_command("LeftKick");
 	_blk->publishSignal(*amot, "motion");
-	
+
 	rpm->set_goalietopos(true);
 	_blk->publishSignal(*rpm, "behavior");
 	return 0;
 }
 
 void MyLeftKick::UserInit () {
-	_blk->subscribeTo("behavior",0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	amot = new MotionActionMessage();
 	rpm = new ReturnToPositionMessage();
 }
@@ -34,4 +34,4 @@ void MyLeftKick::UserInit () {
 std::string MyLeftKick::GetName () {
 	return "MyLeftKick";
 }
-	
+
