@@ -58,3 +58,27 @@
 <legsPose pose=2 angle1=-4.0 angle2=-15.4 angle3=-19.7 angle4=-14.5 angle5=74.3 angle6=54.6495>
 </legsPose>
 </KickBackLeft>
+
+
+<KickSideRight>
+<legsPose pose=0 angle1=-26.5488 angle2=-0.504946 angle3=-25.491 angle4=0.266079 angle5=61.3508 angle6=59.3245>
+</legsPose>
+
+<legsPose pose=1 angle1=-27 angle2=-0.62 angle3=-9.7 angle4=-1.9 angle5=49 angle6=56>
+</legsPose>
+
+<legsPose pose=2 angle1=-22.1 angle2=6.9 angle3=-7.7 angle4=5.5 angle5=52 angle6=69>
+</legsPose>
+</KickSideRight>
+
+
+<KickSideLeft>
+<legsPose pose=0 angle1=-25.0515 angle2=-0.00240423 angle3=-20.9588 angle4=-0.080296 angle5=32.9883 angle6=37.081>
+</legsPose>
+
+<legsPose pose=1 angle1=-9.7 angle2=1.9 angle3=-27 angle4=0.62 angle5=56 angle6=49>
+</legsPose>
+
+<legsPose pose=2 angle1=-7.7 angle2=-5.5 angle3=-22.1 angle4=-6.9 angle5=69 angle6=52>
+</legsPose>
+</KickSideLeft>
