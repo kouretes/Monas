@@ -1,18 +1,18 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
-#include "activities/ApproachBall/ApproachBall.h"			
-#include "activities/Stare/Stare.h"			
+#include "messages/AllMessagesHeader.h"
+#include "activities/ApproachBall/ApproachBall.h"
+#include "activities/Stare/Stare.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-			
+
 class TrCond_0_3_2_3_2TOfollowBall_one_or_more_times_ : public statechart_engine::ICondition {
-			
+
 public:
 
 	void UserInit () {
-		_blk->subscribeTo("behavior", 0);
-		_blk->subscribeTo("vision", 0);
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -32,11 +32,11 @@ public:
 				if(!ab.readyToKick(wimsg)){
 					if( ab.ballAway(wimsg)) //ball is far away from the goalpost
 						return true;
-					//ball is not far away from the goalpost but goalkeeper can repulse the ball	
+					//ball is not far away from the goalpost but goalkeeper can repulse the ball
 				}
 			}
 		}
 		return false;
 	}
 };
-		
+

@@ -87,7 +87,7 @@ void LedHandler::process_messages() {
 
 void LedHandler::UserInit() {
 	//led_change = 0;
-	_blk->subscribeTo("leds", ON_TOPIC);
+	_blk->updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	try {
 		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");

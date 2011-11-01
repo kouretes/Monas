@@ -1,16 +1,16 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
+#include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-			
-			
+
+
 class TrCond_decisionTOdecision : public statechart_engine::ICondition {
-			
+
 public:
 
 	void UserInit () {
-		_blk->subscribeTo("behavior", 0);
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -38,10 +38,10 @@ public:
 			_blk->process_messages();
 			pen = false;
 			}
-			
+
 		//if(gsm.get()!=0 && gsm->player_state()!=PLAYER_FINISHED)
 			return true;
 		//return false;
     }
 };
-		
+

@@ -1,18 +1,18 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
-#include "activities/ApproachBall/ApproachBall.h"			
-#include "activities/Stare/Stare.h"			
+#include "messages/AllMessagesHeader.h"
+#include "activities/ApproachBall/ApproachBall.h"
+#include "activities/Stare/Stare.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-			
+
 class TrCond_followBallTO0_3_2_3_4_3 : public statechart_engine::ICondition {
-			
+
 public:
 
-	void UserInit () { 
-		_blk->subscribeTo("behavior",0);
-		_blk->subscribeTo("vision",0);
+	void UserInit () {
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 		}
 
 	bool Eval() {
@@ -36,7 +36,7 @@ public:
 		}
 		if( wimsg.get()!=0 && wimsg->balls_size()!=0 && !ab.ballAway(wimsg) ){
 			return true;
-		}		
+		}
 	////	if(obsm.get()!=0 && !ab.ballAway(obsm) && doi.get()!=0 && st.toFallOrNotToFall(doi)==0)
 	////		return true;
 		return false;

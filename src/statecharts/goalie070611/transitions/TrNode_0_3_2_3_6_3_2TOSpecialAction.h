@@ -1,17 +1,17 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
+#include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
-#include "tools/logger.h"	
-		
+#include "tools/logger.h"
+
 class TrCond_0_3_2_3_6_3_2TOSpecialAction : public statechart_engine::ICondition {
-			
+
 public:
 
-	void UserInit () { 
-		_blk->subscribeTo("behavior", 0);
+	void UserInit () {
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
-	
+
 	bool Eval() {
 		/* PLAYER_PLAYING and fall */
 		Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TOSpecialAction",  " enter", Logger::Info);
@@ -34,4 +34,4 @@ public:
 		return false;
     }
 };
-		
+

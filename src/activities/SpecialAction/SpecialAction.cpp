@@ -7,7 +7,7 @@ namespace {
 }
 
 int SpecialAction::Execute() {
-	
+
 	Logger::Instance().WriteMsg("SpecialAction",  " execute" + to_simple_string(boost::posix_time::microsec_clock::universal_time()) , Logger::Info);
 	obs = _blk->readData<DoubleObsInfo>("behavior");
 	//Stare st;
@@ -27,7 +27,7 @@ int SpecialAction::Execute() {
 		amot->set_command("goalieRightFootExtened.xar");
 	}
 	_blk->publishSignal(*amot, "motion");
-	
+
 	bhm->set_headaction(BALLTRACK);
 	_blk->publishSignal(*bhm, "behavior");
 	_blk->publishSignal(leds, "leds");
@@ -38,7 +38,7 @@ int SpecialAction::Execute() {
 }
 
 void SpecialAction::UserInit () {
-	_blk->subscribeTo("behavior",0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	amot = new MotionActionMessage();
 	bhm = new BToHeadMessage();
 	rpm = new ReturnToPositionMessage();
@@ -47,4 +47,4 @@ void SpecialAction::UserInit () {
 std::string SpecialAction::GetName () {
 	return "SpecialAction";
 }
-	
+

@@ -13,7 +13,7 @@ int FollowTheBall::Execute() {
 			first = false;
 			return 0;
 	}
-	
+
 	//Logger::Instance().WriteMsg("FollowTheball",  " Execute", Logger::Info);
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 	float posx=0.117, posy=0.03;
@@ -39,14 +39,14 @@ int FollowTheBall::Execute() {
 				rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(5);
 			}
 			int side ;//= 1;
-			
+
 			bd = lastObsm->ball().dist();
 			bb = lastObsm->ball().bearing();
 			bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
 			by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
 			side = (bb > 0) ? 1 : -1;
 
-		   
+
 			static float X=0,Y=0,th=0,f=0.2;
 			//X=(bx-posx)*2;
 			X=(bx-posx )*3;
@@ -80,9 +80,9 @@ int FollowTheBall::Execute() {
 
                velocityWalk(-X,-Y,th,f);
 			//Logger::Instance().WriteMsg("FollowTheball",  " BALLTRACK", Logger::Info);
-			
+
 		}
-		else{		
+		else{
 			if(scancompleted){
 				littleWalk(0.0, 0.0, 45 * TO_RAD, 5);
 				scancompleted = false;
@@ -92,11 +92,11 @@ int FollowTheBall::Execute() {
 				//Logger::Instance().WriteMsg("ScanForBall",  " TURNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNn", Logger::Info);
 			}
 			else{
-				velocityWalk(0.0, 0.0, 0.0, 1);		
-				//Logger::Instance().WriteMsg("ScanForBall",  " DONTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", Logger::Info);	
+				velocityWalk(0.0, 0.0, 0.0, 1);
+				//Logger::Instance().WriteMsg("ScanForBall",  " DONTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", Logger::Info);
 			}
 			headaction = SCANFORBALL;
-			
+
 			//Logger::Instance().WriteMsg("FollowTheball",  " SCANFORBALL", Logger::Info);
 		}
 	}
@@ -108,9 +108,9 @@ int FollowTheBall::Execute() {
 void FollowTheBall::UserInit () {
 	scancompleted = false;
 	first= true;
-	_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("behavior", 0);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	rcvObsm = boost::posix_time::microsec_clock::universal_time();
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
@@ -143,4 +143,4 @@ void FollowTheBall::littleWalk(double x, double y, double th, int s) {
 	wmot->set_parameter(2, th);
 	_blk->publishSignal(*wmot, "motion");
 }
-	
+

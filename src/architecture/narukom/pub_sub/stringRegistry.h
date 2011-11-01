@@ -24,6 +24,11 @@
 #include <set>
 #include <vector>
 
+
+/**
+	Perfect string hasher library
+**/
+
 class stringRegistry {
 
 	public:
@@ -47,7 +52,7 @@ class stringRegistry {
 
 	}
 	std::size_t registryHash() const { return seed; };
-	std::size_t size() const { return nextid;};
+	std::size_t size() const { return nextid-1;};
 	std::size_t getId(std::string const& s) const
 	{
 		std::size_t hashs=hasher(s);
@@ -67,7 +72,7 @@ class stringRegistry {
 		return 0;
 
 	}
-	std::string getString(std::size_t id)
+	std::string getString(std::size_t id) const
 	{
 		if(id>rt.size())
 			return "";

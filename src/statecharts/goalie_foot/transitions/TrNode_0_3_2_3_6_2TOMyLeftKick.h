@@ -1,17 +1,17 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
+#include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-			
-			
+
+
 class TrCond_0_3_2_3_6_2TOMyLeftKick : public statechart_engine::ICondition {
-			
+
 public:
 
-	 void UserInit () { 
-		_blk->subscribeTo("vision", 0);
-		_blk->subscribeTo("behavior", 0);
+	 void UserInit () {
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
      }
 
 	bool Eval() {
@@ -33,4 +33,4 @@ public:
 		}
     }
 };
-		
+

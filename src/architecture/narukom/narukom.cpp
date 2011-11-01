@@ -1,8 +1,6 @@
 #include "narukom.h"
 #include "pub_sub/message_queue.h"
-//TOBE REMOVED
-//#include "pub_sub/filters/content_filter.h"
-///////
+
 Narukom::Narukom()
 {
   mq = new MessageQueue();

@@ -14,15 +14,15 @@ namespace {
 int ProtectPost::Execute() {
 
 	Logger::Instance().WriteMsg("ProtectPost",  " Execute", Logger::Info);
-	
+
 	wimsg = _blk->readData<WorldInfo>("behavior");
 
 	blockBall();
-	
-	headaction = BALLTRACK;		
+
+	headaction = BALLTRACK;
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
-	
+
 	rpm->set_goalietopos(true);
 	_blk->publishSignal(*rpm, "behavior");
 	return 0;
@@ -35,10 +35,10 @@ void ProtectPost::UserInit () {
 	lastPostScan =microsec_clock::universal_time();
 	lastMove = microsec_clock::universal_time();
 	//_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("behavior", 0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	myPosY = 0.0;
 	myPosX = 2.6;
-	myPhi = 0.0; 
+	myPhi = 0.0;
 	estBallX = 0.0;
 	estBallY = 0.0;
 	bhmsg = new BToHeadMessage();
@@ -48,7 +48,7 @@ void ProtectPost::UserInit () {
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
-	wmot.add_parameter(0.0f);	
+	wmot.add_parameter(0.0f);
 }
 
 std::string ProtectPost::GetName () {
@@ -56,8 +56,8 @@ std::string ProtectPost::GetName () {
 }
 
 void ProtectPost::blockBall(){
-	
-	
+
+
 	if(wimsg.get()!=0){
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
@@ -75,7 +75,7 @@ void ProtectPost::blockBall(){
 	if(estBallY<0)
 		sidey =-1;
 	float th1=0.0, th2=0.0,th3=0.0, x=0.0, y=0.0;
-	
+
 	float dist1, dist2, distFromPostCenter;
 	if(wimsg->balls_size()>0){
 		th1 = atan(( limitX - sidex*estBallX)/estBallY); // ball to postcenter angle
@@ -90,35 +90,34 @@ void ProtectPost::blockBall(){
 			dist1 = dist2;
 		if(dist1>1.0)
 			dist1 = 1.0;
-			
+
 		targety = cos(th1)*dist1;
 		targetx = limitX - sin(th1)*dist1;
-		
+
 		GoToPosition(targetx, targety, th1);
 		//littleWalk((myPosX-x), (myPosY-y),myPhi - th1);
-		
+
 	}
 }
 
 void ProtectPost::GoToPosition(float x, float y, float theta){
-	
+
 	float dist = distance(x, myPosX, y, myPosY);
-	KLocalization h;
-	float angleToTarget = h.anglediff2(atan2(y -myPosY, x - myPosX), myPhi);
-	float relativePhi = h.anglediff2(theta,myPhi);
+	float angleToTarget = KLocalization::anglediff2(atan2(y -myPosY, x - myPosX), myPhi);
+	float relativePhi = KLocalization::anglediff2(theta,myPhi);
 	float rot = 0.0, f=1.0;
 	float velx, vely;
 	vely = sin(angleToTarget);
 	velx = cos(angleToTarget);
-		
+
 	if(dist <0.3){
 		velx/=2.0;
-		vely/=2.0;	
+		vely/=2.0;
 		rot = relativePhi*0.5;
 		f = dist*2;
 	}else if(dist>1){
 		velx/=4.0;
-		vely/=4.0;	
+		vely/=4.0;
 		rot = angleToTarget*0.4;
 		f = 0.6;
 	}else{
@@ -134,12 +133,12 @@ void ProtectPost::GoToPosition(float x, float y, float theta){
 	//Logger::Instance().WriteMsg(GetName(),  " if", Logger::Info);
 	if(lastMove <= microsec_clock::universal_time()){
 		Logger::Instance().WriteMsg(GetName(),  " walk", Logger::Info);
-		
+
 		velocityWalk(velx, vely, rot, f);
 		lastMove = microsec_clock::universal_time() + milliseconds(500);
 	}
-	
-	
+
+
 }
 void ProtectPost::velocityWalk(double x, double y, double th, double f) {
 	//Logger::Instance().WriteMsg("Aproachball",  " VelocityWalk", Logger::Info);
@@ -163,16 +162,16 @@ void ProtectPost::littleWalk(double x, double y, double th) {
 
 /////////////////////////////////////////////////////////////////////
 float ProtectPost::rotation(float a, float b, float theta){
-	
+
 	return a*cos(theta) + b*sin(theta);
-	
-	
+
+
 }
 
 float ProtectPost::distance(float x1, float x2, float y1, float y2){
-	
+
 	float dis;
 	dis = sqrt(pow(x2-x1, 2)+ pow(y2-y1, 2));
-	
+
 	return dis;
 }

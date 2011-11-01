@@ -109,9 +109,10 @@ void MotionController::UserInit()
 	//motion->setMotionConfig(AL::ALValue::array(AL::ALValue::array("ENABLE_FALL_MANAGEMENT_PROTECTION", false)));
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
-	_blk->subscribeTo("motion", 0);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("behavior", 0);
+
+	_blk->updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;

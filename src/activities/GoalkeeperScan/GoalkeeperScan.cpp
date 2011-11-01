@@ -23,7 +23,7 @@ int GoalkeeperScan::Execute() {
 		myPosY = wimsg->myposition().y();
 		myPhi = wimsg->myposition().phi();
 	}
-				
+
 	dist = ab.distance(posX, myPosX, posY, myPosY);
 	relativePhi = myPhi-theta;
 	relativeX = ab.rotation(posX, posY, relativePhi) + myPosX;
@@ -33,8 +33,8 @@ int GoalkeeperScan::Execute() {
 			headaction = BALLTRACK;
 			//Logger::Instance().WriteMsg("GoalkeeperScan",  " BALLTRACK", Logger::Info);
 		}
-		else{		
-			
+		else{
+
 			if(posX - locDeviation > myPosX || myPosX > posX + locDeviation || posY - locDeviation > myPosY || myPosY > posY + locDeviation){
 				littleWalk(relativeX,relativeY, relativePhi);
 			}
@@ -42,13 +42,13 @@ int GoalkeeperScan::Execute() {
 				littleWalk( 0.0, 0.0, 45 * TO_RAD);
 				lastTurn = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(5);
 			}else{
-				velocityWalk( 0.0, 0.0, 0.0, 1);		
+				velocityWalk( 0.0, 0.0, 0.0, 1);
 			}
 			//headaction = SCANFORBALL;
 			//Logger::Instance().WriteMsg("Scan",  " SCANFORBALL", Logger::Info);
 		}
 	}
-	
+
 	if(headaction!=BALLTRACK){
 		if(scanPost){
 			headaction = SCANFORPOST;
@@ -62,17 +62,17 @@ int GoalkeeperScan::Execute() {
 				changeScan = boost::posix_time::microsec_clock::universal_time();
 				scanPost = true;
 			}
-			
+
 		}
 	}
-		
+
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 	return 0;
 }
 
 void GoalkeeperScan::UserInit () {
-	_blk->subscribeTo("behavior", 0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	headaction = SCANFORBALL;
 	bhmsg = new BToHeadMessage();
 	lastTurn = boost::posix_time::microsec_clock::universal_time();
@@ -82,7 +82,7 @@ void GoalkeeperScan::UserInit () {
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
-	wmot.add_parameter(0.0f);	
+	wmot.add_parameter(0.0f);
 }
 
 std::string GoalkeeperScan::GetName () {

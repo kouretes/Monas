@@ -412,7 +412,7 @@ void Vision::fetchAndProcess()
 	//saveFrame(rawImage);
 	//return;
 	//cout<<"Attached"<<endl;
-	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", "localhost", &p.time, &stamp);
+	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &p.time, &stamp);
 #ifdef DEBUGVISION
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 	cout << "SensorTimestamp:"<< boost::posix_time::to_iso_string(p.time) << endl;
@@ -655,8 +655,8 @@ void VISIBLE Vision::UserInit()
 
 
 	//_com->get_message_queue()->add_subscriber(_blk);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("vision", 0);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	//_com->get_message_queue()->add_publisher(this);
 
 	debugmode = false;

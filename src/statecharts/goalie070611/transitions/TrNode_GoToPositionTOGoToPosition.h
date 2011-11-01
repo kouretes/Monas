@@ -1,17 +1,17 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"			
+#include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
-#include "tools/logger.h"			
-#include "activities/GoToPosition/GoToPosition.h" 	
-#include "activities/BehaviorConst.h"		
-	
+#include "tools/logger.h"
+#include "activities/GoToPosition/GoToPosition.h"
+#include "activities/BehaviorConst.h"
+
 class TrCond_GoToPositionTOGoToPosition : public statechart_engine::ICondition {
-			
+
 public:
 
-	void UserInit () { 
-		_blk->subscribeTo("behavior", 0);
+	void UserInit () {
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -24,8 +24,8 @@ public:
 		boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("behavior");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		
-		
+
+
 		GoToPosition g;
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_READY){
 			if(pm.get()!=0 && wimsg.get()!=0){
@@ -46,4 +46,4 @@ public:
 		return false;
     }
 };
-		
+

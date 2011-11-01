@@ -29,10 +29,10 @@ VBehavior::VBehavior()        {
 }
 
 void VBehavior::UserInit() {
-	_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("behavior", 0);
-	_blk->subscribeTo("obstacle", 0);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	//wmot->set_topic("motion");
@@ -151,7 +151,7 @@ int VBehavior::Execute() {
 		else if (gameState == PLAYER_SET) {
 			play = false;
 			calibrate();
-			
+
 		}
 		else if (gameState == PLAYER_FINISHED) {
 			play = false;
@@ -471,9 +471,9 @@ void VBehavior::calibrate()
 /*
  * this function set's player number in global variable playernum
  * and initial team color in global variable teamColor
- * 
+ *
  * This function is used in UserInit function
- * 
+ *
  * */
 
 bool VBehavior::readConfiguration(const std::string& file_name) {
@@ -503,8 +503,8 @@ bool VBehavior::readConfiguration(const std::string& file_name) {
  * in x axis : initX in meters
  * in y axis : initY in meters
  * in rotation : initPhi in rads
- * 
- * 
+ *
+ *
  * This function is used in PLAYER_READY state
  *  */
 bool VBehavior::readRobotConfiguration(const std::string& file_name, bool kickoff) {
@@ -534,7 +534,7 @@ bool VBehavior::readRobotConfiguration(const std::string& file_name, bool kickof
 	Logger::Instance().WriteMsg("VBehavior",  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
 			return true;
 		}
-        
+
 	}
 	return true;
 }

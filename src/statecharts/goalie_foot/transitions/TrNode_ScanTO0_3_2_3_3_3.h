@@ -1,18 +1,17 @@
 
 #include "architecture/statechartEngine/ICondition.h"
-#include "messages/AllMessagesHeader.h"	
-#include "activities/ApproachBall/ApproachBall.h"		
+#include "messages/AllMessagesHeader.h"
+#include "activities/ApproachBall/ApproachBall.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-			
+
 class TrCond_ScanTO0_3_2_3_3_3 : public statechart_engine::ICondition {
-			
+
 public:
 
 	void UserInit () {
-		_blk->subscribeTo("behavior", 0);
-		_blk->subscribeTo("vision", 0);
-		
+		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -33,4 +32,4 @@ public:
 		return false;
     }
 };
-		
+

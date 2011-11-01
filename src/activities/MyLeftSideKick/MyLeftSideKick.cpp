@@ -26,7 +26,7 @@ int MyLeftSideKick::Execute() {
 }
 
 void MyLeftSideKick::UserInit () {
-	_blk->subscribeTo("behavior",0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	amot = new MotionActionMessage();
 
 }

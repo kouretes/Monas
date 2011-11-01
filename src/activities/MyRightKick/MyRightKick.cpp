@@ -23,12 +23,12 @@ int MyRightKick::Execute() {
 
 	rpm->set_goalietopos(true);
 	_blk->publishSignal(*rpm, "behavior");
-	
+
 	return 0;
 }
 
 void MyRightKick::UserInit () {
-	_blk->subscribeTo("behavior",0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	amot = new MotionActionMessage();
 	rpm = new ReturnToPositionMessage();
 }
@@ -36,4 +36,4 @@ void MyRightKick::UserInit () {
 std::string MyRightKick::GetName () {
 	return "MyRightKick";
 }
-	
+

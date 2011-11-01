@@ -9,14 +9,14 @@ int Kick::Execute() {
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	wimsg  = _blk->readData<WorldInfo>("behavior");
 	pnm = _blk->readState<PlayerNumberMessage>("behavior");
-	
+
 	if(!readConf)
 		readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() +"/Features.xml");
 //#ifdef RETURN_TO_POSITION
 		//rpm->set_goalietopos(true);
 		//_blk->publishSignal(*rpm, "behavior");
 //#endif
-	
+
 	if(gsm!=0 && gsm->game_state()!=PLAYER_PLAYING){
 	//	Logger::Instance().WriteMsg("MyLeftKick",  " No********************************", Logger::Info);
 		return 0;
@@ -39,13 +39,13 @@ int Kick::Execute() {
 	if(pnm&&pnm->team_side()==TEAM_RED){
 		oppGoalX = blueGoalX;
 		oppGoalY = blueGoalY;
-		
+
 	}else if(pnm&&pnm->team_side()==TEAM_BLUE){
 		oppGoalX = yellowGoalX;
 		oppGoalY = yellowGoalY;
 	}
 
-	float ogb = k.anglediff2(atan2(oppGoalY - wimsg->myposition().y(), oppGoalX - wimsg->myposition().x()), wimsg->myposition().phi());
+	float ogb = KLocalization::anglediff2(atan2(oppGoalY - wimsg->myposition().y(), oppGoalX - wimsg->myposition().x()), wimsg->myposition().phi());
 
 	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
 		orientation = 0;
@@ -87,7 +87,7 @@ int Kick::Execute() {
 }
 
 void Kick::UserInit () {
-	_blk->subscribeTo("behavior",0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	amot = new MotionActionMessage();
 	rpm = new ReturnToPositionMessage();
 	orientation = 0;
@@ -105,11 +105,11 @@ void Kick::UserInit () {
 std::string Kick::GetName () {
 	return "Kick";
 }
-	
-	
+
+
 
 bool Kick::readGoalConfiguration(const std::string& file_name) {
-	
+
 	TiXmlDocument doc2(file_name.c_str());
 	bool loadOkay = doc2.LoadFile();
 	if (!loadOkay) {

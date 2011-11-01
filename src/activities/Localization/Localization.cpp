@@ -35,11 +35,10 @@ TCPSocket * Localization::sock;
 
 void Localization::UserInit()
 {
-
-	_blk->subscribeTo("vision", ON_TOPIC);
-	_blk->subscribeTo("sensors", ON_TOPIC);
-	_blk->subscribeTo("localization", ON_TOPIC);
-	_blk->subscribeTo("behavior", ON_TOPIC);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("localization", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
 
@@ -710,7 +709,7 @@ void Localization::process_messages()
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
-	
+
 
 	currentObservation.clear();
 	currentAbigiusObservation.clear();
@@ -769,7 +768,7 @@ void Localization::process_messages()
 		//		}
 
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
-		rpsm = _blk->readData<RobotPositionMessage> ("sensors", "localhost",NULL, &observation_time);
+		rpsm = _blk->readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
 	}else{
 		rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	}

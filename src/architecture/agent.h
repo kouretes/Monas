@@ -29,8 +29,7 @@ class Agent : public Thread {
             _blk(name),
             _executions(0) {
 
-			_blk.attachSubscriberToMessageQueue(*com->get_message_queue());
-			_blk.attachPublisherToMessageQueue(*com->get_message_queue());
+			_blk.attachTo(*com->get_message_queue());
 
             for ( ActivityNameList::const_iterator it = activities.begin();
                     it != activities.end(); it++ )

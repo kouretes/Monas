@@ -4,6 +4,7 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
+#include "architecture/narukom/pub_sub/topicTree.h"
 
 using namespace AL;
 using namespace std;
@@ -29,7 +30,7 @@ namespace {
 	ActivityRegistrar<Sensors>::Type temp("Sensors");
 }
 
-Sensors::Sensors():Publisher("RtSensors")
+Sensors::Sensors():EndPoint("RtSensors")
 {
 	;
 }
@@ -55,7 +56,7 @@ void Sensors::UserInit() {
 	}
 
 	initialization();
-	this->attachPublisherToMessageQueue(*_com->get_message_queue());
+	this->attachTo(*_com->get_message_queue());
 	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
 }
 void Sensors::fillComputedData(unsigned int timediff)
@@ -255,11 +256,11 @@ void Sensors::synchronisedDCMcallback()
     newptr->CopyFrom(ASM);
     nmsg.msg.reset(newptr);
 
-    nmsg.host="localhost";
+    nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
     nmsg.timestamp=now;
-    nmsg.topic="sensors";
+    nmsg.topic=sensorstopicid;
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::DATA;
 
@@ -272,11 +273,11 @@ void Sensors::synchronisedDCMcallback()
 		newptr->CopyFrom(BM);
 		nmsg.msg.reset(newptr);
 
-		nmsg.host="localhost";
+		nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
 		boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
 		//nmsg.timeoutstamp=now+boost::posix_time::millisec(50);
 		nmsg.timestamp=now;
-		nmsg.topic="buttonevents";
+		nmsg.topic=buttoneventstopicid;
 		//nmsg.publisher=Publisher::getName();
 		nmsg.msgclass=msgentry::SIGNAL;
 		this->publish(nmsg);
@@ -324,6 +325,9 @@ void Sensors::initialization() {
 		buttonValues[i] = (float *) memory->getDataPtr(buttonKeys[i]);
 		cout<<buttonValues[i]<<endl;
 	}
+
+	sensorstopicid=Topics::Instance().getId("sensors");
+	buttoneventstopicid=Topics::Instance().getId("buttonevents");
 
 
 #endif

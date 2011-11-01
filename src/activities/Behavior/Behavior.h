@@ -3,8 +3,6 @@
 
 #include "architecture/IActivity.h"
 
-#include "architecture/narukom/pub_sub/publisher.h"
-
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
@@ -41,9 +39,9 @@ class Behavior: public IActivity {
 		}
 		void UserInit();
 		int Execute();
-		
+
 		void read_messages();
-		
+
 		void GetGameState();
 		void GetPosition();
 		void UpdateOrientation();
@@ -57,23 +55,23 @@ class Behavior: public IActivity {
 		void HeadScanStepIntelligent();
 		float lookAtPointYaw(float x, float y);
 		float lookAtPointPitch(float x, float y);
-		
+
 		void Kick(int side);
 
 	private:
-		
+
 		void velocityWalk(double ix, double iy, double it, double f);
 		void littleWalk(double x, double y, double th);
 		void approachBall(double ballX, double ballY);
 		void approachBallNewWalk(double ballX, double ballY);
 		void gotoPosition(float target_x,float target_y, float target_phi);
-		
+
 		void calibrate();
-		
+
 		bool readConfiguration(const std::string& file_name); 		//this function reads team's configuration info from XML file
 		bool readRobotConfiguration(const std::string& file_name); 	//this function reads robot's initial position in the field from XML file
 		bool readGoalConfiguration(const std::string& file_name); 	//this function reads the position of the goals
-		
+
 		void test();
 
 		/* Incoming Messages */
@@ -83,13 +81,13 @@ class Behavior: public IActivity {
 		//boost::shared_ptr<const ObservationMessage>  obsm;
 		boost::shared_ptr<const ObstacleMessageArray>  om;
 		boost::shared_ptr<const WorldInfo>  wim;
-		
+
 		/* Outgoing Messages */
 		MotionWalkMessage* wmot;
 		MotionHeadMessage* hmot;
 		MotionActionMessage* amot;
 		LocalizationResetMessage* locReset;
-		
+
 		int leftright;
 		float headpos;
 
@@ -104,7 +102,7 @@ class Behavior: public IActivity {
 		float psign,ysign;
 		unsigned waiting;
 		int calibrated;
-		
+
 		int forball, forpost;
 
 		bool kickoff;
@@ -116,16 +114,16 @@ class Behavior: public IActivity {
 		float bd, bb, bx, by, posx, posy;
 		int side;
 		float robot_x,robot_y,robot_phi,robot_confidence;
-		
+
 		bool readytokick;
 		int back;
 		int direction;
 		double orientation;
-		
+
 		int gameState;
 		int teamColor;
 		int playerNumber;
-		
+
 		bool readRobotConf;
 
 		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, ballseen;

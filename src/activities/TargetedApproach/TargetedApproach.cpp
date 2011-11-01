@@ -13,16 +13,16 @@ int TargetedApproach::Execute() {
 	headaction = BALLTRACK;
 	gsm = _blk->readState<GameStateMessage> ("behavior");
 	wimsg = _blk->readData<WorldInfo> ("behavior");
-	
+
 	if(gsm.get()!=0 && gsm->own_goal_color()==GOAL_BLUE){
 		postX = yellowPostCenterX;
 		postY = yellowPostCenterY;
-	}	
+	}
 	else if(gsm.get()!=0 && gsm->team_color()==GOAL_YELLOW){
 		postX = -yellowPostCenterX;
 		postY = yellowPostCenterY;
 	}
-		
+
 
 	if (wimsg.get()==0){
 		//Logger::Instance().WriteMsg("TargetedApproach",  " No OBS", Logger::Info);
@@ -49,7 +49,7 @@ int TargetedApproach::Execute() {
 
 		int side ;//= 1;
 		side = (theta > 0) ? 1 : -1;
-		   
+
 		static float X=0,Y=0,f=0.2, bd=0.0;
 
 		X=(wimsg->balls(0).relativex()-dDistBallX )*3;
@@ -60,7 +60,7 @@ int TargetedApproach::Execute() {
 
 		float offsety=side*dDistBallY;
 		Y=(wimsg->balls(0).relativey()-offsety)*3;
-		
+
 		Y=Y>0?Y+0.01:Y-0.01;
 		Y=Y>1?1:Y;
 		Y=Y<-1?-1:Y;
@@ -70,13 +70,13 @@ int TargetedApproach::Execute() {
     }
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
-	
+
 	return 0;
 }
 
 void TargetedApproach::UserInit () {
 	rcvObs = boost::posix_time::microsec_clock::universal_time();
-	_blk->subscribeTo("behavior", 0);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	postX = yellowPostCenterX;
 	postY = yellowPostCenterY;
 	myPosX = 0.0;
@@ -98,7 +98,7 @@ void TargetedApproach::UserInit () {
 std::string TargetedApproach::GetName () {
 	return "TargetedApproach";
 }
-	
+
 
 void TargetedApproach::velocityWalk(double x, double y, double th, double f) {
 	//Logger::Instance().WriteMsg("TargetedApproach",  " VelocityWalk", Logger::Info);
@@ -125,9 +125,9 @@ float TargetedApproach::calculateAngle( float bPosX, float bPosY, float rPosX, f
 	float adjacent, hypotinuse;
 	adjacent = ab.distance(postX, ballX, ballY, ballY);
 	hypotinuse = ab.distance(postX, ballX, postY, ballY);
-	
+
 	theta = acos( adjacent/hypotinuse );
-	
+
 	if(myPhi>=0 && theta>=0)
 		return fabs(myPhi-theta);
 	if(myPhi>=0 && theta<0)

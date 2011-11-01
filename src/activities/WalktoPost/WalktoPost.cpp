@@ -8,7 +8,7 @@ namespace {
 }
 
 int WalktoPost::Execute() {
-	
+
 	//Logger::Instance().WriteMsg("WalkToPost",  " Execute", Logger::Info);
 	//sleep(3);
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
@@ -21,7 +21,7 @@ int WalktoPost::Execute() {
 		return 0;
 	}
 	int side ;//= 1;
-	
+
 	bd = obsm->ball().dist();
 	bb = obsm->ball().bearing();
 	bx = obsm->ball().dist() * cos(obsm->ball().bearing()); //kanw tracking me to swma
@@ -46,9 +46,9 @@ int WalktoPost::Execute() {
 }
 
 void WalktoPost::UserInit () {
-	_blk->subscribeTo("vision", 0);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("behavior", 0);
+	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
@@ -62,7 +62,7 @@ void WalktoPost::UserInit () {
 std::string WalktoPost::GetName () {
 	return "WalktoPost";
 }
-	
+
 
 void WalktoPost::velocityWalk(double x, double y, double th, double f) {
 	wmot->set_command("setWalkTargetVelocity");
