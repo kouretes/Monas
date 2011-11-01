@@ -21,13 +21,15 @@
 #include <map>
 #include <set>
 #include <string>
+#include "tools/singleton.h"
 
 class TopicTree: public stringRegistry
 {
 
     public:
-	TopicTree(std::string const& root);
-    std::set<std::size_t> iterateTopics(std::string const& topic , int where) const;
+	TopicTree();
+	explicit TopicTree(std::string const& root);
+    std::set<std::size_t> iterateTopics(std::size_t  topic , int where) const;
     void addTopic(std::string const& what,std::string const& under);
     private:
     typedef struct topicdata_s{
@@ -41,6 +43,8 @@ class TopicTree: public stringRegistry
 	void iterateTopicsBelow(std::set<std::size_t>  &res,std::size_t const topicid) const;
 
 };
+typedef Singleton<const TopicTree> Topics;
+
 
 
 #endif /* TOPICTREE_H */

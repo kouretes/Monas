@@ -71,6 +71,7 @@ class Sensors: public IActivity, public EndPoint
 		void synchronisedDCMcallback();
 		AL::ALPtr<AL::ALMemoryProxy> memory;
 		std::vector<float*> jointValues,sensorValues,buttonValues;
+		size_t sensorstopicid,buttoneventstopicid;
 #else
 
 		AL::ALMemoryFastAccess jointaccess,sensoraccess,buttonaccess;

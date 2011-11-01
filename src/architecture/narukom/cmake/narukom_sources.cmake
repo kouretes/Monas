@@ -13,8 +13,9 @@ SET(NARUKOM_PUB_SUB_SRCS
    ${NarukomDir}/pub_sub/buffer.cpp
    ${NarukomDir}/pub_sub/buffer.h
    ${NarukomDir}/pub_sub/message_buffer.h
-   ${NarukomDir}/pub_sub/filters/filter.h
-   ${NarukomDir}/pub_sub/filters/filter.cpp
+
+   #${NarukomDir}/pub_sub/filters/filter.h
+   #${NarukomDir}/pub_sub/filters/filter.cpp
    #${NarukomDir}/pub_sub/filters/special_filters.cpp
    ##${NarukomDir}/pub_sub/filters/content_filter.cpp
    #${NarukomDir}/pub_sub/filters/content_filter.h
@@ -25,6 +26,22 @@ SET(NARUKOM_PUB_SUB_SRCS
    #${NarukomDir}/pub_sub/filters/topic_filter.cpp
    #${NarukomDir}/pub_sub/filters/type_filter.h
    #${NarukomDir}/pub_sub/filters/type_filter.cpp
+)
+
+set(NARUKOM_NETWORK_SRCS
+
+	${NarukomDir}/network/multicastpoint.hpp
+	${NarukomDir}/network/multicastpoint.cpp
+	${NarukomDir}/network/rawPacketDePacket.h
+	${NarukomDir}/network/rawPacketDePacket.cpp
+	${NarukomDir}/network/ptimeserialize.hpp
+	${NarukomDir}/network/msgentryserialize.hpp
+
+	#${NarukomDir}/network/catalog.cpp
+	#${NarukomDir}/network/host.h
+	#${NarukomDir}/network/host.cpp
+
+
 )
 # SET(NARUKOM_PUB_SUB_INCLUDE_DIR ${NarukomDir}/pub_sub/)
 # 

@@ -28,7 +28,6 @@ void RobotController::UserInit() {
 	gm_state.Clear();
 
 
-	_blk->updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	_blk->publishState(gm_state, "behavior");//Default state
 	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);

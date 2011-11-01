@@ -15,6 +15,7 @@
 */
 #include "endpoint.h"
 #include "message_buffer.h"
+#include "topicTree.h"
 
 using namespace std;
 
@@ -33,14 +34,14 @@ EndPoint::~EndPoint()
 }
 
 
-void EndPoint::updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::string const& host)
+void EndPoint::updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host)
 {
 	//cout<<"Check -2"<<endl;
 	if(read_buf==NULL||write_buf==NULL)
 		return;
 	//cout<<"Check -1"<<endl;
 	msgentry nmsg;
-	nmsg.topic=topic;
+	nmsg.topic=Topics::Instance().getId(topic);
 	nmsg.host=host;
 	nmsg.msgclass=where;
 

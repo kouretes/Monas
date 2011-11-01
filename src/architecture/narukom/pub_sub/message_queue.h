@@ -42,8 +42,7 @@ typedef struct msgentry_ msgentry;
 template<typename T>class Buffer;
 
 typedef  Buffer<msgentry> MessageBuffer;
-class TopicTree;
-
+class EndPoint;
 
 /**
 MessageQueue class is the message broker of Narukom.
@@ -55,6 +54,7 @@ class MessageQueue : public Thread
   public:
     //friend class MessageBuffer;
     MessageQueue();
+    ~MessageQueue();
 	MessageBuffer* makeWriteBuffer(std::string const& s);
 	MessageBuffer* makeReadBuffer(std::string const& s);
 
@@ -76,12 +76,13 @@ class MessageQueue : public Thread
     };
   private:
   	//String hasher
+  	EndPoint * multicast;
+
   	stringRegistry pubsubRegistry;
 
 
 	boost::mutex  pub_sub_mutex;
   	//Locked by pub_sub_mutex;
-  	TopicTree * tree;
   	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
   	std::vector<std::set<MessageBuffer*> > publisherbuffers,subscriberBuffers;//Maps pubsubregistry ids to Buffers
 
@@ -94,10 +95,9 @@ class MessageQueue : public Thread
     boost::condition_variable_any cond;
 
     StopWatch<> agentStats;
-    void create_tree();
 
-    void subscribeTo(std::size_t subid, std::string const& topic , int where);
-	void unsubscribeFrom(std::size_t subid, std::string const& topic , int where);
+    void subscribeTo(std::size_t subid, std::size_t  topic , int where);
+	void unsubscribeFrom(std::size_t subid, std::size_t  topic , int where);
 
     //Recursive call, UNLOCKED
     };

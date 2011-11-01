@@ -72,7 +72,7 @@ class stringRegistry {
 		return 0;
 
 	}
-	std::string getString(std::size_t id)
+	std::string getString(std::size_t id) const
 	{
 		if(id>rt.size())
 			return "";

@@ -768,7 +768,7 @@ void Localization::process_messages()
 		//		}
 
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
-		rpsm = _blk->readData<RobotPositionMessage> ("sensors", "localhost",NULL, &observation_time);
+		rpsm = _blk->readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
 	}else{
 		rpsm = _blk->readData<RobotPositionMessage>("sensors");
 	}

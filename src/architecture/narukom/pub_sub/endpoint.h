@@ -39,7 +39,7 @@ class EndPoint
 
 	MessageBuffer *getReadBuffer() const { return read_buf;}
 
-    void updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::string const& host="localhost");
+    void updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host=msgentry::HOST_ID_LOCAL_HOST);
     template<typename M> void attachTo(M& m) {
 
     	read_buf=m.makeReadBuffer(endpoint_name);

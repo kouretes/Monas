@@ -412,7 +412,7 @@ void Vision::fetchAndProcess()
 	//saveFrame(rawImage);
 	//return;
 	//cout<<"Attached"<<endl;
-	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", "localhost", &p.time, &stamp);
+	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &p.time, &stamp);
 #ifdef DEBUGVISION
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 	cout << "SensorTimestamp:"<< boost::posix_time::to_iso_string(p.time) << endl;

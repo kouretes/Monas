@@ -34,9 +34,11 @@ void Blackboard::process_messages()
 
 		type_t newtypeid=typeRegistry.registerNew((*it).msg->GetTypeName());
 		region_index i;
-		i.tid=topicRegistry.registerNew((*it).topic);
-		i.hid=hostRegistry.registerNew((*it).host);
+		i.tid=(*it).topic;
+		i.hid=(*it).host;
+		//std::cout<<"Incoming region:"<<i.hid<<" "<<i.tid<<"<size:"<<allrecords.size()<<std::endl;
 		disjoint_region &r=allrecords[i];
+
 
 		nrec.msg=(*it).msg;
 		nrec.timestamp=(*it).timestamp;
@@ -67,7 +69,7 @@ void Blackboard::process_messages()
 
         }
 
-        //cout<<(*it).msg->GetTypeName()<<":"<<blkdata[(*it).msg->GetTypeName()].size()<<endl;
+        //std::cout<<"Blackboard:"<<(*it).msgclass<<" "<<(*it).msg->GetTypeName()<<std::endl;
 
 
     }
@@ -155,19 +157,19 @@ void Blackboard::publishData(const google::protobuf::Message & msg,std::string c
     nrec.msg=nmsg.msg;
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
-    nmsg.host="localhost";
+    nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
     nmsg.timestamp=now;
     nrec.timestamp=now;
-    nmsg.topic=topic;
+    nmsg.topic=Topics::Instance().getId(topic);
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::DATA;
 
 	type_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
 	region_index i;
-	i.tid=topicRegistry.registerNew(topic);
-	i.hid=hostRegistry.registerNew("localhost");
+	i.tid= nmsg.topic;
+	i.hid= nmsg.host;
 	disjoint_region &r=allrecords[i];
     if(r.blkdata[newtypeid].size()>0)
         r.blkdata[newtypeid].insert(--r.blkdata[newtypeid].end(),nrec);//Suggest last place to add it
@@ -191,20 +193,20 @@ void Blackboard::publishSignal(const google::protobuf::Message & msg,std::string
 
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
-    nmsg.host="localhost";
+    nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now;//Signal, no timeout
     nmsg.timestamp=now;
 	nrec.timestamp=now;
-    nmsg.topic=topic;
+    nmsg.topic=Topics::Instance().getId(topic);
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::SIGNAL;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
 
     type_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
 	region_index i;
-	i.tid=topicRegistry.registerNew(topic);
-	i.hid=hostRegistry.registerNew("localhost");
+	i.tid=nmsg.topic;
+	i.hid=nmsg.host;
 	disjoint_region &r=allrecords[i];
 
     signalentry newsig;
@@ -229,20 +231,20 @@ void Blackboard::publishState(const google::protobuf::Message & msg,std::string 
 	nrec.msg=nmsg.msg;
     //cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
-    nmsg.host="localhost";
+    nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
     //nmsg.timeoutstamp=now;//State, no timeout :)
     nmsg.timestamp=now;
 	nrec.timestamp=now;
-    nmsg.topic=topic;
+    nmsg.topic=Topics::Instance().getId(topic);
     //nmsg.publisher=Publisher::getName();
     nmsg.msgclass=msgentry::STATE;
     //cout<<msg.GetTypeName()<<":"<<blkdata[msg.GetTypeName()].size()<<endl;
 
     type_t newtypeid=typeRegistry.registerNew(msg.GetTypeName());
 	region_index i;
-	i.tid=topicRegistry.registerNew(topic);
-	i.hid=hostRegistry.registerNew("localhost");
+	i.tid=nmsg.topic;
+	i.hid=msgentry::HOST_ID_LOCAL_HOST;
 	disjoint_region &r=allrecords[i];
 
     r.blkstate[newtypeid]=nrec;//If exists replace

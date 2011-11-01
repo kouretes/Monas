@@ -19,6 +19,7 @@
 #include "msg.h"
 #include "endpoint.h"
 #include "stringRegistry.h"
+#include "topicTree.h"
 
 #include <string>
 #include <map>
@@ -41,16 +42,16 @@ public:
     void process_messages();
     void publish_all();
 		template<class Data>
-		boost::shared_ptr<const Data> readData(const std::string& topic,const std::string&  host = "localhost",boost::posix_time::ptime* const tmp =0 , boost::posix_time::ptime const* const time_req =0);
+		boost::shared_ptr<const Data> readData(const std::string& topic,const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST,boost::posix_time::ptime* const tmp =0 , boost::posix_time::ptime const* const time_req =0);
 		template<class Data>
-        boost::shared_ptr<const Data> readSignal(const std::string& topic, const std::string&  host = "localhost",boost::posix_time::ptime* const tmp =0 );
+        boost::shared_ptr<const Data> readSignal(const std::string& topic,const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST,boost::posix_time::ptime* const tmp =0 );
         template<class Data>
-        boost::shared_ptr<const Data> readState(const std::string& topic, const std::string&  host = "localhost",boost::posix_time::ptime* const tmp =0 );
+        boost::shared_ptr<const Data> readState(const std::string& topic,const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST,boost::posix_time::ptime* const tmp =0 );
         void publishData(const google::protobuf::Message & msg,std::string const& topic);
         void publishSignal(const google::protobuf::Message & msg,std::string const& topic);
         void publishState(const google::protobuf::Message &msg, std::string const& topic);
 private:
-	stringRegistry typeRegistry,topicRegistry,hostRegistry;
+	stringRegistry typeRegistry;
 
 	//Each blackboard record is:
 	typedef struct blackboard_record_s{
@@ -84,8 +85,10 @@ private:
 
 		bool operator== (const struct region_index_s & b) const {
 			return (tid==0||b.tid==0||tid==b.tid)&&
-					(hid==0||b.hid==0||hid==b.hid);};
-		bool operator<(const struct region_index_s &b) const {return hid==b.hid?tid<b.tid:hid<b.hid;};
+					(hid==msgentry::HOST_ID_ANY_HOST||b.hid==msgentry::HOST_ID_ANY_HOST||hid==b.hid);};
+		bool operator<(const struct region_index_s &b) const {
+
+			return hid==b.hid?tid<b.tid:hid<b.hid;};
 	} region_index;
 	//Distjoint region: one per topic and per host
 	typedef struct {
@@ -108,18 +111,27 @@ private:
 
 
 template<class Data>
-boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, const std::string&  host,boost::posix_time::ptime* const tmp  ,boost::posix_time::ptime const * const time_req )
+boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic,const std::size_t  host ,boost::posix_time::ptime* const tmp  ,boost::posix_time::ptime const * const time_req )
 {
 	const type_t atypeid=typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
 
-	i.tid=topicRegistry.getId(topic);
-	i.hid=hostRegistry.getId(host);
-	if(host=="") i.hid=0;//Wildcard *
+	i.tid=Topics::Instance().getId(topic);
+	i.hid=host;
+	i.hid=0;//Wildcard *
 	if(topic=="") i.tid=0;//Wildcard
-	regions::iterator rit=allrecords.find(i);
+
+	regions::iterator rit=allrecords.begin();
+	for(;rit!=allrecords.end();++rit)
+	{
+		if((*rit).first==i&&(*rit).second.blkdata.find(atypeid)!=(*rit).second.blkdata.end())
+			break;
+	}
+
+
 	if(rit==allrecords.end())
 		return boost::shared_ptr<const Data>();
+
 	const datastruct &d=(*rit).second.blkdata;
 	datastruct::const_iterator dit=d.find(atypeid);
     if(dit==d.end())
@@ -174,16 +186,22 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic, con
     return  boost::static_pointer_cast<const Data>( (*fit).msg);
 }
 template<class Data>
-boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::string&  host ,boost::posix_time::ptime* tmp )
+boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::size_t  host  ,boost::posix_time::ptime* tmp )
 {
 	const type_t atypeid=typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
 
-	i.tid=topicRegistry.getId(topic);
-	i.hid=hostRegistry.getId(host);
-	if(host=="") i.hid=0;//Wildcard *
+	i.tid=Topics::Instance().getId(topic);
+	i.hid=host;
 	if(topic=="") i.tid=0;//Wildcard
-	regions::iterator rit=allrecords.find(i);
+
+	regions::iterator rit=allrecords.begin();
+	for(;rit!=allrecords.end();++rit)
+	{
+		if((*rit).first==i&&(*rit).second.blksignal.find(atypeid)!=(*rit).second.blksignal.end())
+			break;
+	}
+
 
 	if(rit==allrecords.end())
 		return boost::shared_ptr<const Data>();
@@ -201,16 +219,22 @@ boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, c
 }
 
 template<class Data>
-boost::shared_ptr<const Data> Blackboard::readState(const std::string& topic, const std::string&  host ,boost::posix_time::ptime* tmp )
+boost::shared_ptr<const Data> Blackboard::readState(const std::string& topic, const std::size_t  host  ,boost::posix_time::ptime* tmp )
 {
 	const type_t atypeid=typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
 
-	i.tid=topicRegistry.getId(topic);
-	i.hid=hostRegistry.getId(host);
-	if(host=="") i.hid=0;//Wildcard *
+	i.tid=Topics::Instance().getId(topic);
+	i.hid=host;
 	if(topic=="") i.tid=0;//Wildcard
-	regions::const_iterator rit=allrecords.find(i);
+	regions::const_iterator rit=allrecords.begin();
+	for(;rit!=allrecords.end();++rit)
+	{
+		if((*rit).first==i&&(*rit).second.blkstate.find(atypeid)!=(*rit).second.blkstate.end())
+			break;
+	}
+
+
 	if(rit==allrecords.end())
 		return boost::shared_ptr<const Data>();
 

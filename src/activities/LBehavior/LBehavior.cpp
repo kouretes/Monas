@@ -516,8 +516,8 @@ void LBehavior::read_messages() {
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
 	//obsm = _blk->readSignal<ObservationMessage> ("vision");
+	wim  = _blk->readData<WorldInfo> ("behavior",msgentry::HOST_ID_LOCAL_HOST,&wimtime);
 	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
-	wim  = _blk->readData<WorldInfo> ("behavior","localhost",&wimtime);
 
 
 	//Logger::Instance().WriteMsg("LBehavior", "read_messages ", Logger::ExtraExtraInfo);

@@ -18,6 +18,29 @@
 
 
 
+using namespace std;
+
+
+
+
+
+TopicTree::TopicTree(): stringRegistry()
+{
+	topictree[0].parentid=0;
+	topictree[0].children.insert(registerNew("global"));
+	addTopic(string("motion"),string("global"));
+	addTopic(string("leds"),string("global"));
+	addTopic(string("sensors"),string("global"));
+	addTopic(string("buttonevents"),string("sensor"));
+	addTopic(string("vision"),string("global"));
+	addTopic(string("behavior"),string("global"));
+	addTopic(string("localization"),string("global"));
+	addTopic(string("communication"),string("global"));
+	addTopic(string("obstacle"),string("global"));
+
+}
+
+
 TopicTree::TopicTree(std::string const& root): stringRegistry()
 {
 	topictree[0].parentid=0;
@@ -25,20 +48,20 @@ TopicTree::TopicTree(std::string const& root): stringRegistry()
 
 }
 
-std::set<std::size_t>  TopicTree::iterateTopics(std::string const& topic , int where) const
+std::set<std::size_t>  TopicTree::iterateTopics(std::size_t  topic , int where) const
 {
 	std::set<std::size_t>  res;
-	size_t topicId=getId(topic);
 	//cout<<"Check 0"<<endl;
-	if(topicId==0)
+	if(topic==0)
 		return res;
 	//cout<<"Check 1"<<endl;
-	std::map<std::size_t,topicdata >::const_iterator tit=topictree.find(topicId);
+	std::map<std::size_t,topicdata >::const_iterator tit=topictree.find(topic);
 	if(tit==topictree.end())
 			return res;
 	//cout<<"Check 2"<<endl;
-	res.insert(topicId);
-	if(where==msgentry::SUBSCRIBE_ABOVE_TOPIC||where==msgentry::SUBSCRIBE_ALL_TOPIC)
+	res.insert(topic);
+	if(where==msgentry::SUBSCRIBE_ABOVE_TOPIC||where==msgentry::SUBSCRIBE_ALL_TOPIC||
+		where==msgentry::UNSUBSCRIBE_ABOVE_TOPIC||where==msgentry::UNSUBSCRIBE_ALL_TOPIC)
 	{
 
 		do
@@ -51,8 +74,9 @@ std::set<std::size_t>  TopicTree::iterateTopics(std::string const& topic , int w
 		while((*tit).first!=(*tit).second.parentid);
 	}
 
-	if(where==msgentry::SUBSCRIBE_BELOW_TOPIC||where==msgentry::SUBSCRIBE_ALL_TOPIC)
-		iterateTopicsBelow(res,topicId);
+	if(where==msgentry::SUBSCRIBE_BELOW_TOPIC||where==msgentry::SUBSCRIBE_ALL_TOPIC||
+		where==msgentry::UNSUBSCRIBE_BELOW_TOPIC||where==msgentry::UNSUBSCRIBE_ALL_TOPIC)
+		iterateTopicsBelow(res,topic);
   return res;
 }
 

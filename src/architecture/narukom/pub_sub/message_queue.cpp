@@ -22,20 +22,43 @@
 #include "message_queue.h"
 #include "message_buffer.h"
 #include "topicTree.h"
-#include "tools/XML.h"
+#include "tools/XMLConfig.h"
+#include "architecture/archConfig.h"
+
+#include "network/multicastpoint.hpp"
 
 
 using std::map;
 using std::string;
 using namespace std;
 
-MessageQueue::MessageQueue() : Thread(false)
+MessageQueue::MessageQueue() : Thread(false),multicast(NULL)
 {
-	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
-	tree=new TopicTree("global");
-    create_tree();
+	subscriptions.resize(Topics::Instance().size());//Force Generation of instance and resize subscription vector
 
+    XMLConfig xmlconfig(ArchConfig::Instance().GetConfigPrefix()+"/network.xml");
+    string multicastip;
+    unsigned int port;
+    unsigned maxpayload;
+    unsigned beacon_interval;
+    if(xmlconfig.QueryElement("multicast_ip", multicastip) &&
+	   xmlconfig.QueryElement("multicast_port", port) &&
+	   xmlconfig.QueryElement("maxpayload", maxpayload) &&
+	   xmlconfig.QueryElement("beacon_interval", beacon_interval) )
+	{
+		cout<<"Initiating multicast network at address: "<<multicastip<<":"<<port<<std::endl;
+		KNetwork::MulticastPoint *m=new KNetwork::MulticastPoint(multicastip,maxpayload);
+		m->setCleanupAndBeacon(beacon_interval);
+		m->attachTo(*this);
+		m->startEndPoint(multicastip,port);
+		multicast=m;
+	}
 
+}
+
+MessageQueue::~MessageQueue()
+{
+		delete multicast;
 }
 /*
 void MessageQueue::addTopic(std::string const& what,std::string const& under)
@@ -43,23 +66,6 @@ void MessageQueue::addTopic(std::string const& what,std::string const& under)
 	tree->addTopic(what,under);
 
 }*/
-void MessageQueue::create_tree()
-{
-	//cout << "Could not load file Default tree created" << file_name << endl;
-/*
-
-	*/
-	tree->addTopic(string("motion"),string("global"));
-	tree->addTopic(string("leds"),string("global"));
-	tree->addTopic(string("sensors"),string("global"));
-	tree->addTopic(string("buttonevents"),string("sensor"));
-	tree->addTopic(string("vision"),string("global"));
-	tree->addTopic(string("behavior"),string("global"));
-	tree->addTopic(string("localization"),string("global"));
-	tree->addTopic(string("communication"),string("global"));
-	tree->addTopic(string("obstacle"),string("global"));
-	subscriptions.resize(tree->size());
-}
 
 void MessageQueue::purgeBuffer(MessageBuffer *b)
 {
@@ -96,7 +102,6 @@ MessageBuffer* MessageQueue::makeReadBuffer(std::string const& s)
 
 	size_t newid=pubsubRegistry.registerNew(s);
 	subscriberBuffers.resize(pubsubRegistry.size()+1);
-	std::cout<<newid<<" "<<pubsubRegistry.size()<<std::endl;
 	MessageBuffer* new_msg_buf = new MessageBuffer ( newid);
 	new_msg_buf->setCleanUp(boost::bind(&MessageQueue::purgeBuffer,this,_1));
 	subscriberBuffers[newid].insert(new_msg_buf);
@@ -104,11 +109,11 @@ MessageBuffer* MessageQueue::makeReadBuffer(std::string const& s)
 }
 
 
-void MessageQueue::subscribeTo(std::size_t subid, std::string const& topic , int where)
+void MessageQueue::subscribeTo(std::size_t subid, std::size_t topic , int where)
 {
 
 
-	std::set<std::size_t> r=tree->iterateTopics(topic,where);
+	std::set<std::size_t> r=Topics::Instance().iterateTopics(topic,where);
 
 	std::set<std::size_t>::iterator tit=r.begin();
 	std::set<MessageBuffer *> & bset=subscriberBuffers[subid];
@@ -116,17 +121,17 @@ void MessageQueue::subscribeTo(std::size_t subid, std::string const& topic , int
 
 	for(;tit!=r.end();++tit)
 	{
-		//cout<<"sub:"<<*tit<<" "<< b<<endl;
+		//cout<<"sub:"<<*tit<<" "<< subid<<endl;
 		for(bit=bset.begin();bit!=bset.end();++bit)
 			subscriptions[*tit].insert(*bit);
 	}
 
 }
 
-void MessageQueue::unsubscribeFrom(std::size_t subid, std::string const& topic , int where)
+void MessageQueue::unsubscribeFrom(std::size_t subid, std::size_t topic , int where)
 {
 
-	std::set<std::size_t> r=tree->iterateTopics(topic,where);
+	std::set<std::size_t> r=Topics::Instance().iterateTopics(topic,where);
 
 	std::set<std::size_t>::iterator tit=r.begin();
 
@@ -171,22 +176,26 @@ void MessageQueue::process_queued_msg()
 		boost::unique_lock<boost::mutex > pub_sub_mutexlock(pub_sub_mutex);
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
         {
-			size_t msgtopicId=tree->getId((*mit).topic);
+			size_t msgtopicId=(*mit).topic;
 
 			//===== Handle subscriptions
 			if((*mit).msgclass>=msgentry::SUBSCRIBE_ON_TOPIC && (*mit).msgclass<=msgentry::SUBSCRIBE_ALL_TOPIC)
 			{
 				subscribeTo(pownerid,(*mit).topic,(*mit).msgclass);
+				if((*mit).host!=msgentry::HOST_ID_LOCAL_HOST&&multicast!=NULL)
+					multicast->getReadBuffer()->add((*mit));
 				continue;
 			}
 			else if((*mit).msgclass>=msgentry::UNSUBSCRIBE_ON_TOPIC && (*mit).msgclass<=msgentry::UNSUBSCRIBE_ALL_TOPIC)
 			{
 				unsubscribeFrom(pownerid,(*mit).topic,(*mit).msgclass);
+				if((*mit).host!=msgentry::HOST_ID_LOCAL_HOST&&multicast!=NULL)
+					multicast->getReadBuffer()->add((*mit));
 				continue;
 			}
 
 
-			//cout<<"Topic->id:"<<(*mit).topic<<msgtopicId<<" "<<subscriptions.size()<<endl;
+			//cout<<"Topicid:"<<msgtopicId<<" "<<subscriptions[msgtopicId].size()<<endl;
 			if(msgtopicId==0||subscriptions.size()<=msgtopicId)
 				continue;
 			std::set<MessageBuffer*>::const_iterator subit= subscriptions[msgtopicId].begin();
