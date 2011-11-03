@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<!-- UDP Multicasting ip for networking -->
+<multicast_ip>233.253.124.144</multicast_ip>
+<multicast_port>30004</multicast_port>
+
+<maxpayload>512</maxpayload>
+<!-- Broadcasting interval in ms -->
+<beacon_interval>3500</beacon_interval>

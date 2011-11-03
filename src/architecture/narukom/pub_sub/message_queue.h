@@ -42,8 +42,7 @@ typedef struct msgentry_ msgentry;
 template<typename T>class Buffer;
 
 typedef  Buffer<msgentry> MessageBuffer;
-class TopicTree;
-
+class EndPoint;
 
 /**
 MessageQueue class is the message broker of Narukom.
@@ -55,10 +54,10 @@ class MessageQueue : public Thread
   public:
     //friend class MessageBuffer;
     MessageQueue();
-	MessageBuffer* attachPublisher(std::string const& s);
-	MessageBuffer* attachSubscriber(std::string const& s);
-	void subscribeTo(MessageBuffer *b, std::string const& topic , int where);
-	void unsubscribeFrom(MessageBuffer *b, std::string const& topic , int where);
+    ~MessageQueue();
+	MessageBuffer* makeWriteBuffer(std::string const& s);
+	MessageBuffer* makeReadBuffer(std::string const& s);
+
     void purgeBuffer( MessageBuffer *b);
 
     void process_queued_msg();
@@ -77,14 +76,18 @@ class MessageQueue : public Thread
     };
   private:
   	//String hasher
+  	EndPoint * multicast;
+
   	stringRegistry pubsubRegistry;
 
-  	TopicTree * tree;
 
+	boost::mutex  pub_sub_mutex;
   	//Locked by pub_sub_mutex;
-  	std::vector< std::set<MessageBuffer*> > subscriptions;
+  	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
+  	std::vector<std::set<MessageBuffer*> > publisherbuffers,subscriberBuffers;//Maps pubsubregistry ids to Buffers
 
-    boost::mutex  pub_sub_mutex;
+
+
 	//Waking up stuff
     boost::mutex  cond_mutex;
     std::set<MessageBuffer*> cond_publishers;
@@ -92,7 +95,9 @@ class MessageQueue : public Thread
     boost::condition_variable_any cond;
 
     StopWatch<> agentStats;
-    void create_tree();
+
+    void subscribeTo(std::size_t subid, std::size_t  topic , int where);
+	void unsubscribeFrom(std::size_t subid, std::size_t  topic , int where);
 
     //Recursive call, UNLOCKED
     };

@@ -2,17 +2,13 @@
 #define HeadBehavior_H
 
 #include "architecture/IActivity.h"
-#include "architecture/narukom/pub_sub/publisher.h"
+
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-
-///#include "time.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -52,10 +48,7 @@ class HeadBehavior: public IActivity {
 		HeadBehavior();
 		int Execute();
 		void UserInit();
-		void read_messages();
-		int MakeTrackBallAction();
-		void MakeScanAction();
-		void HeadScanStep();
+
 		std::string GetName() {
 			return "HeadBehavior";
 		}
@@ -71,13 +64,10 @@ class HeadBehavior: public IActivity {
 		int headaction;
 		int prevaction;
 		int curraction;
-		boost::posix_time::ptime lastturn;
-		bool field;
 		int state;
 		float headpos;
 		int leftright;
 		bool startscan;
-		bool scanforball;
 		float targetYaw;
 		float targetPitch;
 		float psign,ysign;
@@ -86,7 +76,6 @@ class HeadBehavior: public IActivity {
 		bool newBearing;
 
 		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
-
 		boost::shared_ptr<const BToHeadMessage> bhm;
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 		boost::shared_ptr<const ObservationMessage> obsm;
@@ -95,8 +84,13 @@ class HeadBehavior: public IActivity {
 		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
 		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
+		void read_messages();
 		void calibrate();
-		void highheadscanstep(float );
+		void HeadScanStep();
+		void highheadscanstep(float limit_yaw);
+		void HeadScanStepSmart();
+		void HeadScanStepFieldUntested();
+		int MakeTrackBallAction();
 		void headmotion(float pitch, float yaw);
 
 };

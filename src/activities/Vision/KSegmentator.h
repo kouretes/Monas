@@ -7,7 +7,7 @@
 
 #include <time.h>
 #include "tools/toString.h"
-#include "opencv/cv.h"
+#include "hal/robot/generic_nao/KImage.h"
 
 
 #ifdef __GNUC__
@@ -45,7 +45,7 @@ class KSegmentator{
 		* are valid and produce a valid segmentation result
 		*/
 
-        void attachToIplImage(IplImage *data);
+        void attachToIplImage(KImage const& data);
 		/**
 		*Clasify a pixel of the image: i is row and j is column, ie i is 0-640 and j is 0-480 in a 640x480 image
 		*/
@@ -94,6 +94,7 @@ class KSegmentator{
 #endif
 		static const unsigned char LUTres=3,LUTsize=32;//Carefull. LUTSIZE=256>>LUTRES
 		//Pointer to attached IplImage data
+
 		char const *dataPointer;
 		int widthmult2;//width*2 :D
 		int width;//:)

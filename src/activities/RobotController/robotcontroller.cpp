@@ -27,7 +27,8 @@ void RobotController::UserInit() {
 
 	gm_state.Clear();
 
-	_blk->subscribeTo("buttonevents", 0);
+
+
 	_blk->publishState(gm_state, "behavior");//Default state
 	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);
 	lastalive=boost::posix_time::microsec_clock::universal_time();

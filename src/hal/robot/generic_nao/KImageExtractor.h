@@ -10,24 +10,21 @@
 #include "hal/robot/generic_nao/aldebaran-vision.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <opencv/cv.h>
+
+#include "KImage.h"
 
 #define VISION_RESOLUTION kVGA
 #define VISION_CSPACE AL::kYUV422InterlacedColorSpace
 #define VISON_FPS 30
 #define VISION_GVMNAME "KImageExtractor"
 
-
-//#define REMOTE_ON 1
-#define  RAW
-
-
-
 /**
  * Extract Image from hardware
  * Automatically deals with naoqi related stuff, and handles gracefully image size changes
  * TODO: Provide functionality to change resolution/framerate on the fly
  */
+
+
 class KImageExtractor
 {
 	public:
@@ -37,9 +34,8 @@ class KImageExtractor
 
 		~KImageExtractor();
 		//Get new Image from hardware
-		boost::posix_time::ptime fetchImage(IplImage *img);
+		boost::posix_time::ptime fetchImage(KImage & img);
 		//Create new space for image
-		IplImage *allocateImage();
 		float calibrateCamera(int sleeptime=500,int exp=15);
 		float getExpUs() const;
 		int getCamera() const;
@@ -49,6 +45,7 @@ class KImageExtractor
 	private:
 		AL::ALPtr<AL::ALVideoDeviceProxy> xCamProxy;
 
+
 		//Name used when subscribing Generic Video Module
 		std::string GVM_name;
 		int resolution;//Current Resolution
@@ -56,6 +53,8 @@ class KImageExtractor
 		bool doneSubscribe;//Initializations done?
 		float refexpusec,lastexpusec,lastcam;
 		Blackboard *_blk;
+
+		void _releaseImage();
 
 };
 

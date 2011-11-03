@@ -21,4 +21,4 @@ add_definitions(" -DNAOQI_${NaoQiVer} ")
 include ( ../activTemplate.cmake )
 
 
-use_lib(${ActivityName} ALCOMMON LIBVISION OPENCV)
+use_lib(${ActivityName} ALCOMMON LIBVISION)

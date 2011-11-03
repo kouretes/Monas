@@ -23,6 +23,8 @@
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_message_reflection.h>
+#include "VisionObservations.pb.h"
+#include "WorldInfo.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Internal implementation detail -- do not call these.
@@ -34,9 +36,11 @@ class KickOffMessage;
 class BToHeadMessage;
 class HeadToBMessage;
 class ScanMessage;
-class StateEnd;
 class PlayerNumberMessage;
 class PositionMessage;
+class ReturnToPositionMessage;
+class DoubleObsInfo;
+class FallMessage;
 class LocalizationResetMessage;
 
 // ===================================================================
@@ -405,95 +409,6 @@ class ScanMessage : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class StateEnd : public ::google::protobuf::Message {
- public:
-  StateEnd();
-  virtual ~StateEnd();
-  
-  StateEnd(const StateEnd& from);
-  
-  inline StateEnd& operator=(const StateEnd& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const StateEnd& default_instance();
-  
-  void Swap(StateEnd* other);
-  
-  // implements Message ----------------------------------------------
-  
-  StateEnd* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const StateEnd& from);
-  void MergeFrom(const StateEnd& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required bool ended = 1 [default = false];
-  inline bool has_ended() const;
-  inline void clear_ended();
-  static const int kEndedFieldNumber = 1;
-  inline bool ended() const;
-  inline void set_ended(bool value);
-  
-  // @@protoc_insertion_point(class_scope:StateEnd)
- private:
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  mutable int _cached_size_;
-  
-  bool ended_;
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
-  inline bool _has_bit(int index) const {
-    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
-  }
-  inline void _set_bit(int index) {
-    _has_bits_[index / 32] |= (1u << (index % 32));
-  }
-  inline void _clear_bit(int index) {
-    _has_bits_[index / 32] &= ~(1u << (index % 32));
-  }
-  
-  void InitAsDefaultInstance();
-  static StateEnd* default_instance_;
-};
-// -------------------------------------------------------------------
-
 class PlayerNumberMessage : public ::google::protobuf::Message {
  public:
   PlayerNumberMessage();
@@ -555,17 +470,25 @@ class PlayerNumberMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 player_number() const;
   inline void set_player_number(::google::protobuf::int32 value);
   
+  // required int32 team_side = 2 [default = 1];
+  inline bool has_team_side() const;
+  inline void clear_team_side();
+  static const int kTeamSideFieldNumber = 2;
+  inline ::google::protobuf::int32 team_side() const;
+  inline void set_team_side(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:PlayerNumberMessage)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
   ::google::protobuf::int32 player_number_;
+  ::google::protobuf::int32 team_side_;
   friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
   friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
   friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -685,6 +608,281 @@ class PositionMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static PositionMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ReturnToPositionMessage : public ::google::protobuf::Message {
+ public:
+  ReturnToPositionMessage();
+  virtual ~ReturnToPositionMessage();
+  
+  ReturnToPositionMessage(const ReturnToPositionMessage& from);
+  
+  inline ReturnToPositionMessage& operator=(const ReturnToPositionMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ReturnToPositionMessage& default_instance();
+  
+  void Swap(ReturnToPositionMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ReturnToPositionMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ReturnToPositionMessage& from);
+  void MergeFrom(const ReturnToPositionMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required bool goalieToPos = 1 [default = false];
+  inline bool has_goalietopos() const;
+  inline void clear_goalietopos();
+  static const int kGoalieToPosFieldNumber = 1;
+  inline bool goalietopos() const;
+  inline void set_goalietopos(bool value);
+  
+  // @@protoc_insertion_point(class_scope:ReturnToPositionMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  bool goalietopos_;
+  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static ReturnToPositionMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class DoubleObsInfo : public ::google::protobuf::Message {
+ public:
+  DoubleObsInfo();
+  virtual ~DoubleObsInfo();
+  
+  DoubleObsInfo(const DoubleObsInfo& from);
+  
+  inline DoubleObsInfo& operator=(const DoubleObsInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const DoubleObsInfo& default_instance();
+  
+  void Swap(DoubleObsInfo* other);
+  
+  // implements Message ----------------------------------------------
+  
+  DoubleObsInfo* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const DoubleObsInfo& from);
+  void MergeFrom(const DoubleObsInfo& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .ObservationMessage prev = 1;
+  inline bool has_prev() const;
+  inline void clear_prev();
+  static const int kPrevFieldNumber = 1;
+  inline const ::ObservationMessage& prev() const;
+  inline ::ObservationMessage* mutable_prev();
+  
+  // required .ObservationMessage last = 2;
+  inline bool has_last() const;
+  inline void clear_last();
+  static const int kLastFieldNumber = 2;
+  inline const ::ObservationMessage& last() const;
+  inline ::ObservationMessage* mutable_last();
+  
+  // @@protoc_insertion_point(class_scope:DoubleObsInfo)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::ObservationMessage* prev_;
+  ::ObservationMessage* last_;
+  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static DoubleObsInfo* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class FallMessage : public ::google::protobuf::Message {
+ public:
+  FallMessage();
+  virtual ~FallMessage();
+  
+  FallMessage(const FallMessage& from);
+  
+  inline FallMessage& operator=(const FallMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const FallMessage& default_instance();
+  
+  void Swap(FallMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  FallMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const FallMessage& from);
+  void MergeFrom(const FallMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required int32 fall = 1 [default = 0];
+  inline bool has_fall() const;
+  inline void clear_fall();
+  static const int kFallFieldNumber = 1;
+  inline ::google::protobuf::int32 fall() const;
+  inline void set_fall(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:FallMessage)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::int32 fall_;
+  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static FallMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -868,26 +1066,6 @@ inline void ScanMessage::set_scancompleted(bool value) {
 
 // -------------------------------------------------------------------
 
-// StateEnd
-
-// required bool ended = 1 [default = false];
-inline bool StateEnd::has_ended() const {
-  return _has_bit(0);
-}
-inline void StateEnd::clear_ended() {
-  ended_ = false;
-  _clear_bit(0);
-}
-inline bool StateEnd::ended() const {
-  return ended_;
-}
-inline void StateEnd::set_ended(bool value) {
-  _set_bit(0);
-  ended_ = value;
-}
-
-// -------------------------------------------------------------------
-
 // PlayerNumberMessage
 
 // required int32 player_number = 1 [default = 2];
@@ -904,6 +1082,22 @@ inline ::google::protobuf::int32 PlayerNumberMessage::player_number() const {
 inline void PlayerNumberMessage::set_player_number(::google::protobuf::int32 value) {
   _set_bit(0);
   player_number_ = value;
+}
+
+// required int32 team_side = 2 [default = 1];
+inline bool PlayerNumberMessage::has_team_side() const {
+  return _has_bit(1);
+}
+inline void PlayerNumberMessage::clear_team_side() {
+  team_side_ = 1;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 PlayerNumberMessage::team_side() const {
+  return team_side_;
+}
+inline void PlayerNumberMessage::set_team_side(::google::protobuf::int32 value) {
+  _set_bit(1);
+  team_side_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -956,6 +1150,84 @@ inline float PositionMessage::theta() const {
 inline void PositionMessage::set_theta(float value) {
   _set_bit(2);
   theta_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ReturnToPositionMessage
+
+// required bool goalieToPos = 1 [default = false];
+inline bool ReturnToPositionMessage::has_goalietopos() const {
+  return _has_bit(0);
+}
+inline void ReturnToPositionMessage::clear_goalietopos() {
+  goalietopos_ = false;
+  _clear_bit(0);
+}
+inline bool ReturnToPositionMessage::goalietopos() const {
+  return goalietopos_;
+}
+inline void ReturnToPositionMessage::set_goalietopos(bool value) {
+  _set_bit(0);
+  goalietopos_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// DoubleObsInfo
+
+// required .ObservationMessage prev = 1;
+inline bool DoubleObsInfo::has_prev() const {
+  return _has_bit(0);
+}
+inline void DoubleObsInfo::clear_prev() {
+  if (prev_ != NULL) prev_->::ObservationMessage::Clear();
+  _clear_bit(0);
+}
+inline const ::ObservationMessage& DoubleObsInfo::prev() const {
+  return prev_ != NULL ? *prev_ : *default_instance_->prev_;
+}
+inline ::ObservationMessage* DoubleObsInfo::mutable_prev() {
+  _set_bit(0);
+  if (prev_ == NULL) prev_ = new ::ObservationMessage;
+  return prev_;
+}
+
+// required .ObservationMessage last = 2;
+inline bool DoubleObsInfo::has_last() const {
+  return _has_bit(1);
+}
+inline void DoubleObsInfo::clear_last() {
+  if (last_ != NULL) last_->::ObservationMessage::Clear();
+  _clear_bit(1);
+}
+inline const ::ObservationMessage& DoubleObsInfo::last() const {
+  return last_ != NULL ? *last_ : *default_instance_->last_;
+}
+inline ::ObservationMessage* DoubleObsInfo::mutable_last() {
+  _set_bit(1);
+  if (last_ == NULL) last_ = new ::ObservationMessage;
+  return last_;
+}
+
+// -------------------------------------------------------------------
+
+// FallMessage
+
+// required int32 fall = 1 [default = 0];
+inline bool FallMessage::has_fall() const {
+  return _has_bit(0);
+}
+inline void FallMessage::clear_fall() {
+  fall_ = 0;
+  _clear_bit(0);
+}
+inline ::google::protobuf::int32 FallMessage::fall() const {
+  return fall_;
+}
+inline void FallMessage::set_fall(::google::protobuf::int32 value) {
+  _set_bit(0);
+  fall_ = value;
 }
 
 // -------------------------------------------------------------------

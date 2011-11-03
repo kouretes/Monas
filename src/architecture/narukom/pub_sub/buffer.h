@@ -25,7 +25,6 @@
 #include <boost/function.hpp>
 #include <vector>
 #include <list>
-#include "filters/filter.h"
 
 
 template<typename T>
@@ -46,14 +45,11 @@ class Buffer
     //bool operator==( MessageBuffer& other) ;
     std::size_t getOwnerID() const {return ownerId;};
     //MessageQueue & getQueue() {return  mq;};
-    void add_filter(Filter* filter);
-    void remove_filter(Filter* filter);
     void setNotifier(NotifierFncPtr an) {boost::unique_lock<boost::mutex > data_lock(mutex);n=an;};
     void setCleanUp(NotifierFncPtr ac) {boost::unique_lock<boost::mutex > data_lock(mutex);c=ac;};
   private:
 
     std::vector<T> msg_buf;
-    std::list<Filter*> filters;
     std::size_t ownerId;
     boost::mutex  mutex;
     NotifierFncPtr n;
