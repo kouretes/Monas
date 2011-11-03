@@ -16,4 +16,4 @@ foreach ( subdir ${theSubDirs} )
    add_subdirectory( ${subdir} )
 endforeach ( subdir ${theSubDirs} )
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} ${StatechartLibraries} PARENT_SCOPE)
+set ( TargetLinkLibraries  ${StatechartLibraries}  ${TargetLinkLibraries} CACHE INTERNAL "")

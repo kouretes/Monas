@@ -35,8 +35,6 @@ if ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
 
   message ( STATUS " _..::: Configuring Statechart Engine for Nao robot :::.._ " )
 
-  include( ../../hal/robot/nao-1.6.0/bootstrap.cmake )
-
   use_lib(statechartEngine ALCOMMON ALVALUE ALMATH LIBCORE TOOLS BOOST  )
 
 endif ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
@@ -49,5 +47,4 @@ install ( TARGETS statechartEngine
         LIBRARY DESTINATION   lib
         ARCHIVE DESTINATION   lib/static )
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} statechartEngine PARENT_SCOPE )
-
+set ( TargetLinkLibraries ${TargetLinkLibraries} statechartEngine CACHE INTERNAL "" )

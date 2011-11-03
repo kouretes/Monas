@@ -21,6 +21,8 @@ if ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
     add_definitions ( -m32 )
 endif ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
 
+set ( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/binaries/${TargetPlatform}" CACHE PATH "Select the install directory" FORCE )
+
 set(ExternalDir ./external)
 add_subdirectory( external )
 add_subdirectory( src )

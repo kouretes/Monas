@@ -2,23 +2,21 @@ message ( STATUS "" )
 message ( STATUS " _..::: Building Architecture for Linux Platform :::.._ " )
 message ( STATUS "" )
 
-# TODO
-include_directories ( AFTER ../../architecture/narukom/
-                            ../../architecture/narukom/message_definitions/
-                            ../../architecture/narukom/messages/
-                            ../../architecture/narukom/network/
-                            ../../architecture/narukom/pub_sub/
-                            ../../architecture/narukom/system/ )
+
+set(MonasTargetSources ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp CACHE INTERNAL "")
+
+function(Monas_Finalize)
+	find_package(Boost COMPONENTS date_time thread system)
+
+	message ( STATUS " _..::: Making Monas Executable Target :::.._ " )
+	add_executable ( Monas ${MonasTargetSources} )
+	target_link_libraries( Monas   ${ActivityLibraries}  ${TargetLinkLibraries}  ${Boost_LIBRARIES} )
 
 
-add_executable ( Monas main.cpp )
-
-
-target_link_libraries( Monas M_tinyxml ${TargetLinkLibraries} ${ActivityLibraries} )
-
-install ( TARGETS Monas 
-            RUNTIME DESTINATION   bin
-            LIBRARY DESTINATION   lib
-            ARCHIVE DESTINATION   lib/static )
+	install ( TARGETS Monas
+		    RUNTIME DESTINATION   bin
+		    LIBRARY DESTINATION   lib
+		    ARCHIVE DESTINATION   lib/static )
+endfunction(Monas_Finalize)
 
 

@@ -4,14 +4,14 @@ message ( STATUS "" )
 
 
 add_library( GenWindows ${LibBuildType}
-                        winthread.cpp 
-                        syscall.cpp 
+                        winthread.cpp
+                        syscall.cpp
                         dlib_fnc.cpp
 )
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} GenWindows PARENT_SCOPE )
+set ( TargetLinkLibraries ${TargetLinkLibraries} GenWindows CACHE INTERNAL "" )
 
-install ( TARGETS GenWindows 
+install ( TARGETS GenWindows
         RUNTIME DESTINATION   bin
         LIBRARY DESTINATION   lib
         ARCHIVE DESTINATION   lib/static )
