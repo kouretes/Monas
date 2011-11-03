@@ -695,16 +695,16 @@ void Behavior::Kick(int side) {
 			else
 				amot->set_command("KickForwardRight.xar"); //RightKick
 		} else if (orientation == 3) {
-			amot->set_command("KickSideLeftFastPierris.xar"); //"HardLeftSideKick" KickSideLeftFast
+			amot->set_command("KickSideLeftFast.xar"); //"HardLeftSideKick" KickSideLeftFast
 			direction = -1;
 		} else if (orientation == 1) {
-			amot->set_command("KickSideRightFastPierris.xar"); //"HardRightSideKick" KickSideRightFast
+			amot->set_command("KickSideRightFast.xar"); //"HardRightSideKick" KickSideRightFast
 			direction = +1;
 		} else if (orientation == 2) {
 			if (by > 0.0)
-				amot->set_command("KickBackLeftPierris.xar"); //LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
+				amot->set_command("KickSideLeftSoft.xar"); //LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
 			else
-				amot->set_command("KickBackRightPierris.xar"); //RightBackHigh_carpet KickBackRight KickBackRightPierris
+				amot->set_command("KickSideRightSoft.xar"); //RightBackHigh_carpet KickBackRight KickBackRightPierris
 		} else {
 			if (by > 0.0)
 				amot->set_command("KickSideLeftFast.xar");
