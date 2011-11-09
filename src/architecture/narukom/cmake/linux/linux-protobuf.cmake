@@ -1,1 +1,1 @@
-set( ProtobufLibrary ${ConfigDir}/${TargetPlatform}/lib/libprotobuf.so)
+set( ProtobufLibrary ${ConfigDir}/${TargetPlatform}/lib/libprotobuf.a)
