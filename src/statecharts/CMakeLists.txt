@@ -16,4 +16,4 @@ foreach ( subdir ${theSubDirs} )
    add_subdirectory( ${subdir} )
 endforeach ( subdir ${theSubDirs} )
 
-set ( TargetLinkLibraries  ${StatechartLibraries}  ${TargetLinkLibraries} CACHE INTERNAL "")
+set ( TargetLinkLibraries    -Wl,--no-as-needed ${StatechartLibraries} -Wl,--as-needed ${TargetLinkLibraries}  CACHE INTERNAL "")
