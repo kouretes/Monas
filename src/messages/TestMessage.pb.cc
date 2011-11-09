@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "TestMessage.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -163,7 +166,7 @@ bool TestMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &counter_)));
-          _set_bit(0);
+          set_has_counter();
         } else {
           goto handle_uninterpreted;
         }
@@ -190,7 +193,7 @@ bool TestMessage::MergePartialFromCodedStream(
 void TestMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 counter = 6 [default = 0];
-  if (_has_bit(0)) {
+  if (has_counter()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->counter(), output);
   }
   
@@ -203,7 +206,7 @@ void TestMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* TestMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 counter = 6 [default = 0];
-  if (_has_bit(0)) {
+  if (has_counter()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->counter(), target);
   }
   
@@ -252,7 +255,7 @@ void TestMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void TestMessage::MergeFrom(const TestMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_counter()) {
       set_counter(from.counter());
     }
   }

@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "ObstacleAvoidanceMessage.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -282,7 +285,7 @@ bool ObstacleMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &direction_)));
-          _set_bit(0);
+          set_has_direction();
         } else {
           goto handle_uninterpreted;
         }
@@ -298,7 +301,7 @@ bool ObstacleMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &distance_)));
-          _set_bit(1);
+          set_has_distance();
         } else {
           goto handle_uninterpreted;
         }
@@ -314,7 +317,7 @@ bool ObstacleMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &certainty_)));
-          _set_bit(2);
+          set_has_certainty();
         } else {
           goto handle_uninterpreted;
         }
@@ -341,17 +344,17 @@ bool ObstacleMessage::MergePartialFromCodedStream(
 void ObstacleMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 direction = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_direction()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->direction(), output);
   }
   
   // required float distance = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_distance()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->distance(), output);
   }
   
   // required float certainty = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_certainty()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->certainty(), output);
   }
   
@@ -364,17 +367,17 @@ void ObstacleMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* ObstacleMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 direction = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_direction()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->direction(), target);
   }
   
   // required float distance = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_distance()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->distance(), target);
   }
   
   // required float certainty = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_certainty()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->certainty(), target);
   }
   
@@ -433,13 +436,13 @@ void ObstacleMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void ObstacleMessage::MergeFrom(const ObstacleMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_direction()) {
       set_direction(from.direction());
     }
-    if (from._has_bit(1)) {
+    if (from.has_distance()) {
       set_distance(from.distance());
     }
-    if (from._has_bit(2)) {
+    if (from.has_certainty()) {
       set_certainty(from.certainty());
     }
   }
@@ -1071,7 +1074,7 @@ bool PathPlanningRequestMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &gotox_)));
-          _set_bit(0);
+          set_has_gotox();
         } else {
           goto handle_uninterpreted;
         }
@@ -1087,7 +1090,7 @@ bool PathPlanningRequestMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &gotoy_)));
-          _set_bit(1);
+          set_has_gotoy();
         } else {
           goto handle_uninterpreted;
         }
@@ -1103,7 +1106,7 @@ bool PathPlanningRequestMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &gotoangle_)));
-          _set_bit(2);
+          set_has_gotoangle();
         } else {
           goto handle_uninterpreted;
         }
@@ -1130,17 +1133,17 @@ bool PathPlanningRequestMessage::MergePartialFromCodedStream(
 void PathPlanningRequestMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float goToX = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_gotox()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->gotox(), output);
   }
   
   // required float goToY = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_gotoy()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->gotoy(), output);
   }
   
   // required float goToAngle = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_gotoangle()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->gotoangle(), output);
   }
   
@@ -1153,17 +1156,17 @@ void PathPlanningRequestMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* PathPlanningRequestMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float goToX = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_gotox()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->gotox(), target);
   }
   
   // required float goToY = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_gotoy()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->gotoy(), target);
   }
   
   // required float goToAngle = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_gotoangle()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->gotoangle(), target);
   }
   
@@ -1220,13 +1223,13 @@ void PathPlanningRequestMessage::MergeFrom(const ::google::protobuf::Message& fr
 void PathPlanningRequestMessage::MergeFrom(const PathPlanningRequestMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_gotox()) {
       set_gotox(from.gotox());
     }
-    if (from._has_bit(1)) {
+    if (from.has_gotoy()) {
       set_gotoy(from.gotoy());
     }
-    if (from._has_bit(2)) {
+    if (from.has_gotoangle()) {
       set_gotoangle(from.gotoangle());
     }
   }
@@ -1353,7 +1356,7 @@ bool PathPlanningResultMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &movetox_)));
-          _set_bit(0);
+          set_has_movetox();
         } else {
           goto handle_uninterpreted;
         }
@@ -1369,7 +1372,7 @@ bool PathPlanningResultMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &movetoy_)));
-          _set_bit(1);
+          set_has_movetoy();
         } else {
           goto handle_uninterpreted;
         }
@@ -1385,7 +1388,7 @@ bool PathPlanningResultMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &movetoangle_)));
-          _set_bit(2);
+          set_has_movetoangle();
         } else {
           goto handle_uninterpreted;
         }
@@ -1412,17 +1415,17 @@ bool PathPlanningResultMessage::MergePartialFromCodedStream(
 void PathPlanningResultMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float moveToX = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_movetox()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->movetox(), output);
   }
   
   // required float moveToY = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_movetoy()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->movetoy(), output);
   }
   
   // required float moveToAngle = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_movetoangle()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->movetoangle(), output);
   }
   
@@ -1435,17 +1438,17 @@ void PathPlanningResultMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* PathPlanningResultMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float moveToX = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_movetox()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->movetox(), target);
   }
   
   // required float moveToY = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_movetoy()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->movetoy(), target);
   }
   
   // required float moveToAngle = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_movetoangle()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->movetoangle(), target);
   }
   
@@ -1502,13 +1505,13 @@ void PathPlanningResultMessage::MergeFrom(const ::google::protobuf::Message& fro
 void PathPlanningResultMessage::MergeFrom(const PathPlanningResultMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_movetox()) {
       set_movetox(from.movetox());
     }
-    if (from._has_bit(1)) {
+    if (from.has_movetoy()) {
       set_movetoy(from.movetoy());
     }
-    if (from._has_bit(2)) {
+    if (from.has_movetoangle()) {
       set_movetoangle(from.movetoangle());
     }
   }
