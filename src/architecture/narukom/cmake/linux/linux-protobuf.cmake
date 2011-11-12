@@ -22,10 +22,11 @@ find_package_handle_standard_args(LIBProtobuf  DEFAULT_MSG
 mark_as_advanced(LIBProtobuf_INCLUDE_DIR LIBProtobuf_LIBRARY )
 
 
-if( "A${LIBProtobuf_LIBRARY}A" STREQUAL "AA")
+if( "${LIBProtobuf_LIBRARY}" STREQUAL "LIBProtobuf_LIBRARY-NOTFOUND")
     set( ProtobufLibrary ${ConfigDir}/${TargetPlatform}/lib/libprotobuf.a)
-else( "A${LIBProtobuf_LIBRARY}A" STREQUAL "AA")
+    set(  LIBProtobuf_LIBRARY ${ProtobufLibrary} )
+else( "${LIBProtobuf_LIBRARY}" STREQUAL "LIBProtobuf_LIBRARY-NOTFOUND")
     set( ProtobufLibrary ${LIBProtobuf_LIBRARY})
-endif( "A${LIBProtobuf_LIBRARY}A" STREQUAL "AA")
+endif( "${LIBProtobuf_LIBRARY}" STREQUAL "LIBProtobuf_LIBRARY-NOTFOUND")
 
 message ( STATUS "Protobuf lib path: ${ProtobufLibrary}")
