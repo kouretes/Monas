@@ -113,6 +113,15 @@ int main ()
 	srand(time(NULL));
 
 	//cout<<sizeof(GenMatrix<char,3,3>)<<endl;
+	ATMatrix<float,4> m1,m2;
+	m1.identity();
+	m1.prettyPrint();
+	m1.get(0,1)=3;
+	m1.get(0,3)=5;
+	m1.get(2,3)=2;
+	m1.check();
+	m1.prettyPrint();
+	
 	GenMatrix<float,4,4> testS,res,res2 ;
 	matrix<float> m(4,4), foo(4,4),foo2(4,4);
 	
@@ -120,7 +129,7 @@ int main ()
 	t.init(0,0);
 	t.initVelocity(0.5f,0.5f);
 	
-	while(true)
+	while(false)//true
 	{
 		float dx=rand()%1024;
 		float dy=rand()%1024;

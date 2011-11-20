@@ -1051,7 +1051,7 @@ namespace KMat
 					if (AisIdentity==false&&AisZero==false)
 						break;
 				}
-				return this;
+				return *this;
 			}
 			COWRef<T, ATMatrix<T,S> > operator() (unsigned i,unsigned j)
 			{
@@ -1062,14 +1062,18 @@ namespace KMat
 
 			T& get(unsigned i,unsigned j)
 			{
-				if(j==S)
+				if(i>=S-1)
+					throw MatrixIndexOutOfBoundsException("ATMatrix():");
+				if(j==S-1)
                     return B.get(i,0);
                 else
                     return A.get(i,j);
 			}
 			const T read(unsigned i,unsigned j) const
 			{
-			    if(j==S)
+				if(i>=S-1)
+					throw MatrixIndexOutOfBoundsException("ATMatrix():");
+			    if(j==S-1)
                     return B.read(i,0);
                 else
                     return A.read(i,j);
