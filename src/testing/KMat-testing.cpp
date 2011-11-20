@@ -121,6 +121,10 @@ int main ()
 	m1.get(2,3)=2;
 	m1.check();
 	m1.prettyPrint();
+	m1.fast_invert();
+	m1.prettyPrint();
+	m1.fast_invert();
+	m1.prettyPrint();
 	
 	GenMatrix<float,4,4> testS,res,res2 ;
 	matrix<float> m(4,4), foo(4,4),foo2(4,4);

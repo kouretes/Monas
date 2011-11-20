@@ -1062,8 +1062,10 @@ namespace KMat
 
 			T& get(unsigned i,unsigned j)
 			{
+#ifndef KMAT_INSANE_MODE
 				if(i>=S-1)
 					throw MatrixIndexOutOfBoundsException("ATMatrix():");
+#endif
 				if(j==S-1)
                     return B.get(i,0);
                 else
@@ -1071,8 +1073,10 @@ namespace KMat
 			}
 			const T read(unsigned i,unsigned j) const
 			{
+#ifndef KMAT_INSANE_MODE
 				if(i>=S-1)
 					throw MatrixIndexOutOfBoundsException("ATMatrix():");
+#endif
 			    if(j==S-1)
                     return B.read(i,0);
                 else
