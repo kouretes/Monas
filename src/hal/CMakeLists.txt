@@ -3,7 +3,6 @@ message ( STATUS " _..::: Configuring Hardware Abstraction Layer :::.._ " )
 message ( STATUS "" )
 
 
-set ( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/binaries/${TargetPlatform}" CACHE PATH "Select the install directory" FORCE )
 
 
 if ( "x${TargetPlatform}x" STREQUAL "xx" )

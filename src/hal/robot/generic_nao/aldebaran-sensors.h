@@ -8,6 +8,7 @@
 #ifndef ALDEBARAN_SENSORS_H_
 #define ALDEBARAN_SENSORS_H_
 
+
 #ifdef NAOQI_1_6_0
 #include <almotionproxy.h>
 //#include <almemoryproxy.h>

@@ -23,30 +23,60 @@ message ( STATUS "" )
 cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/bootstrap.cmake")
+
+STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
+add_definitions(" -DNAOQI_${NaoQiVer} ")
+
+
 use(NAOQI-PLUGINS-TOOLS)
-##BE CAREFULL IF YOU CHANGE THE KROBOT MODULE NAME 
-##SOME ACTIVITY DEFINITIONS ARE HARDCODED, see REMOTE BUILD 
-create_module( krobot )
+##BE CAREFULL IF YOU CHANGE THE KROBOT MODULE NAME
+##SOME ACTIVITY DEFINITIONS ARE HARDCODED, see REMOTE BUILD
+
 
 SET ( KROBOT_SRCS
-  src/krobotmain.cpp
-  src/mainmodule.h
-  src/mainmodule.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/krobotmain.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/mainmodule.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/mainmodule.cpp
 )
+
+set(KRobotTargetSources ${KROBOT_SRCS} CACHE INTERNAL "")
+
+
+
 
 if(Webots)
   message ( STATUS " _..::: Configuring Webots :::.._ " )
   add_definitions(" -DWEBOTS ")
 endif(Webots)
 
-configure_src_module( krobot ${KROBOT_SRCS} )
-
-use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE )
 
 
-target_link_libraries ( krobot ${TargetLinkLibraries} ${ActivityLibraries} )
+function(Monas_Finalize)
 
-install ( TARGETS krobot
-        RUNTIME DESTINATION   bin
-        LIBRARY DESTINATION   lib/naoqi
-        ARCHIVE DESTINATION   lib/static )
+
+	message ( STATUS " _..::: Making Krobot Target :::.._ " )
+	create_module( krobot )
+	if (KROBOT_IS_REMOTE STREQUAL "OFF")
+		add_library(krobot SHARED ${KRobotTargetSources} )
+	else(KROBOT_IS_REMOTE STREQUAL "OFF")
+	    add_executable(krobot ${KRobotTargetSources})
+	 endif( KROBOT_IS_REMOTE STREQUAL "OFF" )
+
+	use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST )
+
+	target_link_libraries ( krobot ${ActivityLibraries} ${TargetLinkLibraries}  M_tinyxml)
+
+
+	message("Install:" ${CMAKE_INSTALL_PREFIX})
+	install ( TARGETS krobot
+			RUNTIME DESTINATION  bin
+			LIBRARY DESTINATION  lib/naoqi
+			ARCHIVE DESTINATION  lib/static )
+
+endfunction(Monas_Finalize)
+
+
+
+
+
+

@@ -1,3 +1,6 @@
+import "VisionObservations.proto";
+import "WorldInfo.proto";
+
 message KickOffMessage{
 	required bool kickOff = 1 [default = false];
 
@@ -17,18 +20,29 @@ message ScanMessage{
 	required bool scancompleted = 1 [default = false];
 }
 
-message StateEnd{
-	required bool ended = 1 [default = false];
-}
-
 message PlayerNumberMessage{
 	required int32 player_number = 1 [default = 2];
+	required int32 team_side = 2 [default = 1];
 }
 
 message PositionMessage{
 	required float posX = 1 [default = 70];
 	required float posY = 2 [default = 70];
 	required float theta = 3 [default = 1];
+}
+
+
+message ReturnToPositionMessage{
+	required bool goalieToPos = 1 [default = false];
+}
+
+message DoubleObsInfo{
+	required ObservationMessage  prev = 1;
+	required ObservationMessage  last = 2;
+}
+
+message FallMessage{
+required int32 fall = 1 [default = 0];
 }
 
 message LocalizationResetMessage{

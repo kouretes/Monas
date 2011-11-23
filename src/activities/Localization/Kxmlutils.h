@@ -11,7 +11,7 @@
 #include <string>
 #include <sstream>
 
-#include <tinyxml/tinyxml.h>
+#include "tools/XMLConfig.h" //Used for proper inclusion of tinyxml
 #include "KLocalization.h"
 
 #define DEBUGMXML

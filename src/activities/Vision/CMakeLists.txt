@@ -14,11 +14,10 @@ set ( ActivitySrcs  KSegmentator.cpp
 		    KCameraTransformation.cpp ../../../external/PracticalSocket/PracticalSocket.cpp
 
 )
-include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake )
+include ( ../activTemplate.cmake )
 STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
 add_definitions(" -DNAOQI_${NaoQiVer} ")
 
-include ( ../activTemplate.cmake )
 
 
-use_lib(${ActivityName} ALCOMMON LIBVISION OPENCV)
+use_lib(${ActivityName} ALCOMMON LIBVISION)

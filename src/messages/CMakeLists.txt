@@ -10,16 +10,15 @@ foreach ( msg ${MessageLibSrcs} )
 endforeach ( msg )
 
 add_library ( MessageLib ${LibBuildType}
-                         ${MessageLibSrcs}   
+                         ${MessageLibSrcs}
 )
 
 target_link_libraries ( MessageLib narukom )
-#TODO link with protocol buffer lib instead of narukomlib   
+#TODO link with protocol buffer lib instead of narukomlib
 
-install ( TARGETS MessageLib 
+install ( TARGETS MessageLib
         RUNTIME DESTINATION   bin
         LIBRARY DESTINATION   lib
-        ARCHIVE DESTINATION   lib/static )   
+        ARCHIVE DESTINATION   lib/static )
 
-set ( TargetLinkLibraries ${TargetLinkLibraries} MessageLib PARENT_SCOPE ) 
-
+set ( TargetLinkLibraries ${TargetLinkLibraries} MessageLib CACHE INTERNAL "" )

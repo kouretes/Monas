@@ -3,7 +3,7 @@ message ( STATUS " _..::: Configuring External Sources :::.._ " )
 message ( STATUS "" )
 
 
-set ( ExternalSrcsBldType SHARED CACHE STRING
+set ( ExternalSrcsBldType STATIC CACHE STRING
         "External sources build type. Available options: STATIC and SHARED" )
 
 if ( "x${ExternalSrcsBldType}x" STREQUAL "xx" )

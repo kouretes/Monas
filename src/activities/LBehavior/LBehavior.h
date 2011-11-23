@@ -3,8 +3,6 @@
 
 #include "architecture/IActivity.h"
 
-#include "architecture/narukom/pub_sub/publisher.h"
-
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"

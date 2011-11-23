@@ -39,7 +39,7 @@ include_directories( ${NarukomDir}
 		     ${ProtobufIncludeDir}
 		     ${BoostIncludeDir}
 		     )
-add_library(narukom  SHARED narukom.cpp ${NARUKOM_SYSTEM_SRCS}  ${NARUKOM_PUB_SUB_SRCS}  ${NARUKOM_NETWORK_SRCS}  ${NARUKOM_MESSAGES_SRCS}  )
+add_library(narukom ${LibBuildType} narukom.cpp ${NARUKOM_SYSTEM_SRCS}  ${NARUKOM_PUB_SUB_SRCS}  ${NARUKOM_NETWORK_SRCS}  ${NARUKOM_MESSAGES_SRCS}  )
 
 install ( TARGETS narukom
 RUNTIME DESTINATION   bin
@@ -47,15 +47,6 @@ LIBRARY DESTINATION   lib
 ARCHIVE DESTINATION   lib/static )
 
 
-if(${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
- # use_lib(narukom ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST TINYXML)
-  #target_link_libraries(narukom ${ProtobufLibrary} narukom_messages boost_system-mt boost_date_time-mt boost_thread-mt )# ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary})
-  include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
-  #set(CTC_DIR ${TOOLCHAIN_DIR})
-  use_lib(narukom BOOST TINYXML)#TINYXML
-  target_link_libraries(narukom ${ProtobufLibrary} )#{TinyxmlLibrary}
-else (${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
-    #message("!@#!@#!@#!#!${ProtobufLibrary} ${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary} ${TinyxmlLibrary}")
-    target_link_libraries(narukom ${ProtobufLibrary} ${Boost_LIBRARIES} ${PThreadLibrary} ${TinyxmlLibrary})#${BoostDateTimeLibrary} ${BoostThreadLibrary} ${BoostSystemLibrary}
-endif(${RobotPlatform} STREQUAL "nao" AND ${TargetPlatform} STREQUAL "robot")
+set ( TargetLinkLibraries ${TargetLinkLibraries} CACHE INTERNAL "" )
 
+target_link_libraries(narukom ${ProtobufLibrary} )

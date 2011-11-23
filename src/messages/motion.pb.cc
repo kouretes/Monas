@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "motion.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -143,7 +146,6 @@ struct StaticDescriptorInitializer_motion_2eproto {
 
 // ===================================================================
 
-const ::std::string MotionWalkMessage::_default_command_;
 #ifndef _MSC_VER
 const int MotionWalkMessage::kCommandFieldNumber;
 const int MotionWalkMessage::kParameterFieldNumber;
@@ -165,7 +167,7 @@ MotionWalkMessage::MotionWalkMessage(const MotionWalkMessage& from)
 
 void MotionWalkMessage::SharedCtor() {
   _cached_size_ = 0;
-  command_ = const_cast< ::std::string*>(&_default_command_);
+  command_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -174,7 +176,7 @@ MotionWalkMessage::~MotionWalkMessage() {
 }
 
 void MotionWalkMessage::SharedDtor() {
-  if (command_ != &_default_command_) {
+  if (command_ != &::google::protobuf::internal::kEmptyString) {
     delete command_;
   }
   if (this != default_instance_) {
@@ -203,8 +205,8 @@ MotionWalkMessage* MotionWalkMessage::New() const {
 
 void MotionWalkMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (command_ != &_default_command_) {
+    if (has_command()) {
+      if (command_ != &::google::protobuf::internal::kEmptyString) {
         command_->clear();
       }
     }
@@ -277,7 +279,7 @@ bool MotionWalkMessage::MergePartialFromCodedStream(
 void MotionWalkMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string command = 6 [default = ""];
-  if (_has_bit(0)) {
+  if (has_command()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -300,7 +302,7 @@ void MotionWalkMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* MotionWalkMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string command = 6 [default = ""];
-  if (_has_bit(0)) {
+  if (has_command()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -368,7 +370,7 @@ void MotionWalkMessage::MergeFrom(const MotionWalkMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   parameter_.MergeFrom(from.parameter_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_command()) {
       set_command(from.command());
     }
   }
@@ -414,7 +416,6 @@ void MotionWalkMessage::Swap(MotionWalkMessage* other) {
 
 // ===================================================================
 
-const ::std::string MotionHeadMessage::_default_command_;
 #ifndef _MSC_VER
 const int MotionHeadMessage::kCommandFieldNumber;
 const int MotionHeadMessage::kParameterFieldNumber;
@@ -436,7 +437,7 @@ MotionHeadMessage::MotionHeadMessage(const MotionHeadMessage& from)
 
 void MotionHeadMessage::SharedCtor() {
   _cached_size_ = 0;
-  command_ = const_cast< ::std::string*>(&_default_command_);
+  command_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -445,7 +446,7 @@ MotionHeadMessage::~MotionHeadMessage() {
 }
 
 void MotionHeadMessage::SharedDtor() {
-  if (command_ != &_default_command_) {
+  if (command_ != &::google::protobuf::internal::kEmptyString) {
     delete command_;
   }
   if (this != default_instance_) {
@@ -474,8 +475,8 @@ MotionHeadMessage* MotionHeadMessage::New() const {
 
 void MotionHeadMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (command_ != &_default_command_) {
+    if (has_command()) {
+      if (command_ != &::google::protobuf::internal::kEmptyString) {
         command_->clear();
       }
     }
@@ -548,7 +549,7 @@ bool MotionHeadMessage::MergePartialFromCodedStream(
 void MotionHeadMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string command = 6 [default = ""];
-  if (_has_bit(0)) {
+  if (has_command()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -571,7 +572,7 @@ void MotionHeadMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* MotionHeadMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string command = 6 [default = ""];
-  if (_has_bit(0)) {
+  if (has_command()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -639,7 +640,7 @@ void MotionHeadMessage::MergeFrom(const MotionHeadMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   parameter_.MergeFrom(from.parameter_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_command()) {
       set_command(from.command());
     }
   }
@@ -685,7 +686,6 @@ void MotionHeadMessage::Swap(MotionHeadMessage* other) {
 
 // ===================================================================
 
-const ::std::string MotionActionMessage::_default_command_;
 #ifndef _MSC_VER
 const int MotionActionMessage::kCommandFieldNumber;
 const int MotionActionMessage::kParameterFieldNumber;
@@ -707,7 +707,7 @@ MotionActionMessage::MotionActionMessage(const MotionActionMessage& from)
 
 void MotionActionMessage::SharedCtor() {
   _cached_size_ = 0;
-  command_ = const_cast< ::std::string*>(&_default_command_);
+  command_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -716,7 +716,7 @@ MotionActionMessage::~MotionActionMessage() {
 }
 
 void MotionActionMessage::SharedDtor() {
-  if (command_ != &_default_command_) {
+  if (command_ != &::google::protobuf::internal::kEmptyString) {
     delete command_;
   }
   if (this != default_instance_) {
@@ -745,8 +745,8 @@ MotionActionMessage* MotionActionMessage::New() const {
 
 void MotionActionMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (command_ != &_default_command_) {
+    if (has_command()) {
+      if (command_ != &::google::protobuf::internal::kEmptyString) {
         command_->clear();
       }
     }
@@ -819,7 +819,7 @@ bool MotionActionMessage::MergePartialFromCodedStream(
 void MotionActionMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string command = 6 [default = ""];
-  if (_has_bit(0)) {
+  if (has_command()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -842,7 +842,7 @@ void MotionActionMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* MotionActionMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string command = 6 [default = ""];
-  if (_has_bit(0)) {
+  if (has_command()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->command().data(), this->command().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -910,7 +910,7 @@ void MotionActionMessage::MergeFrom(const MotionActionMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   parameter_.MergeFrom(from.parameter_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_command()) {
       set_command(from.command());
     }
   }

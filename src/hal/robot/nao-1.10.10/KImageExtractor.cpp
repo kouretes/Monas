@@ -61,12 +61,21 @@ void KImageExtractor::Init(Blackboard *blk)
 }
 
 
+void KImageExtractor::_releaseImage()
+{
+#ifdef KROBOT_IS_REMOTE_ON
+	xCamProxy->releaseDirectRawImageRemote(GVM_name);
+#else
+	xCamProxy->releaseDirectRawImage(GVM_name);
+#endif
+}
+
 /**
  * Fetch a new Image from the hardware, it automatically fixs IplImage and enclosed binary space when needed
  * Use Allocate Image for an initial allocation of an image
  */
 #ifdef KROBOT_IS_REMOTE_ON
-boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
+boost::posix_time::ptime KImageExtractor::fetchImage(KImage &img)
 {
 	//cout<<"KImageExtractor::fetchimage():"<<endl;
 	boost::posix_time::ptime s=boost::posix_time::microsec_clock::universal_time();
@@ -77,26 +86,19 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	}
 	// Now that you're done with the PREVIOUS  image, you have to release it from the V.I.M.
 
-#ifdef RAW
+	_releaseImage();
 
-	results = (c->call<ALValue> ("releaseDirectRawImageRemote", GVM_name));
-#else
-	results = (c->call<ALValue> ("releaseImageRemote", GVM_name));
-#endif
 
 	ALValue results;
-#ifdef RAW
 
-	results = (c->call<ALValue> ("getDirectRawImageRemote", GVM_name));
-#else
-	results = (c->call<ALValue> ("getImageRemote", GVM_name));
-#endif
+	results = xCamProxy->getDirectRawImageRemote(GVM_name);
+
 	if (results.getType() != ALValue::TypeArray && results.getSize() != 7)
 	{
 		throw ALError("KImageExtractor", "ImageRemote", "Invalid image returned.");
 	}
 
-	boost::posix_time::time_duration exp=boost::posix_time::microsec(getExp()/2);
+	boost::posix_time::time_duration exp=boost::posix_time::microsec(getExpUs()/2);
 	boost::posix_time::ptime stamp=time_t_epoch+(boost::posix_time::microsec((int)results[5])+boost::posix_time::seconds((int) results[4]));
 	boost::posix_time::time_duration dur=s-(stamp-exp);//TODO:: rtt - round trip time
 	dur-=boost::posix_time::seconds(dur.total_seconds());
@@ -109,76 +111,36 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 	int nChannels = (int) results[2];
 	//int colorSpace = (int) results[3];
 
-	int size =width*height*nChannels;
+	//int size =width*height*nChannels;
 	//cout<<time<<endl;//-((int) results[4]*1000)-(int)  results[5]<<endl;
 	//Change of image data size
-	assert(img!=NULL);
-	//cout<<img->imageSize<<" "<<size<<endl;
 
-	if (img->imageSize!=size )
-	{
+	img.copyFrom(results[6].GetBinary(),width,height,nChannels);
 
-		cout<<"cvInitImage"<<endl;
-		cvInitImageHeader(img,  cvSize(width,height),IPL_DEPTH_8U, nChannels);
-		//img->imageData=NULL;
-		cout<<" Done"<<endl;
-		//img->imageData=(char*)malloc(img->imageSize);
-	}
-
-    img->imageData= (char*) (results[6].GetBinary());
+    _releaseImage();
 	return s;
 };
 
 #else
-boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
+boost::posix_time::ptime KImageExtractor::fetchImage(KImage & img)
 {
 	//cout << "Remote method off" << endl;
+	_releaseImage();
 
-	// Now that you're done with the PREVIOUS (local) image, you have to release it from the V.I.M.
-#ifdef RAW
-	xCamProxy->releaseDirectRawImage(GVM_name);
-//	c->call<int> ("releaseDirectRawImage", GVM_name);
-	//cout << "releaseDirectRawImage " << endl;
-#else
-	c->call<int> ("releaseImage", GVM_name);
-	//cout << "releaseImage " << endl;
-#endif
-
-	ALImage* imageIn = NULL;
 	// Now you can get the pointer to the video structure.
-#ifdef RAW
-	imageIn = (ALImage*)xCamProxy->getDirectRawImageLocal(GVM_name);
+	ALImage* imageIn = (ALImage*)xCamProxy->getDirectRawImageLocal(GVM_name);
 //	imageIn = (ALImage*) (c->call<int> ("getDirectRawImageLocal", GVM_name));
 	//cout << "GEt getDirectRawImageLocal " << endl;
-#else
-	imageIn = (ALImage*) (c->call<int> ("getImageLocal", GVM_name));
-	//cout << "GEt getImageLocal " << endl;
-#endif
+
 	if (!imageIn)
 	{
 		throw ALError("KImageExtractor", "saveImageLocal", "Invalid image returned.");
 	}
 	//fLogProxy->info(getName(), imageIn->toString());
-	// You can get some image information that you may find useful.
-	int width = imageIn->fWidth;
-	int height = imageIn->fHeight;
-	const int nChannels = imageIn->fNbLayers;
-	//		const int colorSpace = imageIn->fColorSpace;
+	// You can get some image information that you may find usefull
 	const long long timeStamp = imageIn->fTimeStamp;
-	//		const int seconds = (int) (timeStamp / 1000000LL);
-	const int size = width*height*nChannels;
-	// Set the buffer we received to our IplImage header.
-	//Fetch TimeStamp;
 
-	//Change of image data size
-	if ((unsigned)img->imageSize!=size*sizeof(char) )//Cast to remove compiler warning
-	{
-		free(img->imageData);
-		cvInitImageHeader(img,  cvSize(width,height),IPL_DEPTH_8U, nChannels);
-		img->imageData=NULL;
-		//img->imageData=(char*)malloc(img->imageSize);
-	}
-    img->imageData=(char*) imageIn->getFrame();
+	img.copyFrom(imageIn->getFrame(),imageIn->fWidth,imageIn->fHeight,imageIn->fNbLayers);
 
 
     //apply correction factor to timestamp
@@ -194,28 +156,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(IplImage *img)
 #endif
 
 
-IplImage *KImageExtractor::allocateImage()
-{
-	if (doneSubscribe==false)
-	{
-		cout<<"KImageExtractor::allocateImage():WTF"<<endl;
-		return NULL;
-
-	}
-	//Stupid way, but it works!
-	int nChannels=getNumLayersInColorSpace(cSpace);
-	int width;
-	int height;
-	getSizeFromResolution(resolution,width,height);
-	//cout<<"cvCreteImage"<<endl;
-	cout<<width<<" "<<height << " "<< nChannels<<endl;
-	return cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,nChannels);
-}
-
-
 //In 16ths
-
-
 
 inline unsigned int decodeGain(unsigned char inValue)
 {
@@ -263,14 +204,9 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	hmot.add_parameter(0.0f);
 	hmot.add_parameter(0.0f);
 	hmot.set_command("setHeadInstant");
-#ifdef RAW
-	xCamProxy->releaseDirectRawImage(GVM_name);
-//	c->call<int> ("releaseDirectRawImage", GVM_name);
-	//cout << "releaseDirectRawImage " << endl;
-#else
-	c->call<int> ("releaseImage", GVM_name);
-	//cout << "releaseImage " << endl;
-#endif
+
+
+	_releaseImage();
 
 
 	cout<<"Calibrate Start:"<<endl;

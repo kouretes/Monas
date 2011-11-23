@@ -995,9 +995,13 @@ namespace KMat
 					newb.scalar_mult(-1);
 					B=newb;
 				}
+<<<<<<< HEAD
 				else if (AisZero==true)//Result is def zero
 					B.zero();
 				//else unchanged :) AisIdentity==true
+=======
+				return *this;
+>>>>>>> 1db87ac73c6df7488816ae49a98842cce053bd64
 			}
 			return *this;
 		}
@@ -1040,6 +1044,7 @@ namespace KMat
 			AisIdentity=true;
 			for (unsigned i=0;i<S-1;i++)
 			{
+<<<<<<< HEAD
 				if (A(i,i)!=1)
 					AisIdentity=false;
 				for (unsigned j=0;j<S-1;j++)
@@ -1083,6 +1088,30 @@ namespace KMat
 		};
 		
 		
+=======
+#ifndef KMAT_INSANE_MODE
+				if(i>=S-1)
+					throw MatrixIndexOutOfBoundsException("ATMatrix():");
+#endif
+				if(j==S-1)
+                    return B.get(i,0);
+                else
+                    return A.get(i,j);
+			}
+			const T read(unsigned i,unsigned j) const
+			{
+#ifndef KMAT_INSANE_MODE
+				if(i>=S-1)
+					throw MatrixIndexOutOfBoundsException("ATMatrix():");
+#endif
+			    if(j==S-1)
+                    return B.read(i,0);
+                else
+                    return A.read(i,j);
+			};
+
+
+>>>>>>> 1db87ac73c6df7488816ae49a98842cce053bd64
 	};
 	//Typedef vector type
 	template<typename T,unsigned S> struct Vector

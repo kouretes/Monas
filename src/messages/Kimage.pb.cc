@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "Kimage.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -212,7 +215,6 @@ struct StaticDescriptorInitializer_Kimage_2eproto {
 
 // ===================================================================
 
-const ::std::string KRawImage::_default_imagerawdata_;
 #ifndef _MSC_VER
 const int KRawImage::kBytesFieldNumber;
 const int KRawImage::kWidthFieldNumber;
@@ -243,7 +245,7 @@ void KRawImage::SharedCtor() {
   width_ = 0;
   height_ = 0;
   type_ = 4;
-  imagerawdata_ = const_cast< ::std::string*>(&_default_imagerawdata_);
+  imagerawdata_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -252,7 +254,7 @@ KRawImage::~KRawImage() {
 }
 
 void KRawImage::SharedDtor() {
-  if (imagerawdata_ != &_default_imagerawdata_) {
+  if (imagerawdata_ != &::google::protobuf::internal::kEmptyString) {
     delete imagerawdata_;
   }
   if (this != default_instance_) {
@@ -285,8 +287,8 @@ void KRawImage::Clear() {
     width_ = 0;
     height_ = 0;
     type_ = 4;
-    if (_has_bit(4)) {
-      if (imagerawdata_ != &_default_imagerawdata_) {
+    if (has_imagerawdata()) {
+      if (imagerawdata_ != &::google::protobuf::internal::kEmptyString) {
         imagerawdata_->clear();
       }
     }
@@ -310,7 +312,7 @@ bool KRawImage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &bytes_)));
-          _set_bit(0);
+          set_has_bytes();
         } else {
           goto handle_uninterpreted;
         }
@@ -326,7 +328,7 @@ bool KRawImage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &width_)));
-          _set_bit(1);
+          set_has_width();
         } else {
           goto handle_uninterpreted;
         }
@@ -342,7 +344,7 @@ bool KRawImage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &height_)));
-          _set_bit(2);
+          set_has_height();
         } else {
           goto handle_uninterpreted;
         }
@@ -358,7 +360,7 @@ bool KRawImage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &type_)));
-          _set_bit(3);
+          set_has_type();
         } else {
           goto handle_uninterpreted;
         }
@@ -429,27 +431,27 @@ bool KRawImage::MergePartialFromCodedStream(
 void KRawImage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 bytes = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_bytes()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->bytes(), output);
   }
   
   // required int32 width = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_width()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->width(), output);
   }
   
   // required int32 height = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_height()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->height(), output);
   }
   
   // required int32 type = 4 [default = 4];
-  if (_has_bit(3)) {
+  if (has_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->type(), output);
   }
   
   // required bytes ImageRawData = 5;
-  if (_has_bit(4)) {
+  if (has_imagerawdata()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
       5, this->imagerawdata(), output);
   }
@@ -475,27 +477,27 @@ void KRawImage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* KRawImage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 bytes = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_bytes()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->bytes(), target);
   }
   
   // required int32 width = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_width()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->width(), target);
   }
   
   // required int32 height = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_height()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->height(), target);
   }
   
   // required int32 type = 4 [default = 4];
-  if (_has_bit(3)) {
+  if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->type(), target);
   }
   
   // required bytes ImageRawData = 5;
-  if (_has_bit(4)) {
+  if (has_imagerawdata()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         5, this->imagerawdata(), target);
@@ -606,19 +608,19 @@ void KRawImage::MergeFrom(const KRawImage& from) {
   p_.MergeFrom(from.p_);
   ball_.MergeFrom(from.ball_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_bytes()) {
       set_bytes(from.bytes());
     }
-    if (from._has_bit(1)) {
+    if (from.has_width()) {
       set_width(from.width());
     }
-    if (from._has_bit(2)) {
+    if (from.has_height()) {
       set_height(from.height());
     }
-    if (from._has_bit(3)) {
+    if (from.has_type()) {
       set_type(from.type());
     }
-    if (from._has_bit(4)) {
+    if (from.has_imagerawdata()) {
       set_imagerawdata(from.imagerawdata());
     }
   }
@@ -758,7 +760,7 @@ bool KRawImageHeader::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &bytes_)));
-          _set_bit(0);
+          set_has_bytes();
         } else {
           goto handle_uninterpreted;
         }
@@ -774,7 +776,7 @@ bool KRawImageHeader::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &width_)));
-          _set_bit(1);
+          set_has_width();
         } else {
           goto handle_uninterpreted;
         }
@@ -790,7 +792,7 @@ bool KRawImageHeader::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &height_)));
-          _set_bit(2);
+          set_has_height();
         } else {
           goto handle_uninterpreted;
         }
@@ -806,7 +808,7 @@ bool KRawImageHeader::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &type_)));
-          _set_bit(3);
+          set_has_type();
         } else {
           goto handle_uninterpreted;
         }
@@ -833,22 +835,22 @@ bool KRawImageHeader::MergePartialFromCodedStream(
 void KRawImageHeader::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 bytes = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_bytes()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->bytes(), output);
   }
   
   // required int32 width = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_width()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->width(), output);
   }
   
   // required int32 height = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_height()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->height(), output);
   }
   
   // required int32 type = 4 [default = 4];
-  if (_has_bit(3)) {
+  if (has_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->type(), output);
   }
   
@@ -861,22 +863,22 @@ void KRawImageHeader::SerializeWithCachedSizes(
 ::google::protobuf::uint8* KRawImageHeader::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 bytes = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_bytes()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->bytes(), target);
   }
   
   // required int32 width = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_width()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->width(), target);
   }
   
   // required int32 height = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_height()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->height(), target);
   }
   
   // required int32 type = 4 [default = 4];
-  if (_has_bit(3)) {
+  if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->type(), target);
   }
   
@@ -946,16 +948,16 @@ void KRawImageHeader::MergeFrom(const ::google::protobuf::Message& from) {
 void KRawImageHeader::MergeFrom(const KRawImageHeader& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_bytes()) {
       set_bytes(from.bytes());
     }
-    if (from._has_bit(1)) {
+    if (from.has_width()) {
       set_width(from.width());
     }
-    if (from._has_bit(2)) {
+    if (from.has_height()) {
       set_height(from.height());
     }
-    if (from._has_bit(3)) {
+    if (from.has_type()) {
       set_type(from.type());
     }
   }
@@ -1098,7 +1100,7 @@ bool Polygon::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &color_)));
-          _set_bit(1);
+          set_has_color();
         } else {
           goto handle_uninterpreted;
         }
@@ -1114,7 +1116,7 @@ bool Polygon::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &confidence_)));
-          _set_bit(2);
+          set_has_confidence();
         } else {
           goto handle_uninterpreted;
         }
@@ -1147,12 +1149,12 @@ void Polygon::SerializeWithCachedSizes(
   }
   
   // required int32 color = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_color()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->color(), output);
   }
   
   // required float confidence = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_confidence()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->confidence(), output);
   }
   
@@ -1172,12 +1174,12 @@ void Polygon::SerializeWithCachedSizes(
   }
   
   // required int32 color = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_color()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->color(), target);
   }
   
   // required float confidence = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_confidence()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->confidence(), target);
   }
   
@@ -1240,10 +1242,10 @@ void Polygon::MergeFrom(const Polygon& from) {
   GOOGLE_CHECK_NE(&from, this);
   points_.MergeFrom(from.points_);
   if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    if (from._has_bit(1)) {
+    if (from.has_color()) {
       set_color(from.color());
     }
-    if (from._has_bit(2)) {
+    if (from.has_confidence()) {
       set_confidence(from.confidence());
     }
   }
@@ -1358,7 +1360,7 @@ BallCircle* BallCircle::New() const {
 
 void BallCircle::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
+    if (has_center()) {
       if (center_ != NULL) center_->::point::Clear();
     }
     radius_ = -1;
@@ -1397,7 +1399,7 @@ bool BallCircle::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &radius_)));
-          _set_bit(1);
+          set_has_radius();
         } else {
           goto handle_uninterpreted;
         }
@@ -1413,7 +1415,7 @@ bool BallCircle::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &confidence_)));
-          _set_bit(2);
+          set_has_confidence();
         } else {
           goto handle_uninterpreted;
         }
@@ -1429,7 +1431,7 @@ bool BallCircle::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &valid_)));
-          _set_bit(3);
+          set_has_valid();
         } else {
           goto handle_uninterpreted;
         }
@@ -1445,7 +1447,7 @@ bool BallCircle::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &color_)));
-          _set_bit(4);
+          set_has_color();
         } else {
           goto handle_uninterpreted;
         }
@@ -1472,28 +1474,28 @@ bool BallCircle::MergePartialFromCodedStream(
 void BallCircle::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required .point center = 1;
-  if (_has_bit(0)) {
+  if (has_center()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->center(), output);
   }
   
   // required int32 radius = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_radius()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->radius(), output);
   }
   
   // required int32 confidence = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_confidence()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->confidence(), output);
   }
   
   // required bool valid = 4 [default = false];
-  if (_has_bit(3)) {
+  if (has_valid()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->valid(), output);
   }
   
   // optional int32 color = 5 [default = -1];
-  if (_has_bit(4)) {
+  if (has_color()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->color(), output);
   }
   
@@ -1506,29 +1508,29 @@ void BallCircle::SerializeWithCachedSizes(
 ::google::protobuf::uint8* BallCircle::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required .point center = 1;
-  if (_has_bit(0)) {
+  if (has_center()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->center(), target);
   }
   
   // required int32 radius = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_radius()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->radius(), target);
   }
   
   // required int32 confidence = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_confidence()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->confidence(), target);
   }
   
   // required bool valid = 4 [default = false];
-  if (_has_bit(3)) {
+  if (has_valid()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->valid(), target);
   }
   
   // optional int32 color = 5 [default = -1];
-  if (_has_bit(4)) {
+  if (has_color()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->color(), target);
   }
   
@@ -1603,19 +1605,19 @@ void BallCircle::MergeFrom(const ::google::protobuf::Message& from) {
 void BallCircle::MergeFrom(const BallCircle& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_center()) {
       mutable_center()->::point::MergeFrom(from.center());
     }
-    if (from._has_bit(1)) {
+    if (from.has_radius()) {
       set_radius(from.radius());
     }
-    if (from._has_bit(2)) {
+    if (from.has_confidence()) {
       set_confidence(from.confidence());
     }
-    if (from._has_bit(3)) {
+    if (from.has_valid()) {
       set_valid(from.valid());
     }
-    if (from._has_bit(4)) {
+    if (from.has_color()) {
       set_color(from.color());
     }
   }
@@ -1744,7 +1746,7 @@ bool point::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &x_)));
-          _set_bit(0);
+          set_has_x();
         } else {
           goto handle_uninterpreted;
         }
@@ -1760,7 +1762,7 @@ bool point::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &y_)));
-          _set_bit(1);
+          set_has_y();
         } else {
           goto handle_uninterpreted;
         }
@@ -1787,12 +1789,12 @@ bool point::MergePartialFromCodedStream(
 void point::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 x = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->x(), output);
   }
   
   // required int32 y = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_y()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->y(), output);
   }
   
@@ -1805,12 +1807,12 @@ void point::SerializeWithCachedSizes(
 ::google::protobuf::uint8* point::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 x = 1 [default = -1];
-  if (_has_bit(0)) {
+  if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->x(), target);
   }
   
   // required int32 y = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_y()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->y(), target);
   }
   
@@ -1866,10 +1868,10 @@ void point::MergeFrom(const ::google::protobuf::Message& from) {
 void point::MergeFrom(const point& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_x()) {
       set_x(from.x());
     }
-    if (from._has_bit(1)) {
+    if (from.has_y()) {
       set_y(from.y());
     }
   }
