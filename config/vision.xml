@@ -3,8 +3,8 @@
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
-<SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
+<SegmentationBottom>2-Robocup2010-segall.conf</SegmentationBottom>
+<SegmentationTop>2-Robocup2010-segall.conf</SegmentationTop>
 <Dfov>53.85</Dfov>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
@@ -23,9 +23,9 @@
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
-<goalheight>0.799</goalheight>
-<goaldist>1.4</goaldist>
-<goaldiam>0.099</goaldiam>
+<goalheight>0.499</goalheight>
+<goaldist>1.0</goaldist>
+<goaldiam>0.1</goaldiam>
 <goalslopetolerance>0.2</goalslopetolerance>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
