@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "BehaviorMessages.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -399,7 +402,7 @@ bool KickOffMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &kickoff_)));
-          _set_bit(0);
+          set_has_kickoff();
         } else {
           goto handle_uninterpreted;
         }
@@ -426,7 +429,7 @@ bool KickOffMessage::MergePartialFromCodedStream(
 void KickOffMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required bool kickOff = 1 [default = false];
-  if (_has_bit(0)) {
+  if (has_kickoff()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->kickoff(), output);
   }
   
@@ -439,7 +442,7 @@ void KickOffMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* KickOffMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required bool kickOff = 1 [default = false];
-  if (_has_bit(0)) {
+  if (has_kickoff()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->kickoff(), target);
   }
   
@@ -486,7 +489,7 @@ void KickOffMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void KickOffMessage::MergeFrom(const KickOffMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_kickoff()) {
       set_kickoff(from.kickoff());
     }
   }
@@ -605,7 +608,7 @@ bool BToHeadMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &headaction_)));
-          _set_bit(0);
+          set_has_headaction();
         } else {
           goto handle_uninterpreted;
         }
@@ -632,7 +635,7 @@ bool BToHeadMessage::MergePartialFromCodedStream(
 void BToHeadMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 headaction = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_headaction()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->headaction(), output);
   }
   
@@ -645,7 +648,7 @@ void BToHeadMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* BToHeadMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 headaction = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_headaction()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->headaction(), target);
   }
   
@@ -694,7 +697,7 @@ void BToHeadMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void BToHeadMessage::MergeFrom(const BToHeadMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_headaction()) {
       set_headaction(from.headaction());
     }
   }
@@ -816,7 +819,7 @@ bool HeadToBMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &ballfound_)));
-          _set_bit(0);
+          set_has_ballfound();
         } else {
           goto handle_uninterpreted;
         }
@@ -832,7 +835,7 @@ bool HeadToBMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &calibrated_)));
-          _set_bit(1);
+          set_has_calibrated();
         } else {
           goto handle_uninterpreted;
         }
@@ -859,12 +862,12 @@ bool HeadToBMessage::MergePartialFromCodedStream(
 void HeadToBMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 ballfound = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_ballfound()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->ballfound(), output);
   }
   
   // required int32 calibrated = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_calibrated()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->calibrated(), output);
   }
   
@@ -877,12 +880,12 @@ void HeadToBMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* HeadToBMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 ballfound = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_ballfound()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->ballfound(), target);
   }
   
   // required int32 calibrated = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_calibrated()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->calibrated(), target);
   }
   
@@ -938,10 +941,10 @@ void HeadToBMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void HeadToBMessage::MergeFrom(const HeadToBMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_ballfound()) {
       set_ballfound(from.ballfound());
     }
-    if (from._has_bit(1)) {
+    if (from.has_calibrated()) {
       set_calibrated(from.calibrated());
     }
   }
@@ -1061,7 +1064,7 @@ bool ScanMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &scancompleted_)));
-          _set_bit(0);
+          set_has_scancompleted();
         } else {
           goto handle_uninterpreted;
         }
@@ -1088,7 +1091,7 @@ bool ScanMessage::MergePartialFromCodedStream(
 void ScanMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required bool scancompleted = 1 [default = false];
-  if (_has_bit(0)) {
+  if (has_scancompleted()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->scancompleted(), output);
   }
   
@@ -1101,7 +1104,7 @@ void ScanMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* ScanMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required bool scancompleted = 1 [default = false];
-  if (_has_bit(0)) {
+  if (has_scancompleted()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->scancompleted(), target);
   }
   
@@ -1148,7 +1151,7 @@ void ScanMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void ScanMessage::MergeFrom(const ScanMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_scancompleted()) {
       set_scancompleted(from.scancompleted());
     }
   }
@@ -1270,7 +1273,7 @@ bool PlayerNumberMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &player_number_)));
-          _set_bit(0);
+          set_has_player_number();
         } else {
           goto handle_uninterpreted;
         }
@@ -1286,7 +1289,7 @@ bool PlayerNumberMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &team_side_)));
-          _set_bit(1);
+          set_has_team_side();
         } else {
           goto handle_uninterpreted;
         }
@@ -1313,12 +1316,12 @@ bool PlayerNumberMessage::MergePartialFromCodedStream(
 void PlayerNumberMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 player_number = 1 [default = 2];
-  if (_has_bit(0)) {
+  if (has_player_number()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->player_number(), output);
   }
   
   // required int32 team_side = 2 [default = 1];
-  if (_has_bit(1)) {
+  if (has_team_side()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->team_side(), output);
   }
   
@@ -1331,12 +1334,12 @@ void PlayerNumberMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* PlayerNumberMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 player_number = 1 [default = 2];
-  if (_has_bit(0)) {
+  if (has_player_number()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->player_number(), target);
   }
   
   // required int32 team_side = 2 [default = 1];
-  if (_has_bit(1)) {
+  if (has_team_side()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->team_side(), target);
   }
   
@@ -1392,10 +1395,10 @@ void PlayerNumberMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void PlayerNumberMessage::MergeFrom(const PlayerNumberMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_player_number()) {
       set_player_number(from.player_number());
     }
-    if (from._has_bit(1)) {
+    if (from.has_team_side()) {
       set_team_side(from.team_side());
     }
   }
@@ -1521,7 +1524,7 @@ bool PositionMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &posx_)));
-          _set_bit(0);
+          set_has_posx();
         } else {
           goto handle_uninterpreted;
         }
@@ -1537,7 +1540,7 @@ bool PositionMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &posy_)));
-          _set_bit(1);
+          set_has_posy();
         } else {
           goto handle_uninterpreted;
         }
@@ -1553,7 +1556,7 @@ bool PositionMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &theta_)));
-          _set_bit(2);
+          set_has_theta();
         } else {
           goto handle_uninterpreted;
         }
@@ -1580,17 +1583,17 @@ bool PositionMessage::MergePartialFromCodedStream(
 void PositionMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float posX = 1 [default = 70];
-  if (_has_bit(0)) {
+  if (has_posx()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->posx(), output);
   }
   
   // required float posY = 2 [default = 70];
-  if (_has_bit(1)) {
+  if (has_posy()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->posy(), output);
   }
   
   // required float theta = 3 [default = 1];
-  if (_has_bit(2)) {
+  if (has_theta()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->theta(), output);
   }
   
@@ -1603,17 +1606,17 @@ void PositionMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* PositionMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float posX = 1 [default = 70];
-  if (_has_bit(0)) {
+  if (has_posx()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->posx(), target);
   }
   
   // required float posY = 2 [default = 70];
-  if (_has_bit(1)) {
+  if (has_posy()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->posy(), target);
   }
   
   // required float theta = 3 [default = 1];
-  if (_has_bit(2)) {
+  if (has_theta()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->theta(), target);
   }
   
@@ -1670,13 +1673,13 @@ void PositionMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void PositionMessage::MergeFrom(const PositionMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_posx()) {
       set_posx(from.posx());
     }
-    if (from._has_bit(1)) {
+    if (from.has_posy()) {
       set_posy(from.posy());
     }
-    if (from._has_bit(2)) {
+    if (from.has_theta()) {
       set_theta(from.theta());
     }
   }
@@ -1797,7 +1800,7 @@ bool ReturnToPositionMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &goalietopos_)));
-          _set_bit(0);
+          set_has_goalietopos();
         } else {
           goto handle_uninterpreted;
         }
@@ -1824,7 +1827,7 @@ bool ReturnToPositionMessage::MergePartialFromCodedStream(
 void ReturnToPositionMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required bool goalieToPos = 1 [default = false];
-  if (_has_bit(0)) {
+  if (has_goalietopos()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->goalietopos(), output);
   }
   
@@ -1837,7 +1840,7 @@ void ReturnToPositionMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* ReturnToPositionMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required bool goalieToPos = 1 [default = false];
-  if (_has_bit(0)) {
+  if (has_goalietopos()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->goalietopos(), target);
   }
   
@@ -1884,7 +1887,7 @@ void ReturnToPositionMessage::MergeFrom(const ::google::protobuf::Message& from)
 void ReturnToPositionMessage::MergeFrom(const ReturnToPositionMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_goalietopos()) {
       set_goalietopos(from.goalietopos());
     }
   }
@@ -1990,10 +1993,10 @@ DoubleObsInfo* DoubleObsInfo::New() const {
 
 void DoubleObsInfo::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
+    if (has_prev()) {
       if (prev_ != NULL) prev_->::ObservationMessage::Clear();
     }
-    if (_has_bit(1)) {
+    if (has_last()) {
       if (last_ != NULL) last_->::ObservationMessage::Clear();
     }
   }
@@ -2053,13 +2056,13 @@ bool DoubleObsInfo::MergePartialFromCodedStream(
 void DoubleObsInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required .ObservationMessage prev = 1;
-  if (_has_bit(0)) {
+  if (has_prev()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->prev(), output);
   }
   
   // required .ObservationMessage last = 2;
-  if (_has_bit(1)) {
+  if (has_last()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->last(), output);
   }
@@ -2073,14 +2076,14 @@ void DoubleObsInfo::SerializeWithCachedSizes(
 ::google::protobuf::uint8* DoubleObsInfo::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required .ObservationMessage prev = 1;
-  if (_has_bit(0)) {
+  if (has_prev()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->prev(), target);
   }
   
   // required .ObservationMessage last = 2;
-  if (_has_bit(1)) {
+  if (has_last()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, this->last(), target);
@@ -2138,10 +2141,10 @@ void DoubleObsInfo::MergeFrom(const ::google::protobuf::Message& from) {
 void DoubleObsInfo::MergeFrom(const DoubleObsInfo& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_prev()) {
       mutable_prev()->::ObservationMessage::MergeFrom(from.prev());
     }
-    if (from._has_bit(1)) {
+    if (from.has_last()) {
       mutable_last()->::ObservationMessage::MergeFrom(from.last());
     }
   }
@@ -2267,7 +2270,7 @@ bool FallMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &fall_)));
-          _set_bit(0);
+          set_has_fall();
         } else {
           goto handle_uninterpreted;
         }
@@ -2294,7 +2297,7 @@ bool FallMessage::MergePartialFromCodedStream(
 void FallMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 fall = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_fall()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->fall(), output);
   }
   
@@ -2307,7 +2310,7 @@ void FallMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* FallMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 fall = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_fall()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->fall(), target);
   }
   
@@ -2356,7 +2359,7 @@ void FallMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void FallMessage::MergeFrom(const FallMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_fall()) {
       set_fall(from.fall());
     }
   }

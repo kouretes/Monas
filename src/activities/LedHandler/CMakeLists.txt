@@ -4,13 +4,13 @@ endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "
 
 set ( ActivityName LedHandler )
 
-set ( ActivitySrcs LedHandler.cpp 
-)
-include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
+set ( ActivitySrcs LedHandler.cpp )
+
+include ( ../activTemplate.cmake )
+
 STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
 add_definitions(" -DNAOQI_${NaoQiVer} ")
 
-include ( ../activTemplate.cmake )
 
 use_lib(${ActivityName}  LIBCORE TOOLS LIBCORE ALCOMMON)
 

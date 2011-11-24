@@ -15,14 +15,16 @@ namespace KNetwork
 
 MulticastPoint::MulticastPoint(std::string const& name,unsigned payloadsize) :
 	EndPoint(name), Thread(false) ,
-	io(),multisocket(io),timer_(io),payloadsize_(payloadsize),cleanupandbeacon(10)
+	rio(),sio(),senderwork(sio),multireceive(rio),
+	multisend(sio),timer_(rio),payloadsize_(payloadsize),
+	cleanupandbeacon(10), uni(boost::mt19937(),  boost::uniform_real<>(0,1))
 {
 	//hash time and produce string
 	boost::hash<std::string> h;
 	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
 	thishost=h(boost::posix_time::to_iso_string(now));
+	dep.setHost(thishost);
 	p.setHost(thishost );
-
 	std::cout<<"Multicast hostid:"<<thishost<<std::endl;
 
 };
@@ -41,17 +43,19 @@ int MulticastPoint::startEndPoint(std::string const& multicast_ip,unsigned int p
 
 	boost::asio::ip::udp::endpoint rpoint(boost::asio::ip::address_v4::any(), port);
 
-    multisocket.open(rpoint.protocol());
-	multisocket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
+    multireceive.open(rpoint.protocol());
+    multisend.open(rpoint.protocol());
+	multireceive.set_option(boost::asio::ip::udp::socket::reuse_address(true));
+	multireceive.set_option(boost::asio::ip::multicast::enable_loopback(false));
+
 	//remotesocket.set_option(boost::asio::ip::multicast::enable_loopback(false));
 
-    multisocket.bind(rpoint);
+    multireceive.bind(rpoint);
 
     multiport=port;
-    localport=multisocket.local_endpoint().port();
 
     // Join the multicast group.
-    multisocket.set_option( boost::asio::ip::multicast::join_group(multicast_address));
+    multireceive.set_option( boost::asio::ip::multicast::join_group(multicast_address));
 
     queue_receive();
     timer_.expires_from_now(boost::posix_time::milliseconds(100));
@@ -59,7 +63,13 @@ int MulticastPoint::startEndPoint(std::string const& multicast_ip,unsigned int p
 		  boost::bind(&MulticastPoint::handle_timeout, this,
 			boost::asio::placeholders::error));
 
-	this->StartThread();
+    avgqueuesize=0;
+    queuesize=0;
+    sendthread=boost::thread(boost::bind(&boost::asio::io_service::run,&sio));//Start Send
+
+	this->StartThread(); //Start receive
+
+
 	if(getReadBuffer())
 		getReadBuffer()->setNotifier(boost::bind(&MulticastPoint::bufferCallback,this,_1));
 
@@ -74,7 +84,7 @@ void MulticastPoint::queue_receive()
 {
 
 	void *b=dep.getbuffer();
-	multisocket.async_receive_from(
+	multireceive.async_receive_from(
 	boost::asio::buffer(b, dep.getbufferSize()), sender_endpoint_,
 	boost::bind(&MulticastPoint::handle_receive_from, this,(const char *)b,
 	boost::asio::placeholders::error,
@@ -89,24 +99,57 @@ void MulticastPoint::handle_receive_from(const char* buffer,const boost::system:
 	if (!error)
     {
     	queue_receive();
-
+        //Gives possetion of aquired  buffer to Depacketizer
     	processIncoming(buffer,bytes_recvd);
-    	dep.releaseBuffer(buffer);
+
 
     }
 
 }
 
 
-void MulticastPoint::handle_send_to(const boost::system::error_code& error)
+void MulticastPoint::handle_send_to(const char* bytes,std::size_t size)
 {
-	if (error)
+    // Random early detect
+    avgqueuesize=queuesize*wq+avgqueuesize*(1-wq);
+    bool notreject=true;
+    //std::cout<<"avgqueue:"<<avgqueuesize<<std::endl;
+    if(minth<avgqueuesize)
     {
-		std::cout<<error<<std::endl;
-
+        float pb=(avgqueuesize-minth)/(float(maxth-minth));
+        pb=sqrt(pb);
+        //pb+=(size/(1024.0f*MAX_UDP_PAYLOAD))*(size/(4096.0f*MAX_UDP_PAYLOAD));
+        //std::cout<<"pb:"<<pb<<std::endl;
+        if(uni()<pb)
+        {
+            notreject=false;//Reject
+            //std::cout<<"r"<<std::endl;
+        }
     }
 
+
+    if(notreject)
+    {
+        p.assign(bytes,size);
+        int s=p.nextPacket();
+        while(s>0)
+        {
+            size_t r=multisend.send_to(
+               boost::asio::buffer(p.buff,s), multicast_point_);
+            s= p.nextPacket();
+        }
+    }
+
+	{
+	    boost::unique_lock<boost::mutex > data_lock(mut);
+	    queuesize--;
+	}
+	delete[] bytes;
+
 }
+
+
+
 
 
 void MulticastPoint::handle_timeout(const boost::system::error_code& error)
@@ -132,7 +175,9 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 			m.timestamp=boost::posix_time::microsec_clock::universal_time();
 			m.host=msgentry::HOST_ID_LOCAL_HOST;
 
-			processOutGoing(m);
+
+            processOutGoing(m);
+			//rio.post(boost::bind(&MulticastPoint::processOutGoing,this,m) );
 		}
 
 		{
@@ -154,6 +199,7 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 		}
 
 
+        dep.cleanOlderThan(boost::posix_time::milliseconds(cleanupandbeacon*2));
 
 		timer_.expires_from_now(boost::posix_time::milliseconds(cleanupandbeacon));
 		timer_.async_wait(
@@ -167,8 +213,7 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 
 int MulticastPoint::Execute()
 {
-
-	io.run_one();
+    	rio.run_one();
 
 }
 
@@ -211,6 +256,7 @@ bool msgentryFromBytes(packet const& p,msgentry &m)
 						) )
 	{
 		std::cout<<"Cannot Parse Message of type :"<<TypeName<<std::endl;
+		return false;
 	}
 
 	m.msg.reset(protomsg);
@@ -221,10 +267,11 @@ bool msgentryFromBytes(packet const& p,msgentry &m)
 
 void MulticastPoint::bufferCallback(MessageBuffer *mbuf)
 {
+
 	std::vector<msgentry> v=remove();
 	for(unsigned i=0;i<v.size();i++)
 	{
-		io.post(boost::bind(&MulticastPoint::processOutGoing,this,v[i]) );
+		rio.post(boost::bind(&MulticastPoint::processOutGoing,this,v[i]) );
 	}
 
 }
@@ -255,25 +302,41 @@ void MulticastPoint::processOutGoing(msgentry m)
 	if(m.msg==NULL)
 		return;
 
+     //Very early reject
+    if(maxth<=queuesize)
+    {
+        std::cout<<"Congestion on multicast"<<std::endl;
+        return ;
+    }
+
 	packet pack=msgentryToBytes(m);//Serialize msgentry
-	RawPacketBatch b=p.feed(pack.bytes,pack.size);//Packetize data
 
-	delete[] pack.bytes;
 	//std::cout<<"New set"<<std::endl;
-	for( unsigned i=0;i<b.data.size();i++)
-	{
-		//std::cout<<"Sending:"<<b.data[i].size<<m.msg->GetTypeName()<<std::endl;
 
-		multisocket.async_send_to(
-		boost::asio::buffer(b.data[i].bytes,b.data[i].size), multicast_point_,
-					boost::bind(&MulticastPoint::handle_send_to, this,
-					boost::asio::placeholders::error));
+	{
+	    boost::unique_lock<boost::mutex > data_lock(mut);
+	    queuesize++;
+
 	}
+
+	//std::cout<<"Pending:"<<queuesize<<std::endl;
+    sio.post(boost::bind(&MulticastPoint::handle_send_to,this,pack.bytes,pack.size) );
+
+       //multisend.async_send_to(
+         //   boost::asio::buffer(b.data[i].bytes,b.data[i].size), multicast_point_);
+
+		//queue_receive();
+
+        //              boost::bind(&MulticastPoint::handle_send_to, this,
+         //            boost::asio::placeholders::error));
+		//Just a little bit of headroom
+
 
 }
 
 void MulticastPoint::processIncoming( const char * buff, size_t size)
 {
+     //Gives possetion of aquired  buffer to Depacketizer
 	RawDepacketizer::depacketizer_result  r=dep.feed(buff,size);
 	if(r.host<=1)
 	{

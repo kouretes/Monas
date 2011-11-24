@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "timeout.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -89,7 +92,6 @@ struct StaticDescriptorInitializer_timeout_2eproto {
 
 // ===================================================================
 
-const ::std::string TimeoutMsg::_default_wakeup_;
 #ifndef _MSC_VER
 const int TimeoutMsg::kWakeupFieldNumber;
 #endif  // !_MSC_VER
@@ -110,7 +112,7 @@ TimeoutMsg::TimeoutMsg(const TimeoutMsg& from)
 
 void TimeoutMsg::SharedCtor() {
   _cached_size_ = 0;
-  wakeup_ = const_cast< ::std::string*>(&_default_wakeup_);
+  wakeup_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -119,7 +121,7 @@ TimeoutMsg::~TimeoutMsg() {
 }
 
 void TimeoutMsg::SharedDtor() {
-  if (wakeup_ != &_default_wakeup_) {
+  if (wakeup_ != &::google::protobuf::internal::kEmptyString) {
     delete wakeup_;
   }
   if (this != default_instance_) {
@@ -148,8 +150,8 @@ TimeoutMsg* TimeoutMsg::New() const {
 
 void TimeoutMsg::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (wakeup_ != &_default_wakeup_) {
+    if (has_wakeup()) {
+      if (wakeup_ != &::google::protobuf::internal::kEmptyString) {
         wakeup_->clear();
       }
     }
@@ -199,7 +201,7 @@ bool TimeoutMsg::MergePartialFromCodedStream(
 void TimeoutMsg::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string wakeup = 1;
-  if (_has_bit(0)) {
+  if (has_wakeup()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->wakeup().data(), this->wakeup().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -216,7 +218,7 @@ void TimeoutMsg::SerializeWithCachedSizes(
 ::google::protobuf::uint8* TimeoutMsg::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string wakeup = 1;
-  if (_has_bit(0)) {
+  if (has_wakeup()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->wakeup().data(), this->wakeup().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -270,7 +272,7 @@ void TimeoutMsg::MergeFrom(const ::google::protobuf::Message& from) {
 void TimeoutMsg::MergeFrom(const TimeoutMsg& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_wakeup()) {
       set_wakeup(from.wakeup());
     }
   }

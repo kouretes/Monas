@@ -2,11 +2,10 @@ if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao
     return()
 endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
 
-include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
 
 set ( ActivityName ObstacleAvoidance)
 
-set ( ActivitySrcs  ObstacleAvoidance.cpp 
+set ( ActivitySrcs  ObstacleAvoidance.cpp
 )
 if (KROBOT_IS_REMOTE)
   add_definitions(" -DKROBOT_IS_REMOTE_ON ")

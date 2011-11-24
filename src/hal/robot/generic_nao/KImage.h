@@ -1,6 +1,7 @@
 #ifndef KIMAGE_H
 #define KIMAGE_H
 #include <string.h>
+#include <cmath>
 
 class KImage
 {
@@ -13,17 +14,18 @@ public:
 	~KImage() { clean();}
 	void clean() { if(imageData!=0) delete [] imageData; }
 	int imageSize(){ return width*height*nChannels;};
-	void copyFrom(const void *data,int w,int h,int c)
+	void copyFrom(void *data,int w,int h,int c)
 	{
 		if(w*h*c!=imageSize())
 		{
 			clean();
-			imageData=new char[w*h*c];
+			imageData=(char *)new  long long [(int)ceil(((float)w*h*c)/(sizeof(long long)) )];//Make allingment as good as possible
 		}
 		width=w;
 		height=h;
 		nChannels=c;
-		memcpy(imageData,data,height*width*nChannels);
+		imageData=( char *)data;
+		//memcpy(imageData,data,height*width*nChannels);
 
 	}
 };

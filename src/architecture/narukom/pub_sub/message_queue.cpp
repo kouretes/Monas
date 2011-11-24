@@ -32,9 +32,11 @@ using std::map;
 using std::string;
 using namespace std;
 
-MessageQueue::MessageQueue() : Thread(false),multicast(NULL)
+MessageQueue::MessageQueue() : Thread(false),
+multicast(NULL),pubsubRegistry(),pub_sub_mutex(),subscriptions(),publisherbuffers(),subscriberBuffers(),
+cond_mutex(),cond_publishers(),cond_publishers_queue(),cond(),agentStats()
 {
-	subscriptions.resize(Topics::Instance().size());//Force Generation of instance and resize subscription vector
+	subscriptions.resize(Topics::Instance().size()+1);//Force Generation of instance and resize subscription vector
 
     XMLConfig xmlconfig(ArchConfig::Instance().GetConfigPrefix()+"/network.xml");
     string multicastip;

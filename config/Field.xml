@@ -1,9 +1,9 @@
 <?xml version="1.0" ?><!-- Field dimension in meters -->
-<CarpetMaxX>2.2</CarpetMaxX><!--X Dimension according to the lenght of the carpet -->
-<CarpetMinX>-2.2</CarpetMinX>
-<CarpetMaxY>1.7</CarpetMaxY><!--Y Dimension according to the width of the carpet -->
-<CarpetMinY>-1.7</CarpetMinY>
-<FieldMaxX>1.5</FieldMaxX><!--X Dimension according to the lenght -->
-<FieldMinX>-1.5</FieldMinX>
-<FieldMaxY>1.0</FieldMaxY><!--Y Dimension according to the width -->
-<FieldMinY>-1.0</FieldMinY>
+<CarpetMaxX>3.7</CarpetMaxX><!--X Dimension according to the lenght of the carpet -->
+<CarpetMinX>-3.7</CarpetMinX>
+<CarpetMaxY>2.7</CarpetMaxY><!--Y Dimension according to the width of the carpet -->
+<CarpetMinY>-2.7</CarpetMinY>
+<FieldMaxX>3.0</FieldMaxX><!--X Dimension according to the lenght -->
+<FieldMinX>-3.0</FieldMinX>
+<FieldMaxY>2.0</FieldMaxY><!--Y Dimension according to the width -->
+<FieldMinY>-2.0</FieldMinY>

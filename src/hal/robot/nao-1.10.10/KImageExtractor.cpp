@@ -125,6 +125,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImage &img)
 boost::posix_time::ptime KImageExtractor::fetchImage(KImage & img)
 {
 	//cout << "Remote method off" << endl;
+	_releaseImage();
 
 	// Now you can get the pointer to the video structure.
 	ALImage* imageIn = (ALImage*)xCamProxy->getDirectRawImageLocal(GVM_name);
@@ -141,7 +142,6 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImage & img)
 
 	img.copyFrom(imageIn->getFrame(),imageIn->fWidth,imageIn->fHeight,imageIn->fNbLayers);
 
-	_releaseImage();
 
     //apply correction factor to timestamp
 //    std::cout<<"img:"<<timeStamp<<endl;

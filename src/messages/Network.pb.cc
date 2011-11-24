@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "Network.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -427,7 +430,7 @@ bool Subscription::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &host_)));
-          _set_bit(0);
+          set_has_host();
         } else {
           goto handle_uninterpreted;
         }
@@ -443,7 +446,7 @@ bool Subscription::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &topicid_)));
-          _set_bit(1);
+          set_has_topicid();
         } else {
           goto handle_uninterpreted;
         }
@@ -470,12 +473,12 @@ bool Subscription::MergePartialFromCodedStream(
 void Subscription::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required uint32 host = 1;
-  if (_has_bit(0)) {
+  if (has_host()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->host(), output);
   }
   
   // required uint32 topicid = 2;
-  if (_has_bit(1)) {
+  if (has_topicid()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->topicid(), output);
   }
   
@@ -488,12 +491,12 @@ void Subscription::SerializeWithCachedSizes(
 ::google::protobuf::uint8* Subscription::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required uint32 host = 1;
-  if (_has_bit(0)) {
+  if (has_host()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->host(), target);
   }
   
   // required uint32 topicid = 2;
-  if (_has_bit(1)) {
+  if (has_topicid()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->topicid(), target);
   }
   
@@ -549,10 +552,10 @@ void Subscription::MergeFrom(const ::google::protobuf::Message& from) {
 void Subscription::MergeFrom(const Subscription& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_host()) {
       set_host(from.host());
     }
-    if (from._has_bit(1)) {
+    if (from.has_topicid()) {
       set_topicid(from.topicid());
     }
   }

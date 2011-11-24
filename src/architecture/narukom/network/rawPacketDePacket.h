@@ -1,6 +1,5 @@
 #ifndef RAWPACKET_H
 #define RAWPACKET_H
-#include <boost/thread/mutex.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <vector>
 #include <set>
@@ -10,7 +9,7 @@
 
 namespace KNetwork
 {
-	static const unsigned MAX_UDP_PAYLOAD=512;
+	static const unsigned MAX_UDP_PAYLOAD=1280;
 	typedef unsigned char msgid;
 	typedef uint16_t sequenceid;
 	typedef uint32_t hostid;
@@ -33,26 +32,27 @@ namespace KNetwork
 		const char *bytes;
 	};
 
-	class RawPacketBatch
-	{
-		public:
-		RawPacketBatch(size_t i):data(i) {};
-		std::vector<packet> data;
-		~RawPacketBatch() ;
+    class RawPacketizer
+    {
+        public:
+        RawPacketizer();
+        void setHost(hostid h);
+        void assign(const char* bytes,std::size_t size);
 
-	};
+        std::size_t  nextPacket();
 
-  class RawPacketizer
-  {
-    public:
-	RawPacketizer();
-	void setHost(hostid h);
-    RawPacketBatch feed(const  char *const bytes,std::size_t size);
-    RawPacketBatch feed(std::string const& s) ;
-    private:
-    msgid nextmid;
-    packetheader hdr;
-  };
+        char buff[MAX_UDP_PAYLOAD];
+        private:
+        msgid nextmid;
+        packetheader hdr;
+        size_t numofpackets;
+        std::size_t currentpacket;
+        const char * nextbyte;
+	    const char* srcbytes;
+	    std::size_t srcsize;
+	    size_t payloadlength;
+
+    };
 
   class RawDepacketizer
   {
@@ -63,11 +63,13 @@ namespace KNetwork
 		hostid host;
 		packet p;
 	};
+	void setHost(hostid h);
     depacketizer_result feed(const char *const bytes,std::size_t size);
     depacketizer_result feed(std::string const& s);
-    void * getbuffer() const;
-    void releaseBuffer(const void * buf) const;
+    void * getbuffer();
+    void releaseBuffer(const void * buf);
 	std::size_t getbufferSize() const;
+	 void cleanOlderThan(boost::posix_time::time_duration td);
 
     private:
 
@@ -83,9 +85,9 @@ namespace KNetwork
 	};
 	typedef std::map<msgid,partialMessage> hostMessages;
 
-
+    hostid thisid;
     std::map<hostid,hostMessages> pending;
-    void cleanOlderThan(boost::posix_time::time_duration td);
+
   };
 
 

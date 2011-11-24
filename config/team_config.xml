@@ -5,4 +5,4 @@
 <default_team_color>red</default_team_color>
 <!-- gamecontroller port>
 <gm_port>3838</gm_port>-->
-<player>2</player>
+<player>1</player>
