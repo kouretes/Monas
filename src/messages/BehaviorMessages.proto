@@ -48,3 +48,6 @@ required int32 fall = 1 [default = 0];
 message LocalizationResetMessage{
 	
 }
+message RobotInPosition{
+required bool inPosition = 1 [default = false];
+}
