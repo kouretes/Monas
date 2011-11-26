@@ -1,0 +1,17 @@
+
+message ( STATUS "" )
+message ( STATUS " _..::: Configuring TesterGUI :::.._ " )
+message ( STATUS "" )
+
+add_library ( TesterGUI SHARED
+        TesterGUI.cpp )        
+
+#target_link_libraries ( TesterGUI statechartEngine narukom )
+
+install ( TARGETS TesterGUI
+RUNTIME DESTINATION   bin
+LIBRARY DESTINATION   lib
+ARCHIVE DESTINATION   lib/static )
+
+set ( StatechartLibraries ${StatechartLibraries} TesterGUI PARENT_SCOPE )
+	
