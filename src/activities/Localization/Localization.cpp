@@ -370,7 +370,7 @@ void Localization::Send_LocalizationData()
 		sendsize = DebugData.ByteSize();
 
 		std::string buf;
-		DebugData.SerializeToString(&buf);
+		DebugData.SerializePartialToString(&buf);
 		sendsize = buf.length();
 
 		rsize = 0;
