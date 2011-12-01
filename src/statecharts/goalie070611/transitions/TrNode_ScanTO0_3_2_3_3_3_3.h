@@ -23,11 +23,11 @@ public:
 		//boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");
 
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){
-			Logger::Instance().WriteMsg("TrCond_ScanTO0_3_2_3_3_3_3", "!PLAYER_PLAYING ", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_ScanTO0_3_2_3_3_3_3", "!PLAYER_PLAYING ", Logger::Info);
 			return true;
 		}
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
-			Logger::Instance().WriteMsg("TrCond_ScanTO0_3_2_3_3_3_3", "ballfound!=0 ", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_ScanTO0_3_2_3_3_3_3", "ballfound!=0 ", Logger::Info);
 			return true;
 		}
 

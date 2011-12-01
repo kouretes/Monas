@@ -16,14 +16,14 @@ public:
 
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		if(gsm.get()==0){
-			Logger::Instance().WriteMsg("TrCond_0_3_2_2TOnonPlaying", "true", Logger::Info);
+			//Logger::Instance().WriteMsg("TrCond_0_3_2_2TOnonPlaying", "true", Logger::Info);
 			return true;
 		}
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){
-			Logger::Instance().WriteMsg("TrCond_0_3_2_2TOnonPlaying", "true", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_0_3_2_2TOnonPlaying", "true", Logger::Info);
 			return true;
 		}
-		Logger::Instance().WriteMsg("TrCond_0_3_2_2TOnonPlaying", "false " + _toString(gsm->player_state()), Logger::Info);
+		//Logger::Instance().WriteMsg("TrCond_0_3_2_2TOnonPlaying", "false " + _toString(gsm->player_state()), Logger::Info);
 		return false;
     }
 };

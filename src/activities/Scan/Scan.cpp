@@ -7,7 +7,7 @@ namespace {
 }
 
 int Scan::Execute() {
-	Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
+	//Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
 	//scnm = _blk->readSignal<ScanMessage> ("behavior");
 

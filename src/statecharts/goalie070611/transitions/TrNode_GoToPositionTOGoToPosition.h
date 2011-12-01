@@ -18,7 +18,7 @@ public:
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();
-		Logger::Instance().WriteMsg("TrCond_GoToPositionTOGoToPosition", " ", Logger::Info);
+		//Logger::Instance().WriteMsg("TrCond_GoToPositionTOGoToPosition", " ", Logger::Info);
 		/* (PLAYER_READY and !inPosition  ) ||(PLAYER_PLAYING and !inPosition)*/
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");

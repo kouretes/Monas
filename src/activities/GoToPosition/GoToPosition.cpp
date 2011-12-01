@@ -148,7 +148,7 @@ std::string GoToPosition::GetName () {
 }
 
 bool GoToPosition::robotInPosition(float currentX, float targetX, float currentY, float targetY, float currentTheta, float targetTheta){
-	Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
+	//Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
 	if( targetX - locDeviation > currentX || currentX > targetX + locDeviation )
 		return false;
 	if( targetY - locDeviation > currentY || currentY > targetY + locDeviation  )

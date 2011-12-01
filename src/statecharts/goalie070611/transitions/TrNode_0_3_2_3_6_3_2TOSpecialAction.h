@@ -14,7 +14,7 @@ public:
 
 	bool Eval() {
 		/* PLAYER_PLAYING and fall */
-		Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TOSpecialAction",  " enter", Logger::Info);
+		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_4_2_3_2TOSpecialAction",  " enter", Logger::Info);
 
 		boost::shared_ptr<const FallMessage> fm = _blk->readSignal<FallMessage>("behavior");
 		int fall;

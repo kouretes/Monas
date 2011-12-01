@@ -113,7 +113,7 @@ bool Kick::readGoalConfiguration(const std::string& file_name) {
 	TiXmlDocument doc2(file_name.c_str());
 	bool loadOkay = doc2.LoadFile();
 	if (!loadOkay) {
-		Logger::Instance().WriteMsg("Behavior",  " readGoalConfiguration: cannot read file " + file_name , Logger::Info);
+		//Logger::Instance().WriteMsg("Behavior",  " readGoalConfiguration: cannot read file " + file_name , Logger::Info);
 		return false;
 	}
 

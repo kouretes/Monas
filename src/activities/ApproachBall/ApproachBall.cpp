@@ -13,7 +13,7 @@ namespace {
 
 int ApproachBall::Execute() {
 
-	Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
+	//Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
 
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 	wimsg = _blk->readData<WorldInfo> ("behavior");

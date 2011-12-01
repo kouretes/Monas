@@ -16,7 +16,7 @@ public:
 
 	bool Eval() {
 		/* !PLAYER_PLAYING || reayToKick || ballAway || ballfound==0 */
-		Logger::Instance().WriteMsg("TrCond_ApproachBallTO0_3_2_3_5_3", "  ", Logger::Info);
+	//	Logger::Instance().WriteMsg("TrCond_ApproachBallTO0_3_2_3_5_3", "  ", Logger::Info);
 	//	boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");

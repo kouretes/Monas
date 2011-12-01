@@ -144,14 +144,14 @@ int HeadBehavior::Execute() {
 			break;
 		case (CALIBRATE):
 			//std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;
-			Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
+			//Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
 			calibrate();
 			hbmsg->set_calibrated(calibrated);
 			hbmsg->set_ballfound(0);
 			//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			break;
 		case (SCANFORBALL):
-			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
+		//	Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
 				//hbmsg->set_ballfound(1);
@@ -166,7 +166,7 @@ int HeadBehavior::Execute() {
 			}
 			break;
 		case (HIGHSCANFORBALL):
-			Logger::Instance().WriteMsg("HeadBehavior",  " HIGHSCANFORBALL", Logger::Info);
+			//Logger::Instance().WriteMsg("HeadBehavior",  " HIGHSCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
 				//hbmsg->set_ballfound(1);
@@ -191,7 +191,7 @@ int HeadBehavior::Execute() {
 				highheadscanstep(2.08);
 			}
 
-			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
+			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
@@ -507,7 +507,7 @@ void HeadBehavior::headmotion(float pitch, float yaw){
 	hmot->set_parameter(0, yaw);
 	hmot->set_parameter(1, pitch);
 	_blk->publishSignal(*hmot, "motion");
-	Logger::Instance().WriteMsg("HeadBehavior",  " YAW " + _toString(yaw), Logger::Info);
-	Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString(pitch), Logger::Info);
+	//Logger::Instance().WriteMsg("HeadBehavior",  " YAW " + _toString(yaw), Logger::Info);
+	//Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString(pitch), Logger::Info);
 
 }

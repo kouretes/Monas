@@ -33,7 +33,7 @@ public:
 			ret =  g.robotInPosition(pm->posx(), wimsg->myposition().x(), pm->posy(), wimsg->myposition().y(), pm->theta(), wimsg->myposition().phi());
 		}
 		if(ret){
-			Logger::Instance().WriteMsg("robotIposition",  " stop walking", Logger::Info);
+		//	Logger::Instance().WriteMsg("robotIposition",  " stop walking", Logger::Info);
 			MotionActionMessage* amot = new MotionActionMessage();
 			amot->set_command("Init.xar");
 			_blk->publishSignal(*amot, "behavior");

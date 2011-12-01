@@ -34,7 +34,7 @@ public:
 			return true;
 		}
 
-		Logger::Instance().WriteMsg("TrCond_0_3_2_3_3_2TOGoToPosition_one_or_more_times_", " false ", Logger::Info);
+		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_3_2TOGoToPosition_one_or_more_times_", " false ", Logger::Info);
 		return false;
     }
 };

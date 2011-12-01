@@ -13,7 +13,7 @@ public:
 	void UserInit () { }
 
 	bool Eval() {
-		Logger::Instance().WriteMsg("TOScan","enter", Logger::Info);
+		//Logger::Instance().WriteMsg("TOScan","enter", Logger::Info);
 		return true;
     }
 };
