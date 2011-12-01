@@ -139,7 +139,7 @@ int HeadBehavior::Execute() {
 
 		case (DONOTHING):
 			//std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
-			Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
+		//	Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			hbmsg->set_ballfound(0);
 			break;
 		case (CALIBRATE):
@@ -195,7 +195,7 @@ int HeadBehavior::Execute() {
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
-			Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
+		//	Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
 			MakeTrackBallAction();
 			break;
 
