@@ -119,10 +119,10 @@ namespace KDeviceLists
 	//std::vector<std::string> const& getButtonNames();
 	std::vector<std::string> const& getButtonKeys();
 
-	/* Not Implemented yet :P
-	std::map<std::string,JointNames> const& getJointIDs();
-	std::map<std::string,SensorNames> const& getSensorIDs();
-	*/
+	std::map<std::string,int> const& getJointIDs();
+	// Not Implemented yet :P
+	//std::map<std::string,SensorNames> const& getSensorIDs();
+
 
 	//std::vector< std::string> ActuatorName;
 
