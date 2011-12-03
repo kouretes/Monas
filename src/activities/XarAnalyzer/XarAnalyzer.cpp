@@ -15,8 +15,8 @@ XarAnalyzer::XarAnalyzer() {
 
 void XarAnalyzer::UserInit() {
 	
-	_blk->subscribeTo("sensors",0);
-	_blk->subscribeTo("behavior", 0);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
