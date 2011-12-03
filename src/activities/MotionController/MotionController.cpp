@@ -288,12 +288,8 @@ void MotionController::mglrun()
 
 	/* Check if an Action command has been completed */
 	if ( ((actionPID > 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID)) || ((actionPID == KME_ACTIONPID) && !KmeManager::isDCMKmeRunning()) )
-//	if ( (actionPID != 0) && !( KmeManager::isDCMKmeRunning() || motion->isRunning(actionPID) || framemanager->isRunning(actionPID) ) )
-	{//if ( (actionPID != 0) && ((!motion->isRunning(actionPID) && !framemanager->isRunning(actionPID)) || (!KmeManager::isDCMKmeRunning() && robotUp)))
-
-		Logger::Instance().WriteMsg("MotionController", "  Action ID 111111111111111: " + _toString(actionPID), Logger::ExtraInfo);
+	{
 		actionPID = 0;
-		Logger::Instance().WriteMsg("MotionController", "  Action ID 2222222222222222: " + _toString(actionPID), Logger::ExtraInfo);
 		if (robotDown)
 		{
 			robotDown = false;
@@ -307,17 +303,6 @@ void MotionController::mglrun()
 		}
 		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 	}
-
-
-
-//	if ( (actionPID != 0) && !KmeManager::isDCMKmeRunning() && robotUp)
-//	{
-//		Logger::Instance().WriteMsg("MotionController", "  Action ID 333333333333333333: " + _toString(actionPID), Logger::ExtraInfo);
-//		actionPID = 0;
-//		Logger::Instance().WriteMsg("MotionController", "  Action ID 44444444444444444422222: " + _toString(actionPID), Logger::ExtraInfo);
-//
-//		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
-//	}
 
 	if ((actionPID == 0) && !robotDown && !robotUp)
 	{
@@ -455,7 +440,6 @@ void MotionController::mglrun()
 						Logger::Instance().WriteMsg("MotionController", "Frame start : " + _toString(frames.front()) + "  Frame end : " + _toString(frames.back()), Logger::ExtraInfo);
 						KmeManager::set_end_time(ptrdcmkme->ExecuteFrameDCM(frames.front(), frames.back()));
 						actionPID = KME_ACTIONPID;
-						//motion->setAngles("Body", motion->getAngles("Body", true), 0.5);
 					}
 					pam->set_command("NULL");
 				}
@@ -491,7 +475,6 @@ void MotionController::mglrun()
 					}
 					pam->set_command("NULL");
 					Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
-					//motion->setAngles("Body", motion->getAngles("Body", true), 0.5);
 				}
 			}
 		}

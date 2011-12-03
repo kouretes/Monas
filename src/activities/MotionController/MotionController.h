@@ -27,11 +27,6 @@
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif
-#define NUM_OF_ANGLES 6
-#define POSES_FORWKICK 5
-#define POSES_BACKKICK 3
-#define POSES_SIDEKICK 4
-#define SP_ACTION_FILES 6
 
 using namespace boost::posix_time;
 using namespace std;
@@ -113,27 +108,6 @@ private:
 
 	void MotionSkillsInit();
 	vector<int> SpCutActionsManager();
-	//vector<float> AngleCompare(int numOfPoses);
-
-	int frameEnd[SP_ACTION_FILES];
-
-	int Poses_Forward [2][POSES_FORWKICK]; 	//2 gia L k R
-	int Poses_Backward [2][POSES_FORWKICK];
-	int Poses_Sideward [2][POSES_FORWKICK];
-
-	float KickForwRAngles [POSES_FORWKICK][NUM_OF_ANGLES];
-	float KickForwLAngles [POSES_FORWKICK][NUM_OF_ANGLES];
-	float KickBackRAngles [POSES_BACKKICK][NUM_OF_ANGLES];
-	float KickBackLAngles [POSES_BACKKICK][NUM_OF_ANGLES];
-	float KickSideRAngles [POSES_SIDEKICK][NUM_OF_ANGLES];
-	float KickSideLAngles [POSES_SIDEKICK][NUM_OF_ANGLES];
-
-	float diffRKick [POSES_FORWKICK - 1][NUM_OF_ANGLES];
-	float diffLKick [POSES_FORWKICK - 1][NUM_OF_ANGLES];
-	float diffRBackKick [POSES_BACKKICK - 1][NUM_OF_ANGLES];
-	float diffLBackKick [POSES_BACKKICK - 1][NUM_OF_ANGLES];
-	float diffRSideKick [POSES_SIDEKICK - 1][NUM_OF_ANGLES];
-	float diffLSideKick [POSES_SIDEKICK - 1][NUM_OF_ANGLES];
 
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
