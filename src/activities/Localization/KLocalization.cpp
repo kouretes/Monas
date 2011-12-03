@@ -4,6 +4,7 @@
  *  Created on: Jun 3, 2009
  *      Author: trs
  */
+
 #include <time.h>
 #include <boost/random.hpp>
 #include <boost/random/uniform_int.hpp>
@@ -15,9 +16,10 @@
 #include <iomanip>
 #include <boost/lexical_cast.hpp>
 #include "Kutils.h"
-#include "tools/XMLConfig.h"
-#include <boost/math/distributions/normal.hpp>
+//#include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
+#include <boost/math/distributions/normal.hpp>
+
 #include "tools/logger.h"
 #define riza2pi (sqrt(2.0 * M_PI))
 //#undef  WEBOTS

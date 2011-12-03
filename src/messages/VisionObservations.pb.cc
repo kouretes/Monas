@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "VisionObservations.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -396,7 +399,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &cx_)));
-          _set_bit(0);
+          set_has_cx();
         } else {
           goto handle_uninterpreted;
         }
@@ -412,7 +415,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &cy_)));
-          _set_bit(1);
+          set_has_cy();
         } else {
           goto handle_uninterpreted;
         }
@@ -428,7 +431,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &referenceyaw_)));
-          _set_bit(2);
+          set_has_referenceyaw();
         } else {
           goto handle_uninterpreted;
         }
@@ -444,7 +447,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &referencepitch_)));
-          _set_bit(3);
+          set_has_referencepitch();
         } else {
           goto handle_uninterpreted;
         }
@@ -460,7 +463,7 @@ bool BallTrackMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &radius_)));
-          _set_bit(4);
+          set_has_radius();
         } else {
           goto handle_uninterpreted;
         }
@@ -487,27 +490,27 @@ bool BallTrackMessage::MergePartialFromCodedStream(
 void BallTrackMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float cx = 6 [default = 0];
-  if (_has_bit(0)) {
+  if (has_cx()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->cx(), output);
   }
   
   // required float cy = 7 [default = 0];
-  if (_has_bit(1)) {
+  if (has_cy()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->cy(), output);
   }
   
   // required float referenceYaw = 8 [default = 0];
-  if (_has_bit(2)) {
+  if (has_referenceyaw()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->referenceyaw(), output);
   }
   
   // required float referencePitch = 9 [default = 0];
-  if (_has_bit(3)) {
+  if (has_referencepitch()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->referencepitch(), output);
   }
   
   // required float radius = 10 [default = 0];
-  if (_has_bit(4)) {
+  if (has_radius()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->radius(), output);
   }
   
@@ -520,27 +523,27 @@ void BallTrackMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* BallTrackMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float cx = 6 [default = 0];
-  if (_has_bit(0)) {
+  if (has_cx()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->cx(), target);
   }
   
   // required float cy = 7 [default = 0];
-  if (_has_bit(1)) {
+  if (has_cy()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->cy(), target);
   }
   
   // required float referenceYaw = 8 [default = 0];
-  if (_has_bit(2)) {
+  if (has_referenceyaw()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->referenceyaw(), target);
   }
   
   // required float referencePitch = 9 [default = 0];
-  if (_has_bit(3)) {
+  if (has_referencepitch()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->referencepitch(), target);
   }
   
   // required float radius = 10 [default = 0];
-  if (_has_bit(4)) {
+  if (has_radius()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->radius(), target);
   }
   
@@ -607,19 +610,19 @@ void BallTrackMessage::MergeFrom(const ::google::protobuf::Message& from) {
 void BallTrackMessage::MergeFrom(const BallTrackMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_cx()) {
       set_cx(from.cx());
     }
-    if (from._has_bit(1)) {
+    if (from.has_cy()) {
       set_cy(from.cy());
     }
-    if (from._has_bit(2)) {
+    if (from.has_referenceyaw()) {
       set_referenceyaw(from.referenceyaw());
     }
-    if (from._has_bit(3)) {
+    if (from.has_referencepitch()) {
       set_referencepitch(from.referencepitch());
     }
-    if (from._has_bit(4)) {
+    if (from.has_radius()) {
       set_radius(from.radius());
     }
   }
@@ -751,7 +754,7 @@ bool CalibrateCam::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &status_)));
-          _set_bit(0);
+          set_has_status();
         } else {
           goto handle_uninterpreted;
         }
@@ -767,7 +770,7 @@ bool CalibrateCam::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &sleeptime_)));
-          _set_bit(1);
+          set_has_sleeptime();
         } else {
           goto handle_uninterpreted;
         }
@@ -783,7 +786,7 @@ bool CalibrateCam::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &exp_)));
-          _set_bit(2);
+          set_has_exp();
         } else {
           goto handle_uninterpreted;
         }
@@ -799,7 +802,7 @@ bool CalibrateCam::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &exposure_comp_)));
-          _set_bit(3);
+          set_has_exposure_comp();
         } else {
           goto handle_uninterpreted;
         }
@@ -826,22 +829,22 @@ bool CalibrateCam::MergePartialFromCodedStream(
 void CalibrateCam::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required int32 status = 1;
-  if (_has_bit(0)) {
+  if (has_status()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->status(), output);
   }
   
   // required int32 sleeptime = 2 [default = 1500];
-  if (_has_bit(1)) {
+  if (has_sleeptime()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->sleeptime(), output);
   }
   
   // required int32 exp = 3 [default = 15];
-  if (_has_bit(2)) {
+  if (has_exp()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->exp(), output);
   }
   
   // required float exposure_comp = 4 [default = 1];
-  if (_has_bit(3)) {
+  if (has_exposure_comp()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->exposure_comp(), output);
   }
   
@@ -854,22 +857,22 @@ void CalibrateCam::SerializeWithCachedSizes(
 ::google::protobuf::uint8* CalibrateCam::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required int32 status = 1;
-  if (_has_bit(0)) {
+  if (has_status()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->status(), target);
   }
   
   // required int32 sleeptime = 2 [default = 1500];
-  if (_has_bit(1)) {
+  if (has_sleeptime()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->sleeptime(), target);
   }
   
   // required int32 exp = 3 [default = 15];
-  if (_has_bit(2)) {
+  if (has_exp()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->exp(), target);
   }
   
   // required float exposure_comp = 4 [default = 1];
-  if (_has_bit(3)) {
+  if (has_exposure_comp()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->exposure_comp(), target);
   }
   
@@ -937,16 +940,16 @@ void CalibrateCam::MergeFrom(const ::google::protobuf::Message& from) {
 void CalibrateCam::MergeFrom(const CalibrateCam& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_status()) {
       set_status(from.status());
     }
-    if (from._has_bit(1)) {
+    if (from.has_sleeptime()) {
       set_sleeptime(from.sleeptime());
     }
-    if (from._has_bit(2)) {
+    if (from.has_exp()) {
       set_exp(from.exp());
     }
-    if (from._has_bit(3)) {
+    if (from.has_exposure_comp()) {
       set_exposure_comp(from.exposure_comp());
     }
   }
@@ -1074,7 +1077,7 @@ bool BallObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &dist_)));
-          _set_bit(0);
+          set_has_dist();
         } else {
           goto handle_uninterpreted;
         }
@@ -1090,7 +1093,7 @@ bool BallObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &bearing_)));
-          _set_bit(1);
+          set_has_bearing();
         } else {
           goto handle_uninterpreted;
         }
@@ -1106,7 +1109,7 @@ bool BallObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &ball_diameter_)));
-          _set_bit(2);
+          set_has_ball_diameter();
         } else {
           goto handle_uninterpreted;
         }
@@ -1133,17 +1136,17 @@ bool BallObject::MergePartialFromCodedStream(
 void BallObject::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float dist = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_dist()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->dist(), output);
   }
   
   // required float bearing = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->bearing(), output);
   }
   
   // optional float ball_diameter = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_ball_diameter()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->ball_diameter(), output);
   }
   
@@ -1156,17 +1159,17 @@ void BallObject::SerializeWithCachedSizes(
 ::google::protobuf::uint8* BallObject::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float dist = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_dist()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->dist(), target);
   }
   
   // required float bearing = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->bearing(), target);
   }
   
   // optional float ball_diameter = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_ball_diameter()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->ball_diameter(), target);
   }
   
@@ -1223,13 +1226,13 @@ void BallObject::MergeFrom(const ::google::protobuf::Message& from) {
 void BallObject::MergeFrom(const BallObject& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_dist()) {
       set_dist(from.dist());
     }
-    if (from._has_bit(1)) {
+    if (from.has_bearing()) {
       set_bearing(from.bearing());
     }
-    if (from._has_bit(2)) {
+    if (from.has_ball_diameter()) {
       set_ball_diameter(from.ball_diameter());
     }
   }
@@ -1276,7 +1279,6 @@ void BallObject::Swap(BallObject* other) {
 
 // ===================================================================
 
-const ::std::string NamedObject::_default_object_name_;
 #ifndef _MSC_VER
 const int NamedObject::kObjectNameFieldNumber;
 const int NamedObject::kBearingFieldNumber;
@@ -1301,7 +1303,7 @@ NamedObject::NamedObject(const NamedObject& from)
 
 void NamedObject::SharedCtor() {
   _cached_size_ = 0;
-  object_name_ = const_cast< ::std::string*>(&_default_object_name_);
+  object_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   bearing_ = -1;
   distance_ = -1;
   bearing_dev_ = -1;
@@ -1314,7 +1316,7 @@ NamedObject::~NamedObject() {
 }
 
 void NamedObject::SharedDtor() {
-  if (object_name_ != &_default_object_name_) {
+  if (object_name_ != &::google::protobuf::internal::kEmptyString) {
     delete object_name_;
   }
   if (this != default_instance_) {
@@ -1343,8 +1345,8 @@ NamedObject* NamedObject::New() const {
 
 void NamedObject::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (object_name_ != &_default_object_name_) {
+    if (has_object_name()) {
+      if (object_name_ != &::google::protobuf::internal::kEmptyString) {
         object_name_->clear();
       }
     }
@@ -1387,7 +1389,7 @@ bool NamedObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &bearing_)));
-          _set_bit(1);
+          set_has_bearing();
         } else {
           goto handle_uninterpreted;
         }
@@ -1403,7 +1405,7 @@ bool NamedObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &distance_)));
-          _set_bit(2);
+          set_has_distance();
         } else {
           goto handle_uninterpreted;
         }
@@ -1419,7 +1421,7 @@ bool NamedObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &bearing_dev_)));
-          _set_bit(3);
+          set_has_bearing_dev();
         } else {
           goto handle_uninterpreted;
         }
@@ -1435,7 +1437,7 @@ bool NamedObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &distance_dev_)));
-          _set_bit(4);
+          set_has_distance_dev();
         } else {
           goto handle_uninterpreted;
         }
@@ -1462,7 +1464,7 @@ bool NamedObject::MergePartialFromCodedStream(
 void NamedObject::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string object_name = 1 [default = ""];
-  if (_has_bit(0)) {
+  if (has_object_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->object_name().data(), this->object_name().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -1471,22 +1473,22 @@ void NamedObject::SerializeWithCachedSizes(
   }
   
   // required float bearing = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->bearing(), output);
   }
   
   // required float distance = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_distance()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->distance(), output);
   }
   
   // required float bearing_dev = 4 [default = -1];
-  if (_has_bit(3)) {
+  if (has_bearing_dev()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->bearing_dev(), output);
   }
   
   // required float distance_dev = 5 [default = -1];
-  if (_has_bit(4)) {
+  if (has_distance_dev()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->distance_dev(), output);
   }
   
@@ -1499,7 +1501,7 @@ void NamedObject::SerializeWithCachedSizes(
 ::google::protobuf::uint8* NamedObject::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string object_name = 1 [default = ""];
-  if (_has_bit(0)) {
+  if (has_object_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->object_name().data(), this->object_name().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -1509,22 +1511,22 @@ void NamedObject::SerializeWithCachedSizes(
   }
   
   // required float bearing = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->bearing(), target);
   }
   
   // required float distance = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_distance()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->distance(), target);
   }
   
   // required float bearing_dev = 4 [default = -1];
-  if (_has_bit(3)) {
+  if (has_bearing_dev()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->bearing_dev(), target);
   }
   
   // required float distance_dev = 5 [default = -1];
-  if (_has_bit(4)) {
+  if (has_distance_dev()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->distance_dev(), target);
   }
   
@@ -1593,19 +1595,19 @@ void NamedObject::MergeFrom(const ::google::protobuf::Message& from) {
 void NamedObject::MergeFrom(const NamedObject& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_object_name()) {
       set_object_name(from.object_name());
     }
-    if (from._has_bit(1)) {
+    if (from.has_bearing()) {
       set_bearing(from.bearing());
     }
-    if (from._has_bit(2)) {
+    if (from.has_distance()) {
       set_distance(from.distance());
     }
-    if (from._has_bit(3)) {
+    if (from.has_bearing_dev()) {
       set_bearing_dev(from.bearing_dev());
     }
-    if (from._has_bit(4)) {
+    if (from.has_distance_dev()) {
       set_distance_dev(from.distance_dev());
     }
   }
@@ -1654,7 +1656,6 @@ void NamedObject::Swap(NamedObject* other) {
 
 // ===================================================================
 
-const ::std::string UnidentifiedObject::_default_object_type_;
 #ifndef _MSC_VER
 const int UnidentifiedObject::kObjectTypeFieldNumber;
 const int UnidentifiedObject::kBearingFieldNumber;
@@ -1677,7 +1678,7 @@ UnidentifiedObject::UnidentifiedObject(const UnidentifiedObject& from)
 
 void UnidentifiedObject::SharedCtor() {
   _cached_size_ = 0;
-  object_type_ = const_cast< ::std::string*>(&_default_object_type_);
+  object_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   bearing_ = -1;
   distance_ = -1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1688,7 +1689,7 @@ UnidentifiedObject::~UnidentifiedObject() {
 }
 
 void UnidentifiedObject::SharedDtor() {
-  if (object_type_ != &_default_object_type_) {
+  if (object_type_ != &::google::protobuf::internal::kEmptyString) {
     delete object_type_;
   }
   if (this != default_instance_) {
@@ -1717,8 +1718,8 @@ UnidentifiedObject* UnidentifiedObject::New() const {
 
 void UnidentifiedObject::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (object_type_ != &_default_object_type_) {
+    if (has_object_type()) {
+      if (object_type_ != &::google::protobuf::internal::kEmptyString) {
         object_type_->clear();
       }
     }
@@ -1759,7 +1760,7 @@ bool UnidentifiedObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &bearing_)));
-          _set_bit(1);
+          set_has_bearing();
         } else {
           goto handle_uninterpreted;
         }
@@ -1775,7 +1776,7 @@ bool UnidentifiedObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &distance_)));
-          _set_bit(2);
+          set_has_distance();
         } else {
           goto handle_uninterpreted;
         }
@@ -1802,7 +1803,7 @@ bool UnidentifiedObject::MergePartialFromCodedStream(
 void UnidentifiedObject::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string object_type = 1 [default = ""];
-  if (_has_bit(0)) {
+  if (has_object_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->object_type().data(), this->object_type().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -1811,12 +1812,12 @@ void UnidentifiedObject::SerializeWithCachedSizes(
   }
   
   // required float bearing = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->bearing(), output);
   }
   
   // optional float distance = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_distance()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->distance(), output);
   }
   
@@ -1829,7 +1830,7 @@ void UnidentifiedObject::SerializeWithCachedSizes(
 ::google::protobuf::uint8* UnidentifiedObject::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string object_type = 1 [default = ""];
-  if (_has_bit(0)) {
+  if (has_object_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->object_type().data(), this->object_type().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -1839,12 +1840,12 @@ void UnidentifiedObject::SerializeWithCachedSizes(
   }
   
   // required float bearing = 2 [default = -1];
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->bearing(), target);
   }
   
   // optional float distance = 3 [default = -1];
-  if (_has_bit(2)) {
+  if (has_distance()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->distance(), target);
   }
   
@@ -1903,13 +1904,13 @@ void UnidentifiedObject::MergeFrom(const ::google::protobuf::Message& from) {
 void UnidentifiedObject::MergeFrom(const UnidentifiedObject& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_object_type()) {
       set_object_type(from.object_type());
     }
-    if (from._has_bit(1)) {
+    if (from.has_bearing()) {
       set_bearing(from.bearing());
     }
-    if (from._has_bit(2)) {
+    if (from.has_distance()) {
       set_distance(from.distance());
     }
   }
@@ -2039,7 +2040,7 @@ bool LineObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &start_bearing_)));
-          _set_bit(0);
+          set_has_start_bearing();
         } else {
           goto handle_uninterpreted;
         }
@@ -2055,7 +2056,7 @@ bool LineObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &start_distance_)));
-          _set_bit(1);
+          set_has_start_distance();
         } else {
           goto handle_uninterpreted;
         }
@@ -2071,7 +2072,7 @@ bool LineObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &end_bearing_)));
-          _set_bit(2);
+          set_has_end_bearing();
         } else {
           goto handle_uninterpreted;
         }
@@ -2087,7 +2088,7 @@ bool LineObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &end_distance_)));
-          _set_bit(3);
+          set_has_end_distance();
         } else {
           goto handle_uninterpreted;
         }
@@ -2114,22 +2115,22 @@ bool LineObject::MergePartialFromCodedStream(
 void LineObject::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float start_bearing = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_start_bearing()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->start_bearing(), output);
   }
   
   // required float start_distance = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_start_distance()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->start_distance(), output);
   }
   
   // required float end_bearing = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_end_bearing()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->end_bearing(), output);
   }
   
   // required float end_distance = 4 [default = 0];
-  if (_has_bit(3)) {
+  if (has_end_distance()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->end_distance(), output);
   }
   
@@ -2142,22 +2143,22 @@ void LineObject::SerializeWithCachedSizes(
 ::google::protobuf::uint8* LineObject::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float start_bearing = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_start_bearing()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->start_bearing(), target);
   }
   
   // required float start_distance = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_start_distance()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->start_distance(), target);
   }
   
   // required float end_bearing = 3 [default = 0];
-  if (_has_bit(2)) {
+  if (has_end_bearing()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->end_bearing(), target);
   }
   
   // required float end_distance = 4 [default = 0];
-  if (_has_bit(3)) {
+  if (has_end_distance()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->end_distance(), target);
   }
   
@@ -2219,16 +2220,16 @@ void LineObject::MergeFrom(const ::google::protobuf::Message& from) {
 void LineObject::MergeFrom(const LineObject& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_start_bearing()) {
       set_start_bearing(from.start_bearing());
     }
-    if (from._has_bit(1)) {
+    if (from.has_start_distance()) {
       set_start_distance(from.start_distance());
     }
-    if (from._has_bit(2)) {
+    if (from.has_end_bearing()) {
       set_end_bearing(from.end_bearing());
     }
-    if (from._has_bit(3)) {
+    if (from.has_end_distance()) {
       set_end_distance(from.end_distance());
     }
   }
@@ -2353,7 +2354,7 @@ bool PointObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &distance_)));
-          _set_bit(0);
+          set_has_distance();
         } else {
           goto handle_uninterpreted;
         }
@@ -2369,7 +2370,7 @@ bool PointObject::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &bearing_)));
-          _set_bit(1);
+          set_has_bearing();
         } else {
           goto handle_uninterpreted;
         }
@@ -2396,12 +2397,12 @@ bool PointObject::MergePartialFromCodedStream(
 void PointObject::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float distance = 1;
-  if (_has_bit(0)) {
+  if (has_distance()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->distance(), output);
   }
   
   // required float bearing = 2;
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->bearing(), output);
   }
   
@@ -2414,12 +2415,12 @@ void PointObject::SerializeWithCachedSizes(
 ::google::protobuf::uint8* PointObject::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float distance = 1;
-  if (_has_bit(0)) {
+  if (has_distance()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->distance(), target);
   }
   
   // required float bearing = 2;
-  if (_has_bit(1)) {
+  if (has_bearing()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->bearing(), target);
   }
   
@@ -2471,10 +2472,10 @@ void PointObject::MergeFrom(const ::google::protobuf::Message& from) {
 void PointObject::MergeFrom(const PointObject& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_distance()) {
       set_distance(from.distance());
     }
-    if (from._has_bit(1)) {
+    if (from.has_bearing()) {
       set_bearing(from.bearing());
     }
   }
@@ -2520,7 +2521,6 @@ void PointObject::Swap(PointObject* other) {
 
 // ===================================================================
 
-const ::std::string ObservationMessage::_default_image_timestamp_;
 #ifndef _MSC_VER
 const int ObservationMessage::kImageTimestampFieldNumber;
 const int ObservationMessage::kBallFieldNumber;
@@ -2551,7 +2551,7 @@ ObservationMessage::ObservationMessage(const ObservationMessage& from)
 
 void ObservationMessage::SharedCtor() {
   _cached_size_ = 0;
-  image_timestamp_ = const_cast< ::std::string*>(&_default_image_timestamp_);
+  image_timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ball_ = NULL;
   covered_distance_ = 0;
   bearing_limit_left_ = 0;
@@ -2564,7 +2564,7 @@ ObservationMessage::~ObservationMessage() {
 }
 
 void ObservationMessage::SharedDtor() {
-  if (image_timestamp_ != &_default_image_timestamp_) {
+  if (image_timestamp_ != &::google::protobuf::internal::kEmptyString) {
     delete image_timestamp_;
   }
   if (this != default_instance_) {
@@ -2594,12 +2594,12 @@ ObservationMessage* ObservationMessage::New() const {
 
 void ObservationMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (_has_bit(0)) {
-      if (image_timestamp_ != &_default_image_timestamp_) {
+    if (has_image_timestamp()) {
+      if (image_timestamp_ != &::google::protobuf::internal::kEmptyString) {
         image_timestamp_->clear();
       }
     }
-    if (_has_bit(1)) {
+    if (has_ball()) {
       if (ball_ != NULL) ball_->::BallObject::Clear();
     }
     covered_distance_ = 0;
@@ -2736,7 +2736,7 @@ bool ObservationMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &covered_distance_)));
-          _set_bit(7);
+          set_has_covered_distance();
         } else {
           goto handle_uninterpreted;
         }
@@ -2752,7 +2752,7 @@ bool ObservationMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &bearing_limit_left_)));
-          _set_bit(8);
+          set_has_bearing_limit_left();
         } else {
           goto handle_uninterpreted;
         }
@@ -2768,7 +2768,7 @@ bool ObservationMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &bearing_limit_right_)));
-          _set_bit(9);
+          set_has_bearing_limit_right();
         } else {
           goto handle_uninterpreted;
         }
@@ -2795,7 +2795,7 @@ bool ObservationMessage::MergePartialFromCodedStream(
 void ObservationMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string image_timestamp = 1 [default = ""];
-  if (_has_bit(0)) {
+  if (has_image_timestamp()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->image_timestamp().data(), this->image_timestamp().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -2804,7 +2804,7 @@ void ObservationMessage::SerializeWithCachedSizes(
   }
   
   // optional .BallObject ball = 2;
-  if (_has_bit(1)) {
+  if (has_ball()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       2, this->ball(), output);
   }
@@ -2840,17 +2840,17 @@ void ObservationMessage::SerializeWithCachedSizes(
   }
   
   // required float covered_distance = 8;
-  if (_has_bit(7)) {
+  if (has_covered_distance()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->covered_distance(), output);
   }
   
   // required float bearing_limit_left = 9;
-  if (_has_bit(8)) {
+  if (has_bearing_limit_left()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->bearing_limit_left(), output);
   }
   
   // required float bearing_limit_right = 10;
-  if (_has_bit(9)) {
+  if (has_bearing_limit_right()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->bearing_limit_right(), output);
   }
   
@@ -2863,7 +2863,7 @@ void ObservationMessage::SerializeWithCachedSizes(
 ::google::protobuf::uint8* ObservationMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string image_timestamp = 1 [default = ""];
-  if (_has_bit(0)) {
+  if (has_image_timestamp()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->image_timestamp().data(), this->image_timestamp().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
@@ -2873,7 +2873,7 @@ void ObservationMessage::SerializeWithCachedSizes(
   }
   
   // optional .BallObject ball = 2;
-  if (_has_bit(1)) {
+  if (has_ball()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, this->ball(), target);
@@ -2915,17 +2915,17 @@ void ObservationMessage::SerializeWithCachedSizes(
   }
   
   // required float covered_distance = 8;
-  if (_has_bit(7)) {
+  if (has_covered_distance()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->covered_distance(), target);
   }
   
   // required float bearing_limit_left = 9;
-  if (_has_bit(8)) {
+  if (has_bearing_limit_left()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->bearing_limit_left(), target);
   }
   
   // required float bearing_limit_right = 10;
-  if (_has_bit(9)) {
+  if (has_bearing_limit_right()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->bearing_limit_right(), target);
   }
   
@@ -3043,21 +3043,21 @@ void ObservationMessage::MergeFrom(const ObservationMessage& from) {
   intersection_objects_.MergeFrom(from.intersection_objects_);
   line_objects_.MergeFrom(from.line_objects_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_image_timestamp()) {
       set_image_timestamp(from.image_timestamp());
     }
-    if (from._has_bit(1)) {
+    if (from.has_ball()) {
       mutable_ball()->::BallObject::MergeFrom(from.ball());
     }
-    if (from._has_bit(7)) {
+    if (from.has_covered_distance()) {
       set_covered_distance(from.covered_distance());
     }
   }
   if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    if (from._has_bit(8)) {
+    if (from.has_bearing_limit_left()) {
       set_bearing_limit_left(from.bearing_limit_left());
     }
-    if (from._has_bit(9)) {
+    if (from.has_bearing_limit_right()) {
       set_bearing_limit_right(from.bearing_limit_right());
     }
   }

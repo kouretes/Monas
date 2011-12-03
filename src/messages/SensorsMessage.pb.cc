@@ -2,6 +2,9 @@
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "SensorsMessage.pb.h"
+
+#include <algorithm>
+
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -265,7 +268,7 @@ bool RobotPositionMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &timediff_)));
-          _set_bit(1);
+          set_has_timediff();
         } else {
           goto handle_uninterpreted;
         }
@@ -298,7 +301,7 @@ void RobotPositionMessage::SerializeWithCachedSizes(
   }
   
   // required int32 TimeDiff = 2;
-  if (_has_bit(1)) {
+  if (has_timediff()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->timediff(), output);
   }
   
@@ -318,7 +321,7 @@ void RobotPositionMessage::SerializeWithCachedSizes(
   }
   
   // required int32 TimeDiff = 2;
-  if (_has_bit(1)) {
+  if (has_timediff()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->timediff(), target);
   }
   
@@ -376,7 +379,7 @@ void RobotPositionMessage::MergeFrom(const RobotPositionMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   sensordata_.MergeFrom(from.sensordata_);
   if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
-    if (from._has_bit(1)) {
+    if (from.has_timediff()) {
       set_timediff(from.timediff());
     }
   }
@@ -712,7 +715,7 @@ bool SensorData::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &sensorvalue_)));
-          _set_bit(0);
+          set_has_sensorvalue();
         } else {
           goto handle_uninterpreted;
         }
@@ -728,7 +731,7 @@ bool SensorData::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &sensorvaluediff_)));
-          _set_bit(1);
+          set_has_sensorvaluediff();
         } else {
           goto handle_uninterpreted;
         }
@@ -755,12 +758,12 @@ bool SensorData::MergePartialFromCodedStream(
 void SensorData::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required float SensorValue = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_sensorvalue()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->sensorvalue(), output);
   }
   
   // required float SensorValueDiff = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_sensorvaluediff()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->sensorvaluediff(), output);
   }
   
@@ -773,12 +776,12 @@ void SensorData::SerializeWithCachedSizes(
 ::google::protobuf::uint8* SensorData::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required float SensorValue = 1 [default = 0];
-  if (_has_bit(0)) {
+  if (has_sensorvalue()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->sensorvalue(), target);
   }
   
   // required float SensorValueDiff = 2 [default = 0];
-  if (_has_bit(1)) {
+  if (has_sensorvaluediff()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->sensorvaluediff(), target);
   }
   
@@ -830,10 +833,10 @@ void SensorData::MergeFrom(const ::google::protobuf::Message& from) {
 void SensorData::MergeFrom(const SensorData& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from._has_bit(0)) {
+    if (from.has_sensorvalue()) {
       set_sensorvalue(from.sensorvalue());
     }
-    if (from._has_bit(1)) {
+    if (from.has_sensorvaluediff()) {
       set_sensorvaluediff(from.sensorvaluediff());
     }
   }
@@ -1005,7 +1008,7 @@ bool AllSensorValuesMessage::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &timediff_)));
-          _set_bit(3);
+          set_has_timediff();
         } else {
           goto handle_uninterpreted;
         }
@@ -1050,7 +1053,7 @@ void AllSensorValuesMessage::SerializeWithCachedSizes(
   }
   
   // required uint32 TimeDiff = 4;
-  if (_has_bit(3)) {
+  if (has_timediff()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->timediff(), output);
   }
   
@@ -1084,7 +1087,7 @@ void AllSensorValuesMessage::SerializeWithCachedSizes(
   }
   
   // required uint32 TimeDiff = 4;
-  if (_has_bit(3)) {
+  if (has_timediff()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->timediff(), target);
   }
   
@@ -1160,7 +1163,7 @@ void AllSensorValuesMessage::MergeFrom(const AllSensorValuesMessage& from) {
   sensordata_.MergeFrom(from.sensordata_);
   computeddata_.MergeFrom(from.computeddata_);
   if (from._has_bits_[3 / 32] & (0xffu << (3 % 32))) {
-    if (from._has_bit(3)) {
+    if (from.has_timediff()) {
       set_timediff(from.timediff());
     }
   }

@@ -14,8 +14,6 @@ set ( ActivitySrcs  MotionController.cpp
 )
 
 include ( ../activTemplate.cmake )
-
-include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
 STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
 add_definitions(" -DNAOQI_${NaoQiVer} ")
 
@@ -26,5 +24,6 @@ if(Webots)
 endif(Webots)
 
 add_subdirectory ( SpecialActions )
+
 
 set ( ActivityLibraries ${ActivityLibraries} MotionController ${SpecialActionLibraries} PARENT_SCOPE )

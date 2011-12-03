@@ -27,8 +27,8 @@ int main () {
     tal.Start();
 
     std::cout<<"Main: Sleeping"<<std::endl;
-
-    usleep(100000000);
+    while(1)
+		usleep(100000000);
 
     std::cout<<"Main: Stoping"<<std::endl;
 

@@ -116,9 +116,10 @@ void MotionController::UserInit()
 	//motion->setMotionConfig(AL::ALValue::array(AL::ALValue::array("ENABLE_FALL_MANAGEMENT_PROTECTION", false)));
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
-	_blk->subscribeTo("motion", 0);
-	_blk->subscribeTo("sensors", 0);
-	_blk->subscribeTo("behavior", 0);
+
+	_blk->updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
@@ -145,11 +146,11 @@ void MotionController::UserInit()
 
 int MotionController::Execute()
 {
-	counter++;
+	//counter++;
 	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//testcommands();
-	if(counter%100==0)
-		readWalkParameters();
+	//if(counter%100==0)
+	//	readWalkParameters();
 	read_messages();
 	mglrun();
 	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
@@ -427,7 +428,7 @@ void MotionController::mglrun()
 		{
 			if (am != NULL)
 			{
-				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command(), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command() +" "+ to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::ExtraInfo);
 				pam->set_command(am->command());
 			}
 

@@ -7,9 +7,7 @@ use(NAOQI-PLUGINS-TOOLS)
 set ( ActivityName Sensors)
 
 set ( ActivitySrcs  Sensors.cpp )
-include( ../../hal/robot/nao-${NaoQiVersion}/bootstrap.cmake ) 
-STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
-add_definitions(" -DNAOQI_${NaoQiVer} ")
+
 
 if (KROBOT_IS_REMOTE)
   add_definitions(" -DKROBOT_IS_REMOTE_ON ")
@@ -19,5 +17,8 @@ endif (KROBOT_IS_REMOTE)
 
 
 include ( ../activTemplate.cmake )
+
+STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
+add_definitions(" -DNAOQI_${NaoQiVer} ")
 
 use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS)

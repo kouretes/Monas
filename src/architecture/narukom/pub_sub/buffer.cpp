@@ -51,31 +51,8 @@ void Buffer<T>::add( std::vector<T> const & tuples)
 {
 
     boost::unique_lock<boost::mutex > data_lock(mutex);
-    std::vector<msgentry>::const_iterator it= tuples.begin();
-    for(;it!=tuples.end();++it)
-    {
-		bool filtered=false;
-
-        for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
-		{
-			if((*fit)->filter(*it) == Rejected)
-			{
-// 					cout << "filtered " << tuple->get_type() << endl;
-				filtered=true;
-				break;
-			}
-		}
-		if(filtered) continue;
-		//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
-
-		/*google::protobuf::Message * newptr=(*it).msg->New();
-        newptr->CopyFrom(*((*it).msg));
-		msgentry newm= *it;
-		newm.msg.reset(newptr);*/
-		msgentry m=*it;
-        msg_buf.push_back(m);
-
-    }
+    msg_buf.reserve(msg_buf.size()+tuples.size());
+    msg_buf.insert(msg_buf.end(),tuples.begin(),tuples.end());
     data_lock.unlock();
     if(tuples.size()>0&& n!=NULL)
     {
@@ -93,32 +70,18 @@ bool Buffer<T>::tryadd( std::vector<T> const & tuples)
 
     if(!mutex.try_lock())
 		return false;
-    typename std::vector<T>::const_iterator it= tuples.begin();
-    for(;it!=tuples.end();++it)
-    {
-    	bool filtered=false;
 
-        for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
-		{
-			if((*fit)->filter(*it) == Rejected)
-			{
-// 					cout << "filtered " << tuple->get_type() << endl;
-				filtered=true;
-				break;
-			}
-		}
-		if(filtered) continue;
+	//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
 
-		//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
+	/*google::protobuf::Message * newptr=(*it).msg->New();
+	newptr->CopyFrom(*((*it).msg));
+	msgentry newm= *it;
+	newm.msg.reset(newptr);*/
 
-		/*google::protobuf::Message * newptr=(*it).msg->New();
-        newptr->CopyFrom(*((*it).msg));
-		msgentry newm= *it;
-		newm.msg.reset(newptr);*/
-		msgentry m=*it;
-        msg_buf.push_back(m);
+	msg_buf.reserve(msg_buf.size()+tuples.size());
+    msg_buf.insert(msg_buf.end(),tuples.begin(),tuples.end());
 
-    }
+
     mutex.unlock();
     if(tuples.size()>0&& n!=NULL)
     {
@@ -132,15 +95,7 @@ template<typename T>
 void Buffer<T>::add(const T & t)
 {
 	boost::unique_lock<boost::mutex > data_lock(mutex);
-	msgentry newm= t;
-	for(std::list<Filter*>::iterator fit = filters.begin(); fit != filters.end(); ++fit)
-	{
-		if((*fit)->filter(t) == Rejected)
-		{
-// 					cout << "filtered " << tuple->get_type() << endl;
-			return;
-		}
-	}
+
     msg_buf.push_back(t);
     data_lock.unlock();
     if( n!=NULL)
@@ -158,24 +113,6 @@ std::vector<T> Buffer<T>::remove()
     return oldtupples;
 
 }
-template<typename T>
-void Buffer<T>::add_filter(Filter* filter)
-{
-  boost::unique_lock<boost::mutex > data_lock(mutex);
-  filters.push_back(filter);
 
-}
-template<typename T>
-void Buffer<T>::remove_filter(Filter* filter)
-{
-  boost::unique_lock<boost::mutex > data_lock(mutex);
-  for(list<Filter*>::iterator it = filters.begin(); it != filters.end(); it++)
-    if(*filter == (*(*it)))
-    {
-      filters.erase(it);
-
-      return;
-    }
-}
 //Explicit template instantation for MessageBuffer :)
 template class Buffer<msgentry> ;
