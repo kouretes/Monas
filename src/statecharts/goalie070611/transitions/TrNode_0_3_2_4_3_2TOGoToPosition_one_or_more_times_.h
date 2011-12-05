@@ -14,7 +14,7 @@ public:
 
 	bool Eval() {
 		/* PLAYER_READY */
-		Logger::Instance().WriteMsg("TrCond_0_3_2_4_3_2TOGoToPosition_one_or_more_times_",  " enter", Logger::Info);
+	//	Logger::Instance().WriteMsg("TrCond_0_3_2_4_3_2TOGoToPosition_one_or_more_times_",  " enter", Logger::Info);
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		return false;
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_READY)

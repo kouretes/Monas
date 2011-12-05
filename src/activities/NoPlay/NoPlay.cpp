@@ -41,6 +41,7 @@ int NoPlay::Execute() {
 	}else if(gsm->player_state()==PLAYER_PLAYING){
 	//	cal = false;
 	//	Logger::Instance().WriteMsg(GetName(),  " PLAYER_PLAYING", Logger::Info);
+//	_blk->publish_all();
 		return 0;
 	}
 
@@ -72,7 +73,7 @@ int NoPlay::Execute() {
 		//goToPosition(initX, initY, initPhi);
 		break;
 		case PLAYER_SET:
-			Logger::Instance().WriteMsg(GetName(),  " playerset", Logger::Info);
+		//	Logger::Instance().WriteMsg(GetName(),  " playerset", Logger::Info);
 
 		//	if(lastMove<= boost::posix_time::microsec_clock::universal_time()){
 			//	velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
@@ -100,12 +101,12 @@ int NoPlay::Execute() {
 				pmsg->set_theta(initPhi[1][teamColor]);
 			}
 			_blk->publishState(*pmsg, "behavior");
-			Logger::Instance().WriteMsg(GetName(),  " playerready", Logger::Info);
+			//Logger::Instance().WriteMsg(GetName(),  " playerready", Logger::Info);
 			curraction = SCANFORPOST;
 			bhmsg->set_headaction(curraction);
 		break;
 		case PLAYER_INITIAL:
-			Logger::Instance().WriteMsg(GetName(),  " playerinitial", Logger::Info);
+		//	Logger::Instance().WriteMsg(GetName(),  " playerinitial", Logger::Info);
 	//		velocityWalk(0,0,0,1);
 			if(prevstate!=PLAYER_INITIAL){
 				firstInit = boost::posix_time::microsec_clock::universal_time();
@@ -113,7 +114,7 @@ int NoPlay::Execute() {
 			if(firstInit + boost::posix_time::seconds(3) <=boost::posix_time::microsec_clock::universal_time()){
 				curraction = CALIBRATE;
 				if(prevaction!=CALIBRATE){
-			//		Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+				//	Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
 					calibrate_time = boost::posix_time::microsec_clock::universal_time();
 					bhmsg->set_headaction(curraction);
 				}
@@ -134,6 +135,7 @@ int NoPlay::Execute() {
 	prevstate = currstate;
 	_blk->publishSignal(*bhmsg, "behavior");
 	//Logger::Instance().WriteMsg(GetName(),  " bgainw", Logger::Info);
+	_blk->publish_all();
 	return 0;
 
 }
@@ -221,7 +223,7 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 		playernum = pnm->player_number();
 
 	if(playernum==-1){
-		Logger::Instance().WriteMsg(GetName(), " Invalid player number " , Logger::Error);
+		//Logger::Instance().WriteMsg(GetName(), " Invalid player number " , Logger::Error);
 		return false;
 	}
 
@@ -229,7 +231,7 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 	NodeCont teamPositions, robotPosition ;
-	Logger::Instance().WriteMsg(GetName(), " readConf " , Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(), " readConf " , Logger::Info);
 
 
 	for (int i = 0; i < 2; i++) //KICKOFF==0, NOKICKOFF == 1
@@ -264,8 +266,8 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 			initX[i][TEAM_RED] = (it->attrb["posx"]);
 			initY[i][TEAM_RED] = (it->attrb["posy"]);
 
-			Logger::Instance().WriteMsg(GetName(), " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
-			Logger::Instance().WriteMsg(GetName(), " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
+		//	Logger::Instance().WriteMsg(GetName(), " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
+		//	Logger::Instance().WriteMsg(GetName(), " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
 
 			found = true;
 			}
@@ -333,7 +335,7 @@ void NoPlay::goToPosition(float x, float y, float phi){
 		else if(vely<-1)
 			vely = -1;
 
-	Logger::Instance().WriteMsg(GetName(),  " velx" + _toString(velx)+ " vel y " + _toString(vely), Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  " velx" + _toString(velx)+ " vel y " + _toString(vely), Logger::Info);
 	if(lastMove <= boost::posix_time::microsec_clock::universal_time()){
 			velocityWalk(velx, vely, 0.1*relativePhi, 1.0);
 		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(500);
@@ -345,7 +347,7 @@ void NoPlay::goToPosition(float x, float y, float phi){
 
 
 float NoPlay::rotation(float a, float b, float theta){
-	Logger::Instance().WriteMsg("Rotation",  " Entered", Logger::Info);
+	//Logger::Instance().WriteMsg("Rotation",  " Entered", Logger::Info);
 	return a*cos(theta) + b*sin(theta);
 
 

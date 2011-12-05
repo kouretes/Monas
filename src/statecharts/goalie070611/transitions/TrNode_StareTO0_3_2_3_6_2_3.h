@@ -23,22 +23,22 @@ public:
 		boost::shared_ptr<const GameStateMessage> gsm  = _blk->readState<GameStateMessage>("behavior");
 		ApproachBall ab;
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){
-			Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " !PLAYING true ", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " !PLAYING true ", Logger::Info);
 			return true;
 		}
 		if(hbm.get()!=0 && hbm->ballfound()==0){
-			Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " ballfound==0 true ", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " ballfound==0 true ", Logger::Info);
 			return true;
 		}
 		if(wimsg.get()!=0  && wimsg->balls_size()!=0 ){
 			if( !ab.ballAway(wimsg)) {//ball is far away from the goalpost
-				Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " !ballAway true ", Logger::Info);
+			//	Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " !ballAway true ", Logger::Info);
 				return true;
 			}
 		}
 
 		if(fm.get()!=0 && fm->fall()!=0){
-			Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " fall true ", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " fall true ", Logger::Info);
 			return true;
 		}
 		return false;

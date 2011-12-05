@@ -206,7 +206,7 @@ int Stare::toFallOrNotToFall( boost::shared_ptr<const WorldInfo>  doi){
 
 			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ur = " + _toString(ur), Logger::Info);
 			//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " ub = " + _toString(ub), Logger::Info);
-				Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx = " + _toString(ubx), Logger::Info);
+				//Logger::Instance().WriteMsg("toFallOrNotToFall",  " ubx = " + _toString(ubx), Logger::Info);
 
 				if(fabs(ub)>ur){
 					if(ubx==0){
@@ -215,22 +215,22 @@ int Stare::toFallOrNotToFall( boost::shared_ptr<const WorldInfo>  doi){
 					}
 					long tk;
 					tk = fabs((x1/ubx)); //in seconds...................mallon
-					Logger::Instance().WriteMsg("toFallOrNotToFall",  " time to hit the robot" , Logger::Info);
+				//	Logger::Instance().WriteMsg("toFallOrNotToFall",  " time to hit the robot" , Logger::Info);
 					//if(1.5<tk && tk<6.5){
 						//Logger::Instance().WriteMsg("toFallOrNotToFall",  " 300<tk<4000 ", Logger::Info);
 						if(dk>0){
-							Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
+							//Logger::Instance().WriteMsg("toFallOrNotToFall",  " left foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
 							return 1;	//left
 						}
 						else{
-							Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
+							//Logger::Instance().WriteMsg("toFallOrNotToFall",  " right foot" + to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
 							return -1;	//right
 						}
 					//}
 				}
 			}
 	}
-	Logger::Instance().WriteMsg("toFallOrNotToFall",  " no foot", Logger::Info);
+	//Logger::Instance().WriteMsg("toFallOrNotToFall",  " no foot", Logger::Info);
 	return 0;
 }
 

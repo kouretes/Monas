@@ -20,18 +20,18 @@ public:
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();
-		Logger::Instance().WriteMsg("TrCond_ScanTOScan", " ", Logger::Info);
+	//	Logger::Instance().WriteMsg("TrCond_ScanTOScan", " ", Logger::Info);
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		//boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("behavior");
 		//boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");
 
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){
-				Logger::Instance().WriteMsg("TrCond_ScanTOScan", "!PLAYER_PLAYING ", Logger::Info);
+			//	Logger::Instance().WriteMsg("TrCond_ScanTOScan", "!PLAYER_PLAYING ", Logger::Info);
 				return false;
 		}
 		if(hbm.get()!=0 && hbm->ballfound()==0){
-			Logger::Instance().WriteMsg("TrCond_ScanTOScan", "ballfound==0  ", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_ScanTOScan", "ballfound==0  ", Logger::Info);
 
 			//if(wimsg!=0 ){
 				//Logger::Instance().WriteMsg("TrCond_ScanTOScan", "Confidence " +_toString(wimsg->myposition().confidence()), Logger::Info);

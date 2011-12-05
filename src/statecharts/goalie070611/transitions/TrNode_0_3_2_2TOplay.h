@@ -13,7 +13,7 @@ public:
 
 	bool Eval() {
 		/* PLAYER_PLAYING */
-			Logger::Instance().WriteMsg("TrCond_0_3_2_2TOplay", " enter  ", Logger::Info);
+		//	Logger::Instance().WriteMsg("TrCond_0_3_2_2TOplay", " enter  ", Logger::Info);
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_PLAYING)

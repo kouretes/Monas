@@ -31,13 +31,18 @@ int GoToPosition::Execute() {
 	if(obsm&&obsm->regular_objects_size()>0)
 		lastObsm = microsec_clock::universal_time();
 
-	Logger::Instance().WriteMsg(GetName(),  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
-	Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
-
-	if(robotInPosition(posX, myPosX, posY, myPosY, theta, myPhi) && lastMove <= microsec_clock::universal_time() ){
+	//Logger::Instance().WriteMsg(GetName(),  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
+	//Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
+	robotInPos = robotInPosition(posX, myPosX, posY, myPosY, theta, myPhi);
+	
+	ripm.set_inposition(robotInPos);
+	_blk->publishSignal(ripm, "behavior");
+	
+	if(robotInPos && lastMove <= microsec_clock::universal_time() ){
 		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
 		lastMove = microsec_clock::universal_time() + milliseconds(500);
 		Logger::Instance().WriteMsg(GetName(), "Robot Is In Position", Logger::Info);
+		_blk->publish_all();
 		return 0;
 	}
 
@@ -51,6 +56,7 @@ int GoToPosition::Execute() {
 			//velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
 			//lastMove = microsec_clock::universal_time() + milliseconds(500);
 		//}
+		_blk->publish_all();
 		return 0;
 	}
 
@@ -109,11 +115,12 @@ int GoToPosition::Execute() {
 
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
+	_blk->publish_all();
 	return 0;
 }
 
 void GoToPosition::UserInit () {
-
+	robotInPos = false;
 	confidence = 0;
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -140,13 +147,13 @@ std::string GoToPosition::GetName () {
 	return "GoToPosition";
 }
 
-bool GoToPosition::robotInPosition(float rx, float x2, float ry, float y2, float rth, float th2){
-	Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
-	if( x2 - locDeviation > rx || rx > x2 + locDeviation )
+bool GoToPosition::robotInPosition(float currentX, float targetX, float currentY, float targetY, float currentTheta, float targetTheta){
+	//Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
+	if( targetX - locDeviation > currentX || currentX > targetX + locDeviation )
 		return false;
-	if( y2 - locDeviation > ry || ry > y2 + locDeviation  )
+	if( targetY - locDeviation > currentY || currentY > targetY + locDeviation  )
 		return false;
-	if( th2 - th2*0.1 > rth || rth > th2 + th2*0.1  )
+	if( targetTheta - targetTheta*0.1 > currentTheta || currentTheta > targetTheta + targetTheta*0.1  )
 		return false;
 	return true;
 }

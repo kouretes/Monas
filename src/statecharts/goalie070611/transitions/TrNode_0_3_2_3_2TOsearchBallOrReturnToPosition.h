@@ -13,7 +13,7 @@ public:
 
 	bool Eval() {
 		/* ballfound==0 */
-		Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOsearchBallOrReturnToPosition", "  ", Logger::Info);
+		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOsearchBallOrReturnToPosition", "  ", Logger::Info);
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 
 		if(hbm.get()==0)

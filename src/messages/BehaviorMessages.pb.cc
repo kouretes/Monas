@@ -45,6 +45,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationResetMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RobotInPosition_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RobotInPosition_reflection_ = NULL;
 
 }  // namespace
 
@@ -209,6 +212,21 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationResetMessage));
+  RobotInPosition_descriptor_ = file->message_type(10);
+  static const int RobotInPosition_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotInPosition, inposition_),
+  };
+  RobotInPosition_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RobotInPosition_descriptor_,
+      RobotInPosition::default_instance_,
+      RobotInPosition_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotInPosition, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotInPosition, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RobotInPosition));
 }
 
 namespace {
@@ -241,6 +259,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     FallMessage_descriptor_, &FallMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationResetMessage_descriptor_, &LocalizationResetMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RobotInPosition_descriptor_, &RobotInPosition::default_instance());
 }
 
 }  // namespace
@@ -266,6 +286,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete FallMessage_reflection_;
   delete LocalizationResetMessage::default_instance_;
   delete LocalizationResetMessage_reflection_;
+  delete RobotInPosition::default_instance_;
+  delete RobotInPosition_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -292,7 +314,8 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "ev\030\001 \002(\0132\023.ObservationMessage\022!\n\004last\030\002 "
     "\002(\0132\023.ObservationMessage\"\036\n\013FallMessage\022"
     "\017\n\004fall\030\001 \002(\005:\0010\"\032\n\030LocalizationResetMes"
-    "sage", 604);
+    "sage\",\n\017RobotInPosition\022\031\n\ninPosition\030\001 "
+    "\002(\010:\005false", 650);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -305,6 +328,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   DoubleObsInfo::default_instance_ = new DoubleObsInfo();
   FallMessage::default_instance_ = new FallMessage();
   LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
+  RobotInPosition::default_instance_ = new RobotInPosition();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
@@ -315,6 +339,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   DoubleObsInfo::default_instance_->InitAsDefaultInstance();
   FallMessage::default_instance_->InitAsDefaultInstance();
   LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
+  RobotInPosition::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -2553,6 +2578,212 @@ void LocalizationResetMessage::Swap(LocalizationResetMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = LocalizationResetMessage_descriptor_;
   metadata.reflection = LocalizationResetMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int RobotInPosition::kInPositionFieldNumber;
+#endif  // !_MSC_VER
+
+RobotInPosition::RobotInPosition()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RobotInPosition::InitAsDefaultInstance() {
+}
+
+RobotInPosition::RobotInPosition(const RobotInPosition& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RobotInPosition::SharedCtor() {
+  _cached_size_ = 0;
+  inposition_ = false;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RobotInPosition::~RobotInPosition() {
+  SharedDtor();
+}
+
+void RobotInPosition::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void RobotInPosition::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RobotInPosition::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RobotInPosition_descriptor_;
+}
+
+const RobotInPosition& RobotInPosition::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+RobotInPosition* RobotInPosition::default_instance_ = NULL;
+
+RobotInPosition* RobotInPosition::New() const {
+  return new RobotInPosition;
+}
+
+void RobotInPosition::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    inposition_ = false;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RobotInPosition::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required bool inPosition = 1 [default = false];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &inposition_)));
+          set_has_inposition();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RobotInPosition::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required bool inPosition = 1 [default = false];
+  if (has_inposition()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->inposition(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RobotInPosition::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required bool inPosition = 1 [default = false];
+  if (has_inposition()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->inposition(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RobotInPosition::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required bool inPosition = 1 [default = false];
+    if (has_inposition()) {
+      total_size += 1 + 1;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RobotInPosition::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RobotInPosition* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RobotInPosition*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RobotInPosition::MergeFrom(const RobotInPosition& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_inposition()) {
+      set_inposition(from.inposition());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RobotInPosition::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RobotInPosition::CopyFrom(const RobotInPosition& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RobotInPosition::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void RobotInPosition::Swap(RobotInPosition* other) {
+  if (other != this) {
+    std::swap(inposition_, other->inposition_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RobotInPosition::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RobotInPosition_descriptor_;
+  metadata.reflection = RobotInPosition_reflection_;
   return metadata;
 }
 

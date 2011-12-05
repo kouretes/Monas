@@ -19,7 +19,7 @@ public:
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();
-		Logger::Instance().WriteMsg("TrCond_ApproachBallTOApproachBall", " ", Logger::Info);
+	//	Logger::Instance().WriteMsg("TrCond_ApproachBallTOApproachBall", " ", Logger::Info);
 		//boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
