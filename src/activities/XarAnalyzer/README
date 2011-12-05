@@ -16,6 +16,6 @@ For every new special action you have to set:
 2)put comments at the agent KVision
 
 	at MotionController (optional)
-1)for better recording you can change the motion "PenalizedZeroPos.xar" to "Init.xar" in the function mglrun()
+1)for better recording you can change the motion "PenalizedZeroPos.xar" to "InitPose.xar" in the function mglrun()
 
 Also for much better recording you can hold the robot in the air!
