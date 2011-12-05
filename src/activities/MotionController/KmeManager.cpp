@@ -3,6 +3,7 @@
 #include <fstream>
 #include <dirent.h>
 #include "tools/logger.h"
+#include "tools/toString.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "ISpecialAction.h"
@@ -71,8 +72,8 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME() {
         }
 
         fin.close();
-        actionMap[fileName] = i;
-        Logger::Instance().WriteMsg("MotionController","Special Action Succesfully Loaded : "+fileName,Logger::ExtraInfo);
+        actionMap[spAct[i].seqName] = i;
+        Logger::Instance().WriteMsg("MotionController","Special Action Succesfully Loaded : "+spAct[i].seqName,Logger::ExtraInfo);
 
         std::vector<std::string> jointNames;
         jointNames = motion->getJointNames("Body");
@@ -80,37 +81,46 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME() {
         unsigned int joints = 22;
         actionNames.arraySetSize(joints);
         actionAngles.arraySetSize(joints);
-        actionTimes.arraySetSize(joints);
+      //  actionTimes.arraySetSize(joints);
 
         unsigned int poses = spAct[i].seqMotion.size();
         for (unsigned int l = 0; l < joints; l++) {
           actionAngles[l].arraySetSize(poses);
-          actionTimes[l].arraySetSize(poses);
+          //actionTimes[l].arraySetSize(poses);
         }
+        actionTimes.arraySetSize(poses);
 
         for (unsigned int l = 0; l < joints; l++) {
           float time = 0.0;
           actionNames[l] = jointNames[l];
           for (unsigned int k = 0; k < poses; k++) {
-            actionAngles[l][k] = spAct[i].seqMotion[k][l];
+            actionAngles[l][k] = spAct[i].seqMotion[k][l];		//l for the joints and k for the poses actionAngles[joints][poses]
             time += spAct[i].seqMotion[k][22];
-            actionTimes[l][k] = time;
+            actionTimes[k] = time;
+
+            //Logger::Instance().WriteMsg("KmeMANAGER", "actionAngles " + _toString(actionAngles[l][k]) , Logger::ExtraInfo);
+
           }
         }
+       // Logger::Instance().WriteMsg("KmeMANAGER", "actionTimes " + _toString(actionTimes[0]) , Logger::ExtraInfo);
+       // Logger::Instance().WriteMsg("KmeMANAGER", "actionTimes " + _toString(actionTimes[poses-1]) , Logger::ExtraInfo);
+        //Logger::Instance().WriteMsg("KmeMANAGER", "Poses " + _toString(poses) , Logger::ExtraInfo);
 
-        ISpecialAction* curAction = new KmeAction(fileName,actionNames, actionAngles, actionTimes);
+        ISpecialAction* curAction = new KmeAction(spAct[i].seqName,actionNames, actionAngles, actionTimes);
         KmeActions.push_back(curAction);
 
         i++;
 
       }
       else{
-        Logger::Instance().WriteMsg("MotionController","Special Action Failed to Load : "+fileName,Logger::ExtraInfo);
+        Logger::Instance().WriteMsg("MotionController","Special Action Failed to Load : "+spAct[i].seqName,Logger::ExtraInfo);
       }
     }
 
     files = readdir(t);
   }
+
+
   return KmeActions;
 
 

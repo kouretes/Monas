@@ -11,6 +11,7 @@ static const std::string preFix("Device/SubDeviceList/");
 namespace KDeviceLists
 {
 	std::vector<std::string> generateJointNames();
+	std::map<std::string, int> generateJointIDs();
 	void fillJointKeys(std::vector<std::string> &Keys, std::string const & postFix);
 
 	std::vector<std::string>  generateHardnessActuatorKeys();
@@ -25,6 +26,7 @@ namespace KDeviceLists
 
 
 }
+
 std::vector<std::string> KDeviceLists::generateJointNames()
 {
 
@@ -61,6 +63,44 @@ std::vector<std::string> KDeviceLists::generateJointNames()
 	//Keys[R_ARM+WRIST_YAW] = "RWristYaw";
 	//Keys[R_ARM+HAND] = "RHand";
 	return Keys;
+}
+
+std::map<std::string, int> KDeviceLists::generateJointIDs()
+{
+	std::map<std::string, int> JointsIDs;
+
+	JointsIDs.insert(std::pair<std::string, int>("HeadYaw", HEAD+YAW));
+	JointsIDs.insert(std::pair<std::string, int>("HeadPitch", HEAD+PITCH));
+
+	JointsIDs.insert(std::pair<std::string, int>("LHipYawPitch", L_LEG+HIP_YAW_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("LHipRoll", L_LEG+HIP_ROLL));
+	JointsIDs.insert(std::pair<std::string, int>("LHipPitch", L_LEG+HIP_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("LKneePitch", L_LEG+KNEE_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("LAnklePitch", L_LEG+ANKLE_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("LAnkleRoll", L_LEG+ANKLE_ROLL));
+
+	JointsIDs.insert(std::pair<std::string, int>("RHipYawPitch", R_LEG+HIP_YAW_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("RHipRoll", R_LEG+HIP_ROLL));
+	JointsIDs.insert(std::pair<std::string, int>("RHipPitch", R_LEG+HIP_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("RKneePitch", R_LEG+KNEE_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("RAnklePitch", R_LEG+ANKLE_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("RAnkleRoll", R_LEG+ANKLE_ROLL));
+
+	JointsIDs.insert(std::pair<std::string, int>("LShoulderPitch", L_ARM+SHOULDER_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("LShoulderRoll", L_ARM+SHOULDER_ROLL));
+	JointsIDs.insert(std::pair<std::string, int>("LElbowRoll", L_ARM+ELBOW_ROLL));
+	JointsIDs.insert(std::pair<std::string, int>("LElbowYaw", L_ARM+ELBOW_YAW));
+	//JointsIDs.insert(std::pair<std::string, int>("LWristYaw", L_ARM+WRIST_YAW));
+	//JointsIDs.insert(std::pair<std::string, int>("LHand", L_ARM+HAND));
+
+	JointsIDs.insert(std::pair<std::string, int>("RShoulderPitch", R_ARM+SHOULDER_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("RShoulderRoll", R_ARM+SHOULDER_ROLL));
+	JointsIDs.insert(std::pair<std::string, int>("RElbowRoll", R_ARM+ELBOW_ROLL));
+	JointsIDs.insert(std::pair<std::string, int>("RElbowYaw", R_ARM+ELBOW_YAW));
+	//JointsIDs.insert(std::pair<std::string, int>("RWristYaw", R_ARM+WRIST_YAW));
+	//JointsIDs.insert(std::pair<std::string, int>("RHand", R_ARM+HAND));
+
+	return JointsIDs;
 }
 std::vector<std::string> KDeviceLists::generateSensorNames()
 {
@@ -122,6 +162,11 @@ std::vector<std::string> KDeviceLists::generateSensorNames()
 std::vector<std::string> const& KDeviceLists::getJointNames()
 {
 	static const std::vector<std::string> r=generateJointNames();
+	return r;
+}
+std::map<std::string,int> const& KDeviceLists::getJointIDs()
+{
+	static const std::map<std::string,int> r=generateJointIDs();
 	return r;
 }
 std::vector<std::string> const& KDeviceLists::getSensorNames()

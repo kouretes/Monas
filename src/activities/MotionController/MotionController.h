@@ -10,21 +10,26 @@
 #include "hal/robot/generic_nao/aldebaran-motion.h"
 
 #include <string>
-
+#include <math.h>
+#include <iostream>
+#include <fstream>
+#include "tools/logger.h"
+#include "tools/toString.h"
+#include "tools/XML.h"
+#include "tools/XMLConfig.h"
+#include "messages/RoboCupGameControlData.h"
+#include <vector>
 #include "ISpecialAction.h"
-
+#include "KmexManager.h"
+#include "KmexAction.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
 #endif
-#define NUM_OF_ANGLES 6
-#define POSES_FORWKICK 5
-#define POSES_BACKKICK 3
-#define POSES_SIDEKICK 3
 
 using namespace boost::posix_time;
-
+using namespace std;
 //#define WEBOTS
 
 class MotionController : public IActivity{
@@ -83,13 +88,6 @@ private:
 	MotionActionMessage  * mam;
 	MotionActionMessage  * pam;
 
-	SensorData LHipRoll;
-	SensorData RHipPitch;
-	SensorData LHipPitch;
-	SensorData RHipRoll;
-	SensorData RKneePitch;
-	SensorData LKneePitch;
-
 	AL::ALValue commands;//,stiffnessCommand;
 
 	void testcommands();
@@ -109,26 +107,7 @@ private:
 	void ALstandUpFront();
 
 	void MotionSkillsInit();
-	int SpCutActionsManager();
-	void AngleCompare(int numOfPoses);
-	void readRobotLegConfiguration(const std::string& file_name);
-	int motionSkills;
-	int comp [3*(POSES_FORWKICK - 1)];
-	float walkPrevAng [NUM_OF_ANGLES];
-
-	float RKickAng [POSES_FORWKICK][NUM_OF_ANGLES];
-	float LKickAng [POSES_FORWKICK][NUM_OF_ANGLES];
-	int diffRKick [POSES_FORWKICK - 1][NUM_OF_ANGLES];
-	int diffLKick [POSES_FORWKICK - 1][NUM_OF_ANGLES];
-	float RBackKickAng [POSES_BACKKICK][NUM_OF_ANGLES];
-	float LBackKickAng [POSES_BACKKICK][NUM_OF_ANGLES];
-	int diffRBackKick [POSES_BACKKICK - 1][NUM_OF_ANGLES];
-	int diffLBackKick [POSES_BACKKICK - 1][NUM_OF_ANGLES];
-
-	float RSideKickAng [POSES_SIDEKICK][NUM_OF_ANGLES];
-	float LSideKickAng [POSES_SIDEKICK][NUM_OF_ANGLES];
-	int diffRSideKick [POSES_SIDEKICK - 1][NUM_OF_ANGLES];
-	int diffLSideKick [POSES_SIDEKICK - 1][NUM_OF_ANGLES];
+	vector<int> SpCutActionsManager();
 
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
@@ -138,8 +117,15 @@ private:
 		  boost::shared_ptr<ISpecialAction> > SpAsoocElement;
 	SpAssocCont SpActions;
 
-	void readWalkParameters();
 
+	typedef std::map<std::string,
+		  boost::shared_ptr<KmexAction> > SpCont;
+	typedef std::pair<std::string,
+		  boost::shared_ptr<KmexAction> > SpElement;
+	SpCont SpKmexActions;
+
+
+	void readWalkParameters();
 };
 
 #endif

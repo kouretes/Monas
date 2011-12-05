@@ -9,6 +9,8 @@ set ( ActivitySrcs  MotionController.cpp
                     KmeAction.cpp
                     XarManager.cpp
                     XarAction.cpp
+                    KmexManager.cpp
+                    KmexAction.cpp
 )
 
 include ( ../activTemplate.cmake )
