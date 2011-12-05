@@ -132,7 +132,7 @@ int VISIBLE Vision::Execute()
 			seg = segtop;
 		}
 		p.cameraPitch += config.pitchoffset;
-		seg->setLumaScale(1 / ext.getScale());
+		seg->setLumaScale(config.cameraGain*ext.getScale());
 		lastrefresh=now;
 
 
@@ -462,10 +462,8 @@ void Vision::fetchAndProcess()
 	p.pitch += p.Vpitch * imcomp;
 	p.angX += p.VangX * imcomp;
 	p.angY += p.VangY * imcomp;
-	float Dfov;
-	xmlconfig->QueryElement("Dfov", Dfov);
-
-	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(Dfov * TO_RAD / 2));
+	
+	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(config.Dfov * TO_RAD / 2));
 
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
@@ -680,6 +678,10 @@ void Vision::loadXMLConfig(std::string fname)
 	xmlconfig->QueryElement("SegmentationBottom", config.SegmentationBottom);
 	xmlconfig->QueryElement("SegmentationTop", config.SegmentationTop);
 	xmlconfig->QueryElement("sensordelay", config.sensordelay);
+
+	xmlconfig->QueryElement("Dfov", config.Dfov);
+
+	xmlconfig->QueryElement("cameraGain", config.cameraGain);
 
 
 

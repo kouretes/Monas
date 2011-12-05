@@ -231,7 +231,7 @@ class CalibrateCam : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 sleeptime() const;
   inline void set_sleeptime(::google::protobuf::int32 value);
   
-  // required int32 exp = 3 [default = 15];
+  // required int32 exp = 3 [default = 10];
   inline bool has_exp() const;
   inline void clear_exp();
   static const int kExpFieldNumber = 3;
@@ -1168,7 +1168,7 @@ inline void CalibrateCam::set_sleeptime(::google::protobuf::int32 value) {
   sleeptime_ = value;
 }
 
-// required int32 exp = 3 [default = 15];
+// required int32 exp = 3 [default = 10];
 inline bool CalibrateCam::has_exp() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1179,7 +1179,7 @@ inline void CalibrateCam::clear_has_exp() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void CalibrateCam::clear_exp() {
-  exp_ = 15;
+  exp_ = 10;
   clear_has_exp();
 }
 inline ::google::protobuf::int32 CalibrateCam::exp() const {

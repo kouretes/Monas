@@ -239,7 +239,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				continue;
 			}
 
-
+			tobeshown.push_back(KVecInt2(thisl.gtrc.x,thisl.gtrc.y));
 			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y, white | orange | green| yellow |skyblue);
 
 			//cout<<"doseg:"<<(int)tempcolor<<endl;
@@ -822,12 +822,12 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		}
 		else
 		{
-			if(newpost.haveBot&&newpost.distBot.mean<config.seedistance)
+			if(newpost.haveBot&&newpost.distBot.mean<2.0)
 			{
 				newpost.dist.push_back(newpost.distBot);
 				fillGoalPostWidthMeasurments(newpost,c);
 			}
-			else if(newpost.haveTop&&newpost.distTop.mean<config.seedistance)
+			else if(newpost.haveTop&&newpost.distTop.mean<2.0)
 			{
 				newpost.dist.push_back(newpost.distTop);
 				fillGoalPostWidthMeasurments(newpost,c);
@@ -839,10 +839,14 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		}
 
 
-		if(newpost.dist.size()==0)
-			continue;
-		newpost.ber.push_back(newpost.bBot);
+		
+		if(newpost.haveBot)
+			newpost.ber.push_back(newpost.bBot);
+		if(newpost.haveTop)
 		newpost.ber.push_back(newpost.bTop);
+		if(newpost.ber.size()==0 || newpost.dist.size()==0)
+			continue;
+		
 		//cout<<"LocateGoalPost"<<endl;
 
 		//newpost.distance=mWeightedMean(newpost.dist);
@@ -928,6 +932,14 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		p->set_x(d1.ll.x);p->set_y(d1.ll.y);
 		apoly->set_color(c);
 		apoly->set_confidence(1);
+#ifdef DEBUGVISION
+		Logger::Instance().WriteMsg("GM", "Di:"+_toString(d1.distance.mean)+" "+_toString(d1.distance.var), Logger::Info);
+		Logger::Instance().WriteMsg("GM", "Be:"+_toString(d1.bearing.mean)+" "+_toString(d1.bearing.var), Logger::Info);
+		if(d1.haveBot)
+			Logger::Instance().WriteMsg("GM", "DiB:"+_toString(d1.distBot.mean)+" "+_toString(d1.distBot.var), Logger::Info);
+		if(d1.haveHeight)
+		Logger::Instance().WriteMsg("GM", "DiH:"+_toString(d1.distHeight.mean)+" "+_toString(d1.distHeight.var), Logger::Info);
+#endif
 		return 1;
 
 	}
@@ -945,7 +957,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	float d=sqrt(sqrd(x1-x2)+sqrd(y1-y2));
 	if( abs(d-config.goaldist)/config.goaldist> 0.6)
 	{
-		cout<<"Goalaaaaa"<<endl;
+		//cout<<"Goalaaaaa"<<endl;
 		//return 0;
 	}
 	if(d1.bearing.mean<d2.bearing.mean)
@@ -1085,6 +1097,7 @@ void Vision::fillGoalPostHeightMeasurments(GoalPostdata & newpost) const
 		return ;
 	}
 	newpost.haveHeight=true;
+	newpost.distHeight=m;
 	//cout<<"Height Only:"<<m.mean;
 	newpost.dist.push_back(m);//add to vector of results:)
 
@@ -1167,7 +1180,7 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 
 	cosG=cos(angV);
 	cest=sqrt(sqrd(mrT.mean)+sqrd(mrB.mean)-2*mrT.mean*mrB.mean*cosG);
-	cout<<"Cest:"<<cest<<endl;
+	//cout<<"Cest:"<<cest<<endl;
 
 	measurement m;
 	a=mrT.mean;
@@ -1215,7 +1228,7 @@ void Vision::fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::
 		}
 	}*/
 	m.var=(sqrd(dS-m.mean)+sqrd(dL-m.mean))/2;
-	cout<<"Width:"<<m.mean<<" "<<m.var<<endl;
+	//<<"Width:"<<m.mean<<" "<<m.var<<endl;
 	newpost.haveWidth=true;
 	newpost.dist.push_back(m);
 }
@@ -1274,6 +1287,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		//cout<<(*i).x<<" "<<(*i).y<<endl;
 		traceResult trcrs;
 
+		
 		trcrs = traceline((*i), KVecInt2(0, 1), orange);//Stupid
 		KVecInt2 b=trcrs.p;
 		trcrs = traceline((*i), KVecInt2(0, -1), orange);//stupid
@@ -1290,56 +1304,78 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 
 		m.x=(l.x+r.x)/2;
 
+
+		//bounds vector
+		std:vector<KVecFloat2> pv; //Eight points
 		//Repeat up down :)
 		trcrs = traceline(m, KVecInt2(0, 1), orange);//Smart?
 		b=trcrs.p;
-		bool bsuccess=trcrs.smartsuccess;
+		//if(trcrs.smartsuccess)
+			//pv.push_back(KVecFloat2(b.x,b.y+0.5));
+		
+		
 
 		trcrs = traceline(m, KVecInt2(0, -1), orange);//Smart
 		t=trcrs.p;
         m.y=(b.y+t.y)/2;
+       // if(trcrs.smartsuccess)
+		//	pv.push_back(KVecFloat2(b.x,b.y-0.5));
+		
+		
+		
+		
+		
+		for(int dx=-1;dx<2;dx++)
+			for(int dy=-1;dy<2;dy++)
+			{
+				if(dx==0&&dy==0)
+					continue;
+				trcrs = traceline(m, KVecInt2(dx, dy), orange);
+				if(trcrs.smartsuccess)
+					pv.push_back(KVecFloat2(trcrs.p.x+0.5*dx,trcrs.p.y+0.5*dy));
+			}
+		if(pv.size()<3)
+			continue;
+		KVecFloat2 center;
+		float radius=0,er=99999999;
+		for(unsigned i=0;i<pv.size()-2;i++)
+			for(unsigned j=i+1;j<pv.size()-1;j++)
+				for(unsigned k=j+1;k<pv.size();k++)
+				{
 
+					KVecFloat2 c=centerOfCircle(pv[i],pv[j],pv[k]);
+					if(c.x==-1)
+						continue;
+					float error=0;
+					float r=CvDist(c,pv[i]);
+					for(unsigned o=0;o<pv.size();o++)
+						error+=fabs(CvDist(c,pv[o])-r);
+					
+					if(error<er)
+					{
+						radius=r;
+						center=c;
+						er=error;
+						//cout<<radius<<endl;
 
-		KVecFloat2 fl,fr,ft;
-
-		ft=KVecFloat2(t.x,t.y-0.5);
-		if (trcrs.smartsuccess==false)
+					}
+				}
+				
+		if(radius==0)
+			continue;
+		for(unsigned o=0;o<pv.size();o++)
 		{
-			if(bsuccess)//Top failed , use bottom
-				ft=KVecFloat2(b.x,b.y+0.5);//trcrs = traceline(m, cvPoint(0, +1), orange);//try bottom
-			else
-				continue;
+			float r=CvDist(center,pv[o]);
+			if(r>radius)
+				radius=r;
+			
 		}
+		radius+=0.707;
+		
+					
 		//cout<<"Got 3 points"<<endl;
 
-		trcrs = traceline(m, KVecInt2(1, 0), orange);//Prefer  r
-		fr=KVecFloat2(trcrs.p.x+0.5,trcrs.p.y);//KVecFloat2(trcrs.p.x,trcrs.p.y);;//
-		if (trcrs.smartsuccess==false)
-		{
-			trcrs = traceline(m, KVecInt2(1, -1), orange);// try top r
-			if (trcrs.smartsuccess==false)
-				continue;
-			fr=KVecFloat2(trcrs.p.x+0.5,trcrs.p.y-0.5);//KVecFloat2(trcrs.p.x,trcrs.p.y);//
-
-		}
-
-		trcrs = traceline(m, KVecInt2(-1, 0), orange);//Prefer  r
-		fl=KVecFloat2(trcrs.p.x-0.5,trcrs.p.y);//KVecFloat2(trcrs.p.x,trcrs.p.y);//
-		if (trcrs.smartsuccess==false)
-		{
-			trcrs = traceline(m, KVecInt2(-1, -1), orange);// try top r
-			if (trcrs.smartsuccess==false)
-				continue;
-			fl=KVecFloat2(trcrs.p.x-0.5,trcrs.p.y-0.5);//KVecFloat2(trcrs.p.x,trcrs.p.y);//
-
-		}
-		//Call centerOfCircle with the margins of ball color, not the pixels them selves
-		KVecFloat2 center=centerOfCircle(fl,ft,fr);
-		if(center.x==-1)
-			continue;
-
-		float radius = CvDist(center,ft);//-0.707;
-		center.y+=0.707;
+		//center.y+=0.707;
 		//cout << "Wtf" << endl;
 		balldata_t newdata;
 		newdata.x = center.x;
@@ -1352,22 +1388,19 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		KVecFloat2 c1,c2;
 		KVecFloat2 im1;
 
-		im1(0)=center.x +(radius)*0.707;
-		im1(1)=center.y +(radius)*0.707;
+		im1(0)=center.x +(center.x>0?-1:1)*(radius)*0.707;
+		im1(1)=center.y +(center.y>0?-1:1)*(radius)*0.707;
 		//im1.prettyPrint();
 		//im2.prettyPrint();
 		c1=imageToCamera(center);
 		c2=imageToCamera(im1);
-		float tantths=kinext.vectorAngle(c1,c2);
+		float sinhalfdelta=kinext.vectorAngle(c1,c2);
 		c3d=kinext.camera2dToGround(c1);//Transform center vector  to ground coordinates
-		float par=tantths*tantths*( (sqrd(c3d(0))+sqrd(c3d(1)))/sqrd(c3d(2)))+tantths*tantths;
 
-		if (par>1)//Something is terribly wrong!
-		{
-			Logger::Instance().WriteMsg("Vision", "Ball size estimation went boggus!", Logger::Error);
-			continue;
-		}
-		float rest=p.cameraZ*(par-sqrt(par))/(par-1);
+		float tanpitch=fabs(c3d(2))/sqrt(sqrd(c3d(0))+sqrd(c3d(1)) );	
+		float pa=sinhalfdelta*sqrt(tanpitch*tanpitch+1);
+		//cout<<"E:"<<sinhalfdelta<<" "<<tanpitch<<" "<<pa<<std::endl;
+		float rest=1.0*p.cameraZ/(tanpitch/pa+1);
 		//cout<<"rest:"<<rest<<endl;
 		newdata.ballradius=rest;
 		measurement d1=kinext.angularDistanceProjected(c1,c2,rest);//Find distance based on size and project to ground, at radius height
@@ -1380,8 +1413,8 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 			banlist.push_back(newdata);
 			continue;
 		}
-		if (!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
-			continue;
+		//if (!calculateValidBall(newdata,(KSegmentator::colormask_t) orange))
+			//continue;
 		measurement* a=kinext.projectionDistance(c1,rest);
 		measurement d2=a[0];
 		measurement bearing=a[1];
@@ -1423,9 +1456,26 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 
 #ifdef DEBUGVISION
 	//KVecFloat2 & w=camToRobot(o)
-	Logger::Instance().WriteMsg("Vision", "Ball Distance:"+_toString(best.distance.mean), Logger::Info);
-	cout<<"Ball Bearing:"<<best.bearing.mean<<" "<<best.bearing.var<<endl;
-	cout<<"Ball Distance:"<<best.distance.mean<<" "<<best.distance.var<<endl;
+	if(best.cr>0)
+	{
+		Logger::Instance().WriteMsg("BallM", "Ball Distance:"+_toString(best.distance.mean)+" "+_toString(best.distance.var), Logger::Info);
+		Logger::Instance().WriteMsg("BallM", "Ball Bearing:"+_toString(best.bearing.mean)+" "+_toString(best.bearing.var), Logger::Info);
+		Logger::Instance().WriteMsg("BallM", "Ball Size:"+_toString(best.ballradius*2.0), Logger::Info);
+		KVecFloat2 c1(best.x,best.y);
+		c1=imageToCamera(c1);
+		measurement* a=kinext.projectionDistance(c1,config.ballsize/2.0);
+		measurement d2=a[0];
+		measurement bearing=a[1];
+		delete[] a;
+		KVecFloat2 polar;
+			//cout<<"ttldist:"<<distance.mean<<endl;
+		polar(0)=d2.mean;
+		polar(1)=bearing.mean;
+		KVecFloat2 robotpolar=camToRobot(polar);
+		Logger::Instance().WriteMsg("BallM", "Stupid Distance:"+_toString(robotpolar.x)+" "+_toString(d2.var), Logger::Info);
+		Logger::Instance().WriteMsg("BallM", "Stupid Bearing:"+_toString(robotpolar.y)+" "+_toString(bearing.var), Logger::Info);
+	}
+
 
 #endif
 	bd=history.begin();

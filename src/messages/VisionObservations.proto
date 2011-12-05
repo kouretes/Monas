@@ -8,7 +8,7 @@ message BallTrackMessage{
 message CalibrateCam{
 	required int32 status =1;
 	required int32 sleeptime =2 [default = 1500];
-	required int32 exp= 3 [default =15];
+	required int32 exp= 3 [default =10];
 	required float exposure_comp =4 [default=1];
 }
 

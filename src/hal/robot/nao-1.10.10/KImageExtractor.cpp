@@ -470,6 +470,6 @@ float KImageExtractor::getScale() const
 #ifdef WEBOTS
 	return 1.0f;
 #else
-	return log(lastexpusec)/log(refexpusec);
+	return log(refexpusec/lastexpusec);
 #endif
 }

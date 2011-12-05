@@ -6,6 +6,7 @@
 <SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
 <SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
 <Dfov>53.85</Dfov>
+<cameraGain>74.00</cameraGian>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
 <balltolerance>0.15</balltolerance>

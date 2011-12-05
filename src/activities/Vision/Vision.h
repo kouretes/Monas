@@ -49,6 +49,7 @@ class Vision: public IActivity
 			else if(segtop!=NULL)
 				delete segtop;
 		};
+	
 
 		void VISIBLE UserInit();
 		void fetchAndProcess();
@@ -67,8 +68,11 @@ class Vision: public IActivity
 				bool haveWidth;
 				bool haveHeight;
 				std::vector<measurement> dist, ber;
+
 				measurement distBot, distTop;
+				measurement distHeight;
 				measurement bBot, bTop;
+
 				int leftOrRight;
 
 				measurement distance;
@@ -111,6 +115,7 @@ class Vision: public IActivity
 		{
 				int sensordelay;
 				float Dfov;
+				float cameraGain;
 				std::string SegmentationBottom, SegmentationTop;
 				int scanV, scanH, minH, subsampling, bordersize, pixeltol;
 				float skipdistance, seedistance, obstacledistance;
@@ -122,11 +127,15 @@ class Vision: public IActivity
 				float pitchoffset;
 
 		} config;
+		
 		XMLConfig *xmlconfig;
 		BallTrackMessage trckmsg;
 		ObservationMessage obs;
 		LedChangeMessage leds;
 		mutable KProfiling::profiler vprof;
+#ifdef DEBUGVISION
+		void nullCall();
+#endif
 #ifdef  CAPTURE_MODE
 		int frameNo;
 #endif
@@ -153,6 +162,7 @@ class Vision: public IActivity
 		std::vector<KVecInt2> ygoalpost;
 		std::vector<KVecInt2> bgoalpost;
 		std::vector<KVecInt2> obstacles;
+		std::vector<KVecInt2> tobeshown;
 		KVecFloat2 Vup, Vdn, Vlt, Vrt;
 
 		void loadXMLConfig(std::string fname);
