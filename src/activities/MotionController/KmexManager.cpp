@@ -9,8 +9,8 @@
 using namespace std;
 using namespace KDeviceLists;
 
-vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name, map<string,
-		  boost::shared_ptr<ISpecialAction> > SpActions) {
+vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name,
+						map<string,boost::shared_ptr<ISpecialAction> > SpActions) {
 
 
 	XML config(file_name);
@@ -35,13 +35,13 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name, map<str
 		for ( unsigned int j=0; j<jointsNodes.size(); j++ )
 		{
 			jointsResults.push_back( jointsNodes[j].value );
-			Logger::Instance().WriteMsg("KmexManager", "Motion: "+MotionName+" with: "+jointsResults[j], Logger::ExtraInfo );
+			//Logger::Instance().WriteMsg("KmexManager", "Motion: "+MotionName+" with: "+jointsResults[j], Logger::ExtraInfo );
 		}
 		vector<int> jointNum;
 		for (unsigned int i =0; i<jointsResults.size(); i++)
 		{
 			jointNum.push_back(jointIDs[jointsResults[i]]);
-			Logger::Instance().WriteMsg("KmexManager", "JOINTS : " + _toString(jointNum.back()), Logger::ExtraInfo);
+			//Logger::Instance().WriteMsg("KmexManager", "JOINTS : " + _toString(jointNum.back()), Logger::ExtraInfo);
 		}
 
 		int numOfPoses = it->attrb["numOfPoses"];
@@ -54,7 +54,7 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name, map<str
 		{
 			posesResults.push_back(itIn->attrb["pose"]);
 
-			Logger::Instance().WriteMsg("KmexManager", "posesResults : " + _toString(posesResults.back()), Logger::ExtraInfo);
+			//Logger::Instance().WriteMsg("KmexManager", "posesResults : " + _toString(posesResults.back()), Logger::ExtraInfo);
 		}
 		SpAssocCont::iterator it = SpActions.find(MotionName);
 		if (it == SpActions.end())
@@ -80,12 +80,17 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name, map<str
 
 			vector<vector <float> > anglesVelocity;
 			vector <float> newVel;
+			float temp;
 
 			for (int i = 0; i<numOfPoses-1; i++)
 			{
 				for (int j = 0; j<numOfJoints; j++)
 				{
-					newVel.push_back((float)actionAngles[jointNum[j]][posesResults[i+1]] - (float)actionAngles[jointNum[j]][posesResults[i]]);
+					if(posesResults[i] == 0)
+						temp = 0;
+					else
+						temp = (float)actionAngles[jointNum[j]][posesResults[i]] - (float)actionAngles[jointNum[j]][posesResults[i]-1];
+					newVel.push_back(temp);
 				}
 				anglesVelocity.push_back(newVel);
 			}
