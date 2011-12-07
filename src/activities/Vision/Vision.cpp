@@ -495,6 +495,7 @@ void Vision::fetchAndProcess()
 	ygoalpost.clear();
 	bgoalpost.clear();
 	obstacles.clear();
+	tobeshown.clear();
 
 	gridScan(orange);
 	//endt = SysCall::_GetCurrentTimeInUSec()-startt;

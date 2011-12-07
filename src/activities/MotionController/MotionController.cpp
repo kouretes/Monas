@@ -16,8 +16,8 @@
 #define ANGLEHOR 1.6
 #define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
 
-#define MAXHEADYAWSPEED 2.5
-#define MAXHEADPITCHSPEED 2.5
+#define MAXHEADYAWSPEED 1.75
+#define MAXHEADPITCHSPEED 2.0
 
 #define KME_ACTIONPID -1
 

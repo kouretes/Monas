@@ -238,8 +238,9 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				linesdone++;
 				continue;
 			}
-
+#ifdef DEBUGVISION
 			tobeshown.push_back(KVecInt2(thisl.gtrc.x,thisl.gtrc.y));
+#endif
 			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y, white | orange | green| yellow |skyblue);
 
 			//cout<<"doseg:"<<(int)tempcolor<<endl;
