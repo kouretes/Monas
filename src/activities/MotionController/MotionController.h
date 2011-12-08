@@ -106,7 +106,6 @@ private:
 	void ALstandUpBack();
 	void ALstandUpFront();
 
-	void MotionSkillsInit();
 	vector<int> SpCutActionsManager();
 
 	void createDCMAlias();

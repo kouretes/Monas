@@ -137,7 +137,8 @@ void MotionController::UserInit()
 
 	counter = 0;
 
-	MotionSkillsInit();
+	pam = new MotionActionMessage();
+	pam->set_command("NULL");
 
 	walkingWithVelocity = false;
 	//setStiffnessDCM(1);
@@ -290,6 +291,7 @@ void MotionController::mglrun()
 	if ( ((actionPID > 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID)) || ((actionPID == KME_ACTIONPID) && !KmeManager::isDCMKmeRunning()) )
 	{
 		actionPID = 0;
+		//motion->setAngles("Body", (motion->getAngles("Body", true)), 0.5);
 		if (robotDown)
 		{
 			robotDown = false;
@@ -418,7 +420,6 @@ void MotionController::mglrun()
 			}
 
 			std::string str = pam->command();
-			std::string str2 = pam->command();
 			unsigned int pos = 0;
 			pos = str.find_first_of(".");
 			str.erase(0,pos+1);
@@ -427,11 +428,14 @@ void MotionController::mglrun()
 			{
 				vector<int> frames = SpCutActionsManager();
 
-				if ( frames.size()>0 && frames.back()>0 )
+				if ( frames.size()>0 )
 				{
-					SpAssocCont::iterator it = SpActions.find(pam->command());
+					std::string str2 = pam->command();
+					str2.erase(str2.size()-1, str2.size());
+
+					SpAssocCont::iterator it = SpActions.find(str2);
 					if (it == SpActions.end())
-						Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
+						Logger::Instance().WriteMsg("MotionController", "SpAction " + str2 + " not found!", Logger::Error);
 					else
 					{
 						killWalkCommand();
@@ -443,8 +447,6 @@ void MotionController::mglrun()
 					}
 					pam->set_command("NULL");
 				}
-				else
-					pam->set_command(str2);
 			}
 			else{
 				SpAssocCont::iterator it = SpActions.find(pam->command());
@@ -772,14 +774,6 @@ void MotionController::createDCMAlias()
 //	 */
 //}
 
-void MotionController::MotionSkillsInit()
-{
-	pam = new MotionActionMessage();
-	pam->set_command("NULL");
-
-	return;
-}
-
 
 vector<int> MotionController::SpCutActionsManager()
 {
@@ -787,12 +781,12 @@ vector<int> MotionController::SpCutActionsManager()
 
 	std::string str = pam->command();
 	str.erase(str.size()-1, str.size());
-	pam->set_command(str);
+	//pam->set_command(str);
 
-	SpCont::iterator it = SpKmexActions.find(pam->command());
-	Logger::Instance().WriteMsg("MotionController", "PAM: " + pam->command(), Logger::ExtraInfo);
+	SpCont::iterator it = SpKmexActions.find(str);
+	Logger::Instance().WriteMsg("MotionController", "SpCutActionsManager - PAM: " + str, Logger::ExtraInfo);
 	if (it == SpKmexActions.end())
-		Logger::Instance().WriteMsg("MotionController", "SpKmexActions " + pam->command() + " not found!", Logger::Error);
+		Logger::Instance().WriteMsg("MotionController", "SpKmexActions " + str + " not found!", Logger::Error);
 	else
 	{
 		boost::shared_ptr<KmexAction> ptr = it->second;
