@@ -5,8 +5,8 @@
 <!--  Configuration files for Segmentation-->
 <SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
 <SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
-<Dfov>55.85</Dfov>
-<cameraGain>24.20</cameraGain>
+<Dfov>54.85</Dfov>
+<cameraGain>64.20</cameraGain>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
 <balltolerance>0.15</balltolerance>
@@ -29,6 +29,6 @@
 <goaldiam>0.099</goaldiam>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>1</sensordelay>
+<sensordelay>2</sensordelay>
 
 <pitchoffset>0.02</pitchoffset>
