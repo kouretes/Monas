@@ -27,22 +27,22 @@ public:
 
 
 		GoToPosition g;
-		if(gsm.get()!=0 && gsm->player_state()==PLAYER_READY){
+		if(gsm.get()!=0 && (gsm->player_state()==PLAYER_READY || gsm->player_state() == PLAYER_PLAYING)){
 			if(pm.get()!=0 && wimsg.get()!=0){
 				return (! g.robotInPosition( wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(),pm->posy(), wimsg->myposition().phi(), pm->theta()));
 			}
 		}
-		if(gsm.get()!=0 &&  gsm->player_state()==PLAYER_PLAYING){
-			if(pm.get()!=0 && wimsg.get()!=0){
-				int side =1;
-				if(pm->posx()<0)
-					side = -1;
-				if(fabs(wimsg->myposition().y()) <0.3 && side*wimsg->myposition().x() > 2.4){  //polu makria apo thn perioxh tou termatofulaka
-					return false;
-				}else
-					return true;
-			}
-		}
+		//if(gsm.get()!=0 &&  gsm->player_state()==PLAYER_PLAYING){
+			//if(pm.get()!=0 && wimsg.get()!=0){
+				//int side =1;
+				//if(pm->posx()<0)
+					//side = -1;
+				//if(fabs(wimsg->myposition().y()) <0.3 && side*wimsg->myposition().x() > 2.4){  //polu makria apo thn perioxh tou termatofulaka
+					//return false;
+				//}else
+					//return true;
+			//}
+		//}
 		return false;
     }
 };

@@ -62,8 +62,8 @@ int GoToPosition::Execute() {
 
 	dist = distance(posX, myPosX, posY, myPosY);
 
-	float angleToTarget = KLocalization::anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
-	relativePhi = KLocalization::anglediff2(theta,myPhi);
+	float angleToTarget = anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
+	relativePhi = anglediff2(theta,myPhi);
 	float rot = 0.0, f=1.0;
 	float velx, vely;
 	vely = sin(angleToTarget);
@@ -153,7 +153,7 @@ bool GoToPosition::robotInPosition(float currentX, float targetX, float currentY
 		return false;
 	if( targetY - locDeviation > currentY || currentY > targetY + locDeviation  )
 		return false;
-	if( targetTheta - targetTheta*0.1 > currentTheta || currentTheta > targetTheta + targetTheta*0.1  )
+	if( anglediff2(targetTheta , currentTheta)> M_PI/8  )
 		return false;
 	return true;
 }

@@ -13,12 +13,13 @@
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "../BehaviorConst.h"
-#include "../Localization/KLocalization.h"
+#include "tools/MathFunctions.h"
 #include "architecture/archConfig.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 
 using namespace boost::posix_time;
+
 		
 class GoToPosition : public IActivity {
 			
