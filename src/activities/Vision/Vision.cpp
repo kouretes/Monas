@@ -413,10 +413,14 @@ void Vision::fetchAndProcess()
 	//return;
 	//cout<<"Attached"<<endl;
 	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &p.time, &stamp);
-#ifdef DEBUGVISION
+//#ifdef DEBUGVISION
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
 	cout << "SensorTimestamp:"<< boost::posix_time::to_iso_string(p.time) << endl;
-#endif
+	
+	boost::posix_time::ptime t;
+	_blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &t);
+	cout << "Lasttimestamp:"<< boost::posix_time::to_iso_string(t) << endl;
+//#endif
 
 	if (asvm.get() == NULL  )//No sensor data!
 	{
@@ -451,7 +455,7 @@ void Vision::fetchAndProcess()
 	//float imcomp=(exptime*1000.0)/p.timediff;
 
 
-	float imcomp = ((stamp - p.time).total_nanoseconds()*0.5 )/ (p.timediff);
+	float imcomp = ((stamp - p.time).total_nanoseconds()*1.0 )/ (p.timediff);
 
 #ifdef DEBUGVISION
 	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";

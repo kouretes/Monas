@@ -511,11 +511,11 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	}
 	ratio=(float (bd+1))/(ttl+1);
 	//cout<<"Bad ratio:"<<ratio<<endl;
-	if(ratio>0.35)
+	if(ratio>0.25)
 		return false;
 	ratio=(float (gd+1))/(ttl+1);
 	//cout<<"Goodratio:"<<ratio<<endl;
-	if(ratio<0.8)
+	if(ratio<0.65)
 		return false;
 	//if((float (bd+1))/(float (gd+1)) > 0.35)
 	//	return false;
@@ -541,7 +541,7 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 		{
 			if (!validpixel(i,j))
 				continue;
-			if(colorIsA(doSeg(i,j,green),green))
+			if(colorIsA(doSeg(i,j,green|white),green|white))
 				gd++;
 			ttl++;
 		}
@@ -557,27 +557,30 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 {
 	KPROF_SCOPE(vprof,"calculateValidGoalPostTop");
 	traceResult r;
-	KVecInt2 s;
+
+	KVecFloat2 tl,tr,s;
+	tl=simpleRotation(goal.tl);
+	tr=simpleRotation(goal.tr);
+
+    s.x=(tl.x+tr.x)/2;
+    s.y=(tl.y+tr.y)/2;
+    //Half a width below
+    s.y=(tr.x-tl.x)/2;
+    s=simpleRotation(s);
 	//s=goal.top;
 	//s.y+=1;
-	s=goal.tl;
-	r=traceline(s,KVecInt2(-2,+1),c);
-	//cout<<"tp:"<<r.p.x<< " "<<r.p.y<<endl;
-	//m.x=(r.p.x+s.x)/2;
-	//m.y=(r.p.y+s.y)/2;
-	//r=traceBlobEdge(m,Vlt,c);
-	//cout<<"r:"<<r.p.x<<r.p.y<<endl;
-	//cout<<"t:"<<goal.tl.x<<goal.tr.x<<endl;
+	r=traceline(KVecInt2(s.x,s.y),Vrt,c);
 	goal.leftOrRight=0;
-	if(r.p.x<goal.tl.x)
+
+	if(simpleRotation(r.p).x>simpleRotation(goal.tr).x)
 	{
-		goal.leftOrRight=1;
+		goal.leftOrRight=2;//Left goal post, has something on the right
 		return true;
 	}
 
 	//cout<<"No lt proeks"<<endl;
 	s=goal.tr;
-	r=traceline(s,KVecInt2(+2,+1),c);
+	r=traceline(KVecInt2(s.x,s.y),Vlt,c);
 	//cout<<"tp:"<<r.p.x<< " "<<r.p.y<<endl;
 	//m.x=(r.p.x+s.x)/2;
 	//m.y=(r.p.y+s.y)/2;
@@ -585,9 +588,9 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 
 	//cout<<"r:"<<r.p.x<<r.p.y<<endl;
 	//cout<<"t:"<<goal.tl.x<<goal.tr.x<<endl;
-	if(r.p.x>goal.tr.x)
+	if(simpleRotation(r.p).x<simpleRotation(goal.tl).x)
 	{
-		goal.leftOrRight=2;//Left
+		goal.leftOrRight=1;//Right goal post , has something on the left
 		return true;
 	}
 
@@ -643,17 +646,39 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		KVecFloat2 b,t,ll,lr,tl,tr,temp;
 
 
-		trcrs = traceBlobEdge(m,Vdn,c);
+		trcrs = traceline(m,Vdn,c);
 		newpost.haveBot=trcrs.smartsuccess;
 		newpost.bot=trcrs.p;
 
 
-		trcrs = traceBlobEdge(m,Vup,c);
-		newpost.haveTop=trcrs.smartsuccess;
-		newpost.top=trcrs.p;
+        trcrs = traceline(m,Vup,c);
+        while(trcrs.smartsuccess&&simpleRotation(newpost.top).y<simpleRotation(trcrs.p).y)
+        {
 
-		b=simpleRotation(newpost.bot);
-		t=simpleRotation(newpost.top);
+            newpost.top=trcrs.p;
+            temp.x=(trcrs.p.x+m.x);
+            temp.y=(trcrs.p.y+m.y);
+
+            trcrs=traceline(KVecInt2(temp.x,temp.y),Vlt,c);
+            m=trcrs.p;
+            trcrs=traceline((*i),Vrt,c);
+            m.x=(m.x+trcrs.p.x)/2;
+            m.y=(m.y+trcrs.p.y)/2;
+
+            //again up
+            trcrs = traceline(m,Vup,c);
+
+
+        }
+        newpost.top=trcrs.p;
+        newpost.haveTop=trcrs.smartsuccess;
+
+
+        b=simpleRotation(newpost.bot);
+        t=simpleRotation(newpost.top);
+
+
+
 
 		/*
 		newpost.ll.y=newpost.bot.y;
@@ -683,7 +708,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 			//newpost.lr.x=newpost.lr.x<trcrs.p.x?trcrs.p.x :newpost.lr.x;
 			//sumr+=trcrs.p.x;
-			at.step();
 			at.step();
 		}
 		ll.x/=config.subsampling;
@@ -721,7 +745,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 			//newpost.tr.x=newpost.tr.x<trcrs.p.x?trcrs.p.x :newpost.tr.x;
 			at.step();
-			at.step();
 		}
 		tl.x/=config.subsampling;
 		tr.x/=config.subsampling;
@@ -739,15 +762,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		newpost.bot.x=(newpost.ll.x+newpost.lr.x)/2;
 		newpost.bot.y=(newpost.ll.y+newpost.lr.y)/2;
 
-		//Now find again bot and top
 
-		trcrs = traceline(newpost.bot,Vdn,c);
-		newpost.haveBot=trcrs.smartsuccess;
-		newpost.bot=trcrs.p;
-
-		trcrs = traceline(newpost.top,Vup,c);
-		newpost.haveTop=trcrs.smartsuccess;
-		newpost.top=trcrs.p;
 		/*t=simpleRotation(newpost.top);
 		b=simpleRotation(newpost.bot);
 
@@ -768,12 +783,12 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		//cout<<"post:"<<newpost.tl.x<<" " <<newpost.tl.y<<" "<<newpost.tr.x<<" " <<newpost.tr.y<<" "<<newpost.ll.x<<" " <<newpost.ll.y<<" "<<newpost.lr.x<<" " <<newpost.lr.y<<endl;
 
 		//cout<<"Smarts:"<<newpost.haveBot<< " "<<newpost.haveTop<<endl;
-		if(tr.x-tl.x<config.pixeltol || lr.x-ll.x<config.pixeltol ||
-		  -ll.y+tl.y<(tr.x-tl.x) ||	  -lr.y+tr.y<(lr.x-ll.x))//
-		{
+		//if(tr.x-tl.x<config.pixeltol || lr.x-ll.x<config.pixeltol ||
+		 // -ll.y+tl.y<(tr.x-tl.x) ||	  -lr.y+tr.y<(lr.x-ll.x))//
+		//{
 			//cout <<"Goal size test failed"<<endl;
-			continue;
-		}
+			//continue;
+		//}
 		KVecFloat2 ci,i;
 		KVecFloat3 c3d;
 		ci=imageToCamera(newpost.bot);
@@ -840,14 +855,14 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		}
 
 
-		
+
 		if(newpost.haveBot)
 			newpost.ber.push_back(newpost.bBot);
 		if(newpost.haveTop)
 		newpost.ber.push_back(newpost.bTop);
 		if(newpost.ber.size()==0 || newpost.dist.size()==0)
 			continue;
-		
+
 		//cout<<"LocateGoalPost"<<endl;
 
 		//newpost.distance=mWeightedMean(newpost.dist);
@@ -871,7 +886,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		//	cout<<"WDistance"<<newpost.distWidth.mean<<" "<<newpost.distWidth.var<<endl;
 		//cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
 		//cout<<"Distance top-bot:"<<newpost.distTop.mean<<" "<<newpost.distBot.mean<<endl;
-
+		//cout<<"bearing top-bot:"<<newpost.bTop.mean<<" "<<newpost.bBot.mean<<endl;
 		//cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
 		//cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
 
@@ -1288,7 +1303,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		//cout<<(*i).x<<" "<<(*i).y<<endl;
 		traceResult trcrs;
 
-		
+
 		trcrs = traceline((*i), KVecInt2(0, 1), orange);//Stupid
 		KVecInt2 b=trcrs.p;
 		trcrs = traceline((*i), KVecInt2(0, -1), orange);//stupid
@@ -1313,19 +1328,19 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		b=trcrs.p;
 		//if(trcrs.smartsuccess)
 			//pv.push_back(KVecFloat2(b.x,b.y+0.5));
-		
-		
+
+
 
 		trcrs = traceline(m, KVecInt2(0, -1), orange);//Smart
 		t=trcrs.p;
         m.y=(b.y+t.y)/2;
        // if(trcrs.smartsuccess)
 		//	pv.push_back(KVecFloat2(b.x,b.y-0.5));
-		
-		
-		
-		
-		
+
+
+
+
+
 		for(int dx=-1;dx<2;dx++)
 			for(int dy=-1;dy<2;dy++)
 			{
@@ -1351,7 +1366,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 					float r=CvDist(c,pv[i]);
 					for(unsigned o=0;o<pv.size();o++)
 						error+=fabs(CvDist(c,pv[o])-r);
-					
+
 					if(error<er)
 					{
 						radius=r;
@@ -1361,7 +1376,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 
 					}
 				}
-				
+
 		if(radius==0)
 			continue;
 		for(unsigned o=0;o<pv.size();o++)
@@ -1369,11 +1384,11 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 			float r=CvDist(center,pv[o]);
 			if(r>radius)
 				radius=r;
-			
+
 		}
 		radius+=0.707;
-		
-					
+
+
 		//cout<<"Got 3 points"<<endl;
 
 		//center.y+=0.707;
@@ -1398,7 +1413,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		float sinhalfdelta=kinext.vectorAngle(c1,c2);
 		c3d=kinext.camera2dToGround(c1);//Transform center vector  to ground coordinates
 
-		float tanpitch=fabs(c3d(2))/sqrt(sqrd(c3d(0))+sqrd(c3d(1)) );	
+		float tanpitch=fabs(c3d(2))/sqrt(sqrd(c3d(0))+sqrd(c3d(1)) );
 		float pa=sinhalfdelta*sqrt(tanpitch*tanpitch+1);
 		//cout<<"E:"<<sinhalfdelta<<" "<<tanpitch<<" "<<pa<<std::endl;
 		float rest=1.0*p.cameraZ/(tanpitch/pa+1);
@@ -1713,13 +1728,6 @@ Vision::traceResult Vision::traceline(KVecInt2 const & start, KVecFloat2 const& 
 }
 
 
-Vision::traceResult Vision::traceBlobEdge(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const
-{
-	KPROF_SCOPE(vprof,"traceBlobEdge");
-	return traceline(start,vel,c);
-
-
-}
 
 bool Vision::validpixel(int x,int y) const
 {

@@ -49,7 +49,7 @@ class Vision: public IActivity
 			else if(segtop!=NULL)
 				delete segtop;
 		};
-	
+
 
 		void VISIBLE UserInit();
 		void fetchAndProcess();
@@ -127,7 +127,7 @@ class Vision: public IActivity
 				float pitchoffset;
 
 		} config;
-		
+
 		XMLConfig *xmlconfig;
 		BallTrackMessage trckmsg;
 		ObservationMessage obs;
@@ -188,7 +188,7 @@ class Vision: public IActivity
 		traceResult traceline(KVecInt2 const& start, KVecInt2 const&  vel, KSegmentator::colormask_t c) const ;
 		traceResult traceline(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
 		//traceResult traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const;
-		traceResult traceBlobEdge(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
+		//traceResult traceBlobEdge(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
 		//Wrapper for seg object
 		KSegmentator::colormask_t doSeg(const int x, const int y,const KSegmentator::colormask_t h=0xFF ) const;
 		void prepSeg(const int x,const int y) const;//Prefetch

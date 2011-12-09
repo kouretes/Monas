@@ -29,6 +29,6 @@
 <goaldiam>0.099</goaldiam>
 <widthestimateotolerance>0.4</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>2</sensordelay>
+<sensordelay>1</sensordelay>
 
 <pitchoffset>0.02</pitchoffset>
