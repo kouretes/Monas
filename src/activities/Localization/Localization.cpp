@@ -10,8 +10,8 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 #include <math.h>
-
 #include "architecture/archConfig.h"
+//#include "tools/MathFunctions.h"
 #define CALIBRATE 1
 #define SCANFORBALL 2
 #define SCANFORPOST 3
@@ -20,6 +20,7 @@
 #define MAX_TIME_TO_RESET 10 //in seconds
 //#define ADEBUG
 using namespace std;
+
 namespace
 {
 	ActivityRegistrar<Localization>::Type temp("Localization");

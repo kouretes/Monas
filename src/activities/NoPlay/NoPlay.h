@@ -11,7 +11,7 @@
 #include "messages/BehaviorMessages.pb.h"
 #include "../BehaviorConst.h"
 #include "../ApproachBall/ApproachBall.h"
-#include "../Localization/KLocalization.h"
+#include "tools/MathFunctions.h"
 	
 
 class NoPlay : public IActivity {

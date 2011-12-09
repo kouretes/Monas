@@ -13,11 +13,11 @@
 //#define KPROFILING_ENABLED
 
 #include "tools/profiler.hpp"
-
-#include "KLocalization.h"
 #include "BallFilter.h"
+#include "KLocalization.h"
 #include "PracticalSocket.h"
 #include <string>
+
 class Localization: public IActivity, public KLocalization
 {
 

@@ -11,6 +11,7 @@
 namespace {
     ActivityRegistrar<NoPlay>::Type temp("NoPlay");
 }
+using namespace std;
 
 int NoPlay::Execute() {
 
@@ -320,8 +321,8 @@ void NoPlay::goToPosition(float x, float y, float phi){
 	relativeY = rotation(y, y, myPhi) - myPosY;
 
 	float velx, vely;
-	float angle = KLocalization::anglediff2(atan2(y -myPosY, x - myPosX), myPhi);
-	relativePhi = KLocalization::anglediff2(phi,myPhi);
+	float angle = anglediff2(atan2(y -myPosY, x - myPosX), myPhi);
+	relativePhi = anglediff2(phi,myPhi);
 	vely = 0.8*sin(angle);
 	velx = 0.8*cos(angle);
 

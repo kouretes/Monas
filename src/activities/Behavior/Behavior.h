@@ -15,6 +15,7 @@
 #include "architecture/archConfig.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "tools/MathFunctions.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
