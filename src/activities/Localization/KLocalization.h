@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-#include "tools/MathFunctions.h"
+#include "../../tools/MathFunctions.h"
 
 //#define WEBOTS
 //#define VISIBILITY_WEIGHTING
