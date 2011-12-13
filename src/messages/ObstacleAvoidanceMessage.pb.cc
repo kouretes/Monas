@@ -30,6 +30,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PathPlanningResultMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PathPlanningResultMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* GridInfo_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  GridInfo_reflection_ = NULL;
 
 }  // namespace
 
@@ -123,6 +126,22 @@ void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PathPlanningResultMessage));
+  GridInfo_descriptor_ = file->message_type(5);
+  static const int GridInfo_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, gridcells_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, odometrymeasure_),
+  };
+  GridInfo_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      GridInfo_descriptor_,
+      GridInfo::default_instance_,
+      GridInfo_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(GridInfo));
 }
 
 namespace {
@@ -145,6 +164,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     PathPlanningRequestMessage_descriptor_, &PathPlanningRequestMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     PathPlanningResultMessage_descriptor_, &PathPlanningResultMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    GridInfo_descriptor_, &GridInfo::default_instance());
 }
 
 }  // namespace
@@ -160,6 +181,8 @@ void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto() {
   delete PathPlanningRequestMessage_reflection_;
   delete PathPlanningResultMessage::default_instance_;
   delete PathPlanningResultMessage_reflection_;
+  delete GridInfo::default_instance_;
+  delete GridInfo_reflection_;
 }
 
 void protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto() {
@@ -179,7 +202,9 @@ void protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto() {
     "stMessage\022\020\n\005goToX\030\001 \002(\002:\0010\022\020\n\005goToY\030\002 \002"
     "(\002:\0010\022\024\n\tgoToAngle\030\003 \002(\002:\0010\"[\n\031PathPlann"
     "ingResultMessage\022\022\n\007moveToX\030\001 \002(\002:\0010\022\022\n\007"
-    "moveToY\030\002 \002(\002:\0010\022\026\n\013moveToAngle\030\003 \002(\002:\0010", 440);
+    "moveToY\030\002 \002(\002:\0010\022\026\n\013moveToAngle\030\003 \002(\002:\0010"
+    "\"6\n\010GridInfo\022\021\n\tGridCells\030\001 \003(\002\022\027\n\017Odome"
+    "tryMeasure\030\002 \003(\002", 496);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ObstacleAvoidanceMessage.proto", &protobuf_RegisterTypes);
   ObstacleMessage::default_instance_ = new ObstacleMessage();
@@ -187,11 +212,13 @@ void protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto() {
   VisionObstacleMessage::default_instance_ = new VisionObstacleMessage();
   PathPlanningRequestMessage::default_instance_ = new PathPlanningRequestMessage();
   PathPlanningResultMessage::default_instance_ = new PathPlanningResultMessage();
+  GridInfo::default_instance_ = new GridInfo();
   ObstacleMessage::default_instance_->InitAsDefaultInstance();
   ObstacleMessageArray::default_instance_->InitAsDefaultInstance();
   VisionObstacleMessage::default_instance_->InitAsDefaultInstance();
   PathPlanningRequestMessage::default_instance_->InitAsDefaultInstance();
   PathPlanningResultMessage::default_instance_->InitAsDefaultInstance();
+  GridInfo::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto);
 }
 
@@ -1552,6 +1579,258 @@ void PathPlanningResultMessage::Swap(PathPlanningResultMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = PathPlanningResultMessage_descriptor_;
   metadata.reflection = PathPlanningResultMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int GridInfo::kGridCellsFieldNumber;
+const int GridInfo::kOdometryMeasureFieldNumber;
+#endif  // !_MSC_VER
+
+GridInfo::GridInfo()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void GridInfo::InitAsDefaultInstance() {
+}
+
+GridInfo::GridInfo(const GridInfo& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void GridInfo::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+GridInfo::~GridInfo() {
+  SharedDtor();
+}
+
+void GridInfo::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void GridInfo::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* GridInfo::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return GridInfo_descriptor_;
+}
+
+const GridInfo& GridInfo::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();  return *default_instance_;
+}
+
+GridInfo* GridInfo::default_instance_ = NULL;
+
+GridInfo* GridInfo::New() const {
+  return new GridInfo;
+}
+
+void GridInfo::Clear() {
+  gridcells_.Clear();
+  odometrymeasure_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool GridInfo::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated float GridCells = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_GridCells:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 13, input, this->mutable_gridcells())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_gridcells())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(13)) goto parse_GridCells;
+        if (input->ExpectTag(21)) goto parse_OdometryMeasure;
+        break;
+      }
+      
+      // repeated float OdometryMeasure = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_OdometryMeasure:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 21, input, this->mutable_odometrymeasure())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_odometrymeasure())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_OdometryMeasure;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void GridInfo::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // repeated float GridCells = 1;
+  for (int i = 0; i < this->gridcells_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      1, this->gridcells(i), output);
+  }
+  
+  // repeated float OdometryMeasure = 2;
+  for (int i = 0; i < this->odometrymeasure_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      2, this->odometrymeasure(i), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* GridInfo::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // repeated float GridCells = 1;
+  for (int i = 0; i < this->gridcells_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(1, this->gridcells(i), target);
+  }
+  
+  // repeated float OdometryMeasure = 2;
+  for (int i = 0; i < this->odometrymeasure_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(2, this->odometrymeasure(i), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int GridInfo::ByteSize() const {
+  int total_size = 0;
+  
+  // repeated float GridCells = 1;
+  {
+    int data_size = 0;
+    data_size = 4 * this->gridcells_size();
+    total_size += 1 * this->gridcells_size() + data_size;
+  }
+  
+  // repeated float OdometryMeasure = 2;
+  {
+    int data_size = 0;
+    data_size = 4 * this->odometrymeasure_size();
+    total_size += 1 * this->odometrymeasure_size() + data_size;
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void GridInfo::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const GridInfo* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const GridInfo*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void GridInfo::MergeFrom(const GridInfo& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  gridcells_.MergeFrom(from.gridcells_);
+  odometrymeasure_.MergeFrom(from.odometrymeasure_);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void GridInfo::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GridInfo::CopyFrom(const GridInfo& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GridInfo::IsInitialized() const {
+  
+  return true;
+}
+
+void GridInfo::Swap(GridInfo* other) {
+  if (other != this) {
+    gridcells_.Swap(&other->gridcells_);
+    odometrymeasure_.Swap(&other->odometrymeasure_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata GridInfo::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = GridInfo_descriptor_;
+  metadata.reflection = GridInfo_reflection_;
   return metadata;
 }
 
