@@ -3,8 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/GoToPosition/GoToPosition.h"
-#include "activities/BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_GoToPositionTO0_3_2_3_3_4_3 : public statechart_engine::ICondition {
 
@@ -20,7 +19,7 @@ public:
 		boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("behavior");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		GoToPosition g;
+	
 		bool ret = false;
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)
 			return true;

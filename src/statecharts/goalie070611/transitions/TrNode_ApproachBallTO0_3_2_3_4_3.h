@@ -3,7 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/ApproachBall/ApproachBall.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_ApproachBallTO0_3_2_3_4_3 : public statechart_engine::ICondition {
 
@@ -25,15 +25,15 @@ public:
 		//rpm->set_goalietopos(true);
 		//_blk->publishSignal(*rpm, "behavior");
 
-		ApproachBall ab;
+		
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)
 			return true;
 		if(hbm.get()!=0 && hbm->ballfound()==0)
 			return true;
-		if(wimsg.get()!=0 && wimsg->balls_size()!=0 && ab.readyToKick(wimsg))
+		if(wimsg.get()!=0 && wimsg->balls_size()!=0 && readyToKick(wimsg))
 				return true;
-		if(wimsg.get()!=0 && wimsg->balls_size()!=0 && ab.ballAway(wimsg))
+		if(wimsg.get()!=0 && wimsg->balls_size()!=0 && ballAway(wimsg))
 			return true;
 		return false;
     }

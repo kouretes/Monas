@@ -3,8 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/GoToPosition/GoToPosition.h"
-#include "activities/BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_GoToPositionTOGoToPosition : public statechart_engine::ICondition {
 
@@ -26,10 +25,10 @@ public:
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 
 
-		GoToPosition g;
+		
 		if(gsm.get()!=0 && (gsm->player_state()==PLAYER_READY || gsm->player_state() == PLAYER_PLAYING)){
 			if(pm.get()!=0 && wimsg.get()!=0){
-				return (! g.robotInPosition( wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(),pm->posy(), wimsg->myposition().phi(), pm->theta()));
+				return (! robotInPosition( wimsg->myposition().x(), pm->posx(), wimsg->myposition().y(),pm->posy(), wimsg->myposition().phi(), pm->theta()));
 			}
 		}
 		//if(gsm.get()!=0 &&  gsm->player_state()==PLAYER_PLAYING){

@@ -3,7 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_0_3_2_3_3_2TOScan_one_or_more_times_ : public statechart_engine::ICondition {
 

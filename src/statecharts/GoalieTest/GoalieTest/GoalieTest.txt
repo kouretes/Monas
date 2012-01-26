@@ -1,0 +1,7 @@
+GoalieTest
+goalie = decision+
+decision = play | (NoPlay.[GoToPosition+])
+play = searchBallOrGoToPosition | ApproachBall+ | Kick | followTheBall
+searchBallOrGoToPosition = Scan+ | GoToPosition+
+followTheBall = Stare+.[SpecialAction]
+

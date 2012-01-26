@@ -84,6 +84,7 @@ int Kick::Execute() {
 			amot->set_command("KickSideRightFast.xar");
 	}
 	_blk->publishSignal(*amot, "motion");
+	_blk->publish_all();
 	return 0;
 }
 

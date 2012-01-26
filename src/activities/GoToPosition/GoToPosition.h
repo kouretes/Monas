@@ -12,7 +12,7 @@
 #include "messages/RoboCupGameControlData.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "../BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 #include "tools/MathFunctions.h"
 #include "architecture/archConfig.h"
 #include "tools/XML.h"
@@ -31,7 +31,7 @@ public:
 	
 	std::string GetName ();
 	
-	bool robotInPosition(float rx, float x2, float ry, float y2, float rth, float th2);
+	
 	
 private:
 	boost::shared_ptr<const PositionMessage> pm;

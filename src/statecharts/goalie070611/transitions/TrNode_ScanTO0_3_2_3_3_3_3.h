@@ -3,8 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/BehaviorConst.h"
-#include "activities/GoToPosition/GoToPosition.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_ScanTO0_3_2_3_3_3_3 : public statechart_engine::ICondition {
 

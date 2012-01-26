@@ -33,10 +33,8 @@ int GoToPosition::Execute() {
 
 	//Logger::Instance().WriteMsg(GetName(),  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
 	//Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
-	robotInPos = robotInPosition(posX, myPosX, posY, myPosY, theta, myPhi);
-	
-	ripm.set_inposition(robotInPos);
-	_blk->publishSignal(ripm, "behavior");
+	robotInPos = robotInPosition(wimsg, pm);
+
 	
 	if(robotInPos && lastMove <= microsec_clock::universal_time() ){
 		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
@@ -147,16 +145,6 @@ std::string GoToPosition::GetName () {
 	return "GoToPosition";
 }
 
-bool GoToPosition::robotInPosition(float currentX, float targetX, float currentY, float targetY, float currentTheta, float targetTheta){
-	//Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
-	if( targetX - locDeviation > currentX || currentX > targetX + locDeviation )
-		return false;
-	if( targetY - locDeviation > currentY || currentY > targetY + locDeviation  )
-		return false;
-	if( anglediff2(targetTheta , currentTheta)> M_PI/8  )
-		return false;
-	return true;
-}
 
 void GoToPosition::velocityWalk(double x, double y, double th, double f) {
 	//Logger::Instance().WriteMsg(GetName(),  " VelocityWalk", Logger::Info);
@@ -177,12 +165,7 @@ void GoToPosition::littleWalk(double x, double y, double th) {
 	_blk->publishSignal(wmot, "motion");
 }
 ///////////////////////////////////////
-float GoToPosition::rotation(float a, float b, float theta){
-	//Logger::Instance().WriteMsg("Rotation",  " Entered", Logger::Info);
-	return a*cos(theta) + b*sin(theta);
 
-
-}
 
 float GoToPosition::distance(float x1, float x2, float y1, float y2){
 	//Logger::Instance().WriteMsg("Distance",  " Entered", Logger::Info);
