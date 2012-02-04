@@ -5,6 +5,7 @@ namespace {
     ActivityRegistrar<Kick>::Type temp("Kick");
 }
 
+
 int Kick::Execute() {
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	wimsg  = _blk->readData<WorldInfo>("behavior");
@@ -45,7 +46,7 @@ int Kick::Execute() {
 		oppGoalY = yellowGoalY;
 	}
 
-	float ogb = KLocalization::anglediff2(atan2(oppGoalY - wimsg->myposition().y(), oppGoalX - wimsg->myposition().x()), wimsg->myposition().phi());
+	float ogb = anglediff2(atan2(oppGoalY - wimsg->myposition().y(), oppGoalX - wimsg->myposition().x()), wimsg->myposition().phi());
 
 	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
 		orientation = 0;
@@ -83,6 +84,7 @@ int Kick::Execute() {
 			amot->set_command("KickSideRightFast.xar");
 	}
 	_blk->publishSignal(*amot, "motion");
+	_blk->publish_all();
 	return 0;
 }
 
@@ -120,7 +122,7 @@ bool Kick::readGoalConfiguration(const std::string& file_name) {
 	TiXmlNode * Ftr;
 	TiXmlElement * Attr;
 	double x, y;
-	string ID;
+	std::string ID;
 
 	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling()) {
 		Attr = Ftr->ToElement();

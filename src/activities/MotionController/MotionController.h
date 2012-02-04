@@ -107,7 +107,7 @@ private:
 	void ALstandUpFront();
 
 	vector<int> SpCutActionsManager();
-
+	vector<float> KGetAngles();
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
 	typedef std::map<std::string,

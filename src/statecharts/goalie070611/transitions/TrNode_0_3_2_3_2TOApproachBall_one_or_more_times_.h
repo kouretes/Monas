@@ -3,7 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/ApproachBall/ApproachBall.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_0_3_2_3_2TOApproachBall_one_or_more_times_ : public statechart_engine::ICondition {
 
@@ -21,9 +21,9 @@ public:
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
 
-		ApproachBall ab;
+	
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
-			if(wimsg.get()!=0 && wimsg->balls_size()!=0 && !ab.ballAway(wimsg) && !ab.readyToKick(wimsg)){
+			if(wimsg.get()!=0 && wimsg->balls_size()!=0 && !ballAway(wimsg) && !readyToKick(wimsg)){
 					return true;
 			}
 		}

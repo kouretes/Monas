@@ -46,14 +46,15 @@ int XarAnalyzer::Execute() {
 		}
 		else if (gameState == PLAYER_PENALISED) {
 			play = false;
-			velocityWalk(0.0,0.0,0.0,1);
+			velocityWalk(0.0,0.0,0.0,1.0);
 		}
 	}
 
 
 	if (play) {
 		if(flag == 0){
-			amot->set_command("KickSideRightFast.xar");
+			//velocityWalk(1.0,0.0,0.0,1.0);
+			amot->set_command("KickForwardRightSit.xar");
 			_blk->publishSignal(*amot, "motion");
 			kickTime = microsec_clock::universal_time();
 			flag = 1;
@@ -64,29 +65,30 @@ int XarAnalyzer::Execute() {
 				angleStore[temp][0] = allsm->jointdata(HEAD+YAW).sensorvalue();
 				angleStore[temp][1] = allsm->jointdata(HEAD+PITCH).sensorvalue();
 
-				angleStore[temp][2] = allsm->jointdata(L_LEG+HIP_YAW_PITCH).sensorvalue();
-				angleStore[temp][3] = allsm->jointdata(L_LEG+HIP_ROLL).sensorvalue();
-				angleStore[temp][4] = allsm->jointdata(L_LEG+HIP_PITCH).sensorvalue();
-				angleStore[temp][5] = allsm->jointdata(L_LEG+KNEE_PITCH).sensorvalue();
-				angleStore[temp][6] = allsm->jointdata(L_LEG+ANKLE_PITCH).sensorvalue();
-				angleStore[temp][7] = allsm->jointdata(L_LEG+ANKLE_ROLL).sensorvalue();
+				angleStore[temp][2] = allsm->jointdata(L_ARM+SHOULDER_PITCH).sensorvalue();
+				angleStore[temp][3] = allsm->jointdata(L_ARM+SHOULDER_ROLL).sensorvalue();
+				angleStore[temp][4] = allsm->jointdata(L_ARM+ELBOW_YAW).sensorvalue();
+				angleStore[temp][5] = allsm->jointdata(L_ARM+ELBOW_ROLL).sensorvalue();
 
-				angleStore[temp][8] = allsm->jointdata(R_LEG+HIP_YAW_PITCH).sensorvalue();
-				angleStore[temp][9] = allsm->jointdata(R_LEG+HIP_ROLL).sensorvalue();
-				angleStore[temp][10] = allsm->jointdata(R_LEG+HIP_PITCH).sensorvalue();
-				angleStore[temp][11] = allsm->jointdata(R_LEG+KNEE_PITCH).sensorvalue();
-				angleStore[temp][12] = allsm->jointdata(R_LEG+ANKLE_PITCH).sensorvalue();
-				angleStore[temp][13] = allsm->jointdata(R_LEG+ANKLE_ROLL).sensorvalue();
+				angleStore[temp][6] = allsm->jointdata(L_LEG+HIP_YAW_PITCH).sensorvalue();
+				angleStore[temp][7] = allsm->jointdata(L_LEG+HIP_ROLL).sensorvalue();
+				angleStore[temp][8] = allsm->jointdata(L_LEG+HIP_PITCH).sensorvalue();
+				angleStore[temp][9] = allsm->jointdata(L_LEG+KNEE_PITCH).sensorvalue();
+				angleStore[temp][10] = allsm->jointdata(L_LEG+ANKLE_PITCH).sensorvalue();
+				angleStore[temp][11] = allsm->jointdata(L_LEG+ANKLE_ROLL).sensorvalue();
 
-				angleStore[temp][14] = allsm->jointdata(L_ARM+SHOULDER_PITCH).sensorvalue();
-				angleStore[temp][15] = allsm->jointdata(L_ARM+SHOULDER_ROLL).sensorvalue();
-				angleStore[temp][16] = allsm->jointdata(L_ARM+ELBOW_ROLL).sensorvalue();
-				angleStore[temp][17] = allsm->jointdata(L_ARM+ELBOW_YAW).sensorvalue();
+				angleStore[temp][12] = allsm->jointdata(R_LEG+HIP_YAW_PITCH).sensorvalue();
+				angleStore[temp][13] = allsm->jointdata(R_LEG+HIP_ROLL).sensorvalue();
+				angleStore[temp][14] = allsm->jointdata(R_LEG+HIP_PITCH).sensorvalue();
+				angleStore[temp][15] = allsm->jointdata(R_LEG+KNEE_PITCH).sensorvalue();
+				angleStore[temp][16] = allsm->jointdata(R_LEG+ANKLE_PITCH).sensorvalue();
+				angleStore[temp][17] = allsm->jointdata(R_LEG+ANKLE_ROLL).sensorvalue();
 
 				angleStore[temp][18] = allsm->jointdata(R_ARM+SHOULDER_PITCH).sensorvalue();
 				angleStore[temp][19] = allsm->jointdata(R_ARM+SHOULDER_ROLL).sensorvalue();
-				angleStore[temp][20] = allsm->jointdata(R_ARM+ELBOW_ROLL).sensorvalue();
-				angleStore[temp][21] = allsm->jointdata(R_ARM+ELBOW_YAW).sensorvalue();
+				angleStore[temp][20] = allsm->jointdata(R_ARM+ELBOW_YAW).sensorvalue();
+				angleStore[temp][21] = allsm->jointdata(R_ARM+ELBOW_ROLL).sensorvalue();
+
 
 				temp++;
 			}
@@ -116,8 +118,8 @@ void XarAnalyzer::createKmeFile() {
 	unsigned int pos = 0;
 	frameTime = 0.0;
 	num = 0.0;
-	fileName = "KickSideRightFast.kme";
-	fileNameM = "KickSideRightFast.txt";	//for Matlab
+	fileName = "KickForwardRightSit.kme";
+	fileNameM = "KickForwardRightSit.txt";	//for Matlab
 
 	fin.open((ArchConfig::Instance().GetConfigPrefix()+"kme/"+fileName).c_str(),ios::out);
 	finM.open((ArchConfig::Instance().GetConfigPrefix()+"kme/"+fileNameM).c_str(),ios::out);
@@ -146,12 +148,7 @@ void XarAnalyzer::createKmeFile() {
 
 void XarAnalyzer::velocityWalk(double x, double y, double th, double f)
 {
-	static ptime lastcommand=microsec_clock::universal_time();
-	if(microsec_clock::universal_time()-lastcommand<milliseconds(200))
-		return ;
 	wmot->set_command("setWalkTargetVelocity");
-	lastcommand=microsec_clock::universal_time();
-
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);

@@ -360,6 +360,33 @@ namespace FKin
 		return FKVariables;
 		
 	}
+	
+	/**
+	 * @fn FKvars forwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
+	 * @brief This function take's the name of the start point for the chain, the name for the end point and returns the transformation table.
+	 * @param start. The name of the start point of the chain.
+	 * @param stop. The name of the end point of the chain.
+	 * @param jointsStart. One vector with all the joints for the chain of the start point.
+	 * @param jointsEnd. One vector with all the joints for the chain of the end point.
+	 * @returns Tamatrix1. The transformation matrix.
+	 * 
+ 	 * @details Return the whole transformation table
+	 * */
+	kmatTable forwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd){
+		kmatTable Tmatrix1, Tmatrix2;
+		if(!start.compare("Torso")){
+			Tmatrix1.identity();
+		}else
+			filterForward(Tmatrix1,start, jointsStart);
+		if(!stop.compare("Torso")){
+			Tmatrix2.identity();
+		}else
+			filterForward(Tmatrix2,stop, jointsEnd);
+		Tmatrix1.fast_invert();
+		Tmatrix1 *= Tmatrix2;
+		return Tmatrix1;
+		
+	}
 	//std::vector<int>
 	//std::vector<float> lala;
 	//vector<float>::iterator iter;

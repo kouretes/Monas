@@ -81,14 +81,13 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME() {
         unsigned int joints = 22;
         actionNames.arraySetSize(joints);
         actionAngles.arraySetSize(joints);
-      //  actionTimes.arraySetSize(joints);
+        actionTimes.arraySetSize(joints);
 
         unsigned int poses = spAct[i].seqMotion.size();
         for (unsigned int l = 0; l < joints; l++) {
           actionAngles[l].arraySetSize(poses);
-          //actionTimes[l].arraySetSize(poses);
+          actionTimes[l].arraySetSize(poses);
         }
-        actionTimes.arraySetSize(poses);
 
         for (unsigned int l = 0; l < joints; l++) {
           float time = 0.0;
@@ -96,15 +95,9 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME() {
           for (unsigned int k = 0; k < poses; k++) {
             actionAngles[l][k] = spAct[i].seqMotion[k][l];		//l for the joints and k for the poses actionAngles[joints][poses]
             time += spAct[i].seqMotion[k][22];
-            actionTimes[k] = time;
-
-            //Logger::Instance().WriteMsg("KmeMANAGER", "actionAngles " + _toString(actionAngles[l][k]) , Logger::ExtraInfo);
-
+            actionTimes[l][k] = time;
           }
         }
-       // Logger::Instance().WriteMsg("KmeMANAGER", "actionTimes " + _toString(actionTimes[0]) , Logger::ExtraInfo);
-       // Logger::Instance().WriteMsg("KmeMANAGER", "actionTimes " + _toString(actionTimes[poses-1]) , Logger::ExtraInfo);
-        //Logger::Instance().WriteMsg("KmeMANAGER", "Poses " + _toString(poses) , Logger::ExtraInfo);
 
         ISpecialAction* curAction = new KmeAction(spAct[i].seqName,actionNames, actionAngles, actionTimes);
         KmeActions.push_back(curAction);

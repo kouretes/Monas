@@ -34,6 +34,7 @@ int SpecialAction::Execute() {
 	//rpm->set_goalietopos(true);
 	//_blk->publishSignal(*rpm, "behavior");
 	//sleep(2);
+	_blk->publish_all();
 	return 0;
 }
 

@@ -7,7 +7,6 @@
 #include "hal/robot/generic_nao/robot_consts.h"
 
 using namespace boost::posix_time;
-
 namespace {
 	ActivityRegistrar<Behavior>::Type temp("Behavior");
 }
@@ -15,46 +14,6 @@ using namespace std;
 
 Behavior::Behavior() {
 
-}
-
-/* Utility Functions */
-/* TODO: remove and place in some common utilities file */
-
-double wrapToPi(double angle)
-{
-	while (angle > M_PI)
-		angle -= 2.0 * M_PI;
-	while (angle < -M_PI)
-		angle += 2.0 * M_PI;
-	return angle;
-}
-
-double wrapTo2Pi(double angle)
-{
-	while (angle > 2.0 * M_PI)
-		angle -= 2.0 * M_PI;
-	while (angle < -2.0 * M_PI)
-		angle += 2.0 * M_PI;
-	return angle;
-}
-
-double wrapTo0_2Pi(double angle)
-{
-	while (angle > 2.0 * M_PI)
-		angle -= 2.0 * M_PI;
-	while (angle < 0.0)
-		angle += 2.0 * M_PI;
-	return angle;
-}
-
-double anglediff2(double a1, double a2)
-{
-	return wrapToPi(wrapToPi(a1 + M_PI - a2) - M_PI);
-}
-
-double anglediff(double a1, double a2)
-{
-	return fabs(wrapTo0_2Pi(a1 + M_PI - a2) - M_PI);
 }
 
 double mglRand()

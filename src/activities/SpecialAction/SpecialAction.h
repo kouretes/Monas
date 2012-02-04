@@ -7,7 +7,7 @@
 #include "messages/BehaviorMessages.pb.h"
 #include "tools/logger.h"
 #include "tools/toString.h"		
-#include "activities/BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 class SpecialAction : public IActivity {
 			
 public:

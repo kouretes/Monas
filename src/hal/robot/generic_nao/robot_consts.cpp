@@ -35,6 +35,13 @@ std::vector<std::string> KDeviceLists::generateJointNames()
 	Keys[HEAD+YAW] = "HeadYaw";
 	Keys[HEAD+PITCH] = "HeadPitch";
 
+	Keys[L_ARM+SHOULDER_PITCH] = "LShoulderPitch";
+	Keys[L_ARM+SHOULDER_ROLL] = "LShoulderRoll";
+	Keys[L_ARM+ELBOW_YAW] = "LElbowYaw";
+	Keys[L_ARM+ELBOW_ROLL] = "LElbowRoll";
+	//Keys[L_ARM+WRIST_YAW] = "LWristYaw";
+	//Keys[L_ARM+HAND] = "LHand";
+
 	Keys[L_LEG+HIP_YAW_PITCH] = "LHipYawPitch";
 	Keys[L_LEG+HIP_ROLL] = "LHipRoll";
 	Keys[L_LEG+HIP_PITCH] = "LHipPitch";
@@ -49,19 +56,13 @@ std::vector<std::string> KDeviceLists::generateJointNames()
 	Keys[R_LEG+ANKLE_PITCH] = "RAnklePitch";
 	Keys[R_LEG+ANKLE_ROLL] = "RAnkleRoll";
 
-	Keys[L_ARM+SHOULDER_PITCH] = "LShoulderPitch";
-	Keys[L_ARM+SHOULDER_ROLL] = "LShoulderRoll";
-	Keys[L_ARM+ELBOW_ROLL] = "LElbowRoll";
-	Keys[L_ARM+ELBOW_YAW] = "LElbowYaw";
-	//Keys[L_ARM+WRIST_YAW] = "LWristYaw";
-	//Keys[L_ARM+HAND] = "LHand";
-
 	Keys[R_ARM+SHOULDER_PITCH] = "RShoulderPitch";
 	Keys[R_ARM+SHOULDER_ROLL] = "RShoulderRoll";
-	Keys[R_ARM+ELBOW_ROLL] = "RElbowRoll";
 	Keys[R_ARM+ELBOW_YAW] = "RElbowYaw";
+	Keys[R_ARM+ELBOW_ROLL] = "RElbowRoll";
 	//Keys[R_ARM+WRIST_YAW] = "RWristYaw";
 	//Keys[R_ARM+HAND] = "RHand";
+
 	return Keys;
 }
 
@@ -71,6 +72,13 @@ std::map<std::string, int> KDeviceLists::generateJointIDs()
 
 	JointsIDs.insert(std::pair<std::string, int>("HeadYaw", HEAD+YAW));
 	JointsIDs.insert(std::pair<std::string, int>("HeadPitch", HEAD+PITCH));
+
+	JointsIDs.insert(std::pair<std::string, int>("LShoulderPitch", L_ARM+SHOULDER_PITCH));
+	JointsIDs.insert(std::pair<std::string, int>("LShoulderRoll", L_ARM+SHOULDER_ROLL));
+	JointsIDs.insert(std::pair<std::string, int>("LElbowYaw", L_ARM+ELBOW_YAW));
+	JointsIDs.insert(std::pair<std::string, int>("LElbowRoll", L_ARM+ELBOW_ROLL));
+	//JointsIDs.insert(std::pair<std::string, int>("LWristYaw", L_ARM+WRIST_YAW));
+	//JointsIDs.insert(std::pair<std::string, int>("LHand", L_ARM+HAND));
 
 	JointsIDs.insert(std::pair<std::string, int>("LHipYawPitch", L_LEG+HIP_YAW_PITCH));
 	JointsIDs.insert(std::pair<std::string, int>("LHipRoll", L_LEG+HIP_ROLL));
@@ -86,17 +94,10 @@ std::map<std::string, int> KDeviceLists::generateJointIDs()
 	JointsIDs.insert(std::pair<std::string, int>("RAnklePitch", R_LEG+ANKLE_PITCH));
 	JointsIDs.insert(std::pair<std::string, int>("RAnkleRoll", R_LEG+ANKLE_ROLL));
 
-	JointsIDs.insert(std::pair<std::string, int>("LShoulderPitch", L_ARM+SHOULDER_PITCH));
-	JointsIDs.insert(std::pair<std::string, int>("LShoulderRoll", L_ARM+SHOULDER_ROLL));
-	JointsIDs.insert(std::pair<std::string, int>("LElbowRoll", L_ARM+ELBOW_ROLL));
-	JointsIDs.insert(std::pair<std::string, int>("LElbowYaw", L_ARM+ELBOW_YAW));
-	//JointsIDs.insert(std::pair<std::string, int>("LWristYaw", L_ARM+WRIST_YAW));
-	//JointsIDs.insert(std::pair<std::string, int>("LHand", L_ARM+HAND));
-
 	JointsIDs.insert(std::pair<std::string, int>("RShoulderPitch", R_ARM+SHOULDER_PITCH));
 	JointsIDs.insert(std::pair<std::string, int>("RShoulderRoll", R_ARM+SHOULDER_ROLL));
-	JointsIDs.insert(std::pair<std::string, int>("RElbowRoll", R_ARM+ELBOW_ROLL));
 	JointsIDs.insert(std::pair<std::string, int>("RElbowYaw", R_ARM+ELBOW_YAW));
+	JointsIDs.insert(std::pair<std::string, int>("RElbowRoll", R_ARM+ELBOW_ROLL));
 	//JointsIDs.insert(std::pair<std::string, int>("RWristYaw", R_ARM+WRIST_YAW));
 	//JointsIDs.insert(std::pair<std::string, int>("RHand", R_ARM+HAND));
 

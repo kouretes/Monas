@@ -25,7 +25,7 @@
 
 
 #define JOINTS 22
-#define ACTION_TIME 4
+#define ACTION_TIME 8
 #define XarAnalyzerFPS 10
 
 #ifndef TO_RAD

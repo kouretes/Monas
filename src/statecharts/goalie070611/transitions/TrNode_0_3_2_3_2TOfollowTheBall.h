@@ -3,7 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/ApproachBall/ApproachBall.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_0_3_2_3_2TOfollowTheBall : public statechart_engine::ICondition {
 
@@ -20,14 +20,14 @@ public:
 	//	boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
-		ApproachBall ab;
+		
 		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)
 			return false;
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
 			if(wimsg.get()!=0  && wimsg->balls_size()!=0 ){
-				if(!ab.readyToKick(wimsg)){
-					if( ab.ballAway(wimsg)) //ball is far away from the goalpost
+				if(!readyToKick(wimsg)){
+					if( ballAway(wimsg)) //ball is far away from the goalpost
 						return true;
 					//ball is not far away from the goalpost but goalkeeper can repulse the ball
 				}

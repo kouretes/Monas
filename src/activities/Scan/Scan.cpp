@@ -51,6 +51,7 @@ int Scan::Execute() {
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 
+_blk->publish_all();
 	return 0;
 }
 

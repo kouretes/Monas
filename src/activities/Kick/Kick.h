@@ -6,8 +6,8 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "../BehaviorConst.h"
-#include "../Localization/KLocalization.h"
+#include "tools/BehaviorConst.h"
+#include "tools/MathFunctions.h"
 
 class Kick : public IActivity {
 
