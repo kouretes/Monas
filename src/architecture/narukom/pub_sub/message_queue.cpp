@@ -39,10 +39,10 @@ cond_mutex(),cond_publishers(),cond_publishers_queue(),cond(),agentStats()
 	subscriptions.resize(Topics::Instance().size()+1);//Force Generation of instance and resize subscription vector
 
     XMLConfig xmlconfig(ArchConfig::Instance().GetConfigPrefix()+"/network.xml");
-    string multicastip;
-    unsigned int port;
-    unsigned maxpayload;
-    unsigned beacon_interval;
+    string multicastip="";
+    unsigned int port=0;
+    unsigned maxpayload=0;
+    unsigned beacon_interval=0;
     if(xmlconfig.QueryElement("multicast_ip", multicastip) &&
 	   xmlconfig.QueryElement("multicast_port", port) &&
 	   xmlconfig.QueryElement("maxpayload", maxpayload) &&
