@@ -35,13 +35,11 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name,
 		for ( unsigned int j=0; j<jointsNodes.size(); j++ )
 		{
 			jointsResults.push_back( jointsNodes[j].value );
-			//Logger::Instance().WriteMsg("KmexManager", "Motion: "+MotionName+" with: "+jointsResults[j], Logger::ExtraInfo );
 		}
 		vector<int> jointNum;
 		for (unsigned int i =0; i<jointsResults.size(); i++)
 		{
 			jointNum.push_back(jointIDs[jointsResults[i]]);
-			//Logger::Instance().WriteMsg("KmexManager", "JOINTS : " + _toString(jointNum.back()), Logger::ExtraInfo);
 		}
 
 		int numOfPoses = it->attrb["numOfPoses"];
@@ -53,8 +51,6 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name,
 		for (  NodeCont::iterator itIn = poses.begin(); itIn !=poses.end(); itIn++  )
 		{
 			posesResults.push_back(itIn->attrb["pose"]);
-
-			//Logger::Instance().WriteMsg("KmexManager", "posesResults : " + _toString(posesResults.back()), Logger::ExtraInfo);
 		}
 		SpAssocCont::iterator it = SpActions.find(MotionName);
 		if (it == SpActions.end())
@@ -64,7 +60,7 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name,
 			boost::shared_ptr<ISpecialAction> ptr = it->second;
 			KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
 			AL::ALValue actionAngles = ptrdcmkme->ReturnALValues();
-			int totalPoses = actionAngles[21].getSize();
+			int totalPoses = actionAngles[21].getSize()-1;
 
 			vector<vector <float> > anglesResults;
 			vector<float> tmpAngles;
@@ -76,13 +72,14 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name,
 					tmpAngles.push_back(actionAngles[jointNum[j]][posesResults[i]]);
 				}
 				anglesResults.push_back(tmpAngles);
+				tmpAngles.clear();
 			}
 
 			vector<vector <float> > anglesVelocity;
 			vector <float> newVel;
 			float temp;
 
-			for (int i = 0; i<numOfPoses-1; i++)
+			for (int i = 0; i<numOfPoses; i++)
 			{
 				for (int j = 0; j<numOfJoints; j++)
 				{
@@ -93,6 +90,7 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name,
 					newVel.push_back(temp);
 				}
 				anglesVelocity.push_back(newVel);
+				newVel.clear();
 			}
 
 			KmexAction* curAction = new KmexAction(MotionName, numOfPoses, posesResults, totalPoses, threshold, numOfJoints, jointNum, anglesResults, anglesVelocity);

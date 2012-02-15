@@ -33,52 +33,20 @@ void KmexAction::DcmInit() {
 
 vector<int> KmexAction::AngleCompare(boost::shared_ptr<const AllSensorValuesMessage> allsm)
 {
-	float CompAng[numberOfPoses][numberOfJoints];
-	float diffKick[numberOfPoses - 1][numberOfJoints];
 	float diffW[numberOfJoints];
 	vector<int> frames;
-	vector <float> anglesTemp (numberOfJoints, 0);
-	vector <float> anglesVelTemp;
-	float norm[numberOfPoses-1];
+	float norm[numberOfPoses];
+	float tempA[numberOfPoses];
+	float tempB[numberOfPoses];
 
-	for (int i = 0; i < numberOfJoints; i++)
+	for ( int j = 0; j < numberOfPoses; j++ )
 	{
-		diffW[i] = 0.0;
-	}
-
-	int k = 0;
-	for(int j = 0; j < numberOfPoses; j++)
-	{
-		anglesTemp = angles[j];
-		for (int i = 0; i < numberOfJoints; i++)
-		{
-			CompAng[j][i] = anglesTemp[k+i];
-		}
-		k = k + numberOfJoints;
-	}
-
-	int l=0;
-	for(int j = 0; j < numberOfPoses-1; j++)
-	{
-		anglesVelTemp = anglesVelocity[j];
-		for (int i = 0; i < numberOfJoints; i++)
-		{
-			diffKick[j][i] = anglesVelTemp[l+i];
-		}
-		l = l + numberOfJoints;
-	}
-
-	float tempA[numberOfPoses-1];
-	float tempB[numberOfPoses-1];
-
-	for(int j = 0; j < numberOfPoses-1; j++)
-	{
-			tempA[j] = 0;
-			tempB[j] = 0;
+			tempA[j] = 0.0;
+			tempB[j] = 0.0;
 	}
 
 	float walkAngles[numberOfJoints];
-	for( unsigned int i = 0; i<joints.size(); i++)
+	for (int i = 0; i<numberOfJoints; i++)
 	{
 		walkAngles[i] = allsm->jointdata(joints[i]).sensorvalue();
 	}
@@ -88,35 +56,31 @@ vector<int> KmexAction::AngleCompare(boost::shared_ptr<const AllSensorValuesMess
 		diffW[i] = walkAngles[i] - walkPrevAng[i];
 	}
 
-
-	for (int j = 0; j < numberOfPoses-1; j++)
+	for (int j = 0; j < numberOfPoses; j++)
 	{
 		for (int i = 0; i < numberOfJoints; i++)
 		{
-			tempA[j] = pow((CompAng[j][i] - walkAngles[i]),2) + tempA[j];
-			tempB[j] = pow((diffKick[j][i] - diffW[i]),2) + tempB[j];
+			tempA[j] = pow((angles[j][i] - walkAngles[i]),2) + tempA[j];
+			tempB[j] = pow((anglesVelocity[j][i] - diffW[i]),2) + tempB[j];
 
 			walkPrevAng[i] = walkAngles[i];
 		}
 	}
 
-	for (int j = 0; j < numberOfPoses-1; j++)
-	{
-		norm[j] = sqrt(tempA[j] + tempB[j]);
-		Logger::Instance().WriteMsg("KmexAction", "norm : " +  _toString(norm[j]), Logger::ExtraInfo);
-	}
-
 	int ready = 0;
 	int frameStart = 0;
-	for (int j = 0; j < numberOfPoses-1; j++)
+
+	for (int j = 0; j < numberOfPoses; j++)
 	{
+		norm[j] = sqrt(tempA[j] + tempB[j]);
+		//Logger::Instance().WriteMsg("KmexAction", "norm : " +  _toString(norm[j]), Logger::ExtraInfo);
 		if (norm[j] <= threshold){
 			frameStart = poses[j];
 			ready = 1;
 		}else
 			Logger::Instance().WriteMsg("KmexAction", "MPA ", Logger::ExtraInfo);
 	}
-	if(ready == 1){
+	if (ready == 1){
 		frames.push_back(frameStart);
 		frames.push_back(totalPoses);
 	}

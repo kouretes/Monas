@@ -29,9 +29,6 @@
 #define kmatTable KMat::ATMatrix<float,4>
 #define KMatTransf KMat::transformations
 
-#ifndef PI
-#define PI 3.141592653589793238f
-#endif
 /**
  * This is the code for the Forward Kinematics for nao v3.3 robot.
  
@@ -91,7 +88,7 @@ namespace FKin
 	 * */
 	void forwardLeftHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll){
 		kmatTable base,T1,T2,T3,T4,R,endTr;
-		
+		float PI = KMatTransf::PI;
 		KMatTransf::makeTranslationMatrix(base, 0.0f,ShoulderOffsetY + ElbowOffsetY,ShoulderOffsetZ);
 		KMatTransf::makeTransformationMatrix(T1,0.0f,-PI/2,0.0f,ShoulderPitch);
 		KMatTransf::makeTransformationMatrix(T2,0.0f,PI/2,0.0f,ShoulderRoll-PI/2);
@@ -122,6 +119,7 @@ namespace FKin
 	 * */
 	void forwardRightHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll){
 		kmatTable base,T1,T2,T3,T4,R,endTr;
+		float PI = KMatTransf::PI;
 		
 		KMatTransf::makeTranslationMatrix(base, 0.0f,-(ShoulderOffsetY+ElbowOffsetY),ShoulderOffsetZ);
 		
@@ -158,6 +156,7 @@ namespace FKin
 	 * */
 	void forwardLeftLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnkleRoll, float AnklePitch){
 		kmatTable base,T1,T2,T3,T4,T5,T6,R1,R2,endTr;
+		float PI = KMatTransf::PI;
 		
 		KMatTransf::makeTranslationMatrix(base, 0.0f,HipOffsetY,-HipOffsetZ);
 		
@@ -199,6 +198,7 @@ namespace FKin
 	 * */
 	void forwardRightLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnkleRoll, float AnklePitch){
 		kmatTable base,T1,T2,T3,T4,T5,T6,R1,R2,endTr;
+		float PI = KMatTransf::PI;
 		
 		KMatTransf::makeTranslationMatrix(base, 0.0f,-HipOffsetY,-HipOffsetZ);
 		
@@ -237,6 +237,7 @@ namespace FKin
 	 * */
 	void forwardCamera(kmatTable & EndTransf, float HeadYaw, float HeadPitch, bool topCamera){
 		kmatTable base,T1,T2,R,endTr;
+		float PI = KMatTransf::PI;
 		
 		KMatTransf::makeTranslationMatrix(base, 0.0f,0.0f,NeckOffsetZ);
 		

@@ -177,7 +177,9 @@ void MotionController::read_messages()
 
 void MotionController::mglrun()
 {
-
+	vector<float> AangleTemp(22);
+	vector<float> KangleTemp(22);
+	vector<float> CangleTemp(22);
 	/* Return if waiting time has not expired yet */
 	if (waitfor > microsec_clock::universal_time())
 		return;
@@ -287,11 +289,22 @@ void MotionController::mglrun()
 		}
 	}
 
+
 	/* Check if an Action command has been completed */
 	if ( ((actionPID > 0) && !motion->isRunning(actionPID) && !framemanager->isRunning(actionPID)) || ((actionPID == KME_ACTIONPID) && !KmeManager::isDCMKmeRunning()) )
 	{
+		if (actionPID == KME_ACTIONPID)
+		{
+			SpAssocCont::iterator it = SpActions.find("InitPose.xar");
+			if (it == SpActions.end())
+				Logger::Instance().WriteMsg("MotionController", std::string("SpAction ") + "InitPose.xar" + " not found!", Logger::Error);
+			else
+				actionPID = it->second->ExecutePost();
+
+			return;
+		}
 		actionPID = 0;
-		//motion->setAngles("Body", (motion->getAngles("Body", true)), 0.5);
+
 		if (robotDown)
 		{
 			robotDown = false;
@@ -415,7 +428,7 @@ void MotionController::mglrun()
 		{
 			if (am != NULL)
 			{
-				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command() +" "+ to_simple_string(boost::posix_time::microsec_clock::universal_time()), Logger::ExtraInfo);
+				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command(), Logger::ExtraInfo);
 				pam->set_command(am->command());
 			}
 
@@ -454,7 +467,6 @@ void MotionController::mglrun()
 					Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
 				else{
 					stopWalkCommand();
-					Logger::Instance().WriteMsg("MotionController", "EKANA STOP WALK!!!!", Logger::ExtraInfo);
 					if (pam->command() == "LieDown")
 					{
 						killHeadCommand();
@@ -463,7 +475,6 @@ void MotionController::mglrun()
 						killHeadCommand();
 						robotUp = false;
 					}
-
 					if (str.compare("kme") == 0)
 					{
 						boost::shared_ptr<ISpecialAction> ptr = it->second;
@@ -778,10 +789,8 @@ void MotionController::createDCMAlias()
 vector<int> MotionController::SpCutActionsManager()
 {
 	vector<int> frames;
-
 	std::string str = pam->command();
 	str.erase(str.size()-1, str.size());
-	//pam->set_command(str);
 
 	SpCont::iterator it = SpKmexActions.find(str);
 	Logger::Instance().WriteMsg("MotionController", "SpCutActionsManager - PAM: " + str, Logger::ExtraInfo);
@@ -796,6 +805,40 @@ vector<int> MotionController::SpCutActionsManager()
 	return frames;
 }
 
+vector<float> MotionController::KGetAngles(){
+	 static vector<float> angleStore(22);
+
+	if(allsm != 0){
+		angleStore[0] = allsm->jointdata(HEAD+YAW).sensorvalue();
+		angleStore[1] = allsm->jointdata(HEAD+PITCH).sensorvalue();
+
+		angleStore[2] = allsm->jointdata(L_ARM+SHOULDER_PITCH).sensorvalue();
+		angleStore[3] = allsm->jointdata(L_ARM+SHOULDER_ROLL).sensorvalue();
+		angleStore[4] = allsm->jointdata(L_ARM+ELBOW_YAW).sensorvalue();
+		angleStore[5] = allsm->jointdata(L_ARM+ELBOW_ROLL).sensorvalue();
+
+		angleStore[6] = allsm->jointdata(L_LEG+HIP_YAW_PITCH).sensorvalue();
+		angleStore[7] = allsm->jointdata(L_LEG+HIP_ROLL).sensorvalue();
+		angleStore[8] = allsm->jointdata(L_LEG+HIP_PITCH).sensorvalue();
+		angleStore[9] = allsm->jointdata(L_LEG+KNEE_PITCH).sensorvalue();
+		angleStore[10] = allsm->jointdata(L_LEG+ANKLE_PITCH).sensorvalue();
+		angleStore[11] = allsm->jointdata(L_LEG+ANKLE_ROLL).sensorvalue();
+
+		angleStore[12] = allsm->jointdata(R_LEG+HIP_YAW_PITCH).sensorvalue();
+		angleStore[13] = allsm->jointdata(R_LEG+HIP_ROLL).sensorvalue();
+		angleStore[14] = allsm->jointdata(R_LEG+HIP_PITCH).sensorvalue();
+		angleStore[15] = allsm->jointdata(R_LEG+KNEE_PITCH).sensorvalue();
+		angleStore[16] = allsm->jointdata(R_LEG+ANKLE_PITCH).sensorvalue();
+		angleStore[17] = allsm->jointdata(R_LEG+ANKLE_ROLL).sensorvalue();
+
+		angleStore[18] = allsm->jointdata(R_ARM+SHOULDER_PITCH).sensorvalue();
+		angleStore[19] = allsm->jointdata(R_ARM+SHOULDER_ROLL).sensorvalue();
+		angleStore[20] = allsm->jointdata(R_ARM+ELBOW_YAW).sensorvalue();
+		angleStore[21] = allsm->jointdata(R_ARM+ELBOW_ROLL).sensorvalue();
+
+	}
+	return angleStore;
+}
 
 void MotionController::readWalkParameters()
 {

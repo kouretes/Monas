@@ -2,12 +2,14 @@
 
 <!-- Oi pozes metriountai apo to 0 kai oxi apo to 1 -->
 
-<Motion numOfPoses = 5 threshold = 0.7 numOfJoints = 6>
+<Motion numOfPoses = 5 threshold = 0.7 numOfJoints = 8>	<!-- a good ball distance (bd) for the kick is 15 cm -->
 <actionName>KickForwardRight.kme</actionName>
 
 <Joints>LHipRoll</Joints>
 <Joints>LHipPitch</Joints>
 <Joints>LKneePitch</Joints>
+<Joints>LAnklePitch</Joints>
+<Joints>LAnkleRoll</Joints>
 <Joints>RHipRoll</Joints>
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
@@ -20,7 +22,7 @@
 </Motion>
 
 
-<Motion numOfPoses = 5 threshold = 0.7 numOfJoints = 6>
+<Motion numOfPoses = 5 threshold = 0.7 numOfJoints = 8>		<!-- a good ball distance (bd) for the kick is 15 cm -->
 <actionName>KickForwardLeft.kme</actionName>
 
 <Joints>LHipRoll</Joints>
@@ -29,32 +31,37 @@
 <Joints>RHipRoll</Joints>
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
+<Joints>RAnklePitch</Joints>
+<Joints>RAnkleRoll</Joints>
 
 <Poses pose = 5></Poses>
 <Poses pose = 9></Poses>
 <Poses pose = 15></Poses>
 <Poses pose = 19></Poses>
-<Poses pose = 23></Poses>
+<Poses pose = 23></Poses>	
+
 </Motion>
 
 
-<Motion numOfPoses = 3 threshold = 0.6 numOfJoints = 6>
+<Motion numOfPoses = 3 threshold = 0.6 numOfJoints = 8>		<!-- a good ball distance (bd) for the kick is 12 cm -->
 <actionName>KickBackRight.kme</actionName>
 
 <Joints>LHipRoll</Joints>
 <Joints>LHipPitch</Joints>
 <Joints>LKneePitch</Joints>
+<Joints>LAnklePitch</Joints>
+<Joints>LAnkleRoll</Joints>
 <Joints>RHipRoll</Joints>
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
 
 <Poses pose = 4></Poses>
-<Poses pose = 8></Poses>
+<Poses pose = 8></Poses> 
 <Poses pose = 11></Poses>
 </Motion>
 
 
-<Motion numOfPoses = 3 threshold = 0.6 numOfJoints = 6>
+<Motion numOfPoses = 3 threshold = 0.6 numOfJoints = 8>		<!-- a good ball distance (bd) for the kick is 12 cm -->
 <actionName>KickBackLeft.kme</actionName>
 
 <Joints>LHipRoll</Joints>
@@ -63,14 +70,16 @@
 <Joints>RHipRoll</Joints>
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
+<Joints>RAnklePitch</Joints>
+<Joints>RAnkleRoll</Joints>
 
 <Poses pose = 4></Poses>
-<Poses pose = 8></Poses>
+<Poses pose = 8></Poses> 
 <Poses pose = 11></Poses>
 </Motion>
 
 
-<Motion numOfPoses = 4 threshold = 0.5 numOfJoints = 6>
+<Motion numOfPoses = 3 threshold = 0.5 numOfJoints = 6>		<!-- a good ball distance (bd) for the kick is 12 cm -->
 <actionName>KickSideRight.kme</actionName>
 
 <Joints>LHipRoll</Joints>
@@ -80,14 +89,13 @@
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
 
-<Poses pose = 3></Poses>
 <Poses pose = 5></Poses>
 <Poses pose = 7></Poses>
 <Poses pose = 9></Poses>
 </Motion>
 
 
-<Motion numOfPoses = 4 threshold = 0.5 numOfJoints = 6>
+<Motion numOfPoses = 4 threshold = 0.5 numOfJoints = 6>		<!-- a good ball distance (bd) for the kick is 12 cm -->
 <actionName>KickSideLeft.kme</actionName>
 
 <Joints>LHipRoll</Joints>

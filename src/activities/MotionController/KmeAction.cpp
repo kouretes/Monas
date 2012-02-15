@@ -36,8 +36,8 @@ void KmeAction::DcmInit() {
 	jointAliasses[1].arraySetSize(20);
 
 	// Joints actuator list
-	for (int i = KDeviceLists::L_LEG; i < KDeviceLists::NUMOFJOINTS; i++) {
-		jointAliasses[1][i - KDeviceLists::L_LEG] = PosActuatorStrings[i];
+	for (int i = KDeviceLists::L_ARM; i < KDeviceLists::NUMOFJOINTS; i++) {
+		jointAliasses[1][i - KDeviceLists::L_ARM] = PosActuatorStrings[i];
 	}
 
 	// Create alias
@@ -56,9 +56,9 @@ void KmeAction::DcmInit() {
 	commands[5].arraySetSize(20); // For all joints except head
 
 	for (unsigned int i = 0; i < commands[5].getSize(); i++) {
-		commands[5][i].arraySetSize(actionTimes.getSize()); 		//num of poses
+		commands[5][i].arraySetSize(actionTimes[0].getSize()); 		//num of poses
 		for (unsigned int j = 0; j < commands[5][i].getSize(); j++) {
-			commands[5][i][j] = actionAngles[i+2][j];					// actionAngles[joints][poses], commands[joints][poses]
+			commands[5][i][j] = actionAngles[i+2][j];					// actionAngles[joints][poses], commands[5][joints][poses]
 
 			// Logger::Instance().WriteMsg("KmeACTION", "commands " + _toString(commands[5][i][j]) , Logger::ExtraInfo);
 		}
@@ -73,65 +73,70 @@ AL::ALValue KmeAction::ReturnALValues(){
 boost::posix_time::ptime KmeAction::ExecuteDCM() {
 
 	try {
-		commands[4].arraySetSize(actionTimes.getSize());
-		for (unsigned int j = 0; j < commands[4].getSize(); j++) {
-			commands[4][j] = dcm->getTime(rint((float)(actionTimes[j]) * 1000));
-			//Logger::Instance().WriteMsg("KMEAction", "TIME" + _toString(actionTimes[j]), Logger::FatalError);
-			//Logger::Instance().WriteMsg("KMEAction", "TIME" + _toString(commands[4][j]), Logger::FatalError);
-		}
+		int DcmAt = dcm->getTime(0);
 
+		commands[4].clear();
+		commands[4].arraySetSize(actionTimes[0].getSize());
+		for (unsigned int j = 0; j < commands[4].getSize(); j++) {
+			//commands[4][j] = dcm->getTime((int) rint((double) (actionTimes[0][j]) * 1000));
+			commands[4][j] = DcmAt + ((int) rint((double) (actionTimes[0][j]) * 1000));
+		}
 		dcm->setAlias(commands);
 	} catch (AL::ALError& e) {
 		Logger::Instance().WriteMsg("KMEAction", "Error when creating Alias", Logger::FatalError);
 	}
+	float max_time = actionTimes[0][(actionTimes[0].getSize()) - 1];
 
-	float max_time = actionTimes[(actionTimes.getSize()) - 1];
-
-
-
-//	Logger::Instance().WriteMsg("KMEAction", "MAX  TIME : " + _toString(boost::posix_time::seconds(max_time)), Logger::Info);
-//	Logger::Instance().WriteMsg("KMEAction", "REAL TIME : " + _toString(boost::posix_time::microsec_clock::universal_time()), Logger::Info);
-//	Logger::Instance().WriteMsg("KMEAction", "TIME Command" + _toString(commands[4][commands[4].getSize()-1]), Logger::Info);
-//	Logger::Instance().WriteMsg("KMEAction", "TIME Command" + _toString(boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(max_time)), Logger::Info);
 	return boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(max_time);
 }
 
 boost::posix_time::ptime KmeAction::ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd){
 
+	if(frameEnd < frameStart)
+		return boost::posix_time::microsec_clock::universal_time();
+
+	if(frameEnd > actionTimes[0].getSize()-1)
+		frameEnd = actionTimes[0].getSize()-1;
+
+	for (unsigned int i = 0; i < commands[5].getSize(); i++)
+	{
+		commands[5][i].clear();
+		commands[5][i].arraySetSize(frameEnd - frameStart + 1);
+
+		for (unsigned int j = 0; j < commands[5][i].getSize(); j++) {
+			commands[5][i][j] = actionAngles[i+2][j + frameStart];					// actionAngles[joints][poses], commands[5][joints][poses]
+		}
+	}
+	int offset;
+	float max_time;
+	int delay;
+
+	if (frameStart == 0)
+	{
+		offset = 0;
+		delay = 0;
+		max_time = (float)actionTimes[0][frameEnd];
+	}
+	else
+	{
+		offset = (int) rint((double) (actionTimes[0][frameStart - 1]) * 1000);
+		delay = 200;
+		max_time = (float)actionTimes[0][frameEnd] - (float)actionTimes[0][frameStart-1] + delay/1000.0;
+	}
+
+	commands[4].clear();
+	commands[4].arraySetSize(frameEnd - frameStart + 1);
+
+	int DcmAt = dcm->getTime(0) + delay;
+	for (unsigned int j = 0; j < commands[4].getSize(); j++) {
+		commands[4][j] = DcmAt + (((int) rint((double) (actionTimes[0][j + frameStart]) * 1000)) - offset);
+	}
 	try {
-		frameEnd = actionTimes.getSize();
-		for (unsigned int i = 0; i < commands[5].getSize(); i++) {
-			commands[5][i].clear();
-			if(frameEnd != actionTimes.getSize())
-				commands[5][i].arraySetSize(frameEnd - frameStart + 1);
-			else
-				commands[5][i].arraySetSize(actionTimes.getSize() - frameStart + 1);
-
-			for (unsigned int j = 0; j < commands[5][i].getSize(); j++) {
-				commands[5][i][j] = actionAngles[i+2][j + frameStart - 1];					// actionAngles[joints][poses], commands[joints][poses]
-
-				// Logger::Instance().WriteMsg("KmeACTION", "commands " + _toString(commands[5][i][j]) , Logger::ExtraInfo);
-			}
-		}
-
-		if(frameEnd != actionTimes.getSize())
-			commands[4].arraySetSize(frameEnd - frameStart + 1);
-		else
-			commands[4].arraySetSize(actionTimes.getSize() - frameStart + 1);
-		for (unsigned int j = 0; j < commands[4].getSize(); j++) {
-			commands[4][j] = dcm->getTime(rint((float) (actionTimes[j + frameStart - 1]) * 1000));
-		}
-
 		dcm->setAlias(commands);
-
 	} catch (AL::ALError& e) {
 		Logger::Instance().WriteMsg("KMEAction", "Error when creating Alias", Logger::FatalError);
 	}
-
-	float max_time = actionTimes[(actionTimes.getSize()) - 1];
-
 	return boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(max_time);
-
 }
 
 
