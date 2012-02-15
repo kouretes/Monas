@@ -11,16 +11,17 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("sensors",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
 
 	bool Eval() {
-		/* TimeoutCheck(behavior) && _behavior.State.GameStateMessage.player_state()==PLAYER_READY && !robotInPosition(behavior.Data.WorldInfo, behavior.State.PositionMessage) */
+		/* TimeoutCheck(sensors) && _behavior.State.GameStateMessage.player_state()==PLAYER_READY && !robotInPosition(behavior.Data.WorldInfo, behavior.State.PositionMessage) */
 		
 		boost::shared_ptr<const GameStateMessage> var_1692513826 = _blk->readState<GameStateMessage> ("behavior" );
 		boost::shared_ptr<const WorldInfo> var_1071592760 = _blk->readData<WorldInfo> ("behavior" );
 		boost::shared_ptr<const PositionMessage> var_1868674971 = _blk->readState<PositionMessage> ("behavior" );
-		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("behavior");
+		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("sensors");
 
 		
 		_blk->process_messages();
@@ -56,8 +57,8 @@ public:
 // GoToPositionTOGoToPosition
 class TrAction_GoalieTest0_2_4_3_3_20_2_4_3_3_2 : public statechart_engine::
 				TimeoutAction {
-		/* TimeoutAction.behavior.250 */
-	public:	TrAction_GoalieTest0_2_4_3_3_20_2_4_3_3_2() : statechart_engine::TimeoutAction( "behavior", 250 ) { 
+		/* TimeoutAction.sensors.250 */
+	public:	TrAction_GoalieTest0_2_4_3_3_20_2_4_3_3_2() : statechart_engine::TimeoutAction( "sensors", 250 ) { 
 		;
 	 }
 };

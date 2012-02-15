@@ -39,6 +39,7 @@ private:
 	boost::shared_ptr<const ObservationMessage> obsm;
 	boost::shared_ptr<const GameStateMessage> gsm;
 
+	ReturnToPositionMessage* rpm;
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage wmot;
 	RobotInPosition ripm;

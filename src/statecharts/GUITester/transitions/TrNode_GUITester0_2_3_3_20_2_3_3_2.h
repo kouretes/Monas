@@ -11,16 +11,16 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
-		//_blk->updateSubscription("localization",msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
 
 	bool Eval() {
-		/* TimeoutCheck(localization) && !robotInPosition(behavior.Data.WorldInfo, behavior.State.PositionMessage) */
+		/* TimeoutCheck(motion) && !robotInPosition(behavior.Data.WorldInfo, behavior.State.PositionMessage) */
 		
 		boost::shared_ptr<const WorldInfo> var_1071592760 = _blk->readData<WorldInfo> ("behavior" );
 		boost::shared_ptr<const PositionMessage> var_1868674971 = _blk->readState<PositionMessage> ("behavior" );
-		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("behavior");
+		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("motion");
 
 		
 		_blk->process_messages();
@@ -39,7 +39,7 @@ public:
 			return false;
 		}
 
-		
+		std::cout<<"b;"<<_blk<<std::endl;
 		Logger::Instance().WriteMsg("boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && !robotInPosition(var_1071592760, var_1868674971)", _toString(boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && !robotInPosition(var_1071592760, var_1868674971)),  Logger::Info);
 		return ( boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && !robotInPosition(var_1071592760, var_1868674971) ); 
 
@@ -52,9 +52,9 @@ public:
 // GoToPositionTOGoToPosition
 class TrAction_GUITester0_2_3_3_20_2_3_3_2 : public statechart_engine::
 				TimeoutAction {
-		/* TimeoutAction.localization.250 */
-	public:	TrAction_GUITester0_2_3_3_20_2_3_3_2() : statechart_engine::TimeoutAction( "behavior", 250 ) { 
-		;
+		/* TimeoutAction.motion.250 */
+	public:	TrAction_GUITester0_2_3_3_20_2_3_3_2() : statechart_engine::TimeoutAction( "motion", 250 ) { 
+		
 	 }
 };
 

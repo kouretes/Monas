@@ -1,4 +1,0 @@
-GUITester
-tester = (play|NoPlay)+
-play = ChangeRobotPosition.GoToPosition+
-

@@ -4,8 +4,8 @@
 #include "tools/BehaviorConst.h"	
 #include "tools/logger.h"
 #include "tools/toString.h"
-// decisionTOdecision
-class TrCond_GoalieTest0_20_2 : public statechart_engine::ICondition {
+// 0.3.2.2_TO_NoPlay
+class TrCond_TesterGUI0_3_2_20_3_2_4 : public statechart_engine::ICondition {
 			
 public:
 
@@ -15,7 +15,7 @@ public:
 	}
 
 	bool Eval() {
-		/* _behavior.State.GameStateMessage.player_state()!=PLAYER_FINISHED */
+		/* _behavior.State.GameStateMessage.player_state() != PLAYER_PLAYING */
 		
 		boost::shared_ptr<const GameStateMessage> var_1692513826 = _blk->readState<GameStateMessage> ("behavior" );
 
@@ -26,8 +26,8 @@ public:
 		}
 
 		
-		Logger::Instance().WriteMsg("var_1692513826->player_state()!=PLAYER_FINISHED", _toString(var_1692513826->player_state()!=PLAYER_FINISHED),  Logger::Info);
-		return ( var_1692513826->player_state()!=PLAYER_FINISHED ); 
+		Logger::Instance().WriteMsg("var_1692513826->player_state() != PLAYER_PLAYING", _toString(var_1692513826->player_state() != PLAYER_PLAYING),  Logger::Info);
+		return ( var_1692513826->player_state() != PLAYER_PLAYING ); 
 
 		
     }

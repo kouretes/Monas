@@ -20,11 +20,6 @@ TesterGUI::TesterGUI(Narukom* com) {
 	StartState* Node_0_1 = new StartState ( "Node_0_1", Node_0 ); //Name:0.1
 	_states.push_back( Node_0_1 );
 
-			
-	
-	
-	
-
 	IActivity* NodeActivInst_0_2 = ActivityFactory::Instance()->CreateObject( "Init" );
 	_activities.push_back( NodeActivInst_0_2 );			
 	BasicState* Node_0_2 = new BasicState( "Node_Init", Node_0, NodeActivInst_0_2 ); //Name:Init
@@ -51,11 +46,6 @@ TesterGUI::TesterGUI(Narukom* com) {
 	StartState* Node_0_3_2_3_1 = new StartState ( "Node_0_3_2_3_1", Node_0_3_2_3 ); //Name:0.3.2.3.1
 	_states.push_back( Node_0_3_2_3_1 );
 
-			
-	
-	
-	
-
 	IActivity* NodeActivInst_0_3_2_3_2 = ActivityFactory::Instance()->CreateObject( "ChangeRobotPosition" );
 	_activities.push_back( NodeActivInst_0_3_2_3_2 );			
 	BasicState* Node_0_3_2_3_2 = new BasicState( "Node_ChangeRobotPosition", Node_0_3_2_3, NodeActivInst_0_3_2_3_2 ); //Name:ChangeRobotPosition
@@ -67,11 +57,6 @@ TesterGUI::TesterGUI(Narukom* com) {
 	StartState* Node_0_3_2_3_3_1 = new StartState ( "Node_0_3_2_3_3_1", Node_0_3_2_3_3 ); //Name:0.3.2.3.3.1
 	_states.push_back( Node_0_3_2_3_3_1 );
 
-			
-	
-	
-	
-
 	IActivity* NodeActivInst_0_3_2_3_3_2 = ActivityFactory::Instance()->CreateObject( "GoToPosition" );
 	_activities.push_back( NodeActivInst_0_3_2_3_3_2 );			
 	BasicState* Node_0_3_2_3_3_2 = new BasicState( "Node_GoToPosition", Node_0_3_2_3_3, NodeActivInst_0_3_2_3_3_2 ); //Name:GoToPosition
@@ -82,11 +67,6 @@ TesterGUI::TesterGUI(Narukom* com) {
 
 	EndState* Node_0_3_2_3_4 = new EndState ( "Node_0_3_2_3_4", Node_0_3_2_3 ); //Name:0.3.2.3.4
 	_states.push_back( Node_0_3_2_3_4 );
-
-			
-	
-	
-	
 
 	IActivity* NodeActivInst_0_3_2_4 = ActivityFactory::Instance()->CreateObject( "NoPlay" );
 	_activities.push_back( NodeActivInst_0_3_2_4 );			
@@ -109,142 +89,133 @@ TesterGUI::TesterGUI(Narukom* com) {
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_1,Node_0_2    ) ); //0.10.2
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_1,Node_0_2    ) ); //TesterGUI0.10.2
 		
 
 		
 
 		
 		
-	IAction* TrActionInst_0_20_3 = new TrAction_0_20_3;
-	_actions.push_back( TrActionInst_0_20_3 );
+	IAction* TrActionInst_TesterGUI0_20_3 = new TrAction_TesterGUI0_20_3;
+	_actions.push_back( TrActionInst_TesterGUI0_20_3 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_3   ,TrActionInst_0_20_3 ) ); //0.20.3
-		
-
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3,Node_0_4    ) ); //0.30.4
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_3   ,TrActionInst_TesterGUI0_20_3 ) ); //TesterGUI0.20.3
 		
 
 		
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,ConditionConnector>(Node_0_3_2_1,Node_0_3_2_2    ) ); //0.3.2.10.3.2.2
-		
- 
-		
-	ICondition* TrCondInst_0_3_2_20_3_2_3 = new TrCond_0_3_2_20_3_2_3;
-	_conditions.push_back( TrCondInst_0_3_2_20_3_2_3 );
-
-		
-
-	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_2,Node_0_3_2_3  ,TrCondInst_0_3_2_20_3_2_3  ) ); //0.3.2.20.3.2.3
-		
-
-		
-		
-	ICondition* TrCondInst_0_3_2_20_3_2_4 = new TrCond_0_3_2_20_3_2_4;
-	_conditions.push_back( TrCondInst_0_3_2_20_3_2_4 );
-
-		
-
-	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_2,Node_0_3_2_4  ,TrCondInst_0_3_2_20_3_2_4  ) ); //0.3.2.20.3.2.4
-		
-
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_4,Node_0_3_2_5    ) ); //0.3.2.40.3.2.5
-		
-
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3,Node_0_3_2_5    ) ); //0.3.2.30.3.2.5
-		
-
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_1,Node_0_3_2_3_2    ) ); //0.3.2.3.10.3.2.3.2
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3,Node_0_4    ) ); //TesterGUI0.30.4
 		
 
 		
 
 		
 		
-	IAction* TrActionInst_0_3_2_3_20_3_2_3_3 = new TrAction_0_3_2_3_20_3_2_3_3;
-	_actions.push_back( TrActionInst_0_3_2_3_20_3_2_3_3 );
+	IAction* TrActionInst_TesterGUI0_3_2_10_3_2_2 = new TrAction_TesterGUI0_3_2_10_3_2_2;
+	_actions.push_back( TrActionInst_TesterGUI0_3_2_10_3_2_2 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_2,Node_0_3_2_3_3   ,TrActionInst_0_3_2_3_20_3_2_3_3 ) ); //0.3.2.3.20.3.2.3.3
-		
-
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3,Node_0_3_2_3_4    ) ); //0.3.2.3.30.3.2.3.4
-		
-
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3_1,Node_0_3_2_3_3_2    ) ); //0.3.2.3.3.10.3.2.3.3.2
+	_transitions.push_back( new TransitionSegment<State,ConditionConnector>(Node_0_3_2_1,Node_0_3_2_2   ,TrActionInst_TesterGUI0_3_2_10_3_2_2 ) ); //TesterGUI0.3.2.10.3.2.2
 		
 
 		
 		
-	ICondition* TrCondInst_0_3_2_3_3_20_3_2_3_3_2 = new TrCond_0_3_2_3_3_20_3_2_3_3_2;
-	_conditions.push_back( TrCondInst_0_3_2_3_3_20_3_2_3_3_2 );
-
-		
-		
-	IAction* TrActionInst_0_3_2_3_3_20_3_2_3_3_2 = new TrAction_0_3_2_3_3_20_3_2_3_3_2;
-	_actions.push_back( TrActionInst_0_3_2_3_3_20_3_2_3_3_2 );
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3_2,Node_0_3_2_3_3_2  ,TrCondInst_0_3_2_3_3_20_3_2_3_3_2 ,TrActionInst_0_3_2_3_3_20_3_2_3_3_2 ) ); //0.3.2.3.3.20.3.2.3.3.2
-		
-
-		
-		
-	ICondition* TrCondInst_0_3_2_3_3_20_3_2_3_3_3 = new TrCond_0_3_2_3_3_20_3_2_3_3_3;
-	_conditions.push_back( TrCondInst_0_3_2_3_3_20_3_2_3_3_3 );
+	ICondition* TrCondInst_TesterGUI0_3_2_20_3_2_3 = new TrCond_TesterGUI0_3_2_20_3_2_3;
+	_conditions.push_back( TrCondInst_TesterGUI0_3_2_20_3_2_3 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3_2,Node_0_3_2_3_3_3  ,TrCondInst_0_3_2_3_3_20_3_2_3_3_3  ) ); //0.3.2.3.3.20.3.2.3.3.3
+	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_2,Node_0_3_2_3  ,TrCondInst_TesterGUI0_3_2_20_3_2_3  ) ); //TesterGUI0.3.2.20.3.2.3
+		
+
+		
+		
+	ICondition* TrCondInst_TesterGUI0_3_2_20_3_2_4 = new TrCond_TesterGUI0_3_2_20_3_2_4;
+	_conditions.push_back( TrCondInst_TesterGUI0_3_2_20_3_2_4 );
+
+		
+
+	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_3_2_2,Node_0_3_2_4  ,TrCondInst_TesterGUI0_3_2_20_3_2_4  ) ); //TesterGUI0.3.2.20.3.2.4
 		
 
 		
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_1,Node_0_3_2    ) ); //0.3.10.3.2
-		
-
-		
-
-		
-		
-	IAction* TrActionInst_0_3_20_3_2 = new TrAction_0_3_20_3_2;
-	_actions.push_back( TrActionInst_0_3_20_3_2 );
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2,Node_0_3_2   ,TrActionInst_0_3_20_3_2 ) ); //0.3.20.3.2
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_4,Node_0_3_2_5    ) ); //TesterGUI0.3.2.40.3.2.5
 		
 
 		
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2,Node_0_3_3    ) ); //0.3.20.3.3
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3,Node_0_3_2_5    ) ); //TesterGUI0.3.2.30.3.2.5
+		
+
+		
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_1,Node_0_3_2_3_2    ) ); //TesterGUI0.3.2.3.10.3.2.3.2
+		
+
+		
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_2,Node_0_3_2_3_3    ) ); //TesterGUI0.3.2.3.20.3.2.3.3
+		
+
+		
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3,Node_0_3_2_3_4    ) ); //TesterGUI0.3.2.3.30.3.2.3.4
+		
+
+		
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3_1,Node_0_3_2_3_3_2    ) ); //TesterGUI0.3.2.3.3.10.3.2.3.3.2
+		
+
+		
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2_3_3_2,Node_0_3_2_3_3_3    ) ); //TesterGUI0.3.2.3.3.20.3.2.3.3.3
+		
+
+		
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_1,Node_0_3_2    ) ); //TesterGUI0.3.10.3.2
+		
+
+		
+		
+	ICondition* TrCondInst_TesterGUI0_3_20_3_2 = new TrCond_TesterGUI0_3_20_3_2;
+	_conditions.push_back( TrCondInst_TesterGUI0_3_20_3_2 );
+
+		
+		
+	IAction* TrActionInst_TesterGUI0_3_20_3_2 = new TrAction_TesterGUI0_3_20_3_2;
+	_actions.push_back( TrActionInst_TesterGUI0_3_20_3_2 );
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2,Node_0_3_2  ,TrCondInst_TesterGUI0_3_20_3_2 ,TrActionInst_TesterGUI0_3_20_3_2 ) ); //TesterGUI0.3.20.3.2
+		
+
+		
+		
+	ICondition* TrCondInst_TesterGUI0_3_20_3_3 = new TrCond_TesterGUI0_3_20_3_3;
+	_conditions.push_back( TrCondInst_TesterGUI0_3_20_3_3 );
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2,Node_0_3_3  ,TrCondInst_TesterGUI0_3_20_3_3  ) ); //TesterGUI0.3.20.3.3
 	
 }
 

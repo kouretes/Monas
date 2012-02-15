@@ -11,15 +11,16 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
 
 	bool Eval() {
-		/* TimeoutCheck(behavior) && behavior.State.GameStateMessage.player_state()==PLAYER_PLAYING && behavior.State.HeadToBMessage.ballfound()==0 */
+		/* TimeoutCheck(motion) && behavior.State.GameStateMessage.player_state()==PLAYER_PLAYING && behavior.State.HeadToBMessage.ballfound()==0 */
 		
 		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
 		boost::shared_ptr<const HeadToBMessage> var_1901744185 = _blk->readState<HeadToBMessage> ("behavior" );
-		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("behavior");
+		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("motion");
 
 		
 		_blk->process_messages();
@@ -51,8 +52,8 @@ public:
 // ScanTOScan
 class TrAction_GoalieTest0_2_3_3_3_20_2_3_3_3_2 : public statechart_engine::
 				TimeoutAction {
-		/* TimeoutAction.behavior.250 */
-	public:	TrAction_GoalieTest0_2_3_3_3_20_2_3_3_3_2() : statechart_engine::TimeoutAction( "behavior", 250 ) { 
+		/* TimeoutAction.motion.250 */
+	public:	TrAction_GoalieTest0_2_3_3_3_20_2_3_3_3_2() : statechart_engine::TimeoutAction( "motion", 250 ) { 
 		;
 	 }
 };

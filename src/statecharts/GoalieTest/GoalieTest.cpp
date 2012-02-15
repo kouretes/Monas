@@ -285,17 +285,26 @@ GoalieTest::GoalieTest(Narukom* com) {
 		
 
 		
+		
+	ICondition* TrCondInst_GoalieTest0_2_3_50_2_3_7 = new TrCond_GoalieTest0_2_3_50_2_3_7;
+	_conditions.push_back( TrCondInst_GoalieTest0_2_3_50_2_3_7 );
+
+		
+		
+	IAction* TrActionInst_GoalieTest0_2_3_50_2_3_7 = new TrAction_GoalieTest0_2_3_50_2_3_7;
+	_actions.push_back( TrActionInst_GoalieTest0_2_3_50_2_3_7 );
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_5,Node_0_2_3_7  ,TrCondInst_GoalieTest0_2_3_50_2_3_7 ,TrActionInst_GoalieTest0_2_3_50_2_3_7 ) ); //GoalieTest0.2.3.50.2.3.7
+		
+
+		
+		
+	ICondition* TrCondInst_GoalieTest0_2_3_40_2_3_7 = new TrCond_GoalieTest0_2_3_40_2_3_7;
+	_conditions.push_back( TrCondInst_GoalieTest0_2_3_40_2_3_7 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_5,Node_0_2_3_7    ) ); //GoalieTest0.2.3.50.2.3.7
-		
-
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_4,Node_0_2_3_7    ) ); //GoalieTest0.2.3.40.2.3.7
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_4,Node_0_2_3_7  ,TrCondInst_GoalieTest0_2_3_40_2_3_7  ) ); //GoalieTest0.2.3.40.2.3.7
 		
 
 		
@@ -333,17 +342,23 @@ GoalieTest::GoalieTest(Narukom* com) {
 		
 
 		
+		
+	ICondition* TrCondInst_GoalieTest0_2_3_3_40_2_3_3_5 = new TrCond_GoalieTest0_2_3_3_40_2_3_3_5;
+	_conditions.push_back( TrCondInst_GoalieTest0_2_3_3_40_2_3_3_5 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_4,Node_0_2_3_3_5    ) ); //GoalieTest0.2.3.3.40.2.3.3.5
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_4,Node_0_2_3_3_5  ,TrCondInst_GoalieTest0_2_3_3_40_2_3_3_5  ) ); //GoalieTest0.2.3.3.40.2.3.3.5
 		
 
 		
+		
+	ICondition* TrCondInst_GoalieTest0_2_3_3_30_2_3_3_5 = new TrCond_GoalieTest0_2_3_3_30_2_3_3_5;
+	_conditions.push_back( TrCondInst_GoalieTest0_2_3_3_30_2_3_3_5 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_3,Node_0_2_3_3_5    ) ); //GoalieTest0.2.3.3.30.2.3.3.5
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_3,Node_0_2_3_3_5  ,TrCondInst_GoalieTest0_2_3_3_30_2_3_3_5  ) ); //GoalieTest0.2.3.3.30.2.3.3.5
 		
 
 		
@@ -444,17 +459,26 @@ GoalieTest::GoalieTest(Narukom* com) {
 		
 
 		
+		
+	ICondition* TrCondInst_GoalieTest0_2_3_6_20_2_3_6_3 = new TrCond_GoalieTest0_2_3_6_20_2_3_6_3;
+	_conditions.push_back( TrCondInst_GoalieTest0_2_3_6_20_2_3_6_3 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_6_2,Node_0_2_3_6_3    ) ); //GoalieTest0.2.3.6.20.2.3.6.3
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_6_2,Node_0_2_3_6_3  ,TrCondInst_GoalieTest0_2_3_6_20_2_3_6_3  ) ); //GoalieTest0.2.3.6.20.2.3.6.3
 		
 
 		
+		
+	ICondition* TrCondInst_GoalieTest0_2_3_6_30_2_3_6_4 = new TrCond_GoalieTest0_2_3_6_30_2_3_6_4;
+	_conditions.push_back( TrCondInst_GoalieTest0_2_3_6_30_2_3_6_4 );
 
 		
+		
+	IAction* TrActionInst_GoalieTest0_2_3_6_30_2_3_6_4 = new TrAction_GoalieTest0_2_3_6_30_2_3_6_4;
+	_actions.push_back( TrActionInst_GoalieTest0_2_3_6_30_2_3_6_4 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_6_3,Node_0_2_3_6_4    ) ); //GoalieTest0.2.3.6.30.2.3.6.4
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_6_3,Node_0_2_3_6_4  ,TrCondInst_GoalieTest0_2_3_6_30_2_3_6_4 ,TrActionInst_GoalieTest0_2_3_6_30_2_3_6_4 ) ); //GoalieTest0.2.3.6.30.2.3.6.4
 		
 
 		
@@ -533,10 +557,16 @@ GoalieTest::GoalieTest(Narukom* com) {
 		
 
 		
+		
+	ICondition* TrCondInst_GoalieTest0_2_4_30_2_4_4 = new TrCond_GoalieTest0_2_4_30_2_4_4;
+	_conditions.push_back( TrCondInst_GoalieTest0_2_4_30_2_4_4 );
 
 		
+		
+	IAction* TrActionInst_GoalieTest0_2_4_30_2_4_4 = new TrAction_GoalieTest0_2_4_30_2_4_4;
+	_actions.push_back( TrActionInst_GoalieTest0_2_4_30_2_4_4 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_4_3,Node_0_2_4_4    ) ); //GoalieTest0.2.4.30.2.4.4
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_4_3,Node_0_2_4_4  ,TrCondInst_GoalieTest0_2_4_30_2_4_4 ,TrActionInst_GoalieTest0_2_4_30_2_4_4 ) ); //GoalieTest0.2.4.30.2.4.4
 		
 
 		
@@ -616,11 +646,8 @@ GoalieTest::GoalieTest(Narukom* com) {
 	_conditions.push_back( TrCondInst_GoalieTest0_20_2 );
 
 		
-		
-	IAction* TrActionInst_GoalieTest0_20_2 = new TrAction_GoalieTest0_20_2;
-	_actions.push_back( TrActionInst_GoalieTest0_20_2 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_2  ,TrCondInst_GoalieTest0_20_2 ,TrActionInst_GoalieTest0_20_2 ) ); //GoalieTest0.20.2
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_2  ,TrCondInst_GoalieTest0_20_2  ) ); //GoalieTest0.20.2
 		
 
 		

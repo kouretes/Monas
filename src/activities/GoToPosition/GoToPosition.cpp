@@ -43,7 +43,8 @@ int GoToPosition::Execute() {
 		_blk->publish_all();
 		return 0;
 	}
-
+	rpm->set_goalietopos(true);
+	_blk->publishSignal(*rpm, "behavior");
 	if(confidence<badConfidence && lastMove <= microsec_clock::universal_time()){
 
 		if(lastObsm + seconds(10) <microsec_clock::universal_time() ){
