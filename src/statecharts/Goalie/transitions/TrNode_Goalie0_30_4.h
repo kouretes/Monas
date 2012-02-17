@@ -2,8 +2,8 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-// 0.2.2TOplay
-class TrCond_GUITester0_2_20_2_3 : public statechart_engine::ICondition {
+// _open_group_playing_or_nonPlaying_close_group__one_or_more_times_TO0.4
+class TrCond_Goalie0_30_4 : public statechart_engine::ICondition {
 			
 public:
 
@@ -13,13 +13,13 @@ public:
 	}
 
 	bool Eval() {
-		/* behavior.State.GameStateMessage.player_state()==PLAYER_PLAYING */
+		/*  behavior.State.GameStateMessage.player_state()==PLAYER_FINISHED */
 		
 		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
 
 		
 		if ( var_621149599.get() != 0  ){	
-				return ( var_621149599->player_state()==PLAYER_PLAYING );
+				return (  var_621149599->player_state()==PLAYER_FINISHED );
 		}return false;
 
 		

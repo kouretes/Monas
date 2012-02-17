@@ -2,8 +2,6 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-#include "tools/logger.h"
-#include "tools/toString.h"
 // 0.2.2TONoPlay
 class TrCond_GUITester0_2_20_2_4 : public statechart_engine::ICondition {
 			
@@ -15,19 +13,16 @@ public:
 	}
 
 	bool Eval() {
-		/* _behavior.State.GameStateMessage.player_state()!=PLAYER_PLAYING */
+		/* behavior.State.GameStateMessage==NULL ||behavior.State.GameStateMessage.player_state()!=PLAYER_PLAYING */
 		
-		boost::shared_ptr<const GameStateMessage> var_1692513826 = _blk->readState<GameStateMessage> ("behavior" );
+		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
 
 		
-		if ( var_1692513826.get() == 0 ){
-			Logger::Instance().WriteMsg("Condition", "true",  Logger::Info);
-			return true;
-		}
-
-		
-		Logger::Instance().WriteMsg("var_1692513826->player_state()!=PLAYER_PLAYING", _toString(var_1692513826->player_state()!=PLAYER_PLAYING),  Logger::Info);
-		return ( var_1692513826->player_state()!=PLAYER_PLAYING ); 
+		if ( var_621149599.get() == 0 )
+			 return true;
+ 	
+				return ( var_621149599->player_state()!=PLAYER_PLAYING );
+		return false;
 
 		
     }

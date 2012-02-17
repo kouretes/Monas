@@ -105,7 +105,7 @@ float rotation(float a, float b, float theta){
 bool robotInPosition(boost::shared_ptr <const WorldInfo> w, boost::shared_ptr <const PositionMessage> pm ){
 	//Logger::Instance().WriteMsg("robotIposition",  " entered", Logger::Info);
 
-	float currentX,currentY, currentTheta, targetX, targetY, targetTheta;
+	float currentX=0.0,currentY=0.0, currentTheta=0.0, targetX=0.0, targetY=0.0, targetTheta=0.0;
 	if(pm.get()!=0){		///get my target
 		targetX = pm->posx();
 		targetY = pm->posy();

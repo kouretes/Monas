@@ -106,10 +106,13 @@ GUITester::GUITester(Narukom* com) {
 		
 
 		
+		
+	ICondition* TrCondInst_GUITester0_2_30_2_5 = new TrCond_GUITester0_2_30_2_5;
+	_conditions.push_back( TrCondInst_GUITester0_2_30_2_5 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3,Node_0_2_5    ) ); //GUITester0.2.30.2.5
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3,Node_0_2_5  ,TrCondInst_GUITester0_2_30_2_5  ) ); //GUITester0.2.30.2.5
 		
 
 		
@@ -127,10 +130,13 @@ GUITester::GUITester(Narukom* com) {
 		
 
 		
+		
+	ICondition* TrCondInst_GUITester0_2_3_30_2_3_4 = new TrCond_GUITester0_2_3_30_2_3_4;
+	_conditions.push_back( TrCondInst_GUITester0_2_3_30_2_3_4 );
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3,Node_0_2_3_4    ) ); //GUITester0.2.3.30.2.3.4
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3,Node_0_2_3_4  ,TrCondInst_GUITester0_2_3_30_2_3_4  ) ); //GUITester0.2.3.30.2.3.4
 		
 
 		
