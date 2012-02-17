@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:statechart="http://statechart/1.0" xmi:id="_-5j_8VlmEeGg2qRYwS9_EQ" type="StateChart" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_-7kyIFlmEeGg2qRYwS9_EQ" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_-7mAQFlmEeGg2qRYwS9_EQ" type="5005"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_-7mAQVlmEeGg2qRYwS9_EQ" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_-7vxQFlmEeGg2qRYwS9_EQ" type="3004">
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-7vxQVlmEeGg2qRYwS9_EQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_-7vxQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_-7vxQ1lmEeGg2qRYwS9_EQ"/>
+        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-7vxRFlmEeGg2qRYwS9_EQ" x="1355" y="35"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_-7wYUFlmEeGg2qRYwS9_EQ" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_-7wYVVlmEeGg2qRYwS9_EQ" type="5002"/>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-7wYUVlmEeGg2qRYwS9_EQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_-7wYUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_-7wYU1lmEeGg2qRYwS9_EQ"/>
+        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-7wYVFlmEeGg2qRYwS9_EQ" x="1331" y="107"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_-7wYVllmEeGg2qRYwS9_EQ" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_-7zboFlmEeGg2qRYwS9_EQ" type="5004"/>
+        <children xmi:type="notation:DecorationNode" xmi:id="_-7zboVlmEeGg2qRYwS9_EQ" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_-8AP8FlmEeGg2qRYwS9_EQ" type="3004">
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8AP8VlmEeGg2qRYwS9_EQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_-8AP8llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_-8AP81lmEeGg2qRYwS9_EQ"/>
+            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8CFIFlmEeGg2qRYwS9_EQ" x="1307" y="35"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_-8CsMFlmEeGg2qRYwS9_EQ" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_-8CsNVlmEeGg2qRYwS9_EQ" type="5004"/>
+            <children xmi:type="notation:DecorationNode" xmi:id="_-8CsNllmEeGg2qRYwS9_EQ" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_-8NrUFlmEeGg2qRYwS9_EQ" type="3004">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8NrUVlmEeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_-8NrUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_-8NrU1lmEeGg2qRYwS9_EQ"/>
+                <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8NrVFlmEeGg2qRYwS9_EQ" x="1487" y="35"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_-8OSYFlmEeGg2qRYwS9_EQ" type="3001">
+                <children xmi:type="notation:DecorationNode" xmi:id="_-8OSZFlmEeGg2qRYwS9_EQ" type="5001"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8OSYVlmEeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_-8OSYllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8OSY1lmEeGg2qRYwS9_EQ" x="1475" y="107"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_-8OSZVlmEeGg2qRYwS9_EQ" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_-8O5c1lmEeGg2qRYwS9_EQ" type="5004"/>
+                <children xmi:type="notation:DecorationNode" xmi:id="_-8O5dFlmEeGg2qRYwS9_EQ" type="7002">
+                  <children xmi:type="notation:Node" xmi:id="_-8btwFlmEeGg2qRYwS9_EQ" type="3004">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8btwVlmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_-8btwllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_-8btw1lmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.0"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8btxFlmEeGg2qRYwS9_EQ" x="743" y="35"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_-8cU0FlmEeGg2qRYwS9_EQ" type="3001">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8cU1FlmEeGg2qRYwS9_EQ" type="5001"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8cU0VlmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_-8cU0llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.1"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8cU01lmEeGg2qRYwS9_EQ" x="743" y="107"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_-8cU1VlmEeGg2qRYwS9_EQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8f_MFlmEeGg2qRYwS9_EQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8f_MVlmEeGg2qRYwS9_EQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_-8takFlmEeGg2qRYwS9_EQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8takVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-8takllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-8tak1lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8talFlmEeGg2qRYwS9_EQ" x="59" y="35"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_-8wd4FlmEeGg2qRYwS9_EQ" type="3002">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_-8xE8FlmEeGg2qRYwS9_EQ" type="5002"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8wd4VlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-8wd4llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-8wd41lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8wd5FlmEeGg2qRYwS9_EQ" x="35" y="107"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_-8xE8VlmEeGg2qRYwS9_EQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8xE8llmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-8xE81lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-8xE9FlmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8xE9VlmEeGg2qRYwS9_EQ" x="59" y="203"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8cU1llmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_-8cU11lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_-8cU2FlmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8cU2VlmEeGg2qRYwS9_EQ" x="35" y="191"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_-8f_MllmEeGg2qRYwS9_EQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8gmQFlmEeGg2qRYwS9_EQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8kQoFlmEeGg2qRYwS9_EQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_-9zmwFlmEeGg2qRYwS9_EQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-9zmwVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-9zmwllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-9zmw1lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-9zmxFlmEeGg2qRYwS9_EQ" x="107" y="35"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_-9zmxVlmEeGg2qRYwS9_EQ" type="3002">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_-90N0FlmEeGg2qRYwS9_EQ" type="5002"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-9zmxllmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-9zmx1lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-9zmyFlmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-9zmyVlmEeGg2qRYwS9_EQ" x="35" y="107"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_-90N0VlmEeGg2qRYwS9_EQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-90N0llmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-90N01lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-90N1FlmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-90N1VlmEeGg2qRYwS9_EQ" x="107" y="203"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8f_M1lmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_-8f_NFlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_-8f_NVlmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8f_NllmEeGg2qRYwS9_EQ" x="407" y="191"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_-8kQoVlmEeGg2qRYwS9_EQ" type="3002">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8k3sFlmEeGg2qRYwS9_EQ" type="5002"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8kQollmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_-8kQo1lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_-8kQpFlmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.4"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8kQpVlmEeGg2qRYwS9_EQ" x="887" y="191"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_-8k3sVlmEeGg2qRYwS9_EQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8lewVlmEeGg2qRYwS9_EQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_-8lewllmEeGg2qRYwS9_EQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_--FTkFlmEeGg2qRYwS9_EQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_--FTkVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_--FTkllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_--FTk1lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--FTlFlmEeGg2qRYwS9_EQ" x="275" y="35"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_--F6oFlmEeGg2qRYwS9_EQ" type="3003">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_--F6pVlmEeGg2qRYwS9_EQ" type="5004"/>
+                        <children xmi:type="notation:DecorationNode" xmi:id="_--F6pllmEeGg2qRYwS9_EQ" type="7002">
+                          <children xmi:type="notation:Node" xmi:id="_--MBQFlmEeGg2qRYwS9_EQ" type="3004">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_--MBQVlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_--MBQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_--MBQ1lmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.0"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--MBRFlmEeGg2qRYwS9_EQ" x="59" y="35"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_--MoUFlmEeGg2qRYwS9_EQ" type="3002">
+                            <children xmi:type="notation:DecorationNode" xmi:id="_--MoVVlmEeGg2qRYwS9_EQ" type="5002"/>
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_--MoUVlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_--MoUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_--MoU1lmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.1"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--MoVFlmEeGg2qRYwS9_EQ" x="35" y="107"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_--NPYFlmEeGg2qRYwS9_EQ" type="3006">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_--NPYVlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_--NPYllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_--NPY1lmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.2"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--NPZFlmEeGg2qRYwS9_EQ" x="59" y="215"/>
+                          </children>
+                        </children>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_--F6oVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_--F6ollmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_--F6o1lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--F6pFlmEeGg2qRYwS9_EQ" x="119" y="107"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_--GhsFlmEeGg2qRYwS9_EQ" type="3003">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_--IW4FlmEeGg2qRYwS9_EQ" type="5004"/>
+                        <children xmi:type="notation:DecorationNode" xmi:id="_--IW4VlmEeGg2qRYwS9_EQ" type="7002">
+                          <children xmi:type="notation:Node" xmi:id="_--VyQFlmEeGg2qRYwS9_EQ" type="3004">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_--VyQVlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_--VyQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_--VyQ1lmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.0"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--VyRFlmEeGg2qRYwS9_EQ" x="311" y="35"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_--WZUFlmEeGg2qRYwS9_EQ" type="3001">
+                            <children xmi:type="notation:DecorationNode" xmi:id="_--WZVFlmEeGg2qRYwS9_EQ" type="5001"/>
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_--WZUVlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_--WZUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.1"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--WZU1lmEeGg2qRYwS9_EQ" x="311" y="107"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_--XAYFlmEeGg2qRYwS9_EQ" type="3002">
+                            <children xmi:type="notation:DecorationNode" xmi:id="_--XncFlmEeGg2qRYwS9_EQ" type="5002"/>
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_--XAYVlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_--XAYllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_--XAY1lmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.2"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--XAZFlmEeGg2qRYwS9_EQ" x="35" y="191"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_--XncVlmEeGg2qRYwS9_EQ" type="3006">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_--XncllmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_--Xnc1lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_--XndFlmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.3"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--XndVlmEeGg2qRYwS9_EQ" x="311" y="299"/>
+                          </children>
+                        </children>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_--GhsVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_--GhsllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_--Hv0FlmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--Hv0VlmEeGg2qRYwS9_EQ" x="35" y="467"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_--I98FlmEeGg2qRYwS9_EQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_--I98VlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_--I98llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_--I981lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.3"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--I99FlmEeGg2qRYwS9_EQ" x="275" y="923"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8k3sllmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_-8k3s1lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_-8k3tFlmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8lewFlmEeGg2qRYwS9_EQ" x="1007" y="191"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_-8mF0FlmEeGg2qRYwS9_EQ" type="3006">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8mF0VlmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_-8mF0llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_-8mF01lmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.6"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8mF1FlmEeGg2qRYwS9_EQ" x="743" y="1271"/>
+                  </children>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8OSZllmEeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_-8O5cFlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_-8O5cVlmEeGg2qRYwS9_EQ"/>
+                <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8O5cllmEeGg2qRYwS9_EQ" x="35" y="191"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_-8O5dVlmEeGg2qRYwS9_EQ" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_-8PggFlmEeGg2qRYwS9_EQ" type="5004"/>
+                <children xmi:type="notation:DecorationNode" xmi:id="_-8PggVlmEeGg2qRYwS9_EQ" type="7002">
+                  <children xmi:type="notation:Node" xmi:id="_--2IkFlmEeGg2qRYwS9_EQ" type="3004">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_--2IkVlmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_--2IkllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_--2voFlmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.0"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--2voVlmEeGg2qRYwS9_EQ" x="383" y="35"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_--2vollmEeGg2qRYwS9_EQ" type="3002">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_--5L4FlmEeGg2qRYwS9_EQ" type="5002"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_--2vo1lmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_--2vpFlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_--2vpVlmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.1"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--2vpllmEeGg2qRYwS9_EQ" x="347" y="107"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_--5y8FlmEeGg2qRYwS9_EQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_--5y9VlmEeGg2qRYwS9_EQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_--5y9llmEeGg2qRYwS9_EQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_--_SgFlmEeGg2qRYwS9_EQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_--_SgVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_--_SgllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_--_Sg1lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--_ShFlmEeGg2qRYwS9_EQ" x="551" y="35"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_--_5kFlmEeGg2qRYwS9_EQ" type="3001">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_--_5lFlmEeGg2qRYwS9_EQ" type="5001"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_--_5kVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_--_5kllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--_5k1lmEeGg2qRYwS9_EQ" x="551" y="107"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_--_5lVlmEeGg2qRYwS9_EQ" type="3003">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_-_BHsVlmEeGg2qRYwS9_EQ" type="5004"/>
+                        <children xmi:type="notation:DecorationNode" xmi:id="_-_BHsllmEeGg2qRYwS9_EQ" type="7002">
+                          <children xmi:type="notation:Node" xmi:id="_-_GAMFlmEeGg2qRYwS9_EQ" type="3004">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_-_GAMVlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_-_GAMllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_-_GAM1lmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.0"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-_GANFlmEeGg2qRYwS9_EQ" x="107" y="35"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_-_H1YFlmEeGg2qRYwS9_EQ" type="3002">
+                            <children xmi:type="notation:DecorationNode" xmi:id="_-_IcdFlmEeGg2qRYwS9_EQ" type="5002"/>
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_-_IccFlmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_-_IccVlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_-_IccllmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-_Icc1lmEeGg2qRYwS9_EQ" x="35" y="107"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_-_IcdVlmEeGg2qRYwS9_EQ" type="3006">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_-_IcdllmEeGg2qRYwS9_EQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_-_Icd1lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_-_IceFlmEeGg2qRYwS9_EQ"/>
+                            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.2"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-_IceVlmEeGg2qRYwS9_EQ" x="107" y="215"/>
+                          </children>
+                        </children>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_--_5lllmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_--_5l1lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_--_5mFlmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-_BHsFlmEeGg2qRYwS9_EQ" x="35" y="191"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_-_BuwFlmEeGg2qRYwS9_EQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-_BuwVlmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-_BuwllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-_Buw1lmEeGg2qRYwS9_EQ"/>
+                        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.3"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-_BuxFlmEeGg2qRYwS9_EQ" x="551" y="563"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_--5y8VlmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_--5y8llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_--5y81lmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--5y9FlmEeGg2qRYwS9_EQ" x="35" y="203"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_--6aAFlmEeGg2qRYwS9_EQ" type="3006">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_--6aAVlmEeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_--6aAllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_--6aA1lmEeGg2qRYwS9_EQ"/>
+                    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.3"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_--6aBFlmEeGg2qRYwS9_EQ" x="383" y="923"/>
+                  </children>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8O5dllmEeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_-8O5d1lmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_-8O5eFlmEeGg2qRYwS9_EQ"/>
+                <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.3"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8O5eVlmEeGg2qRYwS9_EQ" x="1727" y="191"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_-8PggllmEeGg2qRYwS9_EQ" type="3006">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8Pgg1lmEeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_-8PghFlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_-8PghVlmEeGg2qRYwS9_EQ"/>
+                <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1/@Children.4"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8PghllmEeGg2qRYwS9_EQ" x="1487" y="1619"/>
+              </children>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8CsMVlmEeGg2qRYwS9_EQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_-8CsMllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_-8CsM1lmEeGg2qRYwS9_EQ"/>
+            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8CsNFlmEeGg2qRYwS9_EQ" x="35" y="107"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_-8CsN1lmEeGg2qRYwS9_EQ" type="3006">
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8CsOFlmEeGg2qRYwS9_EQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_-8CsOVlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_-8CsOllmEeGg2qRYwS9_EQ"/>
+            <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2/@Children.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8CsO1lmEeGg2qRYwS9_EQ" x="1307" y="1859"/>
+          </children>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-7wYV1lmEeGg2qRYwS9_EQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_-7wYWFlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_-7wYWVlmEeGg2qRYwS9_EQ"/>
+        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-7wYWllmEeGg2qRYwS9_EQ" x="35" y="215"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_-74UIFlmEeGg2qRYwS9_EQ" type="3006">
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-74UIVlmEeGg2qRYwS9_EQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_-74UIllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_-74UI1lmEeGg2qRYwS9_EQ"/>
+        <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0/@Children.3"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-74UJFlmEeGg2qRYwS9_EQ" x="1355" y="2219"/>
+      </children>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_-7kyIVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_-7kyIllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <styles xmi:type="notation:LineStyle" xmi:id="_-7kyI1lmEeGg2qRYwS9_EQ"/>
+    <element xmi:type="statechart:Node" href="Goalie.stct#//@nodes.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-7kyJFlmEeGg2qRYwS9_EQ" x="24" y="24"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_-5j_8llmEeGg2qRYwS9_EQ"/>
+  <element xmi:type="statechart:Model" href="Goalie.stct#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="__AHT4FlmEeGg2qRYwS9_EQ" type="4001" source="_-7vxQFlmEeGg2qRYwS9_EQ" target="_-7wYUFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AH68FlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AH68VlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AHT4VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AHT4llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__AHT41lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kkr0FlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kkr0VlmEeGg2qRYwS9_EQ" id="(0.49122807017543857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AK-QFlmEeGg2qRYwS9_EQ" type="4001" source="_-7wYUFlmEeGg2qRYwS9_EQ" target="_-7wYVllmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__ALlUFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__ALlUVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AK-QVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AK-QllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__AK-Q1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kkEwFlmEeGg2qRYwS9_EQ" id="(0.49122807017543857,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kkEwVlmEeGg2qRYwS9_EQ" id="(0.4998126639190708,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__APPsFlmEeGg2qRYwS9_EQ" type="4001" source="_-7wYVllmEeGg2qRYwS9_EQ" target="_-74UIFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__ASTAFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__ASTAVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__APPsVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__APPsllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__APPs1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__knvIFlmEeGg2qRYwS9_EQ" id="(0.4998126639190708,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__koWMFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AVWUFlmEeGg2qRYwS9_EQ" type="4001" source="_-8NrUFlmEeGg2qRYwS9_EQ" target="_-8OSYFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AV9YFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AV9YVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AVWUVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AVWUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__AVWU1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fmsQFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fmsQVlmEeGg2qRYwS9_EQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__Abc8FlmEeGg2qRYwS9_EQ" type="4001" source="_-8OSYFlmEeGg2qRYwS9_EQ" target="_-8OSZVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AcEAFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AcrEFlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__Abc8VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__Abc8llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Abc81lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fn6YFlmEeGg2qRYwS9_EQ" id="(0.48,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fn6YVlmEeGg2qRYwS9_EQ" id="(0.8903107861060329,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AegQFlmEeGg2qRYwS9_EQ" type="4001" source="_-8OSYFlmEeGg2qRYwS9_EQ" target="_-8O5dVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AegRFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AegRVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AegQVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AegQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__AegQ1lmEeGg2qRYwS9_EQ" points="[0, 0, -636, -60]$[636, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fohcFlmEeGg2qRYwS9_EQ" id="(0.72,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fohcVlmEeGg2qRYwS9_EQ" id="(0.4993788819875776,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AixsFlmEeGg2qRYwS9_EQ" type="4001" source="_-8O5dVlmEeGg2qRYwS9_EQ" target="_-8PggllmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AixtFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AixtVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AixsVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AixsllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Aixs1lmEeGg2qRYwS9_EQ" points="[0, 0, 640, -420]$[-379, 359, 261, -61]$[-640, 420, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fmFMFlmEeGg2qRYwS9_EQ" id="(0.4993788819875776,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fmFMVlmEeGg2qRYwS9_EQ" id="(0.625,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AmcEFlmEeGg2qRYwS9_EQ" type="4001" source="_-8OSZVlmEeGg2qRYwS9_EQ" target="_-8PggllmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AmcFFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AnDIFlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AmcEVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AmcEllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__AmcE1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fnTUFlmEeGg2qRYwS9_EQ" id="(0.8884826325411335,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__fnTUVlmEeGg2qRYwS9_EQ" id="(0.3125,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AoRQFlmEeGg2qRYwS9_EQ" type="4001" source="_-8btwFlmEeGg2qRYwS9_EQ" target="_-8cU0FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AoRRFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AoRRVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AoRQVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AoRQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__AoRQ1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h_48FlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h_48VlmEeGg2qRYwS9_EQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AqtgFlmEeGg2qRYwS9_EQ" type="4001" source="_-8cU0FlmEeGg2qRYwS9_EQ" target="_-8cU1VlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AqthFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AqthVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AqtgVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AqtgllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Aqtg1lmEeGg2qRYwS9_EQ" points="[0, 0, 559, -60]$[-559, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h-DwFlmEeGg2qRYwS9_EQ" id="(0.2,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h-q0FlmEeGg2qRYwS9_EQ" id="(0.4984423676012461,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__AtJwFlmEeGg2qRYwS9_EQ" type="4001" source="_-8cU0FlmEeGg2qRYwS9_EQ" target="_-8f_MllmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__AtJxFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__Atw0FlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__AtJwVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__AtJwllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.10"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__AtJw1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h9csFlmEeGg2qRYwS9_EQ" id="(0.4,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h9csVlmEeGg2qRYwS9_EQ" id="(0.8305084745762712,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__A5XAFlmEeGg2qRYwS9_EQ" type="4001" source="_-8cU0FlmEeGg2qRYwS9_EQ" target="_-8kQoVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__A5-EFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__A5-EVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__A5XAVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__A5XAllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.11"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__A5XA1lmEeGg2qRYwS9_EQ" points="[0, 0, -158, -60]$[158, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h2vAFlmEeGg2qRYwS9_EQ" id="(0.6,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h2vAVlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__A8aUFlmEeGg2qRYwS9_EQ" type="4001" source="_-8cU0FlmEeGg2qRYwS9_EQ" target="_-8k3sVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__A9BYFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__A9BYVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__A8aUVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__A8aUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.12"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__A8aU1lmEeGg2qRYwS9_EQ" points="[0, 0, -537, -60]$[537, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h3WEFlmEeGg2qRYwS9_EQ" id="(0.8,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h3WEVlmEeGg2qRYwS9_EQ" id="(0.49914236706689535,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BAEsFlmEeGg2qRYwS9_EQ" type="4001" source="_-8k3sVlmEeGg2qRYwS9_EQ" target="_-8mF0FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BAEtFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BAEtVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BAEsVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BAEsllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.13"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BAEs1lmEeGg2qRYwS9_EQ" points="[0, 0, 541, -60]$[-541, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__hvaQFlmEeGg2qRYwS9_EQ" id="(0.49914236706689535,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__hwBUFlmEeGg2qRYwS9_EQ" id="(0.75,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BB54FlmEeGg2qRYwS9_EQ" type="4001" source="_-8kQoVlmEeGg2qRYwS9_EQ" target="_-8mF0FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BDIAFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BDIAVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BB54VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BCg8FlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.14"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BCg8VlmEeGg2qRYwS9_EQ" points="[0, 0, 160, -1031]$[-33, 970, 127, -61]$[-160, 1031, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__hwBUVlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h1g4FlmEeGg2qRYwS9_EQ" id="(0.5625,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BFkQFlmEeGg2qRYwS9_EQ" type="4001" source="_-8f_MllmEeGg2qRYwS9_EQ" target="_-8mF0FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BGLUFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BGLUVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BFkQVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BFkQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.15"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BFkQ1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -780]$[0, 780, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h-q0VlmEeGg2qRYwS9_EQ" id="(0.8305084745762712,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h_R4FlmEeGg2qRYwS9_EQ" id="(0.375,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BIAgFlmEeGg2qRYwS9_EQ" type="4001" source="_-8cU1VlmEeGg2qRYwS9_EQ" target="_-8mF0FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BInkFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BInkVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BIAgVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BIAgllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.16"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BIAg1lmEeGg2qRYwS9_EQ" points="[0, 0, -561, -780]$[101, 719, -460, -61]$[561, 780, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h2H8FlmEeGg2qRYwS9_EQ" id="(0.4984423676012461,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__h2H8VlmEeGg2qRYwS9_EQ" id="(0.1875,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BJ1sFlmEeGg2qRYwS9_EQ" type="4001" source="_-8takFlmEeGg2qRYwS9_EQ" target="_-8wd4FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BOHIFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BOHIVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BJ1sVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BJ1sllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.17"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BJ1s1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__iXsYFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__iXsYVlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BP8UFlmEeGg2qRYwS9_EQ" type="4001" source="_-8wd4FlmEeGg2qRYwS9_EQ" target="_-8wd4FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BRxgFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BRxgVlmEeGg2qRYwS9_EQ" x="16" y="132"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BP8UVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BP8UllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.18"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BP8U1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BU00FlmEeGg2qRYwS9_EQ" type="4001" source="_-8wd4FlmEeGg2qRYwS9_EQ" target="_-8xE8VlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BVb4llmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BVb41lmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BU00VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BVb4FlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.19"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BVb4VlmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__iYTcFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__iY6gFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BYfMFlmEeGg2qRYwS9_EQ" type="4001" source="_-9zmwFlmEeGg2qRYwS9_EQ" target="_-9zmxVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BZGQFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BZGQVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BYfMVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BYfMllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.20"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BYfM1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jiKAFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jiKAVlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BbigFlmEeGg2qRYwS9_EQ" type="4001" source="_-9zmxVlmEeGg2qRYwS9_EQ" target="_-9zmxVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BbihFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BbihVlmEeGg2qRYwS9_EQ" x="-2" y="-24"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BbigVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BbigllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.21"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Bbig1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BfM4FlmEeGg2qRYwS9_EQ" type="4001" source="_-9zmxVlmEeGg2qRYwS9_EQ" target="_-90N0VlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BfM5FlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BfM5VlmEeGg2qRYwS9_EQ" x="23" y="23"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BfM4VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BfM4llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.22"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BfM41lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jixEFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jixEVlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__Bl6kFlmEeGg2qRYwS9_EQ" type="4001" source="_--FTkFlmEeGg2qRYwS9_EQ" target="_--F6oFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BmhoFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BmhoVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__Bl6kVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__Bl6kllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.23"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Bl6k1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__g8JAVlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__g8wEFlmEeGg2qRYwS9_EQ" id="(0.4984709480122324,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__Bo94FlmEeGg2qRYwS9_EQ" type="4001" source="_--F6oFlmEeGg2qRYwS9_EQ" target="_--GhsFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__Bo95FlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__Bo95VlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__Bo94VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__Bo94llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.24"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Bo941lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__g7h8FlmEeGg2qRYwS9_EQ" id="(0.4984709480122324,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__g8JAFlmEeGg2qRYwS9_EQ" id="(0.49899396378269617,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BqzEFlmEeGg2qRYwS9_EQ" type="4001" source="_--GhsFlmEeGg2qRYwS9_EQ" target="_--I98FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BraIllmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BraI1lmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BqzEVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BraIFlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.25"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BraIVlmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__g8wEVlmEeGg2qRYwS9_EQ" id="(0.49899396378269617,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__g_zYFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BtPUFlmEeGg2qRYwS9_EQ" type="4001" source="_--MBQFlmEeGg2qRYwS9_EQ" target="_--MoUFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BtPVFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BtPVVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BtPUVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BtPUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.26"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__BtPU1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__hY08FlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__hZcAFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__BvrkFlmEeGg2qRYwS9_EQ" type="4001" source="_--MoUFlmEeGg2qRYwS9_EQ" target="_--MoUFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__BvrlFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__BvrlVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__BvrkVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__BvrkllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.27"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Bvrk1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__B0kEFlmEeGg2qRYwS9_EQ" type="4001" source="_--MoUFlmEeGg2qRYwS9_EQ" target="_--NPYFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__B1LIFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__B1LIVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__B0kEVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__B0kEllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.28"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__B0kE1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__hYN4FlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__hYN4VlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__B3AUFlmEeGg2qRYwS9_EQ" type="4001" source="_--VyQFlmEeGg2qRYwS9_EQ" target="_--WZUFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__B3AVFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__B3AVVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__B3AUVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__B3AUllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.29"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__B3AU1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i8UIFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i8UIVlmEeGg2qRYwS9_EQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__B6qsFlmEeGg2qRYwS9_EQ" type="4001" source="_--WZUFlmEeGg2qRYwS9_EQ" target="_--XAYFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__B6qtFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__B6qtVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__B6qsVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__B6qsllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.30"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__B6qs1lmEeGg2qRYwS9_EQ" points="[0, 0, 199, -60]$[-199, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i87MFlmEeGg2qRYwS9_EQ" id="(0.28,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i87MVlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__B-VEFlmEeGg2qRYwS9_EQ" type="4001" source="_--WZUFlmEeGg2qRYwS9_EQ" target="_--XncVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__B-VFFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__B-VFVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__B-VEVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__B-VEllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.31"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__B-VE1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -163]$[0, 163, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i-JUFlmEeGg2qRYwS9_EQ" id="(0.56,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i-JUVlmEeGg2qRYwS9_EQ" id="(0.625,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CB_cFlmEeGg2qRYwS9_EQ" type="4001" source="_--XAYFlmEeGg2qRYwS9_EQ" target="_--XncVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CCmgFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CCmgVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CB_cVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CB_cllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.32"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CB_c1lmEeGg2qRYwS9_EQ" points="[0, 0, -201, -60]$[201, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i9iQFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__i9iQVlmEeGg2qRYwS9_EQ" id="(0.3125,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CGQ4FlmEeGg2qRYwS9_EQ" type="4001" source="_--2IkFlmEeGg2qRYwS9_EQ" target="_--2vollmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CGQ5FlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CG38FlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CGQ4VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CGQ4llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.33"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CGQ41lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jS5cFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jS5cVlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CJUMFlmEeGg2qRYwS9_EQ" type="4001" source="_--2vollmEeGg2qRYwS9_EQ" target="_--5y8FlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CKiUFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CKiUVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CJUMVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CJUMllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.34"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CJ7QFlmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jTggFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jUHkFlmEeGg2qRYwS9_EQ" id="(0.4993045897079277,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CMXgFlmEeGg2qRYwS9_EQ" type="4001" source="_--5y8FlmEeGg2qRYwS9_EQ" target="_--6aAFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CM-kFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CM-kVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CMXgVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CMXgllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.35"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CMXg1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jUHkVlmEeGg2qRYwS9_EQ" id="(0.4993045897079277,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jXK4FlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CPa0FlmEeGg2qRYwS9_EQ" type="4001" source="_-_GAMFlmEeGg2qRYwS9_EQ" target="_-_H1YFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CQB4FlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CQB4VlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CPa0VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CPa0llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.36"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CPa01lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kU0MVlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kVbQFlmEeGg2qRYwS9_EQ" id="(0.4968944099378882,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CR3EFlmEeGg2qRYwS9_EQ" type="4001" source="_-_H1YFlmEeGg2qRYwS9_EQ" target="_-_H1YFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CR3FFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CR3FVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CR3EVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CR3EllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.37"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CR3E1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CTsQFlmEeGg2qRYwS9_EQ" type="4001" source="_-_H1YFlmEeGg2qRYwS9_EQ" target="_-_IcdVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CUTUFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CUTUVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CTsQVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CTsQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.38"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CTsQ1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kUNIFlmEeGg2qRYwS9_EQ" id="(0.4968944099378882,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__kU0MFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CWIgFlmEeGg2qRYwS9_EQ" type="4001" source="_--_SgFlmEeGg2qRYwS9_EQ" target="_--_5kFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CWIhFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CWIhVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CWIgVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CWIgllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.39"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CWIg1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j6kgVlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j7LkFlmEeGg2qRYwS9_EQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CYkwFlmEeGg2qRYwS9_EQ" type="4001" source="_--_5kFlmEeGg2qRYwS9_EQ" target="_--_5lVlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CYkxFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CYkxVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CYkwVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CYkwllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.40"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CYkw1lmEeGg2qRYwS9_EQ" points="[0, 0, 320, -60]$[-320, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j59cFlmEeGg2qRYwS9_EQ" id="(0.28,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j6kgFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CboEFlmEeGg2qRYwS9_EQ" type="4001" source="_--_5kFlmEeGg2qRYwS9_EQ" target="_-_BuwFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CboFFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CboFVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CboEVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CboEllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.41"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CboE1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -426]$[0, 426, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j-O4FlmEeGg2qRYwS9_EQ" id="(0.56,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j-O4VlmEeGg2qRYwS9_EQ" id="(0.625,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CddQFlmEeGg2qRYwS9_EQ" type="4001" source="_--_5lVlmEeGg2qRYwS9_EQ" target="_-_BuwFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__CddRFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CddRVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CddQVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CddQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.42"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CddQ1lmEeGg2qRYwS9_EQ" points="[0, 0, -322, -60]$[322, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j3hMFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j3hMVlmEeGg2qRYwS9_EQ" id="(0.3125,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__ChHoFlmEeGg2qRYwS9_EQ" type="4001" source="_-8AP8FlmEeGg2qRYwS9_EQ" target="_-8CsMFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__ChHpFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__ChHpVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__ChHoVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__ChHollmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.43"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__ChHo1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__iqAQFlmEeGg2qRYwS9_EQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__iqAQVlmEeGg2qRYwS9_EQ" id="(0.4998064266356949,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__Cjj4FlmEeGg2qRYwS9_EQ" type="4001" source="_-8CsMFlmEeGg2qRYwS9_EQ" target="_-8CsMFlmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__Cjj5FlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__Cjj5VlmEeGg2qRYwS9_EQ" x="147" y="35"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__Cjj4VlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__Cjj4llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.44"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__Cjj41lmEeGg2qRYwS9_EQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="__CkyAFlmEeGg2qRYwS9_EQ" type="4001" source="_-8CsMFlmEeGg2qRYwS9_EQ" target="_-8CsN1lmEeGg2qRYwS9_EQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="__ClZEFlmEeGg2qRYwS9_EQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__ClZEVlmEeGg2qRYwS9_EQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="__CkyAVlmEeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="__CkyAllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="Goalie.stct#//@transitions.45"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CkyA1lmEeGg2qRYwS9_EQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__ioyIFlmEeGg2qRYwS9_EQ" id="(0.4998064266356949,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__ipZMFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
+  </edges>
+</notation:Diagram>
