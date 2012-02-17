@@ -25,8 +25,6 @@ public:
 	
 	std::string GetName ();
 	
-	float distance(float x1, float x2, float y1, float y2);
-	float rotation(float x, float y, float theta);
 
 private:	
 	MotionWalkMessage wmot;	

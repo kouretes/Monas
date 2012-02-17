@@ -13,7 +13,7 @@ namespace {
 
 int ApproachBall::Execute() {
 
-	//Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
+	Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
 
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 	wimsg = _blk->readData<WorldInfo> ("behavior");
@@ -135,13 +135,5 @@ void ApproachBall::littleWalk(double x, double y, double th) {
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
 	_blk->publishSignal(wmot, "motion");
-}
-
-float ApproachBall::distance(float x1, float x2, float y1, float y2){
-
-	float dis;
-	dis = sqrt(pow(x2-x1, 2)+ pow(y2-y1, 2));
-
-	return dis;
 }
 

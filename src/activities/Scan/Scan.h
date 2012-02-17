@@ -31,6 +31,7 @@ private:
 	boost::shared_ptr<const HeadToBMessage> hbm;
 	//boost::shared_ptr<const ScanMessage> scnm;
 	
+	
 	//bool toPos;
 	int headaction;
 	//int forpost, forball;

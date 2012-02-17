@@ -9,7 +9,7 @@ namespace {
 
 int GoToPosition::Execute() {
 	/*  */
-//	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
+	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
 	pm = _blk->readState<PositionMessage>("behavior");
 	wimsg = _blk->readData<WorldInfo>("behavior");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
@@ -43,8 +43,7 @@ int GoToPosition::Execute() {
 		_blk->publish_all();
 		return 0;
 	}
-	rpm->set_goalietopos(true);
-	_blk->publishSignal(*rpm, "behavior");
+
 	if(confidence<badConfidence && lastMove <= microsec_clock::universal_time()){
 
 		if(lastObsm + seconds(10) <microsec_clock::universal_time() ){
@@ -115,6 +114,7 @@ int GoToPosition::Execute() {
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 	_blk->publish_all();
+	//Logger::Instance().WriteMsg(GetName(),  "EXIT", Logger::Info);
 	return 0;
 }
 
