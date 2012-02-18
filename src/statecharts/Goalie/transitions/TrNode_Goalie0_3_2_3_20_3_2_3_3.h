@@ -8,19 +8,21 @@ class TrCond_Goalie0_3_2_3_20_3_2_3_3 : public statechart_engine::ICondition {
 public:
 
 	void UserInit () {
-		_blk->updateSubscription("_behavior",msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
 
 	bool Eval() {
-		/* _behavior.State.HeadToBMessage.ballfound()==0 */
+		/* behavior.State.HeadToBMessage==NULL || behavior.State.HeadToBMessage.ballfound()==0 */
 		
-		boost::shared_ptr<const HeadToBMessage> var_1318191046 = _blk->readState<HeadToBMessage> ("_behavior" );
+		boost::shared_ptr<const HeadToBMessage> var_1901744185 = _blk->readState<HeadToBMessage> ("behavior" );
 
 		
-		if ( var_1318191046.get() != 0  ){	
-				return ( var_1318191046->ballfound()==0 );
-		}return false;
+		if ( var_1901744185.get() == 0 )
+			 return true;
+ 	
+				return (  var_1901744185->ballfound()==0 );
+		return false;
 
 		
     }
