@@ -1,5 +1,6 @@
 Requirements:
 	libhighgui, lib,dev (opencv libs etc)
+	libcv-dev libcv2.1 libcvaux2.1
 	libprotobuf lib,dev 
 	
 Build:
