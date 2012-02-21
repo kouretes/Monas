@@ -13,14 +13,14 @@ public:
 	}
 
 	bool Eval() {
-		/* behavior.State.GameStateMessage.player_state()==PLAYER_PLAYING && behavior.Signal.FallMessage.fall()!=0 */
+		/* behavior.State.GameStateMessage.player_state()==PLAYER_PLAYING && behavior.State.FallMessage.fall()!=0 */
 		
 		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
-		boost::shared_ptr<const FallMessage> var_734099742 = _blk->readSignal<FallMessage> ("behavior" );
+		boost::shared_ptr<const FallMessage> var_1561961811 = _blk->readState<FallMessage> ("behavior" );
 
 		
-		if ( var_621149599.get() != 0  && var_734099742.get() != 0 ){	
-				return ( var_621149599->player_state()==PLAYER_PLAYING && var_734099742->fall()!=0 );
+		if ( var_621149599.get() != 0  && var_1561961811.get() != 0 ){	
+				return ( var_621149599->player_state()==PLAYER_PLAYING && var_1561961811->fall()!=0 );
 		}return false;
 
 		

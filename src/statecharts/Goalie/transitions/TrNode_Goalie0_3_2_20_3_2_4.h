@@ -21,8 +21,7 @@ public:
 		if ( var_621149599.get() == 0 )
 			 return true;
  	
-				return ( var_621149599->player_state()!=PLAYER_PLAYING );
-		return false;
+		return ( var_621149599->player_state()!=PLAYER_PLAYING );
 
 		
     }

@@ -13,16 +13,17 @@ public:
 	}
 
 	bool Eval() {
-		/* behavior.State.HeadToBMessage==NULL || behavior.State.HeadToBMessage.ballfound()==0 */
+		/* behavior.State.GameStateMessage==NULL || behavior.State.HeadToBMessage.ballfound()==0 */
 		
+		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
 		boost::shared_ptr<const HeadToBMessage> var_1901744185 = _blk->readState<HeadToBMessage> ("behavior" );
 
 		
-		if ( var_1901744185.get() == 0 )
+		if ( var_621149599.get() == 0 )
 			 return true;
- 	
+ 		if ( var_1901744185.get() != 0  ){	
 				return (  var_1901744185->ballfound()==0 );
-		return false;
+		}return false;
 
 		
     }

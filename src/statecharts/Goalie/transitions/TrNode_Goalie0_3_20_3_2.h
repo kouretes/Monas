@@ -29,8 +29,7 @@ public:
 		if ( var_621149599.get() == 0 )
 			 return true;
  	
-				return ( boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && (  var_621149599->player_state()!=PLAYER_FINISHED) );
-		return false;
+		return ( boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && (  var_621149599->player_state()!=PLAYER_FINISHED) );
 
 		
     }

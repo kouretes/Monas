@@ -41,7 +41,7 @@ int Stare::Execute() {
 					fall = -1;
 			}
 			fm->set_fall(fall);
-			_blk->publishSignal(*fm, "behavior");
+			_blk->publishState(*fm, "behavior");
 		}
 
 	}
