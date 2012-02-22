@@ -15,7 +15,7 @@ using namespace std;
 
 int NoPlay::Execute() {
 
-	//Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
+	Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
 	gsm = _blk->readState<GameStateMessage> ("behavior");
 	pnm = _blk->readState<PlayerNumberMessage>("behavior");
 

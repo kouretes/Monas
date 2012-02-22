@@ -2,8 +2,6 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-#include "tools/logger.h"
-#include "tools/toString.h"
 // _open_group_play_or_NoPlay_close_group_TO0.3
 class TrCond_GUITester0_20_3 : public statechart_engine::ICondition {
 			
@@ -20,14 +18,9 @@ public:
 		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
 
 		
-		if ( var_621149599.get() == 0 ){
-			Logger::Instance().WriteMsg("Condition", "false",  Logger::Info);
-			return false;
-		}
-
-		
-		Logger::Instance().WriteMsg("var_621149599->player_state()==PLAYER_FINISHED", _toString(var_621149599->player_state()==PLAYER_FINISHED),  Logger::Info);
-		return ( var_621149599->player_state()==PLAYER_FINISHED ); 
+		if ( var_621149599.get() != 0  ){	
+				return ( var_621149599->player_state()==PLAYER_FINISHED );
+		}return false;
 
 		
     }

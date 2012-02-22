@@ -9,7 +9,7 @@ namespace {
 
 int GoToPosition::Execute() {
 	/*  */
-//	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
+	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
 	pm = _blk->readState<PositionMessage>("behavior");
 	wimsg = _blk->readData<WorldInfo>("behavior");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
@@ -114,6 +114,7 @@ int GoToPosition::Execute() {
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 	_blk->publish_all();
+	//Logger::Instance().WriteMsg(GetName(),  "EXIT", Logger::Info);
 	return 0;
 }
 

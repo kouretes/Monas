@@ -2,8 +2,8 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-// GoToPositionTO0.2.3.3.3
-class TrCond_GUITester0_2_3_3_20_2_3_3_3 : public statechart_engine::ICondition {
+// playTO0.2.5
+class TrCond_GUITester0_2_30_2_5 : public statechart_engine::ICondition {
 			
 public:
 

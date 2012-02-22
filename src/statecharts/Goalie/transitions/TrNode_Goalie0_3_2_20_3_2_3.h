@@ -2,8 +2,8 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-// 0.2.2TOplay
-class TrCond_GUITester0_2_20_2_3 : public statechart_engine::ICondition {
+// 0.3.2.2TOplaying
+class TrCond_Goalie0_3_2_20_3_2_3 : public statechart_engine::ICondition {
 			
 public:
 
