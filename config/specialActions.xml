@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<!-- Oi pozes metriountai apo to 0 kai oxi apo to 1 -->
+<!-- Pose number starts from 0-->
 
 <Motion numOfPoses = 5 threshold = 0.7 numOfJoints = 8>	<!-- a good ball distance (bd) for the kick is 15 cm -->
 <actionName>KickForwardRight.kme</actionName>
@@ -18,7 +18,7 @@
 <Poses pose = 7></Poses>
 <Poses pose = 10></Poses>
 <Poses pose = 14></Poses>
-<Poses pose = 19></Poses>
+<Poses pose = 25></Poses>
 </Motion>
 
 
@@ -38,7 +38,7 @@
 <Poses pose = 9></Poses>
 <Poses pose = 15></Poses>
 <Poses pose = 19></Poses>
-<Poses pose = 23></Poses>	
+<Poses pose = 26></Poses>	
 
 </Motion>
 
@@ -95,7 +95,7 @@
 </Motion>
 
 
-<Motion numOfPoses = 4 threshold = 0.5 numOfJoints = 6>		<!-- a good ball distance (bd) for the kick is 12 cm -->
+<Motion numOfPoses = 3 threshold = 0.5 numOfJoints = 6>		<!-- a good ball distance (bd) for the kick is 12 cm -->
 <actionName>KickSideLeft.kme</actionName>
 
 <Joints>LHipRoll</Joints>
@@ -105,7 +105,6 @@
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
 
-<Poses pose = 5></Poses>
 <Poses pose = 7></Poses>
 <Poses pose = 9></Poses>
 <Poses pose = 11></Poses>
