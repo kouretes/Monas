@@ -50,9 +50,19 @@ cond_mutex(),cond_publishers(),cond_publishers_queue(),cond(),agentStats()
 	{
 		cout<<"Initiating multicast network at address: "<<multicastip<<":"<<port<<std::endl;
 		KNetwork::MulticastPoint *m=new KNetwork::MulticastPoint(multicastip,maxpayload);
+		try {
+		m->startEndPoint(multicastip,port);
 		m->setCleanupAndBeacon(beacon_interval);
 		m->attachTo(*this);
-		m->startEndPoint(multicastip,port);
+		}
+		catch (boost::system::system_error e)
+		{
+		    cout<<"Could not start multicastpoint!!!"<<endl;
+		    delete m;
+		}
+
+
+
 		multicast=m;
 	}
 
