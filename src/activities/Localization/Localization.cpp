@@ -322,7 +322,7 @@ int Localization::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
-
+	cout<<"AgentPosition.x"<<AgentPosition.x <<"AgentPosition.y"<<AgentPosition.y<<endl;
 	calculate_ball_estimate(robotmovement);
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
@@ -582,7 +582,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		Predict(SIRParticles, MotionModel);
 
 	//Set semi-optimal bearing angle as the average bearing angle to the observations
-	ForceBearing(SIRParticles, Observations);
+	//ForceBearing(SIRParticles, Observations);
 
 	//Create some particles using Observation Intersection
 	CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
@@ -667,15 +667,21 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	SIRParticles.phi[max_weight_particle_index] = maxprtcl.phi;
 	SIRParticles.Weight[max_weight_particle_index] = maxprtcl.Weight;
 
-
-
 	AgentPosition.x =  SIRParticles.x[0];// maxprtcl.x;
 	AgentPosition.y = SIRParticles.y[0];//maxprtcl.y;
 	AgentPosition.theta = SIRParticles.phi[0];//maxprtcl.phi;
 
 
 	//cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
-	//AgentPosition = RobustMean(SIRParticles, 2);
+	AgentPosition = RobustMean(SIRParticles, 10);
+	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << ", " << AgentPosition.theta << endl;
+	AgentPosition = RobustMean(SIRParticles, 10);
+
+	//TODO only one value to determine confidance, Now its only distance confidence
+	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+
+
+
 	//Complete the SIR
 	//Check last position confidence
 	if (ESS > 0 && (ESS < Beta ))
@@ -689,8 +695,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		; //cout << "NO need of resampling" << endl;
 	}
 
-	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+
 
 	//cout << "Agent Confidence " << AgentPosition.confidence << endl;
 
@@ -698,6 +703,8 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//cin.clear();
 	//	cout << "write something to display belief " << endl;
 	//cin >> c;
+
+
 
 	return AgentPosition;
 
@@ -732,19 +739,22 @@ void Localization::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
 			tmpOM.Distance.Emean = 0;
-			tmpOM.Distance.Edev = sqrt(Objects.Get(i).distance_dev()) * 1000 + 30;
+			tmpOM.Distance.Edev = 10*sqrt(sqrt(Objects.Get(i).distance_dev())) * 1000 + 30;
 
 			//Bearing
-			tmpOM.Bearing.val = Objects.Get(i).bearing();
+			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0;
-			tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 560;
+			tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 360;
 
 
 			if ((this)->KFeaturesmap.count(id) != 0)
 			{
 				//Make the feature
-				tmpOM.Feature = (this)->KFeaturesmap[id];
-				currentObservation.push_back(tmpOM);
+				if(id.find("Left")!=string::npos ||id.find("Right")!=string::npos)
+				{
+					tmpOM.Feature = (this)->KFeaturesmap[id];
+					currentObservation.push_back(tmpOM);
+				}
 				//cout << "Feature seen " << tmpOM.Feature.id << " Distance " << tmpOM.Distance.val << " Bearing " << tmpOM.Bearing.val << endl;
 				//cout << " DistanceDev " << tmpOM.Distance.Edev << " BearingDev " << tmpOM.Bearing.Edev << endl;
 			}else {

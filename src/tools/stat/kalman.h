@@ -45,8 +45,10 @@ class Kalman1D
 
   Xbar const& predict_with_decel(V dt, V a)
   {
-	r(1)= r(1) - a*((r(1)>0)?1:-1)*dt;
-	r(0)=r(0)+r(1)*dt;
+    float d=a*((r(1)>0)?1:-1);
+    r(0)=r(0)+r(1)*dt-d*dt*dt/2.0;
+	r(1)= r(1) - d*dt;
+
 
     KMat::GenMatrix<V,2,2> Pinc,Q;
     Pinc.zero();
