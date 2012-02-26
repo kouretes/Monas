@@ -42,13 +42,14 @@ namespace statechart_engine {
     }
 
     int Statechart::Execute () {
-        while ( Step() )
-          ;
-        {
+
+
+        while ( Step() ) ;
+        notified = false;
+		{
           boost::unique_lock<boost::mutex> lock(mut);
           if ( notified ) {
-            notified = false;
-            return 0;
+			  return 0;
           }
           cond.wait(lock);
         }
