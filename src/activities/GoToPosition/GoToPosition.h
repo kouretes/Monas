@@ -39,6 +39,7 @@ private:
 	boost::shared_ptr<const ObservationMessage> obsm;
 	boost::shared_ptr<const GameStateMessage> gsm;
 
+	
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage wmot;
 	RobotInPosition ripm;
@@ -53,7 +54,7 @@ private:
 	void littleWalk(double x, double y, double th);	
 	////////////////////////////////////////
 	float distance(float x1, float x2, float y1, float y2);
-	float rotation(float x, float y, float theta);
+	
 
 };
 

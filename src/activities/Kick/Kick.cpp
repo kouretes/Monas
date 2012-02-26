@@ -7,6 +7,7 @@ namespace {
 
 
 int Kick::Execute() {
+	Logger::Instance().WriteMsg(GetName(),  " execute", Logger::Info);
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	wimsg  = _blk->readData<WorldInfo>("behavior");
 	pnm = _blk->readState<PlayerNumberMessage>("behavior");

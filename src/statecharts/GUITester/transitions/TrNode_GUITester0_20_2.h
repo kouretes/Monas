@@ -2,8 +2,6 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-#include "tools/logger.h"
-#include "tools/toString.h"
 // _open_group_play_or_NoPlay_close_group_TO_open_group_play_or_NoPlay_close_group_
 class TrCond_GUITester0_20_2 : public statechart_engine::ICondition {
 			
@@ -15,27 +13,24 @@ public:
 	}
 
 	bool Eval() {
-		/* TimeoutCheck(behavior) && _behavior.State.GameStateMessage.player_state()!=PLAYER_FINISHED */
+		/* TimeoutCheck(behavior) && (behavior.State.GameStateMessage==NULL ||behavior.State.GameStateMessage.player_state()!=PLAYER_FINISHED) */
 		
-		boost::shared_ptr<const GameStateMessage> var_1692513826 = _blk->readState<GameStateMessage> ("behavior" );
+		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
 		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("behavior");
 
 		
 		_blk->process_messages();
 		if( msg.get() == 0){
-			Logger::Instance().WriteMsg("TIMEOUT", "true",  Logger::Info);
-		return true;
+			return true;
 		}
  		if(msg->wakeup()=="")
 			return true;
-		if ( var_1692513826.get() == 0 ){
-			Logger::Instance().WriteMsg("Condition", "true",  Logger::Info);
-			return true;
-		}
 
-		
-		Logger::Instance().WriteMsg("boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && var_1692513826->player_state()!=PLAYER_FINISHED", _toString(boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && var_1692513826->player_state()!=PLAYER_FINISHED),  Logger::Info);
-		return ( boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && var_1692513826->player_state()!=PLAYER_FINISHED ); 
+		if ( var_621149599.get() == 0 )
+			 return true;
+ 	
+				return ( boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time() && (var_621149599->player_state()!=PLAYER_FINISHED) );
+		return false;
 
 		
     }
@@ -46,8 +41,8 @@ public:
 // _open_group_play_or_NoPlay_close_group_TO_open_group_play_or_NoPlay_close_group_
 class TrAction_GUITester0_20_2 : public statechart_engine::
 				TimeoutAction {
-		/* TimeoutAction.behavior.250 */
-	public:	TrAction_GUITester0_20_2() : statechart_engine::TimeoutAction( "behavior", 250 ) { 
+		/* TimeoutAction.behavior.350 */
+	public:	TrAction_GUITester0_20_2() : statechart_engine::TimeoutAction( "behavior", 350 ) { 
 		;
 	 }
 };
