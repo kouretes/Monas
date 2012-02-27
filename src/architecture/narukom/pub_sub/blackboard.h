@@ -41,8 +41,10 @@ public:
     virtual ~Blackboard() {}
     void process_messages();
     void publish_all();
+        enum  DataReq{
+            DATA_NEAREST, DATA_NEAREST_NOTOLDER,DATA_NEAREST_NOTNEWER} ;
 		template<class Data>
-		boost::shared_ptr<const Data> readData(const std::string& topic,const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST,boost::posix_time::ptime* const tmp =0 , boost::posix_time::ptime const* const time_req =0);
+		boost::shared_ptr<const Data> readData(const std::string& topic,const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST,boost::posix_time::ptime* const tmp =0 , boost::posix_time::ptime const* const time_req =0,DataReq dtype=DATA_NEAREST);
 		template<class Data>
         boost::shared_ptr<const Data> readSignal(const std::string& topic,const std::size_t  host = msgentry::HOST_ID_LOCAL_HOST,boost::posix_time::ptime* const tmp =0 );
         template<class Data>
@@ -60,6 +62,7 @@ private:
         //boost::posix_time::ptime timeoutstamp;
         bool operator== (const struct blackboard_record_s & b) const { return msg==b.msg;};
 		bool operator<(const struct blackboard_record_s &b) const {return timestamp < b.timestamp;};
+		bool operator<(const struct  boost::posix_time::ptime  &b) const {return timestamp < b;};
     } brecord;
 
 	//=== Data struct: list of records, alongside a list of timeouts
@@ -111,7 +114,10 @@ private:
 
 
 template<class Data>
-boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic,const std::size_t  host ,boost::posix_time::ptime* const tmp  ,boost::posix_time::ptime const * const time_req )
+boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic,const std::size_t  host,
+                                                   boost::posix_time::ptime* const tmp ,
+                                                   boost::posix_time::ptime const * const time_req,
+                                                   DataReq dtype)
 {
 	const type_t atypeid=typeRegistry.getId(Data::default_instance().GetTypeName());
 	region_index i;
@@ -137,15 +143,19 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic,cons
     if(dit==d.end())
         return boost::shared_ptr<const Data>();
     const recordlist &q=(*dit).second;
-    recordlist::const_reverse_iterator it=q.rbegin();
-    if(it==q.rend())
-        return boost::shared_ptr<const Data>();
+    //Empty set, avoid iterators beiing beign()==end()
+    if(q.size()==0)
+      return boost::shared_ptr<const Data>();
+
     if(time_req==NULL)
     {
+        recordlist::const_reverse_iterator it=q.rbegin();
 		if(tmp!=NULL)
 			*tmp=(*it).timestamp;
 		return  boost::static_pointer_cast<const Data>( (*it).msg);
     }
+    //Update timeout
+
     boost::posix_time::time_duration nt=boost::posix_time::microsec_clock::universal_time()-*time_req;
 	nt*=TIMEOUTSCALE;
     if((*rit).second.blkdatatimeouts.find(atypeid)==(*rit).second.blkdatatimeouts.end())
@@ -153,38 +163,65 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic,cons
 	else
 		(*rit).second.blkdatatimeouts[atypeid]= (*rit).second.blkdatatimeouts[atypeid]<nt?nt:(*rit).second.blkdatatimeouts[atypeid];
 
-    recordlist::const_iterator fit=q.begin();
-    boost::posix_time::time_duration dist,t;
-    t=*time_req-(*fit).timestamp;
-    dist=t;
-    while(fit!=q.end())
+    brecord s;
+    s.timestamp=*time_req;
+    recordlist::const_iterator lit=q.lower_bound(s);
+
+    if(dtype==DATA_NEAREST_NOTOLDER)
     {
-        //Skip
-       // if( !(process==""||(*it).publisher==process) ||
+        if(lit==q.end())
+        {
+            return boost::shared_ptr<const Data>();
+        }
 
-		t=*time_req-(*fit).timestamp;
-		//std::cout<<(*fit).timestamp<<" "<<t<<std::endl;
-		if(t. is_negative())
-			t=t.invert_sign();
-        if(t<=dist)
-			dist=t;
-        else
-            break;
-		++fit; //advance for the next check
+        if(tmp!=NULL)
+            *tmp=(*lit).timestamp;
+        return  boost::static_pointer_cast<const Data>( (*lit).msg);
     }
-    if(fit!=q.begin()) --fit;//Go back one, t
-
-    if(fit==q.end())
-        --fit;
-    if(fit==q.end())
+    else if(dtype==DATA_NEAREST_NOTNEWER)
     {
-        return boost::shared_ptr<const Data>();
+        if(lit==q.end())
+            lit--;
+        else if(s<*lit)
+        {
+            if(lit==q.begin())
+            {
+                return boost::shared_ptr<const Data>();
+            }
+             --lit;//At least one element, and not at begining, see check q.size()==0 above
+        }
+
+        if(tmp!=NULL)
+            *tmp=(*lit).timestamp;
+        return  boost::static_pointer_cast<const Data>( (*lit).msg);
+
+    }
+    if(lit==q.end())//No newer message that lit, this is the nearest, and is OLDER than requested
+    {
+        lit--;
+         if(tmp!=NULL)
+            *tmp=(*lit).timestamp;
+        return  boost::static_pointer_cast<const Data>( (*lit).msg);// Nearest is last, meaning request wast too recent
+    }
+    //Here lit!=end()
+    if(lit==q.begin())//No older message that lit, this is the nearest
+    {
+         if(tmp!=NULL)
+            *tmp=(*lit).timestamp;
+        return  boost::static_pointer_cast<const Data>( (*lit).msg);// Nearest is the lower_bound==begin(), meaning request was too old
+
     }
 
+
+    recordlist::const_iterator uit=lit;
+    uit--;
+    if(s.timestamp-(*uit).timestamp < (*lit).timestamp - s.timestamp) //Upper_bound is closer to search
+        lit=uit;
     if(tmp!=NULL)
-        *tmp=(*fit).timestamp;
-    return  boost::static_pointer_cast<const Data>( (*fit).msg);
+        *tmp=(*lit).timestamp;
+    return  boost::static_pointer_cast<const Data>( (*lit).msg);
 }
+
 template<class Data>
 boost::shared_ptr<const Data> Blackboard::readSignal(const std::string& topic, const std::size_t  host  ,boost::posix_time::ptime* tmp )
 {

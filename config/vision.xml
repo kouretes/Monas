@@ -27,7 +27,7 @@
 <goalheight>0.799</goalheight>
 <goaldist>1.4</goaldist>
 <goaldiam>0.099</goaldiam>
-<widthestimateotolerance>0.4</widthestimateotolerance>
+<widthestimateotolerance>0.2</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>1</sensordelay>
 

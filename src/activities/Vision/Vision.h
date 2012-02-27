@@ -59,10 +59,10 @@ class Vision: public IActivity
 			return "Vision";
 		};
 
-		typedef struct GoalPostdata
+		 struct goalpostdata_t
 		{
-				KVecInt2 ll, lr, tl, tr;//Corners
-				KVecInt2 top, bot;
+				KVecFloat2 ll, lr, tl, tr;//Corners
+				KVecFloat2 top, bot;
 				//float angHeight;//in rads
 				bool haveBot, haveTop;
 				bool haveWidth;
@@ -95,12 +95,11 @@ class Vision: public IActivity
 
 					return true;
 
-				}
-				;
+				};
 
-		} goalpostdata_t;
+		} ;
 
-		typedef struct balldata
+		struct balldata_t
 		{
 				float x, y;
 				float cr;
@@ -108,7 +107,7 @@ class Vision: public IActivity
 				measurement distance;
 				float ballradius;
 
-		} balldata_t;
+		};
 
 	private:
 		struct
@@ -142,7 +141,8 @@ class Vision: public IActivity
 		boost::posix_time::ptime lastrefresh;
 
 		//Incoming messages!
-		boost::shared_ptr<const AllSensorValuesMessage> asvm;
+		boost::shared_ptr<const AllSensorValuesMessage> asvmo,asvmn;//Older and newer than requested timestamp
+		boost::posix_time::ptime timeo,timen;//time
 
 		//Camera transformation matrix
 		cpose p;//Robot pose
@@ -200,11 +200,12 @@ class Vision: public IActivity
 		KVecFloat2 simpleRotation(KVecFloat2 const & i)const ;
 		KVecFloat2 simpleRotation(KVecInt2 const & i)const ;
 
+
 		KVecInt2 cameraToImage( KVecFloat2 const & c) const;
 		KMat::GenMatrix<float,2,2> simpleRot;
 
-		void fillGoalPostHeightMeasurments(GoalPostdata & newpost) const;
-		void fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c) const;
+		void fillGoalPostHeightMeasurments(goalpostdata_t & newpost) const;
+		void fillGoalPostWidthMeasurments(goalpostdata_t & newpost, KSegmentator::colormask_t c) const;
 		//KVecFloat2 & cameraToObs(KMat::HCoords<float ,2> const& t);
 		//KVecFloat2 & camToRobot(KMat::HCoords<float ,2> & t);
 		KVecFloat2 camToRobot(KVecFloat2 const & t) const;

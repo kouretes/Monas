@@ -149,7 +149,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImage & img)
     const long long microsecsonly=timeStamp-(secsonly*1000000LL);
 //    cout<<"secsonly:"<<secsonly<<endl;
 
-    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly)+boost::posix_time::milliseconds(33.3333);
+    return time_t_epoch+boost::posix_time::seconds(secsonly)+boost::posix_time::microseconds(microsecsonly);//+boost::posix_time::milliseconds(33.3333)
 
 
 };
@@ -163,31 +163,29 @@ inline unsigned int decodeGain(unsigned char inValue)
     unsigned int c;
     unsigned char v = inValue >> 4;
 
-    for(c = 0; v; c++)//Count bits
+    for(c = 0; v; c++)//Count 1 bits
     {
-        v &= v - 1;
+       v &= v - 1; // clear the least significant bit set
     }
 
-    return (((inValue&0x07) + 16) * (1 << c));
+    return (((inValue&0xF) + 16) * (1 << c));
 }
 
+//In 16ths
 inline unsigned char encodeGain(unsigned int inValue)
 {
     unsigned char y=0;
 
-	while(inValue>23)
+	while(inValue>0x1F) //Maximum 16ths value is 16+15
 	{
 		y++;
 		inValue>>=1;
 	}
-	if(inValue>16)
+	if(inValue>=16)
 		inValue-=16;
-	else
-		inValue=0;
 
-	return (((1<<y)-1)<<3)|(inValue);
+	return (((1<<y)-1)<<4)|(inValue);
 }
-
 
 float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 {
