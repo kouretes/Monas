@@ -21,11 +21,13 @@
 
 #include "message_queue.h"
 #include "message_buffer.h"
+#include "network/multicastpoint.hpp"
 #include "topicTree.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
+#include "tools/logger.h"
 
-#include "network/multicastpoint.hpp"
+
 
 
 using std::map;
@@ -50,20 +52,22 @@ cond_mutex(),cond_publishers(),cond_publishers_queue(),cond(),agentStats()
 	{
 		cout<<"Initiating multicast network at address: "<<multicastip<<":"<<port<<std::endl;
 		KNetwork::MulticastPoint *m=new KNetwork::MulticastPoint(multicastip,maxpayload);
+		multicast=NULL;
 		try {
-		m->startEndPoint(multicastip,port);
 		m->setCleanupAndBeacon(beacon_interval);
 		m->attachTo(*this);
+		m->startEndPoint(multicastip,port);
+		multicast=m;
 		}
 		catch (boost::system::system_error e)
 		{
-		    cout<<"Could not start multicastpoint!!!"<<endl;
+		    Logger::Instance().WriteMsg("Narukom", "Could not start multicastpoint!", Logger::Error);
 		    delete m;
 		}
 
 
 
-		multicast=m;
+
 	}
 
 }
@@ -190,12 +194,13 @@ void MessageQueue::process_queued_msg()
         {
 			size_t msgtopicId=(*mit).topic;
 
+
 			//===== Handle subscriptions
 			if((*mit).msgclass>=msgentry::SUBSCRIBE_ON_TOPIC && (*mit).msgclass<=msgentry::SUBSCRIBE_ALL_TOPIC)
 			{
 				subscribeTo(pownerid,(*mit).topic,(*mit).msgclass);
 				if((*mit).host!=msgentry::HOST_ID_LOCAL_HOST&&multicast!=NULL)
-					multicast->getReadBuffer()->add((*mit));
+				    multicast->getReadBuffer()->add((*mit));
 				continue;
 			}
 			else if((*mit).msgclass>=msgentry::UNSUBSCRIBE_ON_TOPIC && (*mit).msgclass<=msgentry::UNSUBSCRIBE_ALL_TOPIC)
