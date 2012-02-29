@@ -161,7 +161,7 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 {
 	if (!error)
 	{
-        std::cout<<"timeout"<<std::endl;
+        //std::cout<<"timeout"<<std::endl;
 	    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
 	    {
 	        //Clean old hosts first
