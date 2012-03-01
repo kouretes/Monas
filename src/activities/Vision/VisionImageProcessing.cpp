@@ -414,14 +414,14 @@ bool Vision::calculateValidBall(balldata_t const ball, KSegmentator::colormask_t
 	const int crd=floor(sqrd(ball.cr)+0.5);
 	const int cx=floor(ball.x+0.5);
 	const int cy=floor(ball.y+0.5);
-	const int margin=cr+(cr/4<sub*2?sub*2:cr/4);
+	const int margin=cr+(cr/4<sub*2?sub*2:cr/4);//At least 2 pixels checked
 
     const int border=2;//Only 2 pixels from the borders
 	const int top=ball.y-margin<border?border: ball.y-margin;
 	const int bot=ball.y+margin >rawImage.height-1 -border?rawImage.height-1 -border: ball.y+margin;
 	const int left=ball.x-margin<border?border:ball.x-margin;
 	const int right=ball.x+margin>rawImage.width-1 - border?rawImage.width -1 - border:ball.x+margin;
-    //*2 because we are checking pixels in pairs
+
 	const int ttl = floor((bot-top+1)/(sub))*floor((right-left+1)/(sub));
 	const int inside=floor((KMat::transformations::PI*cr*cr)/(sub*sub));
 	const int bdlimit=(ttl-inside)*(0.25);
@@ -476,16 +476,13 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	unsigned int ttl=0,bd=0,gd=0;
 	float ratio;
 
-
-
-
-
 	tracer_t l,r;
+
 	l.init(goal.tl.x,goal.tl.y);
 	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
 	//l.setScale(config.subsampling);
-	r.init(goal.tr.x,goal.tl.y);
-	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tl.y);
+	r.init(goal.tr.x,goal.tr.y);
+	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
 	//r.setScale(config.subsampling);
 	int w=(r.x-l.x)+1;
 	const int sub=config.subsampling;
