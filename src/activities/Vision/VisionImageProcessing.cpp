@@ -492,7 +492,7 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	for(int i=0;i<PREFETCH-1;++i)
 		prepSeg(l.x-w-1+sub*i,l.y);
 
-	while(l.y<goal.ll.y && r.y<goal.lr.y)
+	while(simpleRotation(l).y<=simpleRotation(goal.ll).y && simpleRotation(r).y<=simpleRotation(goal.lr).y)
 	{
 		//cout<<l.x<<" "<<l.y<<endl;
 		w=(r.x-l.x)+1;
@@ -503,13 +503,13 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 
 			if(colorIsA(doSeg(x,l.y,c),c))
 			{
-				if(x>l.x&&x<r.x)
+				if(x>=l.x&&x<=r.x)
 					gd++;
 				else
 					bd++;
 
 			}
-			if(x>l.x&&x<r.x)
+			if(x>=l.x&&x<=r.x)
 				ttl++;
 		}
 		//cout<<"why oh why"<<endl;
@@ -727,10 +727,10 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		lr.x/=config.subsampling;
 
         //Increase the trapezoid size by half a pixel
-		ll.x-=0.5;
+		/*ll.x-=0.5;
 		ll.y-=0.5;
 		lr.x+=0.5;
-		lr.y-=0.5;
+		lr.y-=0.5;*/
         //Back to unrotated coords
 		newpost.ll=simpleRotation(ll);
 		newpost.lr=simpleRotation(lr);
@@ -770,10 +770,11 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		//Back to unrotated coords
 
 		  //Increase the trapezoid size by half a pixel
-		tl.x-=0.5;
+		/*tl.x-=0.5;
 		tl.y-=0.5;
 		tr.x+=0.5;
-		tr.y-=0.5;
+		tr.y-=0.5;*/
+		 //Back to unrotated coords
 		newpost.tl=simpleRotation(tl);
 		newpost.tr=simpleRotation(tr);
 
