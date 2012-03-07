@@ -484,16 +484,18 @@ void Vision::fetchAndProcess()
 //		Vup.y = -cos(-kinext.getRoll());
 //		Vup.x = sin(-kinext.getRoll());
 	Vup=simpleRot.slow_mult(KVecFloat2(0,1));
+	Vdn=simpleRot.slow_mult(KVecFloat2(0,-1));
+	Vlt=simpleRot.slow_mult(KVecFloat2(-1,0));
+	Vrt=simpleRot.slow_mult(KVecFloat2(1,0));
 
-
-	Vdn.x = -Vup.x;
+	/*Vdn.x = -Vup.x;
 	Vdn.y = -Vup.y;
 
 	Vlt.x = Vup.y;//-Vup.x*cos(-45*TO_RAD)-Vup.y*sin(-45*TO_RAD);
 	Vlt.y = -Vup.x;//-Vup.x*sin(-45*TO_RAD)+Vup.y*sin(-45*TO_RAD);
 
 	Vrt.x = -Vup.y;
-	Vrt.y = Vup.x;
+	Vrt.y = Vup.x;*/
 	//unsigned long startt,endt;
 	//startt=SysCall::_GetCurrentTimeInUSec();
 	ballpixels.clear();

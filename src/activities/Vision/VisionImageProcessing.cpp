@@ -477,31 +477,35 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	float ratio;
 
 	tracer_t l,r;
-
+	/*cout<<"Start:"<<goal.tl.x<<" "<<goal.tl.y<<endl;
+	cout<<"End:"<<goal.ll.x<<" "<<goal.ll.y<<endl;
+	cout<<"Start:"<<goal.tr.x<<" "<<goal.tr.y<<endl;
+	cout<<"End:"<<goal.lr.x<<" "<<goal.lr.y<<endl;*/
+    if(goal.tl==goal.tr || goal.ll==goal.tl)
+        return false;
 	l.init(goal.tl.x,goal.tl.y);
 	l.initVelocity(goal.ll.x-goal.tl.x,goal.ll.y-goal.tl.y);
 	//l.setScale(config.subsampling);
 	r.init(goal.tr.x,goal.tr.y);
 	r.initVelocity(goal.lr.x-goal.tr.x,goal.lr.y-goal.tr.y);
 	//r.setScale(config.subsampling);
-	int w=(r.x-l.x)+1;
+
 	const int sub=config.subsampling;
+	int w;//=(r.x-l.x)+sub+1;
 
-	//cout<<"Start:"<<goal.tl.x<<" "<<goal.tl.y<<endl;
-	//cout<<"End:"<<goal.ll.x<<" "<<goal.ll.y<<endl;
-	for(int i=0;i<PREFETCH-1;++i)
-		prepSeg(l.x-w-1+sub*i,l.y);
-
-	while(simpleRotation(l).y<=simpleRotation(goal.ll).y && simpleRotation(r).y<=simpleRotation(goal.lr).y)
+	/*for(int i=0;i<PREFETCH-1;++i)
+		prepSeg(l.x-w-1+sub*i,l.y);*/
+    //cout<< simpleRotation(l).y<<" " << simpleRotation(goal.ll).y <<" " << simpleRotation(r).y<<" " << simpleRotation(goal.lr).y;
+	while(simpleRotation(l).y>=simpleRotation(goal.ll).y && simpleRotation(r).y>=simpleRotation(goal.lr).y)
 	{
-		//cout<<l.x<<" "<<l.y<<endl;
-		w=(r.x-l.x)+1;
+		//cout<<l.x<<" "<<l.y<<" "<<r.x<<" "<<r.y<<endl;
+		w=(r.x-l.x)+sub+1;
 		for(int x=l.x-w-1; x<r.x+w+1;x+=sub)
 		{
-			if(x+PREFETCH*sub<=r.x+w+1)
-				prepSeg(x+PREFETCH*sub,l.y);//Prefetching
+			/*if(x+PREFETCH*sub<=r.x+w+1)
+				prepSeg(x+PREFETCH*sub,l.y);//Prefetching*/
 
-			if(colorIsA(doSeg(x,l.y,c),c))
+			if(colorIsA(doSeg(x,(l.y+r.y)/2,c),c))
 			{
 				if(x>=l.x&&x<=r.x)
 					gd++;
@@ -520,8 +524,8 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 
 	}
 	ratio=(float (bd+1))/(ttl+1);
-	//cout<<"Bad ratio:"<<ratio<<endl;
-	if(ratio>0.45)
+	//cout<<"Bad ratio:"<<ratio<<" "<<bd<< " "<< ttl <<endl;
+	if(ratio>0.33)
 		return false;
 	ratio=(float (gd+1))/(ttl+1);
 	//cout<<"Goodratio:"<<ratio<<endl;
@@ -551,14 +555,14 @@ bool Vision::calculateValidGoalPostBase(const goalpostdata_t& goal, KSegmentator
 		{
 			if (!validpixel(i,j))
 				continue;
-			if(colorIsA(doSeg(i,j,green|white),green|white))
+			if(colorIsA(doSeg(i,j,green),green))
 				gd++;
 			ttl++;
 		}
 	}
 	ratio=(float(gd+1))/(ttl+1);
 	//cout<<"ratio:"<<ratio<<endl;
-	if (ratio<0.55)
+	if (ratio<0.45)
 		return false;
 	return true;
 }
@@ -569,42 +573,36 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 	traceResult r;
 
 	KVecFloat2 tl,tr,s;
+	goal.leftOrRight=0;//Initialization
 	tl=simpleRotation(goal.tl);
 	tr=simpleRotation(goal.tr);
-
-    s.x=(tl.x+tr.x)/2;
-    s.y=(tl.y+tr.y)/2;
-    //Half a width below
-    s.y=(tr.x-tl.x)/2;
+    s=tr;
+    //1/3 of a width below ?
+    s.y=s.y-(tr.x-tl.x)/3;
     s=simpleRotation(s);
-	//s=goal.top;
-	//s.y+=1;
 	r=traceline(KVecInt2(s.x,s.y),Vrt,c);
-	goal.leftOrRight=0;
+
 
 	if(simpleRotation(r.p).x>simpleRotation(goal.tr).x)
 	{
-		goal.leftOrRight=2;//Left goal post, has something on the right
+		goal.leftOrRight=2;//Left goal post, has something on its right
 		return true;
 	}
 
-	//cout<<"No lt proeks"<<endl;
-	s=goal.tr;
+	//cout<<"No rt "<<endl;
+	s=tl;
+    //1/3 of a width below ?
+    s.y=s.y-(tr.x-tl.x)/3;
+    s=simpleRotation(s);
 	r=traceline(KVecInt2(s.x,s.y),Vlt,c);
-	//cout<<"tp:"<<r.p.x<< " "<<r.p.y<<endl;
-	//m.x=(r.p.x+s.x)/2;
-	//m.y=(r.p.y+s.y)/2;
-	//r=traceBlobEdge(m,Vrt,c);
 
-	//cout<<"r:"<<r.p.x<<r.p.y<<endl;
-	//cout<<"t:"<<goal.tl.x<<goal.tr.x<<endl;
 	if(simpleRotation(r.p).x<simpleRotation(goal.tl).x)
 	{
-		goal.leftOrRight=1;//Right goal post , has something on the left
+		goal.leftOrRight=1;//Right goal post , has something on its left
 		return true;
 	}
 
-	//cout<<"No rt proeks"<<endl;
+	//cout<<"No lt "<<endl;
 	return false;
 
 }
@@ -669,17 +667,25 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
         {
 
             newpost.top=trcrs.p;
-            temp.x=(trcrs.p.x+m.x);
-            temp.y=(trcrs.p.y+m.y);
+            temp.x=(trcrs.p.x+m.x)/2;
+            temp.y=(trcrs.p.y+m.y)/2;
 
             trcrs=traceline(KVecInt2(temp.x,temp.y),Vlt,c);
             m=trcrs.p;
-            trcrs=traceline((*i),Vrt,c);
+            trcrs=traceline(KVecInt2(temp.x,temp.y),Vrt,c);
             m.x=(m.x+trcrs.p.x)/2;
             m.y=(m.y+trcrs.p.y)/2;
 
             //again up
             trcrs = traceline(m,Vup,c);
+            //Delta
+            temp=simpleRotation(trcrs.p);
+            temp-=simpleRotation(newpost.top);
+            //No point moving anymore, moving sideways
+            if(temp.y<fabs(temp.x)*2)
+                break;
+
+            //cout<<trcrs.p.x<<" "<<trcrs.p.y<<endl;
 
 
         }
@@ -731,6 +737,9 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		ll.y-=0.5;
 		lr.x+=0.5;
 		lr.y-=0.5;*/
+		//Too small
+		if(lr.x-ll.x< config.pixeltol)
+            continue;
         //Back to unrotated coords
 		newpost.ll=simpleRotation(ll);
 		newpost.lr=simpleRotation(lr);
@@ -777,6 +786,23 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		 //Back to unrotated coords
 		newpost.tl=simpleRotation(tl);
 		newpost.tr=simpleRotation(tr);
+		/*cout<<"tl:"<<newpost.tl.x<<" "<<newpost.tl.y<<endl;
+        cout<<"ll:"<<newpost.ll.x<<" "<<newpost.ll.y<<endl;
+        cout<<"tr:"<<newpost.tr.x<<" "<<newpost.tr.y<<endl;
+        cout<<"lr:"<<newpost.lr.x<<" "<<newpost.lr.y<<endl;*/
+
+        //Too small
+		if(lr.x-ll.x< config.pixeltol)
+            continue;
+        {
+
+            float md,rd;
+            md=CvDist(tl,lr);
+            rd=CvDist(tr,ll);
+            if(md<rd)   swap(md,rd);
+            if(md>5*rd/4) // md/rd > 5/4 ,md>rd
+                continue;
+        }
 
 		//Now fix the top and bottom pixels.
 
@@ -797,6 +823,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		//cout<<"Camera X-Y-Z"<<p.cameraX<<" " <<p.cameraY<<" "<<p.cameraZ<<endl;
 		newpost.distBot=a[0];
 		newpost.distBot.mean+=config.goaldiam/2;
+		//cout<<"See bot:"<<newpost.distBot.mean<<endl;
 		newpost.bBot=a[1];
 		delete[] a;
 
@@ -815,6 +842,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		a=kinext.projectionDistance(ci,config.goalheight);
 		newpost.distTop=a[0];
 		newpost.distTop.mean+=config.goaldiam/2;
+		//cout<<"See top:"<<newpost.distTop.mean<<endl;
 		newpost.bTop=a[1];
 		delete[] a;
 		if(newpost.haveTop)
@@ -835,20 +863,21 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			//measurement mb=mWeightedMean(newpost.bBot,newpost.bTop);
 			//newpost.ber.push_back(mb);
 			fillGoalPostHeightMeasurments(newpost);
+			//cout<<"HEIGHT!"<<endl;
 		}
 		else
 		{
 			if(newpost.haveBot&&newpost.distBot.mean<config.seedistance)
 			{
 
-				fillGoalPostWidthMeasurments(newpost,c);
-				if(newpost.haveWidth)
+				//fillGoalPostWidthMeasurments(newpost,c);
+				//if(newpost.haveWidth)
                     newpost.dist.push_back(newpost.distBot);
 			}
 			else if(newpost.haveTop&&newpost.distTop.mean<config.seedistance)
 			{
-			    fillGoalPostWidthMeasurments(newpost,c);
-			    if(newpost.haveWidth)
+			    //fillGoalPostWidthMeasurments(newpost,c);
+			    //if(newpost.haveWidth)
                     newpost.dist.push_back(newpost.distTop);
 
 			}
@@ -863,7 +892,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		if(newpost.haveBot)
 			newpost.ber.push_back(newpost.bBot);
 		if(newpost.haveTop)
-		newpost.ber.push_back(newpost.bTop);
+            newpost.ber.push_back(newpost.bTop);
 		if(newpost.ber.size()==0 || newpost.dist.size()==0)
 			continue;
 
@@ -888,11 +917,11 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			continue;
 		//if(newpost.haveWidth)
 		//	cout<<"WDistance"<<newpost.distWidth.mean<<" "<<newpost.distWidth.var<<endl;
-		//cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
-		//cout<<"Distance top-bot:"<<newpost.distTop.mean<<" "<<newpost.distBot.mean<<endl;
-		//cout<<"bearing top-bot:"<<newpost.bTop.mean<<" "<<newpost.bBot.mean<<endl;
-		//cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
-		//cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;
+        /*cout<<"Haves:"<<newpost.haveBot<<" "<<newpost.haveTop<<endl;
+		cout<<"Distance top-bot:"<<newpost.distTop.mean<<" "<<newpost.distBot.mean<<endl;
+		cout<<"bearing top-bot:"<<newpost.bTop.mean<<" "<<newpost.bBot.mean<<endl;
+		cout<<"Distance"<<newpost.distance.mean<<" "<<newpost.distance.var<<endl;
+		cout<<"Bearing"<<newpost.bearing.mean<<" "<<newpost.bearing.var<<endl;*/
 
 
 
@@ -1109,7 +1138,7 @@ void Vision::fillGoalPostHeightMeasurments(goalpostdata_t & newpost) const
 	m.var=(sqrd(dS-m.mean)+sqrd(dL-m.mean))/2;
 
 	if(  !(newpost.distBot.mean<=m.mean&&newpost.distTop.mean>=m.mean) &&
-		 !(newpost.distBot.mean>=m.mean&&newpost.distTop.mean>=m.mean)
+		 !(newpost.distBot.mean>=m.mean&&newpost.distTop.mean<=m.mean)
 		)
 	{
 		//cout<<"Distance logic test failed!"<<endl;

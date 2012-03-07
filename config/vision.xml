@@ -6,19 +6,19 @@
 <SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
 <SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
-<cameraGain>64.20</cameraGain>
+<cameraGain>48.20</cameraGain>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.15</balltolerance>
+<balltolerance>0.20</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.045</skipdistance>
 <seedistance>7.2</seedistance>
 <!-- Image Scanning parameters -->
 <scanV>32</scanV>
 <scanH>32</scanH>
-<minH>8</minH>
+<minH>4</minH>
 <!--<scanstep>23</scanstep>-->
-<bordersize>12</bordersize>
+<bordersize>8</bordersize>
 <pixeltol>5</pixeltol>
 <subsampling>5</subsampling>
 <!-- For obstacle avoidance -->
@@ -29,6 +29,6 @@
 <goaldiam>0.099</goaldiam>
 <widthestimateotolerance>0.2</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>1</sensordelay>
+<sensordelay>0</sensordelay>
 
-<pitchoffset>0.02</pitchoffset>
+<pitchoffset>0.03</pitchoffset>
