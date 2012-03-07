@@ -525,7 +525,7 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	}
 	ratio=(float (bd+1))/(ttl+1);
 	//cout<<"Bad ratio:"<<ratio<<" "<<bd<< " "<< ttl <<endl;
-	if(ratio>0.33)
+	if(ratio>0.15)
 		return false;
 	ratio=(float (gd+1))/(ttl+1);
 	//cout<<"Goodratio:"<<ratio<<endl;
@@ -589,10 +589,36 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 		return true;
 	}
 
+
+	s=tr;
+    //1/2 of a width below ?
+    s.y=s.y-(tr.x-tl.x)/2;
+    s=simpleRotation(s);
+	r=traceline(KVecInt2(s.x,s.y),Vrt,c);
+
+
+	if(simpleRotation(r.p).x>simpleRotation(goal.tr).x)
+	{
+		goal.leftOrRight=2;//Left goal post, has something on its right
+		return true;
+	}
+
 	//cout<<"No rt "<<endl;
 	s=tl;
     //1/3 of a width below ?
     s.y=s.y-(tr.x-tl.x)/3;
+    s=simpleRotation(s);
+	r=traceline(KVecInt2(s.x,s.y),Vlt,c);
+
+	if(simpleRotation(r.p).x<simpleRotation(goal.tl).x)
+	{
+		goal.leftOrRight=1;//Right goal post , has something on its left
+		return true;
+	}
+
+	s=tl;
+    //1/2 of a width below ?
+    s.y=s.y-(tr.x-tl.x)/2;
     s=simpleRotation(s);
 	r=traceline(KVecInt2(s.x,s.y),Vlt,c);
 
@@ -776,31 +802,20 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		tl.x/=config.subsampling;
 		tr.x/=config.subsampling;
 
-		//Back to unrotated coords
-
-		  //Increase the trapezoid size by half a pixel
-		/*tl.x-=0.5;
-		tl.y-=0.5;
-		tr.x+=0.5;
-		tr.y-=0.5;*/
+        //Too small
+		if(tr.x-tl.x< config.pixeltol )
+            continue;
 		 //Back to unrotated coords
 		newpost.tl=simpleRotation(tl);
 		newpost.tr=simpleRotation(tr);
-		/*cout<<"tl:"<<newpost.tl.x<<" "<<newpost.tl.y<<endl;
-        cout<<"ll:"<<newpost.ll.x<<" "<<newpost.ll.y<<endl;
-        cout<<"tr:"<<newpost.tr.x<<" "<<newpost.tr.y<<endl;
-        cout<<"lr:"<<newpost.lr.x<<" "<<newpost.lr.y<<endl;*/
-
-        //Too small
-		if(lr.x-ll.x< config.pixeltol)
-            continue;
         {
 
             float md,rd;
             md=CvDist(tl,lr);
             rd=CvDist(tr,ll);
             if(md<rd)   swap(md,rd);
-            if(md>5*rd/4) // md/rd > 5/4 ,md>rd
+            //Diagonals not approx. the same size
+            if(md>6*rd/5) // md/rd > 6/5 ,md>rd
                 continue;
         }
 
