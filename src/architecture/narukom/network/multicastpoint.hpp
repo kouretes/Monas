@@ -50,18 +50,19 @@ class MulticastPoint : public EndPoint, private Thread
 	unsigned cleanupandbeacon;
 
 	struct hostDescription{
-		hostid h;
+		//hostid h;
 		boost::posix_time::time_duration timecorrection;
 		boost::posix_time::ptime lastseen;
-		bool operator== (const struct hostDescription & b) const {return h==b.h;	};
-		bool operator<(const struct hostDescription &b) const {return h < b.h;};
+		std::set<size_t> needsTopics;//Ie what I broadcast because this host needs it
+		std::set<size_t> providesTopics;//Ie what I receive from this host
+		/*bool operator== (const struct hostDescription & b) const {return h==b.h;	};
+		bool operator<(const struct hostDescription &b) const {return h < b.h;};*/
 
 	};
 
 
-	std::set<hostDescription> otherHosts;
-	std::set<size_t>   localsubscriptions;//Ie what I ask from messagequeue
-	std::set< std::pair<hostid,std::size_t> > remoteSubscriptions;//Ie what I broadcast
+	std::map<hostid,hostDescription> otherHosts;
+	std::set<size_t>   localsubscriptions;//Ie what I ask from messagequeue currently
 
 	void  bufferCallback(MessageBuffer *mbuf);
 	void processIncoming(const char * buff, size_t size);

@@ -14,7 +14,9 @@ if ( "${ActivityBuildType}" STREQUAL "MODULE" )
 endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
 
 add_library ( MonasCore ${LibBuildType}
+                        IActivity.h
                         IActivity.cpp
+                        talws.h
                         talws.cpp
 )
 

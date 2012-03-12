@@ -1,3 +1,4 @@
+
 #ifndef TRANSITIONSEGMENT_H_
 #define TRANSITIONSEGMENT_H_ 1
 
@@ -46,9 +47,9 @@ namespace statechart_engine {
         private:
 
         void Initialize();
-
-        inline bool Execute( Type2Type<TSource> src, Type2Type<State> trg, IEvent* ev = 0, IParameter* param = 0);
-        inline bool Execute( Type2Type<TSource> src, Type2Type<ConditionConnector> trg, IEvent* ev = 0, IParameter* param = 0);
+		inline bool Execute( Type2Type<ConditionConnector> src, Type2Type<State> trg, IEvent* ev = 0, IParameter* param = 0);
+        inline bool Execute( Type2Type<State> src, Type2Type<State> trg, IEvent* ev = 0, IParameter* param = 0);
+        inline bool Execute( Type2Type<State> src, Type2Type<ConditionConnector> trg, IEvent* ev = 0, IParameter* param = 0);
 
         TSource* _source;
         TTarget* _target;
@@ -214,7 +215,7 @@ namespace statechart_engine {
     }
 
     template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::Execute ( Type2Type<TSource>, Type2Type<State>, IEvent* ev, IParameter* param ) {
+    bool TransitionSegment<TSource,TTarget>::Execute ( Type2Type<State>, Type2Type<State>, IEvent* ev, IParameter* param ) {
 
             if ( !CanExecute(ev) ){
                 return false;
@@ -239,7 +240,7 @@ namespace statechart_engine {
     }
 
     template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::Execute ( Type2Type<TSource>, Type2Type<ConditionConnector>, IEvent* ev, IParameter* param ) {
+    bool TransitionSegment<TSource,TTarget>::Execute ( Type2Type<State>, Type2Type<ConditionConnector>, IEvent* ev, IParameter* param ) {
 
             if ( !CanExecute(ev) )
                 return false;
@@ -255,6 +256,29 @@ namespace statechart_engine {
                 _action->Execute();
 
             _target->Step(ev,param,index);
+
+//            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
+
+            return true;
+    }
+    
+     template< class TSource, class TTarget>
+    bool TransitionSegment<TSource,TTarget>::Execute (  Type2Type<ConditionConnector>, Type2Type< State>, IEvent* ev, IParameter* param ) {
+
+			//For ConditionConnectors, assume a "CanExecute" call is made first, during 
+			//an Execute() call for the transitionSegment that precedes the Source ConditionConector
+			_source->DeActivate();
+
+            for ( StateContIter i = _deActivateList.begin(); i != _deActivateList.end(); i++)
+                (*i)->DeActivate();
+
+            if ( _action )
+                _action->Execute();
+
+            for ( StateContIter i = _activateList.begin(); i != _activateList.end(); i++)
+                (*i)->Activate();
+
+            _target->Activate();
 
 //            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
 

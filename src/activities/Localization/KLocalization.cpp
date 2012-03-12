@@ -930,62 +930,41 @@ belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles)
 	//#endif
 	priority_queue<partcl> particlesQueue;
 	partcl temp;
+
 	for (unsigned int i = 0; i < Particles.size; i++)
 	{
 		temp.x = Particles.x[i];
 		temp.y = Particles.y[i];
 		temp.phi = Particles.phi[i];
 		temp.Weight = Particles.Weight[i];
-		if (particlesQueue.size() >= robustmean)
-			particlesQueue.pop();
 		particlesQueue.push(temp);
 	}
 
+	float x = 0;
+	float y = 0;
 	double sumX = 0;
 	double sumY = 0;
-	double sumTheta0toPI = 0; /// TODO !!!! hm check this angle
-	int countTheta0toPI = 0;
-	double sumThetaPIto2PI = 0;
-	int countThetaPIto2PI = 0;
 
-	double tempTheta;
 	for (unsigned int i = 0; i < robustmean; i++)
 	{
 		temp = particlesQueue.top();
 		sumX += temp.x;
 		sumY += temp.y;
-		if ((tempTheta = wrapTo0_2Pi(temp.phi)) > M_PI)
-		{
-			sumThetaPIto2PI += tempTheta;
-			countThetaPIto2PI++;
-
-		} else
-		{
-			sumTheta0toPI += tempTheta;
-			countTheta0toPI++;
-		}
+		x += cos(temp.phi);
+		y += sin(temp.phi);
+	
 
 		particlesQueue.pop();
 
 	}
-	cout << " SumX" << sumX << " SumY" << sumY << "sumTheta0toPI " << sumTheta0toPI << endl;
+	
 	RmeanAgentPosition.x = sumX / (double) robustmean;
 	RmeanAgentPosition.y = sumY / (double) robustmean;
-
-	int bothsemicycles = 0;
-	if (countTheta0toPI > 0)
-	{
-		bothsemicycles++;
-
-		sumTheta0toPI = wrapToPi((double) sumTheta0toPI / (double) countTheta0toPI);
-	}
-	if (countThetaPIto2PI > 0)
-	{
-		sumThetaPIto2PI = wrapToPi(sumThetaPIto2PI / (double) countThetaPIto2PI);
-		bothsemicycles++;
-	}
-
-	RmeanAgentPosition.theta = wrapTo0_2Pi(sumTheta0toPI + sumThetaPIto2PI) / (double) bothsemicycles;
+	
+	if(x!=0)
+		RmeanAgentPosition.theta = wrapTo0_2Pi(atan2(y/(double) robustmean,x/(double) (double) robustmean));
+	else
+		RmeanAgentPosition.theta=0;
 
 	return RmeanAgentPosition;
 }

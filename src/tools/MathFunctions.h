@@ -1,5 +1,5 @@
-#ifndef MathFunctions_H
-#define MathFunctions_H
+#ifndef MATHFUNCTIONS_H
+#define MATHFUNCTIONS_H
 
 #include <math.h>
 		

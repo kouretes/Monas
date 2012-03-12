@@ -85,11 +85,15 @@ Ball BallFilter::get_predicted_ball_estimate(float dt, KMotionModel const & MM)
 	speedX = x_dist(1)*cos(tmpRot) - y_dist(1)*sin(tmpRot);
 	speedY = x_dist(1)*sin(tmpRot) + y_dist(1)*cos(tmpRot);
 
+	if(fabs(speedX)<0.02) speedX=0;//2cm per second is the threshold according to RAUL ROJAS, MARK SIMON
+    if(fabs(speedY)<0.02) speedY=0;//2cm per second is the threshold according to RAUL ROJAS, MARK SIMON
+
+
 	x_filter.set(newx2, speedX);
 	y_filter.set(newy2, speedY);
-
-	x_dist = x_filter.predict_with_decel(dt,0.1);
-	y_dist = y_filter.predict_with_decel(dt,0.1);
+    //Again -0.35m/s is the deceleration found by RAUL ROJAS, MARK SIMON
+	x_dist = x_filter.predict_with_decel(dt,0.35);
+	y_dist = y_filter.predict_with_decel(dt,0.35);
 
 
 //	Kalman1D<float>::Xbar dist = dist_filter.predict(dt);

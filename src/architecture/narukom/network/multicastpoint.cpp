@@ -1,6 +1,7 @@
 
 #include "multicastpoint.hpp"
-
+#include "tools/logger.h"
+#include "tools/toString.h"
 #include "msgentryserialize.hpp"
 #include <boost/functional/hash.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -12,12 +13,14 @@
 namespace KNetwork
 {
 
+static const hostid anyhost=msgentry::HOST_ID_ANY_HOST;
+
 
 MulticastPoint::MulticastPoint(std::string const& name,unsigned payloadsize) :
 	EndPoint(name), Thread(false) ,
 	rio(),sio(),senderwork(sio),multireceive(rio),
 	multisend(sio),timer_(rio),payloadsize_(payloadsize),
-	cleanupandbeacon(10), uni(boost::mt19937(),  boost::uniform_real<>(0,1))
+	cleanupandbeacon(10),otherHosts(),localsubscriptions(), uni(boost::mt19937(),  boost::uniform_real<>(0,1))
 {
 	//hash time and produce string
 	boost::hash<std::string> h;
@@ -25,7 +28,10 @@ MulticastPoint::MulticastPoint(std::string const& name,unsigned payloadsize) :
 	thishost=h(boost::posix_time::to_iso_string(now));
 	dep.setHost(thishost);
 	p.setHost(thishost );
-	std::cout<<"Multicast hostid:"<<thishost<<std::endl;
+	Logger::Instance().WriteMsg("Multicast", "Multicast hostid:"+_toString(thishost), Logger::Info);
+	//std::cout<<"Multicast hostid:"<<thishost<<std::endl;
+	//Initialize anyhost record;
+	otherHosts[anyhost].lastseen=now;
 
 };
 
@@ -72,7 +78,6 @@ int MulticastPoint::startEndPoint(std::string const& multicast_ip,unsigned int p
 
 	if(getReadBuffer())
 		getReadBuffer()->setNotifier(boost::bind(&MulticastPoint::bufferCallback,this,_1));
-
 }
 
 void MulticastPoint::setCleanupAndBeacon(unsigned i)
@@ -156,44 +161,103 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 {
 	if (!error)
 	{
+        //std::cout<<"timeout"<<std::endl;
+	    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
+	    {
+	        //Clean old hosts first
+	        std::map<hostid,hostDescription>::iterator  t,hit= otherHosts.begin();
+	        boost::posix_time::ptime oldest=now-boost::posix_time::milliseconds(cleanupandbeacon*4);
+	        while(hit!=otherHosts.end())
+	        {
+	            if((*hit).first==msgentry::HOST_ID_ANY_HOST)//Do not cleanup ANYHOST
+	            {
+                    ++hit;
+                    continue;
+	            }
 
+                if((*hit).second.lastseen<oldest)
+                {
+                    //std::cout<<"Cleaning Host:"<<(*hit).first<<std::endl;
+                    t=hit++;
+                    otherHosts.erase(t);
+                }
+                else
+                    hit++;
+	        }
+	        std::set<size_t>  remSub;
+	         std::set<size_t>::iterator sit;
+	         //Iterate all needed topics
+	         remSub=localsubscriptions;
+	        for( hit= otherHosts.begin();hit!=otherHosts.end();hit++)
+                for(sit=(*hit).second.needsTopics.begin();sit!=(*hit).second.needsTopics.end();++sit)
+                    remSub.erase(*sit);
+
+            for(sit=remSub.begin();sit!=remSub.end();++sit)
+                localsubscriptions.erase(*sit);
+
+            std::vector<msgentry> newsubscriptions;
+            msgentry kh;
+            kh.msgclass=msgentry::UNSUBSCRIBE_ON_TOPIC;
+            kh.host=msgentry::HOST_ID_LOCAL_HOST;
+            for(sit=remSub.begin();sit!=remSub.end();++sit)
+            {
+                kh.topic=(*sit);
+				newsubscriptions.push_back(kh);
+				//std::cout<<"Unsubscribe from:"<<(*sit)<<std::endl;
+			}
+
+            publish(newsubscriptions);
+        }
 		{
 
 			HostSubscriptions *hs=HostSubscriptions::default_instance().New();
 
-			std::set< std::pair<hostid,std::size_t> >::iterator sit=remoteSubscriptions.begin();
-			for(;sit!=remoteSubscriptions.end();++sit)
+			std::map<hostid,hostDescription>::const_iterator hit= otherHosts.begin();
+			for(;hit!=otherHosts.end();++hit)
 			{
-				Subscription *s=hs->add_topics();
-				s->set_host((*sit).first);
-				s->set_topicid((*sit).second);
+
+
+
+			    std::set<size_t>::const_iterator tit=(*hit).second.providesTopics.begin();
+			    for(;tit!=(*hit).second.providesTopics.end();++tit)
+			    {
+                    Subscription *s=hs->add_topics();
+                    s->set_host((*hit).first);
+                    s->set_topicid(*tit);
+                    //std::cout<<"Requesting"<<(*hit).first<<" "<<(*tit)<<std::endl;
+			    }
+
+
 			}
 			msgentry m;
 			m.msg.reset(hs);
 			m.topic=Topics::Instance().getId("communication");
 			m.msgclass=msgentry::STATE;
-			m.timestamp=boost::posix_time::microsec_clock::universal_time();
+			m.timestamp=now;
 			m.host=msgentry::HOST_ID_LOCAL_HOST;
-
-
+            //std::cout<<"Beacon"<<std::endl;
             processOutGoing(m);
-			//rio.post(boost::bind(&MulticastPoint::processOutGoing,this,m) );
+
 		}
+
 
 		{
 
 			KnownHosts *kn=KnownHosts::default_instance().New();
-			std::set<hostDescription>::iterator kit=otherHosts.begin();
+            std::map<hostid,hostDescription>::const_iterator kit= otherHosts.begin();
 			for(;kit!=otherHosts.end();++kit)
 			{
-				kn->add_name((*kit).h);
+			    if((*kit).first==msgentry::HOST_ID_ANY_HOST) //Do not report ANYHOST
+                    continue;
+
+				kn->add_name((*kit).first);
 
 			}
 			msgentry m;
 			m.msg.reset(kn);
 			m.topic=Topics::Instance().getId("communication");
 			m.msgclass=msgentry::STATE;
-			m.timestamp=boost::posix_time::microsec_clock::universal_time();
+			m.timestamp=now;
 			m.host=msgentry::HOST_ID_LOCAL_HOST;
 			publish(m);
 		}
@@ -271,31 +335,30 @@ void MulticastPoint::bufferCallback(MessageBuffer *mbuf)
 	std::vector<msgentry> v=remove();
 	for(unsigned i=0;i<v.size();i++)
 	{
-		rio.post(boost::bind(&MulticastPoint::processOutGoing,this,v[i]) );
+	    rio.post(boost::bind(&MulticastPoint::processOutGoing,this,v[i]) );
 	}
 
 }
 void MulticastPoint::processOutGoing(msgentry m)
 {
+
 	if(m.msgclass>=msgentry::SUBSCRIBE_ON_TOPIC &&m.msgclass<=msgentry::UNSUBSCRIBE_ALL_TOPIC)
 	{
 
 		bool actionadd=m.msgclass>=msgentry::SUBSCRIBE_ON_TOPIC&&m.msgclass<=msgentry::SUBSCRIBE_ALL_TOPIC;
+
 		if(m.host==msgentry::HOST_ID_LOCAL_HOST||m.host==thishost)
 			return;
+        //Unkown Host, reject
+
+        if(m.host!=msgentry::HOST_ID_ANY_HOST&&otherHosts.find(m.host)==otherHosts.end())
+            return;
+
 		std::set<std::size_t> topics=Topics::Instance().iterateTopics(m.topic,m.msgclass);
-		std::set<std::size_t>::iterator it= topics.begin();
-		for(;it!=topics.end();++it)
-		{
-			if(actionadd)
-				remoteSubscriptions.insert(std::pair<hostid,std::size_t>(m.host,*it));
-			else
-				remoteSubscriptions.erase(std::pair<hostid,std::size_t>(m.host,*it));
-
-			std::cout<<"Subscription:"<<m.host<<","<<(*it)<<" doing:"<<actionadd<<std::endl;
-		}
-
-
+		if(actionadd)
+            otherHosts[m.host].providesTopics.insert(topics.begin(),topics.end());
+        else
+            otherHosts[m.host].providesTopics.erase(topics.begin(),topics.end());
 		return;
 	}
 
@@ -358,29 +421,11 @@ void MulticastPoint::processIncoming( const char * buff, size_t size)
 
 	if(m.msg->GetTypeName()=="HostSubscriptions"&& r.host!=thishost)
 	{
-		/*
-		KnownHosts *kn=KnownHosts::default_instance().New();
-		std::set<hostid>::iterator kit=knownHosts.begin();
-		for(;kit!=knownHosts.end();++kit)
-		{
-			kn->add_name(*kit);
 
-		}
-		msgentry m;
-		m.msg.reset(kn);
-		m.topic=Topics::Instance().getId("communication");
-		m.msgclass=msgentry::STATE;
-		m.timestamp=boost::posix_time::microsec_clock::universal_time();
-		m.host=msgentry::HOST_ID_LOCAL_HOST;
-		publish(m);
-		*/
-		hostDescription hd;
-		hd.h=r.host;
+		hostDescription &hd=otherHosts[r.host];
 		hd.lastseen=boost::posix_time::microsec_clock::universal_time();
 		hd.timecorrection=hd.lastseen-m.timestamp;
 
-		otherHosts.erase(hd);
-		otherHosts.insert(hd);
 		//std::cout<<"Found host:"<<r.host<<std::endl;
 		std::vector<msgentry> newsubscriptions;
 		msgentry kh;
@@ -394,35 +439,36 @@ void MulticastPoint::processIncoming( const char * buff, size_t size)
 		{
 			if((*cit).host()==thishost||(*cit).host()==msgentry::HOST_ID_ANY_HOST)
 			{
-				if(localsubscriptions.find((*cit).topicid())!=localsubscriptions.end()) //Already subscribed
+			    hd.needsTopics.insert((*cit).topicid());
+				if(localsubscriptions.find((*cit).topicid())!=localsubscriptions.end()) //Already subscribed f0r s0ke
 					continue;
-				std::cout<<"Host:"<<r.host<<" needs topic:"<<(*cit).topicid()<<std::endl;
+				//std::cout<<"Host:"<<r.host<<" needs topic:"<<(*cit).topicid()<<std::endl;
 				kh.topic=(*cit).topicid();
+
 				localsubscriptions.insert((*cit).topicid());
 				newsubscriptions.push_back(kh);
 			}
 
 		}
-		publish(newsubscriptions);
+		publish(newsubscriptions);//Ask MessageQueue for these new subscriptions
 
 	}
 	if(m.msg->GetTypeName()=="KnownHosts")//Who is that guy trying to pollute my host?
 		return ;
-	hostDescription hd;
-	hd.h=r.host;
-	if(otherHosts.find(hd)==otherHosts.end())//Unknown Host, reject
-	{
+	if(otherHosts.find(r.host)==otherHosts.end())//Unknown Host, reject
 		return;
-	}
 	//std::cout<<"Host:"<<r.host<<","<<m.topic<<std::endl;
-	hostid anyhost=msgentry::HOST_ID_ANY_HOST;
-	if(remoteSubscriptions.find(std::pair<hostid,std::size_t>(r.host,m.topic))==remoteSubscriptions.end() //Subscription to this host
+
+
+	if(otherHosts[r.host].providesTopics.find(m.topic)==
+        otherHosts[r.host].providesTopics.end() //Subscription to this host
 		&&
-		remoteSubscriptions.find(std::pair<hostid,std::size_t>(anyhost,m.topic))==remoteSubscriptions.end() //Or to any host
+		otherHosts[anyhost].providesTopics.find(m.topic)==
+        otherHosts[anyhost].providesTopics.end()//Or to any host
 		)
 		return;
 
-	m.timestamp+=(*otherHosts.find(hd)).timecorrection;//Correct timestamp
+	m.timestamp+=(otherHosts[r.host]).timecorrection;//Correct timestamp
 	m.host=r.host;//Fix Host
 	//std::cout<<"Received:"<<m.msg->GetTypeName()<<std::endl;
 	publish(m);

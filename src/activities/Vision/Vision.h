@@ -50,6 +50,7 @@ class Vision: public IActivity
 				delete segtop;
 		};
 
+
 		void VISIBLE UserInit();
 		void fetchAndProcess();
 		int VISIBLE  Execute();
@@ -58,17 +59,20 @@ class Vision: public IActivity
 			return "Vision";
 		};
 
-		typedef struct GoalPostdata
+		 struct goalpostdata_t
 		{
-				KVecInt2 ll, lr, tl, tr;//Corners
-				KVecInt2 top, bot;
+				KVecFloat2 ll, lr, tl, tr;//Corners
+				KVecFloat2 top, bot;
 				//float angHeight;//in rads
 				bool haveBot, haveTop;
 				bool haveWidth;
 				bool haveHeight;
 				std::vector<measurement> dist, ber;
+
 				measurement distBot, distTop;
+				measurement distHeight;
 				measurement bBot, bTop;
+
 				int leftOrRight;
 
 				measurement distance;
@@ -91,12 +95,11 @@ class Vision: public IActivity
 
 					return true;
 
-				}
-				;
+				};
 
-		} goalpostdata_t;
+		} ;
 
-		typedef struct balldata
+		struct balldata_t
 		{
 				float x, y;
 				float cr;
@@ -104,13 +107,14 @@ class Vision: public IActivity
 				measurement distance;
 				float ballradius;
 
-		} balldata_t;
+		};
 
 	private:
 		struct
 		{
 				int sensordelay;
 				float Dfov;
+				float cameraGain;
 				std::string SegmentationBottom, SegmentationTop;
 				int scanV, scanH, minH, subsampling, bordersize, pixeltol;
 				float skipdistance, seedistance, obstacledistance;
@@ -122,18 +126,23 @@ class Vision: public IActivity
 				float pitchoffset;
 
 		} config;
+
 		XMLConfig *xmlconfig;
 		BallTrackMessage trckmsg;
 		ObservationMessage obs;
 		LedChangeMessage leds;
 		mutable KProfiling::profiler vprof;
+#ifdef DEBUGVISION
+		void nullCall();
+#endif
 #ifdef  CAPTURE_MODE
 		int frameNo;
 #endif
 		boost::posix_time::ptime lastrefresh;
 
 		//Incoming messages!
-		boost::shared_ptr<const AllSensorValuesMessage> asvm;
+		boost::shared_ptr<const AllSensorValuesMessage> asvmo,asvmn;//Older and newer than requested timestamp
+		boost::posix_time::ptime timeo,timen;//time
 
 		//Camera transformation matrix
 		cpose p;//Robot pose
@@ -153,6 +162,7 @@ class Vision: public IActivity
 		std::vector<KVecInt2> ygoalpost;
 		std::vector<KVecInt2> bgoalpost;
 		std::vector<KVecInt2> obstacles;
+		std::vector<KVecInt2> tobeshown;
 		KVecFloat2 Vup, Vdn, Vlt, Vrt;
 
 		void loadXMLConfig(std::string fname);
@@ -178,7 +188,7 @@ class Vision: public IActivity
 		traceResult traceline(KVecInt2 const& start, KVecInt2 const&  vel, KSegmentator::colormask_t c) const ;
 		traceResult traceline(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
 		//traceResult traceStrictline(KVecInt2 start, KVecFloat2 vel, KSegmentator::colormask_t c) const;
-		traceResult traceBlobEdge(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
+		//traceResult traceBlobEdge(KVecInt2 const& start, KVecFloat2 const& vel, KSegmentator::colormask_t c) const ;
 		//Wrapper for seg object
 		KSegmentator::colormask_t doSeg(const int x, const int y,const KSegmentator::colormask_t h=0xFF ) const;
 		void prepSeg(const int x,const int y) const;//Prefetch
@@ -190,11 +200,12 @@ class Vision: public IActivity
 		KVecFloat2 simpleRotation(KVecFloat2 const & i)const ;
 		KVecFloat2 simpleRotation(KVecInt2 const & i)const ;
 
+
 		KVecInt2 cameraToImage( KVecFloat2 const & c) const;
 		KMat::GenMatrix<float,2,2> simpleRot;
 
-		void fillGoalPostHeightMeasurments(GoalPostdata & newpost) const;
-		void fillGoalPostWidthMeasurments(GoalPostdata & newpost, KSegmentator::colormask_t c) const;
+		void fillGoalPostHeightMeasurments(goalpostdata_t & newpost) const;
+		void fillGoalPostWidthMeasurments(goalpostdata_t & newpost, KSegmentator::colormask_t c) const;
 		//KVecFloat2 & cameraToObs(KMat::HCoords<float ,2> const& t);
 		//KVecFloat2 & camToRobot(KMat::HCoords<float ,2> & t);
 		KVecFloat2 camToRobot(KVecFloat2 const & t) const;
