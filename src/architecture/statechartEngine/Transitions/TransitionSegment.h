@@ -40,7 +40,7 @@ namespace statechart_engine {
         virtual ~TransitionSegment ();
 
         bool CanExecute ( IEvent* ev ) const;
-
+		bool has_Condition() const;
         bool Execute( IEvent* ev = 0, IParameter* param = 0);
 
         private:
@@ -138,6 +138,16 @@ namespace statechart_engine {
                 return false;
 
             return true;
+    }
+
+ template< class TSource, class TTarget>
+    bool TransitionSegment<TSource,TTarget>::has_Condition () const {
+
+            if ( _condition ) {
+                return true;
+            }
+           
+            return false;
     }
 
     template< class TSource, class TTarget >

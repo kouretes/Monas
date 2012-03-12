@@ -13,6 +13,7 @@ namespace statechart_engine {
 
             virtual bool Execute( IEvent* ev, IParameter* param) = 0;
             virtual bool CanExecute (IEvent* ev) const = 0;
+            virtual bool has_Condition() const = 0;
     };
 
 }
