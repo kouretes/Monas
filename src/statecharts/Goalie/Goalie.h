@@ -12,8 +12,6 @@
 
 #include "architecture/statechartWrapper.h"
 
-//namespace nsGoalie {
-
 class Goalie : public StatechartWrapper {
 
 	public:
@@ -48,8 +46,6 @@ class Goalie : public StatechartWrapper {
 		statechart_engine::Statechart* _statechart;
 			
 };
-
-//}
 
 #endif // Goalie_h_
 	
