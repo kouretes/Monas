@@ -19,6 +19,7 @@
 
 #define MAX_TIME_TO_RESET 10 //in seconds
 //#define ADEBUG
+//#define COUT_ON
 using namespace std;
 
 namespace
@@ -131,7 +132,9 @@ int Localization::DebugMode_Receive()
 		incommingheader.DiscardUnknownFields();
 
 		string command = incommingheader.nextmsgname();
+		#ifdef COUT_ON
 		cout << "COMMAND " << command << endl;
+		#endif
 		if (command == "Stop")
 		{
 			debugmode = false;
@@ -149,23 +152,28 @@ int Localization::DebugMode_Receive()
 		//if (((size = reflection->GetInt32(*incommingmsg,field)) > 0)|| incommingheader.nextmsgbytesize()>0) //must read next message
 		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
 		{
+			#ifdef COUT_ON
 			cout << "NextMessageSize " << size << endl;
+			#endif
 			for (rs = rsize = 0; rsize < size; rsize += rs)
 				if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
 				{
 					cout << "receive error" << endl;
 					break;
 				}
-
+			#ifdef COUT_ON
 			cout << "Arrived " << ssize << " $$$$$$$$$$$$$$$$%%%%%%%%%Bytes Do something" << endl;
+			#endif
 			//if (ticommingmsg.GetTypeName() == "RobotPose") {
 
 			if (command == "SetBelief")
 			{
 				RobotPose ticommingmsg;
 				ticommingmsg.ParseFromArray(data, size);
+				#ifdef COUT_ON
 				cout << ticommingmsg.GetTypeName() << endl;
 				cout << "Incoming Pose" << endl;
+				#endif
 				MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
 				//				AgentPosition.x = MyWorld.myposition().x();
 				//				AgentPosition.y = MyWorld.myposition().y();
@@ -179,12 +187,16 @@ int Localization::DebugMode_Receive()
 				target.x = MyWorld.myposition().x();
 				target.y = MyWorld.myposition().y();
 				target.phi = MyWorld.myposition().phi();
+				#ifdef COUT_ON
 				cout << "My World theta " << AgentPosition.theta;
+				#endif
 			} else if (command.find("Walk") != string::npos)/* == "Walk") */
 			{
 				MotionWalkMessage wmot;
 				wmot.ParseFromArray(data, size);
+				#ifdef COUT_ON
 				cout << "Incoming WalkCommand" << endl;
+				#endif
 				if (command.find("Stop") == string::npos)
 				{ //Reset at the beggining
 					TrackPoint.x = 0;
@@ -202,7 +214,9 @@ int Localization::DebugMode_Receive()
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
+		#ifdef COUT_ON
 		cout << "Stopping Debug ############# Disconnecting !!!" << endl;
+		#endif
 		debugmode = false;
 	}
 	return 0;
@@ -286,11 +300,11 @@ void Localization::SimpleBehaviorStep()
 		VelY = -1;
 	if (VelX < -1)
 		VelX = -1;
-
+#ifdef COUT_ON
 	cout << VelX << endl;
 	cout << VelY << endl;
 	cout << Rot << endl;
-
+#endif
 	wmot.set_command("setWalkTargetVelocity");
 	wmot.set_parameter(0, VelX);
 	wmot.set_parameter(1, VelY);
@@ -322,7 +336,9 @@ int Localization::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
+	#ifdef COUT_ON
 	cout<<"AgentPosition.x"<<AgentPosition.x <<"AgentPosition.y"<<AgentPosition.y<<endl;
+	#endif
 	calculate_ball_estimate(robotmovement);
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
@@ -386,7 +402,9 @@ void Localization::Send_LocalizationData()
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
+		#ifdef COUT_ON
 		cout << "Disconnecting !!!!!" << endl;
+		#endif
 		debugmode = false;
 	}
 }
@@ -674,7 +692,9 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 	//cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
 	AgentPosition = RobustMean(SIRParticles, 10);
+	#ifdef COUT_ON
 	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << ", " << AgentPosition.theta << endl;
+	#endif
 	AgentPosition = RobustMean(SIRParticles, 10);
 
 	//TODO only one value to determine confidance, Now its only distance confidence

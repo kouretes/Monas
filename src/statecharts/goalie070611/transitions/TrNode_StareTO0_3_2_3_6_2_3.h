@@ -19,7 +19,7 @@ public:
 	//	boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
-		boost::shared_ptr<const FallMessage> fm  = _blk->readSignal<FallMessage>("behavior");
+		boost::shared_ptr<const FallMessage> fm  = _blk->readState<FallMessage>("behavior");
 		boost::shared_ptr<const GameStateMessage> gsm  = _blk->readState<GameStateMessage>("behavior");
 		
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){

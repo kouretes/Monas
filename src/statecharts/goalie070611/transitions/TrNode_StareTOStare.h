@@ -22,7 +22,7 @@ public:
 	//	Logger::Instance().WriteMsg("TrCond_StareTOStare", "  ", Logger::Info);
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
 		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
-		boost::shared_ptr<const FallMessage> fm  = _blk->readSignal<FallMessage>("behavior");
+		boost::shared_ptr<const FallMessage> fm  = _blk->readState<FallMessage>("behavior");
 		boost::shared_ptr<const GameStateMessage> gsm  = _blk->readState<GameStateMessage>("behavior");
 		
 
