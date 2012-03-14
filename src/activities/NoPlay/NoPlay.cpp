@@ -178,46 +178,6 @@ std::string NoPlay::GetName () {
 }
 
 bool NoPlay::readRobotConfiguration(const std::string& file_name) {
-	//readConf=true;
-	//XML config(file_name);
-	//typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	//NodeCont teamPositions, robotPosition ;
-	//pnm = _blk->readState<PlayerNumberMessage>("behavior");
-	//Logger::Instance().WriteMsg(GetName(),  " readConf "  , Logger::Info);
-	//int side = 1;
-	//initPhi = 0;
-	//if (pnm.get()==0)
-		//return false;
-
-	//if (kickoff)
-		//teamPositions = config.QueryElement<std::string, float, std::string>( "kickOff" );
-	//else
-		//teamPositions = config.QueryElement<std::string, float, std::string>( "noKickOff" );
-	//if( teamPositions.size()!=0)
-		//robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
-	//Logger::Instance().WriteMsg(GetName(),  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
-    //for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
-		//Logger::Instance().WriteMsg(GetName(),  " it "  , Logger::Info);
-		//if(it->attrb["number"] == 1 ){// pnm->player_number()){
-			//if(pnm->team_side()==TEAM_BLUE){
-				//side=-1;
-				//initPhi = 180*TO_RAD;
-			//}
-			//initX = side*(it->attrb["posx"]);
-			//initY = side*(it->attrb["posy"]);
-	//Logger::Instance().WriteMsg(GetName(),  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
-			//pmsg->set_posx(initX);
-			//pmsg->set_posy(initY);
-			//pmsg->set_theta(initPhi);
-			//_blk->publishState(*pmsg, "behavior");
-			//return true;
-		//}
-
-	//}
-	//return true;
-
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
 
 	playernum =-1;
 	if(pnm!=0)
@@ -282,8 +242,6 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 	}
 	return readConf;
 
-
-	///////////////////////////////////////////////////////////////////////////////////
 }
 
 void NoPlay::velocityWalk(double x, double y, double th, double f) {
