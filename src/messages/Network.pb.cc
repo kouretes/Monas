@@ -15,6 +15,9 @@
 
 namespace {
 
+const ::google::protobuf::Descriptor* HostEntry_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  HostEntry_reflection_ = NULL;
 const ::google::protobuf::Descriptor* KnownHosts_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   KnownHosts_reflection_ = NULL;
@@ -34,9 +37,25 @@ void protobuf_AssignDesc_Network_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "Network.proto");
   GOOGLE_CHECK(file != NULL);
-  KnownHosts_descriptor_ = file->message_type(0);
+  HostEntry_descriptor_ = file->message_type(0);
+  static const int HostEntry_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HostEntry, hostid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HostEntry, hostname_),
+  };
+  HostEntry_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      HostEntry_descriptor_,
+      HostEntry::default_instance_,
+      HostEntry_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HostEntry, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HostEntry, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(HostEntry));
+  KnownHosts_descriptor_ = file->message_type(1);
   static const int KnownHosts_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KnownHosts, name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KnownHosts, entrylist_),
   };
   KnownHosts_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -49,7 +68,7 @@ void protobuf_AssignDesc_Network_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(KnownHosts));
-  Subscription_descriptor_ = file->message_type(1);
+  Subscription_descriptor_ = file->message_type(2);
   static const int Subscription_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subscription, host_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Subscription, topicid_),
@@ -65,9 +84,10 @@ void protobuf_AssignDesc_Network_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Subscription));
-  HostSubscriptions_descriptor_ = file->message_type(2);
-  static const int HostSubscriptions_offsets_[1] = {
+  HostSubscriptions_descriptor_ = file->message_type(3);
+  static const int HostSubscriptions_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HostSubscriptions, topics_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HostSubscriptions, hostname_),
   };
   HostSubscriptions_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -93,6 +113,8 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    HostEntry_descriptor_, &HostEntry::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     KnownHosts_descriptor_, &KnownHosts::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Subscription_descriptor_, &Subscription::default_instance());
@@ -103,6 +125,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_Network_2eproto() {
+  delete HostEntry::default_instance_;
+  delete HostEntry_reflection_;
   delete KnownHosts::default_instance_;
   delete KnownHosts_reflection_;
   delete Subscription::default_instance_;
@@ -118,15 +142,19 @@ void protobuf_AddDesc_Network_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\rNetwork.proto\"\032\n\nKnownHosts\022\014\n\004name\030\001 "
-    "\003(\r\"-\n\014Subscription\022\014\n\004host\030\001 \002(\r\022\017\n\007top"
-    "icid\030\002 \002(\r\"2\n\021HostSubscriptions\022\035\n\006topic"
-    "s\030\001 \003(\0132\r.Subscription", 142);
+    "\n\rNetwork.proto\"-\n\tHostEntry\022\016\n\006hostid\030\001"
+    " \002(\r\022\020\n\010hostname\030\002 \002(\t\"+\n\nKnownHosts\022\035\n\t"
+    "entrylist\030\001 \003(\0132\n.HostEntry\"-\n\014Subscript"
+    "ion\022\014\n\004host\030\001 \002(\r\022\017\n\007topicid\030\002 \002(\r\"D\n\021Ho"
+    "stSubscriptions\022\035\n\006topics\030\001 \003(\0132\r.Subscr"
+    "iption\022\020\n\010hostname\030\002 \002(\t", 224);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Network.proto", &protobuf_RegisterTypes);
+  HostEntry::default_instance_ = new HostEntry();
   KnownHosts::default_instance_ = new KnownHosts();
   Subscription::default_instance_ = new Subscription();
   HostSubscriptions::default_instance_ = new HostSubscriptions();
+  HostEntry::default_instance_->InitAsDefaultInstance();
   KnownHosts::default_instance_->InitAsDefaultInstance();
   Subscription::default_instance_->InitAsDefaultInstance();
   HostSubscriptions::default_instance_->InitAsDefaultInstance();
@@ -144,7 +172,272 @@ struct StaticDescriptorInitializer_Network_2eproto {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int KnownHosts::kNameFieldNumber;
+const int HostEntry::kHostidFieldNumber;
+const int HostEntry::kHostnameFieldNumber;
+#endif  // !_MSC_VER
+
+HostEntry::HostEntry()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void HostEntry::InitAsDefaultInstance() {
+}
+
+HostEntry::HostEntry(const HostEntry& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void HostEntry::SharedCtor() {
+  _cached_size_ = 0;
+  hostid_ = 0u;
+  hostname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+HostEntry::~HostEntry() {
+  SharedDtor();
+}
+
+void HostEntry::SharedDtor() {
+  if (hostname_ != &::google::protobuf::internal::kEmptyString) {
+    delete hostname_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void HostEntry::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* HostEntry::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return HostEntry_descriptor_;
+}
+
+const HostEntry& HostEntry::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_Network_2eproto();  return *default_instance_;
+}
+
+HostEntry* HostEntry::default_instance_ = NULL;
+
+HostEntry* HostEntry::New() const {
+  return new HostEntry;
+}
+
+void HostEntry::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    hostid_ = 0u;
+    if (has_hostname()) {
+      if (hostname_ != &::google::protobuf::internal::kEmptyString) {
+        hostname_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool HostEntry::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required uint32 hostid = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &hostid_)));
+          set_has_hostid();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_hostname;
+        break;
+      }
+      
+      // required string hostname = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_hostname:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_hostname()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->hostname().data(), this->hostname().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void HostEntry::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required uint32 hostid = 1;
+  if (has_hostid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->hostid(), output);
+  }
+  
+  // required string hostname = 2;
+  if (has_hostname()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->hostname().data(), this->hostname().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->hostname(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* HostEntry::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required uint32 hostid = 1;
+  if (has_hostid()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->hostid(), target);
+  }
+  
+  // required string hostname = 2;
+  if (has_hostname()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->hostname().data(), this->hostname().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->hostname(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int HostEntry::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required uint32 hostid = 1;
+    if (has_hostid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->hostid());
+    }
+    
+    // required string hostname = 2;
+    if (has_hostname()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->hostname());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void HostEntry::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const HostEntry* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const HostEntry*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void HostEntry::MergeFrom(const HostEntry& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_hostid()) {
+      set_hostid(from.hostid());
+    }
+    if (from.has_hostname()) {
+      set_hostname(from.hostname());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void HostEntry::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void HostEntry::CopyFrom(const HostEntry& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool HostEntry::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  return true;
+}
+
+void HostEntry::Swap(HostEntry* other) {
+  if (other != this) {
+    std::swap(hostid_, other->hostid_);
+    std::swap(hostname_, other->hostname_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata HostEntry::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = HostEntry_descriptor_;
+  metadata.reflection = HostEntry_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int KnownHosts::kEntrylistFieldNumber;
 #endif  // !_MSC_VER
 
 KnownHosts::KnownHosts()
@@ -196,7 +489,7 @@ KnownHosts* KnownHosts::New() const {
 }
 
 void KnownHosts::Clear() {
-  name_.Clear();
+  entrylist_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -207,24 +500,17 @@ bool KnownHosts::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated uint32 name = 1;
+      // repeated .HostEntry entrylist = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_name:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 1, 8, input, this->mutable_name())));
-        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
-                   == ::google::protobuf::internal::WireFormatLite::
-                      WIRETYPE_LENGTH_DELIMITED) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, this->mutable_name())));
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_entrylist:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_entrylist()));
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(8)) goto parse_name;
+        if (input->ExpectTag(10)) goto parse_entrylist;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -247,10 +533,10 @@ bool KnownHosts::MergePartialFromCodedStream(
 
 void KnownHosts::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated uint32 name = 1;
-  for (int i = 0; i < this->name_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(
-      1, this->name(i), output);
+  // repeated .HostEntry entrylist = 1;
+  for (int i = 0; i < this->entrylist_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->entrylist(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -261,10 +547,11 @@ void KnownHosts::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* KnownHosts::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // repeated uint32 name = 1;
-  for (int i = 0; i < this->name_size(); i++) {
+  // repeated .HostEntry entrylist = 1;
+  for (int i = 0; i < this->entrylist_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteUInt32ToArray(1, this->name(i), target);
+      WriteMessageNoVirtualToArray(
+        1, this->entrylist(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -277,14 +564,12 @@ void KnownHosts::SerializeWithCachedSizes(
 int KnownHosts::ByteSize() const {
   int total_size = 0;
   
-  // repeated uint32 name = 1;
-  {
-    int data_size = 0;
-    for (int i = 0; i < this->name_size(); i++) {
-      data_size += ::google::protobuf::internal::WireFormatLite::
-        UInt32Size(this->name(i));
-    }
-    total_size += 1 * this->name_size() + data_size;
+  // repeated .HostEntry entrylist = 1;
+  total_size += 1 * this->entrylist_size();
+  for (int i = 0; i < this->entrylist_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->entrylist(i));
   }
   
   if (!unknown_fields().empty()) {
@@ -312,7 +597,7 @@ void KnownHosts::MergeFrom(const ::google::protobuf::Message& from) {
 
 void KnownHosts::MergeFrom(const KnownHosts& from) {
   GOOGLE_CHECK_NE(&from, this);
-  name_.MergeFrom(from.name_);
+  entrylist_.MergeFrom(from.entrylist_);
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -330,12 +615,15 @@ void KnownHosts::CopyFrom(const KnownHosts& from) {
 
 bool KnownHosts::IsInitialized() const {
   
+  for (int i = 0; i < entrylist_size(); i++) {
+    if (!this->entrylist(i).IsInitialized()) return false;
+  }
   return true;
 }
 
 void KnownHosts::Swap(KnownHosts* other) {
   if (other != this) {
-    name_.Swap(&other->name_);
+    entrylist_.Swap(&other->entrylist_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -603,6 +891,7 @@ void Subscription::Swap(Subscription* other) {
 
 #ifndef _MSC_VER
 const int HostSubscriptions::kTopicsFieldNumber;
+const int HostSubscriptions::kHostnameFieldNumber;
 #endif  // !_MSC_VER
 
 HostSubscriptions::HostSubscriptions()
@@ -621,6 +910,7 @@ HostSubscriptions::HostSubscriptions(const HostSubscriptions& from)
 
 void HostSubscriptions::SharedCtor() {
   _cached_size_ = 0;
+  hostname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -629,6 +919,9 @@ HostSubscriptions::~HostSubscriptions() {
 }
 
 void HostSubscriptions::SharedDtor() {
+  if (hostname_ != &::google::protobuf::internal::kEmptyString) {
+    delete hostname_;
+  }
   if (this != default_instance_) {
   }
 }
@@ -654,6 +947,13 @@ HostSubscriptions* HostSubscriptions::New() const {
 }
 
 void HostSubscriptions::Clear() {
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    if (has_hostname()) {
+      if (hostname_ != &::google::protobuf::internal::kEmptyString) {
+        hostname_->clear();
+      }
+    }
+  }
   topics_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -676,6 +976,23 @@ bool HostSubscriptions::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(10)) goto parse_topics;
+        if (input->ExpectTag(18)) goto parse_hostname;
+        break;
+      }
+      
+      // required string hostname = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_hostname:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_hostname()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->hostname().data(), this->hostname().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -704,6 +1021,15 @@ void HostSubscriptions::SerializeWithCachedSizes(
       1, this->topics(i), output);
   }
   
+  // required string hostname = 2;
+  if (has_hostname()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->hostname().data(), this->hostname().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->hostname(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -719,6 +1045,16 @@ void HostSubscriptions::SerializeWithCachedSizes(
         1, this->topics(i), target);
   }
   
+  // required string hostname = 2;
+  if (has_hostname()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->hostname().data(), this->hostname().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->hostname(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -729,6 +1065,15 @@ void HostSubscriptions::SerializeWithCachedSizes(
 int HostSubscriptions::ByteSize() const {
   int total_size = 0;
   
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    // required string hostname = 2;
+    if (has_hostname()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->hostname());
+    }
+    
+  }
   // repeated .Subscription topics = 1;
   total_size += 1 * this->topics_size();
   for (int i = 0; i < this->topics_size(); i++) {
@@ -763,6 +1108,11 @@ void HostSubscriptions::MergeFrom(const ::google::protobuf::Message& from) {
 void HostSubscriptions::MergeFrom(const HostSubscriptions& from) {
   GOOGLE_CHECK_NE(&from, this);
   topics_.MergeFrom(from.topics_);
+  if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    if (from.has_hostname()) {
+      set_hostname(from.hostname());
+    }
+  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -779,6 +1129,7 @@ void HostSubscriptions::CopyFrom(const HostSubscriptions& from) {
 }
 
 bool HostSubscriptions::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000002) != 0x00000002) return false;
   
   for (int i = 0; i < topics_size(); i++) {
     if (!this->topics(i).IsInitialized()) return false;
@@ -789,6 +1140,7 @@ bool HostSubscriptions::IsInitialized() const {
 void HostSubscriptions::Swap(HostSubscriptions* other) {
   if (other != this) {
     topics_.Swap(&other->topics_);
+    std::swap(hostname_, other->hostname_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

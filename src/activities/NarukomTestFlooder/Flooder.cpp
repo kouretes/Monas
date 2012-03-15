@@ -21,7 +21,7 @@ int Drain::Execute()
 	KPROF_SCOPE(p,Drain::Execute());
 
 	boost::shared_ptr<const KnownHosts> h= _blk->readState<KnownHosts>("communication");
-	if(!h.get()||(h&&h->name_size()==0))
+	if(!h.get()||(h&&h->entrylist_size()==0))
 	{
 		boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication");
 		if(drop==NULL)
@@ -35,13 +35,13 @@ int Drain::Execute()
 	}
 	else
 	{
-		const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >& rf=h->name();
-		::google::protobuf::RepeatedField< ::google::protobuf::uint32 >::const_iterator fit;
+		const ::google::protobuf::RepeatedPtrField< HostEntry >& rf=h->entrylist();
+		::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
 
 
 		for(fit=rf.begin();fit!=rf.end();++fit)
 		{
-			boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication",*fit);
+			boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication",(*fit).hostid());
 			if(drop==NULL)
 				continue;
 			TestMessage newdrop;//.CopyFrom(drop);
@@ -76,7 +76,7 @@ int Pipe::Execute()
 
 	boost::shared_ptr<const KnownHosts> h= _blk->readState<KnownHosts>("communication");
 
-	if(!h.get()||(h&&h->name_size()==0))
+	if(!h.get()||(h&&h->entrylist_size()==0))
 	{
 		std::cout<<"Local"<<std::endl;
 		boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication");
@@ -91,14 +91,14 @@ int Pipe::Execute()
 	else
 	{
 
-		const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >& rf=h->name();
-		::google::protobuf::RepeatedField< ::google::protobuf::uint32 >::const_iterator fit;
+		const ::google::protobuf::RepeatedPtrField< HostEntry >& rf=h->entrylist();
+		::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
 		for(fit=rf.begin();fit!=rf.end();++fit)
 		{
-			std::cout<<"Readingfromhost:"<<*fit<<std::endl;
+			std::cout<<"Readingfromhost:"<<(*fit).hostid()<<std::endl;
 
 
-			boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication",*fit);
+			boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication",(*fit).hostid());
 			TestMessage newdrop;//.CopyFrom(drop);
 			if(drop!=NULL)
 				newdrop.set_counter(drop->counter()+1);
