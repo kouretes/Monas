@@ -142,6 +142,8 @@ void MotionController::UserInit()
 
 	walkingWithVelocity = false;
 	//setStiffnessDCM(1);
+	BodyID = KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID);
+	Logger::Instance().WriteMsg("MotionController", "The Body ID is " + BodyID, Logger::Info);
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
 }
 
@@ -433,9 +435,12 @@ void MotionController::mglrun()
 			}
 
 			std::string str = pam->command();
+			std::string strKick = pam->command();
 			unsigned int pos = 0;
+			unsigned int posKick = 0;
 			pos = str.find_first_of(".");
 			str.erase(0,pos+1);
+			strKick.erase(pos, strKick.size());
 
 			if (str.compare("kmex") == 0)
 			{
@@ -462,6 +467,14 @@ void MotionController::mglrun()
 				}
 			}
 			else{
+				if(	strKick.compare(0, 4, "Kick") == 0 && str.compare("xar") == 0){
+					strKick+=BodyID;
+					strKick+=".";
+					strKick+=str;
+					pam->set_command(strKick);
+					Logger::Instance().WriteMsg("MotionController", " THE SP ACTION IS NOW THE " + pam->command(), Logger::Info);
+				}
+
 				SpAssocCont::iterator it = SpActions.find(pam->command());
 				if (it == SpActions.end())
 					Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);

@@ -123,7 +123,7 @@ private:
 		  boost::shared_ptr<KmexAction> > SpElement;
 	SpCont SpKmexActions;
 
-
+	std::string BodyID;
 	void readWalkParameters();
 };
 
