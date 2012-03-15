@@ -322,5 +322,21 @@ std::vector<std::string> const& KDeviceLists::getButtonKeys()
 }
 
 
+void KRobotConfigClass::setConfig(const size_t key, std::string const& val)
+{
+
+    _dat[key]=val;
+
+}
+
+std::string  KRobotConfigClass::getConfig(const size_t key)
+{
+
+    return _dat[key];
+
+}
+
+
+
 
 
