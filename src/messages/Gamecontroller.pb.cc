@@ -156,8 +156,8 @@ void protobuf_AddDesc_Gamecontroller_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\024Gamecontroller.proto\"\322\002\n\020GameStateMess"
-    "age\022\030\n\rplayer_number\030\006 \002(\005:\0011\022\026\n\013team_nu"
-    "mber\030\001 \002(\005:\0019\022\025\n\nteam_color\030\007 \002(\r:\0010\022\031\n\016"
+    "age\022\030\n\rplayer_number\030\006 \002(\r:\0011\022\026\n\013team_nu"
+    "mber\030\001 \002(\r:\0019\022\025\n\nteam_color\030\007 \002(\r:\0010\022\031\n\016"
     "own_goal_color\030\005 \002(\r:\0010\022\027\n\014player_state\030"
     "\010 \002(\r:\0010\022\025\n\ngame_state\030\t \002(\r:\0010\022\031\n\016sec_g"
     "ame_state\030\n \002(\r:\0010\022\027\n\tfirstHalf\030\003 \002(\010:\004t"
@@ -225,8 +225,8 @@ GameStateMessage::GameStateMessage(const GameStateMessage& from)
 
 void GameStateMessage::SharedCtor() {
   _cached_size_ = 0;
-  player_number_ = 1;
-  team_number_ = 9;
+  player_number_ = 1u;
+  team_number_ = 9u;
   team_color_ = 0u;
   own_goal_color_ = 0u;
   player_state_ = 0u;
@@ -272,8 +272,8 @@ GameStateMessage* GameStateMessage::New() const {
 
 void GameStateMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    player_number_ = 1;
-    team_number_ = 9;
+    player_number_ = 1u;
+    team_number_ = 9u;
     team_color_ = 0u;
     own_goal_color_ = 0u;
     player_state_ = 0u;
@@ -298,12 +298,12 @@ bool GameStateMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 team_number = 1 [default = 9];
+      // required uint32 team_number = 1 [default = 9];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &team_number_)));
           set_has_team_number();
         } else {
@@ -345,13 +345,13 @@ bool GameStateMessage::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 player_number = 6 [default = 1];
+      // required uint32 player_number = 6 [default = 1];
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_player_number:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &player_number_)));
           set_has_player_number();
         } else {
@@ -523,9 +523,9 @@ bool GameStateMessage::MergePartialFromCodedStream(
 
 void GameStateMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 team_number = 1 [default = 9];
+  // required uint32 team_number = 1 [default = 9];
   if (has_team_number()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->team_number(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->team_number(), output);
   }
   
   // required bool firstHalf = 3 [default = true];
@@ -538,9 +538,9 @@ void GameStateMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->own_goal_color(), output);
   }
   
-  // required int32 player_number = 6 [default = 1];
+  // required uint32 player_number = 6 [default = 1];
   if (has_player_number()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(6, this->player_number(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->player_number(), output);
   }
   
   // required uint32 team_color = 7 [default = 0];
@@ -596,9 +596,9 @@ void GameStateMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* GameStateMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required int32 team_number = 1 [default = 9];
+  // required uint32 team_number = 1 [default = 9];
   if (has_team_number()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->team_number(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->team_number(), target);
   }
   
   // required bool firstHalf = 3 [default = true];
@@ -611,9 +611,9 @@ void GameStateMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->own_goal_color(), target);
   }
   
-  // required int32 player_number = 6 [default = 1];
+  // required uint32 player_number = 6 [default = 1];
   if (has_player_number()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(6, this->player_number(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(6, this->player_number(), target);
   }
   
   // required uint32 team_color = 7 [default = 0];
@@ -672,17 +672,17 @@ int GameStateMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 player_number = 6 [default = 1];
+    // required uint32 player_number = 6 [default = 1];
     if (has_player_number()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->player_number());
     }
     
-    // required int32 team_number = 1 [default = 9];
+    // required uint32 team_number = 1 [default = 9];
     if (has_team_number()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->team_number());
     }
     

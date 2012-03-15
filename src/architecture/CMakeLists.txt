@@ -5,6 +5,7 @@ message ( STATUS "" )
 
 add_subdirectory ( ./narukom/ )
 add_subdirectory ( ./statechartEngine/ )
+add_subdirectory (./robocup/)
 
 # TODO
 
