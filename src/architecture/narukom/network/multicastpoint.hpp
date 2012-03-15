@@ -51,6 +51,7 @@ class MulticastPoint : public EndPoint, private Thread
 
 	struct hostDescription{
 		//hostid h;
+		std::string hostname;
 		boost::posix_time::time_duration timecorrection;
 		boost::posix_time::ptime lastseen;
 		std::set<size_t> needsTopics;//Ie what I broadcast because this host needs it
