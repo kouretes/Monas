@@ -1,6 +1,6 @@
 message GameStateMessage{
-	required int32 player_number = 6 [default = 1];
-	required int32 team_number = 1 [default = 9];
+	required uint32 player_number = 6 [default = 1];
+	required uint32 team_number = 1 [default = 9];
 	required uint32 team_color =7 [default =0];
 	required uint32 own_goal_color =5 [default =0];
 	required uint32 player_state = 8 [default =0];
