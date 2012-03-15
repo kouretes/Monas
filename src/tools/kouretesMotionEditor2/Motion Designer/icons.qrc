@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/icons" >
+        <file>connect.jpeg</file>
+        <file>step.png</file>
+        <file>play.png</file>
+        <file>goto.png</file>
+        <file>on.png</file>
+        <file>off.png</file>
+    </qresource>
+    <qresource prefix="/images" >
+        <file>splash.png</file>
+    </qresource>
+</RCC>
