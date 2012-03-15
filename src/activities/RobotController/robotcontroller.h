@@ -64,9 +64,18 @@ class RobotController: public IActivity {
 		bool showover;
 		RoboCupGameControlData game_data;
 		LedChangeMessage leds;
+		/**
+		 * @brief This message of type GameStateMessage holds the current values set by the GameController or the button interface.
+		 * When initialized it assumes values from message conf of type ConfigMessage for team_number, player_number, team_color
+		 * and the default values for all other fields from the GameStateMessage definition in GameStateMessage.proto.
+		 */
 		GameStateMessage gm_state;
 		GameStateMessage new_gm_state;
 		boost::posix_time::ptime lastalive;
+		/**
+		 * @brief This message of type ConfigMessage holds the default values found in team_config.xml. If one or more values are
+		 * not specified in team_config.xml then it assumes the default value of the ConfigMessage definition in GameStateMessage.proto.
+		 */
 		ConfigMessage conf;
 };
 #endif
