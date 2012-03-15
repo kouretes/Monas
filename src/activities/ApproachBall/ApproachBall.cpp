@@ -21,27 +21,7 @@ int ApproachBall::Execute() {
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 
 	headaction = BALLTRACK;
-	//if (obsm.get()==0){
-		////Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
-		//if (lastObsm==0)
-			//return 0;
-		//if (rcvObsm < boost::posix_time::microsec_clock::universal_time() ){
-			//velocityWalk(0,0,0,1);
-			//headaction=SCANFORBALL;
-			//return 0;
-		//}
-	//}else{
-		//lastObsm->CopyFrom(*obsm);
-		//rcvObsm = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(3);
-	//}
-	//int side ;//= 1;
-
-	//bd = lastObsm->ball().dist();
-	//bb = lastObsm->ball().bearing();
-	//bx = lastObsm->ball().dist() * cos(lastObsm->ball().bearing()); //kanw tracking me to swma
-	//by = lastObsm->ball().dist() * sin(lastObsm->ball().bearing());
-	//side = (bb > 0) ? 1 : -1;
-
+	
 	int side = 1;
 	if(wimsg&&wimsg->balls_size()>0){
 	   bx = wimsg->balls(0).relativex();
@@ -51,12 +31,12 @@ int ApproachBall::Execute() {
 
 	}
 	static float X=0,Y=0,th=0,f=0.2;
-	//X=(bx-posx)*2;
+
 	X=(bx-dDistBallX )*3;
 	X=X>0?X:X-0.01;
 	X=X>1?1:X;
 	X=X<-1?-1:X;
-	//Y=(by-offsety)*1.6;
+
 	float offsety=side*dDistBallY;
 	Y=(by-offsety)*3;
 	if(bd>0.26){

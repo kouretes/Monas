@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Robot>
+	<manufacturer>Aldebaran-Robotics</manufacturer>
+
+	<type>Nao-Academics</type>
+	
+	<JointNumber>26</JointNumber>
+
+	<Joint>
+		<name>HeadYaw</name>
+		<minBound>-2.0944</minBound>
+		<maxBound>2.0944</maxBound>
+		<step>0.0</step>
+		<color>54</color>
+		<coupledWith>None</coupledWith>
+		<couplingType>None</couplingType>
+		<indexOrder>0</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LShoulderPitch</name>
+		<minBound>-2.0944</minBound>
+		<maxBound>2.0944</maxBound>
+		<step>0.0</step>
+		<color>34</color>
+		<coupledWith>RShoulderPitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>2</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LShoulderRoll</name>
+		<minBound>0.0</minBound>
+		<maxBound>1.65806</maxBound>
+		<step>0.0</step>
+		<color>34</color>
+		<coupledWith>RShoulderRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>3</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LElbowYaw</name>
+		<minBound>-2.0944</minBound>
+		<maxBound>2.0944</maxBound>
+		<step>0.0</step>
+		<color>34</color>
+		<coupledWith>RElbowYaw</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>4</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LElbowRoll</name>
+		<minBound>-1.5708</minBound>
+		<maxBound>0.0</maxBound>
+		<step>0.0</step>
+		<color>34</color>
+		<coupledWith>RElbowRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>5</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LWristYaw</name>
+		<minBound>-1.8325</minBound>
+		<maxBound>1.8325</maxBound>
+		<step>0.0</step>
+		<color>34</color>
+		<coupledWith>RWristYaw</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>6</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LHand</name>
+		<minBound>0.0</minBound>
+		<maxBound>1.0</maxBound>
+		<step>0.0</step>
+		<color>34</color>
+		<coupledWith>RHand</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>7</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LHipYawPitch</name>
+		<minBound>-1.5708</minBound>
+		<maxBound>0.0</maxBound>
+		<step>0.0</step>
+		<color>84</color>
+		<coupledWith>None</coupledWith>
+		<couplingType>None</couplingType>
+		<indexOrder>8</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LHipRoll</name>
+		<minBound>-0.436332</minBound>
+		<maxBound>0.785398</maxBound>
+		<step>0.0</step>
+		<color>84</color>
+		<coupledWith>RHipRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>9</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LHipPitch</name>
+		<minBound>-1.74533</minBound>
+		<maxBound>0.436332</maxBound>
+		<step>0.0</step>
+		<color>84</color>
+		<coupledWith>RHipPitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>10</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LKneePitch</name>
+		<minBound>0.0</minBound>
+		<maxBound>2.26893</maxBound>
+		<step>0.0</step>
+		<color>84</color>
+		<coupledWith>RKneePitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>11</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LAnklePitch</name>
+		<minBound>-1.309</minBound>
+		<maxBound>0.785398</maxBound>
+		<step>0.0</step>
+		<color>84</color>
+		<coupledWith>RAnklePitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>12</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>LAnkleRoll</name>
+		<minBound>-0.785398</minBound>
+		<maxBound>0.436332</maxBound>
+		<step>0.0</step>
+		<color>84</color>
+		<coupledWith>RAnkleRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>13</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>HeadPitch</name>
+		<minBound>-0.785398</minBound>
+		<maxBound>0.785398</maxBound>
+		<step>0.0</step>
+		<color>54</color>
+		<coupledWith>None</coupledWith>
+		<couplingType>None</couplingType>
+		<indexOrder>1</indexOrder>
+	</Joint>
+	
+	<Joint>
+		<name>RShoulderPitch</name>
+		<minBound>-2.0944</minBound>
+		<maxBound>2.0944</maxBound>
+		<step>0.0</step>
+		<color>154</color>
+		<coupledWith>LShoulderPitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>20</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RShoulderRoll</name>
+		<minBound>-1.65806</minBound>
+		<maxBound>0.0</maxBound>
+		<step>0.0</step>
+		<color>154</color>
+		<coupledWith>LShoulderRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>21</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RElbowYaw</name>
+		<minBound>-2.0944</minBound>
+		<maxBound>2.0944</maxBound>
+		<step>0.0</step>
+		<color>154</color>
+		<coupledWith>LElbowYaw</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>22</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RElbowRoll</name>
+		<minBound>0.0</minBound>
+		<maxBound>1.5708</maxBound>
+		<step>0.0</step>
+		<color>154</color>
+		<coupledWith>LElbowRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>23</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RWristYaw</name>
+		<minBound>-1.8325</minBound>
+		<maxBound>1.8325</maxBound>
+		<step>0.0</step>
+		<color>154</color>
+		<coupledWith>LWristYaw</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>24</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RHand</name>
+		<minBound>0.0</minBound>
+		<maxBound>1.0</maxBound>
+		<step>0.0</step>
+		<color>154</color>
+		<coupledWith>LHand</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>25</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RHipYawPitch</name>
+		<minBound>-1.5708</minBound>
+		<maxBound>0.0</maxBound>
+		<step>0.0</step>
+		<color>244</color>
+		<coupledWith>None</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>14</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RHipRoll</name>
+		<minBound>-0.785398</minBound>
+		<maxBound>0.436332</maxBound>
+		<step>0.0</step>
+		<color>244</color>
+		<coupledWith>LHipRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>15</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RHipPitch</name>
+		<minBound>-1.74533</minBound>
+		<maxBound>0.436332</maxBound>
+		<step>0.0</step>
+		<color>244</color>
+		<coupledWith>LHipPitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>16</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RKneePitch</name>
+		<minBound>0.0</minBound>
+		<maxBound>2.26893</maxBound>
+		<step>0.0</step>
+		<color>244</color>
+		<coupledWith>LKneePitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>17</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RAnklePitch</name>
+		<minBound>-1.309</minBound>
+		<maxBound>0.785398</maxBound>
+		<step>0.0</step>
+		<color>244</color>
+		<coupledWith>LAnklePitch</coupledWith>
+		<couplingType>coupled</couplingType>
+		<indexOrder>18</indexOrder>
+	</Joint>
+
+	<Joint>
+		<name>RAnkleRoll</name>
+		<minBound>-0.436332</minBound>
+		<maxBound>0.785398</maxBound>
+		<step>0.0</step>
+		<color>244</color>
+		<coupledWith>LAnkleRoll</coupledWith>
+		<couplingType>mirrored</couplingType>
+		<indexOrder>19</indexOrder>
+	</Joint>
+	
+</Robot>

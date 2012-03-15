@@ -48,6 +48,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* RobotInPosition_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   RobotInPosition_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RobotStandingPose_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RobotStandingPose_reflection_ = NULL;
 
 }  // namespace
 
@@ -227,6 +230,21 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RobotInPosition));
+  RobotStandingPose_descriptor_ = file->message_type(11);
+  static const int RobotStandingPose_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotStandingPose, pose_),
+  };
+  RobotStandingPose_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RobotStandingPose_descriptor_,
+      RobotStandingPose::default_instance_,
+      RobotStandingPose_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotStandingPose, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotStandingPose, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RobotStandingPose));
 }
 
 namespace {
@@ -261,6 +279,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     LocalizationResetMessage_descriptor_, &LocalizationResetMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     RobotInPosition_descriptor_, &RobotInPosition::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RobotStandingPose_descriptor_, &RobotStandingPose::default_instance());
 }
 
 }  // namespace
@@ -288,6 +308,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete LocalizationResetMessage_reflection_;
   delete RobotInPosition::default_instance_;
   delete RobotInPosition_reflection_;
+  delete RobotStandingPose::default_instance_;
+  delete RobotStandingPose_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -315,7 +337,8 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "\002(\0132\023.ObservationMessage\"\036\n\013FallMessage\022"
     "\017\n\004fall\030\001 \002(\005:\0010\"\032\n\030LocalizationResetMes"
     "sage\",\n\017RobotInPosition\022\031\n\ninPosition\030\001 "
-    "\002(\010:\005false", 650);
+    "\002(\010:\005false\"+\n\021RobotStandingPose\022\026\n\004pose\030"
+    "\001 \002(\t:\010standing", 695);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -329,6 +352,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   FallMessage::default_instance_ = new FallMessage();
   LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
   RobotInPosition::default_instance_ = new RobotInPosition();
+  RobotStandingPose::default_instance_ = new RobotStandingPose();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
@@ -340,6 +364,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   FallMessage::default_instance_->InitAsDefaultInstance();
   LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
   RobotInPosition::default_instance_->InitAsDefaultInstance();
+  RobotStandingPose::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -2784,6 +2809,232 @@ void RobotInPosition::Swap(RobotInPosition* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = RobotInPosition_descriptor_;
   metadata.reflection = RobotInPosition_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::std::string RobotStandingPose::_default_pose_("standing");
+#ifndef _MSC_VER
+const int RobotStandingPose::kPoseFieldNumber;
+#endif  // !_MSC_VER
+
+RobotStandingPose::RobotStandingPose()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RobotStandingPose::InitAsDefaultInstance() {
+}
+
+RobotStandingPose::RobotStandingPose(const RobotStandingPose& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RobotStandingPose::SharedCtor() {
+  _cached_size_ = 0;
+  pose_ = const_cast< ::std::string*>(&_default_pose_);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RobotStandingPose::~RobotStandingPose() {
+  SharedDtor();
+}
+
+void RobotStandingPose::SharedDtor() {
+  if (pose_ != &_default_pose_) {
+    delete pose_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void RobotStandingPose::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RobotStandingPose::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RobotStandingPose_descriptor_;
+}
+
+const RobotStandingPose& RobotStandingPose::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+RobotStandingPose* RobotStandingPose::default_instance_ = NULL;
+
+RobotStandingPose* RobotStandingPose::New() const {
+  return new RobotStandingPose;
+}
+
+void RobotStandingPose::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_pose()) {
+      if (pose_ != &_default_pose_) {
+        pose_->assign(_default_pose_);
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RobotStandingPose::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string pose = 1 [default = "standing"];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_pose()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->pose().data(), this->pose().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RobotStandingPose::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required string pose = 1 [default = "standing"];
+  if (has_pose()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pose().data(), this->pose().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->pose(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RobotStandingPose::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required string pose = 1 [default = "standing"];
+  if (has_pose()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->pose().data(), this->pose().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->pose(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RobotStandingPose::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required string pose = 1 [default = "standing"];
+    if (has_pose()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->pose());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RobotStandingPose::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RobotStandingPose* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RobotStandingPose*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RobotStandingPose::MergeFrom(const RobotStandingPose& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_pose()) {
+      set_pose(from.pose());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RobotStandingPose::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RobotStandingPose::CopyFrom(const RobotStandingPose& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RobotStandingPose::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void RobotStandingPose::Swap(RobotStandingPose* other) {
+  if (other != this) {
+    std::swap(pose_, other->pose_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RobotStandingPose::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RobotStandingPose_descriptor_;
+  metadata.reflection = RobotStandingPose_reflection_;
   return metadata;
 }
 

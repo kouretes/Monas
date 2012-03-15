@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>831</width>
+    <height>499</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Motion Editor</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>831</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Robots</string>
+    </property>
+    <addaction name="actionNao_RC_Edition"/>
+    <addaction name="actionNao_Academics"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_Robot"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionDocumentation"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuNetwork">
+    <property name="title">
+     <string>Network</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionJoints"/>
+    <addaction name="actionGraph"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuNetwork"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget_9">
+   <property name="styleSheet">
+    <string notr="true">QDockWidget {
+                         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 2.5,
+                         stop: 0 #E0E0E0, stop: 1 #9EDEE6);
+                         border: 2px solid gray;
+                         border-radius: 5px;
+                         margin-top: 1ex; /* leave space at the top for the title */}</string>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="windowTitle">
+    <string>Robot Poses</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_9">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QTableWidget" name="poseEditor">
+       <property name="styleSheet">
+        <string notr="true">QTableWidget {
+                         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 4.5,
+                         stop: 0 #E0E0E0, stop: 1 #9EDEE6);
+                         border: 2px solid gray;
+                         border-radius: 5px;
+                         margin-top: 1ex; /* leave space at the top for the title */}
+
+ QTableView {
+     selection-background-color: qlineargradient(x1: 0, y1: 0, x2: 0.9, y2: 0.9,
+                                 stop: 0 #53A0F6, stop: 1 black);
+ }</string>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="dragDropOverwriteMode">
+        <bool>false</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DropOnly</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <property name="textElideMode">
+        <enum>Qt::ElideMiddle</enum>
+       </property>
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <attribute name="horizontalHeaderCascadingSectionResizes">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="verticalHeaderCascadingSectionResizes">
+        <bool>true</bool>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="settingsDockWidget">
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Settings</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QGroupBox" name="groupBox_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QGroupBox {
+                         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 2.5,
+                         stop: 0 #E0E0E0, stop: 1 #FF0000);
+                         border: 4px solid gray;
+                         border-radius: 5px;
+                         margin-top: 1ex;}</string>
+           </property>
+           <property name="title">
+            <string>Connection</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_2">
+                <item>
+                 <layout class="QFormLayout" name="formLayout">
+                  <property name="fieldGrowthPolicy">
+                   <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                  </property>
+                  <property name="horizontalSpacing">
+                   <number>6</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>6</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="iPLabel">
+                    <property name="text">
+                     <string>IP</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="iPLineEdit">
+                    <property name="text">
+                     <string>127.0.0.1</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="portLabel">
+                    <property name="text">
+                     <string>Port</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="portLineEdit">
+                    <property name="text">
+                     <string>50000</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0" colspan="2">
+                   <widget class="QPushButton" name="connectButton">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">QPushButton {
+                         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 3,
+                         stop: 0 #E0E0E0, stop: 1 #FF0000);
+                         margin-top: 1ex; /* leave space at the top for the title */}
+
+
+ QPushButton::hover {
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #dadbde, stop: 1 #f6f7fa);
+ }
+
+</string>
+                    </property>
+                    <property name="text">
+                     <string>Connect</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QGroupBox {
+                         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 2.5,
+                         stop: 0 #E0E0E0, stop: 1 #9EDEE6);
+                         border: 4px solid gray;
+                         border-radius: 5px;
+                         margin-top: 1ex; /* leave space at the top for the title */}</string>
+           </property>
+           <property name="title">
+            <string>Pose Editor</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <property name="topMargin">
+               <number>6</number>
+              </property>
+              <item>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="moveUpPoseButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+color: white;
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #99e, stop: 0.49 #77c, stop: 0.5 #66b, stop: 1 #77c);
+border-width: 1px;
+border-color: #339;
+border-style: solid;
+border-radius: 7;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>Move Up</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="swapPoseButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+color: white;
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #99e, stop: 0.49 #77c, stop: 0.5 #66b, stop: 1 #77c);
+border-width: 1px;
+border-color: #339;
+border-style: solid;
+border-radius: 7;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>Swap</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="moveDownPoseButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+color: white;
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #99e, stop: 0.49 #77c, stop: 0.5 #66b, stop: 1 #77c);
+border-width: 1px;
+border-color: #339;
+border-style: solid;
+border-radius: 7;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>Move Down</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="removePoseButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+color: white;
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #99e, stop: 0.49 #77c, stop: 0.5 #66b, stop: 1 #77c);
+border-width: 1px;
+border-color: #339;
+border-style: solid;
+border-radius: 7;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>Remove</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="storePoseButton">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+color: white;
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #99e, stop: 0.49 #77c, stop: 0.5 #66b, stop: 1 #77c);
+border-width: 1px;
+border-color: #339;
+border-style: solid;
+border-radius: 7;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+}</string>
+                </property>
+                <property name="text">
+                 <string>Store Pose</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="insertPoseButton">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+color: white;
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #88d, stop: 0.1 #99e, stop: 0.49 #77c, stop: 0.5 #66b, stop: 1 #77c);
+border-width: 1px;
+border-color: #339;
+border-style: solid;
+border-radius: 7;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+}</string>
+                </property>
+                <property name="text">
+                 <string>Insert Pose</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>Time</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="transitionTime">
+                  <property name="styleSheet">
+                   <string notr="true">QDoubleSpinBox {
+color: blue;
+}</string>
+                  </property>
+                  <property name="minimum">
+                   <double>0.100000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.100000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>Scale</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="scaleFactor">
+                  <property name="minimum">
+                   <double>0.010000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>10.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.010000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QGroupBox {
+                         background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 2.5,
+                         stop: 0 #E0E0E0, stop: 1 #81F27F);
+                         border: 4px solid gray;
+                         border-radius: 5px;
+                         margin-top: 1ex; /* leave space at the top for the title */}</string>
+           </property>
+           <property name="title">
+            <string>Pose Executor</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QPushButton" name="gotoPoseButton">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 6.5,
+                         stop: 0 #E0E0E0, stop: 1 #f90707);
+     border-width: 2px;
+     border-radius: 12px;
+padding: 3px;
+}
+
+QPushButton::hover{
+
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1.5,
+                         stop: 0 #E0E0E0, stop: 1 #f90707);
+border-width: 1px;
+border-style: no;
+padding: 3px;
+
+}
+
+
+QPushButton:pressed {
+    /* We'll just invert the gradient by changing the colors around. */
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.2,
+                                      stop: 0 #E0E0E0, stop: 1 #f90707);
+}
+</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="icons.qrc">
+                  <normaloff>:/icons/goto.png</normaloff>:/icons/goto.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="stepPoseButton">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 6.5,
+                         stop: 0 #E0E0E0, stop: 1 #81F27F);
+     border-width: 2px;
+     border-radius: 12px;
+padding: 3px;
+}
+
+QPushButton::hover{
+
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1.5,
+                         stop: 0 #E0E0E0, stop: 1 #81F27F);
+border-width: 1px;
+border-style: no;
+padding: 3px;
+
+}
+
+/* This is style when button is pressed */
+QPushButton:pressed {
+    /* We'll just invert the gradient by changing the colors around. */
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.2,
+                                     stop: 0 #E0E0E0, stop: 1 #81F27F);
+}</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="icons.qrc">
+                  <normaloff>:/icons/step.png</normaloff>:/icons/step.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="playMotionButton">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 6.5,
+                         stop: 0 #E0E0E0, stop: 1 #4383ef);
+     border-width: 2px;
+     border-radius: 12px;
+padding: 3px;
+}
+
+QPushButton::hover{
+
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1.5,
+                         stop: 0 #E0E0E0, stop: 1 #4383ef);
+border-width: 1px;
+border-style: no;
+padding: 3px;
+
+}
+
+/* This is style when button is pressed */
+QPushButton:pressed {
+    /* We'll just invert the gradient by changing the colors around. */
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.2,
+                                      stop: 0 #E0E0E0, stop: 1 #4383ef);
+}</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="icons.qrc">
+                  <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>68</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QPushButton" name="stiffOn">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 3.5,
+                         stop: 0 #E0E0E0, stop: 1 #81F27F);
+     border-width: 2px;
+     border-radius: 12px;
+padding: 3px;
+}
+
+QPushButton::hover{
+
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1.5,
+                         stop: 0 #E0E0E0, stop: 1 #81F27F);
+border-width: 1px;
+border-style: no;
+padding: 3px;
+
+}
+
+/* This is style when button is pressed */
+QPushButton:pressed {
+    /* We'll just invert the gradient by changing the colors around. */
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.2,
+                         stop: 0 #E0E0E0, stop: 1 #81F27F);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/on.png</normaloff>:/icons/on.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="stiffOff">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 6.5,
+                         stop: 0 #E0E0E0, stop: 1 #f90707);
+     border-width: 2px;
+     border-radius: 12px;
+padding: 3px;
+}
+
+QPushButton::hover{
+
+background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1.5,
+                         stop: 0 #E0E0E0, stop: 1 #f90707);
+border-width: 1px;
+border-style: no;
+padding: 3px;
+
+}
+
+
+QPushButton:pressed {
+    /* We'll just invert the gradient by changing the colors around. */
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.2,
+                         stop: 0 #E0E0E0, stop: 1 #f90707);
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/off.png</normaloff>:/icons/off.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="text">
+    <string>Documentation</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionJoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Joints</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
+   </property>
+  </action>
+  <action name="actionGraph">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Graph</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionNao_RC_Edition">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Nao RC Edition</string>
+   </property>
+  </action>
+  <action name="actionNao_Academics">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Nao Academics</string>
+   </property>
+  </action>
+  <action name="actionOpen_Robot">
+   <property name="text">
+    <string>Load Robot...</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
