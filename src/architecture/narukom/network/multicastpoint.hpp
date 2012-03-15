@@ -48,6 +48,7 @@ class MulticastPoint : public EndPoint, private Thread
 	RawDepacketizer dep;
 	RawPacketizer   p;
 	unsigned cleanupandbeacon;
+	bool canWarn; //Used for emmitting send error warnings
 
 	struct hostDescription{
 		//hostid h;
