@@ -30,11 +30,108 @@ void  protobuf_AddDesc_Network_2eproto();
 void protobuf_AssignDesc_Network_2eproto();
 void protobuf_ShutdownFile_Network_2eproto();
 
+class HostEntry;
 class KnownHosts;
 class Subscription;
 class HostSubscriptions;
 
 // ===================================================================
+
+class HostEntry : public ::google::protobuf::Message {
+ public:
+  HostEntry();
+  virtual ~HostEntry();
+  
+  HostEntry(const HostEntry& from);
+  
+  inline HostEntry& operator=(const HostEntry& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const HostEntry& default_instance();
+  
+  void Swap(HostEntry* other);
+  
+  // implements Message ----------------------------------------------
+  
+  HostEntry* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const HostEntry& from);
+  void MergeFrom(const HostEntry& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required uint32 hostid = 1;
+  inline bool has_hostid() const;
+  inline void clear_hostid();
+  static const int kHostidFieldNumber = 1;
+  inline ::google::protobuf::uint32 hostid() const;
+  inline void set_hostid(::google::protobuf::uint32 value);
+  
+  // required string hostname = 2;
+  inline bool has_hostname() const;
+  inline void clear_hostname();
+  static const int kHostnameFieldNumber = 2;
+  inline const ::std::string& hostname() const;
+  inline void set_hostname(const ::std::string& value);
+  inline void set_hostname(const char* value);
+  inline void set_hostname(const char* value, size_t size);
+  inline ::std::string* mutable_hostname();
+  inline ::std::string* release_hostname();
+  
+  // @@protoc_insertion_point(class_scope:HostEntry)
+ private:
+  inline void set_has_hostid();
+  inline void clear_has_hostid();
+  inline void set_has_hostname();
+  inline void clear_has_hostname();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* hostname_;
+  ::google::protobuf::uint32 hostid_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Network_2eproto();
+  friend void protobuf_AssignDesc_Network_2eproto();
+  friend void protobuf_ShutdownFile_Network_2eproto();
+  
+  void InitAsDefaultInstance();
+  static HostEntry* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class KnownHosts : public ::google::protobuf::Message {
  public:
@@ -90,24 +187,24 @@ class KnownHosts : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // repeated uint32 name = 1;
-  inline int name_size() const;
-  inline void clear_name();
-  static const int kNameFieldNumber = 1;
-  inline ::google::protobuf::uint32 name(int index) const;
-  inline void set_name(int index, ::google::protobuf::uint32 value);
-  inline void add_name(::google::protobuf::uint32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
-      name() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
-      mutable_name();
+  // repeated .HostEntry entrylist = 1;
+  inline int entrylist_size() const;
+  inline void clear_entrylist();
+  static const int kEntrylistFieldNumber = 1;
+  inline const ::HostEntry& entrylist(int index) const;
+  inline ::HostEntry* mutable_entrylist(int index);
+  inline ::HostEntry* add_entrylist();
+  inline const ::google::protobuf::RepeatedPtrField< ::HostEntry >&
+      entrylist() const;
+  inline ::google::protobuf::RepeatedPtrField< ::HostEntry >*
+      mutable_entrylist();
   
   // @@protoc_insertion_point(class_scope:KnownHosts)
  private:
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > name_;
+  ::google::protobuf::RepeatedPtrField< ::HostEntry > entrylist_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -279,15 +376,29 @@ class HostSubscriptions : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::Subscription >*
       mutable_topics();
   
+  // required string hostname = 2;
+  inline bool has_hostname() const;
+  inline void clear_hostname();
+  static const int kHostnameFieldNumber = 2;
+  inline const ::std::string& hostname() const;
+  inline void set_hostname(const ::std::string& value);
+  inline void set_hostname(const char* value);
+  inline void set_hostname(const char* value, size_t size);
+  inline ::std::string* mutable_hostname();
+  inline ::std::string* release_hostname();
+  
   // @@protoc_insertion_point(class_scope:HostSubscriptions)
  private:
+  inline void set_has_hostname();
+  inline void clear_has_hostname();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::RepeatedPtrField< ::Subscription > topics_;
+  ::std::string* hostname_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   friend void  protobuf_AddDesc_Network_2eproto();
   friend void protobuf_AssignDesc_Network_2eproto();
@@ -301,31 +412,115 @@ class HostSubscriptions : public ::google::protobuf::Message {
 
 // ===================================================================
 
+// HostEntry
+
+// required uint32 hostid = 1;
+inline bool HostEntry::has_hostid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void HostEntry::set_has_hostid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void HostEntry::clear_has_hostid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void HostEntry::clear_hostid() {
+  hostid_ = 0u;
+  clear_has_hostid();
+}
+inline ::google::protobuf::uint32 HostEntry::hostid() const {
+  return hostid_;
+}
+inline void HostEntry::set_hostid(::google::protobuf::uint32 value) {
+  set_has_hostid();
+  hostid_ = value;
+}
+
+// required string hostname = 2;
+inline bool HostEntry::has_hostname() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void HostEntry::set_has_hostname() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void HostEntry::clear_has_hostname() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void HostEntry::clear_hostname() {
+  if (hostname_ != &::google::protobuf::internal::kEmptyString) {
+    hostname_->clear();
+  }
+  clear_has_hostname();
+}
+inline const ::std::string& HostEntry::hostname() const {
+  return *hostname_;
+}
+inline void HostEntry::set_hostname(const ::std::string& value) {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  hostname_->assign(value);
+}
+inline void HostEntry::set_hostname(const char* value) {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  hostname_->assign(value);
+}
+inline void HostEntry::set_hostname(const char* value, size_t size) {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  hostname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* HostEntry::mutable_hostname() {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  return hostname_;
+}
+inline ::std::string* HostEntry::release_hostname() {
+  clear_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = hostname_;
+    hostname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
 // KnownHosts
 
-// repeated uint32 name = 1;
-inline int KnownHosts::name_size() const {
-  return name_.size();
+// repeated .HostEntry entrylist = 1;
+inline int KnownHosts::entrylist_size() const {
+  return entrylist_.size();
 }
-inline void KnownHosts::clear_name() {
-  name_.Clear();
+inline void KnownHosts::clear_entrylist() {
+  entrylist_.Clear();
 }
-inline ::google::protobuf::uint32 KnownHosts::name(int index) const {
-  return name_.Get(index);
+inline const ::HostEntry& KnownHosts::entrylist(int index) const {
+  return entrylist_.Get(index);
 }
-inline void KnownHosts::set_name(int index, ::google::protobuf::uint32 value) {
-  name_.Set(index, value);
+inline ::HostEntry* KnownHosts::mutable_entrylist(int index) {
+  return entrylist_.Mutable(index);
 }
-inline void KnownHosts::add_name(::google::protobuf::uint32 value) {
-  name_.Add(value);
+inline ::HostEntry* KnownHosts::add_entrylist() {
+  return entrylist_.Add();
 }
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
-KnownHosts::name() const {
-  return name_;
+inline const ::google::protobuf::RepeatedPtrField< ::HostEntry >&
+KnownHosts::entrylist() const {
+  return entrylist_;
 }
-inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
-KnownHosts::mutable_name() {
-  return &name_;
+inline ::google::protobuf::RepeatedPtrField< ::HostEntry >*
+KnownHosts::mutable_entrylist() {
+  return &entrylist_;
 }
 
 // -------------------------------------------------------------------
@@ -403,6 +598,64 @@ HostSubscriptions::topics() const {
 inline ::google::protobuf::RepeatedPtrField< ::Subscription >*
 HostSubscriptions::mutable_topics() {
   return &topics_;
+}
+
+// required string hostname = 2;
+inline bool HostSubscriptions::has_hostname() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void HostSubscriptions::set_has_hostname() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void HostSubscriptions::clear_has_hostname() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void HostSubscriptions::clear_hostname() {
+  if (hostname_ != &::google::protobuf::internal::kEmptyString) {
+    hostname_->clear();
+  }
+  clear_has_hostname();
+}
+inline const ::std::string& HostSubscriptions::hostname() const {
+  return *hostname_;
+}
+inline void HostSubscriptions::set_hostname(const ::std::string& value) {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  hostname_->assign(value);
+}
+inline void HostSubscriptions::set_hostname(const char* value) {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  hostname_->assign(value);
+}
+inline void HostSubscriptions::set_hostname(const char* value, size_t size) {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  hostname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* HostSubscriptions::mutable_hostname() {
+  set_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    hostname_ = new ::std::string;
+  }
+  return hostname_;
+}
+inline ::std::string* HostSubscriptions::release_hostname() {
+  clear_has_hostname();
+  if (hostname_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = hostname_;
+    hostname_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 

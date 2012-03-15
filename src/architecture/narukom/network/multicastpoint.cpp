@@ -211,6 +211,7 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 		{
 
 			HostSubscriptions *hs=HostSubscriptions::default_instance().New();
+			hs->set_hostname(boost::asio::ip::host_name());
 
 			std::map<hostid,hostDescription>::const_iterator hit= otherHosts.begin();
 			for(;hit!=otherHosts.end();++hit)
@@ -249,9 +250,9 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 			{
 			    if((*kit).first==msgentry::HOST_ID_ANY_HOST) //Do not report ANYHOST
                     continue;
-
-				kn->add_name((*kit).first);
-
+                HostEntry *e=kn->add_entrylist();
+                e->set_hostid((*kit).first);
+                e->set_hostname((*kit).second.hostname);
 			}
 			msgentry m;
 			m.msg.reset(kn);
@@ -423,6 +424,7 @@ void MulticastPoint::processIncoming( const char * buff, size_t size)
 	{
 
 		hostDescription &hd=otherHosts[r.host];
+
 		hd.lastseen=boost::posix_time::microsec_clock::universal_time();
 		hd.timecorrection=hd.lastseen-m.timestamp;
 
@@ -433,6 +435,7 @@ void MulticastPoint::processIncoming( const char * buff, size_t size)
 		kh.host=msgentry::HOST_ID_LOCAL_HOST;
 
 		boost::shared_ptr<const HostSubscriptions> hs=boost::static_pointer_cast<const HostSubscriptions>(m.msg);
+		hd.hostname=hs->hostname(); //Get HostName from the remote host
 		const ::google::protobuf::RepeatedPtrField< ::Subscription >& fptr=hs->topics();
 		::google::protobuf::RepeatedPtrField< ::Subscription >::const_iterator cit;
 		for(cit=fptr.begin();cit!=fptr.end();++cit)

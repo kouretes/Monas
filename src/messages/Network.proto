@@ -1,5 +1,9 @@
+message HostEntry{
+	required uint32 hostid=1;
+	required string hostname=2;
+}
 message KnownHosts{
-	repeated uint32 name=1;
+	repeated HostEntry entrylist=1;
 }
 
 message Subscription
@@ -9,6 +13,7 @@ message Subscription
 }
 message HostSubscriptions{
 	repeated Subscription topics=1;
+	required string hostname=2;
 }
 
 
