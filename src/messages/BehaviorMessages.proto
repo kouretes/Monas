@@ -42,12 +42,15 @@ message DoubleObsInfo{
 }
 
 message FallMessage{
-required int32 fall = 1 [default = 0];
+	required int32 fall = 1 [default = 0];
 }
 
 message LocalizationResetMessage{
 	
 }
 message RobotInPosition{
-required bool inPosition = 1 [default = false];
+	required bool inPosition = 1 [default = false];
+}
+message RobotStandingPose{
+	required string pose = 1 [default = "standing"];
 }

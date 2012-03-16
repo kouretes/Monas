@@ -10,7 +10,6 @@
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "tools/BehaviorConst.h"
-#include "../ApproachBall/ApproachBall.h"
 #include "tools/MathFunctions.h"
 	
 
@@ -26,7 +25,7 @@ public:
 	bool readRobotConfiguration(const std::string& file_name);	
 	
 private:
-	ApproachBall ab;
+
 	bool kickOff;
 	
 	boost::shared_ptr<const GameStateMessage> gsm;
