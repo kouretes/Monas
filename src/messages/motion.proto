@@ -12,3 +12,15 @@ message MotionActionMessage{
 	required string command 	= 6 	[default = ""];
 	repeated float  parameter   	= 7;
 }
+
+message MotionStateMessage{
+	enum ActionType{
+		WALKING = 0;
+		ACTION = 1;
+		FALL = 2;
+		STANDUP = 3;	
+		IDLE = 4;
+	}
+	required ActionType type = 1;
+	required string detail = 2;
+}
