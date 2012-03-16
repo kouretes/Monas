@@ -71,6 +71,7 @@ int MulticastPoint::startEndPoint(std::string const& multicast_ip,unsigned int p
 
     avgqueuesize=0;
     queuesize=0;
+    canWarn=true;//Enable send error warnings
     sendthread=boost::thread(boost::bind(&boost::asio::io_service::run,&sio));//Start Send
 
 	this->StartThread(); //Start receive
@@ -139,8 +140,20 @@ void MulticastPoint::handle_send_to(const char* bytes,std::size_t size)
         int s=p.nextPacket();
         while(s>0)
         {
-            size_t r=multisend.send_to(
-               boost::asio::buffer(p.buff,s), multicast_point_);
+            try
+            {
+                size_t r=multisend.send_to(boost::asio::buffer(p.buff,s), multicast_point_);
+
+            }
+            catch (boost::system::system_error &r)
+            {
+                if(canWarn)//It is reset every beacon interval
+                {
+                    Logger::Instance().WriteMsg("Multicast", "Possible Network Error", Logger::Warning);
+                    canWarn=false; //Disable warnings again
+                }
+            }
+
             s= p.nextPacket();
         }
     }
@@ -162,6 +175,7 @@ void MulticastPoint::handle_timeout(const boost::system::error_code& error)
 	if (!error)
 	{
         //std::cout<<"timeout"<<std::endl;
+        canWarn=true;//Re enable send error warnings
 	    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
 	    {
 	        //Clean old hosts first
