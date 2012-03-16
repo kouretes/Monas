@@ -85,9 +85,8 @@ private:
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const GameStateMessage>  gsm;
 
-	MotionActionMessage  * mam;
 	MotionActionMessage  * pam;
-
+	MotionStateMessage	sm;
 	AL::ALValue commands;//,stiffnessCommand;
 
 	void testcommands();

@@ -132,13 +132,14 @@ void MotionController::UserInit()
 	headPID = 0;
 	actionPID = 0;
 	currentstate=1000;
-	mam = new MotionActionMessage();
-	mam->set_command("NULL");
 
 	counter = 0;
 
 	pam = new MotionActionMessage();
 	pam->set_command("NULL");
+
+	sm.set_type(MotionStateMessage::IDLE);
+	sm.set_detail("");
 
 	walkingWithVelocity = false;
 	//setStiffnessDCM(1);
@@ -216,13 +217,16 @@ void MotionController::mglrun()
 	{
 		killCommands();
 		motion->setStiffnesses("Body", 0.2);
-
 		SpAssocCont::iterator it = SpActions.find("PoseInitial.xar");
 		if (it == SpActions.end())
 			Logger::Instance().WriteMsg("MotionController", std::string("SpAction ") + "PoseInitial.xar" + " not found!", Logger::Error);
 		else
 			actionPID = it->second->ExecutePost();
 		currentstate=gameState;
+
+	       	sm.set_type(MotionStateMessage::IDLE);
+		sm.set_detail("");
+	      	_blk->publishState(sm,"motion");
 	}
 	else if (gameState == PLAYER_PENALISED||gameState==PLAYER_FINISHED)
 	{
@@ -237,6 +241,10 @@ void MotionController::mglrun()
 			actionPID = it->second->ExecutePost();
 		currentstate=gameState;
 
+	       	sm.set_type(MotionStateMessage::IDLE);
+		sm.set_detail("");
+	      	_blk->publishState(sm,"motion");
+
 	}
 	else
 	{
@@ -248,7 +256,10 @@ void MotionController::mglrun()
 	{
 		motion->setStiffnesses("Body", 0.0);
 
-
+        	sm.set_type(MotionStateMessage::FALL);
+		sm.set_detail("");
+        	_blk->publishState(sm,"motion");
+		
 		waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
 		return;
@@ -278,12 +289,16 @@ void MotionController::mglrun()
 
 			if(currentstate==PLAYER_PLAYING || currentstate == PLAYER_READY)
 			{
+				//Message edw
 				robotUp = false;
 				robotDown = false;
 				killCommands();
 			}
 			motion->setStiffnesses("Body", 0.0);
 
+        		sm.set_type(MotionStateMessage::FALL);
+			sm.set_detail("");
+        		_blk->publishState(sm,"motion");
 
 			waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
@@ -333,6 +348,11 @@ void MotionController::mglrun()
 	/* Check if the robot is down and stand up */
 	if ((actionPID == 0) && robotDown)
 	{
+
+        	sm.set_type(MotionStateMessage::STANDUP);
+		sm.set_detail("");
+      		_blk->publishState(sm,"motion");
+
 		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		robotDown = true;
@@ -365,8 +385,15 @@ void MotionController::mglrun()
 
 		if ((wm != NULL) && (actionPID == 0))
 		{
+			
+
 			if (wm->command() == "walkTo")
 			{
+				if(sm.detail().compare("walkTo") != 0){				
+        				sm.set_type(MotionStateMessage::WALKING);
+					sm.set_detail("walkTo");
+        				_blk->publishState(sm,"motion");	
+				}
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);
@@ -374,8 +401,15 @@ void MotionController::mglrun()
 						+ _toString(walkParam3), Logger::ExtraInfo);
 				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3);
 				Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
+
 			} else if (wm->command() == "setWalkTargetVelocity")
 			{
+				
+				if(sm.detail().compare("setWalkTargetVelocity") != 0){	
+        				sm.set_type(MotionStateMessage::WALKING);
+					sm.set_detail("setWalkTargetVelocity");
+        				_blk->publishState(sm,"motion");
+				}
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);
@@ -441,6 +475,10 @@ void MotionController::mglrun()
 			pos = str.find_first_of(".");
 			str.erase(0,pos+1);
 			strKick.erase(pos, strKick.size());
+
+        		sm.set_type(MotionStateMessage::ACTION);
+			sm.set_detail(str);
+        		_blk->publishState(sm,"motion");			
 
 			if (str.compare("kmex") == 0)
 			{
