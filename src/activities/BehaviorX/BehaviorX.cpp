@@ -30,7 +30,7 @@ void BehaviorX::UserInit() {
 
 	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
@@ -201,11 +201,11 @@ int BehaviorX::Execute() {
 
 void BehaviorX::read_messages()
 {
-	gsm  = _blk->readState<GameStateMessage> ("behavior");
+	gsm  = _blk->readState<GameStateMessage> ("worldstate");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
 	om   = _blk->readState<ObstacleMessageArray> ("obstacle");
-	wim  = _blk->readData<WorldInfo> ("behavior");
+	wim  = _blk->readData<WorldInfo> ("worldstate");
 
 	//Logger::Instance().WriteMsg("BehaviorX", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");

@@ -16,7 +16,7 @@ XarAnalyzer::XarAnalyzer() {
 void XarAnalyzer::UserInit() {
 	
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
@@ -105,7 +105,7 @@ int XarAnalyzer::Execute() {
 
 
 void XarAnalyzer::read_messages() {
-	gsm  = _blk->readState<GameStateMessage> ("behavior");
+	gsm  = _blk->readState<GameStateMessage> ("worldstate");
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
 }
 

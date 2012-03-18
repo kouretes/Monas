@@ -20,6 +20,7 @@ void BodyBehavior::UserInit() {
 	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
@@ -318,7 +319,7 @@ int BodyBehavior::Execute() {
 
 void BodyBehavior::read_messages() {
 
-	gsm = _blk->readState<GameStateMessage> ("behavior");
+	gsm = _blk->readState<GameStateMessage> ("worldstate");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
 	//om   = _blk->readSignal<ObstacleMessage> ("obstacle");

@@ -69,7 +69,7 @@ double anglediff(double a1, double a2)
 void LBehavior::UserInit() {
 	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
@@ -512,11 +512,11 @@ void LBehavior::read_messages() {
 	//if (obsm != 0) delete obsm;
 	//if (om != 0) delete om;
 
-	gsm  = _blk->readState<GameStateMessage> ("behavior");
+	gsm  = _blk->readState<GameStateMessage> ("worldstate");
 	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
 	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
 	//obsm = _blk->readSignal<ObservationMessage> ("vision");
-	wim  = _blk->readData<WorldInfo> ("behavior",msgentry::HOST_ID_LOCAL_HOST,&wimtime);
+	wim  = _blk->readData<WorldInfo> ("worldstate",msgentry::HOST_ID_LOCAL_HOST,&wimtime);
 	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
 
 

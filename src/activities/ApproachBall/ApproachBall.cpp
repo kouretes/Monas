@@ -16,7 +16,7 @@ int ApproachBall::Execute() {
 	Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
 
 	obsm = _blk->readSignal<ObservationMessage> ("vision");
-	wimsg = _blk->readData<WorldInfo> ("behavior");
+	wimsg = _blk->readData<WorldInfo> ("worldstate");
 
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 
@@ -81,7 +81,8 @@ void ApproachBall::UserInit () {
 
 	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+
 
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
