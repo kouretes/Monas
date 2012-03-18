@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:statechart="http://statechart/1.0" xmi:id="_95bJYGRuEeGTUtdDhRiFaQ" type="StateChart" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_95wgkGRuEeGTUtdDhRiFaQ" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_95xHoGRuEeGTUtdDhRiFaQ" type="5005"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_95xHoWRuEeGTUtdDhRiFaQ" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_950yAGRuEeGTUtdDhRiFaQ" type="3004">
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_950yAWRuEeGTUtdDhRiFaQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_950yAmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_950yA2RuEeGTUtdDhRiFaQ"/>
+        <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_950yBGRuEeGTUtdDhRiFaQ" x="35" y="47"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_951ZEGRuEeGTUtdDhRiFaQ" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_951ZFGRuEeGTUtdDhRiFaQ" type="5004"/>
+        <children xmi:type="notation:DecorationNode" xmi:id="_951ZFWRuEeGTUtdDhRiFaQ" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_953OQGRuEeGTUtdDhRiFaQ" type="3004">
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_953OQWRuEeGTUtdDhRiFaQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_953OQmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_953OQ2RuEeGTUtdDhRiFaQ"/>
+            <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_953ORGRuEeGTUtdDhRiFaQ" x="179" y="179"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_953ORWRuEeGTUtdDhRiFaQ" type="3001">
+            <children xmi:type="notation:DecorationNode" xmi:id="_9531UGRuEeGTUtdDhRiFaQ" type="5001"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_953ORmRuEeGTUtdDhRiFaQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_953OR2RuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+            <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_953OSGRuEeGTUtdDhRiFaQ" x="323" y="179"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_9531UWRuEeGTUtdDhRiFaQ" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_9531VWRuEeGTUtdDhRiFaQ" type="5004"/>
+            <children xmi:type="notation:DecorationNode" xmi:id="_9531VmRuEeGTUtdDhRiFaQ" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_9564oGRuEeGTUtdDhRiFaQ" type="3004">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_9564oWRuEeGTUtdDhRiFaQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_9564omRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_9564o2RuEeGTUtdDhRiFaQ"/>
+                <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.2/@Children.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9564pGRuEeGTUtdDhRiFaQ" x="23" y="107"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_9564pWRuEeGTUtdDhRiFaQ" type="3001">
+                <children xmi:type="notation:DecorationNode" xmi:id="_9564qWRuEeGTUtdDhRiFaQ" type="5001"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_9564pmRuEeGTUtdDhRiFaQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_9564p2RuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+                <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.2/@Children.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9564qGRuEeGTUtdDhRiFaQ" x="95" y="107"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_957fsGRuEeGTUtdDhRiFaQ" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_957ftGRuEeGTUtdDhRiFaQ" type="5002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_957fsWRuEeGTUtdDhRiFaQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_957fsmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+                <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.2/@Children.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_957fs2RuEeGTUtdDhRiFaQ" x="119" y="191"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_957ftWRuEeGTUtdDhRiFaQ" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_957fuWRuEeGTUtdDhRiFaQ" type="5002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_957ftmRuEeGTUtdDhRiFaQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_957ft2RuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+                <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.2/@Children.3"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_957fuGRuEeGTUtdDhRiFaQ" x="131" y="11"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_958GwGRuEeGTUtdDhRiFaQ" type="3006">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_958GwWRuEeGTUtdDhRiFaQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_958GwmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_958Gw2RuEeGTUtdDhRiFaQ" lineColor="0"/>
+                <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.2/@Children.4"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_958GxGRuEeGTUtdDhRiFaQ" x="322" y="107"/>
+              </children>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_9531UmRuEeGTUtdDhRiFaQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_9531U2RuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+            <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9531VGRuEeGTUtdDhRiFaQ" x="623" y="11" width="468" height="313"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_9531V2RuEeGTUtdDhRiFaQ" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_954cYGRuEeGTUtdDhRiFaQ" type="5002"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_9531WGRuEeGTUtdDhRiFaQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_9531WWRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+            <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9531WmRuEeGTUtdDhRiFaQ" x="323" y="263"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_954cYWRuEeGTUtdDhRiFaQ" type="3006">
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_954cYmRuEeGTUtdDhRiFaQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_954cY2RuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_954cZGRuEeGTUtdDhRiFaQ" lineColor="0"/>
+            <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1/@Children.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_954cZWRuEeGTUtdDhRiFaQ" x="479" y="275"/>
+          </children>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_951ZEWRuEeGTUtdDhRiFaQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_951ZEmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+        <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_951ZE2RuEeGTUtdDhRiFaQ" x="131" y="11" width="1164" height="409"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_951ZFmRuEeGTUtdDhRiFaQ" type="3006">
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_951ZF2RuEeGTUtdDhRiFaQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_951ZGGRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_951ZGWRuEeGTUtdDhRiFaQ" lineColor="0"/>
+        <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0/@Children.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_951ZGmRuEeGTUtdDhRiFaQ" x="24" y="167"/>
+      </children>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_95wgkWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_95wgkmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Node" href="TestBehavior.stct#//@nodes.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_95wgk2RuEeGTUtdDhRiFaQ" x="24" y="24" width="1357" height="529"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_95bJYWRuEeGTUtdDhRiFaQ"/>
+  <element xmi:type="statechart:Model" href="TestBehavior.stct#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_96F3wGRuEeGTUtdDhRiFaQ" type="4001" source="_953OQGRuEeGTUtdDhRiFaQ" target="_953ORWRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96F3xGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96F3xWRuEeGTUtdDhRiFaQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96F3wWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96F3wmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96F3w2RuEeGTUtdDhRiFaQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5Pno2RuEeGTUtdDhRiFaQ" id="(0.04,0.41379310344827586)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96HF4GRuEeGTUtdDhRiFaQ" type="4001" source="_953ORWRuEeGTUtdDhRiFaQ" target="_9531UWRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96HF5GRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96HF5WRuEeGTUtdDhRiFaQ" x="-177" y="-17"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96HF4WRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96HF4mRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96HF42RuEeGTUtdDhRiFaQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5PnoGRuEeGTUtdDhRiFaQ" id="(0.96,0.41379310344827586)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5PnoWRuEeGTUtdDhRiFaQ" id="(0.01282051282051282,0.4792332268370607)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96Hs8GRuEeGTUtdDhRiFaQ" type="4001" source="_953ORWRuEeGTUtdDhRiFaQ" target="_9531V2RuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96Hs9GRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96Hs9WRuEeGTUtdDhRiFaQ" x="-9" y="17"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96Hs8WRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96Hs8mRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96Hs82RuEeGTUtdDhRiFaQ" points="[0, 0, -125, -60]$[125, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5PAkGRuEeGTUtdDhRiFaQ" id="(0.72,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5PAkWRuEeGTUtdDhRiFaQ" id="(0.4946236559139785,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96IUAGRuEeGTUtdDhRiFaQ" type="4001" source="_9531V2RuEeGTUtdDhRiFaQ" target="_954cYWRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96I7E2RuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96I7FGRuEeGTUtdDhRiFaQ" x="-2" y="20"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96I7EGRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96I7EWRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96I7EmRuEeGTUtdDhRiFaQ" points="[0, 0, 0, -65]$[0, 65, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5QOsmRuEeGTUtdDhRiFaQ" id="(0.956989247311828,0.5116279069767442)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5QOs2RuEeGTUtdDhRiFaQ" id="(0.02857142857142857,0.5142857142857142)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96JiIGRuEeGTUtdDhRiFaQ" type="4001" source="_9531UWRuEeGTUtdDhRiFaQ" target="_954cYWRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96JiJGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96JiJWRuEeGTUtdDhRiFaQ" x="8" y="-33"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96JiIWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96JiImRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96JiI2RuEeGTUtdDhRiFaQ" points="[-1, -1, 110, 9]$[-56, -10, 55, 0]$[-110, -10, 1, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5QOsGRuEeGTUtdDhRiFaQ" id="(0.00641025641025641,0.9169329073482428)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5QOsWRuEeGTUtdDhRiFaQ" id="(0.9714285714285714,0.6857142857142857)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96KJMGRuEeGTUtdDhRiFaQ" type="4001" source="_9564oGRuEeGTUtdDhRiFaQ" target="_9564pWRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96KwQGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96KwQWRuEeGTUtdDhRiFaQ" x="-1" y="-18"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96KJMWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96KJMmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96KJM2RuEeGTUtdDhRiFaQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5UgIWRuEeGTUtdDhRiFaQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5UgImRuEeGTUtdDhRiFaQ" id="(0.04,0.5172413793103449)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96LXUGRuEeGTUtdDhRiFaQ" type="4001" source="_9564pWRuEeGTUtdDhRiFaQ" target="_957fsGRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96LXVGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96LXVWRuEeGTUtdDhRiFaQ" x="-64" y="21"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96LXUWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96LXUmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96LXU2RuEeGTUtdDhRiFaQ" points="[0, 0, -62, -62]$[55, 55, -7, -7]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5VHM2RuEeGTUtdDhRiFaQ" id="(0.32,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5VHNGRuEeGTUtdDhRiFaQ" id="(0.4716981132075472,0.18604651162790697)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96L-YGRuEeGTUtdDhRiFaQ" type="4001" source="_9564pWRuEeGTUtdDhRiFaQ" target="_957ftWRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96L-ZGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96L-ZWRuEeGTUtdDhRiFaQ" x="-208" y="-108"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96L-YWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96L-YmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96L-Y2RuEeGTUtdDhRiFaQ" points="[9, -7, -127, 94]$[78, -58, -58, 43]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5VHMWRuEeGTUtdDhRiFaQ" id="(0.48,0.10344827586206896)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5VHMmRuEeGTUtdDhRiFaQ" id="(0.4807692307692308,0.7906976744186046)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96NMgGRuEeGTUtdDhRiFaQ" type="4001" source="_957ftWRuEeGTUtdDhRiFaQ" target="_958GwGRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96NMhGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96NMhWRuEeGTUtdDhRiFaQ" x="19" y="-15"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96NMgWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96NMgmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96NMg2RuEeGTUtdDhRiFaQ" points="[0, 0, -108, -53]$[108, 53, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5T5EGRuEeGTUtdDhRiFaQ" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96NzkGRuEeGTUtdDhRiFaQ" type="4001" source="_957fsGRuEeGTUtdDhRiFaQ" target="_958GwGRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96NzlGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96NzlWRuEeGTUtdDhRiFaQ" x="3" y="31"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96NzkWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96NzkmRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96Nzk2RuEeGTUtdDhRiFaQ" points="[0, 0, -71, -60]$[71, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5UgI2RuEeGTUtdDhRiFaQ" id="(0.5471698113207547,0.13953488372093023)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5VHMGRuEeGTUtdDhRiFaQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96OaoGRuEeGTUtdDhRiFaQ" type="4001" source="_950yAGRuEeGTUtdDhRiFaQ" target="_951ZEGRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96OapGRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96OapWRuEeGTUtdDhRiFaQ" x="39" y="-23"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96OaoWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96OaomRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.10"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96Oao2RuEeGTUtdDhRiFaQ" points="[8, 4, -80, -45]$[88, 49, 0, 0]"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5I58WRuEeGTUtdDhRiFaQ" id="(0.0,0.2273838630806846)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96PBsGRuEeGTUtdDhRiFaQ" type="4001" source="_951ZEGRuEeGTUtdDhRiFaQ" target="_951ZEGRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96PowmRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96Pow2RuEeGTUtdDhRiFaQ" x="498" y="27"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96PBsWRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96PowGRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.11"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96PowWRuEeGTUtdDhRiFaQ" points="[582, 150, 582, 150]$[605, 156, 605, 156]$[605, 252, 605, 252]$[294, 252, 294, 252]$[239, 205, 239, 205]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_96QP0GRuEeGTUtdDhRiFaQ" type="4001" source="_951ZEGRuEeGTUtdDhRiFaQ" target="_951ZFmRuEeGTUtdDhRiFaQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_96QP1GRuEeGTUtdDhRiFaQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_96QP1WRuEeGTUtdDhRiFaQ" x="-176" y="-109"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_96QP0WRuEeGTUtdDhRiFaQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_96QP0mRuEeGTUtdDhRiFaQ" fontName="Ubuntu"/>
+    <element xmi:type="statechart:Transition" href="TestBehavior.stct#//@transitions.12"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_96QP02RuEeGTUtdDhRiFaQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5JhAGRuEeGTUtdDhRiFaQ" id="(8.771929824561404E-4,0.27898550724637683)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-5JhAWRuEeGTUtdDhRiFaQ" id="(0.7714285714285715,0.4)"/>
+  </edges>
+</notation:Diagram>

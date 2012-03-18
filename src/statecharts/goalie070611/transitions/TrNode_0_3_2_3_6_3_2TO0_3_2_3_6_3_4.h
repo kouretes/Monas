@@ -9,12 +9,13 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
 		/* !PLAYER_PLAYING || ballfound==0 || !fall */
 
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("worldstate");
 
 		boost::shared_ptr<const FallMessage> fm = _blk->readSignal<FallMessage>("behavior");
 		int fall;

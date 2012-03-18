@@ -11,7 +11,7 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-		_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 		 }
 
 	bool Eval() {
@@ -19,7 +19,7 @@ public:
 		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOApproachBall_one_or_more_times_", "  ", Logger::Info);
 		//boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("worldstate");
 
 	
 		if(hbm.get()!=0 && hbm->ballfound()!=0){

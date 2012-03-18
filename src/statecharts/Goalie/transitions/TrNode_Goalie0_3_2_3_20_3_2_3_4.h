@@ -7,15 +7,16 @@ class TrCond_Goalie0_3_2_3_20_3_2_3_4 : public statechart_engine::ICondition {
 public:
 	void UserInit () {
 		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
 	bool Eval() {
 		/* behavior.State.HeadToBMessage.ballfound()>0 &&
- !ballAway(behavior.Data.WorldInfo) && !readyToKick(behavior.Data.WorldInfo) */
+ !ballAway(worldstate.Data.WorldInfo) && !readyToKick(worldstate.Data.WorldInfo) */
 		boost::shared_ptr<const HeadToBMessage> var_1901744185 = _blk->readState<HeadToBMessage> ("behavior" );
-		boost::shared_ptr<const WorldInfo> var_1071592760 = _blk->readData<WorldInfo> ("behavior" );
+		boost::shared_ptr<const WorldInfo> var_1111221333 = _blk->readData<WorldInfo> ("worldstate" );
 	
-				return ( (var_1901744185.get()!=0 && var_1901744185->ballfound()>0) &&  !ballAway(var_1071592760) && !readyToKick(var_1071592760) );	
+				return ( (var_1901744185.get()!=0 && var_1901744185->ballfound()>0) &&  !ballAway(var_1111221333) && !readyToKick(var_1111221333) );	
     }
 };
 		

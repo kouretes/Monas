@@ -8,7 +8,8 @@ class TrCond_decisionTOdecision : public statechart_engine::ICondition {
 public:
 
 	void UserInit () {
-		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -16,14 +17,14 @@ public:
 		//Logger::Instance().WriteMsg("decision forever", "!FINISHED ",Logger::Info);
 		bool pen;
 		pen = false;
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage> ("worldstate");
 		if(gsm.get()!=0 && (gsm->player_state()==PLAYER_PENALISED || gsm->player_state()==PLAYER_INITIAL))
 			pen=true;
 		_blk->publish_all();
 		SysCall::_usleep(200000);
 		_blk->process_messages();
 
-		gsm = _blk->readState<GameStateMessage> ("behavior");
+		gsm = _blk->readState<GameStateMessage> ("worldstate");
 		if(gsm.get()==0)
 			return true;
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_PLAYING && pen){

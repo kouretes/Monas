@@ -8,13 +8,13 @@ class TrCond_0_3_2_2TOnonPlaying : public statechart_engine::ICondition {
 public:
 
 	void UserInit () {
-		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 		}
 
 	bool Eval() {
 		/* !PLAYER_PLAYING */
 
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("worldstate");
 		if(gsm.get()==0){
 			//Logger::Instance().WriteMsg("TrCond_0_3_2_2TOnonPlaying", "true", Logger::Info);
 			return true;

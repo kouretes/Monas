@@ -41,7 +41,7 @@
                 <children xmi:type="notation:DecorationNode" xmi:id="_07ZohVl4EeGg2qRYwS9_EQ" type="5002"/>
                 <styles xmi:type="notation:DescriptionStyle" xmi:id="_07ZogVl4EeGg2qRYwS9_EQ"/>
                 <styles xmi:type="notation:FontStyle" xmi:id="_07Zogll4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-                <styles xmi:type="notation:LineStyle" xmi:id="_07Zog1l4EeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_07Zog1l4EeGg2qRYwS9_EQ" lineColor="0"/>
                 <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.2/@Children.1"/>
                 <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07ZohFl4EeGg2qRYwS9_EQ" x="107" y="107"/>
               </children>
@@ -59,71 +59,71 @@
                     <children xmi:type="notation:DecorationNode" xmi:id="_07cEyll4EeGg2qRYwS9_EQ" type="5002"/>
                     <styles xmi:type="notation:DescriptionStyle" xmi:id="_07cExll4EeGg2qRYwS9_EQ"/>
                     <styles xmi:type="notation:FontStyle" xmi:id="_07cEx1l4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-                    <styles xmi:type="notation:LineStyle" xmi:id="_07cEyFl4EeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_07cEyFl4EeGg2qRYwS9_EQ" lineColor="0"/>
                     <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1"/>
                     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07cEyVl4EeGg2qRYwS9_EQ" x="35" y="107"/>
                   </children>
                   <children xmi:type="notation:Node" xmi:id="_07cr0Fl4EeGg2qRYwS9_EQ" type="3006">
                     <styles xmi:type="notation:DescriptionStyle" xmi:id="_07cr0Vl4EeGg2qRYwS9_EQ"/>
                     <styles xmi:type="notation:FontStyle" xmi:id="_07cr0ll4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-                    <styles xmi:type="notation:LineStyle" xmi:id="_07cr01l4EeGg2qRYwS9_EQ"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_07cr01l4EeGg2qRYwS9_EQ" lineColor="0"/>
                     <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2"/>
                     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07cr1Fl4EeGg2qRYwS9_EQ" x="107" y="215"/>
                   </children>
                 </children>
                 <styles xmi:type="notation:DescriptionStyle" xmi:id="_07Zoh1l4EeGg2qRYwS9_EQ"/>
                 <styles xmi:type="notation:FontStyle" xmi:id="_07ZoiFl4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-                <styles xmi:type="notation:LineStyle" xmi:id="_07ZoiVl4EeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_07ZoiVl4EeGg2qRYwS9_EQ" lineColor="0"/>
                 <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.2/@Children.2"/>
                 <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07Zoill4EeGg2qRYwS9_EQ" x="35" y="203"/>
               </children>
               <children xmi:type="notation:Node" xmi:id="_07ZojVl4EeGg2qRYwS9_EQ" type="3006">
                 <styles xmi:type="notation:DescriptionStyle" xmi:id="_07Zojll4EeGg2qRYwS9_EQ"/>
                 <styles xmi:type="notation:FontStyle" xmi:id="_07Zoj1l4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-                <styles xmi:type="notation:LineStyle" xmi:id="_07ZokFl4EeGg2qRYwS9_EQ"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_07ZokFl4EeGg2qRYwS9_EQ" lineColor="0"/>
                 <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.2/@Children.3"/>
                 <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07ZokVl4EeGg2qRYwS9_EQ" x="227" y="575"/>
               </children>
             </children>
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_07WlNll4EeGg2qRYwS9_EQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_07WlN1l4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-            <styles xmi:type="notation:LineStyle" xmi:id="_07WlOFl4EeGg2qRYwS9_EQ"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_07WlOFl4EeGg2qRYwS9_EQ" lineColor="0"/>
             <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.2"/>
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07WlOVl4EeGg2qRYwS9_EQ" x="35" y="191"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07WlOVl4EeGg2qRYwS9_EQ" x="35" y="203"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_07WlPFl4EeGg2qRYwS9_EQ" type="3002">
             <children xmi:type="notation:DecorationNode" xmi:id="_07WlQVl4EeGg2qRYwS9_EQ" type="5002"/>
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_07WlPVl4EeGg2qRYwS9_EQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_07WlPll4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-            <styles xmi:type="notation:LineStyle" xmi:id="_07WlP1l4EeGg2qRYwS9_EQ"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_07WlP1l4EeGg2qRYwS9_EQ" lineColor="0"/>
             <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.3"/>
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07WlQFl4EeGg2qRYwS9_EQ" x="587" y="191"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_07XMQFl4EeGg2qRYwS9_EQ" type="3006">
             <styles xmi:type="notation:DescriptionStyle" xmi:id="_07XMQVl4EeGg2qRYwS9_EQ"/>
             <styles xmi:type="notation:FontStyle" xmi:id="_07XMQll4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-            <styles xmi:type="notation:LineStyle" xmi:id="_07XMQ1l4EeGg2qRYwS9_EQ"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_07XMQ1l4EeGg2qRYwS9_EQ" lineColor="0"/>
             <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1/@Children.4"/>
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07XMRFl4EeGg2qRYwS9_EQ" x="443" y="923"/>
           </children>
         </children>
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_07STwll4EeGg2qRYwS9_EQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_07STw1l4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-        <styles xmi:type="notation:LineStyle" xmi:id="_07STxFl4EeGg2qRYwS9_EQ"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_07STxFl4EeGg2qRYwS9_EQ" lineColor="0"/>
         <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.1"/>
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07STxVl4EeGg2qRYwS9_EQ" x="35" y="107"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_07S60ll4EeGg2qRYwS9_EQ" type="3006">
         <styles xmi:type="notation:DescriptionStyle" xmi:id="_07S601l4EeGg2qRYwS9_EQ"/>
         <styles xmi:type="notation:FontStyle" xmi:id="_07S61Fl4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-        <styles xmi:type="notation:LineStyle" xmi:id="_07S61Vl4EeGg2qRYwS9_EQ"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_07S61Vl4EeGg2qRYwS9_EQ" lineColor="0"/>
         <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0/@Children.2"/>
         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07S61ll4EeGg2qRYwS9_EQ" x="383" y="1163"/>
       </children>
     </children>
     <styles xmi:type="notation:DescriptionStyle" xmi:id="_07PQcVl4EeGg2qRYwS9_EQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_07PQcll4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-    <styles xmi:type="notation:LineStyle" xmi:id="_07PQc1l4EeGg2qRYwS9_EQ"/>
+    <styles xmi:type="notation:LineStyle" xmi:id="_07PQc1l4EeGg2qRYwS9_EQ" lineColor="0"/>
     <element xmi:type="statechart:Node" href="GUITester.stct#//@nodes.0"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_07PQdFl4EeGg2qRYwS9_EQ" x="24" y="24"/>
   </children>
@@ -270,7 +270,7 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_08Ng0Fl4EeGg2qRYwS9_EQ" type="4001" source="_07STwVl4EeGg2qRYwS9_EQ" target="_07S60ll4EeGg2qRYwS9_EQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_08Ng1Fl4EeGg2qRYwS9_EQ" type="6001">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_08Ng1Vl4EeGg2qRYwS9_EQ" y="40"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_08Ng1Vl4EeGg2qRYwS9_EQ" x="35" y="65"/>
     </children>
     <styles xmi:type="notation:RoutingStyle" xmi:id="_08Ng0Vl4EeGg2qRYwS9_EQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_08Ng0ll4EeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
