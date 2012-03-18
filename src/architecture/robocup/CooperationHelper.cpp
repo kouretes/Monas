@@ -15,7 +15,7 @@ std::size_t CooperationHelper::getHostByPlayerNum(std::size_t p)
 
     for(fit=rf.begin();fit!=rf.end();++fit)
     {
-        gs = _blk.readState<GameStateMessage> ("behavior",(*fit).hostid());
+        gs = _blk.readState<GameStateMessage> ("worldstate",(*fit).hostid());
         if(gs->player_number()==p&& gs->team_number()==team)
             return (*fit).hostid();
     }

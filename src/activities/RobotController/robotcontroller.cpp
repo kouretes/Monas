@@ -27,7 +27,7 @@ void RobotController::UserInit() {
 
 	_blk->updateSubscription("buttonevents",msgentry::SUBSCRIBE_ON_TOPIC);
 
-	_blk->publishState(gm_state, "behavior");
+	_blk->publishState(gm_state, "worldstate");
 	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);
 	lastalive=boost::posix_time::microsec_clock::universal_time();
 }
@@ -164,7 +164,7 @@ int RobotController::Execute() {
 
 	if (changed) {
 		sendLedUpdate();
-		_blk->publishState(gm_state, "behavior");
+		_blk->publishState(gm_state, "worldstate");
 	}
 	else if (delay++ % 50 == 0)
 	{

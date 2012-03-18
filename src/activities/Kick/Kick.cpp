@@ -8,9 +8,10 @@ namespace {
 
 int Kick::Execute() {
 	Logger::Instance().WriteMsg(GetName(),  " execute", Logger::Info);
-	gsm = _blk->readState<GameStateMessage>("behavior");
-	wimsg  = _blk->readData<WorldInfo>("behavior");
 
+	gsm = _blk->readState<GameStateMessage>("worldstate");
+	wimsg  = _blk->readData<WorldInfo>("worldstate");
+	
 	if(!readConf)
 		readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() +"/Features.xml");
 //#ifdef RETURN_TO_POSITION
@@ -89,7 +90,9 @@ int Kick::Execute() {
 }
 
 void Kick::UserInit () {
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+
 	amot = new MotionActionMessage();
 	rpm = new ReturnToPositionMessage();
 	orientation = 0;

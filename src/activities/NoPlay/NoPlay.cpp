@@ -16,7 +16,8 @@ using namespace std;
 int NoPlay::Execute() {
 
 	Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
-	gsm = _blk->readState<GameStateMessage> ("behavior");
+
+	gsm = _blk->readState<GameStateMessage> ("worldstate");
 
 	if(!readConf)
 		readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
@@ -137,6 +138,7 @@ int NoPlay::Execute() {
 }
 
 void NoPlay::UserInit () {
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	curraction = DONOTHING;
 	prevaction = DONOTHING;
@@ -260,7 +262,7 @@ void NoPlay::littleWalk(double x, double y, double th) {
 void NoPlay::goToPosition(float x, float y, float phi){
 
 	curraction = SCANFORPOST;
-	wimsg = _blk->readData<WorldInfo>("behavior");
+	wimsg = _blk->readData<WorldInfo>("worldstate");
 	if(wimsg.get()!=0){
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();

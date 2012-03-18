@@ -11,7 +11,7 @@ int Stare::Execute() {
 
 	Logger::Instance().WriteMsg("Stare",  " execute", Logger::Info);
 	//obsm = _blk->readSignal<ObservationMessage> ("vision");
-	wimsg = _blk->readData<WorldInfo> ("behavior");
+	wimsg = _blk->readData<WorldInfo> ("worldstate");
 
 	velocityWalk(0.0, 0.0, 0.0, 1.0);
 
@@ -56,6 +56,8 @@ _blk->publish_all();
 void Stare::UserInit () {
 
 	fm = new FallMessage();
+
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	fall = 0;
 	penaltyMode = false;	   ////////an eimaste se penalty to allazoume se true!!!!!!!!!!!!!!
