@@ -27,7 +27,6 @@ private:
 	boost::shared_ptr<const GameStateMessage> gsm;
 	boost::shared_ptr<const WorldInfo> wimsg;
 	boost::shared_ptr<const KickOffMessage> kcm;
-	boost::shared_ptr<const PlayerNumberMessage> pnm;
 	ReturnToPositionMessage* rpm;
 	bool readConf;
 

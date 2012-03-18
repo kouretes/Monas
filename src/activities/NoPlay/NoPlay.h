@@ -29,14 +29,11 @@ private:
 	bool kickOff;
 	
 	boost::shared_ptr<const GameStateMessage> gsm;
-	boost::shared_ptr<const PlayerNumberMessage> pnm;
 	boost::shared_ptr<const WorldInfo> wimsg;
-	boost::shared_ptr<const ObservationMessage> obsm;
 	
 	int curraction, prevaction;	
 	float myPosX, myPosY, myPhi;
 	boost::posix_time::ptime lastMove, lastObsm, firstInit, calibrate_time;
-	
 	
 	ReturnToPositionMessage* rpm;
 	MotionWalkMessage wmot;

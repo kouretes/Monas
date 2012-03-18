@@ -10,7 +10,6 @@ int Kick::Execute() {
 	Logger::Instance().WriteMsg(GetName(),  " execute", Logger::Info);
 	gsm = _blk->readState<GameStateMessage>("behavior");
 	wimsg  = _blk->readData<WorldInfo>("behavior");
-	pnm = _blk->readState<PlayerNumberMessage>("behavior");
 
 	if(!readConf)
 		readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() +"/Features.xml");
@@ -38,11 +37,11 @@ int Kick::Execute() {
 		_blk->publishSignal(*amot, "motion");
 		return 0;
 	#endif
-	if(pnm&&pnm->team_side()==TEAM_RED){
+	if(gsm.get()!=0 && gsm->team_color()==TEAM_RED){
 		oppGoalX = blueGoalX;
 		oppGoalY = blueGoalY;
 
-	}else if(pnm&&pnm->team_side()==TEAM_BLUE){
+	}else if(gsm.get()!=0 && gsm->team_color()==TEAM_BLUE){
 		oppGoalX = yellowGoalX;
 		oppGoalY = yellowGoalY;
 	}
