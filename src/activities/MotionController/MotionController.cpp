@@ -140,7 +140,8 @@ void MotionController::UserInit()
 
 	sm.set_type(MotionStateMessage::IDLE);
 	sm.set_detail("");
-
+	sm.set_lastaction("");
+	
 	walkingWithVelocity = false;
 	//setStiffnessDCM(1);
 	BodyID = KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID);
@@ -353,7 +354,7 @@ void MotionController::mglrun()
 		sm.set_detail("");
       		_blk->publishState(sm,"motion");
 
-		Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
+	//	Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		robotDown = true;
 		robotUp = false;
@@ -371,14 +372,14 @@ void MotionController::mglrun()
 		if ((walkPID != 0) && !motion->isRunning(walkPID) && !motion->walkIsActive())
 		{
 			walkPID = 0;
-			Logger::Instance().WriteMsg("MotionController", "Walk completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
+		//	Logger::Instance().WriteMsg("MotionController", "Walk completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 		}
 
 		/* Check if a Head command has been completed */
 		if ((headPID != 0) && !motion->isRunning(headPID))
 		{
 			headPID = 0;
-			Logger::Instance().WriteMsg("MotionController", "Head completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
+		//	Logger::Instance().WriteMsg("MotionController", "Head completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 		}
 
 		/* Check if there is a command to execute */
@@ -414,11 +415,11 @@ void MotionController::mglrun()
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);
 				walkParam4 = wm->parameter(3);
-				Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
-						+ _toString(walkParam3) + " " + _toString(walkParam4), Logger::ExtraInfo);
+			//	Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
+			//			+ _toString(walkParam3) + " " + _toString(walkParam4), Logger::ExtraInfo);
 				motion->setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
 				walkingWithVelocity = true;
-				Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
+				//Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
 			} else
 				Logger::Instance().WriteMsg("MotionController", "Invalid Walk Command: " + wm->command(), Logger::ExtraInfo);
 		}
@@ -478,6 +479,7 @@ void MotionController::mglrun()
 
         		sm.set_type(MotionStateMessage::ACTION);
 			sm.set_detail(str);
+			sm.set_lastaction(am->command());
         		_blk->publishState(sm,"motion");			
 
 			if (str.compare("kmex") == 0)
@@ -497,7 +499,7 @@ void MotionController::mglrun()
 						killWalkCommand();
 						boost::shared_ptr<ISpecialAction> ptr = it->second;
 						KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
-						Logger::Instance().WriteMsg("MotionController", "Frame start : " + _toString(frames.front()) + "  Frame end : " + _toString(frames.back()), Logger::ExtraInfo);
+					//	Logger::Instance().WriteMsg("MotionController", "Frame start : " + _toString(frames.front()) + "  Frame end : " + _toString(frames.back()), Logger::ExtraInfo);
 						KmeManager::set_end_time(ptrdcmkme->ExecuteFrameDCM(frames.front(), frames.back()));
 						actionPID = KME_ACTIONPID;
 					}
@@ -509,7 +511,7 @@ void MotionController::mglrun()
 					if (BodyID.compare(0,7,"Nao1673") == 0 || BodyID.compare(0,7,"Nao1675") == 0){
 						strKick+="Sit.xar";
 						pam->set_command(strKick);
-						Logger::Instance().WriteMsg("MotionController", " THE SP ACTION IS NOW THE " + pam->command(), Logger::Info);
+						//Logger::Instance().WriteMsg("MotionController", " THE SP ACTION IS NOW THE " + pam->command(), Logger::Info);
 					}
 				}
 				SpAssocCont::iterator it = SpActions.find(pam->command());
@@ -550,7 +552,7 @@ void MotionController::killWalkCommand()
 {
 	motion->killWalk();
 	walkingWithVelocity=false;
-	//Logger::Instance().WriteMsg("MotionController", "Killed Walk Command", Logger::ExtraInfo);
+	Logger::Instance().WriteMsg("MotionController", "Killed Walk Command", Logger::ExtraInfo);
 }
 
 void MotionController::stopWalkCommand()
@@ -570,7 +572,7 @@ void MotionController::killHeadCommand()
 	{
 		motion->killTask(headPID);
 		headPID = 0;
-		//Logger::Instance().WriteMsg("MotionController", "Killed Head Command", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Killed Head Command", Logger::ExtraInfo);
 	}
 }
 
@@ -580,7 +582,7 @@ void MotionController::killActionCommand()
 	{
 		motion->killTask(actionPID);
 		actionPID = 0;
-		//Logger::Instance().WriteMsg("MotionController", "Killed Action Command", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Killed Action Command", Logger::ExtraInfo);
 	}
 }
 
@@ -592,7 +594,7 @@ void MotionController::killCommands()
 	walkPID = 0;
 	headPID = 0;
 	actionPID = 0;
-	//Logger::Instance().WriteMsg("MotionController", "Killed All Commands", Logger::ExtraInfo);
+	Logger::Instance().WriteMsg("MotionController", "Killed All Commands", Logger::ExtraInfo);
 }
 
 void MotionController::ALstandUp()
@@ -620,7 +622,7 @@ void MotionController::ALstandUpCross()
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpCross not found!", Logger::Error);
 	else
 		actionPID = it->second->ExecutePost();
-	Logger::Instance().WriteMsg("MotionController", "Stand Up Cross ", Logger::ExtraInfo);
+	//Logger::Instance().WriteMsg("MotionController", "Stand Up Cross ", Logger::ExtraInfo);
 }
 
 void MotionController::ALstandUpBack()
@@ -631,7 +633,7 @@ void MotionController::ALstandUpBack()
 	else
 	{
 		actionPID = it->second->ExecutePost();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up 2011: From Back", Logger::ExtraInfo);
+		//Logger::Instance().WriteMsg("MotionController", "Stand Up 2011: From Back", Logger::ExtraInfo);
 	}
 }
 
@@ -643,7 +645,7 @@ void MotionController::ALstandUpFront()
 	else
 	{
 		actionPID = it->second->ExecutePost();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up 2011: From Front", Logger::ExtraInfo);
+	//	Logger::Instance().WriteMsg("MotionController", "Stand Up 2011: From Front", Logger::ExtraInfo);
 	}
 }
 
@@ -729,7 +731,7 @@ void MotionController::testcommands()
 
 void MotionController::createDCMAlias()
 {
-	Logger::Instance().WriteMsg("MotionController","Creating DCM aliases",Logger::ExtraInfo);
+	//Logger::Instance().WriteMsg("MotionController","Creating DCM aliases",Logger::ExtraInfo);
 	AL::ALValue jointAliasses;
 	vector<std::string> PosActuatorStrings = KDeviceLists::getPositionActuatorKeys();
 
@@ -768,7 +770,7 @@ void MotionController::createDCMAlias()
 		commands[5][i].arraySetSize(1);
 		//commands[5][i][0] will be the new angle
 	}
-	Logger::Instance().WriteMsg("MotionController"," Head PositionActuatorAlias created ",Logger::ExtraInfo);
+	//Logger::Instance().WriteMsg("MotionController"," Head PositionActuatorAlias created ",Logger::ExtraInfo);
 	/*
 	 //STiffness Commands
 	 vector<std::string> stiffnessactStrings = KDeviceLists::getHardnessActuatorKeys();
@@ -844,7 +846,7 @@ vector<int> MotionController::SpCutActionsManager()
 	str.erase(str.size()-1, str.size());
 
 	SpCont::iterator it = SpKmexActions.find(str);
-	Logger::Instance().WriteMsg("MotionController", "SpCutActionsManager - PAM: " + str, Logger::ExtraInfo);
+//	Logger::Instance().WriteMsg("MotionController", "SpCutActionsManager - PAM: " + str, Logger::ExtraInfo);
 	if (it == SpKmexActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpKmexActions " + str + " not found!", Logger::Error);
 	else
