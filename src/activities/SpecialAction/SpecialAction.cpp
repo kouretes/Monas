@@ -19,12 +19,12 @@ int SpecialAction::Execute() {
 	if(fm!=0 && fm->fall()==1){
 		l->set_chain("r_ear");
 		l->set_color( "blue");
-		amot->set_command("goalieLeftFootExtened.xar");
+		amot->set_command("goalieLeft2.xar");
 	}
 	else{
 		l->set_chain("r_ear");
 		l->set_color( "blue");
-		amot->set_command("goalieRightFootExtened.xar");
+		amot->set_command("goalieRight2.xar");
 	}
 	_blk->publishSignal(*amot, "motion");
 
