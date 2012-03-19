@@ -3,7 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/ApproachBall/ApproachBall.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_ApproachBallTOApproachBall : public statechart_engine::ICondition {
 
@@ -11,7 +11,7 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-		_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
@@ -22,14 +22,14 @@ public:
 	//	Logger::Instance().WriteMsg("TrCond_ApproachBallTOApproachBall", " ", Logger::Info);
 		//boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("worldstate");
 
-		ApproachBall ab;
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("worldstate");
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING)
 			return false;
 		if(hbm.get()!=0 && hbm->ballfound()!=0){
-			if(wimsg.get()!=0 && wimsg->balls_size()!=0 && !ab.readyToKick(wimsg) && !ab.ballAway(wimsg) )
+			if(wimsg.get()!=0 && wimsg->balls_size()!=0 && !readyToKick(wimsg) && !ballAway(wimsg) )
 				return true;
 		}
 		return false;

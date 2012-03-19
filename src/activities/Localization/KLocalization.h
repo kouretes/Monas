@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-#include "tools/MathFunctions.h"
+#include "../../tools/MathFunctions.h"
 
 //#define WEBOTS
 //#define VISIBILITY_WEIGHTING
@@ -353,7 +353,7 @@ class KLocalization {
 		int CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) ;
 		void SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 		void SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent);
-		
+
 		/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 		/*::  This function converts decimal degrees to radians             :*/
 		/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
@@ -394,7 +394,6 @@ class KLocalization {
 				return randfloat() * (max - min) + min;
 			}
 		}
-
 };
 
 #endif /* KLOCALIZATION_H_ */

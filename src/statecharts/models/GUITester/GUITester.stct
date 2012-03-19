@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<statechart:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:statechart="http://statechart/1.0" name="GUITester">
+  <nodes name="tester" label="0" type="OR">
+    <Children name="0.1" label="0.1" type="START"/>
+    <Children name="_open_group_play_or_NoPlay_close_group_" label="0.2" type="OR">
+      <Children name="0.2.1" label="0.2.1" type="START"/>
+      <Children name="0.2.2" label="0.2.2" type="CONDITION"/>
+      <Children name="play" label="0.2.3" type="OR">
+        <Children name="0.2.3.1" label="0.2.3.1" type="START"/>
+        <Children name="ChangeRobotPosition" label="0.2.3.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/ChangeRobotPosition/"/>
+        <Children name="GoToPosition_one_or_more_times_" label="0.2.3.3" type="OR">
+          <Children name="0.2.3.3.1" label="0.2.3.3.1" type="START"/>
+          <Children name="GoToPosition" label="0.2.3.3.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/GoToPosition/"/>
+          <Children name="0.2.3.3.3" label="0.2.3.3.3" type="END"/>
+        </Children>
+        <Children name="0.2.3.4" label="0.2.3.4" type="END"/>
+      </Children>
+      <Children name="NoPlay" label="0.2.4" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/NoPlay/"/>
+      <Children name="0.2.5" label="0.2.5" type="END"/>
+    </Children>
+    <Children name="0.3" label="0.3" type="END"/>
+  </nodes>
+  <transitions name="0.2.1TO0.2.2" source="//@nodes.0/@Children.1/@Children.0" target="//@nodes.0/@Children.1/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING]" name="0.2.2TOplay" source="//@nodes.0/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING]" name="0.2.2TONoPlay" source="//@nodes.0/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.3"/>
+  <transitions name="NoPlayTO0.2.5" source="//@nodes.0/@Children.1/@Children.3" target="//@nodes.0/@Children.1/@Children.4"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || &#xA;robotInPosition( worldstate.Data.WorldInfo, behavior.State.PositionMessage)]" name="playTO0.2.5" source="//@nodes.0/@Children.1/@Children.2" target="//@nodes.0/@Children.1/@Children.4"/>
+  <transitions name="0.2.3.1TOChangeRobotPosition" source="//@nodes.0/@Children.1/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.2/@Children.1"/>
+  <transitions name="ChangeRobotPositionTOGoToPosition_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || &#xA;robotInPosition( worldstate.Data.WorldInfo, behavior.State.PositionMessage)]" name="GoToPosition_one_or_more_times_TO0.2.3.4" source="//@nodes.0/@Children.1/@Children.2/@Children.2" target="//@nodes.0/@Children.1/@Children.2/@Children.3"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.2.3.3.1TOGoToPosition" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp;&#xA; worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING &#xA;&amp;&amp; !robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)]/TimeoutAction.behavior.250" name="GoToPositionTOGoToPosition" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || ]&#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING ||&#xA;robotInPosition( worldstate.Data.WorldInfo, behavior.State.PositionMessage)]" name="GoToPositionTO0.2.3.3.3" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.1TO_open_group_play_or_NoPlay_close_group_" source="//@nodes.0/@Children.0" target="//@nodes.0/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp; (worldstate.State.GameStateMessage==NULL ||worldstate.State.GameStateMessage.player_state()!=PLAYER_FINISHED)]/TimeoutAction.behavior.350" name="_open_group_play_or_NoPlay_close_group_TO_open_group_play_or_NoPlay_close_group_" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage.player_state()==PLAYER_FINISHED]" name="_open_group_play_or_NoPlay_close_group_TO0.3" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.2"/>
+</statechart:Model>

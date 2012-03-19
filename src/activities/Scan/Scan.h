@@ -9,7 +9,7 @@
 #include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "../BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 #include "messages/RoboCupGameControlData.h"
 #include "tools/logger.h"
 #include "tools/toString.h"			
@@ -30,6 +30,7 @@ private:
 
 	boost::shared_ptr<const HeadToBMessage> hbm;
 	//boost::shared_ptr<const ScanMessage> scnm;
+	
 	
 	//bool toPos;
 	int headaction;

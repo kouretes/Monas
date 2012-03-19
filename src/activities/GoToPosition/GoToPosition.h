@@ -12,7 +12,7 @@
 #include "messages/RoboCupGameControlData.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "../BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 #include "tools/MathFunctions.h"
 #include "architecture/archConfig.h"
 #include "tools/XML.h"
@@ -31,7 +31,7 @@ public:
 	
 	std::string GetName ();
 	
-	bool robotInPosition(float rx, float x2, float ry, float y2, float rth, float th2);
+	
 	
 private:
 	boost::shared_ptr<const PositionMessage> pm;
@@ -39,6 +39,7 @@ private:
 	boost::shared_ptr<const ObservationMessage> obsm;
 	boost::shared_ptr<const GameStateMessage> gsm;
 
+	
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage wmot;
 	RobotInPosition ripm;
@@ -53,7 +54,7 @@ private:
 	void littleWalk(double x, double y, double th);	
 	////////////////////////////////////////
 	float distance(float x1, float x2, float y1, float y2);
-	float rotation(float x, float y, float theta);
+	
 
 };
 

@@ -85,9 +85,8 @@ private:
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const GameStateMessage>  gsm;
 
-	MotionActionMessage  * mam;
 	MotionActionMessage  * pam;
-
+	MotionStateMessage	sm;
 	AL::ALValue commands;//,stiffnessCommand;
 
 	void testcommands();
@@ -107,7 +106,7 @@ private:
 	void ALstandUpFront();
 
 	vector<int> SpCutActionsManager();
-
+	vector<float> KGetAngles();
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
 	typedef std::map<std::string,
@@ -123,7 +122,7 @@ private:
 		  boost::shared_ptr<KmexAction> > SpElement;
 	SpCont SpKmexActions;
 
-
+	std::string BodyID;
 	void readWalkParameters();
 };
 

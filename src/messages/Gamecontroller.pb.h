@@ -91,6 +91,20 @@ class GameStateMessage : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
+  // required uint32 player_number = 6 [default = 1];
+  inline bool has_player_number() const;
+  inline void clear_player_number();
+  static const int kPlayerNumberFieldNumber = 6;
+  inline ::google::protobuf::uint32 player_number() const;
+  inline void set_player_number(::google::protobuf::uint32 value);
+  
+  // required uint32 team_number = 1 [default = 9];
+  inline bool has_team_number() const;
+  inline void clear_team_number();
+  static const int kTeamNumberFieldNumber = 1;
+  inline ::google::protobuf::uint32 team_number() const;
+  inline void set_team_number(::google::protobuf::uint32 value);
+  
   // required uint32 team_color = 7 [default = 0];
   inline bool has_team_color() const;
   inline void clear_team_color();
@@ -170,6 +184,10 @@ class GameStateMessage : public ::google::protobuf::Message {
   
   // @@protoc_insertion_point(class_scope:GameStateMessage)
  private:
+  inline void set_has_player_number();
+  inline void clear_has_player_number();
+  inline void set_has_team_number();
+  inline void clear_has_team_number();
   inline void set_has_team_color();
   inline void clear_has_team_color();
   inline void set_has_own_goal_color();
@@ -195,6 +213,8 @@ class GameStateMessage : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
+  ::google::protobuf::uint32 player_number_;
+  ::google::protobuf::uint32 team_number_;
   ::google::protobuf::uint32 team_color_;
   ::google::protobuf::uint32 own_goal_color_;
   ::google::protobuf::uint32 player_state_;
@@ -208,7 +228,7 @@ class GameStateMessage : public ::google::protobuf::Message {
   ::google::protobuf::uint32 override_state_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(11 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(13 + 31) / 32];
   
   friend void  protobuf_AddDesc_Gamecontroller_2eproto();
   friend void protobuf_AssignDesc_Gamecontroller_2eproto();
@@ -473,12 +493,12 @@ class ConfigMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 player_number() const;
   inline void set_player_number(::google::protobuf::int32 value);
   
-  // required int32 default_color = 4 [default = 0];
-  inline bool has_default_color() const;
-  inline void clear_default_color();
-  static const int kDefaultColorFieldNumber = 4;
-  inline ::google::protobuf::int32 default_color() const;
-  inline void set_default_color(::google::protobuf::int32 value);
+  // required int32 team_color = 4 [default = 0];
+  inline bool has_team_color() const;
+  inline void clear_team_color();
+  static const int kTeamColorFieldNumber = 4;
+  inline ::google::protobuf::int32 team_color() const;
+  inline void set_team_color(::google::protobuf::int32 value);
   
   // required int32 port = 3 [default = 3838];
   inline bool has_port() const;
@@ -493,8 +513,8 @@ class ConfigMessage : public ::google::protobuf::Message {
   inline void clear_has_team_number();
   inline void set_has_player_number();
   inline void clear_has_player_number();
-  inline void set_has_default_color();
-  inline void clear_has_default_color();
+  inline void set_has_team_color();
+  inline void clear_has_team_color();
   inline void set_has_port();
   inline void clear_has_port();
   
@@ -502,7 +522,7 @@ class ConfigMessage : public ::google::protobuf::Message {
   
   ::google::protobuf::int32 team_number_;
   ::google::protobuf::int32 player_number_;
-  ::google::protobuf::int32 default_color_;
+  ::google::protobuf::int32 team_color_;
   ::google::protobuf::int32 port_;
   
   mutable int _cached_size_;
@@ -522,15 +542,59 @@ class ConfigMessage : public ::google::protobuf::Message {
 
 // GameStateMessage
 
-// required uint32 team_color = 7 [default = 0];
-inline bool GameStateMessage::has_team_color() const {
+// required uint32 player_number = 6 [default = 1];
+inline bool GameStateMessage::has_player_number() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void GameStateMessage::set_has_team_color() {
+inline void GameStateMessage::set_has_player_number() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void GameStateMessage::clear_has_team_color() {
+inline void GameStateMessage::clear_has_player_number() {
   _has_bits_[0] &= ~0x00000001u;
+}
+inline void GameStateMessage::clear_player_number() {
+  player_number_ = 1u;
+  clear_has_player_number();
+}
+inline ::google::protobuf::uint32 GameStateMessage::player_number() const {
+  return player_number_;
+}
+inline void GameStateMessage::set_player_number(::google::protobuf::uint32 value) {
+  set_has_player_number();
+  player_number_ = value;
+}
+
+// required uint32 team_number = 1 [default = 9];
+inline bool GameStateMessage::has_team_number() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void GameStateMessage::set_has_team_number() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void GameStateMessage::clear_has_team_number() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void GameStateMessage::clear_team_number() {
+  team_number_ = 9u;
+  clear_has_team_number();
+}
+inline ::google::protobuf::uint32 GameStateMessage::team_number() const {
+  return team_number_;
+}
+inline void GameStateMessage::set_team_number(::google::protobuf::uint32 value) {
+  set_has_team_number();
+  team_number_ = value;
+}
+
+// required uint32 team_color = 7 [default = 0];
+inline bool GameStateMessage::has_team_color() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void GameStateMessage::set_has_team_color() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void GameStateMessage::clear_has_team_color() {
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void GameStateMessage::clear_team_color() {
   team_color_ = 0u;
@@ -546,13 +610,13 @@ inline void GameStateMessage::set_team_color(::google::protobuf::uint32 value) {
 
 // required uint32 own_goal_color = 5 [default = 0];
 inline bool GameStateMessage::has_own_goal_color() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void GameStateMessage::set_has_own_goal_color() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void GameStateMessage::clear_has_own_goal_color() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void GameStateMessage::clear_own_goal_color() {
   own_goal_color_ = 0u;
@@ -568,13 +632,13 @@ inline void GameStateMessage::set_own_goal_color(::google::protobuf::uint32 valu
 
 // required uint32 player_state = 8 [default = 0];
 inline bool GameStateMessage::has_player_state() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void GameStateMessage::set_has_player_state() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void GameStateMessage::clear_has_player_state() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void GameStateMessage::clear_player_state() {
   player_state_ = 0u;
@@ -590,13 +654,13 @@ inline void GameStateMessage::set_player_state(::google::protobuf::uint32 value)
 
 // required uint32 game_state = 9 [default = 0];
 inline bool GameStateMessage::has_game_state() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void GameStateMessage::set_has_game_state() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void GameStateMessage::clear_has_game_state() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void GameStateMessage::clear_game_state() {
   game_state_ = 0u;
@@ -612,13 +676,13 @@ inline void GameStateMessage::set_game_state(::google::protobuf::uint32 value) {
 
 // required uint32 sec_game_state = 10 [default = 0];
 inline bool GameStateMessage::has_sec_game_state() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline void GameStateMessage::set_has_sec_game_state() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000040u;
 }
 inline void GameStateMessage::clear_has_sec_game_state() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline void GameStateMessage::clear_sec_game_state() {
   sec_game_state_ = 0u;
@@ -634,13 +698,13 @@ inline void GameStateMessage::set_sec_game_state(::google::protobuf::uint32 valu
 
 // required bool firstHalf = 3 [default = true];
 inline bool GameStateMessage::has_firsthalf() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000080u) != 0;
 }
 inline void GameStateMessage::set_has_firsthalf() {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000080u;
 }
 inline void GameStateMessage::clear_has_firsthalf() {
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000080u;
 }
 inline void GameStateMessage::clear_firsthalf() {
   firsthalf_ = true;
@@ -656,13 +720,13 @@ inline void GameStateMessage::set_firsthalf(bool value) {
 
 // required uint32 penalty = 13 [default = 0];
 inline bool GameStateMessage::has_penalty() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
+  return (_has_bits_[0] & 0x00000100u) != 0;
 }
 inline void GameStateMessage::set_has_penalty() {
-  _has_bits_[0] |= 0x00000040u;
+  _has_bits_[0] |= 0x00000100u;
 }
 inline void GameStateMessage::clear_has_penalty() {
-  _has_bits_[0] &= ~0x00000040u;
+  _has_bits_[0] &= ~0x00000100u;
 }
 inline void GameStateMessage::clear_penalty() {
   penalty_ = 0u;
@@ -678,13 +742,13 @@ inline void GameStateMessage::set_penalty(::google::protobuf::uint32 value) {
 
 // required bool kickoff = 12 [default = true];
 inline bool GameStateMessage::has_kickoff() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
+  return (_has_bits_[0] & 0x00000200u) != 0;
 }
 inline void GameStateMessage::set_has_kickoff() {
-  _has_bits_[0] |= 0x00000080u;
+  _has_bits_[0] |= 0x00000200u;
 }
 inline void GameStateMessage::clear_has_kickoff() {
-  _has_bits_[0] &= ~0x00000080u;
+  _has_bits_[0] &= ~0x00000200u;
 }
 inline void GameStateMessage::clear_kickoff() {
   kickoff_ = true;
@@ -700,13 +764,13 @@ inline void GameStateMessage::set_kickoff(bool value) {
 
 // required uint32 our_score = 14 [default = 0];
 inline bool GameStateMessage::has_our_score() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
+  return (_has_bits_[0] & 0x00000400u) != 0;
 }
 inline void GameStateMessage::set_has_our_score() {
-  _has_bits_[0] |= 0x00000100u;
+  _has_bits_[0] |= 0x00000400u;
 }
 inline void GameStateMessage::clear_has_our_score() {
-  _has_bits_[0] &= ~0x00000100u;
+  _has_bits_[0] &= ~0x00000400u;
 }
 inline void GameStateMessage::clear_our_score() {
   our_score_ = 0u;
@@ -722,13 +786,13 @@ inline void GameStateMessage::set_our_score(::google::protobuf::uint32 value) {
 
 // required uint32 otherteam_score = 15 [default = 0];
 inline bool GameStateMessage::has_otherteam_score() const {
-  return (_has_bits_[0] & 0x00000200u) != 0;
+  return (_has_bits_[0] & 0x00000800u) != 0;
 }
 inline void GameStateMessage::set_has_otherteam_score() {
-  _has_bits_[0] |= 0x00000200u;
+  _has_bits_[0] |= 0x00000800u;
 }
 inline void GameStateMessage::clear_has_otherteam_score() {
-  _has_bits_[0] &= ~0x00000200u;
+  _has_bits_[0] &= ~0x00000800u;
 }
 inline void GameStateMessage::clear_otherteam_score() {
   otherteam_score_ = 0u;
@@ -744,13 +808,13 @@ inline void GameStateMessage::set_otherteam_score(::google::protobuf::uint32 val
 
 // required uint32 override_state = 16 [default = 0];
 inline bool GameStateMessage::has_override_state() const {
-  return (_has_bits_[0] & 0x00000400u) != 0;
+  return (_has_bits_[0] & 0x00001000u) != 0;
 }
 inline void GameStateMessage::set_has_override_state() {
-  _has_bits_[0] |= 0x00000400u;
+  _has_bits_[0] |= 0x00001000u;
 }
 inline void GameStateMessage::clear_has_override_state() {
-  _has_bits_[0] &= ~0x00000400u;
+  _has_bits_[0] &= ~0x00001000u;
 }
 inline void GameStateMessage::clear_override_state() {
   override_state_ = 0u;
@@ -961,26 +1025,26 @@ inline void ConfigMessage::set_player_number(::google::protobuf::int32 value) {
   player_number_ = value;
 }
 
-// required int32 default_color = 4 [default = 0];
-inline bool ConfigMessage::has_default_color() const {
+// required int32 team_color = 4 [default = 0];
+inline bool ConfigMessage::has_team_color() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void ConfigMessage::set_has_default_color() {
+inline void ConfigMessage::set_has_team_color() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void ConfigMessage::clear_has_default_color() {
+inline void ConfigMessage::clear_has_team_color() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void ConfigMessage::clear_default_color() {
-  default_color_ = 0;
-  clear_has_default_color();
+inline void ConfigMessage::clear_team_color() {
+  team_color_ = 0;
+  clear_has_team_color();
 }
-inline ::google::protobuf::int32 ConfigMessage::default_color() const {
-  return default_color_;
+inline ::google::protobuf::int32 ConfigMessage::team_color() const {
+  return team_color_;
 }
-inline void ConfigMessage::set_default_color(::google::protobuf::int32 value) {
-  set_has_default_color();
-  default_color_ = value;
+inline void ConfigMessage::set_team_color(::google::protobuf::int32 value) {
+  set_has_team_color();
+  team_color_ = value;
 }
 
 // required int32 port = 3 [default = 3838];

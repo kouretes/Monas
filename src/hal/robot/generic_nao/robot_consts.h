@@ -10,6 +10,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include "tools/singleton.h"
 
 /// Returns a map from joint ids (enum Joint names) to almemory string "path" names
 namespace KDeviceLists
@@ -20,14 +21,15 @@ namespace KDeviceLists
 	{
 		YAW=0, PITCH, HEAD_SIZE
 	};
-	enum ChainLegNames
-	{
-		HIP_YAW_PITCH=0, HIP_ROLL, HIP_PITCH, KNEE_PITCH, ANKLE_PITCH, ANKLE_ROLL, LEG_SIZE
-	};
 
 	enum ChainArmNames
 	{
-		SHOULDER_PITCH=0, SHOULDER_ROLL, ELBOW_ROLL, ELBOW_YAW, /*WRIST_YAW, HAND,*/ARM_SIZE
+		SHOULDER_PITCH=0, SHOULDER_ROLL, ELBOW_YAW, ELBOW_ROLL, /*WRIST_YAW, HAND,*/ARM_SIZE
+	};
+
+	enum ChainLegNames
+	{
+		HIP_YAW_PITCH=0, HIP_ROLL, HIP_PITCH, KNEE_PITCH, ANKLE_PITCH, ANKLE_ROLL, LEG_SIZE
 	};
 
 	enum ChainAccessNames
@@ -55,7 +57,7 @@ namespace KDeviceLists
 
 	enum JointNames
 	{
-		HEAD=0,	L_LEG=HEAD_SIZE , R_LEG=L_LEG+LEG_SIZE,L_ARM=R_LEG+LEG_SIZE,R_ARM=L_ARM+ARM_SIZE ,
+		HEAD=0,	L_ARM=HEAD_SIZE, L_LEG=L_ARM+ARM_SIZE, R_LEG=L_LEG+LEG_SIZE, R_ARM=R_LEG+LEG_SIZE ,
 
 		NUMOFJOINTS=R_ARM+ARM_SIZE
 
@@ -105,6 +107,8 @@ namespace KDeviceLists
 
 		static const float BUTTON_PRESSED=0.0;//Normally on switches
 		static const float BUTTON_RELEASED=1.0;//Normally on switches
+		static const size_t BODY_ID=0;
+		static const size_t HEAD_ID=1;
 	};
 	std::vector<std::string> const& getJointNames();
 
@@ -128,4 +132,17 @@ namespace KDeviceLists
 
 };
 
+class KRobotConfigClass {
+
+    public:
+
+        void setConfig(const size_t key, std::string const& val);
+        std::string getConfig(const size_t key);
+
+    private:
+
+       std::map<size_t, std::string> _dat;
+
+};
+typedef Singleton<KRobotConfigClass> KRobotConfig;
 #endif /* ROBOT_CONSTS_H_ */

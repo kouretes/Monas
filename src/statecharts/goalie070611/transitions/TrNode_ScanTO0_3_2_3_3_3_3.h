@@ -3,8 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/BehaviorConst.h"
-#include "activities/GoToPosition/GoToPosition.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_ScanTO0_3_2_3_3_3_3 : public statechart_engine::ICondition {
 
@@ -12,13 +11,14 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
 		/* ballfound!=0 || return ToPosition */
 
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("worldstate");
 		//boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("behavior");
 		//boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");
 

@@ -131,8 +131,8 @@ int VISIBLE Vision::Execute()
 			p.cameraPitch = 0;
 			seg = segtop;
 		}
-		p.cameraPitch += config.pitchoffset;
-		seg->setLumaScale(1 / ext.getScale());
+
+		seg->setLumaScale(config.cameraGain*ext.getScale());
 		lastrefresh=now;
 
 
@@ -409,63 +409,66 @@ void Vision::fetchAndProcess()
 
 	//cout<<"Attach to Image:"<<seg<<rawImage<<endl;
 	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
+
+
 	//saveFrame(rawImage);
 	//return;
 	//cout<<"Attached"<<endl;
-	asvm = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &p.time, &stamp);
+	asvmo = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,&timeo, &stamp,Blackboard::DATA_NEAREST_NOTNEWER);
+	asvmn = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timen, &stamp,Blackboard::DATA_NEAREST_NOTOLDER);
+
 #ifdef DEBUGVISION
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
-	cout << "SensorTimestamp:"<< boost::posix_time::to_iso_string(p.time) << endl;
+	cout << "Now:"<< boost::posix_time::microsec_clock::universal_time() << endl;
+	cout << "SensorTimestamp:"<< boost::posix_time::to_iso_string(timeo) <<","<< boost::posix_time::to_iso_string(timen) << endl;
+
+//	boost::posix_time::ptime t;
+//	_blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &t);
+//	cout << "Lasttimestamp:"<< boost::posix_time::to_iso_string(t) << endl;
 #endif
 
-	if (asvm.get() == NULL  )//No sensor data!
+	if (asvmn.get() == NULL || asvmo.get()==NULL)//No sensor data!
 	{
 		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no head joint msg in all sensor (allsm) data!", Logger::Error);
 		return;
 	}
 
-	if (asvm.get() == NULL )//No sensor data!
-	{
-		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no intertial msg in all sensor (allsm) data!", Logger::Error);
-		return;
-	}
+	float imcomp =( (float ) ((stamp - timeo).total_nanoseconds()) )/1000000000.0;
+	assert(imcomp>=0);
 
-	//Clear result message
+    //each value is (n-o)*(stamp-timeo) +o
+	p.yaw = asvmo->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvalue();
+	p.yaw += (asvmn->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvalue()-p.yaw)*imcomp;
 
-	p.yaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvalue();
-	p.pitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvalue();
+	p.pitch = asvmo->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvalue();
+	p.pitch += (asvmn->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvalue()-p.pitch)*imcomp;
 
-	p.Vyaw = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvaluediff();
-	p.Vpitch = asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvaluediff();
-
-
-	p.angX = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
-	p.angY = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();//asvm->sensordata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
-	p.VangX = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvaluediff();
-	p.VangY = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvaluediff();
-
-	p.timediff = asvm->timediff();//Get time from headmessage
-	//p.time = time_t_epoch;
-
-	//float exptime=ext.getExp();//Compensate for middle of image
-	//float imcomp=(exptime*1000.0)/p.timediff;
+	//p.Vyaw = asvmo->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW).sensorvaluediff();
+	//p.Vpitch = asvmo->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvaluediff();
 
 
-	float imcomp = ((stamp - p.time).total_nanoseconds()*0.5 )/ (p.timediff);
+	p.angX = asvmo->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvalue();
+    p.angX += (asvmn->jointdata(KDeviceLists::HEAD+KDeviceLists::AXIS_X).sensorvalue()-p.angX)*imcomp;
+
+	p.angY = asvmo->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvalue();
+    p.angY += (asvmn->jointdata(KDeviceLists::HEAD+KDeviceLists::AXIS_Y).sensorvalue()-p.angY)*imcomp;
+
+    p.angY += config.pitchoffset;
+
+	//p.VangX = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_X).sensorvaluediff();
+	//p.VangY = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvaluediff();
+
+	//p.timediff = asvm->timediff();//Get time from headmessage
+
+
+
 
 #ifdef DEBUGVISION
-	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "<<p.Vpitch<<" ";
-	cout<<imcomp<<" "<<p.angX<< " "<<p.angY<<p.VangX<< " "<<p.VangY<<endl;
-#endif
-	//Estimate the values at excactly the timestamp of the image
-	p.yaw += p.Vyaw * imcomp;
-	p.pitch += p.Vpitch * imcomp;
-	p.angX += p.VangX * imcomp;
-	p.angY += p.VangY * imcomp;
-	float Dfov;
-	xmlconfig->QueryElement("Dfov", Dfov);
+	cout<< p.yaw<<" "<<p.pitch<<" "<<p.Vyaw<<" "p.angX<< " "<<p.angY<<imcomp<<endl;
 
-	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(Dfov * TO_RAD / 2));
+#endif
+
+	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(config.Dfov * TO_RAD / 2));
 
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
@@ -481,22 +484,25 @@ void Vision::fetchAndProcess()
 //		Vup.y = -cos(-kinext.getRoll());
 //		Vup.x = sin(-kinext.getRoll());
 	Vup=simpleRot.slow_mult(KVecFloat2(0,1));
+	Vdn=simpleRot.slow_mult(KVecFloat2(0,-1));
+	Vlt=simpleRot.slow_mult(KVecFloat2(-1,0));
+	Vrt=simpleRot.slow_mult(KVecFloat2(1,0));
 
-
-	Vdn.x = -Vup.x;
+	/*Vdn.x = -Vup.x;
 	Vdn.y = -Vup.y;
 
 	Vlt.x = Vup.y;//-Vup.x*cos(-45*TO_RAD)-Vup.y*sin(-45*TO_RAD);
 	Vlt.y = -Vup.x;//-Vup.x*sin(-45*TO_RAD)+Vup.y*sin(-45*TO_RAD);
 
 	Vrt.x = -Vup.y;
-	Vrt.y = Vup.x;
+	Vrt.y = Vup.x;*/
 	//unsigned long startt,endt;
 	//startt=SysCall::_GetCurrentTimeInUSec();
 	ballpixels.clear();
 	ygoalpost.clear();
 	bgoalpost.clear();
 	obstacles.clear();
+	tobeshown.clear();
 
 	gridScan(orange);
 	//endt = SysCall::_GetCurrentTimeInUSec()-startt;
@@ -561,7 +567,7 @@ void Vision::fetchAndProcess()
 		//trckmsg.set_topic("vision");
 		LedValues* l = leds.add_leds();
 		l->set_chain("l_eye");
-		l->set_color("green");
+		l->set_color("white");
 	}
 	if (obs.regular_objects_size() > 0)
 	{
@@ -681,6 +687,10 @@ void Vision::loadXMLConfig(std::string fname)
 	xmlconfig->QueryElement("SegmentationTop", config.SegmentationTop);
 	xmlconfig->QueryElement("sensordelay", config.sensordelay);
 
+	xmlconfig->QueryElement("Dfov", config.Dfov);
+
+	xmlconfig->QueryElement("cameraGain", config.cameraGain);
+
 
 
 	//xmlconfig->QueryElement("scanstep",config.scanstep);
@@ -752,14 +762,13 @@ KVecFloat2 Vision::simpleRotation(KVecFloat2 const& i) const
 	return simpleRot.slow_mult(i);
 }
 
-
 KVecFloat2 Vision::simpleRotation(KVecInt2 const& i) const
 {
-	KVecFloat2 t;
-	t.x=i.x;
-	t.y=i.y;
-	return simpleRotation(t);
+	return simpleRot.slow_mult(KVecFloat2(i.x,i.y));
 }
+
+
+
 
 KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep) const
 {
@@ -787,7 +796,7 @@ KVecInt2 Vision::cameraToImage( KVecFloat2 const& c) const
 	KVecInt2 res;
 
 	res(0) = (int) (c(0) + rawImage.width / 2.0 - 0.5);
-	res(1) = (int) (-c(1) + rawImage.height / 2.0 - 0.5);
+	res(1) = (int) -(c(1) - rawImage.height / 2.0 + 0.5);
 
 	return res;
 }

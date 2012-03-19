@@ -15,14 +15,10 @@ using namespace std;
 
 int NoPlay::Execute() {
 
-	//Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
-	gsm = _blk->readState<GameStateMessage> ("behavior");
-	pnm = _blk->readState<PlayerNumberMessage>("behavior");
+	Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
 
-	if(pnm!=0){
-		playernum = pnm->player_number();
-		teamColor = pnm->team_side();
-	}
+	gsm = _blk->readState<GameStateMessage> ("worldstate");
+
 	if(!readConf)
 		readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	if(gsm.get()==0 ){
@@ -142,8 +138,8 @@ int NoPlay::Execute() {
 }
 
 void NoPlay::UserInit () {
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	curraction = DONOTHING;
 	prevaction = DONOTHING;
 	cal = false;
@@ -178,50 +174,10 @@ std::string NoPlay::GetName () {
 }
 
 bool NoPlay::readRobotConfiguration(const std::string& file_name) {
-	//readConf=true;
-	//XML config(file_name);
-	//typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	//NodeCont teamPositions, robotPosition ;
-	//pnm = _blk->readState<PlayerNumberMessage>("behavior");
-	//Logger::Instance().WriteMsg(GetName(),  " readConf "  , Logger::Info);
-	//int side = 1;
-	//initPhi = 0;
-	//if (pnm.get()==0)
-		//return false;
-
-	//if (kickoff)
-		//teamPositions = config.QueryElement<std::string, float, std::string>( "kickOff" );
-	//else
-		//teamPositions = config.QueryElement<std::string, float, std::string>( "noKickOff" );
-	//if( teamPositions.size()!=0)
-		//robotPosition = config.QueryElement<std::string, float, std::string>( "robot", &(teamPositions[0]) );
-	//Logger::Instance().WriteMsg(GetName(),  " teamPo size" +_toString( teamPositions.size())+ "robotPos size" + _toString( robotPosition.size())  , Logger::Info);
-    //for ( NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++ ) {
-		//Logger::Instance().WriteMsg(GetName(),  " it "  , Logger::Info);
-		//if(it->attrb["number"] == 1 ){// pnm->player_number()){
-			//if(pnm->team_side()==TEAM_BLUE){
-				//side=-1;
-				//initPhi = 180*TO_RAD;
-			//}
-			//initX = side*(it->attrb["posx"]);
-			//initY = side*(it->attrb["posy"]);
-	//Logger::Instance().WriteMsg(GetName(),  " readConf INIT X "+ _toString(initX) +" INITY "+_toString(initY) + " INITPHI " + _toString(initPhi)  , Logger::Info);
-			//pmsg->set_posx(initX);
-			//pmsg->set_posy(initY);
-			//pmsg->set_theta(initPhi);
-			//_blk->publishState(*pmsg, "behavior");
-			//return true;
-		//}
-
-	//}
-	//return true;
-
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
 
 	playernum =-1;
-	if(pnm!=0)
-		playernum = pnm->player_number();
+	if(gsm!=0)
+		playernum = gsm->player_number();
 
 	if(playernum==-1){
 		//Logger::Instance().WriteMsg(GetName(), " Invalid player number " , Logger::Error);
@@ -282,8 +238,6 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 	}
 	return readConf;
 
-
-	///////////////////////////////////////////////////////////////////////////////////
 }
 
 void NoPlay::velocityWalk(double x, double y, double th, double f) {
@@ -308,7 +262,7 @@ void NoPlay::littleWalk(double x, double y, double th) {
 void NoPlay::goToPosition(float x, float y, float phi){
 
 	curraction = SCANFORPOST;
-	wimsg = _blk->readData<WorldInfo>("behavior");
+	wimsg = _blk->readData<WorldInfo>("worldstate");
 	if(wimsg.get()!=0){
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
@@ -316,7 +270,6 @@ void NoPlay::goToPosition(float x, float y, float phi){
 		Logger::Instance().WriteMsg(GetName(),  " X "+ _toString(myPosX) +" Y "+_toString(myPosY) + " PHI " + _toString(myPhi)  , Logger::Info);
 	}
 	float relativeX, relativeY, relativePhi;
-	obsm = _blk->readSignal<ObservationMessage>("vision");
 	relativeX = rotation(x, -y, myPhi) - myPosX;
 	relativeY = rotation(y, y, myPhi) - myPosY;
 

@@ -3,8 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/GoToPosition/GoToPosition.h"
-#include "activities/BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_GoToPositionTO0_3_2_4_3_3_3 : public statechart_engine::ICondition {
 
@@ -12,15 +11,16 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
 		/* !PLAYER_READY || inPosition */
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("worldstate");
 		boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");
-		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("worldstate");
 
-		GoToPosition g;
+
 		bool ret = false;
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_READY)
 			ret= true;
@@ -30,7 +30,7 @@ public:
 				//Logger::Instance().WriteMsg("TrCond_GoToPositionTO0_3_2_4_3_3_3", "  confidence " + _toString( wimsg->myposition().confidence()), Logger::Info);
 				//return true;
 			//}
-			ret =  g.robotInPosition(pm->posx(), wimsg->myposition().x(), pm->posy(), wimsg->myposition().y(), pm->theta(), wimsg->myposition().phi());
+			ret =  robotInPosition(pm->posx(), wimsg->myposition().x(), pm->posy(), wimsg->myposition().y(), pm->theta(), wimsg->myposition().phi());
 		}
 		if(ret){
 		//	Logger::Instance().WriteMsg("robotIposition",  " stop walking", Logger::Info);

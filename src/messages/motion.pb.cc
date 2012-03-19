@@ -24,6 +24,10 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* MotionActionMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   MotionActionMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* MotionStateMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  MotionStateMessage_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* MotionStateMessage_ActionType_descriptor_ = NULL;
 
 }  // namespace
 
@@ -82,6 +86,24 @@ void protobuf_AssignDesc_motion_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(MotionActionMessage));
+  MotionStateMessage_descriptor_ = file->message_type(3);
+  static const int MotionStateMessage_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, detail_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, lastaction_),
+  };
+  MotionStateMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      MotionStateMessage_descriptor_,
+      MotionStateMessage::default_instance_,
+      MotionStateMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(MotionStateMessage));
+  MotionStateMessage_ActionType_descriptor_ = MotionStateMessage_descriptor_->enum_type(0);
 }
 
 namespace {
@@ -100,6 +122,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     MotionHeadMessage_descriptor_, &MotionHeadMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     MotionActionMessage_descriptor_, &MotionActionMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    MotionStateMessage_descriptor_, &MotionStateMessage::default_instance());
 }
 
 }  // namespace
@@ -111,6 +135,8 @@ void protobuf_ShutdownFile_motion_2eproto() {
   delete MotionHeadMessage_reflection_;
   delete MotionActionMessage::default_instance_;
   delete MotionActionMessage_reflection_;
+  delete MotionStateMessage::default_instance_;
+  delete MotionStateMessage_reflection_;
 }
 
 void protobuf_AddDesc_motion_2eproto() {
@@ -124,15 +150,22 @@ void protobuf_AddDesc_motion_2eproto() {
     "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"9\n\021Mot"
     "ionHeadMessage\022\021\n\007command\030\006 \002(\t:\000\022\021\n\tpar"
     "ameter\030\007 \003(\002\";\n\023MotionActionMessage\022\021\n\007c"
-    "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002", 193);
+    "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\256\001\n\022Mo"
+    "tionStateMessage\022,\n\004type\030\001 \002(\0162\036.MotionS"
+    "tateMessage.ActionType\022\016\n\006detail\030\002 \002(\t\022\022"
+    "\n\nlastaction\030\003 \002(\t\"F\n\nActionType\022\013\n\007WALK"
+    "ING\020\000\022\n\n\006ACTION\020\001\022\010\n\004FALL\020\002\022\013\n\007STANDUP\020\003"
+    "\022\010\n\004IDLE\020\004", 370);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "motion.proto", &protobuf_RegisterTypes);
   MotionWalkMessage::default_instance_ = new MotionWalkMessage();
   MotionHeadMessage::default_instance_ = new MotionHeadMessage();
   MotionActionMessage::default_instance_ = new MotionActionMessage();
+  MotionStateMessage::default_instance_ = new MotionStateMessage();
   MotionWalkMessage::default_instance_->InitAsDefaultInstance();
   MotionHeadMessage::default_instance_->InitAsDefaultInstance();
   MotionActionMessage::default_instance_->InitAsDefaultInstance();
+  MotionStateMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_motion_2eproto);
 }
 
@@ -950,6 +983,361 @@ void MotionActionMessage::Swap(MotionActionMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = MotionActionMessage_descriptor_;
   metadata.reflection = MotionActionMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* MotionStateMessage_ActionType_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MotionStateMessage_ActionType_descriptor_;
+}
+bool MotionStateMessage_ActionType_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const MotionStateMessage_ActionType MotionStateMessage::WALKING;
+const MotionStateMessage_ActionType MotionStateMessage::ACTION;
+const MotionStateMessage_ActionType MotionStateMessage::FALL;
+const MotionStateMessage_ActionType MotionStateMessage::STANDUP;
+const MotionStateMessage_ActionType MotionStateMessage::IDLE;
+const MotionStateMessage_ActionType MotionStateMessage::ActionType_MIN;
+const MotionStateMessage_ActionType MotionStateMessage::ActionType_MAX;
+const int MotionStateMessage::ActionType_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+const int MotionStateMessage::kTypeFieldNumber;
+const int MotionStateMessage::kDetailFieldNumber;
+const int MotionStateMessage::kLastactionFieldNumber;
+#endif  // !_MSC_VER
+
+MotionStateMessage::MotionStateMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void MotionStateMessage::InitAsDefaultInstance() {
+}
+
+MotionStateMessage::MotionStateMessage(const MotionStateMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void MotionStateMessage::SharedCtor() {
+  _cached_size_ = 0;
+  type_ = 0;
+  detail_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  lastaction_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+MotionStateMessage::~MotionStateMessage() {
+  SharedDtor();
+}
+
+void MotionStateMessage::SharedDtor() {
+  if (detail_ != &::google::protobuf::internal::kEmptyString) {
+    delete detail_;
+  }
+  if (lastaction_ != &::google::protobuf::internal::kEmptyString) {
+    delete lastaction_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void MotionStateMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* MotionStateMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MotionStateMessage_descriptor_;
+}
+
+const MotionStateMessage& MotionStateMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_motion_2eproto();  return *default_instance_;
+}
+
+MotionStateMessage* MotionStateMessage::default_instance_ = NULL;
+
+MotionStateMessage* MotionStateMessage::New() const {
+  return new MotionStateMessage;
+}
+
+void MotionStateMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    type_ = 0;
+    if (has_detail()) {
+      if (detail_ != &::google::protobuf::internal::kEmptyString) {
+        detail_->clear();
+      }
+    }
+    if (has_lastaction()) {
+      if (lastaction_ != &::google::protobuf::internal::kEmptyString) {
+        lastaction_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool MotionStateMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .MotionStateMessage.ActionType type = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::MotionStateMessage_ActionType_IsValid(value)) {
+            set_type(static_cast< ::MotionStateMessage_ActionType >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_detail;
+        break;
+      }
+      
+      // required string detail = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_detail:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_detail()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->detail().data(), this->detail().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_lastaction;
+        break;
+      }
+      
+      // required string lastaction = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_lastaction:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_lastaction()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->lastaction().data(), this->lastaction().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void MotionStateMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .MotionStateMessage.ActionType type = 1;
+  if (has_type()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->type(), output);
+  }
+  
+  // required string detail = 2;
+  if (has_detail()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->detail().data(), this->detail().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->detail(), output);
+  }
+  
+  // required string lastaction = 3;
+  if (has_lastaction()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->lastaction().data(), this->lastaction().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->lastaction(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* MotionStateMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .MotionStateMessage.ActionType type = 1;
+  if (has_type()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->type(), target);
+  }
+  
+  // required string detail = 2;
+  if (has_detail()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->detail().data(), this->detail().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->detail(), target);
+  }
+  
+  // required string lastaction = 3;
+  if (has_lastaction()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->lastaction().data(), this->lastaction().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->lastaction(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int MotionStateMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .MotionStateMessage.ActionType type = 1;
+    if (has_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+    }
+    
+    // required string detail = 2;
+    if (has_detail()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->detail());
+    }
+    
+    // required string lastaction = 3;
+    if (has_lastaction()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->lastaction());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void MotionStateMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const MotionStateMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const MotionStateMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void MotionStateMessage::MergeFrom(const MotionStateMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_type()) {
+      set_type(from.type());
+    }
+    if (from.has_detail()) {
+      set_detail(from.detail());
+    }
+    if (from.has_lastaction()) {
+      set_lastaction(from.lastaction());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void MotionStateMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void MotionStateMessage::CopyFrom(const MotionStateMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MotionStateMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  
+  return true;
+}
+
+void MotionStateMessage::Swap(MotionStateMessage* other) {
+  if (other != this) {
+    std::swap(type_, other->type_);
+    std::swap(detail_, other->detail_);
+    std::swap(lastaction_, other->lastaction_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata MotionStateMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = MotionStateMessage_descriptor_;
+  metadata.reflection = MotionStateMessage_reflection_;
   return metadata;
 }
 

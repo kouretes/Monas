@@ -36,7 +36,7 @@ float HFov = 46.4;
 //#define DEBUG
 //#define DEBUGPredict
 //#define DEBUGupdate
-
+//#define COUT_ON
 using namespace boost;
 
 KLocalization::KLocalization()
@@ -425,34 +425,45 @@ int KLocalization::Initialize()
 		bool found = true;
 		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
 		CarpetMaxX*=1000; //convert to mm
+		#ifdef COUT_ON
 		cout << " CarpetMaxX " <<  CarpetMaxX << endl;
-
+		#endif
 		found &= config->QueryElement("CarpetMinX", CarpetMinX);
 		CarpetMinX*=1000;
+		#ifdef COUT_ON
 		cout << " CarpetMinX " <<  CarpetMinX << endl;
-
+		#endif
 		found &= config->QueryElement("CarpetMaxY", CarpetMaxY);
 		CarpetMaxY*=1000;
+		#ifdef COUT_ON
 		cout << " CarpetMaxY " <<  CarpetMaxY << endl;
-
+		#endif
 		found &= config->QueryElement("CarpetMinY", CarpetMinY);
 		CarpetMinY*=1000;
+		#ifdef COUT_ON
 		cout << " CarpetMinY " <<  CarpetMinY << endl;
-
+		#endif
 
 		found &= config->QueryElement("FieldMaxX", FieldMaxX);
 		FieldMaxX*=1000;
+		#ifdef COUT_ON
 		cout << " FieldMaxX " <<  FieldMaxX << endl;
-
+		#endif
 		found &= config->QueryElement("FieldMinX", FieldMinX);
 		FieldMinX*=1000;
+		#ifdef COUT_ON
 		cout << " FieldMinX " <<  FieldMinX << endl;
+		#endif
 		found &= config->QueryElement("FieldMaxY", FieldMaxY);
 		FieldMaxY*=1000;
+		#ifdef COUT_ON
 		cout << " FieldMaxY " <<  FieldMaxY << endl;
+		#endif
 		found &= config->QueryElement("FieldMinY", FieldMinY);
 		FieldMinY*=1000;
+		#ifdef COUT_ON
 		cout << " FieldMinY " <<  FieldMinY << endl;
+		#endif
 
 		if (found)
 		{
@@ -473,10 +484,10 @@ int KLocalization::Initialize()
 
 	P_observe_Visible = 1 - P_observe_NotVisible;
 	P_Notobserve_Visible = 1 - P_Notobserve_NotVisible;
-
+#ifdef COUT_ON
 	cout << "ParticlesNum: " << partclsNum << " SpreadParticlesDeviation: " << SpreadParticlesDeviation << " \n rotation_deviation: " << rotation_deviation
 			<< " PercentParticlesSpread: " << PercentParticlesSpread << " Observation PArticles" << numofparticlesfromObservation << endl;
-
+#endif
 #ifdef WEBOTS
 	halfrange = ((2 * /*30 90*/HFov) / 2.0) * TO_RAD; //TODO real angle adding hfov of the camera
 #else
@@ -496,7 +507,9 @@ int KLocalization::Initialize()
 	//
 	//	Random::Set(0.78/*(double) time(NULL)*/);
 	double seed = (double) (time(NULL) % 100 / 100.0);
+	#ifdef COUT_ON
 	cout << "Seed: " << seed << " Time " << time(NULL) % 100 << endl;
+	#endif
 	Random::Set(seed);
 
 	//cout << " After Set" << endl;
@@ -515,17 +528,18 @@ int KLocalization::Initialize()
 	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
 	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
 	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
-
+#ifdef COUT_ON
 	cout << "Particles Population Created Particles Num: " << endl;
-
+#endif
 	LoadMotionModelXML(ArchConfig::Instance().GetConfigPrefix() + "/MotionModel.xml", KouretesMotions, KMMmap);
-
+#ifdef COUT_ON
 	cout << "Motion Model Loaded Number of Motions:  " << KouretesMotions.size() << endl;
-
+#endif
 	// Loading features,
 	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
-
+#ifdef COUT_ON
 	cout << " KFeaturesmap Loaded Number of Features:  " << KFeaturesmap.size() << endl;
+#endif
 	AgentPosition.x = 0;
 	AgentPosition.y = 0;
 	AgentPosition.theta = 0;
@@ -563,7 +577,9 @@ KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, 
 		}
 
 		BestMotionModel = &tVector->at(0);
+		#ifdef COUT_ON
 		cout << "Search for best Motion Model! " << endl;
+		#endif
 		for (unsigned int i = 0; i < tVector->size(); i++)
 		{
 
@@ -575,28 +591,36 @@ KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, 
 			{
 				NegativeUnitMotionModel = &tVector->at(1);
 			}
+			#ifdef COUT_ON
 			cout << "Examining " << tVector->at(i).type << " " << tVector->at(i).Steps << " ";
 			cout << "Distance.Emean:  " << tVector->at(i).Distance.Emean << " Distance.Edev " << tVector->at(i).Distance.Edev << endl;
-
+			#endif
 			if (abs((tVector->at(i).Steps - steps)) < abs(BestMotionModel->Steps - steps)){
 			BestMotionModel = &tVector->at(i);
+			#ifdef COUT_ON
 			cout << "BestMotionModel " << BestMotionModel->type << " BestMotionModel->Steps " << BestMotionModel->Steps << endl;
+			#endif
 		}
 		//	allfeatures.erase(0);
 	}
 
 		if ((BestMotionModel->Steps - steps) == 0)
 		{
+			#ifdef COUT_ON
 			cout << "Found Exact Motion Model" << endl;
 			cout << BestMotionModel->type << " " << BestMotionModel->Steps << " " << endl;
 			cout << "BestMotionModel->Distance.Emean:  " << BestMotionModel->Distance.Emean << " BestMotionModel->Distance.Edev " << BestMotionModel->Distance.Edev << endl;
+			#else
+			;
+			#endif
 
 			//sleep(2);
 		} else
 		{
 			cerr << "Exact Motion Model" << MotionType << " Steps" << steps << " NOT Found Using: " << endl;
-
+			#ifdef COUT_ON
 			cout << BestMotionModel->type << " " << BestMotionModel->Steps << " " << endl;
+			#endif
 			//sleep(2);
 			if (steps > 0)
 			{
@@ -608,8 +632,9 @@ KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, 
 			{
 				return NULL;
 			}
-
+			#ifdef COUT_ON
 			cout << "Creating Model from unit Model" << endl;
+			#endif
 			if (steps == 0)
 				*iterations = 1;
 			else
@@ -634,7 +659,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	//		cout << "Warning No maching Motion Model!!!!!!!!!" << endl;
 	//	} else {
 	//		KMotionModel MotionModel = *MotionModelptr;
+	#ifdef COUT_ON
 	cout << "LocalizationStep MotionModel.Distance.Emean:  " << MotionModel.Distance.Emean << " MotionModel.Distance.Edev " << MotionModel.Distance.Edev << endl;
+	#endif
 	//	}
 
 	int index[partclsNum];
@@ -643,7 +670,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	//SpreadParticles
 	if (Observations.empty())
 	{
+		#ifdef COUT_ON
 		cout << "No observations ... spreading" << endl;
+		#endif
 		SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
 	}
 
@@ -655,7 +684,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	cout << SIRParticles.Weight[i] << "  ";
 #endif
 	//SIR Filter
+	#ifdef COUT_ON
 	cout << "\nPredict Iterations " << iterations << endl;
+	#endif
 
 	//sleep(1);
 	//Predict - Move particles according the Prediction Model
@@ -684,7 +715,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 		{
 			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
 		}
+		#ifdef COUT_ON
 		cout << "Depletion Counter " << depletions_counter << endl;
+		#endif
 	} else
 	{
 		depletions_counter = 0;
@@ -745,9 +778,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	AgentPosition.x = maxprtcl.x;
 	AgentPosition.y = maxprtcl.y;
 	AgentPosition.theta = maxprtcl.phi;
-
+#ifdef COUT_ON
 	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
-
+#endif
 	//AgentPosition = RobustMean(SIRParticles, 2);
 	//Complete the SIR
 	Resample(SIRParticles, index, 0);
@@ -768,11 +801,15 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 	KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
 
 	KMotionModel MotionModel = *MotionModelptr;
+	#ifdef COUT_ON
 	cout << "LocalizationStep MotionModel.Distance.Emean:  " << MotionModel.Distance.Emean << " MotionModel.Distance.Edev " << MotionModel.Distance.Edev << endl;
+	#endif
 
 	int index[partclsNum];
 	//Simple initialization
+	#ifdef COUT_ON
 	cout << "Predict Iterations " << iterations << endl;
+	#endif
 
 	//Initialize Aux particles from current particles information
 	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
@@ -808,14 +845,18 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 	if (normalize(AUXParticles.Weight, partclsNum) < 0.01)
 	{
 		cerr << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
+		#ifdef COUT_ON
 		cout << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
+		#endif
 		//setParticlesPoseUniformly(AUXParticles);
 		depletions_counter++;
 		if (depletions_counter > 1)
 		{
 			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 100);
 		}
+		#ifdef COUT_ON
 		cout << "Depletion Counter " << depletions_counter << endl;
+		#endif
 
 		//		if (Observations.size() > 1)
 		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
@@ -847,13 +888,16 @@ belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObs
 	if ((SIRParticles.WeightSum = normalize(SIRParticles.Weight, partclsNum)) < 0.01)
 	{
 		cerr << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field " << endl;
+		#ifdef COUT_ON
 		cout << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field" << endl;
+		#endif
 		//setParticlesPoseUniformly(SIRParticles);
 		depletions_counter++;
 		if (depletions_counter > 1)
 			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 100);
-
+		#ifdef COUT_ON
 		cout << "Depletion Counter " << depletions_counter << endl;
+		#endif
 
 		//		if (Observations.size() > 1)
 		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
@@ -925,67 +969,46 @@ belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles)
 	///ROBUST MEAN ... .
 	unsigned int robustmean = round((double) Particles.size * ((double) PercenteOfParticles / 100.0));
 	robustmean = (robustmean < 1) ? 1 : robustmean;
-	//#ifdef DEBUG
+	#ifdef DEBUG
 	cout << "RobustMean Particles " << robustmean << endl;
-	//#endif
+	#endif
 	priority_queue<partcl> particlesQueue;
 	partcl temp;
+
 	for (unsigned int i = 0; i < Particles.size; i++)
 	{
 		temp.x = Particles.x[i];
 		temp.y = Particles.y[i];
 		temp.phi = Particles.phi[i];
 		temp.Weight = Particles.Weight[i];
-		if (particlesQueue.size() >= robustmean)
-			particlesQueue.pop();
 		particlesQueue.push(temp);
 	}
 
+	float x = 0;
+	float y = 0;
 	double sumX = 0;
 	double sumY = 0;
-	double sumTheta0toPI = 0; /// TODO !!!! hm check this angle
-	int countTheta0toPI = 0;
-	double sumThetaPIto2PI = 0;
-	int countThetaPIto2PI = 0;
 
-	double tempTheta;
 	for (unsigned int i = 0; i < robustmean; i++)
 	{
 		temp = particlesQueue.top();
 		sumX += temp.x;
 		sumY += temp.y;
-		if ((tempTheta = wrapTo0_2Pi(temp.phi)) > M_PI)
-		{
-			sumThetaPIto2PI += tempTheta;
-			countThetaPIto2PI++;
-
-		} else
-		{
-			sumTheta0toPI += tempTheta;
-			countTheta0toPI++;
-		}
+		x += cos(temp.phi);
+		y += sin(temp.phi);
+	
 
 		particlesQueue.pop();
 
 	}
-	cout << " SumX" << sumX << " SumY" << sumY << "sumTheta0toPI " << sumTheta0toPI << endl;
+	
 	RmeanAgentPosition.x = sumX / (double) robustmean;
 	RmeanAgentPosition.y = sumY / (double) robustmean;
-
-	int bothsemicycles = 0;
-	if (countTheta0toPI > 0)
-	{
-		bothsemicycles++;
-
-		sumTheta0toPI = wrapToPi((double) sumTheta0toPI / (double) countTheta0toPI);
-	}
-	if (countThetaPIto2PI > 0)
-	{
-		sumThetaPIto2PI = wrapToPi(sumThetaPIto2PI / (double) countThetaPIto2PI);
-		bothsemicycles++;
-	}
-
-	RmeanAgentPosition.theta = wrapTo0_2Pi(sumTheta0toPI + sumThetaPIto2PI) / (double) bothsemicycles;
+	
+	if(x!=0)
+		RmeanAgentPosition.theta = wrapTo0_2Pi(atan2(y/(double) robustmean,x/(double) (double) robustmean));
+	else
+		RmeanAgentPosition.theta=0;
 
 	return RmeanAgentPosition;
 }
@@ -2025,7 +2048,7 @@ double KLocalization::CalcDistDev(feature afeature, double Distance)
 	//		}
 	//	}
 
-	//ecout << "CalcDistDev " << ret << endl;
+	//cout << "CalcDistDev " << ret << endl;
 	return ret;
 }
 

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="ASCII"?>
+<statechart:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:statechart="http://statechart/1.0" name="goalie070611">
+  <nodes name="player" label="0" type="OR">
+    <Children name="0.1" label="0.1" type="START"/>
+    <Children name="Init" label="0.2" type="BASIC"/>
+    <Children name="decision_one_or_more_times_" label="0.3" type="OR">
+      <Children name="0.3.1" label="0.3.1" type="START"/>
+      <Children name="decision" label="0.3.2" type="OR">
+        <Children name="0.3.2.1" label="0.3.2.1" type="START"/>
+        <Children name="0.3.2.2" label="0.3.2.2" type="CONDITION"/>
+        <Children name="play" label="0.3.2.3" type="OR">
+          <Children name="0.3.2.3.1" label="0.3.2.3.1" type="START"/>
+          <Children name="0.3.2.3.2" label="0.3.2.3.2" type="CONDITION"/>
+          <Children name="searchBallOrReturnToPosition" label="0.3.2.3.3" type="OR">
+            <Children name="0.3.2.3.3.1" label="0.3.2.3.3.1" type="START"/>
+            <Children name="0.3.2.3.3.2" label="0.3.2.3.3.2" type="CONDITION"/>
+            <Children name="Scan_one_or_more_times_" label="0.3.2.3.3.3" type="OR">
+              <Children name="0.3.2.3.3.3.1" label="0.3.2.3.3.3.1" type="START"/>
+              <Children name="Scan" label="0.3.2.3.3.3.2" type="BASIC"/>
+              <Children name="0.3.2.3.3.3.3" label="0.3.2.3.3.3.3" type="END"/>
+            </Children>
+            <Children name="GoToPosition_one_or_more_times_" label="0.3.2.3.3.4" type="OR">
+              <Children name="0.3.2.3.3.4.1" label="0.3.2.3.3.4.1" type="START"/>
+              <Children name="GoToPosition" label="0.3.2.3.3.4.2" type="BASIC"/>
+              <Children name="0.3.2.3.3.4.3" label="0.3.2.3.3.4.3" type="END"/>
+            </Children>
+            <Children name="0.3.2.3.3.5" label="0.3.2.3.3.5" type="END"/>
+          </Children>
+          <Children name="ApproachBall_one_or_more_times_" label="0.3.2.3.4" type="OR">
+            <Children name="0.3.2.3.4.1" label="0.3.2.3.4.1" type="START"/>
+            <Children name="ApproachBall" label="0.3.2.3.4.2" type="BASIC"/>
+            <Children name="0.3.2.3.4.3" label="0.3.2.3.4.3" type="END"/>
+          </Children>
+          <Children name="Kick" label="0.3.2.3.5" type="BASIC"/>
+          <Children name="followTheBall" label="0.3.2.3.6" type="OR">
+            <Children name="0.3.2.3.6.1" label="0.3.2.3.6.1" type="START"/>
+            <Children name="Stare_one_or_more_times_" label="0.3.2.3.6.2" type="OR">
+              <Children name="0.3.2.3.6.2.1" label="0.3.2.3.6.2.1" type="START"/>
+              <Children name="Stare" label="0.3.2.3.6.2.2" type="BASIC"/>
+              <Children name="0.3.2.3.6.2.3" label="0.3.2.3.6.2.3" type="END"/>
+            </Children>
+            <Children name="_open_option_SpecialAction_close_option_" label="0.3.2.3.6.3" type="OR">
+              <Children name="0.3.2.3.6.3.1" label="0.3.2.3.6.3.1" type="START"/>
+              <Children name="0.3.2.3.6.3.2" label="0.3.2.3.6.3.2" type="CONDITION"/>
+              <Children name="SpecialAction" label="0.3.2.3.6.3.3" type="BASIC"/>
+              <Children name="0.3.2.3.6.3.4" label="0.3.2.3.6.3.4" type="END"/>
+            </Children>
+            <Children name="0.3.2.3.6.4" label="0.3.2.3.6.4" type="END"/>
+          </Children>
+          <Children name="0.3.2.3.7" label="0.3.2.3.7" type="END"/>
+        </Children>
+        <Children name="nonPlaying" label="0.3.2.4" type="OR">
+          <Children name="0.3.2.4.1" label="0.3.2.4.1" type="START"/>
+          <Children name="NoPlay" label="0.3.2.4.2" type="BASIC"/>
+          <Children name="_open_option_GoToPosition_one_or_more_times__close_option_" label="0.3.2.4.3" type="OR">
+            <Children name="0.3.2.4.3.1" label="0.3.2.4.3.1" type="START"/>
+            <Children name="0.3.2.4.3.2" label="0.3.2.4.3.2" type="CONDITION"/>
+            <Children name="GoToPosition_one_or_more_times_" label="0.3.2.4.3.3" type="OR">
+              <Children name="0.3.2.4.3.3.1" label="0.3.2.4.3.3.1" type="START"/>
+              <Children name="GoToPosition" label="0.3.2.4.3.3.2" type="BASIC"/>
+              <Children name="0.3.2.4.3.3.3" label="0.3.2.4.3.3.3" type="END"/>
+            </Children>
+            <Children name="0.3.2.4.3.4" label="0.3.2.4.3.4" type="END"/>
+          </Children>
+          <Children name="0.3.2.4.4" label="0.3.2.4.4" type="END"/>
+        </Children>
+        <Children name="0.3.2.5" label="0.3.2.5" type="END"/>
+      </Children>
+      <Children name="0.3.3" label="0.3.3" type="END"/>
+    </Children>
+    <Children name="0.4" label="0.4" type="END"/>
+  </nodes>
+  <transitions name="0.1TOInit" source="//@nodes.0/@Children.0" target="//@nodes.0/@Children.1"/>
+  <transitions name="InitTOdecision_one_or_more_times_" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.2"/>
+  <transitions name="decision_one_or_more_times_TO0.4" source="//@nodes.0/@Children.2" target="//@nodes.0/@Children.3"/>
+  <transitions name="0.3.2.1TO0.3.2.2" source="//@nodes.0/@Children.2/@Children.1/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.1"/>
+  <transitions TE="[PLAYER_PLAYING]" name="0.3.2.2TOplay" source="//@nodes.0/@Children.2/@Children.1/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2"/>
+  <transitions TE="[!PLAYER_PLAYING]" name="0.3.2.2TOnonPlaying" source="//@nodes.0/@Children.2/@Children.1/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.3"/>
+  <transitions name="nonPlayingTO0.3.2.5" source="//@nodes.0/@Children.2/@Children.1/@Children.3" target="//@nodes.0/@Children.2/@Children.1/@Children.4"/>
+  <transitions name="playTO0.3.2.5" source="//@nodes.0/@Children.2/@Children.1/@Children.2" target="//@nodes.0/@Children.2/@Children.1/@Children.4"/>
+  <transitions name="0.3.2.3.1TO0.3.2.3.2" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.1"/>
+  <transitions TE="[ballfound==0]" name="0.3.2.3.2TOsearchBallOrReturnToPosition" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2"/>
+  <transitions TE="[ballfound!=0 and !readyToKick and !ballAway]" name="0.3.2.3.2TOApproachBall_one_or_more_times_" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3"/>
+  <transitions TE="[ballfound!=0 and readytokick]" name="0.3.2.3.2TOKick" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.4"/>
+  <transitions TE="[ballfound!=0 and ballaway]" name="0.3.2.3.2TOfollowTheBall" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5"/>
+  <transitions name="followTheBallTO0.3.2.3.7" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.6"/>
+  <transitions name="KickTO0.3.2.3.7" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.4" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.6"/>
+  <transitions name="ApproachBall_one_or_more_times_TO0.3.2.3.7" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.6"/>
+  <transitions name="searchBallOrReturnToPositionTO0.3.2.3.7" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.6"/>
+  <transitions name="0.3.2.3.3.1TO0.3.2.3.3.2" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[!returnToPosition]" name="0.3.2.3.3.2TOScan_one_or_more_times_" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2"/>
+  <transitions TE="[returnToPosition]" name="0.3.2.3.3.2TOGoToPosition_one_or_more_times_" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3"/>
+  <transitions name="GoToPosition_one_or_more_times_TO0.3.2.3.3.5" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.4"/>
+  <transitions name="Scan_one_or_more_times_TO0.3.2.3.3.5" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.4"/>
+  <transitions TE="[publish timestamp]" name="0.3.2.3.3.3.1TOScan" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[ballfound==0 ! and ReturnToPosition]" name="ScanTOScan" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[ballfound!=0 || return ToPosition]" name="ScanTO0.3.2.3.3.3.3" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.2/@Children.2"/>
+  <transitions name="0.3.2.3.3.4.1TOGoToPosition" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3/@Children.1"/>
+  <transitions TE="[!inPosition]" name="GoToPositionTOGoToPosition" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3/@Children.1"/>
+  <transitions TE="[inPosition]" name="GoToPositionTO0.3.2.3.3.4.3" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.2/@Children.3/@Children.2"/>
+  <transitions name="0.3.2.3.4.1TOApproachBall" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.1"/>
+  <transitions TE="[PLAYER_PLAYING and !readyToKick and !ballAway and ballfound!=0]" name="ApproachBallTOApproachBall" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.1"/>
+  <transitions TE="[!PLAYER_PLAYING || reayToKick || ballAway || ballfound==0]" name="ApproachBallTO0.3.2.3.4.3" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.3/@Children.2"/>
+  <transitions name="0.3.2.3.6.1TOStare_one_or_more_times_" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1"/>
+  <transitions name="Stare_one_or_more_times_TO_open_option_SpecialAction_close_option_" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2"/>
+  <transitions name="_open_option_SpecialAction_close_option_TO0.3.2.3.6.4" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.3"/>
+  <transitions name="0.3.2.3.6.2.1TOStare" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.1"/>
+  <transitions TE="[ballAway and ballfound!=0 and !fall]" name="StareTOStare" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.1"/>
+  <transitions TE="[ballfounmd==0 || fall || !ballAway]" name="StareTO0.3.2.3.6.2.3" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.1/@Children.2"/>
+  <transitions name="0.3.2.3.6.3.1TO0.3.2.3.6.3.2" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.1"/>
+  <transitions TE="[PLAYER_PLAYING and ballfound!=0 and fall]" name="0.3.2.3.6.3.2TOSpecialAction" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.2"/>
+  <transitions TE="[!PLAYER_PLAYING || ballfound==0 || !fall]" name="0.3.2.3.6.3.2TO0.3.2.3.6.3.4" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.3"/>
+  <transitions TE="" name="SpecialActionTO0.3.2.3.6.3.4" source="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.2" target="//@nodes.0/@Children.2/@Children.1/@Children.2/@Children.5/@Children.2/@Children.3"/>
+  <transitions name="0.3.2.4.1TONoPlay" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.1"/>
+  <transitions name="NoPlayTO_open_option_GoToPosition_one_or_more_times__close_option_" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2"/>
+  <transitions name="_open_option_GoToPosition_one_or_more_times__close_option_TO0.3.2.4.4" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.3"/>
+  <transitions name="0.3.2.4.3.3.1TOGoToPosition" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[PLAYER_READY and !inPosition ]" name="GoToPositionTOGoToPosition" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[!PLAYER_READY || inPosition]" name="GoToPositionTO0.3.2.4.3.3.3" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2/@Children.2"/>
+  <transitions name="0.3.2.4.3.1TO0.3.2.4.3.2" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.0" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.1"/>
+  <transitions TE="[PLAYER_READY]" name="0.3.2.4.3.2TOGoToPosition_one_or_more_times_" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2"/>
+  <transitions TE="[!PLAYER_READY]" name="0.3.2.4.3.2TO0.3.2.4.3.4" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.3"/>
+  <transitions name="GoToPosition_one_or_more_times_TO0.3.2.4.3.4" source="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.2" target="//@nodes.0/@Children.2/@Children.1/@Children.3/@Children.2/@Children.3"/>
+  <transitions name="0.3.1TOdecision" source="//@nodes.0/@Children.2/@Children.0" target="//@nodes.0/@Children.2/@Children.1"/>
+  <transitions TE="[!PLAYER_FINISHED]" name="decisionTOdecision" source="//@nodes.0/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.1"/>
+  <transitions TE="[PLAYER_FINISHED]" name="decisionTO0.3.3" source="//@nodes.0/@Children.2/@Children.1" target="//@nodes.0/@Children.2/@Children.2"/>
+</statechart:Model>

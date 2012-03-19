@@ -3,7 +3,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "activities/ApproachBall/ApproachBall.h"
+#include "tools/BehaviorConst.h"
 
 class TrCond_StareTO0_3_2_3_6_2_3 : public statechart_engine::ICondition {
 
@@ -11,6 +11,7 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 		}
 
 	bool Eval() {
@@ -18,10 +19,10 @@ public:
 		//Logger::Instance().WriteMsg("TrCond_0_3_2_3_2TOfollowBall_one_or_more_times_", "  ", Logger::Info);
 	//	boost::shared_ptr<const ObservationMessage> obsm = _blk->readSignal<ObservationMessage>("vision");
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
-		boost::shared_ptr<const FallMessage> fm  = _blk->readSignal<FallMessage>("behavior");
-		boost::shared_ptr<const GameStateMessage> gsm  = _blk->readState<GameStateMessage>("behavior");
-		ApproachBall ab;
+		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("worldstate");
+		boost::shared_ptr<const FallMessage> fm  = _blk->readState<FallMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm  = _blk->readState<GameStateMessage>("worldstate");
+		
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){
 		//	Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " !PLAYING true ", Logger::Info);
 			return true;
@@ -31,7 +32,7 @@ public:
 			return true;
 		}
 		if(wimsg.get()!=0  && wimsg->balls_size()!=0 ){
-			if( !ab.ballAway(wimsg)) {//ball is far away from the goalpost
+			if( !ballAway(wimsg)) {//ball is far away from the goalpost
 			//	Logger::Instance().WriteMsg("TrCond_StareTO0_3_2_3_6_2_3", " !ballAway true ", Logger::Info);
 				return true;
 			}

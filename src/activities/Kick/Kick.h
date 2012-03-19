@@ -6,7 +6,7 @@
 #include "messages/AllMessagesHeader.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "../BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 #include "tools/MathFunctions.h"
 
 class Kick : public IActivity {
@@ -27,7 +27,6 @@ private:
 	boost::shared_ptr<const GameStateMessage> gsm;
 	boost::shared_ptr<const WorldInfo> wimsg;
 	boost::shared_ptr<const KickOffMessage> kcm;
-	boost::shared_ptr<const PlayerNumberMessage> pnm;
 	ReturnToPositionMessage* rpm;
 	bool readConf;
 

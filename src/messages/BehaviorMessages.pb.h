@@ -36,10 +36,8 @@ class KickOffMessage;
 class BToHeadMessage;
 class HeadToBMessage;
 class ScanMessage;
-class PlayerNumberMessage;
 class PositionMessage;
 class ReturnToPositionMessage;
-class DoubleObsInfo;
 class FallMessage;
 class LocalizationResetMessage;
 class RobotInPosition;
@@ -384,98 +382,6 @@ class ScanMessage : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class PlayerNumberMessage : public ::google::protobuf::Message {
- public:
-  PlayerNumberMessage();
-  virtual ~PlayerNumberMessage();
-  
-  PlayerNumberMessage(const PlayerNumberMessage& from);
-  
-  inline PlayerNumberMessage& operator=(const PlayerNumberMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const PlayerNumberMessage& default_instance();
-  
-  void Swap(PlayerNumberMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  PlayerNumberMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const PlayerNumberMessage& from);
-  void MergeFrom(const PlayerNumberMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 player_number = 1 [default = 2];
-  inline bool has_player_number() const;
-  inline void clear_player_number();
-  static const int kPlayerNumberFieldNumber = 1;
-  inline ::google::protobuf::int32 player_number() const;
-  inline void set_player_number(::google::protobuf::int32 value);
-  
-  // required int32 team_side = 2 [default = 1];
-  inline bool has_team_side() const;
-  inline void clear_team_side();
-  static const int kTeamSideFieldNumber = 2;
-  inline ::google::protobuf::int32 team_side() const;
-  inline void set_team_side(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:PlayerNumberMessage)
- private:
-  inline void set_has_player_number();
-  inline void clear_has_player_number();
-  inline void set_has_team_side();
-  inline void clear_has_team_side();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 player_number_;
-  ::google::protobuf::int32 team_side_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static PlayerNumberMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
 class PositionMessage : public ::google::protobuf::Message {
  public:
   PositionMessage();
@@ -657,100 +563,6 @@ class ReturnToPositionMessage : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static ReturnToPositionMessage* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class DoubleObsInfo : public ::google::protobuf::Message {
- public:
-  DoubleObsInfo();
-  virtual ~DoubleObsInfo();
-  
-  DoubleObsInfo(const DoubleObsInfo& from);
-  
-  inline DoubleObsInfo& operator=(const DoubleObsInfo& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const DoubleObsInfo& default_instance();
-  
-  void Swap(DoubleObsInfo* other);
-  
-  // implements Message ----------------------------------------------
-  
-  DoubleObsInfo* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const DoubleObsInfo& from);
-  void MergeFrom(const DoubleObsInfo& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required .ObservationMessage prev = 1;
-  inline bool has_prev() const;
-  inline void clear_prev();
-  static const int kPrevFieldNumber = 1;
-  inline const ::ObservationMessage& prev() const;
-  inline ::ObservationMessage* mutable_prev();
-  inline ::ObservationMessage* release_prev();
-  
-  // required .ObservationMessage last = 2;
-  inline bool has_last() const;
-  inline void clear_last();
-  static const int kLastFieldNumber = 2;
-  inline const ::ObservationMessage& last() const;
-  inline ::ObservationMessage* mutable_last();
-  inline ::ObservationMessage* release_last();
-  
-  // @@protoc_insertion_point(class_scope:DoubleObsInfo)
- private:
-  inline void set_has_prev();
-  inline void clear_has_prev();
-  inline void set_has_last();
-  inline void clear_has_last();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::ObservationMessage* prev_;
-  ::ObservationMessage* last_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static DoubleObsInfo* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1119,54 +931,6 @@ inline void ScanMessage::set_scancompleted(bool value) {
 
 // -------------------------------------------------------------------
 
-// PlayerNumberMessage
-
-// required int32 player_number = 1 [default = 2];
-inline bool PlayerNumberMessage::has_player_number() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void PlayerNumberMessage::set_has_player_number() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void PlayerNumberMessage::clear_has_player_number() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void PlayerNumberMessage::clear_player_number() {
-  player_number_ = 2;
-  clear_has_player_number();
-}
-inline ::google::protobuf::int32 PlayerNumberMessage::player_number() const {
-  return player_number_;
-}
-inline void PlayerNumberMessage::set_player_number(::google::protobuf::int32 value) {
-  set_has_player_number();
-  player_number_ = value;
-}
-
-// required int32 team_side = 2 [default = 1];
-inline bool PlayerNumberMessage::has_team_side() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void PlayerNumberMessage::set_has_team_side() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void PlayerNumberMessage::clear_has_team_side() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void PlayerNumberMessage::clear_team_side() {
-  team_side_ = 1;
-  clear_has_team_side();
-}
-inline ::google::protobuf::int32 PlayerNumberMessage::team_side() const {
-  return team_side_;
-}
-inline void PlayerNumberMessage::set_team_side(::google::protobuf::int32 value) {
-  set_has_team_side();
-  team_side_ = value;
-}
-
-// -------------------------------------------------------------------
-
 // PositionMessage
 
 // required float posX = 1 [default = 70];
@@ -1259,68 +1023,6 @@ inline bool ReturnToPositionMessage::goalietopos() const {
 inline void ReturnToPositionMessage::set_goalietopos(bool value) {
   set_has_goalietopos();
   goalietopos_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// DoubleObsInfo
-
-// required .ObservationMessage prev = 1;
-inline bool DoubleObsInfo::has_prev() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void DoubleObsInfo::set_has_prev() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void DoubleObsInfo::clear_has_prev() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void DoubleObsInfo::clear_prev() {
-  if (prev_ != NULL) prev_->::ObservationMessage::Clear();
-  clear_has_prev();
-}
-inline const ::ObservationMessage& DoubleObsInfo::prev() const {
-  return prev_ != NULL ? *prev_ : *default_instance_->prev_;
-}
-inline ::ObservationMessage* DoubleObsInfo::mutable_prev() {
-  set_has_prev();
-  if (prev_ == NULL) prev_ = new ::ObservationMessage;
-  return prev_;
-}
-inline ::ObservationMessage* DoubleObsInfo::release_prev() {
-  clear_has_prev();
-  ::ObservationMessage* temp = prev_;
-  prev_ = NULL;
-  return temp;
-}
-
-// required .ObservationMessage last = 2;
-inline bool DoubleObsInfo::has_last() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void DoubleObsInfo::set_has_last() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void DoubleObsInfo::clear_has_last() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void DoubleObsInfo::clear_last() {
-  if (last_ != NULL) last_->::ObservationMessage::Clear();
-  clear_has_last();
-}
-inline const ::ObservationMessage& DoubleObsInfo::last() const {
-  return last_ != NULL ? *last_ : *default_instance_->last_;
-}
-inline ::ObservationMessage* DoubleObsInfo::mutable_last() {
-  set_has_last();
-  if (last_ == NULL) last_ = new ::ObservationMessage;
-  return last_;
-}
-inline ::ObservationMessage* DoubleObsInfo::release_last() {
-  clear_has_last();
-  ::ObservationMessage* temp = last_;
-  last_ = NULL;
-  return temp;
 }
 
 // -------------------------------------------------------------------

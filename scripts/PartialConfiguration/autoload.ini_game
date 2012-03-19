@@ -1,27 +1,22 @@
 [core]
 albase
 framemanager
-audiodevice
-audioout
 
 [extra]
 devicecommunicationmanager
-#sensors #button events
+sensors #button events
+robotmodel
 motion
-#motionrecorder
 leds
 videoinput
-#audioin
-#sensorlog
-#mecalogger
+audiodevice
+audioout
 pythonbridge
 #sentinel #audio warnings about  battery and heat, auto shutdown
 launcher
-#allaser
-#behaviormanager
 albonjour
-#urbistarter
 krobot
+
 [remote]
 #naoqi-autolaunch
 ../../../home/nao/naoqi/bin/autostartkrobot

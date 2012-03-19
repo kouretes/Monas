@@ -9,8 +9,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-#include "../BehaviorConst.h"
-#include "../ApproachBall/ApproachBall.h"
+#include "tools/BehaviorConst.h"
 #include "tools/MathFunctions.h"
 	
 
@@ -26,18 +25,15 @@ public:
 	bool readRobotConfiguration(const std::string& file_name);	
 	
 private:
-	ApproachBall ab;
+
 	bool kickOff;
 	
 	boost::shared_ptr<const GameStateMessage> gsm;
-	boost::shared_ptr<const PlayerNumberMessage> pnm;
 	boost::shared_ptr<const WorldInfo> wimsg;
-	boost::shared_ptr<const ObservationMessage> obsm;
 	
 	int curraction, prevaction;	
 	float myPosX, myPosY, myPhi;
 	boost::posix_time::ptime lastMove, lastObsm, firstInit, calibrate_time;
-	
 	
 	ReturnToPositionMessage* rpm;
 	MotionWalkMessage wmot;

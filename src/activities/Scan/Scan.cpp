@@ -7,10 +7,14 @@ namespace {
 }
 
 int Scan::Execute() {
-	//Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
+	
+	float bx = 0.0;
+	float by = 1.1;
+	float bd = 1.1;
+	float bb = 0.0; // M_PI
+	Logger::Instance().WriteMsg("Scan",  " execute", Logger::Info);
 	hbm = _blk->readState<HeadToBMessage> ("behavior");
 	//scnm = _blk->readSignal<ScanMessage> ("behavior");
-
 
 	LedChangeMessage leds;
 	LedValues* l = leds.add_leds();
@@ -31,7 +35,9 @@ int Scan::Execute() {
 				//lastTurn = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(4);
 			//}else{
 				//if(lastTurn<= )
-			velocityWalk(0.0,0.0, 0.0, 1.0);
+				
+					velocityWalk(0, 0, 0, 1.0);
+					
 			//}
 
 		//	if(forball%51!=0 ){
@@ -51,6 +57,7 @@ int Scan::Execute() {
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
 
+_blk->publish_all();
 	return 0;
 }
 

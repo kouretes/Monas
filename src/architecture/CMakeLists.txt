@@ -5,6 +5,7 @@ message ( STATUS "" )
 
 add_subdirectory ( ./narukom/ )
 add_subdirectory ( ./statechartEngine/ )
+add_subdirectory (./robocup/)
 
 # TODO
 
@@ -14,7 +15,9 @@ if ( "${ActivityBuildType}" STREQUAL "MODULE" )
 endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
 
 add_library ( MonasCore ${LibBuildType}
+                        IActivity.h
                         IActivity.cpp
+                        talws.h
                         talws.cpp
 )
 

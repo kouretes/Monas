@@ -7,7 +7,7 @@
 #include "messages/BehaviorMessages.pb.h"
 #include "tools/logger.h"
 #include "tools/toString.h"		
-#include "activities/BehaviorConst.h"
+#include "tools/BehaviorConst.h"
 class SpecialAction : public IActivity {
 			
 public:
@@ -17,7 +17,6 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	boost::shared_ptr<const DoubleObsInfo> obs;
 	MotionActionMessage* amot;	
 	BToHeadMessage* bhm;
 	ReturnToPositionMessage* rpm;

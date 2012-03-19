@@ -260,7 +260,7 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
     "referenceYaw\030\010 \002(\002:\0010\022\031\n\016referencePitch\030"
     "\t \002(\002:\0010\022\021\n\006radius\030\n \002(\002:\0010\"b\n\014Calibrate"
     "Cam\022\016\n\006status\030\001 \002(\005\022\027\n\tsleeptime\030\002 \002(\005:\004"
-    "1500\022\017\n\003exp\030\003 \002(\005:\00215\022\030\n\rexposure_comp\030\004"
+    "1500\022\017\n\003exp\030\003 \002(\005:\00213\022\030\n\rexposure_comp\030\004"
     " \002(\002:\0011\"K\n\nBallObject\022\017\n\004dist\030\001 \002(\002:\0010\022\022"
     "\n\007bearing\030\002 \002(\002:\0010\022\030\n\rball_diameter\030\003 \001("
     "\002:\0010\"\202\001\n\013NamedObject\022\025\n\013object_name\030\001 \002("
@@ -696,7 +696,7 @@ void CalibrateCam::SharedCtor() {
   _cached_size_ = 0;
   status_ = 0;
   sleeptime_ = 1500;
-  exp_ = 15;
+  exp_ = 13;
   exposure_comp_ = 1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -734,7 +734,7 @@ void CalibrateCam::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     status_ = 0;
     sleeptime_ = 1500;
-    exp_ = 15;
+    exp_ = 13;
     exposure_comp_ = 1;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -778,7 +778,7 @@ bool CalibrateCam::MergePartialFromCodedStream(
         break;
       }
       
-      // required int32 exp = 3 [default = 15];
+      // required int32 exp = 3 [default = 13];
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -838,7 +838,7 @@ void CalibrateCam::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->sleeptime(), output);
   }
   
-  // required int32 exp = 3 [default = 15];
+  // required int32 exp = 3 [default = 13];
   if (has_exp()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->exp(), output);
   }
@@ -866,7 +866,7 @@ void CalibrateCam::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->sleeptime(), target);
   }
   
-  // required int32 exp = 3 [default = 15];
+  // required int32 exp = 3 [default = 13];
   if (has_exp()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->exp(), target);
   }
@@ -901,7 +901,7 @@ int CalibrateCam::ByteSize() const {
           this->sleeptime());
     }
     
-    // required int32 exp = 3 [default = 15];
+    // required int32 exp = 3 [default = 13];
     if (has_exp()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(

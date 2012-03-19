@@ -8,10 +8,10 @@ namespace {
 
 int SpecialAction::Execute() {
 
-	//Logger::Instance().WriteMsg("SpecialAction",  " execute" + to_simple_string(boost::posix_time::microsec_clock::universal_time()) , Logger::Info);
-	obs = _blk->readData<DoubleObsInfo>("behavior");
+	Logger::Instance().WriteMsg("SpecialAction",  " execute" + to_simple_string(boost::posix_time::microsec_clock::universal_time()) , Logger::Info);
+	
 	//Stare st;
-	fm = _blk->readSignal<FallMessage>("behavior");
+	fm = _blk->readState<FallMessage>("behavior");
 	LedChangeMessage leds;
 	//if (st.toFallOrNotToFall(obs) ==-1)
 	LedValues* l = leds.add_leds();
@@ -34,6 +34,10 @@ int SpecialAction::Execute() {
 	//rpm->set_goalietopos(true);
 	//_blk->publishSignal(*rpm, "behavior");
 	//sleep(2);
+	FallMessage fl;
+	fl.set_fall(0);
+	_blk->publishState(fl, "behavior");
+	_blk->publish_all();
 	return 0;
 }
 

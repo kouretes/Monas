@@ -8,13 +8,13 @@ class TrCond_decisionTO0_3_3 : public statechart_engine::ICondition {
 public:
 
 	void UserInit () {
-		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
 		/* PLAYER_FINISHED */
 		//Logger::Instance().WriteMsg("decision forever", "!FINISHED ",Logger::Info);
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("worldstate");
 
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_FINISHED)
 			return true;

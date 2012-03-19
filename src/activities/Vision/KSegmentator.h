@@ -92,7 +92,7 @@ class KSegmentator{
 #ifndef FORCEINTERLV
 		enum {INTERLEAVED,FULL} type;
 #endif
-		static const unsigned char LUTres=3,LUTsize=32;//Carefull. LUTSIZE=256>>LUTRES
+		static const unsigned char LUTres=2,LUTsize=64;//Carefull. LUTSIZE=256>>LUTRES
 		//Pointer to attached IplImage data
 
 		char const *dataPointer;
@@ -100,7 +100,7 @@ class KSegmentator{
 		int width;//:)
 		int height;
 		//Scale up Y component to compensate for exposure or lighting variations
-		float lumascale;
+		int lumascale;
 		enum colorValues
 		{
 			red_ = 1, blue_ = 2, green_ = 3, skyblue_ = 4, yellow_ = 5, orange_ = 6, white_ = 7, black_  = 8
@@ -180,17 +180,10 @@ class KSegmentator{
         	//colormask_t t=YLUT[y]&ULUT[u]&VLUT[v];
         	//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &e);
 			//segment.tv_nsec+=ttdiff(s,e).tv_nsec;
-			int yn=y*lumascale;
+			int yn=y+lumascale;
 			if(yn>255) yn=255;
 			y=yn;
-			int un=(((int)u)-128)*lumascale;
-			if(un<-128) un=-128;
-			if(un>127) un=127;
-			u=un+128;
-			int vn=(((int)v)-128)*lumascale;
-			if(vn<-128) vn=-128;
-			if(vn>127) vn=127;
-			v=vn+128;
+	
 			//Precheck... Does it SEEM at lest to contain needed values?
 
 			if(!(rYLUT[y>>LUTres]&rULUT[u>>LUTres]&rVLUT[v>>LUTres]&hint))

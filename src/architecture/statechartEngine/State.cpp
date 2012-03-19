@@ -87,7 +87,10 @@ namespace statechart_engine {
     int State::AddTransition ( TransitionSegmentBase* transition ) {
         //TODO
 //        std::cout<<"Adding Transition "<<transition<<" of type "<<typeid(transition).name()<<" to state "<<this<<" of type "<<typeid(this).name()<<std::endl;
-        _transitions.push_back(transition);
+		if(transition->has_Condition())
+			_transitions.insert(_transitions.begin(),transition);
+		else
+			_transitions.push_back(transition);
         return 0;
     }
 
