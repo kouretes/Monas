@@ -389,120 +389,6 @@ int ObstacleAvoidance::Execute() {
 	return 0;
 }
 
-/************** Opencv Drawing **************/
-/*
-void ObstacleAvoidance::cvDrawGrid(){
-	int colorValue = 0;
-	CvPoint curve1[4];
-	CvPoint* curveArr = {curve1};
-	int nCurvePts = {4};
-	int nCurves = 1;
-	int isCurveClosed=1;
-	int lineWidth=8;
-	int r, s;
-	CvPoint center, toP, fromP, leftP, rightP;  
-
-	CvScalar white = cvScalar(ColorMax,ColorMax,ColorMax);
-	CvScalar grey = cvScalar(ColorMax/2,ColorMax/2,ColorMax/2);
-	CvScalar blue = cvScalar(ColorMax, 0, 0);
-	CvScalar black = cvScalar(0, 0, 0);
-	CvScalar paintColor = grey;
-	CvScalar red = cvScalar(0, 0, ColorMax);
-	CvScalar green = cvScalar(0, ColorMax, 0);
-
-	for (r=0; r<TotalRings; r++) {
-		for (s=0; s<N; s++) {
-			curve1[0].x = gridImgH[r][s];
-			curve1[0].y = gridImgV[r][s];
-			curve1[1].x = gridImgH[(r+1)][s];
-			curve1[1].y = gridImgV[(r+1)][s];
-			curve1[2].x = gridImgH[(r+1)][wrapTo(s+1, N)];
-			curve1[2].y = gridImgV[(r+1)][wrapTo(s+1, N)];
-			curve1[3].x = gridImgH[r][wrapTo(s+1, N)];
-			curve1[3].y = gridImgV[r][wrapTo(s+1, N)];
-			
-			colorValue = ColorMax - PolarGrid[present][r][s]*ColorMax;
-			paintColor = cvScalar(colorValue, colorValue, colorValue);
-			
-			if (r == InnerRing) {
-				paintColor = cvScalar(ColorMax, ColorMax, ColorMax);
-				cvFillPoly( img, &curveArr,&nCurvePts, nCurves, paintColor );
-			}
-			else {
-				cvFillPoly( img, &curveArr, &nCurvePts, nCurves, paintColor );
-				cvPolyLine( img,&curveArr, &nCurvePts, nCurves, 1, white, isCurveClosed, lineWidth, 0 );
-			}
-		}
-	}
-	
-	if (pathR[0] != -1 && pathS[0] != -1) {
-		CvPoint ball = cvPoint( toGrid(targetY), toGrid(targetX) ); 
-		cvCircle(img, ball, 3, red, 2, 8, 0);
-	//	CvPoint target = cvPoint( toGrid(cellCenterY[targetR][targetS]), toGrid(cellCenterX[targetR][targetS]) );
-	//	cvCircle(img, target, 3, green, 2, 8, 0);
-	}
-	
-	for (int ways=0; ways<PathLength; ways++) {
-		if (pathR[ways] == -1 && pathS[ways] == -1) break;
-		
-		r = pathR[ways];
-		s = pathS[ways]; 
-
-		if (r==InnerRing+1)
-			fromP = cvPoint( toGrid(toCartesianY(RtoD(r)+0.75*RingDistance, StoT(s)+0.5*SectorAngleRad)), toGrid(toCartesianX(RtoD(r)+0.75*RingDistance, StoT(s)+0.5*SectorAngleRad)) );
-		else
-			fromP = cvPoint( toGrid(cellCenterY[r][s]), toGrid(cellCenterX[r][s]) );
-		
-		curve1[0].x = gridImgH[r][s];
-		curve1[0].y = gridImgV[r][s];
-		curve1[1].x = gridImgH[(r+1)][s];
-		curve1[1].y = gridImgV[(r+1)][s];
-		curve1[2].x = gridImgH[(r+1)][wrapTo(s+1, N)];
-		curve1[2].y = gridImgV[(r+1)][wrapTo(s+1, N)];
-		curve1[3].x = gridImgH[r][wrapTo(s+1, N)];
-		curve1[3].y = gridImgV[r][wrapTo(s+1, N)];
-		
-		if (pathO[ways] == 0)
-			toP = cvPoint( (curve1[1].x + curve1[2].x )/2, (curve1[1].y + curve1[2].y )/2 );  
-		else if (pathO[ways] == 1)
-			toP = cvPoint( curve1[2].x, curve1[2].y ); 
-		else if (pathO[ways] == 2)
-			toP = cvPoint( (curve1[2].x + curve1[3].x )/2, (curve1[2].y + curve1[3].y )/2 );  
-		else if (pathO[ways] == 3)
-			toP = cvPoint(  curve1[3].x, curve1[3].y); 
-		else if (pathO[ways] == 4)
-			toP = cvPoint( (curve1[0].x + curve1[3].x )/2, (curve1[0].y + curve1[3].y )/2 );  
-		else if (pathO[ways] == 5)
-			toP = cvPoint(  curve1[0].x, curve1[0].y); 
-		else if (pathO[ways] == 6)
-			toP = cvPoint( (curve1[1].x + curve1[0].x )/2, (curve1[1].y + curve1[0].y )/2 );  
-		else if (pathO[ways] == 7)
-			toP = cvPoint(  curve1[1].x, curve1[1].y); 
-		
-		cvLine( img, fromP, toP, blue, 1, CV_AA, 0);
-		pathR[ways] = -1;
-		pathS[ways] = -1;
-		pathO[ways] = -1;
-	}
-	
-	
-	//draw the arrow
-	center = cvPoint(ImgShift, ImgShift);  
-	fromP  = cvPoint(center.x, center.y + ArrowOffset); 
-	toP    = cvPoint(center.x, center.y - ArrowOffset);   
-	leftP  = cvPoint(center.x - ArrowOffset, center.y);  
-	rightP = cvPoint(center.x + ArrowOffset, center.y);  
-	
-	cvLine( img, fromP,  toP, blue, 2, CV_AA, 0);
-	cvLine( img, leftP,  toP, blue, 2, CV_AA, 0);
-	cvLine( img, rightP, toP, blue, 2, CV_AA, 0);  
-     
-	cvNamedWindow("robot map", CV_WINDOW_AUTOSIZE);
-	cvShowImage("robot map", img);
-	cvWaitKey(0);
-
-}
-*/
 void ObstacleAvoidance::printSonarValues(){
 	for(int i=0;i<SOnARsNum;i++)
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "leftSensor: " + _toString(LeftValue[i].sensorvalue()) + " rightSensor: " + _toString(RightValue[i].sensorvalue()) , Logger::Info);
@@ -593,21 +479,6 @@ void ObstacleAvoidance::initPolarGrid(){
 }
 
 void ObstacleAvoidance::initCoordinates() {
-	/*for (int r=0; r<TotalRings+1; r++) 
-		for (int s=0; s<N; s++) 
-			if (r == InnerRing) {
-				gridImgH[r][s] = ImgShift;
-				gridImgV[r][s] = ImgShift;
-			}
-			else if (r == InnerRing+1) {
-				gridImgV[r][s] = toGrid( toCartesianX( 0.5*RingDistance, StoT(s) ) );
-				gridImgH[r][s] = toGrid( toCartesianY( 0.5*RingDistance, StoT(s) ) );
-			}
-			else {
-				gridImgV[r][s] = toGrid( toCartesianX( RtoD(r), StoT(s) ) );
-				gridImgH[r][s] = toGrid( toCartesianY( RtoD(r), StoT(s) ) );
-			}
-		*/
 	for (int r=0; r<TotalRings; r++) 
 		for (int s=0; s<N; s++) 
 			if (r == InnerRing) {
@@ -1084,7 +955,7 @@ void ObstacleAvoidance::publishGridInfo() {
 		gridInfoMessage.set_pathstepsring(step, pathR[step]);
 		gridInfoMessage.set_pathstepssector(step, pathS[step]);
 		gridInfoMessage.set_pathstepsorientation(step, pathO[step]);
-		Logger::Instance().WriteMsg("ObstacleAvoidance", " R " + _toString(pathR[step]) + " S " + _toString(pathS[step]), Logger::Info);
+		//Logger::Instance().WriteMsg("ObstacleAvoidance", " R " + _toString(pathR[step]) + " S " + _toString(pathS[step]), Logger::Info);
 	}
 	_blk->publishSignal(gridInfoMessage, "obstacle");
 }

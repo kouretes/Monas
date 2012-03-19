@@ -24,7 +24,7 @@
 <GoalDistanceTolerance>0.15</GoalDistanceTolerance>
 <GoalAngleTolerance>0.7</GoalAngleTolerance>
 <!--debuging mode-->
-<debugModeCout>1</debugModeCout>
+<debugModeCout>0</debugModeCout>
 <debugRelativeMode>0</debugRelativeMode>
 <!--Relative Mode-->
 <testPathX>1.0</testPathX>
