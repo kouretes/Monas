@@ -225,9 +225,9 @@ void MotionController::mglrun()
 			actionPID = it->second->ExecutePost();
 		currentstate=gameState;
 
-	       	sm.set_type(MotionStateMessage::IDLE);
+	    sm.set_type(MotionStateMessage::IDLE);
 		sm.set_detail("");
-	      	_blk->publishState(sm,"worldstate");
+	    _blk->publishState(sm,"worldstate");
 	}
 	else if (gameState == PLAYER_PENALISED||gameState==PLAYER_FINISHED)
 	{
@@ -242,9 +242,9 @@ void MotionController::mglrun()
 			actionPID = it->second->ExecutePost();
 		currentstate=gameState;
 
-	       	sm.set_type(MotionStateMessage::IDLE);
+	    sm.set_type(MotionStateMessage::IDLE);
 		sm.set_detail("");
-	      	_blk->publishState(sm,"worldstate");
+	    _blk->publishState(sm,"worldstate");
 
 	}
 	else
@@ -257,9 +257,9 @@ void MotionController::mglrun()
 	{
 		motion->setStiffnesses("Body", 0.0);
 
-        	sm.set_type(MotionStateMessage::FALL);
+        sm.set_type(MotionStateMessage::FALL);
 		sm.set_detail("");
-        	_blk->publishState(sm,"worldstate");
+        _blk->publishState(sm,"worldstate");
 		
 		waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
@@ -297,9 +297,9 @@ void MotionController::mglrun()
 			}
 			motion->setStiffnesses("Body", 0.0);
 
-        		sm.set_type(MotionStateMessage::FALL);
+        	sm.set_type(MotionStateMessage::FALL);
 			sm.set_detail("");
-        		_blk->publishState(sm,"worldstate");
+        	_blk->publishState(sm,"worldstate");
 
 			waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
@@ -350,9 +350,9 @@ void MotionController::mglrun()
 	if ((actionPID == 0) && robotDown)
 	{
 
-        	sm.set_type(MotionStateMessage::STANDUP);
+        sm.set_type(MotionStateMessage::STANDUP);
 		sm.set_detail("");
-      		_blk->publishState(sm,"worldstate");
+      	_blk->publishState(sm,"worldstate");
 
 	//	Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", FULLSTIFFNESS);
@@ -391,9 +391,9 @@ void MotionController::mglrun()
 			if (wm->command() == "walkTo")
 			{
 				if(sm.detail().compare("walkTo") != 0){				
-        				sm.set_type(MotionStateMessage::WALKING);
+        			sm.set_type(MotionStateMessage::WALKING);
 					sm.set_detail("walkTo");
-        				_blk->publishState(sm,"worldstate");
+        			_blk->publishState(sm,"worldstate");
 				}
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
@@ -407,9 +407,9 @@ void MotionController::mglrun()
 			{
 				
 				if(sm.detail().compare("setWalkTargetVelocity") != 0){	
-        				sm.set_type(MotionStateMessage::WALKING);
+        			sm.set_type(MotionStateMessage::WALKING);
 					sm.set_detail("setWalkTargetVelocity");
-        				_blk->publishState(sm,"worldstate");
+        			_blk->publishState(sm,"worldstate");
 				}
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
@@ -477,13 +477,12 @@ void MotionController::mglrun()
 			str.erase(0,pos+1);
 			strKick.erase(pos, strKick.size());
 
-        		sm.set_type(MotionStateMessage::ACTION);
+        	sm.set_type(MotionStateMessage::ACTION);
 			sm.set_detail(str);
+
 
 			sm.set_lastaction(am->command());
         	_blk->publishState(sm,"worldstate");
-
-
 			if (str.compare("kmex") == 0)
 			{
 				vector<int> frames = SpCutActionsManager();

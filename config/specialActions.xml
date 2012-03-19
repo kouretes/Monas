@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 
-<!-- Pose number starts from 0-->
+<!-- Pose number id starts from 0-->
 
-<Motion numOfPoses = 5 threshold = 0.7 numOfJoints = 8>	<!-- a good ball distance (bd) for the kick is 15 cm -->
+<Motion numOfPoses = 3 threshold = 0.7 numOfJoints = 8>	<!-- a good ball distance (bd) for the kick is 15 cm -->
 <actionName>KickForwardRight.kme</actionName>
 
 <Joints>LHipRoll</Joints>
@@ -17,12 +17,11 @@
 <Poses pose = 5></Poses>
 <Poses pose = 7></Poses>
 <Poses pose = 10></Poses>
-<Poses pose = 14></Poses>
-<Poses pose = 25></Poses>
+
 </Motion>
 
 
-<Motion numOfPoses = 5 threshold = 0.7 numOfJoints = 8>		<!-- a good ball distance (bd) for the kick is 15 cm -->
+<Motion numOfPoses = 3 threshold = 0.7 numOfJoints = 8>		<!-- a good ball distance (bd) for the kick is 15 cm -->
 <actionName>KickForwardLeft.kme</actionName>
 
 <Joints>LHipRoll</Joints>
@@ -36,9 +35,7 @@
 
 <Poses pose = 5></Poses>
 <Poses pose = 9></Poses>
-<Poses pose = 15></Poses>
-<Poses pose = 19></Poses>
-<Poses pose = 26></Poses>	
+<Poses pose = 14></Poses>
 
 </Motion>
 
