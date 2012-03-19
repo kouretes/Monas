@@ -24,9 +24,12 @@
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
 	<name>KSensors</name>
 	<activity>Sensors</activity>
-	<activity>ObstacleAvoidance</activity>
 </agent>
 
+<agent IsRealTime=1 Priority=1 ThreadFrequency=4 StatsCycle=1000>
+	<name>ObstacleAvoidance</name>
+	<activity>ObstacleAvoidance</activity>
+</agent>
 
  <statechart>goalie070611</statechart>  
 
