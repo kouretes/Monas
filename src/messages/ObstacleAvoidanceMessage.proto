@@ -21,6 +21,8 @@ message PathPlanningRequestMessage{
 	required float goToX = 1 [default = 0.0];
 	required float goToY = 2 [default = 0.0];
 	required float goToAngle = 3 [default = 0.0];
+	
+	required string mode = 4 [default = "absolute"];
 }
 
 message PathPlanningResultMessage{
@@ -30,6 +32,9 @@ message PathPlanningResultMessage{
 }
 
 message GridInfo{
-	repeated float GridCells = 1 ; 
-	repeated float OdometryMeasure = 2;
+	repeated float GridCells 	= 1 ; 
+	repeated float TargetCoordinates = 2;
+	repeated int32 PathStepsRing	= 3;
+	repeated int32 PathStepsSector 	= 4;
+	repeated int32 PathStepsOrientation = 5;
 }

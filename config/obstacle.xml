@@ -1,51 +1,36 @@
 <?xml version="1.0" ?>
-<!-- Show  image using opencv -->
-<cvHighgui>0</cvHighgui>
-<!--robot relative constants-->
-<GridCm>200</GridCm>
-<BodyCm>20</BodyCm>
-<angleDegrees>360</angleDegrees>
-<SonarAngleRange>30</SonarAngleRange>
-<SonarDistanceRange>100</SonarDistanceRange>
-<MinimumValidSonarValue>0.29</MinimumValidSonarValue>
-<RobotDirections>3</RobotDirections>
-<TooClose>0.2</TooClose>
-<CELLS>100</CELLS>
-<TOLERANCE>0.1</TOLERANCE>
+<!--Occupancy Factors-->
+<OccupancyDecreaseFactor>0.8</OccupancyDecreaseFactor>
+<OccupancyIncreaseFactor>1.5</OccupancyIncreaseFactor>
+<MinOccupancy>0.08</MinOccupancy>
+<MaxOccupancy>1.0</MaxOccupancy>
+<!--Obstacle Factors-->
+<ObstacleThreshold>0.65</ObstacleThreshold>
+<ObstacleCostFactor>500.0</ObstacleCostFactor>
+<!--Move Factors-->
+<RotationCostFactor>3.5</RotationCostFactor>
+<SideStepCostFactor>5.0</SideStepCostFactor>
+<SemiSideCostFactor>4.0</SemiSideCostFactor>
 <FrontDeviation>1.1</FrontDeviation>
 <SideDeviation>1.05</SideDeviation>
-<ToCm>100</ToCm>
-<!--Possibilities-->
-<HighObstaclePossibility>0.8</HighObstaclePossibility>
-<agePossibility>0.95</agePossibility>
-<NoKnowlegde>0.5</NoKnowlegde>
-<!--for update-->
-<UsePossibilityDown>0.95</UsePossibilityDown>
-<UsePossibilityUp>1.1</UsePossibilityUp>
-<MinPossibility>0.005</MinPossibility>
-<MaxPossibility>1.0</MaxPossibility>
-<ObstaclePossibility>1.6</ObstaclePossibility>
-<PossibilityDiscount>0.4</PossibilityDiscount>
-<PossibilityDiscountNoObst>0.7</PossibilityDiscountNoObst>
-<MinimumDistanceValue>0.29</MinimumDistanceValue>
-<MinimumValidValue>0.3</MinimumValidValue>
-<!--path planning-->
-<discount>0.9</discount>
-<reward>-0.05</reward>
-<goal>2</goal>
-<obstacle>-1</obstacle>
-<ITERATIONS>7</ITERATIONS>
-<WATCHDIRECTION>8</WATCHDIRECTION>
-<ageTimerSeconds>3</ageTimerSeconds>
-<debugMode>1</debugMode>
-<velosityShift>90</velosityShift>
-<obstacleCost>500</obstacleCost>
+<RotationMoveFactor>0.75</RotationMoveFactor>
+<!--Sonar relative constants -->
+<SonarDistanceRange>1.0</SonarDistanceRange>
+<SonarMinReading>0.4</SonarMinReading>
+<!--Update variables-->
+<CloseObstacleRadius>0.12</CloseObstacleRadius>
+<CloseObstacleCenter>0.15</CloseObstacleCenter>
+<!--Path planning-->
+<GoalDistanceTolerance>0.15</GoalDistanceTolerance>
+<GoalAngleTolerance>0.7</GoalAngleTolerance>
 <!--debuging mode-->
-<debugModeCout>0</debugModeCout>
-<debugInstantResponce>0</debugInstantResponce>
-<debugWithMovement>1</debugWithMovement>
-<debugPathPlannignDirect>0</debugPathPlannignDirect>
-<debugFullPathPlanning>0</debugFullPathPlanning>
-<debugModePublishMotion>0</debugModePublishMotion>
-<!--for smooth or not-->
-<robotCells>2</robotCells>
+<debugModeCout>1</debugModeCout>
+<debugRelativeMode>0</debugRelativeMode>
+<!--Relative Mode-->
+<testPathX>1.0</testPathX>
+<testPathY>-1.0</testPathY>
+<testPathA>0.0</testPathA>
+<!--rotationCost>3.5</rotationCost-->
+<!--Aging-->
+<ageTimerSeconds>2.0</ageTimerSeconds>
+<AgeFactor>0.8</AgeFactor>

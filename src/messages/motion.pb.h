@@ -455,20 +455,34 @@ class MotionStateMessage : public ::google::protobuf::Message {
   inline ::std::string* mutable_detail();
   inline ::std::string* release_detail();
   
+  // required string lastaction = 3;
+  inline bool has_lastaction() const;
+  inline void clear_lastaction();
+  static const int kLastactionFieldNumber = 3;
+  inline const ::std::string& lastaction() const;
+  inline void set_lastaction(const ::std::string& value);
+  inline void set_lastaction(const char* value);
+  inline void set_lastaction(const char* value, size_t size);
+  inline ::std::string* mutable_lastaction();
+  inline ::std::string* release_lastaction();
+  
   // @@protoc_insertion_point(class_scope:MotionStateMessage)
  private:
   inline void set_has_type();
   inline void clear_has_type();
   inline void set_has_detail();
   inline void clear_has_detail();
+  inline void set_has_lastaction();
+  inline void clear_has_lastaction();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::std::string* detail_;
+  ::std::string* lastaction_;
   int type_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_motion_2eproto();
   friend void protobuf_AssignDesc_motion_2eproto();
@@ -822,6 +836,64 @@ inline ::std::string* MotionStateMessage::release_detail() {
   } else {
     ::std::string* temp = detail_;
     detail_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string lastaction = 3;
+inline bool MotionStateMessage::has_lastaction() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void MotionStateMessage::set_has_lastaction() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void MotionStateMessage::clear_has_lastaction() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void MotionStateMessage::clear_lastaction() {
+  if (lastaction_ != &::google::protobuf::internal::kEmptyString) {
+    lastaction_->clear();
+  }
+  clear_has_lastaction();
+}
+inline const ::std::string& MotionStateMessage::lastaction() const {
+  return *lastaction_;
+}
+inline void MotionStateMessage::set_lastaction(const ::std::string& value) {
+  set_has_lastaction();
+  if (lastaction_ == &::google::protobuf::internal::kEmptyString) {
+    lastaction_ = new ::std::string;
+  }
+  lastaction_->assign(value);
+}
+inline void MotionStateMessage::set_lastaction(const char* value) {
+  set_has_lastaction();
+  if (lastaction_ == &::google::protobuf::internal::kEmptyString) {
+    lastaction_ = new ::std::string;
+  }
+  lastaction_->assign(value);
+}
+inline void MotionStateMessage::set_lastaction(const char* value, size_t size) {
+  set_has_lastaction();
+  if (lastaction_ == &::google::protobuf::internal::kEmptyString) {
+    lastaction_ = new ::std::string;
+  }
+  lastaction_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* MotionStateMessage::mutable_lastaction() {
+  set_has_lastaction();
+  if (lastaction_ == &::google::protobuf::internal::kEmptyString) {
+    lastaction_ = new ::std::string;
+  }
+  return lastaction_;
+}
+inline ::std::string* MotionStateMessage::release_lastaction() {
+  clear_has_lastaction();
+  if (lastaction_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = lastaction_;
+    lastaction_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }

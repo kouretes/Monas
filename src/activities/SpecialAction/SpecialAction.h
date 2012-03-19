@@ -17,7 +17,6 @@ public:
 	void UserInit ();
 	
 	std::string GetName ();
-	boost::shared_ptr<const DoubleObsInfo> obs;
 	MotionActionMessage* amot;	
 	BToHeadMessage* bhm;
 	ReturnToPositionMessage* rpm;

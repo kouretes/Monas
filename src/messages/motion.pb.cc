@@ -87,9 +87,10 @@ void protobuf_AssignDesc_motion_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(MotionActionMessage));
   MotionStateMessage_descriptor_ = file->message_type(3);
-  static const int MotionStateMessage_offsets_[2] = {
+  static const int MotionStateMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, detail_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MotionStateMessage, lastaction_),
   };
   MotionStateMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -149,11 +150,12 @@ void protobuf_AddDesc_motion_2eproto() {
     "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"9\n\021Mot"
     "ionHeadMessage\022\021\n\007command\030\006 \002(\t:\000\022\021\n\tpar"
     "ameter\030\007 \003(\002\";\n\023MotionActionMessage\022\021\n\007c"
-    "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\232\001\n\022Mo"
+    "ommand\030\006 \002(\t:\000\022\021\n\tparameter\030\007 \003(\002\"\256\001\n\022Mo"
     "tionStateMessage\022,\n\004type\030\001 \002(\0162\036.MotionS"
-    "tateMessage.ActionType\022\016\n\006detail\030\002 \002(\t\"F"
-    "\n\nActionType\022\013\n\007WALKING\020\000\022\n\n\006ACTION\020\001\022\010\n"
-    "\004FALL\020\002\022\013\n\007STANDUP\020\003\022\010\n\004IDLE\020\004", 350);
+    "tateMessage.ActionType\022\016\n\006detail\030\002 \002(\t\022\022"
+    "\n\nlastaction\030\003 \002(\t\"F\n\nActionType\022\013\n\007WALK"
+    "ING\020\000\022\n\n\006ACTION\020\001\022\010\n\004FALL\020\002\022\013\n\007STANDUP\020\003"
+    "\022\010\n\004IDLE\020\004", 370);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "motion.proto", &protobuf_RegisterTypes);
   MotionWalkMessage::default_instance_ = new MotionWalkMessage();
@@ -1017,6 +1019,7 @@ const int MotionStateMessage::ActionType_ARRAYSIZE;
 #ifndef _MSC_VER
 const int MotionStateMessage::kTypeFieldNumber;
 const int MotionStateMessage::kDetailFieldNumber;
+const int MotionStateMessage::kLastactionFieldNumber;
 #endif  // !_MSC_VER
 
 MotionStateMessage::MotionStateMessage()
@@ -1037,6 +1040,7 @@ void MotionStateMessage::SharedCtor() {
   _cached_size_ = 0;
   type_ = 0;
   detail_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  lastaction_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1047,6 +1051,9 @@ MotionStateMessage::~MotionStateMessage() {
 void MotionStateMessage::SharedDtor() {
   if (detail_ != &::google::protobuf::internal::kEmptyString) {
     delete detail_;
+  }
+  if (lastaction_ != &::google::protobuf::internal::kEmptyString) {
+    delete lastaction_;
   }
   if (this != default_instance_) {
   }
@@ -1078,6 +1085,11 @@ void MotionStateMessage::Clear() {
     if (has_detail()) {
       if (detail_ != &::google::protobuf::internal::kEmptyString) {
         detail_->clear();
+      }
+    }
+    if (has_lastaction()) {
+      if (lastaction_ != &::google::protobuf::internal::kEmptyString) {
+        lastaction_->clear();
       }
     }
   }
@@ -1124,6 +1136,23 @@ bool MotionStateMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(26)) goto parse_lastaction;
+        break;
+      }
+      
+      // required string lastaction = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_lastaction:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_lastaction()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->lastaction().data(), this->lastaction().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1161,6 +1190,15 @@ void MotionStateMessage::SerializeWithCachedSizes(
       2, this->detail(), output);
   }
   
+  // required string lastaction = 3;
+  if (has_lastaction()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->lastaction().data(), this->lastaction().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->lastaction(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1185,6 +1223,16 @@ void MotionStateMessage::SerializeWithCachedSizes(
         2, this->detail(), target);
   }
   
+  // required string lastaction = 3;
+  if (has_lastaction()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->lastaction().data(), this->lastaction().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->lastaction(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -1207,6 +1255,13 @@ int MotionStateMessage::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->detail());
+    }
+    
+    // required string lastaction = 3;
+    if (has_lastaction()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->lastaction());
     }
     
   }
@@ -1242,6 +1297,9 @@ void MotionStateMessage::MergeFrom(const MotionStateMessage& from) {
     if (from.has_detail()) {
       set_detail(from.detail());
     }
+    if (from.has_lastaction()) {
+      set_lastaction(from.lastaction());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1259,7 +1317,7 @@ void MotionStateMessage::CopyFrom(const MotionStateMessage& from) {
 }
 
 bool MotionStateMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   return true;
 }
@@ -1268,6 +1326,7 @@ void MotionStateMessage::Swap(MotionStateMessage* other) {
   if (other != this) {
     std::swap(type_, other->type_);
     std::swap(detail_, other->detail_);
+    std::swap(lastaction_, other->lastaction_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

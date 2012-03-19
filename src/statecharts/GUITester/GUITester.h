@@ -12,8 +12,6 @@
 
 #include "architecture/statechartWrapper.h"
 
-//namespace nsGUITester {
-
 class GUITester : public StatechartWrapper {
 
 	public:
@@ -48,8 +46,6 @@ class GUITester : public StatechartWrapper {
 		statechart_engine::Statechart* _statechart;
 			
 };
-
-//}
 
 #endif // GUITester_h_
 	

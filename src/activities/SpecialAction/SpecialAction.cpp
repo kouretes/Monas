@@ -9,7 +9,7 @@ namespace {
 int SpecialAction::Execute() {
 
 	Logger::Instance().WriteMsg("SpecialAction",  " execute" + to_simple_string(boost::posix_time::microsec_clock::universal_time()) , Logger::Info);
-	obs = _blk->readData<DoubleObsInfo>("behavior");
+	
 	//Stare st;
 	fm = _blk->readState<FallMessage>("behavior");
 	LedChangeMessage leds;

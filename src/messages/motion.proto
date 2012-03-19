@@ -23,4 +23,5 @@ message MotionStateMessage{
 	}
 	required ActionType type = 1;
 	required string detail = 2;
+	required string lastaction = 3;
 }

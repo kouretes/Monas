@@ -8,10 +8,10 @@ namespace {
 
 int Kick::Execute() {
 	Logger::Instance().WriteMsg(GetName(),  " execute", Logger::Info);
+
 	gsm = _blk->readState<GameStateMessage>("worldstate");
 	wimsg  = _blk->readData<WorldInfo>("worldstate");
-	pnm = _blk->readState<PlayerNumberMessage>("behavior");
-
+	
 	if(!readConf)
 		readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() +"/Features.xml");
 //#ifdef RETURN_TO_POSITION
@@ -38,11 +38,11 @@ int Kick::Execute() {
 		_blk->publishSignal(*amot, "motion");
 		return 0;
 	#endif
-	if(pnm&&pnm->team_side()==TEAM_RED){
+	if(gsm.get()!=0 && gsm->team_color()==TEAM_RED){
 		oppGoalX = blueGoalX;
 		oppGoalY = blueGoalY;
 
-	}else if(pnm&&pnm->team_side()==TEAM_BLUE){
+	}else if(gsm.get()!=0 && gsm->team_color()==TEAM_BLUE){
 		oppGoalX = yellowGoalX;
 		oppGoalY = yellowGoalY;
 	}
@@ -90,7 +90,7 @@ int Kick::Execute() {
 }
 
 void Kick::UserInit () {
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	
 	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	amot = new MotionActionMessage();

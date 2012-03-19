@@ -16,13 +16,9 @@ using namespace std;
 int NoPlay::Execute() {
 
 	Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
-	gsm = _blk->readState<GameStateMessage> ("worldstate");
-	pnm = _blk->readState<PlayerNumberMessage>("behavior");
 
-	if(pnm!=0){
-		playernum = pnm->player_number();
-		teamColor = pnm->team_side();
-	}
+	gsm = _blk->readState<GameStateMessage> ("worldstate");
+
 	if(!readConf)
 		readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	if(gsm.get()==0 ){
@@ -144,7 +140,6 @@ int NoPlay::Execute() {
 void NoPlay::UserInit () {
 	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	curraction = DONOTHING;
 	prevaction = DONOTHING;
 	cal = false;
@@ -181,8 +176,8 @@ std::string NoPlay::GetName () {
 bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 
 	playernum =-1;
-	if(pnm!=0)
-		playernum = pnm->player_number();
+	if(gsm!=0)
+		playernum = gsm->player_number();
 
 	if(playernum==-1){
 		//Logger::Instance().WriteMsg(GetName(), " Invalid player number " , Logger::Error);
@@ -275,7 +270,6 @@ void NoPlay::goToPosition(float x, float y, float phi){
 		Logger::Instance().WriteMsg(GetName(),  " X "+ _toString(myPosX) +" Y "+_toString(myPosY) + " PHI " + _toString(myPhi)  , Logger::Info);
 	}
 	float relativeX, relativeY, relativePhi;
-	obsm = _blk->readSignal<ObservationMessage>("vision");
 	relativeX = rotation(x, -y, myPhi) - myPosX;
 	relativeY = rotation(y, y, myPhi) - myPosY;
 
