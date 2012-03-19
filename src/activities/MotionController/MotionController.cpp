@@ -120,6 +120,7 @@ void MotionController::UserInit()
 	_blk->updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
