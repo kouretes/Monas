@@ -412,6 +412,17 @@ class PathPlanningRequestMessage : public ::google::protobuf::Message {
   inline float gotoangle() const;
   inline void set_gotoangle(float value);
   
+  // required string mode = 4 [default = "absolute"];
+  inline bool has_mode() const;
+  inline void clear_mode();
+  static const int kModeFieldNumber = 4;
+  inline const ::std::string& mode() const;
+  inline void set_mode(const ::std::string& value);
+  inline void set_mode(const char* value);
+  inline void set_mode(const char* value, size_t size);
+  inline ::std::string* mutable_mode();
+  inline ::std::string* release_mode();
+  
   // @@protoc_insertion_point(class_scope:PathPlanningRequestMessage)
  private:
   inline void set_has_gotox();
@@ -420,15 +431,19 @@ class PathPlanningRequestMessage : public ::google::protobuf::Message {
   inline void clear_has_gotoy();
   inline void set_has_gotoangle();
   inline void clear_has_gotoangle();
+  inline void set_has_mode();
+  inline void clear_has_mode();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   float gotox_;
   float gotoy_;
+  ::std::string* mode_;
+  static const ::std::string _default_mode_;
   float gotoangle_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
   friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
@@ -607,17 +622,53 @@ class GridInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< float >*
       mutable_gridcells();
   
-  // repeated float OdometryMeasure = 2;
-  inline int odometrymeasure_size() const;
-  inline void clear_odometrymeasure();
-  static const int kOdometryMeasureFieldNumber = 2;
-  inline float odometrymeasure(int index) const;
-  inline void set_odometrymeasure(int index, float value);
-  inline void add_odometrymeasure(float value);
+  // repeated float TargetCoordinates = 2;
+  inline int targetcoordinates_size() const;
+  inline void clear_targetcoordinates();
+  static const int kTargetCoordinatesFieldNumber = 2;
+  inline float targetcoordinates(int index) const;
+  inline void set_targetcoordinates(int index, float value);
+  inline void add_targetcoordinates(float value);
   inline const ::google::protobuf::RepeatedField< float >&
-      odometrymeasure() const;
+      targetcoordinates() const;
   inline ::google::protobuf::RepeatedField< float >*
-      mutable_odometrymeasure();
+      mutable_targetcoordinates();
+  
+  // repeated int32 PathStepsRing = 3;
+  inline int pathstepsring_size() const;
+  inline void clear_pathstepsring();
+  static const int kPathStepsRingFieldNumber = 3;
+  inline ::google::protobuf::int32 pathstepsring(int index) const;
+  inline void set_pathstepsring(int index, ::google::protobuf::int32 value);
+  inline void add_pathstepsring(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      pathstepsring() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_pathstepsring();
+  
+  // repeated int32 PathStepsSector = 4;
+  inline int pathstepssector_size() const;
+  inline void clear_pathstepssector();
+  static const int kPathStepsSectorFieldNumber = 4;
+  inline ::google::protobuf::int32 pathstepssector(int index) const;
+  inline void set_pathstepssector(int index, ::google::protobuf::int32 value);
+  inline void add_pathstepssector(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      pathstepssector() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_pathstepssector();
+  
+  // repeated int32 PathStepsOrientation = 5;
+  inline int pathstepsorientation_size() const;
+  inline void clear_pathstepsorientation();
+  static const int kPathStepsOrientationFieldNumber = 5;
+  inline ::google::protobuf::int32 pathstepsorientation(int index) const;
+  inline void set_pathstepsorientation(int index, ::google::protobuf::int32 value);
+  inline void add_pathstepsorientation(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      pathstepsorientation() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_pathstepsorientation();
   
   // @@protoc_insertion_point(class_scope:GridInfo)
  private:
@@ -625,10 +676,13 @@ class GridInfo : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::RepeatedField< float > gridcells_;
-  ::google::protobuf::RepeatedField< float > odometrymeasure_;
+  ::google::protobuf::RepeatedField< float > targetcoordinates_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsring_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepssector_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsorientation_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
   friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
@@ -888,6 +942,64 @@ inline void PathPlanningRequestMessage::set_gotoangle(float value) {
   gotoangle_ = value;
 }
 
+// required string mode = 4 [default = "absolute"];
+inline bool PathPlanningRequestMessage::has_mode() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void PathPlanningRequestMessage::set_has_mode() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void PathPlanningRequestMessage::clear_has_mode() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void PathPlanningRequestMessage::clear_mode() {
+  if (mode_ != &_default_mode_) {
+    mode_->assign(_default_mode_);
+  }
+  clear_has_mode();
+}
+inline const ::std::string& PathPlanningRequestMessage::mode() const {
+  return *mode_;
+}
+inline void PathPlanningRequestMessage::set_mode(const ::std::string& value) {
+  set_has_mode();
+  if (mode_ == &_default_mode_) {
+    mode_ = new ::std::string;
+  }
+  mode_->assign(value);
+}
+inline void PathPlanningRequestMessage::set_mode(const char* value) {
+  set_has_mode();
+  if (mode_ == &_default_mode_) {
+    mode_ = new ::std::string;
+  }
+  mode_->assign(value);
+}
+inline void PathPlanningRequestMessage::set_mode(const char* value, size_t size) {
+  set_has_mode();
+  if (mode_ == &_default_mode_) {
+    mode_ = new ::std::string;
+  }
+  mode_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* PathPlanningRequestMessage::mutable_mode() {
+  set_has_mode();
+  if (mode_ == &_default_mode_) {
+    mode_ = new ::std::string(_default_mode_);
+  }
+  return mode_;
+}
+inline ::std::string* PathPlanningRequestMessage::release_mode() {
+  clear_has_mode();
+  if (mode_ == &_default_mode_) {
+    return NULL;
+  } else {
+    ::std::string* temp = mode_;
+    mode_ = const_cast< ::std::string*>(&_default_mode_);
+    return temp;
+  }
+}
+
 // -------------------------------------------------------------------
 
 // PathPlanningResultMessage
@@ -987,29 +1099,104 @@ GridInfo::mutable_gridcells() {
   return &gridcells_;
 }
 
-// repeated float OdometryMeasure = 2;
-inline int GridInfo::odometrymeasure_size() const {
-  return odometrymeasure_.size();
+// repeated float TargetCoordinates = 2;
+inline int GridInfo::targetcoordinates_size() const {
+  return targetcoordinates_.size();
 }
-inline void GridInfo::clear_odometrymeasure() {
-  odometrymeasure_.Clear();
+inline void GridInfo::clear_targetcoordinates() {
+  targetcoordinates_.Clear();
 }
-inline float GridInfo::odometrymeasure(int index) const {
-  return odometrymeasure_.Get(index);
+inline float GridInfo::targetcoordinates(int index) const {
+  return targetcoordinates_.Get(index);
 }
-inline void GridInfo::set_odometrymeasure(int index, float value) {
-  odometrymeasure_.Set(index, value);
+inline void GridInfo::set_targetcoordinates(int index, float value) {
+  targetcoordinates_.Set(index, value);
 }
-inline void GridInfo::add_odometrymeasure(float value) {
-  odometrymeasure_.Add(value);
+inline void GridInfo::add_targetcoordinates(float value) {
+  targetcoordinates_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< float >&
-GridInfo::odometrymeasure() const {
-  return odometrymeasure_;
+GridInfo::targetcoordinates() const {
+  return targetcoordinates_;
 }
 inline ::google::protobuf::RepeatedField< float >*
-GridInfo::mutable_odometrymeasure() {
-  return &odometrymeasure_;
+GridInfo::mutable_targetcoordinates() {
+  return &targetcoordinates_;
+}
+
+// repeated int32 PathStepsRing = 3;
+inline int GridInfo::pathstepsring_size() const {
+  return pathstepsring_.size();
+}
+inline void GridInfo::clear_pathstepsring() {
+  pathstepsring_.Clear();
+}
+inline ::google::protobuf::int32 GridInfo::pathstepsring(int index) const {
+  return pathstepsring_.Get(index);
+}
+inline void GridInfo::set_pathstepsring(int index, ::google::protobuf::int32 value) {
+  pathstepsring_.Set(index, value);
+}
+inline void GridInfo::add_pathstepsring(::google::protobuf::int32 value) {
+  pathstepsring_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+GridInfo::pathstepsring() const {
+  return pathstepsring_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+GridInfo::mutable_pathstepsring() {
+  return &pathstepsring_;
+}
+
+// repeated int32 PathStepsSector = 4;
+inline int GridInfo::pathstepssector_size() const {
+  return pathstepssector_.size();
+}
+inline void GridInfo::clear_pathstepssector() {
+  pathstepssector_.Clear();
+}
+inline ::google::protobuf::int32 GridInfo::pathstepssector(int index) const {
+  return pathstepssector_.Get(index);
+}
+inline void GridInfo::set_pathstepssector(int index, ::google::protobuf::int32 value) {
+  pathstepssector_.Set(index, value);
+}
+inline void GridInfo::add_pathstepssector(::google::protobuf::int32 value) {
+  pathstepssector_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+GridInfo::pathstepssector() const {
+  return pathstepssector_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+GridInfo::mutable_pathstepssector() {
+  return &pathstepssector_;
+}
+
+// repeated int32 PathStepsOrientation = 5;
+inline int GridInfo::pathstepsorientation_size() const {
+  return pathstepsorientation_.size();
+}
+inline void GridInfo::clear_pathstepsorientation() {
+  pathstepsorientation_.Clear();
+}
+inline ::google::protobuf::int32 GridInfo::pathstepsorientation(int index) const {
+  return pathstepsorientation_.Get(index);
+}
+inline void GridInfo::set_pathstepsorientation(int index, ::google::protobuf::int32 value) {
+  pathstepsorientation_.Set(index, value);
+}
+inline void GridInfo::add_pathstepsorientation(::google::protobuf::int32 value) {
+  pathstepsorientation_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+GridInfo::pathstepsorientation() const {
+  return pathstepsorientation_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+GridInfo::mutable_pathstepsorientation() {
+  return &pathstepsorientation_;
 }
 
 
