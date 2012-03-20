@@ -25,7 +25,7 @@ private:
 	MotionActionMessage* amot;
 	boost::shared_ptr<const HeadToBMessage> hbm;
 	boost::posix_time::ptime lastMove;
-		boost::shared_ptr<const MotionStateMessage> msm;
+	boost::shared_ptr<const MotionStateMessage> msm;
 	int headaction;
 
 };
