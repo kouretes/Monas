@@ -38,6 +38,7 @@ private:
 	ReturnToPositionMessage* rpm;
 	MotionWalkMessage wmot;
 	MotionActionMessage amot; 
+	boost::shared_ptr<const MotionStateMessage> msm;
 	KickOffMessage* kcm;
 	BToHeadMessage* bhmsg;
 	PositionMessage* pmsg;

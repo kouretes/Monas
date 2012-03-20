@@ -1,5 +1,5 @@
-#ifndef StateChartEngineTester_h_
-#define StateChartEngineTester_h_ 1
+#ifndef GoaliePenalty_h_
+#define GoaliePenalty_h_ 1
 		
 #include "architecture/statechartEngine/Statechart.h"
 #include "architecture/statechartEngine/StartState.h"
@@ -12,13 +12,13 @@
 
 #include "architecture/statechartWrapper.h"
 
-class StateChartEngineTester : public StatechartWrapper {
+class GoaliePenalty : public StatechartWrapper {
 
 	public:
 	
-		StateChartEngineTester (Narukom* com);
+		GoaliePenalty (Narukom* com);
 		
-		~StateChartEngineTester ();
+		~GoaliePenalty ();
 		
 		void Start ();
 		
@@ -47,5 +47,5 @@ class StateChartEngineTester : public StatechartWrapper {
 			
 };
 
-#endif // StateChartEngineTester_h_
+#endif // GoaliePenalty_h_
 	

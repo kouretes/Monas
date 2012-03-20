@@ -18,11 +18,6 @@ Goalie::Goalie(Narukom* com) {
 	StartState* Node_0_1 = new StartState ( "Node_0_1", Node_0 ); //Name:0.1
 	_states.push_back( Node_0_1 );
 
-	IActivity* NodeActivInst_0_2 = ActivityFactory::Instance()->CreateObject( "Init" );
-	_activities.push_back( NodeActivInst_0_2 );			
-	BasicState* Node_0_2 = new BasicState( "Node_Init", Node_0, NodeActivInst_0_2 ); //Name:Init
-	_states.push_back( Node_0_2 );
-
 	OrState* Node_0_3 = new OrState ( "Node__open_group_playing_or_nonPlaying_close_group__one_or_more_times_", Node_0 );	//Name:_gr_playing_or_nonPlaying_one_or_more_times_
 	_states.push_back( Node_0_3 );
 
@@ -173,16 +168,6 @@ Goalie::Goalie(Narukom* com) {
 	_states.push_back( Node_0_4 );
 	
 	
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_1,Node_0_2   ) ); //Goalie0.10.2
-		
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_3   ) ); //Goalie0.20.3
 		
 		
 	ICondition* TrCondInst_Goalie0_30_4 = new TrCond_Goalie0_30_4;
@@ -508,6 +493,11 @@ Goalie::Goalie(Narukom* com) {
 		
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_3_2,Node_0_3_3 ,TrCondInst_Goalie0_3_20_3_3  ) ); //Goalie0.3.20.3.3
+		
+
+		
+
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_1,Node_0_3   ) ); //Goalie0.10.3
 	
 }
 

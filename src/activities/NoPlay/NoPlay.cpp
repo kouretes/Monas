@@ -18,7 +18,8 @@ int NoPlay::Execute() {
 	Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
 
 	gsm = _blk->readState<GameStateMessage> ("worldstate");
-
+	msm = _blk->readState<MotionStateMessage> ("worldstate");
+	
 	if(!readConf)
 		readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	if(gsm.get()==0 ){
@@ -72,15 +73,36 @@ int NoPlay::Execute() {
 		case PLAYER_SET:
 		//	Logger::Instance().WriteMsg(GetName(),  " playerset", Logger::Info);
 
-		//	if(lastMove<= boost::posix_time::microsec_clock::universal_time()){
-			//	velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-				//lastMove = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(5);
-			//}
 			if (prevstate!=PLAYER_SET){
-				amot.set_command("Init.xar");
+				if(msm.get()!=0 && (msm->lastaction()).compare("InitPose.xar")!=0){
+				amot.set_command("InitPose.xar");
 				_blk->publishSignal(amot, "motion");
 				}
-			curraction = SCANFORPOST;
+			}
+			if(gsm.get()!=0 && gsm->sec_game_state()==STATE2_PENALTYSHOOT){
+				if(prevstate!=PLAYER_SET){
+					firstInit = boost::posix_time::microsec_clock::universal_time();
+				}
+				if(firstInit + boost::posix_time::seconds(3) <=boost::posix_time::microsec_clock::universal_time()){
+					curraction = CALIBRATE;
+					if(prevaction!=CALIBRATE){
+					//	Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+						calibrate_time = boost::posix_time::microsec_clock::universal_time();
+						bhmsg->set_headaction(curraction);
+					}
+					else{
+						if(calibrate_time+boost::posix_time::seconds(15) <boost::posix_time::microsec_clock::universal_time()){
+							bhmsg->set_headaction(curraction);
+							calibrate_time = boost::posix_time::microsec_clock::universal_time();
+						}else
+							bhmsg->set_headaction(DONOTHING);
+			//			Logger::Instance().WriteMsg(GetName(),  " playerinitial DONOTHING", Logger::Info);
+					}
+				}else
+					curraction = DONOTHING;
+			}else
+					curraction = SCANFORPOST;
+		//	curraction = SCANFORPOST;
 			bhmsg->set_headaction(curraction);
 		break;
 		case PLAYER_READY:

@@ -1,2 +1,0 @@
-StateChartEngineTester
-Tester = Init.DoNothing+
