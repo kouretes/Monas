@@ -146,15 +146,15 @@ void ObstacleAvoidance::UserInit() {
 
 	/********* Messages *********/
 	
-	mprosta=false;
-	dexia= false;
-	aristera = false;
-	mprostaDist = 0.0;
-	dexiaDist = 0.0;
-	aristeraDist = 0.0;
-	mprostaCert = 0.0;
-	dexiaCert = 0.0;
-	aristeraCert = 0.0;
+	frontObstacle=false;
+	rightObstacle= false;
+	leftObstacle = false;
+	frontDist = 0.0;
+	rightDist = 0.0;
+	leftDist = 0.0;
+	frontCert = 0.0;
+	rightCert = 0.0;
+	leftCert = 0.0;
 
 	
 	obavm.add_direction(0);
@@ -208,6 +208,30 @@ void ObstacleAvoidance::UserInit() {
 		cvNamedWindow("img", CV_WINDOW_AUTOSIZE);
 	}*/
 		
+}
+
+void ObstacleAvoidance::chooseCloserObstacle(){
+	
+	for(int i=0;i<TotalRings;i++){
+		frontObstacle = PolarGrid[present][i][FRONT] > ObstacleThreshold?true:false;
+		frontDist = frontObstacle == true ? ((i+1) * distanceM) : 0.0;
+		frontCert = frontObstacle == true ? PolarGrid[present][i][FRONT] : 0.0;
+		if (frontObstacle) break;
+	}
+
+	for(int i=0;i<TotalRings;i++){
+		rightObstacle = PolarGrid[present][i][RIGHT] > ObstacleThreshold?true:false;
+		rightDist = rightObstacle == true ? ((i+1) * distanceM ) : 0.0;
+		rightCert = rightObstacle == true ? PolarGrid[present][i][RIGHT] : 0.0;  // TODO: get the central ray
+		if (rightObstacle) break;
+	}
+		
+	for(int i=0;i<TotalRings;i++){
+		leftObstacle = PolarGrid[present][i][LEFT] > ObstacleThreshold?true:false;
+		leftDist = leftObstacle == true ? ((i+1) * distanceM) : 0.0;
+		leftCert = leftObstacle == true ? PolarGrid[present][i][LEFT] : 0.0;  // TODO: get the central ray
+		if (leftObstacle) break;
+	}
 }
 
 int ObstacleAvoidance::Execute() {
@@ -269,6 +293,7 @@ int ObstacleAvoidance::Execute() {
 		}
 		else
 			updateGrid(countLeft!=0?Left:empty, countRight!=0?Right:empty);
+		chooseCloserObstacle();
 	}
 	
 	
@@ -921,23 +946,23 @@ void ObstacleAvoidance::read_messages() {
 }
 
 void ObstacleAvoidance::publishObstacleMessage() {
-	if(debugModeCout){
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "aristera: " + _toString(aristera)+ " dist: " + _toString(aristeraDist) + " cert: "+_toString(aristeraCert) , Logger::ExtraExtraInfo);
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "mprosta: " + _toString(mprosta) + " dist: " + _toString(mprostaDist) + " cert: "+_toString(mprostaCert) , Logger::ExtraExtraInfo);
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "dexia: " + _toString(dexia) + " dist: " + _toString(dexiaDist) + " cert: "+_toString(dexiaCert) , Logger::ExtraExtraInfo);
+	if(debugModeCout){	
+		Logger::Instance().WriteMsg("ObstacleAvoidance", "aristera: " + _toString(leftObstacle)+ " dist: " + _toString(leftDist) + " cert: "+_toString(leftCert) , Logger::ExtraExtraInfo);
+		Logger::Instance().WriteMsg("ObstacleAvoidance", "mprosta: " + _toString(frontObstacle) + " dist: " + _toString(frontDist) + " cert: "+_toString(frontCert) , Logger::ExtraExtraInfo);
+		Logger::Instance().WriteMsg("ObstacleAvoidance", "dexia: " + _toString(rightObstacle) + " dist: " + _toString(rightDist) + " cert: "+_toString(rightCert) , Logger::ExtraExtraInfo);
 	}
 
-	obavm.set_direction(0, aristera?1:0);
-	obavm.set_direction(1, mprosta?1:0);
-	obavm.set_direction(2, dexia?1:0);
+	obavm.set_direction(0, leftObstacle?1:0);
+	obavm.set_direction(1, frontObstacle?1:0);
+	obavm.set_direction(2, rightObstacle?1:0);
 
-	obavm.set_distance(0, aristera?aristeraDist:RAND_MAX);
-	obavm.set_distance(1, mprosta?mprostaDist:RAND_MAX);
-	obavm.set_distance(2, dexia?dexiaDist:RAND_MAX);
+	obavm.set_distance(0, leftObstacle?leftDist:SonarDistanceRange);
+	obavm.set_distance(1, frontObstacle?frontDist:SonarDistanceRange);
+	obavm.set_distance(2, rightObstacle?rightDist:SonarDistanceRange);
 
-	obavm.set_certainty(0, aristera?aristeraCert:0.0);
-	obavm.set_certainty(1, mprosta?mprostaCert:0.0);
-	obavm.set_certainty(2, dexia?dexiaCert:0.0);
+	obavm.set_certainty(0, leftObstacle?leftCert:0.0);
+	obavm.set_certainty(1, frontObstacle?frontCert:0.0);
+	obavm.set_certainty(2, rightObstacle?rightCert:0.0);
 	_blk->publishState(obavm, "obstacle");
 
 }
