@@ -10,8 +10,10 @@
 #include "architecture/narukom/pub_sub/buffer.h"
 #include "architecture/narukom/pub_sub/topicTree.h"
 
+
 namespace KNetwork
 {
+using namespace KSystem;
 
 static const hostid anyhost=msgentry::HOST_ID_ANY_HOST;
 
@@ -159,7 +161,7 @@ void MulticastPoint::handle_send_to(const char* bytes,std::size_t size)
     }
 
 	{
-	    boost::unique_lock<boost::mutex > data_lock(mut);
+	    Mutex::scoped_lock data_lock(mut);
 	    queuesize--;
 	}
 	delete[] bytes;
@@ -316,19 +318,19 @@ packet msgentryToBytes(msgentry const& m)
 	p.size=totalsize;
 	return p;
 }
-using namespace google::protobuf;
+
 bool msgentryFromBytes(packet const& p,msgentry &m)
 {
 	const serializedmsgheader *h=(const serializedmsgheader*)p.bytes;
 	m=h->decodeMsg();
 	std::string TypeName=std::string(p.bytes+sizeof(serializedmsgheader),h->getTypeData());
-	const Descriptor *d=DescriptorPool::generated_pool()->FindMessageTypeByName(TypeName);
+	const google::protobuf::Descriptor *d=google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(TypeName);
 	if(!d)
 	{
 		std::cout<<"Could Not Find Descriptor for:"<<TypeName<<std::endl;
 		return false;
 	}
-	Message *protomsg=MessageFactory::generated_factory()->GetPrototype(d)->New();
+	google::protobuf::Message *protomsg= google::protobuf::MessageFactory::generated_factory()->GetPrototype(d)->New();
 	if( !protomsg->ParsePartialFromArray(
 				p.bytes+sizeof(serializedmsgheader)+h->getTypeData(),
 				p.size-(sizeof(serializedmsgheader)+h->getTypeData())
@@ -392,7 +394,7 @@ void MulticastPoint::processOutGoing(msgentry m)
 	//std::cout<<"New set"<<std::endl;
 
 	{
-	    boost::unique_lock<boost::mutex > data_lock(mut);
+	    Mutex::scoped_lock data_lock(mut);
 	    queuesize++;
 
 	}

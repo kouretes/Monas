@@ -20,7 +20,7 @@
 
 #ifndef BUFFER_H
 #define BUFFER_H
-
+#include "hal/mutex.h"
 #include <boost/thread/mutex.hpp>
 #include <boost/function.hpp>
 #include <vector>
@@ -45,13 +45,13 @@ class Buffer
     //bool operator==( MessageBuffer& other) ;
     std::size_t getOwnerID() const {return ownerId;};
     //MessageQueue & getQueue() {return  mq;};
-    void setNotifier(NotifierFncPtr an) {boost::unique_lock<boost::mutex > data_lock(mutex);n=an;};
-    void setCleanUp(NotifierFncPtr ac) {boost::unique_lock<boost::mutex > data_lock(mutex);c=ac;};
+    void setNotifier(NotifierFncPtr an) {KSystem::Mutex::scoped_lock data_lock(mutex);n=an;};
+    void setCleanUp(NotifierFncPtr ac) {KSystem::Mutex::scoped_lock ata_lock(mutex);c=ac;};
   private:
 
     std::vector<T> msg_buf;
     std::size_t ownerId;
-    boost::mutex  mutex;
+    KSystem::Mutex  mutex;
     NotifierFncPtr n;
     NotifierFncPtr c;
 };

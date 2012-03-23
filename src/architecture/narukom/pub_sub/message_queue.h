@@ -22,13 +22,16 @@
 #include <string>
 #include "stringRegistry.h"
 #include <boost/bind.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
+
 #include <map>
 #include <vector>
 #include <set>
+
+#include "hal/mutex.h"
+#include "hal/condvar.h"
 #include "hal/thread.h"
 #include "hal/syscall.h"
+
 
 #include "tools/statMovingAverage.h"
 #include "tools/stopWatch.h"
@@ -49,8 +52,9 @@ MessageQueue class is the message broker of Narukom.
 This class is responsible for dispatching published messages to the interested subscribers.
 
 */
-class MessageQueue : public Thread
+class MessageQueue : public KSystem::Thread
 {
+
   public:
     //friend class MessageBuffer;
     MessageQueue();
@@ -64,7 +68,7 @@ class MessageQueue : public Thread
     virtual int Execute();
     inline void requestMailMan( MessageBuffer  * m)
     {
-		boost::unique_lock<boost::mutex > cvlock(cond_mutex);
+		KSystem::Mutex::scoped_lock cvlock(cond_mutex);
 		if(cond_publishers.find(m)==cond_publishers.end())
 		{
 			cond_publishers.insert(m);
@@ -81,7 +85,7 @@ class MessageQueue : public Thread
   	stringRegistry pubsubRegistry;
 
 
-	boost::mutex  pub_sub_mutex;
+    KSystem::Mutex pub_sub_mutex;
   	//Locked by pub_sub_mutex;
   	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
   	std::vector<std::set<MessageBuffer*> > publisherbuffers,subscriberBuffers;//Maps pubsubregistry ids to Buffers
@@ -89,10 +93,10 @@ class MessageQueue : public Thread
 
 
 	//Waking up stuff
-    boost::mutex  cond_mutex;
+	KSystem::Mutex  cond_mutex;
     std::set<MessageBuffer*> cond_publishers;
     std::vector<MessageBuffer*> cond_publishers_queue;
-    boost::condition_variable_any cond;
+    KSystem::CondVar cond;
 
     StopWatch<> agentStats;
 
