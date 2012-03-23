@@ -10,7 +10,7 @@ class CooperationHelper {
     public:
     CooperationHelper(Blackboard &b, std::size_t t): _blk(b), team(t) {
 
-    _blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+    _blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
     _blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
 
     };

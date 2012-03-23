@@ -8,10 +8,10 @@ namespace {
 
 int Kick::Execute() {
 	Logger::Instance().WriteMsg(GetName(),  " execute", Logger::Info);
-	gsm = _blk->readState<GameStateMessage>("behavior");
-	wimsg  = _blk->readData<WorldInfo>("behavior");
-	pnm = _blk->readState<PlayerNumberMessage>("behavior");
 
+	gsm = _blk->readState<GameStateMessage>("worldstate");
+	wimsg  = _blk->readData<WorldInfo>("worldstate");
+	
 	if(!readConf)
 		readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() +"/Features.xml");
 //#ifdef RETURN_TO_POSITION
@@ -38,11 +38,11 @@ int Kick::Execute() {
 		_blk->publishSignal(*amot, "motion");
 		return 0;
 	#endif
-	if(pnm&&pnm->team_side()==TEAM_RED){
+	if(gsm.get()!=0 && gsm->team_color()==TEAM_RED){
 		oppGoalX = blueGoalX;
 		oppGoalY = blueGoalY;
 
-	}else if(pnm&&pnm->team_side()==TEAM_BLUE){
+	}else if(gsm.get()!=0 && gsm->team_color()==TEAM_BLUE){
 		oppGoalX = yellowGoalX;
 		oppGoalY = yellowGoalY;
 	}
@@ -65,24 +65,24 @@ int Kick::Execute() {
 		else
 			amot->set_command("KickForwardRight.xar"); //RightKick
 	} else if (orientation == 3) {
-		amot->set_command("KickSideLeftFast.xar"); //"HardLeftSideKick"
+		amot->set_command("KickSideLeftSoft.xar"); //"HardLeftSideKick"
 	} else if (orientation == 1) {
-		amot->set_command("KickSideRightFast.xar"); //"HardRightSideKick"
+		amot->set_command("KickSideRightSoft.xar"); //"HardRightSideKick"
 	} else if (orientation == 2) {
 
 		if (by > 0.0){
-			amot->set_command("KickForwardLeft.xar"); //LeftKick
+			amot->set_command("KickSideLeftSoft.xar"); //LeftKick
 		//	amot->set_command("KickBackLeftPierris.xar"); //LeftBackHigh_carpet
 		}else{
-			amot->set_command("KickForwardRight.xar"); //LeftKick
+			amot->set_command("KickSideRightSoft.xar"); //LeftKick
 		//	amot->set_command("KickBackRightPierris.xar"); //RightBackHigh_carpet
 		}
 
 	} else {
 		if (by > 0.0)
-			amot->set_command("KickSideLeftFast.xar");
+			amot->set_command("KickSideLeftSoft.xar");
 		else
-			amot->set_command("KickSideRightFast.xar");
+			amot->set_command("KickSideRightSoft.xar");
 	}
 	_blk->publishSignal(*amot, "motion");
 	_blk->publish_all();
@@ -90,7 +90,9 @@ int Kick::Execute() {
 }
 
 void Kick::UserInit () {
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+
 	amot = new MotionActionMessage();
 	rpm = new ReturnToPositionMessage();
 	orientation = 0;

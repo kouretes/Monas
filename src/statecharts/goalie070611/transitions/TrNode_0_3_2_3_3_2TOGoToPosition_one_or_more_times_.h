@@ -12,13 +12,14 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
 	//	return false;
 		/* returnToPosition */
 		boost::shared_ptr<const PositionMessage> pm = _blk->readState<PositionMessage>("behavior");
-		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg = _blk->readData<WorldInfo>("worldstate");
 		boost::shared_ptr<const ReturnToPositionMessage> rpm = _blk->readSignal<ReturnToPositionMessage>("behavior");
 
 		bool inPos =  false;

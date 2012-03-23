@@ -34,7 +34,7 @@ TopicTree::TopicTree(): stringRegistry()
 	addTopic(string("buttonevents"),string("sensor"));
 	addTopic(string("vision"),string("global"));
 	addTopic(string("behavior"),string("global"));
-	addTopic(string("localization"),string("global"));
+	addTopic(string("worldstate"),string("global"));
 	addTopic(string("communication"),string("global"));
 	addTopic(string("obstacle"),string("global"));
 

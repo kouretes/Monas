@@ -1,6 +1,4 @@
 	
-//namespace nsGUITester {
-	
 #include "GUITester.h"
 #include "transitionHeaders.h"
 		
@@ -73,11 +71,7 @@ GUITester::GUITester(Narukom* com) {
 
 		
 
-		
-
-	_transitions.push_back( new TransitionSegment<State,ConditionConnector>(Node_0_2_1,Node_0_2_2    ) ); //GUITester0.2.10.2.2
-		
-
+	_transitions.push_back( new TransitionSegment<State,ConditionConnector>(Node_0_2_1,Node_0_2_2   ) ); //GUITester0.2.10.2.2
 		
 		
 	ICondition* TrCondInst_GUITester0_2_20_2_3 = new TrCond_GUITester0_2_20_2_3;
@@ -85,9 +79,7 @@ GUITester::GUITester(Narukom* com) {
 
 		
 
-	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_2_2,Node_0_2_3  ,TrCondInst_GUITester0_2_20_2_3  ) ); //GUITester0.2.20.2.3
-		
-
+	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_2_2,Node_0_2_3 ,TrCondInst_GUITester0_2_20_2_3  ) ); //GUITester0.2.20.2.3
 		
 		
 	ICondition* TrCondInst_GUITester0_2_20_2_4 = new TrCond_GUITester0_2_20_2_4;
@@ -95,16 +87,12 @@ GUITester::GUITester(Narukom* com) {
 
 		
 
-	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_2_2,Node_0_2_4  ,TrCondInst_GUITester0_2_20_2_4  ) ); //GUITester0.2.20.2.4
+	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_2_2,Node_0_2_4 ,TrCondInst_GUITester0_2_20_2_4  ) ); //GUITester0.2.20.2.4
 		
 
 		
 
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_4,Node_0_2_5    ) ); //GUITester0.2.40.2.5
-		
-
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_4,Node_0_2_5   ) ); //GUITester0.2.40.2.5
 		
 		
 	ICondition* TrCondInst_GUITester0_2_30_2_5 = new TrCond_GUITester0_2_30_2_5;
@@ -112,23 +100,17 @@ GUITester::GUITester(Narukom* com) {
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3,Node_0_2_5  ,TrCondInst_GUITester0_2_30_2_5  ) ); //GUITester0.2.30.2.5
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3,Node_0_2_5 ,TrCondInst_GUITester0_2_30_2_5  ) ); //GUITester0.2.30.2.5
 		
 
 		
 
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_1,Node_0_2_3_2    ) ); //GUITester0.2.3.10.2.3.2
-		
-
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_1,Node_0_2_3_2   ) ); //GUITester0.2.3.10.2.3.2
 		
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_2,Node_0_2_3_3    ) ); //GUITester0.2.3.20.2.3.3
-		
-
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_2,Node_0_2_3_3   ) ); //GUITester0.2.3.20.2.3.3
 		
 		
 	ICondition* TrCondInst_GUITester0_2_3_30_2_3_4 = new TrCond_GUITester0_2_3_30_2_3_4;
@@ -136,16 +118,15 @@ GUITester::GUITester(Narukom* com) {
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3,Node_0_2_3_4  ,TrCondInst_GUITester0_2_3_30_2_3_4  ) ); //GUITester0.2.3.30.2.3.4
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3,Node_0_2_3_4 ,TrCondInst_GUITester0_2_3_30_2_3_4  ) ); //GUITester0.2.3.30.2.3.4
 		
 
 		
-
 		
+	IAction* TrActionInst_GUITester0_2_3_3_10_2_3_3_2 = new TrAction_GUITester0_2_3_3_10_2_3_3_2;
+	_actions.push_back( TrActionInst_GUITester0_2_3_3_10_2_3_3_2 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_1,Node_0_2_3_3_2    ) ); //GUITester0.2.3.3.10.2.3.3.2
-		
-
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_1,Node_0_2_3_3_2  ,TrActionInst_GUITester0_2_3_3_10_2_3_3_2 ) ); //GUITester0.2.3.3.10.2.3.3.2
 		
 		
 	ICondition* TrCondInst_GUITester0_2_3_3_20_2_3_3_2 = new TrCond_GUITester0_2_3_3_20_2_3_3_2;
@@ -156,26 +137,20 @@ GUITester::GUITester(Narukom* com) {
 	IAction* TrActionInst_GUITester0_2_3_3_20_2_3_3_2 = new TrAction_GUITester0_2_3_3_20_2_3_3_2;
 	_actions.push_back( TrActionInst_GUITester0_2_3_3_20_2_3_3_2 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_2,Node_0_2_3_3_2  ,TrCondInst_GUITester0_2_3_3_20_2_3_3_2 ,TrActionInst_GUITester0_2_3_3_20_2_3_3_2 ) ); //GUITester0.2.3.3.20.2.3.3.2
-		
-
-		
-		
-	ICondition* TrCondInst_GUITester0_2_3_3_20_2_3_3_3 = new TrCond_GUITester0_2_3_3_20_2_3_3_3;
-	_conditions.push_back( TrCondInst_GUITester0_2_3_3_20_2_3_3_3 );
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_2,Node_0_2_3_3_3  ,TrCondInst_GUITester0_2_3_3_20_2_3_3_3  ) ); //GUITester0.2.3.3.20.2.3.3.3
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_2,Node_0_2_3_3_2 ,TrCondInst_GUITester0_2_3_3_20_2_3_3_2 ,TrActionInst_GUITester0_2_3_3_20_2_3_3_2 ) ); //GUITester0.2.3.3.20.2.3.3.2
 		
 
 		
 
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_2,Node_0_2_3_3_3   ) ); //GUITester0.2.3.3.20.2.3.3.3
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_1,Node_0_2    ) ); //GUITester0.10.2
 		
+		
+	IAction* TrActionInst_GUITester0_10_2 = new TrAction_GUITester0_10_2;
+	_actions.push_back( TrActionInst_GUITester0_10_2 );
 
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_1,Node_0_2  ,TrActionInst_GUITester0_10_2 ) ); //GUITester0.10.2
 		
 		
 	ICondition* TrCondInst_GUITester0_20_2 = new TrCond_GUITester0_20_2;
@@ -186,9 +161,7 @@ GUITester::GUITester(Narukom* com) {
 	IAction* TrActionInst_GUITester0_20_2 = new TrAction_GUITester0_20_2;
 	_actions.push_back( TrActionInst_GUITester0_20_2 );
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_2  ,TrCondInst_GUITester0_20_2 ,TrActionInst_GUITester0_20_2 ) ); //GUITester0.20.2
-		
-
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_2 ,TrCondInst_GUITester0_20_2 ,TrActionInst_GUITester0_20_2 ) ); //GUITester0.20.2
 		
 		
 	ICondition* TrCondInst_GUITester0_20_3 = new TrCond_GUITester0_20_3;
@@ -196,7 +169,7 @@ GUITester::GUITester(Narukom* com) {
 
 		
 
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_3  ,TrCondInst_GUITester0_20_3  ) ); //GUITester0.20.3
+	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_3 ,TrCondInst_GUITester0_20_3  ) ); //GUITester0.20.3
 	
 }
 
@@ -222,7 +195,5 @@ void GUITester::Start () {
 void GUITester::Stop () {
 	_statechart->Stop();
 }
-
-//}
 
 	

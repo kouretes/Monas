@@ -39,8 +39,9 @@ void Localization::UserInit()
 {
 	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("localization", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
 
@@ -346,7 +347,7 @@ int Localization::Execute()
 		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
-	_blk->publishData(MyWorld, "behavior");
+	_blk->publishData(MyWorld, "worldstate");
 
 	count++;
 
@@ -734,7 +735,7 @@ void Localization::process_messages()
 {
 	boost::posix_time::ptime observation_time;
 
-	gsm = _blk->readState<GameStateMessage>("behavior");
+	gsm = _blk->readState<GameStateMessage>("worldstate");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
 

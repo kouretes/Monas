@@ -9,7 +9,7 @@ namespace {
 int SpecialAction::Execute() {
 
 	Logger::Instance().WriteMsg("SpecialAction",  " execute" + to_simple_string(boost::posix_time::microsec_clock::universal_time()) , Logger::Info);
-	obs = _blk->readData<DoubleObsInfo>("behavior");
+	
 	//Stare st;
 	fm = _blk->readState<FallMessage>("behavior");
 	LedChangeMessage leds;
@@ -19,12 +19,12 @@ int SpecialAction::Execute() {
 	if(fm!=0 && fm->fall()==1){
 		l->set_chain("r_ear");
 		l->set_color( "blue");
-		amot->set_command("goalieLeftFootExtened.xar");
+		amot->set_command("goalieLeft2.xar");
 	}
 	else{
 		l->set_chain("r_ear");
 		l->set_color( "blue");
-		amot->set_command("goalieRightFootExtened.xar");
+		amot->set_command("goalieRight2.xar");
 	}
 	_blk->publishSignal(*amot, "motion");
 

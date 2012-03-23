@@ -6,16 +6,17 @@
 class TrCond_Goalie0_3_2_4_3_30_3_2_4_3_4 : public statechart_engine::ICondition {		
 public:
 	void UserInit () {
+		_blk->updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC);
 		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
 	bool Eval() {
-		/* behavior.State.GameStateMessage== NULL|| behavior.State.GameStateMessage.player_state()==PLAYER_READY || !robotInPosition(behavior.Data.WorldInfo, behavior.State.PositionMessage) */
-		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
+		/* worldstate.State.GameStateMessage== NULL|| worldstate.State.GameStateMessage.player_state()==PLAYER_READY || !robotInPosition(behavior.Data.WorldInfo, behavior.State.PositionMessage) */
+		boost::shared_ptr<const GameStateMessage> var_1263977940 = _blk->readState<GameStateMessage> ("worldstate" );
 		boost::shared_ptr<const WorldInfo> var_1071592760 = _blk->readData<WorldInfo> ("behavior" );
 		boost::shared_ptr<const PositionMessage> var_1868674971 = _blk->readState<PositionMessage> ("behavior" );
 	
-				return ( var_621149599.get()==0 ||  (var_621149599.get()!=0 && var_621149599->player_state()==PLAYER_READY) || !robotInPosition(var_1071592760, var_1868674971) );	
+				return ( var_1263977940.get()==0 ||  (var_1263977940.get()!=0 && var_1263977940->player_state()==PLAYER_READY) || !robotInPosition(var_1071592760, var_1868674971) );	
     }
 };
 		

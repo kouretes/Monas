@@ -15,10 +15,10 @@ public:
 	std::string GetName ();
 
 private:
-	PlayerNumberMessage* pnm;
+
 	int teamColor;
-	int playernum;
-	bool readConfiguration(const std::string& file_name);
+//	int playernum;
+//	bool readConfiguration(const std::string& file_name);
 };
 
 #endif // _Init_h_

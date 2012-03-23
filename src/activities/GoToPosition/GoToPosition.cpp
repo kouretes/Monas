@@ -11,9 +11,9 @@ int GoToPosition::Execute() {
 	/*  */
 	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
 	pm = _blk->readState<PositionMessage>("behavior");
-	wimsg = _blk->readData<WorldInfo>("behavior");
+	wimsg = _blk->readData<WorldInfo>("worldstate");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
-	gsm =  _blk->readState<GameStateMessage>("behavior");
+	gsm =  _blk->readState<GameStateMessage>("worldstate");
 	headaction = SCANFORPOST;
 	if(pm.get()!=0){		///get my target
 		posX = pm->posx();
@@ -121,6 +121,8 @@ int GoToPosition::Execute() {
 void GoToPosition::UserInit () {
 	robotInPos = false;
 	confidence = 0;
+
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	int playernum, teamColor;

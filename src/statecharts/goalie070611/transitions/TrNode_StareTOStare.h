@@ -11,19 +11,20 @@ public:
 
 	void UserInit () {
 		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
-		_blk->publish_all();
+
 		SysCall::_usleep(200000);
 		_blk->process_messages();
 
 		/* ballAway and ballfound!=0 and !fall */
 	//	Logger::Instance().WriteMsg("TrCond_StareTOStare", "  ", Logger::Info);
 		boost::shared_ptr<const HeadToBMessage> hbm = _blk->readState<HeadToBMessage>("behavior");
-		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("behavior");
+		boost::shared_ptr<const WorldInfo> wimsg  = _blk->readData<WorldInfo>("worldstate");
 		boost::shared_ptr<const FallMessage> fm  = _blk->readState<FallMessage>("behavior");
-		boost::shared_ptr<const GameStateMessage> gsm  = _blk->readState<GameStateMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm  = _blk->readState<GameStateMessage>("worldstate");
 		
 
 		if(gsm.get()!=0 && gsm->player_state()!=PLAYER_PLAYING){

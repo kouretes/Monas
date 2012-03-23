@@ -16,13 +16,10 @@ using namespace std;
 int NoPlay::Execute() {
 
 	Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
-	gsm = _blk->readState<GameStateMessage> ("behavior");
-	pnm = _blk->readState<PlayerNumberMessage>("behavior");
 
-	if(pnm!=0){
-		playernum = pnm->player_number();
-		teamColor = pnm->team_side();
-	}
+	gsm = _blk->readState<GameStateMessage> ("worldstate");
+	msm = _blk->readState<MotionStateMessage> ("worldstate");
+	
 	if(!readConf)
 		readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	if(gsm.get()==0 ){
@@ -76,15 +73,36 @@ int NoPlay::Execute() {
 		case PLAYER_SET:
 		//	Logger::Instance().WriteMsg(GetName(),  " playerset", Logger::Info);
 
-		//	if(lastMove<= boost::posix_time::microsec_clock::universal_time()){
-			//	velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-				//lastMove = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(5);
-			//}
 			if (prevstate!=PLAYER_SET){
-				amot.set_command("Init.xar");
+				if(msm.get()!=0 && (msm->lastaction()).compare("InitPose.xar")!=0){
+				amot.set_command("InitPose.xar");
 				_blk->publishSignal(amot, "motion");
 				}
-			curraction = SCANFORPOST;
+			}
+			if(gsm.get()!=0 && gsm->sec_game_state()==STATE2_PENALTYSHOOT){
+				if(prevstate!=PLAYER_SET){
+					firstInit = boost::posix_time::microsec_clock::universal_time();
+				}
+				if(firstInit + boost::posix_time::seconds(3) <=boost::posix_time::microsec_clock::universal_time()){
+					curraction = CALIBRATE;
+					if(prevaction!=CALIBRATE){
+					//	Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+						calibrate_time = boost::posix_time::microsec_clock::universal_time();
+						bhmsg->set_headaction(curraction);
+					}
+					else{
+						if(calibrate_time+boost::posix_time::seconds(15) <boost::posix_time::microsec_clock::universal_time()){
+							bhmsg->set_headaction(curraction);
+							calibrate_time = boost::posix_time::microsec_clock::universal_time();
+						}else
+							bhmsg->set_headaction(DONOTHING);
+			//			Logger::Instance().WriteMsg(GetName(),  " playerinitial DONOTHING", Logger::Info);
+					}
+				}else
+					curraction = DONOTHING;
+			}else
+					curraction = SCANFORPOST;
+		//	curraction = SCANFORPOST;
 			bhmsg->set_headaction(curraction);
 		break;
 		case PLAYER_READY:
@@ -142,8 +160,8 @@ int NoPlay::Execute() {
 }
 
 void NoPlay::UserInit () {
+	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	curraction = DONOTHING;
 	prevaction = DONOTHING;
 	cal = false;
@@ -180,8 +198,8 @@ std::string NoPlay::GetName () {
 bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 
 	playernum =-1;
-	if(pnm!=0)
-		playernum = pnm->player_number();
+	if(gsm!=0)
+		playernum = gsm->player_number();
 
 	if(playernum==-1){
 		//Logger::Instance().WriteMsg(GetName(), " Invalid player number " , Logger::Error);
@@ -266,7 +284,7 @@ void NoPlay::littleWalk(double x, double y, double th) {
 void NoPlay::goToPosition(float x, float y, float phi){
 
 	curraction = SCANFORPOST;
-	wimsg = _blk->readData<WorldInfo>("behavior");
+	wimsg = _blk->readData<WorldInfo>("worldstate");
 	if(wimsg.get()!=0){
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
@@ -274,7 +292,6 @@ void NoPlay::goToPosition(float x, float y, float phi){
 		Logger::Instance().WriteMsg(GetName(),  " X "+ _toString(myPosX) +" Y "+_toString(myPosY) + " PHI " + _toString(myPhi)  , Logger::Info);
 	}
 	float relativeX, relativeY, relativePhi;
-	obsm = _blk->readSignal<ObservationMessage>("vision");
 	relativeX = rotation(x, -y, myPhi) - myPosX;
 	relativeY = rotation(y, y, myPhi) - myPosY;
 

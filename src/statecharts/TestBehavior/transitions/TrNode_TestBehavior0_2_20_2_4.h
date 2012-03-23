@@ -6,14 +6,14 @@
 class TrCond_TestBehavior0_2_20_2_4 : public statechart_engine::ICondition {		
 public:
 	void UserInit () {
-		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
 	bool Eval() {
-		/* behavior.State.GameStateMessage==NULL||behavior.State.GameStateMessage.player_state()!=PLAYER_PLAYING */
-		boost::shared_ptr<const GameStateMessage> var_621149599 = _blk->readState<GameStateMessage> ("behavior" );
+		/* worldstate.State.GameStateMessage==NULL||worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING */
+		boost::shared_ptr<const GameStateMessage> var_1263977940 = _blk->readState<GameStateMessage> ("worldstate" );
 	
-				return ( var_621149599.get()==0 || (var_621149599.get()!=0 && var_621149599->player_state()!=PLAYER_PLAYING) );	
+				return ( var_1263977940.get()==0 || (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_PLAYING) );	
     }
 };
 		

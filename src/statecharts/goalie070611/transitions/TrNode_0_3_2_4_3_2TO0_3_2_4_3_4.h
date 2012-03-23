@@ -9,13 +9,13 @@ class TrCond_0_3_2_4_3_2TO0_3_2_4_3_4 : public statechart_engine::ICondition {
 public:
 
 	void UserInit () {
-		_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+		_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	}
 
 	bool Eval() {
 		/* !PLAYER_READY */
 	//	Logger::Instance().WriteMsg("TrCond_0_3_2_4_3_2TO0_3_2_4_3_4",  " enter", Logger::Info);
-		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("behavior");
+		boost::shared_ptr<const GameStateMessage> gsm = _blk->readState<GameStateMessage>("worldstate");
 
 		return true;
 		if(gsm.get()!=0 && gsm->player_state()==PLAYER_READY)

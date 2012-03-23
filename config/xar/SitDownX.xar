@@ -16,7 +16,7 @@
             <BehaviorLayer name="behavior_layer1" mute="0">
                 <BehaviorKeyframe name="keyframe1" index="1" bitmap="">
                     <Diagram scale="-1">
-                        <Box name="Sit Down" robot="" id="1" tooltip="NAO tries to sit down from any position for a number of tries.&#x0A;&#x0A;Note: The number of tries can be set in parameters." bitmap_expanded="1" plugin="" x="172" y="179">
+                        <Box name="Sit Down" robot="" id="1" tooltip="NAO tries to sit down from any position for a number of tries.&#x0A;&#x0A;Note: The number of tries can be set in parameters." bitmap_expanded="1" plugin="" x="172" y="180">
                             <bitmap>media/images/box/movement/sit_ground.png</bitmap>
                             <script language="4">
                                 <content>
@@ -114,7 +114,7 @@
                                                     <BehaviorLayer name="SitDownBehavior" mute="0">
                                                         <BehaviorKeyframe name="DetectRobotPose" index="1" bitmap="">
                                                             <Diagram scale="-1">
-                                                                <Box name="CrouchToSitDown" robot="" id="11" tooltip="Sit down from crouch or stand position." bitmap_expanded="1" plugin="" x="941" y="228">
+                                                                <Box name="CrouchToSitDown" robot="" id="11" tooltip="Sit down from crouch or stand position." bitmap_expanded="1" plugin="" x="940" y="229">
                                                                     <bitmap>media/images/box/movement/move.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -128,26 +128,6 @@
                                                                     <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="13" value="-18.1081" />
-                                                                                <Key frame="24" value="-25.2273" />
-                                                                                <Key frame="34" value="-36.3017" />
-                                                                                <Key frame="43" value="-35.9501" />
-                                                                                <Key frame="52" value="-23.4695" />
-                                                                                <Key frame="59" value="-10.5494" />
-                                                                                <Key frame="66" value="-0.00240423" />
-                                                                                <Key frame="72" value="-1.23289" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="13" value="21.2674" />
-                                                                                <Key frame="24" value="21.5311" />
-                                                                                <Key frame="34" value="21.0916" />
-                                                                                <Key frame="43" value="20.4764" />
-                                                                                <Key frame="52" value="21.0916" />
-                                                                                <Key frame="59" value="21.0037" />
-                                                                                <Key frame="66" value="21.7069" />
-                                                                                <Key frame="72" value="-1.93602" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="13" value="59.8" />
                                                                                 <Key frame="24" value="41.8" />
@@ -384,7 +364,7 @@
                                                                         </ActuatorList>
                                                                     </Timeline>
                                                                 </Box>
-                                                                <Box name="BellyToCrouch" robot="" id="12" tooltip="Crouch from lie down position (on the belly)." bitmap_expanded="1" plugin="" x="707" y="382">
+                                                                <Box name="BellyToCrouch" robot="" id="12" tooltip="Crouch from lie down position (on the belly)." bitmap_expanded="1" plugin="" x="711" y="381">
                                                                     <bitmap>media/images/box/movement/move.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -398,28 +378,6 @@
                                                                     <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="10" />
-                                                                                <Key frame="20" value="-13" />
-                                                                                <Key frame="34" value="16.4" />
-                                                                                <Key frame="45" value="17" />
-                                                                                <Key frame="58" value="-28.4" />
-                                                                                <Key frame="65" value="-17" />
-                                                                                <Key frame="76" value="3" />
-                                                                                <Key frame="89" value="-22.4" />
-                                                                                <Key frame="100" value="-1" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="-33.0497" />
-                                                                                <Key frame="20" value="-31.3797" />
-                                                                                <Key frame="34" value="6.15002" />
-                                                                                <Key frame="45" value="29.5" />
-                                                                                <Key frame="58" value="21.8" />
-                                                                                <Key frame="65" value="21.2674" />
-                                                                                <Key frame="76" value="-6" />
-                                                                                <Key frame="89" value="-30.5887" />
-                                                                                <Key frame="100" value="0.4" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="10" value="4.83164" />
                                                                                 <Key frame="20" value="-86.6" />
@@ -686,26 +644,6 @@
                                                                     <Timeline fps="10" resources_acquisition="1" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="-1.40867" />
-                                                                                <Key frame="20" value="-2.73208e-05" />
-                                                                                <Key frame="28" value="2.37067" />
-                                                                                <Key frame="36" value="3.86374e-05" />
-                                                                                <Key frame="44" value="-0.353971" />
-                                                                                <Key frame="50" value="0.788621" />
-                                                                                <Key frame="56" value="1.40386" />
-                                                                                <Key frame="62" value="-1.32078" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="3.60116" />
-                                                                                <Key frame="20" value="0" />
-                                                                                <Key frame="28" value="29.5016" />
-                                                                                <Key frame="36" value="-38.5028" />
-                                                                                <Key frame="44" value="-1.23289" />
-                                                                                <Key frame="50" value="11.1598" />
-                                                                                <Key frame="56" value="4.2164" />
-                                                                                <Key frame="62" value="-2.02391" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="10" value="119.496" />
                                                                                 <Key frame="20" value="120" />
@@ -921,7 +859,7 @@
                                                                         </ActuatorList>
                                                                     </Timeline>
                                                                 </Box>
-                                                                <Box name="SideToBelly" robot="" id="6" tooltip="Lie down on the back or the belly from an other lie down position (on the side)." bitmap_expanded="1" plugin="" x="513" y="538">
+                                                                <Box name="SideToBelly" robot="" id="6" tooltip="Lie down on the back or the belly from an other lie down position (on the side)." bitmap_expanded="1" plugin="" x="511" y="538">
                                                                     <bitmap>media/images/box/movement/move.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -947,14 +885,6 @@
                                                                     <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="5" value="41.3067" />
-                                                                                <Key frame="10" value="41.3067" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="5" value="8.52309" />
-                                                                                <Key frame="10" value="8.52309" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="5" value="108.72" />
                                                                                 <Key frame="10" value="108.72" />
@@ -1130,7 +1060,7 @@
                                                                     <Output name="onDefault" type="1" type_size="1" nature="1" inner="0" tooltip="If the input value does not match any value set on the box." id="3" />
                                                                     <Output name="output_1" type="0" type_size="1" nature="2" inner="0" tooltip="This IO has been automatically added by box. Read box tooltip for more information." id="4" />
                                                                 </Box>
-                                                                <Box name="Switch Case" robot="" id="4" tooltip="Test input value and stimulate the output matching to this value. If there is no&#x0A;output matching, the default output (onDefault) is stimulated.&#x0A;&#x0A;You can edit a case by left double-clicking on the line. You can add a&#x0A;case by right clicking on a line and selecting &apos;Insert a row&apos;. You can delete&#x0A;a case by right clicking on a line and selecting &apos;Remove a row&apos;." bitmap_expanded="1" plugin="dispatcher_plugin" x="977" y="378">
+                                                                <Box name="Switch Case" robot="" id="4" tooltip="Test input value and stimulate the output matching to this value. If there is no&#x0A;output matching, the default output (onDefault) is stimulated.&#x0A;&#x0A;You can edit a case by left double-clicking on the line. You can add a&#x0A;case by right clicking on a line and selecting &apos;Insert a row&apos;. You can delete&#x0A;a case by right clicking on a line and selecting &apos;Remove a row&apos;." bitmap_expanded="1" plugin="dispatcher_plugin" x="979" y="378">
                                                                     <bitmap>media/images/box/interaction/choice.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -1240,7 +1170,7 @@ class MyClass(GeneratedClass):
                                                                     <Output name="robotPose" type="3" type_size="1" nature="2" inner="0" tooltip='NAO&apos;s current pose. It can be:&#x0A;- &quot;Unknown&quot;&#x0A;- &quot;Stand&quot;&#x0A;- &quot;Sit&quot;&#x0A;- &quot;Crouch&quot;&#x0A;- &quot;Knee&quot;&#x0A;- &quot;Frog&quot;&#x0A;- &quot;Back&quot;&#x0A;- &quot;Belly&quot;&#x0A;- &quot;Left&quot;&#x0A;- &quot;Right&quot;&#x0A;- &quot;HeadBack&quot;' id="3" />
                                                                     <Parameter name="Time to wait for pose stabilization (s)" inherits_from_parent="0" content_type="2" value="1" default_value="1" min="0.5" max="10" tooltip="Maximum time to wait NAO&apos;s pose stabilization. After this time is ellapsed,&#x0A;the current pose is sent to the output even though it is not stabilized." id="4" />
                                                                 </Box>
-                                                                <Box name="Get Robot Pose" robot="" id="3" tooltip="Return NAO&apos;s current pose.&#x0A;&#x0A;Note: The box waits for the robot pose to be stabilized. You can set the maximum&#x0A;time to wait in parameters. After this time is ellapsed, the current pose is sent to the&#x0A;output anyway." bitmap_expanded="1" plugin="" x="104" y="49">
+                                                                <Box name="Get Robot Pose" robot="" id="3" tooltip="Return NAO&apos;s current pose.&#x0A;&#x0A;Note: The box waits for the robot pose to be stabilized. You can set the maximum&#x0A;time to wait in parameters. After this time is ellapsed, the current pose is sent to the&#x0A;output anyway." bitmap_expanded="1" plugin="" x="155" y="127">
                                                                     <bitmap>media/images/box/sensors/inertial_unit.png</bitmap>
                                                                     <script language="4">
                                                                         <content>

@@ -26,19 +26,14 @@ public:
 	
 private:	
 	BToHeadMessage* bhmsg;
-	MotionWalkMessage wmot;
+	MotionActionMessage* amot;
 
 	boost::shared_ptr<const HeadToBMessage> hbm;
-	//boost::shared_ptr<const ScanMessage> scnm;
-	
-	
-	//bool toPos;
-	int headaction;
-	//int forpost, forball;
-	//boost::posix_time::ptime lastTurn;
-	void velocityWalk( double x, double y, double th, double f);
-	void littleWalk(double x, double y, double th);	
+	boost::shared_ptr<const MotionStateMessage> msm;
 
+	int headaction;
+
+	
 };
 
 #endif // _Scan_h_
