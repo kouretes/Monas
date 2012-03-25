@@ -46,6 +46,7 @@ class LBehavior: public IActivity {
 		void read_messages();
 		int MakeTrackBallAction();
 		void HeadScanStep();
+		void ScanForGoalposts(int step);
 		std::string GetName() {
 			return "LBehavior";
 		}
@@ -83,6 +84,10 @@ class LBehavior: public IActivity {
 		//boost::shared_ptr<const ObservationMessage>  obsm;
 		boost::shared_ptr<const ObstacleMessage>  om;
 		boost::shared_ptr<const WorldInfo>  wim;
+		boost::posix_time::ptime timeStart,timeStop;
+		int step;
+
+		bool scanForGoals;
 
 		int calibrated;
 		bool play;

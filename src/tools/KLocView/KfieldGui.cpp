@@ -199,7 +199,7 @@ KfieldGui::KfieldGui() {
 	color["yellow"] = CV_RGB(245,245,10);
 	color["lightyellow"] = CV_RGB(245,245,100);
 	color["blue"] = CV_RGB(20,20,250);
-	color["skyblue"] = CV_RGB(0,100,250);
+	color["skyblue"] = CV_RGB(245,245,10);
 
 	color["lightblue"] = CV_RGB(100,100,250);
 	color["darkblue"] = CV_RGB(50,50,128);

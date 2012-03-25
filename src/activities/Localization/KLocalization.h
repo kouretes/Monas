@@ -23,6 +23,7 @@
 //#define VISIBILITY_WEIGHTING
 #define DISTANCE_WEIGHTING
 #define BEARING_WEIGHTING
+#define yellowyellow
 //#define PASTBELIEF
 
 using namespace std;
@@ -310,14 +311,17 @@ class KLocalization {
 		void Predict(parts &Particles, KMotionModel & MotionModel);
 		void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemin, double rangemax);
 		void Update_Ambigius(parts &Particles, vector<KObservationModel> &Observation, int NumofParticles);
+		void spreadParticlesAfterFall(parts &Particles);
+		//Not used with 2 yellow goals
+		//void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 
-		void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 		float ESS(parts &Particles); //Calculate Effective Sample Size
 		void Resample(parts &Particles, int * Index, int param);
 		void Propagate(parts &Particles, int * Index);
-
-		belief LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observation, double rangemin, double rangemax);
-		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observation, double rangemin, double rangemax);
+		
+		//Not used with the activity
+		//belief LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observation, double rangemin, double rangemax);
+		//belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observation, double rangemin, double rangemax);
 
 		KMotionModel * findBestMotionModel(int steps, string MotionType, vector<KMotionModel> & Motions, int *iterations);
 

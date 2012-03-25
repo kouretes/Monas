@@ -21,89 +21,91 @@
 class Localization: public IActivity, public KLocalization
 {
 
-	public:
-		Localization();
-		~Localization()
-		{
-			if (serverpid != -1)
-				pthread_cancel(serverpid);
-			delete sock;
-		}
-		int Execute();
-		void UserInit();
-		void Reset();
-		void process_messages();
-		belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations, double rangemaxleft, double rangemaxright);
-		void RobotPositionMotionModel(KMotionModel & MModel);
-		std::string GetName()
-		{
-			return "Localization";
-		}
-		void calculate_ball_estimate(KMotionModel const & MModel);
-	private:
+public:
+	Localization();
+	~Localization()
+	{
+		if (serverpid != -1)
+			pthread_cancel(serverpid);
+		delete sock;
+	}
+	int Execute();
+	void UserInit();
+	void Reset();
+	void process_messages();
+	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations, double rangemaxleft, double rangemaxright);
+	void RobotPositionMotionModel(KMotionModel & MModel);
+	std::string GetName()
+	{
+		return "Localization";
+	}
+	void calculate_ball_estimate(KMotionModel const & MModel);
+private:
 
-		int count;
-		int serverpid;
-		WorldInfo MyWorld;
-		mutable KProfiling::profiler vprof;
+	int count;
+	int serverpid;
+	WorldInfo MyWorld;
+	mutable KProfiling::profiler vprof;
 
-		//RtTime rtm;
-		belief mypos;
+	//RtTime rtm;
+	belief mypos;
 
-		vector<KObservationModel> currentObservation;
-		vector<KObservationModel> currentAbigiusObservation;
-		KMotionModel robotmovement;
+	vector<KObservationModel> currentObservation;
+	vector<KObservationModel> currentAbigiusObservation;
+	KMotionModel robotmovement;
 
-		partcl TrackPoint;
-		partcl TrackPointRobotPosition;
+	partcl TrackPoint;
+	partcl TrackPointRobotPosition;
 
-		int leftright;
-		float headpos;
-		LocalizationData DebugData;
-		float maxrangeleft;
-		float maxrangeright;
-		SensorData PosX;
-		SensorData PosY;
-		SensorData Angle;
+	int leftright;
+	float headpos;
+	LocalizationData DebugData;
+	float maxrangeleft;
+	float maxrangeright;
+	SensorData PosX;
+	SensorData PosY;
+	SensorData Angle;
 
-		SensorData HeadYaw;
-		SensorData HeadPitch;
-		BallTrackMessage lastballseen;
-		BallFilter myBall;
+	SensorData HeadYaw;
+	SensorData HeadPitch;
+	BallTrackMessage lastballseen;
+	BallFilter myBall;
 
-		MotionHeadMessage hmot;
-		MotionWalkMessage wmot;
-		partcl target;
+	MotionHeadMessage hmot;
+	MotionWalkMessage wmot;
+	partcl target;
 
-		boost::shared_ptr<const GameStateMessage> gsm;
-		boost::shared_ptr<const ObservationMessage> obsm;
-		boost::shared_ptr<const RobotPositionMessage> rpsm;
-		boost::shared_ptr<const LocalizationResetMessage> lrm;
+	boost::shared_ptr<const GameStateMessage> gsm;
+	boost::shared_ptr<const ObservationMessage> obsm;
+	boost::shared_ptr<const RobotPositionMessage> rpsm;
+	boost::shared_ptr<const LocalizationResetMessage> lrm;
+	boost::shared_ptr<const MotionStateMessage> sm;
 
-		BToHeadMessage* bhmsg;
-		bool firstrun;
+	BToHeadMessage* bhmsg;
+	bool firstrun;
+	MotionStateMessage::ActionType currentRobotAction;
 
-		boost::posix_time::ptime last_observation_time;
-		boost::posix_time::ptime last_filter_time;
-		boost::posix_time::ptime now;
+	boost::posix_time::ptime last_observation_time;
+	boost::posix_time::ptime last_filter_time;
+	boost::posix_time::ptime now;
 
 
-		//For Debug!
-		void SimpleBehaviorStep();
-		static void * StartServer(void * kati);
-		pthread_t acceptthread;
-		static TCPSocket *sock;
+	//For Debug!
+	void SimpleBehaviorStep();
+	static void * StartServer(void * kati);
+	pthread_t acceptthread;
+	static TCPSocket *sock;
 
-		int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation, KMotionModel & MotionModel);
-		void Send_LocalizationData();
-		int DebugMode_Receive();
-		static bool debugmode;
+	int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation, KMotionModel & MotionModel);
+	void Send_LocalizationData();
+	int DebugMode_Receive();
+	static bool debugmode;
 
-		header incommingheader;
-		header outgoingheader;
+	header incommingheader;
+	header outgoingheader;
 
-		int size;
-		char *data;
+	int size;
+	char *data;
 
 };
 

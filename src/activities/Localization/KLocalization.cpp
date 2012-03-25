@@ -19,8 +19,8 @@
 //#include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
 #include <boost/math/distributions/normal.hpp>
-
 #include "tools/logger.h"
+#include "tools/toString.h"
 #define riza2pi (sqrt(2.0 * M_PI))
 //#undef  WEBOTS
 #undef  DEBUG
@@ -334,13 +334,28 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 {
 	Uniform X, Y, P;
 
-	float length = (FieldMaxX - FieldMinX);
+	float length = (FieldMaxX - FieldMinX)/2;
 	float width = (FieldMaxY - FieldMinY);
-	for (unsigned int i = 0; i < partclsNum; i++)
+	unsigned int particlesUp = partclsNum/2;
+	unsigned int particlesDown = partclsNum - particlesUp;
+	//Initialize top Particles
+	for (unsigned int i = 0; i < particlesUp; i++)
 	{
 		Particles.x[i] = X.Next() * length + FieldMinX;
-		Particles.y[i] = Y.Next() * width + FieldMinY;
-		Particles.phi[i] = P.Next() * deg2rad(360);
+		Particles.y[i] = FieldMaxY;//Y.Next() * width + FieldMinY;
+		Particles.phi[i] = deg2rad(270);
+		Particles.Weight[i] = 1.0 / partclsNum;
+#ifdef DEBUGf
+		cout << "Particle[" << i << "] x: " << Particles.x[i] << " y: " << Particles.y[i] << " phi: " << Particles.phi[i] << " Weight " << Particles.Weight[i] << endl;
+#endif
+		//	sum += Particles.weight[i];
+	}
+	//Initialize down Particles
+	for (unsigned int i = particlesUp; i < partclsNum; i++)
+	{
+		Particles.x[i] = X.Next() * length + FieldMinX;
+		Particles.y[i] = -FieldMaxY;//Y.Next() * width + FieldMinY;
+		Particles.phi[i] = deg2rad(90);//P.Next() * deg2rad(360);
 		Particles.Weight[i] = 1.0 / partclsNum;
 #ifdef DEBUGf
 		cout << "Particle[" << i << "] x: " << Particles.x[i] << " y: " << Particles.y[i] << " phi: " << Particles.phi[i] << " Weight " << Particles.Weight[i] << endl;
@@ -425,6 +440,7 @@ int KLocalization::Initialize()
 		bool found = true;
 		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
 		CarpetMaxX*=1000; //convert to mm
+
 		#ifdef COUT_ON
 		cout << " CarpetMaxX " <<  CarpetMaxX << endl;
 		#endif
@@ -464,6 +480,7 @@ int KLocalization::Initialize()
 		#ifdef COUT_ON
 		cout << " FieldMinY " <<  FieldMinY << endl;
 		#endif
+
 
 		if (found)
 		{
@@ -648,321 +665,11 @@ KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, 
 
 }
 
-//, rangemaxleft, rangemaxright
-belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright)
-{
 
-	int iterations = 1;
-	//	KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
-	//
-	//	if (MotionModelptr == NULL) {
-	//		cout << "Warning No maching Motion Model!!!!!!!!!" << endl;
-	//	} else {
-	//		KMotionModel MotionModel = *MotionModelptr;
-	#ifdef COUT_ON
-	cout << "LocalizationStep MotionModel.Distance.Emean:  " << MotionModel.Distance.Emean << " MotionModel.Distance.Edev " << MotionModel.Distance.Edev << endl;
-	#endif
-	//	}
 
-	int index[partclsNum];
-	//Simple initialization
 
-	//SpreadParticles
-	if (Observations.empty())
-	{
-		#ifdef COUT_ON
-		cout << "No observations ... spreading" << endl;
-		#endif
-		SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
-	}
 
-	//	if (Observations.size() > 1)
-	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
-
-#ifdef DEBUG
-	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << SIRParticles.Weight[i] << "  ";
-#endif
-	//SIR Filter
-	#ifdef COUT_ON
-	cout << "\nPredict Iterations " << iterations << endl;
-	#endif
-
-	//sleep(1);
-	//Predict - Move particles according the Prediction Model
-	//if (MotionModelptr != NULL) {
-	for (int i = 0; i < iterations; i++)
-		Predict(SIRParticles, MotionModel);
-	//} else {
-	//	SpreadParticles(SIRParticles, iterations * 100, 30 * TO_RAD, 100);
-	//}
-	//Update - Using incomming observation
-
-	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
-
-#ifdef DEBUG
-	cout << "\nUnnormalized SIR particles " << endl;
-	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << SIRParticles.Weight[i] << "  ";
-#endif
-
-	//Normalize Particles  Weight in order to Resample later
-	if (normalize(SIRParticles.Weight, partclsNum) < 0.001)
-	{
-		cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
-		depletions_counter++;
-		if (depletions_counter > 1)
-		{
-			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
-		}
-		#ifdef COUT_ON
-		cout << "Depletion Counter " << depletions_counter << endl;
-		#endif
-	} else
-	{
-		depletions_counter = 0;
-
-		//		//Resample
-		//		Resample(SIRParticles, index, 0);
-		//		//Propagate Original Particles Using the index from Auxiliary one
-		//		Propagate(SIRParticles, index);
-		//		if (!Observations.empty())
-		//			SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
-	}
-#ifdef DEBUG
-	cout << "\nNormalized SIR particles  " << endl;
-	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << SIRParticles.Weight[i];
-	//Maybe Usefull for others
-	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
-	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
-	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
-	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
-
-	cout << "\nAUX particles Before, SIR before Resample after memcpy" << endl;
-	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << AUXParticles.Weight[i];
-
-#endif
-
-	//extract estimation
-	partcl maxprtcl;
-
-	//Find Max Weight
-	maxprtcl.Weight = SIRParticles.Weight[0];
-	maxprtcl.x = SIRParticles.x[0];
-	maxprtcl.y = SIRParticles.y[0];
-	maxprtcl.phi = SIRParticles.phi[0];
-	SIRParticles.WeightSum = SIRParticles.Weight[0];
-	for (unsigned int i = 0; i < SIRParticles.size; i++)
-	{
-		//Particles_cx += SIRParticles.x[i];
-		//Particles_cy += SIRParticles.y[i];
-
-		if (SIRParticles.Weight[i] > maxprtcl.Weight)
-		{
-			maxprtcl.x = SIRParticles.x[i];
-			maxprtcl.y = SIRParticles.y[i];
-			maxprtcl.phi = SIRParticles.phi[i];
-			maxprtcl.Weight = SIRParticles.Weight[i];
-		}
-	}
-
-	//Find Center of particles population
-	//	double Particles_cx = 0;
-	//	double Particles_cy = 0;
-	//
-	//	Particles_cx = Particles_cx / SIRParticles.size;
-	//	Particles_cy = Particles_cy / SIRParticles.size;
-
-	AgentPosition.x = maxprtcl.x;
-	AgentPosition.y = maxprtcl.y;
-	AgentPosition.theta = maxprtcl.phi;
-#ifdef COUT_ON
-	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
-#endif
-	//AgentPosition = RobustMean(SIRParticles, 2);
-	//Complete the SIR
-	Resample(SIRParticles, index, 0);
-	Propagate(SIRParticles, index);
-
-	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
-
-	return AgentPosition;
-	//AgentPosition
-}
-
-//, rangemaxleft, rangemaxright
-belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright)
-{
-
-	int iterations = 1;
-	KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
-
-	KMotionModel MotionModel = *MotionModelptr;
-	#ifdef COUT_ON
-	cout << "LocalizationStep MotionModel.Distance.Emean:  " << MotionModel.Distance.Emean << " MotionModel.Distance.Edev " << MotionModel.Distance.Edev << endl;
-	#endif
-
-	int index[partclsNum];
-	//Simple initialization
-	#ifdef COUT_ON
-	cout << "Predict Iterations " << iterations << endl;
-	#endif
-
-	//Initialize Aux particles from current particles information
-	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
-	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
-	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
-	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
-
-	//SpreadParticles
-	if (!Observations.empty())
-		SpreadParticles(AUXParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
-
-	//	if (Observations.size() > 1)
-	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
-
-#ifdef DEBUG
-	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << AUXParticles.Weight[i];
-#endif
-	//Auxiliary Filter
-
-	//Predict - Move particles according the Prediction Model
-	for (int i = 0; i < iterations; i++)
-		Predict(AUXParticles, MotionModel);
-	//Update - Using incomming observation
-	Update(AUXParticles, Observations, *MotionModelptr, partclsNum, rangemaxleft, rangemaxright);
-
-#ifdef DEBUG
-	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << AUXParticles.Weight[i];
-#endif
-
-	//Normalize Particles  Weight in order to Resample later
-	if (normalize(AUXParticles.Weight, partclsNum) < 0.01)
-	{
-		cerr << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
-		#ifdef COUT_ON
-		cout << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
-		#endif
-		//setParticlesPoseUniformly(AUXParticles);
-		depletions_counter++;
-		if (depletions_counter > 1)
-		{
-			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 100);
-		}
-		#ifdef COUT_ON
-		cout << "Depletion Counter " << depletions_counter << endl;
-		#endif
-
-		//		if (Observations.size() > 1)
-		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
-
-	} else
-	{
-		depletions_counter = 0;
-#ifdef DEBUG
-		for (int i = 0; i < partclsNum / 10.0; i++)
-		cout << AUXParticles.Weight[i];
-#endif
-
-		//Resample
-		Resample(AUXParticles, index, 0);
-		//Propagate Original Particles Using the index from Auxiliary one
-		Propagate(SIRParticles, index);
-		if (!Observations.empty())
-			SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
-	}
-	//SIR
-	//Predict - Move particles according the Prediction Model
-	for (int i = 0; i < iterations; i++)
-		Predict(SIRParticles, MotionModel);
-
-	//Update - Using incoming observation
-	Update(SIRParticles, Observations, *MotionModelptr, partclsNum, rangemaxleft, rangemaxright);
-
-	//Normalize Particles  Weight in order to Resample later
-	if ((SIRParticles.WeightSum = normalize(SIRParticles.Weight, partclsNum)) < 0.01)
-	{
-		cerr << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field " << endl;
-		#ifdef COUT_ON
-		cout << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field" << endl;
-		#endif
-		//setParticlesPoseUniformly(SIRParticles);
-		depletions_counter++;
-		if (depletions_counter > 1)
-			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 100);
-		#ifdef COUT_ON
-		cout << "Depletion Counter " << depletions_counter << endl;
-		#endif
-
-		//		if (Observations.size() > 1)
-		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
-
-	} else
-	{
-		depletions_counter = 0;
-	}
-
-	//Initialize Aux particles from current particles information
-	//Maybe Usefull for others
-#ifdef DEBUG
-	memcpy(SIRParticles.x, AUXParticles.x, partclsNum * sizeof(double));
-	memcpy(SIRParticles.y, AUXParticles.y, partclsNum * sizeof(double));
-	memcpy(SIRParticles.phi, AUXParticles.phi, partclsNum * sizeof(double));
-	memcpy(SIRParticles.Weight, AUXParticles.Weight, partclsNum * sizeof(double));
-#endif
-
-	//extract estimation
-	partcl temp;
-
-	//Find Max Weight
-	temp.Weight = SIRParticles.Weight[0];
-	temp.x = SIRParticles.x[0];
-	temp.y = SIRParticles.y[0];
-	temp.phi = SIRParticles.phi[0];
-	SIRParticles.WeightSum = SIRParticles.Weight[0];
-	for (unsigned int i = 1; i < SIRParticles.size; i++)
-	{
-		//Particles_cx += SIRParticles.x[i];
-		//Particles_cy += SIRParticles.y[i];
-
-		if (SIRParticles.Weight[i] > temp.Weight)
-		{
-			temp.x = SIRParticles.x[i];
-			temp.y = SIRParticles.y[i];
-			temp.phi = SIRParticles.phi[i];
-			temp.Weight = SIRParticles.Weight[i];
-		}
-	}
-
-	//Find
-	double Particles_cx = 0;
-	double Particles_cy = 0;
-
-	Particles_cx = Particles_cx / SIRParticles.size;
-	Particles_cy = Particles_cy / SIRParticles.size;
-
-	AgentPosition.x = temp.x;
-	AgentPosition.y = temp.y;
-	AgentPosition.theta = temp.phi;
-
-	//AgentPosition = RobustMean(SIRParticles, 2);
-	//Complete the SIR
-	Resample(SIRParticles, index, 0);
-	Propagate(SIRParticles, index);
-
-	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
-
-	return AgentPosition;
-	//AgentPosition
-}
-
-//Function to find the best Belief using the average of the % of the "hevier" particles
+//Function to find the best Belief using the average of the % of the "heavier" particles
 belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles)
 {
 	belief RmeanAgentPosition;
@@ -1018,10 +725,6 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
 	double tmpDist, tmpDir, tmpRot;
 	Normal X, Y, P;
 	unsigned int i;
-	//	cout << "MotionModel.Distance.val:  " << MotionModel.Distance.val << "Distance.Emean:  " << MotionModel.Distance.Emean << " Distance.Edev " << MotionModel.Distance.Edev
-	//			<< endl;
-	//	cout << "MotionModel.Direction.val:  " << MotionModel.Direction.val << "Direction.Emean:  " << MotionModel.Direction.Emean << " Direction.Edev " << MotionModel.Direction.Edev
-	//			<< endl;
 
 	//Just for the 1st particle use only the mean motionmodel without noise
 	if (MotionModel.type == "ratio")
@@ -1070,10 +773,8 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
 
 #ifdef  DEBUGPredict
 		cout << "tmpDist:  " << tmpDist << " tmpDir " << tmpDir << endl;
-
 		cout << "tmpDist:  " << tmpDist << " tmpDir " << tmpDir << " tmpRot "<<tmpRot<< endl;
 		cout << "AFTER  Particles .x[i]" << Particles .x[i] << "Particles .y[i]" << Particles .y[i] << "Particles .phi[i]" << Particles .phi[i] << endl;
-		//Particles.Weight[i] = 1.0;
 #endif
 	}
 #ifdef  DEBUG
@@ -1186,8 +887,138 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 	//Color, Circle, Value
 	//0 Yellow // 1 Blue //0 circle1 , 1 circle 2;
 	float Circles[2][2][4]; //0 x, 1 y, 2 radius, 3 bearing
-	//	float Circle2[2][3];
 
+	#ifdef yellowyellow
+	cerr << "Ta pigenw omiomorfa\n";
+	int halfParticlesFromObs = numofparticlesfromObservation/2;
+	int cy, cb; //counter for yellow and blue goalpost
+	cy = 0;
+	cb = 0;
+	for (unsigned int i = 0; i < Observation.size(); i++)
+	{
+		if (Observation[i].Feature.id[0] == 'Y' && cy < 2)
+		{
+			Circles[0][cy][0] = Observation[i].Feature.x;
+			Circles[0][cy][1] = Observation[i].Feature.y;
+			Circles[0][cy][2] = Observation[i].Distance.val;
+			Circles[0][cy][3] = Observation[i].Bearing.val;
+
+			Circles[1][cy][0] = -Observation[i].Feature.x;
+			Circles[1][cy][1] = -Observation[i].Feature.y;
+			Circles[1][cy][2] = Observation[i].Distance.val;
+			Circles[1][cy][3] = Observation[i].Bearing.val;
+			cy++;
+		}
+	}
+
+	int ci;
+	//Calculate distance between centres of circle
+	ci = 0; //Only yellow
+	float d = DISTANCE(Circles[ci][0][0],Circles[ci][1][0],Circles[ci][0][1],Circles[ci][1][1]); //[MathsFunctions calcDistance:c1.centre end:c2.centre];
+	float c1r = Circles[ci][0][2];
+	float c2r = Circles[ci][1][2];
+	float m = c1r + c2r;
+	float n = c1r - c2r;
+
+	if (n < 0)
+		n = (n * -1);
+	//cout << " d " << d << " n "<< n << " m " << m << endl;
+	//No solns
+	if (d > m)
+		return 0;
+
+	//Circle are contained within each other
+	if (d < n)
+		return 0;
+
+	//Circles are the same
+	if (d == 0 && c1r == c2r)
+		return -1;
+
+	//Solve for a
+	float a = (c1r * c1r - c2r * c2r + d * d) / (2 * d);
+
+	//Solve for h
+	float h = sqrt(c1r * c1r - a * a);
+
+	//Calculate point p, where the line through the circle intersection points crosses the line between the circle centers.
+	partcl p;
+
+	p.x = Circles[ci][0][0] + (a / d) * (Circles[ci][1][0] - Circles[ci][0][0]);
+	p.y = Circles[ci][0][1] + (a / d) * (Circles[ci][1][1] - Circles[ci][0][1]);
+
+	int nsol = 2;
+	//1 soln , circles are touching
+	if (d == c1r + c2r)
+	{
+		nsol = 1;
+	} else
+	{
+		//2solns
+		partcl p1;
+		//partcl p2;
+
+		p1.x = p.x + (h / d) * (Circles[ci][1][1] - Circles[ci][0][1]);
+		p1.y = p.y - (h / d) * (Circles[ci][1][0] - Circles[ci][0][0]);
+		if (fabs(p1.x) > 4000 || fabs(p1.y) > 2800) // TODO add this values to conf file
+		{
+			//Is the other point
+			p.x = p.x - (h / d) * (Circles[ci][1][1] - Circles[ci][0][1]);
+			p.y = p.y + (h / d) * (Circles[ci][1][0] - Circles[ci][0][0]);
+		} else
+			p = p1;
+	}
+
+	int index = (rand()) % Particles.size;
+	//Particles.x[index] = p.x;
+	//Particles.y[index] = p.y;
+
+	for (int i = 0; i < halfParticlesFromObs; i++)
+	{
+		index = (rand() + i) % Particles.size;
+
+		Particles.x[index] = p.x;
+		Particles.y[index] = p.y;
+		//		Particles.phi[index] = temp.phi;
+		float angles[2], ParticlePointBearingAngle;
+		for (unsigned int o = 0; o < 2; o++)
+		{
+			//cout << " ci "<< ci << " o " << o << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
+			ParticlePointBearingAngle = atan2(Circles[ci][o][1] - Particles.y[index], Circles[ci][o][0] - Particles.x[index]);
+			angles[o] = anglediff2(ParticlePointBearingAngle, Circles[ci][o][3]);
+			//cout << "ParticlePointBearingAngle  " << ParticlePointBearingAngle << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
+		}
+
+		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
+		//cout << "index: " << index << " x: " << p.x << " y: " << p.y << " phi: " << Particles.phi[index] << endl;
+
+	}
+	ci = 1; // change to second yellow 
+	for (int i = halfParticlesFromObs; i < numofparticlesfromObservation; i++)
+	{
+		index = (rand() + i) % Particles.size;
+
+		Particles.x[index] = -p.x;
+		Particles.y[index] = -p.y;
+		//		Particles.phi[index] = temp.phi;
+		float angles[2], ParticlePointBearingAngle;
+		for (unsigned int o = 0; o < 2; o++)
+		{
+			//cout << " ci "<< ci << " o " << o << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
+			ParticlePointBearingAngle = atan2(Circles[ci][o][1] - Particles.y[index], Circles[ci][o][0] - Particles.x[index]);
+			angles[o] = anglediff2(ParticlePointBearingAngle, Circles[ci][o][3]);
+			//cout << "ParticlePointBearingAngle  " << ParticlePointBearingAngle << " Circles[ci][o][4] " << Circles[ci][o][3] << endl;
+		}
+
+		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
+		//cout << "index: " << index << " x: " << p.x << " y: " << p.y << " phi: " << Particles.phi[index] << endl;
+
+	}
+	
+	return nsol;
+
+
+	#else
 	int cy, cb; //counter for yellow and blue goalpost
 	cy = 0;
 	cb = 0;
@@ -1302,130 +1133,10 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 	}
 
 	return nsol;
+	#endif
 }
 
-int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, parts &Particles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright)
-{
 
-	float Xstep = round((float) Xdim / (float) resolution);
-	//float Yresolution = round((float) Ydim / (float) resolution);
-
-	vector<partcl> QueueContainer;
-	priority_queue<partcl> particlesQueue;
-
-	partcl temp;
-	float ratio = 0;
-	double Meanerror = 0;
-	//double MeanAngle = 0;
-	// Scan a grid on the field
-	double OverallWeight, MinOverallWeight, R, ParticlePointBearingAngle, ParticleBearing, Deviation;
-
-	//cout << "Observations size " << Observation.size() << endl;
-
-	double OverallWeight2;
-	double max_weight = 0;
-	MinOverallWeight = 0;
-	for (float x = -Xdim / 2.0; x <= Xdim / 2; x = x + Xstep)
-		for (float y = -Ydim / 2.0; y <= Ydim / 2; y = y + Xstep)
-		{
-			temp.x = x;
-			temp.y = y;
-			OverallWeight = 1.0;
-			//cout << "Examining position x " << temp.x << " y: " << temp.y << endl;
-			for (unsigned int i = 0; i < Observation.size(); i++)
-			{
-
-				if (isVisible(Observation[i].Feature, temp, rangemaxleft, rangemaxright))
-					ratio = P_observe_Visible;
-				else
-					ratio = P_observe_NotVisible;
-				// Distance
-				// R Distance the particle has from the LandMark
-				R = DISTANCE(x, Observation[i].Feature.x, y, Observation[i].Feature.y);
-				//Deviation = max_observation_distance_deviation / max_observation_distance * Observation[i].Distance.val + min_observation_distance_deviation;
-				Meanerror = CalcDistMean(Observation[i].Feature, R);
-				Deviation = CalcDistDev(Observation[i].Feature, R);
-				OverallWeight = OverallWeight * normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
-
-				OverallWeight2 = OverallWeight;
-				//Try to find out the best bearing angle
-
-				Deviation = CalcBearDev(Observation[i].Feature, R);
-				for (double test_phi = 0; test_phi < 2.0 * M_PI; test_phi = test_phi + M_PI_4 / 2.0)
-				{
-					ParticlePointBearingAngle = atan2(Observation[i].Feature.y - temp.y, Observation[i].Feature.x - temp.x);
-					ParticleBearing = anglediff2(ParticlePointBearingAngle, test_phi);
-
-					//Deviation = max_observation_bearing_deviation / max_observation_distance * Observation[i].Distance .val + min_observation_bearing_deviation;
-					OverallWeight2 = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
-
-					if (OverallWeight2 > max_weight)
-					{
-						max_weight = OverallWeight2;
-						temp.phi = test_phi;
-					}
-				}
-				OverallWeight = OverallWeight * ratio;
-
-				//Add particles to the priority
-				//So the top particle to have the lower weight
-
-			}
-			temp.Weight = 1 - OverallWeight;
-			particlesQueue.push(temp);
-			//cout << " Particle inserted " << endl;
-			if (particlesQueue.size() > numofparticlesfromObservation)
-				particlesQueue.pop();
-		}
-
-	//TODO more efficient-correct addition of particles!
-	//Now put them in the particles
-	//easy way
-	//just replace random numofparticlesfromObservation particles
-	int index;
-
-	//cout << "Observation Generated Particles " << particlesQueue.size() << endl;
-
-	for (int i = 0; i < numofparticlesfromObservation; i++)
-	{
-		index = (rand() + i) % Particles.size;
-		temp = particlesQueue.top();
-		//	Particles.x[index] = temp.x;
-		//		Particles.y[index] = temp.y;
-		//		Particles.phi[index] = temp.phi;
-		//cout << "index: " << index << " x: " << temp.x << " y: " << temp.y << " phi: " << temp.phi << endl;
-		particlesQueue.pop();
-	}
-	return 1;
-}
-
-void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation)
-{
-	//Calculate the bearing from each particle from each Observation
-	//Force Bearing under some criteria
-
-	float ParticlePointBearingAngle;
-	if (Observation.size() > 1)
-	{
-		float * angles = new float[Observation.size()];for (unsigned int p = 0; p < Particles.size; p++)
-		{
-			for (unsigned int o = 0; o < Observation.size(); o++)
-			{
-				ParticlePointBearingAngle = atan2(Observation[o].Feature.y - Particles .y[p], Observation[o].Feature.x - Particles.x[p]);
-				angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
-			}
-			Particles.phi[p] = circular_mean_angle(angles, Observation.size());
-		}
-		delete angles;
-	} else if (Observation.size() == 1)
-	{
-		for (unsigned int p = 0; p < Particles.size; p++)
-		{
-			ParticlePointBearingAngle = atan2(Observation[0].Feature.y - Particles .y[p], Observation[0].Feature.x - Particles.x[p]);
-			Particles.phi[p] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
-		}
-	}
-}
 
 float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 {
@@ -1458,36 +1169,46 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 	//	return mean, std
 }
 
+
+void KLocalization::spreadParticlesAfterFall(parts &Particles){
+}
+
 void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemaxleft, double rangemaxright)
 {
 
-	//
 	//	 Function to update the weights of each particle regarding the ObservationDistance
 	//	 from an object and the direction
 
-	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation;
+	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation, OverallWeightYellowYellow,ParticlePointBearingAngleS, ParticleBearingS;
 	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double R;
+	double R,RS;
 	double Meanerror = 0;
 	//double MeanAngle = 0;
-#ifdef  DEBUG
-	cout << "Num Of Observation: " << Observation.size() << endl;
-#endif
 
 	//float ratio = 1.0;
+	//cout << "--------------------------------------------------------------" << endl;
+	//cout << "Size = " << Observation.size() << endl;
 	for (int p = 0; p < NumofParticles; p++)
 	{
 		OverallWeight = Particles.Weight[p];
-#ifdef DEBUGupdate
+		OverallWeightYellowYellow = 0;
+		#ifdef DEBUGupdate
 		cout << " ParticleWeightBefore: " << OverallWeight << endl;
-#endif
-		if (!Observation.empty())
-		{ // an landMark has been observed
+		#endif
+		//if(Observation.size()>0)
+		//	Logger::Instance().WriteMsg("Kofi",  "Number of Obs = " + _toString(Observation.size()), Logger::Info);
+		if (!Observation.empty())// an landMark has been observed
+		{ 
 			OverallWeight = 1.0;
-			//	cout << "Weighting prtl X" << Particles.x[p] << " Y: " << Particles.y[p] << " phi: " << Particles.phi[p] << endl;
+#ifdef yellowyellow
+			OverallWeightYellowYellow = 1.0;
+#else
+			OverallWeightYellowYellow = 0;
+#endif
 			for (unsigned int i = 0; i < Observation.size(); i++)
 			{
 #ifdef DISTANCE_WEIGHTING
+				//Logger::Instance().WriteMsg("Kofi",  "Distance of Obs = " + _toString(Observation[i].Distance.val), Logger::Info);
 				// Distance
 				// R Distance the particle has from the LandMark
 				R = DISTANCE(Particles.x[p],Observation[i].Feature.x,Particles.y[p],Observation[i].Feature.y);
@@ -1497,9 +1218,10 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				Meanerror = Observation[i].Distance.Emean; // CalcDistMean(Observation[i].Feature, R);
 				Deviation = Observation[i].Distance.Edev; //CalcDistDev(Observation[i].Feature, R);
 
-#ifdef DEBUGupdate
+				#ifdef DEBUGupdate
 				cout << " Distance Deviation " << Deviation << " Meanerror " << Meanerror << endl;
-#endif
+				#endif
+				//Logger::Instance().WriteMsg("Kofi",  "Distance pou ypologizw 1 = " + _toString(R), Logger::Info);
 				OverallWeight = OverallWeight * normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
 #endif
 				//cout << " ParticleAfterDist: " << OverallWeight << endl;
@@ -1513,34 +1235,60 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				//Meanerror = CalcBearMean(Observation[i].Feature, R);
 				//MeanAngle = -anglediff(Observation[i].Bearing.val, Meanerror);
 
-				//Bearing
 #ifdef	BEARING_WEIGHTING
+				//Bearing
 				ParticlePointBearingAngle = atan2(Observation[i].Feature.y - Particles.y[p], Observation[i].Feature.x - Particles.x[p]);
 				ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
 				Deviation = Observation[i].Bearing.Edev; //CalcBearDev(Observation[i].Feature, R);
-#ifdef DEBUGupdate
-						cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
-#endif
+
+				#ifdef DEBUGupdate
+				cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+				#endif
+
 				//cout << "Bearing Error " << anglediff2(Observation[i].Bearing.val, ParticleBearing) * 100 << " Deviation " << Deviation << endl;
 				//Particles.phi[p] = ParticlePointBearingAngle  + Observation[0].Bearing.val;
 				//Particles.phi[p] -= anglediff2(Observation[i].Bearing.val, ParticleBearing);
 				//Particles.phi[p] = anglediff2(ParticlePointBearingAngle, Observation[i].Bearing.val);
 				//cout << "Particle weight " << normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation) << "Observation " << i << endl;
 				OverallWeight = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
-				//cout << "Bearing  weight " <<
-#endif
-				//
-#ifdef VISIBILITY_WEIGHTING
-				if (isVisible(Observation[i].Feature, Particles, p, rangemaxleft, rangemaxright))
-				ratio = P_observe_Visible;
-				else
-				ratio = P_observe_NotVisible;
-				OverallWeight = OverallWeight * ratio;
 #endif
 
-				//cout << " R: " << R << " Ow: " << OverallWeight;
+#ifdef yellowyellow
+#ifdef DISTANCE_WEIGHTING
+				// Distance
+				// R Distance the particle has from the LandMark
+				// s is for symetry
+				//we take the symetric yellow now, so we put a - to the x and y of the observation
+				RS = DISTANCE(Particles.x[p],-Observation[i].Feature.x,Particles.y[p],-Observation[i].Feature.y);
+
+				#ifdef DEBUGupdate
+				cout << " Distance Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+				#endif
+				
+				if(p == 10)
+					cout << "OverallYellow = " << OverallWeightYellowYellow << endl;
+				OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
+				if(p == 10)
+					cout << "OverallYellow = " << OverallWeightYellowYellow << endl;
+#endif
+#ifdef	BEARING_WEIGHTING
+				//Bearing
+				ParticlePointBearingAngleS = atan2(-Observation[i].Feature.y - Particles.y[p], -Observation[i].Feature.x - Particles.x[p]);
+				ParticleBearingS = anglediff2(ParticlePointBearingAngleS, Particles.phi[p]);
+				OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
+				if(p == 10)
+					cout << "OverallYellow = " << OverallWeightYellowYellow << endl;
+			//	Logger::Instance().WriteMsg("Kofi",  "Distance pou ypologizw 2 = " + _toString(R), Logger::Info);
+#endif
+#endif
+#ifdef VISIBILITY_WEIGHTING
+				if (isVisible(Observation[i].Feature, Particles, p, rangemaxleft, rangemaxright))
+					ratio = P_observe_Visible;
+				else
+					ratio = P_observe_NotVisible;
+				OverallWeight = OverallWeight * ratio;
+#endif
 			}
-			//
 		}
 #ifdef ALLVISIBILITY
 		else
@@ -1562,6 +1310,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 			}
 		}
 #endif
+
 		//USE past belief to weight particle
 		//Here we need also the motion model average
 #ifdef  PASTBELIEF
@@ -1569,30 +1318,38 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		DistanceFromPastBelief = DISTANCE(AgentPosition.x,Particles.x[p],AgentPosition.y,Particles.y[p]);
 		ParticlePointBearingAngle = atan2(Particles .y[p] - AgentPosition.y, Particles.x[p] - AgentPosition.x);
 		DirectionFromPastBelief = anglediff2(ParticlePointBearingAngle, AgentPosition.theta);
-		//MotionModel.Direction
 		OverallWeight *= normpdf(DistanceFromPastBelief - MotionModel.Distance.val * MotionModel.Distance.ratiomean, abs(2500 / (0.5 + AgentPosition.confidence))+0.01);
 		OverallWeight *= normpdf(DirectionFromPastBelief - (MotionModel.Direction.val + MotionModel.Direction.Emean), abs(MotionModel.Direction.Edev + AgentPosition.confidence) * 3+0.000001);
 		//OverallWeight *= normpdf(anglediff2(Particles.phi[p], AgentPosition.theta) - MotionModel.Rotation.val, abs(MotionModel.Rotation.Edev + AgentPosition.confidence)+0.00000001);
-#ifdef  DEBUGupdate
+		#ifdef  DEBUGupdate
 		cout << " pastBelief Ow: " << OverallWeight << endl;
+		#endif
 #endif
-#endif
+		/*if(p == 10){
+			int num = 0;
+			if(Observation.size()>0)
+				num = Observation[0].Distance.val;
+			else
+				num = 0;
+			cout << "OverallWeight = " << OverallWeight << " OverallYellow = " << OverallWeightYellowYellow << endl;
+			cout << "X = " << Particles.x[p] << " Y = " << Particles.y[p] << " R = " << R << " RS = " << RS << " Real Dist = " << num << endl;
+		}*/
 		//cout << endl;
 		//set the weight
-#ifdef  DEBUGupdate
+		#ifdef  DEBUGupdate
 		cout << " Ow: " << OverallWeight << endl;
 		if (OverallWeight == 0)
 		{
 			cout << "\033[01;31m  Particle' s " << p << " Weight is Zero, a dead particle  \033[0m" << endl;
 		}
-#endif
+		#endif
+		OverallWeight += OverallWeightYellowYellow;
 		Particles.Weight[p] = OverallWeight;
 	}
-#ifdef  DEBUG
-
+	//cout << "--------------------------------------------------------------" << endl;
+	#ifdef  DEBUG
 	cout << "Update Done " << endl;
-
-#endif
+	#endif
 }
 
 void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles)
@@ -1601,23 +1358,23 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 	//
 	//	 Function to update the weights of each particle regarding the ObservationDistance
 	//	 from an object and the direction
-
-	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation;
-	double AdditiveWeight = 0;
+	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation,ParticlePointBearingAngleS, ParticleBearingS;
 	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double R;
+	double AdditiveWeight = 0;
+	double R,RS;
 	double Meanerror = 0;
 
-#ifdef  DEBUG
+	#ifdef  DEBUG
 	cout << "Num Of Ambugius Observations: " << Observation.size() << endl;
-#endif
+	#endif
 
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		OverallWeight = Particles.Weight[p];
-#ifdef DEBUGupdate
+		//OverallWeight = Particles.Weight[p];
+		//	OberallWeight = 0;
+		#ifdef DEBUGupdate
 		cout << " ParticleWeightBefore: " << OverallWeight << endl;
-#endif
+		#endif
 		if (!Observation.empty())
 		{ // an Ambigius landMark has been observed
 			for (unsigned int i = 0; i < Observation.size(); i++)
@@ -1632,43 +1389,68 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 					Meanerror = Observation[i].Distance.Emean;
 					Deviation = Observation[i].Distance.Edev;
 
-#ifdef DEBUGupdate
+					#ifdef DEBUGupdate
 					cout << " Distance Deviation " << Deviation << " Meanerror " << Meanerror << endl;
-#endif
+					#endif
 					AdditiveWeight += normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
 #endif
 
 					//Bearing
 #ifdef	BEARING_WEIGHTING
-					ParticlePointBearingAngle = atan2(Observation[i].Feature.y - Particles.y[p] * j, Observation[i].Feature.x - Particles.x[p]);
+					ParticlePointBearingAngle = atan2(Observation[i].Feature.y*j - Particles.y[p], Observation[i].Feature.x - Particles.x[p]);
 					ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
 					Deviation = Observation[i].Bearing.Edev; //CalcBearDev(Observation[i].Feature, R);
-#ifdef DEBUGupdate
-							cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
-#endif
+					#ifdef DEBUGupdate
+					cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+					#endif
 
 					AdditiveWeight += normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
+#endif
+#ifdef yellowyellow
+#ifdef DISTANCE_WEIGHTING
+					// Distance
+					// R Distance the particle has from the LandMark
+					RS = DISTANCE(Particles.x[p],-Observation[i].Feature.x,Particles.y[p],-Observation[i].Feature.y*j);
+
+					Meanerror = Observation[i].Distance.Emean;
+					Deviation = Observation[i].Distance.Edev;
+
+					#ifdef DEBUGupdate
+					cout << " Distance Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+					#endif
+					AdditiveWeight += normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
+#endif
+
+					//Bearing
+#ifdef	BEARING_WEIGHTING
+					ParticlePointBearingAngleS = atan2(-Observation[i].Feature.y*j - Particles.y[p], -Observation[i].Feature.x - Particles.x[p]);
+					ParticleBearingS = anglediff2(ParticlePointBearingAngleS, Particles.phi[p]);
+					Deviation = Observation[i].Bearing.Edev; //CalcBearDev(Observation[i].Feature, R);
+					#ifdef DEBUGupdate
+					cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
+					#endif
+
+					AdditiveWeight += normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
+#endif
 #endif
 				}
 			}
 		}
-		OverallWeight *= AdditiveWeight;
-		AdditiveWeight=0;
+		OverallWeight = AdditiveWeight;
+		//AdditiveWeight=0;
 		//set the weight
-#ifdef  DEBUGupdate
+		#ifdef  DEBUGupdate
 		cout << " Ow: " << OverallWeight << endl;
 		if (OverallWeight == 0)
 		{
 			cout << "\033[01;31m  Particle' s " << p << " Weight is Zero, a dead particle  \033[0m" << endl;
 		}
-#endif
+		#endif
 		Particles.Weight[p] = OverallWeight;
 	}
-#ifdef  DEBUG
-
+	#ifdef  DEBUG
 	cout << "Update Done " << endl;
-
-#endif
+	#endif
 }
 
 void KLocalization::Propagate(parts & Particles, int *Index)
@@ -2095,3 +1877,448 @@ double KLocalization::CalcBearDev(feature afeature, double Distance)
 	//	}
 	return ret;
 }
+
+
+/*
+Use only without localization activity (standalone)
+//, rangemaxleft, rangemaxright
+belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright)
+{
+
+	int iterations = 1;
+	//	KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
+	//
+	//	if (MotionModelptr == NULL) {
+	//		cout << "Warning No maching Motion Model!!!!!!!!!" << endl;
+	//	} else {
+	//		KMotionModel MotionModel = *MotionModelptr;
+	#ifdef COUT_ON
+	cout << "LocalizationStep MotionModel.Distance.Emean:  " << MotionModel.Distance.Emean << " MotionModel.Distance.Edev " << MotionModel.Distance.Edev << endl;
+	#endif
+	//	}
+
+	cout << "\nKLocalizatio.cpp------------------- "<< endl;
+	int index[partclsNum];
+	//Simple initialization
+
+	//SpreadParticles
+	if (Observations.empty())
+	{
+		#ifdef COUT_ON
+		cout << "No observations ... spreading" << endl;
+		#endif
+		SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
+	}
+
+	//	if (Observations.size() > 1)
+	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
+
+#ifdef DEBUG
+	for (int i = 0; i < partclsNum / 10.0; i++)
+	cout << SIRParticles.Weight[i] << "  ";
+#endif
+	//SIR Filter
+	#ifdef COUT_ON
+	cout << "\nPredict Iterations " << iterations << endl;
+	#endif
+
+	//sleep(1);
+	//Predict - Move particles according the Prediction Model
+	//if (MotionModelptr != NULL) {
+	for (int i = 0; i < iterations; i++)
+		Predict(SIRParticles, MotionModel);
+	//} else {
+	//	SpreadParticles(SIRParticles, iterations * 100, 30 * TO_RAD, 100);
+	//}
+	//Update - Using incomming observation
+
+	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
+
+#ifdef DEBUG
+	cout << "\nUnnormalized SIR particles " << endl;
+	for (int i = 0; i < partclsNum / 10.0; i++)
+	cout << SIRParticles.Weight[i] << "  ";
+#endif
+
+	//Normalize Particles  Weight in order to Resample later
+	if (normalize(SIRParticles.Weight, partclsNum) < 0.001)
+	{
+		cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
+		depletions_counter++;
+		if (depletions_counter > 1)
+		{
+			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
+		}
+		#ifdef COUT_ON
+		cout << "Depletion Counter " << depletions_counter << endl;
+		#endif
+	} else
+	{
+		depletions_counter = 0;
+
+		//		//Resample
+		//		Resample(SIRParticles, index, 0);
+		//		//Propagate Original Particles Using the index from Auxiliary one
+		//		Propagate(SIRParticles, index);
+		//		if (!Observations.empty())
+		//			SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
+	}
+#ifdef DEBUG
+	cout << "\nNormalized SIR particles  " << endl;
+	for (int i = 0; i < partclsNum / 10.0; i++)
+	cout << SIRParticles.Weight[i];
+	//Maybe Usefull for others
+	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
+	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
+	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
+	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
+
+	cout << "\nAUX particles Before, SIR before Resample after memcpy" << endl;
+	for (int i = 0; i < partclsNum / 10.0; i++)
+	cout << AUXParticles.Weight[i];
+
+#endif
+
+	//extract estimation
+	partcl maxprtcl;
+
+	//Find Max Weight
+	maxprtcl.Weight = SIRParticles.Weight[0];
+	maxprtcl.x = SIRParticles.x[0];
+	maxprtcl.y = SIRParticles.y[0];
+	maxprtcl.phi = SIRParticles.phi[0];
+	SIRParticles.WeightSum = SIRParticles.Weight[0];
+	for (unsigned int i = 0; i < SIRParticles.size; i++)
+	{
+		//Particles_cx += SIRParticles.x[i];
+		//Particles_cy += SIRParticles.y[i];
+
+		if (SIRParticles.Weight[i] > maxprtcl.Weight)
+		{
+			maxprtcl.x = SIRParticles.x[i];
+			maxprtcl.y = SIRParticles.y[i];
+			maxprtcl.phi = SIRParticles.phi[i];
+			maxprtcl.Weight = SIRParticles.Weight[i];
+		}
+	}
+
+	//Find Center of particles population
+	//	double Particles_cx = 0;
+	//	double Particles_cy = 0;
+	//
+	//	Particles_cx = Particles_cx / SIRParticles.size;
+	//	Particles_cy = Particles_cy / SIRParticles.size;
+
+	AgentPosition.x = maxprtcl.x;
+	AgentPosition.y = maxprtcl.y;
+	AgentPosition.theta = maxprtcl.phi;
+#ifdef COUT_ON
+	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
+#endif
+	//AgentPosition = RobustMean(SIRParticles, 2);
+	//Complete the SIR
+	Resample(SIRParticles, index, 0);
+	Propagate(SIRParticles, index);
+
+	//TODO only one value to determine confidance, Now its only distance confidence
+	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+
+	return AgentPosition;
+	//AgentPosition
+}*/
+
+/*
+//Dont use it any more
+//, rangemaxleft, rangemaxright
+belief KLocalization::LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observations, double rangemaxleft, double rangemaxright)
+{
+
+	int iterations = 1;
+	KMotionModel *MotionModelptr = findBestMotionModel(steps, MotionType, KouretesMotions, &iterations);
+
+	KMotionModel MotionModel = *MotionModelptr;
+	#ifdef COUT_ON
+	cout << "LocalizationStep MotionModel.Distance.Emean:  " << MotionModel.Distance.Emean << " MotionModel.Distance.Edev " << MotionModel.Distance.Edev << endl;
+	#endif
+
+	int index[partclsNum];
+	//Simple initialization
+	#ifdef COUT_ON
+	cout << "Predict Iterations " << iterations << endl;
+	#endif
+
+	//Initialize Aux particles from current particles information
+	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
+	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
+	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
+	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
+
+	//SpreadParticles
+	if (!Observations.empty())
+		SpreadParticles(AUXParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
+
+	//	if (Observations.size() > 1)
+	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
+
+#ifdef DEBUG
+	for (int i = 0; i < partclsNum / 10.0; i++)
+	cout << AUXParticles.Weight[i];
+#endif
+	//Auxiliary Filter
+
+	//Predict - Move particles according the Prediction Model
+	for (int i = 0; i < iterations; i++)
+		Predict(AUXParticles, MotionModel);
+	//Update - Using incomming observation
+	Update(AUXParticles, Observations, *MotionModelptr, partclsNum, rangemaxleft, rangemaxright);
+
+#ifdef DEBUG
+	for (int i = 0; i < partclsNum / 10.0; i++)
+	cout << AUXParticles.Weight[i];
+#endif
+
+	//Normalize Particles  Weight in order to Resample later
+	if (normalize(AUXParticles.Weight, partclsNum) < 0.01)
+	{
+		cerr << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
+		#ifdef COUT_ON
+		cout << " Oups AUXParticles Population Dissapeared Maybe the Robot have changed position" << endl;
+		#endif
+		//setParticlesPoseUniformly(AUXParticles);
+		depletions_counter++;
+		if (depletions_counter > 1)
+		{
+			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 100);
+		}
+		#ifdef COUT_ON
+		cout << "Depletion Counter " << depletions_counter << endl;
+		#endif
+
+		//		if (Observations.size() > 1)
+		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
+
+	} else
+	{
+		depletions_counter = 0;
+#ifdef DEBUG
+		for (int i = 0; i < partclsNum / 10.0; i++)
+		cout << AUXParticles.Weight[i];
+#endif
+
+		//Resample
+		Resample(AUXParticles, index, 0);
+		//Propagate Original Particles Using the index from Auxiliary one
+		Propagate(SIRParticles, index);
+		if (!Observations.empty())
+			SpreadParticles(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
+	}
+	//SIR
+	//Predict - Move particles according the Prediction Model
+	for (int i = 0; i < iterations; i++)
+		Predict(SIRParticles, MotionModel);
+
+	//Update - Using incoming observation
+	Update(SIRParticles, Observations, *MotionModelptr, partclsNum, rangemaxleft, rangemaxright);
+
+	//Normalize Particles  Weight in order to Resample later
+	if ((SIRParticles.WeightSum = normalize(SIRParticles.Weight, partclsNum)) < 0.01)
+	{
+		cerr << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field " << endl;
+		#ifdef COUT_ON
+		cout << " Oops SIRParticles Population Disappeared Maybe the Robot have changed position ...\nRespreading them over the field" << endl;
+		#endif
+		//setParticlesPoseUniformly(SIRParticles);
+		depletions_counter++;
+		if (depletions_counter > 1)
+			SpreadParticles(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 100);
+		#ifdef COUT_ON
+		cout << "Depletion Counter " << depletions_counter << endl;
+		#endif
+
+		//		if (Observations.size() > 1)
+		//			ObservationParticles(Observations, SIRParticles, 6000, 3000, 50, rangemaxleft, rangemaxright);
+
+	} else
+	{
+		depletions_counter = 0;
+	}
+
+	//Initialize Aux particles from current particles information
+	//Maybe Usefull for others
+#ifdef DEBUG
+	memcpy(SIRParticles.x, AUXParticles.x, partclsNum * sizeof(double));
+	memcpy(SIRParticles.y, AUXParticles.y, partclsNum * sizeof(double));
+	memcpy(SIRParticles.phi, AUXParticles.phi, partclsNum * sizeof(double));
+	memcpy(SIRParticles.Weight, AUXParticles.Weight, partclsNum * sizeof(double));
+#endif
+
+	//extract estimation
+	partcl temp;
+
+	//Find Max Weight
+	temp.Weight = SIRParticles.Weight[0];
+	temp.x = SIRParticles.x[0];
+	temp.y = SIRParticles.y[0];
+	temp.phi = SIRParticles.phi[0];
+	SIRParticles.WeightSum = SIRParticles.Weight[0];
+	for (unsigned int i = 1; i < SIRParticles.size; i++)
+	{
+		//Particles_cx += SIRParticles.x[i];
+		//Particles_cy += SIRParticles.y[i];
+
+		if (SIRParticles.Weight[i] > temp.Weight)
+		{
+			temp.x = SIRParticles.x[i];
+			temp.y = SIRParticles.y[i];
+			temp.phi = SIRParticles.phi[i];
+			temp.Weight = SIRParticles.Weight[i];
+		}
+	}
+
+	//Find
+	double Particles_cx = 0;
+	double Particles_cy = 0;
+
+	Particles_cx = Particles_cx / SIRParticles.size;
+	Particles_cy = Particles_cy / SIRParticles.size;
+
+	AgentPosition.x = temp.x;
+	AgentPosition.y = temp.y;
+	AgentPosition.theta = temp.phi;
+
+	//AgentPosition = RobustMean(SIRParticles, 2);
+	//Complete the SIR
+	Resample(SIRParticles, index, 0);
+	Propagate(SIRParticles, index);
+
+	//TODO only one value to determine confidance, Now its only distance confidence
+	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+
+	return AgentPosition;
+	//AgentPosition
+}*/
+/*
+//Bad idea for 2 yellow goals
+void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation)
+{
+	//Calculate the bearing from each particle from each Observation
+	//Force Bearing under some criteria
+
+	float ParticlePointBearingAngle;
+	if (Observation.size() > 1)
+	{
+		float * angles = new float[Observation.size()];for (unsigned int p = 0; p < Particles.size; p++)
+		{
+			for (unsigned int o = 0; o < Observation.size(); o++)
+			{
+				ParticlePointBearingAngle = atan2(Observation[o].Feature.y - Particles .y[p], Observation[o].Feature.x - Particles.x[p]);
+				angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
+			}
+			Particles.phi[p] = circular_mean_angle(angles, Observation.size());
+		}
+		delete angles;
+	} else if (Observation.size() == 1)
+	{
+		for (unsigned int p = 0; p < Particles.size; p++)
+		{
+			ParticlePointBearingAngle = atan2(Observation[0].Feature.y - Particles .y[p], Observation[0].Feature.x - Particles.x[p]);
+			Particles.phi[p] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
+		}
+	}
+}*/
+/*
+Used with UpdateSIR from KLocalization
+int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, parts &Particles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright)
+{
+
+	float Xstep = round((float) Xdim / (float) resolution);
+	//float Yresolution = round((float) Ydim / (float) resolution);
+
+	vector<partcl> QueueContainer;
+	priority_queue<partcl> particlesQueue;
+
+	partcl temp;
+	float ratio = 0;
+	double Meanerror = 0;
+	//double MeanAngle = 0;
+	// Scan a grid on the field
+	double OverallWeight, MinOverallWeight, R, ParticlePointBearingAngle, ParticleBearing, Deviation;
+
+	//cout << "Observations size " << Observation.size() << endl;
+
+	double OverallWeight2;
+	double max_weight = 0;
+	MinOverallWeight = 0;
+	for (float x = -Xdim / 2.0; x <= Xdim / 2; x = x + Xstep)
+		for (float y = -Ydim / 2.0; y <= Ydim / 2; y = y + Xstep)
+		{
+			temp.x = x;
+			temp.y = y;
+			OverallWeight = 1.0;
+			//cout << "Examining position x " << temp.x << " y: " << temp.y << endl;
+			for (unsigned int i = 0; i < Observation.size(); i++)
+			{
+
+				if (isVisible(Observation[i].Feature, temp, rangemaxleft, rangemaxright))
+					ratio = P_observe_Visible;
+				else
+					ratio = P_observe_NotVisible;
+				// Distance
+				// R Distance the particle has from the LandMark
+				R = DISTANCE(x, Observation[i].Feature.x, y, Observation[i].Feature.y);
+				//Deviation = max_observation_distance_deviation / max_observation_distance * Observation[i].Distance.val + min_observation_distance_deviation;
+				Meanerror = CalcDistMean(Observation[i].Feature, R);
+				Deviation = CalcDistDev(Observation[i].Feature, R);
+				OverallWeight = OverallWeight * normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
+
+				OverallWeight2 = OverallWeight;
+				//Try to find out the best bearing angle
+
+				Deviation = CalcBearDev(Observation[i].Feature, R);
+				for (double test_phi = 0; test_phi < 2.0 * M_PI; test_phi = test_phi + M_PI_4 / 2.0)
+				{
+					ParticlePointBearingAngle = atan2(Observation[i].Feature.y - temp.y, Observation[i].Feature.x - temp.x);
+					ParticleBearing = anglediff2(ParticlePointBearingAngle, test_phi);
+
+					//Deviation = max_observation_bearing_deviation / max_observation_distance * Observation[i].Distance .val + min_observation_bearing_deviation;
+					OverallWeight2 = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
+
+					if (OverallWeight2 > max_weight)
+					{
+						max_weight = OverallWeight2;
+						temp.phi = test_phi;
+					}
+				}
+				OverallWeight = OverallWeight * ratio;
+
+				//Add particles to the priority
+				//So the top particle to have the lower weight
+
+			}
+			temp.Weight = 1 - OverallWeight;
+			particlesQueue.push(temp);
+			//cout << " Particle inserted " << endl;
+			if (particlesQueue.size() > numofparticlesfromObservation)
+				particlesQueue.pop();
+		}
+
+	//TODO more efficient-correct addition of particles!
+	//Now put them in the particles
+	//easy way
+	//just replace random numofparticlesfromObservation particles
+	int index;
+
+	//cout << "Observation Generated Particles " << particlesQueue.size() << endl;
+
+	for (int i = 0; i < numofparticlesfromObservation; i++)
+	{
+		index = (rand() + i) % Particles.size;
+		temp = particlesQueue.top();
+		//	Particles.x[index] = temp.x;
+		//		Particles.y[index] = temp.y;
+		//		Particles.phi[index] = temp.phi;
+		//cout << "index: " << index << " x: " << temp.x << " y: " << temp.y << " phi: " << temp.phi << endl;
+		particlesQueue.pop();
+	}
+	return 1;
+}*/
