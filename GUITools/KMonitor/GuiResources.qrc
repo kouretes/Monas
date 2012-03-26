@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>KnownHostsIcons/chore_robot_on.png</file>
+        <file>Posts3D/LBPost.svg</file>
+        <file>Posts3D/LTPost.svg</file>
+        <file>Posts3D/RTPost.svg</file>
+        <file>Posts3D/RBPost.svg</file>
+        <file>KnownHostsIcons/robot_blue.png</file>
+        <file>KnownHostsIcons/robot_red.png</file>
+    </qresource>
+</RCC>
