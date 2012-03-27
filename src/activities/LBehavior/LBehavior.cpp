@@ -244,7 +244,7 @@ int LBehavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
-				cout << "Mpika Sthn gamestate\n";
+
 		if (calibrated == 2 && scanForGoals == false) {
 			play = true;
 		}
@@ -253,11 +253,10 @@ int LBehavior::Execute() {
 			calibrate();
 			step = -1;
 		}else if(calibrated == 2 && scanForGoals){
-				cout << "Mpika sthn else if\n";
+
 			if(step == -1){
 				timeStart = boost::posix_time::microsec_clock::universal_time();
 				step = 0;
-				cout << "Mpika sthn Init\n";
 				ScanForGoalposts(step);				
 			}else{
 				timeStop = boost::posix_time::microsec_clock::universal_time();

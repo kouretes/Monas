@@ -395,7 +395,9 @@ int KLocalization::Initialize()
 		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
 		found &= config->QueryElement("rotation_deviation", rotation_deviation); // % of particles be spreaded
 		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
-
+		
+		found &= config->QueryElement("NumberOfParticlesSpreadAfterFall", NumberOfParticlesSpreadAfterFall);
+		found &= config->QueryElement("ForceBearingParticles", ForceBearingParticles);
 		if (found)
 		{
 			//cout << "All Localization parameters loaded successfully" << endl;
@@ -441,56 +443,29 @@ int KLocalization::Initialize()
 		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
 		CarpetMaxX*=1000; //convert to mm
 
-		#ifdef COUT_ON
-		cout << " CarpetMaxX " <<  CarpetMaxX << endl;
-		#endif
 		found &= config->QueryElement("CarpetMinX", CarpetMinX);
 		CarpetMinX*=1000;
-		#ifdef COUT_ON
-		cout << " CarpetMinX " <<  CarpetMinX << endl;
-		#endif
 		found &= config->QueryElement("CarpetMaxY", CarpetMaxY);
 		CarpetMaxY*=1000;
-		#ifdef COUT_ON
-		cout << " CarpetMaxY " <<  CarpetMaxY << endl;
-		#endif
 		found &= config->QueryElement("CarpetMinY", CarpetMinY);
 		CarpetMinY*=1000;
-		#ifdef COUT_ON
-		cout << " CarpetMinY " <<  CarpetMinY << endl;
-		#endif
-
 		found &= config->QueryElement("FieldMaxX", FieldMaxX);
 		FieldMaxX*=1000;
-		#ifdef COUT_ON
-		cout << " FieldMaxX " <<  FieldMaxX << endl;
-		#endif
 		found &= config->QueryElement("FieldMinX", FieldMinX);
 		FieldMinX*=1000;
-		#ifdef COUT_ON
-		cout << " FieldMinX " <<  FieldMinX << endl;
-		#endif
 		found &= config->QueryElement("FieldMaxY", FieldMaxY);
 		FieldMaxY*=1000;
-		#ifdef COUT_ON
-		cout << " FieldMaxY " <<  FieldMaxY << endl;
-		#endif
 		found &= config->QueryElement("FieldMinY", FieldMinY);
 		FieldMinY*=1000;
-		#ifdef COUT_ON
-		cout << " FieldMinY " <<  FieldMinY << endl;
-		#endif
 
 
 		if (found)
 		{
-			//cout << "All Localization parameters loaded successfully" << endl;
 			Logger::Instance().WriteMsg("Localization", "All Field parameters loaded successfully", Logger::Info);
 		} else
 		{
 			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the Field xml config file ", Logger::Error);
-			//cerr << "Cant Find an attribute in the xml config file " << endl;
-		}
+]		}
 
 	}else
 	{
@@ -501,10 +476,7 @@ int KLocalization::Initialize()
 
 	P_observe_Visible = 1 - P_observe_NotVisible;
 	P_Notobserve_Visible = 1 - P_Notobserve_NotVisible;
-#ifdef COUT_ON
-	cout << "ParticlesNum: " << partclsNum << " SpreadParticlesDeviation: " << SpreadParticlesDeviation << " \n rotation_deviation: " << rotation_deviation
-			<< " PercentParticlesSpread: " << PercentParticlesSpread << " Observation PArticles" << numofparticlesfromObservation << endl;
-#endif
+
 #ifdef WEBOTS
 	halfrange = ((2 * /*30 90*/HFov) / 2.0) * TO_RAD; //TODO real angle adding hfov of the camera
 #else
@@ -545,18 +517,11 @@ int KLocalization::Initialize()
 	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
 	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
 	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
-#ifdef COUT_ON
-	cout << "Particles Population Created Particles Num: " << endl;
-#endif
+
 	LoadMotionModelXML(ArchConfig::Instance().GetConfigPrefix() + "/MotionModel.xml", KouretesMotions, KMMmap);
-#ifdef COUT_ON
-	cout << "Motion Model Loaded Number of Motions:  " << KouretesMotions.size() << endl;
-#endif
 	// Loading features,
 	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
-#ifdef COUT_ON
-	cout << " KFeaturesmap Loaded Number of Features:  " << KFeaturesmap.size() << endl;
-#endif
+
 	AgentPosition.x = 0;
 	AgentPosition.y = 0;
 	AgentPosition.theta = 0;
@@ -664,10 +629,6 @@ KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, 
 	}
 
 }
-
-
-
-
 
 //Function to find the best Belief using the average of the % of the "heavier" particles
 belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles)
@@ -874,10 +835,11 @@ double KLocalization::normpdf(double diff, double dev)
 {
 
 	boost::math::normal dist = boost::math::normal_distribution<double>(0, dev);
-	//cout << " diff " << diff << " dev " << dev << endl;
 	return boost::math::pdf(dist, diff);
 	//return (exp(-pow(diff, 2) / (2 * pow(dev, 2))) / (riza2pi * dev));
 }
+
+//Bad idea with symetric field
 int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation)
 {
 	//Just in case
@@ -1148,7 +1110,6 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 	{
 		x += cos(angles[i]);
 		y += sin(angles[i]);
-		//cout << "Angle " << i << " value: " << angles[i] * TO_DEG << endl;
 	}
 	//	for angle in angles:
 	//		x += math.cos(angle)
@@ -1170,7 +1131,20 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 }
 
 
-void KLocalization::spreadParticlesAfterFall(parts &Particles){
+void KLocalization::spreadParticlesAfterFall(parts &Particles, int numOfParticles){
+	//Normal X, Y, P;
+	Random X, Y, P;	
+	
+	int step = round((float) Particles.size / numOfParticles);
+	if (numOfParticles == 0)
+		return;
+
+	for (unsigned int i = 0; i < Particles.size; i += step)
+	{
+		Particles.x[i] += (X.Next() - 0.5) * Deviation;
+		Particles.y[i] += (Y.Next() - 0.5) * Deviation;
+		Particles.phi[i] = (P.Next() - 0.5) * deg2rad(25);
+	}
 }
 
 void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemaxleft, double rangemaxright)
@@ -1183,11 +1157,8 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 	double DistanceFromPastBelief, DirectionFromPastBelief;
 	double R,RS;
 	double Meanerror = 0;
-	//double MeanAngle = 0;
 
 	//float ratio = 1.0;
-	//cout << "--------------------------------------------------------------" << endl;
-	//cout << "Size = " << Observation.size() << endl;
 	for (int p = 0; p < NumofParticles; p++)
 	{
 		OverallWeight = Particles.Weight[p];
@@ -1195,8 +1166,6 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		#ifdef DEBUGupdate
 		cout << " ParticleWeightBefore: " << OverallWeight << endl;
 		#endif
-		//if(Observation.size()>0)
-		//	Logger::Instance().WriteMsg("Kofi",  "Number of Obs = " + _toString(Observation.size()), Logger::Info);
 		if (!Observation.empty())// an landMark has been observed
 		{ 
 			OverallWeight = 1.0;
@@ -1325,15 +1294,15 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		cout << " pastBelief Ow: " << OverallWeight << endl;
 		#endif
 #endif
-		/*if(p == 10){
+		if(p == 10){
 			int num = 0;
 			if(Observation.size()>0)
 				num = Observation[0].Distance.val;
 			else
 				num = 0;
-			cout << "OverallWeight = " << OverallWeight << " OverallYellow = " << OverallWeightYellowYellow << endl;
+			cout << "Update OverallWeight = " << OverallWeight << " OverallYellow = " << OverallWeightYellowYellow << endl;
 			cout << "X = " << Particles.x[p] << " Y = " << Particles.y[p] << " R = " << R << " RS = " << RS << " Real Dist = " << num << endl;
-		}*/
+		}
 		//cout << endl;
 		//set the weight
 		#ifdef  DEBUGupdate
@@ -1360,7 +1329,7 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 	//	 from an object and the direction
 	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation,ParticlePointBearingAngleS, ParticleBearingS;
 	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double AdditiveWeight = 0;
+	double AdditiveWeightTotal = 0,AdditiveWeight = 0,AdditiveYellow = 0;
 	double R,RS;
 	double Meanerror = 0;
 
@@ -1370,7 +1339,8 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		//OverallWeight = Particles.Weight[p];
+		//AdditiveWeightTotal = 0;
+		AdditiveWeightTotal = Particles.Weight[p];
 		//	OberallWeight = 0;
 		#ifdef DEBUGupdate
 		cout << " ParticleWeightBefore: " << OverallWeight << endl;
@@ -1381,7 +1351,9 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 			{
 				for (int j = -1; j <= 1; j = j + 2)
 				{
-#ifdef DISTANCE_WEIGHTING
+					AdditiveYellow = 0;
+					AdditiveWeight = 0;
+#ifdef DISTANCE_WEIGHTING	
 					// Distance
 					// R Distance the particle has from the LandMark
 					R = DISTANCE(Particles.x[p],Observation[i].Feature.x,Particles.y[p],Observation[i].Feature.y*j);
@@ -1418,7 +1390,7 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 					#ifdef DEBUGupdate
 					cout << " Distance Deviation " << Deviation << " Meanerror " << Meanerror << endl;
 					#endif
-					AdditiveWeight += normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
+					AdditiveYellow += normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
 #endif
 
 					//Bearing
@@ -1430,13 +1402,23 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 					cout << " Bearing Deviation " << Deviation << " Meanerror " << Meanerror << endl;
 					#endif
 
-					AdditiveWeight += normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
+					AdditiveYellow += normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
 #endif
 #endif
+					AdditiveWeightTotal += AdditiveYellow + AdditiveWeight;
 				}
 			}
 		}
-		OverallWeight = AdditiveWeight;
+		if(p == 10){
+			int num = 0;
+			if(Observation.size()>0)
+				num = Observation[0].Distance.val;
+			else
+				num = 0;
+			cout << "Update Additive = " << AdditiveWeight << " Additive Yellow = " << AdditiveYellow  << " Synoliko = " << AdditiveWeightTotal << endl;
+			cout << "X = " << Particles.x[p] << " Y = " << Particles.y[p] << " R = " << R << " RS = " << RS << " Real Dist = " << num << endl;
+		}
+		OverallWeight = AdditiveWeightTotal;
 		//AdditiveWeight=0;
 		//set the weight
 		#ifdef  DEBUGupdate
@@ -1759,33 +1741,14 @@ void KLocalization::SpreadParticles(parts & Particles, double Deviation, double 
 	if (numofrandom == 0)
 		return;
 
-//	cout << "SpreadParticles Deviation " << Deviation << " Step (numofrandom): " << numofrandom << " " << ((double) Percent / 100.0) * (double) Particles.size << " % " << Percent
-//			<< " Step: " << step << endl;
-
 	int count = 0;
 	for (unsigned int i = 0; i < Particles.size; i += step)
 	{
 		count++;
 		Particles.x[i] += (X.Next() - 0.5) * Deviation;
 		Particles.y[i] += (Y.Next() - 0.5) * Deviation;
-		Particles.phi[i] = P.Next() * deg2rad(360);
-		//wrapTo0_2Pi(Particles.phi[i] + (P.Next() - 0.5) * rotation_deviation);
-		cout << " Particles.phi[" << i << "]   " << Particles.phi[i] << endl;
-		/*Particles.x[i] += X.Next() * Deviation;
-		 Particles.y[i] += Y.Next() * Deviation;
-		 Particles.y[i] += P.Next() * rotation_deviation;*/
+		Particles.phi[i] += (P.Next() - 0.5) * deg2rad(10);
 	}
-	//			//	particlesId = randperm(N);
-	//			//	particlesId = particlesId(1:numofrandom) ;
-	//			//	particles = particlesIn;
-	//			//
-	//			//	particles.x(particlesId) = particlesIn.x(particlesId) +Deviation*(rand(numofrandom,1)-0.5);
-	//			//	particles.y(particlesId) = particlesIn.y(particlesId) +Deviation*(rand(numofrandom,1)-0.5);
-	//			//	particles.phi(particlesId) = particlesIn.phi(particlesId) +0.9*(rand(numofrandom,1)-0.5);
-	//			//
-	//			//	particles.Weight(particlesId) = 0.5;
-	//		}
-	//cout << "Num of Particles Spreaded:  " << count << endl;
 
 }
 

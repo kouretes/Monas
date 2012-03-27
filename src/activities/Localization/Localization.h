@@ -84,7 +84,8 @@ private:
 	BToHeadMessage* bhmsg;
 	bool firstrun;
 	MotionStateMessage::ActionType currentRobotAction;
-
+	bool fallBegan;
+	
 	boost::posix_time::ptime last_observation_time;
 	boost::posix_time::ptime last_filter_time;
 	boost::posix_time::ptime now;

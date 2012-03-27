@@ -11,6 +11,8 @@
 <numofparticlesfromObservation>2</numofparticlesfromObservation>
 <partclsNum>30</partclsNum>
 <SpreadParticlesDeviation>30</SpreadParticlesDeviation>
-<rotation_deviation>0.00174533</rotation_deviation>
+<rotation_deviation>0.0174533</rotation_deviation>
 <PercentParticlesSpread>5</PercentParticlesSpread>
+<NumberOfParticlesSpreadAfterFall>10</NumberOfParticlesSpreadAfterFall>
+<ForceBearingParticles>1</ForceBearingParticles>
 <port>9001</port>

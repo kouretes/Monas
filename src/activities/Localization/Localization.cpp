@@ -77,6 +77,7 @@ void Localization::UserInit()
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
 	firstrun = true;
+	fallBegan = false;
 	last_observation_time = boost::posix_time::microsec_clock::universal_time();
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 }
@@ -325,8 +326,14 @@ int Localization::Execute()
 
 	process_messages();
 	
-	if(currentRobotAction == MotionStateMessage::FALL)
+	if(currentRobotAction == MotionStateMessage::FALL){
+		if(fallBegan == true){
+			fallBegan = false;
+			KLocalization::spreadParticlesAfterFall(SIRParticles,NumberOfParticlesSpreadAfterFall);
+		}
 		return 0;
+	}else
+		fallBegan = true;
 	if (debugmode)
 		DebugMode_Receive();
 	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
@@ -580,7 +587,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 
 	//SpreadParticles
-	//SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
+	SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
 
 	#ifdef ADEBUG
 	cout << "\nPredict Iterations " << iterations << endl;
