@@ -2,11 +2,18 @@
 <!-- Refresh Segmentation parameters based camera every : (millisec) -->
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 
+<<<<<<< HEAD
+<!-- Configuration files for Segmentation-->
+<SegmentationBottom>17-GermanOpen12-segall.conf</SegmentationBottom>
+<SegmentationTop>17-GermanOpen12-segall.conf</SegmentationTop>
+<Dfov>53.85</Dfov>
+=======
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>8-GermanOpen11-segall.conf</SegmentationBottom>
-<SegmentationTop>8-GermanOpen11-segall.conf</SegmentationTop>
+<SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
+<SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGain>48.20</cameraGain>
+>>>>>>> 9ae243b7467a140ac96f39c5b08916e4e4b77617
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
 <balltolerance>0.20</balltolerance>
