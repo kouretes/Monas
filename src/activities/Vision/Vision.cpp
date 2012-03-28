@@ -6,6 +6,7 @@
 #include "tools/logger.h"
 #include "tools/XMLConfig.h"
 #include "tools/toString.h"
+#include "tools/KMat.h"
 #include "hal/syscall.h"
 #include <vector>
 //#include "messages/motion.pb.h"
@@ -141,8 +142,12 @@ int VISIBLE Vision::Execute()
 
 
 
-
-	fetchAndProcess();
+	try{
+		fetchAndProcess();
+	}catch(KMat::SingularMatrixInvertionException &e){
+		Logger::Instance().WriteMsg("Kofi","Epese to vision",Logger::Info);
+		return 0;
+	}
 	//std::cout << " Vision run" << std::endl;
 	if (debugmode)
 	{

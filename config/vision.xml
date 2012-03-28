@@ -3,8 +3,8 @@
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>12-Lab3-322-segall.conf</SegmentationBottom>
-<SegmentationTop>12-Lab3-322-segall.conf</SegmentationTop>
+<SegmentationBottom>8-GermanOpen11-segall.conf</SegmentationBottom>
+<SegmentationTop>8-GermanOpen11-segall.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGain>48.20</cameraGain>
 <!-- Ball Detection -->
@@ -26,7 +26,7 @@
 <!--- Goal posts --->
 <goalheight>0.799</goalheight>
 <goaldist>1.4</goaldist>
-<goaldiam>0.099</goaldiam>
+<goaldiam>0.109</goaldiam>
 <widthestimateotolerance>0.2</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>0</sensordelay>

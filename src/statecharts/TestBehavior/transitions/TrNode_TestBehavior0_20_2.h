@@ -11,12 +11,14 @@ public:
 
 	}
 	bool Eval() {
-		/* TimeoutCheck(behavior) && (worldstate.State.GameStateMessage==NULL ||worldstate.State.GameStateMessage.player_state()!=PLAYER_FINISHED) */
+		/* TimeoutCheck(behavior) &&
+ (worldstate.State.GameStateMessage==NULL ||
+worldstate.State.GameStateMessage.player_state()!=PLAYER_FINISHED) */
 		boost::shared_ptr<const GameStateMessage> var_1263977940 = _blk->readState<GameStateMessage> ("worldstate" );
 		boost::shared_ptr<const TimeoutMsg > msg = _blk->readState< TimeoutMsg > ("behavior");
 		_blk->process_messages();
 	
-				return ( (msg.get()!=0 && msg->wakeup()!="" && boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time()) && (var_1263977940.get()==0 || (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_FINISHED)) );	
+				return ( (msg.get()!=0 && msg->wakeup()!="" && boost::posix_time::from_iso_string(msg->wakeup())<boost::posix_time::microsec_clock::local_time()) &&  (var_1263977940.get()==0 ||  (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_FINISHED)) );	
     }
 };
 		

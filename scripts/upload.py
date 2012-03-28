@@ -202,14 +202,13 @@ playerscounter = 0;
 for	ip in robotsIP:
 
 	if game == 1 :
-		print "Stopping NaoQi "
+		print "\nStopping NaoQi "
 		nao_start_stop_cmd = 'ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
-		os.system(nao_start_stop_cmd)
 		print nao_start_stop_cmd
+		os.system(nao_start_stop_cmd)
 
 		player = players[playerscounter]
-		#print("Good luck with the game")
-		print("You are going to create network files for player " + player +" (the " + playersdef[int(player)-1] + ") for the field " + SSID)
+		print("\nYou are going to create network files for player " + player +" (the " + playersdef[int(player)-1] + ") for the field " + SSID)
 
 		#Copy network configuration file to /config just for backup
 		copy_cmd = "cp " + partial_configuration_dir + "/FieldsWlanConnMan/" + SSID    + ".profile  " + binaries_dir +"config/connman.profile"
@@ -296,10 +295,12 @@ for	ip in robotsIP:
 		nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi start ' "
 		os.system(nao_start_stop_cmd)
 
-		wifi_conf_cp_cmd ='ssh root@'+ip  + " 'cp /home/nao/naoqi/config/connman.profile /var/lib/connman/default.profile' "
+		wifi_conf_cp_cmd ='ssh nao@'+ip  + " 'su -c \"cp -f /home/nao/naoqi/config/connman.profile /var/lib/connman/default.profile\" ' "
+		print(wifi_conf_cp_cmd)
 		os.system(wifi_conf_cp_cmd)
-		print wifi_conf_cp_cmd
-		os.system('ssh root@'+ip + " '/etc/init.d/connman restart '")
+		wifi_conf_restart_cmd = 'ssh nao@'+ip + " 'su -c \"/etc/init.d/connman restart\" ' "
+		print(wifi_conf_restart_cmd)
+		os.system(wifi_conf_restart_cmd)
 
 	if (game == 0 and naoqirestart=="y" ):
 		print( "Sending NaoQi start command")

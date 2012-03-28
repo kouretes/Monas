@@ -28,6 +28,6 @@
   <transitions name="StandUpAndScanTO0.2.3.5" source="//@nodes.0/@Children.1/@Children.2/@Children.3" target="//@nodes.0/@Children.1/@Children.2/@Children.4"/>
   <transitions name="SitDownAndStareTO0.2.3.5" source="//@nodes.0/@Children.1/@Children.2/@Children.2" target="//@nodes.0/@Children.1/@Children.2/@Children.4"/>
   <transitions TE="/TimeoutAction.behavior.450" name="0.1TO_open_group_play_or_NoPlay_close_group_" source="//@nodes.0/@Children.0" target="//@nodes.0/@Children.1"/>
-  <transitions TE="[TimeoutCheck(behavior) &amp;&amp; (worldstate.State.GameStateMessage==NULL ||worldstate.State.GameStateMessage.player_state()!=PLAYER_FINISHED)]/TimeoutAction.behavior.450" name="_open_group_play_or_NoPlay_close_group_TO_open_group_play_or_NoPlay_close_group_" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp;&#xA; (worldstate.State.GameStateMessage==NULL ||&#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_FINISHED)]/TimeoutAction.behavior.450" name="_open_group_play_or_NoPlay_close_group_TO_open_group_play_or_NoPlay_close_group_" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.1"/>
   <transitions TE="[worldstate.State.GameStateMessage.player_state()==PLAYER_FINISHED]" name="_open_group_play_or_NoPlay_close_group_TO0.3" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.2"/>
 </statechart:Model>
