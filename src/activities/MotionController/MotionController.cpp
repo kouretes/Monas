@@ -530,17 +530,17 @@ void MotionController::mglrun()
 						killHeadCommand();
 						robotUp = false;
 					}
-					if (str.compare("kme") == 0)
-					{
-						boost::shared_ptr<ISpecialAction> ptr = it->second;
-						KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
-						KmeManager::set_end_time(ptrdcmkme->ExecuteDCM());
-						actionPID = KME_ACTIONPID;
-					}
-					else
-					{
-						actionPID = it->second->ExecutePost();
-					}
+//					if (str.compare("kme") == 0)
+//					{
+//						boost::shared_ptr<ISpecialAction> ptr = it->second;
+//						KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
+//						KmeManager::set_end_time(ptrdcmkme->ExecuteDCM());
+//						actionPID = KME_ACTIONPID;
+//					}
+//					else
+//					{
+					actionPID = it->second->ExecutePost();
+					//}
 					pam->set_command("NULL");
 					Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
 				}
