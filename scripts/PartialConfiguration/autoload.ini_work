@@ -4,6 +4,7 @@ framemanager
 
 [extra]
 devicecommunicationmanager
+alresourcemanager
 sensors #button events
 robotmodel
 motion
