@@ -58,22 +58,26 @@
 #define SIDE_LEFT 		(int(N/2))
 #define SIDE_RIGHT 		( ( (N%4) == 0 ) ? 0 :N-1 )
 
+
 #define SonarAngleShiftDeg	20.0 // deg
 #define SonarAngleShiftRad	(SonarAngleShiftDeg*ToRad)
 #define SonarDistanceShift	0.065
 #define SonarAngleRangeDeg	45.0 // deg
 #define SonarAngleRangeRad 	(SonarAngleRangeDeg*ToRad)
 
-#define RotationAngle (360.0/(N))
-#define RotationAngleRad (RotationAngle*ToRad)
+#define RotationAngle 		(360.0/(N))
+#define RotationAngleRad 	(RotationAngle*ToRad)
 
-#define NoKnowledge 			0.5
+#define RIGHT 			(int(FRONT - (SonarAngleShiftDeg/RotationAngle)))
+#define LEFT 			(int(FRONT + (SonarAngleShiftDeg/RotationAngle)))
 
-#define PathLength 50
+#define NoKnowledge 		0.5
 
-#define distanceM (MapRadius*ToMeters)
-#define SOnARsNum KDeviceLists::US_SIZE
-#define EMPTY 0.0
+#define PathLength 			50
+
+#define distanceM 		(MapRadius*ToMeters)
+#define SOnARsNum 		KDeviceLists::US_SIZE
+#define EMPTY 				0.0
 #define NumOfTargetCoordinates 3
 
 
@@ -180,9 +184,9 @@ class ObstacleAvoidance: public IActivity {
 		/*******variables used in messages***********/
 		SensorData RightValue[SOnARsNum], LeftValue[SOnARsNum];
 		SensorData PosX, PosY, Angle;
-		bool mprosta, dexia, aristera ;
-		double mprostaDist, dexiaDist, aristeraDist;
-		double mprostaCert, dexiaCert, aristeraCert;
+		bool frontObstacle, rightObstacle, leftObstacle ;
+		double frontDist, rightDist, leftDist;
+		double frontCert, rightCert, leftCert;
 		
 		/* Incoming Messages */
 		boost::shared_ptr<const  MotionWalkMessage> wm;
@@ -222,6 +226,8 @@ class ObstacleAvoidance: public IActivity {
 		void mapObstacle(double distance, double theta, double radius);
 		void mapFreeSpace(double distance, double theta);
 		void updateGrid(double* left, double* right);
+		void chooseCloserObstacle();
+
 		void ageGrid();
 		
 		/*********** Map Transformation ***********/

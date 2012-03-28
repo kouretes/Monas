@@ -115,7 +115,7 @@
                                                 <Output name="output_2" type="0" type_size="1" nature="2" inner="0" tooltip="This IO has been automatically added by box. Read box tooltip for more information." id="5" />
                                                 <Output name="output_3" type="0" type_size="1" nature="2" inner="0" tooltip="This IO has been automatically added by box. Read box tooltip for more information." id="6" />
                                             </Box>
-                                            <Box name="Stand Motion" robot="" id="20" tooltip="The robot makes the right motion to stand up depending on its current position." bitmap_expanded="1" plugin="" x="563" y="381">
+                                            <Box name="Stand Motion" robot="" id="20" tooltip="The robot makes the right motion to stand up depending on its current position." bitmap_expanded="1" plugin="" x="564" y="381">
                                                 <bitmap>media/images/box/movement/stand.png</bitmap>
                                                 <script language="4">
                                                     <content>
@@ -202,7 +202,7 @@
                                                                     <Output name="output_7" type="0" type_size="1" nature="2" inner="0" tooltip="This IO has been automatically added by box. Read box tooltip for more information." id="10" />
                                                                     <Output name="output_8" type="0" type_size="1" nature="2" inner="0" tooltip="This IO has been automatically added by box. Read box tooltip for more information." id="11" />
                                                                 </Box>
-                                                                <Box name="SitToCrouch" robot="" id="12" tooltip="First motion to Stand up from a sitting position" bitmap_expanded="1" plugin="" x="689" y="627">
+                                                                <Box name="SitToCrouch" robot="" id="12" tooltip="First motion to Stand up from a sitting position" bitmap_expanded="1" plugin="" x="693" y="626">
                                                                     <bitmap>media/images/box/movement/move.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -234,26 +234,6 @@
                                                                     <Timeline fps="25" resources_acquisition="1" size="300" enable="1" start_frame="0" end_frame="180" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="15" value="0.0854875" />
-                                                                                <Key frame="28" value="-16" />
-                                                                                <Key frame="39" value="-19.9538" />
-                                                                                <Key frame="55" value="-27" />
-                                                                                <Key frame="75" value="-30" />
-                                                                                <Key frame="94" value="-16.4382" />
-                                                                                <Key frame="126" value="-0.538656" />
-                                                                                <Key frame="180" value="-0.538656" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="15" value="21.2674" />
-                                                                                <Key frame="28" value="21.1795" />
-                                                                                <Key frame="39" value="13" />
-                                                                                <Key frame="55" value="15.8" />
-                                                                                <Key frame="75" value="9" />
-                                                                                <Key frame="94" value="20.0369" />
-                                                                                <Key frame="126" value="21.707" />
-                                                                                <Key frame="180" value="21.707" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="15" value="28.4" />
                                                                                 <Key frame="28" value="32.9" />
@@ -514,7 +494,7 @@
                                                                         </ActuatorList>
                                                                     </Timeline>
                                                                 </Box>
-                                                                <Box name="CrouchToStand" robot="" id="3" tooltip="From the old bad position" bitmap_expanded="1" plugin="" x="1206" y="505">
+                                                                <Box name="CrouchToStand" robot="" id="3" tooltip="From the old bad position" bitmap_expanded="1" plugin="" x="1204" y="500">
                                                                     <bitmap>media/images/box/movement/move.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -540,12 +520,6 @@
                                                                     <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="15" value="3.86483" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="15" value="-2.37548" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="15" value="90.8776" />
                                                                             </ActuatorCurve>
@@ -618,7 +592,7 @@
                                                                         </ActuatorList>
                                                                     </Timeline>
                                                                 </Box>
-                                                                <Box name="BellyToStand" robot="" id="16" tooltip="First motion to Stand up from the belly" bitmap_expanded="1" plugin="" x="1199" y="347">
+                                                                <Box name="BellyToStand" robot="" id="16" tooltip="First motion to Stand up from the belly" bitmap_expanded="1" plugin="" x="1201" y="347">
                                                                     <bitmap>media/images/box/movement/move.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -632,28 +606,6 @@
                                                                     <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="10" />
-                                                                                <Key frame="20" value="-13" />
-                                                                                <Key frame="34" value="16.4" />
-                                                                                <Key frame="45" value="17" />
-                                                                                <Key frame="58" value="-28.4" />
-                                                                                <Key frame="65" value="-17" />
-                                                                                <Key frame="76" value="3" />
-                                                                                <Key frame="89" value="-22.4" />
-                                                                                <Key frame="100" value="3.86483" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="-33.0497" />
-                                                                                <Key frame="20" value="-31.3797" />
-                                                                                <Key frame="34" value="6.15002" />
-                                                                                <Key frame="45" value="29.5" />
-                                                                                <Key frame="58" value="21.8" />
-                                                                                <Key frame="65" value="21.2674" />
-                                                                                <Key frame="76" value="-6" />
-                                                                                <Key frame="89" value="-30.5887" />
-                                                                                <Key frame="100" value="7.3" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="10" value="4.83164" />
                                                                                 <Key frame="20" value="-86.6" />
@@ -924,34 +876,6 @@
                                                                     <Timeline fps="10" resources_acquisition="1" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="-1.40867" />
-                                                                                <Key frame="20" value="-2.73208e-05" />
-                                                                                <Key frame="28" value="2.37067" />
-                                                                                <Key frame="36" value="3.86374e-05" />
-                                                                                <Key frame="43" value="1.93188e-05" />
-                                                                                <Key frame="48" value="1.93187e-05" />
-                                                                                <Key frame="56" value="-29.4461" />
-                                                                                <Key frame="65" value="-17.3171" />
-                                                                                <Key frame="74" value="15.1" />
-                                                                                <Key frame="80" value="6.9" />
-                                                                                <Key frame="86" value="-0.538656" />
-                                                                                <Key frame="105" value="3.77694" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="10" value="3.60116" />
-                                                                                <Key frame="20" value="0" />
-                                                                                <Key frame="28" value="29.5016" />
-                                                                                <Key frame="36" value="-38.5028" />
-                                                                                <Key frame="43" value="0" />
-                                                                                <Key frame="48" value="20" />
-                                                                                <Key frame="56" value="9.84147" />
-                                                                                <Key frame="65" value="19.7732" />
-                                                                                <Key frame="74" value="0.6" />
-                                                                                <Key frame="80" value="1.7" />
-                                                                                <Key frame="86" value="21.707" />
-                                                                                <Key frame="105" value="-2.28759" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="10" value="119.496" />
                                                                                 <Key frame="20" value="119.5" />
@@ -1256,7 +1180,7 @@
                                                                         </ActuatorList>
                                                                     </Timeline>
                                                                 </Box>
-                                                                <Box name="SideToBelly" robot="" id="4" tooltip="Lie down on the back or the belly from an other lie down position (on the side)." bitmap_expanded="1" plugin="" x="656" y="93">
+                                                                <Box name="SideToBelly" robot="" id="4" tooltip="Lie down on the back or the belly from an other lie down position (on the side)." bitmap_expanded="1" plugin="" x="654" y="93">
                                                                     <bitmap>media/images/box/movement/move.png</bitmap>
                                                                     <script language="4">
                                                                         <content>
@@ -1282,14 +1206,6 @@
                                                                     <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                                                         <watches />
                                                                         <ActuatorList>
-                                                                            <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="5" value="41.3067" />
-                                                                                <Key frame="10" value="41.3067" />
-                                                                            </ActuatorCurve>
-                                                                            <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                                                                <Key frame="5" value="8.52309" />
-                                                                                <Key frame="10" value="8.52309" />
-                                                                            </ActuatorCurve>
                                                                             <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                                                                 <Key frame="5" value="108.72" />
                                                                                 <Key frame="10" value="108.72" />

@@ -26,6 +26,7 @@
 #include <iostream>
 using namespace std;
 using google::protobuf::Message;
+using namespace KSystem;
 
 
 template<typename T>
@@ -37,7 +38,7 @@ Buffer<T>::Buffer(std::size_t nid):
 template<typename T>
 Buffer<T>::~Buffer()
 {
-  boost::unique_lock<boost::mutex > data_lock(mutex);
+  Mutex::scoped_lock data_lock(mutex);
   if(c!=NULL)
 		c(this);
 
@@ -50,7 +51,7 @@ template<typename T>
 void Buffer<T>::add( std::vector<T> const & tuples)
 {
 
-    boost::unique_lock<boost::mutex > data_lock(mutex);
+     Mutex::scoped_lock  data_lock(mutex);
     msg_buf.reserve(msg_buf.size()+tuples.size());
     msg_buf.insert(msg_buf.end(),tuples.begin(),tuples.end());
     data_lock.unlock();
@@ -94,7 +95,7 @@ bool Buffer<T>::tryadd( std::vector<T> const & tuples)
 template<typename T>
 void Buffer<T>::add(const T & t)
 {
-	boost::unique_lock<boost::mutex > data_lock(mutex);
+	Mutex::scoped_lock data_lock(mutex);
 
     msg_buf.push_back(t);
     data_lock.unlock();
@@ -107,7 +108,7 @@ void Buffer<T>::add(const T & t)
 template<typename T>
 std::vector<T> Buffer<T>::remove()
 {
-    boost::unique_lock<boost::mutex > data_lock(mutex);
+    Mutex::scoped_lock data_lock(mutex);
     std::vector<T> oldtupples=msg_buf;
     msg_buf.clear();
     return oldtupples;

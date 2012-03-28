@@ -212,7 +212,7 @@ for	ip in robotsIP:
 		print("You are going to create network files for player " + player +" (the " + playersdef[int(player)-1] + ") for the field " + SSID)
 
 		#Copy network configuration file to /config just for backup
-		copy_cmd = "cp " + partial_configuration_dir + "/FieldsWlan/" + SSID    + "_wpa_supplicant.conf  " + binaries_dir +"config/wpa_supplicant.conf"
+		copy_cmd = "cp " + partial_configuration_dir + "/FieldsWlanConnMan/" + SSID    + ".profile  " + binaries_dir +"config/connman.profile"
 		os.system(copy_cmd)
 
 		print ("Creating parameters for player " + player )
@@ -296,10 +296,10 @@ for	ip in robotsIP:
 		nao_start_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi start ' "
 		os.system(nao_start_stop_cmd)
 
-		wifi_conf_cp_cmd ='ssh root@'+ip  + " 'cp /home/nao/naoqi/config/wpa_supplicant.conf /etc/wpa_supplicant.conf' "
+		wifi_conf_cp_cmd ='ssh root@'+ip  + " 'cp /home/nao/naoqi/config/connman.profile /var/lib/connman/default.profile' "
 		os.system(wifi_conf_cp_cmd)
 		print wifi_conf_cp_cmd
-		os.system('ssh root@'+ip + " '/etc/init.d/wpa_supplicant.sh '")
+		os.system('ssh root@'+ip + " '/etc/init.d/connman restart '")
 
 	if (game == 0 and naoqirestart=="y" ):
 		print( "Sending NaoQi start command")

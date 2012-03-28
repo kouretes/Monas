@@ -4,6 +4,7 @@
 
 #include "architecture/narukom/pub_sub/endpoint.h"
 #include "hal/thread.h"
+#include "hal/mutex.h"
 #include <boost/asio.hpp>
 #include "boost/bind.hpp"
 #include "rawPacketDePacket.h"
@@ -18,7 +19,7 @@
 
 namespace KNetwork{
 
-class MulticastPoint : public EndPoint, private Thread
+class MulticastPoint : public EndPoint, private KSystem::Thread
 {
 	public:
 	MulticastPoint(std::string const& name,unsigned payloadsize);
@@ -71,7 +72,7 @@ class MulticastPoint : public EndPoint, private Thread
 	void processOutGoing(msgentry m);
 
 
-	boost::mutex  mut;
+	KSystem::Mutex  mut;
 
 
 	//Random Early Detection... for outgoing only
