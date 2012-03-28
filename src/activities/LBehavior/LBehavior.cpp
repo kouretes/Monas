@@ -187,12 +187,14 @@ int LBehavior::Execute() {
 		teamColor = gsm->team_color();
 
 		if (gameState == PLAYER_PLAYING) {
-			if (calibrated == 2) {
+			/*if (calibrated == 2) {
 				play = true;
 				//littleWalk(0.01,0.0,0.0,1);
 			}
-			else if (calibrated == 0) {
+			else */if (calibrated == 0) {
+				scanForGoals = true;
 				calibrate();
+				step = -1;
 			}
 			else if (calibrated == 1) {
 				// wait
@@ -209,12 +211,14 @@ int LBehavior::Execute() {
 		}
 		else if (gameState == PLAYER_INITIAL) {
 			play = false;
+			scanForGoals = false;
 		}
 		else if (gameState == PLAYER_READY) {
-			if (calibrated == 0)
-			{
-				calibrate();
-			}
+		//	if (calibrated == 0)
+		//	{
+		//		calibrate();
+		//	}
+			scanForGoals = false;
 			int p = ((kickoff = gsm->kickoff()))?0:1;
 			gotoPosition(initX[p][teamColor],initY[p][teamColor],initPhi[p][teamColor]);
 			play = false;
@@ -222,7 +226,7 @@ int LBehavior::Execute() {
 		}
 		else if (gameState == PLAYER_SET) {
 			play = false;
-			calibrate();
+		//	calibrate();
 
 		}
 		else if (gameState == PLAYER_FINISHED) {
@@ -230,6 +234,8 @@ int LBehavior::Execute() {
 		}
 		else if (gameState == PLAYER_PENALISED) {
 			play = false;
+			step = -1;
+			scanForGoals = true;
 			_blk->publishSignal(*locReset, "behavior");
 			calibrate();
 			velocityWalk(0.0,0.0,0.0,1);
@@ -238,11 +244,32 @@ int LBehavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
-		if (calibrated == 2) {
+
+		if (calibrated == 2 && scanForGoals == false) {
 			play = true;
 		}
 		else if (calibrated == 0) {
+			scanForGoals = true;
 			calibrate();
+			step = -1;
+		}else if(calibrated == 2 && scanForGoals){
+
+			if(step == -1){
+				timeStart = boost::posix_time::microsec_clock::universal_time();
+				step = 0;
+				ScanForGoalposts(step);				
+			}else{
+				timeStop = boost::posix_time::microsec_clock::universal_time();
+				if(timeStop-timeStart >= boost::posix_time::seconds(3.0)){
+					step++;	
+					timeStart = boost::posix_time::microsec_clock::universal_time();
+					if(step <= 4)
+						ScanForGoalposts(step);
+					else{
+						scanForGoals = false;
+					}
+				}
+			}
 		}
 
 	}
@@ -366,7 +393,6 @@ int LBehavior::Execute() {
 		}
 
 		if (scanforball ) {
-
 			HeadYaw= allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
 			HeadPitch= allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
 			HeadScanStep();
@@ -375,11 +401,23 @@ int LBehavior::Execute() {
 	} else if (!play) {   // Non-Play state
 		velocityWalk(0.0, 0.0, 0.0, 1.0);
 	}
-
 	return 0;
 }
 
 
+void LBehavior::ScanForGoalposts(int step){
+	if(step == 0 || step == 2){
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, -0.972598);
+		hmot->set_parameter(1, -0.504728);
+		_blk->publishSignal(*hmot, "motion");
+	}else{
+		hmot->set_command("setHead");
+		hmot->set_parameter(0, 0.972598);
+		hmot->set_parameter(1, -0.504728);
+		_blk->publishSignal(*hmot, "motion");
+	}
+}
 
 
 void LBehavior::HeadScanStep() {
