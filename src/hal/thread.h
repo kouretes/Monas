@@ -5,13 +5,15 @@
 
 #include <boost/thread.hpp>
 
+namespace KSystem {
+
 class Thread : public IExecutable {
 
     public:
 
-        Thread ( bool start = false ) : running(false) { 
+        Thread ( bool start = false ) : running(false) {
             if ( start )
-                StartThread(); 
+                StartThread();
         }
 
         virtual ~Thread() { ; }
@@ -42,10 +44,12 @@ class Thread : public IExecutable {
         boost::thread bThread;
 
         void startHelper () {
-            while (running) 
+            while (running)
                 this->Execute();
         }
 
 };
 
-#endif // _thread_h_ 
+};
+
+#endif // _thread_h_

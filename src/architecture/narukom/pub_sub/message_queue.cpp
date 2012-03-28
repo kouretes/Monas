@@ -33,6 +33,7 @@
 using std::map;
 using std::string;
 using namespace std;
+using namespace KSystem;
 
 MessageQueue::MessageQueue() : Thread(false),
 multicast(NULL),pubsubRegistry(),pub_sub_mutex(),subscriptions(),publisherbuffers(),subscriberBuffers(),
@@ -87,7 +88,7 @@ void MessageQueue::purgeBuffer(MessageBuffer *b)
 {
 	if(b==NULL)
 			return;
-	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
+	Mutex::scoped_lock pub_sub_lock(pub_sub_mutex);
 	std::vector< std::set<MessageBuffer*> >::iterator mit=subscriptions.begin();
 	for(;mit!=subscriptions.end();++mit)
 	{
@@ -100,7 +101,7 @@ void MessageQueue::purgeBuffer(MessageBuffer *b)
 }
 MessageBuffer* MessageQueue::makeWriteBuffer(std::string const& s)
 {
-	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
+	Mutex::scoped_lock pub_sub_lock(pub_sub_mutex);
 
 	size_t newid=pubsubRegistry.registerNew(s);
 	publisherbuffers.resize(pubsubRegistry.size()+1);
@@ -114,7 +115,7 @@ MessageBuffer* MessageQueue::makeWriteBuffer(std::string const& s)
 
 MessageBuffer* MessageQueue::makeReadBuffer(std::string const& s)
 {
-	boost::unique_lock<boost::mutex > pub_sub_lock(pub_sub_mutex);
+	Mutex::scoped_lock pub_sub_lock(pub_sub_mutex);
 
 	size_t newid=pubsubRegistry.registerNew(s);
 	subscriberBuffers.resize(pubsubRegistry.size()+1);
@@ -166,7 +167,7 @@ void MessageQueue::process_queued_msg()
 {
     std::vector<MessageBuffer *> toprocess;
     /* LOCKING */
-    boost::unique_lock<boost::mutex > cond_lock(cond_mutex);
+    Mutex::scoped_lock cond_lock(cond_mutex);
     while(cond_publishers.size()==0)
         cond.wait(cond_lock);
 	toprocess=cond_publishers_queue;
@@ -176,7 +177,7 @@ void MessageQueue::process_queued_msg()
     /* LOCKING */
 	// cout<<"Queue up!"<<endl;
 
-    //boost::unique_lock<boost::mutex > sub_lock(sub_mutex)
+    //Mutex::scoped_lock sub_lock(sub_mutex)
 	static int _executions = 0;
 	static int msgs=0;
 	_executions ++;
@@ -189,7 +190,7 @@ void MessageQueue::process_queued_msg()
 
         //cout <<(*pit)->getOwnerID() << ":"<<mtp.size() << endl;
         const std::size_t pownerid=(*pit)->getOwnerID();
-		boost::unique_lock<boost::mutex > pub_sub_mutexlock(pub_sub_mutex);
+		Mutex::scoped_lock pub_sub_mutexlock(pub_sub_mutex);
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)
         {
 			size_t msgtopicId=(*mit).topic;

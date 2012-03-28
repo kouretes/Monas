@@ -12,7 +12,7 @@
 
 namespace statechart_engine {
 
-    class Statechart: public statechart_engine::OrState, private Thread {
+    class Statechart: public statechart_engine::OrState, private KSystem::Thread {
 
         public:
 
@@ -45,7 +45,7 @@ namespace statechart_engine {
             ThreadPool _timeoutpool;
 
             boost::condition_variable cond;
-            boost::mutex mut;
+            KSystem::Mutex mut;
             bool notified;
 
 

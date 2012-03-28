@@ -18,7 +18,7 @@
 #include "tools/toString.h"
 
 
-class Agent : public Thread {
+class Agent : public KSystem::Thread {
 
     public:
 

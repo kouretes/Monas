@@ -8,9 +8,13 @@
 <robustmean>10</robustmean>
 <P_observe_NotVisible>0.3</P_observe_NotVisible>
 <P_Notobserve_NotVisible>0.7</P_Notobserve_NotVisible>
-<numofparticlesfromObservation>4</numofparticlesfromObservation>
+<numofparticlesfromObservation>2</numofparticlesfromObservation>
 <partclsNum>30</partclsNum>
 <SpreadParticlesDeviation>30</SpreadParticlesDeviation>
-<rotation_deviation>0.00174533</rotation_deviation>
+<rotation_deviation>0.0174533</rotation_deviation>
 <PercentParticlesSpread>5</PercentParticlesSpread>
+<SpreadParticlesDeviationAfterFall>30</SpreadParticlesDeviationAfterFall>
+<RotationDeviationAfterFallInDeg>25</RotationDeviationAfterFallInDeg>
+<SpreadParticlesDeviation>30</SpreadParticlesDeviation>
+<NumberOfParticlesSpreadAfterFall>10</NumberOfParticlesSpreadAfterFall>
 <port>9001</port>

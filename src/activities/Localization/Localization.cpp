@@ -24,11 +24,11 @@ using namespace std;
 
 namespace
 {
-	ActivityRegistrar<Localization>::Type temp("Localization");
+ActivityRegistrar<Localization>::Type temp("Localization");
 }
 
 Localization::Localization() :
-		vprof("Localization")
+	vprof("Localization")
 {
 }
 
@@ -66,6 +66,8 @@ void Localization::UserInit()
 	bhmsg = new BToHeadMessage();
 
 	MyWorld.add_balls();
+	
+	currentRobotAction = MotionStateMessage::IDLE;
 
 	KLocalization::Initialize();
 	//KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
@@ -75,6 +77,7 @@ void Localization::UserInit()
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
 	firstrun = true;
+	fallBegan = false;
 	last_observation_time = boost::posix_time::microsec_clock::universal_time();
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 }
@@ -133,9 +136,9 @@ int Localization::DebugMode_Receive()
 		incommingheader.DiscardUnknownFields();
 
 		string command = incommingheader.nextmsgname();
-		#ifdef COUT_ON
+#ifdef COUT_ON
 		cout << "COMMAND " << command << endl;
-		#endif
+#endif
 		if (command == "Stop")
 		{
 			debugmode = false;
@@ -153,28 +156,28 @@ int Localization::DebugMode_Receive()
 		//if (((size = reflection->GetInt32(*incommingmsg,field)) > 0)|| incommingheader.nextmsgbytesize()>0) //must read next message
 		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
 		{
-			#ifdef COUT_ON
+#ifdef COUT_ON
 			cout << "NextMessageSize " << size << endl;
-			#endif
+#endif
 			for (rs = rsize = 0; rsize < size; rsize += rs)
 				if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
 				{
 					cout << "receive error" << endl;
 					break;
 				}
-			#ifdef COUT_ON
+#ifdef COUT_ON
 			cout << "Arrived " << ssize << " $$$$$$$$$$$$$$$$%%%%%%%%%Bytes Do something" << endl;
-			#endif
+#endif
 			//if (ticommingmsg.GetTypeName() == "RobotPose") {
 
 			if (command == "SetBelief")
 			{
 				RobotPose ticommingmsg;
 				ticommingmsg.ParseFromArray(data, size);
-				#ifdef COUT_ON
+#ifdef COUT_ON
 				cout << ticommingmsg.GetTypeName() << endl;
 				cout << "Incoming Pose" << endl;
-				#endif
+#endif
 				MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
 				//				AgentPosition.x = MyWorld.myposition().x();
 				//				AgentPosition.y = MyWorld.myposition().y();
@@ -188,16 +191,16 @@ int Localization::DebugMode_Receive()
 				target.x = MyWorld.myposition().x();
 				target.y = MyWorld.myposition().y();
 				target.phi = MyWorld.myposition().phi();
-				#ifdef COUT_ON
+#ifdef COUT_ON
 				cout << "My World theta " << AgentPosition.theta;
-				#endif
+#endif
 			} else if (command.find("Walk") != string::npos)/* == "Walk") */
 			{
 				MotionWalkMessage wmot;
 				wmot.ParseFromArray(data, size);
-				#ifdef COUT_ON
+#ifdef COUT_ON
 				cout << "Incoming WalkCommand" << endl;
-				#endif
+#endif
 				if (command.find("Stop") == string::npos)
 				{ //Reset at the beggining
 					TrackPoint.x = 0;
@@ -215,14 +218,15 @@ int Localization::DebugMode_Receive()
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
-		#ifdef COUT_ON
+#ifdef COUT_ON
 		cout << "Stopping Debug ############# Disconnecting !!!" << endl;
-		#endif
+#endif
 		debugmode = false;
 	}
 	return 0;
 }
 
+//We dont use this any more
 void Localization::SimpleBehaviorStep()
 {
 	// Head Scan simple step
@@ -321,10 +325,18 @@ int Localization::Execute()
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	process_messages();
-
+	
+	if(currentRobotAction == MotionStateMessage::FALL){
+		if(fallBegan == true){
+			fallBegan = false;
+			KLocalization::spreadParticlesAfterFall(SIRParticles,SpreadParticlesDeviationAfterFall, RotationDeviationAfterFallInDeg,NumberOfParticlesSpreadAfterFall);
+		}
+		return 0;
+	}else
+		fallBegan = true;
 	if (debugmode)
 		DebugMode_Receive();
-	if (lrm != 0){
+	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
 		Reset();
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
@@ -337,9 +349,9 @@ int Localization::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
-	#ifdef COUT_ON
+#ifdef COUT_ON
 	cout<<"AgentPosition.x"<<AgentPosition.x <<"AgentPosition.y"<<AgentPosition.y<<endl;
-	#endif
+#endif
 	calculate_ball_estimate(robotmovement);
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
@@ -403,9 +415,9 @@ void Localization::Send_LocalizationData()
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
-		#ifdef COUT_ON
+#ifdef COUT_ON
 		cout << "Disconnecting !!!!!" << endl;
-		#endif
+#endif
 		debugmode = false;
 	}
 }
@@ -567,36 +579,25 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPoint.phi += DR;
 
 }
-
+//Sequential Importance Resampling
 belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbigiusObservations, double rangemaxleft, double rangemaxright)
 {
 	int iterations = 1;
 	int index[partclsNum];
 
+
 	//SpreadParticles
-//	if (Observations.empty())
-//	{
-//		//		cout << "No observations ... spreading" << endl;
-//		//SpreadParticlesCirc(SIRParticles, 10, 0, 2);
-//	}
-	//	if (depletions_counter > 1) {
-	//		cout << "Depletion Counter " << depletions_counter << endl;
-	//		SpreadParticlesCirc(SIRParticles, 100.0 * depletions_counter, 30 * TO_RAD, 50);
-	//	}
-
 	SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
-	//	if (Observations.size() > 1)
-	//		ObservationParticles(Observations, SIRParticles, 6000, 4000, 200, rangemaxleft, rangemaxright);
 
-#ifdef ADEBUG
+	#ifdef ADEBUG
 	cout << "\nPredict Iterations " << iterations << endl;
 	for (int i = 0; i < partclsNum / 10.0; i++)
-	cout << SIRParticles.Weight[i] << "  ";
-#endif
+		cout << SIRParticles.Weight[i] << "  ";
+	#endif
 	//SIR Filter
 
-	//Predict - Move particles according the Prediction Model
 
+	//Predict - Move particles according the Prediction Model
 	for (int i = 0; i < iterations; i++)
 		Predict(SIRParticles, MotionModel);
 
@@ -604,18 +605,20 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//ForceBearing(SIRParticles, Observations);
 
 	//Create some particles using Observation Intersection
-	CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
-
+	//CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 	//Update - Using incoming observation
-	Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
-//	if(AmbigiusObservations.size()>0)
-//		Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
+	if(Observations.size()>=1)
+		Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
+	else if(AmbigiusObservations.size()==1){
+		Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
+	}
 
-#ifdef ADEBUG
+
+	#ifdef ADEBUG
 	cout << "\nUnnormalized SIR particles " << endl;
-	for (int i = 0; i < partclsNum / 5.0; i++)
-	cout << SIRParticles.Weight[i] << " \n ";
-#endif
+	for (int i = 0; i < partclsNum; i=i+6)
+		cout << SIRParticles.Weight[i] << " \n ";
+	#endif
 
 	//Normalize Particles  Weight in order to Resample later
 	float ESS = normalize(SIRParticles.Weight, partclsNum);
@@ -629,22 +632,17 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	{
 		depletions_counter = 0;
 	}
-#ifdef ADEBUG
+	#ifdef ADEBUG
 	cout << "\nNormalized SIR particles  " << endl;
 	for (int i = 0; i < partclsNum / 10.0; i++)
 		cout << SIRParticles.Weight[i] << " \n ";
-#endif
-	//Maybe Usefull for others
+	#endif
+	//Maybe Usefull for others-------------------------------------------------
 	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
 	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
 	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
 	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
-#ifdef ADEBUG
-	cout << "\nAUX particles Before, SIR before Resample after memcpy" << endl;
-	for (int i = 0; i < partclsNum / 10.0; i++)
-		cout << AUXParticles.Weight[i];
-#endif
-	////#########################
+	//--------------------------------------------------------------------------
 
 	//extract estimation
 	partcl maxprtcl;
@@ -652,25 +650,17 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	float max_weight=-1;
 	int max_weight_particle_index=0;
 	//Find Max Weight
-//	maxprtcl.Weight = SIRParticles.Weight[0];
-//	maxprtcl.x = SIRParticles.x[0];
-//	maxprtcl.y = SIRParticles.y[0];
-//	maxprtcl.phi = SIRParticles.phi[0];
-	//SIRParticles.WeightSum = SIRParticles.Weight[0];
+
 	for (unsigned int i = 0; i < SIRParticles.size; i++)
 	{
 		if (SIRParticles.Weight[i] > max_weight)
 		{
-//			maxprtcl.x = SIRParticles.x[i];
-//			maxprtcl.y = SIRParticles.y[i];
-//			maxprtcl.phi = SIRParticles.phi[i];
-//			maxprtcl.Weight = SIRParticles.Weight[i];
 			max_weight = SIRParticles.Weight[i];
 			max_weight_particle_index = i;
 		}
 	}
 
-	//Swap best particle to the
+	//Swap best particle in the first position
 	maxprtcl.x = SIRParticles.x[0];
 	maxprtcl.y = SIRParticles.y[0];
 	maxprtcl.phi = SIRParticles.phi[0];
@@ -716,14 +706,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		; //cout << "NO need of resampling" << endl;
 	}
 
-
-
 	//cout << "Agent Confidence " << AgentPosition.confidence << endl;
-
-	//cin.ignore(10, '\n');
-	//cin.clear();
-	//	cout << "write something to display belief " << endl;
-	//cin >> c;
 
 
 
@@ -738,6 +721,7 @@ void Localization::process_messages()
 	gsm = _blk->readState<GameStateMessage>("worldstate");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
+	sm = _blk->readState<MotionStateMessage>("sensors");
 
 
 	currentObservation.clear();
@@ -812,6 +796,9 @@ void Localization::process_messages()
 		Angle = rpsm->sensordata(KDeviceLists::ROBOT_ANGLE);
 
 		RobotPositionMotionModel(robotmovement);
+	}
+	if (sm != 0){
+		currentRobotAction = sm->type();
 	}
 
 }
@@ -888,7 +875,7 @@ void * Localization::StartServer(void * astring)
 		if (!debugmode)
 		{
 			if (sock != NULL
-			)
+					)
 				delete sock;
 
 			if ((sock = servSock.accept()) < 0)

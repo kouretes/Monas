@@ -92,28 +92,34 @@ int update_field(LocalizationData & DebugData) {
 		if (DebugData.observations().regular_objects_size() > 0) {
 			//cout << "We have observations " << DebugData.observations().regular_objects_size() << endl;
 			vector<KObservationModel> currentObservation;
-			KObservationModel observation;
+			KObservationModel observation,symetricObs;
 			for (int o = 0; o < DebugData.observations().regular_objects_size(); o++) {
 				NamedObject *obj = DebugData.mutable_observations()->mutable_regular_objects(o);
 				cout << obj->object_name() << endl;
 				if (obj->object_name() == "YellowLeft") {// "YellowLeft"
 					observation.Feature.x = 3000;
 					observation.Feature.y = 700;
+					symetricObs.Feature.x = -3000;
+					symetricObs.Feature.y = -700;
 				} else if (obj->object_name() == "YellowRight") { //"YellowRight"
 					observation.Feature.x = 3000;
 					observation.Feature.y = -700;
+					symetricObs.Feature.x = -3000;
+					symetricObs.Feature.y = 700;
 				} else if (obj->object_name() == "SkyblueLeft") {// "YellowLeft"
 					observation.Feature.x = -3000;
 					observation.Feature.y = -700;
 				} else if (obj->object_name() == "SkyblueRight") { //"YellowRight"
 					observation.Feature.x = -3000;
-					observation.Feature.y = 700;
+					observation.Feature.y = 0;
 				} else if (obj->object_name() == "Skyblue") { //Ambigious GoalPost
 					observation.Feature.x = -3000;
-					observation.Feature.y = 700;
+					observation.Feature.y = 0;
 				} else if (obj->object_name() == "Yellow") { //Ambigious GoalPost
 					observation.Feature.x = 3000;
 					observation.Feature.y = 0;
+					symetricObs.Feature.x = -3000;
+					symetricObs.Feature.y = 0;
 				} else {
 					continue;
 				}
@@ -122,7 +128,12 @@ int update_field(LocalizationData & DebugData) {
 				observation.Bearing.val = obj->bearing();
 				observation.Distance.val = obj->distance() * 1000;
 				observation.Distance.Edev = sqrt(obj->distance_dev()) * 1000;
+				symetricObs.Feature.id = obj->object_name();
+				symetricObs.Bearing.val = obj->bearing();
+				symetricObs.Distance.val = obj->distance() * 1000;
+				symetricObs.Distance.Edev = sqrt(obj->distance_dev()) * 1000;
 				currentObservation.push_back(observation);
+				currentObservation.push_back(symetricObs);
 			}
 			KLocView->DrawObservations(Belief, currentObservation);
 		}
