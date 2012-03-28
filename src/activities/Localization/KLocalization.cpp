@@ -396,6 +396,8 @@ int KLocalization::Initialize()
 		found &= config->QueryElement("rotation_deviation", rotation_deviation); // % of particles be spreaded
 		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
 		
+		found &= config->QueryElement("SpreadParticlesDeviationAfterFall", SpreadParticlesDeviationAfterFall);
+		found &= config->QueryElement("RotationDeviationAfterFallInDeg", RotationDeviationAfterFallInDeg);
 		found &= config->QueryElement("NumberOfParticlesSpreadAfterFall", NumberOfParticlesSpreadAfterFall);
 		found &= config->QueryElement("ForceBearingParticles", ForceBearingParticles);
 		if (found)
@@ -465,7 +467,7 @@ int KLocalization::Initialize()
 		} else
 		{
 			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the Field xml config file ", Logger::Error);
-]		}
+		}
 
 	}else
 	{
@@ -1131,7 +1133,7 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 }
 
 
-void KLocalization::spreadParticlesAfterFall(parts &Particles, int numOfParticles){
+void KLocalization::spreadParticlesAfterFall(parts &Particles, double Deviation, double RotDeviation, int numOfParticles){
 	//Normal X, Y, P;
 	Random X, Y, P;	
 	
@@ -1143,7 +1145,7 @@ void KLocalization::spreadParticlesAfterFall(parts &Particles, int numOfParticle
 	{
 		Particles.x[i] += (X.Next() - 0.5) * Deviation;
 		Particles.y[i] += (Y.Next() - 0.5) * Deviation;
-		Particles.phi[i] = (P.Next() - 0.5) * deg2rad(25);
+		Particles.phi[i] += (P.Next() - 0.5) * deg2rad(RotDeviation);
 	}
 }
 

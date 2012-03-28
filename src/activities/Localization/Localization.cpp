@@ -329,7 +329,7 @@ int Localization::Execute()
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
-			KLocalization::spreadParticlesAfterFall(SIRParticles,NumberOfParticlesSpreadAfterFall);
+			KLocalization::spreadParticlesAfterFall(SIRParticles,SpreadParticlesDeviationAfterFall, RotationDeviationAfterFallInDeg,NumberOfParticlesSpreadAfterFall);
 		}
 		return 0;
 	}else

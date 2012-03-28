@@ -13,6 +13,8 @@
 <SpreadParticlesDeviation>30</SpreadParticlesDeviation>
 <rotation_deviation>0.0174533</rotation_deviation>
 <PercentParticlesSpread>5</PercentParticlesSpread>
+<SpreadParticlesDeviationAfterFall>30</SpreadParticlesDeviationAfterFall>
+<RotationDeviationAfterFallInDeg>25</RotationDeviationAfterFallInDeg>
+<SpreadParticlesDeviation>30</SpreadParticlesDeviation>
 <NumberOfParticlesSpreadAfterFall>10</NumberOfParticlesSpreadAfterFall>
-<ForceBearingParticles>1</ForceBearingParticles>
 <port>9001</port>

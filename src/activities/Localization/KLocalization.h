@@ -283,6 +283,8 @@ public:
 	
 	double SpreadParticlesDeviation;
 	double rotation_deviation;
+	double SpreadParticlesDeviationAfterFall;
+	double RotationDeviationAfterFallInDeg;
 	int PercentParticlesSpread;
 	
 	
@@ -315,7 +317,6 @@ public:
 	void Predict(parts &Particles, KMotionModel & MotionModel);
 	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemin, double rangemax);
 	void Update_Ambigius(parts &Particles, vector<KObservationModel> &Observation, int NumofParticles);
-	void spreadParticlesAfterFall(parts &Particles, int numberForSpread);
 	//Not used with 2 yellow goals
 	//void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 	
@@ -361,6 +362,7 @@ public:
 	int CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) ;
 	void SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 	void SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent);
+	void spreadParticlesAfterFall(parts &,double,double, int);
 	
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
