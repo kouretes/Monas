@@ -248,7 +248,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 #ifdef DEBUGVISION
 			tobeshown.push_back(KVecInt2(thisl.gtrc.x,thisl.gtrc.y));
 #endif
-			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y, white | orange | green| yellow |skyblue);
+			tempcolor = doSeg(thisl.gtrc.x,thisl.gtrc.y, white | orange | green| yellow );//|skyblue);
 
 			//cout<<"doseg:"<<(int)tempcolor<<endl;
 			if (colorIsA(tempcolor,green))//
@@ -371,12 +371,12 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				ygoalpost.push_back(thisl.gtrc);
 				thisl.yfound=true;
 			}
-			else if(colorIsA(tempcolor,skyblue)&&thisl.bfound==false)
+			/*else if(colorIsA(tempcolor,skyblue)&&thisl.bfound==false)
 			{
 				//ballpixels.push_back(tmpPoint);
 				bgoalpost.push_back(thisl.gtrc);
 				thisl.bfound=true;
-			}
+			}*/
 			//Prepare for the next one
 			thisl.gtrc.steps(step);
 		}

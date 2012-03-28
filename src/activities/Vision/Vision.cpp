@@ -517,7 +517,7 @@ void Vision::fetchAndProcess()
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
 	locateGoalPost(ygoalpost, yellow);
-	locateGoalPost(bgoalpost, skyblue);
+	//locateGoalPost(bgoalpost, skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	//cout << b.x << " " << b.y << " " << b.cr << endl;
