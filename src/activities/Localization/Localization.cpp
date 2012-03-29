@@ -710,7 +710,7 @@ void Localization::process_messages()
 
 	gsm = _blk->readState<GameStateMessage>("worldstate");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
-	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
+	lrm = _blk->readSignal<LocalizationResetMessage>("worldstate");
 	sm = _blk->readState<MotionStateMessage>("worldstate");
 
 

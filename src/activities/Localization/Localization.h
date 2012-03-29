@@ -8,7 +8,6 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
-#include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 //#define KPROFILING_ENABLED
 
