@@ -257,10 +257,11 @@ void MotionController::mglrun()
 	if(gsm!=NULL&&gsm->override_state()==OVERRIDE_DROPDEAD)
 	{
 		motion->setStiffnesses("Body", 0.0);
-
-        sm.set_type(MotionStateMessage::FALL);
-		sm.set_detail("");
-        _blk->publishState(sm,"worldstate");
+		if(sm.type() != MotionStateMessage::FALL){
+        	sm.set_type(MotionStateMessage::FALL);
+			sm.set_detail("");
+        	_blk->publishState(sm,"worldstate");
+		}
 		
 		waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
@@ -297,10 +298,12 @@ void MotionController::mglrun()
 				killCommands();
 			}
 			motion->setStiffnesses("Body", 0.0);
-
-        	sm.set_type(MotionStateMessage::FALL);
-			sm.set_detail("");
-        	_blk->publishState(sm,"worldstate");
+			
+			if(sm.type() != MotionStateMessage::FALL){
+        		sm.set_type(MotionStateMessage::FALL);
+				sm.set_detail("");
+        		_blk->publishState(sm,"worldstate");
+			}
 
 			waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
@@ -351,10 +354,11 @@ void MotionController::mglrun()
 	if ((actionPID == 0) && robotDown)
 	{
 
-        sm.set_type(MotionStateMessage::STANDUP);
-		sm.set_detail("");
-      	_blk->publishState(sm,"worldstate");
-
+		if(sm.type()!= MotionStateMessage::STANDUP){
+    	    sm.set_type(MotionStateMessage::STANDUP);
+			sm.set_detail("");
+    	  	_blk->publishState(sm,"worldstate");
+		}
 	//	Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		robotDown = true;
@@ -391,11 +395,11 @@ void MotionController::mglrun()
 
 			if (wm->command() == "walkTo")
 			{
-				if(sm.detail().compare("walkTo") != 0){				
-        			sm.set_type(MotionStateMessage::WALKING);
-					sm.set_detail("walkTo");
-        			_blk->publishState(sm,"worldstate");
-				}
+					if(sm.detail().compare("walkTo") != 0){		
+        				sm.set_type(MotionStateMessage::WALKING);
+						sm.set_detail("walkTo");
+        				_blk->publishState(sm,"worldstate");
+					}
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);

@@ -191,8 +191,11 @@ int LBehavior::Execute() {
 				play = true;
 				//littleWalk(0.01,0.0,0.0,1);
 			}
-			else */if (calibrated == 0) {
-				scanForGoals = true;
+			else */
+			if (calibrated == 0) {
+				scanForGoals = true;				
+				amot->set_command("locScan.xar");
+				_blk->publishSignal(*amot,"motion");
 				calibrate();
 				step = -1;
 			}
@@ -236,24 +239,26 @@ int LBehavior::Execute() {
 			play = false;
 			step = -1;
 			scanForGoals = true;
+			calibrated = 0;
+			cerr << "EDW GIDIA" << calibrated << " gidia" << endl;
 			_blk->publishSignal(*locReset, "behavior");
-			calibrate();
+			//calibrate();
 			velocityWalk(0.0,0.0,0.0,1);
 
 		}
 	}
 
 	if (gameState == PLAYER_PLAYING) {
-
 		if (calibrated == 2 && scanForGoals == false) {
 			play = true;
 		}
 		else if (calibrated == 0) {
+			amot->set_command("locScan.xar");
+			_blk->publishSignal(*amot,"motion");
 			scanForGoals = true;
 			calibrate();
 			step = -1;
 		}else if(calibrated == 2 && scanForGoals){
-
 			if(step == -1){
 				timeStart = boost::posix_time::microsec_clock::universal_time();
 				step = 0;
@@ -561,7 +566,7 @@ void LBehavior::read_messages() {
 	//Logger::Instance().WriteMsg("LBehavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
 	if (c != NULL) {
-		if (c->status() == 1)
+		if (c->status() == 1 && calibrated != 0)
 			calibrated = 2;
 	}
 }

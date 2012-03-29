@@ -11,7 +11,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <netdb.h>
-#include <arpa/inet.h>
 #else
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -242,16 +241,11 @@ int Displayimage(KRawImage &img) {
 int main(int argc, char* argv[]) {
 	puts("Hello World!!!");
 	keypressed = 0;
-	struct hostent *server;
-	struct in_addr **addr_list;
 	if (2 != argc) {
 		cout << "usage: " << argv[0] << " server_ip server_port" << endl;
 		return 0;
 	}
-	server = gethostbyname(argv[1]);
-	addr_list = (struct in_addr **)server->h_addr_list;
-	string servAddress = inet_ntoa(*addr_list[0]);
-	cout << servAddress;
+	string servAddress = argv[1];
 	//char *echoString = argv[2];   // Second arg: string to echo
 	//int echoStringLen = strlen(echoString);   // Determine input length
 	unsigned short echoServPort = (argc == 3) ? atoi(argv[2]) : 9000;
@@ -281,7 +275,6 @@ int receive_and_send_loop(TCPSocket *sock) {
 
 	int maxheadersize = 30;
 	int headersize = maxheadersize;
-
 	int alreadyparsedbytes = 0;
 
 	char * data = new char[953604];
