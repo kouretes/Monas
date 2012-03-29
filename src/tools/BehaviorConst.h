@@ -2,7 +2,7 @@
 #define BehaviorConst_H
 
 #include "tools/MathFunctions.h"
-
+#include "messages/AllMessagesHeader.h"
 //********headbehavior enums***********
 #define DONOTHING 0
 #define CALIBRATE 1
@@ -11,6 +11,7 @@
 #define BALLTRACK 4
 #define HIGHSCANFORBALL 5
 #define SCANFIELD 6
+#define SCANAFTERPENALISED 7
 
 //#define PENALTY_ON
 
