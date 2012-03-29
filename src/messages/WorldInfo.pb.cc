@@ -249,7 +249,7 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "eed\030\005 \001(\002:\007-100000\"\213\001\n\030LocalizationReset"
     "Message\0222\n\004type\030\001 \002(\0162$.LocalizationRese"
     "tMessage.ResetPhase\";\n\nResetPhase\022\r\n\tPEN"
-    "ALIZES\020\000\022\006\n\002P1\020\001\022\006\n\002P2\020\002\022\006\n\002P3\020\003\022\006\n\002P4\020\004"
+    "ALIZED\020\000\022\006\n\002P1\020\001\022\006\n\002P2\020\002\022\006\n\002P3\020\003\022\006\n\002P4\020\004"
     "\"\232\001\n\020LocalizationData\022\031\n\005World\030\001 \002(\0132\n.W"
     "orldInfo\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022"
     "!\n\rRobotPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Ob"
@@ -1794,7 +1794,7 @@ bool LocalizationResetMessage_ResetPhase_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::PENALIZES;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::PENALIZED;
 const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P1;
 const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P2;
 const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P3;

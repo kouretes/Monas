@@ -40,14 +40,14 @@ class LocalizationData;
 class header;
 
 enum LocalizationResetMessage_ResetPhase {
-  LocalizationResetMessage_ResetPhase_PENALIZES = 0,
+  LocalizationResetMessage_ResetPhase_PENALIZED = 0,
   LocalizationResetMessage_ResetPhase_P1 = 1,
   LocalizationResetMessage_ResetPhase_P2 = 2,
   LocalizationResetMessage_ResetPhase_P3 = 3,
   LocalizationResetMessage_ResetPhase_P4 = 4
 };
 bool LocalizationResetMessage_ResetPhase_IsValid(int value);
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage_ResetPhase_ResetPhase_MIN = LocalizationResetMessage_ResetPhase_PENALIZES;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage_ResetPhase_ResetPhase_MIN = LocalizationResetMessage_ResetPhase_PENALIZED;
 const LocalizationResetMessage_ResetPhase LocalizationResetMessage_ResetPhase_ResetPhase_MAX = LocalizationResetMessage_ResetPhase_P4;
 const int LocalizationResetMessage_ResetPhase_ResetPhase_ARRAYSIZE = LocalizationResetMessage_ResetPhase_ResetPhase_MAX + 1;
 
@@ -624,7 +624,7 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
   // nested types ----------------------------------------------------
   
   typedef LocalizationResetMessage_ResetPhase ResetPhase;
-  static const ResetPhase PENALIZES = LocalizationResetMessage_ResetPhase_PENALIZES;
+  static const ResetPhase PENALIZED = LocalizationResetMessage_ResetPhase_PENALIZED;
   static const ResetPhase P1 = LocalizationResetMessage_ResetPhase_P1;
   static const ResetPhase P2 = LocalizationResetMessage_ResetPhase_P2;
   static const ResetPhase P3 = LocalizationResetMessage_ResetPhase_P3;
