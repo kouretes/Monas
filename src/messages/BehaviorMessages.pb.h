@@ -40,7 +40,7 @@ class PositionMessage;
 class ReturnToPositionMessage;
 class FallMessage;
 class LocalizationResetMessage;
-class RobotInPosition;
+class LocalizeDone;
 
 // ===================================================================
 
@@ -720,14 +720,14 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class RobotInPosition : public ::google::protobuf::Message {
+class LocalizeDone : public ::google::protobuf::Message {
  public:
-  RobotInPosition();
-  virtual ~RobotInPosition();
+  LocalizeDone();
+  virtual ~LocalizeDone();
   
-  RobotInPosition(const RobotInPosition& from);
+  LocalizeDone(const LocalizeDone& from);
   
-  inline RobotInPosition& operator=(const RobotInPosition& from) {
+  inline LocalizeDone& operator=(const LocalizeDone& from) {
     CopyFrom(from);
     return *this;
   }
@@ -741,17 +741,17 @@ class RobotInPosition : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const RobotInPosition& default_instance();
+  static const LocalizeDone& default_instance();
   
-  void Swap(RobotInPosition* other);
+  void Swap(LocalizeDone* other);
   
   // implements Message ----------------------------------------------
   
-  RobotInPosition* New() const;
+  LocalizeDone* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const RobotInPosition& from);
-  void MergeFrom(const RobotInPosition& from);
+  void CopyFrom(const LocalizeDone& from);
+  void MergeFrom(const LocalizeDone& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -774,21 +774,21 @@ class RobotInPosition : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required bool inPosition = 1 [default = false];
-  inline bool has_inposition() const;
-  inline void clear_inposition();
-  static const int kInPositionFieldNumber = 1;
-  inline bool inposition() const;
-  inline void set_inposition(bool value);
+  // required bool moveon = 1 [default = false];
+  inline bool has_moveon() const;
+  inline void clear_moveon();
+  static const int kMoveonFieldNumber = 1;
+  inline bool moveon() const;
+  inline void set_moveon(bool value);
   
-  // @@protoc_insertion_point(class_scope:RobotInPosition)
+  // @@protoc_insertion_point(class_scope:LocalizeDone)
  private:
-  inline void set_has_inposition();
-  inline void clear_has_inposition();
+  inline void set_has_moveon();
+  inline void clear_has_moveon();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  bool inposition_;
+  bool moveon_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -798,7 +798,7 @@ class RobotInPosition : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
   
   void InitAsDefaultInstance();
-  static RobotInPosition* default_instance_;
+  static LocalizeDone* default_instance_;
 };
 // ===================================================================
 
@@ -1057,28 +1057,28 @@ inline void FallMessage::set_fall(::google::protobuf::int32 value) {
 
 // -------------------------------------------------------------------
 
-// RobotInPosition
+// LocalizeDone
 
-// required bool inPosition = 1 [default = false];
-inline bool RobotInPosition::has_inposition() const {
+// required bool moveon = 1 [default = false];
+inline bool LocalizeDone::has_moveon() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void RobotInPosition::set_has_inposition() {
+inline void LocalizeDone::set_has_moveon() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void RobotInPosition::clear_has_inposition() {
+inline void LocalizeDone::clear_has_moveon() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void RobotInPosition::clear_inposition() {
-  inposition_ = false;
-  clear_has_inposition();
+inline void LocalizeDone::clear_moveon() {
+  moveon_ = false;
+  clear_has_moveon();
 }
-inline bool RobotInPosition::inposition() const {
-  return inposition_;
+inline bool LocalizeDone::moveon() const {
+  return moveon_;
 }
-inline void RobotInPosition::set_inposition(bool value) {
-  set_has_inposition();
-  inposition_ = value;
+inline void LocalizeDone::set_moveon(bool value) {
+  set_has_moveon();
+  moveon_ = value;
 }
 
 

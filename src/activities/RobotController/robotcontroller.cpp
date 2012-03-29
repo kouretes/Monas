@@ -61,7 +61,7 @@ int RobotController::Execute() {
 		new_gm_state.set_firsthalf(game_data.firstHalf == 1);
 		new_gm_state.set_kickoff(game_data.kickOffTeam == new_gm_state.team_color());
 		new_gm_state.set_penalty(game_data.teams[teamindx].players[conf.player_number() - 1].penalty);
-
+		new_gm_state.set_previous_player_state(gm_state.player_state());
 		//Depreciated PLAYER_PENALISED State does not exist any more!
 		new_gm_state.set_player_state((game_data.teams[teamindx].players[conf.player_number() - 1].penalty == 0) ? game_data.state : PLAYER_PENALISED);
 
@@ -142,21 +142,26 @@ int RobotController::Execute() {
 					gm_state.set_penalty(PENALTY_MANUAL);
 					gm_state.set_game_state(STATE_PLAYING);
 					gm_state.set_player_state(PLAYER_PENALISED);
+					gm_state.set_previous_player_state(PLAYER_INITIAL);
 					break;
 				case PLAYER_PLAYING:
 					gm_state.set_penalty(PENALTY_MANUAL);
 					gm_state.set_game_state(STATE_PLAYING);
 					gm_state.set_player_state(PLAYER_PENALISED);
+					gm_state.set_previous_player_state(PLAYER_PLAYING);
 					break;
 				case PLAYER_PENALISED:
 					gm_state.set_game_state(STATE_PLAYING);
 					gm_state.set_penalty(PENALTY_NONE);
 					gm_state.set_player_state(PLAYER_PLAYING);
+					gm_state.set_previous_player_state(PLAYER_PENALISED);
 					break;
 				default:
 					gm_state.set_game_state(STATE_PLAYING);
 					gm_state.set_penalty(PENALTY_NONE);
 					gm_state.set_player_state(PLAYER_PLAYING);
+					gm_state.set_previous_player_state(PLAYER_INITIAL);
+					
 			}
 			changed=true;
 		}

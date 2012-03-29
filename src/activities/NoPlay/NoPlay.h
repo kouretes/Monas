@@ -42,6 +42,7 @@ private:
 	KickOffMessage* kcm;
 	BToHeadMessage* bhmsg;
 	PositionMessage* pmsg;
+	LocalizeDone* ld;
 	bool cal;
 	int teamColor;
 	int playernum;
