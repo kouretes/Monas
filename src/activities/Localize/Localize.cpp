@@ -9,7 +9,10 @@ int Localize::Execute() {
 	if(boost::posix_time::microsec_clock::universal_time()-first>boost::posix_time::seconds(20)){
 		first = boost::posix_time::microsec_clock::universal_time();
 		bhm->set_headaction(CALIBRATE);
+		ld->set_moveon(false);
+		_blk->publishState(*ld, "behavior");
 		_blk->publish_all();
+		
 		return 0;
 	}
 	

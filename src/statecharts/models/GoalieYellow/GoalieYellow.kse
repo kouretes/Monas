@@ -68,7 +68,7 @@
                         <children xmi:type="notation:DecorationNode" xmi:id="_-8xE8FlmEeGg2qRYwS9_EQ" type="5002"/>
                         <styles xmi:type="notation:DescriptionStyle" xmi:id="_-8wd4VlmEeGg2qRYwS9_EQ"/>
                         <styles xmi:type="notation:FontStyle" xmi:id="_-8wd4llmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
-                        <styles xmi:type="notation:LineStyle" xmi:id="_-8wd41lmEeGg2qRYwS9_EQ"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_-8wd41lmEeGg2qRYwS9_EQ" lineColor="0"/>
                         <element xmi:type="statechart:Node" href="GoalieYellow.stct#//@nodes.0/@Children.1/@Children.1/@Children.2/@Children.2/@Children.1"/>
                         <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-8wd5FlmEeGg2qRYwS9_EQ" x="83" y="27"/>
                       </children>
@@ -286,7 +286,7 @@
                             <styles xmi:type="notation:FontStyle" xmi:id="_-_IccVlmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
                             <styles xmi:type="notation:LineStyle" xmi:id="_-_IccllmEeGg2qRYwS9_EQ" lineColor="0"/>
                             <element xmi:type="statechart:Node" href="GoalieYellow.stct#//@nodes.0/@Children.1/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1"/>
-                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-_Icc1lmEeGg2qRYwS9_EQ" x="95" y="31" width="169" height="61"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-_Icc1lmEeGg2qRYwS9_EQ" x="95" y="31" width="169" height="39"/>
                           </children>
                           <children xmi:type="notation:Node" xmi:id="_-_IcdVlmEeGg2qRYwS9_EQ" type="3006">
                             <styles xmi:type="notation:DescriptionStyle" xmi:id="_-_IcdllmEeGg2qRYwS9_EQ"/>
@@ -381,7 +381,7 @@
                     <styles xmi:type="notation:DescriptionStyle" xmi:id="_iNw80ngFEeG72exk7ADMFw"/>
                     <styles xmi:type="notation:FontStyle" xmi:id="_iNw803gFEeG72exk7ADMFw" fontName="Century Schoolbook L"/>
                     <element xmi:type="statechart:Node" href="GoalieYellow.stct#//@nodes.0/@Children.1/@Children.1/@Children.5/@Children.2"/>
-                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iNw81HgFEeG72exk7ADMFw" x="71" y="69" width="290" height="169"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iNw81HgFEeG72exk7ADMFw" x="59" y="93" width="290" height="169"/>
                   </children>
                   <children xmi:type="notation:Node" xmi:id="_iNxj4HgFEeG72exk7ADMFw" type="3006">
                     <styles xmi:type="notation:DescriptionStyle" xmi:id="_iNxj4XgFEeG72exk7ADMFw"/>
@@ -947,7 +947,7 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_iOsJ4HgFEeG72exk7ADMFw" type="4001" source="_iN1OQHgFEeG72exk7ADMFw" target="_iN1ORXgFEeG72exk7ADMFw">
     <children xmi:type="notation:DecorationNode" xmi:id="_iOsw8HgFEeG72exk7ADMFw" type="6001">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_iOsw8XgFEeG72exk7ADMFw" x="-3" y="-16"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iOsw8XgFEeG72exk7ADMFw" x="6" y="-18"/>
     </children>
     <styles xmi:type="notation:RoutingStyle" xmi:id="_iOsJ4XgFEeG72exk7ADMFw"/>
     <styles xmi:type="notation:FontStyle" xmi:id="_iOsJ4ngFEeG72exk7ADMFw" fontName="Century Schoolbook L"/>

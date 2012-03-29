@@ -66,6 +66,8 @@ int NoPlay::Execute() {
 			rpm->set_goalietopos(true);
 			_blk->publishSignal(*rpm, "behavior");
 			#endif
+			ld->set_moveon(false);
+			_blk->publishState(*ld, "behavior");
 //			Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
 
 		//goToPosition(initX, initY, initPhi);
@@ -173,6 +175,7 @@ void NoPlay::UserInit () {
 	kcm = new KickOffMessage();
 	pmsg = new PositionMessage();
 	rpm = new ReturnToPositionMessage();
+	ld = new LocalizeDone();
 	myPosX = 0.0;
 	myPosY = 0.0;
 	myPhi = 0.0;

@@ -10,10 +10,10 @@ public:
 
 	}
 	bool Eval() {
-		/* worldstate.State.GameStateMessage.previous_player_state()!=PLAYER_PENALISED */
+		/* worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || worldstate.State.GameStateMessage.previous_player_state()!=PLAYER_PENALISED */
 		boost::shared_ptr<const GameStateMessage> var_1263977940 = _blk->readState<GameStateMessage> ("worldstate" );
 	
-				return ( (var_1263977940.get()!=0 && var_1263977940->previous_player_state()!=PLAYER_PENALISED) );	
+				return ( var_1263977940.get()==0 ||  (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_PLAYING) || (var_1263977940.get()!=0 && var_1263977940->previous_player_state()!=PLAYER_PENALISED) );	
     }
 };
 		
