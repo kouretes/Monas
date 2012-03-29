@@ -77,9 +77,10 @@ void Localization::UserInit()
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
 	firstrun = true;
-	fallBegan = false;
+	fallBegan = true;
 	last_observation_time = boost::posix_time::microsec_clock::universal_time();
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
+
 }
 
 void Localization::Reset()
@@ -331,7 +332,7 @@ int Localization::Execute()
 			fallBegan = false;
 			KLocalization::spreadParticlesAfterFall(SIRParticles,SpreadParticlesDeviationAfterFall, RotationDeviationAfterFallInDeg,NumberOfParticlesSpreadAfterFall);
 		}
-		return 0;
+	//	return 0;
 	}else
 		fallBegan = true;
 	if (debugmode)
@@ -607,10 +608,18 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//Create some particles using Observation Intersection
 	//CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 	//Update - Using incoming observation
-	if(Observations.size()>=1)
+	if(Observations.size()>=1){
+		beliefForGoalPosts[0] = 0;
+		beliefForGoalPosts[1] = 0;
+		beliefForGoalPosts[2] = 0;
+		beliefForGoalPosts[3] = 0;
+		timesOfContAmbig = 0;
 		Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
+	}
 	else if(AmbigiusObservations.size()==1){
-		Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
+		Update_Ambigius_Eldrad_Version(SIRParticles, AmbigiusObservations, partclsNum);
+		timesOfContAmbig++;
+		//Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
 	}
 
 
@@ -721,7 +730,7 @@ void Localization::process_messages()
 	gsm = _blk->readState<GameStateMessage>("worldstate");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
 	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
-	sm = _blk->readState<MotionStateMessage>("sensors");
+	sm = _blk->readState<MotionStateMessage>("worldstate");
 
 
 	currentObservation.clear();

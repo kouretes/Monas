@@ -298,6 +298,9 @@ public:
 	float FieldMaxY;
 	float FieldMinY;
 	
+	//Belief for each goalpost
+	int beliefForGoalPosts[4];
+	int timesOfContAmbig;
 	
 	parts SIRParticles;
 	parts AUXParticles;
@@ -317,13 +320,13 @@ public:
 	void Predict(parts &Particles, KMotionModel & MotionModel);
 	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemin, double rangemax);
 	void Update_Ambigius(parts &Particles, vector<KObservationModel> &Observation, int NumofParticles);
+	void Update_Ambigius_Eldrad_Version(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
 	//Not used with 2 yellow goals
 	//void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 	
 	float ESS(parts &Particles); //Calculate Effective Sample Size
 	void Resample(parts &Particles, int * Index, int param);
 	void Propagate(parts &Particles, int * Index);
-	
 	//Not used with the activity
 	//belief LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observation, double rangemin, double rangemax);
 	//belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observation, double rangemin, double rangemax);
@@ -363,7 +366,26 @@ public:
 	void SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 	void SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 	void spreadParticlesAfterFall(parts &,double,double, int);
-	
+	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	/*::  This function find the max value from four values and returns the index:*/
+	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	int findMaxIndex(float v1,float v2,float v3,float v4){
+		float table[4] = {v1,v2,v3,v4};
+		int finalChoise,choise1,choise2;
+		if(table[0] > table[1])
+			choise1 = 0;
+		else
+			choise1 = 1;
+		if(table[2] > table[3])
+			choise2 = 2;
+		else
+			choise2 = 3;
+		if(table[choise1] > table[choise2])
+			finalChoise = choise1;
+		else
+			finalChoise = choise2;
+		return finalChoise;
+	}	
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/

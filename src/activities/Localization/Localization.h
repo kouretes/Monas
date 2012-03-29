@@ -90,7 +90,6 @@ private:
 	boost::posix_time::ptime last_filter_time;
 	boost::posix_time::ptime now;
 
-
 	//For Debug!
 	void SimpleBehaviorStep();
 	static void * StartServer(void * kati);
