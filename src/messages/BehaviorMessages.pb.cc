@@ -39,9 +39,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationResetMessage_reflection_ = NULL;
-const ::google::protobuf::Descriptor* RobotInPosition_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* LocalizeDone_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  RobotInPosition_reflection_ = NULL;
+  LocalizeDone_reflection_ = NULL;
 
 }  // namespace
 
@@ -174,21 +174,21 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationResetMessage));
-  RobotInPosition_descriptor_ = file->message_type(8);
-  static const int RobotInPosition_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotInPosition, inposition_),
+  LocalizeDone_descriptor_ = file->message_type(8);
+  static const int LocalizeDone_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizeDone, moveon_),
   };
-  RobotInPosition_reflection_ =
+  LocalizeDone_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      RobotInPosition_descriptor_,
-      RobotInPosition::default_instance_,
-      RobotInPosition_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotInPosition, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotInPosition, _unknown_fields_),
+      LocalizeDone_descriptor_,
+      LocalizeDone::default_instance_,
+      LocalizeDone_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizeDone, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizeDone, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(RobotInPosition));
+      sizeof(LocalizeDone));
 }
 
 namespace {
@@ -218,7 +218,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationResetMessage_descriptor_, &LocalizationResetMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    RobotInPosition_descriptor_, &RobotInPosition::default_instance());
+    LocalizeDone_descriptor_, &LocalizeDone::default_instance());
 }
 
 }  // namespace
@@ -240,8 +240,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete FallMessage_reflection_;
   delete LocalizationResetMessage::default_instance_;
   delete LocalizationResetMessage_reflection_;
-  delete RobotInPosition::default_instance_;
-  delete RobotInPosition_reflection_;
+  delete LocalizeDone::default_instance_;
+  delete LocalizeDone_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -264,8 +264,8 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "ta\030\003 \002(\002:\0011\"5\n\027ReturnToPositionMessage\022\032"
     "\n\013goalieToPos\030\001 \002(\010:\005false\"\036\n\013FallMessag"
     "e\022\017\n\004fall\030\001 \002(\005:\0010\"\032\n\030LocalizationResetM"
-    "essage\",\n\017RobotInPosition\022\031\n\ninPosition\030"
-    "\001 \002(\010:\005false", 492);
+    "essage\"%\n\014LocalizeDone\022\025\n\006moveon\030\001 \002(\010:\005"
+    "false", 485);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   KickOffMessage::default_instance_ = new KickOffMessage();
@@ -276,7 +276,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   ReturnToPositionMessage::default_instance_ = new ReturnToPositionMessage();
   FallMessage::default_instance_ = new FallMessage();
   LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
-  RobotInPosition::default_instance_ = new RobotInPosition();
+  LocalizeDone::default_instance_ = new LocalizeDone();
   KickOffMessage::default_instance_->InitAsDefaultInstance();
   BToHeadMessage::default_instance_->InitAsDefaultInstance();
   HeadToBMessage::default_instance_->InitAsDefaultInstance();
@@ -285,7 +285,7 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   ReturnToPositionMessage::default_instance_->InitAsDefaultInstance();
   FallMessage::default_instance_->InitAsDefaultInstance();
   LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
-  RobotInPosition::default_instance_->InitAsDefaultInstance();
+  LocalizeDone::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -2019,80 +2019,80 @@ void LocalizationResetMessage::Swap(LocalizationResetMessage* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int RobotInPosition::kInPositionFieldNumber;
+const int LocalizeDone::kMoveonFieldNumber;
 #endif  // !_MSC_VER
 
-RobotInPosition::RobotInPosition()
+LocalizeDone::LocalizeDone()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void RobotInPosition::InitAsDefaultInstance() {
+void LocalizeDone::InitAsDefaultInstance() {
 }
 
-RobotInPosition::RobotInPosition(const RobotInPosition& from)
+LocalizeDone::LocalizeDone(const LocalizeDone& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void RobotInPosition::SharedCtor() {
+void LocalizeDone::SharedCtor() {
   _cached_size_ = 0;
-  inposition_ = false;
+  moveon_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-RobotInPosition::~RobotInPosition() {
+LocalizeDone::~LocalizeDone() {
   SharedDtor();
 }
 
-void RobotInPosition::SharedDtor() {
+void LocalizeDone::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void RobotInPosition::SetCachedSize(int size) const {
+void LocalizeDone::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* RobotInPosition::descriptor() {
+const ::google::protobuf::Descriptor* LocalizeDone::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return RobotInPosition_descriptor_;
+  return LocalizeDone_descriptor_;
 }
 
-const RobotInPosition& RobotInPosition::default_instance() {
+const LocalizeDone& LocalizeDone::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
 }
 
-RobotInPosition* RobotInPosition::default_instance_ = NULL;
+LocalizeDone* LocalizeDone::default_instance_ = NULL;
 
-RobotInPosition* RobotInPosition::New() const {
-  return new RobotInPosition;
+LocalizeDone* LocalizeDone::New() const {
+  return new LocalizeDone;
 }
 
-void RobotInPosition::Clear() {
+void LocalizeDone::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    inposition_ = false;
+    moveon_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool RobotInPosition::MergePartialFromCodedStream(
+bool LocalizeDone::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required bool inPosition = 1 [default = false];
+      // required bool moveon = 1 [default = false];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &inposition_)));
-          set_has_inposition();
+                 input, &moveon_)));
+          set_has_moveon();
         } else {
           goto handle_uninterpreted;
         }
@@ -2116,11 +2116,11 @@ bool RobotInPosition::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void RobotInPosition::SerializeWithCachedSizes(
+void LocalizeDone::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required bool inPosition = 1 [default = false];
-  if (has_inposition()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->inposition(), output);
+  // required bool moveon = 1 [default = false];
+  if (has_moveon()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->moveon(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2129,11 +2129,11 @@ void RobotInPosition::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* RobotInPosition::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* LocalizeDone::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required bool inPosition = 1 [default = false];
-  if (has_inposition()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->inposition(), target);
+  // required bool moveon = 1 [default = false];
+  if (has_moveon()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->moveon(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2143,12 +2143,12 @@ void RobotInPosition::SerializeWithCachedSizes(
   return target;
 }
 
-int RobotInPosition::ByteSize() const {
+int LocalizeDone::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required bool inPosition = 1 [default = false];
-    if (has_inposition()) {
+    // required bool moveon = 1 [default = false];
+    if (has_moveon()) {
       total_size += 1 + 1;
     }
     
@@ -2164,10 +2164,10 @@ int RobotInPosition::ByteSize() const {
   return total_size;
 }
 
-void RobotInPosition::MergeFrom(const ::google::protobuf::Message& from) {
+void LocalizeDone::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const RobotInPosition* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const RobotInPosition*>(
+  const LocalizeDone* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const LocalizeDone*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -2176,48 +2176,48 @@ void RobotInPosition::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void RobotInPosition::MergeFrom(const RobotInPosition& from) {
+void LocalizeDone::MergeFrom(const LocalizeDone& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_inposition()) {
-      set_inposition(from.inposition());
+    if (from.has_moveon()) {
+      set_moveon(from.moveon());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void RobotInPosition::CopyFrom(const ::google::protobuf::Message& from) {
+void LocalizeDone::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void RobotInPosition::CopyFrom(const RobotInPosition& from) {
+void LocalizeDone::CopyFrom(const LocalizeDone& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool RobotInPosition::IsInitialized() const {
+bool LocalizeDone::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   return true;
 }
 
-void RobotInPosition::Swap(RobotInPosition* other) {
+void LocalizeDone::Swap(LocalizeDone* other) {
   if (other != this) {
-    std::swap(inposition_, other->inposition_);
+    std::swap(moveon_, other->moveon_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata RobotInPosition::GetMetadata() const {
+::google::protobuf::Metadata LocalizeDone::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = RobotInPosition_descriptor_;
-  metadata.reflection = RobotInPosition_reflection_;
+  metadata.descriptor = LocalizeDone_descriptor_;
+  metadata.reflection = LocalizeDone_reflection_;
   return metadata;
 }
 
