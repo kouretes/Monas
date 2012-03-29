@@ -192,7 +192,9 @@ int LBehavior::Execute() {
 				//littleWalk(0.01,0.0,0.0,1);
 			}
 			else */if (calibrated == 0) {
-				scanForGoals = true;
+				scanForGoals = true;				
+				amot->set_command("locScan.xar");
+				_blk->publishSignal(*amot,"motion");
 				calibrate();
 				step = -1;
 			}
@@ -253,7 +255,6 @@ int LBehavior::Execute() {
 			calibrate();
 			step = -1;
 		}else if(calibrated == 2 && scanForGoals){
-
 			if(step == -1){
 				timeStart = boost::posix_time::microsec_clock::universal_time();
 				step = 0;

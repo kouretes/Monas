@@ -583,24 +583,18 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 //Sequential Importance Resampling
 belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbigiusObservations, double rangemaxleft, double rangemaxright)
 {
-	int iterations = 1;
+	//int iterations = 1;
 	int index[partclsNum];
 
 
 	//SpreadParticles
 	SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
-
-	#ifdef ADEBUG
-	cout << "\nPredict Iterations " << iterations << endl;
-	for (int i = 0; i < partclsNum / 10.0; i++)
-		cout << SIRParticles.Weight[i] << "  ";
-	#endif
 	//SIR Filter
 
 
 	//Predict - Move particles according the Prediction Model
-	for (int i = 0; i < iterations; i++)
-		Predict(SIRParticles, MotionModel);
+	//for (int i = 0; i < iterations; i++)
+	Predict(SIRParticles, MotionModel);
 
 	//Set semi-optimal bearing angle as the average bearing angle to the observations
 	//ForceBearing(SIRParticles, Observations);
@@ -617,35 +611,27 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
 	}
 	else if(AmbigiusObservations.size()==1){
+		beliefForGoalPosts[0] *= 0.6;
+		beliefForGoalPosts[1] *= 0.6;
+		beliefForGoalPosts[2] *= 0.6;
+		beliefForGoalPosts[3] *= 0.6;
 		Update_Ambigius_Eldrad_Version(SIRParticles, AmbigiusObservations, partclsNum);
 		timesOfContAmbig++;
 		//Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
 	}
 
 
-	#ifdef ADEBUG
-	cout << "\nUnnormalized SIR particles " << endl;
-	for (int i = 0; i < partclsNum; i=i+6)
-		cout << SIRParticles.Weight[i] << " \n ";
-	#endif
-
 	//Normalize Particles  Weight in order to Resample later
 	float ESS = normalize(SIRParticles.Weight, partclsNum);
-	//cout << "\033[01;32m \n ESS " << ESS << " Beta " << Beta << " Beta 2 " << *Beta2 << "\033[0m" << endl;
+
 
 	if (ESS < Beta * 0.8)
 	{
-		//cerr << "\033[01;31m \nOups SIRParticles Population Dissapeared Maybe the Robot have changed position\033[0m" << endl;
 		depletions_counter++;
 	} else
 	{
 		depletions_counter = 0;
 	}
-	#ifdef ADEBUG
-	cout << "\nNormalized SIR particles  " << endl;
-	for (int i = 0; i < partclsNum / 10.0; i++)
-		cout << SIRParticles.Weight[i] << " \n ";
-	#endif
 	//Maybe Usefull for others-------------------------------------------------
 	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
 	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
@@ -692,9 +678,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 	//cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
 	AgentPosition = RobustMean(SIRParticles, 10);
-	#ifdef COUT_ON
-	cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << ", " << AgentPosition.theta << endl;
-	#endif
 	AgentPosition = RobustMean(SIRParticles, 10);
 
 	//TODO only one value to determine confidance, Now its only distance confidence
@@ -714,8 +697,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	{
 		; //cout << "NO need of resampling" << endl;
 	}
-
-	//cout << "Agent Confidence " << AgentPosition.confidence << endl;
 
 
 

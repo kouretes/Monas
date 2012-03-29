@@ -299,7 +299,7 @@ public:
 	float FieldMinY;
 	
 	//Belief for each goalpost
-	int beliefForGoalPosts[4];
+	float beliefForGoalPosts[4];
 	int timesOfContAmbig;
 	
 	parts SIRParticles;

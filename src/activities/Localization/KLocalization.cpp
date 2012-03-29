@@ -1017,7 +1017,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 	//	 Function to update the weights of each particle regarding the ObservationDistance
 	//	 from an object and the direction
 
-	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation, OverallWeightYellowYellow,ParticlePointBearingAngleS, ParticleBearingS;
+	double OverallWeight, totalWeight,ParticlePointBearingAngle, ParticleBearing, Deviation, OverallWeightYellowYellow,ParticlePointBearingAngleS, ParticleBearingS;
 	double DistanceFromPastBelief, DirectionFromPastBelief;
 	double R = 0,RS = 0;
 	double Meanerror = 0;
@@ -1025,17 +1025,14 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 	//float ratio = 1.0;
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		OverallWeight = Particles.Weight[p];
-		OverallWeightYellowYellow = 0;
+		OverallWeight = 1.0;
+		OverallWeightYellowYellow = 1.0;
+		totalWeight = 0;
 		if (!Observation.empty())// an landMark has been observed
 		{ 
-			OverallWeight = 1.0;
-
-			OverallWeightYellowYellow = 1.0;
 			for (unsigned int i = 0; i < Observation.size(); i++)
 			{
 #ifdef DISTANCE_WEIGHTING
-				//Logger::Instance().WriteMsg("Kofi",  "Distance of Obs = " + _toString(Observation[i].Distance.val), Logger::Info);
 				// Distance
 				// R Distance the particle has from the LandMark
 				R = DISTANCE(Particles.x[p],Observation[i].Feature.x,Particles.y[p],Observation[i].Feature.y);
@@ -1068,46 +1065,27 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				ParticleBearingS = anglediff2(ParticlePointBearingAngleS, Particles.phi[p]);
 				OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
 #endif
-
-#ifdef VISIBILITY_WEIGHTING
-				if (isVisible(Observation[i].Feature, Particles, p, rangemaxleft, rangemaxright))
-					ratio = P_observe_Visible;
-				else
-					ratio = P_observe_NotVisible;
-				OverallWeight = OverallWeight * ratio;
-#endif
 			}
+			totalWeight = (OverallWeightYellowYellow > totalWeight) ? OverallWeightYellowYellow : totalWeight;
+			totalWeight = (OverallWeight > totalWeight) ? OverallWeight : totalWeight;
 		}
-#ifdef ALLVISIBILITY
 		else
 		{
-			// Check if any particle sees LandMark
-			OverallWeight = OverallWeight * P_Notobserve_NotVisible;
-			for (unsigned int f = 0; f < allfeatures.size(); f++)
-			{
-				if (isVisible(allfeatures[f], Particles, p, rangemaxleft, rangemaxright))
-				{
-					OverallWeight = OverallWeight * P_Notobserve_Visible;
-				} else
-				{
-					;
-				}
-			}
+			totalWeight = Particles.Weight[p];
 		}
-#endif
 
 		//USE past belief to weight particle
 		//Here we need also the motion model average
-#ifdef  PASTBELIEF
+		//#ifdef  PASTBELIEF
+		//TODO FIX
 		//Make an Observation from the past estimated position
-		DistanceFromPastBelief = DISTANCE(AgentPosition.x,Particles.x[p],AgentPosition.y,Particles.y[p]);
-		ParticlePointBearingAngle = atan2(Particles .y[p] - AgentPosition.y, Particles.x[p] - AgentPosition.x);
-		DirectionFromPastBelief = anglediff2(ParticlePointBearingAngle, AgentPosition.theta);
-		OverallWeight *= normpdf(DistanceFromPastBelief - MotionModel.Distance.val * MotionModel.Distance.ratiomean, abs(2500 / (0.5 + AgentPosition.confidence))+0.01);
-		OverallWeight *= normpdf(DirectionFromPastBelief - (MotionModel.Direction.val + MotionModel.Direction.Emean), abs(MotionModel.Direction.Edev + AgentPosition.confidence) * 3+0.000001);
+		//DistanceFromPastBelief = DISTANCE(AgentPosition.x,Particles.x[p],AgentPosition.y,Particles.y[p]);
+		//ParticlePointBearingAngle = atan2(Particles .y[p] - AgentPosition.y, Particles.x[p] - AgentPosition.x);
+		//DirectionFromPastBelief = anglediff2(ParticlePointBearingAngle, AgentPosition.theta);
+		//OverallWeight *= normpdf(DistanceFromPastBelief - MotionModel.Distance.val * MotionModel.Distance.ratiomean, abs(2500 / (0.5 + AgentPosition.confidence))+0.01);
+		//OverallWeight *= normpdf(DirectionFromPastBelief - (MotionModel.Direction.val + MotionModel.Direction.Emean), abs(MotionModel.Direction.Edev + AgentPosition.confidence) * 3+0.000001);
 		//OverallWeight *= normpdf(anglediff2(Particles.phi[p], AgentPosition.theta) - MotionModel.Rotation.val, abs(MotionModel.Rotation.Edev + AgentPosition.confidence)+0.00000001);
-		
-#endif
+		//#endif
 		if(p == 20){
 			int num = 0;
 			if(Observation.size()>0)
@@ -1118,10 +1096,8 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 			cout << "X = " << Particles.x[p] << " Y = " << Particles.y[p] << " R = " << R << " RS = " << RS << " Real Dist = " << num << endl;
 		}
 		//set the weight
-		OverallWeight += OverallWeightYellowYellow;
-		Particles.Weight[p] = OverallWeight;
+		Particles.Weight[p] = totalWeight;
 	}
-	//cout << "--------------------------------------------------------------" << endl;
 }
 void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles){
 	//
@@ -1144,20 +1120,20 @@ void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KOb
 	Meanerror = obsDistEmean;
 	Deviation = obsDistEdev;
 	Deviation = obsBearingEdev;
+	//Find the best candiate for the landmark
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		AdditiveWeightTotal = 0;
-		// an Ambigius landMark has been observed
+		AdditiveWeightTotal = Particles.Weight[p];
 		int oldChoise = 0;
 		float oldWeight = 0;
 		for (int j = -1; j <= 1; j = j + 2)
 		{
-			AdditiveYellowField = 0;
-			AdditiveBlueField = 0; 
+			AdditiveYellowField = 1;
+			AdditiveBlueField = 1; 
 			// Distance
 			// R Distance the particle has from the LandMark
 			R = DISTANCE(Particles.x[p],xPosOfFeature,Particles.y[p],yPosOfFeature*j);
-			AdditiveYellowField += normpdf((obsDistValue - Meanerror) - R, Deviation);
+			AdditiveYellowField *= normpdf((obsDistValue - Meanerror) - R, Deviation);
 			//Bearing
 			ParticlePointBearingAngle = atan2(yPosOfFeature*j - Particles.y[p], xPosOfFeature - Particles.x[p]);
 			ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
@@ -1168,7 +1144,7 @@ void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KOb
 			// R Distance the particle has from the LandMark
 			RS = DISTANCE(Particles.x[p],-xPosOfFeature,Particles.y[p],-yPosOfFeature*j);
 
-			AdditiveBlueField += normpdf((obsDistValue - Meanerror) - RS, Deviation);
+			AdditiveBlueField *= normpdf((obsDistValue - Meanerror) - RS, Deviation);
 
 			//Bearing
 			ParticlePointBearingAngleS = atan2(-yPosOfFeature*j - Particles.y[p], -xPosOfFeature - Particles.x[p]);
@@ -1187,27 +1163,24 @@ void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KOb
 				if(AdditiveBlueField > AdditiveYellowField){
 					if(oldWeight < AdditiveBlueField){
 						oldChoise = 2;
-						Particles.Weight[p] = AdditiveBlueField;
 					}
 				}else{
 					if(oldWeight < AdditiveYellowField){
 						oldChoise = 3;
-						Particles.Weight[p] = AdditiveYellowField;
 					}else{
-						Particles.Weight[p] = oldWeight;
 					}
 				}
 			}
 		}
-		beliefForGoalPosts[oldChoise]++;
+		beliefForGoalPosts[oldChoise]+=0.4;
 	}
 	cerr << "1 = " << beliefForGoalPosts[0] << " 2 = "  << beliefForGoalPosts[1] << " 3 = " << beliefForGoalPosts[2] << " 4 = "  << beliefForGoalPosts[3] << endl;
 	int finalChoise = findMaxIndex(beliefForGoalPosts[0],beliefForGoalPosts[1],beliefForGoalPosts[2],beliefForGoalPosts[3]);
 	int rightOrLeftGoalpost = (finalChoise-2 < 0)?-1:1;
-	int rightOrLeftGoal = (finalChoise%2 ==0)? 1:-1;
+	int rightOrLeftGoal = (finalChoise%2 ==0)? -1:1;
 	float yPosition = rightOrLeftGoal*yPosOfFeature*rightOrLeftGoalpost;
 	float xPosition = rightOrLeftGoal*xPosOfFeature;
-	if(false || timesOfContAmbig*NumofParticles/3<beliefForGoalPosts[finalChoise]){
+	if(true ||timesOfContAmbig*NumofParticles/3<beliefForGoalPosts[finalChoise]){
 		for (int p = 0; p < NumofParticles; p++)
 		{
 			//AdditiveWeightTotal = 0;
@@ -1221,17 +1194,17 @@ void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KOb
 			ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
 			AdditiveWeightTotal *= normpdf(anglediff(obsBearingValue, ParticleBearing), Deviation);
 
+			OverallWeight = Particles.Weight[p]*0.6 + AdditiveWeightTotal*0.4;
 			if(p == 20){
 				int num = 0;
 				if(Observation.size()>0)
 					num = Observation[0].Distance.val;
 				else
 					num = 0;
-				cout << "Update Additive Synoliko = " << AdditiveWeightTotal << endl;
+				cout << "Update Additive Synoliko = " << AdditiveWeightTotal << " Overall Total = " << OverallWeight << endl;
 				cout << "Real Dist = " << num << endl;
 			}
-			OverallWeight = AdditiveWeightTotal;
-			Particles.Weight[p] = OverallWeight;
+			Particles.Weight[p] = AdditiveWeightTotal;//OverallWeight;
 		}
 	}
 }
