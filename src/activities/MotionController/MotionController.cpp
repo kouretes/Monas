@@ -480,10 +480,9 @@ void MotionController::mglrun()
 
         	sm.set_type(MotionStateMessage::ACTION);
 			sm.set_detail(str);
-
-
-			sm.set_lastaction(am->command());
+			sm.set_lastaction(pam->command());
         	_blk->publishState(sm,"worldstate");
+
 			if (str.compare("kmex") == 0)
 			{
 				vector<int> frames = SpCutActionsManager();
@@ -501,7 +500,7 @@ void MotionController::mglrun()
 						killWalkCommand();
 						boost::shared_ptr<ISpecialAction> ptr = it->second;
 						KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
-					//	Logger::Instance().WriteMsg("MotionController", "Frame start : " + _toString(frames.front()) + "  Frame end : " + _toString(frames.back()), Logger::ExtraInfo);
+						Logger::Instance().WriteMsg("MotionController", "Frame start : " + _toString(frames.front()) + "  Frame end : " + _toString(frames.back()), Logger::ExtraInfo);
 						KmeManager::set_end_time(ptrdcmkme->ExecuteFrameDCM(frames.front(), frames.back()));
 						actionPID = KME_ACTIONPID;
 					}
