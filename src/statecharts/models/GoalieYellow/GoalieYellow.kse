@@ -820,12 +820,12 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="__CMXgFlmEeGg2qRYwS9_EQ" type="4001" source="_--5y8FlmEeGg2qRYwS9_EQ" target="_--6aAFlmEeGg2qRYwS9_EQ">
     <children xmi:type="notation:DecorationNode" xmi:id="__CM-kFlmEeGg2qRYwS9_EQ" type="6001">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="__CM-kVlmEeGg2qRYwS9_EQ" y="40"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CM-kVlmEeGg2qRYwS9_EQ" x="16" y="32"/>
     </children>
     <styles xmi:type="notation:RoutingStyle" xmi:id="__CMXgVlmEeGg2qRYwS9_EQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="__CMXgllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
     <element xmi:type="statechart:Transition" href="GoalieYellow.stct#//@transitions.33"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CMXg1lmEeGg2qRYwS9_EQ" points="[265, -57, -52, 16]$[288, -61, -29, 12]$[300, -66, -17, 7]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CMXg1lmEeGg2qRYwS9_EQ" points="[265, -66, -124, 31]$[372, -93, -17, 4]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jUHkVlmEeGg2qRYwS9_EQ" id="(0.4993045897079277,1.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__jXK4FlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
   </edges>
@@ -873,12 +873,12 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="__CYkwFlmEeGg2qRYwS9_EQ" type="4001" source="_--_5kFlmEeGg2qRYwS9_EQ" target="_--_5lVlmEeGg2qRYwS9_EQ">
     <children xmi:type="notation:DecorationNode" xmi:id="__CYkxFlmEeGg2qRYwS9_EQ" type="6001">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="__CYkxVlmEeGg2qRYwS9_EQ" x="209" y="33"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CYkxVlmEeGg2qRYwS9_EQ" x="175" y="44"/>
     </children>
     <styles xmi:type="notation:RoutingStyle" xmi:id="__CYkwVlmEeGg2qRYwS9_EQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="__CYkwllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
     <element xmi:type="statechart:Transition" href="GoalieYellow.stct#//@transitions.38"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CYkw1lmEeGg2qRYwS9_EQ" points="[0, 0, 320, -60]$[-320, 60, 0, 0]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="__CYkw1lmEeGg2qRYwS9_EQ" points="[0, 0, 253, -33]$[-253, 33, 0, 0]"/>
     <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j59cFlmEeGg2qRYwS9_EQ" id="(0.28,1.0)"/>
     <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="__j6kgFlmEeGg2qRYwS9_EQ" id="(0.5,0.0)"/>
   </edges>
@@ -895,7 +895,7 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="__CddQFlmEeGg2qRYwS9_EQ" type="4001" source="_--_5lVlmEeGg2qRYwS9_EQ" target="_-_BuwFlmEeGg2qRYwS9_EQ">
     <children xmi:type="notation:DecorationNode" xmi:id="__CddRFlmEeGg2qRYwS9_EQ" type="6001">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="__CddRVlmEeGg2qRYwS9_EQ" x="570" y="396"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CddRVlmEeGg2qRYwS9_EQ" x="225" y="128"/>
     </children>
     <styles xmi:type="notation:RoutingStyle" xmi:id="__CddQVlmEeGg2qRYwS9_EQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="__CddQllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
