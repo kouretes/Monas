@@ -10,7 +10,8 @@ public:
 
 	}
 	bool Eval() {
-		/* worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING */
+		/* worldstate.State.GameStateMessage==NULL 
+|| worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING */
 		boost::shared_ptr<const GameStateMessage> var_1263977940 = _blk->readState<GameStateMessage> ("worldstate" );
 	
 				return ( var_1263977940.get()==0 ||  (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_PLAYING) );	

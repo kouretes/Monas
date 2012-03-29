@@ -507,7 +507,7 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="__AixsFlmEeGg2qRYwS9_EQ" type="4001" source="_-8O5dVlmEeGg2qRYwS9_EQ" target="_-8PggllmEeGg2qRYwS9_EQ">
     <children xmi:type="notation:DecorationNode" xmi:id="__AixtFlmEeGg2qRYwS9_EQ" type="6001">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="__AixtVlmEeGg2qRYwS9_EQ" y="40"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__AixtVlmEeGg2qRYwS9_EQ" x="2" y="-96"/>
     </children>
     <styles xmi:type="notation:RoutingStyle" xmi:id="__AixsVlmEeGg2qRYwS9_EQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="__AixsllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>
@@ -820,7 +820,7 @@
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="__CMXgFlmEeGg2qRYwS9_EQ" type="4001" source="_--5y8FlmEeGg2qRYwS9_EQ" target="_--6aAFlmEeGg2qRYwS9_EQ">
     <children xmi:type="notation:DecorationNode" xmi:id="__CM-kFlmEeGg2qRYwS9_EQ" type="6001">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="__CM-kVlmEeGg2qRYwS9_EQ" x="16" y="32"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="__CM-kVlmEeGg2qRYwS9_EQ" x="2" y="41"/>
     </children>
     <styles xmi:type="notation:RoutingStyle" xmi:id="__CMXgVlmEeGg2qRYwS9_EQ"/>
     <styles xmi:type="notation:FontStyle" xmi:id="__CMXgllmEeGg2qRYwS9_EQ" fontName="Century Schoolbook L"/>

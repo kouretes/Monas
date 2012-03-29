@@ -11,12 +11,13 @@ public:
 
 	}
 	bool Eval() {
-		/*  worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING && robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage) */
+		/*  (worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING 
+&& robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)) || worldstate.State.GameStateMessage.previous_player_state()==PLAYER_SET */
 		boost::shared_ptr<const GameStateMessage> var_1263977940 = _blk->readState<GameStateMessage> ("worldstate" );
 		boost::shared_ptr<const WorldInfo> var_1111221333 = _blk->readData<WorldInfo> ("worldstate" );
 		boost::shared_ptr<const PositionMessage> var_1868674971 = _blk->readState<PositionMessage> ("behavior" );
 	
-				return (  (var_1263977940.get()!=0 && var_1263977940->player_state()==PLAYER_PLAYING) && robotInPosition(var_1111221333, var_1868674971) );	
+				return (  ((var_1263977940.get()!=0 && var_1263977940->player_state()==PLAYER_PLAYING)  && robotInPosition(var_1111221333, var_1868674971)) || (var_1263977940.get()!=0 && var_1263977940->previous_player_state()==PLAYER_SET) );	
     }
 };
 		

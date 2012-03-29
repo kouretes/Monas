@@ -65,24 +65,24 @@ int Kick::Execute() {
 		else
 			amot->set_command("KickForwardRight.xar"); //RightKick
 	} else if (orientation == 3) {
-		amot->set_command("KickSideLeftSoft.xar"); //"HardLeftSideKick"
+		amot->set_command("KickSideLeftStable.xar"); //"HardLeftSideKick"
 	} else if (orientation == 1) {
-		amot->set_command("KickSideRightSoft.xar"); //"HardRightSideKick"
+		amot->set_command("KickSideRightStable.xar"); //"HardRightSideKick"
 	} else if (orientation == 2) {
 
 		if (by > 0.0){
-			amot->set_command("KickSideLeftSoft.xar"); //LeftKick
+			amot->set_command("KickSideLeftStable.xar"); //LeftKick
 		//	amot->set_command("KickBackLeftPierris.xar"); //LeftBackHigh_carpet
 		}else{
-			amot->set_command("KickSideRightSoft.xar"); //LeftKick
+			amot->set_command("KickSideRightStable.xar"); //LeftKick
 		//	amot->set_command("KickBackRightPierris.xar"); //RightBackHigh_carpet
 		}
 
 	} else {
 		if (by > 0.0)
-			amot->set_command("KickSideLeftSoft.xar");
+			amot->set_command("KickSideLeftStable.xar");
 		else
-			amot->set_command("KickSideRightSoft.xar");
+			amot->set_command("KickSideRightStable.xar");
 	}
 	_blk->publishSignal(*amot, "motion");
 	_blk->publish_all();
