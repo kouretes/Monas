@@ -27,6 +27,10 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* UnknownObjects_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   UnknownObjects_reflection_ = NULL;
+const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  LocalizationResetMessage_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_ResetPhase_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* LocalizationData_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationData_reflection_ = NULL;
@@ -120,7 +124,23 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(UnknownObjects));
-  LocalizationData_descriptor_ = file->message_type(4);
+  LocalizationResetMessage_descriptor_ = file->message_type(4);
+  static const int LocalizationResetMessage_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, type_),
+  };
+  LocalizationResetMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      LocalizationResetMessage_descriptor_,
+      LocalizationResetMessage::default_instance_,
+      LocalizationResetMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(LocalizationResetMessage));
+  LocalizationResetMessage_ResetPhase_descriptor_ = LocalizationResetMessage_descriptor_->enum_type(0);
+  LocalizationData_descriptor_ = file->message_type(5);
   static const int LocalizationData_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, world_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, particles_),
@@ -138,7 +158,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationData));
-  header_descriptor_ = file->message_type(5);
+  header_descriptor_ = file->message_type(6);
   static const int header_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgbytesize_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgname_),
@@ -175,6 +195,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     UnknownObjects_descriptor_, &UnknownObjects::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    LocalizationResetMessage_descriptor_, &LocalizationResetMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationData_descriptor_, &LocalizationData::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     header_descriptor_, &header::default_instance());
@@ -191,6 +213,8 @@ void protobuf_ShutdownFile_WorldInfo_2eproto() {
   delete Ball_reflection_;
   delete UnknownObjects::default_instance_;
   delete UnknownObjects_reflection_;
+  delete LocalizationResetMessage::default_instance_;
+  delete LocalizationResetMessage_reflection_;
   delete LocalizationData::default_instance_;
   delete LocalizationData_reflection_;
   delete header::default_instance_;
@@ -222,25 +246,30 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "iveX\030\001 \001(\002:\007-100000\022\032\n\trelativeY\030\002 \001(\002:\007"
     "-100000\022\027\n\006height\030\003 \001(\002:\007-100000\022\037\n\016rela"
     "tiveXspeed\030\004 \001(\002:\007-100000\022\037\n\016relativeYsp"
-    "eed\030\005 \001(\002:\007-100000\"\232\001\n\020LocalizationData\022"
-    "\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tParticles\030"
-    "\002 \003(\0132\n.RobotPose\022!\n\rRobotPosition\030\003 \002(\013"
-    "2\n.RobotPose\022)\n\014Observations\030\004 \002(\0132\023.Obs"
-    "ervationMessage\"A\n\006header\022\033\n\017NextMsgByte"
-    "Size\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014:\005Und"
-    "ef", 922);
+    "eed\030\005 \001(\002:\007-100000\"\213\001\n\030LocalizationReset"
+    "Message\0222\n\004type\030\001 \002(\0162$.LocalizationRese"
+    "tMessage.ResetPhase\";\n\nResetPhase\022\r\n\tPEN"
+    "ALIZES\020\000\022\006\n\002P1\020\001\022\006\n\002P2\020\002\022\006\n\002P3\020\003\022\006\n\002P4\020\004"
+    "\"\232\001\n\020LocalizationData\022\031\n\005World\030\001 \002(\0132\n.W"
+    "orldInfo\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022"
+    "!\n\rRobotPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Ob"
+    "servations\030\004 \002(\0132\023.ObservationMessage\"A\n"
+    "\006header\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013"
+    "NextMsgName\030\003 \002(\014:\005Undef", 1064);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
   RobotPose::default_instance_ = new RobotPose();
   Ball::default_instance_ = new Ball();
   UnknownObjects::default_instance_ = new UnknownObjects();
+  LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
   LocalizationData::default_instance_ = new LocalizationData();
   header::default_instance_ = new header();
   WorldInfo::default_instance_->InitAsDefaultInstance();
   RobotPose::default_instance_->InitAsDefaultInstance();
   Ball::default_instance_->InitAsDefaultInstance();
   UnknownObjects::default_instance_->InitAsDefaultInstance();
+  LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
   LocalizationData::default_instance_->InitAsDefaultInstance();
   header::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_WorldInfo_2eproto);
@@ -1741,6 +1770,247 @@ void UnknownObjects::Swap(UnknownObjects* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = UnknownObjects_descriptor_;
   metadata.reflection = UnknownObjects_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_ResetPhase_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return LocalizationResetMessage_ResetPhase_descriptor_;
+}
+bool LocalizationResetMessage_ResetPhase_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::PENALIZES;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P1;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P2;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P3;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P4;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::ResetPhase_MIN;
+const LocalizationResetMessage_ResetPhase LocalizationResetMessage::ResetPhase_MAX;
+const int LocalizationResetMessage::ResetPhase_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+const int LocalizationResetMessage::kTypeFieldNumber;
+#endif  // !_MSC_VER
+
+LocalizationResetMessage::LocalizationResetMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void LocalizationResetMessage::InitAsDefaultInstance() {
+}
+
+LocalizationResetMessage::LocalizationResetMessage(const LocalizationResetMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void LocalizationResetMessage::SharedCtor() {
+  _cached_size_ = 0;
+  type_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+LocalizationResetMessage::~LocalizationResetMessage() {
+  SharedDtor();
+}
+
+void LocalizationResetMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void LocalizationResetMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* LocalizationResetMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return LocalizationResetMessage_descriptor_;
+}
+
+const LocalizationResetMessage& LocalizationResetMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_WorldInfo_2eproto();  return *default_instance_;
+}
+
+LocalizationResetMessage* LocalizationResetMessage::default_instance_ = NULL;
+
+LocalizationResetMessage* LocalizationResetMessage::New() const {
+  return new LocalizationResetMessage;
+}
+
+void LocalizationResetMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    type_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool LocalizationResetMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .LocalizationResetMessage.ResetPhase type = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::LocalizationResetMessage_ResetPhase_IsValid(value)) {
+            set_type(static_cast< ::LocalizationResetMessage_ResetPhase >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void LocalizationResetMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .LocalizationResetMessage.ResetPhase type = 1;
+  if (has_type()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->type(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* LocalizationResetMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .LocalizationResetMessage.ResetPhase type = 1;
+  if (has_type()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->type(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int LocalizationResetMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .LocalizationResetMessage.ResetPhase type = 1;
+    if (has_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void LocalizationResetMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const LocalizationResetMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const LocalizationResetMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void LocalizationResetMessage::MergeFrom(const LocalizationResetMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_type()) {
+      set_type(from.type());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void LocalizationResetMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void LocalizationResetMessage::CopyFrom(const LocalizationResetMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool LocalizationResetMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void LocalizationResetMessage::Swap(LocalizationResetMessage* other) {
+  if (other != this) {
+    std::swap(type_, other->type_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata LocalizationResetMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = LocalizationResetMessage_descriptor_;
+  metadata.reflection = LocalizationResetMessage_reflection_;
   return metadata;
 }
 
