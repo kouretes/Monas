@@ -42,7 +42,6 @@ private:
 	
 	BToHeadMessage* bhmsg;
 	MotionWalkMessage wmot;
-	RobotInPosition ripm;
 	bool robotInPos;
 	float posX, posY, theta;
 	float myPosX, myPosY, myPhi;

@@ -141,8 +141,10 @@ int HeadBehavior::Execute() {
 			//std::cout << "HEADBEHAVIOR DONOTHING" <<std::endl;
 		//	Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			hbmsg->set_ballfound(0);
+			step =0;
 			break;
 		case (CALIBRATE):
+			step =0;
 			//std::cout << "HEADBEHAVIOR CALIBRATE" <<std::endl;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " CALIBRATE", Logger::Info);
 			calibrate();
@@ -151,6 +153,7 @@ int HeadBehavior::Execute() {
 			//Logger::Instance().WriteMsg("HeadBehavior",  " DONOTHING", Logger::Info);
 			break;
 		case (SCANFORBALL):
+			step =0;
 		//	Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
@@ -166,6 +169,7 @@ int HeadBehavior::Execute() {
 			}
 			break;
 		case (HIGHSCANFORBALL):
+			step =0;
 			//Logger::Instance().WriteMsg("HeadBehavior",  " HIGHSCANFORBALL", Logger::Info);
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				MakeTrackBallAction();
@@ -177,6 +181,7 @@ int HeadBehavior::Execute() {
 			break;
 
 		case (SCANFORPOST):
+			step =0;
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				//MakeTrackBallAction();
 			//	cout << "ballfound " << ballfound << "HeadBehavior" << endl;
@@ -197,9 +202,11 @@ int HeadBehavior::Execute() {
 		case (BALLTRACK):
 		//	Logger::Instance().WriteMsg("HeadBehavior",  " BALLTRACK", Logger::Info);
 			MakeTrackBallAction();
+			step =0;
 			break;
 
 		case (SCANFIELD):
+			step =0;
 			if (bmsg != 0 && bmsg->radius() > 0) {
 				hbmsg->set_ballfound(1);
 			}
@@ -208,6 +215,13 @@ int HeadBehavior::Execute() {
 				HeadPitch= asvm->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH);
 			}
 			HeadScanStepSmart();
+			break;
+		case (SCANAFTERPENALISED):
+			if(step%2 ==0)
+				headmotion( -0.504728, 0.972598);
+			else
+				headmotion( -0.504728, -0.972598);
+				step++;
 			break;
 	}
 	prevaction = curraction;

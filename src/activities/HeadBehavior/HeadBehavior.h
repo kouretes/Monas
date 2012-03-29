@@ -3,6 +3,7 @@
 
 #include "architecture/IActivity.h"
 
+#include "tools/BehaviorConst.h"
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
@@ -10,17 +11,8 @@
 #include "hal/robot/generic_nao/robot_consts.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
 
-#define DONOTHING 0
-#define CALIBRATE 1
-#define SCANFORBALL 2
-#define SCANFORPOST 3
-#define BALLTRACK 4
-#define HIGHSCANFORBALL 5
-#define SCANFIELD 6
+
 
 #define PITCHMIN -0.55
 #define	PITCHMAX 0.33
@@ -80,7 +72,7 @@ class HeadBehavior: public IActivity {
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 		boost::shared_ptr<const ObservationMessage> obsm;
 		int calibrated;
-
+		int step;
 		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
 		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
 
