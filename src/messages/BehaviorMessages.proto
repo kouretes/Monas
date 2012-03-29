@@ -36,6 +36,6 @@ message FallMessage{
 message LocalizationResetMessage{
 	
 }
-message RobotInPosition{
-	required bool inPosition = 1 [default = false];
+message LocalizeDone{
+	required bool moveon = 1 [default = false];
 }
