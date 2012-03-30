@@ -605,14 +605,6 @@ GoalieYellow::GoalieYellow(Narukom* com) {
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_2_5_3,Node_0_2_2_5_4 ,TrCondInst_GoalieYellow0_2_2_5_30_2_2_5_4  ) ); //GoalieYellow0.2.2.5.30.2.2.5.4
 		
 		
-	ICondition* TrCondInst_GoalieYellow0_2_2_50_2_2_3 = new TrCond_GoalieYellow0_2_2_50_2_2_3;
-	_conditions.push_back( TrCondInst_GoalieYellow0_2_2_50_2_2_3 );
-
-		
-
-	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_2_5,Node_0_2_2_3 ,TrCondInst_GoalieYellow0_2_2_50_2_2_3  ) ); //GoalieYellow0.2.2.50.2.2.3
-		
-		
 	ICondition* TrCondInst_GoalieYellow0_2_2_5_4_10_2_2_5_4_2 = new TrCond_GoalieYellow0_2_2_5_4_10_2_2_5_4_2;
 	_conditions.push_back( TrCondInst_GoalieYellow0_2_2_5_4_10_2_2_5_4_2 );
 
@@ -665,6 +657,14 @@ GoalieYellow::GoalieYellow(Narukom* com) {
 		
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_2_5_3,Node_0_2_2_5_5 ,TrCondInst_GoalieYellow0_2_2_5_30_2_2_5_5  ) ); //GoalieYellow0.2.2.5.30.2.2.5.5
+		
+		
+	ICondition* TrCondInst_GoalieYellow0_2_2_20_2_2_3 = new TrCond_GoalieYellow0_2_2_20_2_2_3;
+	_conditions.push_back( TrCondInst_GoalieYellow0_2_2_20_2_2_3 );
+
+		
+
+	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_2_2_2,Node_0_2_2_3 ,TrCondInst_GoalieYellow0_2_2_20_2_2_3  ) ); //GoalieYellow0.2.2.20.2.2.3
 	
 }
 

@@ -37,13 +37,18 @@ int GoToPosition::Execute() {
 
 	
 	if(robotInPos && lastMove <= microsec_clock::universal_time() ){
-		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+		amot->set_command("InitPose.xar");
+		_blk->publishSignal(*amot, "motion");
 		lastMove = microsec_clock::universal_time() + milliseconds(500);
 		Logger::Instance().WriteMsg(GetName(), "Robot Is In Position", Logger::Info);
+		ReturnToPositionMessage rpm;
+		rpm.set_goalietopos(true);
+		_blk->publishState(rpm, "behavior");
 		_blk->publish_all();
 		return 0;
 	}
-
+	gotoPosition(posX,posY, theta);
+/*
 	if(confidence<badConfidence && lastMove <= microsec_clock::universal_time()){
 
 		if(lastObsm + seconds(10) <microsec_clock::universal_time() ){
@@ -113,8 +118,10 @@ int GoToPosition::Execute() {
 
 	bhmsg->set_headaction(headaction);
 	_blk->publishSignal(*bhmsg, "behavior");
+	*/
 	_blk->publish_all();
 	//Logger::Instance().WriteMsg(GetName(),  "EXIT", Logger::Info);
+	
 	return 0;
 }
 
@@ -135,7 +142,8 @@ void GoToPosition::UserInit () {
 	posY = 0.0;
 	dist = 0.0;
 	relativePhi = 0.0;
-
+	pprm = new PathPlanningRequestMessage();
+	amot = new MotionActionMessage();
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -176,4 +184,30 @@ float GoToPosition::distance(float x1, float x2, float y1, float y2){
 	dis = sqrt((pow((x2-x1), 2)+ pow((y2-y1), 2)));
 
 	return dis;
+}
+
+
+void GoToPosition::gotoPosition(float target_x,float target_y, float target_phi) {
+
+	double targetDistance = sqrt((target_x-myPosX)*(target_x-myPosX)+(target_y-myPosY)*(target_y-myPosY));
+	double targetAngle = anglediff2(atan2(target_y - myPosY, target_x - myPosY), myPhi);
+	double targetOrientation = anglediff2(target_phi, myPhi);
+	
+	if (targetDistance > 0.25) 
+		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle), 
+									toCartesianY(targetDistance,targetAngle),
+									targetOrientation);
+	else{
+		amot->set_command("InitPose.xar");
+		_blk->publishSignal(*amot, "motion");
+	}
+	
+}
+
+void GoToPosition::pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi) {
+	pprm->set_gotox(target_x);
+	pprm->set_gotoy(target_y);
+	pprm->set_gotoangle(target_phi);
+	pprm->set_mode("absolute");
+	_blk->publishSignal(*pprm, "obstacle");
 }

@@ -43,12 +43,13 @@ private:
 	BToHeadMessage* bhmsg;
 	PositionMessage* pmsg;
 	LocalizeDone* ld;
+	 LocalizationResetMessage* locReset;
 	bool cal;
 	int teamColor;
 	int playernum;
 	float posX;
 	float posY;
-	float initX[2][2], initY[2][2], initPhi[2][2];
+	float initX[2], initY[2], initPhi[2];
 
 	
 	int prevstate, currstate;

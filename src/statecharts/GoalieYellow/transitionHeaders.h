@@ -75,8 +75,6 @@
 		
 #include "transitions/TrNode_GoalieYellow0_2_2_5_30_2_2_5_4.h"
 		
-#include "transitions/TrNode_GoalieYellow0_2_2_50_2_2_3.h"
-		
 #include "transitions/TrNode_GoalieYellow0_2_2_5_4_10_2_2_5_4_2.h"
 		
 #include "transitions/TrNode_GoalieYellow0_2_2_5_4_20_2_2_5_4_2.h"
@@ -88,4 +86,6 @@
 #include "transitions/TrNode_GoalieYellow0_2_2_50_2_2_6.h"
 		
 #include "transitions/TrNode_GoalieYellow0_2_2_5_30_2_2_5_5.h"
+		
+#include "transitions/TrNode_GoalieYellow0_2_2_20_2_2_3.h"
 		

@@ -22,10 +22,10 @@ int Scan::Execute() {
 			headaction = BALLTRACK;
 		}
 		else{			
-			if(msm.get()!=0 && (msm->lastaction()).compare("InitPose.xar")!=0){
+		//	if(msm.get()!=0 && ((msm->lastaction()).compare("InitPose.xar")!=0 || msm->detail().compare("walkTo")==0 || msm->detail().compare("setWalkTargetVelocity")==0)){
 				amot->set_command("InitPose.xar");
 				_blk->publishSignal(*amot, "motion");
-			}
+			//}
 			headaction = SCANFORBALL;
 		}
 	}

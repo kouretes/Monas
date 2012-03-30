@@ -26,6 +26,9 @@ private:
 	 boost::posix_time::ptime first;
 	 boost::shared_ptr< const HeadToBMessage> hbm;
 	 BToHeadMessage* bhm;
+	 MotionActionMessage* amot;
+	 LocalizationResetMessage* locReset;
+	
 };
 
 #endif // _Localize_h_
