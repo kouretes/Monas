@@ -80,12 +80,12 @@ void Localization::UserInit()
 
 }
 
-void Localization::Reset(int playerNumber)
+void Localization::Reset(int playerNumber, bool kickOff,bool playReadyPlay )
 {
 	if(playerNumber == -1)
 		KLocalization::setParticlesPoseUniformly(SIRParticles);
 	else
-		KLocalization::initializeParticlesForInitialState(SIRParticles,playerNumber);
+		KLocalization::initializeParticlesForInitialState(SIRParticles,playerNumber,kickOff,playReadyPlay);
 }
 
 
@@ -206,15 +206,15 @@ int Localization::Execute()
 	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty		
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 		if(lrm->type() == LocalizationResetMessage::PENALIZED)
-			Reset(-1);
+			Reset(-1,lrm->kickoff(),lrm->playreadyplay());
 		else if(lrm->type() == LocalizationResetMessage::P1)
-			Reset(1);
+			Reset(1,lrm->kickoff(),lrm->playreadyplay());
 		else if(lrm->type() == LocalizationResetMessage::P2)
-			Reset(2);
+			Reset(2,lrm->kickoff(),lrm->playreadyplay());
 		else if(lrm->type() == LocalizationResetMessage::P3)
-			Reset(3);
+			Reset(3,lrm->kickoff(),lrm->playreadyplay());
 		else if(lrm->type() == LocalizationResetMessage::P4)
-			Reset(4);
+			Reset(4,lrm->kickoff(),lrm->playreadyplay());
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
 
