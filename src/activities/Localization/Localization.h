@@ -30,7 +30,7 @@ public:
 	}
 	int Execute();
 	void UserInit();
-	void Reset(int);
+	void Reset(int,bool,bool);
 	void process_messages();
 	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations, double rangemaxleft, double rangemaxright);
 	void RobotPositionMotionModel(KMotionModel & MModel);

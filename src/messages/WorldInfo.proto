@@ -44,6 +44,8 @@ message LocalizationResetMessage{
 		P4 = 4;
 	}
 	required ResetPhase type = 1;
+	required bool kickOff = 2;
+	required bool playReadyPlay = 3;
 }
 
 message LocalizationData{

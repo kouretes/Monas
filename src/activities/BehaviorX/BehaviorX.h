@@ -108,6 +108,7 @@ class BehaviorX: public IActivity {
 		int forball, forpost;
 
 		bool kickoff;
+		bool toReadyFromGoal;
 		float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
 		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
