@@ -80,7 +80,6 @@ private:
 	boost::shared_ptr<const LocalizationResetMessage> lrm;
 	boost::shared_ptr<const MotionStateMessage> sm;
 
-	BToHeadMessage* bhmsg;
 	bool firstrun;
 	MotionStateMessage::ActionType currentRobotAction;
 	bool fallBegan;
