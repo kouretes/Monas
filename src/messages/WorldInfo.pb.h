@@ -659,17 +659,37 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
   inline ::LocalizationResetMessage_ResetPhase type() const;
   inline void set_type(::LocalizationResetMessage_ResetPhase value);
   
+  // required bool kickOff = 2;
+  inline bool has_kickoff() const;
+  inline void clear_kickoff();
+  static const int kKickOffFieldNumber = 2;
+  inline bool kickoff() const;
+  inline void set_kickoff(bool value);
+  
+  // required bool playReadyPlay = 3;
+  inline bool has_playreadyplay() const;
+  inline void clear_playreadyplay();
+  static const int kPlayReadyPlayFieldNumber = 3;
+  inline bool playreadyplay() const;
+  inline void set_playreadyplay(bool value);
+  
   // @@protoc_insertion_point(class_scope:LocalizationResetMessage)
  private:
   inline void set_has_type();
   inline void clear_has_type();
+  inline void set_has_kickoff();
+  inline void clear_has_kickoff();
+  inline void set_has_playreadyplay();
+  inline void clear_has_playreadyplay();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   int type_;
+  bool kickoff_;
+  bool playreadyplay_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1415,6 +1435,50 @@ inline void LocalizationResetMessage::set_type(::LocalizationResetMessage_ResetP
   GOOGLE_DCHECK(::LocalizationResetMessage_ResetPhase_IsValid(value));
   set_has_type();
   type_ = value;
+}
+
+// required bool kickOff = 2;
+inline bool LocalizationResetMessage::has_kickoff() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void LocalizationResetMessage::set_has_kickoff() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void LocalizationResetMessage::clear_has_kickoff() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void LocalizationResetMessage::clear_kickoff() {
+  kickoff_ = false;
+  clear_has_kickoff();
+}
+inline bool LocalizationResetMessage::kickoff() const {
+  return kickoff_;
+}
+inline void LocalizationResetMessage::set_kickoff(bool value) {
+  set_has_kickoff();
+  kickoff_ = value;
+}
+
+// required bool playReadyPlay = 3;
+inline bool LocalizationResetMessage::has_playreadyplay() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void LocalizationResetMessage::set_has_playreadyplay() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void LocalizationResetMessage::clear_has_playreadyplay() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void LocalizationResetMessage::clear_playreadyplay() {
+  playreadyplay_ = false;
+  clear_has_playreadyplay();
+}
+inline bool LocalizationResetMessage::playreadyplay() const {
+  return playreadyplay_;
+}
+inline void LocalizationResetMessage::set_playreadyplay(bool value) {
+  set_has_playreadyplay();
+  playreadyplay_ = value;
 }
 
 // -------------------------------------------------------------------

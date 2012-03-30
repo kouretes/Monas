@@ -125,8 +125,10 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(UnknownObjects));
   LocalizationResetMessage_descriptor_ = file->message_type(4);
-  static const int LocalizationResetMessage_offsets_[1] = {
+  static const int LocalizationResetMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, kickoff_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, playreadyplay_),
   };
   LocalizationResetMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -246,16 +248,17 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "iveX\030\001 \001(\002:\007-100000\022\032\n\trelativeY\030\002 \001(\002:\007"
     "-100000\022\027\n\006height\030\003 \001(\002:\007-100000\022\037\n\016rela"
     "tiveXspeed\030\004 \001(\002:\007-100000\022\037\n\016relativeYsp"
-    "eed\030\005 \001(\002:\007-100000\"\213\001\n\030LocalizationReset"
+    "eed\030\005 \001(\002:\007-100000\"\263\001\n\030LocalizationReset"
     "Message\0222\n\004type\030\001 \002(\0162$.LocalizationRese"
-    "tMessage.ResetPhase\";\n\nResetPhase\022\r\n\tPEN"
+    "tMessage.ResetPhase\022\017\n\007kickOff\030\002 \002(\010\022\025\n\r"
+    "playReadyPlay\030\003 \002(\010\";\n\nResetPhase\022\r\n\tPEN"
     "ALIZED\020\000\022\006\n\002P1\020\001\022\006\n\002P2\020\002\022\006\n\002P3\020\003\022\006\n\002P4\020\004"
     "\"\232\001\n\020LocalizationData\022\031\n\005World\030\001 \002(\0132\n.W"
     "orldInfo\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022"
     "!\n\rRobotPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Ob"
     "servations\030\004 \002(\0132\023.ObservationMessage\"A\n"
     "\006header\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013"
-    "NextMsgName\030\003 \002(\014:\005Undef", 1064);
+    "NextMsgName\030\003 \002(\014:\005Undef", 1104);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -1805,6 +1808,8 @@ const int LocalizationResetMessage::ResetPhase_ARRAYSIZE;
 #endif  // _MSC_VER
 #ifndef _MSC_VER
 const int LocalizationResetMessage::kTypeFieldNumber;
+const int LocalizationResetMessage::kKickOffFieldNumber;
+const int LocalizationResetMessage::kPlayReadyPlayFieldNumber;
 #endif  // !_MSC_VER
 
 LocalizationResetMessage::LocalizationResetMessage()
@@ -1824,6 +1829,8 @@ LocalizationResetMessage::LocalizationResetMessage(const LocalizationResetMessag
 void LocalizationResetMessage::SharedCtor() {
   _cached_size_ = 0;
   type_ = 0;
+  kickoff_ = false;
+  playreadyplay_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1859,6 +1866,8 @@ LocalizationResetMessage* LocalizationResetMessage::New() const {
 void LocalizationResetMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     type_ = 0;
+    kickoff_ = false;
+    playreadyplay_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1883,6 +1892,38 @@ bool LocalizationResetMessage::MergePartialFromCodedStream(
           } else {
             mutable_unknown_fields()->AddVarint(1, value);
           }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_kickOff;
+        break;
+      }
+      
+      // required bool kickOff = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_kickOff:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &kickoff_)));
+          set_has_kickoff();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_playReadyPlay;
+        break;
+      }
+      
+      // required bool playReadyPlay = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_playReadyPlay:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &playreadyplay_)));
+          set_has_playreadyplay();
         } else {
           goto handle_uninterpreted;
         }
@@ -1914,6 +1955,16 @@ void LocalizationResetMessage::SerializeWithCachedSizes(
       1, this->type(), output);
   }
   
+  // required bool kickOff = 2;
+  if (has_kickoff()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->kickoff(), output);
+  }
+  
+  // required bool playReadyPlay = 3;
+  if (has_playreadyplay()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->playreadyplay(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1926,6 +1977,16 @@ void LocalizationResetMessage::SerializeWithCachedSizes(
   if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       1, this->type(), target);
+  }
+  
+  // required bool kickOff = 2;
+  if (has_kickoff()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->kickoff(), target);
+  }
+  
+  // required bool playReadyPlay = 3;
+  if (has_playreadyplay()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->playreadyplay(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1943,6 +2004,16 @@ int LocalizationResetMessage::ByteSize() const {
     if (has_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+    }
+    
+    // required bool kickOff = 2;
+    if (has_kickoff()) {
+      total_size += 1 + 1;
+    }
+    
+    // required bool playReadyPlay = 3;
+    if (has_playreadyplay()) {
+      total_size += 1 + 1;
     }
     
   }
@@ -1975,6 +2046,12 @@ void LocalizationResetMessage::MergeFrom(const LocalizationResetMessage& from) {
     if (from.has_type()) {
       set_type(from.type());
     }
+    if (from.has_kickoff()) {
+      set_kickoff(from.kickoff());
+    }
+    if (from.has_playreadyplay()) {
+      set_playreadyplay(from.playreadyplay());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1992,7 +2069,7 @@ void LocalizationResetMessage::CopyFrom(const LocalizationResetMessage& from) {
 }
 
 bool LocalizationResetMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   return true;
 }
@@ -2000,6 +2077,8 @@ bool LocalizationResetMessage::IsInitialized() const {
 void LocalizationResetMessage::Swap(LocalizationResetMessage* other) {
   if (other != this) {
     std::swap(type_, other->type_);
+    std::swap(kickoff_, other->kickoff_);
+    std::swap(playreadyplay_, other->playreadyplay_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
