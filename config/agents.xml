@@ -31,8 +31,8 @@
 	<activity>ObstacleAvoidance</activity>
 </agent>
 
-
  <statechart>GoalieYellow</statechart>  
+<!--
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=50>
 	<name>KBehavior</name>
 	<activity>BodyBehavior</activity>
