@@ -150,6 +150,13 @@ int NoPlay::Execute() {
 				}
 			}else
 				curraction = DONOTHING;
+				if(gsm.get()!=0){
+					if (gsm->player_number()==1) locReset->set_type(LocalizationResetMessage::P1);
+					if (gsm->player_number()==2) locReset->set_type(LocalizationResetMessage::P2);
+					if (gsm->player_number()==3) locReset->set_type(LocalizationResetMessage::P3);
+					if (gsm->player_number()==4) locReset->set_type(LocalizationResetMessage::P4);
+					_blk->publishSignal(*locReset, "worldstate");
+				}
 		break;
 	}
 
@@ -177,6 +184,7 @@ void NoPlay::UserInit () {
 	pmsg = new PositionMessage();
 	rpm = new ReturnToPositionMessage();
 	ld = new LocalizeDone();
+	locReset = new LocalizationResetMessage();
 	myPosX = 0.0;
 	myPosY = 0.0;
 	myPhi = 0.0;

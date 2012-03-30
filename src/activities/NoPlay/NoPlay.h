@@ -43,6 +43,7 @@ private:
 	BToHeadMessage* bhmsg;
 	PositionMessage* pmsg;
 	LocalizeDone* ld;
+	 LocalizationResetMessage* locReset;
 	bool cal;
 	int teamColor;
 	int playernum;
