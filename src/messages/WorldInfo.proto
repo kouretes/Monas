@@ -35,6 +35,16 @@ message UnknownObjects{
 	optional float relativeYspeed = 5 [default = -100000];
 }
 
+message LocalizationResetMessage{
+	enum ResetPhase{
+		PENALIZED = 0;
+		P1 = 1;
+		P2 = 2;
+		P3 = 3;	
+		P4 = 4;
+	}
+	required ResetPhase type = 1;
+}
 
 message LocalizationData{
 	required WorldInfo World= 1;

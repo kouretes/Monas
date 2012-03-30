@@ -8,7 +8,6 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
-#include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 //#define KPROFILING_ENABLED
 
@@ -81,7 +80,6 @@ private:
 	boost::shared_ptr<const LocalizationResetMessage> lrm;
 	boost::shared_ptr<const MotionStateMessage> sm;
 
-	BToHeadMessage* bhmsg;
 	bool firstrun;
 	MotionStateMessage::ActionType currentRobotAction;
 	bool fallBegan;

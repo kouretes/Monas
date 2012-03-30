@@ -63,8 +63,6 @@ void Localization::UserInit()
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 
-	bhmsg = new BToHeadMessage();
-
 	MyWorld.add_balls();
 	
 	currentRobotAction = MotionStateMessage::IDLE;
@@ -225,99 +223,6 @@ int Localization::DebugMode_Receive()
 		debugmode = false;
 	}
 	return 0;
-}
-
-//We dont use this any more
-void Localization::SimpleBehaviorStep()
-{
-	// Head Scan simple step
-	bool headscan = false;
-	if (headscan)
-	{
-		if (count % 100 == 2)
-		{
-			hmot.set_command("setHead");
-			//hmot.set_parameter(0,0.0f);
-			hmot.set_parameter(1, -0.66322512);
-		}
-
-		if (fabs(headpos) > 1.5) // 1.3
-			leftright *= -1;
-
-		headpos += 0.1 * leftright;
-
-		hmot.set_parameter(0, headpos);
-		hmot.set_parameter(1, (0.12307 * abs(headpos)) - 0.66322512);
-		_blk->publishSignal(hmot, "motion");
-
-	} else
-	{
-		if (count % 400 == 0)
-			if (count % 100 == 0)
-			{
-				bhmsg->set_headaction(SCANFORBALL);
-				_blk->publishState(*bhmsg, "behavior");
-			} else
-			{
-				bhmsg->set_headaction(SCANFORPOST);
-				_blk->publishState(*bhmsg, "behavior");
-			}
-
-	}
-	return;
-	//Go to target simple behavior
-	float Robot2Target_bearing = anglediff2(atan2(target.y - AgentPosition.y, target.x - AgentPosition.x), AgentPosition.theta);
-	float Distance2Target = DISTANCE(target.x,AgentPosition.x,target.y,AgentPosition.y);
-
-	//cout << "Robot2Target_bearing*TO_DEG  " << Robot2Target_bearing * TO_DEG << endl;
-	//cout << atan2(target.y - AgentPosition.y, target.x - AgentPosition.x) << endl;
-	//cout << AgentPosition.theta << endl << endl;
-	float speed = 0.01;
-
-	if (AgentPosition.confidence > 20)
-		speed = 1;
-	else
-		speed = 0.8;
-
-	if (Distance2Target < 200)
-		speed *= 0.5;
-
-	float VelX, VelY, Rot, freq;
-
-	//TRy to get the robot to the desired position ...
-
-	VelX = speed * cos(Robot2Target_bearing);
-	VelY = speed * sin(Robot2Target_bearing);
-	Rot = anglediff2(target.phi, AgentPosition.theta) * 0.3; // Robot2Target_bearing * 0.3;
-	freq = 1;
-
-	if (Distance2Target < 300)
-		freq *= Distance2Target / 300;
-	//Limits checks
-	if (VelX > 1)
-		VelX = 1;
-	if (VelY > 1)
-		VelY = 1;
-	if (Rot > 1)
-		Rot = 1;
-	if (Rot < -1)
-		Rot = -1;
-	if (VelY < -1)
-		VelY = -1;
-	if (VelX < -1)
-		VelX = -1;
-#ifdef COUT_ON
-	cout << VelX << endl;
-	cout << VelY << endl;
-	cout << Rot << endl;
-#endif
-	wmot.set_command("setWalkTargetVelocity");
-	wmot.set_parameter(0, VelX);
-	wmot.set_parameter(1, VelY);
-	wmot.set_parameter(2, Rot);
-	wmot.set_parameter(3, freq);
-	_blk->publishSignal(wmot, "motion");
-
 }
 
 int Localization::Execute()
@@ -710,7 +615,7 @@ void Localization::process_messages()
 
 	gsm = _blk->readState<GameStateMessage>("worldstate");
 	obsm = _blk->readSignal<ObservationMessage>("vision");
-	lrm = _blk->readSignal<LocalizationResetMessage>("behavior");
+	lrm = _blk->readSignal<LocalizationResetMessage>("worldstate");
 	sm = _blk->readState<MotionStateMessage>("worldstate");
 
 

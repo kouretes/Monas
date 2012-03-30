@@ -55,30 +55,19 @@ def is_valid_ipv4(ip):
 
 def usage():
 
-	#game = string.find(sys.argv[0] , "upload_work.py")
+	print """
+	usage: (python) ../../scripts/upload.py work IP1 IP2 IP3 ...
 
-	#if game > -1:
-	if (string.find(sys.argv[0], "upload_work.py") > -1):
-		print """
-		usage: (python) ../../scripts/upload_work.py IP1 IP2 IP3 ...
-
-				IPi: IPs of the robots on which the same configuration will be uploaded
-				CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
-		"""
-	elif (string.find(sys.argv[0] , "upload_game.py") > -1):
-		print """
-		usage: (python) ../../scripts/upload_game.py SSID IP1 PL1num IP2 PL2num IP3 PL3num ...
-
-			SSID: ssid of the field wifi, the script will look the corresponding network file
-			IPi: IPs of the robots on which the same configuration will be uploaded
-			PLinum: 1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker
-			CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
-		"""
-	else:
-		print """
-		ERROR: You can only run this script as upload_work.py or upload_game.py, use symbolic links
+		IPi: IPs of the robots on which the same configuration will be uploaded
 		CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
-		"""
+
+	usage: (python) ../../scripts/upload.py game SSID IP1 PL1num IP2 PL2num IP3 PL3num ...
+
+		SSID: ssid of the field wifi, the script will look the corresponding network file
+		IPi: IPs of the robots on which the same configuration will be uploaded
+		PLinum: 1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker
+		CAUTION: must run from inside the Monas/make/[build|crossbuild] folder
+	"""
 	exit(-1)
 
 def Ksystem(command, message, TerminateOnError):
@@ -95,40 +84,45 @@ def Ksystem(command, message, TerminateOnError):
 playersdef = ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker']
 #### UPLOAD SCRIPT ####
 
-if string.find(sys.argv[0], "upload_work.py") > -1:
-	if(len(sys.argv) < 2 ):
+if (len(sys.argv) < 2):
 		usage();
 
-	robotsIP = sys.argv[1:len(sys.argv)]
+if string.find(sys.argv[1], "work") > -1:
+	if (len(sys.argv) < 3):
+		usage();
+	robotsIP = sys.argv[2:len(sys.argv)]
+	print robotsIP
 	game = 0
-elif string.find(sys.argv[0] , "upload_game.py") > -1 :
-	if(len(sys.argv) < 4 ):
+
+elif string.find(sys.argv[1] , "game") > -1 :
+	if (len(sys.argv) < 5):
 		usage();
 
-	SSID = sys.argv[1]
-	print sys.argv
+	SSID = sys.argv[2]
+	print SSID
 
-	players = sys.argv[3:len(sys.argv):2]
+	players = sys.argv[4:len(sys.argv):2]
 	print players
 	for p in players:
 		if(int(p) > 4 or int(p) < 1) :
 			print "ERROR: A player number is not valid! Quiting ..."
 			exit(-1)
 
-	robotsIP = sys.argv[2:len(sys.argv):2]
+	robotsIP = sys.argv[3:len(sys.argv):2]
+	print robotsIP
 	if(len(players)!=len(robotsIP)):
 		usage()
 
 	game = 1 #
+	
 else:
 	usage()
 	exit(-1)
 
+
 for ip in robotsIP:
-
-
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	timeouttime= 2
+	timeouttime = 2
 	sock.settimeout(timeouttime)
 	reachable = True
 	try:
@@ -154,9 +148,9 @@ if(pwdfolders[-2] != "make"):
 	exit(-1)
 
 
-print "Working directory " + pwd
-#ret=os.system("make install")
-Ksystem("make install","Compilation", True)
+print "Working directory: " + pwd
+
+Ksystem("make install", "Compilation", True)
 
 #if(ret!=0):
 	#print '\033[1;31m Unsuccessful Compilation \033[1;m'
@@ -192,7 +186,6 @@ os.system('rsync -u ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'start.sh ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'beep.wav ' + binaries_dir + "config/")
-#print "Length of arguments " + str(len(sys.argv))
 
 if(partial_configuration_dir	== "" ):
 	print("ERROR:  Please define partial_configuration_dir")
@@ -253,16 +246,11 @@ for	ip in robotsIP:
   # rsync_cmd = "rync  --rsh=\"sshpass -p myPassword ssh -l t\" "
 	#exit(0)
 	if(game==1):
-
 		autoload_src = partial_configuration_dir + "autoload.ini_game"
-
-
 		autoload_dest = binaries_dir +"preferences/autoload.ini"
 		autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 		os.system(autoload_cmd)
 		print(autoload_cmd)
-
-
 		rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 	else:
 		if(raw_input("Enter y to upload a clean autoload.ini_work (no krobot) or press enter to continue:  ")=='y'):
@@ -276,12 +264,9 @@ for	ip in robotsIP:
 		else:
 			rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
 
-	#~ rsync_cmd = "rsync	-av "+ binaries_dir +"bin	"+ binaries_dir	+"lib "+ binaries_dir +"config	"+ binaries_dir +"preferences	"+" nao@" + ip+ ":naoqi/"
-
-	print("Preparing to copy robot from ",binaries_dir)
+	print("Preparing to copy robot from ", binaries_dir)
 	print ""
 
-	#os.system(rsync_cmd)
 	Ksystem(rsync_cmd, "Uploading ", True);
 	print(rsync_cmd)
 

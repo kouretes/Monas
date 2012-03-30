@@ -100,7 +100,7 @@ void LBehavior::UserInit() {
 		}
 
 	locReset = new LocalizationResetMessage();
-
+	locReset->set_type(LocalizationResetMessage::PENALIZED);
 	ballfound = 0;
 	readRobotConf = false;
 
@@ -240,8 +240,7 @@ int LBehavior::Execute() {
 			step = -1;
 			scanForGoals = true;
 			calibrated = 0;
-			cerr << "EDW GIDIA" << calibrated << " gidia" << endl;
-			_blk->publishSignal(*locReset, "behavior");
+			_blk->publishSignal(*locReset, "worldstate");
 			//calibrate();
 			velocityWalk(0.0,0.0,0.0,1);
 
