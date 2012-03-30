@@ -1,7 +1,8 @@
 [ethernet_0001c004c304_cable]
 Name=Wired
-IPv4.method=manual
 IPv6.method=off
+IPv6.netmask_prefixlen=0
+IPv4.method=manual
 IPv4.netmask_prefixlen=24
 IPv4.local_address=10.0.6.1
 
@@ -12,8 +13,9 @@ Powered=true
 
 [ethernet_0001c0056c81_cable]
 Name=Wired
-IPv4.method=manual
 IPv6.method=off
+IPv6.netmask_prefixlen=0
+IPv4.method=manual
 IPv4.netmask_prefixlen=24
 IPv4.local_address=10.0.6.2
 
@@ -24,8 +26,9 @@ Powered=true
 
 [ethernet_0001c004bf1e_cable]
 Name=Wired
-IPv4.method=manual
 IPv6.method=off
+IPv6.netmask_prefixlen=0
+IPv4.method=manual
 IPv4.netmask_prefixlen=24
 IPv4.local_address=10.0.6.3
 
@@ -35,9 +38,11 @@ Powered=true
 
 
 [ethernet_0001c0075fe5_cable]
+[ethernet_0001c0075fe5_cable]
 Name=Wired
-IPv4.method=manual
 IPv6.method=off
+IPv6.netmask_prefixlen=0
+IPv4.method=manual
 IPv4.netmask_prefixlen=24
 IPv4.local_address=10.0.6.5
 
