@@ -40,6 +40,9 @@ int GoToPosition::Execute() {
 		velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
 		lastMove = microsec_clock::universal_time() + milliseconds(500);
 		Logger::Instance().WriteMsg(GetName(), "Robot Is In Position", Logger::Info);
+		ReturnToPositionMessage rpm;
+		rpm.set_goalietopos(true);
+		_blk->publishState(rpm, "behavior");
 		_blk->publish_all();
 		return 0;
 	}

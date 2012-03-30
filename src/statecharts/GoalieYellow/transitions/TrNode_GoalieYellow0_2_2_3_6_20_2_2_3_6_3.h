@@ -2,6 +2,8 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
+#include "tools/logger.h"
+#include "tools/toString.h"
 // Stare_one_or_more_times__TO__open_option_SpecialAction_close_option_
 class TrCond_GoalieYellow0_2_2_3_6_20_2_2_3_6_3 : public statechart_engine::ICondition {		
 public:
@@ -10,6 +12,7 @@ public:
 		_blk->updateSubscription("behavior",msgentry::SUBSCRIBE_ON_TOPIC);
 
 	}
+
 	bool Eval() {
 		/* worldstate.State.GameStateMessage==NULL|| 
 worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || behavior.State.HeadToBMessage.ballfound()==0 || !ballAway(worldstate.Data.WorldInfo) ||  behavior.State.FallMessage.fall()!=0 */
@@ -17,8 +20,9 @@ worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || behavior.Sta
 		boost::shared_ptr<const HeadToBMessage> var_1901744185 = _blk->readState<HeadToBMessage> ("behavior" );
 		boost::shared_ptr<const WorldInfo> var_1111221333 = _blk->readData<WorldInfo> ("worldstate" );
 		boost::shared_ptr<const FallMessage> var_1561961811 = _blk->readState<FallMessage> ("behavior" );
-	
-				return ( var_1263977940.get()==0 ||   (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_PLAYING) || (var_1901744185.get()!=0 && var_1901744185->ballfound()==0) || !ballAway(var_1111221333) ||  (var_1561961811.get()!=0 && var_1561961811->fall()!=0) );	
+
+		Logger::Instance().WriteMsg("Stare_one_or_more_times__TO__open_option_SpecialAction_close_option_, worldstate.State.GameStateMessage==NULL||  worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || behavior.State.HeadToBMessage.ballfound()==0 || !ballAway(worldstate.Data.WorldInfo) ||  behavior.State.FallMessage.fall()!=0" ,_toString(var_1263977940.get()==0 ||   (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_PLAYING) || (var_1901744185.get()!=0 && var_1901744185->ballfound()==0) || !ballAway(var_1111221333) ||  (var_1561961811.get()!=0 && var_1561961811->fall()!=0)),  Logger::Info);
+		return ( var_1263977940.get()==0 ||   (var_1263977940.get()!=0 && var_1263977940->player_state()!=PLAYER_PLAYING) || (var_1901744185.get()!=0 && var_1901744185->ballfound()==0) || !ballAway(var_1111221333) ||  (var_1561961811.get()!=0 && var_1561961811->fall()!=0) );
     }
 };
 		

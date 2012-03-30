@@ -18,7 +18,7 @@
 	<name>KVision</name>
 	<activity>Vision</activity>
 	<activity>Localization </activity>
-	<activity>Behavior</activity>
+	<activity>HeadBehavior</activity>
 </agent>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
@@ -32,9 +32,7 @@
 </agent>
 
 
-
-<!--
- <statechart>goalie070611</statechart>  
+ <statechart>GoalieYellow</statechart>  
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=50>
 	<name>KBehavior</name>
 	<activity>BodyBehavior</activity>

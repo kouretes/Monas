@@ -48,7 +48,7 @@ private:
 	int playernum;
 	float posX;
 	float posY;
-	float initX[2][2], initY[2][2], initPhi[2][2];
+	float initX[2], initY[2], initPhi[2];
 
 	
 	int prevstate, currstate;
