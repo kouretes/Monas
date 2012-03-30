@@ -285,14 +285,14 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 {
 	Uniform X, Y, P;
 
-	float length = (FieldMaxX - FieldMinX)/4;
+	float length = 2000;//(FieldMaxX - FieldMinX)/4;
 	//float width = (FieldMaxY - FieldMinY)/2;
 	unsigned int particlesUp = partclsNum/2;
 	unsigned int particlesDown = partclsNum - particlesUp;
 	//Initialize top Particles
 	for (unsigned int i = 0; i < particlesUp; i++)
 	{
-		Particles.x[i] = X.Next() * length + FieldMinX - FieldMinX/8;
+		Particles.x[i] = X.Next() * length + FieldMinX + 500;
 		Particles.y[i] = FieldMaxY;
 		Particles.phi[i] = deg2rad(270);
 		Particles.Weight[i] = 1.0 / partclsNum;
@@ -300,7 +300,7 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 	//Initialize down Particles
 	for (unsigned int i = particlesUp; i < partclsNum; i++)
 	{
-		Particles.x[i] = X.Next() * length + FieldMinX - FieldMinX/8;
+		Particles.x[i] = X.Next() * length + FieldMinX - 500;
 		Particles.y[i] = -FieldMaxY;
 		Particles.phi[i] = deg2rad(90);
 		Particles.Weight[i] = 1.0 / partclsNum;
@@ -339,7 +339,7 @@ void KLocalization::initializeParticlesForInitialState(parts & Particles,int pla
 	}
 	//we dont have the kick off
 	if(!kickOff){
-		for (unsigned int i=partclsNum-6; i<partclsNum; i++){
+		for (unsigned int i=partclsNum-4; i<partclsNum; i++){
 			if(playerNumber == 1){
 				Particles.x[i] = -3000;
 				Particles.y[i] = 0;
@@ -360,7 +360,7 @@ void KLocalization::initializeParticlesForInitialState(parts & Particles,int pla
 			Particles.phi[i] = deg2rad(0);
 		}
 	}else{
-		for (unsigned int i=partclsNum-6; i<partclsNum; i++){
+		for (unsigned int i=partclsNum-4; i<partclsNum; i++){
 			if(playerNumber == 1){
 				Particles.x[i] = -3000;
 				Particles.y[i] = 0;
