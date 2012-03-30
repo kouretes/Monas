@@ -30,7 +30,7 @@ public:
 	}
 	int Execute();
 	void UserInit();
-	void Reset();
+	void Reset(int);
 	void process_messages();
 	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations, double rangemaxleft, double rangemaxright);
 	void RobotPositionMotionModel(KMotionModel & MModel);
@@ -79,6 +79,8 @@ private:
 	boost::shared_ptr<const RobotPositionMessage> rpsm;
 	boost::shared_ptr<const LocalizationResetMessage> lrm;
 	boost::shared_ptr<const MotionStateMessage> sm;
+
+	boost::posix_time::ptime timeStart,timeStop;
 
 	bool firstrun;
 	MotionStateMessage::ActionType currentRobotAction;

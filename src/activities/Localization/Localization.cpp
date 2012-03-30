@@ -68,9 +68,8 @@ void Localization::UserInit()
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	KLocalization::Initialize();
-	//KLocalization::setParticlesPose(SIRParticles, 0, 0, 0);
-	KLocalization::setParticlesPoseUniformly(SIRParticles);
-	//KLocalization::setBelief(0, 0, 0, 0.1);
+	KLocalization::setParticlesPoseUniformly(SIRParticles);	
+	timeStart = boost::posix_time::microsec_clock::universal_time();
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
@@ -81,9 +80,12 @@ void Localization::UserInit()
 
 }
 
-void Localization::Reset()
+void Localization::Reset(int playerNumber)
 {
-	KLocalization::setParticlesPoseUniformly(SIRParticles);
+	if(playerNumber == -1)
+		KLocalization::setParticlesPoseUniformly(SIRParticles);
+	else
+		KLocalization::initializeParticlesForInitialState(SIRParticles,playerNumber);
 }
 
 
@@ -104,7 +106,6 @@ int Localization::DebugMode_Receive()
 		}
 		size = ntohl(size);
 
-		//cout << "Waiting for " << size << " Bytes " << endl;
 
 		if (size < 1)
 		{
@@ -121,7 +122,6 @@ int Localization::DebugMode_Receive()
 				break;
 			}
 
-		//cout << "Arrived " << rsize << " Bytes " << endl;
 
 		incommingheader.Clear();
 		headerparsed = incommingheader.ParsePartialFromArray(data, size);
@@ -135,71 +135,34 @@ int Localization::DebugMode_Receive()
 		incommingheader.DiscardUnknownFields();
 
 		string command = incommingheader.nextmsgname();
-#ifdef COUT_ON
-		cout << "COMMAND " << command << endl;
-#endif
 		if (command == "Stop")
 		{
 			debugmode = false;
 			cout << " Stopping Debug ########################" << endl;
 			return 0;
 		}
-		//google::protobuf::Message * incommingmsg = &incommingheader;
-		//cout << "Next message " << incommingheader.nextmsgbytesize() << endl;
-
-		//const google::protobuf::FieldDescriptor* field = incommingmsg->GetDescriptor()->FindFieldByLowercaseName("nextmsgbytesize");
-		//if(field!=NULL || incommingheader.nextmsgbytesize()>0){
-		//cout << "Field !" << endl;
-		//const google::protobuf::Reflection* reflection =incommingmsg->GetReflection();
-
-		//if (((size = reflection->GetInt32(*incommingmsg,field)) > 0)|| incommingheader.nextmsgbytesize()>0) //must read next message
 		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
 		{
-#ifdef COUT_ON
-			cout << "NextMessageSize " << size << endl;
-#endif
 			for (rs = rsize = 0; rsize < size; rsize += rs)
 				if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
 				{
 					cout << "receive error" << endl;
 					break;
 				}
-#ifdef COUT_ON
-			cout << "Arrived " << ssize << " $$$$$$$$$$$$$$$$%%%%%%%%%Bytes Do something" << endl;
-#endif
-			//if (ticommingmsg.GetTypeName() == "RobotPose") {
 
 			if (command == "SetBelief")
 			{
 				RobotPose ticommingmsg;
 				ticommingmsg.ParseFromArray(data, size);
-#ifdef COUT_ON
-				cout << ticommingmsg.GetTypeName() << endl;
-				cout << "Incoming Pose" << endl;
-#endif
 				MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
-				//				AgentPosition.x = MyWorld.myposition().x();
-				//				AgentPosition.y = MyWorld.myposition().y();
-				//				AgentPosition.theta = MyWorld.myposition().phi();
-				//				AgentPosition.weightconfidence = MyWorld.myposition().confidence();
-				//
-				//				TrackPoint.x = AgentPosition.x;
-				//				TrackPoint.y = AgentPosition.y;
-				//				TrackPoint.phi = AgentPosition.theta;
 
 				target.x = MyWorld.myposition().x();
 				target.y = MyWorld.myposition().y();
 				target.phi = MyWorld.myposition().phi();
-#ifdef COUT_ON
-				cout << "My World theta " << AgentPosition.theta;
-#endif
 			} else if (command.find("Walk") != string::npos)/* == "Walk") */
 			{
 				MotionWalkMessage wmot;
 				wmot.ParseFromArray(data, size);
-#ifdef COUT_ON
-				cout << "Incoming WalkCommand" << endl;
-#endif
 				if (command.find("Stop") == string::npos)
 				{ //Reset at the beggining
 					TrackPoint.x = 0;
@@ -217,9 +180,6 @@ int Localization::DebugMode_Receive()
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
-#ifdef COUT_ON
-		cout << "Stopping Debug ############# Disconnecting !!!" << endl;
-#endif
 		debugmode = false;
 	}
 	return 0;
@@ -237,27 +197,35 @@ int Localization::Execute()
 			fallBegan = false;
 			KLocalization::spreadParticlesAfterFall(SIRParticles,SpreadParticlesDeviationAfterFall, RotationDeviationAfterFallInDeg,NumberOfParticlesSpreadAfterFall);
 		}
-	//	return 0;
+		timeStart = boost::posix_time::microsec_clock::universal_time();
+		return 0;
 	}else
 		fallBegan = true;
 	if (debugmode)
 		DebugMode_Receive();
-	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
-		Reset();
+	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty		
+		timeStart = boost::posix_time::microsec_clock::universal_time();
+		if(lrm->type() == LocalizationResetMessage::PENALIZED)
+			Reset(-1);
+		else if(lrm->type() == LocalizationResetMessage::P1)
+			Reset(1);
+		else if(lrm->type() == LocalizationResetMessage::P2)
+			Reset(2);
+		else if(lrm->type() == LocalizationResetMessage::P3)
+			Reset(3);
+		else if(lrm->type() == LocalizationResetMessage::P4)
+			Reset(4);
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
 
 	LocalizationStepSIR(robotmovement, currentObservation, currentAbigiusObservation, maxrangeleft, maxrangeright);
 
-	//SimpleBehaviorStep();
 
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x / 1000.0);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
-#ifdef COUT_ON
-	cout<<"AgentPosition.x"<<AgentPosition.x <<"AgentPosition.y"<<AgentPosition.y<<endl;
-#endif
+
 	calculate_ball_estimate(robotmovement);
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
@@ -279,7 +247,7 @@ void Localization::Send_LocalizationData()
 	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
 	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
 
-	int sendsize; //= DebugData.ByteSize();
+	int sendsize; 
 
 	int rsize = 0;
 	int rs;
@@ -321,9 +289,6 @@ void Localization::Send_LocalizationData()
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
-#ifdef COUT_ON
-		cout << "Disconnecting !!!!!" << endl;
-#endif
 		debugmode = false;
 	}
 }
@@ -355,7 +320,6 @@ void Localization::calculate_ball_estimate(KMotionModel const & robotModel)
 				//Inserting new ball
 				MyWorld.add_balls();
 				myBall.reset(aball.dist(), 0, aball.bearing(), 0);
-				//cout << "RESETING_BALL" << endl;
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
 				last_filter_time = now;
 			} else
@@ -493,7 +457,11 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 
 	//SpreadParticles
-	SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
+	timeStop = boost::posix_time::microsec_clock::universal_time();
+	if(timeStop-timeStart >= boost::posix_time::seconds(0.33)){
+		timeStart = boost::posix_time::microsec_clock::universal_time();
+		SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
+	}
 	//SIR Filter
 
 

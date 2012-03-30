@@ -30,40 +30,11 @@ ObstacleAvoidance::ObstacleAvoidance(){
  * */
 
 /*********** Math functions ***********/
-/*
-double wrapToPi(double angle) {
-	while(angle < -M_PI) angle +=2.0*M_PI;
-	while(angle > M_PI) angle -=2.0*M_PI;
-	return (angle);
-}
 
-double wrapTo0_2Pi(double angle) {
-	while (angle >= 2.0 * M_PI)
-		angle -= 2.0 * M_PI;
-	while (angle < 0.0)
-		angle += 2.0 * M_PI;
-	return angle;
-}
-*/
 double angleDiff(double a1, double a2) {
 	return wrapToPi(wrapToPi(a1+M_PI-a2) - M_PI);
 }
 
-double toPolarD(double x, double y) {
-	return sqrt(x*x + y*y);
-}
-
-double toPolarT(double x, double y) {
-	return atan2(y, x);
-}
-
-double toCartesianX(double d, double t) {
-	return d*cos(t);
-}
-
-double toCartesianY(double d, double t) {
-	return d*sin(t);
-}
 
 int DtoR(double d) {
 	if (d<0)
@@ -94,11 +65,7 @@ int XYtoR(double x, double y) {
 int XYtoS(double x, double y) {
 	return TtoS( toPolarT(x, y) );
 }
-/*
-int toGrid(double x) {
-	return int(-round(ImgScale*x)+ImgShift);
-}
-*/
+
 int wrapTo(int n, int MAXN) {
 	while (n<0) n += MAXN;
 	return (n%MAXN);
@@ -139,6 +106,7 @@ void ObstacleAvoidance::UserInit() {
 	SonarFailCounter = 0; // counter gia fail twn sonars
 	
 	debugCounter=0;
+	debugModeCout = 0;
 	
 	//boh8htikos pinakas gia update
 	for(int i=0;i<SOnARsNum;i++)
@@ -925,7 +893,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo) {
 
 void ObstacleAvoidance::reconstructPath(int ring, int sector, int orientation) {
 	
-	Logger::Instance().WriteMsg("ObstacleAvoidance", "PATH m " + _toString(ring) + " n " + _toString(sector) + " o " + _toString(orientation), Logger::ExtraExtraInfo);
+	//Logger::Instance().WriteMsg("ObstacleAvoidance", "PATH m " + _toString(ring) + " n " + _toString(sector) + " o " + _toString(orientation), Logger::ExtraExtraInfo);
 	if (parentM[ring][sector][orientation] != -1 && parentN[ring][sector][orientation] != -1)
 		reconstructPath( parentM[ring][sector][orientation], parentN[ring][sector][orientation], parentO[ring][sector][orientation] );
 
@@ -1045,27 +1013,12 @@ void ObstacleAvoidance::velocityWalk(double ix, double iy, double it, double f) 
 	
 	wmot->set_command("setWalkTargetVelocity");
 	
-	if ( (x==0.0) && (y==0.0) && (t==0.0) ) {
-		cX = 0.0;
-		cY = 0.0;
-		ct = 0.0;
-		
-	} 
-	else {
-		if( lastwalk + milliseconds(200) > microsec_clock::universal_time() )
-			return;
-
-		x = x>+1.0?+1.0:x;
-		x = x<-1.0?-1.0:x;
-		y = y>+1.0?+1.0:y;
-		y = y<-1.0?-1.0:y;
-		t = t>+1.0?+1.0:t;
-		t = t<-1.0?-1.0:t;
-		cX = 0.25*cX+0.75*x;
-		cY = 0.25*cY+0.75*y;
-		ct = 0.25*ct+0.75*t;
-		
-	}
+	x = x>+1.0?+1.0:x;
+	x = x<-1.0?-1.0:x;
+	y = y>+1.0?+1.0:y;
+	y = y<-1.0?-1.0:y;
+	t = t>+1.0?+1.0:t;
+	t = t<-1.0?-1.0:t;
 
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);

@@ -304,13 +304,44 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 		Particles.y[i] = -FieldMaxY;
 		Particles.phi[i] = deg2rad(90);
 		Particles.Weight[i] = 1.0 / partclsNum;
-		beliefForGoalPosts[0] = 0;
-		beliefForGoalPosts[1] = 0;
-		beliefForGoalPosts[2] = 0;
-		beliefForGoalPosts[3] = 0;
-		timesOfContAmbig = 0;
-
 	}
+	beliefForGoalPosts[0] = 0;
+	beliefForGoalPosts[1] = 0;
+	beliefForGoalPosts[2] = 0;
+	beliefForGoalPosts[3] = 0;
+	timesOfContAmbig = 0;
+}
+
+void KLocalization::initializeParticlesForInitialState(parts & Particles,int playerNumber){
+	for (unsigned int i = 0; i < partclsNum; i++)
+	{
+		if(playerNumber == 1){
+			Particles.x[i] = -2400;
+			Particles.y[i] = -2000;
+			Particles.phi[i] = deg2rad(90);
+			Particles.Weight[i] = 1.0 / partclsNum;
+		}else if(playerNumber == 2){
+			Particles.x[i] = -2400;
+			Particles.y[i] = 2000;
+			Particles.phi[i] = deg2rad(270);
+			Particles.Weight[i] = 1.0 / partclsNum;
+		}else if(playerNumber == 3){
+			Particles.x[i] = -1200;
+			Particles.y[i] = -2000;
+			Particles.phi[i] = deg2rad(90);
+			Particles.Weight[i] = 1.0 / partclsNum;
+		}else{
+			Particles.x[i] = -1200;
+			Particles.y[i] = 2000;
+			Particles.phi[i] = deg2rad(270);
+			Particles.Weight[i] = 1.0 / partclsNum;
+		}
+	}
+	beliefForGoalPosts[0] = 0;
+	beliefForGoalPosts[1] = 0;
+	beliefForGoalPosts[2] = 0;
+	beliefForGoalPosts[3] = 0;
+	timesOfContAmbig = 0;
 }
 
 int KLocalization::Initialize()
