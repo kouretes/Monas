@@ -88,6 +88,14 @@ Powered=true
 
 
 
+[ethernet_0001c005b4f6_cable]
+Name=Wired
+IPv6.method=off
+IPv6.netmask_prefixlen=0
+IPv4.method=manual
+IPv4.netmask_prefixlen=24
+IPv4.local_address=10.0.6.4
+
 [wifi_243c20063d13_53504c5f41_managed_wep]
 Name=SPL_A
 SSID=53504c5f41
@@ -101,6 +109,9 @@ IPv4.gateway=192.168.0.1
 Passphrase=Nao?!
 AutoConnect=true
 Nameservers=192.168.0.1;
+
+[device_0001c005b4f6]
+Powered=true
 
 [device_243c20063d13]
 Powered=true
