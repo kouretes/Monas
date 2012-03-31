@@ -43,7 +43,6 @@ class Behavior: public IActivity {
 
 		void GetGameState();
 		void GetPosition();
-		void UpdateOrientation();
 		void UpdateOrientationPlus();
 		void CheckForBall();
 		int MakeTrackBallAction();

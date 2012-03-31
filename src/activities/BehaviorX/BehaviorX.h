@@ -43,7 +43,6 @@ class BehaviorX: public IActivity {
 
 		void GetGameState();
 		void GetPosition();
-		void UpdateOrientation();
 		void UpdateOrientationPlus();
 		void CheckForBall();
 		int MakeTrackBallAction();
@@ -129,7 +128,7 @@ class BehaviorX: public IActivity {
 
 		bool readRobotConf;
 		std::string currentKick;
-		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, ballseen;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastpenalized, ballseen;
 };
 
 #endif

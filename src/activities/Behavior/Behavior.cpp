@@ -173,22 +173,12 @@ int Behavior::Execute() {
 				startscan = true;
 				scanforball = true;
 			}
-			//velocityWalk(bx*0.1, by*0.1, 0.3*(bb>0?+1:-1), 0.4);
-			pathPlanningRequestAbsolute(0.45, 0.45*(bb>0?+1:-1), M_PI_4*(bb>0?+1:-1));
+			if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
+				pathPlanningRequestAbsolute(0.45, 0.45*direction, M_PI_4*direction);
+			else
+				pathPlanningRequestAbsolute(0.1, 0.1*direction, M_PI_4*direction);
 			/* End of New Exploration */
 
-			/* Old exploration */
-			//if (!scanforball) {
-				//startscan = true;
-				//scanforball = true;
-				//velocityWalk(0.0,0.0,0.0,1.0);
-				//lastmove = microsec_clock::universal_time();
-			//}
-			//if (lastmove + seconds(5) < microsec_clock::universal_time()) {
-				//littleWalk(direction * 0.20, 0.0, direction * M_PI_4);
-				//lastmove = microsec_clock::universal_time();
-			//}
-			/* End of Old Exploration */
 			HeadScanStepSmart();
 		}
 	}
@@ -307,23 +297,6 @@ void Behavior::GetPosition() {
 		robot_confidence = wim->myposition().confidence();
 	}
 	return;
-}
-
-
-void Behavior::UpdateOrientation()
-{
-	float ogb = anglediff2(atan2(oppGoalY - robot_y, oppGoalX - robot_x), robot_phi);
-
-	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
-		orientation = 0;
-	} else if ((fabs(ogb) > +45 * TO_RAD) && (fabs(ogb) <= +135 * TO_RAD)) {
-		orientation = 1;
-	} else if ((fabs(ogb) > +135 * TO_RAD) || (fabs(ogb) <= -135 * TO_RAD)) {
-		orientation = 2;
-	} else if ((fabs(ogb) <= -45 * TO_RAD) && (fabs(ogb) > -135 * TO_RAD)) {
-		orientation = 3;
-	}
-	//Logger::Instance().WriteMsg("Behavior", "OPPGOALX " + _toString(oppGoalX) + "OPPGOALY " + _toString(oppGoalY) + "OGB " + _toString(ogb)+ "ORIENTATION " + _toString(orientation), Logger::Info);
 }
 
 
@@ -853,7 +826,7 @@ void Behavior::gotoPosition(float target_x,float target_y, float target_phi) {
 	double targetAngle = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
 	double targetOrientation = anglediff2(target_phi, robot_phi);
 	
-	if (targetDistance > 0.25) 
+	if ( (targetDistance > 0.25) || (fabs(targetOrientation) > M_PI_4) )
 		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle), 
 									toCartesianY(targetDistance,targetAngle),
 									targetOrientation);

@@ -34,6 +34,7 @@ void BehaviorX::UserInit() {
 	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
+
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
@@ -100,6 +101,7 @@ void BehaviorX::UserInit() {
 	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
+	lastpenalized = microsec_clock::universal_time();
 	ballseen = microsec_clock::universal_time();
 
 	currentKick = "DoNothing";
@@ -126,6 +128,11 @@ int BehaviorX::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
+		
+		if (lastpenalized+seconds(12)>microsec_clock::universal_time()) {
+			HeadScanStepHigh(2.08);
+			return 0;
+		}
 
 		CheckForBall();
 		UpdateOrientationPlus();
@@ -164,21 +171,12 @@ int BehaviorX::Execute() {
 				startscan = true;
 				scanforball = true;
 			}
-			velocityWalk(bx*0.1, by*0.1, 0.3*(bb>0?+1:-1), 0.4);
+			if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
+				pathPlanningRequestAbsolute(0.45, 0.45*direction, M_PI_4*direction);
+			else
+				pathPlanningRequestAbsolute(0.1, 0.1*direction, M_PI_4*direction);
 			/* End of New Exploration */
 
-			/* Old exploration */
-			//if (!scanforball) {
-				//startscan = true;
-				//scanforball = true;
-				//velocityWalk(0.0,0.0,0.0,1.0);
-				//lastmove = microsec_clock::universal_time();
-			//}
-			//if (lastmove + seconds(5) < microsec_clock::universal_time()) {
-				//littleWalk(direction * 0.20, 0.0, direction * M_PI_4);
-				//lastmove = microsec_clock::universal_time();
-			//}
-			/* End of Old Exploration */
 			HeadScanStepSmart();
 		}
 	}
@@ -233,8 +231,9 @@ void BehaviorX::GetGameState()
 			if (prevGameState == PLAYER_PENALISED){
 				direction = 1;
 				calibrated = 0;
+				lastpenalized = microsec_clock::universal_time();
 				locReset->set_type(LocalizationResetMessage::PENALIZED);
-				locReset->set_kickoff(false);
+				locReset->set_kickoff(kickoff);
 				locReset->set_playreadyplay(false);
 				_blk->publishSignal(*locReset, "worldstate");
 			}
@@ -256,7 +255,7 @@ void BehaviorX::GetGameState()
 				if (playerNumber==2) locReset->set_type(LocalizationResetMessage::P2);
 				if (playerNumber==3) locReset->set_type(LocalizationResetMessage::P3);
 				if (playerNumber==4) locReset->set_type(LocalizationResetMessage::P4);
-				locReset->set_kickoff(false);
+				locReset->set_kickoff(kickoff);
 				locReset->set_playreadyplay(false);
 				_blk->publishSignal(*locReset, "worldstate");
 			}
@@ -299,40 +298,20 @@ void BehaviorX::GetPosition() {
 }
 
 
-void BehaviorX::UpdateOrientation()
-{
-	float ogb = anglediff2(atan2(oppGoalY - robot_y, oppGoalX - robot_x), robot_phi);
-
-	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
-		orientation = 0;
-	} else if ((fabs(ogb) > +45 * TO_RAD) && (fabs(ogb) <= +135 * TO_RAD)) {
-		orientation = 1;
-	} else if ((fabs(ogb) > +135 * TO_RAD) || (fabs(ogb) <= -135 * TO_RAD)) {
-		orientation = 2;
-	} else if ((fabs(ogb) <= -45 * TO_RAD) && (fabs(ogb) > -135 * TO_RAD)) {
-		orientation = 3;
-	}
-	//Logger::Instance().WriteMsg("BehaviorX", "OPPGOALX " + _toString(oppGoalX) + "OPPGOALY " + _toString(oppGoalY) + "OGB " + _toString(ogb)+ "ORIENTATION " + _toString(orientation), Logger::Info);
-}
-
-
 void BehaviorX::UpdateOrientationPlus()
 {
-	float loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
-	float roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
-	float oppgb = wrapToPi( (wrapTo0_2Pi(loppgb) + wrapTo0_2Pi(roppgb)) / 2.0 );
-
-	float lowngb = anglediff2(atan2(ownGoalLeftY - robot_y, ownGoalLeftX - robot_x), robot_phi);
-	float rowngb = anglediff2(atan2(ownGoalRightY - robot_y, ownGoalRightX - robot_x), robot_phi);
-	float owngb = wrapToPi( (wrapTo0_2Pi(lowngb) + wrapTo0_2Pi(rowngb)) / 2.0 );
-
-	if ( (fabs(oppgb) <= M_PI_4) && (fabs(oppgb) > -M_PI_4) ) {
+	double loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
+	double roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
+	double cone = anglediff2(loppgb, roppgb); 
+	double oppgb = wrapToPi(roppgb + cone/2.0);
+	
+	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
 		orientation = 0;
-	} else if ( (fabs(oppgb) > M_PI_4) && (fabs(oppgb) <= (M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI-M_PI_4) ) ) {
 		orientation = 1;
-	} else if ( (fabs(oppgb) > (M_PI-M_PI_4) ) || (fabs(oppgb) <= -(M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb > (M_PI-M_PI_4) ) || (oppgb <= -(M_PI-M_PI_4) ) ) {
 		orientation = 2;
-	} else if ( (fabs(oppgb) <= -M_PI_4 ) && (fabs(oppgb) > -(M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI-M_PI_4) ) ) {
 		orientation = 3;
 	}
 }
@@ -717,7 +696,7 @@ void BehaviorX::velocityWalk(double ix, double iy, double it, double f)
 	t = it;
 
 	/* BEGIN - Basic Obstacle Avoidance Code */
-	if ( om!=0 ) {
+	if ( om!=0 && playerNumber==2 ) {
 		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) ) {
 			if (x > 0.0) {
 				x = 0.0;
@@ -845,7 +824,7 @@ void BehaviorX::gotoPosition(float target_x,float target_y, float target_phi) {
 	double targetAngle = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
 	double targetOrientation = anglediff2(target_phi, robot_phi);
 	
-	if (targetDistance > 0.25) 
+	if ( (targetDistance > 0.25) || (fabs(targetOrientation) > M_PI_4) )
 		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle), 
 									toCartesianY(targetDistance,targetAngle),
 									targetOrientation);
