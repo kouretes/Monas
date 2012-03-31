@@ -245,7 +245,7 @@ void Behavior::GetGameState()
 				calibrated = 0;
 				lastpenalized = microsec_clock::universal_time();
 				locReset->set_type(LocalizationResetMessage::PENALIZED);
-				locReset->set_kickoff(false);
+				locReset->set_kickoff(kickoff);
 				locReset->set_playreadyplay(false);
 				_blk->publishSignal(*locReset, "worldstate");
 			}
@@ -267,7 +267,7 @@ void Behavior::GetGameState()
 				if (playerNumber==2) locReset->set_type(LocalizationResetMessage::P2);
 				if (playerNumber==3) locReset->set_type(LocalizationResetMessage::P3);
 				if (playerNumber==4) locReset->set_type(LocalizationResetMessage::P4);
-				locReset->set_kickoff(false);
+				locReset->set_kickoff(kickoff);
 				locReset->set_playreadyplay(false);
 				_blk->publishSignal(*locReset, "worldstate");
 			}
@@ -329,23 +329,29 @@ void Behavior::UpdateOrientation()
 
 void Behavior::UpdateOrientationPlus()
 {
-	float loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
-	float roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
-	float oppgb = wrapToPi( (wrapTo0_2Pi(loppgb) + wrapTo0_2Pi(roppgb)) / 2.0 );
-
-	float lowngb = anglediff2(atan2(ownGoalLeftY - robot_y, ownGoalLeftX - robot_x), robot_phi);
-	float rowngb = anglediff2(atan2(ownGoalRightY - robot_y, ownGoalRightX - robot_x), robot_phi);
-	float owngb = wrapToPi( (wrapTo0_2Pi(lowngb) + wrapTo0_2Pi(rowngb)) / 2.0 );
-
-	if ( (fabs(oppgb) <= M_PI_4) && (fabs(oppgb) > -M_PI_4) ) {
+	double loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
+	double roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
+	double cone = anglediff2(loppgb, roppgb); 
+	double oppgb = wrapToPi(roppgb + cone/2.0);
+	
+	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
 		orientation = 0;
-	} else if ( (fabs(oppgb) > M_PI_4) && (fabs(oppgb) <= (M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI-M_PI_4) ) ) {
 		orientation = 1;
-	} else if ( (fabs(oppgb) > (M_PI-M_PI_4) ) || (fabs(oppgb) <= -(M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb > (M_PI-M_PI_4) ) || (oppgb <= -(M_PI-M_PI_4) ) ) {
 		orientation = 2;
-	} else if ( (fabs(oppgb) <= -M_PI_4 ) && (fabs(oppgb) > -(M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI-M_PI_4) ) ) {
 		orientation = 3;
 	}
+	Logger::Instance().WriteMsg("Behavior", "AGOC-OPPGOAL: " + _toString(oppGoalLeftX) + " " + _toString(oppGoalLeftY) + " " + _toString(oppGoalRightX) + " " + _toString(oppGoalRightY), Logger::Info);
+	Logger::Instance().WriteMsg("Behavior", "AGOC-ROBOT: " + _toString(robot_x) + " " + _toString(robot_y) + " " + _toString(robot_phi) + " DEG: " + _toString(int(robot_phi*180.0/M_PI)), Logger::Info);
+	 Logger::Instance().WriteMsg("Behavior", "AGOC-OGB: " + _toString(oppgb) + " DEG: " + _toString(int(oppgb*180.0/M_PI)) + " ORIENTATION: " + _toString(orientation), Logger::Info);
+
+	//double lowngb = anglediff2(atan2(ownGoalLeftY - robot_y, ownGoalLeftX - robot_x), robot_phi);
+	//double rowngb = anglediff2(atan2(ownGoalRightY - robot_y, ownGoalRightX - robot_x), robot_phi);
+	//double owngb = wrapToPi( (wrapTo0_2Pi(lowngb) + wrapTo0_2Pi(rowngb)) / 2.0 );
+
+
 }
 
 
