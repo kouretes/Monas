@@ -360,7 +360,7 @@ public:
 	void setBelief(double x, double y, double phi, double confidence);
 	void setParticlesPose(parts & Particles, double x, double y, double phi);
 	void setParticlesPoseUniformly(parts & Particles);
-	void initializeParticlesForInitialState(parts & Particles,int playerNumber,bool kickOff, bool playReadyPlay);
+	void initializeParticles(parts & Particles,int playerNumber,bool kickOff, bool playReadyPlay);
 	
 	int ObservationParticles(vector<KObservationModel> & Observation, parts &Paticles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright);
 	int CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) ;

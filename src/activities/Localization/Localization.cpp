@@ -82,10 +82,7 @@ void Localization::UserInit()
 
 void Localization::Reset(int playerNumber, bool kickOff,bool playReadyPlay )
 {
-	if(playerNumber == -1)
-		KLocalization::setParticlesPoseUniformly(SIRParticles);
-	else
-		KLocalization::initializeParticlesForInitialState(SIRParticles,playerNumber,kickOff,playReadyPlay);
+	KLocalization::initializeParticles(SIRParticles,playerNumber,kickOff,playReadyPlay);
 }
 
 
