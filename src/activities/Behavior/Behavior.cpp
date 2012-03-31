@@ -102,6 +102,7 @@ void Behavior::UserInit() {
 	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
+	lastpenalized = microsec_clock::universal_time();
 	ballseen = microsec_clock::universal_time();
 
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
@@ -126,6 +127,11 @@ int Behavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
+		
+		if (lastpenalized+seconds(12)>microsec_clock::universal_time()) {
+			HeadScanStepHigh(2.08);
+			return 0;
+		}
 
 		CheckForBall();
 		UpdateOrientationPlus();
@@ -237,6 +243,7 @@ void Behavior::GetGameState()
 			if (prevGameState == PLAYER_PENALISED){
 				direction = 1;
 				calibrated = 0;
+				lastpenalized = microsec_clock::universal_time();
 				locReset->set_type(LocalizationResetMessage::PENALIZED);
 				locReset->set_kickoff(false);
 				locReset->set_playreadyplay(false);

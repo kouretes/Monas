@@ -130,7 +130,7 @@ class Behavior: public IActivity {
 
 		bool readRobotConf;
 
-		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, ballseen;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastpenalized, ballseen;
 };
 
 #endif
