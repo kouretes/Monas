@@ -349,7 +349,7 @@ void Vision::recv_and_send()
 			rs = sock->send(data + rsize, sendsize - rsize);
 			rsize += rs;
 		}
-		cout << "Sended outgoingheader " << rsize << endl;
+		//cout << "Sended outgoingheader " << rsize << endl;
 		//send the image bytes
 		sendsize = img.ByteSize();
 
@@ -363,18 +363,18 @@ void Vision::recv_and_send()
 		img.SerializeToString(&buf);
 		sendsize = buf.length();
 		rsize = 0;
-		cout << "Will send Data " << sendsize << " " << img.GetTypeName() << endl;
+		//cout << "Will send Data " << sendsize << " " << img.GetTypeName() << endl;
 
 		while (rsize < sendsize)
 		{
 			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);// UDT::send(recver, data + rsize, sendsize - rsize, 0))) {
 			rsize += rs;
 		}
-		cout << "Sended " << rsize << endl;
+		//cout << "Sended " << rsize << endl;
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
-		cout << "Disconnecting !!!" << endl;
+		//cout << "Disconnecting !!!" << endl;
 		exit(0);
 		debugmode = false;
 	}
@@ -642,7 +642,7 @@ void VISIBLE Vision::UserInit()
 
 	ext.Init(_blk);
 	kinext.Init();
-	Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
+	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
 	//cout << "Vision():" ;//<< endl;
 	//rawImage = ext.allocateImage();
 
@@ -824,7 +824,7 @@ void * Vision::StartServer(void * s)
 
 	TCPServerSocket servSock(port);
 
-	cout << "Vision server is ready at port: " << port << endl;
+	//cout << "Vision server is ready at port: " << port << endl;
 
 	while (true)
 	{

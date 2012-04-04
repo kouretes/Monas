@@ -8,14 +8,12 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
-#include "messages/BehaviorMessages.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "tools/MathFunctions.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -45,7 +43,6 @@ class BehaviorX: public IActivity {
 
 		void GetGameState();
 		void GetPosition();
-		void UpdateOrientation();
 		void UpdateOrientationPlus();
 		void CheckForBall();
 		int MakeTrackBallAction();
@@ -65,6 +62,9 @@ class BehaviorX: public IActivity {
 		void littleWalk(double x, double y, double th);
 		void approachBall(double ballX, double ballY);
 		void approachBallNewWalk(double ballX, double ballY);
+		void stopRobot();
+		void pathPlanningRequestRelative(float target_x,float target_y, float target_phi);
+		void pathPlanningRequestAbsolute(float target_x,float target_y, float target_phi);
 		void gotoPosition(float target_x,float target_y, float target_phi);
 
 		void calibrate();
@@ -79,7 +79,6 @@ class BehaviorX: public IActivity {
 		boost::shared_ptr<const AllSensorValuesMessage> allsm;
 		boost::shared_ptr<const BallTrackMessage>  bmsg;
 		boost::shared_ptr<const GameStateMessage>  gsm;
-		//boost::shared_ptr<const ObservationMessage>  obsm;
 		boost::shared_ptr<const ObstacleMessageArray>  om;
 		boost::shared_ptr<const WorldInfo>  wim;
 
@@ -88,6 +87,7 @@ class BehaviorX: public IActivity {
 		MotionHeadMessage* hmot;
 		MotionActionMessage* amot;
 		LocalizationResetMessage* locReset;
+		PathPlanningRequestMessage* pprm;
 
 		int leftright;
 		float headpos;
@@ -107,10 +107,11 @@ class BehaviorX: public IActivity {
 		int forball, forpost;
 
 		bool kickoff;
-		float initX[2][2], initY[2][2], initPhi[2][2]; //initial game position in the field!!!!
-		double oppGoalX[2], oppGoalY[2], ownGoalX[2], ownGoalY[2];
-		double oppGoalLeftX[2], oppGoalLeftY[2], oppGoalRightX[2], oppGoalRightY[2];
-		double ownGoalLeftX[2], ownGoalLeftY[2], ownGoalRightX[2], ownGoalRightY[2];
+		bool toReadyFromGoal;
+		float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
+		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
+		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
+		double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
 		float cX, cY, ct;
 		float bd, bb, bx, by, posx, posy;
 		int side;
@@ -127,7 +128,7 @@ class BehaviorX: public IActivity {
 
 		bool readRobotConf;
 		std::string currentKick;
-		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, ballseen;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastpenalized, ballseen;
 };
 
 #endif

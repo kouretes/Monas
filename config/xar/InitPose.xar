@@ -30,12 +30,6 @@
                             <Timeline fps="10" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
                                 <watches />
                                 <ActuatorList>
-                                    <ActuatorCurve name="value" actuator="HeadYaw" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="5" value="0" />
-                                    </ActuatorCurve>
-                                    <ActuatorCurve name="value" actuator="HeadPitch" recordable="1" mute="0" alwaysVisible="0">
-                                        <Key frame="5" value="0" />
-                                    </ActuatorCurve>
                                     <ActuatorCurve name="value" actuator="LShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
                                         <Key frame="5" value="80" />
                                     </ActuatorCurve>

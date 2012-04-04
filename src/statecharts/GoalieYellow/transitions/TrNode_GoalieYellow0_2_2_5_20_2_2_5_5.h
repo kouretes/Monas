@@ -2,7 +2,7 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-// 0.3.2.6.2_TO_0.2.2.5.5
+// 0.2.2.5.2_TO_0.2.2.5.5
 class TrCond_GoalieYellow0_2_2_5_20_2_2_5_5 : public statechart_engine::ICondition {		
 public:
 	void UserInit () {

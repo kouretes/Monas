@@ -5,6 +5,7 @@
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
 #include "hal/robot/generic_nao/robot_consts.h"
+#include "tools/MathFunctions.h"
 
 using namespace boost::posix_time;
 namespace {
@@ -48,6 +49,8 @@ void Behavior::UserInit() {
 	amot = new MotionActionMessage();
 
 	locReset = new LocalizationResetMessage();
+	
+	pprm = new PathPlanningRequestMessage();
 
 	readRobotConf = false;
 
@@ -58,23 +61,24 @@ void Behavior::UserInit() {
 	scanforball = true;
 	startscan = true;
 	scanOK = true;
+	pathOK = true;
 	calibrated = 0;
 
 	forball = 0;
 	forpost = 0;
 
 	kickoff = false;
-	for (int i = 0; i < 2; i++)     	// i: kick-off
-		for (int j = 0; j < 2; j++){	// j: team color
-			initX[i][j] = 0.0;
-			initY[i][j] = 0.0;
-			initPhi[i][j] = 0.0;
-		}
-	for (int j = 0; j < 2; j++){	// j: team color
-		ownGoalX[j] = 0.0; ownGoalY[j] = 0.0; oppGoalX[j] = 0.0; oppGoalY[j] = 0.0;
-		ownGoalLeftX[j] = 0.0; ownGoalLeftY[j] = 0.0; ownGoalRightX[j] = 0.0; ownGoalRightY[j] = 0.0;
-		oppGoalLeftX[j] = 0.0; oppGoalLeftY[j] = 0.0; oppGoalRightX[j] = 0.0; oppGoalRightY[j] = 0.0;
+	toReadyFromGoal = false;
+	for (int i = 0; i < 2; i++) {		// i: kick-off
+		initX[i] = 0.0;
+		initY[i] = 0.0;
+		initPhi[i] = 0.0;
 	}
+
+	ownGoalX = 0.0; ownGoalY = 0.0; oppGoalX = 0.0; oppGoalY = 0.0;
+	ownGoalLeftX = 0.0; ownGoalLeftY = 0.0; ownGoalRightX = 0.0; ownGoalRightY = 0.0;
+	oppGoalLeftX = 0.0; oppGoalLeftY = 0.0; oppGoalRightX = 0.0; oppGoalRightY = 0.0;
+
 	cX=0.0; cY=0.0; ct=0.0;
 	bd=0.0; bb=0.0; bx=0.0; by=0.0; posx=0.0; posy=0.0;
 	side = +1;
@@ -98,6 +102,7 @@ void Behavior::UserInit() {
 	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
+	lastpenalized = microsec_clock::universal_time();
 	ballseen = microsec_clock::universal_time();
 
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
@@ -122,6 +127,11 @@ int Behavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
+		
+		if (lastpenalized+seconds(12)>microsec_clock::universal_time()) {
+			HeadScanStepHigh(2.08);
+			return 0;
+		}
 
 		CheckForBall();
 		UpdateOrientationPlus();
@@ -143,7 +153,14 @@ int Behavior::Execute() {
 					side = -1;
 				else if (orientation == 3)
 					side = +1;
-				approachBallNewWalk(posx, side*posy);
+				if (pathOK && bd > 0.2){
+					pathOK = false;
+					int pathSide = (bb > 0) ? 1 : -1;
+					pathPlanningRequestRelative(bx, by, pathSide*M_PI_2);
+				}
+				else
+					pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
+				
 				if (scanOK)
 					HeadScanStepSmart();
 			}
@@ -156,30 +173,20 @@ int Behavior::Execute() {
 				startscan = true;
 				scanforball = true;
 			}
-			velocityWalk(bx*0.1, by*0.1, 0.3*(bb>0?+1:-1), 0.4);
+			if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
+				pathPlanningRequestAbsolute(0.45, 0.45*direction, M_PI_4*direction);
+			else
+				pathPlanningRequestAbsolute(0.1, 0.1*direction, M_PI_4*direction);
 			/* End of New Exploration */
 
-			/* Old exploration */
-			//if (!scanforball) {
-				//startscan = true;
-				//scanforball = true;
-				//velocityWalk(0.0,0.0,0.0,1.0);
-				//lastmove = microsec_clock::universal_time();
-			//}
-			//if (lastmove + seconds(5) < microsec_clock::universal_time()) {
-				//littleWalk(direction * 0.20, 0.0, direction * M_PI_4);
-				//lastmove = microsec_clock::universal_time();
-			//}
-			/* End of Old Exploration */
 			HeadScanStepSmart();
 		}
 	}
 	else if (gameState == PLAYER_READY) {
-		if (calibrated == 0)
-			calibrate();
+		//HeadScanStepSmart();
+		HeadScanStepHigh(2.08);
 		int p = (kickoff) ? 0 : 1;
-		//gotoPosition( initX[p][teamColor], initY[p][teamColor], initPhi[p][teamColor] );
-		HeadScanStepSmart();
+		gotoPosition( initX[p], initY[p], initPhi[p] );
 		return 0;
 	}
 	else if (gameState == PLAYER_SET) {
@@ -220,15 +227,21 @@ void Behavior::GetGameState()
 		int prevGameState = gameState;
 		gameState = gsm->player_state();
 		teamColor = gsm->team_color();
+		playerNumber = gsm->player_number();
 
 		if (gameState == PLAYER_PLAYING) {
 			if (prevGameState == PLAYER_PENALISED){
 				direction = 1;
 				calibrated = 0;
-				_blk->publishSignal(*locReset, "behavior");
+				lastpenalized = microsec_clock::universal_time();
+				locReset->set_type(LocalizationResetMessage::PENALIZED);
+				locReset->set_kickoff(kickoff);
+				locReset->set_playreadyplay(false);
+				_blk->publishSignal(*locReset, "worldstate");
 			}
-			if (prevGameState == PLAYER_SET)
+			if (prevGameState == PLAYER_SET) {
 				lastplay = microsec_clock::universal_time();
+			}
 		}
 		else if (gameState == PLAYER_INITIAL) {
 			if (gameState != prevGameState)
@@ -236,14 +249,35 @@ void Behavior::GetGameState()
 		}
 		else if (gameState == PLAYER_READY) {
 			if (gameState != prevGameState) {
-				velocityWalk(0.0, 0.0, 0.0, 1.0);
+				stopRobot();
 				calibrated = 0;
 			}
+			if (prevGameState == PLAYER_INITIAL) {
+				if (playerNumber==1) locReset->set_type(LocalizationResetMessage::P1);
+				if (playerNumber==2) locReset->set_type(LocalizationResetMessage::P2);
+				if (playerNumber==3) locReset->set_type(LocalizationResetMessage::P3);
+				if (playerNumber==4) locReset->set_type(LocalizationResetMessage::P4);
+				locReset->set_kickoff(kickoff);
+				locReset->set_playreadyplay(false);
+				_blk->publishSignal(*locReset, "worldstate");
+			}
+			if (prevGameState == PLAYER_PLAYING)
+				toReadyFromGoal = true;
 		}
 		else if (gameState == PLAYER_SET) {
 			kickoff = gsm->kickoff();
 			if (gameState != prevGameState)
-				velocityWalk(0.0, 0.0, 0.0, 1.0);
+				stopRobot();
+			if ( toReadyFromGoal ) {
+				if (playerNumber==1) locReset->set_type(LocalizationResetMessage::P1);
+				if (playerNumber==2) locReset->set_type(LocalizationResetMessage::P2);
+				if (playerNumber==3) locReset->set_type(LocalizationResetMessage::P3);
+				if (playerNumber==4) locReset->set_type(LocalizationResetMessage::P4);
+				locReset->set_kickoff(kickoff);
+				locReset->set_playreadyplay(true);
+				_blk->publishSignal(*locReset, "worldstate");
+				toReadyFromGoal = false;
+			}
 		}
 		else if (gameState == PLAYER_FINISHED) {
 			;
@@ -266,42 +300,31 @@ void Behavior::GetPosition() {
 }
 
 
-void Behavior::UpdateOrientation()
-{
-	float ogb = anglediff2(atan2(oppGoalY[teamColor] - robot_y, oppGoalX[teamColor] - robot_x), robot_phi);
-
-	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
-		orientation = 0;
-	} else if ((fabs(ogb) > +45 * TO_RAD) && (fabs(ogb) <= +135 * TO_RAD)) {
-		orientation = 1;
-	} else if ((fabs(ogb) > +135 * TO_RAD) || (fabs(ogb) <= -135 * TO_RAD)) {
-		orientation = 2;
-	} else if ((fabs(ogb) <= -45 * TO_RAD) && (fabs(ogb) > -135 * TO_RAD)) {
-		orientation = 3;
-	}
-	//Logger::Instance().WriteMsg("Behavior", "OPPGOALX " + _toString(oppGoalX[teamColor]) + "OPPGOALY " + _toString(oppGoalY[teamColor]) + "OGB " + _toString(ogb)+ "ORIENTATION " + _toString(orientation), Logger::Info);
-}
-
-
 void Behavior::UpdateOrientationPlus()
 {
-	float loppgb = anglediff2(atan2(oppGoalLeftY[teamColor] - robot_y, oppGoalLeftX[teamColor] - robot_x), robot_phi);
-	float roppgb = anglediff2(atan2(oppGoalRightY[teamColor] - robot_y, oppGoalRightX[teamColor] - robot_x), robot_phi);
-	float oppgb = wrapToPi( (wrapTo0_2Pi(loppgb) + wrapTo0_2Pi(roppgb)) / 2.0 );
-
-	float lowngb = anglediff2(atan2(ownGoalLeftY[teamColor] - robot_y, ownGoalLeftX[teamColor] - robot_x), robot_phi);
-	float rowngb = anglediff2(atan2(ownGoalRightY[teamColor] - robot_y, ownGoalRightX[teamColor] - robot_x), robot_phi);
-	float owngb = wrapToPi( (wrapTo0_2Pi(lowngb) + wrapTo0_2Pi(rowngb)) / 2.0 );
-
-	if ( (fabs(oppgb) <= M_PI_4) && (fabs(oppgb) > -M_PI_4) ) {
+	double loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
+	double roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
+	double cone = anglediff2(loppgb, roppgb); 
+	double oppgb = wrapToPi(roppgb + cone/2.0);
+	
+	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
 		orientation = 0;
-	} else if ( (fabs(oppgb) > M_PI_4) && (fabs(oppgb) <= (M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI-M_PI_4) ) ) {
 		orientation = 1;
-	} else if ( (fabs(oppgb) > (M_PI-M_PI_4) ) || (fabs(oppgb) <= -(M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb > (M_PI-M_PI_4) ) || (oppgb <= -(M_PI-M_PI_4) ) ) {
 		orientation = 2;
-	} else if ( (fabs(oppgb) <= -M_PI_4 ) && (fabs(oppgb) > -(M_PI-M_PI_4) ) ) {
+	} else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI-M_PI_4) ) ) {
 		orientation = 3;
 	}
+	Logger::Instance().WriteMsg("Behavior", "AGOC-OPPGOAL: " + _toString(oppGoalLeftX) + " " + _toString(oppGoalLeftY) + " " + _toString(oppGoalRightX) + " " + _toString(oppGoalRightY), Logger::Info);
+	Logger::Instance().WriteMsg("Behavior", "AGOC-ROBOT: " + _toString(robot_x) + " " + _toString(robot_y) + " " + _toString(robot_phi) + " DEG: " + _toString(int(robot_phi*180.0/M_PI)), Logger::Info);
+	 Logger::Instance().WriteMsg("Behavior", "AGOC-OGB: " + _toString(oppgb) + " DEG: " + _toString(int(oppgb*180.0/M_PI)) + " ORIENTATION: " + _toString(orientation), Logger::Info);
+
+	//double lowngb = anglediff2(atan2(ownGoalLeftY - robot_y, ownGoalLeftX - robot_x), robot_phi);
+	//double rowngb = anglediff2(atan2(ownGoalRightY - robot_y, ownGoalRightX - robot_x), robot_phi);
+	//double owngb = wrapToPi( (wrapTo0_2Pi(lowngb) + wrapTo0_2Pi(rowngb)) / 2.0 );
+
+
 }
 
 
@@ -567,8 +590,8 @@ void Behavior::HeadScanStepIntelligent() {
 				targetPitch = lookAtPointPitch(robot_x+bx, robot_y+by);
 				break;
 			case OPPG:
-				targetYaw = lookAtPointYaw(oppGoalX[teamColor], oppGoalY[teamColor]);
-				targetPitch = lookAtPointPitch(oppGoalX[teamColor], oppGoalY[teamColor]);
+				targetYaw = lookAtPointYaw(oppGoalX, oppGoalY);
+				targetPitch = lookAtPointPitch(oppGoalX, oppGoalY);
 				//if (targetYaw < 1.57)
 					//targetPitch = (0.145 * fabs(headpos)) - 0.752;
 				//else
@@ -579,8 +602,8 @@ void Behavior::HeadScanStepIntelligent() {
 				targetPitch = lookAtPointPitch(robot_x+bx, robot_y+by);
 				break;
 			case OWNG:
-				targetYaw = lookAtPointYaw(ownGoalX[teamColor], ownGoalY[teamColor]);
-				targetPitch = lookAtPointPitch(ownGoalX[teamColor], ownGoalY[teamColor]);
+				targetYaw = lookAtPointYaw(ownGoalX, ownGoalY);
+				targetPitch = lookAtPointPitch(ownGoalX, ownGoalY);
 				//if (targetYaw < 1.57)
 					//targetPitch = (0.145 * fabs(headpos)) - 0.752;
 				//else
@@ -594,7 +617,7 @@ void Behavior::HeadScanStepIntelligent() {
 
 		switch (state) {
 			case BALL1:
-				bearing = lookAtPointYaw(oppGoalX[teamColor], oppGoalY[teamColor]);
+				bearing = lookAtPointYaw(oppGoalX, oppGoalY);
 				//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) )
 					//state = OPPG;
 				//else
@@ -604,7 +627,7 @@ void Behavior::HeadScanStepIntelligent() {
 				state = BALL2;
 				break;
 			case BALL2:
-				bearing = lookAtPointYaw(ownGoalX[teamColor], ownGoalY[teamColor]);
+				bearing = lookAtPointYaw(ownGoalX, ownGoalY);
 				//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) )
 					//state = OWNG;
 				//else
@@ -775,37 +798,40 @@ void Behavior::approachBallNewWalk(double ballX, double ballY){
 	velocityWalk(X, Y, t, f);
 }
 
+void Behavior::stopRobot() {
+	//velocityWalk(0.0, 0.0, 0.0, 1.0);
+	amot->set_command("InitPose.xar");
+	_blk->publishSignal(*amot, "motion");
+}
+
+void Behavior::pathPlanningRequestRelative(float target_x, float target_y, float target_phi) {
+	pprm->set_gotox(target_x);
+	pprm->set_gotoy(target_y);
+	pprm->set_gotoangle(target_phi);
+	pprm->set_mode("relative");
+	_blk->publishSignal(*pprm, "obstacle");
+}
+
+void Behavior::pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi) {
+	pprm->set_gotox(target_x);
+	pprm->set_gotoy(target_y);
+	pprm->set_gotoangle(target_phi);
+	pprm->set_mode("absolute");
+	_blk->publishSignal(*pprm, "obstacle");
+}
 
 void Behavior::gotoPosition(float target_x,float target_y, float target_phi) {
 
-	HeadScanStepHigh(2.08);
-
-	float Robot2Target_bearing = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
-	float Distance2Target = sqrt((target_x-robot_x)*(target_x-robot_x)+(target_y-robot_y)*(target_y-robot_y));
-
-	float VelX, VelY, Rot, freq;
-
-	VelX =  cos(Robot2Target_bearing);
-	VelY =  sin(Robot2Target_bearing);
-
-	if (Distance2Target < 0.3) {
-		VelX /= 2.0;
-		VelY /= 2.0;
-		Rot = anglediff2(target_phi, robot_phi)*0.5;
-		freq = Distance2Target;
-	}
-	else if (fabs(Robot2Target_bearing) > 1) {
-		VelX /= 4.0;
-		VelY /= 4.0;
-		Rot = Robot2Target_bearing*0.4;
-		freq = 0.5;
-	}
-	else {
-		Rot = Robot2Target_bearing*0.1 ;
-		freq = 1.0;
-	}
-
-	velocityWalk(VelX, VelY, Rot, freq);
+	double targetDistance = sqrt((target_x-robot_x)*(target_x-robot_x)+(target_y-robot_y)*(target_y-robot_y));
+	double targetAngle = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
+	double targetOrientation = anglediff2(target_phi, robot_phi);
+	
+	if ( (targetDistance > 0.25) || (fabs(targetOrientation) > M_PI_4) )
+		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle), 
+									toCartesianY(targetDistance,targetAngle),
+									targetOrientation);
+	else
+		stopRobot();
 }
 
 
@@ -870,16 +896,11 @@ bool Behavior::readRobotConfiguration(const std::string& file_name) {
 
 		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++) {
 			if (it->attrb["number"] == playerNumber) {
-				initPhi[i][TEAM_BLUE] = 0.0;
-				initX[i][TEAM_BLUE] = -1.0*(it->attrb["posx"]);
-				initY[i][TEAM_BLUE] = -1.0*(it->attrb["posy"]);
+				initPhi[i] = 0.0;
+				initX[i] = (it->attrb["posx"]);
+				initY[i] = (it->attrb["posy"]);
 
-				initPhi[i][TEAM_RED] = M_PI;
-				initX[i][TEAM_RED] = (it->attrb["posx"]);
-				initY[i][TEAM_RED] = (it->attrb["posy"]);
-
-				Logger::Instance().WriteMsg("Behavior", " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
-				Logger::Instance().WriteMsg("Behavior", " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
+				Logger::Instance().WriteMsg("Behavior", " readConf INIT X "+ kickoff + " "+ _toString(initX[i]) + " INITY " + _toString(initY[i]) + " INITPHI " + _toString(initPhi[i]), Logger::Info);
 
 				found = true;
 			}
@@ -914,40 +935,28 @@ bool Behavior::readGoalConfiguration(const std::string& file_name) {
 		ID = Attr->Attribute("ID");
 
 		if (ID == "SkyblueGoal"){
-			ownGoalX[TEAM_BLUE] = x/1000.0;
-			ownGoalY[TEAM_BLUE] = y/1000.0;
-			oppGoalX[TEAM_RED] = x/1000.0;
-			oppGoalY[TEAM_RED] = y/1000.0;
+			ownGoalX = x/1000.0;
+			ownGoalY = y/1000.0;
 		}
 		if (ID == "SkyblueLeft"){
-			ownGoalLeftX[TEAM_BLUE] = x/1000.0;
-			ownGoalLeftY[TEAM_BLUE] = y/1000.0;
-			oppGoalLeftX[TEAM_RED] = x/1000.0;
-			oppGoalLeftY[TEAM_RED] = y/1000.0;
+			ownGoalLeftX = x/1000.0;
+			ownGoalLeftY = y/1000.0;
 		}
 		if (ID == "SkyblueRight"){
-			ownGoalRightX[TEAM_BLUE] = x/1000.0;
-			ownGoalRightY[TEAM_BLUE] = y/1000.0;
-			oppGoalRightX[TEAM_RED] = x/1000.0;
-			oppGoalRightY[TEAM_RED] = y/1000.0;
+			ownGoalRightX = x/1000.0;
+			ownGoalRightY = y/1000.0;
 		}
 		if (ID == "YellowGoal"){
-			oppGoalX[TEAM_BLUE] = x/1000.0;
-			oppGoalY[TEAM_BLUE] = y/1000.0;
-			ownGoalX[TEAM_RED] = x/1000.0;
-			ownGoalY[TEAM_RED] = y/1000.0;
+			oppGoalX = x/1000.0;
+			oppGoalY = y/1000.0;
 		}
 		if (ID == "YellowLeft"){
-			oppGoalLeftX[TEAM_BLUE] = x/1000.0;
-			oppGoalLeftY[TEAM_BLUE] = y/1000.0;
-			ownGoalLeftX[TEAM_RED] = x/1000.0;
-			ownGoalLeftY[TEAM_RED] = y/1000.0;
+			oppGoalLeftX = x/1000.0;
+			oppGoalLeftY = y/1000.0;
 		}
 		if (ID == "YellowRight"){
-			oppGoalRightX[TEAM_BLUE] = x/1000.0;
-			oppGoalRightY[TEAM_BLUE] = y/1000.0;
-			ownGoalRightX[TEAM_RED] = x/1000.0;
-			ownGoalRightY[TEAM_RED] = y/1000.0;
+			oppGoalRightX = x/1000.0;
+			oppGoalRightY = y/1000.0;
 		}
 	}
 

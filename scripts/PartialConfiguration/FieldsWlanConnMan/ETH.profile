@@ -36,8 +36,19 @@ IPv4.local_address=10.0.6.3
 Powered=true
 
 
+[ethernet_0001c005b4f6_cable]
+Name=Wired
+IPv6.method=off
+IPv6.netmask_prefixlen=0
+IPv4.method=manual
+IPv4.netmask_prefixlen=24
+IPv4.local_address=10.0.6.4
 
-[ethernet_0001c0075fe5_cable]
+[device_0001c005b4f6]
+Powered=true
+
+
+
 [ethernet_0001c0075fe5_cable]
 Name=Wired
 IPv6.method=off

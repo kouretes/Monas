@@ -3,8 +3,8 @@
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>8-GermanOpen11-segall.conf</SegmentationBottom>
-<SegmentationTop>8-GermanOpen11-segall.conf</SegmentationTop>
+<SegmentationBottom>17-GermanOpen12-segall.conf</SegmentationBottom>
+<SegmentationTop>17-GermanOpen12-segall.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGain>48.20</cameraGain>
 <!-- Ball Detection -->

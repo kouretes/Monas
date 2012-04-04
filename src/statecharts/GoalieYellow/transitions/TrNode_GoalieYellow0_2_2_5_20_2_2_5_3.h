@@ -2,7 +2,7 @@
 #include "architecture/statechartEngine/ICondition.h"
 #include "messages/AllMessagesHeader.h"		
 #include "tools/BehaviorConst.h"	
-// 0.3.2.6.2_TO_Localize_one_or_more_times_
+// 0.2.2.5.2_TO_Localize_one_or_more_times_
 class TrCond_GoalieYellow0_2_2_5_20_2_2_5_3 : public statechart_engine::ICondition {		
 public:
 	void UserInit () {

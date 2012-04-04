@@ -202,7 +202,7 @@ class ObstacleAvoidance: public IActivity {
 		PathPlanningRequestMessage* pprm_rel;
 
 
-		/********** Debuging ***********/
+		/********** Debugging ***********/
 		int debugModeCout;
 		int debugRelativeMode;
 		int debugCounter;

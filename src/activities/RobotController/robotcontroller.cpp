@@ -83,7 +83,7 @@ int RobotController::Execute() {
 
 		int chest=bm->data(KDeviceLists::CHEST_BUTTON);
 
-		if((lbump+rbump)>0 && chest==2)
+		if(chest==4 || ((lbump+rbump)>0 && chest==2))
 		{
 		  Logger::Instance().WriteMsg("SysCall","Shutdown robot",LoggerClass::Info);
 		  gm_state.Clear();

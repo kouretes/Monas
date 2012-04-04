@@ -285,14 +285,14 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 {
 	Uniform X, Y, P;
 
-	float length = (FieldMaxX - FieldMinX)/4;
+	float length = 2000;//(FieldMaxX - FieldMinX)/4;
 	//float width = (FieldMaxY - FieldMinY)/2;
 	unsigned int particlesUp = partclsNum/2;
 	unsigned int particlesDown = partclsNum - particlesUp;
 	//Initialize top Particles
 	for (unsigned int i = 0; i < particlesUp; i++)
 	{
-		Particles.x[i] = X.Next() * length + FieldMinX - FieldMinX/8;
+		Particles.x[i] = X.Next() * length + FieldMinX + 500;
 		Particles.y[i] = FieldMaxY;
 		Particles.phi[i] = deg2rad(270);
 		Particles.Weight[i] = 1.0 / partclsNum;
@@ -300,17 +300,132 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 	//Initialize down Particles
 	for (unsigned int i = particlesUp; i < partclsNum; i++)
 	{
-		Particles.x[i] = X.Next() * length + FieldMinX - FieldMinX/8;
+		Particles.x[i] = X.Next() * length + FieldMinX + 500;
 		Particles.y[i] = -FieldMaxY;
 		Particles.phi[i] = deg2rad(90);
 		Particles.Weight[i] = 1.0 / partclsNum;
-		beliefForGoalPosts[0] = 0;
-		beliefForGoalPosts[1] = 0;
-		beliefForGoalPosts[2] = 0;
-		beliefForGoalPosts[3] = 0;
-		timesOfContAmbig = 0;
-
 	}
+}
+
+void KLocalization::initializeParticles(parts & Particles,int playerNumber,bool kickOff, bool playReadyPlay){
+	if(playerNumber == -1)
+		setParticlesPoseUniformly(Particles);
+	else{
+		for (unsigned int i = 0; i < partclsNum; i++)
+		{
+			if(playerNumber == 1){
+				Particles.x[i] = -2400;
+				Particles.y[i] = -2000;
+				Particles.phi[i] = deg2rad(90);
+				Particles.Weight[i] = 1.0 / partclsNum;
+			}else if(playerNumber == 2){
+				Particles.x[i] = -2400;
+				Particles.y[i] = 2000;
+				Particles.phi[i] = deg2rad(270);
+				Particles.Weight[i] = 1.0 / partclsNum;
+			}else if(playerNumber == 3){
+				Particles.x[i] = -1200;
+				Particles.y[i] = -2000;
+				Particles.phi[i] = deg2rad(90);
+				Particles.Weight[i] = 1.0 / partclsNum;
+			}else{
+				Particles.x[i] = -1200;
+				Particles.y[i] = 2000;
+				Particles.phi[i] = deg2rad(270);
+				Particles.Weight[i] = 1.0 / partclsNum;
+			}
+		}
+	}
+	//we dont have the kick off
+	int index = (rand()) % Particles.size;
+	if(!kickOff){
+		for (unsigned int i=0; i<4; i++){
+			index = (rand() + i) % Particles.size;
+			if(playerNumber == 1){
+				Particles.x[index] = -3000;
+				Particles.y[index] = 0;
+			}else if(playerNumber == 2){
+				Particles.x[index] = -2300;
+				Particles.y[index] = 1400;
+			}else if(playerNumber == 3){
+				Particles.x[index] = -2300;
+				Particles.y[index] = -1400;
+			}else{
+				Particles.x[index] = -2300;
+				Particles.y[index] = 200;
+			}
+			Particles.phi[index] = deg2rad(0);
+			Particles.Weight[i] = 1.0 / partclsNum;
+		}
+	}else{
+		for (unsigned int i=partclsNum-4; i<partclsNum; i++){
+			if(playerNumber == 1){
+				Particles.x[index] = -3000;
+				Particles.y[index] = 0;
+			}else if(playerNumber == 2){
+				Particles.x[index] = -1200;
+				Particles.y[index] = 0;
+			}else if(playerNumber == 3){
+				Particles.x[index] = -2300;
+				Particles.y[index] = -1100;
+			}else{
+				Particles.x[index] = -600;
+				Particles.y[index] = 0;
+			}
+			Particles.Weight[index] = 1.0 / partclsNum;
+			Particles.phi[index] = deg2rad(0);
+		}
+	}
+	if(playReadyPlay){
+		if(!kickOff){
+			for (unsigned int i=0; i<partclsNum; i++){
+				if(playerNumber == 1){
+					Particles.x[i] = -3000;
+					Particles.y[i] = 0;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}else if(playerNumber == 2){
+					Particles.x[i] = -2300;
+					Particles.y[i] = 1400;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}else if(playerNumber == 3){
+					Particles.x[i] = -2300;
+					Particles.y[i] = -1400;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}else{
+					Particles.x[i] = -2300;
+					Particles.y[i] = 200;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}
+				Particles.phi[i] = deg2rad(0);
+			}
+		}else{
+			for (unsigned int i=0; i<partclsNum; i++){
+				if(playerNumber == 1){
+					Particles.x[i] = -3000;
+					Particles.y[i] = 0;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}else if(playerNumber == 2){
+					Particles.x[i] = -1200;
+					Particles.y[i] = 0;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}else if(playerNumber == 3){
+					Particles.x[i] = -2300;
+					Particles.y[i] = -1100;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}else{
+					Particles.x[i] = -600;
+					Particles.y[i] = 0;
+					Particles.Weight[i] = 1.0 / partclsNum;
+				}
+				Particles.phi[i] = deg2rad(0);
+			}
+		}
+	}
+	beliefForGoalPosts[0] = 0;
+	beliefForGoalPosts[1] = 0;
+	beliefForGoalPosts[2] = 0;
+	beliefForGoalPosts[3] = 0;
+	timesOfContAmbig = 0;
 }
 
 int KLocalization::Initialize()

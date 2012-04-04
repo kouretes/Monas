@@ -33,6 +33,7 @@ int NoPlay::Execute() {
 		//}
 		prevaction = curraction;
 		_blk->publishSignal(*bhmsg, "behavior");
+		_blk->publish_all();
 		//Logger::Instance().WriteMsg(GetName(),  " bgainw", Logger::Info);
 		return 0;
 
@@ -55,17 +56,17 @@ int NoPlay::Execute() {
 				lastMove = boost::posix_time::microsec_clock::universal_time()+boost::posix_time::seconds(5);
 			}
 
-			pmsg->set_posx(initX[0][teamColor]);
-			pmsg->set_posy(initY[0][teamColor]);
-			pmsg->set_theta(initPhi[0][teamColor]);
+			pmsg->set_posx(initX[0]);
+			pmsg->set_posy(initY[0]);
+			pmsg->set_theta(initPhi[0]);
 			_blk->publishState(*pmsg, "behavior");
 	//		Logger::Instance().WriteMsg(GetName(),  " publish pos", Logger::Info);
-			#ifdef PENALTY_ON
-				;
-			#else
-			rpm->set_goalietopos(true);
-			_blk->publishSignal(*rpm, "behavior");
-			#endif
+		//	#ifdef PENALTY_ON
+			//	;
+			//#else
+			rpm->set_goalietopos(false);
+			_blk->publishState(*rpm, "behavior");
+			//#endif
 			ld->set_moveon(false);
 			_blk->publishState(*ld, "behavior");
 //			Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
@@ -88,7 +89,7 @@ int NoPlay::Execute() {
 				if(firstInit + boost::posix_time::seconds(3) <=boost::posix_time::microsec_clock::universal_time()){
 					curraction = CALIBRATE;
 					if(prevaction!=CALIBRATE){
-					//	Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+						Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
 						calibrate_time = boost::posix_time::microsec_clock::universal_time();
 						bhmsg->set_headaction(curraction);
 					}
@@ -113,13 +114,13 @@ int NoPlay::Execute() {
 			_blk->publishState(*kcm, "behavior");
 
 			if(kickOff){	//in 0 position of the table kickoff positions
-				pmsg->set_posx(initX[0][teamColor]);
-				pmsg->set_posy(initY[0][teamColor]);
-				pmsg->set_theta(initPhi[0][teamColor]);
+				pmsg->set_posx(initX[0]);
+				pmsg->set_posy(initY[0]);
+				pmsg->set_theta(initPhi[0]);
 			}else{	//in 1 position of the table not in kickoff positions
-				pmsg->set_posx(initX[1][teamColor]);
-				pmsg->set_posy(initY[1][teamColor]);
-				pmsg->set_theta(initPhi[1][teamColor]);
+				pmsg->set_posx(initX[1]);
+				pmsg->set_posy(initY[1]);
+				pmsg->set_theta(initPhi[1]);
 			}
 			_blk->publishState(*pmsg, "behavior");
 			//Logger::Instance().WriteMsg(GetName(),  " playerready", Logger::Info);
@@ -135,7 +136,7 @@ int NoPlay::Execute() {
 			if(firstInit + boost::posix_time::seconds(3) <=boost::posix_time::microsec_clock::universal_time()){
 				curraction = CALIBRATE;
 				if(prevaction!=CALIBRATE){
-				//	Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
+					Logger::Instance().WriteMsg(GetName(),  " playerinitial CALIBRATE", Logger::Info);
 					calibrate_time = boost::posix_time::microsec_clock::universal_time();
 					bhmsg->set_headaction(curraction);
 				}
@@ -149,6 +150,13 @@ int NoPlay::Execute() {
 				}
 			}else
 				curraction = DONOTHING;
+				if(gsm.get()!=0){
+					if (gsm->player_number()==1) locReset->set_type(LocalizationResetMessage::P1);
+					if (gsm->player_number()==2) locReset->set_type(LocalizationResetMessage::P2);
+					if (gsm->player_number()==3) locReset->set_type(LocalizationResetMessage::P3);
+					if (gsm->player_number()==4) locReset->set_type(LocalizationResetMessage::P4);
+					_blk->publishSignal(*locReset, "worldstate");
+				}
 		break;
 	}
 
@@ -176,6 +184,7 @@ void NoPlay::UserInit () {
 	pmsg = new PositionMessage();
 	rpm = new ReturnToPositionMessage();
 	ld = new LocalizeDone();
+	locReset = new LocalizationResetMessage();
 	myPosX = 0.0;
 	myPosY = 0.0;
 	myPhi = 0.0;
@@ -233,20 +242,11 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 		// Logger::Instance().WriteMsg(GetName(), " it ", Logger::Info);
 			if (it->attrb["number"] == playernum)///////////////////////////////////////////
 			{
-			initPhi[i][TEAM_BLUE] = 0;
-			if((it->attrb["posx"])!=0.0)
-				initX[i][TEAM_BLUE] = -1*(it->attrb["posx"]);
-			else
-				initX[i][TEAM_BLUE] = (it->attrb["posx"]);
+			initPhi[i] = 0;
+	
+			initX[i] = (it->attrb["posx"]);
 
-			if((it->attrb["posy"])!=0.0)
-				initY[i][TEAM_BLUE] = -1*(it->attrb["posy"]);
-			else
-				initY[i][TEAM_BLUE] = (it->attrb["posy"]);
-
-			initPhi[i][TEAM_RED] = 180 * TO_RAD;
-			initX[i][TEAM_RED] = (it->attrb["posx"]);
-			initY[i][TEAM_RED] = (it->attrb["posy"]);
+			initY[i] = (it->attrb["posy"]);
 
 		//	Logger::Instance().WriteMsg(GetName(), " readConf TEAM_BLUE INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_BLUE]) + " INITY " + _toString(initY[i][TEAM_BLUE]) + " INITPHI " + _toString(initPhi[i][TEAM_BLUE]), Logger::Info);
 		//	Logger::Instance().WriteMsg(GetName(), " readConf TEAM_RED INIT X "+ kickoff + " "+ _toString(initX[i][TEAM_RED]) + " INITY " + _toString(initY[i][TEAM_RED]) + " INITPHI " + _toString(initPhi[i][TEAM_RED]), Logger::Info);
