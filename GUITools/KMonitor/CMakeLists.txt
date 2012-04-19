@@ -7,6 +7,8 @@ cmake_minimum_required( VERSION 2.6 )
 PROJECT( KMonitor )
 
 FIND_PACKAGE( Qt4 REQUIRED )
+
+# necessary ? 
 FIND_PACKAGE(Boost COMPONENTS date_time thread system)
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${Boost_INCLUDE_DIRS} ../../src/)

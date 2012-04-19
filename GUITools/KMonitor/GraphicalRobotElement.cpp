@@ -21,19 +21,13 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LWSVisionBallVisible = false;
 	VisionYellowLeftPostVisible = false;
 	VisionYellowRightPostVisible = false;
-	VisionBlueLeftPostVisible = false;
-	VisionBlueRightPostVisible = false;
+	VisionYellowPostVisible = false;
 
 	QPen penForUnionistLine(Qt::black);
 	penForUnionistLine.setWidth(1);
 
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
-
-	QPen penForYellowPost(Qt::darkYellow);//todo darkYellow , red
-	penForYellowPost.setWidth(6);
-	QPen penForBluePost(Qt::darkBlue); //todo darkBlue , black
-	penForBluePost.setWidth(6);
 
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
@@ -43,15 +37,9 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	VisionBall = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::white));
 
-	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::red),QBrush(Qt::darkYellow)); //todo darkYellow
-	LeftYellowPost = this->parentScene->addLine(QLineF(),penForYellowPost);
-	YellowPost1 = this->parentScene->addEllipse(QRect(),QPen(Qt::red),QBrush(Qt::darkYellow));//todo darkYellow
-	RightYellowPost = this->parentScene->addLine(QLineF(),penForYellowPost);
-	BluePost = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkBlue));//todo darkBlue
-	LeftBluePost = this->parentScene->addLine(QLineF(),penForBluePost);
-	BluePost1 = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkBlue));//todo darkBlue
-	RightBluePost = this->parentScene->addLine(QLineF(),penForBluePost);
-
+	LeftYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::darkYellow),QBrush(Qt::darkYellow));
+	RightYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::darkYellow),QBrush(Qt::darkYellow));
+	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::darkYellow),QBrush(Qt::darkYellow));
 
 	///////////////////////////////////////////////
 
@@ -86,23 +74,9 @@ GraphicalRobotElement::~GraphicalRobotElement()
 	if(LeftYellowPost)
 		delete LeftYellowPost;
 
-	if(YellowPost1)
-		delete YellowPost1;
-
 	if(RightYellowPost)
 		delete RightYellowPost;
 
-	if(BluePost)
-		delete BluePost;
-
-	if(LeftBluePost)
-		delete LeftBluePost;
-
-	if(BluePost1)
-		delete BluePost1;
-
-	if(RightBluePost)
-		delete RightBluePost;
 }
 
 void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim)
@@ -227,7 +201,6 @@ void GraphicalRobotElement::updateVisionBallRect(ObservationMessage obm)
 	if( obm.has_ball() && currentWIM.has_myposition())
 	{
 		VisionBall->setRect(this->parentScene->visionBallRect(obm.ball(), currentWIM));
-		std::cout << "Exw mpala exw exw exw exw exw exw AKOMA!!!" << std::endl;
 	}
 	else
 	{
@@ -235,161 +208,60 @@ void GraphicalRobotElement::updateVisionBallRect(ObservationMessage obm)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
-
 void GraphicalRobotElement::setYellowLeftPostVisible(bool visible)
 {
 	if (visible == false)
-	{
-		this->YellowPost->setVisible(false);
 		this->LeftYellowPost->setVisible(false);
-
-	} else
-	{
-		this->YellowPost->setVisible(true);
+	else
 		this->LeftYellowPost->setVisible(true);
-	}
 }
 
 void GraphicalRobotElement::setYellowRightPostVisible(bool visible)
 {
 	if (visible == false)
-	{
-		this->YellowPost1->setVisible(false);
 		this->RightYellowPost->setVisible(false);
-
-	} else
-	{
-		this->YellowPost1->setVisible(true);
+	else
 		this->RightYellowPost->setVisible(true);
-	}
 }
 
-void GraphicalRobotElement::setBlueLeftPostVisible(bool visible)
+void GraphicalRobotElement::setYellowPostVisible(bool visible)
 {
 	if (visible == false)
-	{
-		this->BluePost->setVisible(false);
-		this->LeftBluePost->setVisible(false);
-
-	} else
-	{
-		this->BluePost->setVisible(true);
-		this->LeftBluePost->setVisible(true);
-	}
+		this->YellowPost->setVisible(false);
+	else
+		this->YellowPost->setVisible(true);
 }
 
-void GraphicalRobotElement::setBlueRightPostVisible(bool visible)
+void GraphicalRobotElement::updateGoalPostsRect()
 {
-	if (visible == false)
+	if (currentObsm.regular_objects_size() > 0 && currentWIM.has_myposition())
 	{
-		this->BluePost1->setVisible(false);
-		this->RightBluePost->setVisible(false);
 
-	} else
-	{
-		this->BluePost1->setVisible(true);
-		this->RightBluePost->setVisible(true);
-	}
-}
-
-//todo rename to all vision obs
-void GraphicalRobotElement::updateYellowLeftPostRect()
-{
-	float xmiddle;
-	float ymiddle;
-
-	if (currentObsm.regular_objects_size() > 0 && currentWIM.has_myposition()) {
-
-		//cout << "#############################################################" << endl;
-
-		for (int o = 0; o < currentObsm.regular_objects_size(); o++) {
-
-			xmiddle = 0.f;
-			ymiddle = 0.f;
+		for (int o = 0; o < currentObsm.regular_objects_size(); o++)
+		{
 
 			NamedObject *obj = currentObsm.mutable_regular_objects(o);
 
-			if (obj->object_name() == "YellowLeft") {
+			if (obj->object_name() == "YellowLeft")
+				LeftYellowPost->setRect(this->parentScene->goalPostRectFromOBM( obj, &currentWIM));
 
-				xmiddle = (currentWIM.myposition().x() + obj->distance()*cos((currentWIM.myposition().phi() + obj->bearing())))*1000;
-				ymiddle = (currentWIM.myposition().y() + obj->distance() * sin((currentWIM.myposition().phi() + obj->bearing())))*1000;
+			else if (obj->object_name() == "YellowRight")
+				RightYellowPost->setRect(this->parentScene->goalPostRectFromOBM( obj, &currentWIM));
 
-				//e3iswseis chief ..
-				//xmiddle = (currentWIM.myposition().x() + obj->distance()*cos(obj->bearing()))*1000;
-				//ymiddle = (currentWIM.myposition().y() + obj->distance() * sin(obj->bearing()))*1000;
-
-
-
-				YellowPost->setRect(this->parentScene->rectFromFC( xmiddle, ymiddle, 100, 100));
-				LeftYellowPost->setLine(this->parentScene->lineFromFieldCoordinates(xmiddle, ymiddle, xmiddle, (ymiddle - 175)));
-
-
-
-			cout << "EXWWWWWWWWWWWWWWWWWW YellowLeft @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
-			/*cout << "Sta xmiddle = " << xmiddle << endl;
-			cout << "Sta ymiddle = " << ymiddle << endl;
-			cout << "To distance = " <<  obj->distance() << endl;*/
-
-
-			} else if (obj->object_name() == "YellowRight") {
-
-				cout << "EXWWWWWWWWWWWWWWWWWW YellowRight @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
-				xmiddle = (currentWIM.myposition().x() + obj->distance()*cos((currentWIM.myposition().phi() + obj->bearing())))*1000;
-				ymiddle = (currentWIM.myposition().y() + obj->distance() * sin((currentWIM.myposition().phi() + obj->bearing())))*1000;
-
-				//cout << "To xmiddle = " << xmiddle << endl;
-				//cout << "To ymiddle = " << ymiddle << endl;
-				//cout << "To distance = " << obj->distance() << endl;
-
-
-				YellowPost1->setRect(this->parentScene->rectFromFC( xmiddle, ymiddle, 100, 100));
-				RightYellowPost->setLine(this->parentScene->lineFromFieldCoordinates(xmiddle, ymiddle, xmiddle, (ymiddle + 175)));
-
-
-			} else if (obj->object_name() == "SkyblueLeft") {
-				cout << "EXWWWWWWWWWWWWWWWWWW SkyblueLeft @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
-				xmiddle = (currentWIM.myposition().x() + obj->distance()*cos((currentWIM.myposition().phi() + obj->bearing())))*1000;
-				ymiddle = (currentWIM.myposition().y() + obj->distance() * sin((currentWIM.myposition().phi() + obj->bearing())))*1000;
-
-
-				//cout << "Sta xmiddle = " << xmiddle << endl;
-				//cout << "Sta ymiddle = " << ymiddle << endl;
-
-				BluePost->setRect(this->parentScene->rectFromFC( xmiddle, ymiddle, 100, 100));
-				LeftBluePost->setLine(this->parentScene->lineFromFieldCoordinates(xmiddle, ymiddle, xmiddle, (ymiddle + 175)));
-
-
-			} else if (obj->object_name() == "SkyblueRight") {
-				cout << "EXWWWWWWWWWWWWWWWWWW SkyblueRight @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
-				xmiddle = (currentWIM.myposition().x() + obj->distance()*cos((currentWIM.myposition().phi() + obj->bearing())))*1000;
-				ymiddle = (currentWIM.myposition().y() + obj->distance() * sin((currentWIM.myposition().phi() + obj->bearing())))*1000;
-
-				BluePost1->setRect(this->parentScene->rectFromFC( xmiddle, ymiddle, 100, 100));
-				RightBluePost->setLine(this->parentScene->lineFromFieldCoordinates(xmiddle, ymiddle, xmiddle, (ymiddle - 175)));
-
-
-
-			} /*else if (obj->object_name() == "Skyblue") { //Ambigious GoalPost
-				//cout << "EXWWWWWWWWWWWWWWWWWW Skyblue @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
-
-
-			} else if (obj->object_name() == "Yellow") { //Ambigious GoalPost
-
-				//cout << "EXWWWWWWWWWWWWWWWWWW Yellow @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << endl;
-
-			}*/
-
+			else if (obj->object_name() == "Yellow")
+				YellowPost->setRect(this->parentScene->goalPostRectFromOBM( obj, &currentWIM));
 		}
 
+	}else
+	{
+		LeftYellowPost->setRect(0, 0, 0, 0);
+		RightYellowPost->setRect(0, 0, 0, 0);
+		YellowPost->setRect(0, 0, 0, 0);
 	}
-
-
 }
 
 void GraphicalRobotElement::resetVisionObservations()
 {
-	cout << "Kanw reset !!!!" << endl;
 	if (this->YellowPost->isVisible())
 	{
 		this->YellowPost->setVisible(false);
@@ -400,34 +272,9 @@ void GraphicalRobotElement::resetVisionObservations()
 		this->LeftYellowPost->setVisible(false);
 	}
 
-	if (this->YellowPost1->isVisible())
-	{
-		this->YellowPost1->setVisible(false);
-	}
-
 	if (this->RightYellowPost->isVisible())
 	{
 		this->RightYellowPost->setVisible(false);
-	}
-
-	if (this->BluePost->isVisible())
-	{
-		this->BluePost->setVisible(false);
-	}
-
-	if (this->LeftBluePost->isVisible())
-	{
-		this->LeftBluePost->setVisible(false);
-	}
-
-	if (this->BluePost1->isVisible())
-	{
-		this->BluePost1->setVisible(false);
-	}
-
-	if (this->RightBluePost->isVisible())
-	{
-		this->RightBluePost->setVisible(false);
 	}
 
 	GREtimer->stop();

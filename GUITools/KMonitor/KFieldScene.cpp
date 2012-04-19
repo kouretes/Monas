@@ -397,26 +397,20 @@ QLineF KFieldScene::unionistLineRectFromFC(WorldInfo* wim)
 	float yMiddle = (wim->myposition().y() + wim->balls(0).relativex()*b + wim->balls(0).relativey()*a)*1000;
 
 
-	return QLineF(
+	return lineRectFromFC(x, y, xMiddle, yMiddle);
+
+	//wanna be deleted
+
+	/*return QLineF(
 		sceneRect().width() * (config.xCentre+x)/config.totalCarpetAreaWidth,
 		sceneRect().height() - sceneRect().height() *(config.yCentre+y)/config.totalCarpetAreaHeight,
 		sceneRect().width() * (config.xCentre + xMiddle)/config.totalCarpetAreaWidth,
 		sceneRect().height() - sceneRect().height() *(config.yCentre + yMiddle)/config.totalCarpetAreaHeight);
+	 */
 
 }
 
-QRectF KFieldScene::visionBallRect(BallObject bob, WorldInfo wim)
-{
-	//std::cout << "Mpika kai stelnw rectf @@@@@@@@@@@@ " << std::endl;
-	float xmiddle = (wim.myposition().x() + bob.dist()*cos((wim.myposition().phi() + bob.bearing())))*1000;
-	float ymiddle = (wim.myposition().y() + bob.dist() * sin((wim.myposition().phi() + bob.bearing())))*1000;
-
-	return rectFromFC( xmiddle, ymiddle, 75, 75);
-}
-
-//////////////////////////////////////////////////////////////
-//todo fix name & use this one to unionist line ...
-QLineF KFieldScene::lineFromFieldCoordinates(float x1,float y1, float x2,float y2)
+QLineF KFieldScene::lineRectFromFC(float x1,float y1, float x2,float y2)
 {
 	return QLineF(
 		sceneRect().width() * (config.xCentre + x1)/config.totalCarpetAreaWidth,
@@ -425,7 +419,27 @@ QLineF KFieldScene::lineFromFieldCoordinates(float x1,float y1, float x2,float y
 		sceneRect().height() - sceneRect().height() *(config.yCentre + y2)/config.totalCarpetAreaHeight);
 }
 
-////////////////////////////////////////////////////////////////
+
+QRectF KFieldScene::visionBallRect(BallObject bob, WorldInfo wim)
+{
+	float xmiddle = (wim.myposition().x() + bob.dist()*cos((wim.myposition().phi() + bob.bearing())))*1000;
+	float ymiddle = (wim.myposition().y() + bob.dist()*sin((wim.myposition().phi() + bob.bearing())))*1000;
+
+	return rectFromFC( xmiddle, ymiddle, 75, 75);
+}
+
+QRectF KFieldScene::goalPostRectFromOBM(NamedObject* nob, WorldInfo* wim)
+{
+	float xmiddle = (wim->myposition().x() + nob->distance()*cos((wim->myposition().phi() + nob->bearing())))*1000;
+	float ymiddle = (wim->myposition().y() + nob->distance() * sin((wim->myposition().phi() + nob->bearing())))*1000;
+
+	//e3iswseis chief ..
+	//xmiddle = (currentWIM.myposition().x() + obj->distance()*cos(obj->bearing()))*1000;
+	//ymiddle = (currentWIM.myposition().y() + obj->distance() * sin(obj->bearing()))*1000;
+
+	return rectFromFC( xmiddle, ymiddle, 100, 100);
+}
+
 
 
 

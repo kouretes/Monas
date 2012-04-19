@@ -35,11 +35,9 @@ public slots:
 	void LWSGVRobotVisible(QString host, bool visible);
 	void LWSGVBallVisible(QString host, bool visible);
 
-
-	//void setVisionBall(BallObject obm, QString host);
-
-	//todo remove from here
 	void LWSGVVisionBallVisible(QString host, bool visible);
+	void LWSGVVisionGoalPostsVisible(QString host, bool visible);
+
 	void observationMessageUpdateHandler(ObservationMessage om, QString host);
 
 private:

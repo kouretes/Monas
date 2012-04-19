@@ -45,35 +45,29 @@ public:
 	void setUnionistLineVisible(bool visible);
 	void updateUnionistLineRect();
 
+	// Vision observations
 	void setLWSVisionBallVisible(bool visible){LWSVisionBallVisible = visible; setVisionBallVisible(visible);}
 	bool getLWSVisionBallVisible(){return LWSVisionBallVisible;}
 	void setVisionBallVisible(bool visible);
+	//void updateVisionBallRect();
 	void updateVisionBallRect(ObservationMessage obm);
 
 	void setLWSYellowLeftPostVisible(bool visible){VisionYellowLeftPostVisible = visible; setYellowLeftPostVisible(visible);}
 	bool getLWSYellowLeftPostVisible(){return VisionYellowLeftPostVisible;}
 	void setYellowLeftPostVisible(bool visible);
-	void updateYellowLeftPostRect();
+	void updateGoalPostsRect();
 
 	void setLWSYellowRightPostVisible(bool visible){VisionYellowRightPostVisible = visible; setYellowRightPostVisible(visible);}
 	bool getLWSYellowRightPostVisible(){return VisionYellowRightPostVisible;}
 	void setYellowRightPostVisible(bool visible);
 	//void updateYellowRightPostRect();
 
-	void setLWSBlueLeftPostVisible(bool visible){VisionBlueLeftPostVisible = visible; setBlueLeftPostVisible(visible);}
-	bool getLWSBlueLeftPostVisible(){return VisionBlueLeftPostVisible;}
-	void setBlueLeftPostVisible(bool visible);
+	void setLWSYellowPostVisible(bool visible){VisionYellowPostVisible = visible; setYellowPostVisible(visible);}
+	bool getLWSYellowPostVisible(){return VisionYellowPostVisible;}
+	void setYellowPostVisible(bool visible);
 	//void updateBlueLeftPostRect();
 
-	void setLWSBlueRightPostVisible(bool visible){VisionBlueRightPostVisible = visible; setBlueRightPostVisible(visible);}
-	bool getLWSBlueRightPostVisible(){return VisionBlueRightPostVisible;}
-	void setBlueRightPostVisible(bool visible);
-	//void updateYellowRightPostRect();
-
 	QTimer* getGREtimer(){return GREtimer;}
-
-
-
 
 private slots:
 	void resetVisionObservations();
@@ -102,20 +96,13 @@ private:
 	QGraphicsEllipseItem* VisionBall;
 
 	bool VisionYellowLeftPostVisible;
-	QGraphicsEllipseItem* YellowPost;
-	QGraphicsLineItem* LeftYellowPost;
+	QGraphicsEllipseItem* LeftYellowPost;
 
 	bool VisionYellowRightPostVisible;
-	QGraphicsEllipseItem* YellowPost1;
-	QGraphicsLineItem* RightYellowPost;
+	QGraphicsEllipseItem* RightYellowPost;
 
-	bool VisionBlueLeftPostVisible;
-	QGraphicsEllipseItem* BluePost;
-	QGraphicsLineItem* LeftBluePost;
-
-	bool VisionBlueRightPostVisible;
-	QGraphicsEllipseItem* BluePost1;
-	QGraphicsLineItem* RightBluePost;
+	bool VisionYellowPostVisible;
+	QGraphicsEllipseItem* YellowPost;
 
 	QTimer *GREtimer;
 

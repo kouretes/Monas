@@ -32,12 +32,12 @@ public:
 	QRectF rectFromFC(float xMiddle, float yMiddle, float width, float height);
 	QLineF lineFromFCA(float x,float y, float degAngle, float size);
 	QRectF ballRectFromFC(WorldInfo* wim, float width, float height);
+	QLineF lineRectFromFC(float x1,float y1, float x2,float y2);
 	QLineF unionistLineRectFromFC(WorldInfo* wim);
 
 	QRectF visionBallRect( BallObject bob, WorldInfo wim);
+	QRectF goalPostRectFromOBM(NamedObject* nob, WorldInfo* wim);
 
-	////////////////////////////////////////////////////////////
-	QLineF lineFromFieldCoordinates(float x1,float y1, float x2,float y2);
 
 
 private:

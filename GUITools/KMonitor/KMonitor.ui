@@ -114,7 +114,15 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <property name="text">
-              <string>vision observable ball</string>
+              <string>ball observation</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>goal posts observations</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>

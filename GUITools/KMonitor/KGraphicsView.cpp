@@ -19,8 +19,9 @@ KGraphicsView::~KGraphicsView()
 void KGraphicsView::resizeEvent(QResizeEvent* event)
 {
 	//paintArea->resizeFieldScene(width()-20,height()-40);
-	paintArea->resizeFieldScene((height()-40)*1.37, height()-40);
 	//paintArea->resizeFieldScene(width()-20, (width()-20)/1.37037) ;
+
+	paintArea->resizeFieldScene((height()-40)*1.37, height()-40);
 	QGraphicsView::resizeEvent(event);
 }
 
@@ -189,7 +190,7 @@ void KGraphicsView::LWSGVBallVisible(QString host, bool visible)
 
 }
 
-
+// !!!
 void KGraphicsView::LWSGVVisionBallVisible(QString host, bool visible)
 {
 	GraphicalRobotElement *robotElement = NULL;
@@ -207,20 +208,45 @@ void KGraphicsView::LWSGVVisionBallVisible(QString host, bool visible)
 	if (robotElement != NULL)
 	{
 		robotElement->setLWSVisionBallVisible(visible);
-		robotElement->setLWSYellowLeftPostVisible(visible);
-		robotElement->setLWSYellowRightPostVisible(visible);
-		robotElement->setLWSBlueLeftPostVisible(visible);
-		robotElement->setLWSBlueRightPostVisible(visible);
+
 	}else
 	{
-		std::cout << "[83] KGraphicsView::LWSGVVisionBallVisible : Fatal !" << std::endl;
+		std::cout << "[214] KGraphicsView::LWSGVVisionBallVisible : Fatal !" << std::endl;
 	}
 
 	//paintArea->printRobotList();
 
 }
 
-// todo make it for all vision obs
+void KGraphicsView::LWSGVVisionGoalPostsVisible(QString host, bool visible)
+{
+	GraphicalRobotElement *robotElement = NULL;
+
+	robotElement = paintArea->findGraphicalRobotItem( host );
+
+	if(robotElement == NULL )
+	{
+		if(paintArea->getRobotList().count() != 0)
+			removeGraphicalElement(paintArea->getRobotList().at(0)->getHostId());
+
+		robotElement = paintArea->newGraphicalRobotItem(host);
+	}
+
+	if (robotElement != NULL)
+	{
+		robotElement->setLWSYellowPostVisible(visible);
+		robotElement->setLWSYellowLeftPostVisible(visible);
+		robotElement->setLWSYellowRightPostVisible(visible);
+
+	}else
+	{
+		std::cout << "[245] KGraphicsView::LWSGVVisionGoalPostsVisible : Fatal " << std::endl;
+	}
+
+	//paintArea->printRobotList();
+
+}
+
 void KGraphicsView::observationMessageUpdateHandler(ObservationMessage om, QString host)
 {
 
@@ -238,24 +264,24 @@ void KGraphicsView::observationMessageUpdateHandler(ObservationMessage om, QStri
 			element->setLWSVisionBallVisible(true);
 		}
 
+		if (element->getLWSYellowPostVisible())
+			element->setLWSYellowPostVisible(false);
+
 		if (element->getLWSYellowLeftPostVisible())
-		{
-			element->setLWSYellowLeftPostVisible(false); //check!!!!!
-			element->setLWSYellowRightPostVisible(false); //check !!!!!
-			element->setLWSBlueLeftPostVisible(false); //check !!!!!
-			element->setLWSBlueRightPostVisible(false); //check !!!!!
+			element->setLWSYellowLeftPostVisible(false);
 
-			element->updateYellowLeftPostRect();  //todo rename this one for all vision observations
+		if (element->getLWSYellowRightPostVisible())
+			element->setLWSYellowRightPostVisible(false);
 
-			element->setLWSYellowLeftPostVisible(true); //check!!!!!
-			element->setLWSYellowRightPostVisible(true); //check !!!!!
-			element->setLWSBlueLeftPostVisible(true); //check !!!!!
-			element->setLWSBlueRightPostVisible(true); //check !!!
-			element->getGREtimer()->start(500);
-			std::cout << "Ksanampika gia 2 ms !!" << std::endl;
-		}
+		element->updateGoalPostsRect();
 
+		element->setLWSYellowLeftPostVisible(true);
+		element->setLWSYellowRightPostVisible(true);
+		element->setLWSYellowPostVisible(true);
 
+		//check ...
+		element->getGREtimer()->start(500);
+		std::cout << "Ksanampika gia 0.5 s !!" << std::endl;
 
 	}else
 	{

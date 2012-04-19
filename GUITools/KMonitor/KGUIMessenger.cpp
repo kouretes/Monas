@@ -76,7 +76,11 @@ MessageBuffer* KGUIMessenger::makeReadBuffer(std::string const& s)
 
 void KGUIMessenger::allocateReceivedMessages()
 {
-	QString currentRHost = "";
+	//QString currentRHost = "";
+	//TODO change it everywhere gypsy
+	QString currentRHost;
+	currentRHost.clear();
+
 	std::vector<msgentry> incomingMessages = multicast->getWriteBuffer()->remove();
 
 	for( unsigned i=0; i<incomingMessages.size(); i++ )
@@ -91,7 +95,7 @@ void KGUIMessenger::allocateReceivedMessages()
 				myRemoteHosts.Clear();
 				myRemoteHosts.CopyFrom(*(incomingMessages.at(i).msg));
 
-				//printKnownHosts(myRemoteHosts);
+				printKnownHosts(myRemoteHosts);
 				emit knownHostsUpdate( myRemoteHosts );
 				//printMyGWRequestedHosts();
 			}
@@ -113,7 +117,7 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="ObservationMessage" && myLWRequestedHost == currentRHost)
 			{
-				//std::cout << "OBM host :: "<< incomingMessages.at(i).host << std::endl;
+				std::cout << "OBM host :: "<< incomingMessages.at(i).host << std::endl;
 				ObservationMessage om;
 				om.Clear();
 				om.CopyFrom(*(incomingMessages.at(i).msg));
