@@ -281,7 +281,7 @@ void KGraphicsView::observationMessageUpdateHandler(ObservationMessage om, QStri
 
 		//check ...
 		element->getGREtimer()->start(500);
-		std::cout << "Ksanampika gia 0.5 s !!" << std::endl;
+		std::cout << "GREtimer started." << std::endl;
 
 	}else
 	{

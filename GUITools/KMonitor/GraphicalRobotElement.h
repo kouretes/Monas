@@ -1,9 +1,9 @@
 #ifndef GRAPHICALROBOTELEMENT_H_
 #define GRAPHICALROBOTELEMENT_H_
 
-#include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsLineItem>
+#include <QGraphicsScene>
 #include <QString>
 
 #include <QTimer>
@@ -70,9 +70,11 @@ public:
 	QTimer* getGREtimer(){return GREtimer;}
 
 private slots:
-	void resetVisionObservations();
+	void clearVisionObservations();
 
 private:
+	void tagVisionObservations(QGraphicsEllipseItem* post,QRectF rect, QString text);
+
 
 	KFieldScene* parentScene;
 
@@ -104,8 +106,7 @@ private:
 	bool VisionYellowPostVisible;
 	QGraphicsEllipseItem* YellowPost;
 
-	QTimer *GREtimer;
-
+	QTimer* GREtimer;
 
 };
 #endif /* GRAPHICALROBOTELEMENT_H_ */

@@ -59,7 +59,6 @@ KFieldScene::KFieldScene(KGraphicsView* parent)
 	this->addItem(LBPost);
 	this->addItem(RTPost);
 	this->addItem(RBPost);
-
 }
 
 KFieldScene::~KFieldScene()

@@ -37,17 +37,13 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	VisionBall = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::white));
 
-	LeftYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::darkYellow),QBrush(Qt::darkYellow));
-	RightYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::darkYellow),QBrush(Qt::darkYellow));
-	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::darkYellow),QBrush(Qt::darkYellow));
-
-	///////////////////////////////////////////////
+	LeftYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
+	RightYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
+	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 
 	GREtimer = new QTimer();
-	GREtimer->setInterval(500);
-
+	//GREtimer->setInterval(500);
 	connect(GREtimer, SIGNAL(timeout()), this, SLOT(resetVisionObservations()));
-
 }
 
 
@@ -108,8 +104,6 @@ void GraphicalRobotElement::setCurrentGSM(GameStateMessage gsm)
 
 void GraphicalRobotElement::setcurrentOBSM(ObservationMessage obm)
 {
-	//GREtimer->stop();
-	//cout << "GREtimer->stop()" << endl;
 	currentObsm.Clear();
 	currentObsm = obm;
 }
@@ -239,17 +233,24 @@ void GraphicalRobotElement::updateGoalPostsRect()
 
 		for (int o = 0; o < currentObsm.regular_objects_size(); o++)
 		{
-
 			NamedObject *obj = currentObsm.mutable_regular_objects(o);
+			QRectF rect = parentScene->goalPostRectFromOBM( obj, &currentWIM);
 
 			if (obj->object_name() == "YellowLeft")
-				LeftYellowPost->setRect(this->parentScene->goalPostRectFromOBM( obj, &currentWIM));
+			{
+				LeftYellowPost->setRect(rect);
+				tagVisionObservations(LeftYellowPost, rect, "L");
 
-			else if (obj->object_name() == "YellowRight")
-				RightYellowPost->setRect(this->parentScene->goalPostRectFromOBM( obj, &currentWIM));
+			}else if (obj->object_name() == "YellowRight")
+			{
+				RightYellowPost->setRect(rect);
+				tagVisionObservations(RightYellowPost, rect, "R");
 
-			else if (obj->object_name() == "Yellow")
-				YellowPost->setRect(this->parentScene->goalPostRectFromOBM( obj, &currentWIM));
+			}else if (obj->object_name() == "Yellow")
+			{
+				YellowPost->setRect(rect);
+				tagVisionObservations(YellowPost, rect, "A");
+			}
 		}
 
 	}else
@@ -260,8 +261,26 @@ void GraphicalRobotElement::updateGoalPostsRect()
 	}
 }
 
-void GraphicalRobotElement::resetVisionObservations()
+void GraphicalRobotElement::tagVisionObservations(QGraphicsEllipseItem* post,QRectF rect, QString text)
 {
+	QBrush brush;
+    QPixmap pix(700,700);
+    pix.fill(Qt::yellow);
+    QPainter paint(&pix);
+    paint.setPen("black");
+    paint.drawText(rect, Qt::AlignCenter ,text);
+    brush.setTexture(pix);
+    post->setBrush(brush);
+
+}
+
+void GraphicalRobotElement::clearVisionObservations()
+{
+	if (this->VisionBall->isVisible())
+	{
+		this->YellowPost->setVisible(false);
+	}
+
 	if (this->YellowPost->isVisible())
 	{
 		this->YellowPost->setVisible(false);
@@ -278,12 +297,5 @@ void GraphicalRobotElement::resetVisionObservations()
 	}
 
 	GREtimer->stop();
-	cout << "GREtimer->stop()!!!!!!!!!!!!!!" << endl;
-
-
-
+	std::cout << "GREtimer stopped." << std::endl;
 }
-
-////////////////////////////////////////////////////////////////////////////////////
-
-
