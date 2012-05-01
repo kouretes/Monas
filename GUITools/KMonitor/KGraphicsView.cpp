@@ -252,9 +252,16 @@ void KGraphicsView::observationMessageUpdateHandler(ObservationMessage om, QStri
 
 	GraphicalRobotElement* element = paintArea->findGraphicalRobotItem(host);
 
-	//paintArea->printRobotList();
 	if(element != NULL)
 	{
+
+		if(element->getGREtimer()->isActive()){
+			emit forceTimeOut();
+			std::cout << "Eimai active!Kanw emit forceTimeOut();"<< std::endl;
+		}else{
+			std::cout <<"Den eimai active!" << std::endl;
+		}
+
 		element->setcurrentOBSM(om);
 
 		if (element->getLWSVisionBallVisible())
@@ -265,21 +272,16 @@ void KGraphicsView::observationMessageUpdateHandler(ObservationMessage om, QStri
 		}
 
 		if (element->getLWSYellowPostVisible())
+		{
 			element->setLWSYellowPostVisible(false);
-
-		if (element->getLWSYellowLeftPostVisible())
 			element->setLWSYellowLeftPostVisible(false);
-
-		if (element->getLWSYellowRightPostVisible())
 			element->setLWSYellowRightPostVisible(false);
+			element->updateGoalPostsRect();
+			element->setLWSYellowLeftPostVisible(true);
+			element->setLWSYellowRightPostVisible(true);
+			element->setLWSYellowPostVisible(true);
+		}
 
-		element->updateGoalPostsRect();
-
-		element->setLWSYellowLeftPostVisible(true);
-		element->setLWSYellowRightPostVisible(true);
-		element->setLWSYellowPostVisible(true);
-
-		//check ...
 		element->getGREtimer()->start(500);
 		std::cout << "GREtimer started." << std::endl;
 
@@ -287,5 +289,54 @@ void KGraphicsView::observationMessageUpdateHandler(ObservationMessage om, QStri
 	{
 		//std::cout << "[67]KGraphicsView::worldInfoUpdateHandler:: Host hasn't been requested!" << host.toStdString() <<std::endl;
 	}
+
+}
+
+void KGraphicsView::LWSGVParticlesVisible(QString host, bool visible)
+{
+	GraphicalRobotElement *robotElement = NULL;
+
+	robotElement = paintArea->findGraphicalRobotItem( host );
+
+	if(robotElement == NULL )
+	{
+		if(paintArea->getRobotList().count() != 0)
+			removeGraphicalElement(paintArea->getRobotList().at(0)->getHostId());
+
+		robotElement = paintArea->newGraphicalRobotItem(host);
+	}
+
+	if (robotElement != NULL)
+	{
+		robotElement->setLWSParticlesVisible(visible);
+
+	}else
+	{
+		std::cout << "[214] KGraphicsView::LWSGVParticlesVisible : Fatal !" << std::endl;
+	}
+
+	//paintArea->printRobotList();
+
+}
+
+void KGraphicsView::localizationDataUpdateHandler(LocalizationDataForGUI debugData, QString host)
+{
+
+	GraphicalRobotElement* element = paintArea->findGraphicalRobotItem(host);
+
+	if(element != NULL)
+	{
+		if (element->getLWSParticlesVisible())
+		{
+			element->setLWSParticlesVisible(false);
+			element->updateParticlesRect(debugData);
+			element->setLWSParticlesVisible(true);
+		}
+
+	}else
+	{
+		//std::cout << "[67]KGraphicsView::worldInfoUpdateHandler:: Host hasn't been requested!" << host.toStdString() <<std::endl;
+	}
+
 
 }

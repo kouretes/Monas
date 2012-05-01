@@ -27,7 +27,9 @@ public:
 	GraphicalRobotElement* findGraphicalRobotItem(QString hostId );
 	GraphicalRobotElement* newGraphicalRobotItem(QString hostId);
 	void removeGraphicalRobotItem(QString hostId);
+
 	QList<GraphicalRobotElement*> getRobotList (){return RobotList;}
+	KGraphicsView* getParentGraphicsView(){return parent;}
 
 	QRectF rectFromFC(float xMiddle, float yMiddle, float width, float height);
 	QLineF lineFromFCA(float x,float y, float degAngle, float size);
@@ -103,6 +105,7 @@ private:
 
 	KGraphicsView* parent;
 	QList<GraphicalRobotElement*> RobotList;
+
 };
 
 #endif // KFieldScene_H

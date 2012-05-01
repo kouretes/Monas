@@ -40,11 +40,9 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	timer->start();
 
 	myGWRequestedHosts.clear();
-	myLWRequestedHost = "";
+	myLWRequestedHost.clear();
 
 	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
-
-	//+ initial test for vision messages
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 
@@ -79,7 +77,6 @@ void KGUIMessenger::allocateReceivedMessages()
 	//QString currentRHost = "";
 	//TODO change it everywhere gypsy
 	QString currentRHost;
-	currentRHost.clear();
 
 	std::vector<msgentry> incomingMessages = multicast->getWriteBuffer()->remove();
 
@@ -87,6 +84,7 @@ void KGUIMessenger::allocateReceivedMessages()
 	{
 		if ( incomingMessages.at(i).msg != NULL )
 		{
+			currentRHost.clear();
 			currentRHost = QString::fromStdString(_toString(incomingMessages.at(i).host));
 
 			if( incomingMessages.at(i).msg->GetTypeName() == "KnownHosts" )
@@ -95,7 +93,7 @@ void KGUIMessenger::allocateReceivedMessages()
 				myRemoteHosts.Clear();
 				myRemoteHosts.CopyFrom(*(incomingMessages.at(i).msg));
 
-				printKnownHosts(myRemoteHosts);
+				//printKnownHosts(myRemoteHosts);
 				emit knownHostsUpdate( myRemoteHosts );
 				//printMyGWRequestedHosts();
 			}
@@ -117,35 +115,22 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="ObservationMessage" && myLWRequestedHost == currentRHost)
 			{
-				std::cout << "OBM host :: "<< incomingMessages.at(i).host << std::endl;
+				std::cout << "ObservationMessage :: "<< incomingMessages.at(i).host << std::endl;
+
 				ObservationMessage om;
 				om.Clear();
 				om.CopyFrom(*(incomingMessages.at(i).msg));
 
 				emit obsmsgUpdate(om, currentRHost);
 			}
-			else if (incomingMessages.at(i).msg->GetTypeName()=="LocalizationDataforGUI")
+			else if (incomingMessages.at(i).msg->GetTypeName()=="LocalizationDataForGUI" && myLWRequestedHost == currentRHost)
 			{
-				std::cout << "LocalizationDataforGUI :: "<< incomingMessages.at(i).host << std::endl;
+				LocalizationDataForGUI debugGUI;
+				debugGUI.Clear();
+				debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
 
-				//LocalizationDataforGUI debugGUI;
-				//debugGUI.Clear();
-				//debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
-
-				//const ::google::protobuf::RepeatedPtrField<RobotPose>& rf = debugGUI.;
-			   // ::google::protobuf::RepeatedPtrField< RobotPose >::const_iterator fit;
-
-				//for (unsigned i=0; i < debugGUI; i++)
-					//{
-						//item = NULL;
-						//hostId = QString::fromStdString(_toString((newHosts.name(i))));
-
-						//item = GWhostFinder(hostId);
-						//if( item == NULL)
-						//	addTreeWidgetItem(parentTreeWidget->topLevelItemCount(),hostId);
-				//	}
+				emit localizationDataUpdate(debugGUI, currentRHost);
 			}
-
 		}
 		else
 		{

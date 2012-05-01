@@ -26,6 +26,8 @@ protected:
 public slots:
 	void setKGFCGameStateInfo(GameStateMessage gsm, QString host);
 	void worldInfoUpdateHandler(WorldInfo nwim, QString host);
+	void observationMessageUpdateHandler(ObservationMessage om, QString host);
+	void localizationDataUpdateHandler(LocalizationDataForGUI debugData, QString host);
 
 	void GWSGVRobotVisible(QString host, bool visible);
 	void GWSGVBallVisible(QString host, bool visible);
@@ -38,7 +40,10 @@ public slots:
 	void LWSGVVisionBallVisible(QString host, bool visible);
 	void LWSGVVisionGoalPostsVisible(QString host, bool visible);
 
-	void observationMessageUpdateHandler(ObservationMessage om, QString host);
+	void LWSGVParticlesVisible(QString host, bool visible);
+
+signals:
+	void forceTimeOut();
 
 private:
 	void GWSGVUnionistLineVisible(GraphicalRobotElement *robotElement);

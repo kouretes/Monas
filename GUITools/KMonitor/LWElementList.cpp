@@ -49,6 +49,17 @@ void LWElementList::newListElementRequested(QListWidgetItem* item)
 			emit LWRHSetVisionGoalPostsVisible(myCurrentLWRequestedHost, false);
 		else
 			emit LWRHSetVisionGoalPostsVisible(myCurrentLWRequestedHost, true);
+
+	}else if(parentListWidget->row(item)==4)
+	{
+		if(item->checkState() == 0)
+		{
+			emit LWRHSetParticlesVisible(myCurrentLWRequestedHost, false);
+		}
+		else
+		{
+			emit LWRHSetParticlesVisible(myCurrentLWRequestedHost, true);
+		}
 	}
 }
 

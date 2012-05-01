@@ -35,6 +35,7 @@ signals:
 	void knownHostsUpdate(KnownHosts newHosts);
 	void gameStateMessageUpdate(GameStateMessage gsm, QString hostId);
 	void worldInfoUpdate(WorldInfo wim, QString hostId);
+	void localizationDataUpdate(LocalizationDataForGUI, QString);
 
 	void obsmsgUpdate(ObservationMessage obm, QString hostId);
 

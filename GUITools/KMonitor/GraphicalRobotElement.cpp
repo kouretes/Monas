@@ -14,14 +14,16 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	currentWIM.Clear();
 	currentObsm.Clear();
+	ParticlesList.clear();
 
 	GWSRobotVisible = false;
 	GWSBallVisible = false;
 	GWSUnionistLineVisible = false;
 	LWSVisionBallVisible = false;
-	VisionYellowLeftPostVisible = false;
-	VisionYellowRightPostVisible = false;
-	VisionYellowPostVisible = false;
+	LWSVisionYellowLeftPostVisible = false;
+	LWSVisionYellowRightPostVisible = false;
+	LWSVisionYellowPostVisible = false;
+	LWSParticlesVisible = false;
 
 	QPen penForUnionistLine(Qt::black);
 	penForUnionistLine.setWidth(1);
@@ -29,11 +31,18 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
 
+	for(unsigned it=0; it<30; it++)
+	{
+		Particle *part = new GUIRobotPose();
+		part->Direction = this->parentScene->addLine(QLineF(),QPen(Qt::black));
+		part->Pose = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::black));
+		ParticlesList.append(part);
+	}
+
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
 	Robot = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
 	Ball = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
-
 
 	VisionBall = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::white));
 
@@ -42,8 +51,8 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 
 	GREtimer = new QTimer();
-	//GREtimer->setInterval(500);
-	connect(GREtimer, SIGNAL(timeout()), this, SLOT(resetVisionObservations()));
+	connect(GREtimer, SIGNAL(timeout()), this, SLOT(clearVisionObservations()));
+	connect(parentScene->getParentGraphicsView(), SIGNAL(forceTimeOut()),this, SLOT(clearVisionObservations()));
 }
 
 
@@ -72,6 +81,18 @@ GraphicalRobotElement::~GraphicalRobotElement()
 
 	if(RightYellowPost)
 		delete RightYellowPost;
+
+	for(unsigned i = 0; i<ParticlesList.count();i++)
+	{
+		if(ParticlesList.at(i)->Pose)
+			delete ParticlesList.at(i)->Pose;
+
+		if(ParticlesList.at(i)->Direction)
+			delete ParticlesList.at(i)->Direction;
+
+		if (ParticlesList.at(i))
+			delete ParticlesList.at(i);
+	}
 
 }
 
@@ -231,11 +252,13 @@ void GraphicalRobotElement::updateGoalPostsRect()
 	if (currentObsm.regular_objects_size() > 0 && currentWIM.has_myposition())
 	{
 
-		for (int o = 0; o < currentObsm.regular_objects_size(); o++)
+		std::cout << "---------------------" << std::endl;
+		for (unsigned o = 0; o < currentObsm.regular_objects_size(); o++)
 		{
 			NamedObject *obj = currentObsm.mutable_regular_objects(o);
 			QRectF rect = parentScene->goalPostRectFromOBM( obj, &currentWIM);
 
+			std::cout << obj->object_name() << std::endl;
 			if (obj->object_name() == "YellowLeft")
 			{
 				LeftYellowPost->setRect(rect);
@@ -252,6 +275,7 @@ void GraphicalRobotElement::updateGoalPostsRect()
 				tagVisionObservations(YellowPost, rect, "A");
 			}
 		}
+		std::cout << "---------------------" << std::endl;
 
 	}else
 	{
@@ -278,7 +302,7 @@ void GraphicalRobotElement::clearVisionObservations()
 {
 	if (this->VisionBall->isVisible())
 	{
-		this->YellowPost->setVisible(false);
+		this->VisionBall->setVisible(false);
 	}
 
 	if (this->YellowPost->isVisible())
@@ -298,4 +322,43 @@ void GraphicalRobotElement::clearVisionObservations()
 
 	GREtimer->stop();
 	std::cout << "GREtimer stopped." << std::endl;
+}
+
+
+void GraphicalRobotElement::setParticlesVisible(bool visible)
+{
+	for(unsigned i = 0; i<ParticlesList.count();i++)
+	{
+		if (visible == false)
+		{
+			ParticlesList.at(i)->Pose->setVisible(false);
+			ParticlesList.at(i)->Direction->setVisible(false);
+
+		}else
+		{
+			ParticlesList.at(i)->Pose->setVisible(true);
+			ParticlesList.at(i)->Direction->setVisible(true);
+		}
+	}
+}
+
+void GraphicalRobotElement::updateParticlesRect(LocalizationDataForGUI debugGUI)
+{
+
+	for (unsigned i=0; i < debugGUI.particles_size(); i++)
+	{
+		RobotPose particle = debugGUI.particles(i);
+
+		if(particle.has_x() && particle.has_y() && particle.has_phi())
+		{
+			ParticlesList.at(i)->Pose->setRect(this->parentScene->rectFromFC( particle.x(),
+					particle.y(), 50, 50));
+			ParticlesList.at(i)->Direction->setLine(this->parentScene->lineFromFCA(particle.x(),
+					particle.y(), particle.phi(), 200));
+		}else
+		{
+			ParticlesList.at(i)->Pose->setRect( 0, 0, 0, 0);
+			ParticlesList.at(i)->Direction->setLine(0, 0, 0, 0);
+		}
+	}
 }

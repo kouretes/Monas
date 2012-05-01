@@ -5,6 +5,7 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
 #include <QString>
+#include <QList>
 
 #include <QTimer>
 #include <QObject>
@@ -15,6 +16,13 @@
 #include "KFieldScene.h"
 
 class KFieldScene;
+
+typedef struct GUIRobotPose{
+
+	QGraphicsEllipseItem* Pose;
+	QGraphicsLineItem* Direction;
+
+}Particle;
 
 class GraphicalRobotElement : public QObject
 {
@@ -52,20 +60,24 @@ public:
 	//void updateVisionBallRect();
 	void updateVisionBallRect(ObservationMessage obm);
 
-	void setLWSYellowLeftPostVisible(bool visible){VisionYellowLeftPostVisible = visible; setYellowLeftPostVisible(visible);}
-	bool getLWSYellowLeftPostVisible(){return VisionYellowLeftPostVisible;}
+	void setLWSYellowLeftPostVisible(bool visible){LWSVisionYellowLeftPostVisible = visible; setYellowLeftPostVisible(visible);}
+	bool getLWSYellowLeftPostVisible(){return LWSVisionYellowLeftPostVisible;}
 	void setYellowLeftPostVisible(bool visible);
 	void updateGoalPostsRect();
 
-	void setLWSYellowRightPostVisible(bool visible){VisionYellowRightPostVisible = visible; setYellowRightPostVisible(visible);}
-	bool getLWSYellowRightPostVisible(){return VisionYellowRightPostVisible;}
+	void setLWSYellowRightPostVisible(bool visible){LWSVisionYellowRightPostVisible = visible; setYellowRightPostVisible(visible);}
+	bool getLWSYellowRightPostVisible(){return LWSVisionYellowRightPostVisible;}
 	void setYellowRightPostVisible(bool visible);
-	//void updateYellowRightPostRect();
 
-	void setLWSYellowPostVisible(bool visible){VisionYellowPostVisible = visible; setYellowPostVisible(visible);}
-	bool getLWSYellowPostVisible(){return VisionYellowPostVisible;}
+	void setLWSYellowPostVisible(bool visible){LWSVisionYellowPostVisible = visible; setYellowPostVisible(visible);}
+	bool getLWSYellowPostVisible(){return LWSVisionYellowPostVisible;}
 	void setYellowPostVisible(bool visible);
-	//void updateBlueLeftPostRect();
+
+	// Particles of Localization
+	void setLWSParticlesVisible(bool visible){LWSParticlesVisible = visible; setParticlesVisible(visible);}
+	bool getLWSParticlesVisible(){return LWSParticlesVisible;}
+	void setParticlesVisible(bool visible);
+	void updateParticlesRect(LocalizationDataForGUI debugGUI);
 
 	QTimer* getGREtimer(){return GREtimer;}
 
@@ -97,16 +109,21 @@ private:
 	bool LWSVisionBallVisible;
 	QGraphicsEllipseItem* VisionBall;
 
-	bool VisionYellowLeftPostVisible;
+	bool LWSVisionYellowLeftPostVisible;
 	QGraphicsEllipseItem* LeftYellowPost;
 
-	bool VisionYellowRightPostVisible;
+	bool LWSVisionYellowRightPostVisible;
 	QGraphicsEllipseItem* RightYellowPost;
 
-	bool VisionYellowPostVisible;
+	bool LWSVisionYellowPostVisible;
 	QGraphicsEllipseItem* YellowPost;
 
+	bool LWSParticlesVisible;
+	QList<Particle*> ParticlesList;
+
 	QTimer* GREtimer;
+
+
 
 };
 #endif /* GRAPHICALROBOTELEMENT_H_ */

@@ -46,7 +46,7 @@
             </attribute>
             <column>
              <property name="text">
-              <string>          TEAM      HOST   TEAM#   PLAYER#   STATE</string>
+              <string>  TEAM   HOST   TEAM#   PLAYER#   STATE</string>
              </property>
              <property name="font">
               <font>
@@ -98,7 +98,7 @@ p, li { white-space: pre-wrap; }
            <widget class="QListWidget" name="LWSListWidget">
             <item>
              <property name="text">
-              <string>position &amp; orientation</string>
+              <string>Estimated Robot Position &amp; Orientation</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -106,7 +106,7 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <property name="text">
-              <string>world info ball </string>
+              <string>Estimated Ball Position </string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -114,7 +114,7 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <property name="text">
-              <string>ball observation</string>
+              <string>Ball Observation</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -122,7 +122,15 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <property name="text">
-              <string>goal posts observations</string>
+              <string>Regular Field Objects Observations</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Localization Particles</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>

@@ -60,6 +60,10 @@ KMonitor::KMonitor(QWidget *parent)
 
 	connect(Messenger, SIGNAL(obsmsgUpdate(ObservationMessage, QString)), LWSGraphicsView, SLOT(observationMessageUpdateHandler(ObservationMessage, QString)));
 
+	//Signal slot connections for Particles of Localization
+	connect(LWSElementList, SIGNAL(LWRHSetParticlesVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVParticlesVisible(QString, bool)));
+	connect(Messenger, SIGNAL(localizationDataUpdate(LocalizationDataForGUI, QString)), LWSGraphicsView, SLOT(localizationDataUpdateHandler(LocalizationDataForGUI, QString)));
+
 	setWindowState(Qt::WindowMaximized);
 
 }

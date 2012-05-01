@@ -9,8 +9,6 @@
 
 #include <math.h>
 
-#define trydelete(x) {if((x)!=NULL){delete (x);(x)=NULL;}}
-
 using namespace std;
 
 KFieldScene::KFieldScene(KGraphicsView* parent)
@@ -59,6 +57,7 @@ KFieldScene::KFieldScene(KGraphicsView* parent)
 	this->addItem(LBPost);
 	this->addItem(RTPost);
 	this->addItem(RBPost);
+
 }
 
 KFieldScene::~KFieldScene()
@@ -436,7 +435,7 @@ QRectF KFieldScene::goalPostRectFromOBM(NamedObject* nob, WorldInfo* wim)
 	//xmiddle = (currentWIM.myposition().x() + obj->distance()*cos(obj->bearing()))*1000;
 	//ymiddle = (currentWIM.myposition().y() + obj->distance() * sin(obj->bearing()))*1000;
 
-	return rectFromFC( xmiddle, ymiddle, 100, 100);
+	return rectFromFC( xmiddle, ymiddle, 125, 125);
 }
 
 
