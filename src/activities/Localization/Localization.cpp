@@ -232,6 +232,10 @@ int Localization::Execute()
 	}
 	_blk->publishData(MyWorld, "worldstate");
 
+	DebugDataForGUI.Clear();
+	LocalizationDataForGUI_Load(AUXParticles);
+	_blk->publishSignal(DebugDataForGUI, "debug");
+
 	count++;
 
 	vprof.generate_report(10);
@@ -708,6 +712,26 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	{
 		DebugData.clear_observations();
 	}
+	return 1;
+}
+
+int Localization::LocalizationDataForGUI_Load(parts& Particles)
+{
+	bool addnewptrs = false;
+
+	if ((unsigned int)  DebugDataForGUI.particles_size() < Particles.size)
+		addnewptrs = true;
+
+	for (unsigned int i = 0; i < Particles.size; i++)
+	{
+		if (addnewptrs)
+			DebugDataForGUI.add_particles();
+		DebugDataForGUI.mutable_particles(i)->set_x(Particles.x[i]);
+		DebugDataForGUI.mutable_particles(i)->set_y(Particles.y[i]);
+		DebugDataForGUI.mutable_particles(i)->set_phi(Particles.phi[i]);
+		DebugDataForGUI.mutable_particles(i)->set_confidence(Particles.Weight[i]);
+	}
+
 	return 1;
 }
 

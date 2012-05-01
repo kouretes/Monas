@@ -60,3 +60,7 @@ message header{
 	required bytes NextMsgName = 3 [default = "Undef" ];
 	
 }
+
+message LocalizationDataForGUI{
+	repeated RobotPose Particles = 1;
+}
