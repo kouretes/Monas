@@ -22,6 +22,7 @@ signals:
 	void LWRHSetVisionBallVisible(QString, bool);
 	void LWRHSetVisionGoalPostsVisible(QString, bool);
 	void LWRHSetParticlesVisible(QString, bool);
+	void LWRHSetHFOVVisible(QString, bool);
 
 private slots:
 	void newListElementRequested(QListWidgetItem* item);

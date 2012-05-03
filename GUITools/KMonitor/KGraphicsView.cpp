@@ -338,5 +338,51 @@ void KGraphicsView::localizationDataUpdateHandler(LocalizationDataForGUI debugDa
 		//std::cout << "[67]KGraphicsView::worldInfoUpdateHandler:: Host hasn't been requested!" << host.toStdString() <<std::endl;
 	}
 
+}
+
+void KGraphicsView::LWSGVHFOVVisible(QString host, bool visible)
+{
+	GraphicalRobotElement *robotElement = NULL;
+
+	robotElement = paintArea->findGraphicalRobotItem( host );
+
+	if(robotElement == NULL )
+	{
+		if(paintArea->getRobotList().count() != 0)
+			removeGraphicalElement(paintArea->getRobotList().at(0)->getHostId());
+
+		robotElement = paintArea->newGraphicalRobotItem(host);
+	}
+
+	if (robotElement != NULL)
+	{
+		robotElement->setLWSHFOVVisible(visible);
+
+	}else
+	{
+		std::cout << "[214] KGraphicsView::LWSGVParticlesVisible : Fatal !" << std::endl;
+	}
+
+
+}
+
+void KGraphicsView::headYawJointUpdateHandler(float HeadYaw, QString host)
+{
+
+	GraphicalRobotElement* element = paintArea->findGraphicalRobotItem(host);
+
+	if(element != NULL)
+	{
+		if (element->getLWSHFOVVisible())
+		{
+			element->setLWSHFOVVisible(false);
+			element->updateHFOVRect(HeadYaw);
+			element->setLWSHFOVVisible(true);
+		}
+
+	}else
+	{
+		//std::cout << "[67]KGraphicsView::worldInfoUpdateHandler:: Host hasn't been requested!" << host.toStdString() <<std::endl;
+	}
 
 }

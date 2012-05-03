@@ -4,6 +4,8 @@
 
 #include <math.h>
 
+#define TO_RAD 0.01745329f
+
 #include <iostream>
 using namespace std;
 
@@ -24,9 +26,10 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LWSVisionYellowRightPostVisible = false;
 	LWSVisionYellowPostVisible = false;
 	LWSParticlesVisible = false;
+	LWSHFOVVisible = false;
 
 	QPen penForUnionistLine(Qt::black);
-	penForUnionistLine.setWidth(1);
+	penForUnionistLine.setWidth(2);
 
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
@@ -35,9 +38,12 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	{
 		Particle *part = new GUIRobotPose();
 		part->Direction = this->parentScene->addLine(QLineF(),QPen(Qt::black));
-		part->Pose = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::black));
+		part->Pose = this->parentScene->addEllipse(QRect(),QPen(Qt::cyan),QBrush(Qt::cyan));
 		ParticlesList.append(part);
 	}
+
+	PositiveBoundLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
+	NegativeBoundLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
@@ -58,6 +64,12 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 GraphicalRobotElement::~GraphicalRobotElement()
 {
+	if(PositiveBoundLine)
+		delete PositiveBoundLine;
+
+	if(NegativeBoundLine)
+		delete NegativeBoundLine;
+
 	if(UnionistLine)
 		delete UnionistLine;
 
@@ -303,21 +315,25 @@ void GraphicalRobotElement::clearVisionObservations()
 	if (this->VisionBall->isVisible())
 	{
 		this->VisionBall->setVisible(false);
+		this->VisionBall->setRect(0, 0, 0, 0); //?????
 	}
 
 	if (this->YellowPost->isVisible())
 	{
 		this->YellowPost->setVisible(false);
+		this->YellowPost->setRect(0, 0, 0, 0);
 	}
 
 	if (this->LeftYellowPost->isVisible())
 	{
 		this->LeftYellowPost->setVisible(false);
+		this->LeftYellowPost->setRect(0, 0, 0, 0);
 	}
 
 	if (this->RightYellowPost->isVisible())
 	{
 		this->RightYellowPost->setVisible(false);
+		this->RightYellowPost->setRect(0, 0, 0, 0);
 	}
 
 	GREtimer->stop();
@@ -362,3 +378,37 @@ void GraphicalRobotElement::updateParticlesRect(LocalizationDataForGUI debugGUI)
 		}
 	}
 }
+
+void GraphicalRobotElement::setHFOVVisible(bool visible)
+{
+	if (visible == false)
+	{
+		this->PositiveBoundLine->setVisible(false);
+		this->NegativeBoundLine->setVisible(false);
+
+	}else
+	{
+		this->PositiveBoundLine->setVisible(true);
+		this->NegativeBoundLine->setVisible(true);
+	}
+}
+
+void GraphicalRobotElement::updateHFOVRect(float HeadYaw)
+{
+	float HeadYawPlusTheta = 0.f;
+
+	if(this->currentWIM.has_myposition())
+	{
+		HeadYawPlusTheta = this->currentWIM.myposition().phi() + HeadYaw;
+
+		PositiveBoundLine->setLine(this->parentScene->lineFromFCA( this->currentWIM.myposition().x()*1000,
+				this->currentWIM.myposition().y()*1000, HeadYawPlusTheta + 20*TO_RAD, 800));
+		NegativeBoundLine->setLine(this->parentScene->lineFromFCA(this->currentWIM.myposition().x()*1000,
+						this->currentWIM.myposition().y()*1000,HeadYawPlusTheta - 20*TO_RAD , 800));
+	}else
+	{
+		PositiveBoundLine->setLine(0, 0, 0, 0);
+		NegativeBoundLine->setLine(0, 0, 0, 0);
+	}
+}
+

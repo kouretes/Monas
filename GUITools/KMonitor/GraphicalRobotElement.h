@@ -79,6 +79,12 @@ public:
 	void setParticlesVisible(bool visible);
 	void updateParticlesRect(LocalizationDataForGUI debugGUI);
 
+	// HFOV
+	void setLWSHFOVVisible(bool visible){LWSHFOVVisible = visible; setHFOVVisible(visible);}
+	bool getLWSHFOVVisible(){return LWSHFOVVisible;}
+	void setHFOVVisible(bool visible);
+	void updateHFOVRect(float HeadYaw);
+
 	QTimer* getGREtimer(){return GREtimer;}
 
 private slots:
@@ -120,6 +126,10 @@ private:
 
 	bool LWSParticlesVisible;
 	QList<Particle*> ParticlesList;
+
+	bool LWSHFOVVisible;
+	QGraphicsLineItem* PositiveBoundLine;
+	QGraphicsLineItem* NegativeBoundLine;
 
 	QTimer* GREtimer;
 

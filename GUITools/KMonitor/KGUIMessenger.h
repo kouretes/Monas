@@ -12,6 +12,7 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/VisionObservations.pb.h"
+#include "messages/SensorsMessage.pb.h"
 
 class KGUIMessenger : public QObject
 {
@@ -25,19 +26,19 @@ public:
 	MessageBuffer* makeReadBuffer(std::string const& s);
 
 public slots:
-	void GWRHSubscriptionHandler(QString hostId);
-	void GWRHUnsubscriptionHandler(QString hostId);
+	void GWRHSubscriptionHandler(QString);
+	void GWRHUnsubscriptionHandler(QString);
 
-	void LWRHSubscriptionHandler(QString hostId);
-	void LWRHUnsubscriptionHandler(QString hostId);
+	void LWRHSubscriptionHandler(QString);
+	void LWRHUnsubscriptionHandler(QString);
 
 signals:
-	void knownHostsUpdate(KnownHosts newHosts);
-	void gameStateMessageUpdate(GameStateMessage gsm, QString hostId);
-	void worldInfoUpdate(WorldInfo wim, QString hostId);
+	void knownHostsUpdate(KnownHosts);
+	void gameStateMessageUpdate(GameStateMessage, QString);
+	void worldInfoUpdate(WorldInfo, QString);
 	void localizationDataUpdate(LocalizationDataForGUI, QString);
-
-	void obsmsgUpdate(ObservationMessage obm, QString hostId);
+	void obsmsgUpdate(ObservationMessage, QString);
+	void headYawJointUpdate(float, QString);
 
 private slots:
 	void allocateReceivedMessages();
@@ -55,7 +56,5 @@ private:
 
 	QStringList myGWRequestedHosts;
 	QString myLWRequestedHost;
-
-	int vt;
 };
 #endif /* KGUIMESSENGER_H_ */

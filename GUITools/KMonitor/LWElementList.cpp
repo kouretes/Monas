@@ -60,6 +60,16 @@ void LWElementList::newListElementRequested(QListWidgetItem* item)
 		{
 			emit LWRHSetParticlesVisible(myCurrentLWRequestedHost, true);
 		}
+	}else if(parentListWidget->row(item)==5)
+	{
+		if(item->checkState() == 0)
+		{
+			emit LWRHSetHFOVVisible(myCurrentLWRequestedHost, false);
+		}
+		else
+		{
+			emit LWRHSetHFOVVisible(myCurrentLWRequestedHost, true);
+		}
 	}
 }
 

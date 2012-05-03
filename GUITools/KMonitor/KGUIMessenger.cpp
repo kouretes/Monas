@@ -7,6 +7,7 @@
 #include "architecture/narukom/network/multicastpoint.hpp"
 #include "architecture/narukom/pub_sub/message_buffer.h"
 #include "architecture/narukom/pub_sub/topicTree.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 
 using std::string;
 using namespace std;
@@ -45,6 +46,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	updateSubscription("sensors",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 
 }
 
@@ -130,6 +132,26 @@ void KGUIMessenger::allocateReceivedMessages()
 				debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
 
 				emit localizationDataUpdate(debugGUI, currentRHost);
+			}
+			else if (incomingMessages.at(i).msg->GetTypeName()=="AllSensorValuesMessage" && myLWRequestedHost == currentRHost)
+			{
+				//std::cout << "AllSensorValuesMessage :: "<< incomingMessages.at(i).host << std::endl;
+
+				AllSensorValuesMessage asvm;
+				SensorData HeadYaw;
+				float targetYaw;
+
+				asvm.Clear();
+				HeadYaw.Clear();
+				targetYaw = 0.f;
+
+				asvm.CopyFrom(*(incomingMessages.at(i).msg));
+				HeadYaw = asvm.jointdata(KDeviceLists::HEAD + KDeviceLists::YAW);
+				targetYaw = HeadYaw.sensorvalue();
+
+				//std::cout << "targetYaw :: "<< targetYaw << std::endl;
+
+				emit headYawJointUpdate(targetYaw, currentRHost);
 			}
 		}
 		else

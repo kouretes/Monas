@@ -14,7 +14,7 @@
    id="svg3027"
    version="1.1"
    inkscape:version="0.48.1 r9760"
-   sodipodi:docname="kwlopost.svg">
+   sodipodi:docname="RTPost.svg">
   <defs
      id="defs3029" />
   <sodipodi:namedview
@@ -25,7 +25,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="233.26507"
+     inkscape:cx="-281.02064"
      inkscape:cy="573.10997"
      inkscape:document-units="px"
      inkscape:current-layer="g3048"
@@ -43,7 +43,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -56,11 +56,11 @@
        transform="matrix(20.652647,0,0,24.746593,-5228.2308,-11147.266)">
       <g
          id="g3079"
-         transform="translate(-0.55337078,-0.4618237)">
+         transform="translate(-0.55336972,-0.4618237)">
         <path
            transform="translate(189.90923,211.6632)"
            sodipodi:type="arc"
-           style="fill:#0058ff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           style="fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:none"
            id="path5675"
            sodipodi:cx="70.857613"
            sodipodi:cy="255.7984"
@@ -73,7 +73,7 @@
            inkscape:connector-curvature="0"
            id="path3073"
            d="m 401.45592,636.44604 -223.52345,-47.44786 56.38059,-25.89516 c 24.73819,-11.36205 50.52656,-51.04475 57.37847,-75.85081 13.68152,-49.53146 6.09644,-26.52786 13.17556,-78.67578 3.03143,-22.3309 -21.20511,-87.59429 -29.1004,-96.31849 -2.49157,-2.75316 -57.65228,-50.76289 -56.23015,-50.81529 1.42212,-0.0524 138.35308,47.18131 247.04285,84.6238 l 204.45717,70.43335 c 56.27922,33.33917 62.72226,74.86308 59.31906,64.39826 -4.32234,-13.29116 24.56032,60.64842 4.36969,111.09048 -20.19193,50.44531 -81.22829,89.52568 -86.63338,89.29882 -3.28334,-0.13772 -131.55525,-23.45926 -246.63601,-44.84132 z"
-           style="opacity:0.91000001;fill:#0000ff;fill-opacity:1;stroke:none" />
+           style="opacity:0.91000001;fill:#ffff00;fill-opacity:1;stroke:none" />
       </g>
       <path
          style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

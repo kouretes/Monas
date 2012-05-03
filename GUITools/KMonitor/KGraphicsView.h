@@ -24,23 +24,25 @@ protected:
 	void resizeEvent(QResizeEvent* event);
 
 public slots:
-	void setKGFCGameStateInfo(GameStateMessage gsm, QString host);
-	void worldInfoUpdateHandler(WorldInfo nwim, QString host);
-	void observationMessageUpdateHandler(ObservationMessage om, QString host);
-	void localizationDataUpdateHandler(LocalizationDataForGUI debugData, QString host);
+	void setKGFCGameStateInfo(GameStateMessage, QString);
+	void worldInfoUpdateHandler(WorldInfo, QString);
+	void observationMessageUpdateHandler(ObservationMessage, QString);
+	void localizationDataUpdateHandler(LocalizationDataForGUI, QString);
+	void headYawJointUpdateHandler(float, QString);
 
-	void GWSGVRobotVisible(QString host, bool visible);
-	void GWSGVBallVisible(QString host, bool visible);
+	void GWSGVRobotVisible(QString, bool);
+	void GWSGVBallVisible(QString, bool);
 
-	void removeGraphicalElement(QString host);
+	void removeGraphicalElement(QString);
 
-	void LWSGVRobotVisible(QString host, bool visible);
-	void LWSGVBallVisible(QString host, bool visible);
+	void LWSGVRobotVisible(QString, bool);
+	void LWSGVBallVisible(QString, bool);
 
-	void LWSGVVisionBallVisible(QString host, bool visible);
-	void LWSGVVisionGoalPostsVisible(QString host, bool visible);
+	void LWSGVVisionBallVisible(QString, bool);
+	void LWSGVVisionGoalPostsVisible(QString, bool);
 
-	void LWSGVParticlesVisible(QString host, bool visible);
+	void LWSGVParticlesVisible(QString, bool);
+	void LWSGVHFOVVisible(QString, bool);
 
 signals:
 	void forceTimeOut();

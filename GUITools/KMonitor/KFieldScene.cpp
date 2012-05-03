@@ -24,8 +24,6 @@ KFieldScene::KFieldScene(KGraphicsView* parent)
 	penForWhiteLine.setWidth(4);
 	QPen penForYellowPost(Qt::yellow);
 	penForYellowPost.setWidth(6);
-	QPen penForBluePost(Qt::blue);
-	penForBluePost.setWidth(6);
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
 
@@ -44,12 +42,12 @@ KFieldScene::KFieldScene(KGraphicsView* parent)
 	RCrossVPart = addLine(QLineF(),penForWhiteLine);
 	CCrossHPart = addLine(QLineF(),penForWhiteLine);
 
-	LTPostCircle = addEllipse(QRect(),QPen(Qt::blue),QBrush(Qt::blue));
-	LBPostCircle = addEllipse(QRect(),QPen(Qt::blue),QBrush(Qt::blue));
+	LTPostCircle = addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
+	LBPostCircle = addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	RTPostCircle = addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	RBPostCircle = addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 
-	LPostVPart = addLine(QLineF(),penForBluePost);
+	LPostVPart = addLine(QLineF(),penForYellowPost);
 	RPostVPart = addLine(QLineF(),penForYellowPost);
 
 	setSvgItems();

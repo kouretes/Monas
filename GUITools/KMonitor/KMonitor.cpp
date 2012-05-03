@@ -64,6 +64,11 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(LWSElementList, SIGNAL(LWRHSetParticlesVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVParticlesVisible(QString, bool)));
 	connect(Messenger, SIGNAL(localizationDataUpdate(LocalizationDataForGUI, QString)), LWSGraphicsView, SLOT(localizationDataUpdateHandler(LocalizationDataForGUI, QString)));
 
+	//Signal slot connections for HFOV
+	connect(LWSElementList, SIGNAL(LWRHSetHFOVVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVHFOVVisible(QString, bool)));
+	connect(Messenger, SIGNAL(headYawJointUpdate(float, QString)), LWSGraphicsView, SLOT(headYawJointUpdateHandler(float, QString)));
+
+
 	setWindowState(Qt::WindowMaximized);
 
 }

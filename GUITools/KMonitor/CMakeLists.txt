@@ -26,6 +26,7 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 					../../src/messages/WorldInfo.pb.cc
 					../../src/messages/Gamecontroller.pb.cc
 					../../src/messages/motion.pb.cc
+					../../src/messages/SensorsMessage.pb.cc
 					
    )
 SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
