@@ -5,11 +5,12 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
 #include <QString>
+#include <QObject>
+#include <QPoint>
+#include <QTimer>
 #include <QList>
 
-#include <QTimer>
-#include <QObject>
-
+#include <boost/circular_buffer.hpp>
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
 
@@ -85,6 +86,11 @@ public:
 	void setHFOVVisible(bool visible);
 	void updateHFOVRect(float HeadYaw);
 
+	// Trace
+	void setLWSTraceVisible(bool visible){LWSTraceVisible = visible; setTraceVisible(visible);}
+	bool getLWSTraceVisible(){return LWSTraceVisible;}
+	void setTraceVisible(bool visible);
+
 	QTimer* getGREtimer(){return GREtimer;}
 
 private slots:
@@ -92,6 +98,7 @@ private slots:
 
 private:
 	void tagVisionObservations(QGraphicsEllipseItem* post,QRectF rect, QString text);
+	void updateTraceRect();
 
 
 	KFieldScene* parentScene;
@@ -131,9 +138,10 @@ private:
 	QGraphicsLineItem* PositiveBoundLine;
 	QGraphicsLineItem* NegativeBoundLine;
 
+	bool LWSTraceVisible;
+	boost::circular_buffer<QGraphicsEllipseItem*> RobotPositions;
+	boost::circular_buffer<QGraphicsLineItem*> UnionistLines;
+
 	QTimer* GREtimer;
-
-
-
 };
 #endif /* GRAPHICALROBOTELEMENT_H_ */

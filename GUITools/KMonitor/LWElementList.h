@@ -23,6 +23,7 @@ signals:
 	void LWRHSetVisionGoalPostsVisible(QString, bool);
 	void LWRHSetParticlesVisible(QString, bool);
 	void LWRHSetHFOVVisible(QString, bool);
+	void LWRHSetTraceVisible(QString, bool);
 
 private slots:
 	void newListElementRequested(QListWidgetItem* item);

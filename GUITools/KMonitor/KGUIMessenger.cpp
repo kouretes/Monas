@@ -117,8 +117,6 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="ObservationMessage" && myLWRequestedHost == currentRHost)
 			{
-				std::cout << "ObservationMessage :: "<< incomingMessages.at(i).host << std::endl;
-
 				ObservationMessage om;
 				om.Clear();
 				om.CopyFrom(*(incomingMessages.at(i).msg));
@@ -135,8 +133,6 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="AllSensorValuesMessage" && myLWRequestedHost == currentRHost)
 			{
-				//std::cout << "AllSensorValuesMessage :: "<< incomingMessages.at(i).host << std::endl;
-
 				AllSensorValuesMessage asvm;
 				SensorData HeadYaw;
 				float targetYaw;
@@ -148,8 +144,6 @@ void KGUIMessenger::allocateReceivedMessages()
 				asvm.CopyFrom(*(incomingMessages.at(i).msg));
 				HeadYaw = asvm.jointdata(KDeviceLists::HEAD + KDeviceLists::YAW);
 				targetYaw = HeadYaw.sensorvalue();
-
-				//std::cout << "targetYaw :: "<< targetYaw << std::endl;
 
 				emit headYawJointUpdate(targetYaw, currentRHost);
 			}

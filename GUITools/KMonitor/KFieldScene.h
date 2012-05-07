@@ -105,7 +105,6 @@ private:
 
 	KGraphicsView* parent;
 	QList<GraphicalRobotElement*> RobotList;
-
 };
 
 #endif // KFieldScene_H

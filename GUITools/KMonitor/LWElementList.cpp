@@ -70,6 +70,16 @@ void LWElementList::newListElementRequested(QListWidgetItem* item)
 		{
 			emit LWRHSetHFOVVisible(myCurrentLWRequestedHost, true);
 		}
+	}else if(parentListWidget->row(item)==6)
+	{
+		if(item->checkState() == 0)
+		{
+			emit LWRHSetTraceVisible(myCurrentLWRequestedHost, false);
+		}
+		else
+		{
+			emit LWRHSetTraceVisible(myCurrentLWRequestedHost, true);
+		}
 	}
 }
 

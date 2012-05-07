@@ -43,6 +43,7 @@ public slots:
 
 	void LWSGVParticlesVisible(QString, bool);
 	void LWSGVHFOVVisible(QString, bool);
+	void LWSGVTraceVisible(QString, bool);
 
 signals:
 	void forceTimeOut();
