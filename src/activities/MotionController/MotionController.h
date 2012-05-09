@@ -124,6 +124,7 @@ private:
 
 	std::string BodyID;
 	void readWalkParameters();
+	boost::posix_time::ptime standUpStartTime, timeLapsed;
 };
 
 #endif

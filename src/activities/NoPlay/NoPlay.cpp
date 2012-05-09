@@ -151,10 +151,7 @@ int NoPlay::Execute() {
 			}else
 				curraction = DONOTHING;
 				if(gsm.get()!=0){
-					if (gsm->player_number()==1) locReset->set_type(LocalizationResetMessage::P1);
-					if (gsm->player_number()==2) locReset->set_type(LocalizationResetMessage::P2);
-					if (gsm->player_number()==3) locReset->set_type(LocalizationResetMessage::P3);
-					if (gsm->player_number()==4) locReset->set_type(LocalizationResetMessage::P4);
+					locReset->set_type(gsm->player_number());
 					_blk->publishSignal(*locReset, "worldstate");
 				}
 		break;

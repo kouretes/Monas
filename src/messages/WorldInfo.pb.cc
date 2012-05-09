@@ -30,7 +30,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationResetMessage_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_ResetPhase_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* LocalizationData_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationData_reflection_ = NULL;
@@ -125,10 +124,9 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(UnknownObjects));
   LocalizationResetMessage_descriptor_ = file->message_type(4);
-  static const int LocalizationResetMessage_offsets_[3] = {
+  static const int LocalizationResetMessage_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, kickoff_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, playreadyplay_),
   };
   LocalizationResetMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -141,7 +139,6 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationResetMessage));
-  LocalizationResetMessage_ResetPhase_descriptor_ = LocalizationResetMessage_descriptor_->enum_type(0);
   LocalizationData_descriptor_ = file->message_type(5);
   static const int LocalizationData_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, world_),
@@ -248,17 +245,14 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "iveX\030\001 \001(\002:\007-100000\022\032\n\trelativeY\030\002 \001(\002:\007"
     "-100000\022\027\n\006height\030\003 \001(\002:\007-100000\022\037\n\016rela"
     "tiveXspeed\030\004 \001(\002:\007-100000\022\037\n\016relativeYsp"
-    "eed\030\005 \001(\002:\007-100000\"\263\001\n\030LocalizationReset"
-    "Message\0222\n\004type\030\001 \002(\0162$.LocalizationRese"
-    "tMessage.ResetPhase\022\017\n\007kickOff\030\002 \002(\010\022\025\n\r"
-    "playReadyPlay\030\003 \002(\010\";\n\nResetPhase\022\r\n\tPEN"
-    "ALIZED\020\000\022\006\n\002P1\020\001\022\006\n\002P2\020\002\022\006\n\002P3\020\003\022\006\n\002P4\020\004"
-    "\"\232\001\n\020LocalizationData\022\031\n\005World\030\001 \002(\0132\n.W"
-    "orldInfo\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022"
-    "!\n\rRobotPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Ob"
-    "servations\030\004 \002(\0132\023.ObservationMessage\"A\n"
-    "\006header\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013"
-    "NextMsgName\030\003 \002(\014:\005Undef", 1104);
+    "eed\030\005 \001(\002:\007-100000\"9\n\030LocalizationResetM"
+    "essage\022\014\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\"\232\001"
+    "\n\020LocalizationData\022\031\n\005World\030\001 \002(\0132\n.Worl"
+    "dInfo\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022!\n\r"
+    "RobotPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Obser"
+    "vations\030\004 \002(\0132\023.ObservationMessage\"A\n\006he"
+    "ader\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013Nex"
+    "tMsgName\030\003 \002(\014:\005Undef", 981);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -1779,37 +1773,9 @@ void UnknownObjects::Swap(UnknownObjects* other) {
 
 // ===================================================================
 
-const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_ResetPhase_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return LocalizationResetMessage_ResetPhase_descriptor_;
-}
-bool LocalizationResetMessage_ResetPhase_IsValid(int value) {
-  switch(value) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      return true;
-    default:
-      return false;
-  }
-}
-
-#ifndef _MSC_VER
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::PENALIZED;
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P1;
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P2;
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P3;
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::P4;
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::ResetPhase_MIN;
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage::ResetPhase_MAX;
-const int LocalizationResetMessage::ResetPhase_ARRAYSIZE;
-#endif  // _MSC_VER
 #ifndef _MSC_VER
 const int LocalizationResetMessage::kTypeFieldNumber;
 const int LocalizationResetMessage::kKickOffFieldNumber;
-const int LocalizationResetMessage::kPlayReadyPlayFieldNumber;
 #endif  // !_MSC_VER
 
 LocalizationResetMessage::LocalizationResetMessage()
@@ -1830,7 +1796,6 @@ void LocalizationResetMessage::SharedCtor() {
   _cached_size_ = 0;
   type_ = 0;
   kickoff_ = false;
-  playreadyplay_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1867,7 +1832,6 @@ void LocalizationResetMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     type_ = 0;
     kickoff_ = false;
-    playreadyplay_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1879,19 +1843,14 @@ bool LocalizationResetMessage::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .LocalizationResetMessage.ResetPhase type = 1;
+      // required int32 type = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::LocalizationResetMessage_ResetPhase_IsValid(value)) {
-            set_type(static_cast< ::LocalizationResetMessage_ResetPhase >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(1, value);
-          }
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &type_)));
+          set_has_type();
         } else {
           goto handle_uninterpreted;
         }
@@ -1908,22 +1867,6 @@ bool LocalizationResetMessage::MergePartialFromCodedStream(
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &kickoff_)));
           set_has_kickoff();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(24)) goto parse_playReadyPlay;
-        break;
-      }
-      
-      // required bool playReadyPlay = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_playReadyPlay:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &playreadyplay_)));
-          set_has_playreadyplay();
         } else {
           goto handle_uninterpreted;
         }
@@ -1949,20 +1892,14 @@ bool LocalizationResetMessage::MergePartialFromCodedStream(
 
 void LocalizationResetMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .LocalizationResetMessage.ResetPhase type = 1;
+  // required int32 type = 1;
   if (has_type()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->type(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->type(), output);
   }
   
   // required bool kickOff = 2;
   if (has_kickoff()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->kickoff(), output);
-  }
-  
-  // required bool playReadyPlay = 3;
-  if (has_playreadyplay()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->playreadyplay(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1973,20 +1910,14 @@ void LocalizationResetMessage::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* LocalizationResetMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .LocalizationResetMessage.ResetPhase type = 1;
+  // required int32 type = 1;
   if (has_type()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->type(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->type(), target);
   }
   
   // required bool kickOff = 2;
   if (has_kickoff()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->kickoff(), target);
-  }
-  
-  // required bool playReadyPlay = 3;
-  if (has_playreadyplay()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->playreadyplay(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2000,19 +1931,15 @@ int LocalizationResetMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .LocalizationResetMessage.ResetPhase type = 1;
+    // required int32 type = 1;
     if (has_type()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->type());
     }
     
     // required bool kickOff = 2;
     if (has_kickoff()) {
-      total_size += 1 + 1;
-    }
-    
-    // required bool playReadyPlay = 3;
-    if (has_playreadyplay()) {
       total_size += 1 + 1;
     }
     
@@ -2049,9 +1976,6 @@ void LocalizationResetMessage::MergeFrom(const LocalizationResetMessage& from) {
     if (from.has_kickoff()) {
       set_kickoff(from.kickoff());
     }
-    if (from.has_playreadyplay()) {
-      set_playreadyplay(from.playreadyplay());
-    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -2069,7 +1993,7 @@ void LocalizationResetMessage::CopyFrom(const LocalizationResetMessage& from) {
 }
 
 bool LocalizationResetMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
   
   return true;
 }
@@ -2078,7 +2002,6 @@ void LocalizationResetMessage::Swap(LocalizationResetMessage* other) {
   if (other != this) {
     std::swap(type_, other->type_);
     std::swap(kickoff_, other->kickoff_);
-    std::swap(playreadyplay_, other->playreadyplay_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

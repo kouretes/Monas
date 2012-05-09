@@ -80,9 +80,9 @@ void Localization::UserInit()
 
 }
 
-void Localization::Reset(int playerNumber, bool kickOff,bool playReadyPlay )
+void Localization::Reset(int playerNumber, bool kickOff)
 {
-	KLocalization::initializeParticles(SIRParticles,playerNumber,kickOff,playReadyPlay);
+	KLocalization::initializeParticles(SIRParticles,playerNumber,kickOff);
 }
 
 
@@ -202,16 +202,7 @@ int Localization::Execute()
 		DebugMode_Receive();
 	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty		
 		timeStart = boost::posix_time::microsec_clock::universal_time();
-		if(lrm->type() == LocalizationResetMessage::PENALIZED)
-			Reset(-1,lrm->kickoff(),lrm->playreadyplay());
-		else if(lrm->type() == LocalizationResetMessage::P1)
-			Reset(1,lrm->kickoff(),lrm->playreadyplay());
-		else if(lrm->type() == LocalizationResetMessage::P2)
-			Reset(2,lrm->kickoff(),lrm->playreadyplay());
-		else if(lrm->type() == LocalizationResetMessage::P3)
-			Reset(3,lrm->kickoff(),lrm->playreadyplay());
-		else if(lrm->type() == LocalizationResetMessage::P4)
-			Reset(4,lrm->kickoff(),lrm->playreadyplay());
+		Reset((int)lrm->type(),lrm->kickoff());
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
 
@@ -485,7 +476,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		beliefForGoalPosts[1] *= 0.6;
 		beliefForGoalPosts[2] *= 0.6;
 		beliefForGoalPosts[3] *= 0.6;
-		Update_Ambigius_Eldrad_Version(SIRParticles, AmbigiusObservations, partclsNum);
+		Update_Ambigius(SIRParticles, AmbigiusObservations, partclsNum);
 		timesOfContAmbig++;
 		//Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
 	}
@@ -586,6 +577,9 @@ void Localization::process_messages()
 
 	currentObservation.clear();
 	currentAbigiusObservation.clear();
+	if(gsm != 0){
+		playerNumber = gsm->player_number();
+	}
 	if (obsm != 0)
 	{
 		KObservationModel tmpOM;
