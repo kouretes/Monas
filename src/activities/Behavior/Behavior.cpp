@@ -234,9 +234,8 @@ void Behavior::GetGameState()
 				direction = 1;
 				calibrated = 0;
 				lastpenalized = microsec_clock::universal_time();
-				locReset->set_type(LocalizationResetMessage::PENALIZED);
+				locReset->set_type(-1);
 				locReset->set_kickoff(kickoff);
-				locReset->set_playreadyplay(false);
 				_blk->publishSignal(*locReset, "worldstate");
 			}
 			if (prevGameState == PLAYER_SET) {
@@ -253,12 +252,8 @@ void Behavior::GetGameState()
 				calibrated = 0;
 			}
 			if (prevGameState == PLAYER_INITIAL) {
-				if (playerNumber==1) locReset->set_type(LocalizationResetMessage::P1);
-				if (playerNumber==2) locReset->set_type(LocalizationResetMessage::P2);
-				if (playerNumber==3) locReset->set_type(LocalizationResetMessage::P3);
-				if (playerNumber==4) locReset->set_type(LocalizationResetMessage::P4);
+				locReset->set_type(playerNumber);
 				locReset->set_kickoff(kickoff);
-				locReset->set_playreadyplay(false);
 				_blk->publishSignal(*locReset, "worldstate");
 			}
 			if (prevGameState == PLAYER_PLAYING)
@@ -269,12 +264,8 @@ void Behavior::GetGameState()
 			if (gameState != prevGameState)
 				stopRobot();
 			if ( toReadyFromGoal ) {
-				if (playerNumber==1) locReset->set_type(LocalizationResetMessage::P1);
-				if (playerNumber==2) locReset->set_type(LocalizationResetMessage::P2);
-				if (playerNumber==3) locReset->set_type(LocalizationResetMessage::P3);
-				if (playerNumber==4) locReset->set_type(LocalizationResetMessage::P4);
+				locReset->set_type(playerNumber);
 				locReset->set_kickoff(kickoff);
-				locReset->set_playreadyplay(true);
 				_blk->publishSignal(*locReset, "worldstate");
 				toReadyFromGoal = false;
 			}

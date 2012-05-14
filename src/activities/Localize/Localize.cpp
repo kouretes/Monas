@@ -46,7 +46,7 @@ void Localize::UserInit () {
 	bhm = new BToHeadMessage();
 	amot = new MotionActionMessage();
 	locReset = new LocalizationResetMessage();
-	locReset->set_type(LocalizationResetMessage::PENALIZED);
+	locReset->set_type(-1);
 }
 std::string Localize::GetName () {
 	return "Localize";

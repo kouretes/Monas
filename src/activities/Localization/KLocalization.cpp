@@ -140,6 +140,45 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 	return 0;
 }
 
+int KLocalization::readConfiguration(const std::string& file_name) {
+	XMLConfig config(file_name);
+	if (!config.QueryElement("player", playerNumber)){
+		Logger::Instance().WriteMsg("KLocalization", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
+		playerNumber = 1;
+	}
+	return 1;
+}
+bool KLocalization::readRobotConf(const std::string& file_name) {
+	XML config(file_name);
+	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
+	NodeCont teamPositions, robotPosition ;
+	Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration "  , Logger::Info);
+
+	for (int i = 0; i < 2; i++) {
+		string kickoff = (i==0)?"KickOff":"noKickOff";	//KICKOFF==0, NOKICKOFF == 1
+		bool found = false;
+		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
+
+		if (teamPositions.size() != 0)
+			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
+
+		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++) {
+			if (it->attrb["number"] == playerNumber) {
+				initPhi[i] = 0.0;
+				initX[i] = (it->attrb["posx"]);
+				initY[i] = (it->attrb["posy"]);
+
+				found = true;
+			}else{
+				initPhi[i] = 0.0;
+				initX[i] = 0.0;
+				initY[i] = 0.0;
+			}
+		}
+	}
+	return true;
+}
+
 int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Motions, map<string, vector<KMotionModel> >& KMMmap)
 {
 	TiXmlDocument doc2(filename.c_str());
@@ -307,118 +346,16 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 	}
 }
 
-void KLocalization::initializeParticles(parts & Particles,int playerNumber,bool kickOff, bool playReadyPlay){
+void KLocalization::initializeParticles(parts & Particles,int playerNumber,bool kickOff){
 	if(playerNumber == -1)
 		setParticlesPoseUniformly(Particles);
 	else{
 		for (unsigned int i = 0; i < partclsNum; i++)
 		{
-			if(playerNumber == 1){
-				Particles.x[i] = -2400;
-				Particles.y[i] = -2000;
-				Particles.phi[i] = deg2rad(90);
-				Particles.Weight[i] = 1.0 / partclsNum;
-			}else if(playerNumber == 2){
-				Particles.x[i] = -2400;
-				Particles.y[i] = 2000;
-				Particles.phi[i] = deg2rad(270);
-				Particles.Weight[i] = 1.0 / partclsNum;
-			}else if(playerNumber == 3){
-				Particles.x[i] = -1200;
-				Particles.y[i] = -2000;
-				Particles.phi[i] = deg2rad(90);
-				Particles.Weight[i] = 1.0 / partclsNum;
-			}else{
-				Particles.x[i] = -1200;
-				Particles.y[i] = 2000;
-				Particles.phi[i] = deg2rad(270);
-				Particles.Weight[i] = 1.0 / partclsNum;
-			}
-		}
-	}
-	//we dont have the kick off
-	int index = (rand()) % Particles.size;
-	if(!kickOff){
-		for (unsigned int i=0; i<4; i++){
-			index = (rand() + i) % Particles.size;
-			if(playerNumber == 1){
-				Particles.x[index] = -3000;
-				Particles.y[index] = 0;
-			}else if(playerNumber == 2){
-				Particles.x[index] = -2300;
-				Particles.y[index] = 1400;
-			}else if(playerNumber == 3){
-				Particles.x[index] = -2300;
-				Particles.y[index] = -1400;
-			}else{
-				Particles.x[index] = -2300;
-				Particles.y[index] = 200;
-			}
-			Particles.phi[index] = deg2rad(0);
+			Particles.x[i] = initX[(kickOff)?0:1];
+			Particles.y[i] = initY[(kickOff)?0:1];
+			Particles.phi[i] = initPhi[(kickOff)?0:1];
 			Particles.Weight[i] = 1.0 / partclsNum;
-		}
-	}else{
-		for (unsigned int i=partclsNum-4; i<partclsNum; i++){
-			if(playerNumber == 1){
-				Particles.x[index] = -3000;
-				Particles.y[index] = 0;
-			}else if(playerNumber == 2){
-				Particles.x[index] = -1200;
-				Particles.y[index] = 0;
-			}else if(playerNumber == 3){
-				Particles.x[index] = -2300;
-				Particles.y[index] = -1100;
-			}else{
-				Particles.x[index] = -600;
-				Particles.y[index] = 0;
-			}
-			Particles.Weight[index] = 1.0 / partclsNum;
-			Particles.phi[index] = deg2rad(0);
-		}
-	}
-	if(playReadyPlay){
-		if(!kickOff){
-			for (unsigned int i=0; i<partclsNum; i++){
-				if(playerNumber == 1){
-					Particles.x[i] = -3000;
-					Particles.y[i] = 0;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}else if(playerNumber == 2){
-					Particles.x[i] = -2300;
-					Particles.y[i] = 1400;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}else if(playerNumber == 3){
-					Particles.x[i] = -2300;
-					Particles.y[i] = -1400;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}else{
-					Particles.x[i] = -2300;
-					Particles.y[i] = 200;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}
-				Particles.phi[i] = deg2rad(0);
-			}
-		}else{
-			for (unsigned int i=0; i<partclsNum; i++){
-				if(playerNumber == 1){
-					Particles.x[i] = -3000;
-					Particles.y[i] = 0;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}else if(playerNumber == 2){
-					Particles.x[i] = -1200;
-					Particles.y[i] = 0;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}else if(playerNumber == 3){
-					Particles.x[i] = -2300;
-					Particles.y[i] = -1100;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}else{
-					Particles.x[i] = -600;
-					Particles.y[i] = 0;
-					Particles.Weight[i] = 1.0 / partclsNum;
-				}
-				Particles.phi[i] = deg2rad(0);
-			}
 		}
 	}
 	beliefForGoalPosts[0] = 0;
@@ -568,7 +505,8 @@ int KLocalization::Initialize()
 	AgentPosition.confidence = 100000;
 
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
-
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
+	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	return 1;
 }
 
@@ -1214,7 +1152,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		Particles.Weight[p] = totalWeight;
 	}
 }
-void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles){
+void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles){
 	//
 	//	 Function to update the weights of each particle regarding the ObservationDistance
 	//	 from an object and the direction
@@ -1289,7 +1227,6 @@ void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KOb
 		}
 		beliefForGoalPosts[oldChoise]+=0.4;
 	}
-	cerr << "1 = " << beliefForGoalPosts[0] << " 2 = "  << beliefForGoalPosts[1] << " 3 = " << beliefForGoalPosts[2] << " 4 = "  << beliefForGoalPosts[3] << endl;
 	int finalChoise = findMaxIndex(beliefForGoalPosts[0],beliefForGoalPosts[1],beliefForGoalPosts[2],beliefForGoalPosts[3]);
 	int rightOrLeftGoalpost = (finalChoise-2 < 0)?-1:1;
 	int rightOrLeftGoal = (finalChoise%2 ==0)? -1:1;
@@ -1310,102 +1247,11 @@ void KLocalization::Update_Ambigius_Eldrad_Version(parts & Particles, vector<KOb
 			AdditiveWeightTotal *= normpdf(anglediff(obsBearingValue, ParticleBearing), Deviation);
 
 			OverallWeight = Particles.Weight[p]*0.6 + AdditiveWeightTotal*0.4;
-			if(p == 20){
-				int num = 0;
-				if(Observation.size()>0)
-					num = Observation[0].Distance.val;
-				else
-					num = 0;
-				cout << "Update Additive Synoliko = " << AdditiveWeightTotal << " Overall Total = " << OverallWeight << endl;
-				cout << "Real Dist = " << num << endl;
-			}
 			Particles.Weight[p] = AdditiveWeightTotal;//OverallWeight;
 		}
 	}
 }
-void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles)
-{
 
-	//
-	//	 Function to update the weights of each particle regarding the ObservationDistance
-	//	 from an object and the direction
-	double OverallWeight, /*ObservationAngle, ObservationBearing,*/ParticlePointBearingAngle, ParticleBearing, Deviation,ParticlePointBearingAngleS, ParticleBearingS;
-	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double AdditiveWeightTotal = 0,AdditiveWeight = 0,AdditiveYellow = 0;
-	double R,RS;
-	double Meanerror = 0;
-
-	for (int p = 0; p < NumofParticles; p++)
-	{
-		AdditiveWeightTotal = 0;
-		//AdditiveWeightTotal = Particles.Weight[p];
-		//	OberallWeight = 0;
-		if (!Observation.empty())
-		{ // an Ambigius landMark has been observed
-			for (unsigned int i = 0; i < Observation.size(); i++)
-			{
-				for (int j = -1; j <= 1; j = j + 2)
-				{
-					AdditiveYellow = 0;
-					AdditiveWeight = 0;
-#ifdef DISTANCE_WEIGHTING	
-					// Distance
-					// R Distance the particle has from the LandMark
-					R = DISTANCE(Particles.x[p],Observation[i].Feature.x,Particles.y[p],Observation[i].Feature.y*j);
-
-					Meanerror = Observation[i].Distance.Emean;
-					Deviation = Observation[i].Distance.Edev;
-
-					AdditiveWeight += normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
-#endif
-
-					//Bearing
-#ifdef	BEARING_WEIGHTING
-					ParticlePointBearingAngle = atan2(Observation[i].Feature.y*j - Particles.y[p], Observation[i].Feature.x - Particles.x[p]);
-					ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
-					Deviation = Observation[i].Bearing.Edev;
-
-					AdditiveWeight *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
-#endif
-
-
-#ifdef DISTANCE_WEIGHTING
-					// Distance
-					// R Distance the particle has from the LandMark
-					RS = DISTANCE(Particles.x[p],-Observation[i].Feature.x,Particles.y[p],-Observation[i].Feature.y*j);
-
-					Meanerror = Observation[i].Distance.Emean;
-					Deviation = Observation[i].Distance.Edev;
-
-					AdditiveYellow += normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
-#endif
-
-					//Bearing
-#ifdef	BEARING_WEIGHTING
-					ParticlePointBearingAngleS = atan2(-Observation[i].Feature.y*j - Particles.y[p], -Observation[i].Feature.x - Particles.x[p]);
-					ParticleBearingS = anglediff2(ParticlePointBearingAngleS, Particles.phi[p]);
-					Deviation = Observation[i].Bearing.Edev; 
-					AdditiveYellow *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
-#endif
-					float biggerWeightTemp = (AdditiveYellow > AdditiveWeight) ? AdditiveYellow : AdditiveWeight;
-					AdditiveWeightTotal = (AdditiveWeightTotal > biggerWeightTemp) ? AdditiveWeightTotal : biggerWeightTemp;
-				}
-			}
-		}
-		if(p == 10){
-			int num = 0;
-			if(Observation.size()>0)
-				num = Observation[0].Distance.val;
-			else
-				num = 0;
-			cout << "Update Additive Synoliko = " << AdditiveWeightTotal << endl;
-			cout << "Real Dist = " << num << endl;
-		}
-		OverallWeight = AdditiveWeightTotal;
-		//set the weight
-		Particles.Weight[p] = OverallWeight;
-	}
-}
 
 void KLocalization::Propagate(parts & Particles, int *Index)
 {
@@ -2212,3 +2058,4 @@ int KLocalization::ObservationParticles(vector<KObservationModel> &Observation, 
 	}
 	return 1;
 }*/
+

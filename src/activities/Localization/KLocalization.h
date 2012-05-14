@@ -17,7 +17,9 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-#include "../../tools/MathFunctions.h"
+#include "tools/MathFunctions.h"
+#include "tools/XML.h"
+#include "tools/XMLConfig.h"
 
 //#define WEBOTS
 //#define VISIBILITY_WEIGHTING
@@ -297,7 +299,9 @@ public:
 	float FieldMinX;
 	float FieldMaxY;
 	float FieldMinY;
-	
+	//Team
+	float initX[2], initY[2], initPhi[2]; 
+	int playerNumber;
 	//Belief for each goalpost
 	float beliefForGoalPosts[4];
 	int timesOfContAmbig;
@@ -316,11 +320,12 @@ public:
 	int Initialize();
 	int LoadMotionModelXML(string filename, vector<KMotionModel>& Motions, map<string, vector<KMotionModel> > & KMMmap);
 	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
+	int readConfiguration(const std::string& file_name);
+	bool readRobotConf(const std::string& file_name);
 	///Basic SIR functions
 	void Predict(parts &Particles, KMotionModel & MotionModel);
 	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemin, double rangemax);
-	void Update_Ambigius(parts &Particles, vector<KObservationModel> &Observation, int NumofParticles);
-	void Update_Ambigius_Eldrad_Version(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
+	void Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
 	//Not used with 2 yellow goals
 	//void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 	
@@ -360,7 +365,7 @@ public:
 	void setBelief(double x, double y, double phi, double confidence);
 	void setParticlesPose(parts & Particles, double x, double y, double phi);
 	void setParticlesPoseUniformly(parts & Particles);
-	void initializeParticles(parts & Particles,int playerNumber,bool kickOff, bool playReadyPlay);
+	void initializeParticles(parts & Particles,int playerNumber,bool kickOff);
 	
 	int ObservationParticles(vector<KObservationModel> & Observation, parts &Paticles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright);
 	int CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) ;

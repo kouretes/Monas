@@ -143,6 +143,8 @@ void MotionController::UserInit()
 	sm.set_detail("");
 	sm.set_lastaction("");
 	
+	standUpStartTime =boost::posix_time::microsec_clock::universal_time();
+	
 	walkingWithVelocity = false;
 	//setStiffnessDCM(1);
 	BodyID = KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID);
@@ -289,25 +291,25 @@ void MotionController::mglrun()
 		   )
 		{
 			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
+			timeLapsed = boost::posix_time::microsec_clock::universal_time();
+			if(timeLapsed-standUpStartTime >= boost::posix_time::seconds(3.5)){
+				if(currentstate==PLAYER_PLAYING || currentstate == PLAYER_READY)
+				{
+					//Message edw
+					robotUp = false;
+					robotDown = false;
+					killCommands();
+				}
+				motion->setStiffnesses("Body", 0.0);
 
-			if(currentstate==PLAYER_PLAYING || currentstate == PLAYER_READY)
-			{
-				//Message edw
-				robotUp = false;
-				robotDown = false;
-				killCommands();
-			}
-			motion->setStiffnesses("Body", 0.0);
-			
-			if(sm.type() != MotionStateMessage::FALL){
-        		sm.set_type(MotionStateMessage::FALL);
+				sm.set_type(MotionStateMessage::FALL);
 				sm.set_detail("");
-        		_blk->publishState(sm,"worldstate");
+				_blk->publishState(sm,"worldstate");
+
+				waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
+
+				return;
 			}
-
-			waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
-
-			return;
 		}
 	}
 
@@ -364,6 +366,7 @@ void MotionController::mglrun()
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();
+		standUpStartTime =boost::posix_time::microsec_clock::universal_time();
 		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
 		//uŔ(7000000);
 		return;

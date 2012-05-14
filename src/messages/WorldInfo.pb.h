@@ -40,28 +40,6 @@ class LocalizationData;
 class header;
 class LocalizationDataForGUI;
 
-enum LocalizationResetMessage_ResetPhase {
-  LocalizationResetMessage_ResetPhase_PENALIZED = 0,
-  LocalizationResetMessage_ResetPhase_P1 = 1,
-  LocalizationResetMessage_ResetPhase_P2 = 2,
-  LocalizationResetMessage_ResetPhase_P3 = 3,
-  LocalizationResetMessage_ResetPhase_P4 = 4
-};
-bool LocalizationResetMessage_ResetPhase_IsValid(int value);
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage_ResetPhase_ResetPhase_MIN = LocalizationResetMessage_ResetPhase_PENALIZED;
-const LocalizationResetMessage_ResetPhase LocalizationResetMessage_ResetPhase_ResetPhase_MAX = LocalizationResetMessage_ResetPhase_P4;
-const int LocalizationResetMessage_ResetPhase_ResetPhase_ARRAYSIZE = LocalizationResetMessage_ResetPhase_ResetPhase_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_ResetPhase_descriptor();
-inline const ::std::string& LocalizationResetMessage_ResetPhase_Name(LocalizationResetMessage_ResetPhase value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    LocalizationResetMessage_ResetPhase_descriptor(), value);
-}
-inline bool LocalizationResetMessage_ResetPhase_Parse(
-    const ::std::string& name, LocalizationResetMessage_ResetPhase* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<LocalizationResetMessage_ResetPhase>(
-    LocalizationResetMessage_ResetPhase_descriptor(), name, value);
-}
 // ===================================================================
 
 class WorldInfo : public ::google::protobuf::Message {
@@ -624,41 +602,14 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
   
   // nested types ----------------------------------------------------
   
-  typedef LocalizationResetMessage_ResetPhase ResetPhase;
-  static const ResetPhase PENALIZED = LocalizationResetMessage_ResetPhase_PENALIZED;
-  static const ResetPhase P1 = LocalizationResetMessage_ResetPhase_P1;
-  static const ResetPhase P2 = LocalizationResetMessage_ResetPhase_P2;
-  static const ResetPhase P3 = LocalizationResetMessage_ResetPhase_P3;
-  static const ResetPhase P4 = LocalizationResetMessage_ResetPhase_P4;
-  static inline bool ResetPhase_IsValid(int value) {
-    return LocalizationResetMessage_ResetPhase_IsValid(value);
-  }
-  static const ResetPhase ResetPhase_MIN =
-    LocalizationResetMessage_ResetPhase_ResetPhase_MIN;
-  static const ResetPhase ResetPhase_MAX =
-    LocalizationResetMessage_ResetPhase_ResetPhase_MAX;
-  static const int ResetPhase_ARRAYSIZE =
-    LocalizationResetMessage_ResetPhase_ResetPhase_ARRAYSIZE;
-  static inline const ::google::protobuf::EnumDescriptor*
-  ResetPhase_descriptor() {
-    return LocalizationResetMessage_ResetPhase_descriptor();
-  }
-  static inline const ::std::string& ResetPhase_Name(ResetPhase value) {
-    return LocalizationResetMessage_ResetPhase_Name(value);
-  }
-  static inline bool ResetPhase_Parse(const ::std::string& name,
-      ResetPhase* value) {
-    return LocalizationResetMessage_ResetPhase_Parse(name, value);
-  }
-  
   // accessors -------------------------------------------------------
   
-  // required .LocalizationResetMessage.ResetPhase type = 1;
+  // required int32 type = 1;
   inline bool has_type() const;
   inline void clear_type();
   static const int kTypeFieldNumber = 1;
-  inline ::LocalizationResetMessage_ResetPhase type() const;
-  inline void set_type(::LocalizationResetMessage_ResetPhase value);
+  inline ::google::protobuf::int32 type() const;
+  inline void set_type(::google::protobuf::int32 value);
   
   // required bool kickOff = 2;
   inline bool has_kickoff() const;
@@ -667,30 +618,20 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
   inline bool kickoff() const;
   inline void set_kickoff(bool value);
   
-  // required bool playReadyPlay = 3;
-  inline bool has_playreadyplay() const;
-  inline void clear_playreadyplay();
-  static const int kPlayReadyPlayFieldNumber = 3;
-  inline bool playreadyplay() const;
-  inline void set_playreadyplay(bool value);
-  
   // @@protoc_insertion_point(class_scope:LocalizationResetMessage)
  private:
   inline void set_has_type();
   inline void clear_has_type();
   inline void set_has_kickoff();
   inline void clear_has_kickoff();
-  inline void set_has_playreadyplay();
-  inline void clear_has_playreadyplay();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  int type_;
+  ::google::protobuf::int32 type_;
   bool kickoff_;
-  bool playreadyplay_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1500,7 +1441,7 @@ inline void UnknownObjects::set_relativeyspeed(float value) {
 
 // LocalizationResetMessage
 
-// required .LocalizationResetMessage.ResetPhase type = 1;
+// required int32 type = 1;
 inline bool LocalizationResetMessage::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1514,11 +1455,10 @@ inline void LocalizationResetMessage::clear_type() {
   type_ = 0;
   clear_has_type();
 }
-inline ::LocalizationResetMessage_ResetPhase LocalizationResetMessage::type() const {
-  return static_cast< ::LocalizationResetMessage_ResetPhase >(type_);
+inline ::google::protobuf::int32 LocalizationResetMessage::type() const {
+  return type_;
 }
-inline void LocalizationResetMessage::set_type(::LocalizationResetMessage_ResetPhase value) {
-  GOOGLE_DCHECK(::LocalizationResetMessage_ResetPhase_IsValid(value));
+inline void LocalizationResetMessage::set_type(::google::protobuf::int32 value) {
   set_has_type();
   type_ = value;
 }
@@ -1543,28 +1483,6 @@ inline bool LocalizationResetMessage::kickoff() const {
 inline void LocalizationResetMessage::set_kickoff(bool value) {
   set_has_kickoff();
   kickoff_ = value;
-}
-
-// required bool playReadyPlay = 3;
-inline bool LocalizationResetMessage::has_playreadyplay() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void LocalizationResetMessage::set_has_playreadyplay() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void LocalizationResetMessage::clear_has_playreadyplay() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void LocalizationResetMessage::clear_playreadyplay() {
-  playreadyplay_ = false;
-  clear_has_playreadyplay();
-}
-inline bool LocalizationResetMessage::playreadyplay() const {
-  return playreadyplay_;
-}
-inline void LocalizationResetMessage::set_playreadyplay(bool value) {
-  set_has_playreadyplay();
-  playreadyplay_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1803,10 +1721,6 @@ LocalizationDataForGUI::mutable_particles() {
 namespace google {
 namespace protobuf {
 
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::LocalizationResetMessage_ResetPhase>() {
-  return ::LocalizationResetMessage_ResetPhase_descriptor();
-}
 
 }  // namespace google
 }  // namespace protobuf

@@ -36,16 +36,8 @@ message UnknownObjects{
 }
 
 message LocalizationResetMessage{
-	enum ResetPhase{
-		PENALIZED = 0;
-		P1 = 1;
-		P2 = 2;
-		P3 = 3;	
-		P4 = 4;
-	}
-	required ResetPhase type = 1;
+	required int32 type = 1;
 	required bool kickOff = 2;
-	required bool playReadyPlay = 3;
 }
 
 message LocalizationData{

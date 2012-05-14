@@ -100,7 +100,7 @@ void LBehavior::UserInit() {
 		}
 
 	locReset = new LocalizationResetMessage();
-	locReset->set_type(LocalizationResetMessage::PENALIZED);
+	locReset->set_type(-1);
 	ballfound = 0;
 	readRobotConf = false;
 
