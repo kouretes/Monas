@@ -44,7 +44,6 @@ public:
 
 private:
 	void loadXMLConfig(std::string fname);
-
 	void setSvgItems();
 
 	QGraphicsRectItem* LSide;
@@ -105,6 +104,14 @@ private:
 
 	KGraphicsView* parent;
 	QList<GraphicalRobotElement*> RobotList;
+
+	//test
+	QGraphicsLineItem* GotoPositionLine;
+	QGraphicsPolygonItem* GotoArrow;
+	QGraphicsEllipseItem* testArc;
+
+	QPolygonF testcalculateArrowHeadPosition(QLineF Line);
+
 };
 
 #endif // KFieldScene_H

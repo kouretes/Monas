@@ -24,6 +24,7 @@ signals:
 	void LWRHSetParticlesVisible(QString, bool);
 	void LWRHSetHFOVVisible(QString, bool);
 	void LWRHSetTraceVisible(QString, bool);
+	void LWRHSetMWCmdVisible(QString, bool);
 
 private slots:
 	void newListElementRequested(QListWidgetItem* item);

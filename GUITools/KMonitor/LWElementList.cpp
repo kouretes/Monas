@@ -80,6 +80,16 @@ void LWElementList::newListElementRequested(QListWidgetItem* item)
 		{
 			emit LWRHSetTraceVisible(myCurrentLWRequestedHost, true);
 		}
+	}else if(parentListWidget->row(item)==7)
+	{
+		if(item->checkState() == 0)
+		{
+			emit LWRHSetMWCmdVisible(myCurrentLWRequestedHost, false);
+		}
+		else
+		{
+			emit LWRHSetMWCmdVisible(myCurrentLWRequestedHost, true);
+		}
 	}
 }
 

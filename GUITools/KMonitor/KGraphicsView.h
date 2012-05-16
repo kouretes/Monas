@@ -29,6 +29,7 @@ public slots:
 	void observationMessageUpdateHandler(ObservationMessage, QString);
 	void localizationDataUpdateHandler(LocalizationDataForGUI, QString);
 	void headYawJointUpdateHandler(float, QString);
+	void motionCommandUpdateHandler(MotionWalkMessage, QString);
 
 	void GWSGVRobotVisible(QString, bool);
 	void GWSGVBallVisible(QString, bool);
@@ -44,6 +45,8 @@ public slots:
 	void LWSGVParticlesVisible(QString, bool);
 	void LWSGVHFOVVisible(QString, bool);
 	void LWSGVTraceVisible(QString, bool);
+
+	void LWSGVMWCmdVisible(QString, bool);
 
 signals:
 	void forceTimeOut();

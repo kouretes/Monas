@@ -71,6 +71,10 @@ KMonitor::KMonitor(QWidget *parent)
 	//Signal slot connections for Trace Of Estimated Robot Positions
 	connect(LWSElementList, SIGNAL(LWRHSetTraceVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVTraceVisible(QString, bool)));
 
+	//Signal slot connections for Motion Walk Command
+	connect(LWSElementList, SIGNAL(LWRHSetMWCmdVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVMWCmdVisible(QString, bool)));
+	connect(Messenger, SIGNAL(motionCommandUpdate(MotionWalkMessage, QString)), LWSGraphicsView, SLOT(motionCommandUpdateHandler(MotionWalkMessage, QString)));
+
 	setWindowState(Qt::WindowMaximized);
 
 }

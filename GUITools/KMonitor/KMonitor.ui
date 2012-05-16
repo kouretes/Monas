@@ -152,6 +152,14 @@ p, li { white-space: pre-wrap; }
               <enum>Checked</enum>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Motion Walk Command</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

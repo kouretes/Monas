@@ -13,6 +13,7 @@
 #include <boost/circular_buffer.hpp>
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
+#include "messages/motion.pb.h"
 
 #include "KFieldScene.h"
 
@@ -91,6 +92,12 @@ public:
 	bool getLWSTraceVisible(){return LWSTraceVisible;}
 	void setTraceVisible(bool visible);
 
+	// Motion Walk Command
+	void setLWSMWCmdVisible(bool visible){LWSMWCmdVisible = visible; setMWCmdVisible(visible);}
+	bool getLWSMWCmdVisible(){return LWSMWCmdVisible;}
+	void setMWCmdVisible(bool visible);
+	void updateMWCmdRect(MotionWalkMessage wmot);
+
 	QTimer* getGREtimer(){return GREtimer;}
 
 private slots:
@@ -98,6 +105,7 @@ private slots:
 
 private:
 	void tagVisionObservations(QGraphicsEllipseItem* post,QRectF rect, QString text);
+	QPolygonF calculateArrowHeadPosition(QLineF Line);
 	void updateTraceRect();
 
 
@@ -141,6 +149,10 @@ private:
 	bool LWSTraceVisible;
 	boost::circular_buffer<QGraphicsEllipseItem*> RobotPositions;
 	boost::circular_buffer<QGraphicsLineItem*> UnionistLines;
+
+	bool LWSMWCmdVisible;
+	QGraphicsLineItem* GotoPositionLine;
+	QGraphicsPolygonItem* GotoArrow;
 
 	QTimer* GREtimer;
 };

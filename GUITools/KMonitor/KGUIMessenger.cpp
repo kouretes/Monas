@@ -47,6 +47,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("sensors",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 
 }
 
@@ -146,6 +147,14 @@ void KGUIMessenger::allocateReceivedMessages()
 				targetYaw = HeadYaw.sensorvalue();
 
 				emit headYawJointUpdate(targetYaw, currentRHost);
+			}
+			else if (incomingMessages.at(i).msg->GetTypeName()=="MotionWalkMessage" && myLWRequestedHost == currentRHost)
+			{
+				MotionWalkMessage mwm;
+				mwm.Clear();
+				mwm.CopyFrom(*(incomingMessages.at(i).msg));
+
+				emit motionCommandUpdate(mwm, currentRHost);
 			}
 		}
 		else

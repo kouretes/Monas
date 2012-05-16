@@ -13,6 +13,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
+#include "messages/motion.pb.h"
 
 class KGUIMessenger : public QObject
 {
@@ -39,6 +40,7 @@ signals:
 	void localizationDataUpdate(LocalizationDataForGUI, QString);
 	void obsmsgUpdate(ObservationMessage, QString);
 	void headYawJointUpdate(float, QString);
+	void motionCommandUpdate(MotionWalkMessage, QString);
 
 private slots:
 	void allocateReceivedMessages();

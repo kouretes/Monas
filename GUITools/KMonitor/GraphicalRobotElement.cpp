@@ -5,6 +5,7 @@
 #include <math.h>
 
 #define TO_RAD 0.01745329f
+const qreal Pi = 3.14;
 
 #include <iostream>
 using namespace std;
@@ -31,12 +32,16 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LWSParticlesVisible = false;
 	LWSHFOVVisible = false;
 	LWSTraceVisible = false;
+	LWSMWCmdVisible = false;
 
 	QPen penForUnionistLine(Qt::black);
 	penForUnionistLine.setWidth(2);
 
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
+
+	QPen penForMotionCmdLine(Qt::darkRed);
+	penForMotionCmdLine.setWidth(2);
 
 	for(unsigned it=0; it<30; it++)
 	{
@@ -59,6 +64,9 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LeftYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	RightYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
+
+	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
+	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
 
 	GREtimer = new QTimer();
 	connect(GREtimer, SIGNAL(timeout()), this, SLOT(clearVisionObservations()));
@@ -97,6 +105,12 @@ GraphicalRobotElement::~GraphicalRobotElement()
 
 	if(RightYellowPost)
 		delete RightYellowPost;
+
+	if(GotoPositionLine)
+		delete GotoPositionLine;
+
+	if(GotoArrow)
+		delete GotoArrow;
 
 	for(unsigned i = 0; i<ParticlesList.count();i++)
 	{
@@ -338,7 +352,7 @@ void GraphicalRobotElement::clearVisionObservations()
 	if (this->VisionBall->isVisible())
 	{
 		this->VisionBall->setVisible(false);
-		this->VisionBall->setRect(0, 0, 0, 0); //?????
+		this->VisionBall->setRect(0, 0, 0, 0);
 	}
 
 	if (this->YellowPost->isVisible())
@@ -488,5 +502,76 @@ void GraphicalRobotElement::updateTraceRect()
 			UnionistLines.push_back(UnLine);
 		}
 	}
+}
+
+void GraphicalRobotElement::setMWCmdVisible(bool visible)
+{
+	if (visible == false)
+	{
+		GotoPositionLine->setVisible(false);
+		GotoArrow->setVisible(false);
+	}
+	else
+	{
+		GotoPositionLine->setVisible(true);
+		GotoArrow->setVisible(true);
+	}
+
+}
+
+void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
+{
+	float FinalXCoordinate = 0.f;
+	float FinalYCoordinate = 0.f;
+	QPolygonF arrowHead;
+
+	if( wmot.has_command())
+		std::cout << "To command mou :: " << wmot.command() <<  std::endl;
+
+	arrowHead.clear();
+	if(this->currentWIM.has_myposition())
+	{
+
+		std::cout << "To cX mou :: " << wmot.parameter(0) <<  std::endl;
+		std::cout << "To cY mou :: " << wmot.parameter(1) <<  std::endl;
+		std::cout << "To ct mou :: " << wmot.parameter(2) << std::endl;
+
+
+		FinalXCoordinate = currentWIM.myposition().x() + wmot.parameter(0)*0.2;
+		FinalYCoordinate = currentWIM.myposition().y() + wmot.parameter(1)*0.2;
+
+		QLineF arrowLine = this->parentScene->lineRectFromFC(FinalXCoordinate*1000, FinalYCoordinate*1000,
+					currentWIM.myposition().x()*1000, currentWIM.myposition().y()*1000);
+		arrowHead = calculateArrowHeadPosition(arrowLine);
+
+		GotoPositionLine->setLine(arrowLine);
+		GotoArrow->setPolygon(arrowHead);
+
+	}else
+	{
+		GotoPositionLine->setLine(0, 0, 0, 0);
+		GotoArrow->setPolygon(arrowHead);
+	}
+
+}
+
+QPolygonF GraphicalRobotElement::calculateArrowHeadPosition(QLineF Line)
+{
+	int arrowSize = 10;
+	QPolygonF polyF;
+
+	double angle = ::acos(Line.dx() / Line.length());
+    if (Line.dy() >= 0)
+        angle = (Pi * 2) - angle;
+
+	QPointF arrowP1 = Line.p1() + QPointF(sin(angle + Pi / 3) * arrowSize,
+									cos(angle + Pi / 3) * arrowSize);
+	QPointF arrowP2 = Line.p1() + QPointF(sin(angle + Pi - Pi / 3) * arrowSize,
+									cos(angle + Pi - Pi / 3) * arrowSize);
+
+	polyF.clear();
+	polyF << Line.p1() << arrowP1 << arrowP2;
+
+	return polyF;
 }
 
