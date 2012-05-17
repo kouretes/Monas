@@ -40,8 +40,6 @@ public:
 	QRectF visionBallRect( BallObject bob, WorldInfo wim);
 	QRectF goalPostRectFromOBM(NamedObject* nob, WorldInfo* wim);
 
-
-
 private:
 	void loadXMLConfig(std::string fname);
 	void setSvgItems();
@@ -104,14 +102,6 @@ private:
 
 	KGraphicsView* parent;
 	QList<GraphicalRobotElement*> RobotList;
-
-	//test
-	QGraphicsLineItem* GotoPositionLine;
-	QGraphicsPolygonItem* GotoArrow;
-	QGraphicsEllipseItem* testArc;
-
-	QPolygonF testcalculateArrowHeadPosition(QLineF Line);
-
 };
 
 #endif // KFieldScene_H

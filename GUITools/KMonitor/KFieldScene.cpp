@@ -9,9 +9,6 @@
 
 #include <math.h>
 
-const qreal Pi = 3.14;
-#define ToDegrees 	(180.0/Pi)
-
 using namespace std;
 
 KFieldScene::KFieldScene(KGraphicsView* parent)
@@ -29,13 +26,6 @@ KFieldScene::KFieldScene(KGraphicsView* parent)
 	penForYellowPost.setWidth(6);
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
-
-
-	//test
-	QPen penForMotionCmdLine(Qt::darkRed);
-	penForMotionCmdLine.setWidth(2);
-	//testArc = addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::Dense7Pattern));
-	//test
 
 	LSide = addRect(QRect(),penForWhiteLine,QBrush(Qt::transparent));
 	RSide = addRect(QRect(),penForWhiteLine,QBrush(Qt::transparent));
@@ -65,12 +55,6 @@ KFieldScene::KFieldScene(KGraphicsView* parent)
 	this->addItem(LBPost);
 	this->addItem(RTPost);
 	this->addItem(RBPost);
-
-	//test
-	testArc = addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::Dense7Pattern));
-	GotoPositionLine = addLine(QLineF(),penForMotionCmdLine);
-	GotoArrow = addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
-
 }
 
 KFieldScene::~KFieldScene()
@@ -342,13 +326,13 @@ void KFieldScene::resizeFieldScene(int width, int height)
 	CCircle->setRect(wCentre-radKickOffCircle,hCentre - radKickOffCircle,
 			radKickOffCircle*2,radKickOffCircle*2);
 
-	//LCrossHPart->setLine(wLeftCross-wCenterCross,hCentre,wLeftCross+wCenterCross,hCentre);
+	LCrossHPart->setLine(wLeftCross-wCenterCross,hCentre,wLeftCross+wCenterCross,hCentre);
 	LCrossVPart->setLine(wLeftCross,hCentre -wCenterCross,wLeftCross,hCentre+wCenterCross);
 	RCrossHPart->setLine(wRightCross-wCenterCross,hCentre,wRightCross+wCenterCross,hCentre);
 	RCrossVPart->setLine(wRightCross,hCentre -wCenterCross,wRightCross,hCentre + wCenterCross);
 	CCrossHPart->setLine(wCentre-wCenterCross,hCentre,wCentre+wCenterCross,hCentre);
 
-	//LTPostCircle->setRect(wLLine-radPost,hTGoalArea - radPost, radPost*2,radPost*2);
+	LTPostCircle->setRect(wLLine-radPost,hTGoalArea - radPost, radPost*2,radPost*2);
 	LBPostCircle->setRect(wLLine-radPost,hBGoalArea - radPost, radPost*2,radPost*2);
 	RTPostCircle->setRect(wRLine-radPost,hTGoalArea - radPost, radPost*2,radPost*2);
 	RBPostCircle->setRect(wRLine-radPost,hBGoalArea - radPost, radPost*2,radPost*2);
@@ -361,60 +345,7 @@ void KFieldScene::resizeFieldScene(int width, int height)
 	RTPost->setPos(wRLine-6, hTGoalArea -22);
 	RBPost->setPos(wRLine-6, hBGoalArea-16);
 
-	//test
-
-	float theta = 4.7;
-	LTPostCircle->setRect(rectFromFC( wRightCross+400, hCentre+400, 150, 150));
-	LCrossHPart->setLine(lineFromFCA( wRightCross+400,hCentre+400, theta, 200));
-
-	// h arrow line prepei na ksekinaei apo to endpoint ths orientation line
-	QLineF arrowLine = lineRectFromFC(wRightCross+400, hCentre+400, wRightCross+200, hCentre+800 );
-
-
-	QPolygonF arrowHead = testcalculateArrowHeadPosition(arrowLine);
-
-	GotoPositionLine->setLine(arrowLine);
-	GotoArrow->setPolygon(arrowHead);
-
-	double angle = ToDegrees*theta;
-
-
-	double angle2 = (LCrossHPart->line().angleTo(arrowLine));
-
-   	testArc->setRect(rectFromFC( wRightCross+400, hCentre+400, 300, 300));
-	int startAngle = angle * 16;
-	int spanAngle = angle2 * 16;
-
-
-	testArc->setStartAngle(startAngle);
-	testArc->setSpanAngle(spanAngle);
-
 }
-
-QPolygonF KFieldScene::testcalculateArrowHeadPosition(QLineF aLine)
-{
-	int arrowSize = 10;
-	QPolygonF polyF;
-	QLineF Line;
-
-	Line.setP1(aLine.p2());
-	Line.setP2(aLine.p1());
-
-	double angle = ::acos(Line.dx() / Line.length());
-    if (Line.dy() >= 0)
-        angle = (Pi * 2) - angle;
-
-	QPointF arrowP1 = Line.p1() + QPointF(sin(angle + Pi / 3) * arrowSize,
-									cos(angle + Pi / 3) * arrowSize);
-	QPointF arrowP2 = Line.p1() + QPointF(sin(angle + Pi - Pi / 3) * arrowSize,
-									cos(angle + Pi - Pi / 3) * arrowSize);
-
-	polyF.clear();
-	polyF << Line.p1() << arrowP1 << arrowP2;
-
-	return polyF;
-}
-
 
 QRectF KFieldScene::rectFromFC(float xMiddle, float yMiddle, float width, float height)
 {

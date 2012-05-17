@@ -471,6 +471,8 @@ void KGraphicsView::motionCommandUpdateHandler(MotionWalkMessage wmot, QString h
 			element->setLWSMWCmdVisible(false);
 			element->updateMWCmdRect(wmot);
 			element->setLWSMWCmdVisible(true);
+
+			element->getMWCmdTimer()->start(3000);
 		}
 
 	}else

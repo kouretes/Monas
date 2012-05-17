@@ -99,13 +99,15 @@ public:
 	void updateMWCmdRect(MotionWalkMessage wmot);
 
 	QTimer* getGREtimer(){return GREtimer;}
+	QTimer* getMWCmdTimer(){return MWCmdTimer;}
 
 private slots:
 	void clearVisionObservations();
+	void clearMotionWalkCommand();
 
 private:
 	void tagVisionObservations(QGraphicsEllipseItem* post,QRectF rect, QString text);
-	QPolygonF calculateArrowHeadPosition(QLineF Line);
+	QPolygonF calculateArrowHeadPosition(QLineF aLine);
 	void updateTraceRect();
 
 
@@ -153,7 +155,9 @@ private:
 	bool LWSMWCmdVisible;
 	QGraphicsLineItem* GotoPositionLine;
 	QGraphicsPolygonItem* GotoArrow;
+	QGraphicsEllipseItem* zAxisArc;
 
 	QTimer* GREtimer;
+	QTimer* MWCmdTimer;
 };
 #endif /* GRAPHICALROBOTELEMENT_H_ */

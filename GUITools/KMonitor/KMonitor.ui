@@ -154,7 +154,7 @@ p, li { white-space: pre-wrap; }
             </item>
             <item>
              <property name="text">
-              <string>Motion Walk Command</string>
+              <string>Motion Walk Commands</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
