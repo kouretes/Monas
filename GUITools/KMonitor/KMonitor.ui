@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="GWSTab">
        <attribute name="title">
@@ -160,6 +160,33 @@ p, li { white-space: pre-wrap; }
               <enum>Checked</enum>
              </property>
             </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="LPMTab">
+       <attribute name="title">
+        <string>Local Polar Map</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2" columnstretch="2,1">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="LPMComboBox"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QListWidget" name="LPMListWidget"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="LPMLabel">
+            <property name="text">
+             <string/>
+            </property>
            </widget>
           </item>
          </layout>
