@@ -9,10 +9,13 @@ KMonitor::KMonitor(QWidget *parent)
 	availableGWHosts = new GWRemoteHosts(this->GWSTreeWidget);
 	availableLWHosts = new LWRemoteHosts(this->LWSComboBox);
 	LWSElementList = new LWElementList(this->LWSListWidget);
+	//RobotMap = new KRobotMap(this->LPMLabel);
 
 	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
 
-	//Signals-Slots for Global World State
+	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
+	//Signal slot connections for Robot Position & Orientation, Ball Estimation
+
 	connect(Messenger, SIGNAL(knownHostsUpdate(KnownHosts)), availableGWHosts, SLOT(emergeAvailableHosts(KnownHosts)));
 	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), availableGWHosts, SLOT(setGWRHGameStateInfo(GameStateMessage, QString)));
 	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), this->GWSGraphicsView, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)));
@@ -30,8 +33,8 @@ KMonitor::KMonitor(QWidget *parent)
 	//connect(this->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
 
 
-	//Signals-Slots for Local World State
-	//Signals-Slots for local remote hosts (comboBox)
+	//SIGNAL SLOT CONNECTIONS FOR LOCAL WORLD STATE
+	//Signal slot connections for Local Remote Hosts ComboBox
 
 	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->availableLWHosts, SLOT(addComboBoxItem(QString, QString)));
 	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->availableLWHosts, SLOT(removeComboBoxItem(QString)));
@@ -40,9 +43,7 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLWHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LWRHSubscriptionHandler(QString)));
 	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LWRHUnsubscriptionHandler(QString)));
 
-
-	//Signals-Slots btw local remote hosts (comboBox) and available elements (LWSlistwidget)
-
+	//Signal slot connections for Robot Position & Orientation, Ball Estimation
 	connect(availableLWHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LWSElementList, SLOT(LWELSubscriptionHandler(QString)));
 	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LWSElementList, SLOT(LWELUnsubscriptionHandler(QString)));
 	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LWSGraphicsView, SLOT(removeGraphicalElement(QString)));

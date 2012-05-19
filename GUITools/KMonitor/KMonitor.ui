@@ -177,15 +177,15 @@ p, li { white-space: pre-wrap; }
            <number>3</number>
           </property>
           <item row="0" column="1">
-           <widget class="QComboBox" name="LPMComboBox"/>
+           <widget class="QComboBox" name="comboBox"/>
           </item>
           <item row="1" column="1">
-           <widget class="QListWidget" name="LPMListWidget"/>
+           <widget class="QListWidget" name="listWidget"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="LPMLabel">
+           <widget class="KLabel" name="label">
             <property name="text">
-             <string/>
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
@@ -230,7 +230,12 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>KGraphicsView</class>
    <extends>QGraphicsView</extends>
-   <header location="global">../KGraphicsView.h</header>
+   <header>../KGraphicsView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">../KLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

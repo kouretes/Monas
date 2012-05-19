@@ -7,6 +7,9 @@
 #include "GWRemoteHosts.h"
 #include "LWRemoteHosts.h"
 #include "LWElementList.h"
+
+// SE AUTO TO HEADER MOU DHMIOURGEI TO PROBLHMA A"I" SIXTIR
+//#include "KRobotMap.h"
 #include "ui_KMonitor.h"
 
 class KMonitor : public QMainWindow, private Ui::KMonitorClass
@@ -22,10 +25,11 @@ private slots:
 	void printCurrentTab(int index);
 
 private:
-    KGUIMessenger *Messenger;
-    GWRemoteHosts *availableGWHosts;
-    LWRemoteHosts *availableLWHosts;
-    LWElementList *LWSElementList;
+    KGUIMessenger* Messenger;
+    GWRemoteHosts* availableGWHosts;
+    LWRemoteHosts* availableLWHosts;
+    LWElementList* LWSElementList;
+    //KRobotMap* RobotMap;
 };
 
 #endif // KMONITOR_H

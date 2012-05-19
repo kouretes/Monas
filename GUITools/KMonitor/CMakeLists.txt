@@ -21,7 +21,7 @@ SET( QT_USE_QTSVG TRUE )
 
 SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp LWRemoteHosts.cpp 
 					KGraphicsView.cpp KFieldScene.cpp GraphicalRobotElement.cpp LWElementList.cpp
-					#obstacleAvoidance.cpp
+					KLabel.cpp KRobotMap.cpp obstacleAvoidance.cpp
 					../../src/hal/generic_linux/syscall.cpp
 					../../src/messages/Network.pb.cc
 					../../src/messages/VisionObservations.pb.cc
@@ -29,12 +29,11 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 					../../src/messages/Gamecontroller.pb.cc
 					../../src/messages/motion.pb.cc
 					../../src/messages/SensorsMessage.pb.cc
-					../../src/messages/ObstacleAvoidanceMessage.pb.cc
 					../../src/messages/motion.pb.cc
-					
-   )
+					../../src/messages/ObstacleAvoidanceMessage.pb.cc
+					  )
 SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
-				 	GraphicalRobotElement.h LWElementList.h ) #obstacleAvoidance.h)
+				 	GraphicalRobotElement.h LWElementList.h KLabel.h ) 
 SET( KMonitor_FORMS KMonitor.ui )
 SET( KMonitor_RESOURCES GuiResources.qrc )
 
@@ -51,4 +50,4 @@ ADD_EXECUTABLE( KMonitor ${KMonitor_SOURCES}
 		${KMonitor_RESOURCES_RCC}
 	      )
 
-TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} ${OpenCV_LIBS} M_tinyxml narukom ${Boost_LIBRARIES})
+TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} ${OpenCV_LIBS} M_tinyxml narukom ${Boost_LIBRARIES} )

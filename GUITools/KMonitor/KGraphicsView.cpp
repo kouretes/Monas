@@ -1,12 +1,5 @@
 #include "KGraphicsView.h"
 
-
-///////////////////////////////////
-/*#include "obstacleAvoidance.h"
-#include "messages/ObstacleAvoidanceMessage.pb.h"
-obstacleAvoidance oa;*/
-
-////////////////////////////////////
 KGraphicsView::KGraphicsView(QWidget* parent)
     : QGraphicsView(parent)
     , paintArea(0)
@@ -15,28 +8,6 @@ KGraphicsView::KGraphicsView(QWidget* parent)
 	this->setScene(paintArea);
 	this->setResizeAnchor(QGraphicsView::NoAnchor);
 	this->setTransformationAnchor(QGraphicsView::NoAnchor);
-
-	///////////////////////////////////////
-
-
-	/*for (int ring=0; ring < TotalRings; ring++)
-				for (int sector=0; sector < N; sector++){
-					oa.PolarGrid[0][ring][sector] = sector+ 0.5;
-				}
-			oa.targetX = 3.4;
-			oa.targetY = 5.2;
-			oa.targetA = 1.5;
-
-			for (int step = 0; step < PathLength; step++){
-				oa.pathR[step] = step;
-				oa.pathS[step] = step;
-				oa.pathO[step] = step;
-			}
-			oa.cvDrawGrid();*/
-
-
-
-	////////////////////////////////////////////
 
 }
 
