@@ -18,9 +18,6 @@ KGraphicsView::~KGraphicsView()
 
 void KGraphicsView::resizeEvent(QResizeEvent* event)
 {
-	//paintArea->resizeFieldScene(width()-20,height()-40);
-	//paintArea->resizeFieldScene(width()-20, (width()-20)/1.37037) ;
-
 	paintArea->resizeFieldScene((height()-40)*1.37, height()-40);
 	QGraphicsView::resizeEvent(event);
 }

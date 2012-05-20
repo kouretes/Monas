@@ -177,13 +177,22 @@ p, li { white-space: pre-wrap; }
            <number>3</number>
           </property>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox"/>
+           <widget class="QComboBox" name="LPMComboBox"/>
           </item>
           <item row="1" column="1">
-           <widget class="QListWidget" name="listWidget"/>
+           <widget class="QListWidget" name="LPMListWidget">
+            <item>
+             <property name="text">
+              <string>Obstacles</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+           </widget>
           </item>
           <item row="1" column="0">
-           <widget class="KLabel" name="label">
+           <widget class="KLabel" name="LPMLabel">
             <property name="text">
              <string>TextLabel</string>
             </property>

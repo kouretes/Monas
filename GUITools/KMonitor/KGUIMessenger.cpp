@@ -42,12 +42,14 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 
 	myGWRequestedHosts.clear();
 	myLWRequestedHost.clear();
+	myLMRequestedHost.clear();
 
 	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("sensors",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 
 }
 
@@ -156,6 +158,14 @@ void KGUIMessenger::allocateReceivedMessages()
 
 				emit motionCommandUpdate(mwm, currentRHost);
 			}
+			else if (incomingMessages.at(i).msg->GetTypeName()=="GridInfo" && myLMRequestedHost == currentRHost)
+			{
+				GridInfo ngim;
+				ngim.Clear();
+				ngim.CopyFrom(*(incomingMessages.at(i).msg));
+
+				emit gridInfoUpdate(ngim, currentRHost);
+			}
 		}
 		else
 		{
@@ -204,7 +214,18 @@ void KGUIMessenger::LWRHSubscriptionHandler(QString hostId)
 void KGUIMessenger::LWRHUnsubscriptionHandler(QString hostId)
 {
 	if(myLWRequestedHost == hostId)
-		myLWRequestedHost = "";
+		myLWRequestedHost.clear();
+}
+
+void KGUIMessenger::LMRHSubscriptionHandler(QString hostId)
+{
+	myLMRequestedHost = hostId;
+}
+
+void KGUIMessenger::LMRHUnsubscriptionHandler(QString hostId)
+{
+	if(myLMRequestedHost == hostId)
+		myLMRequestedHost.clear();
 }
 
 void KGUIMessenger::printKnownHosts(KnownHosts hosts)

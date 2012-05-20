@@ -8,7 +8,6 @@
 #include "GraphicalRobotElement.h"
 #include "KFieldScene.h"
 
-
 class GraphicalRobotElement;
 class KFieldScene;
 

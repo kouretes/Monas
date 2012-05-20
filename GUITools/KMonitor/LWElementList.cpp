@@ -6,7 +6,7 @@ using namespace std;
 LWElementList::LWElementList(QListWidget *parent )
 {
 	parentListWidget = parent;
-	myCurrentLWRequestedHost = "";
+	myCurrentLWRequestedHost.clear();
 
 	uncheckAllListElements();
 
@@ -118,7 +118,7 @@ void LWElementList::LWELUnsubscriptionHandler(QString hostId)
 {
 	if(myCurrentLWRequestedHost == hostId)
 	{
-		myCurrentLWRequestedHost = "";
+		myCurrentLWRequestedHost.clear();
 		uncheckAllListElements();
 	}
 }

@@ -3,6 +3,8 @@
 
 #include <QLabel>
 
+#include "messages/ObstacleAvoidanceMessage.pb.h"
+
 class KRobotMap;
 
 class KLabel : public QLabel
@@ -16,7 +18,12 @@ public:
 protected:
 	void resizeEvent(QResizeEvent* event);
 
-//public slots:
+public slots:
+	void removeRobotMap(QString);
+
+	void LMObstaclesVisible(QString, bool);
+	void gridInfoUpdateHandler(GridInfo, QString);
+
 //signals:
 private:
 	KRobotMap* polarMap;

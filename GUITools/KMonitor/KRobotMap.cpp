@@ -1,32 +1,46 @@
 #include "KRobotMap.h"
 
-KRobotMap::KRobotMap(KLabel* parentscene)
+#include <iostream>
+using namespace std;
+
+KRobotMap::KRobotMap(KLabel* parent, QString hostId)
 	: parentLabel(0)
 {
-	this->parentLabel = parentscene;
+	this->parentLabel = parent;
 
-}
+	currentHost = hostId;
+	obstaclesVisible = false;
+	targetCoordVisible = false;
+	pathVisible = false;
 
-KRobotMap::~KRobotMap()
-{}
+	if (this->parentLabel->width()>this->parentLabel->height())
+		ImgSize = this->parentLabel->height()-10;
+	else
+		ImgSize = this->parentLabel->width()-10;
 
-void KRobotMap::resizeRobotMap(int size)
-{
-	QImage* image;
-
-	ImgSize = size;
 	ImgShift = (ImgSize/2);
-	//arrowOffset=10;
 	present = 0;
+
 	img = cvCreateImage(cvSize(ImgSize, ImgSize), IPL_DEPTH_8U, 3);
 	initGrid();
 	initCoordinates();
 
-	image = this->IplImage2QImage(img);
+	QImage* image = this->IplImage2QImage(img);
 	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
+	this->parentLabel->setScaledContents (true);
 
 	//this->parentLabel->setAlignment(Qt::AlignHCenter);
-	this->parentLabel->setScaledContents (true);
+}
+
+KRobotMap::~KRobotMap()
+{
+	if (img)
+		delete img;
+}
+
+void KRobotMap::resizeRobotMap(int size)
+{
+
 }
 
 //initialize Polar grid
@@ -109,6 +123,157 @@ QImage* KRobotMap::IplImage2QImage(IplImage *iplImg)
 		}
 	}
 	return qimg;
+}
+
+void KRobotMap::cvDrawGrid() {
+	int colorValue = 0;
+	CvPoint curve1[4];
+	CvPoint* curveArr = {curve1};
+	int nCurvePts = {4};
+	int nCurves = 1;
+	int isCurveClosed=1;
+	int lineWidth=8;
+	int r, s;
+	CvPoint center, toP, fromP, leftP, rightP;
+
+	CvScalar white = cvScalar(ColorMax,ColorMax,ColorMax);
+	CvScalar grey = cvScalar(ColorMax/2,ColorMax/2,ColorMax/2);
+	CvScalar blue = cvScalar(ColorMax, 0, 0);
+	CvScalar black = cvScalar(0, 0, 0);
+	CvScalar paintColor = grey;
+	CvScalar red = cvScalar(0, 0, ColorMax);
+	CvScalar green = cvScalar(0, ColorMax, 0);
+
+	if(obstaclesVisible){
+
+		for (r=0; r<TotalRings; r++) {
+			for (s=0; s<N; s++) {
+				curve1[0].x = gridImgH[r][s];
+				curve1[0].y = gridImgV[r][s];
+				curve1[1].x = gridImgH[(r+1)][s];
+				curve1[1].y = gridImgV[(r+1)][s];
+				curve1[2].x = gridImgH[(r+1)][wrapTo(s+1, N)];
+				curve1[2].y = gridImgV[(r+1)][wrapTo(s+1, N)];
+				curve1[3].x = gridImgH[r][wrapTo(s+1, N)];
+				curve1[3].y = gridImgV[r][wrapTo(s+1, N)];
+
+				colorValue = ColorMax - PolarGrid[present][r][s]*ColorMax;
+				paintColor = cvScalar(colorValue, colorValue, colorValue);
+
+				if (r == InnerRing) {
+					paintColor = cvScalar(ColorMax, ColorMax, ColorMax);
+					cvFillPoly( img, &curveArr,&nCurvePts, nCurves, paintColor );
+				}
+				else {
+					cvFillPoly( img, &curveArr, &nCurvePts, nCurves, paintColor );
+					cvPolyLine( img,&curveArr, &nCurvePts, nCurves, 1, white, isCurveClosed, lineWidth, 0 );
+				}
+			}
+		}
+	}
+
+	/**************************************************************************/
+	if(targetCoordVisible){
+
+		CvPoint ball = cvPoint( toGrid(targetY), toGrid(targetX) );
+		cvCircle(img, ball, 3, red, 2, 8, 0);
+
+		int pix = 5;
+		if (targetA > -(M_PI_4/2) && targetA <= (M_PI_4/2))
+			toP = cvPoint( ball.x , ball.y - pix);
+		else if (targetA > (M_PI_4/2) && targetA <= 3*(M_PI_4/2))
+			toP = cvPoint( ball.x - pix, ball.y - pix );
+		else if (targetA > 3*(M_PI_4/2) && targetA <= 5*(M_PI_4/2))
+			toP = cvPoint( ball.x -pix, ball.y );
+		else if (targetA > 5*(M_PI_4/2) && targetA <= 7*(M_PI_4/2))
+			toP = cvPoint( ball.x - pix, ball.y + pix );
+
+
+		else if (targetA > -3*(M_PI_4/2) && targetA <= -(M_PI_4/2))
+			toP = cvPoint( ball.x + pix, ball.y - pix );
+		else if (targetA > -5*(M_PI_4/2) && targetA <= -3*(M_PI_4/2))
+			toP = cvPoint( ball.x+pix, ball.y);
+		else if (targetA > -7*(M_PI_4/2) && targetA <= -5*(M_PI_4/2))
+			toP = cvPoint( ball.x +pix, ball.y + pix );
+		else
+			toP = cvPoint( ball.x , ball.y + pix );
+
+
+		cvLine( img, ball, toP, green, 2, CV_AA, 0);
+	}
+
+	/**************************************************************************/
+
+	if(pathVisible){
+
+		for (int ways=0; ways<PathLength; ways++) {
+			if (pathR[ways] == -1 && pathS[ways] == -1) break;
+			r = pathR[ways];
+			s = pathS[ways];
+
+			if (r==InnerRing+1)
+				fromP = cvPoint( toGrid(toCartesianY(RtoD(r)+0.75*RingDistance, StoT(s)+0.5*SectorAngleRad)), toGrid(toCartesianX(RtoD(r)+0.75*RingDistance, StoT(s)+0.5*SectorAngleRad)) );
+			else
+				fromP = cvPoint( toGrid(cellCenterY[r][s]), toGrid(cellCenterX[r][s]) );
+
+			curve1[0].x = gridImgH[r][s];
+			curve1[0].y = gridImgV[r][s];
+			curve1[1].x = gridImgH[(r+1)][s];
+			curve1[1].y = gridImgV[(r+1)][s];
+			curve1[2].x = gridImgH[(r+1)][wrapTo(s+1, N)];
+			curve1[2].y = gridImgV[(r+1)][wrapTo(s+1, N)];
+			curve1[3].x = gridImgH[r][wrapTo(s+1, N)];
+			curve1[3].y = gridImgV[r][wrapTo(s+1, N)];
+
+			if (pathO[ways] == 0)
+				toP = cvPoint( (curve1[1].x + curve1[2].x )/2, (curve1[1].y + curve1[2].y )/2 );
+			else if (pathO[ways] == 1)
+				toP = cvPoint( curve1[2].x, curve1[2].y );
+			else if (pathO[ways] == 2)
+				toP = cvPoint( (curve1[2].x + curve1[3].x )/2, (curve1[2].y + curve1[3].y )/2 );
+			else if (pathO[ways] == 3)
+				toP = cvPoint(  curve1[3].x, curve1[3].y);
+			else if (pathO[ways] == 4)
+				toP = cvPoint( (curve1[0].x + curve1[3].x )/2, (curve1[0].y + curve1[3].y )/2 );
+			else if (pathO[ways] == 5)
+				toP = cvPoint(  curve1[0].x, curve1[0].y);
+			else if (pathO[ways] == 6)
+				toP = cvPoint( (curve1[1].x + curve1[0].x )/2, (curve1[1].y + curve1[0].y )/2 );
+			else if (pathO[ways] == 7)
+				toP = cvPoint(  curve1[1].x, curve1[1].y);
+
+			cvLine( img, fromP, toP, blue, 1, CV_AA, 0);
+			pathR[ways] = -1;
+			pathS[ways] = -1;
+			pathO[ways] = -1;
+		}
+	}
+
+	/**************************************************************************/
+	//draw the arrow
+	center = cvPoint(ImgShift, ImgShift);
+	fromP  = cvPoint(center.x, center.y + ArrowOffset);
+	toP    = cvPoint(center.x, center.y - ArrowOffset);
+	leftP  = cvPoint(center.x - ArrowOffset, center.y);
+	rightP = cvPoint(center.x + ArrowOffset, center.y);
+
+	cvLine( img, fromP,  toP, blue, 2, CV_AA, 0);
+	cvLine( img, leftP,  toP, blue, 2, CV_AA, 0);
+	cvLine( img, rightP, toP, blue, 2, CV_AA, 0);
+
+	//return img;
+}
+
+void KRobotMap::updateRobotMap()
+{
+	QImage* image;
+
+	cvDrawGrid();
+
+	image = this->IplImage2QImage(img);
+	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
+	this->parentLabel->setScaledContents (true);
+
 }
 
 /*********** Math functions ***********/

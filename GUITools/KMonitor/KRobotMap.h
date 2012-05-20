@@ -31,7 +31,7 @@
 #define NEIGHBOURS 	8
 
 #define RobotRadius 	0.2
-#define MapRadius 		1.0
+#define MapRadius 		0.63  // prev Value 1.0
 #define ObstacleRadius 	0.15
 #define RingDistance 	( (MapRadius) / (M) )
 #define SectorAngleDeg 	(360.0/N) // deg
@@ -71,10 +71,14 @@ class KRobotMap
 {
 
 public:
-	KRobotMap(KLabel* parentscene);
+	KRobotMap(KLabel* parent, QString hostId);
 	~KRobotMap();
 
 	void resizeRobotMap(int size);
+	QString getCurrentHost(){ return currentHost; }
+
+	void setLMObstaclesVisible(bool visible) {obstaclesVisible = visible;}
+	void updateRobotMap();
 
 	double targetX, targetY, targetA;
 	int pathR[PathLength], pathS[PathLength], pathO[PathLength];
@@ -86,9 +90,8 @@ public:
 private:
 	void initGrid();
 	void initCoordinates();
-	//IplImage* cvDrawGrid();
+	void cvDrawGrid();
 	QImage* IplImage2QImage(IplImage *iplImg);
-
 
 	// Math functions headers
 	double wrapToPi(double angle);
@@ -106,8 +109,6 @@ private:
 	int XYtoS(double x, double y);
 	int toGrid(double x);
 	int wrapTo(int n, int MAXN);
-
-	KLabel* parentLabel;
 
 	struct OpenListNode {
 		int ring;
@@ -133,10 +134,15 @@ private:
 	int ImgShift;
 	CvPoint ball;
 
-	int shiftGui;// = imgSize/2;
-	//int arrowOffset;
-	int x[TotalRings+1][N],
-			   y[TotalRings+1][N];
+	int shiftGui;
+	int x[TotalRings+1][N], y[TotalRings+1][N];
+
+	KLabel* parentLabel;
+
+	QString currentHost;
+	bool obstaclesVisible;
+	bool targetCoordVisible;
+	bool pathVisible;
 
 };
 

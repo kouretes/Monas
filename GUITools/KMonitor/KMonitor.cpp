@@ -7,11 +7,12 @@ KMonitor::KMonitor(QWidget *parent)
 
 	Messenger = new KGUIMessenger();
 	availableGWHosts = new GWRemoteHosts(this->GWSTreeWidget);
+
 	availableLWHosts = new LWRemoteHosts(this->LWSComboBox);
 	LWSElementList = new LWElementList(this->LWSListWidget);
-	//RobotMap = new KRobotMap(this->LPMLabel);
 
-	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
+	availableLMHosts = new LWRemoteHosts(this->LPMComboBox);
+	LPMElementList = new LMElementList(this->LPMListWidget);
 
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
@@ -76,6 +77,27 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(LWSElementList, SIGNAL(LWRHSetMWCmdVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVMWCmdVisible(QString, bool)));
 	connect(Messenger, SIGNAL(motionCommandUpdate(MotionWalkMessage, QString)), LWSGraphicsView, SLOT(motionCommandUpdateHandler(MotionWalkMessage, QString)));
 
+	//SIGNAL SLOT CONNECTIONS FOR LOCAL POLAR MAP
+	//Signal slot connections for Local Map Hosts ComboBox
+
+	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), availableLMHosts, SLOT(addComboBoxItem(QString, QString)));
+	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), availableLMHosts, SLOT(removeComboBoxItem(QString)));
+	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), availableLMHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+
+	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LMRHSubscriptionHandler(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LMRHUnsubscriptionHandler(QString)));
+
+	//Signal slot connections for
+	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LPMElementList, SLOT(LMELSubscriptionHandler(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMElementList, SLOT(LMELUnsubscriptionHandler(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMLabel, SLOT(removeRobotMap(QString)));
+
+	//Signal slot connections for Obstacles
+	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), LPMLabel, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
+	connect(LPMElementList, SIGNAL(LMRHSetObstaclesVisible(QString, bool)), LPMLabel, SLOT(LMObstaclesVisible(QString, bool)));
+
+	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
+	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
 	setWindowState(Qt::WindowMaximized);
 
 }
