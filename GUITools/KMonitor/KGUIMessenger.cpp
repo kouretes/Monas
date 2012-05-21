@@ -195,7 +195,6 @@ void KGUIMessenger::GWRHSubscriptionHandler(QString hostId)
 	myGWRequestedHosts.removeDuplicates();
 
 	//printMyGWRequestedHosts();
-
 }
 
 void KGUIMessenger::GWRHUnsubscriptionHandler(QString hostId)
@@ -208,7 +207,6 @@ void KGUIMessenger::LWRHSubscriptionHandler(QString hostId)
 {
 	myLWRequestedHost = hostId;
 	//printMyGWRequestedHosts();
-
 }
 
 void KGUIMessenger::LWRHUnsubscriptionHandler(QString hostId)

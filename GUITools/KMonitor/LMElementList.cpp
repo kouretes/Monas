@@ -27,22 +27,7 @@ void LMElementList::newListElementRequested(QListWidgetItem* item)
 			emit LMRHSetObstaclesVisible(myCurrentLMRequestedHost, false);
 		else
 			emit LMRHSetObstaclesVisible(myCurrentLMRequestedHost, true);
-
-	}/*else if(parentListWidget->row(item)==1)
-	{
-		if(item->checkState() == 0)
-			emit LWRHSetBallVisible(myCurrentLWRequestedHost, false);
-		else
-			emit LWRHSetBallVisible(myCurrentLWRequestedHost, true);
-
-	}else if(parentListWidget->row(item)==2)
-	{
-		if(item->checkState() == 0)
-			emit LWRHSetVisionBallVisible(myCurrentLWRequestedHost, false);
-		else
-			emit LWRHSetVisionBallVisible(myCurrentLWRequestedHost, true);
-
-	}*/
+	}
 }
 
 void LMElementList::uncheckAllListElements()
@@ -58,16 +43,17 @@ void LMElementList::uncheckAllListElements()
 
 void LMElementList::LMELSubscriptionHandler(QString hostId)
 {
+
 	if(myCurrentLMRequestedHost != hostId)
 	{
 		myCurrentLMRequestedHost = hostId;
 		uncheckAllListElements();
 	}
-
 }
 
 void LMElementList::LMELUnsubscriptionHandler(QString hostId)
 {
+
 	if(myCurrentLMRequestedHost == hostId)
 	{
 		myCurrentLMRequestedHost.clear();

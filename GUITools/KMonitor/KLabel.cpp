@@ -30,7 +30,8 @@ void KLabel::resizeEvent(QResizeEvent* event)
 
 void KLabel::removeRobotMap(QString hostId)
 {
-	if (this->polarMap->getCurrentHost() == hostId)
+	std::cout << "KLabel::removeRobotMap" << std::endl;
+	if (this->polarMap && this->polarMap->getCurrentHost() == hostId)
 		delete polarMap;
 }
 
@@ -38,7 +39,7 @@ void KLabel::LMObstaclesVisible(QString hostId, bool visible)
 {
 	KRobotMap* robotMap;
 
-	if (polarMap->getCurrentHost().isEmpty())
+	if (!polarMap || polarMap->getCurrentHost().isEmpty())
 	{
 		robotMap = new KRobotMap(this, hostId);
 		polarMap = robotMap;
@@ -59,7 +60,7 @@ void KLabel::LMObstaclesVisible(QString hostId, bool visible)
 
 void KLabel::gridInfoUpdateHandler(GridInfo gim, QString hostId)
 {
-	if(polarMap->getCurrentHost() == hostId)
+	if(polarMap && polarMap->getCurrentHost() == hostId)
 	{
 		for (int ring=0; ring < TotalRings; ring++)
 			for (int sector=0; sector < N; sector++){
@@ -81,7 +82,7 @@ void KLabel::gridInfoUpdateHandler(GridInfo gim, QString hostId)
 
 	}else
 	{
-		std::cout << "[i67]Host doesn't exist !" << hostId.toStdString() <<std::endl;
+		std::cout << "[67]Host doesn't exist !" << hostId.toStdString() <<std::endl;
 	}
 
 

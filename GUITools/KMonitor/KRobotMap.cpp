@@ -10,8 +10,8 @@ KRobotMap::KRobotMap(KLabel* parent, QString hostId)
 
 	currentHost = hostId;
 	obstaclesVisible = false;
-	targetCoordVisible = false;
-	pathVisible = false;
+	targetCoordVisible = true;	//TEST
+	pathVisible = true;		//TEST
 
 	if (this->parentLabel->width()>this->parentLabel->height())
 		ImgSize = this->parentLabel->height()-10;
@@ -27,9 +27,8 @@ KRobotMap::KRobotMap(KLabel* parent, QString hostId)
 
 	QImage* image = this->IplImage2QImage(img);
 	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
-	this->parentLabel->setScaledContents (true);
-
-	//this->parentLabel->setAlignment(Qt::AlignHCenter);
+	this->parentLabel->setAlignment(Qt::AlignHCenter);
+	//this->parentLabel->setScaledContents (true);
 }
 
 KRobotMap::~KRobotMap()
@@ -173,7 +172,7 @@ void KRobotMap::cvDrawGrid() {
 	}
 
 	/**************************************************************************/
-	if(targetCoordVisible){
+	/*if(targetCoordVisible){
 
 		CvPoint ball = cvPoint( toGrid(targetY), toGrid(targetX) );
 		cvCircle(img, ball, 3, red, 2, 8, 0);
@@ -202,7 +201,7 @@ void KRobotMap::cvDrawGrid() {
 		cvLine( img, ball, toP, green, 2, CV_AA, 0);
 	}
 
-	/**************************************************************************/
+	************************************************************************
 
 	if(pathVisible){
 
@@ -247,7 +246,7 @@ void KRobotMap::cvDrawGrid() {
 			pathS[ways] = -1;
 			pathO[ways] = -1;
 		}
-	}
+	}*/
 
 	/**************************************************************************/
 	//draw the arrow
@@ -272,7 +271,9 @@ void KRobotMap::updateRobotMap()
 
 	image = this->IplImage2QImage(img);
 	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
-	this->parentLabel->setScaledContents (true);
+	this->parentLabel->setAlignment(Qt::AlignHCenter);
+	//this->parentLabel->setScaledContents (true);
+
 
 }
 

@@ -13,7 +13,7 @@ LWRemoteHosts::LWRemoteHosts(QComboBox *parent )
 	connect(parentComboBox, SIGNAL(activated(int)), this, SLOT(newLWRemoteHostSelected(int)));
 
 	LWRequests.clear();
-	myCurrentRequestedHost = "";
+	myCurrentRequestedHost.clear();
 
 }
 
@@ -96,7 +96,9 @@ void LWRemoteHosts::newLWRemoteHostSelected(int index)
 		{
 			LWRequests.at(i)->hostSelected = true;
 			myCurrentRequestedHost = LWRequests.at(i)->hostId;
+
 			emit LWRHSubscriptionRequest(LWRequests.at(i)->hostId);
+
 		}else
 		{
 			LWRequests.at(i)->hostSelected = false;
