@@ -8,8 +8,7 @@ KLabel::KLabel(QWidget* parent)
 	: QLabel(parent)
 	, polarMap(0)
 {
-	//this->polarMap = new KRobotMap(this);
-
+	polarMap = new KRobotMap(this, "Anybody");
 }
 
 KLabel::~KLabel()
@@ -20,7 +19,6 @@ void KLabel::resizeEvent(QResizeEvent* event)
 {
 	//std::cout << "To neo mou width() :: " << width() << std::endl;
 	//std::cout << "To neo mou height() :: " << height() << std::endl;
-
 	if (width()>height())
 		polarMap->resizeRobotMap(height()-10);
 	else
@@ -60,7 +58,7 @@ void KLabel::LMObstaclesVisible(QString hostId, bool visible)
 
 void KLabel::gridInfoUpdateHandler(GridInfo gim, QString hostId)
 {
-	if(polarMap && polarMap->getCurrentHost() == hostId)
+	if(polarMap )	//&& polarMap->getCurrentHost() == hostId)
 	{
 		for (int ring=0; ring < TotalRings; ring++)
 			for (int sector=0; sector < N; sector++){

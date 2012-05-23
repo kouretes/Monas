@@ -13,7 +13,7 @@ KRobotMap::KRobotMap(KLabel* parent, QString hostId)
 	targetCoordVisible = true;	//TEST
 	pathVisible = true;		//TEST
 
-	if (this->parentLabel->width()>this->parentLabel->height())
+/*	if (this->parentLabel->width()>this->parentLabel->height())
 		ImgSize = this->parentLabel->height()-10;
 	else
 		ImgSize = this->parentLabel->width()-10;
@@ -27,7 +27,7 @@ KRobotMap::KRobotMap(KLabel* parent, QString hostId)
 
 	QImage* image = this->IplImage2QImage(img);
 	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
-	this->parentLabel->setAlignment(Qt::AlignHCenter);
+	this->parentLabel->setAlignment(Qt::AlignHCenter);*/
 	//this->parentLabel->setScaledContents (true);
 }
 
@@ -39,6 +39,35 @@ KRobotMap::~KRobotMap()
 
 void KRobotMap::resizeRobotMap(int size)
 {
+	ImgSize = size;
+	ImgShift = (ImgSize/2);
+	present = 0;
+
+	img = cvCreateImage(cvSize(ImgSize, ImgSize), IPL_DEPTH_8U, 3);
+	initGrid();
+	initCoordinates();
+
+	QImage* image = this->IplImage2QImage(img);
+	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
+	this->parentLabel->setAlignment(Qt::AlignHCenter);
+
+
+	for (int ring=0; ring < TotalRings; ring++)
+		for (int sector=0; sector < N; sector++){
+			PolarGrid[0][ring][sector] = sector*0.01;
+		}
+	targetX = 200;
+	targetY = 500;
+	targetA = 480;
+
+	for (int step = 0; step < PathLength; step++){
+		pathR[step] = 0;
+		pathS[step] = 0;
+		pathO[step] = 0;
+	}
+
+	updateRobotMap();
+
 
 }
 
@@ -143,10 +172,13 @@ void KRobotMap::cvDrawGrid() {
 	CvScalar red = cvScalar(0, 0, ColorMax);
 	CvScalar green = cvScalar(0, ColorMax, 0);
 
-	if(obstaclesVisible){
-
+	//if(obstaclesVisible){
+	int cells = 0;
 		for (r=0; r<TotalRings; r++) {
+
 			for (s=0; s<N; s++) {
+
+
 				curve1[0].x = gridImgH[r][s];
 				curve1[0].y = gridImgV[r][s];
 				curve1[1].x = gridImgH[(r+1)][s];
@@ -156,23 +188,41 @@ void KRobotMap::cvDrawGrid() {
 				curve1[3].x = gridImgH[r][wrapTo(s+1, N)];
 				curve1[3].y = gridImgV[r][wrapTo(s+1, N)];
 
+
+				/*std::cout << "To rrrrrrrrrrrrr :: "<<  r <<std::endl
+						<< "to ssssssssssssss :: " << s << std::endl << std::endl
+						<< " KRobotMap::gridImgH[r][s] :: " << gridImgH[r][s] << std::endl
+				          << "gridImgV[r][s] :: " << gridImgV[r][s] << std::endl
+				          << "gridImgH[(r+1)][s] :: " << gridImgH[(r+1)][s] << std::endl
+				          << "gridImgV[(r+1)][s] :: " << gridImgV[(r+1)][s] << std::endl
+					 << "gridImgH[(r+1)][wrapTo(s+1, N)] :: " << gridImgH[(r+1)][wrapTo(s+1, N)] << std::endl
+					 << "gridImgV[(r+1)][wrapTo(s+1, N)] :: " << gridImgV[(r+1)][wrapTo(s+1, N)] << std::endl
+					 << "gridImgH[r][wrapTo(s+1, N)] :: " <<gridImgH[r][wrapTo(s+1, N)] << std::endl
+					 << "gridImgV[r][wrapTo(s+1, N)] :: " << gridImgV[r][wrapTo(s+1, N)] << std::endl;
+*/
+
 				colorValue = ColorMax - PolarGrid[present][r][s]*ColorMax;
+				//std::cout << "KRobotMap::To colorValue :: " << colorValue << std::endl;
 				paintColor = cvScalar(colorValue, colorValue, colorValue);
 
 				if (r == InnerRing) {
 					paintColor = cvScalar(ColorMax, ColorMax, ColorMax);
 					cvFillPoly( img, &curveArr,&nCurvePts, nCurves, paintColor );
+					cells++;
 				}
 				else {
 					cvFillPoly( img, &curveArr, &nCurvePts, nCurves, paintColor );
 					cvPolyLine( img,&curveArr, &nCurvePts, nCurves, 1, white, isCurveClosed, lineWidth, 0 );
+					cells++;
 				}
 			}
 		}
-	}
+
+		//std::cout << "KRobotMap::cells :: " << cells<< std::endl;
+	//}
 
 	/**************************************************************************/
-	/*if(targetCoordVisible){
+	//if(targetCoordVisible){
 
 		CvPoint ball = cvPoint( toGrid(targetY), toGrid(targetX) );
 		cvCircle(img, ball, 3, red, 2, 8, 0);
@@ -199,11 +249,11 @@ void KRobotMap::cvDrawGrid() {
 
 
 		cvLine( img, ball, toP, green, 2, CV_AA, 0);
-	}
+	//}
 
-	************************************************************************
+	/************************************************************************/
 
-	if(pathVisible){
+	/*if(pathVisible){
 
 		for (int ways=0; ways<PathLength; ways++) {
 			if (pathR[ways] == -1 && pathS[ways] == -1) break;
