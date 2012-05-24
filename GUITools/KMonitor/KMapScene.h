@@ -71,14 +71,27 @@ class KMapScene : public QGraphicsScene
 {
 
 public:
-	KMapScene(KMapView* parent );//, QString hostId);
+	KMapScene(KMapView* parent, QString hostId);
 	~KMapScene();
 
 	void resizeMapScene(int size);
 	QString getCurrentHost(){ return currentHost; }
 
+	void setLPMObstaclesVisible(bool visible){ LPMObstaclesVisible = visible; setPMObstaclesVisible(visible);}
+	bool getLPMObstaclesVisible(){return LPMObstaclesVisible;}
+	void setPMObstaclesVisible(bool visible);
 	void updateObstacles();
 	void updateArrow();
+
+	void setLPMTargetCoordVisible(bool visible){ LPMTargetCoordVisible = visible; setPMTargetCoordVisible(visible);}
+	bool getLPMTargetCoordVisible(){return LPMTargetCoordVisible;}
+	void setPMTargetCoordVisible(bool visible);
+	void updateTargetCoordinates();
+
+	void setLPMPathVisible(bool visible){ LPMPathVisible = visible; setPMPathVisible(visible);}
+	bool getLPMPathVisible(){return LPMPathVisible;}
+	void setPMPathVisible(bool visible);
+	void updatePath();
 
 	double targetX, targetY, targetA;
 	int pathR[PathLength], pathS[PathLength], pathO[PathLength];
@@ -91,12 +104,19 @@ private:
 	KMapView* parent;
 	QString currentHost;
 
-	bool LMSObstaclesVisible;
+	bool LPMObstaclesVisible;
 	QList<QGraphicsPolygonItem*> cellsList;
 
 	QGraphicsLineItem* arrowBody;
 	QGraphicsLineItem* arrowLside;
 	QGraphicsLineItem* arrowRside;
+
+	bool LPMTargetCoordVisible;
+	QGraphicsEllipseItem* targetBall;
+	QGraphicsLineItem* targetLine;
+
+	bool LPMPathVisible;
+	QList<QGraphicsLineItem*> pathLineList;
 
 
 	// Math functions headers

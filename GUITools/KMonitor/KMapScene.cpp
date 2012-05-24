@@ -6,15 +6,23 @@
 using namespace std;
 
 
-KMapScene::KMapScene(KMapView* parent )//, QString hostId)
+KMapScene::KMapScene(KMapView* parent, QString hostId)
 {
 	this->parent = parent;
-	cellsList.clear();
+	currentHost = hostId;
 
-	//currentHost = hostId;
+	cellsList.clear();
+	pathLineList.clear();
+
+	LPMPathVisible = false;
+	LPMObstaclesVisible = false;
+	LPMTargetCoordVisible = false;
 
 	QPen penForRedLine(Qt::red);
 	penForRedLine.setWidth(3);
+
+	QPen penForBlueLine(Qt::blue);
+	penForBlueLine.setWidth(2);
 
 	for (int r=0; r<TotalRings; r++)
 		for (int s=0; s<N; s++)
@@ -26,6 +34,15 @@ KMapScene::KMapScene(KMapView* parent )//, QString hostId)
 	arrowBody = addLine(QLineF(),penForRedLine);
 	arrowLside = addLine(QLineF(),penForRedLine);
 	arrowRside = addLine(QLineF(),penForRedLine);
+
+	for (int ways=0; ways<PathLength; ways++)
+	{
+		QGraphicsLineItem* path = addLine(QLineF(),penForBlueLine);
+		pathLineList.append(path);
+	}
+
+	targetBall = addEllipse(QRect(),QPen(Qt::red),QBrush(Qt::red));
+	targetLine = addLine(QLineF(),QPen(Qt::green));
 
 	setBackgroundBrush(QBrush(QColor(155,0,0)));
 
@@ -46,23 +63,6 @@ void KMapScene::resizeMapScene(int size)
 	initCoordinates();
 
 	setSceneRect(0,0,size,size);
-
-	for (int ring=0; ring < TotalRings; ring++)
-		for (int sector=0; sector < N; sector++){
-			PolarGrid[0][ring][sector] = sector*0.01;
-		}
-	targetX = 0;
-	targetY = 0;
-	targetA = 0;
-
-	for (int step = 0; step < PathLength; step++){
-		pathR[step] = 0;
-		pathS[step] = 0;
-		pathO[step] = 0;
-	}
-
-	updateObstacles();
-	updateArrow();
 }
 
 //initialize Polar grid
@@ -107,6 +107,34 @@ void KMapScene::initCoordinates()
 				cellCenterX[r][s] = toCartesianX( RtoD(r)+0.5*RingDistance, StoT(s)+0.5*SectorAngleRad );
 				cellCenterY[r][s] = toCartesianY( RtoD(r)+0.5*RingDistance, StoT(s)+0.5*SectorAngleRad );
 			}
+}
+
+void KMapScene::setPMObstaclesVisible(bool visible)
+{
+	for(unsigned i = 0; i<cellsList.count();i++)
+	{
+		if (visible == false)
+		{
+			cellsList.at(i)->setVisible(false);
+
+		}else
+		{
+			cellsList.at(i)->setVisible(true);
+		}
+	}
+
+	if (visible == false)
+	{
+		arrowBody->setVisible(false);
+		arrowLside->setVisible(false);
+		arrowRside->setVisible(false);
+	}else
+	{
+		arrowBody->setVisible(true);
+		arrowLside->setVisible(true);
+		arrowRside->setVisible(true);
+	}
+
 }
 
 void KMapScene::updateObstacles()
@@ -157,6 +185,163 @@ void KMapScene::updateArrow()
 	arrowBody->setLine(fromP.x(), fromP.y(), toP.x(), toP.y());
 	arrowLside->setLine(leftP.x(), leftP.y(), toP.x(), toP.y());
 	arrowRside->setLine(rightP.x(), rightP.y(), toP.x(), toP.y());
+}
+
+void KMapScene::setPMTargetCoordVisible(bool visible)
+{
+	if (visible == false)
+	{
+		targetBall->setVisible(false);
+		targetLine->setVisible(false);
+	}else
+	{
+		targetBall->setVisible(true);
+		targetLine->setVisible(true);
+	}
+
+}
+
+void KMapScene::updateTargetCoordinates()
+{
+	QPoint toP;
+	QPoint ball( toGrid(targetY), toGrid(targetX) );
+
+	//cvCircle(img, ball, 3, red, 2, 8, 0);
+
+	targetBall->setRect(ball.x()-4, ball.y()-4, 8, 8);
+
+	int pix = 5;
+	if (targetA > -(M_PI_4/2) && targetA <= (M_PI_4/2)){
+		 toP.setX( ball.x() );
+		 toP.setY( ball.y() - pix);
+	}else if (targetA > (M_PI_4/2) && targetA <= 3*(M_PI_4/2)){
+		toP.setX( ball.x() - pix);
+		toP.setY( ball.y() - pix );
+	}else if (targetA > 3*(M_PI_4/2) && targetA <= 5*(M_PI_4/2)){
+		toP.setX( ball.x() -pix);
+		toP.setY(ball.y() );
+	}else if (targetA > 5*(M_PI_4/2) && targetA <= 7*(M_PI_4/2)){
+		toP.setX( ball.x() - pix);
+		toP.setY( ball.y() + pix );
+	}else if (targetA > -3*(M_PI_4/2) && targetA <= -(M_PI_4/2)){
+		toP.setX( ball.x() + pix);
+		toP.setY(ball.y() - pix );
+	}else if (targetA > -5*(M_PI_4/2) && targetA <= -3*(M_PI_4/2)){
+		toP.setX(ball.x() + pix);
+		toP.setY(ball.y());
+	}else if (targetA > -7*(M_PI_4/2) && targetA <= -5*(M_PI_4/2)){
+		toP.setX( ball.x() +pix);
+		toP.setY(ball.y() + pix );
+	}else{
+		toP.setX( ball.x());
+		toP.setY(ball.y() + pix );
+	}
+
+
+	targetLine->setLine(ball.x(), ball.y(), toP.x(), toP.y());
+}
+
+void KMapScene::setPMPathVisible(bool visible)
+{
+	for(unsigned i = 0; i<pathLineList.count();i++)
+	{
+		if (visible == false)
+		{
+			pathLineList.at(i)->setVisible(false);
+
+		}else
+		{
+			pathLineList.at(i)->setVisible(true);
+		}
+	}
+
+}
+
+void KMapScene::updatePath()
+{
+	QGraphicsLineItem* path;
+	QVector<QPoint> curve1(0);
+	QPoint toP(0,0), fromP(0,0);
+	int r, s;
+
+	curve1.clear();
+	for (int ways=0; ways<PathLength; ways++) {
+		if (pathR[ways] == -1 && pathS[ways] == -1) break;
+		r = pathR[ways];
+		s = pathS[ways];
+
+		if (r==InnerRing+1){
+			fromP.setX( toGrid(toCartesianY(RtoD(r)+0.75*RingDistance, StoT(s)+0.5*SectorAngleRad)));
+			fromP.setY( toGrid(toCartesianX(RtoD(r)+0.75*RingDistance, StoT(s)+0.5*SectorAngleRad)));
+		}else{
+			fromP.setX( toGrid(cellCenterY[r][s]));
+			fromP.setY( toGrid(cellCenterX[r][s]));
+		}
+
+		/*curve1[0].x = gridImgH[r][s];
+		curve1[0].y = gridImgV[r][s];
+		curve1[1].x = gridImgH[(r+1)][s];
+		curve1[1].y = gridImgV[(r+1)][s];
+		curve1[2].x = gridImgH[(r+1)][wrapTo(s+1, N)];
+		curve1[2].y = gridImgV[(r+1)][wrapTo(s+1, N)];
+		curve1[3].x = gridImgH[r][wrapTo(s+1, N)];
+		curve1[3].y = gridImgV[r][wrapTo(s+1, N)];*/
+
+		QPoint x0(gridImgH[r][s], gridImgV[r][s]);
+		QPoint x1(gridImgH[(r+1)][s], gridImgV[(r+1)][s]);
+		QPoint x2(gridImgH[(r+1)][wrapTo(s+1, N)], gridImgV[(r+1)][wrapTo(s+1, N)]);
+		QPoint x3(gridImgH[r][wrapTo(s+1, N)], gridImgV[r][wrapTo(s+1, N)]);
+
+		curve1.clear();
+		curve1.append(x0);
+		curve1.append(x1);
+		curve1.append(x2);
+		curve1.append(x3);
+
+		if (pathO[ways] == 0){
+			//toP = cvPoint( (curve1[1].x + curve1[2].x )/2, (curve1[1].y + curve1[2].y )/2 );
+			toP.setX((curve1[1].x() + curve1[2].x() )/2);
+			toP.setY((curve1[1].y() + curve1[2].y() )/2);
+		}else if (pathO[ways] == 1){
+			//toP = cvPoint( curve1[2].x, curve1[2].y );
+			toP.setX( curve1[2].x());
+			toP.setY( curve1[2].y());
+		}else if (pathO[ways] == 2){
+			//toP = cvPoint( (curve1[2].x + curve1[3].x )/2, (curve1[2].y + curve1[3].y )/2 );
+			toP.setX((curve1[2].x() + curve1[3].x() )/2);
+			toP.setY((curve1[2].y() + curve1[3].y() )/2);
+		}else if (pathO[ways] == 3){
+			//toP = cvPoint(  curve1[3].x, curve1[3].y);
+			toP.setX(curve1[3].x());
+			toP.setY(curve1[3].y());
+		}else if (pathO[ways] == 4){
+			//toP = cvPoint( (curve1[0].x + curve1[3].x )/2, (curve1[0].y + curve1[3].y )/2 );
+			toP.setX((curve1[0].x() + curve1[3].x() )/2);
+			toP.setY((curve1[0].y() + curve1[3].y() )/2);
+		}else if (pathO[ways] == 5){
+			//toP = cvPoint(  curve1[0].x, curve1[0].y);
+			toP.setX( curve1[0].x());
+			toP.setY(curve1[0].y());
+		}else if (pathO[ways] == 6){
+			//toP = cvPoint( (curve1[1].x + curve1[0].x )/2, (curve1[1].y + curve1[0].y )/2 );
+			toP.setX((curve1[1].x() + curve1[0].x() )/2);
+			toP.setY((curve1[1].y() + curve1[0].y() )/2);
+		}else if (pathO[ways] == 7){
+			//toP = cvPoint(  curve1[1].x, curve1[1].y);
+			toP.setX(curve1[1].x());
+			toP.setY(curve1[1].y());
+		}
+
+
+		//cvLine( img, fromP, toP, blue, 1, CV_AA, 0);
+		path = pathLineList.at(ways);
+		path->setLine(fromP.x(), fromP.y(), toP.x(), toP.y());
+
+
+		pathR[ways] = -1;
+		pathS[ways] = -1;
+		pathO[ways] = -1;
+	}
 }
 
 

@@ -12,7 +12,7 @@ KMonitor::KMonitor(QWidget *parent)
 	LWSElementList = new LWElementList(this->LWSListWidget);
 
 	availableLMHosts = new LWRemoteHosts(this->LPMComboBox);
-	//LPMElementList = new LMElementList(this->LPMListWidget);
+	LPMElementList = new LMElementList(this->LPMListWidget);
 
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
@@ -88,14 +88,16 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LMRHUnsubscriptionHandler(QString)));
 
 	//Signal slot connections for
-	/*connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LPMElementList, SLOT(LMELSubscriptionHandler(QString)));
-	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMElementList, SLOT(LMELUnsubscriptionHandler(QString)));*/
-	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMLabel, SLOT(removeRobotMap(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LPMElementList, SLOT(LMELSubscriptionHandler(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMElementList, SLOT(LMELUnsubscriptionHandler(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMGraphicsView, SLOT(removeRobotMap(QString)));
 
 	//Signal slot connections for Obstacles
-	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), LPMLabel, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
-	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), this->graphicsView, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
-	//connect(LPMElementList, SIGNAL(LMRHSetObstaclesVisible(QString, bool)), LPMLabel, SLOT(LMObstaclesVisible(QString, bool)));
+	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), LPMGraphicsView, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
+	connect(LPMElementList, SIGNAL(LMRHSetObstaclesVisible(QString, bool)), LPMGraphicsView, SLOT(LMObstaclesVisible(QString, bool)));
+	connect(LPMElementList, SIGNAL(LMRHSetPathVisible(QString, bool)), LPMGraphicsView, SLOT(LMPathVisible(QString, bool)));
+	connect(LPMElementList, SIGNAL(LMRHSetTargCoordVisible(QString, bool)), LPMGraphicsView, SLOT(LMTargetCoordVisible(QString, bool)));
+
 
 	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
 	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));

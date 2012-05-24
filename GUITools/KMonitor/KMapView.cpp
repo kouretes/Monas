@@ -8,7 +8,7 @@ KMapView::KMapView(QWidget* parent)
     : QGraphicsView(parent)
     , mapArea(0)
 {
-	this->mapArea = new KMapScene(this);
+	this->mapArea = new KMapScene(this, "");
 	this->setScene(mapArea);
 	this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
 	this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
@@ -41,26 +41,91 @@ void KMapView::removeRobotMap(QString hostId)
 
 void KMapView::LMObstaclesVisible(QString hostId, bool visible)
 {
-	/*KMapScene* map;
+	KMapScene* map;
 
 	if (!mapArea || mapArea->getCurrentHost().isEmpty())
 	{
 		map = new KMapScene(this, hostId);
 		mapArea = map;
+		this->setScene(mapArea);
+		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
 
 	}else if (mapArea->getCurrentHost() != hostId)
 	{
 		removeRobotMap(mapArea->getCurrentHost());
-		map = new KRobotMap(this, hostId);
+		map = new KMapScene(this, hostId);
 		mapArea = map;
+		this->setScene(mapArea);
+		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
 	}
 
 	if (mapArea != NULL)
-		mapArea->setLMObstaclesVisible(visible);
+		mapArea->setLPMObstaclesVisible(visible);
 	else
-		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;*/
+		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;
 
 }
+
+void KMapView::LMPathVisible(QString hostId, bool visible)
+{
+	KMapScene* map;
+
+	if (!mapArea || mapArea->getCurrentHost().isEmpty())
+	{
+		map = new KMapScene(this, hostId);
+		mapArea = map;
+		this->setScene(mapArea);
+		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+
+	}else if (mapArea->getCurrentHost() != hostId)
+	{
+		removeRobotMap(mapArea->getCurrentHost());
+		map = new KMapScene(this, hostId);
+		mapArea = map;
+		this->setScene(mapArea);
+		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+	}
+
+	if (mapArea != NULL)
+		mapArea->setLPMPathVisible(visible);
+	else
+		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;
+
+}
+
+void KMapView::LMTargetCoordVisible(QString hostId, bool visible)
+{
+	KMapScene* map;
+
+	if (!mapArea || mapArea->getCurrentHost().isEmpty())
+	{
+		map = new KMapScene(this, hostId);
+		mapArea = map;
+		this->setScene(mapArea);
+		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+
+	}else if (mapArea->getCurrentHost() != hostId)
+	{
+		removeRobotMap(mapArea->getCurrentHost());
+		map = new KMapScene(this, hostId);
+		mapArea = map;
+		this->setScene(mapArea);
+		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
+	}
+
+	if (mapArea != NULL)
+		mapArea->setLPMTargetCoordVisible(visible);
+	else
+		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;
+
+}
+
 
 void KMapView::gridInfoUpdateHandler(GridInfo gim, QString hostId)
 {
@@ -81,10 +146,27 @@ void KMapView::gridInfoUpdateHandler(GridInfo gim, QString hostId)
 			mapArea->pathO[step] = gim.pathstepsorientation(step);
 		}
 
-		//std::cout << "mapArea->updateObstacles()" << std::endl;
-		mapArea->updateObstacles();
+		if (mapArea->getLPMObstaclesVisible())
+		{
+			mapArea->setPMObstaclesVisible(false);
+			mapArea->updateObstacles();
+			mapArea->updateArrow();
+			mapArea->setPMObstaclesVisible(true);
+		}
 
-		//std::cout << "DFG " << std::endl;
+		if (mapArea->getLPMTargetCoordVisible())
+		{
+			mapArea->setPMTargetCoordVisible(false);
+			mapArea->updateTargetCoordinates();
+			mapArea->setPMTargetCoordVisible(true);
+		}
+
+		if (mapArea->getLPMPathVisible())
+		{
+			mapArea->setPMPathVisible(false);
+			mapArea->updatePath();
+			mapArea->setPMPathVisible(true);
+		}
 
 	}else
 	{

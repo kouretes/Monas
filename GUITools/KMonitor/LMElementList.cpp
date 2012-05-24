@@ -21,12 +21,29 @@ LMElementList::~LMElementList()
 
 void LMElementList::newListElementRequested(QListWidgetItem* item)
 {
-	if(parentListWidget->row(item)==0 && !myCurrentLMRequestedHost.isEmpty())
+	if(!myCurrentLMRequestedHost.isEmpty())
 	{
-		if(item->checkState() == 0)
-			emit LMRHSetObstaclesVisible(myCurrentLMRequestedHost, false);
-		else
-			emit LMRHSetObstaclesVisible(myCurrentLMRequestedHost, true);
+		if(parentListWidget->row(item)==0 )
+		{
+			if(item->checkState() == 0)
+				emit LMRHSetObstaclesVisible(myCurrentLMRequestedHost, false);
+			else
+				emit LMRHSetObstaclesVisible(myCurrentLMRequestedHost, true);
+
+		}else if(parentListWidget->row(item)== 1)
+		{
+			if(item->checkState() == 0)
+				emit LMRHSetPathVisible(myCurrentLMRequestedHost, false);
+			else
+				emit LMRHSetPathVisible(myCurrentLMRequestedHost, true);
+
+		}else if(parentListWidget->row(item)== 2 )
+		{
+			if(item->checkState() == 0)
+				emit LMRHSetTargCoordVisible(myCurrentLMRequestedHost, false);
+			else
+				emit LMRHSetTargCoordVisible(myCurrentLMRequestedHost, true);
+		}
 	}
 }
 

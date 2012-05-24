@@ -18,6 +18,8 @@ public slots:
 
 signals:
 	void LMRHSetObstaclesVisible(QString, bool);
+	void LMRHSetPathVisible(QString, bool);
+	void LMRHSetTargCoordVisible(QString, bool);
 
 private slots:
 	void newListElementRequested(QListWidgetItem* item);

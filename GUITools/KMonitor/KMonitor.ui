@@ -172,7 +172,7 @@ p, li { white-space: pre-wrap; }
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1,1">
+         <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,2,1">
           <property name="spacing">
            <number>3</number>
           </property>
@@ -180,14 +180,35 @@ p, li { white-space: pre-wrap; }
            <widget class="QComboBox" name="LPMComboBox"/>
           </item>
           <item row="1" column="1">
-           <widget class="KLabel" name="LPMLabel">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
+           <widget class="KMapView" name="LPMGraphicsView"/>
           </item>
           <item row="1" column="2">
-           <widget class="KMapView" name="graphicsView"/>
+           <widget class="QListWidget" name="LPMListWidget">
+            <item>
+             <property name="text">
+              <string>Obstacles</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Path</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Target Coordinates</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+           </widget>
           </item>
          </layout>
         </item>
@@ -231,11 +252,6 @@ p, li { white-space: pre-wrap; }
    <class>KGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>../KGraphicsView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KLabel</class>
-   <extends>QLabel</extends>
-   <header>../KLabel.h</header>
   </customwidget>
   <customwidget>
    <class>KMapView</class>
