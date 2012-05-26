@@ -6,7 +6,7 @@
 #include <fstream>
 
 #include "tools/XMLConfig.h"
-#include "../config/config.h"
+#include "config.h"
 #include "hal/syscall.h"
 
 #include "tools/singleton.h"
@@ -14,7 +14,7 @@
 class ArchConfigClass {
 
     public:
-        
+
         const std::string GetConfigPrefix () const { return ConfigPrefix; }
 
         const std::string GetThreadType () const { return ThreadType; }
@@ -29,7 +29,7 @@ class ArchConfigClass {
             std::ifstream _testConf ( GlobalConf::Instance().ConfigurationFile().c_str() );
             std::ifstream _testConfAlt (GlobalConf::Instance().ConfigurationFileAlter().c_str() );
 
-            if ( _testConf.is_open() ) { 
+            if ( _testConf.is_open() ) {
                 std::cout<<"Configuration file found @ "<<GlobalConf::Instance().ConfigurationFile()<<std::endl;
                 ConfFilePrefix = GlobalConf::Instance().ConfigurationFile();
             }
@@ -63,11 +63,11 @@ class ArchConfigClass {
                 SysCall::_exit(1);
             }
 
-            if ( ! ConfFile.QueryElement( "ThreadType", ThreadType ) ) 
+            if ( ! ConfFile.QueryElement( "ThreadType", ThreadType ) )
                 ThreadType = "PThread";
 
-        }         
-    
+        }
+
     private:
 
         std::string ConfigPrefix;

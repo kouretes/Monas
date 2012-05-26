@@ -19,6 +19,9 @@ add_library ( MonasCore ${LibBuildType}
                         IActivity.cpp
                         talws.h
                         talws.cpp
+			config.h
+			archConfig.h
+			agentConfig.h
 )
 
 target_link_libraries ( MonasCore M_tinyxml )
