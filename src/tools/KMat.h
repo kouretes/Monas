@@ -957,7 +957,14 @@ namespace KMat
 			return *this;
 			
 		}
-		
+		GenMatrix<T,S-1,1> get_translation()
+		{
+			return B;
+		}
+		GenMatrix<T,S-1,S-1> get_rotation()
+		{
+			return A;
+		}
 		//Project a point !
 		GenMatrix<T,S-1,1> transform(GenMatrix<T,S-1,1> const & c,T hom=1) const
 		{
@@ -1184,6 +1191,8 @@ namespace KMat
 		{
 			Transl.identity();
 			Transl.AisIdentity = false;
+			Transl.AisZero=false;
+			Transl.BisZero=false;
 			Transl(0,3) = x;
 			Transl(1,3) = y;
 			Transl(2,3) = z;
@@ -1193,6 +1202,7 @@ namespace KMat
 		{
 			Transf.zero();
 			Transf.AisZero = false;
+			Transf.BisZero = false;
 			Transf(0,0) = cos(theta);
 			Transf(0,1) = -sin(theta);
 			Transf(0,2) = 0;
@@ -1206,20 +1216,43 @@ namespace KMat
 			Transf(2,2) = cos(alpha);
 			Transf(2,3) = cos(alpha)*d;
 		}
-		template<typename T> static void rotationMatrix(ATMatrix<T,4> & Rot,T xAngle,T yAngle,T zAngle){
+		template<typename T> static void rebuildTransformation(ATMatrix<T,4> & Transf, T px, T py, T pz, T rx, T ry, T rz)
+		{ 
+			Transf.zero();
+			Transf.AisZero = false;
+			Transf.BisZero = false;
+			Transf(0,0) = cos(rz)*cos(ry);
+			Transf(0,1) = cos(rz)*sin(ry)*sin(rx)-sin(rz)*cos(rx);
+			Transf(0,2) = cos(rz)*sin(ry)*cos(rx)+sin(rz)*sin(rx);
+			Transf(0,3) = px;
+			Transf(1,0) = sin(rz)*cos(ry);
+			Transf(1,1) = sin(rz)*sin(ry)*sin(rx)+cos(rz)*cos(rx);
+			Transf(1,2) = sin(rz)*sin(ry)*cos(rx)-cos(rz)*sin(rx);
+			Transf(1,3) = py;
+			Transf(2,0) = -sin(ry);
+			Transf(2,1) = cos(ry)*sin(rx);
+			Transf(2,2) = cos(ry)*cos(rx);
+			Transf(2,3) = pz;
+		}
+		template<typename T> static void rotationMatrix(ATMatrix<T,4> & Rot,T xAngle,T yAngle,T zAngle)
+		{
 			ATMatrix<float,4> Rx,Ry,Rz;
 			rotateX(Rx, xAngle);
 			rotateY(Ry, yAngle);
 			rotateZ(Rz, zAngle);
 			Rx *= Ry;
 			Rx *= Rz;
-			/*Rot.zero();
-			Rot.AisZero = false;
-			for(int i=0;i<3;i++)
-				for(int j=0;j<3;j++)
-					Rot(i,j) = Rx(i,j);
-			Rot(3,3) = 1;*/
 			Rot = Rx;
+		}
+		template<typename T> static void rotationMatrixZYX(ATMatrix<T,4> & Rot,T zAngle,T yAngle,T xAngle)
+		{
+			ATMatrix<float,4> Rx,Ry,Rz;
+			rotateX(Rx, xAngle);
+			rotateY(Ry, yAngle);
+			rotateZ(Rz, zAngle);
+			Rz *= Ry;
+			Rz *= Rx;
+			Rot = Rz;
 		}
 
 	};
