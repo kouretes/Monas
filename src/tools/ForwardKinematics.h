@@ -102,7 +102,7 @@ namespace FKin
 	 * @param ElbowRoll. The value of the Right's arm elbow roll joint.
 	 * */
 	void forwardRightHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll){
-		kmatTable base,T1,T2,T3,T4,R,endTr;
+		kmatTable base,T1,T2,T3,T4,R,Rfix,endTr;
 		float PI = KMatTransf::PI;
 		
 		KMatTransf::makeTranslationMatrix(base, 0.0f,-(ShoulderOffsetY+ElbowOffsetY),ShoulderOffsetZ);
@@ -112,6 +112,7 @@ namespace FKin
 		KMatTransf::makeTransformationMatrix(T4,0.0f,PI/2,0.0f,ElbowRoll);//Allagh apo matlab
 		
 		KMatTransf::rotationMatrix(R,0.0f,0.0f,PI/2);
+		KMatTransf::rotationMatrix(Rfix,0.0f,0.0f,-PI);
 		KMatTransf::makeTranslationMatrix(endTr,-(HandOffsetX+LowerArmLength),0.0f,0.0f);
 		
 		kmatTable Tend;
@@ -122,6 +123,7 @@ namespace FKin
 		Tend *= T4;
 		Tend *= R;
 		Tend *= endTr;
+		Tend *= Rfix;
 		EndTransf = Tend;
 		
 	};
