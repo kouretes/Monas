@@ -1,7 +1,8 @@
 #ifndef _talws_h_
 #define _talws_h_ 1
 
-#include "architecture/agent.h"
+#include "agent.h"
+#include "IProvider.h"
 #include "hal/thread.h"
 
 #include "statechartWrapper.h"
@@ -23,6 +24,7 @@ class Talws {
     private:
 
         std::vector<Agent*> Agents;
+        std::vector<IProvider*> Providers;
 
         std::vector<StatechartWrapper*> StatechartPlans;
 

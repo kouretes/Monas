@@ -1,0 +1,7 @@
+
+
+set ( ProviderName ApproachBall )
+
+set ( ProviderSrcs  ApproachBall.cpp )
+
+include ( ../provTemplate.cmake )
