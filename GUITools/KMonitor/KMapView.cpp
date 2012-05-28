@@ -43,7 +43,7 @@ void KMapView::LMObstaclesVisible(QString hostId, bool visible)
 {
 	KMapScene* map;
 
-	if (!mapArea || mapArea->getCurrentHost().isEmpty())
+	if (!mapArea )
 	{
 		map = new KMapScene(this, hostId);
 		mapArea = map;
@@ -51,7 +51,7 @@ void KMapView::LMObstaclesVisible(QString hostId, bool visible)
 		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
 		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
 
-	}else if (mapArea->getCurrentHost() != hostId)
+	}else if (mapArea->getCurrentHost() != hostId || mapArea->getCurrentHost().isEmpty())
 	{
 		removeRobotMap(mapArea->getCurrentHost());
 		map = new KMapScene(this, hostId);

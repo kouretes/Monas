@@ -18,8 +18,8 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 	LPMObstaclesVisible = false;
 	LPMTargetCoordVisible = false;
 
-	QPen penForRedLine(Qt::red);
-	penForRedLine.setWidth(3);
+	QPen penForGreenLine(Qt::green);
+	penForGreenLine.setWidth(3);
 
 	QPen penForBlueLine(Qt::blue);
 	penForBlueLine.setWidth(2);
@@ -31,9 +31,9 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 			cellsList.append(cell);
 		}
 
-	arrowBody = addLine(QLineF(),penForRedLine);
-	arrowLside = addLine(QLineF(),penForRedLine);
-	arrowRside = addLine(QLineF(),penForRedLine);
+	arrowBody = addLine(QLineF(),penForGreenLine);
+	arrowLside = addLine(QLineF(),penForGreenLine);
+	arrowRside = addLine(QLineF(),penForGreenLine);
 
 	for (int ways=0; ways<PathLength; ways++)
 	{
@@ -44,7 +44,7 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 	targetBall = addEllipse(QRect(),QPen(Qt::red),QBrush(Qt::red));
 	targetLine = addLine(QLineF(),QPen(Qt::green));
 
-	setBackgroundBrush(QBrush(QColor(155,0,0)));
+	setBackgroundBrush(QBrush(QColor(0,155,0)));
 
 }
 
