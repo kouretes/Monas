@@ -478,7 +478,7 @@ void Vision::fetchAndProcess()
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
 
-	KMat::transformations::rotate(simpleRot,-kinext.getRoll());
+	KMat::transformations::makeRotation(simpleRot,-kinext.getRoll());
 	//Now change y axis :)
 	simpleRot(0,1)=-simpleRot(0,1);
 	simpleRot(1,1)=-simpleRot(1,1);
