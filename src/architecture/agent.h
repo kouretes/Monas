@@ -22,22 +22,23 @@ class Agent : public KSystem::Thread {
 
     public:
 
-        Agent ( std::string name, AgentConfig cfg, Narukom* com, std::vector<std::string> activities ) :
+        Agent ( std::string name, AgentConfig cfg, Narukom& com, std::vector<std::string> activities ) :
             _name(name),
             _cfg(cfg),
             _com(com),
             _blk(name),
             _executions(0) {
 
-			_blk.attachTo(*com->get_message_queue());
+          
+
+
+		_blk.attachTo(*com.get_message_queue());
 
             for ( ActivityNameList::const_iterator it = activities.begin();
                     it != activities.end(); it++ )
-                _activities.push_back( ActivityFactory::Instance()->CreateObject( (*it) ) );
+                _activities.push_back( ActivityFactory::Instance()->CreateObject( (*it),_blk ) );
 
-            for ( ActivList::iterator it = _activities.begin();
-                    it != _activities.end(); it++ )
-                (*it)->Initialize(_com,&_blk);
+
             Freq2Time = (1/(double) _cfg.ThreadFrequency)*1000000;
 
         }
@@ -106,7 +107,7 @@ class Agent : public KSystem::Thread {
 
         AgentConfig _cfg;
 
-        Narukom* _com;
+        Narukom & _com;
         Blackboard _blk;
 
         typedef std::vector<IActivity*> ActivList;

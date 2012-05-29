@@ -8,7 +8,7 @@ namespace statechart_engine {
         _blk = &_blackboard;
         _isRunning = new volatile int; //FIXME mem leak
         *_isRunning = 0;
-	_blk->attachTo(*_com->get_message_queue());
+	_blk.attachTo(*_com->get_message_queue());
     }
 
     Statechart::~Statechart () {

@@ -16,7 +16,7 @@ template
   class ProductCreator = Product* (*)(),
   class T1 = bool,
   class T2 = bool,
-  class ErrorPolicy =LogErrAndExitPolicy 
+  class ErrorPolicy =LogErrAndExitPolicy
 >
 class GenericFactory
     : public ErrorPolicy
@@ -31,18 +31,18 @@ class GenericFactory
         }
 
         bool Unregister(const IdType& id ) {
-         
+
             return assoc.eraser(id) == 1;
 
         }
-        
+
         std::vector<IdType> GetRegisteredProducts() {
 	    std::vector<IdType> result;
 	    typename Id2TypeMap::const_iterator it;
 	    for (  it = assoc.begin(); it != assoc.end(); it++ )
 		result.push_back(it->first);
 	    return result;
-	}  
+	}
 
         Product* CreateObject(const IdType& id ) {
 
@@ -51,14 +51,14 @@ class GenericFactory
                 return (it->second)();
             return OnUnknownType(id);
         }
-        
+
         Product* CreateObject(const IdType& id, T1 p1 ) {
 
             typename  Id2TypeMap::const_iterator it = assoc.find(id);
             if ( it != assoc.end() )
                 return (it->second)(p1);
             return OnUnknownType(id);
-        }        
+        }
 
         Product* CreateObject(const IdType& id, T1 p1, T2 p2) {
 
@@ -66,9 +66,9 @@ class GenericFactory
             if ( it != assoc.end() )
                 return (it->second)(p1,p2);
             return OnUnknownType(id);
-        }      
-        
-        
+        }
+
+
         static GenericFactory* Instance() {
             static GenericFactory G;
             return &G;

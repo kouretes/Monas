@@ -4,18 +4,18 @@
 #include "hal/thread.h"
 
 #include "architecture/narukom/narukom.h"
-#include "architecture/narukom/pub_sub/blackboard.h"
+#include "architecture/narukom/pub_sub/endpoint.h"
+
 
 #include "tools/genFactory.h"
 #include "tools/genRegistrar.h"
 
 #include <string>
 
-class IProvider : public KSystem::Thread {
+class IProvider : public EndPoint , KSystem::Thread {
 
     public:
-
-        void Initialize ( Narukom*, Blackboard* );
+        IProvider( Narukom&);
 
         virtual void UserInit ()=0;
 
@@ -23,17 +23,16 @@ class IProvider : public KSystem::Thread {
 
     protected:
 
-        Narukom* _com;
+        Narukom & _com;
 
-        Blackboard* _blk;
 
 };
 
-typedef GenericFactory < IProvider, std::string >  ProviderFactory;
+typedef GenericFactory < IProvider, std::string,IProvider* (*)(Narukom&),Narukom&>  ProviderFactory;
 
 template<class T>
 struct ProviderRegistrar {
-    typedef Registrar<ProviderFactory,IProvider,std::string,T> Type;
+    typedef Registrar<ProviderFactory,IProvider,std::string,T,Narukom&> Type;
 };
 
 #endif /* _IPROVIDER_H_ */

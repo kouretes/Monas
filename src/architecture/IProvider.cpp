@@ -1,9 +1,7 @@
 #include "IProvider.h"
 
 
-void IProvider::Initialize ( Narukom* com, Blackboard* blk) {
-    _com = com;
-    _blk = blk;
+IProvider::IProvider ( Narukom & com) : _com(com){
+    this->attachTo(*_com,get_message_queue())
     this->UserInit();
-    this->StartThread();
 }

@@ -1,8 +1,6 @@
 #include "IActivity.h"
 
 
-void IActivity::Initialize ( Narukom* com, Blackboard* blk) {
-    _com = com;
-    _blk = blk;
+IActivity::IActivity ( Blackboard & b) :  _blk(b){
     this->UserInit();
 }

@@ -22,7 +22,7 @@ void Blackboard::process_messages()
 
 
 // 		cout << "SIZE OF BUFFER = " << buf->size() << endl;
-//     _blk->process_messages();
+//     _blk.process_messages();
 //     cout << "After returns " << endl
     std::vector<msgentry> msg=EndPoint::remove();
     std::vector<msgentry>::iterator it=msg.begin();

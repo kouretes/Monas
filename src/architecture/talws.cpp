@@ -30,7 +30,7 @@ Talws::Talws () {
         SysCall::_exit(1);
     }
 
-
+    //======================= Start Agents  ===================================
     typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 
     NodeCont AgentNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "agent" );
@@ -66,7 +66,7 @@ Talws::Talws () {
         tcfg.ThreadFrequency = it->attrb["ThreadFrequency"];
         tcfg.StatsCycle = it->attrb["StatsCycle"];
 
-        Agent *a = new Agent(AgentName,tcfg,&com,activities);
+        Agent *a = new Agent(AgentName,tcfg,com,activities);
 
         Agents.push_back( a );
 
@@ -76,6 +76,8 @@ Talws::Talws () {
             <<" StatsCycle="<<tcfg.StatsCycle<<std::endl;
         Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
     }
+
+    //======================= Start StateCharts  ===================================
     NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
 
     Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
@@ -83,6 +85,13 @@ Talws::Talws () {
     for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
       StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
 
+    //======================= Start Providers  ===================================
+    NodeCont ProviderNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "provider" );
+
+    Logger::Instance().WriteMsg("Talws","Found "+_toString(ProviderNodes.size())+" provider(s)", Logger::Info );
+
+    for ( NodeCont::iterator it = ProviderNodes.begin(); it != ProviderNodes.end(); it++ )
+      Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value , com ) );
 
 }
 
@@ -91,6 +100,8 @@ Talws::~Talws() {
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         delete (*it);
     for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
+      delete (*it);
+    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
       delete (*it);
 
 }
@@ -101,6 +112,8 @@ void Talws::Start() {
         (*it)->StartThread();
     for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
       (*it)->Start();
+    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
+      (*it)->StartThread();
 }
 
 void Talws::Stop() {
