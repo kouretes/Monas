@@ -100,6 +100,7 @@ public:
 private:
 	void initGrid();
 	void initCoordinates();
+	void pathLineListRectReset();
 
 	KMapView* parent;
 	QString currentHost;

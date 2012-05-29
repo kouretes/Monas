@@ -63,6 +63,8 @@ void KMapScene::resizeMapScene(int size)
 	initCoordinates();
 
 	setSceneRect(0,0,size,size);
+
+	updateObstacles();
 }
 
 //initialize Polar grid
@@ -264,7 +266,6 @@ void KMapScene::updatePath()
 	QPoint toP(0,0), fromP(0,0);
 	int r, s;
 
-	curve1.clear();
 	for (int ways=0; ways<PathLength; ways++) {
 		if (pathR[ways] == -1 && pathS[ways] == -1) break;
 		r = pathR[ways];
@@ -278,15 +279,6 @@ void KMapScene::updatePath()
 			fromP.setY( toGrid(cellCenterX[r][s]));
 		}
 
-		/*curve1[0].x = gridImgH[r][s];
-		curve1[0].y = gridImgV[r][s];
-		curve1[1].x = gridImgH[(r+1)][s];
-		curve1[1].y = gridImgV[(r+1)][s];
-		curve1[2].x = gridImgH[(r+1)][wrapTo(s+1, N)];
-		curve1[2].y = gridImgV[(r+1)][wrapTo(s+1, N)];
-		curve1[3].x = gridImgH[r][wrapTo(s+1, N)];
-		curve1[3].y = gridImgV[r][wrapTo(s+1, N)];*/
-
 		QPoint x0(gridImgH[r][s], gridImgV[r][s]);
 		QPoint x1(gridImgH[(r+1)][s], gridImgV[(r+1)][s]);
 		QPoint x2(gridImgH[(r+1)][wrapTo(s+1, N)], gridImgV[(r+1)][wrapTo(s+1, N)]);
@@ -299,41 +291,32 @@ void KMapScene::updatePath()
 		curve1.append(x3);
 
 		if (pathO[ways] == 0){
-			//toP = cvPoint( (curve1[1].x + curve1[2].x )/2, (curve1[1].y + curve1[2].y )/2 );
 			toP.setX((curve1[1].x() + curve1[2].x() )/2);
 			toP.setY((curve1[1].y() + curve1[2].y() )/2);
 		}else if (pathO[ways] == 1){
-			//toP = cvPoint( curve1[2].x, curve1[2].y );
 			toP.setX( curve1[2].x());
 			toP.setY( curve1[2].y());
 		}else if (pathO[ways] == 2){
-			//toP = cvPoint( (curve1[2].x + curve1[3].x )/2, (curve1[2].y + curve1[3].y )/2 );
 			toP.setX((curve1[2].x() + curve1[3].x() )/2);
 			toP.setY((curve1[2].y() + curve1[3].y() )/2);
 		}else if (pathO[ways] == 3){
-			//toP = cvPoint(  curve1[3].x, curve1[3].y);
 			toP.setX(curve1[3].x());
 			toP.setY(curve1[3].y());
 		}else if (pathO[ways] == 4){
-			//toP = cvPoint( (curve1[0].x + curve1[3].x )/2, (curve1[0].y + curve1[3].y )/2 );
 			toP.setX((curve1[0].x() + curve1[3].x() )/2);
 			toP.setY((curve1[0].y() + curve1[3].y() )/2);
 		}else if (pathO[ways] == 5){
-			//toP = cvPoint(  curve1[0].x, curve1[0].y);
 			toP.setX( curve1[0].x());
 			toP.setY(curve1[0].y());
 		}else if (pathO[ways] == 6){
-			//toP = cvPoint( (curve1[1].x + curve1[0].x )/2, (curve1[1].y + curve1[0].y )/2 );
 			toP.setX((curve1[1].x() + curve1[0].x() )/2);
 			toP.setY((curve1[1].y() + curve1[0].y() )/2);
 		}else if (pathO[ways] == 7){
-			//toP = cvPoint(  curve1[1].x, curve1[1].y);
 			toP.setX(curve1[1].x());
 			toP.setY(curve1[1].y());
 		}
 
-
-		//cvLine( img, fromP, toP, blue, 1, CV_AA, 0);
+		pathLineListRectReset();
 		path = pathLineList.at(ways);
 		path->setLine(fromP.x(), fromP.y(), toP.x(), toP.y());
 
@@ -344,7 +327,11 @@ void KMapScene::updatePath()
 	}
 }
 
-
+void KMapScene::pathLineListRectReset()
+{
+	for(unsigned i = 0; i<pathLineList.count();i++)
+		pathLineList.at(i)->setLine(0, 0, 0, 0);
+}
 
 /*********** Math functions ***********/
 
