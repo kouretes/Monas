@@ -6,7 +6,7 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "tools/logger.h"
-#include "../config/config.h"
+#include "config.h"
 #include "architecture/archConfig.h"
 
 #ifdef DLIB_FUNCTIONALITY
@@ -14,6 +14,7 @@
 #endif // DLIB_FUNCTIONALITY
 
 #include "activities/activityRegistry.h"
+#include "providers/providerRegistry.h"
 
 Talws::Talws () {
 
@@ -75,12 +76,12 @@ Talws::Talws () {
             <<" StatsCycle="<<tcfg.StatsCycle<<std::endl;
         Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
     }
-     NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
+    NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
 
-        Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
+    Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
 
-        for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
-          StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
+    for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
+      StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
 
 
 }

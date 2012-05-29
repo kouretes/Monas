@@ -53,13 +53,13 @@ void  KCameraTranformation::setPose(cpose p)
 {
 	thepose=p;
 	KMat::ATMatrix<float,4> temp,h,t;
-	KMat::transformations::rotateZ(h,thepose.yaw);
+	KMat::transformations::makeRotationZ(h,thepose.yaw);
 
-	KMat::transformations::rotateY(temp,thepose.pitch+thepose.cameraPitch);
+	KMat::transformations::makeRotationY(temp,thepose.pitch+thepose.cameraPitch);
 	h*=temp;//Fixed head chain!
 	cameraTorsoChain=h;//Copy half Part
-	KMat::transformations::rotateY(cameraChain,thepose.angY);
-	KMat::transformations::rotateX(temp,thepose.angX);
+	KMat::transformations::makeRotationY(cameraChain,thepose.angY);
+	KMat::transformations::makeRotationX(temp,thepose.angX);
 	cameraChain*=temp;
 	cameraChain*=h;
 

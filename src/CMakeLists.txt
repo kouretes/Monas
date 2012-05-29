@@ -31,6 +31,7 @@ set ( NaoQiVersion 1.10.10 CACHE STRING "Set the NaoQi version" )
 add_subdirectory ( ./hal/ )
 add_subdirectory ( ./architecture/ )
 add_subdirectory ( ./activities/ )
+add_subdirectory ( ./providers/ )
 add_subdirectory ( ./statecharts/ )
 
 

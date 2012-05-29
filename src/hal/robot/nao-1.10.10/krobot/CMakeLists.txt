@@ -64,7 +64,7 @@ function(Monas_Finalize)
 
 	use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST )
 
-	target_link_libraries ( krobot ${ActivityLibraries} ${TargetLinkLibraries}  M_tinyxml)
+	target_link_libraries ( krobot ${ActivityLibraries}  ${ProviderLibraries} ${TargetLinkLibraries}  M_tinyxml)
 
 
 	message("Install:" ${CMAKE_INSTALL_PREFIX})
