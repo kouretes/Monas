@@ -28,6 +28,7 @@ class ArchConfigClass {
 
             std::ifstream _testConf ( GlobalConf::Instance().ConfigurationFile().c_str() );
             std::ifstream _testConfAlt (GlobalConf::Instance().ConfigurationFileAlter().c_str() );
+            std::ifstream _testConfGUIAlt (GlobalConf::Instance().ConfigurationFileGUIAlter().c_str() );
 
             if ( _testConf.is_open() ) {
                 std::cout<<"Configuration file found @ "<<GlobalConf::Instance().ConfigurationFile()<<std::endl;
@@ -37,14 +38,20 @@ class ArchConfigClass {
                 std::cout<<"Configuration file found @ "<<GlobalConf::Instance().ConfigurationFileAlter()<<std::endl;
                 ConfFilePrefix = GlobalConf::Instance().ConfigurationFileAlter();
             }
+            else if ( _testConfGUIAlt.is_open() ) {
+                std::cout<<"Configuration file found @ "<<GlobalConf::Instance().ConfigurationFileGUIAlter()<<std::endl;
+                ConfFilePrefix = GlobalConf::Instance().ConfigurationFileGUIAlter();
+            }
             else {
                 std::cerr<<"Configuration file not found either @ "<<GlobalConf::Instance().ConfigurationFile()<<std::endl;
                 std::cerr<<"Configuration file not found or @ "<<GlobalConf::Instance().ConfigurationFileAlter()<<std::endl;
+                std::cerr<<"Configuration file not found or @ "<<GlobalConf::Instance().ConfigurationFileGUIAlter()<<std::endl;
                 SysCall::_exit( 1 );
             }
 
             _testConf.close();
             _testConfAlt.close();
+            _testConfGUIAlt.close();
 
             ConfigPrefix.assign( ConfFilePrefix, 0, ConfFilePrefix.find_last_of("/")+1 );  //FIXME no '/' ?, end in '/'
 

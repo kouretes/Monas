@@ -19,6 +19,10 @@ class GlobalConfClass {
             return "/home/nao/naoqi/config/archconf.xml";
         }
 
+        std::string ConfigurationFileGUIAlter () {
+            return "../../../config/archconf.xml";
+        }
+
 };
 
 typedef Singleton<GlobalConfClass> GlobalConf;

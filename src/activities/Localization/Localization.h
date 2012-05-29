@@ -59,6 +59,7 @@ private:
 	int leftright;
 	float headpos;
 	LocalizationData DebugData;
+	LocalizationDataForGUI DebugDataForGUI;
 	float maxrangeleft;
 	float maxrangeright;
 	SensorData PosX;
@@ -97,6 +98,7 @@ private:
 	static TCPSocket *sock;
 
 	int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation, KMotionModel & MotionModel);
+	int LocalizationDataForGUI_Load(parts& Particles);
 	void Send_LocalizationData();
 	int DebugMode_Receive();
 	static bool debugmode;
