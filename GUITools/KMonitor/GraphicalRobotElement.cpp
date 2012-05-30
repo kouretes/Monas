@@ -538,38 +538,32 @@ void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 	int startAngle;
 	int spanAngle;
 
+/*	std::cout << "cx :: " << wmot.parameter(0) << std::endl;
+	std::cout << "cy :: " << wmot.parameter(1) << std::endl;
+	std::cout << "ct :: " << wmot.parameter(2) << std::endl;
+	std::cout << "f :: " << wmot.parameter(3) << std::endl;*/
+
 	arrowHead.clear();
 	if(this->currentWIM.has_myposition())
 	{
-		std::cout << "To cX mou :: " << wmot.parameter(0) <<  std::endl;
-		std::cout << "To cY mou :: " << wmot.parameter(1) <<  std::endl << std::endl;
-		std::cout << "To ct mou :: " << wmot.parameter(2) << std::endl;
-
 		arrowLine = this->parentScene->motionCmdRectFromFC(&currentWIM, wmot.parameter(0), wmot.parameter(1));
 
 		arrowHead = calculateArrowHeadPosition(arrowLine);
 
-		GotoPositionLine->setLine(arrowLine);
-		GotoArrow->setPolygon(arrowHead);
-
 		angleOrient = ToDegrees*currentWIM.myposition().phi();
-		angleArrow = (RobotDirection->line().angleTo(arrowLine));
+		angleArrow =  90*wmot.parameter(2);
 
 		startAngle = angleOrient * 16;
 		spanAngle = angleArrow * 16;
 
-		zAxisArc->setRect(this->parentScene->rectFromFC( this->currentWIM.myposition().x()*1000,
-				this->currentWIM.myposition().y()*1000, 300, 300));
+		GotoPositionLine->setLine(arrowLine);
+		GotoArrow->setPolygon(arrowHead);
 
-		if(wmot.parameter(2) >= 0)
-		{
-			zAxisArc->setStartAngle(startAngle);
-			zAxisArc->setSpanAngle(spanAngle);
-		}else
-		{
-			zAxisArc->setStartAngle(arrowLine.angle()*16);
-			zAxisArc->setSpanAngle(arrowLine.angleTo(RobotDirection->line())*16);
-		}
+		zAxisArc->setRect(this->parentScene->rectFromFC( this->currentWIM.myposition().x()*1000,
+				this->currentWIM.myposition().y()*1000, 500, 500));
+
+		zAxisArc->setStartAngle(startAngle);
+		zAxisArc->setSpanAngle(spanAngle);
 
 	}else
 	{
