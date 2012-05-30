@@ -1217,7 +1217,7 @@ namespace KMat
 			Transf(2,2) = cos(alpha);
 			Transf(2,3) = cos(alpha)*d;
 		}
-		template<typename T> static void rebuildTransformation(ATMatrix<T,4> & Transf, T px, T py, T pz, T rx, T ry, T rz)
+		template<typename T> static void makeTransformation(ATMatrix<T,4> & Transf, T px, T py, T pz, T rx, T ry, T rz)
 		{
 			Transf.zero();
 			Transf.AisZero = false;
