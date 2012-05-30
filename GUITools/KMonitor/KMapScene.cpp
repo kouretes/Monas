@@ -11,7 +11,7 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 	this->parent = parent;
 	currentHost = hostId;
 
-	cellsInit.clear();
+	staticCellsList.clear();
 	cellsList.clear();
 	pathLineList.clear();
 
@@ -29,9 +29,9 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 		for (int s=0; s<N; s++)
 		{
 			QGraphicsPolygonItem* cellIn = addPolygon(QPolygonF(QRectF()),QPen(Qt::white),QBrush(Qt::transparent));
-			cellsInit.append(cellIn);
-
 			QGraphicsPolygonItem* cell = addPolygon(QPolygonF(QRectF()),QPen(Qt::white),QBrush(Qt::transparent));
+
+			staticCellsList.append(cellIn);
 			cellsList.append(cell);
 		}
 
@@ -55,6 +55,15 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 KMapScene::~KMapScene()
 {
 
+}
+
+void KMapScene::resetKMapScene(QString hostId)
+{
+	currentHost = hostId;
+
+	setLPMObstaclesVisible(false);
+	setLPMTargetCoordVisible(false);
+	setLPMPathVisible(false);
 }
 
 void KMapScene::resizeMapScene(int size)
@@ -168,7 +177,7 @@ void KMapScene::updateObstacles(bool initialization)
 			colorValue = ColorMax - PolarGrid[present][r][s]*ColorMax;
 
 			if (initialization)
-				cell = cellsInit.at(cellNum);
+				cell = staticCellsList.at(cellNum);
 			else
 				cell = cellsList.at(cellNum);
 

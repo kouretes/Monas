@@ -19,6 +19,12 @@ KMapView::~KMapView()
 {
 }
 
+void KMapView::resetRobotMap(QString hostId)
+{
+	if (mapArea->getCurrentHost() == hostId)
+		mapArea->resetKMapScene("");
+}
+
 void KMapView::resizeEvent(QResizeEvent* event)
 {
 	if (width()>height())
@@ -30,97 +36,34 @@ void KMapView::resizeEvent(QResizeEvent* event)
 
 }
 
-void KMapView::removeRobotMap(QString hostId)
-{
-	if (this->mapArea && this->mapArea->getCurrentHost() == hostId)
-		delete mapArea;
-}
-
 void KMapView::LMObstaclesVisible(QString hostId, bool visible)
 {
-	KMapScene* map;
-
-	if (mapArea == NULL )
-	{
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);mapArea->resizeMapScene(height()-10);
-		this->mapArea->resizeMapScene(height()-10);
-
-	}else if (mapArea->getCurrentHost() != hostId)
-	{
-		removeRobotMap(mapArea->getCurrentHost());
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-		this->mapArea->resizeMapScene(height()-10);
-	}
+	if (mapArea->getCurrentHost() != hostId)
+		mapArea->resetKMapScene(hostId);
 
 	if (mapArea != NULL)
 		mapArea->setLPMObstaclesVisible(visible);
 	else
-		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;
+		std::cout << "[41] KMapView::LMObstaclesVisible : Fatal !" << std::endl;
 
 }
 
 void KMapView::LMPathVisible(QString hostId, bool visible)
 {
-	KMapScene* map;
-
-	if (mapArea == NULL )
-	{
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-		this->mapArea->resizeMapScene(height()-10);
-
-	}else if (mapArea->getCurrentHost() != hostId)
-	{
-		removeRobotMap(mapArea->getCurrentHost());
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-		this->mapArea->resizeMapScene(height()-10);
-	}
+	if (mapArea->getCurrentHost() != hostId)
+		mapArea->resetKMapScene(hostId);
 
 	if (mapArea != NULL)
 		mapArea->setLPMPathVisible(visible);
 	else
-		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;
+		std::cout << "[53] KMapView::LMObstaclesVisible : Fatal !" << std::endl;
 
 }
 
 void KMapView::LMTargetCoordVisible(QString hostId, bool visible)
 {
-	KMapScene* map;
-
-	if (mapArea == NULL)
-	{
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-		this->mapArea->resizeMapScene(height()-10);
-
-	}else if (mapArea->getCurrentHost() != hostId)
-	{
-		removeRobotMap(mapArea->getCurrentHost());
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-		this->mapArea->resizeMapScene(height()-10);
-	}
+	if (mapArea->getCurrentHost() != hostId)
+		mapArea->resetKMapScene(hostId);
 
 	if (mapArea != NULL)
 		mapArea->setLPMTargetCoordVisible(visible);

@@ -16,12 +16,12 @@ public:
 	~KMapView();
 
 public slots:
-	void removeRobotMap(QString hostId);
-	void LMObstaclesVisible(QString hostId, bool visible);
-	void LMPathVisible(QString hostId, bool visible);
-	void LMTargetCoordVisible(QString hostId, bool visible);
+	void resetRobotMap(QString);
+	void LMObstaclesVisible(QString, bool);
+	void LMPathVisible(QString, bool);
+	void LMTargetCoordVisible(QString, bool);
 
-	void gridInfoUpdateHandler(GridInfo gim, QString hostId);
+	void gridInfoUpdateHandler(GridInfo, QString);
 
 protected:
 	void resizeEvent(QResizeEvent* event);

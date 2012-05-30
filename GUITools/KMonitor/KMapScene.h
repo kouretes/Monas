@@ -76,6 +76,7 @@ public:
 
 	void resizeMapScene(int size);
 	QString getCurrentHost(){ return currentHost; }
+	void resetKMapScene(QString hostId);
 
 	void setLPMObstaclesVisible(bool visible){ LPMObstaclesVisible = visible; setPMObstaclesVisible(visible);}
 	bool getLPMObstaclesVisible(){return LPMObstaclesVisible;}
@@ -105,7 +106,7 @@ private:
 	KMapView* parent;
 	QString currentHost;
 
-	QList<QGraphicsPolygonItem*> cellsInit;
+	QList<QGraphicsPolygonItem*> staticCellsList;
 
 	bool LPMObstaclesVisible;
 	QList<QGraphicsPolygonItem*> cellsList;
