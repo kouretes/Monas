@@ -80,7 +80,7 @@ public:
 	void setLPMObstaclesVisible(bool visible){ LPMObstaclesVisible = visible; setPMObstaclesVisible(visible);}
 	bool getLPMObstaclesVisible(){return LPMObstaclesVisible;}
 	void setPMObstaclesVisible(bool visible);
-	void updateObstacles();
+	void updateObstacles(bool initialization);
 	void updateArrow();
 
 	void setLPMTargetCoordVisible(bool visible){ LPMTargetCoordVisible = visible; setPMTargetCoordVisible(visible);}
@@ -104,6 +104,8 @@ private:
 
 	KMapView* parent;
 	QString currentHost;
+
+	QList<QGraphicsPolygonItem*> cellsInit;
 
 	bool LPMObstaclesVisible;
 	QList<QGraphicsPolygonItem*> cellsList;

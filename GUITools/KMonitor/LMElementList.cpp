@@ -60,7 +60,6 @@ void LMElementList::uncheckAllListElements()
 
 void LMElementList::LMELSubscriptionHandler(QString hostId)
 {
-
 	if(myCurrentLMRequestedHost != hostId)
 	{
 		myCurrentLMRequestedHost = hostId;
@@ -70,7 +69,6 @@ void LMElementList::LMELSubscriptionHandler(QString hostId)
 
 void LMElementList::LMELUnsubscriptionHandler(QString hostId)
 {
-
 	if(myCurrentLMRequestedHost == hostId)
 	{
 		myCurrentLMRequestedHost.clear();

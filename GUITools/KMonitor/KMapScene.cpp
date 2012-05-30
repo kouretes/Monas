@@ -11,6 +11,7 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 	this->parent = parent;
 	currentHost = hostId;
 
+	cellsInit.clear();
 	cellsList.clear();
 	pathLineList.clear();
 
@@ -27,6 +28,9 @@ KMapScene::KMapScene(KMapView* parent, QString hostId)
 	for (int r=0; r<TotalRings; r++)
 		for (int s=0; s<N; s++)
 		{
+			QGraphicsPolygonItem* cellIn = addPolygon(QPolygonF(QRectF()),QPen(Qt::white),QBrush(Qt::transparent));
+			cellsInit.append(cellIn);
+
 			QGraphicsPolygonItem* cell = addPolygon(QPolygonF(QRectF()),QPen(Qt::white),QBrush(Qt::transparent));
 			cellsList.append(cell);
 		}
@@ -63,8 +67,8 @@ void KMapScene::resizeMapScene(int size)
 	initCoordinates();
 
 	setSceneRect(0,0,size,size);
+	this->updateObstacles(true);
 
-	updateObstacles();
 }
 
 //initialize Polar grid
@@ -139,7 +143,7 @@ void KMapScene::setPMObstaclesVisible(bool visible)
 
 }
 
-void KMapScene::updateObstacles()
+void KMapScene::updateObstacles(bool initialization)
 {
 	QGraphicsPolygonItem* cell;
 	QVector<QPoint> curve1(0);
@@ -163,7 +167,11 @@ void KMapScene::updateObstacles()
 
 			colorValue = ColorMax - PolarGrid[present][r][s]*ColorMax;
 
-			cell = cellsList.at(cellNum);
+			if (initialization)
+				cell = cellsInit.at(cellNum);
+			else
+				cell = cellsList.at(cellNum);
+
 			cell->setPolygon(QPolygon(curve1));
 
 			if (r == InnerRing )
@@ -208,8 +216,6 @@ void KMapScene::updateTargetCoordinates()
 	QPoint toP;
 	QPoint ball( toGrid(targetY), toGrid(targetX) );
 
-	//cvCircle(img, ball, 3, red, 2, 8, 0);
-
 	targetBall->setRect(ball.x()-4, ball.y()-4, 8, 8);
 
 	int pix = 5;
@@ -239,7 +245,6 @@ void KMapScene::updateTargetCoordinates()
 		toP.setY(ball.y() + pix );
 	}
 
-
 	targetLine->setLine(ball.x(), ball.y(), toP.x(), toP.y());
 }
 
@@ -266,6 +271,7 @@ void KMapScene::updatePath()
 	QPoint toP(0,0), fromP(0,0);
 	int r, s;
 
+	pathLineListRectReset();
 	for (int ways=0; ways<PathLength; ways++) {
 		if (pathR[ways] == -1 && pathS[ways] == -1) break;
 		r = pathR[ways];
@@ -316,7 +322,6 @@ void KMapScene::updatePath()
 			toP.setY(curve1[1].y());
 		}
 
-		pathLineListRectReset();
 		path = pathLineList.at(ways);
 		path->setLine(fromP.x(), fromP.y(), toP.x(), toP.y());
 
