@@ -68,6 +68,67 @@ void EndPoint::publish(std::vector<msgentry> const& vec)
 }
 
 
+
+void EndPoint::publishData(const google::protobuf::Message & msg,std::string const& topic)
+{
+    msgentry nmsg;
+
+    google::protobuf::Message * newptr=msg.New();
+    newptr->CopyFrom(msg);
+    nmsg.msg.reset(newptr);
+    //cout<<"In:"<<&msg;
+    //cout<<"Copy:"<<nmsg.msg<<endl;
+    nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
+    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
+    //nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+    nmsg.timestamp=now;
+    nmsg.topic=Topics::Instance().getId(topic);
+    //nmsg.publisher=Publisher::getName();
+    nmsg.msgclass=msgentry::DATA;
+    publish(nmsg);
+
+}
+
+void EndPoint::publishSignal(const google::protobuf::Message & msg,std::string const& topic)
+{
+    msgentry nmsg;
+
+    google::protobuf::Message * newptr=msg.New();
+    newptr->CopyFrom(msg);
+    nmsg.msg.reset(newptr);
+    //cout<<"In:"<<&msg;
+    //cout<<"Copy:"<<nmsg.msg<<endl;
+    nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
+    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
+    //nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+    nmsg.timestamp=now;
+    nmsg.topic=Topics::Instance().getId(topic);
+    //nmsg.publisher=Publisher::getName();
+    nmsg.msgclass=msgentry::SIGNAL;
+    publish(nmsg);
+
+}
+
+void EndPoint::publishState(const google::protobuf::Message & msg,std::string const& topic)
+{
+    msgentry nmsg;
+
+    google::protobuf::Message * newptr=msg.New();
+    newptr->CopyFrom(msg);
+    nmsg.msg.reset(newptr);
+    //cout<<"In:"<<&msg;
+    //cout<<"Copy:"<<nmsg.msg<<endl;
+    nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
+    boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
+    //nmsg.timeoutstamp=now+boost::posix_time::millisec(timeout);
+    nmsg.timestamp=now;
+    nmsg.topic=Topics::Instance().getId(topic);
+    //nmsg.publisher=Publisher::getName();
+    nmsg.msgclass=msgentry::STATE;
+    publish(nmsg);
+
+}
+
 std::vector<msgentry> EndPoint::remove()
 {
     std::vector<msgentry> data;
