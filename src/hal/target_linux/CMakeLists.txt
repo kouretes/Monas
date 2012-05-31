@@ -11,7 +11,7 @@ function(Monas_Finalize)
 
 	add_executable ( Monas ${MonasTargetSources} )
 
-	target_link_libraries( Monas    -Wl,--no-as-needed -lrt  -Wl,--no-as-needed ${ActivityLibraries}   -Wl,--as-needed ${TargetLinkLibraries} -Wl,--as-needed ${Boost_LIBRARIES}  )
+	target_link_libraries( Monas    -Wl,--no-as-needed -lrt  -Wl,--no-as-needed ${ActivityLibraries}  ${ProviderLibraries} -Wl,--as-needed ${TargetLinkLibraries} -Wl,--as-needed ${Boost_LIBRARIES}  )
 
 
 	install ( TARGETS Monas
