@@ -5,17 +5,16 @@
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
-#include "hal/robot/generic_nao/KImageExtractor.h"
 #include "KSegmentator.h"
 
+
+#include "messages/Kimage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
-#include "messages/Kimage.pb.h"
+
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
-
-#include "PracticalSocket.h"
 
 //#define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
@@ -23,7 +22,6 @@
 #include <vector>
 #include <iostream>
 //#define DEBUGVISION
-//#define CAPTURE_MODE
 
 
 
@@ -119,8 +117,6 @@ class Vision: public IActivity
 
 				float balltolerance, ballsize;
 				float goalheight, goaldist, goaldiam, goalslopetolerance, widthestimateotolerance;
-				int camerarefreshmillisec;
-
 				float pitchoffset;
 
 		} config;
@@ -133,26 +129,20 @@ class Vision: public IActivity
 #ifdef DEBUGVISION
 		void nullCall();
 #endif
-#ifdef  CAPTURE_MODE
-		int frameNo;
-#endif
-		boost::posix_time::ptime lastrefresh;
-
 		//Incoming messages!
 		boost::shared_ptr<const AllSensorValuesMessage> asvmo,asvmn;//Older and newer than requested timestamp
-		boost::posix_time::ptime timeo,timen;//time
+		boost::posix_time::ptime timeo,timen,stamp;//time of earlier sensors, later, and the image itself
 
 		//Camera transformation matrix
 		cpose p;//Robot pose
 
 
 		//Extractor Object, to get a new image
-		KImageExtractor ext;
 		KCameraTranformation kinext;
 		KSegmentator *seg;
 		KSegmentator *segbottom;
 		KSegmentator *segtop;
-		int type;//Colorspace fourCC
+
 		//Raw Input Image
 		KImage rawImage;
 		//Ball Detection related
@@ -207,24 +197,6 @@ class Vision: public IActivity
 		//KVecFloat2 & cameraToObs(KMat::HCoords<float ,2> const& t);
 		//KVecFloat2 & camToRobot(KMat::HCoords<float ,2> & t);
 		KVecFloat2 camToRobot(KVecFloat2 const & t) const;
-
-
-		//For Debug!
-		static void * StartServer(void *s);
-		pthread_t acceptthread;
-		static TCPSocket *sock;
-		void recv_and_send();
-		KRawImage img;
-		KRawImageHeader imgheader;
-		//void Send_Image();
-		int sendtype;
-		static bool debugmode;
-
-		header incommingheader;
-		header outgoingheader;
-
-		int size;
-		char *data;
 
 };
 

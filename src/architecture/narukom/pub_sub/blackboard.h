@@ -30,7 +30,7 @@
 
 
 
-class Blackboard : public EndPoint
+class Blackboard : virtual public EndPoint
 {
 public:
 

@@ -16,6 +16,8 @@ ACTIVITY_START
 #define CvDist(pa,pb) sqrt(  ( ((pa).x-(pb).x )*((pa).x-(pb).x )  )+( ((pa).y-(pb).y )*((pa).y-(pb).y) )  )
 #define colorIsA(x,y) (((x)&(y))!=0)
 
+
+using namespace std;
 inline measurement mWeightedMean(measurement m1,measurement m2)
 {
 	measurement res;
@@ -975,7 +977,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		else if(d1.leftOrRight==2)
 			name+="Left";
 		o->set_object_name(name);
-		Polygon *apoly=img.add_p();
+		/*Polygon *apoly=img.add_p();
 		point *p;
 		p=apoly->add_points();
 		p->set_x(d1.tl.x);p->set_y(d1.tl.y);
@@ -990,7 +992,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		p=apoly->add_points();
 		p->set_x(d1.ll.x);p->set_y(d1.ll.y);
 		apoly->set_color(c);
-		apoly->set_confidence(1);
+		apoly->set_confidence(1);*/
 #ifdef DEBUGVISION
 		Logger::Instance().WriteMsg("GM", "Di:"+_toString(d1.distance.mean)+" "+_toString(d1.distance.var), Logger::Info);
 		Logger::Instance().WriteMsg("GM", "Be:"+_toString(d1.bearing.mean)+" "+_toString(d1.bearing.var), Logger::Info);
@@ -1051,6 +1053,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	name+="Right";
 	o->set_object_name(name);
 
+/*
 	Polygon *apoly=img.add_p();
 	point *p;
 	p=apoly->add_points();
@@ -1082,7 +1085,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	p=apoly->add_points();
 	p->set_x(d2.ll.x);p->set_y(d2.ll.y);
 	apoly->set_color(c);
-	apoly->set_confidence(1);
+	apoly->set_confidence(1); */
 	return 2;
 
 }
@@ -1531,6 +1534,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 
 
 #endif
+    /*
 	bd=history.begin();
 	while(bd!=history.end())
 	{
@@ -1542,7 +1546,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		bc->set_confidence(bc->valid());
 
 		bd++;
-	}
+	}*/
 	return best;
 
 
@@ -1731,8 +1735,7 @@ KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmenta
 	KPROF_SCOPE(vprof,"dopSeg");
 	if (x >= 0 && x < (rawImage.width) && y >= 0 && y < (rawImage.height))
 	{
-		//return seg->classifyPixel(rawImage, x, y, type);
-		return seg->classifyPixel(x,y,h);
+	    return seg->classifyPixel(x,y,h);
 	}
 	else
 	{

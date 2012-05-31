@@ -31,11 +31,46 @@ void protobuf_AssignDesc_Kimage_2eproto();
 void protobuf_ShutdownFile_Kimage_2eproto();
 
 class KRawImage;
-class KRawImageHeader;
-class Polygon;
-class BallCircle;
-class point;
+class KCalibrateCam;
 
+enum KRawImage_Colorspaces {
+  KRawImage_Colorspaces_YUYV = 1,
+  KRawImage_Colorspaces_OTHER = 2
+};
+bool KRawImage_Colorspaces_IsValid(int value);
+const KRawImage_Colorspaces KRawImage_Colorspaces_Colorspaces_MIN = KRawImage_Colorspaces_YUYV;
+const KRawImage_Colorspaces KRawImage_Colorspaces_Colorspaces_MAX = KRawImage_Colorspaces_OTHER;
+const int KRawImage_Colorspaces_Colorspaces_ARRAYSIZE = KRawImage_Colorspaces_Colorspaces_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* KRawImage_Colorspaces_descriptor();
+inline const ::std::string& KRawImage_Colorspaces_Name(KRawImage_Colorspaces value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    KRawImage_Colorspaces_descriptor(), value);
+}
+inline bool KRawImage_Colorspaces_Parse(
+    const ::std::string& name, KRawImage_Colorspaces* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<KRawImage_Colorspaces>(
+    KRawImage_Colorspaces_descriptor(), name, value);
+}
+enum KRawImage_Camera {
+  KRawImage_Camera_TOP = 0,
+  KRawImage_Camera_BOTTOM = 1
+};
+bool KRawImage_Camera_IsValid(int value);
+const KRawImage_Camera KRawImage_Camera_Camera_MIN = KRawImage_Camera_TOP;
+const KRawImage_Camera KRawImage_Camera_Camera_MAX = KRawImage_Camera_BOTTOM;
+const int KRawImage_Camera_Camera_ARRAYSIZE = KRawImage_Camera_Camera_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* KRawImage_Camera_descriptor();
+inline const ::std::string& KRawImage_Camera_Name(KRawImage_Camera value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    KRawImage_Camera_descriptor(), value);
+}
+inline bool KRawImage_Camera_Parse(
+    const ::std::string& name, KRawImage_Camera* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<KRawImage_Camera>(
+    KRawImage_Camera_descriptor(), name, value);
+}
 // ===================================================================
 
 class KRawImage : public ::google::protobuf::Message {
@@ -90,96 +125,148 @@ class KRawImage : public ::google::protobuf::Message {
   
   // nested types ----------------------------------------------------
   
+  typedef KRawImage_Colorspaces Colorspaces;
+  static const Colorspaces YUYV = KRawImage_Colorspaces_YUYV;
+  static const Colorspaces OTHER = KRawImage_Colorspaces_OTHER;
+  static inline bool Colorspaces_IsValid(int value) {
+    return KRawImage_Colorspaces_IsValid(value);
+  }
+  static const Colorspaces Colorspaces_MIN =
+    KRawImage_Colorspaces_Colorspaces_MIN;
+  static const Colorspaces Colorspaces_MAX =
+    KRawImage_Colorspaces_Colorspaces_MAX;
+  static const int Colorspaces_ARRAYSIZE =
+    KRawImage_Colorspaces_Colorspaces_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Colorspaces_descriptor() {
+    return KRawImage_Colorspaces_descriptor();
+  }
+  static inline const ::std::string& Colorspaces_Name(Colorspaces value) {
+    return KRawImage_Colorspaces_Name(value);
+  }
+  static inline bool Colorspaces_Parse(const ::std::string& name,
+      Colorspaces* value) {
+    return KRawImage_Colorspaces_Parse(name, value);
+  }
+  
+  typedef KRawImage_Camera Camera;
+  static const Camera TOP = KRawImage_Camera_TOP;
+  static const Camera BOTTOM = KRawImage_Camera_BOTTOM;
+  static inline bool Camera_IsValid(int value) {
+    return KRawImage_Camera_IsValid(value);
+  }
+  static const Camera Camera_MIN =
+    KRawImage_Camera_Camera_MIN;
+  static const Camera Camera_MAX =
+    KRawImage_Camera_Camera_MAX;
+  static const int Camera_ARRAYSIZE =
+    KRawImage_Camera_Camera_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Camera_descriptor() {
+    return KRawImage_Camera_descriptor();
+  }
+  static inline const ::std::string& Camera_Name(Camera value) {
+    return KRawImage_Camera_Name(value);
+  }
+  static inline bool Camera_Parse(const ::std::string& name,
+      Camera* value) {
+    return KRawImage_Camera_Parse(name, value);
+  }
+  
   // accessors -------------------------------------------------------
   
-  // required int32 bytes = 1 [default = -1];
-  inline bool has_bytes() const;
-  inline void clear_bytes();
-  static const int kBytesFieldNumber = 1;
-  inline ::google::protobuf::int32 bytes() const;
-  inline void set_bytes(::google::protobuf::int32 value);
+  // required uint32 bytes_per_pix = 1;
+  inline bool has_bytes_per_pix() const;
+  inline void clear_bytes_per_pix();
+  static const int kBytesPerPixFieldNumber = 1;
+  inline ::google::protobuf::uint32 bytes_per_pix() const;
+  inline void set_bytes_per_pix(::google::protobuf::uint32 value);
   
-  // required int32 width = 2 [default = 0];
+  // required uint32 width = 2 [default = 0];
   inline bool has_width() const;
   inline void clear_width();
   static const int kWidthFieldNumber = 2;
-  inline ::google::protobuf::int32 width() const;
-  inline void set_width(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 width() const;
+  inline void set_width(::google::protobuf::uint32 value);
   
-  // required int32 height = 3 [default = 0];
+  // required uint32 height = 3 [default = 0];
   inline bool has_height() const;
   inline void clear_height();
   static const int kHeightFieldNumber = 3;
-  inline ::google::protobuf::int32 height() const;
-  inline void set_height(::google::protobuf::int32 value);
+  inline ::google::protobuf::uint32 height() const;
+  inline void set_height(::google::protobuf::uint32 value);
   
-  // required int32 type = 4 [default = 4];
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 4;
-  inline ::google::protobuf::int32 type() const;
-  inline void set_type(::google::protobuf::int32 value);
+  // required .KRawImage.Colorspaces colorspace = 4;
+  inline bool has_colorspace() const;
+  inline void clear_colorspace();
+  static const int kColorspaceFieldNumber = 4;
+  inline ::KRawImage_Colorspaces colorspace() const;
+  inline void set_colorspace(::KRawImage_Colorspaces value);
   
-  // required bytes ImageRawData = 5;
-  inline bool has_imagerawdata() const;
-  inline void clear_imagerawdata();
-  static const int kImageRawDataFieldNumber = 5;
-  inline const ::std::string& imagerawdata() const;
-  inline void set_imagerawdata(const ::std::string& value);
-  inline void set_imagerawdata(const char* value);
-  inline void set_imagerawdata(const void* value, size_t size);
-  inline ::std::string* mutable_imagerawdata();
-  inline ::std::string* release_imagerawdata();
+  // required bytes image_rawdata = 5;
+  inline bool has_image_rawdata() const;
+  inline void clear_image_rawdata();
+  static const int kImageRawdataFieldNumber = 5;
+  inline const ::std::string& image_rawdata() const;
+  inline void set_image_rawdata(const ::std::string& value);
+  inline void set_image_rawdata(const char* value);
+  inline void set_image_rawdata(const void* value, size_t size);
+  inline ::std::string* mutable_image_rawdata();
+  inline ::std::string* release_image_rawdata();
   
-  // repeated .Polygon p = 6;
-  inline int p_size() const;
-  inline void clear_p();
-  static const int kPFieldNumber = 6;
-  inline const ::Polygon& p(int index) const;
-  inline ::Polygon* mutable_p(int index);
-  inline ::Polygon* add_p();
-  inline const ::google::protobuf::RepeatedPtrField< ::Polygon >&
-      p() const;
-  inline ::google::protobuf::RepeatedPtrField< ::Polygon >*
-      mutable_p();
+  // required int32 exposure_us = 6;
+  inline bool has_exposure_us() const;
+  inline void clear_exposure_us();
+  static const int kExposureUsFieldNumber = 6;
+  inline ::google::protobuf::int32 exposure_us() const;
+  inline void set_exposure_us(::google::protobuf::int32 value);
   
-  // repeated .BallCircle ball = 7;
-  inline int ball_size() const;
-  inline void clear_ball();
-  static const int kBallFieldNumber = 7;
-  inline const ::BallCircle& ball(int index) const;
-  inline ::BallCircle* mutable_ball(int index);
-  inline ::BallCircle* add_ball();
-  inline const ::google::protobuf::RepeatedPtrField< ::BallCircle >&
-      ball() const;
-  inline ::google::protobuf::RepeatedPtrField< ::BallCircle >*
-      mutable_ball();
+  // required float luminance_scale = 7;
+  inline bool has_luminance_scale() const;
+  inline void clear_luminance_scale();
+  static const int kLuminanceScaleFieldNumber = 7;
+  inline float luminance_scale() const;
+  inline void set_luminance_scale(float value);
+  
+  // required .KRawImage.Camera active_camera = 8;
+  inline bool has_active_camera() const;
+  inline void clear_active_camera();
+  static const int kActiveCameraFieldNumber = 8;
+  inline ::KRawImage_Camera active_camera() const;
+  inline void set_active_camera(::KRawImage_Camera value);
   
   // @@protoc_insertion_point(class_scope:KRawImage)
  private:
-  inline void set_has_bytes();
-  inline void clear_has_bytes();
+  inline void set_has_bytes_per_pix();
+  inline void clear_has_bytes_per_pix();
   inline void set_has_width();
   inline void clear_has_width();
   inline void set_has_height();
   inline void clear_has_height();
-  inline void set_has_type();
-  inline void clear_has_type();
-  inline void set_has_imagerawdata();
-  inline void clear_has_imagerawdata();
+  inline void set_has_colorspace();
+  inline void clear_has_colorspace();
+  inline void set_has_image_rawdata();
+  inline void clear_has_image_rawdata();
+  inline void set_has_exposure_us();
+  inline void clear_has_exposure_us();
+  inline void set_has_luminance_scale();
+  inline void clear_has_luminance_scale();
+  inline void set_has_active_camera();
+  inline void clear_has_active_camera();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::google::protobuf::int32 bytes_;
-  ::google::protobuf::int32 width_;
-  ::google::protobuf::int32 height_;
-  ::google::protobuf::int32 type_;
-  ::std::string* imagerawdata_;
-  ::google::protobuf::RepeatedPtrField< ::Polygon > p_;
-  ::google::protobuf::RepeatedPtrField< ::BallCircle > ball_;
+  ::google::protobuf::uint32 bytes_per_pix_;
+  ::google::protobuf::uint32 width_;
+  ::google::protobuf::uint32 height_;
+  int colorspace_;
+  ::std::string* image_rawdata_;
+  ::google::protobuf::int32 exposure_us_;
+  float luminance_scale_;
+  int active_camera_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
   
   friend void  protobuf_AddDesc_Kimage_2eproto();
   friend void protobuf_AssignDesc_Kimage_2eproto();
@@ -190,14 +277,14 @@ class KRawImage : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class KRawImageHeader : public ::google::protobuf::Message {
+class KCalibrateCam : public ::google::protobuf::Message {
  public:
-  KRawImageHeader();
-  virtual ~KRawImageHeader();
+  KCalibrateCam();
+  virtual ~KCalibrateCam();
   
-  KRawImageHeader(const KRawImageHeader& from);
+  KCalibrateCam(const KCalibrateCam& from);
   
-  inline KRawImageHeader& operator=(const KRawImageHeader& from) {
+  inline KCalibrateCam& operator=(const KCalibrateCam& from) {
     CopyFrom(from);
     return *this;
   }
@@ -211,17 +298,17 @@ class KRawImageHeader : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const KRawImageHeader& default_instance();
+  static const KCalibrateCam& default_instance();
   
-  void Swap(KRawImageHeader* other);
+  void Swap(KCalibrateCam* other);
   
   // implements Message ----------------------------------------------
   
-  KRawImageHeader* New() const;
+  KCalibrateCam* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const KRawImageHeader& from);
-  void MergeFrom(const KRawImageHeader& from);
+  void CopyFrom(const KCalibrateCam& from);
+  void MergeFrom(const KCalibrateCam& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -244,51 +331,51 @@ class KRawImageHeader : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required int32 bytes = 1 [default = -1];
-  inline bool has_bytes() const;
-  inline void clear_bytes();
-  static const int kBytesFieldNumber = 1;
-  inline ::google::protobuf::int32 bytes() const;
-  inline void set_bytes(::google::protobuf::int32 value);
+  // required int32 status = 1;
+  inline bool has_status() const;
+  inline void clear_status();
+  static const int kStatusFieldNumber = 1;
+  inline ::google::protobuf::int32 status() const;
+  inline void set_status(::google::protobuf::int32 value);
   
-  // required int32 width = 2 [default = 0];
-  inline bool has_width() const;
-  inline void clear_width();
-  static const int kWidthFieldNumber = 2;
-  inline ::google::protobuf::int32 width() const;
-  inline void set_width(::google::protobuf::int32 value);
+  // required int32 sleeptime = 2 [default = 1500];
+  inline bool has_sleeptime() const;
+  inline void clear_sleeptime();
+  static const int kSleeptimeFieldNumber = 2;
+  inline ::google::protobuf::int32 sleeptime() const;
+  inline void set_sleeptime(::google::protobuf::int32 value);
   
-  // required int32 height = 3 [default = 0];
-  inline bool has_height() const;
-  inline void clear_height();
-  static const int kHeightFieldNumber = 3;
-  inline ::google::protobuf::int32 height() const;
-  inline void set_height(::google::protobuf::int32 value);
+  // required int32 exp = 3 [default = 13];
+  inline bool has_exp() const;
+  inline void clear_exp();
+  static const int kExpFieldNumber = 3;
+  inline ::google::protobuf::int32 exp() const;
+  inline void set_exp(::google::protobuf::int32 value);
   
-  // required int32 type = 4 [default = 4];
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 4;
-  inline ::google::protobuf::int32 type() const;
-  inline void set_type(::google::protobuf::int32 value);
+  // required float exposure_comp = 4 [default = 1];
+  inline bool has_exposure_comp() const;
+  inline void clear_exposure_comp();
+  static const int kExposureCompFieldNumber = 4;
+  inline float exposure_comp() const;
+  inline void set_exposure_comp(float value);
   
-  // @@protoc_insertion_point(class_scope:KRawImageHeader)
+  // @@protoc_insertion_point(class_scope:KCalibrateCam)
  private:
-  inline void set_has_bytes();
-  inline void clear_has_bytes();
-  inline void set_has_width();
-  inline void clear_has_width();
-  inline void set_has_height();
-  inline void clear_has_height();
-  inline void set_has_type();
-  inline void clear_has_type();
+  inline void set_has_status();
+  inline void clear_has_status();
+  inline void set_has_sleeptime();
+  inline void clear_has_sleeptime();
+  inline void set_has_exp();
+  inline void clear_has_exp();
+  inline void set_has_exposure_comp();
+  inline void clear_has_exposure_comp();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::google::protobuf::int32 bytes_;
-  ::google::protobuf::int32 width_;
-  ::google::protobuf::int32 height_;
-  ::google::protobuf::int32 type_;
+  ::google::protobuf::int32 status_;
+  ::google::protobuf::int32 sleeptime_;
+  ::google::protobuf::int32 exp_;
+  float exposure_comp_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
@@ -298,327 +385,7 @@ class KRawImageHeader : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_Kimage_2eproto();
   
   void InitAsDefaultInstance();
-  static KRawImageHeader* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class Polygon : public ::google::protobuf::Message {
- public:
-  Polygon();
-  virtual ~Polygon();
-  
-  Polygon(const Polygon& from);
-  
-  inline Polygon& operator=(const Polygon& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const Polygon& default_instance();
-  
-  void Swap(Polygon* other);
-  
-  // implements Message ----------------------------------------------
-  
-  Polygon* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Polygon& from);
-  void MergeFrom(const Polygon& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .point points = 1;
-  inline int points_size() const;
-  inline void clear_points();
-  static const int kPointsFieldNumber = 1;
-  inline const ::point& points(int index) const;
-  inline ::point* mutable_points(int index);
-  inline ::point* add_points();
-  inline const ::google::protobuf::RepeatedPtrField< ::point >&
-      points() const;
-  inline ::google::protobuf::RepeatedPtrField< ::point >*
-      mutable_points();
-  
-  // required int32 color = 2 [default = -1];
-  inline bool has_color() const;
-  inline void clear_color();
-  static const int kColorFieldNumber = 2;
-  inline ::google::protobuf::int32 color() const;
-  inline void set_color(::google::protobuf::int32 value);
-  
-  // required float confidence = 3 [default = -1];
-  inline bool has_confidence() const;
-  inline void clear_confidence();
-  static const int kConfidenceFieldNumber = 3;
-  inline float confidence() const;
-  inline void set_confidence(float value);
-  
-  // @@protoc_insertion_point(class_scope:Polygon)
- private:
-  inline void set_has_color();
-  inline void clear_has_color();
-  inline void set_has_confidence();
-  inline void clear_has_confidence();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::RepeatedPtrField< ::point > points_;
-  ::google::protobuf::int32 color_;
-  float confidence_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_Kimage_2eproto();
-  friend void protobuf_AssignDesc_Kimage_2eproto();
-  friend void protobuf_ShutdownFile_Kimage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static Polygon* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class BallCircle : public ::google::protobuf::Message {
- public:
-  BallCircle();
-  virtual ~BallCircle();
-  
-  BallCircle(const BallCircle& from);
-  
-  inline BallCircle& operator=(const BallCircle& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const BallCircle& default_instance();
-  
-  void Swap(BallCircle* other);
-  
-  // implements Message ----------------------------------------------
-  
-  BallCircle* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const BallCircle& from);
-  void MergeFrom(const BallCircle& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required .point center = 1;
-  inline bool has_center() const;
-  inline void clear_center();
-  static const int kCenterFieldNumber = 1;
-  inline const ::point& center() const;
-  inline ::point* mutable_center();
-  inline ::point* release_center();
-  
-  // required int32 radius = 2 [default = -1];
-  inline bool has_radius() const;
-  inline void clear_radius();
-  static const int kRadiusFieldNumber = 2;
-  inline ::google::protobuf::int32 radius() const;
-  inline void set_radius(::google::protobuf::int32 value);
-  
-  // required int32 confidence = 3 [default = -1];
-  inline bool has_confidence() const;
-  inline void clear_confidence();
-  static const int kConfidenceFieldNumber = 3;
-  inline ::google::protobuf::int32 confidence() const;
-  inline void set_confidence(::google::protobuf::int32 value);
-  
-  // required bool valid = 4 [default = false];
-  inline bool has_valid() const;
-  inline void clear_valid();
-  static const int kValidFieldNumber = 4;
-  inline bool valid() const;
-  inline void set_valid(bool value);
-  
-  // optional int32 color = 5 [default = -1];
-  inline bool has_color() const;
-  inline void clear_color();
-  static const int kColorFieldNumber = 5;
-  inline ::google::protobuf::int32 color() const;
-  inline void set_color(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:BallCircle)
- private:
-  inline void set_has_center();
-  inline void clear_has_center();
-  inline void set_has_radius();
-  inline void clear_has_radius();
-  inline void set_has_confidence();
-  inline void clear_has_confidence();
-  inline void set_has_valid();
-  inline void clear_has_valid();
-  inline void set_has_color();
-  inline void clear_has_color();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::point* center_;
-  ::google::protobuf::int32 radius_;
-  ::google::protobuf::int32 confidence_;
-  bool valid_;
-  ::google::protobuf::int32 color_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_Kimage_2eproto();
-  friend void protobuf_AssignDesc_Kimage_2eproto();
-  friend void protobuf_ShutdownFile_Kimage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static BallCircle* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class point : public ::google::protobuf::Message {
- public:
-  point();
-  virtual ~point();
-  
-  point(const point& from);
-  
-  inline point& operator=(const point& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const point& default_instance();
-  
-  void Swap(point* other);
-  
-  // implements Message ----------------------------------------------
-  
-  point* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const point& from);
-  void MergeFrom(const point& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 x = 1 [default = -1];
-  inline bool has_x() const;
-  inline void clear_x();
-  static const int kXFieldNumber = 1;
-  inline ::google::protobuf::int32 x() const;
-  inline void set_x(::google::protobuf::int32 value);
-  
-  // required int32 y = 2 [default = -1];
-  inline bool has_y() const;
-  inline void clear_y();
-  static const int kYFieldNumber = 2;
-  inline ::google::protobuf::int32 y() const;
-  inline void set_y(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:point)
- private:
-  inline void set_has_x();
-  inline void clear_has_x();
-  inline void set_has_y();
-  inline void clear_has_y();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 x_;
-  ::google::protobuf::int32 y_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_Kimage_2eproto();
-  friend void protobuf_AssignDesc_Kimage_2eproto();
-  friend void protobuf_ShutdownFile_Kimage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static point* default_instance_;
+  static KCalibrateCam* default_instance_;
 };
 // ===================================================================
 
@@ -627,29 +394,29 @@ class point : public ::google::protobuf::Message {
 
 // KRawImage
 
-// required int32 bytes = 1 [default = -1];
-inline bool KRawImage::has_bytes() const {
+// required uint32 bytes_per_pix = 1;
+inline bool KRawImage::has_bytes_per_pix() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void KRawImage::set_has_bytes() {
+inline void KRawImage::set_has_bytes_per_pix() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void KRawImage::clear_has_bytes() {
+inline void KRawImage::clear_has_bytes_per_pix() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void KRawImage::clear_bytes() {
-  bytes_ = -1;
-  clear_has_bytes();
+inline void KRawImage::clear_bytes_per_pix() {
+  bytes_per_pix_ = 0u;
+  clear_has_bytes_per_pix();
 }
-inline ::google::protobuf::int32 KRawImage::bytes() const {
-  return bytes_;
+inline ::google::protobuf::uint32 KRawImage::bytes_per_pix() const {
+  return bytes_per_pix_;
 }
-inline void KRawImage::set_bytes(::google::protobuf::int32 value) {
-  set_has_bytes();
-  bytes_ = value;
+inline void KRawImage::set_bytes_per_pix(::google::protobuf::uint32 value) {
+  set_has_bytes_per_pix();
+  bytes_per_pix_ = value;
 }
 
-// required int32 width = 2 [default = 0];
+// required uint32 width = 2 [default = 0];
 inline bool KRawImage::has_width() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -660,18 +427,18 @@ inline void KRawImage::clear_has_width() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void KRawImage::clear_width() {
-  width_ = 0;
+  width_ = 0u;
   clear_has_width();
 }
-inline ::google::protobuf::int32 KRawImage::width() const {
+inline ::google::protobuf::uint32 KRawImage::width() const {
   return width_;
 }
-inline void KRawImage::set_width(::google::protobuf::int32 value) {
+inline void KRawImage::set_width(::google::protobuf::uint32 value) {
   set_has_width();
   width_ = value;
 }
 
-// required int32 height = 3 [default = 0];
+// required uint32 height = 3 [default = 0];
 inline bool KRawImage::has_height() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -682,479 +449,255 @@ inline void KRawImage::clear_has_height() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void KRawImage::clear_height() {
-  height_ = 0;
+  height_ = 0u;
   clear_has_height();
 }
-inline ::google::protobuf::int32 KRawImage::height() const {
+inline ::google::protobuf::uint32 KRawImage::height() const {
   return height_;
 }
-inline void KRawImage::set_height(::google::protobuf::int32 value) {
+inline void KRawImage::set_height(::google::protobuf::uint32 value) {
   set_has_height();
   height_ = value;
 }
 
-// required int32 type = 4 [default = 4];
-inline bool KRawImage::has_type() const {
+// required .KRawImage.Colorspaces colorspace = 4;
+inline bool KRawImage::has_colorspace() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void KRawImage::set_has_type() {
+inline void KRawImage::set_has_colorspace() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void KRawImage::clear_has_type() {
+inline void KRawImage::clear_has_colorspace() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void KRawImage::clear_type() {
-  type_ = 4;
-  clear_has_type();
+inline void KRawImage::clear_colorspace() {
+  colorspace_ = 1;
+  clear_has_colorspace();
 }
-inline ::google::protobuf::int32 KRawImage::type() const {
-  return type_;
+inline ::KRawImage_Colorspaces KRawImage::colorspace() const {
+  return static_cast< ::KRawImage_Colorspaces >(colorspace_);
 }
-inline void KRawImage::set_type(::google::protobuf::int32 value) {
-  set_has_type();
-  type_ = value;
+inline void KRawImage::set_colorspace(::KRawImage_Colorspaces value) {
+  GOOGLE_DCHECK(::KRawImage_Colorspaces_IsValid(value));
+  set_has_colorspace();
+  colorspace_ = value;
 }
 
-// required bytes ImageRawData = 5;
-inline bool KRawImage::has_imagerawdata() const {
+// required bytes image_rawdata = 5;
+inline bool KRawImage::has_image_rawdata() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void KRawImage::set_has_imagerawdata() {
+inline void KRawImage::set_has_image_rawdata() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void KRawImage::clear_has_imagerawdata() {
+inline void KRawImage::clear_has_image_rawdata() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void KRawImage::clear_imagerawdata() {
-  if (imagerawdata_ != &::google::protobuf::internal::kEmptyString) {
-    imagerawdata_->clear();
+inline void KRawImage::clear_image_rawdata() {
+  if (image_rawdata_ != &::google::protobuf::internal::kEmptyString) {
+    image_rawdata_->clear();
   }
-  clear_has_imagerawdata();
+  clear_has_image_rawdata();
 }
-inline const ::std::string& KRawImage::imagerawdata() const {
-  return *imagerawdata_;
+inline const ::std::string& KRawImage::image_rawdata() const {
+  return *image_rawdata_;
 }
-inline void KRawImage::set_imagerawdata(const ::std::string& value) {
-  set_has_imagerawdata();
-  if (imagerawdata_ == &::google::protobuf::internal::kEmptyString) {
-    imagerawdata_ = new ::std::string;
+inline void KRawImage::set_image_rawdata(const ::std::string& value) {
+  set_has_image_rawdata();
+  if (image_rawdata_ == &::google::protobuf::internal::kEmptyString) {
+    image_rawdata_ = new ::std::string;
   }
-  imagerawdata_->assign(value);
+  image_rawdata_->assign(value);
 }
-inline void KRawImage::set_imagerawdata(const char* value) {
-  set_has_imagerawdata();
-  if (imagerawdata_ == &::google::protobuf::internal::kEmptyString) {
-    imagerawdata_ = new ::std::string;
+inline void KRawImage::set_image_rawdata(const char* value) {
+  set_has_image_rawdata();
+  if (image_rawdata_ == &::google::protobuf::internal::kEmptyString) {
+    image_rawdata_ = new ::std::string;
   }
-  imagerawdata_->assign(value);
+  image_rawdata_->assign(value);
 }
-inline void KRawImage::set_imagerawdata(const void* value, size_t size) {
-  set_has_imagerawdata();
-  if (imagerawdata_ == &::google::protobuf::internal::kEmptyString) {
-    imagerawdata_ = new ::std::string;
+inline void KRawImage::set_image_rawdata(const void* value, size_t size) {
+  set_has_image_rawdata();
+  if (image_rawdata_ == &::google::protobuf::internal::kEmptyString) {
+    image_rawdata_ = new ::std::string;
   }
-  imagerawdata_->assign(reinterpret_cast<const char*>(value), size);
+  image_rawdata_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* KRawImage::mutable_imagerawdata() {
-  set_has_imagerawdata();
-  if (imagerawdata_ == &::google::protobuf::internal::kEmptyString) {
-    imagerawdata_ = new ::std::string;
+inline ::std::string* KRawImage::mutable_image_rawdata() {
+  set_has_image_rawdata();
+  if (image_rawdata_ == &::google::protobuf::internal::kEmptyString) {
+    image_rawdata_ = new ::std::string;
   }
-  return imagerawdata_;
+  return image_rawdata_;
 }
-inline ::std::string* KRawImage::release_imagerawdata() {
-  clear_has_imagerawdata();
-  if (imagerawdata_ == &::google::protobuf::internal::kEmptyString) {
+inline ::std::string* KRawImage::release_image_rawdata() {
+  clear_has_image_rawdata();
+  if (image_rawdata_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
   } else {
-    ::std::string* temp = imagerawdata_;
-    imagerawdata_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    ::std::string* temp = image_rawdata_;
+    image_rawdata_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }
 
-// repeated .Polygon p = 6;
-inline int KRawImage::p_size() const {
-  return p_.size();
+// required int32 exposure_us = 6;
+inline bool KRawImage::has_exposure_us() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
-inline void KRawImage::clear_p() {
-  p_.Clear();
+inline void KRawImage::set_has_exposure_us() {
+  _has_bits_[0] |= 0x00000020u;
 }
-inline const ::Polygon& KRawImage::p(int index) const {
-  return p_.Get(index);
+inline void KRawImage::clear_has_exposure_us() {
+  _has_bits_[0] &= ~0x00000020u;
 }
-inline ::Polygon* KRawImage::mutable_p(int index) {
-  return p_.Mutable(index);
+inline void KRawImage::clear_exposure_us() {
+  exposure_us_ = 0;
+  clear_has_exposure_us();
 }
-inline ::Polygon* KRawImage::add_p() {
-  return p_.Add();
+inline ::google::protobuf::int32 KRawImage::exposure_us() const {
+  return exposure_us_;
 }
-inline const ::google::protobuf::RepeatedPtrField< ::Polygon >&
-KRawImage::p() const {
-  return p_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::Polygon >*
-KRawImage::mutable_p() {
-  return &p_;
+inline void KRawImage::set_exposure_us(::google::protobuf::int32 value) {
+  set_has_exposure_us();
+  exposure_us_ = value;
 }
 
-// repeated .BallCircle ball = 7;
-inline int KRawImage::ball_size() const {
-  return ball_.size();
+// required float luminance_scale = 7;
+inline bool KRawImage::has_luminance_scale() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
-inline void KRawImage::clear_ball() {
-  ball_.Clear();
+inline void KRawImage::set_has_luminance_scale() {
+  _has_bits_[0] |= 0x00000040u;
 }
-inline const ::BallCircle& KRawImage::ball(int index) const {
-  return ball_.Get(index);
+inline void KRawImage::clear_has_luminance_scale() {
+  _has_bits_[0] &= ~0x00000040u;
 }
-inline ::BallCircle* KRawImage::mutable_ball(int index) {
-  return ball_.Mutable(index);
+inline void KRawImage::clear_luminance_scale() {
+  luminance_scale_ = 0;
+  clear_has_luminance_scale();
 }
-inline ::BallCircle* KRawImage::add_ball() {
-  return ball_.Add();
+inline float KRawImage::luminance_scale() const {
+  return luminance_scale_;
 }
-inline const ::google::protobuf::RepeatedPtrField< ::BallCircle >&
-KRawImage::ball() const {
-  return ball_;
+inline void KRawImage::set_luminance_scale(float value) {
+  set_has_luminance_scale();
+  luminance_scale_ = value;
 }
-inline ::google::protobuf::RepeatedPtrField< ::BallCircle >*
-KRawImage::mutable_ball() {
-  return &ball_;
+
+// required .KRawImage.Camera active_camera = 8;
+inline bool KRawImage::has_active_camera() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void KRawImage::set_has_active_camera() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void KRawImage::clear_has_active_camera() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void KRawImage::clear_active_camera() {
+  active_camera_ = 0;
+  clear_has_active_camera();
+}
+inline ::KRawImage_Camera KRawImage::active_camera() const {
+  return static_cast< ::KRawImage_Camera >(active_camera_);
+}
+inline void KRawImage::set_active_camera(::KRawImage_Camera value) {
+  GOOGLE_DCHECK(::KRawImage_Camera_IsValid(value));
+  set_has_active_camera();
+  active_camera_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// KRawImageHeader
+// KCalibrateCam
 
-// required int32 bytes = 1 [default = -1];
-inline bool KRawImageHeader::has_bytes() const {
+// required int32 status = 1;
+inline bool KCalibrateCam::has_status() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void KRawImageHeader::set_has_bytes() {
+inline void KCalibrateCam::set_has_status() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void KRawImageHeader::clear_has_bytes() {
+inline void KCalibrateCam::clear_has_status() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void KRawImageHeader::clear_bytes() {
-  bytes_ = -1;
-  clear_has_bytes();
+inline void KCalibrateCam::clear_status() {
+  status_ = 0;
+  clear_has_status();
 }
-inline ::google::protobuf::int32 KRawImageHeader::bytes() const {
-  return bytes_;
+inline ::google::protobuf::int32 KCalibrateCam::status() const {
+  return status_;
 }
-inline void KRawImageHeader::set_bytes(::google::protobuf::int32 value) {
-  set_has_bytes();
-  bytes_ = value;
+inline void KCalibrateCam::set_status(::google::protobuf::int32 value) {
+  set_has_status();
+  status_ = value;
 }
 
-// required int32 width = 2 [default = 0];
-inline bool KRawImageHeader::has_width() const {
+// required int32 sleeptime = 2 [default = 1500];
+inline bool KCalibrateCam::has_sleeptime() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void KRawImageHeader::set_has_width() {
+inline void KCalibrateCam::set_has_sleeptime() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void KRawImageHeader::clear_has_width() {
+inline void KCalibrateCam::clear_has_sleeptime() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void KRawImageHeader::clear_width() {
-  width_ = 0;
-  clear_has_width();
+inline void KCalibrateCam::clear_sleeptime() {
+  sleeptime_ = 1500;
+  clear_has_sleeptime();
 }
-inline ::google::protobuf::int32 KRawImageHeader::width() const {
-  return width_;
+inline ::google::protobuf::int32 KCalibrateCam::sleeptime() const {
+  return sleeptime_;
 }
-inline void KRawImageHeader::set_width(::google::protobuf::int32 value) {
-  set_has_width();
-  width_ = value;
+inline void KCalibrateCam::set_sleeptime(::google::protobuf::int32 value) {
+  set_has_sleeptime();
+  sleeptime_ = value;
 }
 
-// required int32 height = 3 [default = 0];
-inline bool KRawImageHeader::has_height() const {
+// required int32 exp = 3 [default = 13];
+inline bool KCalibrateCam::has_exp() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void KRawImageHeader::set_has_height() {
+inline void KCalibrateCam::set_has_exp() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void KRawImageHeader::clear_has_height() {
+inline void KCalibrateCam::clear_has_exp() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void KRawImageHeader::clear_height() {
-  height_ = 0;
-  clear_has_height();
+inline void KCalibrateCam::clear_exp() {
+  exp_ = 13;
+  clear_has_exp();
 }
-inline ::google::protobuf::int32 KRawImageHeader::height() const {
-  return height_;
+inline ::google::protobuf::int32 KCalibrateCam::exp() const {
+  return exp_;
 }
-inline void KRawImageHeader::set_height(::google::protobuf::int32 value) {
-  set_has_height();
-  height_ = value;
+inline void KCalibrateCam::set_exp(::google::protobuf::int32 value) {
+  set_has_exp();
+  exp_ = value;
 }
 
-// required int32 type = 4 [default = 4];
-inline bool KRawImageHeader::has_type() const {
+// required float exposure_comp = 4 [default = 1];
+inline bool KCalibrateCam::has_exposure_comp() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void KRawImageHeader::set_has_type() {
+inline void KCalibrateCam::set_has_exposure_comp() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void KRawImageHeader::clear_has_type() {
+inline void KCalibrateCam::clear_has_exposure_comp() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void KRawImageHeader::clear_type() {
-  type_ = 4;
-  clear_has_type();
-}
-inline ::google::protobuf::int32 KRawImageHeader::type() const {
-  return type_;
-}
-inline void KRawImageHeader::set_type(::google::protobuf::int32 value) {
-  set_has_type();
-  type_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// Polygon
-
-// repeated .point points = 1;
-inline int Polygon::points_size() const {
-  return points_.size();
-}
-inline void Polygon::clear_points() {
-  points_.Clear();
-}
-inline const ::point& Polygon::points(int index) const {
-  return points_.Get(index);
-}
-inline ::point* Polygon::mutable_points(int index) {
-  return points_.Mutable(index);
-}
-inline ::point* Polygon::add_points() {
-  return points_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::point >&
-Polygon::points() const {
-  return points_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::point >*
-Polygon::mutable_points() {
-  return &points_;
-}
-
-// required int32 color = 2 [default = -1];
-inline bool Polygon::has_color() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void Polygon::set_has_color() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void Polygon::clear_has_color() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void Polygon::clear_color() {
-  color_ = -1;
-  clear_has_color();
-}
-inline ::google::protobuf::int32 Polygon::color() const {
-  return color_;
-}
-inline void Polygon::set_color(::google::protobuf::int32 value) {
-  set_has_color();
-  color_ = value;
-}
-
-// required float confidence = 3 [default = -1];
-inline bool Polygon::has_confidence() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void Polygon::set_has_confidence() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void Polygon::clear_has_confidence() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void Polygon::clear_confidence() {
-  confidence_ = -1;
-  clear_has_confidence();
-}
-inline float Polygon::confidence() const {
-  return confidence_;
-}
-inline void Polygon::set_confidence(float value) {
-  set_has_confidence();
-  confidence_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// BallCircle
-
-// required .point center = 1;
-inline bool BallCircle::has_center() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void BallCircle::set_has_center() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void BallCircle::clear_has_center() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void BallCircle::clear_center() {
-  if (center_ != NULL) center_->::point::Clear();
-  clear_has_center();
-}
-inline const ::point& BallCircle::center() const {
-  return center_ != NULL ? *center_ : *default_instance_->center_;
-}
-inline ::point* BallCircle::mutable_center() {
-  set_has_center();
-  if (center_ == NULL) center_ = new ::point;
-  return center_;
-}
-inline ::point* BallCircle::release_center() {
-  clear_has_center();
-  ::point* temp = center_;
-  center_ = NULL;
-  return temp;
-}
-
-// required int32 radius = 2 [default = -1];
-inline bool BallCircle::has_radius() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void BallCircle::set_has_radius() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void BallCircle::clear_has_radius() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void BallCircle::clear_radius() {
-  radius_ = -1;
-  clear_has_radius();
-}
-inline ::google::protobuf::int32 BallCircle::radius() const {
-  return radius_;
-}
-inline void BallCircle::set_radius(::google::protobuf::int32 value) {
-  set_has_radius();
-  radius_ = value;
-}
-
-// required int32 confidence = 3 [default = -1];
-inline bool BallCircle::has_confidence() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void BallCircle::set_has_confidence() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void BallCircle::clear_has_confidence() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void BallCircle::clear_confidence() {
-  confidence_ = -1;
-  clear_has_confidence();
-}
-inline ::google::protobuf::int32 BallCircle::confidence() const {
-  return confidence_;
-}
-inline void BallCircle::set_confidence(::google::protobuf::int32 value) {
-  set_has_confidence();
-  confidence_ = value;
-}
-
-// required bool valid = 4 [default = false];
-inline bool BallCircle::has_valid() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void BallCircle::set_has_valid() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void BallCircle::clear_has_valid() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void BallCircle::clear_valid() {
-  valid_ = false;
-  clear_has_valid();
-}
-inline bool BallCircle::valid() const {
-  return valid_;
-}
-inline void BallCircle::set_valid(bool value) {
-  set_has_valid();
-  valid_ = value;
-}
-
-// optional int32 color = 5 [default = -1];
-inline bool BallCircle::has_color() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void BallCircle::set_has_color() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void BallCircle::clear_has_color() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void BallCircle::clear_color() {
-  color_ = -1;
-  clear_has_color();
-}
-inline ::google::protobuf::int32 BallCircle::color() const {
-  return color_;
-}
-inline void BallCircle::set_color(::google::protobuf::int32 value) {
-  set_has_color();
-  color_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// point
-
-// required int32 x = 1 [default = -1];
-inline bool point::has_x() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void point::set_has_x() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void point::clear_has_x() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void point::clear_x() {
-  x_ = -1;
-  clear_has_x();
-}
-inline ::google::protobuf::int32 point::x() const {
-  return x_;
-}
-inline void point::set_x(::google::protobuf::int32 value) {
-  set_has_x();
-  x_ = value;
-}
-
-// required int32 y = 2 [default = -1];
-inline bool point::has_y() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void point::set_has_y() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void point::clear_has_y() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void point::clear_y() {
-  y_ = -1;
-  clear_has_y();
-}
-inline ::google::protobuf::int32 point::y() const {
-  return y_;
-}
-inline void point::set_y(::google::protobuf::int32 value) {
-  set_has_y();
-  y_ = value;
+inline void KCalibrateCam::clear_exposure_comp() {
+  exposure_comp_ = 1;
+  clear_has_exposure_comp();
+}
+inline float KCalibrateCam::exposure_comp() const {
+  return exposure_comp_;
+}
+inline void KCalibrateCam::set_exposure_comp(float value) {
+  set_has_exposure_comp();
+  exposure_comp_ = value;
 }
 
 
@@ -1164,6 +707,14 @@ inline void point::set_y(::google::protobuf::int32 value) {
 namespace google {
 namespace protobuf {
 
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::KRawImage_Colorspaces>() {
+  return ::KRawImage_Colorspaces_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::KRawImage_Camera>() {
+  return ::KRawImage_Camera_descriptor();
+}
 
 }  // namespace google
 }  // namespace protobuf
