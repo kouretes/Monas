@@ -18,6 +18,7 @@ Blackboard::Blackboard(const std::string& sub_name): EndPoint(sub_name)
 void Blackboard::process_messages()
 {
 
+
     cleanup();
 
 
@@ -32,6 +33,7 @@ void Blackboard::process_messages()
    for(;it!=msg.end();++it)
     {
 
+        //std::cout<<"incoming:"<<(*it).msg->GetTypeName()<<std::endl;
 		type_t newtypeid=typeRegistry.registerNew((*it).msg->GetTypeName());
 		region_index i;
 		i.tid=(*it).topic;

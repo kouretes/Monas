@@ -138,7 +138,7 @@ void MessageQueue::subscribeTo(std::size_t subid, std::size_t topic , int where)
 
 	for(;tit!=r.end();++tit)
 	{
-		//cout<<"sub:"<<*tit<<" "<< subid<<endl;
+        //cout<<"sub:"<<*tit<<" "<< subid<<endl;
 		for(bit=bset.begin();bit!=bset.end();++bit)
 			subscriptions[*tit].insert(*bit);
 	}
@@ -188,7 +188,7 @@ void MessageQueue::process_queued_msg()
 
         std::vector<msgentry> mtp=(*pit)->remove();
 
-        //cout <<(*pit)->getOwnerID() << ":"<<mtp.size() << endl;
+       // cout <<(*pit)->getOwnerID() << ":"<<mtp.size() << endl;
         const std::size_t pownerid=(*pit)->getOwnerID();
 		Mutex::scoped_lock pub_sub_mutexlock(pub_sub_mutex);
         for(std::vector<msgentry>::iterator mit=mtp.begin();mit!=mtp.end();++mit)

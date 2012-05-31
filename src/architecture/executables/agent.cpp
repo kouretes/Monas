@@ -18,7 +18,8 @@ Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, Narukom& c
                 _activities.push_back( ActivityFactory::Instance()->CreateObject( (*it),_blk ) );
 
 
-
+            for ( ActivList::iterator it=_activities.begin(); it != _activities.end(); ++it )
+                (*it)->UserInit();
 
         };
 Agent::~Agent () {
