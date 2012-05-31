@@ -16,10 +16,8 @@
 	<activity>Behavior</activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>
-	<name>KSensors</name>
-	<activity>Sensors</activity>
-</agent>
+
+<provider  IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>Sensors</provider>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=4 StatsCycle=1000>
 	<name>ObstacleAvoidance</name>
