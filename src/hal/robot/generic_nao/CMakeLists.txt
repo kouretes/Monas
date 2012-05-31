@@ -12,6 +12,8 @@ add_library ( GenericNao  ${LibBuildType}
 			KImageExtractor.h
 			aldebaran-motion.h
 			aldebaran-visiondefinitions.h
+			ForwardKinematics.h
+			InverseKinematics.h
 			headAngleSensor.h
 			robot_consts.h
 			robot_consts.cpp

@@ -5,10 +5,10 @@ message ( STATUS "" )
 #______________________________________________________________________
 # Select build type for user Activities. User Activities can be build as an
 # archive static library ( STATIC option ), as a dynamically loaded
-# library ( SHARED option ) or as a run-time dynamically loaded library 
+# library ( SHARED option ) or as a run-time dynamically loaded library
 # ( MODULE option ).
 
-set ( ProviderBuildType SHARED CACHE STRING 
+set ( ProviderBuildType SHARED CACHE STRING
         "Choose build type for user Providers. Available options are STATIC, SHARED and MODULE" )
 
 if ( "x${ProviderBuildType}x" STREQUAL "xx" )
@@ -39,7 +39,7 @@ endif ( "${ProviderBuildType}" STREQUAL "STATIC" )
 
 
 #___________________________________________________________
-# Autodetect user Activitys and add them to the building tree.
+# Autodetect user Providers and add them to the building tree.
 
 file ( GLOB FilesInDir . * )
 
@@ -57,16 +57,16 @@ endforeach ( subdir ${theSubDirs} )
 
 
 #________________________________________________________
-# Back propagate TargetLinkLibraries variable in order to 
-# make available the library names to the linker. This is 
-# needed in both STATIC and SHARED built Activities but not 
+# Back propagate TargetLinkLibraries variable in order to
+# make available the library names to the linker. This is
+# needed in both STATIC and SHARED built Activities but not
 # for "MODULE" Activities.
 
-if ( ("${ProviderBuildType}" STREQUAL "STATIC") OR 
+if ( ("${ProviderBuildType}" STREQUAL "STATIC") OR
         ("${ProviderBuildType}" STREQUAL "SHARED") )
 
     set ( ProviderLibraries ${ProviderLibraries} PARENT_SCOPE)
 
-endif ( ("${ProviderBuildType}" STREQUAL "STATIC") OR 
+endif ( ("${ProviderBuildType}" STREQUAL "STATIC") OR
         ("${ProviderBuildType}" STREQUAL "SHARED") )
 

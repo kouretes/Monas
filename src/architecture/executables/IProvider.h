@@ -23,13 +23,13 @@
 #define PROVIDER_VISIBLE
 #endif
 
-#define PROVIDER_CONSTRUCTOR(x)  PROVIDER_VISIBLE x(KSystem::ThreadConfig &c, Narukom&n): IProvider(GetName(),c,n){   }
+#define PROVIDER_CONSTRUCTOR(x)  PROVIDER_VISIBLE x(KSystem::ThreadConfig &c, Narukom&n): EndPoint(GetName()),IProvider(GetName(),c,n){   }
 
 #define PROVIDER_REGISTER(x) namespace { 	PROVIDER_VISIBLE ProviderRegistrar<x>::Type temp##x(#x);  }
 
 
 
-class IProvider : public EndPoint , public KSystem::PeriodicThread {
+class IProvider : virtual public EndPoint , public KSystem::PeriodicThread {
 
     public:
         IProvider(const std::string &,KSystem::ThreadConfig &c, Narukom&);
