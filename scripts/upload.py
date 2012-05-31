@@ -150,7 +150,7 @@ if(pwdfolders[-2] != "make"):
 
 print "Working directory: " + pwd
 
-Ksystem("make install", "Compilation", True)
+Ksystem("make install -j4", "Compilation", True)
 
 #if(ret!=0):
 	#print '\033[1;31m Unsuccessful Compilation \033[1;m'

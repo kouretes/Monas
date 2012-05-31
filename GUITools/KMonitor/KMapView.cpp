@@ -19,10 +19,14 @@ KMapView::~KMapView()
 {
 }
 
+void KMapView::resetRobotMap(QString hostId)
+{
+	if (mapArea->getCurrentHost() == hostId)
+		mapArea->resetKMapScene("");
+}
+
 void KMapView::resizeEvent(QResizeEvent* event)
 {
-	//std::cout << "To neo mou width() :: " << width() << std::endl;
-	//std::cout << "To neo mou height() :: " << height() << std::endl;
 	if (width()>height())
 		mapArea->resizeMapScene(height()-10);
 	else
@@ -32,92 +36,34 @@ void KMapView::resizeEvent(QResizeEvent* event)
 
 }
 
-void KMapView::removeRobotMap(QString hostId)
-{
-	std::cout << "KLabel::removeRobotMap" << std::endl;
-	if (this->mapArea && this->mapArea->getCurrentHost() == hostId)
-		delete mapArea;
-}
-
 void KMapView::LMObstaclesVisible(QString hostId, bool visible)
 {
-	KMapScene* map;
-
-	if (!mapArea || mapArea->getCurrentHost().isEmpty())
-	{
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-
-	}else if (mapArea->getCurrentHost() != hostId)
-	{
-		removeRobotMap(mapArea->getCurrentHost());
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-	}
+	if (mapArea->getCurrentHost() != hostId)
+		mapArea->resetKMapScene(hostId);
 
 	if (mapArea != NULL)
 		mapArea->setLPMObstaclesVisible(visible);
 	else
-		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;
+		std::cout << "[41] KMapView::LMObstaclesVisible : Fatal !" << std::endl;
 
 }
 
 void KMapView::LMPathVisible(QString hostId, bool visible)
 {
-	KMapScene* map;
-
-	if (!mapArea || mapArea->getCurrentHost().isEmpty())
-	{
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-
-	}else if (mapArea->getCurrentHost() != hostId)
-	{
-		removeRobotMap(mapArea->getCurrentHost());
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-	}
+	if (mapArea->getCurrentHost() != hostId)
+		mapArea->resetKMapScene(hostId);
 
 	if (mapArea != NULL)
 		mapArea->setLPMPathVisible(visible);
 	else
-		std::cout << "[51] KLabel::LMObstaclesVisible : Fatal !" << std::endl;
+		std::cout << "[53] KMapView::LMObstaclesVisible : Fatal !" << std::endl;
 
 }
 
 void KMapView::LMTargetCoordVisible(QString hostId, bool visible)
 {
-	KMapScene* map;
-
-	if (!mapArea || mapArea->getCurrentHost().isEmpty())
-	{
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-
-	}else if (mapArea->getCurrentHost() != hostId)
-	{
-		removeRobotMap(mapArea->getCurrentHost());
-		map = new KMapScene(this, hostId);
-		mapArea = map;
-		this->setScene(mapArea);
-		this->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-		this->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
-	}
+	if (mapArea->getCurrentHost() != hostId)
+		mapArea->resetKMapScene(hostId);
 
 	if (mapArea != NULL)
 		mapArea->setLPMTargetCoordVisible(visible);
@@ -129,8 +75,7 @@ void KMapView::LMTargetCoordVisible(QString hostId, bool visible)
 
 void KMapView::gridInfoUpdateHandler(GridInfo gim, QString hostId)
 {
-	//std::cout << "KMapView::gridInfoUpdateHandler" << std::endl;
-	if(mapArea )	//&& mapArea->getCurrentHost() == hostId)
+	if( mapArea && mapArea->getCurrentHost() == hostId)
 	{
 		for (int ring=0; ring < TotalRings; ring++)
 			for (int sector=0; sector < N; sector++){
@@ -149,7 +94,7 @@ void KMapView::gridInfoUpdateHandler(GridInfo gim, QString hostId)
 		if (mapArea->getLPMObstaclesVisible())
 		{
 			mapArea->setPMObstaclesVisible(false);
-			mapArea->updateObstacles();
+			mapArea->updateObstacles(false);
 			mapArea->updateArrow();
 			mapArea->setPMObstaclesVisible(true);
 		}

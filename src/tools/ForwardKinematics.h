@@ -9,14 +9,15 @@
 #include <math.h>
 #include "KMat.h"
 #include "hal/robot/generic_nao/KinematicsDefines.h"
+//#include "KinematicsDefines.h"
 
 /**
  * This is the code for the Forward Kinematics for nao v3.3 robot.
-
+ 
  * @author Kofinas Nikos aka eldr4d, 2011 kouretes team
  *
  	 * 1 = vector's head position\n
-	 * Arms:
+	 * Arms:	
 	 *			-# ShoulderPitch
 	 * 			-# ShoulderRoll
 	 *			-# ElbowYaw
@@ -32,7 +33,7 @@
 	 *			-# AnkleRoll
 	 *
 	 * .
-	 * Camera:
+	 * Camera:	
 	 *			-# HeadYaw
 	 *			-# HeadPitch
 	 * .
@@ -58,8 +59,8 @@ namespace FKin
 		float pointX,pointY,pointZ;
 		float angleX,angleY,angleZ;
 	};
-
-
+	
+	
 	/**
 	 * @fn void forwardLeftHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll)
 	 * @brief Forward kinematic for the left hand.
@@ -72,13 +73,13 @@ namespace FKin
 	void forwardLeftHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll){
 		kmatTable base,T1,T2,T3,T4,R,endTr;
 		float PI = KMatTransf::PI;
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,ShoulderOffsetY + ElbowOffsetY,ShoulderOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,-PI/2,0.0f,ShoulderPitch);
 		KMatTransf::makeDHTransformation(T2,0.0f,PI/2,0.0f,ShoulderRoll-PI/2);
 		KMatTransf::makeDHTransformation(T3,0.0f,-PI/2,UpperArmLength,ElbowYaw);
 		KMatTransf::makeDHTransformation(T4,0.0f,PI/2,0.0f,ElbowRoll);
-
+		
 		KMatTransf::makeRotationXYZ(R,0.0f,0.0f,PI/2);
 		KMatTransf::makeTranslation(endTr,HandOffsetX + LowerArmLength,0.0f,0.0f);
 		kmatTable Tend;
@@ -91,7 +92,7 @@ namespace FKin
 		Tend *= endTr;
 		EndTransf = Tend;
 	};
-
+	
 	/**
 	 * @fn void FKin::forwardRightHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll)
 	 * @brief Forward kinematic for the right hand.
@@ -104,17 +105,17 @@ namespace FKin
 	void forwardRightHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll){
 		kmatTable base,T1,T2,T3,T4,R,Rfix,endTr;
 		float PI = KMatTransf::PI;
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,-(ShoulderOffsetY+ElbowOffsetY),ShoulderOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,-PI/2,0.0f,ShoulderPitch);
 		KMatTransf::makeDHTransformation(T2,0.0f,PI/2,0.0f,ShoulderRoll+PI/2);//Allagh apo matlab
 		KMatTransf::makeDHTransformation(T3,0.0f,-PI/2,-UpperArmLength,ElbowYaw);
 		KMatTransf::makeDHTransformation(T4,0.0f,PI/2,0.0f,ElbowRoll);//Allagh apo matlab
-
+		
 		KMatTransf::makeRotationXYZ(R,0.0f,0.0f,PI/2);
 		KMatTransf::makeRotationXYZ(Rfix,0.0f,0.0f,-PI);
 		KMatTransf::makeTranslation(endTr,-(HandOffsetX+LowerArmLength),0.0f,0.0f);
-
+		
 		kmatTable Tend;
 		Tend = base;
 		Tend *= T1;
@@ -125,9 +126,9 @@ namespace FKin
 		Tend *= endTr;
 		Tend *= Rfix;
 		EndTransf = Tend;
-
+		
 	};
-
+	
 	/**
 	 * @fn void forwardLeftLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnklePitch, float AnkleRoll)
 	 * @brief Forward kinematic for the left leg.
@@ -142,7 +143,7 @@ namespace FKin
 	void forwardLeftLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnklePitch, float AnkleRoll){
 		kmatTable base,T1,T2,T3,T4,T5,T6,R,endTr;
 		float PI = KMatTransf::PI;
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,HipOffsetY,-HipOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,-3*PI/4,0.0f,HipYawPitch-PI/2);
 		KMatTransf::makeDHTransformation(T2,0.0f,-PI/2,0.0f,HipRoll+PI/4);
@@ -150,7 +151,7 @@ namespace FKin
 		KMatTransf::makeDHTransformation(T4,-ThighLength,0.0f,0.0f,KneePitch);
 		KMatTransf::makeDHTransformation(T5,-TibiaLength,0.0f,0.0f,AnklePitch);
 		KMatTransf::makeDHTransformation(T6,0.0f,-PI/2,0.0f,AnkleRoll);
-
+		
 		KMatTransf::makeRotationZYX(R,PI,-PI/2,0.0f);
 		KMatTransf::makeTranslation(endTr,0.0f,0.0f,-FootHeight);
 		kmatTable Tend;
@@ -164,9 +165,9 @@ namespace FKin
 		Tend *= R;
 		Tend *= endTr;
 		EndTransf = Tend;
-
+		
 	};
-
+	
 	/**
 	 * @fn void forwardRightLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnkleRoll, float AnklePitch)
 	 * @brief Forward kinematic for the right leg.
@@ -181,7 +182,7 @@ namespace FKin
 	void forwardRightLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnklePitch, float AnkleRoll){
 		kmatTable base,T1,T2,T3,T4,T5,T6,R,endTr;
 		float PI = KMatTransf::PI;
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,-HipOffsetY,-HipOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,-PI/4,0.0f,HipYawPitch-PI/2);
 		KMatTransf::makeDHTransformation(T2,0.0f,-PI/2,0.0f,HipRoll-PI/4);//allagh
@@ -189,7 +190,7 @@ namespace FKin
 		KMatTransf::makeDHTransformation(T4,-ThighLength,0.0f,0.0f,KneePitch);
 		KMatTransf::makeDHTransformation(T5,-TibiaLength,0.0f,0.0f,AnklePitch);//allagh
 		KMatTransf::makeDHTransformation(T6,0.0f,-PI/2,0.0f,AnkleRoll);
-
+		
 		KMatTransf::makeRotationZYX(R,PI,-PI/2,0.0f);
 		KMatTransf::makeTranslation(endTr,0.0f,0.0f,-FootHeight);
 		kmatTable Tend;
@@ -203,9 +204,9 @@ namespace FKin
 		Tend *= R;
 		Tend *= endTr;
 		EndTransf = Tend;
-
+		
 	};
-
+	
 	/**
 	 * @fn void forwardCamera(kmatTable & EndTransf, float HeadYaw, float HeadPitch, bool topCamera)
 	 * @brief Forward kinematic for the camera's on the head.
@@ -217,11 +218,11 @@ namespace FKin
 	void forwardCamera(kmatTable & EndTransf, float HeadYaw, float HeadPitch, bool topCamera){
 		kmatTable base,T1,T2,R,endTr;
 		float PI = KMatTransf::PI;
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,0.0f,NeckOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,0.0f,0.0f,HeadYaw);
 		KMatTransf::makeDHTransformation(T2,0.0f,-PI/2,0.0f,HeadPitch-PI/2);
-
+		
 		KMatTransf::makeRotationXYZ(R,PI/2,PI/2,0.0f);
 		if(!topCamera)
 			KMatTransf::makeTranslation(endTr,CameraBotomX,0.0f,CameraBotomZ);
@@ -234,9 +235,9 @@ namespace FKin
 		Tend *= R;
 		Tend *= endTr;
 		EndTransf = Tend;
-
+		
 	};
-
+	
 	/**
 	 * @fn void filterForward(kmatTable & Tmatrix, string WhatForward, std::vector<float> joints)
 	 * @brief This function take the name of the end effector and one vector with joint and then it call's the apropriate function.
@@ -305,7 +306,7 @@ namespace FKin
 		}
 		Tmatrix.check();
 	}
-
+	
 	/**
 	 * @fn FKvars filterForwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
 	 * @brief This function take's the name of the start point for the chain, the name for the end point and returns the cartesian values of the end effector.
@@ -314,7 +315,7 @@ namespace FKin
 	 * @param jointsStart. One vector with all the joints for the chain of the start point.
 	 * @param jointsEnd. One vector with all the joints for the chain of the end point.
 	 * @returns FKVariables. The struct with the 3 cartesian points and with the 3 cartesian angles.
-	 *
+	 * 
  	 * @details Format of vector for filtering.
 	 * */
 	FKvars filterForwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd){
@@ -337,9 +338,9 @@ namespace FKin
 		FKVariables.angleY = atan2(-Tmatrix1(2,0),sqrt(pow(Tmatrix1(2,1),2)+pow(Tmatrix1(2,2),2)));
 		FKVariables.angleX = atan2(Tmatrix1(2,1),Tmatrix1(2,2));
 		return FKVariables;
-
+		
 	}
-
+	
 	/**
 	 * @fn FKvars forwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
 	 * @brief This function take's the name of the start point for the chain, the name for the end point and returns the transformation table.
@@ -348,7 +349,7 @@ namespace FKin
 	 * @param jointsStart. One vector with all the joints for the chain of the start point.
 	 * @param jointsEnd. One vector with all the joints for the chain of the end point.
 	 * @returns Tamatrix1. The transformation matrix.
-	 *
+	 * 
  	 * @details Return the whole transformation table
 	 * */
 	kmatTable forwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd){
@@ -364,9 +365,9 @@ namespace FKin
 		Tmatrix1.fast_invert();
 		Tmatrix1 *= Tmatrix2;
 		return Tmatrix1;
-
+		
 	}
-
+	
 	/**
 	 * @fn FKvars calculateCenterOfMass(vector<float> allJoints)
 	 * @brief Calculate the center of mass of the robot
@@ -419,7 +420,7 @@ namespace FKin
 		KMatTransf::makeTranslation(endTr2, RShoulderRollX,RShoulderRollY,RShoulderRollZ);
 		KMatTransf::makeTranslation(endTr3, RElbowYawX,RElbowYawY,RElbowYawZ);
 		KMatTransf::makeTranslation(endTr4, RElbowRollX,RElbowRollY,RElbowRollZ);
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,-(ShoulderOffsetY+ElbowOffsetY),allJoints.front());
 		KMatTransf::makeDHTransformation(T1,0.0f,-PI/2,0.0f,allJoints.front());
 		allJoints.erase(allJoints.begin());
@@ -459,7 +460,7 @@ namespace FKin
 		KMatTransf::makeTranslation(endTr4, LKneePitchX,LKneePitchY,LKneePitchZ);
 		KMatTransf::makeTranslation(endTr5, LAnklePitchX,LAnklePitchY,LAnklePitchZ);
 		KMatTransf::makeTranslation(endTr6, LAnkleRollX,LAnkleRollY,LAnkleRollZ);
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,HipOffsetY,-HipOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,-3*PI/4,0.0f,allJoints.front()-PI/2);
 		allJoints.erase(allJoints.begin());
@@ -515,7 +516,7 @@ namespace FKin
 		KMatTransf::makeTranslation(endTr4, RKneePitchX,RKneePitchY,RKneePitchZ);
 		KMatTransf::makeTranslation(endTr5, RAnklePitchX,RAnklePitchY,RAnklePitchZ);
 		KMatTransf::makeTranslation(endTr6, RAnkleRollX,RAnkleRollY,RAnkleRollZ);
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,-HipOffsetY,-HipOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,-PI/4,0.0f,allJoints.front()-PI/2);
 		allJoints.erase(allJoints.begin());
@@ -567,7 +568,7 @@ namespace FKin
 		//Head
 		KMatTransf::makeTranslation(endTr1, HeadYawX,HeadYawY,HeadYawZ);
 		KMatTransf::makeTranslation(endTr2, HeadPitchX,HeadPitchY,HeadPitchZ);
-
+		
 		KMatTransf::makeTranslation(base, 0.0f,0.0f,NeckOffsetZ);
 		KMatTransf::makeDHTransformation(T1,0.0f,0.0f,0.0f,allJoints.front());
 		allJoints.erase(allJoints.begin());
@@ -584,7 +585,7 @@ namespace FKin
 		h2=temp.get_translation();
 		h2.scalar_mult(HeadPitchMass);
 		h1+=h2;
-		//Torso
+		//Torso		
 		t(0,0)=TorsoX;
 		t(1,0)=TorsoY;
 		t(2,0)=TorsoZ;
@@ -605,7 +606,7 @@ namespace FKin
 		FKVariables.angleX = 0;
 		return FKVariables;
 	}
-
+	
 }
 
 #endif

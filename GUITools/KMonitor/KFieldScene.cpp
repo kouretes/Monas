@@ -344,7 +344,6 @@ void KFieldScene::resizeFieldScene(int width, int height)
 	LTPost->setPos(wLLine-24, hTGoalArea -22);
 	RTPost->setPos(wRLine-6, hTGoalArea -22);
 	RBPost->setPos(wRLine-6, hBGoalArea-16);
-
 }
 
 QRectF KFieldScene::rectFromFC(float xMiddle, float yMiddle, float width, float height)
@@ -419,6 +418,17 @@ QRectF KFieldScene::goalPostRectFromOBM(NamedObject* nob, WorldInfo* wim)
 	float ymiddle = (wim->myposition().y() + nob->distance() * sin((wim->myposition().phi() + nob->bearing())))*1000;
 
 	return rectFromFC( xmiddle, ymiddle, 125, 125);
+}
+
+QLineF KFieldScene::motionCmdRectFromFC(WorldInfo* wim, float cx, float cy)
+{
+	float a = cos(wim->myposition().phi());
+	float b = sin(wim->myposition().phi());
+
+	float xMiddle = (wim->myposition().x() + cx*a - cy*b)*1000;
+	float yMiddle = (wim->myposition().y() + cx*b + cy*a)*1000;
+
+	return lineRectFromFC(wim->myposition().x()*1000,wim->myposition().y()*1000, xMiddle, yMiddle);
 }
 
 

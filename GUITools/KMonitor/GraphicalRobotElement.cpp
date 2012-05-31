@@ -52,10 +52,6 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 		ParticlesList.append(part);
 	}
 
-	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
-	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
-	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::Dense7Pattern));
-
 	PositiveBoundLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	NegativeBoundLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 
@@ -69,6 +65,10 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LeftYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	RightYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
+
+	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
+	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
+	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::Dense7Pattern));
 
 	GREtimer = new QTimer();
 	connect(GREtimer, SIGNAL(timeout()), this, SLOT(clearVisionObservations()));
@@ -531,8 +531,6 @@ void GraphicalRobotElement::setMWCmdVisible(bool visible)
 
 void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 {
-	float FinalXCoordinate = 0.f;
-	float FinalYCoordinate = 0.f;
 	QPolygonF arrowHead;
 	QLineF arrowLine;
 	double angleOrient;
@@ -540,45 +538,32 @@ void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 	int startAngle;
 	int spanAngle;
 
+/*	std::cout << "cx :: " << wmot.parameter(0) << std::endl;
+	std::cout << "cy :: " << wmot.parameter(1) << std::endl;
+	std::cout << "ct :: " << wmot.parameter(2) << std::endl;
+	std::cout << "f :: " << wmot.parameter(3) << std::endl;*/
+
 	arrowHead.clear();
 	if(this->currentWIM.has_myposition())
 	{
-		/*std::cout << "To cX mou :: " << wmot.parameter(0) <<  std::endl;
-		std::cout << "To cY mou :: " << wmot.parameter(1) <<  std::endl;
-		std::cout << "To ct mou :: " << wmot.parameter(2) << std::endl;*/
-
-		FinalXCoordinate = currentWIM.myposition().x() + wmot.parameter(0)*0.2;
-		FinalYCoordinate = currentWIM.myposition().y() + wmot.parameter(1)*0.2;
-
-		arrowLine = this->parentScene->lineRectFromFC(currentWIM.myposition().x()*1000, currentWIM.myposition().y()*1000,
-					FinalXCoordinate*1000, FinalYCoordinate*1000);
+		arrowLine = this->parentScene->motionCmdRectFromFC(&currentWIM, wmot.parameter(0), wmot.parameter(1));
 
 		arrowHead = calculateArrowHeadPosition(arrowLine);
 
-		GotoPositionLine->setLine(arrowLine);
-		GotoArrow->setPolygon(arrowHead);
-
 		angleOrient = ToDegrees*currentWIM.myposition().phi();
-		angleArrow = (RobotDirection->line().angleTo(arrowLine));
+		angleArrow =  90*wmot.parameter(2);
 
 		startAngle = angleOrient * 16;
 		spanAngle = angleArrow * 16;
 
-		zAxisArc->setRect(this->parentScene->rectFromFC( this->currentWIM.myposition().x()*1000,
-				this->currentWIM.myposition().y()*1000, 300, 300));
-		zAxisArc->setToolTip(QString("x = ") + QString::fromStdString(_toString(wmot.parameter(0))) +
-				QString("\ny = ") + QString::fromStdString(_toString(wmot.parameter(1)))+ QString("\nz = ") +
-				QString::fromStdString(_toString(wmot.parameter(2))));
+		GotoPositionLine->setLine(arrowLine);
+		GotoArrow->setPolygon(arrowHead);
 
-		if(wmot.parameter(2) >= 0)
-		{
-			zAxisArc->setStartAngle(startAngle);
-			zAxisArc->setSpanAngle(spanAngle);
-		}else
-		{
-			zAxisArc->setStartAngle(arrowLine.angle()*16);
-			zAxisArc->setSpanAngle(arrowLine.angleTo(RobotDirection->line())*16);
-		}
+		zAxisArc->setRect(this->parentScene->rectFromFC( this->currentWIM.myposition().x()*1000,
+				this->currentWIM.myposition().y()*1000, 500, 500));
+
+		zAxisArc->setStartAngle(startAngle);
+		zAxisArc->setSpanAngle(spanAngle);
 
 	}else
 	{

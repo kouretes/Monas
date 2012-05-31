@@ -30,10 +30,6 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableGWHosts, SIGNAL(GWRHSetBallVisible(QString, bool)), this->GWSGraphicsView, SLOT(GWSGVBallVisible(QString, bool)));
 	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->GWSGraphicsView, SLOT(removeGraphicalElement(QString)));
 
-	//Signals-Slots for tab changes manipulation
-	//connect(this->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
-
-
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL WORLD STATE
 	//Signal slot connections for Local Remote Hosts ComboBox
 
@@ -87,12 +83,12 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LMRHSubscriptionHandler(QString)));
 	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LMRHUnsubscriptionHandler(QString)));
 
-	//Signal slot connections for
+	//Signal slot connections for user's preferences
 	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LPMElementList, SLOT(LMELSubscriptionHandler(QString)));
 	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMElementList, SLOT(LMELUnsubscriptionHandler(QString)));
-	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMGraphicsView, SLOT(removeRobotMap(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMGraphicsView, SLOT(resetRobotMap(QString)));
 
-	//Signal slot connections for Obstacles
+	//Signal slot connections for Obstacles, Path, TargetCoordinates
 	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), LPMGraphicsView, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
 	connect(LPMElementList, SIGNAL(LMRHSetObstaclesVisible(QString, bool)), LPMGraphicsView, SLOT(LMObstaclesVisible(QString, bool)));
 	connect(LPMElementList, SIGNAL(LMRHSetPathVisible(QString, bool)), LPMGraphicsView, SLOT(LMPathVisible(QString, bool)));
@@ -103,6 +99,8 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
 	setWindowState(Qt::WindowMaximized);
 
+	//Signals-Slots for tab changes manipulation
+	//connect(this->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
 }
 
 KMonitor::~KMonitor()

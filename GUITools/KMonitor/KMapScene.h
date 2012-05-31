@@ -76,11 +76,12 @@ public:
 
 	void resizeMapScene(int size);
 	QString getCurrentHost(){ return currentHost; }
+	void resetKMapScene(QString hostId);
 
 	void setLPMObstaclesVisible(bool visible){ LPMObstaclesVisible = visible; setPMObstaclesVisible(visible);}
 	bool getLPMObstaclesVisible(){return LPMObstaclesVisible;}
 	void setPMObstaclesVisible(bool visible);
-	void updateObstacles();
+	void updateObstacles(bool initialization);
 	void updateArrow();
 
 	void setLPMTargetCoordVisible(bool visible){ LPMTargetCoordVisible = visible; setPMTargetCoordVisible(visible);}
@@ -100,9 +101,12 @@ public:
 private:
 	void initGrid();
 	void initCoordinates();
+	void pathLineListRectReset();
 
 	KMapView* parent;
 	QString currentHost;
+
+	QList<QGraphicsPolygonItem*> staticCellsList;
 
 	bool LPMObstaclesVisible;
 	QList<QGraphicsPolygonItem*> cellsList;

@@ -11,10 +11,10 @@ LWRemoteHosts::LWRemoteHosts(QComboBox *parent )
 	parentComboBox->adjustSize();
 
 	connect(parentComboBox, SIGNAL(activated(int)), this, SLOT(newLWRemoteHostSelected(int)));
+	addComboBoxItem(tr("-1"), tr("  Please, select available host to monitor."));
 
 	LWRequests.clear();
 	myCurrentRequestedHost.clear();
-
 }
 
 LWRemoteHosts::~LWRemoteHosts()

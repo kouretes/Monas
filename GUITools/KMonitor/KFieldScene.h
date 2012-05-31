@@ -39,6 +39,7 @@ public:
 
 	QRectF visionBallRect( BallObject bob, WorldInfo wim);
 	QRectF goalPostRectFromOBM(NamedObject* nob, WorldInfo* wim);
+	QLineF motionCmdRectFromFC(WorldInfo* wim, float cx, float cy);
 
 private:
 	void loadXMLConfig(std::string fname);
