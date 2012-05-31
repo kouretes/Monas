@@ -1,7 +1,7 @@
 #ifndef BODY_BEHAVIOR_H
 #define BODY_BEHAVIOR_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -24,15 +24,16 @@
 #define BALLTRACK 4
 #define HIGHSCANFORBALL 5
 #define SCANFIELD 6
+ACTIVITY_START
 
 class BodyBehavior: public IActivity {
 
 	public:
-		BodyBehavior();
-		int Execute();
-		void UserInit();
+		ACTIVITY_CONSTRUCTOR(BodyBehavior);
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		void ACTIVITY_VISIBLE UserInit();
 		void read_messages();
-		std::string GetName() {
+		std::string  ACTIVITY_VISIBLE GetName() {
 			return "BodyBehavior";
 		}
 
@@ -81,5 +82,7 @@ class BodyBehavior: public IActivity {
 		void littleWalk(double x, double y, double th, int s);
 		bool readConfiguration(const std::string& file_name);
 };
+
+ACTIVITY_END
 
 #endif

@@ -23,7 +23,6 @@ namespace statechart_engine {
         _st = stc;
 
         if ( _stateActivity ) {
-            _stateActivity->Initialize ( _com, _blk );
             _actWrap.Init(_stateActivity,_isRunning,_st);
         }
 

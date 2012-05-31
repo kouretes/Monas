@@ -10,21 +10,16 @@
 #include "hal/robot/generic_nao/KImage.h"
 
 
-#ifdef __GNUC__
-#pragma GCC visibility push(hidden)
-#define VISIBLE __attribute__ ((visibility("default")))
-#else
-#define VISIBLE
-#endif
 
 #define FORCEINTERLV
+#define CACHETAG 0x1F
 
 /**
  * Basic segmentation class, loads up a custom configuration file in the constructor
  * and fills up a colortable using the rules defined there
  */
 
-#define CACHETAG 0x1F
+
 
 //Assign disjoint bits to the color values to compose colormasks
 enum colors
@@ -183,7 +178,7 @@ class KSegmentator{
 			int yn=y+lumascale;
 			if(yn>255) yn=255;
 			y=yn;
-	
+
 			//Precheck... Does it SEEM at lest to contain needed values?
 
 			if(!(rYLUT[y>>LUTres]&rULUT[u>>LUTres]&rVLUT[v>>LUTres]&hint))
@@ -206,9 +201,5 @@ class KSegmentator{
 
 
 };
-
-#ifdef __GNUC__
-#pragma GCC visibility pop
-#endif
 
 #endif //KSegmentator_H__

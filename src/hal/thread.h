@@ -2,8 +2,12 @@
 #define _thread_h_ 1
 
 #include "architecture/IExecutable.h"
-
 #include <boost/thread.hpp>
+
+
+
+
+
 
 namespace KSystem {
 
@@ -12,6 +16,7 @@ class Thread : public IExecutable {
     public:
 
         Thread ( bool start = false ) : running(false) {
+
             if ( start )
                 StartThread();
         }
@@ -38,15 +43,18 @@ class Thread : public IExecutable {
         }
 
     protected:
-
         volatile bool running;
 
         boost::thread bThread;
 
-        void startHelper () {
+        virtual void startHelper () {
             while (running)
                 this->Execute();
+
         }
+
+
+
 
 };
 

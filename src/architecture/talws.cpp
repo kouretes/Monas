@@ -60,20 +60,22 @@ Talws::Talws () {
             Logger::Instance().WriteMsg("Talws", "Agent: "+AgentName+" Registering module: "+activities[i], Logger::ExtraInfo );
         }
 
-        AgentConfig tcfg;
+        KSystem::ThreadConfig tcfg;
         tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
         tcfg.Priority = it->attrb["Priority"];
-        tcfg.ThreadFrequency = it->attrb["ThreadFrequency"];
-        tcfg.StatsCycle = it->attrb["StatsCycle"];
+        tcfg.ThreadPeriod = it->attrb["ThreadFrequency"]>0?1/it->attrb["ThreadFrequency"]:0;
+        int StatsCycle = it->attrb["StatsCycle"];
 
-        Agent *a = new Agent(AgentName,tcfg,com,activities);
+        Agent *a = new Agent(AgentName,tcfg,StatsCycle,com,activities);
 
         Agents.push_back( a );
 
         std::ostringstream AgentInfo;
-        AgentInfo<<AgentName<<" Attrb: IsRealTime="<<tcfg.IsRealTime<<" Priority="<<tcfg.Priority
-            <<" ThreadFrequency="<<tcfg.ThreadFrequency
-            <<" StatsCycle="<<tcfg.StatsCycle<<std::endl;
+        AgentInfo<<AgentName
+            <<" Attrb: IsRealTime="<<(it->attrb["IsRealTime"])
+            <<" Priority="<<(it->attrb["Priority"])
+            <<" ThreadFrequency="<<(it->attrb["ThreadFrequency"])
+            <<" StatsCycle="<<(it->attrb["StatsCycle"])<<std::endl;
         Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
     }
 
@@ -91,7 +93,14 @@ Talws::Talws () {
     Logger::Instance().WriteMsg("Talws","Found "+_toString(ProviderNodes.size())+" provider(s)", Logger::Info );
 
     for ( NodeCont::iterator it = ProviderNodes.begin(); it != ProviderNodes.end(); it++ )
-      Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value , com ) );
+    {
+        KSystem::ThreadConfig tcfg;
+        tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
+        tcfg.Priority = it->attrb["Priority"];
+        tcfg.ThreadPeriod = it->attrb["ThreadFrequency"]>0?1/it->attrb["ThreadFrequency"]:0;
+         Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value ,  tcfg,com ) );
+    }
+
 
 }
 
@@ -120,12 +129,15 @@ void Talws::Stop() {
     std::cout<<"Talws: Stoping..."<<std::endl; //TODO
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->StopThread();
+    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
+        (*it)->StopThread();
+
     SysCall::_usleep(100000);
     //TODO stop somehow narukom
     for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
         (*it)->JoinThread();
-    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
-      (*it)->JoinThread();
+    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
+        (*it)->JoinThread();
     //com.get_message_queue()->JoinThread();
 }
 

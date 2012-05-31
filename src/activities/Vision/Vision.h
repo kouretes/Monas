@@ -1,10 +1,10 @@
 #ifndef VISION_H
 #define VISION_H
 
+#include "architecture/executables/IActivity.h"
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
-#include "architecture/IActivity.h"
 #include "hal/robot/generic_nao/KImageExtractor.h"
 #include "KSegmentator.h"
 
@@ -25,13 +25,11 @@
 //#define DEBUGVISION
 //#define CAPTURE_MODE
 
-#ifdef __GNUC__
-#pragma GCC visibility push(hidden)
-#define VISIBLE __attribute__ ((visibility("default")))
-#else
-#define VISIBLE
-#endif
 
+
+
+
+ACTIVITY_START
 
 class Vision: public IActivity
 {
@@ -39,8 +37,8 @@ class Vision: public IActivity
 		/**
 		 * The only available constructor:
 		 */
-		VISIBLE Vision();
-		VISIBLE ~Vision()
+		ACTIVITY_VISIBLE Vision(Blackboard& b);
+		ACTIVITY_VISIBLE ~Vision()
 		{
 			if(segtop==segbottom&&segbottom!=NULL)
 				delete segbottom;
@@ -51,10 +49,10 @@ class Vision: public IActivity
 		};
 
 
-		void VISIBLE UserInit();
+		void ACTIVITY_VISIBLE  UserInit();
 		void fetchAndProcess();
-		int VISIBLE  Execute();
-		std::string VISIBLE  GetName()
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		std::string ACTIVITY_VISIBLE  GetName()
 		{
 			return "Vision";
 		};
@@ -230,10 +228,6 @@ class Vision: public IActivity
 
 };
 
-
-#ifdef __GNUC__
-#pragma GCC visibility pop
-#endif
-
+ACTIVITY_END
 
 #endif

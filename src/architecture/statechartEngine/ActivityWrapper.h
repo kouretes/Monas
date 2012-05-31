@@ -3,7 +3,7 @@
 
 #include "architecture/IExecutable.h"
 #include "Statechart.h"
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 namespace statechart_engine {
 
@@ -15,7 +15,7 @@ namespace statechart_engine {
 
       void Init(IActivity* act, volatile int* running, Statechart* s);
 
-      int Execute();
+      int IEX_DIRECTIVE_HOT Execute();
 
     private:
 

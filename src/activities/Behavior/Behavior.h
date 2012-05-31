@@ -1,7 +1,7 @@
 #ifndef BEHAVIOR_H
 #define BEHAVIOR_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -29,15 +29,16 @@
 #define OVERSH 0.08
 #define WAITFOR 40
 
+ACTIVITY_START
 class Behavior: public IActivity {
 
 	public:
-		Behavior();
-		std::string GetName() {
+        ACTIVITY_CONSTRUCTOR(Behavior);
+		std::string ACTIVITY_VISIBLE GetName() {
 			return "Behavior";
 		}
-		void UserInit();
-		int Execute();
+		void ACTIVITY_VISIBLE  UserInit();
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 		void read_messages();
 
@@ -132,4 +133,5 @@ class Behavior: public IActivity {
 		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastpenalized, ballseen;
 };
 
+ACTIVITY_END
 #endif

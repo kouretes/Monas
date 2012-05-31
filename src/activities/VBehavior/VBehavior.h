@@ -1,7 +1,7 @@
 #ifndef VBEHAVIOR_H
 #define VBEHAVIOR_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
@@ -30,17 +30,17 @@
 //	class ALMotionProxy;
 //	class ALMemoryProxy;
 //}
-
+ACTIVITY_START
 class VBehavior: public IActivity {
 
 	public:
-		VBehavior();
-		int Execute();
-		void UserInit();
+		ACTIVITY_CONSTRUCTOR(VBehavior);
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		void ACTIVITY_VISIBLE  UserInit();
 		void read_messages();
 		int MakeTrackBallAction();
 		void HeadScanStep();
-		std::string GetName() {
+		std::string ACTIVITY_VISIBLE GetName() {
 			return "VBehavior";
 		}
 		void mgltest();
@@ -103,5 +103,5 @@ class VBehavior: public IActivity {
 		float cX,cY,cth;//Commanded
 
 };
-
+ACTIVITY_END
 #endif

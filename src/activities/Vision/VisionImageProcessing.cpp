@@ -10,12 +10,7 @@
 #include <vector>
 #include "messages/motion.pb.h"
 
-#ifdef __GNUC__
-#pragma GCC visibility push(hidden)
-#define VISIBLE __attribute__ ((visibility("default")))
-#else
-#define VISIBLE
-#endif
+ACTIVITY_START
 
 #define PREFETCH 2
 #define CvDist(pa,pb) sqrt(  ( ((pa).x-(pb).x )*((pa).x-(pb).x )  )+( ((pa).y-(pb).y )*((pa).y-(pb).y) )  )
@@ -1756,6 +1751,4 @@ void Vision::prepSeg(const int x,const int y) const
 //	}
 }
 
-#ifdef __GNUC__
-#pragma GCC visibility pop
-#endif
+ACTIVITY_END

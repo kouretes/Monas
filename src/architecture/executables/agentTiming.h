@@ -3,7 +3,7 @@
 
 
 #include "hal/syscall.h"
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include <string>
 #include <map>
@@ -13,11 +13,11 @@
 #include "tools/stopWatch.h"
 
 
-class AgentTiming 
+class AgentTiming
 {
     public:
 
-        AgentTiming () { 
+        AgentTiming () {
             //TODO Get Alpha from XML
 
         }
@@ -61,8 +61,8 @@ class AgentTiming
 
         std::map<IActivity*,StopWatch<> > activityStats;
 
-}; 
+};
 
 
 
-#endif   // _agentTiming_h_  
+#endif   // _agentTiming_h_

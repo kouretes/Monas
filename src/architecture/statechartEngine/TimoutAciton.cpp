@@ -22,7 +22,7 @@ namespace statechart_engine {
 //       cout<<"PRPRPRP "<<((TimeoutMsg*)_tpl.get_msg_data())->wakeup()<<endl;
 
       _msg->set_wakeup(time);
-      _blk.publishState(*_msg,_var);
+      _blk->publishState(*_msg,_var);
 
       if ( ! _s->GetTimeoutThreadPool()->Enqueue( &_twork ) ) {
         throw "Timeout: can't enqueue timeout!";
@@ -32,7 +32,7 @@ namespace statechart_engine {
 
     void TimeoutAction::UserInit() {
       _msg.reset(new TimeoutMsg());
-      _blk.publishState(*_msg,_var);
+      _blk->publishState(*_msg,_var);
       _twork.Set ( _blk, _var, _s );
     }
 
@@ -44,7 +44,7 @@ namespace statechart_engine {
     }
 
     int TimeoutWorker::Execute() {
-        boost::shared_ptr<const TimeoutMsg> msg  = _blk.readState<TimeoutMsg>(_var);
+        boost::shared_ptr<const TimeoutMsg> msg  = _blk->readState<TimeoutMsg>(_var);
         if ( msg == 0 )
           throw "TimeoutWorker msg null";
         std::string time = msg->wakeup();

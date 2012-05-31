@@ -10,24 +10,22 @@
 
 using boost::posix_time::milliseconds;
 
-namespace {
-	ActivityRegistrar<RobotController>::Type temp("RobotController");
-}
-RobotController::RobotController() :gm(game_data) { //Initialize game controller with message pointer
+
+ACTIVITY_REGISTER(RobotController);
+RobotController::RobotController(Blackboard &b) : IActivity(b) , gm(game_data) { //Initialize game controller with message pointer
 
 }
 
 void RobotController::UserInit() {
 	//"Initialize Robot controller"
-	//_com->get_message_queue()->add_publisher(this);
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
 	gm.connectTo(conf.port(), conf.team_number());
 	gm.setNonBlock(true);
 
-	_blk->updateSubscription("buttonevents",msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("buttonevents",msgentry::SUBSCRIBE_ON_TOPIC);
 
-	_blk->publishState(gm_state, "worldstate");
+	_blk.publishState(gm_state, "worldstate");
 	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);
 	lastalive=boost::posix_time::microsec_clock::universal_time();
 }
@@ -75,7 +73,7 @@ int RobotController::Execute() {
 		}
 	}
 
-	boost::shared_ptr<const ButtonMessage> bm=_blk->readSignal<ButtonMessage>("buttonevents");
+	boost::shared_ptr<const ButtonMessage> bm=_blk.readSignal<ButtonMessage>("buttonevents");
 	if(bm.get()!= NULL)
 	{
 		int lbump=bm->data(KDeviceLists::L_BUMPER_L)+bm->data(KDeviceLists::L_BUMPER_R);
@@ -161,7 +159,7 @@ int RobotController::Execute() {
 					gm_state.set_penalty(PENALTY_NONE);
 					gm_state.set_player_state(PLAYER_PLAYING);
 					gm_state.set_previous_player_state(PLAYER_INITIAL);
-					
+
 			}
 			changed=true;
 		}
@@ -169,7 +167,7 @@ int RobotController::Execute() {
 
 	if (changed) {
 		sendLedUpdate();
-		_blk->publishState(gm_state, "worldstate");
+		_blk.publishState(gm_state, "worldstate");
 	}
 	else if (delay++ % 50 == 0)
 	{
@@ -213,7 +211,7 @@ void RobotController::sendLedUpdate() {
 	else
 		lfoot_led->set_color("red");
 
-	_blk->publishSignal(leds, "leds");
+	_blk.publishSignal(leds, "leds");
 	leds.clear_leds();
 }
 

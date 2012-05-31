@@ -23,7 +23,7 @@
 #ifdef KPROFILING_ENABLED
 
 #include <vector>
-#include "smart_timer.hpp"
+#include "hal/smart_timer.h"
 #include "tools/logger.h"
 #include "toString.h"
 #include <sstream>
@@ -163,10 +163,10 @@ namespace KProfiling {
         void pop( ){
         	frame &f=callstack.back();
 
-        	double time= f.t.elasped()-f.residual;
+        	double time= f.t.elapsed()-f.residual;
         	double res=f.residual;
-        	stats_policy::on_stop(f.name,time,time<f.t.elasped_min());
-        	logging_policy::on_stop(f.name,time,time<f.t.elasped_min());
+        	stats_policy::on_stop(f.name,time,time<f.t.elapsed_min());
+        	logging_policy::on_stop(f.name,time,time<f.t.elapsed_min());
 
         	callstack.pop_back();
         	if(callstack.size()>0)
@@ -194,7 +194,7 @@ namespace KProfiling {
     	~basic_profiling_scope() { pr.pop(); }
 
     };
-    typedef basic_profiler<empty_logging_policy, default_stats_policy, smart_timer> profiler;
+    typedef basic_profiler<empty_logging_policy, default_stats_policy, KSystem::smart_timer> profiler;
 	typedef basic_profiling_scope<profiler> profiling_scope;
 
 #else

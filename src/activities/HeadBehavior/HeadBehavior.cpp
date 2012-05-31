@@ -8,20 +8,17 @@
 using namespace boost::posix_time;
 
 
-namespace {
-	ActivityRegistrar<HeadBehavior>::Type temp("HeadBehavior");
-}
 
-HeadBehavior::HeadBehavior() {
-}
+ACTIVITY_REGISTER(HeadBehavior);
+
 using namespace std;
 
 void HeadBehavior::UserInit() {
 
 
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	state =1;
 	hmot = new MotionHeadMessage();
@@ -225,7 +222,7 @@ int HeadBehavior::Execute() {
 			break;
 	}
 	prevaction = curraction;
-	_blk->publishState(*hbmsg, "behavior");
+	_blk.publishState(*hbmsg, "behavior");
 	//Logger::Instance().WriteMsg("HeadBehavior", "end", Logger::Info);
 	return 0;
 }
@@ -277,7 +274,7 @@ void HeadBehavior::HeadScanStep() {
 
 	if ((targetYaw>=YAWMAX || targetYaw<=YAWMIN) && (targetPitch>=PITCHMAX || targetPitch<=PITCHMIN)){
 		scmsg->set_scancompleted(1);
-		_blk->publishSignal(*scmsg, "behavior");
+		_blk.publishSignal(*scmsg, "behavior");
 	}
 	waiting++;
 	if( (fabs(targetPitch-HeadPitch.sensorvalue())<=OVERSH &&fabs(targetYaw -HeadYaw.sensorvalue())<=OVERSH )
@@ -420,11 +417,11 @@ void HeadBehavior::HeadScanStepSmart() {
 
 void HeadBehavior::read_messages() {
 
-	bhm = _blk->readSignal<BToHeadMessage> ("behavior");
-	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	obsm = _blk->readSignal<ObservationMessage> ("vision");
-	asvm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	boost::shared_ptr<const CalibrateCam> c = _blk->readState<CalibrateCam> ("vision");
+	bhm = _blk.readSignal<BToHeadMessage> ("behavior");
+	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
+	obsm = _blk.readSignal<ObservationMessage> ("vision");
+	asvm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	boost::shared_ptr<const CalibrateCam> c = _blk.readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1) {
 			calibrated = 2;
@@ -436,7 +433,7 @@ void HeadBehavior::read_messages() {
 void HeadBehavior::calibrate() {
 	CalibrateCam v;
 	v.set_status(0);
-	_blk->publishState(v, "vision");
+	_blk.publishState(v, "vision");
 	Logger::Instance().WriteMsg("HeadBehavior", "sendCalibrate ", Logger::Info);
 	calibrated = 1;
 }
@@ -463,7 +460,7 @@ void HeadBehavior::highheadscanstep(float limit_yaw){
 		pitchd = (-0.0698 * (fabs(headpos)-1.57)) - 0.52;
 	}
 
-	//_blk->publishSignal(*hmot, "motion");
+	//_blk.publishSignal(*hmot, "motion");
 	headmotion(pitchd, headpos);
 	return;
 }
@@ -520,7 +517,7 @@ void HeadBehavior::headmotion(float pitch, float yaw){
 	hmot->set_command("setHead");
 	hmot->set_parameter(0, yaw);
 	hmot->set_parameter(1, pitch);
-	_blk->publishSignal(*hmot, "motion");
+	_blk.publishSignal(*hmot, "motion");
 	//Logger::Instance().WriteMsg("HeadBehavior",  " YAW " + _toString(yaw), Logger::Info);
 	//Logger::Instance().WriteMsg("HeadBehavior",  " PITCH " + _toString(pitch), Logger::Info);
 

@@ -7,21 +7,18 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/robot_consts.h"
 
-namespace {
-	ActivityRegistrar<BodyBehavior>::Type temp("BodyBehavior");
-}
+ACTIVITY_REGISTER(BodyBehavior);
+
 using namespace std;
-BodyBehavior::BodyBehavior() {
-}
 
 void BodyBehavior::UserInit() {
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
@@ -226,7 +223,7 @@ int BodyBehavior::Execute() {
 						direction = +1;
 					}
 
-				_blk->publishSignal(*amot, "motion");
+				_blk.publishSignal(*amot, "motion");
 				kickoff = false;
 			} else {
 
@@ -254,7 +251,7 @@ int BodyBehavior::Execute() {
 						amot->set_command("KickSideRightSoft.xar");
 				}
 
-				_blk->publishSignal(*amot, "motion");
+				_blk.publishSignal(*amot, "motion");
 
 				/* **************** End of Targetted Kicks ********************** */
 
@@ -265,7 +262,7 @@ int BodyBehavior::Execute() {
 				//	amot->set_command("LeftKick");
 				//else
 				//	amot->set_command("RightKick");
-				//_blk->publishSignal(*amot, "motion");
+				//_blk.publishSignal(*amot, "motion");
 				//}
 				//else if (mglRand()<0.5) {
 				//if (by > 0.0) {
@@ -311,7 +308,7 @@ int BodyBehavior::Execute() {
 	bhmsg->set_headaction(curraction);
 
 	//cout << "headAction " << curraction << "BodyBehavior" << endl;
-	_blk->publishSignal(*bhmsg, "behavior");
+	_blk.publishSignal(*bhmsg, "behavior");
 
 
 	return 0;
@@ -319,12 +316,12 @@ int BodyBehavior::Execute() {
 
 void BodyBehavior::read_messages() {
 
-	gsm = _blk->readState<GameStateMessage> ("worldstate");
-	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	obsm = _blk->readSignal<ObservationMessage> ("vision");
-	//om   = _blk->readSignal<ObstacleMessage> ("obstacle");
-	hbm = _blk->readState<HeadToBMessage> ("behavior");
-	scm = _blk->readSignal<ScanMessage> ("behavior");
+	gsm = _blk.readState<GameStateMessage> ("worldstate");
+	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
+	obsm = _blk.readSignal<ObservationMessage> ("vision");
+	//om   = _blk.readSignal<ObstacleMessage> ("obstacle");
+	hbm = _blk.readState<HeadToBMessage> ("behavior");
+	scm = _blk.readSignal<ScanMessage> ("behavior");
 	if(gsm!=0)
 	Logger::Instance().WriteMsg("BodyBehavior", "gameState " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 
@@ -340,7 +337,7 @@ void BodyBehavior::velocityWalk(double x, double y, double th, double f) {
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
 	wmot->set_parameter(3, f);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 }
 
 void BodyBehavior::littleWalk(double x, double y, double th, int s) {
@@ -349,7 +346,7 @@ void BodyBehavior::littleWalk(double x, double y, double th, int s) {
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 }
 
 bool BodyBehavior::readConfiguration(const std::string& file_name) {

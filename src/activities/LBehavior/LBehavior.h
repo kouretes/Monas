@@ -1,7 +1,7 @@
 #ifndef LBEHAVIOR_H
 #define LBEHAVIOR_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -36,17 +36,19 @@ using namespace boost::posix_time;
 //	class ALMemoryProxy;
 //}
 
+
+ACTIVITY_START
 class LBehavior: public IActivity {
 
 	public:
-		LBehavior();
-		int Execute();
-		void UserInit();
+        ACTIVITY_CONSTRUCTOR(LBehavior);
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		void ACTIVITY_VISIBLE UserInit();
 		void read_messages();
 		int MakeTrackBallAction();
 		void HeadScanStep();
 		void ScanForGoalposts(int step);
-		std::string GetName() {
+		std::string ACTIVITY_VISIBLE GetName() {
 			return "LBehavior";
 		}
 		void test();
@@ -120,4 +122,5 @@ class LBehavior: public IActivity {
 
 };
 
+ACTIVITY_END
 #endif

@@ -8,14 +8,10 @@
 #include "tools/MathFunctions.h"
 
 using namespace boost::posix_time;
-namespace {
-	ActivityRegistrar<Behavior>::Type temp("Behavior");
-}
+
+ACTIVITY_REGISTER(Behavior);
 using namespace std;
 
-Behavior::Behavior() {
-
-}
 
 double mglRand()
 {
@@ -29,10 +25,10 @@ double mglRand()
 void Behavior::UserInit() {
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 
 	wmot = new MotionWalkMessage();
@@ -49,7 +45,7 @@ void Behavior::UserInit() {
 	amot = new MotionActionMessage();
 
 	locReset = new LocalizationResetMessage();
-	
+
 	pprm = new PathPlanningRequestMessage();
 
 	readRobotConf = false;
@@ -127,7 +123,7 @@ int Behavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
-		
+
 		if (lastpenalized+seconds(12)>microsec_clock::universal_time()) {
 			HeadScanStepHigh(2.08);
 			return 0;
@@ -160,7 +156,7 @@ int Behavior::Execute() {
 				}
 				else
 					pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
-				
+
 				if (scanOK)
 					HeadScanStepSmart();
 			}
@@ -203,14 +199,14 @@ int Behavior::Execute() {
 
 void Behavior::read_messages()
 {
-	gsm  = _blk->readState<GameStateMessage> ("worldstate");
-	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	om   = _blk->readState<ObstacleMessageArray> ("obstacle");
-	wim  = _blk->readData<WorldInfo> ("worldstate");
+	gsm  = _blk.readState<GameStateMessage> ("worldstate");
+	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
+	wim  = _blk.readData<WorldInfo> ("worldstate");
 
 	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
+	boost::shared_ptr<const CalibrateCam> c= _blk.readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1)
 			calibrated = 2;
@@ -236,7 +232,7 @@ void Behavior::GetGameState()
 				lastpenalized = microsec_clock::universal_time();
 				locReset->set_type(-1);
 				locReset->set_kickoff(kickoff);
-				_blk->publishSignal(*locReset, "worldstate");
+				_blk.publishSignal(*locReset, "worldstate");
 			}
 			if (prevGameState == PLAYER_SET) {
 				lastplay = microsec_clock::universal_time();
@@ -254,7 +250,7 @@ void Behavior::GetGameState()
 			if (prevGameState == PLAYER_INITIAL) {
 				locReset->set_type(playerNumber);
 				locReset->set_kickoff(kickoff);
-				_blk->publishSignal(*locReset, "worldstate");
+				_blk.publishSignal(*locReset, "worldstate");
 			}
 			if (prevGameState == PLAYER_PLAYING)
 				toReadyFromGoal = true;
@@ -266,7 +262,7 @@ void Behavior::GetGameState()
 			if ( toReadyFromGoal ) {
 				locReset->set_type(playerNumber);
 				locReset->set_kickoff(kickoff);
-				_blk->publishSignal(*locReset, "worldstate");
+				_blk.publishSignal(*locReset, "worldstate");
 				toReadyFromGoal = false;
 			}
 		}
@@ -295,9 +291,9 @@ void Behavior::UpdateOrientationPlus()
 {
 	double loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
 	double roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
-	double cone = anglediff2(loppgb, roppgb); 
+	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone/2.0);
-	
+
 	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
 		orientation = 0;
 	} else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI-M_PI_4) ) ) {
@@ -373,7 +369,7 @@ int Behavior::MakeTrackBallAction() {
 	hmot->set_command("setHead");
 	hmot->set_parameter(0, bmsg->referenceyaw());
 	hmot->set_parameter(1,  bmsg->referencepitch());
-	_blk->publishSignal(*hmot, "motion");
+	_blk.publishSignal(*hmot, "motion");
 
 	return 1;
 }
@@ -402,7 +398,7 @@ void Behavior::HeadScanStepRaster() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		waiting = 0;
 		startscan = false;
 		return;
@@ -431,7 +427,7 @@ void Behavior::HeadScanStepRaster() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 	}
 	return;
 }
@@ -452,7 +448,7 @@ void Behavior::HeadScanStepHigh(float yaw_limit) {
 	else
 		hmot->set_parameter(1, (-0.0698 * (fabs(headpos) - 1.57)) - 0.52);
 
-	_blk->publishSignal(*hmot, "motion");
+	_blk.publishSignal(*hmot, "motion");
 }
 
 
@@ -488,7 +484,7 @@ void Behavior::HeadScanStepSmart() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		waiting = 0;
 		startscan = false;
 		return;
@@ -557,7 +553,7 @@ void Behavior::HeadScanStepSmart() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 	}
 	return;
 }
@@ -604,7 +600,7 @@ void Behavior::HeadScanStepIntelligent() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 
 		switch (state) {
 			case BALL1:
@@ -659,7 +655,7 @@ void Behavior::Kick(int side) {
 				amot->set_command("KickSideLeftStable.xar");
 			else
 				amot->set_command("KickSideRightStable.xar");
-			_blk->publishSignal(*amot, "motion");
+			_blk.publishSignal(*amot, "motion");
 		}
 	}
 	else {
@@ -685,7 +681,7 @@ void Behavior::Kick(int side) {
 			else
 				amot->set_command("KickSideRightStable.xar");
 		}
-		_blk->publishSignal(*amot, "motion");
+		_blk.publishSignal(*amot, "motion");
 	}
 }
 
@@ -749,7 +745,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	wmot->set_parameter(1, cY);
 	wmot->set_parameter(2, ct);
 	wmot->set_parameter(3, f);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 	lastwalk = microsec_clock::universal_time();
 }
 
@@ -760,7 +756,7 @@ void Behavior::littleWalk(double x, double y, double th)
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 }
 
 
@@ -792,7 +788,7 @@ void Behavior::approachBallNewWalk(double ballX, double ballY){
 void Behavior::stopRobot() {
 	//velocityWalk(0.0, 0.0, 0.0, 1.0);
 	amot->set_command("InitPose.xar");
-	_blk->publishSignal(*amot, "motion");
+	_blk.publishSignal(*amot, "motion");
 }
 
 void Behavior::pathPlanningRequestRelative(float target_x, float target_y, float target_phi) {
@@ -800,7 +796,7 @@ void Behavior::pathPlanningRequestRelative(float target_x, float target_y, float
 	pprm->set_gotoy(target_y);
 	pprm->set_gotoangle(target_phi);
 	pprm->set_mode("relative");
-	_blk->publishSignal(*pprm, "obstacle");
+	_blk.publishSignal(*pprm, "obstacle");
 }
 
 void Behavior::pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi) {
@@ -808,7 +804,7 @@ void Behavior::pathPlanningRequestAbsolute(float target_x, float target_y, float
 	pprm->set_gotoy(target_y);
 	pprm->set_gotoangle(target_phi);
 	pprm->set_mode("absolute");
-	_blk->publishSignal(*pprm, "obstacle");
+	_blk.publishSignal(*pprm, "obstacle");
 }
 
 void Behavior::gotoPosition(float target_x,float target_y, float target_phi) {
@@ -816,9 +812,9 @@ void Behavior::gotoPosition(float target_x,float target_y, float target_phi) {
 	double targetDistance = sqrt((target_x-robot_x)*(target_x-robot_x)+(target_y-robot_y)*(target_y-robot_y));
 	double targetAngle = anglediff2(atan2(target_y - robot_y, target_x - robot_x), robot_phi);
 	double targetOrientation = anglediff2(target_phi, robot_phi);
-	
+
 	if ( (targetDistance > 0.25) || (fabs(targetOrientation) > M_PI_4) )
-		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle), 
+		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle),
 									toCartesianY(targetDistance,targetAngle),
 									targetOrientation);
 	else
@@ -832,7 +828,7 @@ void Behavior::calibrate()
 {
 	CalibrateCam v;
 	v.set_status(0);
-	_blk->publishState(v, "vision");
+	_blk.publishState(v, "vision");
 	calibrated = 1;
 }
 
@@ -1017,7 +1013,7 @@ void Behavior::test() {
 					if ( (t > 2.0) && (t < 5.0) ) {
 						Logger::Instance().WriteMsg("Behavior",  "OP: Openchallenge FTW!!!!!!!!!!!!!! ", Logger::Info);
 						amot->set_command("KickForwardRightFast.xar");
-						_blk->publishSignal(*amot, "motion");
+						_blk.publishSignal(*amot, "motion");
 					}
 				}
 			}

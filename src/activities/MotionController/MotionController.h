@@ -1,7 +1,7 @@
 #ifndef MOTION_CONTROLLER_H
 #define MOTION_CONTROLLER_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -32,17 +32,18 @@ using namespace boost::posix_time;
 using namespace std;
 //#define WEBOTS
 
+
+ACTIVITY_START
 class MotionController : public IActivity{
 
 public:
 
-	MotionController();
+	MotionController(Blackboard &b);
 
-	int Execute();
+	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	void ACTIVITY_VISIBLE UserInit();
 
-	void UserInit();
-
-	std::string GetName() {
+	std::string ACTIVITY_VISIBLE GetName() {
 		return "MotionController";
 	}
 
@@ -126,5 +127,7 @@ private:
 	void readWalkParameters();
 	boost::posix_time::ptime standUpStartTime, timeLapsed;
 };
+
+ACTIVITY_END
 
 #endif

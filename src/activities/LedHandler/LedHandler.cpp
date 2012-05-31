@@ -6,10 +6,7 @@
 using std::string;
 using namespace boost::posix_time;
 
-namespace {
-	ActivityRegistrar<LedHandler>::Type temp("LedHandler");
-}
-
+ACTIVITY_REGISTER(LedHandler);
 int LedHandler::Execute() {
 
 
@@ -82,12 +79,12 @@ void LedHandler::SetBateryLevel(){
 
 void LedHandler::process_messages() {
 
-	led_change = _blk->readSignal<LedChangeMessage> ("leds");
+	led_change = _blk.readSignal<LedChangeMessage> ("leds");
 }
 
 void LedHandler::UserInit() {
 	//led_change = 0;
-	_blk->updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	try {
 		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
@@ -127,10 +124,6 @@ void LedHandler::UserInit() {
 
 	leds->callVoid<string> ("off", "AllLeds");
 	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
-}
-
-LedHandler::LedHandler() {
-
 }
 
 void LedHandler::setLed(const string& device, const string& color) {

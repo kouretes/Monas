@@ -13,7 +13,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include <iostream>
 #include <string>
-#include <architecture/IActivity.h>
+#include <architecture/executables/IActivity.h>
 
 //Game Controller return data interval
 #define ALIVEMS 750
@@ -26,25 +26,28 @@
 * @brief A Monas Activity that receives the gamestate either from network interface either from buttor interfaces,
 *  publishes the gamestate ledchange messages regarding the current player state.
 */
+
+ACTIVITY_START
 class RobotController: public IActivity {
 	public:
 		/**
 		* @brief Does nothing
 		*/
-		RobotController();
+
+		ACTIVITY_VISIBLE RobotController(Blackboard &b);
 		/**
 		* @brief Activity's Execute function. Either reads new gamestate if available and checks if it is changed regarding the old one.
 		* Either read the button events ALmemory's values and changes the state.
 		* Generally if the state has been changed sends a gamestatemessage and ledchangedmessage
 		* @return 0
 		*/
-		int Execute();
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 		/**
 		* @brief Here the Activity initializes. The configuration file is being readed and a new GameController thread is created and started.
 		* Also AlMemmory proxy and event values are initialized
 		*/
-		void UserInit();
-		std::string GetName() {
+		void ACTIVITY_VISIBLE UserInit();
+		std::string ACTIVITY_VISIBLE GetName() {
 			return "RobotController";
 		}
 	private:
@@ -78,4 +81,5 @@ class RobotController: public IActivity {
 		 */
 		ConfigMessage conf;
 };
+ACTIVITY_END
 #endif

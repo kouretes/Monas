@@ -2,16 +2,14 @@
 #include "Stare.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "messages/Gamecontroller.pb.h"
-namespace {
-    ActivityRegistrar<Stare>::Type temp("Stare");
-}
 
+ACTIVITY_REGISTER(Stare);
 int Stare::Execute() {
 
 
 	Logger::Instance().WriteMsg("Stare",  " execute", Logger::Info);
-	//obsm = _blk->readSignal<ObservationMessage> ("vision");
-	wimsg = _blk->readData<WorldInfo> ("worldstate");
+	//obsm = _blk.readSignal<ObservationMessage> ("vision");
+	wimsg = _blk.readData<WorldInfo> ("worldstate");
 
 	velocityWalk(0.0, 0.0, 0.0, 1.0);
 
@@ -21,7 +19,7 @@ int Stare::Execute() {
 	headaction = BALLTRACK;
 	l->set_chain("r_ear");
 	l->set_color( "off");
-	_blk->publishSignal(leds, "leds");
+	_blk.publishSignal(leds, "leds");
 
 	if (wimsg.get()==0){
 		//Logger::Instance().WriteMsg("Approachball",  " No OBS", Logger::Info);
@@ -41,15 +39,15 @@ int Stare::Execute() {
 					fall = -1;
 			}
 			fm->set_fall(fall);
-			_blk->publishState(*fm, "behavior");
+			_blk.publishState(*fm, "behavior");
 		}
 
 	}
 
 	bhmsg->set_headaction(headaction);
-	_blk->publishSignal(*bhmsg, "behavior");
+	_blk.publishSignal(*bhmsg, "behavior");
 
-_blk->publish_all();
+_blk.publish_all();
 	return 0;
 }
 
@@ -57,8 +55,8 @@ void Stare::UserInit () {
 
 	fm = new FallMessage();
 
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	fall = 0;
 	penaltyMode = false;	   ////////an eimaste se penalty to allazoume se true!!!!!!!!!!!!!!
 	//wmot = new MotionWalkMessage();
@@ -84,7 +82,7 @@ void Stare::velocityWalk(double x, double y, double th, double f) {
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
 	wmot.set_parameter(3, f);
-	_blk->publishSignal(wmot, "motion");
+	_blk.publishSignal(wmot, "motion");
 }
 
 /*this function returns 0 when the goalkeeper shouldn't extend its foot, -1 for right foot extended and

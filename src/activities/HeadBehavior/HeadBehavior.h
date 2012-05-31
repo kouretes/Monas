@@ -1,7 +1,7 @@
 #ifndef HeadBehavior_H
 #define HeadBehavior_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "tools/BehaviorConst.h"
 #include "messages/motion.pb.h"
@@ -34,14 +34,16 @@
 #define OVERSH 0.06
 #define WAITFOR 40
 
+
+ACTIVITY_START
 class HeadBehavior: public IActivity {
 
 	public:
-		HeadBehavior();
-		int Execute();
-		void UserInit();
+        ACTIVITY_CONSTRUCTOR(HeadBehavior);
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		void ACTIVITY_VISIBLE UserInit();
 
-		std::string GetName() {
+		std::string ACTIVITY_VISIBLE GetName() {
 			return "HeadBehavior";
 		}
 
@@ -86,5 +88,6 @@ class HeadBehavior: public IActivity {
 		void headmotion(float pitch, float yaw);
 
 };
+ACTIVITY_END
 
 #endif

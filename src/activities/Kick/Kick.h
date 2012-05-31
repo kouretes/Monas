@@ -2,22 +2,25 @@
 #ifndef _Kick_h_
 #define _Kick_h_ 1
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "messages/AllMessagesHeader.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "tools/BehaviorConst.h"
 #include "tools/MathFunctions.h"
 
+
+ACTIVITY_START
 class Kick : public IActivity {
 
 public:
+    ACTIVITY_CONSTRUCTOR(Kick);
 
-	int Execute ();
+	int ACTIVITY_VISIBLE Execute ();
 
-	void UserInit ();
+	void ACTIVITY_VISIBLE UserInit ();
 
-	std::string GetName ();
+	std::string  ACTIVITY_VISIBLE GetName ();
 private:
 
 	int orientation;
@@ -32,6 +35,8 @@ private:
 
 	bool readGoalConfiguration(const std::string& file_name);
 };
+
+ACTIVITY_END
 
 #endif // _Kick_h_
 

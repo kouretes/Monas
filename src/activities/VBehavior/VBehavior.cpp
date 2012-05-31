@@ -18,21 +18,14 @@
 #include "hal/robot/generic_nao/robot_consts.h"
 
 using namespace boost::posix_time;
+ACTIVITY_REGISTER(VBehavior);
 
-
-namespace {
-	ActivityRegistrar<VBehavior>::Type temp("VBehavior");
-}
 using namespace std;
-
-VBehavior::VBehavior()        {
-}
-
 void VBehavior::UserInit() {
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	//wmot->set_topic("motion");
@@ -100,7 +93,7 @@ int VBehavior::MakeTrackBallAction() {
 		hmot->set_command("setHead");
         hmot->set_parameter(0, bmsg->referenceyaw());
 		hmot->set_parameter(1,  bmsg->referencepitch());
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		cout<<"Track step"<<endl;
 	//}
 	return 1;
@@ -285,7 +278,7 @@ int VBehavior::Execute() {
 				amot->set_command("KickForwardRight.xar"); //"KickSideRightFast.xar"
 				direction = +1;
 			}
-			_blk->publishSignal(*amot, "motion");
+			_blk.publishSignal(*amot, "motion");
 
 			kickoff = false;
 
@@ -348,7 +341,7 @@ void VBehavior::HeadScanStep() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		waiting=0;
 
 		startscan=false;
@@ -390,7 +383,7 @@ void VBehavior::HeadScanStep() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 
 	}
 	return ;
@@ -405,16 +398,16 @@ void VBehavior::read_messages() {
 	//if (obsm != 0) delete obsm;
 	//if (om != 0) delete om;
 
-	gsm  = _blk->readState<GameStateMessage> ("worldstate");
-	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	//obsm = _blk->readSignal<ObservationMessage> ("vision");
-	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
-	wim  = _blk->readData<WorldInfo> ("worldstate");
+	gsm  = _blk.readState<GameStateMessage> ("worldstate");
+	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	//obsm = _blk.readSignal<ObservationMessage> ("vision");
+	om   = _blk.readSignal<ObstacleMessage> ("obstacle");
+	wim  = _blk.readData<WorldInfo> ("worldstate");
 
 
 	Logger::Instance().WriteMsg("VBehavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
+	boost::shared_ptr<const CalibrateCam> c= _blk.readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1)
 			calibrated = 2;
@@ -449,7 +442,7 @@ void VBehavior::velocityWalk(double x, double y, double th, double f)
 	wmot->set_parameter(1, cY);
 	wmot->set_parameter(2, cth);
 	wmot->set_parameter(3, f);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 }
 
 void VBehavior::littleWalk(double x, double y, double th)
@@ -458,14 +451,14 @@ void VBehavior::littleWalk(double x, double y, double th)
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 }
 
 void VBehavior::calibrate()
 {
 	CalibrateCam v;
 	v.set_status(0);
-	_blk->publishState(v, "vision");
+	_blk.publishState(v, "vision");
 	calibrated = 1;
 }
 /*

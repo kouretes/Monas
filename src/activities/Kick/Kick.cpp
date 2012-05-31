@@ -1,22 +1,19 @@
 
 #include "Kick.h"
 
-namespace {
-    ActivityRegistrar<Kick>::Type temp("Kick");
-}
-
+ACTIVITY_REGISTER(Kick);
 
 int Kick::Execute() {
 	Logger::Instance().WriteMsg(GetName(),  " execute", Logger::Info);
 
-	gsm = _blk->readState<GameStateMessage>("worldstate");
-	wimsg  = _blk->readData<WorldInfo>("worldstate");
-	
+	gsm = _blk.readState<GameStateMessage>("worldstate");
+	wimsg  = _blk.readData<WorldInfo>("worldstate");
+
 	if(!readConf)
 		readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() +"/Features.xml");
 //#ifdef RETURN_TO_POSITION
 		//rpm->set_goalietopos(true);
-		//_blk->publishSignal(*rpm, "behavior");
+		//_blk.publishSignal(*rpm, "behavior");
 //#endif
 
 	if(gsm!=0 && gsm->game_state()!=PLAYER_PLAYING){
@@ -35,7 +32,7 @@ int Kick::Execute() {
 			amot->set_command("KickForwardLeft.xar"); //LeftKick
 		else
 			amot->set_command("KickForwardRight.xar"); //RightKick
-		_blk->publishSignal(*amot, "motion");
+		_blk.publishSignal(*amot, "motion");
 		return 0;
 	#endif
 	if(gsm.get()!=0 && gsm->team_color()==TEAM_RED){
@@ -84,14 +81,14 @@ int Kick::Execute() {
 		else
 			amot->set_command("KickSideRightStable.xar");
 	}
-	_blk->publishSignal(*amot, "motion");
-	_blk->publish_all();
+	_blk.publishSignal(*amot, "motion");
+	_blk.publish_all();
 	return 0;
 }
 
 void Kick::UserInit () {
-	
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	amot = new MotionActionMessage();
 	rpm = new ReturnToPositionMessage();

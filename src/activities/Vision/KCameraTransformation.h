@@ -4,14 +4,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
-#ifdef __GNUC__
-#pragma GCC visibility push(hidden)
-#define VISIBLE __attribute__ ((visibility("default")))
-#else
-#define VISIBLE
-#endif
 
 #include "tools/KMat.h"
+
 
 
 #define sqrd(x) ( (x)*(x) )
@@ -106,11 +101,5 @@ private:
 	AL::ALPtr<AL::ALMotionProxy> motion;
 
 };
-
-
-#ifdef __GNUC__
-#pragma GCC visibility pop
-#endif
-
 
 #endif

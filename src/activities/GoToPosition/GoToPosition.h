@@ -2,7 +2,7 @@
 #ifndef _GoToPosition_h_
 #define _GoToPosition_h_ 1
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/BehaviorMessages.pb.h"
@@ -20,19 +20,19 @@
 
 using namespace boost::posix_time;
 
-		
+ACTIVITY_START
 class GoToPosition : public IActivity {
-			
+
 public:
-	
-	int Execute ();
-	
-	void UserInit ();
-	
-	std::string GetName ();
-	
-	
-	
+    ACTIVITY_CONSTRUCTOR(GoToPosition);
+	int ACTIVITY_VISIBLE Execute ();
+
+	void ACTIVITY_VISIBLE UserInit ();
+
+	std::string ACTIVITY_VISIBLE GetName ();
+
+
+
 private:
 	boost::shared_ptr<const PositionMessage> pm;
 	boost::shared_ptr<const WorldInfo> wimsg;
@@ -51,7 +51,7 @@ private:
 	int headaction;
 	ptime lastMove, lastObsm;
 	void velocityWalk( double x, double y, double th, double f);
-	void littleWalk(double x, double y, double th);	
+	void littleWalk(double x, double y, double th);
 	////////////////////////////////////////
 	float distance(float x1, float x2, float y1, float y2);
 
@@ -59,6 +59,7 @@ private:
 	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
 
 };
+ACTIVITY_END
 
 #endif // _GoToPosition_h_
-	
+

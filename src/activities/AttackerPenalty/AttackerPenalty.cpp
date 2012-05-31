@@ -6,16 +6,12 @@
 #include "messages/RoboCupGameControlData.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 
+
+ACTIVITY_REGISTER(AttackerPenalty);
 using namespace boost::posix_time;
-namespace {
-	ActivityRegistrar<AttackerPenalty>::Type temp("AttackerPenalty");
-}
+
+
 using namespace std;
-
-AttackerPenalty::AttackerPenalty() {
-
-}
-
 double mglRand()
 {
     //return rand() / double(RAND_MAX);
@@ -28,10 +24,10 @@ double mglRand()
 void AttackerPenalty::UserInit() {
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 
 	wmot = new MotionWalkMessage();
@@ -189,15 +185,15 @@ int AttackerPenalty::Execute() {
 
 void AttackerPenalty::read_messages()
 {
-	gsm  = _blk->readState<GameStateMessage> ("worldstate");
-	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	om   = _blk->readState<ObstacleMessageArray> ("obstacle");
-	wim  = _blk->readData<WorldInfo> ("worldstate");
-	msm  = _blk->readState<MotionStateMessage> ("worldstate");
+	gsm  = _blk.readState<GameStateMessage> ("worldstate");
+	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
+	wim  = _blk.readData<WorldInfo> ("worldstate");
+	msm  = _blk.readState<MotionStateMessage> ("worldstate");
 
 	//Logger::Instance().WriteMsg("AttackerPenalty", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
+	boost::shared_ptr<const CalibrateCam> c= _blk.readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1)
 			calibrated = 2;
@@ -219,7 +215,7 @@ void AttackerPenalty::GetGameState()
 			if (prevGameState == PLAYER_PENALISED){
 				direction = 1;
 				calibrated = 0;
-				_blk->publishSignal(*locReset, "behavior");
+				_blk.publishSignal(*locReset, "behavior");
 			}
 			if (prevGameState == PLAYER_SET)
 				lastplay = microsec_clock::universal_time();
@@ -229,7 +225,7 @@ void AttackerPenalty::GetGameState()
 			if(msm.get() != 0 && (msm->lastaction()).compare("InitPose.xar")){
 				firstShoot = false;
 				amot->set_command("InitPose.xar");
-				_blk->publishSignal(*amot, "motion");
+				_blk.publishSignal(*amot, "motion");
 			}
 		}
 		else if (gameState == PLAYER_FINISHED) {
@@ -343,7 +339,7 @@ int AttackerPenalty::MakeTrackBallAction() {
 	hmot->set_command("setHead");
 	hmot->set_parameter(0, bmsg->referenceyaw());
 	hmot->set_parameter(1,  bmsg->referencepitch());
-	_blk->publishSignal(*hmot, "motion");
+	_blk.publishSignal(*hmot, "motion");
 
 	return 1;
 }
@@ -372,7 +368,7 @@ void AttackerPenalty::HeadScanStepRaster() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		waiting = 0;
 		startscan = false;
 		return;
@@ -401,7 +397,7 @@ void AttackerPenalty::HeadScanStepRaster() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 	}
 	return;
 }
@@ -422,7 +418,7 @@ void AttackerPenalty::HeadScanStepHigh(float yaw_limit) {
 	else
 		hmot->set_parameter(1, (-0.0698 * (fabs(headpos) - 1.57)) - 0.52);
 
-	_blk->publishSignal(*hmot, "motion");
+	_blk.publishSignal(*hmot, "motion");
 }
 
 
@@ -458,7 +454,7 @@ void AttackerPenalty::HeadScanStepSmart() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		waiting = 0;
 		startscan = false;
 		return;
@@ -527,7 +523,7 @@ void AttackerPenalty::HeadScanStepSmart() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 	}
 	return;
 }
@@ -574,7 +570,7 @@ void AttackerPenalty::HeadScanStepIntelligent() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 
 		switch (state) {
 			case BALL1:
@@ -625,7 +621,7 @@ void AttackerPenalty::Kick(int side) {
 	else
 		amot->set_command("KickForwardRight.xar"); //RightKick
 
-	_blk->publishSignal(*amot, "motion");
+	_blk.publishSignal(*amot, "motion");
 }
 
 
@@ -688,7 +684,7 @@ void AttackerPenalty::velocityWalk(double ix, double iy, double it, double f)
 	wmot->set_parameter(1, cY);
 	wmot->set_parameter(2, ct);
 	wmot->set_parameter(3, f);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 	lastwalk = microsec_clock::universal_time();
 }
 
@@ -699,7 +695,7 @@ void AttackerPenalty::littleWalk(double x, double y, double th)
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 }
 
 
@@ -768,7 +764,7 @@ void AttackerPenalty::calibrate()
 {
 	CalibrateCam v;
 	v.set_status(0);
-	_blk->publishState(v, "vision");
+	_blk.publishState(v, "vision");
 	calibrated = 1;
 }
 
@@ -970,7 +966,7 @@ void AttackerPenalty::test() {
 					if ( (t > 2.0) && (t < 5.0) ) {
 						Logger::Instance().WriteMsg("AttackerPenalty",  "OP: Openchallenge FTW!!!!!!!!!!!!!! ", Logger::Info);
 						amot->set_command("KickForwardRightFast.xar");
-						_blk->publishSignal(*amot, "motion");
+						_blk.publishSignal(*amot, "motion");
 					}
 				}
 			}

@@ -7,28 +7,25 @@ using namespace std;
 
 //#define UNNEEDED
 
-namespace {
-	ActivityRegistrar<Drain>::Type drainreg("Drain");
-}
 
-namespace {
-	ActivityRegistrar<Pipe>::Type pipereg("Pipe");
-}
+ACTIVITY_REGISTER(Drain);
+
+ACTIVITY_REGISTER(Pipe);
 
 
 int Drain::Execute()
 {
 	KPROF_SCOPE(p,Drain::Execute());
 
-	boost::shared_ptr<const KnownHosts> h= _blk->readState<KnownHosts>("communication");
+	boost::shared_ptr<const KnownHosts> h= _blk.readState<KnownHosts>("communication");
 	if(!h.get()||(h&&h->entrylist_size()==0))
 	{
-		boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication");
+		boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication");
 		if(drop==NULL)
 			return 0;
 		TestMessage newdrop;//.CopyFrom(drop);
 		newdrop.set_counter(drop->counter()-1);
-		_blk->publishSignal(newdrop,"communication");
+		_blk.publishSignal(newdrop,"communication");
 		cout<<"Drop reduced to:"<<newdrop.counter()<<endl;
 
 
@@ -41,12 +38,12 @@ int Drain::Execute()
 
 		for(fit=rf.begin();fit!=rf.end();++fit)
 		{
-			boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication",(*fit).hostid());
+			boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication",(*fit).hostid());
 			if(drop==NULL)
 				continue;
 			TestMessage newdrop;//.CopyFrom(drop);
 			newdrop.set_counter(drop->counter()-1);
-			_blk->publishSignal(newdrop,"communication");
+			_blk.publishSignal(newdrop,"communication");
 			cout<<"Drop reduced to:"<<newdrop.counter()<<endl;
 
 		}
@@ -65,7 +62,7 @@ int Drain::Execute()
 void Drain::UserInit()
 {
 	cout<<"Hey!"<<endl;
-	_blk->updateSubscription("communication",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("communication",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 }
 
 
@@ -74,18 +71,18 @@ int Pipe::Execute()
 {
 	KPROF_SCOPE(p,Pipe::Execute());
 
-	boost::shared_ptr<const KnownHosts> h= _blk->readState<KnownHosts>("communication");
+	boost::shared_ptr<const KnownHosts> h= _blk.readState<KnownHosts>("communication");
 
 	if(!h.get()||(h&&h->entrylist_size()==0))
 	{
 		std::cout<<"Local"<<std::endl;
-		boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication");
+		boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication");
 		TestMessage newdrop;//.CopyFrom(drop);
 		if(drop!=NULL)
 			newdrop.set_counter(drop->counter()+1);
 		else
 			newdrop.set_counter(1);
-		_blk->publishSignal(newdrop,"communication");
+		_blk.publishSignal(newdrop,"communication");
 		cout<<"New drop to:"<<newdrop.counter()<<endl;
 	}
 	else
@@ -98,13 +95,13 @@ int Pipe::Execute()
 			std::cout<<"Readingfromhost:"<<(*fit).hostid()<<std::endl;
 
 
-			boost::shared_ptr<const TestMessage> drop= _blk->readSignal<TestMessage>("communication",(*fit).hostid());
+			boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication",(*fit).hostid());
 			TestMessage newdrop;//.CopyFrom(drop);
 			if(drop!=NULL)
 				newdrop.set_counter(drop->counter()+1);
 			else
 				newdrop.set_counter(1);
-			_blk->publishSignal(newdrop,"communication");
+			_blk.publishSignal(newdrop,"communication");
 			cout<<"New drop to:"<<newdrop.counter()<<endl;
 
 		}
@@ -121,5 +118,5 @@ int Pipe::Execute()
 void Pipe::UserInit()
 {
 	cout<<"Hey!"<<endl;
-	_blk->updateSubscription("communication",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("communication",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 }

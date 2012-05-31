@@ -1,7 +1,7 @@
 #ifndef ATTACKERPENALTY_H
 #define ATTACKERPENALTY_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -32,15 +32,16 @@
 #define OVERSH 0.08
 #define WAITFOR 40
 
+ACTIVITY_START
 class AttackerPenalty: public IActivity {
 
 	public:
-		AttackerPenalty();
-		std::string GetName() {
+		ACTIVITY_CONSTRUCTOR(AttackerPenalty);
+		std::string ACTIVITY_VISIBLE GetName() {
 			return "AttackerPenalty";
 		}
-		void UserInit();
-		int Execute();
+		void ACTIVITY_VISIBLE UserInit();
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 		void read_messages();
 
@@ -131,5 +132,7 @@ class AttackerPenalty: public IActivity {
 		bool firstShoot;
 		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, ballseen;
 };
+
+ACTIVITY_END
 
 #endif

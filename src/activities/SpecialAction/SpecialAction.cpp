@@ -2,16 +2,16 @@
 #include "SpecialAction.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "messages/Gamecontroller.pb.h"
-namespace {
-    ActivityRegistrar<SpecialAction>::Type temp("SpecialAction");
-}
+
+
+ACTIVITY_REGISTER(SpecialAction);
 
 int SpecialAction::Execute() {
 
 	Logger::Instance().WriteMsg("SpecialAction",  " execute" + to_simple_string(boost::posix_time::microsec_clock::universal_time()) , Logger::Info);
-	
+
 	//Stare st;
-	fm = _blk->readState<FallMessage>("behavior");
+	fm = _blk.readState<FallMessage>("behavior");
 	LedChangeMessage leds;
 	//if (st.toFallOrNotToFall(obs) ==-1)
 	LedValues* l = leds.add_leds();
@@ -26,23 +26,23 @@ int SpecialAction::Execute() {
 		l->set_color( "blue");
 		amot->set_command("goalieRight2.xar");
 	}
-	_blk->publishSignal(*amot, "motion");
+	_blk.publishSignal(*amot, "motion");
 
 	bhm->set_headaction(BALLTRACK);
-	_blk->publishSignal(*bhm, "behavior");
-	_blk->publishSignal(leds, "leds");
+	_blk.publishSignal(*bhm, "behavior");
+	_blk.publishSignal(leds, "leds");
 	//rpm->set_goalietopos(true);
-	//_blk->publishSignal(*rpm, "behavior");
+	//_blk.publishSignal(*rpm, "behavior");
 	//sleep(2);
 	FallMessage fl;
 	fl.set_fall(0);
-	_blk->publishState(fl, "behavior");
-	_blk->publish_all();
+	_blk.publishState(fl, "behavior");
+	_blk.publish_all();
 	return 0;
 }
 
 void SpecialAction::UserInit () {
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	amot = new MotionActionMessage();
 	bhm = new BToHeadMessage();
 	rpm = new ReturnToPositionMessage();

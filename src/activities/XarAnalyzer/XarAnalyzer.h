@@ -1,7 +1,7 @@
 #ifndef XARANALYZER_H
 #define XARANALYZER_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -32,27 +32,29 @@
 #define TO_RAD 0.01745329f
 #endif
 
+
+ACTIVITY_START
 class XarAnalyzer: public IActivity {
 
 	public:
-		XarAnalyzer();
-		std::string GetName() {
+		ACTIVITY_CONSTRUCTOR(XarAnalyzer))
+		std::string ACTIVITY_VISIBLE GetName() {
 			return "XarAnalyzer";
 		}
-		void UserInit();
-		int Execute();		
-		void read_messages();		
+		void ACTIVITY_VISIBLE UserInit();
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		void read_messages();
 
 	private:
 
 		/* Incoming Messages */
 		boost::shared_ptr<const AllSensorValuesMessage> allsm;
 		boost::shared_ptr<const GameStateMessage>  gsm;
-		
+
 		/* Outgoing Messages */
 		MotionWalkMessage* wmot;
 		MotionActionMessage* amot;
-		
+
 		void velocityWalk(double x, double y, double th, double f);
 		void createKmeFile();
 		float angleStore [ACTION_TIME*XarAnalyzerFPS][JOINTS];
@@ -61,5 +63,8 @@ class XarAnalyzer: public IActivity {
 		int gameState;
 		bool play;
 };
+
+ACTIVITY_END
+
 
 #endif

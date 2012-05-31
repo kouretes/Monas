@@ -21,13 +21,8 @@
 using namespace boost::posix_time;
 
 
-namespace {
-	ActivityRegistrar<LBehavior>::Type temp("LBehavior");
-}
 using namespace std;
-
-LBehavior::LBehavior()        {
-}
+ACTIVITY_REGISTER(LBehavior);
 
 double wrapToPi(double angle)
 {
@@ -67,10 +62,10 @@ double anglediff(double a1, double a2)
 
 
 void LBehavior::UserInit() {
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot = new MotionWalkMessage();
 	//wmot->set_topic("motion");
@@ -156,7 +151,7 @@ int LBehavior::MakeTrackBallAction() {
 		hmot->set_command("setHead");
         hmot->set_parameter(0, bmsg->referenceyaw());
 		hmot->set_parameter(1,  bmsg->referencepitch());
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		cout<<"Track step"<<endl;
 	//}
 	return 1;
@@ -193,9 +188,9 @@ int LBehavior::Execute() {
 			}
 			else */
 			if (calibrated == 0) {
-				scanForGoals = true;				
+				scanForGoals = true;
 				amot->set_command("locScan.xar");
-				_blk->publishSignal(*amot,"motion");
+				_blk.publishSignal(*amot,"motion");
 				calibrate();
 				step = -1;
 			}
@@ -240,7 +235,7 @@ int LBehavior::Execute() {
 			step = -1;
 			scanForGoals = true;
 			calibrated = 0;
-			_blk->publishSignal(*locReset, "worldstate");
+			_blk.publishSignal(*locReset, "worldstate");
 			//calibrate();
 			velocityWalk(0.0,0.0,0.0,1);
 
@@ -253,7 +248,7 @@ int LBehavior::Execute() {
 		}
 		else if (calibrated == 0) {
 			amot->set_command("locScan.xar");
-			_blk->publishSignal(*amot,"motion");
+			_blk.publishSignal(*amot,"motion");
 			scanForGoals = true;
 			calibrate();
 			step = -1;
@@ -261,11 +256,11 @@ int LBehavior::Execute() {
 			if(step == -1){
 				timeStart = boost::posix_time::microsec_clock::universal_time();
 				step = 0;
-				ScanForGoalposts(step);				
+				ScanForGoalposts(step);
 			}else{
 				timeStop = boost::posix_time::microsec_clock::universal_time();
 				if(timeStop-timeStart >= boost::posix_time::seconds(3.0)){
-					step++;	
+					step++;
 					timeStart = boost::posix_time::microsec_clock::universal_time();
 					if(step <= 4)
 						ScanForGoalposts(step);
@@ -378,7 +373,7 @@ int LBehavior::Execute() {
 				amot->set_command("KickForwardRight.xar"); //"KickSideRightFast.xar"
 				direction = +1;
 			}
-			_blk->publishSignal(*amot, "motion");
+			_blk.publishSignal(*amot, "motion");
 
 			kickoff = false;
 
@@ -414,12 +409,12 @@ void LBehavior::ScanForGoalposts(int step){
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, -0.972598);
 		hmot->set_parameter(1, -0.504728);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 	}else{
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, 0.972598);
 		hmot->set_parameter(1, -0.504728);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 	}
 }
 
@@ -460,7 +455,7 @@ void LBehavior::HeadScanStep() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 		waiting=0;
 
 		startscan=false;
@@ -539,7 +534,7 @@ void LBehavior::HeadScanStep() {
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 
 	}
 	return ;
@@ -554,16 +549,16 @@ void LBehavior::read_messages() {
 	//if (obsm != 0) delete obsm;
 	//if (om != 0) delete om;
 
-	gsm  = _blk->readState<GameStateMessage> ("worldstate");
-	bmsg = _blk->readSignal<BallTrackMessage> ("vision");
-	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
-	//obsm = _blk->readSignal<ObservationMessage> ("vision");
-	wim  = _blk->readData<WorldInfo> ("worldstate",msgentry::HOST_ID_LOCAL_HOST,&wimtime);
-	om   = _blk->readSignal<ObstacleMessage> ("obstacle");
+	gsm  = _blk.readState<GameStateMessage> ("worldstate");
+	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	//obsm = _blk.readSignal<ObservationMessage> ("vision");
+	wim  = _blk.readData<WorldInfo> ("worldstate",msgentry::HOST_ID_LOCAL_HOST,&wimtime);
+	om   = _blk.readSignal<ObstacleMessage> ("obstacle");
 
 
 	//Logger::Instance().WriteMsg("LBehavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c= _blk->readState<CalibrateCam> ("vision");
+	boost::shared_ptr<const CalibrateCam> c= _blk.readState<CalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1 && calibrated != 0)
 			calibrated = 2;
@@ -607,7 +602,7 @@ void LBehavior::velocityWalk(double ix, double iy, double it, double f)
 	wmot->set_parameter(1, cY);
 	wmot->set_parameter(2, ct);
 	wmot->set_parameter(3, f);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 	lastwalk = microsec_clock::universal_time();
 }
 
@@ -618,14 +613,14 @@ void LBehavior::littleWalk(double x, double y, double th)
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
 	wmot->set_parameter(2, th);
-	_blk->publishSignal(*wmot, "motion");
+	_blk.publishSignal(*wmot, "motion");
 }
 
 void LBehavior::calibrate()
 {
 	CalibrateCam v;
 	v.set_status(0);
-	_blk->publishState(v, "vision");
+	_blk.publishState(v, "vision");
 	calibrated = 1;
 }
 /*
@@ -757,7 +752,7 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 			hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
 		else
 			hmot->set_parameter(1, (-0.0698 * (fabs(headpos)-1.57)) - 0.52);
-		_blk->publishSignal(*hmot, "motion");
+		_blk.publishSignal(*hmot, "motion");
 
 	}
 
@@ -766,11 +761,11 @@ void LBehavior::gotoPosition(float target_x,float target_y, float target_phi)
 //			if (count % 100 == 0)
 //			{
 //				bhmsg->set_headaction(SCANFORBALL);
-//				_blk->publishState(*bhmsg, "behavior");
+//				_blk.publishState(*bhmsg, "behavior");
 //			} else
 //			{
 //				bhmsg->set_headaction(SCANFORPOST);
-//				_blk->publishState(*bhmsg, "behavior");
+//				_blk.publishState(*bhmsg, "behavior");
 //			}
 //
 //	}

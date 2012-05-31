@@ -1,7 +1,7 @@
 #ifndef Localization_H
 #define Localization_H
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
@@ -17,24 +17,26 @@
 #include "PracticalSocket.h"
 #include <string>
 
+
+ACTIVITY_START
 class Localization: public IActivity, public KLocalization
 {
 
 public:
-	Localization();
-	~Localization()
+	ACTIVITY_VISIBLE Localization(Blackboard &b);
+	ACTIVITY_VISIBLE ~Localization()
 	{
 		if (serverpid != -1)
 			pthread_cancel(serverpid);
 		delete sock;
 	}
-	int Execute();
-	void UserInit();
+	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	void ACTIVITY_VISIBLE UserInit();
 	void Reset(int,bool);
 	void process_messages();
 	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations, double rangemaxleft, double rangemaxright);
 	void RobotPositionMotionModel(KMotionModel & MModel);
-	std::string GetName()
+	std::string ACTIVITY_VISIBLE GetName()
 	{
 		return "Localization";
 	}
@@ -86,7 +88,7 @@ private:
 	bool firstrun;
 	MotionStateMessage::ActionType currentRobotAction;
 	bool fallBegan;
-	
+
 	boost::posix_time::ptime last_observation_time;
 	boost::posix_time::ptime last_filter_time;
 	boost::posix_time::ptime now;
@@ -110,5 +112,5 @@ private:
 	char *data;
 
 };
-
+ACTIVITY_END
 #endif

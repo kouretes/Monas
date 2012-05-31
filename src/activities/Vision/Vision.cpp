@@ -27,14 +27,9 @@ namespace
 {
 	ActivityRegistrar<Vision>::Type temp("Vision");
 }
+ACTIVITY_REGISTER(Vision);
 
-#ifdef __GNUC__
-#pragma GCC visibility push(hidden)
-#define VISIBLE __attribute__ ((visibility("default")))
-#else
-#define VISIBLE
-#endif
-
+ACTIVITY_START
 
 bool Vision::debugmode = false;
 TCPSocket * Vision::sock;
@@ -81,17 +76,17 @@ void saveFrame(IplImage *fIplImageHeader)
 
 }
 
-int VISIBLE Vision::Execute()
+int  Vision::Execute()
 {
 	//cout<<"Vision Execute"<<endl;
-	boost::shared_ptr<const CalibrateCam> cal = _blk->readState<CalibrateCam> ("vision");
+	boost::shared_ptr<const CalibrateCam> cal = _blk.readState<CalibrateCam> ("vision");
 	//if (cal == NULL)
 	//{
 		//CalibrateCam res;
 		//res.set_status(0);
-		//_blk->publishState(res, "vision");
+		//_blk.publishState(res, "vision");
 		//cout<<"---------Start calibration:"<<res.status()<<endl;
-		//cal = _blk->readState<CalibrateCam> ("vision");
+		//cal = _blk.readState<CalibrateCam> ("vision");
 	//}
 	if (cal != NULL)
 	{
@@ -107,7 +102,7 @@ int VISIBLE Vision::Execute()
 			//cout<<"Calibration Done!"<<endl;
 			res.set_status(1);
 			res.set_exposure_comp(scale);
-			_blk->publishState(res, "vision");
+			_blk.publishState(res, "vision");
 
 		}
 	}
@@ -229,7 +224,7 @@ void Vision::recv_and_send()
 			CalibrateCam res;
 			res.set_status(0);
 			res.set_exp(100000);
-			_blk->publishState(res, "vision");
+			_blk.publishState(res, "vision");
 
 		}
 		else if (command == "Calibration")
@@ -237,7 +232,7 @@ void Vision::recv_and_send()
 			CalibrateCam res;
 			res.set_status(0);
 			//res.set_exp(100000);
-			_blk->publishState(res, "vision");
+			_blk.publishState(res, "vision");
 
 		}
 
@@ -419,8 +414,8 @@ void Vision::fetchAndProcess()
 	//saveFrame(rawImage);
 	//return;
 	//cout<<"Attached"<<endl;
-	asvmo = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,&timeo, &stamp,Blackboard::DATA_NEAREST_NOTNEWER);
-	asvmn = _blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timen, &stamp,Blackboard::DATA_NEAREST_NOTOLDER);
+	asvmo = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,&timeo, &stamp,Blackboard::DATA_NEAREST_NOTNEWER);
+	asvmn = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timen, &stamp,Blackboard::DATA_NEAREST_NOTOLDER);
 
 #ifdef DEBUGVISION
 	cout << "ImageTimestamp:"<< boost::posix_time::to_iso_string(stamp) << endl;
@@ -428,7 +423,7 @@ void Vision::fetchAndProcess()
 	cout << "SensorTimestamp:"<< boost::posix_time::to_iso_string(timeo) <<","<< boost::posix_time::to_iso_string(timen) << endl;
 
 //	boost::posix_time::ptime t;
-//	_blk->readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &t);
+//	_blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &t);
 //	cout << "Lasttimestamp:"<< boost::posix_time::to_iso_string(t) << endl;
 #endif
 
@@ -612,17 +607,17 @@ void Vision::fetchAndProcess()
 		l->set_color("black");
 
 	}
-	_blk->publishSignal(trckmsg, "vision");
-	_blk->publishSignal(leds, "leds");
+	_blk.publishSignal(trckmsg, "vision");
+	_blk.publishSignal(leds, "leds");
 
 	if (obs.has_ball() || obs.regular_objects_size() > 0 || obs.adhoc_objects_size() > 0 || obs.corner_objects_size() > 0 || obs.intersection_objects_size() > 0
 			|| obs.line_objects_size() > 0)
-		_blk->publishSignal(obs, "vision");
+		_blk.publishSignal(obs, "vision");
 
 }
 
-VISIBLE Vision::Vision() :
-	xmlconfig(NULL), vprof("Vision"),type(VISION_CSPACE)
+Vision::Vision(Blackboard &b) :
+	IActivity(b), xmlconfig(NULL), vprof("Vision"),type(VISION_CSPACE)
 {
 	debugmode = false;
 
@@ -631,7 +626,7 @@ VISIBLE Vision::Vision() :
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 }
 
-void VISIBLE Vision::UserInit()
+void Vision::UserInit()
 {
 #ifdef CAPTURE_MODE
 	frameNo=0;
@@ -640,7 +635,7 @@ void VISIBLE Vision::UserInit()
 	if (xmlconfig->IsLoadedSuccessfully() == false)
 		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
 
-	ext.Init(_blk);
+	ext.Init(&_blk);
 	kinext.Init();
 	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
 	//cout << "Vision():" ;//<< endl;
@@ -665,10 +660,8 @@ void VISIBLE Vision::UserInit()
 
 
 
-	//_com->get_message_queue()->add_subscriber(_blk);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	//_com->get_message_queue()->add_publisher(this);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	debugmode = false;
 
@@ -758,7 +751,7 @@ void Vision::publishObstacles(std::vector<KVecInt2> points) const
 		 */
 
 	}
-	_blk->publishSignal(result, "obstacle");
+	_blk.publishSignal(result, "obstacle");
 
 }
 
@@ -861,7 +854,4 @@ void * Vision::StartServer(void * s)
 
 	return NULL;
 }
-
-#ifdef __GNUC__
-#pragma GCC visibility pop
-#endif
+ACTIVITY_END

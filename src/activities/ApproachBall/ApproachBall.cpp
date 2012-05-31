@@ -7,21 +7,20 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
 
-namespace {
-    ActivityRegistrar<ApproachBall>::Type temp("ApproachBall");
-}
+
+ACTIVITY_REGISTER(ApproachBall);
 
 int ApproachBall::Execute() {
 
 	Logger::Instance().WriteMsg("ApproachBall",  " Execute", Logger::Info);
 
-	obsm = _blk->readSignal<ObservationMessage> ("vision");
-	wimsg = _blk->readData<WorldInfo> ("worldstate");
+	obsm = _blk.readSignal<ObservationMessage> ("vision");
+	wimsg = _blk.readData<WorldInfo> ("worldstate");
 
 	float bd = 0.0, bx = 0.0, by = 0.0, bb = 0.0;
 
 	headaction = BALLTRACK;
-	
+
 	int side = 1;
 	if(wimsg&&wimsg->balls_size()>0){
 	   bx = wimsg->balls(0).relativex();
@@ -64,14 +63,14 @@ int ApproachBall::Execute() {
 		lastMove = boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(400);
 	}
 	bhmsg->set_headaction(headaction);
-	_blk->publishSignal(*bhmsg, "behavior");
+	_blk.publishSignal(*bhmsg, "behavior");
 
 //#ifdef RETURN_TO_POSITION
 		//rpm->set_goalietopos(true);
-		//_blk->publishSignal(*rpm, "behavior");
+		//_blk.publishSignal(*rpm, "behavior");
 //#endif
 
-_blk->publish_all();
+_blk.publish_all();
 	return 0;
 }
 
@@ -79,9 +78,9 @@ void ApproachBall::UserInit () {
 	rcvObsm = boost::posix_time::microsec_clock::universal_time()-boost::posix_time::hours(1);
 	lastMove = boost::posix_time::microsec_clock::universal_time()-boost::posix_time::hours(1);
 
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
 
 	wmot.add_parameter(0.0f);
@@ -106,7 +105,7 @@ void ApproachBall::velocityWalk(double x, double y, double th, double f) {
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
 	wmot.set_parameter(3, f);
-	_blk->publishSignal(wmot, "motion");
+	_blk.publishSignal(wmot, "motion");
 }
 
 void ApproachBall::littleWalk(double x, double y, double th) {
@@ -115,6 +114,6 @@ void ApproachBall::littleWalk(double x, double y, double th) {
 	wmot.set_parameter(0, x);
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
-	_blk->publishSignal(wmot, "motion");
+	_blk.publishSignal(wmot, "motion");
 }
 

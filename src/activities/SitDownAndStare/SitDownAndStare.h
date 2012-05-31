@@ -2,24 +2,25 @@
 #ifndef _SitDownAndStare_h_
 #define _SitDownAndStare_h_ 1
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/motion.pb.h"
-#include "messages/BehaviorMessages.pb.h"		
+#include "messages/BehaviorMessages.pb.h"
 #include "tools/BehaviorConst.h"
 
-
+ACTIVITY_START
 class SitDownAndStare : public IActivity {
-			
+
 public:
-	
-	int Execute ();
-	
-	void UserInit ();
-	
-	std::string GetName ();
-	
+    ACTIVITY_CONSTRUCTOR(SitDownAndStare)
+
+	int ACTIVITY_VISIBLE Execute ();
+
+	void ACTIVITY_VISIBLE UserInit ();
+
+	std::string ACTIVITY_VISIBLE GetName ();
+
 private:
 	BToHeadMessage* bhmsg;
 	MotionActionMessage* amot;
@@ -29,6 +30,6 @@ private:
 	int headaction;
 
 };
-
+ACTIVITY_END
 #endif // _SitDownAndStare_h_
-	
+

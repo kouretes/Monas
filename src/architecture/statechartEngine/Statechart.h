@@ -12,7 +12,7 @@
 
 namespace statechart_engine {
 
-    class Statechart: public statechart_engine::OrState, private KSystem::Thread {
+    class Statechart:  public statechart_engine::OrState, private KSystem::Thread {
 
         public:
 
@@ -30,7 +30,7 @@ namespace statechart_engine {
 
             void Stop ();
 
-            int Execute();
+            int IEX_DIRECTIVE_HOT Execute();
 
            void AtomicNotify ();
 

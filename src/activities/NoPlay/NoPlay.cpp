@@ -8,18 +8,17 @@
 #include "messages/RoboCupGameControlData.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-namespace {
-    ActivityRegistrar<NoPlay>::Type temp("NoPlay");
-}
+
+ACTIVITY_REGISTER(NoPlay);
 using namespace std;
 
 int NoPlay::Execute() {
 
 	Logger::Instance().WriteMsg(GetName(),  " Execute", Logger::Info);
 
-	gsm = _blk->readState<GameStateMessage> ("worldstate");
-	msm = _blk->readState<MotionStateMessage> ("worldstate");
-	
+	gsm = _blk.readState<GameStateMessage> ("worldstate");
+	msm = _blk.readState<MotionStateMessage> ("worldstate");
+
 	if(!readConf)
 		readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	if(gsm.get()==0 ){
@@ -32,15 +31,15 @@ int NoPlay::Execute() {
 			//bhmsg->set_headaction(DONOTHING);
 		//}
 		prevaction = curraction;
-		_blk->publishSignal(*bhmsg, "behavior");
-		_blk->publish_all();
+		_blk.publishSignal(*bhmsg, "behavior");
+		_blk.publish_all();
 		//Logger::Instance().WriteMsg(GetName(),  " bgainw", Logger::Info);
 		return 0;
 
 	}else if(gsm->player_state()==PLAYER_PLAYING){
 	//	cal = false;
 	//	Logger::Instance().WriteMsg(GetName(),  " PLAYER_PLAYING", Logger::Info);
-//	_blk->publish_all();
+//	_blk.publish_all();
 		return 0;
 	}
 
@@ -59,16 +58,16 @@ int NoPlay::Execute() {
 			pmsg->set_posx(initX[0]);
 			pmsg->set_posy(initY[0]);
 			pmsg->set_theta(initPhi[0]);
-			_blk->publishState(*pmsg, "behavior");
+			_blk.publishState(*pmsg, "behavior");
 	//		Logger::Instance().WriteMsg(GetName(),  " publish pos", Logger::Info);
 		//	#ifdef PENALTY_ON
 			//	;
 			//#else
 			rpm->set_goalietopos(false);
-			_blk->publishState(*rpm, "behavior");
+			_blk.publishState(*rpm, "behavior");
 			//#endif
 			ld->set_moveon(false);
-			_blk->publishState(*ld, "behavior");
+			_blk.publishState(*ld, "behavior");
 //			Logger::Instance().WriteMsg(GetName(),  " publish return to pos", Logger::Info);
 
 		//goToPosition(initX, initY, initPhi);
@@ -79,7 +78,7 @@ int NoPlay::Execute() {
 			if (prevstate!=PLAYER_SET){
 				if(msm.get()!=0 && (msm->lastaction()).compare("InitPose.xar")!=0){
 				amot.set_command("InitPose.xar");
-				_blk->publishSignal(amot, "motion");
+				_blk.publishSignal(amot, "motion");
 				}
 			}
 			if(gsm.get()!=0 && gsm->sec_game_state()==STATE2_PENALTYSHOOT){
@@ -111,7 +110,7 @@ int NoPlay::Execute() {
 		case PLAYER_READY:
 			kickOff = gsm->kickoff();
 			kcm->set_kickoff(kickOff);
-			_blk->publishState(*kcm, "behavior");
+			_blk.publishState(*kcm, "behavior");
 
 			if(kickOff){	//in 0 position of the table kickoff positions
 				pmsg->set_posx(initX[0]);
@@ -122,7 +121,7 @@ int NoPlay::Execute() {
 				pmsg->set_posy(initY[1]);
 				pmsg->set_theta(initPhi[1]);
 			}
-			_blk->publishState(*pmsg, "behavior");
+			_blk.publishState(*pmsg, "behavior");
 			//Logger::Instance().WriteMsg(GetName(),  " playerready", Logger::Info);
 			curraction = SCANFORPOST;
 			bhmsg->set_headaction(curraction);
@@ -152,23 +151,23 @@ int NoPlay::Execute() {
 				curraction = DONOTHING;
 				if(gsm.get()!=0){
 					locReset->set_type(gsm->player_number());
-					_blk->publishSignal(*locReset, "worldstate");
+					_blk.publishSignal(*locReset, "worldstate");
 				}
 		break;
 	}
 
 	prevaction = curraction;
 	prevstate = currstate;
-	_blk->publishSignal(*bhmsg, "behavior");
+	_blk.publishSignal(*bhmsg, "behavior");
 	//Logger::Instance().WriteMsg(GetName(),  " bgainw", Logger::Info);
-	_blk->publish_all();
+	_blk.publish_all();
 	return 0;
 
 }
 
 void NoPlay::UserInit () {
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	curraction = DONOTHING;
 	prevaction = DONOTHING;
 	cal = false;
@@ -240,7 +239,7 @@ bool NoPlay::readRobotConfiguration(const std::string& file_name) {
 			if (it->attrb["number"] == playernum)///////////////////////////////////////////
 			{
 			initPhi[i] = 0;
-	
+
 			initX[i] = (it->attrb["posx"]);
 
 			initY[i] = (it->attrb["posy"]);
@@ -269,7 +268,7 @@ void NoPlay::velocityWalk(double x, double y, double th, double f) {
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
 	wmot.set_parameter(3, f);
-	_blk->publishSignal(wmot, "motion");
+	_blk.publishSignal(wmot, "motion");
 }
 
 void NoPlay::littleWalk(double x, double y, double th) {
@@ -278,13 +277,13 @@ void NoPlay::littleWalk(double x, double y, double th) {
 	wmot.set_parameter(0, x);
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
-	_blk->publishSignal(wmot, "motion");
+	_blk.publishSignal(wmot, "motion");
 }
 
 void NoPlay::goToPosition(float x, float y, float phi){
 
 	curraction = SCANFORPOST;
-	wimsg = _blk->readData<WorldInfo>("worldstate");
+	wimsg = _blk.readData<WorldInfo>("worldstate");
 	if(wimsg.get()!=0){
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();

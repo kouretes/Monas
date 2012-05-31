@@ -1,42 +1,41 @@
 #ifndef FLOODER_H
 #define FLOODER_H
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "tools/profiler.hpp"
 
-//#define NUMBER_OF_SENSORS 46//TODO Please check the number devices
-// Use DCM proxy
-
-//#define USE_POINTERS
-
+ACTIVITY_START
 
 class Pipe: public IActivity
 {
 	public:
-		Pipe() :p("Pipe") {}
-		int Execute();
+		Pipe(Blackboard&b) :IActivity(b),p("Pipe") {};
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 		KProfiling::profiler p;
 
-		void UserInit();
-		std::string GetName()
+		void ACTIVITY_VISIBLE UserInit();
+		std::string ACTIVITY_VISIBLE GetName()
 		{
 			return "Pipe";
 		}
 };
+ACTIVITY_END
 
+ACTIVITY_START
 class Drain: public IActivity
 {
 	public:
-		Drain() : p("Drain"){}
-		int Execute();
+		Drain(Blackboard&b) :IActivity(b),p("Drain"){}
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 		KProfiling::profiler p;
-		void UserInit();
-		std::string GetName()
+		void ACTIVITY_VISIBLE UserInit();
+		std::string  ACTIVITY_VISIBLE GetName()
 		{
 			return "Drain";
 		}
 
 
 };
+ACTIVITY_END
 
 #endif
 

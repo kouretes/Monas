@@ -3,17 +3,16 @@
 #include "architecture/archConfig.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
-namespace {
-    ActivityRegistrar<GoToPosition>::Type temp("GoToPosition");
-}
+
+ACTIVITY_REGISTER(GoToPosition);
 
 int GoToPosition::Execute() {
 	/*  */
 	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
-	pm = _blk->readState<PositionMessage>("behavior");
-	wimsg = _blk->readData<WorldInfo>("worldstate");
-	obsm = _blk->readSignal<ObservationMessage>("vision");
-	gsm =  _blk->readState<GameStateMessage>("worldstate");
+	pm = _blk.readState<PositionMessage>("behavior");
+	wimsg = _blk.readData<WorldInfo>("worldstate");
+	obsm = _blk.readSignal<ObservationMessage>("vision");
+	gsm =  _blk.readState<GameStateMessage>("worldstate");
 	headaction = SCANFORPOST;
 	if(pm.get()!=0){		///get my target
 		posX = pm->posx();
@@ -35,16 +34,16 @@ int GoToPosition::Execute() {
 	//Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
 	robotInPos = robotInPosition(wimsg, pm);
 
-	
+
 	if(robotInPos && lastMove <= microsec_clock::universal_time() ){
 		amot->set_command("InitPose.xar");
-		_blk->publishSignal(*amot, "motion");
+		_blk.publishSignal(*amot, "motion");
 		lastMove = microsec_clock::universal_time() + milliseconds(500);
 		Logger::Instance().WriteMsg(GetName(), "Robot Is In Position", Logger::Info);
 		ReturnToPositionMessage rpm;
 		rpm.set_goalietopos(true);
-		_blk->publishState(rpm, "behavior");
-		_blk->publish_all();
+		_blk.publishState(rpm, "behavior");
+		_blk.publish_all();
 		return 0;
 	}
 	gotoPosition(posX,posY, theta);
@@ -59,7 +58,7 @@ int GoToPosition::Execute() {
 			//velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
 			//lastMove = microsec_clock::universal_time() + milliseconds(500);
 		//}
-		_blk->publish_all();
+		_blk.publish_all();
 		return 0;
 	}
 
@@ -117,11 +116,11 @@ int GoToPosition::Execute() {
 	}
 
 	bhmsg->set_headaction(headaction);
-	_blk->publishSignal(*bhmsg, "behavior");
+	_blk.publishSignal(*bhmsg, "behavior");
 	*/
-	_blk->publish_all();
+	_blk.publish_all();
 	//Logger::Instance().WriteMsg(GetName(),  "EXIT", Logger::Info);
-	
+
 	return 0;
 }
 
@@ -129,9 +128,9 @@ void GoToPosition::UserInit () {
 	robotInPos = false;
 	confidence = 0;
 
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	int playernum, teamColor;
 	lastMove = microsec_clock::universal_time();
 	lastObsm = microsec_clock::universal_time();
@@ -164,7 +163,7 @@ void GoToPosition::velocityWalk(double x, double y, double th, double f) {
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
 	wmot.set_parameter(3, f);
-	_blk->publishSignal(wmot, "motion");
+	_blk.publishSignal(wmot, "motion");
 }
 
 void GoToPosition::littleWalk(double x, double y, double th) {
@@ -173,7 +172,7 @@ void GoToPosition::littleWalk(double x, double y, double th) {
 	wmot.set_parameter(0, x);
 	wmot.set_parameter(1, y);
 	wmot.set_parameter(2, th);
-	_blk->publishSignal(wmot, "motion");
+	_blk.publishSignal(wmot, "motion");
 }
 ///////////////////////////////////////
 
@@ -192,16 +191,16 @@ void GoToPosition::gotoPosition(float target_x,float target_y, float target_phi)
 	double targetDistance = sqrt((target_x-myPosX)*(target_x-myPosX)+(target_y-myPosY)*(target_y-myPosY));
 	double targetAngle = anglediff2(atan2(target_y - myPosY, target_x - myPosY), myPhi);
 	double targetOrientation = anglediff2(target_phi, myPhi);
-	
-	if (targetDistance > 0.25) 
-		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle), 
+
+	if (targetDistance > 0.25)
+		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle),
 									toCartesianY(targetDistance,targetAngle),
 									targetOrientation);
 	else{
 		amot->set_command("InitPose.xar");
-		_blk->publishSignal(*amot, "motion");
+		_blk.publishSignal(*amot, "motion");
 	}
-	
+
 }
 
 void GoToPosition::pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi) {
@@ -209,5 +208,5 @@ void GoToPosition::pathPlanningRequestAbsolute(float target_x, float target_y, f
 	pprm->set_gotoy(target_y);
 	pprm->set_gotoangle(target_phi);
 	pprm->set_mode("absolute");
-	_blk->publishSignal(*pprm, "obstacle");
+	_blk.publishSignal(*pprm, "obstacle");
 }

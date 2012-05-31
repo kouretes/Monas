@@ -3,7 +3,6 @@
 
 #include "architecture/IExecutable.h"
 
-
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
@@ -11,14 +10,31 @@
 #include "tools/genRegistrar.h"
 
 #include <string>
-class ActivityBindings;
+
+
+#ifdef __GNUC__
+#define ACTIVITY_START _Pragma("GCC visibility push(hidden)" )
+#define ACTIVITY_END _Pragma("GCC visibility pop")
+#define ACTIVITY_VISIBLE __attribute__ ((visibility("default")))
+#else
+#define ACTIVITY_START
+#define ACTIVITY_END
+#define ACTIVITY_VISIBLE
+#endif
+
+
+#define ACTIVITY_CONSTRUCTOR(x)  ACTIVITY_VISIBLE x(Blackboard&b): IActivity(b){   }
+
+#define ACTIVITY_REGISTER(x) namespace { 	ACTIVITY_VISIBLE ActivityRegistrar<x>::Type temp##x(#x);  }
+
+
 class IActivity : public IExecutable {
 
     public:
         IActivity  ( Blackboard & );
-        virtual ~IActivity();
+        virtual ~IActivity() {};
 
-        virtual void UserInit ()=0;
+        virtual void UserInit () {};
 
         virtual std::string GetName ()=0;
 
@@ -36,19 +52,6 @@ struct ActivityRegistrar {
 };
 
 
-#ifdef __GNUC__
-#define ACTIVITY_START _Pragma("GCC visibility push(hidden)" )
-#define ACTIVITY_END _Pragma("GCC visibility pop")
-#define ACTIVITY_VISIBLE __attribute__ ((visibility("default")))
-#else
-#define ACTIVITY_START
-#define ACTIVITY_END
-#define ACTIVITY_VISIBLE
-#endif
-
-#define ACTIVITY_CONSTRUCTOR(x)  x(Blackboard&b):IActivity(b){   };
-
-#define ACTIVITY_REGISTER(x) namespace { 	ActivityRegistrar<x>::Type temp##x(#x);  };
 
 
 #endif /* IACTIVITY_H_ */

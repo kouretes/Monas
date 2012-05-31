@@ -26,6 +26,7 @@
 #endif
 
 #include <limits>
+namespace KSystem {
 class smart_timer
 {
   private:
@@ -54,7 +55,7 @@ class smart_timer
       clock_gettime(SMART_TIMER_TIME_ID,&t);
     }
     //Maximum value for elasped
-    static double elasped_max()
+    static double elapsed_max()
     {
         timertype temp;
         temp.tv_sec=std::numeric_limits<time_t>::max();
@@ -62,7 +63,7 @@ class smart_timer
         return resultify(temp);
     }
      // return elapsed time in seconds
-    double elasped() const {
+    double elapsed() const {
       timertype temp;
       clock_gettime(SMART_TIMER_TIME_ID,&temp);
 
@@ -70,7 +71,7 @@ class smart_timer
     }
 
     // return minimum value for elapsed()
-    static double elasped_min()
+    static double elapsed_min()
     {
        timertype temp;
        clock_getres(SMART_TIMER_TIME_ID,&temp);
@@ -79,7 +80,7 @@ class smart_timer
 
 
 };
-
+}
 
 #else
 
@@ -108,6 +109,8 @@ class smart_timer
 //      CAUTION: Windows only!
 //
 ///////////////////////////////////////////////////////////////////////////////
+namespace KSystem
+{
 class smart_timer
 {
 public:
@@ -163,9 +166,13 @@ private:
     LARGE_INTEGER start_time;
     LARGE_INTEGER frequency;
 };
+}
 
 #else  // defined(BOOST_WINDOWS)
+namespace KSystem{
+
   typedef boost:timer smart_timer;
+}
 #endif
 
 #endif

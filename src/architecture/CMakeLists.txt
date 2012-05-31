@@ -15,13 +15,18 @@ if ( "${ActivityBuildType}" STREQUAL "MODULE" )
 endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
 
 add_library ( MonasCore ${LibBuildType}
-                        IActivity.h
-                        IActivity.cpp
-			IProvider.h
-                        IProvider.cpp
+                        executables/IActivity.h
+                        executables/IActivity.cpp
+			executables/IProvider.h
+                        executables/IProvider.cpp
+			executables/agent.h
+			executables/agent.cpp
+			executables/agentTiming.h
+			IExecutable.h
                         talws.h
                         talws.cpp
-			config.h
+			config.h			
+			statechartWrapper.h
 			archConfig.h
 			agentConfig.h
 )

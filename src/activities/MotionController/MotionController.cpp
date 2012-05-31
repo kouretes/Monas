@@ -21,13 +21,12 @@
 
 #define KME_ACTIONPID -1
 
-namespace
-{
-	ActivityRegistrar<MotionController>::Type temp("MotionController");
-}
+ACTIVITY_REGISTER(MotionController);
+
 using namespace std;
 using namespace KDeviceLists;
-MotionController::MotionController()
+
+MotionController::MotionController(Blackboard &b) : IActivity(b)
 {
 	waitfor = microsec_clock::universal_time() - hours(1);
 }
@@ -117,10 +116,10 @@ void MotionController::UserInit()
 
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
 
-	_blk->updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	AccZvalue = 0.0;
 	AccXvalue = 0.0;
@@ -142,9 +141,9 @@ void MotionController::UserInit()
 	sm.set_type(MotionStateMessage::IDLE);
 	sm.set_detail("");
 	sm.set_lastaction("");
-	
+
 	standUpStartTime =boost::posix_time::microsec_clock::universal_time();
-	
+
 	walkingWithVelocity = false;
 	//setStiffnessDCM(1);
 	BodyID = KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID);
@@ -169,15 +168,15 @@ void MotionController::read_messages()
 {
 
 	/* Messages for Walk, Head, Action */
-	hm = _blk->readSignal<MotionHeadMessage> ("motion");
-	wm = _blk->readSignal<MotionWalkMessage> ("motion");
-	am = _blk->readSignal<MotionActionMessage> ("motion");
+	hm = _blk.readSignal<MotionHeadMessage> ("motion");
+	wm = _blk.readSignal<MotionWalkMessage> ("motion");
+	am = _blk.readSignal<MotionActionMessage> ("motion");
 
 	/* Messages for Intertial Readings */
-	allsm = _blk->readData<AllSensorValuesMessage> ("sensors");
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 
 	/* Messages from the Game Controller */
-	gsm = _blk->readState<GameStateMessage> ("worldstate");
+	gsm = _blk.readState<GameStateMessage> ("worldstate");
 
 	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 }
@@ -230,7 +229,7 @@ void MotionController::mglrun()
 
 	    sm.set_type(MotionStateMessage::IDLE);
 		sm.set_detail("");
-	    _blk->publishState(sm,"worldstate");
+	    _blk.publishState(sm,"worldstate");
 	}
 	else if (gameState == PLAYER_PENALISED||gameState==PLAYER_FINISHED)
 	{
@@ -247,7 +246,7 @@ void MotionController::mglrun()
 
 	    sm.set_type(MotionStateMessage::IDLE);
 		sm.set_detail("");
-	    _blk->publishState(sm,"worldstate");
+	    _blk.publishState(sm,"worldstate");
 
 	}
 	else
@@ -262,9 +261,9 @@ void MotionController::mglrun()
 		if(sm.type() != MotionStateMessage::FALL){
         	sm.set_type(MotionStateMessage::FALL);
 			sm.set_detail("");
-        	_blk->publishState(sm,"worldstate");
+        	_blk.publishState(sm,"worldstate");
 		}
-		
+
 		waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
 		return;
@@ -304,7 +303,7 @@ void MotionController::mglrun()
 
 				sm.set_type(MotionStateMessage::FALL);
 				sm.set_detail("");
-				_blk->publishState(sm,"worldstate");
+				_blk.publishState(sm,"worldstate");
 
 				waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
 
@@ -359,7 +358,7 @@ void MotionController::mglrun()
 		if(sm.type()!= MotionStateMessage::STANDUP){
     	    sm.set_type(MotionStateMessage::STANDUP);
 			sm.set_detail("");
-    	  	_blk->publishState(sm,"worldstate");
+    	  	_blk.publishState(sm,"worldstate");
 		}
 	//	Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", FULLSTIFFNESS);
@@ -394,14 +393,14 @@ void MotionController::mglrun()
 
 		if ((wm != NULL) && (actionPID == 0))
 		{
-			
+
 
 			if (wm->command() == "walkTo")
 			{
-					if(sm.detail().compare("walkTo") != 0){		
+					if(sm.detail().compare("walkTo") != 0){
         				sm.set_type(MotionStateMessage::WALKING);
 						sm.set_detail("walkTo");
-        				_blk->publishState(sm,"worldstate");
+        				_blk.publishState(sm,"worldstate");
 					}
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
@@ -413,11 +412,11 @@ void MotionController::mglrun()
 
 			} else if (wm->command() == "setWalkTargetVelocity")
 			{
-				
-				if(sm.detail().compare("setWalkTargetVelocity") != 0){	
+
+				if(sm.detail().compare("setWalkTargetVelocity") != 0){
         			sm.set_type(MotionStateMessage::WALKING);
 					sm.set_detail("setWalkTargetVelocity");
-        			_blk->publishState(sm,"worldstate");
+        			_blk.publishState(sm,"worldstate");
 				}
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
@@ -488,7 +487,7 @@ void MotionController::mglrun()
         	sm.set_type(MotionStateMessage::ACTION);
 			sm.set_detail(str);
 			sm.set_lastaction(pam->command());
-        	_blk->publishState(sm,"worldstate");
+        	_blk.publishState(sm,"worldstate");
 
 			if (str.compare("kmex") == 0)
 			{
@@ -671,7 +670,7 @@ void MotionController::testcommands()
 	//		hmot->add_parameter(x);
 	//		hmot->add_parameter(y);
 	//		Logger::Instance().WriteMsg("MotionController","Sending Command: changeHead ", Logger::ExtraInfo);
-	//		_blk->publishSignal(*hmot,"motion");
+	//		_blk.publishSignal(*hmot,"motion");
 	//		delete hmot;
 	//	}
 	//
@@ -691,7 +690,7 @@ void MotionController::testcommands()
 	//		wmot->add_parameter(z);
 	//		wmot->add_parameter(s);
 	//		Logger::Instance().WriteMsg("MotionController","Sending Command: setWalkTargetVelocity ", Logger::ExtraInfo);
-	//		_blk->publishSignal(*wmot,"motion");
+	//		_blk.publishSignal(*wmot,"motion");
 	//		delete wmot;
 	//	}
 	//
@@ -700,7 +699,7 @@ void MotionController::testcommands()
 	//		//amot->set_topic("motion");
 	//		amot->set_command("PenalizedZeroPos.xar");
 	//		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
-	//		_blk->publishSignal(*amot, "motion");
+	//		_blk.publishSignal(*amot, "motion");
 	//		delete amot;
 	//	}
 //
@@ -709,7 +708,7 @@ void MotionController::testcommands()
 //			MotionActionMessage* amot = new MotionActionMessage();
 //			amot->set_command("KickForwardRight.kme");
 //			Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
-//			_blk->publishSignal(*amot, "motion");
+//			_blk.publishSignal(*amot, "motion");
 //			delete amot;
 //		}
 	//
@@ -718,7 +717,7 @@ void MotionController::testcommands()
 	//		MotionActionMessage* amot = new MotionActionMessage();
 	//		amot->set_command("RightKick3.xar");
 	//		Logger::Instance().WriteMsg("MotionController", "Sending Command: action ", Logger::ExtraInfo);
-	//		_blk->publishSignal(*amot, "motion");
+	//		_blk.publishSignal(*amot, "motion");
 	//		delete amot;
 	//	}
 	//
@@ -732,7 +731,7 @@ void MotionController::testcommands()
 	//	//		amot->set_topic("motion");
 	//	//		amot->set_command("LeftDive");
 	//	//		Logger::Instance().WriteMsg("MotionController","Sending Command: action ", Logger::ExtraInfo);
-	//	//		_blk->publishSignal(*amot,"motion");
+	//	//		_blk.publishSignal(*amot,"motion");
 	//	//		delete amot;
 	//	//	}
 }

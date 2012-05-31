@@ -4,17 +4,12 @@
 using namespace boost::posix_time;
 using namespace KDeviceLists;
 
-namespace {
-	ActivityRegistrar<XarAnalyzer>::Type temp("XarAnalyzer");
-}
+ACTIVITY_REGISTER(XarAnalyzer);
 using namespace std;
 
-XarAnalyzer::XarAnalyzer() {
-
-}
 
 void XarAnalyzer::UserInit() {
-	
+
 	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
@@ -35,7 +30,7 @@ void XarAnalyzer::UserInit() {
 
 
 int XarAnalyzer::Execute() {
-	
+
 	read_messages();
 
 	if (gsm != 0) {
@@ -95,7 +90,7 @@ int XarAnalyzer::Execute() {
 			if(temp == ACTION_TIME*XarAnalyzerFPS)
 				createKmeFile();
 		}
-	
+
 	} else if (!play) {   // Non-Play state
 		velocityWalk(0.0,0.0,0.0,1);
 	}

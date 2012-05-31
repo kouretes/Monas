@@ -13,7 +13,7 @@ namespace statechart_engine {
 
            void Set( Blackboard* blk, std::string& var, Statechart* s );
 
-           int Execute();
+           int IEX_DIRECTIVE_HOT Execute();
 
       private:
 
@@ -28,7 +28,7 @@ namespace statechart_engine {
 
           TimeoutAction ( std::string var, int timeout_ms );
 
-          virtual int Execute();
+          virtual int IEX_DIRECTIVE_HOT Execute();
 
           virtual void UserInit();
 

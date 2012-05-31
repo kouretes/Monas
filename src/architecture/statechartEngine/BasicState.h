@@ -4,7 +4,7 @@
 #include "State.h"
 #include "IAction.h"
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "ActivityWrapper.h"
 
 #include "architecture/statechartEngine/Statechart.h"

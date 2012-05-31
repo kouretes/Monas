@@ -1,15 +1,14 @@
 
 #include "StandUpAndScan.h"
 
-namespace {
-    ActivityRegistrar<StandUpAndScan>::Type temp("StandUpAndScan");
-}
+
+ACTIVITY_REGISTER(StandUpAndScan);
 
 int StandUpAndScan::Execute() {
-	
+
 	Logger::Instance().WriteMsg(GetName(),  " execute", Logger::Info);
-	hbm = _blk->readState<HeadToBMessage> ("behavior");
-	msm = _blk->readState<MotionStateMessage>("worldstate");
+	hbm = _blk.readState<HeadToBMessage> ("behavior");
+	msm = _blk.readState<MotionStateMessage>("worldstate");
 
 	if( hbm.get()==0 || hbm->ballfound()==0){
 		headaction = SCANFORBALL;
@@ -20,20 +19,20 @@ int StandUpAndScan::Execute() {
 			Logger::Instance().WriteMsg(GetName(), _toString(msm->type()), Logger::Info);
 			Logger::Instance().WriteMsg(GetName(),  " PUBLISH STAND", Logger::Info);
 			amot->set_command("StandUpX.xar");
-			_blk->publishSignal(*amot, "motion");
+			_blk.publishSignal(*amot, "motion");
 		}
 	}else
 		headaction = BALLTRACK;
-	
-	bhmsg->set_headaction(headaction);
-	_blk->publishSignal(*bhmsg, "behavior");
 
-	_blk->publish_all();
+	bhmsg->set_headaction(headaction);
+	_blk.publishSignal(*bhmsg, "behavior");
+
+	_blk.publish_all();
 	return 0;
 }
-void StandUpAndScan::UserInit () {	
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+void StandUpAndScan::UserInit () {
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	headaction = SCANFORBALL;
 	bhmsg = new BToHeadMessage();
 	amot=  new MotionActionMessage();
@@ -44,4 +43,4 @@ void StandUpAndScan::UserInit () {
 std::string StandUpAndScan::GetName () {
 	return "StandUpAndScan";
 }
-	
+

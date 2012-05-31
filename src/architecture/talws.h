@@ -1,11 +1,11 @@
 #ifndef _talws_h_
 #define _talws_h_ 1
 
-#include "agent.h"
-#include "IProvider.h"
+#include "architecture/executables/agent.h"
+#include "architecture/executables/IProvider.h"
 #include "hal/thread.h"
 
-#include "statechartWrapper.h"
+#include "architecture/statechartWrapper.h"
 
 #include <vector>
 

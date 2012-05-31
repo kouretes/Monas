@@ -1,16 +1,16 @@
-	
+
 #include "GUITester.h"
 #include "transitionHeaders.h"
-		
+
 using namespace statechart_engine;
 
 namespace {
 	StatechartRegistrar<GUITester>::Type temp("GUITester");
 }
-	
+
 GUITester::GUITester(Narukom* com) {
 
-	
+
 	_statechart = new Statechart ( "Node_tester", com );
 	Statechart* Node_0 = _statechart;
 	_states.push_back( Node_0 );
@@ -33,8 +33,8 @@ GUITester::GUITester(Narukom* com) {
 	StartState* Node_0_2_3_1 = new StartState ( "Node_0_2_3_1", Node_0_2_3 ); //Name:0.2.3.1
 	_states.push_back( Node_0_2_3_1 );
 
-	IActivity* NodeActivInst_0_2_3_2 = ActivityFactory::Instance()->CreateObject( "ChangeRobotPosition" );
-	_activities.push_back( NodeActivInst_0_2_3_2 );			
+	IActivity* NodeActivInst_0_2_3_2 = ActivityFactory::Instance()->CreateObject( "ChangeRobotPosition",*Node_0_2_3->GetBlackboard() );
+	_activities.push_back( NodeActivInst_0_2_3_2 );
 	BasicState* Node_0_2_3_2 = new BasicState( "Node_ChangeRobotPosition", Node_0_2_3, NodeActivInst_0_2_3_2 ); //Name:ChangeRobotPosition
 	_states.push_back( Node_0_2_3_2 );
 
@@ -44,8 +44,8 @@ GUITester::GUITester(Narukom* com) {
 	StartState* Node_0_2_3_3_1 = new StartState ( "Node_0_2_3_3_1", Node_0_2_3_3 ); //Name:0.2.3.3.1
 	_states.push_back( Node_0_2_3_3_1 );
 
-	IActivity* NodeActivInst_0_2_3_3_2 = ActivityFactory::Instance()->CreateObject( "GoToPosition" );
-	_activities.push_back( NodeActivInst_0_2_3_3_2 );			
+	IActivity* NodeActivInst_0_2_3_3_2 = ActivityFactory::Instance()->CreateObject( "GoToPosition",*Node_0_2_3_3->GetBlackboard() );
+	_activities.push_back( NodeActivInst_0_2_3_3_2 );
 	BasicState* Node_0_2_3_3_2 = new BasicState( "Node_GoToPosition", Node_0_2_3_3, NodeActivInst_0_2_3_3_2 ); //Name:GoToPosition
 	_states.push_back( Node_0_2_3_3_2 );
 
@@ -55,8 +55,8 @@ GUITester::GUITester(Narukom* com) {
 	EndState* Node_0_2_3_4 = new EndState ( "Node_0_2_3_4", Node_0_2_3 ); //Name:0.2.3.4
 	_states.push_back( Node_0_2_3_4 );
 
-	IActivity* NodeActivInst_0_2_4 = ActivityFactory::Instance()->CreateObject( "NoPlay" );
-	_activities.push_back( NodeActivInst_0_2_4 );			
+	IActivity* NodeActivInst_0_2_4 = ActivityFactory::Instance()->CreateObject( "NoPlay",*Node_0_2->GetBlackboard()  );
+	_activities.push_back( NodeActivInst_0_2_4 );
 	BasicState* Node_0_2_4 = new BasicState( "Node_NoPlay", Node_0_2, NodeActivInst_0_2_4 ); //Name:NoPlay
 	_states.push_back( Node_0_2_4 );
 
@@ -65,112 +65,112 @@ GUITester::GUITester(Narukom* com) {
 
 	EndState* Node_0_3 = new EndState ( "Node_0_3", Node_0 ); //Name:0.3
 	_states.push_back( Node_0_3 );
-	
-	
-		
 
-		
+
+
+
+
 
 	_transitions.push_back( new TransitionSegment<State,ConditionConnector>(Node_0_2_1,Node_0_2_2   ) ); //GUITester0.2.10.2.2
-		
-		
+
+
 	ICondition* TrCondInst_GUITester0_2_20_2_3 = new TrCond_GUITester0_2_20_2_3;
 	_conditions.push_back( TrCondInst_GUITester0_2_20_2_3 );
 
-		
+
 
 	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_2_2,Node_0_2_3 ,TrCondInst_GUITester0_2_20_2_3  ) ); //GUITester0.2.20.2.3
-		
-		
+
+
 	ICondition* TrCondInst_GUITester0_2_20_2_4 = new TrCond_GUITester0_2_20_2_4;
 	_conditions.push_back( TrCondInst_GUITester0_2_20_2_4 );
 
-		
+
 
 	_transitions.push_back( new TransitionSegment<ConditionConnector,State>(Node_0_2_2,Node_0_2_4 ,TrCondInst_GUITester0_2_20_2_4  ) ); //GUITester0.2.20.2.4
-		
 
-		
+
+
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_4,Node_0_2_5   ) ); //GUITester0.2.40.2.5
-		
-		
+
+
 	ICondition* TrCondInst_GUITester0_2_30_2_5 = new TrCond_GUITester0_2_30_2_5;
 	_conditions.push_back( TrCondInst_GUITester0_2_30_2_5 );
 
-		
+
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3,Node_0_2_5 ,TrCondInst_GUITester0_2_30_2_5  ) ); //GUITester0.2.30.2.5
-		
 
-		
+
+
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_1,Node_0_2_3_2   ) ); //GUITester0.2.3.10.2.3.2
-		
 
-		
+
+
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_2,Node_0_2_3_3   ) ); //GUITester0.2.3.20.2.3.3
-		
-		
+
+
 	ICondition* TrCondInst_GUITester0_2_3_30_2_3_4 = new TrCond_GUITester0_2_3_30_2_3_4;
 	_conditions.push_back( TrCondInst_GUITester0_2_3_30_2_3_4 );
 
-		
+
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3,Node_0_2_3_4 ,TrCondInst_GUITester0_2_3_30_2_3_4  ) ); //GUITester0.2.3.30.2.3.4
-		
 
-		
-		
+
+
+
 	IAction* TrActionInst_GUITester0_2_3_3_10_2_3_3_2 = new TrAction_GUITester0_2_3_3_10_2_3_3_2;
 	_actions.push_back( TrActionInst_GUITester0_2_3_3_10_2_3_3_2 );
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_1,Node_0_2_3_3_2  ,TrActionInst_GUITester0_2_3_3_10_2_3_3_2 ) ); //GUITester0.2.3.3.10.2.3.3.2
-		
-		
+
+
 	ICondition* TrCondInst_GUITester0_2_3_3_20_2_3_3_2 = new TrCond_GUITester0_2_3_3_20_2_3_3_2;
 	_conditions.push_back( TrCondInst_GUITester0_2_3_3_20_2_3_3_2 );
 
-		
-		
+
+
 	IAction* TrActionInst_GUITester0_2_3_3_20_2_3_3_2 = new TrAction_GUITester0_2_3_3_20_2_3_3_2;
 	_actions.push_back( TrActionInst_GUITester0_2_3_3_20_2_3_3_2 );
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_2,Node_0_2_3_3_2 ,TrCondInst_GUITester0_2_3_3_20_2_3_3_2 ,TrActionInst_GUITester0_2_3_3_20_2_3_3_2 ) ); //GUITester0.2.3.3.20.2.3.3.2
-		
 
-		
+
+
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2_3_3_2,Node_0_2_3_3_3   ) ); //GUITester0.2.3.3.20.2.3.3.3
-		
 
-		
-		
+
+
+
 	IAction* TrActionInst_GUITester0_10_2 = new TrAction_GUITester0_10_2;
 	_actions.push_back( TrActionInst_GUITester0_10_2 );
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_1,Node_0_2  ,TrActionInst_GUITester0_10_2 ) ); //GUITester0.10.2
-		
-		
+
+
 	ICondition* TrCondInst_GUITester0_20_2 = new TrCond_GUITester0_20_2;
 	_conditions.push_back( TrCondInst_GUITester0_20_2 );
 
-		
-		
+
+
 	IAction* TrActionInst_GUITester0_20_2 = new TrAction_GUITester0_20_2;
 	_actions.push_back( TrActionInst_GUITester0_20_2 );
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_2 ,TrCondInst_GUITester0_20_2 ,TrActionInst_GUITester0_20_2 ) ); //GUITester0.20.2
-		
-		
+
+
 	ICondition* TrCondInst_GUITester0_20_3 = new TrCond_GUITester0_20_3;
 	_conditions.push_back( TrCondInst_GUITester0_20_3 );
 
-		
+
 
 	_transitions.push_back( new TransitionSegment<State,State>(Node_0_2,Node_0_3 ,TrCondInst_GUITester0_20_3  ) ); //GUITester0.20.3
-	
+
 }
 
 GUITester::~GUITester() {
@@ -196,4 +196,3 @@ void GUITester::Stop () {
 	_statechart->Stop();
 }
 
-	

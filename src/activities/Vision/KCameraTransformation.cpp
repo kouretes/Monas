@@ -5,12 +5,6 @@
 
 #include <vector>
 
-#ifdef __GNUC__
-#pragma GCC visibility push(hidden)
-#define VISIBLE __attribute__ ((visibility("default")))
-#else
-#define VISIBLE
-#endif
 
 using namespace std;
 
@@ -295,7 +289,3 @@ float KCameraTranformation::getRoll() const
 {
 	return atan(cameraChain(2,1)/cameraChain(2,2));
 }
-
-#ifdef __GNUC__
-#pragma GCC visibility pop
-#endif

@@ -2,7 +2,7 @@
 #ifndef _ApproachBall_h_
 #define _ApproachBall_h_ 1
 
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
@@ -13,21 +13,22 @@
 #include "tools/BehaviorConst.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <math.h>	
-			
-class ApproachBall : public IActivity {
-			
-public:
-	
-	int Execute ();
-	
-	void UserInit ();
-	
-	std::string GetName ();
-	
+#include <math.h>
 
-private:	
-	MotionWalkMessage wmot;	
+ACTIVITY_START
+class ApproachBall : public IActivity {
+
+public:
+    ACTIVITY_CONSTRUCTOR(ApproachBall);
+	int ACTIVITY_VISIBLE Execute ();
+
+	void ACTIVITY_VISIBLE UserInit ();
+
+	std::string ACTIVITY_VISIBLE GetName ();
+
+
+private:
+	MotionWalkMessage wmot;
 	BToHeadMessage* bhmsg;
 	ObservationMessage* lastObsm;
 	boost::posix_time::ptime rcvObsm;
@@ -38,10 +39,12 @@ private:
 	ReturnToPositionMessage* rpm;
 	int headaction;
 	void velocityWalk( double x, double y, double th, double f);
-	void littleWalk(double x, double y, double th);	
+	void littleWalk(double x, double y, double th);
 
 
 };
 
+ACTIVITY_END
+
 #endif // _AproachBall_h_
-	
+

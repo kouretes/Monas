@@ -6,7 +6,7 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/motion.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
 #include "tools/MathFunctions.h"
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
@@ -39,14 +39,14 @@
 #define ToRad 		(M_PI/180.0)
 #define ToMeters	0.1
 
-#define M 			10 
+#define M 			10
 #define N 			18
 #define TotalRings	(1+M+1)
 #define InnerRing	(0)
 #define OuterRing	(1+M)
 #define NEIGHBOURS 	8
 
-#define RobotRadius 	0.2 
+#define RobotRadius 	0.2
 #define MapRadius 		1.0
 #define ObstacleRadius 	0.15
 #define RingDistance 	( (MapRadius) / (M) )
@@ -54,7 +54,7 @@
 #define SectorAngleRad 	(SectorAngleDeg*ToRad)
 #define SectorShiftRad	( ( (N%4) == 0 ) ? 0.5*SectorAngleRad : 0.0 )
 
-#define FRONT 			(int(N/4)) 
+#define FRONT 			(int(N/4))
 #define SIDE_LEFT 		(int(N/2))
 #define SIDE_RIGHT 		( ( (N%4) == 0 ) ? 0 :N-1 )
 
@@ -84,14 +84,15 @@
 
 using namespace  std;
 
+ACTIVITY_START
 class ObstacleAvoidance: public IActivity {
 
 	public:
-		ObstacleAvoidance();
-		
+		ACTIVITY_CONSTRUCTOR(ObstacleAvoidance)
 
-		int Execute();
-		void UserInit();
+
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		void ACTIVITY_VISIBLE UserInit();
 		void read_messages();
 		 struct OpenListNode {
 			int ring;
@@ -102,15 +103,15 @@ class ObstacleAvoidance: public IActivity {
 			double hn;
 			double fn;
 		} ;
-        std::string GetName() {
+        std::string ACTIVITY_VISIBLE GetName() {
             return "ObstacleAvoidance";
         }
- 
+
 
 	private:
 		double AgeFactor ;
 		double ageTimerSeconds;
-		
+
 		double PolarGrid[2][TotalRings][N];
 		int present, past;
 
@@ -124,17 +125,17 @@ class ObstacleAvoidance: public IActivity {
 		bool initializeOdometry ;
 		double cellCenterX[TotalRings][N],
 				cellCenterY[TotalRings][N];
-		
+
 
 		/*********** OpenCV Drawing ***********/
 		//int cvHighgui;
 		//IplImage *img;
-		//int gridImgH[TotalRings+1][N], 
+		//int gridImgH[TotalRings+1][N],
 			//gridImgV[TotalRings+1][N];
 		//int guiX[(M+4)][N], guiY[(M+4)][N];
-		
+
 		/*********** Map Update ***********/
-		
+
 		double Right[SOnARsNum], Left[SOnARsNum], empty[SOnARsNum];
 		double changed[TotalRings][N];
 		int SonarFailCounter;
@@ -154,13 +155,13 @@ class ObstacleAvoidance: public IActivity {
 		double targetR, targetS, targetO;
 
 		int whatList[TotalRings][N][NEIGHBOURS];
-		int parentM[TotalRings][N][NEIGHBOURS], 
+		int parentM[TotalRings][N][NEIGHBOURS],
 			parentN[TotalRings][N][NEIGHBOURS],
 			parentO[TotalRings][N][NEIGHBOURS];
-		
-		int neighbourRing[NEIGHBOURS+1], 
+
+		int neighbourRing[NEIGHBOURS+1],
 			neighbourSector[NEIGHBOURS+1];
-			
+
 		double euclidean[TotalRings][N][TotalRings][N];
 		int pathR[PathLength], pathS[PathLength], pathO[PathLength];
 		int pathCounter;
@@ -168,8 +169,8 @@ class ObstacleAvoidance: public IActivity {
 		int relativeMode;
 		double ObstacleThreshold ;
 		double ObstacleCostFactor;
-		
-		
+
+
 		/***** Walk *******/
 		double GoalDistanceTolerance;
 		double GoalAngleTolerance;
@@ -187,14 +188,14 @@ class ObstacleAvoidance: public IActivity {
 		bool frontObstacle, rightObstacle, leftObstacle ;
 		double frontDist, rightDist, leftDist;
 		double frontCert, rightCert, leftCert;
-		
+
 		/* Incoming Messages */
 		boost::shared_ptr<const  MotionWalkMessage> wm;
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 		boost::shared_ptr<const RobotPositionMessage> rpm;
 		boost::shared_ptr<const ObstacleMessage> DataFromVision;
-		boost::shared_ptr<const PathPlanningRequestMessage> pprm;		
-		
+		boost::shared_ptr<const PathPlanningRequestMessage> pprm;
+
 		/* Outgoing Messages */
 		ObstacleMessageArray obavm;
 		GridInfo gridInfoMessage;
@@ -206,11 +207,11 @@ class ObstacleAvoidance: public IActivity {
 		int debugModeCout;
 		int debugRelativeMode;
 		int debugCounter;
-		
+
 		/*********** OpenCV Drawing ***********/
 		//void cvDrawGrid();
 		void printSonarValues();
-		
+
 		/*********** Initialization ***********/
 		void initGrid();
 		void initCoordinates();
@@ -221,7 +222,7 @@ class ObstacleAvoidance: public IActivity {
 		void initPossibilities();
 		void initIndexes(int mm, int nn);
 		void Initialize();
-		
+
 		/*********** Map Update ***********/
 		void mapObstacle(double distance, double theta, double radius);
 		void mapFreeSpace(double distance, double theta);
@@ -229,12 +230,12 @@ class ObstacleAvoidance: public IActivity {
 		void chooseCloserObstacle();
 
 		void ageGrid();
-		
+
 		/*********** Map Transformation ***********/
 		void rotateGrid(double angle);
 		void translateGrid(double deltaX, double deltaY);
 		void moveRobot();
-		
+
 		/*********** Path Planning ***********/
 		void initAstar();
 		void insertInOpenList(OpenListNode anode, list<OpenListNode> &openList);
@@ -253,13 +254,15 @@ class ObstacleAvoidance: public IActivity {
 		void publishObstacleMessage();
 		void pathPlanningRequestRelative(float target_x,float target_y, float target_phi);
 
-		
+
 		/*********** Motion ***********/
 		void velocityWalk(double ix, double iy, double it, double f);
 		void callVelocityWalk(double walkToX, double walkToY, double walkToT, double distance2Goal);
 		void motionController(double distance2Goal);
 
 };
+
+ACTIVITY_END
 
 #endif
 

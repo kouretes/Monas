@@ -22,12 +22,10 @@
 //#define COUT_ON
 using namespace std;
 
-namespace
-{
-ActivityRegistrar<Localization>::Type temp("Localization");
-}
 
-Localization::Localization() :
+ACTIVITY_REGISTER(Localization);
+
+Localization::Localization(Blackboard &b) : IActivity(b),
 	vprof("Localization")
 {
 }
@@ -37,10 +35,10 @@ TCPSocket * Localization::sock;
 
 void Localization::UserInit()
 {
-	_blk->updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk->updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
@@ -64,11 +62,11 @@ void Localization::UserInit()
 	wmot.add_parameter(0.0f);
 
 	MyWorld.add_balls();
-	
+
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	KLocalization::Initialize();
-	KLocalization::setParticlesPoseUniformly(SIRParticles);	
+	KLocalization::setParticlesPoseUniformly(SIRParticles);
 	timeStart = boost::posix_time::microsec_clock::universal_time();
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
@@ -169,7 +167,7 @@ int Localization::DebugMode_Receive()
 					AgentPosition.x = 0;
 					AgentPosition.y = 0;
 				}
-				_blk->publishSignal(wmot, "motion");
+				_blk.publishSignal(wmot, "motion");
 			}
 
 			//field = incommingmsg->GetDescriptor()->FindFieldByName("nextmsgbytesize");
@@ -188,7 +186,7 @@ int Localization::Execute()
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	process_messages();
-	
+
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
@@ -200,7 +198,7 @@ int Localization::Execute()
 		fallBegan = true;
 	if (debugmode)
 		DebugMode_Receive();
-	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty		
+	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 		Reset((int)lrm->type(),lrm->kickoff());
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
@@ -221,11 +219,11 @@ int Localization::Execute()
 		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
-	_blk->publishData(MyWorld, "worldstate");
+	_blk.publishData(MyWorld, "worldstate");
 
 	DebugDataForGUI.Clear();
 	LocalizationDataForGUI_Load(AUXParticles);
-	_blk->publishSignal(DebugDataForGUI, "debug");
+	_blk.publishSignal(DebugDataForGUI, "debug");
 
 	count++;
 
@@ -239,7 +237,7 @@ void Localization::Send_LocalizationData()
 	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
 	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
 
-	int sendsize; 
+	int sendsize;
 
 	int rsize = 0;
 	int rs;
@@ -573,10 +571,10 @@ void Localization::process_messages()
 {
 	boost::posix_time::ptime observation_time;
 
-	gsm = _blk->readState<GameStateMessage>("worldstate");
-	obsm = _blk->readSignal<ObservationMessage>("vision");
-	lrm = _blk->readSignal<LocalizationResetMessage>("worldstate");
-	sm = _blk->readState<MotionStateMessage>("worldstate");
+	gsm = _blk.readState<GameStateMessage>("worldstate");
+	obsm = _blk.readSignal<ObservationMessage>("vision");
+	lrm = _blk.readSignal<LocalizationResetMessage>("worldstate");
+	sm = _blk.readState<MotionStateMessage>("worldstate");
 
 
 	currentObservation.clear();
@@ -642,9 +640,9 @@ void Localization::process_messages()
 		//		}
 
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
-		rpsm = _blk->readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
+		rpsm = _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
 	}else{
-		rpsm = _blk->readData<RobotPositionMessage>("sensors");
+		rpsm = _blk.readData<RobotPositionMessage>("sensors");
 	}
 
 	if (rpsm != 0)

@@ -1,11 +1,16 @@
 #ifndef LED_HANDLER_H
 #define LED_HANDLER_H
-#include "hal/thread.h"
+
 #include "hal/robot/generic_nao/aldebaran-proxy.h"
 #include <string>
 #include "messages/Gamecontroller.pb.h"
-#include "architecture/IActivity.h"
+#include "architecture/executables/IActivity.h"
+
+
+
+
 using std::string;
+ACTIVITY_START
 /**
  * \class LedHandler
 
@@ -16,8 +21,7 @@ using std::string;
 
 class LedHandler: public IActivity {
 public:
-	LedHandler();
-
+    ACTIVITY_CONSTRUCTOR(LedHandler);
 	/**
 	 * \brief setLed. Sets the device, a specified color
 	 *
@@ -64,7 +68,7 @@ public:
 	/**
 	 * \brief Agents execute function. Here is where leds color is changed according to the incomming messages.
 	 * */
-	int Execute();
+	 int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	/**
 	 * \brief Reads the raw battery level and displays the level in left ear led. Full Battery all leds off. Empty Battery All leds on.
 	 * Also last Level Leds flashes. As battery empties flash frequency increases.
@@ -78,9 +82,9 @@ public:
 	 * \brief Activity initialization. Blackboard subscription, Leds proxy creation.
 	 * In addition chest button, l_foot, r_foot leds become on (white)
 	 */
-	void UserInit();
+	 void ACTIVITY_VISIBLE UserInit();
 
-	string GetName() {
+	string ACTIVITY_VISIBLE GetName() {
 		return "LedHandler";
 	}
 
@@ -105,5 +109,7 @@ private:
 
 	std::map<string, int> colors; /// The map where the pairs of color and hex rgb value are storeds
 };
+
+ACTIVITY_END
 
 #endif // LED_HANDLER_H
