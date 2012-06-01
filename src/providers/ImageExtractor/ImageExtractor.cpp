@@ -14,20 +14,21 @@ PROVIDER_REGISTER(ImageExtractor);
 
 
 void ImageExtractor::UserInit() {
-    imext.Init(this);
-    Blackboard:updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+
+    imext.Init(&_blk);
+    _blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 }
 
 
 
 int ImageExtractor::Execute() {
-    Blackboard::process_messages();
+    _blk.process_messages();
 
-    boost::shared_ptr<const KCalibrateCam> cal = Blackboard::readState<KCalibrateCam> ("vision");
+    boost::shared_ptr<const KCalibrateCam> cal = _blk.readState<KCalibrateCam> ("vision");
 
-	if (cal != NULL)
+	if (cal.get() != NULL)
 	{
-		//cout<<"=======Start calibration:"<<cal->status()<<endl;
+		cout<<"=======Start calibration:"<<cal->status()<<endl;
 		if (cal->status() == 0)
 		{
 			//cout<<"Start calibration"<<endl;
@@ -38,12 +39,11 @@ int ImageExtractor::Execute() {
 			Logger::Instance().WriteMsg("ImageExtractor", "Calibration Done", Logger::Info);
 			//cout<<"Calibration Done!"<<endl;
 			res.set_status(1);
-			Blackboard::publishState(res, "vision");
+			_blk.publishState(res, "vision");
 
 		}
 	}
-	Blackboard::publish_all();
-
+	_blk.publish_all();
 	boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
 	boost::posix_time::ptime  timestamp;
 	if(lastrefresh+boost::posix_time::millisec(camerarefreshmillisec)<now)
@@ -61,13 +61,15 @@ int ImageExtractor::Execute() {
 	timestamp=imext.fetchImage(imstore);
     outmsg.set_width((imstore.width));
     outmsg.set_height((imstore.height));
+
     outmsg.set_bytes_per_pix(imstore.nChannels);
     if(imstore.nChannels==2)
         outmsg.set_colorspace(KRawImage::YUYV);
     else
         outmsg.set_colorspace(KRawImage::OTHER);
 
-    outmsg.mutable_image_rawdata()->assign(imstore.imageData,imstore.imageSize());
+    outmsg.mutable_image_rawdata()->reserve(imstore.imageSize());
+    outmsg.mutable_image_rawdata()->assign(imstore.imageData, imstore.imageSize());
 
     //Publish msg
 
@@ -83,8 +85,6 @@ int ImageExtractor::Execute() {
     nmsg.msgclass=msgentry::DATA;
 
     this->publish(nmsg);
-
-
 
 
 	return 0;

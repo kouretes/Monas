@@ -40,7 +40,7 @@ class KSegmentator{
 		* are valid and produce a valid segmentation result
 		*/
 
-        void attachToIplImage(KImage const& data);
+        void attachToIplImage(KImageConst const& data);
 		/**
 		*Clasify a pixel of the image: i is row and j is column, ie i is 0-640 and j is 0-480 in a 640x480 image
 		*/
@@ -90,7 +90,7 @@ class KSegmentator{
 		static const unsigned char LUTres=2,LUTsize=64;//Carefull. LUTSIZE=256>>LUTRES
 		//Pointer to attached IplImage data
 
-		char const *dataPointer;
+		const char  *dataPointer;
 		int widthmult2;//width*2 :D
 		int width;//:)
 		int height;

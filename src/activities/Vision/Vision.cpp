@@ -54,8 +54,10 @@ void Vision::fetchAndProcess()
 	//cout << "fetchImage" << endl;
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
     boost::shared_ptr<const KRawImage> img=_blk.readData<KRawImage> ("vision", msgentry::HOST_ID_LOCAL_HOST, &stamp);
+    if(img.get()==0)
+        return;
     //Remove constness, tricky stuff :/
-    rawImage.copyFrom(const_cast<char *>(img->image_rawdata().data()),
+    rawImage.copyFrom(img->image_rawdata().data(),
                       img->width(),img->height(),img->bytes_per_pix());
 	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
 

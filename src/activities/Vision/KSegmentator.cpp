@@ -100,7 +100,7 @@ inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
 void KSegmentator::setLumaScale(float s)
 {
 	lumascale=floor(s+1);
-	cout<<"KSegmentator:setLumaScale():"<<s<<endl;
+	//cout<<"KSegmentator:setLumaScale():"<<s<<endl;
 	/*for(int i=0;i<256;i++)
 	{
 	    int r=i*lumascale;
@@ -182,7 +182,7 @@ KSegmentator::colormask_t ruleFileClassifyPixel(struct RuleSet const& r, unsigne
 
 }
 
-void KSegmentator::attachToIplImage(KImage const& data)
+void KSegmentator::attachToIplImage(KImageConst const& data)
 {
 	//string m="Seg times:"+_toString(fetch.tv_nsec)+" "+_toString(segment.tv_nsec);
 	//fetch.tv_nsec=0;

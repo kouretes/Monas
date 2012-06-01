@@ -34,7 +34,7 @@ class KImageExtractor
 
 		~KImageExtractor();
 		//Get new Image from hardware
-		boost::posix_time::ptime fetchImage(KImage & img);
+		boost::posix_time::ptime fetchImage(KImageDeepCopy & img);
 		//Create new space for image
 		float calibrateCamera(int sleeptime=500,int exp=15);
 		float getExpUs() const;

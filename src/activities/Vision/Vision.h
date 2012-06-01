@@ -144,7 +144,7 @@ class Vision: public IActivity
 		KSegmentator *segtop;
 
 		//Raw Input Image
-		KImage rawImage;
+		KImageConst rawImage;
 		//Ball Detection related
 		std::vector<KVecInt2> ballpixels;
 		std::vector<KVecInt2> ygoalpost;
