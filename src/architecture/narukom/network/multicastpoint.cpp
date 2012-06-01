@@ -120,44 +120,27 @@ void MulticastPoint::handle_send_to(const char* bytes,std::size_t size)
 {
     // Random early detect
     avgqueuesize=queuesize*wq+avgqueuesize*(1-wq);
-    bool notreject=true;
-    //std::cout<<"avgqueue:"<<avgqueuesize<<std::endl;
-    if(minth<avgqueuesize)
+
+
+    p.assign(bytes,size);
+    int s=p.nextPacket();
+    while(s>0)
     {
-        float pb=(avgqueuesize-minth)/(float(maxth-minth));
-        pb=sqrt(pb);
-        //pb+=(size/(1024.0f*MAX_UDP_PAYLOAD))*(size/(4096.0f*MAX_UDP_PAYLOAD));
-        //std::cout<<"pb:"<<pb<<std::endl;
-        if(uni()<pb)
+        try
         {
-            notreject=false;//Reject
-            //std::cout<<"r"<<std::endl;
+            size_t r=multisend.send_to(boost::asio::buffer(p.buff,s), multicast_point_);
+
         }
-    }
-
-
-    if(notreject)
-    {
-        p.assign(bytes,size);
-        int s=p.nextPacket();
-        while(s>0)
+        catch (boost::system::system_error &r)
         {
-            try
+            if(canWarn)//It is reset every beacon interval
             {
-                size_t r=multisend.send_to(boost::asio::buffer(p.buff,s), multicast_point_);
-
+                Logger::Instance().WriteMsg("Multicast", "Possible Network Error", Logger::Warning);
+                canWarn=false; //Disable warnings again
             }
-            catch (boost::system::system_error &r)
-            {
-                if(canWarn)//It is reset every beacon interval
-                {
-                    Logger::Instance().WriteMsg("Multicast", "Possible Network Error", Logger::Warning);
-                    canWarn=false; //Disable warnings again
-                }
-            }
-
-            s= p.nextPacket();
         }
+
+        s= p.nextPacket();
     }
 
 	{
@@ -388,6 +371,26 @@ void MulticastPoint::processOutGoing(msgentry m)
         std::cout<<"Congestion on multicast"<<std::endl;
         return ;
     }
+
+    //std::cout<<"avgqueue:"<<avgqueuesize<<std::endl;
+    //std::cout<<"checking:"<<m.msg->GetTypeName()<<std::endl;
+    if(minth<avgqueuesize)
+    {
+        float pb=((avgqueuesize-minth)/(float(maxth-minth)))*ceil(((float)m.msg->ByteSize())/MAX_UDP_PAYLOAD);
+
+        pb=sqrt(pb);
+        //pb+=(size/(1024.0f*MAX_UDP_PAYLOAD))*(size/(4096.0f*MAX_UDP_PAYLOAD));
+        //std::cout<<"pb:"<<pb<<std::endl;
+        if(uni()<pb)
+        {
+            //std::cout<<"Rejecting:"<<m.msg->GetTypeName()<<std::endl;
+            return ;
+        }
+
+    }
+
+
+
 
 	packet pack=msgentryToBytes(m);//Serialize msgentry
 

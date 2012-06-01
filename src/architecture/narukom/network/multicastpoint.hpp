@@ -84,8 +84,8 @@ class MulticastPoint : public EndPoint, private KSystem::Thread
 
 	static const float wq=0.75;
 
-	static const std::size_t minth=2;
-	static const std::size_t maxth=32;
+	static const std::size_t minth=16;
+	static const std::size_t maxth=48;
 
 
 
