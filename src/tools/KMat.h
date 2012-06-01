@@ -947,7 +947,6 @@ namespace KMat
 			{
 				A*=rop.A;
 				AisZero=rop.AisZero;
-				AisIdentity=rop.AisIdentity;
 			}
 
 			B+=axd;
@@ -1004,6 +1003,11 @@ namespace KMat
 				}
 				else if (AisZero==true)//Result is def zero
 					B.zero();
+				else
+				{
+					B.scalar_mult(-1);
+				}
+				
 				//else unchanged :) AisIdentity==true
 
 			}

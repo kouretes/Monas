@@ -10,12 +10,36 @@
 #include "hal/robot/generic_nao/KinematicsDefines.h"
 //#include "KinematicsDefines.h"
 #include "ForwardKinematics.h"
+/**
+ * This is the code for the Invers Kinematics for nao v3.3 and v4 robot.
+ 
+ * @author Kofinas Nikos aka eldr4d, 2012 kouretes team
+ * special thanks to Orf or vosk for the KMat library
+ *
+	
+ * DON'T TRY to understand the code, it's just chaotic maths. If u want the maths
+ * e-mail me (nikofinas@gmail.com) for the matlab files.
+ * \file InverseKinematics.h
+*/
 
-
-#define KMatTransf KMat::transformations
 namespace IKin
 {
-	vector<vector<float> > inverseHead(float px,float py,float pz, float rx, float ry, float rz, bool wihtAngles, bool topCamera){
+	typedef KMat::transformations KMatTransf;
+	/**
+	 * vector<vector<float> > inverseHead(float px,float py,float pz, float rx, float ry, float rz, bool withAngles, bool topCamera)
+	 * @brief Inverse Kinematics for the head (DON'T try to understand the code, it's just maths)
+	 * @param px. The x cartesian coordinate.
+	 * @param py. The y cartesian coordinate.
+	 * @param pz. The z cartesian coordinate.
+	 * @param ax. The x rotation. For the head it's every time 0.0f so don't bother.
+	 * @param ay. The y rotation.
+	 * @param az. The z rotation.
+	 * @param wihtAngles. If true, the problem will be solved only with angles, else only with the cartesian points.
+	 * @param topCamera. If true, the top camera is chosen as end point, else the bottom camera is chosen.
+	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
+		Each solutions vector contains the angles with this order: HeadYaw,HeadPitch.
+	 * */
+	vector<vector<float> > inverseHead(float px,float py,float pz, float rx, float ry, float rz, bool withAngles, bool topCamera){
 		std::vector<float> fc,empty;
 		std::vector<vector<float> > returnResult;
 		float PI = KMatTransf::PI;
@@ -23,7 +47,9 @@ namespace IKin
 		FKin::FKvars output;
 		KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);	
 		float theta1,theta2;
-		if(wihtAngles){
+		if(rx!=0.0f && withAngles)
+			return returnResult;
+		if(withAngles){
 			theta1 = rz;
 			theta2 = ry;
 			//---------------------------Forward validation step--------------------------------------------------------------------------------------
@@ -83,7 +109,8 @@ namespace IKin
 				else
 					output = FKin::filterForwardFromTo("Torso","CameraBot",empty,fc);
 				float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
-				if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1 && rx-0.001<=ax && rx+0.001>=ax && ry-0.001<=ay && ry+0.001>=ay && rz-0.001<=az && rz+0.001>=az){
+				//Validate only the points
+				if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1){
 					returnResult.push_back(fc);
 				}
 				//-----------------------------------------------------------------------------------------------------------------------------------------
@@ -92,8 +119,19 @@ namespace IKin
 		
 		return returnResult;
 	}
-		
-
+	
+	/**
+	 * vector<vector<float> > inverseLeftHand(float px,float py,float pz, float rx, float ry, float rz)
+	 * @brief Inverse Kinematics for the left hand (DON'T try to understand the code, it's just maths)
+	 * @param px. The x cartesian coordinate.
+	 * @param py. The y cartesian coordinate.
+	 * @param pz. The z cartesian coordinate.
+	 * @param ax. The x rotation.
+	 * @param ay. The y rotation.
+	 * @param az. The z rotation.
+	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
+		Each solutions vector contains the angles with this order: LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll
+	 * */
 	vector<vector<float> > inverseLeftHand(float px,float py,float pz, float rx, float ry, float rz){
 		std::vector<float> flh,empty;
 		std::vector<vector<float> > returnResult;
@@ -181,7 +219,18 @@ namespace IKin
 		return returnResult;
 	}
 
-
+	/**
+	 * vector<vector<float> > inverseRightHand(float px,float py,float pz, float rx, float ry, float rz)
+	 * @brief Inverse Kinematics for the right hand (DON'T try to understand the code, it's just maths)
+	 * @param px. The x cartesian coordinate.
+	 * @param py. The y cartesian coordinate.
+	 * @param pz. The z cartesian coordinate.
+	 * @param ax. The x rotation.
+	 * @param ay. The y rotation.
+	 * @param az. The z rotation.
+	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
+		Each solutions vector contains the angles with this order: RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll
+	 * */
 	vector<vector<float> > inverseRightHand(float px,float py,float pz, float rx, float ry, float rz){
 		std::vector<float> frh,empty;
 		std::vector<vector<float> > returnResult;
@@ -274,11 +323,9 @@ namespace IKin
 					output = FKin::filterForwardFromTo("Torso","RightArm",empty,frh);
 					float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
 					if(oldPx-1<=x && x<=oldPx+1 && oldPy-1<=y && y<=oldPy+1 && oldPz-1<=z && z<=oldPz+1 && oldRx-0.001<=ax && oldRx+0.001>=ax && oldRy-0.001<=ay && oldRy+0.001>=ay && oldRz-0.001<=az && oldRz+0.001>=az){
-//std::cout << "x = " << output.pointX << " y = " << output.pointY << " z = " << output.pointZ << " ax = " << output.angleX << " ay = " << output.angleY << " az = " << output.angleZ << std::endl;
-//std::cout << "Px = " << px << " Py = " << py << " Pz = " << pz << "Ax = " << rx << " Ay = " << ry << " Az = " << rz << std::endl;
-//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;
 						returnResult.push_back(frh);
-					}-----------------------------------------------------------------------------------------------------------------------------------------
+					}
+					//-----------------------------------------------------------------------------------------------------------------------------------------
 					
 				}
 			}
@@ -288,7 +335,18 @@ namespace IKin
 		frh.clear();
 		return returnResult;
 	}
-	
+	/**
+	 * vector<vector<float> > inverseLeftLeg(float px,float py,float pz, float rx, float ry, float rz)
+	 * @brief Inverse Kinematics for the left leg (DON'T try to understand the code, it's just maths)
+	 * @param px. The x cartesian coordinate.
+	 * @param py. The y cartesian coordinate.
+	 * @param pz. The z cartesian coordinate.
+	 * @param ax. The x rotation.
+	 * @param ay. The y rotation.
+	 * @param az. The z rotation.
+	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
+		Each solutions vector contains the angles with this order: LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll
+	 * */
 	vector<vector<float> > inverseLeftLeg(float px,float py,float pz, float rx, float ry, float rz){
 		std::vector<float> fll,empty;
 		std::vector<vector<float> > returnResult;
@@ -415,6 +473,156 @@ namespace IKin
 						float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
 						if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1 && rx-0.001<=ax && rx+0.001>=ax && ry-0.001<=ay && ry+0.001>=ay && rz-0.001<=az && rz+0.001>=az){
 							returnResult.push_back(fll);
+						}						
+						//---------------------------------------------------------------------------------------------------------------------------------------------
+					}
+				}
+			}
+		}
+		return returnResult;
+	}
+
+	/**
+	 * vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz)
+	 * @brief Inverse Kinematics for the right leg (DON'T try to understand the code, it's just maths)
+	 * @param px. The x cartesian coordinate.
+	 * @param py. The y cartesian coordinate.
+	 * @param pz. The z cartesian coordinate.
+	 * @param ax. The x rotation.
+	 * @param ay. The y rotation.
+	 * @param az. The z rotation.
+	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
+		Each solutions vector contains the angles with this order: RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll
+	 * */
+	vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz){
+		std::vector<float> frl,empty;
+		std::vector<vector<float> > returnResult;
+		FKin::FKvars output;
+		float PI = KMatTransf::PI;
+		FKin::kmatTable T,base,T4,T5,T6,R,endTr,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5;
+		KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);
+		KMatTransf::makeTranslation(base, 0.0f,-HipOffsetY,-HipOffsetZ);	
+		KMatTransf::makeTranslation(endTr,0.0f,0.0f,-FootHeight);
+		KMatTransf::makeRotationXYZ(Rot,-PI/4,0.0f,0.0f);
+		//Move the start point to the hipyawpitch point
+		base.fast_invert();
+		base *= T;
+		//Move the end point to the anklePitch joint
+		endTr.fast_invert();
+		base *= endTr;
+		//Rotate hipyawpitch joint
+		Rot *= base;
+		//Invert the table, because we need the chain from the ankle to the hip
+		Tstart = Rot;
+		Rot.fast_invert();
+		Rot.prettyPrint();
+		T = Rot;
+		//Build the rotation table
+		KMatTransf::makeRotationZYX(R,PI,-PI/2,0.0f);
+		float startX = 0;
+		float startY = 0;
+		float startZ = 0;
+		float side1 = ThighLength;
+		float side2 = TibiaLength; 
+		
+		float pxInvert = T(0,3);
+		float pyInvert = T(1,3);
+		float pzInvert = T(2,3);
+		//Calculate Theta 4
+		float distance = sqrt(pow(startX - pxInvert,2) + pow(startY - pyInvert,2) + pow(startZ -pzInvert,2));
+		float theta4 = PI - acos((pow(side1,2)+pow(side2,2) - pow(distance,2))/(2*side1*side2));
+		if(theta4!=theta4 || theta4 < RKneePitchLow || theta4 > RKneePitchHigh)
+			return returnResult;
+		
+		KMatTransf::makeDHTransformation(T4,-ThighLength,0.0f,0.0f,theta4);
+		float theta6 = atan(pyInvert/pzInvert);
+		
+		if(theta6 < RAnkleRollLow || theta6 > RAnkleRollHigh)
+			return returnResult;
+		//cout << "theta6 = " << theta6 << endl;
+		KMatTransf::makeDHTransformation(T6,0.0f,-PI/2,0.0f,theta6);
+		T6 *= R;
+		try{
+			T6.fast_invert();
+			Tstart *= T6;
+			TtempTheta5 = Tstart;
+			TtempTheta5.fast_invert();
+		}catch(KMat::SingularMatrixInvertionException d){
+			return returnResult;
+		}
+
+		float up = TtempTheta5(1,3)*(TibiaLength + ThighLength*cos(theta4)) + ThighLength*TtempTheta5(0,3)*sin(theta4);
+		float down = pow(ThighLength,2)*pow(sin(theta4),2)+pow(TibiaLength + ThighLength*cos(theta4),2);
+		float theta5= asin(-up/down);
+		if(theta5 != theta5 && up/down<0)
+			theta5 = -PI/2;
+		else if(theta5 != theta5)
+			theta5 = PI/2;
+			
+		for(int i=0;i<2;i++){
+			if(i == 0 && (theta5 > RAnklePitchHigh || theta5 < RAnklePitchLow))
+				continue;
+			else if(i == 1 && (PI - theta5 > RAnklePitchHigh || PI - theta5 < RAnklePitchLow))
+				continue;
+			else if(i == 1)
+				theta5 = PI - theta5;
+			KMatTransf::makeDHTransformation(T5,-TibiaLength,0.0f,0.0f,theta5);
+			Ttemp = T4;
+			Ttemp *= T5; 
+			try{
+				Ttemp.fast_invert();
+			}catch(KMat::SingularMatrixInvertionException d){
+				continue;			
+			}
+			Ttemp2 = Tstart;
+			Ttemp2 *= Ttemp;
+			float temptheta2 = acos(Ttemp2(1,2));
+			float theta2;
+      		for(int l=0;l<2;l++){
+      			if(l == 0 && (temptheta2 + PI/4> RHipRollHigh || temptheta2 + PI/4 < RHipRollLow))
+					continue;
+				else if(l == 1 && (-temptheta2 + PI/4>RHipRollHigh || -temptheta2 + PI/4 < RHipRollLow))
+					continue;
+				else if(l==0)
+					theta2 = temptheta2 + PI/4;
+				else if(l == 1)
+					theta2 = -temptheta2 + PI/4;
+				float theta3 = asin(Ttemp2(1,1)/sin(theta2+PI/4));
+				if(theta3 != theta3 && Ttemp2(1,1)/sin(theta2+PI/4)<0)
+					theta3 = -PI/2;
+				else if(theta3 != theta3)
+					theta3 = PI/2;
+				for(int k=0;k<2;k++){
+					if(k == 0 && (theta3 > RHipPitchHigh || theta3 < RHipPitchLow))
+						continue;
+					else if(k == 1 && (PI - theta3 > RHipPitchHigh || PI - theta3 < RHipPitchLow))
+						continue;
+					else if(k == 1)
+						theta3 = PI - theta3;
+					float temptheta1 = acos(Ttemp2(0,2)/sin(theta2+PI/4));
+					if(temptheta1 != temptheta1)
+						temptheta1 = 0;
+					for(int p=0;p<2;p++){
+						float theta1;
+						if(p == 0 && (temptheta1 + PI/2> RHipYawPitchHigh || -temptheta1 + PI/2 < RHipYawPitchLow))
+							continue;
+						else if(p == 1 && (-temptheta1 + PI/2> RHipYawPitchHigh || - temptheta1 + PI/2< RHipYawPitchLow))
+							continue;
+						else if(p == 0)
+							theta1 = temptheta1 + PI/2;
+						else if(p == 1)
+							theta1 = -temptheta1 + PI/2;
+						
+						//--------------------------------------Forward validation step------------------------------------------------------------------------------
+						frl.clear();
+						frl.push_back(theta1);frl.push_back(theta2);frl.push_back(theta3);frl.push_back(theta4);frl.push_back(theta5);frl.push_back(theta6);
+						output = FKin::filterForwardFromTo("Torso","RightLeg",empty,frl);
+						float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
+						if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1 && rx-0.001<=ax && rx+0.001>=ax && ry-0.001<=ay && ry+0.001>=ay && rz-0.001<=az && rz+0.001>=az){
+							//std::cout << "x = " << output.pointX << " y = " << output.pointY << " z = " << output.pointZ << " ax = " << output.angleX << " ay = " << output.angleY << " az = " << output.angleZ << std::endl;
+							//std::cout << "Px = " << px << " Py = " << py << " Pz = " << pz << "Ax = " << rx << " Ay = " << ry << " Az = " << rz << std::endl;
+							//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
+							returnResult.push_back(frl);
 						}						
 						//---------------------------------------------------------------------------------------------------------------------------------------------
 					}

@@ -15,7 +15,7 @@
  * This is the code for the Forward Kinematics for nao v3.3 robot.
  
  * @author Kofinas Nikos aka eldr4d, 2011 kouretes team
- *
+ * special thanks to Orf or vosk for the KMat library
  	 * 1 = vector's head position\n
 	 * Arms:	
 	 *			-# ShoulderPitch
@@ -204,7 +204,6 @@ namespace FKin
 		Tend *= R;
 		Tend *= endTr;
 		EndTransf = Tend;
-		
 	};
 	
 	/**
