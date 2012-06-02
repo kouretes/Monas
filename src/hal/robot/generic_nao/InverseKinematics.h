@@ -108,7 +108,7 @@ namespace IKin
 					output = FKin::filterForwardFromTo("Torso","CameraTop",empty,fc);
 				else
 					output = FKin::filterForwardFromTo("Torso","CameraBot",empty,fc);
-				float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
+				float x = output.pointX,y = output.pointY,z = output.pointZ;
 				//Validate only the points
 				if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1){
 					returnResult.push_back(fc);
@@ -135,7 +135,8 @@ namespace IKin
 	vector<vector<float> > inverseLeftHand(float px,float py,float pz, float rx, float ry, float rz){
 		std::vector<float> flh,empty;
 		std::vector<vector<float> > returnResult;
-		FKin::FKvars output;
+		FKin::kmatTable Tinit;
+		KMatTransf::makeTransformation(Tinit,px,py,pz,rx,ry,rz);
 		float PI = KMatTransf::PI;
 		float startX = 0;
 		float startY = ShoulderOffsetY + ElbowOffsetY;
@@ -204,9 +205,10 @@ namespace IKin
 					//---------------------------Forward validation step--------------------------------------------------------------------------------------
 					flh.clear();
 					flh.push_back(theta1);flh.push_back(theta2);flh.push_back(theta3);flh.push_back(theta4);
-					output = FKin::filterForwardFromTo("Torso","LeftArm",empty,flh);
-					float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
-					if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1 && rx-0.001<=ax && rx+0.001>=ax && ry-0.001<=ay && ry+0.001>=ay && rz-0.001<=az && rz+0.001>=az){
+					FKin::kmatTable test;						
+					FKin::filterForward(test,"LeftHand", flh);
+					if(test.almostEqualTo(Tinit)){
+						std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
 						returnResult.push_back(flh);
 					}
 					//------------------------------------------------------------------------------------------------------------------------------------------
@@ -234,12 +236,12 @@ namespace IKin
 	vector<vector<float> > inverseRightHand(float px,float py,float pz, float rx, float ry, float rz){
 		std::vector<float> frh,empty;
 		std::vector<vector<float> > returnResult;
-		FKin::FKvars output;
 		float PI = KMatTransf::PI;
-		float oldPx = px,oldPy = py,oldPz = pz,oldRx = rx,oldRy = ry,oldRz = rz;
+
 		//Rotate input to remvoe Rfix
-		FKin::kmatTable T,Rfix;
-		KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);	
+		FKin::kmatTable T,Rfix,Tinit;
+		KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);
+		Tinit = T;	
 		KMatTransf::makeRotationXYZ(Rfix,0.0f,0.0f,-PI);
 		Rfix.fast_invert();
 		T*=Rfix;
@@ -320,9 +322,10 @@ namespace IKin
 					//---------------------------Forward validation step--------------------------------------------------------------------------------------
 					frh.clear();
 					frh.push_back(theta1);frh.push_back(theta2);frh.push_back(theta3);frh.push_back(theta4);
-					output = FKin::filterForwardFromTo("Torso","RightArm",empty,frh);
-					float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
-					if(oldPx-1<=x && x<=oldPx+1 && oldPy-1<=y && y<=oldPy+1 && oldPz-1<=z && z<=oldPz+1 && oldRx-0.001<=ax && oldRx+0.001>=ax && oldRy-0.001<=ay && oldRy+0.001>=ay && oldRz-0.001<=az && oldRz+0.001>=az){
+					FKin::kmatTable test;						
+					FKin::filterForward(test,"RightHand", frh);
+					if(test.almostEqualTo(Tinit)){
+						std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
 						returnResult.push_back(frh);
 					}
 					//-----------------------------------------------------------------------------------------------------------------------------------------
@@ -350,10 +353,10 @@ namespace IKin
 	vector<vector<float> > inverseLeftLeg(float px,float py,float pz, float rx, float ry, float rz){
 		std::vector<float> fll,empty;
 		std::vector<vector<float> > returnResult;
-		FKin::FKvars output;
 		float PI = KMatTransf::PI;
-		FKin::kmatTable T,base,T4,T5,T6,R,endTr,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5;
+		FKin::kmatTable T,base,T4,T5,T6,R,endTr,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5,Tinit;
 		KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);	
+		Tinit=T;
 		KMatTransf::makeTranslation(base, 0.0f,HipOffsetY,-HipOffsetZ);	
 		KMatTransf::makeTranslation(endTr,0.0f,0.0f,-FootHeight);
 		KMatTransf::makeRotationXYZ(Rot,PI/4,0.0f,0.0f);
@@ -469,11 +472,12 @@ namespace IKin
 						//--------------------------------------Forward validation step------------------------------------------------------------------------------
 						fll.clear();
 						fll.push_back(theta1);fll.push_back(theta2);fll.push_back(theta3);fll.push_back(theta4);fll.push_back(theta5);fll.push_back(theta6);
-						output = FKin::filterForwardFromTo("Torso","LeftLeg",empty,fll);
-						float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
-						if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1 && rx-0.001<=ax && rx+0.001>=ax && ry-0.001<=ay && ry+0.001>=ay && rz-0.001<=az && rz+0.001>=az){
+						FKin::kmatTable test;						
+						FKin::filterForward(test,"LeftLeg", fll);
+						if(test.almostEqualTo(Tinit)){
+							//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;							
 							returnResult.push_back(fll);
-						}						
+						}
 						//---------------------------------------------------------------------------------------------------------------------------------------------
 					}
 				}
@@ -497,10 +501,10 @@ namespace IKin
 	vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz){
 		std::vector<float> frl,empty;
 		std::vector<vector<float> > returnResult;
-		FKin::FKvars output;
 		float PI = KMatTransf::PI;
-		FKin::kmatTable T,base,T4,T5,T6,R,endTr,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5;
+		FKin::kmatTable T,base,T4,T5,T6,R,endTr,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5,Tinit;
 		KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);
+		Tinit=T;
 		KMatTransf::makeTranslation(base, 0.0f,-HipOffsetY,-HipOffsetZ);	
 		KMatTransf::makeTranslation(endTr,0.0f,0.0f,-FootHeight);
 		KMatTransf::makeRotationXYZ(Rot,-PI/4,0.0f,0.0f);
@@ -515,7 +519,7 @@ namespace IKin
 		//Invert the table, because we need the chain from the ankle to the hip
 		Tstart = Rot;
 		Rot.fast_invert();
-		Rot.prettyPrint();
+
 		T = Rot;
 		//Build the rotation table
 		KMatTransf::makeRotationZYX(R,PI,-PI/2,0.0f);
@@ -533,13 +537,12 @@ namespace IKin
 		float theta4 = PI - acos((pow(side1,2)+pow(side2,2) - pow(distance,2))/(2*side1*side2));
 		if(theta4!=theta4 || theta4 < RKneePitchLow || theta4 > RKneePitchHigh)
 			return returnResult;
-		
 		KMatTransf::makeDHTransformation(T4,-ThighLength,0.0f,0.0f,theta4);
 		float theta6 = atan(pyInvert/pzInvert);
 		
 		if(theta6 < RAnkleRollLow || theta6 > RAnkleRollHigh)
 			return returnResult;
-		//cout << "theta6 = " << theta6 << endl;
+
 		KMatTransf::makeDHTransformation(T6,0.0f,-PI/2,0.0f,theta6);
 		T6 *= R;
 		try{
@@ -587,8 +590,8 @@ namespace IKin
 					theta2 = temptheta2 + PI/4;
 				else if(l == 1)
 					theta2 = -temptheta2 + PI/4;
-				float theta3 = asin(Ttemp2(1,1)/sin(theta2+PI/4));
-				if(theta3 != theta3 && Ttemp2(1,1)/sin(theta2+PI/4)<0)
+				float theta3 = asin(Ttemp2(1,1)/sin(theta2-PI/4));
+				if(theta3 != theta3 && Ttemp2(1,1)/sin(theta2-PI/4)<0)
 					theta3 = -PI/2;
 				else if(theta3 != theta3)
 					theta3 = PI/2;
@@ -599,7 +602,7 @@ namespace IKin
 						continue;
 					else if(k == 1)
 						theta3 = PI - theta3;
-					float temptheta1 = acos(Ttemp2(0,2)/sin(theta2+PI/4));
+					float temptheta1 = acos(Ttemp2(0,2)/sin(theta2-PI/4));
 					if(temptheta1 != temptheta1)
 						temptheta1 = 0;
 					for(int p=0;p<2;p++){
@@ -612,18 +615,16 @@ namespace IKin
 							theta1 = temptheta1 + PI/2;
 						else if(p == 1)
 							theta1 = -temptheta1 + PI/2;
-						
 						//--------------------------------------Forward validation step------------------------------------------------------------------------------
 						frl.clear();
 						frl.push_back(theta1);frl.push_back(theta2);frl.push_back(theta3);frl.push_back(theta4);frl.push_back(theta5);frl.push_back(theta6);
-						output = FKin::filterForwardFromTo("Torso","RightLeg",empty,frl);
-						float x = output.pointX,y = output.pointY,z = output.pointZ,ax = output.angleX,ay=output.angleY,az=output.angleZ;
-						if(px-1<=x && x<=px+1 && py-1<=y && y<=py+1 && pz-1<=z && z<=pz+1 && rx-0.001<=ax && rx+0.001>=ax && ry-0.001<=ay && ry+0.001>=ay && rz-0.001<=az && rz+0.001>=az){
-							//std::cout << "x = " << output.pointX << " y = " << output.pointY << " z = " << output.pointZ << " ax = " << output.angleX << " ay = " << output.angleY << " az = " << output.angleZ << std::endl;
-							//std::cout << "Px = " << px << " Py = " << py << " Pz = " << pz << "Ax = " << rx << " Ay = " << ry << " Az = " << rz << std::endl;
-							//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
+						FKin::kmatTable test;						
+						FKin::filterForward(test,"RightLeg", frl);
+						if(test.almostEqualTo(Tinit)){
+						//	std::cout << "Px = " << px << " Py = " << py << " Pz = " << pz << "Ax = " << rx << " Ay = " << ry << " Az = " << rz << std::endl;
+						//	std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;							
 							returnResult.push_back(frl);
-						}						
+						}
 						//---------------------------------------------------------------------------------------------------------------------------------------------
 					}
 				}
