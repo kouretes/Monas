@@ -29,8 +29,8 @@ class EndPoint
     EndPoint(std::string const& name);
     virtual ~EndPoint();
 
-    virtual void publish(  msgentry const& msg);
-	virtual void publish(std::vector<msgentry> const& vec);
+    void publish(  msgentry const& msg);
+	void publish(std::vector<msgentry> const& vec);
 
     virtual void publishData(const google::protobuf::Message & msg,std::string const& topic);
     virtual void publishSignal(const google::protobuf::Message & msg,std::string const& topic);

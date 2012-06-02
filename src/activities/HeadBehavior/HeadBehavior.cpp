@@ -421,7 +421,7 @@ void HeadBehavior::read_messages() {
 	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
 	obsm = _blk.readSignal<ObservationMessage> ("vision");
 	asvm = _blk.readData<AllSensorValuesMessage> ("sensors");
-	boost::shared_ptr<const CalibrateCam> c = _blk.readState<CalibrateCam> ("vision");
+	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1) {
 			calibrated = 2;
@@ -431,7 +431,7 @@ void HeadBehavior::read_messages() {
 }
 
 void HeadBehavior::calibrate() {
-	CalibrateCam v;
+	KCalibrateCam v;
 	v.set_status(0);
 	_blk.publishState(v, "vision");
 	Logger::Instance().WriteMsg("HeadBehavior", "sendCalibrate ", Logger::Info);

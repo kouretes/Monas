@@ -10,19 +10,23 @@
 #include "architecture/executables/IProvider.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 #include "hal/robot/generic_nao/KImageExtractor.h"
+#include "hal/smart_timer.h"
 #include "messages/Kimage.pb.h"
 
 
 
 PROVIDER_START
-class ImageExtractor: virtual Blackboard,  virtual public IProvider
+class ImageExtractor:   public IProvider
 {
 	public:
         static const unsigned camerarefreshmillisec=1000;
         ImageExtractor(KSystem::ThreadConfig &c, Narukom&n):
         EndPoint("ImageExtractor"),
-        Blackboard("ImageExtractor"),
-        IProvider("ImageExtractor",c,n),imext(){  lastrefresh=boost::posix_time::microsec_clock::universal_time()-boost::posix_time::microseconds(camerarefreshmillisec+10);      };
+        IProvider("ImageExtractor",c,n),_blk("ImageExtractorBlackboard"),imext(){
+            _blk.attachTo(*n.get_message_queue());
+            lastrefresh=boost::posix_time::microsec_clock::universal_time()-boost::posix_time::microseconds(camerarefreshmillisec+10);
+            UserInit();
+        };
 		int PROVIDER_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 		void PROVIDER_VISIBLE UserInit();
@@ -35,8 +39,10 @@ class ImageExtractor: virtual Blackboard,  virtual public IProvider
 
 		}
     private:
+        Blackboard _blk;
         KImageExtractor imext;
-        KImage imstore;
+        KSystem::smart_timer t;
+        KImageDeepCopy imstore;
         KRawImage outmsg;
         boost::posix_time::ptime lastrefresh;
 

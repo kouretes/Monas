@@ -75,7 +75,7 @@ void KImageExtractor::_releaseImage()
  * Use Allocate Image for an initial allocation of an image
  */
 #ifdef KROBOT_IS_REMOTE_ON
-boost::posix_time::ptime KImageExtractor::fetchImage(KImage &img)
+boost::posix_time::ptime KImageExtractor::fetchImage(KImageDeepCopy &img)
 {
 	//cout<<"KImageExtractor::fetchimage():"<<endl;
 	boost::posix_time::ptime s=boost::posix_time::microsec_clock::universal_time();
@@ -122,7 +122,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImage &img)
 };
 
 #else
-boost::posix_time::ptime KImageExtractor::fetchImage(KImage & img)
+boost::posix_time::ptime KImageExtractor::fetchImage(KImageDeepCopy & img)
 {
 	//cout << "Remote method off" << endl;
 	_releaseImage();

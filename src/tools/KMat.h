@@ -456,6 +456,17 @@ namespace KMat
 
 			return static_cast< D<T,M,N>& > (*this);
 		};
+
+		T  sum() const
+		{
+			if(h==NULL)
+				return 0;
+			T s=0;
+			for (unsigned i=0;i<M;i++)
+				for (unsigned j=0;j<N;j++)
+					s+=h->data(i,j);
+			return s;
+		};
 		/**
 		 * Subtract a scalar
 		 */
@@ -650,13 +661,13 @@ namespace KMat
 		 return copyFrom(d);
 		 };*/
 		//
-		T norm2()
+		T norm2() const
 		{
-			if(!RefHandle<DataContainer<T,M,N> >::validHandle())
+			if(h==NULL)
 				return 0;
 			T res=0,a;
 			for(unsigned i=0;i<M;i++)
-				for(unsigned j=0;i<N;j++)
+				for(unsigned j=0;j<N;j++)
 				{
 					a=h->data(i,j);
 					res+=a*a;
@@ -1020,6 +1031,19 @@ namespace KMat
 			B.prettyPrint();
 			return *this;
 		}
+		
+		bool almostEqualTo(ATMatrix<T,S> const & other)const{
+			ATMatrix<T,S> temp=other;
+			temp.fast_invert();
+			temp*=(*this);
+			T rs=temp.A.norm2()+temp.B.norm2()-(S-1);
+			rs=rs>0?rs:-rs;
+			//std::cout<<rs<<std::endl;
+			//std::cout<<std::numeric_limits<T>::epsilon()<<std::endl;
+			return rs<std::numeric_limits<T>::epsilon()*10e1;
+
+
+		}
 
 		ATMatrix<T,S>& identity()
 		{
@@ -1042,7 +1066,7 @@ namespace KMat
 		ATMatrix<T,S>& check()//Just update booleans
 		{
 			BisZero=true;
-			for (unsigned i=0;i<S;i++)
+			for (unsigned i=0;i<S-1;i++)
 				if (B(i)!=0)
 				{
 					BisZero=false;

@@ -205,7 +205,7 @@ void BehaviorX::read_messages()
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 
 	//Logger::Instance().WriteMsg("BehaviorX", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const CalibrateCam> c= _blk.readState<CalibrateCam> ("vision");
+	boost::shared_ptr<const KCalibrateCam> c= _blk.readState<KCalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1)
 			calibrated = 2;
@@ -825,7 +825,7 @@ void BehaviorX::gotoPosition(float target_x,float target_y, float target_phi) {
 
 void BehaviorX::calibrate()
 {
-	CalibrateCam v;
+	KCalibrateCam v;
 	v.set_status(0);
 	_blk.publishState(v, "vision");
 	calibrated = 1;

@@ -5,12 +5,6 @@ message BallTrackMessage{
 	required float referencePitch  = 9 [default = 0.0];
 	required float radius = 10 [default = 0.0];
 }
-message CalibrateCam{
-	required int32 status =1;
-	required int32 sleeptime =2 [default = 1500];
-	required int32 exp= 3 [default =13];
-	required float exposure_comp =4 [default=1];
-}
 
 message BallObject{
 	required float dist =1 [default = 0.0];
