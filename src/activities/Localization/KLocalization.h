@@ -21,7 +21,6 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 
-//#define WEBOTS
 //#define VISIBILITY_WEIGHTING
 #define DISTANCE_WEIGHTING
 #define BEARING_WEIGHTING
