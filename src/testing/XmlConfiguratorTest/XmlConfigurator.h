@@ -13,6 +13,7 @@ public:
 	static const char DELIMITER='.';
 	static const char ATTRIBUTE_DELIMITER='$';
 	static const char NUMBER_DELIMITER='~';
+	static const char TEXTNUMBER_DELIMITER='#';
 	static const int MAIN_FILE = 0;
 	static const int BODY_FILE = 1;
 	static const int HEAD_FILE = 2;
@@ -23,8 +24,9 @@ public:
 	
 	void insertRecursivePolicyAppend(TiXmlNode* xmlNode,int fileType);
 	static queue<string> findAllSubstring(string  key);
-	static  string  extractNumber(string & str, int * num);//Get the ~ part
-	node *  findNodeForKey(queue<string> & key) ;
+	static string  extractNumber(string & str, int * num);//Get the ~ part
+	static string  extractNumberText(string & str, int * num);
+	node * findNodeForKey(queue<string> & key) ;
 	
 	
 public:
@@ -36,9 +38,9 @@ public:
 	bool loadFile(string filename,int fileType);
 	bool loadAllFiles(string filename);
 	vector<string> findValueForKey(string key);
-	bool updateValueForKey(string key, string value,int textpos);
-	bool updateFilesValue(string path,string value,int textpos,int fileType);
+	bool updateValueForKey(string key, string value);
+	bool updateFilesValue(string path,string value,int fileType);
 	void deleteNodesForKey(string key,int fileType);
-	bool rapidSet();
+	bool burstWrite(vector<pair<string,string> > writeData);
 	
 };

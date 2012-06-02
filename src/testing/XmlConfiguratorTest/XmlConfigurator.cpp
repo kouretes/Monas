@@ -38,6 +38,10 @@ void node::print(string pref)
 	}
 }
 
+
+ /**
+ * Delete all nodes that much a given key
+ **/
 void node::deleteNodesForKey(string key,int fileType){
 	queue<string> keys = findAllSubstring(key);
 	node * secondtolast=findNodeForKey(keys);
@@ -51,9 +55,13 @@ void node::deleteNodesForKey(string key,int fileType){
 	}	
 }
 
-bool node::updateFilesValue(string path,string value,int textpos,int fileType){
+ /**
+ * Updates a value to a file.
+ **/
+bool node::updateFilesValue(string path,string value,int fileType){
+	int filePos,textpos;
+	path = extractNumberText(path,&textpos);
 	queue<string> keys = findAllSubstring(path);
-	int filePos;
 	string filename = extractNumber(keys.front(),&filePos);
 	if(fileType == HEAD_FILE)
 		filename.insert(0,"HEAD/");
@@ -91,7 +99,7 @@ bool node::updateFilesValue(string path,string value,int textpos,int fileType){
 			int numOfCurText = 0;
 			for(TiXmlNode* child = firstChild->FirstChild(); child; child = child->NextSibling() ){
 				if(child->Type()==TiXmlNode::TEXT){
-					if(numOfCurText==textpos){
+					if(numOfCurText==textpos+1){
 						found = true;
 						child->SetValue(value);
 						break;
@@ -123,7 +131,12 @@ bool node::updateFilesValue(string path,string value,int textpos,int fileType){
 	return true;
 }
 
-bool node::updateValueForKey(string key, string value, int textpos){
+ /**
+ * Updates an attribute or a text to a given value.
+ **/
+bool node::updateValueForKey(string key, string value){
+	int textpos;
+	key = extractNumberText(key,&textpos);
 	queue<string> keys = findAllSubstring(key);
 	node * secondtolast=findNodeForKey(keys);
 	if(secondtolast==NULL)
@@ -138,17 +151,36 @@ bool node::updateValueForKey(string key, string value, int textpos){
 			(*it).second=value;
 		else
 			return false;
-		updateFilesValue(key,value,textpos,secondtolast->fileType);
+		updateFilesValue(key,value,secondtolast->fileType);
 	}else{
 		node * lastNode = secondtolast->findNodeForKey(lastkey);
 		if(lastNode == NULL)
 			return false;
 		lastNode->text[textpos] = value;
-		updateFilesValue(key,value,textpos,lastNode->fileType);
+		key.append("=");
+		key.append(convertInt(textpos));
+		updateFilesValue(key,value,lastNode->fileType);
 	}
 	return true;
 }
 
+ /**
+ * Update a set of keys,values at once
+ **/
+bool node::burstWrite(vector<pair<string,string> > writeData){
+	bool allOk = true;
+	pair<string,string> tempPair;
+	while(writeData.size()!=0){
+		tempPair = writeData.front();
+		writeData.erase(writeData.begin());
+		allOk &= updateValueForKey(tempPair.first,tempPair.second);
+	}
+	return allOk;
+}
+
+ /**
+ * Returns a vector of string(values) for the given key. 
+ **/
 vector<string> node::findValueForKey(string key){
 	queue<string> keys = findAllSubstring(key);
 
@@ -171,15 +203,19 @@ vector<string> node::findValueForKey(string key){
 		return vector<string>();
 	else
 		return (*secondtolast->kids.find(lastkey)).second[pos].text;
-	
 }
 	
-	
+ /**
+ * Returns ..... Feel in the blanks
+ **/
 vector<string> node::getText(){
 	return text;
 }
 
 
+ /**
+ * Return the attribute for the given key
+ **/
 vector<string> node::getAttribute(string & key){
 	
 	int pos;
@@ -196,6 +232,10 @@ vector<string> node::getAttribute(string & key){
 		return vector<string>();
 }
 
+ /**
+ * Break the given key in subkeys.
+ * The DELIMITER are removed
+ **/
 queue<string> node::findAllSubstring(string  key){
 	queue<string> allKeys;
 	size_t pos = key.find_first_of(DELIMITER,0);
@@ -209,7 +249,11 @@ queue<string> node::findAllSubstring(string  key){
 	return allKeys;
 
 }
-
+/**
+ * Process the queue of strings and returns the second-to-last
+ *  Node in the queue, the last one can be tested as either an attribute
+ * or as  node 
+ **/
 node* node::findNodeForKey(string key){
 	queue<string> keys = findAllSubstring(key);
 	//return findNodeForKey(keys);
@@ -232,36 +276,6 @@ node* node::findNodeForKey(string key){
 	}
 }
 
-/**
- * Process the queue of strings and returns the second-to-last
- *  Node in the queue, the last one can be tested as either an attribute
- * or as  node 
- **/
- 
-string  node::extractNumber(string & str, int * num)
-{
-	size_t pos = str.find_first_of(NUMBER_DELIMITER,0);
-	
-	if(pos==string::npos)
-	{
-		*num=0;
-		return str;
-	}
-	else
-	{	
-		string strnum=str.substr(pos+1);
-		string key=str.substr(0,pos);
-		istringstream convert(strnum);
-		
-		if ( !(convert >> (*num)) ) //give the value to 'Result' using the characters in the stram
-			*num = 0;
-		return key;
-		
-	}
-		
-	
-}
-
 node* node::findNodeForKey(queue<string> & keys){
 		
 	if(keys.size()>1)
@@ -279,14 +293,74 @@ node* node::findNodeForKey(queue<string> & keys){
 	return this;
 }
 
+ /**
+ * Extract the number from the given key and return
+ * the key without the delimiter and number
+ **/
+string  node::extractNumber(string & str, int * num)
+{
+	size_t pos = str.find_first_of(NUMBER_DELIMITER,0);
+	if(pos==string::npos)
+	{
+		*num=0;
+		return str;
+	}
+	else
+	{	
+		string strnum=str.substr(pos+1);
+		string key=str.substr(0,pos);
+		istringstream convert(strnum);
+		if ( !(convert >> (*num)) ) //give the value to 'Result' using the characters in the stram
+			*num = 0;
+		return key;
+	}
+}
+
+ /**
+ * Extract the number from the given key and return
+ * the key without the delimiter and number
+ **/
+string  node::extractNumberText(string & str, int * num)
+{
+	size_t pos = str.find_last_of(TEXTNUMBER_DELIMITER,0);
+	if(pos==string::npos)
+	{	
+		if(num!=NULL)
+			*num=0;
+		return str;
+	}
+	else
+	{	
+		string strnum=str.substr(pos+1);
+		string key=str.substr(0,pos);
+		istringstream convert(strnum);
+		int temp;
+		if ( !(convert >> temp)) //give the value to 'Result' using the characters in the stram
+			temp = 0;
+		if(num!=NULL)
+			*num = temp;
+		return key;
+	}
+}
+
+ /**
+ * Load the main file and search under BODY and HEAD directory
+ * for the secondary files
+ **/
 bool node::loadAllFiles(string filename){
-	bool loadIsOk = true;
-	loadIsOk &= loadFile(filename,MAIN_FILE);
-	loadIsOk &= loadFile(filename,BODY_FILE);
-	loadIsOk &= loadFile(filename,HEAD_FILE);
+	bool loadIsOk;
+	loadIsOk = loadFile(filename,MAIN_FILE);
+	//we only care about the base file
+	if(loadIsOk){
+		loadFile(filename,BODY_FILE);
+		loadFile(filename,HEAD_FILE);
+	}
 	return loadIsOk;
 }
 
+ /**
+ * Load the given file
+ **/
 bool node::loadFile(string filename,int fileType){
 	string key = filename.substr(0,filename.find_first_of("."));
 	if(fileType == HEAD_FILE)
@@ -316,7 +390,9 @@ bool node::loadFile(string filename,int fileType){
 	}
 	return true;
 }
-
+ /**
+ * Insert recursive all the nodes from the xml file to our tree
+ **/
 void node::insertRecursivePolicyAppend(TiXmlNode* xmlNode,int fileType){
 	
 	//Todo what file type for this text subnode?
@@ -365,10 +441,22 @@ int main(){
 	//cout<< "6) " << root.findValueForKey("test~0.agent~1.module~1")[0]<<endl;
 	cout<< "7) " << root.findValueForKey("test~0.map_double").size()<<endl;
 	
-	if(!root.updateValueForKey("test.agent.$time", "lala",0))
+	if(!root.updateValueForKey("test.agent.$time", "lala"))
 		cout << "Ton poulo" << endl;
 	cout<< "8) " << root.findValueForKey("test~0.agent~0.$time")[0]<<endl;
 
+	vector<pair<string,string> > tempV;
+	pair<string,string> tempP;
+	tempP.first = "test.iter_string~0";
+	tempP.second = "gg";
+	tempV.push_back(tempP);
+	tempP.first = "test.map_double~1.$TheASDF1";
+	tempP.second = "bb";
+	tempV.push_back(tempP);
+	tempP.first = "test.agent~0=1";
+	tempP.second = "qq";
+	tempV.push_back(tempP);
+	cout << root.burstWrite(tempV) << endl;
 	/*node *temp = root.findNodeForKey("test.iter_string");
 	cout << temp->getText() << endl;
 	cout << root.findValueForKey("test.map_int~2.$correctTheASDF1") << endl;
