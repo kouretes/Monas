@@ -6,7 +6,7 @@
  */
 
 #include "KfieldGui.h"
-#include "../../activities/Localization/Kutils.h"
+#include "../../src/activities/Localization/Kutils.h"
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <opencv/cxcore.h>

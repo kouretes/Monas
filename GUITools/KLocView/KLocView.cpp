@@ -20,17 +20,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../messages/Kimage.pb.h"
-#include "../../messages/VisionObservations.pb.h"
-#include "../../messages/WorldInfo.pb.h"
-#include "../../messages/motion.pb.h"
+#include "../../src/messages/Kimage.pb.h"
+#include "../../src/messages/VisionObservations.pb.h"
+#include "../../src/messages/WorldInfo.pb.h"
+#include "../../src/messages/motion.pb.h"
 #include <netinet/in.h>
 
 #include <iostream>
 #include <fstream>
 #include "KfieldGui.h"
 //#include "KLocalization.h"
-#include "../../../external/PracticalSocket/PracticalSocket.h"
+#include "../../external/PracticalSocket/PracticalSocket.h"
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>

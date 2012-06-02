@@ -11,10 +11,10 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <opencv/cxcore.h>
-#include "../../activities/Localization/KLocalization.h"
-#include "../../messages/VisionObservations.pb.h"
-#include "../../messages/WorldInfo.pb.h"
-#include "../../messages/motion.pb.h"
+#include "../../src/activities/Localization/KLocalization.h"
+#include "../../src/messages/VisionObservations.pb.h"
+#include "../../src/messages/WorldInfo.pb.h"
+#include "../../src/messages/motion.pb.h"
 #include "stdio.h"
 #include <fstream>
 #include <time.h>

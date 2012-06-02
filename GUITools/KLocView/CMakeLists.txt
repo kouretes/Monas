@@ -12,12 +12,13 @@ FIND_PACKAGE(Protobuf)
 #find(OPENCV NO_MODULE QUIET)
 #target_link_libraries ( stateTest statechartEngine narukom MonasCore GenLinux)
 
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ../../src/)
 
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR})
 message (STATUS ${CMAKE_BINARY_DIR})
 # ${CMAKE_BINARY_DIR}
-ADD_EXECUTABLE( KLocView KLocView.cpp  KfieldGui.cpp ../../../external/PracticalSocket/PracticalSocket.cpp
-          ../../messages/VisionObservations.pb.cc ../../messages/WorldInfo.pb.cc  ../../messages/motion.pb.cc)
+ADD_EXECUTABLE( KLocView KLocView.cpp  KfieldGui.cpp ../../external/PracticalSocket/PracticalSocket.cpp
+          ../../src/messages/VisionObservations.pb.cc ../../src/messages/WorldInfo.pb.cc  ../../src/messages/motion.pb.cc)
 TARGET_LINK_LIBRARIES( KLocView ${OpenCV_LIBS} ${PROTOBUF_LIBRARY} )
 
 

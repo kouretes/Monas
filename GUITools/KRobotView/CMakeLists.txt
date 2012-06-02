@@ -16,8 +16,8 @@ FIND_PACKAGE(Protobuf)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR})
 message (STATUS ${CMAKE_BINARY_DIR})
 # ${CMAKE_BINARY_DIR}
-ADD_EXECUTABLE( KRobotView KRobotView.cpp  ../../../external/PracticalSocket/PracticalSocket.cpp
-          ../../messages/VisionObservations.pb.cc ../../messages/Kimage.pb.cc  ../../messages/WorldInfo.pb.cc )
+ADD_EXECUTABLE( KRobotView KRobotView.cpp  ../../external/PracticalSocket/PracticalSocket.cpp
+          ../../src/messages/VisionObservations.pb.cc ../../src/messages/Kimage.pb.cc  ../../src/messages/WorldInfo.pb.cc )
 TARGET_LINK_LIBRARIES( KRobotView ${OpenCV_LIBS} ${PROTOBUF_LIBRARY} )
 
 
