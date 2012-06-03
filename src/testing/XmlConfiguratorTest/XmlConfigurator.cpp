@@ -46,7 +46,7 @@ void node::deleteNodesForKey(string key,int fileType){
 	queue<string> keys = findAllSubstring(key);
 	node * secondtolast=findNodeForKey(keys);
 	string lastkey = keys.front();
-	int pos;
+	unsigned pos;
 
 	lastkey=extractNumber(lastkey,&pos);
 	if(secondtolast!=NULL && secondtolast->kids.find(lastkey)!=secondtolast->kids.end() && secondtolast->kids[lastkey].front().fileType!=fileType){
@@ -59,7 +59,7 @@ void node::deleteNodesForKey(string key,int fileType){
  * Updates a value to a file.
  **/
 bool node::updateFilesValue(string path,string value,int fileType){
-	int filePos,textpos;
+	unsigned filePos,textpos;
 	path = extractNumberText(path,&textpos);
 	queue<string> keys = findAllSubstring(path);
 	string filename = extractNumber(keys.front(),&filePos);
@@ -78,7 +78,7 @@ bool node::updateFilesValue(string path,string value,int fileType){
 	do{
 		string key = keys.front();
 		keys.pop();
-		int id,idCount=0;
+		unsigned id,idCount=0;
 		//Find the correct sibling
 		TiXmlNode *oldChild = firstChild;
 		key = extractNumber(key,&id);
@@ -96,7 +96,7 @@ bool node::updateFilesValue(string path,string value,int fileType){
 			return false;
 		//change the text
 		if(keys.size()==0){
-			int numOfCurText = 0;
+			unsigned numOfCurText = 0;
 			for(TiXmlNode* child = firstChild->FirstChild(); child; child = child->NextSibling() ){
 				if(child->Type()==TiXmlNode::TEXT){
 					if(numOfCurText==textpos+1){
@@ -111,7 +111,7 @@ bool node::updateFilesValue(string path,string value,int fileType){
 		//check if the last key is attribute and change it
 		if(keys.size()==1){
 			string lastkey = keys.front();
-			int pos;
+			unsigned pos;
 			lastkey=extractNumber(lastkey,&pos);
 			if(lastkey[0] == ATTRIBUTE_DELIMITER){
 				keys.pop();
@@ -135,14 +135,14 @@ bool node::updateFilesValue(string path,string value,int fileType){
  * Updates an attribute or a text to a given value.
  **/
 bool node::updateValueForKey(string key, string value){
-	int textpos;
+	unsigned textpos;
 	key = extractNumberText(key,&textpos);
 	queue<string> keys = findAllSubstring(key);
 	node * secondtolast=findNodeForKey(keys);
 	if(secondtolast==NULL)
 		return false;
 	string lastkey = keys.front();
-	int pos;
+	unsigned pos;
 	lastkey=extractNumber(lastkey,&pos);
 	if(lastkey[0] == ATTRIBUTE_DELIMITER){
 		lastkey.erase(0,1);		
@@ -196,7 +196,7 @@ vector<string> node::findValueForKey(string key){
 		return secondtolast->getAttribute(lastkey);
 	}
 	//No
-	int pos;
+	unsigned pos;
 	lastkey=extractNumber(lastkey,&pos);
 	if(secondtolast->kids.find(lastkey)==secondtolast->kids.end()||
 			(*secondtolast->kids.find(lastkey)).second.size()<=pos)
@@ -218,7 +218,7 @@ vector<string> node::getText(){
  **/
 vector<string> node::getAttribute(string & key){
 	
-	int pos;
+	unsigned pos;
 	string akey=extractNumber(key,&pos);		
 
   	map<string,string>::iterator it = attributes.find(akey);
@@ -264,7 +264,7 @@ node* node::findNodeForKey(string key){
 	if(secondtolast==NULL)
 		return NULL;
 	string lastkey=keys.front();
-	int pos;
+	unsigned pos;
 	lastkey=extractNumber(lastkey,&pos);		
 	
 	if(secondtolast->kids.find(lastkey)==secondtolast->kids.end()||
@@ -282,7 +282,7 @@ node* node::findNodeForKey(queue<string> & keys){
 	{
 		string key=keys.front();
 		keys.pop();
-		int pos;
+		unsigned pos;
 		key=extractNumber(key,&pos);	
 		if(kids.find(key)==kids.end()||(*kids.find(key)).second.size()<pos)
 			return NULL;
@@ -297,7 +297,7 @@ node* node::findNodeForKey(queue<string> & keys){
  * Extract the number from the given key and return
  * the key without the delimiter and number
  **/
-string  node::extractNumber(string & str, int * num)
+string  node::extractNumber(string & str, unsigned * num)
 {
 	size_t pos = str.find_first_of(NUMBER_DELIMITER,0);
 	if(pos==string::npos)
@@ -320,7 +320,7 @@ string  node::extractNumber(string & str, int * num)
  * Extract the number from the given key and return
  * the key without the delimiter and number
  **/
-string  node::extractNumberText(string & str, int * num)
+string  node::extractNumberText(string & str, unsigned  * num)
 {
 	size_t pos = str.find_last_of(TEXTNUMBER_DELIMITER,0);
 	if(pos==string::npos)
@@ -424,46 +424,4 @@ void node::insertRecursivePolicyAppend(TiXmlNode* xmlNode,int fileType){
 	kids[element->Value()].push_back(baby);		
 }
 
-
-int main(){
-	string filename = "test.xml";
-	node root;
-	root.loadAllFiles(filename);
-
-	cout << root.kids.size() << endl;
-	node *temp =root.findNodeForKey("test.iter_string");
-	root.print("");
-	cout<< "1) " << temp->text[0]<<endl;
-	cout<< "2) " << root.findValueForKey("test.agent.$time").size()<<endl;
-	cout<< "3) " << root.findValueForKey("test~0.agent~0.$time")[0]<<endl;
-	cout<< "4) " << root.findValueForKey("test~0.agent~0")[0]<<endl;
-	cout<< "5) " << root.findValueForKey("test~0.agent~0")[1]<<endl;
-	//cout<< "6) " << root.findValueForKey("test~0.agent~1.module~1")[0]<<endl;
-	cout<< "7) " << root.findValueForKey("test~0.map_double").size()<<endl;
-	
-	if(!root.updateValueForKey("test.agent.$time", "lala"))
-		cout << "Ton poulo" << endl;
-	cout<< "8) " << root.findValueForKey("test~0.agent~0.$time")[0]<<endl;
-
-	vector<pair<string,string> > tempV;
-	pair<string,string> tempP;
-	tempP.first = "test.iter_string~0";
-	tempP.second = "gg";
-	tempV.push_back(tempP);
-	tempP.first = "test.map_double~1.$TheASDF1";
-	tempP.second = "bb";
-	tempV.push_back(tempP);
-	tempP.first = "test.agent~0=1";
-	tempP.second = "qq";
-	tempV.push_back(tempP);
-	cout << root.burstWrite(tempV) << endl;
-	/*node *temp = root.findNodeForKey("test.iter_string");
-	cout << temp->getText() << endl;
-	cout << root.findValueForKey("test.map_int~2.$correctTheASDF1") << endl;
-	if(root.updateValueForKey("test.map_int~2.$correctTheASDF1","Kofi"))
-		cout << "Updated succesfull" << endl;
-	cout << root.findValueForKey("test.iter_int~2.iter~2") << endl;
-	*/
-	return 0;
-}
 

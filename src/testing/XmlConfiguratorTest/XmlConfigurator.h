@@ -5,7 +5,7 @@
 #include <queue>
 #include <map>
 #include <utility>
-#include "tinyxml.h"
+#include "../external/tinyxml_2-5-3/tinyxml.h"
 
 using namespace std;
 class node{
@@ -24,8 +24,8 @@ public:
 	
 	void insertRecursivePolicyAppend(TiXmlNode* xmlNode,int fileType);
 	static queue<string> findAllSubstring(string  key);
-	static string  extractNumber(string & str, int * num);//Get the ~ part
-	static string  extractNumberText(string & str, int * num);
+	static string  extractNumber(string & str, unsigned * num);//Get the ~ part
+	static string  extractNumberText(string & str, unsigned * num);
 	node * findNodeForKey(queue<string> & key) ;
 	
 	

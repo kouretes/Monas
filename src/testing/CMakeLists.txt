@@ -16,6 +16,7 @@ message ( STATUS "" )
 
 add_executable(KMat-testing KMat-testing.cpp )
 add_executable(Kalman-testing kalmantest.cpp )
+add_subdirectory(XmlConfiguratorTest)
 
 
 install ( TARGETS  KMat-testing Kalman-testing #stateTest
