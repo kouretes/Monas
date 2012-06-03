@@ -131,6 +131,13 @@ bool node::updateFilesValue(string path,string value,int fileType){
 	return true;
 }
 
+
+/**
+ * Get the number of children nodes
+ **/
+unsigned node::getChildrenCount() const{
+    return kids.size();
+}
  /**
  * Updates an attribute or a text to a given value.
  **/
