@@ -42,5 +42,6 @@ public:
 	bool updateFilesValue(string path,string value,int fileType);
 	void deleteNodesForKey(string key,int fileType);
 	bool burstWrite(vector<pair<string,string> > writeData);
+	int node::numberOfNodesForKey(string key);
 	
 };

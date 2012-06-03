@@ -55,6 +55,13 @@ void node::deleteNodesForKey(string key,int fileType){
 	}	
 }
 
+
+ /**
+ *Num of nodes for a keys
+ **/
+int node::numberOfNodesForKey(string key){
+
+}
  /**
  * Updates a value to a file.
  **/
