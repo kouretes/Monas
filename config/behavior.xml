@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<!-- Desired ball position for kick -->
+<posx>0.12</posx>
+<posy>0.03</posy>
+
+<!-- Desired precision -->
+<epsx>0.025</epsx>
+<epsy>0.025</epsy>
+
+<!-- Desired kicks -->
+<KickForwardLeft>KickForwardLeft.xar</KickForwardLeft>
+<KickForwardRight>KickForwardRight.xar</KickForwardRight>
+<KickSideLeft>KickSideLeftStable.xar</KickSideLeft>
+<KickSideRight>KickSideRightStable.xar</KickSideRight>
+<KickBackLeft>KickBackLeftED.xar</KickBackLeft>
+<KickBackRight>KickBackRightED.xar</KickBackRight>
+
