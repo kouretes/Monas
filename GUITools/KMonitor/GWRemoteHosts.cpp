@@ -304,10 +304,10 @@ void GWRemoteHosts::setGWRHGameStateInfo(GameStateMessage gsm, QString hostId)
 	QCheckBox *checkBox;
 	QIcon icon;
 
-	QString gsmQString = QString::QString("");
-	QString teamNumber = QString::QString("");
-	QString playerNumber = QString::QString("");
-	QString playerState = QString::QString("");
+	QString gsmQString = QString("");
+	QString teamNumber = QString("");
+	QString playerNumber = QString("");
+	QString playerState = QString("");
 
 
 	item = GWhostFinder(hostId);
@@ -334,27 +334,27 @@ void GWRemoteHosts::setGWRHGameStateInfo(GameStateMessage gsm, QString hostId)
 
 		if(gsm.player_state() == 0)
 		{
-			playerState = QString::QString("INITIAL");
+			playerState = QString("INITIAL");
 
 		}else if(gsm.player_state() == 1)
 		{
-			playerState = QString::QString("READY");
+			playerState = QString("READY");
 
 		}else if(gsm.player_state() == 2)
 		{
-			playerState = QString::QString("SET");
+			playerState = QString("SET");
 
 		}else if(gsm.player_state() == 3)
 		{
-			playerState = QString::QString("PLAYING");
+			playerState = QString("PLAYING");
 
 		}else if(gsm.player_state() == 4)
 		{
-			playerState = QString::QString("FINISHED");
+			playerState = QString("FINISHED");
 
 		}else if(gsm.player_state() == 5)
 		{
-			playerState = QString::QString("PENALISED");
+			playerState = QString("PENALISED");
 		}
 
 		//find hostname and give it to me ...

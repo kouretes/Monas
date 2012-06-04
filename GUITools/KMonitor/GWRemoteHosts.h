@@ -15,8 +15,8 @@ typedef struct Elements{
 
 	Elements()
 	{
-			hostId = QString::QString("");
-			hostName = QString::QString("");
+			hostId = QString("");
+			hostName = QString("");
 			requestedPosition = false;
 			requestedBall = false;
 	}
