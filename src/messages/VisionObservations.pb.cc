@@ -153,7 +153,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PointObject));
   ObservationMessage_descriptor_ = file->message_type(6);
-  static const int ObservationMessage_offsets_[10] = {
+  static const int ObservationMessage_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, image_timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, ball_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, regular_objects_),
@@ -161,9 +161,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, corner_objects_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, intersection_objects_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, line_objects_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, covered_distance_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, bearing_limit_left_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, bearing_limit_right_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, view_limit_points_),
   };
   ObservationMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -245,16 +243,15 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
     "(\002:\0010\022\031\n\016start_distance\030\002 \002(\002:\0010\022\026\n\013end_"
     "bearing\030\003 \002(\002:\0010\022\027\n\014end_distance\030\004 \002(\002:\001"
     "0\"0\n\013PointObject\022\020\n\010distance\030\001 \002(\002\022\017\n\007be"
-    "aring\030\002 \002(\002\"\345\002\n\022ObservationMessage\022\031\n\017im"
+    "aring\030\002 \002(\002\"\273\002\n\022ObservationMessage\022\031\n\017im"
     "age_timestamp\030\001 \002(\t:\000\022\031\n\004ball\030\002 \001(\0132\013.Ba"
     "llObject\022%\n\017regular_objects\030\003 \003(\0132\014.Name"
     "dObject\022*\n\radhoc_objects\030\004 \003(\0132\023.Unident"
     "ifiedObject\022$\n\016corner_objects\030\005 \003(\0132\014.Po"
     "intObject\022*\n\024intersection_objects\030\006 \003(\0132"
     "\014.PointObject\022!\n\014line_objects\030\007 \003(\0132\013.Li"
-    "neObject\022\030\n\020covered_distance\030\010 \002(\002\022\032\n\022be"
-    "aring_limit_left\030\t \002(\002\022\033\n\023bearing_limit_"
-    "right\030\n \002(\002", 971);
+    "neObject\022\'\n\021view_limit_points\030\013 \003(\0132\014.Po"
+    "intObject", 929);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "VisionObservations.proto", &protobuf_RegisterTypes);
   BallTrackMessage::default_instance_ = new BallTrackMessage();
@@ -2174,9 +2171,7 @@ const int ObservationMessage::kAdhocObjectsFieldNumber;
 const int ObservationMessage::kCornerObjectsFieldNumber;
 const int ObservationMessage::kIntersectionObjectsFieldNumber;
 const int ObservationMessage::kLineObjectsFieldNumber;
-const int ObservationMessage::kCoveredDistanceFieldNumber;
-const int ObservationMessage::kBearingLimitLeftFieldNumber;
-const int ObservationMessage::kBearingLimitRightFieldNumber;
+const int ObservationMessage::kViewLimitPointsFieldNumber;
 #endif  // !_MSC_VER
 
 ObservationMessage::ObservationMessage()
@@ -2198,9 +2193,6 @@ void ObservationMessage::SharedCtor() {
   _cached_size_ = 0;
   image_timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ball_ = NULL;
-  covered_distance_ = 0;
-  bearing_limit_left_ = 0;
-  bearing_limit_right_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2247,17 +2239,13 @@ void ObservationMessage::Clear() {
     if (has_ball()) {
       if (ball_ != NULL) ball_->::BallObject::Clear();
     }
-    covered_distance_ = 0;
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    bearing_limit_left_ = 0;
-    bearing_limit_right_ = 0;
   }
   regular_objects_.Clear();
   adhoc_objects_.Clear();
   corner_objects_.Clear();
   intersection_objects_.Clear();
   line_objects_.Clear();
+  view_limit_points_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -2369,54 +2357,21 @@ bool ObservationMessage::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(58)) goto parse_line_objects;
-        if (input->ExpectTag(69)) goto parse_covered_distance;
+        if (input->ExpectTag(90)) goto parse_view_limit_points;
         break;
       }
       
-      // required float covered_distance = 8;
-      case 8: {
+      // repeated .PointObject view_limit_points = 11;
+      case 11: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_covered_distance:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &covered_distance_)));
-          set_has_covered_distance();
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_view_limit_points:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_view_limit_points()));
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(77)) goto parse_bearing_limit_left;
-        break;
-      }
-      
-      // required float bearing_limit_left = 9;
-      case 9: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_bearing_limit_left:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &bearing_limit_left_)));
-          set_has_bearing_limit_left();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(85)) goto parse_bearing_limit_right;
-        break;
-      }
-      
-      // required float bearing_limit_right = 10;
-      case 10: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_bearing_limit_right:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &bearing_limit_right_)));
-          set_has_bearing_limit_right();
-        } else {
-          goto handle_uninterpreted;
-        }
+        if (input->ExpectTag(90)) goto parse_view_limit_points;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2484,19 +2439,10 @@ void ObservationMessage::SerializeWithCachedSizes(
       7, this->line_objects(i), output);
   }
   
-  // required float covered_distance = 8;
-  if (has_covered_distance()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->covered_distance(), output);
-  }
-  
-  // required float bearing_limit_left = 9;
-  if (has_bearing_limit_left()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->bearing_limit_left(), output);
-  }
-  
-  // required float bearing_limit_right = 10;
-  if (has_bearing_limit_right()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->bearing_limit_right(), output);
+  // repeated .PointObject view_limit_points = 11;
+  for (int i = 0; i < this->view_limit_points_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      11, this->view_limit_points(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2559,19 +2505,11 @@ void ObservationMessage::SerializeWithCachedSizes(
         7, this->line_objects(i), target);
   }
   
-  // required float covered_distance = 8;
-  if (has_covered_distance()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->covered_distance(), target);
-  }
-  
-  // required float bearing_limit_left = 9;
-  if (has_bearing_limit_left()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->bearing_limit_left(), target);
-  }
-  
-  // required float bearing_limit_right = 10;
-  if (has_bearing_limit_right()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->bearing_limit_right(), target);
+  // repeated .PointObject view_limit_points = 11;
+  for (int i = 0; i < this->view_limit_points_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        11, this->view_limit_points(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2597,23 +2535,6 @@ int ObservationMessage::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
           this->ball());
-    }
-    
-    // required float covered_distance = 8;
-    if (has_covered_distance()) {
-      total_size += 1 + 4;
-    }
-    
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    // required float bearing_limit_left = 9;
-    if (has_bearing_limit_left()) {
-      total_size += 1 + 4;
-    }
-    
-    // required float bearing_limit_right = 10;
-    if (has_bearing_limit_right()) {
-      total_size += 1 + 4;
     }
     
   }
@@ -2657,6 +2578,14 @@ int ObservationMessage::ByteSize() const {
         this->line_objects(i));
   }
   
+  // repeated .PointObject view_limit_points = 11;
+  total_size += 1 * this->view_limit_points_size();
+  for (int i = 0; i < this->view_limit_points_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->view_limit_points(i));
+  }
+  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -2687,23 +2616,13 @@ void ObservationMessage::MergeFrom(const ObservationMessage& from) {
   corner_objects_.MergeFrom(from.corner_objects_);
   intersection_objects_.MergeFrom(from.intersection_objects_);
   line_objects_.MergeFrom(from.line_objects_);
+  view_limit_points_.MergeFrom(from.view_limit_points_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_image_timestamp()) {
       set_image_timestamp(from.image_timestamp());
     }
     if (from.has_ball()) {
       mutable_ball()->::BallObject::MergeFrom(from.ball());
-    }
-    if (from.has_covered_distance()) {
-      set_covered_distance(from.covered_distance());
-    }
-  }
-  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    if (from.has_bearing_limit_left()) {
-      set_bearing_limit_left(from.bearing_limit_left());
-    }
-    if (from.has_bearing_limit_right()) {
-      set_bearing_limit_right(from.bearing_limit_right());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -2722,7 +2641,7 @@ void ObservationMessage::CopyFrom(const ObservationMessage& from) {
 }
 
 bool ObservationMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000381) != 0x00000381) return false;
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   if (has_ball()) {
     if (!this->ball().IsInitialized()) return false;
@@ -2742,6 +2661,9 @@ bool ObservationMessage::IsInitialized() const {
   for (int i = 0; i < line_objects_size(); i++) {
     if (!this->line_objects(i).IsInitialized()) return false;
   }
+  for (int i = 0; i < view_limit_points_size(); i++) {
+    if (!this->view_limit_points(i).IsInitialized()) return false;
+  }
   return true;
 }
 
@@ -2754,9 +2676,7 @@ void ObservationMessage::Swap(ObservationMessage* other) {
     corner_objects_.Swap(&other->corner_objects_);
     intersection_objects_.Swap(&other->intersection_objects_);
     line_objects_.Swap(&other->line_objects_);
-    std::swap(covered_distance_, other->covered_distance_);
-    std::swap(bearing_limit_left_, other->bearing_limit_left_);
-    std::swap(bearing_limit_right_, other->bearing_limit_right_);
+    view_limit_points_.Swap(&other->view_limit_points_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

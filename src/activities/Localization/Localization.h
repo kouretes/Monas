@@ -34,7 +34,7 @@ public:
 	void ACTIVITY_VISIBLE UserInit();
 	void Reset(int,bool);
 	void process_messages();
-	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations, double rangemaxleft, double rangemaxright);
+	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations);
 	void RobotPositionMotionModel(KMotionModel & MModel);
 	std::string ACTIVITY_VISIBLE GetName()
 	{
@@ -62,8 +62,7 @@ private:
 	float headpos;
 	LocalizationData DebugData;
 	LocalizationDataForGUI DebugDataForGUI;
-	float maxrangeleft;
-	float maxrangeright;
+
 	SensorData PosX;
 	SensorData PosY;
 	SensorData Angle;

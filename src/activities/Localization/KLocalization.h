@@ -35,7 +35,7 @@ typedef struct ftr {
 	double y;
 	string id; //Name of the feature
 	double weight;
-	
+
 	//Distance and Bearing error
 	//For polunomial mean error Functions
 	//Pointer to Arrays of parameters
@@ -51,7 +51,7 @@ typedef struct ftr {
 	//Number of polunomial parameters
 	short CntDistErrorDevParams;
 	short CntBearErrorDevParams;
-	
+
 	//Zero Constructor
 	ftr() {
 		id = "";
@@ -60,25 +60,25 @@ typedef struct ftr {
 		weight = 0;
 		CntDistErrorDevParams = 0;
 		CntBearErrorDevParams = 0;
-		
+
 		CntDistErrorMeanParams = 0;
 		CntBearErrorMeanParams = 0;
-		
+
 		DistErrorMeanParams = NULL;
 		BearignErrorMeanParams = NULL;
-		
+
 		DistErrorDevParams = NULL;
 		BearignErrorDevParams = NULL;
 	}
 	//Parameterized Constructor
 	ftr(double x_, double y_, string id_, double weight_, short CntDistErrorDevParams_, short CntBearErrorDevParams_, double *DistErrorDevParams_, double*BearignErrorDevParams_, short CntDistErrorMeanParams_, short CntBearErrorMeanParams_, double *DistErrorMeanParams_, double*BearignErrorMeanParams_) {
-		
+
 		set(x_, y_, id_, weight_, CntDistErrorDevParams_, CntBearErrorDevParams_, DistErrorDevParams_, BearignErrorDevParams_, CntDistErrorMeanParams_, CntBearErrorMeanParams_, DistErrorMeanParams_, BearignErrorMeanParams_);
-		
+
 	}
-	
+
 	void set(double x_, double y_, string id_, double weight_, short CntDistErrorDevParams_, short CntBearErrorDevParams_, double *DistErrorDevParams_, double*BearignErrorDevParams_, short CntDistErrorMeanParams_, short CntBearErrorMeanParams_, double *DistErrorMeanParams_, double*BearignErrorMeanParams_) {
-		
+
 		id = id_;
 		x = x_;
 		y = y_;
@@ -87,13 +87,13 @@ typedef struct ftr {
 		CntBearErrorDevParams = CntBearErrorDevParams_;
 		DistErrorDevParams = DistErrorDevParams_;
 		BearignErrorDevParams = BearignErrorDevParams_;
-		
+
 		CntDistErrorMeanParams = CntDistErrorMeanParams_;
 		CntBearErrorMeanParams = CntBearErrorMeanParams_;
 		DistErrorMeanParams = DistErrorMeanParams_;
 		BearignErrorMeanParams = BearignErrorMeanParams_;
 	}
-	
+
 } feature;
 
 //Special structure to keep the data of a particle
@@ -102,28 +102,28 @@ typedef struct pvar {
 	double y;
 	double phi;// orientation
 	double Weight;//Weight of a particle
-	
+
 	pvar() {
 		x = 0;
 		y = 0;
 		phi = 0;
 		Weight = 0;
 	}
-	
+
 	pvar(int x_, int y_, int phi_, int Weight_) {
-		
+
 		x = x_;
 		y = y_;
 		phi = phi_;
 		Weight = Weight_;
 	}
-	
+
 	//Operator to compare 2 particles by their weight
 	bool operator<(const struct pvar &other) const {
 		//	cout << Weight << "Other " << other.Weight << endl;
 		return Weight < other.Weight;
 	}
-	
+
 } partcl;
 
 //usualy particles are processed in arrays
@@ -168,10 +168,10 @@ typedef struct var {
 		if (pos > 0)
 			if ((unsigned int) pos < size)
 				return new partcl(x[pos], y[pos], phi[pos], Weight[pos]);
-		
+
 		return NULL;
 	}
-	
+
 } parts;
 
 //Random Variable
@@ -189,7 +189,7 @@ typedef struct rvar {
 		ratiomean = 0;
 		ratiodev =0 ;
 	}
-	
+
 	rvar(double val_, double mean_, double dev_) {
 		set(val_, mean_, dev_);
 	}
@@ -212,7 +212,7 @@ typedef struct rvar {
 		stream >> obj.val >> obj.Emean >> obj.Edev;
 		return stream;
 	}
-	
+
 } randvar;
 
 //MotionModel
@@ -252,43 +252,43 @@ class KLocalization {
 public:
 	//private:
 	double* Distances;
-	
+
 	float P_observe_NotVisible;
 	float P_Notobserve_NotVisible;
 	float P_observe_Visible;
 	float P_Notobserve_Visible;
-	
+
 	float numofparticlesfromObservation;
-	
-	
+
+
 	float NumberOfParticlesSpreadAfterFall;
 	float ForceBearingParticles;
-	
+
 	double riza2pi;
-	
+
 	unsigned int robustmean;
 	int depletions_counter;
 	belief AgentPosition;
 	//public:
-	
+
 	float Beta;
 	float * Beta2;
 	float max_observation_distance;
 	float max_observation_distance_deviation;
 	float min_observation_distance_deviation;
-	
+
 	float max_observation_bearing_deviation;
 	float min_observation_bearing_deviation;
-	
+
 	float halfrange;
-	
+
 	double SpreadParticlesDeviation;
 	double rotation_deviation;
 	double SpreadParticlesDeviationAfterFall;
 	double RotationDeviationAfterFallInDeg;
 	int PercentParticlesSpread;
-	
-	
+
+
 	//Field
 	float CarpetMaxX;
 	float CarpetMinX;
@@ -299,23 +299,23 @@ public:
 	float FieldMaxY;
 	float FieldMinY;
 	//Team
-	float initX[2], initY[2], initPhi[2]; 
+	float initX[2], initY[2], initPhi[2];
 	int playerNumber;
 	//Belief for each goalpost
 	float beliefForGoalPosts[4];
 	int timesOfContAmbig;
-	
+
 	parts SIRParticles;
 	parts AUXParticles;
 	vector<feature> allfeatures;
 	unsigned int partclsNum;
-	
+
 	vector<KMotionModel> KouretesMotions;
 	map<string, vector<KMotionModel> > KMMmap;
 	map<string, feature> KFeaturesmap;
 	KLocalization();
 	virtual ~KLocalization();
-	
+
 	int Initialize();
 	int LoadMotionModelXML(string filename, vector<KMotionModel>& Motions, map<string, vector<KMotionModel> > & KMMmap);
 	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
@@ -323,49 +323,46 @@ public:
 	bool readRobotConf(const std::string& file_name);
 	///Basic SIR functions
 	void Predict(parts &Particles, KMotionModel & MotionModel);
-	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemin, double rangemax);
+	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles);
 	void Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
 	//Not used with 2 yellow goals
 	//void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
-	
+
 	float ESS(parts &Particles); //Calculate Effective Sample Size
 	void Resample(parts &Particles, int * Index, int param);
 	void Propagate(parts &Particles, int * Index);
 	//Not used with the activity
 	//belief LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observation, double rangemin, double rangemax);
 	//belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observation, double rangemin, double rangemax);
-	
+
 	KMotionModel * findBestMotionModel(int steps, string MotionType, vector<KMotionModel> & Motions, int *iterations);
-	
+
 	double normalize(double *Weights, int size);
 	double CalculateConfidence(parts & Particles, belief & blf);
 	double CalcDistDev(feature afeature, double Distance);
 	double CalcBearDev(feature afeature, double Distance);
-	
+
 	double CalcDistMean(feature afeature, double Distance);
 	double CalcBearMean(feature afeature, double Distance);
 	float circular_mean_angle(float *angles, unsigned int size);
 	//! Get Particles from observation
 	belief getCurrentPosition();
-	
+
 	//bool isVisible(feature Feature, parts &Particles, int particle);
 	//bool isVisible(feature Feature, partcl);
-	
-	bool isVisible(feature & Feature, parts &Particles, int particle, double rangemaxleft, double rangemaxright);
-	bool isVisible(feature & Feature, partcl, double rangemaxleft, double rangemaxright);
-	
+
 	double normpdf(double diff, double dev);
 	belief RobustMean(parts & Particles, int PercenteOfParticles);
 	double * CumSum(double * Table, int size);
 	double * FlipCumProd(double * Table, int size);
 	int * ResampleSWR(parts & Particles, int *Index);
 	int * multinomialR(parts & Particles, int *Index);
-	
+
 	void setBelief(double x, double y, double phi, double confidence);
 	void setParticlesPose(parts & Particles, double x, double y, double phi);
 	void setParticlesPoseUniformly(parts & Particles);
 	void initializeParticles(parts & Particles,int playerNumber,bool kickOff);
-	
+
 	int ObservationParticles(vector<KObservationModel> & Observation, parts &Paticles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright);
 	int CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) ;
 	void SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent);
@@ -390,31 +387,31 @@ public:
 		else
 			finalChoise = choise2;
 		return finalChoise;
-	}	
+	}
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	double deg2rad(double deg) {
 		return (deg * M_PI / 180);
 	}
-	
+
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts radians to decimal degrees             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	double rad2deg(double rad) {
 		return (rad * 180 / M_PI);
 	}
-	
+
 	float randfloat() {
-		
+
 		return rand() / (float(RAND_MAX)/* + 1*/);
 	}
-	
+
 	//generates a psuedo-random float between 0.0 and max
 	float randfloat(float max) {
 		return randfloat() * max;
 	}
-	
+
 	//generates a psuedo-random float between min and max
 	double randdouble(double min, double max) {
 		if (min > max) {
