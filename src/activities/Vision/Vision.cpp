@@ -87,7 +87,7 @@ void Vision::fetchAndProcess()
 		p.cameraPitch = 0;
 		seg = segtop;
 	}
-	seg->setLumaScale(config.cameraGain*img->luminance_scale());
+	seg->setLumaScale(pow(img->luminance_scale(),config.cameraGamma) );
 
 	//cout<<"Attach to Image:"<<seg<<rawImage<<endl;
 	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
@@ -408,7 +408,7 @@ void Vision::loadXMLConfig(std::string fname)
 
 	xmlconfig->QueryElement("Dfov", config.Dfov);
 
-	xmlconfig->QueryElement("cameraGain", config.cameraGain);
+	xmlconfig->QueryElement("cameraGamma", config.cameraGamma);
 
 
 

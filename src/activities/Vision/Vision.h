@@ -110,7 +110,7 @@ class Vision: public IActivity
 		{
 				int sensordelay;
 				float Dfov;
-				float cameraGain;
+				float cameraGamma;
 				std::string SegmentationBottom, SegmentationTop;
 				int scanV, scanH, minH, subsampling, bordersize, pixeltol;
 				float skipdistance, seedistance, obstacledistance;
