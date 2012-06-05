@@ -15,6 +15,7 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/motion.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/Kimage.pb.h"
 
 class KGUIMessenger : public QObject
 {
@@ -37,6 +38,9 @@ public slots:
 	void LMRHSubscriptionHandler(QString);
 	void LMRHUnsubscriptionHandler(QString);
 
+	void LVRHSubscriptionHandler(QString);
+	void LVRHUnsubscriptionHandler(QString);
+
 signals:
 	void knownHostsUpdate(KnownHosts);
 	void gameStateMessageUpdate(GameStateMessage, QString);
@@ -46,6 +50,7 @@ signals:
 	void headYawJointUpdate(float, QString);
 	void motionCommandUpdate(MotionWalkMessage, QString);
 	void gridInfoUpdate(GridInfo, QString);
+	void rawImageUpdate(KRawImage, QString);
 
 private slots:
 	void allocateReceivedMessages();
@@ -64,5 +69,6 @@ private:
 	QStringList myGWRequestedHosts;
 	QString myLWRequestedHost;
 	QString myLMRequestedHost;
+	QString myLVRequestedHost;
 };
 #endif /* KGUIMESSENGER_H_ */

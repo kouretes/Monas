@@ -43,6 +43,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	myGWRequestedHosts.clear();
 	myLWRequestedHost.clear();
 	myLMRequestedHost.clear();
+	myLVRequestedHost.clear();
 
 	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
@@ -50,7 +51,6 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	updateSubscription("sensors",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
-
 }
 
 KGUIMessenger::~KGUIMessenger()
@@ -101,6 +101,15 @@ void KGUIMessenger::allocateReceivedMessages()
 				//printKnownHosts(myRemoteHosts);
 				emit knownHostsUpdate( myRemoteHosts );
 				//printMyGWRequestedHosts();
+			}
+			else if (incomingMessages.at(i).msg->GetTypeName()=="KRawImage" && myLVRequestedHost == currentRHost)
+			{
+				std::cout << "incomingMessages == KRawImage " << std::endl;
+				KRawImage rawimg;
+				rawimg.Clear();
+				rawimg.CopyFrom(*(incomingMessages.at(i).msg));
+
+				emit rawImageUpdate(rawimg, currentRHost);
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="GameStateMessage")
 			{
@@ -224,6 +233,17 @@ void KGUIMessenger::LMRHUnsubscriptionHandler(QString hostId)
 {
 	if(myLMRequestedHost == hostId)
 		myLMRequestedHost.clear();
+}
+
+void KGUIMessenger::LVRHSubscriptionHandler(QString hostId)
+{
+	myLVRequestedHost = hostId;
+}
+
+void KGUIMessenger::LVRHUnsubscriptionHandler(QString hostId)
+{
+	if(myLVRequestedHost == hostId)
+		myLVRequestedHost.clear();
 }
 
 void KGUIMessenger::printKnownHosts(KnownHosts hosts)
