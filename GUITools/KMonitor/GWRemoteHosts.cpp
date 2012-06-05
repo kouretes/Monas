@@ -6,7 +6,7 @@
 #include <QList>
 
 #include "tools/toString.h"
-
+#include "messages/RoboCupPlayerData.h"
 #include <iostream>
 using namespace std;
 
@@ -332,31 +332,38 @@ void GWRemoteHosts::setGWRHGameStateInfo(GameStateMessage gsm, QString hostId)
 		playerNumber = QString::fromStdString(_toString((gsm.player_number())));
 		teamNumber = QString::fromStdString(_toString((gsm.team_number())));
 
-		if(gsm.player_state() == 0)
+		switch(gsm.player_state())
 		{
-			playerState = QString("INITIAL");
+			case PLAYER_INITIAL:
+				playerState = QString("INITIAL");
+				break;
+			case PLAYER_READY:
+				playerState = QString("READY");
+				break;
+			case PLAYER_SET:
+				playerState = QString("SET");
+				break;
+			case PLAYER_PLAYING:
+				playerState = QString("PLAYING");
+				break;
+			case PLAYER_FINISHED:
+				playerState = QString("FINISHED");
+				break;
+			case PLAYER_PENALISED:
+				 playerState = QString("PENALISED");
+				break;
+			case PLAYER_DEAD:
+				 playerState = QString("DEAD");
+				break;
+			case PLAYER_LOG:
+				 playerState = QString("LOG");
+				break;
+			case PLAYER_DEMO:
+				 playerState = QString("DEMO");
+				break;
 
-		}else if(gsm.player_state() == 1)
-		{
-			playerState = QString("READY");
 
-		}else if(gsm.player_state() == 2)
-		{
-			playerState = QString("SET");
-
-		}else if(gsm.player_state() == 3)
-		{
-			playerState = QString("PLAYING");
-
-		}else if(gsm.player_state() == 4)
-		{
-			playerState = QString("FINISHED");
-
-		}else if(gsm.player_state() == 5)
-		{
-			playerState = QString("PENALISED");
 		}
-
 		//find hostname and give it to me ...
 
 		gsmQString = GWhostNameFinder(hostId) + QString(", ") + teamNumber + QString(", ") + playerNumber + QString(", ") + playerState;
