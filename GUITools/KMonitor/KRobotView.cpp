@@ -35,7 +35,7 @@ void KRobotView::setRVRawImageVisible(bool visible)
 {
 	if (visible == false)
 	{
-		this->parentLabel->setPixmap(QPixmap::QPixmap());
+		this->parentLabel->setPixmap(QPixmap());
 		this->parentLabel->setAlignment(Qt::AlignHCenter);
 	}
 }
@@ -45,8 +45,7 @@ void KRobotView::updateRobotView(KRawImage rawImage)
 	QImage* image;
 
 	image = this->YUVPixelFormat2RGB32(rawImage);
-
-	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
+	this->parentLabel->setPixmap(QPixmap::fromImage(*image));
 	this->parentLabel->setAlignment(Qt::AlignHCenter);
 
 }
