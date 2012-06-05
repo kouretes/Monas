@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="GWSTab">
        <attribute name="title">
@@ -214,6 +214,50 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="LRVTab">
+       <attribute name="title">
+        <string>Local Robot View</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,1">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="KLabel" name="LRVLabel">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QListWidget" name="LRVListWidget">
+            <item>
+             <property name="text">
+              <string>Display Raw Image View</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Print Known Objects</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="LRVComboBox"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -256,7 +300,12 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>KMapView</class>
    <extends>QGraphicsView</extends>
-   <header location="global">../KMapView.h</header>
+   <header>../KMapView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">../KLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

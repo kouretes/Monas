@@ -17,6 +17,7 @@ public:
 
 public slots:
 	void resetRobotMap(QString);
+
 	void LMObstaclesVisible(QString, bool);
 	void LMPathVisible(QString, bool);
 	void LMTargetCoordVisible(QString, bool);
