@@ -24,7 +24,7 @@ class MulticastPoint : public EndPoint, private KSystem::Thread
 	public:
 	MulticastPoint(std::string const& name,unsigned payloadsize);
 	~MulticastPoint();
-	int startEndPoint(std::string const& multicast_ip,unsigned int port);
+	bool startEndPoint(std::string const& multicast_ip,unsigned int port);
 	void setCleanupAndBeacon(unsigned i);
 	private:
 	int Execute();

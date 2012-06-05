@@ -29,7 +29,11 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 		KNetwork::MulticastPoint *m=new KNetwork::MulticastPoint(multicastip,maxpayload);
 		m->setCleanupAndBeacon(beacon_interval);
 		m->attachTo(*this);
-		m->startEndPoint(multicastip,port);
+		if(m->startEndPoint(multicastip,port)==false)
+		{
+			delete m;
+			_exit(-1);
+		}
 		multicast=m;
 	}
 

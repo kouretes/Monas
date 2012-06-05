@@ -40,47 +40,59 @@ MulticastPoint::MulticastPoint(std::string const& name,unsigned payloadsize) :
 MulticastPoint::~MulticastPoint()
 {
 	this->StopThread();
+	this->JoinThread();
 
 }
 
-int MulticastPoint::startEndPoint(std::string const& multicast_ip,unsigned int port)
+bool MulticastPoint::startEndPoint(std::string const& multicast_ip,unsigned int port)
 {
-	boost::asio::ip::address multicast_address(boost::asio::ip::address::from_string(multicast_ip));
 
-	multicast_point_= boost::asio::ip::udp::endpoint(multicast_address,port);
+	try
+	{
+		boost::asio::ip::address multicast_address(boost::asio::ip::address::from_string(multicast_ip));
 
-	boost::asio::ip::udp::endpoint rpoint(boost::asio::ip::address_v4::any(), port);
+		multicast_point_= boost::asio::ip::udp::endpoint(multicast_address,port);
 
-    multireceive.open(rpoint.protocol());
-    multisend.open(rpoint.protocol());
-	multireceive.set_option(boost::asio::ip::udp::socket::reuse_address(true));
-	multireceive.set_option(boost::asio::ip::multicast::enable_loopback(false));
+		boost::asio::ip::udp::endpoint rpoint(boost::asio::ip::address_v4::any(), port);
 
-	//remotesocket.set_option(boost::asio::ip::multicast::enable_loopback(false));
+		multireceive.open(rpoint.protocol());
+		multisend.open(rpoint.protocol());
+		multireceive.set_option(boost::asio::ip::udp::socket::reuse_address(true));
+		multireceive.set_option(boost::asio::ip::multicast::enable_loopback(false));
 
-    multireceive.bind(rpoint);
+		//remotesocket.set_option(boost::asio::ip::multicast::enable_loopback(false));
 
-    multiport=port;
+		multireceive.bind(rpoint);
 
-    // Join the multicast group.
-    multireceive.set_option( boost::asio::ip::multicast::join_group(multicast_address));
+		multiport=port;
 
-    queue_receive();
-    timer_.expires_from_now(boost::posix_time::milliseconds(100));
-	timer_.async_wait(
-		  boost::bind(&MulticastPoint::handle_timeout, this,
-			boost::asio::placeholders::error));
+		// Join the multicast group.
+		multireceive.set_option( boost::asio::ip::multicast::join_group(multicast_address));
+		multireceive.set_option( boost::asio::ip::multicast::hops(2));//Limit to two hop only, ie local+1
 
-    avgqueuesize=0;
-    queuesize=0;
-    canWarn=true;//Enable send error warnings
-    sendthread=boost::thread(boost::bind(&boost::asio::io_service::run,&sio));//Start Send
+		queue_receive();
+		timer_.expires_from_now(boost::posix_time::milliseconds(100));
+		timer_.async_wait(
+			  boost::bind(&MulticastPoint::handle_timeout, this,
+				boost::asio::placeholders::error));
 
-	this->StartThread(); //Start receive
+		avgqueuesize=0;
+		queuesize=0;
+		canWarn=true;//Enable send error warnings
+		sendthread=boost::thread(boost::bind(&boost::asio::io_service::run,&sio));//Start Send
+
+		this->StartThread(); //Start receive
 
 
-	if(getReadBuffer())
-		getReadBuffer()->setNotifier(boost::bind(&MulticastPoint::bufferCallback,this,_1));
+		if(getReadBuffer())
+			getReadBuffer()->setNotifier(boost::bind(&MulticastPoint::bufferCallback,this,_1));
+	}
+	catch (boost::system::system_error e)
+	{
+		Logger::Instance().WriteMsg("Multicast", "Could not start multicastpoint!", Logger::Error);
+		return false;
+	}
+	return true;
 }
 
 void MulticastPoint::setCleanupAndBeacon(unsigned i)

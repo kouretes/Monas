@@ -54,21 +54,12 @@ cond_mutex(),cond_publishers(),cond_publishers_queue(),cond(),agentStats()
 		cout<<"Initiating multicast network at address: "<<multicastip<<":"<<port<<std::endl;
 		KNetwork::MulticastPoint *m=new KNetwork::MulticastPoint(multicastip,maxpayload);
 		multicast=NULL;
-		try {
 		m->setCleanupAndBeacon(beacon_interval);
 		m->attachTo(*this);
-		m->startEndPoint(multicastip,port);
-		multicast=m;
-		}
-		catch (boost::system::system_error e)
-		{
-		    Logger::Instance().WriteMsg("Narukom", "Could not start multicastpoint!", Logger::Error);
-		    delete m;
-		}
-
-
-
-
+		if(m->startEndPoint(multicastip,port)==false)
+			delete m;
+		else
+			multicast=m;
 	}
 
 }
