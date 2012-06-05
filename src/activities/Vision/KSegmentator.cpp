@@ -99,20 +99,26 @@ inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
 
 void KSegmentator::setLumaScale(float s)
 {
-	lumascale=floor(s+1);
+	lumascale=s;
 	//cout<<"KSegmentator:setLumaScale():"<<s<<endl;
-	/*for(int i=0;i<256;i++)
+	for(int i=0;i<256;i++)
 	{
 	    int r=i*lumascale;
 	    r=r>255?255:r;
 	    r=r<0?0:r;
-	    YLUT[i]=rYLUT[r];
+	    pYLUT[i]=rYLUT[r];
+	    Y_SCALESUB[i]=r>>yres;
 	    r=(i-128)*lumascale+128;
 		r=r>255?255:r;
 	    r=r<0?0:r;
-	    ULUT[i]=rULUT[r];
-	    VLUT[i]=rVLUT[r];
-	}*/
+	    pULUT[i]=rULUT[r];
+	    pVLUT[i]=rVLUT[r];
+	    U_SCALESUB[i]=r>>ures;
+	    V_SCALESUB[i]=r>>vres;
+
+
+
+	}
 
 }
 
