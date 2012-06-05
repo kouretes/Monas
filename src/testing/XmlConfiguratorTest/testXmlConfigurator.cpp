@@ -6,11 +6,11 @@ int main(){
 	node root;
 	root.loadAllFiles(filename);
 
-	cout << root.kids.size() << endl;
+	cout << root.getChildrenCount() << endl;
 	node *temp =root.findNodeForKey("test.iter_string");
 	root.print("");
 	cout << temp << endl;
-	cout<< "1) " << temp->text[0]<<endl;
+	cout<< "1) " << temp->getText()[0]<<endl;
 	cout<< "2) " << root.findValueForKey("test.agent.$time").size()<<endl;
 	cout<< "3) " << root.findValueForKey("test~0.agent~0.$time")[0]<<endl;
 	cout<< "4) " << root.findValueForKey("test~0.agent~0")[0]<<endl;

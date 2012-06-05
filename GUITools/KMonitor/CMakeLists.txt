@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 2.6 )
 PROJECT( KMonitor )
 
 FIND_PACKAGE( Qt4 REQUIRED )
-FIND_PACKAGE( OpenCV REQUIRED )
+#FIND_PACKAGE( OpenCV REQUIRED )
 
 # necessary ? 
 FIND_PACKAGE(Boost COMPONENTS date_time thread system)
@@ -51,4 +51,4 @@ ADD_EXECUTABLE( KMonitor ${KMonitor_SOURCES}
 		${KMonitor_RESOURCES_RCC}
 	      )
 
-TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} ${OpenCV_LIBS} M_tinyxml narukom ${Boost_LIBRARIES} )
+TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} M_tinyxml narukom ${Boost_LIBRARIES} ) #${OpenCV_LIBS} 

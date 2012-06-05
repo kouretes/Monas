@@ -255,7 +255,7 @@ double KLocalization::CalculateConfidence(parts & Particles, belief & blf)
 	//Distance Deviation
 	double DistConfidence = sqrt(DistSum / Particles.size);
 	//1.0 / (0.1 + DistSum / 500.0); // result to be between 0.01...10
-	double WeigtConfidence = Particles.WeightSum; 
+	double WeigtConfidence = Particles.WeightSum;
 	blf.confidence = DistConfidence;
 	blf.weightconfidence = WeigtConfidence;
 	return DistConfidence; //* (WeigtConfidence + 1.0) + WeigtConfidence; // Max degree == 20 :p
@@ -351,7 +351,7 @@ int KLocalization::Initialize()
 		found &= config->QueryElement("partclsNum", partclsNum); // 0.2 meters deviation
 		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
 		found &= config->QueryElement("rotation_deviation", rotation_deviation); // % of particles be spreaded
-		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);	
+		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
 		found &= config->QueryElement("SpreadParticlesDeviationAfterFall", SpreadParticlesDeviationAfterFall);
 		found &= config->QueryElement("RotationDeviationAfterFallInDeg", RotationDeviationAfterFallInDeg);
 		found &= config->QueryElement("NumberOfParticlesSpreadAfterFall", NumberOfParticlesSpreadAfterFall);
@@ -491,7 +491,7 @@ KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, 
 			if (abs((tVector->at(i).Steps - steps)) < abs(BestMotionModel->Steps - steps)){
 				BestMotionModel = &tVector->at(i);
 			}
-		}	
+		}
 		if ((BestMotionModel->Steps - steps) == 0)
 		{
 			;
@@ -603,57 +603,6 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
 		Particles.y[i] = Particles.y[i] + sin(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.phi[i] = Particles.phi[i] + tmpRot;
 	}
-}
-
-bool KLocalization::isVisible(feature & Feature, parts &Particles, int pos, double rangemaxleft, double rangemaxright)
-{
-	bool visible = 0;
-	//%calculate the direction on the feature regarding the robot position
-	double angleToFeature = wrapTo0_2Pi(atan2(Feature.y - Particles.y[pos], Feature.x - Particles.x[pos]));
-	//Range values are both positive and negative left is positive right negative
-	double phileft = wrapTo0_2Pi(Particles.phi[pos] + rangemaxleft);
-	double phiright = wrapTo0_2Pi(Particles.phi[pos] + rangemaxright);
-	double fullrange = rangemaxleft - rangemaxright;
-	if (fullrange < M_PI)
-	{
-		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, phiright) > 0)
-			visible = 1;
-	} else
-	{
-		double middle = phileft - fullrange / 2.0;
-
-		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, middle) > 0)
-			visible = 1;
-		if (anglediff2(middle, angleToFeature) > 0 && anglediff2(angleToFeature, phiright) > 0)
-			visible = 1;
-	}
-	return visible;
-}
-
-bool KLocalization::isVisible(feature & Feature, partcl prtcl, double rangemaxleft, double rangemaxright)
-{
-	bool visible = 0;
-	//%calculate the direction on the feature regarding the robot position
-	double angleToFeature = wrapTo0_2Pi(atan2(Feature.y - prtcl.y, Feature.x - prtcl.x));
-
-	double phileft = wrapTo0_2Pi(prtcl.phi + rangemaxleft);
-	double phiright = wrapTo0_2Pi(prtcl.phi + rangemaxright);
-	double fullrange = rangemaxleft - rangemaxright;
-
-	if (fullrange < M_PI)
-	{
-		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, phiright) > 0)
-			visible = 1;
-	} else
-	{
-		double middle = phileft - fullrange / 2.0;
-		if (anglediff2(phileft, angleToFeature) > 0 && anglediff2(angleToFeature, middle) > 0)
-			visible = 1;
-		if (anglediff2(middle, angleToFeature) > 0 && anglediff2(angleToFeature, phiright) > 0)
-			visible = 1;
-	}
-	return visible;
-
 }
 
 double KLocalization::normpdf(double diff, double dev)
@@ -769,7 +718,7 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
 
 	}
-	ci = 1; // change to second yellow 
+	ci = 1; // change to second yellow
 	for (int i = halfParticlesFromObs; i < numofparticlesfromObservation; i++)
 	{
 		index = (rand() + i) % Particles.size;
@@ -787,7 +736,7 @@ int KLocalization::CircleIntersectionPossibleParticles(vector<KObservationModel>
 		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
 
 	}
-	
+
 	return nsol;
 }
 
@@ -811,8 +760,8 @@ float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 
 void KLocalization::spreadParticlesAfterFall(parts &Particles, double Deviation, double RotDeviation, int numOfParticles){
 	//Normal X, Y, P;
-	Random X, Y, P;	
-	
+	Random X, Y, P;
+
 	int step = round((float) Particles.size / numOfParticles);
 	if (numOfParticles == 0)
 		return;
@@ -825,7 +774,7 @@ void KLocalization::spreadParticlesAfterFall(parts &Particles, double Deviation,
 	}
 }
 
-void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles, double rangemaxleft, double rangemaxright)
+void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles)
 {
 
 	//	 Function to update the weights of each particle regarding the ObservationDistance
@@ -843,7 +792,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		OverallWeightYellowYellow = 1.0;
 		totalWeight = 0;
 		if (!Observation.empty())// an landMark has been observed
-		{ 
+		{
 			for (unsigned int i = 0; i < Observation.size(); i++)
 			{
 #ifdef DISTANCE_WEIGHTING
@@ -860,7 +809,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				//Bearing
 				ParticlePointBearingAngle = atan2(Observation[i].Feature.y - Particles.y[p], Observation[i].Feature.x - Particles.x[p]);
 				ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
-				Deviation = Observation[i].Bearing.Edev; 
+				Deviation = Observation[i].Bearing.Edev;
 				OverallWeight = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
 #endif
 
@@ -870,7 +819,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				// s is for symetry
 				//we take the symetric yellow now, so we put a - to the x and y of the observation
 				RS = DISTANCE(Particles.x[p],-Observation[i].Feature.x,Particles.y[p],-Observation[i].Feature.y);
-				
+
 				OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
 #endif
 #ifdef	BEARING_WEIGHTING
@@ -942,7 +891,7 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 		for (int j = -1; j <= 1; j = j + 2)
 		{
 			AdditiveYellowField = 1;
-			AdditiveBlueField = 1; 
+			AdditiveBlueField = 1;
 			// Distance
 			// R Distance the particle has from the LandMark
 			R = DISTANCE(Particles.x[p],xPosOfFeature,Particles.y[p],yPosOfFeature*j);
@@ -963,7 +912,7 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 			ParticlePointBearingAngleS = atan2(-yPosOfFeature*j - Particles.y[p], -xPosOfFeature - Particles.x[p]);
 			ParticleBearingS = anglediff2(ParticlePointBearingAngleS, Particles.phi[p]);
 			AdditiveBlueField *= normpdf(anglediff(obsBearingValue, ParticleBearingS), Deviation);
-			//Check The Best GoalPost	
+			//Check The Best GoalPost
 			if(j==-1){
 				if(AdditiveBlueField > AdditiveYellowField){
 					oldChoise = 0;

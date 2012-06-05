@@ -170,6 +170,66 @@ void Vision::fetchAndProcess()
 	Vlt=simpleRot.slow_mult(KVecFloat2(-1,0));
 	Vrt=simpleRot.slow_mult(KVecFloat2(1,0));
 
+	KVecFloat2 c2d;
+	KVecFloat3 c3d;
+	//Publish the projection of the camera limits on the ground
+	PointObject *p1;
+
+	c2d=imageToCamera(KVecFloat2(0,0));
+	c3d=kinext.camera2dToGround(c2d);
+    if(c3d(2)<0)//Not Looking up :)
+    {
+        p1= obs.add_view_limit_points();
+        measurement *m=kinext.projectionDistance(c2d,0);
+        p1->set_distance(m[0].mean);
+        p1->set_bearing(m[1].mean);
+		//cout<<"See bot:"<<newpost.distBot.mean<<endl;
+		delete[] m;
+    }
+
+
+	c2d=imageToCamera(KVecFloat2(0,rawImage.height));
+	c3d=kinext.camera2dToGround(c2d);
+    if(c3d(2)<0)//Not Looking up :)
+    {
+        p1= obs.add_view_limit_points();
+        measurement *m=kinext.projectionDistance(c2d,0);
+        p1->set_distance(m[0].mean);
+        p1->set_bearing(m[1].mean);
+		//cout<<"See bot:"<<newpost.distBot.mean<<endl;
+		delete[] m;
+
+    }
+
+    c2d=imageToCamera(KVecFloat2(rawImage.width,rawImage.height));
+	c3d=kinext.camera2dToGround(c2d);
+    if(c3d(2)<0)//Not Looking up :)
+    {
+        p1= obs.add_view_limit_points();
+        measurement *m=kinext.projectionDistance(c2d,0);
+        p1->set_distance(m[0].mean);
+        p1->set_bearing(m[1].mean);
+		//cout<<"See bot:"<<newpost.distBot.mean<<endl;
+		delete[] m;
+
+    }
+
+    c2d=imageToCamera(KVecFloat2(rawImage.width,0));
+	c3d=kinext.camera2dToGround(c2d);
+    if(c3d(2)<0)//Not Looking up :)
+    {
+        p1= obs.add_view_limit_points();
+        measurement *m=kinext.projectionDistance(c2d,0);
+        p1->set_distance(m[0].mean);
+        p1->set_bearing(m[1].mean);
+		//cout<<"See bot:"<<newpost.distBot.mean<<endl;
+		delete[] m;
+
+    }
+
+
+
+
 	/*Vdn.x = -Vup.x;
 	Vdn.y = -Vup.y;
 
@@ -292,9 +352,7 @@ void Vision::fetchAndProcess()
 	_blk.publishSignal(trckmsg, "vision");
 	_blk.publishSignal(leds, "leds");
 
-	if (obs.has_ball() || obs.regular_objects_size() > 0 || obs.adhoc_objects_size() > 0 || obs.corner_objects_size() > 0 || obs.intersection_objects_size() > 0
-			|| obs.line_objects_size() > 0)
-		_blk.publishSignal(obs, "vision");
+    _blk.publishSignal(obs, "vision");
 
 }
 

@@ -197,7 +197,7 @@ int Localization::Execute()
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
 
-	LocalizationStepSIR(robotmovement, currentObservation, currentAbigiusObservation, maxrangeleft, maxrangeright);
+	LocalizationStepSIR(robotmovement, currentObservation, currentAbigiusObservation);
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x / 1000.0);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
@@ -409,7 +409,7 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 
 }
 //Sequential Importance Resampling
-belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbigiusObservations, double rangemaxleft, double rangemaxright)
+belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbigiusObservations)
 {
 	//int iterations = 1;
 	int index[partclsNum];
@@ -440,7 +440,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		beliefForGoalPosts[2] = 0;
 		beliefForGoalPosts[3] = 0;
 		timesOfContAmbig = 0;
-		Update(SIRParticles, Observations, MotionModel, partclsNum, rangemaxleft, rangemaxright);
+		Update(SIRParticles, Observations, MotionModel, partclsNum);
 	}
 	else if(AmbigiusObservations.size()==1){
 		beliefForGoalPosts[0] *= 0.6;
@@ -551,9 +551,6 @@ void Localization::process_messages()
 		//Load observations
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
-
-		maxrangeleft = obsm->bearing_limit_left();
-		maxrangeright = obsm->bearing_limit_right();
 
 		for (int i = 0; i < Objects.size(); i++)
 		{

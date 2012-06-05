@@ -21,18 +21,19 @@ public:
 	map<string,string > attributes;
 	map<string,vector<node> > kids;
 	int fileType;//HeadFile = 1 BodyFile = 2
-	
+
 	void insertRecursivePolicyAppend(TiXmlNode* xmlNode,int fileType);
 	static queue<string> findAllSubstring(string  key);
 	static string  extractNumber(string & str, unsigned * num);//Get the ~ part
 	static string  extractNumberText(string & str, unsigned * num);
 	node * findNodeForKey(queue<string> & key) ;
-	
-	
+
+
 public:
 	node(){fileType=0;};
 	void print(string pref);
 	vector<string> getText();
+	unsigned getChildrenCount() const;
 	vector<string> getAttribute(string & key) ;
 	node* findNodeForKey(string key) ;
 	bool loadFile(string filename,int fileType);
@@ -42,6 +43,6 @@ public:
 	bool updateFilesValue(string path,string value,int fileType);
 	void deleteNodesForKey(string key,int fileType);
 	bool burstWrite(vector<pair<string,string> > writeData);
-	int node::numberOfNodesForKey(string key);
-	
+	int numberOfNodesForKey(string key);
+
 };

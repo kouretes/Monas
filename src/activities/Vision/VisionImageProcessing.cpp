@@ -287,8 +287,9 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 				//linesdone++;
 				//continue;
 				c=imageToCamera(thisl.gtrc);
-				c3d=kinext.camera2dToGroundProjection(c,0);
-				float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+
+				c3d=kinext.camera2dToGround(c);
+
 				if(c3d(2)>=0)//Looking up :)
 				{
 					//cout<<"--dup"<<endl;
@@ -297,6 +298,9 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 					linesdone++;
 					continue;
 				}
+				c3d=kinext.camera2dToGroundProjection(c,0);
+				float d=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
+
 
 				if (d>=config.seedistance)
 				{
@@ -306,8 +310,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 					continue;
 				}
 				c=imageToCamera(thisl.lastpoint);
-
-				c3d=kinext.camera2dToGroundProjection(c,0);
+				c3d=kinext.camera2dToGround(c);
 				if(c3d(2)>=0)//Looking up :)
 				{
 					//cout<<"--d1up"<<endl;
@@ -315,6 +318,7 @@ void Vision::gridScan(const KSegmentator::colormask_t color)
 					linesdone++;
 					continue;
 				}
+				c3d=kinext.camera2dToGroundProjection(c,0);
 				float d1=sqrt(sqrd(c3d(0))+sqrd(c3d(1)));
 
 

@@ -13,8 +13,8 @@ typedef struct LWElements{
 
 	LWElements()
 	{
-			hostId = QString::QString("");
-			hostName = QString::QString("");
+			hostId = QString("");
+			hostName = QString("");
 			hostSelected = false;
 	}
 
