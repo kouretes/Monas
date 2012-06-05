@@ -38,7 +38,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	}
 
 	timer = new QTimer();
-	timer->setInterval(50);
+	timer->setInterval(500);
 
 	connect(this->timer, SIGNAL(timeout()), this, SLOT(allocateReceivedMessages()));
 
@@ -48,6 +48,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	myLWRequestedHost.clear();
 	myLMRequestedHost.clear();
 	myLVRequestedHost.clear();
+	myKccRequestedHost.clear();
 
 	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
@@ -106,17 +107,29 @@ void KGUIMessenger::allocateReceivedMessages()
 				emit knownHostsUpdate( myRemoteHosts );
 				//printMyGWRequestedHosts();
 			}
-			else if (incomingMessages.at(i).msg->GetTypeName()=="KRawImage" && myLVRequestedHost == currentRHost)
+			else if (incomingMessages.at(i).msg->GetTypeName()=="KRawImage" && (myLVRequestedHost == currentRHost || myKccRequestedHost == currentRHost))
 			{
 				std::cout << "incomingMessages == KRawImage " << std::endl;
 				KRawImage rawimg;
 				rawimg.Clear();
 				rawimg.CopyFrom(*(incomingMessages.at(i).msg));
 
-				emit rawImageUpdate(rawimg, currentRHost);
+				//todo fix this better
+				if(myLVRequestedHost == currentRHost)
+					emit rawImageUpdate(rawimg, currentRHost);
+
+				else if(myKccRequestedHost == currentRHost)
+					emit KCCRawImageUpdate(rawimg, currentRHost);
+				else
+				{
+					emit rawImageUpdate(rawimg, currentRHost);
+					emit KCCRawImageUpdate(rawimg, currentRHost);
+				}
+
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="GameStateMessage")
 			{
+				//std::cout << "incomingMessages == GameStateMessage " << std::endl;
 				GameStateMessage gsm;
 				gsm.Clear();
 				gsm.CopyFrom(*(incomingMessages.at(i).msg));
@@ -125,6 +138,7 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="WorldInfo" && (myGWRequestedHosts.contains(currentRHost)||(myLWRequestedHost ==currentRHost)))
 			{
+				//std::cout << "incomingMessages == WorldInfo " << std::endl;
 				WorldInfo wim;
 				wim.Clear();
 				wim.CopyFrom(*(incomingMessages.at(i).msg));
@@ -133,6 +147,7 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="ObservationMessage" && myLWRequestedHost == currentRHost)
 			{
+				//std::cout << "incomingMessages == ObservationMessage " << std::endl;
 				ObservationMessage om;
 				om.Clear();
 				om.CopyFrom(*(incomingMessages.at(i).msg));
@@ -248,6 +263,17 @@ void KGUIMessenger::LVRHUnsubscriptionHandler(QString hostId)
 {
 	if(myLVRequestedHost == hostId)
 		myLVRequestedHost.clear();
+}
+
+void KGUIMessenger::KCCRHSubscriptionHandler(QString hostId)
+{
+	myKccRequestedHost = hostId;
+}
+
+void KGUIMessenger::KCCRHUnsubscriptionHandler(QString hostId)
+{
+	if(myKccRequestedHost == hostId)
+		myKccRequestedHost.clear();
 }
 
 void KGUIMessenger::printKnownHosts(KnownHosts hosts)

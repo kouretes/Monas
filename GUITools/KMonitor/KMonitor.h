@@ -32,6 +32,7 @@ private:
     LMElementList* LPMElementList;
     LWRemoteHosts* availableLVHosts;
     LVElementList* LRVElementList;
+    LWRemoteHosts* availableKCCHosts;
 };
 
 #endif // KMONITOR_H

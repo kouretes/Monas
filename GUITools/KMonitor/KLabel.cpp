@@ -60,3 +60,9 @@ void KLabel::kRawImageUpdateHandler(KRawImage rawImage, QString hostId)
 		std::cout << "[47]Host doesn't exist !" << hostId.toStdString() <<std::endl;
 	}
 }
+
+void KLabel::KCCRawImageUpdateHandler(KRawImage rawImage, QString hostId)
+{
+	LVRawImageVisible(hostId, true);
+	kRawImageUpdateHandler(rawImage, hostId);
+}

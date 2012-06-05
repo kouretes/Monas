@@ -41,6 +41,9 @@ public slots:
 	void LVRHSubscriptionHandler(QString);
 	void LVRHUnsubscriptionHandler(QString);
 
+	void KCCRHSubscriptionHandler(QString);
+	void KCCRHUnsubscriptionHandler(QString);
+
 signals:
 	void knownHostsUpdate(KnownHosts);
 	void gameStateMessageUpdate(GameStateMessage, QString);
@@ -51,6 +54,7 @@ signals:
 	void motionCommandUpdate(MotionWalkMessage, QString);
 	void gridInfoUpdate(GridInfo, QString);
 	void rawImageUpdate(KRawImage, QString);
+	void KCCRawImageUpdate(KRawImage, QString);
 
 private slots:
 	void allocateReceivedMessages();
@@ -70,5 +74,6 @@ private:
 	QString myLWRequestedHost;
 	QString myLMRequestedHost;
 	QString myLVRequestedHost;
+	QString myKccRequestedHost;
 };
 #endif /* KGUIMESSENGER_H_ */

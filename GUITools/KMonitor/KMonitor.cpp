@@ -17,6 +17,8 @@ KMonitor::KMonitor(QWidget *parent)
 	availableLVHosts = new LWRemoteHosts(this->LRVComboBox);
 	LRVElementList = new LVElementList(this->LRVListWidget);
 
+	availableKCCHosts = new LWRemoteHosts(this->KCComboBox);
+
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
 
@@ -115,6 +117,25 @@ KMonitor::KMonitor(QWidget *parent)
 	//Signal slot connections for dispaying Robot's Raw Image
 	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), LRVLabel, SLOT(kRawImageUpdateHandler(KRawImage, QString)));
 	connect(LRVElementList, SIGNAL(LVRHSetRawImageVisible(QString, bool)), LRVLabel, SLOT(LVRawImageVisible(QString, bool)));
+
+
+	//SIGNAL SLOT CONNECTIONS FOR KCC Beta
+	//Signal slot connections for KCC ComboBox
+
+	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), availableKCCHosts, SLOT(addComboBoxItem(QString, QString)));
+	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), availableKCCHosts, SLOT(removeComboBoxItem(QString)));
+	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), availableKCCHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+
+	connect(availableKCCHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
+	connect(availableKCCHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
+	connect(availableKCCHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), RawImgLabel, SLOT(resetRobotView(QString)));
+	//Signal slot connections for dispaying Robot's Raw Image
+
+	connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), RawImgLabel, SLOT(KCCRawImageUpdateHandler(KRawImage, QString)));
+
+	/**********************************************************************************************/
+	/*PROS8ETEIS OTI SIGNAL SLOT CONNECTION 8ELEIS GIA TO KCC APO EDWWWWWWW KAI KAAAAAAAATWWWWWWW*/
+	/**********************************************************************************************/
 
 
 	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW

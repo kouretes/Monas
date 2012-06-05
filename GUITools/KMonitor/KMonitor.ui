@@ -16,9 +16,9 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="GWSTab">
        <attribute name="title">
@@ -251,6 +251,114 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="KCCTab">
+       <attribute name="title">
+        <string>KCC Beta !</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,4">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item row="0" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QComboBox" name="KCComboBox"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="PromptCurCoLabel">
+            <property name="text">
+             <string>Current Color ::</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="SelectedColorLabel">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_1">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_3">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_4">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_5">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="PromptPixelsLabel">
+            <property name="text">
+             <string>Num of Pixels ::</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="UndopushButton">
+            <property name="text">
+             <string>Undo</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="KLabel" name="RawImgLabel">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="SegmentedImgLabel">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -298,7 +406,7 @@
   <customwidget>
    <class>KLabel</class>
    <extends>QLabel</extends>
-   <header location="global">../KLabel.h</header>
+   <header>../KLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

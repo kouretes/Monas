@@ -1,6 +1,5 @@
 #include "KRobotView.h"
 
-#include <QByteArray>
 #include <QImage>
 
 #include <iostream>

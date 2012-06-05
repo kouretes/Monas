@@ -22,8 +22,9 @@ public slots:
 	void resetRobotView(QString);
 
 	void LVRawImageVisible(QString, bool);
+	void kRawImageUpdateHandler(KRawImage, QString);
 
-	void kRawImageUpdateHandler(KRawImage rawImage, QString);
+	void KCCRawImageUpdateHandler(KRawImage, QString);
 
 //signals:
 private:
