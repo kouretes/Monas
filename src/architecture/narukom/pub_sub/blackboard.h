@@ -124,10 +124,10 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic,cons
 
 	i.tid=Topics::Instance().getId(topic);
 	i.hid=host;
-	i.hid=0;//Wildcard *
 	if(topic=="") i.tid=0;//Wildcard
 
 	regions::iterator rit=allrecords.begin();
+
 	for(;rit!=allrecords.end();++rit)
 	{
 		if((*rit).first==i&&(*rit).second.blkdata.find(atypeid)!=(*rit).second.blkdata.end())
@@ -137,6 +137,7 @@ boost::shared_ptr<const Data> Blackboard::readData(const std::string& topic,cons
 
 	if(rit==allrecords.end())
 		return boost::shared_ptr<const Data>();
+
 
 	const datastruct &d=(*rit).second.blkdata;
 	datastruct::const_iterator dit=d.find(atypeid);

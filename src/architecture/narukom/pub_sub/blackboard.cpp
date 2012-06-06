@@ -33,7 +33,7 @@ void Blackboard::process_messages()
    for(;it!=msg.end();++it)
     {
 
-        //std::cout<<"incoming:"<<(*it).msg->GetTypeName()<<std::endl;
+        //std::cout<<"incoming:"<<(*it).msg->GetTypeName()<<(*it).msgclass<<" "<<msgentry::DATA<<std::endl;
 		type_t newtypeid=typeRegistry.registerNew((*it).msg->GetTypeName());
 		region_index i;
 		i.tid=(*it).topic;
@@ -50,6 +50,7 @@ void Blackboard::process_messages()
 				r.blkstate[newtypeid]=nrec;
 				break;
             case msgentry::DATA:
+				//std::cout<<(*it).msg->GetTypeName()<<i.hid<<std::endl;
                 if(r.blkdata[newtypeid].size()>0)
                     r.blkdata[newtypeid].insert(--r.blkdata[newtypeid].end(),nrec);//Suggest last place to add it
                 else
@@ -150,14 +151,14 @@ void Blackboard::publish_all()
 
 void Blackboard::publishData(const google::protobuf::Message & msg,std::string const& topic)
 {
-    msgentry nmsg;
+    msgentry nmsg,test;
     brecord  nrec;
 
     google::protobuf::Message * newptr=msg.New();
     newptr->CopyFrom(msg);
     nmsg.msg.reset(newptr);
     nrec.msg=nmsg.msg;
-    //cout<<"In:"<<&msg;
+    //std::cout<<"In:"<<&msg;
     //cout<<"Copy:"<<nmsg.msg<<endl;
     nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
     boost::posix_time::ptime now=boost::posix_time::microsec_clock::universal_time();
@@ -177,6 +178,9 @@ void Blackboard::publishData(const google::protobuf::Message & msg,std::string c
         r.blkdata[newtypeid].insert(--r.blkdata[newtypeid].end(),nrec);//Suggest last place to add it
     else
 		r.blkdata[newtypeid].insert(nrec);
+
+	test=nmsg;
+	//std::cout<<test.msgclass<<" "<<nmsg.msgclass<<std::endl;
     topublish.push_back(nmsg);
 
     //cout<<blkdata[msg.GetTypeName()].size()<<endl;q

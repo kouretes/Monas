@@ -204,7 +204,7 @@ void MessageQueue::process_queued_msg()
 			}
 
 
-			//cout<<"Topicid:"<<msgtopicId<<" "<<subscriptions[msgtopicId].size()<<endl;
+			//cout<<"Topicid:"<<msgtopicId<<" "<<subscriptions[msgtopicId].size()<<" "<<(*mit).msgclass<<endl;
 			if(msgtopicId==0||subscriptions.size()<=msgtopicId)
 				continue;
 			std::set<MessageBuffer*>::const_iterator subit= subscriptions[msgtopicId].begin();
@@ -215,7 +215,7 @@ void MessageQueue::process_queued_msg()
 				//cout<<"dest"<<endl;
 				if ((*subit)->getOwnerID() != pownerid  )
 				{
-					//cout << "Delivering to " << (*subit)->getOwnerID()<< " the " << (*mit).msg->GetTypeName() << " size: " << endl;
+					//cout << "Delivering to " <<  pubsubRegistry.getString((*subit)->getOwnerID())<< " the " << (*mit).msg->GetTypeName() << " size: " << endl;
 					ready[(*subit)].push_back(*mit);
 					msgs++;
 				}
