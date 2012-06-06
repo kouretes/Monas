@@ -833,26 +833,17 @@ class ObservationMessage : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::LineObject >*
       mutable_line_objects();
   
-  // required float covered_distance = 8;
-  inline bool has_covered_distance() const;
-  inline void clear_covered_distance();
-  static const int kCoveredDistanceFieldNumber = 8;
-  inline float covered_distance() const;
-  inline void set_covered_distance(float value);
-  
-  // required float bearing_limit_left = 9;
-  inline bool has_bearing_limit_left() const;
-  inline void clear_bearing_limit_left();
-  static const int kBearingLimitLeftFieldNumber = 9;
-  inline float bearing_limit_left() const;
-  inline void set_bearing_limit_left(float value);
-  
-  // required float bearing_limit_right = 10;
-  inline bool has_bearing_limit_right() const;
-  inline void clear_bearing_limit_right();
-  static const int kBearingLimitRightFieldNumber = 10;
-  inline float bearing_limit_right() const;
-  inline void set_bearing_limit_right(float value);
+  // repeated .PointObject view_limit_points = 11;
+  inline int view_limit_points_size() const;
+  inline void clear_view_limit_points();
+  static const int kViewLimitPointsFieldNumber = 11;
+  inline const ::PointObject& view_limit_points(int index) const;
+  inline ::PointObject* mutable_view_limit_points(int index);
+  inline ::PointObject* add_view_limit_points();
+  inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
+      view_limit_points() const;
+  inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
+      mutable_view_limit_points();
   
   // @@protoc_insertion_point(class_scope:ObservationMessage)
  private:
@@ -860,12 +851,6 @@ class ObservationMessage : public ::google::protobuf::Message {
   inline void clear_has_image_timestamp();
   inline void set_has_ball();
   inline void clear_has_ball();
-  inline void set_has_covered_distance();
-  inline void clear_has_covered_distance();
-  inline void set_has_bearing_limit_left();
-  inline void clear_has_bearing_limit_left();
-  inline void set_has_bearing_limit_right();
-  inline void clear_has_bearing_limit_right();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -876,12 +861,10 @@ class ObservationMessage : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::PointObject > corner_objects_;
   ::google::protobuf::RepeatedPtrField< ::PointObject > intersection_objects_;
   ::google::protobuf::RepeatedPtrField< ::LineObject > line_objects_;
-  float covered_distance_;
-  float bearing_limit_left_;
-  float bearing_limit_right_;
+  ::google::protobuf::RepeatedPtrField< ::PointObject > view_limit_points_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
   
   friend void  protobuf_AddDesc_VisionObservations_2eproto();
   friend void protobuf_AssignDesc_VisionObservations_2eproto();
@@ -1689,70 +1672,29 @@ ObservationMessage::mutable_line_objects() {
   return &line_objects_;
 }
 
-// required float covered_distance = 8;
-inline bool ObservationMessage::has_covered_distance() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
+// repeated .PointObject view_limit_points = 11;
+inline int ObservationMessage::view_limit_points_size() const {
+  return view_limit_points_.size();
 }
-inline void ObservationMessage::set_has_covered_distance() {
-  _has_bits_[0] |= 0x00000080u;
+inline void ObservationMessage::clear_view_limit_points() {
+  view_limit_points_.Clear();
 }
-inline void ObservationMessage::clear_has_covered_distance() {
-  _has_bits_[0] &= ~0x00000080u;
+inline const ::PointObject& ObservationMessage::view_limit_points(int index) const {
+  return view_limit_points_.Get(index);
 }
-inline void ObservationMessage::clear_covered_distance() {
-  covered_distance_ = 0;
-  clear_has_covered_distance();
+inline ::PointObject* ObservationMessage::mutable_view_limit_points(int index) {
+  return view_limit_points_.Mutable(index);
 }
-inline float ObservationMessage::covered_distance() const {
-  return covered_distance_;
+inline ::PointObject* ObservationMessage::add_view_limit_points() {
+  return view_limit_points_.Add();
 }
-inline void ObservationMessage::set_covered_distance(float value) {
-  set_has_covered_distance();
-  covered_distance_ = value;
+inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
+ObservationMessage::view_limit_points() const {
+  return view_limit_points_;
 }
-
-// required float bearing_limit_left = 9;
-inline bool ObservationMessage::has_bearing_limit_left() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
-}
-inline void ObservationMessage::set_has_bearing_limit_left() {
-  _has_bits_[0] |= 0x00000100u;
-}
-inline void ObservationMessage::clear_has_bearing_limit_left() {
-  _has_bits_[0] &= ~0x00000100u;
-}
-inline void ObservationMessage::clear_bearing_limit_left() {
-  bearing_limit_left_ = 0;
-  clear_has_bearing_limit_left();
-}
-inline float ObservationMessage::bearing_limit_left() const {
-  return bearing_limit_left_;
-}
-inline void ObservationMessage::set_bearing_limit_left(float value) {
-  set_has_bearing_limit_left();
-  bearing_limit_left_ = value;
-}
-
-// required float bearing_limit_right = 10;
-inline bool ObservationMessage::has_bearing_limit_right() const {
-  return (_has_bits_[0] & 0x00000200u) != 0;
-}
-inline void ObservationMessage::set_has_bearing_limit_right() {
-  _has_bits_[0] |= 0x00000200u;
-}
-inline void ObservationMessage::clear_has_bearing_limit_right() {
-  _has_bits_[0] &= ~0x00000200u;
-}
-inline void ObservationMessage::clear_bearing_limit_right() {
-  bearing_limit_right_ = 0;
-  clear_has_bearing_limit_right();
-}
-inline float ObservationMessage::bearing_limit_right() const {
-  return bearing_limit_right_;
-}
-inline void ObservationMessage::set_bearing_limit_right(float value) {
-  set_has_bearing_limit_right();
-  bearing_limit_right_ = value;
+inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
+ObservationMessage::mutable_view_limit_points() {
+  return &view_limit_points_;
 }
 
 

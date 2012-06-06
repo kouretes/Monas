@@ -8,6 +8,7 @@
 #include "LWRemoteHosts.h"
 #include "LWElementList.h"
 #include "LMElementList.h"
+#include "LVElementList.h"
 #include "ui_KMonitor.h"
 
 class KMonitor : public QMainWindow, private Ui::KMonitorClass
@@ -29,6 +30,9 @@ private:
     LWElementList* LWSElementList;
     LWRemoteHosts* availableLMHosts;
     LMElementList* LPMElementList;
+    LWRemoteHosts* availableLVHosts;
+    LVElementList* LRVElementList;
+    LWRemoteHosts* availableKCCHosts;
 };
 
 #endif // KMONITOR_H

@@ -310,13 +310,11 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		//============================
 
 		e=(eL+eR)/2;
-
+		refexpusec=e*MAXEXPUS/510.0;
 
 		if ((exp*510.0f)/33.33333333f <e)
 		{
-			refexpusec=e*MAXEXPUS/510.0;
 			e=exp*510.0f/33.33333333f;
-
 		}
 		lastexpusec=e*MAXEXPUS/510.0f;
 		cout<<"Exposure Scaling:"<<getScale()<<", from"<<refexpusec<<"usec to "<<lastexpusec<<"usec"<<endl;
@@ -468,6 +466,6 @@ float KImageExtractor::getScale() const
 #ifdef WEBOTS
 	return 1.0f;
 #else
-	return log(refexpusec/lastexpusec);
+	return refexpusec/lastexpusec;
 #endif
 }

@@ -55,7 +55,7 @@ int ImageExtractor::Execute() {
             outmsg.set_active_camera(KRawImage::BOTTOM);
 		else
             outmsg.set_active_camera(KRawImage::TOP);
-		outmsg.set_exposure_us(imext.getScale());
+		outmsg.set_luminance_scale(imext.getScale());
 		lastrefresh=now;
 	}
 	timestamp=imext.fetchImage(imstore);

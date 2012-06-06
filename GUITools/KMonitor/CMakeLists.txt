@@ -7,8 +7,6 @@ cmake_minimum_required( VERSION 2.6 )
 PROJECT( KMonitor )
 
 FIND_PACKAGE( Qt4 REQUIRED )
-FIND_PACKAGE( OpenCV REQUIRED )
-
 # necessary ? 
 FIND_PACKAGE(Boost COMPONENTS date_time thread system)
 
@@ -20,20 +18,22 @@ ADD_SUBDIRECTORY( ../../src/architecture/narukom "${CMAKE_CURRENT_BINARY_DIR}/na
 SET( QT_USE_QTSVG TRUE )
 
 SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp LWRemoteHosts.cpp 
-					KGraphicsView.cpp KFieldScene.cpp GraphicalRobotElement.cpp LWElementList.cpp
-					LMElementList.cpp KMapView.cpp KMapScene.cpp
-					../../src/hal/generic_linux/syscall.cpp
-					../../src/messages/Network.pb.cc
-					../../src/messages/VisionObservations.pb.cc
-					../../src/messages/WorldInfo.pb.cc
-					../../src/messages/Gamecontroller.pb.cc
-					../../src/messages/motion.pb.cc
-					../../src/messages/SensorsMessage.pb.cc
-					../../src/messages/motion.pb.cc
-					../../src/messages/ObstacleAvoidanceMessage.pb.cc
-					  )
+		KGraphicsView.cpp KFieldScene.cpp GraphicalRobotElement.cpp LWElementList.cpp
+		LMElementList.cpp KMapView.cpp KMapScene.cpp KLabel.cpp KRobotView.cpp LVElementList.cpp
+		../../src/hal/generic_linux/syscall.cpp
+		../../src/messages/Network.pb.cc
+		../../src/messages/VisionObservations.pb.cc
+		../../src/messages/WorldInfo.pb.cc
+		../../src/messages/Gamecontroller.pb.cc
+		../../src/messages/motion.pb.cc
+		../../src/messages/SensorsMessage.pb.cc
+		../../src/messages/motion.pb.cc
+		../../src/messages/ObstacleAvoidanceMessage.pb.cc
+		../../src/messages/Kimage.pb.cc 
+		
+	)
 SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
-				 	GraphicalRobotElement.h LWElementList.h LMElementList.h KMapView.h) 
+		GraphicalRobotElement.h LWElementList.h LMElementList.h KMapView.h KLabel.h LVElementList.h ) 
 SET( KMonitor_FORMS KMonitor.ui )
 SET( KMonitor_RESOURCES GuiResources.qrc )
 
@@ -50,4 +50,4 @@ ADD_EXECUTABLE( KMonitor ${KMonitor_SOURCES}
 		${KMonitor_RESOURCES_RCC}
 	      )
 
-TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} ${OpenCV_LIBS} M_tinyxml narukom ${Boost_LIBRARIES} )
+TARGET_LINK_LIBRARIES( KMonitor ${QT_LIBRARIES} M_tinyxml narukom ${Boost_LIBRARIES})

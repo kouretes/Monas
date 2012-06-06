@@ -53,7 +53,5 @@ message ObservationMessage {
 	repeated PointObject corner_objects=5;
 	repeated PointObject intersection_objects=6;
 	repeated LineObject line_objects=7;
-	required float covered_distance = 8;
-	required float bearing_limit_left = 9;
-	required float bearing_limit_right = 10;
+	repeated PointObject view_limit_points=11;
 }

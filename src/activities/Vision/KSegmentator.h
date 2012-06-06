@@ -95,7 +95,7 @@ class KSegmentator{
 		int width;//:)
 		int height;
 		//Scale up Y component to compensate for exposure or lighting variations
-		int lumascale;
+		float lumascale;
 		enum colorValues
 		{
 			red_ = 1, blue_ = 2, green_ = 3, skyblue_ = 4, yellow_ = 5, orange_ = 6, white_ = 7, black_  = 8
@@ -128,10 +128,12 @@ class KSegmentator{
 #endif
 
 
-		//Value prelookup
-		colormask_t rYLUT[LUTsize];
-		colormask_t rULUT[LUTsize];
-		colormask_t rVLUT[LUTsize];
+		//Value prelookup,reference values
+		colormask_t rYLUT[LUTsize],rULUT[LUTsize],rVLUT[LUTsize];
+		//Value prelookup,exposure-scaled values
+		colormask_t pYLUT[LUTsize],pULUT[LUTsize],pVLUT[LUTsize];
+		//Value transformation, scale by lumascale and subsampled
+		colormask_t Y_SCALESUB[256],U_SCALESUB[256],V_SCALESUB[256];
 
 		int yres,ysize;
 		int ures,usize;
@@ -175,28 +177,23 @@ class KSegmentator{
         	//colormask_t t=YLUT[y]&ULUT[u]&VLUT[v];
         	//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &e);
 			//segment.tv_nsec+=ttdiff(s,e).tv_nsec;
-			int yn=y+lumascale;
-			if(yn>255) yn=255;
-			y=yn;
 
 			//Precheck... Does it SEEM at lest to contain needed values?
 
-			if(!(rYLUT[y>>LUTres]&rULUT[u>>LUTres]&rVLUT[v>>LUTres]&hint))
+			if(!( pYLUT[y>>LUTres]& pULUT[u>>LUTres]& pVLUT[v>>LUTres]&hint))
 				return 0;
+
 
 			//Well, it does. Look for it
 
-			return * ctableAccess(v,u,y);
+			return * ctableAccess(V_SCALESUB[v],U_SCALESUB[u],Y_SCALESUB[y]);
         }
 
         inline  colormask_t const * ctableAccess( const unsigned char v, const unsigned char u, const unsigned char y) const
         {
         	//y>>=yres;u>>=ures;v>>=vres;
 			//return ctable + y + u*ysize+v*ysize*usize;
-        	return ctable+(y>>yres)
-        	+((unsigned(u)>>ures)<<(8-yres))
-
-        	+((unsigned(v)>>vres)<<(16-yres-ures));
+        	return ctable+(y)+((u)<<(8-yres))+((v)<<(16-yres-ures));
         }
 
 
