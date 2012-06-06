@@ -258,7 +258,7 @@ namespace FKin
 			iter++;
 			float HY = *iter;
 			forwardCamera(Tmatrix,HP,HY,false);
-		}else if(!WhatForward.compare("LeftArm")){
+		}else if(!WhatForward.compare("LeftArm") || !WhatForward.compare("LeftHand")){
 			float SP = *iter;
 			iter++;
 			float SR = *iter;
@@ -267,7 +267,7 @@ namespace FKin
 			iter++;
 			float ER = *iter;
 			forwardLeftHand(Tmatrix,SP,SR,EY,ER);
-		}else if(!WhatForward.compare("RightArm")){
+		}else if(!WhatForward.compare("RightArm") || !WhatForward.compare("RightHand")){
 			float SP = *iter;
 			iter++;
 			float SR = *iter;

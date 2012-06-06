@@ -208,8 +208,10 @@ namespace IKin
 					FKin::kmatTable test;						
 					FKin::filterForward(test,"LeftHand", flh);
 					if(test.almostEqualTo(Tinit)){
-						std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
+						//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
 						returnResult.push_back(flh);
+					}else{
+						;//std::cout << "Hta!!\nTheta 1 = " << theta1 << "Theta 2 = " << theta2 << "Theta 3 = " << theta3 << "Theta 4 = " << theta4 << std::endl;	
 					}
 					//------------------------------------------------------------------------------------------------------------------------------------------
 				}
@@ -325,8 +327,10 @@ namespace IKin
 					FKin::kmatTable test;						
 					FKin::filterForward(test,"RightHand", frh);
 					if(test.almostEqualTo(Tinit)){
-						std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
+						//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4 << std::endl;							
 						returnResult.push_back(frh);
+					}else{
+						;//std::cout << "Htaa!!\nTheta 1 = " << theta1 << "Theta 2 = " << theta2 << "Theta 3 = " << theta3 << "Theta 4 = " << theta4 << std::endl;
 					}
 					//-----------------------------------------------------------------------------------------------------------------------------------------
 					
@@ -478,6 +482,7 @@ namespace IKin
 							//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;							
 							returnResult.push_back(fll);
 						}
+						//-					
 						//---------------------------------------------------------------------------------------------------------------------------------------------
 					}
 				}
