@@ -35,7 +35,7 @@ void KRobotView::setRVRawImageVisible(bool visible)
 {
 	if (visible == false)
 	{
-		this->parentLabel->setPixmap(QPixmap::QPixmap());
+		this->parentLabel->setPixmap(QPixmap());
 		this->parentLabel->setAlignment(Qt::AlignHCenter);
 	}
 }

@@ -27,7 +27,6 @@ public slots:
 	void worldInfoUpdateHandler(WorldInfo, QString);
 	void observationMessageUpdateHandler(ObservationMessage, QString);
 	void localizationDataUpdateHandler(LocalizationDataForGUI, QString);
-	void headYawJointUpdateHandler(float, QString);
 	void motionCommandUpdateHandler(MotionWalkMessage, QString);
 
 	void GWSGVRobotVisible(QString, bool);

@@ -67,7 +67,6 @@ KMonitor::KMonitor(QWidget *parent)
 
 	//Signal slot connections for HFOV
 	connect(LWSElementList, SIGNAL(LWRHSetHFOVVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVHFOVVisible(QString, bool)));
-	connect(Messenger, SIGNAL(headYawJointUpdate(float, QString)), LWSGraphicsView, SLOT(headYawJointUpdateHandler(float, QString)));
 
 	//Signal slot connections for Trace Of Estimated Robot Positions
 	connect(LWSElementList, SIGNAL(LWRHSetTraceVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVTraceVisible(QString, bool)));

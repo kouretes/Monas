@@ -274,7 +274,12 @@ void KGraphicsView::observationMessageUpdateHandler(ObservationMessage om, QStri
 			element->setLWSYellowRightPostVisible(true);
 			element->setLWSYellowPostVisible(true);
 		}
-
+		if (element->getLWSHFOVVisible())
+		{
+			element->setLWSHFOVVisible(false);
+			element->updateHFOVRect();
+			element->setLWSHFOVVisible(true);
+		}
 		element->getGREtimer()->start(500);
 
 	}else
@@ -358,25 +363,7 @@ void KGraphicsView::LWSGVHFOVVisible(QString host, bool visible)
 
 }
 
-void KGraphicsView::headYawJointUpdateHandler(float HeadYaw, QString host)
-{
 
-	GraphicalRobotElement* element = paintArea->findGraphicalRobotItem(host);
-
-	if(element != NULL)
-	{
-		if (element->getLWSHFOVVisible())
-		{
-			element->setLWSHFOVVisible(false);
-			element->updateHFOVRect(HeadYaw);
-			element->setLWSHFOVVisible(true);
-		}
-
-	}else
-	{
-		//std::cout << "[67]KGraphicsView::worldInfoUpdateHandler:: Host hasn't been requested!" << host.toStdString() <<std::endl;
-	}
-}
 
 void KGraphicsView::LWSGVTraceVisible(QString host, bool visible)
 {

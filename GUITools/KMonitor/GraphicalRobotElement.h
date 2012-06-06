@@ -85,7 +85,7 @@ public:
 	void setLWSHFOVVisible(bool visible){LWSHFOVVisible = visible; setHFOVVisible(visible);}
 	bool getLWSHFOVVisible(){return LWSHFOVVisible;}
 	void setHFOVVisible(bool visible);
-	void updateHFOVRect(float HeadYaw);
+	void updateHFOVRect();
 
 	// Trace
 	void setLWSTraceVisible(bool visible){LWSTraceVisible = visible; setTraceVisible(visible);}
@@ -145,8 +145,7 @@ private:
 	QList<Particle*> ParticlesList;
 
 	bool LWSHFOVVisible;
-	QGraphicsLineItem* PositiveBoundLine;
-	QGraphicsLineItem* NegativeBoundLine;
+	QGraphicsPolygonItem* HFOVLines;
 
 	bool LWSTraceVisible;
 	boost::circular_buffer<QGraphicsEllipseItem*> RobotPositions;

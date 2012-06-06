@@ -52,8 +52,6 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 		ParticlesList.append(part);
 	}
 
-	PositiveBoundLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
-	NegativeBoundLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
@@ -68,6 +66,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
 	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
+	HFOVLines =this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::Dense7Pattern));
 	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::Dense7Pattern));
 
 	GREtimer = new QTimer();
@@ -81,11 +80,8 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 GraphicalRobotElement::~GraphicalRobotElement()
 {
-	if(PositiveBoundLine)
-		delete PositiveBoundLine;
-
-	if(NegativeBoundLine)
-		delete NegativeBoundLine;
+	if(HFOVLines)
+		delete HFOVLines;
 
 	if(UnionistLine)
 		delete UnionistLine;
@@ -427,32 +423,34 @@ void GraphicalRobotElement::setHFOVVisible(bool visible)
 {
 	if (visible == false)
 	{
-		this->PositiveBoundLine->setVisible(false);
-		this->NegativeBoundLine->setVisible(false);
+		this->HFOVLines->setVisible(false);
+		this->HFOVLines->setVisible(false);
 
 	}else
 	{
-		this->PositiveBoundLine->setVisible(true);
-		this->NegativeBoundLine->setVisible(true);
+		this->HFOVLines->setVisible(true);
+		this->HFOVLines->setVisible(true);
 	}
 }
 
-void GraphicalRobotElement::updateHFOVRect(float HeadYaw)
+void GraphicalRobotElement::updateHFOVRect()
 {
 	float HeadYawPlusTheta = 0.f;
-
-	if(this->currentWIM.has_myposition())
+	QPolygonF poly;
+	float lx=this->currentWIM.myposition().x()*1000, ly=this->currentWIM.myposition().y()*1000;
+	for(int i=0;i<currentObsm.view_limit_points_size();i++)
 	{
-		HeadYawPlusTheta = this->currentWIM.myposition().phi() + HeadYaw;
+		const PointObject p=currentObsm.view_limit_points(i);
+		QLineF l=  this->parentScene->lineFromFCA(
+							this->currentWIM.myposition().x()*1000,
+							this->currentWIM.myposition().y()*1000,
+							this->currentWIM.myposition().phi()+p.bearing(),
+							p.distance()*1000);
 
-		PositiveBoundLine->setLine(this->parentScene->lineFromFCA( this->currentWIM.myposition().x()*1000,
-				this->currentWIM.myposition().y()*1000, HeadYawPlusTheta + 20*TO_RAD, 3000));
-		NegativeBoundLine->setLine(this->parentScene->lineFromFCA(this->currentWIM.myposition().x()*1000,
-						this->currentWIM.myposition().y()*1000,HeadYawPlusTheta - 20*TO_RAD , 3000));
-	}else
-	{
-		PositiveBoundLine->setLine(0, 0, 0, 0);
-		NegativeBoundLine->setLine(0, 0, 0, 0);
+		poly<<l.p2();
+		HFOVLines->setPolygon(poly);
+
+
 	}
 }
 

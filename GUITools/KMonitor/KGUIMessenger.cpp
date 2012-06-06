@@ -52,7 +52,6 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
-	updateSubscription("sensors",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 }
@@ -146,22 +145,6 @@ void KGUIMessenger::allocateReceivedMessages()
 				debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
 
 				emit localizationDataUpdate(debugGUI, currentRHost);
-			}
-			else if (incomingMessages.at(i).msg->GetTypeName()=="AllSensorValuesMessage" && myLWRequestedHost == currentRHost)
-			{
-				AllSensorValuesMessage asvm;
-				SensorData HeadYaw;
-				float targetYaw;
-
-				asvm.Clear();
-				HeadYaw.Clear();
-				targetYaw = 0.f;
-
-				asvm.CopyFrom(*(incomingMessages.at(i).msg));
-				HeadYaw = asvm.jointdata(KDeviceLists::HEAD + KDeviceLists::YAW);
-				targetYaw = HeadYaw.sensorvalue();
-
-				emit headYawJointUpdate(targetYaw, currentRHost);
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="MotionWalkMessage" && myLWRequestedHost == currentRHost)
 			{

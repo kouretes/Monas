@@ -12,7 +12,7 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/VisionObservations.pb.h"
-#include "messages/SensorsMessage.pb.h"
+//#include "messages/SensorsMessage.pb.h"
 #include "messages/motion.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/Kimage.pb.h"
@@ -47,7 +47,6 @@ signals:
 	void worldInfoUpdate(WorldInfo, QString);
 	void localizationDataUpdate(LocalizationDataForGUI, QString);
 	void obsmsgUpdate(ObservationMessage, QString);
-	void headYawJointUpdate(float, QString);
 	void motionCommandUpdate(MotionWalkMessage, QString);
 	void gridInfoUpdate(GridInfo, QString);
 	void rawImageUpdate(KRawImage, QString);
