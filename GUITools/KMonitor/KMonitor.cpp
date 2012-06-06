@@ -19,6 +19,8 @@ KMonitor::KMonitor(QWidget *parent)
 
 	availableKCCHosts = new LWRemoteHosts(this->KCComboBox);
 
+	KCC = new KCCHandler(this->PromptCurCoLabel, this->pbBlack);
+
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
 
