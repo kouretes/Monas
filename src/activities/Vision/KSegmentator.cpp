@@ -101,18 +101,25 @@ void KSegmentator::setLumaScale(float s)
 {
 	lumascale=s;
 	//cout<<"KSegmentator:setLumaScale():"<<s<<endl;
+	for(int i=0;i<LUTsize;i++)
+	{
+		pYLUT[i]=0;
+		pULUT[i]=0;
+		pVLUT[i]=0;
+	}
+
 	for(int i=0;i<256;i++)
 	{
 	    int r=i*lumascale;
 	    r=r>255?255:r;
 	    r=r<0?0:r;
-	    pYLUT[i]=rYLUT[r];
+	    pYLUT[i>> LUTres]|=rYLUT[r>> LUTres];
 	    Y_SCALESUB[i]=r>>yres;
 	    r=(i-128)*lumascale+128;
 		r=r>255?255:r;
 	    r=r<0?0:r;
-	    pULUT[i]=rULUT[r];
-	    pVLUT[i]=rVLUT[r];
+	    pULUT[i>> LUTres]|=rULUT[r>>LUTres];
+	    pVLUT[i>> LUTres]|=rVLUT[r>>LUTres];
 	    U_SCALESUB[i]=r>>ures;
 	    V_SCALESUB[i]=r>>vres;
 
@@ -255,13 +262,13 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 		readRulefile(conf);
 	else if (set.ruletype=='C')
 		readColorTable(conf);
-	lumascale=1;//Default setting;
+	setLumaScale(1);//Default setting;
 
 	for (int v=0;v<256;v++)
 		for (int u=0;u<256;u++)
 			for (int y=0;y<256;y++)
 			{
-				colormask_t val=* (ctableAccess(v,u,y));
+				colormask_t val=* (ctableAccess(V_SCALESUB[v],U_SCALESUB[u],Y_SCALESUB[y]));
 				rYLUT[y>>LUTres]|=val;
 				rULUT[u>>LUTres]|=val;
 				rVLUT[v>>LUTres]|=val;
