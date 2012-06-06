@@ -193,7 +193,7 @@ class KSegmentator{
         {
         	//y>>=yres;u>>=ures;v>>=vres;
 			//return ctable + y + u*ysize+v*ysize*usize;
-        	return ctable+(y)+((u)<<(8-yres))+((v)<<(16-yres-ures));
+        	return ctable+(unsigned(y))+((unsigned(u))<<(8-yres))+((unsigned(v))<<(16-yres-ures));
         }
 
 
