@@ -50,12 +50,15 @@ int ImageExtractor::Execute() {
 	{
 		//cout<<"Refresh"<<endl;
         imext.refreshValues();//Reload
+        if(imext.getCamera()!=1)
+			imext.swapCamera();
 		outmsg.set_exposure_us(imext.getExpUs());
 		if(imext.getCamera()==1)
             outmsg.set_active_camera(KRawImage::BOTTOM);
 		else
             outmsg.set_active_camera(KRawImage::TOP);
 		outmsg.set_luminance_scale(imext.getScale());
+		cout<<"scale"<<imext.getScale()<<endl;
 		lastrefresh=now;
 	}
 	timestamp=imext.fetchImage(imstore);
@@ -81,7 +84,7 @@ int ImageExtractor::Execute() {
 
     nmsg.host=msgentry::HOST_ID_LOCAL_HOST;
     nmsg.timestamp=timestamp;
-    nmsg.topic=Topics::Instance().getId("vision");
+    nmsg.topic=Topics::Instance().getId("image");
     nmsg.msgclass=msgentry::DATA;
 
     this->publish(nmsg);

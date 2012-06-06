@@ -53,7 +53,10 @@ void Vision::fetchAndProcess()
 
 	//cout << "fetchImage" << endl;
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
-    boost::shared_ptr<const KRawImage> img=_blk.readData<KRawImage> ("vision", msgentry::HOST_ID_LOCAL_HOST, &stamp);
+	boost::posix_time::ptime oldstamp=stamp;
+    boost::shared_ptr<const KRawImage> img=_blk.readData<KRawImage> ("image", msgentry::HOST_ID_LOCAL_HOST, &stamp);
+    if(stamp<=oldstamp)
+		return ;
     if(img.get()==0)
         return;
     //Remove constness, tricky stuff :/
@@ -389,10 +392,12 @@ void Vision::UserInit()
 
 	}
 
+	stamp=boost::posix_time::microsec_clock::universal_time();
 	seg=segbottom;
 
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
 
 }
 
