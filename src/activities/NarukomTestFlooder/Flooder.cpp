@@ -1,6 +1,6 @@
 #include "Flooder.h"
 #include "messages/TestMessage.pb.h"
-
+#include "messages/WorldInfo.pb.h"
 #include "messages/Network.pb.h"
 
 using namespace std;
@@ -20,12 +20,12 @@ int Drain::Execute()
 	boost::shared_ptr<const KnownHosts> h= _blk.readState<KnownHosts>("communication");
 	if(!h.get()||(h&&h->entrylist_size()==0))
 	{
-		boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication");
+		boost::shared_ptr<const TestMessage> drop= _blk.readData<TestMessage>("communication");
 		if(drop==NULL)
 			return 0;
 		TestMessage newdrop;//.CopyFrom(drop);
 		newdrop.set_counter(drop->counter()-1);
-		_blk.publishSignal(newdrop,"communication");
+		_blk.publishData(newdrop,"communication");
 		cout<<"Drop reduced to:"<<newdrop.counter()<<endl;
 
 
@@ -38,12 +38,15 @@ int Drain::Execute()
 
 		for(fit=rf.begin();fit!=rf.end();++fit)
 		{
-			boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication",(*fit).hostid());
+			boost::shared_ptr<const WorldInfo> wim=_blk.readData<WorldInfo>("worldstate",(*fit).hostid());
+			if(wim.get()!=0)
+				cout<<"WorldInfo:"<<wim->myposition().x()<<" "<<wim->myposition().y()<<endl;
+			boost::shared_ptr<const TestMessage> drop= _blk.readData<TestMessage>("communication",(*fit).hostid());
 			if(drop==NULL)
 				continue;
 			TestMessage newdrop;//.CopyFrom(drop);
 			newdrop.set_counter(drop->counter()-1);
-			_blk.publishSignal(newdrop,"communication");
+			_blk.publishData(newdrop,"communication");
 			cout<<"Drop reduced to:"<<newdrop.counter()<<endl;
 
 		}
@@ -63,6 +66,7 @@ void Drain::UserInit()
 {
 	cout<<"Hey!"<<endl;
 	_blk.updateSubscription("communication",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 }
 
 
@@ -76,13 +80,13 @@ int Pipe::Execute()
 	if(!h.get()||(h&&h->entrylist_size()==0))
 	{
 		std::cout<<"Local"<<std::endl;
-		boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication");
+		boost::shared_ptr<const TestMessage> drop= _blk.readData<TestMessage>("communication");
 		TestMessage newdrop;//.CopyFrom(drop);
 		if(drop!=NULL)
 			newdrop.set_counter(drop->counter()+1);
 		else
 			newdrop.set_counter(1);
-		_blk.publishSignal(newdrop,"communication");
+		_blk.publishData(newdrop,"communication");
 		cout<<"New drop to:"<<newdrop.counter()<<endl;
 	}
 	else
@@ -95,13 +99,13 @@ int Pipe::Execute()
 			std::cout<<"Readingfromhost:"<<(*fit).hostid()<<std::endl;
 
 
-			boost::shared_ptr<const TestMessage> drop= _blk.readSignal<TestMessage>("communication",(*fit).hostid());
+			boost::shared_ptr<const TestMessage> drop= _blk.readData<TestMessage>("communication",(*fit).hostid());
 			TestMessage newdrop;//.CopyFrom(drop);
 			if(drop!=NULL)
 				newdrop.set_counter(drop->counter()+1);
 			else
 				newdrop.set_counter(1);
-			_blk.publishSignal(newdrop,"communication");
+			_blk.publishData(newdrop,"communication");
 			cout<<"New drop to:"<<newdrop.counter()<<endl;
 
 		}
