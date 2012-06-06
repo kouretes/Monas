@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>880</width>
+    <width>882</width>
     <height>492</height>
    </rect>
   </property>
@@ -38,9 +38,6 @@
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
-            <attribute name="headerCascadingSectionResizes">
-             <bool>true</bool>
-            </attribute>
             <attribute name="headerCascadingSectionResizes">
              <bool>true</bool>
             </attribute>
@@ -257,7 +254,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,4">
         <property name="spacing">
-         <number>6</number>
+         <number>7</number>
         </property>
         <item row="0" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -279,42 +276,49 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_1">
+           <widget class="QPushButton" name="pbOrange">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="pbGreen">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="pbYellow">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="pbWhite">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pbBlue">
             <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_5">
+           <widget class="QPushButton" name="pbRed">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbBlack">
             <property name="text">
              <string/>
             </property>
@@ -328,10 +332,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="spinBox"/>
+           <widget class="QSpinBox" name="pixelSpinBox">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>6</number>
+            </property>
+           </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="UndopushButton">
+           <widget class="QPushButton" name="pbUndo">
             <property name="text">
              <string>Undo</string>
             </property>
@@ -368,7 +379,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>880</width>
+     <width>882</width>
      <height>25</height>
     </rect>
    </property>
