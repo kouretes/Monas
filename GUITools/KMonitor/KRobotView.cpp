@@ -1,6 +1,5 @@
 #include "KRobotView.h"
 
-#include <QByteArray>
 #include <QImage>
 
 #include <iostream>
@@ -45,8 +44,7 @@ void KRobotView::updateRobotView(KRawImage rawImage)
 	QImage* image;
 
 	image = this->YUVPixelFormat2RGB32(rawImage);
-
-	this->parentLabel->setPixmap(QPixmap::fromImage((*image)));
+	this->parentLabel->setPixmap(QPixmap::fromImage(*image));
 	this->parentLabel->setAlignment(Qt::AlignHCenter);
 
 }
