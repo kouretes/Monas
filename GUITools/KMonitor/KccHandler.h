@@ -51,9 +51,9 @@ public slots:
 	void pbBluePressed();
 	void pbRedPressed();
     void pbBlackPressed();
-	/*void undoPressed();
+	void undoPressed();
 	void realZoom(double sca);
-	void segZoom(double sca);*/
+	void segZoom(double sca);
 
 private:
 	char ***rgbColorTable;

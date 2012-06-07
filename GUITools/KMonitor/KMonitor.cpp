@@ -123,13 +123,13 @@ KMonitor::KMonitor(QWidget *parent)
 	//SIGNAL SLOT CONNECTIONS FOR KCC Beta
 	//Signal slot connections for KCC ComboBox
 
-	//connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), availableKCCHosts, SLOT(addComboBoxItem(QString, QString)));
-	//connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), availableKCCHosts, SLOT(removeComboBoxItem(QString)));
-	//connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), availableKCCHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	//connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->KccHandler, SLOT(addComboBoxItem(QString, QString)));
+	//connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->KccHandler, SLOT(removeComboBoxItem(QString)));
+	//connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->KccHandler, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
 
-	//connect(availableKCCHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
-	//connect(availableKCCHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
-	//connect(availableKCCHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), RawImgLabel, SLOT(resetRobotView(QString)));
+	//connect(this->KccHandler, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
+	//connect(this->KccHandler, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
+	//connect(this->KccHandler, SIGNAL(LWRHUnsubscriptionRequest(QString)), RawImgLabel, SLOT(resetRobotView(QString)));
 	//Signal slot connections for dispaying Robot's Raw Image
 
 	//connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), RawImgLabel, SLOT(KCCRawImageUpdateHandler(KRawImage, QString)));

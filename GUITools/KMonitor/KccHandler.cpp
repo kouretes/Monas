@@ -42,7 +42,7 @@ KccHandler::KccHandler(QWidget *parent) :
 	ui->scrollSeg->setBackgroundRole(QPalette::Dark);
 	ui->scrollSeg->setWidget(segImL);
 
-	realImage.load("/home/eldrad/Desktop/Monas/GUITools/KMonitor/photo.png");
+	realImage.load("/home/nikos/Desktop/Monas/GUITools/KMonitor/photo.png");
 	segImage = QImage ( realImage.width(), realImage.height(), QImage::Format_RGB32);
 	segImage.fill(0);
 	realImL->setPixmap(QPixmap::fromImage(realImage));
@@ -70,6 +70,9 @@ KccHandler::KccHandler(QWidget *parent) :
     connect(ui->pbBlack, SIGNAL(clicked()), this, SLOT(pbBlackPressed()));
     this->connect(realImL, SIGNAL(clicked(QMouseEvent*)), SLOT(clickedImage(QMouseEvent*)));
 	this->connect(segImL, SIGNAL(clicked(QMouseEvent*)), SLOT(clickedImage(QMouseEvent*)));
+	connect(ui->pbUndo, SIGNAL(clicked()), this, SLOT(undoPressed()));
+	connect(ui->rSpin, SIGNAL(valueChanged(double)), this, SLOT(realZoom(double)));
+	connect(ui->sSpin, SIGNAL(valueChanged(double)), this, SLOT(segZoom(double)));
 
 
 	rgbColorTableOld = (char***) malloc(256*sizeof(char**));
@@ -105,10 +108,10 @@ KccHandler::KccHandler(QWidget *parent) :
 }
 
 
-void MainWindow::clickedImage(QMouseEvent* ev){
+void KccHandler::clickedImage(QMouseEvent* ev){
 	int x,y;
-	x = ((int) ev->x()*realImage.width()/((myLabel *)sender())->width());
-	y = ((int) ev->y()*realImage.height()/((myLabel *)sender())->height());
+	x = ((int) ev->x()*realImage.width()/((KccLabel *)sender())->width());
+	y = ((int) ev->y()*realImage.height()/((KccLabel *)sender())->height());
 
 	//memcpy(rgbColorTableOld,rgbColorTable,sizeof(rgbColorTable));
 	for(int i=0;i<255;i++){
@@ -118,7 +121,7 @@ void MainWindow::clickedImage(QMouseEvent* ev){
 			}
 		}
 	}
-	int pixNum = ui->pixSelection->value()-1;
+	int pixNum = ui->pixelSpinBox->value()-1;
 	map<QRgb,char> undo;
 	//vector<QRgb> allColors;
     for(int px=-pixNum;px<pixNum+1;px++){
@@ -139,11 +142,44 @@ void MainWindow::clickedImage(QMouseEvent* ev){
 	undoVector.push_back(undo);
 	if(undoVector.size() >= MAX_UNDO)
 		undoVector.erase(undoVector.begin());
-	segImL->setPixmap(QPixmap::fromImage(segImage).scaled(segImL->size(),Qt::KeepAspectRatio));
+	segImL->setPixmap(QPixmap::fromImage(segImage));
 	segImL->show();
 }
 
+void KccHandler::undoPressed(){
+	if(undoVector.size()>0){
+		//map<QRgb,char>::iterator it;
+		map<QRgb,char> undoList = undoVector.back();
+		undoVector.pop_back();
+		QRgb temp;
+		for(map<QRgb,char>::iterator iter = undoList.begin();iter!=undoList.end();iter++){
+			temp = (*iter).first;
+			rgbColorTable[qRed(temp)][qGreen(temp)][qBlue(temp)] = (*iter).second;
+		}
+		for(int i=0;i<realImage.width();i++){
+			for(int j=0;j<realImage.height();j++){
+				temp = realImage.pixel(i,j);
+				segImage.setPixel(i,j,basicSegColors[rgbColorTable[qRed(temp)][qGreen(temp)][qBlue(temp)]]);
+			}
+		}
+		segImL->setPixmap(QPixmap::fromImage(segImage).scaled(segImL->size()));
+		segImL->show();
+	}
+}
 
+void KccHandler::realZoom(double sca){
+	rScale = sca;
+	realImL->resize(rScale*QPixmap::fromImage(realImage).size());
+	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
+	adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);
+}
+
+void KccHandler::segZoom(double sca){
+	iScale = sca;
+	segImL->resize(iScale*QPixmap::fromImage(realImage).size());
+	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
+	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);
+}
 
 void KccHandler::pbOrangePressed(){
 	ui->SelectedColorLabel->setStyleSheet("* { background-color: rgb(255,140,0) }");
