@@ -248,127 +248,10 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="KCCTab">
+      <widget class="KccHandler" name="KCCTab">
        <attribute name="title">
         <string>KCC Beta !</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,4">
-        <property name="spacing">
-         <number>7</number>
-        </property>
-        <item row="0" column="0" colspan="2">
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <widget class="QComboBox" name="KCComboBox"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="PromptCurCoLabel">
-            <property name="text">
-             <string>Current Color ::</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="SelectedColorLabel">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbOrange">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbGreen">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbYellow">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbWhite">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbBlue">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbRed">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbBlack">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="PromptPixelsLabel">
-            <property name="text">
-             <string>Num of Pixels ::</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="pixelSpinBox">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbUndo">
-            <property name="text">
-             <string>Undo</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="KLabel" name="RawImgLabel">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="SegmentedImgLabel">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
       </widget>
      </widget>
     </item>
@@ -418,6 +301,11 @@
    <class>KLabel</class>
    <extends>QLabel</extends>
    <header>../KLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KccHandler</class>
+   <extends>QWidget</extends>
+   <header>../KccHandler.h</header>
   </customwidget>
  </customwidgets>
  <resources>
