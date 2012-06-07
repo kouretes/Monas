@@ -58,7 +58,7 @@ int ImageExtractor::Execute() {
 		else
             outmsg.set_active_camera(KRawImage::TOP);
 		outmsg.set_luminance_scale(imext.getScale());
-		cout<<"scale"<<imext.getScale()<<endl;
+//		cout<<"scale"<<imext.getScale()<<endl;
 		lastrefresh=now;
 	}
 	timestamp=imext.fetchImage(imstore);
