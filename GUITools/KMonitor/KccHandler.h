@@ -68,7 +68,7 @@ private:
 	char ***rgbColorTable;
 	char ***rgbColorTableOld;
 	//map<QRgb,char> rgbMap;
-	char yuvImage[640][480]
+	char yuvImage[640][480];
 	map<char,QRgb> basicSegColors;
 	//char basicSegColorsChars[7];
 
