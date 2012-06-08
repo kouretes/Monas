@@ -68,58 +68,60 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 	feature temp;
 	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
 	{
-		Attr = Ftr->ToElement();
-		Attr->Attribute("x", &x);
-		Attr->Attribute("y", &y);
-		Attr->Attribute("weight", &w);
-		Attr->Attribute("DistMeanParams", &CntDistErrorMeanParams);
-		if (CntDistErrorMeanParams > 0)
-		{
-			DistErrorMeanParams = new double[CntDistErrorMeanParams];
-			for (int p = 0; p < CntDistErrorMeanParams; p++)
+		if(Ftr->ToComment() == NULL){
+			Attr = Ftr->ToElement();
+			Attr->Attribute("x", &x);
+			Attr->Attribute("y", &y);
+			Attr->Attribute("weight", &w);
+			Attr->Attribute("DistMeanParams", &CntDistErrorMeanParams);
+			if (CntDistErrorMeanParams > 0)
 			{
-				tmp = "DistM";
-				tmp += boost::lexical_cast<string>(p);
-				Attr->Attribute(tmp.c_str(), DistErrorMeanParams + p);
+				DistErrorMeanParams = new double[CntDistErrorMeanParams];
+				for (int p = 0; p < CntDistErrorMeanParams; p++)
+				{
+					tmp = "DistM";
+					tmp += boost::lexical_cast<string>(p);
+					Attr->Attribute(tmp.c_str(), DistErrorMeanParams + p);
+				}
 			}
-		}
-		Attr->Attribute("DistDevParams", &CntDistErrorDevParams);
-		if (CntDistErrorDevParams > 0)
-		{
-			DistErrorDevParams = new double[CntDistErrorDevParams];
-			for (int p = 0; p < CntDistErrorDevParams; p++)
+			Attr->Attribute("DistDevParams", &CntDistErrorDevParams);
+			if (CntDistErrorDevParams > 0)
 			{
-				tmp = "DistD";
-				tmp += boost::lexical_cast<string>(p);
-				Attr->Attribute(tmp.c_str(), DistErrorDevParams + p);
+				DistErrorDevParams = new double[CntDistErrorDevParams];
+				for (int p = 0; p < CntDistErrorDevParams; p++)
+				{
+					tmp = "DistD";
+					tmp += boost::lexical_cast<string>(p);
+					Attr->Attribute(tmp.c_str(), DistErrorDevParams + p);
+				}
 			}
-		}
-		Attr->Attribute("BearMeanParams", &CntBearErrorMeanParams);
-		if (CntBearErrorMeanParams > 0)
-		{
-			BearignErrorMeanParams = new double[CntBearErrorMeanParams];
-			for (int p = 0; p < CntBearErrorMeanParams; p++)
+			Attr->Attribute("BearMeanParams", &CntBearErrorMeanParams);
+			if (CntBearErrorMeanParams > 0)
 			{
-				tmp = "BearM";
-				tmp += boost::lexical_cast<string>(p);
-				Attr->Attribute(tmp.c_str(), BearignErrorMeanParams + p);
+				BearignErrorMeanParams = new double[CntBearErrorMeanParams];
+				for (int p = 0; p < CntBearErrorMeanParams; p++)
+				{
+					tmp = "BearM";
+					tmp += boost::lexical_cast<string>(p);
+					Attr->Attribute(tmp.c_str(), BearignErrorMeanParams + p);
+				}
 			}
-		}
-		Attr->Attribute("BearDevParams", &CntBearErrorDevParams);
-		if (CntBearErrorDevParams > 0)
-		{
-			BearignErrorDevParams = new double[CntBearErrorDevParams];
-			for (int p = 0; p < CntBearErrorDevParams; p++)
+			Attr->Attribute("BearDevParams", &CntBearErrorDevParams);
+			if (CntBearErrorDevParams > 0)
 			{
-				tmp = "BearD";
-				tmp += boost::lexical_cast<string>(p);
-				Attr->Attribute(tmp.c_str(), BearignErrorDevParams + p);
+				BearignErrorDevParams = new double[CntBearErrorDevParams];
+				for (int p = 0; p < CntBearErrorDevParams; p++)
+				{
+					tmp = "BearD";
+					tmp += boost::lexical_cast<string>(p);
+					Attr->Attribute(tmp.c_str(), BearignErrorDevParams + p);
+				}
 			}
+			ID = Attr->Attribute("ID");
+			temp.set(x, y, ID, w, CntDistErrorDevParams, CntBearErrorDevParams, DistErrorDevParams, BearignErrorDevParams, CntDistErrorMeanParams, CntBearErrorMeanParams, DistErrorMeanParams, BearignErrorMeanParams);
+			KFeaturesmap[temp.id] = temp;
+			allfeatures.push_back(temp);
 		}
-		ID = Attr->Attribute("ID");
-		temp.set(x, y, ID, w, CntDistErrorDevParams, CntBearErrorDevParams, DistErrorDevParams, BearignErrorDevParams, CntDistErrorMeanParams, CntBearErrorMeanParams, DistErrorMeanParams, BearignErrorMeanParams);
-		KFeaturesmap[temp.id] = temp;
-		allfeatures.push_back(temp);
 	}
 	return 0;
 }
@@ -137,7 +139,7 @@ bool KLocalization::readRobotConf(const std::string& file_name) {
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 	NodeCont teamPositions, robotPosition ;
-	Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration "  , Logger::Info);
+	Logger::Instance().WriteMsg("Localization",  " readRobotConfiguration "  , Logger::Info);
 	for (int i = 0; i < 2; i++) {
 		string kickoff = (i==0)?"KickOff":"noKickOff";	//KICKOFF==0, NOKICKOFF == 1
 		bool found = false;
