@@ -38,12 +38,12 @@ KccHandler::KccHandler(QWidget *parent) :
 	//segImL->resize(lx,ly);
 
 
-    ui->scrollImage->setBackgroundRole(QPalette::Dark);
+   /* ui->scrollImage->setBackgroundRole(QPalette::Dark);
     ui->scrollImage->setWidget(realImL);
 
 	ui->scrollSeg->setBackgroundRole(QPalette::Dark);
 	ui->scrollSeg->setWidget(segImL);
-
+*/
 	realImage.load("/home/nikos/Desktop/Monas/GUITools/KMonitor/photo.png");
 	segImage = QImage ( realImage.width(), realImage.height(), QImage::Format_RGB32);
 	segImage.fill(0);
@@ -55,13 +55,13 @@ KccHandler::KccHandler(QWidget *parent) :
 
 	rScale=iScale=1;
 	//qDebug() << realImL->pixmap()->size();
-	ui->scrollImage->resize(rScale*realImL->pixmap()->size());
+	/*ui->scrollImage->resize(rScale*realImL->pixmap()->size());
 	ui->scrollSeg->resize(iScale*segImL->pixmap()->size());
 
 	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
     adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);
 	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
-	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);
+	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);*/
 
 	connect(ui->pbOrange, SIGNAL(clicked()), this, SLOT(pbOrangePressed()));
 	connect(ui->pbGreen, SIGNAL(clicked()), this, SLOT(pbGreenPressed()));
@@ -108,7 +108,6 @@ KccHandler::KccHandler(QWidget *parent) :
 		}
 	}
 }
-
 
 void KccHandler::clickedImage(QMouseEvent* ev){
 	int x,y;
@@ -172,15 +171,15 @@ void KccHandler::undoPressed(){
 void KccHandler::realZoom(double sca){
 	rScale = sca;
 	realImL->resize(rScale*QPixmap::fromImage(realImage).size());
-	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
-	adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);
+/*	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
+	adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);*/
 }
 
 void KccHandler::segZoom(double sca){
 	iScale = sca;
 	segImL->resize(iScale*QPixmap::fromImage(realImage).size());
-	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
-	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);
+/*	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
+	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);*/
 }
 
 void KccHandler::pbOrangePressed(){

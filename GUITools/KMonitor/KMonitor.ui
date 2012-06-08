@@ -41,6 +41,9 @@
             <attribute name="headerCascadingSectionResizes">
              <bool>true</bool>
             </attribute>
+            <attribute name="headerCascadingSectionResizes">
+             <bool>true</bool>
+            </attribute>
             <column>
              <property name="text">
               <string>  TEAM   HOST   TEAM#   PLAYER#   STATE</string>
@@ -288,6 +291,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>KLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">../KLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>KGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>../KGraphicsView.h</header>
@@ -296,11 +304,6 @@
    <class>KMapView</class>
    <extends>QGraphicsView</extends>
    <header>../KMapView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KLabel</class>
-   <extends>QLabel</extends>
-   <header>../KLabel.h</header>
   </customwidget>
   <customwidget>
    <class>KccHandler</class>

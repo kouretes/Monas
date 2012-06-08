@@ -38,6 +38,8 @@ public:
     explicit KccHandler(QWidget *parent = 0);
     ~KccHandler();
 
+    Ui::KccHandler* getKccUi() {return ui;}
+
 private:
 	void adjustScrollBar(QScrollBar *scrollBar, double factor);
 	int distance(QRgb a,QRgb b);
@@ -68,7 +70,7 @@ private:
 	char ***rgbColorTable;
 	char ***rgbColorTableOld;
 	//map<QRgb,char> rgbMap;
-	char yuvImage[640][480]
+	char yuvImage[640][480];
 	map<char,QRgb> basicSegColors;
 	//char basicSegColorsChars[7];
 
