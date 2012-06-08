@@ -162,63 +162,6 @@ bool KLocalization::readRobotConf(const std::string& file_name) {
 	return true;
 }
 
-int KLocalization::LoadMotionModelXML(string filename, vector<KMotionModel>& Motions, map<string, vector<KMotionModel> >& KMMmap)
-{
-	TiXmlDocument doc2(filename.c_str());
-
-	bool loadOkay = doc2.LoadFile();
-	if (!loadOkay)
-	{
-		printf("Failed to load file \"%s\"\n", filename.c_str());
-		return -1;
-	}
-	TiXmlNode * BasicMotion;
-	TiXmlNode * MotionStep;
-	TiXmlNode * MotionData;
-	BasicMotion = doc2.FirstChild();
-	BasicMotion = BasicMotion->NextSibling();
-	vector<KMotionModel> tempVMM;
-	KMotionModel tempM;
-	for (BasicMotion->NextSibling(); BasicMotion != 0; BasicMotion = BasicMotion->NextSibling())
-	{
-		tempM.type = string(BasicMotion->Value());
-		if (KMMmap.count(tempM.type) == 0)
-		{
-
-			KMMmap[tempM.type] = tempVMM;
-		} else
-		{
-			;
-		}
-		MotionStep = BasicMotion->FirstChild()->NextSibling(); //Overide TextComment
-		while (MotionStep != 0)
-		{
-			string Steps = "";
-			Steps += MotionStep->Value();
-			//Loading Steps
-			tempM.Steps = atoi(Steps.c_str() + 11);
-			string name;
-			for (MotionData = MotionStep->FirstChild(); MotionData != 0; MotionData = MotionData->NextSibling())
-			{
-				name = "";
-				name += (MotionData->Value());
-				if (name.compare("Distance") == 0)
-					dump_attribs_to_randVar(MotionData->ToElement(), 1 + 2 + 1, tempM.Distance);
-				else if (name.compare("Direction") == 0)
-					dump_attribs_to_randVar(MotionData->ToElement(), 1 + 2 + 1, tempM.Direction);
-				else if (name.compare("Rotation") == 0)
-					dump_attribs_to_randVar(MotionData->ToElement(), 1 + 2 + 1, tempM.Rotation);
-				else
-					printf("\033[22;32mError Uknown Data value please check xml file\033[0m\n");
-			}
-			Motions.push_back(tempM);
-			KMMmap[tempM.type].push_back(tempM);
-			MotionStep = MotionStep->NextSibling();
-		}
-	}
-	return 0;
-}
-
 KLocalization::~KLocalization()
 {
 	// TODO Auto-generated destructor stub
@@ -317,11 +260,6 @@ void KLocalization::initializeParticles(parts & Particles,int playerNumber,bool 
 			Particles.Weight[i] = 1.0 / partclsNum;
 		}
 	}
-	beliefForGoalPosts[0] = 0;
-	beliefForGoalPosts[1] = 0;
-	beliefForGoalPosts[2] = 0;
-	beliefForGoalPosts[3] = 0;
-	timesOfContAmbig = 0;
 }
 
 int KLocalization::Initialize()
@@ -443,7 +381,6 @@ int KLocalization::Initialize()
 	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
 	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
 
-	LoadMotionModelXML(ArchConfig::Instance().GetConfigPrefix() + "/MotionModel.xml", KouretesMotions, KMMmap);
 	// Loading features,
 	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
 
@@ -456,67 +393,6 @@ int KLocalization::Initialize()
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	return 1;
-}
-
-KMotionModel * KLocalization::findBestMotionModel(int steps, string MotionType, vector<KMotionModel> & Motions, int *iterations)
-{
-	KMotionModel *BestMotionModel;
-	KMotionModel *PositiveUnitMotionModel = NULL;
-	KMotionModel *NegativeUnitMotionModel = NULL;
-	KMotionModel tModel;
-	vector<KMotionModel> *tVector;
-	if (KMMmap.count(MotionType) == 0)
-	{
-		//cout << "Motion Type " << MotionType << " Unavailable" << endl;
-		return NULL;
-	} else
-	{
-		tVector = &KMMmap[MotionType];
-		if (tVector->empty())
-		{
-			cerr << "NO MOTION MODEL OF TYPE" << MotionType << endl;
-			return NULL;
-		}
-		BestMotionModel = &tVector->at(0);
-		for (unsigned int i = 0; i < tVector->size(); i++)
-		{
-			if (tVector->at(i).Steps == 1)
-			{
-				PositiveUnitMotionModel = &tVector->at(1);
-			}
-			if (tVector->at(i).Steps == -1)
-			{
-				NegativeUnitMotionModel = &tVector->at(1);
-			}
-			if (abs((tVector->at(i).Steps - steps)) < abs(BestMotionModel->Steps - steps)){
-				BestMotionModel = &tVector->at(i);
-			}
-		}
-		if ((BestMotionModel->Steps - steps) == 0)
-		{
-			;
-		} else
-		{
-			cerr << "Exact Motion Model" << MotionType << " Steps" << steps << " NOT Found Using: " << endl;
-			if (steps > 0)
-			{
-				BestMotionModel = PositiveUnitMotionModel;
-			} else if (steps < 0)
-			{
-				BestMotionModel = NegativeUnitMotionModel;
-			} else
-			{
-				return NULL;
-			}
-			if (steps == 0)
-				*iterations = 1;
-			else
-				*iterations = abs(steps);
-			//TODO fit Best Model
-		}
-		return BestMotionModel;
-	}
-
 }
 
 //Function to find the best Belief using the average of the % of the "heavier" particles
@@ -568,17 +444,17 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
 	if (MotionModel.type == "ratio")
 	{
 		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean);
-		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean;
-		tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean;
 
 	} else
 	{
 		tmpDist = MotionModel.Distance.val + MotionModel.Distance.Emean;
-		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean;
-		tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean;
 	}
+	tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean;
+	tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean;
+
 	if (abs(tmpDir) > 400 || isnan(tmpDir))
 		tmpDir = 0;
+
 	Particles.x[0] = Particles.x[0] + cos(tmpDir + Particles.phi[0]) * tmpDist;
 	Particles.y[0] = Particles.y[0] + sin(tmpDir + Particles.phi[0]) * tmpDist;
 	Particles.phi[0] = Particles.phi[0] + tmpRot;
@@ -588,15 +464,12 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
 		if (MotionModel.type == "ratio")
 		{
 			tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X.Next() * MotionModel.Distance.ratiodev);
-			tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
-			tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean + P.Next() * MotionModel.Rotation.Edev;
-
 		} else
 		{
 			tmpDist = MotionModel.Distance.val + MotionModel.Distance.Emean + X.Next() * MotionModel.Distance.Edev;
-			tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
-			tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean + P.Next() * MotionModel.Rotation.Edev;
 		}
+		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
+		tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean + P.Next() * MotionModel.Rotation.Edev;
 		if (abs(tmpDir) > 400 || isnan(tmpDir))
 			tmpDir = 0;
 		Particles.x[i] = Particles.x[i] + cos(tmpDir + Particles.phi[i]) * tmpDist;
@@ -798,7 +671,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 #ifdef DISTANCE_WEIGHTING
 				// Distance
 				// R Distance the particle has from the LandMark
-				R = DISTANCE(Particles.x[p],Observation[i].Feature.x,Particles.y[p],Observation[i].Feature.y);
+				R = DISTANCE_2(Particles.x[p]-Observation[i].Feature.x, Particles.y[p]-Observation[i].Feature.y);
 
 				Meanerror = Observation[i].Distance.Emean;
 				Deviation = Observation[i].Distance.Edev;
@@ -818,7 +691,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				// R Distance the particle has from the LandMark
 				// s is for symetry
 				//we take the symetric yellow now, so we put a - to the x and y of the observation
-				RS = DISTANCE(Particles.x[p],-Observation[i].Feature.x,Particles.y[p],-Observation[i].Feature.y);
+				RS = DISTANCE_2(Particles.x[p] - (-Observation[i].Feature.x), Particles.y[p] - (-Observation[i].Feature.y));
 
 				OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
 #endif
@@ -849,15 +722,6 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		//OverallWeight *= normpdf(DirectionFromPastBelief - (MotionModel.Direction.val + MotionModel.Direction.Emean), abs(MotionModel.Direction.Edev + AgentPosition.confidence) * 3+0.000001);
 		//OverallWeight *= normpdf(anglediff2(Particles.phi[p], AgentPosition.theta) - MotionModel.Rotation.val, abs(MotionModel.Rotation.Edev + AgentPosition.confidence)+0.00000001);
 		//#endif
-		/*if(p == 20){
-			int num = 0;
-			if(Observation.size()>0)
-				num = Observation[0].Distance.val;
-			else
-				num = 0;
-			cout << "Update OverallWeight = " << OverallWeight << " OverallYellow = " << OverallWeightYellowYellow << endl;
-			cout << "X = " << Particles.x[p] << " Y = " << Particles.y[p] << " R = " << R << " RS = " << RS << " Real Dist = " << num << endl;
-		}*/
 		//set the weight
 		Particles.Weight[p] = totalWeight;
 	}
@@ -867,7 +731,7 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 	//	 from an object and the direction
 	double OverallWeight, ParticlePointBearingAngle, ParticleBearing, Deviation,ParticlePointBearingAngleS, ParticleBearingS;
 	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double AdditiveWeightTotal = 0,AdditiveBlueField,AdditiveYellowField;
+	double AdditiveWeightTotal = 0,AdditiveBlueField=0,AdditiveYellowField=0;
 	double R,RS;
 	double Meanerror = 0;
 	float xPosOfFeature 	= Observation[0].Feature.x;
@@ -877,24 +741,21 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 	float obsDistValue		= Observation[0].Distance.val;
 	float obsBearingEdev 	= Observation[0].Bearing.Edev;
 	float obsBearingValue 	= Observation[0].Bearing.val;
-
-
 	Meanerror = obsDistEmean;
 	Deviation = obsDistEdev;
 	Deviation = obsBearingEdev;
 	//Find the best candiate for the landmark
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		AdditiveWeightTotal = Particles.Weight[p];
-		int oldChoise = 0;
-		float oldWeight = 0;
+		AdditiveWeightTotal = 0;//Particles.Weight[p]; Ama paraminei auto tote den allazei pote
+		float oldWeight = Particles.Weight[p];
 		for (int j = -1; j <= 1; j = j + 2)
 		{
 			AdditiveYellowField = 1;
 			AdditiveBlueField = 1;
 			// Distance
 			// R Distance the particle has from the LandMark
-			R = DISTANCE(Particles.x[p],xPosOfFeature,Particles.y[p],yPosOfFeature*j);
+			R = DISTANCE_2(Particles.x[p]-xPosOfFeature,Particles.y[p]-yPosOfFeature*j);
 			AdditiveYellowField *= normpdf((obsDistValue - Meanerror) - R, Deviation);
 			//Bearing
 			ParticlePointBearingAngle = atan2(yPosOfFeature*j - Particles.y[p], xPosOfFeature - Particles.x[p]);
@@ -904,7 +765,7 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 
 			// Distance
 			// R Distance the particle has from the LandMark
-			RS = DISTANCE(Particles.x[p],-xPosOfFeature,Particles.y[p],-yPosOfFeature*j);
+			RS = DISTANCE_2(Particles.x[p]- (-xPosOfFeature),Particles.y[p]- (-yPosOfFeature*j));
 
 			AdditiveBlueField *= normpdf((obsDistValue - Meanerror) - RS, Deviation);
 
@@ -912,52 +773,10 @@ void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel>
 			ParticlePointBearingAngleS = atan2(-yPosOfFeature*j - Particles.y[p], -xPosOfFeature - Particles.x[p]);
 			ParticleBearingS = anglediff2(ParticlePointBearingAngleS, Particles.phi[p]);
 			AdditiveBlueField *= normpdf(anglediff(obsBearingValue, ParticleBearingS), Deviation);
-			//Check The Best GoalPost
-			if(j==-1){
-				if(AdditiveBlueField > AdditiveYellowField){
-					oldChoise = 0;
-					oldWeight = AdditiveBlueField;
-				}else{
-					oldChoise = 1;
-					oldWeight = AdditiveYellowField;
-				}
-			}else{
-				if(AdditiveBlueField > AdditiveYellowField){
-					if(oldWeight < AdditiveBlueField){
-						oldChoise = 2;
-					}
-				}else{
-					if(oldWeight < AdditiveYellowField){
-						oldChoise = 3;
-					}else{
-					}
-				}
-			}
-		}
-		beliefForGoalPosts[oldChoise]+=0.4;
-	}
-	int finalChoise = findMaxIndex(beliefForGoalPosts[0],beliefForGoalPosts[1],beliefForGoalPosts[2],beliefForGoalPosts[3]);
-	int rightOrLeftGoalpost = (finalChoise-2 < 0)?-1:1;
-	int rightOrLeftGoal = (finalChoise%2 ==0)? -1:1;
-	float yPosition = rightOrLeftGoal*yPosOfFeature*rightOrLeftGoalpost;
-	float xPosition = rightOrLeftGoal*xPosOfFeature;
-	if(true ||timesOfContAmbig*NumofParticles/3<beliefForGoalPosts[finalChoise]){
-		for (int p = 0; p < NumofParticles; p++)
-		{
-			//AdditiveWeightTotal = 0;
-			AdditiveWeightTotal = Particles.Weight[p];
-			// Distance
-			// R Distance the particle has from the LandMark
-			R = DISTANCE(Particles.x[p],xPosition,Particles.y[p],yPosition);
 
-			AdditiveWeightTotal += normpdf((obsDistValue - Meanerror) - R, Deviation);
-			ParticlePointBearingAngle = atan2(yPosOfFeature - Particles.y[p], xPosOfFeature - Particles.x[p]);
-			ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
-			AdditiveWeightTotal *= normpdf(anglediff(obsBearingValue, ParticleBearing), Deviation);
-
-			OverallWeight = Particles.Weight[p]*0.6 + AdditiveWeightTotal*0.4;
-			Particles.Weight[p] = AdditiveWeightTotal;//OverallWeight;
+			AdditiveWeightTotal += AdditiveYellowField + AdditiveBlueField;
 		}
+		Particles.Weight[p] = AdditiveWeightTotal;//OverallWeight;
 	}
 }
 
@@ -1193,7 +1012,7 @@ void KLocalization::SpreadParticlesCirc(parts & Particles, double Deviation, dou
 	for (unsigned int i = (rand() % step)+1; i < Particles.size; i += step)
 	{
 		tmpDist = D.Next() * Deviation;
-		tmpDir = R.Next() * deg2rad(360);
+		tmpDir = R.Next() * deg2rad(360);//Mporei kai ligotero
 		Particles.x[i] = Particles.x[i] + cos(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.y[i] = Particles.y[i] + sin(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.phi[i] = Particles.phi[i] + P.Next() * rotation_deviation;

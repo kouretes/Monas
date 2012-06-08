@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ftr ID="SkyblueGoal" x="-3000" y="0" weight="0"
+<!--<ftr ID="SkyblueGoal" x="-3000" y="0" weight="0"
 DistDevParams=  "2" BearDevParams="2" DistMeanParams="1" BearMeanParams="1"
 DistM0="0"
 DistD1="0.001" DistD0="150"
@@ -16,7 +16,7 @@ DistDevParams=  "2" BearDevParams="2" DistMeanParams="1" BearMeanParams="1"
 DistM0="0"
 DistD1="0.001" DistD0="150"
 BearM0="0.0"
-BearD1="0" BearD0="0.05"></ftr>
+BearD1="0" BearD0="0.05"></ftr>-->
 <ftr ID="YellowGoal"  x="3000" y="0" weight="0"
 DistDevParams=  "2" BearDevParams="2" DistMeanParams="1" BearMeanParams="1"
 DistM0="0"

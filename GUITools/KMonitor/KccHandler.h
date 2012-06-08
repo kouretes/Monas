@@ -13,7 +13,11 @@
 #include <math.h>
 #include <QFileDialog>
 #include <QScrollBar>
+#include <QString>
 #include "KccLabel.h"
+#include "LWRemoteHosts.h"
+#include "messages/Kimage.pb.h"
+
 using namespace std;
 
 namespace Ui {
@@ -23,6 +27,9 @@ namespace Ui {
 class KccHandler : public QWidget
 {
     Q_OBJECT
+	typedef struct{
+		unsigned char y,u,v;
+	}QYuv;
 public:
 	static const unsigned int MAX_UNDO = 10;
 	static const unsigned int THRESHOLD = 10*10;
@@ -42,9 +49,20 @@ public:
 
 private:
 	void adjustScrollBar(QScrollBar *scrollBar, double factor);
-	int distance(QRgb a,QRgb b);
-
+	void transformYUVtoRGB(const char *yuvImage, QImage *rgbImage);
+	int distance(QYuv a,QYuv b);
+signals:
+	void NewHostAdded(QString,QString);
+	void OldHostRemoved(QString);
+	void GameStateMsgUpdate(QIcon,QString,QString);
+	void LWRHSubscriptionRequest(QString);
+	void LWRHUnsubscriptionRequest(QString);
 public slots:
+	void addComboBoxItem(QString, QString);
+	void removeComboBoxItem(QString);
+	void setLWRHGameStateInfo(QIcon, QString, QString);
+	void SubscriptionHandler(QString);
+	void UnsubscriptionHandler(QString);
     void clickedImage(QMouseEvent* ev);
 	void pbOrangePressed();
 	void pbGreenPressed();
@@ -56,32 +74,31 @@ public slots:
 	void undoPressed();
 	void realZoom(double sca);
 	void segZoom(double sca);
+	void changeImage(KRawImage rawImage, QString hostId);
 
 private:
 
 	double A, B, C, D;
-	int startofBlock;
 	int widthInPixels;
-	int widthmult2;
 	int heightInPixels;
-	int channels;
-	const char *data;
+	int widthmult2;
 
-	char ***rgbColorTable;
-	char ***rgbColorTableOld;
+	char ***yuvColorTable;
+	char ***yuvColorTableOld;
 	//map<QRgb,char> rgbMap;
-	char yuvImage[640][480];
+	QYuv yuvRealImage[480][640];
 	map<char,QRgb> basicSegColors;
 	//char basicSegColorsChars[7];
 
 	char choosedColor;
 
-	vector<map<QRgb,char> > undoVector;
+	vector<map<QYuv,char> > undoVector;
 
     KccLabel* realImL,* segImL;
-	QScrollArea *segScrollArea,*realScrollArea;
+    LWRemoteHosts* availableKCCHosts;
+
 	double rScale,iScale;
-	int lx,ly;
+
 	QImage segImage,realImage;
     Ui::KccHandler *ui;
 };

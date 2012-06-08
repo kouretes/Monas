@@ -124,6 +124,7 @@ KMonitor::KMonitor(QWidget *parent)
 	//SIGNAL SLOT CONNECTIONS FOR KCC Beta
 	//Signal slot connections for KCC ComboBox
 
+<<<<<<< Updated upstream
 	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), availableKccHosts, SLOT(addComboBoxItem(QString, QString)));
 	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), availableKccHosts, SLOT(removeComboBoxItem(QString)));
 	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), availableKccHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
@@ -131,6 +132,20 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableKccHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
 	connect(availableKccHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
 	connect(availableKccHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), KccUi->KccRawImgLabel, SLOT(resetRobotView(QString)));
+=======
+	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->KCCTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->KCCTab, SLOT(removeComboBoxItem(QString)));
+	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->KCCTab, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+
+	connect(this->KCCTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
+	connect(this->KCCTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
+
+	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), this->KCCTab, SLOT(changeImage(KRawImage, QString)));
+	//connect(this->KccHandler, SIGNAL(LWRHUnsubscriptionRequest(QString)), RawImgLabel, SLOT(resetRobotView(QString)));
+	//Signal slot connections for dispaying Robot's Raw Image
+
+	//connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), RawImgLabel, SLOT(KCCRawImageUpdateHandler(KRawImage, QString)));
+>>>>>>> Stashed changes
 
 	//Signal slot connections for dispaying Robot's Raw Image
 	connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), KccUi->KccRawImgLabel, SLOT(KCCRawImageUpdateHandler(KRawImage, QString)));

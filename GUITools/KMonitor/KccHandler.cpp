@@ -7,6 +7,8 @@ KccHandler::KccHandler(QWidget *parent) :
 {
     ui->setupUi(this);
 
+	availableKCCHosts = new LWRemoteHosts(ui->KCComboBox);
+
 	orangeColor = 'o';
 	greenColor = 'g';
 	yellowColor = 'y';
@@ -16,6 +18,9 @@ KccHandler::KccHandler(QWidget *parent) :
 	blackColor = 'b';
 
 	A=1.4075;B=0.3455;C=0.7169;D=1.7790;
+	widthInPixels = 640;
+	heightInPixels = 480;
+	widthmult2 = 2*widthInPixels;
 
 	ui->pbOrange->setStyleSheet("* { background-color: rgb(255,140,0) }");
 	ui->pbGreen->setStyleSheet("* { background-color: rgb(0,255,0) }");
@@ -75,10 +80,15 @@ KccHandler::KccHandler(QWidget *parent) :
 	connect(ui->pbUndo, SIGNAL(clicked()), this, SLOT(undoPressed()));
 	connect(ui->rSpin, SIGNAL(valueChanged(double)), this, SLOT(realZoom(double)));
 	connect(ui->sSpin, SIGNAL(valueChanged(double)), this, SLOT(segZoom(double)));
+	
+	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableKCCHosts, SLOT(addComboBoxItem(QString, QString)));
+	connect(this, SIGNAL(OldHostRemoved(QString)), availableKCCHosts, SLOT(removeComboBoxItem(QString)));
+	connect(this, SIGNAL(GameStateMsgUpdate(QIcon, QString, QString)), availableKCCHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+
+	connect(availableKCCHosts, SIGNAL(LWRHSubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)));
+	connect(availableKCCHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), this, SLOT(UnsubscriptionHandler(QString)));
 
 
-	rgbColorTableOld = (char***) malloc(256*sizeof(char**));
-	rgbColorTable = (char***) malloc(256*sizeof(char**));
 	basicSegColors[orangeColor] = qRgb(255,140,0);
 	basicSegColors[redColor] = qRgb(255,0,0);
 	basicSegColors[greenColor] = qRgb(0,255,0);
@@ -90,20 +100,21 @@ KccHandler::KccHandler(QWidget *parent) :
 	//qDebug() << qRed(basicSegColors[yellowColor]) <<qGreen(basicSegColors[yellowColor]) <<qBlue(basicSegColors[yellowColor]);
 
 	
-
+	yuvColorTableOld = (char***) malloc(256*sizeof(char**));
+	yuvColorTable = (char***) malloc(256*sizeof(char**));
 	for (int i = 0; i < 256; i++){
-		rgbColorTableOld[i] = (char**) malloc(256*sizeof(char*));
-		rgbColorTable[i] = (char**) malloc(256*sizeof(char*));
+		yuvColorTableOld[i] = (char**) malloc(256*sizeof(char*));
+		yuvColorTable[i] = (char**) malloc(256*sizeof(char*));
 		for (int j = 0; j < 256; j++){
-			rgbColorTableOld[i][j] = (char*) malloc(256*sizeof(char));
-			rgbColorTable[i][j] = (char*) malloc(256*sizeof(char));
+			yuvColorTableOld[i][j] = (char*) malloc(256*sizeof(char));
+			yuvColorTable[i][j] = (char*) malloc(256*sizeof(char));
 		}
 	}
 
 	for(int i=0;i<255;i++){
 		for(int j=0;j<255;j++){
 			for(int z=0;z<255;z++){
-				rgbColorTable[i][j][z] = blackColor;
+				yuvColorTable[i][j][z] = blackColor;
 			}
 		}
 	}
@@ -118,26 +129,26 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 	for(int i=0;i<255;i++){
 		for(int j=0;j<255;j++){
 			for(int z=0;z<255;z++){
-				rgbColorTableOld[i][j][z] = rgbColorTable[i][j][z];
+				yuvColorTableOld[i][j][z] = yuvColorTable[i][j][z];
 			}
 		}
 	}
 	int pixNum = ui->pixelSpinBox->value()-1;
-	map<QRgb,char> undo;
+	map<QYuv,char> undo;
 	//vector<QRgb> allColors;
     for(int px=-pixNum;px<pixNum+1;px++){
         for(int py=-pixNum;py<pixNum+1;py++){
-            if(x+px>=0 && y+py>=0 && x+px<=realImage.width() && y+py<=realImage.height()){
-				QRgb temp = realImage.pixel(x+px,y+py);
-				undo[temp]=rgbColorTableOld[qRed(temp)][qGreen(temp)][qBlue(temp)];
-				rgbColorTable[qRed(temp)][qGreen(temp)][qBlue(temp)]=choosedColor;
+            if(x+px>=0 && y+py>=0 && x+px<=widthInPixels && y+py<=heightInPixels){
+				QYuv temp = yuvRealImage[x+px][y+py];
+				//undo[temp] = yuvColorTableOld[temp.y][temp.u][temp.v];
+				yuvColorTable[temp.y][temp.u][temp.v]=choosedColor;
 			}
 		}
 	}
-	for(int i=0;i<realImage.width();i++){
-		for(int j=0;j<realImage.height();j++){
-			QRgb temp = realImage.pixel(i,j);
-			segImage.setPixel(i,j,basicSegColors[rgbColorTable[qRed(temp)][qGreen(temp)][qBlue(temp)]]);
+	for(int i=0;i<widthInPixels;i++){
+		for(int j=0;j<heightInPixels;j++){
+			QYuv temp = yuvRealImage[i][j];
+			segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
 		}
 	}
 	undoVector.push_back(undo);
@@ -150,21 +161,88 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 void KccHandler::undoPressed(){
 	if(undoVector.size()>0){
 		//map<QRgb,char>::iterator it;
-		map<QRgb,char> undoList = undoVector.back();
+		map<QYuv,char> undoList = undoVector.back();
 		undoVector.pop_back();
-		QRgb temp;
-		for(map<QRgb,char>::iterator iter = undoList.begin();iter!=undoList.end();iter++){
+		QYuv temp;
+		for(map<QYuv,char>::iterator iter = undoList.begin();iter!=undoList.end();iter++){
 			temp = (*iter).first;
-			rgbColorTable[qRed(temp)][qGreen(temp)][qBlue(temp)] = (*iter).second;
+			yuvColorTable[temp.y][temp.u][temp.v] = (*iter).second;
 		}
-		for(int i=0;i<realImage.width();i++){
-			for(int j=0;j<realImage.height();j++){
-				temp = realImage.pixel(i,j);
-				segImage.setPixel(i,j,basicSegColors[rgbColorTable[qRed(temp)][qGreen(temp)][qBlue(temp)]]);
+		for(int i=0;i<widthInPixels;i++){
+			for(int j=0;j<heightInPixels;j++){
+				temp = yuvRealImage[i][j];
+				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
 			}
 		}
 		segImL->setPixmap(QPixmap::fromImage(segImage).scaled(segImL->size()));
 		segImL->show();
+	}
+}
+
+void KccHandler::changeImage(KRawImage rawImage, QString hostId){
+	int tempWidth = rawImage.width();
+	int tempHeight = rawImage.height();
+	int channels = rawImage.bytes_per_pix();
+	if(tempWidth == widthInPixels && tempHeight == heightInPixels && channels ==2){
+
+		segImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
+		segImage.fill(0);
+		realImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
+
+		const char *data = rawImage.image_rawdata().data();
+		transformYUVtoRGB(data, &realImage);
+		QYuv temp;
+		for(int i=0;i<widthInPixels;i++){
+			for(int j=0;j<heightInPixels;j++){
+				temp = yuvRealImage[i][j];
+				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
+			}
+		}
+		segImL->setPixmap(QPixmap::fromImage(segImage).scaled(segImL->size()));
+		segImL->show();
+		realImL->setPixmap(QPixmap::fromImage(realImage).scaled(realImL->size()));
+		realImL->show();
+		segZoom(1);
+		realZoom(1);
+	}
+}
+
+void KccHandler::transformYUVtoRGB(const char *yuvImage, QImage *rgbImage){
+	unsigned char y, cu, cv;
+	int r, g, b, u, v;
+	int startofBlock;
+	for (int hCoord = 0; hCoord < heightInPixels; hCoord++)
+	{
+		for (int wCoord = 0; wCoord < widthInPixels; wCoord++)
+		{
+			y = *(yuvImage + hCoord*widthmult2 + (wCoord<<1));//Y is right where we want it
+			//a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
+			startofBlock =hCoord * widthmult2 + ((wCoord>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
+			// cout<<"sob"<<endl;
+			cu=*(yuvImage + startofBlock+1);
+			// cout<<"u"<<endl;
+			cv= *(yuvImage + startofBlock+3);
+
+			yuvRealImage[hCoord][wCoord].y = y;
+			yuvRealImage[hCoord][wCoord].u = cu;
+			yuvRealImage[hCoord][wCoord].v = cv;
+
+			u=cu-128;
+			v=cv-128;
+			//cout<<y<<" "<<u<<" "<< v<<" " <<endl;
+			r=y+A*v;
+			g=y-B*u-C*v;
+			b=y+D*u;
+			//cout<<r<<" "<<g<<" "<< b<<endl;
+			r=r<0?0:r;
+			g=g<0?0:g;
+			b=b<0?0:b;
+			r=r>255?255:r;
+			g=g>255?255:g;
+			b=b>255?255:b;
+
+			rgbImage->setPixel(wCoord, hCoord, qRgb(r,g,b));
+		}
 	}
 }
 
@@ -220,6 +298,27 @@ void KccHandler::pbBlackPressed(){
 void KccHandler::adjustScrollBar(QScrollBar *scrollBar, double factor)
 {
 	scrollBar->setValue(int(factor*scrollBar->value()+((factor - 1)*scrollBar->pageStep()/2)));
+}
+
+/*		Signal Forwarding */
+void KccHandler::addComboBoxItem(QString data1, QString data2){
+	emit NewHostAdded(data1,data2);
+}
+
+void KccHandler::removeComboBoxItem(QString data1){
+	OldHostRemoved(data1);
+}
+
+void KccHandler::setLWRHGameStateInfo(QIcon data1, QString data2, QString data3){
+	emit GameStateMsgUpdate(data1,data2,data3);
+}
+
+void KccHandler::SubscriptionHandler(QString data1){
+	emit LWRHSubscriptionRequest(data1);
+}
+
+void KccHandler::UnsubscriptionHandler(QString data1){
+	emit LWRHUnsubscriptionRequest(data1);
 }
 
 KccHandler::~KccHandler()

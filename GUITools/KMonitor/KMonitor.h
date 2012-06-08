@@ -32,10 +32,16 @@ private:
     LWElementList* LWSElementList;
     LWRemoteHosts* availableLMHosts;
     LMElementList* LPMElementList;
+
     LWRemoteHosts* availableLVHosts;
     LVElementList* LRVElementList;
+<<<<<<< Updated upstream
     LWRemoteHosts* availableKccHosts;
     Ui::KccHandler* KccUi;
+=======
+
+    KccHandler* KCC;
+>>>>>>> Stashed changes
 };
 
 #endif // KMONITOR_H
