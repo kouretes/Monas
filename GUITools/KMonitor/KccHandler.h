@@ -56,10 +56,19 @@ public slots:
 	void segZoom(double sca);
 
 private:
+
+	double A, B, C, D;
+	int startofBlock;
+	int widthInPixels;
+	int widthmult2;
+	int heightInPixels;
+	int channels;
+	const char *data;
+
 	char ***rgbColorTable;
 	char ***rgbColorTableOld;
 	//map<QRgb,char> rgbMap;
-
+	char yuvImage[640][480]
 	map<char,QRgb> basicSegColors;
 	//char basicSegColorsChars[7];
 

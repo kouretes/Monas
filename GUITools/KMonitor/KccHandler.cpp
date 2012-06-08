@@ -15,6 +15,8 @@ KccHandler::KccHandler(QWidget *parent) :
 	blueColor = 'u';//From magic the gathering :P
 	blackColor = 'b';
 
+	A=1.4075;B=0.3455;C=0.7169;D=1.7790;
+
 	ui->pbOrange->setStyleSheet("* { background-color: rgb(255,140,0) }");
 	ui->pbGreen->setStyleSheet("* { background-color: rgb(0,255,0) }");
 	ui->pbYellow->setStyleSheet("* { background-color: rgb(255,255,0) }");

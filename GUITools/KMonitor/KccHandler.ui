@@ -37,7 +37,6 @@
          <height>417</height>
         </rect>
        </property>
-       <zorder>scrollSeg</zorder>
       </widget>
      </widget>
     </item>
@@ -46,7 +45,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <widget class="QWidget" name="widget2">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -65,11 +64,11 @@
     <rect>
      <x>750</x>
      <y>50</y>
-     <width>271</width>
+     <width>277</width>
      <height>29</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_21">
     <item>
      <widget class="QLabel" name="label_2">
       <property name="text">
@@ -118,7 +117,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>5</x>
@@ -132,7 +131,7 @@
      <widget class="QComboBox" name="KCComboBox"/>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_pola">
       <item>
        <widget class="QLabel" name="PromptCurCoLabel">
         <property name="text">
@@ -153,7 +152,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_19">
       <item>
        <widget class="QPushButton" name="pbOrange">
         <property name="text">
