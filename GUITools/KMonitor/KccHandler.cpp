@@ -59,7 +59,7 @@ KccHandler::KccHandler(QWidget *parent) :
 	segImL->setPixmap(QPixmap::fromImage(segImage));
 	segImL->setStyleSheet("border: 3px solid grey");
 
-
+	takeSnapshot = false;
 	rScale=iScale=1;
 	//qDebug() << realImL->pixmap()->size();
 	ui->scrollImage->resize(rScale*realImL->pixmap()->size());
@@ -82,6 +82,7 @@ KccHandler::KccHandler(QWidget *parent) :
 	connect(ui->pbUndo, SIGNAL(clicked()), this, SLOT(undoPressed()));
 	connect(ui->rSpin, SIGNAL(valueChanged(double)), this, SLOT(realZoom(double)));
 	connect(ui->sSpin, SIGNAL(valueChanged(double)), this, SLOT(segZoom(double)));
+    connect(ui->pbSnapshot, SIGNAL(clicked()), this, SLOT(pbSnapshotPressed()));
 	
 	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableKCCHosts, SLOT(addComboBoxItem(QString, QString)));
 	connect(this, SIGNAL(OldHostRemoved(QString)), availableKCCHosts, SLOT(removeComboBoxItem(QString)));
@@ -138,12 +139,30 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 	int pixNum = ui->pixelSpinBox->value()-1;
 	map<QYuv,char> undo;
 	//vector<QRgb> allColors;
+	QYuv b;
     for(int px=-pixNum;px<pixNum+1;px++){
         for(int py=-pixNum;py<pixNum+1;py++){
             if(x+px>=0 && y+py>=0 && x+px<=widthInPixels && y+py<=heightInPixels){
 				QYuv temp = yuvRealImage[x+px][y+py];
-				//undo[temp] = yuvColorTableOld[temp.y][temp.u][temp.v];
+				undo[temp] = yuvColorTableOld[temp.y][temp.u][temp.v];
 				yuvColorTable[temp.y][temp.u][temp.v]=choosedColor;
+				for(char ty = -10;ty<11;ty++){
+					b.y = temp.y+ty;
+					if(b.y>=0 && b.y < 256){
+						for(char tu = -10;ty<11;tu++){
+							b.u = temp.u+tu;
+							if(b.u>=0 && b.u < 256){
+								for(char tv = -10;ty<11;tv++){
+									b.v = temp.v+tv;
+									if(b.v>=0 && b.v < 256 && distance(temp,b)<=100){
+										undo[b] = yuvColorTableOld[b.y][b.u][b.v];
+										yuvColorTable[b.y][b.u][b.v]=choosedColor;		
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -176,7 +195,7 @@ void KccHandler::undoPressed(){
 				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
 			}
 		}
-		segImL->setPixmap(QPixmap::fromImage(segImage).scaled(segImL->size()));
+		segImL->setPixmap(QPixmap::fromImage(segImage));
 		segImL->show();
 	}
 }
@@ -185,8 +204,8 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 	int tempWidth = rawImage.width();
 	int tempHeight = rawImage.height();
 	int channels = rawImage.bytes_per_pix();
-	if(tempWidth == widthInPixels && tempHeight == heightInPixels && channels ==2){
-
+	if((ui->rbLiveVideo->isChecked() || takeSnapshot) && tempWidth == widthInPixels && tempHeight == heightInPixels && channels ==2){
+		takeSnapshot = false;
 		segImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
 		segImage.fill(0);
 		realImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
@@ -200,9 +219,9 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
 			}
 		}
-		segImL->setPixmap(QPixmap::fromImage(segImage).scaled(segImL->size()));
+		segImL->setPixmap(QPixmap::fromImage(segImage));
 		segImL->show();
-		realImL->setPixmap(QPixmap::fromImage(realImage).scaled(realImL->size()));
+		realImL->setPixmap(QPixmap::fromImage(realImage));
 		realImL->show();
 		segZoom(1);
 		realZoom(1);
@@ -248,18 +267,22 @@ void KccHandler::transformYUVtoRGB(const char *yuvImage, QImage *rgbImage){
 	}
 }
 
+int KccHandler::distance(QYuv a,QYuv b){
+	return pow(a.y-b.y,2)+pow(a.u-b.u,2)+pow(a.v-b.v,2);
+}
+
 void KccHandler::realZoom(double sca){
 	rScale = sca;
 	realImL->resize(rScale*QPixmap::fromImage(realImage).size());
-/*	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
-	adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);*/
+	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
+	adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);
 }
 
 void KccHandler::segZoom(double sca){
 	iScale = sca;
 	segImL->resize(iScale*QPixmap::fromImage(realImage).size());
-/*	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
-	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);*/
+	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
+	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);
 }
 
 void KccHandler::pbOrangePressed(){
@@ -295,6 +318,10 @@ void KccHandler::pbRedPressed(){
 void KccHandler::pbBlackPressed(){
 	ui->SelectedColorLabel->setStyleSheet("* { background-color: rgb(0,0,0) }");
 	choosedColor = blackColor;
+}
+
+void KccHandler::pbSnapshotPressed(){
+	takeSnapshot = true;
 }
 
 void KccHandler::adjustScrollBar(QScrollBar *scrollBar, double factor)

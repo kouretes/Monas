@@ -27,9 +27,11 @@ namespace Ui {
 class KccHandler : public QWidget
 {
     Q_OBJECT
-	typedef struct{
+	struct QYuv{
 		unsigned char y,u,v;
-	}QYuv;
+		//Custom operator because is needed for the map<>
+		bool operator<(const QYuv& QYuv1) const { return (y<<16)|(u<<8)|v < (QYuv1.y<<16)|(QYuv1.u<<8)|QYuv1.v;}
+	};
 public:
 	static const unsigned int MAX_UNDO = 10;
 	static const unsigned int THRESHOLD = 10*10;
@@ -72,6 +74,7 @@ public slots:
 	void pbRedPressed();
     void pbBlackPressed();
 	void undoPressed();
+	void pbSnapshotPressed();
 	void realZoom(double sca);
 	void segZoom(double sca);
 	void changeImage(KRawImage rawImage, QString hostId);
@@ -93,7 +96,7 @@ private:
 	char choosedColor;
 
 	vector<map<QYuv,char> > undoVector;
-
+	bool takeSnapshot;
     KccLabel* realImL,* segImL;
     LWRemoteHosts* availableKCCHosts;
 
