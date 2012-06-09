@@ -30,6 +30,13 @@
 #include <opencv/highgui.h>
 #include "opencv/cvaux.hpp"
 
+#include <QFile>
+#include <QTextStream>
+
+KImageLogger imageLogger;
+QFile *asynchronousConnectionFile;
+QTextStream *out;
+
 IplImage* fIplImageHeader = NULL;
 IplImage* fIplSegImageHeader = NULL;
 IplImage* fIpl = NULL;
@@ -239,6 +246,8 @@ int Displayimage(KRawImage &img) {
 }
 
 int main(int argc, char* argv[]) {
+	imageLogger.Clear();
+
 	puts("Hello World!!!");
 	keypressed = 0;
 	if (2 != argc) {
@@ -258,6 +267,20 @@ int main(int argc, char* argv[]) {
 		receive_and_send_loop(&sock);
 	} catch (SocketException &e) {
 		cerr << e.what() << endl;
+
+		{
+			// Write the new rawimage logger back to disk.
+			fstream output("MyVisionData.pb", ios::out | ios::trunc | ios::binary);
+			if (!imageLogger.SerializeToOstream(&output)) {
+				cerr << "Failed to write logs." << endl;
+			}else {
+				cout << "Log writing completed." << endl;
+			}
+		}
+
+		// Optional:  Delete all global objects allocated by libprotobuf.
+		google::protobuf::ShutdownProtobufLibrary();
+
 		exit(1);
 	}
 
@@ -397,6 +420,8 @@ int receive_and_send_loop(TCPSocket *sock) {
 					//if (counter < 1)
 					//newdata = new char[img.width() * img.height() * 2];
 					//img.imagerawdata().copy(newdata, img.width() * img.height() * 2);
+
+					imageLogger.add_img()->CopyFrom(img);
 					Displayimage(img);
 				}
 			}
