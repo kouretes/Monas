@@ -127,7 +127,7 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(this->KCCTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
 	connect(this->KCCTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
 
-	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), this->KCCTab, SLOT(changeImage(KRawImage, QString)));
+	connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), this->KCCTab, SLOT(changeImage(KRawImage, QString)));
 	//connect(this->KccHandler, SIGNAL(LWRHUnsubscriptionRequest(QString)), RawImgLabel, SLOT(resetRobotView(QString)));
 	//Signal slot connections for dispaying Robot's Raw Image
 
