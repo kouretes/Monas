@@ -217,7 +217,7 @@ typedef struct rvar {
 
 //MotionModel
 typedef struct MM {
-	string type;
+	string type; //Mono gia to distance
 	int Steps;
 	randvar Distance;
 	randvar Direction;
@@ -228,7 +228,6 @@ typedef struct MM {
 typedef struct OM {
 	feature Feature;
 	randvar Distance;
-	//randvar Angle;
 	randvar Bearing;
 } KObservationModel;
 
@@ -302,8 +301,6 @@ public:
 	float initX[2], initY[2], initPhi[2];
 	int playerNumber;
 	//Belief for each goalpost
-	float beliefForGoalPosts[4];
-	int timesOfContAmbig;
 
 	parts SIRParticles;
 	parts AUXParticles;
@@ -368,26 +365,6 @@ public:
 	void SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 	void SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 	void spreadParticlesAfterFall(parts &,double,double, int);
-	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function find the max value from four values and returns the index:*/
-	/*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	int findMaxIndex(float v1,float v2,float v3,float v4){
-		float table[4] = {v1,v2,v3,v4};
-		int finalChoise,choise1,choise2;
-		if(table[0] > table[1])
-			choise1 = 0;
-		else
-			choise1 = 1;
-		if(table[2] > table[3])
-			choise2 = 2;
-		else
-			choise2 = 3;
-		if(table[choise1] > table[choise2])
-			finalChoise = choise1;
-		else
-			finalChoise = choise2;
-		return finalChoise;
-	}
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/

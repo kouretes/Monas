@@ -52,6 +52,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 
 	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
@@ -108,7 +109,7 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="KRawImage" && (myLVRequestedHost == currentRHost || myKccRequestedHost == currentRHost))
 			{
-				std::cout << "incomingMessages == KRawImage " << std::endl;
+				//std::cout << "incomingMessages == KRawImage " << std::endl;
 				KRawImage rawimg;
 				rawimg.Clear();
 				rawimg.CopyFrom(*(incomingMessages.at(i).msg));

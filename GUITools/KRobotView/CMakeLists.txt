@@ -5,7 +5,11 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT( KRobotView )
 FIND_PACKAGE( OpenCV REQUIRED )
+FIND_PACKAGE(Qt4 REQUIRED)
 FIND_PACKAGE(Protobuf)
+
+INCLUDE(${QT_USE_FILE})
+ADD_DEFINITIONS(${QT_DEFINITIONS})
 
 #add_executable ( stateTest statechartTest.cpp ../messages/planMsg.pb.cc )
 #use_lib(KLocView LIBVISION OPENCV)
@@ -18,6 +22,6 @@ message (STATUS ${CMAKE_BINARY_DIR})
 # ${CMAKE_BINARY_DIR}
 ADD_EXECUTABLE( KRobotView KRobotView.cpp  ../../external/PracticalSocket/PracticalSocket.cpp
           ../../src/messages/VisionObservations.pb.cc ../../src/messages/Kimage.pb.cc  ../../src/messages/WorldInfo.pb.cc )
-TARGET_LINK_LIBRARIES( KRobotView ${OpenCV_LIBS} ${PROTOBUF_LIBRARY} )
+TARGET_LINK_LIBRARIES( KRobotView ${OpenCV_LIBS} ${QT_LIBRARIES} ${PROTOBUF_LIBRARY} )
 
 

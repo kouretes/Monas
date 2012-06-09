@@ -9,7 +9,7 @@
 #include "LWElementList.h"
 #include "LMElementList.h"
 #include "LVElementList.h"
-#include "KCCHandler.h"
+#include "KccHandler.h"
 #include "ui_KMonitor.h"
 
 
@@ -32,10 +32,11 @@ private:
     LWElementList* LWSElementList;
     LWRemoteHosts* availableLMHosts;
     LMElementList* LPMElementList;
+
     LWRemoteHosts* availableLVHosts;
     LVElementList* LRVElementList;
-    LWRemoteHosts* availableKCCHosts;
-    KCCHandler* KCC;
+
+    KccHandler* KCC;
 };
 
 #endif // KMONITOR_H

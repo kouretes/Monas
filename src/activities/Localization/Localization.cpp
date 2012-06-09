@@ -387,16 +387,16 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 		robot_rot = 0.00001;
 	}
 	MModel.Distance.val = robot_dist;
-	MModel.Distance.ratiomean = 1.32; // -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155;
+	MModel.Distance.ratiomean = 1.32; // -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155; //Systimatika sfalmata?
 	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058*robot_dist);
 
 	MModel.Direction.val = robot_dir;
-	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3); // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ;
+	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3); // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ; //Systimatika sfalmata?
 	MModel.Direction.Edev = abs(-0.019 * abs(robot_dir) );
 	// 0.0063971 * robot_dir + 0.090724 / abs(robot_dir);
 
 	MModel.Rotation.val = robot_rot;
-	MModel.Rotation.ratiomean = 0;//-1.9346*robot_dist + 10.041 *robot_dir + 173.24*robot_rot + 890.64;
+	MModel.Rotation.ratiomean = 0;//-1.9346*robot_dist + 10.041 *robot_dir + 173.24*robot_rot + 890.64; //Systimatika sfalmata?
 	MModel.Rotation.ratiodev = 0.0001; //5.67 *robot_dist + -69.009 *robot_dir +-359.19*robot_rot -2561.2;
 
 	TrackPointRobotPosition.x = XA;
@@ -417,7 +417,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 
 	//SpreadParticles
 	timeStop = boost::posix_time::microsec_clock::universal_time();
-	if(timeStop-timeStart >= boost::posix_time::seconds(0.33)){
+	if(timeStop-timeStart >= boost::posix_time::seconds(2)){
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 		SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
 	}
@@ -435,20 +435,10 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 	//Update - Using incoming observation
 	if(Observations.size()>=1){
-		beliefForGoalPosts[0] = 0;
-		beliefForGoalPosts[1] = 0;
-		beliefForGoalPosts[2] = 0;
-		beliefForGoalPosts[3] = 0;
-		timesOfContAmbig = 0;
 		Update(SIRParticles, Observations, MotionModel, partclsNum);
 	}
 	else if(AmbigiusObservations.size()==1){
-		beliefForGoalPosts[0] *= 0.6;
-		beliefForGoalPosts[1] *= 0.6;
-		beliefForGoalPosts[2] *= 0.6;
-		beliefForGoalPosts[3] *= 0.6;
 		Update_Ambigius(SIRParticles, AmbigiusObservations, partclsNum);
-		timesOfContAmbig++;
 		//Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
 	}
 
@@ -558,7 +548,7 @@ void Localization::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
 			tmpOM.Distance.Emean = 0;
-			tmpOM.Distance.Edev = 10*sqrt(sqrt(Objects.Get(i).distance_dev())) * 1000 + 30;
+			tmpOM.Distance.Edev = 10*sqrt(sqrt( Objects.Get(i).distance_dev() ) ) * 1000 + 30;
 			//Bearing
 			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0;
