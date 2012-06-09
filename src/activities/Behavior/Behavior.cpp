@@ -374,11 +374,9 @@ void Behavior::CheckForBall() {
 					scanforball = false;
 					ballseen = microsec_clock::universal_time();
 				}
-				Logger::Instance().WriteMsg("BehaviorTest", "scanOk false", Logger::Info);
 				scanOK = false;
 			}
 			else {
-			    Logger::Instance().WriteMsg("BehaviorTest", "scanOk true", Logger::Info);
 				scanOK = true;
 			}
 			lastball = microsec_clock::universal_time();
@@ -389,17 +387,14 @@ void Behavior::CheckForBall() {
                     if (wim->balls_size() > 0){
                         trackYaw = lookAtPointRelativeYaw(bx, by);
                         trackPitch = lookAtPointRelativePitch(bx, by);
-                        Logger::Instance().WriteMsg("BehaviorTest", "Model - trackYaw: " + _toString(trackYaw) + " trackPitch: " + _toString(trackPitch), Logger::Info);
                         MakeTrackBallActionNoBmsg();
                     }
 			if (bd < closeToBall) {
 				if (lastball+milliseconds(1000)<microsec_clock::universal_time()){
-                    Logger::Instance().WriteMsg("BehaviorTest", "Expire 1 sec", Logger::Info);
 					ballfound = 0;
 				}
 			} else {
 				if (lastball+seconds(3)<microsec_clock::universal_time()){
-                    Logger::Instance().WriteMsg("BehaviorTest", "Expire 3 sec", Logger::Info);
 					ballfound = 0;
 				}
 			}
