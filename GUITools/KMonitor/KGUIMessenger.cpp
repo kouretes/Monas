@@ -109,7 +109,7 @@ void KGUIMessenger::allocateReceivedMessages()
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="KRawImage" && (myLVRequestedHost == currentRHost || myKccRequestedHost == currentRHost))
 			{
-				std::cout << "incomingMessages == KRawImage " << std::endl;
+				//std::cout << "incomingMessages == KRawImage " << std::endl;
 				KRawImage rawimg;
 				rawimg.Clear();
 				rawimg.CopyFrom(*(incomingMessages.at(i).msg));

@@ -30,7 +30,7 @@ class KccHandler : public QWidget
 	struct QYuv{
 		unsigned char y,u,v;
 		//Custom operator because is needed for the map<>
-		bool operator<(const QYuv& QYuv1) const { return (y<<16)|(u<<8)|v < (QYuv1.y<<16)|(QYuv1.u<<8)|QYuv1.v;}
+		bool operator<(const QYuv& QYuv1) const { return (int((y<<16)|(u<<8)|v)) < (int((QYuv1.y<<16)|(QYuv1.u<<8)|QYuv1.v));}
 	};
 public:
 	static const unsigned int MAX_UNDO = 10;

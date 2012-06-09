@@ -30,6 +30,7 @@ KccHandler::KccHandler(QWidget *parent) :
 	ui->pbRed->setStyleSheet("* { background-color: rgb(0,0,255) }");
 	ui->pbBlack->setStyleSheet("* { background-color: rgb(0,0,0) }");
 	ui->SelectedColorLabel->setStyleSheet("* { background-color: rgb(255,140,0) }");
+	ui->pbUndo->setEnabled(false);
 	
 	realImL = new KccLabel(this);
     realImL->setBackgroundRole(QPalette::Base);
@@ -143,16 +144,16 @@ void KccHandler::clickedImage(QMouseEvent* ev){
     for(int px=-pixNum;px<pixNum+1;px++){
         for(int py=-pixNum;py<pixNum+1;py++){
             if(x+px>=0 && y+py>=0 && x+px<=widthInPixels && y+py<=heightInPixels){
-				QYuv temp = yuvRealImage[x+px][y+py];
+				QYuv temp = yuvRealImage[y+py][x+px];
 				undo[temp] = yuvColorTableOld[temp.y][temp.u][temp.v];
 				yuvColorTable[temp.y][temp.u][temp.v]=choosedColor;
-				for(char ty = -10;ty<11;ty++){
+				for(int ty = -10;ty<11;ty++){
 					b.y = temp.y+ty;
 					if(b.y>=0 && b.y < 256){
-						for(char tu = -10;ty<11;tu++){
+						for(int tu = -10;tu<11;tu++){
 							b.u = temp.u+tu;
 							if(b.u>=0 && b.u < 256){
-								for(char tv = -10;ty<11;tv++){
+								for(int tv = -10;tv<11;tv++){
 									b.v = temp.v+tv;
 									if(b.v>=0 && b.v < 256 && distance(temp,b)<=100){
 										undo[b] = yuvColorTableOld[b.y][b.u][b.v];
@@ -168,11 +169,12 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 	}
 	for(int i=0;i<widthInPixels;i++){
 		for(int j=0;j<heightInPixels;j++){
-			QYuv temp = yuvRealImage[i][j];
+			QYuv temp = yuvRealImage[j][i];
 			segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
 		}
 	}
 	undoVector.push_back(undo);
+	ui->pbUndo->setEnabled(true);
 	if(undoVector.size() >= MAX_UNDO)
 		undoVector.erase(undoVector.begin());
 	segImL->setPixmap(QPixmap::fromImage(segImage));
@@ -184,14 +186,17 @@ void KccHandler::undoPressed(){
 		//map<QRgb,char>::iterator it;
 		map<QYuv,char> undoList = undoVector.back();
 		undoVector.pop_back();
+		if(undoVector.size()==0)
+			ui->pbUndo->setEnabled(false);
 		QYuv temp;
+		int size = undoList.size();
 		for(map<QYuv,char>::iterator iter = undoList.begin();iter!=undoList.end();iter++){
 			temp = (*iter).first;
 			yuvColorTable[temp.y][temp.u][temp.v] = (*iter).second;
 		}
-		for(int i=0;i<widthInPixels;i++){
-			for(int j=0;j<heightInPixels;j++){
-				temp = yuvRealImage[i][j];
+		for(int j=0;j<heightInPixels;j++){
+			for(int i=0;i<widthInPixels;i++){
+				temp = yuvRealImage[j][i];
 				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
 			}
 		}
@@ -215,7 +220,7 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 		QYuv temp;
 		for(int i=0;i<widthInPixels;i++){
 			for(int j=0;j<heightInPixels;j++){
-				temp = yuvRealImage[i][j];
+				temp = yuvRealImage[j][i];
 				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
 			}
 		}
