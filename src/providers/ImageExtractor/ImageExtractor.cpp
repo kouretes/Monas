@@ -28,7 +28,7 @@ int ImageExtractor::Execute() {
 
 	if (cal.get() != NULL)
 	{
-		cout<<"=======Start calibration:"<<cal->status()<<endl;
+//		cout<<"=======Start calibration:"<<cal->status()<<endl;
 		if (cal->status() == 0)
 		{
 			//cout<<"Start calibration"<<endl;

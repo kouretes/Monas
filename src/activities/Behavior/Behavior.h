@@ -13,6 +13,7 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
+#include "activities/ObstacleAvoidance/ObstacleAvoidance.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -30,6 +31,11 @@
 #define OVERSH 0.08
 #define WAITFOR 40
 
+#define INIT_VALUE -111.0
+#define numOfFakeObstacles 30
+#define ATTACKER 0
+#define CENTER_FOR 1
+
 ACTIVITY_START
 class Behavior: public IActivity {
 
@@ -44,10 +50,12 @@ class Behavior: public IActivity {
 		void read_messages();
 
 		void GetGameState();
+		bool ClosestRobot();
 		void GetPosition();
 		void UpdateOrientationPlus();
 		void CheckForBall();
 		int MakeTrackBallAction();
+        int MakeTrackBallActionNoBmsg();
 
 		void HeadScanStepRaster();
 		void HeadScanStepHigh(float yaw_limit);
@@ -55,6 +63,10 @@ class Behavior: public IActivity {
 		void HeadScanStepIntelligent();
 		float lookAtPointYaw(float x, float y);
 		float lookAtPointPitch(float x, float y);
+		float lookAtPointRelativeYaw(float x, float y);
+		float lookAtPointRelativePitch(float x, float y);
+
+
 
 		void Kick(int side);
 
@@ -64,7 +76,10 @@ class Behavior: public IActivity {
 		void littleWalk(double x, double y, double th);
 		void approachBall(double ballX, double ballY);
 		void approachBallNewWalk(double ballX, double ballY);
+		void approachBallRoleDependent(double ballX, double ballY);
+
 		void stopRobot();
+		void generateFakeObstacles();
 		void pathPlanningRequestRelative(float target_x,float target_y, float target_phi);
 		void pathPlanningRequestAbsolute(float target_x,float target_y, float target_phi);
 		void gotoPosition(float target_x,float target_y, float target_phi);
@@ -83,6 +98,7 @@ class Behavior: public IActivity {
 		boost::shared_ptr<const GameStateMessage>  gsm;
 		boost::shared_ptr<const ObstacleMessageArray>  om;
 		boost::shared_ptr<const WorldInfo>  wim;
+		boost::shared_ptr<const SharedWorldInfo>  swim;
 
 		/* Outgoing Messages */
 		MotionWalkMessage* wmot;
@@ -112,11 +128,13 @@ class Behavior: public IActivity {
 		bool kickoff;
 		bool toReadyFromGoal;
 		float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
+		float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
 		double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
 		float cX, cY, ct;
 		float bd, bb, bx, by, posx, posy;
+		float trackYaw, trackPitch;
 		int side;
 		float robot_x,robot_y,robot_phi,robot_confidence;
 
@@ -128,6 +146,7 @@ class Behavior: public IActivity {
 		int gameState;
 		int teamColor;
 		int playerNumber;
+		int role;
 
 		bool readRobotConf;
 

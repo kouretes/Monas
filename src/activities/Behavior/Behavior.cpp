@@ -17,8 +17,8 @@ double mglRand()
 {
     //return rand() / double(RAND_MAX);
     return (rand()%100) / 100.0;
-}
 
+}
 
 /* Behavior Initialization */
 
@@ -29,7 +29,6 @@ void Behavior::UserInit() {
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
-
 
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
@@ -88,6 +87,8 @@ void Behavior::UserInit() {
 	gameState = PLAYER_INITIAL;
 	teamColor = TEAM_BLUE;
 	playerNumber = 1;
+	role = ATTACKER;
+
 
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
 	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	// reads initX, initY, initPhi
@@ -145,17 +146,16 @@ int Behavior::Execute() {
 			}
 
 			if (!readytokick) {
-				if (orientation == 1)
-					side = -1;
-				else if (orientation == 3)
-					side = +1;
-				if (pathOK && bd > 0.2){
-					pathOK = false;
-					int pathSide = (bb > 0) ? 1 : -1;
-					pathPlanningRequestRelative(bx, by, pathSide*M_PI_2);
-				}
-				else
-					pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
+			    /********************************************************
+			    *                   Define roles                        *
+			    *********************************************************/
+			    if(ClosestRobot()){
+			        role = ATTACKER;
+			    }
+			    else{
+                    role = CENTER_FOR;
+			    }
+                approachBallRoleDependent(bx, by);
 
 				if (scanOK)
 					HeadScanStepSmart();
@@ -204,6 +204,7 @@ void Behavior::read_messages()
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
+    swim = _blk.readData<SharedWorldInfo> ("worldstate");
 
 	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c= _blk.readState<KCalibrateCam> ("vision");
@@ -275,14 +276,33 @@ void Behavior::GetGameState()
 	}
 }
 
+bool Behavior::ClosestRobot() {
+    double epsx = 0.025, epsy = 0.025; // Desired precision
+ 	if(swim != 0)
+        if(swim.get() != 0){
+            Logger::Instance().WriteMsg("SharedWorldModel", "Closest robot x: " + _toString(swim->playerclosesttoball().x()) +
+                                " y: " + _toString(swim->playerclosesttoball().y()), Logger::Info);
+
+            double closest_robot_x = swim->playerclosesttoball().x();
+            double closest_robot_y = swim->playerclosesttoball().y();
+            if(((fabs(robot_x - closest_robot_x)) < epsx) && (fabsf(robot_y - closest_robot_y) < epsy))
+                return true;
+            else
+                return false;
+
+        }
+    else
+        return true;
+}
 
 void Behavior::GetPosition() {
-	if(wim.get() != 0){
-		robot_x = wim->myposition().x();
-		robot_y = wim->myposition().y();
-		robot_phi = wrapToPi( wim->myposition().phi() );
-		robot_confidence = wim->myposition().confidence();
-	}
+	if(wim != 0)
+        if(wim.get() != 0){
+            robot_x = wim->myposition().x();
+            robot_y = wim->myposition().y();
+            robot_phi = wrapToPi( wim->myposition().phi() );
+            robot_confidence = wim->myposition().confidence();
+        }
 	return;
 }
 
@@ -317,7 +337,7 @@ void Behavior::UpdateOrientationPlus()
 
 void Behavior::CheckForBall() {
 
-	double closeToBall = 1.0;
+	double closeToBall = 6.0;
 
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
@@ -350,16 +370,24 @@ void Behavior::CheckForBall() {
 			lastball = microsec_clock::universal_time();
 			ballfound = 1;
 		} else {
+		    if(!scanOK && ballfound)
+                if(wim != 0)
+                    if (wim->balls_size() > 0){
+                        trackYaw = lookAtPointRelativeYaw(bx, by);
+                        trackPitch = lookAtPointRelativePitch(bx, by);
+                        MakeTrackBallActionNoBmsg();
+                    }
 			if (bd < closeToBall) {
-				if (lastball+milliseconds(1000)<microsec_clock::universal_time())
+				if (lastball+milliseconds(1000)<microsec_clock::universal_time()){
 					ballfound = 0;
+				}
 			} else {
-				if (lastball+seconds(3)<microsec_clock::universal_time())
+				if (lastball+seconds(3)<microsec_clock::universal_time()){
 					ballfound = 0;
+				}
 			}
 		}
 	}
-
 	return;
 }
 
@@ -369,6 +397,16 @@ int Behavior::MakeTrackBallAction() {
 	hmot->set_command("setHead");
 	hmot->set_parameter(0, bmsg->referenceyaw());
 	hmot->set_parameter(1,  bmsg->referencepitch());
+	_blk.publishSignal(*hmot, "motion");
+
+	return 1;
+}
+
+int Behavior::MakeTrackBallActionNoBmsg() {
+
+	hmot->set_command("setHead");
+	hmot->set_parameter(0, trackYaw);
+	hmot->set_parameter(1, trackPitch);
 	_blk.publishSignal(*hmot, "motion");
 
 	return 1;
@@ -635,10 +673,19 @@ float Behavior::lookAtPointYaw(float x, float y)
 	return anglediff2(atan2(y - robot_y, x - robot_x), robot_phi);
 }
 
-
 float Behavior::lookAtPointPitch(float x, float y)
 {
 	return (50.0 * TO_RAD) - atan2f( sqrt((x-robot_x)*(x-robot_x)+(y-robot_y)*(y-robot_y)), 0.45 );
+}
+
+float Behavior::lookAtPointRelativeYaw(float x, float y)
+{
+	return atan2(y, x);
+}
+
+float Behavior::lookAtPointRelativePitch(float x, float y)
+{
+	return (50.0 * TO_RAD) - atan2f( sqrt((x)*(x)+(y)*(y)), 0.45 );
 }
 
 
@@ -759,7 +806,6 @@ void Behavior::littleWalk(double x, double y, double th)
 	_blk.publishSignal(*wmot, "motion");
 }
 
-
 void Behavior::approachBall(double ballX, double ballY){
 
 	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
@@ -783,6 +829,31 @@ void Behavior::approachBallNewWalk(double ballX, double ballY){
 	Y = gain * (by-ballY)/maxd;
 	t = 0.55 * gain * (bb/M_PI);
 	velocityWalk(X, Y, t, f);
+}
+
+void Behavior::approachBallRoleDependent(double ballX, double ballY){
+    if (orientation == 1)
+        side = -1;
+    else if (orientation == 3)
+        side = +1;
+    if(role == ATTACKER){
+        if (pathOK && bd > 0.2){
+            pathOK = false;
+            int pathSide = (bb > 0) ? 1 : -1;
+            pathPlanningRequestRelative(bx, by, pathSide*M_PI_2);
+        }
+        else
+            pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
+    }
+    else if(role == CENTER_FOR){
+        if (pathOK && bd > 0.5){
+            pathOK = false;
+            int pathSide = (bb > 0) ? 1 : -1;
+            pathPlanningRequestRelative(bx, by, pathSide*M_PI_2);
+        }
+        else
+            stopRobot();
+    }
 }
 
 void Behavior::stopRobot() {
@@ -945,7 +1016,31 @@ bool Behavior::readGoalConfiguration(const std::string& file_name) {
 	return true;
 }
 
+void Behavior::generateFakeObstacles(){
 
+    float tmpX=-3.0+ObstacleRadius,tmpY=-1.1+ObstacleRadius;
+    for(int j=0;j<numOfFakeObstacles;j++){
+        fakeObstacles[j][0]=INIT_VALUE;
+        fakeObstacles[j][1]=INIT_VALUE;
+    }
+    int i=0;
+    while(tmpX+ObstacleRadius<-2.4){
+        fakeObstacles[i][0] = tmpX;
+        fakeObstacles[i][1] = tmpY;
+
+        fakeObstacles[i+1][0] = tmpX;
+        fakeObstacles[i+1][1] = -tmpY;
+        tmpX+=2*ObstacleRadius;
+        i+=2;
+    }
+    tmpX=-2.4+ObstacleRadius
+    while(tmpY+ObstacleRadius<1.1){
+        fakeObstacles[i][0] = tmpX;
+        fakeObstacles[i][1] = tmpY;
+        tmpY+=2*ObstacleRadius;
+        i++;
+    }
+}
 
 /* Test Function */
 

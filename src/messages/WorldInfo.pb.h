@@ -32,6 +32,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto();
 void protobuf_ShutdownFile_WorldInfo_2eproto();
 
 class WorldInfo;
+class SharedWorldInfo;
 class RobotPose;
 class Ball;
 class UnknownObjects;
@@ -140,6 +141,18 @@ class WorldInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::UnknownObjects >*
       mutable_ufos();
   
+  // repeated .Ball GlobBalls = 5;
+  inline int globballs_size() const;
+  inline void clear_globballs();
+  static const int kGlobBallsFieldNumber = 5;
+  inline const ::Ball& globballs(int index) const;
+  inline ::Ball* mutable_globballs(int index);
+  inline ::Ball* add_globballs();
+  inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
+      globballs() const;
+  inline ::google::protobuf::RepeatedPtrField< ::Ball >*
+      mutable_globballs();
+  
   // @@protoc_insertion_point(class_scope:WorldInfo)
  private:
   inline void set_has_myposition();
@@ -151,9 +164,10 @@ class WorldInfo : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::Ball > balls_;
   ::google::protobuf::RepeatedPtrField< ::RobotPose > otherrobots_;
   ::google::protobuf::RepeatedPtrField< ::UnknownObjects > ufos_;
+  ::google::protobuf::RepeatedPtrField< ::Ball > globballs_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -161,6 +175,89 @@ class WorldInfo : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static WorldInfo* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class SharedWorldInfo : public ::google::protobuf::Message {
+ public:
+  SharedWorldInfo();
+  virtual ~SharedWorldInfo();
+  
+  SharedWorldInfo(const SharedWorldInfo& from);
+  
+  inline SharedWorldInfo& operator=(const SharedWorldInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SharedWorldInfo& default_instance();
+  
+  void Swap(SharedWorldInfo* other);
+  
+  // implements Message ----------------------------------------------
+  
+  SharedWorldInfo* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SharedWorldInfo& from);
+  void MergeFrom(const SharedWorldInfo& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .RobotPose playerClosestToBall = 1;
+  inline bool has_playerclosesttoball() const;
+  inline void clear_playerclosesttoball();
+  static const int kPlayerClosestToBallFieldNumber = 1;
+  inline const ::RobotPose& playerclosesttoball() const;
+  inline ::RobotPose* mutable_playerclosesttoball();
+  inline ::RobotPose* release_playerclosesttoball();
+  
+  // @@protoc_insertion_point(class_scope:SharedWorldInfo)
+ private:
+  inline void set_has_playerclosesttoball();
+  inline void clear_has_playerclosesttoball();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::RobotPose* playerclosesttoball_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static SharedWorldInfo* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1049,6 +1146,64 @@ WorldInfo::ufos() const {
 inline ::google::protobuf::RepeatedPtrField< ::UnknownObjects >*
 WorldInfo::mutable_ufos() {
   return &ufos_;
+}
+
+// repeated .Ball GlobBalls = 5;
+inline int WorldInfo::globballs_size() const {
+  return globballs_.size();
+}
+inline void WorldInfo::clear_globballs() {
+  globballs_.Clear();
+}
+inline const ::Ball& WorldInfo::globballs(int index) const {
+  return globballs_.Get(index);
+}
+inline ::Ball* WorldInfo::mutable_globballs(int index) {
+  return globballs_.Mutable(index);
+}
+inline ::Ball* WorldInfo::add_globballs() {
+  return globballs_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
+WorldInfo::globballs() const {
+  return globballs_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::Ball >*
+WorldInfo::mutable_globballs() {
+  return &globballs_;
+}
+
+// -------------------------------------------------------------------
+
+// SharedWorldInfo
+
+// required .RobotPose playerClosestToBall = 1;
+inline bool SharedWorldInfo::has_playerclosesttoball() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void SharedWorldInfo::set_has_playerclosesttoball() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void SharedWorldInfo::clear_has_playerclosesttoball() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void SharedWorldInfo::clear_playerclosesttoball() {
+  if (playerclosesttoball_ != NULL) playerclosesttoball_->::RobotPose::Clear();
+  clear_has_playerclosesttoball();
+}
+inline const ::RobotPose& SharedWorldInfo::playerclosesttoball() const {
+  return playerclosesttoball_ != NULL ? *playerclosesttoball_ : *default_instance_->playerclosesttoball_;
+}
+inline ::RobotPose* SharedWorldInfo::mutable_playerclosesttoball() {
+  set_has_playerclosesttoball();
+  if (playerclosesttoball_ == NULL) playerclosesttoball_ = new ::RobotPose;
+  return playerclosesttoball_;
+}
+inline ::RobotPose* SharedWorldInfo::release_playerclosesttoball() {
+  clear_has_playerclosesttoball();
+  ::RobotPose* temp = playerclosesttoball_;
+  playerclosesttoball_ = NULL;
+  return temp;
 }
 
 // -------------------------------------------------------------------
