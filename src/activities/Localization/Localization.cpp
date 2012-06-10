@@ -366,10 +366,10 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 
 		TrackPoint = TrackPointRobotPosition;
 	}
-
 	float XA = PosX.sensorvalue() * 1000;
 	float YA = PosY.sensorvalue() * 1000;
 	float AA = Angle.sensorvalue();
+	
 
 	float DX = (XA - TrackPointRobotPosition.x);
 	float DY = (YA - TrackPointRobotPosition.y);
@@ -387,26 +387,31 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 		robot_rot = 0.00001;
 	}
 	MModel.Distance.val = robot_dist;
-	MModel.Distance.ratiomean = 1.32; // -0.0048898*robot_dist + 0.013794*robot_dir + 0.32631*robot_rot + 3.6155; //Systimatika sfalmata?
-	MModel.Distance.ratiodev = abs(0.002131 * (robot_dir + robot_rot) + 0.094058*robot_dist);
+	MModel.Distance.ratiomean = 1.0;// systematic error out
+	MModel.Distance.ratiodev = 0.1;
+	MModel.Distance.Emean = 0.0;
+	MModel.Distance.Edev = 0.0;
 
 	MModel.Direction.val = robot_dir;
-	MModel.Direction.Emean = -0.014257 * abs(robot_dir) - 0.031725 * pow(robot_dir, 3); // -0.81684*abs(robot_dir) -1.8177*pow(robot_dir,3) + ; //Systimatika sfalmata?
-	MModel.Direction.Edev = abs(-0.019 * abs(robot_dir) );
-	// 0.0063971 * robot_dir + 0.090724 / abs(robot_dir);
+	MModel.Direction.ratiomean = 1.0;// systematic error out
+	MModel.Direction.ratiodev = 0.0;
+	MModel.Direction.Emean = 0.0;// systematic error out
+	MModel.Direction.Edev = 0.034;//0.034 = 2 degrees
 
 	MModel.Rotation.val = robot_rot;
-	MModel.Rotation.ratiomean = 0;//-1.9346*robot_dist + 10.041 *robot_dir + 173.24*robot_rot + 890.64; //Systimatika sfalmata?
-	MModel.Rotation.ratiodev = 0.0001; //5.67 *robot_dist + -69.009 *robot_dir +-359.19*robot_rot -2561.2;
+	MModel.Rotation.ratiomean = 1.0;// systematic error out
+	MModel.Rotation.ratiodev = 0.2;
+	MModel.Rotation.Emean = 0.0;// systematic error out
+	MModel.Rotation.Edev = 0.0;
 
 	TrackPointRobotPosition.x = XA;
 	TrackPointRobotPosition.y = YA;
 	TrackPointRobotPosition.phi = AA;
-
+	//If u want edev change the klocalization file
 	TrackPoint.x += DX;
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
-
+	//Logger::Instance().WriteMsg("Localization", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
 //Sequential Importance Resampling
 belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbigiusObservations)
@@ -434,13 +439,13 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//Create some particles using Observation Intersection
 	//CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 	//Update - Using incoming observation
-	if(Observations.size()>=1){
+	/*if(Observations.size()>=1){
 		Update(SIRParticles, Observations, MotionModel, partclsNum);
 	}
 	else if(AmbigiusObservations.size()==1){
 		Update_Ambigius(SIRParticles, AmbigiusObservations, partclsNum);
 		//Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
-	}
+	}*/
 
 
 	//Normalize Particles  Weight in order to Resample later

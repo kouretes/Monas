@@ -442,38 +442,13 @@ void KLocalization::Predict(parts & Particles, KMotionModel & MotionModel)
 	double tmpDist, tmpDir, tmpRot;
 	Normal X, Y, P;
 	unsigned int i;
-	//Just for the 1st particle use only the mean motionmodel without noise
-	if (MotionModel.type == "ratio")
+	//Move the particles with noise
+	for (i = 0; i < partclsNum; i++)
 	{
-		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean);
-
-	} else
-	{
-		tmpDist = MotionModel.Distance.val + MotionModel.Distance.Emean;
-	}
-	tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean;
-	tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean;
-
-	if (abs(tmpDir) > 400 || isnan(tmpDir))
-		tmpDir = 0;
-
-	Particles.x[0] = Particles.x[0] + cos(tmpDir + Particles.phi[0]) * tmpDist;
-	Particles.y[0] = Particles.y[0] + sin(tmpDir + Particles.phi[0]) * tmpDist;
-	Particles.phi[0] = Particles.phi[0] + tmpRot;
-	//Move the others with noise
-	for (i = 1; i < partclsNum; i++)
-	{
-		if (MotionModel.type == "ratio")
-		{
-			tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X.Next() * MotionModel.Distance.ratiodev);
-		} else
-		{
-			tmpDist = MotionModel.Distance.val + MotionModel.Distance.Emean + X.Next() * MotionModel.Distance.Edev;
-		}
+		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X.Next() * MotionModel.Distance.ratiodev);
 		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
-		tmpRot = MotionModel.Rotation.val + MotionModel.Rotation.Emean + P.Next() * MotionModel.Rotation.Edev;
-		if (abs(tmpDir) > 400 || isnan(tmpDir))
-			tmpDir = 0;
+		tmpRot = MotionModel.Rotation.val * (MotionModel.Rotation.ratiomean + P.Next() * MotionModel.Rotation.ratiodev);
+
 		Particles.x[i] = Particles.x[i] + cos(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.y[i] = Particles.y[i] + sin(tmpDir + Particles.phi[i]) * tmpDist;
 		Particles.phi[i] = Particles.phi[i] + tmpRot;
