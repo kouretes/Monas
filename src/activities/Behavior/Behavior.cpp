@@ -1033,7 +1033,7 @@ void Behavior::generateFakeObstacles(){
         tmpX+=2*ObstacleRadius;
         i+=2;
     }
-    tmpX=-2.4+ObstacleRadius
+    tmpX=-2.4+ObstacleRadius;
     while(tmpY+ObstacleRadius<1.1){
         fakeObstacles[i][0] = tmpX;
         fakeObstacles[i][1] = tmpY;
