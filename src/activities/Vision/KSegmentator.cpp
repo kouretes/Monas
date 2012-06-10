@@ -97,6 +97,18 @@ inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
 }
 
 
+inline unsigned char BitMaskToValue ( KSegmentator::colormask_t v)
+{
+	KSegmentator::colormask_t r=v;
+	unsigned c=0;
+	while(r>0)
+	{
+		r=r>>1;
+		c++;
+	}
+	return c;
+}
+
 void KSegmentator::setLumaScale(float s)
 {
 	if(lumascale==s)
@@ -198,43 +210,6 @@ KSegmentator::colormask_t ruleFileClassifyPixel(struct RuleSet const& r, unsigne
 
 }
 
-void KSegmentator::attachToIplImage(KImageConst const& data)
-{
-	//string m="Seg times:"+_toString(fetch.tv_nsec)+" "+_toString(segment.tv_nsec);
-	//fetch.tv_nsec=0;
-	//segment.tv_nsec=0;
-	//Logger::Instance().WriteMsg("KSegmentator",m,Logger::Warning);
-    dataPointer= data.imageData;
-    widthmult2=data.width*2;
-    width=data.width;
-    height=data.height;
-#ifndef FORCEINTERLV
-    if(data.nChannels==2)//Imply 422
-	{
-		classifyFunc= &KSegmentator::classify422;
-		type=INTERLEAVED;
-
-	}
-    else if (data.nChannels==3)//444
-	{
-		classifyFunc=&KSegmentator::classify444;
-		type=FULL;
-
-	}
-
-    else
-    {
-        classifyFunc=NULL;
-        Logger::Instance().WriteMsg("KSegmentator", "ONLY 422 AND 444 interleaving IMPLEMENTED :P",Logger::Error);
-    }
-#else
-	if(data.nChannels!=2)//Imply 422
-		Logger::Instance().WriteMsg("KSegmentator", "ONLY 444 AND 422 interleaving IMPLEMENTED,422 only forced",Logger::Error);
-
-#endif
-
-
-}
 
 KSegmentator::KSegmentator(std::ifstream &conf)
 {
@@ -297,6 +272,60 @@ void KSegmentator::readColorInfo(ifstream & conf)
 {
 	for (int i=0;i<set.colorLines-'0';i++)
 		conf.ignore(256,'\n');
+
+}
+
+
+void KSegmentator::writeFile(std::ofstream &of,const std::string  comment) const
+{
+	of.write(reinterpret_cast<const char *>(&set),sizeof(SegHeader));
+	of<<comment;
+	of.put('\n');
+	int y,u,v;
+	for (y=0;y<ysize;y++)
+		for (u=0;u<usize;u++)
+			for (v=0;v<vsize;v++)
+			{
+				of.put(BitMaskToValue(*(ctable+y+u*ysize+v*usize*ysize)));
+
+			}
+
+}
+KSegmentator::KSegmentator(int nyres,int nures,int nvres)
+{
+
+	set.ID[0]='K';
+	set.ID[1]='S';
+	set.ruletype='C';
+	set.size='0'+((int)sizeof(colormask_t));
+	set.calType='A';
+	set.calLines='0';
+	set.colorInfo='A';
+	set.colorLines='0';
+	set.conf[0]='Y';
+	set.conf[1]='0'+nyres;
+	set.conf[2]='0'+nures;
+	set.conf[3]='0'+nvres;
+
+
+	yres=nyres;ysize=256>>yres;
+	ures=nures;usize=256>>ures;
+	vres=nvres;vsize=256>>vres;
+	colormask_t* nctable= (colormask_t *) malloc(sizeof(colormask_t)*ysize*usize*vsize);
+	int y,u,v;
+	for (y=0;y<ysize;y++)
+		for (u=0;u<usize;u++)
+			for (v=0;v<vsize;v++)
+			{
+				*(nctable+y+u*ysize+v*usize*ysize)=0;
+
+			}
+	ctable=nctable;
+	for(int i=0 ;i<LUTsize;i++)
+	{
+		rYLUT[i]=rULUT[i]=rVLUT[i]=0;
+	}
+	setLumaScale(1);//Default setting
 
 }
 

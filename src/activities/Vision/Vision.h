@@ -23,6 +23,9 @@
 #include <iostream>
 //#define DEBUGVISION
 
+#define FORCEINTERLV
+#define CACHETAG 0x1F
+
 
 
 
@@ -197,6 +200,7 @@ class Vision: public IActivity
 		//KVecFloat2 & cameraToObs(KMat::HCoords<float ,2> const& t);
 		//KVecFloat2 & camToRobot(KMat::HCoords<float ,2> & t);
 		KVecFloat2 camToRobot(KVecFloat2 const & t) const;
+
 
 };
 

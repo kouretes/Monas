@@ -1737,9 +1737,18 @@ bool Vision::validpixel(int x,int y) const
 KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmentator::colormask_t h ) const
 {
 	KPROF_SCOPE(vprof,"dopSeg");
+	unsigned char yd,ud,vd;
 	if (x >= 0 && x < (rawImage.width) && y >= 0 && y < (rawImage.height))
 	{
-	    return seg->classifyPixel(x,y,h);
+	   yd=*(rawImage.imageData+y*(rawImage.width<<1)+(x<<1));//Y is right where we want it
+
+		//a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
+		int startofBlock =y*(rawImage.width<<1)+ ((x>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
+		// cout<<"sob"<<endl;
+		ud=*(rawImage.imageData+startofBlock+1);
+		// cout<<"u"<<endl;
+		vd= *(rawImage.imageData+startofBlock+3);
+		seg->classifyWithPrecheck(yd,ud,vd,h);
 	}
 	else
 	{
@@ -1747,15 +1756,17 @@ KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmenta
 	}
 
 }
-
 void Vision::prepSeg(const int x,const int y) const
 {
 	KPROF_SCOPE(vprof,"prepSeg");
 
-//	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
-//	{
-		seg->prefetchPixelData(x,y);
-//	}
+	int startofBlock =y*(rawImage.width<<1)+ ((x>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
+	__builtin_prefetch(rawImage.imageData+startofBlock);
+
+
+	//How much luck do we NOT have :)
+	//if((unsigned(dataPointer+startofBlock) & ~(CACHETAG) )!=(unsigned(dataPointer+startofBlock+3)& ~(CACHETAG) ))
+	//	__builtin_prefetch(dataPointer+startofBlock+3);
 }
 
 ACTIVITY_END
