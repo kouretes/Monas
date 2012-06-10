@@ -6,25 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1020</width>
-    <height>514</height>
+    <width>1142</width>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>13</x>
-     <y>17</y>
-     <width>978</width>
-     <height>471</height>
+     <x>16</x>
+     <y>12</y>
+     <width>1096</width>
+     <height>631</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QComboBox" name="KCComboBox"/>
       </item>
@@ -101,7 +101,7 @@
       <item>
        <widget class="QLabel" name="PromptPixelsLabel">
         <property name="text">
-         <string>Num of Pixels ::</string>
+         <string>Pixels:</string>
         </property>
        </widget>
       </item>
@@ -116,6 +116,26 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="PromptPixelsLabel_2">
+        <property name="text">
+         <string>Threshold:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="theshSpinBox">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>15</number>
+        </property>
+        <property name="value">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="pbUndo">
         <property name="text">
          <string>Undo</string>
@@ -125,7 +145,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_21">
         <item>
@@ -190,17 +210,25 @@
        </layout>
       </item>
       <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+       <widget class="QPushButton" name="pbClear">
+        <property name="text">
+         <string>Clear</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Fps:</string>
         </property>
-       </spacer>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="fpsLabel">
+        <property name="text">
+         <string>0 fps</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pbOpenTemp">
@@ -256,7 +284,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QScrollArea" name="scrollImage">
         <property name="widgetResizable">
@@ -267,8 +295,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>482</width>
-           <height>370</height>
+           <width>541</width>
+           <height>530</height>
           </rect>
          </property>
         </widget>
@@ -284,8 +312,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>482</width>
-           <height>370</height>
+           <width>541</width>
+           <height>530</height>
           </rect>
          </property>
         </widget>
