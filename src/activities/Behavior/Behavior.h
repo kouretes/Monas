@@ -56,6 +56,7 @@ class Behavior: public IActivity {
 		void CheckForBall();
 		int MakeTrackBallAction();
         int MakeTrackBallActionNoBmsg();
+        void checkForPenaltyArea();
 
 		void HeadScanStepRaster();
 		void HeadScanStepHigh(float yaw_limit);
@@ -90,6 +91,7 @@ class Behavior: public IActivity {
 		bool readRobotConfiguration(const std::string& file_name); 	//this function reads robot's initial position in the field from XML file
 		bool readGoalConfiguration(const std::string& file_name); 	//this function reads the position of the goals
 
+        float dist(float x1, float y1, float x2, float y2);
 		void test();
 
 		/* Incoming Messages */
@@ -106,6 +108,7 @@ class Behavior: public IActivity {
 		MotionActionMessage* amot;
 		LocalizationResetMessage* locReset;
 		PathPlanningRequestMessage* pprm;
+		ObstacleMessage* fom; //fake obstacle message
 
 		int leftright;
 		float headpos;
