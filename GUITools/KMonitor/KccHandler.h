@@ -79,8 +79,10 @@ public slots:
 	void segSave();
 	void segOpen();
 	void clearColorTable();
-	void realZoom(double sca);
-	void segZoom(double sca);
+	void realZoomIn();
+	void realZoomOut();
+	void segZoomIn();
+	void segZoomOut();
 	void changeImage(KRawImage rawImage, QString hostId);
 
 private:
@@ -103,9 +105,10 @@ private:
 	bool takeSnapshot;
     KccLabel* realImL,* segImL;
     LWRemoteHosts* availableKCCHosts;
+	QScrollArea *scrollImage,*scrollSeg;
 
 	double rScale,iScale;
-
+	double zoomInScale,zoomOutScale;
 	QImage segImage,realImage;
     Ui::KccHandler *ui;
 };
