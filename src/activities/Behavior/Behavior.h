@@ -13,6 +13,7 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
+#include "activities/ObstacleAvoidance/ObstacleAvoidance.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -30,6 +31,8 @@
 #define OVERSH 0.08
 #define WAITFOR 40
 
+#define INIT_VALUE -111.0
+#define numOfFakeObstacles 30
 #define ATTACKER 0
 #define CENTER_FOR 1
 
@@ -76,6 +79,7 @@ class Behavior: public IActivity {
 		void approachBallRoleDependent(double ballX, double ballY);
 
 		void stopRobot();
+		void generateFakeObstacles();
 		void pathPlanningRequestRelative(float target_x,float target_y, float target_phi);
 		void pathPlanningRequestAbsolute(float target_x,float target_y, float target_phi);
 		void gotoPosition(float target_x,float target_y, float target_phi);
@@ -124,6 +128,7 @@ class Behavior: public IActivity {
 		bool kickoff;
 		bool toReadyFromGoal;
 		float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
+		float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
 		double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;

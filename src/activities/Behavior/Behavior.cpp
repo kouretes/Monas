@@ -151,21 +151,9 @@ int Behavior::Execute() {
 			    *********************************************************/
 			    if(ClosestRobot()){
 			        role = ATTACKER;
-//                    if (orientation == 1)
-//                        side = -1;
-//                    else if (orientation == 3)
-//                        side = +1;
-//                    if (pathOK && bd > 0.2){
-//                        pathOK = false;
-//                        int pathSide = (bb > 0) ? 1 : -1;
-//                        pathPlanningRequestRelative(bx, by, pathSide*M_PI_2);
-//                    }
-//                    else
-//                        pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
 			    }
 			    else{
                     role = CENTER_FOR;
-//                    velocityWalk(0.0, 0.0, 0.0, 1.0);
 			    }
                 approachBallRoleDependent(bx, by);
 
@@ -858,7 +846,7 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY){
             pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
     }
     else if(role == CENTER_FOR){
-        if (pathOK && bd > 1){
+        if (pathOK && bd > 0.5){
             pathOK = false;
             int pathSide = (bb > 0) ? 1 : -1;
             pathPlanningRequestRelative(bx, by, pathSide*M_PI_2);
@@ -1028,7 +1016,31 @@ bool Behavior::readGoalConfiguration(const std::string& file_name) {
 	return true;
 }
 
+void Behavior::generateFakeObstacles(){
 
+    float tmpX=-3.0+ObstacleRadius,tmpY=-1.1+ObstacleRadius;
+    for(int j=0;j<numOfFakeObstacles;j++){
+        fakeObstacles[j][0]=INIT_VALUE;
+        fakeObstacles[j][1]=INIT_VALUE;
+    }
+    int i=0;
+    while(tmpX+ObstacleRadius<-2.4){
+        fakeObstacles[i][0] = tmpX;
+        fakeObstacles[i][1] = tmpY;
+
+        fakeObstacles[i+1][0] = tmpX;
+        fakeObstacles[i+1][1] = -tmpY;
+        tmpX+=2*ObstacleRadius;
+        i+=2;
+    }
+    tmpX=-2.4+ObstacleRadius
+    while(tmpY+ObstacleRadius<1.1){
+        fakeObstacles[i][0] = tmpX;
+        fakeObstacles[i][1] = tmpY;
+        tmpY+=2*ObstacleRadius;
+        i++;
+    }
+}
 
 /* Test Function */
 
