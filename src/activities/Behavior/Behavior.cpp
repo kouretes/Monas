@@ -47,6 +47,8 @@ void Behavior::UserInit() {
 
 	pprm = new PathPlanningRequestMessage();
 
+    fom = new ObstacleMessage();
+
 	readRobotConf = false;
 
 	leftright = 1;
@@ -146,15 +148,14 @@ int Behavior::Execute() {
 			}
 
 			if (!readytokick) {
-			    /********************************************************
-			    *                   Define roles                        *
-			    *********************************************************/
+			    //Define roles
 			    if(ClosestRobot()){
 			        role = ATTACKER;
 			    }
 			    else{
                     role = CENTER_FOR;
 			    }
+	//		    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
                 approachBallRoleDependent(bx, by);
 
 				if (scanOK)
@@ -277,7 +278,7 @@ void Behavior::GetGameState()
 }
 
 bool Behavior::ClosestRobot() {
-    double epsx = 0.025, epsy = 0.025; // Desired precision
+    double epsx = 0.005, epsy = 0.005; // Desired precision
  	if(swim != 0)
         if(swim.get() != 0){
             Logger::Instance().WriteMsg("SharedWorldModel", "Closest robot x: " + _toString(swim->playerclosesttoball().x()) +
@@ -846,10 +847,9 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY){
             pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
     }
     else if(role == CENTER_FOR){
-        if (pathOK && bd > 0.5){
-            pathOK = false;
+        if (bd > 0.5){
             int pathSide = (bb > 0) ? 1 : -1;
-            pathPlanningRequestRelative(bx, by, pathSide*M_PI_2);
+            pathPlanningRequestAbsolute(bx-posx, by-side*posy, bb);
         }
         else
             stopRobot();
@@ -1039,6 +1039,26 @@ void Behavior::generateFakeObstacles(){
         fakeObstacles[i][1] = tmpY;
         tmpY+=2*ObstacleRadius;
         i++;
+    }
+}
+float Behavior::dist(float x1, float y1, float x2, float y2){
+    return sqrt((x1-x2) * (x1-x2) + (y1-y2) * (y1-y2));
+}
+void Behavior::checkForPenaltyArea(){
+    float fakeDist=0.0, fakeDir=0.0;
+    for(int j=0;j<numOfFakeObstacles;j++){
+        if(fakeObstacles[j][0]==INIT_VALUE)
+            continue;
+        else
+            fakeDist=dist(robot_x,fakeObstacles[j][0],robot_y,fakeObstacles[j][1]);
+            if(fakeDist<MapRadius){
+                //send fake obstacle message
+
+
+                fom->set_direction(fakeDir);
+                fom->set_distance(fakeDist);
+                _blk.publishData(*fom, "obstacle");
+            }
     }
 }
 

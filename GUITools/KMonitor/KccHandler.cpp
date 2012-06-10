@@ -35,35 +35,51 @@ KccHandler::KccHandler(QWidget *parent) :
 	
 	realImL = new KccLabel(this);
     realImL->setBackgroundRole(QPalette::Base);
+    realImL->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    realImL->setScaledContents(true);
 
     segImL = new KccLabel(this);
     segImL->setBackgroundRole(QPalette::Base);
+    segImL->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    segImL->setScaledContents(true);
 
-    ui->scrollImage->setBackgroundRole(QPalette::Dark);
-    ui->scrollImage->setWidget(realImL);
 
-	ui->scrollSeg->setBackgroundRole(QPalette::Dark);
-	ui->scrollSeg->setWidget(segImL);
+	scrollImage = new QScrollArea;
+    scrollImage->setBackgroundRole(QPalette::Dark);
+    scrollImage->setWidget(realImL);
 
-	segImage = QImage ( realImage.width(), realImage.height(), QImage::Format_RGB32);
+	scrollSeg = new QScrollArea;
+	scrollSeg->setBackgroundRole(QPalette::Dark);
+	scrollSeg->setWidget(segImL);
+
+    ui->scrollLayout->addWidget(scrollImage);
+	ui->scrollLayout->addWidget(scrollSeg);	
+
+	segImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
 	segImage.fill(0);
-	realImage = QImage ( realImage.width(), realImage.height(), QImage::Format_RGB32);
+	realImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
 	realImage.fill(0);
 	realImL->setPixmap(QPixmap::fromImage(realImage));
-	realImL->setStyleSheet("border: 3px solid grey");
+	//realImL->setStyleSheet("border: 3px solid grey");
 	segImL->setPixmap(QPixmap::fromImage(segImage));
-	segImL->setStyleSheet("border: 3px solid grey");
+	//segImL->setStyleSheet("border: 3px solid grey");
 
 	takeSnapshot = false;
 	rScale=iScale=1;
-	//qDebug() << realImL->pixmap()->size();
-	ui->scrollImage->resize(rScale*realImL->pixmap()->size());
-	ui->scrollSeg->resize(iScale*segImL->pixmap()->size());
+	zoomInScale=1.1;
+	zoomOutScale=0.9;
+	
+	realImL->resize(rScale*realImL->pixmap()->size());
+	segImL->resize(iScale*segImL->pixmap()->size());
+	
+    adjustScrollBar(scrollImage->horizontalScrollBar(), rScale);
+    adjustScrollBar(scrollImage->verticalScrollBar(), rScale);
+	adjustScrollBar(scrollSeg->horizontalScrollBar(), iScale);
+	adjustScrollBar(scrollSeg->verticalScrollBar(), iScale);
 
-	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
-    adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);
-	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
-	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);
+	ui->pbZoutReal->setEnabled(false);
+	ui->pbZoutSeg->setEnabled(false);
+
 
 	connect(ui->pbOrange, SIGNAL(clicked()), this, SLOT(pbOrangePressed()));
 	connect(ui->pbGreen, SIGNAL(clicked()), this, SLOT(pbGreenPressed()));
@@ -75,14 +91,16 @@ KccHandler::KccHandler(QWidget *parent) :
     this->connect(realImL, SIGNAL(clicked(QMouseEvent*)), SLOT(clickedImage(QMouseEvent*)));
 	this->connect(segImL, SIGNAL(clicked(QMouseEvent*)), SLOT(clickedImage(QMouseEvent*)));
 	connect(ui->pbUndo, SIGNAL(clicked()), this, SLOT(undoPressed()));
-	connect(ui->rSpin, SIGNAL(valueChanged(double)), this, SLOT(realZoom(double)));
-	connect(ui->sSpin, SIGNAL(valueChanged(double)), this, SLOT(segZoom(double)));
     connect(ui->pbSnapshot, SIGNAL(clicked()), this, SLOT(pbSnapshotPressed()));
 	connect(ui->pbSaveTemp, SIGNAL(clicked()), this, SLOT(tempSave()));
 	connect(ui->pbOpenTemp, SIGNAL(clicked()), this, SLOT(tempOpen()));
 	connect(ui->pbSave, SIGNAL(clicked()), this, SLOT(segSave()));
 	connect(ui->pbOpen, SIGNAL(clicked()), this, SLOT(segOpen()));
 	connect(ui->pbClear, SIGNAL(clicked()), this, SLOT(clearColorTable()));
+	connect(ui->pbZinSeg, SIGNAL(clicked()), this, SLOT(segZoomIn()));
+	connect(ui->pbZoutSeg, SIGNAL(clicked()), this, SLOT(segZoomOut()));
+	connect(ui->pbZinReal, SIGNAL(clicked()), this, SLOT(realZoomIn()));
+	connect(ui->pbZoutReal, SIGNAL(clicked()), this, SLOT(realZoomOut()));
 	
 	
 	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableKCCHosts, SLOT(addComboBoxItem(QString, QString)));
@@ -102,7 +120,6 @@ KccHandler::KccHandler(QWidget *parent) :
 	basicSegColors[whiteColor] = qRgb(255,255,255);
 	choosedColor = orangeColor;
 	//qDebug() << qRed(basicSegColors[yellowColor]) <<qGreen(basicSegColors[yellowColor]) <<qBlue(basicSegColors[yellowColor]);
-
 	
 	yuvColorTableOld = (unsigned char***) malloc(256*sizeof(unsigned char**));
 	yuvColorTable = (unsigned char***) malloc(256*sizeof(unsigned char**));
@@ -291,18 +308,58 @@ void KccHandler::clearColorTable(){
 	}
 }
 
-void KccHandler::realZoom(double sca){
-	rScale = sca;
-	realImL->resize(rScale*QPixmap::fromImage(realImage).size());
-	adjustScrollBar(ui->scrollImage->horizontalScrollBar(), rScale);
-	adjustScrollBar(ui->scrollImage->verticalScrollBar(), rScale);
+void KccHandler::realZoomIn(){
+    rScale *= zoomInScale;
+    realImL->resize(rScale * realImL->pixmap()->size());
+
+    adjustScrollBar(scrollImage->horizontalScrollBar(), rScale);
+    adjustScrollBar(scrollImage->verticalScrollBar(), rScale);
+
+    if(rScale >=3)
+		ui->pbZinReal->setEnabled(false);
+	ui->pbZoutReal->setEnabled(true);
+	realImL->show();
 }
 
-void KccHandler::segZoom(double sca){
-	iScale = sca;
-	segImL->resize(iScale*QPixmap::fromImage(realImage).size());
-	adjustScrollBar(ui->scrollSeg->horizontalScrollBar(), iScale);
-	adjustScrollBar(ui->scrollSeg->verticalScrollBar(), iScale);
+void KccHandler::realZoomOut(){
+    rScale *= zoomOutScale;
+    realImL->resize(rScale * realImL->pixmap()->size());
+
+    adjustScrollBar(scrollImage->horizontalScrollBar(), rScale);
+    adjustScrollBar(scrollImage->verticalScrollBar(), rScale);
+
+    if(rScale <1)
+		ui->pbZoutReal->setEnabled(false);
+	ui->pbZinReal->setEnabled(true);
+	realImL->show();
+}
+
+void KccHandler::segZoomIn(){
+    iScale *= zoomInScale;
+    segImL->resize(iScale * segImL->pixmap()->size());
+
+    adjustScrollBar(scrollSeg->horizontalScrollBar(), iScale);
+    adjustScrollBar(scrollSeg->verticalScrollBar(), iScale);
+
+    if(iScale >=3)
+		ui->pbZinSeg->setEnabled(false);
+	ui->pbZoutSeg->setEnabled(true);
+	segImL->show();
+
+}
+
+void KccHandler::segZoomOut(){
+    iScale *= zoomOutScale;
+    segImL->resize(iScale * segImL->pixmap()->size());
+
+    adjustScrollBar(scrollSeg->horizontalScrollBar(), iScale);
+    adjustScrollBar(scrollSeg->verticalScrollBar(), iScale);
+
+	if(iScale <1)
+		ui->pbZoutSeg->setEnabled(false);
+	ui->pbZinSeg->setEnabled(true);
+	segImL->show();
+
 }
 
 void KccHandler::tempSave(){
@@ -317,7 +374,6 @@ void KccHandler::tempSave(){
 void KccHandler::tempOpen(){
 	ifstream myReadFile;
 	myReadFile.open("temp.kcc");
-	char output[100];
 	if (myReadFile.is_open()) {
 		for(int i=0;i<256;i++)
 			for(int j=0;j<256;j++)
@@ -328,13 +384,6 @@ void KccHandler::tempOpen(){
 
 void KccHandler::segSave(){
 	KCC::createColortable("322","test at home",yuvColorTable);
-	for(int i=0;i<255;i++){
-		for(int j=0;j<255;j++){
-			for(int z=0;z<255;z++){
-				yuvColorTable[i][j][z] = blackColor;
-			}
-		}
-	}
 }
 
 void KccHandler::segOpen(){
