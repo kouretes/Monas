@@ -34,7 +34,7 @@ unsigned char calculatePixel(unsigned char yuv[3])
 int main( int argc, char *argv[] )
 {
   std::cout << "..::: KC3Table :::.." << std::endl;
-  string dimensions="411";
+  string dimensions="422";
   string output="segmentation.conf";
   int yres,ures,vres;
   struct SegHeader header;
@@ -52,10 +52,10 @@ int main( int argc, char *argv[] )
   cout<<argc<<endl;
      // checking options
   while( i < argc ) {
-//    if ( argv[i][0] != '-' ) return usage( argv[0] );
-	//cout<<"|"<<string(argv[i])<<"|"<<endl;
-    if ( std::string( argv[i] ) == "-d" )        dimensions          = std::string( argv[++i] );
-    else if ( std::string( argv[i] ) == "-o" )       output        = string( argv[++i] );
+    if ( std::string( argv[i] ) == "-d" )
+    	dimensions = std::string( argv[++i] );
+    else if ( std::string( argv[i] ) == "-o" )
+    	output = string( argv[++i] );
     i++;
   }
   

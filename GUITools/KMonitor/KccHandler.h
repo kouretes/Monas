@@ -14,10 +14,10 @@
 #include <QFileDialog>
 #include <QScrollBar>
 #include <QString>
+#include <fstream>
 #include "KccLabel.h"
 #include "LWRemoteHosts.h"
 #include "messages/Kimage.pb.h"
-
 using namespace std;
 
 namespace Ui {
@@ -34,7 +34,6 @@ class KccHandler : public QWidget
 	};
 public:
 	static const unsigned int MAX_UNDO = 10;
-	static const unsigned int THRESHOLD = 10*10;
 	char orangeColor;// = 'o';
 	char greenColor;// = 'g';
 	char yellowColor;// = 'y';
@@ -75,6 +74,11 @@ public slots:
     void pbBlackPressed();
 	void undoPressed();
 	void pbSnapshotPressed();
+	void tempSave();
+	void tempOpen();
+	void segSave();
+	void segOpen();
+	void clearColorTable();
 	void realZoom(double sca);
 	void segZoom(double sca);
 	void changeImage(KRawImage rawImage, QString hostId);
@@ -86,8 +90,8 @@ private:
 	int heightInPixels;
 	int widthmult2;
 
-	char ***yuvColorTable;
-	char ***yuvColorTableOld;
+	unsigned char ***yuvColorTable;
+	unsigned char ***yuvColorTableOld;
 	//map<QRgb,char> rgbMap;
 	QYuv yuvRealImage[480][640];
 	map<char,QRgb> basicSegColors;
