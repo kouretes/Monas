@@ -133,7 +133,7 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 
 	for(int i=0;i<256;i++)
 		for(int j=0;j<256;j++)
-			for(int z=0;j<256;j++)
+			for(int z=0;z<256;z++)
  				*(yuvColorTableOld->ctableAccessDirect(i,j,z)) = *(yuvColorTable->ctableAccessDirect(i,j,z));
 	int threshold = ui->theshSpinBox->value();
 	threshold = threshold*threshold;
@@ -388,11 +388,12 @@ void KccHandler::segSave(){
 void KccHandler::segOpen(){
 	//delete yuvColorTable;
 	ifstream myReadFile;
+	undoVector.clear();
 	QString filename = QFileDialog::getOpenFileName(this,tr("Open Segmentation File"), QDir::currentPath(), tr("Segmentation Files (*.conf)"));
 	myReadFile.open(filename.toStdString().c_str());
 	if(myReadFile.is_open()){
 		yuvColorTable = new KSegmentator(myReadFile);
-		yuvColorTable->setLumaScale(curLuminance);
+		yuvColorTable->setLumaScale(powf(curLuminance,0.45));
 	}
 	myReadFile.close();	
 }
