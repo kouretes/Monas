@@ -290,6 +290,13 @@ void KSegmentator::writeFile(std::ofstream &of,const std::string  comment) const
 			}
 
 }
+
+KSegmentator::~KSegmentator()
+{
+	if(ctable)
+		free(ctable);
+
+}
 KSegmentator::KSegmentator(int nyres,int nures,int nvres)
 {
 

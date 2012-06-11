@@ -37,6 +37,8 @@ class KSegmentator{
 		 */
 		KSegmentator(int yres,int ures,int vres);
 
+		~KSegmentator();
+
 		void writeFile(std::ofstream &of,std::string const comment) const;
 		/**
         * Set Luminace scale of the environtment, to account for
