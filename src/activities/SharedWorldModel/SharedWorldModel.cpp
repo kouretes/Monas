@@ -70,7 +70,7 @@ int SharedWorldModel::Execute() {
                 bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
                 by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
                 bd[0] = sqrt(pow(bx,2)+pow(by,2));
-                Logger::Instance().WriteMsg("SharedWorldModel", "My bd " + _toString(bd[0]) + " bx " + _toString(bx) + " by " + _toString(by), Logger::Info);
+//                Logger::Instance().WriteMsg("SharedWorldModel", "My bd " + _toString(bd[0]) + " bx " + _toString(bx) + " by " + _toString(by), Logger::Info);
             }
 
             //Find the robot which is closer to the ball and publish the corresponding message
