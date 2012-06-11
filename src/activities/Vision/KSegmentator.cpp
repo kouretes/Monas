@@ -2,7 +2,7 @@
 #include "tools/logger.h"
 #include <iostream>
 
-#include "hal/robot/generic_nao/aldebaran-visiondefinitions.h"
+//#include "../../hal/robot/generic_nao/aldebaran-visiondefinitions.h"
 
 using namespace std;
 #define max(x,y) ((x)>(y))?(x):(y)
@@ -317,7 +317,7 @@ KSegmentator::KSegmentator(int nyres,int nures,int nvres)
 		for (u=0;u<usize;u++)
 			for (v=0;v<vsize;v++)
 			{
-				*(nctable+y+u*ysize+v*usize*ysize)=0;
+				*(nctable+y+u*ysize+v*usize*ysize)=black;
 
 			}
 	ctable=nctable;
