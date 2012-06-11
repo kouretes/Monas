@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="GWSTab">
        <attribute name="title">
@@ -38,9 +38,6 @@
             <property name="mouseTracking">
              <bool>false</bool>
             </property>
-            <attribute name="headerCascadingSectionResizes">
-             <bool>true</bool>
-            </attribute>
             <attribute name="headerCascadingSectionResizes">
              <bool>true</bool>
             </attribute>
@@ -253,7 +250,7 @@
       </widget>
       <widget class="KccHandler" name="KCCTab">
        <attribute name="title">
-        <string>KCC Beta !</string>
+        <string>Toumpaniasmeno KCC</string>
        </attribute>
       </widget>
      </widget>

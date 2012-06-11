@@ -70,6 +70,13 @@ class KSegmentator{
 			return * ctableAccess(v,u,y);
         }
 
+         //Direct access to the colortable
+        inline  colormask_t  * ctableAccessDirect( const unsigned char v, const unsigned char u, const unsigned char y)
+        {
+        	//y>>=yres;u>>=ures;v>>=vres;
+			//return ctable + y + u*ysize+v*ysize*usize;
+        	return ctable+unsigned(y>>yres)+unsigned((u>>ures)<<(8-yres))+unsigned((v>>vres)<<(16-yres-ures));
+        }
          //This does the job
         inline colormask_t classifyNoPrecheck(unsigned char  y, unsigned char  u , unsigned  char   v) const
         {

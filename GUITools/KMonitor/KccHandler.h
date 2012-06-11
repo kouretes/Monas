@@ -36,13 +36,13 @@ class KccHandler : public QWidget
 public:
 	static const unsigned int MAX_UNDO = 10;
 	static const float gammaExposure = 0.45;
-	char orangeColor;// = 'o';
-	char greenColor;// = 'g';
-	char yellowColor;// = 'y';
-	char whiteColor;// = 'w';
-	char redColor;// = 'r';
-	char blueColor;// = 'u';//From magic the gathering :P
-	char blackColor;// = 'b';
+	unsigned char orangeColor;// = 'o';
+	unsigned char greenColor;// = 'g';
+	unsigned char yellowColor;// = 'y';
+	unsigned char whiteColor;// = 'w';
+	unsigned char redColor;// = 'r';
+	unsigned char blueColor;// = 'u';//From magic the gathering :P
+	unsigned char blackColor;// = 'b';
 
 public:
     explicit KccHandler(QWidget *parent = 0);
@@ -54,6 +54,9 @@ private:
 	void adjustScrollBar(QScrollBar *scrollBar, double factor);
 	void transformYUVtoRGB(const char *yuvImage, QImage *rgbImage);
 	int distance(QYuv a,QYuv b);
+	unsigned char adjustY(unsigned char y);
+	unsigned char adjustU(unsigned char u);
+	unsigned char adjustV(unsigned char v);
 signals:
 	void NewHostAdded(QString,QString);
 	void OldHostRemoved(QString);
@@ -76,8 +79,6 @@ public slots:
     void pbBlackPressed();
 	void undoPressed();
 	void pbSnapshotPressed();
-	void tempSave();
-	void tempOpen();
 	void segSave();
 	void segOpen();
 	void clearColorTable();
@@ -96,17 +97,13 @@ private:
 	float lumaScale;
 	float curLuminance;
 	KSegmentator *yuvColorTable,*yuvColorTableOld;
-	//unsigned char ***yuvColorTable;
-	//unsigned char ***yuvColorTableOld;
 	
-	//map<QRgb,char> rgbMap;
 	QYuv yuvRealImage[480][640];
-	map<char,QRgb> basicSegColors;
-	//char basicSegColorsChars[7];
+	map<unsigned char,QRgb> basicSegColors;
 
-	char choosedColor;
+	unsigned char choosedColor;
 
-	vector<map<QYuv,char> > undoVector;
+	vector<map<QYuv,unsigned char> > undoVector;
 	bool takeSnapshot;
     KccLabel* realImL,* segImL;
     LWRemoteHosts* availableKCCHosts;
