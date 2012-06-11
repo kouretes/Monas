@@ -34,7 +34,7 @@ public:
 	void ACTIVITY_VISIBLE UserInit();
 	void Reset(int,bool);
 	void process_messages();
-	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbigiusObservations);
+	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observations, vector<KObservationModel> & AmbiguousObservations);
 	void RobotPositionMotionModel(KMotionModel & MModel);
 	std::string ACTIVITY_VISIBLE GetName()
 	{
@@ -52,13 +52,12 @@ private:
 	belief mypos;
 
 	vector<KObservationModel> currentObservation;
-	vector<KObservationModel> currentAbigiusObservation;
+	vector<KObservationModel> currentAmbiguousObservation;
 	KMotionModel robotmovement;
 
 	partcl TrackPoint;
 	partcl TrackPointRobotPosition;
 
-	int leftright;
 	float headpos;
 	LocalizationData DebugData;
 	LocalizationDataForGUI DebugDataForGUI;
@@ -72,7 +71,6 @@ private:
 	BallTrackMessage lastballseen;
 	BallFilter myBall;
 
-	MotionHeadMessage hmot;
 	MotionWalkMessage wmot;
 	partcl target;
 

@@ -7,8 +7,7 @@
 
 
 #include <time.h>
-#include "tools/toString.h"
-#include "hal/robot/generic_nao/KImage.h"
+#include "../../hal/robot/generic_nao/KImage.h"
 
 
 
@@ -45,6 +44,9 @@ class KSegmentator{
         * luminance variations (ie exposure differences from ideal)
         */
 		void setLumaScale(float s);
+		float getLumaScale(){
+			return lumascale;
+		}
 
 		//This does the job
         inline colormask_t classifyWithPrecheck(unsigned char  y, unsigned char  u , unsigned  char   v, colormask_t const hint) const

@@ -21,6 +21,7 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 		KGraphicsView.cpp KFieldScene.cpp GraphicalRobotElement.cpp LWElementList.cpp
 		LMElementList.cpp KMapView.cpp KMapScene.cpp KLabel.cpp KRobotView.cpp LVElementList.cpp
 		KccHandler.cpp KccLabel.cpp
+		../../src/activities/Vision/KSegmentator.cpp
 		../../src/hal/generic_linux/syscall.cpp
 		../../src/messages/Network.pb.cc
 		../../src/messages/VisionObservations.pb.cc
@@ -35,7 +36,8 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 	)
 SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
 		GraphicalRobotElement.h LWElementList.h LMElementList.h KMapView.h KLabel.h LVElementList.h 
-		KccHandler.h KccLabel.h kc3table.h) 
+		KccHandler.h KccLabel.h 
+		../../src/activities/Vision/KSegmentator.h) 
 SET( KMonitor_FORMS KMonitor.ui KccHandler.ui)
 SET( KMonitor_RESOURCES GuiResources.qrc )
 

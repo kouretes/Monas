@@ -18,6 +18,7 @@
 #include "KccLabel.h"
 #include "LWRemoteHosts.h"
 #include "messages/Kimage.pb.h"
+#include "../../src/activities/Vision/KSegmentator.h"
 using namespace std;
 
 namespace Ui {
@@ -34,6 +35,7 @@ class KccHandler : public QWidget
 	};
 public:
 	static const unsigned int MAX_UNDO = 10;
+	static const float gammaExposure = 0.45;
 	char orangeColor;// = 'o';
 	char greenColor;// = 'g';
 	char yellowColor;// = 'y';
@@ -91,9 +93,12 @@ private:
 	int widthInPixels;
 	int heightInPixels;
 	int widthmult2;
-
-	unsigned char ***yuvColorTable;
-	unsigned char ***yuvColorTableOld;
+	float lumaScale;
+	float curLuminance;
+	KSegmentator *yuvColorTable,*yuvColorTableOld;
+	//unsigned char ***yuvColorTable;
+	//unsigned char ***yuvColorTableOld;
+	
 	//map<QRgb,char> rgbMap;
 	QYuv yuvRealImage[480][640];
 	map<char,QRgb> basicSegColors;

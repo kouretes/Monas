@@ -1,6 +1,6 @@
 #include "KccHandler.h"
 #include "ui_KccHandler.h"
-#include "kc3table.h"
+
 
 KccHandler::KccHandler(QWidget *parent) :
     QWidget(parent),
@@ -10,13 +10,13 @@ KccHandler::KccHandler(QWidget *parent) :
 
 	availableKCCHosts = new LWRemoteHosts(ui->KCComboBox);
 
-	orangeColor = 'o';
-	greenColor = 'g';
-	yellowColor = 'y';
-	whiteColor = 'w';
-	redColor = 'r';
-	blueColor = 'u';//From magic the gathering :P
-	blackColor = 'b';
+	orangeColor = 32;
+	greenColor = 4;
+	yellowColor = 16;
+	whiteColor = 64;
+	redColor = 1;
+	blueColor = 2;//From magic the gathering :P
+	blackColor = 128;
 
 	A=1.4075;B=0.3455;C=0.7169;D=1.7790;
 	widthInPixels = 640;
@@ -121,24 +121,10 @@ KccHandler::KccHandler(QWidget *parent) :
 	choosedColor = orangeColor;
 	//qDebug() << qRed(basicSegColors[yellowColor]) <<qGreen(basicSegColors[yellowColor]) <<qBlue(basicSegColors[yellowColor]);
 	
-	yuvColorTableOld = (unsigned char***) malloc(256*sizeof(unsigned char**));
-	yuvColorTable = (unsigned char***) malloc(256*sizeof(unsigned char**));
-	for (int i = 0; i < 256; i++){
-		yuvColorTableOld[i] = (unsigned char**) malloc(256*sizeof(unsigned char*));
-		yuvColorTable[i] = (unsigned char**) malloc(256*sizeof(unsigned char*));
-		for (int j = 0; j < 256; j++){
-			yuvColorTableOld[i][j] = (unsigned char*) malloc(256*sizeof(unsigned char));
-			yuvColorTable[i][j] = (unsigned char*) malloc(256*sizeof(unsigned char));
-		}
-	}
-
-	for(int i=0;i<255;i++){
-		for(int j=0;j<255;j++){
-			for(int z=0;z<255;z++){
-				yuvColorTable[i][j][z] = blackColor;
-			}
-		}
-	}
+	
+	
+	yuvColorTable = new KSegmentator(3,2,2);
+	yuvColorTableOld = new KSegmentator(3,2,2);
 }
 
 void KccHandler::clickedImage(QMouseEvent* ev){
@@ -146,26 +132,23 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 	x = ((int) ev->x()*realImage.width()/((KccLabel *)sender())->width());
 	y = ((int) ev->y()*realImage.height()/((KccLabel *)sender())->height());
 
-	//memcpy(rgbColorTableOld,rgbColorTable,sizeof(rgbColorTable));
-	for(int i=0;i<255;i++){
-		for(int j=0;j<255;j++){
-			for(int z=0;z<255;z++){
-				yuvColorTableOld[i][j][z] = yuvColorTable[i][j][z];
-			}
-		}
-	}
+
+	*yuvColorTableOld = *yuvColorTable;
+
 	int threshold = ui->theshSpinBox->value();
 	threshold = threshold*threshold;
 	int pixNum = ui->pixelSpinBox->value()-1;
 	map<QYuv,char> undo;
 	//vector<QRgb> allColors;
+	
+	lumaScale = yuvColorTable->getLumaScale();
 	QYuv b;
     for(int px=-pixNum;px<pixNum+1;px++){
         for(int py=-pixNum;py<pixNum+1;py++){
             if(x+px>=0 && y+py>=0 && x+px<=widthInPixels && y+py<=heightInPixels){
 				QYuv temp = yuvRealImage[y+py][x+px];
-				undo[temp] = yuvColorTableOld[temp.y][temp.u][temp.v];
-				yuvColorTable[temp.y][temp.u][temp.v]=choosedColor;
+				undo[temp] = yuvColorTableOld->classifyNoPrecheck(temp.y, temp.u, temp.v);
+				*(yuvColorTable->ctableAccess(temp.y/lumaScale, temp.u/lumaScale, temp.v/lumaScale))=choosedColor;		
 				for(int ty = -10;ty<11;ty++){
 					b.y = temp.y+ty;
 					if(b.y>=0 && b.y < 256){
@@ -175,8 +158,8 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 								for(int tv = -10;tv<11;tv++){
 									b.v = temp.v+tv;
 									if(b.v>=0 && b.v < 256 && distance(temp,b)<=threshold){
-										undo[b] = yuvColorTableOld[b.y][b.u][b.v];
-										yuvColorTable[b.y][b.u][b.v]=choosedColor;		
+										undo[b] = yuvColorTableOld->classifyNoPrecheck(b.y, b.u, b.v);
+										*(yuvColorTable->ctableAccess(b.y/lumaScale, b.u/lumaScale, b.v/lumaScale))=choosedColor;		
 									}
 								}
 							}
@@ -189,7 +172,7 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 	for(int i=0;i<widthInPixels;i++){
 		for(int j=0;j<heightInPixels;j++){
 			QYuv temp = yuvRealImage[j][i];
-			segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
+			segImage.setPixel(i,j,basicSegColors[yuvColorTable->classifyNoPrecheck(temp.y, temp.u, temp.v)]);
 		}
 	}
 	undoVector.push_back(undo);
@@ -211,12 +194,12 @@ void KccHandler::undoPressed(){
 		int size = undoList.size();
 		for(map<QYuv,char>::iterator iter = undoList.begin();iter!=undoList.end();iter++){
 			temp = (*iter).first;
-			yuvColorTable[temp.y][temp.u][temp.v] = (*iter).second;
+			*(yuvColorTable->ctableAccess(temp.y/lumaScale, temp.u/lumaScale, temp.v/lumaScale)) = (*iter).second;
 		}
 		for(int j=0;j<heightInPixels;j++){
 			for(int i=0;i<widthInPixels;i++){
 				temp = yuvRealImage[j][i];
-				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
+				segImage.setPixel(i,j,basicSegColors[yuvColorTable->classifyNoPrecheck(temp.y, temp.u, temp.v)]);
 			}
 		}
 		segImL->setPixmap(QPixmap::fromImage(segImage));
@@ -230,6 +213,9 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 	int channels = rawImage.bytes_per_pix();
 	if((ui->rbLiveVideo->isChecked() || takeSnapshot) && tempWidth == widthInPixels && tempHeight == heightInPixels && channels ==2){
 		takeSnapshot = false;
+		curLuminance = rawImage.luminance_scale();
+		yuvColorTable->setLumaScale(powf(curLuminance,0.45));
+		
 		segImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
 		segImage.fill(0);
 		realImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
@@ -240,7 +226,7 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 		for(int i=0;i<widthInPixels;i++){
 			for(int j=0;j<heightInPixels;j++){
 				temp = yuvRealImage[j][i];
-				segImage.setPixel(i,j,basicSegColors[yuvColorTable[temp.y][temp.u][temp.v]]);
+				segImage.setPixel(i,j,basicSegColors[yuvColorTable->classifyNoPrecheck(temp.y, temp.u, temp.v)]);
 			}
 		}
 		segImL->setPixmap(QPixmap::fromImage(segImage));
@@ -302,7 +288,7 @@ void KccHandler::clearColorTable(){
 	for(int i=0;i<255;i++){
 		for(int j=0;j<255;j++){
 			for(int z=0;z<255;z++){
-				yuvColorTable[i][j][z] = blackColor;
+				*(yuvColorTable->ctableAccess(i,j,z)) = blackColor;
 			}
 		}
 	}
@@ -367,7 +353,8 @@ void KccHandler::tempSave(){
 	myfile.open ("temp.kcc");
 	for(int i=0;i<256;i++)
 		for(int j=0;j<256;j++)
-			myfile << yuvColorTable[i][j];
+			for(int z=0;j<256;j++)
+			myfile << yuvColorTable->classifyNoPrecheck(i, j, z);
 	myfile.close();
 }
 
@@ -377,17 +364,32 @@ void KccHandler::tempOpen(){
 	if (myReadFile.is_open()) {
 		for(int i=0;i<256;i++)
 			for(int j=0;j<256;j++)
- 				myReadFile.read((char *)yuvColorTable[i][j],256);
+				for(int z=0;j<256;j++)
+ 					myReadFile.read((char*)(yuvColorTable->ctableAccess(i,j,z)),1);
 	}
 	myReadFile.close();
 }
 
 void KccHandler::segSave(){
-	KCC::createColortable("322","test at home",yuvColorTable);
+	QString filename = QFileDialog::getSaveFileName(this,tr("Save Segmentation File"), QDir::currentPath(), tr("Documents (*.conf)"));
+	ofstream myfile;
+	myfile.open(filename.toStdString().c_str());
+	if(myfile.is_open()){
+		yuvColorTable->writeFile(myfile,"Tipote pros to paron");
+	}
+	myfile.close();	
 }
 
 void KccHandler::segOpen(){
-
+	delete yuvColorTable;
+	ifstream myReadFile;
+	QString filename = QFileDialog::getOpenFileName(this,tr("Open Segmentation File"), QDir::currentPath(), tr("Segmentation Files (*.conf)"));
+	myReadFile.open(filename.toStdString().c_str());
+	if(myReadFile.is_open()){
+		yuvColorTable = new KSegmentator(myReadFile);
+		yuvColorTable->setLumaScale(curLuminance);
+	}
+	myReadFile.close();	
 }
 
 void KccHandler::pbOrangePressed(){
