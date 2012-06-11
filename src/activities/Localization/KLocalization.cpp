@@ -703,7 +703,7 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 		Particles.Weight[p] = totalWeight;
 	}
 }
-void KLocalization::Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles){
+void KLocalization::Update_Ambiguous(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles){
 	//	 Function to update the weights of each particle regarding the ObservationDistance
 	//	 from an object and the direction
 	double OverallWeight, ParticlePointBearingAngle, ParticleBearing, Deviation,ParticlePointBearingAngleS, ParticleBearingS;
@@ -870,6 +870,12 @@ Uniform 	U;
 	return Index;
 }
 
+void KLocalization::Resample(parts & Particles, int *Index, int param)
+{
+	//ResampleSWR(Particles, Index);
+	multinomialR(Particles, Index);
+}
+
 //AUTHORS  : Arnaud Doucet and Nando de Freitas - for the acknowledgement.
 int * KLocalization::multinomialR(parts & Particles, int *Index)
 { // (inIndex,q);
@@ -930,13 +936,6 @@ float KLocalization::ESS(parts &Particles)
 	//ESS
 	return (float) 1.0f / (1.0f + cv);
 
-}
-
-void KLocalization::Resample(parts & Particles, int *Index, int param)
-{
-	//ResampleSWR(Particles, Index);
-
-	multinomialR(Particles, Index);
 }
 
 ///Normalizes and Returns ESS effective Sample size;

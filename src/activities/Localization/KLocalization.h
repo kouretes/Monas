@@ -71,14 +71,7 @@ typedef struct ftr {
 		BearignErrorDevParams = NULL;
 	}
 	//Parameterized Constructor
-	ftr(double x_, double y_, string id_, double weight_, short CntDistErrorDevParams_, short CntBearErrorDevParams_, double *DistErrorDevParams_, double*BearignErrorDevParams_, short CntDistErrorMeanParams_, short CntBearErrorMeanParams_, double *DistErrorMeanParams_, double*BearignErrorMeanParams_) {
-
-		set(x_, y_, id_, weight_, CntDistErrorDevParams_, CntBearErrorDevParams_, DistErrorDevParams_, BearignErrorDevParams_, CntDistErrorMeanParams_, CntBearErrorMeanParams_, DistErrorMeanParams_, BearignErrorMeanParams_);
-
-	}
-
 	void set(double x_, double y_, string id_, double weight_, short CntDistErrorDevParams_, short CntBearErrorDevParams_, double *DistErrorDevParams_, double*BearignErrorDevParams_, short CntDistErrorMeanParams_, short CntBearErrorMeanParams_, double *DistErrorMeanParams_, double*BearignErrorMeanParams_) {
-
 		id = id_;
 		x = x_;
 		y = y_;
@@ -189,15 +182,6 @@ typedef struct rvar {
 		ratiomean = 0;
 		ratiodev =0 ;
 	}
-
-	rvar(double val_, double mean_, double dev_) {
-		set(val_, mean_, dev_);
-	}
-	void set(double val_, double mean_, double dev_) {
-		val = val_;
-		Emean = mean_;
-		Edev = dev_;
-	}
 	//operator to export data
 	// friend ostream &operator<<(ostream &stream, struct rvar obj);
 	friend ostream &operator<<(ostream &stream, struct rvar obj) {
@@ -238,13 +222,6 @@ typedef struct blf {
 	double theta;
 	double confidence;
 	double weightconfidence;
-	blf() {
-		x = 0.0;
-		y = 0.0;
-		theta = 0.0;
-		confidence = 0.0;
-		weightconfidence = 0.0;
-	}
 } belief;
 
 class KLocalization {
@@ -321,7 +298,7 @@ public:
 	///Basic SIR functions
 	void Predict(parts &Particles, KMotionModel & MotionModel);
 	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles);
-	void Update_Ambigius(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
+	void Update_Ambiguous(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
 	//Not used with 2 yellow goals
 	//void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 
@@ -377,33 +354,6 @@ public:
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	double rad2deg(double rad) {
 		return (rad * 180 / M_PI);
-	}
-
-	float randfloat() {
-
-		return rand() / (float(RAND_MAX)/* + 1*/);
-	}
-
-	//generates a psuedo-random float between 0.0 and max
-	float randfloat(float max) {
-		return randfloat() * max;
-	}
-
-	//generates a psuedo-random float between min and max
-	double randdouble(double min, double max) {
-		if (min > max) {
-			return drand48() * (min - max) + max;
-		} else {
-			return drand48() * (max - min) + min;
-		}
-	}
-	//generates a psuedo-random float between min and max
-	float randfloat(float min, float max) {
-		if (min > max) {
-			return randfloat() * (min - max) + max;
-		} else {
-			return randfloat() * (max - min) + min;
-		}
 	}
 };
 

@@ -47,11 +47,6 @@ void Localization::UserInit()
 	int max_bytedata_size = 100000;
 
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
-	leftright = 1;
-	headpos = 0;
-	hmot.set_command("setHead");
-	hmot.add_parameter(0.0f);
-	hmot.add_parameter(-0.66322512);
 
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -197,7 +192,7 @@ int Localization::Execute()
 		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
 
-	LocalizationStepSIR(robotmovement, currentObservation, currentAbigiusObservation);
+	LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x / 1000.0);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
@@ -356,65 +351,8 @@ void Localization::calculate_ball_estimate(KMotionModel const & robotModel)
 	}
 }
 
-void Localization::RobotPositionMotionModel(KMotionModel & MModel)
-{
-	if (count == 0)
-	{
-		TrackPointRobotPosition.x = PosX.sensorvalue() * 1000;
-		TrackPointRobotPosition.y = PosY.sensorvalue() * 1000;
-		TrackPointRobotPosition.phi = Angle.sensorvalue();
-
-		TrackPoint = TrackPointRobotPosition;
-	}
-	float XA = PosX.sensorvalue() * 1000;
-	float YA = PosY.sensorvalue() * 1000;
-	float AA = Angle.sensorvalue();
-	
-
-	float DX = (XA - TrackPointRobotPosition.x);
-	float DY = (YA - TrackPointRobotPosition.y);
-	float DR = anglediff2(AA, TrackPointRobotPosition.phi);
-
-	float robot_dist = DISTANCE_2(DX, DY);
-	float robot_dir = anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
-	float robot_rot = DR;
-
-	MModel.type = "ratio";
-	if (robot_dist > 500)
-	{
-		robot_dist = 0.0;
-		robot_dir = 0.000001;
-		robot_rot = 0.00001;
-	}
-	MModel.Distance.val = robot_dist;
-	MModel.Distance.ratiomean = 1.0;// systematic error out
-	MModel.Distance.ratiodev = 0.1;
-	MModel.Distance.Emean = 0.0;
-	MModel.Distance.Edev = 0.0;
-
-	MModel.Direction.val = robot_dir;
-	MModel.Direction.ratiomean = 1.0;// systematic error out
-	MModel.Direction.ratiodev = 0.0;
-	MModel.Direction.Emean = 0.0;// systematic error out
-	MModel.Direction.Edev = 0.034;//0.034 = 2 degrees
-
-	MModel.Rotation.val = robot_rot;
-	MModel.Rotation.ratiomean = 1.0;// systematic error out
-	MModel.Rotation.ratiodev = 0.2;
-	MModel.Rotation.Emean = 0.0;// systematic error out
-	MModel.Rotation.Edev = 0.0;
-
-	TrackPointRobotPosition.x = XA;
-	TrackPointRobotPosition.y = YA;
-	TrackPointRobotPosition.phi = AA;
-	//If u want edev change the klocalization file
-	TrackPoint.x += DX;
-	TrackPoint.y += DY;
-	TrackPoint.phi += DR;
-	//Logger::Instance().WriteMsg("Localization", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
-}
 //Sequential Importance Resampling
-belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbigiusObservations)
+belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
 {
 	//int iterations = 1;
 	int index[partclsNum];
@@ -443,8 +381,8 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		Update(SIRParticles, Observations, MotionModel, partclsNum);
 	}
 	else if(AmbigiusObservations.size()==1){
-		Update_Ambigius(SIRParticles, AmbigiusObservations, partclsNum);
-		//Update_Ambigius(SIRParticles,AmbigiusObservations,partclsNum);
+		Update_Ambiguous(SIRParticles, AmbiguousObservations, partclsNum);
+		//Update_Ambiguous(SIRParticles,AmbiguousObservations,partclsNum);
 	}*/
 
 
@@ -536,7 +474,7 @@ void Localization::process_messages()
 
 
 	currentObservation.clear();
-	currentAbigiusObservation.clear();
+	currentAmbiguousObservation.clear();
 	if(gsm != 0){
 		playerNumber = gsm->player_number();
 	}
@@ -571,7 +509,7 @@ void Localization::process_messages()
 
 				if( id.find("Yellow")!=string::npos){
 					tmpOM.Feature = (this)->KFeaturesmap["YellowLeft"];
-					currentAbigiusObservation.push_back(tmpOM);
+					currentAmbiguousObservation.push_back(tmpOM);
 				}
 
 				Logger::Instance().WriteMsg("Localization", "Unmatched Observation: "+id, Logger::Info);
@@ -595,6 +533,65 @@ void Localization::process_messages()
 		currentRobotAction = sm->type();
 	}
 
+}
+
+
+void Localization::RobotPositionMotionModel(KMotionModel & MModel)
+{
+	if (count == 0)
+	{
+		TrackPointRobotPosition.x = PosX.sensorvalue() * 1000;
+		TrackPointRobotPosition.y = PosY.sensorvalue() * 1000;
+		TrackPointRobotPosition.phi = Angle.sensorvalue();
+
+		TrackPoint = TrackPointRobotPosition;
+	}
+	float XA = PosX.sensorvalue() * 1000;
+	float YA = PosY.sensorvalue() * 1000;
+	float AA = Angle.sensorvalue();
+	
+
+	float DX = (XA - TrackPointRobotPosition.x);
+	float DY = (YA - TrackPointRobotPosition.y);
+	float DR = anglediff2(AA, TrackPointRobotPosition.phi);
+
+	float robot_dist = DISTANCE_2(DX, DY);
+	float robot_dir = anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
+	float robot_rot = DR;
+
+	MModel.type = "ratio";
+	if (robot_dist > 500)
+	{
+		robot_dist = 0.0;
+		robot_dir = 0.000001;
+		robot_rot = 0.00001;
+	}
+	MModel.Distance.val = robot_dist;
+	MModel.Distance.ratiomean = 1.0;// systematic error out
+	MModel.Distance.ratiodev = 0.1;
+	MModel.Distance.Emean = 0.0;
+	MModel.Distance.Edev = 0.0;
+
+	MModel.Direction.val = robot_dir;
+	MModel.Direction.ratiomean = 1.0;// systematic error out
+	MModel.Direction.ratiodev = 0.0;
+	MModel.Direction.Emean = 0.0;// systematic error out
+	MModel.Direction.Edev = deg2rad(2);
+
+	MModel.Rotation.val = robot_rot;
+	MModel.Rotation.ratiomean = 1.0;// systematic error out
+	MModel.Rotation.ratiodev = 0.2;
+	MModel.Rotation.Emean = 0.0;// systematic error out
+	MModel.Rotation.Edev = 0.0;
+
+	TrackPointRobotPosition.x = XA;
+	TrackPointRobotPosition.y = YA;
+	TrackPointRobotPosition.phi = AA;
+	//If u want edev change the klocalization file
+	TrackPoint.x += DX;
+	TrackPoint.y += DY;
+	TrackPoint.phi += DR;
+	//Logger::Instance().WriteMsg("Localization", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
 
 int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel)
