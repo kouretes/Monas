@@ -64,7 +64,7 @@ class KSegmentator{
 
 			//Well, it does. Look for it
 
-			return * ctableAccess(V_SCALESUB[v],U_SCALESUB[u],Y_SCALESUB[y]);
+			return * ctableAccess(v,u,y);
         }
 
          //This does the job
@@ -72,20 +72,22 @@ class KSegmentator{
         {
 			//Well, it does. Look for it
 
-			return * ctableAccess(V_SCALESUB[v],U_SCALESUB[u],Y_SCALESUB[y]);
+			return * ctableAccess(v,u,y);
         }
 
         inline  colormask_t  * ctableAccess( const unsigned char v, const unsigned char u, const unsigned char y)
         {
         	//y>>=yres;u>>=ures;v>>=vres;
 			//return ctable + y + u*ysize+v*ysize*usize;
-        	return ctable+(unsigned(y))+((unsigned(u))<<(8-yres))+((unsigned(v))<<(16-yres-ures));
+        	return ctable+(unsigned(Y_SCALESUB[y]))+
+					((unsigned(U_SCALESUB[u]))<<(8-yres))+((unsigned(V_SCALESUB[v]))<<(16-yres-ures));
         }
           inline  colormask_t const * ctableAccess( const unsigned char v, const unsigned char u, const unsigned char y) const
         {
         	//y>>=yres;u>>=ures;v>>=vres;
 			//return ctable + y + u*ysize+v*ysize*usize;
-        	return ctable+(unsigned(y))+((unsigned(u))<<(8-yres))+((unsigned(v))<<(16-yres-ures));
+        	return ctable+(unsigned(Y_SCALESUB[y]))+
+					((unsigned(U_SCALESUB[u]))<<(8-yres))+((unsigned(V_SCALESUB[v]))<<(16-yres-ures));
         }
 
 	private:

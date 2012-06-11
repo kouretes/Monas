@@ -246,7 +246,7 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 		for (int u=0;u<256;u++)
 			for (int y=0;y<256;y++)
 			{
-				colormask_t val=* (ctableAccess(V_SCALESUB[v],U_SCALESUB[u],Y_SCALESUB[y]));
+				colormask_t val=* (ctableAccess(v,u,y));
 				rYLUT[y>>LUTres]|=val;
 				rULUT[u>>LUTres]|=val;
 				rVLUT[v>>LUTres]|=val;
@@ -317,7 +317,7 @@ KSegmentator::KSegmentator(int nyres,int nures,int nvres)
 		for (u=0;u<usize;u++)
 			for (v=0;v<vsize;v++)
 			{
-				*(nctable+y+u*ysize+v*usize*ysize)=0;
+				*(nctable+y+u*ysize+v*usize*ysize)=black;
 
 			}
 	ctable=nctable;
