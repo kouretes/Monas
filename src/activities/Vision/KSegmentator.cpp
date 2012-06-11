@@ -212,7 +212,7 @@ KSegmentator::colormask_t ruleFileClassifyPixel(struct RuleSet const& r, unsigne
 
 KSegmentator::KSegmentator(std::ifstream &conf)
 {
-
+	lumascale=0;
 	conf.read(reinterpret_cast<char *>(&set),sizeof(set));
 
 	//Check that file is indeed Segmentation configuration
@@ -231,25 +231,26 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 	readComment(conf);
 	readCalibration(conf);
 	readColorInfo(conf);
-	for(int i=0 ;i<LUTsize;i++)
-	{
-		rYLUT[i]=rULUT[i]=rVLUT[i]=0;
-	}
+
 	if (set.ruletype=='R')
 		readRulefile(conf);
 	else if (set.ruletype=='C')
 		readColorTable(conf);
-	setLumaScale(1);//Default setting;
 
+	for(int i=0 ;i<LUTsize;i++)
+	{
+		rYLUT[i]=rULUT[i]=rVLUT[i]=0;
+	}
 	for (int v=0;v<256;v++)
 		for (int u=0;u<256;u++)
 			for (int y=0;y<256;y++)
 			{
-				colormask_t val=* (ctableAccess(v,u,y));
+				colormask_t val=* (ctableAccessDirect(v,u,y));
 				rYLUT[y>>LUTres]|=val;
 				rULUT[u>>LUTres]|=val;
 				rVLUT[v>>LUTres]|=val;
 			}
+	setLumaScale(1);//Default setting;
 
 }
 
@@ -299,6 +300,7 @@ KSegmentator::~KSegmentator()
 }
 KSegmentator::KSegmentator(int nyres,int nures,int nvres)
 {
+	lumascale=0;
 
 	set.ID[0]='K';
 	set.ID[1]='S';
