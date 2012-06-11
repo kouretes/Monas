@@ -220,7 +220,7 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 	if((ui->rbLiveVideo->isChecked() || takeSnapshot) && tempWidth == widthInPixels && tempHeight == heightInPixels && channels ==2){
 		takeSnapshot = false;
 		curLuminance = rawImage.luminance_scale();
-		yuvColorTable->setLumaScale(powf(curLuminance,0.45));
+		yuvColorTable->setLumaScale(powf(curLuminance,0.42));
 		lumaScale = yuvColorTable->getLumaScale();
 		
 		segImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
@@ -393,7 +393,7 @@ void KccHandler::segOpen(){
 	myReadFile.open(filename.toStdString().c_str());
 	if(myReadFile.is_open()){
 		yuvColorTable = new KSegmentator(myReadFile);
-		yuvColorTable->setLumaScale(powf(curLuminance,0.45));
+		yuvColorTable->setLumaScale(powf(curLuminance,0.42));
 	}
 	myReadFile.close();	
 }
