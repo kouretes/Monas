@@ -8,6 +8,8 @@
 #include "KSegmentator.h"
 
 
+#include "../../hal/robot/generic_nao/KImage.h"
+
 #include "messages/Kimage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -18,6 +20,7 @@
 
 //#define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
+
 
 #include <vector>
 #include <iostream>

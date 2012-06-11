@@ -2,7 +2,6 @@
 #include "tools/logger.h"
 #include <iostream>
 
-//#include "../../hal/robot/generic_nao/aldebaran-visiondefinitions.h"
 
 using namespace std;
 #define max(x,y) ((x)>(y))?(x):(y)
