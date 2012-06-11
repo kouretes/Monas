@@ -149,17 +149,21 @@ int Behavior::Execute() {
 
 			if (!readytokick) {
 			    //Define roles
-			    if(ClosestRobot()){
-			        role = ATTACKER;
-			    }
-			    else{
-                    role = CENTER_FOR;
-			    }
+                if(microsec_clock::universal_time() > lastrolechange + milliseconds(500)){
+                    if(ClosestRobot()){
+                        role = ATTACKER;
+                    }
+                    else{
+                        role = CENTER_FOR;
+                    }
+                    lastrolechange = microsec_clock::universal_time();
+                }
 	//		    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
                 approachBallRoleDependent(bx, by);
 
 				if (scanOK)
-					HeadScanStepSmart();
+                   HeadScanStepIntelligent();
+//					HeadScanStepSmart();
 			}
 		}
 
@@ -281,8 +285,8 @@ bool Behavior::ClosestRobot() {
     double epsx = 0.005, epsy = 0.005; // Desired precision
  	if(swim != 0)
         if(swim.get() != 0){
-            Logger::Instance().WriteMsg("SharedWorldModel", "Closest robot x: " + _toString(swim->playerclosesttoball().x()) +
-                                " y: " + _toString(swim->playerclosesttoball().y()), Logger::Info);
+//            Logger::Instance().WriteMsg("SharedWorldModel", "Closest robot x: " + _toString(swim->playerclosesttoball().x()) +
+//                                " y: " + _toString(swim->playerclosesttoball().y()), Logger::Info);
 
             double closest_robot_x = swim->playerclosesttoball().x();
             double closest_robot_y = swim->playerclosesttoball().y();
@@ -338,7 +342,7 @@ void Behavior::UpdateOrientationPlus()
 
 void Behavior::CheckForBall() {
 
-	double closeToBall = 6.0;
+	double closeToBall = 1.0;
 
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
@@ -600,7 +604,7 @@ void Behavior::HeadScanStepSmart() {
 
 void Behavior::HeadScanStepIntelligent() {
 
-	float bearing;
+    float bearing;
 	static enum {BALL1, OPPG, BALL2, OWNG} state = BALL1;
 
 	HeadYaw = allsm->jointdata(KDeviceLists::HEAD+KDeviceLists::YAW);
@@ -612,30 +616,36 @@ void Behavior::HeadScanStepIntelligent() {
 		waiting = 0;
 		switch (state) {
 			case BALL1:
-				targetYaw = lookAtPointYaw(robot_x+bx, robot_y+by);
-				targetPitch = lookAtPointPitch(robot_x+bx, robot_y+by);
+				targetYaw = lookAtPointRelativeYaw(bx, by);
+				targetPitch = lookAtPointRelativePitch(bx, by);
 				break;
 			case OPPG:
-				targetYaw = lookAtPointYaw(oppGoalX, oppGoalY);
-				targetPitch = lookAtPointPitch(oppGoalX, oppGoalY);
+				targetYaw = robot_phi - lookAtPointRelativeYaw(oppGoalX-robot_x, oppGoalY-robot_y);
+				targetYaw = (targetYaw<0) ? targetYaw - 0.2 : targetYaw + 0.2;
+				targetPitch = lookAtPointRelativePitch(oppGoalX-robot_x, oppGoalY-robot_y);
 				//if (targetYaw < 1.57)
 					//targetPitch = (0.145 * fabs(headpos)) - 0.752;
 				//else
 					//targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
 				break;
 			case BALL2:
-				targetYaw = lookAtPointYaw(robot_x+bx, robot_y+by);
-				targetPitch = lookAtPointPitch(robot_x+bx, robot_y+by);
+				targetYaw = lookAtPointRelativeYaw(bx, by);
+				targetYaw = (targetYaw<0) ? targetYaw - 0.2 : targetYaw + 0.2;
+				targetPitch = lookAtPointRelativePitch(bx, by);
 				break;
 			case OWNG:
-				targetYaw = lookAtPointYaw(ownGoalX, ownGoalY);
-				targetPitch = lookAtPointPitch(ownGoalX, ownGoalY);
+                targetYaw = robot_phi - lookAtPointRelativeYaw(ownGoalX-robot_x, ownGoalY-robot_y);
+				targetPitch = lookAtPointRelativePitch(ownGoalX-robot_x, ownGoalY-robot_y);
 				//if (targetYaw < 1.57)
 					//targetPitch = (0.145 * fabs(headpos)) - 0.752;
 				//else
 					//targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
 				break;
 		}
+		cout << " OwnX: " << ownGoalX-robot_x << " OwnY: " << ownGoalY-robot_y << " OppX: " << oppGoalX-robot_x << " OppY: " << oppGoalY-robot_y << endl;
+
+		cout << state << " Yaw: " << targetYaw << " Pitch: " << targetPitch << endl;
+
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
 		hmot->set_parameter(1, targetPitch);
@@ -647,7 +657,7 @@ void Behavior::HeadScanStepIntelligent() {
 				//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) )
 					//state = OPPG;
 				//else
-					state = BALL2;
+					state = OPPG;
 				break;
 			case OPPG:
 				state = BALL2;
@@ -657,7 +667,7 @@ void Behavior::HeadScanStepIntelligent() {
 				//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) )
 					//state = OWNG;
 				//else
-					state = BALL1;
+					state = OWNG;
 				break;
 			case OWNG:
 				state = BALL1;
@@ -1007,12 +1017,11 @@ bool Behavior::readGoalConfiguration(const std::string& file_name) {
 			if (ID == "YellowRight"){
 				oppGoalRightX = x/1000.0;
 				oppGoalRightY = y/1000.0;
-				ownGoalRightX = oppGoalRightX;
-				ownGoalRightY = oppGoalRightY;
+				ownGoalRightX = -oppGoalRightX;
+				ownGoalRightY = -oppGoalRightY;
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -1024,7 +1033,7 @@ void Behavior::generateFakeObstacles(){
         fakeObstacles[j][1]=INIT_VALUE;
     }
     int i=0;
-    while(tmpX+ObstacleRadius<-2.4){
+    while(tmpX<-2.4){
         fakeObstacles[i][0] = tmpX;
         fakeObstacles[i][1] = tmpY;
 
@@ -1034,10 +1043,10 @@ void Behavior::generateFakeObstacles(){
         i+=2;
     }
     tmpX=-2.4+ObstacleRadius;
-    while(tmpY+ObstacleRadius<1.1){
+    while(tmpY<1.1){
         fakeObstacles[i][0] = tmpX;
         fakeObstacles[i][1] = tmpY;
-        tmpY+=2*ObstacleRadius;
+        tmpY+=2*ObstacleRadius+0.02;
         i++;
     }
 }
@@ -1053,8 +1062,7 @@ void Behavior::checkForPenaltyArea(){
             fakeDist=dist(robot_x,fakeObstacles[j][0],robot_y,fakeObstacles[j][1]);
             if(fakeDist<MapRadius){
                 //send fake obstacle message
-
-
+                fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x),robot_phi);
                 fom->set_direction(fakeDir);
                 fom->set_distance(fakeDist);
                 _blk.publishData(*fom, "obstacle");

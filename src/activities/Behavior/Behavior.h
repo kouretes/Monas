@@ -32,7 +32,7 @@
 #define WAITFOR 40
 
 #define INIT_VALUE -111.0
-#define numOfFakeObstacles 30
+#define numOfFakeObstacles 15
 #define ATTACKER 0
 #define CENTER_FOR 1
 
@@ -153,7 +153,7 @@ class Behavior: public IActivity {
 
 		bool readRobotConf;
 
-		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastpenalized, ballseen;
+		boost::posix_time::ptime lastmove, lastball, lastwalk, lastplay, lastpenalized, ballseen, lastrolechange;
 };
 
 ACTIVITY_END
