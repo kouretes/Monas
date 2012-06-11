@@ -642,9 +642,9 @@ void Behavior::HeadScanStepIntelligent() {
 					//targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
 				break;
 		}
-		cout << " OwnX: " << ownGoalX-robot_x << " OwnY: " << ownGoalY-robot_y << " OppX: " << oppGoalX-robot_x << " OppY: " << oppGoalY-robot_y << endl;
+//		cout << " OwnX: " << ownGoalX-robot_x << " OwnY: " << ownGoalY-robot_y << " OppX: " << oppGoalX-robot_x << " OppY: " << oppGoalY-robot_y << endl;
 
-		cout << state << " Yaw: " << targetYaw << " Pitch: " << targetPitch << endl;
+//		cout << state << " Yaw: " << targetYaw << " Pitch: " << targetPitch << endl;
 
 		hmot->set_command("setHead");
 		hmot->set_parameter(0, targetYaw);
