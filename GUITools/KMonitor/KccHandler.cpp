@@ -316,7 +316,7 @@ void KccHandler::clearColorTable(){
 	for(int i=0;i<256;i++){
 		for(int j=0;j<256;j++){
 			for(int z=0;z<256;z++){
-				*(yuvColorTable->ctableAccess(i,j,z)) = blackColor;
+				*(yuvColorTable->ctableAccessDirect(i,j,z)) = blackColor;
 			}
 		}
 	}

@@ -96,18 +96,6 @@ inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
 }
 
 
-inline unsigned char BitMaskToValue ( KSegmentator::colormask_t v)
-{
-	KSegmentator::colormask_t r=v;
-	unsigned c=0;
-	while(r>0)
-	{
-		r=r>>1;
-		c++;
-	}
-	return c;
-}
-
 void KSegmentator::setLumaScale(float s)
 {
 	if(lumascale==s)
@@ -209,10 +197,47 @@ KSegmentator::colormask_t ruleFileClassifyPixel(struct RuleSet const& r, unsigne
 
 }
 
+void KSegmentator::attachToIplImage(KImageConst const& data)
+{
+	//string m="Seg times:"+_toString(fetch.tv_nsec)+" "+_toString(segment.tv_nsec);
+	//fetch.tv_nsec=0;
+	//segment.tv_nsec=0;
+	//Logger::Instance().WriteMsg("KSegmentator",m,Logger::Warning);
+    dataPointer= data.imageData;
+    widthmult2=data.width*2;
+    width=data.width;
+    height=data.height;
+#ifndef FORCEINTERLV
+    if(data.nChannels==2)//Imply 422
+	{
+		classifyFunc= &KSegmentator::classify422;
+		type=INTERLEAVED;
+
+	}
+    else if (data.nChannels==3)//444
+	{
+		classifyFunc=&KSegmentator::classify444;
+		type=FULL;
+
+	}
+
+    else
+    {
+        classifyFunc=NULL;
+        Logger::Instance().WriteMsg("KSegmentator", "ONLY 422 AND 444 interleaving IMPLEMENTED :P",Logger::Error);
+    }
+#else
+	if(data.nChannels!=2)//Imply 422
+		Logger::Instance().WriteMsg("KSegmentator", "ONLY 444 AND 422 interleaving IMPLEMENTED,422 only forced",Logger::Error);
+
+#endif
+
+
+}
 
 KSegmentator::KSegmentator(std::ifstream &conf)
 {
-	lumascale=0;
+
 	conf.read(reinterpret_cast<char *>(&set),sizeof(set));
 
 	//Check that file is indeed Segmentation configuration
@@ -231,26 +256,25 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 	readComment(conf);
 	readCalibration(conf);
 	readColorInfo(conf);
-
-	if (set.ruletype=='R')
-		readRulefile(conf);
-	else if (set.ruletype=='C')
-		readColorTable(conf);
-
 	for(int i=0 ;i<LUTsize;i++)
 	{
 		rYLUT[i]=rULUT[i]=rVLUT[i]=0;
 	}
+	if (set.ruletype=='R')
+		readRulefile(conf);
+	else if (set.ruletype=='C')
+		readColorTable(conf);
+	setLumaScale(1);//Default setting;
+
 	for (int v=0;v<256;v++)
 		for (int u=0;u<256;u++)
 			for (int y=0;y<256;y++)
 			{
-				colormask_t val=* (ctableAccessDirect(v,u,y));
+				colormask_t val=* (ctableAccess(V_SCALESUB[v],U_SCALESUB[u],Y_SCALESUB[y]));
 				rYLUT[y>>LUTres]|=val;
 				rULUT[u>>LUTres]|=val;
 				rVLUT[v>>LUTres]|=val;
 			}
-	setLumaScale(1);//Default setting;
 
 }
 
@@ -275,29 +299,55 @@ void KSegmentator::readColorInfo(ifstream & conf)
 
 }
 
-
-void KSegmentator::writeFile(std::ofstream &of,const std::string  comment) const
+void KSegmentator::readColorTable(ifstream & conf)
 {
-	of.write(reinterpret_cast<const char *>(&set),sizeof(SegHeader));
-	of<<comment;
-	of.put('\n');
-	int y,u,v;
-	for (y=0;y<ysize;y++)
-		for (u=0;u<usize;u++)
-			for (v=0;v<vsize;v++)
-			{
-				of.put(BitMaskToValue(*(ctable+y+u*ysize+v*usize*ysize)));
+	if (set.conf[0]=='Y')
+	{
+		yres=set.conf[1]-'0';ysize=256>>yres;
+		ures=set.conf[2]-'0';usize=256>>ures;
+		vres=set.conf[3]-'0';vsize=256>>vres;
+		int dsize=set.size-'0';
+		colormask_t t,r;
+		t=0;
+		char *dest=((char*)(&t))+sizeof(colormask_t)-dsize;//For little endian systems like x86 :)
+		int y,u,v;
 
-			}
+		colormask_t* nctable= (colormask_t *) malloc(sizeof(colormask_t)*ysize*usize*vsize);
 
+		for (y=0;y<ysize;y++)
+			for (u=0;u<usize;u++)
+				for (v=0;v<vsize;v++)
+				{
+					conf.read(dest,dsize);
+					//if(y==128>>yres)
+						//cout<<"t:"<<(int)t<<endl;
+					r=ValueToBitMask(t);
+					//Store it :)
+					*(nctable+y+u*ysize+v*usize*ysize)=r;
+
+				}
+		ctable=nctable;
+
+
+
+		cout<<"Read Colortable:"<<ysize<<"-"<<usize<<"-"<<vsize<<endl;
+	}
+	else
+		cout<<"KSegmentator():Invalid or unknown colortable file header"<<endl;
 }
 
-KSegmentator::~KSegmentator()
+inline unsigned char BitMaskToValue ( KSegmentator::colormask_t v)
 {
-	if(ctable)
-		free(ctable);
-
+	KSegmentator::colormask_t r=v;
+	unsigned c=0;
+	while(r>0)
+	{
+		r=r>>1;
+		c++;
+	}
+	return c;
 }
+
 KSegmentator::KSegmentator(int nyres,int nures,int nvres)
 {
 	lumascale=0;
@@ -337,41 +387,20 @@ KSegmentator::KSegmentator(int nyres,int nures,int nvres)
 
 }
 
-void KSegmentator::readColorTable(ifstream & conf)
+void KSegmentator::writeFile(std::ofstream &of,const std::string  comment) const
 {
-	if (set.conf[0]=='Y')
-	{
-		yres=set.conf[1]-'0';ysize=256>>yres;
-		ures=set.conf[2]-'0';usize=256>>ures;
-		vres=set.conf[3]-'0';vsize=256>>vres;
-		int dsize=set.size-'0';
-		colormask_t t,r;
-		t=0;
-		char *dest=((char*)(&t))+sizeof(colormask_t)-dsize;//For little endian systems like x86 :)
-		int y,u,v;
+	of.write(reinterpret_cast<const char *>(&set),sizeof(SegHeader));
+	of<<comment;
+	of.put('\n');
+	int y,u,v;
+	for (y=0;y<ysize;y++)
+		for (u=0;u<usize;u++)
+			for (v=0;v<vsize;v++)
+			{
+				of.put(BitMaskToValue(*(ctable+y+u*ysize+v*usize*ysize)));
 
-		colormask_t* nctable= (colormask_t *) malloc(sizeof(colormask_t)*ysize*usize*vsize);
+			}
 
-		for (y=0;y<ysize;y++)
-			for (u=0;u<usize;u++)
-				for (v=0;v<vsize;v++)
-				{
-					conf.read(dest,dsize);
-					//if(y==128>>yres)
-						//cout<<"t:"<<(int)t<<endl;
-					r=ValueToBitMask(t);
-					//Store it :)
-					*(nctable+y+u*ysize+v*usize*ysize)=r;
-
-				}
-		ctable=nctable;
-
-
-
-		cout<<"Read Colortable:"<<ysize<<"-"<<usize<<"-"<<vsize<<endl;
-	}
-	else
-		cout<<"KSegmentator():Invalid or unknown colortable file header"<<endl;
 }
 
 void KSegmentator::readRulefile(ifstream & conf)
