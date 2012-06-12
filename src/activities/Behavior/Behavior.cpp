@@ -328,9 +328,6 @@ void Behavior::UpdateOrientationPlus()
 	} else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI-M_PI_4) ) ) {
 		orientation = 3;
 	}
-	Logger::Instance().WriteMsg("Behavior", "AGOC-OPPGOAL: " + _toString(oppGoalLeftX) + " " + _toString(oppGoalLeftY) + " " + _toString(oppGoalRightX) + " " + _toString(oppGoalRightY), Logger::Info);
-	Logger::Instance().WriteMsg("Behavior", "AGOC-ROBOT: " + _toString(robot_x) + " " + _toString(robot_y) + " " + _toString(robot_phi) + " DEG: " + _toString(int(robot_phi*180.0/M_PI)), Logger::Info);
-	 Logger::Instance().WriteMsg("Behavior", "AGOC-OGB: " + _toString(oppgb) + " DEG: " + _toString(int(oppgb*180.0/M_PI)) + " ORIENTATION: " + _toString(orientation), Logger::Info);
 
 	//double lowngb = anglediff2(atan2(ownGoalLeftY - robot_y, ownGoalLeftX - robot_x), robot_phi);
 	//double rowngb = anglediff2(atan2(ownGoalRightY - robot_y, ownGoalRightX - robot_x), robot_phi);
@@ -342,7 +339,7 @@ void Behavior::UpdateOrientationPlus()
 
 void Behavior::CheckForBall() {
 
-	double closeToBall = 1.0;
+	double closeToBall = 1.3;
 
 	if(wim != 0){
 		if (wim->balls_size() > 0) {
