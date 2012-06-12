@@ -207,37 +207,11 @@ void KSegmentator::attachToIplImage(KImageConst const& data)
     widthmult2=data.width*2;
     width=data.width;
     height=data.height;
-#ifndef FORCEINTERLV
-    if(data.nChannels==2)//Imply 422
-	{
-		classifyFunc= &KSegmentator::classify422;
-		type=INTERLEAVED;
-
-	}
-    else if (data.nChannels==3)//444
-	{
-		classifyFunc=&KSegmentator::classify444;
-		type=FULL;
-
-	}
-
-    else
-    {
-        classifyFunc=NULL;
-        Logger::Instance().WriteMsg("KSegmentator", "ONLY 422 AND 444 interleaving IMPLEMENTED :P",Logger::Error);
-    }
-#else
-	if(data.nChannels!=2)//Imply 422
-		Logger::Instance().WriteMsg("KSegmentator", "ONLY 444 AND 422 interleaving IMPLEMENTED,422 only forced",Logger::Error);
-
-#endif
-
-
 }
 
 KSegmentator::KSegmentator(std::ifstream &conf)
 {
-
+	lumascale=0;
 	conf.read(reinterpret_cast<char *>(&set),sizeof(set));
 
 	//Check that file is indeed Segmentation configuration

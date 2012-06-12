@@ -10,7 +10,7 @@
 
 
 
-#define FORCEINTERLV
+
 #define CACHETAG 0x1F
 
 /**
@@ -54,37 +54,32 @@ class KSegmentator{
 		*/
         inline colormask_t classifyPixel(const int i,const int j,const colormask_t h) const
         {
-#ifndef FORCEINTERLV
-        	if (classifyFunc==NULL)
-				return 0;
-			return ((*this).*(classifyFunc))(i,j,h);
-#else
-			return classify422(i,j,h);
-#endif
+        	unsigned char y,u,v;
+			//timespec s,e;
+			//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &s)
+
+			//widthStep
+			y=*(dataPointer+j*widthmult2+(i<<1));//Y is right where we want it
+
+			//a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
+			int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
+			// cout<<"sob"<<endl;
+			u=*(dataPointer+startofBlock+1);
+			// cout<<"u"<<endl;
+			v= *(dataPointer+startofBlock+3);
+			//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &e);
+			//fetch.tv_nsec+=ttdiff(s,e).tv_nsec;
+
+			return classifyWithPrecheck(y,u,v,h);
         };
         inline void prefetchPixelData(const int i, const int j)
         {
-#ifdef __GNUC__
-#ifndef FORCEINTERLV
-			if(type==INTERLEAVED)
-        	{
-#endif
+			int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
+			__builtin_prefetch(dataPointer+startofBlock);
+			//How much luck do we NOT have :)
+			//if((unsigned(dataPointer+startofBlock) & ~(CACHETAG) )!=(unsigned(dataPointer+startofBlock+3)& ~(CACHETAG) ))
+			//	__builtin_prefetch(dataPointer+startofBlock+3);
 
-        		int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
-        		__builtin_prefetch(dataPointer+startofBlock);
-        		//How much luck do we NOT have :)
-        		if((unsigned(dataPointer+startofBlock) & ~(CACHETAG) )!=(unsigned(dataPointer+startofBlock+3)& ~(CACHETAG) ))
-					__builtin_prefetch(dataPointer+startofBlock+3);
-#ifndef FORCEINTERLV
-        	}
-        	else if(type==FULL)
-        	{
-        		__builtin_prefetch(dataPointer+j*width*3+i*3);
-
-        	}
-#endif
-
-#endif
         }
         /**
         * Set Luminace scale of the environtment, to account for
@@ -102,9 +97,7 @@ class KSegmentator{
 			return * ctableAccess(V_SCALESUB[v],U_SCALESUB[u],Y_SCALESUB[y]);
         }
 	private:
-#ifndef FORCEINTERLV
-		enum {INTERLEAVED,FULL} type;
-#endif
+
 		static const unsigned char LUTres=2,LUTsize=64;//Carefull. LUTSIZE=256>>LUTRES
 		//Pointer to attached IplImage data
 
@@ -139,11 +132,6 @@ class KSegmentator{
 		//Based on header, one of these should do the trick :)
 		void readRulefile(std::ifstream & conf);
 		void readColorTable(std::ifstream & conf);
-#ifndef FORCEINTERLV
-		//pointer to classifierfuncUsed by classifyPixel
-		typedef colormask_t (KSegmentator::*classFncPtr)(const int, const int,const colormask_t) const;
-		classFncPtr classifyFunc;
-#endif
 
 
 		//Value prelookup,reference values
@@ -159,33 +147,6 @@ class KSegmentator{
 
 		colormask_t *ctable;
 
-		//timespec fetch,segment;
-		//matches :
-		colormask_t classify444(const int i,const int j,const colormask_t hint) const
-		{
-			return classifyWithPrecheck(*(dataPointer+j*width*3+i*3),*(dataPointer+j*width*3+i*3+1),*(dataPointer+j*width*3+i*3+2), hint);
-		};
-        colormask_t classify422(const int i,const int j,const colormask_t hint) const
-        {
-			unsigned char y,u,v;
-			//timespec s,e;
-			//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &s)
-
-			//widthStep
-			y=*(dataPointer+j*widthmult2+(i<<1));//Y is right where we want it
-
-			//a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
-			int startofBlock =j*widthmult2+ ((i>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
-			// cout<<"sob"<<endl;
-			u=*(dataPointer+startofBlock+1);
-			// cout<<"u"<<endl;
-			v= *(dataPointer+startofBlock+3);
-			//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &e);
-			//fetch.tv_nsec+=ttdiff(s,e).tv_nsec;
-
-			return classifyWithPrecheck(y,u,v,hint);
-
-        }
         //This does the job
         inline colormask_t classifyWithPrecheck(unsigned char  y, unsigned char  u , unsigned  char   v, colormask_t const hint) const
         {
