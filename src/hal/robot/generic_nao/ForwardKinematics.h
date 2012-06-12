@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <limits>
 #include <math.h>
-#include "KMat.h"
+#include "tools/KMat.h"
 #include "hal/robot/generic_nao/KinematicsDefines.h"
 //#include "KinematicsDefines.h"
 
