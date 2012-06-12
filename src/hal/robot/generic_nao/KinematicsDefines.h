@@ -31,7 +31,7 @@
 #define LShoulderRollLow 	-0.3142f
 #define LElbowYawHigh		2.0875f
 #define LElbowYawLow 		-2.0875f
-#define LElbowRollHigh  	-0.0349f
+#define LElbowRollHigh  	0.00001f//Aldebaran gives this value (-0.0349f) but the hand can go further
 #define LElbowRollLow 		-1.5446f
 //Right Hand limits
 #define RShoulderPitchHigh 	2.0857f
@@ -41,7 +41,7 @@
 #define RElbowYawHigh 		2.0875f
 #define RElbowYawLow 		-2.0875f
 #define RElbowRollHigh		1.5446f
-#define RElbowRollLow		0.0349f
+#define RElbowRollLow		0.00001f//Aldebaran gives this value (0.0349f) but the hand can go further
 //Left Leg limits
 #define LHipYawPitchHigh	0.7408f
 #define LHipYawPitchLow		-1.1453f

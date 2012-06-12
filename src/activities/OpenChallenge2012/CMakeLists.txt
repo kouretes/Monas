@@ -5,12 +5,8 @@ endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "
 set ( ActivityName OpenChallenge2012 )
 
 set ( ActivitySrcs  OpenChallenge2012.cpp
-                    KmeManager.cpp
-                    KmeAction.cpp
                     XarManager.cpp
                     XarAction.cpp
-                    KmexManager.cpp
-                    KmexAction.cpp
 )
 
 include ( ../activTemplate.cmake )

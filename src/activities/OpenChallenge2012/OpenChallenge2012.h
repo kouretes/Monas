@@ -1,5 +1,5 @@
-#ifndef MOTION_CONTROLLER2_H
-#define MOTION_CONTROLLER2_H
+#ifndef OpenChallenge2012_H
+#define OpenChallenge2012_H
 
 #include "architecture/executables/IActivity.h"
 
@@ -7,11 +7,12 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
+#include "messages/VisionObservations.pb.h"
+
 
 #include "hal/robot/generic_nao/aldebaran-motion.h"
 #include "hal/robot/generic_nao/InverseKinematics.h"
 #include "hal/robot/generic_nao/ForwardKinematics.h"
-
 #include <string>
 #include <math.h>
 #include <iostream>
@@ -22,14 +23,8 @@
 #include "tools/XMLConfig.h"
 #include "messages/RoboCupGameControlData.h"
 #include <vector>
-#include "ISpecialAction.h"
-#include "KmexManager.h"
-#include "KmexAction.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-
-#include "messages/VisionObservations.pb.h"
-#include "messages/SensorsMessage.pb.h"
+#include "ISpecialAction.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -39,17 +34,18 @@ using namespace boost::posix_time;
 using namespace std;
 //#define WEBOTS
 
+
+ACTIVITY_START
 class OpenChallenge2012 : public IActivity{
 
 public:
 
-	OpenChallenge2012(Blackboard &b);;
+	OpenChallenge2012(Blackboard &b);
 
-	int Execute();
+	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	void ACTIVITY_VISIBLE UserInit();
 
-	void UserInit();
-
-	std::string GetName() {
+	std::string ACTIVITY_VISIBLE GetName() {
 		return "OpenChallenge2012";
 	}
 
@@ -73,7 +69,6 @@ private:
 	int gameState;
 	int currentstate;
 
-	int counter;
 
 	int walkPID;
 	float walkParam1, walkParam2, walkParam3, walkParam4;
@@ -82,6 +77,7 @@ private:
 	float headParam1, headParam2;
 
 	int actionPID;
+	int counter;
 
 	AL::ALValue names, values;
 
@@ -100,11 +96,11 @@ private:
 	bool donee;
 	
 
-	MotionActionMessage  * mam;
 	MotionActionMessage  * pam;
-
+	MotionStateMessage	sm;
 	AL::ALValue commands;//,stiffnessCommand;
 
+	void testcommands();
 	void mglrun();
 	void read_messages();
 
@@ -114,8 +110,13 @@ private:
 	void killActionCommand();
 	void killCommands();
 
-	vector<int> SpCutActionsManager();
+	void ALstandUp();
+	void ALstandUpCross();
 
+	void ALstandUpBack();
+	void ALstandUpFront();
+
+	vector<float> KGetAngles();
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
 	typedef std::map<std::string,
@@ -125,13 +126,13 @@ private:
 	SpAssocCont SpActions;
 
 
-	typedef std::map<std::string,
-		  boost::shared_ptr<KmexAction> > SpCont;
-	typedef std::pair<std::string,
-		  boost::shared_ptr<KmexAction> > SpElement;
-	SpCont SpKmexActions;
+	std::string BodyID;
+	void readWalkParameters();
+	boost::posix_time::ptime standUpStartTime, timeLapsed;
 	boost::posix_time::ptime startl, stopl;
 	boost::posix_time::ptime startr, stopr;
 };
+
+ACTIVITY_END
 
 #endif
