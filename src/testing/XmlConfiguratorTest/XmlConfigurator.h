@@ -6,6 +6,7 @@
 #include <map>
 #include <utility>
 #include "../external/tinyxml_2-5-3/tinyxml.h"
+#include "boost/filesystem.hpp"
 
 using namespace std;
 class node{
@@ -21,16 +22,18 @@ public:
 	map<string,string > attributes;
 	map<string,vector<node> > kids;
 	int fileType;//HeadFile = 1 BodyFile = 2
-
 	void insertRecursivePolicyAppend(TiXmlNode* xmlNode,int fileType);
 	static queue<string> findAllSubstring(string  key);
 	static string  extractNumber(string & str, unsigned * num);//Get the ~ part
 	static string  extractNumberText(string & str, unsigned * num);
 	node * findNodeForKey(queue<string> & key) ;
-
+private:
+	string headPath;
+	string bodyPath;
 
 public:
 	node(){fileType=0;};
+	node(string dirPath,string headId, string bodyId);
 	void print(string pref);
 	vector<string> getText();
 	unsigned getChildrenCount() const;
