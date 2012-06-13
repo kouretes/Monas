@@ -221,7 +221,7 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 		takeSnapshot = false;
 		curLuminance = rawImage.luminance_scale();
 		yuvColorTable->setLumaScale(powf(curLuminance,0.42));
-		lumaScale = yuvColorTable->getLumaScale();
+		lumaScale = 1/yuvColorTable->getLumaScale();
 		
 		segImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
 		segImage.fill(0);
