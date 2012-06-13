@@ -377,13 +377,13 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//Create some particles using Observation Intersection
 	//CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 	//Update - Using incoming observation
-	/*if(Observations.size()>=1){
+	if(Observations.size()>=1){
 		Update(SIRParticles, Observations, MotionModel, partclsNum);
 	}
-	else if(AmbigiusObservations.size()==1){
+	else if(AmbiguousObservations.size()==1){
 		Update_Ambiguous(SIRParticles, AmbiguousObservations, partclsNum);
 		//Update_Ambiguous(SIRParticles,AmbiguousObservations,partclsNum);
-	}*/
+	}
 
 
 	//Normalize Particles  Weight in order to Resample later
@@ -420,29 +420,12 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 		}
 	}
 
-	//Swap best particle in the first position
-	maxprtcl.x = SIRParticles.x[0];
-	maxprtcl.y = SIRParticles.y[0];
-	maxprtcl.phi = SIRParticles.phi[0];
-	maxprtcl.Weight = SIRParticles.Weight[0];
-
-	SIRParticles.x[0] = SIRParticles.x[max_weight_particle_index];
-	SIRParticles.y[0] = SIRParticles.y[max_weight_particle_index];
-	SIRParticles.phi[0] = SIRParticles.phi[max_weight_particle_index];
-	SIRParticles.Weight[0] = SIRParticles.Weight[max_weight_particle_index];
-
-	SIRParticles.x[max_weight_particle_index] = maxprtcl.x;
-	SIRParticles.y[max_weight_particle_index] = maxprtcl.y;
-	SIRParticles.phi[max_weight_particle_index] = maxprtcl.phi;
-	SIRParticles.Weight[max_weight_particle_index] = maxprtcl.Weight;
-
-	AgentPosition.x =  SIRParticles.x[0];// maxprtcl.x;
-	AgentPosition.y = SIRParticles.y[0];//maxprtcl.y;
-	AgentPosition.theta = SIRParticles.phi[0];//maxprtcl.phi;
+	AgentPosition.x =  SIRParticles.x[max_weight_particle_index];// maxprtcl.x;
+	AgentPosition.y = SIRParticles.y[max_weight_particle_index];//maxprtcl.y;
+	AgentPosition.theta = SIRParticles.phi[max_weight_particle_index];//maxprtcl.phi;
 
 	//cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
-	AgentPosition = RobustMean(SIRParticles, 10);
-	AgentPosition = RobustMean(SIRParticles, 10);
+	//AgentPosition = RobustMean(SIRParticles, 10);
 
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
@@ -458,6 +441,9 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	} else
 	{
 		; //cout << "NO need of resampling" << endl;
+	}
+	if(Observations.size()>=1){
+		ForceBearing(SIRParticles,Observations);
 	}
 	return AgentPosition;
 
@@ -491,11 +477,16 @@ void Localization::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
 			tmpOM.Distance.Emean = 0;
-			tmpOM.Distance.Edev = 10*sqrt(sqrt( Objects.Get(i).distance_dev() ) ) * 1000 + 30;
+			tmpOM.Distance.Edev = Objects.Get(i).distance_dev()*1000;//10*sqrt(sqrt( Objects.Get(i).distance_dev() ) ) * 1000 + 30;
 			//Bearing
 			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0;
-			tmpOM.Bearing.Edev = sqrt(Objects.Get(i).bearing_dev()) * 360;
+			tmpOM.Bearing.Edev = Objects.Get(i).bearing_dev();//sqrt(Objects.Get(i).bearing_dev()) * 360;
+			/*Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(Objects.Get(i).distance() * 1000), Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "Kanoniko dev: "+_toString(Objects.Get(i).distance_dev()*1000) + " Auto pou vazoume twra: " + _toString(tmpOM.Distance.Edev), Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "Gwnia: "+_toString( Objects.Get(i).bearing()) + " Dev gwnias: " + _toString(Objects.Get(i).bearing_dev()), Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);*/
 
 			if ((this)->KFeaturesmap.count(id) != 0)
 			{
@@ -568,7 +559,7 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	}
 	MModel.Distance.val = robot_dist;
 	MModel.Distance.ratiomean = 1.0;// systematic error out
-	MModel.Distance.ratiodev = 0.1;
+	MModel.Distance.ratiodev = 0.5;
 	MModel.Distance.Emean = 0.0;
 	MModel.Distance.Edev = 0.0;
 
@@ -576,11 +567,11 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	MModel.Direction.ratiomean = 1.0;// systematic error out
 	MModel.Direction.ratiodev = 0.0;
 	MModel.Direction.Emean = 0.0;// systematic error out
-	MModel.Direction.Edev = deg2rad(2);
+	MModel.Direction.Edev = deg2rad(20);
 
 	MModel.Rotation.val = robot_rot;
 	MModel.Rotation.ratiomean = 1.0;// systematic error out
-	MModel.Rotation.ratiodev = 0.2;
+	MModel.Rotation.ratiodev = 0.5;
 	MModel.Rotation.Emean = 0.0;// systematic error out
 	MModel.Rotation.Edev = 0.0;
 

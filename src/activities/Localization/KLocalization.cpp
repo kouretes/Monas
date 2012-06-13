@@ -232,6 +232,14 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 	//float width = (FieldMaxY - FieldMinY)/2;
 	unsigned int particlesUp = partclsNum/2;
 	unsigned int particlesDown = partclsNum - particlesUp;
+	//all particles same point
+	/*for (unsigned int i = 0; i < partclsNum; i++)
+	{
+		Particles.x[i] = -1000;
+		Particles.y[i] = FieldMaxY;
+		Particles.phi[i] = deg2rad(270);
+		Particles.Weight[i] = 1.0 / partclsNum;
+	}*/
 	//Initialize top Particles
 	for (unsigned int i = 0; i < particlesUp; i++)
 	{
@@ -430,7 +438,7 @@ belief KLocalization::RobustMean(parts & Particles, int PercenteOfParticles)
 	RmeanAgentPosition.x = sumX / (double) robustmean;
 	RmeanAgentPosition.y = sumY / (double) robustmean;
 	if(x!=0)
-		RmeanAgentPosition.theta = wrapTo0_2Pi(atan2(y/(double) robustmean,x/(double) (double) robustmean));
+		RmeanAgentPosition.theta = wrapTo0_2Pi(atan2(y/(double)robustmean,x/(double)robustmean));
 	else
 		RmeanAgentPosition.theta=0;
 
@@ -679,8 +687,8 @@ void KLocalization::Update(parts & Particles, vector<KObservationModel> &Observa
 				OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
 #endif
 			}
-			totalWeight = (OverallWeightYellowYellow > totalWeight) ? OverallWeightYellowYellow : totalWeight;
-			totalWeight = (OverallWeight > totalWeight) ? OverallWeight : totalWeight;
+			totalWeight = (OverallWeightYellowYellow > OverallWeight) ? OverallWeightYellowYellow : OverallWeight;
+			//totalWeight = OverallWeightYellowYellow + OverallWeight;
 		}
 		else
 		{
@@ -710,7 +718,6 @@ void KLocalization::Update_Ambiguous(parts & Particles, vector<KObservationModel
 	double DistanceFromPastBelief, DirectionFromPastBelief;
 	double AdditiveWeightTotal = 0,AdditiveBlueField=0,AdditiveYellowField=0;
 	double R,RS;
-	double Meanerror = 0;
 	float xPosOfFeature 	= Observation[0].Feature.x;
 	float yPosOfFeature 	= Observation[0].Feature.x;
 	float obsDistEmean		= Observation[0].Distance.Emean;
@@ -718,9 +725,6 @@ void KLocalization::Update_Ambiguous(parts & Particles, vector<KObservationModel
 	float obsDistValue		= Observation[0].Distance.val;
 	float obsBearingEdev 	= Observation[0].Bearing.Edev;
 	float obsBearingValue 	= Observation[0].Bearing.val;
-	Meanerror = obsDistEmean;
-	Deviation = obsDistEdev;
-	Deviation = obsBearingEdev;
 	//Find the best candiate for the landmark
 	for (int p = 0; p < NumofParticles; p++)
 	{
@@ -733,23 +737,23 @@ void KLocalization::Update_Ambiguous(parts & Particles, vector<KObservationModel
 			// Distance
 			// R Distance the particle has from the LandMark
 			R = DISTANCE_2(Particles.x[p]-xPosOfFeature,Particles.y[p]-yPosOfFeature*j);
-			AdditiveYellowField *= normpdf((obsDistValue - Meanerror) - R, Deviation);
+			AdditiveYellowField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 			//Bearing
 			ParticlePointBearingAngle = atan2(yPosOfFeature*j - Particles.y[p], xPosOfFeature - Particles.x[p]);
 			ParticleBearing = anglediff2(ParticlePointBearingAngle, Particles.phi[p]);
 
-			AdditiveYellowField *= normpdf(anglediff(obsBearingValue, ParticleBearing), Deviation);
+			AdditiveYellowField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
 
 			// Distance
 			// R Distance the particle has from the LandMark
 			RS = DISTANCE_2(Particles.x[p]- (-xPosOfFeature),Particles.y[p]- (-yPosOfFeature*j));
 
-			AdditiveBlueField *= normpdf((obsDistValue - Meanerror) - RS, Deviation);
+			AdditiveBlueField *= normpdf((obsDistValue - obsDistEmean) - RS, obsDistEdev);
 
 			//Bearing
 			ParticlePointBearingAngleS = atan2(-yPosOfFeature*j - Particles.y[p], -xPosOfFeature - Particles.x[p]);
 			ParticleBearingS = anglediff2(ParticlePointBearingAngleS, Particles.phi[p]);
-			AdditiveBlueField *= normpdf(anglediff(obsBearingValue, ParticleBearingS), Deviation);
+			AdditiveBlueField *= normpdf(anglediff(obsBearingValue, ParticleBearingS), obsBearingEdev);
 
 			AdditiveWeightTotal += AdditiveYellowField + AdditiveBlueField;
 		}
@@ -804,7 +808,6 @@ double * KLocalization::CumSum(double * Table, int size)
 			else
 				cumsum[i] = cumsum[i - 1] + Table[i];
 		}
-
 		return cumsum;
 	} else
 	{
@@ -836,7 +839,7 @@ int * KLocalization::ResampleSWR(parts & Particles, int *Index)
 	double * Q = CumSum(Particles.Weight, partclsNum);
 	int N = partclsNum;
 	double* t = new double[N + 1];
-Uniform 	U;
+	Uniform U;
 	for (int i = 0; i < N; i++)
 	{
 		t[i] = U.Next();
@@ -1063,7 +1066,7 @@ double KLocalization::CalcBearDev(feature afeature, double Distance)
 	return ret;
 }
 
-/*
+
 //Bad idea for 2 yellow goals
 void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &Observation)
 {
@@ -1073,23 +1076,34 @@ void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &O
 	float ParticlePointBearingAngle;
 	if (Observation.size() > 1)
 	{
-		float * angles = new float[Observation.size()];for (unsigned int p = 0; p < Particles.size; p++)
+		float * angles = new float[Observation.size()];
+		//for the real one
+		int index = rand() % Particles.size;
+		for (unsigned int o = 0; o < Observation.size(); o++)
 		{
-			for (unsigned int o = 0; o < Observation.size(); o++)
-			{
-				ParticlePointBearingAngle = atan2(Observation[o].Feature.y - Particles .y[p], Observation[o].Feature.x - Particles.x[p]);
-				angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
-			}
-			Particles.phi[p] = circular_mean_angle(angles, Observation.size());
+			ParticlePointBearingAngle = atan2(Observation[o].Feature.y - Particles .y[index], Observation[o].Feature.x - Particles.x[index]);
+			angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
 		}
+		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
+		//for the symetric one
+		index = rand() % Particles.size;
+		for (unsigned int o = 0; o < Observation.size(); o++)
+		{
+			ParticlePointBearingAngle = atan2(-Observation[o].Feature.y - Particles .y[index], -Observation[o].Feature.x - Particles.x[index]);
+			angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
+		}
+		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
 		delete angles;
 	} else if (Observation.size() == 1)
 	{
-		for (unsigned int p = 0; p < Particles.size; p++)
-		{
-			ParticlePointBearingAngle = atan2(Observation[0].Feature.y - Particles .y[p], Observation[0].Feature.x - Particles.x[p]);
-			Particles.phi[p] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
-		}
+		//for the real one
+		int index = rand() % Particles.size;
+		ParticlePointBearingAngle = atan2(Observation[0].Feature.y - Particles .y[index], Observation[0].Feature.x - Particles.x[index]);
+		Particles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
+		//for the symetric one
+		index = rand() % Particles.size;
+		ParticlePointBearingAngle = atan2(-Observation[0].Feature.y - Particles .y[index], -Observation[0].Feature.x - Particles.x[index]);
+		Particles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 	}
-}*/
+}
 
