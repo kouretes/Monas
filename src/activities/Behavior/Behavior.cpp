@@ -1065,7 +1065,8 @@ void Behavior::checkForPenaltyArea(){
                 fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x),robot_phi);
                 fom->set_direction(fakeDir);
                 fom->set_distance(fakeDist);
-                _blk.publishData(*fom, "obstacle");
+                fom->set_certainty(1);
+                _blk.publishSignal(*fom, "obstacle");
             }
     }
 }
