@@ -186,6 +186,7 @@ os.system('rsync -u ' + scripts_dir +'Stop.py ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'start.sh ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'autostartkrobot ' + binaries_dir + "bin/")
 os.system('rsync -u ' + scripts_dir +'beep.wav ' + binaries_dir + "config/")
+os.system('rm ' + binaries_dir + "config/MonasLog.txt.*")
 
 if(partial_configuration_dir	== "" ):
 	print("ERROR:  Please define partial_configuration_dir")

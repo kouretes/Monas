@@ -68,11 +68,6 @@ void Vision::fetchAndProcess()
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"Fetch image takes:"<<endt<<endl;
 	stamp += boost::posix_time::millisec(config.sensordelay);
-	if(img->colorspace()!=KRawImage::YUYV)
-	{
-		Logger::Instance().WriteMsg("Vision", "Warning!!! Wrong Colorspace !", Logger::Error);
-		return;
-	}
 	if (img->active_camera() == KRawImage::BOTTOM)//bottom cam
 	{
 		//Get Kinematics first!
@@ -96,6 +91,10 @@ void Vision::fetchAndProcess()
 		seg = segtop;
 	}
 	seg->setLumaScale(pow(img->luminance_scale(),config.cameraGamma) );
+
+	//cout<<"Attach to Image:"<<seg<<rawImage<<endl;
+	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
+
 
 	//saveFrame(rawImage);
 	//return;

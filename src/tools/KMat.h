@@ -1040,7 +1040,7 @@ namespace KMat
 			rs=rs>0?rs:-rs;
 			//std::cout<<rs<<std::endl;
 			//std::cout<<std::numeric_limits<T>::epsilon()<<std::endl;
-			return rs<std::numeric_limits<T>::epsilon()*10e1;
+			return rs<(std::numeric_limits<T>::epsilon()*10e1);
 
 
 		}

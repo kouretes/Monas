@@ -23,7 +23,7 @@
 
 //#define VISIBILITY_WEIGHTING
 #define DISTANCE_WEIGHTING
-#define BEARING_WEIGHTING
+//#define BEARING_WEIGHTING
 #define yellowyellow
 //#define PASTBELIEF
 
@@ -300,7 +300,7 @@ public:
 	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles);
 	void Update_Ambiguous(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
 	//Not used with 2 yellow goals
-	//void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
+	void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 
 	float ESS(parts &Particles); //Calculate Effective Sample Size
 	void Resample(parts &Particles, int * Index, int param);

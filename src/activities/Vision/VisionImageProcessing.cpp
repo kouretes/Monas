@@ -1469,7 +1469,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 		//rest= rest*(0.5-w)/w + (config.ballsize/2.0*(w-0.5))/w;
 		if (abs( (rest*2-config.ballsize)/config.ballsize)>config.balltolerance)//Wrong diameter ball
 		{
-			Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
+			//Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed", Logger::Info);
 			banlist.push_back(newdata);
 			continue;
 		}
@@ -1737,18 +1737,9 @@ bool Vision::validpixel(int x,int y) const
 KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmentator::colormask_t h ) const
 {
 	KPROF_SCOPE(vprof,"dopSeg");
-	unsigned char yd,ud,vd;
 	if (x >= 0 && x < (rawImage.width) && y >= 0 && y < (rawImage.height))
 	{
-	   yd=*(rawImage.imageData+y*(rawImage.width<<1)+(x<<1));//Y is right where we want it
-
-		//a block is a yuyv sequence, and from that block extract the second (Y) and 4th byte (V)
-		int startofBlock =y*(rawImage.width<<1)+ ((x>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
-		// cout<<"sob"<<endl;
-		ud=*(rawImage.imageData+startofBlock+1);
-		// cout<<"u"<<endl;
-		vd= *(rawImage.imageData+startofBlock+3);
-		seg->classifyWithPrecheck(yd,ud,vd,h);
+	    return seg->classifyPixel(x,y,h);
 	}
 	else
 	{
@@ -1756,17 +1747,15 @@ KSegmentator::colormask_t Vision::doSeg(const int x, const int y,const KSegmenta
 	}
 
 }
+
 void Vision::prepSeg(const int x,const int y) const
 {
 	KPROF_SCOPE(vprof,"prepSeg");
 
-	int startofBlock =y*(rawImage.width<<1)+ ((x>>1)<<2); //every 2 pixels (i/2) swap block (size of block=4)
-	__builtin_prefetch(rawImage.imageData+startofBlock);
-
-
-	//How much luck do we NOT have :)
-	//if((unsigned(dataPointer+startofBlock) & ~(CACHETAG) )!=(unsigned(dataPointer+startofBlock+3)& ~(CACHETAG) ))
-	//	__builtin_prefetch(dataPointer+startofBlock+3);
+//	if (x >= 0 && x < (rawImage-> width) && y >= 0 && y < (rawImage-> height))
+//	{
+		seg->prefetchPixelData(x,y);
+//	}
 }
 
 ACTIVITY_END

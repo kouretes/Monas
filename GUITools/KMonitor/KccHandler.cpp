@@ -220,8 +220,8 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId){
 	if((ui->rbLiveVideo->isChecked() || takeSnapshot) && tempWidth == widthInPixels && tempHeight == heightInPixels && channels ==2){
 		takeSnapshot = false;
 		curLuminance = rawImage.luminance_scale();
-		yuvColorTable->setLumaScale(powf(curLuminance,0.45));
-		lumaScale = yuvColorTable->getLumaScale();
+		yuvColorTable->setLumaScale(powf(curLuminance,0.42));
+		lumaScale = 1/yuvColorTable->getLumaScale();
 		
 		segImage = QImage ( widthInPixels, heightInPixels, QImage::Format_RGB32);
 		segImage.fill(0);
@@ -316,7 +316,7 @@ void KccHandler::clearColorTable(){
 	for(int i=0;i<256;i++){
 		for(int j=0;j<256;j++){
 			for(int z=0;z<256;z++){
-				*(yuvColorTable->ctableAccess(i,j,z)) = blackColor;
+				*(yuvColorTable->ctableAccessDirect(i,j,z)) = blackColor;
 			}
 		}
 	}
@@ -393,7 +393,7 @@ void KccHandler::segOpen(){
 	myReadFile.open(filename.toStdString().c_str());
 	if(myReadFile.is_open()){
 		yuvColorTable = new KSegmentator(myReadFile);
-		yuvColorTable->setLumaScale(powf(curLuminance,0.45));
+		yuvColorTable->setLumaScale(powf(curLuminance,0.42));
 	}
 	myReadFile.close();	
 }

@@ -18,7 +18,7 @@ BUILD (for remote execution)
 
 - Execute: ccmake .
 
-- Change TargetPlatform to robot
+- Change TargetPlatform to linux
 
 - Press c to configure
 
@@ -33,6 +33,12 @@ BUILD (for remote execution)
 - Execute: make -jk install, where k is the number of cores in your system. 
 
 - Get a coffee and be patient ... 
+
+- Enter folder build/binaries/linux
+
+- Execute: export export LD_LIBRARY_PATH=./lib
+
+- Execute: ./bin/Monas
 
 
 CROSSBUILD (for on-board execution)

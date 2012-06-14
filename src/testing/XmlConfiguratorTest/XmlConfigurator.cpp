@@ -8,8 +8,28 @@ string convertInt(int number)
    return ss.str();//return a string with the contents of the stream
 }
 
-
-
+/* Initilize the tree with the files from a directory */
+node::node(string dirPath,string headId, string bodyId){
+	fileType=0;
+	headPath = "/HEAD/";
+	headPath.append(headId);
+	bodyPath = "/BODY/";
+	bodyPath.append(bodyId);
+	this->bodyId = bodyId;
+	using namespace boost::filesystem; 
+	if (is_directory(p))
+	{
+		for (directory_iterator itr(p); itr!=directory_iterator(); ++itr)
+		{
+			if (is_regular_file(itr->status())){
+				if(!loadAllFiles(itr->path().filename()))
+					cout << "Failed to load xml file \"" << itr->path().filename()) << "\"" << endl;
+			}
+		}
+	}
+	else
+		cout << "Directory path \"" << dirPath << "\" not found" << endl;
+}
 
 void node::print(string pref)
 {
@@ -71,9 +91,9 @@ bool node::updateFilesValue(string path,string value,int fileType){
 	queue<string> keys = findAllSubstring(path);
 	string filename = extractNumber(keys.front(),&filePos);
 	if(fileType == HEAD_FILE)
-		filename.insert(0,"HEAD/");
+		filename.insert(0,headPath);
 	else if(fileType == BODY_FILE)
-		filename.insert(0,"BODY/");
+		filename.insert(0,bodyPath);
 	keys.pop();
 	filename.append(".xml");
 	TiXmlDocument doc(filename);
@@ -378,9 +398,9 @@ bool node::loadAllFiles(string filename){
 bool node::loadFile(string filename,int fileType){
 	string key = filename.substr(0,filename.find_first_of("."));
 	if(fileType == HEAD_FILE)
-		filename.insert(0,"HEAD/");//NA MPEI TO HEAD ID
+		filename.insert(0,headPath);//NA MPEI TO HEAD ID
 	else if(fileType == BODY_FILE)
-		filename.insert(0,"BODY/");//NA MPEI TO BODY ID
+		filename.insert(0,bodyPath);//NA MPEI TO BODY ID
 	TiXmlDocument doc(filename);
 	bool loadOkay = doc.LoadFile();
 	if(!loadOkay)
