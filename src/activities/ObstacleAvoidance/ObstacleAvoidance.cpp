@@ -309,8 +309,8 @@ int ObstacleAvoidance::Execute() {
 			if (targetR == InnerRing)
 				targetO = 0;
 
-			Logger::Instance().WriteMsg("ObstacleAvoidance",  " targetR " + _toString(targetR) + " targetS " + _toString(targetS) + " targetO " + _toString(targetO), Logger::Info );
-			Logger::Instance().WriteMsg("ObstacleAvoidance",  " targetR " + _toString(int(targetR)) + " targetS " + _toString(int(targetS)) + " targetO " + _toString(int(targetO)), Logger::Info );
+			//Logger::Instance().WriteMsg("ObstacleAvoidance",  " targetR " + _toString(targetR) + " targetS " + _toString(targetS) + " targetO " + _toString(targetO), Logger::Info );
+			//Logger::Instance().WriteMsg("ObstacleAvoidance",  " targetR " + _toString(int(targetR)) + " targetS " + _toString(int(targetS)) + " targetO " + _toString(int(targetO)), Logger::Info );
 			astar13Neighbours(int(targetR), int(targetS),  int(targetO));
 			motionController(distance2Goal);
 		}else{
@@ -751,7 +751,7 @@ void ObstacleAvoidance::findNeighbours(int r, int s) {
 }
 
 void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo) {
-	Logger::Instance().WriteMsg("ObstacleAvoidance", "*** A* input: r" + _toString(goalm) + " s " + _toString(goaln) + " o " + _toString(goalo) , Logger::ExtraExtraInfo);
+	//Logger::Instance().WriteMsg("ObstacleAvoidance", "*** A* input: r" + _toString(goalm) + " s " + _toString(goaln) + " o " + _toString(goalo) , Logger::ExtraExtraInfo);
 	int nodes=0;
 	int startSector = FRONT, startRing = InnerRing;
 	double deltaTheta, sideCost;
@@ -958,13 +958,13 @@ void ObstacleAvoidance::pathPlanningRequestRelative(float target_x,float target_
 
 void ObstacleAvoidance::motionController(double distance2Goal) {
 	double walkToX, walkToY, walkToT;
-	Logger::Instance().WriteMsg("ObstacleAvoidance", " wayM " + _toString(pathR[1]) + " wayN " + _toString(pathS[1]), Logger::Info);
+	//Logger::Instance().WriteMsg("ObstacleAvoidance", " wayM " + _toString(pathR[1]) + " wayN " + _toString(pathS[1]), Logger::Info);
 	if (pathCounter != 0){
 		if(pathCounter == 1){
 			walkToX = 0.0;
 			walkToY = 0.0;
 			walkToT = 0.0;
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "EFTASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA! " , Logger::Info);
+			//Logger::Instance().WriteMsg("ObstacleAvoidance", "EFTASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA! " , Logger::Info);
 		}
 		else if(pathR[1] == InnerRing){ 		//peristrofikh kinhsh
 			walkToX = 0.0;
@@ -973,12 +973,12 @@ void ObstacleAvoidance::motionController(double distance2Goal) {
 			while (c < pathCounter-1 && pathR[c+1] == 1)
 				c++;
 			walkToT =(pathS[1]>FRONT)?c*RotationAngleRad*RotationMoveFactor:-c*RotationAngleRad*RotationMoveFactor;
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "Turn! " + _toString(c), Logger::Info);
+			//Logger::Instance().WriteMsg("ObstacleAvoidance", "Turn! " + _toString(c), Logger::Info);
 		}else if(pathS[1]>FRONT+1 || pathS[1]<FRONT-1){		//plagia bhmata
 			walkToX = 0.0;
 			walkToY = cellCenterY[pathR[1]][pathS[1]];
 			walkToT = 0.0;
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "Side! " , Logger::Info);
+			//Logger::Instance().WriteMsg("ObstacleAvoidance", "Side! " , Logger::Info);
 		}else{
 			if (PolarGrid[present][pathR[1]][pathS[1]] > 0.8){
 				walkToX = 0.0;
@@ -989,7 +989,7 @@ void ObstacleAvoidance::motionController(double distance2Goal) {
 				walkToX = cellCenterX[pathR[1]][pathS[1]];
 				walkToY = cellCenterY[pathR[1]][pathS[1]];
 				walkToT = anglediff2((pathS[1] * RotationAngleRad + pathO[1] * M_PI_4), (pathS[0] * RotationAngleRad + pathO[0] * M_PI_4));
-				Logger::Instance().WriteMsg("ObstacleAvoidance", "Front! ", Logger::Info);
+				//Logger::Instance().WriteMsg("ObstacleAvoidance", "Front! ", Logger::Info);
 			}
 		}
 		if(debugModeCout)
@@ -1034,7 +1034,7 @@ void ObstacleAvoidance::callVelocityWalk(double walkToX, double walkToY, double 
 	X = gain*(walkToX)/maxd;
 	Y = gain*(walkToY)/maxd;
 	t = gain * (walkToT/M_PI);
-	Logger::Instance().WriteMsg("ObstacleAvoidance", "x: " + _toString(X) + " y " + _toString(Y) + " t " + _toString(t) + " f " + _toString(f), Logger::ExtraExtraInfo);
+	//Logger::Instance().WriteMsg("ObstacleAvoidance", "x: " + _toString(X) + " y " + _toString(Y) + " t " + _toString(t) + " f " + _toString(f), Logger::ExtraExtraInfo);
 	velocityWalk(X,Y,t,f);
 }
 
@@ -1054,6 +1054,6 @@ void ObstacleAvoidance::reset(){
 	targetY_0 = targetD_0 * sin(targetT_0 + originA);
 	targetA_0 = wrapToPi(targetA_0 + originA);
 
-	Logger::Instance().WriteMsg("ObstacleAvoidance", "origin X: " + _toString(originX)+ " Y: " + _toString(originY) + " A: "+_toString(originA) , Logger::ExtraExtraInfo);
+	//Logger::Instance().WriteMsg("ObstacleAvoidance", "origin X: " + _toString(originX)+ " Y: " + _toString(originY) + " A: "+_toString(originA) , Logger::ExtraExtraInfo);
 }
 
