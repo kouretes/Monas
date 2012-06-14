@@ -1,5 +1,4 @@
 #include "Localization.h"
-#include "Kutils.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
@@ -16,7 +15,7 @@
 #define SCANFORBALL 2
 #define SCANFORPOST 3
 #define BALLTRACK 4
-
+#define NO_GAME
 #define MAX_TIME_TO_RESET 10 //in seconds
 //#define ADEBUG
 using namespace std;
@@ -60,13 +59,31 @@ void Localization::UserInit()
 	KLocalization::Initialize();
 	KLocalization::setParticlesPoseUniformly(SIRParticles);
 	timeStart = boost::posix_time::microsec_clock::universal_time();
+#ifdef NO_GAME
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
 	pthread_detach(acceptthread);
+#endif
 	firstrun = true;
 	fallBegan = true;
 	last_observation_time = boost::posix_time::microsec_clock::universal_time();
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
+
+	robotmovement.type = "ratio";
+	robotmovement.Distance.ratiomean = 1.0;// systematic error out
+	robotmovement.Distance.ratiodev = 0.5;
+	robotmovement.Distance.Emean = 0.0;
+	robotmovement.Distance.Edev = 0.0;
+
+	robotmovement.Direction.ratiomean = 1.0;// systematic error out
+	robotmovement.Direction.ratiodev = 0.0;
+	robotmovement.Direction.Emean = 0.0;// systematic error out
+	robotmovement.Direction.Edev = deg2rad(20);
+
+	robotmovement.Rotation.ratiomean = 1.0;// systematic error out
+	robotmovement.Rotation.ratiodev = 0.5;
+	robotmovement.Rotation.Emean = 0.0;// systematic error out
+	robotmovement.Rotation.Edev = 0.0;
 
 }
 
@@ -88,14 +105,12 @@ int Localization::DebugMode_Receive()
 		ssize = 0;
 		if ((sock->recv(&size, sizeof(uint32_t))) == 0)
 		{
-			cout << "Stopping Debug ############# Disconnecting !!!" << endl;
 			debugmode = false;
 		}
 		size = ntohl(size);
 		if (size < 1)
 		{
 			//Something went wrong ...
-			cout << " Unable to parse Disconnecting" << endl;
 			debugmode = false;
 			return -2;
 		}
@@ -104,7 +119,6 @@ int Localization::DebugMode_Receive()
 		{
 			if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
 			{
-				cout << "receive error" << endl;
 				break;
 			}
 		}
@@ -112,7 +126,6 @@ int Localization::DebugMode_Receive()
 		headerparsed = incommingheader.ParsePartialFromArray(data, size);
 		if (!headerparsed)
 		{
-			cout << " Unable to parse Disconnecting" << endl;
 			debugmode = false;
 			return -1;
 		}
@@ -123,7 +136,6 @@ int Localization::DebugMode_Receive()
 		if (command == "Stop")
 		{
 			debugmode = false;
-			cout << " Stopping Debug ########################" << endl;
 			return 0;
 		}
 		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
@@ -131,7 +143,6 @@ int Localization::DebugMode_Receive()
 			for (rs = rsize = 0; rsize < size; rsize += rs)
 				if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
 				{
-					cout << "receive error" << endl;
 					break;
 				}
 
@@ -196,7 +207,7 @@ int Localization::Execute()
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x / 1000.0);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
-	MyWorld.mutable_myposition()->set_confidence(AgentPosition.confidence);
+	MyWorld.mutable_myposition()->set_confidence(0.0);
 
 	calculate_ball_estimate(robotmovement);
 	///DEBUGMODE SEND RESULTS
@@ -206,11 +217,11 @@ int Localization::Execute()
 		Send_LocalizationData();
 	}
 	_blk.publishData(MyWorld, "worldstate");
-
+#ifdef NO_GAME
 	DebugDataForGUI.Clear();
 	LocalizationDataForGUI_Load(AUXParticles);
 	_blk.publishSignal(DebugDataForGUI, "debug");
-
+#endif
 	count++;
 
 	vprof.generate_report(10);
@@ -354,72 +365,39 @@ void Localization::calculate_ball_estimate(KMotionModel const & robotModel)
 //Sequential Importance Resampling
 belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
 {
-	//int iterations = 1;
-	int index[partclsNum];
-
-
-	//SpreadParticles
-	timeStop = boost::posix_time::microsec_clock::universal_time();
-	if(timeStop-timeStart >= boost::posix_time::seconds(2)){
-		timeStart = boost::posix_time::microsec_clock::universal_time();
-		SpreadParticlesCirc(SIRParticles, SpreadParticlesDeviation, rotation_deviation, PercentParticlesSpread);
-	}
 	//SIR Filter
-
+	//int index[partclsNum];
+	bool weightsChanged = false;
 
 	//Predict - Move particles according the Prediction Model
-	//for (int i = 0; i < iterations; i++)
 	Predict(SIRParticles, MotionModel);
 
-	//Set semi-optimal bearing angle as the average bearing angle to the observations
-	//ForceBearing(SIRParticles, Observations);
-
-	//Create some particles using Observation Intersection
-	//CircleIntersectionPossibleParticles(Observations, SIRParticles, 4);
 	//Update - Using incoming observation
 	if(Observations.size()>=1){
 		Update(SIRParticles, Observations, MotionModel, partclsNum);
+		weightsChanged = true;
 	}
 	else if(AmbiguousObservations.size()==1){
 		Update_Ambiguous(SIRParticles, AmbiguousObservations, partclsNum);
-		//Update_Ambiguous(SIRParticles,AmbiguousObservations,partclsNum);
+		weightsChanged = true;
 	}
-
 
 	//Normalize Particles  Weight in order to Resample later
-	float ESS = normalize(SIRParticles.Weight, partclsNum);
+	//Find the index of the max weight in the process
+	float ESS = 0;
+	if(weightsChanged)
+		ESS = normalize(SIRParticles.Weight,&max_weight_particle_index);
 
-
-	if (ESS < Beta * 0.8)
-	{
-		depletions_counter++;
-	} else
-	{
-		depletions_counter = 0;
-	}
+#ifdef NO_GAME
 	//Maybe Usefull for others-------------------------------------------------
 	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
 	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
 	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
 	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
 	//--------------------------------------------------------------------------
+#endif
 
 	//extract estimation
-	partcl maxprtcl;
-
-	float max_weight=-1;
-	int max_weight_particle_index=0;
-	//Find Max Weight
-
-	for (unsigned int i = 0; i < SIRParticles.size; i++)
-	{
-		if (SIRParticles.Weight[i] > max_weight)
-		{
-			max_weight = SIRParticles.Weight[i];
-			max_weight_particle_index = i;
-		}
-	}
-
 	AgentPosition.x =  SIRParticles.x[max_weight_particle_index];// maxprtcl.x;
 	AgentPosition.y = SIRParticles.y[max_weight_particle_index];//maxprtcl.y;
 	AgentPosition.theta = SIRParticles.phi[max_weight_particle_index];//maxprtcl.phi;
@@ -428,22 +406,20 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	//AgentPosition = RobustMean(SIRParticles, 10);
 
 	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = CalculateConfidence(SIRParticles, AgentPosition);
+	AgentPosition.confidence = 0.0;
 
 	//Complete the SIR
 	//Check last position confidence
-	if (ESS > 0 && (ESS < Beta ))
-	{
-		Resample(SIRParticles, index, 0);
-		Propagate(SIRParticles, index);
-		if (depletions_counter > 4)
-			depletions_counter -= 2;
-	} else
-	{
-		; //cout << "NO need of resampling" << endl;
-	}
-	if(Observations.size()>=1){
-		ForceBearing(SIRParticles,Observations);
+	if(weightsChanged){
+		if (ESS > 0 && (ESS < Beta ))//Always true because ESS is disabled in normalize
+		{
+			//Resample(SIRParticles, index, 0);
+			//Propagate(SIRParticles, index);
+			rouletteResample(SIRParticles);
+		}
+		if(Observations.size()>=1){
+			//ForceBearing(SIRParticles,Observations);
+		}
 	}
 	return AgentPosition;
 
@@ -477,16 +453,18 @@ void Localization::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
 			tmpOM.Distance.Emean = 0;
-			tmpOM.Distance.Edev = Objects.Get(i).distance_dev()*1000;//10*sqrt(sqrt( Objects.Get(i).distance_dev() ) ) * 1000 + 30;
+			tmpOM.Distance.Edev = Objects.Get(i).distance_dev()*1000*2;//10*sqrt(sqrt( Objects.Get(i).distance_dev() ) ) * 1000 + 30;
 			//Bearing
 			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0;
-			tmpOM.Bearing.Edev = Objects.Get(i).bearing_dev();//sqrt(Objects.Get(i).bearing_dev()) * 360;
-			/*Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(Objects.Get(i).distance() * 1000), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Kanoniko dev: "+_toString(Objects.Get(i).distance_dev()*1000) + " Auto pou vazoume twra: " + _toString(tmpOM.Distance.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Gwnia: "+_toString( Objects.Get(i).bearing()) + " Dev gwnias: " + _toString(Objects.Get(i).bearing_dev()), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);*/
+			tmpOM.Bearing.Edev = Objects.Get(i).bearing_dev()*2;//sqrt(Objects.Get(i).bearing_dev()) * 360;
+			Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val), Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "Dev from vision: "+_toString(Objects.Get(i).distance_dev()*1000) + " Dev ours: " + _toString(tmpOM.Distance.Edev), Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);
+
+
 
 			if ((this)->KFeaturesmap.count(id) != 0)
 			{
@@ -550,30 +528,9 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	float robot_dir = anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
 	float robot_rot = DR;
 
-	MModel.type = "ratio";
-	if (robot_dist > 500)
-	{
-		robot_dist = 0.0;
-		robot_dir = 0.000001;
-		robot_rot = 0.00001;
-	}
 	MModel.Distance.val = robot_dist;
-	MModel.Distance.ratiomean = 1.0;// systematic error out
-	MModel.Distance.ratiodev = 0.5;
-	MModel.Distance.Emean = 0.0;
-	MModel.Distance.Edev = 0.0;
-
 	MModel.Direction.val = robot_dir;
-	MModel.Direction.ratiomean = 1.0;// systematic error out
-	MModel.Direction.ratiodev = 0.0;
-	MModel.Direction.Emean = 0.0;// systematic error out
-	MModel.Direction.Edev = deg2rad(20);
-
 	MModel.Rotation.val = robot_rot;
-	MModel.Rotation.ratiomean = 1.0;// systematic error out
-	MModel.Rotation.ratiodev = 0.5;
-	MModel.Rotation.Emean = 0.0;// systematic error out
-	MModel.Rotation.Edev = 0.0;
 
 	TrackPointRobotPosition.x = XA;
 	TrackPointRobotPosition.y = YA;
@@ -594,7 +551,7 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	WI->mutable_myposition()->set_x(AgentPosition.x);
 	WI->mutable_myposition()->set_y(AgentPosition.y);
 	WI->mutable_myposition()->set_phi(AgentPosition.theta);
-	WI->mutable_myposition()->set_confidence(AgentPosition.confidence);
+	WI->mutable_myposition()->set_confidence(0.0);
 
 	WI->CopyFrom(MyWorld);
 	DebugData.mutable_robotposition()->set_x(TrackPoint.x);

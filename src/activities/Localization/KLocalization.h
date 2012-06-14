@@ -20,11 +20,13 @@
 #include "tools/MathFunctions.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
+//#include <boost/random/mersenne_twister.hpp>
+//#include <boost/random/normal_distribution.hpp>
+//#include <boost/random/variate_generator.hpp>
 
-//#define VISIBILITY_WEIGHTING
 #define DISTANCE_WEIGHTING
-//#define BEARING_WEIGHTING
-#define yellowyellow
+#define BEARING_WEIGHTING
+
 //#define PASTBELIEF
 
 using namespace std;
@@ -52,24 +54,6 @@ typedef struct ftr {
 	short CntDistErrorDevParams;
 	short CntBearErrorDevParams;
 
-	//Zero Constructor
-	ftr() {
-		id = "";
-		x = 0;
-		y = 0;
-		weight = 0;
-		CntDistErrorDevParams = 0;
-		CntBearErrorDevParams = 0;
-
-		CntDistErrorMeanParams = 0;
-		CntBearErrorMeanParams = 0;
-
-		DistErrorMeanParams = NULL;
-		BearignErrorMeanParams = NULL;
-
-		DistErrorDevParams = NULL;
-		BearignErrorDevParams = NULL;
-	}
 	//Parameterized Constructor
 	void set(double x_, double y_, string id_, double weight_, short CntDistErrorDevParams_, short CntBearErrorDevParams_, double *DistErrorDevParams_, double*BearignErrorDevParams_, short CntDistErrorMeanParams_, short CntBearErrorMeanParams_, double *DistErrorMeanParams_, double*BearignErrorMeanParams_) {
 		id = id_;
@@ -95,22 +79,7 @@ typedef struct pvar {
 	double y;
 	double phi;// orientation
 	double Weight;//Weight of a particle
-
-	pvar() {
-		x = 0;
-		y = 0;
-		phi = 0;
-		Weight = 0;
-	}
-
-	pvar(int x_, int y_, int phi_, int Weight_) {
-
-		x = x_;
-		y = y_;
-		phi = phi_;
-		Weight = Weight_;
-	}
-
+	pvar() {Weight = 0;}
 	//Operator to compare 2 particles by their weight
 	bool operator<(const struct pvar &other) const {
 		//	cout << Weight << "Other " << other.Weight << endl;
@@ -128,25 +97,6 @@ typedef struct var {
 	double *Weight; //all the weights
 	double WeightSum; //the sum of the weights
 	unsigned int size; //The number of the particles
-	var() { //zero Constructor
-		size = 0;
-		x = NULL;
-		y = NULL;
-		phi = NULL;
-		Weight = NULL;
-		WeightSum = -1;
-	}
-	var(int size_) {
-		if (size > 0) {
-			size = size_;
-			x = new double[size];
-			y = new double[size];
-			phi = new double[size];
-			Weight = new double[size];
-			WeightSum = -1;
-		} else
-			var();
-	}
 	~var() {
 		if (x != NULL)
 			delete[] x;
@@ -157,46 +107,15 @@ typedef struct var {
 		if (Weight != NULL)
 			delete[] Weight;
 	}
-	partcl * get_particle(int pos) { //Take a particle
-		if (pos > 0)
-			if ((unsigned int) pos < size)
-				return new partcl(x[pos], y[pos], phi[pos], Weight[pos]);
-
-		return NULL;
-	}
-
 } parts;
 
 //Random Variable
-//Here is store the odometry data
 typedef struct rvar {
 	double val;
 	double Emean;
 	double Edev;
 	double ratiomean;
 	double ratiodev;
-	rvar() {
-		val = 0;
-		Emean = 0;
-		Edev = 0;
-		ratiomean = 0;
-		ratiodev =0 ;
-	}
-	//operator to export data
-	// friend ostream &operator<<(ostream &stream, struct rvar obj);
-	friend ostream &operator<<(ostream &stream, struct rvar obj) {
-		stream << obj.val << " ";
-		stream << obj.Emean << " ";
-		stream << obj.Edev;
-		return stream; // return the stream
-	}
-	//operator to import data
-	friend istream &operator>>(istream &stream, struct rvar &obj) {
-		cout << "Entered X,Y,Z values: ";
-		stream >> obj.val >> obj.Emean >> obj.Edev;
-		return stream;
-	}
-
 } randvar;
 
 //MotionModel
@@ -227,28 +146,20 @@ typedef struct blf {
 class KLocalization {
 public:
 	//private:
-	double* Distances;
 
-	float P_observe_NotVisible;
-	float P_Notobserve_NotVisible;
-	float P_observe_Visible;
-	float P_Notobserve_Visible;
+	//Random number generetors
+	//boost::mt19937                     ENG;    // Mersenne Twister
+    //boost::normal_distribution<double> DIST;   // Normal Distribution
+    //boost::variate_generator<ENG,DIST> NORMAL_ENGINE;    // Variate generator
 
 	float numofparticlesfromObservation;
-
-
 	float NumberOfParticlesSpreadAfterFall;
-	float ForceBearingParticles;
-
-	double riza2pi;
 
 	unsigned int robustmean;
-	int depletions_counter;
 	belief AgentPosition;
 	//public:
 
 	float Beta;
-	float * Beta2;
 	float max_observation_distance;
 	float max_observation_distance_deviation;
 	float min_observation_distance_deviation;
@@ -256,7 +167,6 @@ public:
 	float max_observation_bearing_deviation;
 	float min_observation_bearing_deviation;
 
-	float halfrange;
 
 	double SpreadParticlesDeviation;
 	double rotation_deviation;
@@ -277,11 +187,11 @@ public:
 	//Team
 	float initX[2], initY[2], initPhi[2];
 	int playerNumber;
-	//Belief for each goalpost
+	//Particle with the max weight
+	unsigned int max_weight_particle_index;
 
 	parts SIRParticles;
 	parts AUXParticles;
-	vector<feature> allfeatures;
 	unsigned int partclsNum;
 
 	vector<KMotionModel> KouretesMotions;
@@ -302,58 +212,37 @@ public:
 	//Not used with 2 yellow goals
 	void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 
-	float ESS(parts &Particles); //Calculate Effective Sample Size
-	void Resample(parts &Particles, int * Index, int param);
-	void Propagate(parts &Particles, int * Index);
-	//Not used with the activity
-	//belief LocalizationStep(int steps, string MotionType, vector<KObservationModel> & Observation, double rangemin, double rangemax);
-	//belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel> & Observation, double rangemin, double rangemax);
-
 	KMotionModel * findBestMotionModel(int steps, string MotionType, vector<KMotionModel> & Motions, int *iterations);
 
-	double normalize(double *Weights, int size);
-	double CalculateConfidence(parts & Particles, belief & blf);
-	double CalcDistDev(feature afeature, double Distance);
-	double CalcBearDev(feature afeature, double Distance);
+	double normalize(double *Weights, unsigned int *max_weight_index);
 
-	double CalcDistMean(feature afeature, double Distance);
-	double CalcBearMean(feature afeature, double Distance);
 	float circular_mean_angle(float *angles, unsigned int size);
 	//! Get Particles from observation
 	belief getCurrentPosition();
 
-	//bool isVisible(feature Feature, parts &Particles, int particle);
-	//bool isVisible(feature Feature, partcl);
 
 	double normpdf(double diff, double dev);
 	belief RobustMean(parts & Particles, int PercenteOfParticles);
-	double * CumSum(double * Table, int size);
-	double * FlipCumProd(double * Table, int size);
-	int * ResampleSWR(parts & Particles, int *Index);
-	int * multinomialR(parts & Particles, int *Index);
+	void rouletteResample(parts & Particles);
 
 	void setBelief(double x, double y, double phi, double confidence);
 	void setParticlesPose(parts & Particles, double x, double y, double phi);
 	void setParticlesPoseUniformly(parts & Particles);
 	void initializeParticles(parts & Particles,int playerNumber,bool kickOff);
 
-	int ObservationParticles(vector<KObservationModel> & Observation, parts &Paticles, int Xdim, int Ydim, int resolution, double rangemaxleft, double rangemaxright);
-	int CircleIntersectionPossibleParticles(vector<KObservationModel> &Observation, parts &Particles, int numofparticlesfromObservation) ;
-	void SpreadParticles(parts & Particles, double Deviation, double rotation_deviation, int Percent);
-	void SpreadParticlesCirc(parts & Particles, double Deviation, double rotation_deviation, int Percent);
 	void spreadParticlesAfterFall(parts &,double,double, int);
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	double deg2rad(double deg) {
-		return (deg * M_PI / 180);
+		return (deg * M_PI / 180.0);
 	}
 
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts radians to decimal degrees             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	double rad2deg(double rad) {
-		return (rad * 180 / M_PI);
+		return (rad * 180.0 / M_PI);
 	}
 };
 
