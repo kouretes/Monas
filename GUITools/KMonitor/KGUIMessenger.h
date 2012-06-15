@@ -44,6 +44,8 @@ public slots:
 	void KCCRHSubscriptionHandler(QString);
 	void KCCRHUnsubscriptionHandler(QString);
 
+	void tabChangeHandler(int);
+
 signals:
 	void knownHostsUpdate(KnownHosts);
 	void gameStateMessageUpdate(GameStateMessage, QString);

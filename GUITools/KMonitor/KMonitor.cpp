@@ -139,7 +139,8 @@ KMonitor::KMonitor(QWidget *parent)
 	setWindowState(Qt::WindowMaximized);
 
 	//Signals-Slots for tab changes manipulation
-	//connect(this->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
+	connect(this->KMTabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
+	connect(this->KMTabWidget, SIGNAL(currentChanged(int)), Messenger, SLOT(tabChangeHandler(int)));
 }
 
 KMonitor::~KMonitor()

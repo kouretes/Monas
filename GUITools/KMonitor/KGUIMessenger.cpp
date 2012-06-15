@@ -38,7 +38,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	}
 
 	timer = new QTimer();
-	timer->setInterval(500);
+	timer->setInterval(50);
 
 	connect(this->timer, SIGNAL(timeout()), this, SLOT(allocateReceivedMessages()));
 
@@ -50,12 +50,12 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	myLVRequestedHost.clear();
 	myKccRequestedHost.clear();
 
-	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+/*	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
 	updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
-	updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);
+	updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,msgentry::HOST_ID_ANY_HOST);*/
 }
 
 KGUIMessenger::~KGUIMessenger()
@@ -203,6 +203,8 @@ void KGUIMessenger::updateSubscription(std::string const& topic , msgentry::msgc
 
 void KGUIMessenger::GWRHSubscriptionHandler(QString hostId)
 {
+	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC, hostId.toUInt());
+
 	myGWRequestedHosts << hostId;
 	myGWRequestedHosts.removeDuplicates();
 
@@ -211,12 +213,19 @@ void KGUIMessenger::GWRHSubscriptionHandler(QString hostId)
 
 void KGUIMessenger::GWRHUnsubscriptionHandler(QString hostId)
 {
+	updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC, hostId.toUInt());
 	myGWRequestedHosts.removeOne(hostId);
+
 	//printMyGWRequestedHosts();
 }
 
 void KGUIMessenger::LWRHSubscriptionHandler(QString hostId)
 {
+	updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
+	updateSubscription("vision",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
+	updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
+	updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
+
 	myLWRequestedHost = hostId;
 	//printMyGWRequestedHosts();
 }
@@ -224,40 +233,113 @@ void KGUIMessenger::LWRHSubscriptionHandler(QString hostId)
 void KGUIMessenger::LWRHUnsubscriptionHandler(QString hostId)
 {
 	if(myLWRequestedHost == hostId)
+	{
+		updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		updateSubscription("vision",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		updateSubscription("debug",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		updateSubscription("motion",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+
 		myLWRequestedHost.clear();
+	}
 }
 
 void KGUIMessenger::LMRHSubscriptionHandler(QString hostId)
 {
+	updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
 	myLMRequestedHost = hostId;
 }
 
 void KGUIMessenger::LMRHUnsubscriptionHandler(QString hostId)
 {
 	if(myLMRequestedHost == hostId)
+	{
+		updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
 		myLMRequestedHost.clear();
+	}
+
 }
 
 void KGUIMessenger::LVRHSubscriptionHandler(QString hostId)
 {
+	updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
 	myLVRequestedHost = hostId;
 }
 
 void KGUIMessenger::LVRHUnsubscriptionHandler(QString hostId)
 {
 	if(myLVRequestedHost == hostId)
+	{
+		updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
 		myLVRequestedHost.clear();
+	}
+
 }
 
 void KGUIMessenger::KCCRHSubscriptionHandler(QString hostId)
 {
+	updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
 	myKccRequestedHost = hostId;
 }
 
 void KGUIMessenger::KCCRHUnsubscriptionHandler(QString hostId)
 {
 	if(myKccRequestedHost == hostId)
+	{
+		updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
 		myKccRequestedHost.clear();
+	}
+}
+
+void KGUIMessenger::tabChangeHandler(int currentTab)
+{
+	switch(currentTab)
+	{
+		// Global World State
+		case 0:
+			if (!myLVRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
+			if (!myKccRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
+
+			break;
+
+		// Local World State
+		case 1:
+			if (!myLVRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
+			if (!myKccRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
+
+			break;
+
+		// Local Polar Map
+		case 2:
+			if (!myLVRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
+			if (!myKccRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
+
+			break;
+
+		// Local Robot View
+		case 3:
+			if (!myKccRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
+			if (!myLVRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
+
+			break;
+
+		// Kcc
+		case 4:
+			if (!myLVRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
+			if (!myKccRequestedHost.isEmpty())
+				updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
+
+			break;
+	}
+
 }
 
 void KGUIMessenger::printKnownHosts(KnownHosts hosts)
@@ -272,6 +354,10 @@ void KGUIMessenger::printKnownHosts(KnownHosts hosts)
 
             cout <<"To hostid mou :: "  <<  (*fit).hostid() << endl;
             cout <<"To hostname mou :: "  <<  (*fit).hostname() << endl;
+          /*  QString curr = QString::fromStdString(_toString((*fit).hostid()));
+            std::cout <<"QString"<<  curr.toStdString() << std::endl;
+            std::cout <<"uint"<<  curr.toUInt() << std::endl;*/
+
     }
 
 	std::cout <<  "###################" << std::endl << std::endl;
