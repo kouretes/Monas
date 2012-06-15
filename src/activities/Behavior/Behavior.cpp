@@ -112,6 +112,7 @@ void Behavior::UserInit() {
 
 int Behavior::Execute() {
 
+
 	read_messages();
 	GetGameState();
 	GetPosition();
@@ -126,7 +127,6 @@ int Behavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
-
 		if (lastpenalized+seconds(12)>microsec_clock::universal_time()) {
 			HeadScanStepHigh(2.08);
 			return 0;
@@ -1000,20 +1000,20 @@ bool Behavior::readGoalConfiguration(const std::string& file_name) {
 			Attr->Attribute("y", &y);
 			ID = Attr->Attribute("ID");
 			if (ID == "YellowGoal"){
-				oppGoalX = x/1000.0;
-				oppGoalY = y/1000.0;
+				oppGoalX = x;
+				oppGoalY = y;
 				ownGoalX = -oppGoalX;
 				ownGoalY = -oppGoalY;
 			}
 			if (ID == "YellowLeft"){
-				oppGoalLeftX = x/1000.0;
-				oppGoalLeftY = y/1000.0;
+				oppGoalLeftX = x;
+				oppGoalLeftY = y;
 				ownGoalLeftX = -oppGoalLeftX;
 				ownGoalLeftY = -oppGoalLeftY;
 			}
 			if (ID == "YellowRight"){
-				oppGoalRightX = x/1000.0;
-				oppGoalRightY = y/1000.0;
+				oppGoalRightX = x;
+				oppGoalRightY = y;
 				ownGoalRightX = -oppGoalRightX;
 				ownGoalRightY = -oppGoalRightY;
 			}

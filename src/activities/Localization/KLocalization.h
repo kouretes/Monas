@@ -37,38 +37,12 @@ typedef struct ftr {
 	double y;
 	string id; //Name of the feature
 	double weight;
-
-	//Distance and Bearing error
-	//For polunomial mean error Functions
-	//Pointer to Arrays of parameters
-	double *DistErrorMeanParams;
-	double *BearignErrorMeanParams;
-	//Number of polunomial parameters
-	short CntDistErrorMeanParams;
-	short CntBearErrorMeanParams;
-	//For polunomial error's deviation Functions
-	//Pointer to Arrays of parameters
-	double *DistErrorDevParams;
-	double *BearignErrorDevParams;
-	//Number of polunomial parameters
-	short CntDistErrorDevParams;
-	short CntBearErrorDevParams;
-
 	//Parameterized Constructor
-	void set(double x_, double y_, string id_, double weight_, short CntDistErrorDevParams_, short CntBearErrorDevParams_, double *DistErrorDevParams_, double*BearignErrorDevParams_, short CntDistErrorMeanParams_, short CntBearErrorMeanParams_, double *DistErrorMeanParams_, double*BearignErrorMeanParams_) {
+	void set(double x_, double y_, string id_, double weight_) {
 		id = id_;
 		x = x_;
 		y = y_;
 		weight = weight_;
-		CntDistErrorDevParams = CntDistErrorDevParams_;
-		CntBearErrorDevParams = CntBearErrorDevParams_;
-		DistErrorDevParams = DistErrorDevParams_;
-		BearignErrorDevParams = BearignErrorDevParams_;
-
-		CntDistErrorMeanParams = CntDistErrorMeanParams_;
-		CntBearErrorMeanParams = CntBearErrorMeanParams_;
-		DistErrorMeanParams = DistErrorMeanParams_;
-		BearignErrorMeanParams = BearignErrorMeanParams_;
 	}
 
 } feature;
@@ -79,7 +53,7 @@ typedef struct pvar {
 	double y;
 	double phi;// orientation
 	double Weight;//Weight of a particle
-	pvar() {Weight = 0;}
+	pvar() {x=0;y=0;phi=0;Weight = 0;}
 	//Operator to compare 2 particles by their weight
 	bool operator<(const struct pvar &other) const {
 		//	cout << Weight << "Other " << other.Weight << endl;
@@ -120,8 +94,8 @@ typedef struct rvar {
 
 //MotionModel
 typedef struct MM {
+	bool freshData;
 	string type; //Mono gia to distance
-	int Steps;
 	randvar Distance;
 	randvar Direction;
 	randvar Rotation;
@@ -152,25 +126,17 @@ public:
     //boost::normal_distribution<double> DIST;   // Normal Distribution
     //boost::variate_generator<ENG,DIST> NORMAL_ENGINE;    // Variate generator
 
-	float numofparticlesfromObservation;
 	float NumberOfParticlesSpreadAfterFall;
-
 	unsigned int robustmean;
 	belief AgentPosition;
 	//public:
 
 	float Beta;
-	float max_observation_distance;
-	float max_observation_distance_deviation;
-	float min_observation_distance_deviation;
-
-	float max_observation_bearing_deviation;
-	float min_observation_bearing_deviation;
 
 
-	double SpreadParticlesDeviation;
 	double rotation_deviation;
 	double SpreadParticlesDeviationAfterFall;
+	double SpreadParticlesDeviation;
 	double RotationDeviationAfterFallInDeg;
 	int PercentParticlesSpread;
 
@@ -191,17 +157,14 @@ public:
 	unsigned int max_weight_particle_index;
 
 	parts SIRParticles;
-	parts AUXParticles;
 	unsigned int partclsNum;
 
-	vector<KMotionModel> KouretesMotions;
-	map<string, vector<KMotionModel> > KMMmap;
 	map<string, feature> KFeaturesmap;
 	KLocalization();
 	virtual ~KLocalization();
 
 	int Initialize();
-	int LoadMotionModelXML(string filename, vector<KMotionModel>& Motions, map<string, vector<KMotionModel> > & KMMmap);
+
 	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
 	int readConfiguration(const std::string& file_name);
 	bool readRobotConf(const std::string& file_name);

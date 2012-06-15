@@ -39,18 +39,13 @@ void Localization::UserInit()
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
-	count = 0;
+	firstOdometry = true;
 	serverpid = -1;
 	debugmode = false;
 
 	int max_bytedata_size = 100000;
 
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
-
-	wmot.add_parameter(0.0f);
-	wmot.add_parameter(0.0f);
-	wmot.add_parameter(0.0f);
-	wmot.add_parameter(0.0f);
 
 	MyWorld.add_balls();
 
@@ -70,6 +65,7 @@ void Localization::UserInit()
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 
 	robotmovement.type = "ratio";
+	robotmovement.freshData = false;
 	robotmovement.Distance.ratiomean = 1.0;// systematic error out
 	robotmovement.Distance.ratiodev = 0.5;
 	robotmovement.Distance.Emean = 0.0;
@@ -92,96 +88,8 @@ void Localization::Reset(int playerNumber, bool kickOff)
 	KLocalization::initializeParticles(SIRParticles,playerNumber,kickOff);
 }
 
-
-int Localization::DebugMode_Receive()
-{
-	///DEBUG MODE
-	bool headerparsed = false;
-	int size;
-	int ssize, rsize;
-	int rs;
-	try
-	{
-		ssize = 0;
-		if ((sock->recv(&size, sizeof(uint32_t))) == 0)
-		{
-			debugmode = false;
-		}
-		size = ntohl(size);
-		if (size < 1)
-		{
-			//Something went wrong ...
-			debugmode = false;
-			return -2;
-		}
-		//Receive the data header
-		for (rs = rsize = 0; rsize < size; rsize += rs)
-		{
-			if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
-			{
-				break;
-			}
-		}
-		incommingheader.Clear();
-		headerparsed = incommingheader.ParsePartialFromArray(data, size);
-		if (!headerparsed)
-		{
-			debugmode = false;
-			return -1;
-		}
-
-		incommingheader.DiscardUnknownFields();
-
-		string command = incommingheader.nextmsgname();
-		if (command == "Stop")
-		{
-			debugmode = false;
-			return 0;
-		}
-		if ((size = incommingheader.nextmsgbytesize()) > 0) //must read next message
-		{
-			for (rs = rsize = 0; rsize < size; rsize += rs)
-				if ((rs = sock->recv(data + rsize, size - rsize)) < 0)
-				{
-					break;
-				}
-
-			if (command == "SetBelief")
-			{
-				RobotPose ticommingmsg;
-				ticommingmsg.ParseFromArray(data, size);
-				MyWorld.mutable_myposition()->MergeFrom(ticommingmsg);
-
-				target.x = MyWorld.myposition().x();
-				target.y = MyWorld.myposition().y();
-				target.phi = MyWorld.myposition().phi();
-			} else if (command.find("Walk") != string::npos)/* == "Walk") */
-			{
-				MotionWalkMessage wmot;
-				wmot.ParseFromArray(data, size);
-				if (command.find("Stop") == string::npos)
-				{ //Reset at the beggining
-					TrackPoint.x = 0;
-					TrackPoint.y = 0;
-					TrackPoint.phi = 0;
-					AgentPosition.theta = 0;
-					AgentPosition.x = 0;
-					AgentPosition.y = 0;
-				}
-				_blk.publishSignal(wmot, "motion");
-			}
-		}
-	} catch (SocketException &e)
-	{
-		cerr << e.what() << endl;
-		debugmode = false;
-	}
-	return 0;
-}
-
 int Localization::Execute()
 {
-	KPROF_SCOPE(vprof, "Localization Execute");
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	process_messages();
@@ -195,17 +103,15 @@ int Localization::Execute()
 		return 0;
 	}else
 		fallBegan = true;
-	if (debugmode)
-		DebugMode_Receive();
 	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 		Reset((int)lrm->type(),lrm->kickoff());
-		Logger::Instance().WriteMsg("Localization", "Uniform particle spread over field ", Logger::Info);
 	}
 
 	LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
-	MyWorld.mutable_myposition()->set_x(AgentPosition.x / 1000.0);
-	MyWorld.mutable_myposition()->set_y(AgentPosition.y / 1000.0);
+	Logger::Instance().WriteMsg("Localization", "Update my position x = " + _toString(AgentPosition.x) + " y = " + _toString(AgentPosition.y) + " phi = " + _toString(AgentPosition.theta) + " max index = " + _toString(max_weight_particle_index), Logger::Info);
+	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
+	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
 	MyWorld.mutable_myposition()->set_confidence(0.0);
 
@@ -213,16 +119,15 @@ int Localization::Execute()
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
 	{
-		LocalizationData_Load(AUXParticles, currentObservation, robotmovement);
+		LocalizationData_Load(SIRParticles, currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
 	_blk.publishData(MyWorld, "worldstate");
 #ifdef NO_GAME
 	DebugDataForGUI.Clear();
-	LocalizationDataForGUI_Load(AUXParticles);
+	LocalizationDataForGUI_Load(SIRParticles);
 	_blk.publishSignal(DebugDataForGUI, "debug");
 #endif
-	count++;
 
 	vprof.generate_report(10);
 	return 0;
@@ -370,7 +275,8 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	bool weightsChanged = false;
 
 	//Predict - Move particles according the Prediction Model
-	Predict(SIRParticles, MotionModel);
+	if(MotionModel.freshData)
+		Predict(SIRParticles, MotionModel);
 
 	//Update - Using incoming observation
 	if(Observations.size()>=1){
@@ -388,14 +294,6 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 	if(weightsChanged)
 		ESS = normalize(SIRParticles.Weight,&max_weight_particle_index);
 
-#ifdef NO_GAME
-	//Maybe Usefull for others-------------------------------------------------
-	memcpy(AUXParticles.x, SIRParticles.x, partclsNum * sizeof(double));
-	memcpy(AUXParticles.y, SIRParticles.y, partclsNum * sizeof(double));
-	memcpy(AUXParticles.phi, SIRParticles.phi, partclsNum * sizeof(double));
-	memcpy(AUXParticles.Weight, SIRParticles.Weight, partclsNum * sizeof(double));
-	//--------------------------------------------------------------------------
-#endif
 
 	//extract estimation
 	AgentPosition.x =  SIRParticles.x[max_weight_particle_index];// maxprtcl.x;
@@ -440,31 +338,30 @@ void Localization::process_messages()
 	if(gsm != 0){
 		playerNumber = gsm->player_number();
 	}
+	Logger::Instance().WriteMsg("Localization", "Data from observations", Logger::Info);
 	if (obsm != 0)
 	{
 		KObservationModel tmpOM;
 		//Load observations
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
+		Logger::Instance().WriteMsg("Localization", "Data from vision obs", Logger::Info);
 
 		for (int i = 0; i < Objects.size(); i++)
 		{
 			id = Objects.Get(i).object_name();
 			//Distance
-			tmpOM.Distance.val = Objects.Get(i).distance() * 1000;
-			tmpOM.Distance.Emean = 0;
-			tmpOM.Distance.Edev = Objects.Get(i).distance_dev()*1000*2;//10*sqrt(sqrt( Objects.Get(i).distance_dev() ) ) * 1000 + 30;
+			tmpOM.Distance.val = Objects.Get(i).distance();
+			tmpOM.Distance.Emean = 0.0;
+			tmpOM.Distance.Edev = 1.0+2.0*Objects.Get(i).distance_dev();//The deviation is 1 meter plus double the precision of vision
 			//Bearing
 			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
-			tmpOM.Bearing.Emean = 0;
-			tmpOM.Bearing.Edev = Objects.Get(i).bearing_dev()*2;//sqrt(Objects.Get(i).bearing_dev()) * 360;
+			tmpOM.Bearing.Emean = 0.0;
+			tmpOM.Bearing.Edev = deg2rad(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
 			Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Dev from vision: "+_toString(Objects.Get(i).distance_dev()*1000) + " Dev ours: " + _toString(tmpOM.Distance.Edev), Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);
-
-
 
 			if ((this)->KFeaturesmap.count(id) != 0)
 			{
@@ -485,8 +382,10 @@ void Localization::process_messages()
 			}
 		}
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
+		Logger::Instance().WriteMsg("Localization", "Data from sensors", Logger::Info);
 		rpsm = _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
 	}else{
+		Logger::Instance().WriteMsg("Localization", "Data from sensors", Logger::Info);
 		rpsm = _blk.readData<RobotPositionMessage>("sensors");
 	}
 
@@ -495,8 +394,10 @@ void Localization::process_messages()
 		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
 		PosY = rpsm->sensordata(KDeviceLists::ROBOT_Y);
 		Angle = rpsm->sensordata(KDeviceLists::ROBOT_ANGLE);
-
+		robotmovement.freshData = true;
 		RobotPositionMotionModel(robotmovement);
+	}else{
+		robotmovement.freshData = false;
 	}
 	if (sm != 0){
 		currentRobotAction = sm->type();
@@ -507,16 +408,16 @@ void Localization::process_messages()
 
 void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 {
-	if (count == 0)
+	if (firstOdometry)
 	{
-		TrackPointRobotPosition.x = PosX.sensorvalue() * 1000;
-		TrackPointRobotPosition.y = PosY.sensorvalue() * 1000;
+		TrackPointRobotPosition.x = PosX.sensorvalue();
+		TrackPointRobotPosition.y = PosY.sensorvalue();
 		TrackPointRobotPosition.phi = Angle.sensorvalue();
-
 		TrackPoint = TrackPointRobotPosition;
+		firstOdometry=false;
 	}
-	float XA = PosX.sensorvalue() * 1000;
-	float YA = PosY.sensorvalue() * 1000;
+	float XA = PosX.sensorvalue();
+	float YA = PosY.sensorvalue();
 	float AA = Angle.sensorvalue();
 	
 
@@ -548,14 +449,14 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	//Fill the world with data!
 	WorldInfo *WI = DebugData.mutable_world();
 
-	WI->mutable_myposition()->set_x(AgentPosition.x);
-	WI->mutable_myposition()->set_y(AgentPosition.y);
+	WI->mutable_myposition()->set_x(AgentPosition.x*1000);
+	WI->mutable_myposition()->set_y(AgentPosition.y*1000);
 	WI->mutable_myposition()->set_phi(AgentPosition.theta);
 	WI->mutable_myposition()->set_confidence(0.0);
 
 	WI->CopyFrom(MyWorld);
-	DebugData.mutable_robotposition()->set_x(TrackPoint.x);
-	DebugData.mutable_robotposition()->set_y(TrackPoint.y);
+	DebugData.mutable_robotposition()->set_x(TrackPoint.x*1000);
+	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
 	RobotPose prtcl;
 	if ((unsigned int) DebugData.particles_size() < Particles.size)
@@ -564,8 +465,8 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	{
 		if (addnewptrs)
 			DebugData.add_particles();
-		DebugData.mutable_particles(i)->set_x(Particles.x[i]);
-		DebugData.mutable_particles(i)->set_y(Particles.y[i]);
+		DebugData.mutable_particles(i)->set_x(Particles.x[i]*1000);
+		DebugData.mutable_particles(i)->set_y(Particles.y[i]*1000);
 		DebugData.mutable_particles(i)->set_phi(Particles.phi[i]);
 		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
 	}
@@ -591,8 +492,8 @@ int Localization::LocalizationDataForGUI_Load(parts& Particles)
 	{
 		if (addnewptrs)
 			DebugDataForGUI.add_particles();
-		DebugDataForGUI.mutable_particles(i)->set_x(Particles.x[i]);
-		DebugDataForGUI.mutable_particles(i)->set_y(Particles.y[i]);
+		DebugDataForGUI.mutable_particles(i)->set_x(Particles.x[i]*1000);
+		DebugDataForGUI.mutable_particles(i)->set_y(Particles.y[i]*1000);
 		DebugDataForGUI.mutable_particles(i)->set_phi(Particles.phi[i]);
 		DebugDataForGUI.mutable_particles(i)->set_confidence(Particles.Weight[i]);
 	}
@@ -623,8 +524,7 @@ void * Localization::StartServer(void * astring)
 	{
 		if (!debugmode)
 		{
-			if (sock != NULL
-					)
+			if (sock != NULL)
 				delete sock;
 
 			if ((sock = servSock.accept()) < 0)

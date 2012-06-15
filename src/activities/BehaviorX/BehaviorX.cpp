@@ -915,34 +915,29 @@ bool BehaviorX::readGoalConfiguration(const std::string& file_name) {
 	string ID;
 
 	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling()) {
-		Attr = Ftr->ToElement();
-		Attr->Attribute("x", &x);
-		Attr->Attribute("y", &y);
-		ID = Attr->Attribute("ID");
-
-		if (ID == "SkyblueGoal"){
-			ownGoalX = x/1000.0;
-			ownGoalY = y/1000.0;
-		}
-		if (ID == "SkyblueLeft"){
-			ownGoalLeftX = x/1000.0;
-			ownGoalLeftY = y/1000.0;
-		}
-		if (ID == "SkyblueRight"){
-			ownGoalRightX = x/1000.0;
-			ownGoalRightY = y/1000.0;
-		}
-		if (ID == "YellowGoal"){
-			oppGoalX = x/1000.0;
-			oppGoalY = y/1000.0;
-		}
-		if (ID == "YellowLeft"){
-			oppGoalLeftX = x/1000.0;
-			oppGoalLeftY = y/1000.0;
-		}
-		if (ID == "YellowRight"){
-			oppGoalRightX = x/1000.0;
-			oppGoalRightY = y/1000.0;
+		if(Ftr->ToComment() == NULL){
+			Attr = Ftr->ToElement();
+			Attr->Attribute("x", &x);
+			Attr->Attribute("y", &y);
+			ID = Attr->Attribute("ID");
+			if (ID == "YellowGoal"){
+				oppGoalX = x;
+				oppGoalY = y;
+				ownGoalX = -oppGoalX;
+				ownGoalY = -oppGoalY;
+			}
+			if (ID == "YellowLeft"){
+				oppGoalLeftX = x;
+				oppGoalLeftY = y;
+				ownGoalLeftX = -oppGoalLeftX;
+				ownGoalLeftY = -oppGoalLeftY;
+			}
+			if (ID == "YellowRight"){
+				oppGoalRightX = x;
+				oppGoalRightY = y;
+				ownGoalRightX = -oppGoalRightX;
+				ownGoalRightY = -oppGoalRightY;
+			}
 		}
 	}
 

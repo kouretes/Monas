@@ -43,7 +43,7 @@ public:
 	void calculate_ball_estimate(KMotionModel const & MModel);
 private:
 
-	int count;
+	bool firstOdometry;
 	int serverpid;
 	WorldInfo MyWorld;
 	mutable KProfiling::profiler vprof;
@@ -71,7 +71,6 @@ private:
 	BallTrackMessage lastballseen;
 	BallFilter myBall;
 
-	MotionWalkMessage wmot;
 	partcl target;
 
 	boost::shared_ptr<const GameStateMessage> gsm;
@@ -99,7 +98,6 @@ private:
 	int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation, KMotionModel & MotionModel);
 	int LocalizationDataForGUI_Load(parts& Particles);
 	void Send_LocalizationData();
-	int DebugMode_Receive();
 	static bool debugmode;
 
 	header incommingheader;

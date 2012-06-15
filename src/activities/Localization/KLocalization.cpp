@@ -32,20 +32,13 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 	bool loadOkay = doc2.LoadFile();
 	if (!loadOkay)
 	{
-		printf("Failed to load file \"%s\"\n", filename.c_str());
+		Logger::Instance().WriteMsg("KLocalization", "Feature loading failed!!!!", Logger::Error);
 		return -1;
 	}
 	TiXmlNode * Ftr;
 	TiXmlElement * Attr;
-	string tmp = "";
-	double x, y, w;
-	int CntDistErrorDevParams, CntBearErrorDevParams;
-	int CntDistErrorMeanParams, CntBearErrorMeanParams;
-	double *DistErrorDevParams = NULL;
-	double *BearignErrorDevParams = NULL;
-	double *DistErrorMeanParams = NULL;
-	double *BearignErrorMeanParams = NULL;
 	string ID;
+	double x, y, w;
 	feature temp;
 	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
 	{
@@ -54,52 +47,8 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 			Attr->Attribute("x", &x);
 			Attr->Attribute("y", &y);
 			Attr->Attribute("weight", &w);
-			Attr->Attribute("DistMeanParams", &CntDistErrorMeanParams);
-			if (CntDistErrorMeanParams > 0)
-			{
-				DistErrorMeanParams = new double[CntDistErrorMeanParams];
-				for (int p = 0; p < CntDistErrorMeanParams; p++)
-				{
-					tmp = "DistM";
-					tmp += boost::lexical_cast<string>(p);
-					Attr->Attribute(tmp.c_str(), DistErrorMeanParams + p);
-				}
-			}
-			Attr->Attribute("DistDevParams", &CntDistErrorDevParams);
-			if (CntDistErrorDevParams > 0)
-			{
-				DistErrorDevParams = new double[CntDistErrorDevParams];
-				for (int p = 0; p < CntDistErrorDevParams; p++)
-				{
-					tmp = "DistD";
-					tmp += boost::lexical_cast<string>(p);
-					Attr->Attribute(tmp.c_str(), DistErrorDevParams + p);
-				}
-			}
-			Attr->Attribute("BearMeanParams", &CntBearErrorMeanParams);
-			if (CntBearErrorMeanParams > 0)
-			{
-				BearignErrorMeanParams = new double[CntBearErrorMeanParams];
-				for (int p = 0; p < CntBearErrorMeanParams; p++)
-				{
-					tmp = "BearM";
-					tmp += boost::lexical_cast<string>(p);
-					Attr->Attribute(tmp.c_str(), BearignErrorMeanParams + p);
-				}
-			}
-			Attr->Attribute("BearDevParams", &CntBearErrorDevParams);
-			if (CntBearErrorDevParams > 0)
-			{
-				BearignErrorDevParams = new double[CntBearErrorDevParams];
-				for (int p = 0; p < CntBearErrorDevParams; p++)
-				{
-					tmp = "BearD";
-					tmp += boost::lexical_cast<string>(p);
-					Attr->Attribute(tmp.c_str(), BearignErrorDevParams + p);
-				}
-			}
 			ID = Attr->Attribute("ID");
-			temp.set(x, y, ID, w, CntDistErrorDevParams, CntBearErrorDevParams, DistErrorDevParams, BearignErrorDevParams, CntDistErrorMeanParams, CntBearErrorMeanParams, DistErrorMeanParams, BearignErrorMeanParams);
+			temp.set(x, y, ID, w);
 			KFeaturesmap[temp.id] = temp;
 		}
 	}
@@ -147,16 +96,6 @@ bool KLocalization::readRobotConf(const std::string& file_name) {
 KLocalization::~KLocalization()
 {
 	// TODO Auto-generated destructor stub
-	//	delete[] Particles.x;
-	//	delete[] Particles.y;
-	//	delete[] Particles.phi;
-	//	delete[] Particles.Weight;
-	//
-	//	delete[] AUXParticles.x;
-	//	delete[] AUXParticles.y;
-	//	delete[] AUXParticles.phi;
-	//	delete[] AUXParticles.Weight;
-
 }
 
 
@@ -182,7 +121,7 @@ void KLocalization::setParticlesPose(parts & Particles, double x, double y, doub
 void KLocalization::setParticlesPoseUniformly(parts & Particles)
 {
 	Uniform X, Y, P;
-	float length = 2000;//(FieldMaxX - FieldMinX)/4;
+	float length = 2;//(FieldMaxX - FieldMinX)/4;
 	//float width = (FieldMaxY - FieldMinY)/2;
 	unsigned int particlesUp = partclsNum/2;
 	unsigned int particlesDown = partclsNum - particlesUp;
@@ -197,7 +136,7 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 	//Initialize top Particles
 	for (unsigned int i = 0; i < particlesUp; i++)
 	{
-		Particles.x[i] = X.Next() * length + FieldMinX + 500;
+		Particles.x[i] = X.Next() * length + FieldMinX + 0.5;
 		Particles.y[i] = FieldMaxY;
 		Particles.phi[i] = deg2rad(270);
 		Particles.Weight[i] = 1.0 / partclsNum;
@@ -205,7 +144,7 @@ void KLocalization::setParticlesPoseUniformly(parts & Particles)
 	//Initialize down Particles
 	for (unsigned int i = particlesUp; i < partclsNum; i++)
 	{
-		Particles.x[i] = X.Next() * length + FieldMinX + 500;
+		Particles.x[i] = X.Next() * length + FieldMinX + 0.5;
 		Particles.y[i] = -FieldMaxY;
 		Particles.phi[i] = deg2rad(90);
 		Particles.Weight[i] = 1.0 / partclsNum;
@@ -237,18 +176,11 @@ int KLocalization::Initialize()
 		float temp;
 		found &= config->QueryElement("Beta", Beta);
 		///Parameters
-		found &= config->QueryElement("max_observation_distance", max_observation_distance);
-		found &= config->QueryElement("max_observation_distance_deviation", max_observation_distance_deviation);
-		found &= config->QueryElement("min_observation_distance_deviation", min_observation_distance_deviation);
-		found &= config->QueryElement("max_observation_bearing_deviation", max_observation_bearing_deviation);
-		found &= config->QueryElement("min_observation_bearing_deviation", min_observation_bearing_deviation);
 		found &= config->QueryElement("robustmean", robustmean);
-		found &= config->QueryElement("numofparticlesfromObservation", numofparticlesfromObservation);
-		found &= config->QueryElement("partclsNum", partclsNum); // 0.2 meters deviation
+		found &= config->QueryElement("partclsNum", partclsNum);
 		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
-		found &= config->QueryElement("rotation_deviation", rotation_deviation); // % of particles be spreaded
+		found &= config->QueryElement("rotation_deviation", rotation_deviation);
 		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
-		found &= config->QueryElement("SpreadParticlesDeviationAfterFall", SpreadParticlesDeviationAfterFall);
 		found &= config->QueryElement("RotationDeviationAfterFallInDeg", RotationDeviationAfterFallInDeg);
 		found &= config->QueryElement("NumberOfParticlesSpreadAfterFall", NumberOfParticlesSpreadAfterFall);
 		if (found)
@@ -273,21 +205,13 @@ int KLocalization::Initialize()
 	{
 		bool found = true;
 		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
-		CarpetMaxX*=1000; //convert to mm
 		found &= config->QueryElement("CarpetMinX", CarpetMinX);
-		CarpetMinX*=1000;
 		found &= config->QueryElement("CarpetMaxY", CarpetMaxY);
-		CarpetMaxY*=1000;
 		found &= config->QueryElement("CarpetMinY", CarpetMinY);
-		CarpetMinY*=1000;
 		found &= config->QueryElement("FieldMaxX", FieldMaxX);
-		FieldMaxX*=1000;
 		found &= config->QueryElement("FieldMinX", FieldMinX);
-		FieldMinX*=1000;
 		found &= config->QueryElement("FieldMaxY", FieldMaxY);
-		FieldMaxY*=1000;
 		found &= config->QueryElement("FieldMinY", FieldMinY);
-		FieldMinY*=1000;
 		if (found)
 		{
 			Logger::Instance().WriteMsg("Localization", "All Field parameters loaded successfully", Logger::Info);
@@ -315,14 +239,6 @@ int KLocalization::Initialize()
 	double seed = (double) (time(NULL) % 100 / 100.0);
 	Random::Set(seed);
     srand(time(0));
-	//Also Allocate Auxiliary particles
-
-	AUXParticles.size = partclsNum;
-	AUXParticles.x = new double[partclsNum];
-	AUXParticles.y = new double[partclsNum];
-	AUXParticles.phi = new double[partclsNum];
-	AUXParticles.Weight = new double[partclsNum];
-
 
 	// Loading features,
 	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
