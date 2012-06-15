@@ -109,7 +109,6 @@ int Localization::Execute()
 	}
 
 	LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
-	Logger::Instance().WriteMsg("Localization", "Update my position x = " + _toString(AgentPosition.x) + " y = " + _toString(AgentPosition.y) + " phi = " + _toString(AgentPosition.theta) + " max index = " + _toString(max_weight_particle_index), Logger::Info);
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
@@ -316,7 +315,7 @@ belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObs
 			rouletteResample(SIRParticles);
 		}
 		if(Observations.size()>=1){
-			//ForceBearing(SIRParticles,Observations);
+			;//ForceBearing(SIRParticles,Observations);
 		}
 	}
 	return AgentPosition;
@@ -338,14 +337,12 @@ void Localization::process_messages()
 	if(gsm != 0){
 		playerNumber = gsm->player_number();
 	}
-	Logger::Instance().WriteMsg("Localization", "Data from observations", Logger::Info);
 	if (obsm != 0)
 	{
 		KObservationModel tmpOM;
 		//Load observations
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
-		Logger::Instance().WriteMsg("Localization", "Data from vision obs", Logger::Info);
 
 		for (int i = 0; i < Objects.size(); i++)
 		{
@@ -353,15 +350,15 @@ void Localization::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance();
 			tmpOM.Distance.Emean = 0.0;
-			tmpOM.Distance.Edev = 1.0+2.0*Objects.Get(i).distance_dev();//The deviation is 1 meter plus double the precision of vision
+			tmpOM.Distance.Edev = 1.7+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
 			//Bearing
 			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
-			tmpOM.Bearing.Edev = deg2rad(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
-			Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
+			tmpOM.Bearing.Edev = deg2rad(50) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
+			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);
+			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);*/
 
 			if ((this)->KFeaturesmap.count(id) != 0)
 			{
@@ -378,14 +375,11 @@ void Localization::process_messages()
 					currentAmbiguousObservation.push_back(tmpOM);
 				}
 
-				Logger::Instance().WriteMsg("Localization", "Unmatched Observation: "+id, Logger::Info);
 			}
 		}
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
-		Logger::Instance().WriteMsg("Localization", "Data from sensors", Logger::Info);
 		rpsm = _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST,NULL, &observation_time);
 	}else{
-		Logger::Instance().WriteMsg("Localization", "Data from sensors", Logger::Info);
 		rpsm = _blk.readData<RobotPositionMessage>("sensors");
 	}
 

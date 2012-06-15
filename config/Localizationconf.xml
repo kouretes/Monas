@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Beta>0.900000</Beta>
 <robustmean>10</robustmean>
-<partclsNum>60</partclsNum>
+<partclsNum>120</partclsNum>
 <SpreadParticlesDeviation>30</SpreadParticlesDeviation>
 <rotation_deviation>0.1</rotation_deviation>
 <PercentParticlesSpread>5</PercentParticlesSpread>

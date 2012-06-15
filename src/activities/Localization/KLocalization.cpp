@@ -545,11 +545,14 @@ void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &O
 	//Force Bearing under some criteria
 
 	float ParticlePointBearingAngle;
+		unsigned int index;
 	if (Observation.size() > 1)
 	{
 		float * angles = new float[Observation.size()];
 		//for the real one
-		int index = rand() % Particles.size;
+		do{
+			index = rand() % Particles.size;
+		}while(index == max_weight_particle_index);
 		for (unsigned int o = 0; o < Observation.size(); o++)
 		{
 			ParticlePointBearingAngle = atan2(Observation[o].Feature.y - Particles.y[index], Observation[o].Feature.x - Particles.x[index]);
@@ -557,7 +560,9 @@ void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &O
 		}
 		Particles.phi[index] = circular_mean_angle(angles, Observation.size());
 		//for the symetric one
-		index = rand() % Particles.size;
+		do{
+			index = rand() % Particles.size;
+		}while(index == max_weight_particle_index);
 		for (unsigned int o = 0; o < Observation.size(); o++)
 		{
 			ParticlePointBearingAngle = atan2(-Observation[o].Feature.y - Particles.y[index], -Observation[o].Feature.x - Particles.x[index]);
@@ -568,11 +573,15 @@ void KLocalization::ForceBearing(parts & Particles, vector<KObservationModel> &O
 	} else if (Observation.size() == 1)
 	{
 		//for the real one
-		int index = rand() % Particles.size;
+		do{
+			index = rand() % Particles.size;
+		}while(index == max_weight_particle_index);
 		ParticlePointBearingAngle = atan2(Observation[0].Feature.y - Particles.y[index], Observation[0].Feature.x - Particles.x[index]);
 		Particles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 		//for the symetric one
-		index = rand() % Particles.size;
+		do{
+			index = rand() % Particles.size;
+		}while(index == max_weight_particle_index);
 		ParticlePointBearingAngle = atan2(-Observation[0].Feature.y - Particles.y[index], -Observation[0].Feature.x - Particles.x[index]);
 		Particles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 	}

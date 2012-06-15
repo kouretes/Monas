@@ -24,10 +24,6 @@
 //#include <boost/random/normal_distribution.hpp>
 //#include <boost/random/variate_generator.hpp>
 
-#define DISTANCE_WEIGHTING
-#define BEARING_WEIGHTING
-
-//#define PASTBELIEF
 
 using namespace std;
 
@@ -56,7 +52,6 @@ typedef struct pvar {
 	pvar() {x=0;y=0;phi=0;Weight = 0;}
 	//Operator to compare 2 particles by their weight
 	bool operator<(const struct pvar &other) const {
-		//	cout << Weight << "Other " << other.Weight << endl;
 		return Weight < other.Weight;
 	}
 
@@ -129,10 +124,8 @@ public:
 	float NumberOfParticlesSpreadAfterFall;
 	unsigned int robustmean;
 	belief AgentPosition;
-	//public:
 
-	float Beta;
-
+	float Beta;//useless
 
 	double rotation_deviation;
 	double SpreadParticlesDeviationAfterFall;
