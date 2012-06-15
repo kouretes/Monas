@@ -368,9 +368,14 @@ void MulticastPoint::processOutGoing(msgentry m)
 
 		std::set<std::size_t> topics=Topics::Instance().iterateTopics(m.topic,m.msgclass);
 		if(actionadd)
-            otherHosts[m.host].providesTopics.insert(topics.begin(),topics.end());
-        else
-            otherHosts[m.host].providesTopics.erase(topics.begin(),topics.end());
+			otherHosts[m.host].providesTopics.insert(topics.begin(),topics.end());
+		else
+        {
+        	std::set<size_t>::iterator sit;
+			for(sit=topics.begin();sit!=topics.end();++sit)
+				otherHosts[m.host].providesTopics.erase(*sit);
+				//std::cout << m.host << " unsubscribed from " << (*sit) << std::endl;
+        }
 		return;
 	}
 
