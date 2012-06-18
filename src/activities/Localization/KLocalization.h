@@ -1,8 +1,8 @@
 /*
  * KLocalization.h
  *
- *  Created on: Jun 3, 2009
- *      Author: trs
+ *      Author: krambo
+ *		Patched: eldr4d
  */
 
 #ifndef KLOCALIZATION_H_
@@ -29,11 +29,10 @@ using namespace std;
 
 //A structure used to store statistical data about a recognized feature
 typedef struct ftr {
-	double x; //position of the feature
+	double x;
 	double y;
-	string id; //Name of the feature
+	string id;
 	double weight;
-	//Parameterized Constructor
 	void set(double x_, double y_, string id_, double weight_) {
 		id = id_;
 		x = x_;
@@ -45,12 +44,11 @@ typedef struct ftr {
 
 //Special structure to keep the data of a particle
 typedef struct pvar {
-	double x;//position
+	double x;
 	double y;
-	double phi;// orientation
-	double Weight;//Weight of a particle
+	double phi;
+	double Weight;
 	pvar() {x=0;y=0;phi=0;Weight = 0;}
-	//Operator to compare 2 particles by their weight
 	bool operator<(const struct pvar &other) const {
 		return Weight < other.Weight;
 	}
@@ -60,12 +58,12 @@ typedef struct pvar {
 //usualy particles are processed in arrays
 //So in this structure a number of arrays store individually a property
 typedef struct var {
-	double *x; //positions of all particles
+	double *x;
 	double *y;
 	double *phi;
-	double *Weight; //all the weights
-	double WeightSum; //the sum of the weights
-	unsigned int size; //The number of the particles
+	double *Weight;
+	double WeightSum;
+	unsigned int size;
 	~var() {
 		if (x != NULL)
 			delete[] x;
@@ -90,7 +88,7 @@ typedef struct rvar {
 //MotionModel
 typedef struct MM {
 	bool freshData;
-	string type; //Mono gia to distance
+	string type;
 	randvar Distance;
 	randvar Direction;
 	randvar Rotation;
@@ -114,7 +112,6 @@ typedef struct blf {
 
 class KLocalization {
 public:
-	//private:
 
 	//Random number generetors
 	//boost::mt19937                     ENG;    // Mersenne Twister
@@ -123,9 +120,7 @@ public:
 
 	float NumberOfParticlesSpreadAfterFall;
 	unsigned int robustmean;
-	belief AgentPosition;
 
-	float Beta;//useless
 
 	double rotation_deviation;
 	double SpreadParticlesDeviationAfterFall;
@@ -149,44 +144,64 @@ public:
 	//Particle with the max weight
 	unsigned int max_weight_particle_index;
 
+	//The particles we are using
 	parts SIRParticles;
 	unsigned int partclsNum;
 
+	//map with all the features we read from an xml
 	map<string, feature> KFeaturesmap;
+
 	KLocalization();
 	virtual ~KLocalization();
 
+	//initialize localization
 	int Initialize();
 
+	//Functions to read from xml files
 	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
 	int readConfiguration(const std::string& file_name);
 	bool readRobotConf(const std::string& file_name);
-	///Basic SIR functions
-	void Predict(parts &Particles, KMotionModel & MotionModel);
-	void Update(parts &Particles, vector<KObservationModel> &Observation, KMotionModel & MotionModel, int NumofParticles);
-	void Update_Ambiguous(parts & Particles, vector<KObservationModel> &Observation, int NumofParticles);
-	//Not used with 2 yellow goals
-	void ForceBearing(parts & Particles, vector<KObservationModel> &Observation);
 
-	KMotionModel * findBestMotionModel(int steps, string MotionType, vector<KMotionModel> & Motions, int *iterations);
+	//The step of the localization SIR filter
+	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations);
 
-	double normalize(double *Weights, unsigned int *max_weight_index);
+	//Update particles with the data from the odometry
+	void Predict(KMotionModel & MotionModel);
 
+	//Recalculate weights of the particles using the current observation
+	void Update(vector<KObservationModel> &Observation, int NumofParticles);
+
+	//Recalculate weights of the particles using the current ambiguous observation
+	void Update_Ambiguous(vector<KObservationModel> &Observation, int NumofParticles);
+
+	//Select parts at random and change the angle of these particles to the angle of the obervation. Bad idea for symetric field
+	void ForceBearing(vector<KObservationModel> &Observation);
+
+	//Normilize the weights of the particles
+	void normalize(double *Weights, unsigned int *max_weight_index);
+
+	//Find the mean angle from a set of angles
 	float circular_mean_angle(float *angles, unsigned int size);
-	//! Get Particles from observation
+
+	//Returns the current position of the agent
 	belief getCurrentPosition();
 
-
+	//Return the propability of value from a normal pdf with deviation dev
 	double normpdf(double diff, double dev);
-	belief RobustMean(parts & Particles, int PercenteOfParticles);
-	void rouletteResample(parts & Particles);
 
-	void setBelief(double x, double y, double phi, double confidence);
-	void setParticlesPose(parts & Particles, double x, double y, double phi);
-	void setParticlesPoseUniformly(parts & Particles);
-	void initializeParticles(parts & Particles,int playerNumber,bool kickOff);
+	//Find the agent position using the mean values of a given percentage of particles
+	belief RobustMean(int PercenteOfParticles);
 
-	void spreadParticlesAfterFall(parts &,double,double, int);
+	//This function resamples the particles with the new weigths and reposition the particles given the new weights
+	void rouletteResample();
+
+	//Initialize the particles of the filter
+	void setParticlesPose(double x, double y, double phi);
+	void setParticlesPoseUniformly();
+	void initializeParticles(int playerNumber,bool kickOff);
+
+	//Spread the particles after the fall of the robot (change the orientation)
+	void spreadParticlesAfterFall();
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
