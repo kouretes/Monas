@@ -38,6 +38,10 @@ void HeadBehavior::UserInit() {
 	headaction = 0;
 	lastbearing=obsmbearing=-1;
 
+	bd = 0.0;
+	bb = 0.0;
+	bx = 0.0;
+	by = 0.0;
 //	Logger::Instance().WriteMsg("HeadBehavior", "Initialized", Logger::Info);
 }
 
@@ -78,6 +82,13 @@ int HeadBehavior::Execute() {
 		else if(!(bmsg != 0 &&bmsg->radius() > 0)&&lastgoodbmsg.get()) {
 			bmsg=lastgoodbmsg;
 			headaction = BALLTRACK;
+		}else if(wim!=0 && wim->balls_size() > 0) {
+			headaction = BALLTRACKKALMAN;
+			bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
+			by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
+			bd = sqrt(pow(bx,2)+pow(by,2));
+			bb = atan2(by,bx);
+			hbmsg->set_ballfound(1);
 		}
 
 	}
@@ -93,17 +104,23 @@ int HeadBehavior::Execute() {
 				lastgoodbmsg=bmsg;
 			else
 				lastgoodbmsg.reset();
-
 		}
 
 		hbmsg->set_ballfound(1);
 
-	} else {
-			if (ballLastSeen+seconds(1.5) > now){ //Lost
-				startscan=true;
-
-				hbmsg->set_ballfound(0);
-			}
+	} else if (wim!=0 && wim->balls_size() > 0) {//This means that a ball is not found
+		headaction = BALLTRACKKALMAN;
+		bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
+		by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
+		bd = sqrt(pow(bx,2)+pow(by,2));
+		bb = atan2(by,bx);
+		hbmsg->set_ballfound(1);
+	}
+	else {
+		if (ballLastSeen+seconds(1.5) > now){ //Lost
+			startscan=true;
+			hbmsg->set_ballfound(0);
+		}
 	}
 	if(obsmbearing!=-1)
 	{
@@ -118,8 +135,6 @@ int HeadBehavior::Execute() {
 			else
 				lastbearing=-1;
 		}
-
-
 
 	}
 
@@ -193,7 +208,7 @@ int HeadBehavior::Execute() {
 				highheadscanstep(2.08);
 			}
 
-			//Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
+			Logger::Instance().WriteMsg("HeadBehavior",  " SCANFORPOST", Logger::Info);
 			//std::cout << "HEADBEHAVIOR SCANFORPOST" <<std::endl;
 			break;
 		case (BALLTRACK):
@@ -220,6 +235,9 @@ int HeadBehavior::Execute() {
 				headmotion( -0.504728, -0.972598);
 				step++;
 			break;
+		case (BALLTRACKKALMAN):
+             MakeTrackBallActionNoBmsg();
+			break;
 	}
 	prevaction = curraction;
 	_blk.publishState(*hbmsg, "behavior");
@@ -228,19 +246,31 @@ int HeadBehavior::Execute() {
 }
 
 int HeadBehavior::MakeTrackBallAction() {
-
-
 	if (bmsg != 0) {
 //		Logger::Instance().WriteMsg("HeadBehavior", "BallTrackMessage", Logger::ExtraExtraInfo);
 		if (bmsg->radius() > 0) { //This means that a ball was found
 			headmotion(bmsg->referencepitch(), bmsg->referenceyaw());
 		}
 	}
+	return 1;
+}
+
+int HeadBehavior::MakeTrackBallActionNoBmsg() {
+
+	headmotion( lookAtPointRelativePitch(bx, by), lookAtPointRelativeYaw(bx, by));
 
 	return 1;
 }
 
+float HeadBehavior::lookAtPointRelativeYaw(float x, float y)
+{
+	return atan2(y, x);
+}
 
+float HeadBehavior::lookAtPointRelativePitch(float x, float y)
+{
+	return (50.0 * TO_RAD) - atan2f( sqrt((x)*(x)+(y)*(y)), 0.45 );
+}
 
 void HeadBehavior::HeadScanStep() {
 	static float s=(YAWMIN-YAWMAX)/(PITCHMIN-PITCHMAX);
@@ -421,6 +451,7 @@ void HeadBehavior::read_messages() {
 	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
 	obsm = _blk.readSignal<ObservationMessage> ("vision");
 	asvm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	wim = _blk.readData<WorldInfo> ("worldstate");
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 	if (c != NULL) {
 		if (c->status() == 1) {

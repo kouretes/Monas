@@ -7,6 +7,7 @@
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
+#include "messages/WorldInfo.pb.h"
 #include "messages/Kimage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -68,12 +69,15 @@ class HeadBehavior: public IActivity {
 		float psign,ysign;
 		unsigned waiting;
 		float obsmbearing,lastbearing;
+		float bd, bx, by, bb;
 		bool newBearing;
 
 		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
 		boost::shared_ptr<const BToHeadMessage> bhm;
 		boost::shared_ptr<const AllSensorValuesMessage> asvm;
 		boost::shared_ptr<const ObservationMessage> obsm;
+		boost::shared_ptr<const WorldInfo> wim;
+		
 		int calibrated;
 		int step;
 		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
@@ -86,6 +90,9 @@ class HeadBehavior: public IActivity {
 		void HeadScanStepSmart();
 		void HeadScanStepFieldUntested();
 		int MakeTrackBallAction();
+		int MakeTrackBallActionNoBmsg();
+		float lookAtPointRelativeYaw(float x, float y);
+		float lookAtPointRelativePitch(float x, float y);
 		void headmotion(float pitch, float yaw);
 
 };
