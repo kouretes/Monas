@@ -13,8 +13,8 @@ int Localize::Execute() {
 		bhm->set_headaction(CALIBRATE);
 		ld->set_moveon(false);
 		_blk.publishState(*ld, "behavior");
-		amot->set_command("locScan.xar");
-		_blk.publishSignal(*amot, "motion");
+		//amot->set_command("locScan.xar");
+		//_blk.publishSignal(*amot, "motion");
 		_blk.publishSignal(*locReset, "worldstate");
 		_blk.publish_all();
 
@@ -29,8 +29,8 @@ int Localize::Execute() {
 	}else if((hbm.get()!=0 && hbm->calibrated()!=2) && boost::posix_time::microsec_clock::universal_time()-first<boost::posix_time::seconds(3) ){
 		ld->set_moveon(false);
 		_blk.publishState(*ld, "behavior");
-		bhm->set_headaction(DONOTHING);
-		Logger::Instance().WriteMsg(GetName(),  " DONOTHING", Logger::Info);
+	bhm->set_headaction(SCANFORPOST);
+		Logger::Instance().WriteMsg(GetName(),  " SCANFORPOST", Logger::Info);
 	}else if ((hbm.get()!=0 && hbm->calibrated()==2) && boost::posix_time::microsec_clock::universal_time()-first>boost::posix_time::seconds(3)&& boost::posix_time::microsec_clock::universal_time()-first<boost::posix_time::seconds(10)){
 		bhm->set_headaction(SCANFORPOST);
 		Logger::Instance().WriteMsg(GetName(),  " SCANFORPOST", Logger::Info);
@@ -44,9 +44,9 @@ void Localize::UserInit () {
 	first = boost::posix_time::microsec_clock::universal_time()- boost::posix_time::hours(3);
 	ld = new LocalizeDone();
 	bhm = new BToHeadMessage();
-	amot = new MotionActionMessage();
+	//amot = new MotionActionMessage();
 	locReset = new LocalizationResetMessage();
-	locReset->set_type(-1);
+	locReset->set_type(PLAYER_PENALISED);
 }
 std::string Localize::GetName () {
 	return "Localize";
