@@ -174,7 +174,13 @@ int Behavior::Execute() {
 				startscan = true;
 				scanforball = true;
 			}
-			if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
+			//walk straight for 12 seconds after the scan has ended (lastpenalized+seconds(12))
+			//and then start turning around to search for ball.
+			if (lastpenalized+seconds(24)>microsec_clock::universal_time()){
+                std::cout<<"eleos1\n";
+                pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+			}
+			else if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
 				pathPlanningRequestAbsolute(0.45, 0.45*direction, M_PI_4*direction);
 			else
 				pathPlanningRequestAbsolute(0.1, 0.1*direction, M_PI_4*direction);
