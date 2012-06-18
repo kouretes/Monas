@@ -100,7 +100,7 @@ private:
 	static void * StartServer(void * kati);
 	pthread_t acceptthread;
 	static TCPSocket *sock;
-	int LocalizationData_Load(parts & Particles, vector<KObservationModel> & Observation, KMotionModel & MotionModel);
+	int LocalizationData_Load(vector<KObservationModel> & Observation, KMotionModel & MotionModel);
 	int LocalizationDataForGUI_Load(parts& Particles);
 	void Send_LocalizationData();
 	static bool debugmode;
