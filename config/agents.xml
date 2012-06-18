@@ -12,7 +12,7 @@
 <agent IsRealTime=1 Priority=1 ThreadFrequency=25 StatsCycle=50>
 	<name>KVision</name>
 	<activity>Vision</activity>
-	<activity>Localization </activity>
+	<activity>LocalWorldState</activity>
 	<activity>Behavior</activity>
 </agent>
 

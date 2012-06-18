@@ -258,7 +258,7 @@ int receive_and_send_loop(TCPSocket *sock) {
 					wmot.set_parameter(2, th);
 					wmot.set_parameter(3, f); //// frequency 1?
 					outgoingheader.set_nextmsgbytesize(wmot.ByteSize());
-					partcl tmp(0, 0, 0, 0);
+					partcl tmp;
 
 					KLocView->KfieldInitTrackLine(tmp);
 					KLocView->draw_Trackpoint(tmp, 0.5, -0.5);
