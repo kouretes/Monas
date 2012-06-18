@@ -20,9 +20,7 @@
 #include "tools/MathFunctions.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
-//#include <boost/random/mersenne_twister.hpp>
-//#include <boost/random/normal_distribution.hpp>
-//#include <boost/random/variate_generator.hpp>
+#include "messages/RoboCupPlayerData.h"
 
 
 using namespace std;
@@ -114,9 +112,6 @@ class KLocalization {
 public:
 
 	//Random number generetors
-	//boost::mt19937                     ENG;    // Mersenne Twister
-    //boost::normal_distribution<double> DIST;   // Normal Distribution
-    //boost::variate_generator<ENG,DIST> NORMAL_ENGINE;    // Variate generator
 
 	float NumberOfParticlesSpreadAfterFall;
 	unsigned int robustmean;
@@ -198,7 +193,7 @@ public:
 	//Initialize the particles of the filter
 	void setParticlesPose(double x, double y, double phi);
 	void setParticlesPoseUniformly();
-	void initializeParticles(int playerNumber,bool kickOff);
+	void initializeParticles(int playerState,bool kickOff);
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();
