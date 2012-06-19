@@ -101,7 +101,7 @@ private:
 	pthread_t acceptthread;
 	static TCPSocket *sock;
 	int LocalizationData_Load(vector<KObservationModel> & Observation, KMotionModel & MotionModel);
-	int LocalizationDataForGUI_Load(parts& Particles);
+	int LocalizationDataForGUI_Load();
 	void Send_LocalizationData();
 	static bool debugmode;
 	header incommingheader;
