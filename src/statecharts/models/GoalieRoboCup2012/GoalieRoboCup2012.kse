@@ -1,0 +1,1119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:statechart="http://statechart/1.0" xmi:id="_MjqDcLmFEeGADpaeWquryQ" type="StateChart" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_Mkl3kLmFEeGADpaeWquryQ" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_MknFsLmFEeGADpaeWquryQ" type="5005"/>
+    <children xmi:type="notation:DecorationNode" xmi:id="_MknswLmFEeGADpaeWquryQ" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_MkslQLmFEeGADpaeWquryQ" type="3004">
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_MkslQbmFEeGADpaeWquryQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_MkslQrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+        <styles xmi:type="notation:LineStyle" xmi:id="_MkslQ7mFEeGADpaeWquryQ"/>
+        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MkslRLmFEeGADpaeWquryQ" x="1319" y="33"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_MktMULmFEeGADpaeWquryQ" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_MktMVLmFEeGADpaeWquryQ" type="5004"/>
+        <children xmi:type="notation:DecorationNode" xmi:id="_MktMVbmFEeGADpaeWquryQ" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_Mkw2sLmFEeGADpaeWquryQ" type="3004">
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mkw2sbmFEeGADpaeWquryQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_Mkw2srmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+            <styles xmi:type="notation:LineStyle" xmi:id="_Mkw2s7mFEeGADpaeWquryQ"/>
+            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mkw2tLmFEeGADpaeWquryQ" x="1055" y="33"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_MkxdwLmFEeGADpaeWquryQ" type="3001">
+            <children xmi:type="notation:DecorationNode" xmi:id="_MkxdxLmFEeGADpaeWquryQ" type="5001"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_MkxdwbmFEeGADpaeWquryQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_MkxdwrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mkxdw7mFEeGADpaeWquryQ" x="1055" y="105"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_MkxdxbmFEeGADpaeWquryQ" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_MkyE0LmFEeGADpaeWquryQ" type="5004"/>
+            <children xmi:type="notation:DecorationNode" xmi:id="_MkyE0bmFEeGADpaeWquryQ" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_Mk2WQLmFEeGADpaeWquryQ" type="3004">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mk2WQbmFEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_Mk2WQrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_Mk2WQ7mFEeGADpaeWquryQ"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mk2WRLmFEeGADpaeWquryQ" x="371" y="33"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_Mk3kYLmFEeGADpaeWquryQ" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_Mk3kZLmFEeGADpaeWquryQ" type="5004"/>
+                <children xmi:type="notation:DecorationNode" xmi:id="_Mk3kZbmFEeGADpaeWquryQ" type="7002">
+                  <children xmi:type="notation:Node" xmi:id="_Ml1NsLmFEeGADpaeWquryQ" type="3004">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_Ml1NsbmFEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_Ml1NsrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_Ml1Ns7mFEeGADpaeWquryQ"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.0"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ml1NtLmFEeGADpaeWquryQ" x="527" y="33"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_Ml10wLmFEeGADpaeWquryQ" type="3001">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_Ml10xLmFEeGADpaeWquryQ" type="5001"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_Ml10wbmFEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_Ml10wrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ml10w7mFEeGADpaeWquryQ" x="527" y="105"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_Ml10xbmFEeGADpaeWquryQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_Ml10ybmFEeGADpaeWquryQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_Ml10yrmFEeGADpaeWquryQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_Ml6GMLmFEeGADpaeWquryQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_Ml6GMbmFEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_Ml6GMrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_Ml6GM7mFEeGADpaeWquryQ"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ml6GNLmFEeGADpaeWquryQ" x="107" y="33"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_-XkGQLmGEeGADpaeWquryQ" type="3002">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_-XkGRLmGEeGADpaeWquryQ" type="5002"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-XkGQbmGEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-XkGQrmGEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-XkGQ7mGEeGADpaeWquryQ" x="35" y="105"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_-XkGRbmGEeGADpaeWquryQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_-XkGRrmGEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_-XkGR7mGEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-XkGSLmGEeGADpaeWquryQ" x="95" y="213"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_Ml10xrmFEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_Ml10x7mFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ml10yLmFEeGADpaeWquryQ" x="35" y="189"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_Ml2b0LmFEeGADpaeWquryQ" type="3006">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_Ml2b0bmFEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_Ml2b0rmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.3"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Ml2b07mFEeGADpaeWquryQ" x="527" y="573"/>
+                  </children>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mk3kYbmFEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_Mk3kYrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mk3kY7mFEeGADpaeWquryQ" x="35" y="213"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_-X3oQLmGEeGADpaeWquryQ" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_-X3oRLmGEeGADpaeWquryQ" type="5002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_-X3oQbmGEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_-X3oQrmGEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-X3oQ7mGEeGADpaeWquryQ" x="335" y="105"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_RPZ5gLmIEeGADpaeWquryQ" type="3006">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_RPZ5gbmIEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_RPZ5grmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2/@Children.3"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RPZ5g7mIEeGADpaeWquryQ" x="359" y="945"/>
+              </children>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_MkxdxrmFEeGADpaeWquryQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_Mkxdx7mFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MkxdyLmFEeGADpaeWquryQ" x="35" y="201"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_MkyE0rmFEeGADpaeWquryQ" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_MkyE1rmFEeGADpaeWquryQ" type="5004"/>
+            <children xmi:type="notation:DecorationNode" xmi:id="_MkyE17mFEeGADpaeWquryQ" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_Mm3IcLmFEeGADpaeWquryQ" type="3004">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mm3IcbmFEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_Mm3IcrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <styles xmi:type="notation:LineStyle" xmi:id="_Mm3Ic7mFEeGADpaeWquryQ"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mm3IdLmFEeGADpaeWquryQ" x="815" y="33"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_Mm4WkbmFEeGADpaeWquryQ" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_Mm4WlbmFEeGADpaeWquryQ" type="5004"/>
+                <children xmi:type="notation:DecorationNode" xmi:id="_Mm4WlrmFEeGADpaeWquryQ" type="7002">
+                  <children xmi:type="notation:Node" xmi:id="_MnEj0LmFEeGADpaeWquryQ" type="3004">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_MnEj0bmFEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_MnEj0rmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_MnEj07mFEeGADpaeWquryQ"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.0"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MnEj1LmFEeGADpaeWquryQ" x="527" y="33"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RPjDcLmIEeGADpaeWquryQ" type="3001">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RPjqgLmIEeGADpaeWquryQ" type="5001"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RPjDcbmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RPjDcrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.1"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RPjDc7mIEeGADpaeWquryQ" x="527" y="105"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RPjqgbmIEeGADpaeWquryQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RPjqhbmIEeGADpaeWquryQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RPjqhrmIEeGADpaeWquryQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_RPmGwLmIEeGADpaeWquryQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RPmGwbmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RPmGwrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_RPmGw7mIEeGADpaeWquryQ"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RPmGxLmIEeGADpaeWquryQ" x="107" y="33"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RPmt0LmIEeGADpaeWquryQ" type="3002">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RPmt1LmIEeGADpaeWquryQ" type="5002"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RPmt0bmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RPmt0rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RPmt07mIEeGADpaeWquryQ" x="35" y="105"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RPnU4LmIEeGADpaeWquryQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RPnU4bmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RPnU4rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RPnU47mIEeGADpaeWquryQ" x="95" y="213"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RPjqgrmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RPjqg7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RPjqhLmIEeGADpaeWquryQ" x="35" y="189"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RPjqh7mIEeGADpaeWquryQ" type="3006">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RPjqiLmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RPjqibmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.3"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RPjqirmIEeGADpaeWquryQ" x="527" y="573"/>
+                  </children>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mm4WkrmFEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_Mm4Wk7mFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mm4WlLmFEeGADpaeWquryQ" x="467" y="873"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_Mm4Wl7mFEeGADpaeWquryQ" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_Mm49oLmFEeGADpaeWquryQ" type="5004"/>
+                <children xmi:type="notation:DecorationNode" xmi:id="_Mm49obmFEeGADpaeWquryQ" type="7002">
+                  <children xmi:type="notation:Node" xmi:id="_MnVpkLmFEeGADpaeWquryQ" type="3004">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_MnVpkbmFEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_MnVpkrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_MnVpk7mFEeGADpaeWquryQ"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.0"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MnVplLmFEeGADpaeWquryQ" x="839" y="33"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RP5BsLmIEeGADpaeWquryQ" type="3001">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RP5owrmIEeGADpaeWquryQ" type="5001"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP5BsbmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RP5owLmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.1"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP5owbmIEeGADpaeWquryQ" x="839" y="105"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RP5ow7mIEeGADpaeWquryQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RP5ox7mIEeGADpaeWquryQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RP5oyLmIEeGADpaeWquryQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_RP8sELmIEeGADpaeWquryQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP8sEbmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RP8sErmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_RP8sE7mIEeGADpaeWquryQ"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP8sFLmIEeGADpaeWquryQ" x="59" y="33"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RP8sFbmIEeGADpaeWquryQ" type="3002">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RP9TILmIEeGADpaeWquryQ" type="5002"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP8sFrmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RP8sF7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP8sGLmIEeGADpaeWquryQ" x="35" y="105"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RP9TIbmIEeGADpaeWquryQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP9TIrmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RP9TI7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP9TJLmIEeGADpaeWquryQ" x="47" y="213"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP5oxLmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RP5oxbmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP5oxrmIEeGADpaeWquryQ" x="35" y="201"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RP5oybmIEeGADpaeWquryQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RP5ozbmIEeGADpaeWquryQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RP6P0LmIEeGADpaeWquryQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_RQCLoLmIEeGADpaeWquryQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQCLobmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RQCLormIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_RQCLo7mIEeGADpaeWquryQ"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQCLpLmIEeGADpaeWquryQ" x="107" y="33"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RQCysLmIEeGADpaeWquryQ" type="3002">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RQCytLmIEeGADpaeWquryQ" type="5002"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQCysbmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RQCysrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQCys7mIEeGADpaeWquryQ" x="35" y="105"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RQCytbmIEeGADpaeWquryQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQCytrmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RQCyt7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQCyuLmIEeGADpaeWquryQ" x="95" y="213"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP5oyrmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RP5oy7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP5ozLmIEeGADpaeWquryQ" x="395" y="201"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RP6P17mIEeGADpaeWquryQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RP6P27mIEeGADpaeWquryQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RP6P3LmIEeGADpaeWquryQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_RQNKwLmIEeGADpaeWquryQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQNKwbmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RQNKwrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_RQNKw7mIEeGADpaeWquryQ"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQNKxLmIEeGADpaeWquryQ" x="263" y="33"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RQNx0LmIEeGADpaeWquryQ" type="3003">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RQNx1LmIEeGADpaeWquryQ" type="5004"/>
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RQNx1bmIEeGADpaeWquryQ" type="7002">
+                          <children xmi:type="notation:Node" xmi:id="_RQPnALmIEeGADpaeWquryQ" type="3004">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQPnAbmIEeGADpaeWquryQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_RQPnArmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_RQPnA7mIEeGADpaeWquryQ"/>
+                            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.0"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQPnBLmIEeGADpaeWquryQ" x="59" y="33"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_RQQOELmIEeGADpaeWquryQ" type="3002">
+                            <children xmi:type="notation:DecorationNode" xmi:id="_RQQOFLmIEeGADpaeWquryQ" type="5002"/>
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQQOEbmIEeGADpaeWquryQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_RQQOErmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.1"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQQOE7mIEeGADpaeWquryQ" x="35" y="105"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_RQQOFbmIEeGADpaeWquryQ" type="3006">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQQOFrmIEeGADpaeWquryQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_RQQOF7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.2"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQQOGLmIEeGADpaeWquryQ" x="47" y="213"/>
+                          </children>
+                        </children>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQNx0bmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RQNx0rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQNx07mIEeGADpaeWquryQ" x="119" y="105"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RQNx1rmIEeGADpaeWquryQ" type="3003">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RQNx2rmIEeGADpaeWquryQ" type="5004"/>
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RQNx27mIEeGADpaeWquryQ" type="7002">
+                          <children xmi:type="notation:Node" xmi:id="_RQVGkLmIEeGADpaeWquryQ" type="3004">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQVGkbmIEeGADpaeWquryQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_RQVGkrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                            <styles xmi:type="notation:LineStyle" xmi:id="_RQVGk7mIEeGADpaeWquryQ"/>
+                            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.0"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQVGlLmIEeGADpaeWquryQ" x="311" y="33"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_RQVtoLmIEeGADpaeWquryQ" type="3001">
+                            <children xmi:type="notation:DecorationNode" xmi:id="_RQVtpLmIEeGADpaeWquryQ" type="5001"/>
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQVtobmIEeGADpaeWquryQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_RQVtormIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.1"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQVto7mIEeGADpaeWquryQ" x="311" y="105"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_RQVtpbmIEeGADpaeWquryQ" type="3002">
+                            <children xmi:type="notation:DecorationNode" xmi:id="_RQVtqbmIEeGADpaeWquryQ" type="5002"/>
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQVtprmIEeGADpaeWquryQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_RQVtp7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.2"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQVtqLmIEeGADpaeWquryQ" x="35" y="189"/>
+                          </children>
+                          <children xmi:type="notation:Node" xmi:id="_RQWUsLmIEeGADpaeWquryQ" type="3006">
+                            <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQWUsbmIEeGADpaeWquryQ"/>
+                            <styles xmi:type="notation:FontStyle" xmi:id="_RQWUsrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.3"/>
+                            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQWUs7mIEeGADpaeWquryQ" x="299" y="297"/>
+                          </children>
+                        </children>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQNx17mIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RQNx2LmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQNx2bmIEeGADpaeWquryQ" x="35" y="477"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RQNx3LmIEeGADpaeWquryQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RQNx3bmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RQNx3rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.3"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RQNx37mIEeGADpaeWquryQ" x="251" y="933"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP6P2LmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RP6P2bmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP6P2rmIEeGADpaeWquryQ" x="839" y="201"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RP6P3bmIEeGADpaeWquryQ" type="3006">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RP6P3rmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RP6P37mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.5"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RP6P4LmIEeGADpaeWquryQ" x="827" y="1293"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_WsAcYbmZEeGc7axJyA_6eQ" type="3002">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_WsBqgLmZEeGc7axJyA_6eQ" type="5002"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WsAcYrmZEeGc7axJyA_6eQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_WsAcY7mZEeGc7axJyA_6eQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.6"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WsAcZLmZEeGc7axJyA_6eQ" x="1463" y="201"/>
+                  </children>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mm4WmLmFEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_Mm4WmbmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.3"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mm4WmrmFEeGADpaeWquryQ" x="35" y="1569"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_RRm48LmIEeGADpaeWquryQ" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_RRngALmIEeGADpaeWquryQ" type="5004"/>
+                <children xmi:type="notation:DecorationNode" xmi:id="_RRngAbmIEeGADpaeWquryQ" type="7002">
+                  <children xmi:type="notation:Node" xmi:id="_RRpVMLmIEeGADpaeWquryQ" type="3004">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRpVMbmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RRpVMrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <styles xmi:type="notation:LineStyle" xmi:id="_RRpVM7mIEeGADpaeWquryQ"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.0"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRpVNLmIEeGADpaeWquryQ" x="479" y="33"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RRpVNbmIEeGADpaeWquryQ" type="3001">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RRp8QLmIEeGADpaeWquryQ" type="5001"/>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRpVNrmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RRpVN7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.1"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRpVOLmIEeGADpaeWquryQ" x="479" y="105"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RRp8QbmIEeGADpaeWquryQ" type="3003">
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RRp8RbmIEeGADpaeWquryQ" type="5004"/>
+                    <children xmi:type="notation:DecorationNode" xmi:id="_RRp8RrmIEeGADpaeWquryQ" type="7002">
+                      <children xmi:type="notation:Node" xmi:id="_RRsYgLmIEeGADpaeWquryQ" type="3004">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRsYgbmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RRsYgrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <styles xmi:type="notation:LineStyle" xmi:id="_RRsYg7mIEeGADpaeWquryQ"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.0"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRsYhLmIEeGADpaeWquryQ" x="71" y="33"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RRsYhbmIEeGADpaeWquryQ" type="3002">
+                        <children xmi:type="notation:DecorationNode" xmi:id="_RRsYibmIEeGADpaeWquryQ" type="5002"/>
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRsYhrmIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RRsYh7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.1"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRsYiLmIEeGADpaeWquryQ" x="35" y="105"/>
+                      </children>
+                      <children xmi:type="notation:Node" xmi:id="_RRsYirmIEeGADpaeWquryQ" type="3006">
+                        <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRsYi7mIEeGADpaeWquryQ"/>
+                        <styles xmi:type="notation:FontStyle" xmi:id="_RRsYjLmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.2"/>
+                        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRsYjbmIEeGADpaeWquryQ" x="71" y="213"/>
+                      </children>
+                    </children>
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRp8QrmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RRp8Q7mIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRp8RLmIEeGADpaeWquryQ" x="35" y="201"/>
+                  </children>
+                  <children xmi:type="notation:Node" xmi:id="_RRp8R7mIEeGADpaeWquryQ" type="3006">
+                    <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRp8SLmIEeGADpaeWquryQ"/>
+                    <styles xmi:type="notation:FontStyle" xmi:id="_RRp8SbmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.3"/>
+                    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRp8SrmIEeGADpaeWquryQ" x="467" y="573"/>
+                  </children>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRm48bmIEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_RRm48rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRm487mIEeGADpaeWquryQ" x="503" y="105"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_RRngArmIEeGADpaeWquryQ" type="3006">
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_RRngA7mIEeGADpaeWquryQ"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_RRngBLmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+                <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3/@Children.4"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RRngBbmIEeGADpaeWquryQ" x="803" y="3021"/>
+              </children>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_MkyE07mFEeGADpaeWquryQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_MkyE1LmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MkyE1bmFEeGADpaeWquryQ" x="875" y="201"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_Mkyr4LmFEeGADpaeWquryQ" type="3006">
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mkyr4bmFEeGADpaeWquryQ"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_Mkyr4rmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+            <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1/@Children.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mkyr47mFEeGADpaeWquryQ" x="1043" y="3381"/>
+          </children>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_MktMUbmFEeGADpaeWquryQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_MktMUrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MktMU7mFEeGADpaeWquryQ" x="35" y="105"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_MktMVrmFEeGADpaeWquryQ" type="3006">
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_MktMV7mFEeGADpaeWquryQ"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_MktMWLmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+        <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0/@Children.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MktMWbmFEeGADpaeWquryQ" x="1307" y="3645"/>
+      </children>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_Mkl3kbmFEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_Mkl3krmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Node" href="GoalieRoboCup2012.stct#//@nodes.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Mkl3k7mFEeGADpaeWquryQ" x="24" y="24"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_MjqDcbmFEeGADpaeWquryQ"/>
+  <element xmi:type="statechart:Model" href="GoalieRoboCup2012.stct#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_MpPHALmFEeGADpaeWquryQ" type="4001" source="_Mkw2sLmFEeGADpaeWquryQ" target="_MkxdwLmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_MpPHBLmFEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_MpPHBbmFEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_MpPHAbmFEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_MpPHArmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_MpPHA7mFEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Sfhk8LmFEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfiMALmFEeGADpaeWquryQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_MpVNoLmFEeGADpaeWquryQ" type="4001" source="_MkxdwLmFEeGADpaeWquryQ" target="_MkxdxbmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_MpV0sLmFEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_MpV0sbmFEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_MpVNobmFEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_MpVNormFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_MpVNo7mFEeGADpaeWquryQ" points="[0, 0, 637, -60]$[-637, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfiMAbmFEeGADpaeWquryQ" id="(0.24,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfizELmFEeGADpaeWquryQ" id="(0.49936305732484076,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_MpXp4LmFEeGADpaeWquryQ" type="4001" source="_MkxdwLmFEeGADpaeWquryQ" target="_MkyE0rmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_MpXp5LmFEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_MpXp5bmFEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_MpXp4bmFEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_MpXp4rmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_MpXp47mFEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfizEbmFEeGADpaeWquryQ" id="(0.48,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfjaILmFEeGADpaeWquryQ" id="(0.11404561824729892,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_MpaGILmFEeGADpaeWquryQ" type="4001" source="_MkyE0rmFEeGADpaeWquryQ" target="_Mkyr4LmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_MpaGJLmFEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_MpaGJbmFEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_MpaGIbmFEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_MpaGIrmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_MpaGI7mFEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfgW0LmFEeGADpaeWquryQ" id="(0.11404561824729892,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Sfg94LmFEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_Mpb7ULmFEeGADpaeWquryQ" type="4001" source="_MkxdxbmFEeGADpaeWquryQ" target="_Mkyr4LmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_MpciYrmFEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_MpciY7mFEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_Mpb7UbmFEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_MpciYLmFEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_MpciYbmFEeGADpaeWquryQ" points="[0, 0, -634, -2136]$[333, 2075, -301, -61]$[634, 2136, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfjaIbmFEeGADpaeWquryQ" id="(0.49936305732484076,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SfkBMLmFEeGADpaeWquryQ" id="(0.22857142857142856,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_-ZO6MLmGEeGADpaeWquryQ" type="4001" source="_Mk2WQLmFEeGADpaeWquryQ" target="_-X3oQLmGEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_-ZO6NLmGEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_-ZO6NbmGEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_-ZO6MbmGEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_-ZO6MrmGEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_-ZO6M7mGEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-wnfcrmGEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-wnfc7mGEeGADpaeWquryQ" id="(0.494949494949495,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_-ZQvYLmGEeGADpaeWquryQ" type="4001" source="_-X3oQLmGEeGADpaeWquryQ" target="_Mk3kYLmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_-ZQvZLmGEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_-ZQvZbmGEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_-ZQvYbmGEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_-ZQvYrmGEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_-ZQvY7mGEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-wmRULmGEeGADpaeWquryQ" id="(0.494949494949495,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_-wm4YLmGEeGADpaeWquryQ" id="(0.49928469241773965,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSMHwLmIEeGADpaeWquryQ" type="4001" source="_Mk3kYLmFEeGADpaeWquryQ" target="_RPZ5gLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSMHxLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSMu0LmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSMHwbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSMHwrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSMHw7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghGh8LmIEeGADpaeWquryQ" id="(0.49928469241773965,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghHJALmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSN88LmIEeGADpaeWquryQ" type="4001" source="_Ml6GMLmFEeGADpaeWquryQ" target="_-XkGQLmGEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSN89LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSN89bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSN88bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSN88rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSN887mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghRhErmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghRhE7mIEeGADpaeWquryQ" id="(0.4968944099378882,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSPLELmIEeGADpaeWquryQ" type="4001" source="_-XkGQLmGEeGADpaeWquryQ" target="_-XkGQLmGEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSPLFLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSPLFbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSPLEbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSPLErmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSPLE7mIEeGADpaeWquryQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSRAQLmIEeGADpaeWquryQ" type="4001" source="_-XkGQLmGEeGADpaeWquryQ" target="_-XkGRbmGEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSRARLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSRARbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSRAQbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSRAQrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.10"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSRAQ7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghRhELmIEeGADpaeWquryQ" id="(0.4968944099378882,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghRhEbmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSSOYLmIEeGADpaeWquryQ" type="4001" source="_Ml1NsLmFEeGADpaeWquryQ" target="_Ml10wLmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSSOZLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSSOZbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSSOYbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSSOYrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.11"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSSOY7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguugLmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguugbmIEeGADpaeWquryQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSTcgLmIEeGADpaeWquryQ" type="4001" source="_Ml10wLmFEeGADpaeWquryQ" target="_Ml10xbmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSTchLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSTchbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSTcgbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSTcgrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.12"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSTcg7mIEeGADpaeWquryQ" points="[0, 0, 309, -60]$[-309, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguHcLmIEeGADpaeWquryQ" id="(0.24,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguHcbmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSUqoLmIEeGADpaeWquryQ" type="4001" source="_Ml10wLmFEeGADpaeWquryQ" target="_Ml2b0LmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSVRsLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSVRsbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSUqobmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSUqormIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.13"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSUqo7mIEeGADpaeWquryQ" points="[0, 0, 0, -433]$[0, 433, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguugrmIEeGADpaeWquryQ" id="(0.48,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguug7mIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSWf0LmIEeGADpaeWquryQ" type="4001" source="_Ml10xbmFEeGADpaeWquryQ" target="_Ml2b0LmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSWf1LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSWf1bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSWf0bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSWf0rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.14"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSWf07mIEeGADpaeWquryQ" points="[0, 0, -306, -60]$[306, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguHcrmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gguHc7mIEeGADpaeWquryQ" id="(0.22857142857142856,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSXt8LmIEeGADpaeWquryQ" type="4001" source="_Mm3IcLmFEeGADpaeWquryQ" target="_RRm48LmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSXt9LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSXt9bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSXt8bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSXt8rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.15"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSXt87mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghXAormIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghXAo7mIEeGADpaeWquryQ" id="(0.4992248062015504,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSY8ELmIEeGADpaeWquryQ" type="4001" source="_RRm48LmIEeGADpaeWquryQ" target="_Mm4WkbmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSY8FLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSY8FbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSY8EbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSY8ErmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.16"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSY8E7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghVygLmIEeGADpaeWquryQ" id="(0.4992248062015504,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghWZkLmIEeGADpaeWquryQ" id="(0.49928469241773965,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSaxQLmIEeGADpaeWquryQ" type="4001" source="_Mm4WkbmFEeGADpaeWquryQ" target="_Mm4Wl7mFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSaxRLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSaxRbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSaxQbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSaxQrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.17"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSaxQ7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghWZkbmIEeGADpaeWquryQ" id="(0.49928469241773965,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghWZkrmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSb_YLmIEeGADpaeWquryQ" type="4001" source="_Mm4Wl7mFEeGADpaeWquryQ" target="_RRngArmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSb_ZLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSb_ZbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSb_YbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSb_YrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.18"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSb_Y7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghXAoLmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghXAobmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSdNgLmIEeGADpaeWquryQ" type="4001" source="_RRsYgLmIEeGADpaeWquryQ" target="_RRsYhbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSdNhLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSd0kLmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSdNgbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSdNgrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.19"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSdNg7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggdBsLmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggdBsbmIEeGADpaeWquryQ" id="(0.4953271028037383,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSfCsLmIEeGADpaeWquryQ" type="4001" source="_RRsYhbmIEeGADpaeWquryQ" target="_RRsYhbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSfCtLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSfCtbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSfCsbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSfCsrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.20"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSfCs7mIEeGADpaeWquryQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSgQ0LmIEeGADpaeWquryQ" type="4001" source="_RRsYhbmIEeGADpaeWquryQ" target="_RRsYirmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSgQ1LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSgQ1bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSgQ0bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSgQ0rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.21"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSgQ07mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggdowLmIEeGADpaeWquryQ" id="(0.4953271028037383,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggdowbmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RShe8LmIEeGADpaeWquryQ" type="4001" source="_RRpVMLmIEeGADpaeWquryQ" target="_RRpVNbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSiGALmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSiGAbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RShe8bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RShe8rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.22"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RShe87mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghb5ILmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghcgMLmIEeGADpaeWquryQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSjUILmIEeGADpaeWquryQ" type="4001" source="_RRpVNbmIEeGADpaeWquryQ" target="_RRp8QbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSjUJLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSjUJbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSjUIbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSjUIrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.23"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSjUI7mIEeGADpaeWquryQ" points="[0, 0, 282, -60]$[-282, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghdHQLmIEeGADpaeWquryQ" id="(0.24,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghdHQbmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSkiQLmIEeGADpaeWquryQ" type="4001" source="_RRpVNbmIEeGADpaeWquryQ" target="_RRp8R7mIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSkiRLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSlJULmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSkiQbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSkiQrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.24"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSkiQ7mIEeGADpaeWquryQ" points="[0, 0, 0, -433]$[0, 433, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghduULmIEeGADpaeWquryQ" id="(0.48,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghduUbmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSlwYLmIEeGADpaeWquryQ" type="4001" source="_RRp8QbmIEeGADpaeWquryQ" target="_RRp8R7mIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSmXcLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSmXcbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSlwYbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSlwYrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.25"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSlwY7mIEeGADpaeWquryQ" points="[0, 0, -279, -60]$[279, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghcgMbmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghcgMrmIEeGADpaeWquryQ" id="(0.22857142857142856,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSm-gLmIEeGADpaeWquryQ" type="4001" source="_RPmGwLmIEeGADpaeWquryQ" target="_RPmt0LmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSnlkLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSnlkbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSm-gbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSm-grmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.26"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSm-g7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggVs8LmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggVs8bmIEeGADpaeWquryQ" id="(0.4968944099378882,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSozsLmIEeGADpaeWquryQ" type="4001" source="_RPmt0LmIEeGADpaeWquryQ" target="_RPmt0LmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSpawLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSpawbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSozsbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSozsrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.27"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSozs7mIEeGADpaeWquryQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSqB0LmIEeGADpaeWquryQ" type="4001" source="_RPmt0LmIEeGADpaeWquryQ" target="_RPnU4LmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSqo4LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSqo4bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSqB0bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSqB0rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.28"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSqB07mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggVF4LmIEeGADpaeWquryQ" id="(0.4968944099378882,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggVF4bmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RSzLwLmIEeGADpaeWquryQ" type="4001" source="_MnEj0LmFEeGADpaeWquryQ" target="_RPjDcLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RSzLxLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RSzLxbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RSzLwbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RSzLwrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.29"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RSzLw7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggznALmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggznAbmIEeGADpaeWquryQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS0Z4LmIEeGADpaeWquryQ" type="4001" source="_RPjDcLmIEeGADpaeWquryQ" target="_RPjqgbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS1A8LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS1A8bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS0Z4bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS0Z4rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.30"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS0Z47mIEeGADpaeWquryQ" points="[0, 0, 309, -60]$[-309, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gg0OErmIEeGADpaeWquryQ" id="(0.24,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gg01ILmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS1oALmIEeGADpaeWquryQ" type="4001" source="_RPjDcLmIEeGADpaeWquryQ" target="_RPjqh7mIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS2PE7mIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS2PFLmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS2PELmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS2PEbmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.31"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS2PErmIEeGADpaeWquryQ" points="[0, 0, 0, -433]$[0, 433, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gg01IbmIEeGADpaeWquryQ" id="(0.48,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gg01IrmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS4EQLmIEeGADpaeWquryQ" type="4001" source="_RPjqgbmIEeGADpaeWquryQ" target="_RPjqh7mIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS4ERLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS4ERbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS4EQbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS4EQrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.32"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS4EQ7mIEeGADpaeWquryQ" points="[0, 0, -306, -60]$[306, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gg0OELmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gg0OEbmIEeGADpaeWquryQ" id="(0.22857142857142856,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS5SYLmIEeGADpaeWquryQ" type="4001" source="_MnVpkLmFEeGADpaeWquryQ" target="_RP5BsLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS55cLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS55cbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS5SYbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS5SYrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.33"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS5SY7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggO_QrmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggO_Q7mIEeGADpaeWquryQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS7HkLmIEeGADpaeWquryQ" type="4001" source="_RP5BsLmIEeGADpaeWquryQ" target="_RP5ow7mIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS7HlLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS7HlbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS7HkbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS7HkrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.34"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS7Hk7mIEeGADpaeWquryQ" points="[0, 0, 661, -60]$[-661, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggOYMbmIEeGADpaeWquryQ" id="(0.2,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggOYMrmIEeGADpaeWquryQ" id="(0.4983388704318937,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS8VsLmIEeGADpaeWquryQ" type="4001" source="_RP5BsLmIEeGADpaeWquryQ" target="_RP5oybmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS8VtLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS8VtbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS8VsbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS8VsrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.35"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS8Vs7mIEeGADpaeWquryQ" points="[0, 0, 259, -60]$[-259, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggNxI7mIEeGADpaeWquryQ" id="(0.4,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggOYMLmIEeGADpaeWquryQ" id="(0.49872773536895676,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS9j0LmIEeGADpaeWquryQ" type="4001" source="_RP5BsLmIEeGADpaeWquryQ" target="_WsAcYbmZEeGc7axJyA_6eQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS9j1LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS9j1bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS9j0bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS9j0rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.36"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS9j07mIEeGADpaeWquryQ" points="[0, 0, -644, -60]$[644, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggNxIbmIEeGADpaeWquryQ" id="(0.8,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggNxIrmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RS-x8LmIEeGADpaeWquryQ" type="4001" source="_RP5BsLmIEeGADpaeWquryQ" target="_RP6P17mIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RS-x9LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RS-x9bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RS-x8bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RS-x8rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.37"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RS-x87mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggNKErmIEeGADpaeWquryQ" id="(0.6,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggNxILmIEeGADpaeWquryQ" id="(0.012433392539964476,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTAAELmIEeGADpaeWquryQ" type="4001" source="_RP6P17mIEeGADpaeWquryQ" target="_RP6P3bmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTAnILmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTAnIbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTAAEbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTAAErmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.38"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTAAE7mIEeGADpaeWquryQ" points="[0, 0, 277, -60]$[-277, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggNKELmIEeGADpaeWquryQ" id="(0.4991119005328597,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggNKEbmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTB1QLmIEeGADpaeWquryQ" type="4001" source="_WsAcYbmZEeGc7axJyA_6eQ" target="_RP6P3bmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTB1RLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTB1RbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTB1QbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTB1QrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.39"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTB1Q7mIEeGADpaeWquryQ" points="[0, 0, 643, -1050]$[-33, 989, 610, -61]$[-643, 1050, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_OHXFULmaEeGc7axJyA_6eQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggMjAbmIEeGADpaeWquryQ" id="(0.7428571428571429,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTDDYLmIEeGADpaeWquryQ" type="4001" source="_RP5oybmIEeGADpaeWquryQ" target="_RP6P3bmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTDDZLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTDDZbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTDDYbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTDDYrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.40"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTDDY7mIEeGADpaeWquryQ" points="[0, 0, -255, -780]$[137, 719, -118, -61]$[255, 780, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggMjArmIEeGADpaeWquryQ" id="(0.49872773536895676,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggMjA7mIEeGADpaeWquryQ" id="(0.3142857142857143,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTERgLmIEeGADpaeWquryQ" type="4001" source="_RP5ow7mIEeGADpaeWquryQ" target="_RP6P3bmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTERhLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTERhbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTERgbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTERgrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.41"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTERg7mIEeGADpaeWquryQ" points="[0, 0, -656, -780]$[91, 719, -565, -61]$[656, 780, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggO_QLmIEeGADpaeWquryQ" id="(0.4983388704318937,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggO_QbmIEeGADpaeWquryQ" id="(0.14285714285714285,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTFfoLmIEeGADpaeWquryQ" type="4001" source="_RP8sELmIEeGADpaeWquryQ" target="_RP8sFbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTFfpLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTFfpbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTFfobmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTFformIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.42"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTFfo7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghim0LmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghim0bmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTHU0LmIEeGADpaeWquryQ" type="4001" source="_RP8sFbmIEeGADpaeWquryQ" target="_RP8sFbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTH74LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTH74bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTHU0bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTHU0rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.43"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTHU07mIEeGADpaeWquryQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTJKALmIEeGADpaeWquryQ" type="4001" source="_RP8sFbmIEeGADpaeWquryQ" target="_RP9TIbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTJKBLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTJKBbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTJKAbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTJKArmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.44"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTJKA7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghjN4LmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghjN4bmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTKYILmIEeGADpaeWquryQ" type="4001" source="_RQCLoLmIEeGADpaeWquryQ" target="_RQCysLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTKYJLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTKYJbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTKYIbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTKYIrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.45"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTKYI7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggp2AbmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggp2ArmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTLmQLmIEeGADpaeWquryQ" type="4001" source="_RQCysLmIEeGADpaeWquryQ" target="_RQCysLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTLmRLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTLmRbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTLmQbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTLmQrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.46"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTLmQ7mIEeGADpaeWquryQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTM0YLmIEeGADpaeWquryQ" type="4001" source="_RQCysLmIEeGADpaeWquryQ" target="_RQCytbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTM0ZLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTM0ZbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTM0YbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTM0YrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.47"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTM0Y7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggpO8LmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggp2ALmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTST8LmIEeGADpaeWquryQ" type="4001" source="_RQNKwLmIEeGADpaeWquryQ" target="_RQNx0LmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTST9LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTST9bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTST8bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTST8rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.48"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTST87mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gf8rY7mIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gf9ScLmIEeGADpaeWquryQ" id="(0.498371335504886,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTTiELmIEeGADpaeWquryQ" type="4001" source="_RQNx0LmIEeGADpaeWquryQ" target="_RQNx1rmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTUJILmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTUJIbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTTiEbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTTiErmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.49"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTTiE7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gf8EULmIEeGADpaeWquryQ" id="(0.498371335504886,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gf8rYLmIEeGADpaeWquryQ" id="(0.4989517819706499,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTUwMLmIEeGADpaeWquryQ" type="4001" source="_RQNx1rmIEeGADpaeWquryQ" target="_RQNx3LmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTVXQLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTVXQbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTUwMbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTUwMrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.50"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTUwM7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gf8rYbmIEeGADpaeWquryQ" id="(0.4989517819706499,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gf8rYrmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTXzgLmIEeGADpaeWquryQ" type="4001" source="_RQPnALmIEeGADpaeWquryQ" target="_RQQOELmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTXzhLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTXzhbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTXzgbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTXzgrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.51"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTXzg7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggZXULmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggZXUbmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTZosLmIEeGADpaeWquryQ" type="4001" source="_RQQOELmIEeGADpaeWquryQ" target="_RQQOELmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTZotLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTZotbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTZosbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTZosrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.52"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTZos7mIEeGADpaeWquryQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTa20LmIEeGADpaeWquryQ" type="4001" source="_RQQOELmIEeGADpaeWquryQ" target="_RQQOFbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTa21LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTa21bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTa20bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTa20rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.53"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTa207mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggZXUrmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggZXU7mIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTcE8LmIEeGADpaeWquryQ" type="4001" source="_RQVGkLmIEeGADpaeWquryQ" target="_RQVtoLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTcE9LmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTcE9bmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTcE8bmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTcE8rmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.54"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTcE87mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghBCYrmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghBCY7mIEeGADpaeWquryQ" id="(0.48,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTdTELmIEeGADpaeWquryQ" type="4001" source="_RQVtoLmIEeGADpaeWquryQ" target="_RQVtpbmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTd6ILmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTd6IbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTdTEbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTdTErmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.55"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTdTE7mIEeGADpaeWquryQ" points="[0, 0, 198, -60]$[-198, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghAbULmIEeGADpaeWquryQ" id="(0.24,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghAbUbmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTfvULmIEeGADpaeWquryQ" type="4001" source="_RQVtoLmIEeGADpaeWquryQ" target="_RQWUsLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTfvVLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTfvVbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTfvUbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTfvUrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.56"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTfvU7mIEeGADpaeWquryQ" points="[0, 0, 0, -163]$[0, 163, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghBpcLmIEeGADpaeWquryQ" id="(0.48,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghBpcbmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTg9cLmIEeGADpaeWquryQ" type="4001" source="_RQVtpbmIEeGADpaeWquryQ" target="_RQWUsLmIEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RThkgLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RThkgbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTg9cbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTg9crmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.57"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTg9c7mIEeGADpaeWquryQ" points="[0, 0, -195, -60]$[195, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghBCYLmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ghBCYbmIEeGADpaeWquryQ" id="(0.22857142857142856,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTiLkLmIEeGADpaeWquryQ" type="4001" source="_MkslQLmFEeGADpaeWquryQ" target="_MktMULmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTiyoLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTiyobmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTiLkbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTiLkrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.58"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTiLk7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gghTIrmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ggh6MLmIEeGADpaeWquryQ" id="(0.5,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTjZsLmIEeGADpaeWquryQ" type="4001" source="_MktMULmFEeGADpaeWquryQ" target="_MktMULmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTkAwLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTkn0LmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTjZsbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTjZsrmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.59"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTjZs7mIEeGADpaeWquryQ" points="[0, 0, 0, 0]$[0, 0, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_RTmdALmIEeGADpaeWquryQ" type="4001" source="_MktMULmFEeGADpaeWquryQ" target="_MktMVrmFEeGADpaeWquryQ">
+    <children xmi:type="notation:DecorationNode" xmi:id="_RTmdBLmIEeGADpaeWquryQ" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_RTmdBbmIEeGADpaeWquryQ" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_RTmdAbmIEeGADpaeWquryQ"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_RTmdArmIEeGADpaeWquryQ" fontName="Century Schoolbook L"/>
+    <element xmi:type="statechart:Transition" href="GoalieRoboCup2012.stct#//@transitions.60"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_RTmdA7mIEeGADpaeWquryQ" points="[0, 0, 0, -60]$[0, 60, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gghTILmIEeGADpaeWquryQ" id="(0.5,1.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_gghTIbmIEeGADpaeWquryQ" id="(0.4857142857142857,0.0)"/>
+  </edges>
+</notation:Diagram>
