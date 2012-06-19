@@ -1,4 +1,4 @@
-#include "Localization.h"
+#include "LocalWorldState.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
@@ -10,35 +10,28 @@
 #include <google/protobuf/descriptor.h>
 #include <math.h>
 #include "architecture/archConfig.h"
-//#include "tools/MathFunctions.h"
-#define CALIBRATE 1
-#define SCANFORBALL 2
-#define SCANFORPOST 3
-#define BALLTRACK 4
 #define NO_GAME
 #define MAX_TIME_TO_RESET 10 //in seconds
-//#define ADEBUG
 using namespace std;
 
+ACTIVITY_REGISTER(LocalWorldState);
 
-ACTIVITY_REGISTER(Localization);
-
-Localization::Localization(Blackboard &b) : IActivity(b),
-	vprof("Localization")
+LocalWorldState::LocalWorldState(Blackboard &b) : IActivity(b),
+	vprof("LocalWorldState")
 {
 }
 
-bool Localization::debugmode = false;
-TCPSocket * Localization::sock;
+bool LocalWorldState::debugmode = false;
+TCPSocket * LocalWorldState::sock;
 
-void Localization::UserInit()
+void LocalWorldState::UserInit()
 {
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
-	Logger::Instance().WriteMsg("Localization", "Localization Initialized", Logger::Info);
+	Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
 	firstOdometry = true;
 	serverpid = -1;
 	debugmode = false;
@@ -51,15 +44,14 @@ void Localization::UserInit()
 
 	currentRobotAction = MotionStateMessage::IDLE;
 
-	KLocalization::Initialize();
-	KLocalization::setParticlesPoseUniformly(SIRParticles);
+	localizationWorld.Initialize();
+	localizationWorld.setParticlesPoseUniformly();
 	timeStart = boost::posix_time::microsec_clock::universal_time();
 #ifdef NO_GAME
 	sock = NULL;
-	serverpid = pthread_create(&acceptthread, NULL, &Localization::StartServer, this);
+	serverpid = pthread_create(&acceptthread, NULL, &LocalWorldState::StartServer, this);
 	pthread_detach(acceptthread);
 #endif
-	firstrun = true;
 	fallBegan = true;
 	last_observation_time = boost::posix_time::microsec_clock::universal_time();
 	last_filter_time = boost::posix_time::microsec_clock::universal_time();
@@ -83,12 +75,7 @@ void Localization::UserInit()
 
 }
 
-void Localization::Reset(int playerNumber, bool kickOff)
-{
-	KLocalization::initializeParticles(SIRParticles,playerNumber,kickOff);
-}
-
-int Localization::Execute()
+int LocalWorldState::Execute()
 {
 	now = boost::posix_time::microsec_clock::universal_time();
 
@@ -97,7 +84,7 @@ int Localization::Execute()
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
-			KLocalization::spreadParticlesAfterFall(SIRParticles,SpreadParticlesDeviationAfterFall, RotationDeviationAfterFallInDeg,NumberOfParticlesSpreadAfterFall);
+			localizationWorld.spreadParticlesAfterFall();
 		}
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 		return 0;
@@ -105,10 +92,11 @@ int Localization::Execute()
 		fallBegan = true;
 	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
 		timeStart = boost::posix_time::microsec_clock::universal_time();
-		Reset((int)lrm->type(),lrm->kickoff());
+		localizationWorld.initializeParticles((int)lrm->type(),lrm->kickoff());
 	}
 
-	LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
+	
+	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
@@ -118,13 +106,13 @@ int Localization::Execute()
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
 	{
-		LocalizationData_Load(SIRParticles, currentObservation, robotmovement);
+		LocalizationData_Load(currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
 	_blk.publishData(MyWorld, "worldstate");
 #ifdef NO_GAME
 	DebugDataForGUI.Clear();
-	LocalizationDataForGUI_Load(SIRParticles);
+	LocalizationDataForGUI_Load(localizationWorld.SIRParticles);
 	_blk.publishSignal(DebugDataForGUI, "debug");
 #endif
 
@@ -132,51 +120,7 @@ int Localization::Execute()
 	return 0;
 }
 
-void Localization::Send_LocalizationData()
-{
-
-	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
-	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
-
-	int sendsize;
-	int rsize = 0;
-	int rs;
-	//send a header
-	sendsize = outgoingheader.ByteSize();
-	sendsize = htonl(sendsize);
-
-	try
-	{
-		sock->send(&sendsize, sizeof(uint32_t));
-
-		sendsize = outgoingheader.ByteSize();
-		outgoingheader.SerializeToArray(data, sendsize);
-		while (rsize < sendsize)
-		{
-			rs = sock->send(data + rsize, sendsize - rsize);
-			rsize += rs;
-		}
-		//send the image bytes
-		sendsize = DebugData.ByteSize();
-		std::string buf;
-		DebugData.SerializePartialToString(&buf);
-		sendsize = buf.length();
-
-		rsize = 0;
-
-		while (rsize < sendsize)
-		{
-			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
-			rsize += rs;
-		}
-	} catch (SocketException &e)
-	{
-		cerr << e.what() << endl;
-		debugmode = false;
-	}
-}
-
-void Localization::calculate_ball_estimate(KMotionModel const & robotModel)
+void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 {
 	boost::posix_time::time_duration duration;
 	boost::posix_time::ptime observation_time;
@@ -266,63 +210,7 @@ void Localization::calculate_ball_estimate(KMotionModel const & robotModel)
 	}
 }
 
-//Sequential Importance Resampling
-belief Localization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
-{
-	//SIR Filter
-	//int index[partclsNum];
-	bool weightsChanged = false;
-
-	//Predict - Move particles according the Prediction Model
-	if(MotionModel.freshData)
-		Predict(SIRParticles, MotionModel);
-
-	//Update - Using incoming observation
-	if(Observations.size()>=1){
-		Update(SIRParticles, Observations, MotionModel, partclsNum);
-		weightsChanged = true;
-	}
-	else if(AmbiguousObservations.size()==1){
-		Update_Ambiguous(SIRParticles, AmbiguousObservations, partclsNum);
-		weightsChanged = true;
-	}
-
-	//Normalize Particles  Weight in order to Resample later
-	//Find the index of the max weight in the process
-	float ESS = 0;
-	if(weightsChanged)
-		ESS = normalize(SIRParticles.Weight,&max_weight_particle_index);
-
-
-	//extract estimation
-	AgentPosition.x =  SIRParticles.x[max_weight_particle_index];// maxprtcl.x;
-	AgentPosition.y = SIRParticles.y[max_weight_particle_index];//maxprtcl.y;
-	AgentPosition.theta = SIRParticles.phi[max_weight_particle_index];//maxprtcl.phi;
-
-	//cout << "Probable agents position " << AgentPosition.x << ", " << AgentPosition.y << " maxprtcl W: " << maxprtcl.Weight << endl;
-	//AgentPosition = RobustMean(SIRParticles, 10);
-
-	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = 0.0;
-
-	//Complete the SIR
-	//Check last position confidence
-	if(weightsChanged){
-		if (ESS > 0 && (ESS < Beta ))//Always true because ESS is disabled in normalize
-		{
-			//Resample(SIRParticles, index, 0);
-			//Propagate(SIRParticles, index);
-			rouletteResample(SIRParticles);
-		}
-		if(Observations.size()>=1){
-			;//ForceBearing(SIRParticles,Observations);
-		}
-	}
-	return AgentPosition;
-
-}
-
-void Localization::process_messages()
+void LocalWorldState::process_messages()
 {
 	boost::posix_time::ptime observation_time;
 
@@ -335,7 +223,7 @@ void Localization::process_messages()
 	currentObservation.clear();
 	currentAmbiguousObservation.clear();
 	if(gsm != 0){
-		playerNumber = gsm->player_number();
+		localizationWorld.playerNumber = gsm->player_number();
 	}
 	if (obsm != 0)
 	{
@@ -360,18 +248,18 @@ void Localization::process_messages()
 			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);*/
 
-			if ((this)->KFeaturesmap.count(id) != 0)
+			if (localizationWorld.KFeaturesmap.count(id) != 0)
 			{
 				//Make the feature
 				if(id.find("Left")!=string::npos ||id.find("Right")!=string::npos)
 				{
-					tmpOM.Feature = (this)->KFeaturesmap[id];
+					tmpOM.Feature = localizationWorld.KFeaturesmap[id];
 					currentObservation.push_back(tmpOM);
 				}
 			}else {
 
 				if( id.find("Yellow")!=string::npos){
-					tmpOM.Feature = (this)->KFeaturesmap["YellowLeft"];
+					tmpOM.Feature = localizationWorld.KFeaturesmap["YellowLeft"];
 					currentAmbiguousObservation.push_back(tmpOM);
 				}
 
@@ -400,7 +288,7 @@ void Localization::process_messages()
 }
 
 
-void Localization::RobotPositionMotionModel(KMotionModel & MModel)
+void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 {
 	if (firstOdometry)
 	{
@@ -434,10 +322,53 @@ void Localization::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPoint.x += DX;
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
-	//Logger::Instance().WriteMsg("Localization", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
+	//Logger::Instance().WriteMsg("LocalWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
 
-int Localization::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel)
+//------------------------------------------------- Functions for the GUI-----------------------------------------------------
+void LocalWorldState::Send_LocalizationData()
+{
+	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
+	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
+
+	int sendsize;
+	int rsize = 0;
+	int rs;
+	//send a header
+	sendsize = outgoingheader.ByteSize();
+	sendsize = htonl(sendsize);
+
+	try
+	{
+		sock->send(&sendsize, sizeof(uint32_t));
+		sendsize = outgoingheader.ByteSize();
+		outgoingheader.SerializeToArray(data, sendsize);
+		while (rsize < sendsize)
+		{
+			rs = sock->send(data + rsize, sendsize - rsize);
+			rsize += rs;
+		}
+		//send the image bytes
+		sendsize = DebugData.ByteSize();
+		std::string buf;
+		DebugData.SerializePartialToString(&buf);
+		sendsize = buf.length();
+
+		rsize = 0;
+
+		while (rsize < sendsize)
+		{
+			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
+			rsize += rs;
+		}
+	} catch (SocketException &e)
+	{
+		cerr << e.what() << endl;
+		debugmode = false;
+	}
+}
+
+int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observation, KMotionModel & MotionModel)
 {
 	bool addnewptrs = false;
 	//Fill the world with data!
@@ -453,16 +384,16 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
 	RobotPose prtcl;
-	if ((unsigned int) DebugData.particles_size() < Particles.size)
+	if ((unsigned int) DebugData.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
-	for (unsigned int i = 0; i < Particles.size; i++)
+	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
 		if (addnewptrs)
 			DebugData.add_particles();
-		DebugData.mutable_particles(i)->set_x(Particles.x[i]*1000);
-		DebugData.mutable_particles(i)->set_y(Particles.y[i]*1000);
-		DebugData.mutable_particles(i)->set_phi(Particles.phi[i]);
-		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
+		DebugData.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
+		DebugData.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
+		DebugData.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
+		DebugData.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
 	}
 
 	if (obsm != NULL)
@@ -475,7 +406,7 @@ int Localization::LocalizationData_Load(parts & Particles, vector<KObservationMo
 	return 1;
 }
 
-int Localization::LocalizationDataForGUI_Load(parts& Particles)
+int LocalWorldState::LocalizationDataForGUI_Load(parts& Particles)
 {
 	bool addnewptrs = false;
 
@@ -495,7 +426,7 @@ int Localization::LocalizationDataForGUI_Load(parts& Particles)
 	return 1;
 }
 
-void * Localization::StartServer(void * astring)
+void * LocalWorldState::StartServer(void * astring)
 {
 	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
 	bool found = false;
@@ -509,11 +440,11 @@ void * Localization::StartServer(void * astring)
 	if (found)
 		port = temp;
 	else
-		Logger::Instance().WriteMsg("Localization", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml", Logger::Warning);
+		Logger::Instance().WriteMsg("LocalWorldState", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml", Logger::Warning);
 
 	TCPServerSocket servSock(port);
 
-	Logger::Instance().WriteMsg("Localization", " Localization server is ready at port: " + _toString(port), Logger::Info);
+	Logger::Instance().WriteMsg("LocalWorldState", " LocalWorldState server is ready at port: " + _toString(port), Logger::Info);
 	while (true)
 	{
 		if (!debugmode)
