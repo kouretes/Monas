@@ -7,9 +7,9 @@ using std::string;
 using namespace boost::posix_time;
 
 ACTIVITY_REGISTER(LedHandler);
+
+
 int LedHandler::Execute() {
-
-
 
 	process_messages();
 
@@ -19,22 +19,25 @@ int LedHandler::Execute() {
 		}
 	}
 
-	SetBateryLevel();
+	SetBatteryLevel();
 
 	return 0;
 }
 
-void LedHandler::SetBateryLevel(){
+
+void LedHandler::SetBatteryLevel(){
+
 	static bool firstRun = true;
+
 	if (firstRun) {
 		Logger::Instance().WriteMsg("LedHandler", "Real Battery level: "+_toString(battery_level), Logger::Info);
-				//10 == empty , 0, == full
+		//10 == empty , 0, == full
 		battery_level = rint((1-battery_level)*left_ear_names.size()); //scale and reverse the real value
 		if(battery_level >=left_ear_names.size())
 			battery_level = left_ear_names.size()-1;
 
 		Logger::Instance().WriteMsg("LedHandler", "Reversed Battery level: "+_toString(battery_level), Logger::Info);
-		for(int i=0; i < left_ear_names.size(); i++){
+		for(unsigned int i=0; i < left_ear_names.size(); i++){
 			if(i<=battery_level)
 				leds->callVoid<string>("on",left_ear_names[i]);
 			else
@@ -44,7 +47,6 @@ void LedHandler::SetBateryLevel(){
 
 		firstRun = false;
 	}
-
 
 	float new_battery_level = memory->getData("Device/SubDeviceList/Battery/Charge/Sensor/Value");
 	//10 == empty , 0, == full
@@ -64,25 +66,27 @@ void LedHandler::SetBateryLevel(){
 		//Charging so light up the next led
 		Logger::Instance().WriteMsg("LedHandler", "Charging, Battery Level: "+_toString(new_battery_level), Logger::ExtraExtraInfo);
 		leds->callVoid<string>("off",left_ear_names[battery_level]);
-
 	}
+
 	battery_level = new_battery_level;
 	static ptime last_ledchange=microsec_clock::universal_time();
 	if(microsec_clock::universal_time()-last_ledchange<milliseconds(2000/(1+battery_level)))
 		return ;
 	last_ledchange=microsec_clock::universal_time();
-	static bool ledonof = false;
-	ledonof=!ledonof;
-	leds->callVoid<string>((ledonof)?"on":"off",left_ear_names[battery_level]);
-
+	static bool ledonoff = false;
+	ledonoff=!ledonoff;
+	leds->callVoid<string>((ledonoff)?"on":"off",left_ear_names[battery_level]);
 }
+
 
 void LedHandler::process_messages() {
 
 	led_change = _blk.readSignal<LedChangeMessage> ("leds");
 }
 
+
 void LedHandler::UserInit() {
+
 	//led_change = 0;
 	_blk.updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
 
@@ -104,7 +108,6 @@ void LedHandler::UserInit() {
 //	setFootColor("r_foot", "on");
 //	setFootColor("l_foot", "on");
 
-
 	left_ear_names.push_back("Ears/Led/Left/0Deg/Actuator/Value");
 	left_ear_names.push_back("Ears/Led/Left/36Deg/Actuator/Value");
 	left_ear_names.push_back("Ears/Led/Left/72Deg/Actuator/Value");
@@ -125,6 +128,7 @@ void LedHandler::UserInit() {
 	leds->callVoid<string> ("off", "AllLeds");
 	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
 }
+
 
 void LedHandler::setLed(const string& device, const string& color) {
 	if (device.compare("chest") == 0) {
@@ -157,9 +161,11 @@ void LedHandler::setLed(const string& device, const string& color) {
 	}
 }
 
+
 void LedHandler::setChestColor(const string& color) {
 	leds->callVoid<string, int, float> ("fadeRGB", "ChestLeds", colors[color], 0.0);
 }
+
 
 void LedHandler::setFootColor(const string& device, const string& color) {
 	if (device.find("l") != device.npos) {
@@ -169,9 +175,11 @@ void LedHandler::setFootColor(const string& device, const string& color) {
 	}
 }
 
+
 void LedHandler::setEyesColor(const string& color) {
 	leds->callVoid<string, int, float> ("fadeRGB", "FaceLeds", colors[color], 0.0);
 }
+
 
 void LedHandler::setIndividualEyeColor(const string& device, const string& color) {
 	if (device.find("l") != device.npos) {
@@ -186,8 +194,9 @@ void LedHandler::setIndividualEyeColor(const string& device, const string& color
 		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsRightBottom", colors[color], 0.0);
 		leds->callVoid<string, int, float> ("fadeRGB", "FaceLedsRightTop", colors[color], 0.0);
 	}
-
 }
+
+
 void LedHandler::setEarsColor(const string& color) {
 
 	if (color.compare("off") != 0 && color.compare("blue") != 0) {
@@ -195,6 +204,7 @@ void LedHandler::setEarsColor(const string& color) {
 	}
 	leds->callVoid<string, int, float> ("fadeRGB", "EarLeds", colors[color.c_str()], 0.0);
 }
+
 
 void LedHandler::setIndividualEarColor(const string& device, const string& color) {
 	if (color.compare("off") != 0 && color.compare("blue") != 0) {
@@ -206,6 +216,7 @@ void LedHandler::setIndividualEarColor(const string& device, const string& color
 	else
 		leds->callVoid<string, int, float> ("fadeRGB", "RightEarLeds", colors[color.c_str()], 0.0);
 }
+
 
 void LedHandler::initializeColorMap() {
 	//add off to color map
@@ -226,6 +237,8 @@ void LedHandler::initializeColorMap() {
 	colors["purple"] = 0x00FF00FF;
 
 }
+
+
 int LedHandler::getColor(string color) {
 	return colors[color];
 }
