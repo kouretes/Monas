@@ -153,11 +153,11 @@ void MotionController::UserInit()
 
 int MotionController::Execute()
 {
-	counter++;
+	//counter++;
 	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//testcommands();
-	if(counter%100==0)
-		readWalkParameters();
+	//if(counter%100==0)
+	//	readWalkParameters();
 	read_messages();
 	mglrun();
 	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);

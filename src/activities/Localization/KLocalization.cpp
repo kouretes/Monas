@@ -96,6 +96,12 @@ int KLocalization::Initialize()
 	SIRParticles.y = new double[partclsNum];
 	SIRParticles.phi = new double[partclsNum];
 	SIRParticles.Weight = new double[partclsNum];
+	for(unsigned int i=0;i<partclsNum;i++){
+		SIRParticles.x[i] = 0;
+		SIRParticles.y[i] = 0;
+		SIRParticles.phi[i] = 0;
+		SIRParticles.Weight[i] = 0;
+	}
 	max_weight_particle_index=0;
 	double seed = (double) (time(NULL) % 100 / 100.0);
 	Random::Set(seed);
@@ -146,9 +152,39 @@ void KLocalization::setParticlesPoseUniformly()
 }
 
 void KLocalization::initializeParticles(int playerState,bool kickOff){
-	if(playerState == PLAYER_PENALISED)
+	if(playerState == PLAYER_PENALISED){
 		setParticlesPoseUniformly();
-	else if(playerState == PLAYER_READY || playerState==PLAYER_SET){
+	}else if(playerState == PLAYER_READY){
+		float phi,x,y;
+		if(playerNumber == 1){
+			y = -FieldMaxY;
+			x = -2.4;
+			phi = deg2rad(90);
+		}else if(playerNumber == 2){
+			y = FieldMaxY;
+			x = -2.4;
+			phi = deg2rad(270);
+		}else if(playerNumber == 3){
+			y = -FieldMaxY;
+			x = -1.2;
+			phi = deg2rad(90);
+		}else if(playerNumber == 4){
+			y = FieldMaxY;
+			x = -1.2;
+			phi = deg2rad(270);
+		}
+		//Leave some particles to the current position in case of ready state after goal
+		int percentageOfParticle = partclsNum*0.2;
+		for (unsigned int i = percentageOfParticle; i < partclsNum; i++)
+		{
+			if(i == max_weight_particle_index)
+				continue;
+			SIRParticles.x[i] = x;
+			SIRParticles.y[i] = y;
+			SIRParticles.phi[i] = phi;
+			SIRParticles.Weight[i] = 1.0 / partclsNum;
+		}
+	}else if(playerState == PLAYER_SET){
 		for (unsigned int i = 0; i < partclsNum; i++)
 		{
 			SIRParticles.x[i] = initX[(kickOff)?0:1] + ((double)rand()/(double)RAND_MAX)*0.2 - 0.1;
@@ -564,8 +600,8 @@ bool KLocalization::readRobotConf(const std::string& file_name) {
 				initPhi[i] = 0.0;
 				initX[i] = (it->attrb["posx"]);
 				initY[i] = (it->attrb["posy"]);
-
 				found = true;
+				break;
 			}else{
 				initPhi[i] = 0.0;
 				initX[i] = 0.0;

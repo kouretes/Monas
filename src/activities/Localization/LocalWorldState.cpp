@@ -112,7 +112,7 @@ int LocalWorldState::Execute()
 	_blk.publishData(MyWorld, "worldstate");
 #ifdef NO_GAME
 	DebugDataForGUI.Clear();
-	LocalizationDataForGUI_Load(localizationWorld.SIRParticles);
+	LocalizationDataForGUI_Load();
 	_blk.publishSignal(DebugDataForGUI, "debug");
 #endif
 
@@ -335,8 +335,7 @@ void LocalWorldState::Send_LocalizationData()
 	int rsize = 0;
 	int rs;
 	//send a header
-	sendsize = outgoingheader.ByteSize();
-	sendsize = htonl(sendsize);
+	sendsize = htonl(outgoingheader.ByteSize());
 
 	try
 	{
@@ -356,11 +355,13 @@ void LocalWorldState::Send_LocalizationData()
 
 		rsize = 0;
 
+		cerr << "Start transmition" << endl;
 		while (rsize < sendsize)
 		{
 			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
 			rsize += rs;
 		}
+		cerr << "End transmition" << endl;
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
@@ -371,19 +372,11 @@ void LocalWorldState::Send_LocalizationData()
 int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observation, KMotionModel & MotionModel)
 {
 	bool addnewptrs = false;
-	//Fill the world with data!
-	WorldInfo *WI = DebugData.mutable_world();
 
-	WI->mutable_myposition()->set_x(AgentPosition.x*1000);
-	WI->mutable_myposition()->set_y(AgentPosition.y*1000);
-	WI->mutable_myposition()->set_phi(AgentPosition.theta);
-	WI->mutable_myposition()->set_confidence(0.0);
-
-	WI->CopyFrom(MyWorld);
 	DebugData.mutable_robotposition()->set_x(TrackPoint.x*1000);
 	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
-	RobotPose prtcl;
+
 	if ((unsigned int) DebugData.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
 	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
@@ -406,21 +399,21 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 	return 1;
 }
 
-int LocalWorldState::LocalizationDataForGUI_Load(parts& Particles)
+int LocalWorldState::LocalizationDataForGUI_Load()
 {
 	bool addnewptrs = false;
 
-	if ((unsigned int)  DebugDataForGUI.particles_size() < Particles.size)
+	if ((unsigned int)  DebugDataForGUI.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
 
-	for (unsigned int i = 0; i < Particles.size; i++)
+	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
 		if (addnewptrs)
 			DebugDataForGUI.add_particles();
-		DebugDataForGUI.mutable_particles(i)->set_x(Particles.x[i]*1000);
-		DebugDataForGUI.mutable_particles(i)->set_y(Particles.y[i]*1000);
-		DebugDataForGUI.mutable_particles(i)->set_phi(Particles.phi[i]);
-		DebugDataForGUI.mutable_particles(i)->set_confidence(Particles.Weight[i]);
+		DebugDataForGUI.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
+		DebugDataForGUI.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
+		DebugDataForGUI.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
+		DebugDataForGUI.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
 	}
 
 	return 1;
