@@ -59,17 +59,17 @@ void LocalWorldState::UserInit()
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
 	robotmovement.Distance.ratiomean = 1.0;// systematic error out
-	robotmovement.Distance.ratiodev = 0.5;
+	robotmovement.Distance.ratiodev = 0.55;
 	robotmovement.Distance.Emean = 0.0;
 	robotmovement.Distance.Edev = 0.0;
 
 	robotmovement.Direction.ratiomean = 1.0;// systematic error out
 	robotmovement.Direction.ratiodev = 0.0;
 	robotmovement.Direction.Emean = 0.0;// systematic error out
-	robotmovement.Direction.Edev = deg2rad(20);
+	robotmovement.Direction.Edev = deg2rad(22);
 
 	robotmovement.Rotation.ratiomean = 1.0;// systematic error out
-	robotmovement.Rotation.ratiodev = 0.5;
+	robotmovement.Rotation.ratiodev = 0.55;
 	robotmovement.Rotation.Emean = 0.0;// systematic error out
 	robotmovement.Rotation.Edev = 0.0;
 
@@ -238,11 +238,11 @@ void LocalWorldState::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance();
 			tmpOM.Distance.Emean = 0.0;
-			tmpOM.Distance.Edev = 1.7+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
+			tmpOM.Distance.Edev = 1.5+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
 			//Bearing
 			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
-			tmpOM.Bearing.Edev = deg2rad(50) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
+			tmpOM.Bearing.Edev = deg2rad(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
 			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
