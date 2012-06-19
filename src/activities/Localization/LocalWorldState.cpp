@@ -106,7 +106,7 @@ int LocalWorldState::Execute()
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
 	{
-		LocalizationData_Load(localizationWorld.SIRParticles, currentObservation, robotmovement);
+		LocalizationData_Load(currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
 	_blk.publishData(MyWorld, "worldstate");
@@ -328,7 +328,6 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
 void LocalWorldState::Send_LocalizationData()
 {
-
 	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
 	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
 
@@ -342,7 +341,6 @@ void LocalWorldState::Send_LocalizationData()
 	try
 	{
 		sock->send(&sendsize, sizeof(uint32_t));
-
 		sendsize = outgoingheader.ByteSize();
 		outgoingheader.SerializeToArray(data, sendsize);
 		while (rsize < sendsize)
@@ -370,7 +368,7 @@ void LocalWorldState::Send_LocalizationData()
 	}
 }
 
-int LocalWorldState::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel)
+int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observation, KMotionModel & MotionModel)
 {
 	bool addnewptrs = false;
 	//Fill the world with data!
@@ -386,16 +384,16 @@ int LocalWorldState::LocalizationData_Load(parts & Particles, vector<KObservatio
 	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
 	RobotPose prtcl;
-	if ((unsigned int) DebugData.particles_size() < Particles.size)
+	if ((unsigned int) DebugData.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
-	for (unsigned int i = 0; i < Particles.size; i++)
+	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
 		if (addnewptrs)
 			DebugData.add_particles();
-		DebugData.mutable_particles(i)->set_x(Particles.x[i]*1000);
-		DebugData.mutable_particles(i)->set_y(Particles.y[i]*1000);
-		DebugData.mutable_particles(i)->set_phi(Particles.phi[i]);
-		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
+		DebugData.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
+		DebugData.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
+		DebugData.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
+		DebugData.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
 	}
 
 	if (obsm != NULL)
