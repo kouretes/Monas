@@ -192,7 +192,7 @@ void GoToPosition::gotoPosition(float target_x,float target_y, float target_phi)
 	double targetAngle = anglediff2(atan2(target_y - myPosY, target_x - myPosY), myPhi);
 	double targetOrientation = anglediff2(target_phi, myPhi);
 
-	if (targetDistance > 0.25)
+	if (targetDistance > 0.25|| (fabs(targetOrientation) > M_PI_4) )
 		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle),
 									toCartesianY(targetDistance,targetAngle),
 									targetOrientation);
