@@ -129,7 +129,6 @@ class Behavior: public IActivity {
 		int forball, forpost;
 
 		bool kickoff;
-		bool toReadyFromGoal;
 		float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
 		float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
