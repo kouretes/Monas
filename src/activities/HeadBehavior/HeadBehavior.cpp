@@ -15,7 +15,6 @@ using namespace std;
 
 void HeadBehavior::UserInit() {
 
-
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -29,6 +28,7 @@ void HeadBehavior::UserInit() {
 	ballLastSeen =ballFirstSeen= microsec_clock::universal_time()-hours(5);
 
 	GoalLastSeen =GoalFirstSeen= microsec_clock::universal_time()-hours(5);
+	lastBtmsg = microsec_clock::universal_time()-hours(5);
 	ysign = 1;
 	headpos = 0.0;
 	leftright = 1;
@@ -79,10 +79,14 @@ int HeadBehavior::Execute() {
 			headaction=SCANFORPOST;
 			if(obsmbearing==-1&&lastbearing!=-1) {obsmbearing=lastbearing;};
 		}
-		else if(!(bmsg != 0 &&bmsg->radius() > 0)&&lastgoodbmsg.get()) {
+		else if(!(bmsg != 0 &&bmsg->radius() > 0)&&lastgoodbmsg.get()) 
+		{
+			lastBtmsg = microsec_clock::universal_time();
 			bmsg=lastgoodbmsg;
 			headaction = BALLTRACK;
-		}else if(wim!=0 && wim->balls_size() > 0) {
+			hbmsg->set_ballfound(1);
+		}else if(wim!=0 && wim->balls_size() > 0 && lastBtmsg+seconds(2)>microsec_clock::universal_time())
+		{
 			headaction = BALLTRACKKALMAN;
 			bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
 			by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
@@ -90,9 +94,13 @@ int HeadBehavior::Execute() {
 			bb = atan2(by,bx);
 			hbmsg->set_ballfound(1);
 		}
+		else
+			hbmsg->set_ballfound(0);
 
 	}
-	if (bmsg != 0 && bmsg->radius() > 0) { //This means that a ball was found
+	if (bmsg != 0 && bmsg->radius() > 0) //This means that a ball was found
+	{ 
+		lastBtmsg = microsec_clock::universal_time();
 		startscan=false;
 		if(ballLastSeen+seconds(1)<=now)
 			ballFirstSeen=now;
@@ -108,18 +116,22 @@ int HeadBehavior::Execute() {
 
 		hbmsg->set_ballfound(1);
 
-	} else if (wim!=0 && wim->balls_size() > 0) {//This means that a ball is not found
-		headaction = BALLTRACKKALMAN;
-		bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
-		by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
-		bd = sqrt(pow(bx,2)+pow(by,2));
-		bb = atan2(by,bx);
-		hbmsg->set_ballfound(1);
-	}
-	else {
-		if (ballLastSeen+seconds(1.5) > now){ //Lost
-			startscan=true;
-			hbmsg->set_ballfound(0);
+	} 
+	
+	if(headaction==BALLTRACK){
+		 if (wim!=0 && wim->balls_size() > 0 && lastBtmsg+seconds(2)>microsec_clock::universal_time()  ) {//This means that a ball is not found but there is still info about it
+			headaction = BALLTRACKKALMAN;
+			bx = wim->balls(0).relativex()+wim->balls(0).relativexspeed()*0.200;
+			by = wim->balls(0).relativey()+wim->balls(0).relativeyspeed()*0.200;
+			bd = sqrt(pow(bx,2)+pow(by,2));
+			bb = atan2(by,bx);
+			hbmsg->set_ballfound(1);
+		}
+		else {//Lost
+			
+				startscan=true;
+				hbmsg->set_ballfound(0);
+				headaction = SCANFORBALL;
 		}
 	}
 	if(obsmbearing!=-1)
@@ -236,6 +248,7 @@ int HeadBehavior::Execute() {
 				step++;
 			break;
 		case (BALLTRACKKALMAN):
+			//Logger::Instance().WriteMsg("HeadBehavior", "BALLTRACKKALMAN", Logger::Info);
              MakeTrackBallActionNoBmsg();
 			break;
 	}

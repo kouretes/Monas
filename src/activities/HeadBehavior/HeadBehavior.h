@@ -82,6 +82,7 @@ class HeadBehavior: public IActivity {
 		int step;
 		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
 		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
+		boost::posix_time::ptime lastBtmsg;
 
 		void read_messages();
 		void calibrate();
