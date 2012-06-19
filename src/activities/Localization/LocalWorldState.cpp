@@ -59,17 +59,17 @@ void LocalWorldState::UserInit()
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
 	robotmovement.Distance.ratiomean = 1.0;// systematic error out
-	robotmovement.Distance.ratiodev = 0.5;
+	robotmovement.Distance.ratiodev = 0.55;
 	robotmovement.Distance.Emean = 0.0;
 	robotmovement.Distance.Edev = 0.0;
 
 	robotmovement.Direction.ratiomean = 1.0;// systematic error out
 	robotmovement.Direction.ratiodev = 0.0;
 	robotmovement.Direction.Emean = 0.0;// systematic error out
-	robotmovement.Direction.Edev = deg2rad(20);
+	robotmovement.Direction.Edev = deg2rad(22);
 
 	robotmovement.Rotation.ratiomean = 1.0;// systematic error out
-	robotmovement.Rotation.ratiodev = 0.5;
+	robotmovement.Rotation.ratiodev = 0.55;
 	robotmovement.Rotation.Emean = 0.0;// systematic error out
 	robotmovement.Rotation.Edev = 0.0;
 
@@ -106,7 +106,7 @@ int LocalWorldState::Execute()
 	///DEBUGMODE SEND RESULTS
 	if (debugmode)
 	{
-		LocalizationData_Load(localizationWorld.SIRParticles, currentObservation, robotmovement);
+		LocalizationData_Load(currentObservation, robotmovement);
 		Send_LocalizationData();
 	}
 	_blk.publishData(MyWorld, "worldstate");
@@ -238,11 +238,11 @@ void LocalWorldState::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance();
 			tmpOM.Distance.Emean = 0.0;
-			tmpOM.Distance.Edev = 1.7+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
+			tmpOM.Distance.Edev = 1.5+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
 			//Bearing
 			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
-			tmpOM.Bearing.Edev = deg2rad(50) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
+			tmpOM.Bearing.Edev = deg2rad(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
 			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
@@ -328,7 +328,6 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
 void LocalWorldState::Send_LocalizationData()
 {
-
 	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
 	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
 
@@ -342,7 +341,6 @@ void LocalWorldState::Send_LocalizationData()
 	try
 	{
 		sock->send(&sendsize, sizeof(uint32_t));
-
 		sendsize = outgoingheader.ByteSize();
 		outgoingheader.SerializeToArray(data, sendsize);
 		while (rsize < sendsize)
@@ -370,7 +368,7 @@ void LocalWorldState::Send_LocalizationData()
 	}
 }
 
-int LocalWorldState::LocalizationData_Load(parts & Particles, vector<KObservationModel>& Observation, KMotionModel & MotionModel)
+int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observation, KMotionModel & MotionModel)
 {
 	bool addnewptrs = false;
 	//Fill the world with data!
@@ -386,16 +384,16 @@ int LocalWorldState::LocalizationData_Load(parts & Particles, vector<KObservatio
 	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
 	RobotPose prtcl;
-	if ((unsigned int) DebugData.particles_size() < Particles.size)
+	if ((unsigned int) DebugData.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
-	for (unsigned int i = 0; i < Particles.size; i++)
+	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
 		if (addnewptrs)
 			DebugData.add_particles();
-		DebugData.mutable_particles(i)->set_x(Particles.x[i]*1000);
-		DebugData.mutable_particles(i)->set_y(Particles.y[i]*1000);
-		DebugData.mutable_particles(i)->set_phi(Particles.phi[i]);
-		DebugData.mutable_particles(i)->set_confidence(Particles.Weight[i]);
+		DebugData.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
+		DebugData.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
+		DebugData.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
+		DebugData.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
 	}
 
 	if (obsm != NULL)

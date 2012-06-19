@@ -65,7 +65,6 @@ void Behavior::UserInit() {
 	forpost = 0;
 
 	kickoff = false;
-	toReadyFromGoal = false;
 	for (int i = 0; i < 2; i++) {		// i: kick-off
 		initX[i] = 0.0;
 		initY[i] = 0.0;
@@ -104,6 +103,7 @@ void Behavior::UserInit() {
 	lastpenalized = microsec_clock::universal_time();
 	ballseen = microsec_clock::universal_time();
 
+    generateFakeObstacles();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
 
@@ -134,6 +134,7 @@ int Behavior::Execute() {
 
 		CheckForBall();
 		UpdateOrientationPlus();
+		checkForPenaltyArea();
 
 		readytokick = false;
 
@@ -241,7 +242,7 @@ void Behavior::GetGameState()
 				direction = 1;
 				calibrated = 0;
 				lastpenalized = microsec_clock::universal_time();
-				locReset->set_type(-1);
+				locReset->set_type(PLAYER_PENALISED);
 				locReset->set_kickoff(kickoff);
 				_blk.publishSignal(*locReset, "worldstate");
 			}
@@ -257,25 +258,18 @@ void Behavior::GetGameState()
 			if (gameState != prevGameState) {
 				stopRobot();
 				calibrated = 0;
-			}
-			if (prevGameState == PLAYER_INITIAL) {
-				locReset->set_type(playerNumber);
+				locReset->set_type(PLAYER_READY);
 				locReset->set_kickoff(kickoff);
 				_blk.publishSignal(*locReset, "worldstate");
 			}
-			if (prevGameState == PLAYER_PLAYING)
-				toReadyFromGoal = true;
 		}
 		else if (gameState == PLAYER_SET) {
 			kickoff = gsm->kickoff();
+			locReset->set_type(PLAYER_SET);
+            locReset->set_kickoff(kickoff);
+            _blk.publishSignal(*locReset, "worldstate");
 			if (gameState != prevGameState)
 				stopRobot();
-			if ( toReadyFromGoal ) {
-				locReset->set_type(playerNumber);
-				locReset->set_kickoff(kickoff);
-				_blk.publishSignal(*locReset, "worldstate");
-				toReadyFromGoal = false;
-			}
 		}
 		else if (gameState == PLAYER_FINISHED) {
 			;
@@ -288,7 +282,7 @@ void Behavior::GetGameState()
 
 bool Behavior::ClosestRobot() {
     double epsx = 0.005, epsy = 0.005; // Desired precision
- 	if(swim != 0)
+ 	if(swim != 0){
         if(swim.get() != 0){
 //            Logger::Instance().WriteMsg("SharedWorldModel", "Closest robot x: " + _toString(swim->playerclosesttoball().x()) +
 //                                " y: " + _toString(swim->playerclosesttoball().y()), Logger::Info);
@@ -301,6 +295,7 @@ bool Behavior::ClosestRobot() {
                 return false;
 
         }
+ 	}
     else
         return true;
 }
@@ -1060,16 +1055,18 @@ void Behavior::checkForPenaltyArea(){
     for(int j=0;j<numOfFakeObstacles;j++){
         if(fakeObstacles[j][0]==INIT_VALUE)
             continue;
-        else
+        else{
             fakeDist=dist(robot_x,fakeObstacles[j][0],robot_y,fakeObstacles[j][1]);
             if(fakeDist<MapRadius){
                 //send fake obstacle message
-                fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x),robot_phi);
+ //               fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
+                fakeDir = 2*M_PI - wrapTo0_2Pi(robot_phi) - atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x);
                 fom->set_direction(fakeDir);
                 fom->set_distance(fakeDist);
                 fom->set_certainty(1);
                 _blk.publishSignal(*fom, "obstacle");
             }
+        }
     }
 }
 

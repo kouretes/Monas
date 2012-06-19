@@ -4,7 +4,6 @@
  *      Author: krambo
  *		Patched: eldr4d
  */
-
 #include <time.h>
 #include <boost/random.hpp>
 #include <boost/random/uniform_int.hpp>
@@ -18,7 +17,6 @@
 #include <boost/math/distributions/normal.hpp>
 #include "tools/logger.h"
 #include "tools/toString.h"
-#undef  DEBUG
 
 using namespace boost;
 
@@ -147,14 +145,14 @@ void KLocalization::setParticlesPoseUniformly()
 	}
 }
 
-void KLocalization::initializeParticles(int playerNumber,bool kickOff){
-	if(playerNumber == -1)
+void KLocalization::initializeParticles(int playerState,bool kickOff){
+	if(playerState == PLAYER_PENALISED)
 		setParticlesPoseUniformly();
-	else{
+	else if(playerState == PLAYER_READY || playerState==PLAYER_SET){
 		for (unsigned int i = 0; i < partclsNum; i++)
 		{
-			SIRParticles.x[i] = initX[(kickOff)?0:1];
-			SIRParticles.y[i] = initY[(kickOff)?0:1];
+			SIRParticles.x[i] = initX[(kickOff)?0:1] + ((double)rand()/(double)RAND_MAX)*0.2 - 0.1;
+			SIRParticles.y[i] = initY[(kickOff)?0:1] + ((double)rand()/(double)RAND_MAX)*0.2 - 0.1;
 			SIRParticles.phi[i] = initPhi[(kickOff)?0:1];
 			SIRParticles.Weight[i] = 1.0 / partclsNum;
 		}
