@@ -514,13 +514,13 @@ void MotionController::mglrun()
 				}
 			}
 			else{
-				if(	strKick.compare(0, 11, "KickForward") == 0 && str.compare("xar") == 0){
-					if (BodyID.compare(0,7,"Nao1673") == 0 || BodyID.compare(0,7,"Nao1675") == 0){
-						strKick+="Sit.xar";
-						pam->set_command(strKick);
-						//Logger::Instance().WriteMsg("MotionController", " THE SP ACTION IS NOW THE " + pam->command(), Logger::Info);
-					}
-				}
+//				if(	strKick.compare(0, 11, "KickForward") == 0 && str.compare("xar") == 0){
+//					if (BodyID.compare(0,7,"Nao1673") == 0 || BodyID.compare(0,7,"Nao1675") == 0){
+//						strKick+="Sit.xar";
+//						pam->set_command(strKick);
+//						//Logger::Instance().WriteMsg("MotionController", " THE SP ACTION IS NOW THE " + pam->command(), Logger::Info);
+//					}
+//				}
 				SpAssocCont::iterator it = SpActions.find(pam->command());
 				if (it == SpActions.end()){
 					Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
@@ -646,7 +646,7 @@ void MotionController::ALstandUpBack()
 
 void MotionController::ALstandUpFront()
 {
-	SpAssocCont::iterator it = SpActions.find("StandUpFromFront.xar");
+	SpAssocCont::iterator it = SpActions.find("StandFromFrontMexico.xar");
 	if (it == SpActions.end())
 		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpFront2011 not found!", Logger::Error);
 	else
