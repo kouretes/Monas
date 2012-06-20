@@ -25,14 +25,15 @@ private:
 
 	int orientation;
 	float by;
-	float blueGoalX, blueGoalY, yellowGoalX, yellowGoalY, oppGoalX, oppGoalY;
 	MotionActionMessage* amot;
 	boost::shared_ptr<const GameStateMessage> gsm;
 	boost::shared_ptr<const WorldInfo> wimsg;
 	boost::shared_ptr<const KickOffMessage> kcm;
 	ReturnToPositionMessage* rpm;
 	bool readConf;
-
+	double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
+	double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
+	double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
 	bool readGoalConfiguration(const std::string& file_name);
 };
 
