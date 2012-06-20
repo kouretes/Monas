@@ -13,6 +13,7 @@
 	<name>KVision</name>
 	<activity>Vision</activity>
 	<activity>LocalWorldState</activity>
+	<activity>SharedWorldModel</activity>
 	<activity>Behavior</activity>
 </agent>
 

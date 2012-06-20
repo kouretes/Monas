@@ -97,12 +97,6 @@ int KLocalization::Initialize()
 	SIRParticles.y = new double[partclsNum];
 	SIRParticles.phi = new double[partclsNum];
 	SIRParticles.Weight = new double[partclsNum];
-	for(unsigned int i=0;i<partclsNum;i++){
-		SIRParticles.x[i] = 0;
-		SIRParticles.y[i] = 0;
-		SIRParticles.phi[i] = 0;
-		SIRParticles.Weight[i] = 0;
-	}
 	max_weight_particle_index=0;
 	double seed = (double) (time(NULL) % 100 / 100.0);
 	Random::Set(seed);
@@ -113,19 +107,32 @@ int KLocalization::Initialize()
 
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
+	setParticlesPose(0,0,0);
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
 	return 1;
 }
 
 void KLocalization::setParticlesPose(double x, double y, double phi)
 {
-	for (unsigned int i = 0; i < SIRParticles.size; i++)
-	{
-		SIRParticles.x[i] = x;
-		SIRParticles.y[i] = y;
-		SIRParticles.phi[i] = phi;
-		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
+	Uniform X, Y, P;
+	float length = FieldMaxX*2/3;
+	unsigned int particlesUp = partclsNum/2;
+	unsigned int particlesDown = partclsNum - particlesUp;
+	//Initialize top Particles
+	for (unsigned int i = 0; i < particlesUp; i++){
+		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.y[i] = FieldMaxY;
+		SIRParticles.phi[i] = deg2rad(270);
+		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
+	//Initialize down Particles
+	for (unsigned int i = particlesUp; i < partclsNum; i++){
+		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.y[i] = -FieldMaxY;
+		SIRParticles.phi[i] = deg2rad(90);
+		SIRParticles.Weight[i] = 1.0 / partclsNum;
+	}
+
 }
 
 void KLocalization::setParticlesPoseUniformly()
@@ -153,7 +160,7 @@ void KLocalization::setParticlesPoseUniformly()
 		}
 		SIRParticles.x[i] = x;
 		SIRParticles.y[i] = y;
-		SIRParticles.phi[i] = deg2rad(270);
+		SIRParticles.phi[i] = deg2rad(0);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 	for (unsigned int i = resetParticles; i < particlesUp; i++){
