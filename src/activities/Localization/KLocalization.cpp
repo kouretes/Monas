@@ -17,7 +17,8 @@
 #include <boost/math/distributions/normal.hpp>
 #include "tools/logger.h"
 #include "tools/toString.h"
-
+//hyaw = 0.693326 hpitch = -0.6105
+//hyaw = -0.636652 hpitch = -0.668866
 using namespace boost;
 
 KLocalization::KLocalization()
@@ -131,19 +132,38 @@ void KLocalization::setParticlesPoseUniformly()
 {
 	Uniform X, Y, P;
 	float length = FieldMaxX*2/3;
-	unsigned int particlesUp = partclsNum/2;
+	unsigned int resetParticles = 20;
+	unsigned int particlesUp = partclsNum/2-resetParticles/2;
 	unsigned int particlesDown = partclsNum - particlesUp;
 	//Initialize top Particles
-	for (unsigned int i = 0; i < particlesUp; i++)
-	{
+	for (unsigned int i = 0; i < resetParticles; i++){
+		float x,y;
+		if(playerNumber == 1){
+			y = 0;
+			x = -2.7;
+		}else if(playerNumber == 2){
+			y = 1.2;
+			x = -2.4;
+		}else if(playerNumber == 3){
+			y = -1.2;
+			x = -2.4;
+		}else if(playerNumber == 4){
+			y = -0.4;
+			x = -2.4;
+		}
+		SIRParticles.x[i] = x;
+		SIRParticles.y[i] = y;
+		SIRParticles.phi[i] = deg2rad(270);
+		SIRParticles.Weight[i] = 1.0 / partclsNum;
+	}
+	for (unsigned int i = resetParticles; i < particlesUp; i++){
 		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = FieldMaxY;
 		SIRParticles.phi[i] = deg2rad(270);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 	//Initialize down Particles
-	for (unsigned int i = particlesUp; i < partclsNum; i++)
-	{
+	for (unsigned int i = particlesUp; i < partclsNum; i++){
 		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = -FieldMaxY;
 		SIRParticles.phi[i] = deg2rad(90);

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="ASCII"?>
+<statechart:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:statechart="http://statechart/1.0" name="GoalieRoboCup2012">
+  <nodes name="Goalie" label="0" type="OR">
+    <Children name="0.1" label="0.1" type="START"/>
+    <Children name="_open_group_NonPlaying_or_Playing_close_group_" label="0.2" type="OR">
+      <Children name="0.2.1" label="0.2.1" type="START"/>
+      <Children name="0.2.2" label="0.2.2" type="CONDITION"/>
+      <Children name="NonPlaying" label="0.2.3" type="OR">
+        <Children name="0.2.3.1" label="0.2.3.1" type="START"/>
+        <Children name="NoPlay" label="0.2.3.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/NoPlay/"/>
+        <Children name="_open_option_GoToPosition_one_or_more_times__close_option_" label="0.2.3.3" type="OR">
+          <Children name="0.2.3.3.1" label="0.2.3.3.1" type="START"/>
+          <Children name="0.2.3.3.2" label="0.2.3.3.2" type="CONDITION"/>
+          <Children name="GoToPosition_one_or_more_times_" label="0.2.3.3.3" type="OR">
+            <Children name="0.2.3.3.3.1" label="0.2.3.3.3.1" type="START"/>
+            <Children name="GoToPosition" label="0.2.3.3.3.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/GoToPosition/"/>
+            <Children name="0.2.3.3.3.3" label="0.2.3.3.3.3" type="END"/>
+          </Children>
+          <Children name="0.2.3.3.4" label="0.2.3.3.4" type="END"/>
+        </Children>
+        <Children name="0.2.3.4" label="0.2.3.4" type="END"/>
+      </Children>
+      <Children name="Playing" label="0.2.4" type="OR">
+        <Children name="0.2.4.1" label="0.2.4.1" type="START"/>
+        <Children name="_open_option_Localize_one_or_more_times__close_option_" label="0.2.4.2" type="OR">
+          <Children name="0.2.4.2.1" label="0.2.4.2.1" type="START"/>
+          <Children name="0.2.4.2.2" label="0.2.4.2.2" type="CONDITION"/>
+          <Children name="Localize_one_or_more_times_" label="0.2.4.2.3" type="OR">
+            <Children name="0.2.4.2.3.1" label="0.2.4.2.3.1" type="START"/>
+            <Children name="Localize" label="0.2.4.2.3.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/Localize/"/>
+            <Children name="0.2.4.2.3.3" label="0.2.4.2.3.3" type="END"/>
+          </Children>
+          <Children name="0.2.4.2.4" label="0.2.4.2.4" type="END"/>
+        </Children>
+        <Children name="_open_option_GoToPosition_one_or_more_times__close_option_" label="0.2.4.3" type="OR">
+          <Children name="0.2.4.3.1" label="0.2.4.3.1" type="START"/>
+          <Children name="0.2.4.3.2" label="0.2.4.3.2" type="CONDITION"/>
+          <Children name="GoToPosition_one_or_more_times_" label="0.2.4.3.3" type="OR">
+            <Children name="0.2.4.3.3.1" label="0.2.4.3.3.1" type="START"/>
+            <Children name="GoToPosition" label="0.2.4.3.3.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/GoToPosition/"/>
+            <Children name="0.2.4.3.3.3" label="0.2.4.3.3.3" type="END"/>
+          </Children>
+          <Children name="0.2.4.3.4" label="0.2.4.3.4" type="END"/>
+        </Children>
+        <Children name="MakeAction" label="0.2.4.4" type="OR">
+          <Children name="0.2.4.4.1" label="0.2.4.4.1" type="START"/>
+          <Children name="0.2.4.4.2" label="0.2.4.4.2" type="CONDITION"/>
+          <Children name="Scan_one_or_more_times_" label="0.2.4.4.3" type="OR">
+            <Children name="0.2.4.4.3.1" label="0.2.4.4.3.1" type="START"/>
+            <Children name="Scan" label="0.2.4.4.3.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/Scan/"/>
+            <Children name="0.2.4.4.3.3" label="0.2.4.4.3.3" type="END"/>
+          </Children>
+          <Children name="ApproachBall_one_or_more_times_" label="0.2.4.4.4" type="OR">
+            <Children name="0.2.4.4.4.1" label="0.2.4.4.4.1" type="START"/>
+            <Children name="ApproachBall" label="0.2.4.4.4.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/ApproachBall/"/>
+            <Children name="0.2.4.4.4.3" label="0.2.4.4.4.3" type="END"/>
+          </Children>
+          <Children name="FollowBall" label="0.2.4.4.6" type="OR">
+            <Children name="0.2.4.4.6.1" label="0.2.4.4.6.1" type="START"/>
+            <Children name="Stare_one_or_more_times_" label="0.2.4.4.6.2" type="OR">
+              <Children name="0.2.4.4.6.2.1" label="0.2.4.4.6.2.1" type="START"/>
+              <Children name="Stare" label="0.2.4.4.6.2.2" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/Stare/"/>
+              <Children name="0.2.4.4.6.2.3" label="0.2.4.4.6.2.3" type="END"/>
+            </Children>
+            <Children name="_open_option_SpecialAction_close_option_" label="0.2.4.4.6.3" type="OR">
+              <Children name="0.2.4.4.6.3.1" label="0.2.4.4.6.3.1" type="START"/>
+              <Children name="0.2.4.4.6.3.2" label="0.2.4.4.6.3.2" type="CONDITION"/>
+              <Children name="SpecialAction" label="0.2.4.4.6.3.3" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/SpecialAction/"/>
+              <Children name="0.2.4.4.6.3.4" label="0.2.4.4.6.3.4" type="END"/>
+            </Children>
+            <Children name="0.2.4.4.6.4" label="0.2.4.4.6.4" type="END"/>
+          </Children>
+          <Children name="0.2.4.4.7" label="0.2.4.4.7" type="END"/>
+          <Children name="Kick" label="0.2.4.4.5" type="BASIC" activity="file:/home/angelica/Desktop/Monas/src/activities/Kick/"/>
+        </Children>
+        <Children name="0.2.4.5" label="0.2.4.5" type="END"/>
+      </Children>
+      <Children name="0.2.5" label="0.2.5" type="END"/>
+    </Children>
+    <Children name="0.3" label="0.3" type="END"/>
+  </nodes>
+  <transitions name="0.2.1TO0.2.2" source="//@nodes.0/@Children.1/@Children.0" target="//@nodes.0/@Children.1/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING]" name="0.2.2TONonPlaying" source="//@nodes.0/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING]" name="0.2.2TOPlaying" source="//@nodes.0/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.3"/>
+  <transitions name="PlayingTO0.2.5" source="//@nodes.0/@Children.1/@Children.3" target="//@nodes.0/@Children.1/@Children.4"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_READY &#xA;|| robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)]" name="NonPlayingTO0.2.5" source="//@nodes.0/@Children.1/@Children.2" target="//@nodes.0/@Children.1/@Children.4"/>
+  <transitions name="0.2.3.1TONoPLay" source="//@nodes.0/@Children.1/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.2/@Children.1"/>
+  <transitions name="NoPLayTO_open_option_GoToPosition_one_or_more_times__close_option_" source="//@nodes.0/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_READY &#xA;|| robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)]" name="_open_option_GoToPosition_one_or_more_times__close_option_TO0.2.3.4" source="//@nodes.0/@Children.1/@Children.2/@Children.2" target="//@nodes.0/@Children.1/@Children.2/@Children.3"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.2.3.3.3.1TOGoToPosition" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp;&#xA;worldstate.State.GameStateMessage.player_state()==PLAYER_READY&#xA;&amp;&amp;&#xA;!robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)&#xA;]/TimeoutAction.behavior.250" name="GoToPositionTOGoToPosition" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_READY &#xA;|| robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)]" name="GoToPositionTO0.2.3.3.3.3" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2/@Children.2"/>
+  <transitions name="0.2.3.3.1TO0.2.3.3.2" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage.player_state()==PLAYER_READY]" name="0.2.3.3.2TOGoToPosition_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL &#xA;|| worldstate.State.GameStateMessage.player_state()!=PLAYER_READY]" name="0.2.3.3.2TO0.2.3.3.4" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.3"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_READY &#xA;|| robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)]" name="GoToPosition_one_or_more_times_TO0.2.3.3.4" source="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.2" target="//@nodes.0/@Children.1/@Children.2/@Children.2/@Children.3"/>
+  <transitions name="0.2.4.1TO_open_option_Localize_one_or_more_times__close_option_" source="//@nodes.0/@Children.1/@Children.3/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.1"/>
+  <transitions TE="[behavior.State.LocalizeDone.moveon()||worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.previous_player_state()!=PLAYER_PENALISED]" name="_open_option_Localize_one_or_more_times__close_option_TO_open_option_GoToPosition_one_or_more_times__close_option_" source="//@nodes.0/@Children.1/@Children.3/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL &#xA;|| worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING &#xA;||(behavior.State.LocalizeDone.moveon() &amp;&amp; behavior.State.ReturnToPositionMessage.goalietopos())&#xA;|| robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage) || worldstate.State.GameStateMessage.previous_player_state()!=PLAYER_PENALISED&#xA;]" name="_open_option_GoToPosition_one_or_more_times__close_option_TOMakeAction" source="//@nodes.0/@Children.1/@Children.3/@Children.2" target="//@nodes.0/@Children.1/@Children.3/@Children.3"/>
+  <transitions name="MakeActionTO0.2.4.5" source="//@nodes.0/@Children.1/@Children.3/@Children.3" target="//@nodes.0/@Children.1/@Children.3/@Children.4"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.2.4.2.3.1TOLocalize" source="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp; worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING &amp;&amp; (behavior.State.LocalizeDone==NULL || !behavior.State.LocalizeDone.moveon())]/TimeoutAction.behavior.250" name="LocalizeTOLocalize" source="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.1"/>
+  <transitions TE="[worlstate.State.GameStateMessage==NULL || worlstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || behavior.State.LocalizeDone.moveon()]" name="LocalizeTO0.2.4.2.3.3" source="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2/@Children.2"/>
+  <transitions name="0.2.4.2.1TO0.2.4.2.2" source="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage.previous_player_state()==PLAYER_PENALISED &amp;&amp; !behavior.State.LocalizeDone.moveon()]" name="0.2.4.2.2TOLocalize_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.previous_player_state()!=PLAYER_PENALISED ||behavior.State.LocalizeDone==NULL || behavior.State.LocalizeDone.moveon()]" name="0.2.4.2.2TO0.2.4.2.4" source="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.3"/>
+  <transitions TE="[behavior.State.LocalizeDone.moveon()]" name="Localize_one_or_more_times_TO0.2.4.2.4" source="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.2" target="//@nodes.0/@Children.1/@Children.3/@Children.1/@Children.3"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.2.4.3.3.1TOGoToPosition" source="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp;&#xA;worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING&#xA;&amp;&amp;&#xA;!robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)&#xA;&amp;&amp; !behavior.State.ReturnToPositionMessage.goalietopos()&#xA;]/TimeoutAction.behavior.250" name="GoToPositionTOGoToPosition" source="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING&#xA;|| robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)&#xA;||behavior.State.ReturnToPositionMessage.goalietopos()]" name="GoToPositionTO0.2.4.3.3.3" source="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2/@Children.2"/>
+  <transitions name="0.2.4.3.1TO0.2.4.3.2" source="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage.previous_player_state()==PLAYER_PENALISED&#xA;&amp;&amp; !behavior.State.ReturnToPositionMessage.goalietopos()]" name="0.2.4.3.2TOGoToPosition_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.previous_player_state()!=PLAYER_PENALISED&#xA;|| behavior.State.ReturnToPositionMessage.goalietopos()]" name="0.2.4.3.2TO0.2.4.3.4" source="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.3"/>
+  <transitions TE="[(worldstate.State.GameStateMessage==NULL &#xA;|| worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING&#xA;) || robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage)&#xA;|| behavior.State.ReturnToPositionMessage.goalietopos()]" name="GoToPosition_one_or_more_times_TO0.2.4.3.4" source="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.2" target="//@nodes.0/@Children.1/@Children.3/@Children.2/@Children.3"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING ||&#xA;(behavior.State.LocalizeDone.moveon() &amp;&amp; behavior.State.ReturnToPositionMessage.goalietopos())|| &#xA;robotInPosition(worldstate.Data.WorldInfo, behavior.State.PositionMessage) ||&#xA; worldstate.State.GameStateMessage.previous_player_state()!=PLAYER_PENALISED]" name="0.2.4.4.1TO0.2.4.4.2" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;behavior.State.HeadToBMessage.ballfound()==0]" name="0.2.4.4.2TOScan_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2"/>
+  <transitions TE="[behavior.State.HeadToBMessage.ballfound()>0 &amp;&amp;&#xA; !ballAway(worldstate.Data.WorldInfo) &amp;&amp; !readyToKick(worldstate.Data.WorldInfo)]" name="0.2.4.4.2TOApproachBall_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3"/>
+  <transitions TE="[behavior.State.HeadToBMessage.ballfound()>0 &amp;&amp;&#xA; readyToKick(worldstate.Data.WorldInfo)]" name="0.2.4.4.2TOKick_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.6"/>
+  <transitions TE="[behavior.State.HeadToBMessage.ballfound()>0 &amp;&amp; &#xA;ballAway(worldstate.Data.WorldInfo)]" name="0.2.4.4.2TOFollowBall" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4"/>
+  <transitions name="FollowBallTO0.2.4.4.7" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.5"/>
+  <transitions name="Kick_one_or_more_times_TO0.2.4.4.7" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.6" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.5"/>
+  <transitions TE="[behavior.State.HeadToBMessage.ballfound()==0 || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || worldstate.State.GameStateMessage==NULL|| ballAway(worldstate.Data.WorldInfo) || readyToKick(worldstate.Data.WorldInfo)]" name="ApproachBall_one_or_more_times_TO0.2.4.4.7" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.5"/>
+  <transitions TE="[behavior.State.HeadToBMessage.ballfound()>0 ||&#xA; worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || worldstate.State.GameStateMessage==NULL]" name="Scan_one_or_more_times_TO0.2.4.4.7" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.5"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.2.4.4.3.1TOScan" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp; &#xA; worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING &amp;&amp; (behavior.State.HeadToBMessage ==NULL || behavior.State.HeadToBMessage.ballfound()==0)]/TimeoutAction.behavior.250" name="ScanTOScan" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.1"/>
+  <transitions TE="[behavior.State.HeadToBMessage.ballfound()>0 ||&#xA; worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || worldstate.State.GameStateMessage==NULL]" name="ScanTO0.2.4.4.3.3" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.2/@Children.2"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.2.4.4.4.1TOApproachBall" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp; &#xA; worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING &amp;&amp; behavior.State.HeadToBMessage.ballfound()>0&amp;&amp; !ballAway(worldstate.Data.WorldInfo) &amp;&amp; !readyToKick(worldstate.Data.WorldInfo)]/TimeoutAction.behavior.250" name="ApproachBallTOApproachBall" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.1"/>
+  <transitions TE="[behavior.State.HeadToBMessage.ballfound()==0 || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || worldstate.State.GameStateMessage==NULL|| ballAway(worldstate.Data.WorldInfo) || readyToKick(worldstate.Data.WorldInfo)]" name="ApproachBallTO0.2.4.4.4.3" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.3/@Children.2"/>
+  <transitions name="0.2.4.4.6.1TOStare_one_or_more_times_" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL|| &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || behavior.State.HeadToBMessage.ballfound()==0 || !ballAway(worldstate.Data.WorldInfo) ||  behavior.State.FallMessage.fall()!=0]" name="Stare_one_or_more_times_TO_open_option_SpecialAction_close_option_" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2"/>
+  <transitions name="_open_option_SpecialAction_close_option_TO0.2.4.4.6.4" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.3"/>
+  <transitions TE="/TimeoutAction.behavior.250" name="0.2.4.4.6.2.1TOStare" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp;  &#xA;worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING &amp;&amp; behavior.State.HeadToBMessage.ballfound()>0 &amp;&amp; ballAway(worldstate.Data.WorldInfo) &amp;&amp;(behavior.State.FallMessage==NULL|| behavior.State.FallMessage.fall()==0)]/TimeoutAction.behavior.250" name="StareTOStare" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL||&#xA; worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING || behavior.State.HeadToBMessage.ballfound()==0 || !ballAway(worldstate.Data.WorldInfo) ||  behavior.State.FallMessage.fall()!=0]" name="StareTO0.2.4.4.6.2.3" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.1/@Children.2"/>
+  <transitions name="0.2.4.4.6.3.1TO0.2.4.4.6.3.2" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.0" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.1"/>
+  <transitions TE="[worldstate.State.GameStateMessage.player_state()==PLAYER_PLAYING &amp;&amp;&#xA; behavior.State.FallMessage.fall()!=0]" name="0.2.4.4.6.3.2TOSpecialAction" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.2"/>
+  <transitions TE="[worldstate.State.GameStateMessage==NULL || &#xA;worldstate.State.GameStateMessage.player_state()!=PLAYER_PLAYING ||behavior.State.FallMessage==NULL || behavior.State.FallMessage.fall()==0]" name="0.2.4.4.6.3.2TO0.2.4.4.6.3.4" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.1" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.3"/>
+  <transitions name="SpecialActionTO0.2.4.4.6.3.4" source="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.2" target="//@nodes.0/@Children.1/@Children.3/@Children.3/@Children.4/@Children.2/@Children.3"/>
+  <transitions TE="/TimeoutAction.behavior.300" name="0.1TO_open_group_NonPlaying_or_Playing_close_group_" source="//@nodes.0/@Children.0" target="//@nodes.0/@Children.1"/>
+  <transitions TE="[TimeoutCheck(behavior) &amp;&amp; ( worldstate.State.GameStateMessage==NULL || worldstate.State.GameStateMessage.player_state()!=PLAYER_FINISHED)]/TimeoutAction.behavior.300" name="_open_group_NonPlaying_or_Playing_close_group_TO_open_group_NonPlaying_or_Playing_close_group_" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.1"/>
+  <transitions TE="[ worldstate.State.GameStateMessage.player_state()==PLAYER_FINISHED]" name="_open_group_NonPlaying_or_Playing_close_group_TO0.3" source="//@nodes.0/@Children.1" target="//@nodes.0/@Children.2"/>
+</statechart:Model>

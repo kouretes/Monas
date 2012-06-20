@@ -35,27 +35,21 @@ int Kick::Execute() {
 		_blk.publishSignal(*amot, "motion");
 		return 0;
 	#endif
-	if(gsm.get()!=0 && gsm->team_color()==TEAM_RED){
-		oppGoalX = blueGoalX;
-		oppGoalY = blueGoalY;
+	double loppgb = anglediff2(atan2(oppGoalLeftY - wimsg->myposition().y(), oppGoalLeftX - wimsg->myposition().x()), wimsg->myposition().phi());
+	double roppgb = anglediff2(atan2(oppGoalRightY - wimsg->myposition().y(), oppGoalRightX - wimsg->myposition().x()), wimsg->myposition().phi());
+	double cone = anglediff2(loppgb, roppgb);
+	double oppgb = wrapToPi(roppgb + cone/2.0);
 
-	}else if(gsm.get()!=0 && gsm->team_color()==TEAM_BLUE){
-		oppGoalX = yellowGoalX;
-		oppGoalY = yellowGoalY;
-	}
-
-	float ogb = anglediff2(atan2(oppGoalY - wimsg->myposition().y(), oppGoalX - wimsg->myposition().x()), wimsg->myposition().phi());
-
-	if ((fabs(ogb) <= +45 * TO_RAD) && (fabs(ogb) > -45 * TO_RAD)) {
+	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
 		orientation = 0;
-	} else if ((fabs(ogb) > +45 * TO_RAD) && (fabs(ogb) <= +135 * TO_RAD)) {
+	} else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI-M_PI_4) ) ) {
 		orientation = 1;
-	} else if ((fabs(ogb) > +135 * TO_RAD) || (fabs(ogb) <= -135 * TO_RAD)) {
+	} else if ( (oppgb > (M_PI-M_PI_4) ) || (oppgb <= -(M_PI-M_PI_4) ) ) {
 		orientation = 2;
-	} else if ((fabs(ogb) <= -45 * TO_RAD) && (fabs(ogb) > -135 * TO_RAD)) {
+	} else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI-M_PI_4) ) ) {
 		orientation = 3;
 	}
-
+	
 	if (orientation == 0) {
 		if (by > 0.0)
 			amot->set_command("KickForwardLeft.xar"); //LeftKick
@@ -95,13 +89,9 @@ void Kick::UserInit () {
 	orientation = 0;
 	readConf = false;
 	by = 0.0;
-	blueGoalX = 0.0;
-	blueGoalY = 0.0;
-	yellowGoalX = 0.0;
-	yellowGoalY= 0.0;
-	oppGoalX =0.0;
-	oppGoalY = 0.0;
-	oppGoalY = 0.0;
+	ownGoalX = 0.0; ownGoalY = 0.0; oppGoalX = 0.0; oppGoalY = 0.0;
+	ownGoalLeftX = 0.0; ownGoalLeftY = 0.0; ownGoalRightX = 0.0; ownGoalRightY = 0.0;
+	oppGoalLeftX = 0.0; oppGoalLeftY = 0.0; oppGoalRightX = 0.0; oppGoalRightY = 0.0;
 }
 
 std::string Kick::GetName () {
@@ -115,7 +105,7 @@ bool Kick::readGoalConfiguration(const std::string& file_name) {
 	TiXmlDocument doc2(file_name.c_str());
 	bool loadOkay = doc2.LoadFile();
 	if (!loadOkay) {
-		//Logger::Instance().WriteMsg("Behavior",  " readGoalConfiguration: cannot read file " + file_name , Logger::Info);
+		Logger::Instance().WriteMsg("Behavior",  " readGoalConfiguration: cannot read file " + file_name , Logger::Info);
 		return false;
 	}
 
@@ -125,21 +115,30 @@ bool Kick::readGoalConfiguration(const std::string& file_name) {
 	std::string ID;
 
 	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling()) {
-		Attr = Ftr->ToElement();
-		Attr->Attribute("x", &x);
-		Attr->Attribute("y", &y);
-		ID = Attr->Attribute("ID");
-
-		if (ID == "SkyblueGoal"){
-			blueGoalX = x/1000.0;
-			blueGoalY = y/1000.0;
-		}
-		if (ID == "YellowGoal"){
-			yellowGoalX = x/1000.0;
-			yellowGoalY = y/1000.0;
+		if(Ftr->ToComment() == NULL){
+			Attr = Ftr->ToElement();
+			Attr->Attribute("x", &x);
+			Attr->Attribute("y", &y);
+			ID = Attr->Attribute("ID");
+			if (ID == "YellowGoal"){
+				oppGoalX = x;
+				oppGoalY = y;
+				ownGoalX = -oppGoalX;
+				ownGoalY = -oppGoalY;
+			}
+			if (ID == "YellowLeft"){
+				oppGoalLeftX = x;
+				oppGoalLeftY = y;
+				ownGoalLeftX = -oppGoalLeftX;
+				ownGoalLeftY = -oppGoalLeftY;
+			}
+			if (ID == "YellowRight"){
+				oppGoalRightX = x;
+				oppGoalRightY = y;
+				ownGoalRightX = -oppGoalRightX;
+				ownGoalRightY = -oppGoalRightY;
+			}
 		}
 	}
-
-	readConf = true;
 	return true;
 }

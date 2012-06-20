@@ -76,9 +76,12 @@ int NoPlay::Execute() {
 		//	Logger::Instance().WriteMsg(GetName(),  " playerset", Logger::Info);
 
 			if (prevstate!=PLAYER_SET){
+				locReset->set_type(PLAYER_SET);
+				locReset->set_kickoff( gsm->kickoff());
+				_blk.publishSignal(*locReset, "worldstate");
 				if(msm.get()!=0 && (msm->lastaction()).compare("InitPose.xar")!=0){
-				amot.set_command("InitPose.xar");
-				_blk.publishSignal(amot, "motion");
+					amot.set_command("InitPose.xar");
+					_blk.publishSignal(amot, "motion");
 				}
 			}
 			if(gsm.get()!=0 && gsm->sec_game_state()==STATE2_PENALTYSHOOT){
@@ -120,6 +123,12 @@ int NoPlay::Execute() {
 				pmsg->set_posx(initX[1]);
 				pmsg->set_posy(initY[1]);
 				pmsg->set_theta(initPhi[1]);
+			}
+			if (prevstate!=PLAYER_READY){
+				locReset->set_type(PLAYER_READY);
+				locReset->set_kickoff(kickOff);
+				_blk.publishSignal(*locReset, "worldstate");
+				
 			}
 			_blk.publishState(*pmsg, "behavior");
 			//Logger::Instance().WriteMsg(GetName(),  " playerready", Logger::Info);

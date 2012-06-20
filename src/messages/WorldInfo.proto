@@ -40,7 +40,7 @@ message UnknownObjects{
 }
 
 message LocalizationResetMessage{
-	required int32 type = 1;
+	required int32 type = 1; // RoboCup GameController Data PLAYER_SET, PLAYER_READY, PLAYER_PENALISED
 	required bool kickOff = 2;
 }
 

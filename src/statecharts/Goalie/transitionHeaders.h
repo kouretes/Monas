@@ -5,6 +5,8 @@
 		
 #include "transitions/TrNode_Goalie0_3_2_20_3_2_4.h"
 		
+#include "transitions/TrNode_Goalie0_3_2_40_3_2_5.h"
+		
 #include "transitions/TrNode_Goalie0_3_2_3_20_3_2_3_3.h"
 		
 #include "transitions/TrNode_Goalie0_3_2_3_20_3_2_3_4.h"
@@ -40,6 +42,8 @@
 #include "transitions/TrNode_Goalie0_3_2_3_6_3_20_3_2_3_6_3_3.h"
 		
 #include "transitions/TrNode_Goalie0_3_2_3_6_3_20_3_2_3_6_3_4.h"
+		
+#include "transitions/TrNode_Goalie0_3_2_4_30_3_2_4_4.h"
 		
 #include "transitions/TrNode_Goalie0_3_2_4_3_3_10_3_2_4_3_3_2.h"
 		

@@ -45,7 +45,7 @@ void LocalWorldState::UserInit()
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	localizationWorld.Initialize();
-	localizationWorld.setParticlesPoseUniformly();
+	//localizationWorld.setParticlesPoseUniformly();
 	timeStart = boost::posix_time::microsec_clock::universal_time();
 #ifdef NO_GAME
 	sock = NULL;
@@ -335,7 +335,8 @@ void LocalWorldState::Send_LocalizationData()
 	int rsize = 0;
 	int rs;
 	//send a header
-	sendsize = htonl(outgoingheader.ByteSize());
+	sendsize = outgoingheader.ByteSize();
+	sendsize = htonl(sendsize);
 
 	try
 	{
@@ -355,13 +356,11 @@ void LocalWorldState::Send_LocalizationData()
 
 		rsize = 0;
 
-		cerr << "Start transmition" << endl;
 		while (rsize < sendsize)
 		{
 			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
 			rsize += rs;
 		}
-		cerr << "End transmition" << endl;
 	} catch (SocketException &e)
 	{
 		cerr << e.what() << endl;
@@ -372,11 +371,19 @@ void LocalWorldState::Send_LocalizationData()
 int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observation, KMotionModel & MotionModel)
 {
 	bool addnewptrs = false;
+	//Fill the world with data!
+	WorldInfo *WI = DebugData.mutable_world();
 
+	WI->mutable_myposition()->set_x(AgentPosition.x*1000);
+	WI->mutable_myposition()->set_y(AgentPosition.y*1000);
+	WI->mutable_myposition()->set_phi(AgentPosition.theta);
+	WI->mutable_myposition()->set_confidence(0.0);
+
+	WI->CopyFrom(MyWorld);
 	DebugData.mutable_robotposition()->set_x(TrackPoint.x*1000);
 	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
-
+	RobotPose prtcl;
 	if ((unsigned int) DebugData.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
 	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
