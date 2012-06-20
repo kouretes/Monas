@@ -5,11 +5,11 @@
 <!--  Configuration files for Segmentation-->
 <SegmentationBottom>20-Mexico-SplA.conf</SegmentationBottom>
 <SegmentationTop>20-Mexico-SplA.conf</SegmentationTop>
-<Dfov>55.85</Dfov>
+<Dfov>54.85</Dfov>
 <cameraGamma>0.42</cameraGamma>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.20</balltolerance>
+<balltolerance>0.7</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.045</skipdistance>
 <seedistance>7.2</seedistance>
@@ -31,4 +31,4 @@
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>0</sensordelay>
 
-<pitchoffset>0.04</pitchoffset>
+<pitchoffset>0.06</pitchoffset>

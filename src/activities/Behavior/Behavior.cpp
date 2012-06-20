@@ -103,7 +103,7 @@ void Behavior::UserInit() {
 	lastpenalized = microsec_clock::universal_time();
 	ballseen = microsec_clock::universal_time();
 
-    generateFakeObstacles();
+//    generateFakeObstacles();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
 
@@ -127,14 +127,14 @@ int Behavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
-		if (lastpenalized+seconds(12)>microsec_clock::universal_time()) {
-			HeadScanStepHigh(2.08);
+		if (lastpenalized+seconds(14)>microsec_clock::universal_time()) {
+			HeadScanStepHigh(1.57);//2.08);
 			return 0;
 		}
 
 		CheckForBall();
 		UpdateOrientationPlus();
-		checkForPenaltyArea();
+//		checkForPenaltyArea();
 
 		readytokick = false;
 
@@ -191,7 +191,7 @@ int Behavior::Execute() {
 	}
 	else if (gameState == PLAYER_READY) {
 		//HeadScanStepSmart();
-		HeadScanStepHigh(2.08);
+		HeadScanStepHigh(1.57);
 		int p = (kickoff) ? 0 : 1;
 		gotoPosition( initX[p], initY[p], initPhi[p] );
 		return 0;
@@ -475,18 +475,19 @@ void Behavior::HeadScanStepRaster() {
 
 void Behavior::HeadScanStepHigh(float yaw_limit) {
 
-	hmot->set_command("setHead");
+	hmot->set_command("setHeadInstant");
 
 	if (fabs(headpos) > yaw_limit) // 1.3
 		leftright *= -1;
-	headpos += 0.2 * leftright;
+	headpos += 0.05 * leftright;
 	hmot->set_parameter(0, headpos); //yaw
+    hmot->set_parameter(1, -0.55); //pitch
 
-	float abspos = fabs(headpos);
-	if (abspos < 1.57)
-		hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
-	else
-		hmot->set_parameter(1, (-0.0698 * (fabs(headpos) - 1.57)) - 0.52);
+//	float abspos = fabs(headpos);
+//	if (abspos < 1.57)
+//		hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
+//	else-
+//		hmot->set_parameter(1, (-0.0698 * (fabs(headpos) - 1.57)) - 0.52);
 
 	_blk.publishSignal(*hmot, "motion");
 }
@@ -1056,11 +1057,12 @@ void Behavior::checkForPenaltyArea(){
         if(fakeObstacles[j][0]==INIT_VALUE)
             continue;
         else{
-            fakeDist=dist(robot_x,fakeObstacles[j][0],robot_y,fakeObstacles[j][1]);
+            fakeDist=dist(robot_x,robot_y,fakeObstacles[j][0],fakeObstacles[j][1]);
             if(fakeDist<MapRadius){
                 //send fake obstacle message
  //               fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
-                fakeDir = 2*M_PI - wrapTo0_2Pi(robot_phi) - atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x);
+                fakeDir = 2*M_PI - wrapTo0_2Pi(robot_phi) - atan2(fakeObstacles[j][1]-robot_y, fakeObstacles[j][0]-robot_x);
+                std::cout << "fakeDir: " << fakeDir << std::endl;
                 fom->set_direction(fakeDir);
                 fom->set_distance(fakeDist);
                 fom->set_certainty(1);
@@ -1068,6 +1070,7 @@ void Behavior::checkForPenaltyArea(){
             }
         }
     }
+    std::cout << "-------------" << std::endl;
 }
 
 /* Test Function */
