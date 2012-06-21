@@ -163,7 +163,7 @@ Real Random::Next()                          // get new mixed random number
 }
 
 double Random::Get()                  // get random number seed
-{ return (double)seed/(double)2147483648L; }
+{ return (double)seed/(double)2147483648LL; }
 
 void Random::Set(double s)            // set random number seed
                                       // s must be between 0 and 1
@@ -171,7 +171,7 @@ void Random::Set(double s)            // set random number seed
    if (s>=1.0 || s<=0.0)
       Throw(Logic_error("Newran: seed out of range"));
    //iseed = 2147483648L * s;         // for Mother
-   seed = (long)(s*(double)2147483648L);
+   seed = (long)(s*(double)2147483648LL);
    for (int i = 0; i<128; i++) Buffer[i] = Raw();
 }
 
