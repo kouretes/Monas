@@ -1,6 +1,0 @@
-			 "player = Init.decision+\n"+
-			 "decision = play|nonPlaying\n"+
-			 "nonPlaying = NoPlay.[GoToPosition+]\n"+
-			 "play = searchBallOrReturnToPosition|ApproachBall+|Kick|followTheBall\n"+
-			 "searchBallOrReturnToPosition = Scan+|GoToPosition+\n"+
-			 "followTheBall = Stare+.[SpecialAction]\n"
