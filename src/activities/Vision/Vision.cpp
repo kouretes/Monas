@@ -330,15 +330,11 @@ void Vision::fetchAndProcess()
 		}
 		LedValues* l = leds.add_leds();
 		l->set_chain("r_eye");
-		if (yellow && !blue)
+		if (obs.regular_objects_size() == 1)
 		{
 
 			l->set_color("yellow");
-		} else if (!yellow && blue)
-		{
-
-			l->set_color("blue");
-		} else if (yellow && blue)
+		} else if (obs.regular_objects_size() == 2)
 		{
 
 			l->set_color("purple");

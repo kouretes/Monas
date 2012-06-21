@@ -191,7 +191,7 @@ public:
 	void rouletteResample();
 
 	//Initialize the particles of the filter
-	void setParticlesPose(double x, double y, double phi);
+	void initParticles();
 	void setParticlesPoseUniformly();
 	void initializeParticles(int playerState,bool kickOff);
 

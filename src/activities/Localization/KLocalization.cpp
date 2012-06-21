@@ -107,12 +107,12 @@ int KLocalization::Initialize()
 
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
-	setParticlesPose(0,0,0);
+	initParticles();
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
 	return 1;
 }
 
-void KLocalization::setParticlesPose(double x, double y, double phi)
+void KLocalization::initParticles()
 {
 	Uniform X, Y, P;
 	float length = FieldMaxX*2/3;
