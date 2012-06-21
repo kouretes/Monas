@@ -39,9 +39,7 @@ void LocalWorldState::UserInit()
 	int max_bytedata_size = 100000;
 
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
-
-	MyWorld.add_balls();
-
+	//MyWorld.add_balls();
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	localizationWorld.Initialize();
