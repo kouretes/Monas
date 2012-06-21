@@ -599,7 +599,7 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
     {
     	s=tl;
 		s.y=s.y-(tr.x-tl.x)*i;
-		s=simpleRotation(s);//Unrotate
+		s=simpleRotation(s);/Unrotate
 		r=traceline(KVecInt2(s.x,s.y),Vlt,c);
 
 		if(simpleRotation(r.p).x<tl.x)
