@@ -577,59 +577,39 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 	goal.leftOrRight=0;//Initialization
 	tl=simpleRotation(goal.tl);
 	tr=simpleRotation(goal.tr);
-    s=tr;
-    //1/3 of a width below ?
-    s.y=s.y-(tr.x-tl.x)/3;
-    s=simpleRotation(s);
-	r=traceline(KVecInt2(s.x,s.y),Vrt,c);
+
+    //i*1/8 of a width below ?
+    for (float i=1.0;i>0;i=i-1.0/8.0)
+    {
+    	s=tr;
+    	s.y=s.y-(tr.x-tl.x)*i;
+		s=simpleRotation(s);//Unrotate
+		r=traceline(KVecInt2(s.x,s.y),Vrt,c);
 
 
-	if(simpleRotation(r.p).x>simpleRotation(goal.tr).x)
-	{
-		goal.leftOrRight=2;//Left goal post, has something on its right
-		return true;
-	}
+		if(simpleRotation(r.p).x>tr.x)
+		{
+			goal.leftOrRight=2;//Left goal post, has something on its right
+			return true;
+		}
+    }
 
 
-	s=tr;
-    //1/2 of a width below ?
-    s.y=s.y-(tr.x-tl.x)/2;
-    s=simpleRotation(s);
-	r=traceline(KVecInt2(s.x,s.y),Vrt,c);
+	for (float i=1.0;i>0;i=i-1.0/8.0)
+    {
+    	s=tl;
+		s.y=s.y-(tr.x-tl.x)*i;
+		s=simpleRotation(s);/Unrotate
+		r=traceline(KVecInt2(s.x,s.y),Vlt,c);
 
+		if(simpleRotation(r.p).x<tl.x)
+		{
+			goal.leftOrRight=1;//Right goal post , has something on its left
+			return true;
+		}
 
-	if(simpleRotation(r.p).x>simpleRotation(goal.tr).x)
-	{
-		goal.leftOrRight=2;//Left goal post, has something on its right
-		return true;
-	}
+    }
 
-	//cout<<"No rt "<<endl;
-	s=tl;
-    //1/3 of a width below ?
-    s.y=s.y-(tr.x-tl.x)/3;
-    s=simpleRotation(s);
-	r=traceline(KVecInt2(s.x,s.y),Vlt,c);
-
-	if(simpleRotation(r.p).x<simpleRotation(goal.tl).x)
-	{
-		goal.leftOrRight=1;//Right goal post , has something on its left
-		return true;
-	}
-
-	s=tl;
-    //1/2 of a width below ?
-    s.y=s.y-(tr.x-tl.x)/2;
-    s=simpleRotation(s);
-	r=traceline(KVecInt2(s.x,s.y),Vlt,c);
-
-	if(simpleRotation(r.p).x<simpleRotation(goal.tl).x)
-	{
-		goal.leftOrRight=1;//Right goal post , has something on its left
-		return true;
-	}
-
-	//cout<<"No lt "<<endl;
 	return false;
 
 }
@@ -1392,7 +1372,8 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 					continue;
 				trcrs = traceline(m, KVecInt2(dx, dy), orange);
 				if(trcrs.smartsuccess)
-					pv.push_back(KVecFloat2(trcrs.p.x+0.5*dx,trcrs.p.y+0.5*dy));
+					pv.push_back(KVecFloat2(trcrs.p.x,trcrs.p.y));
+					//pv.push_back(KVecFloat2(trcrs.p.x+0.5*dx,trcrs.p.y+0.5*dy));
 			}
 		if(pv.size()<3)
 			continue;
@@ -1430,7 +1411,7 @@ Vision::balldata_t Vision::locateBall(vector<KVecInt2> const& cand)
 				radius=r;
 
 		}
-		radius+=0.707;
+		//radius+=0.707;
 
 
 		//cout<<"Got 3 points"<<endl;

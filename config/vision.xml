@@ -14,13 +14,13 @@
 <skipdistance>0.045</skipdistance>
 <seedistance>7.2</seedistance>
 <!-- Image Scanning parameters -->
-<scanV>32</scanV>
+<scanV>48</scanV>
 <scanH>32</scanH>
-<minH>4</minH>
+<minH>2</minH>
 <!--<scanstep>23</scanstep>-->
-<bordersize>8</bordersize>
+<bordersize>6</bordersize>
 <pixeltol>5</pixeltol>
-<subsampling>5</subsampling>
+<subsampling>4</subsampling>
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
