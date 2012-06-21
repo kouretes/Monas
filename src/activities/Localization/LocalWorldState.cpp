@@ -11,7 +11,7 @@
 #include <math.h>
 #include "architecture/archConfig.h"
 #define NO_GAME
-#define MAX_TIME_TO_RESET 10 //in seconds
+#define MAX_TIME_TO_RESET 15 //in seconds
 using namespace std;
 
 ACTIVITY_REGISTER(LocalWorldState);
@@ -95,7 +95,7 @@ int LocalWorldState::Execute()
 		localizationWorld.initializeParticles((int)lrm->type(),lrm->kickoff());
 	}
 
-	
+
 	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
@@ -156,7 +156,8 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				dt = duration.total_microseconds() / 1000000.0f;
 
 				float dist_var = 1.10 - tanh(1.8 / aball.dist()); //observation ... deviation ... leme twra
-				nearest_filtered_ball = myBall.get_updated_ball_estimate(aball.dist(), dist_var * dist_var, aball.bearing(), 0.03, dt);
+				myBall.get_predicted_ball_estimate(dt,robotModel);
+				nearest_filtered_ball = myBall.get_updated_ball_estimate(aball.dist(), dist_var * dist_var, aball.bearing(), 0.03);
 
 				//Predict
 				duration = now - last_filter_time;
@@ -166,16 +167,14 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 
 				float dx = nearest_filtered_ball.relativex() - nearest_nofilter_ball.relativex();
 				float dy = nearest_filtered_ball.relativey() - nearest_nofilter_ball.relativey();
-				float distance = dx + dy;
-				if (distance != 0)
-					distance = DISTANCE_2(dx,dy);
+				float distance = distance = DISTANCE_2(dx,dy);
 
 				//Check if we must reset the ball
 				duration = observation_time - last_observation_time;
 				last_observation_time = observation_time;
 				dt = duration.total_microseconds() / 1000000.0f;
 
-				if (dt > MAX_TIME_TO_RESET && distance > 2) //etc... dt > 5sec && distance > 2 m
+				if (dt > MAX_TIME_TO_RESET && distance > 0.5) //etc... dt > 5sec && distance > 2 m
 				{
 					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
 					last_filter_time = now;
@@ -204,6 +203,8 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 			last_filter_time = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
+			if(myBall.get_filter_variance()>4 && MyWorld.balls_size() > 0) //Std = 2m
+				MyWorld.clear_balls();
 			if (MyWorld.balls_size() > 0)
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
 		}
@@ -301,7 +302,7 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	float XA = PosX.sensorvalue();
 	float YA = PosY.sensorvalue();
 	float AA = Angle.sensorvalue();
-	
+
 
 	float DX = (XA - TrackPointRobotPosition.x);
 	float DY = (YA - TrackPointRobotPosition.y);

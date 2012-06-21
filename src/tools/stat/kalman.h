@@ -73,9 +73,8 @@ class Kalman1D
     P.scalar_mult(L);
   }
 
-  Xbar const& update(V v, V varv, V dt)
+  Xbar const& update(V v, V varv)
   {
-    predict(dt);
     V y=v-r(0);//Residual
     V s=P.read(0,0)+ varv;
     Xbar k;
@@ -101,9 +100,8 @@ class Kalman1D
   }
 
 
-   Xbar const& updateWithVel(V v, V varv,V vdot, V varvdot,V dt)
+   Xbar const& updateWithVel(V v, V varv,V vdot, V varvdot)
   {
-    predict(dt);
     Xbar y;
     y(0)=v-r(0);
     y(1)=vdot-r(1);
@@ -131,7 +129,10 @@ class Kalman1D
   {
     return r;
   }
-
+  Xbar const readVariance() const
+  {
+  	return Xbar(P(0,0),P(1,1));
+  }
   private:
   static KMat::GenMatrix<V,2,2> produceQ(V dt)
  {

@@ -30,14 +30,14 @@ BallFilter::~BallFilter()
 }
 
 //Update the position
-Ball BallFilter::get_updated_ball_estimate(float new_dist, float dist_variance, float new_dir, float dir_variance, float dt)
+Ball BallFilter::get_updated_ball_estimate(float new_dist, float dist_variance, float new_dir, float dir_variance)
 { 	//dt seconds
 
 	float new_x = new_dist * cos(new_dir);
 	float new_y = new_dist * sin(new_dir);
 
-	Kalman1D<float>::Xbar x_dist = x_filter.update(new_x, dist_variance, dt);
-	Kalman1D<float>::Xbar y_dist = y_filter.update(new_y, dist_variance, dt);
+	Kalman1D<float>::Xbar x_dist = x_filter.update(new_x, dist_variance);
+	Kalman1D<float>::Xbar y_dist = y_filter.update(new_y, dist_variance);
 
 
 
@@ -125,4 +125,9 @@ void BallFilter::reset(float new_dist, float dist_variance, float new_dir, float
 
 //	dist_filter.reset(new_dist, 10); //dist , speed variance in (m/s)^2
 //	dir_filter.reset(new_dir, KMat::transformations::PI);
+}
+
+float BallFilter::get_filter_variance() const
+{
+	return max(x_filter.readVariance()(0),y_filter.readVariance()(0));
 }
