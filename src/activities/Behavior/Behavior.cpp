@@ -117,7 +117,7 @@ int Behavior::Execute() {
 	GetGameState();
 	GetPosition();
 
-	if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_PLAYING) ) {
+	if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_INITIAL) ) {
 		if (calibrated == 0) {
 			calibrate();
 			return 0;
@@ -127,7 +127,7 @@ int Behavior::Execute() {
 	}
 
 	if (gameState == PLAYER_PLAYING) {
-		if (lastpenalized+seconds(14)>microsec_clock::universal_time()) {
+		if (lastpenalized+seconds(4)>microsec_clock::universal_time()) {
 			HeadScanStepHigh(1.7);
 			return 0;
 		}
@@ -177,7 +177,7 @@ int Behavior::Execute() {
 			}
 			//walk straight for 12 seconds after the scan has ended (lastpenalized+seconds(12))
 			//and then start turning around to search for ball.
-			if (lastpenalized+seconds(24)>microsec_clock::universal_time()){
+			if (lastpenalized+seconds(14)>microsec_clock::universal_time()){
                 pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
 			}
 			else if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
@@ -240,7 +240,7 @@ void Behavior::GetGameState()
 		if (gameState == PLAYER_PLAYING) {
 			if (prevGameState == PLAYER_PENALISED){
 				direction = 1;
-				calibrated = 0;
+	//			calibrated = 0;
 				lastpenalized = microsec_clock::universal_time();
 				locReset->set_type(PLAYER_PENALISED);
 				locReset->set_kickoff(kickoff);
@@ -251,7 +251,7 @@ void Behavior::GetGameState()
 			}
 		}
 		else if (gameState == PLAYER_INITIAL) {
-			if (gameState != prevGameState)
+//			if (gameState != prevGameState)
 				calibrated = 0;
 		}
 		else if (gameState == PLAYER_READY) {
