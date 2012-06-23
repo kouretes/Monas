@@ -263,7 +263,7 @@ void OpenChallenge2012::mglrun()
 			float anglez = atan2(xK,dist3) -PI/2;
 			AL::ALValue names;
 			AL::ALValue angleLists;
-			AL::ALValue timeLists  = 0.05f;
+			AL::ALValue timeLists  = 0.15f;
 			bool isAbsolute        = true;
 			vector<vector<float> > results;
 			results = IKin::inverseLeftHand(xK, yK, zK, 0,angley, anglez);
@@ -284,15 +284,15 @@ void OpenChallenge2012::mglrun()
 				motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
 			}else{
 				stopl = boost::posix_time::microsec_clock::universal_time();
-				if(stopl-startl >= boost::posix_time::seconds(0.1)){
+				if(stopl-startl >= boost::posix_time::seconds(2)){
 					AL::ALValue names;
 					AL::ALValue angleLists;
-					AL::ALValue timeLists  = 0.2f;
+					AL::ALValue timeListss  = 0.2f;
 					bool isAbsolute        = true;
 					names = AL::ALValue::array("LShoulderPitch", "LShoulderRoll", "LElbowRoll", "LElbowYaw");
 					
 					angleLists = AL::ALValue::array(PI/2,PI/10,0.0f,0.0f);
-					motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
+					motion->angleInterpolation(names, angleLists, timeListss, isAbsolute);
 				}
 			}
 			//RIGHT HAND------------------------------------------------------------------------------------------------------------------------------------
@@ -329,40 +329,28 @@ void OpenChallenge2012::mglrun()
 				motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
 			}else{
 				stopr = boost::posix_time::microsec_clock::universal_time();
-				if(stopr-startr >= boost::posix_time::seconds(0.1)){
+				if(stopr-startr >= boost::posix_time::seconds(2)){
 					AL::ALValue names;
 					AL::ALValue angleLists;
-					AL::ALValue timeLists  = 0.2f;
+					AL::ALValue timeListss  = 0.2f;
 					bool isAbsolute        = true;
 					names = AL::ALValue::array("RShoulderPitch", "RShoulderRoll", "RElbowRoll", "RElbowYaw");
 					
 					angleLists = AL::ALValue::array(PI/2,-PI/10,0.0f,0.0f);
-					motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
+					motion->angleInterpolation(names, angleLists, timeListss, isAbsolute);
 				}
 			}
 		}else{
-			stopl = boost::posix_time::microsec_clock::universal_time();
-			if(stopl-startl >= boost::posix_time::seconds(0.1)){
-				AL::ALValue names;
-				AL::ALValue angleLists;
-				AL::ALValue timeLists  = 0.2f;
-				bool isAbsolute        = true;
-				names = AL::ALValue::array("LShoulderPitch", "LShoulderRoll", "LElbowRoll", "LElbowYaw");
-				
-				angleLists = AL::ALValue::array(PI/2,PI/10,0.0f,0.0f);
-				motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
-			}
-			stopr = boost::posix_time::microsec_clock::universal_time();
-			if(stopr-startr >= boost::posix_time::seconds(0.1)){
-				AL::ALValue names;
-				AL::ALValue angleLists;
-				AL::ALValue timeLists  = 0.2f;
-				bool isAbsolute        = true;
-				names = AL::ALValue::array("RShoulderPitch", "RShoulderRoll", "RElbowRoll", "RElbowYaw");
-				
-				angleLists = AL::ALValue::array(PI/2,-PI/10,0.0f,0.0f);
-				motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
-			}		
+			AL::ALValue names;
+			AL::ALValue angleLists;
+			AL::ALValue timeLists  = 0.2f;
+			bool isAbsolute        = true;
+			names = AL::ALValue::array("LShoulderPitch", "LShoulderRoll", "LElbowRoll", "LElbowYaw");
+			angleLists = AL::ALValue::array(PI/2,PI/10,0.0f,0.0f);
+			motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
+			names = AL::ALValue::array("RShoulderPitch", "RShoulderRoll", "RElbowRoll", "RElbowYaw");
+			angleLists = AL::ALValue::array(PI/2,-PI/10,0.0f,0.0f);
+			motion->angleInterpolation(names, angleLists, timeLists, isAbsolute);
 		}
 	}
 
