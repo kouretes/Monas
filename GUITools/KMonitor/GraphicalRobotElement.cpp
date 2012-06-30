@@ -54,7 +54,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 		ParticlesList.append(part);
 	}
 
-	HFOVLines =this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::Dense7Pattern));
+	HFOVLines =this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkCyan),QBrush(Qt::Dense7Pattern));
 
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);

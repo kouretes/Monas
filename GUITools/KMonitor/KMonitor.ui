@@ -26,14 +26,14 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,1">
+         <layout class="QGridLayout" name="gridLayout_4" columnstretch="3,0,1">
           <property name="spacing">
            <number>3</number>
           </property>
-          <item>
+          <item row="1" column="0">
            <widget class="KGraphicsView" name="GWSGraphicsView"/>
           </item>
-          <item>
+          <item row="1" column="2">
            <widget class="QTreeWidget" name="GWSTreeWidget">
             <property name="mouseTracking">
              <bool>false</bool>
@@ -58,6 +58,13 @@
               <set>AlignLeft|AlignVCenter</set>
              </property>
             </column>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>SHARED WORLD MODEL  ::  Estimated Ball Position</string>
+            </property>
            </widget>
           </item>
          </layout>
