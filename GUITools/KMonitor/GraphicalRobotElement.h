@@ -106,6 +106,7 @@ private slots:
 	void clearMotionWalkCommand();
 
 private:
+	void loadXMLConfigParameters(std::string fname);
 	void tagVisionObservations(QGraphicsEllipseItem* post,QRectF rect, QString text);
 	QPolygonF calculateArrowHeadPosition(QLineF aLine);
 	void updateTraceRect();
@@ -143,6 +144,7 @@ private:
 
 	bool LWSParticlesVisible;
 	QList<Particle*> ParticlesList;
+	int partclsNum;
 
 	bool LWSHFOVVisible;
 	QGraphicsPolygonItem* HFOVLines;

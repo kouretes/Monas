@@ -1,5 +1,6 @@
 #include "GraphicalRobotElement.h"
 
+#include "architecture/archConfig.h"
 #include "tools/toString.h"
 
 #include <math.h>
@@ -44,7 +45,8 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	QPen penForMotionCmdLine(Qt::darkRed);
 	penForMotionCmdLine.setWidth(2);
 
-	for(unsigned it=0; it<30; it++)
+	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
+	for(unsigned it=0; it<partclsNum; it++)
 	{
 		Particle *part = new GUIRobotPose();
 		part->Direction = this->parentScene->addLine(QLineF(),QPen(Qt::black));
@@ -52,6 +54,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 		ParticlesList.append(part);
 	}
 
+	HFOVLines =this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::Dense7Pattern));
 
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
@@ -66,7 +69,6 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
 	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
-	HFOVLines =this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::Dense7Pattern));
 	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::Dense7Pattern));
 
 	GREtimer = new QTimer();
@@ -142,6 +144,14 @@ GraphicalRobotElement::~GraphicalRobotElement()
     	if ((*L_it))
     		delete (*L_it);
     }
+}
+
+void GraphicalRobotElement::loadXMLConfigParameters(std::string fname)
+{
+	XMLConfig *xmlconfig = new XMLConfig(fname);
+	partclsNum = 0;
+
+	xmlconfig->QueryElement("partclsNum", partclsNum);
 }
 
 void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim)
@@ -422,36 +432,35 @@ void GraphicalRobotElement::updateParticlesRect(LocalizationDataForGUI debugGUI)
 void GraphicalRobotElement::setHFOVVisible(bool visible)
 {
 	if (visible == false)
-	{
-		this->HFOVLines->setVisible(false);
 		this->HFOVLines->setVisible(false);
 
-	}else
-	{
+	else
 		this->HFOVLines->setVisible(true);
-		this->HFOVLines->setVisible(true);
-	}
 }
 
 void GraphicalRobotElement::updateHFOVRect()
 {
-	float HeadYawPlusTheta = 0.f;
 	QPolygonF poly;
-	float lx=this->currentWIM.myposition().x()*1000, ly=this->currentWIM.myposition().y()*1000;
-	for(int i=0;i<currentObsm.view_limit_points_size();i++)
+
+	if(this->currentWIM.has_myposition())
 	{
-		const PointObject p=currentObsm.view_limit_points(i);
-		QLineF l=  this->parentScene->lineFromFCA(
-							this->currentWIM.myposition().x()*1000,
-							this->currentWIM.myposition().y()*1000,
-							this->currentWIM.myposition().phi()+p.bearing(),
-							p.distance()*1000);
+		for(int i=0;i<currentObsm.view_limit_points_size();i++)
+		{
+			const PointObject p = currentObsm.view_limit_points(i);
+			QLineF l = this->parentScene->lineFromFCA(
+								this->currentWIM.myposition().x()*1000,
+								this->currentWIM.myposition().y()*1000,
+								this->currentWIM.myposition().phi()+p.bearing(),
+								p.distance()*1000);
 
-		poly<<l.p2();
-		HFOVLines->setPolygon(poly);
+			poly<<l.p2();
+			HFOVLines->setPolygon(poly);
 
 
+		}
 	}
+	else
+		HFOVLines->setPolygon(QPolygon());
 }
 
 void GraphicalRobotElement::setTraceVisible(bool visible)
