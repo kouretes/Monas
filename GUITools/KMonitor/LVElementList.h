@@ -18,6 +18,7 @@ public slots:
 
 signals:
 	void LVRHSetRawImageVisible(QString, bool);
+	void LVRHSetSegImageVisible(QString, bool);
 
 private slots:
 	void newListElementRequested(QListWidgetItem* item);
@@ -27,6 +28,8 @@ private:
 
 	QString myCurrentLVRequestedHost;
     QListWidget* parentListWidget;
+
+    bool rawImageRequested;
 
 };
 

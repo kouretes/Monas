@@ -51,8 +51,14 @@ void KLabel::kRawImageUpdateHandler(KRawImage rawImage, QString hostId)
 		if (robotView->getLRVRawImageVisible())
 		{
 			robotView->setRVRawImageVisible(false);
-			robotView->updateRobotView(rawImage);
+			robotView->updateRawRobotView(rawImage);
 			robotView->setRVRawImageVisible(true);
+		}
+		else if(robotView->getLRVSegImageVisible())
+		{
+			robotView->setRVSegImageVisible(false);
+			robotView->updateSegRobotView(rawImage);
+			robotView->setRVSegImageVisible(true);
 		}
 
 	}else
@@ -61,6 +67,20 @@ void KLabel::kRawImageUpdateHandler(KRawImage rawImage, QString hostId)
 	}
 }
 
+void KLabel::LVSegImageVisible(QString hostId, bool visible)
+{
+	if (robotView->getCurrentHost() != hostId)
+		robotView->resetKRobotView(hostId);
+
+	if (robotView != NULL)
+		robotView->setLRVSegImageVisible(visible);
+	else
+		std::cout << "[72] KLabel::LVSegImageVisible : Fatal !" << std::endl;
+
+
+}
+
+// todo delete this better :p
 void KLabel::KCCRawImageUpdateHandler(KRawImage rawImage, QString hostId)
 {
 	LVRawImageVisible(hostId, true);

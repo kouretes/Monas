@@ -1,5 +1,7 @@
 #include "LVElementList.h"
 
+#include <QCheckBox>
+
 #include <iostream>
 using namespace std;
 
@@ -8,6 +10,7 @@ LVElementList::LVElementList(QListWidget *parent )
 	parentListWidget = parent;
 	myCurrentLVRequestedHost.clear();
 
+	rawImageRequested = false;
 	uncheckAllListElements();
 
 	connect(parentListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(newListElementRequested(QListWidgetItem*)));
@@ -21,17 +24,25 @@ LVElementList::~LVElementList()
 
 void LVElementList::newListElementRequested(QListWidgetItem* item)
 {
+	QCheckBox* checkBox = NULL;
+
 	if(!myCurrentLVRequestedHost.isEmpty())
 	{
-		if(parentListWidget->row(item)==0 )
+		if(parentListWidget->row(item) == 0 )
 		{
 			if(item->checkState() == 0)
 				emit LVRHSetRawImageVisible(myCurrentLVRequestedHost, false);
+
 			else
 				emit LVRHSetRawImageVisible(myCurrentLVRequestedHost, true);
 
-		}else if(parentListWidget->row(item)== 1)
+		}else if(parentListWidget->row(item) == 1)
 		{
+			if(item->checkState() == 0)
+				emit LVRHSetSegImageVisible(myCurrentLVRequestedHost, false);
+
+			else
+				emit LVRHSetSegImageVisible(myCurrentLVRequestedHost, true);
 
 		}
 	}
