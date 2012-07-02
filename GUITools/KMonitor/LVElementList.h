@@ -30,6 +30,7 @@ private:
     QListWidget* parentListWidget;
 
     bool rawImageRequested;
+    bool segImageRequested;
 
 };
 
