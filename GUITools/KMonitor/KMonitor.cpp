@@ -115,6 +115,8 @@ KMonitor::KMonitor(QWidget *parent)
 	//Signal slot connections for dispaying Robot's Raw Image
 	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), LRVLabel, SLOT(kRawImageUpdateHandler(KRawImage, QString)));
 	connect(LRVElementList, SIGNAL(LVRHSetRawImageVisible(QString, bool)), LRVLabel, SLOT(LVRawImageVisible(QString, bool)));
+	connect(LRVElementList, SIGNAL(LVRHSetSegImageVisible(QString, bool)), LRVLabel, SLOT(LVSegImageVisible(QString, bool)));
+
 
 
 	//SIGNAL SLOT CONNECTIONS FOR KCC Beta
@@ -157,6 +159,6 @@ void KMonitor::quitKMonitor()
 
 void KMonitor::printCurrentTab(int index)
 {
-	std::cout << "Allaksa kai eimai to :: " << index << std::endl;
+	//std::cout << "Allaksa kai eimai to :: " << index << std::endl;
 
 }
