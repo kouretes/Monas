@@ -31,13 +31,12 @@ void LVElementList::newListElementRequested(QListWidgetItem* item)
 	{
 		if(parentListWidget->row(item) == 0 )
 		{
-			if(item->checkState() == 0){
-				cout << "Raw = false" << endl;
+			if(item->checkState() == 0)
+			{
 				rawImageRequested = false;
 				emit LVRHSetRawImageVisible(myCurrentLVRequestedHost, false);
 
 			}else{
-				cout << "Raw = true" << endl;
 				rawImageRequested = true;
 				if(segImageRequested)
 					parentListWidget->item(1)->setCheckState(Qt::Unchecked);
@@ -47,13 +46,13 @@ void LVElementList::newListElementRequested(QListWidgetItem* item)
 
 		}else if(parentListWidget->row(item) == 1)
 		{
-			if(item->checkState() == 0){
-				cout << "Seg = false" << endl;
+			if(item->checkState() == 0)
+			{
 				segImageRequested = false;
 				emit LVRHSetSegImageVisible(myCurrentLVRequestedHost, false);
 
-			}else{
-				cout << "Seg = true" << endl;
+			}else
+			{
 				segImageRequested = true;
 				if(rawImageRequested)
 					parentListWidget->item(0)->setCheckState(Qt::Unchecked);
