@@ -36,7 +36,7 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 	)
 SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
 		GraphicalRobotElement.h LWElementList.h LMElementList.h KMapView.h KLabel.h LVElementList.h 
-		KccHandler.h KccLabel.h 
+		KccHandler.h KccLabel.h
 	) 
 SET( KMonitor_FORMS KMonitor.ui KccHandler.ui)
 SET( KMonitor_RESOURCES GuiResources.qrc )

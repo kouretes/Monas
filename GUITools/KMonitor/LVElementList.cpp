@@ -11,6 +11,7 @@ LVElementList::LVElementList(QListWidget *parent )
 	myCurrentLVRequestedHost.clear();
 
 	rawImageRequested = false;
+	segImageRequested = false;
 	uncheckAllListElements();
 
 	connect(parentListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(newListElementRequested(QListWidgetItem*)));
@@ -30,20 +31,35 @@ void LVElementList::newListElementRequested(QListWidgetItem* item)
 	{
 		if(parentListWidget->row(item) == 0 )
 		{
-			if(item->checkState() == 0)
+			if(item->checkState() == 0){
+				cout << "Raw = false" << endl;
+				rawImageRequested = false;
 				emit LVRHSetRawImageVisible(myCurrentLVRequestedHost, false);
 
-			else
+			}else{
+				cout << "Raw = true" << endl;
+				rawImageRequested = true;
+				if(segImageRequested)
+					parentListWidget->item(1)->setCheckState(Qt::Unchecked);
+
 				emit LVRHSetRawImageVisible(myCurrentLVRequestedHost, true);
+			}
 
 		}else if(parentListWidget->row(item) == 1)
 		{
-			if(item->checkState() == 0)
+			if(item->checkState() == 0){
+				cout << "Seg = false" << endl;
+				segImageRequested = false;
 				emit LVRHSetSegImageVisible(myCurrentLVRequestedHost, false);
 
-			else
-				emit LVRHSetSegImageVisible(myCurrentLVRequestedHost, true);
+			}else{
+				cout << "Seg = true" << endl;
+				segImageRequested = true;
+				if(rawImageRequested)
+					parentListWidget->item(0)->setCheckState(Qt::Unchecked);
 
+				emit LVRHSetSegImageVisible(myCurrentLVRequestedHost, true);
+			}
 		}
 	}
 }
