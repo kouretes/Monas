@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>5</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="GWSTab">
        <attribute name="title">
@@ -77,28 +77,76 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnstretch="0,3,0,1">
-          <property name="spacing">
-           <number>3</number>
+         <widget class="QLabel" name="LWSLabel">
+          <property name="text">
+           <string/>
           </property>
-          <item row="2" column="1">
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1,0">
+          <item>
            <widget class="KGraphicsView" name="LWSGraphicsView"/>
           </item>
-          <item row="0" column="3">
-           <widget class="QComboBox" name="LWSComboBox"/>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="LWSLabel">
-            <property name="text">
-             <string/>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="spacing">
+             <number>1</number>
             </property>
-           </widget>
+            <item>
+             <widget class="QComboBox" name="LWSComboBox"/>
+            </item>
+            <item>
+             <widget class="QTreeWidget" name="treeWidget">
+              <column>
+               <property name="text">
+                <string>AVAILABLE GRAPHICAL ELEMENTS</string>
+               </property>
+               <property name="textAlignment">
+                <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+               </property>
+              </column>
+              <item>
+               <property name="text">
+                <string>Check - Uncheck All</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Estimated Robot Pose</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Estimated Ball Position</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ball Observation</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
-          <item row="2" column="3">
+          <item>
            <widget class="QListWidget" name="LWSListWidget">
             <item>
              <property name="text">
-              <string>Estimated Robot Position &amp; Orientation</string>
+              <string>Estimated Robot Pose</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -122,7 +170,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Regular Field Objects Observations</string>
+              <string>Landmark Observations</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -138,7 +186,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Horizontal Field Of View</string>
+              <string>Robot View Field Projection</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -146,7 +194,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Trace Of Estimated Robot Positions</string>
+              <string>Robot Trace</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -154,7 +202,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Motion Walk Commands</string>
+              <string>Walk Commands</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -260,12 +308,12 @@
       </widget>
       <widget class="KccHandler" name="KCCTab">
        <attribute name="title">
-        <string>Toumpaniasmeno KCC</string>
+        <string>KCC Beta</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="LSDTab">
        <attribute name="title">
-        <string>Local Sensors Data</string>
+        <string>Local Sensor Data</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
@@ -362,6 +410,17 @@
    <addaction name="menu_File"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
   <action name="action_Quit">
    <property name="text">
     <string>&amp;Quit</string>
