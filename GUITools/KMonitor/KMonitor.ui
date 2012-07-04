@@ -84,7 +84,10 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1,0">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1">
+          <property name="spacing">
+           <number>3</number>
+          </property>
           <item>
            <widget class="KGraphicsView" name="LWSGraphicsView"/>
           </item>
@@ -110,8 +113,16 @@
                <property name="text">
                 <string>Check - Uncheck All</string>
                </property>
+               <property name="font">
+                <font>
+                 <kerning>false</kerning>
+                </font>
+               </property>
                <property name="checkState">
                 <enum>Checked</enum>
+               </property>
+               <property name="flags">
+                <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
                </property>
                <item>
                 <property name="text">
@@ -141,74 +152,6 @@
              </widget>
             </item>
            </layout>
-          </item>
-          <item>
-           <widget class="QListWidget" name="LWSListWidget">
-            <item>
-             <property name="text">
-              <string>Estimated Robot Pose</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Estimated Ball Position </string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Ball Observation</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Landmark Observations</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Localization Particles</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Robot View Field Projection</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Robot Trace</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Walk Commands</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-           </widget>
           </item>
          </layout>
         </item>
