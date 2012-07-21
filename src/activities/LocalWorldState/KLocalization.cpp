@@ -17,8 +17,6 @@
 #include <boost/math/distributions/normal.hpp>
 #include "tools/logger.h"
 #include "tools/toString.h"
-//hyaw = 0.693326 hpitch = -0.6105
-//hyaw = -0.636652 hpitch = -0.668866
 using namespace boost;
 
 KLocalization::KLocalization()
@@ -100,7 +98,7 @@ int KLocalization::Initialize()
 	max_weight_particle_index=0;
 	double seed = (double) (time(NULL) % 100 / 100.0);
 	Random::Set(seed);
-    srand(time(0));
+   	srand(time(0));
 
 	// Loading features,
 	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
@@ -255,8 +253,6 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	AgentPosition.y = SIRParticles.y[max_weight_particle_index];//maxprtcl.y;
 	AgentPosition.theta = SIRParticles.phi[max_weight_particle_index];//maxprtcl.phi;
 
-	//AgentPosition = RobustMean(SIRParticles, 10);
-
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = 0.0;
 
@@ -269,46 +265,6 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	}
 	return AgentPosition;
 
-}
-
-
-//Function to find the best Belief using the average of the % of the "heavier" particles
-belief KLocalization::RobustMean(int PercenteOfParticles)
-{
-	belief RmeanAgentPosition;
-	unsigned int robustmean = round((double) SIRParticles.size * ((double) PercenteOfParticles / 100.0));
-	robustmean = (robustmean < 1) ? 1 : robustmean;
-	priority_queue<partcl> particlesQueue;
-	partcl temp;
-	for (unsigned int i = 0; i < SIRParticles.size; i++)
-	{
-		temp.x = SIRParticles.x[i];
-		temp.y = SIRParticles.y[i];
-		temp.phi = SIRParticles.phi[i];
-		temp.Weight = SIRParticles.Weight[i];
-		particlesQueue.push(temp);
-	}
-	float x = 0;
-	float y = 0;
-	double sumX = 0;
-	double sumY = 0;
-	for (unsigned int i = 0; i < robustmean; i++)
-	{
-		temp = particlesQueue.top();
-		sumX += temp.x;
-		sumY += temp.y;
-		x += cos(temp.phi);
-		y += sin(temp.phi);
-		particlesQueue.pop();
-	}
-	RmeanAgentPosition.x = sumX / (double) robustmean;
-	RmeanAgentPosition.y = sumY / (double) robustmean;
-	if(x!=0)
-		RmeanAgentPosition.theta = wrapTo0_2Pi(atan2(y/(double)robustmean,x/(double)robustmean));
-	else
-		RmeanAgentPosition.theta=0;
-
-	return RmeanAgentPosition;
 }
 
 void KLocalization::Predict(KMotionModel & MotionModel)

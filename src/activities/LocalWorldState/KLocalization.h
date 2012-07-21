@@ -40,40 +40,6 @@ typedef struct ftr {
 
 } feature;
 
-//Special structure to keep the data of a particle
-typedef struct pvar {
-	double x;
-	double y;
-	double phi;
-	double Weight;
-	pvar() {x=0;y=0;phi=0;Weight = 0;}
-	bool operator<(const struct pvar &other) const {
-		return Weight < other.Weight;
-	}
-
-} partcl;
-
-//usualy particles are processed in arrays
-//So in this structure a number of arrays store individually a property
-typedef struct var {
-	double *x;
-	double *y;
-	double *phi;
-	double *Weight;
-	double WeightSum;
-	unsigned int size;
-	~var() {
-		if (x != NULL)
-			delete[] x;
-		if (y != NULL)
-			delete[] y;
-		if (phi != NULL)
-			delete[] phi;
-		if (Weight != NULL)
-			delete[] Weight;
-	}
-} parts;
-
 //Random Variable
 typedef struct rvar {
 	double val;
@@ -183,9 +149,6 @@ public:
 
 	//Return the propability of value from a normal pdf with deviation dev
 	double normpdf(double diff, double dev);
-
-	//Find the agent position using the mean values of a given percentage of particles
-	belief RobustMean(int PercenteOfParticles);
 
 	//This function resamples the particles with the new weigths and reposition the particles given the new weights
 	void rouletteResample();
