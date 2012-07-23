@@ -11,7 +11,7 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <opencv/cxcore.h>
-#include "../../src/activities/Localization/KLocalization.h"
+#include "../../src/activities/LocalWorldState/KLocalization.h"
 #include "../../src/messages/VisionObservations.pb.h"
 #include "../../src/messages/WorldInfo.pb.h"
 #include "../../src/messages/motion.pb.h"
