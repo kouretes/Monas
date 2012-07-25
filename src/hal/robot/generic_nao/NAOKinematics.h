@@ -10,11 +10,12 @@
 #include "tools/KMat.h"
 #include "hal/robot/generic_nao/KinematicsDefines.h"
 //#include "KinematicsDefines.h"
+//#include "KMat.h"
 
 /**
- * This is the code for the Forward Kinematics for nao v3.3 robot.
- 
- * @author Kofinas Nikos aka eldr4d, 2011 kouretes team
+ * This is the code for the Forward and Inverse Kinematics for nao v3.3 robot.
+ 	
+ * @author Kofinas Nikos aka eldr4d, 2012 kouretes team
  * special thanks to Orf or vosk for the KMat library
  	 * 1 = vector's head position\n
 	 * Arms:	
@@ -44,7 +45,7 @@
 	 * "RightLeg" = forward for right leg
 	 * "LeftArm" = forward for left arm
 	 * "RightArm" = forward for right arm
- * \file ForwardKinematics.h
+ * \file NAOKinematics.h
 */
 using namespace std;
 typedef KMat::transformations KMatTransf;
@@ -61,11 +62,18 @@ class NAOKinematics
 {
 public:
 	float PI;
+	//Predifined tables
 	kmatTable TBaseHead,TEndHead1,TEndHead2,RotHead;
 	kmatTable TBaseLArm,TEndLArm,RotLArm;
 	kmatTable TBaseRArm,TEndRArm,RotRArm,RotRArmFix,RotRArmFixInv;
 	kmatTable TBaseLLeg,TEndLLeg,RotLLeg,TBaseLLegInv,TEndLLegInv,RotFixLLeg;
 	kmatTable TBaseBRLeg,TEndRLeg,RotRLeg,TBaseRLegInv,TEndRLegInv,RotFixRLeg;
+	//Predifined only for forward kinematics
+	kmatTable T1,T2,T3,T4,T5,T6,Tend;
+	kmatTable Tmatrix1, Tmatrix2;
+	//Predifined only for inverse kinematics
+	kmatTable T4i,T5i,T6i;
+	kmatTable T,base,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5,Tinit,Rfix;
 
 public:
 		
@@ -284,14 +292,12 @@ public:
 };
 
 void NAOKinematics::forwardLeftHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll){
-	kmatTable T1,T2,T3,T4;
 	
 	KMatTransf::makeDHTransformation(T1,0.0f,-PI/2,0.0f,ShoulderPitch);
 	KMatTransf::makeDHTransformation(T2,0.0f,PI/2,0.0f,ShoulderRoll-PI/2);
 	KMatTransf::makeDHTransformation(T3,0.0f,-PI/2,UpperArmLength,ElbowYaw);
 	KMatTransf::makeDHTransformation(T4,0.0f,PI/2,0.0f,ElbowRoll);
 	
-	kmatTable Tend;
 	Tend = TBaseLArm;
 	Tend *= T1;
 	Tend *= T2;
@@ -304,15 +310,12 @@ void NAOKinematics::forwardLeftHand(kmatTable & EndTransf, float ShoulderPitch, 
 
 
 void NAOKinematics::forwardRightHand(kmatTable & EndTransf, float ShoulderPitch, float ShoulderRoll, float ElbowYaw, float ElbowRoll){
-	kmatTable T1,T2,T3,T4;
 	
 	KMatTransf::makeDHTransformation(T1,0.0f,-PI/2,0.0f,ShoulderPitch);
 	KMatTransf::makeDHTransformation(T2,0.0f,PI/2,0.0f,ShoulderRoll+PI/2);//Allagh apo matlab
 	KMatTransf::makeDHTransformation(T3,0.0f,-PI/2,-UpperArmLength,ElbowYaw);
 	KMatTransf::makeDHTransformation(T4,0.0f,PI/2,0.0f,ElbowRoll);//Allagh apo matlab
 	
-	
-	kmatTable Tend;
 	Tend = TBaseRArm;
 	Tend *= T1;
 	Tend *= T2;
@@ -325,9 +328,7 @@ void NAOKinematics::forwardRightHand(kmatTable & EndTransf, float ShoulderPitch,
 }
 
 void  NAOKinematics::forwardLeftLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnklePitch, float AnkleRoll){
-	kmatTable T1,T2,T3,T4,T5,T6;
 
-	
 	KMatTransf::makeDHTransformation(T1,0.0f,-3*PI/4,0.0f,HipYawPitch-PI/2);
 	KMatTransf::makeDHTransformation(T2,0.0f,-PI/2,0.0f,HipRoll+PI/4);
 	KMatTransf::makeDHTransformation(T3,0.0f,PI/2,0.0f,HipPitch);
@@ -335,7 +336,6 @@ void  NAOKinematics::forwardLeftLeg(kmatTable & EndTransf, float HipYawPitch, fl
 	KMatTransf::makeDHTransformation(T5,-TibiaLength,0.0f,0.0f,AnklePitch);
 	KMatTransf::makeDHTransformation(T6,0.0f,-PI/2,0.0f,AnkleRoll);
 
-	kmatTable Tend;
 	Tend = TBaseLLeg;
 	Tend *= T1;
 	Tend *= T2;
@@ -350,7 +350,6 @@ void  NAOKinematics::forwardLeftLeg(kmatTable & EndTransf, float HipYawPitch, fl
 }
 
 void NAOKinematics::forwardRightLeg(kmatTable & EndTransf, float HipYawPitch, float HipRoll, float HipPitch, float KneePitch, float AnklePitch, float AnkleRoll){
-	kmatTable T1,T2,T3,T4,T5,T6;
 
 	KMatTransf::makeDHTransformation(T1,0.0f,-PI/4,0.0f,HipYawPitch-PI/2);
 	KMatTransf::makeDHTransformation(T2,0.0f,-PI/2,0.0f,HipRoll-PI/4);//allagh
@@ -359,7 +358,6 @@ void NAOKinematics::forwardRightLeg(kmatTable & EndTransf, float HipYawPitch, fl
 	KMatTransf::makeDHTransformation(T5,-TibiaLength,0.0f,0.0f,AnklePitch);//allagh
 	KMatTransf::makeDHTransformation(T6,0.0f,-PI/2,0.0f,AnkleRoll);
 	
-	kmatTable Tend;
 	Tend = TBaseBRLeg;
 	Tend *= T1;
 	Tend *= T2;
@@ -373,12 +371,10 @@ void NAOKinematics::forwardRightLeg(kmatTable & EndTransf, float HipYawPitch, fl
 }
 
 void NAOKinematics::forwardCamera(kmatTable & EndTransf, float HeadYaw, float HeadPitch, bool topCamera){
-	kmatTable T1,T2;
 	
 	KMatTransf::makeDHTransformation(T1,0.0f,0.0f,0.0f,HeadYaw);
 	KMatTransf::makeDHTransformation(T2,0.0f,-PI/2,0.0f,HeadPitch-PI/2);	
 
-	kmatTable Tend;
 	Tend = TBaseHead;
 	Tend *= T1;
 	Tend *= T2;
@@ -454,7 +450,6 @@ void NAOKinematics::filterForward(kmatTable & Tmatrix, string WhatForward, std::
 }
 
 FKvars NAOKinematics::filterForwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd){
-	kmatTable Tmatrix1, Tmatrix2;
 	if(!start.compare("Torso")){
 		Tmatrix1.identity();
 	}else
@@ -477,7 +472,6 @@ FKvars NAOKinematics::filterForwardFromTo(std::string start, std::string stop, s
 }
 
 kmatTable NAOKinematics::forwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd){
-	kmatTable Tmatrix1, Tmatrix2;
 	if(!start.compare("Torso")){
 		Tmatrix1.identity();
 	}else
@@ -493,7 +487,7 @@ kmatTable NAOKinematics::forwardFromTo(std::string start, std::string stop, std:
 }
 
 FKvars NAOKinematics::calculateCenterOfMass(vector<float> allJoints){
-	kmatTable base,T1,T2,T3,T4,T5,T6,endTr1,endTr2,endTr3,endTr4,endTr5,endTr6,temp;
+	kmatTable endTr1,endTr2,endTr3,endTr4,endTr5,endTr6,temp;
 	KMat::GenMatrix<float,3,1> lh1,lh2,lh3,lh4,rh1,rh2,rh3,rh4,ll1,ll2,ll3,ll4,ll5,ll6,rl1,rl2,rl3,rl4,rl5,rl6,h1,h2,t;
 	float PI = KMatTransf::PI;
 	//Left Hand
@@ -728,7 +722,6 @@ FKvars NAOKinematics::calculateCenterOfMass(vector<float> allJoints){
 vector<vector<float> > NAOKinematics::inverseHead(float px,float py,float pz, float rx, float ry, float rz, bool withAngles, bool topCamera){
 	std::vector<float> fc,empty;
 	std::vector<vector<float> > returnResult;
-	kmatTable T;
 	FKvars output;
 	KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);	
 	float theta1,theta2;
@@ -760,13 +753,14 @@ vector<vector<float> > NAOKinematics::inverseHead(float px,float py,float pz, fl
 			psi = atan2(CameraBotomX,CameraBotomZ);
 		}
 		float tempTheta2 = asin(up/downt2);//-psi;
+		float posOrNegPI = (tempTheta2>=0)?PI:-PI;
 		for(int j=0;j<2;j++){
 			if(j == 0 && (tempTheta2 - psi > HeadYawHigh || tempTheta2 - psi < HeadYawLow))
 				continue;
-			else if(j == 1 && (PI - tempTheta2 - psi > HeadYawHigh || PI - tempTheta2 - psi < HeadYawLow))
+			else if(j == 1 && (posOrNegPI - tempTheta2 - psi > HeadYawHigh || posOrNegPI - tempTheta2 - psi < HeadYawLow))
 				continue;
 			else if(j == 1)
-				theta2 = PI - tempTheta2 - psi;
+				theta2 = posOrNegPI - tempTheta2 - psi;
 			else
 				theta2 = tempTheta2 - psi;
 			if(topCamera){
@@ -808,7 +802,6 @@ vector<vector<float> > NAOKinematics::inverseHead(float px,float py,float pz, fl
 vector<vector<float> > NAOKinematics::inverseLeftHand(float px,float py,float pz, float rx, float ry, float rz){
 	std::vector<float> flh,empty;
 	std::vector<vector<float> > returnResult;
-	kmatTable Tinit;
 	KMatTransf::makeTransformation(Tinit,px,py,pz,rx,ry,rz);
 
 	float startX = 0;
@@ -848,14 +841,15 @@ vector<vector<float> > NAOKinematics::inverseLeftHand(float px,float py,float pz
 		float upForTheta3 = equationForTheta3;
 		float downForTheta3 = sin(theta2-PI/2);
 		float theta3temp = asin(upForTheta3/downForTheta3);
+		float posOrNegPI = (theta3temp>=0)?PI:-PI;
 		for(int j=0;j<2;j++){
 			float theta3 = theta3temp;
 			if(j == 0 && (theta3 > LElbowYawHigh || theta3 < LElbowYawLow))
 				continue;
-			else if(j == 1 && (PI - theta3 > LElbowYawHigh || PI - theta3 < LElbowYawLow))
+			else if(j == 1 && (posOrNegPI - theta3 > LElbowYawHigh || posOrNegPI - theta3 < LElbowYawLow))
 				continue;
 			else if(j == 1)
-				theta3 = PI - theta3;
+				theta3 = posOrNegPI - theta3;
 			//Calculate Theta 1
 			float equation1ForTheta1 = cos(rz)*sin(ry)*cos(rx) + sin(rz)*sin(rx);
 			float equation2ForTheta1 = cos(ry)*cos(rx);
@@ -902,7 +896,6 @@ vector<vector<float> > NAOKinematics::inverseRightHand(float px,float py,float p
 	std::vector<vector<float> > returnResult;
 
 	//Rotate input to remvoe Rfix
-	kmatTable T,Rfix,Tinit;
 	KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);
 	Tinit = T;	
 	T*=RotRArmFixInv;
@@ -953,14 +946,15 @@ vector<vector<float> > NAOKinematics::inverseRightHand(float px,float py,float p
 		float upForTheta3 = equationForTheta3;
 		float downForTheta3 = sin(theta2+PI/2);
 		float theta3temp = asin(upForTheta3/downForTheta3);
+		float posOrNegPI = (theta3temp>=0)?PI:-PI;
 		for(int j=0;j<2;j++){
 			float theta3 = theta3temp;
 			if(j == 0 && (theta3 > RElbowYawHigh || theta3 < RElbowYawLow))
 				continue;
-			else if(j == 1 && (PI - theta3 > RElbowYawHigh || PI - theta3 < RElbowYawLow))
+			else if(j == 1 && (posOrNegPI - theta3 > RElbowYawHigh || posOrNegPI - theta3 < RElbowYawLow))
 				continue;
 			else if(j == 1)
-				theta3 = PI - theta3;
+				theta3 = posOrNegPI - theta3;
 			//Calculate Theta 1
 			float equation1ForTheta1 = cos(rz)*sin(ry)*cos(rx) + sin(rz)*sin(rx);
 			float equation2ForTheta1 = cos(ry)*cos(rx);
@@ -1006,7 +1000,6 @@ vector<vector<float> > NAOKinematics::inverseLeftLeg(float px,float py,float pz,
 	std::vector<float> fll,empty;
 	std::vector<vector<float> > returnResult;
 
-	kmatTable T,base,T4,T5,T6,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5,Tinit;
 	KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);	
 	Tinit=T;
 
@@ -1036,100 +1029,104 @@ vector<vector<float> > NAOKinematics::inverseLeftLeg(float px,float py,float pz,
 	//Calculate Theta 4
 	float distance = sqrt(pow(startX - pxInvert,2) + pow(startY - pyInvert,2) + pow(startZ -pzInvert,2));
 	float theta4 = PI - acos((pow(side1,2)+pow(side2,2) - pow(distance,2))/(2*side1*side2));
-	
-	if(theta4!=theta4 || theta4 < LKneePitchLow || theta4 > LKneePitchHigh)
+	if(theta4!=theta4)
 		return returnResult;
-	
-	KMatTransf::makeDHTransformation(T4,-ThighLength,0.0f,0.0f,theta4);
+
 	float theta6 = atan(pyInvert/pzInvert);
-	
-	if(theta6 < LAnkleRollLow || theta6 > LAnkleRollHigh)
+	if(theta6 < RAnkleRollLow || theta6 > RAnkleRollHigh)
 		return returnResult;
-	//cout << "theta6 = " << theta6 << endl;
-	KMatTransf::makeDHTransformation(T6,0.0f,-PI/2,0.0f,theta6);
-	T6 *= RotLLeg;
+	KMatTransf::makeDHTransformation(T6i,0.0f,-PI/2,0.0f,theta6);
+	T6i *= RotRLeg;
 	try{
-		T6.fast_invert();
-		Tstart *= T6;
+		T6i.fast_invert();
+		Tstart *= T6i;
 		TtempTheta5 = Tstart;
 		TtempTheta5.fast_invert();
 	}catch(KMat::SingularMatrixInvertionException d){
 		return returnResult;
 	}
+	for(int itter = 0; itter < 2; itter++){
+		theta4 = (itter==0)?theta4:-theta4;
+		if(theta4 < RKneePitchLow || theta4 > RKneePitchHigh)
+			continue;
+		KMatTransf::makeDHTransformation(T4i,-ThighLength,0.0f,0.0f,theta4);
 
-	float up = TtempTheta5(1,3)*(TibiaLength + ThighLength*cos(theta4)) + ThighLength*TtempTheta5(0,3)*sin(theta4);
-	float down = pow(ThighLength,2)*pow(sin(theta4),2)+pow(TibiaLength + ThighLength*cos(theta4),2);
-	float theta5= asin(-up/down);
-	if(theta5 != theta5 && up/down<0)
-		theta5 = -PI/2;
-	else if(theta5 != theta5)
-		theta5 = PI/2;
+		float up = TtempTheta5(1,3)*(TibiaLength + ThighLength*cos(theta4)) + ThighLength*TtempTheta5(0,3)*sin(theta4);
+		float down = pow(ThighLength,2)*pow(sin(theta4),2)+pow(TibiaLength + ThighLength*cos(theta4),2);
+		float theta5= asin(-up/down);
+		float posOrNegPIt5 = (theta5>=0)?PI:-PI;
+		if(theta5 != theta5 && up/down<0)
+			theta5 = -PI/2;
+		else if(theta5 != theta5)
+			theta5 = PI/2;
 		
-	for(int i=0;i<2;i++){
-		if(i == 0 && (theta5 > LAnklePitchHigh || theta5 < LAnklePitchLow))
-			continue;
-		else if(i == 1 && (PI - theta5 > LAnklePitchHigh || PI - theta5 < LAnklePitchLow))
-			continue;
-		else if(i == 1)
-			theta5 = PI - theta5;
-		KMatTransf::makeDHTransformation(T5,-TibiaLength,0.0f,0.0f,theta5);
-		Ttemp = T4;
-		Ttemp *= T5; 
-		try{
-			Ttemp.fast_invert();
-		}catch(KMat::SingularMatrixInvertionException d){
-			continue;			
-		}
-		Ttemp2 = Tstart;
-		Ttemp2 *= Ttemp;
-		float temptheta2 = acos(Ttemp2(1,2));
-		float theta2;
-	for(int l=0;l<2;l++){
-		if(l == 0 && (temptheta2 - PI/4> LHipRollHigh || temptheta2 -PI/4 < LHipRollLow))
+		for(int i=0;i<2;i++){
+			if(i == 0 && (theta5 > LAnklePitchHigh || theta5 < LAnklePitchLow))
 				continue;
-			else if(l == 1 && (-temptheta2 - PI/4> LHipRollHigh || -temptheta2 -PI/4 < LHipRollLow))
+			else if(i == 1 && (posOrNegPIt5 - theta5 > LAnklePitchHigh || posOrNegPIt5 - theta5 < LAnklePitchLow))
 				continue;
-			else if(l==0)
-				theta2 = temptheta2 - PI/4;
-			else if(l == 1)
-				theta2 = -temptheta2 - PI/4;
-			float theta3 = asin(Ttemp2(1,1)/sin(theta2+PI/4));
-			if(theta3 != theta3 && Ttemp2(1,1)/sin(theta2+PI/4)<0)
-				theta3 = -PI/2;
-			else if(theta3 != theta3)
-				theta3 = PI/2;
-			for(int k=0;k<2;k++){
-				if(k == 0 && (theta3 > LHipPitchHigh || theta3 < LHipPitchLow))
+			else if(i == 1)
+				theta5 = posOrNegPIt5 - theta5;
+			KMatTransf::makeDHTransformation(T5i,-TibiaLength,0.0f,0.0f,theta5);
+			Ttemp = T4i;
+			Ttemp *= T5i; 
+			try{
+				Ttemp.fast_invert();
+			}catch(KMat::SingularMatrixInvertionException d){
+				continue;			
+			}
+			Ttemp2 = Tstart;
+			Ttemp2 *= Ttemp;
+			float temptheta2 = acos(Ttemp2(1,2));
+			float theta2;
+		for(int l=0;l<2;l++){
+			if(l == 0 && (temptheta2 - PI/4> LHipRollHigh || temptheta2 -PI/4 < LHipRollLow))
 					continue;
-				else if(k == 1 && (PI - theta3 > LHipPitchHigh || PI - theta3 < LHipPitchLow))
+				else if(l == 1 && (-temptheta2 - PI/4> LHipRollHigh || -temptheta2 -PI/4 < LHipRollLow))
 					continue;
-				else if(k == 1)
-					theta3 = PI - theta3;
-				float temptheta1 = acos(Ttemp2(0,2)/sin(theta2+PI/4));
-				if(temptheta1 != temptheta1)
-					temptheta1 = 0;
-				for(int p=0;p<2;p++){
-					float theta1;
-					if(p == 0 && (temptheta1 + PI/2> LHipYawPitchHigh || -temptheta1 + PI/2 < LHipYawPitchLow))
+				else if(l==0)
+					theta2 = temptheta2 - PI/4;
+				else if(l == 1)
+					theta2 = -temptheta2 - PI/4;
+				float theta3 = asin(Ttemp2(1,1)/sin(theta2+PI/4));
+				float posOrNegPIt3 = (theta3>=0)?PI:-PI;
+				if(theta3 != theta3 && Ttemp2(1,1)/sin(theta2+PI/4)<0)
+					theta3 = -PI/2;
+				else if(theta3 != theta3)
+					theta3 = PI/2;
+				for(int k=0;k<2;k++){
+					if(k == 0 && (theta3 > LHipPitchHigh || theta3 < LHipPitchLow))
 						continue;
-					else if(p == 1 && (-temptheta1 + PI/2> LHipYawPitchHigh || - temptheta1 + PI/2< LHipYawPitchLow))
+					else if(k == 1 && (posOrNegPIt3 - theta3 > LHipPitchHigh || posOrNegPIt3 - theta3 < LHipPitchLow))
 						continue;
-					else if(p == 0)
-						theta1 = temptheta1 + PI/2;
-					else if(p == 1)
-						theta1 = -temptheta1 + PI/2;
+					else if(k == 1)
+						theta3 = posOrNegPIt3 - theta3;
+					float temptheta1 = acos(Ttemp2(0,2)/sin(theta2+PI/4));
+					if(temptheta1 != temptheta1)
+						temptheta1 = 0;
+					for(int p=0;p<2;p++){
+						float theta1;
+						if(p == 0 && (temptheta1 + PI/2> LHipYawPitchHigh || -temptheta1 + PI/2 < LHipYawPitchLow))
+							continue;
+						else if(p == 1 && (-temptheta1 + PI/2> LHipYawPitchHigh || - temptheta1 + PI/2< LHipYawPitchLow))
+							continue;
+						else if(p == 0)
+							theta1 = temptheta1 + PI/2;
+						else if(p == 1)
+							theta1 = -temptheta1 + PI/2;
 					
-					//--------------------------------------Forward validation step------------------------------------------------------------------------------
-					fll.clear();
-					fll.push_back(theta1);fll.push_back(theta2);fll.push_back(theta3);fll.push_back(theta4);fll.push_back(theta5);fll.push_back(theta6);
-					kmatTable test;						
-					filterForward(test,"LeftLeg", fll);
-					if(test.almostEqualTo(Tinit)){
-						//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;							
-						returnResult.push_back(fll);
+						//--------------------------------------Forward validation step------------------------------------------------------------------------------
+						fll.clear();
+						fll.push_back(theta1);fll.push_back(theta2);fll.push_back(theta3);fll.push_back(theta4);fll.push_back(theta5);fll.push_back(theta6);
+						kmatTable test;						
+						filterForward(test,"LeftLeg", fll);
+						if(test.almostEqualTo(Tinit)){
+							//std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;							
+							returnResult.push_back(fll);
+						}
+						//-					
+						//---------------------------------------------------------------------------------------------------------------------------------------------
 					}
-					//-					
-					//---------------------------------------------------------------------------------------------------------------------------------------------
 				}
 			}
 		}
@@ -1141,7 +1138,6 @@ vector<vector<float> > NAOKinematics::inverseRightLeg(float px,float py,float pz
 	std::vector<float> frl,empty;
 	std::vector<vector<float> > returnResult;
 
-	kmatTable T,base,T4,T5,T6,Rot,Tstart,Ttemp,Ttemp2,TtempTheta5,Tinit;
 	KMatTransf::makeTransformation(T,px,py,pz,rx,ry,rz);
 	Tinit=T;
 	//Move the start point to the hipyawpitch point
@@ -1170,96 +1166,105 @@ vector<vector<float> > NAOKinematics::inverseRightLeg(float px,float py,float pz
 	//Calculate Theta 4
 	float distance = sqrt(pow(startX - pxInvert,2) + pow(startY - pyInvert,2) + pow(startZ -pzInvert,2));
 	float theta4 = PI - acos((pow(side1,2)+pow(side2,2) - pow(distance,2))/(2*side1*side2));
-	if(theta4!=theta4 || theta4 < RKneePitchLow || theta4 > RKneePitchHigh)
-		return returnResult;
-	KMatTransf::makeDHTransformation(T4,-ThighLength,0.0f,0.0f,theta4);
-	float theta6 = atan(pyInvert/pzInvert);
-	
-	if(theta6 < RAnkleRollLow || theta6 > RAnkleRollHigh)
+	if(theta4!=theta4)
 		return returnResult;
 
-	T6 *= RotRLeg;
+	float theta6 = atan(pyInvert/pzInvert);
+	if(theta6 < RAnkleRollLow || theta6 > RAnkleRollHigh)
+		return returnResult;
+	KMatTransf::makeDHTransformation(T6i,0.0f,-PI/2,0.0f,theta6);
+	T6i *= RotRLeg;
 	try{
-		T6.fast_invert();
-		Tstart *= T6;
+		T6i.fast_invert();
+		Tstart *= T6i;
 		TtempTheta5 = Tstart;
 		TtempTheta5.fast_invert();
 	}catch(KMat::SingularMatrixInvertionException d){
 		return returnResult;
 	}
+	for(int itter = 0; itter < 2; itter++){
+		theta4 = (itter==0)?theta4:-theta4;
+		if(theta4 < RKneePitchLow || theta4 > RKneePitchHigh)
+			continue;
+		KMatTransf::makeDHTransformation(T4i,-ThighLength,0.0f,0.0f,theta4);
 
-	float up = TtempTheta5(1,3)*(TibiaLength + ThighLength*cos(theta4)) + ThighLength*TtempTheta5(0,3)*sin(theta4);
-	float down = pow(ThighLength,2)*pow(sin(theta4),2)+pow(TibiaLength + ThighLength*cos(theta4),2);
-	float theta5= asin(-up/down);
-	if(theta5 != theta5 && up/down<0)
-		theta5 = -PI/2;
-	else if(theta5 != theta5)
-		theta5 = PI/2;
 		
-	for(int i=0;i<2;i++){
-		if(i == 0 && (theta5 > RAnklePitchHigh || theta5 < RAnklePitchLow))
-			continue;
-		else if(i == 1 && (PI - theta5 > RAnklePitchHigh || PI - theta5 < RAnklePitchLow))
-			continue;
-		else if(i == 1)
-			theta5 = PI - theta5;
-		KMatTransf::makeDHTransformation(T5,-TibiaLength,0.0f,0.0f,theta5);
-		Ttemp = T4;
-		Ttemp *= T5; 
-		try{
-			Ttemp.fast_invert();
-		}catch(KMat::SingularMatrixInvertionException d){
-			continue;			
-		}
-		Ttemp2 = Tstart;
-		Ttemp2 *= Ttemp;
-		float temptheta2 = acos(Ttemp2(1,2));
-		float theta2;
-	for(int l=0;l<2;l++){
-		if(l == 0 && (temptheta2 + PI/4> RHipRollHigh || temptheta2 + PI/4 < RHipRollLow))
+
+		float up = TtempTheta5(1,3)*(TibiaLength + ThighLength*cos(theta4)) + ThighLength*TtempTheta5(0,3)*sin(theta4);
+		float down = pow(ThighLength,2)*pow(sin(theta4),2)+pow(TibiaLength + ThighLength*cos(theta4),2);
+		float theta5= asin(-up/down);
+		float posOrNegPIt5 = (theta5>=0)?PI:-PI;
+		if(theta5 != theta5 && up/down<0)
+			theta5 = -PI/2;
+		else if(theta5 != theta5)
+			theta5 = PI/2;
+		
+		for(int i=0;i<2;i++){
+			if(i == 0 && (theta5 > RAnklePitchHigh || theta5 < RAnklePitchLow))
 				continue;
-			else if(l == 1 && (-temptheta2 + PI/4>RHipRollHigh || -temptheta2 + PI/4 < RHipRollLow))
+			else if(i == 1 && (posOrNegPIt5 - theta5 > RAnklePitchHigh || posOrNegPIt5 - theta5 < RAnklePitchLow))
 				continue;
-			else if(l==0)
-				theta2 = temptheta2 + PI/4;
-			else if(l == 1)
-				theta2 = -temptheta2 + PI/4;
-			float theta3 = asin(Ttemp2(1,1)/sin(theta2-PI/4));
-			if(theta3 != theta3 && Ttemp2(1,1)/sin(theta2-PI/4)<0)
-				theta3 = -PI/2;
-			else if(theta3 != theta3)
-				theta3 = PI/2;
-			for(int k=0;k<2;k++){
-				if(k == 0 && (theta3 > RHipPitchHigh || theta3 < RHipPitchLow))
+			else if(i == 1)
+				theta5 = posOrNegPIt5 - theta5;
+			KMatTransf::makeDHTransformation(T5i,-TibiaLength,0.0f,0.0f,theta5);
+			Ttemp = T4i;
+			Ttemp *= T5i; 
+			try{
+				Ttemp.fast_invert();
+			}catch(KMat::SingularMatrixInvertionException d){
+				continue;			
+			}
+			Ttemp2 = Tstart;
+			Ttemp2 *= Ttemp;
+			float temptheta2 = acos(Ttemp2(1,2));
+			float theta2;
+		for(int l=0;l<2;l++){
+			if(l == 0 && (temptheta2 + PI/4> RHipRollHigh || temptheta2 + PI/4 < RHipRollLow))
 					continue;
-				else if(k == 1 && (PI - theta3 > RHipPitchHigh || PI - theta3 < RHipPitchLow))
+				else if(l == 1 && (-temptheta2 + PI/4>RHipRollHigh || -temptheta2 + PI/4 < RHipRollLow))
 					continue;
-				else if(k == 1)
-					theta3 = PI - theta3;
-				float temptheta1 = acos(Ttemp2(0,2)/sin(theta2-PI/4));
-				if(temptheta1 != temptheta1)
-					temptheta1 = 0;
-				for(int p=0;p<2;p++){
-					float theta1;
-					if(p == 0 && (temptheta1 + PI/2> RHipYawPitchHigh || -temptheta1 + PI/2 < RHipYawPitchLow))
+				else if(l==0)
+					theta2 = temptheta2 + PI/4;
+				else if(l == 1)
+					theta2 = -temptheta2 + PI/4;
+				float theta3 = asin(Ttemp2(1,1)/sin(theta2-PI/4));
+				float posOrNegPIt3 = (theta3>=0)?PI:-PI;
+				if(theta3 != theta3 && Ttemp2(1,1)/sin(theta2-PI/4)<0)
+					theta3 = -PI/2;
+				else if(theta3 != theta3)
+					theta3 = PI/2;
+				for(int k=0;k<2;k++){
+					if(k == 0 && (theta3 > RHipPitchHigh || theta3 < RHipPitchLow))
 						continue;
-					else if(p == 1 && (-temptheta1 + PI/2> RHipYawPitchHigh || - temptheta1 + PI/2< RHipYawPitchLow))
+					else if(k == 1 && (posOrNegPIt3 - theta3 > RHipPitchHigh || posOrNegPIt3 - theta3 < RHipPitchLow))
 						continue;
-					else if(p == 0)
-						theta1 = temptheta1 + PI/2;
-					else if(p == 1)
-						theta1 = -temptheta1 + PI/2;
-					//--------------------------------------Forward validation step------------------------------------------------------------------------------
-					frl.clear();
-					frl.push_back(theta1);frl.push_back(theta2);frl.push_back(theta3);frl.push_back(theta4);frl.push_back(theta5);frl.push_back(theta6);
-					kmatTable test;						
-					filterForward(test,"RightLeg", frl);
-					if(test.almostEqualTo(Tinit)){
-					//	std::cout << "Px = " << px << " Py = " << py << " Pz = " << pz << "Ax = " << rx << " Ay = " << ry << " Az = " << rz << std::endl;
-					//	std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;							
-						returnResult.push_back(frl);
+					else if(k == 1)
+						theta3 = posOrNegPIt3 - theta3;
+					float temptheta1 = acos(Ttemp2(0,2)/sin(theta2-PI/4));
+					if(temptheta1 != temptheta1)
+						temptheta1 = 0;
+					for(int p=0;p<2;p++){
+						float theta1;
+						if(p == 0 && (temptheta1 + PI/2> RHipYawPitchHigh || -temptheta1 + PI/2 < RHipYawPitchLow))
+							continue;
+						else if(p == 1 && (-temptheta1 + PI/2> RHipYawPitchHigh || - temptheta1 + PI/2< RHipYawPitchLow))
+							continue;
+						else if(p == 0)
+							theta1 = temptheta1 + PI/2;
+						else if(p == 1)
+							theta1 = -temptheta1 + PI/2;
+						//--------------------------------------Forward validation step------------------------------------------------------------------------------
+						frl.clear();
+						frl.push_back(theta1);frl.push_back(theta2);frl.push_back(theta3);frl.push_back(theta4);frl.push_back(theta5);frl.push_back(theta6);
+						kmatTable test;						
+						filterForward(test,"RightLeg", frl);
+						if(test.almostEqualTo(Tinit)){
+						//	std::cout << "Px = " << px << " Py = " << py << " Pz = " << pz << "Ax = " << rx << " Ay = " << ry << " Az = " << rz << std::endl;
+						//	std::cout << "Niki!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;							
+							returnResult.push_back(frl);
+						}
+						//---------------------------------------------------------------------------------------------------------------------------------------------
 					}
-					//---------------------------------------------------------------------------------------------------------------------------------------------
 				}
 			}
 		}
