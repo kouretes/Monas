@@ -184,9 +184,6 @@ public:
 	//Return the propability of value from a normal pdf with deviation dev
 	double normpdf(double diff, double dev);
 
-	//Find the agent position using the mean values of a given percentage of particles
-	belief RobustMean(int PercenteOfParticles);
-
 	//This function resamples the particles with the new weigths and reposition the particles given the new weights
 	void rouletteResample();
 

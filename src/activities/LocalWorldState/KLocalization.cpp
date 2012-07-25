@@ -17,8 +17,6 @@
 #include <boost/math/distributions/normal.hpp>
 #include "tools/logger.h"
 #include "tools/toString.h"
-//hyaw = 0.693326 hpitch = -0.6105
-//hyaw = -0.636652 hpitch = -0.668866
 using namespace boost;
 
 KLocalization::KLocalization()
@@ -272,45 +270,6 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 }
 
 
-//Function to find the best Belief using the average of the % of the "heavier" particles
-belief KLocalization::RobustMean(int PercenteOfParticles)
-{
-	belief RmeanAgentPosition;
-	unsigned int robustmean = round((double) SIRParticles.size * ((double) PercenteOfParticles / 100.0));
-	robustmean = (robustmean < 1) ? 1 : robustmean;
-	priority_queue<partcl> particlesQueue;
-	partcl temp;
-	for (unsigned int i = 0; i < SIRParticles.size; i++)
-	{
-		temp.x = SIRParticles.x[i];
-		temp.y = SIRParticles.y[i];
-		temp.phi = SIRParticles.phi[i];
-		temp.Weight = SIRParticles.Weight[i];
-		particlesQueue.push(temp);
-	}
-	float x = 0;
-	float y = 0;
-	double sumX = 0;
-	double sumY = 0;
-	for (unsigned int i = 0; i < robustmean; i++)
-	{
-		temp = particlesQueue.top();
-		sumX += temp.x;
-		sumY += temp.y;
-		x += cos(temp.phi);
-		y += sin(temp.phi);
-		particlesQueue.pop();
-	}
-	RmeanAgentPosition.x = sumX / (double) robustmean;
-	RmeanAgentPosition.y = sumY / (double) robustmean;
-	if(x!=0)
-		RmeanAgentPosition.theta = wrapTo0_2Pi(atan2(y/(double)robustmean,x/(double)robustmean));
-	else
-		RmeanAgentPosition.theta=0;
-
-	return RmeanAgentPosition;
-}
-
 void KLocalization::Predict(KMotionModel & MotionModel)
 {
 	double tmpDist, tmpDir, tmpRot;
@@ -350,47 +309,43 @@ void KLocalization::spreadParticlesAfterFall(){
 	}
 }
 
-
-
 void KLocalization::Update(vector<KObservationModel> &Observation, int NumofParticles)
 {
 
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
 
-	double OverallWeight, totalWeight,ParticlePointBearingAngle, ParticleBearing, Deviation, OverallWeightYellowYellow,ParticlePointBearingAngleS, ParticleBearingS;
+	double OverallWeightOwnField, OverallWeightEnemyField, OverallWeightTotal;
+	double ParticlePointBearingAngle, ParticleBearing;
 	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double R = 0,RS = 0;
-	double Meanerror = 0;
-
+	double R;
+	
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		OverallWeight = 1.0;
-		OverallWeightYellowYellow = 1.0;
-		totalWeight = 0;
+		OverallWeightOwnField = 1.0;
+		OverallWeightEnemyField = 1.0;
+		OverallWeightTotal = 0;
 		for (unsigned int i = 0; i < Observation.size(); i++)
 		{
-			R = DISTANCE_2(SIRParticles.x[p]-Observation[i].Feature.x, SIRParticles.y[p]-Observation[i].Feature.y);
-			Meanerror = Observation[i].Distance.Emean;
-			Deviation = Observation[i].Distance.Edev;
-			OverallWeight = OverallWeight * normpdf((Observation[i].Distance.val - Meanerror) - R, Deviation);
-
+			R = DISTANCE_2(SIRParticles.x[p]-Observation[i].Feature.x,SIRParticles.y[p]-Observation[i].Feature.y);
+			OverallWeightEnemyField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
+			
 			ParticlePointBearingAngle = atan2(Observation[i].Feature.y - SIRParticles.y[p], Observation[i].Feature.x - SIRParticles.x[p]);
-			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-			Deviation = Observation[i].Bearing.Edev;
-			OverallWeight = OverallWeight * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Deviation);
+			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			OverallWeightEnemyField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 
 			//we take the symetric yellow now, so we put a - to the x and y of the observation
-			RS = DISTANCE_2(SIRParticles.x[p] - (-Observation[i].Feature.x), SIRParticles.y[p] - (-Observation[i].Feature.y));
-			OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf((Observation[i].Distance.val - Meanerror) - RS, Deviation);
-			ParticlePointBearingAngleS = atan2(-Observation[i].Feature.y - SIRParticles.y[p], -Observation[i].Feature.x - SIRParticles.x[p]);
-			ParticleBearingS = anglediff2(ParticlePointBearingAngleS, SIRParticles.phi[p]);
-			OverallWeightYellowYellow = OverallWeightYellowYellow * normpdf(anglediff(Observation[i].Bearing.val, ParticleBearingS), Deviation);
+			R = DISTANCE_2(SIRParticles.x[p] - (-Observation[i].Feature.x),SIRParticles.y[p]-(-Observation[i].Feature.y));
+			OverallWeightOwnField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
+			
+			ParticlePointBearingAngle = atan2((-Observation[i].Feature.y) - SIRParticles.y[p], (-Observation[i].Feature.x) - SIRParticles.x[p]);
+			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			OverallWeightOwnField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 		}
-		totalWeight = (OverallWeightYellowYellow > OverallWeight) ? OverallWeightYellowYellow : OverallWeight;
+		OverallWeightTotal = (OverallWeightOwnField > OverallWeightEnemyField) ? OverallWeightOwnField : OverallWeightEnemyField;
 		//totalWeight = OverallWeightYellowYellow + OverallWeight;
 
-		totalWeight = (totalWeight<0.0001)?0.0001:totalWeight;
-		SIRParticles.Weight[p] = totalWeight;
+		OverallWeightTotal = (OverallWeightTotal<0.0001)?0.0001:OverallWeightTotal;
+		SIRParticles.Weight[p] = OverallWeightTotal;
 	}
 }
 void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int NumofParticles){
@@ -400,10 +355,10 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 	double AdditiveWeightTotal = 0,AdditiveOwnField=0,AdditiveEnemyField=0;
 	double R;
 	float xPosOfFeature 	= Observation[0].Feature.x;
-	float yPosOfFeature 	= Observation[0].Feature.x;
-	float obsDistEmean		= Observation[0].Distance.Emean;
-	float obsDistEdev 		= Observation[0].Distance.Edev;
-	float obsDistValue		= Observation[0].Distance.val;
+	float yPosOfFeature 	= Observation[0].Feature.y;
+	float obsDistEmean	= Observation[0].Distance.Emean;
+	float obsDistEdev 	= Observation[0].Distance.Edev;
+	float obsDistValue	= Observation[0].Distance.val;
 	float obsBearingEdev 	= Observation[0].Bearing.Edev;
 	float obsBearingValue 	= Observation[0].Bearing.val;
 	//Find the best candiate for the landmark

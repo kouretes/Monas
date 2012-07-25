@@ -74,117 +74,117 @@
 #define TotalMassH21		4.879f
 //Torso
 #define TorsoMass			1.03948f
-#define TorsoX				-0.00415f
-#define TorsoY				0.00007f
-#define TorsoZ				0.04258f
+#define TorsoX				-4.15f
+#define TorsoY				0.07f
+#define TorsoZ				42.58f
 //Head
 #define HeadYawMass			0.05930f
-#define HeadYawX			-0.00002f
-#define HeadYawY			0.00017f
-#define HeadYawZ			-0.02556f
+#define HeadYawX			-0.02f
+#define HeadYawY			0.17f
+#define HeadYawZ			-25.56f
 
 #define HeadPitchMass		0.52065f
-#define HeadPitchX			0.00120f
-#define HeadPitchY			-0.00084f
-#define HeadPitchZ			0.05353f
+#define HeadPitchX			1.20f
+#define HeadPitchY			-0.84f
+#define HeadPitchZ			53.53f
 //Left Hand
 #define LShoulderPitchMass	0.06996f
-#define LShoulderPitchX		-0.00178f
-#define LShoulderPitchY		0.02496f
-#define LShoulderPitchZ		0.00018f
+#define LShoulderPitchX		-1.78f
+#define LShoulderPitchY		-24.96f
+#define LShoulderPitchZ		0.18f
 
 #define LShoulderRollMass	0.12309f
-#define LShoulderRollX		0.01885f
-#define LShoulderRollY		-0.00577f
-#define LShoulderRollZ		0.00065f
+#define LShoulderRollX		18.85f
+#define LShoulderRollY		5.77f
+#define LShoulderRollZ		0.65f
 
 #define LElbowYawMass		0.05971f
-#define LElbowYawX			-0.02560f
-#define LElbowYawY			0.00001f
-#define LElbowYawZ			-0.00019f
+#define LElbowYawX			-25.60f
+#define LElbowYawY			-0.01f
+#define LElbowYawZ			-0.19f
 
 #define LElbowRollMass		0.18500f
-#define LElbowRollX			0.06536f
-#define LElbowRollY			-0.00034f
-#define LElbowRollZ			-0.00002f
+#define LElbowRollX			65.36f
+#define LElbowRollY			0.34f
+#define LElbowRollZ			-0.02f
 //Right Hand
 #define RShoulderPitchMass	0.06996f
-#define RShoulderPitchX		-0.00178f
-#define RShoulderPitchY		0.02496f
-#define RShoulderPitchZ		0.00018f
+#define RShoulderPitchX		-1.78f
+#define RShoulderPitchY		24.96f
+#define RShoulderPitchZ		0.18f
 
 #define RShoulderRollMass	0.12309f
-#define RShoulderRollX		0.01885f
-#define RShoulderRollY		-0.00577f
-#define RShoulderRollZ		0.00065f
+#define RShoulderRollX		18.85f
+#define RShoulderRollY		-5.77f
+#define RShoulderRollZ		0.65f
 
 #define RElbowYawMass		0.05971f
-#define RElbowYawX			-0.02560f
-#define RElbowYawY			0.00001f
-#define RElbowYawZ			-0.00019f
+#define RElbowYawX			-25.60f
+#define RElbowYawY			0.01f
+#define RElbowYawZ			-0.19f
 
 #define RElbowRollMass		0.18500f
-#define RElbowRollX			0.06536f
-#define RElbowRollY			-0.00034f
-#define RElbowRollZ			-0.00002f
+#define RElbowRollX			65.36f
+#define RElbowRollY			-0.34f
+#define RElbowRollZ			-0.02f
 //LeftLeg Leg
 #define LHipYawPitchMass	0.07117f
-#define LHipYawPitchX		-0.00766f
-#define LHipYawPitchY		0.01200f
-#define LHipYawPitchZ		0.02717f
+#define LHipYawPitchX		-7.66f
+#define LHipYawPitchY		-12.00f
+#define LHipYawPitchZ		27.17f
 
 #define LHipRollMass		0.13530f
-#define LHipRollX			-0.01649f
-#define LHipRollY			-0.00029f
-#define LHipRollZ			-0.00475f
+#define LHipRollX			-16.49f
+#define LHipRollY			0.29f
+#define LHipRollZ			-4.75f
 
 #define LHipPitchMass		0.39421
-#define LHipPitchX			0.00132f
-#define LHipPitchY			-0.00235f
-#define LHipPitchZ			-0.05352f
+#define LHipPitchX			1.32f
+#define LHipPitchY			2.35f
+#define LHipPitchZ			-53.52f
 
 #define LKneePitchMass		0.29159
-#define LKneePitchX			0.00422f
-#define LKneePitchY			-0.00252f
-#define LKneePitchZ			-0.04868f
+#define LKneePitchX			4.22f
+#define LKneePitchY			2.52f
+#define LKneePitchZ			-48.68f
 
 #define LAnklePitchMass		0.13892
-#define LAnklePitchX		0.00142f
-#define LAnklePitchY		-0.00028f
-#define LAnklePitchZ		0.00638f
+#define LAnklePitchX		1.42f
+#define LAnklePitchY		0.28f
+#define LAnklePitchZ		6.38f
 
 #define LAnkleRollMass		0.16175
-#define LAnkleRollX			0.02540f
-#define LAnkleRollY			-0.00332f
-#define LAnkleRollZ			-0.03241f
+#define LAnkleRollX			25.40f
+#define LAnkleRollY			3.32f
+#define LAnkleRollZ			-32.41f
 //Right Leg
 #define RHipYawPitchMass	0.07117f
-#define RHipYawPitchX		-0.00766f
-#define RHipYawPitchY		0.01200f
-#define RHipYawPitchZ		0.02717f
+#define RHipYawPitchX		-7.66f
+#define RHipYawPitchY		12.00f
+#define RHipYawPitchZ		27.17f
 
 #define RHipRollMass		0.13530f
-#define RHipRollX			-0.01649f
-#define RHipRollY			-0.00029f
-#define RHipRollZ			-0.00475f
+#define RHipRollX			-16.49f
+#define RHipRollY			-0.29f
+#define RHipRollZ			-4.75f
 
 #define RHipPitchMass		0.39421
-#define RHipPitchX			0.00132f
-#define RHipPitchY			-0.00235f
-#define RHipPitchZ			-0.05352f
+#define RHipPitchX			1.32f
+#define RHipPitchY			-2.35f
+#define RHipPitchZ			-53.52f
 
 #define RKneePitchMass		0.29159
-#define RKneePitchX			0.00422f
-#define RKneePitchY			-0.00252f
-#define RKneePitchZ			-0.04868f
+#define RKneePitchX			4.22f
+#define RKneePitchY			-2.52f
+#define RKneePitchZ			-48.68f
 
 #define RAnklePitchMass		0.13892
-#define RAnklePitchX		0.00142f
-#define RAnklePitchY		-0.00028f
-#define RAnklePitchZ		0.00638f
+#define RAnklePitchX		1.42f
+#define RAnklePitchY		-0.28f
+#define RAnklePitchZ		6.38f
 
 #define RAnkleRollMass		0.16175
-#define RAnkleRollX			0.02540f
-#define RAnkleRollY			-0.00332f
-#define RAnkleRollZ			-0.03241f
+#define RAnkleRollX			25.40f
+#define RAnkleRollY			-3.32f
+#define RAnkleRollZ			-32.41f
 #endif

@@ -104,7 +104,8 @@ void MotionController::UserInit()
 	}
 
 	createDCMAlias();
-	readWalkParameters();
+	//Stable walk for the lab ENABLE for robocup
+	//readWalkParameters();
 	motion->setWalkArmsEnable(true, true);
 
 	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);

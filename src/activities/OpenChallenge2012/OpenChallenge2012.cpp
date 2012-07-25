@@ -102,6 +102,8 @@ void OpenChallenge2012::UserInit()
 	AccXvalue = 0.0;
 	AccYvalue = 0.0;
 
+	nkin = new NAOKinematics();
+
 	robotDown = false;
 	robotUp = true;
 
@@ -196,8 +198,8 @@ void OpenChallenge2012::mglrun()
 			LARoll = allsm->jointdata(KDeviceLists::L_LEG+KDeviceLists::ANKLE_ROLL);
 			LAPitch = allsm->jointdata(KDeviceLists::L_LEG+KDeviceLists::ANKLE_PITCH);
 			fll.push_back(LHYPitch.sensorvalue());fll.push_back(LHRoll.sensorvalue());fll.push_back(LHPitch.sensorvalue());fll.push_back(LKPitch.sensorvalue());fll.push_back(LAPitch.sensorvalue());fll.push_back(LARoll.sensorvalue());
-			FKin::FKvars output;
-			output = FKin::filterForwardFromTo("Torso","LeftLeg",empty,fll);
+			FKvars output;
+			output = nkin->filterForwardFromTo("Torso","LeftLeg",empty,fll);
 			RSPitch = allsm->jointdata(KDeviceLists::R_ARM+KDeviceLists::SHOULDER_PITCH);
 			RSRoll= allsm->jointdata(KDeviceLists::R_ARM+KDeviceLists::SHOULDER_ROLL);
 			REYaw = allsm->jointdata(KDeviceLists::R_ARM+KDeviceLists::ELBOW_YAW);
@@ -266,7 +268,7 @@ void OpenChallenge2012::mglrun()
 			AL::ALValue timeLists  = 0.15f;
 			bool isAbsolute        = true;
 			vector<vector<float> > results;
-			results = IKin::inverseLeftHand(xK, yK, zK, 0,angley, anglez);
+			results = nkin->inverseLeftHand(xK, yK, zK, 0,angley, anglez);
 			if(!results.empty()){
 				startl =boost::posix_time::microsec_clock::universal_time();
 				vector<float> result = results.front();
@@ -310,7 +312,7 @@ void OpenChallenge2012::mglrun()
 			dist3 = startY - yK;
 			anglez = atan2(xK,dist3) -PI/2;
 
-			results = IKin::inverseRightHand(xK, yK, zK, 0,angley, anglez);
+			results = nkin->inverseRightHand(xK, yK, zK, 0,angley, anglez);
 			if(!results.empty()){
 				startr =boost::posix_time::microsec_clock::universal_time();
 				vector<float> result = results.front();

@@ -291,7 +291,6 @@ void GWRemoteHosts::subCheckBox2Handler(int state)
 			break;
 		}
 
-
 	}
 
 	//this->printGWRequests();

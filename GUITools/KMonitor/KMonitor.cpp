@@ -115,6 +115,8 @@ KMonitor::KMonitor(QWidget *parent)
 	//Signal slot connections for dispaying Robot's Raw Image
 	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), LRVLabel, SLOT(kRawImageUpdateHandler(KRawImage, QString)));
 	connect(LRVElementList, SIGNAL(LVRHSetRawImageVisible(QString, bool)), LRVLabel, SLOT(LVRawImageVisible(QString, bool)));
+	connect(LRVElementList, SIGNAL(LVRHSetSegImageVisible(QString, bool)), LRVLabel, SLOT(LVSegImageVisible(QString, bool)));
+
 
 
 	//SIGNAL SLOT CONNECTIONS FOR KCC Beta
@@ -128,11 +130,6 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(this->KCCTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
 
 	connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), this->KCCTab, SLOT(changeImage(KRawImage, QString)));
-	//connect(this->KccHandler, SIGNAL(LWRHUnsubscriptionRequest(QString)), RawImgLabel, SLOT(resetRobotView(QString)));
-	//Signal slot connections for dispaying Robot's Raw Image
-
-	//connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), RawImgLabel, SLOT(KCCRawImageUpdateHandler(KRawImage, QString)));
-
 
 	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
 	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
@@ -157,6 +154,6 @@ void KMonitor::quitKMonitor()
 
 void KMonitor::printCurrentTab(int index)
 {
-	std::cout << "Allaksa kai eimai to :: " << index << std::endl;
+	//std::cout << "Allaksa kai eimai to :: " << index << std::endl;
 
 }

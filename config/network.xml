@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- UDP Multicasting ip for networking -->
-<multicast_ip>226.0.10.1</multicast_ip>
+<multicast_ip>233.253.124.144</multicast_ip>
 <multicast_port>11002</multicast_port>
 
 <maxpayload>512</maxpayload>

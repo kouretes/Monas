@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="GWSTab">
        <attribute name="title">
@@ -26,14 +26,14 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,1">
+         <layout class="QGridLayout" name="gridLayout_4" columnstretch="3,0,1">
           <property name="spacing">
            <number>3</number>
           </property>
-          <item>
+          <item row="1" column="0">
            <widget class="KGraphicsView" name="GWSGraphicsView"/>
           </item>
-          <item>
+          <item row="1" column="2">
            <widget class="QTreeWidget" name="GWSTreeWidget">
             <property name="mouseTracking">
              <bool>false</bool>
@@ -58,6 +58,13 @@
               <set>AlignLeft|AlignVCenter</set>
              </property>
             </column>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>SHARED WORLD MODEL  ::  Estimated Ball Position</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -220,7 +227,7 @@
           <item row="1" column="0">
            <widget class="KLabel" name="LRVLabel">
             <property name="text">
-             <string/>
+             <string>                                        No Available Image View Yet</string>
             </property>
            </widget>
           </item>
@@ -236,7 +243,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Print Known Objects</string>
+              <string>Display Segmented Image View</string>
              </property>
              <property name="checkState">
               <enum>Checked</enum>
@@ -255,6 +262,83 @@
        <attribute name="title">
         <string>Toumpaniasmeno KCC</string>
        </attribute>
+      </widget>
+      <widget class="QWidget" name="LSDTab">
+       <attribute name="title">
+        <string>Local Sensors Data</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,1,4">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QTableWidget" name="LSDTableWidget_1">
+            <property name="baseSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="midLineWidth">
+             <number>0</number>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <row>
+             <property name="text">
+              <string/>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>AccZvalue</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>AccXvalue</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>AccYvalue</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>accnorm</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>angX</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>angY</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="LSDTableWidget_2"/>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="LSDTableWidget_3"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>

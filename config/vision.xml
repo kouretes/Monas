@@ -3,13 +3,13 @@
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>20-Mexico-SplA.conf</SegmentationBottom>
-<SegmentationTop>20-Mexico-SplA.conf</SegmentationTop>
+<SegmentationBottom>3-lab-322-seglBGYW.conf</SegmentationBottom>
+<SegmentationTop>3-lab-322-seglBGYW.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGamma>0.42</cameraGamma>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.7</balltolerance>
+<balltolerance>0.2</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.045</skipdistance>
 <seedistance>7.2</seedistance>

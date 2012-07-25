@@ -24,6 +24,8 @@ public slots:
 	void LVRawImageVisible(QString, bool);
 	void kRawImageUpdateHandler(KRawImage, QString);
 
+	void LVSegImageVisible(QString, bool);
+
 	void KCCRawImageUpdateHandler(KRawImage, QString);
 
 //signals:

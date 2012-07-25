@@ -11,10 +11,12 @@ LWRemoteHosts::LWRemoteHosts(QComboBox *parent )
 	parentComboBox->adjustSize();
 
 	connect(parentComboBox, SIGNAL(activated(int)), this, SLOT(newLWRemoteHostSelected(int)));
-	//addComboBoxItem(tr("-1"), tr("  Please, select available host to monitor."));
 
 	LWRequests.clear();
 	myCurrentRequestedHost.clear();
+
+	addComboBoxItem(tr("-1"), tr("  Please, select available host to monitor."));
+	//printLWRequests();
 }
 
 LWRemoteHosts::~LWRemoteHosts()
@@ -46,6 +48,10 @@ void LWRemoteHosts::removeComboBoxItem(QString hostId)
 	if(hostIndex != -1 && hostIndex <= parentComboBox->count())
 	{
 		emit LWRHUnsubscriptionRequest(hostId);
+
+		if (LWRequests.at(hostIndex)->hostSelected)
+			emit newLWRemoteHostSelected(0);
+
 		parentComboBox->removeItem(hostIndex);
 		LWRequests.removeAt(hostIndex);
 	}
@@ -106,9 +112,6 @@ void LWRemoteHosts::newLWRemoteHostSelected(int index)
 	}
 
 	//printLWRequests();
-	//std::cout << "Epeleksa ton ::" << myCurrentRequestedHost.toStdString() << std::endl;
-
-
 }
 
 void LWRemoteHosts::printLWRequests()

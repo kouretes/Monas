@@ -18,7 +18,7 @@
 #include "KccLabel.h"
 #include "LWRemoteHosts.h"
 #include "messages/Kimage.pb.h"
-#include "../../src/activities/Vision/KSegmentator.h"
+#include "activities/Vision/KSegmentator.h"
 using namespace std;
 
 namespace Ui {

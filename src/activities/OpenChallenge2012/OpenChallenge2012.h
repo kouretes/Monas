@@ -11,8 +11,7 @@
 
 
 #include "hal/robot/generic_nao/aldebaran-motion.h"
-#include "hal/robot/generic_nao/InverseKinematics.h"
-#include "hal/robot/generic_nao/ForwardKinematics.h"
+#include "hal/robot/generic_nao/NAOKinematics.h"
 #include <string>
 #include <math.h>
 #include <iostream>
@@ -69,7 +68,7 @@ private:
 	int gameState;
 	int currentstate;
 
-
+	NAOKinematics *nkin;
 	int walkPID;
 	float walkParam1, walkParam2, walkParam3, walkParam4;
 
