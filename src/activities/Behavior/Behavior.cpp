@@ -150,16 +150,14 @@ int Behavior::Execute() {
 
 			if (!readytokick) {
 			    //Define roles
-                if(microsec_clock::universal_time() > lastrolechange + milliseconds(500)){
-                    if(ClosestRobot()){
-                        role = ATTACKER;
-                    }
-                    else{
-                        role = CENTER_FOR;
-                    }
-                    lastrolechange = microsec_clock::universal_time();
+                if(ClosestRobot()){
+                    role = ATTACKER;
                 }
-	//		    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
+                else{
+                    role = CENTER_FOR;
+                }
+                lastrolechange = microsec_clock::universal_time();
+//			    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
                 approachBallRoleDependent(bx, by);
 
 				if (scanOK)
