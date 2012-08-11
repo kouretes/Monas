@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>882</width>
-    <height>492</height>
+    <width>846</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,54 +18,58 @@
     <item>
      <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="GWSTab">
        <attribute name="title">
         <string>Global World State</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <layout class="QGridLayout" name="gridLayout_4" columnstretch="3,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="4,1">
           <property name="spacing">
            <number>3</number>
           </property>
-          <item row="1" column="0">
+          <item>
            <widget class="KGraphicsView" name="GWSGraphicsView"/>
           </item>
-          <item row="1" column="2">
-           <widget class="QTreeWidget" name="GWSTreeWidget">
-            <property name="mouseTracking">
-             <bool>false</bool>
-            </property>
-            <attribute name="headerCascadingSectionResizes">
-             <bool>true</bool>
-            </attribute>
-            <attribute name="headerCascadingSectionResizes">
-             <bool>true</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>  TEAM   HOST   TEAM#   PLAYER#   STATE</string>
-             </property>
-             <property name="font">
-              <font>
-               <family>Sans Serif</family>
-               <pointsize>9</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignLeft|AlignVCenter</set>
-             </property>
-            </column>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="radioButton">
-            <property name="text">
-             <string>SHARED WORLD MODEL  ::  Estimated Ball Position</string>
-            </property>
-           </widget>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QTreeWidget" name="GWSTreeWidget">
+              <property name="mouseTracking">
+               <bool>false</bool>
+              </property>
+              <attribute name="headerCascadingSectionResizes">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="headerCascadingSectionResizes">
+               <bool>true</bool>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>TEAM   HOST   TEAM#   PLAYER#   STATE</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Sans Serif</family>
+                 <pointsize>9</pointsize>
+                </font>
+               </property>
+               <property name="textAlignment">
+                <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+               </property>
+              </column>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton">
+              <property name="text">
+               <string>SHARED WORLD MODEL : Estimated Ball</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
@@ -76,13 +80,6 @@
         <string>Local World State</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="LWSLabel">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1">
           <property name="spacing">
@@ -100,33 +97,117 @@
              <widget class="QComboBox" name="LWSComboBox"/>
             </item>
             <item>
-             <widget class="QTreeWidget" name="treeWidget">
-              <column>
-               <property name="text">
-                <string>AVAILABLE GRAPHICAL ELEMENTS</string>
-               </property>
-               <property name="textAlignment">
-                <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-               </property>
-              </column>
+             <widget class="QListWidget" name="LWSListWidget">
               <item>
                <property name="text">
-                <string>Check - Uncheck All</string>
-               </property>
-               <property name="font">
-                <font>
-                 <kerning>false</kerning>
-                </font>
+                <string>Estimated Robot Pose</string>
                </property>
                <property name="checkState">
                 <enum>Checked</enum>
                </property>
-               <property name="flags">
-                <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled</set>
+              </item>
+              <item>
+               <property name="text">
+                <string>Estimated Ball Position </string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ball Observation</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Landmark Observations</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Localization Particles</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Robot View Field Projection</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Robot Trace</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Walk Commands</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="LPMTab">
+       <attribute name="title">
+        <string>Local Polar Map</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="4,1">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="KMapView" name="LPMGraphicsView"/>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <property name="spacing">
+             <number>3</number>
+            </property>
+            <item>
+             <widget class="QComboBox" name="LPMComboBox"/>
+            </item>
+            <item>
+             <widget class="QTreeWidget" name="LPMTreeWidget">
+              <column>
+               <property name="text">
+                <string>Available Graphical Elements</string>
+               </property>
+              </column>
+              <item>
+               <property name="text">
+                <string>(Un) Check all</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
                </property>
                <item>
                 <property name="text">
-                 <string>Estimated Robot Pose</string>
+                 <string>Obstacles</string>
                 </property>
                 <property name="checkState">
                  <enum>Checked</enum>
@@ -134,7 +215,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Estimated Ball Position</string>
+                 <string>Path</string>
                 </property>
                 <property name="checkState">
                  <enum>Checked</enum>
@@ -142,7 +223,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Ball Observation</string>
+                 <string>Target Coordinates</string>
                 </property>
                 <property name="checkState">
                  <enum>Checked</enum>
@@ -157,93 +238,49 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="LPMTab">
-       <attribute name="title">
-        <string>Local Polar Map</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,2,1">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item row="0" column="2">
-           <widget class="QComboBox" name="LPMComboBox"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="KMapView" name="LPMGraphicsView"/>
-          </item>
-          <item row="1" column="2">
-           <widget class="QListWidget" name="LPMListWidget">
-            <item>
-             <property name="text">
-              <string>Obstacles</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Path</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Target Coordinates</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="LRVTab">
        <attribute name="title">
         <string>Local Robot View</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
         <item>
-         <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,1">
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="4,1">
           <property name="spacing">
            <number>3</number>
           </property>
-          <item row="1" column="0">
+          <item>
            <widget class="KLabel" name="LRVLabel">
             <property name="text">
              <string>                                        No Available Image View Yet</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QListWidget" name="LRVListWidget">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
-             <property name="text">
-              <string>Display Raw Image View</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
+             <widget class="QComboBox" name="LRVComboBox"/>
             </item>
             <item>
-             <property name="text">
-              <string>Display Segmented Image View</string>
-             </property>
-             <property name="checkState">
-              <enum>Checked</enum>
-             </property>
+             <widget class="QListWidget" name="LRVListWidget">
+              <item>
+               <property name="text">
+                <string>Display Raw Image View</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Display Segmented Image View</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+             </widget>
             </item>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="LRVComboBox"/>
+           </layout>
           </item>
          </layout>
         </item>
@@ -340,7 +377,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>882</width>
+     <width>846</width>
      <height>25</height>
     </rect>
    </property>

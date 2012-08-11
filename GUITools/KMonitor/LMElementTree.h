@@ -1,16 +1,16 @@
-#ifndef LMELEMENTLIST_H_
-#define LMELEMENTLIST_H_
+#ifndef LMELEMENTTREE_H_
+#define LMELEMENTTREE_H_
 
-#include <QListWidget>
+#include <QTreeWidget>
 #include <QString>
 
-class LMElementList : public QListWidget
+class LMElementTree : public QTreeWidget
 {
     Q_OBJECT
 
 public:
-    LMElementList(QListWidget *parent = 0);
-    ~LMElementList();
+    LMElementTree(QTreeWidget *parent = 0);
+    ~LMElementTree();
 
 public slots:
    void LMELSubscriptionHandler(QString);
@@ -22,14 +22,14 @@ signals:
 	void LMRHSetTargCoordVisible(QString, bool);
 
 private slots:
-	void newListElementRequested(QListWidgetItem* item);
+	void newTreeElementRequested(QTreeWidgetItem* item);
 
 private:
-	void uncheckAllListElements();
+	void un_checkAllTreeElements(Qt::CheckState state);
 
 	QString myCurrentLMRequestedHost;
-    QListWidget* parentListWidget;
+    QTreeWidget* parentTreeWidget;
 
 };
 
-#endif /* LMELEMENTLIST_H_ */
+#endif /* LMELEMENTTREE_H_ */

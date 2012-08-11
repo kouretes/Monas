@@ -7,7 +7,7 @@
 #include "GWRemoteHosts.h"
 #include "LWRemoteHosts.h"
 #include "LWElementList.h"
-#include "LMElementList.h"
+#include "LMElementTree.h"
 #include "LVElementList.h"
 #include "KccHandler.h"
 #include "ui_KMonitor.h"
@@ -31,7 +31,7 @@ private:
     LWRemoteHosts* availableLWHosts;
     LWElementList* LWSElementList;
     LWRemoteHosts* availableLMHosts;
-    LMElementList* LPMElementList;
+    LMElementTree* LPMElementTree;
 
     LWRemoteHosts* availableLVHosts;
     LVElementList* LRVElementList;

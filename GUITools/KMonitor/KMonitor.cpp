@@ -13,7 +13,7 @@ KMonitor::KMonitor(QWidget *parent)
 	LWSElementList = new LWElementList(this->LWSListWidget);
 
 	availableLMHosts = new LWRemoteHosts(this->LPMComboBox);
-	LPMElementList = new LMElementList(this->LPMListWidget);
+	LPMElementTree = new LMElementTree(this->LPMTreeWidget);
 
 	availableLVHosts = new LWRemoteHosts(this->LRVComboBox);
 	LRVElementList = new LVElementList(this->LRVListWidget);
@@ -87,15 +87,15 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LMRHUnsubscriptionHandler(QString)));
 
 	//Signal slot connections for user's preferences
-	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LPMElementList, SLOT(LMELSubscriptionHandler(QString)));
-	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMElementList, SLOT(LMELUnsubscriptionHandler(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LPMElementTree, SLOT(LMELSubscriptionHandler(QString)));
+	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMElementTree, SLOT(LMELUnsubscriptionHandler(QString)));
 	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMGraphicsView, SLOT(resetRobotMap(QString)));
 
 	//Signal slot connections for Obstacles, Path, TargetCoordinates
 	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), LPMGraphicsView, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
-	connect(LPMElementList, SIGNAL(LMRHSetObstaclesVisible(QString, bool)), LPMGraphicsView, SLOT(LMObstaclesVisible(QString, bool)));
-	connect(LPMElementList, SIGNAL(LMRHSetPathVisible(QString, bool)), LPMGraphicsView, SLOT(LMPathVisible(QString, bool)));
-	connect(LPMElementList, SIGNAL(LMRHSetTargCoordVisible(QString, bool)), LPMGraphicsView, SLOT(LMTargetCoordVisible(QString, bool)));
+	connect(LPMElementTree, SIGNAL(LMRHSetObstaclesVisible(QString, bool)), LPMGraphicsView, SLOT(LMObstaclesVisible(QString, bool)));
+	connect(LPMElementTree, SIGNAL(LMRHSetPathVisible(QString, bool)), LPMGraphicsView, SLOT(LMPathVisible(QString, bool)));
+	connect(LPMElementTree, SIGNAL(LMRHSetTargCoordVisible(QString, bool)), LPMGraphicsView, SLOT(LMTargetCoordVisible(QString, bool)));
 
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL ROBOT VIEW
 	//Signal slot connections for Robot View ComboBox
