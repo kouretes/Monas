@@ -1,6 +1,9 @@
 #include "KMonitor.h"
 #include "ui_KccHandler.h"
 
+#include <QTableWidget>
+#include <QList>
+
 KMonitor::KMonitor(QWidget *parent)
     : QMainWindow(parent), Messenger(NULL), availableGWHosts(NULL)
 {
@@ -17,6 +20,20 @@ KMonitor::KMonitor(QWidget *parent)
 
 	availableLVHosts = new LWRemoteHosts(this->LRVComboBox);
 	LRVElementList = new LVElementList(this->LRVListWidget);
+
+	availableLSHosts = new LWRemoteHosts(this->LSDComboBox);
+
+	QList<QTableWidget*> list;
+
+	list.append(LSDHeadTableWidget);
+	list.append(LSDInertialTableWidget);
+	list.append(LSDLArmTableWidget);
+	list.append(LSDRArmTableWidget);
+	list.append(LSDLLegTableWidget);
+	list.append(LSDRLegTableWidget);
+
+	LSController = new LSDController(list);
+
 
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
@@ -116,6 +133,25 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), LRVLabel, SLOT(kRawImageUpdateHandler(KRawImage, QString)));
 	connect(LRVElementList, SIGNAL(LVRHSetRawImageVisible(QString, bool)), LRVLabel, SLOT(LVRawImageVisible(QString, bool)));
 	connect(LRVElementList, SIGNAL(LVRHSetSegImageVisible(QString, bool)), LRVLabel, SLOT(LVSegImageVisible(QString, bool)));
+
+
+	//SIGNAL SLOT CONNECTIONS FOR LOCAL SENSOR DATA
+	//Signal slot connections for Local Remote Hosts ComboBox
+	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->availableLSHosts, SLOT(addComboBoxItem(QString, QString)));
+	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->availableLSHosts, SLOT(removeComboBoxItem(QString)));
+	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->availableLSHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+
+	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LSRHSubscriptionHandler(QString)));
+	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LSRHUnsubscriptionHandler(QString)));
+
+
+	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LSController, SLOT(LSCSubscriptionHandler(QString)));
+	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LSController, SLOT(LSCUnsubscriptionHandler(QString)));
+
+	connect(Messenger, SIGNAL(sensorsDataUpdate(AllSensorValuesMessage, QString)), LSController, SLOT(sensorsDataUpdateHandler(AllSensorValuesMessage, QString)));
+
+
+
 
 
 

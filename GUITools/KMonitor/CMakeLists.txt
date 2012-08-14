@@ -20,7 +20,7 @@ SET( QT_USE_QTSVG TRUE )
 SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp LWRemoteHosts.cpp 
 		KGraphicsView.cpp KFieldScene.cpp GraphicalRobotElement.cpp LWElementList.cpp
 	    LMElementTree.cpp KMapView.cpp KMapScene.cpp KLabel.cpp KRobotView.cpp LVElementList.cpp
-		KccHandler.cpp KccLabel.cpp
+		KccHandler.cpp KccLabel.cpp LSDController.cpp
 		../../src/activities/Vision/KSegmentator.cpp
 		../../src/hal/generic_linux/syscall.cpp
 		../../src/messages/Network.pb.cc
@@ -36,7 +36,7 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 	)
 SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
 		GraphicalRobotElement.h LWElementList.h LMElementTree.h KMapView.h KLabel.h LVElementList.h 
-		KccHandler.h KccLabel.h
+		KccHandler.h KccLabel.h LSDController.h
 	) 
 SET( KMonitor_FORMS KMonitor.ui KccHandler.ui)
 SET( KMonitor_RESOURCES GuiResources.qrc )

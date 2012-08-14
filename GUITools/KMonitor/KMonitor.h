@@ -9,6 +9,7 @@
 #include "LWElementList.h"
 #include "LMElementTree.h"
 #include "LVElementList.h"
+#include "LSDController.h"
 #include "KccHandler.h"
 #include "ui_KMonitor.h"
 
@@ -32,9 +33,10 @@ private:
     LWElementList* LWSElementList;
     LWRemoteHosts* availableLMHosts;
     LMElementTree* LPMElementTree;
-
     LWRemoteHosts* availableLVHosts;
     LVElementList* LRVElementList;
+    LWRemoteHosts* availableLSHosts;
+    LSDController* LSController;
 
     KccHandler* KCC;
 };
