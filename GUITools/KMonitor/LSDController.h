@@ -14,6 +14,37 @@ typedef struct joints{
 
 }HeadJoints;
 
+typedef struct joints1{
+
+	QString ShoulderPitch;
+	QString ShoulderRoll;
+	QString ElbowYaw;
+	QString ElbowRoll;
+
+}ArmJoints;
+
+typedef struct joints2{
+
+	QString HipYawPitch;
+	QString HipRoll;
+	QString HipPitch;
+	QString KneePitch;
+	QString AnklePitch;
+	QString AnkleRoll;
+
+}LegJoints;
+
+typedef struct values{
+
+	QString AccZvalue;
+	QString AccXvalue;
+	QString AccYvalue;
+	QString angX;
+	QString angY;
+	//QString AnkleRoll;
+
+}InertialValues;
+
 
 class LSDController : public QTableWidget
 {
@@ -23,39 +54,6 @@ public:
 	LSDController(QList<QTableWidget*> tablesList);
 	~LSDController();
 
-/*
-protected:
-	void resizeEvent(QResizeEvent* event);
-
-public slots:
-	void setKGFCGameStateInfo(GameStateMessage, QString);
-	void worldInfoUpdateHandler(WorldInfo, QString);
-	void observationMessageUpdateHandler(ObservationMessage, QString);
-	void localizationDataUpdateHandler(LocalizationDataForGUI, QString);
-	void motionCommandUpdateHandler(MotionWalkMessage, QString);
-
-	void GWSGVRobotVisible(QString, bool);
-	void GWSGVBallVisible(QString, bool);
-
-	void removeGraphicalElement(QString);
-
-	void LWSGVRobotVisible(QString, bool);
-	void LWSGVBallVisible(QString, bool);
-
-	void LWSGVVisionBallVisible(QString, bool);
-	void LWSGVVisionGoalPostsVisible(QString, bool);
-
-	void LWSGVParticlesVisible(QString, bool);
-	void LWSGVHFOVVisible(QString, bool);
-	void LWSGVTraceVisible(QString, bool);
-
-	void LWSGVMWCmdVisible(QString, bool);
-
-signals:
-	void forceTimeOut();
-
-*/
-
 public slots:
 	void LSCSubscriptionHandler(QString);
 	void LSCUnsubscriptionHandler(QString);
@@ -64,12 +62,27 @@ public slots:
 
 private:
 	void uncheckAllTablesContents();
-	void udpateHeadJointsBuffer(AllSensorValuesMessage);
+	void updateHeadJointsBuffer(AllSensorValuesMessage);
+	void updateLArmJointsBuffer(AllSensorValuesMessage asvm);
+	void updateRArmJointsBuffer(AllSensorValuesMessage asvm);
+	void updateLLegJointsBuffer(AllSensorValuesMessage asvm);
+	void updateRLegJointsBuffer(AllSensorValuesMessage asvm);
+	void updateInertialBuffer(AllSensorValuesMessage asvm);
 	void updateHeadJointsTable();
+	void updateLArmJointsTable();
+	void updateRArmJointsTable();
+	void updateLLegJointsTable();
+	void updateRLegJointsTable();
+	void updateInertialTable();
 
 
 
 	boost::circular_buffer<HeadJoints> headJointsBuffer;
+	boost::circular_buffer<ArmJoints> LArmJointsBuffer;
+	boost::circular_buffer<ArmJoints> RArmJointsBuffer;
+	boost::circular_buffer<LegJoints> LLegJointsBuffer;
+	boost::circular_buffer<LegJoints> RLegJointsBuffer;
+	boost::circular_buffer<InertialValues> InertialBuffer;
 
 	QList<QTableWidget*> parentTablesList;
 	QString currentHost;
