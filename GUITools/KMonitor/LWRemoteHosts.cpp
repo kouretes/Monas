@@ -15,7 +15,7 @@ LWRemoteHosts::LWRemoteHosts(QComboBox *parent )
 	LWRequests.clear();
 	myCurrentRequestedHost.clear();
 
-	addComboBoxItem(tr("-1"), tr("  Please, select robot."));
+	addComboBoxItem(tr(""), tr("  Please, select robot."));
 	//printLWRequests();
 }
 
@@ -33,6 +33,7 @@ void LWRemoteHosts::addComboBoxItem(QString hostId, QString hostName)
 	parentComboBox->addItem(icon, hostName);
 
 	requestedLWElements *re = new LWElements(hostId, hostName, false);
+
 	LWRequests.append(re);
 
 	//printLWRequests();
@@ -78,8 +79,6 @@ int LWRemoteHosts::LWhostFinder(QString hostId)
 
 }
 
-
-
 void LWRemoteHosts::setLWRHGameStateInfo(QIcon icon, QString gsm, QString hostId)
 {
 	int hostIndex = this->LWhostFinder(hostId);
@@ -96,6 +95,16 @@ void LWRemoteHosts::setLWRHGameStateInfo(QIcon icon, QString gsm, QString hostId
 
 void LWRemoteHosts::newLWRemoteHostSelected(int index)
 {
+/*	int oldHostIndex;
+
+	oldHostIndex = LWhostFinder(myCurrentRequestedHost);
+	if(oldHostIndex > -1 && oldHostIndex <= parentComboBox->count()){
+
+		emit LWRHUnsubscriptionRequest(LWRequests.at(oldHostIndex)->hostId);
+	}*/
+
+	emit LWRHUnsubscriptionRequest(myCurrentRequestedHost);
+
 	for(int i = 0; i<LWRequests.count();i++)
 	{
 		if(i == index)
@@ -103,8 +112,10 @@ void LWRemoteHosts::newLWRemoteHostSelected(int index)
 			LWRequests.at(i)->hostSelected = true;
 			myCurrentRequestedHost = LWRequests.at(i)->hostId;
 
-			emit LWRHSubscriptionRequest(LWRequests.at(i)->hostId);
-
+			if(!myCurrentRequestedHost.isEmpty()){
+				std::cout << "LWRemoteHosts::newLWRemoteHostSelected :: KAnw subreq" << std::endl;
+				emit LWRHSubscriptionRequest(LWRequests.at(i)->hostId);
+			}
 		}else
 		{
 			LWRequests.at(i)->hostSelected = false;
