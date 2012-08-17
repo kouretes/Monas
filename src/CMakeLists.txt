@@ -25,7 +25,7 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
 option ( Webots "Webots ..." )
-set ( NaoQiVersion 1.10.10 CACHE STRING "Set the NaoQi version" )
+set ( NaoQiVersion 1.12.5 CACHE STRING "Set the NaoQi version" )
 
 
 add_subdirectory ( ./hal/ )

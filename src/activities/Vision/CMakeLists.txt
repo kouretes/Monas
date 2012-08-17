@@ -20,4 +20,4 @@ add_definitions(" -DNAOQI_${NaoQiVer} ")
 
 
 
-use_lib(${ActivityName} ALCOMMON LIBVISION)
+qi_use_lib(${ActivityName} ALCOMMON LIBVISION)

@@ -43,7 +43,7 @@ class KImageExtractor
 		int swapCamera();
 		void refreshValues();
 	private:
-		AL::ALPtr<AL::ALVideoDeviceProxy> xCamProxy;
+		boost::shared_ptr<AL::ALVideoDeviceProxy> xCamProxy;
 
 
 		//Name used when subscribing Generic Video Module

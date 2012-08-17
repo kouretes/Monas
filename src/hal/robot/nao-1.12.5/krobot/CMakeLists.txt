@@ -22,13 +22,10 @@ message ( STATUS "" )
 
 cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/bootstrap.cmake")
 
 STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
 add_definitions(" -DNAOQI_${NaoQiVer} ")
 
-
-use(NAOQI-PLUGINS-TOOLS)
 ##BE CAREFULL IF YOU CHANGE THE KROBOT MODULE NAME
 ##SOME ACTIVITY DEFINITIONS ARE HARDCODED, see REMOTE BUILD
 
@@ -41,7 +38,10 @@ SET ( KROBOT_SRCS
 
 set(KRobotTargetSources ${KROBOT_SRCS} CACHE INTERNAL "")
 
-
+option(KROBOT_IS_REMOTE
+  "is KROBOT remote?"
+  OFF
+)
 
 
 if(Webots)
@@ -55,14 +55,15 @@ function(Monas_Finalize)
 
 
 	message ( STATUS " _..::: Making Krobot Target :::.._ " )
-	create_module( krobot )
-	if (KROBOT_IS_REMOTE STREQUAL "OFF")
-		add_library(krobot SHARED ${KRobotTargetSources} )
-	else(KROBOT_IS_REMOTE STREQUAL "OFF")
-	    add_executable(krobot ${KRobotTargetSources})
-	 endif( KROBOT_IS_REMOTE STREQUAL "OFF" )
+	#create_module( krobot )
+	if (KROBOT_IS_REMOTE)
+ 		add_definitions(" -DKROBOT_IS_REMOTE ")
+		qi_create_bin(krobot ${KRobotTargetSources})
+	else()
+		qi_create_lib(krobot SHARED ${KRobotTargetSources})
+	endif()
 
-	use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST )
+	qi_use_lib( krobot ALCOMMON ALMATH LIBCORE TOOLS ALVALUE BOOST )
 
 	target_link_libraries ( krobot ${ActivityLibraries}  ${ProviderLibraries} ${TargetLinkLibraries}  M_tinyxml)
 

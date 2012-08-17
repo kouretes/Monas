@@ -21,7 +21,7 @@ class ALstandUpBack2011_2: public ISpecialAction {
 
     void Initialize();
 
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
 
     std::vector<std::string> names;
     AL::ALValue times, keys;

@@ -21,7 +21,7 @@ class RightDive: public ISpecialAction {
     
     void Initialize();
     
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
     
     std::vector<std::string> RightDive_names;
     AL::ALValue RightDive_times, RightDive_keys;     

@@ -15,7 +15,7 @@ class XarAction: public ISpecialAction {
 			return name;
 		}
 		//TODO fix this constructor
-		XarAction(AL::ALPtr<AL::ALFrameManagerProxy> frame, std::string filenamepath,std::string name, std::string identifier);
+		XarAction(boost::shared_ptr<AL::ALFrameManagerProxy> frame, std::string filenamepath,std::string name, std::string identifier);
 
 		int ExecutePost();
 
@@ -31,8 +31,8 @@ class XarAction: public ISpecialAction {
 		std::string filename;
 		std::string identifier;
 
-		//AL::ALPtr<AL::ALFrameManagerProxy> frame;
-		AL::ALPtr<AL::ALFrameManagerProxy> frame;
+		//boost::shared_ptr<AL::ALFrameManagerProxy> frame;
+		boost::shared_ptr<AL::ALFrameManagerProxy> frame;
 };
 
 #endif // _XARACTION_H_

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-XarAction::XarAction(AL::ALPtr<AL::ALFrameManagerProxy> frame, std::string filepathname,std::string name,std::string identifier) {
+XarAction::XarAction(boost::shared_ptr<AL::ALFrameManagerProxy> frame, std::string filepathname,std::string name,std::string identifier) {
 //	try {
 //		//frame =KAlBroker::Instance().GetBroker()->getSpecialisedProxy(frame,"ALFrameManager");
 //		KAlBroker::Instance().GetBroker()->getProxy("ALFrameManager");

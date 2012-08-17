@@ -36,7 +36,7 @@ void OpenChallenge2012::UserInit()
 
 	try
 	{
-		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+		dcm = new AL::DCMProxy(KAlBroker::Instance().GetBroker());
 	} catch (AL::ALError& e)
 	{
 		Logger::Instance().WriteMsg("OpenChallenge2012", "Error in getting dcm proxy", Logger::FatalError);
@@ -52,8 +52,8 @@ void OpenChallenge2012::UserInit()
 
 	try
 	{
-		pbroker = AL::ALPtr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
-		framemanager = AL::ALPtr<AL::ALFrameManagerProxy>(new AL::ALFrameManagerProxy(pbroker));
+		pbroker = boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
+		framemanager = boost::shared_ptr<AL::ALFrameManagerProxy>(new AL::ALFrameManagerProxy(pbroker));
 	} catch (AL::ALError& e)
 	{
 		Logger::Instance().WriteMsg("OpenChallenge2012", "Error in getting frameManager proxy" + e.getDescription(), Logger::FatalError);

@@ -28,7 +28,7 @@ class KmexAction {
 
     void DcmInit();
 
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
 
     std::string name;
     int numberOfPoses;

@@ -51,11 +51,12 @@ class Sensors: public IProvider
 		AllSensorValuesMessage ASM;
 
 	private:
-		AL::ALPtr<AL::DCMProxy> dcm;
-		AL::ALPtr<AL::ALMotionProxy> motion;
+	
+		AL::DCMProxy *dcm;
+		boost::shared_ptr<AL::ALMotionProxy> motion;
 		Kalman1D<float> angle[2];
 		AL::ALValue commands;//,stiffnessCommand;
-		//	AL::ALPtr<AL::ALMemoryFastAccess> MemoryFastAccess;
+		//	boost::shared_ptr<AL::ALMemoryFastAccess> MemoryFastAccess;
 
 		void initialization();
 
@@ -69,9 +70,9 @@ class Sensors: public IProvider
 
 
 
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 		void synchronisedDCMcallback();
-		AL::ALPtr<AL::ALMemoryProxy> memory;
+		boost::shared_ptr<AL::ALMemoryProxy> memory;
 		std::vector<float*> jointValues,sensorValues,buttonValues;
 		size_t sensorstopicid,buttoneventstopicid;
 #else

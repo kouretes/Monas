@@ -20,7 +20,7 @@ class LieDown: public ISpecialAction {
     
     void Initialize();
     
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
     
     AL::ALValue LieDown_names, LieDown_times, LieDown_keys;     
     

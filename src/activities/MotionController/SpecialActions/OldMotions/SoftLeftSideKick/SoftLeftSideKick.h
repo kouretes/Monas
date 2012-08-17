@@ -21,7 +21,7 @@ class SoftLeftSideKick: public ISpecialAction {
     
     void Initialize();
     
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
     
     std::vector<std::string> SoftLeftSideKick_names;
     AL::ALValue SoftLeftSideKick_times, SoftLeftSideKick_keys;     

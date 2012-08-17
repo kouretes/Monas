@@ -20,7 +20,7 @@ class ALstandUpBack2009: public ISpecialAction {
     
     void Initialize();
     
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
     
     AL::ALValue jointCodes, angles, times;     
     

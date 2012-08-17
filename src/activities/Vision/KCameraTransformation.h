@@ -98,7 +98,7 @@ private:
 	KMat::ATMatrix<float,4> cameraTorsoChain;//CameraToTorso;
 	KMat::ATMatrix<float,4> cameraChainInv;//Inverse
 	//KMat::ATMatrix<float,4> cameraYawless;
-	AL::ALPtr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
 };
 

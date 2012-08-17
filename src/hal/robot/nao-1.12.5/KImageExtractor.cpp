@@ -1,6 +1,6 @@
 #include "hal/robot/generic_nao/KImageExtractor.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
-
+#include <qi/os.hpp>
 #include "messages/motion.pb.h"
 using boost::posix_time::ptime;
 static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970,1,1));
@@ -35,7 +35,7 @@ void KImageExtractor::Init(Blackboard *blk)
 	refexpusec=MAXEXPUS;
 	try
 	{
-		xCamProxy = ALPtr<ALVideoDeviceProxy>( new ALVideoDeviceProxy(KAlBroker::Instance().GetBroker()));
+		xCamProxy = boost::shared_ptr<ALVideoDeviceProxy>( new ALVideoDeviceProxy(KAlBroker::Instance().GetBroker()));
 
 		//c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
 
@@ -63,7 +63,7 @@ void KImageExtractor::Init(Blackboard *blk)
 
 void KImageExtractor::_releaseImage()
 {
-#ifdef KROBOT_IS_REMOTE_ON
+#ifdef KROBOT_IS_REMOTE
 	xCamProxy->releaseDirectRawImageRemote(GVM_name);
 #else
 	xCamProxy->releaseDirectRawImage(GVM_name);
@@ -74,7 +74,7 @@ void KImageExtractor::_releaseImage()
  * Fetch a new Image from the hardware, it automatically fixs IplImage and enclosed binary space when needed
  * Use Allocate Image for an initial allocation of an image
  */
-#ifdef KROBOT_IS_REMOTE_ON
+#ifdef KROBOT_IS_REMOTE
 boost::posix_time::ptime KImageExtractor::fetchImage(KImageDeepCopy &img)
 {
 	//cout<<"KImageExtractor::fetchimage():"<<endl;
@@ -138,9 +138,9 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImageDeepCopy & img)
 	}
 	//fLogProxy->info(getName(), imageIn->toString());
 	// You can get some image information that you may find usefull
-	const long long timeStamp = imageIn->fTimeStamp;
+	const long long timeStamp = imageIn->getTimeStamp();
 
-	img.copyFrom(imageIn->getFrame(),imageIn->fWidth,imageIn->fHeight,imageIn->fNbLayers);
+	img.copyFrom(imageIn->getFrame(),imageIn->getWidth(),imageIn->getHeight(),imageIn->getNbLayers());
 
 
     //apply correction factor to timestamp
@@ -212,33 +212,33 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 	{
 
 		xCamProxy->setParam( kCameraSelectID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoGainID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		//xCamProxy->setParam( kCameraSelectID, 1);
 //		c->callVoid( "setParam", kCameraSelectID, 1);
 		xCamProxy->setParam( kCameraExposureCorrectionID,0);
 //		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
-		SleepMs(10);
+		qi::os::msleep(10);
 
 
 		xCamProxy->setParam( kCameraSelectID, 1);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoGainID, 1);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoExpositionID, 1);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 1);
-		SleepMs(5);
+		qi::os::msleep(5);
 		//xCamProxy->setParam( kCameraSelectID, 1);
 //		c->callVoid( "setParam", kCameraSelectID, 1);
 		xCamProxy->setParam( kCameraExposureCorrectionID,0);
 //		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
-		SleepMs(10);
+		qi::os::msleep(10);
 
 		//Move head to the left
 		hmot.set_parameter(0,1.57);
@@ -246,10 +246,10 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		_blk->publishSignal(hmot,"motion");
 		_blk->publish_all();
 
-		SleepMs(100);
+		qi::os::msleep(100);
 
 		//Wait for autoconf
-		SleepMs(sleeptime);
+		qi::os::msleep(sleeptime);
 
 		//Get Bottom camera settings
 		gainL=xCamProxy->getParam( kCameraGainID);
@@ -259,11 +259,11 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 //		eL=xCamProxy->getParam(kCameraExposureID);
 
 		xCamProxy->setParam( kCameraAutoGainID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 //		c->callVoid( "setParam", kCameraAutoGainID, 0);
 //		c->callVoid( "setParam", kCameraAutoExpositionID,0);
 //		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,0);
@@ -275,32 +275,32 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 		_blk->publishSignal(hmot,"motion");
         _blk->publish_all();
 		//m->callVoid("setAngles",names,pos,0.8);
-		SleepMs(100);
+		qi::os::msleep(100);
 
 //		c->callVoid( "setParam", kCameraAutoGainID, 1);
 //		c->callVoid( "setParam", kCameraAutoExpositionID,1);
 //		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,1);
 		xCamProxy->setParam(  kCameraAutoGainID, 1);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam(  kCameraAutoExpositionID,1);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam(  kCameraAutoWhiteBalanceID,1);
 		//wait for autoconf
-		SleepMs(sleeptime);
+		qi::os::msleep(sleeptime);
 
 
 
 		//GET BOTTOM CAMERA SETTINGS!!!
 
 		gainR=xCamProxy->getParam(kCameraGainID);
-		SleepMs(5);
+		qi::os::msleep(5);
 		eR=xCamProxy->getParam(kCameraExposureID);
-		SleepMs(5);
+		qi::os::msleep(5);
 
 		xCamProxy->setParam( kCameraAutoGainID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoExpositionID,0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		//Since now we`ll need again the wb correction, leave it on
 		//xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
 
@@ -330,12 +330,12 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 		//Start white balance calibration
 		//wait for autoconf
-		SleepMs(sleeptime);
+		qi::os::msleep(sleeptime);
 
 		rchromaR=xCamProxy->getParam(kCameraRedChromaID);
-		SleepMs(5);
+		qi::os::msleep(5);
 		bchromaR=xCamProxy->getParam(kCameraBlueChromaID);
-		SleepMs(5);
+		qi::os::msleep(5);
 
 //        xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
 		cout<<"Right white balance settings:"<<rchromaR<<" "<<bchromaR<<endl;
@@ -349,13 +349,13 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 
 		//wait for autoconf
-		SleepMs(sleeptime);
+		qi::os::msleep(sleeptime);
 		rchromaL=xCamProxy->getParam(kCameraRedChromaID);
-		SleepMs(5);
+		qi::os::msleep(5);
 		bchromaL=xCamProxy->getParam(kCameraBlueChromaID);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		cout<<"Left white balance settings:"<<rchromaL<<" "<<bchromaL<<endl;
 		redchroma=(rchromaL+rchromaR)/2;
 		bluechroma=(bchromaL+bchromaR)/2;
@@ -364,48 +364,48 @@ float KImageExtractor::calibrateCamera(int sleeptime,int exp)
 
 
 		xCamProxy->setParam( kCameraSelectID, 0);
-		SleepMs(150);
+		qi::os::msleep(150);
 		//SET BOTTOM CAMERA SETTINGS
 		xCamProxy->setParam( kCameraAutoGainID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 
 
 		xCamProxy->setParam( kCameraBlueChromaID,bluechroma);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraRedChromaID,redchroma);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraGainID,gain);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraExposureID,e);
-		SleepMs(5);
+		qi::os::msleep(5);
 		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
-		SleepMs(150);
+		qi::os::msleep(150);
 		//c->callVoid( "setParam", kCameraSelectID, 0);
-		//SleepMs(10);
+		//qi::os::msleep(10);
 		xCamProxy->setParam( kCameraSelectID, 1);
-		SleepMs(150);
+		qi::os::msleep(150);
 		//SET BOTTOM CAMERA SETTINGS
 		xCamProxy->setParam( kCameraAutoGainID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		SleepMs(5);
+		qi::os::msleep(5);
 
 
 		xCamProxy->setParam( kCameraBlueChromaID,bluechroma);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraRedChromaID,redchroma);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraGainID,gain);
-		SleepMs(5);
+		qi::os::msleep(5);
 		xCamProxy->setParam( kCameraExposureID,e);
 		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
-		SleepMs(150);
+		qi::os::msleep(150);
 		//Start with bottom cam
 		//xCamProxy->setParam( kCameraSelectID, 1);
 

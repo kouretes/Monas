@@ -12,7 +12,7 @@
  */
 
 #include <signal.h>
-#include <alcore/alptr.h>
+#include <boost/shared_ptr.hpp>
 #include <alcommon/albroker.h>
 #include <alcommon/almodule.h>
 #include <alcommon/albrokermanager.h>
@@ -22,7 +22,7 @@
 
 
 
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 
 #ifdef _WIN32
     #define ALCALL __declspec(dllexport)
@@ -39,7 +39,7 @@ extern "C"
 #endif
 
 
-ALCALL int _createModule( AL::ALPtr<AL::ALBroker> pBroker )
+ALCALL int _createModule( boost::shared_ptr<AL::ALBroker> pBroker )
 {
   // init broker with the main broker inctance
   // from the parent executable
@@ -60,7 +60,7 @@ ALCALL int _closeModule(  )
 }
 # endif
 
-#ifdef KROBOT_IS_REMOTE_ON
+#ifdef KROBOT_IS_REMOTE
 
 int main( int argc, char *argv[] )
 {

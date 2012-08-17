@@ -20,7 +20,7 @@ class HardRightSideKick: public ISpecialAction {
     
     void Initialize();
     
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
     
     std::vector<std::string> HardRightSideKick_names;
     AL::ALValue HardRightSideKick_times, HardRightSideKick_keys;    

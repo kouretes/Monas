@@ -20,7 +20,7 @@ class LeftBackKick: public ISpecialAction {
     
     void Initialize();
     
-    AL::ALPtr<AL::ALMotionProxy> motion;
+    boost::shared_ptr<AL::ALMotionProxy> motion;
     
     std::vector<std::string> LeftBackKick_names;
     AL::ALValue LeftBackKick_times, LeftBackKick_keys;

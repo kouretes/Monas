@@ -17,7 +17,7 @@ class KmeManager {
   public:
 
     static std::vector<ISpecialAction*> LoadActionsKME();
-   // static std::vector<ISpecialAction*> LoadActionsKME( AL::ALPtr<AL::ALFrameManagerProxy> frame);
+   // static std::vector<ISpecialAction*> LoadActionsKME( boost::shared_ptr<AL::ALFrameManagerProxy> frame);
 
     struct motSequence {
       std::string seqName;

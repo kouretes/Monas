@@ -1,10 +1,10 @@
 #include "kAlBroker.h"
 
-void KAlBrokerClass::SetBroker( AL::ALPtr<AL::ALBroker> broker) {
+void KAlBrokerClass::SetBroker( boost::shared_ptr<AL::ALBroker> broker) {
     _broker = broker;
 }
 
-AL::ALPtr<AL::ALBroker> KAlBrokerClass::GetBroker() const {
+boost::shared_ptr<AL::ALBroker> KAlBrokerClass::GetBroker() const {
     return _broker;
 }
 

@@ -34,7 +34,7 @@ void Sensors::UserInit() {
 	Logger::Instance().WriteMsg("Sensors", "Sensors UserInit", Logger::Info);
 
 	try {
-		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+		dcm = new AL::DCMProxy(KAlBroker::Instance().GetBroker());
 	} catch (AL::ALError& e) {
 		Logger::Instance().WriteMsg("Sensors", "Error in getting dcm proxy", Logger::FatalError);
 	}
@@ -108,7 +108,7 @@ int Sensors::Execute() {
 		dcm->set(commands);
 		rtm.start();
 
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
 #endif
 		firstrun = false;
@@ -116,7 +116,7 @@ int Sensors::Execute() {
 
 
 
-#ifndef KROBOT_IS_REMOTE_OFF
+#ifdef KROBOT_IS_REMOTE
 	//Fetch into vectors
 	jointaccess.GetValues(jointValues);
 	sensoraccess.GetValues(sensorValues);
@@ -239,7 +239,7 @@ void Sensors::fetchValues() {
 
 }
 
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 void Sensors::synchronisedDCMcallback()
 {
 
@@ -306,7 +306,7 @@ void Sensors::initialization() {
 	t.count=0;
 	buttonevnts.assign(buttonKeys.size(),t);
 
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 
 
 	for (unsigned i = 0; i < jointKeys.size(); i++) {
@@ -364,7 +364,7 @@ void Sensors::initialization() {
 
 	angle[0].init(60000);
 	angle[1].init(60000);
-#ifndef KROBOT_IS_REMOTE_OFF
+#ifdef KROBOT_IS_REMOTE
 	jointaccess.ConnectToVariables(KAlBroker::Instance().GetBroker(),jointKeys,false);
 	sensoraccess.ConnectToVariables(KAlBroker::Instance().GetBroker(),sensorKeys,false);
 	buttonaccess.ConnectToVariables(KAlBroker::Instance().GetBroker(),buttonKeys,false);

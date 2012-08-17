@@ -8,9 +8,10 @@
 #ifndef ALDEBARAN_PROXY_H_
 #define ALDEBARAN_PROXY_H_
 
-#ifdef NAOQI_1_10_10
-#include <alcore/alptr.h>
+#ifdef NAOQI_1_12_5
+#include <boost/shared_ptr.hpp>
 #include <alcommon/alproxy.h>
+#include <alcommon/albroker.h>
 #include <alproxies/almemoryproxy.h>
 
 #endif

@@ -17,7 +17,7 @@
 //______________________________________________
 // constructor
 //______________________________________________
-mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name ): AL::ALModule(broker, name )
+mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string& name ): AL::ALModule(broker, name )
 {
   setModuleDescription( "This is the Kouretes Team root module " );
 
@@ -26,7 +26,7 @@ mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name )
 
   functionName( "Stop", "mainModule" ,  "Method to stop Talws" );
   BIND_METHOD( mainModule::Stop );
-  AL::ALPtr<AL::ALMemoryProxy> memory;
+  boost::shared_ptr<AL::ALMemoryProxy> memory;
   try {
 		memory = broker->getMemoryProxy();
 		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::BODY_ID, memory->getData("Device/DeviceList/ChestBoard/BodyNickName"));

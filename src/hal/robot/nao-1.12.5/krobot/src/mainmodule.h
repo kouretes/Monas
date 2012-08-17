@@ -7,7 +7,7 @@
 #ifndef KROBOT_MAINMODULE_H
 #define KROBOT_MAINMODULE_H
 
-#include <alcore/alptr.h>
+#include <boost/shared_ptr.hpp>
 #include <alcommon/almodule.h>
 
 #include "architecture/talws.h"
@@ -28,7 +28,8 @@ class mainModule : public AL::ALModule
     /**
      * Default Constructor.
      */
-     mainModule(AL::ALPtr<AL::ALBroker> pBroker, const std::string& pName );
+
+     mainModule(boost::shared_ptr<AL::ALBroker> pBroker, const std::string& pName );
 
     /**
      * Destructor.
