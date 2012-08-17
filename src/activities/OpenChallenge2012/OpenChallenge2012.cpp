@@ -26,7 +26,7 @@ namespace
 }
 using namespace std;
 using namespace KDeviceLists;
-OpenChallenge2012::OpenChallenge2012(Blackboard &b) : IActivity(b)
+OpenChallenge2012::OpenChallenge2012(Blackboard &b,XmlNode &x) : IActivity(b,x)
 {
 	waitfor = microsec_clock::universal_time() - hours(1);
 }

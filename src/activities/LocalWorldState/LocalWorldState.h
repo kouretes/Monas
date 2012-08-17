@@ -9,9 +9,6 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-//#define KPROFILING_ENABLED
-
-#include "tools/profiler.hpp"
 #include "BallFilter.h"
 #include "KLocalization.h"
 #include "PracticalSocket.h"
@@ -23,7 +20,7 @@ class LocalWorldState: public IActivity
 {
 
 public:
-	ACTIVITY_VISIBLE LocalWorldState(Blackboard &b);
+	ACTIVITY_CONSTRUCTOR(LocalWorldState)
 	ACTIVITY_VISIBLE ~LocalWorldState()
 	{
 		if (serverpid != -1)
@@ -54,9 +51,6 @@ private:
 
 	//localization world
 	KLocalization localizationWorld;	
-
-	//Profiles
-	mutable KProfiling::profiler vprof;
 
 	//Observations and odometry data to feed localization
 	vector<KObservationModel> currentObservation;

@@ -39,7 +39,9 @@ namespace statechart_engine {
             Narukom* _narukom;
 
             Blackboard _blackboard;
-
+			
+        	XmlNode _xmlnode;
+			
             ThreadPool _tp;
 
             ThreadPool _timeoutpool;

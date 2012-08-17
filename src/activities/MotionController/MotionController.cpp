@@ -26,7 +26,7 @@ ACTIVITY_REGISTER(MotionController);
 using namespace std;
 using namespace KDeviceLists;
 
-MotionController::MotionController(Blackboard &b) : IActivity(b)
+MotionController::MotionController(Blackboard &b,XmlNode &x) : IActivity(b,x)
 {
 	waitfor = microsec_clock::universal_time() - hours(1);
 }

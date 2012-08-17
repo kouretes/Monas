@@ -25,6 +25,12 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
 option ( Webots "Webots ..." )
+
+
+if ( "${TargetPlatform}" STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao"  )
+	add_definitions(" -DRUN_ON_NAO  ")
+endif("${TargetPlatform}" STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao")
+
 set ( NaoQiVersion 1.10.10 CACHE STRING "Set the NaoQi version" )
 
 

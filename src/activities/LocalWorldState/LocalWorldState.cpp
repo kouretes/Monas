@@ -16,10 +16,7 @@ using namespace std;
 
 ACTIVITY_REGISTER(LocalWorldState);
 
-LocalWorldState::LocalWorldState(Blackboard &b) : IActivity(b),
-	vprof("LocalWorldState")
-{
-}
+
 
 bool LocalWorldState::debugmode = false;
 TCPSocket * LocalWorldState::sock;
@@ -114,7 +111,6 @@ int LocalWorldState::Execute()
 	_blk.publishSignal(DebugDataForGUI, "debug");
 #endif
 
-	vprof.generate_report(10);
 	return 0;
 }
 

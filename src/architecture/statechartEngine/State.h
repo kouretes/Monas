@@ -9,6 +9,14 @@
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
+#include "architecture/XmlManager/XmlConfigurator.h"
+
+#include "architecture/periodicthread.h"
+
+#ifdef RUN_ON_NAO
+#include "hal/robot/generic_nao/robot_consts.h"
+#endif
+
 #include "Containers.h"
 
 #include <string>
@@ -44,6 +52,8 @@ namespace statechart_engine {
             Narukom* GetCom () const; //TODO add const
 
             Blackboard* GetBlackboard () const; //TODO add const
+            
+            XmlNode* GetXmlNode () const; //TODO add const
 
             virtual volatile int* GetIsRunningRef () const;
 
@@ -70,6 +80,8 @@ namespace statechart_engine {
             Narukom* _com;
 
             Blackboard* _blk;
+            
+            XmlNode* _xml;
 
     };
 

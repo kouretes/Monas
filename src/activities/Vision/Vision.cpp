@@ -355,8 +355,8 @@ void Vision::fetchAndProcess()
 
 }
 
-Vision::Vision(Blackboard &b) :
-	IActivity(b), xmlconfig(NULL), vprof("Vision")
+Vision::Vision(Blackboard &b,XmlNode &x) :
+	IActivity(b,x), xmlconfig(NULL), vprof("Vision")
 {
 ;
 }

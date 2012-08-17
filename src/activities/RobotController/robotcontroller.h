@@ -34,7 +34,7 @@ class RobotController: public IActivity {
 		* @brief Does nothing
 		*/
 
-		ACTIVITY_VISIBLE RobotController(Blackboard &b);
+		ACTIVITY_VISIBLE RobotController(Blackboard &b,XmlNode &x);
 		/**
 		* @brief Activity's Execute function. Either reads new gamestate if available and checks if it is changed regarding the old one.
 		* Either read the button events ALmemory's values and changes the state.

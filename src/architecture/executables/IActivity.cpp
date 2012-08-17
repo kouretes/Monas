@@ -1,4 +1,4 @@
 #include "IActivity.h"
 
-IActivity::IActivity ( Blackboard & b) :  _blk(b){
+IActivity::IActivity ( Blackboard & b,XmlNode & x) :  _blk(b), _xml(x){
 }

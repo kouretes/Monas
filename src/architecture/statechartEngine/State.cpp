@@ -19,7 +19,7 @@ namespace statechart_engine {
         if ( _parent ) {
 
             _blk = _parent->AddChild ( this );
-
+			_xml = _parent->GetXmlNode();
             _isRunning = _parent->GetIsRunningRef();
 	    *_isRunning = 0;
 
@@ -117,9 +117,13 @@ namespace statechart_engine {
     Blackboard* State::GetBlackboard () const { //TODO
         return _blk;
     }
-
+    
+    XmlNode* State::GetXmlNode () const { //TODO
+        return _xml;
+    }
+	
     volatile int* State::GetIsRunningRef () const {
-      return _isRunning;
+		return _isRunning;
     }
 
     const std::string State::GetName() const {

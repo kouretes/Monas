@@ -35,7 +35,7 @@ class Vision: public IActivity
 		/**
 		 * The only available constructor:
 		 */
-		ACTIVITY_VISIBLE Vision(Blackboard& b);
+		ACTIVITY_VISIBLE Vision(Blackboard& b,XmlNode &x);
 		ACTIVITY_VISIBLE ~Vision()
 		{
 			if(segtop==segbottom&&segbottom!=NULL)

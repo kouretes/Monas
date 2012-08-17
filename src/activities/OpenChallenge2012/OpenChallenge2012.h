@@ -39,7 +39,7 @@ class OpenChallenge2012 : public IActivity{
 
 public:
 
-	OpenChallenge2012(Blackboard &b);
+	OpenChallenge2012(Blackboard &b,XmlNode &x);
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();

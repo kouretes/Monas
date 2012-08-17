@@ -6,9 +6,18 @@ namespace statechart_engine {
     : OrState ( name, 0 ), _blackboard("StatechartBlakboard"), notified(false) { //FIXME
         _com = com;
         _blk = &_blackboard;
+        _xml = &_xmlnode;
         _isRunning = new volatile int; //FIXME mem leak
         *_isRunning = 0;
-	_blk->attachTo(*_com->get_message_queue());
+		_blk->attachTo(*_com->get_message_queue());
+		
+		#ifdef RUN_ON_NAO
+		_xmlnode = XmlNode(ArchConfig::Instance().GetConfigPrefix(),KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
+															,KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID));
+		#else
+		_xmlnode = XmlNode(ArchConfig::Instance().GetConfigPrefix(),"hi","bi");
+		#endif
+		_xmlnode.print("");
     }
 
     Statechart::~Statechart () {
@@ -42,8 +51,6 @@ namespace statechart_engine {
     }
 
     int Statechart::Execute () {
-
-
         while ( Step() ) ;
         notified = false;
 		{

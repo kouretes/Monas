@@ -9,9 +9,15 @@
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
+#include "architecture/XmlManager/XmlConfigurator.h"
+
 #include "architecture/executables/IActivity.h"
 
 #include "architecture/periodicthread.h"
+
+#ifdef RUN_ON_NAO
+#include "hal/robot/generic_nao/robot_consts.h"
+#endif
 
 #include "agentTiming.h"
 #include "tools/toString.h"
@@ -38,6 +44,7 @@ class Agent : public KSystem::PeriodicThread {
 
         Narukom & _com;
         Blackboard _blk;
+        XmlNode _xml;
 
         typedef std::vector<IActivity*> ActivList;
 
