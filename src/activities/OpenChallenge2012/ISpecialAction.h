@@ -6,22 +6,24 @@
 
 #include <string>
 
-class ISpecialAction  {
+class ISpecialAction
+{
 
-    public:        
+public:
 
-        virtual std::string GetName ()=0;
-	
-	virtual int ExecutePost()=0;
+	virtual std::string GetName () = 0;
+
+	virtual int ExecutePost() = 0;
 
 };
 
 typedef GenericFactory < ISpecialAction, std::string >  SpecialActionFactory;
 
 template<class T>
-struct SpecialActionRegistrar {
-    typedef Registrar<SpecialActionFactory,ISpecialAction,std::string,T> Type;
+struct SpecialActionRegistrar
+{
+	typedef Registrar<SpecialActionFactory, ISpecialAction, std::string, T> Type;
 };
 
 #endif /* _ISPECIALACTION_H_ */
- 
+

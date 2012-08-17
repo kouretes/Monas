@@ -40,838 +40,887 @@ class ObservationMessage;
 
 // ===================================================================
 
-class BallTrackMessage : public ::google::protobuf::Message {
- public:
-  BallTrackMessage();
-  virtual ~BallTrackMessage();
-  
-  BallTrackMessage(const BallTrackMessage& from);
-  
-  inline BallTrackMessage& operator=(const BallTrackMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const BallTrackMessage& default_instance();
-  
-  void Swap(BallTrackMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  BallTrackMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const BallTrackMessage& from);
-  void MergeFrom(const BallTrackMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required float cx = 6 [default = 0];
-  inline bool has_cx() const;
-  inline void clear_cx();
-  static const int kCxFieldNumber = 6;
-  inline float cx() const;
-  inline void set_cx(float value);
-  
-  // required float cy = 7 [default = 0];
-  inline bool has_cy() const;
-  inline void clear_cy();
-  static const int kCyFieldNumber = 7;
-  inline float cy() const;
-  inline void set_cy(float value);
-  
-  // required float referenceYaw = 8 [default = 0];
-  inline bool has_referenceyaw() const;
-  inline void clear_referenceyaw();
-  static const int kReferenceYawFieldNumber = 8;
-  inline float referenceyaw() const;
-  inline void set_referenceyaw(float value);
-  
-  // required float referencePitch = 9 [default = 0];
-  inline bool has_referencepitch() const;
-  inline void clear_referencepitch();
-  static const int kReferencePitchFieldNumber = 9;
-  inline float referencepitch() const;
-  inline void set_referencepitch(float value);
-  
-  // required float radius = 10 [default = 0];
-  inline bool has_radius() const;
-  inline void clear_radius();
-  static const int kRadiusFieldNumber = 10;
-  inline float radius() const;
-  inline void set_radius(float value);
-  
-  // @@protoc_insertion_point(class_scope:BallTrackMessage)
- private:
-  inline void set_has_cx();
-  inline void clear_has_cx();
-  inline void set_has_cy();
-  inline void clear_has_cy();
-  inline void set_has_referenceyaw();
-  inline void clear_has_referenceyaw();
-  inline void set_has_referencepitch();
-  inline void clear_has_referencepitch();
-  inline void set_has_radius();
-  inline void clear_has_radius();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  float cx_;
-  float cy_;
-  float referenceyaw_;
-  float referencepitch_;
-  float radius_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_VisionObservations_2eproto();
-  friend void protobuf_AssignDesc_VisionObservations_2eproto();
-  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
-  
-  void InitAsDefaultInstance();
-  static BallTrackMessage* default_instance_;
+class BallTrackMessage : public ::google::protobuf::Message
+{
+public:
+	BallTrackMessage();
+	virtual ~BallTrackMessage();
+
+	BallTrackMessage(const BallTrackMessage& from);
+
+	inline BallTrackMessage& operator=(const BallTrackMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const BallTrackMessage& default_instance();
+
+	void Swap(BallTrackMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	BallTrackMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const BallTrackMessage& from);
+	void MergeFrom(const BallTrackMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required float cx = 6 [default = 0];
+	inline bool has_cx() const;
+	inline void clear_cx();
+	static const int kCxFieldNumber = 6;
+	inline float cx() const;
+	inline void set_cx(float value);
+
+	// required float cy = 7 [default = 0];
+	inline bool has_cy() const;
+	inline void clear_cy();
+	static const int kCyFieldNumber = 7;
+	inline float cy() const;
+	inline void set_cy(float value);
+
+	// required float referenceYaw = 8 [default = 0];
+	inline bool has_referenceyaw() const;
+	inline void clear_referenceyaw();
+	static const int kReferenceYawFieldNumber = 8;
+	inline float referenceyaw() const;
+	inline void set_referenceyaw(float value);
+
+	// required float referencePitch = 9 [default = 0];
+	inline bool has_referencepitch() const;
+	inline void clear_referencepitch();
+	static const int kReferencePitchFieldNumber = 9;
+	inline float referencepitch() const;
+	inline void set_referencepitch(float value);
+
+	// required float radius = 10 [default = 0];
+	inline bool has_radius() const;
+	inline void clear_radius();
+	static const int kRadiusFieldNumber = 10;
+	inline float radius() const;
+	inline void set_radius(float value);
+
+	// @@protoc_insertion_point(class_scope:BallTrackMessage)
+private:
+	inline void set_has_cx();
+	inline void clear_has_cx();
+	inline void set_has_cy();
+	inline void clear_has_cy();
+	inline void set_has_referenceyaw();
+	inline void clear_has_referenceyaw();
+	inline void set_has_referencepitch();
+	inline void clear_has_referencepitch();
+	inline void set_has_radius();
+	inline void clear_has_radius();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	float cx_;
+	float cy_;
+	float referenceyaw_;
+	float referencepitch_;
+	float radius_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+	friend void  protobuf_AddDesc_VisionObservations_2eproto();
+	friend void protobuf_AssignDesc_VisionObservations_2eproto();
+	friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+
+	void InitAsDefaultInstance();
+	static BallTrackMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class BallObject : public ::google::protobuf::Message {
- public:
-  BallObject();
-  virtual ~BallObject();
-  
-  BallObject(const BallObject& from);
-  
-  inline BallObject& operator=(const BallObject& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const BallObject& default_instance();
-  
-  void Swap(BallObject* other);
-  
-  // implements Message ----------------------------------------------
-  
-  BallObject* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const BallObject& from);
-  void MergeFrom(const BallObject& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required float dist = 1 [default = 0];
-  inline bool has_dist() const;
-  inline void clear_dist();
-  static const int kDistFieldNumber = 1;
-  inline float dist() const;
-  inline void set_dist(float value);
-  
-  // required float bearing = 2 [default = 0];
-  inline bool has_bearing() const;
-  inline void clear_bearing();
-  static const int kBearingFieldNumber = 2;
-  inline float bearing() const;
-  inline void set_bearing(float value);
-  
-  // optional float ball_diameter = 3 [default = 0];
-  inline bool has_ball_diameter() const;
-  inline void clear_ball_diameter();
-  static const int kBallDiameterFieldNumber = 3;
-  inline float ball_diameter() const;
-  inline void set_ball_diameter(float value);
-  
-  // @@protoc_insertion_point(class_scope:BallObject)
- private:
-  inline void set_has_dist();
-  inline void clear_has_dist();
-  inline void set_has_bearing();
-  inline void clear_has_bearing();
-  inline void set_has_ball_diameter();
-  inline void clear_has_ball_diameter();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  float dist_;
-  float bearing_;
-  float ball_diameter_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_VisionObservations_2eproto();
-  friend void protobuf_AssignDesc_VisionObservations_2eproto();
-  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
-  
-  void InitAsDefaultInstance();
-  static BallObject* default_instance_;
+class BallObject : public ::google::protobuf::Message
+{
+public:
+	BallObject();
+	virtual ~BallObject();
+
+	BallObject(const BallObject& from);
+
+	inline BallObject& operator=(const BallObject& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const BallObject& default_instance();
+
+	void Swap(BallObject* other);
+
+	// implements Message ----------------------------------------------
+
+	BallObject* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const BallObject& from);
+	void MergeFrom(const BallObject& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required float dist = 1 [default = 0];
+	inline bool has_dist() const;
+	inline void clear_dist();
+	static const int kDistFieldNumber = 1;
+	inline float dist() const;
+	inline void set_dist(float value);
+
+	// required float bearing = 2 [default = 0];
+	inline bool has_bearing() const;
+	inline void clear_bearing();
+	static const int kBearingFieldNumber = 2;
+	inline float bearing() const;
+	inline void set_bearing(float value);
+
+	// optional float ball_diameter = 3 [default = 0];
+	inline bool has_ball_diameter() const;
+	inline void clear_ball_diameter();
+	static const int kBallDiameterFieldNumber = 3;
+	inline float ball_diameter() const;
+	inline void set_ball_diameter(float value);
+
+	// @@protoc_insertion_point(class_scope:BallObject)
+private:
+	inline void set_has_dist();
+	inline void clear_has_dist();
+	inline void set_has_bearing();
+	inline void clear_has_bearing();
+	inline void set_has_ball_diameter();
+	inline void clear_has_ball_diameter();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	float dist_;
+	float bearing_;
+	float ball_diameter_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+	friend void  protobuf_AddDesc_VisionObservations_2eproto();
+	friend void protobuf_AssignDesc_VisionObservations_2eproto();
+	friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+
+	void InitAsDefaultInstance();
+	static BallObject* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class NamedObject : public ::google::protobuf::Message {
- public:
-  NamedObject();
-  virtual ~NamedObject();
-  
-  NamedObject(const NamedObject& from);
-  
-  inline NamedObject& operator=(const NamedObject& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const NamedObject& default_instance();
-  
-  void Swap(NamedObject* other);
-  
-  // implements Message ----------------------------------------------
-  
-  NamedObject* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const NamedObject& from);
-  void MergeFrom(const NamedObject& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required string object_name = 1 [default = ""];
-  inline bool has_object_name() const;
-  inline void clear_object_name();
-  static const int kObjectNameFieldNumber = 1;
-  inline const ::std::string& object_name() const;
-  inline void set_object_name(const ::std::string& value);
-  inline void set_object_name(const char* value);
-  inline void set_object_name(const char* value, size_t size);
-  inline ::std::string* mutable_object_name();
-  inline ::std::string* release_object_name();
-  
-  // required float bearing = 2 [default = -1];
-  inline bool has_bearing() const;
-  inline void clear_bearing();
-  static const int kBearingFieldNumber = 2;
-  inline float bearing() const;
-  inline void set_bearing(float value);
-  
-  // required float distance = 3 [default = -1];
-  inline bool has_distance() const;
-  inline void clear_distance();
-  static const int kDistanceFieldNumber = 3;
-  inline float distance() const;
-  inline void set_distance(float value);
-  
-  // required float bearing_dev = 4 [default = -1];
-  inline bool has_bearing_dev() const;
-  inline void clear_bearing_dev();
-  static const int kBearingDevFieldNumber = 4;
-  inline float bearing_dev() const;
-  inline void set_bearing_dev(float value);
-  
-  // required float distance_dev = 5 [default = -1];
-  inline bool has_distance_dev() const;
-  inline void clear_distance_dev();
-  static const int kDistanceDevFieldNumber = 5;
-  inline float distance_dev() const;
-  inline void set_distance_dev(float value);
-  
-  // @@protoc_insertion_point(class_scope:NamedObject)
- private:
-  inline void set_has_object_name();
-  inline void clear_has_object_name();
-  inline void set_has_bearing();
-  inline void clear_has_bearing();
-  inline void set_has_distance();
-  inline void clear_has_distance();
-  inline void set_has_bearing_dev();
-  inline void clear_has_bearing_dev();
-  inline void set_has_distance_dev();
-  inline void clear_has_distance_dev();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* object_name_;
-  float bearing_;
-  float distance_;
-  float bearing_dev_;
-  float distance_dev_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_VisionObservations_2eproto();
-  friend void protobuf_AssignDesc_VisionObservations_2eproto();
-  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
-  
-  void InitAsDefaultInstance();
-  static NamedObject* default_instance_;
+class NamedObject : public ::google::protobuf::Message
+{
+public:
+	NamedObject();
+	virtual ~NamedObject();
+
+	NamedObject(const NamedObject& from);
+
+	inline NamedObject& operator=(const NamedObject& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const NamedObject& default_instance();
+
+	void Swap(NamedObject* other);
+
+	// implements Message ----------------------------------------------
+
+	NamedObject* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const NamedObject& from);
+	void MergeFrom(const NamedObject& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required string object_name = 1 [default = ""];
+	inline bool has_object_name() const;
+	inline void clear_object_name();
+	static const int kObjectNameFieldNumber = 1;
+	inline const ::std::string& object_name() const;
+	inline void set_object_name(const ::std::string& value);
+	inline void set_object_name(const char* value);
+	inline void set_object_name(const char* value, size_t size);
+	inline ::std::string* mutable_object_name();
+	inline ::std::string* release_object_name();
+
+	// required float bearing = 2 [default = -1];
+	inline bool has_bearing() const;
+	inline void clear_bearing();
+	static const int kBearingFieldNumber = 2;
+	inline float bearing() const;
+	inline void set_bearing(float value);
+
+	// required float distance = 3 [default = -1];
+	inline bool has_distance() const;
+	inline void clear_distance();
+	static const int kDistanceFieldNumber = 3;
+	inline float distance() const;
+	inline void set_distance(float value);
+
+	// required float bearing_dev = 4 [default = -1];
+	inline bool has_bearing_dev() const;
+	inline void clear_bearing_dev();
+	static const int kBearingDevFieldNumber = 4;
+	inline float bearing_dev() const;
+	inline void set_bearing_dev(float value);
+
+	// required float distance_dev = 5 [default = -1];
+	inline bool has_distance_dev() const;
+	inline void clear_distance_dev();
+	static const int kDistanceDevFieldNumber = 5;
+	inline float distance_dev() const;
+	inline void set_distance_dev(float value);
+
+	// @@protoc_insertion_point(class_scope:NamedObject)
+private:
+	inline void set_has_object_name();
+	inline void clear_has_object_name();
+	inline void set_has_bearing();
+	inline void clear_has_bearing();
+	inline void set_has_distance();
+	inline void clear_has_distance();
+	inline void set_has_bearing_dev();
+	inline void clear_has_bearing_dev();
+	inline void set_has_distance_dev();
+	inline void clear_has_distance_dev();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::std::string* object_name_;
+	float bearing_;
+	float distance_;
+	float bearing_dev_;
+	float distance_dev_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+	friend void  protobuf_AddDesc_VisionObservations_2eproto();
+	friend void protobuf_AssignDesc_VisionObservations_2eproto();
+	friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+
+	void InitAsDefaultInstance();
+	static NamedObject* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class UnidentifiedObject : public ::google::protobuf::Message {
- public:
-  UnidentifiedObject();
-  virtual ~UnidentifiedObject();
-  
-  UnidentifiedObject(const UnidentifiedObject& from);
-  
-  inline UnidentifiedObject& operator=(const UnidentifiedObject& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const UnidentifiedObject& default_instance();
-  
-  void Swap(UnidentifiedObject* other);
-  
-  // implements Message ----------------------------------------------
-  
-  UnidentifiedObject* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const UnidentifiedObject& from);
-  void MergeFrom(const UnidentifiedObject& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required string object_type = 1 [default = ""];
-  inline bool has_object_type() const;
-  inline void clear_object_type();
-  static const int kObjectTypeFieldNumber = 1;
-  inline const ::std::string& object_type() const;
-  inline void set_object_type(const ::std::string& value);
-  inline void set_object_type(const char* value);
-  inline void set_object_type(const char* value, size_t size);
-  inline ::std::string* mutable_object_type();
-  inline ::std::string* release_object_type();
-  
-  // required float bearing = 2 [default = -1];
-  inline bool has_bearing() const;
-  inline void clear_bearing();
-  static const int kBearingFieldNumber = 2;
-  inline float bearing() const;
-  inline void set_bearing(float value);
-  
-  // optional float distance = 3 [default = -1];
-  inline bool has_distance() const;
-  inline void clear_distance();
-  static const int kDistanceFieldNumber = 3;
-  inline float distance() const;
-  inline void set_distance(float value);
-  
-  // @@protoc_insertion_point(class_scope:UnidentifiedObject)
- private:
-  inline void set_has_object_type();
-  inline void clear_has_object_type();
-  inline void set_has_bearing();
-  inline void clear_has_bearing();
-  inline void set_has_distance();
-  inline void clear_has_distance();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* object_type_;
-  float bearing_;
-  float distance_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_VisionObservations_2eproto();
-  friend void protobuf_AssignDesc_VisionObservations_2eproto();
-  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
-  
-  void InitAsDefaultInstance();
-  static UnidentifiedObject* default_instance_;
+class UnidentifiedObject : public ::google::protobuf::Message
+{
+public:
+	UnidentifiedObject();
+	virtual ~UnidentifiedObject();
+
+	UnidentifiedObject(const UnidentifiedObject& from);
+
+	inline UnidentifiedObject& operator=(const UnidentifiedObject& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const UnidentifiedObject& default_instance();
+
+	void Swap(UnidentifiedObject* other);
+
+	// implements Message ----------------------------------------------
+
+	UnidentifiedObject* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const UnidentifiedObject& from);
+	void MergeFrom(const UnidentifiedObject& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required string object_type = 1 [default = ""];
+	inline bool has_object_type() const;
+	inline void clear_object_type();
+	static const int kObjectTypeFieldNumber = 1;
+	inline const ::std::string& object_type() const;
+	inline void set_object_type(const ::std::string& value);
+	inline void set_object_type(const char* value);
+	inline void set_object_type(const char* value, size_t size);
+	inline ::std::string* mutable_object_type();
+	inline ::std::string* release_object_type();
+
+	// required float bearing = 2 [default = -1];
+	inline bool has_bearing() const;
+	inline void clear_bearing();
+	static const int kBearingFieldNumber = 2;
+	inline float bearing() const;
+	inline void set_bearing(float value);
+
+	// optional float distance = 3 [default = -1];
+	inline bool has_distance() const;
+	inline void clear_distance();
+	static const int kDistanceFieldNumber = 3;
+	inline float distance() const;
+	inline void set_distance(float value);
+
+	// @@protoc_insertion_point(class_scope:UnidentifiedObject)
+private:
+	inline void set_has_object_type();
+	inline void clear_has_object_type();
+	inline void set_has_bearing();
+	inline void clear_has_bearing();
+	inline void set_has_distance();
+	inline void clear_has_distance();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::std::string* object_type_;
+	float bearing_;
+	float distance_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+	friend void  protobuf_AddDesc_VisionObservations_2eproto();
+	friend void protobuf_AssignDesc_VisionObservations_2eproto();
+	friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+
+	void InitAsDefaultInstance();
+	static UnidentifiedObject* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class LineObject : public ::google::protobuf::Message {
- public:
-  LineObject();
-  virtual ~LineObject();
-  
-  LineObject(const LineObject& from);
-  
-  inline LineObject& operator=(const LineObject& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const LineObject& default_instance();
-  
-  void Swap(LineObject* other);
-  
-  // implements Message ----------------------------------------------
-  
-  LineObject* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const LineObject& from);
-  void MergeFrom(const LineObject& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required float start_bearing = 1 [default = 0];
-  inline bool has_start_bearing() const;
-  inline void clear_start_bearing();
-  static const int kStartBearingFieldNumber = 1;
-  inline float start_bearing() const;
-  inline void set_start_bearing(float value);
-  
-  // required float start_distance = 2 [default = 0];
-  inline bool has_start_distance() const;
-  inline void clear_start_distance();
-  static const int kStartDistanceFieldNumber = 2;
-  inline float start_distance() const;
-  inline void set_start_distance(float value);
-  
-  // required float end_bearing = 3 [default = 0];
-  inline bool has_end_bearing() const;
-  inline void clear_end_bearing();
-  static const int kEndBearingFieldNumber = 3;
-  inline float end_bearing() const;
-  inline void set_end_bearing(float value);
-  
-  // required float end_distance = 4 [default = 0];
-  inline bool has_end_distance() const;
-  inline void clear_end_distance();
-  static const int kEndDistanceFieldNumber = 4;
-  inline float end_distance() const;
-  inline void set_end_distance(float value);
-  
-  // @@protoc_insertion_point(class_scope:LineObject)
- private:
-  inline void set_has_start_bearing();
-  inline void clear_has_start_bearing();
-  inline void set_has_start_distance();
-  inline void clear_has_start_distance();
-  inline void set_has_end_bearing();
-  inline void clear_has_end_bearing();
-  inline void set_has_end_distance();
-  inline void clear_has_end_distance();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  float start_bearing_;
-  float start_distance_;
-  float end_bearing_;
-  float end_distance_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_VisionObservations_2eproto();
-  friend void protobuf_AssignDesc_VisionObservations_2eproto();
-  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
-  
-  void InitAsDefaultInstance();
-  static LineObject* default_instance_;
+class LineObject : public ::google::protobuf::Message
+{
+public:
+	LineObject();
+	virtual ~LineObject();
+
+	LineObject(const LineObject& from);
+
+	inline LineObject& operator=(const LineObject& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const LineObject& default_instance();
+
+	void Swap(LineObject* other);
+
+	// implements Message ----------------------------------------------
+
+	LineObject* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const LineObject& from);
+	void MergeFrom(const LineObject& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required float start_bearing = 1 [default = 0];
+	inline bool has_start_bearing() const;
+	inline void clear_start_bearing();
+	static const int kStartBearingFieldNumber = 1;
+	inline float start_bearing() const;
+	inline void set_start_bearing(float value);
+
+	// required float start_distance = 2 [default = 0];
+	inline bool has_start_distance() const;
+	inline void clear_start_distance();
+	static const int kStartDistanceFieldNumber = 2;
+	inline float start_distance() const;
+	inline void set_start_distance(float value);
+
+	// required float end_bearing = 3 [default = 0];
+	inline bool has_end_bearing() const;
+	inline void clear_end_bearing();
+	static const int kEndBearingFieldNumber = 3;
+	inline float end_bearing() const;
+	inline void set_end_bearing(float value);
+
+	// required float end_distance = 4 [default = 0];
+	inline bool has_end_distance() const;
+	inline void clear_end_distance();
+	static const int kEndDistanceFieldNumber = 4;
+	inline float end_distance() const;
+	inline void set_end_distance(float value);
+
+	// @@protoc_insertion_point(class_scope:LineObject)
+private:
+	inline void set_has_start_bearing();
+	inline void clear_has_start_bearing();
+	inline void set_has_start_distance();
+	inline void clear_has_start_distance();
+	inline void set_has_end_bearing();
+	inline void clear_has_end_bearing();
+	inline void set_has_end_distance();
+	inline void clear_has_end_distance();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	float start_bearing_;
+	float start_distance_;
+	float end_bearing_;
+	float end_distance_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+	friend void  protobuf_AddDesc_VisionObservations_2eproto();
+	friend void protobuf_AssignDesc_VisionObservations_2eproto();
+	friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+
+	void InitAsDefaultInstance();
+	static LineObject* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class PointObject : public ::google::protobuf::Message {
- public:
-  PointObject();
-  virtual ~PointObject();
-  
-  PointObject(const PointObject& from);
-  
-  inline PointObject& operator=(const PointObject& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const PointObject& default_instance();
-  
-  void Swap(PointObject* other);
-  
-  // implements Message ----------------------------------------------
-  
-  PointObject* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const PointObject& from);
-  void MergeFrom(const PointObject& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required float distance = 1;
-  inline bool has_distance() const;
-  inline void clear_distance();
-  static const int kDistanceFieldNumber = 1;
-  inline float distance() const;
-  inline void set_distance(float value);
-  
-  // required float bearing = 2;
-  inline bool has_bearing() const;
-  inline void clear_bearing();
-  static const int kBearingFieldNumber = 2;
-  inline float bearing() const;
-  inline void set_bearing(float value);
-  
-  // @@protoc_insertion_point(class_scope:PointObject)
- private:
-  inline void set_has_distance();
-  inline void clear_has_distance();
-  inline void set_has_bearing();
-  inline void clear_has_bearing();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  float distance_;
-  float bearing_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_VisionObservations_2eproto();
-  friend void protobuf_AssignDesc_VisionObservations_2eproto();
-  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
-  
-  void InitAsDefaultInstance();
-  static PointObject* default_instance_;
+class PointObject : public ::google::protobuf::Message
+{
+public:
+	PointObject();
+	virtual ~PointObject();
+
+	PointObject(const PointObject& from);
+
+	inline PointObject& operator=(const PointObject& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const PointObject& default_instance();
+
+	void Swap(PointObject* other);
+
+	// implements Message ----------------------------------------------
+
+	PointObject* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const PointObject& from);
+	void MergeFrom(const PointObject& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required float distance = 1;
+	inline bool has_distance() const;
+	inline void clear_distance();
+	static const int kDistanceFieldNumber = 1;
+	inline float distance() const;
+	inline void set_distance(float value);
+
+	// required float bearing = 2;
+	inline bool has_bearing() const;
+	inline void clear_bearing();
+	static const int kBearingFieldNumber = 2;
+	inline float bearing() const;
+	inline void set_bearing(float value);
+
+	// @@protoc_insertion_point(class_scope:PointObject)
+private:
+	inline void set_has_distance();
+	inline void clear_has_distance();
+	inline void set_has_bearing();
+	inline void clear_has_bearing();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	float distance_;
+	float bearing_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+	friend void  protobuf_AddDesc_VisionObservations_2eproto();
+	friend void protobuf_AssignDesc_VisionObservations_2eproto();
+	friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+
+	void InitAsDefaultInstance();
+	static PointObject* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class ObservationMessage : public ::google::protobuf::Message {
- public:
-  ObservationMessage();
-  virtual ~ObservationMessage();
-  
-  ObservationMessage(const ObservationMessage& from);
-  
-  inline ObservationMessage& operator=(const ObservationMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const ObservationMessage& default_instance();
-  
-  void Swap(ObservationMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  ObservationMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ObservationMessage& from);
-  void MergeFrom(const ObservationMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required string image_timestamp = 1 [default = ""];
-  inline bool has_image_timestamp() const;
-  inline void clear_image_timestamp();
-  static const int kImageTimestampFieldNumber = 1;
-  inline const ::std::string& image_timestamp() const;
-  inline void set_image_timestamp(const ::std::string& value);
-  inline void set_image_timestamp(const char* value);
-  inline void set_image_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_image_timestamp();
-  inline ::std::string* release_image_timestamp();
-  
-  // optional .BallObject ball = 2;
-  inline bool has_ball() const;
-  inline void clear_ball();
-  static const int kBallFieldNumber = 2;
-  inline const ::BallObject& ball() const;
-  inline ::BallObject* mutable_ball();
-  inline ::BallObject* release_ball();
-  
-  // repeated .NamedObject regular_objects = 3;
-  inline int regular_objects_size() const;
-  inline void clear_regular_objects();
-  static const int kRegularObjectsFieldNumber = 3;
-  inline const ::NamedObject& regular_objects(int index) const;
-  inline ::NamedObject* mutable_regular_objects(int index);
-  inline ::NamedObject* add_regular_objects();
-  inline const ::google::protobuf::RepeatedPtrField< ::NamedObject >&
-      regular_objects() const;
-  inline ::google::protobuf::RepeatedPtrField< ::NamedObject >*
-      mutable_regular_objects();
-  
-  // repeated .UnidentifiedObject adhoc_objects = 4;
-  inline int adhoc_objects_size() const;
-  inline void clear_adhoc_objects();
-  static const int kAdhocObjectsFieldNumber = 4;
-  inline const ::UnidentifiedObject& adhoc_objects(int index) const;
-  inline ::UnidentifiedObject* mutable_adhoc_objects(int index);
-  inline ::UnidentifiedObject* add_adhoc_objects();
-  inline const ::google::protobuf::RepeatedPtrField< ::UnidentifiedObject >&
-      adhoc_objects() const;
-  inline ::google::protobuf::RepeatedPtrField< ::UnidentifiedObject >*
-      mutable_adhoc_objects();
-  
-  // repeated .PointObject corner_objects = 5;
-  inline int corner_objects_size() const;
-  inline void clear_corner_objects();
-  static const int kCornerObjectsFieldNumber = 5;
-  inline const ::PointObject& corner_objects(int index) const;
-  inline ::PointObject* mutable_corner_objects(int index);
-  inline ::PointObject* add_corner_objects();
-  inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
-      corner_objects() const;
-  inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
-      mutable_corner_objects();
-  
-  // repeated .PointObject intersection_objects = 6;
-  inline int intersection_objects_size() const;
-  inline void clear_intersection_objects();
-  static const int kIntersectionObjectsFieldNumber = 6;
-  inline const ::PointObject& intersection_objects(int index) const;
-  inline ::PointObject* mutable_intersection_objects(int index);
-  inline ::PointObject* add_intersection_objects();
-  inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
-      intersection_objects() const;
-  inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
-      mutable_intersection_objects();
-  
-  // repeated .LineObject line_objects = 7;
-  inline int line_objects_size() const;
-  inline void clear_line_objects();
-  static const int kLineObjectsFieldNumber = 7;
-  inline const ::LineObject& line_objects(int index) const;
-  inline ::LineObject* mutable_line_objects(int index);
-  inline ::LineObject* add_line_objects();
-  inline const ::google::protobuf::RepeatedPtrField< ::LineObject >&
-      line_objects() const;
-  inline ::google::protobuf::RepeatedPtrField< ::LineObject >*
-      mutable_line_objects();
-  
-  // repeated .PointObject view_limit_points = 11;
-  inline int view_limit_points_size() const;
-  inline void clear_view_limit_points();
-  static const int kViewLimitPointsFieldNumber = 11;
-  inline const ::PointObject& view_limit_points(int index) const;
-  inline ::PointObject* mutable_view_limit_points(int index);
-  inline ::PointObject* add_view_limit_points();
-  inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
-      view_limit_points() const;
-  inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
-      mutable_view_limit_points();
-  
-  // @@protoc_insertion_point(class_scope:ObservationMessage)
- private:
-  inline void set_has_image_timestamp();
-  inline void clear_has_image_timestamp();
-  inline void set_has_ball();
-  inline void clear_has_ball();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* image_timestamp_;
-  ::BallObject* ball_;
-  ::google::protobuf::RepeatedPtrField< ::NamedObject > regular_objects_;
-  ::google::protobuf::RepeatedPtrField< ::UnidentifiedObject > adhoc_objects_;
-  ::google::protobuf::RepeatedPtrField< ::PointObject > corner_objects_;
-  ::google::protobuf::RepeatedPtrField< ::PointObject > intersection_objects_;
-  ::google::protobuf::RepeatedPtrField< ::LineObject > line_objects_;
-  ::google::protobuf::RepeatedPtrField< ::PointObject > view_limit_points_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_VisionObservations_2eproto();
-  friend void protobuf_AssignDesc_VisionObservations_2eproto();
-  friend void protobuf_ShutdownFile_VisionObservations_2eproto();
-  
-  void InitAsDefaultInstance();
-  static ObservationMessage* default_instance_;
+class ObservationMessage : public ::google::protobuf::Message
+{
+public:
+	ObservationMessage();
+	virtual ~ObservationMessage();
+
+	ObservationMessage(const ObservationMessage& from);
+
+	inline ObservationMessage& operator=(const ObservationMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const ObservationMessage& default_instance();
+
+	void Swap(ObservationMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	ObservationMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const ObservationMessage& from);
+	void MergeFrom(const ObservationMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required string image_timestamp = 1 [default = ""];
+	inline bool has_image_timestamp() const;
+	inline void clear_image_timestamp();
+	static const int kImageTimestampFieldNumber = 1;
+	inline const ::std::string& image_timestamp() const;
+	inline void set_image_timestamp(const ::std::string& value);
+	inline void set_image_timestamp(const char* value);
+	inline void set_image_timestamp(const char* value, size_t size);
+	inline ::std::string* mutable_image_timestamp();
+	inline ::std::string* release_image_timestamp();
+
+	// optional .BallObject ball = 2;
+	inline bool has_ball() const;
+	inline void clear_ball();
+	static const int kBallFieldNumber = 2;
+	inline const ::BallObject& ball() const;
+	inline ::BallObject* mutable_ball();
+	inline ::BallObject* release_ball();
+
+	// repeated .NamedObject regular_objects = 3;
+	inline int regular_objects_size() const;
+	inline void clear_regular_objects();
+	static const int kRegularObjectsFieldNumber = 3;
+	inline const ::NamedObject& regular_objects(int index) const;
+	inline ::NamedObject* mutable_regular_objects(int index);
+	inline ::NamedObject* add_regular_objects();
+	inline const ::google::protobuf::RepeatedPtrField< ::NamedObject >&
+	regular_objects() const;
+	inline ::google::protobuf::RepeatedPtrField< ::NamedObject >*
+	mutable_regular_objects();
+
+	// repeated .UnidentifiedObject adhoc_objects = 4;
+	inline int adhoc_objects_size() const;
+	inline void clear_adhoc_objects();
+	static const int kAdhocObjectsFieldNumber = 4;
+	inline const ::UnidentifiedObject& adhoc_objects(int index) const;
+	inline ::UnidentifiedObject* mutable_adhoc_objects(int index);
+	inline ::UnidentifiedObject* add_adhoc_objects();
+	inline const ::google::protobuf::RepeatedPtrField< ::UnidentifiedObject >&
+	adhoc_objects() const;
+	inline ::google::protobuf::RepeatedPtrField< ::UnidentifiedObject >*
+	mutable_adhoc_objects();
+
+	// repeated .PointObject corner_objects = 5;
+	inline int corner_objects_size() const;
+	inline void clear_corner_objects();
+	static const int kCornerObjectsFieldNumber = 5;
+	inline const ::PointObject& corner_objects(int index) const;
+	inline ::PointObject* mutable_corner_objects(int index);
+	inline ::PointObject* add_corner_objects();
+	inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
+	corner_objects() const;
+	inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
+	mutable_corner_objects();
+
+	// repeated .PointObject intersection_objects = 6;
+	inline int intersection_objects_size() const;
+	inline void clear_intersection_objects();
+	static const int kIntersectionObjectsFieldNumber = 6;
+	inline const ::PointObject& intersection_objects(int index) const;
+	inline ::PointObject* mutable_intersection_objects(int index);
+	inline ::PointObject* add_intersection_objects();
+	inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
+	intersection_objects() const;
+	inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
+	mutable_intersection_objects();
+
+	// repeated .LineObject line_objects = 7;
+	inline int line_objects_size() const;
+	inline void clear_line_objects();
+	static const int kLineObjectsFieldNumber = 7;
+	inline const ::LineObject& line_objects(int index) const;
+	inline ::LineObject* mutable_line_objects(int index);
+	inline ::LineObject* add_line_objects();
+	inline const ::google::protobuf::RepeatedPtrField< ::LineObject >&
+	line_objects() const;
+	inline ::google::protobuf::RepeatedPtrField< ::LineObject >*
+	mutable_line_objects();
+
+	// repeated .PointObject view_limit_points = 11;
+	inline int view_limit_points_size() const;
+	inline void clear_view_limit_points();
+	static const int kViewLimitPointsFieldNumber = 11;
+	inline const ::PointObject& view_limit_points(int index) const;
+	inline ::PointObject* mutable_view_limit_points(int index);
+	inline ::PointObject* add_view_limit_points();
+	inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
+	view_limit_points() const;
+	inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
+	mutable_view_limit_points();
+
+	// @@protoc_insertion_point(class_scope:ObservationMessage)
+private:
+	inline void set_has_image_timestamp();
+	inline void clear_has_image_timestamp();
+	inline void set_has_ball();
+	inline void clear_has_ball();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::std::string* image_timestamp_;
+	::BallObject* ball_;
+	::google::protobuf::RepeatedPtrField< ::NamedObject > regular_objects_;
+	::google::protobuf::RepeatedPtrField< ::UnidentifiedObject > adhoc_objects_;
+	::google::protobuf::RepeatedPtrField< ::PointObject > corner_objects_;
+	::google::protobuf::RepeatedPtrField< ::PointObject > intersection_objects_;
+	::google::protobuf::RepeatedPtrField< ::LineObject > line_objects_;
+	::google::protobuf::RepeatedPtrField< ::PointObject > view_limit_points_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+
+	friend void  protobuf_AddDesc_VisionObservations_2eproto();
+	friend void protobuf_AssignDesc_VisionObservations_2eproto();
+	friend void protobuf_ShutdownFile_VisionObservations_2eproto();
+
+	void InitAsDefaultInstance();
+	static ObservationMessage* default_instance_;
 };
 // ===================================================================
 
@@ -881,113 +930,143 @@ class ObservationMessage : public ::google::protobuf::Message {
 // BallTrackMessage
 
 // required float cx = 6 [default = 0];
-inline bool BallTrackMessage::has_cx() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool BallTrackMessage::has_cx() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void BallTrackMessage::set_has_cx() {
-  _has_bits_[0] |= 0x00000001u;
+inline void BallTrackMessage::set_has_cx()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void BallTrackMessage::clear_has_cx() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void BallTrackMessage::clear_has_cx()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void BallTrackMessage::clear_cx() {
-  cx_ = 0;
-  clear_has_cx();
+inline void BallTrackMessage::clear_cx()
+{
+	cx_ = 0;
+	clear_has_cx();
 }
-inline float BallTrackMessage::cx() const {
-  return cx_;
+inline float BallTrackMessage::cx() const
+{
+	return cx_;
 }
-inline void BallTrackMessage::set_cx(float value) {
-  set_has_cx();
-  cx_ = value;
+inline void BallTrackMessage::set_cx(float value)
+{
+	set_has_cx();
+	cx_ = value;
 }
 
 // required float cy = 7 [default = 0];
-inline bool BallTrackMessage::has_cy() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool BallTrackMessage::has_cy() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void BallTrackMessage::set_has_cy() {
-  _has_bits_[0] |= 0x00000002u;
+inline void BallTrackMessage::set_has_cy()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void BallTrackMessage::clear_has_cy() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void BallTrackMessage::clear_has_cy()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void BallTrackMessage::clear_cy() {
-  cy_ = 0;
-  clear_has_cy();
+inline void BallTrackMessage::clear_cy()
+{
+	cy_ = 0;
+	clear_has_cy();
 }
-inline float BallTrackMessage::cy() const {
-  return cy_;
+inline float BallTrackMessage::cy() const
+{
+	return cy_;
 }
-inline void BallTrackMessage::set_cy(float value) {
-  set_has_cy();
-  cy_ = value;
+inline void BallTrackMessage::set_cy(float value)
+{
+	set_has_cy();
+	cy_ = value;
 }
 
 // required float referenceYaw = 8 [default = 0];
-inline bool BallTrackMessage::has_referenceyaw() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool BallTrackMessage::has_referenceyaw() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void BallTrackMessage::set_has_referenceyaw() {
-  _has_bits_[0] |= 0x00000004u;
+inline void BallTrackMessage::set_has_referenceyaw()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void BallTrackMessage::clear_has_referenceyaw() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void BallTrackMessage::clear_has_referenceyaw()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void BallTrackMessage::clear_referenceyaw() {
-  referenceyaw_ = 0;
-  clear_has_referenceyaw();
+inline void BallTrackMessage::clear_referenceyaw()
+{
+	referenceyaw_ = 0;
+	clear_has_referenceyaw();
 }
-inline float BallTrackMessage::referenceyaw() const {
-  return referenceyaw_;
+inline float BallTrackMessage::referenceyaw() const
+{
+	return referenceyaw_;
 }
-inline void BallTrackMessage::set_referenceyaw(float value) {
-  set_has_referenceyaw();
-  referenceyaw_ = value;
+inline void BallTrackMessage::set_referenceyaw(float value)
+{
+	set_has_referenceyaw();
+	referenceyaw_ = value;
 }
 
 // required float referencePitch = 9 [default = 0];
-inline bool BallTrackMessage::has_referencepitch() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool BallTrackMessage::has_referencepitch() const
+{
+	return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void BallTrackMessage::set_has_referencepitch() {
-  _has_bits_[0] |= 0x00000008u;
+inline void BallTrackMessage::set_has_referencepitch()
+{
+	_has_bits_[0] |= 0x00000008u;
 }
-inline void BallTrackMessage::clear_has_referencepitch() {
-  _has_bits_[0] &= ~0x00000008u;
+inline void BallTrackMessage::clear_has_referencepitch()
+{
+	_has_bits_[0] &= ~0x00000008u;
 }
-inline void BallTrackMessage::clear_referencepitch() {
-  referencepitch_ = 0;
-  clear_has_referencepitch();
+inline void BallTrackMessage::clear_referencepitch()
+{
+	referencepitch_ = 0;
+	clear_has_referencepitch();
 }
-inline float BallTrackMessage::referencepitch() const {
-  return referencepitch_;
+inline float BallTrackMessage::referencepitch() const
+{
+	return referencepitch_;
 }
-inline void BallTrackMessage::set_referencepitch(float value) {
-  set_has_referencepitch();
-  referencepitch_ = value;
+inline void BallTrackMessage::set_referencepitch(float value)
+{
+	set_has_referencepitch();
+	referencepitch_ = value;
 }
 
 // required float radius = 10 [default = 0];
-inline bool BallTrackMessage::has_radius() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+inline bool BallTrackMessage::has_radius() const
+{
+	return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void BallTrackMessage::set_has_radius() {
-  _has_bits_[0] |= 0x00000010u;
+inline void BallTrackMessage::set_has_radius()
+{
+	_has_bits_[0] |= 0x00000010u;
 }
-inline void BallTrackMessage::clear_has_radius() {
-  _has_bits_[0] &= ~0x00000010u;
+inline void BallTrackMessage::clear_has_radius()
+{
+	_has_bits_[0] &= ~0x00000010u;
 }
-inline void BallTrackMessage::clear_radius() {
-  radius_ = 0;
-  clear_has_radius();
+inline void BallTrackMessage::clear_radius()
+{
+	radius_ = 0;
+	clear_has_radius();
 }
-inline float BallTrackMessage::radius() const {
-  return radius_;
+inline float BallTrackMessage::radius() const
+{
+	return radius_;
 }
-inline void BallTrackMessage::set_radius(float value) {
-  set_has_radius();
-  radius_ = value;
+inline void BallTrackMessage::set_radius(float value)
+{
+	set_has_radius();
+	radius_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -995,69 +1074,87 @@ inline void BallTrackMessage::set_radius(float value) {
 // BallObject
 
 // required float dist = 1 [default = 0];
-inline bool BallObject::has_dist() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool BallObject::has_dist() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void BallObject::set_has_dist() {
-  _has_bits_[0] |= 0x00000001u;
+inline void BallObject::set_has_dist()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void BallObject::clear_has_dist() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void BallObject::clear_has_dist()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void BallObject::clear_dist() {
-  dist_ = 0;
-  clear_has_dist();
+inline void BallObject::clear_dist()
+{
+	dist_ = 0;
+	clear_has_dist();
 }
-inline float BallObject::dist() const {
-  return dist_;
+inline float BallObject::dist() const
+{
+	return dist_;
 }
-inline void BallObject::set_dist(float value) {
-  set_has_dist();
-  dist_ = value;
+inline void BallObject::set_dist(float value)
+{
+	set_has_dist();
+	dist_ = value;
 }
 
 // required float bearing = 2 [default = 0];
-inline bool BallObject::has_bearing() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool BallObject::has_bearing() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void BallObject::set_has_bearing() {
-  _has_bits_[0] |= 0x00000002u;
+inline void BallObject::set_has_bearing()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void BallObject::clear_has_bearing() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void BallObject::clear_has_bearing()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void BallObject::clear_bearing() {
-  bearing_ = 0;
-  clear_has_bearing();
+inline void BallObject::clear_bearing()
+{
+	bearing_ = 0;
+	clear_has_bearing();
 }
-inline float BallObject::bearing() const {
-  return bearing_;
+inline float BallObject::bearing() const
+{
+	return bearing_;
 }
-inline void BallObject::set_bearing(float value) {
-  set_has_bearing();
-  bearing_ = value;
+inline void BallObject::set_bearing(float value)
+{
+	set_has_bearing();
+	bearing_ = value;
 }
 
 // optional float ball_diameter = 3 [default = 0];
-inline bool BallObject::has_ball_diameter() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool BallObject::has_ball_diameter() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void BallObject::set_has_ball_diameter() {
-  _has_bits_[0] |= 0x00000004u;
+inline void BallObject::set_has_ball_diameter()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void BallObject::clear_has_ball_diameter() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void BallObject::clear_has_ball_diameter()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void BallObject::clear_ball_diameter() {
-  ball_diameter_ = 0;
-  clear_has_ball_diameter();
+inline void BallObject::clear_ball_diameter()
+{
+	ball_diameter_ = 0;
+	clear_has_ball_diameter();
 }
-inline float BallObject::ball_diameter() const {
-  return ball_diameter_;
+inline float BallObject::ball_diameter() const
+{
+	return ball_diameter_;
 }
-inline void BallObject::set_ball_diameter(float value) {
-  set_has_ball_diameter();
-  ball_diameter_ = value;
+inline void BallObject::set_ball_diameter(float value)
+{
+	set_has_ball_diameter();
+	ball_diameter_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1065,149 +1162,201 @@ inline void BallObject::set_ball_diameter(float value) {
 // NamedObject
 
 // required string object_name = 1 [default = ""];
-inline bool NamedObject::has_object_name() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool NamedObject::has_object_name() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void NamedObject::set_has_object_name() {
-  _has_bits_[0] |= 0x00000001u;
+inline void NamedObject::set_has_object_name()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void NamedObject::clear_has_object_name() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void NamedObject::clear_has_object_name()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void NamedObject::clear_object_name() {
-  if (object_name_ != &::google::protobuf::internal::kEmptyString) {
-    object_name_->clear();
-  }
-  clear_has_object_name();
+inline void NamedObject::clear_object_name()
+{
+	if (object_name_ != &::google::protobuf::internal::kEmptyString)
+	{
+		object_name_->clear();
+	}
+
+	clear_has_object_name();
 }
-inline const ::std::string& NamedObject::object_name() const {
-  return *object_name_;
+inline const ::std::string& NamedObject::object_name() const
+{
+	return *object_name_;
 }
-inline void NamedObject::set_object_name(const ::std::string& value) {
-  set_has_object_name();
-  if (object_name_ == &::google::protobuf::internal::kEmptyString) {
-    object_name_ = new ::std::string;
-  }
-  object_name_->assign(value);
+inline void NamedObject::set_object_name(const ::std::string& value)
+{
+	set_has_object_name();
+
+	if (object_name_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_name_ = new ::std::string;
+	}
+
+	object_name_->assign(value);
 }
-inline void NamedObject::set_object_name(const char* value) {
-  set_has_object_name();
-  if (object_name_ == &::google::protobuf::internal::kEmptyString) {
-    object_name_ = new ::std::string;
-  }
-  object_name_->assign(value);
+inline void NamedObject::set_object_name(const char* value)
+{
+	set_has_object_name();
+
+	if (object_name_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_name_ = new ::std::string;
+	}
+
+	object_name_->assign(value);
 }
-inline void NamedObject::set_object_name(const char* value, size_t size) {
-  set_has_object_name();
-  if (object_name_ == &::google::protobuf::internal::kEmptyString) {
-    object_name_ = new ::std::string;
-  }
-  object_name_->assign(reinterpret_cast<const char*>(value), size);
+inline void NamedObject::set_object_name(const char* value, size_t size)
+{
+	set_has_object_name();
+
+	if (object_name_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_name_ = new ::std::string;
+	}
+
+	object_name_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* NamedObject::mutable_object_name() {
-  set_has_object_name();
-  if (object_name_ == &::google::protobuf::internal::kEmptyString) {
-    object_name_ = new ::std::string;
-  }
-  return object_name_;
+inline ::std::string* NamedObject::mutable_object_name()
+{
+	set_has_object_name();
+
+	if (object_name_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_name_ = new ::std::string;
+	}
+
+	return object_name_;
 }
-inline ::std::string* NamedObject::release_object_name() {
-  clear_has_object_name();
-  if (object_name_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = object_name_;
-    object_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
+inline ::std::string* NamedObject::release_object_name()
+{
+	clear_has_object_name();
+
+	if (object_name_ == &::google::protobuf::internal::kEmptyString)
+	{
+		return NULL;
+	}
+	else
+	{
+		::std::string* temp = object_name_;
+		object_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+		return temp;
+	}
 }
 
 // required float bearing = 2 [default = -1];
-inline bool NamedObject::has_bearing() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool NamedObject::has_bearing() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void NamedObject::set_has_bearing() {
-  _has_bits_[0] |= 0x00000002u;
+inline void NamedObject::set_has_bearing()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void NamedObject::clear_has_bearing() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void NamedObject::clear_has_bearing()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void NamedObject::clear_bearing() {
-  bearing_ = -1;
-  clear_has_bearing();
+inline void NamedObject::clear_bearing()
+{
+	bearing_ = -1;
+	clear_has_bearing();
 }
-inline float NamedObject::bearing() const {
-  return bearing_;
+inline float NamedObject::bearing() const
+{
+	return bearing_;
 }
-inline void NamedObject::set_bearing(float value) {
-  set_has_bearing();
-  bearing_ = value;
+inline void NamedObject::set_bearing(float value)
+{
+	set_has_bearing();
+	bearing_ = value;
 }
 
 // required float distance = 3 [default = -1];
-inline bool NamedObject::has_distance() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool NamedObject::has_distance() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void NamedObject::set_has_distance() {
-  _has_bits_[0] |= 0x00000004u;
+inline void NamedObject::set_has_distance()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void NamedObject::clear_has_distance() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void NamedObject::clear_has_distance()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void NamedObject::clear_distance() {
-  distance_ = -1;
-  clear_has_distance();
+inline void NamedObject::clear_distance()
+{
+	distance_ = -1;
+	clear_has_distance();
 }
-inline float NamedObject::distance() const {
-  return distance_;
+inline float NamedObject::distance() const
+{
+	return distance_;
 }
-inline void NamedObject::set_distance(float value) {
-  set_has_distance();
-  distance_ = value;
+inline void NamedObject::set_distance(float value)
+{
+	set_has_distance();
+	distance_ = value;
 }
 
 // required float bearing_dev = 4 [default = -1];
-inline bool NamedObject::has_bearing_dev() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool NamedObject::has_bearing_dev() const
+{
+	return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void NamedObject::set_has_bearing_dev() {
-  _has_bits_[0] |= 0x00000008u;
+inline void NamedObject::set_has_bearing_dev()
+{
+	_has_bits_[0] |= 0x00000008u;
 }
-inline void NamedObject::clear_has_bearing_dev() {
-  _has_bits_[0] &= ~0x00000008u;
+inline void NamedObject::clear_has_bearing_dev()
+{
+	_has_bits_[0] &= ~0x00000008u;
 }
-inline void NamedObject::clear_bearing_dev() {
-  bearing_dev_ = -1;
-  clear_has_bearing_dev();
+inline void NamedObject::clear_bearing_dev()
+{
+	bearing_dev_ = -1;
+	clear_has_bearing_dev();
 }
-inline float NamedObject::bearing_dev() const {
-  return bearing_dev_;
+inline float NamedObject::bearing_dev() const
+{
+	return bearing_dev_;
 }
-inline void NamedObject::set_bearing_dev(float value) {
-  set_has_bearing_dev();
-  bearing_dev_ = value;
+inline void NamedObject::set_bearing_dev(float value)
+{
+	set_has_bearing_dev();
+	bearing_dev_ = value;
 }
 
 // required float distance_dev = 5 [default = -1];
-inline bool NamedObject::has_distance_dev() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+inline bool NamedObject::has_distance_dev() const
+{
+	return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void NamedObject::set_has_distance_dev() {
-  _has_bits_[0] |= 0x00000010u;
+inline void NamedObject::set_has_distance_dev()
+{
+	_has_bits_[0] |= 0x00000010u;
 }
-inline void NamedObject::clear_has_distance_dev() {
-  _has_bits_[0] &= ~0x00000010u;
+inline void NamedObject::clear_has_distance_dev()
+{
+	_has_bits_[0] &= ~0x00000010u;
 }
-inline void NamedObject::clear_distance_dev() {
-  distance_dev_ = -1;
-  clear_has_distance_dev();
+inline void NamedObject::clear_distance_dev()
+{
+	distance_dev_ = -1;
+	clear_has_distance_dev();
 }
-inline float NamedObject::distance_dev() const {
-  return distance_dev_;
+inline float NamedObject::distance_dev() const
+{
+	return distance_dev_;
 }
-inline void NamedObject::set_distance_dev(float value) {
-  set_has_distance_dev();
-  distance_dev_ = value;
+inline void NamedObject::set_distance_dev(float value)
+{
+	set_has_distance_dev();
+	distance_dev_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1215,105 +1364,145 @@ inline void NamedObject::set_distance_dev(float value) {
 // UnidentifiedObject
 
 // required string object_type = 1 [default = ""];
-inline bool UnidentifiedObject::has_object_type() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool UnidentifiedObject::has_object_type() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void UnidentifiedObject::set_has_object_type() {
-  _has_bits_[0] |= 0x00000001u;
+inline void UnidentifiedObject::set_has_object_type()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void UnidentifiedObject::clear_has_object_type() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void UnidentifiedObject::clear_has_object_type()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void UnidentifiedObject::clear_object_type() {
-  if (object_type_ != &::google::protobuf::internal::kEmptyString) {
-    object_type_->clear();
-  }
-  clear_has_object_type();
+inline void UnidentifiedObject::clear_object_type()
+{
+	if (object_type_ != &::google::protobuf::internal::kEmptyString)
+	{
+		object_type_->clear();
+	}
+
+	clear_has_object_type();
 }
-inline const ::std::string& UnidentifiedObject::object_type() const {
-  return *object_type_;
+inline const ::std::string& UnidentifiedObject::object_type() const
+{
+	return *object_type_;
 }
-inline void UnidentifiedObject::set_object_type(const ::std::string& value) {
-  set_has_object_type();
-  if (object_type_ == &::google::protobuf::internal::kEmptyString) {
-    object_type_ = new ::std::string;
-  }
-  object_type_->assign(value);
+inline void UnidentifiedObject::set_object_type(const ::std::string& value)
+{
+	set_has_object_type();
+
+	if (object_type_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_type_ = new ::std::string;
+	}
+
+	object_type_->assign(value);
 }
-inline void UnidentifiedObject::set_object_type(const char* value) {
-  set_has_object_type();
-  if (object_type_ == &::google::protobuf::internal::kEmptyString) {
-    object_type_ = new ::std::string;
-  }
-  object_type_->assign(value);
+inline void UnidentifiedObject::set_object_type(const char* value)
+{
+	set_has_object_type();
+
+	if (object_type_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_type_ = new ::std::string;
+	}
+
+	object_type_->assign(value);
 }
-inline void UnidentifiedObject::set_object_type(const char* value, size_t size) {
-  set_has_object_type();
-  if (object_type_ == &::google::protobuf::internal::kEmptyString) {
-    object_type_ = new ::std::string;
-  }
-  object_type_->assign(reinterpret_cast<const char*>(value), size);
+inline void UnidentifiedObject::set_object_type(const char* value, size_t size)
+{
+	set_has_object_type();
+
+	if (object_type_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_type_ = new ::std::string;
+	}
+
+	object_type_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* UnidentifiedObject::mutable_object_type() {
-  set_has_object_type();
-  if (object_type_ == &::google::protobuf::internal::kEmptyString) {
-    object_type_ = new ::std::string;
-  }
-  return object_type_;
+inline ::std::string* UnidentifiedObject::mutable_object_type()
+{
+	set_has_object_type();
+
+	if (object_type_ == &::google::protobuf::internal::kEmptyString)
+	{
+		object_type_ = new ::std::string;
+	}
+
+	return object_type_;
 }
-inline ::std::string* UnidentifiedObject::release_object_type() {
-  clear_has_object_type();
-  if (object_type_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = object_type_;
-    object_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
+inline ::std::string* UnidentifiedObject::release_object_type()
+{
+	clear_has_object_type();
+
+	if (object_type_ == &::google::protobuf::internal::kEmptyString)
+	{
+		return NULL;
+	}
+	else
+	{
+		::std::string* temp = object_type_;
+		object_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+		return temp;
+	}
 }
 
 // required float bearing = 2 [default = -1];
-inline bool UnidentifiedObject::has_bearing() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool UnidentifiedObject::has_bearing() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void UnidentifiedObject::set_has_bearing() {
-  _has_bits_[0] |= 0x00000002u;
+inline void UnidentifiedObject::set_has_bearing()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void UnidentifiedObject::clear_has_bearing() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void UnidentifiedObject::clear_has_bearing()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void UnidentifiedObject::clear_bearing() {
-  bearing_ = -1;
-  clear_has_bearing();
+inline void UnidentifiedObject::clear_bearing()
+{
+	bearing_ = -1;
+	clear_has_bearing();
 }
-inline float UnidentifiedObject::bearing() const {
-  return bearing_;
+inline float UnidentifiedObject::bearing() const
+{
+	return bearing_;
 }
-inline void UnidentifiedObject::set_bearing(float value) {
-  set_has_bearing();
-  bearing_ = value;
+inline void UnidentifiedObject::set_bearing(float value)
+{
+	set_has_bearing();
+	bearing_ = value;
 }
 
 // optional float distance = 3 [default = -1];
-inline bool UnidentifiedObject::has_distance() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool UnidentifiedObject::has_distance() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void UnidentifiedObject::set_has_distance() {
-  _has_bits_[0] |= 0x00000004u;
+inline void UnidentifiedObject::set_has_distance()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void UnidentifiedObject::clear_has_distance() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void UnidentifiedObject::clear_has_distance()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void UnidentifiedObject::clear_distance() {
-  distance_ = -1;
-  clear_has_distance();
+inline void UnidentifiedObject::clear_distance()
+{
+	distance_ = -1;
+	clear_has_distance();
 }
-inline float UnidentifiedObject::distance() const {
-  return distance_;
+inline float UnidentifiedObject::distance() const
+{
+	return distance_;
 }
-inline void UnidentifiedObject::set_distance(float value) {
-  set_has_distance();
-  distance_ = value;
+inline void UnidentifiedObject::set_distance(float value)
+{
+	set_has_distance();
+	distance_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1321,91 +1510,115 @@ inline void UnidentifiedObject::set_distance(float value) {
 // LineObject
 
 // required float start_bearing = 1 [default = 0];
-inline bool LineObject::has_start_bearing() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool LineObject::has_start_bearing() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void LineObject::set_has_start_bearing() {
-  _has_bits_[0] |= 0x00000001u;
+inline void LineObject::set_has_start_bearing()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void LineObject::clear_has_start_bearing() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void LineObject::clear_has_start_bearing()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void LineObject::clear_start_bearing() {
-  start_bearing_ = 0;
-  clear_has_start_bearing();
+inline void LineObject::clear_start_bearing()
+{
+	start_bearing_ = 0;
+	clear_has_start_bearing();
 }
-inline float LineObject::start_bearing() const {
-  return start_bearing_;
+inline float LineObject::start_bearing() const
+{
+	return start_bearing_;
 }
-inline void LineObject::set_start_bearing(float value) {
-  set_has_start_bearing();
-  start_bearing_ = value;
+inline void LineObject::set_start_bearing(float value)
+{
+	set_has_start_bearing();
+	start_bearing_ = value;
 }
 
 // required float start_distance = 2 [default = 0];
-inline bool LineObject::has_start_distance() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool LineObject::has_start_distance() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void LineObject::set_has_start_distance() {
-  _has_bits_[0] |= 0x00000002u;
+inline void LineObject::set_has_start_distance()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void LineObject::clear_has_start_distance() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void LineObject::clear_has_start_distance()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void LineObject::clear_start_distance() {
-  start_distance_ = 0;
-  clear_has_start_distance();
+inline void LineObject::clear_start_distance()
+{
+	start_distance_ = 0;
+	clear_has_start_distance();
 }
-inline float LineObject::start_distance() const {
-  return start_distance_;
+inline float LineObject::start_distance() const
+{
+	return start_distance_;
 }
-inline void LineObject::set_start_distance(float value) {
-  set_has_start_distance();
-  start_distance_ = value;
+inline void LineObject::set_start_distance(float value)
+{
+	set_has_start_distance();
+	start_distance_ = value;
 }
 
 // required float end_bearing = 3 [default = 0];
-inline bool LineObject::has_end_bearing() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool LineObject::has_end_bearing() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void LineObject::set_has_end_bearing() {
-  _has_bits_[0] |= 0x00000004u;
+inline void LineObject::set_has_end_bearing()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void LineObject::clear_has_end_bearing() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void LineObject::clear_has_end_bearing()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void LineObject::clear_end_bearing() {
-  end_bearing_ = 0;
-  clear_has_end_bearing();
+inline void LineObject::clear_end_bearing()
+{
+	end_bearing_ = 0;
+	clear_has_end_bearing();
 }
-inline float LineObject::end_bearing() const {
-  return end_bearing_;
+inline float LineObject::end_bearing() const
+{
+	return end_bearing_;
 }
-inline void LineObject::set_end_bearing(float value) {
-  set_has_end_bearing();
-  end_bearing_ = value;
+inline void LineObject::set_end_bearing(float value)
+{
+	set_has_end_bearing();
+	end_bearing_ = value;
 }
 
 // required float end_distance = 4 [default = 0];
-inline bool LineObject::has_end_distance() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool LineObject::has_end_distance() const
+{
+	return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void LineObject::set_has_end_distance() {
-  _has_bits_[0] |= 0x00000008u;
+inline void LineObject::set_has_end_distance()
+{
+	_has_bits_[0] |= 0x00000008u;
 }
-inline void LineObject::clear_has_end_distance() {
-  _has_bits_[0] &= ~0x00000008u;
+inline void LineObject::clear_has_end_distance()
+{
+	_has_bits_[0] &= ~0x00000008u;
 }
-inline void LineObject::clear_end_distance() {
-  end_distance_ = 0;
-  clear_has_end_distance();
+inline void LineObject::clear_end_distance()
+{
+	end_distance_ = 0;
+	clear_has_end_distance();
 }
-inline float LineObject::end_distance() const {
-  return end_distance_;
+inline float LineObject::end_distance() const
+{
+	return end_distance_;
 }
-inline void LineObject::set_end_distance(float value) {
-  set_has_end_distance();
-  end_distance_ = value;
+inline void LineObject::set_end_distance(float value)
+{
+	set_has_end_distance();
+	end_distance_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1413,47 +1626,59 @@ inline void LineObject::set_end_distance(float value) {
 // PointObject
 
 // required float distance = 1;
-inline bool PointObject::has_distance() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool PointObject::has_distance() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void PointObject::set_has_distance() {
-  _has_bits_[0] |= 0x00000001u;
+inline void PointObject::set_has_distance()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void PointObject::clear_has_distance() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void PointObject::clear_has_distance()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void PointObject::clear_distance() {
-  distance_ = 0;
-  clear_has_distance();
+inline void PointObject::clear_distance()
+{
+	distance_ = 0;
+	clear_has_distance();
 }
-inline float PointObject::distance() const {
-  return distance_;
+inline float PointObject::distance() const
+{
+	return distance_;
 }
-inline void PointObject::set_distance(float value) {
-  set_has_distance();
-  distance_ = value;
+inline void PointObject::set_distance(float value)
+{
+	set_has_distance();
+	distance_ = value;
 }
 
 // required float bearing = 2;
-inline bool PointObject::has_bearing() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool PointObject::has_bearing() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void PointObject::set_has_bearing() {
-  _has_bits_[0] |= 0x00000002u;
+inline void PointObject::set_has_bearing()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void PointObject::clear_has_bearing() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void PointObject::clear_has_bearing()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void PointObject::clear_bearing() {
-  bearing_ = 0;
-  clear_has_bearing();
+inline void PointObject::clear_bearing()
+{
+	bearing_ = 0;
+	clear_has_bearing();
 }
-inline float PointObject::bearing() const {
-  return bearing_;
+inline float PointObject::bearing() const
+{
+	return bearing_;
 }
-inline void PointObject::set_bearing(float value) {
-  set_has_bearing();
-  bearing_ = value;
+inline void PointObject::set_bearing(float value)
+{
+	set_has_bearing();
+	bearing_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1461,251 +1686,333 @@ inline void PointObject::set_bearing(float value) {
 // ObservationMessage
 
 // required string image_timestamp = 1 [default = ""];
-inline bool ObservationMessage::has_image_timestamp() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool ObservationMessage::has_image_timestamp() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ObservationMessage::set_has_image_timestamp() {
-  _has_bits_[0] |= 0x00000001u;
+inline void ObservationMessage::set_has_image_timestamp()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void ObservationMessage::clear_has_image_timestamp() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void ObservationMessage::clear_has_image_timestamp()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void ObservationMessage::clear_image_timestamp() {
-  if (image_timestamp_ != &::google::protobuf::internal::kEmptyString) {
-    image_timestamp_->clear();
-  }
-  clear_has_image_timestamp();
+inline void ObservationMessage::clear_image_timestamp()
+{
+	if (image_timestamp_ != &::google::protobuf::internal::kEmptyString)
+	{
+		image_timestamp_->clear();
+	}
+
+	clear_has_image_timestamp();
 }
-inline const ::std::string& ObservationMessage::image_timestamp() const {
-  return *image_timestamp_;
+inline const ::std::string& ObservationMessage::image_timestamp() const
+{
+	return *image_timestamp_;
 }
-inline void ObservationMessage::set_image_timestamp(const ::std::string& value) {
-  set_has_image_timestamp();
-  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    image_timestamp_ = new ::std::string;
-  }
-  image_timestamp_->assign(value);
+inline void ObservationMessage::set_image_timestamp(const ::std::string& value)
+{
+	set_has_image_timestamp();
+
+	if (image_timestamp_ == &::google::protobuf::internal::kEmptyString)
+	{
+		image_timestamp_ = new ::std::string;
+	}
+
+	image_timestamp_->assign(value);
 }
-inline void ObservationMessage::set_image_timestamp(const char* value) {
-  set_has_image_timestamp();
-  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    image_timestamp_ = new ::std::string;
-  }
-  image_timestamp_->assign(value);
+inline void ObservationMessage::set_image_timestamp(const char* value)
+{
+	set_has_image_timestamp();
+
+	if (image_timestamp_ == &::google::protobuf::internal::kEmptyString)
+	{
+		image_timestamp_ = new ::std::string;
+	}
+
+	image_timestamp_->assign(value);
 }
-inline void ObservationMessage::set_image_timestamp(const char* value, size_t size) {
-  set_has_image_timestamp();
-  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    image_timestamp_ = new ::std::string;
-  }
-  image_timestamp_->assign(reinterpret_cast<const char*>(value), size);
+inline void ObservationMessage::set_image_timestamp(const char* value, size_t size)
+{
+	set_has_image_timestamp();
+
+	if (image_timestamp_ == &::google::protobuf::internal::kEmptyString)
+	{
+		image_timestamp_ = new ::std::string;
+	}
+
+	image_timestamp_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* ObservationMessage::mutable_image_timestamp() {
-  set_has_image_timestamp();
-  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    image_timestamp_ = new ::std::string;
-  }
-  return image_timestamp_;
+inline ::std::string* ObservationMessage::mutable_image_timestamp()
+{
+	set_has_image_timestamp();
+
+	if (image_timestamp_ == &::google::protobuf::internal::kEmptyString)
+	{
+		image_timestamp_ = new ::std::string;
+	}
+
+	return image_timestamp_;
 }
-inline ::std::string* ObservationMessage::release_image_timestamp() {
-  clear_has_image_timestamp();
-  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = image_timestamp_;
-    image_timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
+inline ::std::string* ObservationMessage::release_image_timestamp()
+{
+	clear_has_image_timestamp();
+
+	if (image_timestamp_ == &::google::protobuf::internal::kEmptyString)
+	{
+		return NULL;
+	}
+	else
+	{
+		::std::string* temp = image_timestamp_;
+		image_timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+		return temp;
+	}
 }
 
 // optional .BallObject ball = 2;
-inline bool ObservationMessage::has_ball() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool ObservationMessage::has_ball() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void ObservationMessage::set_has_ball() {
-  _has_bits_[0] |= 0x00000002u;
+inline void ObservationMessage::set_has_ball()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void ObservationMessage::clear_has_ball() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void ObservationMessage::clear_has_ball()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void ObservationMessage::clear_ball() {
-  if (ball_ != NULL) ball_->::BallObject::Clear();
-  clear_has_ball();
+inline void ObservationMessage::clear_ball()
+{
+	if (ball_ != NULL) ball_->::BallObject::Clear();
+
+	clear_has_ball();
 }
-inline const ::BallObject& ObservationMessage::ball() const {
-  return ball_ != NULL ? *ball_ : *default_instance_->ball_;
+inline const ::BallObject& ObservationMessage::ball() const
+{
+	return ball_ != NULL ? *ball_ : *default_instance_->ball_;
 }
-inline ::BallObject* ObservationMessage::mutable_ball() {
-  set_has_ball();
-  if (ball_ == NULL) ball_ = new ::BallObject;
-  return ball_;
+inline ::BallObject* ObservationMessage::mutable_ball()
+{
+	set_has_ball();
+
+	if (ball_ == NULL) ball_ = new ::BallObject;
+
+	return ball_;
 }
-inline ::BallObject* ObservationMessage::release_ball() {
-  clear_has_ball();
-  ::BallObject* temp = ball_;
-  ball_ = NULL;
-  return temp;
+inline ::BallObject* ObservationMessage::release_ball()
+{
+	clear_has_ball();
+	::BallObject* temp = ball_;
+	ball_ = NULL;
+	return temp;
 }
 
 // repeated .NamedObject regular_objects = 3;
-inline int ObservationMessage::regular_objects_size() const {
-  return regular_objects_.size();
+inline int ObservationMessage::regular_objects_size() const
+{
+	return regular_objects_.size();
 }
-inline void ObservationMessage::clear_regular_objects() {
-  regular_objects_.Clear();
+inline void ObservationMessage::clear_regular_objects()
+{
+	regular_objects_.Clear();
 }
-inline const ::NamedObject& ObservationMessage::regular_objects(int index) const {
-  return regular_objects_.Get(index);
+inline const ::NamedObject& ObservationMessage::regular_objects(int index) const
+{
+	return regular_objects_.Get(index);
 }
-inline ::NamedObject* ObservationMessage::mutable_regular_objects(int index) {
-  return regular_objects_.Mutable(index);
+inline ::NamedObject* ObservationMessage::mutable_regular_objects(int index)
+{
+	return regular_objects_.Mutable(index);
 }
-inline ::NamedObject* ObservationMessage::add_regular_objects() {
-  return regular_objects_.Add();
+inline ::NamedObject* ObservationMessage::add_regular_objects()
+{
+	return regular_objects_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::NamedObject >&
-ObservationMessage::regular_objects() const {
-  return regular_objects_;
+ObservationMessage::regular_objects() const
+{
+	return regular_objects_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::NamedObject >*
-ObservationMessage::mutable_regular_objects() {
-  return &regular_objects_;
+ObservationMessage::mutable_regular_objects()
+{
+	return &regular_objects_;
 }
 
 // repeated .UnidentifiedObject adhoc_objects = 4;
-inline int ObservationMessage::adhoc_objects_size() const {
-  return adhoc_objects_.size();
+inline int ObservationMessage::adhoc_objects_size() const
+{
+	return adhoc_objects_.size();
 }
-inline void ObservationMessage::clear_adhoc_objects() {
-  adhoc_objects_.Clear();
+inline void ObservationMessage::clear_adhoc_objects()
+{
+	adhoc_objects_.Clear();
 }
-inline const ::UnidentifiedObject& ObservationMessage::adhoc_objects(int index) const {
-  return adhoc_objects_.Get(index);
+inline const ::UnidentifiedObject& ObservationMessage::adhoc_objects(int index) const
+{
+	return adhoc_objects_.Get(index);
 }
-inline ::UnidentifiedObject* ObservationMessage::mutable_adhoc_objects(int index) {
-  return adhoc_objects_.Mutable(index);
+inline ::UnidentifiedObject* ObservationMessage::mutable_adhoc_objects(int index)
+{
+	return adhoc_objects_.Mutable(index);
 }
-inline ::UnidentifiedObject* ObservationMessage::add_adhoc_objects() {
-  return adhoc_objects_.Add();
+inline ::UnidentifiedObject* ObservationMessage::add_adhoc_objects()
+{
+	return adhoc_objects_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::UnidentifiedObject >&
-ObservationMessage::adhoc_objects() const {
-  return adhoc_objects_;
+ObservationMessage::adhoc_objects() const
+{
+	return adhoc_objects_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::UnidentifiedObject >*
-ObservationMessage::mutable_adhoc_objects() {
-  return &adhoc_objects_;
+ObservationMessage::mutable_adhoc_objects()
+{
+	return &adhoc_objects_;
 }
 
 // repeated .PointObject corner_objects = 5;
-inline int ObservationMessage::corner_objects_size() const {
-  return corner_objects_.size();
+inline int ObservationMessage::corner_objects_size() const
+{
+	return corner_objects_.size();
 }
-inline void ObservationMessage::clear_corner_objects() {
-  corner_objects_.Clear();
+inline void ObservationMessage::clear_corner_objects()
+{
+	corner_objects_.Clear();
 }
-inline const ::PointObject& ObservationMessage::corner_objects(int index) const {
-  return corner_objects_.Get(index);
+inline const ::PointObject& ObservationMessage::corner_objects(int index) const
+{
+	return corner_objects_.Get(index);
 }
-inline ::PointObject* ObservationMessage::mutable_corner_objects(int index) {
-  return corner_objects_.Mutable(index);
+inline ::PointObject* ObservationMessage::mutable_corner_objects(int index)
+{
+	return corner_objects_.Mutable(index);
 }
-inline ::PointObject* ObservationMessage::add_corner_objects() {
-  return corner_objects_.Add();
+inline ::PointObject* ObservationMessage::add_corner_objects()
+{
+	return corner_objects_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
-ObservationMessage::corner_objects() const {
-  return corner_objects_;
+ObservationMessage::corner_objects() const
+{
+	return corner_objects_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
-ObservationMessage::mutable_corner_objects() {
-  return &corner_objects_;
+ObservationMessage::mutable_corner_objects()
+{
+	return &corner_objects_;
 }
 
 // repeated .PointObject intersection_objects = 6;
-inline int ObservationMessage::intersection_objects_size() const {
-  return intersection_objects_.size();
+inline int ObservationMessage::intersection_objects_size() const
+{
+	return intersection_objects_.size();
 }
-inline void ObservationMessage::clear_intersection_objects() {
-  intersection_objects_.Clear();
+inline void ObservationMessage::clear_intersection_objects()
+{
+	intersection_objects_.Clear();
 }
-inline const ::PointObject& ObservationMessage::intersection_objects(int index) const {
-  return intersection_objects_.Get(index);
+inline const ::PointObject& ObservationMessage::intersection_objects(int index) const
+{
+	return intersection_objects_.Get(index);
 }
-inline ::PointObject* ObservationMessage::mutable_intersection_objects(int index) {
-  return intersection_objects_.Mutable(index);
+inline ::PointObject* ObservationMessage::mutable_intersection_objects(int index)
+{
+	return intersection_objects_.Mutable(index);
 }
-inline ::PointObject* ObservationMessage::add_intersection_objects() {
-  return intersection_objects_.Add();
+inline ::PointObject* ObservationMessage::add_intersection_objects()
+{
+	return intersection_objects_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
-ObservationMessage::intersection_objects() const {
-  return intersection_objects_;
+ObservationMessage::intersection_objects() const
+{
+	return intersection_objects_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
-ObservationMessage::mutable_intersection_objects() {
-  return &intersection_objects_;
+ObservationMessage::mutable_intersection_objects()
+{
+	return &intersection_objects_;
 }
 
 // repeated .LineObject line_objects = 7;
-inline int ObservationMessage::line_objects_size() const {
-  return line_objects_.size();
+inline int ObservationMessage::line_objects_size() const
+{
+	return line_objects_.size();
 }
-inline void ObservationMessage::clear_line_objects() {
-  line_objects_.Clear();
+inline void ObservationMessage::clear_line_objects()
+{
+	line_objects_.Clear();
 }
-inline const ::LineObject& ObservationMessage::line_objects(int index) const {
-  return line_objects_.Get(index);
+inline const ::LineObject& ObservationMessage::line_objects(int index) const
+{
+	return line_objects_.Get(index);
 }
-inline ::LineObject* ObservationMessage::mutable_line_objects(int index) {
-  return line_objects_.Mutable(index);
+inline ::LineObject* ObservationMessage::mutable_line_objects(int index)
+{
+	return line_objects_.Mutable(index);
 }
-inline ::LineObject* ObservationMessage::add_line_objects() {
-  return line_objects_.Add();
+inline ::LineObject* ObservationMessage::add_line_objects()
+{
+	return line_objects_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::LineObject >&
-ObservationMessage::line_objects() const {
-  return line_objects_;
+ObservationMessage::line_objects() const
+{
+	return line_objects_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::LineObject >*
-ObservationMessage::mutable_line_objects() {
-  return &line_objects_;
+ObservationMessage::mutable_line_objects()
+{
+	return &line_objects_;
 }
 
 // repeated .PointObject view_limit_points = 11;
-inline int ObservationMessage::view_limit_points_size() const {
-  return view_limit_points_.size();
+inline int ObservationMessage::view_limit_points_size() const
+{
+	return view_limit_points_.size();
 }
-inline void ObservationMessage::clear_view_limit_points() {
-  view_limit_points_.Clear();
+inline void ObservationMessage::clear_view_limit_points()
+{
+	view_limit_points_.Clear();
 }
-inline const ::PointObject& ObservationMessage::view_limit_points(int index) const {
-  return view_limit_points_.Get(index);
+inline const ::PointObject& ObservationMessage::view_limit_points(int index) const
+{
+	return view_limit_points_.Get(index);
 }
-inline ::PointObject* ObservationMessage::mutable_view_limit_points(int index) {
-  return view_limit_points_.Mutable(index);
+inline ::PointObject* ObservationMessage::mutable_view_limit_points(int index)
+{
+	return view_limit_points_.Mutable(index);
 }
-inline ::PointObject* ObservationMessage::add_view_limit_points() {
-  return view_limit_points_.Add();
+inline ::PointObject* ObservationMessage::add_view_limit_points()
+{
+	return view_limit_points_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::PointObject >&
-ObservationMessage::view_limit_points() const {
-  return view_limit_points_;
+ObservationMessage::view_limit_points() const
+{
+	return view_limit_points_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::PointObject >*
-ObservationMessage::mutable_view_limit_points() {
-  return &view_limit_points_;
+ObservationMessage::mutable_view_limit_points()
+{
+	return &view_limit_points_;
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 
 #ifndef SWIG
-namespace google {
-namespace protobuf {
+namespace google
+{
+	namespace protobuf
+	{
 
 
-}  // namespace google
+	}  // namespace google
 }  // namespace protobuf
 #endif  // SWIG
 

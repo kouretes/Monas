@@ -12,7 +12,8 @@
 
 ACTIVITY_START
 
-class StandUpAndScan : public IActivity {
+class StandUpAndScan : public IActivity
+{
 
 public:
 	ACTIVITY_CONSTRUCTOR(StandUpAndScan);

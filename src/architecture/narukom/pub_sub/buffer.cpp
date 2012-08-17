@@ -31,18 +31,16 @@ using namespace KSystem;
 
 template<typename T>
 Buffer<T>::Buffer(std::size_t nid):
-	ownerId(nid),n(NULL),c(NULL)
+	ownerId(nid), n(NULL), c(NULL)
 {
-
 }
 template<typename T>
 Buffer<T>::~Buffer()
 {
-  Mutex::scoped_lock data_lock(mutex);
-  if(c!=NULL)
+	Mutex::scoped_lock data_lock(mutex);
+
+	if(c != NULL)
 		c(this);
-
-
 }
 
 
@@ -50,45 +48,39 @@ Buffer<T>::~Buffer()
 template<typename T>
 void Buffer<T>::add( std::vector<T> const & tuples)
 {
+	Mutex::scoped_lock  data_lock(mutex);
+	msg_buf.reserve(msg_buf.size() + tuples.size());
+	msg_buf.insert(msg_buf.end(), tuples.begin(), tuples.end());
+	data_lock.unlock();
 
-     Mutex::scoped_lock  data_lock(mutex);
-    msg_buf.reserve(msg_buf.size()+tuples.size());
-    msg_buf.insert(msg_buf.end(),tuples.begin(),tuples.end());
-    data_lock.unlock();
-    if(tuples.size()>0&& n!=NULL)
-    {
-       //mq.requestMailMan(this);
+	if(tuples.size() > 0 && n != NULL)
+	{
+		//mq.requestMailMan(this);
 		n(this);//Call notifier
-    }
-
-
-
+	}
 }
 
 template<typename T>
 bool Buffer<T>::tryadd( std::vector<T> const & tuples)
 {
-
-    if(!mutex.try_lock())
+	if(!mutex.try_lock())
 		return false;
 
 	//VERY SPECIAL POINT! WHERE POINTERS ACROSS THREADS ARE DECOUPLED
-
 	/*google::protobuf::Message * newptr=(*it).msg->New();
 	newptr->CopyFrom(*((*it).msg));
 	msgentry newm= *it;
 	newm.msg.reset(newptr);*/
+	msg_buf.reserve(msg_buf.size() + tuples.size());
+	msg_buf.insert(msg_buf.end(), tuples.begin(), tuples.end());
+	mutex.unlock();
 
-	msg_buf.reserve(msg_buf.size()+tuples.size());
-    msg_buf.insert(msg_buf.end(),tuples.begin(),tuples.end());
+	if(tuples.size() > 0 && n != NULL)
+	{
+		//mq.requestMailMan(this);
+		n(this);//Call notifier
+	}
 
-
-    mutex.unlock();
-    if(tuples.size()>0&& n!=NULL)
-    {
-       //mq.requestMailMan(this);
-       n(this);//Call notifier
-    }
 	return true;
 }
 
@@ -96,23 +88,22 @@ template<typename T>
 void Buffer<T>::add(const T & t)
 {
 	Mutex::scoped_lock data_lock(mutex);
+	msg_buf.push_back(t);
+	data_lock.unlock();
 
-    msg_buf.push_back(t);
-    data_lock.unlock();
-    if( n!=NULL)
+	if( n != NULL)
 	{
 		n(this);//Call notifier
 		//mq.requestMailMan(this);
-    }
+	}
 }
 template<typename T>
 std::vector<T> Buffer<T>::remove()
 {
-    Mutex::scoped_lock data_lock(mutex);
-    std::vector<T> oldtupples=msg_buf;
-    msg_buf.clear();
-    return oldtupples;
-
+	Mutex::scoped_lock data_lock(mutex);
+	std::vector<T> oldtupples = msg_buf;
+	msg_buf.clear();
+	return oldtupples;
 }
 
 //Explicit template instantation for MessageBuffer :)

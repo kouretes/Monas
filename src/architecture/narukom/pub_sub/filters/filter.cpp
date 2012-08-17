@@ -2,28 +2,27 @@
 
 Filter::Filter(const std::string& type_name, bool value) : type(type_name), complement(value)
 {
-
 }
 FilterState Filter::filter(const msgentry & a_tuple)
 {
-  return Unknown;
+	return Unknown;
 }
 
 std::string Filter::get_type() const
 {
-  return type;
+	return type;
 }
 bool Filter::operator==(const Filter& another_filter) const
 {
-  return type == another_filter.get_type();
+	return type == another_filter.get_type();
 }
 
 bool Filter::get_complement() const
 {
-  return complement;
+	return complement;
 }
 
 void Filter::set_complement(bool value)
 {
-  complement = value;
+	complement = value;
 }

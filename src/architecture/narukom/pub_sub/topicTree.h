@@ -26,21 +26,22 @@
 class TopicTree: public stringRegistry
 {
 
-    public:
+public:
 	TopicTree();
 	explicit TopicTree(std::string const& root);
-    std::set<std::size_t> iterateTopics(std::size_t  topic , int where) const;
-    void addTopic(std::string const& what,std::string const& under);
-    private:
-    typedef struct topicdata_s{
-  		std::size_t parentid;
-  		std::set<std::size_t> children;
+	std::set<std::size_t> iterateTopics(std::size_t  topic , int where) const;
+	void addTopic(std::string const& what, std::string const& under);
+private:
+	typedef struct topicdata_s
+	{
+		std::size_t parentid;
+		std::set<std::size_t> children;
 
-  	} topicdata;
+	} topicdata;
 	//Unlocked, stable and untouched while running
 	//stringRegistry topicRegistry;
-  	std::map<std::size_t,topicdata > topictree;
-	void iterateTopicsBelow(std::set<std::size_t>  &res,std::size_t const topicid) const;
+	std::map<std::size_t, topicdata > topictree;
+	void iterateTopicsBelow(std::set<std::size_t>  &res, std::size_t const topicid) const;
 
 };
 typedef Singleton<const TopicTree> Topics;

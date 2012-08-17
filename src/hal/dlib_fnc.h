@@ -1,17 +1,18 @@
 #ifndef _dlib_fnc_h_
 #define _dlib_fnc_h_ 1
 
-class DLibFnc {
+class DLibFnc
+{
 
-    public:
+public:
 
-        static void* _open ( const char * filename );
+	static void* _open ( const char * filename );
 
-        static char* _error ( );
+	static char* _error ( );
 
-        static void* _sym ( void* handle, const char* symbol );
+	static void* _sym ( void* handle, const char* symbol );
 
-        static int _close ( void* handle );
+	static int _close ( void* handle );
 
 };
 

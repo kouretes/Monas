@@ -10,22 +10,23 @@
 
 ACTIVITY_REGISTER(Init);
 
-int Init::Execute() {
+int Init::Execute()
+{
 	//_blk.process_messages();
 	//_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	//readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	//Logger::Instance().WriteMsg("Init",  " Execute "+ _toString(playernum), Logger::Info);
-//
-//_blk.publish_all();
+	//
+	//_blk.publish_all();
 	return 0;
 }
 
-void Init::UserInit () {
-//	pnm = new PlayerNumberMessage();
-
-
+void Init::UserInit ()
+{
+	//	pnm = new PlayerNumberMessage();
 }
 
-std::string Init::GetName () {
+std::string Init::GetName ()
+{
 	return "Init";
 }

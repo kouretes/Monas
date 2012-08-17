@@ -9,54 +9,66 @@
 
 
 
-namespace KSystem {
+namespace KSystem
+{
 
-class Thread : public IExecutable {
+	class Thread : public IExecutable
+	{
 
-    public:
+	public:
 
-        Thread ( bool start = false ) : running(false) {
+		Thread ( bool start = false ) : running(false)
+		{
+			if ( start )
+				StartThread();
+		}
 
-            if ( start )
-                StartThread();
-        }
+		virtual ~Thread()
+		{
+			;
+		}
 
-        virtual ~Thread() { ; }
+		bool IsRunning() const
+		{
+			return running;
+		}
 
-        bool IsRunning() const { return running; }
+		virtual void StartThread()
+		{
+			running = true;
+			bThread = boost::thread( &Thread::startHelper , this);
+		}
 
-        virtual void StartThread() {
-            running = true;
-            bThread = boost::thread( &Thread::startHelper , this);
-        }
+		virtual void StopThread()
+		{
+			running = false;
+		}
 
-        virtual void StopThread() {
-            running = false;
-        }
+		virtual void KillThread()
+		{
+			StopThread(); //TODO
+		}
 
-        virtual void KillThread() {
-            StopThread(); //TODO
-        }
+		void JoinThread()
+		{
+			bThread.join();
+		}
 
-        void JoinThread() {
-            bThread.join();
-        }
+	protected:
+		volatile bool running;
 
-    protected:
-        volatile bool running;
+		boost::thread bThread;
 
-        boost::thread bThread;
-
-        virtual void startHelper () {
-            while (running)
-                this->Execute();
-
-        }
+		virtual void startHelper ()
+		{
+			while (running)
+				this->Execute();
+		}
 
 
 
 
-};
+	};
 
 };
 

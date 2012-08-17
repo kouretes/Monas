@@ -34,85 +34,92 @@ class TestMessage;
 
 // ===================================================================
 
-class TestMessage : public ::google::protobuf::Message {
- public:
-  TestMessage();
-  virtual ~TestMessage();
-  
-  TestMessage(const TestMessage& from);
-  
-  inline TestMessage& operator=(const TestMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const TestMessage& default_instance();
-  
-  void Swap(TestMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  TestMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const TestMessage& from);
-  void MergeFrom(const TestMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 counter = 6 [default = 0];
-  inline bool has_counter() const;
-  inline void clear_counter();
-  static const int kCounterFieldNumber = 6;
-  inline ::google::protobuf::int32 counter() const;
-  inline void set_counter(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:TestMessage)
- private:
-  inline void set_has_counter();
-  inline void clear_has_counter();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 counter_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_TestMessage_2eproto();
-  friend void protobuf_AssignDesc_TestMessage_2eproto();
-  friend void protobuf_ShutdownFile_TestMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static TestMessage* default_instance_;
+class TestMessage : public ::google::protobuf::Message
+{
+public:
+	TestMessage();
+	virtual ~TestMessage();
+
+	TestMessage(const TestMessage& from);
+
+	inline TestMessage& operator=(const TestMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const TestMessage& default_instance();
+
+	void Swap(TestMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	TestMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const TestMessage& from);
+	void MergeFrom(const TestMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required int32 counter = 6 [default = 0];
+	inline bool has_counter() const;
+	inline void clear_counter();
+	static const int kCounterFieldNumber = 6;
+	inline ::google::protobuf::int32 counter() const;
+	inline void set_counter(::google::protobuf::int32 value);
+
+	// @@protoc_insertion_point(class_scope:TestMessage)
+private:
+	inline void set_has_counter();
+	inline void clear_has_counter();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::int32 counter_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_TestMessage_2eproto();
+	friend void protobuf_AssignDesc_TestMessage_2eproto();
+	friend void protobuf_ShutdownFile_TestMessage_2eproto();
+
+	void InitAsDefaultInstance();
+	static TestMessage* default_instance_;
 };
 // ===================================================================
 
@@ -122,36 +129,44 @@ class TestMessage : public ::google::protobuf::Message {
 // TestMessage
 
 // required int32 counter = 6 [default = 0];
-inline bool TestMessage::has_counter() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool TestMessage::has_counter() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void TestMessage::set_has_counter() {
-  _has_bits_[0] |= 0x00000001u;
+inline void TestMessage::set_has_counter()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void TestMessage::clear_has_counter() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void TestMessage::clear_has_counter()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void TestMessage::clear_counter() {
-  counter_ = 0;
-  clear_has_counter();
+inline void TestMessage::clear_counter()
+{
+	counter_ = 0;
+	clear_has_counter();
 }
-inline ::google::protobuf::int32 TestMessage::counter() const {
-  return counter_;
+inline ::google::protobuf::int32 TestMessage::counter() const
+{
+	return counter_;
 }
-inline void TestMessage::set_counter(::google::protobuf::int32 value) {
-  set_has_counter();
-  counter_ = value;
+inline void TestMessage::set_counter(::google::protobuf::int32 value)
+{
+	set_has_counter();
+	counter_ = value;
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 
 #ifndef SWIG
-namespace google {
-namespace protobuf {
+namespace google
+{
+	namespace protobuf
+	{
 
 
-}  // namespace google
+	}  // namespace google
 }  // namespace protobuf
 #endif  // SWIG
 

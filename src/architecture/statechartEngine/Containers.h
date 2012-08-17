@@ -4,29 +4,31 @@
 #include <list>
 #include <vector>
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class State;
-    class OrState;
+	class State;
+	class OrState;
 
-    class Containers {
+	class Containers
+	{
 
-        public:
+	public:
 
-            typedef std::list<State*> StateContainer;
-            typedef StateContainer::iterator StateContainerIterator;
-            typedef StateContainer::const_iterator StateContainerIteratorConst;
+		typedef std::list<State*> StateContainer;
+		typedef StateContainer::iterator StateContainerIterator;
+		typedef StateContainer::const_iterator StateContainerIteratorConst;
 
-            typedef std::vector<OrState*> OrStateContainer;
-            typedef OrStateContainer::iterator OrStateContainerIterator;
-            typedef OrStateContainer::const_iterator OrStateContainerIteratorConst;
+		typedef std::vector<OrState*> OrStateContainer;
+		typedef OrStateContainer::iterator OrStateContainerIterator;
+		typedef OrStateContainer::const_iterator OrStateContainerIteratorConst;
 
-            typedef std::vector<TransitionSegmentBase*> TransitionContainer;
-            typedef TransitionContainer::iterator TransitionContainerIterator;
-            typedef TransitionContainer::const_iterator TransitionContainerIteratorConst;
+		typedef std::vector<TransitionSegmentBase*> TransitionContainer;
+		typedef TransitionContainer::iterator TransitionContainerIterator;
+		typedef TransitionContainer::const_iterator TransitionContainerIteratorConst;
 
 
-    };
+	};
 
 }
 

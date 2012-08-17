@@ -3,21 +3,25 @@
 
 #include<string>
 
-class RobotEffector {
+class RobotEffector
+{
 
-    public:
+public:
 
-        RobotEffector(std::string &name) :
-            name(name)
-        {
-            ;
-        }
+	RobotEffector(std::string &name) :
+		name(name)
+	{
+		;
+	}
 
-        virtual ~RobotEffector() { ; }
+	virtual ~RobotEffector()
+	{
+		;
+	}
 
-    private:
+private:
 
-        std::string name;
+	std::string name;
 
 };
 

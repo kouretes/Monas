@@ -5,23 +5,27 @@
 
 #include "tools/singleton.h"
 
-class GlobalConfClass {
+class GlobalConfClass
+{
 
-    public:
+public:
 
-        // Implicit set of the configuration path!
-        // Configuration files expected at the same level as archconf
-        std::string ConfigurationFile () {
-            return "config/archconf.xml";
-        }
+	// Implicit set of the configuration path!
+	// Configuration files expected at the same level as archconf
+	std::string ConfigurationFile ()
+	{
+		return "config/archconf.xml";
+	}
 
-        std::string ConfigurationFileAlter () {
-            return "/home/nao/naoqi/config/archconf.xml";
-        }
+	std::string ConfigurationFileAlter ()
+	{
+		return "/home/nao/naoqi/config/archconf.xml";
+	}
 
-        std::string ConfigurationFileGUIAlter () {
-            return "../../../config/archconf.xml";
-        }
+	std::string ConfigurationFileGUIAlter ()
+	{
+		return "../../../config/archconf.xml";
+	}
 
 };
 

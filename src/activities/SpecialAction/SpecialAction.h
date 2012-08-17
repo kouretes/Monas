@@ -11,7 +11,8 @@
 
 
 //ACTIVITY_START
-class ACTIVITY_VISIBLE SpecialAction : public IActivity {
+class ACTIVITY_VISIBLE SpecialAction : public IActivity
+{
 
 public:
 

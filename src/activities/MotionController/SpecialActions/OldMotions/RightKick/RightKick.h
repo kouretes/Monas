@@ -6,25 +6,27 @@
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
 
-class RightKick: public ISpecialAction {
-  
-  public:
-    std::string GetName () {
-      return "RightKick";
-    }
-    
-    RightKick();
-    
-    int ExecutePost();
-    
-  private:
-    
-    void Initialize();
-    
-    AL::ALPtr<AL::ALMotionProxy> motion;
-    
-    AL::ALValue RightKick_names, RightKick_times, RightKick_keys;     
-    
-}; 
+class RightKick: public ISpecialAction
+{
+
+public:
+	std::string GetName ()
+	{
+		return "RightKick";
+	}
+
+	RightKick();
+
+	int ExecutePost();
+
+private:
+
+	void Initialize();
+
+	AL::ALPtr<AL::ALMotionProxy> motion;
+
+	AL::ALValue RightKick_names, RightKick_times, RightKick_keys;
+
+};
 
 #endif // _RightKick_h_ 

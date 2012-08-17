@@ -5,7 +5,7 @@
 #include <endian.h>
 #include <bits/byteswap.h>
 
-const boost::posix_time::ptime serializeepoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
+const boost::posix_time::ptime serializeepoch(boost::gregorian::date(1970, boost::gregorian::Jan, 1));
 
 
 
@@ -21,17 +21,13 @@ const boost::posix_time::ptime serializeepoch(boost::gregorian::date(1970,boost:
 
 inline int64_t serialize_ptime(boost::posix_time::ptime const& t)
 {
-
-
-	boost::posix_time::time_duration d=serializeepoch-t;
+	boost::posix_time::time_duration d = serializeepoch - t;
 	return htonll(d.total_microseconds());
-
 };
 
 inline boost::posix_time::ptime deserialize_ptime(int64_t const& l)
 {
-
-	return serializeepoch+boost::posix_time::microseconds(ntohll(l));
+	return serializeepoch + boost::posix_time::microseconds(ntohll(l));
 };
 
 

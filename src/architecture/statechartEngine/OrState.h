@@ -3,33 +3,35 @@
 
 #include "State.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class OrState: public State {
+	class OrState: public State
+	{
 
-        public:
-            OrState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+	public:
+		OrState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
 
-            virtual ~OrState ();
+		virtual ~OrState ();
 
-            virtual int Activate ();
-            int DeActivate ();
+		virtual int Activate ();
+		int DeActivate ();
 
-            bool Step ( IEvent* ev = 0, IParameter* param = 0);
+		bool Step ( IEvent* ev = 0, IParameter* param = 0);
 
-            void SetActive ( State* );
+		void SetActive ( State* );
 
-            void SetStartState ( State* );
+		void SetStartState ( State* );
 
-            virtual Blackboard* AddChild ( State* );
+		virtual Blackboard* AddChild ( State* );
 
-        protected:
+	protected:
 
-            State* _activeState;
+		State* _activeState;
 
-            State* _startState;
+		State* _startState;
 
-    };
+	};
 
 }
 

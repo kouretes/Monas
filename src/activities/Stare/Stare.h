@@ -18,10 +18,11 @@
 #include <math.h>
 
 ACTIVITY_START
-class Stare : public IActivity {
+class Stare : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(Stare);
+	ACTIVITY_CONSTRUCTOR(Stare);
 
 	int ACTIVITY_VISIBLE Execute ();
 
@@ -29,7 +30,7 @@ public:
 
 	std::string  ACTIVITY_VISIBLE GetName ();
 	//int toFallOrNotToFall(boost::shared_ptr<const DoubleObsInfo> doi);
-//	int toFallOrNotToFall(DoubleObsInfo* doi);
+	//	int toFallOrNotToFall(DoubleObsInfo* doi);
 	int toFallOrNotToFall(boost::shared_ptr<const WorldInfo> doi);
 private:
 	MotionWalkMessage wmot;

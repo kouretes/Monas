@@ -11,61 +11,66 @@
 
 
 
-namespace KSystem {
+namespace KSystem
+{
 
-class ThreadConfig {
+	class ThreadConfig
+	{
 
-    public:
+	public:
 
-        bool IsRealTime;
+		bool IsRealTime;
 
-        int Priority;
+		int Priority;
 
-        float ThreadPeriod;
+		float ThreadPeriod;
 
-};
-class PeriodicThread : public Thread {
+	};
+	class PeriodicThread : public Thread
+	{
 
-    public:
-
-     
- 	PeriodicThread ( ThreadConfig &c,bool start=false ) : Thread(start) {
-		IsRealTime=c.IsRealTime;
-		Priority=c.Priority;
-		ThreadPeriod=c.ThreadPeriod;
-          
-        }
-
-	void StartThread() {
-            running = true;
-            bThread = boost::thread( &PeriodicThread::startHelper , this);
-        }
-
-    protected:
-	virtual const std::string GetName() const =0;
-        void startHelper () {
-            while (running)
-            {
-                t.restart ();
-                this->Execute();
-		double el=t.elapsed();
-                if ( el  > ThreadPeriod &&ThreadPeriod>0 )
-                    Logger::Instance().WriteMsg(GetName(), "Decrease Freq!!!", Logger::ExtraInfo );
-                else
-                    SysCall::_usleep( (ThreadPeriod - el)*1000000L );
-
-            }
-        }
-	KSystem::smart_timer t;
-
-        bool IsRealTime;
-
-        int Priority;
-
-        float ThreadPeriod;
+	public:
 
 
-};
+		PeriodicThread ( ThreadConfig &c, bool start = false ) : Thread(start)
+		{
+			IsRealTime = c.IsRealTime;
+			Priority = c.Priority;
+			ThreadPeriod = c.ThreadPeriod;
+		}
+
+		void StartThread()
+		{
+			running = true;
+			bThread = boost::thread( &PeriodicThread::startHelper , this);
+		}
+
+	protected:
+		virtual const std::string GetName() const = 0;
+		void startHelper ()
+		{
+			while (running)
+			{
+				t.restart ();
+				this->Execute();
+				double el = t.elapsed();
+
+				if ( el  > ThreadPeriod && ThreadPeriod > 0 )
+					Logger::Instance().WriteMsg(GetName(), "Decrease Freq!!!", Logger::ExtraInfo );
+				else
+					SysCall::_usleep( (ThreadPeriod - el) * 1000000L );
+			}
+		}
+		KSystem::smart_timer t;
+
+		bool IsRealTime;
+
+		int Priority;
+
+		float ThreadPeriod;
+
+
+	};
 
 };
 

@@ -2,11 +2,12 @@
 #define TYPE2TYPE_H_ 1
 
 template< class T >
-class Type2Type {
+class Type2Type
+{
 
-    public:
+public:
 
-        typedef T theType;
+	typedef T theType;
 
 };
 

@@ -3,21 +3,22 @@
 
 #include <pthread.h>
 
-class Mutex {
+class Mutex
+{
 
-    public:
+public:
 
-        Mutex();
+	Mutex();
 
-        virtual ~Mutex();
+	virtual ~Mutex();
 
-        virtual void lock() const;
+	virtual void lock() const;
 
-        virtual void release() const;
+	virtual void release() const;
 
-    private:
+private:
 
-        mutable pthread_mutex_t mtex;
+	mutable pthread_mutex_t mtex;
 };
 
 #endif // _mutex_h_

@@ -12,19 +12,20 @@
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
-class KmexManager {
+class KmexManager
+{
 
-  public:
+public:
 
-    static std::vector<KmexAction*> LoadActionsXML(const std::string& file_name, std::map<std::string,
-  		  boost::shared_ptr<ISpecialAction> > SpActions);
+	static std::vector<KmexAction*> LoadActionsXML(const std::string& file_name, std::map < std::string,
+	        boost::shared_ptr<ISpecialAction> > SpActions);
 
 
 
-  private:
+private:
 
-	typedef std::map<std::string,
-		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
+	typedef std::map < std::string,
+	        boost::shared_ptr<ISpecialAction> > SpAssocCont;
 
 };
 

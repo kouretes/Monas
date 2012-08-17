@@ -26,60 +26,72 @@
 #endif
 
 #include <limits>
-namespace KSystem {
-class smart_timer
+namespace KSystem
 {
-  private:
-    typedef struct timespec timertype;
-    timertype t;
-    static const double NSECPERSEC = 1000000000.0;
-    static double resultify(timertype const& t) { return t.tv_sec+ t.tv_nsec/NSECPERSEC;};
-    static timertype timertypediff(timertype const& start, timertype  const& end)
-    {
-      timertype temp;
-      if ((end.tv_nsec-start.tv_nsec)<0) {
-        temp.tv_sec = end.tv_sec-start.tv_sec-1;
-        temp.tv_nsec = NSECPERSEC+end.tv_nsec-start.tv_nsec;
-      } else {
-        temp.tv_sec = end.tv_sec-start.tv_sec;
-        temp.tv_nsec = end.tv_nsec-start.tv_nsec;
-      }
-      return temp;
-    }
-  public:
+	class smart_timer
+	{
+	private:
+		typedef struct timespec timertype;
+		timertype t;
+		static const double NSECPERSEC = 1000000000.0;
+		static double resultify(timertype const& t)
+		{
+			return t.tv_sec + t.tv_nsec / NSECPERSEC;
+		};
+		static timertype timertypediff(timertype const& start, timertype  const& end)
+		{
+			timertype temp;
 
-    smart_timer() { restart();};
+			if ((end.tv_nsec - start.tv_nsec) < 0)
+			{
+				temp.tv_sec = end.tv_sec - start.tv_sec - 1;
+				temp.tv_nsec = NSECPERSEC + end.tv_nsec - start.tv_nsec;
+			}
+			else
+			{
+				temp.tv_sec = end.tv_sec - start.tv_sec;
+				temp.tv_nsec = end.tv_nsec - start.tv_nsec;
+			}
 
-    void restart()
-    {
-      clock_gettime(SMART_TIMER_TIME_ID,&t);
-    }
-    //Maximum value for elasped
-    static double elapsed_max()
-    {
-        timertype temp;
-        temp.tv_sec=std::numeric_limits<time_t>::max();
-        temp.tv_nsec=std::numeric_limits<long>::max();
-        return resultify(temp);
-    }
-     // return elapsed time in seconds
-    double elapsed() const {
-      timertype temp;
-      clock_gettime(SMART_TIMER_TIME_ID,&temp);
+			return temp;
+		}
+	public:
 
-      return resultify(timertypediff(t,temp));
-    }
+		smart_timer()
+		{
+			restart();
+		};
 
-    // return minimum value for elapsed()
-    static double elapsed_min()
-    {
-       timertype temp;
-       clock_getres(SMART_TIMER_TIME_ID,&temp);
-       return resultify(temp);
-    }
+		void restart()
+		{
+			clock_gettime(SMART_TIMER_TIME_ID, &t);
+		}
+		//Maximum value for elasped
+		static double elapsed_max()
+		{
+			timertype temp;
+			temp.tv_sec = std::numeric_limits<time_t>::max();
+			temp.tv_nsec = std::numeric_limits<long>::max();
+			return resultify(temp);
+		}
+		// return elapsed time in seconds
+		double elapsed() const
+		{
+			timertype temp;
+			clock_gettime(SMART_TIMER_TIME_ID, &temp);
+			return resultify(timertypediff(t, temp));
+		}
+
+		// return minimum value for elapsed()
+		static double elapsed_min()
+		{
+			timertype temp;
+			clock_getres(SMART_TIMER_TIME_ID, &temp);
+			return resultify(temp);
+		}
 
 
-};
+	};
 }
 
 #else
@@ -111,67 +123,71 @@ class smart_timer
 ///////////////////////////////////////////////////////////////////////////////
 namespace KSystem
 {
-class smart_timer
-{
-public:
-    // ctor
-    smart_timer()
-    {
-        start_time.QuadPart = 0;
-        frequency.QuadPart = 0;
+	class smart_timer
+	{
+	public:
+		// ctor
+		smart_timer()
+		{
+			start_time.QuadPart = 0;
+			frequency.QuadPart = 0;
 
-        if (!QueryPerformanceFrequency(&frequency))
-            throw std::runtime_error("Couldn't acquire frequency");
+			if (!QueryPerformanceFrequency(&frequency))
+				throw std::runtime_error("Couldn't acquire frequency");
 
-        restart();
-    }
+			restart();
+		}
 
-    // restart timer
-    void restart()
-    {
-        t.restart();
-        if (!QueryPerformanceCounter(&start_time))
-            throw std::runtime_error("Couldn't initialize start_time");
-    }
+		// restart timer
+		void restart()
+		{
+			t.restart();
 
-    // return elapsed time in seconds
-    double elapsed() const
-    {
-        LARGE_INTEGER now;
-        if (!QueryPerformanceCounter(&now))
-            throw std::runtime_error("Couldn't get current time");
+			if (!QueryPerformanceCounter(&start_time))
+				throw std::runtime_error("Couldn't initialize start_time");
+		}
 
-        // QueryPerformanceCounter() workaround
-        // http://support.microsoft.com/default.aspx?scid=kb;EN-US;q274323
-        double d1 = double(now.QuadPart - start_time.QuadPart) / frequency.QuadPart;
-        double d2 = t.elapsed();
-        return ((d1 - d2) > 0.5) ? d2 : d1;
-    }
+		// return elapsed time in seconds
+		double elapsed() const
+		{
+			LARGE_INTEGER now;
 
-    // return estimated maximum value for elapsed()
-    static double elapsed_max()
-    {
-        return (double((std::numeric_limits<LONGLONG>::max)())
-            - double(start_time.QuadPart)) / double(frequency.QuadPart);
-    }
+			if (!QueryPerformanceCounter(&now))
+				throw std::runtime_error("Couldn't get current time");
 
-    // return minimum value for elapsed()
-    static double elapsed_min()
-    {
-        return 1.0 / frequency.QuadPart;
-    }
+			// QueryPerformanceCounter() workaround
+			// http://support.microsoft.com/default.aspx?scid=kb;EN-US;q274323
+			double d1 = double(now.QuadPart - start_time.QuadPart) / frequency.QuadPart;
+			double d2 = t.elapsed();
+			return ((d1 - d2) > 0.5) ? d2 : d1;
+		}
 
-private:
-    boost::timer t; // backup in case of QueryPerformanceCounter() bug
-    LARGE_INTEGER start_time;
-    LARGE_INTEGER frequency;
-};
+		// return estimated maximum value for elapsed()
+		static double elapsed_max()
+		{
+			return (double((std::numeric_limits<LONGLONG>::max)())
+			        - double(start_time.QuadPart)) / double(frequency.QuadPart);
+		}
+
+		// return minimum value for elapsed()
+		static double elapsed_min()
+		{
+			return 1.0 / frequency.QuadPart;
+		}
+
+	private:
+		boost::timer t; // backup in case of QueryPerformanceCounter() bug
+		LARGE_INTEGER start_time;
+		LARGE_INTEGER frequency;
+	};
 }
 
 #else  // defined(BOOST_WINDOWS)
-namespace KSystem{
+namespace KSystem
+{
 
-  typedef boost:timer smart_timer;
+typedef boost:
+	timer smart_timer;
 }
 #endif
 

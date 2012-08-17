@@ -21,21 +21,22 @@
 #include "type_filter.h"
 TypeFilter::TypeFilter(const std::string& filter_name) : Filter(filter_name)
 {
-
 }
 
 FilterState TypeFilter::filter(const msgentry& t)
 {
 	unsigned int i = 0;
+
 	if(!Filter::get_complement())
 	{
-
 		while( i < type_vector.size())
 		{
 			if(t.msg->GetTypeName() ==  type_vector[i])
 				return Accepted;
+
 			i++;
 		}
+
 		return Rejected;
 	}
 	else
@@ -44,11 +45,12 @@ FilterState TypeFilter::filter(const msgentry& t)
 		{
 			if(t.msg->GetTypeName() ==  type_vector[i])
 				return Rejected;
+
 			i++;
 		}
+
 		return Accepted;
 	}
-
 }
 
 void TypeFilter::add_type(const std::string& new_type)

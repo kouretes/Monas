@@ -11,10 +11,11 @@
 
 
 ACTIVITY_START
-class Kick : public IActivity {
+class Kick : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(Kick);
+	ACTIVITY_CONSTRUCTOR(Kick);
 
 	int ACTIVITY_VISIBLE Execute ();
 

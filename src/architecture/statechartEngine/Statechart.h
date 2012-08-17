@@ -10,48 +10,50 @@
 
 #include <boost/thread/condition_variable.hpp>
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class Statechart:  public statechart_engine::OrState, private KSystem::Thread {
+	class Statechart:  public statechart_engine::OrState, private KSystem::Thread
+	{
 
-        public:
+	public:
 
-            Statechart ( std::string name, Narukom* com );
+		Statechart ( std::string name, Narukom* com );
 
-            virtual ~Statechart ();
+		virtual ~Statechart ();
 
-            int Activate();
+		int Activate();
 
-            ThreadPool* GetThreadPool ();
+		ThreadPool* GetThreadPool ();
 
-            ThreadPool* GetTimeoutThreadPool ();
+		ThreadPool* GetTimeoutThreadPool ();
 
-            void Start ();
+		void Start ();
 
-            void Stop ();
+		void Stop ();
 
-            int IEX_DIRECTIVE_HOT Execute();
+		int IEX_DIRECTIVE_HOT Execute();
 
-           void AtomicNotify ();
+		void AtomicNotify ();
 
-        private:
+	private:
 
-            Narukom* _narukom;
+		Narukom* _narukom;
 
-            Blackboard _blackboard;
-			
-        	XmlNode _xmlnode;
-			
-            ThreadPool _tp;
+		Blackboard _blackboard;
 
-            ThreadPool _timeoutpool;
+		XmlNode _xmlnode;
 
-            boost::condition_variable cond;
-            KSystem::Mutex mut;
-            bool notified;
+		ThreadPool _tp;
+
+		ThreadPool _timeoutpool;
+
+		boost::condition_variable cond;
+		KSystem::Mutex mut;
+		bool notified;
 
 
-    };
+	};
 
 }
 

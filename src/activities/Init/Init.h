@@ -6,10 +6,11 @@
 #include "messages/BehaviorMessages.pb.h"
 ACTIVITY_START
 
-class Init : public IActivity {
+class Init : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(Init);
+	ACTIVITY_CONSTRUCTOR(Init);
 
 	int ACTIVITY_VISIBLE Execute ();
 
@@ -20,8 +21,8 @@ public:
 private:
 
 	int teamColor;
-//	int playernum;
-//	bool readConfiguration(const std::string& file_name);
+	//	int playernum;
+	//	bool readConfiguration(const std::string& file_name);
 };
 ACTIVITY_END
 #endif // _Init_h_

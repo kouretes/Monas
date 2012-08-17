@@ -8,9 +8,10 @@
 #endif
 
 
-class IExecutable {
-    public:
-        virtual int IEX_DIRECTIVE_HOT  Execute()  =0;
+class IExecutable
+{
+public:
+	virtual int IEX_DIRECTIVE_HOT  Execute()  = 0;
 };
 
 

@@ -11,17 +11,19 @@
 
 
 
-class XarManager {
+class XarManager
+{
 
-	public:
+public:
 
-		static std::vector<ISpecialAction*> LoadActionsXAR(AL::ALPtr<AL::ALFrameManagerProxy> frame);
+	static std::vector<ISpecialAction*> LoadActionsXAR(AL::ALPtr<AL::ALFrameManagerProxy> frame);
 
-		struct XarBehavior {
-				std::string filename;
-				std::string name;
-				std::string identifier;
-		};
+	struct XarBehavior
+	{
+		std::string filename;
+		std::string name;
+		std::string identifier;
+	};
 
 };
 

@@ -30,29 +30,31 @@
 #define ACTIVITY_REGISTER(x) namespace { 	ACTIVITY_VISIBLE ActivityRegistrar<x>::Type temp##x(#x);  }
 
 
-class IActivity : public IExecutable {
+class IActivity : public IExecutable
+{
 
-    public:
-        IActivity  ( Blackboard &,  XmlNode & );
-        virtual ~IActivity() {};
+public:
+	IActivity  ( Blackboard &,  XmlNode & );
+	virtual ~IActivity() {};
 
-        virtual void UserInit () {};
+	virtual void UserInit () {};
 
-        virtual std::string GetName ()=0;
+	virtual std::string GetName () = 0;
 
-    protected:
+protected:
 
-        Blackboard &  _blk;
-        XmlNode &  _xml;
+	Blackboard &  _blk;
+	XmlNode &  _xml;
 
 };
 
 //typedef GenericFactory < IActivity, std::string ,IActivity* (*)(Blackboard&),Blackboard&>  ActivityFactory;
-typedef GenericFactory < IActivity, std::string ,IActivity* (*)(Blackboard&, XmlNode &),Blackboard&, XmlNode &>  ActivityFactory;
+typedef GenericFactory < IActivity, std::string , IActivity* (*)(Blackboard&, XmlNode &), Blackboard&, XmlNode &>  ActivityFactory;
 
 template<class T>
-struct ActivityRegistrar {
-    typedef Registrar<ActivityFactory,IActivity,std::string,T,Blackboard&,XmlNode&> Type;
+struct ActivityRegistrar
+{
+	typedef Registrar<ActivityFactory, IActivity, std::string, T, Blackboard&, XmlNode&> Type;
 };
 
 

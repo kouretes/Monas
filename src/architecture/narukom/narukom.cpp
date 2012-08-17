@@ -3,18 +3,16 @@
 
 Narukom::Narukom()
 {
-  mq = new MessageQueue();
-  //   udp_multi = new UdpMulticastChannel();
-  // mq->add_subscriber(udp_multi);
-  //   mq->subscribe("global",udp_multi,2);
-  mq->StartThread();
-
+	mq = new MessageQueue();
+	//   udp_multi = new UdpMulticastChannel();
+	// mq->add_subscriber(udp_multi);
+	//   mq->subscribe("global",udp_multi,2);
+	mq->StartThread();
 }
 MessageQueue* Narukom::get_message_queue()
 {
-  if(mq == 0)
-    mq = new MessageQueue();
-  return mq;
+	if(mq == 0)
+		mq = new MessageQueue();
 
-
+	return mq;
 }

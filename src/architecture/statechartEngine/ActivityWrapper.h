@@ -5,26 +5,28 @@
 #include "Statechart.h"
 #include "architecture/executables/IActivity.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-  class ActivityWrapper : public IExecutable {
+	class ActivityWrapper : public IExecutable
+	{
 
-    public:
+	public:
 
-      ActivityWrapper ();
+		ActivityWrapper ();
 
-      void Init(IActivity* act, volatile int* running, Statechart* s);
+		void Init(IActivity* act, volatile int* running, Statechart* s);
 
-      int IEX_DIRECTIVE_HOT Execute();
+		int IEX_DIRECTIVE_HOT Execute();
 
-    private:
+	private:
 
-      IActivity* _act;
+		IActivity* _act;
 
-      volatile int* _running;
+		volatile int* _running;
 
-      Statechart* _s;
-  };
+		Statechart* _s;
+	};
 
 }
 
