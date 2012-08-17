@@ -28,17 +28,17 @@ TestBehavior::TestBehavior(Narukom* com)
 	_states.push_back( Node_0_2_3_1 );
 	ConditionConnector* Node_0_2_3_2  = new ConditionConnector ( "Node_0_2_3_2", Node_0_2_3 ); //Name:0.2.3.2
 	_states.push_back( Node_0_2_3_2 );
-	IActivity* NodeActivInst_0_2_3_3 = ActivityFactory::Instance()->CreateObject( "SitDownAndStare", *Node_0_2_3->GetBlackboard() );
+	IActivity* NodeActivInst_0_2_3_3 = ActivityFactory::Instance()->CreateObject( "SitDownAndStare", *Node_0_2_3->GetBlackboard(), *Node_0_2_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_2_3_3 );
 	BasicState* Node_0_2_3_3 = new BasicState( "Node_SitDownAndStare", Node_0_2_3, NodeActivInst_0_2_3_3 ); //Name:SitDownAndStare
 	_states.push_back( Node_0_2_3_3 );
-	IActivity* NodeActivInst_0_2_3_4 = ActivityFactory::Instance()->CreateObject( "StandUpAndScan" , *Node_0_2_3->GetBlackboard());
+	IActivity* NodeActivInst_0_2_3_4 = ActivityFactory::Instance()->CreateObject( "StandUpAndScan" , *Node_0_2_3->GetBlackboard(), *Node_0_2_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_2_3_4 );
 	BasicState* Node_0_2_3_4 = new BasicState( "Node_StandUpAndScan", Node_0_2_3, NodeActivInst_0_2_3_4 ); //Name:StandUpAndScan
 	_states.push_back( Node_0_2_3_4 );
 	EndState* Node_0_2_3_5 = new EndState ( "Node_0_2_3_5", Node_0_2_3 ); //Name:0.2.3.5
 	_states.push_back( Node_0_2_3_5 );
-	IActivity* NodeActivInst_0_2_4 = ActivityFactory::Instance()->CreateObject( "NoPlay", *Node_0_2->GetBlackboard() );
+	IActivity* NodeActivInst_0_2_4 = ActivityFactory::Instance()->CreateObject( "NoPlay", *Node_0_2->GetBlackboard(), *Node_0_2->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_2_4 );
 	BasicState* Node_0_2_4 = new BasicState( "Node_NoPlay", Node_0_2, NodeActivInst_0_2_4 ); //Name:NoPlay
 	_states.push_back( Node_0_2_4 );

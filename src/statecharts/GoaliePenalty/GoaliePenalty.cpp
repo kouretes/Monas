@@ -36,7 +36,7 @@ GoaliePenalty::GoaliePenalty(Narukom* com)
 	_states.push_back( Node_0_2_2_3_3 );
 	StartState* Node_0_2_2_3_3_1 = new StartState ( "Node_0_2_2_3_3_1", Node_0_2_2_3_3 ); //Name:0.2.2.3.3.1
 	_states.push_back( Node_0_2_2_3_3_1 );
-	IActivity* NodeActivInst_0_2_2_3_3_2 = ActivityFactory::Instance()->CreateObject( "Scan" , *Node_0_2_2_3_3->GetBlackboard());
+	IActivity* NodeActivInst_0_2_2_3_3_2 = ActivityFactory::Instance()->CreateObject( "Scan" , *Node_0_2_2_3_3->GetBlackboard(), *Node_0_2_2_3_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_2_2_3_3_2 );
 	BasicState* Node_0_2_2_3_3_2 = new BasicState( "Node_Scan", Node_0_2_2_3_3, NodeActivInst_0_2_2_3_3_2 ); //Name:Scan
 	_states.push_back( Node_0_2_2_3_3_2 );
@@ -50,7 +50,7 @@ GoaliePenalty::GoaliePenalty(Narukom* com)
 	_states.push_back( Node_0_2_2_3_4_2 );
 	StartState* Node_0_2_2_3_4_2_1 = new StartState ( "Node_0_2_2_3_6_2_1", Node_0_2_2_3_4_2 ); //Name:0.2.2.3.6.2.1
 	_states.push_back( Node_0_2_2_3_4_2_1 );
-	IActivity* NodeActivInst_0_2_2_3_4_2_2 = ActivityFactory::Instance()->CreateObject( "Stare" , *Node_0_2_2_3_4_2->GetBlackboard());
+	IActivity* NodeActivInst_0_2_2_3_4_2_2 = ActivityFactory::Instance()->CreateObject( "Stare" , *Node_0_2_2_3_4_2->GetBlackboard(), *Node_0_2_2_3_4_2->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_2_2_3_4_2_2 );
 	BasicState* Node_0_2_2_3_4_2_2 = new BasicState( "Node_Stare", Node_0_2_2_3_4_2, NodeActivInst_0_2_2_3_4_2_2 ); //Name:Stare
 	_states.push_back( Node_0_2_2_3_4_2_2 );
@@ -62,7 +62,7 @@ GoaliePenalty::GoaliePenalty(Narukom* com)
 	_states.push_back( Node_0_2_2_3_4_3_1 );
 	ConditionConnector* Node_0_2_2_3_4_3_2  = new ConditionConnector ( "Node_0_2_2_3_4_3_2", Node_0_2_2_3_4_3 ); //Name:0.2.2.3.4.3.2
 	_states.push_back( Node_0_2_2_3_4_3_2 );
-	IActivity* NodeActivInst_0_2_2_3_4_3_3 = ActivityFactory::Instance()->CreateObject( "SpecialAction" , *Node_0_2_2_3_4_3->GetBlackboard());
+	IActivity* NodeActivInst_0_2_2_3_4_3_3 = ActivityFactory::Instance()->CreateObject( "SpecialAction" , *Node_0_2_2_3_4_3->GetBlackboard(), *Node_0_2_2_3_4_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_2_2_3_4_3_3 );
 	BasicState* Node_0_2_2_3_4_3_3 = new BasicState( "Node_SpecialAction", Node_0_2_2_3_4_3, NodeActivInst_0_2_2_3_4_3_3 ); //Name:SpecialAction
 	_states.push_back( Node_0_2_2_3_4_3_3 );
@@ -72,7 +72,7 @@ GoaliePenalty::GoaliePenalty(Narukom* com)
 	_states.push_back( Node_0_2_2_3_4_4 );
 	EndState* Node_0_2_2_3_5 = new EndState ( "Node_0_2_2_3_5", Node_0_2_2_3 ); //Name:0.2.2.3.5
 	_states.push_back( Node_0_2_2_3_5 );
-	IActivity* NodeActivInst_0_2_2_4 = ActivityFactory::Instance()->CreateObject( "NoPlay" , *Node_0_2_2->GetBlackboard());
+	IActivity* NodeActivInst_0_2_2_4 = ActivityFactory::Instance()->CreateObject( "NoPlay" , *Node_0_2_2->GetBlackboard(), *Node_0_2_2->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_2_2_4 );
 	BasicState* Node_0_2_2_4 = new BasicState( "Node_NoPlay", Node_0_2_2, NodeActivInst_0_2_2_4 ); //Name:NoPlay
 	_states.push_back( Node_0_2_2_4 );

@@ -36,7 +36,7 @@ Goalie::Goalie(Narukom* com)
 	_states.push_back( Node_0_3_2_3_3 );
 	StartState* Node_0_3_2_3_3_1 = new StartState ( "Node_0_3_2_3_3_1", Node_0_3_2_3_3 ); //Name:0.3.2.3.3.1
 	_states.push_back( Node_0_3_2_3_3_1 );
-	IActivity* NodeActivInst_0_3_2_3_3_2 = ActivityFactory::Instance()->CreateObject( "Scan" , *Node_0_3_2_3_3->GetBlackboard());
+	IActivity* NodeActivInst_0_3_2_3_3_2 = ActivityFactory::Instance()->CreateObject( "Scan" , *Node_0_3_2_3_3->GetBlackboard(), *Node_0_3_2_3_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_3_2_3_3_2 );
 	BasicState* Node_0_3_2_3_3_2 = new BasicState( "Node_Scan", Node_0_3_2_3_3, NodeActivInst_0_3_2_3_3_2 ); //Name:Scan
 	_states.push_back( Node_0_3_2_3_3_2 );
@@ -46,13 +46,13 @@ Goalie::Goalie(Narukom* com)
 	_states.push_back( Node_0_3_2_3_4 );
 	StartState* Node_0_3_2_3_4_1 = new StartState ( "Node_0_3_2_3_4_1", Node_0_3_2_3_4 ); //Name:0.3.2.3.4.1
 	_states.push_back( Node_0_3_2_3_4_1 );
-	IActivity* NodeActivInst_0_3_2_3_4_2 = ActivityFactory::Instance()->CreateObject( "ApproachBall" , *Node_0_3_2_3_4->GetBlackboard());
+	IActivity* NodeActivInst_0_3_2_3_4_2 = ActivityFactory::Instance()->CreateObject( "ApproachBall" , *Node_0_3_2_3_4->GetBlackboard(), *Node_0_3_2_3_4->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_3_2_3_4_2 );
 	BasicState* Node_0_3_2_3_4_2 = new BasicState( "Node_ApproachBall", Node_0_3_2_3_4, NodeActivInst_0_3_2_3_4_2 ); //Name:ApproachBall
 	_states.push_back( Node_0_3_2_3_4_2 );
 	EndState* Node_0_3_2_3_4_3 = new EndState ( "Node_0_3_2_3_4_3", Node_0_3_2_3_4 ); //Name:0.3.2.3.4.3
 	_states.push_back( Node_0_3_2_3_4_3 );
-	IActivity* NodeActivInst_0_3_2_3_5 = ActivityFactory::Instance()->CreateObject( "Kick" , *Node_0_3_2_3->GetBlackboard());
+	IActivity* NodeActivInst_0_3_2_3_5 = ActivityFactory::Instance()->CreateObject( "Kick" , *Node_0_3_2_3->GetBlackboard(), *Node_0_3_2_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_3_2_3_5 );
 	BasicState* Node_0_3_2_3_5 = new BasicState( "Node_Kick", Node_0_3_2_3, NodeActivInst_0_3_2_3_5 ); //Name:Kick
 	_states.push_back( Node_0_3_2_3_5 );
@@ -64,7 +64,7 @@ Goalie::Goalie(Narukom* com)
 	_states.push_back( Node_0_3_2_3_6_2 );
 	StartState* Node_0_3_2_3_6_2_1 = new StartState ( "Node_0_3_2_3_6_2_1", Node_0_3_2_3_6_2 ); //Name:0.3.2.3.6.2.1
 	_states.push_back( Node_0_3_2_3_6_2_1 );
-	IActivity* NodeActivInst_0_3_2_3_6_2_2 = ActivityFactory::Instance()->CreateObject( "Stare" , *Node_0_3_2_3_6_2->GetBlackboard());
+	IActivity* NodeActivInst_0_3_2_3_6_2_2 = ActivityFactory::Instance()->CreateObject( "Stare" , *Node_0_3_2_3_6_2->GetBlackboard(), *Node_0_3_2_3_6_2->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_3_2_3_6_2_2 );
 	BasicState* Node_0_3_2_3_6_2_2 = new BasicState( "Node_Stare", Node_0_3_2_3_6_2, NodeActivInst_0_3_2_3_6_2_2 ); //Name:Stare
 	_states.push_back( Node_0_3_2_3_6_2_2 );
@@ -76,7 +76,7 @@ Goalie::Goalie(Narukom* com)
 	_states.push_back( Node_0_3_2_3_6_3_1 );
 	ConditionConnector* Node_0_3_2_3_6_3_2  = new ConditionConnector ( "Node_0_3_2_3_6_3_2", Node_0_3_2_3_6_3 ); //Name:0.3.2.3.6.3.2
 	_states.push_back( Node_0_3_2_3_6_3_2 );
-	IActivity* NodeActivInst_0_3_2_3_6_3_3 = ActivityFactory::Instance()->CreateObject( "SpecialAction" , *Node_0_3_2_3_6_3->GetBlackboard());
+	IActivity* NodeActivInst_0_3_2_3_6_3_3 = ActivityFactory::Instance()->CreateObject( "SpecialAction" , *Node_0_3_2_3_6_3->GetBlackboard(), *Node_0_3_2_3_6_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_3_2_3_6_3_3 );
 	BasicState* Node_0_3_2_3_6_3_3 = new BasicState( "Node_SpecialAction", Node_0_3_2_3_6_3, NodeActivInst_0_3_2_3_6_3_3 ); //Name:SpecialAction
 	_states.push_back( Node_0_3_2_3_6_3_3 );
@@ -90,7 +90,7 @@ Goalie::Goalie(Narukom* com)
 	_states.push_back( Node_0_3_2_4 );
 	StartState* Node_0_3_2_4_1 = new StartState ( "Node_0_3_2_4_1", Node_0_3_2_4 ); //Name:0.3.2.4.1
 	_states.push_back( Node_0_3_2_4_1 );
-	IActivity* NodeActivInst_0_3_2_4_2 = ActivityFactory::Instance()->CreateObject( "NoPlay" , *Node_0_3_2_4->GetBlackboard());
+	IActivity* NodeActivInst_0_3_2_4_2 = ActivityFactory::Instance()->CreateObject( "NoPlay" , *Node_0_3_2_4->GetBlackboard(), *Node_0_3_2_4->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_3_2_4_2 );
 	BasicState* Node_0_3_2_4_2 = new BasicState( "Node_NoPlay", Node_0_3_2_4, NodeActivInst_0_3_2_4_2 ); //Name:NoPlay
 	_states.push_back( Node_0_3_2_4_2 );
@@ -104,7 +104,7 @@ Goalie::Goalie(Narukom* com)
 	_states.push_back( Node_0_3_2_4_3_3 );
 	StartState* Node_0_3_2_4_3_3_1 = new StartState ( "Node_0_3_2_4_3_3_1", Node_0_3_2_4_3_3 ); //Name:0.3.2.4.3.3.1
 	_states.push_back( Node_0_3_2_4_3_3_1 );
-	IActivity* NodeActivInst_0_3_2_4_3_3_2 = ActivityFactory::Instance()->CreateObject( "GoToPosition" , *Node_0_3_2_4_3_3->GetBlackboard());
+	IActivity* NodeActivInst_0_3_2_4_3_3_2 = ActivityFactory::Instance()->CreateObject( "GoToPosition" , *Node_0_3_2_4_3_3->GetBlackboard(), *Node_0_3_2_4_3_3->GetXmlNode());
 	_activities.push_back( NodeActivInst_0_3_2_4_3_3_2 );
 	BasicState* Node_0_3_2_4_3_3_2 = new BasicState( "Node_GoToPosition", Node_0_3_2_4_3_3, NodeActivInst_0_3_2_4_3_3_2 ); //Name:GoToPosition
 	_states.push_back( Node_0_3_2_4_3_3_2 );
