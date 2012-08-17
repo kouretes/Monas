@@ -15,7 +15,7 @@ LWRemoteHosts::LWRemoteHosts(QComboBox *parent )
 	LWRequests.clear();
 	myCurrentRequestedHost.clear();
 
-	addComboBoxItem(tr("-1"), tr("  Please, select available host to monitor."));
+	addComboBoxItem(tr("-1"), tr("  Please, select robot."));
 	//printLWRequests();
 }
 

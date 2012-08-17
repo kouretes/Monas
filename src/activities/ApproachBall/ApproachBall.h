@@ -16,10 +16,11 @@
 #include <math.h>
 
 ACTIVITY_START
-class ApproachBall : public IActivity {
+class ApproachBall : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(ApproachBall);
+	ACTIVITY_CONSTRUCTOR(ApproachBall);
 	int ACTIVITY_VISIBLE Execute ();
 
 	void ACTIVITY_VISIBLE UserInit ();

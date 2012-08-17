@@ -11,150 +11,155 @@
 #include "../external/tinyxml_2-5-3/tinyxml.h"
 
 
-class XMLConfig {
+class XMLConfig
+{
 
-    public:
+public:
 
-        XMLConfig ( const std::string & filename) {
-            load_successful = doc.LoadFile( filename );
-            if ( ! load_successful ) 
-                doc.LinkEndChild( new TiXmlDeclaration( "1.0", "", "" ) );
-        }
+	XMLConfig ( const std::string & filename)
+	{
+		load_successful = doc.LoadFile( filename );
 
-        bool IsLoadedSuccessfully () const { return load_successful; }
+		if ( ! load_successful )
+			doc.LinkEndChild( new TiXmlDeclaration( "1.0", "", "" ) );
+	}
 
-        bool SaveConfiguration () { return doc.SaveFile(); }
+	bool IsLoadedSuccessfully () const
+	{
+		return load_successful;
+	}
 
-        template <class T>
-        bool SetElement (const std::string & ElName, const T & Value, bool isIterative = false) {
+	bool SaveConfiguration ()
+	{
+		return doc.SaveFile();
+	}
 
-            std::ostringstream strs;
-            strs<<Value;
-            
-            TiXmlElement * element = doc.FirstChildElement ( ElName );
+	template <class T>
+	bool SetElement (const std::string & ElName, const T & Value, bool isIterative = false)
+	{
+		std::ostringstream strs;
+		strs << Value;
+		TiXmlElement * element = doc.FirstChildElement ( ElName );
 
-            if ( element == NULL || isIterative ) {
-                element = new TiXmlElement ( ElName );
-                doc.LinkEndChild(element);
-            }
+		if ( element == NULL || isIterative )
+		{
+			element = new TiXmlElement ( ElName );
+			doc.LinkEndChild(element);
+		}
 
-            if ( element->FirstChild() == NULL ) 
-                element->LinkEndChild( new TiXmlText ( strs.str() ) );
-            else 
-                element->FirstChild()->ToText()->SetValue( strs.str() ); 
+		if ( element->FirstChild() == NULL )
+			element->LinkEndChild( new TiXmlText ( strs.str() ) );
+		else
+			element->FirstChild()->ToText()->SetValue( strs.str() );
 
-            return true;
-        }
+		return true;
+	}
 
-        template <class T>
-        bool QueryElement (const std::string & ElName, T & Value) const {
+	template <class T>
+	bool QueryElement (const std::string & ElName, T & Value) const
+	{
+		std::vector<T> tmpVector;
+		bool found = QueryElement( ElName, tmpVector );
 
-            std::vector<T> tmpVector;
-            bool found = QueryElement( ElName, tmpVector );
+		if (!found) return false;
 
-            if (!found) return false;
+		Value = tmpVector[0];
+		return true;
+	}
 
-            Value = tmpVector[0];
+	template <class T>
+	bool QueryElement (const std::string & ElName, std::vector<T> & Value) const
+	{
+		Value.clear();
 
-            return true;
+		for ( const TiXmlNode * currentNode = doc.FirstChild( ElName ); currentNode != NULL ; currentNode = doc.IterateChildren( ElName , currentNode ) )
+		{
+			const TiXmlElement * element = currentNode->ToElement();
 
-        }
-        
-        template <class T>
-        bool QueryElement (const std::string & ElName, std::vector<T> & Value) const {
+			if ( element == NULL ) continue;
 
-            Value.clear();
+			std::string elText;
+			elText.assign( element->GetText() );
 
-            for ( const TiXmlNode * currentNode = doc.FirstChild( ElName ); currentNode != NULL ; currentNode = doc.IterateChildren( ElName , currentNode ) ) {
+			if ( elText.size() == 0 ) continue;
 
-                const TiXmlElement * element = currentNode->ToElement();
+			std::istringstream strmElText(elText);
+			T  tTypeVal;
+			strmElText >> tTypeVal;
+			Value.push_back( tTypeVal );
+		}
 
-                if ( element==NULL ) continue;
+		return Value.size() == 0 ? false : true;
+	}
 
-                std::string elText;
-                elText.assign( element->GetText() );
+	template <class T>
+	bool SetElement (const std::string & ElName, const std::map<std::string, T > & Values, bool isIterative = false)
+	{
+		TiXmlElement * element = doc.FirstChildElement ( ElName );
 
-                if ( elText.size() == 0 ) continue;
+		if ( element == NULL || isIterative )
+		{
+			element = new TiXmlElement ( ElName );
+			doc.LinkEndChild(element);
+		}
 
-                std::istringstream strmElText(elText);
+		for ( typename std::map<std::string, T>::const_iterator it = Values.begin(); it != Values.end(); it++ )
+		{
+			std::ostringstream strs;
+			strs << (*it).second;
+			element->SetAttribute( (*it).first , strs.str() );
+		}
 
-                T  tTypeVal;
-                strmElText>>tTypeVal;
-                Value.push_back( tTypeVal );
+		return true;
+	}
 
-            } 
+	template < class T >
+	bool QueryElement (const std::string & ElName, std::map< std::string, T > & Values)
+	{
+		std::vector< std::map< std::string, T > > tmpVector;
+		bool found = QueryElement( ElName, tmpVector);
 
-            return Value.size()==0? false : true;
-        }
+		if (!found) return false;
 
-        template <class T>
-        bool SetElement (const std::string & ElName, const std::map<std::string, T > & Values, bool isIterative = false) {
+		Values = tmpVector[0];
+		return true;
+	}
 
-            TiXmlElement * element = doc.FirstChildElement ( ElName );
+	template < class T >
+	bool QueryElement (const std::string & ElName, std::vector < std::map< std::string, T > >& Values)
+	{
+		Values.clear();
 
-            if ( element == NULL || isIterative ) {
-                element = new TiXmlElement ( ElName );
-                doc.LinkEndChild(element);
-            }
+		for ( const TiXmlNode * currentNode = doc.FirstChild( ElName ); currentNode != NULL ; currentNode = doc.IterateChildren( ElName , currentNode ) )
+		{
+			const TiXmlElement * element = currentNode->ToElement();
 
-            for ( typename std::map<std::string,T>::const_iterator it = Values.begin(); it != Values.end(); it++ ) {
-                std::ostringstream strs;
-                strs<<(*it).second;
-                element->SetAttribute( (*it).first , strs.str() );
-            }
+			if ( element == NULL ) continue;
 
-            return true;
-        }
+			const TiXmlAttribute * pAttrib = element->FirstAttribute();
+			std::map< std::string, T >  aMap;
 
-        template < class T >  
-        bool QueryElement (const std::string & ElName, std::map< std::string, T > & Values) {
+			while ( pAttrib )
+			{
+				std::istringstream strs( pAttrib->Value() );
+				T theValue;
+				strs >> theValue;
+				aMap.insert( std::pair<std::string, T> ( pAttrib->Name(), theValue ) );
+				pAttrib = pAttrib->Next();
+			}
 
-            std::vector< std::map< std::string, T > > tmpVector;
-            bool found = QueryElement( ElName, tmpVector);
+			Values.push_back( aMap );
+		}
 
-            if (!found) return false;
-
-            Values = tmpVector[0];
-
-            return true;
-        }
-        
-        template < class T >
-        bool QueryElement (const std::string & ElName, std::vector < std::map< std::string, T > >& Values) {
-            
-            Values.clear();
-            
-            for ( const TiXmlNode * currentNode = doc.FirstChild( ElName ); currentNode != NULL ; currentNode = doc.IterateChildren( ElName , currentNode ) ) {
-
-                const TiXmlElement * element = currentNode->ToElement();
-
-                if ( element==NULL ) continue;
-
-                const TiXmlAttribute * pAttrib = element->FirstAttribute();
-
-                std::map< std::string, T >  aMap;
-
-                while ( pAttrib ) {
-                    std::istringstream strs( pAttrib->Value() );
-                    T theValue;
-                    strs>>theValue;
-                    aMap.insert( std::pair<std::string,T> ( pAttrib->Name(), theValue ) );
-                    pAttrib = pAttrib->Next();
-                }
-
-                Values.push_back( aMap );
-
-            }
-
-            return Values.size()==0 ? false : true;
-        }
+		return Values.size() == 0 ? false : true;
+	}
 
 
-    private:
+private:
 
-        TiXmlDocument doc;
+	TiXmlDocument doc;
 
-        bool load_successful;
+	bool load_successful;
 };
 
 #endif // _XMLConfig_h_

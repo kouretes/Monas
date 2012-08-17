@@ -3,24 +3,23 @@
 #include "hal/robot/generic_nao/aldebaran-proxy.h"
 #include "tools/singleton.h"
 
-namespace AL {
-    class ALBroker;
-//    template <class T> class  ALPtr;
+namespace AL
+{
+	class ALBroker;
+	//    template <class T> class  ALPtr;
 }
 
-class KAlBrokerClass {
+class KAlBrokerClass
+{
 
-    public:
+public:
+	KAlBrokerClass();
 
-        void SetBroker(boost::shared_ptr<AL::ALBroker>  broker);
-        
-        boost::shared_ptr<AL::ALBroker> GetBroker () const;
+	void SetBroker(boost::shared_ptr<AL::ALBroker>  broker);
 
-        KAlBrokerClass();
-    
-    private:
+	boost::shared_ptr<AL::ALBroker> GetBroker () const;
 
-        boost::shared_ptr<AL::ALBroker>  _broker;
+	boost::shared_ptr<AL::ALBroker>  _broker;
 
 };
 

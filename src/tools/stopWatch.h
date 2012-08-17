@@ -2,21 +2,24 @@
 #define _stopWatch_h_ 1
 
 template<class AvgPol = StatMovingAverage>
-class StopWatch : public AvgPol {
+class StopWatch : public AvgPol
+{
 
-    public:
+public:
 
-        void StartTiming () {
-            execStart = SysCall::_GetCurrentTimeInUSec();
-        }
+	void StartTiming ()
+	{
+		execStart = SysCall::_GetCurrentTimeInUSec();
+	}
 
-        double StopTiming () {
-            return this->AddElement( SysCall::_GetCurrentTimeInUSec() - execStart );
-        }
+	double StopTiming ()
+	{
+		return this->AddElement( SysCall::_GetCurrentTimeInUSec() - execStart );
+	}
 
-    private:
+private:
 
-        unsigned long execStart;
+	unsigned long execStart;
 
 };
 

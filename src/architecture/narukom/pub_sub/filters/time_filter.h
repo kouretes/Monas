@@ -20,12 +20,12 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 class TimeFilter : public Filter
 {
-  public:
-    TimeFilter(const std::string& type_name,unsigned period = 100);
-    virtual FilterState filter(const msgentry& a_tuple);
-  private:
-    boost::posix_time::time_duration period;
-    boost::posix_time::ptime last_accepted;
+public:
+	TimeFilter(const std::string& type_name, unsigned period = 100);
+	virtual FilterState filter(const msgentry& a_tuple);
+private:
+	boost::posix_time::time_duration period;
+	boost::posix_time::ptime last_accepted;
 };
 
 #endif // TIME_FILTER_H

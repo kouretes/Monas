@@ -188,7 +188,7 @@ void GWRemoteHosts::addTreeWidgetItem(int position, QString hostId, QString host
 	subCheckBox1 = new QCheckBox();
 	subCheckBox1->setTristate(false);
 	subCheckBox1->setObjectName(QString("position,")+ hostId );
-	subCheckBox1->setText(tr("Estimated Robot Position-Orientation"));
+	subCheckBox1->setText(tr("Estimated Robot Pose"));
 
 	subCheckBox2 = new QCheckBox();
 	subCheckBox2->setTristate(false);

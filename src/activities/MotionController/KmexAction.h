@@ -11,36 +11,38 @@
 #include "hal/robot/generic_nao/aldebaran-sensors.h"
 #include "messages/SensorsMessage.pb.h"
 
-class KmexAction {
+class KmexAction
+{
 
-  public:
+public:
 
-    std::string GetName () {
-      return name;
-    }
+	std::string GetName ()
+	{
+		return name;
+	}
 
-    KmexAction( std::string name, int numberOfPoses, std::vector<int> poses, int totalPoses, float threshold, int numberOfJoints,
-             std::vector<int> joints, std::vector<std::vector <float> > angles, std::vector<std::vector <float> > anglesVelocity);
+	KmexAction( std::string name, int numberOfPoses, std::vector<int> poses, int totalPoses, float threshold, int numberOfJoints,
+	            std::vector<int> joints, std::vector<std::vector <float> > angles, std::vector<std::vector <float> > anglesVelocity);
 
-    std::vector<int> AngleCompare(boost::shared_ptr<const AllSensorValuesMessage> allsm);
+	std::vector<int> AngleCompare(boost::shared_ptr<const AllSensorValuesMessage> allsm);
 
-  private:
+private:
 
-    void DcmInit();
+	void DcmInit();
 
-    boost::shared_ptr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
-    std::string name;
-    int numberOfPoses;
-    std::vector<int> poses;
-    int totalPoses;
-    float threshold;
-    int numberOfJoints;
-    std::vector<int> joints;
-    std::vector<std::vector <float> > angles;
-    std::vector<std::vector <float> > anglesVelocity;
+	std::string name;
+	int numberOfPoses;
+	std::vector<int> poses;
+	int totalPoses;
+	float threshold;
+	int numberOfJoints;
+	std::vector<int> joints;
+	std::vector<std::vector <float> > angles;
+	std::vector<std::vector <float> > anglesVelocity;
 
-    std::vector<float> walkPrevAng;
+	std::vector<float> walkPrevAng;
 };
 
 #endif

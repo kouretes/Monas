@@ -30,30 +30,41 @@
 template<typename T>
 class Buffer
 {
-  public:
-  	typedef boost::function1<void,Buffer<T> *>  NotifierFncPtr;
+public:
+	typedef boost::function1<void, Buffer<T> *>  NotifierFncPtr;
 
-    explicit
-    Buffer(std::size_t nid);
-    ~Buffer();
-    void add( std::vector<T> const & tuples);
-    bool tryadd( std::vector<T> const & tuples);
+	explicit
+	Buffer(std::size_t nid);
+	~Buffer();
+	void add( std::vector<T> const & tuples);
+	bool tryadd( std::vector<T> const & tuples);
 
-    void add(const T & t);
-    std::vector<T> remove();
-    std::vector<T> tryremove();
-    //bool operator==( MessageBuffer& other) ;
-    std::size_t getOwnerID() const {return ownerId;};
-    //MessageQueue & getQueue() {return  mq;};
-    void setNotifier(NotifierFncPtr an) {KSystem::Mutex::scoped_lock data_lock(mutex);n=an;};
-    void setCleanUp(NotifierFncPtr ac) {KSystem::Mutex::scoped_lock ata_lock(mutex);c=ac;};
-  private:
+	void add(const T & t);
+	std::vector<T> remove();
+	std::vector<T> tryremove();
+	//bool operator==( MessageBuffer& other) ;
+	std::size_t getOwnerID() const
+	{
+		return ownerId;
+	};
+	//MessageQueue & getQueue() {return  mq;};
+	void setNotifier(NotifierFncPtr an)
+	{
+		KSystem::Mutex::scoped_lock data_lock(mutex);
+		n = an;
+	};
+	void setCleanUp(NotifierFncPtr ac)
+	{
+		KSystem::Mutex::scoped_lock ata_lock(mutex);
+		c = ac;
+	};
+private:
 
-    std::vector<T> msg_buf;
-    std::size_t ownerId;
-    KSystem::Mutex  mutex;
-    NotifierFncPtr n;
-    NotifierFncPtr c;
+	std::vector<T> msg_buf;
+	std::size_t ownerId;
+	KSystem::Mutex  mutex;
+	NotifierFncPtr n;
+	NotifierFncPtr c;
 };
 
 #endif // BUFFER_H

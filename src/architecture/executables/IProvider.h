@@ -30,30 +30,32 @@
 
 
 
-class IProvider : virtual public EndPoint , public KSystem::PeriodicThread {
+class IProvider : virtual public EndPoint , public KSystem::PeriodicThread
+{
 
-    public:
-        IProvider(const std::string &,KSystem::ThreadConfig &c, Narukom&);
-        virtual ~IProvider(){};
-        virtual void UserInit ()=0;
+public:
+	IProvider(const std::string &, KSystem::ThreadConfig &c, Narukom&);
+	virtual ~IProvider() {};
+	virtual void UserInit () = 0;
 
-        using   KSystem::PeriodicThread::GetName  ;
+	using   KSystem::PeriodicThread::GetName  ;
 
-    protected:
-        void notify();
+protected:
+	void notify();
 
-        Narukom & _com;
+	Narukom & _com;
 
 
 };
 
 typedef GenericFactory < IProvider, std::string,
-                        IProvider* (*)(KSystem::ThreadConfig &,Narukom&),
-                        KSystem::ThreadConfig &, Narukom& >  ProviderFactory;
+        IProvider* (*)(KSystem::ThreadConfig &, Narukom&),
+        KSystem::ThreadConfig &, Narukom& >  ProviderFactory;
 
 template<class T>
-struct ProviderRegistrar {
-    typedef Registrar<ProviderFactory,IProvider,std::string,T,KSystem::ThreadConfig &,Narukom&> Type;
+struct ProviderRegistrar
+{
+	typedef Registrar<ProviderFactory, IProvider, std::string, T, KSystem::ThreadConfig &, Narukom&> Type;
 };
 
 #endif /* _IPROVIDER_H_ */

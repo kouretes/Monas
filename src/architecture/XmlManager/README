@@ -1,0 +1,30 @@
+An easy example of how to use XmlManager.
+For the example we will use the agent.xml file.
+
+First of all u must construct the key for the value that u want:
+
+first part of the key is the file without the .xml string
+so first part is: agents
+
+next with the use of the "." seperator u can move to a child node, for example to a statechart:
+so now the key is: agents.statechart
+
+It is possible to have multiple nodes with the same name, you can select ammong them with the use of the "~" seperator:
+so if you have the key: agents.agent~1, you querry the xmlmanager to return the second appearance of a node (with respect of the appearance in the xml file)
+
+If you want to take the value of an attribute you must use the "$" seperator
+so with the key: agents.agent.$Priority, you querry the xmlmanager to return from the first agent node the priority attribute
+
+------------------------------- Examples --------------------------------------------
+You can get the number of all the agent node in the file with the following command:
+_xml.numberOfNodesForKey("agents.agent")
+
+Now for a given agent node u can take the number of activities:
+_xml.numberOfNodesForKey("agents.agent~2.activity")
+
+You can access the value of a specific activity node:
+_xml.findValueForKey("agents.agent~1.activity~2").at(0)
+
+With the same function call u can get the value of attribute:
+_xml.findValueForKey("agents.agent~1.$Priority").at(0)
+

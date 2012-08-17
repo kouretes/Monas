@@ -43,689 +43,745 @@ class LocalizeDone;
 
 // ===================================================================
 
-class KickOffMessage : public ::google::protobuf::Message {
- public:
-  KickOffMessage();
-  virtual ~KickOffMessage();
-  
-  KickOffMessage(const KickOffMessage& from);
-  
-  inline KickOffMessage& operator=(const KickOffMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const KickOffMessage& default_instance();
-  
-  void Swap(KickOffMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  KickOffMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const KickOffMessage& from);
-  void MergeFrom(const KickOffMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required bool kickOff = 1 [default = false];
-  inline bool has_kickoff() const;
-  inline void clear_kickoff();
-  static const int kKickOffFieldNumber = 1;
-  inline bool kickoff() const;
-  inline void set_kickoff(bool value);
-  
-  // @@protoc_insertion_point(class_scope:KickOffMessage)
- private:
-  inline void set_has_kickoff();
-  inline void clear_has_kickoff();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  bool kickoff_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static KickOffMessage* default_instance_;
+class KickOffMessage : public ::google::protobuf::Message
+{
+public:
+	KickOffMessage();
+	virtual ~KickOffMessage();
+
+	KickOffMessage(const KickOffMessage& from);
+
+	inline KickOffMessage& operator=(const KickOffMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const KickOffMessage& default_instance();
+
+	void Swap(KickOffMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	KickOffMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const KickOffMessage& from);
+	void MergeFrom(const KickOffMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required bool kickOff = 1 [default = false];
+	inline bool has_kickoff() const;
+	inline void clear_kickoff();
+	static const int kKickOffFieldNumber = 1;
+	inline bool kickoff() const;
+	inline void set_kickoff(bool value);
+
+	// @@protoc_insertion_point(class_scope:KickOffMessage)
+private:
+	inline void set_has_kickoff();
+	inline void clear_has_kickoff();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	bool kickoff_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static KickOffMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class BToHeadMessage : public ::google::protobuf::Message {
- public:
-  BToHeadMessage();
-  virtual ~BToHeadMessage();
-  
-  BToHeadMessage(const BToHeadMessage& from);
-  
-  inline BToHeadMessage& operator=(const BToHeadMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const BToHeadMessage& default_instance();
-  
-  void Swap(BToHeadMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  BToHeadMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const BToHeadMessage& from);
-  void MergeFrom(const BToHeadMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 headaction = 1 [default = 0];
-  inline bool has_headaction() const;
-  inline void clear_headaction();
-  static const int kHeadactionFieldNumber = 1;
-  inline ::google::protobuf::int32 headaction() const;
-  inline void set_headaction(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:BToHeadMessage)
- private:
-  inline void set_has_headaction();
-  inline void clear_has_headaction();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 headaction_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static BToHeadMessage* default_instance_;
+class BToHeadMessage : public ::google::protobuf::Message
+{
+public:
+	BToHeadMessage();
+	virtual ~BToHeadMessage();
+
+	BToHeadMessage(const BToHeadMessage& from);
+
+	inline BToHeadMessage& operator=(const BToHeadMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const BToHeadMessage& default_instance();
+
+	void Swap(BToHeadMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	BToHeadMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const BToHeadMessage& from);
+	void MergeFrom(const BToHeadMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required int32 headaction = 1 [default = 0];
+	inline bool has_headaction() const;
+	inline void clear_headaction();
+	static const int kHeadactionFieldNumber = 1;
+	inline ::google::protobuf::int32 headaction() const;
+	inline void set_headaction(::google::protobuf::int32 value);
+
+	// @@protoc_insertion_point(class_scope:BToHeadMessage)
+private:
+	inline void set_has_headaction();
+	inline void clear_has_headaction();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::int32 headaction_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static BToHeadMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class HeadToBMessage : public ::google::protobuf::Message {
- public:
-  HeadToBMessage();
-  virtual ~HeadToBMessage();
-  
-  HeadToBMessage(const HeadToBMessage& from);
-  
-  inline HeadToBMessage& operator=(const HeadToBMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const HeadToBMessage& default_instance();
-  
-  void Swap(HeadToBMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  HeadToBMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const HeadToBMessage& from);
-  void MergeFrom(const HeadToBMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 ballfound = 1 [default = 0];
-  inline bool has_ballfound() const;
-  inline void clear_ballfound();
-  static const int kBallfoundFieldNumber = 1;
-  inline ::google::protobuf::int32 ballfound() const;
-  inline void set_ballfound(::google::protobuf::int32 value);
-  
-  // required int32 calibrated = 2 [default = 0];
-  inline bool has_calibrated() const;
-  inline void clear_calibrated();
-  static const int kCalibratedFieldNumber = 2;
-  inline ::google::protobuf::int32 calibrated() const;
-  inline void set_calibrated(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:HeadToBMessage)
- private:
-  inline void set_has_ballfound();
-  inline void clear_has_ballfound();
-  inline void set_has_calibrated();
-  inline void clear_has_calibrated();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 ballfound_;
-  ::google::protobuf::int32 calibrated_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static HeadToBMessage* default_instance_;
+class HeadToBMessage : public ::google::protobuf::Message
+{
+public:
+	HeadToBMessage();
+	virtual ~HeadToBMessage();
+
+	HeadToBMessage(const HeadToBMessage& from);
+
+	inline HeadToBMessage& operator=(const HeadToBMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const HeadToBMessage& default_instance();
+
+	void Swap(HeadToBMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	HeadToBMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const HeadToBMessage& from);
+	void MergeFrom(const HeadToBMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required int32 ballfound = 1 [default = 0];
+	inline bool has_ballfound() const;
+	inline void clear_ballfound();
+	static const int kBallfoundFieldNumber = 1;
+	inline ::google::protobuf::int32 ballfound() const;
+	inline void set_ballfound(::google::protobuf::int32 value);
+
+	// required int32 calibrated = 2 [default = 0];
+	inline bool has_calibrated() const;
+	inline void clear_calibrated();
+	static const int kCalibratedFieldNumber = 2;
+	inline ::google::protobuf::int32 calibrated() const;
+	inline void set_calibrated(::google::protobuf::int32 value);
+
+	// @@protoc_insertion_point(class_scope:HeadToBMessage)
+private:
+	inline void set_has_ballfound();
+	inline void clear_has_ballfound();
+	inline void set_has_calibrated();
+	inline void clear_has_calibrated();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::int32 ballfound_;
+	::google::protobuf::int32 calibrated_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static HeadToBMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class ScanMessage : public ::google::protobuf::Message {
- public:
-  ScanMessage();
-  virtual ~ScanMessage();
-  
-  ScanMessage(const ScanMessage& from);
-  
-  inline ScanMessage& operator=(const ScanMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const ScanMessage& default_instance();
-  
-  void Swap(ScanMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  ScanMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ScanMessage& from);
-  void MergeFrom(const ScanMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required bool scancompleted = 1 [default = false];
-  inline bool has_scancompleted() const;
-  inline void clear_scancompleted();
-  static const int kScancompletedFieldNumber = 1;
-  inline bool scancompleted() const;
-  inline void set_scancompleted(bool value);
-  
-  // @@protoc_insertion_point(class_scope:ScanMessage)
- private:
-  inline void set_has_scancompleted();
-  inline void clear_has_scancompleted();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  bool scancompleted_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static ScanMessage* default_instance_;
+class ScanMessage : public ::google::protobuf::Message
+{
+public:
+	ScanMessage();
+	virtual ~ScanMessage();
+
+	ScanMessage(const ScanMessage& from);
+
+	inline ScanMessage& operator=(const ScanMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const ScanMessage& default_instance();
+
+	void Swap(ScanMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	ScanMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const ScanMessage& from);
+	void MergeFrom(const ScanMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required bool scancompleted = 1 [default = false];
+	inline bool has_scancompleted() const;
+	inline void clear_scancompleted();
+	static const int kScancompletedFieldNumber = 1;
+	inline bool scancompleted() const;
+	inline void set_scancompleted(bool value);
+
+	// @@protoc_insertion_point(class_scope:ScanMessage)
+private:
+	inline void set_has_scancompleted();
+	inline void clear_has_scancompleted();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	bool scancompleted_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static ScanMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class PositionMessage : public ::google::protobuf::Message {
- public:
-  PositionMessage();
-  virtual ~PositionMessage();
-  
-  PositionMessage(const PositionMessage& from);
-  
-  inline PositionMessage& operator=(const PositionMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const PositionMessage& default_instance();
-  
-  void Swap(PositionMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  PositionMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const PositionMessage& from);
-  void MergeFrom(const PositionMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required float posX = 1 [default = 70];
-  inline bool has_posx() const;
-  inline void clear_posx();
-  static const int kPosXFieldNumber = 1;
-  inline float posx() const;
-  inline void set_posx(float value);
-  
-  // required float posY = 2 [default = 70];
-  inline bool has_posy() const;
-  inline void clear_posy();
-  static const int kPosYFieldNumber = 2;
-  inline float posy() const;
-  inline void set_posy(float value);
-  
-  // required float theta = 3 [default = 1];
-  inline bool has_theta() const;
-  inline void clear_theta();
-  static const int kThetaFieldNumber = 3;
-  inline float theta() const;
-  inline void set_theta(float value);
-  
-  // @@protoc_insertion_point(class_scope:PositionMessage)
- private:
-  inline void set_has_posx();
-  inline void clear_has_posx();
-  inline void set_has_posy();
-  inline void clear_has_posy();
-  inline void set_has_theta();
-  inline void clear_has_theta();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  float posx_;
-  float posy_;
-  float theta_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static PositionMessage* default_instance_;
+class PositionMessage : public ::google::protobuf::Message
+{
+public:
+	PositionMessage();
+	virtual ~PositionMessage();
+
+	PositionMessage(const PositionMessage& from);
+
+	inline PositionMessage& operator=(const PositionMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const PositionMessage& default_instance();
+
+	void Swap(PositionMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	PositionMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const PositionMessage& from);
+	void MergeFrom(const PositionMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required float posX = 1 [default = 70];
+	inline bool has_posx() const;
+	inline void clear_posx();
+	static const int kPosXFieldNumber = 1;
+	inline float posx() const;
+	inline void set_posx(float value);
+
+	// required float posY = 2 [default = 70];
+	inline bool has_posy() const;
+	inline void clear_posy();
+	static const int kPosYFieldNumber = 2;
+	inline float posy() const;
+	inline void set_posy(float value);
+
+	// required float theta = 3 [default = 1];
+	inline bool has_theta() const;
+	inline void clear_theta();
+	static const int kThetaFieldNumber = 3;
+	inline float theta() const;
+	inline void set_theta(float value);
+
+	// @@protoc_insertion_point(class_scope:PositionMessage)
+private:
+	inline void set_has_posx();
+	inline void clear_has_posx();
+	inline void set_has_posy();
+	inline void clear_has_posy();
+	inline void set_has_theta();
+	inline void clear_has_theta();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	float posx_;
+	float posy_;
+	float theta_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static PositionMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class ReturnToPositionMessage : public ::google::protobuf::Message {
- public:
-  ReturnToPositionMessage();
-  virtual ~ReturnToPositionMessage();
-  
-  ReturnToPositionMessage(const ReturnToPositionMessage& from);
-  
-  inline ReturnToPositionMessage& operator=(const ReturnToPositionMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const ReturnToPositionMessage& default_instance();
-  
-  void Swap(ReturnToPositionMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  ReturnToPositionMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ReturnToPositionMessage& from);
-  void MergeFrom(const ReturnToPositionMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required bool goalieToPos = 1 [default = false];
-  inline bool has_goalietopos() const;
-  inline void clear_goalietopos();
-  static const int kGoalieToPosFieldNumber = 1;
-  inline bool goalietopos() const;
-  inline void set_goalietopos(bool value);
-  
-  // @@protoc_insertion_point(class_scope:ReturnToPositionMessage)
- private:
-  inline void set_has_goalietopos();
-  inline void clear_has_goalietopos();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  bool goalietopos_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static ReturnToPositionMessage* default_instance_;
+class ReturnToPositionMessage : public ::google::protobuf::Message
+{
+public:
+	ReturnToPositionMessage();
+	virtual ~ReturnToPositionMessage();
+
+	ReturnToPositionMessage(const ReturnToPositionMessage& from);
+
+	inline ReturnToPositionMessage& operator=(const ReturnToPositionMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const ReturnToPositionMessage& default_instance();
+
+	void Swap(ReturnToPositionMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	ReturnToPositionMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const ReturnToPositionMessage& from);
+	void MergeFrom(const ReturnToPositionMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required bool goalieToPos = 1 [default = false];
+	inline bool has_goalietopos() const;
+	inline void clear_goalietopos();
+	static const int kGoalieToPosFieldNumber = 1;
+	inline bool goalietopos() const;
+	inline void set_goalietopos(bool value);
+
+	// @@protoc_insertion_point(class_scope:ReturnToPositionMessage)
+private:
+	inline void set_has_goalietopos();
+	inline void clear_has_goalietopos();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	bool goalietopos_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static ReturnToPositionMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class FallMessage : public ::google::protobuf::Message {
- public:
-  FallMessage();
-  virtual ~FallMessage();
-  
-  FallMessage(const FallMessage& from);
-  
-  inline FallMessage& operator=(const FallMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const FallMessage& default_instance();
-  
-  void Swap(FallMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  FallMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const FallMessage& from);
-  void MergeFrom(const FallMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 fall = 1 [default = 0];
-  inline bool has_fall() const;
-  inline void clear_fall();
-  static const int kFallFieldNumber = 1;
-  inline ::google::protobuf::int32 fall() const;
-  inline void set_fall(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:FallMessage)
- private:
-  inline void set_has_fall();
-  inline void clear_has_fall();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 fall_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static FallMessage* default_instance_;
+class FallMessage : public ::google::protobuf::Message
+{
+public:
+	FallMessage();
+	virtual ~FallMessage();
+
+	FallMessage(const FallMessage& from);
+
+	inline FallMessage& operator=(const FallMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const FallMessage& default_instance();
+
+	void Swap(FallMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	FallMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const FallMessage& from);
+	void MergeFrom(const FallMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required int32 fall = 1 [default = 0];
+	inline bool has_fall() const;
+	inline void clear_fall();
+	static const int kFallFieldNumber = 1;
+	inline ::google::protobuf::int32 fall() const;
+	inline void set_fall(::google::protobuf::int32 value);
+
+	// @@protoc_insertion_point(class_scope:FallMessage)
+private:
+	inline void set_has_fall();
+	inline void clear_has_fall();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::int32 fall_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static FallMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class LocalizeDone : public ::google::protobuf::Message {
- public:
-  LocalizeDone();
-  virtual ~LocalizeDone();
-  
-  LocalizeDone(const LocalizeDone& from);
-  
-  inline LocalizeDone& operator=(const LocalizeDone& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const LocalizeDone& default_instance();
-  
-  void Swap(LocalizeDone* other);
-  
-  // implements Message ----------------------------------------------
-  
-  LocalizeDone* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const LocalizeDone& from);
-  void MergeFrom(const LocalizeDone& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required bool moveon = 1 [default = false];
-  inline bool has_moveon() const;
-  inline void clear_moveon();
-  static const int kMoveonFieldNumber = 1;
-  inline bool moveon() const;
-  inline void set_moveon(bool value);
-  
-  // @@protoc_insertion_point(class_scope:LocalizeDone)
- private:
-  inline void set_has_moveon();
-  inline void clear_has_moveon();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  bool moveon_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
-  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
-  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
-  
-  void InitAsDefaultInstance();
-  static LocalizeDone* default_instance_;
+class LocalizeDone : public ::google::protobuf::Message
+{
+public:
+	LocalizeDone();
+	virtual ~LocalizeDone();
+
+	LocalizeDone(const LocalizeDone& from);
+
+	inline LocalizeDone& operator=(const LocalizeDone& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const LocalizeDone& default_instance();
+
+	void Swap(LocalizeDone* other);
+
+	// implements Message ----------------------------------------------
+
+	LocalizeDone* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const LocalizeDone& from);
+	void MergeFrom(const LocalizeDone& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required bool moveon = 1 [default = false];
+	inline bool has_moveon() const;
+	inline void clear_moveon();
+	static const int kMoveonFieldNumber = 1;
+	inline bool moveon() const;
+	inline void set_moveon(bool value);
+
+	// @@protoc_insertion_point(class_scope:LocalizeDone)
+private:
+	inline void set_has_moveon();
+	inline void clear_has_moveon();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	bool moveon_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+	friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+	friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+
+	void InitAsDefaultInstance();
+	static LocalizeDone* default_instance_;
 };
 // ===================================================================
 
@@ -735,25 +791,31 @@ class LocalizeDone : public ::google::protobuf::Message {
 // KickOffMessage
 
 // required bool kickOff = 1 [default = false];
-inline bool KickOffMessage::has_kickoff() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool KickOffMessage::has_kickoff() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void KickOffMessage::set_has_kickoff() {
-  _has_bits_[0] |= 0x00000001u;
+inline void KickOffMessage::set_has_kickoff()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void KickOffMessage::clear_has_kickoff() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void KickOffMessage::clear_has_kickoff()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void KickOffMessage::clear_kickoff() {
-  kickoff_ = false;
-  clear_has_kickoff();
+inline void KickOffMessage::clear_kickoff()
+{
+	kickoff_ = false;
+	clear_has_kickoff();
 }
-inline bool KickOffMessage::kickoff() const {
-  return kickoff_;
+inline bool KickOffMessage::kickoff() const
+{
+	return kickoff_;
 }
-inline void KickOffMessage::set_kickoff(bool value) {
-  set_has_kickoff();
-  kickoff_ = value;
+inline void KickOffMessage::set_kickoff(bool value)
+{
+	set_has_kickoff();
+	kickoff_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -761,25 +823,31 @@ inline void KickOffMessage::set_kickoff(bool value) {
 // BToHeadMessage
 
 // required int32 headaction = 1 [default = 0];
-inline bool BToHeadMessage::has_headaction() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool BToHeadMessage::has_headaction() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void BToHeadMessage::set_has_headaction() {
-  _has_bits_[0] |= 0x00000001u;
+inline void BToHeadMessage::set_has_headaction()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void BToHeadMessage::clear_has_headaction() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void BToHeadMessage::clear_has_headaction()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void BToHeadMessage::clear_headaction() {
-  headaction_ = 0;
-  clear_has_headaction();
+inline void BToHeadMessage::clear_headaction()
+{
+	headaction_ = 0;
+	clear_has_headaction();
 }
-inline ::google::protobuf::int32 BToHeadMessage::headaction() const {
-  return headaction_;
+inline ::google::protobuf::int32 BToHeadMessage::headaction() const
+{
+	return headaction_;
 }
-inline void BToHeadMessage::set_headaction(::google::protobuf::int32 value) {
-  set_has_headaction();
-  headaction_ = value;
+inline void BToHeadMessage::set_headaction(::google::protobuf::int32 value)
+{
+	set_has_headaction();
+	headaction_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -787,47 +855,59 @@ inline void BToHeadMessage::set_headaction(::google::protobuf::int32 value) {
 // HeadToBMessage
 
 // required int32 ballfound = 1 [default = 0];
-inline bool HeadToBMessage::has_ballfound() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool HeadToBMessage::has_ballfound() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void HeadToBMessage::set_has_ballfound() {
-  _has_bits_[0] |= 0x00000001u;
+inline void HeadToBMessage::set_has_ballfound()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void HeadToBMessage::clear_has_ballfound() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void HeadToBMessage::clear_has_ballfound()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void HeadToBMessage::clear_ballfound() {
-  ballfound_ = 0;
-  clear_has_ballfound();
+inline void HeadToBMessage::clear_ballfound()
+{
+	ballfound_ = 0;
+	clear_has_ballfound();
 }
-inline ::google::protobuf::int32 HeadToBMessage::ballfound() const {
-  return ballfound_;
+inline ::google::protobuf::int32 HeadToBMessage::ballfound() const
+{
+	return ballfound_;
 }
-inline void HeadToBMessage::set_ballfound(::google::protobuf::int32 value) {
-  set_has_ballfound();
-  ballfound_ = value;
+inline void HeadToBMessage::set_ballfound(::google::protobuf::int32 value)
+{
+	set_has_ballfound();
+	ballfound_ = value;
 }
 
 // required int32 calibrated = 2 [default = 0];
-inline bool HeadToBMessage::has_calibrated() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool HeadToBMessage::has_calibrated() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void HeadToBMessage::set_has_calibrated() {
-  _has_bits_[0] |= 0x00000002u;
+inline void HeadToBMessage::set_has_calibrated()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void HeadToBMessage::clear_has_calibrated() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void HeadToBMessage::clear_has_calibrated()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void HeadToBMessage::clear_calibrated() {
-  calibrated_ = 0;
-  clear_has_calibrated();
+inline void HeadToBMessage::clear_calibrated()
+{
+	calibrated_ = 0;
+	clear_has_calibrated();
 }
-inline ::google::protobuf::int32 HeadToBMessage::calibrated() const {
-  return calibrated_;
+inline ::google::protobuf::int32 HeadToBMessage::calibrated() const
+{
+	return calibrated_;
 }
-inline void HeadToBMessage::set_calibrated(::google::protobuf::int32 value) {
-  set_has_calibrated();
-  calibrated_ = value;
+inline void HeadToBMessage::set_calibrated(::google::protobuf::int32 value)
+{
+	set_has_calibrated();
+	calibrated_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -835,25 +915,31 @@ inline void HeadToBMessage::set_calibrated(::google::protobuf::int32 value) {
 // ScanMessage
 
 // required bool scancompleted = 1 [default = false];
-inline bool ScanMessage::has_scancompleted() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool ScanMessage::has_scancompleted() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ScanMessage::set_has_scancompleted() {
-  _has_bits_[0] |= 0x00000001u;
+inline void ScanMessage::set_has_scancompleted()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void ScanMessage::clear_has_scancompleted() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void ScanMessage::clear_has_scancompleted()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void ScanMessage::clear_scancompleted() {
-  scancompleted_ = false;
-  clear_has_scancompleted();
+inline void ScanMessage::clear_scancompleted()
+{
+	scancompleted_ = false;
+	clear_has_scancompleted();
 }
-inline bool ScanMessage::scancompleted() const {
-  return scancompleted_;
+inline bool ScanMessage::scancompleted() const
+{
+	return scancompleted_;
 }
-inline void ScanMessage::set_scancompleted(bool value) {
-  set_has_scancompleted();
-  scancompleted_ = value;
+inline void ScanMessage::set_scancompleted(bool value)
+{
+	set_has_scancompleted();
+	scancompleted_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -861,69 +947,87 @@ inline void ScanMessage::set_scancompleted(bool value) {
 // PositionMessage
 
 // required float posX = 1 [default = 70];
-inline bool PositionMessage::has_posx() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool PositionMessage::has_posx() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void PositionMessage::set_has_posx() {
-  _has_bits_[0] |= 0x00000001u;
+inline void PositionMessage::set_has_posx()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void PositionMessage::clear_has_posx() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void PositionMessage::clear_has_posx()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void PositionMessage::clear_posx() {
-  posx_ = 70;
-  clear_has_posx();
+inline void PositionMessage::clear_posx()
+{
+	posx_ = 70;
+	clear_has_posx();
 }
-inline float PositionMessage::posx() const {
-  return posx_;
+inline float PositionMessage::posx() const
+{
+	return posx_;
 }
-inline void PositionMessage::set_posx(float value) {
-  set_has_posx();
-  posx_ = value;
+inline void PositionMessage::set_posx(float value)
+{
+	set_has_posx();
+	posx_ = value;
 }
 
 // required float posY = 2 [default = 70];
-inline bool PositionMessage::has_posy() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool PositionMessage::has_posy() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void PositionMessage::set_has_posy() {
-  _has_bits_[0] |= 0x00000002u;
+inline void PositionMessage::set_has_posy()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void PositionMessage::clear_has_posy() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void PositionMessage::clear_has_posy()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void PositionMessage::clear_posy() {
-  posy_ = 70;
-  clear_has_posy();
+inline void PositionMessage::clear_posy()
+{
+	posy_ = 70;
+	clear_has_posy();
 }
-inline float PositionMessage::posy() const {
-  return posy_;
+inline float PositionMessage::posy() const
+{
+	return posy_;
 }
-inline void PositionMessage::set_posy(float value) {
-  set_has_posy();
-  posy_ = value;
+inline void PositionMessage::set_posy(float value)
+{
+	set_has_posy();
+	posy_ = value;
 }
 
 // required float theta = 3 [default = 1];
-inline bool PositionMessage::has_theta() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool PositionMessage::has_theta() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void PositionMessage::set_has_theta() {
-  _has_bits_[0] |= 0x00000004u;
+inline void PositionMessage::set_has_theta()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void PositionMessage::clear_has_theta() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void PositionMessage::clear_has_theta()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void PositionMessage::clear_theta() {
-  theta_ = 1;
-  clear_has_theta();
+inline void PositionMessage::clear_theta()
+{
+	theta_ = 1;
+	clear_has_theta();
 }
-inline float PositionMessage::theta() const {
-  return theta_;
+inline float PositionMessage::theta() const
+{
+	return theta_;
 }
-inline void PositionMessage::set_theta(float value) {
-  set_has_theta();
-  theta_ = value;
+inline void PositionMessage::set_theta(float value)
+{
+	set_has_theta();
+	theta_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -931,25 +1035,31 @@ inline void PositionMessage::set_theta(float value) {
 // ReturnToPositionMessage
 
 // required bool goalieToPos = 1 [default = false];
-inline bool ReturnToPositionMessage::has_goalietopos() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool ReturnToPositionMessage::has_goalietopos() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ReturnToPositionMessage::set_has_goalietopos() {
-  _has_bits_[0] |= 0x00000001u;
+inline void ReturnToPositionMessage::set_has_goalietopos()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void ReturnToPositionMessage::clear_has_goalietopos() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void ReturnToPositionMessage::clear_has_goalietopos()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void ReturnToPositionMessage::clear_goalietopos() {
-  goalietopos_ = false;
-  clear_has_goalietopos();
+inline void ReturnToPositionMessage::clear_goalietopos()
+{
+	goalietopos_ = false;
+	clear_has_goalietopos();
 }
-inline bool ReturnToPositionMessage::goalietopos() const {
-  return goalietopos_;
+inline bool ReturnToPositionMessage::goalietopos() const
+{
+	return goalietopos_;
 }
-inline void ReturnToPositionMessage::set_goalietopos(bool value) {
-  set_has_goalietopos();
-  goalietopos_ = value;
+inline void ReturnToPositionMessage::set_goalietopos(bool value)
+{
+	set_has_goalietopos();
+	goalietopos_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -957,25 +1067,31 @@ inline void ReturnToPositionMessage::set_goalietopos(bool value) {
 // FallMessage
 
 // required int32 fall = 1 [default = 0];
-inline bool FallMessage::has_fall() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool FallMessage::has_fall() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void FallMessage::set_has_fall() {
-  _has_bits_[0] |= 0x00000001u;
+inline void FallMessage::set_has_fall()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void FallMessage::clear_has_fall() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void FallMessage::clear_has_fall()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void FallMessage::clear_fall() {
-  fall_ = 0;
-  clear_has_fall();
+inline void FallMessage::clear_fall()
+{
+	fall_ = 0;
+	clear_has_fall();
 }
-inline ::google::protobuf::int32 FallMessage::fall() const {
-  return fall_;
+inline ::google::protobuf::int32 FallMessage::fall() const
+{
+	return fall_;
 }
-inline void FallMessage::set_fall(::google::protobuf::int32 value) {
-  set_has_fall();
-  fall_ = value;
+inline void FallMessage::set_fall(::google::protobuf::int32 value)
+{
+	set_has_fall();
+	fall_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -983,36 +1099,44 @@ inline void FallMessage::set_fall(::google::protobuf::int32 value) {
 // LocalizeDone
 
 // required bool moveon = 1 [default = false];
-inline bool LocalizeDone::has_moveon() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool LocalizeDone::has_moveon() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void LocalizeDone::set_has_moveon() {
-  _has_bits_[0] |= 0x00000001u;
+inline void LocalizeDone::set_has_moveon()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void LocalizeDone::clear_has_moveon() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void LocalizeDone::clear_has_moveon()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void LocalizeDone::clear_moveon() {
-  moveon_ = false;
-  clear_has_moveon();
+inline void LocalizeDone::clear_moveon()
+{
+	moveon_ = false;
+	clear_has_moveon();
 }
-inline bool LocalizeDone::moveon() const {
-  return moveon_;
+inline bool LocalizeDone::moveon() const
+{
+	return moveon_;
 }
-inline void LocalizeDone::set_moveon(bool value) {
-  set_has_moveon();
-  moveon_ = value;
+inline void LocalizeDone::set_moveon(bool value)
+{
+	set_has_moveon();
+	moveon_ = value;
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 
 #ifndef SWIG
-namespace google {
-namespace protobuf {
+namespace google
+{
+	namespace protobuf
+	{
 
 
-}  // namespace google
+	}  // namespace google
 }  // namespace protobuf
 #endif  // SWIG
 

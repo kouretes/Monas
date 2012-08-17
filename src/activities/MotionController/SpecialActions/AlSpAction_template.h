@@ -6,26 +6,28 @@
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
 
-class THEALSP: public ISpecialAction {
-  
-  public:
-    std::string GetName () {
-      return "THEALSP";
-    }
-    
-    THEALSP();
-    
-    int ExecutePost();
-    
-  private:
-    
-    void Initialize();
-    
-    boost::shared_ptr<AL::ALMotionProxy> motion;
-    
-    std::vector<std::string> names;
-    AL::ALValue times, keys;
-    
-}; 
+class THEALSP: public ISpecialAction
+{
+
+public:
+	std::string GetName ()
+	{
+		return "THEALSP";
+	}
+
+	THEALSP();
+
+	int ExecutePost();
+
+private:
+
+	void Initialize();
+
+	boost::shared_ptr<AL::ALMotionProxy> motion;
+
+	std::vector<std::string> names;
+	AL::ALValue times, keys;
+
+};
 
 #endif // _THEALSP_h_ 

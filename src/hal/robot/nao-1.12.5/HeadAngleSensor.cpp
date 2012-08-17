@@ -6,16 +6,17 @@
 #include <vector>
 #include <string>
 
-HeadAngleSensor::HeadAngleSensor() 
+HeadAngleSensor::HeadAngleSensor()
 {
-        ;
+	;
 }
 
-float HeadAngleSensor::GetHeadAngle() {
-    std::vector<std::string>  name;
-    name.push_back("HeadYaw");
-    bool ssf=true;
-    return 
-        KAlBroker::Instance().GetBroker()->getProxy("ALMotion")->call<std::vector<float> >("getAngles",name,ssf)[0];
+float HeadAngleSensor::GetHeadAngle()
+{
+	std::vector<std::string>  name;
+	name.push_back("HeadYaw");
+	bool ssf = true;
+	return
+	    KAlBroker::Instance().GetBroker()->getProxy("ALMotion")->call<std::vector<float> >("getAngles", name, ssf)[0];
 }
 

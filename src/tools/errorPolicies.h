@@ -8,46 +8,53 @@
 #include "hal/syscall.h"
 #include "logger.h"
 
-class AbErrPolicy {
+class AbErrPolicy
+{
 
-    public:
+public:
 
-        virtual void Error ( const std::string& ) =0;
-
-};
-
-
-
-class RuntimeErrPolicy : public AbErrPolicy {
-
-    public:
-
-        void Error( const std::string& er ) {
-            throw std::runtime_error( "Error: "+er );
-        }
+	virtual void Error ( const std::string& ) = 0;
 
 };
 
-class PrintErrAndExitPolicy: public AbErrPolicy {
-    
-    public:
 
-        void Error( const std::string& er ) {
-            std::cerr<<er<<std::endl;
-            SysCall::_exit(1);
-        }
+
+class RuntimeErrPolicy : public AbErrPolicy
+{
+
+public:
+
+	void Error( const std::string& er )
+	{
+		throw std::runtime_error( "Error: " + er );
+	}
 
 };
 
-class LogErrAndExitPolicy: public AbErrPolicy {
-    
-    public:
+class PrintErrAndExitPolicy: public AbErrPolicy
+{
 
-        void Error( const std::string& er ) {
-            Logger::Instance().WriteMsg("Factory", er, Logger::FatalError);
-            std::cerr<<er<<std::endl;
-            SysCall::_exit(1);
-        }
+public:
+
+	void Error( const std::string& er )
+	{
+		std::cerr << er << std::endl;
+		SysCall::_exit(1);
+	}
+
+};
+
+class LogErrAndExitPolicy: public AbErrPolicy
+{
+
+public:
+
+	void Error( const std::string& er )
+	{
+		Logger::Instance().WriteMsg("Factory", er, Logger::FatalError);
+		std::cerr << er << std::endl;
+		SysCall::_exit(1);
+	}
 
 };
 

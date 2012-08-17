@@ -24,266 +24,271 @@
 #include <iostream>
 #include <typeinfo>
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class State;
+	class State;
 
-    template< class TSource, class TTarget >
-    class TransitionSegment : public statechart_engine::TransitionSegmentBase {
+	template< class TSource, class TTarget >
+	class TransitionSegment : public statechart_engine::TransitionSegmentBase
+	{
 
-        public:
+	public:
 
-        TransitionSegment (TSource* source, TTarget* target, IEvent* event = 0 , ICondition* condition = 0 , IAction* action = 0 );
-        TransitionSegment (TSource* source, TTarget* target, IAction* action);
-        TransitionSegment (TSource* source, TTarget* target, IEvent* event, IAction* action);
-        TransitionSegment (TSource* source, TTarget* target, ICondition* condition, IAction* action = 0 );
+		TransitionSegment (TSource* source, TTarget* target, IEvent* event = 0 , ICondition* condition = 0 , IAction* action = 0 );
+		TransitionSegment (TSource* source, TTarget* target, IAction* action);
+		TransitionSegment (TSource* source, TTarget* target, IEvent* event, IAction* action);
+		TransitionSegment (TSource* source, TTarget* target, ICondition* condition, IAction* action = 0 );
 
-        virtual ~TransitionSegment ();
+		virtual ~TransitionSegment ();
 
-        bool CanExecute ( IEvent* ev ) const;
+		bool CanExecute ( IEvent* ev ) const;
 		bool has_Condition() const;
-        bool Execute( IEvent* ev = 0, IParameter* param = 0);
+		bool Execute( IEvent* ev = 0, IParameter* param = 0);
 
-        private:
+	private:
 
-        void Initialize();
+		void Initialize();
 		inline bool Execute( Type2Type<ConditionConnector> src, Type2Type<State> trg, IEvent* ev = 0, IParameter* param = 0);
-        inline bool Execute( Type2Type<State> src, Type2Type<State> trg, IEvent* ev = 0, IParameter* param = 0);
-        inline bool Execute( Type2Type<State> src, Type2Type<ConditionConnector> trg, IEvent* ev = 0, IParameter* param = 0);
+		inline bool Execute( Type2Type<State> src, Type2Type<State> trg, IEvent* ev = 0, IParameter* param = 0);
+		inline bool Execute( Type2Type<State> src, Type2Type<ConditionConnector> trg, IEvent* ev = 0, IParameter* param = 0);
 
-        TSource* _source;
-        TTarget* _target;
+		TSource* _source;
+		TTarget* _target;
 
-        IEvent* _event;
-        ICondition* _condition;
-        IAction* _action;
+		IEvent* _event;
+		ICondition* _condition;
+		IAction* _action;
 
-        Narukom* _com;
-        Blackboard* _blk;
+		Narukom* _com;
+		Blackboard* _blk;
 
-        typedef Containers::StateContainer StateCont;
-        typedef Containers::StateContainerIterator StateContIter;
+		typedef Containers::StateContainer StateCont;
+		typedef Containers::StateContainerIterator StateContIter;
 
-        StateCont _activateList;
-        StateCont _deActivateList;
+		StateCont _activateList;
+		StateCont _deActivateList;
 
-    };
+	};
 
-    template< class TSource, class TTarget >
-    TransitionSegment<TSource,TTarget>::TransitionSegment (TSource* source, TTarget* target, IAction* action)
-    :_source(source),
-     _target(target),
-     _event(0),
-     _condition(0),
-     _action(action)
-     {
-            Initialize();
-     }
+	template< class TSource, class TTarget >
+	TransitionSegment<TSource, TTarget>::TransitionSegment (TSource* source, TTarget* target, IAction* action)
+		: _source(source),
+		  _target(target),
+		  _event(0),
+		  _condition(0),
+		  _action(action)
+	{
+		Initialize();
+	}
 
-    template< class TSource, class TTarget >
-    TransitionSegment<TSource,TTarget>::TransitionSegment (TSource* source, TTarget* target, IEvent* event, IAction* action)
-    :_source(source),
-     _target(target),
-     _event(event),
-     _condition(0),
-     _action(action)
-     {
-            Initialize();
-     }
+	template< class TSource, class TTarget >
+	TransitionSegment<TSource, TTarget>::TransitionSegment (TSource* source, TTarget* target, IEvent* event, IAction* action)
+		: _source(source),
+		  _target(target),
+		  _event(event),
+		  _condition(0),
+		  _action(action)
+	{
+		Initialize();
+	}
 
-    template< class TSource, class TTarget >
-    TransitionSegment<TSource,TTarget>::TransitionSegment (TSource* source, TTarget* target, ICondition* condition, IAction* action)
-    :_source(source),
-     _target(target),
-     _event(0),
-     _condition(condition),
-     _action(action)
-     {
-            Initialize();
-     }
+	template< class TSource, class TTarget >
+	TransitionSegment<TSource, TTarget>::TransitionSegment (TSource* source, TTarget* target, ICondition* condition, IAction* action)
+		: _source(source),
+		  _target(target),
+		  _event(0),
+		  _condition(condition),
+		  _action(action)
+	{
+		Initialize();
+	}
 
-    template< class TSource, class TTarget >
-    TransitionSegment<TSource,TTarget>::TransitionSegment (TSource* source, TTarget* target, IEvent* event, ICondition* condition, IAction* action)
-    :_source(source),
-     _target(target),
-     _event(event),
-     _condition(condition),
-     _action(action)
-     {
-            Initialize();
-     }
+	template< class TSource, class TTarget >
+	TransitionSegment<TSource, TTarget>::TransitionSegment (TSource* source, TTarget* target, IEvent* event, ICondition* condition, IAction* action)
+		: _source(source),
+		  _target(target),
+		  _event(event),
+		  _condition(condition),
+		  _action(action)
+	{
+		Initialize();
+	}
 
-    template< class TSource, class TTarget >
-    TransitionSegment<TSource,TTarget>::~TransitionSegment ()
-    {
-            _source = 0;
-            _target = 0;
-            _event = 0;
-            _condition = 0;
-            _action = 0;
-    }
+	template< class TSource, class TTarget >
+	TransitionSegment<TSource, TTarget>::~TransitionSegment ()
+	{
+		_source = 0;
+		_target = 0;
+		_event = 0;
+		_condition = 0;
+		_action = 0;
+	}
 
-    template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::CanExecute ( IEvent* ev ) const {
+	template< class TSource, class TTarget>
+	bool TransitionSegment<TSource, TTarget>::CanExecute ( IEvent* ev ) const
+	{
+		if ( _event )
+		{
+			if ( !ev || typeid(_event) != typeid(ev) )
+				return false;
+		}
+		else
+		{
+			if ( ev )
+				return false;
+		}
 
-            if ( _event ) {
-                if ( !ev || typeid(_event) != typeid(ev) )
-                    return false;
-            }
-            else {
-                if ( ev )
-                    return false;
-            }
+		if ( _condition && !_condition->Eval() )
+			return false;
 
-            if ( _condition && !_condition->Eval() )
-                return false;
+		return true;
+	}
 
-            return true;
-    }
+	template< class TSource, class TTarget>
+	bool TransitionSegment<TSource, TTarget>::has_Condition () const
+	{
+		if ( _condition )
+		{
+			return true;
+		}
 
- template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::has_Condition () const {
+		return false;
+	}
 
-            if ( _condition ) {
-                return true;
-            }
-           
-            return false;
-    }
+	template< class TSource, class TTarget >
+	void TransitionSegment<TSource, TTarget>::Initialize ()
+	{
+		_source->AddTransition(this);
+		StateCont srcAncesors;
+		State* parent = _source->GetParent();
+		srcAncesors.push_back(parent);
+		Statechart* s = 0;
 
-    template< class TSource, class TTarget >
-    void TransitionSegment<TSource,TTarget>::Initialize () {
+		while ( parent != 0 )
+		{
+			if ( parent->GetParent() == 0 )
+			{
+				s = dynamic_cast<Statechart*>(parent);
 
-            _source->AddTransition(this);
-
-            StateCont srcAncesors;
-
-            State* parent = _source->GetParent();
-            srcAncesors.push_back(parent);
-
-            Statechart* s = 0;
-
-            while ( parent != 0 ) {
-                if ( parent->GetParent() == 0 ) {
-                  s = dynamic_cast<Statechart*>(parent);
-                  if ( s == 0 )
-                    throw "TRS: Can't find statechart";
-                }
-                parent=parent->GetParent();
-                srcAncesors.push_back(parent);
-            }
-
-            StateCont trgAncesors;
-
-            parent = _target->GetParent();
-            trgAncesors.push_front(parent);
-
-            while ( parent != 0 ) {
-                parent=parent->GetParent();
-                trgAncesors.push_front(parent);
-            }
-
-
-            for ( StateContIter srcIter = srcAncesors.begin(); srcIter != srcAncesors.end(); srcIter++ ) {
-
-                for ( StateContIter trgIter = trgAncesors.begin(); trgIter != trgAncesors.end(); trgIter++ ) {
-                    if ( (*srcIter) == (*trgIter) ) {
-                        _deActivateList.assign( srcAncesors.begin(), srcIter );
-                        _activateList.assign( ++trgIter, trgAncesors.end() );
-                        _com = (*srcIter)->GetCom();
-                        _blk = (*srcIter)->GetBlackboard();
-                        if ( _action )
-                            _action->Initialize ( _com, _blk, s );
-                        if ( _condition )
-                            _condition->Initialize ( _com, _blk );
-//                        for ( StateContIter i = _deActivateList.begin(); i!=_deActivateList.end(); i++)
-//                            std::cout<<"Deactivate: "<<(*i)<<std::endl;//TODO
-//                        for ( StateContIter i = _activateList.begin(); i!=_activateList.end(); i++)
-//                            std::cout<<"Activate: "<<(*i)<<std::endl;//TODO
-                        return;
-                    }
-                }
-
-            }
-
-            std::cout<<"Nooooooooooo!!!"<<std::cout; //TODO throw
-    }
-
-    template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::Execute(IEvent* ev, IParameter* param) {
-            return Execute ( Type2Type<TSource>(), Type2Type<TTarget>(), ev, param );
-    }
-
-    template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::Execute ( Type2Type<State>, Type2Type<State>, IEvent* ev, IParameter* param ) {
-
-            if ( !CanExecute(ev) ){
-                return false;
+				if ( s == 0 )
+					throw "TRS: Can't find statechart";
 			}
 
-            _source->DeActivate();
+			parent = parent->GetParent();
+			srcAncesors.push_back(parent);
+		}
 
-            for ( StateContIter i = _deActivateList.begin(); i != _deActivateList.end(); i++)
-                (*i)->DeActivate();
+		StateCont trgAncesors;
+		parent = _target->GetParent();
+		trgAncesors.push_front(parent);
 
-            if ( _action )
-                _action->Execute();
+		while ( parent != 0 )
+		{
+			parent = parent->GetParent();
+			trgAncesors.push_front(parent);
+		}
 
-            for ( StateContIter i = _activateList.begin(); i != _activateList.end(); i++)
-                (*i)->Activate();
+		for ( StateContIter srcIter = srcAncesors.begin(); srcIter != srcAncesors.end(); srcIter++ )
+		{
+			for ( StateContIter trgIter = trgAncesors.begin(); trgIter != trgAncesors.end(); trgIter++ )
+			{
+				if ( (*srcIter) == (*trgIter) )
+				{
+					_deActivateList.assign( srcAncesors.begin(), srcIter );
+					_activateList.assign( ++trgIter, trgAncesors.end() );
+					_com = (*srcIter)->GetCom();
+					_blk = (*srcIter)->GetBlackboard();
 
-            _target->Activate();
+					if ( _action )
+						_action->Initialize ( _com, _blk, s );
 
-//            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
+					if ( _condition )
+						_condition->Initialize ( _com, _blk );
 
-            return true;
-    }
+					//                        for ( StateContIter i = _deActivateList.begin(); i!=_deActivateList.end(); i++)
+					//                            std::cout<<"Deactivate: "<<(*i)<<std::endl;//TODO
+					//                        for ( StateContIter i = _activateList.begin(); i!=_activateList.end(); i++)
+					//                            std::cout<<"Activate: "<<(*i)<<std::endl;//TODO
+					return;
+				}
+			}
+		}
 
-    template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::Execute ( Type2Type<State>, Type2Type<ConditionConnector>, IEvent* ev, IParameter* param ) {
+		std::cout << "Nooooooooooo!!!" << std::cout; //TODO throw
+	}
 
-            if ( !CanExecute(ev) )
-                return false;
+	template< class TSource, class TTarget>
+	bool TransitionSegment<TSource, TTarget>::Execute(IEvent* ev, IParameter* param)
+	{
+		return Execute ( Type2Type<TSource>(), Type2Type<TTarget>(), ev, param );
+	}
 
-            Containers::TransitionContainerIteratorConst index;
+	template< class TSource, class TTarget>
+	bool TransitionSegment<TSource, TTarget>::Execute ( Type2Type<State>, Type2Type<State>, IEvent* ev, IParameter* param )
+	{
+		if ( !CanExecute(ev) )
+		{
+			return false;
+		}
 
-            if ( !_target->CanStep(ev,index) )
-                return false;
+		_source->DeActivate();
 
-            _source->DeActivate();
+		for ( StateContIter i = _deActivateList.begin(); i != _deActivateList.end(); i++)
+			(*i)->DeActivate();
 
-            if ( _action )
-                _action->Execute();
+		if ( _action )
+			_action->Execute();
 
-            _target->Step(ev,param,index);
+		for ( StateContIter i = _activateList.begin(); i != _activateList.end(); i++)
+			(*i)->Activate();
 
-//            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
+		_target->Activate();
+		//            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
+		return true;
+	}
 
-            return true;
-    }
-    
-     template< class TSource, class TTarget>
-    bool TransitionSegment<TSource,TTarget>::Execute (  Type2Type<ConditionConnector>, Type2Type< State>, IEvent* ev, IParameter* param ) {
+	template< class TSource, class TTarget>
+	bool TransitionSegment<TSource, TTarget>::Execute ( Type2Type<State>, Type2Type<ConditionConnector>, IEvent* ev, IParameter* param )
+	{
+		if ( !CanExecute(ev) )
+			return false;
 
-			//For ConditionConnectors, assume a "CanExecute" call is made first, during 
-			//an Execute() call for the transitionSegment that precedes the Source ConditionConector
-			_source->DeActivate();
+		Containers::TransitionContainerIteratorConst index;
 
-            for ( StateContIter i = _deActivateList.begin(); i != _deActivateList.end(); i++)
-                (*i)->DeActivate();
+		if ( !_target->CanStep(ev, index) )
+			return false;
 
-            if ( _action )
-                _action->Execute();
+		_source->DeActivate();
 
-            for ( StateContIter i = _activateList.begin(); i != _activateList.end(); i++)
-                (*i)->Activate();
+		if ( _action )
+			_action->Execute();
 
-            _target->Activate();
+		_target->Step(ev, param, index);
+		//            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
+		return true;
+	}
 
-//            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
+	template< class TSource, class TTarget>
+	bool TransitionSegment<TSource, TTarget>::Execute (  Type2Type<ConditionConnector>, Type2Type< State>, IEvent* ev, IParameter* param )
+	{
+		//For ConditionConnectors, assume a "CanExecute" call is made first, during
+		//an Execute() call for the transitionSegment that precedes the Source ConditionConector
+		_source->DeActivate();
 
-            return true;
-    }
+		for ( StateContIter i = _deActivateList.begin(); i != _deActivateList.end(); i++)
+			(*i)->DeActivate();
+
+		if ( _action )
+			_action->Execute();
+
+		for ( StateContIter i = _activateList.begin(); i != _activateList.end(); i++)
+			(*i)->Activate();
+
+		_target->Activate();
+		//            std::cout<<"TR:Hello from"<<typeid(_target).name()<<std::endl;//TODO
+		return true;
+	}
 
 }
 

@@ -10,26 +10,28 @@
 
 ACTIVITY_START
 
-class SharedWorldModel: public IActivity {
+class SharedWorldModel: public IActivity
+{
 
-	public:
-        ACTIVITY_CONSTRUCTOR(SharedWorldModel);
-		std::string ACTIVITY_VISIBLE GetName() {
-			return "SharedWorldModel";
-		}
-        void ACTIVITY_VISIBLE  UserInit();
-		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
-		boost::shared_ptr<const WorldInfo>  wim;
-		boost::shared_ptr<const KnownHosts> h;
+public:
+	ACTIVITY_CONSTRUCTOR(SharedWorldModel);
+	std::string ACTIVITY_VISIBLE GetName()
+	{
+		return "SharedWorldModel";
+	}
+	void ACTIVITY_VISIBLE  UserInit();
+	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	boost::shared_ptr<const WorldInfo>  wim;
+	boost::shared_ptr<const KnownHosts> h;
 
-	private:
-        int findClosestRobot();
+private:
+	int findClosestRobot();
 
-        SharedWorldInfo swi;
+	SharedWorldInfo swi;
 
-        int idx, count;
-        float robot_x[numOfRobots], robot_y[numOfRobots], bd[numOfRobots];
-        float bx, by;
+	int idx, count;
+	float robot_x[numOfRobots], robot_y[numOfRobots], bd[numOfRobots];
+	float bx, by;
 
 };
 

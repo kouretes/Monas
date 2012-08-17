@@ -2,8 +2,9 @@
 
 #include <dlfcn.h>
 
-void* DLibFnc::_open ( const char * filename ) {
-    return (void*) LoadLibrary( filename );
+void* DLibFnc::_open ( const char * filename )
+{
+	return (void*) LoadLibrary( filename );
 }
 
 //char* DLibFnc::_error () {
@@ -14,7 +15,8 @@ void* DLibFnc::_open ( const char * filename ) {
 //    return dlsym ( handle, symbol );
 //}
 
-int DLibFnc::_close ( void * handle ) {
-    return FreeLibrary ( handle );
+int DLibFnc::_close ( void * handle )
+{
+	return FreeLibrary ( handle );
 }
 

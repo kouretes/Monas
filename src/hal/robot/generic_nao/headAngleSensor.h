@@ -4,13 +4,14 @@
 #include "hal/robot/robotSensor.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
 
-class HeadAngleSensor : public RobotSensor{
+class HeadAngleSensor : public RobotSensor
+{
 
-    public:
+public:
 
-        HeadAngleSensor();
+	HeadAngleSensor();
 
-        float GetHeadAngle();
+	float GetHeadAngle();
 };
 
 #endif  // _headAngleSensor_h_

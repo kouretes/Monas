@@ -6,7 +6,8 @@
 
 ACTIVITY_REGISTER(GoToPosition);
 
-int GoToPosition::Execute() {
+int GoToPosition::Execute()
+{
 	/*  */
 	Logger::Instance().WriteMsg(GetName(),  " Execute ", Logger::Info);
 	pm = _blk.readState<PositionMessage>("behavior");
@@ -14,28 +15,31 @@ int GoToPosition::Execute() {
 	obsm = _blk.readSignal<ObservationMessage>("vision");
 	gsm =  _blk.readState<GameStateMessage>("worldstate");
 	headaction = SCANFORPOST;
-	if(pm.get()!=0){		///get my target
+
+	if(pm.get() != 0) 		///get my target
+	{
 		posX = pm->posx();
 		posY = pm->posy();
 		theta = pm->theta();
 	}
 
-	if(wimsg.get()!=0){		///get my position
+	if(wimsg.get() != 0) 		///get my position
+	{
 		myPosX = wimsg->myposition().x();
 		myPosY = wimsg->myposition().y();
 		myPhi = wimsg->myposition().phi();
 		confidence =  wimsg->myposition().confidence();
 	}
 
-	if(obsm&&obsm->regular_objects_size()>0)
+	if(obsm && obsm->regular_objects_size() > 0)
 		lastObsm = microsec_clock::universal_time();
 
 	//Logger::Instance().WriteMsg(GetName(),  "Init X "+ _toString(posX) +" InitY " + _toString(posY) + " InitPhi " + _toString(theta), Logger::Info);
 	//Logger::Instance().WriteMsg(GetName(),  "Pos X "+ _toString(myPosX) +" Pos Y " + _toString(myPosY) + " Phi " + _toString(myPhi) + " Confidence " + _toString(confidence), Logger::Info);
 	robotInPos = robotInPosition(wimsg, pm);
 
-
-	if(robotInPos && lastMove <= microsec_clock::universal_time() ){
+	if(robotInPos && lastMove <= microsec_clock::universal_time() )
+	{
 		amot->set_command("InitPose.xar");
 		_blk.publishSignal(*amot, "motion");
 		lastMove = microsec_clock::universal_time() + milliseconds(500);
@@ -46,88 +50,88 @@ int GoToPosition::Execute() {
 		_blk.publish_all();
 		return 0;
 	}
-	gotoPosition(posX,posY, theta);
-/*
-	if(confidence<badConfidence && lastMove <= microsec_clock::universal_time()){
 
-		if(lastObsm + seconds(10) <microsec_clock::universal_time() ){
-			velocityWalk(0.5, 0.5, 0.0, 0.7);
-			lastMove = microsec_clock::universal_time()+ milliseconds(500);
+	gotoPosition(posX, posY, theta);
+	/*
+		if(confidence<badConfidence && lastMove <= microsec_clock::universal_time()){
+
+			if(lastObsm + seconds(10) <microsec_clock::universal_time() ){
+				velocityWalk(0.5, 0.5, 0.0, 0.7);
+				lastMove = microsec_clock::universal_time()+ milliseconds(500);
+			}
+			//else{
+				//velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
+				//lastMove = microsec_clock::universal_time() + milliseconds(500);
+			//}
+			_blk.publish_all();
+			return 0;
 		}
-		//else{
-			//velocityWalk(0.0f, 0.0f, 0.0f, 1.0f);
-			//lastMove = microsec_clock::universal_time() + milliseconds(500);
-		//}
-		_blk.publish_all();
-		return 0;
-	}
 
-	dist = distance(posX, myPosX, posY, myPosY);
+		dist = distance(posX, myPosX, posY, myPosY);
 
-	float angleToTarget = anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
-	relativePhi = anglediff2(theta,myPhi);
-	float rot = 0.0, f=1.0;
-	float velx, vely;
-	vely = sin(angleToTarget);
-	velx = cos(angleToTarget);
+		float angleToTarget = anglediff2(atan2(posY -myPosY, posX - myPosX), myPhi);
+		relativePhi = anglediff2(theta,myPhi);
+		float rot = 0.0, f=1.0;
+		float velx, vely;
+		vely = sin(angleToTarget);
+		velx = cos(angleToTarget);
 
 
-	if(dist <0.3){
-		velx/=2.0;
-		vely/=2.0;
-		rot = relativePhi*0.5;
-		f = dist*2;
-	}else if(dist>1 && gsm!=0 && gsm->player_state()==PLAYER_PLAYING){
-		velx/=4.0;
-		vely/=4.0;
-		rot = relativePhi*0.2;
-		f = 0.6;
-		if(confidence>goodConfidence){
-			f=1;
-			velx*=2;
-			vely*=2;
+		if(dist <0.3){
+			velx/=2.0;
+			vely/=2.0;
+			rot = relativePhi*0.5;
+			f = dist*2;
+		}else if(dist>1 && gsm!=0 && gsm->player_state()==PLAYER_PLAYING){
+			velx/=4.0;
+			vely/=4.0;
+			rot = relativePhi*0.2;
+			f = 0.6;
+			if(confidence>goodConfidence){
+				f=1;
+				velx*=2;
+				vely*=2;
+			}
+		}else if(dist>1 &&(gsm==0 ||(gsm!=0 && gsm->player_state()!=PLAYER_PLAYING))){
+			velx/=4.0;
+			vely/=4.0;
+			rot = angleToTarget*0.4;
+			f = 0.6;
+			if(confidence>goodConfidence){
+				f=1;
+				velx*=2;
+				vely*=2;
+			}
+		}else{
+			rot = angleToTarget*0.1;
+			f = 1;
 		}
-	}else if(dist>1 &&(gsm==0 ||(gsm!=0 && gsm->player_state()!=PLAYER_PLAYING))){
-		velx/=4.0;
-		vely/=4.0;
-		rot = angleToTarget*0.4;
-		f = 0.6;
-		if(confidence>goodConfidence){
-			f=1;
-			velx*=2;
-			vely*=2;
+			rot = rot>1.0 ? 1.0:rot;
+			rot = rot<-1.0 ? -1.0:rot;
+			velx = velx>1.0 ? 1.0: velx;
+			velx = velx<-1.0 ? -1.0 : velx;
+			vely = vely>1.0 ? 1.0: vely;
+			vely = vely<-1.0 ? -1.0 : vely;
+		//Logger::Instance().WriteMsg(GetName(),  " if", Logger::Info);
+		if(lastMove <= microsec_clock::universal_time()){
+			Logger::Instance().WriteMsg(GetName(),  " walk", Logger::Info);
+
+			velocityWalk(velx, vely, rot, f);
+			lastMove = microsec_clock::universal_time() + milliseconds(500);
 		}
-	}else{
-		rot = angleToTarget*0.1;
-		f = 1;
-	}
-		rot = rot>1.0 ? 1.0:rot;
-		rot = rot<-1.0 ? -1.0:rot;
-		velx = velx>1.0 ? 1.0: velx;
-		velx = velx<-1.0 ? -1.0 : velx;
-		vely = vely>1.0 ? 1.0: vely;
-		vely = vely<-1.0 ? -1.0 : vely;
-	//Logger::Instance().WriteMsg(GetName(),  " if", Logger::Info);
-	if(lastMove <= microsec_clock::universal_time()){
-		Logger::Instance().WriteMsg(GetName(),  " walk", Logger::Info);
 
-		velocityWalk(velx, vely, rot, f);
-		lastMove = microsec_clock::universal_time() + milliseconds(500);
-	}
-
-	bhmsg->set_headaction(headaction);
-	_blk.publishSignal(*bhmsg, "behavior");
-	*/
+		bhmsg->set_headaction(headaction);
+		_blk.publishSignal(*bhmsg, "behavior");
+		*/
 	_blk.publish_all();
 	//Logger::Instance().WriteMsg(GetName(),  "EXIT", Logger::Info);
-
 	return 0;
 }
 
-void GoToPosition::UserInit () {
+void GoToPosition::UserInit ()
+{
 	robotInPos = false;
 	confidence = 0;
-
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -147,16 +151,17 @@ void GoToPosition::UserInit () {
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
-
 	//Logger::Instance().WriteMsg(GetName(),  " UserInit ", Logger::Info);
 }
 
-std::string GoToPosition::GetName () {
+std::string GoToPosition::GetName ()
+{
 	return "GoToPosition";
 }
 
 
-void GoToPosition::velocityWalk(double x, double y, double th, double f) {
+void GoToPosition::velocityWalk(double x, double y, double th, double f)
+{
 	//Logger::Instance().WriteMsg(GetName(),  " VelocityWalk", Logger::Info);
 	wmot.set_command("setWalkTargetVelocity");
 	wmot.set_parameter(0, x);
@@ -166,7 +171,8 @@ void GoToPosition::velocityWalk(double x, double y, double th, double f) {
 	_blk.publishSignal(wmot, "motion");
 }
 
-void GoToPosition::littleWalk(double x, double y, double th) {
+void GoToPosition::littleWalk(double x, double y, double th)
+{
 	//cout << x << " y " << y << " th " << th<<endl;
 	wmot.set_command("walkTo");
 	wmot.set_parameter(0, x);
@@ -177,33 +183,34 @@ void GoToPosition::littleWalk(double x, double y, double th) {
 ///////////////////////////////////////
 
 
-float GoToPosition::distance(float x1, float x2, float y1, float y2){
+float GoToPosition::distance(float x1, float x2, float y1, float y2)
+{
 	//Logger::Instance().WriteMsg("Distance",  " Entered", Logger::Info);
 	float dis;
-	dis = sqrt((pow((x2-x1), 2)+ pow((y2-y1), 2)));
-
+	dis = sqrt((pow((x2 - x1), 2) + pow((y2 - y1), 2)));
 	return dis;
 }
 
 
-void GoToPosition::gotoPosition(float target_x,float target_y, float target_phi) {
-
-	double targetDistance = sqrt((target_x-myPosX)*(target_x-myPosX)+(target_y-myPosY)*(target_y-myPosY));
+void GoToPosition::gotoPosition(float target_x, float target_y, float target_phi)
+{
+	double targetDistance = sqrt((target_x - myPosX) * (target_x - myPosX) + (target_y - myPosY) * (target_y - myPosY));
 	double targetAngle = anglediff2(atan2(target_y - myPosY, target_x - myPosY), myPhi);
 	double targetOrientation = anglediff2(target_phi, myPhi);
 
-	if (targetDistance > 0.25|| (fabs(targetOrientation) > M_PI_4) )
-		pathPlanningRequestAbsolute(toCartesianX(targetDistance,targetAngle),
-									toCartesianY(targetDistance,targetAngle),
-									targetOrientation);
-	else{
+	if (targetDistance > 0.25 || (fabs(targetOrientation) > M_PI_4) )
+		pathPlanningRequestAbsolute(toCartesianX(targetDistance, targetAngle),
+		                            toCartesianY(targetDistance, targetAngle),
+		                            targetOrientation);
+	else
+	{
 		amot->set_command("InitPose.xar");
 		_blk.publishSignal(*amot, "motion");
 	}
-
 }
 
-void GoToPosition::pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi) {
+void GoToPosition::pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi)
+{
 	pprm->set_gotox(target_x);
 	pprm->set_gotoy(target_y);
 	pprm->set_gotoangle(target_phi);

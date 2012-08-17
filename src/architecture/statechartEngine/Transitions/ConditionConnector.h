@@ -3,22 +3,24 @@
 
 #include "TransitionConnector.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class ConditionConnector: public statechart_engine::TransitionConnector {
+	class ConditionConnector: public statechart_engine::TransitionConnector
+	{
 
-        public:
+	public:
 
-            ConditionConnector ( std::string name, State* parent );
+		ConditionConnector ( std::string name, State* parent );
 
-            virtual ~ConditionConnector ();
+		virtual ~ConditionConnector ();
 
-            bool CanStep ( IEvent* ev,
-                    Containers::TransitionContainerIteratorConst& index );
+		bool CanStep ( IEvent* ev,
+		               Containers::TransitionContainerIteratorConst& index );
 
-            bool Step ( IEvent*ev, IParameter* param,
-                    Containers::TransitionContainerIteratorConst& index );
-    };
+		bool Step ( IEvent*ev, IParameter* param,
+		            Containers::TransitionContainerIteratorConst& index );
+	};
 
 }
 

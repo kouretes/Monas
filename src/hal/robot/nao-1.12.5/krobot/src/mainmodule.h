@@ -14,7 +14,7 @@
 
 namespace AL
 {
-  class ALBroker;
+	class ALBroker;
 }
 
 /**
@@ -23,27 +23,27 @@ namespace AL
 class mainModule : public AL::ALModule
 {
 
-  public:
+public:
 
-    /**
-     * Default Constructor.
-     */
+	/**
+	 * Default Constructor.
+	 */
 
-     mainModule(boost::shared_ptr<AL::ALBroker> pBroker, const std::string& pName );
+	mainModule(boost::shared_ptr<AL::ALBroker> pBroker, const std::string& pName );
 
-    /**
-     * Destructor.
-     */
-    virtual ~mainModule();
+	/**
+	 * Destructor.
+	 */
+	virtual ~mainModule();
 
 
-    void Start();
+	void Start();
 
-    void Stop();
+	void Stop();
 
-  private:
+private:
 
-    Talws* tal;
+	Talws* tal;
 
 };
 

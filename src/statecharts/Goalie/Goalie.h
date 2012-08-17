@@ -1,6 +1,6 @@
 #ifndef Goalie_h_
 #define Goalie_h_ 1
-		
+
 #include "architecture/statechartEngine/Statechart.h"
 #include "architecture/statechartEngine/StartState.h"
 #include "architecture/statechartEngine/EndState.h"
@@ -12,40 +12,40 @@
 
 #include "architecture/statechartWrapper.h"
 
-class Goalie : public StatechartWrapper {
+class Goalie : public StatechartWrapper
+{
 
-	public:
-	
-		Goalie (Narukom* com);
-		
-		~Goalie ();
-		
-		void Start ();
-		
-		void Stop ();
-		
-	private:
-	
-		typedef std::vector<statechart_engine::State*> StateCont;
-		typedef std::vector<statechart_engine::TransitionSegmentBase*> TransitionCont;
-		
-		StateCont _states;
-		TransitionCont _transitions;
-		
-		typedef std::vector<IActivity*> ActCont;		
-		ActCont _activities;
-		
-		typedef std::vector<statechart_engine::IEvent*> EventCont;
-		typedef std::vector<statechart_engine::ICondition*> CondCont;
-		typedef std::vector<statechart_engine::IAction*> ActionCont;
-		
-		EventCont _events;
-		CondCont _conditions;
-		ActionCont _actions;
-		
-		statechart_engine::Statechart* _statechart;
-			
+public:
+
+	Goalie (Narukom* com);
+
+	~Goalie ();
+
+	void Start ();
+
+	void Stop ();
+
+private:
+
+	typedef std::vector<statechart_engine::State*> StateCont;
+	typedef std::vector<statechart_engine::TransitionSegmentBase*> TransitionCont;
+
+	StateCont _states;
+	TransitionCont _transitions;
+
+	typedef std::vector<IActivity*> ActCont;
+	ActCont _activities;
+
+	typedef std::vector<statechart_engine::IEvent*> EventCont;
+	typedef std::vector<statechart_engine::ICondition*> CondCont;
+	typedef std::vector<statechart_engine::IAction*> ActionCont;
+
+	EventCont _events;
+	CondCont _conditions;
+	ActionCont _actions;
+
+	statechart_engine::Statechart* _statechart;
+
 };
 
 #endif // Goalie_h_
-	

@@ -15,10 +15,10 @@
 
 
 //#define TEMPS_DESTROYED_QUICKLY         // for compilers that delete
-					// temporaries too quickly
+// temporaries too quickly
 
 //#define TEMPS_DESTROYED_QUICKLY_R       // the same thing but applied
-					// to return from functions only
+// to return from functions only
 
 //#define DO_FREE_CHECK                   // check news and deletes balance
 
@@ -42,29 +42,29 @@
 
 
 #ifdef _STANDARD_                       // using standard library
-   #include <cstdlib>
-       #include <limits>              // required by VC++6 ?
-   #ifdef WANT_STREAM
-      #include <iostream>
-      #include <iomanip>
-   #endif
-   #ifdef WANT_MATH
-      #include <cmath>
-   #endif
-   #ifdef WANT_STRING
-      #include <cstring>
-   #endif
-   #ifdef WANT_TIME
-      #include <ctime>
-   #endif
-   using namespace std;
+#include <cstdlib>
+#include <limits>              // required by VC++6 ?
+#ifdef WANT_STREAM
+#include <iostream>
+#include <iomanip>
+#endif
+#ifdef WANT_MATH
+#include <cmath>
+#endif
+#ifdef WANT_STRING
+#include <cstring>
+#endif
+#ifdef WANT_TIME
+#include <ctime>
+#endif
+using namespace std;
 #else
 
 #define DEFAULT_HEADER                  // use AT&T style header
-                                        // if no other compiler is recognised
+// if no other compiler is recognised
 
 #ifdef _MSC_VER                         // Microsoft
-   #include <stdlib.h>
+#include <stdlib.h>
 
 //   reactivate these statements to run under MSC version 7.0
 //   typedef int jmp_buf[9];
@@ -74,102 +74,102 @@
 //      void __cdecl longjmp(jmp_buf, int);
 //   }
 
-   #ifdef WANT_STREAM
-      #include <iostream.h>
-      #include <iomanip.h>
-   #endif
-   #ifdef WANT_MATH
-      #include <math.h>
-      #include <float.h>
-   #endif
-   #ifdef WANT_STRING
-      #include <string.h>
-   #endif
-   #ifdef WANT_TIME
-      #include <time.h>
-   #endif
-   #undef DEFAULT_HEADER
+#ifdef WANT_STREAM
+#include <iostream.h>
+#include <iomanip.h>
+#endif
+#ifdef WANT_MATH
+#include <math.h>
+#include <float.h>
+#endif
+#ifdef WANT_STRING
+#include <string.h>
+#endif
+#ifdef WANT_TIME
+#include <time.h>
+#endif
+#undef DEFAULT_HEADER
 #endif
 
 #ifdef __ZTC__                          // Zortech
-   #include <stdlib.h>
-   #ifdef WANT_STREAM
-      #include <iostream.hpp>
-      #include <iomanip.hpp>
-      #define flush ""                  // not defined in iomanip?
-   #endif
-   #ifdef WANT_MATH
-      #include <math.h>
-      #include <float.h>
-   #endif
-   #ifdef WANT_STRING
-      #include <string.h>
-   #endif
-   #ifdef WANT_TIME
-      #include <time.h>
-   #endif
-   #undef DEFAULT_HEADER
+#include <stdlib.h>
+#ifdef WANT_STREAM
+#include <iostream.hpp>
+#include <iomanip.hpp>
+#define flush ""                  // not defined in iomanip?
+#endif
+#ifdef WANT_MATH
+#include <math.h>
+#include <float.h>
+#endif
+#ifdef WANT_STRING
+#include <string.h>
+#endif
+#ifdef WANT_TIME
+#include <time.h>
+#endif
+#undef DEFAULT_HEADER
 #endif
 
 #if defined __BCPLUSPLUS__ || defined __TURBOC__  // Borland or Turbo
-   #include <stdlib.h>
-   #ifdef WANT_STREAM
-      #include <iostream.h>
-      #include <iomanip.h>
-   #endif
-   #ifdef WANT_MATH
-      #include <math.h>
-      #include <float.h>            // Borland has both float and values
-                                    // but values.h returns +INF for
-                                    // MAXDOUBLE in BC5
-   #endif
-   #ifdef WANT_STRING
-      #include <string.h>
-   #endif
-   #ifdef WANT_TIME
-      #include <time.h>
-   #endif
-   #undef DEFAULT_HEADER
+#include <stdlib.h>
+#ifdef WANT_STREAM
+#include <iostream.h>
+#include <iomanip.h>
+#endif
+#ifdef WANT_MATH
+#include <math.h>
+#include <float.h>            // Borland has both float and values
+// but values.h returns +INF for
+// MAXDOUBLE in BC5
+#endif
+#ifdef WANT_STRING
+#include <string.h>
+#endif
+#ifdef WANT_TIME
+#include <time.h>
+#endif
+#undef DEFAULT_HEADER
 #endif
 
 #ifdef __GNUG__                         // Gnu C++
 using namespace std;
-   #include <stdlib.h>
-   #ifdef WANT_STREAM
-      #include <iostream>
-      #include <iomanip>
-   #endif
-   #ifdef WANT_MATH
-      #include <math.h>
-      #include <float.h>
-   #endif
-   #ifdef WANT_STRING
-      #include <string>
-	  #include <cstring>
-   #endif
-   #ifdef WANT_TIME
-      #include <time.h>
-   #endif
-   #undef DEFAULT_HEADER
+#include <stdlib.h>
+#ifdef WANT_STREAM
+#include <iostream>
+#include <iomanip>
+#endif
+#ifdef WANT_MATH
+#include <math.h>
+#include <float.h>
+#endif
+#ifdef WANT_STRING
+#include <string>
+#include <cstring>
+#endif
+#ifdef WANT_TIME
+#include <time.h>
+#endif
+#undef DEFAULT_HEADER
 #endif
 
 #ifdef __WATCOMC__                      // Watcom C/C++
-   #include <stdlib.h>
-   #ifdef WANT_STREAM
-      #include <iostream.h>
-      #include <iomanip.h>
-   #endif
-   #ifdef WANT_MATH
-      #include <math.h>
-      #include <float.h>
-   #endif
-   #ifdef WANT_STRING
-      #include <string.h>
-   #endif
-   #ifdef WANT_TIME
-      #include <time.h>
-   #endif
-   #undef DEFAULT_HEADER
+#include <stdlib.h>
+#ifdef WANT_STREAM
+#include <iostream.h>
+#include <iomanip.h>
+#endif
+#ifdef WANT_MATH
+#include <math.h>
+#include <float.h>
+#endif
+#ifdef WANT_STRING
+#include <string.h>
+#endif
+#ifdef WANT_TIME
+#include <time.h>
+#endif
+#undef DEFAULT_HEADER
 #endif
 
 
@@ -235,18 +235,19 @@ using namespace std;
 #endif                                  // _STANDARD_
 
 #ifdef use_namespace
-namespace RBD_COMMON {
+namespace RBD_COMMON
+{
 #endif
 
 
 #ifdef USING_FLOAT                      // set precision type to float
-typedef float Real;
-typedef double long_Real;
+	typedef float Real;
+	typedef double long_Real;
 #endif
 
 #ifdef USING_DOUBLE                     // set precision type to double
-typedef double Real;
-typedef long double long_Real;
+	typedef double Real;
+	typedef long double long_Real;
 #endif
 
 
@@ -259,7 +260,7 @@ typedef long double long_Real;
 namespace RBD_COMMON {}
 namespace RBD_LIBRARIES                 // access all my libraries
 {
-   using namespace RBD_COMMON;
+	using namespace RBD_COMMON;
 }
 #endif
 

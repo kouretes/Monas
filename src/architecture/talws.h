@@ -9,27 +9,28 @@
 
 #include <vector>
 
-class Talws {
+class Talws
+{
 
-    public:
+public:
 
-        Talws ();
+	Talws ();
 
-        ~Talws();
+	~Talws();
 
-        void Start();
+	void Start();
 
-        void Stop();
+	void Stop();
 
-    private:
+private:
 
-        std::vector<Agent*> Agents;
-        std::vector<IProvider*> Providers;
+	std::vector<Agent*> Agents;
+	std::vector<IProvider*> Providers;
 
-        std::vector<StatechartWrapper*> StatechartPlans;
+	std::vector<StatechartWrapper*> StatechartPlans;
 
 
-        Narukom com;
+	Narukom com;
 
 };
 

@@ -6,28 +6,29 @@
 
 ACTIVITY_REGISTER(SpecialAction);
 
-int SpecialAction::Execute() {
-
+int SpecialAction::Execute()
+{
 	Logger::Instance().WriteMsg("SpecialAction",  " execute" + to_simple_string(boost::posix_time::microsec_clock::universal_time()) , Logger::Info);
-
 	//Stare st;
 	fm = _blk.readState<FallMessage>("behavior");
 	LedChangeMessage leds;
 	//if (st.toFallOrNotToFall(obs) ==-1)
 	LedValues* l = leds.add_leds();
 
-	if(fm!=0 && fm->fall()==1){
+	if(fm != 0 && fm->fall() == 1)
+	{
 		l->set_chain("r_ear");
 		l->set_color( "blue");
 		amot->set_command("goalieLeft2.xar");
 	}
-	else{
+	else
+	{
 		l->set_chain("r_ear");
 		l->set_color( "blue");
 		amot->set_command("goalieRight2.xar");
 	}
-	_blk.publishSignal(*amot, "motion");
 
+	_blk.publishSignal(*amot, "motion");
 	bhm->set_headaction(BALLTRACK);
 	_blk.publishSignal(*bhm, "behavior");
 	_blk.publishSignal(leds, "leds");
@@ -41,14 +42,16 @@ int SpecialAction::Execute() {
 	return 0;
 }
 
-void SpecialAction::UserInit () {
+void SpecialAction::UserInit ()
+{
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	amot = new MotionActionMessage();
 	bhm = new BToHeadMessage();
 	rpm = new ReturnToPositionMessage();
 }
 
-std::string SpecialAction::GetName () {
+std::string SpecialAction::GetName ()
+{
 	return "SpecialAction";
 }
 

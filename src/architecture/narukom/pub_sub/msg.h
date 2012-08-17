@@ -21,34 +21,44 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <google/protobuf/message.h>
 
-typedef struct msgentry_{
-        enum msgclass_t{ DATA, SIGNAL,STATE,
-						SUBSCRIBE_ON_TOPIC,
-						SUBSCRIBE_ABOVE_TOPIC,
-						SUBSCRIBE_BELOW_TOPIC,
-						SUBSCRIBE_ALL_TOPIC,
-						UNSUBSCRIBE_ON_TOPIC,
-						UNSUBSCRIBE_ABOVE_TOPIC,
-						UNSUBSCRIBE_BELOW_TOPIC,
-						UNSUBSCRIBE_ALL_TOPIC
-					};
-		static const std::size_t HOST_ID_ANY_HOST=0;
-		static const std::size_t HOST_ID_LOCAL_HOST=1;
-        boost::shared_ptr<const google::protobuf::Message > msg;
-        boost::posix_time::ptime timestamp;
-        //boost::posix_time::ptime timeoutstamp;
-        std::size_t topic;
-        std::size_t host;
-        //std::string publisher;
-        msgclass_t msgclass;
-        bool operator== (const struct msgentry_ & b){ return msg==b.msg;};
-    } msgentry;
+typedef struct msgentry_
+{
+	enum msgclass_t { DATA, SIGNAL, STATE,
+	                  SUBSCRIBE_ON_TOPIC,
+	                  SUBSCRIBE_ABOVE_TOPIC,
+	                  SUBSCRIBE_BELOW_TOPIC,
+	                  SUBSCRIBE_ALL_TOPIC,
+	                  UNSUBSCRIBE_ON_TOPIC,
+	                  UNSUBSCRIBE_ABOVE_TOPIC,
+	                  UNSUBSCRIBE_BELOW_TOPIC,
+	                  UNSUBSCRIBE_ALL_TOPIC
+	                };
+	static const std::size_t HOST_ID_ANY_HOST = 0;
+	static const std::size_t HOST_ID_LOCAL_HOST = 1;
+	boost::shared_ptr<const google::protobuf::Message > msg;
+	boost::posix_time::ptime timestamp;
+	//boost::posix_time::ptime timeoutstamp;
+	std::size_t topic;
+	std::size_t host;
+	//std::string publisher;
+	msgclass_t msgclass;
+	bool operator== (const struct msgentry_ & b)
+	{
+		return msg == b.msg;
+	};
+} msgentry;
 
 struct msgentrytimestampComparator
 {
 
-   bool operator()(const msgentry &a,const msgentry &b) {return a.timestamp < b.timestamp;};
-   bool operator()(const msgentry &a, const boost::posix_time::ptime &b) {return a.timestamp < b;};
+	bool operator()(const msgentry &a, const msgentry &b)
+	{
+		return a.timestamp < b.timestamp;
+	};
+	bool operator()(const msgentry &a, const boost::posix_time::ptime &b)
+	{
+		return a.timestamp < b;
+	};
 };
 
 

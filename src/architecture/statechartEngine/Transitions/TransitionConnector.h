@@ -3,21 +3,23 @@
 
 #include "../State.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class TransitionConnector : public State {
+	class TransitionConnector : public State
+	{
 
-        public:
+	public:
 
-            TransitionConnector (std::string name, statechart_engine::State* parent);
-            virtual ~TransitionConnector ();
+		TransitionConnector (std::string name, statechart_engine::State* parent);
+		virtual ~TransitionConnector ();
 
-            int Activate ();
+		int Activate ();
 
-            int DeActivate ();
+		int DeActivate ();
 
-            virtual bool CanStep ( IEvent* ev) const;
-    };
+		virtual bool CanStep ( IEvent* ev) const;
+	};
 
 }
 

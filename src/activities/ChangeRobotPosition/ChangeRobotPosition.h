@@ -8,10 +8,11 @@
 #include "tools/toString.h"
 
 ACTIVITY_START
-class ChangeRobotPosition : public IActivity {
+class ChangeRobotPosition : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(ChangeRobotPosition);
+	ACTIVITY_CONSTRUCTOR(ChangeRobotPosition);
 	int ACTIVITY_VISIBLE Execute ();
 
 	void ACTIVITY_VISIBLE UserInit ();

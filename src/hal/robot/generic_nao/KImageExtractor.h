@@ -27,34 +27,34 @@
 
 class KImageExtractor
 {
-	public:
-		KImageExtractor();
+public:
+	KImageExtractor();
 
-		void Init(Blackboard *blk);
+	void Init(Blackboard *blk);
 
-		~KImageExtractor();
-		//Get new Image from hardware
-		boost::posix_time::ptime fetchImage(KImageDeepCopy & img);
-		//Create new space for image
-		float calibrateCamera(int sleeptime=500,int exp=15);
-		float getExpUs() const;
-		int getCamera() const;
-		float getScale() const;
-		int swapCamera();
-		void refreshValues();
-	private:
-		boost::shared_ptr<AL::ALVideoDeviceProxy> xCamProxy;
+	~KImageExtractor();
+	//Get new Image from hardware
+	boost::posix_time::ptime fetchImage(KImageDeepCopy & img);
+	//Create new space for image
+	float calibrateCamera(int sleeptime = 500, int exp = 15);
+	float getExpUs() const;
+	int getCamera() const;
+	float getScale() const;
+	int swapCamera();
+	void refreshValues();
+private:
+	boost::shared_ptr<AL::ALVideoDeviceProxy> xCamProxy;
 
 
-		//Name used when subscribing Generic Video Module
-		std::string GVM_name;
-		int resolution;//Current Resolution
-		int cSpace;// Current Colorspace
-		bool doneSubscribe;//Initializations done?
-		float refexpusec,lastexpusec,lastcam;
-		Blackboard *_blk;
+	//Name used when subscribing Generic Video Module
+	std::string GVM_name;
+	int resolution;//Current Resolution
+	int cSpace;// Current Colorspace
+	bool doneSubscribe;//Initializations done?
+	float refexpusec, lastexpusec, lastcam;
+	Blackboard *_blk;
 
-		void _releaseImage();
+	void _releaseImage();
 
 };
 

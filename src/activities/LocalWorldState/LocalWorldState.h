@@ -9,9 +9,6 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-//#define KPROFILING_ENABLED
-
-#include "tools/profiler.hpp"
 #include "BallFilter.h"
 #include "KLocalization.h"
 #include "PracticalSocket.h"
@@ -23,11 +20,12 @@ class LocalWorldState: public IActivity
 {
 
 public:
-	ACTIVITY_VISIBLE LocalWorldState(Blackboard &b);
+	ACTIVITY_CONSTRUCTOR(LocalWorldState)
 	ACTIVITY_VISIBLE ~LocalWorldState()
 	{
 		if (serverpid != -1)
 			pthread_cancel(serverpid);
+
 		delete sock;
 	}
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
@@ -45,7 +43,7 @@ private:
 	bool firstOdometry;
 
 	int serverpid;
-	
+
 	//WorldInfo message
 	WorldInfo MyWorld;
 
@@ -53,10 +51,7 @@ private:
 	belief AgentPosition;
 
 	//localization world
-	KLocalization localizationWorld;	
-
-	//Profiles
-	mutable KProfiling::profiler vprof;
+	KLocalization localizationWorld;
 
 	//Observations and odometry data to feed localization
 	vector<KObservationModel> currentObservation;
@@ -91,7 +86,7 @@ private:
 	bool fallBegan;
 
 	//Time variables
-	boost::posix_time::ptime timeStart,timeStop;
+	boost::posix_time::ptime timeStart, timeStop;
 	boost::posix_time::ptime last_observation_time;
 	boost::posix_time::ptime last_filter_time;
 	boost::posix_time::ptime now;
@@ -111,14 +106,16 @@ private:
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double deg2rad(double deg) {
+	double deg2rad(double deg)
+	{
 		return (deg * M_PI / 180.0);
 	}
 
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts radians to decimal degrees             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double rad2deg(double rad) {
+	double rad2deg(double rad)
+	{
 		return (rad * 180.0 / M_PI);
 	}
 
