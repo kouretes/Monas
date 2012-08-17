@@ -1,0 +1,10 @@
+compile:
+cd build/gcc
+make
+
+run:
+cd build/gcc/bin
+for src folder:
+./astyle -t -W -Y -f -N -n -p -xd -A1 --recursive ../../../../Monas/src/*.cpp ../../../../Monas/src/*.h ../../../../Monas/src/*.hpp ../../../../Monas/src/*.c
+for GUITools folder
+./astyle -t -W -Y -f -N -n -p -xd -A1 --recursive ../../../../Monas/GUITools/*.cpp ../../../../Monas/GUITools/*.h ../../../../Monas/GUITools/*.hpp ../../../../Monas/GUITools/*.c
