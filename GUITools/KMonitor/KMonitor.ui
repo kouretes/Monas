@@ -97,70 +97,83 @@
              <widget class="QComboBox" name="LWSComboBox"/>
             </item>
             <item>
-             <widget class="QListWidget" name="LWSListWidget">
+             <widget class="QTreeWidget" name="LWSTreeWidget">
+              <column>
+               <property name="text">
+                <string>Available Graphical Elements</string>
+               </property>
+              </column>
               <item>
                <property name="text">
-                <string>Estimated Robot Pose</string>
+                <string>(Un) Check all</string>
                </property>
                <property name="checkState">
                 <enum>Checked</enum>
                </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Estimated Ball Position </string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Ball Observation</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Landmark Observations</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Localization Particles</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Robot View Field Projection</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Robot Trace</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Walk Commands</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
+               <item>
+                <property name="text">
+                 <string>Estimated Robot Pose</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Estimated Ball Position</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Ball Observation</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Landmark Observations</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Localization Particles</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Robot View Field Projection</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Robot Trace</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Walk Commands</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
               </item>
              </widget>
             </item>
@@ -738,7 +751,22 @@
          </property>
         </column>
        </widget>
-       <widget class="QTableWidget" name="LSDHeadTableWidget">
+       <widget class="QWidget" name="verticalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>60</y>
+          <width>241</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QComboBox" name="LSDComboBox"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget_2">
         <property name="geometry">
          <rect>
           <x>450</x>
@@ -747,96 +775,92 @@
           <height>181</height>
          </rect>
         </property>
-        <row>
-         <property name="text">
-          <string>0</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>1</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>2</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>3</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>4</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>5</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>6</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>7</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>8</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>9</string>
-         </property>
-        </row>
-        <column>
-         <property name="text">
-          <string>HeadYaw</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>HeadPitch</string>
-         </property>
-        </column>
-        <item row="0" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="0" column="1">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="1">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-       </widget>
-       <widget class="QComboBox" name="LSDComboBox">
-        <property name="geometry">
-         <rect>
-          <x>110</x>
-          <y>70</y>
-          <width>231</width>
-          <height>51</height>
-         </rect>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QTableWidget" name="LSDHeadTableWidget">
+           <row>
+            <property name="text">
+             <string>0</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>1</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>2</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>3</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>4</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>5</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>6</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>7</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>8</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>9</string>
+            </property>
+           </row>
+           <column>
+            <property name="text">
+             <string>HeadYaw</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>HeadPitch</string>
+            </property>
+           </column>
+           <item row="0" column="0">
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item row="0" column="1">
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item row="1" column="0">
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item row="1" column="1">
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="KccHandler" name="KCCTab">

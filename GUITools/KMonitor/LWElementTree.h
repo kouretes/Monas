@@ -1,20 +1,20 @@
-#ifndef LWELEMENTLIST_H_
-#define LWELEMENTLIST_H_
+#ifndef LWELEMENTTREE_H_
+#define LWELEMENTTREE_H_
 
-#include <QListWidget>
+#include <QTreeWidget>
 #include <QString>
 
-class LWElementList : public QListWidget
+class LWElementTree : public QTreeWidget
 {
     Q_OBJECT
 
 public:
-    LWElementList(QListWidget *parent = 0);
-    ~LWElementList();
+    LWElementTree(QTreeWidget *parent = 0);
+    ~LWElementTree();
 
 public slots:
-   void LWELSubscriptionHandler(QString hostId);
-   void LWELUnsubscriptionHandler(QString hostId);
+	void LWELSubscriptionHandler(QString hostId);
+	void LWELUnsubscriptionHandler(QString hostId);
 
 signals:
 	void LWRHSetRobotVisible(QString, bool);
@@ -27,13 +27,14 @@ signals:
 	void LWRHSetMWCmdVisible(QString, bool);
 
 private slots:
-	void newListElementRequested(QListWidgetItem* item);
+	void newTreeElementRequested(QTreeWidgetItem* item);
 
 private:
-	void uncheckAllListElements();
+	void un_checkAllTreeElements(Qt::CheckState state);
 
 	QString myCurrentLWRequestedHost;
-    QListWidget* parentListWidget;
+    QTreeWidget* parentTreeWidget;
 
 };
-#endif /* LWELEMENTLIST_H_ */
+
+#endif /* LWELEMENTTREE_H_ */

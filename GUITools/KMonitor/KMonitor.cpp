@@ -13,7 +13,7 @@ KMonitor::KMonitor(QWidget *parent)
 	availableGWHosts = new GWRemoteHosts(this->GWSTreeWidget);
 
 	availableLWHosts = new LWRemoteHosts(this->LWSComboBox);
-	LWSElementList = new LWElementList(this->LWSListWidget);
+	LWSElementTree = new LWElementTree(this->LWSTreeWidget);
 
 	availableLMHosts = new LWRemoteHosts(this->LPMComboBox);
 	LPMElementTree = new LMElementTree(this->LPMTreeWidget);
@@ -62,35 +62,35 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LWRHUnsubscriptionHandler(QString)));
 
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
-	connect(availableLWHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LWSElementList, SLOT(LWELSubscriptionHandler(QString)));
-	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LWSElementList, SLOT(LWELUnsubscriptionHandler(QString)));
+	connect(availableLWHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LWSElementTree, SLOT(LWELSubscriptionHandler(QString)));
+	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LWSElementTree, SLOT(LWELUnsubscriptionHandler(QString)));
 	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LWSGraphicsView, SLOT(removeGraphicalElement(QString)));
 
 	connect(Messenger, SIGNAL(worldInfoUpdate(WorldInfo, QString)), LWSGraphicsView, SLOT(worldInfoUpdateHandler(WorldInfo, QString)));
 	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), LWSGraphicsView, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)));
 
-	connect(LWSElementList, SIGNAL(LWRHSetRobotVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVRobotVisible(QString, bool)));
-	connect(LWSElementList, SIGNAL(LWRHSetBallVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVBallVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetRobotVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVRobotVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetBallVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVBallVisible(QString, bool)));
 
 
 	//Signal slot connections for Vision Observations
-	connect(LWSElementList, SIGNAL(LWRHSetVisionBallVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVVisionBallVisible(QString, bool)));
-	connect(LWSElementList, SIGNAL(LWRHSetVisionGoalPostsVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVVisionGoalPostsVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetVisionBallVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVVisionBallVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetVisionGoalPostsVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVVisionGoalPostsVisible(QString, bool)));
 
 	connect(Messenger, SIGNAL(obsmsgUpdate(ObservationMessage, QString)), LWSGraphicsView, SLOT(observationMessageUpdateHandler(ObservationMessage, QString)));
 
 	//Signal slot connections for Particles of Localization
-	connect(LWSElementList, SIGNAL(LWRHSetParticlesVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVParticlesVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetParticlesVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVParticlesVisible(QString, bool)));
 	connect(Messenger, SIGNAL(localizationDataUpdate(LocalizationDataForGUI, QString)), LWSGraphicsView, SLOT(localizationDataUpdateHandler(LocalizationDataForGUI, QString)));
 
 	//Signal slot connections for HFOV
-	connect(LWSElementList, SIGNAL(LWRHSetHFOVVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVHFOVVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetHFOVVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVHFOVVisible(QString, bool)));
 
 	//Signal slot connections for Trace Of Estimated Robot Positions
-	connect(LWSElementList, SIGNAL(LWRHSetTraceVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVTraceVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetTraceVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVTraceVisible(QString, bool)));
 
 	//Signal slot connections for Motion Walk Command
-	connect(LWSElementList, SIGNAL(LWRHSetMWCmdVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVMWCmdVisible(QString, bool)));
+	connect(LWSElementTree, SIGNAL(LWRHSetMWCmdVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVMWCmdVisible(QString, bool)));
 	connect(Messenger, SIGNAL(motionCommandUpdate(MotionWalkMessage, QString)), LWSGraphicsView, SLOT(motionCommandUpdateHandler(MotionWalkMessage, QString)));
 
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL POLAR MAP

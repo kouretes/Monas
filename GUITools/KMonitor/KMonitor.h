@@ -6,7 +6,7 @@
 #include "KGUIMessenger.h"
 #include "GWRemoteHosts.h"
 #include "LWRemoteHosts.h"
-#include "LWElementList.h"
+#include "LWElementTree.h"
 #include "LMElementTree.h"
 #include "LVElementList.h"
 #include "LSDController.h"
@@ -30,7 +30,7 @@ private:
     KGUIMessenger* Messenger;
     GWRemoteHosts* availableGWHosts;
     LWRemoteHosts* availableLWHosts;
-    LWElementList* LWSElementList;
+    LWElementTree* LWSElementTree;
     LWRemoteHosts* availableLMHosts;
     LMElementTree* LPMElementTree;
     LWRemoteHosts* availableLVHosts;
