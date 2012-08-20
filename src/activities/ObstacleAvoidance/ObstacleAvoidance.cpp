@@ -198,6 +198,7 @@ int ObstacleAvoidance::Execute()
 	countLeft = 0;
 	countRight = 0;
 	double Right[SOnARsNum], Left[SOnARsNum];
+	initPaths();
 
 	//(RobotPositionSensor Message) find current robot position
 	if(rpm != 0)
