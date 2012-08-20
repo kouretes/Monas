@@ -85,14 +85,12 @@ void KGUIMessenger::allocateReceivedMessages()
 
 	std::vector<msgentry> incomingMessages = multicast->getWriteBuffer()->remove();
 
-	//std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 	for( unsigned i=0; i<incomingMessages.size(); i++ )
 	{
 		if ( incomingMessages.at(i).msg != NULL )
 		{
 			currentRHost.clear();
 			currentRHost = QString::fromStdString(_toString(incomingMessages.at(i).host));
-
 			//std::cout << currentRHost.toStdString() << "::" << incomingMessages.at(i).msg->GetTypeName() << std::endl;
 
 			if( incomingMessages.at(i).msg->GetTypeName() == "KnownHosts" )
@@ -189,7 +187,6 @@ void KGUIMessenger::allocateReceivedMessages()
 			std::cout << "Null msg from host " << incomingMessages.at(i).host << std::endl;
 		}
 	}
-//	std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 }
 
 void KGUIMessenger::updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host)
@@ -238,10 +235,8 @@ void KGUIMessenger::LWRHSubscriptionHandler(QString hostId)
 
 void KGUIMessenger::LWRHUnsubscriptionHandler(QString hostId)
 {
-	std::cout << " Prin to if " << std::endl;
 	if((hostId.isEmpty() && !myLWRequestedHost.isEmpty()) || (myLWRequestedHost == hostId && !hostId.isEmpty()))
 	{
-		std::cout << " stin to if " << std::endl;
 		updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC, myLWRequestedHost.toUInt());
 		updateSubscription("vision",msgentry::UNSUBSCRIBE_ON_TOPIC, myLWRequestedHost.toUInt());
 		updateSubscription("debug",msgentry::UNSUBSCRIBE_ON_TOPIC, myLWRequestedHost.toUInt());
@@ -249,7 +244,6 @@ void KGUIMessenger::LWRHUnsubscriptionHandler(QString hostId)
 
 		myLWRequestedHost.clear();
 	}
-	std::cout << " Meta to if " << std::endl;
 }
 
 void KGUIMessenger::LMRHSubscriptionHandler(QString hostId)
@@ -260,9 +254,10 @@ void KGUIMessenger::LMRHSubscriptionHandler(QString hostId)
 
 void KGUIMessenger::LMRHUnsubscriptionHandler(QString hostId)
 {
-	if(myLMRequestedHost == hostId)
+
+	if((hostId.isEmpty() && !myLMRequestedHost.isEmpty()) || (myLMRequestedHost == hostId && !hostId.isEmpty()))
 	{
-		updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC, myLMRequestedHost.toUInt());
 		myLMRequestedHost.clear();
 	}
 
@@ -276,9 +271,9 @@ void KGUIMessenger::LVRHSubscriptionHandler(QString hostId)
 
 void KGUIMessenger::LVRHUnsubscriptionHandler(QString hostId)
 {
-	if(myLVRequestedHost == hostId)
+	if((hostId.isEmpty() && !myLVRequestedHost.isEmpty()) || (myLVRequestedHost == hostId && !hostId.isEmpty()))
 	{
-		updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC,myLVRequestedHost.toUInt());
 		myLVRequestedHost.clear();
 	}
 
@@ -293,9 +288,9 @@ void KGUIMessenger::LSRHSubscriptionHandler(QString hostId)
 
 void KGUIMessenger::LSRHUnsubscriptionHandler(QString hostId)
 {
-	if(myLSRequestedHost == hostId)
+	if((hostId.isEmpty() && !myLSRequestedHost.isEmpty()) || (myLSRequestedHost == hostId && !hostId.isEmpty()))
 	{
-		updateSubscription("sensors",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		updateSubscription("sensors",msgentry::UNSUBSCRIBE_ON_TOPIC,myLSRequestedHost.toUInt());
 		myLSRequestedHost.clear();
 	}
 
@@ -309,9 +304,9 @@ void KGUIMessenger::KCCRHSubscriptionHandler(QString hostId)
 
 void KGUIMessenger::KCCRHUnsubscriptionHandler(QString hostId)
 {
-	if(myKccRequestedHost == hostId)
+	if((hostId.isEmpty() && !myKccRequestedHost.isEmpty()) || (myKccRequestedHost == hostId && !hostId.isEmpty()))
 	{
-		updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC,myKccRequestedHost.toUInt());
 		myKccRequestedHost.clear();
 	}
 }

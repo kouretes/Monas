@@ -447,7 +447,7 @@ void LSDController::LSCSubscriptionHandler(QString hostId)
 
 void LSDController::LSCUnsubscriptionHandler(QString hostId)
 {
-	if(currentHost == hostId)
+	if((hostId.isEmpty() && !currentHost.isEmpty()) || (currentHost == hostId && !hostId.isEmpty()))
 	{
 		currentHost.clear();
 		uncheckAllTablesContents();

@@ -76,7 +76,7 @@ void LMElementTree::LMELSubscriptionHandler(QString hostId)
 
 void LMElementTree::LMELUnsubscriptionHandler(QString hostId)
 {
-	if(myCurrentLMRequestedHost == hostId)
+	if((hostId.isEmpty() && !myCurrentLMRequestedHost.isEmpty()) || (myCurrentLMRequestedHost == hostId && !hostId.isEmpty()))
 	{
 		myCurrentLMRequestedHost.clear();
 		un_checkAllTreeElements(Qt::Unchecked);

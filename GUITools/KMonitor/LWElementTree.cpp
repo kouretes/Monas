@@ -113,7 +113,8 @@ void LWElementTree::LWELSubscriptionHandler(QString hostId)
 
 void LWElementTree::LWELUnsubscriptionHandler(QString hostId)
 {
-	if(myCurrentLWRequestedHost == hostId)
+
+	if((hostId.isEmpty() && !myCurrentLWRequestedHost.isEmpty()) || (myCurrentLWRequestedHost == hostId && !hostId.isEmpty()))
 	{
 		myCurrentLWRequestedHost.clear();
 		un_checkAllTreeElements(Qt::Unchecked);

@@ -48,10 +48,12 @@ void LWRemoteHosts::removeComboBoxItem(QString hostId)
 
 	if(hostIndex != -1 && hostIndex <= parentComboBox->count())
 	{
-		emit LWRHUnsubscriptionRequest(hostId);
+		if (LWRequests.at(hostIndex)->hostSelected){
 
-		if (LWRequests.at(hostIndex)->hostSelected)
+			emit LWRHUnsubscriptionRequest(hostId);
 			emit newLWRemoteHostSelected(0);
+		}
+
 
 		parentComboBox->removeItem(hostIndex);
 		LWRequests.removeAt(hostIndex);
@@ -95,14 +97,6 @@ void LWRemoteHosts::setLWRHGameStateInfo(QIcon icon, QString gsm, QString hostId
 
 void LWRemoteHosts::newLWRemoteHostSelected(int index)
 {
-/*	int oldHostIndex;
-
-	oldHostIndex = LWhostFinder(myCurrentRequestedHost);
-	if(oldHostIndex > -1 && oldHostIndex <= parentComboBox->count()){
-
-		emit LWRHUnsubscriptionRequest(LWRequests.at(oldHostIndex)->hostId);
-	}*/
-
 	emit LWRHUnsubscriptionRequest(myCurrentRequestedHost);
 
 	for(int i = 0; i<LWRequests.count();i++)
