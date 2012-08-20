@@ -17,12 +17,13 @@
 #include "topic_filter.h"
 FilterState TopicFilter::filter(const msgentry& a_tuple)
 {
-  if(a_tuple.topic == topic && Filter::get_complement())
-    return Accepted;
-  return Rejected;
+	if(a_tuple.topic == topic && Filter::get_complement())
+		return Accepted;
+
+	return Rejected;
 }
-TopicFilter::TopicFilter(const std::string& type_name,const std::string& topic_filter,bool value) : Filter(type_name,value)
+TopicFilter::TopicFilter(const std::string& type_name, const std::string& topic_filter, bool value) : Filter(type_name, value)
 {
-  topic = topic_filter;
+	topic = topic_filter;
 }
 

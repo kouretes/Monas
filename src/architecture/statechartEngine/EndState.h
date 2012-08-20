@@ -3,18 +3,20 @@
 
 #include "State.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class EndState: public State {
+	class EndState: public State
+	{
 
-        public:
+	public:
 
-            EndState ( std::string name, State* parent );
+		EndState ( std::string name, State* parent );
 
-            virtual ~EndState ();
+		virtual ~EndState ();
 
-            bool Step ( IEvent* ev = 0, IParameter* param = 0);
-    };
+		bool Step ( IEvent* ev = 0, IParameter* param = 0);
+	};
 
 }
 

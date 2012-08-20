@@ -16,30 +16,22 @@
 //}
 
 
-int main () {
+int main ()
+{
+	std::cout << "Main: Inst" << std::endl;
+	Talws tal;
+	std::cout << "Main: Starting" << std::endl;
+	tal.Start();
+	std::cout << "Main: Sleeping" << std::endl;
 
-    std::cout<<"Main: Inst"<<std::endl;
-
-    Talws tal;
-
-    std::cout<<"Main: Starting"<<std::endl;
-
-    tal.Start();
-
-    std::cout<<"Main: Sleeping"<<std::endl;
-    while(1)
+	while(1)
 		usleep(100000000);
 
-    std::cout<<"Main: Stoping"<<std::endl;
-
-    tal.Stop();
-
-    usleep(3000000);
-
-    std::cout<<"Main: Exiting"<<std::endl;
-
-
-    return 0;
+	std::cout << "Main: Stoping" << std::endl;
+	tal.Stop();
+	usleep(3000000);
+	std::cout << "Main: Exiting" << std::endl;
+	return 0;
 }
 
 

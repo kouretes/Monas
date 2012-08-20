@@ -4,24 +4,26 @@
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class ICondition {
+	class ICondition
+	{
 
-        public:
+	public:
 
-            virtual bool Eval() = 0;
+		virtual bool Eval() = 0;
 
-            void Initialize ( Narukom*, Blackboard* );
+		void Initialize ( Narukom*, Blackboard* );
 
-            virtual void UserInit ()=0;
+		virtual void UserInit () = 0;
 
-        protected:
+	protected:
 
-            Narukom* _com;
+		Narukom* _com;
 
-            Blackboard* _blk;
-    };
+		Blackboard* _blk;
+	};
 
 }
 

@@ -1,29 +1,35 @@
 #include "TransitionConnector.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    TransitionConnector::TransitionConnector (std::string name, State* parent)
-    : State(name, parent)    {
-    }
+	TransitionConnector::TransitionConnector (std::string name, State* parent)
+		: State(name, parent)
+	{
+	}
 
-    TransitionConnector::~TransitionConnector () {
-        // TODO Auto-generated destructor stub
-    }
+	TransitionConnector::~TransitionConnector ()
+	{
+		// TODO Auto-generated destructor stub
+	}
 
-    int TransitionConnector::Activate () {
-        return 0;
-    }
+	int TransitionConnector::Activate ()
+	{
+		return 0;
+	}
 
-    int TransitionConnector::DeActivate () {
-        return 0;
-    }
+	int TransitionConnector::DeActivate ()
+	{
+		return 0;
+	}
 
-    bool TransitionConnector::CanStep ( IEvent* ev ) const {
-        for ( Containers::TransitionContainerIteratorConst i = _transitions.begin(); i != _transitions.end(); i++)
-            if ( (*i)->CanExecute(ev) )
-                return true;
-        return false;
+	bool TransitionConnector::CanStep ( IEvent* ev ) const
+	{
+		for ( Containers::TransitionContainerIteratorConst i = _transitions.begin(); i != _transitions.end(); i++)
+			if ( (*i)->CanExecute(ev) )
+				return true;
 
-    }
+		return false;
+	}
 
 }

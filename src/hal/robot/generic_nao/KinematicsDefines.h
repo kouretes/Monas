@@ -11,11 +11,11 @@
 #define HipOffsetZ			85.0f
 #define HipOffsetY			50.0f
 #define ThighLength			100.0f
-#define TibiaLength			102.9f	
+#define TibiaLength			102.9f
 #define FootHeight			45.11f
-#define NeckOffsetZ			126.5f 
+#define NeckOffsetZ			126.5f
 #define CameraBotomX		48.8f
-#define CameraBotomZ		23.81f 
+#define CameraBotomZ		23.81f
 #define CameraTopX			53.9f
 #define CameraTopZ			67.9f
 

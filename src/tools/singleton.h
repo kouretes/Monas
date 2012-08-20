@@ -2,21 +2,23 @@
 #define _singleton_h_ 1
 
 template< class T>
-class Singleton : public T {
+class Singleton : public T
+{
 
-    public:
+public:
 
-        static T& Instance() {
-            static T t;
-            return t;
-        }
+	static T& Instance()
+	{
+		static T t;
+		return t;
+	}
 
-    private:
+private:
 
-        Singleton();
-        Singleton(const Singleton&);
-        Singleton& operator=(const Singleton&);
-        ~Singleton();
+	Singleton();
+	Singleton(const Singleton&);
+	Singleton& operator=(const Singleton&);
+	~Singleton();
 
 };
 

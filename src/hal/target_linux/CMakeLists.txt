@@ -5,7 +5,7 @@ message ( STATUS "" )
 set(MonasTargetSources ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp CACHE INTERNAL "")
 
 function(Monas_Finalize)
-	find_package(Boost COMPONENTS date_time thread system)
+	find_package(Boost COMPONENTS date_time thread system filesystem)
 
 	message ( STATUS " _..::: Making Monas Executable Target :::.._ " )
 

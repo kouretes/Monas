@@ -25,36 +25,45 @@ template<typename T>class Buffer;
 typedef  Buffer<msgentry> MessageBuffer;
 class EndPoint
 {
-  public:
-    EndPoint(std::string const& name);
-    virtual ~EndPoint();
+public:
+	EndPoint(std::string const& name);
+	virtual ~EndPoint();
 
-    void publish(  msgentry const& msg);
+	void publish(  msgentry const& msg);
 	void publish(std::vector<msgentry> const& vec);
 
-    virtual void publishData(const google::protobuf::Message & msg,std::string const& topic);
-    virtual void publishSignal(const google::protobuf::Message & msg,std::string const& topic);
-    virtual void publishState(const google::protobuf::Message &msg, std::string const& topic);
+	virtual void publishData(const google::protobuf::Message & msg, std::string const& topic);
+	virtual void publishSignal(const google::protobuf::Message & msg, std::string const& topic);
+	virtual void publishState(const google::protobuf::Message &msg, std::string const& topic);
 
 
-    std::string const getEndPointName() const { return endpoint_name;}
+	std::string const getEndPointName() const
+	{
+		return endpoint_name;
+	}
 
-    MessageBuffer *getWriteBuffer() const { return write_buf;}
+	MessageBuffer *getWriteBuffer() const
+	{
+		return write_buf;
+	}
 
 	std::vector<msgentry> remove();
 
-	MessageBuffer *getReadBuffer() const { return read_buf;}
+	MessageBuffer *getReadBuffer() const
+	{
+		return read_buf;
+	}
 
-    void updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host=msgentry::HOST_ID_LOCAL_HOST);
-    template<typename M> void attachTo(M& m) {
+	void updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host = msgentry::HOST_ID_LOCAL_HOST);
+	template<typename M> void attachTo(M& m)
+	{
+		read_buf = m.makeReadBuffer(endpoint_name);
+		write_buf = m.makeWriteBuffer(endpoint_name);
+	}
 
-    	read_buf=m.makeReadBuffer(endpoint_name);
-    	write_buf=m.makeWriteBuffer(endpoint_name);
-    }
-
-  private:
-    std::string endpoint_name;
-    MessageBuffer *write_buf,*read_buf;
+private:
+	std::string endpoint_name;
+	MessageBuffer *write_buf, *read_buf;
 
 
 };

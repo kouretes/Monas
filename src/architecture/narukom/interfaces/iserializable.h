@@ -19,9 +19,9 @@
 
 class ISerializable
 {
-  public:
-    virtual void ParsePartialFromString(const string & byte_string) = 0;
-    virtual void SerializeToArray(char* buffer) = 0;
+public:
+	virtual void ParsePartialFromString(const string & byte_string) = 0;
+	virtual void SerializeToArray(char* buffer) = 0;
 };
 
 #endif // ISERIALIZABLE_H

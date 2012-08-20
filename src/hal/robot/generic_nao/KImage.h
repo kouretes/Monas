@@ -10,23 +10,32 @@ public:
 	int height;
 	int nChannels;
 	char* imageData;
-	KImageDeepCopy() :width(0),height(0),nChannels(0),imageData(0){}
-	~KImageDeepCopy() { clean();}
-	void clean() { if(imageData!=0) delete [] imageData; }
-	int imageSize(){ return width*height*nChannels;};
-	void copyFrom(void *data,int w,int h,int c)
+	KImageDeepCopy() : width(0), height(0), nChannels(0), imageData(0) {}
+	~KImageDeepCopy()
 	{
-		if(w*h*c!=imageSize())
+		clean();
+	}
+	void clean()
+	{
+		if(imageData != 0) delete [] imageData;
+	}
+	int imageSize()
+	{
+		return width * height * nChannels;
+	};
+	void copyFrom(void *data, int w, int h, int c)
+	{
+		if(w * h * c != imageSize())
 		{
 			clean();
-			imageData=(char *)new  long long [(int)ceil(((float)w*h*c)/(sizeof(long long)) )];//Make allingment as good as possible
+			imageData = (char *)new  long long [(int)ceil(((float)w * h * c) / (sizeof(long long)) )]; //Make allingment as good as possible
 		}
-		width=w;
-		height=h;
-		nChannels=c;
-		//imageData=( char *)data;
-		memcpy(imageData,data,height*width*nChannels);
 
+		width = w;
+		height = h;
+		nChannels = c;
+		//imageData=( char *)data;
+		memcpy(imageData, data, height * width * nChannels);
 	}
 };
 
@@ -39,23 +48,31 @@ public:
 	int height;
 	int nChannels;
 	const char* imageData;
-	KImageConst() :width(0),height(0),nChannels(0),imageData(0){}
-	~KImageConst() { clean();}
-	void clean() { /*if(imageData!=0) delete [] imageData;*/ }
-	int imageSize(){ return width*height*nChannels;};
-	void copyFrom(const void *data,int w,int h,int c)
+	KImageConst() : width(0), height(0), nChannels(0), imageData(0) {}
+	~KImageConst()
+	{
+		clean();
+	}
+	void clean()
+	{
+		/*if(imageData!=0) delete [] imageData;*/
+	}
+	int imageSize()
+	{
+		return width * height * nChannels;
+	};
+	void copyFrom(const void *data, int w, int h, int c)
 	{
 		/*if(w*h*c!=imageSize())
 		{
 			//clean();
 			//imageData=(char *)new  long long [(int)ceil(((float)w*h*c)/(sizeof(long long)) )];//Make allingment as good as possible
 		}*/
-		width=w;
-		height=h;
-		nChannels=c;
-		imageData=(const  char *)data;
+		width = w;
+		height = h;
+		nChannels = c;
+		imageData = (const  char *)data;
 		//memcpy(imageData,data,height*width*nChannels);
-
 	}
 };
 

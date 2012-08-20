@@ -8,41 +8,43 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
-class KmeAction : public ISpecialAction {
+class KmeAction : public ISpecialAction
+{
 
-  public:
+public:
 
-    std::string GetName () {
-      return name;
-    }
+	std::string GetName ()
+	{
+		return name;
+	}
 
-    KmeAction(std::string name, AL::ALValue actionNames,
-              AL::ALValue actionAngles, AL::ALValue actionTimes );
+	KmeAction(std::string name, AL::ALValue actionNames,
+	          AL::ALValue actionAngles, AL::ALValue actionTimes );
 
-    int ExecutePost();
-    AL::ALValue ReturnALValues();
-    boost::posix_time::ptime ExecuteDCM();
+	int ExecutePost();
+	AL::ALValue ReturnALValues();
+	boost::posix_time::ptime ExecuteDCM();
 
-    boost::posix_time::ptime ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd);
+	boost::posix_time::ptime ExecuteFrameDCM(unsigned int frameStart, unsigned int frameEnd);
 
-  private:
+private:
 
-    int ExecuteActionKME();
+	int ExecuteActionKME();
 
-    int ExecuteActionBodyKME();
+	int ExecuteActionBodyKME();
 
-   void DcmInit();
+	void DcmInit();
 
 
-   //     int PrintActionsKME();
-    AL::ALValue commands;
+	//     int PrintActionsKME();
+	AL::ALValue commands;
 
-    std::string name;
+	std::string name;
 
-    AL::ALPtr<AL::ALMotionProxy> motion;
-    AL::ALPtr<AL::DCMProxy> dcm;
+	AL::ALPtr<AL::ALMotionProxy> motion;
+	AL::ALPtr<AL::DCMProxy> dcm;
 
-    AL::ALValue actionNames, actionAngles, actionTimes;
+	AL::ALValue actionNames, actionAngles, actionTimes;
 
 };
 

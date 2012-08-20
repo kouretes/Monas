@@ -26,12 +26,14 @@
 using namespace std;
 
 //A structure used to store statistical data about a recognized feature
-typedef struct ftr {
+typedef struct ftr
+{
 	double x;
 	double y;
 	string id;
 	double weight;
-	void set(double x_, double y_, string id_, double weight_) {
+	void set(double x_, double y_, string id_, double weight_)
+	{
 		id = id_;
 		x = x_;
 		y = y_;
@@ -41,13 +43,21 @@ typedef struct ftr {
 } feature;
 
 //Special structure to keep the data of a particle
-typedef struct pvar {
+typedef struct pvar
+{
 	double x;
 	double y;
 	double phi;
 	double Weight;
-	pvar() {x=0;y=0;phi=0;Weight = 0;}
-	bool operator<(const struct pvar &other) const {
+	pvar()
+	{
+		x = 0;
+		y = 0;
+		phi = 0;
+		Weight = 0;
+	}
+	bool operator<(const struct pvar &other) const
+	{
 		return Weight < other.Weight;
 	}
 
@@ -55,27 +65,33 @@ typedef struct pvar {
 
 //usualy particles are processed in arrays
 //So in this structure a number of arrays store individually a property
-typedef struct var {
+typedef struct var
+{
 	double *x;
 	double *y;
 	double *phi;
 	double *Weight;
 	double WeightSum;
 	unsigned int size;
-	~var() {
+	~var()
+	{
 		if (x != NULL)
 			delete[] x;
+
 		if (y != NULL)
 			delete[] y;
+
 		if (phi != NULL)
 			delete[] phi;
+
 		if (Weight != NULL)
 			delete[] Weight;
 	}
 } parts;
 
 //Random Variable
-typedef struct rvar {
+typedef struct rvar
+{
 	double val;
 	double Emean;
 	double Edev;
@@ -84,7 +100,8 @@ typedef struct rvar {
 } randvar;
 
 //MotionModel
-typedef struct MM {
+typedef struct MM
+{
 	bool freshData;
 	string type;
 	randvar Distance;
@@ -93,14 +110,16 @@ typedef struct MM {
 } KMotionModel;
 
 //ObservationModel
-typedef struct OM {
+typedef struct OM
+{
 	feature Feature;
 	randvar Distance;
 	randvar Bearing;
 } KObservationModel;
 
 //Structure to store the belief of the robot about its position
-typedef struct blf {
+typedef struct blf
+{
 	double x;
 	double y;
 	double theta;
@@ -108,7 +127,8 @@ typedef struct blf {
 	double weightconfidence;
 } belief;
 
-class KLocalization {
+class KLocalization
+{
 public:
 
 	//Random number generetors
@@ -190,21 +210,23 @@ public:
 	//Initialize the particles of the filter
 	void initParticles();
 	void setParticlesPoseUniformly();
-	void initializeParticles(int playerState,bool kickOff);
+	void initializeParticles(int playerState, bool kickOff);
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts decimal degrees to radians             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double deg2rad(double deg) {
+	double deg2rad(double deg)
+	{
 		return (deg * M_PI / 180.0);
 	}
 
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	/*::  This function converts radians to decimal degrees             :*/
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double rad2deg(double rad) {
+	double rad2deg(double rad)
+	{
 		return (rad * 180.0 / M_PI);
 	}
 };

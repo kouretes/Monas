@@ -6,32 +6,34 @@
 
 #include <string>
 
-//TODO implement interpolation, speed etc 
+//TODO implement interpolation, speed etc
 
 template<class MotorPositionType>
-class RobotMotor : public RobotEffector, public RobotSensor {
+class RobotMotor : public RobotEffector, public RobotSensor
+{
 
-    public:
+public:
 
-        RobotMotor(std::string name, MotorPositionType from, MotorPositionType to) 
-            : RobotEffector(name), RobotSensor(name),
-            from(from), to(to)        
-        {
-            ;
-        }
+	RobotMotor(std::string name, MotorPositionType from, MotorPositionType to)
+		: RobotEffector(name), RobotSensor(name),
+		  from(from), to(to)
+	{
+		;
+	}
 
-        ~virtual RobotMotor() {
-            ;
-        }
+	~virtual RobotMotor()
+	{
+		;
+	}
 
-        MotorPositionType GetMotorPosition ()=0;
+	MotorPositionType GetMotorPosition () = 0;
 
-        void SetMotorPosition(MotorPositionType x)=0;
+	void SetMotorPosition(MotorPositionType x) = 0;
 
-        
-    private:
 
-        MotorPositionType from,to;
+private:
+
+	MotorPositionType from, to;
 
 };
 

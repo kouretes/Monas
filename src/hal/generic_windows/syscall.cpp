@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <Windows.h>
 
-int SysCall::_usleep ( unsigned long usec ) {
-    Sleep( usec/1000 );
-    return 0;
+int SysCall::_usleep ( unsigned long usec )
+{
+	Sleep( usec / 1000 );
+	return 0;
 }
 
 //TODO
@@ -16,7 +17,8 @@ int SysCall::_usleep ( unsigned long usec ) {
 //    return tm;
 //}
 
-void SysCall::_exit ( int status ) {
-    exit( status ); 
+void SysCall::_exit ( int status )
+{
+	exit( status );
 }
-    
+

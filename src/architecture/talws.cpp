@@ -16,128 +16,133 @@
 #include "activities/activityRegistry.h"
 #include "providers/providerRegistry.h"
 
-Talws::Talws () {
+Talws::Talws ()
+{
+	ArchConfig::Instance();
+	Logger::Instance();
+	XML AgentXmlFile( ArchConfig::Instance().GetConfigPrefix() + ArchConfig::Instance().GetAgentCfgFile() );
 
-    ArchConfig::Instance();
-    Logger::Instance();
+	if ( ! AgentXmlFile.IsLoadedSuccessfully() )
+	{
+		std::string msg("Can't read or parse agent configuration file @ ");
+		msg += ArchConfig::Instance().GetAgentCfgFile();
+		Logger::Instance().WriteMsg(std::string("Talws"), msg, Logger::FatalError );
+		SysCall::_exit(1);
+	}
 
-    XML AgentXmlFile( ArchConfig::Instance().GetConfigPrefix()+ArchConfig::Instance().GetAgentCfgFile() );
+	//======================= Start Agents  ===================================
+	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
+	NodeCont AgentNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "agent" );
+	std::ostringstream AgentNum;
+	AgentNum << "Found " << AgentNodes.size() << " agent(s)";
+	Logger::Instance().WriteMsg("Talws", AgentNum.str(), Logger::Info );
 
-    if ( ! AgentXmlFile.IsLoadedSuccessfully() ) {
-        std::string msg("Can't read or parse agent configuration file @ ");
-        msg += ArchConfig::Instance().GetAgentCfgFile();
-        Logger::Instance().WriteMsg(std::string("Talws"),msg, Logger::FatalError );
-        SysCall::_exit(1);
-    }
+	for ( NodeCont::iterator it = AgentNodes.begin(); it != AgentNodes.end(); it++ )
+	{
+		NodeCont AgentNameNode = AgentXmlFile.QueryElement<std::string, float, std::string>("name", &(*it) );
+		std::string AgentName = AgentNameNode[0].value;
+		NodeCont ActivityNodes = AgentXmlFile.QueryElement<std::string, float, std::string>("activity", &(*it) );
+		std::vector<std::string> activities;
 
-    //======================= Start Agents  ===================================
-    typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-
-    NodeCont AgentNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "agent" );
-
-    std::ostringstream AgentNum;
-    AgentNum<<"Found "<<AgentNodes.size()<<" agent(s)";
-
-    Logger::Instance().WriteMsg("Talws",AgentNum.str(), Logger::Info );
-
-    for ( NodeCont::iterator it = AgentNodes.begin(); it != AgentNodes.end(); it++ ) {
-
-        NodeCont AgentNameNode = AgentXmlFile.QueryElement<std::string, float, std::string>("name", &(*it) );
-
-        std::string AgentName = AgentNameNode[0].value;
-
-        NodeCont ActivityNodes = AgentXmlFile.QueryElement<std::string, float, std::string>("activity", &(*it) );
-
-        std::vector<std::string> activities;
-        for ( unsigned int i=0; i<ActivityNodes.size(); i++ ) {
+		for ( unsigned int i = 0; i < ActivityNodes.size(); i++ )
+		{
 #ifdef DLIB_FUNCTIONALITY
-            void* dlib_handler = DLibFnc::_open( ("lib"+ActivityNodes[i].value+".so").c_str());
-            if ( ! dlib_handler ) {
-                Logger::Instance().WriteMsg("Talws", DLibFnc::_error(), Logger::Info );
-            }
+			void* dlib_handler = DLibFnc::_open( ("lib" + ActivityNodes[i].value + ".so").c_str());
+
+			if ( ! dlib_handler )
+			{
+				Logger::Instance().WriteMsg("Talws", DLibFnc::_error(), Logger::Info );
+			}
+
 #endif //DLIB_FUNCTIONALITY
-            activities.push_back( ActivityNodes[i].value );
-            Logger::Instance().WriteMsg("Talws", "Agent: "+AgentName+" Registering module: "+activities[i], Logger::ExtraInfo );
-        }
+			activities.push_back( ActivityNodes[i].value );
+			Logger::Instance().WriteMsg("Talws", "Agent: " + AgentName + " Registering module: " + activities[i], Logger::ExtraInfo );
+		}
 
-        KSystem::ThreadConfig tcfg;
-        tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
-        tcfg.Priority = it->attrb["Priority"];
-        tcfg.ThreadPeriod = it->attrb["ThreadFrequency"]>0?1/it->attrb["ThreadFrequency"]:0;
-        int StatsCycle = it->attrb["StatsCycle"];
+		KSystem::ThreadConfig tcfg;
+		tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
+		tcfg.Priority = it->attrb["Priority"];
+		tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
+		int StatsCycle = it->attrb["StatsCycle"];
+		Agent *a = new Agent(AgentName, tcfg, StatsCycle, com, activities);
+		Agents.push_back( a );
+		std::ostringstream AgentInfo;
+		AgentInfo << AgentName
+		          << " Attrb: IsRealTime=" << (it->attrb["IsRealTime"])
+		          << " Priority=" << (it->attrb["Priority"])
+		          << " ThreadFrequency=" << (it->attrb["ThreadFrequency"])
+		          << " StatsCycle=" << (it->attrb["StatsCycle"]) << std::endl;
+		Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
+	}
 
-        Agent *a = new Agent(AgentName,tcfg,StatsCycle,com,activities);
+	//======================= Start StateCharts  ===================================
+	NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
+	Logger::Instance().WriteMsg("Talws", "Found " + _toString(StatechartNodes.size()) + " statechart plan(s)", Logger::Info );
 
-        Agents.push_back( a );
+	for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
+		StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
 
-        std::ostringstream AgentInfo;
-        AgentInfo<<AgentName
-            <<" Attrb: IsRealTime="<<(it->attrb["IsRealTime"])
-            <<" Priority="<<(it->attrb["Priority"])
-            <<" ThreadFrequency="<<(it->attrb["ThreadFrequency"])
-            <<" StatsCycle="<<(it->attrb["StatsCycle"])<<std::endl;
-        Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
-    }
+	//======================= Start Providers  ===================================
+	NodeCont ProviderNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "provider" );
+	Logger::Instance().WriteMsg("Talws", "Found " + _toString(ProviderNodes.size()) + " provider(s)", Logger::Info );
 
-    //======================= Start StateCharts  ===================================
-    NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
-
-    Logger::Instance().WriteMsg("Talws","Found "+_toString(StatechartNodes.size())+" statechart plan(s)", Logger::Info );
-
-    for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
-      StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
-
-    //======================= Start Providers  ===================================
-    NodeCont ProviderNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "provider" );
-
-    Logger::Instance().WriteMsg("Talws","Found "+_toString(ProviderNodes.size())+" provider(s)", Logger::Info );
-
-    for ( NodeCont::iterator it = ProviderNodes.begin(); it != ProviderNodes.end(); it++ )
-    {
-        KSystem::ThreadConfig tcfg;
-        tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
-        tcfg.Priority = it->attrb["Priority"];
-        tcfg.ThreadPeriod = it->attrb["ThreadFrequency"]>0?1/it->attrb["ThreadFrequency"]:0;
-         Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value ,  tcfg,com ) );
-    }
-
-
+	for ( NodeCont::iterator it = ProviderNodes.begin(); it != ProviderNodes.end(); it++ )
+	{
+		KSystem::ThreadConfig tcfg;
+		tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
+		tcfg.Priority = it->attrb["Priority"];
+		tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
+		Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value ,  tcfg, com ) );
+	}
 }
 
-Talws::~Talws() {
-    Stop();
-    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
-        delete (*it);
-    for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
-      delete (*it);
-    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
-      delete (*it);
+Talws::~Talws()
+{
+	Stop();
 
+	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
+		delete (*it);
+
+	for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
+		delete (*it);
+
+	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
+		delete (*it);
 }
 
-void Talws::Start() {
-    std::cout<<"Talws: Starting..."<<std::endl; //TODO
-    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
-        (*it)->StartThread();
-    for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
-      (*it)->Start();
-    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
-      (*it)->StartThread();
+void Talws::Start()
+{
+	std::cout << "Talws: Starting..." << std::endl; //TODO
+
+	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
+		(*it)->StartThread();
+
+	for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
+		(*it)->Start();
+
+	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
+		(*it)->StartThread();
 }
 
-void Talws::Stop() {
-    std::cout<<"Talws: Stoping..."<<std::endl; //TODO
-    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
-        (*it)->StopThread();
-    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
-        (*it)->StopThread();
+void Talws::Stop()
+{
+	std::cout << "Talws: Stoping..." << std::endl; //TODO
 
-    SysCall::_usleep(100000);
-    //TODO stop somehow narukom
-    for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
-        (*it)->JoinThread();
-    for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
-        (*it)->JoinThread();
-    //com.get_message_queue()->JoinThread();
+	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
+		(*it)->StopThread();
+
+	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
+		(*it)->StopThread();
+
+	SysCall::_usleep(100000);
+
+	//TODO stop somehow narukom
+	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
+		(*it)->JoinThread();
+
+	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
+		(*it)->JoinThread();
+
+	//com.get_message_queue()->JoinThread();
 }
 

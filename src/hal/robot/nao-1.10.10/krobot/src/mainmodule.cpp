@@ -19,29 +19,28 @@
 //______________________________________________
 mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name ): AL::ALModule(broker, name )
 {
-  setModuleDescription( "This is the Kouretes Team root module " );
+	setModuleDescription( "This is the Kouretes Team root module " );
+	functionName( "Start", "mainModule" ,  "Method to start Talws" );
+	BIND_METHOD( mainModule::Start );
+	functionName( "Stop", "mainModule" ,  "Method to stop Talws" );
+	BIND_METHOD( mainModule::Stop );
+	AL::ALPtr<AL::ALMemoryProxy> memory;
 
-  functionName( "Start", "mainModule" ,  "Method to start Talws" );
-  BIND_METHOD( mainModule::Start );
-
-  functionName( "Stop", "mainModule" ,  "Method to stop Talws" );
-  BIND_METHOD( mainModule::Stop );
-  AL::ALPtr<AL::ALMemoryProxy> memory;
-  try {
+	try
+	{
 		memory = broker->getMemoryProxy();
 		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::BODY_ID, memory->getData("Device/DeviceList/ChestBoard/BodyNickName"));
 		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::HEAD_ID, memory->getData("RobotConfig/Head/HeadId"));
-
-	} catch (AL::ALError& e) {
+	}
+	catch (AL::ALError& e)
+	{
 		Logger::Instance().WriteMsg("Sensors", "Error in getting memory proxy", Logger::FatalError);
 	}
 
-  std::cout<<"KRobot - Found Body ID: '"<<KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID) <<"'"<<std::endl;
-  std::cout<<"KRobot - Found Head ID: '"<<KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID) <<"'"<<std::endl;
-
-  KAlBroker::Instance().SetBroker ( broker );
-
-  tal = new Talws();
+	std::cout << "KRobot - Found Body ID: '" << KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID) << "'" << std::endl;
+	std::cout << "KRobot - Found Head ID: '" << KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID) << "'" << std::endl;
+	KAlBroker::Instance().SetBroker ( broker );
+	tal = new Talws();
 }
 
 //______________________________________________
@@ -49,14 +48,16 @@ mainModule::mainModule(AL::ALPtr<AL::ALBroker> broker, const std::string& name )
 //______________________________________________
 mainModule::~mainModule()
 {
-    delete tal;
+	delete tal;
 }
 
 
-void mainModule::Start() {
-    tal->Start();
+void mainModule::Start()
+{
+	tal->Start();
 }
 
-void mainModule::Stop() {
-    tal->Stop();
+void mainModule::Stop()
+{
+	tal->Stop();
 }

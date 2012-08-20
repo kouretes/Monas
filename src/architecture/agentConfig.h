@@ -1,17 +1,18 @@
 #ifndef _agentconfig_h_
 #define _agentconfig_h_ 1
 
-class AgentConfig {
+class AgentConfig
+{
 
-    public:
+public:
 
-        bool IsRealTime;
+	bool IsRealTime;
 
-        int Priority;
+	int Priority;
 
-        float ThreadPeriod;
+	float ThreadPeriod;
 
-        int StatsCycle;
+	int StatsCycle;
 };
 
 #endif //_agentconfig_h_

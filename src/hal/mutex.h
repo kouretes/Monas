@@ -2,9 +2,10 @@
 #define _mutex_h_ 1
 
 #include <boost/thread/mutex.hpp>
-namespace KSystem {
+namespace KSystem
+{
 
-class Mutex  : public boost::mutex{ };
+	class Mutex  : public boost::mutex { };
 
 };
 

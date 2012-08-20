@@ -16,23 +16,21 @@ struct serializedmsgheader
 	unsigned char msgclass;
 
 	uint16_t typeData;///Either as uinque identifier or as a length prefix for the GetTypeName() string that follows, currently the latter
-	void encodeFromMsg(msgentry const& m,uint16_t atypeData)
+	void encodeFromMsg(msgentry const& m, uint16_t atypeData)
 	{
-		topicid=htonl(m.topic);
-		timestamp=serialize_ptime(m.timestamp);
-		msgclass=m.msgclass;
-		typeData=htons(atypeData);
+		topicid = htonl(m.topic);
+		timestamp = serialize_ptime(m.timestamp);
+		msgclass = m.msgclass;
+		typeData = htons(atypeData);
 	}
 
 	msgentry decodeMsg() const
 	{
-
 		msgentry en;
-		en.topic=ntohl(topicid);
-		en.timestamp=deserialize_ptime(timestamp);
-		en.msgclass=(msgentry::msgclass_t)msgclass;
+		en.topic = ntohl(topicid);
+		en.timestamp = deserialize_ptime(timestamp);
+		en.msgclass = (msgentry::msgclass_t)msgclass;
 		return en;
-
 	}
 	uint16_t getTypeData() const
 	{

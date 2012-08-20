@@ -10,97 +10,108 @@
 #include "../external/tinyxml_2-5-3/tinyxml.h"
 
 template<class TxtType, class AttrType, class Key = std::string>
-class XMLNode {
+class XMLNode
+{
 
-    public:
+public:
 
-        std::string name;
-        
-        TxtType value;
+	std::string name;
 
-        std::map<Key,AttrType> attrb;
+	TxtType value;
 
-        XMLNode(std::string name) : name(name), node(0) { ; }
+	std::map<Key, AttrType> attrb;
 
-    private:
+	XMLNode(std::string name) : name(name), node(0)
+	{
+		;
+	}
 
-        const TiXmlNode * node;
-        
-        XMLNode( std::string name, const TiXmlNode * node ) : name(name), node(node) { ; }
+private:
 
-    friend class XML;
+	const TiXmlNode * node;
+
+	XMLNode( std::string name, const TiXmlNode * node ) : name(name), node(node)
+	{
+		;
+	}
+
+	friend class XML;
 
 };
 
-class XML {
+class XML
+{
 
-    public:
+public:
 
-        XML ( const std::string & filename) {
-            load_successful = doc.LoadFile( filename );
-            if ( ! load_successful ) 
-                doc.LinkEndChild( new TiXmlDeclaration( "1.0", "", "" ) );
-        }
+	XML ( const std::string & filename)
+	{
+		load_successful = doc.LoadFile( filename );
 
-        bool IsLoadedSuccessfully () const { return load_successful; }
+		if ( ! load_successful )
+			doc.LinkEndChild( new TiXmlDeclaration( "1.0", "", "" ) );
+	}
 
-        //bool SaveConfiguration () { return doc.SaveFile(); }
+	bool IsLoadedSuccessfully () const
+	{
+		return load_successful;
+	}
 
-        template <class TxtType, class AttrType, class Key >
-        std::vector<XMLNode<TxtType, AttrType, Key> > QueryElement (const std::string & ElName, XMLNode<TxtType, AttrType, Key> * pNode = NULL) const {
+	//bool SaveConfiguration () { return doc.SaveFile(); }
 
-            std::vector<XMLNode<TxtType, AttrType, Key> > Values;
+	template <class TxtType, class AttrType, class Key >
+	std::vector<XMLNode<TxtType, AttrType, Key> > QueryElement (const std::string & ElName, XMLNode<TxtType, AttrType, Key> * pNode = NULL) const
+	{
+		std::vector<XMLNode<TxtType, AttrType, Key> > Values;
+		const TiXmlNode * currentNode = (pNode == NULL) ? doc.FirstChild( ElName ) : pNode->node->FirstChild( ElName);
+		const TiXmlNode * searchNode = (pNode == NULL) ? &doc : pNode->node;
 
-            const TiXmlNode * currentNode = (pNode == NULL)? doc.FirstChild( ElName ) : pNode->node->FirstChild( ElName);
-            const TiXmlNode * searchNode = (pNode==NULL)? &doc : pNode->node;
+		for ( ; currentNode != NULL ; currentNode = searchNode->IterateChildren( ElName , currentNode ) )
+		{
+			const TiXmlElement * element = currentNode->ToElement();
 
-            for ( ; currentNode != NULL ; currentNode = searchNode->IterateChildren( ElName , currentNode ) ) {
+			if ( element == NULL ) continue;
 
-                const TiXmlElement * element = currentNode->ToElement();
+			XMLNode<TxtType, AttrType, Key> theNode( ElName, currentNode );
 
-                if ( element==NULL ) continue;
+			// Node Text
+			if ( element->GetText() )
+			{
+				std::string elText;
+				elText.assign( element->GetText() );
 
-                XMLNode<TxtType, AttrType, Key> theNode( ElName, currentNode );                
+				if ( elText.size() != 0 )
+				{
+					std::istringstream strmElText(elText);
+					TxtType  tTypeVal;
+					strmElText >> tTypeVal;
+					theNode.value = tTypeVal;
+				}
+			}
 
-                // Node Text
-                if ( element->GetText() ) {
+			//Node Attrb
+			const TiXmlAttribute * pAttrib = element->FirstAttribute();
 
-                    std::string elText;
-                    elText.assign( element->GetText() );
+			while ( pAttrib )
+			{
+				std::istringstream strs( pAttrib->Value() ); // assumption: key is string, fix
+				AttrType theValue;
+				strs >> theValue;
+				theNode.attrb.insert( std::pair<Key, AttrType> ( pAttrib->Name(), theValue ) );
+				pAttrib = pAttrib->Next();
+			}
 
-                    if ( elText.size() != 0 ) {
-                        std::istringstream strmElText(elText);
+			Values.push_back( theNode );
+		}
 
-                        TxtType  tTypeVal;
-                        strmElText>>tTypeVal;
+		return Values;
+	}
 
-                        theNode.value = tTypeVal;
-                    }
-                }
+private:
 
-                //Node Attrb
-                const TiXmlAttribute * pAttrib = element->FirstAttribute();
+	TiXmlDocument doc;
 
-                while ( pAttrib ) {
-                    std::istringstream strs( pAttrib->Value() ); // assumption: key is string, fix
-                    AttrType theValue;
-                    strs>>theValue;
-                    theNode.attrb.insert( std::pair<Key,AttrType> ( pAttrib->Name(), theValue ) );
-                    pAttrib = pAttrib->Next();
-                }
-
-                Values.push_back( theNode );
-
-            } 
-
-            return Values;
-        }
-
-    private:
-
-        TiXmlDocument doc;
-
-        bool load_successful;
+	bool load_successful;
 };
 
 #endif // _XML_h_

@@ -1,13 +1,17 @@
 #ifndef _threadable_h_
 #define _threadable_h_ 1
 
-class Threadable {
+class Threadable
+{
 
-    public:
+public:
 
-        Threadable() { ; }
+	Threadable()
+	{
+		;
+	}
 
-        virtual int ThreadMain ( ) =0;
+	virtual int ThreadMain ( ) = 0;
 
 };
 

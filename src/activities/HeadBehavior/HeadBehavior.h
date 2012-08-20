@@ -38,63 +38,65 @@
 
 
 ACTIVITY_START
-class HeadBehavior: public IActivity {
+class HeadBehavior: public IActivity
+{
 
-	public:
-        ACTIVITY_CONSTRUCTOR(HeadBehavior);
-		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
-		void ACTIVITY_VISIBLE UserInit();
+public:
+	ACTIVITY_CONSTRUCTOR(HeadBehavior);
+	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	void ACTIVITY_VISIBLE UserInit();
 
-		std::string ACTIVITY_VISIBLE GetName() {
-			return "HeadBehavior";
-		}
+	std::string ACTIVITY_VISIBLE GetName()
+	{
+		return "HeadBehavior";
+	}
 
-	private:
+private:
 
-		MotionHeadMessage* hmot;
-		HeadToBMessage* hbmsg;
-		ScanMessage* scmsg;
-		SensorData HeadYaw;
-		SensorData HeadPitch;
+	MotionHeadMessage* hmot;
+	HeadToBMessage* hbmsg;
+	ScanMessage* scmsg;
+	SensorData HeadYaw;
+	SensorData HeadPitch;
 
-		int headaction;
-		int prevaction;
-		int curraction;
-		int state;
-		float headpos;
-		int leftright;
-		bool startscan;
-		float targetYaw;
-		float targetPitch;
-		float psign,ysign;
-		unsigned waiting;
-		float obsmbearing,lastbearing;
-		float bd, bx, by, bb;
-		bool newBearing;
+	int headaction;
+	int prevaction;
+	int curraction;
+	int state;
+	float headpos;
+	int leftright;
+	bool startscan;
+	float targetYaw;
+	float targetPitch;
+	float psign, ysign;
+	unsigned waiting;
+	float obsmbearing, lastbearing;
+	float bd, bx, by, bb;
+	bool newBearing;
 
-		boost::shared_ptr<const BallTrackMessage> bmsg,lastgoodbmsg;
-		boost::shared_ptr<const BToHeadMessage> bhm;
-		boost::shared_ptr<const AllSensorValuesMessage> asvm;
-		boost::shared_ptr<const ObservationMessage> obsm;
-		boost::shared_ptr<const WorldInfo> wim;
-		
-		int calibrated;
-		int step;
-		boost::posix_time::ptime ballLastSeen,ballFirstSeen;
-		boost::posix_time::ptime GoalLastSeen,GoalFirstSeen;
-		boost::posix_time::ptime lastBtmsg;
+	boost::shared_ptr<const BallTrackMessage> bmsg, lastgoodbmsg;
+	boost::shared_ptr<const BToHeadMessage> bhm;
+	boost::shared_ptr<const AllSensorValuesMessage> asvm;
+	boost::shared_ptr<const ObservationMessage> obsm;
+	boost::shared_ptr<const WorldInfo> wim;
 
-		void read_messages();
-		void calibrate();
-		void HeadScanStep();
-		void highheadscanstep(float limit_yaw);
-		void HeadScanStepSmart();
-		void HeadScanStepFieldUntested();
-		int MakeTrackBallAction();
-		int MakeTrackBallActionNoBmsg();
-		float lookAtPointRelativeYaw(float x, float y);
-		float lookAtPointRelativePitch(float x, float y);
-		void headmotion(float pitch, float yaw);
+	int calibrated;
+	int step;
+	boost::posix_time::ptime ballLastSeen, ballFirstSeen;
+	boost::posix_time::ptime GoalLastSeen, GoalFirstSeen;
+	boost::posix_time::ptime lastBtmsg;
+
+	void read_messages();
+	void calibrate();
+	void HeadScanStep();
+	void highheadscanstep(float limit_yaw);
+	void HeadScanStepSmart();
+	void HeadScanStepFieldUntested();
+	int MakeTrackBallAction();
+	int MakeTrackBallActionNoBmsg();
+	float lookAtPointRelativeYaw(float x, float y);
+	float lookAtPointRelativePitch(float x, float y);
+	void headmotion(float pitch, float yaw);
 
 };
 ACTIVITY_END

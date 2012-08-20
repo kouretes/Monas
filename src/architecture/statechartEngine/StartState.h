@@ -3,16 +3,18 @@
 
 #include "State.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class StartState: public State {
+	class StartState: public State
+	{
 
-        public:
+	public:
 
-            StartState ( std::string name, State* parent );
+		StartState ( std::string name, State* parent );
 
-            virtual ~StartState ();
-    };
+		virtual ~StartState ();
+	};
 
 }
 

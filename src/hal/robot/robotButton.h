@@ -4,17 +4,19 @@
 #include<string>
 #include"robot_sensor.h"
 
-class RobotButton : public RobotSensor {
+class RobotButton : public RobotSensor
+{
 
 
-    public:
+public:
 
-        RobotButton(std::string name) :
-            RobotSensor(name) {
-              ;
-        }    
+	RobotButton(std::string name) :
+		RobotSensor(name)
+	{
+		;
+	}
 
-        isPressed()=0;
+	isPressed() = 0;
 
 };
 

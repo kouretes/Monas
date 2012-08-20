@@ -5,43 +5,46 @@
 
 #include "messages/timeout.pb.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class TimeoutWorker: public IExecutable {
+	class TimeoutWorker: public IExecutable
+	{
 
-        public:
+	public:
 
-           void Set( Blackboard* blk, std::string& var, Statechart* s );
+		void Set( Blackboard* blk, std::string& var, Statechart* s );
 
-           int IEX_DIRECTIVE_HOT Execute();
+		int IEX_DIRECTIVE_HOT Execute();
 
-      private:
+	private:
 
-           Blackboard* _blk;
-           std::string _var;
-           Statechart* _s;
-    };
+		Blackboard* _blk;
+		std::string _var;
+		Statechart* _s;
+	};
 
-    class TimeoutAction: public IAction {
+	class TimeoutAction: public IAction
+	{
 
-        public:
+	public:
 
-          TimeoutAction ( std::string var, int timeout_ms );
+		TimeoutAction ( std::string var, int timeout_ms );
 
-          virtual int IEX_DIRECTIVE_HOT Execute();
+		virtual int IEX_DIRECTIVE_HOT Execute();
 
-          virtual void UserInit();
+		virtual void UserInit();
 
-        private:
+	private:
 
-          std::string _var;
-          int _timeout_ms;
+		std::string _var;
+		int _timeout_ms;
 
-          TimeoutWorker _twork;
+		TimeoutWorker _twork;
 
-          boost::shared_ptr<TimeoutMsg> _msg;
+		boost::shared_ptr<TimeoutMsg> _msg;
 
-    };
+	};
 
 }
 

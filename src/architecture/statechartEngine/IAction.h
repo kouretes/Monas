@@ -6,27 +6,29 @@
 
 #include "architecture/IExecutable.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class Statechart;
+	class Statechart;
 
-    class IAction: public IExecutable {
+	class IAction: public IExecutable
+	{
 
-        public:
+	public:
 
-            void Initialize ( Narukom*, Blackboard*, Statechart* );
+		void Initialize ( Narukom*, Blackboard*, Statechart* );
 
-            virtual void UserInit ()=0;
+		virtual void UserInit () = 0;
 
-        protected:
+	protected:
 
-            Narukom* _com;
+		Narukom* _com;
 
-            Blackboard* _blk;
+		Blackboard* _blk;
 
-            Statechart* _s;
+		Statechart* _s;
 
-    };
+	};
 
 }
 

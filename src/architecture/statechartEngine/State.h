@@ -9,69 +9,83 @@
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
+#include "architecture/XmlManager/XmlConfigurator.h"
+
+#include "architecture/periodicthread.h"
+
+#ifdef RUN_ON_NAO
+#include "hal/robot/generic_nao/robot_consts.h"
+#endif
+
 #include "Containers.h"
 
 #include <string>
 #include <vector>
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class State {
+	class State
+	{
 
-        public:
+	public:
 
-            State ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+		State ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
 
-            virtual ~State ();
+		virtual ~State ();
 
-            bool isActive () const;
+		bool isActive () const;
 
-            virtual bool isRunning () const;
+		virtual bool isRunning () const;
 
-            virtual int Activate ();
-            virtual int DeActivate ();
+		virtual int Activate ();
+		virtual int DeActivate ();
 
-            virtual bool Step ( IEvent* ev = 0, IParameter* param = 0);
+		virtual bool Step ( IEvent* ev = 0, IParameter* param = 0);
 
-            int AddTransition ( TransitionSegmentBase* transition );
+		int AddTransition ( TransitionSegmentBase* transition );
 
-            virtual void SetActive ( State* );
+		virtual void SetActive ( State* );
 
-            State* GetParent () const;
+		State* GetParent () const;
 
-            virtual Blackboard* AddChild ( State* ); //TODO
+		virtual Blackboard* AddChild ( State* ); //TODO
 
-            Narukom* GetCom () const; //TODO add const
+		Narukom* GetCom () const; //TODO add const
 
-            Blackboard* GetBlackboard () const; //TODO add const
+		Blackboard* GetBlackboard () const; //TODO add const
 
-            virtual volatile int* GetIsRunningRef () const;
+		XmlNode* GetXmlNode () const; //TODO add const
 
-            virtual const std::string GetName () const;
+		virtual volatile int* GetIsRunningRef () const;
 
-        protected:
+		virtual const std::string GetName () const;
 
-            std::string _name;
+	protected:
 
-            IAction* _entryAction;
-            IAction* _exitAction;
+		std::string _name;
 
-            State* _parent;
+		IAction* _entryAction;
+		IAction* _exitAction;
 
-            bool _isActive;
+		State* _parent;
 
-            volatile int* _isRunning;
+		bool _isActive;
 
-            typedef Containers::TransitionContainer TransitionsCont;
-            typedef Containers::TransitionContainerIterator TransitionsContIter;
+		volatile int* _isRunning;
 
-            TransitionsCont _transitions;
+		typedef Containers::TransitionContainer TransitionsCont;
+		typedef Containers::TransitionContainerIterator TransitionsContIter;
 
-            Narukom* _com;
+		TransitionsCont _transitions;
 
-            Blackboard* _blk;
+		Narukom* _com;
 
-    };
+		Blackboard* _blk;
+
+		XmlNode* _xml;
+
+	};
 
 }
 

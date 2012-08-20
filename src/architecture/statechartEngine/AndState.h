@@ -11,38 +11,40 @@
 #include "Containers.h"
 
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class AndState: public State {
+	class AndState: public State
+	{
 
-        public:
+	public:
 
-            AndState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+		AndState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
 
-            virtual ~AndState ();
+		virtual ~AndState ();
 
-            int Activate ();
-            int DeActivate ();
+		int Activate ();
+		int DeActivate ();
 
-            bool Step ( IEvent* ev , IParameter* param );
+		bool Step ( IEvent* ev , IParameter* param );
 
-            Blackboard* AddChild ( State* );
+		Blackboard* AddChild ( State* );
 
-            bool isRunning () const;
+		bool isRunning () const;
 
-            Blackboard* GetBlackboard () const;
+		Blackboard* GetBlackboard () const;
 
-	    volatile int* GetIsRunningRef () const;
+		volatile int* GetIsRunningRef () const;
 
-        private:
+	private:
 
-            typedef Containers::OrStateContainer OrNodeCont;
-            typedef Containers::OrStateContainerIterator OrNodeContIter;
-            typedef Containers::OrStateContainerIteratorConst OrNodeContIterConst;
+		typedef Containers::OrStateContainer OrNodeCont;
+		typedef Containers::OrStateContainerIterator OrNodeContIter;
+		typedef Containers::OrStateContainerIteratorConst OrNodeContIterConst;
 
-            OrNodeCont _subStates;
+		OrNodeCont _subStates;
 
-    };
+	};
 
 }
 

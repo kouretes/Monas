@@ -29,65 +29,85 @@
 	Perfect string hasher library
 **/
 
-class stringRegistry {
+class stringRegistry
+{
 
-	public:
+public:
 
-	stringRegistry(){ nextid=1	; rt.push_back("");};
+	stringRegistry()
+	{
+		nextid = 1	;
+		rt.push_back("");
+	};
 	/**Register new string and return new id **/
 	std::size_t registerNew(std::string const& s)
 	{
-		std::size_t lookup=getId(s);
-		if(lookup!=0)
+		std::size_t lookup = getId(s);
+
+		if(lookup != 0)
 			return lookup;
+
 		stringidpair p;
-		p.id=nextid++;
-		p.s=s;
-		std::size_t hashs=hasher(s);
+		p.id = nextid++;
+		p.s = s;
+		std::size_t hashs = hasher(s);
 		ft[hashs].insert(p);
 		rt.push_back(s);
-		boost::hash_combine(seed,hashs);
-
+		boost::hash_combine(seed, hashs);
 		return p.id;
-
 	}
-	std::size_t registryHash() const { return seed; };
-	std::size_t size() const { return nextid-1;};
+	std::size_t registryHash() const
+	{
+		return seed;
+	};
+	std::size_t size() const
+	{
+		return nextid - 1;
+	};
 	std::size_t getId(std::string const& s) const
 	{
-		std::size_t hashs=hasher(s);
-		fttype::const_iterator ftit= ft.find(hashs);
-		if(ftit==ft.end())
-		{
+		std::size_t hashs = hasher(s);
+		fttype::const_iterator ftit = ft.find(hashs);
 
+		if(ftit == ft.end())
+		{
 			return 0;
 		}
+
 		std::set<stringidpair>::const_iterator fit;
-		for(fit= (*ftit).second.begin();fit!=(*ftit).second.end();++fit)
+
+		for(fit = (*ftit).second.begin(); fit != (*ftit).second.end(); ++fit)
 		{
-			if((*fit).s==s)
+			if((*fit).s == s)
 				return (*fit).id;
-
 		}
-		return 0;
 
+		return 0;
 	}
 	std::string getString(std::size_t id) const
 	{
-		if(id>rt.size())
+		if(id > rt.size())
 			return "";
+
 		return rt[id];
 	}
 
-	private:
-	typedef struct spair_s{
+private:
+	typedef struct spair_s
+	{
 		std::string s;
 		std::size_t id;
-		bool operator<(struct spair_s const & a) const { return id < a.id;};
-		bool operator==(struct spair_s const & a)const { return id == a.id;};
-	}stringidpair;
+		bool operator<(struct spair_s const & a) const
+		{
+			return id < a.id;
+		};
+		bool operator==(struct spair_s const & a)const
+		{
+			return id == a.id;
+		};
+	} stringidpair;
 	//From HASH to pair of ids,and strings for lookup
-	typedef std::map<std::size_t,std::set<stringidpair> > fttype;
+	typedef std::map<std::size_t, std::set<stringidpair> > fttype;
 	//From id, to string
 	typedef std::vector<std::string> rttype;
 	boost::hash<std::string> hasher;
