@@ -23,7 +23,7 @@ KMonitor::KMonitor(QWidget *parent)
 
 	availableLSHosts = new LWRemoteHosts(this->LSDComboBox);
 
-	QList<QTableWidget*> list;
+	/*QList<QTableWidget*> list;
 
 	list.append(LSDHeadTableWidget);
 	list.append(LSDInertialTableWidget);
@@ -32,7 +32,7 @@ KMonitor::KMonitor(QWidget *parent)
 	list.append(LSDLLegTableWidget);
 	list.append(LSDRLegTableWidget);
 
-	LSController = new LSDController(list);
+	LSController = new LSDController(list);*/
 
 
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
@@ -145,12 +145,12 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LSRHUnsubscriptionHandler(QString)));
 
 
-	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LSController, SLOT(LSCSubscriptionHandler(QString)));
+	/*connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LSController, SLOT(LSCSubscriptionHandler(QString)));
 	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LSController, SLOT(LSCUnsubscriptionHandler(QString)));
 
 	connect(Messenger, SIGNAL(sensorsDataUpdate(AllSensorValuesMessage, QString)), LSController, SLOT(sensorsDataUpdateHandler(AllSensorValuesMessage, QString)));
 
-
+*/
 
 
 
