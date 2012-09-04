@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1084</width>
-    <height>597</height>
+    <width>1071</width>
+    <height>666</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -305,7 +305,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="1" column="0">
-         <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1,1,1,2,1,1,1,1">
+         <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,1,1,1,2,1,1,1">
           <property name="spacing">
            <number>3</number>
           </property>
@@ -322,21 +322,8 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="7">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>LShoulderPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="5" column="5">
            <widget class="QComboBox" name="AccYComboBox"/>
-          </item>
-          <item row="5" column="8">
-           <widget class="QComboBox" name="LSPComboBox"/>
           </item>
           <item row="5" column="4">
            <widget class="QLabel" name="label_2">
@@ -362,9 +349,6 @@
           </item>
           <item row="6" column="5">
            <widget class="QComboBox" name="AccZComboBox"/>
-          </item>
-          <item row="6" column="8">
-           <widget class="QComboBox" name="LSRComboBox"/>
           </item>
           <item row="7" column="2">
            <widget class="QComboBox" name="REYComboBox"/>
@@ -438,42 +422,6 @@
           <item row="8" column="5">
            <widget class="QComboBox" name="AngYComboBox"/>
           </item>
-          <item row="7" column="8">
-           <widget class="QComboBox" name="LEYComboBox"/>
-          </item>
-          <item row="8" column="8">
-           <widget class="QComboBox" name="LERComboBox"/>
-          </item>
-          <item row="6" column="7">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>LShoulderRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="7">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>LElbowYaw</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="7">
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>LElbowRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="4">
            <widget class="QLabel" name="label_13">
             <property name="text">
@@ -520,7 +468,7 @@
           <item row="5" column="3">
            <widget class="QLabel" name="label_18">
             <property name="text">
-             <string>                      </string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -530,14 +478,14 @@
           <item row="5" column="6">
            <widget class="QLabel" name="label_19">
             <property name="text">
-             <string>                    </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="6" column="3">
            <widget class="QLabel" name="label_20">
             <property name="text">
-             <string>                      </string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -547,7 +495,7 @@
           <item row="7" column="3">
            <widget class="QLabel" name="label_21">
             <property name="text">
-             <string>                      </string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -557,7 +505,7 @@
           <item row="8" column="3">
            <widget class="QLabel" name="label_22">
             <property name="text">
-             <string>                      </string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -597,7 +545,7 @@
           <item row="4" column="3">
            <widget class="QLabel" name="label_37">
             <property name="text">
-             <string>                       </string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -694,14 +642,14 @@
           <item row="6" column="6">
            <widget class="QLabel" name="label_36">
             <property name="text">
-             <string>                    </string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="7" column="6">
            <widget class="QLabel" name="label_39">
             <property name="text">
-             <string>                    </string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -718,85 +666,7 @@
           <item row="17" column="2">
            <widget class="QLabel" name="label_49">
             <property name="text">
-             <string>           </string>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="0">
-           <widget class="QLabel" name="label_50">
-            <property name="text">
-             <string>RFsrFrontLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="1">
-           <widget class="QComboBox" name="comboBox"/>
-          </item>
-          <item row="19" column="0">
-           <widget class="QLabel" name="label_51">
-            <property name="text">
-             <string>RFsrRearLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="1">
-           <widget class="QComboBox" name="comboBox_2"/>
-          </item>
-          <item row="18" column="2">
-           <widget class="QLabel" name="label_52">
-            <property name="text">
-             <string>RFsrFrontRight</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="2">
-           <widget class="QLabel" name="label_53">
-            <property name="text">
-             <string>RFsrRearRight</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="3">
-           <widget class="QComboBox" name="comboBox_3"/>
-          </item>
-          <item row="19" column="3">
-           <widget class="QComboBox" name="comboBox_4"/>
-          </item>
-          <item row="18" column="7">
-           <widget class="QComboBox" name="comboBox_7"/>
-          </item>
-          <item row="19" column="7">
-           <widget class="QComboBox" name="comboBox_8"/>
-          </item>
-          <item row="18" column="6">
-           <widget class="QLabel" name="label_54">
-            <property name="text">
-             <string>LFsrFrontLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="6">
-           <widget class="QLabel" name="label_55">
-            <property name="text">
-             <string>LFsrRearLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <string/>
             </property>
            </widget>
           </item>
@@ -806,7 +676,7 @@
              <string>LFsrFrontRight</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -816,15 +686,9 @@
              <string>LFsrRearRight</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
-          </item>
-          <item row="18" column="9">
-           <widget class="QComboBox" name="comboBox_5"/>
-          </item>
-          <item row="19" column="9">
-           <widget class="QComboBox" name="comboBox_6"/>
           </item>
           <item row="11" column="4">
            <widget class="QComboBox" name="RHRComboBox"/>
@@ -972,6 +836,122 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="7">
+           <widget class="QComboBox" name="LSPComboBox"/>
+          </item>
+          <item row="6" column="7">
+           <widget class="QComboBox" name="LSRComboBox"/>
+          </item>
+          <item row="7" column="7">
+           <widget class="QComboBox" name="LEYComboBox"/>
+          </item>
+          <item row="8" column="7">
+           <widget class="QComboBox" name="LERComboBox"/>
+          </item>
+          <item row="5" column="8">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>LShoulderPitch</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="8">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>LShoulderRoll</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="8">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>LElbowYaw</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="8">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>LElbowRoll</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="5">
+           <widget class="QLabel" name="label_52">
+            <property name="text">
+             <string>RFsrFrontRight          LFsrFrontLeft</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="6">
+           <widget class="QComboBox" name="LFsrFLComboBox"/>
+          </item>
+          <item row="18" column="4">
+           <widget class="QComboBox" name="RFsrFRComboBox"/>
+          </item>
+          <item row="19" column="4">
+           <widget class="QComboBox" name="RFsrRRComboBox"/>
+          </item>
+          <item row="19" column="5">
+           <widget class="QLabel" name="label_53">
+            <property name="text">
+             <string>RFsrRearRight           LFsrRearLeft</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="6">
+           <widget class="QComboBox" name="LFsrRLComboBox"/>
+          </item>
+          <item row="18" column="3">
+           <widget class="QComboBox" name="RFsrFLComboBox"/>
+          </item>
+          <item row="19" column="3">
+           <widget class="QComboBox" name="RFsrRLComboBox"/>
+          </item>
+          <item row="18" column="2">
+           <widget class="QLabel" name="label_50">
+            <property name="text">
+             <string>RFsrFrontLeft</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="2">
+           <widget class="QLabel" name="label_51">
+            <property name="text">
+             <string>RFsrRearLeft</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="18" column="7">
+           <widget class="QComboBox" name="LFsrFRComboBox"/>
+          </item>
+          <item row="19" column="7">
+           <widget class="QComboBox" name="LFsrRRComboBox"/>
+          </item>
          </layout>
         </item>
        </layout>
@@ -990,7 +970,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1084</width>
+     <width>1071</width>
      <height>25</height>
     </rect>
    </property>

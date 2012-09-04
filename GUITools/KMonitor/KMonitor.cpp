@@ -1,7 +1,7 @@
 #include "KMonitor.h"
 #include "ui_KccHandler.h"
 
-#include <QTableWidget>
+#include <QComboBox>
 #include <QList>
 
 KMonitor::KMonitor(QWidget *parent)
@@ -23,17 +23,7 @@ KMonitor::KMonitor(QWidget *parent)
 
 	availableLSHosts = new LWRemoteHosts(this->LSDComboBox);
 
-	/*QList<QTableWidget*> list;
-
-	list.append(LSDHeadTableWidget);
-	list.append(LSDInertialTableWidget);
-	list.append(LSDLArmTableWidget);
-	list.append(LSDRArmTableWidget);
-	list.append(LSDLLegTableWidget);
-	list.append(LSDRLegTableWidget);
-
-	LSController = new LSDController(list);*/
-
+	LSDInitialization();
 
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
@@ -145,12 +135,11 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LSRHUnsubscriptionHandler(QString)));
 
 
-	/*connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LSController, SLOT(LSCSubscriptionHandler(QString)));
+	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LSController, SLOT(LSCSubscriptionHandler(QString)));
 	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LSController, SLOT(LSCUnsubscriptionHandler(QString)));
 
 	connect(Messenger, SIGNAL(sensorsDataUpdate(AllSensorValuesMessage, QString)), LSController, SLOT(sensorsDataUpdateHandler(AllSensorValuesMessage, QString)));
 
-*/
 
 
 
@@ -178,6 +167,57 @@ KMonitor::KMonitor(QWidget *parent)
 
 KMonitor::~KMonitor()
 {
+
+}
+
+void KMonitor::LSDInitialization()
+{
+	QList<QComboBox*> list;
+
+	list.append(HYComboBox);	//0-1
+	list.append(HPComboBox);
+
+	list.append(AccXComboBox);	//2-6
+	list.append(AccYComboBox);
+	list.append(AccZComboBox);
+	list.append(AngXComboBox);
+	list.append(AngYComboBox);
+
+	list.append(RSPComboBox);	//7-10
+	list.append(RSRComboBox);
+	list.append(REYComboBox);
+	list.append(RERComboBox);
+
+	list.append(LSPComboBox);	//11-14
+	list.append(LSRComboBox);
+	list.append(LEYComboBox);
+	list.append(LERComboBox);
+
+	list.append(RHYPComboBox);	//15-20
+	list.append(RHRComboBox);
+	list.append(RHPComboBox);
+	list.append(RKPComboBox);
+	list.append(RAPComboBox);
+	list.append(RARComboBox);
+
+	list.append(LHYPComboBox);  //21-26
+	list.append(LHRComboBox);
+	list.append(LHPComboBox);
+	list.append(LKPComboBox);
+	list.append(LAPComboBox);
+	list.append(LARComboBox);
+
+	list.append(RFsrFLComboBox);	//27-30
+	list.append(RFsrRLComboBox);
+	list.append(RFsrFRComboBox);
+	list.append(RFsrRRComboBox);
+
+	list.append(LFsrFLComboBox);	//31-34
+	list.append(LFsrRLComboBox);
+	list.append(LFsrFRComboBox);
+	list.append(LFsrRRComboBox);
+
+	LSController = new LSDController(list);
 
 }
 

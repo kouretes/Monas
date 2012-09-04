@@ -27,6 +27,8 @@ private slots:
 	void printCurrentTab(int index);
 
 private:
+	void LSDInitialization();
+
     KGUIMessenger* Messenger;
     GWRemoteHosts* availableGWHosts;
     LWRemoteHosts* availableLWHosts;

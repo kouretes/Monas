@@ -54,7 +54,6 @@ void LWRemoteHosts::removeComboBoxItem(QString hostId)
 			emit newLWRemoteHostSelected(0);
 		}
 
-
 		parentComboBox->removeItem(hostIndex);
 		LWRequests.removeAt(hostIndex);
 	}
@@ -106,10 +105,9 @@ void LWRemoteHosts::newLWRemoteHostSelected(int index)
 			LWRequests.at(i)->hostSelected = true;
 			myCurrentRequestedHost = LWRequests.at(i)->hostId;
 
-			if(!myCurrentRequestedHost.isEmpty()){
-				std::cout << "LWRemoteHosts::newLWRemoteHostSelected :: KAnw subreq" << std::endl;
+			if(!myCurrentRequestedHost.isEmpty())
 				emit LWRHSubscriptionRequest(LWRequests.at(i)->hostId);
-			}
+
 		}else
 		{
 			LWRequests.at(i)->hostSelected = false;
