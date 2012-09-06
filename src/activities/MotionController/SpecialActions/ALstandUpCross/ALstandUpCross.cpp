@@ -14,7 +14,7 @@ ALstandUpCross::ALstandUpCross()
 
 	try
 	{
-		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
+		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
 	}
 	catch (AL::ALError& e)
 	{

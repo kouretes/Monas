@@ -4,7 +4,7 @@
 
 void* DLibFnc::_open ( const char * filename )
 {
-	return dlopen ( filename, RTLD_LAZY );
+	return dlopen ( filename, RTLD_NOW/*LAZY*/ );
 }
 
 char* DLibFnc::_error ()

@@ -44,7 +44,7 @@ void OpenChallenge2012::UserInit()
 
 	try
 	{
-		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
+		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
 	}
 	catch (AL::ALError& e)
 	{
@@ -53,7 +53,8 @@ void OpenChallenge2012::UserInit()
 
 	try
 	{
-		framemanager = new AL::ALFrameManagerProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
+		pbroker = boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
+		framemanager = boost::shared_ptr<AL::ALFrameManagerProxy>(new AL::ALFrameManagerProxy(pbroker));
 	}
 	catch (AL::ALError& e)
 	{

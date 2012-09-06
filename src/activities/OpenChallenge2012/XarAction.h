@@ -17,7 +17,7 @@ public:
 		return name;
 	}
 	//TODO fix this constructor
-	XarAction(boost::shared_ptr<AL::ALFrameManagerProxy> frame, std::string filenamepath, std::string name, std::string identifier);
+	XarAction(AL::ALFrameManagerProxy *frame, std::string filenamepath, std::string name, std::string identifier);
 
 	int ExecutePost();
 
@@ -34,7 +34,7 @@ private:
 	std::string identifier;
 
 	//boost::shared_ptr<AL::ALFrameManagerProxy> frame;
-	boost::shared_ptr<AL::ALFrameManagerProxy> frame;
+	AL::ALFrameManagerProxy *frame;
 };
 
 #endif // _XARACTION_H_

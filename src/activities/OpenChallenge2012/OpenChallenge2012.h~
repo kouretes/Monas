@@ -1,14 +1,16 @@
-#ifndef MOTION_CONTROLLER_H
-#define MOTION_CONTROLLER_H
+#ifndef OpenChallenge2012_H
+#define OpenChallenge2012_H
 
 #include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/Gamecontroller.pb.h"
+#include "messages/WorldInfo.pb.h"
+#include "messages/VisionObservations.pb.h"
 
 #include "hal/robot/generic_nao/aldebaran-motion.h"
-
+#include "hal/robot/generic_nao/NAOKinematics.h"
 #include <string>
 #include <math.h>
 #include <iostream>
@@ -19,10 +21,8 @@
 #include "tools/XMLConfig.h"
 #include "messages/RoboCupGameControlData.h"
 #include <vector>
-#include "ISpecialAction.h"
-#include "KmexManager.h"
-#include "KmexAction.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "ISpecialAction.h"
 
 #ifndef TO_RAD
 #define TO_RAD 0.01745329f
@@ -34,19 +34,19 @@ using namespace std;
 
 
 ACTIVITY_START
-class MotionController : public IActivity
+class OpenChallenge2012 : public IActivity
 {
 
 public:
 
-	MotionController(Blackboard &b, XmlNode &x);
+	OpenChallenge2012(Blackboard &b, XmlNode &x);
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
 
 	std::string ACTIVITY_VISIBLE GetName()
 	{
-		return "MotionController";
+		return "OpenChallenge2012";
 	}
 
 
@@ -54,10 +54,9 @@ private:
 
 	AL::DCMProxy *dcm;
 	AL::ALMotionProxy *motion;
-	AL::ALFrameManagerProxy *framemanager;
 	boost::shared_ptr<AL::ALProxy> temp;
 	boost::shared_ptr<AL::ALBroker> pbroker;
-	//boost::shared_ptr<AL::ALFrameManagerProxy> framemanager;
+	boost::shared_ptr<AL::ALFrameManagerProxy> framemanager;
 
 	bool walkingWithVelocity;
 
@@ -70,8 +69,7 @@ private:
 	int gameState;
 	int currentstate;
 
-	int counter;
-
+	NAOKinematics *nkin;
 	int walkPID;
 	float walkParam1, walkParam2, walkParam3, walkParam4;
 
@@ -79,6 +77,7 @@ private:
 	float headParam1, headParam2;
 
 	int actionPID;
+	int counter;
 
 	AL::ALValue names, values;
 
@@ -88,6 +87,14 @@ private:
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const GameStateMessage>  gsm;
+	boost::shared_ptr<const WorldInfo>  wim;
+
+	boost::shared_ptr<const ObservationMessage>  obsm;
+	SensorData LHYPitch, LHRoll, LHPitch, LKPitch, LARoll, LAPitch;
+	SensorData RSPitch, RSRoll, REYaw, RERoll;
+	float torsoHeight;
+	bool donee;
+
 
 	MotionActionMessage  * pam;
 	MotionStateMessage	sm;
@@ -109,7 +116,6 @@ private:
 	void ALstandUpBack();
 	void ALstandUpFront();
 
-	vector<int> SpCutActionsManager();
 	vector<float> KGetAngles();
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
@@ -120,15 +126,11 @@ private:
 	SpAssocCont SpActions;
 
 
-	typedef std::map < std::string,
-	        boost::shared_ptr<KmexAction> > SpCont;
-	typedef std::pair < std::string,
-	        boost::shared_ptr<KmexAction> > SpElement;
-	SpCont SpKmexActions;
-
 	std::string BodyID;
 	void readWalkParameters();
 	boost::posix_time::ptime standUpStartTime, timeLapsed;
+	boost::posix_time::ptime startl, stopl;
+	boost::posix_time::ptime startr, stopr;
 };
 
 ACTIVITY_END

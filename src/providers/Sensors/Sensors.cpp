@@ -170,7 +170,7 @@ void Sensors::fetchValues()
 	}
 
 	//All Sensors
-	float gyrRef = fabs((readVector(sensorValues, GYR + AXIS_Z) - Interpret::GYR_Z_RAW) / Interpret::GYR_Z_RAW);
+	//float gyrRef = fabs((readVector(sensorValues, GYR + AXIS_Z) - Interpret::GYR_Z_RAW) / Interpret::GYR_Z_RAW);
 	// 	Logger::Instance().WriteMsg("SENSORS","Current: "
 	// 				      +_toString(readVector(sensorValues,GYR+AXIS_Z))
 	// 				      +" Avg: "+_toString(gyravg[AXIS_Z].read_mean())
@@ -180,10 +180,10 @@ void Sensors::fetchValues()
 	                  (readVector(sensorValues, ACC + AXIS_Y)) * (readVector(sensorValues, ACC + AXIS_Y)) +
 	                  (readVector(sensorValues, ACC + AXIS_Z)) * (readVector(sensorValues, ACC + AXIS_Z))    );
 	float accRef = fabs((accn - Interpret::ACC_NORM)) / Interpret::ACC_NORM;
-	bool isvalid = gyrRef < 0.2 && accRef < 0.5;
+	bool isvalid = accRef < 0.5;
 
-	// 	if ( !isvalid )
-	// 	  Logger::Instance().WriteMsg("SENSORS","Invalid Data",Logger::Error);
+	//if ( !isvalid )
+	//	Logger::Instance().WriteMsg("SENSORS","Invalid Data gyrref = " + _toString(gyrRef) + " accRef = " + _toString(accRef),Logger::Error);
 
 	if( isvalid )
 	{
@@ -191,7 +191,7 @@ void Sensors::fetchValues()
 		accnorm.update(accn, sc);
 		float accgain = Interpret::GRAVITY_PULL / accnorm.read_mean();
 		oldval = ASM.sensordata(GYR + AXIS_Z).sensorvalue();
-		gyravg[AXIS_Z].update(readVector(sensorValues, GYR + AXIS_Z), sc);
+		gyravg[AXIS_Z].update(-1520/*readVector(sensorValues, GYR + AXIS_Z)*/, sc);
 		newval = gyravg[AXIS_Z].read_mean();
 		ASM.mutable_sensordata(GYR + AXIS_Z)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(GYR + AXIS_Z)->set_sensorvaluediff(newval - oldval);

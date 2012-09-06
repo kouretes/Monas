@@ -9,7 +9,7 @@
 
 using namespace std;
 
-std::vector<ISpecialAction*> XarManager::LoadActionsXAR(boost::shared_ptr<AL::ALFrameManagerProxy> frame)
+std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy *frame)
 {
 	std::vector<ISpecialAction*> XarActions;
 	std::vector<XarBehavior> spAct;

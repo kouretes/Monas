@@ -12,7 +12,7 @@
 #include <boost/shared_ptr.hpp>
 #include <alcommon/alproxy.h>
 #include <alvalue/alvalue.h>
-#include "alproxies/dcmproxy.h"
+#include <alproxies/dcmproxy.h>
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/almotionproxy.h>
 #include <alproxies/alframemanagerproxy.h>

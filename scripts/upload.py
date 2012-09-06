@@ -170,7 +170,7 @@ os.system('aplay -q '+ scripts_dir +'beep.wav &')
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
 #probable_binaries_path = "/binaries/robot/naoqi_1.6.0_cross/" #under make/buildfolder
-naoqi_cross_folder = commands.getoutput("ls ./binaries/robot | grep naoqi")
+naoqi_cross_folder = "."#commands.getoutput("ls ./binaries/robot | grep naoqi")
 if(naoqi_cross_folder!=""):
 	binaries_dir = "./binaries/robot/" + naoqi_cross_folder +"/"
 else:
@@ -281,7 +281,7 @@ for	ip in robotsIP:
 		nao_start_cmd = 'ssh nao@'+ip+" ' /etc/init.d/naoqi start ' "
 		print(">>> Sending NaoQi start command: "+nao_start_cmd)
 		os.system(nao_start_cmd)
-		wifi_conf_cmd = 'ssh nao@'+ip+" 'su -c \"/etc/init.d/connman restart\" ' "
+		wifi_conf_cmd = 'ssh -nao@'+ip+" su --session-command=\"/etc/init.d/connman restart\" ' "
 		print(">>> Sending ConnMan restart command: "+wifi_conf_cmd)
 		os.system(wifi_conf_cmd)
 

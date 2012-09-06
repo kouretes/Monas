@@ -49,17 +49,18 @@ void MotionController::UserInit()
 
 	try
 	{
-		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
+		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MotionController", "Error in getting motion proxy", Logger::FatalError);
+		Logger::Instance().WriteMsg("MotionController", "Error in getting motion proxy" + e.getDescription(), Logger::FatalError);
 	}
 
 	try
 	{
-		pbroker = boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
-		framemanager = boost::shared_ptr<AL::ALFrameManagerProxy>(new AL::ALFrameManagerProxy(pbroker));
+		framemanager = new AL::ALFrameManagerProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
+		//pbroker = boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
+		//framemanager = boost::shared_ptr<AL::ALFrameManagerProxy>(new AL::ALFrameManagerProxy(pbroker));
 	}
 	catch (AL::ALError& e)
 	{
@@ -254,7 +255,6 @@ void MotionController::mglrun()
 	{
 		/* Check if the robot is falling and remove stiffness, kill all motions */
 		float normdist = (accnorm - KDeviceLists::Interpret::GRAVITY_PULL) / KDeviceLists::Interpret::GRAVITY_PULL;
-
 		if (
 		    (
 		        normdist < -0.65 || normdist > 0.65  ||

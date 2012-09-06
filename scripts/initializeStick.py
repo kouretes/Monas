@@ -7,7 +7,6 @@ import string;
 import re;
 import commands,socket;
 from subprocess import call
-
 def is_valid_ipv4(ip):
 	"""Validates IPv4 addresses.
 	"""
@@ -51,16 +50,17 @@ def is_valid_ipv4(ip):
 def usage():
 
 	print """
-	usage: (python) ../../scripts/clean.py IP
+	usage: (python) initializeStick.py IP
 
-		IP: IP of the robots on which the same configuration will be uploaded
+		IP: IP of the robot
+		Must be run from the scripts folder
+
 	"""
 	exit(-1)
 
-#### UPLOAD SCRIPT ####
-
 if (len(sys.argv) != 2):
-		usage();
+	usage();
+	exit(-1);
 else:
 	ip = sys.argv[1]
 
@@ -81,10 +81,41 @@ sock.close()
 if(reachable):
 	print "\033[1;32m Robot " + ip + " reachable\033[1;m (ssh ok)"
 else:
-	print "\033[1;32m Robot " + ip + " is unreachable\033[1;m (ssh failed)"
-	exit(-1)
+	exit(-1);
 
 
-nao_cmd = ' ssh nao@'+ip + " ' rm -r naoqi/config naoqi/lib' "
-os.system(nao_cmd)
+pwd = os.getcwd()
+print "Working directory: " + pwd
+
+
+print "Changing /etc/profile"
+ssh_mkdir = "ssh nao@" + ip + " 'mkdir ./.ssh'"
+ssh_transfer0 = "scp ./PartialConfiguration/authorized_keys nao@" + ip + ':/home/nao/.ssh/authorized_keys' 
+ssh_transfer1 = "scp ./PartialConfiguration/autoload.ini_etc nao@" + ip + ':/home/nao/autoload.ini' 
+ssh_transfer2 = "scp connman nao@" + ip + ':/home/nao/connman' 
+ssh_transfer3 = "scp enable_krobot.sh disable_krobot.sh nao@" + ip + ':~/'
+print ssh_mkdir
+os.system(ssh_mkdir)
+print ssh_transfer0
+os.system(ssh_transfer0)
+print ssh_transfer1
+os.system(ssh_transfer1)
+print ssh_transfer2
+os.system(ssh_transfer2)
+print ssh_transfer3
+os.system(ssh_transfer3)
+
+echo_command = "echo export LD_LIBRARY_PATH=\\\"$\\\"LD_LIBRARY_PATH:/home/nao/naoqi/lib >> /etc/profile"
+mv_command1 = "mv /home/nao/connman /etc/init.d/connman"
+mv_command2 = "mv /home/nao/autoload.ini /etc/naoqi/autoload.ini"
+ssh_profile = 'ssh -t nao@'+ip+ " 'su -c \"" + echo_command + ";" + mv_command1 + ";" + mv_command2 + "\"'"
+print ssh_profile
+os.system(ssh_profile)
+
+
+
+
+
+
+
 

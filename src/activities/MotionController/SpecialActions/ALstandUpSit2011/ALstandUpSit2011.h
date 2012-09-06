@@ -23,7 +23,7 @@ private:
 
 	void Initialize();
 
-	boost::shared_ptr<AL::ALMotionProxy> motion;
+	AL::ALMotionProxy *motion;
 
 	std::vector<std::string> names;
 	AL::ALValue times, keys;
