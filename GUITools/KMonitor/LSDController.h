@@ -1,7 +1,7 @@
 #ifndef LSDCONTROLLER_H_
 #define LSDCONTROLLER_H_
 
-#include <QTableWidget>
+#include <QComboBox>
 #include <QList>
 
 #include "messages/SensorsMessage.pb.h"
@@ -41,17 +41,29 @@ typedef struct values{
 	QString AccYvalue;
 	QString angX;
 	QString angY;
-	//QString AnkleRoll;
 
 }InertialValues;
 
+typedef struct morevalues{
 
-class LSDController : public QTableWidget
+	QString LFsrFL;
+	QString LFsrRL;
+	QString LFsrFR;
+	QString LFsrRR;
+	QString RFsrFL;
+	QString RFsrRL;
+	QString RFsrFR;
+	QString RFsrRR;
+
+}FSRValues;
+
+
+class LSDController : public QComboBox
 {
 	Q_OBJECT
 
 public:
-	LSDController(QList<QTableWidget*> tablesList);
+	LSDController(QList<QComboBox*> tablesList);
 	~LSDController();
 
 public slots:
@@ -61,19 +73,21 @@ public slots:
 	void sensorsDataUpdateHandler(AllSensorValuesMessage, QString);
 
 private:
-	void uncheckAllTablesContents();
+	void clearComboLists(QList<QComboBox*> cList);
 	void updateHeadJointsBuffer(AllSensorValuesMessage);
 	void updateLArmJointsBuffer(AllSensorValuesMessage asvm);
 	void updateRArmJointsBuffer(AllSensorValuesMessage asvm);
 	void updateLLegJointsBuffer(AllSensorValuesMessage asvm);
 	void updateRLegJointsBuffer(AllSensorValuesMessage asvm);
 	void updateInertialBuffer(AllSensorValuesMessage asvm);
+	void updateFSRsBuffer(AllSensorValuesMessage asvm);
 	void updateHeadJointsTable();
 	void updateLArmJointsTable();
 	void updateRArmJointsTable();
 	void updateLLegJointsTable();
 	void updateRLegJointsTable();
 	void updateInertialTable();
+	void updateFSRsTable();
 
 
 
@@ -83,8 +97,9 @@ private:
 	boost::circular_buffer<LegJoints> LLegJointsBuffer;
 	boost::circular_buffer<LegJoints> RLegJointsBuffer;
 	boost::circular_buffer<InertialValues> InertialBuffer;
+	boost::circular_buffer<FSRValues> FSRsBuffer;
 
-	QList<QTableWidget*> parentTablesList;
+	QList<QComboBox*> parentTablesList;
 	QString currentHost;
 
 };

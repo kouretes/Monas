@@ -5,9 +5,8 @@
 #include <iostream>
 
 using namespace std;
-//using namespace KDeviceLists;
 
-LSDController::LSDController(QList<QTableWidget*> tablesList)
+LSDController::LSDController(QList<QComboBox*> tablesList)
 {
 	parentTablesList.clear();
 	parentTablesList = tablesList;
@@ -18,6 +17,7 @@ LSDController::LSDController(QList<QTableWidget*> tablesList)
 	LLegJointsBuffer.set_capacity(10);
 	RLegJointsBuffer.set_capacity(10);
 	InertialBuffer.set_capacity(10);
+	FSRsBuffer.set_capacity(10);
 }
 
 LSDController::~LSDController()
@@ -35,6 +35,7 @@ void LSDController::sensorsDataUpdateHandler(AllSensorValuesMessage asvm, QStrin
 {
 	if( currentHost == hostId)
 	{
+		clearComboLists(parentTablesList);
 
 		updateHeadJointsBuffer(asvm);
 		updateLArmJointsBuffer(asvm);
@@ -42,6 +43,7 @@ void LSDController::sensorsDataUpdateHandler(AllSensorValuesMessage asvm, QStrin
 		updateLLegJointsBuffer(asvm);
 		updateRLegJointsBuffer(asvm);
 		updateInertialBuffer(asvm);
+		updateFSRsBuffer(asvm);
 
 		updateHeadJointsTable();
 		updateLArmJointsTable();
@@ -49,6 +51,7 @@ void LSDController::sensorsDataUpdateHandler(AllSensorValuesMessage asvm, QStrin
 		updateLLegJointsTable();
 		updateRLegJointsTable();
 		updateInertialTable();
+		updateFSRsTable();
 
 	}else
 	{
@@ -75,29 +78,11 @@ void LSDController::updateHeadJointsBuffer(AllSensorValuesMessage asvm)
 
 void LSDController::updateHeadJointsTable()
 {
-	QTableWidget* headJointsTable = parentTablesList.at(0);
-	QTableWidgetItem * tableItem;
-	int raw = 0;
-
 	boost::circular_buffer<HeadJoints>::iterator it;
 	for(it=headJointsBuffer.begin(); it!=headJointsBuffer.end(); ++it)
 	{
-		for (int column=0; column< headJointsTable->columnCount(); column++)
-		{
-			tableItem = headJointsTable->item(raw, column);
-
-			switch(column)
-			{
-				case 0:
-					tableItem->setText((*it).yaw);
-					break;
-				case 1:
-					tableItem->setText((*it).pitch);
-					break;
-			}
-
-		}
-		raw++;
+		parentTablesList.at(0)->addItem((*it).yaw);
+		parentTablesList.at(1)->addItem((*it).pitch);
 	}
 }
 
@@ -128,35 +113,13 @@ void LSDController::updateLArmJointsBuffer(AllSensorValuesMessage asvm)
 
 void LSDController::updateLArmJointsTable()
 {
-	QTableWidget* JointsTable = parentTablesList.at(2);
-	QTableWidgetItem * tableItem;
-	int raw = 0;
-
 	boost::circular_buffer<ArmJoints>::iterator it;
 	for(it= LArmJointsBuffer.begin(); it!=LArmJointsBuffer.end(); ++it)
 	{
-		for (int column=0; column< JointsTable->columnCount(); column++)
-		{
-			tableItem = JointsTable->item(raw, column);
-
-			switch(column)
-			{
-				case 0:
-					tableItem->setText((*it).ShoulderPitch);
-					break;
-				case 1:
-					tableItem->setText((*it).ShoulderRoll);
-					break;
-				case 2:
-					tableItem->setText((*it).ElbowYaw);
-					break;
-				case 3:
-					tableItem->setText((*it).ElbowRoll);
-					break;
-			}
-
-		}
-		raw++;
+		parentTablesList.at(11)->addItem((*it).ShoulderPitch);
+		parentTablesList.at(12)->addItem((*it).ShoulderRoll);
+		parentTablesList.at(13)->addItem((*it).ElbowYaw);
+		parentTablesList.at(14)->addItem((*it).ElbowRoll);
 	}
 }
 
@@ -187,35 +150,13 @@ void LSDController::updateRArmJointsBuffer(AllSensorValuesMessage asvm)
 
 void LSDController::updateRArmJointsTable()
 {
-	QTableWidget* JointsTable = parentTablesList.at(3);
-	QTableWidgetItem * tableItem;
-	int raw = 0;
-
 	boost::circular_buffer<ArmJoints>::iterator it;
 	for(it= RArmJointsBuffer.begin(); it!=RArmJointsBuffer.end(); ++it)
 	{
-		for (int column=0; column< JointsTable->columnCount(); column++)
-		{
-			tableItem = JointsTable->item(raw, column);
-
-			switch(column)
-			{
-				case 0:
-					tableItem->setText((*it).ShoulderPitch);
-					break;
-				case 1:
-					tableItem->setText((*it).ShoulderRoll);
-					break;
-				case 2:
-					tableItem->setText((*it).ElbowYaw);
-					break;
-				case 3:
-					tableItem->setText((*it).ElbowRoll);
-					break;
-			}
-
-		}
-		raw++;
+		parentTablesList.at(7)->addItem((*it).ShoulderPitch);
+		parentTablesList.at(8)->addItem((*it).ShoulderRoll);
+		parentTablesList.at(9)->addItem((*it).ElbowYaw);
+		parentTablesList.at(10)->addItem((*it).ElbowRoll);
 	}
 }
 
@@ -254,41 +195,16 @@ void LSDController::updateLLegJointsBuffer(AllSensorValuesMessage asvm)
 
 void LSDController::updateLLegJointsTable()
 {
-	QTableWidget* JointsTable = parentTablesList.at(4);
-	QTableWidgetItem * tableItem;
-	int raw = 0;
-
 	boost::circular_buffer<LegJoints>::iterator it;
 	for(it= LLegJointsBuffer.begin(); it!=LLegJointsBuffer.end(); ++it)
 	{
-		for (int column=0; column< JointsTable->columnCount(); column++)
-		{
-			tableItem = JointsTable->item(raw, column);
+		parentTablesList.at(21)->addItem((*it).HipYawPitch);
+		parentTablesList.at(22)->addItem((*it).HipRoll);
+		parentTablesList.at(23)->addItem((*it).HipPitch);
+		parentTablesList.at(24)->addItem((*it).KneePitch);
+		parentTablesList.at(25)->addItem((*it).AnklePitch);
+		parentTablesList.at(26)->addItem((*it).AnkleRoll);
 
-			switch(column)
-			{
-				case 0:
-					tableItem->setText((*it).HipYawPitch);
-					break;
-				case 1:
-					tableItem->setText((*it).HipRoll);
-					break;
-				case 2:
-					tableItem->setText((*it).HipPitch);
-					break;
-				case 3:
-					tableItem->setText((*it).KneePitch);
-					break;
-				case 4:
-					tableItem->setText((*it).AnklePitch);
-					break;
-				case 5:
-					tableItem->setText((*it).AnkleRoll);
-					break;
-			}
-
-		}
-		raw++;
 	}
 }
 
@@ -327,41 +243,15 @@ void LSDController::updateRLegJointsBuffer(AllSensorValuesMessage asvm)
 
 void LSDController::updateRLegJointsTable()
 {
-	QTableWidget* JointsTable = parentTablesList.at(5);
-	QTableWidgetItem * tableItem;
-	int raw = 0;
-
 	boost::circular_buffer<LegJoints>::iterator it;
 	for(it= RLegJointsBuffer.begin(); it!=RLegJointsBuffer.end(); ++it)
 	{
-		for (int column=0; column< JointsTable->columnCount(); column++)
-		{
-			tableItem = JointsTable->item(raw, column);
-
-			switch(column)
-			{
-				case 0:
-					tableItem->setText((*it).HipYawPitch);
-					break;
-				case 1:
-					tableItem->setText((*it).HipRoll);
-					break;
-				case 2:
-					tableItem->setText((*it).HipPitch);
-					break;
-				case 3:
-					tableItem->setText((*it).KneePitch);
-					break;
-				case 4:
-					tableItem->setText((*it).AnklePitch);
-					break;
-				case 5:
-					tableItem->setText((*it).AnkleRoll);
-					break;
-			}
-
-		}
-		raw++;
+		parentTablesList.at(15)->addItem((*it).HipYawPitch);
+		parentTablesList.at(16)->addItem((*it).HipRoll);
+		parentTablesList.at(17)->addItem((*it).HipPitch);
+		parentTablesList.at(18)->addItem((*it).KneePitch);
+		parentTablesList.at(19)->addItem((*it).AnklePitch);
+		parentTablesList.at(20)->addItem((*it).AnkleRoll);
 	}
 }
 
@@ -397,41 +287,75 @@ void LSDController::updateInertialBuffer(AllSensorValuesMessage asvm)
 
 void LSDController::updateInertialTable()
 {
-	QTableWidget* JointsTable = parentTablesList.at(1);
-	QTableWidgetItem * tableItem;
-	int raw = 0;
-
 	boost::circular_buffer<InertialValues>::iterator it;
 	for(it= InertialBuffer.begin(); it!=InertialBuffer.end(); ++it)
 	{
-		for (int column=0; column< JointsTable->columnCount(); column++)
-		{
-			tableItem = JointsTable->item(raw, column);
+		parentTablesList.at(2)->addItem((*it).AccXvalue);
+		parentTablesList.at(3)->addItem((*it).AccYvalue);
+		parentTablesList.at(4)->addItem((*it).AccZvalue);
+		parentTablesList.at(5)->addItem((*it).angX);
+		parentTablesList.at(6)->addItem((*it).angY);
 
-			switch(column)
-			{
-				case 0:
-					tableItem->setText((*it).AccZvalue);
-					break;
-				case 1:
-					tableItem->setText((*it).AccXvalue);
-					break;
-				case 2:
-					tableItem->setText((*it).AccYvalue);
-					break;
-				/*case 3:
-					tableItem->setText((*it).KneePitch);
-					break;*/
-				case 4:
-					tableItem->setText((*it).angX);
-					break;
-				case 5:
-					tableItem->setText((*it).angY);
-					break;
-			}
+	}
+}
 
-		}
-		raw++;
+void LSDController::updateFSRsBuffer(AllSensorValuesMessage asvm)
+{
+	SensorData Value;
+	FSRValues fv;
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::L_FSR + KDeviceLists::FSR_FL);
+	fv.LFsrFL = QString::fromStdString(_toString(Value.sensorvalue()));
+
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::L_FSR + KDeviceLists::FSR_RL);
+	fv.LFsrRL = QString::fromStdString(_toString(Value.sensorvalue()));
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::L_FSR + KDeviceLists::FSR_FR);
+	fv.LFsrFR = QString::fromStdString(_toString(Value.sensorvalue()));
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::L_FSR + KDeviceLists::FSR_RR);
+	fv.LFsrRR = QString::fromStdString(_toString(Value.sensorvalue()));
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::R_FSR + KDeviceLists::FSR_FL);
+	fv.RFsrFL = QString::fromStdString(_toString(Value.sensorvalue()));
+
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::R_FSR + KDeviceLists::FSR_RL);
+	fv.RFsrRL = QString::fromStdString(_toString(Value.sensorvalue()));
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::R_FSR + KDeviceLists::FSR_FR);
+	fv.RFsrFR = QString::fromStdString(_toString(Value.sensorvalue()));
+
+	Value.Clear();
+	Value = asvm.jointdata(KDeviceLists::R_FSR + KDeviceLists::FSR_RR);
+	fv.RFsrRR = QString::fromStdString(_toString(Value.sensorvalue()));
+
+	FSRsBuffer.push_front(fv);
+
+}
+
+void LSDController::updateFSRsTable()
+{
+	boost::circular_buffer<FSRValues>::iterator it;
+	for(it= FSRsBuffer.begin(); it!=FSRsBuffer.end(); ++it)
+	{
+		parentTablesList.at(27)->addItem((*it).RFsrFL);
+		parentTablesList.at(28)->addItem((*it).RFsrRL);
+		parentTablesList.at(29)->addItem((*it).RFsrFR);
+		parentTablesList.at(30)->addItem((*it).RFsrRR);
+
+		parentTablesList.at(31)->addItem((*it).LFsrFL);
+		parentTablesList.at(32)->addItem((*it).LFsrRL);
+		parentTablesList.at(33)->addItem((*it).LFsrFR);
+		parentTablesList.at(34)->addItem((*it).LFsrRR);
 	}
 }
 
@@ -440,40 +364,27 @@ void LSDController::LSCSubscriptionHandler(QString hostId)
 	if( currentHost != hostId)
 	{
 		currentHost = hostId;
-		uncheckAllTablesContents();
+		clearComboLists(parentTablesList);
 	}
 
 }
 
 void LSDController::LSCUnsubscriptionHandler(QString hostId)
 {
-	if(currentHost == hostId)
+	if((hostId.isEmpty() && !currentHost.isEmpty()) || (currentHost == hostId && !hostId.isEmpty()))
 	{
 		currentHost.clear();
-		uncheckAllTablesContents();
+		clearComboLists(parentTablesList);
 	}
 }
 
-void LSDController::uncheckAllTablesContents()
+void LSDController::clearComboLists(QList<QComboBox*> cList)
 {
-	QTableWidget* JointsTable;
-	QTableWidgetItem * tableItem;
+	QComboBox* item;
 
-	// ka8arise tous buffers
-	for(int t = 0; t < parentTablesList.count();t++)
+	for(int t = 0; t < cList.count();t++)
 	{
-		JointsTable = parentTablesList.at(t);
-
-		for (int j=0; j< JointsTable->columnCount(); j++){
-			for (int i=0; i< JointsTable->rowCount(); i++){
-
-				tableItem = JointsTable->item(i, j);
-				if (tableItem == 0){
-					tableItem = new QTableWidgetItem(tr("%1").arg((i+1)*(j+1)));
-					JointsTable->setItem(i, j, tableItem);
-				}
-				tableItem->setText(tr(""));
-			}
-		}
+		item = cList.at(t);
+		item->clear();
 	}
 }
