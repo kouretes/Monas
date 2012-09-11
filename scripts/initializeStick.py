@@ -105,10 +105,11 @@ os.system(ssh_transfer2)
 print ssh_transfer3
 os.system(ssh_transfer3)
 
-echo_command = "echo export LD_LIBRARY_PATH=\\\"$\\\"LD_LIBRARY_PATH:/home/nao/naoqi/lib >> /etc/profile"
+echo_command1 = "echo export LD_LIBRARY_PATH=\\\"$\\\"LD_LIBRARY_PATH:/home/nao/naoqi/lib/ >> /etc/profile"
+echo_command2 = "echo export LD_LIBRARY_PATH=\\\"$\\\"LD_LIBRARY_PATH:/home/nao/naoqi/lib/ >> /etc/profile.d/dbus-session.sh"
 mv_command1 = "mv /home/nao/connman /etc/init.d/connman"
 mv_command2 = "mv /home/nao/autoload.ini /etc/naoqi/autoload.ini"
-ssh_profile = 'ssh -t nao@'+ip+ " 'su -c \"" + echo_command + ";" + mv_command1 + ";" + mv_command2 + "\"'"
+ssh_profile = 'ssh -t nao@'+ip+ " 'su -c \"if [ ! -e \\\"/.init\\\" ]; then " + echo_command1 + ";" + echo_command2 + ";" + mv_command1 + ";" + mv_command2 + "; chmod a+s /sbin/shutdown; chmod a+s /etc/init.d/naoqi; echo initialized > /.init; else rm /home/nao/connman /home/nao/autoload.ini; fi\"'"
 print ssh_profile
 os.system(ssh_profile)
 
