@@ -1122,7 +1122,7 @@ vector<vector<float> > NAOKinematics::inverseLeftLeg(float px, float py, float p
 
 	float theta6 = atan(pyInvert / pzInvert);
 
-	if(theta6 < RAnkleRollLow || theta6 > RAnkleRollHigh)
+	if(theta6 < LAnkleRollLow || theta6 > LAnkleRollHigh)
 		return returnResult;
 
 	KMatTransf::makeDHTransformation(T6i, 0.0f, -PI / 2, 0.0f, theta6);
