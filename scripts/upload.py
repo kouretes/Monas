@@ -197,7 +197,7 @@ for	ip in robotsIP:
 
 	if game == 1 :
 		print "\nStopping NaoQi "
-		nao_stop_cmd = 'ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
+		nao_stop_cmd = 'ssh nao@'+ip + " 'sudo /etc/init.d/naoqi stop' "
 		print nao_stop_cmd
 		os.system(nao_stop_cmd)
 
@@ -237,7 +237,7 @@ for	ip in robotsIP:
 		naoqirestart = raw_input("Enter y to Restart NaoQi or press enter to continue: ")
 		if(naoqirestart=='y'):
 			print( "Stopping NaoQi, will start it again after all binaries have been uploaded")
-			nao_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
+			nao_stop_cmd = ' ssh nao@'+ip + " 'sudo /etc/init.d/naoqi stop ' "
 			os.system(nao_stop_cmd)
 
 	#if(raw_input("Enter y to Change hostname or press enter to continue: ")=='y'):
@@ -278,14 +278,14 @@ for	ip in robotsIP:
 		perm_cmd = 'ssh nao@'+ip+ " 'chmod 777 /home/nao/naoqi/bin/autostartkrobot'"
 		print(">>> Sending autostart permission command: "+perm_cmd)
 		os.system(perm_cmd)
-		nao_start_cmd = 'ssh nao@'+ip+" ' /etc/init.d/naoqi start ' "
+		nao_start_cmd = 'ssh nao@'+ip+" 'sudo /etc/init.d/naoqi start ' "
 		print(">>> Sending NaoQi start command: "+nao_start_cmd)
 		os.system(nao_start_cmd)
-		wifi_conf_cmd = 'ssh -nao@'+ip+" su --session-command=\"/etc/init.d/connman restart\" ' "
+		wifi_conf_cmd = 'ssh -t nao@'+ip+" 'su -c \"/etc/init.d/connman restart\" ' "
 		print(">>> Sending ConnMan restart command: "+wifi_conf_cmd)
 		os.system(wifi_conf_cmd)
 
 	if (game == 0 and naoqirestart=="y") :
-		nao_start_cmd = 'ssh nao@'+ip+" ' /etc/init.d/naoqi start ' "
+		nao_start_cmd = 'ssh nao@'+ip+" 'sudo /etc/init.d/naoqi start ' "
 		print(">>> Sending NaoQi start command: "+nao_start_cmd)
 		os.system(nao_start_cmd)

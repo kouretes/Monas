@@ -39,7 +39,7 @@ void KImageExtractor::Init(Blackboard *blk)
 		xCamProxy = boost::shared_ptr<ALVideoDeviceProxy>( new ALVideoDeviceProxy(KAlBroker::Instance().GetBroker()));
 		//c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
 		//c->callVoid( "unsubscribe", GVM_name );
-		xCamProxy->unsubscribe(GVM_name);
+		//xCamProxy->unsubscribe(GVM_name);
 		GVM_name = xCamProxy->subscribe(GVM_name, resolution, cSpace, VISON_FPS );
 		//		GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
 		//										 cSpace,VISON_FPS );
