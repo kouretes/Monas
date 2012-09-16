@@ -13,7 +13,8 @@
 #include "tools/MathFunctions.h"
 
 ACTIVITY_START
-class NoPlay : public IActivity {
+class NoPlay : public IActivity
+{
 
 public:
 	ACTIVITY_CONSTRUCTOR(NoPlay);

@@ -5,7 +5,7 @@ message ( STATUS "" )
 
 add_subdirectory ( ./narukom/ )
 add_subdirectory ( ./statechartEngine/ )
-add_subdirectory (./robocup/)
+add_subdirectory ( ./robocup/)
 
 # TODO
 
@@ -15,16 +15,18 @@ if ( "${ActivityBuildType}" STREQUAL "MODULE" )
 endif ( "${ActivityBuildType}" STREQUAL "MODULE" )
 
 add_library ( MonasCore ${LibBuildType}
-                        executables/IActivity.h
-                        executables/IActivity.cpp
+			executables/IActivity.h
+			executables/IActivity.cpp
 			executables/IProvider.h
-                        executables/IProvider.cpp
+			executables/IProvider.cpp
 			executables/agent.h
 			executables/agent.cpp
 			executables/agentTiming.h
+			XmlManager/XmlConfigurator.h
+			XmlManager/XmlConfigurator.cpp
 			IExecutable.h
-                        talws.h
-                        talws.cpp
+			talws.h
+			talws.cpp
 			config.h			
 			statechartWrapper.h
 			archConfig.h

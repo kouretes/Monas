@@ -8,9 +8,9 @@
 #ifndef ALDEBARAN_SENSORS_H_
 #define ALDEBARAN_SENSORS_H_
 
-#ifdef NAOQI_1_10_10
 
-#include <alcore/alptr.h>
+#ifdef NAOQI_1_12_5
+#include <boost/shared_ptr.hpp>
 #include <alcommon/alproxy.h>
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/almotionproxy.h>

@@ -39,657 +39,699 @@ class GridInfo;
 
 // ===================================================================
 
-class ObstacleMessage : public ::google::protobuf::Message {
- public:
-  ObstacleMessage();
-  virtual ~ObstacleMessage();
-  
-  ObstacleMessage(const ObstacleMessage& from);
-  
-  inline ObstacleMessage& operator=(const ObstacleMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const ObstacleMessage& default_instance();
-  
-  void Swap(ObstacleMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  ObstacleMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ObstacleMessage& from);
-  void MergeFrom(const ObstacleMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required int32 direction = 1 [default = -1];
-  inline bool has_direction() const;
-  inline void clear_direction();
-  static const int kDirectionFieldNumber = 1;
-  inline ::google::protobuf::int32 direction() const;
-  inline void set_direction(::google::protobuf::int32 value);
-  
-  // required float distance = 2 [default = 0];
-  inline bool has_distance() const;
-  inline void clear_distance();
-  static const int kDistanceFieldNumber = 2;
-  inline float distance() const;
-  inline void set_distance(float value);
-  
-  // required float certainty = 3 [default = 0];
-  inline bool has_certainty() const;
-  inline void clear_certainty();
-  static const int kCertaintyFieldNumber = 3;
-  inline float certainty() const;
-  inline void set_certainty(float value);
-  
-  // @@protoc_insertion_point(class_scope:ObstacleMessage)
- private:
-  inline void set_has_direction();
-  inline void clear_has_direction();
-  inline void set_has_distance();
-  inline void clear_has_distance();
-  inline void set_has_certainty();
-  inline void clear_has_certainty();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::int32 direction_;
-  float distance_;
-  float certainty_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static ObstacleMessage* default_instance_;
+class ObstacleMessage : public ::google::protobuf::Message
+{
+public:
+	ObstacleMessage();
+	virtual ~ObstacleMessage();
+
+	ObstacleMessage(const ObstacleMessage& from);
+
+	inline ObstacleMessage& operator=(const ObstacleMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const ObstacleMessage& default_instance();
+
+	void Swap(ObstacleMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	ObstacleMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const ObstacleMessage& from);
+	void MergeFrom(const ObstacleMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required int32 direction = 1 [default = -1];
+	inline bool has_direction() const;
+	inline void clear_direction();
+	static const int kDirectionFieldNumber = 1;
+	inline ::google::protobuf::int32 direction() const;
+	inline void set_direction(::google::protobuf::int32 value);
+
+	// required float distance = 2 [default = 0];
+	inline bool has_distance() const;
+	inline void clear_distance();
+	static const int kDistanceFieldNumber = 2;
+	inline float distance() const;
+	inline void set_distance(float value);
+
+	// required float certainty = 3 [default = 0];
+	inline bool has_certainty() const;
+	inline void clear_certainty();
+	static const int kCertaintyFieldNumber = 3;
+	inline float certainty() const;
+	inline void set_certainty(float value);
+
+	// @@protoc_insertion_point(class_scope:ObstacleMessage)
+private:
+	inline void set_has_direction();
+	inline void clear_has_direction();
+	inline void set_has_distance();
+	inline void clear_has_distance();
+	inline void set_has_certainty();
+	inline void clear_has_certainty();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::int32 direction_;
+	float distance_;
+	float certainty_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+	friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+
+	void InitAsDefaultInstance();
+	static ObstacleMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class ObstacleMessageArray : public ::google::protobuf::Message {
- public:
-  ObstacleMessageArray();
-  virtual ~ObstacleMessageArray();
-  
-  ObstacleMessageArray(const ObstacleMessageArray& from);
-  
-  inline ObstacleMessageArray& operator=(const ObstacleMessageArray& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const ObstacleMessageArray& default_instance();
-  
-  void Swap(ObstacleMessageArray* other);
-  
-  // implements Message ----------------------------------------------
-  
-  ObstacleMessageArray* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ObstacleMessageArray& from);
-  void MergeFrom(const ObstacleMessageArray& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated int32 direction = 1;
-  inline int direction_size() const;
-  inline void clear_direction();
-  static const int kDirectionFieldNumber = 1;
-  inline ::google::protobuf::int32 direction(int index) const;
-  inline void set_direction(int index, ::google::protobuf::int32 value);
-  inline void add_direction(::google::protobuf::int32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      direction() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_direction();
-  
-  // repeated float distance = 2;
-  inline int distance_size() const;
-  inline void clear_distance();
-  static const int kDistanceFieldNumber = 2;
-  inline float distance(int index) const;
-  inline void set_distance(int index, float value);
-  inline void add_distance(float value);
-  inline const ::google::protobuf::RepeatedField< float >&
-      distance() const;
-  inline ::google::protobuf::RepeatedField< float >*
-      mutable_distance();
-  
-  // repeated float certainty = 3;
-  inline int certainty_size() const;
-  inline void clear_certainty();
-  static const int kCertaintyFieldNumber = 3;
-  inline float certainty(int index) const;
-  inline void set_certainty(int index, float value);
-  inline void add_certainty(float value);
-  inline const ::google::protobuf::RepeatedField< float >&
-      certainty() const;
-  inline ::google::protobuf::RepeatedField< float >*
-      mutable_certainty();
-  
-  // @@protoc_insertion_point(class_scope:ObstacleMessageArray)
- private:
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > direction_;
-  ::google::protobuf::RepeatedField< float > distance_;
-  ::google::protobuf::RepeatedField< float > certainty_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static ObstacleMessageArray* default_instance_;
+class ObstacleMessageArray : public ::google::protobuf::Message
+{
+public:
+	ObstacleMessageArray();
+	virtual ~ObstacleMessageArray();
+
+	ObstacleMessageArray(const ObstacleMessageArray& from);
+
+	inline ObstacleMessageArray& operator=(const ObstacleMessageArray& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const ObstacleMessageArray& default_instance();
+
+	void Swap(ObstacleMessageArray* other);
+
+	// implements Message ----------------------------------------------
+
+	ObstacleMessageArray* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const ObstacleMessageArray& from);
+	void MergeFrom(const ObstacleMessageArray& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// repeated int32 direction = 1;
+	inline int direction_size() const;
+	inline void clear_direction();
+	static const int kDirectionFieldNumber = 1;
+	inline ::google::protobuf::int32 direction(int index) const;
+	inline void set_direction(int index, ::google::protobuf::int32 value);
+	inline void add_direction(::google::protobuf::int32 value);
+	inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+	direction() const;
+	inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+	mutable_direction();
+
+	// repeated float distance = 2;
+	inline int distance_size() const;
+	inline void clear_distance();
+	static const int kDistanceFieldNumber = 2;
+	inline float distance(int index) const;
+	inline void set_distance(int index, float value);
+	inline void add_distance(float value);
+	inline const ::google::protobuf::RepeatedField< float >&
+	distance() const;
+	inline ::google::protobuf::RepeatedField< float >*
+	mutable_distance();
+
+	// repeated float certainty = 3;
+	inline int certainty_size() const;
+	inline void clear_certainty();
+	static const int kCertaintyFieldNumber = 3;
+	inline float certainty(int index) const;
+	inline void set_certainty(int index, float value);
+	inline void add_certainty(float value);
+	inline const ::google::protobuf::RepeatedField< float >&
+	certainty() const;
+	inline ::google::protobuf::RepeatedField< float >*
+	mutable_certainty();
+
+	// @@protoc_insertion_point(class_scope:ObstacleMessageArray)
+private:
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::RepeatedField< ::google::protobuf::int32 > direction_;
+	::google::protobuf::RepeatedField< float > distance_;
+	::google::protobuf::RepeatedField< float > certainty_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+	friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+
+	void InitAsDefaultInstance();
+	static ObstacleMessageArray* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class VisionObstacleMessage : public ::google::protobuf::Message {
- public:
-  VisionObstacleMessage();
-  virtual ~VisionObstacleMessage();
-  
-  VisionObstacleMessage(const VisionObstacleMessage& from);
-  
-  inline VisionObstacleMessage& operator=(const VisionObstacleMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const VisionObstacleMessage& default_instance();
-  
-  void Swap(VisionObstacleMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  VisionObstacleMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const VisionObstacleMessage& from);
-  void MergeFrom(const VisionObstacleMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .ObstacleMessage obstacles = 1;
-  inline int obstacles_size() const;
-  inline void clear_obstacles();
-  static const int kObstaclesFieldNumber = 1;
-  inline const ::ObstacleMessage& obstacles(int index) const;
-  inline ::ObstacleMessage* mutable_obstacles(int index);
-  inline ::ObstacleMessage* add_obstacles();
-  inline const ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >&
-      obstacles() const;
-  inline ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >*
-      mutable_obstacles();
-  
-  // @@protoc_insertion_point(class_scope:VisionObstacleMessage)
- private:
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::RepeatedPtrField< ::ObstacleMessage > obstacles_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static VisionObstacleMessage* default_instance_;
+class VisionObstacleMessage : public ::google::protobuf::Message
+{
+public:
+	VisionObstacleMessage();
+	virtual ~VisionObstacleMessage();
+
+	VisionObstacleMessage(const VisionObstacleMessage& from);
+
+	inline VisionObstacleMessage& operator=(const VisionObstacleMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const VisionObstacleMessage& default_instance();
+
+	void Swap(VisionObstacleMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	VisionObstacleMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const VisionObstacleMessage& from);
+	void MergeFrom(const VisionObstacleMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// repeated .ObstacleMessage obstacles = 1;
+	inline int obstacles_size() const;
+	inline void clear_obstacles();
+	static const int kObstaclesFieldNumber = 1;
+	inline const ::ObstacleMessage& obstacles(int index) const;
+	inline ::ObstacleMessage* mutable_obstacles(int index);
+	inline ::ObstacleMessage* add_obstacles();
+	inline const ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >&
+	obstacles() const;
+	inline ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >*
+	mutable_obstacles();
+
+	// @@protoc_insertion_point(class_scope:VisionObstacleMessage)
+private:
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::RepeatedPtrField< ::ObstacleMessage > obstacles_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+	friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+
+	void InitAsDefaultInstance();
+	static VisionObstacleMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class PathPlanningRequestMessage : public ::google::protobuf::Message {
- public:
-  PathPlanningRequestMessage();
-  virtual ~PathPlanningRequestMessage();
-  
-  PathPlanningRequestMessage(const PathPlanningRequestMessage& from);
-  
-  inline PathPlanningRequestMessage& operator=(const PathPlanningRequestMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const PathPlanningRequestMessage& default_instance();
-  
-  void Swap(PathPlanningRequestMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  PathPlanningRequestMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const PathPlanningRequestMessage& from);
-  void MergeFrom(const PathPlanningRequestMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required float goToX = 1 [default = 0];
-  inline bool has_gotox() const;
-  inline void clear_gotox();
-  static const int kGoToXFieldNumber = 1;
-  inline float gotox() const;
-  inline void set_gotox(float value);
-  
-  // required float goToY = 2 [default = 0];
-  inline bool has_gotoy() const;
-  inline void clear_gotoy();
-  static const int kGoToYFieldNumber = 2;
-  inline float gotoy() const;
-  inline void set_gotoy(float value);
-  
-  // required float goToAngle = 3 [default = 0];
-  inline bool has_gotoangle() const;
-  inline void clear_gotoangle();
-  static const int kGoToAngleFieldNumber = 3;
-  inline float gotoangle() const;
-  inline void set_gotoangle(float value);
-  
-  // required string mode = 4 [default = "absolute"];
-  inline bool has_mode() const;
-  inline void clear_mode();
-  static const int kModeFieldNumber = 4;
-  inline const ::std::string& mode() const;
-  inline void set_mode(const ::std::string& value);
-  inline void set_mode(const char* value);
-  inline void set_mode(const char* value, size_t size);
-  inline ::std::string* mutable_mode();
-  inline ::std::string* release_mode();
-  
-  // @@protoc_insertion_point(class_scope:PathPlanningRequestMessage)
- private:
-  inline void set_has_gotox();
-  inline void clear_has_gotox();
-  inline void set_has_gotoy();
-  inline void clear_has_gotoy();
-  inline void set_has_gotoangle();
-  inline void clear_has_gotoangle();
-  inline void set_has_mode();
-  inline void clear_has_mode();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  float gotox_;
-  float gotoy_;
-  ::std::string* mode_;
-  static const ::std::string _default_mode_;
-  float gotoangle_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static PathPlanningRequestMessage* default_instance_;
+class PathPlanningRequestMessage : public ::google::protobuf::Message
+{
+public:
+	PathPlanningRequestMessage();
+	virtual ~PathPlanningRequestMessage();
+
+	PathPlanningRequestMessage(const PathPlanningRequestMessage& from);
+
+	inline PathPlanningRequestMessage& operator=(const PathPlanningRequestMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const PathPlanningRequestMessage& default_instance();
+
+	void Swap(PathPlanningRequestMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	PathPlanningRequestMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const PathPlanningRequestMessage& from);
+	void MergeFrom(const PathPlanningRequestMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required float goToX = 1 [default = 0];
+	inline bool has_gotox() const;
+	inline void clear_gotox();
+	static const int kGoToXFieldNumber = 1;
+	inline float gotox() const;
+	inline void set_gotox(float value);
+
+	// required float goToY = 2 [default = 0];
+	inline bool has_gotoy() const;
+	inline void clear_gotoy();
+	static const int kGoToYFieldNumber = 2;
+	inline float gotoy() const;
+	inline void set_gotoy(float value);
+
+	// required float goToAngle = 3 [default = 0];
+	inline bool has_gotoangle() const;
+	inline void clear_gotoangle();
+	static const int kGoToAngleFieldNumber = 3;
+	inline float gotoangle() const;
+	inline void set_gotoangle(float value);
+
+	// required string mode = 4 [default = "absolute"];
+	inline bool has_mode() const;
+	inline void clear_mode();
+	static const int kModeFieldNumber = 4;
+	inline const ::std::string& mode() const;
+	inline void set_mode(const ::std::string& value);
+	inline void set_mode(const char* value);
+	inline void set_mode(const char* value, size_t size);
+	inline ::std::string* mutable_mode();
+	inline ::std::string* release_mode();
+
+	// @@protoc_insertion_point(class_scope:PathPlanningRequestMessage)
+private:
+	inline void set_has_gotox();
+	inline void clear_has_gotox();
+	inline void set_has_gotoy();
+	inline void clear_has_gotoy();
+	inline void set_has_gotoangle();
+	inline void clear_has_gotoangle();
+	inline void set_has_mode();
+	inline void clear_has_mode();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	float gotox_;
+	float gotoy_;
+	::std::string* mode_;
+	static const ::std::string _default_mode_;
+	float gotoangle_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+	friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+
+	void InitAsDefaultInstance();
+	static PathPlanningRequestMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class PathPlanningResultMessage : public ::google::protobuf::Message {
- public:
-  PathPlanningResultMessage();
-  virtual ~PathPlanningResultMessage();
-  
-  PathPlanningResultMessage(const PathPlanningResultMessage& from);
-  
-  inline PathPlanningResultMessage& operator=(const PathPlanningResultMessage& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const PathPlanningResultMessage& default_instance();
-  
-  void Swap(PathPlanningResultMessage* other);
-  
-  // implements Message ----------------------------------------------
-  
-  PathPlanningResultMessage* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const PathPlanningResultMessage& from);
-  void MergeFrom(const PathPlanningResultMessage& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required float moveToX = 1 [default = 0];
-  inline bool has_movetox() const;
-  inline void clear_movetox();
-  static const int kMoveToXFieldNumber = 1;
-  inline float movetox() const;
-  inline void set_movetox(float value);
-  
-  // required float moveToY = 2 [default = 0];
-  inline bool has_movetoy() const;
-  inline void clear_movetoy();
-  static const int kMoveToYFieldNumber = 2;
-  inline float movetoy() const;
-  inline void set_movetoy(float value);
-  
-  // required float moveToAngle = 3 [default = 0];
-  inline bool has_movetoangle() const;
-  inline void clear_movetoangle();
-  static const int kMoveToAngleFieldNumber = 3;
-  inline float movetoangle() const;
-  inline void set_movetoangle(float value);
-  
-  // @@protoc_insertion_point(class_scope:PathPlanningResultMessage)
- private:
-  inline void set_has_movetox();
-  inline void clear_has_movetox();
-  inline void set_has_movetoy();
-  inline void clear_has_movetoy();
-  inline void set_has_movetoangle();
-  inline void clear_has_movetoangle();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  float movetox_;
-  float movetoy_;
-  float movetoangle_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static PathPlanningResultMessage* default_instance_;
+class PathPlanningResultMessage : public ::google::protobuf::Message
+{
+public:
+	PathPlanningResultMessage();
+	virtual ~PathPlanningResultMessage();
+
+	PathPlanningResultMessage(const PathPlanningResultMessage& from);
+
+	inline PathPlanningResultMessage& operator=(const PathPlanningResultMessage& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const PathPlanningResultMessage& default_instance();
+
+	void Swap(PathPlanningResultMessage* other);
+
+	// implements Message ----------------------------------------------
+
+	PathPlanningResultMessage* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const PathPlanningResultMessage& from);
+	void MergeFrom(const PathPlanningResultMessage& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// required float moveToX = 1 [default = 0];
+	inline bool has_movetox() const;
+	inline void clear_movetox();
+	static const int kMoveToXFieldNumber = 1;
+	inline float movetox() const;
+	inline void set_movetox(float value);
+
+	// required float moveToY = 2 [default = 0];
+	inline bool has_movetoy() const;
+	inline void clear_movetoy();
+	static const int kMoveToYFieldNumber = 2;
+	inline float movetoy() const;
+	inline void set_movetoy(float value);
+
+	// required float moveToAngle = 3 [default = 0];
+	inline bool has_movetoangle() const;
+	inline void clear_movetoangle();
+	static const int kMoveToAngleFieldNumber = 3;
+	inline float movetoangle() const;
+	inline void set_movetoangle(float value);
+
+	// @@protoc_insertion_point(class_scope:PathPlanningResultMessage)
+private:
+	inline void set_has_movetox();
+	inline void clear_has_movetox();
+	inline void set_has_movetoy();
+	inline void clear_has_movetoy();
+	inline void set_has_movetoangle();
+	inline void clear_has_movetoangle();
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	float movetox_;
+	float movetoy_;
+	float movetoangle_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+	friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+
+	void InitAsDefaultInstance();
+	static PathPlanningResultMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class GridInfo : public ::google::protobuf::Message {
- public:
-  GridInfo();
-  virtual ~GridInfo();
-  
-  GridInfo(const GridInfo& from);
-  
-  inline GridInfo& operator=(const GridInfo& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const GridInfo& default_instance();
-  
-  void Swap(GridInfo* other);
-  
-  // implements Message ----------------------------------------------
-  
-  GridInfo* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const GridInfo& from);
-  void MergeFrom(const GridInfo& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated float GridCells = 1;
-  inline int gridcells_size() const;
-  inline void clear_gridcells();
-  static const int kGridCellsFieldNumber = 1;
-  inline float gridcells(int index) const;
-  inline void set_gridcells(int index, float value);
-  inline void add_gridcells(float value);
-  inline const ::google::protobuf::RepeatedField< float >&
-      gridcells() const;
-  inline ::google::protobuf::RepeatedField< float >*
-      mutable_gridcells();
-  
-  // repeated float TargetCoordinates = 2;
-  inline int targetcoordinates_size() const;
-  inline void clear_targetcoordinates();
-  static const int kTargetCoordinatesFieldNumber = 2;
-  inline float targetcoordinates(int index) const;
-  inline void set_targetcoordinates(int index, float value);
-  inline void add_targetcoordinates(float value);
-  inline const ::google::protobuf::RepeatedField< float >&
-      targetcoordinates() const;
-  inline ::google::protobuf::RepeatedField< float >*
-      mutable_targetcoordinates();
-  
-  // repeated int32 PathStepsRing = 3;
-  inline int pathstepsring_size() const;
-  inline void clear_pathstepsring();
-  static const int kPathStepsRingFieldNumber = 3;
-  inline ::google::protobuf::int32 pathstepsring(int index) const;
-  inline void set_pathstepsring(int index, ::google::protobuf::int32 value);
-  inline void add_pathstepsring(::google::protobuf::int32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      pathstepsring() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_pathstepsring();
-  
-  // repeated int32 PathStepsSector = 4;
-  inline int pathstepssector_size() const;
-  inline void clear_pathstepssector();
-  static const int kPathStepsSectorFieldNumber = 4;
-  inline ::google::protobuf::int32 pathstepssector(int index) const;
-  inline void set_pathstepssector(int index, ::google::protobuf::int32 value);
-  inline void add_pathstepssector(::google::protobuf::int32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      pathstepssector() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_pathstepssector();
-  
-  // repeated int32 PathStepsOrientation = 5;
-  inline int pathstepsorientation_size() const;
-  inline void clear_pathstepsorientation();
-  static const int kPathStepsOrientationFieldNumber = 5;
-  inline ::google::protobuf::int32 pathstepsorientation(int index) const;
-  inline void set_pathstepsorientation(int index, ::google::protobuf::int32 value);
-  inline void add_pathstepsorientation(::google::protobuf::int32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      pathstepsorientation() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_pathstepsorientation();
-  
-  // @@protoc_insertion_point(class_scope:GridInfo)
- private:
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::RepeatedField< float > gridcells_;
-  ::google::protobuf::RepeatedField< float > targetcoordinates_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsring_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepssector_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsorientation_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
-  friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
-  
-  void InitAsDefaultInstance();
-  static GridInfo* default_instance_;
+class GridInfo : public ::google::protobuf::Message
+{
+public:
+	GridInfo();
+	virtual ~GridInfo();
+
+	GridInfo(const GridInfo& from);
+
+	inline GridInfo& operator=(const GridInfo& from)
+	{
+		CopyFrom(from);
+		return *this;
+	}
+
+	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+	{
+		return _unknown_fields_;
+	}
+
+	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+	{
+		return &_unknown_fields_;
+	}
+
+	static const ::google::protobuf::Descriptor* descriptor();
+	static const GridInfo& default_instance();
+
+	void Swap(GridInfo* other);
+
+	// implements Message ----------------------------------------------
+
+	GridInfo* New() const;
+	void CopyFrom(const ::google::protobuf::Message& from);
+	void MergeFrom(const ::google::protobuf::Message& from);
+	void CopyFrom(const GridInfo& from);
+	void MergeFrom(const GridInfo& from);
+	void Clear();
+	bool IsInitialized() const;
+
+	int ByteSize() const;
+	bool MergePartialFromCodedStream(
+	    ::google::protobuf::io::CodedInputStream* input);
+	void SerializeWithCachedSizes(
+	    ::google::protobuf::io::CodedOutputStream* output) const;
+	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+	int GetCachedSize() const
+	{
+		return _cached_size_;
+	}
+private:
+	void SharedCtor();
+	void SharedDtor();
+	void SetCachedSize(int size) const;
+public:
+
+	::google::protobuf::Metadata GetMetadata() const;
+
+	// nested types ----------------------------------------------------
+
+	// accessors -------------------------------------------------------
+
+	// repeated float GridCells = 1;
+	inline int gridcells_size() const;
+	inline void clear_gridcells();
+	static const int kGridCellsFieldNumber = 1;
+	inline float gridcells(int index) const;
+	inline void set_gridcells(int index, float value);
+	inline void add_gridcells(float value);
+	inline const ::google::protobuf::RepeatedField< float >&
+	gridcells() const;
+	inline ::google::protobuf::RepeatedField< float >*
+	mutable_gridcells();
+
+	// repeated float TargetCoordinates = 2;
+	inline int targetcoordinates_size() const;
+	inline void clear_targetcoordinates();
+	static const int kTargetCoordinatesFieldNumber = 2;
+	inline float targetcoordinates(int index) const;
+	inline void set_targetcoordinates(int index, float value);
+	inline void add_targetcoordinates(float value);
+	inline const ::google::protobuf::RepeatedField< float >&
+	targetcoordinates() const;
+	inline ::google::protobuf::RepeatedField< float >*
+	mutable_targetcoordinates();
+
+	// repeated int32 PathStepsRing = 3;
+	inline int pathstepsring_size() const;
+	inline void clear_pathstepsring();
+	static const int kPathStepsRingFieldNumber = 3;
+	inline ::google::protobuf::int32 pathstepsring(int index) const;
+	inline void set_pathstepsring(int index, ::google::protobuf::int32 value);
+	inline void add_pathstepsring(::google::protobuf::int32 value);
+	inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+	pathstepsring() const;
+	inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+	mutable_pathstepsring();
+
+	// repeated int32 PathStepsSector = 4;
+	inline int pathstepssector_size() const;
+	inline void clear_pathstepssector();
+	static const int kPathStepsSectorFieldNumber = 4;
+	inline ::google::protobuf::int32 pathstepssector(int index) const;
+	inline void set_pathstepssector(int index, ::google::protobuf::int32 value);
+	inline void add_pathstepssector(::google::protobuf::int32 value);
+	inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+	pathstepssector() const;
+	inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+	mutable_pathstepssector();
+
+	// repeated int32 PathStepsOrientation = 5;
+	inline int pathstepsorientation_size() const;
+	inline void clear_pathstepsorientation();
+	static const int kPathStepsOrientationFieldNumber = 5;
+	inline ::google::protobuf::int32 pathstepsorientation(int index) const;
+	inline void set_pathstepsorientation(int index, ::google::protobuf::int32 value);
+	inline void add_pathstepsorientation(::google::protobuf::int32 value);
+	inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+	pathstepsorientation() const;
+	inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+	mutable_pathstepsorientation();
+
+	// @@protoc_insertion_point(class_scope:GridInfo)
+private:
+
+	::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+	::google::protobuf::RepeatedField< float > gridcells_;
+	::google::protobuf::RepeatedField< float > targetcoordinates_;
+	::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsring_;
+	::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepssector_;
+	::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsorientation_;
+
+	mutable int _cached_size_;
+	::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+	friend void  protobuf_AddDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_AssignDesc_ObstacleAvoidanceMessage_2eproto();
+	friend void protobuf_ShutdownFile_ObstacleAvoidanceMessage_2eproto();
+
+	void InitAsDefaultInstance();
+	static GridInfo* default_instance_;
 };
 // ===================================================================
 
@@ -699,69 +741,87 @@ class GridInfo : public ::google::protobuf::Message {
 // ObstacleMessage
 
 // required int32 direction = 1 [default = -1];
-inline bool ObstacleMessage::has_direction() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool ObstacleMessage::has_direction() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void ObstacleMessage::set_has_direction() {
-  _has_bits_[0] |= 0x00000001u;
+inline void ObstacleMessage::set_has_direction()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void ObstacleMessage::clear_has_direction() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void ObstacleMessage::clear_has_direction()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void ObstacleMessage::clear_direction() {
-  direction_ = -1;
-  clear_has_direction();
+inline void ObstacleMessage::clear_direction()
+{
+	direction_ = -1;
+	clear_has_direction();
 }
-inline ::google::protobuf::int32 ObstacleMessage::direction() const {
-  return direction_;
+inline ::google::protobuf::int32 ObstacleMessage::direction() const
+{
+	return direction_;
 }
-inline void ObstacleMessage::set_direction(::google::protobuf::int32 value) {
-  set_has_direction();
-  direction_ = value;
+inline void ObstacleMessage::set_direction(::google::protobuf::int32 value)
+{
+	set_has_direction();
+	direction_ = value;
 }
 
 // required float distance = 2 [default = 0];
-inline bool ObstacleMessage::has_distance() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool ObstacleMessage::has_distance() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void ObstacleMessage::set_has_distance() {
-  _has_bits_[0] |= 0x00000002u;
+inline void ObstacleMessage::set_has_distance()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void ObstacleMessage::clear_has_distance() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void ObstacleMessage::clear_has_distance()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void ObstacleMessage::clear_distance() {
-  distance_ = 0;
-  clear_has_distance();
+inline void ObstacleMessage::clear_distance()
+{
+	distance_ = 0;
+	clear_has_distance();
 }
-inline float ObstacleMessage::distance() const {
-  return distance_;
+inline float ObstacleMessage::distance() const
+{
+	return distance_;
 }
-inline void ObstacleMessage::set_distance(float value) {
-  set_has_distance();
-  distance_ = value;
+inline void ObstacleMessage::set_distance(float value)
+{
+	set_has_distance();
+	distance_ = value;
 }
 
 // required float certainty = 3 [default = 0];
-inline bool ObstacleMessage::has_certainty() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool ObstacleMessage::has_certainty() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void ObstacleMessage::set_has_certainty() {
-  _has_bits_[0] |= 0x00000004u;
+inline void ObstacleMessage::set_has_certainty()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void ObstacleMessage::clear_has_certainty() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void ObstacleMessage::clear_has_certainty()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void ObstacleMessage::clear_certainty() {
-  certainty_ = 0;
-  clear_has_certainty();
+inline void ObstacleMessage::clear_certainty()
+{
+	certainty_ = 0;
+	clear_has_certainty();
 }
-inline float ObstacleMessage::certainty() const {
-  return certainty_;
+inline float ObstacleMessage::certainty() const
+{
+	return certainty_;
 }
-inline void ObstacleMessage::set_certainty(float value) {
-  set_has_certainty();
-  certainty_ = value;
+inline void ObstacleMessage::set_certainty(float value)
+{
+	set_has_certainty();
+	certainty_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -769,78 +829,99 @@ inline void ObstacleMessage::set_certainty(float value) {
 // ObstacleMessageArray
 
 // repeated int32 direction = 1;
-inline int ObstacleMessageArray::direction_size() const {
-  return direction_.size();
+inline int ObstacleMessageArray::direction_size() const
+{
+	return direction_.size();
 }
-inline void ObstacleMessageArray::clear_direction() {
-  direction_.Clear();
+inline void ObstacleMessageArray::clear_direction()
+{
+	direction_.Clear();
 }
-inline ::google::protobuf::int32 ObstacleMessageArray::direction(int index) const {
-  return direction_.Get(index);
+inline ::google::protobuf::int32 ObstacleMessageArray::direction(int index) const
+{
+	return direction_.Get(index);
 }
-inline void ObstacleMessageArray::set_direction(int index, ::google::protobuf::int32 value) {
-  direction_.Set(index, value);
+inline void ObstacleMessageArray::set_direction(int index, ::google::protobuf::int32 value)
+{
+	direction_.Set(index, value);
 }
-inline void ObstacleMessageArray::add_direction(::google::protobuf::int32 value) {
-  direction_.Add(value);
+inline void ObstacleMessageArray::add_direction(::google::protobuf::int32 value)
+{
+	direction_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-ObstacleMessageArray::direction() const {
-  return direction_;
+ObstacleMessageArray::direction() const
+{
+	return direction_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-ObstacleMessageArray::mutable_direction() {
-  return &direction_;
+ObstacleMessageArray::mutable_direction()
+{
+	return &direction_;
 }
 
 // repeated float distance = 2;
-inline int ObstacleMessageArray::distance_size() const {
-  return distance_.size();
+inline int ObstacleMessageArray::distance_size() const
+{
+	return distance_.size();
 }
-inline void ObstacleMessageArray::clear_distance() {
-  distance_.Clear();
+inline void ObstacleMessageArray::clear_distance()
+{
+	distance_.Clear();
 }
-inline float ObstacleMessageArray::distance(int index) const {
-  return distance_.Get(index);
+inline float ObstacleMessageArray::distance(int index) const
+{
+	return distance_.Get(index);
 }
-inline void ObstacleMessageArray::set_distance(int index, float value) {
-  distance_.Set(index, value);
+inline void ObstacleMessageArray::set_distance(int index, float value)
+{
+	distance_.Set(index, value);
 }
-inline void ObstacleMessageArray::add_distance(float value) {
-  distance_.Add(value);
+inline void ObstacleMessageArray::add_distance(float value)
+{
+	distance_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< float >&
-ObstacleMessageArray::distance() const {
-  return distance_;
+ObstacleMessageArray::distance() const
+{
+	return distance_;
 }
 inline ::google::protobuf::RepeatedField< float >*
-ObstacleMessageArray::mutable_distance() {
-  return &distance_;
+ObstacleMessageArray::mutable_distance()
+{
+	return &distance_;
 }
 
 // repeated float certainty = 3;
-inline int ObstacleMessageArray::certainty_size() const {
-  return certainty_.size();
+inline int ObstacleMessageArray::certainty_size() const
+{
+	return certainty_.size();
 }
-inline void ObstacleMessageArray::clear_certainty() {
-  certainty_.Clear();
+inline void ObstacleMessageArray::clear_certainty()
+{
+	certainty_.Clear();
 }
-inline float ObstacleMessageArray::certainty(int index) const {
-  return certainty_.Get(index);
+inline float ObstacleMessageArray::certainty(int index) const
+{
+	return certainty_.Get(index);
 }
-inline void ObstacleMessageArray::set_certainty(int index, float value) {
-  certainty_.Set(index, value);
+inline void ObstacleMessageArray::set_certainty(int index, float value)
+{
+	certainty_.Set(index, value);
 }
-inline void ObstacleMessageArray::add_certainty(float value) {
-  certainty_.Add(value);
+inline void ObstacleMessageArray::add_certainty(float value)
+{
+	certainty_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< float >&
-ObstacleMessageArray::certainty() const {
-  return certainty_;
+ObstacleMessageArray::certainty() const
+{
+	return certainty_;
 }
 inline ::google::protobuf::RepeatedField< float >*
-ObstacleMessageArray::mutable_certainty() {
-  return &certainty_;
+ObstacleMessageArray::mutable_certainty()
+{
+	return &certainty_;
 }
 
 // -------------------------------------------------------------------
@@ -848,28 +929,35 @@ ObstacleMessageArray::mutable_certainty() {
 // VisionObstacleMessage
 
 // repeated .ObstacleMessage obstacles = 1;
-inline int VisionObstacleMessage::obstacles_size() const {
-  return obstacles_.size();
+inline int VisionObstacleMessage::obstacles_size() const
+{
+	return obstacles_.size();
 }
-inline void VisionObstacleMessage::clear_obstacles() {
-  obstacles_.Clear();
+inline void VisionObstacleMessage::clear_obstacles()
+{
+	obstacles_.Clear();
 }
-inline const ::ObstacleMessage& VisionObstacleMessage::obstacles(int index) const {
-  return obstacles_.Get(index);
+inline const ::ObstacleMessage& VisionObstacleMessage::obstacles(int index) const
+{
+	return obstacles_.Get(index);
 }
-inline ::ObstacleMessage* VisionObstacleMessage::mutable_obstacles(int index) {
-  return obstacles_.Mutable(index);
+inline ::ObstacleMessage* VisionObstacleMessage::mutable_obstacles(int index)
+{
+	return obstacles_.Mutable(index);
 }
-inline ::ObstacleMessage* VisionObstacleMessage::add_obstacles() {
-  return obstacles_.Add();
+inline ::ObstacleMessage* VisionObstacleMessage::add_obstacles()
+{
+	return obstacles_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >&
-VisionObstacleMessage::obstacles() const {
-  return obstacles_;
+VisionObstacleMessage::obstacles() const
+{
+	return obstacles_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::ObstacleMessage >*
-VisionObstacleMessage::mutable_obstacles() {
-  return &obstacles_;
+VisionObstacleMessage::mutable_obstacles()
+{
+	return &obstacles_;
 }
 
 // -------------------------------------------------------------------
@@ -877,127 +965,173 @@ VisionObstacleMessage::mutable_obstacles() {
 // PathPlanningRequestMessage
 
 // required float goToX = 1 [default = 0];
-inline bool PathPlanningRequestMessage::has_gotox() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool PathPlanningRequestMessage::has_gotox() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void PathPlanningRequestMessage::set_has_gotox() {
-  _has_bits_[0] |= 0x00000001u;
+inline void PathPlanningRequestMessage::set_has_gotox()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void PathPlanningRequestMessage::clear_has_gotox() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void PathPlanningRequestMessage::clear_has_gotox()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void PathPlanningRequestMessage::clear_gotox() {
-  gotox_ = 0;
-  clear_has_gotox();
+inline void PathPlanningRequestMessage::clear_gotox()
+{
+	gotox_ = 0;
+	clear_has_gotox();
 }
-inline float PathPlanningRequestMessage::gotox() const {
-  return gotox_;
+inline float PathPlanningRequestMessage::gotox() const
+{
+	return gotox_;
 }
-inline void PathPlanningRequestMessage::set_gotox(float value) {
-  set_has_gotox();
-  gotox_ = value;
+inline void PathPlanningRequestMessage::set_gotox(float value)
+{
+	set_has_gotox();
+	gotox_ = value;
 }
 
 // required float goToY = 2 [default = 0];
-inline bool PathPlanningRequestMessage::has_gotoy() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool PathPlanningRequestMessage::has_gotoy() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void PathPlanningRequestMessage::set_has_gotoy() {
-  _has_bits_[0] |= 0x00000002u;
+inline void PathPlanningRequestMessage::set_has_gotoy()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void PathPlanningRequestMessage::clear_has_gotoy() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void PathPlanningRequestMessage::clear_has_gotoy()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void PathPlanningRequestMessage::clear_gotoy() {
-  gotoy_ = 0;
-  clear_has_gotoy();
+inline void PathPlanningRequestMessage::clear_gotoy()
+{
+	gotoy_ = 0;
+	clear_has_gotoy();
 }
-inline float PathPlanningRequestMessage::gotoy() const {
-  return gotoy_;
+inline float PathPlanningRequestMessage::gotoy() const
+{
+	return gotoy_;
 }
-inline void PathPlanningRequestMessage::set_gotoy(float value) {
-  set_has_gotoy();
-  gotoy_ = value;
+inline void PathPlanningRequestMessage::set_gotoy(float value)
+{
+	set_has_gotoy();
+	gotoy_ = value;
 }
 
 // required float goToAngle = 3 [default = 0];
-inline bool PathPlanningRequestMessage::has_gotoangle() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool PathPlanningRequestMessage::has_gotoangle() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void PathPlanningRequestMessage::set_has_gotoangle() {
-  _has_bits_[0] |= 0x00000004u;
+inline void PathPlanningRequestMessage::set_has_gotoangle()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void PathPlanningRequestMessage::clear_has_gotoangle() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void PathPlanningRequestMessage::clear_has_gotoangle()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void PathPlanningRequestMessage::clear_gotoangle() {
-  gotoangle_ = 0;
-  clear_has_gotoangle();
+inline void PathPlanningRequestMessage::clear_gotoangle()
+{
+	gotoangle_ = 0;
+	clear_has_gotoangle();
 }
-inline float PathPlanningRequestMessage::gotoangle() const {
-  return gotoangle_;
+inline float PathPlanningRequestMessage::gotoangle() const
+{
+	return gotoangle_;
 }
-inline void PathPlanningRequestMessage::set_gotoangle(float value) {
-  set_has_gotoangle();
-  gotoangle_ = value;
+inline void PathPlanningRequestMessage::set_gotoangle(float value)
+{
+	set_has_gotoangle();
+	gotoangle_ = value;
 }
 
 // required string mode = 4 [default = "absolute"];
-inline bool PathPlanningRequestMessage::has_mode() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool PathPlanningRequestMessage::has_mode() const
+{
+	return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void PathPlanningRequestMessage::set_has_mode() {
-  _has_bits_[0] |= 0x00000008u;
+inline void PathPlanningRequestMessage::set_has_mode()
+{
+	_has_bits_[0] |= 0x00000008u;
 }
-inline void PathPlanningRequestMessage::clear_has_mode() {
-  _has_bits_[0] &= ~0x00000008u;
+inline void PathPlanningRequestMessage::clear_has_mode()
+{
+	_has_bits_[0] &= ~0x00000008u;
 }
-inline void PathPlanningRequestMessage::clear_mode() {
-  if (mode_ != &_default_mode_) {
-    mode_->assign(_default_mode_);
-  }
-  clear_has_mode();
+inline void PathPlanningRequestMessage::clear_mode()
+{
+	if (mode_ != &_default_mode_)
+	{
+		mode_->assign(_default_mode_);
+	}
+
+	clear_has_mode();
 }
-inline const ::std::string& PathPlanningRequestMessage::mode() const {
-  return *mode_;
+inline const ::std::string& PathPlanningRequestMessage::mode() const
+{
+	return *mode_;
 }
-inline void PathPlanningRequestMessage::set_mode(const ::std::string& value) {
-  set_has_mode();
-  if (mode_ == &_default_mode_) {
-    mode_ = new ::std::string;
-  }
-  mode_->assign(value);
+inline void PathPlanningRequestMessage::set_mode(const ::std::string& value)
+{
+	set_has_mode();
+
+	if (mode_ == &_default_mode_)
+	{
+		mode_ = new ::std::string;
+	}
+
+	mode_->assign(value);
 }
-inline void PathPlanningRequestMessage::set_mode(const char* value) {
-  set_has_mode();
-  if (mode_ == &_default_mode_) {
-    mode_ = new ::std::string;
-  }
-  mode_->assign(value);
+inline void PathPlanningRequestMessage::set_mode(const char* value)
+{
+	set_has_mode();
+
+	if (mode_ == &_default_mode_)
+	{
+		mode_ = new ::std::string;
+	}
+
+	mode_->assign(value);
 }
-inline void PathPlanningRequestMessage::set_mode(const char* value, size_t size) {
-  set_has_mode();
-  if (mode_ == &_default_mode_) {
-    mode_ = new ::std::string;
-  }
-  mode_->assign(reinterpret_cast<const char*>(value), size);
+inline void PathPlanningRequestMessage::set_mode(const char* value, size_t size)
+{
+	set_has_mode();
+
+	if (mode_ == &_default_mode_)
+	{
+		mode_ = new ::std::string;
+	}
+
+	mode_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* PathPlanningRequestMessage::mutable_mode() {
-  set_has_mode();
-  if (mode_ == &_default_mode_) {
-    mode_ = new ::std::string(_default_mode_);
-  }
-  return mode_;
+inline ::std::string* PathPlanningRequestMessage::mutable_mode()
+{
+	set_has_mode();
+
+	if (mode_ == &_default_mode_)
+	{
+		mode_ = new ::std::string(_default_mode_);
+	}
+
+	return mode_;
 }
-inline ::std::string* PathPlanningRequestMessage::release_mode() {
-  clear_has_mode();
-  if (mode_ == &_default_mode_) {
-    return NULL;
-  } else {
-    ::std::string* temp = mode_;
-    mode_ = const_cast< ::std::string*>(&_default_mode_);
-    return temp;
-  }
+inline ::std::string* PathPlanningRequestMessage::release_mode()
+{
+	clear_has_mode();
+
+	if (mode_ == &_default_mode_)
+	{
+		return NULL;
+	}
+	else
+	{
+		::std::string* temp = mode_;
+		mode_ = const_cast< ::std::string*>(&_default_mode_);
+		return temp;
+	}
 }
 
 // -------------------------------------------------------------------
@@ -1005,69 +1139,87 @@ inline ::std::string* PathPlanningRequestMessage::release_mode() {
 // PathPlanningResultMessage
 
 // required float moveToX = 1 [default = 0];
-inline bool PathPlanningResultMessage::has_movetox() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool PathPlanningResultMessage::has_movetox() const
+{
+	return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void PathPlanningResultMessage::set_has_movetox() {
-  _has_bits_[0] |= 0x00000001u;
+inline void PathPlanningResultMessage::set_has_movetox()
+{
+	_has_bits_[0] |= 0x00000001u;
 }
-inline void PathPlanningResultMessage::clear_has_movetox() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void PathPlanningResultMessage::clear_has_movetox()
+{
+	_has_bits_[0] &= ~0x00000001u;
 }
-inline void PathPlanningResultMessage::clear_movetox() {
-  movetox_ = 0;
-  clear_has_movetox();
+inline void PathPlanningResultMessage::clear_movetox()
+{
+	movetox_ = 0;
+	clear_has_movetox();
 }
-inline float PathPlanningResultMessage::movetox() const {
-  return movetox_;
+inline float PathPlanningResultMessage::movetox() const
+{
+	return movetox_;
 }
-inline void PathPlanningResultMessage::set_movetox(float value) {
-  set_has_movetox();
-  movetox_ = value;
+inline void PathPlanningResultMessage::set_movetox(float value)
+{
+	set_has_movetox();
+	movetox_ = value;
 }
 
 // required float moveToY = 2 [default = 0];
-inline bool PathPlanningResultMessage::has_movetoy() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool PathPlanningResultMessage::has_movetoy() const
+{
+	return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void PathPlanningResultMessage::set_has_movetoy() {
-  _has_bits_[0] |= 0x00000002u;
+inline void PathPlanningResultMessage::set_has_movetoy()
+{
+	_has_bits_[0] |= 0x00000002u;
 }
-inline void PathPlanningResultMessage::clear_has_movetoy() {
-  _has_bits_[0] &= ~0x00000002u;
+inline void PathPlanningResultMessage::clear_has_movetoy()
+{
+	_has_bits_[0] &= ~0x00000002u;
 }
-inline void PathPlanningResultMessage::clear_movetoy() {
-  movetoy_ = 0;
-  clear_has_movetoy();
+inline void PathPlanningResultMessage::clear_movetoy()
+{
+	movetoy_ = 0;
+	clear_has_movetoy();
 }
-inline float PathPlanningResultMessage::movetoy() const {
-  return movetoy_;
+inline float PathPlanningResultMessage::movetoy() const
+{
+	return movetoy_;
 }
-inline void PathPlanningResultMessage::set_movetoy(float value) {
-  set_has_movetoy();
-  movetoy_ = value;
+inline void PathPlanningResultMessage::set_movetoy(float value)
+{
+	set_has_movetoy();
+	movetoy_ = value;
 }
 
 // required float moveToAngle = 3 [default = 0];
-inline bool PathPlanningResultMessage::has_movetoangle() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool PathPlanningResultMessage::has_movetoangle() const
+{
+	return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void PathPlanningResultMessage::set_has_movetoangle() {
-  _has_bits_[0] |= 0x00000004u;
+inline void PathPlanningResultMessage::set_has_movetoangle()
+{
+	_has_bits_[0] |= 0x00000004u;
 }
-inline void PathPlanningResultMessage::clear_has_movetoangle() {
-  _has_bits_[0] &= ~0x00000004u;
+inline void PathPlanningResultMessage::clear_has_movetoangle()
+{
+	_has_bits_[0] &= ~0x00000004u;
 }
-inline void PathPlanningResultMessage::clear_movetoangle() {
-  movetoangle_ = 0;
-  clear_has_movetoangle();
+inline void PathPlanningResultMessage::clear_movetoangle()
+{
+	movetoangle_ = 0;
+	clear_has_movetoangle();
 }
-inline float PathPlanningResultMessage::movetoangle() const {
-  return movetoangle_;
+inline float PathPlanningResultMessage::movetoangle() const
+{
+	return movetoangle_;
 }
-inline void PathPlanningResultMessage::set_movetoangle(float value) {
-  set_has_movetoangle();
-  movetoangle_ = value;
+inline void PathPlanningResultMessage::set_movetoangle(float value)
+{
+	set_has_movetoangle();
+	movetoangle_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1075,139 +1227,176 @@ inline void PathPlanningResultMessage::set_movetoangle(float value) {
 // GridInfo
 
 // repeated float GridCells = 1;
-inline int GridInfo::gridcells_size() const {
-  return gridcells_.size();
+inline int GridInfo::gridcells_size() const
+{
+	return gridcells_.size();
 }
-inline void GridInfo::clear_gridcells() {
-  gridcells_.Clear();
+inline void GridInfo::clear_gridcells()
+{
+	gridcells_.Clear();
 }
-inline float GridInfo::gridcells(int index) const {
-  return gridcells_.Get(index);
+inline float GridInfo::gridcells(int index) const
+{
+	return gridcells_.Get(index);
 }
-inline void GridInfo::set_gridcells(int index, float value) {
-  gridcells_.Set(index, value);
+inline void GridInfo::set_gridcells(int index, float value)
+{
+	gridcells_.Set(index, value);
 }
-inline void GridInfo::add_gridcells(float value) {
-  gridcells_.Add(value);
+inline void GridInfo::add_gridcells(float value)
+{
+	gridcells_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< float >&
-GridInfo::gridcells() const {
-  return gridcells_;
+GridInfo::gridcells() const
+{
+	return gridcells_;
 }
 inline ::google::protobuf::RepeatedField< float >*
-GridInfo::mutable_gridcells() {
-  return &gridcells_;
+GridInfo::mutable_gridcells()
+{
+	return &gridcells_;
 }
 
 // repeated float TargetCoordinates = 2;
-inline int GridInfo::targetcoordinates_size() const {
-  return targetcoordinates_.size();
+inline int GridInfo::targetcoordinates_size() const
+{
+	return targetcoordinates_.size();
 }
-inline void GridInfo::clear_targetcoordinates() {
-  targetcoordinates_.Clear();
+inline void GridInfo::clear_targetcoordinates()
+{
+	targetcoordinates_.Clear();
 }
-inline float GridInfo::targetcoordinates(int index) const {
-  return targetcoordinates_.Get(index);
+inline float GridInfo::targetcoordinates(int index) const
+{
+	return targetcoordinates_.Get(index);
 }
-inline void GridInfo::set_targetcoordinates(int index, float value) {
-  targetcoordinates_.Set(index, value);
+inline void GridInfo::set_targetcoordinates(int index, float value)
+{
+	targetcoordinates_.Set(index, value);
 }
-inline void GridInfo::add_targetcoordinates(float value) {
-  targetcoordinates_.Add(value);
+inline void GridInfo::add_targetcoordinates(float value)
+{
+	targetcoordinates_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< float >&
-GridInfo::targetcoordinates() const {
-  return targetcoordinates_;
+GridInfo::targetcoordinates() const
+{
+	return targetcoordinates_;
 }
 inline ::google::protobuf::RepeatedField< float >*
-GridInfo::mutable_targetcoordinates() {
-  return &targetcoordinates_;
+GridInfo::mutable_targetcoordinates()
+{
+	return &targetcoordinates_;
 }
 
 // repeated int32 PathStepsRing = 3;
-inline int GridInfo::pathstepsring_size() const {
-  return pathstepsring_.size();
+inline int GridInfo::pathstepsring_size() const
+{
+	return pathstepsring_.size();
 }
-inline void GridInfo::clear_pathstepsring() {
-  pathstepsring_.Clear();
+inline void GridInfo::clear_pathstepsring()
+{
+	pathstepsring_.Clear();
 }
-inline ::google::protobuf::int32 GridInfo::pathstepsring(int index) const {
-  return pathstepsring_.Get(index);
+inline ::google::protobuf::int32 GridInfo::pathstepsring(int index) const
+{
+	return pathstepsring_.Get(index);
 }
-inline void GridInfo::set_pathstepsring(int index, ::google::protobuf::int32 value) {
-  pathstepsring_.Set(index, value);
+inline void GridInfo::set_pathstepsring(int index, ::google::protobuf::int32 value)
+{
+	pathstepsring_.Set(index, value);
 }
-inline void GridInfo::add_pathstepsring(::google::protobuf::int32 value) {
-  pathstepsring_.Add(value);
+inline void GridInfo::add_pathstepsring(::google::protobuf::int32 value)
+{
+	pathstepsring_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GridInfo::pathstepsring() const {
-  return pathstepsring_;
+GridInfo::pathstepsring() const
+{
+	return pathstepsring_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GridInfo::mutable_pathstepsring() {
-  return &pathstepsring_;
+GridInfo::mutable_pathstepsring()
+{
+	return &pathstepsring_;
 }
 
 // repeated int32 PathStepsSector = 4;
-inline int GridInfo::pathstepssector_size() const {
-  return pathstepssector_.size();
+inline int GridInfo::pathstepssector_size() const
+{
+	return pathstepssector_.size();
 }
-inline void GridInfo::clear_pathstepssector() {
-  pathstepssector_.Clear();
+inline void GridInfo::clear_pathstepssector()
+{
+	pathstepssector_.Clear();
 }
-inline ::google::protobuf::int32 GridInfo::pathstepssector(int index) const {
-  return pathstepssector_.Get(index);
+inline ::google::protobuf::int32 GridInfo::pathstepssector(int index) const
+{
+	return pathstepssector_.Get(index);
 }
-inline void GridInfo::set_pathstepssector(int index, ::google::protobuf::int32 value) {
-  pathstepssector_.Set(index, value);
+inline void GridInfo::set_pathstepssector(int index, ::google::protobuf::int32 value)
+{
+	pathstepssector_.Set(index, value);
 }
-inline void GridInfo::add_pathstepssector(::google::protobuf::int32 value) {
-  pathstepssector_.Add(value);
+inline void GridInfo::add_pathstepssector(::google::protobuf::int32 value)
+{
+	pathstepssector_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GridInfo::pathstepssector() const {
-  return pathstepssector_;
+GridInfo::pathstepssector() const
+{
+	return pathstepssector_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GridInfo::mutable_pathstepssector() {
-  return &pathstepssector_;
+GridInfo::mutable_pathstepssector()
+{
+	return &pathstepssector_;
 }
 
 // repeated int32 PathStepsOrientation = 5;
-inline int GridInfo::pathstepsorientation_size() const {
-  return pathstepsorientation_.size();
+inline int GridInfo::pathstepsorientation_size() const
+{
+	return pathstepsorientation_.size();
 }
-inline void GridInfo::clear_pathstepsorientation() {
-  pathstepsorientation_.Clear();
+inline void GridInfo::clear_pathstepsorientation()
+{
+	pathstepsorientation_.Clear();
 }
-inline ::google::protobuf::int32 GridInfo::pathstepsorientation(int index) const {
-  return pathstepsorientation_.Get(index);
+inline ::google::protobuf::int32 GridInfo::pathstepsorientation(int index) const
+{
+	return pathstepsorientation_.Get(index);
 }
-inline void GridInfo::set_pathstepsorientation(int index, ::google::protobuf::int32 value) {
-  pathstepsorientation_.Set(index, value);
+inline void GridInfo::set_pathstepsorientation(int index, ::google::protobuf::int32 value)
+{
+	pathstepsorientation_.Set(index, value);
 }
-inline void GridInfo::add_pathstepsorientation(::google::protobuf::int32 value) {
-  pathstepsorientation_.Add(value);
+inline void GridInfo::add_pathstepsorientation(::google::protobuf::int32 value)
+{
+	pathstepsorientation_.Add(value);
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GridInfo::pathstepsorientation() const {
-  return pathstepsorientation_;
+GridInfo::pathstepsorientation() const
+{
+	return pathstepsorientation_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GridInfo::mutable_pathstepsorientation() {
-  return &pathstepsorientation_;
+GridInfo::mutable_pathstepsorientation()
+{
+	return &pathstepsorientation_;
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 
 #ifndef SWIG
-namespace google {
-namespace protobuf {
+namespace google
+{
+	namespace protobuf
+	{
 
 
-}  // namespace google
+	}  // namespace google
 }  // namespace protobuf
 #endif  // SWIG
 

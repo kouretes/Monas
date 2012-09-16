@@ -19,11 +19,12 @@ ACTIVITY_START
  * control the robot's LEDs (eye leds, ear leds, chest button leds, feet leds)
  */
 
-class LedHandler: public IActivity {
-	
+class LedHandler: public IActivity
+{
+
 public:
 
-    ACTIVITY_CONSTRUCTOR(LedHandler);
+	ACTIVITY_CONSTRUCTOR(LedHandler);
 
 	/**
 	 * \brief setLed. Sets the device to a specified color.
@@ -78,7 +79,7 @@ public:
 	/**
 	 * \brief Agents execute function. This is where leds color is changed according to the incomming messages.
 	 * */
-	 int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 	/**
 	 * \brief Reads the raw battery level and displays the level in left ear led. Full Battery: all leds off. Empty Battery: all leds on.
@@ -95,9 +96,10 @@ public:
 	 * \brief Activity initialization. Blackboard subscription, Leds proxy creation.
 	 * In addition chest button, l_foot, r_foot leds become on (white)
 	 */
-	 void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE UserInit();
 
-	string ACTIVITY_VISIBLE GetName() {
+	string ACTIVITY_VISIBLE GetName()
+	{
 		return "LedHandler";
 	}
 
@@ -106,7 +108,7 @@ private:
 	boost::shared_ptr<const LedChangeMessage> led_change;
 
 	std::vector<std::string> left_ear_names;
-	
+
 	/**
 	 * \brief Inside this function, HEX RGB colors are stored in a <hex color, color name> map
 	 */
@@ -117,10 +119,10 @@ private:
 	 * \return returns the HEX value of the RGB color, stored in the map
 	 */
 	int getColor(string);
-	
+
 	float battery_level; ///the level of the battery
-	AL::ALPtr<AL::ALProxy> leds; ///proxy to handle led colors
-	AL::ALPtr<AL::ALMemoryProxy> memory;  ///proxy to read ALmemory values
+	boost::shared_ptr<AL::ALProxy> leds; ///proxy to handle led colors
+	boost::shared_ptr<AL::ALMemoryProxy> memory;  ///proxy to read ALmemory values
 
 	std::map<string, int> colors; /// The map where the pairs of color and HEX RGB values are stored
 };

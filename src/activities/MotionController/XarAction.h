@@ -7,32 +7,34 @@
 
 #include "hal/robot/generic_nao/aldebaran-motion-extra.h"
 
-class XarAction: public ISpecialAction {
+class XarAction: public ISpecialAction
+{
 
-	public:
+public:
 
-		std::string GetName() {
-			return name;
-		}
-		//TODO fix this constructor
-		XarAction(AL::ALPtr<AL::ALFrameManagerProxy> frame, std::string filenamepath,std::string name, std::string identifier);
+	std::string GetName()
+	{
+		return name;
+	}
+	//TODO fix this constructor
+	XarAction(AL::ALFrameManagerProxy *frame, std::string filenamepath, std::string name, std::string identifier);
 
-		int ExecutePost();
+	int ExecutePost();
 
-	private:
+private:
 
-		int ExecuteActionXAR();
+	int ExecuteActionXAR();
 
-		//int ExecuteActionBodyXAR();
+	//int ExecuteActionBodyXAR();
 
-		//     int PrintActionsXAR();
+	//     int PrintActionsXAR();
 
-		std::string name;
-		std::string filename;
-		std::string identifier;
+	std::string name;
+	std::string filename;
+	std::string identifier;
 
-		//AL::ALPtr<AL::ALFrameManagerProxy> frame;
-		AL::ALPtr<AL::ALFrameManagerProxy> frame;
+	//boost::shared_ptr<AL::ALFrameManagerProxy> frame;
+	AL::ALFrameManagerProxy *frame;
 };
 
 #endif // _XARACTION_H_

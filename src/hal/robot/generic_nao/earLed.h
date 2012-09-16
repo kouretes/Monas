@@ -3,13 +3,14 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 
-class EarLed {
+class EarLed
+{
 
-    public:
+public:
 
-        void AllOn ();
+	void AllOn ();
 
-        void AllOff ();
+	void AllOff ();
 
 
 };

@@ -6,7 +6,7 @@ set ( SpecialActionSrcs ALstandUpSit2011.cpp
 
 include ( ../spActionTemplate.cmake )
 
-use_lib(${SpecialActionName}  LIBCORE TOOLS LIBCORE ALCOMMON)
+qi_use_lib(${SpecialActionName}  LIBCORE TOOLS LIBCORE ALCOMMON)
 
 target_link_libraries ( ${SpecialActionName} NaoQiDep )
 

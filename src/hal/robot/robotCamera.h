@@ -6,29 +6,33 @@
 #include<string>
 
 template<class ImageDataType>
-class RobotCamera : public RobotSensor {
+class RobotCamera : public RobotSensor
+{
 
-    public:
+public:
 
-        RobotCamera(std::string name, int px, int py, int fps):
-            RobotSensor(name),
-            px(px),py(py),fps(fps) {
-                ;
-        }
+	RobotCamera(std::string name, int px, int py, int fps):
+		RobotSensor(name),
+		px(px), py(py), fps(fps)
+	{
+		;
+	}
 
-        ImageDataType GetImage()=0;
+	ImageDataType GetImage() = 0;
 
-        std::pair<int,int> GetImageDimensions() const {
-            return std::pair<int,int> (px,py);
-        }
+	std::pair<int, int> GetImageDimensions() const
+	{
+		return std::pair<int, int> (px, py);
+	}
 
-        int GetCameraFPS() const {
-            return fps;
-        }
+	int GetCameraFPS() const
+	{
+		return fps;
+	}
 
-    private:
+private:
 
-        const int px,py,fps;
+	const int px, py, fps;
 
 };
 

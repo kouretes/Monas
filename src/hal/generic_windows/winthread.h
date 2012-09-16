@@ -4,25 +4,32 @@
 #include "hal/thread.h"
 
 
-class WinThread : public Thread {
+class WinThread : public Thread
+{
 
-    public:
+public:
 
-        WinThread ( Threadable * obj, ThreadConfig & cfg );
+	WinThread ( Threadable * obj, ThreadConfig & cfg );
 
-        ~WinThread () { KillThread(); }
+	~WinThread ()
+	{
+		KillThread();
+	}
 
-        void StartThread ();
+	void StartThread ();
 
-        void StopThread () { running = false; }
+	void StopThread ()
+	{
+		running = false;
+	}
 
-        void KillThread ();
+	void KillThread ();
 
-    private:
+private:
 
-        static void *startHelper ( WinThread * obj );
+	static void *startHelper ( WinThread * obj );
 
-        winthread_t ThreadID;
+	winthread_t ThreadID;
 
 };
 

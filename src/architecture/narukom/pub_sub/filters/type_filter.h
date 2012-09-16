@@ -23,12 +23,12 @@
 #include "filter.h"
 class TypeFilter : public Filter
 {
-	public:
-		TypeFilter(const std::string& filter_name);
-		FilterState filter( const msgentry& t);
-		void add_type(const std::string& new_type);
-	private:
-		std::vector<std::string> type_vector;
+public:
+	TypeFilter(const std::string& filter_name);
+	FilterState filter( const msgentry& t);
+	void add_type(const std::string& new_type);
+private:
+	std::vector<std::string> type_vector;
 };
 
 #endif // TYPE_FILTER_H

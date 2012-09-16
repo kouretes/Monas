@@ -4,17 +4,19 @@
 #include "../IEvent.h"
 #include "../IParameter.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class TransitionSegmentBase {
-        public:
-            TransitionSegmentBase () { }
-            virtual ~TransitionSegmentBase () { }
+	class TransitionSegmentBase
+	{
+	public:
+		TransitionSegmentBase () { }
+		virtual ~TransitionSegmentBase () { }
 
-            virtual bool Execute( IEvent* ev, IParameter* param) = 0;
-            virtual bool CanExecute (IEvent* ev) const = 0;
-            virtual bool has_Condition() const = 0;
-    };
+		virtual bool Execute( IEvent* ev, IParameter* param) = 0;
+		virtual bool CanExecute (IEvent* ev) const = 0;
+		virtual bool has_Condition() const = 0;
+	};
 
 }
 

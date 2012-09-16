@@ -1,13 +1,15 @@
 #ifndef IEVENT_H_
 #define IEVENT_H_ 1
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class IEvent {
-        public:
-            IEvent ();
-            virtual ~IEvent ();
-    };
+	class IEvent
+	{
+	public:
+		IEvent ();
+		virtual ~IEvent ();
+	};
 
 }
 

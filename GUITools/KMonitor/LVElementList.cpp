@@ -85,7 +85,7 @@ void LVElementList::LVELSubscriptionHandler(QString hostId)
 
 void LVElementList::LVELUnsubscriptionHandler(QString hostId)
 {
-	if(myCurrentLVRequestedHost == hostId)
+	if((hostId.isEmpty() && !myCurrentLVRequestedHost.isEmpty()) || (myCurrentLVRequestedHost == hostId && !hostId.isEmpty()))
 	{
 		myCurrentLVRequestedHost.clear();
 		uncheckAllListElements();

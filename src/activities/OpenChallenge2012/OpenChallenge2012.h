@@ -9,7 +9,6 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/VisionObservations.pb.h"
 
-
 #include "hal/robot/generic_nao/aldebaran-motion.h"
 #include "hal/robot/generic_nao/NAOKinematics.h"
 #include <string>
@@ -35,27 +34,29 @@ using namespace std;
 
 
 ACTIVITY_START
-class OpenChallenge2012 : public IActivity{
+class OpenChallenge2012 : public IActivity
+{
 
 public:
 
-	OpenChallenge2012(Blackboard &b);
+	OpenChallenge2012(Blackboard &b, XmlNode &x);
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
 
-	std::string ACTIVITY_VISIBLE GetName() {
+	std::string ACTIVITY_VISIBLE GetName()
+	{
 		return "OpenChallenge2012";
 	}
 
 
 private:
 
-	AL::ALPtr<AL::DCMProxy> dcm;
-	AL::ALPtr<AL::ALProxy> temp;
-	AL::ALPtr<AL::ALMotionProxy> motion;
-	AL::ALPtr<AL::ALBroker> pbroker;
-	AL::ALPtr<AL::ALFrameManagerProxy> framemanager;
+	AL::DCMProxy *dcm;
+	AL::ALMotionProxy *motion;
+	boost::shared_ptr<AL::ALProxy> temp;
+	boost::shared_ptr<AL::ALBroker> pbroker;
+	AL::ALFrameManagerProxy *framemanager;
 
 	bool walkingWithVelocity;
 
@@ -87,13 +88,13 @@ private:
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const GameStateMessage>  gsm;
 	boost::shared_ptr<const WorldInfo>  wim;
-	
+
 	boost::shared_ptr<const ObservationMessage>  obsm;
-	SensorData LHYPitch,LHRoll,LHPitch,LKPitch,LARoll,LAPitch;
-	SensorData RSPitch,RSRoll,REYaw,RERoll;
+	SensorData LHYPitch, LHRoll, LHPitch, LKPitch, LARoll, LAPitch;
+	SensorData RSPitch, RSRoll, REYaw, RERoll;
 	float torsoHeight;
 	bool donee;
-	
+
 
 	MotionActionMessage  * pam;
 	MotionStateMessage	sm;
@@ -118,10 +119,10 @@ private:
 	vector<float> KGetAngles();
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
-	typedef std::map<std::string,
-		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
-	typedef std::pair<std::string,
-		  boost::shared_ptr<ISpecialAction> > SpAsoocElement;
+	typedef std::map < std::string,
+	        boost::shared_ptr<ISpecialAction> > SpAssocCont;
+	typedef std::pair < std::string,
+	        boost::shared_ptr<ISpecialAction> > SpAsoocElement;
 	SpAssocCont SpActions;
 
 

@@ -21,10 +21,11 @@
 using namespace boost::posix_time;
 
 ACTIVITY_START
-class GoToPosition : public IActivity {
+class GoToPosition : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(GoToPosition);
+	ACTIVITY_CONSTRUCTOR(GoToPosition);
 	int ACTIVITY_VISIBLE Execute ();
 
 	void ACTIVITY_VISIBLE UserInit ();
@@ -55,7 +56,7 @@ private:
 	////////////////////////////////////////
 	float distance(float x1, float x2, float y1, float y2);
 
-	void gotoPosition(float target_x,float target_y, float target_phi);
+	void gotoPosition(float target_x, float target_y, float target_phi);
 	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
 
 };

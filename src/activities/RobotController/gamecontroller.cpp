@@ -15,30 +15,27 @@ using std::endl;
 
 GameController::GameController(RoboCupGameControlData & storage ) : game_data(storage)
 {
-
-	runcnt=0;
-	recvflag=0;
-	memcpy(rd.header,GAMECONTROLLER_RETURN_STRUCT_HEADER,strlen(GAMECONTROLLER_RETURN_STRUCT_HEADER));
-	rd.message=(GAMECONTROLLER_RETURN_MSG_ALIVE);
-	rd.version=(GAMECONTROLLER_RETURN_STRUCT_VERSION);
-
+	runcnt = 0;
+	recvflag = 0;
+	memcpy(rd.header, GAMECONTROLLER_RETURN_STRUCT_HEADER, strlen(GAMECONTROLLER_RETURN_STRUCT_HEADER));
+	rd.message = (GAMECONTROLLER_RETURN_MSG_ALIVE);
+	rd.version = (GAMECONTROLLER_RETURN_STRUCT_VERSION);
 }
 void GameController::connectTo(int port, int tn )
 {
-
-	team_number=tn;
+	team_number = tn;
 	//Initialize_data
 	Logger::Instance().WriteMsg("GameController", "Initialize GameController", Logger::Info);
-
 	socket_fd = socket(AF_INET, SOCK_DGRAM, 0); //socket creation
 
 	if (socket_fd == -1)
 	{
 		Logger::Instance().WriteMsg("GameController", "Cannot create Socket ", Logger::FatalError);
-
 	}
+
 	{
 		int reuse = 1;
+
 		if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, (char *) &reuse, sizeof(reuse)) < 0)
 		{
 			Logger::Instance().WriteMsg("GameController", "Setting SO_REUSEADDR error ", Logger::FatalError);
@@ -48,6 +45,7 @@ void GameController::connectTo(int port, int tn )
 
 	{
 		int reuse = 1;
+
 		if (setsockopt(socket_fd, SOL_SOCKET, SO_BROADCAST, (char *) &reuse, sizeof(reuse)) < 0)
 		{
 			Logger::Instance().WriteMsg("GameController", "Setting SO_BROADCAST error ", Logger::FatalError);
@@ -55,10 +53,12 @@ void GameController::connectTo(int port, int tn )
 		}
 	}
 
-
 	struct timeval timeout;
+
 	timeout.tv_sec = 1;
+
 	timeout.tv_usec = 0;
+
 	if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) == -1)
 	{
 		Logger::Instance().WriteMsg("GameController", "Setting SO_RCVTIMEO error ", Logger::FatalError);
@@ -68,11 +68,13 @@ void GameController::connectTo(int port, int tn )
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = INADDR_ANY;
+
 	//binding
 	if ((bind(socket_fd, (struct sockaddr*) &addr, sizeof(addr))) != 0)
 	{
 		Logger::Instance().WriteMsg("GameController", "Cannot Bind  ", Logger::FatalError);
 	}
+
 	Logger::Instance().WriteMsg("GameController", " Game controller Initialized", Logger::Info);
 	addr.sin_addr.s_addr = INADDR_BROADCAST;
 }
@@ -80,26 +82,27 @@ void GameController::connectTo(int port, int tn )
 
 void GameController::setNonBlock(bool nb)
 {
-	if(nb==true)
-		recvflag=MSG_DONTWAIT;
+	if(nb == true)
+		recvflag = MSG_DONTWAIT;
 	else
-		recvflag=0;
+		recvflag = 0;
 }
 bool GameController::poll()
 {
 	int bytes;
-	bool update=false;
+	bool update = false;
+
 	if ((bytes = recv(socket_fd, buffer, sizeof(buffer), recvflag)) > 0)
 	{
-		update=check_data_and_copy(buffer, bytes);
-	} else
+		update = check_data_and_copy(buffer, bytes);
+	}
+	else
 	{
 		if (runcnt++ % 5000 == 0)
 		{
 			Logger::Instance().WriteMsg("GameController", "Is Game Controller Running? Cant Listen", Logger::Error);
-			runcnt=1;
+			runcnt = 1;
 		}
-
 	}
 
 	return update;
@@ -108,36 +111,33 @@ bool GameController::poll()
 
 void GameController::SendAlive(int pnum)
 {
-
-
-	rd.team=(team_number);
-	rd.player=(pnum);
-
-	sendto(socket_fd,&rd,sizeof(rd),recvflag,(struct sockaddr*)  &addr,sizeof(addr));
-
+	rd.team = (team_number);
+	rd.player = (pnum);
+	sendto(socket_fd, &rd, sizeof(rd), recvflag, (struct sockaddr*)  &addr, sizeof(addr));
 }
 bool GameController::check_data_and_copy(char* bytes, int size)
 {
-
 	if ((strncmp(bytes, GAMECONTROLLER_STRUCT_HEADER, 4) == 0) && (size == sizeof(RoboCupGameControlData)))
 	{
 		// Valid GameController packet
-		RoboCupGameControlData *c=(RoboCupGameControlData *)bytes;
+		RoboCupGameControlData *c = (RoboCupGameControlData *)bytes;
 
 		if (c->teams[0].teamNumber == team_number || c->teams[1].teamNumber == team_number)
 		{
 			//Packet is  for our team
 			memcpy(&game_data, bytes, size);
 			return true;
-		} else
-		{
-
 		}
-	} else
+		else
+		{
+		}
+	}
+	else
 	{
 		//Header mismatch
 		return false;
 	}
+
 	return false;
 }
 

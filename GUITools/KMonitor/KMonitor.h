@@ -6,9 +6,10 @@
 #include "KGUIMessenger.h"
 #include "GWRemoteHosts.h"
 #include "LWRemoteHosts.h"
-#include "LWElementList.h"
-#include "LMElementList.h"
+#include "LWElementTree.h"
+#include "LMElementTree.h"
 #include "LVElementList.h"
+#include "LSDController.h"
 #include "KccHandler.h"
 #include "ui_KMonitor.h"
 
@@ -26,15 +27,18 @@ private slots:
 	void printCurrentTab(int index);
 
 private:
+	void LSDInitialization();
+
     KGUIMessenger* Messenger;
     GWRemoteHosts* availableGWHosts;
     LWRemoteHosts* availableLWHosts;
-    LWElementList* LWSElementList;
+    LWElementTree* LWSElementTree;
     LWRemoteHosts* availableLMHosts;
-    LMElementList* LPMElementList;
-
+    LMElementTree* LPMElementTree;
     LWRemoteHosts* availableLVHosts;
     LVElementList* LRVElementList;
+    LWRemoteHosts* availableLSHosts;
+    LSDController* LSController;
 
     KccHandler* KCC;
 };

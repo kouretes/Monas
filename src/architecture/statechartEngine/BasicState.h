@@ -9,27 +9,29 @@
 
 #include "architecture/statechartEngine/Statechart.h"
 
-namespace statechart_engine {
+namespace statechart_engine
+{
 
-    class BasicState: public State {
+	class BasicState: public State
+	{
 
-        public:
+	public:
 
-            BasicState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
-            BasicState ( std::string name, State* parent, IActivity* activity, IAction* entryAction = 0, IAction* exitAction = 0 );
+		BasicState ( std::string name, State* parent, IAction* entryAction = 0, IAction* exitAction = 0 );
+		BasicState ( std::string name, State* parent, IActivity* activity, IAction* entryAction = 0, IAction* exitAction = 0 );
 
-            virtual ~BasicState ();
+		virtual ~BasicState ();
 
-            int Activate ();
+		int Activate ();
 
-        private:
+	private:
 
-            IActivity* _stateActivity;
+		IActivity* _stateActivity;
 
-            ActivityWrapper _actWrap;
+		ActivityWrapper _actWrap;
 
-            Statechart* _st;
-    };
+		Statechart* _st;
+	};
 
 }
 

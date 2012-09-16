@@ -10,10 +10,11 @@
 #include "tools/BehaviorConst.h"
 
 ACTIVITY_START
-class SitDownAndStare : public IActivity {
+class SitDownAndStare : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(SitDownAndStare)
+	ACTIVITY_CONSTRUCTOR(SitDownAndStare)
 
 	int ACTIVITY_VISIBLE Execute ();
 

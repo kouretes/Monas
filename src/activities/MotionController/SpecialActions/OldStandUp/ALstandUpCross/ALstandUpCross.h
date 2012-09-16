@@ -5,25 +5,27 @@
 
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
-class ALstandUpCross: public ISpecialAction {
-  
-  public:
-    std::string GetName () {
-      return "ALstandUpCross";
-    }
-    
-    ALstandUpCross();
-    
-    int ExecutePost();
-    
-  private:
-    
-    void Initialize();
-    
-    AL::ALPtr<AL::ALMotionProxy> motion;
-    
-    AL::ALValue jointCodes, angles, times;     
-    
-}; 
+class ALstandUpCross: public ISpecialAction
+{
+
+public:
+	std::string GetName ()
+	{
+		return "ALstandUpCross";
+	}
+
+	ALstandUpCross();
+
+	int ExecutePost();
+
+private:
+
+	void Initialize();
+
+	boost::shared_ptr<AL::ALMotionProxy> motion;
+
+	AL::ALValue jointCodes, angles, times;
+
+};
 
 #endif // _ALstandUpCross_h_ 

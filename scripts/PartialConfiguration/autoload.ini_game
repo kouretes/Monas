@@ -1,23 +1,14 @@
-[core]
-albase
-framemanager
+# autoload.ini
+#
+# Use this file to list the cross-compiled modules that you wish to load.
+# You must specify the full path to the module, python module or program.
 
-[extra]
-devicecommunicationmanager
-alresourcemanager
-sensors #button events
-robotmodel
-motion
-leds
-videoinput
-audiodevice
-audioout
-pythonbridge
-#sentinel #audio warnings about  battery and heat, auto shutdown
-launcher
-albonjour
-krobot
+[user]
+/home/nao/naoqi/lib/naoqi/libkrobot.so
 
-[remote]
-#naoqi-autolaunch
-../../../home/nao/naoqi/bin/autostartkrobot
+[python]
+/home/nao/naoqi/bin/autostartkrobot
+
+[program]
+#the/full/path/to/your/program            # load program
+

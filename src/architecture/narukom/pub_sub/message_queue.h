@@ -37,7 +37,7 @@
 #include "tools/stopWatch.h"
 
 #ifndef TIXML_USE_STL
- #define TIXML_USE_STL
+#define TIXML_USE_STL
 #endif
 
 struct msgentry_;
@@ -55,55 +55,54 @@ This class is responsible for dispatching published messages to the interested s
 class MessageQueue : public KSystem::Thread
 {
 
-  public:
-    //friend class MessageBuffer;
-    MessageQueue();
-    ~MessageQueue();
+public:
+	//friend class MessageBuffer;
+	MessageQueue();
+	~MessageQueue();
 	MessageBuffer* makeWriteBuffer(std::string const& s);
 	MessageBuffer* makeReadBuffer(std::string const& s);
 
-    void purgeBuffer( MessageBuffer *b);
+	void purgeBuffer( MessageBuffer *b);
 
-    void process_queued_msg();
-    virtual int Execute();
-    inline void requestMailMan( MessageBuffer  * m)
-    {
+	void process_queued_msg();
+	virtual int Execute();
+	inline void requestMailMan( MessageBuffer  * m)
+	{
 		KSystem::Mutex::scoped_lock cvlock(cond_mutex);
-		if(cond_publishers.find(m)==cond_publishers.end())
+
+		if(cond_publishers.find(m) == cond_publishers.end())
 		{
 			cond_publishers.insert(m);
 			cond_publishers_queue.push_back(m);
 			cond.notify_one();
 		}
+	};
+private:
+	//String hasher
+	EndPoint * multicast;
+
+	stringRegistry pubsubRegistry;
 
 
-    };
-  private:
-  	//String hasher
-  	EndPoint * multicast;
-
-  	stringRegistry pubsubRegistry;
-
-
-    KSystem::Mutex pub_sub_mutex;
-  	//Locked by pub_sub_mutex;
-  	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
-  	std::vector<std::set<MessageBuffer*> > publisherbuffers,subscriberBuffers;//Maps pubsubregistry ids to Buffers
+	KSystem::Mutex pub_sub_mutex;
+	//Locked by pub_sub_mutex;
+	std::vector< std::set<MessageBuffer*> > subscriptions;//Maps topicids to subscriber buffers
+	std::vector<std::set<MessageBuffer*> > publisherbuffers, subscriberBuffers; //Maps pubsubregistry ids to Buffers
 
 
 
 	//Waking up stuff
 	KSystem::Mutex  cond_mutex;
-    std::set<MessageBuffer*> cond_publishers;
-    std::vector<MessageBuffer*> cond_publishers_queue;
-    KSystem::CondVar cond;
+	std::set<MessageBuffer*> cond_publishers;
+	std::vector<MessageBuffer*> cond_publishers_queue;
+	KSystem::CondVar cond;
 
-    StopWatch<> agentStats;
+	StopWatch<> agentStats;
 
-    void subscribeTo(std::size_t subid, std::size_t  topic , int where);
+	void subscribeTo(std::size_t subid, std::size_t  topic , int where);
 	void unsubscribeFrom(std::size_t subid, std::size_t  topic , int where);
 
-    //Recursive call, UNLOCKED
-    };
+	//Recursive call, UNLOCKED
+};
 
 #endif // MESSAGE_QUEUE_H

@@ -11,5 +11,5 @@ set ( ActivitySrcs  ChangeRobotPosition.cpp )
 
 include ( ../activTemplate.cmake )
 
-#use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS)	
+#qi_use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS)	
 	

@@ -3,16 +3,20 @@
 
 #include <string>
 
-class RobotSensor {
+class RobotSensor
+{
 
-    public:
+public:
 
-        RobotSensor()
-        {
-            ;
-        }
+	RobotSensor()
+	{
+		;
+	}
 
-        virtual ~RobotSensor() { ; }
+	virtual ~RobotSensor()
+	{
+		;
+	}
 
 
 

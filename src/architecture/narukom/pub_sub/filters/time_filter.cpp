@@ -15,25 +15,27 @@
 */
 
 #include "time_filter.h"
-TimeFilter::TimeFilter(const std::string& type_name,unsigned int period):Filter(type_name)
+TimeFilter::TimeFilter(const std::string& type_name, unsigned int period): Filter(type_name)
 {
-  this->period = boost::posix_time::milliseconds(period);
-  last_accepted = boost::posix_time::min_date_time;
+	this->period = boost::posix_time::milliseconds(period);
+	last_accepted = boost::posix_time::min_date_time;
 }
 
 FilterState TimeFilter::filter(const msgentry& a_tuple)
 {
-  if(last_accepted == boost::posix_time::min_date_time)
-  {
-    last_accepted = boost::posix_time::microsec_clock::universal_time();
-    return Accepted;
-  }
-  boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-  if(now - last_accepted > period)
-  {
-    last_accepted = now;
-    return Accepted;
-  }
-  else
-    return Rejected;
+	if(last_accepted == boost::posix_time::min_date_time)
+	{
+		last_accepted = boost::posix_time::microsec_clock::universal_time();
+		return Accepted;
+	}
+
+	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+
+	if(now - last_accepted > period)
+	{
+		last_accepted = now;
+		return Accepted;
+	}
+	else
+		return Rejected;
 }

@@ -12,7 +12,7 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/VisionObservations.pb.h"
-//#include "messages/SensorsMessage.pb.h"
+#include "messages/SensorsMessage.pb.h"
 #include "messages/motion.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/Kimage.pb.h"
@@ -44,6 +44,9 @@ public slots:
 	void KCCRHSubscriptionHandler(QString);
 	void KCCRHUnsubscriptionHandler(QString);
 
+	void LSRHSubscriptionHandler(QString);
+	void LSRHUnsubscriptionHandler(QString);
+
 	void tabChangeHandler(int);
 
 signals:
@@ -56,6 +59,7 @@ signals:
 	void gridInfoUpdate(GridInfo, QString);
 	void rawImageUpdate(KRawImage, QString);
 	void KCCRawImageUpdate(KRawImage, QString);
+	void sensorsDataUpdate(AllSensorValuesMessage, QString);
 
 private slots:
 	void allocateReceivedMessages();
@@ -76,5 +80,6 @@ private:
 	QString myLMRequestedHost;
 	QString myLVRequestedHost;
 	QString myKccRequestedHost;
+	QString myLSRequestedHost;
 };
 #endif /* KGUIMESSENGER_H_ */

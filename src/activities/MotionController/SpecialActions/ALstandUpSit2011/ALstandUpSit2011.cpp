@@ -2,35 +2,37 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 
-namespace {
-SpecialActionRegistrar<ALstandUpSit2011>::Type temp("ALstandUpSit2011");
+namespace
+{
+	SpecialActionRegistrar<ALstandUpSit2011>::Type temp("ALstandUpSit2011");
 }
 
-ALstandUpSit2011::ALstandUpSit2011() {
-  Initialize();
-  Logger::Instance().WriteMsg("SP:ALstandUpSit2011","Initialized!",Logger::ExtraInfo);
-  
-  try {
-    motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
-  } catch (AL::ALError& e) {
-    Logger::Instance().WriteMsg("SP:ALstandUpSit2011","Error in getting motion proxy",Logger::FatalError);
-  }
-  
+ALstandUpSit2011::ALstandUpSit2011()
+{
+	Initialize();
+	Logger::Instance().WriteMsg("SP:ALstandUpSit2011", "Initialized!", Logger::ExtraInfo);
+
+	try
+	{
+		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
+	}
+	catch (AL::ALError& e)
+	{
+		Logger::Instance().WriteMsg("SP:ALstandUpSit2011", "Error in getting motion proxy", Logger::FatalError);
+	}
 }
 
 
 
 
-void ALstandUpSit2011::Initialize() {
-  
+void ALstandUpSit2011::Initialize()
+{
 	names.reserve(25);
 	times.arraySetSize(25);
 	keys.arraySetSize(25);
-
 	names.push_back("HeadYaw");
 	times[0].arraySetSize(8);
 	keys[0].arraySetSize(8);
-
 	times[0][0] = 0.600000;
 	keys[0][0] = AL::ALValue::array(0.00149204, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[0][1] = 1.12000;
@@ -47,11 +49,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[0][6] = AL::ALValue::array(-0.00940132, AL::ALValue::array(3, -0.426667, -0.00000), AL::ALValue::array(3, 0.720000, 0.00000));
 	times[0][7] = 7.20000;
 	keys[0][7] = AL::ALValue::array(-0.00940132, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("HeadPitch");
 	times[1].arraySetSize(8);
 	keys[1].arraySetSize(8);
-
 	times[1][0] = 0.600000;
 	keys[1][0] = AL::ALValue::array(0.371186, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[1][1] = 1.12000;
@@ -68,11 +68,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[1][6] = AL::ALValue::array(0.378859, AL::ALValue::array(3, -0.426667, -0.00000), AL::ALValue::array(3, 0.720000, 0.00000));
 	times[1][7] = 7.20000;
 	keys[1][7] = AL::ALValue::array(0.378859, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LShoulderPitch");
 	times[2].arraySetSize(10);
 	keys[2].arraySetSize(10);
-
 	times[2][0] = 0.600000;
 	keys[2][0] = AL::ALValue::array(0.558334, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[2][1] = 1.12000;
@@ -93,11 +91,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[2][8] = AL::ALValue::array(1.58611, AL::ALValue::array(3, -0.226667, -0.00000), AL::ALValue::array(3, 0.720000, 0.00000));
 	times[2][9] = 7.20000;
 	keys[2][9] = AL::ALValue::array(1.24863, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LShoulderRoll");
 	times[3].arraySetSize(10);
 	keys[3].arraySetSize(10);
-
 	times[3][0] = 0.600000;
 	keys[3][0] = AL::ALValue::array(0.243864, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[3][1] = 1.12000;
@@ -118,11 +114,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[3][8] = AL::ALValue::array(0.688724, AL::ALValue::array(3, -0.226667, -0.00000), AL::ALValue::array(3, 0.720000, 0.00000));
 	times[3][9] = 7.20000;
 	keys[3][9] = AL::ALValue::array(0.592082, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LElbowYaw");
 	times[4].arraySetSize(10);
 	keys[4].arraySetSize(10);
-
 	times[4][0] = 0.600000;
 	keys[4][0] = AL::ALValue::array(-0.544613, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[4][1] = 1.12000;
@@ -143,11 +137,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[4][8] = AL::ALValue::array(-0.920441, AL::ALValue::array(3, -0.226667, -0.0517887), AL::ALValue::array(3, 0.720000, 0.164505));
 	times[4][9] = 7.20000;
 	keys[4][9] = AL::ALValue::array(-0.365133, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LElbowRoll");
 	times[5].arraySetSize(10);
 	keys[5].arraySetSize(10);
-
 	times[5][0] = 0.600000;
 	keys[5][0] = AL::ALValue::array(-1.06302, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[5][1] = 1.12000;
@@ -168,33 +160,27 @@ void ALstandUpSit2011::Initialize() {
 	keys[5][8] = AL::ALValue::array(-1.23636, AL::ALValue::array(3, -0.226667, -0.00000), AL::ALValue::array(3, 0.720000, 0.00000));
 	times[5][9] = 7.20000;
 	keys[5][9] = AL::ALValue::array(-1.07836, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LWristYaw");
 	times[6].arraySetSize(3);
 	keys[6].arraySetSize(3);
-
 	times[6][0] = 0.600000;
 	keys[6][0] = AL::ALValue::array(-0.742498, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[6][1] = 1.12000;
 	keys[6][1] = AL::ALValue::array(-0.771643, AL::ALValue::array(3, -0.173333, -0.00000), AL::ALValue::array(3, 0.146667, 0.00000));
 	times[6][2] = 1.56000;
 	keys[6][2] = AL::ALValue::array(-0.736361, AL::ALValue::array(3, -0.146667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LHand");
 	times[7].arraySetSize(3);
 	keys[7].arraySetSize(3);
-
 	times[7][0] = 0.600000;
 	keys[7][0] = AL::ALValue::array(0.000316824, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[7][1] = 1.12000;
 	keys[7][1] = AL::ALValue::array(0.00116190, AL::ALValue::array(3, -0.173333, -0.000112506), AL::ALValue::array(3, 0.146667, 9.51972e-05));
 	times[7][2] = 1.56000;
 	keys[7][2] = AL::ALValue::array(0.00125709, AL::ALValue::array(3, -0.146667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RShoulderPitch");
 	times[8].arraySetSize(11);
 	keys[8].arraySetSize(11);
-
 	times[8][0] = 0.600000;
 	keys[8][0] = AL::ALValue::array(0.566087, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.0800000, 0.00000));
 	times[8][1] = 0.840000;
@@ -217,11 +203,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[8][9] = AL::ALValue::array(1.42359, AL::ALValue::array(3, -0.226667, 0.0317099), AL::ALValue::array(3, 0.720000, -0.100726));
 	times[8][10] = 7.20000;
 	keys[8][10] = AL::ALValue::array(1.21650, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RShoulderRoll");
 	times[9].arraySetSize(10);
 	keys[9].arraySetSize(10);
-
 	times[9][0] = 0.600000;
 	keys[9][0] = AL::ALValue::array(-0.351328, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[9][1] = 1.12000;
@@ -242,11 +226,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[9][8] = AL::ALValue::array(-0.576826, AL::ALValue::array(3, -0.226667, -0.0321996), AL::ALValue::array(3, 0.720000, 0.102281));
 	times[9][9] = 7.20000;
 	keys[9][9] = AL::ALValue::array(-0.262356, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RElbowYaw");
 	times[10].arraySetSize(10);
 	keys[10].arraySetSize(10);
-
 	times[10][0] = 0.600000;
 	keys[10][0] = AL::ALValue::array(0.480100, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[10][1] = 1.12000;
@@ -267,11 +249,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[10][8] = AL::ALValue::array(1.67969, AL::ALValue::array(3, -0.226667, -0.00000), AL::ALValue::array(3, 0.720000, 0.00000));
 	times[10][9] = 7.20000;
 	keys[10][9] = AL::ALValue::array(0.966378, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RElbowRoll");
 	times[11].arraySetSize(10);
 	keys[11].arraySetSize(10);
-
 	times[11][0] = 0.600000;
 	keys[11][0] = AL::ALValue::array(1.21650, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[11][1] = 1.12000;
@@ -292,33 +272,27 @@ void ALstandUpSit2011::Initialize() {
 	keys[11][8] = AL::ALValue::array(0.497058, AL::ALValue::array(3, -0.226667, -0.0510542), AL::ALValue::array(3, 0.720000, 0.162172));
 	times[11][9] = 7.20000;
 	keys[11][9] = AL::ALValue::array(0.972599, AL::ALValue::array(3, -0.720000, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RWristYaw");
 	times[12].arraySetSize(3);
 	keys[12].arraySetSize(3);
-
 	times[12][0] = 0.600000;
 	keys[12][0] = AL::ALValue::array(1.07529, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[12][1] = 1.12000;
 	keys[12][1] = AL::ALValue::array(1.09523, AL::ALValue::array(3, -0.173333, -0.00000), AL::ALValue::array(3, 0.146667, 0.00000));
 	times[12][2] = 1.56000;
 	keys[12][2] = AL::ALValue::array(1.08756, AL::ALValue::array(3, -0.146667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RHand");
 	times[13].arraySetSize(3);
 	keys[13].arraySetSize(3);
-
 	times[13][0] = 0.600000;
 	keys[13][0] = AL::ALValue::array(0.000316824, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[13][1] = 1.12000;
 	keys[13][1] = AL::ALValue::array(0.00220908, AL::ALValue::array(3, -0.173333, -0.000277531), AL::ALValue::array(3, 0.146667, 0.000234834));
 	times[13][2] = 1.56000;
 	keys[13][2] = AL::ALValue::array(0.00244391, AL::ALValue::array(3, -0.146667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LHipYawPitch");
 	times[14].arraySetSize(9);
 	keys[14].arraySetSize(9);
-
 	times[14][0] = 0.600000;
 	keys[14][0] = AL::ALValue::array(-0.676451, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[14][1] = 1.12000;
@@ -337,11 +311,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[14][7] = AL::ALValue::array(-0.282215, AL::ALValue::array(3, -0.253333, -0.0305854), AL::ALValue::array(3, 0.466667, 0.0563415));
 	times[14][8] = 7.20000;
 	keys[14][8] = AL::ALValue::array(-0.173300, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LHipRoll");
 	times[15].arraySetSize(10);
 	keys[15].arraySetSize(10);
-
 	times[15][0] = 0.600000;
 	keys[15][0] = AL::ALValue::array(0.139636, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[15][1] = 1.12000;
@@ -362,11 +334,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[15][8] = AL::ALValue::array(0.440299, AL::ALValue::array(3, -0.253333, -0.00000), AL::ALValue::array(3, 0.466667, 0.00000));
 	times[15][9] = 7.20000;
 	keys[15][9] = AL::ALValue::array(0.130432, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LHipPitch");
 	times[16].arraySetSize(11);
 	keys[16].arraySetSize(11);
-
 	times[16][0] = 0.600000;
 	keys[16][0] = AL::ALValue::array(-1.57077, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[16][1] = 1.12000;
@@ -389,11 +359,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[16][9] = AL::ALValue::array(-0.754686, AL::ALValue::array(3, -0.253333, -0.00000), AL::ALValue::array(3, 0.466667, 0.00000));
 	times[16][10] = 7.20000;
 	keys[16][10] = AL::ALValue::array(-0.730143, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LKneePitch");
 	times[17].arraySetSize(10);
 	keys[17].arraySetSize(10);
-
 	times[17][0] = 0.600000;
 	keys[17][0] = AL::ALValue::array(0.724006, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[17][1] = 1.12000;
@@ -414,11 +382,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[17][8] = AL::ALValue::array(2.11253, AL::ALValue::array(3, -0.253333, -0.00000), AL::ALValue::array(3, 0.466667, 0.00000));
 	times[17][9] = 7.20000;
 	keys[17][9] = AL::ALValue::array(1.61833, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LAnklePitch");
 	times[18].arraySetSize(10);
 	keys[18].arraySetSize(10);
-
 	times[18][0] = 0.600000;
 	keys[18][0] = AL::ALValue::array(0.776162, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[18][1] = 1.12000;
@@ -439,11 +405,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[18][8] = AL::ALValue::array(-1.18952, AL::ALValue::array(3, -0.253333, -0.00000), AL::ALValue::array(3, 0.466667, 0.00000));
 	times[18][9] = 7.20000;
 	keys[18][9] = AL::ALValue::array(-0.736361, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("LAnkleRoll");
 	times[19].arraySetSize(10);
 	keys[19].arraySetSize(10);
-
 	times[19][0] = 0.600000;
 	keys[19][0] = AL::ALValue::array(-0.0505800, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[19][1] = 1.12000;
@@ -464,11 +428,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[19][8] = AL::ALValue::array(-0.0168320, AL::ALValue::array(3, -0.253333, 0.0116944), AL::ALValue::array(3, 0.466667, -0.0215423));
 	times[19][9] = 7.20000;
 	keys[19][9] = AL::ALValue::array(-0.0889301, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RHipRoll");
 	times[20].arraySetSize(10);
 	keys[20].arraySetSize(10);
-
 	times[20][0] = 0.600000;
 	keys[20][0] = AL::ALValue::array(-0.144154, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[20][1] = 1.12000;
@@ -489,11 +451,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[20][8] = AL::ALValue::array(-0.0812601, AL::ALValue::array(3, -0.253333, -0.00333100), AL::ALValue::array(3, 0.466667, 0.00613606));
 	times[20][9] = 7.20000;
 	keys[20][9] = AL::ALValue::array(-0.0751240, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RHipPitch");
 	times[21].arraySetSize(10);
 	keys[21].arraySetSize(10);
-
 	times[21][0] = 0.600000;
 	keys[21][0] = AL::ALValue::array(-1.55245, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[21][1] = 1.12000;
@@ -514,11 +474,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[21][8] = AL::ALValue::array(-0.678069, AL::ALValue::array(3, -0.253333, -0.0158217), AL::ALValue::array(3, 0.466667, 0.0291452));
 	times[21][9] = 7.20000;
 	keys[21][9] = AL::ALValue::array(-0.648924, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RKneePitch");
 	times[22].arraySetSize(10);
 	keys[22].arraySetSize(10);
-
 	times[22][0] = 0.600000;
 	keys[22][0] = AL::ALValue::array(0.843743, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[22][1] = 1.12000;
@@ -539,11 +497,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[22][8] = AL::ALValue::array(1.44047, AL::ALValue::array(3, -0.253333, -0.0757801), AL::ALValue::array(3, 0.466667, 0.139595));
 	times[22][9] = 7.20000;
 	keys[22][9] = AL::ALValue::array(1.58006, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RAnklePitch");
 	times[23].arraySetSize(12);
 	keys[23].arraySetSize(12);
-
 	times[23][0] = 0.600000;
 	keys[23][0] = AL::ALValue::array(0.785451, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[23][1] = 1.12000;
@@ -568,11 +524,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[23][10] = AL::ALValue::array(-0.369652, AL::ALValue::array(3, -0.253333, 0.148968), AL::ALValue::array(3, 0.466667, -0.274415));
 	times[23][11] = 7.20000;
 	keys[23][11] = AL::ALValue::array(-0.788433, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
-
 	names.push_back("RAnkleRoll");
 	times[24].arraySetSize(13);
 	keys[24].arraySetSize(13);
-
 	times[24][0] = 0.600000;
 	keys[24][0] = AL::ALValue::array(0.0491300, AL::ALValue::array(3, -0.200000, -0.00000), AL::ALValue::array(3, 0.173333, 0.00000));
 	times[24][1] = 1.12000;
@@ -599,9 +553,9 @@ void ALstandUpSit2011::Initialize() {
 	keys[24][11] = AL::ALValue::array(0.423426, AL::ALValue::array(3, -0.253333, 0.0168739), AL::ALValue::array(3, 0.466667, -0.0310834));
 	times[24][12] = 7.20000;
 	keys[24][12] = AL::ALValue::array(0.0905480, AL::ALValue::array(3, -0.466667, -0.00000), AL::ALValue::array(3, 0.00000, 0.00000));
- 
 }
 
-int ALstandUpSit2011::ExecutePost() {
-  return  motion->post.angleInterpolationBezier(names, times, keys); 
-} 
+int ALstandUpSit2011::ExecutePost()
+{
+	return  motion->post.angleInterpolationBezier(names, times, keys);
+}

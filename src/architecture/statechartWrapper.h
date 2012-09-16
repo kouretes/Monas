@@ -3,23 +3,28 @@
 
 #include "architecture/statechartEngine/Statechart.h"
 
-class StatechartWrapper {
+class StatechartWrapper
+{
 
-  public:
+public:
 
-    StatechartWrapper () {;}
+	StatechartWrapper ()
+	{
+		;
+	}
 
-    virtual void Start ()=0;
+	virtual void Start () = 0;
 
-    virtual void Stop ()=0;
+	virtual void Stop () = 0;
 
 };
 
-typedef GenericFactory < StatechartWrapper, std::string,StatechartWrapper* (*)(Narukom*),Narukom* >  StatechartFactory;
+typedef GenericFactory < StatechartWrapper, std::string, StatechartWrapper* (*)(Narukom*), Narukom* >  StatechartFactory;
 
 template<class T>
-struct StatechartRegistrar {
-  typedef Registrar<StatechartFactory,StatechartWrapper,std::string,T,Narukom*> Type;
+struct StatechartRegistrar
+{
+	typedef Registrar<StatechartFactory, StatechartWrapper, std::string, T, Narukom*> Type;
 };
 
 #endif // STATECHARTWRAPPER_H

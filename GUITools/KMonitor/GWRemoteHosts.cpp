@@ -40,9 +40,12 @@ void GWRemoteHosts::emergeAvailableHosts(KnownHosts newHosts)
     		hostId = QString::fromStdString(_toString(((*fit).hostid())));
     		hostName = QString::fromStdString(_toString(((*fit).hostname())));
 
-    		item = GWhostFinder(hostId);
-    		if( item == NULL)
-    			addTreeWidgetItem(parentTreeWidget->topLevelItemCount(),hostId, hostName);
+    		if (hostName.contains(QString("nao")))
+    		{
+				item = GWhostFinder(hostId);
+				if( item == NULL)
+					addTreeWidgetItem(parentTreeWidget->topLevelItemCount(),hostId, hostName);
+    		}
     }
 
 
@@ -188,7 +191,7 @@ void GWRemoteHosts::addTreeWidgetItem(int position, QString hostId, QString host
 	subCheckBox1 = new QCheckBox();
 	subCheckBox1->setTristate(false);
 	subCheckBox1->setObjectName(QString("position,")+ hostId );
-	subCheckBox1->setText(tr("Estimated Robot Position-Orientation"));
+	subCheckBox1->setText(tr("Estimated Robot Pose"));
 
 	subCheckBox2 = new QCheckBox();
 	subCheckBox2->setTristate(false);

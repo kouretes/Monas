@@ -12,7 +12,7 @@ STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
 add_definitions(" -DNAOQI_${NaoQiVer} ")
 
 
-use_lib(${ActivityName}  LIBCORE TOOLS LIBCORE ALCOMMON)
+qi_use_lib(${ActivityName}  LIBCORE TOOLS LIBCORE ALCOMMON)
 
 target_link_libraries ( ${ActivityName} NaoQiDep )
 

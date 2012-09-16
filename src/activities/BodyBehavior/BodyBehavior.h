@@ -26,61 +26,63 @@
 #define SCANFIELD 6
 ACTIVITY_START
 
-class BodyBehavior: public IActivity {
+class BodyBehavior: public IActivity
+{
 
-	public:
-		ACTIVITY_CONSTRUCTOR(BodyBehavior);
-		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
-		void ACTIVITY_VISIBLE UserInit();
-		void read_messages();
-		std::string  ACTIVITY_VISIBLE GetName() {
-			return "BodyBehavior";
-		}
+public:
+	ACTIVITY_CONSTRUCTOR(BodyBehavior);
+	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	void ACTIVITY_VISIBLE UserInit();
+	void read_messages();
+	std::string  ACTIVITY_VISIBLE GetName()
+	{
+		return "BodyBehavior";
+	}
 
-	private:
+private:
 
-		short ballfound;
-		bool scancompleted;
+	short ballfound;
+	bool scancompleted;
 
-		MotionWalkMessage* wmot;
-		MotionActionMessage* amot;
-		BToHeadMessage* bhmsg;
-		int pitchdirection;
-		int yawdirection;
-		SensorData HeadYaw;
-		SensorData HeadPitch;
+	MotionWalkMessage* wmot;
+	MotionActionMessage* amot;
+	BToHeadMessage* bhmsg;
+	int pitchdirection;
+	int yawdirection;
+	SensorData HeadYaw;
+	SensorData HeadPitch;
 
-		boost::shared_ptr<const BallTrackMessage> bmsg;
-		boost::shared_ptr<const GameStateMessage> gsm;
-		boost::shared_ptr<const ObservationMessage> obsm;
-		//	boost::shared_ptr<const ObstacleMessage>  om;
-		boost::shared_ptr<const HeadToBMessage> hbm;
-		boost::shared_ptr<const ScanMessage> scm;
+	boost::shared_ptr<const BallTrackMessage> bmsg;
+	boost::shared_ptr<const GameStateMessage> gsm;
+	boost::shared_ptr<const ObservationMessage> obsm;
+	//	boost::shared_ptr<const ObstacleMessage>  om;
+	boost::shared_ptr<const HeadToBMessage> hbm;
+	boost::shared_ptr<const ScanMessage> scm;
 
-		ObservationMessage* lastObsm;
+	ObservationMessage* lastObsm;
 
-		int calibrated;
-		bool play;
-		bool kickoff;
-		bool isScaning;
-		bool readytokick;
-		int back;
-		int direction;
-		bool obstacleFront;
-		int gameState;
-		int oldGameState;
-		int curraction;
-		int prevaction;
+	int calibrated;
+	bool play;
+	bool kickoff;
+	bool isScaning;
+	bool readytokick;
+	int back;
+	int direction;
+	bool obstacleFront;
+	int gameState;
+	int oldGameState;
+	int curraction;
+	int prevaction;
 
-		int teamColor;
-		int playernum;
-		int orientation;
+	int teamColor;
+	int playernum;
+	int orientation;
 
 
-		double mglRand();
-		void velocityWalk(double x, double y, double th, double f);
-		void littleWalk(double x, double y, double th, int s);
-		bool readConfiguration(const std::string& file_name);
+	double mglRand();
+	void velocityWalk(double x, double y, double th, double f);
+	void littleWalk(double x, double y, double th, int s);
+	bool readConfiguration(const std::string& file_name);
 };
 
 ACTIVITY_END

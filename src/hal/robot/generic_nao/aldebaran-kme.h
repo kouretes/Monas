@@ -8,8 +8,8 @@
 #ifndef ALDEBARAN_KME_H_
 #define ALDEBARAN_KME_H_
 
-#ifdef NAOQI_1_10_10
-#include <alcore/alptr.h>
+#ifdef NAOQI_1_12_5
+#include <boost/shared_ptr.hpp>
 #include <alvalue/alvalue.h>
 #include <alproxies/almotionproxy.h>
 #include <alproxies/dcmproxy.h>

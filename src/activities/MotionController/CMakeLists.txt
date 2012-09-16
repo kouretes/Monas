@@ -17,7 +17,7 @@ include ( ../activTemplate.cmake )
 STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
 add_definitions(" -DNAOQI_${NaoQiVer} ")
 
-use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS)
+qi_use_lib(${ActivityName} ALCOMMON ALVALUE ALMATH LIBCORE TOOLS)
 if(Webots)
   message ( STATUS " _..::: Configuring MotionController for Webots :::.._ " )
   add_definitions(" -DWEBOTS ")

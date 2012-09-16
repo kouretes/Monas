@@ -20,11 +20,11 @@
 
 class TopicFilter : public Filter
 {
-  public:
-    TopicFilter(const std::string& type_name,const std::string& topic_filter,bool value = false);
-    virtual FilterState filter(const msgentry& a_tuple);
-  private:
-    std::string topic;
+public:
+	TopicFilter(const std::string& type_name, const std::string& topic_filter, bool value = false);
+	virtual FilterState filter(const msgentry& a_tuple);
+private:
+	std::string topic;
 };
 
 #endif // METADATA_FILTER_H

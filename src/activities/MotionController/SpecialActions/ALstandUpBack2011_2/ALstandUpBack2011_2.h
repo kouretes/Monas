@@ -6,25 +6,27 @@
 #include "hal/robot/generic_nao/aldebaran-kme.h"
 
 
-class ALstandUpBack2011_2: public ISpecialAction {
+class ALstandUpBack2011_2: public ISpecialAction
+{
 
-  public:
-    std::string GetName () {
-      return "ALstandUpBack2011_2";
-    }
+public:
+	std::string GetName ()
+	{
+		return "ALstandUpBack2011_2";
+	}
 
-    ALstandUpBack2011_2();
+	ALstandUpBack2011_2();
 
-    int ExecutePost();
+	int ExecutePost();
 
-  private:
+private:
 
-    void Initialize();
+	void Initialize();
 
-    AL::ALPtr<AL::ALMotionProxy> motion;
+	AL::ALMotionProxy *motion;
 
-    std::vector<std::string> names;
-    AL::ALValue times, keys;
+	std::vector<std::string> names;
+	AL::ALValue times, keys;
 
 };
 

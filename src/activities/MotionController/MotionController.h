@@ -34,27 +34,30 @@ using namespace std;
 
 
 ACTIVITY_START
-class MotionController : public IActivity{
+class MotionController : public IActivity
+{
 
 public:
 
-	MotionController(Blackboard &b);
+	MotionController(Blackboard &b, XmlNode &x);
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
 
-	std::string ACTIVITY_VISIBLE GetName() {
+	std::string ACTIVITY_VISIBLE GetName()
+	{
 		return "MotionController";
 	}
 
 
 private:
 
-	AL::ALPtr<AL::DCMProxy> dcm;
-	AL::ALPtr<AL::ALProxy> temp;
-	AL::ALPtr<AL::ALMotionProxy> motion;
-	AL::ALPtr<AL::ALBroker> pbroker;
-	AL::ALPtr<AL::ALFrameManagerProxy> framemanager;
+	AL::DCMProxy *dcm;
+	AL::ALMotionProxy *motion;
+	AL::ALFrameManagerProxy *framemanager;
+	boost::shared_ptr<AL::ALProxy> temp;
+	boost::shared_ptr<AL::ALBroker> pbroker;
+	//boost::shared_ptr<AL::ALFrameManagerProxy> framemanager;
 
 	bool walkingWithVelocity;
 
@@ -110,17 +113,17 @@ private:
 	vector<float> KGetAngles();
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
-	typedef std::map<std::string,
-		  boost::shared_ptr<ISpecialAction> > SpAssocCont;
-	typedef std::pair<std::string,
-		  boost::shared_ptr<ISpecialAction> > SpAsoocElement;
+	typedef std::map < std::string,
+	        boost::shared_ptr<ISpecialAction> > SpAssocCont;
+	typedef std::pair < std::string,
+	        boost::shared_ptr<ISpecialAction> > SpAsoocElement;
 	SpAssocCont SpActions;
 
 
-	typedef std::map<std::string,
-		  boost::shared_ptr<KmexAction> > SpCont;
-	typedef std::pair<std::string,
-		  boost::shared_ptr<KmexAction> > SpElement;
+	typedef std::map < std::string,
+	        boost::shared_ptr<KmexAction> > SpCont;
+	typedef std::pair < std::string,
+	        boost::shared_ptr<KmexAction> > SpElement;
 	SpCont SpKmexActions;
 
 	std::string BodyID;

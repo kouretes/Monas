@@ -16,10 +16,11 @@
 
 
 ACTIVITY_START
-class Scan : public IActivity {
+class Scan : public IActivity
+{
 
 public:
-    ACTIVITY_CONSTRUCTOR(Scan);
+	ACTIVITY_CONSTRUCTOR(Scan);
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 	void ACTIVITY_VISIBLE UserInit ();
