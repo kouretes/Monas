@@ -91,11 +91,6 @@ void Sensors::fillComputedData(unsigned int timediff)
 	   anglefilterreset=true;
 	  Logger::Instance().WriteMsg("SENSORS","Singular Matrix Exception on Kalman update",Logger::Error);
 	}
-	catch (...)
-	{
-		anglefilterreset = true;
-		Logger::Instance().WriteMsg("SENSORS", "Singular Matrix Exception on Kalman update", Logger::Error);
-	}
 
 	for(int i = 0; i < ANGLE_SIZE; i++)
 	{

@@ -8,8 +8,6 @@
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "architecture/executables/IActivity.h"
 #include "tools/MathFunctions.h"
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
 
 #include "architecture/archConfig.h"
 #include <iomanip>
