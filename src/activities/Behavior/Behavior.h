@@ -13,13 +13,8 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
-#include "activities/ObstacleAvoidance/ObstacleAvoidance.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
 
 #define PITCHMIN -0.55
 #define	PITCHMAX 0.33

@@ -15,7 +15,6 @@ using namespace std;
 
 double mglRand()
 {
-	//return rand() / double(RAND_MAX);
 	return (rand() % 100) / 100.0;
 }
 
@@ -61,18 +60,6 @@ void Behavior::UserInit()
 		initPhi[i] = 0.0;
 	}
 
-	ownGoalX = 0.0;
-	ownGoalY = 0.0;
-	oppGoalX = 0.0;
-	oppGoalY = 0.0;
-	ownGoalLeftX = 0.0;
-	ownGoalLeftY = 0.0;
-	ownGoalRightX = 0.0;
-	ownGoalRightY = 0.0;
-	oppGoalLeftX = 0.0;
-	oppGoalLeftY = 0.0;
-	oppGoalRightX = 0.0;
-	oppGoalRightY = 0.0;
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
@@ -780,7 +767,7 @@ float Behavior::lookAtPointYaw(float x, float y)
 
 float Behavior::lookAtPointPitch(float x, float y)
 {
-	return (50.0 * TO_RAD) - atan2f( sqrt((x - robot_x) * (x - robot_x) + (y - robot_y) * (y - robot_y)), 0.45 );
+	return deg2rad(50.0) - atan2f( sqrt((x - robot_x) * (x - robot_x) + (y - robot_y) * (y - robot_y)), 0.45 );
 }
 
 float Behavior::lookAtPointRelativeYaw(float x, float y)
@@ -790,7 +777,7 @@ float Behavior::lookAtPointRelativeYaw(float x, float y)
 
 float Behavior::lookAtPointRelativePitch(float x, float y)
 {
-	return (50.0 * TO_RAD) - atan2f( sqrt((x) * (x) + (y) * (y)), 0.45 );
+	return deg2rad(50.0) - atan2f( sqrt((x) * (x) + (y) * (y)), 0.45 );
 }
 
 
@@ -1175,6 +1162,8 @@ bool Behavior::readGoalConfiguration(const std::string& file_name)
 
 void Behavior::generateFakeObstacles()
 {
+#define ObstacleRadius 	0.15 // TODO na mpoun sto xml kai na diavazonte apo to xml configurator
+#define MapRadius 		1.0
 	float tmpX = -3.0 + ObstacleRadius, tmpY = -1.1 + ObstacleRadius;
 
 	for(int j = 0; j < numOfFakeObstacles; j++)
