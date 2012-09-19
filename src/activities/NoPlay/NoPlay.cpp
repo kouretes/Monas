@@ -349,8 +349,8 @@ void NoPlay::goToPosition(float x, float y, float phi)
 	relativeX = rotation(x, -y, myPhi) - myPosX;
 	relativeY = rotation(y, y, myPhi) - myPosY;
 	float velx, vely;
-	float angle = anglediff2(atan2(y - myPosY, x - myPosX), myPhi);
-	relativePhi = anglediff2(phi, myPhi);
+	float angle = KMath::anglediff2(atan2(y - myPosY, x - myPosX), myPhi);
+	relativePhi = KMath::anglediff2(phi, myPhi);
 	vely = 0.8 * sin(angle);
 	velx = 0.8 * cos(angle);
 

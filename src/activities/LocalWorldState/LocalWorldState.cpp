@@ -158,7 +158,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 
 				float dx = nearest_filtered_ball.relativex() - nearest_nofilter_ball.relativex();
 				float dy = nearest_filtered_ball.relativey() - nearest_nofilter_ball.relativey();
-				float distance = distance = DISTANCE_2(dx,dy);
+				float distance = distance = KMath::norm2(dx,dy);
 
 				//Check if we must reset the ball
 				duration = observation_time - last_observation_time;
@@ -232,7 +232,7 @@ void LocalWorldState::process_messages()
 			tmpOM.Distance.Emean = 0.0;
 			tmpOM.Distance.Edev = 1.5+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
 			//Bearing
-			tmpOM.Bearing.val = wrapTo0_2Pi( Objects.Get(i).bearing());
+			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
 			tmpOM.Bearing.Edev = deg2rad(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
 			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
@@ -297,10 +297,10 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 
 	float DX = (XA - TrackPointRobotPosition.x);
 	float DY = (YA - TrackPointRobotPosition.y);
-	float DR = anglediff2(AA, TrackPointRobotPosition.phi);
+	float DR = KMath::anglediff2(AA, TrackPointRobotPosition.phi);
 
-	float robot_dist = DISTANCE_2(DX, DY);
-	float robot_dir = anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
+	float robot_dist = KMath::norm2(DX, DY);
+	float robot_dir = KMath::anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
 	float robot_rot = DR;
 
 	MModel.Distance.val = robot_dist;

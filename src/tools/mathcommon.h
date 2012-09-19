@@ -2,11 +2,18 @@
 #define MATHFUNCTIONS_H
 
 #include <math.h>
-#define TO_RAD 0.01745329f
-#define TO_DEG 1.0/TO_RAD
+
+//DO NOT USE DEFINES, USE THE BLOODY FUNCTIONS
+#define TO_RAD_SUPER_INTERNAL_DO_NOT_USE 0.01745329f
+namespace KMath{
+
+
+inline static double TO_RAD(double X) { return X*TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
+inline static double TO_DEG(double X) { return X/TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
+
 #define DISTANCE(x1,x2,y1,y2) (sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)))
 
-template<typename T> inline T DISTANCE_2(T dx, T dy)
+template<typename T> inline T norm2(T dx, T dy)
 {
 	return sqrt((dx) * (dx) + (dy) * (dy));
 }
@@ -73,5 +80,5 @@ static double toCartesianY(double d, double t)
 	return d * sin(t);
 }
 
-
+}
 #endif

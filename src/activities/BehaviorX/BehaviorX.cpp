@@ -5,12 +5,13 @@
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
 #include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
 
 using namespace boost::posix_time;
 
 ACTIVITY_REGISTER(BehaviorX);
 using namespace std;
+using namespace KMath;
 
 
 
@@ -729,7 +730,7 @@ float BehaviorX::lookAtPointYaw(float x, float y)
 
 float BehaviorX::lookAtPointPitch(float x, float y)
 {
-	return (50.0 * TO_RAD) - atan2f( sqrt((x - robot_x) * (x - robot_x) + (y - robot_y) * (y - robot_y)), 0.45 );
+	return TO_RAD(50.0) - atan2f( sqrt((x - robot_x) * (x - robot_x) + (y - robot_y) * (y - robot_y)), 0.45 );
 }
 
 

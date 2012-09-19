@@ -36,8 +36,8 @@ Ball BallFilter::get_updated_ball_estimate(float new_dist, float dist_variance, 
 	float new_x = new_dist * cos(new_dir);
 	float new_y = new_dist * sin(new_dir);
 
-	Kalman1D<float>::Xbar x_dist = x_filter.update(new_x, dist_variance);
-	Kalman1D<float>::Xbar y_dist = y_filter.update(new_y, dist_variance);
+	KMath::Kalman1D<float>::Xbar x_dist = x_filter.update(new_x, dist_variance);
+	KMath::Kalman1D<float>::Xbar y_dist = y_filter.update(new_y, dist_variance);
 
 
 
@@ -70,8 +70,8 @@ Ball BallFilter::get_predicted_ball_estimate(float dt, KMotionModel const & MM)
 	tmpDir = MM.Direction.val + MM.Direction.Emean;
 	tmpRot = - (MM.Rotation.val + MM.Rotation.Emean); //We turn on the other way the robot turns
 
-	Kalman1D<float>::Xbar x_dist = x_filter.read();
-	Kalman1D<float>::Xbar y_dist = y_filter.read();
+	KMath::Kalman1D<float>::Xbar x_dist = x_filter.read();
+	KMath::Kalman1D<float>::Xbar y_dist = y_filter.read();
 
 	//Translation
 	newx = x_dist(0) - cos(tmpDir)*tmpDist;

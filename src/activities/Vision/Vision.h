@@ -188,7 +188,7 @@ private:
 
 
 	KVecInt2 cameraToImage( KVecFloat2 const & c) const;
-	KMat::GenMatrix<float, 2, 2> simpleRot;
+	KMath::KMat::GenMatrix<float, 2, 2> simpleRot;
 
 	void fillGoalPostHeightMeasurments(goalpostdata_t & newpost) const;
 	void fillGoalPostWidthMeasurments(goalpostdata_t & newpost, KSegmentator::colormask_t c) const;

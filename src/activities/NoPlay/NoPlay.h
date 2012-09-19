@@ -10,7 +10,6 @@
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "tools/BehaviorConst.h"
-#include "tools/MathFunctions.h"
 
 ACTIVITY_START
 class NoPlay : public IActivity

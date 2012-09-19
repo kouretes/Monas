@@ -1,6 +1,9 @@
 #ifndef _KALMAN_H_
 #define _KALMAN_H_
-#include "../KMat.h"
+#include "tools/KMat.h"
+namespace KMath
+{
+
 template<typename V>
 class Kalman1D
 {
@@ -154,4 +157,6 @@ class Kalman1D
 
 };
 
+
+}
 #endif //_KALMAN_H_

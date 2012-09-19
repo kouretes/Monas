@@ -22,8 +22,8 @@ class BallFilter
 //		Kalman1D<float> dist_filter;
 //		Kalman1D<float> dir_filter;
 
-		Kalman1D<float> x_filter;
-		Kalman1D<float> y_filter;
+		KMath::Kalman1D<float> x_filter;
+		KMath::Kalman1D<float> y_filter;
 
 
 	public:

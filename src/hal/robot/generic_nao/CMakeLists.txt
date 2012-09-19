@@ -12,6 +12,7 @@ add_library ( GenericNao  ${LibBuildType}
 			aldebaran-motion.h
 			aldebaran-visiondefinitions.h
 			NAOKinematics.h
+			KinematicsDefines.h
 			headAngleSensor.h
 			robot_consts.h
 			robot_consts.cpp

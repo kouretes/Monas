@@ -5,7 +5,7 @@
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
 #include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
 
 using namespace boost::posix_time;
 

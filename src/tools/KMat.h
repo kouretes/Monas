@@ -34,6 +34,7 @@
  *
  * @author vosk
  * */
+namespace KMath {
 namespace KMat
 {
 	using std::runtime_error;
@@ -1437,11 +1438,13 @@ namespace KMat
 
 };
 
+};
+
 //Short Definitions :)
-typedef KMat::Vector<float, 2>::type KVecFloat2;
-typedef KMat::Vector<float, 3>::type KVecFloat3;
-typedef KMat::Vector<int, 2>::type KVecInt2;
-typedef KMat::Vector<int, 3>::type KVecInt3;
+typedef KMath::KMat::Vector<float, 2>::type KVecFloat2;
+typedef KMath::KMat::Vector<float, 3>::type KVecFloat3;
+typedef KMath::KMat::Vector<int, 2>::type KVecInt2;
+typedef KMath::KMat::Vector<int, 3>::type KVecInt3;
 
 
 #endif

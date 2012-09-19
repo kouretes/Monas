@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "messages/RoboCupPlayerData.h"
