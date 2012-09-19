@@ -35,7 +35,7 @@ int  Vision::Execute()
 	{
 		fetchAndProcess();
 	}
-	catch(KMat::SingularMatrixInvertionException &e)
+	catch(KMath::KMat::SingularMatrixInvertionException &e)
 	{
 		Logger::Instance().WriteMsg("Vision", "Holy mother of jesus", Logger::Warning);
 		return 0;
@@ -75,7 +75,7 @@ void Vision::fetchAndProcess()
 	{
 		//Get Kinematics first!
 		std::vector<float> val = kinext.getKinematics("CameraBottom");
-		p.cameraPitch = (KMat::transformations::PI * 40.0) / 180.0;
+		p.cameraPitch = (KMath::KMat::transformations::PI * 40.0) / 180.0;
 		//cout<<"CameraPitch:"<<cameraPitch<<endl;
 		seg = segbottom;
 		p.cameraX = val[0];
@@ -139,7 +139,7 @@ void Vision::fetchAndProcess()
 	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(config.Dfov * TO_RAD / 2));
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
-	KMat::transformations::makeRotation(simpleRot, -kinext.getRoll());
+	KMath::KMat::transformations::makeRotation(simpleRot, -kinext.getRoll());
 	//Now change y axis :)
 	simpleRot(0, 1) = -simpleRot(0, 1);
 	simpleRot(1, 1) = -simpleRot(1, 1);

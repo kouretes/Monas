@@ -7,6 +7,7 @@
 
 
 using namespace std;
+using namespace KMath;
 
 KCameraTranformation::KCameraTranformation() {}
 void KCameraTranformation::Init()

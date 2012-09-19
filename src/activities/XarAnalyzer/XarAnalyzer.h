@@ -28,9 +28,7 @@
 #define ACTION_TIME 8
 #define XarAnalyzerFPS 10
 
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
+
 
 
 ACTIVITY_START

@@ -7,7 +7,7 @@
 #include "messages/motion.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "architecture/executables/IActivity.h"
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
 
 #include "architecture/archConfig.h"
 #include <iomanip>
