@@ -23,6 +23,7 @@
 #include "architecture/executables/IActivity.h"
 
 #include "tools/mathcommon.h"
+#include "tools/obstacleConst.h"
 
 #define ToMeters	0.1
 
@@ -33,9 +34,6 @@
 #define OuterRing	(1+M)
 #define NEIGHBOURS 	8
 
-#define RobotRadius 	0.2
-#define MapRadius 		1.0
-#define ObstacleRadius 	0.15
 #define RingDistance 	( (MapRadius) / (M) )
 #define SectorAngleDeg 	(360.0/N) // deg
 #define SectorAngleRad 	(TO_RAD(SectorAngleDeg))

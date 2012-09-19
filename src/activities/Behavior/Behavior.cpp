@@ -6,6 +6,7 @@
 #include "messages/RoboCupGameControlData.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/mathcommon.h"
+#include "tools/obstacleConst.h"
 using namespace KMath;
 using namespace boost::posix_time;
 
