@@ -13,7 +13,6 @@
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
-#include "activities/ObstacleAvoidance/ObstacleAvoidance.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -29,8 +28,6 @@
 
 #define INIT_VALUE -111.0
 #define numOfFakeObstacles 15
-#define ATTACKER 0
-#define CENTER_FOR 1
 
 ACTIVITY_START
 class Behavior: public IActivity
@@ -65,7 +62,10 @@ public:
 	float lookAtPointRelativeYaw(float x, float y);
 	float lookAtPointRelativePitch(float x, float y);
 
-
+	enum ChainHeadNames
+	{
+	    ATTACKER=0, CENTER_FOR
+	};
 
 	void Kick(int side);
 

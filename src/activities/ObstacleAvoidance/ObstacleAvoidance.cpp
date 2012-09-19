@@ -348,23 +348,6 @@ int ObstacleAvoidance::Execute()
 		targetA = 0.0;
 	}
 
-	//	boost::shared_ptr<const ButtonMessage> bm=_blk.readSignal<ButtonMessage>("buttonevents");
-	/*  if(bm.get()!= NULL){
-	      int lbump=bm->data(KDeviceLists::L_BUMPER_L)+bm->data(KDeviceLists::L_BUMPER_R);
-	      int rbump=bm->data(KDeviceLists::R_BUMPER_L)+bm->data(KDeviceLists::R_BUMPER_R);
-	      if(debugModeCout)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "lbump " + _toString(lbump) + "rbump " + _toString(rbump), Logger::Info);
-		if(lbump >= 1 && rbump >= 1 )
-			for(int i = RIGHT; i <= LEFT; i++)
-				PolarGrid[present][2][i] = 1.0;
-		else if(lbump >= 1 )
-			for(int i = FRONT; i < LEFT; i++)
-				PolarGrid[present][2][i] = 1.0;
-		else if(rbump >= 1 )
-			for(int i = RIGHT; i < FRONT+1; i++)
-				PolarGrid[present][2][i] = 1.0;
-	  }
-	*/
 	//aging grid every 'ageTimerSeconds' seconds (currently 3)
 	if (microsec_clock::universal_time() - lastAge >= seconds(ageTimerSeconds))
 	{
@@ -374,17 +357,10 @@ int ObstacleAvoidance::Execute()
 		if(debugModeCout)
 			Logger::Instance().WriteMsg("ObstacleAvoidance", "aging!!", Logger::Info);
 
-		//publishObstacleMessage();
-		//publishMotionMessage(0);
 	}
 
-	//if (cvHighgui)
-	//cvDrawGrid();
 	publishObstacleMessage();
 	publishGridInfo();
-	//pairnei orisma initn???
-	//if(debugModePublishMotion)
-	//publishMotionMessage(FRONT);
 	return 0;
 }
 
@@ -431,6 +407,8 @@ void ObstacleAvoidance::Initialize()
 		found &= config.QueryElement("CloseObstacleCenter", CloseObstacleCenter);
 		found &= config.QueryElement("GoalDistanceTolerance", GoalDistanceTolerance);
 		found &= config.QueryElement("GoalAngleTolerance", GoalAngleTolerance);
+		
+		
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "Initialize no knowledge: " + _toString(NoKnowledge) , Logger::ExtraExtraInfo);
 
 		if (found)
@@ -601,7 +579,7 @@ void ObstacleAvoidance::ageGrid()
 void ObstacleAvoidance::rotateGrid(double angle)
 {
 	int rotateSectors = int(angle / SectorAngleRad);
-	cout << "   rotate (degrees): " << (angle * ToDegrees) << "   rotate (sectors): " << rotateSectors << endl;
+	//cout << "   rotate (degrees): " << rad2deg(angle) << "   rotate (sectors): " << rotateSectors << endl;
 	past = present;
 	present = 1 - present;
 
@@ -916,7 +894,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 		}
 	}
 
-	cout << "*** A* input: " << "x " << goalm << " y " << goaln << " o " << goalo << endl;
+	//cout << "*** A* input: " << "x " << goalm << " y " << goaln << " o " << goalo << endl;
 }
 
 void ObstacleAvoidance::reconstructPath(int ring, int sector, int orientation)

@@ -1,40 +1,29 @@
 #ifndef OBSTACLEAVOIDANCE_H
 #define OBSTACLEAVOIDANCE_H
 
-#include "hal/robot/generic_nao/robot_consts.h"
-#include "messages/TestMessage.pb.h"
-#include "messages/SensorsMessage.pb.h"
-#include "messages/motion.pb.h"
-#include "messages/ObstacleAvoidanceMessage.pb.h"
-#include "architecture/executables/IActivity.h"
-#include "tools/mathcommon.h"
-
-#include "architecture/archConfig.h"
 #include <iomanip>
-
-
-
 #include <string>
 #include <cstring>
 #include <fstream>
 #include <math.h>
 #include <vector>
 #include <map>
-#include <string>
 #include <cstdlib>
 #include <list>
-#include "messages/BehaviorMessages.pb.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "messages/TestMessage.pb.h"
+#include "messages/SensorsMessage.pb.h"
+#include "messages/BehaviorMessages.pb.h"
+#include "messages/motion.pb.h"
+#include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 
-//#define ImgSize 	500 //1000
-//#define ImgShift	(ImgSize/2)
-//#define ImgScale	200 //400
-//#define ColorMax 	255
-//#define ArrowOffset	10
+#include "architecture/archConfig.h"
+#include "architecture/executables/IActivity.h"
 
-#define ToDegrees 	(180.0/M_PI)
-#define ToRad 		(M_PI/180.0)
+#include "tools/mathcommon.h"
+
 #define ToMeters	0.1
 
 #define M 			10
@@ -49,7 +38,7 @@
 #define ObstacleRadius 	0.15
 #define RingDistance 	( (MapRadius) / (M) )
 #define SectorAngleDeg 	(360.0/N) // deg
-#define SectorAngleRad 	(SectorAngleDeg*ToRad)
+#define SectorAngleRad 	(TO_RAD(SectorAngleDeg))
 #define SectorShiftRad	( ( (N%4) == 0 ) ? 0.5*SectorAngleRad : 0.0 )
 
 #define FRONT 			(int(N/4))
@@ -58,13 +47,13 @@
 
 
 #define SonarAngleShiftDeg	20.0 // deg
-#define SonarAngleShiftRad	(SonarAngleShiftDeg*ToRad)
+#define SonarAngleShiftRad	(TO_RAD(SonarAngleShiftDeg))
 #define SonarDistanceShift	0.065
 #define SonarAngleRangeDeg	45.0 // deg
-#define SonarAngleRangeRad 	(SonarAngleRangeDeg*ToRad)
+#define SonarAngleRangeRad 	(TO_RAD(SonarAngleRangeDeg))
 
 #define RotationAngle 		(360.0/(N))
-#define RotationAngleRad 	(RotationAngle*ToRad)
+#define RotationAngleRad 	(TO_RAD(RotationAngle))
 
 #define RIGHT 			(int(FRONT - (SonarAngleShiftDeg/RotationAngle)))
 #define LEFT 			(int(FRONT + (SonarAngleShiftDeg/RotationAngle)))

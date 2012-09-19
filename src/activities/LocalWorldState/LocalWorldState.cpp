@@ -14,6 +14,8 @@
 #define MAX_TIME_TO_RESET 15 //in seconds
 using namespace std;
 
+
+using namespace KMath;
 ACTIVITY_REGISTER(LocalWorldState);
 
 bool LocalWorldState::debugmode = false;
@@ -59,7 +61,7 @@ void LocalWorldState::UserInit()
 	robotmovement.Direction.ratiomean = 1.0;// systematic error out
 	robotmovement.Direction.ratiodev = 0.0;
 	robotmovement.Direction.Emean = 0.0;// systematic error out
-	robotmovement.Direction.Edev = deg2rad(22);
+	robotmovement.Direction.Edev = TO_RAD(22);
 
 	robotmovement.Rotation.ratiomean = 1.0;// systematic error out
 	robotmovement.Rotation.ratiodev = 0.55;
@@ -234,7 +236,7 @@ void LocalWorldState::process_messages()
 			//Bearing
 			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
-			tmpOM.Bearing.Edev = deg2rad(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
+			tmpOM.Bearing.Edev = TO_RAD(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
 			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
 			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
