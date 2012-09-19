@@ -2,14 +2,21 @@
 #define MATHFUNCTIONS_H
 
 #include <math.h>
-#define TO_RAD 0.01745329f
-#define TO_DEG 1.0/TO_RAD
-#define DISTANCE(x1,x2,y1,y2) (sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)))
 
-template<typename T> inline T DISTANCE_2(T dx, T dy)
+template<typename T> inline T deg2rad(T angle){
+	return angle*M_PI/180.0;
+}
+
+template<typename T> inline T rad2deg(T angle){
+	return angle*M_PI/3.14159265358979;
+}
+
+template<typename T> inline T euclideanDistance(T dx, T dy)
 {
 	return sqrt((dx) * (dx) + (dy) * (dy));
 }
+
+
 inline static double wrapToPi(double angle)
 {
 	while (angle > M_PI)

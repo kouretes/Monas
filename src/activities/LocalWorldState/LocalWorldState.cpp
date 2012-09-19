@@ -1,15 +1,10 @@
 #include "LocalWorldState.h"
-#include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
-#include "messages/RoboCupGameControlData.h"
-#include <pthread.h>
-#include <netinet/in.h>
-#include <csignal>
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
-#include <math.h>
-#include "architecture/archConfig.h"
+
+#include "tools/logger.h"
+#include "tools/toString.h"
+
 #define NO_GAME
 #define MAX_TIME_TO_RESET 10 //in seconds
 using namespace std;
@@ -157,7 +152,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				float distance = dx + dy;
 
 				if (distance != 0)
-					distance = DISTANCE_2(dx, dy);
+					distance = euclideanDistance(dx, dy);
 
 				//Check if we must reset the ball
 				duration = observation_time - last_observation_time;
@@ -306,7 +301,7 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	float DX = (XA - TrackPointRobotPosition.x);
 	float DY = (YA - TrackPointRobotPosition.y);
 	float DR = anglediff2(AA, TrackPointRobotPosition.phi);
-	float robot_dist = DISTANCE_2(DX, DY);
+	float robot_dist = euclideanDistance(DX, DY);
 	float robot_dir = anglediff2(atan2(DY, DX), TrackPointRobotPosition.phi);
 	float robot_rot = DR;
 	MModel.Distance.val = robot_dist;
