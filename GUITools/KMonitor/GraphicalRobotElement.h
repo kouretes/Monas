@@ -1,6 +1,8 @@
 #ifndef GRAPHICALROBOTELEMENT_H_
 #define GRAPHICALROBOTELEMENT_H_
 
+#define MAX_ROT_ARC_ANGLE_DEG  180
+
 #include <QGraphicsEllipseItem>
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
@@ -115,6 +117,7 @@ private:
 	KFieldScene* parentScene;
 
 	QString hostId;
+	int teamColor;	//1 for blue, -1 for red
 
 	WorldInfo currentWIM;
 
@@ -157,6 +160,7 @@ private:
 	QGraphicsLineItem* GotoPositionLine;
 	QGraphicsPolygonItem* GotoArrow;
 	QGraphicsEllipseItem* zAxisArc;
+	//QGraphicsPolygonItem* zAxisArcArrow;
 
 	QTimer* GREtimer;
 	QTimer* MWCmdTimer;
