@@ -11,7 +11,6 @@
 #include "../external/tinyxml_2-5-3/tinyxml.h"
 #include "boost/filesystem.hpp"
 
-using namespace std;
 
 class XmlNode
 {
@@ -23,21 +22,21 @@ public:
 	static const int MAIN_FILE = 0;
 	static const int BODY_FILE = 1;
 	static const int HEAD_FILE = 2;
-	vector<string> text;
-	map<string, string > attributes;
-	map<string, vector<XmlNode> > kids;
+	std::vector<std::string> text;
+	std::map<std::string, std::string > attributes;
+	std::map<std::string, std::vector<XmlNode> > kids;
 private:
-	string headPath;
-	string bodyPath;
-	string directoryPath;
+	std::string headPath;
+	std::string bodyPath;
+	std::string directoryPath;
 	int fileType;//HeadFile = 1 BodyFile = 2
 
-	bool updateFilesValue(string path, string value, int fileType);
-	void deleteNodesForKey(string key, int fileType);
-	XmlNode * findSecondToLastNodeForKey(queue<string> & key);
-	static string extractNumber(string & str, unsigned * num);//Get the ~ part
-	static string extractNumberText(string & str, unsigned * num);
-	static queue<string> findAllSubstring(string  key);
+	bool updateFilesValue(std::string path, std::string value, int fileType);
+	void deleteNodesForKey(std::string key, int fileType);
+	XmlNode * findSecondToLastNodeForKey(std::queue<std::string> & key);
+	static std::string extractNumber(std::string & str, unsigned * num);//Get the ~ part
+	static std::string extractNumberText(std::string & str, unsigned * num);
+	static std::queue<std::string> findAllSubstring(std::string  key);
 	void insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType);
 
 
@@ -46,20 +45,20 @@ public:
 	{
 		fileType = 0;
 	};
-	vector<string> getText();
-	XmlNode(string dirPath, string headId, string bodyId);
-	void print(string pref);
+	std::vector<std::string> getText();
+	XmlNode(std::string dirPath, std::string headId, std::string bodyId);
+	void print(std::string pref);
 	unsigned getChildrenCount() const;
-	vector<string> getAttribute(string & key) ;
-	bool loadFile(string filename, int fileType);
-	bool loadAllFiles(string filename);
-	vector<string> findValueForKey(string key);
-	bool updateValueForKey(string key, string value);
-	bool burstWrite(vector<pair<string, string> > writeData);
-	int numberOfNodesForKey(string key);
-	int numberOfChildsForKey(string key);
-	int numberOfUniqueChildsForKey(string key);
-	XmlNode* findNodeForKey(string key);
+	std::vector<std::string> getAttribute(std::string & key) ;
+	bool loadFile(std::string filename, int fileType);
+	bool loadAllFiles(std::string filename);
+	std::vector<std::string> findValueForKey(std::string key);
+	bool updateValueForKey(std::string key, std::string value);
+	bool burstWrite(std::vector<std::pair<std::string, std::string> > writeData);
+	int numberOfNodesForKey(std::string key);
+	int numberOfChildrendsForKey(std::string key);
+	int numberOfUniqueChildrendsForKey(std::string key);
+	XmlNode* findNodeForKey(std::string key);
 
 };
 #endif // XML_MANAGER_H

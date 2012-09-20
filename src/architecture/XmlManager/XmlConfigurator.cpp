@@ -1,5 +1,8 @@
 #include "XmlConfigurator.h"
 
+using namespace std;
+
+
 string convertInt(int number)
 {
 	stringstream ss;//create a stringstream
@@ -114,7 +117,7 @@ int XmlNode::numberOfNodesForKey(string key)
 }
 
 
-int XmlNode::numberOfChildsForKey(string key)
+int XmlNode::numberOfChildrendsForKey(string key)
 {
 	//return findNodeForKey(keys);
 	XmlNode * darthVader = findNodeForKey(key); //darthVader = father
@@ -122,20 +125,20 @@ int XmlNode::numberOfChildsForKey(string key)
 	if(darthVader == NULL)
 		return 0;
 
-	int childs = 0;
+	int childrends = 0;
 	map<string,vector<XmlNode> >::iterator it;
 	for(it = darthVader->kids.begin(); it != darthVader->kids.end(); it++){
-		childs += (*it).second.size();
+		childrends += (*it).second.size();
 	}
-	return childs;
+	return childrends;
 }
-int XmlNode::numberOfUniqueChildsForKey(string key){
+int XmlNode::numberOfUniqueChildrendsForKey(string key){
 	XmlNode * darthVader = findNodeForKey(key); //darthVader = father
 
 	if(darthVader == NULL)
 		return 0;
 
-	int childs = darthVader->kids.size();
+	int childrends = darthVader->kids.size();
 
 }
 /**
