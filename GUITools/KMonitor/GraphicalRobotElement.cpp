@@ -37,14 +37,15 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LWSTraceVisible = false;
 	LWSMWCmdVisible = false;
 
+	QPen penForMotionCmdLine(Qt::darkRed);
+	penForMotionCmdLine.setWidth(2);
+
 	QPen penForUnionistLine(Qt::black);
-	penForUnionistLine.setWidth(2);
+	penForUnionistLine.setWidth(1);
 
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
 
-	QPen penForMotionCmdLine(Qt::darkRed);
-	penForMotionCmdLine.setWidth(2);
 
 	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
 	for(unsigned it=0; it<partclsNum; it++)
@@ -71,7 +72,6 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
 	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
 	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::transparent));
-	//zAxisArcArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
 
 	GREtimer = new QTimer();
 	connect(GREtimer, SIGNAL(timeout()), this, SLOT(clearVisionObservations()));
@@ -119,9 +119,6 @@ GraphicalRobotElement::~GraphicalRobotElement()
 
 	if(zAxisArc)
 			delete zAxisArc;
-
-	//if(zAxisArcArrow)
-		//delete zAxisArcArrow;
 
 	for(unsigned i = 0; i<ParticlesList.count();i++)
 	{
@@ -613,24 +610,11 @@ void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 		zAxisArc->setStartAngle(startAngle);
 		zAxisArc->setSpanAngle(spanAngle);
 
-		QRectF mrect = zAxisArc->rect();
-		cout << "~~~~~~~~~~~~~~~~x" << mrect.x() << endl;
-		cout << "y" << mrect.y() << endl;
-		cout << "wi" <<mrect.width()  << endl;
-		cout <<  "le" << mrect.height()<< endl;
-
-		//arrowLine = this->parentScene->motionCmdRectFromFC(&currentWIM, wmot.parameter(0), wmot.parameter(1));
-		/*arrowHead1 = calculateArrowHeadPosition(QLine(arrowLine.x1(), arrowLine.y1(),mrect.x(), mrect.y()));
-		zAxisArcArrow->setPolygon(arrowHead1);
-		QGraphicsEllipseItem* dok = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
-		dok->setRect(QRect(mrect.x(), mrect.y(), 10, 10));*/
-
 	}else
 	{
 		GotoPositionLine->setLine(0, 0, 0, 0);
 		GotoArrow->setPolygon(arrowHead);
 		zAxisArc->setRect( 0, 0, 0, 0);
-		//zAxisArcArrow->setPolygon(arrowHead1);
 	}
 
 }
