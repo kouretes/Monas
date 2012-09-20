@@ -17,14 +17,11 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-
-#include "messages/RoboCupGameControlData.h"
-
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "messages/RoboCupPlayerData.h"
+
 
 using namespace std;
 
@@ -217,6 +214,21 @@ public:
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();
+	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	/*::  This function converts decimal degrees to radians             :*/
+	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	double deg2rad(double deg)
+	{
+		return (deg * M_PI / 180.0);
+	}
+
+	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	/*::  This function converts radians to decimal degrees             :*/
+	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+	double rad2deg(double rad)
+	{
+		return (rad * 180.0 / M_PI);
+	}
 };
 
 #endif /* KLOCALIZATION_H_ */

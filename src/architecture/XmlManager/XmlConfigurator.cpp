@@ -28,7 +28,7 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId)
 			if (is_regular_file(itr->status()))
 			{
 				string filename = dirPath;
-				filename.append(itr->path().filename());
+				filename.append(itr->path().filename().string());
 
 				if(!loadAllFiles(filename))
 					cout << "Failed to load xml file \"" << itr->path().filename() << "\"" << endl;

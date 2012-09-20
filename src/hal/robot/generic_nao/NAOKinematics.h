@@ -47,20 +47,20 @@
 	 * "RightArm" = forward for right arm
  * \file NAOKinematics.h
 */
-using namespace std;
-typedef KMat::transformations KMatTransf;
-/**
-*@struct FKvars
-*@brief This struct contains all the cartesian points and angles that we extract from the forward kinematics
-*/
-struct FKvars
-{
-	float pointX, pointY, pointZ;
-	float angleX, angleY, angleZ;
-};
-typedef KMat::ATMatrix<float, 4> kmatTable;
+
 class NAOKinematics
 {
+	typedef KMath::KMat::transformations KMatTransf;
+	/**
+	*@struct FKvars
+	*@brief This struct contains all the cartesian points and angles that we extract from the forward kinematics
+	*/
+	struct FKvars
+	{
+		float pointX, pointY, pointZ;
+		float angleX, angleY, angleZ;
+	};
+	typedef KMath::KMat::ATMatrix<float, 4> kmatTable;
 public:
 	float PI;
 	//Predifined tables
@@ -178,7 +178,7 @@ public:
 	 * @param WhatForward. With this string, this function understands whate forward chain we want.
 	 * @param joints. One vector with all the joints for the chain.
 	 * */
-	void filterForward(kmatTable & Tmatrix, string WhatForward, std::vector<float> joints);
+	void filterForward(kmatTable & Tmatrix, std::string WhatForward, std::vector<float> joints);
 
 	/**
 	 * @fn FKvars filterForwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
@@ -212,7 +212,7 @@ public:
 	 * @param allJoints. all the joint of the robot. They must be Larm,Rarm,Lleg,Rleg,Head with that order.
 	 * */
 	//Makaronada code
-	FKvars calculateCenterOfMass(vector<float> allJoints);
+	FKvars calculateCenterOfMass(std::vector<float> allJoints);
 
 	/**
 	 * vector<vector<float> > inverseHead(float px,float py,float pz, float rx, float ry, float rz, bool withAngles, bool topCamera)
@@ -228,7 +228,7 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: HeadYaw,HeadPitch.
 	 * */
-	vector<vector<float> > inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera);
+	std::vector<std::vector<float> > inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera);
 
 	/**
 	 * vector<vector<float> > inverseLeftHand(float px,float py,float pz, float rx, float ry, float rz)
@@ -242,7 +242,7 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll
 	 * */
-	vector<vector<float> > inverseLeftHand(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseLeftHand(float px, float py, float pz, float rx, float ry, float rz);
 
 	/**
 	 * vector<vector<float> > inverseRightHand(float px,float py,float pz, float rx, float ry, float rz)
@@ -256,7 +256,7 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll
 	 * */
-	vector<vector<float> > inverseRightHand(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseRightHand(float px, float py, float pz, float rx, float ry, float rz);
 	/**
 	 * vector<vector<float> > inverseLeftLeg(float px,float py,float pz, float rx, float ry, float rz)
 	 * @brief Inverse Kinematics for the left leg (DON'T try to understand the code, it's just maths)
@@ -269,7 +269,7 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll
 	 * */
-	vector<vector<float> > inverseLeftLeg(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseLeftLeg(float px, float py, float pz, float rx, float ry, float rz);
 
 	/**
 	 * vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz)
@@ -283,7 +283,7 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll
 	 * */
-	vector<vector<float> > inverseRightLeg(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseRightLeg(float px, float py, float pz, float rx, float ry, float rz);
 
 };
 
@@ -378,7 +378,7 @@ void NAOKinematics::forwardCamera(kmatTable & EndTransf, float HeadYaw, float He
 	EndTransf = Tend;
 }
 
-void NAOKinematics::filterForward(kmatTable & Tmatrix, string WhatForward, std::vector<float> joints)
+void NAOKinematics::filterForward(kmatTable & Tmatrix, std::string WhatForward, std::vector<float> joints)
 {
 	Tmatrix.zero();
 	std::vector<float>::iterator iter;
@@ -454,7 +454,7 @@ void NAOKinematics::filterForward(kmatTable & Tmatrix, string WhatForward, std::
 	Tmatrix.check();
 }
 
-FKvars NAOKinematics::filterForwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
+NAOKinematics::FKvars NAOKinematics::filterForwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
 {
 	if(!start.compare("Torso"))
 	{
@@ -482,7 +482,7 @@ FKvars NAOKinematics::filterForwardFromTo(std::string start, std::string stop, s
 	return FKVariables;
 }
 
-kmatTable NAOKinematics::forwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
+NAOKinematics::kmatTable NAOKinematics::forwardFromTo(std::string start, std::string stop, std::vector<float> jointsStart, std::vector<float> jointsEnd)
 {
 	if(!start.compare("Torso"))
 	{
@@ -503,10 +503,10 @@ kmatTable NAOKinematics::forwardFromTo(std::string start, std::string stop, std:
 	return Tmatrix1;
 }
 
-FKvars NAOKinematics::calculateCenterOfMass(vector<float> allJoints)
+NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> allJoints)
 {
 	kmatTable endTr1, endTr2, endTr3, endTr4, endTr5, endTr6, temp;
-	KMat::GenMatrix<float, 3, 1> lh1, lh2, lh3, lh4, rh1, rh2, rh3, rh4, ll1, ll2, ll3, ll4, ll5, ll6, rl1, rl2, rl3, rl4, rl5, rl6, h1, h2, t;
+	KMath::KMat::GenMatrix<float, 3, 1> lh1, lh2, lh3, lh4, rh1, rh2, rh3, rh4, ll1, ll2, ll3, ll4, ll5, ll6, rl1, rl2, rl3, rl4, rl5, rl6, h1, h2, t;
 	float PI = KMatTransf::PI;
 	//Left Hand
 	KMatTransf::makeTranslation(endTr1, LShoulderPitchX, LShoulderPitchY, LShoulderPitchZ);
@@ -733,10 +733,10 @@ FKvars NAOKinematics::calculateCenterOfMass(vector<float> allJoints)
 	return FKVariables;
 }
 
-vector<vector<float> > NAOKinematics::inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera)
+std::vector<std::vector<float> > NAOKinematics::inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera)
 {
 	std::vector<float> fc, empty;
-	std::vector<vector<float> > returnResult;
+	std::vector<std::vector<float> > returnResult;
 	FKvars output;
 	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
 	float theta1, theta2;
@@ -846,10 +846,10 @@ vector<vector<float> > NAOKinematics::inverseHead(float px, float py, float pz, 
 	return returnResult;
 }
 
-vector<vector<float> > NAOKinematics::inverseLeftHand(float px, float py, float pz, float rx, float ry, float rz)
+std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(float px, float py, float pz, float rx, float ry, float rz)
 {
 	std::vector<float> flh, empty;
-	std::vector<vector<float> > returnResult;
+	std::vector<std::vector<float> > returnResult;
 	KMatTransf::makeTransformation(Tinit, px, py, pz, rx, ry, rz);
 	float startX = 0;
 	float startY = ShoulderOffsetY + ElbowOffsetY;
@@ -961,10 +961,10 @@ vector<vector<float> > NAOKinematics::inverseLeftHand(float px, float py, float 
 }
 
 
-vector<vector<float> > NAOKinematics::inverseRightHand(float px, float py, float pz, float rx, float ry, float rz)
+std::vector<std::vector<float> > NAOKinematics::inverseRightHand(float px, float py, float pz, float rx, float ry, float rz)
 {
 	std::vector<float> frh, empty;
-	std::vector<vector<float> > returnResult;
+	std::vector<std::vector<float> > returnResult;
 	//Rotate input to remvoe Rfix
 	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
 	Tinit = T;
@@ -1086,10 +1086,10 @@ vector<vector<float> > NAOKinematics::inverseRightHand(float px, float py, float
 	return returnResult;
 }
 
-vector<vector<float> > NAOKinematics::inverseLeftLeg(float px, float py, float pz, float rx, float ry, float rz)
+std::vector<std::vector<float> > NAOKinematics::inverseLeftLeg(float px, float py, float pz, float rx, float ry, float rz)
 {
 	std::vector<float> fll, empty;
-	std::vector<vector<float> > returnResult;
+	std::vector<std::vector<float> > returnResult;
 	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
 	Tinit = T;
 	//Move the start point to the hipyawpitch point
@@ -1135,7 +1135,7 @@ vector<vector<float> > NAOKinematics::inverseLeftLeg(float px, float py, float p
 		TtempTheta5 = Tstart;
 		TtempTheta5.fast_invert();
 	}
-	catch(KMat::SingularMatrixInvertionException d)
+	catch(KMath::KMat::SingularMatrixInvertionException d)
 	{
 		return returnResult;
 	}
@@ -1175,7 +1175,7 @@ vector<vector<float> > NAOKinematics::inverseLeftLeg(float px, float py, float p
 			{
 				Ttemp.fast_invert();
 			}
-			catch(KMat::SingularMatrixInvertionException d)
+			catch(KMath::KMat::SingularMatrixInvertionException d)
 			{
 				continue;
 			}
@@ -1259,10 +1259,10 @@ vector<vector<float> > NAOKinematics::inverseLeftLeg(float px, float py, float p
 	return returnResult;
 }
 
-vector<vector<float> > NAOKinematics::inverseRightLeg(float px, float py, float pz, float rx, float ry, float rz)
+std::vector<std::vector<float> > NAOKinematics::inverseRightLeg(float px, float py, float pz, float rx, float ry, float rz)
 {
 	std::vector<float> frl, empty;
-	std::vector<vector<float> > returnResult;
+	std::vector<std::vector<float> > returnResult;
 	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
 	Tinit = T;
 	//Move the start point to the hipyawpitch point
@@ -1308,7 +1308,7 @@ vector<vector<float> > NAOKinematics::inverseRightLeg(float px, float py, float 
 		TtempTheta5 = Tstart;
 		TtempTheta5.fast_invert();
 	}
-	catch(KMat::SingularMatrixInvertionException d)
+	catch(KMath::KMat::SingularMatrixInvertionException d)
 	{
 		return returnResult;
 	}
@@ -1348,7 +1348,7 @@ vector<vector<float> > NAOKinematics::inverseRightLeg(float px, float py, float 
 			{
 				Ttemp.fast_invert();
 			}
-			catch(KMat::SingularMatrixInvertionException d)
+			catch(KMath::KMat::SingularMatrixInvertionException d)
 			{
 				continue;
 			}

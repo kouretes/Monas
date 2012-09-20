@@ -22,7 +22,8 @@
 #include "architecture/archConfig.h"
 #include "architecture/executables/IActivity.h"
 
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
+#include "tools/obstacleConst.h"
 
 #define ToMeters	0.1
 
@@ -33,12 +34,9 @@
 #define OuterRing	(1+M)
 #define NEIGHBOURS 	8
 
-#define RobotRadius 	0.2
-#define MapRadius 		1.0
-#define ObstacleRadius 	0.15
 #define RingDistance 	( (MapRadius) / (M) )
 #define SectorAngleDeg 	(360.0/N) // deg
-#define SectorAngleRad 	(deg2rad(SectorAngleDeg))
+#define SectorAngleRad 	(TO_RAD(SectorAngleDeg))
 #define SectorShiftRad	( ( (N%4) == 0 ) ? 0.5*SectorAngleRad : 0.0 )
 
 #define FRONT 			(int(N/4))
@@ -47,13 +45,13 @@
 
 
 #define SonarAngleShiftDeg	20.0 // deg
-#define SonarAngleShiftRad	(deg2rad(SonarAngleShiftDeg))
+#define SonarAngleShiftRad	(TO_RAD(SonarAngleShiftDeg))
 #define SonarDistanceShift	0.065
 #define SonarAngleRangeDeg	45.0 // deg
-#define SonarAngleRangeRad 	(deg2rad(SonarAngleRangeDeg))
+#define SonarAngleRangeRad 	(TO_RAD(SonarAngleRangeDeg))
 
 #define RotationAngle 		(360.0/(N))
-#define RotationAngleRad 	(deg2rad(RotationAngle))
+#define RotationAngleRad 	(TO_RAD(RotationAngle))
 
 #define RIGHT 			(int(FRONT - (SonarAngleShiftDeg/RotationAngle)))
 #define LEFT 			(int(FRONT + (SonarAngleShiftDeg/RotationAngle)))

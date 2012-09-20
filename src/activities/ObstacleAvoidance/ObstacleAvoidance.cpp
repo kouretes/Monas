@@ -24,11 +24,7 @@ ACTIVITY_REGISTER(ObstacleAvoidance);
 
 /*********** Math functions ***********/
 
-double angleDiff(double a1, double a2)
-{
-	return wrapToPi(wrapToPi(a1 + M_PI - a2) - M_PI);
-}
-
+using namespace KMath;
 
 int DtoR(double d)
 {
@@ -305,7 +301,7 @@ int ObstacleAvoidance::Execute()
 			targetR = XYtoR(targetX, targetY);
 			targetS = XYtoS(targetX, targetY);
 			double targetZeroOrientation = wrapTo0_2Pi((targetS + 0.5) * SectorAngleRad - M_PI_2);
-			targetO = int( wrapTo0_2Pi( angleDiff(targetA, targetZeroOrientation) + 0.5 * M_PI_4 ) / M_PI_4 );
+			targetO = int( wrapTo0_2Pi( anglediff(targetA, targetZeroOrientation) + 0.5 * M_PI_4 ) / M_PI_4 );
 
 			if (targetR > OuterRing)
 			{
@@ -658,7 +654,7 @@ void ObstacleAvoidance::moveRobot()
 	//cout << "Odometry  : " << odometryX << " " << odometryY << " " << odometryA << endl;
 	diffX = odometryX - robotX;
 	diffY = odometryY - robotY;
-	diffA = angleDiff(odometryA, robotA);
+	diffA = anglediff(odometryA, robotA);
 	//cout << "DIFF: " << diffX << " " << diffY << " " << diffA << endl;
 	double diffD = sqrt(diffX * diffX + diffY * diffY);
 	double diffT = atan2(diffY, diffX);
@@ -802,7 +798,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 			next.sector = (current.ring == InnerRing) ? wrapTo(current.sector + 1, N) : current.sector;
 			next.orientation = (current.ring == InnerRing) ? current.orientation : wrapTo(current.orientation + 1, NEIGHBOURS);
 			next.angle = next.sector * SectorAngleRad + next.orientation * M_PI_4;
-			deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+			deltaTheta = fabs( anglediff(next.angle, current.angle) );
 			next.gn = current.gn;
 			next.gn += (current.ring == InnerRing) ? RotationCostFactor * SectorAngleRad / (2.0 * M_PI) : RotationCostFactor * deltaTheta / (2.0 * M_PI);
 			next.hn = euclidean[next.ring][next.sector][goalm][goaln];
@@ -814,7 +810,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 			next.sector = (current.ring == InnerRing) ? wrapTo(current.sector - 1, N) : current.sector;
 			next.orientation = (current.ring == InnerRing) ? current.orientation : wrapTo(current.orientation - 1, NEIGHBOURS);
 			next.angle = next.sector * SectorAngleRad + next.orientation * M_PI_4;
-			deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+			deltaTheta = fabs( anglediff(next.angle, current.angle) );
 			next.gn = current.gn;
 			next.gn += (current.ring == InnerRing) ? RotationCostFactor * SectorAngleRad / (2.0 * M_PI) : RotationCostFactor * deltaTheta / (2.0 * M_PI);
 			next.hn = euclidean[next.ring][next.sector][goalm][goaln];
@@ -845,7 +841,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 
 					sideCost = ( (next.orientation != j) && (j != current.orientation) ) ? SemiSideCostFactor : 1.0;
 					next.gn += sideCost * euclidean[current.ring][current.sector][next.ring][next.sector];
-					deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+					deltaTheta = fabs( anglediff(next.angle, current.angle) );
 					next.gn += deltaTheta / (2.0 * M_PI);
 					next.hn =  euclidean[next.ring][next.sector][goalm][goaln];
 					next.fn = next.gn + next.hn;
@@ -888,7 +884,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 
 				sideCost = SideStepCostFactor;
 				next.gn += sideCost * euclidean[current.ring][current.sector][next.ring][next.sector];
-				deltaTheta = fabs(angleDiff(next.angle, current.angle));
+				deltaTheta = fabs(anglediff(next.angle, current.angle));
 				next.gn += deltaTheta / (2.0 * M_PI);
 				next.hn =  euclidean[next.ring][next.sector][goalm][goaln];
 				next.fn = next.gn + next.hn;

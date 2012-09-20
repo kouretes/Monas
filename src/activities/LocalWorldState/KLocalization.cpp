@@ -4,22 +4,21 @@
  *      Author: krambo
  *		Patched: eldr4d
  */
- 
-#include <boost/math/distributions/normal.hpp>
 #include <time.h>
 #include <boost/random.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <math.h>
-#include <iomanip>
-#include <boost/lexical_cast.hpp>
- 
 #include "newran/newran.h"
 #include "KLocalization.h"
+#include <iomanip>
+#include <boost/lexical_cast.hpp>
 #include "architecture/archConfig.h"
-
+#include <boost/math/distributions/normal.hpp>
+#include "tools/logger.h"
+#include "tools/toString.h"
 using namespace boost;
-
+using namespace KMath;
 KLocalization::KLocalization()
 {
 }
@@ -155,7 +154,6 @@ void KLocalization::setParticlesPoseUniformly()
 	{
 		float x, y;
 
-		//TODO auta se xml file
 		if(playerNumber == 1)
 		{
 			y = 0;
@@ -171,7 +169,7 @@ void KLocalization::setParticlesPoseUniformly()
 			y = -1.2;
 			x = -2.4;
 		}
-		else
+		else if(playerNumber == 4)
 		{
 			y = -0.4;
 			x = -2.4;
@@ -203,12 +201,14 @@ void KLocalization::setParticlesPoseUniformly()
 
 void KLocalization::initializeParticles(int playerState, bool kickOff)
 {
-	
-	if(playerState == PLAYER_READY)
+	if(playerState == PLAYER_PENALISED)
+	{
+		setParticlesPoseUniformly();
+	}
+	else if(playerState == PLAYER_READY)
 	{
 		float phi, x, y;
 
-		//TODO auta se xml file
 		if(playerNumber == 1)
 		{
 			y = -FieldMaxY;
@@ -227,7 +227,7 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 			x = -1.2;
 			phi = deg2rad(90);
 		}
-		else
+		else if(playerNumber == 4)
 		{
 			y = FieldMaxY;
 			x = -1.2;
@@ -257,10 +257,6 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 			SIRParticles.phi[i] = initPhi[(kickOff) ? 0 : 1];
 			SIRParticles.Weight[i] = 1.0 / partclsNum;
 		}
-	}
-	else if(playerState == PLAYER_PENALISED)
-	{
-		setParticlesPoseUniformly();
 	}
 }
 
@@ -372,13 +368,13 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 
 		for (unsigned int i = 0; i < Observation.size(); i++)
 		{
-			R = euclideanDistance(SIRParticles.x[p] - Observation[i].Feature.x, SIRParticles.y[p] - Observation[i].Feature.y);
+			R = KMath::norm2(SIRParticles.x[p] - Observation[i].Feature.x, SIRParticles.y[p] - Observation[i].Feature.y);
 			OverallWeightEnemyField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2(Observation[i].Feature.y - SIRParticles.y[p], Observation[i].Feature.x - SIRParticles.x[p]);
 			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
 			OverallWeightEnemyField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 			//we take the symetric yellow now, so we put a - to the x and y of the observation
-			R = euclideanDistance(SIRParticles.x[p] - (-Observation[i].Feature.x), SIRParticles.y[p] - (-Observation[i].Feature.y));
+			R = KMath::norm2(SIRParticles.x[p] - (-Observation[i].Feature.x), SIRParticles.y[p] - (-Observation[i].Feature.y));
 			OverallWeightOwnField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2((-Observation[i].Feature.y) - SIRParticles.y[p], (-Observation[i].Feature.x) - SIRParticles.x[p]);
 			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
@@ -414,7 +410,7 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 		AdditiveEnemyField = 1;
 		AdditiveOwnField = 1;
 		//Enemy Left
-		R = euclideanDistance(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - yPosOfFeature);
+		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - yPosOfFeature);
 		AdditiveEnemyField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(yPosOfFeature - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
@@ -422,14 +418,14 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 		AdditiveWeightTotal += AdditiveEnemyField;
 		AdditiveEnemyField = 1;
 		//Enemy Right
-		R = euclideanDistance(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - (-yPosOfFeature));
+		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - (-yPosOfFeature));
 		AdditiveEnemyField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2((-yPosOfFeature) - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 		AdditiveEnemyField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
 		AdditiveWeightTotal += AdditiveEnemyField;
 		//Own Left
-		R = euclideanDistance(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-yPosOfFeature));
+		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-yPosOfFeature));
 		AdditiveOwnField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-yPosOfFeature - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
@@ -437,7 +433,7 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 		AdditiveWeightTotal += AdditiveOwnField;
 		AdditiveOwnField = 1;
 		//Own Right
-		R = euclideanDistance(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-(-yPosOfFeature)));
+		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-(-yPosOfFeature)));
 		AdditiveOwnField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-(-yPosOfFeature) - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);

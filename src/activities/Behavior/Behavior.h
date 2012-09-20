@@ -62,7 +62,7 @@ public:
 	float lookAtPointRelativeYaw(float x, float y);
 	float lookAtPointRelativePitch(float x, float y);
 
-	enum ChainHeadNames
+	enum ROLES
 	{
 	    ATTACKER=0, CENTER_FOR
 	};

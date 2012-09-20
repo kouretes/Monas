@@ -18,6 +18,7 @@ ACTIVITY_START
 
 
 using namespace std;
+using namespace KMath;
 inline measurement mWeightedMean(measurement m1, measurement m2)
 {
 	measurement res;

@@ -3,20 +3,20 @@
 
 #include <math.h>
 
-template<typename T> inline T deg2rad(T angle){
-	return angle*M_PI/180.0;
-}
+//DO NOT USE DEFINES, USE THE BLOODY FUNCTIONS
+#define TO_RAD_SUPER_INTERNAL_DO_NOT_USE 0.01745329f
+namespace KMath{
 
-template<typename T> inline T rad2deg(T angle){
-	return angle*M_PI/3.14159265358979;
-}
 
-template<typename T> inline T euclideanDistance(T dx, T dy)
+inline static double TO_RAD(double X) { return X*TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
+inline static double TO_DEG(double X) { return X/TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
+
+#define DISTANCE(x1,x2,y1,y2) (sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)))
+
+template<typename T> inline T norm2(T dx, T dy)
 {
 	return sqrt((dx) * (dx) + (dy) * (dy));
 }
-
-
 inline static double wrapToPi(double angle)
 {
 	while (angle > M_PI)
@@ -80,5 +80,5 @@ static double toCartesianY(double d, double t)
 	return d * sin(t);
 }
 
-
+}
 #endif
