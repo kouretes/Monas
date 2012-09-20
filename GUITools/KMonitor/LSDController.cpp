@@ -274,11 +274,11 @@ void LSDController::updateInertialBuffer(AllSensorValuesMessage asvm)
 	iv.AccZvalue = QString::fromStdString(_toString(Value.sensorvalue()));
 
 	Value.Clear();
-	Value = asvm.jointdata(KDeviceLists::GYR + KDeviceLists::AXIS_X);
+	Value = asvm.computeddata(KDeviceLists::ANGLE + KDeviceLists::AXIS_X);
 	iv.angX = QString::fromStdString(_toString(Value.sensorvalue()));
 
 	Value.Clear();
-	Value = asvm.jointdata(KDeviceLists::GYR + KDeviceLists::AXIS_Y);
+	Value = asvm.computeddata(KDeviceLists::ANGLE + KDeviceLists::AXIS_Y);
 	iv.angY = QString::fromStdString(_toString(Value.sensorvalue()));
 
 	InertialBuffer.push_front(iv);
