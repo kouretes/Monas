@@ -50,7 +50,8 @@
 
 class NAOKinematics
 {
-	typedef KMath::KMat::transformations KMatTransf;
+public:
+	float PI;
 	/**
 	*@struct FKvars
 	*@brief This struct contains all the cartesian points and angles that we extract from the forward kinematics
@@ -61,8 +62,9 @@ class NAOKinematics
 		float angleX, angleY, angleZ;
 	};
 	typedef KMath::KMat::ATMatrix<float, 4> kmatTable;
-public:
-	float PI;
+	
+private:
+	typedef KMath::KMat::transformations KMatTransf;
 	//Predifined tables
 	kmatTable TBaseHead, TEndHead1, TEndHead2, RotHead;
 	kmatTable TBaseLArm, TEndLArm, RotLArm;
@@ -77,7 +79,6 @@ public:
 	kmatTable T, base, Rot, Tstart, Ttemp, Ttemp2, TtempTheta5, Tinit, Rfix;
 
 public:
-
 	NAOKinematics()
 	{
 		PI = KMatTransf::PI;
