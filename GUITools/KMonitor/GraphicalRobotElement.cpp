@@ -37,15 +37,14 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LWSTraceVisible = false;
 	LWSMWCmdVisible = false;
 
-	QPen penForMotionCmdLine(Qt::darkRed);
-	penForMotionCmdLine.setWidth(2);
-
 	QPen penForUnionistLine(Qt::black);
 	penForUnionistLine.setWidth(1);
 
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
 
+	QPen penForMotionCmdLine(Qt::darkRed);
+	penForMotionCmdLine.setWidth(2);
 
 	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
 	for(unsigned it=0; it<partclsNum; it++)
@@ -58,6 +57,10 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	HFOVLines =this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkCyan),QBrush(Qt::Dense7Pattern));
 
+	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
+	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
+	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::transparent));
+
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
 	Robot = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
@@ -68,10 +71,6 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LeftYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	RightYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
-
-	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
-	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
-	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::transparent));
 
 	GREtimer = new QTimer();
 	connect(GREtimer, SIGNAL(timeout()), this, SLOT(clearVisionObservations()));
