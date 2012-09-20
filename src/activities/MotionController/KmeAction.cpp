@@ -18,7 +18,7 @@ KmeAction::KmeAction(std::string name, AL::ALValue actionNames, AL::ALValue acti
 
 	try
 	{
-		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+		dcm = new AL::DCMProxy(KAlBroker::Instance().GetBroker());
 	}
 	catch (AL::ALError& e)
 	{

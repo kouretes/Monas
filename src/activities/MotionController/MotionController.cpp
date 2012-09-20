@@ -40,7 +40,7 @@ void MotionController::UserInit()
 	//}
 	try
 	{
-		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+		dcm = new AL::DCMProxy(KAlBroker::Instance().GetBroker());
 	}
 	catch (AL::ALError& e)
 	{
@@ -49,17 +49,18 @@ void MotionController::UserInit()
 
 	try
 	{
-		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
+		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MotionController", "Error in getting motion proxy", Logger::FatalError);
+		Logger::Instance().WriteMsg("MotionController", "Error in getting motion proxy" + e.getDescription(), Logger::FatalError);
 	}
 
 	try
 	{
-		pbroker = AL::ALPtr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
-		framemanager = AL::ALPtr<AL::ALFrameManagerProxy>(new AL::ALFrameManagerProxy(pbroker));
+		framemanager = new AL::ALFrameManagerProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
+		//pbroker = boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker());
+		//framemanager = boost::shared_ptr<AL::ALFrameManagerProxy>(new AL::ALFrameManagerProxy(pbroker));
 	}
 	catch (AL::ALError& e)
 	{
@@ -254,7 +255,6 @@ void MotionController::mglrun()
 	{
 		/* Check if the robot is falling and remove stiffness, kill all motions */
 		float normdist = (accnorm - KDeviceLists::Interpret::GRAVITY_PULL) / KDeviceLists::Interpret::GRAVITY_PULL;
-
 		if (
 		    (
 		        normdist < -0.65 || normdist > 0.65  ||
@@ -902,78 +902,28 @@ vector<float> MotionController::KGetAngles()
 }
 
 void MotionController::readWalkParameters()
-{
-	std::string fname = ArchConfig::Instance().GetConfigPrefix() + "walk_parameters.xml";
-	TiXmlDocument d(fname);
-
-	if(!d.LoadFile())
-	{
-		Logger::Instance().WriteMsg("MotionController", "walk_parameters.xml cannot be parsed", Logger::Warning);
-		return;
-	}
-
-	/*
+{	
 	AL::ALValue config;
-		config.arraySetSize(15);
-		for (int i = 0; i < 15; ++i)
-			config[i].arraySetSize(2);
-		config[0][0] = "ENABLE_FOOT_CONTACT_PROTECTION";
-		config[0][1] = true;
-		config[1][0] = "ENABLE_FALL_MANAGEMENT_PROTECTION";
-		config[1][1] = false;
-		config[2][0] = "WALK_MAX_TRAPEZOID";
-		config[2][1] = 2.5; // 4.5
-		config[3][0] = "WALK_MIN_TRAPEZOID";
-		config[3][1] = 1.65; // 3.5
-		config[4][0] = "WALK_STEP_MAX_PERIOD";
-		config[4][1] = 28; // 30
-		config[5][0] = "WALK_STEP_MIN_PERIOD";
-		config[5][1] = 18; // 21
-		config[6][0] = "WALK_MAX_STEP_X";
-		config[6][1] = 0.044; // 0.04
-		config[7][0] = "WALK_MAX_STEP_Y";
-		config[7][1] = 0.04; // 0.04
-		config[8][0] = "WALK_MAX_STEP_THETA";
-		config[8][1] = 30; // 20
-		config[9][0] = "WALK_STEP_HEIGHT";
-		config[9][1] = 0.01; // 0.015
-		config[10][0] = "WALK_FOOT_SEPARATION";
-		config[10][1] = 0.095; // 0.095
-		config[11][0] = "WALK_FOOT_ORIENTATION";
-		config[11][1] = 5.0;// 0
-		config[12][0] = "WALK_TORSO_HEIGHT";
-		config[12][1] = 0.316;
-		config[13][0] = "WALK_TORSO_ORIENTATION_X";
-		config[13][1] = 0.0; // 0
-		config[14][0] = "WALK_TORSO_ORIENTATION_Y";
-		config[14][1] = 0.0; // 0
-
-		motion->setMotionConfig(config);
-		*/
-	std::vector<std::string> names;
-	std::vector<float> values;
-	const TiXmlElement *c = d.FirstChildElement();
-
-	while(c)
-	{
-		names.push_back(c->Value());
-		std::istringstream strs( c->GetText() );
-		float v;
-		strs >> v;
-		values.push_back(v);
-		cout << c->Value() << ":" << v << endl;
-		c = c->NextSiblingElement();
+	config.arraySetSize(7);
+	
+	string filename = "walk_parameters";
+	XmlNode * walkPamNode = _xml.findNodeForKey(filename);
+	int itteration = 0;
+	for(map<string,vector<XmlNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){
+	
+		std::istringstream strs( (walkPamNode->findValueForKey((*it).first)).front() );
+		float value;
+		strs>>value;
+		if((*it).first.compare("EnableFallManager")!=0){
+			config[itteration].arraySetSize(2);
+			config[itteration][0] = (*it).first;
+			config[itteration][1] = value;
+			itteration++;
+		}else{
+			motion->setFallManagerEnabled(value);
+		}
 	}
-
-	AL::ALValue config;
-	config.arraySetSize(names.size());
-
-	for(unsigned i = 0; i < names.size(); i++)
-	{
-		config[i].arraySetSize(2);
-		config[i][0] = names[i];
-		config[i][1] = values[i];
-	}
+	
 
 	motion->setMotionConfig(config);
 }

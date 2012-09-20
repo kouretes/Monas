@@ -52,11 +52,12 @@ public:
 
 private:
 
-	AL::ALPtr<AL::DCMProxy> dcm;
-	AL::ALPtr<AL::ALProxy> temp;
-	AL::ALPtr<AL::ALMotionProxy> motion;
-	AL::ALPtr<AL::ALBroker> pbroker;
-	AL::ALPtr<AL::ALFrameManagerProxy> framemanager;
+	AL::DCMProxy *dcm;
+	AL::ALMotionProxy *motion;
+	AL::ALFrameManagerProxy *framemanager;
+	boost::shared_ptr<AL::ALProxy> temp;
+	boost::shared_ptr<AL::ALBroker> pbroker;
+	//boost::shared_ptr<AL::ALFrameManagerProxy> framemanager;
 
 	bool walkingWithVelocity;
 

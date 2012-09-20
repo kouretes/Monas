@@ -19,13 +19,14 @@ typedef  struct measurement_struct
 	float var;
 }  measurement;
 
-class CameraT : public KMat::transformations
+
+class CameraT : public KMath::KMat::transformations
 {
 
 	static const double TAU = 33.33333333333333333333333333333333; //Skew constant of CMOS sensor in ms
 	//v is velocity components
 	//tau is time per line. constant of CMOS sensors
-	template<typename T> static void skew2d(KMat::ATMatrix<T, 3> t, const KMat::GenMatrix<T, 2, 1>&  v, const T tau)
+	template<typename T> static void skew2d(KMath::KMat::ATMatrix<T, 3> t, const KMath::KMat::GenMatrix<T, 2, 1>&  v, const T tau)
 	{
 		t.identity();
 		t.AisIdentity = false;
@@ -93,11 +94,11 @@ public:
 
 private:
 	cpose thepose;
-	KMat::ATMatrix<float, 4> cameraChain; //Camera to ground transformation
-	KMat::ATMatrix<float, 4> cameraTorsoChain; //CameraToTorso;
-	KMat::ATMatrix<float, 4> cameraChainInv; //Inverse
+	KMath::KMat::ATMatrix<float, 4> cameraChain; //Camera to ground transformation
+	KMath::KMat::ATMatrix<float, 4> cameraTorsoChain; //CameraToTorso;
+	KMath::KMat::ATMatrix<float, 4> cameraChainInv; //Inverse
 	//KMat::ATMatrix<float,4> cameraYawless;
-	AL::ALPtr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
 };
 

@@ -22,7 +22,7 @@ private:
 
 	void Initialize();
 
-	AL::ALPtr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
 	std::vector<std::string> LeftDive_names;
 	AL::ALValue LeftDive_times, LeftDive_keys;

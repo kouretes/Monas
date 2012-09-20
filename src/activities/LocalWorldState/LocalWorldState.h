@@ -1,18 +1,28 @@
 #ifndef LocalWorldState_H
 #define LocalWorldState_H
+#include <string>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <pthread.h>
+#include <netinet/in.h>
+#include <math.h>
+#include <csignal>
 
 #include "architecture/executables/IActivity.h"
+#include "architecture/archConfig.h"
+
+
+#include "hal/robot/generic_nao/robot_consts.h"
 
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
+#include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "BallFilter.h"
 #include "KLocalization.h"
 #include "PracticalSocket.h"
-#include <string>
 
 
 ACTIVITY_START
@@ -38,6 +48,7 @@ public:
 
 	void RobotPositionMotionModel(KMotionModel & MModel);
 	void calculate_ball_estimate(KMotionModel const & MModel);
+	
 private:
 	//check if the first odometry data had come
 	bool firstOdometry;
@@ -103,21 +114,6 @@ private:
 	header outgoingheader;
 	int size;
 	char *data;
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts decimal degrees to radians             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double deg2rad(double deg)
-	{
-		return (deg * M_PI / 180.0);
-	}
-
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts radians to decimal degrees             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double rad2deg(double rad)
-	{
-		return (rad * 180.0 / M_PI);
-	}
 
 };
 ACTIVITY_END

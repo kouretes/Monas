@@ -1,7 +1,7 @@
 #ifndef BehaviorConst_H
 #define BehaviorConst_H
 
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
 #include "messages/AllMessagesHeader.h"
 //********headbehavior enums***********
 #define DONOTHING 0
@@ -39,10 +39,6 @@ static const float  lPost = 0.7,
                     goodConfidence = 10.0,
                     badConfidence = 5.0;
 //Need change for penalties!!!!!!!!!!!!!!!!!!!!!!!!!! Suggested 0.40
-
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
 
 
 bool readyToKick(boost::shared_ptr<const ObservationMessage>  msg1)
@@ -146,7 +142,7 @@ bool robotInPosition(boost::shared_ptr <const WorldInfo> w, boost::shared_ptr <c
 	if( targetY - locDeviation > currentY || currentY > targetY + locDeviation  )
 		return false;
 
-	if( anglediff2(targetTheta , currentTheta) > M_PI / 8  )
+	if( KMath::anglediff2(targetTheta , currentTheta) > M_PI / 8  )
 		return false;
 
 	return true;
@@ -163,7 +159,7 @@ bool robotInPosition(float currentX, float targetX, float currentY, float target
 	if( targetY - locDeviation > currentY || currentY > targetY + locDeviation )
 		return false;
 
-	if( anglediff2(targetTheta , currentTheta) > M_PI / 8 )
+	if( KMath::anglediff2(targetTheta , currentTheta) > M_PI / 8 )
 		return false;
 
 	return true;

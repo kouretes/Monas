@@ -24,11 +24,7 @@ ACTIVITY_REGISTER(ObstacleAvoidance);
 
 /*********** Math functions ***********/
 
-double angleDiff(double a1, double a2)
-{
-	return wrapToPi(wrapToPi(a1 + M_PI - a2) - M_PI);
-}
-
+using namespace KMath;
 
 int DtoR(double d)
 {
@@ -305,7 +301,7 @@ int ObstacleAvoidance::Execute()
 			targetR = XYtoR(targetX, targetY);
 			targetS = XYtoS(targetX, targetY);
 			double targetZeroOrientation = wrapTo0_2Pi((targetS + 0.5) * SectorAngleRad - M_PI_2);
-			targetO = int( wrapTo0_2Pi( angleDiff(targetA, targetZeroOrientation) + 0.5 * M_PI_4 ) / M_PI_4 );
+			targetO = int( wrapTo0_2Pi( anglediff(targetA, targetZeroOrientation) + 0.5 * M_PI_4 ) / M_PI_4 );
 
 			if (targetR > OuterRing)
 			{
@@ -352,23 +348,6 @@ int ObstacleAvoidance::Execute()
 		targetA = 0.0;
 	}
 
-	//	boost::shared_ptr<const ButtonMessage> bm=_blk.readSignal<ButtonMessage>("buttonevents");
-	/*  if(bm.get()!= NULL){
-	      int lbump=bm->data(KDeviceLists::L_BUMPER_L)+bm->data(KDeviceLists::L_BUMPER_R);
-	      int rbump=bm->data(KDeviceLists::R_BUMPER_L)+bm->data(KDeviceLists::R_BUMPER_R);
-	      if(debugModeCout)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "lbump " + _toString(lbump) + "rbump " + _toString(rbump), Logger::Info);
-		if(lbump >= 1 && rbump >= 1 )
-			for(int i = RIGHT; i <= LEFT; i++)
-				PolarGrid[present][2][i] = 1.0;
-		else if(lbump >= 1 )
-			for(int i = FRONT; i < LEFT; i++)
-				PolarGrid[present][2][i] = 1.0;
-		else if(rbump >= 1 )
-			for(int i = RIGHT; i < FRONT+1; i++)
-				PolarGrid[present][2][i] = 1.0;
-	  }
-	*/
 	//aging grid every 'ageTimerSeconds' seconds (currently 3)
 	if (microsec_clock::universal_time() - lastAge >= seconds(ageTimerSeconds))
 	{
@@ -378,17 +357,10 @@ int ObstacleAvoidance::Execute()
 		if(debugModeCout)
 			Logger::Instance().WriteMsg("ObstacleAvoidance", "aging!!", Logger::Info);
 
-		//publishObstacleMessage();
-		//publishMotionMessage(0);
 	}
 
-	//if (cvHighgui)
-	//cvDrawGrid();
 	publishObstacleMessage();
 	publishGridInfo();
-	//pairnei orisma initn???
-	//if(debugModePublishMotion)
-	//publishMotionMessage(FRONT);
 	return 0;
 }
 
@@ -435,6 +407,8 @@ void ObstacleAvoidance::Initialize()
 		found &= config.QueryElement("CloseObstacleCenter", CloseObstacleCenter);
 		found &= config.QueryElement("GoalDistanceTolerance", GoalDistanceTolerance);
 		found &= config.QueryElement("GoalAngleTolerance", GoalAngleTolerance);
+		
+		
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "Initialize no knowledge: " + _toString(NoKnowledge) , Logger::ExtraExtraInfo);
 
 		if (found)
@@ -605,7 +579,7 @@ void ObstacleAvoidance::ageGrid()
 void ObstacleAvoidance::rotateGrid(double angle)
 {
 	int rotateSectors = int(angle / SectorAngleRad);
-	cout << "   rotate (degrees): " << (angle * ToDegrees) << "   rotate (sectors): " << rotateSectors << endl;
+	//cout << "   rotate (degrees): " << rad2deg(angle) << "   rotate (sectors): " << rotateSectors << endl;
 	past = present;
 	present = 1 - present;
 
@@ -680,7 +654,7 @@ void ObstacleAvoidance::moveRobot()
 	//cout << "Odometry  : " << odometryX << " " << odometryY << " " << odometryA << endl;
 	diffX = odometryX - robotX;
 	diffY = odometryY - robotY;
-	diffA = angleDiff(odometryA, robotA);
+	diffA = anglediff(odometryA, robotA);
 	//cout << "DIFF: " << diffX << " " << diffY << " " << diffA << endl;
 	double diffD = sqrt(diffX * diffX + diffY * diffY);
 	double diffT = atan2(diffY, diffX);
@@ -824,7 +798,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 			next.sector = (current.ring == InnerRing) ? wrapTo(current.sector + 1, N) : current.sector;
 			next.orientation = (current.ring == InnerRing) ? current.orientation : wrapTo(current.orientation + 1, NEIGHBOURS);
 			next.angle = next.sector * SectorAngleRad + next.orientation * M_PI_4;
-			deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+			deltaTheta = fabs( anglediff(next.angle, current.angle) );
 			next.gn = current.gn;
 			next.gn += (current.ring == InnerRing) ? RotationCostFactor * SectorAngleRad / (2.0 * M_PI) : RotationCostFactor * deltaTheta / (2.0 * M_PI);
 			next.hn = euclidean[next.ring][next.sector][goalm][goaln];
@@ -836,7 +810,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 			next.sector = (current.ring == InnerRing) ? wrapTo(current.sector - 1, N) : current.sector;
 			next.orientation = (current.ring == InnerRing) ? current.orientation : wrapTo(current.orientation - 1, NEIGHBOURS);
 			next.angle = next.sector * SectorAngleRad + next.orientation * M_PI_4;
-			deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+			deltaTheta = fabs( anglediff(next.angle, current.angle) );
 			next.gn = current.gn;
 			next.gn += (current.ring == InnerRing) ? RotationCostFactor * SectorAngleRad / (2.0 * M_PI) : RotationCostFactor * deltaTheta / (2.0 * M_PI);
 			next.hn = euclidean[next.ring][next.sector][goalm][goaln];
@@ -867,7 +841,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 
 					sideCost = ( (next.orientation != j) && (j != current.orientation) ) ? SemiSideCostFactor : 1.0;
 					next.gn += sideCost * euclidean[current.ring][current.sector][next.ring][next.sector];
-					deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+					deltaTheta = fabs( anglediff(next.angle, current.angle) );
 					next.gn += deltaTheta / (2.0 * M_PI);
 					next.hn =  euclidean[next.ring][next.sector][goalm][goaln];
 					next.fn = next.gn + next.hn;
@@ -910,7 +884,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 
 				sideCost = SideStepCostFactor;
 				next.gn += sideCost * euclidean[current.ring][current.sector][next.ring][next.sector];
-				deltaTheta = fabs(angleDiff(next.angle, current.angle));
+				deltaTheta = fabs(anglediff(next.angle, current.angle));
 				next.gn += deltaTheta / (2.0 * M_PI);
 				next.hn =  euclidean[next.ring][next.sector][goalm][goaln];
 				next.fn = next.gn + next.hn;
@@ -920,7 +894,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 		}
 	}
 
-	cout << "*** A* input: " << "x " << goalm << " y " << goaln << " o " << goalo << endl;
+	//cout << "*** A* input: " << "x " << goalm << " y " << goaln << " o " << goalo << endl;
 }
 
 void ObstacleAvoidance::reconstructPath(int ring, int sector, int orientation)

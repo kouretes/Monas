@@ -22,7 +22,7 @@ private:
 
 	void Initialize();
 
-	AL::ALPtr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
 	std::vector<std::string> SoftRightSideKick_names;
 	AL::ALValue SoftRightSideKick_times, SoftRightSideKick_keys;

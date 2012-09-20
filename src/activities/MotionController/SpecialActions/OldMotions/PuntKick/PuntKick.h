@@ -22,7 +22,7 @@ private:
 
 	void Initialize();
 
-	AL::ALPtr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
 	std::vector<std::string> PuntKick_names;
 	AL::ALValue PuntKick_times, PuntKick_keys;

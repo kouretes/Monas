@@ -170,7 +170,7 @@ os.system('aplay -q '+ scripts_dir +'beep.wav &')
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
 #probable_binaries_path = "/binaries/robot/naoqi_1.6.0_cross/" #under make/buildfolder
-naoqi_cross_folder = commands.getoutput("ls ./binaries/robot | grep naoqi")
+naoqi_cross_folder = "."#commands.getoutput("ls ./binaries/robot | grep naoqi")
 if(naoqi_cross_folder!=""):
 	binaries_dir = "./binaries/robot/" + naoqi_cross_folder +"/"
 else:
@@ -197,7 +197,7 @@ for	ip in robotsIP:
 
 	if game == 1 :
 		print "\nStopping NaoQi "
-		nao_stop_cmd = 'ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
+		nao_stop_cmd = 'ssh nao@'+ip + " 'sudo /etc/init.d/naoqi stop' "
 		print nao_stop_cmd
 		os.system(nao_stop_cmd)
 
@@ -237,7 +237,7 @@ for	ip in robotsIP:
 		naoqirestart = raw_input("Enter y to Restart NaoQi or press enter to continue: ")
 		if(naoqirestart=='y'):
 			print( "Stopping NaoQi, will start it again after all binaries have been uploaded")
-			nao_stop_cmd = ' ssh nao@'+ip + " ' /etc/init.d/naoqi stop ' "
+			nao_stop_cmd = ' ssh nao@'+ip + " 'sudo /etc/init.d/naoqi stop ' "
 			os.system(nao_stop_cmd)
 
 	#if(raw_input("Enter y to Change hostname or press enter to continue: ")=='y'):
@@ -261,9 +261,9 @@ for	ip in robotsIP:
 			autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 			os.system(autoload_cmd)
 			print(autoload_cmd)
-			rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
+			rsync_cmd = "rsync -av " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 		else:
-			rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
+			rsync_cmd = "rsync -av " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
 
 	print("Preparing to copy robot from ", binaries_dir)
 	print ""
@@ -273,19 +273,20 @@ for	ip in robotsIP:
 
 	print("All necessary files have been upload successfully!");
 	print("TREAT THE ROBOT NICELY.... I know this is sooooo difficult ...")
+	print("And ADD COMMENTS to your code, think the next generation")
 
 	if game == 1 :
 		perm_cmd = 'ssh nao@'+ip+ " 'chmod 777 /home/nao/naoqi/bin/autostartkrobot'"
 		print(">>> Sending autostart permission command: "+perm_cmd)
 		os.system(perm_cmd)
-		nao_start_cmd = 'ssh nao@'+ip+" ' /etc/init.d/naoqi start ' "
+		nao_start_cmd = 'ssh nao@'+ip+" 'sudo /etc/init.d/naoqi start ' "
 		print(">>> Sending NaoQi start command: "+nao_start_cmd)
 		os.system(nao_start_cmd)
-		wifi_conf_cmd = 'ssh nao@'+ip+" 'su -c \"/etc/init.d/connman restart\" ' "
+		wifi_conf_cmd = 'ssh -t nao@'+ip+" 'su -c \"/etc/init.d/connman restart\" ' "
 		print(">>> Sending ConnMan restart command: "+wifi_conf_cmd)
 		os.system(wifi_conf_cmd)
 
 	if (game == 0 and naoqirestart=="y") :
-		nao_start_cmd = 'ssh nao@'+ip+" ' /etc/init.d/naoqi start ' "
+		nao_start_cmd = 'ssh nao@'+ip+" 'sudo /etc/init.d/naoqi start ' "
 		print(">>> Sending NaoQi start command: "+nao_start_cmd)
 		os.system(nao_start_cmd)

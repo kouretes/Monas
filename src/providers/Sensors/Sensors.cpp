@@ -35,7 +35,7 @@ void Sensors::UserInit()
 
 	try
 	{
-		dcm = KAlBroker::Instance().GetBroker()->getDcmProxy();
+		dcm = new AL::DCMProxy(KAlBroker::Instance().GetBroker());
 	}
 	catch (AL::ALError& e)
 	{
@@ -82,16 +82,14 @@ void Sensors::fillComputedData(unsigned int timediff)
 		angle[1].reset(angY, 0.1);
 		anglefilterreset = false;
 	}
-
-	try
-	{
-		angle[0].updateWithVel(angX, 0.01 * sqrt(fabs(Interpret::GRAVITY_PULL - accnorm) / accnorm) + 0.003, gyrX, 0.01 * gyrX * gyrX + 0.003, timediff / 1000000000.0);
-		angle[1].updateWithVel(angY, 0.01 * sqrt(fabs(Interpret::GRAVITY_PULL - accnorm) / accnorm) + 0.003, gyrY, 0.01 * gyrY * gyrY + 0.003, timediff / 1000000000.0);
-	}
-	catch (...)
-	{
-		anglefilterreset = true;
-		Logger::Instance().WriteMsg("SENSORS", "Singular Matrix Exception on Kalman update", Logger::Error);
+	try{
+		angle[0].predict(timediff/1000000000.0);
+		angle[1].predict(timediff/1000000000.0);
+		angle[0].updateWithVel(angX,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.003,gyrX,0.01*gyrX*gyrX+0.003);
+		angle[1].updateWithVel(angY,0.01*sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.003,gyrY,0.01*gyrY*gyrY+0.003);
+	} catch (...) {
+	   anglefilterreset=true;
+	  Logger::Instance().WriteMsg("SENSORS","Singular Matrix Exception on Kalman update",Logger::Error);
 	}
 
 	for(int i = 0; i < ANGLE_SIZE; i++)
@@ -117,13 +115,13 @@ int Sensors::Execute()
 		commands[2][0][1] = dcm->getTime(10);
 		dcm->set(commands);
 		rtm.start();
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&Sensors::synchronisedDCMcallback , this));
 #endif
 		firstrun = false;
 	}
 
-#ifndef KROBOT_IS_REMOTE_OFF
+#ifdef KROBOT_IS_REMOTE
 	//Fetch into vectors
 	jointaccess.GetValues(jointValues);
 	sensoraccess.GetValues(sensorValues);
@@ -170,7 +168,7 @@ void Sensors::fetchValues()
 	}
 
 	//All Sensors
-	float gyrRef = fabs((readVector(sensorValues, GYR + AXIS_Z) - Interpret::GYR_Z_RAW) / Interpret::GYR_Z_RAW);
+	//float gyrRef = fabs((readVector(sensorValues, GYR + AXIS_Z) - Interpret::GYR_Z_RAW) / Interpret::GYR_Z_RAW);
 	// 	Logger::Instance().WriteMsg("SENSORS","Current: "
 	// 				      +_toString(readVector(sensorValues,GYR+AXIS_Z))
 	// 				      +" Avg: "+_toString(gyravg[AXIS_Z].read_mean())
@@ -180,10 +178,10 @@ void Sensors::fetchValues()
 	                  (readVector(sensorValues, ACC + AXIS_Y)) * (readVector(sensorValues, ACC + AXIS_Y)) +
 	                  (readVector(sensorValues, ACC + AXIS_Z)) * (readVector(sensorValues, ACC + AXIS_Z))    );
 	float accRef = fabs((accn - Interpret::ACC_NORM)) / Interpret::ACC_NORM;
-	bool isvalid = gyrRef < 0.2 && accRef < 0.5;
+	bool isvalid = accRef < 0.5;
 
-	// 	if ( !isvalid )
-	// 	  Logger::Instance().WriteMsg("SENSORS","Invalid Data",Logger::Error);
+	//if ( !isvalid )
+	//	Logger::Instance().WriteMsg("SENSORS","Invalid Data gyrref = " + _toString(gyrRef) + " accRef = " + _toString(accRef),Logger::Error);
 
 	if( isvalid )
 	{
@@ -191,7 +189,7 @@ void Sensors::fetchValues()
 		accnorm.update(accn, sc);
 		float accgain = Interpret::GRAVITY_PULL / accnorm.read_mean();
 		oldval = ASM.sensordata(GYR + AXIS_Z).sensorvalue();
-		gyravg[AXIS_Z].update(readVector(sensorValues, GYR + AXIS_Z), sc);
+		gyravg[AXIS_Z].update(-1520/*readVector(sensorValues, GYR + AXIS_Z)*/, sc);
 		newval = gyravg[AXIS_Z].read_mean();
 		ASM.mutable_sensordata(GYR + AXIS_Z)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(GYR + AXIS_Z)->set_sensorvaluediff(newval - oldval);
@@ -231,7 +229,7 @@ void Sensors::fetchValues()
 	ASM.set_timediff(timediff);
 }
 
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 void Sensors::synchronisedDCMcallback()
 {
 	fetchValues();
@@ -287,7 +285,7 @@ void Sensors::initialization()
 	t.last_val = KDeviceLists::Interpret::BUTTON_PRESSED;
 	t.count = 0;
 	buttonevnts.assign(buttonKeys.size(), t);
-#ifdef KROBOT_IS_REMOTE_OFF
+#ifndef KROBOT_IS_REMOTE
 
 	for (unsigned i = 0; i < jointKeys.size(); i++)
 	{
@@ -337,7 +335,7 @@ void Sensors::initialization()
 	RPM.add_sensordata(); //Angle
 	angle[0].init(60000);
 	angle[1].init(60000);
-#ifndef KROBOT_IS_REMOTE_OFF
+#ifdef KROBOT_IS_REMOTE
 	jointaccess.ConnectToVariables(KAlBroker::Instance().GetBroker(), jointKeys, false);
 	sensoraccess.ConnectToVariables(KAlBroker::Instance().GetBroker(), sensorKeys, false);
 	buttonaccess.ConnectToVariables(KAlBroker::Instance().GetBroker(), buttonKeys, false);

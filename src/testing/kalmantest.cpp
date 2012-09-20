@@ -17,6 +17,7 @@ int main()
 		cout << "Xbar:" << t(0) << "," << t(1) << endl;
 		float r;
 		cin >> r;
-		test.update(r, r * r * 0.25, 0.03);
+		test.predict( 0.03);
+		test.update(r, r * r * 0.25);
 	}
 }

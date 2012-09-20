@@ -41,8 +41,8 @@ private:
 
 	std::string name;
 
-	AL::ALPtr<AL::ALMotionProxy> motion;
-	AL::ALPtr<AL::DCMProxy> dcm;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
+	AL::DCMProxy *dcm;
 
 	AL::ALValue actionNames, actionAngles, actionTimes;
 

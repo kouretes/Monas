@@ -16,7 +16,7 @@ class XarManager
 
 public:
 
-	static std::vector<ISpecialAction*> LoadActionsXAR(AL::ALPtr<AL::ALFrameManagerProxy> frame);
+	static std::vector<ISpecialAction*> LoadActionsXAR(AL::ALFrameManagerProxy *frame);
 
 	struct XarBehavior
 	{

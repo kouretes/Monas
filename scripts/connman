@@ -1,51 +1,34 @@
-#!/bin/sh
+#!/sbin/runscript
+##
+## Author(s):
+##  - Samuel MARTIN <smartin@aldebaran-robotics.com>
+##
+## Copyright (C) 2010 - 2011 Aldebaran Robotics
+##
 
-DAEMON=/usr/sbin/connmand
-PIDFILE=/var/run/connmand.pid
-DESC="Connection Manager"
+BINARY="/etc/init.d/connman.sh"
 
-if [ -f /var/lib/connman/default.profile ];then
-        sed -i "/^Failure/d" /var/lib/connman/default.profile
-fi
-
-if [ -f /etc/default/connman ] ; then
-	. /etc/default/connman
-fi
-
-set -e
-
-do_start() {
-        if [ -f /home/nao/naoqi/config/connman.profile ]; then
-        	echo "Applying profile /home/nao/naoqi/config/connman.profile"
-                rm /var/lib/connman/default.profile
-                cp /home/nao/naoqi/config/connman.profile /var/lib/connman/default.profile
-        fi
-	$DAEMON
+depend() {
+  need dbus
 }
 
-do_stop() {
-	start-stop-daemon --stop --name connmand --quiet
+start() {
+  if [ -f /home/nao/naoqi/config/connman.profile ]; then
+  	echo "Applying profile /home/nao/naoqi/config/connman.profile"
+        rm /var/lib/connman/default.profile
+  	cp /home/nao/naoqi/config/connman.profile /var/lib/connman/default.profile
+  fi
+  "${BINARY}" &
 }
 
-case "$1" in
-  start)
-	echo "Starting $DESC"
-	do_start
-	;;
-  stop)
-	echo "Stopping $DESC"
-	do_stop
-	;;
-  restart|force-reload)
-	echo "Restarting $DESC"
-	do_stop
-	sleep 1
-	do_start
-	;;
-  *)
-	echo "Usage: $0 {start|stop|restart|force-reload}" >&2
-	exit 1
-	;;
-esac
+stop() {
+  killall -s TERM connman.sh
+  killall -s TERM connmand
+}
 
-exit 0
+restart() {
+  stop
+  sleep 1
+  start
+}
+

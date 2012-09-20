@@ -28,7 +28,12 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId)
 			if (is_regular_file(itr->status()))
 			{
 				string filename = dirPath;
+#if BOOST_FILESYSTEM_VERSION == 2
 				filename.append(itr->path().filename());
+#else
+				filename.append(itr->path().filename().string());
+#endif
+
 
 				if(!loadAllFiles(filename))
 					cout << "Failed to load xml file \"" << itr->path().filename() << "\"" << endl;
@@ -73,7 +78,7 @@ void XmlNode::print(string pref)
 void XmlNode::deleteNodesForKey(string key, int fileType)
 {
 	queue<string> keys = findAllSubstring(key);
-	XmlNode * secondtolast = findNodeForKey(keys);
+	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
 	string lastkey = keys.front();
 	unsigned pos;
 	lastkey = extractNumber(lastkey, &pos);
@@ -92,7 +97,7 @@ int XmlNode::numberOfNodesForKey(string key)
 {
 	queue<string> keys = findAllSubstring(key);
 	//return findNodeForKey(keys);
-	XmlNode * secondtolast = findNodeForKey(keys);
+	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
 	//Last processing, it must be a valid XmlNode, so repeat check one more time
 
 	if(secondtolast == NULL)
@@ -108,6 +113,31 @@ int XmlNode::numberOfNodesForKey(string key)
 	}
 }
 
+
+int XmlNode::numberOfChildsForKey(string key)
+{
+	//return findNodeForKey(keys);
+	XmlNode * darthVader = findNodeForKey(key); //darthVader = father
+
+	if(darthVader == NULL)
+		return 0;
+
+	int childs = 0;
+	map<string,vector<XmlNode> >::iterator it;
+	for(it = darthVader->kids.begin(); it != darthVader->kids.end(); it++){
+		childs += (*it).second.size();
+	}
+	return childs;
+}
+int XmlNode::numberOfUniqueChildsForKey(string key){
+	XmlNode * darthVader = findNodeForKey(key); //darthVader = father
+
+	if(darthVader == NULL)
+		return 0;
+
+	int childs = darthVader->kids.size();
+
+}
 /**
 * Updates a value to a file.
 **/
@@ -232,7 +262,7 @@ bool XmlNode::updateValueForKey(string key, string value)
 	unsigned textpos;
 	key = extractNumberText(key, &textpos);
 	queue<string> keys = findAllSubstring(key);
-	XmlNode * secondtolast = findNodeForKey(keys);
+	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
 
 	if(secondtolast == NULL)
 		return false;
@@ -293,7 +323,7 @@ bool XmlNode::burstWrite(vector<pair<string, string> > writeData)
 vector<string> XmlNode::findValueForKey(string key)
 {
 	queue<string> keys = findAllSubstring(key);
-	XmlNode * secondtolast = findNodeForKey(keys);
+	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
 
 	if(secondtolast == NULL)
 		return vector<string>();
@@ -373,8 +403,8 @@ queue<string> XmlNode::findAllSubstring(string  key)
 XmlNode* XmlNode::findNodeForKey(string key)
 {
 	queue<string> keys = findAllSubstring(key);
-	//return findNodeForKey(keys);
-	XmlNode * secondtolast = findNodeForKey(keys);
+
+	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
 	//Last processing, it must be a valid XmlNode, so repeat check one more time
 
 	if(secondtolast == NULL)
@@ -393,7 +423,7 @@ XmlNode* XmlNode::findNodeForKey(string key)
 	}
 }
 
-XmlNode* XmlNode::findNodeForKey(queue<string> & keys)
+XmlNode* XmlNode::findSecondToLastNodeForKey(queue<string> & keys)
 {
 	if(keys.size() > 1)
 	{
@@ -405,7 +435,7 @@ XmlNode* XmlNode::findNodeForKey(queue<string> & keys)
 		if(kids.find(key) == kids.end() || (*kids.find(key)).second.size() < pos)
 			return NULL;
 		else
-			return (*kids.find(key)).second[pos].findNodeForKey(keys);
+			return (*kids.find(key)).second[pos].findSecondToLastNodeForKey(keys);
 	}
 
 	return this;

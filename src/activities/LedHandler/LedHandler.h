@@ -121,8 +121,8 @@ private:
 	int getColor(string);
 
 	float battery_level; ///the level of the battery
-	AL::ALPtr<AL::ALProxy> leds; ///proxy to handle led colors
-	AL::ALPtr<AL::ALMemoryProxy> memory;  ///proxy to read ALmemory values
+	boost::shared_ptr<AL::ALProxy> leds; ///proxy to handle led colors
+	boost::shared_ptr<AL::ALMemoryProxy> memory;  ///proxy to read ALmemory values
 
 	std::map<string, int> colors; /// The map where the pairs of color and HEX RGB values are stored
 };

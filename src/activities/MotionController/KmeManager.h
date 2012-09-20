@@ -7,10 +7,6 @@
 #include "tools/logger.h"
 #include "tools/toString.h"
 
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
-
 
 class KmeManager
 {
@@ -18,7 +14,7 @@ class KmeManager
 public:
 
 	static std::vector<ISpecialAction*> LoadActionsKME();
-	// static std::vector<ISpecialAction*> LoadActionsKME( AL::ALPtr<AL::ALFrameManagerProxy> frame);
+	// static std::vector<ISpecialAction*> LoadActionsKME( boost::shared_ptr<AL::ALFrameManagerProxy> frame);
 
 	struct motSequence
 	{

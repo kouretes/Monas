@@ -1,7 +1,6 @@
 message ( STATUS "" )
 message ( STATUS " _..::: Configuring Generic Nao :::.._ " )
 message ( STATUS "" )
-include( ../nao-${NaoQiVersion}/bootstrap.cmake )
 
 add_library ( GenericNao  ${LibBuildType}
 			aldebaran-kme.h
@@ -13,6 +12,8 @@ add_library ( GenericNao  ${LibBuildType}
 			aldebaran-motion.h
 			aldebaran-visiondefinitions.h
 			NAOKinematics.h
+			NAOKinematics.cpp
+			KinematicsDefines.h
 			headAngleSensor.h
 			robot_consts.h
 			robot_consts.cpp
@@ -21,7 +22,7 @@ add_library ( GenericNao  ${LibBuildType}
 			kAlBroker.cpp
 
 )
-use_lib( GenericNao ALCOMMON)
+qi_use_lib( GenericNao ALCOMMON)
 
 install ( TARGETS GenericNao
         RUNTIME DESTINATION   bin

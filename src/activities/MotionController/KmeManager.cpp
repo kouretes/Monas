@@ -16,7 +16,7 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME()
 {
 	std::vector<ISpecialAction*> KmeActions;
 	AL::ALValue actionNames, actionAngles, actionTimes;
-	AL::ALPtr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
 	try
 	{

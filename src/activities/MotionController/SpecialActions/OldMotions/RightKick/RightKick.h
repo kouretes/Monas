@@ -23,7 +23,7 @@ private:
 
 	void Initialize();
 
-	AL::ALPtr<AL::ALMotionProxy> motion;
+	boost::shared_ptr<AL::ALMotionProxy> motion;
 
 	AL::ALValue RightKick_names, RightKick_times, RightKick_keys;
 

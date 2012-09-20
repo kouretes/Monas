@@ -13,16 +13,13 @@ class KAlBrokerClass
 {
 
 public:
-
-	void SetBroker(AL::ALPtr<AL::ALBroker>  broker);
-
-	AL::ALPtr<AL::ALBroker> GetBroker () const;
-
 	KAlBrokerClass();
 
-private:
+	void SetBroker(boost::shared_ptr<AL::ALBroker>  broker);
 
-	AL::ALPtr<AL::ALBroker>  _broker;
+	boost::shared_ptr<AL::ALBroker> GetBroker () const;
+
+	boost::shared_ptr<AL::ALBroker>  _broker;
 
 };
 
