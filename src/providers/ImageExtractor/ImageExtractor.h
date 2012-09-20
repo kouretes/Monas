@@ -1,5 +1,5 @@
-#ifndef SENSORS_H
-#define SENSORS_H
+#ifndef IMAGEEXTR_H
+#define IMAGEEXTR_H
 
 #include <vector>
 #include <map>
