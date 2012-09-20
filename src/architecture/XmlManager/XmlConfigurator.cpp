@@ -28,7 +28,12 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId)
 			if (is_regular_file(itr->status()))
 			{
 				string filename = dirPath;
+#if BOOST_FILESYSTEM_VERSION == 2
+				filename.append(itr->path().filename());
+#else
 				filename.append(itr->path().filename().string());
+#endif
+
 
 				if(!loadAllFiles(filename))
 					cout << "Failed to load xml file \"" << itr->path().filename() << "\"" << endl;
@@ -398,7 +403,7 @@ queue<string> XmlNode::findAllSubstring(string  key)
 XmlNode* XmlNode::findNodeForKey(string key)
 {
 	queue<string> keys = findAllSubstring(key);
-	
+
 	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
 	//Last processing, it must be a valid XmlNode, so repeat check one more time
 
