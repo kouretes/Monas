@@ -1,38 +1,42 @@
 import "VisionObservations.proto";
 import "WorldInfo.proto";
 
-message KickOffMessage{
-	required bool kickOff = 1 [default = false];
 
+message ActionDescription{
+	enum URGENCY_LEVELS{
+		SOMEDAY=0;
+		SLOW=1;
+		BEAM_ME_UP=2;
+	}
+		
+	required uint32 action=1;
+	required uint32 urgency=2; 
+	required string description=3;
+	required float x=4;
+	required float y=5;
+	required float phi=6;
 }
-message BToHeadMessage{
-	required int32 headaction = 1 [default = 0];
-
-}
-message HeadToBMessage{
-	required int32 ballfound = 1 [default = 0];
-	required int32 calibrated = 2 [default = 0];
-}
-
-message ScanMessage{
-	required bool scancompleted = 1 [default = false];
-}
-
-message PositionMessage{
-	required float posX = 1 [default = 70];
-	required float posY = 2 [default = 70];
-	required float theta = 3 [default = 1];
-}
-
-
-message ReturnToPositionMessage{
-	required bool goalieToPos = 1 [default = false];
-}
-
-message FallMessage{
-	required int32 fall = 1 [default = 0];
+message BodyControlMessage{
+	enum BODYACTIONS{
+		NOTHING=0;
+		STAND=1;
+		DOACTION=2;
+		BALLAPPROACH=3; //Target (=orientation) the opposing goal post
+		BALLAPPROACH_SUPPORT=4; //Target the side of the goal post
+		GOTO=5;  //Use x,y, phi to describe where
+		DEMO=6; //Reserved
+	}
+	required ActionDescription task=1;
 }
 
-message LocalizeDone{
-	required bool moveon = 1 [default = false];
+message HeadControlMessage{
+	enum HEADACTIONS{
+		NOTHING=0;
+		FROWN=1; //Look down
+		SCAN_AND_TRACK_FOR_BALL=2;
+		LOCALIZE=3;
+		SMART_SELECT=4; //Decide based on the distance from the ball, and the urgency
+		
+	}
+	required ActionDescription task=1;
 }
