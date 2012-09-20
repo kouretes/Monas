@@ -16,8 +16,8 @@ BallFilter::BallFilter()
 
 	x_filter.init(10.0f);
 	y_filter.init(10.0f);
-	x_filter.reset(3,10);
-	y_filter.reset(0,10);
+	x_filter.reset(3,4);
+	y_filter.reset(0,4);
 
 
 	filtered_ball.set_relativex(3);

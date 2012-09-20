@@ -16,8 +16,8 @@
 #define ANGLEHOR 1.6
 #define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
 
-#define MAXHEADYAWSPEED 1.5
-#define MAXHEADPITCHSPEED 1.5
+#define MAXHEADYAWSPEED 1.8
+#define MAXHEADPITCHSPEED 1.8
 
 #define KME_ACTIONPID -1
 
@@ -902,15 +902,15 @@ vector<float> MotionController::KGetAngles()
 }
 
 void MotionController::readWalkParameters()
-{	
+{
 	AL::ALValue config;
 	config.arraySetSize(7);
-	
+
 	string filename = "walk_parameters";
 	XmlNode * walkPamNode = _xml.findNodeForKey(filename);
 	int itteration = 0;
 	for(map<string,vector<XmlNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){
-	
+
 		std::istringstream strs( (walkPamNode->findValueForKey((*it).first)).front() );
 		float value;
 		strs>>value;
@@ -923,7 +923,7 @@ void MotionController::readWalkParameters()
 			motion->setFallManagerEnabled(value);
 		}
 	}
-	
+
 
 	motion->setMotionConfig(config);
 }
