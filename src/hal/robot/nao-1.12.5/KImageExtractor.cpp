@@ -128,7 +128,7 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImageDeepCopy & img)
 	//fLogProxy->info(getName(), imageIn->toString());
 	// You can get some image information that you may find usefull
 	const long long timeStamp = imageIn->getTimeStamp();
-	img.copyFrom(imageIn->getFrame(), imageIn->getWidth(), imageIn->getHeight(), imageIn->getNbLayers());
+	img.copyFrom(imageIn->getData(), imageIn->getWidth(), imageIn->getHeight(), imageIn->getNbLayers());
 	//apply correction factor to timestamp
 	//    std::cout<<"img:"<<timeStamp<<endl;
 	const long long secsonly = (timeStamp / 1000000LL);
