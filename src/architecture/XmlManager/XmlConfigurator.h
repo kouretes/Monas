@@ -32,11 +32,9 @@ private:
 	string directoryPath;
 	int fileType;//HeadFile = 1 BodyFile = 2
 
-	vector<string> getText();
-	XmlNode* findNodeForKey(string key);
 	bool updateFilesValue(string path, string value, int fileType);
 	void deleteNodesForKey(string key, int fileType);
-	XmlNode * findNodeForKey(queue<string> & key);
+	XmlNode * findSecondToLastNodeForKey(queue<string> & key);
 	static string extractNumber(string & str, unsigned * num);//Get the ~ part
 	static string extractNumberText(string & str, unsigned * num);
 	static queue<string> findAllSubstring(string  key);
@@ -48,6 +46,7 @@ public:
 	{
 		fileType = 0;
 	};
+	vector<string> getText();
 	XmlNode(string dirPath, string headId, string bodyId);
 	void print(string pref);
 	unsigned getChildrenCount() const;
@@ -58,6 +57,9 @@ public:
 	bool updateValueForKey(string key, string value);
 	bool burstWrite(vector<pair<string, string> > writeData);
 	int numberOfNodesForKey(string key);
+	int numberOfChildsForKey(string key);
+	int numberOfUniqueChildsForKey(string key);
+	XmlNode* findNodeForKey(string key);
 
 };
 #endif // XML_MANAGER_H
