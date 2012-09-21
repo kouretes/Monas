@@ -81,6 +81,7 @@ private:
 	int actionPID;
 
 	AL::ALValue names, values;
+	AL::ALValue walkConfig;
 
 	boost::shared_ptr<const  MotionWalkMessage> wm;
 	boost::shared_ptr<const  MotionHeadMessage> hm;

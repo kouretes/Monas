@@ -33,11 +33,7 @@ MotionController::MotionController(Blackboard &b, XmlNode &x) : IActivity(b, x)
 
 void MotionController::UserInit()
 {
-	//try {
-	//tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
-	//} catch (AL::ALError& e) {
-	//Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
-	//}
+
 	try
 	{
 		dcm = new AL::DCMProxy(KAlBroker::Instance().GetBroker());
@@ -106,11 +102,8 @@ void MotionController::UserInit()
 	}
 	createDCMAlias();
 	//Stable walk for the lab ENABLE for robocup
-	//readWalkParameters();
+	readWalkParameters();
 	motion->setWalkArmsEnable(true, true);
-	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
-	//motion->setMotionConfig(AL::ALValue::array(AL::ALValue::array("ENABLE_FOOT_CONTACT_PROTECTION", true)));
-	//motion->setMotionConfig(AL::ALValue::array(AL::ALValue::array("ENABLE_FALL_MANAGEMENT_PROTECTION", false)));
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
 	_blk.updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -387,7 +380,7 @@ void MotionController::mglrun()
 				walkParam3 = wm->parameter(2);
 				Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
 				                            + _toString(walkParam3), Logger::ExtraInfo);
-				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3);
+				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3, walkConfig);
 				Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
 			}
 			else if (wm->command() == "setWalkTargetVelocity")
@@ -405,7 +398,7 @@ void MotionController::mglrun()
 				walkParam4 = wm->parameter(3);
 				//	Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
 				//			+ _toString(walkParam3) + " " + _toString(walkParam4), Logger::ExtraInfo);
-				motion->setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
+				motion->setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4, walkConfig);
 				walkingWithVelocity = true;
 				//Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
 			}
@@ -566,7 +559,7 @@ void MotionController::stopWalkCommand()
 {
 	if (walkingWithVelocity || walkPID != 0)
 	{
-		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 1.0); // stop walk
+		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 1.0, walkConfig); // stop walk
 		motion->waitUntilWalkIsFinished();
 		walkingWithVelocity = false;
 	}
@@ -903,8 +896,8 @@ vector<float> MotionController::KGetAngles()
 
 void MotionController::readWalkParameters()
 {
-	AL::ALValue config;
-	config.arraySetSize(7);
+	//setMotionConfig is deprecated
+	walkConfig.arraySetSize(7);
 
 	string filename = "walk_parameters";
 	XmlNode * walkPamNode = _xml.findNodeForKey(filename);
@@ -915,15 +908,13 @@ void MotionController::readWalkParameters()
 		float value;
 		strs>>value;
 		if((*it).first.compare("EnableFallManager")!=0){
-			config[itteration].arraySetSize(2);
-			config[itteration][0] = (*it).first;
-			config[itteration][1] = value;
+			walkConfig[itteration].arraySetSize(2);
+			walkConfig[itteration][0] = (*it).first;
+			walkConfig[itteration][1] = value;
 			itteration++;
 		}else{
 			motion->setFallManagerEnabled(value);
 		}
 	}
 
-
-	motion->setMotionConfig(config);
 }
