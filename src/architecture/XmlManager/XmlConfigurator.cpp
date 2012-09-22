@@ -11,8 +11,10 @@ string convertInt(int number)
 }
 
 /* Initilize the tree with the files from a directory */
-XmlNode::XmlNode(string dirPath, string headId, string bodyId)
+XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrator)
 {
+	root = administrator;
+	adler = adler32(0, Z_NULL, 0); //Initialize checksum
 	fileType = 0;
 	headPath = "HEAD/";
 	headPath.append(headId);
@@ -31,11 +33,11 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId)
 			if (is_regular_file(itr->status()))
 			{
 				string filename = dirPath;
-#if BOOST_FILESYSTEM_VERSION == 2
+//#if BOOST_FILESYSTEM_VERSION == 2
 				filename.append(itr->path().filename());
-#else
-				filename.append(itr->path().filename().string());
-#endif
+//#else
+//				filename.append(itr->path().filename().string());
+//#endif
 
 
 				if(!loadAllFiles(filename))
@@ -283,8 +285,8 @@ bool XmlNode::updateValueForKey(string key, string value)
 			(*it).second = value;
 		else
 			return false;
-
-		updateFilesValue(key, value, secondtolast->fileType);
+		if(root)
+			updateFilesValue(key, value, secondtolast->fileType);
 	}
 	else
 	{
@@ -296,7 +298,8 @@ bool XmlNode::updateValueForKey(string key, string value)
 		lastNode->text[textpos] = value;
 		key.append(string(1, TEXTNUMBER_DELIMITER));
 		key.append(convertInt(textpos));
-		updateFilesValue(key, value, lastNode->fileType);
+		if(root)
+			updateFilesValue(key, value, lastNode->fileType);
 	}
 
 	return true;
@@ -570,7 +573,18 @@ bool XmlNode::loadFile(string filename, int fileType)
 
 		kids[key].push_back(baby);
 	}
-
+	//calculate checksum
+	if(root){	
+		ifstream xmlFile(filename.c_str());
+		string str;
+		xmlFile.seekg(0, ios::end);   
+		str.reserve(xmlFile.tellg());
+		xmlFile.seekg(0, ios::beg);
+		str.assign((istreambuf_iterator<char>(xmlFile)), istreambuf_iterator<char>());
+		adler = adler32(adler, (Bytef *)str.c_str(), str.length());
+	  	xmlFile.close();
+	}
+		
 	return true;
 }
 /**
@@ -611,4 +625,15 @@ void XmlNode::insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType)
 	kids[element->Value()].push_back(baby);
 }
 
+//Get checksum of all files
+unsigned int XmlNode::getChecksum(){
+	return adler;
+}
+
+string XmlNode::getHeadPath(){
+	return headPath;
+}
+string XmlNode::getBodyPath(){
+	return bodyPath;
+}
 

@@ -4,13 +4,15 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <vector>
 #include <queue>
 #include <map>
 #include <utility>
-#include "../external/tinyxml_2-5-3/tinyxml.h"
-#include "boost/filesystem.hpp"
+#include <boost/filesystem.hpp>
+#include <zlib.h>
 
+#include "../external/tinyxml_2-5-3/tinyxml.h"
 
 class XmlNode
 {
@@ -29,6 +31,9 @@ private:
 	std::string headPath;
 	std::string bodyPath;
 	std::string directoryPath;
+	bool root;
+	unsigned int adler; //checksum
+	
 	int fileType;//HeadFile = 1 BodyFile = 2
 
 	bool updateFilesValue(std::string path, std::string value, int fileType);
@@ -44,9 +49,10 @@ public:
 	XmlNode()
 	{
 		fileType = 0;
+		root = false;
 	};
 	std::vector<std::string> getText();
-	XmlNode(std::string dirPath, std::string headId, std::string bodyId);
+	XmlNode(std::string dirPath, std::string headId, std::string bodyId, bool administrator);
 	void print(std::string pref);
 	unsigned getChildrenCount() const;
 	std::vector<std::string> getAttribute(std::string & key) ;
@@ -59,6 +65,9 @@ public:
 	int numberOfChildrendsForKey(std::string key);
 	int numberOfUniqueChildrendsForKey(std::string key);
 	XmlNode* findNodeForKey(std::string key);
+	std::string getHeadPath();
+	std::string getBodyPath();
+	unsigned int getChecksum();
 
 };
 #endif // XML_MANAGER_H
