@@ -624,15 +624,15 @@ namespace KMat
 			D<T, N, M> ngen;
 
 			if(h == NULL)
-				return static_cast< D<T, M, N> &> (*this);
+				return ngen;
 
-			ngen.makeExclusive();
+			ngen.getHandle();
 
 			for (unsigned i = 0; i < M; i++)
 			{
 				for (unsigned j = 0; j < N; j++)
 				{
-					ngen.h->data[j][i] = h->data[i][j];
+					ngen(j,i) =h->data(i, j);
 				}
 			}
 
@@ -1143,6 +1143,7 @@ namespace KMat
 
 		ATMatrix<T, S> & fast_invert()
 		{
+			//It could be just the transpose, but only if A is a rotation... so there...
 			if (AisIdentity != true)
 				A.fast_invert();
 
