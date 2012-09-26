@@ -33,11 +33,11 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrato
 			if (is_regular_file(itr->status()))
 			{
 				string filename = dirPath;
-//#if BOOST_FILESYSTEM_VERSION == 2
+#if BOOST_FILESYSTEM_VERSION == 2
 				filename.append(itr->path().filename());
-//#else
-//				filename.append(itr->path().filename().string());
-//#endif
+#else
+				filename.append(itr->path().filename().string());
+#endif
 
 
 				if(!loadAllFiles(filename))
