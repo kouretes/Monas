@@ -4,6 +4,7 @@ message HostEntry{
 }
 message KnownHosts{
 	repeated HostEntry entrylist=1;
+	required HostEntry localhost=2;
 }
 
 message Subscription
