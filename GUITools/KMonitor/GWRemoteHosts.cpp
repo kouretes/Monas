@@ -40,7 +40,19 @@ void GWRemoteHosts::emergeAvailableHosts(KnownHosts newHosts)
     		hostId = QString::fromStdString(_toString(((*fit).hostid())));
     		hostName = QString::fromStdString(_toString(((*fit).hostname())));
 
-    		if (hostName.contains(QString("nao")))
+
+		//Witch regard to the commented if line below:
+		//Let us ponder...
+		//Apart from the fact that I spent 2 hours tryign to debug this line
+		//Not all usefull hostnames should contain "nao", In fact this could change in the future
+		//A hostname that does, is not necessarily useful
+		//Should a different client be running it would actually be USEFUL TO KNOW IT
+		//It is also a security thing, if and only if you can see the client in the GUI,
+		//can an end point succesfully mess with the robot. 
+		//(Hosts that do not send a beacon are ignored by the network)
+		
+
+    		//if (hostName.contains(QString("nao"))) //Why god why...
     		{
 				item = GWhostFinder(hostId);
 				if( item == NULL)
