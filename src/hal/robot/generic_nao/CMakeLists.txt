@@ -9,6 +9,7 @@ add_library ( GenericNao  ${LibBuildType}
 			aldebaran-sensors.h
 			earLed.h
 			KImageExtractor.h
+			NaoCamera.h
 			aldebaran-motion.h
 			aldebaran-visiondefinitions.h
 			NAOKinematics.h
