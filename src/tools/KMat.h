@@ -906,6 +906,8 @@ namespace KMat
 		throw SingularMatrixInvertionException(d);
 	};
 
+
+
 	//Partial specialization for square matrices
 	template<typename T, unsigned S> class GenMatrix<T, S, S> : public BaseMatrix<GenMatrix, T, S, S>
 	{
@@ -951,6 +953,8 @@ namespace KMat
 	};
 
 
+
+
 	template <typename T> class GenMatrix<T, 1, 1> : public BaseMatrix<GenMatrix, T, 1, 1>
 	{
 		//Add single dimentionall acess operator
@@ -971,6 +975,8 @@ namespace KMat
 		{
 			return read(i, 0);
 		};
+		operator T () const{return read(0, 0);};
+
 	};
 
 	template <typename T> class GenMatrix<T, 2, 1> : public BaseMatrix<GenMatrix, T, 2, 1>
