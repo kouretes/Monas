@@ -35,7 +35,8 @@ message HeadControlMessage{
 		FROWN=1; //Look down
 		SCAN_AND_TRACK_FOR_BALL=2;
 		LOCALIZE=3;
-		SMART_SELECT=4; //Decide based on the distance from the ball, and the urgency
+		LOCALIZE_FAR=4;
+		SMART_SELECT=5; //Decide based on the distance from the ball, and the urgency
 		
 	}
 	required ActionDescription task=1;

@@ -140,11 +140,11 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "nDescription\"s\n\013BODYACTIONS\022\013\n\007NOTHING\020\000"
     "\022\t\n\005STAND\020\001\022\014\n\010DOACTION\020\002\022\020\n\014BALLAPPROAC"
     "H\020\003\022\030\n\024BALLAPPROACH_SUPPORT\020\004\022\010\n\004GOTO\020\005\022"
-    "\010\n\004DEMO\020\006\"\232\001\n\022HeadControlMessage\022 \n\004task"
-    "\030\001 \002(\0132\022.ActionDescription\"b\n\013HEADACTION"
+    "\010\n\004DEMO\020\006\"\254\001\n\022HeadControlMessage\022 \n\004task"
+    "\030\001 \002(\0132\022.ActionDescription\"t\n\013HEADACTION"
     "S\022\013\n\007NOTHING\020\000\022\t\n\005FROWN\020\001\022\033\n\027SCAN_AND_TR"
-    "ACK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014SMART_SE"
-    "LECT\020\004", 566);
+    "ACK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE"
+    "_FAR\020\004\022\020\n\014SMART_SELECT\020\005", 584);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   ActionDescription::default_instance_ = new ActionDescription();
@@ -866,6 +866,7 @@ bool HeadControlMessage_HEADACTIONS_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -877,6 +878,7 @@ const HeadControlMessage_HEADACTIONS HeadControlMessage::NOTHING;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::FROWN;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::SCAN_AND_TRACK_FOR_BALL;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::LOCALIZE;
+const HeadControlMessage_HEADACTIONS HeadControlMessage::LOCALIZE_FAR;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::SMART_SELECT;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::HEADACTIONS_MIN;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::HEADACTIONS_MAX;
