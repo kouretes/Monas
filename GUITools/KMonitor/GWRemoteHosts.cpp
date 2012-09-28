@@ -33,26 +33,42 @@ void GWRemoteHosts::emergeAvailableHosts(KnownHosts newHosts)
 
     for(fit=rf.begin();fit!=rf.end();++fit)
     {
+    	//cout <<"Tous pairnw ...."  <<  (*fit).hostid();
 
-            //cout <<"Tous pairnw ...."  <<  (*fit).hostid();
+		item = NULL;
+		hostId = QString::fromStdString(_toString(((*fit).hostid())));
+		hostName = QString::fromStdString(_toString(((*fit).hostname())));
 
-    		item = NULL;
-    		hostId = QString::fromStdString(_toString(((*fit).hostid())));
-    		hostName = QString::fromStdString(_toString(((*fit).hostname())));
+		//>>Witch regard to the commented if line below:
+		//>>Let us ponder...
+		//>>Apart from the fact that I spent 2 hours tryign to debug this line
+		// 8a mporouses na 3odepseis elaxista lepta an apla epikoinwnouses mazi mou
+
+		//>>Not all usefull hostnames should contain "nao"
+		//Symfwnw. Alla ti na kanoume, pros to paron oi hosts pou einai aparaithtoi gia thn
+		//sugkekrimenh leitourgikothta ikanopoioyn auth th sun8hkh.
+
+		//>>In fact this could change in the future
+		//Gi auto uparxoun ta updates. Den mporw na psuxanemistw tis mellontikes apaithseis kai ta dedomena.
+
+		//>>A hostname that does, is not necessarily useful
+		//H sugkekrimenh leitourgikothta prepei na ulopoiei to e3hs:
+		//1. elegxei poios apo tous hosts pou lambanei einai robot kai mono (den endiaferoun sto sugkekrimeno shmeio alloi pelates),
+		//2. dhmiourgei to grafiko antikeimeno me ta dia8eshma stoixeia
+		//Otan loipon breis kaluterh idea gia ti mporei na ikanopoihsei to 1.
+		//sumplhrwse thn sun8hkh pou me tosh anesh sxoliases.
+
+		//>>Should a different client be running it would actually be USEFUL TO KNOW IT
+		// Symfwnw, den afora omws to parapanw thn sugkekrimenh leitoyrgikothta.
+
+		//>>It is also a security thing, if and only if you can see the client in the GUI,
+		//>>can an end point succesfully mess with the robot.
+		//>>(Hosts that do not send a beacon are ignored by the network)
+		//Anoikse 2 KMonitors kai luse mou swstotera to problhma pou 8a dhmiourgh8ei.
 
 
-		//Witch regard to the commented if line below:
-		//Let us ponder...
-		//Apart from the fact that I spent 2 hours tryign to debug this line
-		//Not all usefull hostnames should contain "nao", In fact this could change in the future
-		//A hostname that does, is not necessarily useful
-		//Should a different client be running it would actually be USEFUL TO KNOW IT
-		//It is also a security thing, if and only if you can see the client in the GUI,
-		//can an end point succesfully mess with the robot. 
-		//(Hosts that do not send a beacon are ignored by the network)
-		
-
-    		//if (hostName.contains(QString("nao"))) //Why god why...
+    		//if (hostName.contains(QString("nao"))) //>>Why god why...
+			//Thn epomenh fora rwta emena 8a sou apanthsw grhgorotera
     		{
 				item = GWhostFinder(hostId);
 				if( item == NULL)
