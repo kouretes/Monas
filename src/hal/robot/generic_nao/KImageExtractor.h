@@ -7,16 +7,14 @@
 
 #include "architecture/narukom/pub_sub/blackboard.h"
 
-#include "hal/robot/generic_nao/aldebaran-vision.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-
+#include "NaoCamera.h"
 
 #include "KImage.h"
 
-#define VISION_RESOLUTION kVGA
-#define VISION_CSPACE AL::kYUV422InterlacedColorSpace
+#define VISION_RESOLUTION VGA
+#define VISION_CSPACE YUV
 #define VISON_FPS 30
-#define VISION_GVMNAME "KImageExtractor"
 
 /**
  * Extract Image from hardware
@@ -34,27 +32,24 @@ public:
 
 	~KImageExtractor();
 	//Get new Image from hardware
-	boost::posix_time::ptime fetchImage(KImageDeepCopy & img);
+	boost::posix_time::ptime fetchImage(KImageConst & img);
 	//Create new space for image
 	float calibrateCamera(int sleeptime = 500, int exp = 15);
 	float getExpUs() const;
-	int getCamera() const;
+	int currentCameraIsBottom() const;
 	float getScale() const;
-	int swapCamera();
+	  unsigned char swapCamera();
 	void refreshValues();
 private:
-	boost::shared_ptr<AL::ALVideoDeviceProxy> xCamProxy;
+	NaoCamera * naocam;
 
-
-	//Name used when subscribing Generic Video Module
-	std::string GVM_name;
-	int resolution;//Current Resolution
-	int cSpace;// Current Colorspace
 	bool doneSubscribe;//Initializations done?
-	float refexpusec, lastexpusec, lastcam;
+	float refexpusec, lastexpusec;
 	Blackboard *_blk;
 
 	void _releaseImage();
+	void setDefaultSettings();
+	void setCalibrateSettings();
 
 };
 

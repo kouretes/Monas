@@ -42,7 +42,7 @@ private:
 	Blackboard _blk;
 	KImageExtractor imext;
 	KSystem::smart_timer t;
-	KImageDeepCopy imstore;
+	KImageConst imstore;
 	KRawImage outmsg;
 	boost::posix_time::ptime lastrefresh;
 

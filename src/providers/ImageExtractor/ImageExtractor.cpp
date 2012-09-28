@@ -52,12 +52,12 @@ int ImageExtractor::Execute()
 		//cout<<"Refresh"<<endl;
 		imext.refreshValues();//Reload
 
-		if(imext.getCamera() != 1)
+		if(imext.currentCameraIsBottom() != 1)
 			imext.swapCamera();
 
 		outmsg.set_exposure_us(imext.getExpUs());
 
-		if(imext.getCamera() == 1)
+		if(imext.currentCameraIsBottom() == 1)
 			outmsg.set_active_camera(KRawImage::BOTTOM);
 		else
 			outmsg.set_active_camera(KRawImage::TOP);
