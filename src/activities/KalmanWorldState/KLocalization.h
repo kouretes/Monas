@@ -154,10 +154,10 @@ public:
 	bool readRobotConf(const std::string& file_name);
 
 	//The step of the localization SIR filter
-	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt);
+	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations);
 
 	//Update particles with the data from the odometry
-	void Predict(KMotionModel & MotionModel,float dt);
+	void Predict(KMotionModel & MotionModel);
 
 	//Recalculate weights of the particles using the current observation
 	void Update(vector<KObservationModel> &Observation);

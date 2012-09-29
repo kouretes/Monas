@@ -241,7 +241,7 @@ void KLocalization::pruneParticles()
 }
 
 //Sequential Importance Resampling
-belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt)
+belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
 {
 	//SIR Filter
 	//int index[partclsNum];
@@ -270,7 +270,7 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 
 	//Predict - Move particles according the Prediction Model
 	if(MotionModel.freshData)
-		Predict(MotionModel,dt);
+		Predict(MotionModel);
 
 	//Update - Using incoming observation
 	if(Observations.size() >= 1)
@@ -282,7 +282,7 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 		Update_Ambiguous(AmbiguousObservations);
 	}
 	float normweight=1;
-	for(unsigned j=0;j<current_particles/2;j++)
+	for(unsigned j=0;j<current_particles&&j<(unsigned)maxparticles/8;j++)
 	{
 
 		//do one run of bubble sort
@@ -360,7 +360,7 @@ KalmanParticle::Pmatrix KLocalization::MMSE_variance(KalmanParticle::Pvector mea
 }
 
 
-void KLocalization::Predict(KMotionModel & MotionModel,float dt)
+void KLocalization::Predict(KMotionModel & MotionModel)
 {
 	double tmpDist, tmpDir, tmpRot;
 	tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean );//+ X.Next() * MotionModel.Distance.ratiodev);
@@ -369,9 +369,9 @@ void KLocalization::Predict(KMotionModel & MotionModel,float dt)
 
 	KalmanParticle::Pvector disp,dvar;
 
-	dvar(0)=MotionModel.Distance.Edev;
-	dvar(1)=MotionModel.Distance.Edev;
-	dvar(2)=MotionModel.Rotation.Edev;
+	dvar(0)=MotionModel.Distance.Edev+MotionModel.Distance.ratiodev* MotionModel.Distance.val;
+	dvar(1)=MotionModel.Distance.Edev+MotionModel.Distance.ratiodev* MotionModel.Distance.val;
+	dvar(2)=MotionModel.Rotation.Edev+MotionModel.Rotation.ratiodev*MotionModel.Rotation.val;
 	//Move the particles
 	//cout<<"--"<<endl;
 	for ( unsigned i = 0; i < current_particles; i++)
@@ -381,7 +381,7 @@ void KLocalization::Predict(KMotionModel & MotionModel,float dt)
 		disp(1)= sin(tmpDir + kalmanpoints[i].x(2)) * tmpDist;
 		disp(2)=tmpRot;
 		//cout<<kalmanpoints[i].x(0)<<endl;
-		kalmanpoints[i].predict(disp,dvar,dt);
+		kalmanpoints[i].predict(disp,dvar);
 
 		//cout<<kalmanpoints[i].x(2)<<endl;
 

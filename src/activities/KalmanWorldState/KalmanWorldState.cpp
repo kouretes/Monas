@@ -84,7 +84,7 @@ int KalmanWorldState::Execute()
 		localizationWorld.initializeParticles((int)lrm->type(),lrm->kickoff());
 	}
 
-	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation,0.04);
+	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
 	cout<<AgentPosition.x<<" "<< AgentPosition.y << "  "<<AgentPosition.theta <<" "<<AgentPosition.confidence<<endl;
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
