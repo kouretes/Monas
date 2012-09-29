@@ -390,12 +390,20 @@ void NaoCamera::initDefaultControlSettings()
   setControlSetting(V4L2_CID_SAT_AUTO, 0);
   setControlSetting(V4L2_CID_HUE_AUTO, 0);
   setControlSetting(V4L2_CID_HUE, 0);
-  setControlSetting(V4L2_CID_SATURATION, 255);
+
+  setControlSetting(V4L2_CID_SATURATION, 240);
   setControlSetting(V4L2_CID_BRIGHTNESS, 128);
-  setControlSetting(V4L2_CID_CONTRAST, 96);
+  setControlSetting(V4L2_CID_CONTRAST, 64);
 
   setControlSetting(V4L2_CID_AWB_G_CHANNEL_GAIN,64);
+
   setControlSetting(V4L2_CID_AUTO_CONTRAST_CENTER,0);
+  setControlSetting(V4L2_CID_CONTRAST_CENTER,0x80);//Default
+
+  setControlSetting(V4L2_CID_UVSAT_RESULT,0);
+  setControlSetting(V4L2_CID_EDGE_ENH_FACTOR,0);//Sharpness
+  setControlSetting(V4L2_CID_DENOISE_STRENGTH,0x10);//Noise reduction
+
   setControlSetting(V4L2_CID_POWER_LINE_FREQUENCY, V4L2_CID_POWER_LINE_FREQUENCY_DISABLED);
   usleep(300*1000);
 

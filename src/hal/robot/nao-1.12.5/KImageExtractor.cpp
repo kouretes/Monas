@@ -104,9 +104,9 @@ void KImageExtractor::setDefaultSettings()
 	naocam->setControlSetting(V4L2_CID_SAT_AUTO, 0);
 	naocam->setControlSetting(V4L2_CID_HUE_AUTO, 0);
 	naocam->setControlSetting(V4L2_CID_HUE, 0);
-	naocam->setControlSetting(V4L2_CID_SATURATION, 255);
+	naocam->setControlSetting(V4L2_CID_SATURATION, 240);
 	naocam->setControlSetting(V4L2_CID_BRIGHTNESS, 128);
-	naocam->setControlSetting(V4L2_CID_CONTRAST, 96);
+	naocam->setControlSetting(V4L2_CID_CONTRAST, 64);
 }
 
 void KImageExtractor::setCalibrateSettings()
@@ -118,9 +118,9 @@ void KImageExtractor::setCalibrateSettings()
 	naocam->setControlSetting(V4L2_CID_SAT_AUTO, 0);
 	naocam-> setControlSetting(V4L2_CID_HUE_AUTO, 0);
 	naocam->setControlSetting(V4L2_CID_HUE, 0);
-	naocam->setControlSetting(V4L2_CID_SATURATION, 255);
+	naocam->setControlSetting(V4L2_CID_SATURATION, 240);
 	naocam->setControlSetting(V4L2_CID_BRIGHTNESS, 128);
-	naocam->setControlSetting(V4L2_CID_CONTRAST, 96);
+	naocam->setControlSetting(V4L2_CID_CONTRAST, 64);
 
 }
 
