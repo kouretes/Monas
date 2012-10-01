@@ -8,6 +8,59 @@ using namespace boost::posix_time;
 
 ACTIVITY_REGISTER(LedHandler);
 
+void LedHandler::UserInit()
+{
+	//led_change = 0;
+	_blk.updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
+
+	try
+	{
+		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
+	}
+	catch (AL::ALError& e)
+	{
+		Logger::Instance().WriteMsg("LedHandler", "Could not create ALLEds Proxy", Logger::FatalError);
+	}
+
+	try
+	{
+		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
+	}
+	catch (AL::ALError& e)
+	{
+		Logger::Instance().WriteMsg("LedHandler", "Error in getting ALmemory proxy", Logger::FatalError);
+	}
+
+	initializeColorMap();
+	//	setChestColor("on");
+	//	setFootColor("r_foot", "on");
+	//	setFootColor("l_foot", "on");
+	left_ear_names.push_back("Ears/Led/Left/0Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/36Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/72Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/108Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/144Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/180Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/216Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/252Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/288Deg/Actuator/Value");
+	left_ear_names.push_back("Ears/Led/Left/324Deg/Actuator/Value");
+
+	try
+	{
+		battery_level = memory->getData("Device/SubDeviceList/Battery/Charge/Sensor/Value");
+	}
+	catch (AL::ALError& e)
+	{
+		Logger::Instance().WriteMsg("LedHandler", "Error somewhere here", Logger::FatalError);
+	}
+
+	leds->callVoid<string> ("off", "AllLeds");
+	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
+}
+
+void LedHandler::Reset(){
+}
 
 int LedHandler::Execute()
 {
@@ -96,59 +149,6 @@ void LedHandler::process_messages()
 {
 	led_change = _blk.readSignal<LedChangeMessage> ("leds");
 }
-
-
-void LedHandler::UserInit()
-{
-	//led_change = 0;
-	_blk.updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
-
-	try
-	{
-		leds = KAlBroker::Instance().GetBroker()->getProxy("ALLeds");
-	}
-	catch (AL::ALError& e)
-	{
-		Logger::Instance().WriteMsg("LedHandler", "Could not create ALLEds Proxy", Logger::FatalError);
-	}
-
-	try
-	{
-		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
-	}
-	catch (AL::ALError& e)
-	{
-		Logger::Instance().WriteMsg("LedHandler", "Error in getting ALmemory proxy", Logger::FatalError);
-	}
-
-	initializeColorMap();
-	//	setChestColor("on");
-	//	setFootColor("r_foot", "on");
-	//	setFootColor("l_foot", "on");
-	left_ear_names.push_back("Ears/Led/Left/0Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/36Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/72Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/108Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/144Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/180Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/216Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/252Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/288Deg/Actuator/Value");
-	left_ear_names.push_back("Ears/Led/Left/324Deg/Actuator/Value");
-
-	try
-	{
-		battery_level = memory->getData("Device/SubDeviceList/Battery/Charge/Sensor/Value");
-	}
-	catch (AL::ALError& e)
-	{
-		Logger::Instance().WriteMsg("LedHandler", "Error somewhere here", Logger::FatalError);
-	}
-
-	leds->callVoid<string> ("off", "AllLeds");
-	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
-}
-
 
 void LedHandler::setLed(const string& device, const string& color)
 {

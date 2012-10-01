@@ -28,9 +28,6 @@
 #define ACTION_TIME 8
 #define XarAnalyzerFPS 10
 
-
-
-
 ACTIVITY_START
 class XarAnalyzer: public IActivity
 {
@@ -42,6 +39,7 @@ public:
 		return "XarAnalyzer";
 	}
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void read_messages();
 

@@ -31,6 +31,7 @@ private:
 	std::string headPath;
 	std::string bodyPath;
 	std::string directoryPath;
+	std::vector<std::string> allFiles;
 	bool root;
 	unsigned int adler; //checksum
 	
@@ -43,6 +44,7 @@ private:
 	static std::string extractNumberText(std::string & str, unsigned * num);
 	static std::queue<std::string> findAllSubstring(std::string  key);
 	void insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType);
+	bool updateValueForKey(std::string key, std::string value);
 
 
 public:
@@ -54,12 +56,12 @@ public:
 	std::vector<std::string> getText();
 	XmlNode(std::string dirPath, std::string headId, std::string bodyId, bool administrator);
 	void print(std::string pref);
+	void computeAddler32();
 	unsigned getChildrenCount() const;
 	std::vector<std::string> getAttribute(std::string & key) ;
 	bool loadFile(std::string filename, int fileType);
 	bool loadAllFiles(std::string filename);
 	std::vector<std::string> findValueForKey(std::string key);
-	bool updateValueForKey(std::string key, std::string value);
 	bool burstWrite(std::vector<std::pair<std::string, std::string> > writeData);
 	int numberOfNodesForKey(std::string key);
 	int numberOfChildrendsForKey(std::string key);

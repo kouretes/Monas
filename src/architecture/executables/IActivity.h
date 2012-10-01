@@ -38,6 +38,7 @@ public:
 	virtual ~IActivity() {};
 
 	virtual void UserInit () {};
+	virtual void Reset () {};
 
 	virtual std::string GetName () = 0;
 

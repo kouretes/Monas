@@ -97,6 +97,11 @@ public:
 	 * In addition chest button, l_foot, r_foot leds become on (white)
 	 */
 	void ACTIVITY_VISIBLE UserInit();
+	
+	/**
+	 * \brief Activity reset capability. Reload xmls etc
+	 */
+	void ACTIVITY_VISIBLE Reset();
 
 	string ACTIVITY_VISIBLE GetName()
 	{

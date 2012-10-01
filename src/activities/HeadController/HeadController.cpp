@@ -6,19 +6,12 @@
 #include "messages/RoboCupGameControlData.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/mathcommon.h"
-#include "tools/obstacleConst.h"
+
 using namespace KMath;
 using namespace boost::posix_time;
 
 ACTIVITY_REGISTER(HeadController);
 using namespace std;
-
-
-double mglRand()
-{
-	//return rand() / double(RAND_MAX);
-	return (rand() % 100) / 100.0;
-}
 
 /* HeadController Initialization */
 
@@ -69,6 +62,10 @@ void HeadController::UserInit()
 	Logger::Instance().WriteMsg("HeadController", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 }
 
+
+void HeadController::Reset(){
+
+}
 
 /* HeadController Main Execution Function */
 
@@ -608,7 +605,7 @@ bool HeadController::readConfiguration(const std::string& file_name)
 	else if (color == "red")
 		teamColor = TEAM_RED;
 	else
-		Logger::Instance().WriteMsg("HeadController", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
+		Logger::Instance().WriteMsg("HeadController", "Undefined color in configuration, setting to default value: " + teamColor, Logger::Error);
 
 	return true;
 }

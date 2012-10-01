@@ -1,6 +1,7 @@
 #include "XmlConfigurator.h"
 
 using namespace std;
+using namespace boost::filesystem;
 
 
 string convertInt(int number)
@@ -14,7 +15,6 @@ string convertInt(int number)
 XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrator)
 {
 	root = administrator;
-	adler = adler32(0, Z_NULL, 0); //Initialize checksum
 	fileType = 0;
 	headPath = "HEAD/";
 	headPath.append(headId);
@@ -23,7 +23,6 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrato
 	bodyPath.append(bodyId);
 	bodyPath.append("/");
 	directoryPath = dirPath;
-	using namespace boost::filesystem;
 	path p(dirPath);
 
 	if (is_directory(p))
@@ -33,20 +32,22 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrato
 			if (is_regular_file(itr->status()))
 			{
 				string filename = dirPath;
-#if BOOST_FILESYSTEM_VERSION == 2
+//#if BOOST_FILESYSTEM_VERSION == 2
 				filename.append(itr->path().filename());
-#else
-				filename.append(itr->path().filename().string());
-#endif
-
-
-				if(!loadAllFiles(filename))
-					cout << "Failed to load xml file \"" << itr->path().filename() << "\"" << endl;
+//#else
+//				filename.append(itr->path().filename().string());
+//#endif
+				if(!loadAllFiles(filename)){
+					//cout << "Failed to load xml file \"" << itr->path().filename() << "\"" << endl;
+					;
+				}
 			}
 		}
 	}
 	else
 		cout << "Directory path \"" << dirPath << "\" not found" << endl;
+	
+	computeAddler32();
 }
 
 void XmlNode::print(string pref)
@@ -318,8 +319,8 @@ bool XmlNode::burstWrite(vector<pair<string, string> > writeData)
 		tempPair = writeData.front();
 		writeData.erase(writeData.begin());
 		allOk &= updateValueForKey(tempPair.first, tempPair.second);
-	}
-
+	}	
+	computeAddler32();
 	return allOk;
 }
 
@@ -535,7 +536,7 @@ bool XmlNode::loadAllFiles(string filename)
 **/
 bool XmlNode::loadFile(string filename, int fileType)
 {
-	string key = filename.substr(0, filename.find_first_of("."));
+	string key = filename.substr(0, filename.find_last_of("."));
 	key = key.substr(key.find_last_of("/") + 1, key.size() - 1);
 
 	if(fileType == HEAD_FILE)
@@ -548,7 +549,7 @@ bool XmlNode::loadFile(string filename, int fileType)
 
 	if(!loadOkay)
 		return false;
-
+	allFiles.push_back(filename);
 	if(kids.find(key) != kids.end())
 	{
 		for(TiXmlNode* child = doc.FirstChild(); child; child = child->NextSibling())
@@ -572,17 +573,6 @@ bool XmlNode::loadFile(string filename, int fileType)
 		}
 
 		kids[key].push_back(baby);
-	}
-	//calculate checksum
-	if(root){	
-		ifstream xmlFile(filename.c_str());
-		string str;
-		xmlFile.seekg(0, ios::end);   
-		str.reserve(xmlFile.tellg());
-		xmlFile.seekg(0, ios::beg);
-		str.assign((istreambuf_iterator<char>(xmlFile)), istreambuf_iterator<char>());
-		adler = adler32(adler, (Bytef *)str.c_str(), str.length());
-	  	xmlFile.close();
 	}
 		
 	return true;
@@ -623,6 +613,22 @@ void XmlNode::insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType)
 	}
 
 	kids[element->Value()].push_back(baby);
+}
+
+void XmlNode::computeAddler32(){
+	adler = adler32(0, Z_NULL, 0); //Initialize checksum
+	if(root){
+		for(vector<string>::iterator iter = allFiles.begin(); iter != allFiles.end(); iter++){
+			ifstream xmlFile((*iter).c_str());
+			string str;
+			xmlFile.seekg(0, ios::end);   
+			str.reserve(xmlFile.tellg());
+			xmlFile.seekg(0, ios::beg);
+			str.assign((istreambuf_iterator<char>(xmlFile)), istreambuf_iterator<char>());
+			adler = adler32(adler, (Bytef *)str.c_str(), str.length());
+			xmlFile.close();
+		}	
+	}
 }
 
 //Get checksum of all files

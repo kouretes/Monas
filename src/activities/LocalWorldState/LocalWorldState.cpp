@@ -70,6 +70,10 @@ void LocalWorldState::UserInit()
 
 }
 
+void LocalWorldState::Reset(){
+
+}
+
 int LocalWorldState::Execute()
 {
 	now = boost::posix_time::microsec_clock::universal_time();

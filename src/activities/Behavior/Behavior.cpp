@@ -111,6 +111,9 @@ void Behavior::UserInit()
 }
 
 
+void Behavior::Reset(){
+
+}
 /* Behavior Main Execution Function */
 
 int Behavior::Execute()

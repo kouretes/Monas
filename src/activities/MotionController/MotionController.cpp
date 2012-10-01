@@ -101,8 +101,7 @@ void MotionController::UserInit()
 		}
 	}
 	createDCMAlias();
-	//Stable walk for the lab ENABLE for robocup
-	readWalkParameters();
+
 	motion->setWalkArmsEnable(true, true);
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
 	_blk.updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -118,7 +117,6 @@ void MotionController::UserInit()
 	headPID = 0;
 	actionPID = 0;
 	currentstate = 1000;
-	counter = 0;
 	pam = new MotionActionMessage();
 	pam->set_command("NULL");
 	sm.set_type(MotionStateMessage::IDLE);
@@ -130,43 +128,28 @@ void MotionController::UserInit()
 	BodyID = KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID);
 	Logger::Instance().WriteMsg("MotionController", "The Body ID is " + BodyID, Logger::Info);
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
+	
+	//Self Reset for initialization
+	Reset();
+}
+
+void MotionController::Reset(){
+	readWalkParameters();
 }
 
 int MotionController::Execute()
 {
-	//counter++;
-	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//testcommands();
 	//if(counter%100==0)
 	//	readWalkParameters();
 	read_messages();
-	mglrun();
-	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
-	return 0;
-}
-
-void MotionController::read_messages()
-{
-	/* Messages for Walk, Head, Action */
-	hm = _blk.readSignal<MotionHeadMessage> ("motion");
-	wm = _blk.readSignal<MotionWalkMessage> ("motion");
-	am = _blk.readSignal<MotionActionMessage> ("motion");
-	/* Messages for Intertial Readings */
-	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
-	/* Messages from the Game Controller */
-	gsm = _blk.readState<GameStateMessage> ("worldstate");
-	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
-}
-
-void MotionController::mglrun()
-{
 	vector<float> AangleTemp(22);
 	vector<float> KangleTemp(22);
 	vector<float> CangleTemp(22);
 
 	/* Return if waiting time has not expired yet */
 	if (waitfor > microsec_clock::universal_time())
-		return;
+		return 0;
 
 	if (allsm != NULL && allsm->sensordata_size() >= L_FSR)//Has Accelerometers
 	{
@@ -241,7 +224,7 @@ void MotionController::mglrun()
 		}
 
 		waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
-		return;
+		return 0;
 	}
 
 	if (allsm != NULL)//Has Accelerometers
@@ -276,7 +259,7 @@ void MotionController::mglrun()
 				sm.set_detail("");
 				_blk.publishState(sm, "worldstate");
 				waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
-				return;
+				return 0;
 			}
 		}
 	}
@@ -293,7 +276,7 @@ void MotionController::mglrun()
 			else
 				actionPID = it->second->ExecutePost();
 
-			return;
+			return 0;
 		}
 
 		actionPID = 0;
@@ -312,16 +295,15 @@ void MotionController::mglrun()
 			robotUp = false;
 		}
 
-		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Action completed!", Logger::ExtraInfo);
 	}
 
 	if ((actionPID == 0) && !robotDown && !robotUp)
 	{
 		//Now execute an alstandupcross
 		motion->setStiffnesses("Body", 0.68);
-		//usleep(300000);
 		ALstandUpCross();
-		return;
+		return 0;
 	}
 
 	/* Check if the robot is down and stand up */
@@ -334,15 +316,13 @@ void MotionController::mglrun()
 			_blk.publishState(sm, "worldstate");
 		}
 
-		//	Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();
 		standUpStartTime = boost::posix_time::microsec_clock::universal_time();
 		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
-		//uŔ(7000000);
-		return;
+		return 0;
 	}
 
 	/* The robot is up and ready to execute motions */
@@ -352,14 +332,12 @@ void MotionController::mglrun()
 		if ((walkPID != 0) && !motion->isRunning(walkPID) && !motion->walkIsActive())
 		{
 			walkPID = 0;
-			//	Logger::Instance().WriteMsg("MotionController", "Walk completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 		}
 
 		/* Check if a Head command has been completed */
 		if ((headPID != 0) && !motion->isRunning(headPID))
 		{
 			headPID = 0;
-			//	Logger::Instance().WriteMsg("MotionController", "Head completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 		}
 
 		/* Check if there is a command to execute */
@@ -396,11 +374,9 @@ void MotionController::mglrun()
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);
 				walkParam4 = wm->parameter(3);
-				//	Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
-				//			+ _toString(walkParam3) + " " + _toString(walkParam4), Logger::ExtraInfo);
+
 				motion->setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4, walkConfig);
 				walkingWithVelocity = true;
-				//Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
 			}
 			else
 				Logger::Instance().WriteMsg("MotionController", "Invalid Walk Command: " + wm->command(), Logger::ExtraInfo);
@@ -499,13 +475,6 @@ void MotionController::mglrun()
 			}
 			else
 			{
-				//				if(	strKick.compare(0, 11, "KickForward") == 0 && str.compare("xar") == 0){
-				//					if (BodyID.compare(0,7,"Nao1673") == 0 || BodyID.compare(0,7,"Nao1675") == 0){
-				//						strKick+="Sit.xar";
-				//						pam->set_command(strKick);
-				//						//Logger::Instance().WriteMsg("MotionController", " THE SP ACTION IS NOW THE " + pam->command(), Logger::Info);
-				//					}
-				//				}
 				SpAssocCont::iterator it = SpActions.find(pam->command());
 
 				if (it == SpActions.end())
@@ -545,7 +514,20 @@ void MotionController::mglrun()
 		}
 	}
 
-	return;
+	return 0;
+}
+
+void MotionController::read_messages()
+{
+	/* Messages for Walk, Head, Action */
+	hm = _blk.readSignal<MotionHeadMessage> ("motion");
+	wm = _blk.readSignal<MotionWalkMessage> ("motion");
+	am = _blk.readSignal<MotionActionMessage> ("motion");
+	/* Messages for Intertial Readings */
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	/* Messages from the Game Controller */
+	gsm = _blk.readState<GameStateMessage> ("worldstate");
+	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 }
 
 void MotionController::killWalkCommand()

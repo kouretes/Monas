@@ -8,12 +8,11 @@
 
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
-
 #include "architecture/XmlManager/XmlConfigurator.h"
-
 #include "architecture/executables/IActivity.h"
-
 #include "architecture/periodicthread.h"
+
+#include "messages/GUICommunication.pb.h"
 
 #ifdef RUN_ON_NAO
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -59,6 +58,10 @@ private:
 	unsigned int _statsCycle;
 
 	unsigned int _executions;
+	
+	//Reset Messages
+	boost::shared_ptr<const ResetMessage> rmsg;
+	boost::shared_ptr<const UpdateMessage> umsg;
 
 };
 

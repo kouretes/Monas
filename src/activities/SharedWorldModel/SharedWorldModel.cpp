@@ -9,7 +9,6 @@
 ACTIVITY_REGISTER(SharedWorldModel);
 using namespace std;
 
-
 void SharedWorldModel::UserInit()
 {
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
@@ -24,6 +23,9 @@ void SharedWorldModel::UserInit()
 	Logger::Instance().WriteMsg("SharedWorldModel", "Initialized", Logger::Info);
 }
 
+void SharedWorldModel::Reset(){
+
+}
 
 int SharedWorldModel::Execute()
 {

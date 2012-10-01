@@ -43,6 +43,7 @@ public:
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 
 	std::string ACTIVITY_VISIBLE GetName()
 	{
@@ -56,21 +57,17 @@ private:
 	AL::ALMotionProxy *motion;
 	AL::ALFrameManagerProxy *framemanager;
 	boost::shared_ptr<AL::ALProxy> temp;
-	boost::shared_ptr<AL::ALBroker> pbroker;
-	//boost::shared_ptr<AL::ALFrameManagerProxy> framemanager;
 
 	bool walkingWithVelocity;
 
 	bool robotDown;
 	bool robotUp;
-	//SensorPair AccZ, AccX, AccY;
+
 	float AccZvalue, AccXvalue, AccYvalue;
 	float accnorm, angX, angY, VangX, VangY;
 	ptime waitfor;
 	int gameState;
 	int currentstate;
-
-	int counter;
 
 	int walkPID;
 	float walkParam1, walkParam2, walkParam3, walkParam4;
@@ -114,17 +111,13 @@ private:
 	vector<float> KGetAngles();
 	void createDCMAlias();
 	//void setStiffnessDCM(float s);
-	typedef std::map < std::string,
-	        boost::shared_ptr<ISpecialAction> > SpAssocCont;
-	typedef std::pair < std::string,
-	        boost::shared_ptr<ISpecialAction> > SpAsoocElement;
+	typedef std::map < std::string, boost::shared_ptr<ISpecialAction> > SpAssocCont;
+	typedef std::pair < std::string, boost::shared_ptr<ISpecialAction> > SpAsoocElement;
 	SpAssocCont SpActions;
 
 
-	typedef std::map < std::string,
-	        boost::shared_ptr<KmexAction> > SpCont;
-	typedef std::pair < std::string,
-	        boost::shared_ptr<KmexAction> > SpElement;
+	typedef std::map < std::string, boost::shared_ptr<KmexAction> > SpCont;
+	typedef std::pair < std::string, boost::shared_ptr<KmexAction> > SpElement;
 	SpCont SpKmexActions;
 
 	std::string BodyID;
