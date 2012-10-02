@@ -63,7 +63,6 @@ int ImageExtractor::Execute()
 			outmsg.set_active_camera(KRawImage::TOP);
 
 		outmsg.set_luminance_scale(imext.getScale());
-		//		cout<<"scale"<<imext.getScale()<<endl;
 		lastrefresh = now;
 	}
 
@@ -71,7 +70,7 @@ int ImageExtractor::Execute()
 	outmsg.set_width((imstore.width));
 	outmsg.set_height((imstore.height));
 	outmsg.set_bytes_per_pix(imstore.nChannels);
-
+	outmsg.set_luminance_scale(imext.getScale());
 	if(imstore.nChannels == 2)
 		outmsg.set_colorspace(KRawImage::YUYV);
 	else

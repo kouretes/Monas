@@ -382,21 +382,26 @@ void NaoCamera::initDefaultControlSettings()
 
   //std::list<CameraSettings::V4L2Setting> v4l2settings = settings.getInitSettings();
   //assert(setControlSettings(v4l2settings));
-  setControlSetting(V4L2_CID_AUTOEXPOSURE ,0);
-  setControlSetting(V4L2_CID_AUTO_WHITE_BALANCE, 1);
+  setControlSetting(V4L2_CID_AUTOEXPOSURE , 0);
+  setControlSetting(V4L2_CID_AUTO_WHITE_BALANCE, 0);
   setControlSetting(V4L2_CID_AUTOGAIN, 0);
-  setControlSetting(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_AUTO);
+  setControlSetting(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
+  setControlSetting(V4L2_CID_GAIN,0xF0);
   setControlSetting(V4L2_CID_BACKLIGHT_COMPENSATION, 0);
   setControlSetting(V4L2_CID_SAT_AUTO, 0);
   setControlSetting(V4L2_CID_HUE_AUTO, 0);
+  setControlSetting(V4L2_CID_AUTO_CONTRAST_CENTER,0);
+  setControlSetting(V4L2_CID_POWER_LINE_FREQUENCY, V4L2_CID_POWER_LINE_FREQUENCY_DISABLED);
+
   setControlSetting(V4L2_CID_HUE, 0);
   setControlSetting(V4L2_CID_SATURATION, 255);
   setControlSetting(V4L2_CID_BRIGHTNESS, 128);
   setControlSetting(V4L2_CID_CONTRAST, 96);
 
   setControlSetting(V4L2_CID_AWB_G_CHANNEL_GAIN,64);
-  setControlSetting(V4L2_CID_AUTO_CONTRAST_CENTER,0);
-  setControlSetting(V4L2_CID_POWER_LINE_FREQUENCY, V4L2_CID_POWER_LINE_FREQUENCY_DISABLED);
+  setControlSetting(V4L2_CID_RED_BALANCE,128 );
+  setControlSetting(V4L2_CID_BLUE_BALANCE,128);
+
   usleep(300*1000);
 
 #else
