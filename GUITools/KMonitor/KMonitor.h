@@ -11,6 +11,7 @@
 #include "LVElementList.h"
 #include "LSDController.h"
 #include "KccHandler.h"
+#include "XMLHandler.h"
 #include "ui_KMonitor.h"
 
 
@@ -39,8 +40,6 @@ private:
     LVElementList* LRVElementList;
     LWRemoteHosts* availableLSHosts;
     LSDController* LSController;
-
-    KccHandler* KCC;
 };
 
 #endif // KMONITOR_H

@@ -8,7 +8,7 @@ PROJECT( KMonitor )
 
 FIND_PACKAGE( Qt4 REQUIRED )
 # necessary ? 
-FIND_PACKAGE(Boost COMPONENTS date_time thread system)
+FIND_PACKAGE(Boost COMPONENTS date_time thread filesystem system REQUIRED)
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${Boost_INCLUDE_DIRS} ../../src/)
 
@@ -20,7 +20,8 @@ SET( QT_USE_QTSVG TRUE )
 SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp LWRemoteHosts.cpp 
 		KGraphicsView.cpp KFieldScene.cpp GraphicalRobotElement.cpp LWElementTree.cpp
 	    LMElementTree.cpp KMapView.cpp KMapScene.cpp KLabel.cpp KRobotView.cpp LVElementList.cpp
-		KccHandler.cpp KccLabel.cpp LSDController.cpp
+		KccHandler.cpp KccLabel.cpp LSDController.cpp XMLHandler.cpp 
+		../../src/architecture/XmlManager/XmlConfigurator.cpp
 		../../src/activities/Vision/KSegmentator.cpp
 		../../src/hal/generic_linux/syscall.cpp
 		../../src/messages/Network.pb.cc
@@ -32,13 +33,14 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 		../../src/messages/motion.pb.cc
 		../../src/messages/ObstacleAvoidanceMessage.pb.cc
 		../../src/messages/Kimage.pb.cc 
+		../../src/messages/GUICommunication.pb.cc 
 		
 	)
 SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
 		GraphicalRobotElement.h LWElementTree.h LMElementTree.h KMapView.h KLabel.h LVElementList.h 
-		KccHandler.h KccLabel.h LSDController.h
+		KccHandler.h KccLabel.h LSDController.h XMLHandler.h
 	) 
-SET( KMonitor_FORMS KMonitor.ui KccHandler.ui)
+SET( KMonitor_FORMS KMonitor.ui KccHandler.ui XMLHandler.ui)
 SET( KMonitor_RESOURCES GuiResources.qrc )
 
 QT4_WRAP_CPP( KMonitor_HEADERS_MOC ${KMonitor_HEADERS} )

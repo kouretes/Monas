@@ -14,6 +14,7 @@
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/motion.pb.h"
+#include "messages/GUICommunication.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/Kimage.pb.h"
 
@@ -46,6 +47,10 @@ public slots:
 
 	void LSRHSubscriptionHandler(QString);
 	void LSRHUnsubscriptionHandler(QString);
+	
+	void XMLRHSubscriptionHandler(QString);
+	void XMLPublishMessage(ExternalConfig);
+	void XMLRHUnsubscriptionHandler(QString);
 
 	void tabChangeHandler(int);
 
@@ -60,6 +65,7 @@ signals:
 	void rawImageUpdate(KRawImage, QString);
 	void KCCRawImageUpdate(KRawImage, QString);
 	void sensorsDataUpdate(AllSensorValuesMessage, QString);
+	void xmlGenericAckReceived(GenericACK, QString);
 
 private slots:
 	void allocateReceivedMessages();
@@ -81,5 +87,6 @@ private:
 	QString myLVRequestedHost;
 	QString myKccRequestedHost;
 	QString myLSRequestedHost;
+	QString myXMLRequestedHost;
 };
 #endif /* KGUIMESSENGER_H_ */
