@@ -36,6 +36,7 @@ public:
 	}
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	void process_messages();
 	std::string ACTIVITY_VISIBLE GetName()
 	{

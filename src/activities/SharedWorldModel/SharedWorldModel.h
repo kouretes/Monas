@@ -6,8 +6,6 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/Network.pb.h"
 
-#define numOfRobots 5
-
 ACTIVITY_START
 
 class SharedWorldModel: public IActivity
@@ -19,11 +17,12 @@ public:
 	{
 		return "SharedWorldModel";
 	}
-	void ACTIVITY_VISIBLE  UserInit();
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	boost::shared_ptr<const WorldInfo>  wim;
 	boost::shared_ptr<const KnownHosts> h;
-
+	static const int numOfRobots = 5;
 private:
 	int findClosestRobot();
 

@@ -141,7 +141,8 @@ void KccHandler::clickedImage(QMouseEvent* ev){
 	map<QYuv,unsigned char> undo;
 
 	
-	lumaScale = yuvColorTable->getLumaScale();
+	lumaScale = 1/yuvColorTable->getLumaScale();
+	qDebug()<< lumaScale ;
 	QYuv b, temp2;
 
     for(int px=-pixNum;px<pixNum+1;px++){
@@ -448,7 +449,7 @@ void KccHandler::addComboBoxItem(QString data1, QString data2){
 }
 
 void KccHandler::removeComboBoxItem(QString data1){
-	OldHostRemoved(data1);
+	emit OldHostRemoved(data1);
 }
 
 void KccHandler::setLWRHGameStateInfo(QIcon data1, QString data2, QString data3){

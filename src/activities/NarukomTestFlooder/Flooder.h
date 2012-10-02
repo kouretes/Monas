@@ -13,6 +13,7 @@ public:
 	KProfiling::profiler p;
 
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	std::string ACTIVITY_VISIBLE GetName()
 	{
 		return "Pipe";
@@ -28,6 +29,7 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	KProfiling::profiler p;
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	std::string  ACTIVITY_VISIBLE GetName()
 	{
 		return "Drain";

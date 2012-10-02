@@ -1,0 +1,337 @@
+#include "XMLHandler.h"
+#include "ui_XMLHandler.h"
+#include "../../src/tools/toString.h"
+#include <sstream>
+
+using namespace std;
+
+XMLHandler::XMLHandler(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::XMLHandler)
+{
+    ui->setupUi(this);
+
+	availableXMLHosts = new LWRemoteHosts(ui->XMLComboBox);
+	
+	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableXMLHosts, SLOT(addComboBoxItem(QString, QString)));
+	connect(this, SIGNAL(OldHostRemoved(QString)), availableXMLHosts, SLOT(removeComboBoxItem(QString)));
+	connect(this, SIGNAL(GameStateMsgUpdate(QIcon, QString, QString)), availableXMLHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+
+	connect(availableXMLHosts, SIGNAL(LWRHSubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)));
+	connect(availableXMLHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), this, SLOT(UnsubscriptionHandler(QString)));
+
+	connect(ui->pushHandOff, SIGNAL(clicked()), this, SLOT(pbHandOfPressed()));
+	connect(ui->sendpb, SIGNAL(clicked()), this, SLOT(sendPressed()));
+	ui->sendpb->setEnabled(false);
+	
+	
+	//Initialize main tree
+	connect(ui->mainTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(editItemOrNot(QTreeWidgetItem *, int)));
+	connect(ui->mainTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(itemChanged(QTreeWidgetItem *, int)));
+	
+	ui->mainTree->blockSignals(true);
+	ui->mainTree->setColumnCount(3);
+	ui->mainTree->setHeaderLabels(QStringList() << "Name" << "Value" << "key");
+	QTreeWidgetItem *item = new QTreeWidgetItem(ui->mainTree);
+	item->setText(0, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+	item->setText(1, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+	item->setText(2, "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+	for(int i = 0; i < 3; i++)
+		ui->mainTree->resizeColumnToContents(i);
+	ui->mainTree->takeTopLevelItem(0);
+	ui->mainTree->blockSignals(false);
+	
+	//Initialize activities tree
+	ui->activitiesTree->setHeaderLabel("Reset activities list");
+	ui->activitiesTree->resizeColumnToContents(1);
+	ui->activitiesTree->takeTopLevelItem(0);
+	connect(ui->activitiesTree, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(selectActivities(QTreeWidgetItem *, int)));
+	
+	ui->status->setText("");
+	ui->status2->setText("Waiting for handoff");
+	
+	updateTreeStructure("lala","lala");
+	
+	//timer for the acks
+	timer = new QTimer();
+	timer->setInterval(200);
+	connect(this->timer, SIGNAL(timeout()), this, SLOT(retransmitMessage()));
+	
+	bodyid = "";
+	headid = "";
+	lastMessageACKed = true;
+	numOfRetransmits = 0;
+	timestamp = boost::posix_time::microsec_clock::universal_time();
+}
+
+void XMLHandler::updateTreeStructure(string headID, string bodyID){
+	ui->mainTree->blockSignals(true);
+	ui->mainTree->clear();
+	xmlStructure = XmlNode("../../../config/", headID, bodyID, true);
+	for(map<string, vector<XmlNode> >::iterator kit = xmlStructure.kids.begin(); kit != xmlStructure.kids.end(); ++kit)
+	{		
+		addChildsRecursive(ui->mainTree->invisibleRootItem(), QString((*kit).first.c_str()),QString(" "), &((*kit).second.front()), (*kit).first.c_str());		
+	}
+	initializeActivitiesTree();
+	changes.clear();
+	ui->mainTree->blockSignals(false);
+}
+
+void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, XmlNode *currentNode, string currentKey){
+	QTreeWidgetItem* item = new QTreeWidgetItem(parent);
+	item->setText(0, name);
+	item->setText(1, data);
+	item->setText(2, QString::fromStdString(currentKey));
+
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+	for(map<string, string>::iterator attr = currentNode->attributes.begin(); attr != currentNode->attributes.end(); ++attr){
+		string tempKey = currentKey;
+		tempKey.append(".$"+(*attr).first);
+		addAttributeChild(item, QString::fromStdString("$" + (*attr).first), QString::fromStdString((*attr).second), tempKey);
+	}
+	for(map<string, vector<XmlNode> >::iterator kit = currentNode->kids.begin(); kit != currentNode->kids.end(); ++kit){
+		int kidNum = 0;
+		for(vector<XmlNode>::iterator vit = (*kit).second.begin(); vit != (*kit).second.end(); ++vit){
+			QString text = " ";
+			if((*vit).text.size() != 0){
+				text = QString::fromStdString((*vit).text.front());
+			}
+			string tempKey = currentKey;
+			tempKey.append(string(".")+string((*kit).first) + string("~") + _toString(kidNum));
+			kidNum++;
+			addChildsRecursive(item, QString::fromStdString((*kit).first), text, &(*vit), tempKey);
+		}
+	}
+}
+
+void XMLHandler::addAttributeChild(QTreeWidgetItem *parent, QString name, QString data, string currentKey){
+	QTreeWidgetItem *item = new QTreeWidgetItem(parent);
+	item->setText(0, name);
+	item->setText(1, data);
+	item->setText(2, QString::fromStdString(currentKey));
+
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+}
+
+void XMLHandler::initializeActivitiesTree(){
+	int numOfAgents = xmlStructure.numberOfNodesForKey("agents.agent");
+	ui->activitiesTree->clear();
+	for(int i = 0; i < numOfAgents; i++){
+		QTreeWidgetItem* parent = new QTreeWidgetItem(ui->activitiesTree);
+		QString agentName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + ".name").front());
+		parent->setText(0, agentName);
+		parent->setFlags(parent->flags() & ~Qt::ItemIsSelectable);
+		int numOfActivities = xmlStructure.numberOfNodesForKey(string("agents.agent~") + string(_toString(i)) + ".activity");
+		for(int j = 0; j < numOfActivities; j++){
+			QTreeWidgetItem* child = new QTreeWidgetItem(parent);
+			child->setFlags(child->flags() & ~Qt::ItemIsSelectable);
+			QString activityName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + string(".activity~") + _toString(j)).front());
+			child->setText(0, activityName);
+			child->setText(1, "0");
+		}
+	}
+	int numOfStatecharts = xmlStructure.numberOfNodesForKey("agents.statechart");
+	if(numOfStatecharts != 0){
+		QTreeWidgetItem* parent = new QTreeWidgetItem(ui->activitiesTree);
+		QString agentName = "Statecharts";
+		parent->setText(0, agentName);
+		parent->setFlags(parent->flags() & ~Qt::ItemIsSelectable);
+		for(int i = 0; i < numOfStatecharts; i++){
+			QTreeWidgetItem* child = new QTreeWidgetItem(parent);
+			child->setFlags(child->flags() & ~Qt::ItemIsSelectable);
+			QString statechartName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.statechart~") + _toString(i)).front());
+			child->setText(0, statechartName);
+			child->setText(1, "0");
+		}
+	}
+	
+	ui->activitiesTree->expandAll();
+	ui->activitiesTree->setItemsExpandable(false);
+	ui->activitiesTree->setRootIsDecorated(false);
+}
+
+void XMLHandler::pbHandOfPressed(){
+	qDebug() << "Efige";
+	//target host is be setting to the kguimessenger class
+	lastMessageACKed = false;
+	ui->pushHandOff->setEnabled(false);
+	timer->start();
+	timestamp = boost::posix_time::microsec_clock::universal_time();
+	string messageid = boost::posix_time::to_iso_string(timestamp);
+	outmsg.set_messageid(messageid);
+	outmsg.clear_updatexml();
+	outmsg.set_handoffrequest(true);
+	lastmsg = outmsg;
+	emit sendConfigMessage(outmsg);
+}
+
+void XMLHandler::genericAckReceived(GenericACK ack, QString hostid){
+	qDebug() << "Mou irthe";
+	if(boost::posix_time::from_iso_string(ack.messageid()) == timestamp && !lastMessageACKed){
+		timer->stop();
+		numOfRetransmits = 0;
+		lastMessageACKed = true;
+		if(ack.ownlock()){
+			if(ack.has_handshaking())
+			{
+				HandShake hs = ack.handshaking();
+				headid = hs.headid();
+				bodyid = hs.bodyid();
+				updateTreeStructure(headid,bodyid);
+				oldChecksum = xmlStructure.getChecksum();
+				if(oldChecksum == hs.checksum()){
+					ui->status->setText("succeeded");
+					ui->sendpb->setEnabled(true);
+				}else{
+					ui->status->setText("failed");
+					ui->sendpb->setEnabled(false);
+				}
+			}else
+				ui->sendpb->setEnabled(true);
+			updateXMLFiles();
+		}else{
+			ui->status->setText("Locked owned by other GUI");
+			ui->status2->setText("Waiting for handoff");
+			ui->pushHandOff->setEnabled(true);
+			ui->sendpb->setEnabled(false);
+		}
+	}
+}
+
+void XMLHandler::retransmitMessage(){
+	numOfRetransmits++;
+	if(numOfRetransmits != MAX_RETRANSMITS){
+		emit sendConfigMessage(lastmsg);
+	}else{
+		numOfRetransmits = 0;
+		timer->stop();
+		ui->pushHandOff->setEnabled(true);
+		ui->sendpb->setEnabled(false);
+		ui->status->setText("failed");
+		ui->status2->setText("hand off required");
+
+		timestamp = boost::posix_time::microsec_clock::universal_time();
+	}
+}
+
+void XMLHandler::editItemOrNot(QTreeWidgetItem *item, int col){
+	ui->mainTree->blockSignals(true);
+	if(col == 1 && item->text(col) != " "){
+		oldValue = item->text(col);
+		item->setFlags(item->flags() | Qt::ItemIsEditable);
+	}else{
+		item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+	}	
+	ui->mainTree->blockSignals(false);
+}
+
+void XMLHandler::selectActivities(QTreeWidgetItem *item, int col){
+	if(item->childCount()!=0){
+		for (int i = 0; i != item->childCount(); i++){
+    		item->child(i)->setBackground(0,*(new QBrush(Qt::green)));
+			item->child(i)->setText(1, "1");
+    	}
+	}else{
+		if(item->text(1) == "0"){
+    		item->setBackground(0,*(new QBrush(Qt::green)));
+			item->setText(1, "1");
+		}else{
+    		item->setBackground(0,item->background(1));
+			item->setText(1, "0");
+		}
+	}
+}
+
+void XMLHandler::itemChanged(QTreeWidgetItem *item, int col){
+	if(item->text(1) != "" && item->text(1) != " "){
+		changes[item->text(2).toStdString()] = item->text(1).toStdString();
+	}else{
+		item->setText(1, oldValue);	
+	}
+}
+
+void XMLHandler::sendPressed(){
+	outmsg.clear_updatexml();
+	int i = 0;
+	for(map<string, string>::iterator iter = changes.begin(); iter != changes.end(); iter++){
+		outmsg.add_updatexml();
+		outmsg.mutable_updatexml(i)->set_keyword(iter->first);
+		outmsg.mutable_updatexml(i)->set_value(iter->second);
+		i++;
+		//cout << iter->first << " " << iter->second << endl;	
+	}
+	
+	outmsg.clear_resetactivities();
+	QTreeWidgetItem *first = ui->activitiesTree->invisibleRootItem();
+	if(first->childCount()!=0){
+		for (int i = 0; i != first->childCount(); i++){
+			for(int j = 0; j != first->child(i)->childCount(); j++){
+				if(first->child(i)->child(j)->text(1).compare("1") == 0){
+					outmsg.add_resetactivities(first->child(i)->child(j)->text(0).toStdString());
+				}
+			}
+		}
+	}
+	
+	if(outmsg.updatexml_size() != 0 || outmsg.resetactivities_size() != 0){
+		//target host is be setting to the kguimessenger class
+		lastMessageACKed = false;
+		ui->sendpb->setEnabled(false);
+		
+		timer->start();
+		
+		outmsg.set_handoffrequest(false);
+		
+		timestamp = boost::posix_time::microsec_clock::universal_time();
+		string messageid = boost::posix_time::to_iso_string(timestamp);
+		outmsg.set_messageid(messageid);
+
+		lastmsg = outmsg;
+
+		emit sendConfigMessage(outmsg);
+	}
+}
+
+void XMLHandler::updateXMLFiles(){
+	if(changes.size() != 0){
+		vector<pair<string,string> > dataForWrite;
+		for(map<string, string>::iterator iter = changes.begin(); iter != changes.end(); iter++){
+			pair<string,string> temp;
+			temp.first = iter->first;
+			temp.second = iter->second;
+			dataForWrite.push_back(temp);
+			//cout << iter->first << " " << iter->second << endl;	
+		}		
+		changes.clear();
+		xmlStructure.burstWrite(dataForWrite);
+	}
+}
+
+void XMLHandler::addComboBoxItem(QString data1, QString data2){
+	emit NewHostAdded(data1,data2);
+}
+
+void XMLHandler::removeComboBoxItem(QString data1){
+	emit OldHostRemoved(data1);
+}
+
+void XMLHandler::setLWRHGameStateInfo(QIcon data1, QString data2, QString data3){
+	emit GameStateMsgUpdate(data1,data2,data3);
+}
+
+void XMLHandler::SubscriptionHandler(QString data1){
+	ui->pushHandOff->setEnabled(true);
+	ui->sendpb->setEnabled(false);
+	ui->status->setText("failed");
+	ui->status2->setText("hand off required");
+	emit LWRHSubscriptionRequest(data1);
+}
+
+void XMLHandler::UnsubscriptionHandler(QString data1){
+	emit LWRHUnsubscriptionRequest(data1);
+}
+
+XMLHandler::~XMLHandler()
+{
+    delete ui;
+}

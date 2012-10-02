@@ -7,10 +7,9 @@
 #include "messages/SensorsMessage.pb.h"
 #include "messages/motion.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-#include "messages/Kimage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
-#include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/Kimage.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
@@ -40,6 +39,7 @@ public:
 		return "HeadController";
 	}
 	void ACTIVITY_VISIBLE  UserInit();
+	void ACTIVITY_VISIBLE  Reset();
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 	void read_messages();

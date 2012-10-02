@@ -26,50 +26,6 @@ ACTIVITY_REGISTER(ObstacleAvoidance);
 
 using namespace KMath;
 
-int DtoR(double d)
-{
-	if (d < 0)
-		return InnerRing;
-	else
-		return int( d / RingDistance ) + 1; // +1 is used to skip the InnerRing
-}
-
-int TtoS(double theta)
-{
-	return int( wrapTo0_2Pi(theta + M_PI_2 + SectorShiftRad) / SectorAngleRad );
-}
-
-double RtoD(int r)
-{
-	if (r == InnerRing)
-		return 0.0;
-	else
-		return (r - 1) * RingDistance;
-}
-
-double StoT(int s)
-{
-	return wrapToPi(s * SectorAngleRad - M_PI_2 - SectorShiftRad);
-}
-
-int XYtoR(double x, double y)
-{
-	return DtoR( toPolarD(x, y) );
-}
-
-int XYtoS(double x, double y)
-{
-	return TtoS( toPolarT(x, y) );
-}
-
-int wrapTo(int n, int MAXN)
-{
-	while (n < 0) n += MAXN;
-
-	return (n % MAXN);
-}
-
-
 void ObstacleAvoidance::UserInit()
 {
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -157,34 +113,8 @@ void ObstacleAvoidance::UserInit()
 	}*/
 }
 
-void ObstacleAvoidance::chooseCloserObstacle()
-{
-	for(int i = 0; i < TotalRings; i++)
-	{
-		frontObstacle = PolarGrid[present][i][FRONT] > ObstacleThreshold ? true : false;
-		frontDist = frontObstacle == true ? ((i + 1) * distanceM) : 0.0;
-		frontCert = frontObstacle == true ? PolarGrid[present][i][FRONT] : 0.0;
+void ObstacleAvoidance::Reset(){
 
-		if (frontObstacle) break;
-	}
-
-	for(int i = 0; i < TotalRings; i++)
-	{
-		rightObstacle = PolarGrid[present][i][RIGHT] > ObstacleThreshold ? true : false;
-		rightDist = rightObstacle == true ? ((i + 1) * distanceM ) : 0.0;
-		rightCert = rightObstacle == true ? PolarGrid[present][i][RIGHT] : 0.0;  // TODO: get the central ray
-
-		if (rightObstacle) break;
-	}
-
-	for(int i = 0; i < TotalRings; i++)
-	{
-		leftObstacle = PolarGrid[present][i][LEFT] > ObstacleThreshold ? true : false;
-		leftDist = leftObstacle == true ? ((i + 1) * distanceM) : 0.0;
-		leftCert = leftObstacle == true ? PolarGrid[present][i][LEFT] : 0.0;  // TODO: get the central ray
-
-		if (leftObstacle) break;
-	}
 }
 
 int ObstacleAvoidance::Execute()
@@ -362,6 +292,79 @@ int ObstacleAvoidance::Execute()
 	publishObstacleMessage();
 	publishGridInfo();
 	return 0;
+}
+
+int ObstacleAvoidance::DtoR(double d)
+{
+	if (d < 0)
+		return InnerRing;
+	else
+		return int( d / RingDistance ) + 1; // +1 is used to skip the InnerRing
+}
+
+int ObstacleAvoidance::TtoS(double theta)
+{
+	return int( wrapTo0_2Pi(theta + M_PI_2 + SectorShiftRad) / SectorAngleRad );
+}
+
+double ObstacleAvoidance::RtoD(int r)
+{
+	if (r == InnerRing)
+		return 0.0;
+	else
+		return (r - 1) * RingDistance;
+}
+
+double ObstacleAvoidance::StoT(int s)
+{
+	return wrapToPi(s * SectorAngleRad - M_PI_2 - SectorShiftRad);
+}
+
+int ObstacleAvoidance::XYtoR(double x, double y)
+{
+	return DtoR( toPolarD(x, y) );
+}
+
+int ObstacleAvoidance::XYtoS(double x, double y)
+{
+	return TtoS( toPolarT(x, y) );
+}
+
+int ObstacleAvoidance::wrapTo(int n, int MAXN)
+{
+	while (n < 0) n += MAXN;
+
+	return (n % MAXN);
+}
+
+void ObstacleAvoidance::chooseCloserObstacle()
+{
+	for(int i = 0; i < TotalRings; i++)
+	{
+		frontObstacle = PolarGrid[present][i][FRONT] > ObstacleThreshold ? true : false;
+		frontDist = frontObstacle == true ? ((i + 1) * distanceM) : 0.0;
+		frontCert = frontObstacle == true ? PolarGrid[present][i][FRONT] : 0.0;
+
+		if (frontObstacle) break;
+	}
+
+	for(int i = 0; i < TotalRings; i++)
+	{
+		rightObstacle = PolarGrid[present][i][RIGHT] > ObstacleThreshold ? true : false;
+		rightDist = rightObstacle == true ? ((i + 1) * distanceM ) : 0.0;
+		rightCert = rightObstacle == true ? PolarGrid[present][i][RIGHT] : 0.0;  // TODO: get the central ray
+
+		if (rightObstacle) break;
+	}
+
+	for(int i = 0; i < TotalRings; i++)
+	{
+		leftObstacle = PolarGrid[present][i][LEFT] > ObstacleThreshold ? true : false;
+		leftDist = leftObstacle == true ? ((i + 1) * distanceM) : 0.0;
+		leftCert = leftObstacle == true ? PolarGrid[present][i][LEFT] : 0.0;  // TODO: get the central ray
+
+		if (leftObstacle) break;
+	}
 }
 
 void ObstacleAvoidance::printSonarValues()

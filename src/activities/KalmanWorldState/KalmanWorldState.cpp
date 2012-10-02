@@ -64,6 +64,9 @@ void KalmanWorldState::UserInit()
 
 }
 
+void KalmanWorldState::Reset(){
+}
+
 int KalmanWorldState::Execute()
 {
 	now = boost::posix_time::microsec_clock::universal_time();

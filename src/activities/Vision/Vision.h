@@ -47,7 +47,8 @@ public:
 	};
 
 
-	void ACTIVITY_VISIBLE  UserInit();
+	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	void fetchAndProcess();
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	std::string ACTIVITY_VISIBLE  GetName()

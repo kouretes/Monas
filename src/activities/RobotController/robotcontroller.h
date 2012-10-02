@@ -48,6 +48,7 @@ public:
 	* Also AlMemmory proxy and event values are initialized
 	*/
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	std::string ACTIVITY_VISIBLE GetName()
 	{
 		return "RobotController";

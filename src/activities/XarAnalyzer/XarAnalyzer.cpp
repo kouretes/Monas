@@ -25,6 +25,9 @@ void XarAnalyzer::UserInit()
 	temp = 0;
 }
 
+void XarAnalyzer::Reset(){
+
+}
 
 int XarAnalyzer::Execute()
 {

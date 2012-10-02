@@ -124,7 +124,6 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(LRVElementList, SIGNAL(LVRHSetRawImageVisible(QString, bool)), LRVLabel, SLOT(LVRawImageVisible(QString, bool)));
 	connect(LRVElementList, SIGNAL(LVRHSetSegImageVisible(QString, bool)), LRVLabel, SLOT(LVSegImageVisible(QString, bool)));
 
-
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL SENSOR DATA
 	//Signal slot connections for Local Remote Hosts ComboBox
 	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->availableLSHosts, SLOT(addComboBoxItem(QString, QString)));
@@ -134,19 +133,14 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LSRHSubscriptionHandler(QString)));
 	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LSRHUnsubscriptionHandler(QString)));
 
-
 	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LSController, SLOT(LSCSubscriptionHandler(QString)));
 	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LSController, SLOT(LSCUnsubscriptionHandler(QString)));
 
 	connect(Messenger, SIGNAL(sensorsDataUpdate(AllSensorValuesMessage, QString)), LSController, SLOT(sensorsDataUpdateHandler(AllSensorValuesMessage, QString)));
 
 
-
-
-
-	//SIGNAL SLOT CONNECTIONS FOR KCC Beta
+	//SIGNAL SLOT CONNECTIONS FOR KCC
 	//Signal slot connections for KCC ComboBox
-
 	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->KCCTab, SLOT(addComboBoxItem(QString, QString)));
 	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->KCCTab, SLOT(removeComboBoxItem(QString)));
 	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->KCCTab, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
@@ -156,13 +150,27 @@ KMonitor::KMonitor(QWidget *parent)
 
 	connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), this->KCCTab, SLOT(changeImage(KRawImage, QString)));
 
-	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
-	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
-	setWindowState(Qt::WindowMaximized);
+
+	//Signal slot connections for XML
+	//Signal slot connections for KCC ComboBox
+	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->XMLTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->XMLTab, SLOT(removeComboBoxItem(QString)));
+	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->XMLTab, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+
+	connect(this->XMLTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(XMLRHSubscriptionHandler(QString)));
+	connect(this->XMLTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(XMLRHUnsubscriptionHandler(QString)));
+
+	connect(Messenger, SIGNAL(xmlGenericAckReceived(GenericACK, QString)), this->XMLTab, SLOT(genericAckReceived(GenericACK, QString)));
+	connect(this->XMLTab, SIGNAL(sendConfigMessage(ExternalConfig)), Messenger, SLOT(XMLPublishMessage(ExternalConfig)));
 
 	//Signals-Slots for tab changes manipulation
 	connect(this->KMTabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
 	connect(this->KMTabWidget, SIGNAL(currentChanged(int)), Messenger, SLOT(tabChangeHandler(int)));
+	
+	
+	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
+	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
+	setWindowState(Qt::WindowMaximized);
 }
 
 KMonitor::~KMonitor()

@@ -36,7 +36,6 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 		}
 		multicast=m;
 	}
-
 	timer = new QTimer();
 	timer->setInterval(50);
 
@@ -50,7 +49,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	myLVRequestedHost.clear();
 	myKccRequestedHost.clear();
 	myLSRequestedHost.clear();
-
+	myXMLRequestedHost.clear();
 }
 
 KGUIMessenger::~KGUIMessenger()
@@ -179,6 +178,13 @@ void KGUIMessenger::allocateReceivedMessages()
 				asvm.CopyFrom(*(incomingMessages.at(i).msg));
 
 				emit sensorsDataUpdate(asvm, currentRHost);
+			}
+			else if (incomingMessages.at(i).msg->GetTypeName()=="GenericACK" && myXMLRequestedHost == currentRHost){
+				GenericACK gack;
+				gack.Clear();
+				gack.CopyFrom(*(incomingMessages.at(i).msg));
+				
+				emit xmlGenericAckReceived(gack, currentRHost);
 			}
 
 		}
@@ -311,30 +317,46 @@ void KGUIMessenger::KCCRHUnsubscriptionHandler(QString hostId)
 	}
 }
 
+
+void KGUIMessenger::XMLRHSubscriptionHandler(QString hostId){
+		updateSubscription("external",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		myXMLRequestedHost = hostId;
+}
+
+
+void KGUIMessenger::XMLRHUnsubscriptionHandler(QString hostId)
+{
+	if((hostId.isEmpty() && !myXMLRequestedHost.isEmpty()) || (myXMLRequestedHost == hostId && !hostId.isEmpty()))
+	{
+		updateSubscription("external",msgentry::UNSUBSCRIBE_ON_TOPIC,myXMLRequestedHost.toUInt());
+		myXMLRequestedHost.clear();
+	}
+}
+
+
+void KGUIMessenger::XMLPublishMessage(ExternalConfig message)
+{
+	message.set_targethost(myXMLRequestedHost.toUInt());
+	
+	msgentry nmsg;
+	google::protobuf::Message * newptr = message.New();
+	newptr->CopyFrom(message);
+	nmsg.msg.reset(newptr);
+	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
+	nmsg.topic = Topics::Instance().getId("external");
+	nmsg.msgclass = msgentry::SIGNAL;
+	multicast->getReadBuffer()->add(nmsg);
+}
+
 void KGUIMessenger::tabChangeHandler(int currentTab)
 {
 	QString hostId;
 
+	updateSubscription("global",msgentry::UNSUBSCRIBE_ALL_TOPIC, msgentry::HOST_ID_ANY_HOST);
 	switch(currentTab)
 	{
 		// Global World State 	((un-)sub to worldstate is absolutely defined by user's prefs )
 		case 0:
-			if (!myLWRequestedHost.isEmpty())
-			{
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("vision",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("debug",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("motion",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-			}
-			if(!myLMRequestedHost.isEmpty())
-				updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC,myLMRequestedHost.toUInt());
-			if (!myLVRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
-			if (!myLSRequestedHost.isEmpty())
-				updateSubscription("sensors",msgentry::UNSUBSCRIBE_ON_TOPIC, myLSRequestedHost.toUInt());
-			if (!myKccRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
-
 			for(unsigned i=0; i< myGWRequestedHosts.count(); i++ ){
 				hostId = myGWRequestedHosts.at(i);
 				updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
@@ -343,19 +365,6 @@ void KGUIMessenger::tabChangeHandler(int currentTab)
 
 		// Local World State
 		case 1:
-			for(unsigned i=0; i< myGWRequestedHosts.count(); i++ ){
-				hostId = myGWRequestedHosts.at(i);
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
-			}
-			if(!myLMRequestedHost.isEmpty())
-				updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC,myLMRequestedHost.toUInt());
-			if (!myLVRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
-			if (!myLSRequestedHost.isEmpty())
-				updateSubscription("sensors",msgentry::UNSUBSCRIBE_ON_TOPIC, myLSRequestedHost.toUInt());
-			if (!myKccRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
-
 			if (!myLWRequestedHost.isEmpty())
 			{
 				updateSubscription("worldstate",msgentry::SUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
@@ -363,29 +372,10 @@ void KGUIMessenger::tabChangeHandler(int currentTab)
 				updateSubscription("debug",msgentry::SUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
 				updateSubscription("motion",msgentry::SUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
 			}
-
 			break;
 
 		// Local Polar Map
 		case 2:
-			for(unsigned i=0; i< myGWRequestedHosts.count(); i++ ){
-				hostId = myGWRequestedHosts.at(i);
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
-			}
-			if (!myLWRequestedHost.isEmpty())
-			{
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("vision",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("debug",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("motion",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-			}
-			if (!myLVRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
-			if (!myLSRequestedHost.isEmpty())
-				updateSubscription("sensors",msgentry::UNSUBSCRIBE_ON_TOPIC, myLSRequestedHost.toUInt());
-			if (!myKccRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
-
 			if(!myLMRequestedHost.isEmpty())
 				updateSubscription("obstacle",msgentry::SUBSCRIBE_ON_TOPIC,myLMRequestedHost.toUInt());
 
@@ -393,24 +383,6 @@ void KGUIMessenger::tabChangeHandler(int currentTab)
 
 		// Local Robot View
 		case 3:
-			for(unsigned i=0; i< myGWRequestedHosts.count(); i++ ){
-				hostId = myGWRequestedHosts.at(i);
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
-			}
-			if (!myLWRequestedHost.isEmpty())
-			{
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("vision",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("debug",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("motion",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-			}
-			if(!myLMRequestedHost.isEmpty())
-				updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC,myLMRequestedHost.toUInt());
-			if (!myLSRequestedHost.isEmpty())
-				updateSubscription("sensors",msgentry::UNSUBSCRIBE_ON_TOPIC, myLSRequestedHost.toUInt());
-			if (!myKccRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
-
 			if (!myLVRequestedHost.isEmpty())
 				updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
 
@@ -418,24 +390,6 @@ void KGUIMessenger::tabChangeHandler(int currentTab)
 
 		// Local Sensors Data
 		case 4:
-			for(unsigned i=0; i< myGWRequestedHosts.count(); i++ ){
-				hostId = myGWRequestedHosts.at(i);
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
-			}
-			if (!myLWRequestedHost.isEmpty())
-			{
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("vision",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("debug",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("motion",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-			}
-			if(!myLMRequestedHost.isEmpty())
-				updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC,myLMRequestedHost.toUInt());
-			if (!myLVRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
-			if (!myKccRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
-
 			if (!myLSRequestedHost.isEmpty())
 				updateSubscription("sensors",msgentry::SUBSCRIBE_ON_TOPIC, myLSRequestedHost.toUInt());
 
@@ -443,27 +397,12 @@ void KGUIMessenger::tabChangeHandler(int currentTab)
 
 		// Kcc
 		case 5:
-			for(unsigned i=0; i< myGWRequestedHosts.count(); i++ ){
-				hostId = myGWRequestedHosts.at(i);
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,hostId.toUInt());
-			}
-			if (!myLWRequestedHost.isEmpty())
-			{
-				updateSubscription("worldstate",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("vision",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("debug",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-				updateSubscription("motion",msgentry::UNSUBSCRIBE_ON_TOPIC,myLWRequestedHost.toUInt());
-			}
-			if(!myLMRequestedHost.isEmpty())
-				updateSubscription("obstacle",msgentry::UNSUBSCRIBE_ON_TOPIC,myLMRequestedHost.toUInt());
-			if (!myLVRequestedHost.isEmpty())
-				updateSubscription("image",msgentry::UNSUBSCRIBE_ON_TOPIC, myLVRequestedHost.toUInt());
-			if (!myLSRequestedHost.isEmpty())
-				updateSubscription("sensors",msgentry::UNSUBSCRIBE_ON_TOPIC, myLSRequestedHost.toUInt());
-
 			if (!myKccRequestedHost.isEmpty())
 				updateSubscription("image",msgentry::SUBSCRIBE_ON_TOPIC, myKccRequestedHost.toUInt());
-
+		// Xml
+		case 6:
+			if (!myXMLRequestedHost.isEmpty())
+				updateSubscription("external",msgentry::SUBSCRIBE_ON_TOPIC, myXMLRequestedHost.toUInt());
 			break;
 	}
 

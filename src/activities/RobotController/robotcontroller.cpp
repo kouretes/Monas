@@ -28,6 +28,9 @@ void RobotController::UserInit()
 	lastalive = boost::posix_time::microsec_clock::universal_time();
 }
 
+void RobotController::Reset(){
+}
+
 int RobotController::Execute()
 {
 	static int delay;

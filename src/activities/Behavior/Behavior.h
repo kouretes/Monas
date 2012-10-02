@@ -40,6 +40,7 @@ public:
 		return "Behavior";
 	}
 	void ACTIVITY_VISIBLE  UserInit();
+	void ACTIVITY_VISIBLE  Reset();
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 	void read_messages();

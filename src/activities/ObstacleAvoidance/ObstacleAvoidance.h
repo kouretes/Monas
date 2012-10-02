@@ -79,6 +79,7 @@ public:
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	void read_messages();
 	struct OpenListNode
 	{
@@ -247,6 +248,15 @@ private:
 	void velocityWalk(double ix, double iy, double it, double f);
 	void callVelocityWalk(double walkToX, double walkToY, double walkToT, double distance2Goal);
 	void motionController(double distance2Goal);
+	
+	//Only for internal use
+	int DtoR(double d);
+	int TtoS(double theta);
+	double RtoD(int r);
+	double StoT(int s);
+	int XYtoR(double x, double y);
+	int XYtoS(double x, double y);
+	int wrapTo(int n, int MAXN);
 
 };
 

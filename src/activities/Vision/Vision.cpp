@@ -18,15 +18,54 @@
 
 #define trydelete(x) {if((x)!=NULL){delete (x);(x)=NULL;}}
 
-//using namespace AL;
 using namespace std;
-//using namespace boost::posix_time;
-
 
 ACTIVITY_REGISTER(Vision);
 
 ACTIVITY_START
 
+Vision::Vision(Blackboard &b, XmlNode &x) :
+	IActivity(b, x), xmlconfig(NULL), vprof("Vision")
+{
+	;
+}
+
+void Vision::UserInit()
+{
+	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
+
+	if (xmlconfig->IsLoadedSuccessfully() == false)
+		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
+
+	kinext.Init();
+	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
+	//cout << "Vision():" ;//<< endl;
+	//rawImage = ext.allocateImage();
+	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationBottom).c_str());
+	segbottom = new KSegmentator(*conffile);
+	conffile->close();
+	delete conffile;
+
+	if(config.SegmentationTop == config.SegmentationBottom) //Same file, do not load twice
+		segtop = segbottom;
+	else
+	{
+		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationTop).c_str());
+		segtop = new KSegmentator(*conffile);
+		conffile->close();
+		delete conffile;
+	}
+
+	stamp = boost::posix_time::microsec_clock::universal_time();
+	seg = segbottom;
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
+}
+
+void Vision::Reset(){
+
+}
 
 int  Vision::Execute()
 {
@@ -46,7 +85,6 @@ int  Vision::Execute()
 #endif
 	return 0;
 }
-
 
 void Vision::fetchAndProcess()
 {
@@ -326,74 +364,6 @@ void Vision::fetchAndProcess()
 	_blk.publishSignal(obs, "vision");
 }
 
-Vision::Vision(Blackboard &b, XmlNode &x) :
-	IActivity(b, x), xmlconfig(NULL), vprof("Vision")
-{
-	;
-}
-
-void Vision::UserInit()
-{
-	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
-
-	if (xmlconfig->IsLoadedSuccessfully() == false)
-		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
-
-	kinext.Init();
-	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
-	//cout << "Vision():" ;//<< endl;
-	//rawImage = ext.allocateImage();
-	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationBottom).c_str());
-	segbottom = new KSegmentator(*conffile);
-	conffile->close();
-	delete conffile;
-
-	if(config.SegmentationTop == config.SegmentationBottom) //Same file, do not load twice
-		segtop = segbottom;
-	else
-	{
-		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationTop).c_str());
-		segtop = new KSegmentator(*conffile);
-		conffile->close();
-		delete conffile;
-	}
-
-	stamp = boost::posix_time::microsec_clock::universal_time();
-	seg = segbottom;
-	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
-}
-
-void Vision::loadXMLConfig(std::string fname)
-{
-	trydelete(xmlconfig);
-	xmlconfig = new XMLConfig(fname);//ArchConfig::Instance().GetConfigPrefix()+"/vision.xml");
-	xmlconfig->QueryElement("SegmentationBottom", config.SegmentationBottom);
-	xmlconfig->QueryElement("SegmentationTop", config.SegmentationTop);
-	xmlconfig->QueryElement("sensordelay", config.sensordelay);
-	xmlconfig->QueryElement("Dfov", config.Dfov);
-	xmlconfig->QueryElement("cameraGamma", config.cameraGamma);
-	//xmlconfig->QueryElement("scanstep",config.scanstep);
-	xmlconfig->QueryElement("scanV", config.scanV);
-	xmlconfig->QueryElement("scanH", config.scanH);
-	xmlconfig->QueryElement("minH", config.minH);
-	xmlconfig->QueryElement("skipdistance", config.skipdistance);
-	xmlconfig->QueryElement("bordersize", config.bordersize);
-	xmlconfig->QueryElement("subsampling", config.subsampling);
-	xmlconfig->QueryElement("seedistance", config.seedistance);
-	xmlconfig->QueryElement("obstacledistance", config.obstacledistance);
-	xmlconfig->QueryElement("balltolerance", config.balltolerance);
-	xmlconfig->QueryElement("ballsize", config.ballsize);
-	xmlconfig->QueryElement("pixeltol", config.pixeltol);
-	xmlconfig->QueryElement("goalheight", config.goalheight);
-	xmlconfig->QueryElement("goaldist", config.goaldist);
-	xmlconfig->QueryElement("goaldiam", config.goaldiam);
-	xmlconfig->QueryElement("goalslopetolerance", config.goalslopetolerance);
-	xmlconfig->QueryElement("widthestimateotolerance", config.widthestimateotolerance);
-	xmlconfig->QueryElement("pitchoffset", config.pitchoffset);
-}
-
 void Vision::publishObstacles(std::vector<KVecInt2> points) const
 {
 	static int period = 0;
@@ -445,8 +415,34 @@ KVecFloat2 Vision::simpleRotation(KVecInt2 const& i) const
 	return simpleRot.slow_mult(KVecFloat2(i.x, i.y));
 }
 
-
-
+void Vision::loadXMLConfig(std::string fname)
+{
+	trydelete(xmlconfig);
+	xmlconfig = new XMLConfig(fname);//ArchConfig::Instance().GetConfigPrefix()+"/vision.xml");
+	xmlconfig->QueryElement("SegmentationBottom", config.SegmentationBottom);
+	xmlconfig->QueryElement("SegmentationTop", config.SegmentationTop);
+	xmlconfig->QueryElement("sensordelay", config.sensordelay);
+	xmlconfig->QueryElement("Dfov", config.Dfov);
+	xmlconfig->QueryElement("cameraGamma", config.cameraGamma);
+	//xmlconfig->QueryElement("scanstep",config.scanstep);
+	xmlconfig->QueryElement("scanV", config.scanV);
+	xmlconfig->QueryElement("scanH", config.scanH);
+	xmlconfig->QueryElement("minH", config.minH);
+	xmlconfig->QueryElement("skipdistance", config.skipdistance);
+	xmlconfig->QueryElement("bordersize", config.bordersize);
+	xmlconfig->QueryElement("subsampling", config.subsampling);
+	xmlconfig->QueryElement("seedistance", config.seedistance);
+	xmlconfig->QueryElement("obstacledistance", config.obstacledistance);
+	xmlconfig->QueryElement("balltolerance", config.balltolerance);
+	xmlconfig->QueryElement("ballsize", config.ballsize);
+	xmlconfig->QueryElement("pixeltol", config.pixeltol);
+	xmlconfig->QueryElement("goalheight", config.goalheight);
+	xmlconfig->QueryElement("goaldist", config.goaldist);
+	xmlconfig->QueryElement("goaldiam", config.goaldiam);
+	xmlconfig->QueryElement("goalslopetolerance", config.goalslopetolerance);
+	xmlconfig->QueryElement("widthestimateotolerance", config.widthestimateotolerance);
+	xmlconfig->QueryElement("pitchoffset", config.pitchoffset);
+}
 
 KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep) const
 {
