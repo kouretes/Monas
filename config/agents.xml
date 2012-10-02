@@ -19,6 +19,7 @@
 
 
 <provider  IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>Sensors</provider>
+<provider  IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>Gateway</provider>
 <provider  IsRealTime=1 Priority=1 ThreadFrequency=25 StatsCycle=1000>ImageExtractor</provider>
 
 <agent IsRealTime=1 Priority=1 ThreadFrequency=4 StatsCycle=1000>

@@ -22,6 +22,7 @@ XMLHandler::XMLHandler(QWidget *parent) :
 
 	connect(ui->pushHandOff, SIGNAL(clicked()), this, SLOT(pbHandOfPressed()));
 	connect(ui->sendpb, SIGNAL(clicked()), this, SLOT(sendPressed()));
+	connect(ui->changePb, SIGNAL(clicked()), this, SLOT(changeCt()));
 	ui->sendpb->setEnabled(false);
 	
 	
@@ -56,7 +57,7 @@ XMLHandler::XMLHandler(QWidget *parent) :
 	timer = new QTimer();
 	timer->setInterval(200);
 	connect(this->timer, SIGNAL(timeout()), this, SLOT(retransmitMessage()));
-	
+		
 	bodyid = "";
 	headid = "";
 	lastMessageACKed = true;
@@ -74,6 +75,7 @@ void XMLHandler::updateTreeStructure(string headID, string bodyID){
 	}
 	initializeActivitiesTree();
 	changes.clear();
+	ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom").front()));
 	ui->mainTree->blockSignals(false);
 }
 
@@ -151,7 +153,9 @@ void XMLHandler::initializeActivitiesTree(){
 }
 
 void XMLHandler::pbHandOfPressed(){
-	qDebug() << "Efige";
+	outmsg.clear_updatexml();
+	outmsg.clear_resetactivities();
+	outmsg.clear_file();
 	//target host is be setting to the kguimessenger class
 	lastMessageACKed = false;
 	ui->pushHandOff->setEnabled(false);
@@ -159,14 +163,12 @@ void XMLHandler::pbHandOfPressed(){
 	timestamp = boost::posix_time::microsec_clock::universal_time();
 	string messageid = boost::posix_time::to_iso_string(timestamp);
 	outmsg.set_messageid(messageid);
-	outmsg.clear_updatexml();
 	outmsg.set_handoffrequest(true);
 	lastmsg = outmsg;
 	emit sendConfigMessage(outmsg);
 }
 
 void XMLHandler::genericAckReceived(GenericACK ack, QString hostid){
-	qDebug() << "Mou irthe";
 	if(boost::posix_time::from_iso_string(ack.messageid()) == timestamp && !lastMessageACKed){
 		timer->stop();
 		numOfRetransmits = 0;
@@ -181,14 +183,18 @@ void XMLHandler::genericAckReceived(GenericACK ack, QString hostid){
 				oldChecksum = xmlStructure.getChecksum();
 				if(oldChecksum == hs.checksum()){
 					ui->status->setText("succeeded");
+					ui->status2->setText("");
 					ui->sendpb->setEnabled(true);
 				}else{
-					ui->status->setText("failed");
+					ui->status->setText("different checksum");
 					ui->sendpb->setEnabled(false);
 				}
-			}else
+			}else{
+				ui->status2->setText("success");
 				ui->sendpb->setEnabled(true);
+			}
 			updateXMLFiles();
+			ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom").front()));
 		}else{
 			ui->status->setText("Locked owned by other GUI");
 			ui->status2->setText("Waiting for handoff");
@@ -252,6 +258,8 @@ void XMLHandler::itemChanged(QTreeWidgetItem *item, int col){
 
 void XMLHandler::sendPressed(){
 	outmsg.clear_updatexml();
+	outmsg.clear_resetactivities();
+	outmsg.clear_file();
 	int i = 0;
 	for(map<string, string>::iterator iter = changes.begin(); iter != changes.end(); iter++){
 		outmsg.add_updatexml();
@@ -261,7 +269,6 @@ void XMLHandler::sendPressed(){
 		//cout << iter->first << " " << iter->second << endl;	
 	}
 	
-	outmsg.clear_resetactivities();
 	QTreeWidgetItem *first = ui->activitiesTree->invisibleRootItem();
 	if(first->childCount()!=0){
 		for (int i = 0; i != first->childCount(); i++){
@@ -273,10 +280,30 @@ void XMLHandler::sendPressed(){
 		}
 	}
 	
-	if(outmsg.updatexml_size() != 0 || outmsg.resetactivities_size() != 0){
+	if(ui->ctCB->isChecked()){
+		string path = ArchConfig::Instance().GetConfigPrefix() + "colortables/";
+		path.append(ui->ctLabel->text().toStdString());
+		string filepath = "colortables/" + ui->ctLabel->text().toStdString();
+		
+		ifstream ctfile(path.c_str());
+		if(ctfile.is_open()){
+			string strfile;
+			ctfile.seekg(0, ios::end);   
+			strfile.reserve(ctfile.tellg());
+			ctfile.seekg(0, ios::beg);
+			strfile.assign((istreambuf_iterator<char>(ctfile)), istreambuf_iterator<char>());
+			ctfile.close();
+			outmsg.mutable_file()->set_file(strfile);
+			outmsg.mutable_file()->set_filepath(filepath);
+			ui->ctCB->setChecked(false);
+		}
+	}
+	
+	if(outmsg.updatexml_size() != 0 || outmsg.resetactivities_size() != 0 || outmsg.has_file()){
 		//target host is be setting to the kguimessenger class
 		lastMessageACKed = false;
 		ui->sendpb->setEnabled(false);
+		ui->status2->setText("waiting");
 		
 		timer->start();
 		
@@ -304,6 +331,16 @@ void XMLHandler::updateXMLFiles(){
 		}		
 		changes.clear();
 		xmlStructure.burstWrite(dataForWrite);
+	}
+}
+
+void XMLHandler::changeCt(){
+	string path = ArchConfig::Instance().GetConfigPrefix() + "colortables";
+	QString filename = QFileDialog::getOpenFileName(this,tr("Choose Segmentation File"), QString::fromStdString(path), tr("Segmentation Files (*.conf)"));
+	if(filename != ""){
+  		int found=filename.toStdString().find_last_of("/");
+		string strfilename = filename.toStdString().substr(found+1);
+		ui->ctLabel->setText(QString::fromStdString(strfilename));
 	}
 }
 

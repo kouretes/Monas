@@ -8,16 +8,18 @@
 #include <QDebug>
 #include <QTimer>
 #include <QList>
+#include <QFileDialog>
 #include <math.h>
 #include <QString>
 #include <fstream>
 #include <QTreeWidgetItem>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "LWRemoteHosts.h"
-#include "../../src/architecture/XmlManager/XmlConfigurator.h"
+#include "architecture/XmlManager/XmlConfigurator.h"
+#include "architecture/archConfig.h"
 #include "../../src/messages/GUICommunication.pb.h"
 
-#define MAX_RETRANSMITS 10
+#define MAX_RETRANSMITS 15
 namespace Ui {
     class XMLHandler;
 }
@@ -54,7 +56,7 @@ private slots:
 	void editItemOrNot(QTreeWidgetItem *item, int col);
 	void itemChanged(QTreeWidgetItem *item, int col);
 	void selectActivities(QTreeWidgetItem *item, int col);
-	
+	void changeCt();
 private:
 	void addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, XmlNode *currentNode, std::string currentKey);
 	void addAttributeChild(QTreeWidgetItem *parent, QString name, QString data, std::string currentKey);

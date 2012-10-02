@@ -9,12 +9,18 @@ message HandShake{
 	required uint32 checksum = 3;
 }
 
+message FileTransfer{
+	required bytes file = 1;
+	required string filepath = 2;
+}
+
 message ExternalConfig{
 	required string messageid = 1;
 	required uint32 targethost = 2;
 	repeated XmlUpdate updateXml = 3;
 	repeated string resetActivities = 4;
-	required bool handOffRequest = 5;
+	optional FileTransfer file = 5;
+	required bool handOffRequest = 6;
 }
 
 message GenericACK{
