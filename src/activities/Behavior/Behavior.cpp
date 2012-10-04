@@ -150,7 +150,7 @@ int Behavior::Execute()
 		
 		if(bfm != 0) {
 			if(bfm.get() != 0) {
-				ballfound = bfm.ballfound();
+				ballfound = bfm->ballfound();
 			}
 		}
 		
@@ -219,7 +219,7 @@ int Behavior::Execute()
 	else if (gameState == PLAYER_READY)
 	{
 		//HeadScanStepSmart();
-		hcontrol->mutable_task->set_action(HeadControlMessage::LOCALIZE);
+		hcontrol->mutable_task()->set_action(HeadControlMessage::LOCALIZE);
 		_blk.publishState(*hcontrol, "behavior");
 		int p = (kickoff) ? 0 : 1;
 		gotoPosition( initX[p], initY[p], initPhi[p] );
@@ -552,7 +552,7 @@ void Behavior::littleWalk(double x, double y, double th)
 	wmot->set_command("walkTo");
 	wmot->set_parameter(0, x);
 	wmot->set_parameter(1, y);
-	wmot->set_parameter(2, th);Che
+	wmot->set_parameter(2, th);
 	_blk.publishSignal(*wmot, "motion");
 }
 
@@ -941,8 +941,8 @@ void Behavior::test()
 	{
 		HeadScanStepSmart();
 	}
-*/
-	/* OPEN CHALLENGE 2011 - PROJECTION KICK - END */
+
+	/* OPEN CHALLENGE 2011 - PROJECTION KICK - END
 	//HeadScanStepIntelligent();
 	//if (om!=0) {
 	//Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
@@ -961,4 +961,4 @@ void Behavior::test()
 	//}
 	//else
 	//velocityWalk(1.0, 0.0, 0.0, 1.0);
-}
+} */
