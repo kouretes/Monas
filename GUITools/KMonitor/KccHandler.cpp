@@ -119,6 +119,8 @@ KccHandler::KccHandler(QWidget *parent) :
 	choosedColor = orangeColor;
 	
 	lumaScale = 1;
+	yuvColorTableOld = NULL;
+	yuvColorTable = NULL;
 	yuvColorTableOld = new KSegmentator(3,2,2);
 	yuvColorTable = new KSegmentator(3,2,2);
 	
@@ -309,6 +311,8 @@ int KccHandler::distance(QYuv a,QYuv b){
 }
 
 void KccHandler::clearColorTable(){
+	realImL->blockSignals(true);
+	segImL->blockSignals(true);
 	undoVector.clear();
 	segImage.fill(0);
 	segImL->setPixmap(QPixmap::fromImage(segImage));
@@ -321,6 +325,8 @@ void KccHandler::clearColorTable(){
 			}
 		}
 	}
+	realImL->blockSignals(false);
+	segImL->blockSignals(false);
 }
 
 void KccHandler::realZoomIn(){
@@ -386,9 +392,7 @@ void KccHandler::segSave(){
 }
 
 void KccHandler::segOpen(){
-	if(yuvColorTable != NULL){
-		delete yuvColorTable;
-	}
+	KSegmentator *temp = yuvColorTable;
 	ifstream myReadFile;
 	undoVector.clear();
 	QString filename = QFileDialog::getOpenFileName(this,tr("Open Segmentation File"), colortablesPath, tr("Segmentation Files (*.conf)"));
@@ -406,6 +410,10 @@ void KccHandler::segOpen(){
 	segImL->setPixmap(QPixmap::fromImage(segImage));
 	segImL->show();
 	myReadFile.close();	
+	if(temp != NULL){
+		temp = NULL;
+		delete temp;
+	}
 }
 
 void KccHandler::pbOrangePressed(){
