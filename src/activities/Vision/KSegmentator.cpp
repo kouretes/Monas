@@ -341,7 +341,6 @@ KSegmentator::KSegmentator(int nyres, int nures, int nvres)
 	vsize = 256 >> vres;
 	colormask_t* nctable = (colormask_t *) malloc(sizeof(colormask_t) * ysize * usize * vsize);
 	int y, u, v;
-
 	for (y = 0; y < ysize; y++)
 		for (u = 0; u < usize; u++)
 			for (v = 0; v < vsize; v++)
@@ -362,16 +361,18 @@ KSegmentator::KSegmentator(int nyres, int nures, int nvres)
 void KSegmentator::writeFile(std::ofstream &of, const std::string  comment) const
 {
 	of.write(reinterpret_cast<const char *>(&set), sizeof(SegHeader));
-	of << comment;
+	of.write(comment.c_str(),comment.size());
 	of.put('\n');
-	int y, u, v;
+	//int y, u, v;
+	of.write(reinterpret_cast<char *>(ctable),(256>>yres)*(256>>ures)*(256>>vres)*sizeof(unsigned char ));
 
-	for (y = 0; y < ysize; y++)
-		for (u = 0; u < usize; u++)
-			for (v = 0; v < vsize; v++)
-			{
+	/*for (y = 0; y < ysize; y++){
+		for (u = 0; u < usize; u++){
+			for (v = 0; v < vsize; v++){
 				of.put(BitMaskToValue(*(ctable + y + u * ysize + v * usize * ysize)));
 			}
+		}
+	}*/
 }
 
 void KSegmentator::readRulefile(ifstream & conf)

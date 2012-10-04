@@ -40,6 +40,12 @@ public:
 	* are valid and produce a valid segmentation result
 	*/
 	KSegmentator(int yres, int ures, int vres);
+	/**
+	* destructor
+	**/
+	~KSegmentator(){
+		 delete [] ctable;
+	}
 
 	void writeFile(std::ofstream &of, std::string const comment) const;
 	void attachToIplImage(KImageConst const& data);
@@ -93,6 +99,10 @@ public:
 		//Well, it does. Look for it
 		return * ctableAccess(V_SCALESUB[v], U_SCALESUB[u], Y_SCALESUB[y]);
 	}
+	colormask_t *ctable;
+	int yres, ysize;
+	int ures, usize;
+	int vres, vsize;
 private:
 
 	static const unsigned char LUTres = 2, LUTsize = 64; //Carefull. LUTSIZE=256>>LUTRES
@@ -104,10 +114,6 @@ private:
 	int height;
 	//Scale up Y component to compensate for exposure or lighting variations
 	float lumascale;
-	enum colorValues
-	{
-	    red_ = 1, blue_ = 2, green_ = 3, skyblue_ = 4, yellow_ = 5, orange_ = 6, white_ = 7, black_  = 8
-	};
 
 	struct SegHeader
 	{
@@ -139,11 +145,7 @@ private:
 	//Value transformation, scale by lumascale and subsampled
 	colormask_t Y_SCALESUB[256], U_SCALESUB[256], V_SCALESUB[256];
 
-	int yres, ysize;
-	int ures, usize;
-	int vres, vsize;
 
-	colormask_t *ctable;
 
 	//This does the job
 	inline colormask_t classifyWithPrecheck(unsigned char  y, unsigned char  u , unsigned  char   v, colormask_t const hint) const
