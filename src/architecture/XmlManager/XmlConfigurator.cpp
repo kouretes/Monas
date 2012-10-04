@@ -27,13 +27,16 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrato
 
 	if (is_directory(p))
 	{
-		for (directory_iterator itr(p); itr != directory_iterator(); ++itr)
+		vector<boost::filesystem::path> v;
+        copy(boost::filesystem::directory_iterator(p), directory_iterator(), back_inserter(v));
+        sort(v.begin(), v.end());
+		for (vector<boost::filesystem::path>::iterator iter = v.begin(); iter != v.end(); ++iter)//directory_iterator itr(p); itr != directory_iterator(); ++itr)
 		{
-			if (is_regular_file(itr->status()))
+			if (is_regular_file(*iter))
 			{
-				string filename = dirPath;
+				string filename;
 //#if BOOST_FILESYSTEM_VERSION == 2
-				filename.append(itr->path().filename());
+				filename.append(iter->string());
 //#else
 //				filename.append(itr->path().filename().string());
 //#endif
@@ -538,7 +541,6 @@ bool XmlNode::loadFile(string filename, int fileType)
 {
 	string key = filename.substr(0, filename.find_last_of("."));
 	key = key.substr(key.find_last_of("/") + 1, key.size() - 1);
-
 	if(fileType == HEAD_FILE)
 		filename.insert(directoryPath.size(), headPath);
 	else if(fileType == BODY_FILE)
@@ -548,7 +550,8 @@ bool XmlNode::loadFile(string filename, int fileType)
 	bool loadOkay = doc.LoadFile();
 
 	if(!loadOkay)
-		return false;
+		return false;	
+	
 	allFiles.push_back(filename);
 	if(kids.find(key) != kids.end())
 	{
