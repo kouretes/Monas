@@ -10,6 +10,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/WorldInfo.pb.h"
+#include "messages/BehaviorMessages.pb.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include "architecture/archConfig.h"
@@ -49,19 +50,11 @@ public:
 	bool ClosestRobot();
 	void GetPosition();
 	void UpdateOrientationPlus();
-	void CheckForBall();
 	int MakeTrackBallAction();
 	int MakeTrackBallActionNoBmsg();
 	void checkForPenaltyArea();
 
 	void HeadScanStepRaster();
-	void HeadScanStepHigh(float yaw_limit);
-	void HeadScanStepSmart();
-	void HeadScanStepIntelligent();
-	float lookAtPointYaw(float x, float y);
-	float lookAtPointPitch(float x, float y);
-	float lookAtPointRelativeYaw(float x, float y);
-	float lookAtPointRelativePitch(float x, float y);
 
 	enum ROLES
 	{
@@ -100,8 +93,10 @@ private:
 	boost::shared_ptr<const ObstacleMessageArray>  om;
 	boost::shared_ptr<const WorldInfo>  wim;
 	boost::shared_ptr<const SharedWorldInfo>  swim;
+	boost::shared_ptr<const BallFoundMessage>  bfm;
 
 	/* Outgoing Messages */
+	HeadControlMessage* hcontrol;
 	MotionWalkMessage* wmot;
 	MotionHeadMessage* hmot;
 	MotionActionMessage* amot;
