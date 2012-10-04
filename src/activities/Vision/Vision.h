@@ -5,6 +5,7 @@
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
+#include <memory>
 #include "KSegmentator.h"
 
 
@@ -114,7 +115,7 @@ private:
 		float skipdistance, seedistance, obstacledistance;
 
 		float balltolerance, ballsize;
-		float goalheight, goaldist, goaldiam, goalslopetolerance, widthestimateotolerance;
+		float goalheight, goaldist, goaldiam, widthestimateotolerance;
 		float pitchoffset;
 
 	} config;

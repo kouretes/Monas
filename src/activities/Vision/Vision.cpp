@@ -35,16 +35,20 @@ void Vision::UserInit()
 	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
 	//cout << "Vision():" ;//<< endl;
 	//rawImage = ext.allocateImage();
-	Reset();
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
+	segbottom = NULL;
+	segtop = NULL;
+	Reset();
 }
 
 void Vision::Reset(){
 	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationBottom").front()).c_str());
-	if(segbottom != NULL)
+	if(segbottom != NULL){
 		delete segbottom;
+		segbottom = NULL;	
+	}
 	segbottom = new KSegmentator(*conffile);
 	conffile->close();
 	delete conffile;
@@ -54,8 +58,10 @@ void Vision::Reset(){
 	else
 	{
 		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationTop").front()).c_str());
-		if(segtop != NULL)
+		if(segtop != NULL){
 			delete segtop;
+			segtop = NULL;	
+		}
 		segtop = new KSegmentator(*conffile);
 		conffile->close();
 		delete conffile;
@@ -79,7 +85,6 @@ void Vision::Reset(){
 	config.ballsize = atof(_xml.findValueForKey("vision.ballsize").front().c_str());
 	config.goalheight = atof(_xml.findValueForKey("vision.goalheight").front().c_str());
 	config.goaldist = atof(_xml.findValueForKey("vision.goaldist").front().c_str());
-	config.goalslopetolerance = atof(_xml.findValueForKey("vision.goalslopetolerance").front().c_str());
 	config.widthestimateotolerance = atof(_xml.findValueForKey("vision.widthestimateotolerance").front().c_str());
 	config.pitchoffset = atof(_xml.findValueForKey("vision.pitchoffset").front().c_str());
 	config.pixeltol = atof(_xml.findValueForKey("vision.pixeltol").front().c_str());
@@ -109,17 +114,15 @@ void Vision::fetchAndProcess()
 {
 	leds.Clear();
 	obs.Clear();
-	cout << "fetchImage" << endl;
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 	boost::posix_time::ptime oldstamp = stamp;
 	boost::shared_ptr<const KRawImage> img = _blk.readData<KRawImage> ("image", msgentry::HOST_ID_LOCAL_HOST, &stamp);
-	std::cout<<oldstamp<<" "<<stamp<<std::endl;
 	if(stamp <= oldstamp)
 		return ;
 
 	if(img.get() == 0)
 		return;
-	cout << "haveimage" << endl;
+//	cout << "haveimage" << endl;
 
 	//Remove constness, tricky stuff :/
 	rawImage.copyFrom(img->image_rawdata().data(),
@@ -152,12 +155,11 @@ void Vision::fetchAndProcess()
 	}
 
 	seg->setLumaScale(pow(img->luminance_scale(), config.cameraGamma) );
-	 std::cout<<img->luminance_scale()<<std::endl;
+	//std::cout<<img->luminance_scale()<<std::endl;
 	//cout<<"Attach to Image:"<<seg<<rawImage<<endl;
 	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
 	//saveFrame(rawImage);
 	//return;
-	cout<<"Attached"<<endl;
 	asvmo = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timeo, &stamp, Blackboard::DATA_NEAREST_NOTNEWER);
 	asvmn = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timen, &stamp, Blackboard::DATA_NEAREST_NOTOLDER);
 #ifdef DEBUGVISION
@@ -193,7 +195,7 @@ void Vision::fetchAndProcess()
 	//p.VangY = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvaluediff();
 	//p.timediff = asvm->timediff();//Get time from headmessage
 #ifdef DEBUGVISION
-	cout << p.yaw << " " << p.pitch << " " << p.Vyaw << " "p.angX << " " << p.angY << imcomp << endl;
+	cout << p.yaw << " " << p.pitch << " " << p.angX << " " << p.angY << imcomp << endl;
 #endif
 	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(config.Dfov * TO_RAD / 2));
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
