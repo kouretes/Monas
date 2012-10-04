@@ -27,6 +27,9 @@ const ::google::protobuf::Descriptor* HeadControlMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   HeadControlMessage_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* HeadControlMessage_HEADACTIONS_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* BallFoundMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  BallFoundMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -90,6 +93,21 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(HeadControlMessage));
   HeadControlMessage_HEADACTIONS_descriptor_ = HeadControlMessage_descriptor_->enum_type(0);
+  BallFoundMessage_descriptor_ = file->message_type(3);
+  static const int BallFoundMessage_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallFoundMessage, ballfound_),
+  };
+  BallFoundMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      BallFoundMessage_descriptor_,
+      BallFoundMessage::default_instance_,
+      BallFoundMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallFoundMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallFoundMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(BallFoundMessage));
 }
 
 namespace {
@@ -108,6 +126,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     BodyControlMessage_descriptor_, &BodyControlMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     HeadControlMessage_descriptor_, &HeadControlMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    BallFoundMessage_descriptor_, &BallFoundMessage::default_instance());
 }
 
 }  // namespace
@@ -119,6 +139,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete BodyControlMessage_reflection_;
   delete HeadControlMessage::default_instance_;
   delete HeadControlMessage_reflection_;
+  delete BallFoundMessage::default_instance_;
+  delete BallFoundMessage_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -144,15 +166,18 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "\030\001 \002(\0132\022.ActionDescription\"t\n\013HEADACTION"
     "S\022\013\n\007NOTHING\020\000\022\t\n\005FROWN\020\001\022\033\n\027SCAN_AND_TR"
     "ACK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE"
-    "_FAR\020\004\022\020\n\014SMART_SELECT\020\005", 584);
+    "_FAR\020\004\022\020\n\014SMART_SELECT\020\005\"%\n\020BallFoundMes"
+    "sage\022\021\n\tballfound\030\001 \002(\010", 623);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   ActionDescription::default_instance_ = new ActionDescription();
   BodyControlMessage::default_instance_ = new BodyControlMessage();
   HeadControlMessage::default_instance_ = new HeadControlMessage();
+  BallFoundMessage::default_instance_ = new BallFoundMessage();
   ActionDescription::default_instance_->InitAsDefaultInstance();
   BodyControlMessage::default_instance_->InitAsDefaultInstance();
   HeadControlMessage::default_instance_->InitAsDefaultInstance();
+  BallFoundMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -1094,6 +1119,212 @@ void HeadControlMessage::Swap(HeadControlMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = HeadControlMessage_descriptor_;
   metadata.reflection = HeadControlMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int BallFoundMessage::kBallfoundFieldNumber;
+#endif  // !_MSC_VER
+
+BallFoundMessage::BallFoundMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void BallFoundMessage::InitAsDefaultInstance() {
+}
+
+BallFoundMessage::BallFoundMessage(const BallFoundMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void BallFoundMessage::SharedCtor() {
+  _cached_size_ = 0;
+  ballfound_ = false;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+BallFoundMessage::~BallFoundMessage() {
+  SharedDtor();
+}
+
+void BallFoundMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void BallFoundMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* BallFoundMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return BallFoundMessage_descriptor_;
+}
+
+const BallFoundMessage& BallFoundMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+BallFoundMessage* BallFoundMessage::default_instance_ = NULL;
+
+BallFoundMessage* BallFoundMessage::New() const {
+  return new BallFoundMessage;
+}
+
+void BallFoundMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    ballfound_ = false;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool BallFoundMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required bool ballfound = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &ballfound_)));
+          set_has_ballfound();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void BallFoundMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required bool ballfound = 1;
+  if (has_ballfound()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->ballfound(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* BallFoundMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required bool ballfound = 1;
+  if (has_ballfound()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->ballfound(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int BallFoundMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required bool ballfound = 1;
+    if (has_ballfound()) {
+      total_size += 1 + 1;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void BallFoundMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const BallFoundMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const BallFoundMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void BallFoundMessage::MergeFrom(const BallFoundMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_ballfound()) {
+      set_ballfound(from.ballfound());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void BallFoundMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BallFoundMessage::CopyFrom(const BallFoundMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BallFoundMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void BallFoundMessage::Swap(BallFoundMessage* other) {
+  if (other != this) {
+    std::swap(ballfound_, other->ballfound_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata BallFoundMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = BallFoundMessage_descriptor_;
+  metadata.reflection = BallFoundMessage_reflection_;
   return metadata;
 }
 

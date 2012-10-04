@@ -92,6 +92,7 @@ private:
 	boost::shared_ptr<const ObstacleMessageArray>  om;
 	boost::shared_ptr<const WorldInfo>  wim;
 	boost::shared_ptr<const SharedWorldInfo>  swim;
+	boost::shared_ptr<const BallFoundMessage>  bfm;
 
 	/* Outgoing Messages */
 	HeadControlMessage* hcontrol;

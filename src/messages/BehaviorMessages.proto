@@ -28,7 +28,6 @@ message BodyControlMessage{
 	}
 	required ActionDescription task=1;
 }
-
 message HeadControlMessage{
 	enum HEADACTIONS{
 		NOTHING=0;
@@ -40,4 +39,7 @@ message HeadControlMessage{
 		
 	}
 	required ActionDescription task=1;
+}
+message BallFoundMessage{
+	required bool ballfound=1;
 }

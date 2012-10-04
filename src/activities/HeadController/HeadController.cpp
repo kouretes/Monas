@@ -142,13 +142,16 @@ int HeadController::Execute()
 					targetPitch =  bmsg->referencepitch();
 					MakeHeadAction();
 					scanforball=false;
+					bfm.set_ballfound(true);
+					_blk.publishState(bfm, "behavior");
 			}
 			else if(seeballtrust) // Try and look at where we expect the ball to be
 			{		targetYaw = lookAtPointRelativeYaw(bx, by);
 					targetPitch = lookAtPointRelativePitch(bx, by);
 					MakeHeadAction();
 					scanforball=false;
-
+                    bfm.set_ballfound(true);
+					_blk.publishState(bfm, "behavior");
 			}
 			else
 			{
@@ -158,6 +161,8 @@ int HeadController::Execute()
 					scanforball=true;
 				}
 				HeadScanStepSmart();
+				bfm.set_ballfound(false);
+                _blk.publishState(bfm, "behavior");
 			}
 
 			break;
@@ -198,7 +203,7 @@ void HeadController::read_messages()
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
-	control=_blk.readData<HeadControlMessage> ("behavior");
+	control=_blk.readState<HeadControlMessage> ("behavior");
 	//Logger::Instance().WriteMsg("HeadController", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 
