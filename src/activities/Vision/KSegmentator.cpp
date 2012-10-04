@@ -84,21 +84,8 @@ void yuv2hsy(const unsigned char yuv[3], unsigned  int hsy[3])
 	hsy[1] = (mn * 256) / yuv[0];
 }
 
-
-inline KSegmentator::colormask_t ValueToBitMask ( KSegmentator::colormask_t v)
-{
-	if(v < 1)
-		return 0;
-
-	return 1 << (v - 1);
-}
-
-
 void KSegmentator::setLumaScale(float s)
 {
-	if(lumascale == s)
-		return;
-
 	lumascale = s;
 
 	//cout<<"KSegmentator:setLumaScale():"<<s<<endl;
@@ -108,6 +95,7 @@ void KSegmentator::setLumaScale(float s)
 		pULUT[i] = 0;
 		pVLUT[i] = 0;
 	}
+	
 
 	for(int i = 0; i < 256; i++)
 	{
@@ -236,8 +224,9 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 		readRulefile(conf);
 	else if (set.ruletype == 'C')
 		readColorTable(conf);
+	
+	setLumaScale(1.0);
 
-	setLumaScale(1);//Default setting;
 
 	for (int v = 0; v < 256; v++)
 		for (int u = 0; u < 256; u++)
@@ -248,12 +237,13 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 				rULUT[u >> LUTres] |= val;
 				rVLUT[v >> LUTres] |= val;
 			}
+	setLumaScale(1.0); //WE NEED IT BOTH TIMES
 }
 
 void KSegmentator::readComment(ifstream & conf)
 {
 	char com[1024];
-	conf.get(com, 1024);
+	conf.getline(com, 1024);
 	Logger::Instance().WriteMsg("KSegmentator", std::string(com), Logger::Info);
 }
 
@@ -283,7 +273,7 @@ void KSegmentator::readColorTable(ifstream & conf)
 		t = 0;
 		char *dest = ((char*)(&t)) + sizeof(colormask_t) - dsize; //For little endian systems like x86 :)
 		int y, u, v;
-		colormask_t* nctable = (colormask_t *) malloc(sizeof(colormask_t) * ysize * usize * vsize);
+		colormask_t* nctable = new colormask_t[ysize * usize * vsize];
 
 		for (y = 0; y < ysize; y++)
 			for (u = 0; u < usize; u++)
@@ -292,7 +282,7 @@ void KSegmentator::readColorTable(ifstream & conf)
 					conf.read(dest, dsize);
 					//if(y==128>>yres)
 					//cout<<"t:"<<(int)t<<endl;
-					r = ValueToBitMask(t);
+					r = t;
 					//Store it :)
 					*(nctable + y + u * ysize + v * usize * ysize) = r;
 				}
@@ -302,20 +292,6 @@ void KSegmentator::readColorTable(ifstream & conf)
 	}
 	else
 		cout << "KSegmentator():Invalid or unknown colortable file header" << endl;
-}
-
-inline unsigned char BitMaskToValue ( KSegmentator::colormask_t v)
-{
-	KSegmentator::colormask_t r = v;
-	unsigned c = 0;
-
-	while(r > 0)
-	{
-		r = r >> 1;
-		c++;
-	}
-
-	return c;
 }
 
 KSegmentator::KSegmentator(int nyres, int nures, int nvres)
@@ -339,7 +315,7 @@ KSegmentator::KSegmentator(int nyres, int nures, int nvres)
 	usize = 256 >> ures;
 	vres = nvres;
 	vsize = 256 >> vres;
-	colormask_t* nctable = (colormask_t *) malloc(sizeof(colormask_t) * ysize * usize * vsize);
+	colormask_t* nctable = new colormask_t[ysize * usize * vsize];
 	int y, u, v;
 	for (y = 0; y < ysize; y++)
 		for (u = 0; u < usize; u++)
@@ -360,19 +336,19 @@ KSegmentator::KSegmentator(int nyres, int nures, int nvres)
 
 void KSegmentator::writeFile(std::ofstream &of, const std::string  comment) const
 {
-	of.write(reinterpret_cast<const char *>(&set), sizeof(SegHeader));
+	of.write(reinterpret_cast<const char *>(&set), sizeof(set));
 	of.write(comment.c_str(),comment.size());
 	of.put('\n');
 	//int y, u, v;
-	of.write(reinterpret_cast<char *>(ctable),(256>>yres)*(256>>ures)*(256>>vres)*sizeof(unsigned char ));
+	//of.write(reinterpret_cast<colormask_t *>(ctable),(256>>yres)*(256>>ures)*(256>>vres)*sizeof(colormask_t));
 
-	/*for (y = 0; y < ysize; y++){
-		for (u = 0; u < usize; u++){
-			for (v = 0; v < vsize; v++){
-				of.put(BitMaskToValue(*(ctable + y + u * ysize + v * usize * ysize)));
+	for (int y = 0; y < ysize; y++){
+		for (int u = 0; u < usize; u++){
+			for (int v = 0; v < vsize; v++){
+				of.put(*(ctable + y + u * ysize + v * usize * ysize));
 			}
 		}
-	}*/
+	}
 }
 
 void KSegmentator::readRulefile(ifstream & conf)
@@ -446,7 +422,7 @@ void KSegmentator::readRulefile(ifstream & conf)
 			}
 		}
 
-		unsigned char * nctable = (unsigned char *) malloc(sizeof(colormask_t) * ysize * usize * vsize);
+		unsigned char * nctable = new colormask_t[ysize * usize * vsize];
 		unsigned char yuv[3];
 
 		for (int v = 0; v < vsize; v++)
@@ -457,7 +433,6 @@ void KSegmentator::readRulefile(ifstream & conf)
 					yuv[1] = u;
 					yuv[2] = v;
 					colormask_t val = ruleFileClassifyPixel(r, yuv);
-					val = ValueToBitMask(val);
 					//Store it :)
 					*(nctable + y + (u + v * usize)*ysize) = val;
 				}
