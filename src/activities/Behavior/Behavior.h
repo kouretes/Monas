@@ -49,19 +49,11 @@ public:
 	bool ClosestRobot();
 	void GetPosition();
 	void UpdateOrientationPlus();
-	void CheckForBall();
 	int MakeTrackBallAction();
 	int MakeTrackBallActionNoBmsg();
 	void checkForPenaltyArea();
 
 	void HeadScanStepRaster();
-	void HeadScanStepHigh(float yaw_limit);
-	void HeadScanStepSmart();
-	void HeadScanStepIntelligent();
-	float lookAtPointYaw(float x, float y);
-	float lookAtPointPitch(float x, float y);
-	float lookAtPointRelativeYaw(float x, float y);
-	float lookAtPointRelativePitch(float x, float y);
 
 	enum ROLES
 	{
@@ -102,6 +94,7 @@ private:
 	boost::shared_ptr<const SharedWorldInfo>  swim;
 
 	/* Outgoing Messages */
+	HeadControlMessage* hcontrol;
 	MotionWalkMessage* wmot;
 	MotionHeadMessage* hmot;
 	MotionActionMessage* amot;
