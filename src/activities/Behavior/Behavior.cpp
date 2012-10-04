@@ -29,6 +29,7 @@ void Behavior::UserInit()
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
@@ -171,8 +172,6 @@ int Behavior::Execute()
 				{
 					role = CENTER_FOR;
 				}
-
-				lastrolechange = microsec_clock::universal_time();
 				//			    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
 				approachBallRoleDependent(bx, by);
 
@@ -192,7 +191,7 @@ int Behavior::Execute()
 				scanforball = true;
 			}
 
-			//walk straight for 12 seconds after the scan has ended (lastpenalized+seconds(12))
+			//walk straight for some seconds after the scan has ended (lastpenalized+seconds(12))
 			//and then start turning around to search for ball.
 			if (lastpenalized + seconds(14) > microsec_clock::universal_time())
 			{
@@ -237,6 +236,7 @@ void Behavior::read_messages()
 	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
+	bfm = _blk.readData<BallFoundMessage> ("behavior");
 	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 

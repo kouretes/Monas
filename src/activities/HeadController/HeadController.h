@@ -88,6 +88,7 @@ private:
 
 	/* Outgoing Messages */
 	MotionHeadMessage hmot;
+	BallFoundMessage bfm;
 
 	int leftright;
 	float headpos;
