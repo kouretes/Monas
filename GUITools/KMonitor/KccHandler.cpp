@@ -10,13 +10,13 @@ KccHandler::KccHandler(QWidget *parent) :
 
 	availableKCCHosts = new LWRemoteHosts(ui->KCComboBox);
 
-	orangeColor = 32;
-	greenColor = 4;
-	yellowColor = 16;
-	whiteColor = 64;
-	redColor = 1;
-	blueColor = 2;//From magic the gathering :P
-	blackColor = 128;
+	orangeColor = orange;
+	greenColor = green;
+	yellowColor = yellow;
+	whiteColor = white;
+	redColor = red;
+	blueColor = blue;
+	blackColor = black;
 
 	A=1.4075;B=0.3455;C=0.7169;D=1.7790;
 	widthInPixels = 640;
@@ -117,12 +117,12 @@ KccHandler::KccHandler(QWidget *parent) :
 	basicSegColors[blackColor] = qRgb(0,0,0);
 	basicSegColors[whiteColor] = qRgb(255,255,255);
 	choosedColor = orangeColor;
-
-	
 	
 	lumaScale = 1;
 	yuvColorTableOld = new KSegmentator(3,2,2);
 	yuvColorTable = new KSegmentator(3,2,2);
+	
+	colortablesPath = QDir::currentPath().append(string("/../../../config/colortables").c_str());
 }
 
 void KccHandler::clickedImage(QMouseEvent* ev){
@@ -202,8 +202,8 @@ void KccHandler::undoPressed(){
 			temp = (*iter).first;
 			*(yuvColorTable->ctableAccessDirect(temp.v, temp.u, temp.y)) = (*iter).second;
 		}
-		for(int j=0;j<heightInPixels;j++){
-			for(int i=0;i<widthInPixels;i++){
+		for(int i=0;i<widthInPixels;i++){
+			for(int j=0;j<heightInPixels;j++){
 				temp = yuvRealImage[j][i];
 				segImage.setPixel(i,j,basicSegColors[yuvColorTable->classifyNoPrecheck(temp.y, temp.u, temp.v)]);
 			}
@@ -377,25 +377,34 @@ void KccHandler::segZoomOut(){
 }
 
 void KccHandler::segSave(){
-	QString filename = QFileDialog::getSaveFileName(this,tr("Save Segmentation File"), QDir::currentPath(), tr("Documents (*.conf)"));
-	ofstream myfile;
-	myfile.open(filename.toStdString().c_str());
+	QString filename = QFileDialog::getSaveFileName(this,tr("Save Segmentation File"), colortablesPath, tr("Documents (*.conf)"));
+	ofstream myfile(filename.toStdString().c_str(),ios_base::out|ios_base::binary|ios_base::trunc);
 	if(myfile.is_open()){
-		yuvColorTable->writeFile(myfile,"Tipote pros to paron");
+		yuvColorTable->writeFile(myfile,"No Comments");
 	}
 	myfile.close();	
 }
 
 void KccHandler::segOpen(){
-	//delete yuvColorTable;
+	if(yuvColorTable != NULL){
+		delete yuvColorTable;
+	}
 	ifstream myReadFile;
 	undoVector.clear();
-	QString filename = QFileDialog::getOpenFileName(this,tr("Open Segmentation File"), QDir::currentPath(), tr("Segmentation Files (*.conf)"));
+	QString filename = QFileDialog::getOpenFileName(this,tr("Open Segmentation File"), colortablesPath, tr("Segmentation Files (*.conf)"));
 	myReadFile.open(filename.toStdString().c_str());
 	if(myReadFile.is_open()){
 		yuvColorTable = new KSegmentator(myReadFile);
 		yuvColorTable->setLumaScale(powf(curLuminance,0.42));
 	}
+	for(int i=0;i<widthInPixels;i++){
+		for(int j=0;j<heightInPixels;j++){
+			QYuv temp = yuvRealImage[j][i];
+			segImage.setPixel(i,j,basicSegColors[yuvColorTable->classifyNoPrecheck(temp.y, temp.u, temp.v)]);
+		}
+	}
+	segImL->setPixmap(QPixmap::fromImage(segImage));
+	segImL->show();
 	myReadFile.close();	
 }
 

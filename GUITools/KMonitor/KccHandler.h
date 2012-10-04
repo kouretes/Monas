@@ -108,6 +108,8 @@ private:
     KccLabel* realImL,* segImL;
     LWRemoteHosts* availableKCCHosts;
 	QScrollArea *scrollImage,*scrollSeg;
+	
+	QString colortablesPath;
 
 	double rScale,iScale;
 	double zoomInScale,zoomOutScale;
