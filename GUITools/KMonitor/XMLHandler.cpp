@@ -11,11 +11,11 @@ XMLHandler::XMLHandler(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	availableXMLHosts = new LWRemoteHosts(ui->XMLComboBox);
+	availableXMLHosts = new HostsComboBox(ui->XMLComboBox);
 	
 	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableXMLHosts, SLOT(addComboBoxItem(QString, QString)));
 	connect(this, SIGNAL(OldHostRemoved(QString)), availableXMLHosts, SLOT(removeComboBoxItem(QString)));
-	connect(this, SIGNAL(GameStateMsgUpdate(QIcon, QString, QString)), availableXMLHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	connect(this, SIGNAL(GameStateMsgUpdate(QString, QString, QString)), availableXMLHosts, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
 	connect(availableXMLHosts, SIGNAL(LWRHSubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)));
 	connect(availableXMLHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), this, SLOT(UnsubscriptionHandler(QString)));
@@ -352,7 +352,7 @@ void XMLHandler::removeComboBoxItem(QString data1){
 	emit OldHostRemoved(data1);
 }
 
-void XMLHandler::setLWRHGameStateInfo(QIcon data1, QString data2, QString data3){
+void XMLHandler::setLWRHGameStateInfo(QString data1, QString data2, QString data3){
 	emit GameStateMsgUpdate(data1,data2,data3);
 }
 

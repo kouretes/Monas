@@ -11,7 +11,7 @@
 
 using namespace std;
 
-KFieldScene::KFieldScene(KGraphicsView* parent)
+KFieldScene::KFieldScene(QGraphicsView* parent)
 {
 	this->parent = parent;
 	this->RobotList.clear();

@@ -11,6 +11,7 @@
 #include <QPoint>
 #include <QTimer>
 #include <QList>
+#include <QPainter>
 
 #include <boost/circular_buffer.hpp>
 #include "messages/WorldInfo.pb.h"
@@ -44,16 +45,22 @@ public:
 
 	void setGWSRobotVisible(bool visible){GWSRobotVisible = visible; setRobotVisible(visible);}
 	bool getGWSRobotVisible(){return GWSRobotVisible;}
+	void setLWSRobotVisible(bool visible){LWSRobotVisible = visible; setRobotVisible(visible);}
+	bool getLWSRobotVisible(){return LWSRobotVisible;}
 	void setRobotVisible(bool visible);
 	void updateRobotRect();
 
 	void setGWSBallVisible(bool visible){GWSBallVisible = visible; setBallVisible(visible);}
 	bool getGWSBallVisible(){return GWSBallVisible;}
+	void setLWSBallVisible(bool visible){LWSBallVisible = visible; setBallVisible(visible);}
+	bool getLWSBallVisible(){return LWSBallVisible;}
 	void setBallVisible(bool visible);
 	void updateBallRect();
 
 	void setGWSUnionistLineVisible(bool visible){GWSUnionistLineVisible = visible; setUnionistLineVisible(visible);}
 	bool getGWSUnionistLineVisible(){return GWSUnionistLineVisible;}
+	void setLWSUnionistLineVisible(bool visible){LWSUnionistLineVisible = visible; setUnionistLineVisible(visible);}
+	bool getLWSUnionistLineVisible(){return LWSUnionistLineVisible;}
 	void setUnionistLineVisible(bool visible);
 	void updateUnionistLineRect();
 
@@ -103,8 +110,10 @@ public:
 	QTimer* getGREtimer(){return GREtimer;}
 	QTimer* getMWCmdTimer(){return MWCmdTimer;}
 
-private slots:
+public slots:
 	void clearVisionObservations();
+
+private slots:
 	void clearMotionWalkCommand();
 
 private:
@@ -122,13 +131,16 @@ private:
 	WorldInfo currentWIM;
 
 	bool GWSRobotVisible;
+	bool LWSRobotVisible;
 	QGraphicsEllipseItem* Robot;
 	QGraphicsLineItem* RobotDirection;
 
 	bool GWSBallVisible;
+	bool LWSBallVisible;
 	QGraphicsEllipseItem* Ball;
 
 	bool GWSUnionistLineVisible;
+	bool LWSUnionistLineVisible;
 	QGraphicsLineItem* UnionistLine;
 
 	ObservationMessage currentObsm;

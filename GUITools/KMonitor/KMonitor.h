@@ -4,18 +4,14 @@
 #include <QtGui/QMainWindow>
 
 #include "KGUIMessenger.h"
-#include "GWRemoteHosts.h"
-#include "LWRemoteHosts.h"
-#include "LWElementTree.h"
-#include "LMElementTree.h"
-#include "LVElementList.h"
-#include "LSDController.h"
-#include "KccHandler.h"
-#include "XMLHandler.h"
+#include "HostsComboBox.h"
 #include "ui_KMonitor.h"
 
+namespace Ui {
+    class KMonitor;
+}
 
-class KMonitor : public QMainWindow, private Ui::KMonitorClass
+class KMonitor : public QMainWindow
 {
     Q_OBJECT
 
@@ -28,18 +24,9 @@ private slots:
 	void printCurrentTab(int index);
 
 private:
-	void LSDInitialization();
 
+	Ui::KMonitor *ui;
     KGUIMessenger* Messenger;
-    GWRemoteHosts* availableGWHosts;
-    LWRemoteHosts* availableLWHosts;
-    LWElementTree* LWSElementTree;
-    LWRemoteHosts* availableLMHosts;
-    LMElementTree* LPMElementTree;
-    LWRemoteHosts* availableLVHosts;
-    LVElementList* LRVElementList;
-    LWRemoteHosts* availableLSHosts;
-    LSDController* LSController;
 };
 
 #endif // KMONITOR_H

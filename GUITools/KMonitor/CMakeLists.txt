@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 2.6 )
 PROJECT( KMonitor )
 
 FIND_PACKAGE( Qt4 REQUIRED )
-# necessary ? 
+# necessary ? KMapView.cpp KMapView.h
 FIND_PACKAGE(Boost COMPONENTS date_time thread filesystem system REQUIRED)
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} ${Boost_INCLUDE_DIRS} ../../src/)
@@ -17,10 +17,10 @@ ADD_SUBDIRECTORY( ../../src/architecture/narukom "${CMAKE_CURRENT_BINARY_DIR}/na
 
 SET( QT_USE_QTSVG TRUE )
 
-SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp LWRemoteHosts.cpp 
-		KGraphicsView.cpp KFieldScene.cpp GraphicalRobotElement.cpp LWElementTree.cpp
-	    LMElementTree.cpp KMapView.cpp KMapScene.cpp KLabel.cpp KRobotView.cpp LVElementList.cpp
-		KccHandler.cpp KccLabel.cpp LSDController.cpp XMLHandler.cpp 
+SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp HostsComboBox.cpp 
+		KFieldScene.cpp GraphicalRobotElement.cpp LocalWorldController.cpp
+	    KMapScene.cpp KCamView.cpp GlobalWorldController.cpp
+		KccHandler.cpp KccLabel.cpp SensorsController.cpp XMLHandler.cpp KSonarsController.cpp
 		../../src/architecture/XmlManager/XmlConfigurator.cpp
 		../../src/activities/Vision/KSegmentator.cpp
 		../../src/hal/generic_linux/syscall.cpp
@@ -36,12 +36,12 @@ SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp GWRemoteHosts.cpp 
 		../../src/messages/GUICommunication.pb.cc 
 		
 	)
-SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h GWRemoteHosts.h LWRemoteHosts.h KGraphicsView.h 
-		GraphicalRobotElement.h LWElementTree.h LMElementTree.h KMapView.h KLabel.h LVElementList.h 
-		KccHandler.h KccLabel.h LSDController.h XMLHandler.h
+SET( KMonitor_HEADERS KMonitor.h KGUIMessenger.h HostsComboBox.h 
+		GraphicalRobotElement.h LocalWorldController.h KCamView.h GlobalWorldController.h
+		KccHandler.h KccLabel.h SensorsController.h XMLHandler.h KSonarsController.h
 	) 
-SET( KMonitor_FORMS KMonitor.ui KccHandler.ui XMLHandler.ui)
-SET( KMonitor_RESOURCES GuiResources.qrc )
+SET( KMonitor_FORMS KMonitor.ui KccHandler.ui XMLHandler.ui SensorsController.ui KSonarsController.ui KCamView.ui GlobalWorldController.ui LocalWorldController.ui)
+SET( KMonitor_RESOURCES KMonitorResources.qrc )
 
 QT4_WRAP_CPP( KMonitor_HEADERS_MOC ${KMonitor_HEADERS} )
 QT4_WRAP_UI( KMonitor_FORMS_HEADERS ${KMonitor_FORMS} )

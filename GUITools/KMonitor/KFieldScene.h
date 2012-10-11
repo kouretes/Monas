@@ -7,7 +7,6 @@
 #include "tools/XMLConfig.h"
 #include "messages/WorldInfo.pb.h"
 
-#include "KGraphicsView.h"
 #include "GraphicalRobotElement.h"
 
 #include "messages/VisionObservations.pb.h"
@@ -18,7 +17,7 @@ class KGraphicsView;
 class KFieldScene : public QGraphicsScene
 {
 public:
-	KFieldScene(KGraphicsView* parent);
+	KFieldScene(QGraphicsView* parent);
 	~KFieldScene();
 
 	void resizeFieldScene(int width, int height);
@@ -29,7 +28,7 @@ public:
 	void removeGraphicalRobotItem(QString hostId);
 
 	QList<GraphicalRobotElement*> getRobotList (){return RobotList;}
-	KGraphicsView* getParentGraphicsView(){return parent;}
+	QGraphicsView* getParentGraphicsView(){return parent;}
 
 	QRectF rectFromFC(float xMiddle, float yMiddle, float width, float height);
 	QLineF lineFromFCA(float x,float y, float degAngle, float size);
@@ -101,7 +100,7 @@ private:
 	} config;
 	XMLConfig *xmlconfig;
 
-	KGraphicsView* parent;
+	QGraphicsView* parent;
 	QList<GraphicalRobotElement*> RobotList;
 };
 

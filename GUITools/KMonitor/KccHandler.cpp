@@ -8,7 +8,7 @@ KccHandler::KccHandler(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	availableKCCHosts = new LWRemoteHosts(ui->KCComboBox);
+	availableKCCHosts = new HostsComboBox(ui->KCComboBox);
 
 	orangeColor = orange;
 	greenColor = green;
@@ -103,7 +103,7 @@ KccHandler::KccHandler(QWidget *parent) :
 	
 	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableKCCHosts, SLOT(addComboBoxItem(QString, QString)));
 	connect(this, SIGNAL(OldHostRemoved(QString)), availableKCCHosts, SLOT(removeComboBoxItem(QString)));
-	connect(this, SIGNAL(GameStateMsgUpdate(QIcon, QString, QString)), availableKCCHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	connect(this, SIGNAL(GameStateMsgUpdate(QString, QString, QString)), availableKCCHosts, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
 	connect(availableKCCHosts, SIGNAL(LWRHSubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)));
 	connect(availableKCCHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), this, SLOT(UnsubscriptionHandler(QString)));
@@ -469,7 +469,7 @@ void KccHandler::removeComboBoxItem(QString data1){
 	emit OldHostRemoved(data1);
 }
 
-void KccHandler::setLWRHGameStateInfo(QIcon data1, QString data2, QString data3){
+void KccHandler::setLWRHGameStateInfo(QString data1, QString data2, QString data3){
 	emit GameStateMsgUpdate(data1,data2,data3);
 }
 

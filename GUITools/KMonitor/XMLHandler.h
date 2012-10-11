@@ -14,7 +14,7 @@
 #include <fstream>
 #include <QTreeWidgetItem>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "LWRemoteHosts.h"
+#include "HostsComboBox.h"
 #include "architecture/XmlManager/XmlConfigurator.h"
 #include "architecture/archConfig.h"
 #include "../../src/messages/GUICommunication.pb.h"
@@ -37,14 +37,15 @@ public:
 signals:
 	void NewHostAdded(QString,QString);
 	void OldHostRemoved(QString);
-	void GameStateMsgUpdate(QIcon,QString,QString);
+	void GameStateMsgUpdate(QString,QString,QString);
 	void LWRHSubscriptionRequest(QString);
 	void LWRHUnsubscriptionRequest(QString);
 	void sendConfigMessage(ExternalConfig msg);
+	
 public slots:
 	void addComboBoxItem(QString, QString);
 	void removeComboBoxItem(QString);
-	void setLWRHGameStateInfo(QIcon, QString, QString);
+	void setLWRHGameStateInfo(QString, QString, QString);
 	void SubscriptionHandler(QString);
 	void UnsubscriptionHandler(QString);
 	void genericAckReceived(GenericACK ack, QString hostid);
@@ -65,7 +66,7 @@ private:
 	void updateXMLFiles();
 private:
 	
-    LWRemoteHosts* availableXMLHosts;
+    HostsComboBox* availableXMLHosts;
 	Ui::XMLHandler *ui;
 	QTimer *timer;
 	XmlNode xmlStructure;

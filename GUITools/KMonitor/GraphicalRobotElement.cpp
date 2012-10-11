@@ -28,6 +28,9 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	GWSRobotVisible = false;
 	GWSBallVisible = false;
 	GWSUnionistLineVisible = false;
+	LWSRobotVisible = false;
+	LWSBallVisible = false;
+	LWSUnionistLineVisible = false;
 	LWSVisionBallVisible = false;
 	LWSVisionYellowLeftPostVisible = false;
 	LWSVisionYellowRightPostVisible = false;
@@ -74,7 +77,6 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	GREtimer = new QTimer();
 	connect(GREtimer, SIGNAL(timeout()), this, SLOT(clearVisionObservations()));
-	connect(parentScene->getParentGraphicsView(), SIGNAL(forceTimeOut()),this, SLOT(clearVisionObservations()));
 
 	MWCmdTimer = new QTimer();
 	connect(MWCmdTimer, SIGNAL(timeout()), this, SLOT(clearMotionWalkCommand()));
@@ -386,6 +388,7 @@ void GraphicalRobotElement::tagVisionObservations(QGraphicsEllipseItem* post,QRe
 
 void GraphicalRobotElement::clearVisionObservations()
 {
+	GREtimer->stop();
 	if (this->VisionBall->isVisible())
 	{
 		this->VisionBall->setVisible(false);
@@ -410,7 +413,6 @@ void GraphicalRobotElement::clearVisionObservations()
 		this->RightYellowPost->setRect(0, 0, 0, 0);
 	}
 
-	GREtimer->stop();
 }
 
 
