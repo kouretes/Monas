@@ -119,12 +119,7 @@ int Behavior::Execute()
 
 	if (gameState == PLAYER_PLAYING)
 	{
-		if (lastpenalized + seconds(4) > microsec_clock::universal_time())
-		{
-			HeadScanStepHigh(1.7);
-			return 0;
-		}
-
+	
 		CheckForBall();
 		UpdateOrientationPlus();
 		//		checkForPenaltyArea();
@@ -177,7 +172,7 @@ int Behavior::Execute()
 
 			//walk straight for 12 seconds after the scan has ended (lastpenalized+seconds(12))
 			//and then start turning around to search for ball.
-			if (lastpenalized + seconds(14) > microsec_clock::universal_time())
+			if (lastpenalized + seconds(5) > microsec_clock::universal_time())
 			{
 				pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
 			}
@@ -786,7 +781,7 @@ float Behavior::lookAtPointRelativePitch(float x, float y)
 void Behavior::Kick(int side)
 {
 	//if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
-	if ( kickoff && (microsec_clock::universal_time() <= lastplay + seconds(25)) )
+	if ( kickoff && (microsec_clock::universal_time() <= lastplay + seconds(1)) )
 	{
 		if (mglRand() < 0.75)
 		{

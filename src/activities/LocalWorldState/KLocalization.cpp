@@ -151,7 +151,7 @@ void KLocalization::setParticlesPoseUniformly()
 	unsigned int particlesDown = partclsNum - particlesUp;
 
 	//Initialize top Particles
-	for (unsigned int i = 0; i < resetParticles; i++)
+	for (unsigned int i = 0; i < partclsNum; i++)
 	{
 		float x, y;
 
@@ -163,8 +163,8 @@ void KLocalization::setParticlesPoseUniformly()
 		}
 		else if(playerNumber == 2)
 		{
-			y = 1.2;
-			x = -2.4;
+			y = 0;
+			x = 0;
 		}
 		else if(playerNumber == 3)
 		{
@@ -183,7 +183,7 @@ void KLocalization::setParticlesPoseUniformly()
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 
-	for (unsigned int i = resetParticles; i < particlesUp; i++)
+	/*for (unsigned int i = resetParticles; i < particlesUp; i++)
 	{
 		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = FieldMaxY;
@@ -198,7 +198,7 @@ void KLocalization::setParticlesPoseUniformly()
 		SIRParticles.y[i] = -FieldMaxY;
 		SIRParticles.phi[i] = deg2rad(90);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
-	}
+	}*/
 }
 
 void KLocalization::initializeParticles(int playerState, bool kickOff)

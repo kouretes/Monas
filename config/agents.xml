@@ -14,7 +14,8 @@
 	<activity>Vision</activity>
 	<activity>LocalWorldState</activity>
 	<activity>SharedWorldModel</activity>
-	<activity>Behavior</activity>
+	<activity>HeadBehavior</activity>
+	<!--<activity>Behavior</activity>-->
 </agent>
 
 
@@ -27,8 +28,9 @@
 </agent>
 
 
-<!--  
-<statechart>GoalieRoboCup2012</statechart>
+  
+<statechart>GoaliePenalty</statechart>
+<!--
 <agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=50>
 	<name>KBehavior</name>
 	<activity>BodyBehavior</activity>
