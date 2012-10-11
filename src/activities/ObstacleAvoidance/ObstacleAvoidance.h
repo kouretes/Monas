@@ -25,8 +25,8 @@
 #include "tools/mathcommon.h"
 #include "tools/obstacleConst.h"
 
-#define ToMeters	0.1
 
+//IF SOME DEFINE CHANGE, YOU MUST CHANGE THE DEFINE IN /GUITools/KMonitos/KMapScene.h
 #define M 			10
 #define N 			18
 #define TotalRings	(1+M+1)
@@ -44,10 +44,7 @@
 #define SIDE_RIGHT 		( ( (N%4) == 0 ) ? 0 :N-1 )
 
 
-#define SonarAngleShiftDeg	20.0 // deg
 #define SonarAngleShiftRad	(TO_RAD(SonarAngleShiftDeg))
-#define SonarDistanceShift	0.065
-#define SonarAngleRangeDeg	45.0 // deg
 #define SonarAngleRangeRad 	(TO_RAD(SonarAngleRangeDeg))
 
 #define RotationAngle 		(360.0/(N))
@@ -56,13 +53,8 @@
 #define RIGHT 			(int(FRONT - (SonarAngleShiftDeg/RotationAngle)))
 #define LEFT 			(int(FRONT + (SonarAngleShiftDeg/RotationAngle)))
 
-#define NoKnowledge 		0.5
 
-#define PathLength 			50
 
-#define distanceM 		(MapRadius*ToMeters)
-#define SOnARsNum 		KDeviceLists::US_SIZE
-#define EMPTY 				0.0
 #define NumOfTargetCoordinates 3
 
 
@@ -125,7 +117,7 @@ private:
 
 	/*********** Map Update ***********/
 
-	double Right[SOnARsNum], Left[SOnARsNum], empty[SOnARsNum];
+	double Right[KDeviceLists::US_SIZE], Left[KDeviceLists::US_SIZE], empty[KDeviceLists::US_SIZE];
 	double changed[TotalRings][N];
 	int SonarFailCounter;
 	int countLeft, countRight;
@@ -172,7 +164,7 @@ private:
 	float bd;
 
 	/*******variables used in messages***********/
-	SensorData RightValue[SOnARsNum], LeftValue[SOnARsNum];
+	SensorData RightValue[KDeviceLists::US_SIZE], LeftValue[KDeviceLists::US_SIZE];
 	SensorData PosX, PosY, Angle;
 	bool frontObstacle, rightObstacle, leftObstacle ;
 	double frontDist, rightDist, leftDist;
@@ -233,7 +225,6 @@ private:
 	void astar13Neighbours(int goalm, int goaln, int goalo);
 	void reconstructPath(int ring, int sector, int orientation);
 
-	void reset();
 	double myAngleDiff(double a1, double a2);
 	double myRound(double value);
 
