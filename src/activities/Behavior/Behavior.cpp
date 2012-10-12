@@ -591,6 +591,7 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY)
 	if(role == ATTACKER)
 	{
 		approachBall(ballX, ballY);
+
 	}
 	else if(role == CENTER_FOR)
 	{
