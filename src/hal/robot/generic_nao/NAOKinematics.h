@@ -210,7 +210,7 @@ public:
 	/**
 	 * @fn FKvars calculateCenterOfMass(vector<float> allJoints)
 	 * @brief Calculate the center of mass of the robot
-	 * @param allJoints. all the joint of the robot. They must be Larm,Rarm,Lleg,Rleg,Head with that order.
+	 * @param allJoints. all the joint of the robot. They must be Head,Larm,Lleg,Rleg,Rarm with that order.
 	 * */
 	//Makaronada code
 	FKvars calculateCenterOfMass(std::vector<float> allJoints);

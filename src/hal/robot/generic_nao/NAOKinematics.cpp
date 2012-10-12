@@ -222,6 +222,27 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	kmatTable endTr1, endTr2, endTr3, endTr4, endTr5, endTr6, temp;
 	KMath::KMat::GenMatrix<float, 3, 1> lh1, lh2, lh3, lh4, rh1, rh2, rh3, rh4, ll1, ll2, ll3, ll4, ll5, ll6, rl1, rl2, rl3, rl4, rl5, rl6, h1, h2, t;
 	float PI = KMatTransf::PI;
+	//Head
+	KMatTransf::makeTranslation(endTr1, HeadYawX, HeadYawY, HeadYawZ);
+	KMatTransf::makeTranslation(endTr2, HeadPitchX, HeadPitchY, HeadPitchZ);
+	KMatTransf::makeTranslation(base, 0.0f, 0.0f, NeckOffsetZ);
+	KMatTransf::makeDHTransformation(T1, 0.0f, 0.0f, 0.0f, allJoints.front());
+	allJoints.erase(allJoints.begin());
+	KMatTransf::makeDHTransformation(T2, 0.0f, -PI / 2, 0.0f, allJoints.front() - PI / 2);
+	allJoints.erase(allJoints.begin());
+	base *= T1;
+	temp = base;
+	temp *= endTr1;
+	h1 = temp.get_translation();
+	h1.scalar_mult(HeadYawMass);
+	base *= T2;
+	temp = base;
+	temp *= RotHead;
+	temp *= endTr2;
+	h2 = temp.get_translation();
+	h2.scalar_mult(HeadPitchMass);
+	h1 += h2;
+
 	//Left Hand
 	KMatTransf::makeTranslation(endTr1, LShoulderPitchX, LShoulderPitchY, LShoulderPitchZ);
 	KMatTransf::makeTranslation(endTr2, LShoulderRollX, LShoulderRollY, LShoulderRollZ);
@@ -259,43 +280,7 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	lh1 += lh2;
 	lh1 += lh3;
 	lh1 += lh4;
-	//Right Hand
-	KMatTransf::makeTranslation(endTr1, RShoulderPitchX, RShoulderPitchY, RShoulderPitchZ);
-	KMatTransf::makeTranslation(endTr2, RShoulderRollX, RShoulderRollY, RShoulderRollZ);
-	KMatTransf::makeTranslation(endTr3, RElbowYawX, RElbowYawY, RElbowYawZ);
-	KMatTransf::makeTranslation(endTr4, RElbowRollX, RElbowRollY, RElbowRollZ);
-	KMatTransf::makeTranslation(base, 0.0f, -(ShoulderOffsetY + ElbowOffsetY), allJoints.front());
-	KMatTransf::makeDHTransformation(T1, 0.0f, -PI / 2, 0.0f, allJoints.front());
-	allJoints.erase(allJoints.begin());
-	KMatTransf::makeDHTransformation(T2, 0.0f, PI / 2, 0.0f, allJoints.front() + PI / 2);
-	allJoints.erase(allJoints.begin());
-	KMatTransf::makeDHTransformation(T3, 0.0f, -PI / 2, -UpperArmLength, allJoints.front());
-	allJoints.erase(allJoints.begin());
-	KMatTransf::makeDHTransformation(T4, 0.0f, PI / 2, 0.0f, allJoints.front());
-	allJoints.erase(allJoints.begin());
-	base *= T1;
-	temp = base;
-	temp *= endTr1;
-	rh1 = temp.get_translation();
-	rh1.scalar_mult(RShoulderPitchMass);
-	base *= T2;
-	temp = base;
-	temp *= endTr2;
-	rh2 = temp.get_translation();
-	rh2.scalar_mult(RShoulderRollMass);
-	base *= T3;
-	temp = base;
-	temp *= endTr3;
-	rh3 = temp.get_translation();
-	rh3.scalar_mult(RElbowYawMass);
-	base *= T4;
-	temp = base;
-	temp *= endTr4;
-	rh4 = temp.get_translation();
-	rh4.scalar_mult(RElbowRollMass);
-	rh1 += rh2;
-	rh1 += rh3;
-	rh1 += rh4;
+
 	//Left Leg
 	KMatTransf::makeTranslation(endTr1, LHipYawPitchX, LHipYawPitchY, LHipYawPitchZ);
 	KMatTransf::makeTranslation(endTr2, LHipRollX, LHipRollY, LHipRollZ);
@@ -351,6 +336,7 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	ll1 += ll4;
 	ll1 += ll5;
 	ll1 += ll6;
+
 	//Right Leg
 	KMatTransf::makeTranslation(endTr1, RHipYawPitchX, RHipYawPitchY, RHipYawPitchZ);
 	KMatTransf::makeTranslation(endTr2, RHipRollX, RHipRollY, RHipRollZ);
@@ -406,25 +392,45 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	rl1 += rl4;
 	rl1 += rl5;
 	rl1 += rl6;
-	//Head
-	KMatTransf::makeTranslation(endTr1, HeadYawX, HeadYawY, HeadYawZ);
-	KMatTransf::makeTranslation(endTr2, HeadPitchX, HeadPitchY, HeadPitchZ);
-	KMatTransf::makeTranslation(base, 0.0f, 0.0f, NeckOffsetZ);
-	KMatTransf::makeDHTransformation(T1, 0.0f, 0.0f, 0.0f, allJoints.front());
+
+	//Right Hand
+	KMatTransf::makeTranslation(endTr1, RShoulderPitchX, RShoulderPitchY, RShoulderPitchZ);
+	KMatTransf::makeTranslation(endTr2, RShoulderRollX, RShoulderRollY, RShoulderRollZ);
+	KMatTransf::makeTranslation(endTr3, RElbowYawX, RElbowYawY, RElbowYawZ);
+	KMatTransf::makeTranslation(endTr4, RElbowRollX, RElbowRollY, RElbowRollZ);
+	KMatTransf::makeTranslation(base, 0.0f, -(ShoulderOffsetY + ElbowOffsetY), allJoints.front());
+	KMatTransf::makeDHTransformation(T1, 0.0f, -PI / 2, 0.0f, allJoints.front());
 	allJoints.erase(allJoints.begin());
-	KMatTransf::makeDHTransformation(T2, 0.0f, -PI / 2, 0.0f, allJoints.front() - PI / 2);
+	KMatTransf::makeDHTransformation(T2, 0.0f, PI / 2, 0.0f, allJoints.front() + PI / 2);
+	allJoints.erase(allJoints.begin());
+	KMatTransf::makeDHTransformation(T3, 0.0f, -PI / 2, -UpperArmLength, allJoints.front());
+	allJoints.erase(allJoints.begin());
+	KMatTransf::makeDHTransformation(T4, 0.0f, PI / 2, 0.0f, allJoints.front());
 	allJoints.erase(allJoints.begin());
 	base *= T1;
 	temp = base;
 	temp *= endTr1;
-	h1 = temp.get_translation();
-	h1.scalar_mult(HeadYawMass);
+	rh1 = temp.get_translation();
+	rh1.scalar_mult(RShoulderPitchMass);
 	base *= T2;
 	temp = base;
 	temp *= endTr2;
-	h2 = temp.get_translation();
-	h2.scalar_mult(HeadPitchMass);
-	h1 += h2;
+	rh2 = temp.get_translation();
+	rh2.scalar_mult(RShoulderRollMass);
+	base *= T3;
+	temp = base;
+	temp *= endTr3;
+	rh3 = temp.get_translation();
+	rh3.scalar_mult(RElbowYawMass);
+	base *= T4;
+	temp = base;
+	temp *= endTr4;
+	rh4 = temp.get_translation();
+	rh4.scalar_mult(RElbowRollMass);
+	rh1 += rh2;
+	rh1 += rh3;
+	rh1 += rh4;
+
 	//Torso
 	t(0, 0) = TorsoX;
 	t(1, 0) = TorsoY;
