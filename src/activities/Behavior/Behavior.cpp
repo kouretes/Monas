@@ -143,17 +143,17 @@ int Behavior::Execute()
 			_blk.publishState(*hcontrol, "behavior");
 			return 0;
 		}
-		
+
 		// Publish message to head controller to run check for ball
 		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(*hcontrol, "behavior");
-		
+
 		if(bfm != 0) {
 			if(bfm.get() != 0) {
 				ballfound = bfm->ballfound();
 			}
 		}
-		
+
 		UpdateOrientationPlus();
 		//		checkForPenaltyArea();
 		readytokick = false;
@@ -558,14 +558,14 @@ void Behavior::littleWalk(double x, double y, double th)
 
 void Behavior::approachBall(double ballX, double ballY)
 {
-	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
-	double maxd = fmaxf( fabs(bx - ballX), fabs(by - ballY) );
-	f    = fminf(1.0, 0.4 + (maxd / 0.5));
-	gain = fminf(1.0, 0.0 + (maxd / 0.5));
-	X = gain * (bx - ballX) / maxd;
-	Y = gain * (by - ballY) / maxd;
-	t = gain * (bb / M_PI);
-	velocityWalk(X, Y, t, f);
+	if (pathOK && bd > 0.2)
+    {
+        pathOK = false;
+        int pathSide = (bb > 0) ? 1 : -1;
+        pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
+    }
+    else
+        pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
 }
 
 
@@ -590,14 +590,8 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY)
 
 	if(role == ATTACKER)
 	{
-		if (pathOK && bd > 0.2)
-		{
-			pathOK = false;
-			int pathSide = (bb > 0) ? 1 : -1;
-			pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
-		}
-		else
-			pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
+		approachBall(ballX, ballY);
+
 	}
 	else if(role == CENTER_FOR)
 	{
