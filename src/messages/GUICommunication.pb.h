@@ -32,6 +32,7 @@ void protobuf_ShutdownFile_GUICommunication_2eproto();
 
 class XmlUpdate;
 class HandShake;
+class FileTransfer;
 class ExternalConfig;
 class GenericACK;
 class ResetMessage;
@@ -249,6 +250,106 @@ class HandShake : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class FileTransfer : public ::google::protobuf::Message {
+ public:
+  FileTransfer();
+  virtual ~FileTransfer();
+  
+  FileTransfer(const FileTransfer& from);
+  
+  inline FileTransfer& operator=(const FileTransfer& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const FileTransfer& default_instance();
+  
+  void Swap(FileTransfer* other);
+  
+  // implements Message ----------------------------------------------
+  
+  FileTransfer* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const FileTransfer& from);
+  void MergeFrom(const FileTransfer& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required bytes file = 1;
+  inline bool has_file() const;
+  inline void clear_file();
+  static const int kFileFieldNumber = 1;
+  inline const ::std::string& file() const;
+  inline void set_file(const ::std::string& value);
+  inline void set_file(const char* value);
+  inline void set_file(const void* value, size_t size);
+  inline ::std::string* mutable_file();
+  inline ::std::string* release_file();
+  
+  // required string filepath = 2;
+  inline bool has_filepath() const;
+  inline void clear_filepath();
+  static const int kFilepathFieldNumber = 2;
+  inline const ::std::string& filepath() const;
+  inline void set_filepath(const ::std::string& value);
+  inline void set_filepath(const char* value);
+  inline void set_filepath(const char* value, size_t size);
+  inline ::std::string* mutable_filepath();
+  inline ::std::string* release_filepath();
+  
+  // @@protoc_insertion_point(class_scope:FileTransfer)
+ private:
+  inline void set_has_file();
+  inline void clear_has_file();
+  inline void set_has_filepath();
+  inline void clear_has_filepath();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* file_;
+  ::std::string* filepath_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_GUICommunication_2eproto();
+  friend void protobuf_AssignDesc_GUICommunication_2eproto();
+  friend void protobuf_ShutdownFile_GUICommunication_2eproto();
+  
+  void InitAsDefaultInstance();
+  static FileTransfer* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class ExternalConfig : public ::google::protobuf::Message {
  public:
   ExternalConfig();
@@ -349,10 +450,18 @@ class ExternalConfig : public ::google::protobuf::Message {
   inline const ::google::protobuf::RepeatedPtrField< ::std::string>& resetactivities() const;
   inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_resetactivities();
   
-  // required bool handOffRequest = 5;
+  // optional .FileTransfer file = 5;
+  inline bool has_file() const;
+  inline void clear_file();
+  static const int kFileFieldNumber = 5;
+  inline const ::FileTransfer& file() const;
+  inline ::FileTransfer* mutable_file();
+  inline ::FileTransfer* release_file();
+  
+  // required bool handOffRequest = 6;
   inline bool has_handoffrequest() const;
   inline void clear_handoffrequest();
-  static const int kHandOffRequestFieldNumber = 5;
+  static const int kHandOffRequestFieldNumber = 6;
   inline bool handoffrequest() const;
   inline void set_handoffrequest(bool value);
   
@@ -362,6 +471,8 @@ class ExternalConfig : public ::google::protobuf::Message {
   inline void clear_has_messageid();
   inline void set_has_targethost();
   inline void clear_has_targethost();
+  inline void set_has_file();
+  inline void clear_has_file();
   inline void set_has_handoffrequest();
   inline void clear_has_handoffrequest();
   
@@ -369,12 +480,13 @@ class ExternalConfig : public ::google::protobuf::Message {
   
   ::std::string* messageid_;
   ::google::protobuf::RepeatedPtrField< ::XmlUpdate > updatexml_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> resetactivities_;
   ::google::protobuf::uint32 targethost_;
   bool handoffrequest_;
-  ::google::protobuf::RepeatedPtrField< ::std::string> resetactivities_;
+  ::FileTransfer* file_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
   
   friend void  protobuf_AddDesc_GUICommunication_2eproto();
   friend void protobuf_AssignDesc_GUICommunication_2eproto();
@@ -941,6 +1053,126 @@ inline void HandShake::set_checksum(::google::protobuf::uint32 value) {
 
 // -------------------------------------------------------------------
 
+// FileTransfer
+
+// required bytes file = 1;
+inline bool FileTransfer::has_file() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void FileTransfer::set_has_file() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void FileTransfer::clear_has_file() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void FileTransfer::clear_file() {
+  if (file_ != &::google::protobuf::internal::kEmptyString) {
+    file_->clear();
+  }
+  clear_has_file();
+}
+inline const ::std::string& FileTransfer::file() const {
+  return *file_;
+}
+inline void FileTransfer::set_file(const ::std::string& value) {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  file_->assign(value);
+}
+inline void FileTransfer::set_file(const char* value) {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  file_->assign(value);
+}
+inline void FileTransfer::set_file(const void* value, size_t size) {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  file_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* FileTransfer::mutable_file() {
+  set_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    file_ = new ::std::string;
+  }
+  return file_;
+}
+inline ::std::string* FileTransfer::release_file() {
+  clear_has_file();
+  if (file_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = file_;
+    file_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string filepath = 2;
+inline bool FileTransfer::has_filepath() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void FileTransfer::set_has_filepath() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void FileTransfer::clear_has_filepath() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void FileTransfer::clear_filepath() {
+  if (filepath_ != &::google::protobuf::internal::kEmptyString) {
+    filepath_->clear();
+  }
+  clear_has_filepath();
+}
+inline const ::std::string& FileTransfer::filepath() const {
+  return *filepath_;
+}
+inline void FileTransfer::set_filepath(const ::std::string& value) {
+  set_has_filepath();
+  if (filepath_ == &::google::protobuf::internal::kEmptyString) {
+    filepath_ = new ::std::string;
+  }
+  filepath_->assign(value);
+}
+inline void FileTransfer::set_filepath(const char* value) {
+  set_has_filepath();
+  if (filepath_ == &::google::protobuf::internal::kEmptyString) {
+    filepath_ = new ::std::string;
+  }
+  filepath_->assign(value);
+}
+inline void FileTransfer::set_filepath(const char* value, size_t size) {
+  set_has_filepath();
+  if (filepath_ == &::google::protobuf::internal::kEmptyString) {
+    filepath_ = new ::std::string;
+  }
+  filepath_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* FileTransfer::mutable_filepath() {
+  set_has_filepath();
+  if (filepath_ == &::google::protobuf::internal::kEmptyString) {
+    filepath_ = new ::std::string;
+  }
+  return filepath_;
+}
+inline ::std::string* FileTransfer::release_filepath() {
+  clear_has_filepath();
+  if (filepath_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = filepath_;
+    filepath_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
 // ExternalConfig
 
 // required string messageid = 1;
@@ -1092,15 +1324,44 @@ ExternalConfig::mutable_resetactivities() {
   return &resetactivities_;
 }
 
-// required bool handOffRequest = 5;
-inline bool ExternalConfig::has_handoffrequest() const {
+// optional .FileTransfer file = 5;
+inline bool ExternalConfig::has_file() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void ExternalConfig::set_has_handoffrequest() {
+inline void ExternalConfig::set_has_file() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void ExternalConfig::clear_has_handoffrequest() {
+inline void ExternalConfig::clear_has_file() {
   _has_bits_[0] &= ~0x00000010u;
+}
+inline void ExternalConfig::clear_file() {
+  if (file_ != NULL) file_->::FileTransfer::Clear();
+  clear_has_file();
+}
+inline const ::FileTransfer& ExternalConfig::file() const {
+  return file_ != NULL ? *file_ : *default_instance_->file_;
+}
+inline ::FileTransfer* ExternalConfig::mutable_file() {
+  set_has_file();
+  if (file_ == NULL) file_ = new ::FileTransfer;
+  return file_;
+}
+inline ::FileTransfer* ExternalConfig::release_file() {
+  clear_has_file();
+  ::FileTransfer* temp = file_;
+  file_ = NULL;
+  return temp;
+}
+
+// required bool handOffRequest = 6;
+inline bool ExternalConfig::has_handoffrequest() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void ExternalConfig::set_has_handoffrequest() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void ExternalConfig::clear_has_handoffrequest() {
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void ExternalConfig::clear_handoffrequest() {
   handoffrequest_ = false;

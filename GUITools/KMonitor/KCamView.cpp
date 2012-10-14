@@ -1,23 +1,26 @@
-#include "KRobotView.h"
-
-#include <QImage>
-
-#include <fstream>
+#include "KCamView.h"
+#include "ui_KCamView.h"
 #include "architecture/archConfig.h"
 #include "tools/toString.h"
-
-#include <iostream>
 using namespace std;
-
-KRobotView::KRobotView(KLabel* parent, QString hostId)
-	: parentLabel(0)
+KCamView::KCamView(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::KCamView)
 {
-	parentLabel = parent;
-	currentHost = hostId;
+    ui->setupUi(this);
+	rawImageRequested = false;
+	segImageRequested = false;
+	connect(ui->camList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(newListElementRequested(QListWidgetItem*)));
+	
+	
+	availableCamHosts = new HostsComboBox(ui->camComboBox);
+	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableCamHosts, SLOT(addComboBoxItem(QString, QString)));
+	connect(this, SIGNAL(OldHostRemoved(QString)), availableCamHosts, SLOT(removeComboBoxItem(QString)));
+	connect(this, SIGNAL(GameStateMsgUpdate(QString, QString, QString)), availableCamHosts, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
-	LRVRawImageVisible = false;
-	LRVSegImageVisible = false;
-
+	connect(availableCamHosts, SIGNAL(LWRHSubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)));
+	connect(availableCamHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), this, SLOT(UnsubscriptionHandler(QString)));
+	
 	orangeColor = 32;
 	redColor = 1;
 	greenColor = 4;
@@ -37,11 +40,61 @@ KRobotView::KRobotView(KLabel* parent, QString hostId)
 	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
 }
 
-KRobotView::~KRobotView()
+KCamView::~KCamView()
 {
+    delete ui;
 }
 
-void KRobotView::loadXMLConfigParameters(std::string fname)
+void KCamView::kRawImageUpdateHandler(KRawImage rawImage, QString hostId)
+{
+	QImage* image;
+	currentImage = rawImage;
+	if (rawImageRequested)
+	{
+		image = YUVPixelFormat2RGB32(rawImage);
+		ui->imageLabel->setPixmap(QPixmap::fromImage(*image));
+	}
+	else if(segImageRequested)
+	{
+		image = YUV2RGBPlusPixSegmentation(rawImage);
+		ui->imageLabel->setPixmap(QPixmap::fromImage(*image));
+	}
+}
+
+void KCamView::newListElementRequested(QListWidgetItem* item)
+{
+	if(ui->camList->row(item) == 0 )
+	{
+		if(item->checkState() == 0)
+		{
+			rawImageRequested = false;
+			QImage emptyImage;
+			ui->imageLabel->setPixmap(QPixmap::fromImage(emptyImage));
+		}else{
+			rawImageRequested = true;
+			segImageRequested = false;
+			ui->camList->item(1)->setCheckState(Qt::Unchecked);
+			kRawImageUpdateHandler(currentImage,"");
+		}
+
+	}else if(ui->camList->row(item) == 1)
+	{
+		if(item->checkState() == 0)
+		{
+			segImageRequested = false;
+			QImage emptyImage;
+			ui->imageLabel->setPixmap(QPixmap::fromImage(emptyImage));
+		}else
+		{
+			segImageRequested = true;
+			rawImageRequested = false;
+			ui->camList->item(0)->setCheckState(Qt::Unchecked);
+			kRawImageUpdateHandler(currentImage,"");
+		}
+	}
+}
+
+void KCamView::loadXMLConfigParameters(std::string fname)
 {
 	XMLConfig* xmlconfig = new XMLConfig(fname);
 	std::string colorTableConf;
@@ -59,40 +112,9 @@ void KRobotView::loadXMLConfigParameters(std::string fname)
 	myReadFile.close();
 }
 
-void KRobotView::resizeRobotView(int size)
+QImage* KCamView::YUVPixelFormat2RGB32(KRawImage rawImage)
 {
-	//this->parentLabel->setAlignment(Qt::AlignHCenter);
-}
-
-void KRobotView::resetKRobotView(QString hostId)
-{
-	currentHost = hostId;
-
-	setLRVRawImageVisible(false);
-}
-
-void KRobotView::setRVRawImageVisible(bool visible)
-{
-	if (visible == false)
-	{
-		this->parentLabel->setPixmap(QPixmap());
-		this->parentLabel->setAlignment(Qt::AlignHCenter);
-	}
-}
-
-void KRobotView::updateRawRobotView(KRawImage rawImage)
-{
-	QImage* image;
-
-	image = this->YUVPixelFormat2RGB32(rawImage);
-	this->parentLabel->setPixmap(QPixmap::fromImage(*image));
-	this->parentLabel->setAlignment(Qt::AlignHCenter);
-
-}
-
-QImage* KRobotView::YUVPixelFormat2RGB32(KRawImage rawImage)
-{
-	const  double A=1.4075, B=0.3455, C=0.7169, D=1.7790;
+	double A=1.4075, B=0.3455, C=0.7169, D=1.7790;
 	int startofBlock;
 	unsigned char y, cu, cv;
 	int r, g, b, u, v;
@@ -143,29 +165,9 @@ QImage* KRobotView::YUVPixelFormat2RGB32(KRawImage rawImage)
 	return qimg;
 }
 
-void KRobotView::setRVSegImageVisible(bool visible)
+QImage* KCamView::YUV2RGBPlusPixSegmentation(KRawImage rawImage)
 {
-	if (visible == false)
-	{
-		this->parentLabel->setPixmap(QPixmap());
-		this->parentLabel->setAlignment(Qt::AlignHCenter);
-	}
-}
-
-void KRobotView::updateSegRobotView(KRawImage rawImage)
-{
-	QImage* image;
-
-
-	image = YUV2RGBPlusPixSegmentation(rawImage);
-	this->parentLabel->setPixmap(QPixmap::fromImage(*image));
-	this->parentLabel->setAlignment(Qt::AlignHCenter);
-
-}
-
-QImage* KRobotView::YUV2RGBPlusPixSegmentation(KRawImage rawImage)
-{
-	const  double A=1.4075, B=0.3455, C=0.7169, D=1.7790;
+	double A=1.4075, B=0.3455, C=0.7169, D=1.7790;
 	int startofBlock;
 	unsigned char y, cu, cv;
 	int r, g, b, u, v;
@@ -210,4 +212,45 @@ QImage* KRobotView::YUV2RGBPlusPixSegmentation(KRawImage rawImage)
 
 	return segImage;
 
+}
+//TODO
+/*void KLabel::resizeEvent(QResizeEvent* event)
+{
+	if (width()>height())
+		robotView->resizeRobotView(height()-10);
+	else
+		robotView->resizeRobotView(width()-10);
+
+}*/
+
+void KCamView::addComboBoxItem(QString data1, QString data2){
+	emit NewHostAdded(data1,data2);
+}
+
+void KCamView::removeComboBoxItem(QString data1){
+	emit OldHostRemoved(data1);
+}
+
+void KCamView::setLWRHGameStateInfo(QString data1, QString data2, QString data3){
+	emit GameStateMsgUpdate(data1,data2,data3);
+}
+
+void KCamView::SubscriptionHandler(QString data1){
+	emit LWRHSubscriptionRequest(data1);
+}
+
+void KCamView::UnsubscriptionHandler(QString data1){
+	emit LWRHUnsubscriptionRequest(data1);
+}
+
+void KCamView::changeEvent(QEvent *e)
+{
+    QWidget::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
 }

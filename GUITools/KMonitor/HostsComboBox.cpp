@@ -1,16 +1,16 @@
-#include "LWRemoteHosts.h"
+#include "HostsComboBox.h"
 
 #include <iostream>
 using namespace std;
 
-LWRemoteHosts::LWRemoteHosts(QComboBox *parent )
+HostsComboBox::HostsComboBox(QComboBox *parent )
 {
 	parentComboBox = parent;
 
 	parentComboBox->setIconSize(QSize(48, 48));
 	parentComboBox->adjustSize();
 
-	connect(parentComboBox, SIGNAL(activated(int)), this, SLOT(newLWRemoteHostSelected(int)));
+	connect(parentComboBox, SIGNAL(activated(int)), this, SLOT(newHostsComboBoxelected(int)));
 
 	LWRequests.clear();
 	myCurrentRequestedHost.clear();
@@ -19,12 +19,12 @@ LWRemoteHosts::LWRemoteHosts(QComboBox *parent )
 	//printLWRequests();
 }
 
-LWRemoteHosts::~LWRemoteHosts()
+HostsComboBox::~HostsComboBox()
 {
 
 }
 
-void LWRemoteHosts::addComboBoxItem(QString hostId, QString hostName)
+void HostsComboBox::addComboBoxItem(QString hostId, QString hostName)
 {
 	QIcon icon;
 
@@ -40,10 +40,9 @@ void LWRemoteHosts::addComboBoxItem(QString hostId, QString hostName)
 
 }
 
-void LWRemoteHosts::removeComboBoxItem(QString hostId)
+void HostsComboBox::removeComboBoxItem(QString hostId)
 {
 	int hostIndex = -1;
-
 	hostIndex = this->LWhostFinder(hostId);
 
 	if(hostIndex != -1 && hostIndex <= parentComboBox->count())
@@ -51,7 +50,7 @@ void LWRemoteHosts::removeComboBoxItem(QString hostId)
 		if (LWRequests.at(hostIndex)->hostSelected){
 
 			emit LWRHUnsubscriptionRequest(hostId);
-			emit newLWRemoteHostSelected(0);
+			emit newHostsComboBoxelected(0);
 		}
 
 		parentComboBox->removeItem(hostIndex);
@@ -62,7 +61,7 @@ void LWRemoteHosts::removeComboBoxItem(QString hostId)
 
 }
 
-int LWRemoteHosts::LWhostFinder(QString hostId)
+int HostsComboBox::LWhostFinder(QString hostId)
 {
 	int hostIndex = -1;
 
@@ -80,21 +79,24 @@ int LWRemoteHosts::LWhostFinder(QString hostId)
 
 }
 
-void LWRemoteHosts::setLWRHGameStateInfo(QIcon icon, QString gsm, QString hostId)
+void HostsComboBox::setLWRHGameStateInfo(QString iconPath, QString gsm, QString hostId)
 {
 	int hostIndex = this->LWhostFinder(hostId);
-
+	QIcon icon;
+	icon.addFile(iconPath, QSize(), QIcon::Normal, QIcon::Off);
 	if(hostIndex != -1 && hostIndex <= parentComboBox->count())
 	{
+		QString fixGsm = LWRequests.at(hostIndex)->hostName;
+		fixGsm = fixGsm + gsm;
 		parentComboBox->setItemIcon(hostIndex, icon);
-		parentComboBox->setItemText(hostIndex, gsm);
+		parentComboBox->setItemText(hostIndex, fixGsm);
 
 	}
 
 
 }
 
-void LWRemoteHosts::newLWRemoteHostSelected(int index)
+void HostsComboBox::newHostsComboBoxelected(int index)
 {
 	emit LWRHUnsubscriptionRequest(myCurrentRequestedHost);
 
@@ -117,9 +119,9 @@ void LWRemoteHosts::newLWRemoteHostSelected(int index)
 	//printLWRequests();
 }
 
-void LWRemoteHosts::printLWRequests()
+void HostsComboBox::printLWRequests()
 {
-	std::cout << "~~~~~~~~~LWRemoteHosts::printLWRequests()~~~~~~~~~~~~~~" << std::endl;
+	std::cout << "~~~~~~~~~HostsComboBox::printLWRequests()~~~~~~~~~~~~~~" << std::endl;
 	for(int i = 0; i<LWRequests.count();i++)
 	{
 		std::cout << "Host :: " << LWRequests.at(i)->hostId.toStdString()<< std::endl;

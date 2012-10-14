@@ -81,24 +81,6 @@ int HeadController::Execute()
 			HeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH);
 	}
 
-
-	if (calibrated == 0)
-	{
-		std::cout<<"-----------------------cal"<<std::endl;
-		calibrate();
-		return 0;
-	}
-
-	if (calibrated == 1)
-	{
-		std::cout<<"-----------------------noth"<<std::endl;
-		return 0;
-
-	}
-
-	if(calibrated!=2)
-		return 0;
-
 	unsigned int whattodo;
 	if(control.get()==0)
 		whattodo=HeadControlMessage::SCAN_AND_TRACK_FOR_BALL;
@@ -125,7 +107,7 @@ int HeadController::Execute()
 				scanforball=true;
 
 			}
-			std::cout<<"Localize"<<scanforball<<startscan<<std::endl;
+			//std::cout<<"Localize"<<scanforball<<startscan<<std::endl;
 			HeadScanStepHigh(1.4);
 			break;
 		case HeadControlMessage::LOCALIZE_FAR:
@@ -134,21 +116,25 @@ int HeadController::Execute()
 			break;
 		case HeadControlMessage::SCAN_AND_TRACK_FOR_BALL:
 			CheckForBall();
-			std::cout<<"trust:"<<seeballtrust<<std::endl;
+			//std::cout<<"trust:"<<seeballtrust<<std::endl;
 			if(seeballmessage) //Do we see the ball? then
 			{
-
-					targetYaw = bmsg->referenceyaw();
-					targetPitch =  bmsg->referencepitch();
-					MakeHeadAction();
-					scanforball=false;
+                targetYaw = bmsg->referenceyaw();
+                targetPitch =  bmsg->referencepitch();
+                MakeHeadAction();
+                scanforball=false;
+                std::cout << "seeballmessage\n";
+                bfm.set_ballfound(true);
+                _blk.publishState(bfm, "behavior");
 			}
 			else if(seeballtrust) // Try and look at where we expect the ball to be
 			{		targetYaw = lookAtPointRelativeYaw(bx, by);
 					targetPitch = lookAtPointRelativePitch(bx, by);
 					MakeHeadAction();
 					scanforball=false;
-
+					std::cout << "seeballtrust\n";
+                    bfm.set_ballfound(true);
+					_blk.publishState(bfm, "behavior");
 			}
 			else
 			{
@@ -158,6 +144,9 @@ int HeadController::Execute()
 					scanforball=true;
 				}
 				HeadScanStepSmart();
+				std::cout << "scan\n";
+				bfm.set_ballfound(false);
+                _blk.publishState(bfm, "behavior");
 			}
 
 			break;
@@ -198,7 +187,7 @@ void HeadController::read_messages()
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
-	control=_blk.readData<HeadControlMessage> ("behavior");
+	control=_blk.readState<HeadControlMessage> ("behavior");
 	//Logger::Instance().WriteMsg("HeadController", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 

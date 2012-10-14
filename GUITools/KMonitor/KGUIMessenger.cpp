@@ -97,10 +97,8 @@ void KGUIMessenger::allocateReceivedMessages()
 				KnownHosts myRemoteHosts;
 				myRemoteHosts.Clear();
 				myRemoteHosts.CopyFrom(*(incomingMessages.at(i).msg));
-
-				//printKnownHosts(myRemoteHosts);
-				emit knownHostsUpdate( myRemoteHosts );
-				//printMyGWRequestedHosts();
+		
+				updateKnownHosts(myRemoteHosts);
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="KRawImage" && (myLVRequestedHost == currentRHost || myKccRequestedHost == currentRHost))
 			{
@@ -127,6 +125,7 @@ void KGUIMessenger::allocateReceivedMessages()
 				gsm.Clear();
 				gsm.CopyFrom(*(incomingMessages.at(i).msg));
 
+				updateGameState(gsm, currentRHost);
 				emit gameStateMessageUpdate(gsm, currentRHost);
 			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="WorldInfo" && (myGWRequestedHosts.contains(currentRHost)||(myLWRequestedHost ==currentRHost)))
@@ -195,13 +194,79 @@ void KGUIMessenger::allocateReceivedMessages()
 	}
 }
 
+void KGUIMessenger::updateKnownHosts(KnownHosts myRemoteHosts){
+	const ::google::protobuf::RepeatedPtrField< HostEntry >& rf = myRemoteHosts.entrylist();
+    ::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
+	vec tempHosts;
+    for(fit=rf.begin();fit!=rf.end();++fit)
+    {
+		tempHosts.push_back((*fit).hostid());
+		vec::iterator found = find(hostIds.begin(), hostIds.end(), (*fit).hostid());
+		if(found != hostIds.end()){
+			hostIds.erase(found);
+		}else{
+			emit addHost(QString::fromStdString(_toString((*fit).hostid())), QString::fromStdString(_toString((*fit).hostname())));
+		}
+    }
+    for(vec::iterator iter = hostIds.begin(); iter < hostIds.end(); iter++){
+    	emit removeHost(QString::fromStdString(_toString(*iter)));
+    }
+    hostIds.clear();
+    hostIds = tempHosts;
+}
+
+void KGUIMessenger::updateGameState(GameStateMessage gsm, QString hostId){
+	QString iconFile;
+	if(gsm.team_color() == 0)
+	{
+		iconFile = QString::fromUtf8(":/KnownHostsIcons/robot_blue.png");
+	}else if (gsm.team_color() == 1)
+	{
+		iconFile = QString::fromUtf8(":/KnownHostsIcons/robot_red.png");
+	}
+	QString playerNumber = QString::fromStdString(_toString((gsm.player_number())));
+	QString teamNumber = QString::fromStdString(_toString((gsm.team_number())));
+	QString playerState;
+	switch(gsm.player_state())
+	{
+		case PLAYER_INITIAL:
+			playerState = QString("INITIAL");
+			break;
+		case PLAYER_READY:
+			playerState = QString("READY");
+			break;
+		case PLAYER_SET:
+			playerState = QString("SET");
+			break;
+		case PLAYER_PLAYING:
+			playerState = QString("PLAYING");
+			break;
+		case PLAYER_FINISHED:
+			playerState = QString("FINISHED");
+			break;
+		case PLAYER_PENALISED:
+			 playerState = QString("PENALISED");
+			break;
+		case PLAYER_DEAD:
+			 playerState = QString("DEAD");
+			break;
+		case PLAYER_LOG:
+			 playerState = QString("LOG");
+			break;
+		case PLAYER_DEMO:
+			 playerState = QString("DEMO");
+			break;
+	}
+	
+	QString stateMSG = QString(", ") + teamNumber + QString(", ") + playerNumber + QString(", ") + playerState;
+	emit updateGameState(iconFile, stateMSG, hostId);
+}
+
 void KGUIMessenger::updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host)
 {
-	//cout<<"Check -2"<<endl;
 	if(multicast->getReadBuffer()==NULL||multicast->getWriteBuffer()==NULL)
 		return;
-	//cout<<"Check -1"<<endl;
-
+		
 	msgentry nmsg;
 	nmsg.topic=Topics::Instance().getId(topic);
 	nmsg.host=host;

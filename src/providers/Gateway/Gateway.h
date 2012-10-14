@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <fstream>
 
 #include "architecture/executables/IProvider.h"
 #include "architecture/narukom/pub_sub/blackboard.h"

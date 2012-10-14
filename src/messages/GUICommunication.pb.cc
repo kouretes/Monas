@@ -21,6 +21,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* HandShake_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   HandShake_reflection_ = NULL;
+const ::google::protobuf::Descriptor* FileTransfer_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  FileTransfer_reflection_ = NULL;
 const ::google::protobuf::Descriptor* ExternalConfig_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ExternalConfig_reflection_ = NULL;
@@ -76,12 +79,29 @@ void protobuf_AssignDesc_GUICommunication_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(HandShake));
-  ExternalConfig_descriptor_ = file->message_type(2);
-  static const int ExternalConfig_offsets_[5] = {
+  FileTransfer_descriptor_ = file->message_type(2);
+  static const int FileTransfer_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, file_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, filepath_),
+  };
+  FileTransfer_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      FileTransfer_descriptor_,
+      FileTransfer::default_instance_,
+      FileTransfer_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FileTransfer, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(FileTransfer));
+  ExternalConfig_descriptor_ = file->message_type(3);
+  static const int ExternalConfig_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalConfig, messageid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalConfig, targethost_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalConfig, updatexml_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalConfig, resetactivities_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalConfig, file_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalConfig, handoffrequest_),
   };
   ExternalConfig_reflection_ =
@@ -95,7 +115,7 @@ void protobuf_AssignDesc_GUICommunication_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ExternalConfig));
-  GenericACK_descriptor_ = file->message_type(3);
+  GenericACK_descriptor_ = file->message_type(4);
   static const int GenericACK_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GenericACK, hostid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GenericACK, messageid_),
@@ -113,7 +133,7 @@ void protobuf_AssignDesc_GUICommunication_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(GenericACK));
-  ResetMessage_descriptor_ = file->message_type(4);
+  ResetMessage_descriptor_ = file->message_type(5);
   static const int ResetMessage_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResetMessage, resetactivities_),
   };
@@ -128,7 +148,7 @@ void protobuf_AssignDesc_GUICommunication_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResetMessage));
-  UpdateMessage_descriptor_ = file->message_type(5);
+  UpdateMessage_descriptor_ = file->message_type(6);
   static const int UpdateMessage_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UpdateMessage, updatexml_),
   };
@@ -160,6 +180,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     HandShake_descriptor_, &HandShake::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    FileTransfer_descriptor_, &FileTransfer::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ExternalConfig_descriptor_, &ExternalConfig::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     GenericACK_descriptor_, &GenericACK::default_instance());
@@ -176,6 +198,8 @@ void protobuf_ShutdownFile_GUICommunication_2eproto() {
   delete XmlUpdate_reflection_;
   delete HandShake::default_instance_;
   delete HandShake_reflection_;
+  delete FileTransfer::default_instance_;
+  delete FileTransfer_reflection_;
   delete ExternalConfig::default_instance_;
   delete ExternalConfig_reflection_;
   delete GenericACK::default_instance_;
@@ -196,25 +220,29 @@ void protobuf_AddDesc_GUICommunication_2eproto() {
     "\n\026GUICommunication.proto\"+\n\tXmlUpdate\022\017\n"
     "\007keyword\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"=\n\tHandSha"
     "ke\022\016\n\006headId\030\001 \002(\t\022\016\n\006bodyId\030\002 \002(\t\022\020\n\010ch"
-    "ecksum\030\003 \002(\r\"\207\001\n\016ExternalConfig\022\021\n\tmessa"
-    "geid\030\001 \002(\t\022\022\n\ntargethost\030\002 \002(\r\022\035\n\tupdate"
-    "Xml\030\003 \003(\0132\n.XmlUpdate\022\027\n\017resetActivities"
-    "\030\004 \003(\t\022\026\n\016handOffRequest\030\005 \002(\010\"a\n\nGeneri"
-    "cACK\022\016\n\006hostid\030\001 \002(\r\022\021\n\tmessageid\030\002 \002(\t\022"
-    "\037\n\013handshaking\030\003 \001(\0132\n.HandShake\022\017\n\007ownl"
-    "ock\030\004 \002(\010\"\'\n\014ResetMessage\022\027\n\017resetActivi"
-    "ties\030\001 \003(\t\".\n\rUpdateMessage\022\035\n\tupdateXml"
-    "\030\001 \003(\0132\n.XmlUpdate", 458);
+    "ecksum\030\003 \002(\r\".\n\014FileTransfer\022\014\n\004file\030\001 \002"
+    "(\014\022\020\n\010filepath\030\002 \002(\t\"\244\001\n\016ExternalConfig\022"
+    "\021\n\tmessageid\030\001 \002(\t\022\022\n\ntargethost\030\002 \002(\r\022\035"
+    "\n\tupdateXml\030\003 \003(\0132\n.XmlUpdate\022\027\n\017resetAc"
+    "tivities\030\004 \003(\t\022\033\n\004file\030\005 \001(\0132\r.FileTrans"
+    "fer\022\026\n\016handOffRequest\030\006 \002(\010\"a\n\nGenericAC"
+    "K\022\016\n\006hostid\030\001 \002(\r\022\021\n\tmessageid\030\002 \002(\t\022\037\n\013"
+    "handshaking\030\003 \001(\0132\n.HandShake\022\017\n\007ownlock"
+    "\030\004 \002(\010\"\'\n\014ResetMessage\022\027\n\017resetActivitie"
+    "s\030\001 \003(\t\".\n\rUpdateMessage\022\035\n\tupdateXml\030\001 "
+    "\003(\0132\n.XmlUpdate", 535);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GUICommunication.proto", &protobuf_RegisterTypes);
   XmlUpdate::default_instance_ = new XmlUpdate();
   HandShake::default_instance_ = new HandShake();
+  FileTransfer::default_instance_ = new FileTransfer();
   ExternalConfig::default_instance_ = new ExternalConfig();
   GenericACK::default_instance_ = new GenericACK();
   ResetMessage::default_instance_ = new ResetMessage();
   UpdateMessage::default_instance_ = new UpdateMessage();
   XmlUpdate::default_instance_->InitAsDefaultInstance();
   HandShake::default_instance_->InitAsDefaultInstance();
+  FileTransfer::default_instance_->InitAsDefaultInstance();
   ExternalConfig::default_instance_->InitAsDefaultInstance();
   GenericACK::default_instance_->InitAsDefaultInstance();
   ResetMessage::default_instance_->InitAsDefaultInstance();
@@ -837,10 +865,284 @@ void HandShake::Swap(HandShake* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
+const int FileTransfer::kFileFieldNumber;
+const int FileTransfer::kFilepathFieldNumber;
+#endif  // !_MSC_VER
+
+FileTransfer::FileTransfer()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void FileTransfer::InitAsDefaultInstance() {
+}
+
+FileTransfer::FileTransfer(const FileTransfer& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void FileTransfer::SharedCtor() {
+  _cached_size_ = 0;
+  file_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  filepath_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+FileTransfer::~FileTransfer() {
+  SharedDtor();
+}
+
+void FileTransfer::SharedDtor() {
+  if (file_ != &::google::protobuf::internal::kEmptyString) {
+    delete file_;
+  }
+  if (filepath_ != &::google::protobuf::internal::kEmptyString) {
+    delete filepath_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void FileTransfer::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* FileTransfer::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return FileTransfer_descriptor_;
+}
+
+const FileTransfer& FileTransfer::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_GUICommunication_2eproto();  return *default_instance_;
+}
+
+FileTransfer* FileTransfer::default_instance_ = NULL;
+
+FileTransfer* FileTransfer::New() const {
+  return new FileTransfer;
+}
+
+void FileTransfer::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_file()) {
+      if (file_ != &::google::protobuf::internal::kEmptyString) {
+        file_->clear();
+      }
+    }
+    if (has_filepath()) {
+      if (filepath_ != &::google::protobuf::internal::kEmptyString) {
+        filepath_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool FileTransfer::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required bytes file = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_file()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_filepath;
+        break;
+      }
+      
+      // required string filepath = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_filepath:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_filepath()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->filepath().data(), this->filepath().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void FileTransfer::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required bytes file = 1;
+  if (has_file()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
+      1, this->file(), output);
+  }
+  
+  // required string filepath = 2;
+  if (has_filepath()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->filepath().data(), this->filepath().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->filepath(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* FileTransfer::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required bytes file = 1;
+  if (has_file()) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        1, this->file(), target);
+  }
+  
+  // required string filepath = 2;
+  if (has_filepath()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->filepath().data(), this->filepath().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->filepath(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int FileTransfer::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required bytes file = 1;
+    if (has_file()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->file());
+    }
+    
+    // required string filepath = 2;
+    if (has_filepath()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->filepath());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void FileTransfer::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const FileTransfer* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const FileTransfer*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void FileTransfer::MergeFrom(const FileTransfer& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_file()) {
+      set_file(from.file());
+    }
+    if (from.has_filepath()) {
+      set_filepath(from.filepath());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void FileTransfer::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void FileTransfer::CopyFrom(const FileTransfer& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool FileTransfer::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  return true;
+}
+
+void FileTransfer::Swap(FileTransfer* other) {
+  if (other != this) {
+    std::swap(file_, other->file_);
+    std::swap(filepath_, other->filepath_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata FileTransfer::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = FileTransfer_descriptor_;
+  metadata.reflection = FileTransfer_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
 const int ExternalConfig::kMessageidFieldNumber;
 const int ExternalConfig::kTargethostFieldNumber;
 const int ExternalConfig::kUpdateXmlFieldNumber;
 const int ExternalConfig::kResetActivitiesFieldNumber;
+const int ExternalConfig::kFileFieldNumber;
 const int ExternalConfig::kHandOffRequestFieldNumber;
 #endif  // !_MSC_VER
 
@@ -850,6 +1152,7 @@ ExternalConfig::ExternalConfig()
 }
 
 void ExternalConfig::InitAsDefaultInstance() {
+  file_ = const_cast< ::FileTransfer*>(&::FileTransfer::default_instance());
 }
 
 ExternalConfig::ExternalConfig(const ExternalConfig& from)
@@ -862,6 +1165,7 @@ void ExternalConfig::SharedCtor() {
   _cached_size_ = 0;
   messageid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   targethost_ = 0u;
+  file_ = NULL;
   handoffrequest_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -875,6 +1179,7 @@ void ExternalConfig::SharedDtor() {
     delete messageid_;
   }
   if (this != default_instance_) {
+    delete file_;
   }
 }
 
@@ -906,6 +1211,9 @@ void ExternalConfig::Clear() {
       }
     }
     targethost_ = 0u;
+    if (has_file()) {
+      if (file_ != NULL) file_->::FileTransfer::Clear();
+    }
     handoffrequest_ = false;
   }
   updatexml_.Clear();
@@ -981,12 +1289,26 @@ bool ExternalConfig::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(34)) goto parse_resetActivities;
-        if (input->ExpectTag(40)) goto parse_handOffRequest;
+        if (input->ExpectTag(42)) goto parse_file;
         break;
       }
       
-      // required bool handOffRequest = 5;
+      // optional .FileTransfer file = 5;
       case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_file:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_file()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(48)) goto parse_handOffRequest;
+        break;
+      }
+      
+      // required bool handOffRequest = 6;
+      case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_handOffRequest:
@@ -1048,9 +1370,15 @@ void ExternalConfig::SerializeWithCachedSizes(
       4, this->resetactivities(i), output);
   }
   
-  // required bool handOffRequest = 5;
+  // optional .FileTransfer file = 5;
+  if (has_file()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->file(), output);
+  }
+  
+  // required bool handOffRequest = 6;
   if (has_handoffrequest()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->handoffrequest(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->handoffrequest(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1092,9 +1420,16 @@ void ExternalConfig::SerializeWithCachedSizes(
       WriteStringToArray(4, this->resetactivities(i), target);
   }
   
-  // required bool handOffRequest = 5;
+  // optional .FileTransfer file = 5;
+  if (has_file()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, this->file(), target);
+  }
+  
+  // required bool handOffRequest = 6;
   if (has_handoffrequest()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->handoffrequest(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->handoffrequest(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1122,7 +1457,14 @@ int ExternalConfig::ByteSize() const {
           this->targethost());
     }
     
-    // required bool handOffRequest = 5;
+    // optional .FileTransfer file = 5;
+    if (has_file()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->file());
+    }
+    
+    // required bool handOffRequest = 6;
     if (has_handoffrequest()) {
       total_size += 1 + 1;
     }
@@ -1177,6 +1519,9 @@ void ExternalConfig::MergeFrom(const ExternalConfig& from) {
     if (from.has_targethost()) {
       set_targethost(from.targethost());
     }
+    if (from.has_file()) {
+      mutable_file()->::FileTransfer::MergeFrom(from.file());
+    }
     if (from.has_handoffrequest()) {
       set_handoffrequest(from.handoffrequest());
     }
@@ -1197,10 +1542,13 @@ void ExternalConfig::CopyFrom(const ExternalConfig& from) {
 }
 
 bool ExternalConfig::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000013) != 0x00000013) return false;
+  if ((_has_bits_[0] & 0x00000023) != 0x00000023) return false;
   
   for (int i = 0; i < updatexml_size(); i++) {
     if (!this->updatexml(i).IsInitialized()) return false;
+  }
+  if (has_file()) {
+    if (!this->file().IsInitialized()) return false;
   }
   return true;
 }
@@ -1211,6 +1559,7 @@ void ExternalConfig::Swap(ExternalConfig* other) {
     std::swap(targethost_, other->targethost_);
     updatexml_.Swap(&other->updatexml_);
     resetactivities_.Swap(&other->resetactivities_);
+    std::swap(file_, other->file_);
     std::swap(handoffrequest_, other->handoffrequest_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);

@@ -59,9 +59,7 @@ public:
 	float lookAtPointRelativePitch(float x, float y);
 
 	bool reachedTargetHead()
-	{
-		std::cout<<"t:"<<targetPitch<<" "<<targetYaw<<std::endl;
-		std::cout<<"s:"<<HeadPitch.sensorvalue()<<" "<<HeadYaw.sensorvalue()<<std::endl;
+    {
 		return  (fabs(targetPitch - HeadPitch.sensorvalue()) <= OVERSH) && (fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH) ;
 	}
 
@@ -88,6 +86,7 @@ private:
 
 	/* Outgoing Messages */
 	MotionHeadMessage hmot;
+	BallFoundMessage bfm;
 
 	int leftright;
 	float headpos;

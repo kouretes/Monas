@@ -6,11 +6,10 @@
 using namespace std;
 
 
-KMapScene::KMapScene(KMapView* parent, QString hostId)
+KMapScene::KMapScene(QGraphicsView* parent)
 {
 	this->parent = parent;
-	currentHost = hostId;
-
+	
 	staticCellsList.clear();
 	cellsList.clear();
 	pathLineList.clear();
@@ -57,9 +56,8 @@ KMapScene::~KMapScene()
 
 }
 
-void KMapScene::resetKMapScene(QString hostId)
+void KMapScene::resetKMapScene()
 {
-	currentHost = hostId;
 
 	setLPMObstaclesVisible(false);
 	setLPMTargetCoordVisible(false);
@@ -91,7 +89,7 @@ void KMapScene::initGrid()
 				if (r == InnerRing)
 					PolarGrid[k][r][s] = 0.0;
 				else
-					PolarGrid[k][r][s] = NoKnowledge;
+					PolarGrid[k][r][s] = 0.5;
 
 }
 

@@ -921,8 +921,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 		if(colorIsA(c, yellow))
 			name = "Yellow";
-		else
-			name = "Skyblue";
 
 		if(d1.leftOrRight == 1)
 			name += "Right";
@@ -990,8 +988,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 	if(colorIsA(c, yellow))
 		name = "Yellow";
-	else
-		name = "Skyblue";
 
 	name += "Left";
 	o->set_object_name(name);
@@ -1004,8 +1000,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	//name;
 	if(colorIsA(c, yellow))
 		name = "Yellow";
-	else
-		name = "Skyblue";
 
 	name += "Right";
 	o->set_object_name(name);

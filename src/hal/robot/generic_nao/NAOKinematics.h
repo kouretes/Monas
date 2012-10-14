@@ -77,6 +77,11 @@ private:
 	//Predifined only for inverse kinematics
 	kmatTable T4i, T5i, T6i;
 	kmatTable T, base, Rot, Tstart, Ttemp, Ttemp2, TtempTheta5, Tinit, Rfix;
+	//Predifined only for Center of Mass
+	kmatTable RotLHshouldP, RotLHshoulR,RotLHelbowY;
+	kmatTable RotRHshouldP, RotRHshoulR,RotRHelbowY,RotRHelbowR;
+	kmatTable RotLLhipYP, RotLLhipR, RotLLallPitchs;
+	kmatTable RotRLhipYP, RotRLhipR, RotRLallPitchs;
 
 public:
 	NAOKinematics()
@@ -111,6 +116,25 @@ public:
 		TBaseBRLeg.fast_invert();
 		TEndRLegInv = TEndRLeg.fast_invert();
 		TEndRLeg.fast_invert();
+
+		//For Center of Mass
+		//Left hand
+		KMatTransf::makeRotationXYZ(RotLHshouldP, PI/2, 0.0f, 0.0f);
+		KMatTransf::makeRotationXYZ(RotLHshoulR, 0.0f, 0.0f, PI/2);
+		KMatTransf::makeRotationXYZ(RotLHelbowY, PI/2, 0.0f, PI/2);
+		//Right hand
+		KMatTransf::makeRotationXYZ(RotRHshouldP, PI/2, 0.0f, 0.0f);
+		KMatTransf::makeRotationXYZ(RotRHshoulR, 0.0f, 0.0f, -PI/2);
+		KMatTransf::makeRotationXYZ(RotRHelbowY, PI/2, 0.0f, -PI/2);
+		KMatTransf::makeRotationXYZ(RotRHelbowR, 0.0f, 0.0f, -PI/2);
+		//Left leg
+		KMatTransf::makeRotationXYZ(RotLLhipYP, 0.0f, 3*PI/4, PI/2);
+		KMatTransf::makeRotationXYZ(RotLLhipR, 0.0f, PI/2, 0.0f);
+		KMatTransf::makeRotationXYZ(RotLLallPitchs, 0.0f, PI/2, PI/2);
+		//Right leg
+		KMatTransf::makeRotationXYZ(RotRLhipYP, 0.0f, 3*PI/4, PI/2);
+		KMatTransf::makeRotationXYZ(RotRLhipR, 0.0f, PI/2, 0.0f);
+		KMatTransf::makeRotationXYZ(RotRLallPitchs, 0.0f, PI/2, PI/2);
 	}
 
 
@@ -210,7 +234,7 @@ public:
 	/**
 	 * @fn FKvars calculateCenterOfMass(vector<float> allJoints)
 	 * @brief Calculate the center of mass of the robot
-	 * @param allJoints. all the joint of the robot. They must be Larm,Rarm,Lleg,Rleg,Head with that order.
+	 * @param allJoints. all the joint of the robot. They must be Head,Larm,Lleg,Rleg,Rarm with that order.
 	 * */
 	//Makaronada code
 	FKvars calculateCenterOfMass(std::vector<float> allJoints);

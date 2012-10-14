@@ -29,6 +29,7 @@ void Behavior::UserInit()
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	wmot = new MotionWalkMessage();
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
@@ -42,13 +43,14 @@ void Behavior::UserInit()
 	locReset = new LocalizationResetMessage();
 	pprm = new PathPlanningRequestMessage();
 	fom = new ObstacleMessage();
+	hcontrol = new HeadControlMessage();
 	readRobotConf = false;
 	leftright = 1;
 	headpos = 0;
 	ballfound = 0;
 	scanforball = true;
 	startscan = true;
-	scanOK = true;
+	//scanOK = true;
 	pathOK = true;
 	calibrated = 0;
 	forball = 0;
@@ -122,27 +124,34 @@ int Behavior::Execute()
 	GetGameState();
 	GetPosition();
 
-	if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_INITIAL) )
-	{
-		if (calibrated == 0)
-		{
-			calibrate();
-			return 0;
-		}
+	//if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_INITIAL) )
+	//{
 
-		if (calibrated == 1)
-			return 0;
-	}
+	//}
 
-	if (gameState == PLAYER_PLAYING)
+    if (gameState == PLAYER_INITIAL){
+         hcontrol->mutable_task()->set_action(HeadControlMessage::NOTHING);
+        _blk.publishState(*hcontrol, "behavior");
+    }
+	else if (gameState == PLAYER_PLAYING)
 	{
 		if (lastpenalized + seconds(4) > microsec_clock::universal_time())
 		{
-			HeadScanStepHigh(1.7);
+			hcontrol->mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
+			_blk.publishState(*hcontrol, "behavior");
 			return 0;
 		}
 
-		CheckForBall();
+		// Publish message to head controller to run check for ball
+		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+		_blk.publishState(*hcontrol, "behavior");
+
+		if(bfm != 0) {
+			if(bfm.get() != 0) {
+				ballfound = bfm->ballfound();
+			}
+		}
+
 		UpdateOrientationPlus();
 		//		checkForPenaltyArea();
 		readytokick = false;
@@ -171,13 +180,11 @@ int Behavior::Execute()
 				{
 					role = CENTER_FOR;
 				}
-
-				lastrolechange = microsec_clock::universal_time();
 				//			    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
 				approachBallRoleDependent(bx, by);
 
-				if (scanOK)
-					HeadScanStepIntelligent();
+				//if (scanOK)
+					//HeadScanStepIntelligent();
 
 				//					HeadScanStepSmart();
 			}
@@ -185,14 +192,14 @@ int Behavior::Execute()
 
 		if (ballfound == 0)
 		{
-			/* New exploration */
+			/* New exploration
 			if (!scanforball)
 			{
 				startscan = true;
 				scanforball = true;
-			}
+			}*/
 
-			//walk straight for 12 seconds after the scan has ended (lastpenalized+seconds(12))
+			//walk straight for some seconds after the scan has ended (lastpenalized+seconds(12))
 			//and then start turning around to search for ball.
 			if (lastpenalized + seconds(14) > microsec_clock::universal_time())
 			{
@@ -204,23 +211,25 @@ int Behavior::Execute()
 				pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
 
 			/* End of New Exploration */
-			HeadScanStepSmart();
+			//HeadScanStepSmart();
 		}
 	}
 	else if (gameState == PLAYER_READY)
 	{
 		//HeadScanStepSmart();
-		HeadScanStepHigh(1.57);
+		hcontrol->mutable_task()->set_action(HeadControlMessage::LOCALIZE);
+		_blk.publishState(*hcontrol, "behavior");
 		int p = (kickoff) ? 0 : 1;
 		gotoPosition( initX[p], initY[p], initPhi[p] );
 		return 0;
 	}
 	else if (gameState == PLAYER_SET)
 	{
-		CheckForBall();
+		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+		_blk.publishState(*hcontrol, "behavior");
 
-		if (ballfound == 0)
-			HeadScanStepSmart();
+		//if (ballfound == 0)
+			//HeadScanStepSmart();
 	}
 
 	return 0;
@@ -237,6 +246,7 @@ void Behavior::read_messages()
 	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
+	bfm = _blk.readData<BallFoundMessage> ("behavior");
 	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 
@@ -382,85 +392,6 @@ void Behavior::UpdateOrientationPlus()
 }
 
 
-void Behavior::CheckForBall()
-{
-	double closeToBall = 1.3;
-
-	if(wim != 0)
-	{
-		if (wim->balls_size() > 0)
-		{
-			bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-			by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-			bd = sqrt(pow(bx, 2) + pow(by, 2));
-			bb = atan2(by, bx);
-		}
-		else
-		{
-			ballfound = 0;
-			bx = 0.0;
-			by = 1.1;
-			bd = 1.1;
-			bb = 0.0; // M_PI
-		}
-	}
-
-	if (bmsg != 0)
-	{
-		if (bmsg->radius() > 0)
-		{
-			if ( (bd < closeToBall) || (microsec_clock::universal_time() < ballseen + milliseconds(1500)) || (scanforball) )
-			{
-				MakeTrackBallAction();
-
-				if (scanforball == true)
-				{
-					scanforball = false;
-					ballseen = microsec_clock::universal_time();
-				}
-
-				scanOK = false;
-			}
-			else
-			{
-				scanOK = true;
-			}
-
-			lastball = microsec_clock::universal_time();
-			ballfound = 1;
-		}
-		else
-		{
-			if(!scanOK && ballfound)
-				if(wim != 0)
-					if (wim->balls_size() > 0)
-					{
-						trackYaw = lookAtPointRelativeYaw(bx, by);
-						trackPitch = lookAtPointRelativePitch(bx, by);
-						MakeTrackBallActionNoBmsg();
-					}
-
-			if (bd < closeToBall)
-			{
-				if (lastball + milliseconds(1000) < microsec_clock::universal_time())
-				{
-					ballfound = 0;
-				}
-			}
-			else
-			{
-				if (lastball + seconds(3) < microsec_clock::universal_time())
-				{
-					ballfound = 0;
-				}
-			}
-		}
-	}
-
-	return;
-}
-
-
 int Behavior::MakeTrackBallAction()
 {
 	hmot->set_command("setHead");
@@ -477,324 +408,6 @@ int Behavior::MakeTrackBallActionNoBmsg()
 	hmot->set_parameter(1, trackPitch);
 	_blk.publishSignal(*hmot, "motion");
 	return 1;
-}
-
-
-/* Head Scanning Functions */
-
-void Behavior::HeadScanStepRaster()
-{
-	static float s = (YAWMIN - YAWMAX) / (PITCHMIN - PITCHMAX);
-	HeadYaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW);
-	HeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH);
-
-	if (startscan)
-	{
-		ysign = HeadYaw.sensorvalue() > 0 ? +1 : -1; //Side
-		targetPitch = HeadPitch.sensorvalue();
-		targetYaw = HeadYaw.sensorvalue();
-		targetPitch = (targetPitch >= PITCHMAX) ? PITCHMAX : targetPitch;
-		targetPitch = (targetPitch <= PITCHMIN) ? PITCHMIN : targetPitch;
-		float yawlim = s * (targetPitch - PITCHMAX) + YAWMAX;
-		targetYaw += ysign * YAWSTEP;
-		targetYaw = fabs(targetYaw) >= yawlim ? ysign * yawlim : targetYaw;
-
-		if ( fabs(targetYaw) >= yawlim )
-			ysign = -ysign;
-
-		psign = 1; //Down
-		hmot->set_command("setHead");
-		hmot->set_parameter(0, targetYaw);
-		hmot->set_parameter(1, targetPitch);
-		_blk.publishSignal(*hmot, "motion");
-		waiting = 0;
-		startscan = false;
-		return;
-	}
-
-	waiting++;
-
-	if ( ( (fabs(targetPitch - HeadPitch.sensorvalue()) <= OVERSH) && (fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH) ) || (waiting >= WAITFOR) )
-	{
-		waiting = 0;
-		float yawlim = s * (targetPitch - PITCHMAX) + YAWMAX;
-
-		if (fabs(fabs(targetYaw) - yawlim) <= OVERSH)
-		{
-			targetPitch += psign * PITCHSTEP;
-			targetPitch = (targetPitch >= PITCHMAX) ? PITCHMAX : targetPitch;
-			targetPitch = (targetPitch <= PITCHMIN) ? PITCHMIN : targetPitch;
-
-			if (targetPitch >= PITCHMAX)
-				psign = -1;
-			else if (targetPitch <= PITCHMIN)
-				psign = +1;
-		}
-		else
-		{
-			targetYaw += ysign * YAWSTEP;
-			targetYaw = fabs(targetYaw) >= yawlim ? ysign * yawlim : targetYaw;
-
-			if (fabs(targetYaw) >= yawlim)
-				ysign = -ysign;
-		}
-
-		hmot->set_command("setHead");
-		hmot->set_parameter(0, targetYaw);
-		hmot->set_parameter(1, targetPitch);
-		_blk.publishSignal(*hmot, "motion");
-	}
-
-	return;
-}
-
-
-void Behavior::HeadScanStepHigh(float yaw_limit)
-{
-	hmot->set_command("setHead");//Instant");
-	headpos += 0.2 * leftright;
-
-	if (fabs(headpos) > yaw_limit) // 1.3
-		leftright *= -1;
-
-	hmot->set_parameter(0, headpos); //yaw
-	hmot->set_parameter(1, -0.55); //pitch
-	//	float abspos = fabs(headpos);
-	//	if (abspos < 1.57)
-	//		hmot->set_parameter(1, (0.145 * fabs(headpos)) - 0.752);
-	//	else-
-	//		hmot->set_parameter(1, (-0.0698 * (fabs(headpos) - 1.57)) - 0.52);
-	_blk.publishSignal(*hmot, "motion");
-}
-
-
-void Behavior::HeadScanStepSmart()
-{
-	float  blue1y, blue1p, blue2y, blue2p;
-	blue1y = +0.75;
-	blue1p = +0.38;
-	blue2y = +0.00;
-	blue2p = -0.55;
-	float green1y, green1p, green2y, green2p;
-	green1y = +1.45;
-	green1p = -0.42;
-	green2y = +0.00;
-	green2p = +0.35;
-	float red1y, red1p, red2y, red2p;
-	red1y = +1.80;
-	red1p = -0.39;
-	red2y = +0.00;
-	red2p = -0.60;
-	static enum {BLUE, RED, GREEN} state = BLUE;
-	static enum {START, MIDDLE, END} phase = START;
-	HeadYaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW);
-	HeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH);
-
-	if (startscan)
-	{
-		ysign = HeadYaw.sensorvalue() > 0 ? +1 : -1; //Side
-		targetYaw = blue1y * ysign;
-		targetPitch = blue1p;
-		state = BLUE;
-		phase = START;
-		hmot->set_command("setHead");
-		hmot->set_parameter(0, targetYaw);
-		hmot->set_parameter(1, targetPitch);
-		_blk.publishSignal(*hmot, "motion");
-		waiting = 0;
-		startscan = false;
-		return;
-	}
-
-	waiting++;
-
-	if ( ( (fabs(targetPitch - HeadPitch.sensorvalue()) <= OVERSH) && (fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH) ) || (waiting >= WAITFOR) )
-	{
-		waiting = 0;
-
-		if (phase == START)
-		{
-			phase = MIDDLE;
-
-			switch (state)
-			{
-			case BLUE:
-				targetYaw = blue2y;
-				targetPitch = blue2p;
-				break;
-
-			case GREEN:
-				targetYaw = green2y;
-				targetPitch = green2p;
-				break;
-
-			case RED:
-				targetYaw = red2y;
-				targetPitch = red2p;
-				break;
-			}
-		}
-		else if (phase == MIDDLE)
-		{
-			ysign = -ysign;
-			phase = END;
-
-			switch (state)
-			{
-			case BLUE:
-				targetYaw = blue1y * ysign;
-				targetPitch = blue1p;
-				break;
-
-			case GREEN:
-				targetYaw = green1y * ysign;
-				targetPitch = green1p;
-				break;
-
-			case RED:
-				targetYaw = red1y * ysign;
-				targetPitch = red1p;
-				break;
-			}
-		}
-		else
-		{
-			phase = START;
-
-			switch (state)
-			{
-			case BLUE:
-				state = GREEN;
-				targetYaw = green1y * ysign;
-				targetPitch = green1p;
-				break;
-
-			case GREEN:
-				state = RED;
-				targetYaw = red1y * ysign;
-				targetPitch = red1p;
-				break;
-
-			case RED:
-				state = BLUE;
-				targetYaw = blue1y * ysign;
-				targetPitch = blue1p;
-				break;
-			}
-		}
-
-		hmot->set_command("setHead");
-		hmot->set_parameter(0, targetYaw);
-		hmot->set_parameter(1, targetPitch);
-		_blk.publishSignal(*hmot, "motion");
-	}
-
-	return;
-}
-
-
-void Behavior::HeadScanStepIntelligent()
-{
-	float bearing;
-	static enum {BALL1, OPPG, BALL2, OWNG} state = BALL1;
-	HeadYaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW);
-	HeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH);
-	waiting++;
-
-	if ( ( (fabs(targetPitch - HeadPitch.sensorvalue()) <= OVERSH) && (fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH) ) || (waiting >= WAITFOR) )
-	{
-		waiting = 0;
-
-		switch (state)
-		{
-		case BALL1:
-			targetYaw = lookAtPointRelativeYaw(bx, by);
-			targetPitch = lookAtPointRelativePitch(bx, by);
-			break;
-
-		case OPPG:
-			targetYaw = robot_phi - lookAtPointRelativeYaw(oppGoalX - robot_x, oppGoalY - robot_y);
-			targetYaw = (targetYaw < 0) ? targetYaw - 0.2 : targetYaw + 0.2;
-			targetPitch = lookAtPointRelativePitch(oppGoalX - robot_x, oppGoalY - robot_y);
-			//if (targetYaw < 1.57)
-			//targetPitch = (0.145 * fabs(headpos)) - 0.752;
-			//else
-			//targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
-			break;
-
-		case BALL2:
-			targetYaw = lookAtPointRelativeYaw(bx, by);
-			targetYaw = (targetYaw < 0) ? targetYaw - 0.2 : targetYaw + 0.2;
-			targetPitch = lookAtPointRelativePitch(bx, by);
-			break;
-
-		case OWNG:
-			targetYaw = robot_phi - lookAtPointRelativeYaw(ownGoalX - robot_x, ownGoalY - robot_y);
-			targetPitch = lookAtPointRelativePitch(ownGoalX - robot_x, ownGoalY - robot_y);
-			//if (targetYaw < 1.57)
-			//targetPitch = (0.145 * fabs(headpos)) - 0.752;
-			//else
-			//targetPitch = (-0.0698 * (fabs(headpos) - 1.57)) - 0.52;
-			break;
-		}
-
-		//		cout << " OwnX: " << ownGoalX-robot_x << " OwnY: " << ownGoalY-robot_y << " OppX: " << oppGoalX-robot_x << " OppY: " << oppGoalY-robot_y << endl;
-		//		cout << state << " Yaw: " << targetYaw << " Pitch: " << targetPitch << endl;
-		hmot->set_command("setHead");
-		hmot->set_parameter(0, targetYaw);
-		hmot->set_parameter(1, targetPitch);
-		_blk.publishSignal(*hmot, "motion");
-
-		switch (state)
-		{
-		case BALL1:
-			bearing = lookAtPointYaw(oppGoalX, oppGoalY);
-			//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) )
-			//state = OPPG;
-			//else
-			state = OPPG;
-			break;
-
-		case OPPG:
-			state = BALL2;
-			break;
-
-		case BALL2:
-			bearing = lookAtPointYaw(ownGoalX, ownGoalY);
-			//if ( (-M_PI_2 < bearing) && (bearing < M_PI_2) )
-			//state = OWNG;
-			//else
-			state = OWNG;
-			break;
-
-		case OWNG:
-			state = BALL1;
-			break;
-		}
-	}
-
-	return;
-}
-
-
-float Behavior::lookAtPointYaw(float x, float y)
-{
-	return anglediff2(atan2(y - robot_y, x - robot_x), robot_phi);
-}
-
-float Behavior::lookAtPointPitch(float x, float y)
-{
-	return TO_RAD(50.0) - atan2f( sqrt((x - robot_x) * (x - robot_x) + (y - robot_y) * (y - robot_y)), 0.45 );
-}
-
-float Behavior::lookAtPointRelativeYaw(float x, float y)
-{
-	return atan2(y, x);
-}
-
-float Behavior::lookAtPointRelativePitch(float x, float y)
-{
-	return  TO_RAD(50.0)  - atan2f( sqrt((x) * (x) + (y) * (y)), 0.45 );
 }
 
 
@@ -943,14 +556,14 @@ void Behavior::littleWalk(double x, double y, double th)
 
 void Behavior::approachBall(double ballX, double ballY)
 {
-	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
-	double maxd = fmaxf( fabs(bx - ballX), fabs(by - ballY) );
-	f    = fminf(1.0, 0.4 + (maxd / 0.5));
-	gain = fminf(1.0, 0.0 + (maxd / 0.5));
-	X = gain * (bx - ballX) / maxd;
-	Y = gain * (by - ballY) / maxd;
-	t = gain * (bb / M_PI);
-	velocityWalk(X, Y, t, f);
+	if (pathOK && bd > 0.2)
+    {
+        pathOK = false;
+        int pathSide = (bb > 0) ? 1 : -1;
+        pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
+    }
+    else
+        pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
 }
 
 
@@ -975,14 +588,8 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY)
 
 	if(role == ATTACKER)
 	{
-		if (pathOK && bd > 0.2)
-		{
-			pathOK = false;
-			int pathSide = (bb > 0) ? 1 : -1;
-			pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
-		}
-		else
-			pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
+		approachBall(ballX, ballY);
+
 	}
 	else if(role == CENTER_FOR)
 	{
@@ -1244,9 +851,10 @@ void Behavior::checkForPenaltyArea()
 
 /* Test Function */
 
+/*
 void Behavior::test()
 {
-	/* OPEN CHALLENGE 2011 - PROJECTION KICK - START */
+	// OPEN CHALLENGE 2011 - PROJECTION KICK - START
 	if(wim != 0)
 	{
 		if (wim->balls_size() > 0)
@@ -1326,7 +934,7 @@ void Behavior::test()
 		HeadScanStepSmart();
 	}
 
-	/* OPEN CHALLENGE 2011 - PROJECTION KICK - END */
+	/* OPEN CHALLENGE 2011 - PROJECTION KICK - END
 	//HeadScanStepIntelligent();
 	//if (om!=0) {
 	//Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
@@ -1345,4 +953,4 @@ void Behavior::test()
 	//}
 	//else
 	//velocityWalk(1.0, 0.0, 0.0, 1.0);
-}
+} */

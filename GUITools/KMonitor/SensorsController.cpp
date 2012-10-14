@@ -1,4 +1,5 @@
-#include "LSDController.h"
+#include "SensorsController.h"
+#include "ui_SensorsController.h"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/toString.h"
@@ -6,10 +7,19 @@
 
 using namespace std;
 
-LSDController::LSDController(QList<QComboBox*> tablesList)
+SensorsController::SensorsController(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::SensorsController)
 {
-	parentTablesList.clear();
-	parentTablesList = tablesList;
+    ui->setupUi(this);
+	availableLSDHosts = new HostsComboBox(ui->LSDComboBox);
+	
+	connect(this, SIGNAL(NewHostAdded(QString, QString)),availableLSDHosts, SLOT(addComboBoxItem(QString, QString)));
+	connect(this, SIGNAL(OldHostRemoved(QString)), availableLSDHosts, SLOT(removeComboBoxItem(QString)));
+	connect(this, SIGNAL(GameStateMsgUpdate(QString, QString, QString)), availableLSDHosts, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
+
+	connect(availableLSDHosts, SIGNAL(LWRHSubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)));
+	connect(availableLSDHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), this, SLOT(UnsubscriptionHandler(QString)));
 
 	headJointsBuffer.set_capacity(10);
 	LArmJointsBuffer.set_capacity(10);
@@ -20,46 +30,28 @@ LSDController::LSDController(QList<QComboBox*> tablesList)
 	FSRsBuffer.set_capacity(10);
 }
 
-LSDController::~LSDController()
+void SensorsController::sensorsDataUpdateHandler(AllSensorValuesMessage asvm, QString hostId)
 {
-	boost::circular_buffer<HeadJoints>::iterator it;
-	for(it=headJointsBuffer.begin(); it!=headJointsBuffer.end(); ++it)
-	{
-		//if ((*it))
-		//	delete (*it);
+	clearComboLists();
 
-	}
+	updateHeadJointsBuffer(asvm);
+	updateLArmJointsBuffer(asvm);
+	updateRArmJointsBuffer(asvm);
+	updateLLegJointsBuffer(asvm);
+	updateRLegJointsBuffer(asvm);
+	updateInertialBuffer(asvm);
+	updateFSRsBuffer(asvm);
+
+	updateHeadJointsTable();
+	updateLArmJointsTable();
+	updateRArmJointsTable();
+	updateLLegJointsTable();
+	updateRLegJointsTable();
+	updateInertialTable();
+	updateFSRsTable();
 }
 
-void LSDController::sensorsDataUpdateHandler(AllSensorValuesMessage asvm, QString hostId)
-{
-	if( currentHost == hostId)
-	{
-		clearComboLists(parentTablesList);
-
-		updateHeadJointsBuffer(asvm);
-		updateLArmJointsBuffer(asvm);
-		updateRArmJointsBuffer(asvm);
-		updateLLegJointsBuffer(asvm);
-		updateRLegJointsBuffer(asvm);
-		updateInertialBuffer(asvm);
-		updateFSRsBuffer(asvm);
-
-		updateHeadJointsTable();
-		updateLArmJointsTable();
-		updateRArmJointsTable();
-		updateLLegJointsTable();
-		updateRLegJointsTable();
-		updateInertialTable();
-		updateFSRsTable();
-
-	}else
-	{
-		std::cout << "[67]Host hasn't been selected!" << hostId.toStdString() <<std::endl;
-	}
-}
-
-void LSDController::updateHeadJointsBuffer(AllSensorValuesMessage asvm)
+void SensorsController::updateHeadJointsBuffer(AllSensorValuesMessage asvm)
 {
 	SensorData HeadJoint;
 	HeadJoints hj;
@@ -76,17 +68,17 @@ void LSDController::updateHeadJointsBuffer(AllSensorValuesMessage asvm)
 
 }
 
-void LSDController::updateHeadJointsTable()
+void SensorsController::updateHeadJointsTable()
 {
 	boost::circular_buffer<HeadJoints>::iterator it;
 	for(it=headJointsBuffer.begin(); it!=headJointsBuffer.end(); ++it)
 	{
-		parentTablesList.at(0)->addItem((*it).yaw);
-		parentTablesList.at(1)->addItem((*it).pitch);
+		ui->HYComboBox->addItem((*it).yaw);
+		ui->HPComboBox->addItem((*it).pitch);
 	}
 }
 
-void LSDController::updateLArmJointsBuffer(AllSensorValuesMessage asvm)
+void SensorsController::updateLArmJointsBuffer(AllSensorValuesMessage asvm)
 {
 	SensorData ArmJoint;
 	ArmJoints aj;
@@ -111,19 +103,19 @@ void LSDController::updateLArmJointsBuffer(AllSensorValuesMessage asvm)
 
 }
 
-void LSDController::updateLArmJointsTable()
+void SensorsController::updateLArmJointsTable()
 {
 	boost::circular_buffer<ArmJoints>::iterator it;
 	for(it= LArmJointsBuffer.begin(); it!=LArmJointsBuffer.end(); ++it)
 	{
-		parentTablesList.at(11)->addItem((*it).ShoulderPitch);
-		parentTablesList.at(12)->addItem((*it).ShoulderRoll);
-		parentTablesList.at(13)->addItem((*it).ElbowYaw);
-		parentTablesList.at(14)->addItem((*it).ElbowRoll);
+		ui->LSPComboBox->addItem((*it).ShoulderPitch);
+		ui->LSRComboBox->addItem((*it).ShoulderRoll);
+		ui->LEYComboBox->addItem((*it).ElbowYaw);
+		ui->LERComboBox->addItem((*it).ElbowRoll);
 	}
 }
 
-void LSDController::updateRArmJointsBuffer(AllSensorValuesMessage asvm)
+void SensorsController::updateRArmJointsBuffer(AllSensorValuesMessage asvm)
 {
 	SensorData ArmJoint;
 	ArmJoints aj;
@@ -148,19 +140,19 @@ void LSDController::updateRArmJointsBuffer(AllSensorValuesMessage asvm)
 
 }
 
-void LSDController::updateRArmJointsTable()
+void SensorsController::updateRArmJointsTable()
 {
 	boost::circular_buffer<ArmJoints>::iterator it;
 	for(it= RArmJointsBuffer.begin(); it!=RArmJointsBuffer.end(); ++it)
 	{
-		parentTablesList.at(7)->addItem((*it).ShoulderPitch);
-		parentTablesList.at(8)->addItem((*it).ShoulderRoll);
-		parentTablesList.at(9)->addItem((*it).ElbowYaw);
-		parentTablesList.at(10)->addItem((*it).ElbowRoll);
+		ui->RSPComboBox->addItem((*it).ShoulderPitch);
+		ui->RSRComboBox->addItem((*it).ShoulderRoll);
+		ui->REYComboBox->addItem((*it).ElbowYaw);
+		ui->RERComboBox->addItem((*it).ElbowRoll);
 	}
 }
 
-void LSDController::updateLLegJointsBuffer(AllSensorValuesMessage asvm)
+void SensorsController::updateLLegJointsBuffer(AllSensorValuesMessage asvm)
 {
 	SensorData LegJoint;
 	LegJoints lj;
@@ -193,22 +185,22 @@ void LSDController::updateLLegJointsBuffer(AllSensorValuesMessage asvm)
 
 }
 
-void LSDController::updateLLegJointsTable()
+void SensorsController::updateLLegJointsTable()
 {
 	boost::circular_buffer<LegJoints>::iterator it;
 	for(it= LLegJointsBuffer.begin(); it!=LLegJointsBuffer.end(); ++it)
 	{
-		parentTablesList.at(21)->addItem((*it).HipYawPitch);
-		parentTablesList.at(22)->addItem((*it).HipRoll);
-		parentTablesList.at(23)->addItem((*it).HipPitch);
-		parentTablesList.at(24)->addItem((*it).KneePitch);
-		parentTablesList.at(25)->addItem((*it).AnklePitch);
-		parentTablesList.at(26)->addItem((*it).AnkleRoll);
+		ui->LHYPComboBox->addItem((*it).HipYawPitch);
+		ui->LHRComboBox->addItem((*it).HipRoll);
+		ui->LHPComboBox->addItem((*it).HipPitch);
+		ui->LKPComboBox->addItem((*it).KneePitch);
+		ui->LAPComboBox->addItem((*it).AnklePitch);
+		ui->LARComboBox->addItem((*it).AnkleRoll);
 
 	}
 }
 
-void LSDController::updateRLegJointsBuffer(AllSensorValuesMessage asvm)
+void SensorsController::updateRLegJointsBuffer(AllSensorValuesMessage asvm)
 {
 	SensorData LegJoint;
 	LegJoints lj;
@@ -241,21 +233,21 @@ void LSDController::updateRLegJointsBuffer(AllSensorValuesMessage asvm)
 
 }
 
-void LSDController::updateRLegJointsTable()
+void SensorsController::updateRLegJointsTable()
 {
 	boost::circular_buffer<LegJoints>::iterator it;
 	for(it= RLegJointsBuffer.begin(); it!=RLegJointsBuffer.end(); ++it)
 	{
-		parentTablesList.at(15)->addItem((*it).HipYawPitch);
-		parentTablesList.at(16)->addItem((*it).HipRoll);
-		parentTablesList.at(17)->addItem((*it).HipPitch);
-		parentTablesList.at(18)->addItem((*it).KneePitch);
-		parentTablesList.at(19)->addItem((*it).AnklePitch);
-		parentTablesList.at(20)->addItem((*it).AnkleRoll);
+		ui->RHYPComboBox->addItem((*it).HipYawPitch);
+		ui->RHRComboBox->addItem((*it).HipRoll);
+		ui->RHPComboBox->addItem((*it).HipPitch);
+		ui->RKPComboBox->addItem((*it).KneePitch);
+		ui->RAPComboBox->addItem((*it).AnklePitch);
+		ui->RARComboBox->addItem((*it).AnkleRoll);
 	}
 }
 
-void LSDController::updateInertialBuffer(AllSensorValuesMessage asvm)
+void SensorsController::updateInertialBuffer(AllSensorValuesMessage asvm)
 {
 	SensorData Value;
 	InertialValues iv;
@@ -285,21 +277,21 @@ void LSDController::updateInertialBuffer(AllSensorValuesMessage asvm)
 
 }
 
-void LSDController::updateInertialTable()
+void SensorsController::updateInertialTable()
 {
 	boost::circular_buffer<InertialValues>::iterator it;
 	for(it= InertialBuffer.begin(); it!=InertialBuffer.end(); ++it)
 	{
-		parentTablesList.at(2)->addItem((*it).AccXvalue);
-		parentTablesList.at(3)->addItem((*it).AccYvalue);
-		parentTablesList.at(4)->addItem((*it).AccZvalue);
-		parentTablesList.at(5)->addItem((*it).angX);
-		parentTablesList.at(6)->addItem((*it).angY);
+		ui->AccXComboBox->addItem((*it).AccXvalue);
+		ui->AccYComboBox->addItem((*it).AccYvalue);
+		ui->AccZComboBox->addItem((*it).AccZvalue);
+		ui->AngXComboBox->addItem((*it).angX);
+		ui->AngYComboBox->addItem((*it).angY);
 
 	}
 }
 
-void LSDController::updateFSRsBuffer(AllSensorValuesMessage asvm)
+void SensorsController::updateFSRsBuffer(AllSensorValuesMessage asvm)
 {
 	SensorData Value;
 	FSRValues fv;
@@ -342,49 +334,84 @@ void LSDController::updateFSRsBuffer(AllSensorValuesMessage asvm)
 
 }
 
-void LSDController::updateFSRsTable()
+void SensorsController::updateFSRsTable()
 {
 	boost::circular_buffer<FSRValues>::iterator it;
 	for(it= FSRsBuffer.begin(); it!=FSRsBuffer.end(); ++it)
 	{
-		parentTablesList.at(27)->addItem((*it).RFsrFL);
-		parentTablesList.at(28)->addItem((*it).RFsrRL);
-		parentTablesList.at(29)->addItem((*it).RFsrFR);
-		parentTablesList.at(30)->addItem((*it).RFsrRR);
+		ui->RFsrFLComboBox->addItem((*it).RFsrFL);
+		ui->RFsrRLComboBox->addItem((*it).RFsrRL);
+		ui->RFsrFRComboBox->addItem((*it).RFsrFR);
+		ui->RFsrRRComboBox->addItem((*it).RFsrRR);
 
-		parentTablesList.at(31)->addItem((*it).LFsrFL);
-		parentTablesList.at(32)->addItem((*it).LFsrRL);
-		parentTablesList.at(33)->addItem((*it).LFsrFR);
-		parentTablesList.at(34)->addItem((*it).LFsrRR);
+		ui->LFsrFLComboBox->addItem((*it).LFsrFL);
+		ui->LFsrRLComboBox->addItem((*it).LFsrRL);
+		ui->LFsrFRComboBox->addItem((*it).LFsrFR);
+		ui->LFsrRRComboBox->addItem((*it).LFsrRR);
 	}
 }
 
-void LSDController::LSCSubscriptionHandler(QString hostId)
+void SensorsController::clearComboLists()
 {
-	if( currentHost != hostId)
-	{
-		currentHost = hostId;
-		clearComboLists(parentTablesList);
-	}
+	ui->HYComboBox->clear();	//0-1
+	ui->HPComboBox->clear();
+	ui->AccXComboBox->clear();	//2-6
+	ui->AccYComboBox->clear();
+	ui->AccZComboBox->clear();
+	ui->AngXComboBox->clear();
+	ui->AngYComboBox->clear();
+	ui->RSPComboBox->clear();	//7-10
+	ui->RSRComboBox->clear();
+	ui->REYComboBox->clear();
+	ui->RERComboBox->clear();
+	ui->LSPComboBox->clear();	//11-14
+	ui->LSRComboBox->clear();
+	ui->LEYComboBox->clear();
+	ui->LERComboBox->clear();
+	ui->RHYPComboBox->clear();	//15-20
+	ui->RHRComboBox->clear();
+	ui->RHPComboBox->clear();
+	ui->RKPComboBox->clear();
+	ui->RAPComboBox->clear();
+	ui->RARComboBox->clear();
+	ui->LHYPComboBox->clear();  //21-26
+	ui->LHRComboBox->clear();
+	ui->LHPComboBox->clear();
+	ui->LKPComboBox->clear();
+	ui->LAPComboBox->clear();
+	ui->LARComboBox->clear();
+	ui->RFsrFLComboBox->clear();	//27-30
+	ui->RFsrRLComboBox->clear();
+	ui->RFsrFRComboBox->clear();
+	ui->RFsrRRComboBox->clear();
+	ui->LFsrFLComboBox->clear();	//31-34
+	ui->LFsrRLComboBox->clear();
+	ui->LFsrFRComboBox->clear();
+	ui->LFsrRRComboBox->clear();
 
 }
 
-void LSDController::LSCUnsubscriptionHandler(QString hostId)
-{
-	if((hostId.isEmpty() && !currentHost.isEmpty()) || (currentHost == hostId && !hostId.isEmpty()))
-	{
-		currentHost.clear();
-		clearComboLists(parentTablesList);
-	}
+void SensorsController::addComboBoxItem(QString data1, QString data2){
+	emit NewHostAdded(data1,data2);
 }
 
-void LSDController::clearComboLists(QList<QComboBox*> cList)
-{
-	QComboBox* item;
+void SensorsController::removeComboBoxItem(QString data1){
+	emit OldHostRemoved(data1);
+}
 
-	for(int t = 0; t < cList.count();t++)
-	{
-		item = cList.at(t);
-		item->clear();
-	}
+void SensorsController::setLWRHGameStateInfo(QString data1, QString data2, QString data3){
+	emit GameStateMsgUpdate(data1,data2,data3);
+}
+
+void SensorsController::SubscriptionHandler(QString data1){
+	emit LWRHSubscriptionRequest(data1);
+}
+
+void SensorsController::UnsubscriptionHandler(QString data1){
+	emit LWRHUnsubscriptionRequest(data1);
+}
+
+SensorsController::~SensorsController()
+{
+    delete ui;
 }

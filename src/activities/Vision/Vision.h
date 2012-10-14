@@ -5,6 +5,7 @@
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
+#include <memory>
 #include "KSegmentator.h"
 
 
@@ -110,17 +111,15 @@ private:
 		int sensordelay;
 		float Dfov;
 		float cameraGamma;
-		std::string SegmentationBottom, SegmentationTop;
 		int scanV, scanH, minH, subsampling, bordersize, pixeltol;
 		float skipdistance, seedistance, obstacledistance;
 
 		float balltolerance, ballsize;
-		float goalheight, goaldist, goaldiam, goalslopetolerance, widthestimateotolerance;
+		float goalheight, goaldist, goaldiam, widthestimateotolerance;
 		float pitchoffset;
 
 	} config;
 
-	XMLConfig *xmlconfig;
 	BallTrackMessage trckmsg;
 	ObservationMessage obs;
 	LedChangeMessage leds;
@@ -151,8 +150,6 @@ private:
 	std::vector<KVecInt2> obstacles;
 	std::vector<KVecInt2> tobeshown;
 	KVecFloat2 Vup, Vdn, Vlt, Vrt;
-
-	void loadXMLConfig(std::string fname);
 
 	void gridScan(const KSegmentator::colormask_t color);
 

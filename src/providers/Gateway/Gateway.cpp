@@ -20,6 +20,7 @@ void Gateway::UserInit()
 	localHostId = 0;
 	lockId = 0;
 	locked = false;
+	Logger::Instance().WriteMsg("Gateway", "Initialized", Logger::ExtraInfo);
 }
 
 
@@ -111,6 +112,16 @@ int Gateway::Execute()
 							this->publish(nmsg);
 						}
 					
+						if(inmsg->has_file()){
+							ofstream fout;
+							fout.open( ( ArchConfig::Instance().GetConfigPrefix() + inmsg->file().filepath()).c_str(), ios::trunc | ios::out);
+							if (fout.is_open()){
+								fout.write(inmsg->file().file().c_str(),inmsg->file().file().size());
+								fout.close();
+							}else
+								Logger::Instance().WriteMsg("Gateway", "Wrong file path", Logger::ExtraInfo);
+						}
+						
 						for(int i=0; i < inmsg->resetactivities_size(); i++){
 							resetActMsg.add_resetactivities(inmsg->resetactivities(i));
 						}
