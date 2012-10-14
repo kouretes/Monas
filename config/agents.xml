@@ -14,6 +14,7 @@
 	<activity>Vision</activity>
 	<activity>LocalWorldState</activity>
 	<activity>SharedWorldModel</activity>
+	<activity>HeadController</activity>
 	<activity>Behavior</activity>
 </agent>
 

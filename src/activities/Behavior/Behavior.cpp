@@ -43,6 +43,7 @@ void Behavior::UserInit()
 	locReset = new LocalizationResetMessage();
 	pprm = new PathPlanningRequestMessage();
 	fom = new ObstacleMessage();
+	hcontrol = new HeadControlMessage();
 	readRobotConf = false;
 	leftright = 1;
 	headpos = 0;
@@ -123,19 +124,16 @@ int Behavior::Execute()
 	GetGameState();
 	GetPosition();
 
-	if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_INITIAL) )
-	{
-		if (calibrated == 0)
-		{
-			calibrate();
-			return 0;
-		}
+	//if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_INITIAL) )
+	//{
 
-		if (calibrated == 1)
-			return 0;
-	}
+	//}
 
-	if (gameState == PLAYER_PLAYING)
+    if (gameState == PLAYER_INITIAL){
+         hcontrol->mutable_task()->set_action(HeadControlMessage::NOTHING);
+        _blk.publishState(*hcontrol, "behavior");
+    }
+	else if (gameState == PLAYER_PLAYING)
 	{
 		if (lastpenalized + seconds(4) > microsec_clock::universal_time())
 		{
