@@ -86,7 +86,7 @@ int HeadController::Execute()
 		whattodo=HeadControlMessage::SCAN_AND_TRACK_FOR_BALL;
 	else
 		whattodo=control->task().action();
-	std::cout<<whattodo<<std::endl;
+	//std::cout<<whattodo<<std::endl;
 
 
 	switch(whattodo)
@@ -123,18 +123,17 @@ int HeadController::Execute()
                 targetPitch =  bmsg->referencepitch();
                 MakeHeadAction();
                 scanforball=false;
-                std::cout << "seeballmessage\n";
                 bfm.set_ballfound(true);
                 _blk.publishState(bfm, "behavior");
 			}
 			else if(seeballtrust) // Try and look at where we expect the ball to be
-			{		targetYaw = lookAtPointRelativeYaw(bx, by);
-					targetPitch = lookAtPointRelativePitch(bx, by);
-					MakeHeadAction();
-					scanforball=false;
-					std::cout << "seeballtrust\n";
-                    bfm.set_ballfound(true);
-					_blk.publishState(bfm, "behavior");
+            {
+                targetYaw = lookAtPointRelativeYaw(bx, by);
+                targetPitch = lookAtPointRelativePitch(bx, by);
+                MakeHeadAction();
+                scanforball=false;
+                bfm.set_ballfound(true);
+                _blk.publishState(bfm, "behavior");
 			}
 			else
 			{
@@ -144,7 +143,6 @@ int HeadController::Execute()
 					scanforball=true;
 				}
 				HeadScanStepSmart();
-				std::cout << "scan\n";
 				bfm.set_ballfound(false);
                 _blk.publishState(bfm, "behavior");
 			}
@@ -187,7 +185,7 @@ void HeadController::read_messages()
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
-	control=_blk.readState<HeadControlMessage> ("behavior");
+	control = _blk.readState<HeadControlMessage> ("behavior");
 	//Logger::Instance().WriteMsg("HeadController", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 
@@ -274,12 +272,15 @@ void HeadController::CheckForBall()
 
 	if(wim != 0)
 	{
-		if (wim->balls_size() > 0)
+	    if(wim.get() != 0)
 		{
-			bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-			by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-			bd = sqrt(pow(bx, 2) + pow(by, 2));
-			bb = atan2(by, bx);
+            if (wim->balls_size() > 0)
+            {
+                bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
+                by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
+                bd = sqrt(pow(bx, 2) + pow(by, 2));
+                bb = atan2(by, bx);
+            }
 		}
 	}
 
@@ -294,7 +295,7 @@ void HeadController::CheckForBall()
 		else
 		{
 			seeballmessage=0;
-			if (lastball + milliseconds(600) < microsec_clock::universal_time())
+			if (lastball + milliseconds(1500) < microsec_clock::universal_time())
 			{
 				seeballtrust = 0;
 			}
