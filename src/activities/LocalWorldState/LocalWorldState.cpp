@@ -136,6 +136,8 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 			BallObject aball = obsm->ball();
 			nearest_nofilter_ball.set_relativex(aball.dist() * cos(aball.bearing()));
 			nearest_nofilter_ball.set_relativey(aball.dist() * sin(aball.bearing()));
+			nearest_nofilter_ball.set_relativexspeed(0.0);
+			nearest_nofilter_ball.set_relativeyspeed(0.0);
 
 			if (MyWorld.balls_size() < 1)
 			{

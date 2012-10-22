@@ -57,10 +57,10 @@ int SharedWorldModel::Execute()
 				if(wim.get() != 0)
 				{
 					//                   Logger::Instance().WriteMsg("SharedWorldModel", "Host Name: " + _toString((*fit).hostname()) + " \tRobot x: " + _toString(robot_x[count]) + " Robot y: " + _toString(robot_y[count]), Logger::Info);
-					if (wim->balls_size() > 0)
+					robot_x[count] = wim->myposition().x();
+                    robot_y[count] = wim->myposition().y();
+                    if (wim->balls_size() > 0)
 					{
-						robot_x[count] = wim->myposition().x();
-						robot_y[count] = wim->myposition().y();
 						bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
 						by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
 						bd[count] = sqrt(pow(bx, 2) + pow(by, 2));
