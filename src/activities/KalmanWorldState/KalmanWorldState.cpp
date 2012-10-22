@@ -342,7 +342,7 @@ void KalmanWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPointRobotPosition.x = XA;
 	TrackPointRobotPosition.y = YA;
 	TrackPointRobotPosition.phi = AA;
-	//If u want edev change the klocalization file
+	//If u want edev change the KKalmanLocalization file
 	TrackPoint.x += DX;
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
