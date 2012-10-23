@@ -247,7 +247,7 @@ for	ip in robotsIP:
   # rsync_cmd = "rync  --rsh=\"sshpass -p myPassword ssh -l t\" "
 	#exit(0)
 	if(game==1):
-		autoload_src = partial_configuration_dir + "autoload.ini_game"
+		autoload_src = partial_configuration_dir + "autoload.ini"
 		autoload_dest = binaries_dir +"preferences/autoload.ini"
 		autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 		os.system(autoload_cmd)
@@ -256,7 +256,7 @@ for	ip in robotsIP:
 	else:
 		if(raw_input("Enter y to upload a clean autoload.ini_work (no krobot) or press enter to continue:  ")=='y'):
 			print("Setting autoload.ini")
-			autoload_src = partial_configuration_dir + "autoload.ini_work"
+			autoload_src = partial_configuration_dir + "autoload.ini"
 			autoload_dest = binaries_dir +"preferences/autoload.ini"
 			autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 			os.system(autoload_cmd)
