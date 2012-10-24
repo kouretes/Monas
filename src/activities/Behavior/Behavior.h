@@ -107,7 +107,7 @@ private:
 	int leftright;
 	float headpos;
 
-	short ballfound;
+	bool ballfound;
 	bool scanforball;
 	bool startscan;
 	bool scanOK;

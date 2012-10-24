@@ -47,7 +47,7 @@ void Behavior::UserInit()
 	readRobotConf = false;
 	leftright = 1;
 	headpos = 0;
-	ballfound = 0;
+	ballfound = false;
 	scanforball = true;
 	startscan = true;
 	//scanOK = true;
@@ -152,11 +152,12 @@ int Behavior::Execute()
 			}
 		}
 
+        std::cout << ballfound << "\n";
 		UpdateOrientationPlus();
 		//		checkForPenaltyArea();
 		readytokick = false;
 
-		if (ballfound == 1)
+		if (ballfound)
 		{
 			side = (bb > 0) ? 1 : -1;
 			posx = 0.12, posy = 0.03; // Desired ball position for kick
@@ -190,7 +191,7 @@ int Behavior::Execute()
 			}
 		}
 
-		if (ballfound == 0)
+		if (!ballfound)
 		{
 			/* New exploration
 			if (!scanforball)
@@ -246,7 +247,7 @@ void Behavior::read_messages()
 	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
-	bfm = _blk.readData<BallFoundMessage> ("behavior");
+	bfm = _blk.readState<BallFoundMessage> ("behavior");
 	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 
@@ -581,7 +582,9 @@ void Behavior::approachBallNewWalk(double ballX, double ballY)
 
 void Behavior::approachBallRoleDependent(double ballX, double ballY)
 {
-	if (orientation == 1)
+	std::cout << ballX << "    " << ballY
+	 << "\n";
+    if (orientation == 1)
 		side = -1;
 	else if (orientation == 3)
 		side = +1;
