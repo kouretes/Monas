@@ -382,7 +382,7 @@ int MotionController::Execute()
 				Logger::Instance().WriteMsg("MotionController", "Invalid Walk Command: " + wm->command(), Logger::ExtraInfo);
 		}
 
-		if (hm != NULL)
+		if (hm != NULL && allsm != NULL)
 		{
 			killHeadCommand();
 

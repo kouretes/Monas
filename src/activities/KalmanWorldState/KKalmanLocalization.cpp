@@ -1,25 +1,26 @@
 /*
- * KLocalization.cpp
+ * KKalmanLocalization.cpp
  *
  *      Author: vosk
  */
 #include <time.h>
 #include <math.h>
-#include "KLocalization.h"
+#include "KKalmanLocalization.h"
 #include "architecture/archConfig.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
+#include "tools/mathcommon.h"
 using namespace boost;
 using namespace KMath;
-KLocalization::KLocalization()
+KKalmanLocalization::KKalmanLocalization()
 {
 }
 
-KLocalization::~KLocalization()
+KKalmanLocalization::~KKalmanLocalization()
 {
 }
 
-int KLocalization::Initialize()
+int KKalmanLocalization::Initialize()
 {
 	XMLConfig * config = NULL;
 	string filename = ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml" ;
@@ -29,15 +30,9 @@ int KLocalization::Initialize()
 	{
 		bool found = true;
 		float temp;
-		///Parameters
-		found &= config->QueryElement("robustmean", robustmean);
+
 		found &= config->QueryElement("partclsNum", maxparticles);
 		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
-		found &= config->QueryElement("rotation_deviation", rotation_deviation);
-		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
-		found &= config->QueryElement("RotationDeviationAfterFallInDeg", RotationDeviationAfterFallInDeg);
-		found &= config->QueryElement("NumberOfParticlesSpreadAfterFall", NumberOfParticlesSpreadAfterFall);
-
 		if (found)
 		{
 			Logger::Instance().WriteMsg("Localization", "All Localization parameters loaded successfully" , Logger::Info);
@@ -62,10 +57,6 @@ int KLocalization::Initialize()
 	if (config->IsLoadedSuccessfully())
 	{
 		bool found = true;
-		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
-		found &= config->QueryElement("CarpetMinX", CarpetMinX);
-		found &= config->QueryElement("CarpetMaxY", CarpetMaxY);
-		found &= config->QueryElement("CarpetMinY", CarpetMinY);
 		found &= config->QueryElement("FieldMaxX", FieldMaxX);
 		found &= config->QueryElement("FieldMinX", FieldMinX);
 		found &= config->QueryElement("FieldMaxY", FieldMaxY);
@@ -104,41 +95,40 @@ int KLocalization::Initialize()
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	initParticles();
-	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
 	return 1;
 }
 
-void KLocalization::initParticles()
+void KKalmanLocalization::initParticles()
 {
 	current_particles=2;
 	KalmanParticle::Pvector p;
 	float stdx=((FieldMaxX-FieldMinX)/4)/2;
 	p(0)=stdx*stdx;
 	p(1)=(0.02)*(0.02);
-	p(2)=deg2rad(30)*deg2rad(30);
+	p(2)=TO_RAD(30)*TO_RAD(30);
 
 	KalmanParticle::Pvector initx;
 	initx(0)=(FieldMaxX-FieldMinX)/4+FieldMinX;
 	initx(1)=FieldMaxY;
-	initx(2)=deg2rad(270);
+	initx(2)=TO_RAD(270);
 
 	kalmanpoints[0].reset(initx,p,1);// (max) weight
 
 	initx(0)=(FieldMaxX-FieldMinX)/4+FieldMinX;
 	initx(1)=FieldMinY;
-	initx(2)=deg2rad(90);
+	initx(2)=TO_RAD(90);
 
 	kalmanpoints[1].reset(initx,p,1);// (max) weight
 
 }
 
-void KLocalization::setParticlesPoseUniformly()
+void KKalmanLocalization::setParticlesPoseUniformly()
 {
 	KalmanParticle::Pvector p;
 	float stdx=((FieldMaxX-FieldMinX)/4)/2;
 	p(0)=stdx*stdx;
 	p(1)=(0.02)*(0.02);
-	p(2)=deg2rad(30)*deg2rad(30);
+	p(2)=TO_RAD(30)*TO_RAD(30);
 	initParticles();
 
 
@@ -167,20 +157,20 @@ void KLocalization::setParticlesPoseUniformly()
 	KalmanParticle::Pvector initx;
 	initx(0)=x;
 	initx(1)=y;
-	initx(2)=deg2rad(0);
+	initx(2)=TO_RAD(0);
 
 	kalmanpoints[current_particles].reset(initx,p,2);
 	current_particles++;
 
 }
 
-void KLocalization::initializeParticles(int playerState, bool kickOff)
+void KKalmanLocalization::initializeParticles(int playerState, bool kickOff)
 {
 	KalmanParticle::Pvector p;
 	float stdx=((FieldMaxX-FieldMinX)/4)/2;
 	p(0)=(0.02)*(0.02);
 	p(1)=(0.02)*(0.02);
-	p(2)=deg2rad(30)*deg2rad(30);
+	p(2)=TO_RAD(30)*TO_RAD(30);
 
 
 	setParticlesPoseUniformly();
@@ -192,30 +182,30 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 		{
 			y = FieldMinY;
 			x = -2.4;
-			phi = deg2rad(90);
+			phi = TO_RAD(90);
 		}
 		else if(playerNumber == 2)
 		{
 			y = FieldMaxY;
 			x = -2.4;
-			phi = deg2rad(270);
+			phi = TO_RAD(270);
 		}
 		else if(playerNumber == 3)
 		{
 			y = FieldMinY;
 			x = -1.2;
-			phi = deg2rad(90);
+			phi = TO_RAD(90);
 		}
 		else if(playerNumber == 4)
 		{
 			y = FieldMaxY;
 			x = -1.2;
-			phi = deg2rad(270);
+			phi = TO_RAD(270);
 		}
 		KalmanParticle::Pvector initx;
 		initx(0)=x;
 		initx(1)=y;
-		initx(2)=deg2rad(phi);
+		initx(2)=TO_RAD(phi);
 
 		kalmanpoints[current_particles].reset(initx,p,2);
 		current_particles++;
@@ -233,7 +223,7 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 	}
 }
 
-void KLocalization::pruneParticles()
+void KKalmanLocalization::pruneParticles()
 {
 
 
@@ -241,11 +231,11 @@ void KLocalization::pruneParticles()
 }
 
 //Sequential Importance Resampling
-belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt)
+belief KKalmanLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt)
 {
 	//SIR Filter
 	//int index[partclsNum];
-	cout<<"SIR"<<endl;
+	//cout<<"SIR"<<endl;
 
 		//Combine :)
 
@@ -302,9 +292,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 
 	}
 
-	cout<<"n"<<normweight<<"-"<<current_particles<<endl;
+	//cout<<"n"<<normweight<<"-"<<current_particles<<endl;
 	//Normalize with the largest weight, which is now at pos 0;
-	cout<<kalmanpoints[0].weight<<" "<<kalmanpoints[current_particles-1].weight<<endl;
+	//cout<<kalmanpoints[0].weight<<" "<<kalmanpoints[current_particles-1].weight<<endl;
 	for(unsigned i=0;i<current_particles;i++)
 	{
 		kalmanpoints[i].weight/=normweight;
@@ -312,7 +302,7 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	return getCurrentPosition();
 ;
 }
-belief KLocalization::getCurrentPosition() const
+belief KKalmanLocalization::getCurrentPosition() const
 {
 	belief AgentPosition;
 	KalmanParticle::Pvector  mmseest=MMSE_belief();
@@ -321,13 +311,13 @@ belief KLocalization::getCurrentPosition() const
 	AgentPosition.y = mmseest(1);
 	AgentPosition.theta = mmseest(2);
 	KalmanParticle::Pmatrix p=MMSE_variance(mmseest);
-	std::cout<<AgentPosition.x<<" "<<AgentPosition.y<< " "<<AgentPosition.theta<<endl;
+	//std::cout<<AgentPosition.x<<" "<<AgentPosition.y<< " "<<AgentPosition.theta<<endl;
 	AgentPosition.confidence=1/(p(0,0)+p(1,1)+10*p(2,2));
 	return AgentPosition;
 
 }
 
-KalmanParticle::Pvector KLocalization::MMSE_belief(unsigned start)const
+KalmanParticle::Pvector KKalmanLocalization::MMSE_belief(unsigned start)const
 {
 	KalmanParticle::Pvector r,t;
 	r.zero();
@@ -342,7 +332,7 @@ KalmanParticle::Pvector KLocalization::MMSE_belief(unsigned start)const
 }
 
 
-KalmanParticle::Pmatrix KLocalization::MMSE_variance(KalmanParticle::Pvector mean,unsigned start)const
+KalmanParticle::Pmatrix KKalmanLocalization::MMSE_variance(KalmanParticle::Pvector mean,unsigned start)const
 {
 	KalmanParticle::Pmatrix r,t;
 	KalmanParticle::Pvector tv;
@@ -360,7 +350,7 @@ KalmanParticle::Pmatrix KLocalization::MMSE_variance(KalmanParticle::Pvector mea
 }
 
 
-void KLocalization::Predict(KMotionModel & MotionModel,float dt)
+void KKalmanLocalization::Predict(KMotionModel & MotionModel,float dt)
 {
 	double tmpDist, tmpDir, tmpRot;
 	tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean );//+ X.Next() * MotionModel.Distance.ratiodev);
@@ -389,7 +379,7 @@ void KLocalization::Predict(KMotionModel & MotionModel,float dt)
 }
 
 
-void KLocalization::spreadParticlesAfterFall()
+void KKalmanLocalization::spreadParticlesAfterFall()
 {
 
 	for ( unsigned i = 0; i < current_particles; i++)
@@ -400,7 +390,7 @@ void KLocalization::spreadParticlesAfterFall()
 	}
 }
 
-void KLocalization::Update(vector<KObservationModel> &Observation)
+void KKalmanLocalization::Update(vector<KObservationModel> &Observation)
 {
 
 	for (unsigned int i = 0; i < Observation.size(); i++)
@@ -435,7 +425,7 @@ void KLocalization::Update(vector<KObservationModel> &Observation)
 
 	}
 }
-void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation)
+void KKalmanLocalization::Update_Ambiguous(vector<KObservationModel> &Observation)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
 	double OverallWeight, ParticlePointBearingAngle, ParticleBearing, Deviation;
@@ -501,7 +491,7 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation)
 				kalmanpoints[current_particles++]=t[1];
 				kalmanpoints[current_particles++]=t[2];
 				kalmanpoints[current_particles++]=t[3];
-				cout<<current_particles<<endl;
+				//cout<<current_particles<<endl;
 		}
 
 
@@ -512,14 +502,14 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation)
 
 
 //Load xml files
-int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap)
+int KKalmanLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap)
 {
 	TiXmlDocument doc2(filename.c_str());
 	bool loadOkay = doc2.LoadFile();
 
 	if (!loadOkay)
 	{
-		Logger::Instance().WriteMsg("KLocalization", "Feature loading failed!!!!", Logger::Error);
+		Logger::Instance().WriteMsg("KKalmanLocalization", "Feature loading failed!!!!", Logger::Error);
 		return -1;
 	}
 
@@ -546,20 +536,20 @@ int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeatu
 	return 0;
 }
 
-int KLocalization::readConfiguration(const std::string& file_name)
+int KKalmanLocalization::readConfiguration(const std::string& file_name)
 {
 	XMLConfig config(file_name);
 
 	if (!config.QueryElement("player", playerNumber))
 	{
-		Logger::Instance().WriteMsg("KLocalization", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
+		Logger::Instance().WriteMsg("KKalmanLocalization", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
 		playerNumber = 1;
 	}
 
 	return 1;
 }
 
-bool KLocalization::readRobotConf(const std::string& file_name)
+bool KKalmanLocalization::readRobotConf(const std::string& file_name)
 {
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;

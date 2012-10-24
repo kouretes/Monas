@@ -22,7 +22,7 @@ motion
 # facetracker
 # motionrecorder
 leds
-videoinput
+# videoinput
 # redballdetection
 # facedetection
 # visionrecognition
