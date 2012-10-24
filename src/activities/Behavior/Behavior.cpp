@@ -171,7 +171,7 @@ int Behavior::Execute()
 			role = GOALIE;
 			if(ballfound == 1) {
 					// TODO
-					fall = toFallOrNotToFall(wim);
+					fall = toFallOrNotToFall();
 					//cout << "TO FALL EINAI: "<<fall<<endl;					
 					if(fall == 1) //LEFT
 					{
@@ -307,6 +307,20 @@ void Behavior::read_messages()
 	{
 		if (c->status() == 1)
 			calibrated = 2;
+	}
+	
+	if(wim != 0)
+	{
+	    if(wim.get() != 0)
+		{
+            if (wim->balls_size() > 0)
+            {
+                bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
+                by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
+                bd = sqrt(pow(bx, 2) + pow(by, 2));
+                bb = atan2(by, bx);
+            }
+		}
 	}
 }
 
@@ -909,10 +923,10 @@ void Behavior::checkForPenaltyArea()
 }
 
 
-int Behavior::toFallOrNotToFall( boost::shared_ptr<const WorldInfo> doi)
+int Behavior::toFallOrNotToFall()
 {
   	
-	if(doi == 0)   //the two last observation messages
+	if(wim == 0)   //the two last observation messages
 	{
 		return 0;
 	}
@@ -920,13 +934,13 @@ int Behavior::toFallOrNotToFall( boost::shared_ptr<const WorldInfo> doi)
 	float x1, y1, temp, dk;
 	float ub, ubx, ur, uby;
 
-	if(doi->balls_size() == 0)
+	if(wim->balls_size() == 0)
 		return 0;
 	
-	x1 = doi->balls(0).relativex();  //the last b observation's x position
-	y1 = doi->balls(0).relativey();  //the last but one observation's y position
-	ubx = doi->balls(0).relativexspeed();
-	uby = doi->balls(0).relativeyspeed();
+	x1 = wim->balls(0).relativex();  //the last b observation's x position
+	y1 = wim->balls(0).relativey();  //the last but one observation's y position
+	ubx = wim->balls(0).relativexspeed();
+	uby = wim->balls(0).relativeyspeed();
 	cout<<"UBX: "<<ubx<<endl;
 	float ds, dx, ws;
 	//cout<< "prin thn IF"<<endl;
@@ -942,7 +956,7 @@ int Behavior::toFallOrNotToFall( boost::shared_ptr<const WorldInfo> doi)
 			ur = 0.1 / 1.4;
 			ub = sqrt(ubx * ubx + uby * uby);
 			Logger::Instance().WriteMsg("toFallOrNotToFall","UB:"+_toString(ub), Logger::Info);
-	Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(ur), Logger::Info);
+			Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(ur), Logger::Info);
 			if(fabs(ub) > ur)
 			{
 				Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 2", Logger::Info);

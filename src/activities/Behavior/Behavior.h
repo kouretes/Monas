@@ -65,7 +65,7 @@ public:
 
 private:
 
-	int toFallOrNotToFall( boost::shared_ptr<const WorldInfo>  doi);
+	int toFallOrNotToFall();
 
 	void velocityWalk(double ix, double iy, double it, double f);
 	void littleWalk(double x, double y, double th);
