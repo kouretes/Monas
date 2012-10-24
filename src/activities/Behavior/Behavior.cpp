@@ -7,7 +7,6 @@
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/mathcommon.h"
 #include "tools/obstacleConst.h"
-
 using namespace KMath;
 using namespace boost::posix_time;
 
@@ -15,22 +14,17 @@ ACTIVITY_REGISTER(Behavior);
 using namespace std;
 
 
-/**
-	Returns a double random number (0 - 100.0) 
-*/
-double behaviorRand()
+double mglRand()
 {
 	//return rand() / double(RAND_MAX);
 	return (rand() % 100) / 100.0;
 }
 
-
-/** 
-	Behavior Initialization
-*/
+/* Behavior Initialization */
 
 void Behavior::UserInit()
 {
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -119,14 +113,9 @@ void Behavior::UserInit()
 }
 
 
-/**
-	TODO
-*/
 void Behavior::Reset(){
 
 }
-
-
 /* Behavior Main Execution Function */
 
 int Behavior::Execute()
@@ -166,96 +155,64 @@ int Behavior::Execute()
 		UpdateOrientationPlus();
 		//		checkForPenaltyArea();
 		readytokick = false;
-		
-	
-		if(playerNumber == 1 || role == GOALIE) { // goalie role if number 1
-			role = GOALIE;
-			if(ballfound == 1) {
-					// TODO
-					fall = toFallOrNotToFall(wim);
-					//cout << "TO FALL EINAI: "<<fall<<endl;					
-					if(fall == 1) //LEFT
-					{
-						amot->set_command("goalieLeftFootExtened.xar");
-						_blk.publishSignal(*amot, "motion");
-					}
-					else if(fall == -1) // RIGHT
-					{
-						amot->set_command("goalieRightFootExtened.xar");
-						_blk.publishSignal(*amot, "motion");
-					}
-					else // NOTHING
-					{
-						hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
-						_blk.publishState(*hcontrol, "behavior");
-					}
-			}
-			else if(ballfound == 0){
-				hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
-				_blk.publishState(*hcontrol, "behavior");
-			}
-		
-		}
-		else { // not goalie behavior
-			if (ballfound == 1)
+
+		if (ballfound == 1)
+		{
+			side = (bb > 0) ? 1 : -1;
+			posx = 0.12, posy = 0.03; // Desired ball position for kick
+			double epsx = 0.025, epsy = 0.025; // Desired precision
+
+			if ( (fabs( bx - posx ) < epsx)  && (fabs( by - (side * posy) ) < epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
 			{
-				side = (bb > 0) ? 1 : -1;
-				posx = 0.12, posy = 0.03; // Desired ball position for kick
-				double epsx = 0.025, epsy = 0.025; // Desired precision
-
-				if ( (fabs( bx - posx ) < epsx)  && (fabs( by - (side * posy) ) < epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
-				{
-					readytokick = true;
-					Kick(side);
-					direction = (side == +1) ? -1 : +1;
-				}
-
-				if (!readytokick)
-				{
-					//Define roles
-					if(ClosestRobot())
-					{
-						role = ATTACKER;
-					}
-					else
-					{
-						role = CENTER_FOR;
-					}
-					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
-					approachBallRoleDependent(bx, by);
-
-					//if (scanOK)
-						//HeadScanStepIntelligent();
-
-					//					HeadScanStepSmart();
-				}
+				readytokick = true;
+				Kick(side);
+				direction = (side == +1) ? -1 : +1;
 			}
 
-			if (ballfound == 0)
+			if (!readytokick)
 			{
-				/* New exploration
-				if (!scanforball)
+				//Define roles
+				if(ClosestRobot())
 				{
-					startscan = true;
-					scanforball = true;
-				}*/
-
-				//walk straight for some seconds after the scan has ended (lastpenalized+seconds(12))
-				//and then start turning around to search for ball.
-				if (lastpenalized + seconds(14) > microsec_clock::universal_time())
-				{
-					pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+					role = ATTACKER;
 				}
-				else if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
-					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
 				else
-					pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+				{
+					role = CENTER_FOR;
+				}
+				//			    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
+				approachBallRoleDependent(bx, by);
 
-				/* End of New Exploration */
-				//HeadScanStepSmart();
+				//if (scanOK)
+					//HeadScanStepIntelligent();
+
+				//					HeadScanStepSmart();
 			}
+		}
 
-		} // not goalie behavior end
+		if (ballfound == 0)
+		{
+			/* New exploration
+			if (!scanforball)
+			{
+				startscan = true;
+				scanforball = true;
+			}*/
+
+			//walk straight for some seconds after the scan has ended (lastpenalized+seconds(12))
+			//and then start turning around to search for ball.
+			if (lastpenalized + seconds(14) > microsec_clock::universal_time())
+			{
+				pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+			}
+			else if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
+				pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
+			else
+				pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+
+			/* End of New Exploration */
+			//HeadScanStepSmart();
+		}
 	}
 	else if (gameState == PLAYER_READY)
 	{
@@ -274,19 +231,12 @@ int Behavior::Execute()
 		//if (ballfound == 0)
 			//HeadScanStepSmart();
 	}
-	else if(gameState == PLAYER_PENALISED)
-	{
-		hcontrol->mutable_task()->set_action(HeadControlMessage::NOTHING);
-		_blk.publishState(*hcontrol, "behavior");
-	}	
 
 	return 0;
 }
 
 
-/** 
-	Read Incoming Messages from declared topics...use Message objects to get the data.
-  */
+/* Read Incoming Messages */
 
 void Behavior::read_messages()
 {
@@ -296,7 +246,7 @@ void Behavior::read_messages()
 	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
-	bfm = _blk.readState<BallFoundMessage> ("behavior"); // error! its state
+	bfm = _blk.readData<BallFoundMessage> ("behavior");
 	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
 	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
 
@@ -468,7 +418,7 @@ void Behavior::Kick(int side)
 	//if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
 	if ( kickoff && (microsec_clock::universal_time() <= lastplay + seconds(25)) )
 	{
-		if (behaviorRand() < 0.75)
+		if (mglRand() < 0.75)
 		{
 			littleWalk(0.2, 0.0, 0.0);
 		}
@@ -866,14 +816,10 @@ void Behavior::generateFakeObstacles()
 		i++;
 	}
 }
-
-
 float Behavior::dist(float x1, float y1, float x2, float y2)
 {
 	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
-
-
 void Behavior::checkForPenaltyArea()
 {
 	float fakeDist = 0.0, fakeDir = 0.0;
@@ -901,64 +847,6 @@ void Behavior::checkForPenaltyArea()
 	}
 
 	std::cout << "-------------" << std::endl;
-}
-
-
-int Behavior::toFallOrNotToFall( boost::shared_ptr<const WorldInfo> doi)
-{
-  	
-	if(doi == 0)   //the two last observation messages
-	{
-		return 0;
-	}
-	
-	float x1, y1, temp, dk;
-	float ub, ubx, ur, uby;
-
-	if(doi->balls_size() == 0)
-		return 0;
-	
-	x1 = doi->balls(0).relativex();  //the last b observation's x position
-	y1 = doi->balls(0).relativey();  //the last but one observation's y position
-	ubx = doi->balls(0).relativexspeed();
-	uby = doi->balls(0).relativeyspeed();
-	cout<<"UBX: "<<ubx<<endl;
-	float ds, dx, ws;
-	//cout<< "prin thn IF"<<endl;
-	if(ubx < 0.0)
-	{	//cout<<"meta thn IF"<<endl;
-		Logger::Instance().WriteMsg("toFallOrNotToFall", "ubx<0", Logger::Info);
-		dk = (ubx * y1 - uby * x1) / ubx ; // dk is the projection of the ball's route towards the robot/goalpost
-		Logger::Instance().WriteMsg("toFallOrNotToFall","DK:"+_toString(dk), Logger::Info);
-		if(fabs(dk) <= 0.3) //if dk is shorter than the robot's foot can extend
-		{
-			Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 1", Logger::Info);
-			
-			ur = 0.1 / 1.4;
-			ub = sqrt(ubx * ubx + uby * uby);
-			Logger::Instance().WriteMsg("toFallOrNotToFall","UB:"+_toString(ub), Logger::Info);
-	Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(ur), Logger::Info);
-			if(fabs(ub) > ur)
-			{
-				Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 2", Logger::Info);
-				//long tk;
-				//tk = fabs((x1 / ubx)); //in seconds...................mallon
-
-				if(dk > 0)
-				{
-					return 1;  //left
-				}
-				else
-				{
-					return -1;  //right
-				}
-			}
-
-		}
-
-	}
-
-	return 0;
 }
 
 /* Test Function */
