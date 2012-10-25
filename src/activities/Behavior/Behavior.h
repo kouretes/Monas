@@ -58,12 +58,14 @@ public:
 
 	enum ROLES
 	{
-	    ATTACKER=0, CENTER_FOR
+	    ATTACKER=0, CENTER_FOR, GOALIE
 	};
 
 	void Kick(int side);
 
 private:
+
+	int toFallOrNotToFall();
 
 	void velocityWalk(double ix, double iy, double it, double f);
 	void littleWalk(double x, double y, double th);
@@ -107,7 +109,7 @@ private:
 	int leftright;
 	float headpos;
 
-	short ballfound;
+	bool ballfound;
 	bool scanforball;
 	bool startscan;
 	bool scanOK;
@@ -121,6 +123,8 @@ private:
 	int calibrated;
 
 	int forball, forpost;
+	
+	int fall;	// variable for goalie role to check if he should fall or not.
 
 	bool kickoff;
 	float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
