@@ -10,6 +10,12 @@ message WorldInfo{
 
 message SharedWorldInfo{
 	required RobotPose playerClosestToBall = 1 ;
+	repeated TeammatePose teammatePosition = 2;
+}
+
+message TeammatePose{
+	required RobotPose pose = 1;
+	required uint32 robotId = 2;
 }
 
 message RobotPose{
