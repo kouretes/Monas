@@ -16,19 +16,17 @@ using namespace std;
 
 
 /**
-	Returns a double random number (0 - 100.0) 
-*/
+ *	Returns a double random number (0 - 100.0) 
+ */
 double behaviorRand()
 {
-	//return rand() / double(RAND_MAX);
 	return (rand() % 100) / 100.0;
 }
 
 
 /** 
-	Behavior Initialization
-*/
-
+ *	Behavior Initialization
+ */
 void Behavior::UserInit()
 {
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
