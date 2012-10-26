@@ -2,37 +2,32 @@
 <!-- Modules to be loaded -->
 <!-- ThreadFrequency in Hz StatsCycle=n every n repetitions the agent will log statistics -->
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=50 StatsCycle=1000>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=50 StatsCycle=1000 Enable=1>
 	<name>KMC</name>
-	<activity>MotionController</activity>
-	<activity>RobotController</activity>
-	<activity>LedHandler</activity>
+	<activity Enable=1>MotionController</activity>
+	<activity Enable=1>RobotController</activity>
+	<activity Enable=1>LedHandler</activity>
 </agent>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=25 StatsCycle=50>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=25 StatsCycle=50 Enable=1>
 	<name>KVision</name>
-	<activity>Vision</activity>
-	<activity>LocalWorldState</activity>
-	<activity>SharedWorldModel</activity>
-	<activity>HeadController</activity>
-	<activity>Behavior</activity>
+	<activity Enable=1>Vision</activity>
+	<activity Enable=1>LocalWorldState</activity>
+	<activity Enable=1>SharedWorldModel</activity>
+	<activity Enable=1>HeadController</activity>
+	<activity Enable=1>Behavior</activity>
 </agent>
 
 
-<provider  IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>Sensors</provider>
-<provider  IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000>Gateway</provider>
-<provider  IsRealTime=1 Priority=1 ThreadFrequency=25 StatsCycle=1000>ImageExtractor</provider>
+<provider IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000 Enable=1>Sensors</provider>
+<provider IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000 Enable=1>Gateway</provider>
+<provider IsRealTime=1 Priority=1 ThreadFrequency=25 StatsCycle=1000 Enable=1>ImageExtractor</provider>
 
-<agent IsRealTime=1 Priority=1 ThreadFrequency=4 StatsCycle=1000>
+<agent IsRealTime=1 Priority=1 ThreadFrequency=4 StatsCycle=1000 Enable=1>
 	<name>ObstacleAvoidance</name>
-	<activity>ObstacleAvoidance</activity>
+	<activity Enable=1>ObstacleAvoidance</activity>
 </agent>
 
+  
+<statechart Enable=0>GoalieRoboCup2012</statechart>
 
-<!--  
-<statechart>GoalieRoboCup2012</statechart>
-<agent IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=50>
-	<name>KBehavior</name>
-	<activity>BodyBehavior</activity>
-</agent>
--->
