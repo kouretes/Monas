@@ -141,7 +141,7 @@ int Behavior::Execute()
 	//}
 
     if (gameState == PLAYER_INITIAL){
-         hcontrol->mutable_task()->set_action(HeadControlMessage::NOTHING);
+         hcontrol->mutable_task()->set_action(HeadControlMessage::FROWN);
         _blk.publishState(*hcontrol, "behavior");
     }
 	else if (gameState == PLAYER_PLAYING)
@@ -278,7 +278,7 @@ int Behavior::Execute()
 	}
 	else if(gameState == PLAYER_PENALISED)
 	{
-		hcontrol->mutable_task()->set_action(HeadControlMessage::NOTHING);
+		hcontrol->mutable_task()->set_action(HeadControlMessage::FROWN);
 		_blk.publishState(*hcontrol, "behavior");
 	}	
 
