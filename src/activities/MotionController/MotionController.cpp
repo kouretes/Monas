@@ -124,9 +124,7 @@ void MotionController::UserInit()
 	sm.set_lastaction("");
 	standUpStartTime = boost::posix_time::microsec_clock::universal_time();
 	walkingWithVelocity = false;
-	//setStiffnessDCM(1);
-	BodyID = KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID);
-	Logger::Instance().WriteMsg("MotionController", "The Body ID is " + BodyID, Logger::Info);
+
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
 	
 	//Self Reset for initialization
@@ -527,7 +525,6 @@ void MotionController::read_messages()
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	/* Messages from the Game Controller */
 	gsm = _blk.readState<GameStateMessage> ("worldstate");
-	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
 }
 
 void MotionController::killWalkCommand()
@@ -545,7 +542,6 @@ void MotionController::stopWalkCommand()
 		motion->waitUntilWalkIsFinished();
 		walkingWithVelocity = false;
 	}
-
 	walkPID = 0;
 }
 
@@ -755,73 +751,7 @@ void MotionController::createDCMAlias()
 		//commands[5][i][0] will be the new angle
 	}
 
-	//Logger::Instance().WriteMsg("MotionController"," Head PositionActuatorAlias created ",Logger::ExtraInfo);
-	/*
-	 //STiffness Commands
-	 vector<std::string> stiffnessactStrings = KDeviceLists::getHardnessActuatorKeys();
-	 jointAliasses.arraySetSize(2);
-	 jointAliasses[0] = std::string("AllHardnessActuators"); // Alias for all 25 joint actuators
-
-	 jointAliasses[1].arraySetSize(stiffnessactStrings.size());
-	 for(unsigned i=0;i<stiffnessactStrings.size();i++)
-	 jointAliasses[1][i]=stiffnessactStrings[i];
-	 try
-	 {
-	 dcm->createAlias(jointAliasses);
-	 } catch (const AL::ALError &e)
-	 {
-	 throw ALERROR("mainModule", "createPositionActuatorAlias()", "Error when creating Alias : " + e.toString());
-	 }
-
-	 stiffnessCommand.arraySetSize(6);
-	 stiffnessCommand[0] = std::string("AllHardnessActuators");
-	 stiffnessCommand[1] = std::string("ClearAll"); // Erase all previous commands
-	 stiffnessCommand[2] = std::string("time-separate");
-	 stiffnessCommand[3] = 0;
-
-	 stiffnessCommand[4].arraySetSize(1);
-	 //commands[4][0]  Will be the new time
-
-	 stiffnessCommand[5].arraySetSize(stiffnessactStrings.size()); // For all joints
-
-	 for (unsigned i = 0; i < stiffnessactStrings.size(); i++)
-	 {
-	 stiffnessCommand[5][i].arraySetSize(1);
-	 //commands[5][i][0] will be the new angle
-	 }
-	 cout << "  AllHardnessActuators  alias created " << endl;
-	 */
 }
-//
-//void MotionController::setStiffnessDCM(float s)
-//{
-//	motion->setStiffnesses("Body", s);
-//	/*for (int p = 0; p < NUMOFJOINTS; p++)
-//	 stiffnessCommand[5][(p)][0] = s;
-//
-//	 int DCMtime;
-//
-//	 try
-//	 { // Get time in 0 ms
-//	 DCMtime = dcm->getTime(0);
-//	 } catch (const AL::ALError &e)
-//	 {
-//	 throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
-//	 }
-//
-//	 stiffnessCommand[4][0] = DCMtime;
-//	 //Send command
-//	 try
-//	 {
-//	 dcm->setAlias(stiffnessCommand);
-//	 } catch (const AL::ALError &e)
-//	 {
-//	 throw ALERROR("mainModule", "execute_action", "Error when sending command to DCM : " + e.toString());
-//	 }
-//	 motion->setStiffnesses("Body", s);
-//	 */
-//}
-
 
 vector<int> MotionController::SpCutActionsManager()
 {
