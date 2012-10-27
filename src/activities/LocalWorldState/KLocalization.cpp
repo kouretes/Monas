@@ -5,16 +5,14 @@
  *		Patched: eldr4d
  */
 #include <time.h>
-#include <boost/random.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <boost/math/distributions/normal.hpp>
 #include <math.h>
-#include "newran/newran.h"
 #include "KLocalization.h"
 #include <iomanip>
 #include <boost/lexical_cast.hpp>
 #include "architecture/archConfig.h"
-#include <boost/math/distributions/normal.hpp>
 #include "tools/logger.h"
 #include "tools/toString.h"
 using namespace boost;
@@ -36,8 +34,9 @@ int KLocalization::Initialize()
 	SIRParticles.phi = new double[partclsNum];
 	SIRParticles.Weight = new double[partclsNum];
 	max_weight_particle_index = 0;
-	double seed = (double) (time(NULL) % 100 / 100.0);
-	Random::Set(seed);
+	
+    //set seed (current time)
+    generator.seed(static_cast<unsigned int> (std::time(0)));
 	srand(time(0));
 
 	// Loading features
@@ -51,7 +50,10 @@ int KLocalization::Initialize()
 
 void KLocalization::initParticles()
 {
-	Uniform X, Y, P;
+	 //uniform [0,1)
+    boost::uniform_real<> uni_dist(0,1);
+    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+
 	float length = FieldMaxX * 2 / 3;
 	unsigned int particlesUp = partclsNum / 2;
 	unsigned int particlesDown = partclsNum - particlesUp;
@@ -59,25 +61,28 @@ void KLocalization::initParticles()
 	//Initialize top Particles
 	for (unsigned int i = 0; i < particlesUp; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(270);
+		SIRParticles.phi[i] = TO_RAD(270);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 
 	//Initialize down Particles
 	for (unsigned int i = particlesUp; i < partclsNum; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = -FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(90);
+		SIRParticles.phi[i] = TO_RAD(90);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 }
 
 void KLocalization::setParticlesPoseUniformly()
 {
-	Uniform X, Y, P;
+	//uniform [0,1)
+    boost::uniform_real<> uni_dist(0,1);
+    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+
 	float length = FieldMaxX * 2 / 3;
 	unsigned int resetParticles = 20;
 	unsigned int particlesUp = partclsNum / 2 - resetParticles / 2;
@@ -111,24 +116,24 @@ void KLocalization::setParticlesPoseUniformly()
 
 		SIRParticles.x[i] = x;
 		SIRParticles.y[i] = y;
-		SIRParticles.phi[i] = deg2rad(0);
+		SIRParticles.phi[i] = TO_RAD(0);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 
 	for (unsigned int i = resetParticles; i < particlesUp; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(270);
+		SIRParticles.phi[i] = TO_RAD(270);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 
 	//Initialize down Particles
 	for (unsigned int i = particlesUp; i < partclsNum; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = -FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(90);
+		SIRParticles.phi[i] = TO_RAD(90);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
 }
@@ -147,25 +152,25 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 		{
 			y = -FieldMaxY;
 			x = -2.4;
-			phi = deg2rad(90);
+			phi = TO_RAD(90);
 		}
 		else if(playerNumber == 2)
 		{
 			y = FieldMaxY;
 			x = -2.4;
-			phi = deg2rad(270);
+			phi = TO_RAD(270);
 		}
 		else if(playerNumber == 3)
 		{
 			y = -FieldMaxY;
 			x = -1.2;
-			phi = deg2rad(90);
+			phi = TO_RAD(90);
 		}
 		else if(playerNumber == 4)
 		{
 			y = FieldMaxY;
 			x = -1.2;
-			phi = deg2rad(270);
+			phi = TO_RAD(270);
 		}
 
 		//Leave some particles to the current position in case of ready state after goal
@@ -249,14 +254,15 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 void KLocalization::Predict(KMotionModel & MotionModel)
 {
 	double tmpDist, tmpDir, tmpRot;
-	Normal X, Y, P;
+	boost::normal_distribution<> norm_dist(0,1);
+    boost::variate_generator<r_gen&, boost::normal_distribution<> > X(generator, norm_dist);
 
 	//Move the particles with noise
 	for (unsigned int i = 0; i < partclsNum; i++)
 	{
-		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X.Next() * MotionModel.Distance.ratiodev);
-		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
-		tmpRot = MotionModel.Rotation.val * (MotionModel.Rotation.ratiomean + P.Next() * MotionModel.Rotation.ratiodev);
+		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X() * MotionModel.Distance.ratiodev);
+		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + X() * MotionModel.Direction.Edev;
+		tmpRot = MotionModel.Rotation.val * (MotionModel.Rotation.ratiomean + X() * MotionModel.Rotation.ratiodev);
 		SIRParticles.x[i] = SIRParticles.x[i] + cos(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.y[i] = SIRParticles.y[i] + sin(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.phi[i] = SIRParticles.phi[i] + tmpRot;
@@ -271,8 +277,9 @@ double KLocalization::normpdf(double diff, double dev)
 
 void KLocalization::spreadParticlesAfterFall()
 {
-	//Normal X, Y, P;
-	Random X, Y, P;
+	boost::uniform_real<> uni_dist(0,1);
+    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+
 	int step = round((float) SIRParticles.size / NumberOfParticlesSpreadAfterFall);
 
 	if (NumberOfParticlesSpreadAfterFall == 0)
@@ -280,9 +287,9 @@ void KLocalization::spreadParticlesAfterFall()
 
 	for (unsigned int i = 0; i < SIRParticles.size; i += step)
 	{
-		SIRParticles.x[i] += (X.Next() - 0.5) * SpreadParticlesDeviationAfterFall;
-		SIRParticles.y[i] += (Y.Next() - 0.5) * SpreadParticlesDeviationAfterFall;
-		SIRParticles.phi[i] += (P.Next() - 0.5) * deg2rad(RotationDeviationAfterFallInDeg);
+		SIRParticles.x[i] += (X() - 0.5) * SpreadParticlesDeviationAfterFall;
+		SIRParticles.y[i] += (X() - 0.5) * SpreadParticlesDeviationAfterFall;
+		SIRParticles.phi[i] += (X() - 0.5) * TO_RAD(RotationDeviationAfterFallInDeg);
 	}
 }
 
