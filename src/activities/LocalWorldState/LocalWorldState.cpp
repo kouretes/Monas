@@ -28,7 +28,7 @@ void LocalWorldState::UserInit()
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
-	Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
+	Logger::Instance().WriteMsg("Localization", "LocalWorldState Initialized", Logger::Info);
 	firstOdometry = true;
 	serverpid = -1;
 	debugmode = false;
@@ -38,6 +38,10 @@ void LocalWorldState::UserInit()
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 	//MyWorld.add_balls();
 	currentRobotAction = MotionStateMessage::IDLE;
+
+    //read xml files
+    ReadLocConf();
+    ReadFieldConf();
 
 	localizationWorld.Initialize();
 	//localizationWorld.setParticlesPoseUniformly();
@@ -71,7 +75,33 @@ void LocalWorldState::UserInit()
 }
 
 void LocalWorldState::Reset(){
+    //ReadLocConf();
+    //ReadFieldConf();
+}
 
+void LocalWorldState::ReadLocConf()
+{
+    localizationWorld.robustmean=atoi(_xml.findValueForKey("Localizationconf.robustmean").front().c_str());
+    localizationWorld.partclsNum=atoi(_xml.findValueForKey("Localizationconf.partclsNum").front().c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("Localizationconf.SpreadParticlesDeviation").front().c_str());
+    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("Localizationconf.rotation_deviation").front().c_str());
+    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").front().c_str());
+    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").front().c_str());
+    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").front().c_str());
+    Logger::Instance().WriteMsg("Localization", "Localization parameters loaded" , Logger::Info);
+}
+
+void LocalWorldState::ReadFieldConf()
+{
+    localizationWorld.CarpetMaxX=atof(_xml.findValueForKey("Field.CarpetMaxX").front().c_str());
+    localizationWorld.CarpetMinX=atof(_xml.findValueForKey("Field.CarpetMinX").front().c_str());
+    localizationWorld.CarpetMaxY=atof(_xml.findValueForKey("Field.CarpetMaxY").front().c_str());
+    localizationWorld.CarpetMinY=atof(_xml.findValueForKey("Field.CarpetMinY").front().c_str());
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").front().c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").front().c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").front().c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").front().c_str());
+	Logger::Instance().WriteMsg("Localization", "Field parameters loaded", Logger::Info);
 }
 
 int LocalWorldState::Execute()

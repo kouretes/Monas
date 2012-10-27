@@ -29,73 +29,6 @@ KLocalization::~KLocalization()
 
 int KLocalization::Initialize()
 {
-	XMLConfig * config = NULL;
-	string filename = ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml" ;
-	config = new XMLConfig(filename);
-
-	if (config->IsLoadedSuccessfully())
-	{
-		bool found = true;
-		float temp;
-		///Parameters
-		found &= config->QueryElement("robustmean", robustmean);
-		found &= config->QueryElement("partclsNum", partclsNum);
-		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
-		found &= config->QueryElement("rotation_deviation", rotation_deviation);
-		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
-		found &= config->QueryElement("RotationDeviationAfterFallInDeg", RotationDeviationAfterFallInDeg);
-		found &= config->QueryElement("NumberOfParticlesSpreadAfterFall", NumberOfParticlesSpreadAfterFall);
-
-		if (found)
-		{
-			Logger::Instance().WriteMsg("Localization", "All Localization parameters loaded successfully" , Logger::Info);
-		}
-		else
-		{
-			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the xml config file " , Logger::Error);
-		}
-	}
-	else
-	{
-		Logger::Instance().WriteMsg("Localization", "Cant Find xml config file " + filename , Logger::Error);
-	}
-
-	if(config)
-		delete config;
-
-	config = NULL;
-	filename = ArchConfig::Instance().GetConfigPrefix() + "/Field.xml" ;
-	config = new XMLConfig(filename);
-
-	if (config->IsLoadedSuccessfully())
-	{
-		bool found = true;
-		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
-		found &= config->QueryElement("CarpetMinX", CarpetMinX);
-		found &= config->QueryElement("CarpetMaxY", CarpetMaxY);
-		found &= config->QueryElement("CarpetMinY", CarpetMinY);
-		found &= config->QueryElement("FieldMaxX", FieldMaxX);
-		found &= config->QueryElement("FieldMinX", FieldMinX);
-		found &= config->QueryElement("FieldMaxY", FieldMaxY);
-		found &= config->QueryElement("FieldMinY", FieldMinY);
-
-		if (found)
-		{
-			Logger::Instance().WriteMsg("Localization", "All Field parameters loaded successfully", Logger::Info);
-		}
-		else
-		{
-			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the Field xml config file ", Logger::Error);
-		}
-	}
-	else
-	{
-		Logger::Instance().WriteMsg("Localization", "Cant Find Field xml config file " + filename , Logger::Error);
-	}
-
-	if(config)
-		delete config;
-
 	//Initialize particles
 	SIRParticles.size = partclsNum;
 	SIRParticles.x = new double[partclsNum];
@@ -106,7 +39,8 @@ int KLocalization::Initialize()
 	double seed = (double) (time(NULL) % 100 / 100.0);
 	Random::Set(seed);
 	srand(time(0));
-	// Loading features,
+
+	// Loading features
 	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
@@ -147,7 +81,7 @@ void KLocalization::setParticlesPoseUniformly()
 	float length = FieldMaxX * 2 / 3;
 	unsigned int resetParticles = 20;
 	unsigned int particlesUp = partclsNum / 2 - resetParticles / 2;
-	unsigned int particlesDown = partclsNum - particlesUp;
+	unsigned int particlesDown = partclsNum - particlesUp - resetParticles;
 
 	//Initialize top Particles
 	for (unsigned int i = 0; i < resetParticles; i++)

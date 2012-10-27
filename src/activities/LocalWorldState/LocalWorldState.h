@@ -56,6 +56,10 @@ private:
 
 	int serverpid;
 
+    //read xml files
+    void ReadLocConf();
+    void ReadFieldConf();
+
 	//WorldInfo message
 	WorldInfo MyWorld;
 
