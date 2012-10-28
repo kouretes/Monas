@@ -40,6 +40,7 @@ public:
 	QString getHostId(){return hostId;}
 
 	void setCurrentWIM(WorldInfo nwim);
+	void setCurrentSWIM(SharedWorldInfo nswim);
 	void setCurrentGSM(GameStateMessage gsm);
 	void setcurrentOBSM(ObservationMessage obm);
 
@@ -47,8 +48,13 @@ public:
 	bool getGWSRobotVisible(){return GWSRobotVisible;}
 	void setLWSRobotVisible(bool visible){LWSRobotVisible = visible; setRobotVisible(visible);}
 	bool getLWSRobotVisible(){return LWSRobotVisible;}
+	void setLWSTeammatesVisible(bool visible){LWSTeammatesVisible = visible; setTeammatesVisible(visible);}
+	bool getLWSTeammatesVisible(){return LWSTeammatesVisible;}
 	void setRobotVisible(bool visible);
+	void setTeammateVisible(int idx, bool visible);
+	void setTeammatesVisible(bool visible);
 	void updateRobotRect();
+	void updateTeammatesRects();
 
 	void setGWSBallVisible(bool visible){GWSBallVisible = visible; setBallVisible(visible);}
 	bool getGWSBallVisible(){return GWSBallVisible;}
@@ -129,11 +135,13 @@ private:
 	int teamColor;	//1 for blue, -1 for red
 
 	WorldInfo currentWIM;
+	SharedWorldInfo currentSWIM;
 
 	bool GWSRobotVisible;
-	bool LWSRobotVisible;
-	QGraphicsEllipseItem* Robot;
-	QGraphicsLineItem* RobotDirection;
+	bool LWSRobotVisible, LWSTeammatesVisible;
+	static const int numOfRobots = 5;
+	QGraphicsEllipseItem* Robot, *Teammates[numOfRobots];
+	QGraphicsLineItem* RobotDirection, *TeammateDirections[numOfRobots];
 
 	bool GWSBallVisible;
 	bool LWSBallVisible;

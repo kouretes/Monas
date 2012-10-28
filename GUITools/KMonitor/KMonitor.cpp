@@ -39,6 +39,7 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(ui->LWSTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LWRHUnsubscriptionHandler(QString)));
 	
 	connect(Messenger, SIGNAL(worldInfoUpdate(WorldInfo, QString)), ui->LWSTab, SLOT(worldInfoUpdateHandler(WorldInfo, QString)));
+	connect(Messenger, SIGNAL(sharedWorldInfoUpdate(SharedWorldInfo, QString)), ui->LWSTab, SLOT(sharedWorldInfoUpdateHandler(SharedWorldInfo, QString)));
 	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), ui->LWSTab, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)));
 	connect(Messenger, SIGNAL(obsmsgUpdate(ObservationMessage, QString)), ui->LWSTab, SLOT(observationMessageUpdateHandler(ObservationMessage, QString)));
 	connect(Messenger, SIGNAL(localizationDataUpdate(LocalizationDataForGUI, QString)), ui->LWSTab, SLOT(localizationDataUpdateHandler(LocalizationDataForGUI, QString)));

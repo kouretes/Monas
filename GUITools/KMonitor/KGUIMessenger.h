@@ -61,6 +61,7 @@ signals:
 	void knownHostsUpdate(KnownHosts);
 	void gameStateMessageUpdate(GameStateMessage, QString);
 	void worldInfoUpdate(WorldInfo, QString);
+	void sharedWorldInfoUpdate(SharedWorldInfo, QString);
 	void localizationDataUpdate(LocalizationDataForGUI, QString);
 	void obsmsgUpdate(ObservationMessage, QString);
 	void motionCommandUpdate(MotionWalkMessage, QString);
