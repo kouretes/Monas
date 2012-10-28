@@ -37,7 +37,7 @@ int SharedWorldModel::Execute()
 		robot_x[i] = INIT_VALUE;
 		robot_y[i] = INIT_VALUE;
 	}
-
+    swi.Clear();
     swi.add_teammateposition(); //add position for self
 
 	//Other robots' WorldInfo and ball distances
@@ -91,7 +91,7 @@ int SharedWorldModel::Execute()
 	//Local WorldInfo and ball distance
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 
-	if(wim != 0)
+	if(wim != 0){
 		if(wim.get() != 0)
 		{
 			robot_x[0] = wim->myposition().x();
@@ -125,6 +125,7 @@ int SharedWorldModel::Execute()
 			swi.mutable_playerclosesttoball()->set_y(robot_y[idx]);
 			_blk.publishData(swi, "worldstate");
 		}
+	}
 }
 
 int SharedWorldModel::findClosestRobot()
