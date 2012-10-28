@@ -23,6 +23,7 @@ TCPSocket * LocalWorldState::sock;
 
 void LocalWorldState::UserInit()
 {
+	
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -71,7 +72,6 @@ void LocalWorldState::UserInit()
 	robotmovement.Rotation.ratiodev = 0.55;
 	robotmovement.Rotation.Emean = 0.0;// systematic error out
 	robotmovement.Rotation.Edev = 0.0;
-
 }
 
 void LocalWorldState::Reset(){
@@ -154,6 +154,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 	Ball nearest_filtered_ball, nearest_nofilter_ball;
 	float dt;
 	bool ballseen = false;
+	
 	if (obsm.get())
 	{
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
@@ -224,16 +225,18 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 		{
 			//time = newtime;
 			last_observation_time = now; //So it wont try to delete already delete ball
-			if (MyWorld.balls_size() > 0)
+			if (MyWorld.balls_size() > 0){
 				MyWorld.clear_balls();
+			}
 		} else
 		{
 			duration = now - last_filter_time;
 			last_filter_time = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-			if(myBall.get_filter_variance()>4 && MyWorld.balls_size() > 0) //Std = 2m
+			if(dt > 0.080 && myBall.get_filter_variance() > 8 && MyWorld.balls_size() > 0){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
+			}
 			if (MyWorld.balls_size() > 0)
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
 		}
@@ -273,10 +276,7 @@ void LocalWorldState::process_messages()
 			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
 			tmpOM.Bearing.Edev = TO_RAD(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
-			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);*/
+			
 
 			if (localizationWorld.KFeaturesmap.count(id) != 0)
 			{
