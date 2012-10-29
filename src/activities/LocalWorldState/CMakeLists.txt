@@ -8,7 +8,3 @@ KLocalization.h KLocalization.cpp ../../../external/PracticalSocket/PracticalSoc
 
 include ( ../activTemplate.cmake )
 
-if(Webots)
-  message ( STATUS " _..::: Configuring LocalWorldState for Webots :::.._ " )
-  add_definitions(" -DWEBOTS ")
-endif(Webots)

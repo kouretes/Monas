@@ -51,7 +51,7 @@ NaoCamera::NaoCamera() :
   theInstance = this;
 
   unsigned char current = currentCamera;
-    unsigned char other = currentCamera ==NAO_UPPER_CAMERA ?  NAO_LOWER_CAMERA : NAO_UPPER_CAMERA;
+  unsigned char other = currentCamera ==NAO_UPPER_CAMERA ?  NAO_LOWER_CAMERA : NAO_UPPER_CAMERA;
 
   assert(verifyNaoVersion()==true);
   std::cout<<"INIT"<<std::endl;

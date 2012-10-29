@@ -43,14 +43,6 @@ option(KROBOT_IS_REMOTE
   OFF
 )
 
-
-if(Webots)
-  message ( STATUS " _..::: Configuring Webots :::.._ " )
-  add_definitions(" -DWEBOTS ")
-endif(Webots)
-
-
-
 function(Monas_Finalize)
 
 
