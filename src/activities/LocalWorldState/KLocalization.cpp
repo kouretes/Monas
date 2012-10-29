@@ -223,10 +223,19 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 		weightsChanged = true;
 	}
 
-	//Normalize Particles  Weight in order to Resample later
+
+	//Resample and propagate
+	//Normalize Particles after resampling
 	//Find the index of the max weight in the process
 	if(weightsChanged)
-		normalize(SIRParticles.Weight, &max_weight_particle_index);
+	{
+		rouletteResampleAndNormalize();
+
+		if(Observations.size() >= 1)
+		{
+			;//ForceBearing(SIRParticles,Observations);
+		}
+	}
 
 	//extract estimation
 	AgentPosition.x =  SIRParticles.x[max_weight_particle_index];// maxprtcl.x;
@@ -235,18 +244,6 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	//AgentPosition = RobustMean(SIRParticles, 10);
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = 0.0;
-
-	//Resample and propagate
-	if(weightsChanged)
-	{
-		rouletteResample();
-
-		if(Observations.size() >= 1)
-		{
-			;//ForceBearing(SIRParticles,Observations);
-		}
-	}
-
 	return AgentPosition;
 }
 
@@ -386,12 +383,24 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 }
 
 
-void KLocalization::rouletteResample()
+void KLocalization::rouletteResampleAndNormalize()
 {
-	double r = rand() / ((double)RAND_MAX);
+
+	double sum = 0;
+	double max = -1;
+	for (unsigned int i = 0; i < partclsNum; i++){
+		sum += SIRParticles.Weight[i];
+		if(SIRParticles.Weight[i] > max)
+		{
+			max = SIRParticles.Weight[i];
+			max_weight_particle_index = i;
+		}
+	}
+
+	double r = (rand() / ((double)RAND_MAX))*sum;
 	r = r / SIRParticles.size;
 	double cumSum = SIRParticles.Weight[0];
-	double step = 1 / ((double)SIRParticles.size);
+	double step = sum / ((double)SIRParticles.size);
 	unsigned int i = 0;
 	double tempX[SIRParticles.size];
 	double tempY[SIRParticles.size];
@@ -412,41 +421,16 @@ void KLocalization::rouletteResample()
 		tempPhi[m] = SIRParticles.phi[i];
 	}
 
+	double newWeight = 1.0 / SIRParticles.size;
 	// lets propagate them
 	for (i = 0; i < partclsNum; i++)
 	{
 		SIRParticles.phi[i] = tempPhi[i];
-		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
+		SIRParticles.Weight[i] = newWeight;
 		SIRParticles.x[i] = tempX[i];
 		SIRParticles.y[i] = tempY[i];
 	}
 }
-
-
-
-///Normalizes and Returns ESS effective Sample size;
-void KLocalization::normalize(double * Weights, unsigned int *max_weight_index)
-{
-	double sum = 0;
-
-	for (unsigned int i = 0; i < partclsNum; i++)
-		sum += Weights[i];
-
-	//normalize particles
-	double max = -1;
-
-	for (unsigned int i = 0; i < partclsNum; i++)
-	{
-		Weights[i] = Weights[i] / sum;
-
-		if(Weights[i] > max)
-		{
-			max = Weights[i];
-			*max_weight_index = i;
-		}
-	}
-}
-
 
 float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 {

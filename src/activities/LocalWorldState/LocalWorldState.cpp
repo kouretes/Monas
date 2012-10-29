@@ -234,7 +234,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 			last_filter_time = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-			if(dt > 0.080 && myBall.get_filter_variance() > 8 && MyWorld.balls_size() > 0){ //Std = 2m and wait for 80 ms before deleting
+			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
 			}
 			if (MyWorld.balls_size() > 0)

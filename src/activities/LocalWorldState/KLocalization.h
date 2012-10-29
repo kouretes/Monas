@@ -211,7 +211,7 @@ public:
 	double normpdf(double diff, double dev);
 
 	//This function resamples the particles with the new weigths and reposition the particles given the new weights
-	void rouletteResample();
+	void rouletteResampleAndNormalize();
 
 	//Initialize the particles of the filter
 	void initParticles();
