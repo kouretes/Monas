@@ -34,10 +34,10 @@ audiodevice
 # mecalogger
 pythonbridge
 # sentinel
-# launcher
+launcher
 # allaser
 # behaviormanager
-# albonjour
+albonjour
 # infrared
 altelepathe
 # store
