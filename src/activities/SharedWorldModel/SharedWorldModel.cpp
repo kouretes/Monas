@@ -53,6 +53,7 @@ int SharedWorldModel::Execute()
 
 		for(fit = rf.begin(); fit != rf.end(); ++fit)
 		{
+		    gsm  = _blk.readState<GameStateMessage> ("worldstate", (*fit).hostid());
 			wim  = _blk.readData<WorldInfo> ("worldstate", (*fit).hostid());
 
 			if(wim != 0)
@@ -70,7 +71,9 @@ int SharedWorldModel::Execute()
 
                     TeammatePose tPose;
                     tPose.mutable_pose()->CopyFrom(rPose);
-                    tPose.set_robotid(555); //test
+
+                    if(gsm!=0)
+                        tPose.set_robotid(gsm->player_number());
 
                     swi.add_teammateposition();
                     swi.mutable_teammateposition(count)->CopyFrom(tPose);
