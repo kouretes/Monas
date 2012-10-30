@@ -102,9 +102,11 @@ void Behavior::UserInit()
 	teamColor = TEAM_BLUE;
 	playerNumber = 1;
 	role = ATTACKER;
+	ur = 0.55;
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
 	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	// reads initX, initY, initPhi
 	readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");		// reads blueGoal*, yellowGoal*
+	//readBehaviorConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Behavior.xml");
 	srand(time(0));
 	lastmove = microsec_clock::universal_time();
 	lastball = microsec_clock::universal_time();
@@ -168,27 +170,27 @@ int Behavior::Execute()
 		if(playerNumber == 1 || role == GOALIE) { // goalie role if number 1
 			role = GOALIE;
 			if(ballfound == 1) {
-					// TODO
+				
 					fall = toFallOrNotToFall();
-					//cout << "TO FALL EINAI: "<<fall<<endl;					
-					if(fall == 1) //LEFT
+									
+					if(fall == 1) // extend left foot
 					{
 						amot->set_command("goalieLeftFootExtened.xar");
 						_blk.publishSignal(*amot, "motion");
 					}
-					else if(fall == -1) // RIGHT
+					else if(fall == -1) // extend right foot
 					{
 						amot->set_command("goalieRightFootExtened.xar");
 						_blk.publishSignal(*amot, "motion");
 					}
-					else // NOTHING
+					else // scan and track for ball
 					{
 						hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 						_blk.publishState(*hcontrol, "behavior");
 					}
 
 			}
-			else if(ballfound == 0){
+			else if(ballfound == 0) {
 				hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 				_blk.publishState(*hcontrol, "behavior");
 			}
@@ -720,6 +722,15 @@ void Behavior::calibrate()
 	calibrated = 1;
 }
 
+/*bool readBehaviorConfiguration(const std::string& file_name)
+{
+	XMLConfig config(file_name);
+	
+	if(!config.QueryElement("ur", ur))
+		Logger::Instance().WriteMsg("Behavior", "Configuration file has no ur value, setting to default value: " + _toString(ur), Logger::Error);
+	
+	return true;
+}*/
 
 /* Read Configuration Functions */
 
@@ -923,27 +934,23 @@ void Behavior::checkForPenaltyArea()
 
 int Behavior::toFallOrNotToFall()
 {
+	float x1, y1, dk, ubx, uby, ub;
   	
-	if(wim == 0)   //the two last observation messages
-	{
+	if(wim == 0)   // the two last observation messages
 		return 0;
-	}
 	
-	float x1, y1, temp, dk;
-	float ub, ubx, ur, uby;
-
 	if(wim->balls_size() == 0)
 		return 0;
 	
-	x1 = wim->balls(0).relativex();  //the last b observation's x position
-	y1 = wim->balls(0).relativey();  //the last but one observation's y position
+	// observation of (x,y) position of the ball and x,y speed
+	x1 = wim->balls(0).relativex();
+	y1 = wim->balls(0).relativey();
 	ubx = wim->balls(0).relativexspeed();
 	uby = wim->balls(0).relativeyspeed();
-	cout<<"UBX: "<<ubx<<endl;
-	float ds, dx, ws;
-	//cout<< "prin thn IF"<<endl;
+	
+	
 	if(ubx < 0.0)
-	{	//cout<<"meta thn IF"<<endl;
+	{
 		Logger::Instance().WriteMsg("toFallOrNotToFall", "ubx<0", Logger::Info);
 		dk = (ubx * y1 - uby * x1) / ubx ; // dk is the projection of the ball's route towards the robot/goalpost
 		Logger::Instance().WriteMsg("toFallOrNotToFall","DK:"+_toString(dk), Logger::Info);
@@ -951,28 +958,20 @@ int Behavior::toFallOrNotToFall()
 		{
 			Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 1", Logger::Info);
 			
-			ur = 0.1 / 1.4;
+			ur = 0.55; // old value 0.1 / 1.4
 			ub = sqrt(ubx * ubx + uby * uby);
 			Logger::Instance().WriteMsg("toFallOrNotToFall","UB:"+_toString(ub), Logger::Info);
 			Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(ur), Logger::Info);
 			if(fabs(ub) > ur)
 			{
 				Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 2", Logger::Info);
-				//long tk;
-				//tk = fabs((x1 / ubx)); //in seconds...................mallon
-
+			
 				if(dk > 0)
-				{
-					return 1;  //left
-				}
+					return 1;  // left
 				else
-				{
-					return -1;  //right
-				}
+					return -1;  // right
 			}
-
 		}
-
 	}
 
 	return 0;
