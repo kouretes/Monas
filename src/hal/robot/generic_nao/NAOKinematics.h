@@ -254,6 +254,7 @@ public:
 		Each solutions vector contains the angles with this order: HeadYaw,HeadPitch.
 	 * */
 	std::vector<std::vector<float> > inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera);
+	std::vector<std::vector<float> > inverseHead(kmatTable targetPoint, bool withAngles, bool topCamera);
 
 	/**
 	 * vector<vector<float> > inverseLeftHand(float px,float py,float pz, float rx, float ry, float rz)
@@ -268,6 +269,7 @@ public:
 		Each solutions vector contains the angles with this order: LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll
 	 * */
 	std::vector<std::vector<float> > inverseLeftHand(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseLeftHand(kmatTable targetPoint);
 
 	/**
 	 * vector<vector<float> > inverseRightHand(float px,float py,float pz, float rx, float ry, float rz)
@@ -282,6 +284,7 @@ public:
 		Each solutions vector contains the angles with this order: RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll
 	 * */
 	std::vector<std::vector<float> > inverseRightHand(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseRightHand(kmatTable targetPoint);
 	/**
 	 * vector<vector<float> > inverseLeftLeg(float px,float py,float pz, float rx, float ry, float rz)
 	 * @brief Inverse Kinematics for the left leg (DON'T try to understand the code, it's just maths)
@@ -295,6 +298,7 @@ public:
 		Each solutions vector contains the angles with this order: LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll
 	 * */
 	std::vector<std::vector<float> > inverseLeftLeg(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseLeftLeg(kmatTable targetPoint);
 
 	/**
 	 * vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz)
@@ -309,6 +313,7 @@ public:
 		Each solutions vector contains the angles with this order: RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll
 	 * */
 	std::vector<std::vector<float> > inverseRightLeg(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseRightLeg(kmatTable targetPoint);
 
 };
 
