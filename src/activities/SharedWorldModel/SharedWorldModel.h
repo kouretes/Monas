@@ -29,7 +29,7 @@ private:
 	SharedWorldInfo swi;
 
 	int idx, count;
-	float robot_x[numOfRobots], robot_y[numOfRobots], bd[numOfRobots];
+	float robot_x[numOfRobots], robot_y[numOfRobots], robot_phi[numOfRobots], bd[numOfRobots];
 	float bx, by;
 
 };

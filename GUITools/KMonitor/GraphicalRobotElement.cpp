@@ -19,6 +19,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	teamColor = 1;
 
 	currentWIM.Clear();
+	currentSWIM.Clear();
 	currentObsm.Clear();
 	ParticlesList.clear();
 
@@ -68,6 +69,16 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
 	Robot = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
 	Ball = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
+	
+	Teammates[0] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::magenta));
+	Teammates[1] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::green));
+	Teammates[2] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::blue));
+	Teammates[3] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::red));
+	Teammates[4] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::cyan));
+	
+	for(int i=0;i<numOfRobots;i++){
+		TeammateDirections[i] = this->parentScene->addLine(QLineF(),penForRobotDirection);
+	}
 
 	VisionBall = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::white));
 
@@ -96,6 +107,13 @@ GraphicalRobotElement::~GraphicalRobotElement()
 
 	if(Robot)
 		delete Robot;
+	
+	for(int i=0;i<numOfRobots;i++){
+		if(Teammates[i])
+			delete Teammates[i];
+		if(TeammateDirections[i])
+			delete TeammateDirections[i];
+	}
 
 	if(Ball)
 		delete Ball;
@@ -193,6 +211,12 @@ void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim)
 	}
 }
 
+void GraphicalRobotElement::setCurrentSWIM(SharedWorldInfo nswim)
+{
+	currentSWIM.Clear();
+	currentSWIM = nswim;
+}
+
 void GraphicalRobotElement::setCurrentGSM(GameStateMessage gsm)
 {
 	QString playerNumber = "No Available number";
@@ -237,18 +261,59 @@ void GraphicalRobotElement::setRobotVisible(bool visible)
 
 }
 
+void GraphicalRobotElement::setTeammatesVisible(bool visible)
+{
+	for(int i=0;i<numOfRobots;i++){
+		Teammates[i]->setVisible(visible);
+		TeammateDirections[i]->setVisible(visible);
+	}
+}
+
+void GraphicalRobotElement::setTeammateVisible(int idx, bool visible)
+{
+	if (visible == false)
+	{
+		Teammates[idx]->setVisible(false);
+		TeammateDirections[idx]->setVisible(false);
+
+	}else
+	{
+		Teammates[idx]->setVisible(true);
+		TeammateDirections[idx]->setVisible(true);
+	}
+
+}
+
 void GraphicalRobotElement::updateRobotRect()
 {
 	if(this->currentWIM.has_myposition())
 	{
 		Robot->setRect(this->parentScene->rectFromFC(this->currentWIM.myposition().x()*1000,
 				this->currentWIM.myposition().y()*1000, 150, 150));
-			RobotDirection->setLine(this->parentScene->lineFromFCA(this->currentWIM.myposition().x()*1000,
+		RobotDirection->setLine(this->parentScene->lineFromFCA(this->currentWIM.myposition().x()*1000,
 				this->currentWIM.myposition().y()*1000, this->currentWIM.myposition().phi(), 200));
 	}else
 	{
 		Robot->setRect( 0, 0, 0, 0);
 		RobotDirection->setLine(0, 0, 0, 0);
+	}
+}
+
+
+void GraphicalRobotElement::updateTeammatesRects()
+{
+	int idx;
+	if(currentSWIM.teammateposition_size() != 0){
+		//std::cout << currentSWIM.teammateposition_size() << "\n";
+		for(idx=0;idx<numOfRobots;idx++){
+			setTeammateVisible(idx,false);
+		}
+		for(idx=0;idx<currentSWIM.teammateposition_size();idx++){
+			//std::cout << this->currentSWIM.teammateposition(idx).pose().x() << " = x \n";
+			Teammates[idx]->setRect(this->parentScene->rectFromFC(this->currentSWIM.teammateposition(idx).pose().x()*1000, this->currentSWIM.teammateposition(idx).pose().y()*1000, 150, 150));
+			TeammateDirections[idx]->setLine(this->parentScene->lineFromFCA(this->currentSWIM.teammateposition(idx).pose().x()*1000, this->currentSWIM.teammateposition(idx).pose().y()*1000, this->currentSWIM.teammateposition(idx).pose().phi(), 200));
+			setTeammateVisible(idx,true);
+		}
 	}
 }
 

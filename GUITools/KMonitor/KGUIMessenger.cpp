@@ -137,6 +137,15 @@ void KGUIMessenger::allocateReceivedMessages()
 
 				emit worldInfoUpdate(wim, currentRHost);
 			}
+			else if (incomingMessages.at(i).msg->GetTypeName()=="SharedWorldInfo" && (myGWRequestedHosts.contains(currentRHost)||(myLWRequestedHost ==currentRHost)))
+			{
+				//std::cout << "incomingMessages == WorldInfo " << std::endl;
+				SharedWorldInfo swim;
+				swim.Clear();
+				swim.CopyFrom(*(incomingMessages.at(i).msg));
+
+				emit sharedWorldInfoUpdate(swim, currentRHost);
+			}
 			else if (incomingMessages.at(i).msg->GetTypeName()=="ObservationMessage" && myLWRequestedHost == currentRHost)
 			{
 				//std::cout << "incomingMessages == ObservationMessage " << std::endl;

@@ -37,6 +37,8 @@ int SharedWorldModel::Execute()
 		robot_x[i] = INIT_VALUE;
 		robot_y[i] = INIT_VALUE;
 	}
+    swi.Clear();
+    swi.add_teammateposition(); //add position for self
 
 	//Other robots' WorldInfo and ball distances
 	if(!h.get() || (h && h->entrylist_size() == 0))
@@ -59,6 +61,20 @@ int SharedWorldModel::Execute()
 					//                   Logger::Instance().WriteMsg("SharedWorldModel", "Host Name: " + _toString((*fit).hostname()) + " \tRobot x: " + _toString(robot_x[count]) + " Robot y: " + _toString(robot_y[count]), Logger::Info);
 					robot_x[count] = wim->myposition().x();
                     robot_y[count] = wim->myposition().y();
+                    robot_phi[count] = wim->myposition().phi();
+
+                    RobotPose rPose;
+                    rPose.set_x(robot_x[count]);
+                    rPose.set_y(robot_y[count]);
+                    rPose.set_phi(robot_phi[count]);
+
+                    TeammatePose tPose;
+                    tPose.mutable_pose()->CopyFrom(rPose);
+                    tPose.set_robotid(555); //test
+
+                    swi.add_teammateposition();
+                    swi.mutable_teammateposition(count)->CopyFrom(tPose);
+
                     if (wim->balls_size() > 0)
 					{
 						bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
@@ -75,11 +91,23 @@ int SharedWorldModel::Execute()
 	//Local WorldInfo and ball distance
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 
-	if(wim != 0)
+	if(wim != 0){
 		if(wim.get() != 0)
 		{
 			robot_x[0] = wim->myposition().x();
 			robot_y[0] = wim->myposition().y();
+			robot_phi[0] = wim->myposition().phi();
+
+			RobotPose rPose;
+            rPose.set_x(robot_x[0]);
+            rPose.set_y(robot_y[0]);
+            rPose.set_phi(robot_phi[0]);
+
+            TeammatePose tPose;
+            tPose.mutable_pose()->CopyFrom(rPose);
+            tPose.set_robotid(444); //test
+
+            swi.mutable_teammateposition(0)->CopyFrom(tPose);
 
 			//            Logger::Instance().WriteMsg("SharedWorldModel", "Local World info: Robot x: " + _toString(robot_x[0]) + " Robot y: " + _toString(robot_y[0]), Logger::Info);
 			if (wim->balls_size() > 0)
@@ -97,6 +125,7 @@ int SharedWorldModel::Execute()
 			swi.mutable_playerclosesttoball()->set_y(robot_y[idx]);
 			_blk.publishData(swi, "worldstate");
 		}
+	}
 }
 
 int SharedWorldModel::findClosestRobot()

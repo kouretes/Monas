@@ -23,12 +23,13 @@ TCPSocket * LocalWorldState::sock;
 
 void LocalWorldState::UserInit()
 {
+	
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
-	Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
+	Logger::Instance().WriteMsg("Localization", "LocalWorldState Initialized", Logger::Info);
 	firstOdometry = true;
 	serverpid = -1;
 	debugmode = false;
@@ -38,6 +39,10 @@ void LocalWorldState::UserInit()
 	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
 	//MyWorld.add_balls();
 	currentRobotAction = MotionStateMessage::IDLE;
+
+    //read xml files
+    ReadLocConf();
+    ReadFieldConf();
 
 	localizationWorld.Initialize();
 	//localizationWorld.setParticlesPoseUniformly();
@@ -67,11 +72,36 @@ void LocalWorldState::UserInit()
 	robotmovement.Rotation.ratiodev = 0.55;
 	robotmovement.Rotation.Emean = 0.0;// systematic error out
 	robotmovement.Rotation.Edev = 0.0;
-
 }
 
 void LocalWorldState::Reset(){
+    //ReadLocConf();
+    //ReadFieldConf();
+}
 
+void LocalWorldState::ReadLocConf()
+{
+    localizationWorld.robustmean=atoi(_xml.findValueForKey("Localizationconf.robustmean").front().c_str());
+    localizationWorld.partclsNum=atoi(_xml.findValueForKey("Localizationconf.partclsNum").front().c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("Localizationconf.SpreadParticlesDeviation").front().c_str());
+    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("Localizationconf.rotation_deviation").front().c_str());
+    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").front().c_str());
+    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").front().c_str());
+    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").front().c_str());
+    Logger::Instance().WriteMsg("Localization", "Localization parameters loaded" , Logger::Info);
+}
+
+void LocalWorldState::ReadFieldConf()
+{
+    localizationWorld.CarpetMaxX=atof(_xml.findValueForKey("Field.CarpetMaxX").front().c_str());
+    localizationWorld.CarpetMinX=atof(_xml.findValueForKey("Field.CarpetMinX").front().c_str());
+    localizationWorld.CarpetMaxY=atof(_xml.findValueForKey("Field.CarpetMaxY").front().c_str());
+    localizationWorld.CarpetMinY=atof(_xml.findValueForKey("Field.CarpetMinY").front().c_str());
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").front().c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").front().c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").front().c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").front().c_str());
+	Logger::Instance().WriteMsg("Localization", "Field parameters loaded", Logger::Info);
 }
 
 int LocalWorldState::Execute()
@@ -124,6 +154,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 	Ball nearest_filtered_ball, nearest_nofilter_ball;
 	float dt;
 	bool ballseen = false;
+	
 	if (obsm.get())
 	{
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
@@ -194,16 +225,18 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 		{
 			//time = newtime;
 			last_observation_time = now; //So it wont try to delete already delete ball
-			if (MyWorld.balls_size() > 0)
+			if (MyWorld.balls_size() > 0){
 				MyWorld.clear_balls();
+			}
 		} else
 		{
 			duration = now - last_filter_time;
 			last_filter_time = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-			if(myBall.get_filter_variance()>4 && MyWorld.balls_size() > 0) //Std = 2m
+			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
+			}
 			if (MyWorld.balls_size() > 0)
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
 		}
@@ -243,10 +276,7 @@ void LocalWorldState::process_messages()
 			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
 			tmpOM.Bearing.Edev = TO_RAD(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
-			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);*/
+			
 
 			if (localizationWorld.KFeaturesmap.count(id) != 0)
 			{

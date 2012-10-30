@@ -165,20 +165,11 @@ int KImageExtractor::currentCameraIsBottom() const
 
 float KImageExtractor::getExpUs() const
 {
-#ifdef WEBOTS
-	return 1.0f;
-#else
 	return lastexpusec;
-#endif
 }
 
 
 float KImageExtractor::getScale() const
 {
 	return 1.0f;
-#ifdef WEBOTS
-	return 1.0f;
-#else
-	return refexpusec / lastexpusec;
-#endif
 }

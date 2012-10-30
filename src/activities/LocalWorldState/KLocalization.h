@@ -8,6 +8,7 @@
 #ifndef KLOCALIZATION_H_
 #define KLOCALIZATION_H_
 
+#include <boost/random.hpp>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -127,11 +128,16 @@ typedef struct blf
 	double weightconfidence;
 } belief;
 
+//random genetator
+typedef boost::mt19937 r_gen;
+
 class KLocalization
 {
 public:
 
-	//Random number generetors
+    //random generator
+    r_gen generator;
+
 
 	float NumberOfParticlesSpreadAfterFall;
 	unsigned int robustmean;
@@ -205,7 +211,7 @@ public:
 	double normpdf(double diff, double dev);
 
 	//This function resamples the particles with the new weigths and reposition the particles given the new weights
-	void rouletteResample();
+	void rouletteResampleAndNormalize();
 
 	//Initialize the particles of the filter
 	void initParticles();
@@ -214,21 +220,6 @@ public:
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts decimal degrees to radians             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double deg2rad(double deg)
-	{
-		return (deg * M_PI / 180.0);
-	}
-
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts radians to decimal degrees             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double rad2deg(double rad)
-	{
-		return (rad * 180.0 / M_PI);
-	}
 };
 
 #endif /* KLOCALIZATION_H_ */

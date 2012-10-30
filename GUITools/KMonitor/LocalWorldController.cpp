@@ -88,6 +88,13 @@ void LocalWorldController::newTreeElementRequested(QTreeWidgetItem* item)
 		else
 			LWSGVMWCmdVisible(myCurrentLWRequestedHost, true);
 
+	}else if(ui->checkTree->itemAt(0,0)->indexOfChild(item) == 8 )
+	{
+		if(item->checkState(0) == 0)
+			LWSGVTeammatesVisible(myCurrentLWRequestedHost, false);
+		else
+			LWSGVTeammatesVisible(myCurrentLWRequestedHost, true);
+
 	}else
 	{
 		if(item->checkState(0) == 0)
@@ -140,6 +147,19 @@ void LocalWorldController::worldInfoUpdateHandler(WorldInfo nwim, QString host)
 	}
 }
 
+void LocalWorldController::sharedWorldInfoUpdateHandler(SharedWorldInfo nswim, QString host)
+{
+	GraphicalRobotElement* element = paintArea->findGraphicalRobotItem(host);
+
+	if(element !=NULL)
+	{
+		element->setCurrentSWIM(nswim);
+		if(element->getLWSTeammatesVisible()){
+			element->updateTeammatesRects();
+		}
+	}
+}
+
 void LocalWorldController::LWSGVUnionistLineVisible(GraphicalRobotElement *robotElement)
 {
 
@@ -177,8 +197,6 @@ void LocalWorldController::LWSGVRobotVisible(QString host, bool visible)
 		robotElement->setLWSRobotVisible(visible);
 		LWSGVUnionistLineVisible(robotElement);
 	}
-	
-
 }
 
 void LocalWorldController::LWSGVBallVisible(QString host, bool visible)
@@ -379,6 +397,28 @@ void LocalWorldController::LWSGVMWCmdVisible(QString host, bool visible)
 	}
 
 }
+
+void LocalWorldController::LWSGVTeammatesVisible(QString host, bool visible)
+{
+	GraphicalRobotElement *robotElement = NULL;
+
+	robotElement = paintArea->findGraphicalRobotItem( host );
+
+	if(robotElement == NULL )
+	{
+		if(paintArea->getRobotList().count() != 0)
+			removeGraphicalElement(paintArea->getRobotList().at(0)->getHostId());
+
+		robotElement = paintArea->newGraphicalRobotItem(host);
+	}
+
+	if (robotElement != NULL)
+	{
+		robotElement->setLWSTeammatesVisible(visible);
+	}
+
+}
+
 
 void LocalWorldController::motionCommandUpdateHandler(MotionWalkMessage wmot, QString host)
 {

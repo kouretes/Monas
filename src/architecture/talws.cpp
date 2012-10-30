@@ -9,10 +9,6 @@
 #include "config.h"
 #include "architecture/archConfig.h"
 
-#ifdef DLIB_FUNCTIONALITY
-#include "hal/dlib_fnc.h"
-#endif // DLIB_FUNCTIONALITY
-
 #include "activities/activityRegistry.h"
 #include "providers/providerRegistry.h"
 
@@ -46,20 +42,11 @@ Talws::Talws ()
 			std::vector<std::string> activities;
 
 			for ( unsigned int i = 0; i < ActivityNodes.size(); i++ )
-			{
+			{	
 				if(ActivityNodes[i].attrb["Enable"] == 1){
-#ifdef DLIB_FUNCTIONALITY
-					void* dlib_handler = DLibFnc::_open( ("lib" + ActivityNodes[i].value + ".so").c_str());
-
-					if ( ! dlib_handler )
-					{
-						Logger::Instance().WriteMsg("Talws", DLibFnc::_error(), Logger::Info );
-					}
-
-#endif //DLIB_FUNCTIONALITY
 					activities.push_back( ActivityNodes[i].value );
-					Logger::Instance().WriteMsg("Talws", "Agent: " + AgentName + " Registering module: " + activities[i], Logger::ExtraInfo );
-				}
+					Logger::Instance().WriteMsg("Talws", "Agent: " + AgentName + " Registering module: " + activities.back(), Logger::ExtraInfo );
+				}				
 			}
 
 			KSystem::ThreadConfig tcfg;

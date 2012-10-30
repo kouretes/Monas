@@ -21,6 +21,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* SharedWorldInfo_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   SharedWorldInfo_reflection_ = NULL;
+const ::google::protobuf::Descriptor* TeammatePose_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  TeammatePose_reflection_ = NULL;
 const ::google::protobuf::Descriptor* RobotPose_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   RobotPose_reflection_ = NULL;
@@ -72,8 +75,9 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(WorldInfo));
   SharedWorldInfo_descriptor_ = file->message_type(1);
-  static const int SharedWorldInfo_offsets_[1] = {
+  static const int SharedWorldInfo_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, playerclosesttoball_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, teammateposition_),
   };
   SharedWorldInfo_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -86,7 +90,23 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(SharedWorldInfo));
-  RobotPose_descriptor_ = file->message_type(2);
+  TeammatePose_descriptor_ = file->message_type(2);
+  static const int TeammatePose_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TeammatePose, pose_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TeammatePose, robotid_),
+  };
+  TeammatePose_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      TeammatePose_descriptor_,
+      TeammatePose::default_instance_,
+      TeammatePose_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TeammatePose, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TeammatePose, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(TeammatePose));
+  RobotPose_descriptor_ = file->message_type(3);
   static const int RobotPose_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, y_),
@@ -104,7 +124,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(RobotPose));
-  Ball_descriptor_ = file->message_type(3);
+  Ball_descriptor_ = file->message_type(4);
   static const int Ball_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, relativex_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, relativey_),
@@ -126,7 +146,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Ball));
-  UnknownObjects_descriptor_ = file->message_type(4);
+  UnknownObjects_descriptor_ = file->message_type(5);
   static const int UnknownObjects_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, relativex_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, relativey_),
@@ -145,7 +165,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(UnknownObjects));
-  LocalizationResetMessage_descriptor_ = file->message_type(5);
+  LocalizationResetMessage_descriptor_ = file->message_type(6);
   static const int LocalizationResetMessage_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, kickoff_),
@@ -161,7 +181,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationResetMessage));
-  LocalizationData_descriptor_ = file->message_type(6);
+  LocalizationData_descriptor_ = file->message_type(7);
   static const int LocalizationData_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, world_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, particles_),
@@ -179,7 +199,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationData));
-  header_descriptor_ = file->message_type(7);
+  header_descriptor_ = file->message_type(8);
   static const int header_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgbytesize_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgname_),
@@ -195,7 +215,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(header));
-  LocalizationDataForGUI_descriptor_ = file->message_type(8);
+  LocalizationDataForGUI_descriptor_ = file->message_type(9);
   static const int LocalizationDataForGUI_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationDataForGUI, particles_),
   };
@@ -227,6 +247,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     SharedWorldInfo_descriptor_, &SharedWorldInfo::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    TeammatePose_descriptor_, &TeammatePose::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     RobotPose_descriptor_, &RobotPose::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Ball_descriptor_, &Ball::default_instance());
@@ -249,6 +271,8 @@ void protobuf_ShutdownFile_WorldInfo_2eproto() {
   delete WorldInfo_reflection_;
   delete SharedWorldInfo::default_instance_;
   delete SharedWorldInfo_reflection_;
+  delete TeammatePose::default_instance_;
+  delete TeammatePose_reflection_;
   delete RobotPose::default_instance_;
   delete RobotPose_reflection_;
   delete Ball::default_instance_;
@@ -278,34 +302,37 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "RobotPose\022\024\n\005Balls\030\002 \003(\0132\005.Ball\022\037\n\013Other"
     "Robots\030\003 \003(\0132\n.RobotPose\022\035\n\004UFOs\030\004 \003(\0132\017"
     ".UnknownObjects\022\030\n\tGlobBalls\030\005 \003(\0132\005.Bal"
-    "l\":\n\017SharedWorldInfo\022\'\n\023playerClosestToB"
-    "all\030\001 \002(\0132\n.RobotPose\"f\n\tRobotPose\022\022\n\001X\030"
-    "\001 \002(\002:\007-100000\022\022\n\001Y\030\002 \002(\002:\007-100000\022\024\n\003ph"
-    "i\030\003 \002(\002:\007-100000\022\033\n\nconfidence\030\004 \002(\002:\007-1"
-    "00000\"\372\001\n\004Ball\022\032\n\trelativeX\030\001 \002(\002:\007-1000"
-    "00\022\032\n\trelativeY\030\002 \002(\002:\007-100000\022\037\n\016relati"
-    "veXspeed\030\003 \002(\002:\007-100000\022\037\n\016relativeYspee"
-    "d\030\004 \002(\002:\007-100000\022\032\n\tvarianceX\030\005 \002(\002:\007-10"
-    "0000\022\032\n\tvarianceY\030\006 \002(\002:\007-100000\022\037\n\016vari"
-    "anceXspeed\030\007 \002(\002:\007-100000\022\037\n\016varianceYsp"
-    "eed\030\010 \002(\002:\007-100000\"\243\001\n\016UnknownObjects\022\032\n"
-    "\trelativeX\030\001 \001(\002:\007-100000\022\032\n\trelativeY\030\002"
-    " \001(\002:\007-100000\022\027\n\006height\030\003 \001(\002:\007-100000\022\037"
-    "\n\016relativeXspeed\030\004 \001(\002:\007-100000\022\037\n\016relat"
-    "iveYspeed\030\005 \001(\002:\007-100000\"9\n\030Localization"
-    "ResetMessage\022\014\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 "
-    "\002(\010\"\232\001\n\020LocalizationData\022\031\n\005World\030\001 \002(\0132"
-    "\n.WorldInfo\022\035\n\tParticles\030\002 \003(\0132\n.RobotPo"
-    "se\022!\n\rRobotPosition\030\003 \002(\0132\n.RobotPose\022)\n"
-    "\014Observations\030\004 \002(\0132\023.ObservationMessage"
-    "\"A\n\006header\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022"
-    "\032\n\013NextMsgName\030\003 \002(\014:\005Undef\"7\n\026Localizat"
-    "ionDataForGUI\022\035\n\tParticles\030\001 \003(\0132\n.Robot"
-    "Pose", 1124);
+    "l\"c\n\017SharedWorldInfo\022\'\n\023playerClosestToB"
+    "all\030\001 \002(\0132\n.RobotPose\022\'\n\020teammatePositio"
+    "n\030\002 \003(\0132\r.TeammatePose\"9\n\014TeammatePose\022\030"
+    "\n\004pose\030\001 \002(\0132\n.RobotPose\022\017\n\007robotId\030\002 \002("
+    "\r\"f\n\tRobotPose\022\022\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030"
+    "\002 \002(\002:\007-100000\022\024\n\003phi\030\003 \002(\002:\007-100000\022\033\n\n"
+    "confidence\030\004 \002(\002:\007-100000\"\372\001\n\004Ball\022\032\n\tre"
+    "lativeX\030\001 \002(\002:\007-100000\022\032\n\trelativeY\030\002 \002("
+    "\002:\007-100000\022\037\n\016relativeXspeed\030\003 \002(\002:\007-100"
+    "000\022\037\n\016relativeYspeed\030\004 \002(\002:\007-100000\022\032\n\t"
+    "varianceX\030\005 \002(\002:\007-100000\022\032\n\tvarianceY\030\006 "
+    "\002(\002:\007-100000\022\037\n\016varianceXspeed\030\007 \002(\002:\007-1"
+    "00000\022\037\n\016varianceYspeed\030\010 \002(\002:\007-100000\"\243"
+    "\001\n\016UnknownObjects\022\032\n\trelativeX\030\001 \001(\002:\007-1"
+    "00000\022\032\n\trelativeY\030\002 \001(\002:\007-100000\022\027\n\006hei"
+    "ght\030\003 \001(\002:\007-100000\022\037\n\016relativeXspeed\030\004 \001"
+    "(\002:\007-100000\022\037\n\016relativeYspeed\030\005 \001(\002:\007-10"
+    "0000\"9\n\030LocalizationResetMessage\022\014\n\004type"
+    "\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\"\232\001\n\020Localization"
+    "Data\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tParti"
+    "cles\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPosition\030"
+    "\003 \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002(\0132"
+    "\023.ObservationMessage\"A\n\006header\022\033\n\017NextMs"
+    "gByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014"
+    ":\005Undef\"7\n\026LocalizationDataForGUI\022\035\n\tPar"
+    "ticles\030\001 \003(\0132\n.RobotPose", 1224);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
   SharedWorldInfo::default_instance_ = new SharedWorldInfo();
+  TeammatePose::default_instance_ = new TeammatePose();
   RobotPose::default_instance_ = new RobotPose();
   Ball::default_instance_ = new Ball();
   UnknownObjects::default_instance_ = new UnknownObjects();
@@ -315,6 +342,7 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   LocalizationDataForGUI::default_instance_ = new LocalizationDataForGUI();
   WorldInfo::default_instance_->InitAsDefaultInstance();
   SharedWorldInfo::default_instance_->InitAsDefaultInstance();
+  TeammatePose::default_instance_->InitAsDefaultInstance();
   RobotPose::default_instance_->InitAsDefaultInstance();
   Ball::default_instance_->InitAsDefaultInstance();
   UnknownObjects::default_instance_->InitAsDefaultInstance();
@@ -722,6 +750,7 @@ void WorldInfo::Swap(WorldInfo* other) {
 
 #ifndef _MSC_VER
 const int SharedWorldInfo::kPlayerClosestToBallFieldNumber;
+const int SharedWorldInfo::kTeammatePositionFieldNumber;
 #endif  // !_MSC_VER
 
 SharedWorldInfo::SharedWorldInfo()
@@ -781,6 +810,7 @@ void SharedWorldInfo::Clear() {
       if (playerclosesttoball_ != NULL) playerclosesttoball_->::RobotPose::Clear();
     }
   }
+  teammateposition_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -800,6 +830,21 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(18)) goto parse_teammatePosition;
+        break;
+      }
+      
+      // repeated .TeammatePose teammatePosition = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_teammatePosition:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_teammateposition()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_teammatePosition;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -828,6 +873,12 @@ void SharedWorldInfo::SerializeWithCachedSizes(
       1, this->playerclosesttoball(), output);
   }
   
+  // repeated .TeammatePose teammatePosition = 2;
+  for (int i = 0; i < this->teammateposition_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->teammateposition(i), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -841,6 +892,13 @@ void SharedWorldInfo::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         1, this->playerclosesttoball(), target);
+  }
+  
+  // repeated .TeammatePose teammatePosition = 2;
+  for (int i = 0; i < this->teammateposition_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->teammateposition(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -862,6 +920,14 @@ int SharedWorldInfo::ByteSize() const {
     }
     
   }
+  // repeated .TeammatePose teammatePosition = 2;
+  total_size += 1 * this->teammateposition_size();
+  for (int i = 0; i < this->teammateposition_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->teammateposition(i));
+  }
+  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -887,6 +953,7 @@ void SharedWorldInfo::MergeFrom(const ::google::protobuf::Message& from) {
 
 void SharedWorldInfo::MergeFrom(const SharedWorldInfo& from) {
   GOOGLE_CHECK_NE(&from, this);
+  teammateposition_.MergeFrom(from.teammateposition_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_playerclosesttoball()) {
       mutable_playerclosesttoball()->::RobotPose::MergeFrom(from.playerclosesttoball());
@@ -913,12 +980,16 @@ bool SharedWorldInfo::IsInitialized() const {
   if (has_playerclosesttoball()) {
     if (!this->playerclosesttoball().IsInitialized()) return false;
   }
+  for (int i = 0; i < teammateposition_size(); i++) {
+    if (!this->teammateposition(i).IsInitialized()) return false;
+  }
   return true;
 }
 
 void SharedWorldInfo::Swap(SharedWorldInfo* other) {
   if (other != this) {
     std::swap(playerclosesttoball_, other->playerclosesttoball_);
+    teammateposition_.Swap(&other->teammateposition_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -930,6 +1001,262 @@ void SharedWorldInfo::Swap(SharedWorldInfo* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = SharedWorldInfo_descriptor_;
   metadata.reflection = SharedWorldInfo_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int TeammatePose::kPoseFieldNumber;
+const int TeammatePose::kRobotIdFieldNumber;
+#endif  // !_MSC_VER
+
+TeammatePose::TeammatePose()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void TeammatePose::InitAsDefaultInstance() {
+  pose_ = const_cast< ::RobotPose*>(&::RobotPose::default_instance());
+}
+
+TeammatePose::TeammatePose(const TeammatePose& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void TeammatePose::SharedCtor() {
+  _cached_size_ = 0;
+  pose_ = NULL;
+  robotid_ = 0u;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+TeammatePose::~TeammatePose() {
+  SharedDtor();
+}
+
+void TeammatePose::SharedDtor() {
+  if (this != default_instance_) {
+    delete pose_;
+  }
+}
+
+void TeammatePose::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* TeammatePose::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return TeammatePose_descriptor_;
+}
+
+const TeammatePose& TeammatePose::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_WorldInfo_2eproto();  return *default_instance_;
+}
+
+TeammatePose* TeammatePose::default_instance_ = NULL;
+
+TeammatePose* TeammatePose::New() const {
+  return new TeammatePose;
+}
+
+void TeammatePose::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_pose()) {
+      if (pose_ != NULL) pose_->::RobotPose::Clear();
+    }
+    robotid_ = 0u;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool TeammatePose::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .RobotPose pose = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_pose()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_robotId;
+        break;
+      }
+      
+      // required uint32 robotId = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_robotId:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &robotid_)));
+          set_has_robotid();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void TeammatePose::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .RobotPose pose = 1;
+  if (has_pose()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->pose(), output);
+  }
+  
+  // required uint32 robotId = 2;
+  if (has_robotid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->robotid(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* TeammatePose::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .RobotPose pose = 1;
+  if (has_pose()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->pose(), target);
+  }
+  
+  // required uint32 robotId = 2;
+  if (has_robotid()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->robotid(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int TeammatePose::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .RobotPose pose = 1;
+    if (has_pose()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->pose());
+    }
+    
+    // required uint32 robotId = 2;
+    if (has_robotid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->robotid());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void TeammatePose::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const TeammatePose* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const TeammatePose*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void TeammatePose::MergeFrom(const TeammatePose& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_pose()) {
+      mutable_pose()->::RobotPose::MergeFrom(from.pose());
+    }
+    if (from.has_robotid()) {
+      set_robotid(from.robotid());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void TeammatePose::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TeammatePose::CopyFrom(const TeammatePose& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TeammatePose::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  if (has_pose()) {
+    if (!this->pose().IsInitialized()) return false;
+  }
+  return true;
+}
+
+void TeammatePose::Swap(TeammatePose* other) {
+  if (other != this) {
+    std::swap(pose_, other->pose_);
+    std::swap(robotid_, other->robotid_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata TeammatePose::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = TeammatePose_descriptor_;
+  metadata.reflection = TeammatePose_reflection_;
   return metadata;
 }
 

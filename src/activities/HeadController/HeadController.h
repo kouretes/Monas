@@ -74,8 +74,6 @@ private:
 	bool readRobotConfiguration(const std::string& file_name); 	//this function reads robot's initial position in the field from XML file
 	bool readGoalConfiguration(const std::string& file_name); 	//this function reads the position of the goals
 
-	float dist(float x1, float y1, float x2, float y2);
-
 	/* Incoming Messages */
 	boost::shared_ptr<const HeadControlMessage> control;
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;

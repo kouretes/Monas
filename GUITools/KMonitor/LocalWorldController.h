@@ -41,6 +41,7 @@ public slots:
 	void UnsubscriptionHandler(QString);
 	void setKGFCGameStateInfo(GameStateMessage, QString);
 	void worldInfoUpdateHandler(WorldInfo, QString);
+	void sharedWorldInfoUpdateHandler(SharedWorldInfo, QString);
 	void observationMessageUpdateHandler(ObservationMessage, QString);
 	void localizationDataUpdateHandler(LocalizationDataForGUI, QString);
 	void motionCommandUpdateHandler(MotionWalkMessage, QString);
@@ -66,6 +67,7 @@ private:
 	void LWSGVHFOVVisible(QString, bool);
 	void LWSGVTraceVisible(QString, bool);
 	void LWSGVMWCmdVisible(QString, bool);
+	void LWSGVTeammatesVisible(QString, bool);
 
 protected:
 	void resizeEvent(QResizeEvent* event);

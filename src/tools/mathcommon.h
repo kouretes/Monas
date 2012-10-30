@@ -11,7 +11,9 @@ namespace KMath{
 inline static double TO_RAD(double X) { return X*TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
 inline static double TO_DEG(double X) { return X/TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
 
-#define DISTANCE(x1,x2,y1,y2) (sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)))
+template<typename T> inline T DISTANCE(T x1, T x2, T y1, T y2){
+	return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+}
 
 template<typename T> inline T norm2(T dx, T dy)
 {
