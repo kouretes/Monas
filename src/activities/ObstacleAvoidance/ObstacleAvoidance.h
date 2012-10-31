@@ -107,14 +107,6 @@ private:
 	double cellCenterX[TotalRings][N],
 	       cellCenterY[TotalRings][N];
 
-
-	/*********** OpenCV Drawing ***********/
-	//int cvHighgui;
-	//IplImage *img;
-	//int gridImgH[TotalRings+1][N],
-	//gridImgV[TotalRings+1][N];
-	//int guiX[(M+4)][N], guiY[(M+4)][N];
-
 	/*********** Map Update ***********/
 
 	double Right[KDeviceLists::US_SIZE], Left[KDeviceLists::US_SIZE], empty[KDeviceLists::US_SIZE];
