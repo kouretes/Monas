@@ -6,7 +6,6 @@
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
-#include "messages/Kimage.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/WorldInfo.pb.h"
@@ -124,7 +123,6 @@ private:
 	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
 	void gotoPosition(float target_x, float target_y, float target_phi);
 
-	void calibrate();
 
 	bool readConfiguration(const std::string& file_name); 		//this function reads team's configuration info from XML file
 	bool readRobotConfiguration(const std::string& file_name); 	//this function reads robot's initial position in the field from XML file
@@ -170,7 +168,6 @@ private:
 	SensorData HeadPitch;
 	float psign, ysign;
 	unsigned waiting;
-	int calibrated;
 
 	int forball, forpost;
 	

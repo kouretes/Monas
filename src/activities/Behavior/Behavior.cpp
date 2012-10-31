@@ -56,7 +56,6 @@ void Behavior::UserInit()
 	startscan = true;
 	//scanOK = true;
 	pathOK = true;
-	calibrated = 0;
 	forball = 0;
 	forpost = 0;
 	kickoff = false;
@@ -154,7 +153,7 @@ int Behavior::Execute()
 		}
 
 		// Publish message to head controller to run check for ball
-		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+		hcontrol->mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
 		_blk.publishState(*hcontrol, "behavior");
 
 		if(bfm != 0) {
@@ -223,11 +222,6 @@ int Behavior::Execute()
 					}
 					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
 					approachBallRoleDependent(bx, by);
-
-					//if (scanOK)
-						//HeadScanStepIntelligent();
-
-					//					HeadScanStepSmart();
 				}
 			}
 
@@ -299,15 +293,6 @@ void Behavior::read_messages()
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
 	bfm = _blk.readState<BallFoundMessage> ("behavior");
-
-	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
-
-	if (c != NULL)
-	{
-		if (c->status() == 1)
-			calibrated = 2;
-	}
 	
 	if(wim != 0)
 	{
@@ -342,7 +327,6 @@ void Behavior::GetGameState()
 			if (prevGameState == PLAYER_PENALISED)
 			{
 				direction = 1;
-				//			calibrated = 0;
 				lastpenalized = microsec_clock::universal_time();
 				locReset->set_type(PLAYER_PENALISED);
 				locReset->set_kickoff(kickoff);
@@ -356,15 +340,12 @@ void Behavior::GetGameState()
 		}
 		else if (gameState == PLAYER_INITIAL)
 		{
-			//			if (gameState != prevGameState)
-			calibrated = 0;
 		}
 		else if (gameState == PLAYER_READY)
 		{
 			if (gameState != prevGameState)
 			{
 				stopRobot();
-				calibrated = 0;
 				locReset->set_type(PLAYER_READY);
 				locReset->set_kickoff(kickoff);
 				_blk.publishSignal(*locReset, "worldstate");
@@ -648,8 +629,7 @@ void Behavior::approachBallNewWalk(double ballX, double ballY)
 
 void Behavior::approachBallRoleDependent(double ballX, double ballY)
 {
-	std::cout << ballX << "    " << ballY
-	 << "\n";
+	//std::cout << ballX << "    " << ballY << "\n";
     if (orientation == 1)
 		side = -1;
 	else if (orientation == 3)
@@ -712,15 +692,6 @@ void Behavior::gotoPosition(float target_x, float target_y, float target_phi)
 }
 
 
-/* Vision Calibration */
-
-void Behavior::calibrate()
-{
-	KCalibrateCam v;
-	v.set_status(0);
-	_blk.publishState(v, "vision");
-	calibrated = 1;
-}
 
 /*bool readBehaviorConfiguration(const std::string& file_name)
 {
@@ -919,7 +890,7 @@ void Behavior::checkForPenaltyArea()
 				//send fake obstacle message
 				//               fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
 				fakeDir = 2 * M_PI - wrapTo0_2Pi(robot_phi) - atan2(fakeObstacles[j][1] - robot_y, fakeObstacles[j][0] - robot_x);
-				std::cout << "fakeDir: " << fakeDir << std::endl;
+				//std::cout << "fakeDir: " << fakeDir << std::endl;
 				fom->set_direction(fakeDir);
 				fom->set_distance(fakeDist);
 				fom->set_certainty(1);
@@ -928,7 +899,7 @@ void Behavior::checkForPenaltyArea()
 		}
 	}
 
-	std::cout << "-------------" << std::endl;
+	//std::cout << "-------------" << std::endl;
 }
 
 
