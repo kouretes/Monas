@@ -102,11 +102,9 @@ void Behavior::UserInit()
 	teamColor = TEAM_BLUE;
 	playerNumber = 1;
 	role = ATTACKER;
-	ur = 0.55;
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
 	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	// reads initX, initY, initPhi
 	readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");		// reads blueGoal*, yellowGoal*
-	//readBehaviorConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Behavior.xml");
 	srand(time(0));
 	lastmove = microsec_clock::universal_time();
 	lastball = microsec_clock::universal_time();
@@ -116,14 +114,19 @@ void Behavior::UserInit()
 	ballseen = microsec_clock::universal_time();
 	//    generateFakeObstacles();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
+	Reset();
+	
 }
 
 
 /**
 	TODO
+	Works only for goalie!!!
+	default value??
 */
 void Behavior::Reset(){
-
+	config.ur = atof(_xml.findValueForKey("behavior.ur").front().c_str());
+	Logger::Instance().WriteMsg("Behavior", "Reset done", Logger::Warning);
 }
 
 
@@ -168,33 +171,7 @@ int Behavior::Execute()
 		readytokick = false;
 
 		if(playerNumber == 1 || role == GOALIE) { // goalie role if number 1
-			role = GOALIE;
-			if(ballfound == 1) {
-				
-					fall = toFallOrNotToFall();
-									
-					if(fall == 1) // extend left foot
-					{
-						amot->set_command("goalieLeftFootExtened.xar");
-						_blk.publishSignal(*amot, "motion");
-					}
-					else if(fall == -1) // extend right foot
-					{
-						amot->set_command("goalieRightFootExtened.xar");
-						_blk.publishSignal(*amot, "motion");
-					}
-					else // scan and track for ball
-					{
-						hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
-						_blk.publishState(*hcontrol, "behavior");
-					}
-
-			}
-			else if(ballfound == 0) {
-				hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
-				_blk.publishState(*hcontrol, "behavior");
-			}
-		
+			Goalie();
 		}
 		else { // not goalie behavior
 			if (ballfound == 1)
@@ -722,15 +699,6 @@ void Behavior::calibrate()
 	calibrated = 1;
 }
 
-/*bool readBehaviorConfiguration(const std::string& file_name)
-{
-	XMLConfig config(file_name);
-	
-	if(!config.QueryElement("ur", ur))
-		Logger::Instance().WriteMsg("Behavior", "Configuration file has no ur value, setting to default value: " + _toString(ur), Logger::Error);
-	
-	return true;
-}*/
 
 /* Read Configuration Functions */
 
@@ -932,6 +900,38 @@ void Behavior::checkForPenaltyArea()
 }
 
 
+void Behavior::Goalie()
+{
+	role = GOALIE;
+	if(ballfound == 1) {
+				
+		fall = toFallOrNotToFall();
+									
+		if(fall == 1) // extend left foot
+		{
+			amot->set_command("goalieLeftFootExtened.xar");
+			_blk.publishSignal(*amot, "motion");
+		}
+		else if(fall == -1) // extend right foot
+		{
+			amot->set_command("goalieRightFootExtened.xar");
+			_blk.publishSignal(*amot, "motion");
+		}
+		else // scan and track for ball
+		{
+			hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+			_blk.publishState(*hcontrol, "behavior");
+		}
+
+	}
+	else if(ballfound == 0) {
+		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+		_blk.publishState(*hcontrol, "behavior");
+	}
+
+	return;
+}
+
 int Behavior::toFallOrNotToFall()
 {
 	float x1, y1, dk, ubx, uby, ub;
@@ -958,11 +958,11 @@ int Behavior::toFallOrNotToFall()
 		{
 			Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 1", Logger::Info);
 			
-			ur = 0.55; // old value 0.1 / 1.4
+			// ur old value 0.1 / 1.4
 			ub = sqrt(ubx * ubx + uby * uby);
 			Logger::Instance().WriteMsg("toFallOrNotToFall","UB:"+_toString(ub), Logger::Info);
-			Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(ur), Logger::Info);
-			if(fabs(ub) > ur)
+			Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(config.ur), Logger::Info);
+			if(fabs(ub) > config.ur)
 			{
 				Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 2", Logger::Info);
 			
