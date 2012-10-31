@@ -309,13 +309,13 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 			R = KMath::norm2(SIRParticles.x[p] - Observation[i].Feature.x, SIRParticles.y[p] - Observation[i].Feature.y);
 			OverallWeightEnemyField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2(Observation[i].Feature.y - SIRParticles.y[p], Observation[i].Feature.x - SIRParticles.x[p]);
-			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 			OverallWeightEnemyField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 			//we take the symetric yellow now, so we put a - to the x and y of the observation
 			R = KMath::norm2(SIRParticles.x[p] - (-Observation[i].Feature.x), SIRParticles.y[p] - (-Observation[i].Feature.y));
 			OverallWeightOwnField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2((-Observation[i].Feature.y) - SIRParticles.y[p], (-Observation[i].Feature.x) - SIRParticles.x[p]);
-			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 			OverallWeightOwnField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 		}
 
