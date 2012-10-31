@@ -16,8 +16,8 @@
 #define ANGLEHOR 1.6
 #define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
 
-#define MAXHEADYAWSPEED 1.8
-#define MAXHEADPITCHSPEED 1.8
+//#define MAXHEADYAWSPEED 1.8
+//#define MAXHEADPITCHSPEED 1.8
 
 #define KME_ACTIONPID -1
 
@@ -388,8 +388,8 @@ int MotionController::Execute()
 			{
 				float lastyaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW).sensorvalue();
 				float lastpitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH).sensorvalue();
-				float tyaw = fabs(hm->parameter(0) - lastyaw) / MAXHEADYAWSPEED;
-				float tpitch = fabs(hm->parameter(1) - lastpitch) / MAXHEADPITCHSPEED;
+				float tyaw = fabs(hm->parameter(0) - lastyaw) / hm->parameter(2);
+				float tpitch = fabs(hm->parameter(1) - lastpitch) / hm->parameter(2);
 				float t = tyaw > tpitch ? tyaw : tpitch;
 
 				for (int p = 0; p < HEAD_SIZE; p++)
