@@ -109,7 +109,16 @@ private:
 	    ATTACKER = 0, CENTER_FOR, GOALIE
 	};
 
+	/**
+	 * @struct 
+	 * @brief	
+	 */
+	struct {
+		float ur; // to find better name...
+	} config;
+	
 	int toFallOrNotToFall();
+	void Goalie();
 
 	void velocityWalk(double ix, double iy, double it, double f);
 	void littleWalk(double x, double y, double th);
@@ -171,8 +180,6 @@ private:
 
 	int forball, forpost;
 	
-	//float ur; // value used by goalie function toFallOrNotToFall!!!
-	
 	int fall;	// variable for goalie role to check if he should fall or not.
 
 	bool kickoff;
@@ -182,7 +189,6 @@ private:
 	double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
 	double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
 	float cX, cY, ct;
-	float ur; //Better names plz :P
 	float bd, bb, bx, by, posx, posy;
 	float trackYaw, trackPitch;
 	int side;
