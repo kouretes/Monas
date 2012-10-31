@@ -185,6 +185,7 @@ private:
 	double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
 	double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
 	float cX, cY, ct;
+	float ur; //Better names plz :P
 	float bd, bb, bx, by, posx, posy;
 	float trackYaw, trackPitch;
 	int side;
