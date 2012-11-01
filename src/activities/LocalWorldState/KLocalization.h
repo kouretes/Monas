@@ -23,7 +23,6 @@
 #include "tools/XMLConfig.h"
 #include "messages/RoboCupPlayerData.h"
 
-
 using namespace std;
 
 //A structure used to store statistical data about a recognized feature
@@ -163,7 +162,7 @@ public:
 	float initX[2], initY[2], initPhi[2];
 	int playerNumber;
 	//Particle with the max weight
-	unsigned int max_weight_particle_index;
+	unsigned int maxWeightParticleIndex;
 
 	//The particles we are using
 	parts SIRParticles;
@@ -175,11 +174,10 @@ public:
 	KLocalization();
 	virtual ~KLocalization();
 
-	//initialize localization
+    //initialize localization
 	int Initialize();
 
 	//Functions to read from xml files
-	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
 	int readConfiguration(const std::string& file_name);
 	bool readRobotConf(const std::string& file_name);
 
