@@ -12,10 +12,10 @@
 #include "architecture/archConfig.h"
 #define NO_GAME
 #define MAX_TIME_TO_RESET 15 //in seconds
+
 using namespace std;
-
-
 using namespace KMath;
+
 ACTIVITY_REGISTER(LocalWorldState);
 
 bool LocalWorldState::debugmode = false;
@@ -23,38 +23,37 @@ TCPSocket * LocalWorldState::sock;
 
 void LocalWorldState::UserInit()
 {
-	
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
-	Logger::Instance().WriteMsg("Localization", "LocalWorldState Initialized", Logger::Info);
 	firstOdometry = true;
 	serverpid = -1;
 	debugmode = false;
+	fallBegan = true;
 
-	int max_bytedata_size = 100000;
+	int maxBytedataSize = 100000;
+	data = new char[maxBytedataSize]; //## TODO  FIX THIS BETTER
 
-	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
-	//MyWorld.add_balls();
 	currentRobotAction = MotionStateMessage::IDLE;
 
-    //read xml files
+	//time variables initialization
+    timeStart = boost::posix_time::microsec_clock::universal_time();
+	lastObservationTime = boost::posix_time::microsec_clock::universal_time();
+	lastFilterTime = boost::posix_time::microsec_clock::universal_time();
+
+    //read xml files..set parameters for localizationWorld
     ReadLocConf();
     ReadFieldConf();
-
+    ReadFeatureConf();
 	localizationWorld.Initialize();
-	//localizationWorld.setParticlesPoseUniformly();
-	timeStart = boost::posix_time::microsec_clock::universal_time();
+
 #ifdef NO_GAME
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &LocalWorldState::StartServer, this);
 	pthread_detach(acceptthread);
 #endif
-	fallBegan = true;
-	last_observation_time = boost::posix_time::microsec_clock::universal_time();
-	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
@@ -72,43 +71,21 @@ void LocalWorldState::UserInit()
 	robotmovement.Rotation.ratiodev = 0.55;
 	robotmovement.Rotation.Emean = 0.0;// systematic error out
 	robotmovement.Rotation.Edev = 0.0;
+
+    Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
 }
 
 void LocalWorldState::Reset(){
     //ReadLocConf();
     //ReadFieldConf();
-}
-
-void LocalWorldState::ReadLocConf()
-{
-    localizationWorld.robustmean=atoi(_xml.findValueForKey("Localizationconf.robustmean").front().c_str());
-    localizationWorld.partclsNum=atoi(_xml.findValueForKey("Localizationconf.partclsNum").front().c_str());
-    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("Localizationconf.SpreadParticlesDeviation").front().c_str());
-    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("Localizationconf.rotation_deviation").front().c_str());
-    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").front().c_str());
-    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").front().c_str());
-    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").front().c_str());
-    Logger::Instance().WriteMsg("Localization", "Localization parameters loaded" , Logger::Info);
-}
-
-void LocalWorldState::ReadFieldConf()
-{
-    localizationWorld.CarpetMaxX=atof(_xml.findValueForKey("Field.CarpetMaxX").front().c_str());
-    localizationWorld.CarpetMinX=atof(_xml.findValueForKey("Field.CarpetMinX").front().c_str());
-    localizationWorld.CarpetMaxY=atof(_xml.findValueForKey("Field.CarpetMaxY").front().c_str());
-    localizationWorld.CarpetMinY=atof(_xml.findValueForKey("Field.CarpetMinY").front().c_str());
-    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").front().c_str());
-    localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").front().c_str());
-    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").front().c_str());
-    localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").front().c_str());
-	Logger::Instance().WriteMsg("Localization", "Field parameters loaded", Logger::Info);
+    //ReadFeatureConf();
 }
 
 int LocalWorldState::Execute()
 {
 	now = boost::posix_time::microsec_clock::universal_time();
 
-	process_messages();
+	ProcessMessages();
 
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
@@ -154,7 +131,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 	Ball nearest_filtered_ball, nearest_nofilter_ball;
 	float dt;
 	bool ballseen = false;
-	
+
 	if (obsm.get())
 	{
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
@@ -176,13 +153,13 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				MyWorld.add_balls();
 				myBall.reset(aball.dist(), 0, aball.bearing(), 0);
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-				last_filter_time = now;
+				lastFilterTime = now;
 			} else
 			{
 				//Get estimate ball
 				//Update
-				duration = observation_time - last_filter_time;
-				last_filter_time = observation_time;
+				duration = observation_time - lastFilterTime;
+				lastFilterTime = observation_time;
 				dt = duration.total_microseconds() / 1000000.0f;
 
 				float dist_var = 1.10 - tanh(1.8 / aball.dist()); //observation ... deviation ... leme twra
@@ -190,8 +167,8 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				nearest_filtered_ball = myBall.get_updated_ball_estimate(aball.dist(), dist_var * dist_var, aball.bearing(), 0.03);
 
 				//Predict
-				duration = now - last_filter_time;
-				last_filter_time = now;
+				duration = now - lastFilterTime;
+				lastFilterTime = now;
 				dt = duration.total_microseconds() / 1000000.0f;
 				nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt, robotModel);
 
@@ -200,14 +177,14 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				float distance = distance = KMath::norm2(dx,dy);
 
 				//Check if we must reset the ball
-				duration = observation_time - last_observation_time;
-				last_observation_time = observation_time;
+				duration = observation_time - lastObservationTime;
+				lastObservationTime = observation_time;
 				dt = duration.total_microseconds() / 1000000.0f;
 
 				if (dt > MAX_TIME_TO_RESET && distance > 0.5) //etc... dt > 5sec && distance > 2 m
 				{
 					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
-					last_filter_time = now;
+					lastFilterTime = now;
 					//RESET
 					//cout << "RESETING_BALL" << endl;
 					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
@@ -219,19 +196,19 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 
 	if (!ballseen)
 	{
-		duration = now - last_observation_time;
+		duration = now - lastObservationTime;
 		dt = duration.total_microseconds() / 1000000.0f;
 		if (dt > MAX_TIME_TO_RESET)
 		{
 			//time = newtime;
-			last_observation_time = now; //So it wont try to delete already delete ball
+			lastObservationTime = now; //So it wont try to delete already delete ball
 			if (MyWorld.balls_size() > 0){
 				MyWorld.clear_balls();
 			}
 		} else
 		{
-			duration = now - last_filter_time;
-			last_filter_time = now;
+			duration = now - lastFilterTime;
+			lastFilterTime = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
 			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0){ //Std = 2m and wait for 80 ms before deleting
@@ -243,7 +220,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 	}
 }
 
-void LocalWorldState::process_messages()
+void LocalWorldState::ProcessMessages()
 {
 	boost::posix_time::ptime observation_time;
 
@@ -276,7 +253,7 @@ void LocalWorldState::process_messages()
 			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
 			tmpOM.Bearing.Edev = TO_RAD(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
-			
+
 
 			if (localizationWorld.KFeaturesmap.count(id) != 0)
 			{
@@ -317,7 +294,6 @@ void LocalWorldState::process_messages()
 
 }
 
-
 void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 {
 	if (firstOdometry)
@@ -353,6 +329,80 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
 	//Logger::Instance().WriteMsg("LocalWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
+}
+
+//------------------------------------------------- xml read/print functions -----------------------------------------------------
+
+
+void LocalWorldState::ReadFeatureConf()
+{
+    feature temp;
+    double x,y,weight;
+    string ID;
+
+    //YellowGoal
+    ID=_xml.findValueForKey("Features.ftr~0.$ID").front();
+    x= atof(_xml.findValueForKey("Features.ftr~0.$x").front().c_str());
+    y= atof(_xml.findValueForKey("Features.ftr~0.$y").front().c_str());
+    weight= atof(_xml.findValueForKey("Features.ftr~0.$weight").front().c_str());
+    temp.set(x, y, ID, weight);
+    localizationWorld.KFeaturesmap[ID]=temp;
+
+    //YellowLeft
+    ID=_xml.findValueForKey("Features.ftr~1.$ID").front();
+    x= atof(_xml.findValueForKey("Features.ftr~1.$x").front().c_str());
+    y= atof(_xml.findValueForKey("Features.ftr~1.$y").front().c_str());
+    weight= atof(_xml.findValueForKey("Features.ftr~1.$weight").front().c_str());
+    temp.set(x, y, ID, weight);
+    localizationWorld.KFeaturesmap[ID]=temp;
+
+    //YellowRight
+    ID=_xml.findValueForKey("Features.ftr~2.$ID").front();
+    x= atof(_xml.findValueForKey("Features.ftr~2.$x").front().c_str());
+    y= atof(_xml.findValueForKey("Features.ftr~2.$y").front().c_str());
+    weight= atof(_xml.findValueForKey("Features.ftr~2.$weight").front().c_str());
+    temp.set(x, y, ID, weight);
+    localizationWorld.KFeaturesmap[ID]=temp;
+    Logger::Instance().WriteMsg("LocalWorldState", "Feature parameters loaded", Logger::Info);
+}
+
+void LocalWorldState::ReadLocConf()
+{
+    localizationWorld.robustmean=atoi(_xml.findValueForKey("Localizationconf.robustmean").front().c_str());
+    localizationWorld.partclsNum=atoi(_xml.findValueForKey("Localizationconf.partclsNum").front().c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("Localizationconf.SpreadParticlesDeviation").front().c_str());
+    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("Localizationconf.rotation_deviation").front().c_str());
+    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").front().c_str());
+    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").front().c_str());
+    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").front().c_str());
+    Logger::Instance().WriteMsg("LocalWorldState", "Localization parameters loaded" , Logger::Info);
+}
+
+void LocalWorldState::ReadFieldConf()
+{
+    localizationWorld.CarpetMaxX=atof(_xml.findValueForKey("Field.CarpetMaxX").front().c_str());
+    localizationWorld.CarpetMinX=atof(_xml.findValueForKey("Field.CarpetMinX").front().c_str());
+    localizationWorld.CarpetMaxY=atof(_xml.findValueForKey("Field.CarpetMaxY").front().c_str());
+    localizationWorld.CarpetMinY=atof(_xml.findValueForKey("Field.CarpetMinY").front().c_str());
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").front().c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").front().c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").front().c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").front().c_str());
+	Logger::Instance().WriteMsg("LocalWorldState", "Field parameters loaded", Logger::Info);
+}
+
+//check if values are correct
+void LocalWorldState::PrintFeatureConf()
+{
+    typedef map<string,feature>::const_iterator MapIterator;
+    for (MapIterator iter = localizationWorld.KFeaturesmap.begin(); iter != localizationWorld.KFeaturesmap.end(); iter++)
+    {
+        cout << " Key: " << iter->first;
+        cout << " Value x: " << iter->second.x;
+        cout << " Value y: " << iter->second.y;
+        cout << " Value weight: " << iter->second.weight;
+        cout << " Value: " << iter->second.id << endl;
+    }
 }
 
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------

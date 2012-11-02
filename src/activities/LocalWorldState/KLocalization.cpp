@@ -33,14 +33,13 @@ int KLocalization::Initialize()
 	SIRParticles.y = new double[partclsNum];
 	SIRParticles.phi = new double[partclsNum];
 	SIRParticles.Weight = new double[partclsNum];
-	max_weight_particle_index = 0;
-	
+	maxWeightParticleIndex = 0;
+
     //set seed (current time)
     generator.seed(static_cast<unsigned int> (std::time(0)));
 	srand(time(0));
 
 	// Loading features
-	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	initParticles();
@@ -91,7 +90,7 @@ void KLocalization::setParticlesPoseUniformly()
 	//Initialize top Particles
 	for (unsigned int i = 0; i < resetParticles; i++)
 	{
-		float x, y;
+		float x=0, y=0;
 
 		if(playerNumber == 1)
 		{
@@ -146,7 +145,7 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 	}
 	else if(playerState == PLAYER_READY)
 	{
-		float phi, x, y;
+		float phi=0,x=0,y=0;
 
 		if(playerNumber == 1)
 		{
@@ -178,7 +177,7 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 
 		for (unsigned int i = percentageOfParticle; i < partclsNum; i++)
 		{
-			if(i == max_weight_particle_index)
+			if(i == maxWeightParticleIndex)
 				continue;
 
 			SIRParticles.x[i] = x;
@@ -238,9 +237,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	}
 
 	//extract estimation
-	AgentPosition.x =  SIRParticles.x[max_weight_particle_index];// maxprtcl.x;
-	AgentPosition.y = SIRParticles.y[max_weight_particle_index];//maxprtcl.y;
-	AgentPosition.theta = SIRParticles.phi[max_weight_particle_index];//maxprtcl.phi;
+	AgentPosition.x =  SIRParticles.x[maxWeightParticleIndex];// maxprtcl.x;
+	AgentPosition.y = SIRParticles.y[maxWeightParticleIndex];//maxprtcl.y;
+	AgentPosition.theta = SIRParticles.phi[maxWeightParticleIndex];//maxprtcl.phi;
 	//AgentPosition = RobustMean(SIRParticles, 10);
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = 0.0;
@@ -309,13 +308,13 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 			R = KMath::norm2(SIRParticles.x[p] - Observation[i].Feature.x, SIRParticles.y[p] - Observation[i].Feature.y);
 			OverallWeightEnemyField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2(Observation[i].Feature.y - SIRParticles.y[p], Observation[i].Feature.x - SIRParticles.x[p]);
-			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 			OverallWeightEnemyField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 			//we take the symetric yellow now, so we put a - to the x and y of the observation
 			R = KMath::norm2(SIRParticles.x[p] - (-Observation[i].Feature.x), SIRParticles.y[p] - (-Observation[i].Feature.y));
 			OverallWeightOwnField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2((-Observation[i].Feature.y) - SIRParticles.y[p], (-Observation[i].Feature.x) - SIRParticles.x[p]);
-			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 			OverallWeightOwnField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 		}
 
@@ -393,7 +392,7 @@ void KLocalization::rouletteResampleAndNormalize()
 		if(SIRParticles.Weight[i] > max)
 		{
 			max = SIRParticles.Weight[i];
-			max_weight_particle_index = i;
+			maxWeightParticleIndex = i;
 		}
 	}
 
@@ -465,7 +464,7 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		for (unsigned int o = 0; o < Observation.size(); o++)
 		{
@@ -480,7 +479,7 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		for (unsigned int o = 0; o < Observation.size(); o++)
 		{
@@ -498,7 +497,7 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		ParticlePointBearingAngle = atan2(Observation[0].Feature.y - SIRParticles.y[index], Observation[0].Feature.x - SIRParticles.x[index]);
 		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
@@ -508,46 +507,11 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		ParticlePointBearingAngle = atan2(-Observation[0].Feature.y - SIRParticles.y[index], -Observation[0].Feature.x - SIRParticles.x[index]);
 		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 	}
-}
-
-//Load xml files
-int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap)
-{
-	TiXmlDocument doc2(filename.c_str());
-	bool loadOkay = doc2.LoadFile();
-
-	if (!loadOkay)
-	{
-		Logger::Instance().WriteMsg("KLocalization", "Feature loading failed!!!!", Logger::Error);
-		return -1;
-	}
-
-	TiXmlNode * Ftr;
-	TiXmlElement * Attr;
-	string ID;
-	double x, y, w;
-	feature temp;
-
-	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
-	{
-		if(Ftr->ToComment() == NULL)
-		{
-			Attr = Ftr->ToElement();
-			Attr->Attribute("x", &x);
-			Attr->Attribute("y", &y);
-			Attr->Attribute("weight", &w);
-			ID = Attr->Attribute("ID");
-			temp.set(x, y, ID, w);
-			KFeaturesmap[temp.id] = temp;
-		}
-	}
-
-	return 0;
 }
 
 int KLocalization::readConfiguration(const std::string& file_name)
@@ -600,5 +564,3 @@ bool KLocalization::readRobotConf(const std::string& file_name)
 
 	return true;
 }
-
-
