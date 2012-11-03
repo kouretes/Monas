@@ -47,6 +47,7 @@ void LocalWorldState::UserInit()
     ReadLocConf();
     ReadFieldConf();
     ReadFeatureConf();
+    ReadTeamConf();
 	localizationWorld.Initialize();
 
 #ifdef NO_GAME
@@ -76,9 +77,7 @@ void LocalWorldState::UserInit()
 }
 
 void LocalWorldState::Reset(){
-    //ReadLocConf();
-    //ReadFieldConf();
-    //ReadFeatureConf();
+    ReadLocConf();
 }
 
 int LocalWorldState::Execute()
@@ -363,7 +362,6 @@ void LocalWorldState::ReadFeatureConf()
     weight= atof(_xml.findValueForKey("Features.ftr~2.$weight").front().c_str());
     temp.set(x, y, ID, weight);
     localizationWorld.KFeaturesmap[ID]=temp;
-    Logger::Instance().WriteMsg("LocalWorldState", "Feature parameters loaded", Logger::Info);
 }
 
 void LocalWorldState::ReadLocConf()
@@ -375,21 +373,21 @@ void LocalWorldState::ReadLocConf()
     localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").front().c_str());
     localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").front().c_str());
     localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").front().c_str());
-    Logger::Instance().WriteMsg("LocalWorldState", "Localization parameters loaded" , Logger::Info);
 }
 
 void LocalWorldState::ReadFieldConf()
 {
-    localizationWorld.CarpetMaxX=atof(_xml.findValueForKey("Field.CarpetMaxX").front().c_str());
-    localizationWorld.CarpetMinX=atof(_xml.findValueForKey("Field.CarpetMinX").front().c_str());
-    localizationWorld.CarpetMaxY=atof(_xml.findValueForKey("Field.CarpetMaxY").front().c_str());
-    localizationWorld.CarpetMinY=atof(_xml.findValueForKey("Field.CarpetMinY").front().c_str());
     localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").front().c_str());
     localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").front().c_str());
     localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").front().c_str());
     localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").front().c_str());
-	Logger::Instance().WriteMsg("LocalWorldState", "Field parameters loaded", Logger::Info);
 }
+
+void LocalWorldState::ReadTeamConf()
+{
+    localizationWorld.playerNumber=atoi(_xml.findValueForKey("team_config.player").front().c_str());
+}
+
 
 //check if values are correct
 void LocalWorldState::PrintFeatureConf()
