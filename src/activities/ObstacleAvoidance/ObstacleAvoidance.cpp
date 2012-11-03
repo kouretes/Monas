@@ -229,6 +229,7 @@ int ObstacleAvoidance::Execute()
 			targetX = pprm->gotox();
 			targetY = pprm->gotoy();
 			targetA = pprm->gotoangle();
+			Logger::Instance().WriteMsg("ObstacleAvoidance", " targetX: " + _toString(targetX) + " targetY: " + _toString(targetY) + " targetA: " + _toString(targetA), Logger::Info );
 		}
 
 		distance2Goal = sqrt((targetX) * (targetX) + (targetY) * (targetY));
@@ -236,7 +237,7 @@ int ObstacleAvoidance::Execute()
 		if(debugModeCout)
 			Logger::Instance().WriteMsg("ObstacleAvoidance", " targetX: " + _toString(targetX) + " targetY: " + _toString(targetY) + " targetA: " + _toString(targetA), Logger::Info );
 
-		if( distance2Goal > GoalDistanceTolerance && fabs(anglediff2(targetA, robotA)) > GoalAngleTolerance)   //|| targetA > M_PI_4 ){
+		if( distance2Goal > GoalDistanceTolerance || fabs(anglediff2(targetA, robotA)) > GoalAngleTolerance)   //|| targetA > M_PI_4 ){
 		{
 			//eykleidia apostash kai orientation an mikrotero apla kalv velocityWalk
 			targetR = XYtoR(targetX, targetY);
@@ -439,15 +440,15 @@ void ObstacleAvoidance::updateGrid(double* left, double* right)
 {
 	if (left[0] != 0 )
 	{
-		if (left[0] <= SonarDistanceRange)
-			mapObstacle( left[0] + SonarDistanceShift, +SonarAngleShiftRad, ObstacleRadius );
-
-		if (left[0] <= SonarMinReading)
-		{
-			//mapObstacle( ObstacleRadius, +SonarAngleShiftRad, ObstacleRadius );
-			mapObstacle( CloseObstacleCenter, +SonarAngleShiftRad, CloseObstacleRadius );
-		}
-		else
+	//	if (left[0] <= SonarDistanceRange)
+	//		mapObstacle( left[0] + SonarDistanceShift, +SonarAngleShiftRad, ObstacleRadius );
+//
+//		if (left[0] <= SonarMinReading)
+//		{
+//			//mapObstacle( ObstacleRadius, +SonarAngleShiftRad, ObstacleRadius );
+//			mapObstacle( CloseObstacleCenter, +SonarAngleShiftRad, CloseObstacleRadius );
+//		}
+//		else
 			mapFreeSpace( left[0] + SonarDistanceShift, +SonarAngleShiftRad );
 	}
 	else
@@ -455,15 +456,15 @@ void ObstacleAvoidance::updateGrid(double* left, double* right)
 
 	if (right[0] != 0)
 	{
-		if (right[0] <= SonarDistanceRange)
-			mapObstacle( right[0] + SonarDistanceShift, -SonarAngleShiftRad, ObstacleRadius );
+//		if (right[0] <= SonarDistanceRange)
+//			mapObstacle( right[0] + SonarDistanceShift, -SonarAngleShiftRad, ObstacleRadius );
 
-		if (right[0] <= SonarMinReading)
-		{
-			mapObstacle( CloseObstacleCenter, -SonarAngleShiftRad, CloseObstacleRadius );
+//		if (right[0] <= SonarMinReading)
+//		{
+	//		mapObstacle( CloseObstacleCenter, -SonarAngleShiftRad, CloseObstacleRadius );
 			//			mapObstacle( ObstacleRadius, -SonarAngleShiftRad, ObstacleRadius );
-		}
-		else
+	//	}
+	//	else
 			mapFreeSpace( right[0] + SonarDistanceShift, -SonarAngleShiftRad );
 	}
 	else
@@ -879,7 +880,7 @@ void ObstacleAvoidance::pathPlanningRequestRelative(float target_x, float target
 void ObstacleAvoidance::motionController(double distance2Goal)
 {
 	double walkToX, walkToY, walkToT;
-
+	std::cout << "Path Counter" << pathCounter << std::endl;
 	//Logger::Instance().WriteMsg("ObstacleAvoidance", " wayM " + _toString(pathR[1]) + " wayN " + _toString(pathS[1]), Logger::Info);
 	if (pathCounter != 0)
 	{
@@ -890,7 +891,7 @@ void ObstacleAvoidance::motionController(double distance2Goal)
 			walkToT = 0.0;
 			//Logger::Instance().WriteMsg("ObstacleAvoidance", "EFTASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA! " , Logger::Info);
 		}
-		else if(pathR[1] == InnerRing)  		//peristrofikh kinhsh
+		else if(pathR[1] == InnerRing + 1/*TODO FIX that */)  		//peristrofikh kinhsh
 		{
 			walkToX = 0.0;
 			walkToY = 0.0;
@@ -907,7 +908,7 @@ void ObstacleAvoidance::motionController(double distance2Goal)
 			walkToX = 0.0;
 			walkToY = cellCenterY[pathR[1]][pathS[1]];
 			walkToT = 0.0;
-			//Logger::Instance().WriteMsg("ObstacleAvoidance", "Side! " , Logger::Info);
+			//Logger::Instance().WriteMsg("ObstacleAvoidance", "Side! " + _toString(pathR[1]), Logger::Info);
 		}
 		else
 		{
@@ -916,6 +917,7 @@ void ObstacleAvoidance::motionController(double distance2Goal)
 				walkToX = 0.0;
 				walkToY = 0.0;
 				walkToT = 0.0;
+				//Logger::Instance().WriteMsg("ObstacleAvoidance", "Tipota! ", Logger::Info);
 			}
 			else
 			{
@@ -960,7 +962,7 @@ void ObstacleAvoidance::velocityWalk(double ix, double iy, double it, double f)
 
 void ObstacleAvoidance::callVelocityWalk(double walkToX, double walkToY, double walkToT, double distance2Goal)
 {
-	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
+	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0, gainTheta = 1.0;
 	double maxd = fmaxf(fabs(walkToX), fabs(walkToY));
 
 	if (maxd == 0.0 ) maxd = 1.0;
@@ -969,7 +971,9 @@ void ObstacleAvoidance::callVelocityWalk(double walkToX, double walkToY, double 
 	gain = fminf(1.0, 0.0 + (distance2Goal / 0.4));
 	X = gain * (walkToX) / maxd;
 	Y = gain * (walkToY) / maxd;
-	t = gain * (walkToT / M_PI);
+
+	gainTheta = fminf(1.0, 0.0 + walkToT/0.4);
+	t = gainTheta * (walkToT / M_PI);
 	//Logger::Instance().WriteMsg("ObstacleAvoidance", "x: " + _toString(X) + " y " + _toString(Y) + " t " + _toString(t) + " f " + _toString(f), Logger::ExtraExtraInfo);
 	velocityWalk(X, Y, t, f);
 }
