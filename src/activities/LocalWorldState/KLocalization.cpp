@@ -40,7 +40,6 @@ int KLocalization::Initialize()
 	srand(time(0));
 
 	// Loading features
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
 	initParticles();
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
@@ -237,9 +236,9 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	}
 
 	//extract estimation
-	AgentPosition.x =  SIRParticles.x[maxWeightParticleIndex];// maxprtcl.x;
-	AgentPosition.y = SIRParticles.y[maxWeightParticleIndex];//maxprtcl.y;
-	AgentPosition.theta = SIRParticles.phi[maxWeightParticleIndex];//maxprtcl.phi;
+	AgentPosition.x =  particlesAvg.x;
+	AgentPosition.y =particlesAvg.y;
+	AgentPosition.theta =particlesAvg.phi;
 	//AgentPosition = RobustMean(SIRParticles, 10);
 	//TODO only one value to determine confidance, Now its only distance confidence
 	AgentPosition.confidence = 0.0;
@@ -253,6 +252,10 @@ void KLocalization::Predict(KMotionModel & MotionModel)
 	boost::normal_distribution<> norm_dist(0,1);
     boost::variate_generator<r_gen&, boost::normal_distribution<> > X(generator, norm_dist);
 
+    particlesAvg.x=0;
+    particlesAvg.y=0;
+    particlesAvg.phi=0;
+
 	//Move the particles with noise
 	for (unsigned int i = 0; i < partclsNum; i++)
 	{
@@ -262,7 +265,15 @@ void KLocalization::Predict(KMotionModel & MotionModel)
 		SIRParticles.x[i] = SIRParticles.x[i] + cos(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.y[i] = SIRParticles.y[i] + sin(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.phi[i] = SIRParticles.phi[i] + tmpRot;
+
+        particlesAvg.x+=SIRParticles.x[i];
+        particlesAvg.y+=SIRParticles.y[i];
+        particlesAvg.phi+=SIRParticles.phi[i];
 	}
+
+     particlesAvg.x/=partclsNum;
+     particlesAvg.y/=partclsNum;
+     particlesAvg.phi/=partclsNum;
 }
 
 double KLocalization::normpdf(double diff, double dev)
@@ -421,6 +432,11 @@ void KLocalization::rouletteResampleAndNormalize()
 	}
 
 	double newWeight = 1.0 / SIRParticles.size;
+
+    particlesAvg.x=0;
+    particlesAvg.y=0;
+    particlesAvg.phi=0;
+
 	// lets propagate them
 	for (i = 0; i < partclsNum; i++)
 	{
@@ -428,7 +444,15 @@ void KLocalization::rouletteResampleAndNormalize()
 		SIRParticles.Weight[i] = newWeight;
 		SIRParticles.x[i] = tempX[i];
 		SIRParticles.y[i] = tempY[i];
+
+        particlesAvg.x+=SIRParticles.x[i];
+        particlesAvg.y+=SIRParticles.y[i];
+        particlesAvg.phi+=SIRParticles.phi[i];
 	}
+
+    particlesAvg.x/=partclsNum;
+    particlesAvg.y/=partclsNum;
+    particlesAvg.phi/=partclsNum;
 }
 
 float KLocalization::circular_mean_angle(float *angles, unsigned int size)
@@ -512,19 +536,6 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		ParticlePointBearingAngle = atan2(-Observation[0].Feature.y - SIRParticles.y[index], -Observation[0].Feature.x - SIRParticles.x[index]);
 		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 	}
-}
-
-int KLocalization::readConfiguration(const std::string& file_name)
-{
-	XMLConfig config(file_name);
-
-	if (!config.QueryElement("player", playerNumber))
-	{
-		Logger::Instance().WriteMsg("KLocalization", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
-		playerNumber = 1;
-	}
-
-	return 1;
 }
 
 bool KLocalization::readRobotConf(const std::string& file_name)

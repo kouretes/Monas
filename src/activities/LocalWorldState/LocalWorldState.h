@@ -57,6 +57,7 @@ private:
     void ReadLocConf();
     void ReadFieldConf();
     void ReadFeatureConf();
+    void ReadTeamConf();
 
     //print
     void PrintFeatureConf();
