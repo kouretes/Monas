@@ -166,6 +166,8 @@ public:
 
 	//The particles we are using
 	parts SIRParticles;
+    //particles average
+    partcl particlesAvg;
 	unsigned int partclsNum;
 
 	//map with all the features we read from an xml
@@ -178,7 +180,6 @@ public:
 	int Initialize();
 
 	//Functions to read from xml files
-	int readConfiguration(const std::string& file_name);
 	bool readRobotConf(const std::string& file_name);
 
 	//The step of the localization SIR filter
