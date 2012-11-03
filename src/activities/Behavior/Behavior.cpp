@@ -16,7 +16,7 @@ using namespace std;
 
 
 /**
- *	Returns a double random number (0 - 100.0) 
+ *	Returns a double random number (0 - 100.0)
  */
 double behaviorRand()
 {
@@ -24,7 +24,7 @@ double behaviorRand()
 }
 
 
-/** 
+/**
  *	Behavior Initialization
  */
 void Behavior::UserInit()
@@ -114,7 +114,7 @@ void Behavior::UserInit()
 	//    generateFakeObstacles();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 	Reset();
-	
+
 }
 
 
@@ -156,7 +156,7 @@ int Behavior::Execute()
 		}
 
 		// Publish message to head controller to run check for ball
-		hcontrol->mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
+		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(*hcontrol, "behavior");
 
 		if(bfm != 0) {
@@ -176,7 +176,7 @@ int Behavior::Execute()
 			if (ballfound == 1)
 			{
 				side = (bb > 0) ? 1 : -1;
-				posx = 0.12, posy = 0.03; // Desired ball position for kick
+				posx = 0.1, posy = 0.03; // Desired ball position for kick
 				double epsx = 0.025, epsy = 0.025; // Desired precision
 
 				if ( (fabs( bx - posx ) < epsx)  && (fabs( by - (side * posy) ) < epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
@@ -204,7 +204,7 @@ int Behavior::Execute()
 
 			if (ballfound == 0)
 
-		
+
 			{
 				/* New exploration
 				if (!scanforball)
@@ -251,13 +251,13 @@ int Behavior::Execute()
 	{
 		hcontrol->mutable_task()->set_action(HeadControlMessage::FROWN);
 		_blk.publishState(*hcontrol, "behavior");
-	}	
+	}
 
 	return 0;
 }
 
 
-/** 
+/**
 	Read Incoming Messages from declared topics...use Message objects to get the data.
   */
 
@@ -270,7 +270,7 @@ void Behavior::read_messages()
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
 	bfm = _blk.readState<BallFoundMessage> ("behavior");
-	
+
 	if(wim != 0)
 	{
 	    if(wim.get() != 0)
@@ -581,11 +581,16 @@ void Behavior::littleWalk(double x, double y, double th)
 
 void Behavior::approachBall(double ballX, double ballY)
 {
-	if (pathOK && bd > 0.2)
+	if (bd > 0.3)
     {
-        pathOK = false;
         int pathSide = (bb > 0) ? 1 : -1;
         pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
+    }
+    else if(robot_phi > (float) (M_PI_4/2.0)){
+        littleWalk(0.1, 0.55, (float)(-3*M_PI_4/2.0));
+    }
+    else if(robot_phi < (float) (-M_PI_4/2.0)){
+        littleWalk(0.1, -0.55, (float)(3*M_PI_4/2.0));
     }
     else
         pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
@@ -619,7 +624,7 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY)
 	}
 	else if(role == CENTER_FOR)
 	{
-		if (bd > 0.5)
+		if (bd > 0.7)
 		{
 			int pathSide = (bb > 0) ? 1 : -1;
 			pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
@@ -875,9 +880,9 @@ void Behavior::Goalie()
 {
 	role = GOALIE;
 	if(ballfound == 1) {
-				
+
 		fall = toFallOrNotToFall();
-									
+
 		if(fall == 1) // extend left foot
 		{
 			amot->set_command("goalieLeftFootExtened.xar");
@@ -906,20 +911,20 @@ void Behavior::Goalie()
 int Behavior::toFallOrNotToFall()
 {
 	float x1, y1, dk, ubx, uby, ub;
-  	
+
 	if(wim == 0)   // the two last observation messages
 		return 0;
-	
+
 	if(wim->balls_size() == 0)
 		return 0;
-	
+
 	// observation of (x,y) position of the ball and x,y speed
 	x1 = wim->balls(0).relativex();
 	y1 = wim->balls(0).relativey();
 	ubx = wim->balls(0).relativexspeed();
 	uby = wim->balls(0).relativeyspeed();
-	
-	
+
+
 	if(ubx < 0.0)
 	{
 		Logger::Instance().WriteMsg("toFallOrNotToFall", "ubx<0", Logger::Info);
@@ -928,7 +933,7 @@ int Behavior::toFallOrNotToFall()
 		if(fabs(dk) <= 0.3) //if dk is shorter than the robot's foot can extend
 		{
 			Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 1", Logger::Info);
-			
+
 			// ur old value 0.1 / 1.4
 			ub = sqrt(ubx * ubx + uby * uby);
 			Logger::Instance().WriteMsg("toFallOrNotToFall","UB:"+_toString(ub), Logger::Info);
@@ -936,7 +941,7 @@ int Behavior::toFallOrNotToFall()
 			if(fabs(ub) > config.ur)
 			{
 				Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 2", Logger::Info);
-			
+
 				if(dk > 0)
 					return 1;  // left
 				else
