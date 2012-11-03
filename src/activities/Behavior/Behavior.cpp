@@ -510,10 +510,10 @@ void Behavior::approachBall()
         pathPlanningRequestAbsolute(0.1, 0.55, (float)(-3*M_PI_4/2.0));
     }
     else if(robot_phi < (float) (-M_PI_4/2.0)){
-        pathPlanningRequestAbsolute(0.1, -0.55, (float)(3*M_PI_4/2.0));
+        littleWalk(0.1, -0.55, (float)(3*M_PI_4/2.0));
     }
     else
-        pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
+        littleWalk(bx - posx, by - side * posy, bb);
 }
 
 void Behavior::approachBallRoleDependent()
