@@ -1,12 +1,6 @@
 #include "Behavior.h"
 
 #include <math.h>
-#include "tools/logger.h"
-#include "tools/toString.h"
-#include "messages/RoboCupGameControlData.h"
-#include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/mathcommon.h"
-#include "tools/obstacleConst.h"
 
 using namespace KMath;
 using namespace boost::posix_time;
@@ -39,46 +33,21 @@ void Behavior::UserInit()
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
 	wmot->add_parameter(0.0f);
-	hmot = new MotionHeadMessage();
-	hmot->set_command("setHead");
-	hmot->add_parameter(0.0f);
-	hmot->add_parameter(-0.66322512);
 	amot = new MotionActionMessage();
 	locReset = new LocalizationResetMessage();
 	pprm = new PathPlanningRequestMessage();
 	fom = new ObstacleMessage();
 	hcontrol = new HeadControlMessage();
-	readRobotConf = false;
-	leftright = 1;
-	headpos = 0;
 	ballfound = false;
-	scanforball = true;
-	startscan = true;
-	//scanOK = true;
 	pathOK = true;
-	forball = 0;
-	forpost = 0;
 	kickoff = false;
 
-	for (int i = 0; i < 2; i++)  		// i: kick-off
+	for (int i = 0; i < 2; i++)
 	{
 		initX[i] = 0.0;
 		initY[i] = 0.0;
 		initPhi[i] = 0.0;
 	}
-
-	ownGoalX = 0.0;
-	ownGoalY = 0.0;
-	oppGoalX = 0.0;
-	oppGoalY = 0.0;
-	ownGoalLeftX = 0.0;
-	ownGoalLeftY = 0.0;
-	ownGoalRightX = 0.0;
-	ownGoalRightY = 0.0;
-	oppGoalLeftX = 0.0;
-	oppGoalLeftY = 0.0;
-	oppGoalRightX = 0.0;
-	oppGoalRightY = 0.0;
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
@@ -86,31 +55,24 @@ void Behavior::UserInit()
 	bb = 0.0;
 	bx = 0.0;
 	by = 0.0;
-	posx = 0.0;
-	posy = 0.0;
 	side = +1;
 	robot_x = 0.0;
 	robot_y = 0.0;
 	robot_phi = 0.0;
 	robot_confidence = 1.0;
 	readytokick = false;
-	back = 0;
 	direction = 1;
 	orientation = 0;
 	gameState = PLAYER_INITIAL;
 	teamColor = TEAM_BLUE;
-	playerNumber = 1;
 	role = ATTACKER;
 	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
 	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	// reads initX, initY, initPhi
 	readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");		// reads blueGoal*, yellowGoal*
 	srand(time(0));
-	lastmove = microsec_clock::universal_time();
-	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
 	lastpenalized = microsec_clock::universal_time();
-	ballseen = microsec_clock::universal_time();
 	//    generateFakeObstacles();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
 	Reset();
@@ -137,46 +99,41 @@ int Behavior::Execute()
 	GetGameState();
 	GetPosition();
 
-	//if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_INITIAL) )
-	//{
-
-	//}
-
     if (gameState == PLAYER_INITIAL){
          hcontrol->mutable_task()->set_action(HeadControlMessage::FROWN);
         _blk.publishState(*hcontrol, "behavior");
     }
 	else if (gameState == PLAYER_PLAYING)
 	{
-		if (lastpenalized + seconds(4) > microsec_clock::universal_time())
-		{
-			hcontrol->mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
-			_blk.publishState(*hcontrol, "behavior");
-			return 0;
-		}
-
-		// Publish message to head controller to run check for ball
-		hcontrol->mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
-		_blk.publishState(*hcontrol, "behavior");
-
 		if(bfm != 0) {
 			if(bfm.get() != 0) {
 				ballfound = bfm->ballfound();
 			}
 		}
 
-		UpdateOrientationPlus();
-		//		checkForPenaltyArea();
+		UpdateOrientation();
+		//checkForPenaltyArea();
 		readytokick = false;
 
 		if(playerNumber == 1 || role == GOALIE) { // goalie role if number 1
 			Goalie();
 		}
 		else { // not goalie behavior
+			//TODO goalie must go to his position, not walk strait :P
+			if (lastpenalized + seconds(4) > microsec_clock::universal_time())
+			{
+				hcontrol->mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
+				_blk.publishState(*hcontrol, "behavior");
+				return 0;
+			}
+
+			// Publish message to head controller to run check for ball
+			hcontrol->mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
+			_blk.publishState(*hcontrol, "behavior");
 			if (ballfound == 1)
 			{
 				side = (bb > 0) ? 1 : -1;
-				posx = 0.12, posy = 0.03; // Desired ball position for kick
+				posx = 0.1, posy = 0.03; // Desired ball position for kick
 				double epsx = 0.025, epsy = 0.025; // Desired precision
 
 				if ( (fabs( bx - posx ) < epsx)  && (fabs( by - (side * posy) ) < epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
@@ -198,20 +155,12 @@ int Behavior::Execute()
 						role = CENTER_FOR;
 					}
 					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
-					approachBallRoleDependent(bx, by);
+					approachBallRoleDependent();
 				}
 			}
-
 			if (ballfound == 0)
-
-		
 			{
-				/* New exploration
-				if (!scanforball)
-				{
-					startscan = true;
-					scanforball = true;
-				}*/
+				/* New exploration */
 
 				//walk straight for some seconds after the scan has ended (lastpenalized+seconds(12))
 				//and then start turning around to search for ball.
@@ -293,7 +242,6 @@ void Behavior::GetGameState()
 {
 	if (gsm != 0)
 	{
-		//Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		int prevGameState = gameState;
 		gameState = gsm->player_state();
 		teamColor = gsm->team_color();
@@ -352,7 +300,6 @@ void Behavior::GetGameState()
 bool Behavior::ClosestRobot()
 {
 	double epsx = 0.005, epsy = 0.005; // Desired precision
-
 	if(swim != 0)
 	{
 		if(swim.get() != 0)
@@ -374,7 +321,7 @@ bool Behavior::ClosestRobot()
 
 void Behavior::GetPosition()
 {
-	if(wim != 0)
+	if(wim != 0){
 		if(wim.get() != 0)
 		{
 			robot_x = wim->myposition().x();
@@ -382,12 +329,11 @@ void Behavior::GetPosition()
 			robot_phi = wrapToPi( wim->myposition().phi() );
 			robot_confidence = wim->myposition().confidence();
 		}
-
-	return;
+	}
 }
 
 
-void Behavior::UpdateOrientationPlus()
+void Behavior::UpdateOrientation()
 {
 	double loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
 	double roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
@@ -410,37 +356,12 @@ void Behavior::UpdateOrientationPlus()
 	{
 		orientation = 3;
 	}
-
-	//double lowngb = anglediff2(atan2(ownGoalLeftY - robot_y, ownGoalLeftX - robot_x), robot_phi);
-	//double rowngb = anglediff2(atan2(ownGoalRightY - robot_y, ownGoalRightX - robot_x), robot_phi);
-	//double owngb = wrapToPi( (wrapTo0_2Pi(lowngb) + wrapTo0_2Pi(rowngb)) / 2.0 );
 }
-
-
-int Behavior::MakeTrackBallAction()
-{
-	hmot->set_command("setHead");
-	hmot->set_parameter(0, bmsg->referenceyaw());
-	hmot->set_parameter(1,  bmsg->referencepitch());
-	_blk.publishSignal(*hmot, "motion");
-	return 1;
-}
-
-int Behavior::MakeTrackBallActionNoBmsg()
-{
-	hmot->set_command("setHead");
-	hmot->set_parameter(0, trackYaw);
-	hmot->set_parameter(1, trackPitch);
-	_blk.publishSignal(*hmot, "motion");
-	return 1;
-}
-
 
 /* Kicking */
 
 void Behavior::Kick(int side)
 {
-	//if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
 	if ( kickoff && (microsec_clock::universal_time() <= lastplay + seconds(25)) )
 	{
 		if (behaviorRand() < 0.75)
@@ -494,7 +415,6 @@ void Behavior::Kick(int side)
 		_blk.publishSignal(*amot, "motion");
 	}
 }
-
 
 /* Locomotion Functions */
 
@@ -579,34 +499,13 @@ void Behavior::littleWalk(double x, double y, double th)
 	_blk.publishSignal(*wmot, "motion");
 }
 
-void Behavior::approachBall(double ballX, double ballY)
+void Behavior::approachBall()
 {
-	if (pathOK && bd > 0.2)
-    {
-        pathOK = false;
-        int pathSide = (bb > 0) ? 1 : -1;
-        pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
-    }
-    else
-        pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
+	pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
 }
 
-
-void Behavior::approachBallNewWalk(double ballX, double ballY)
+void Behavior::approachBallRoleDependent()
 {
-	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
-	double maxd = fmaxf( fabs(bx - ballX), fabs(by - ballY) );
-	f    = fminf(1.0, 0.4 + (maxd / 0.5));
-	gain = fminf(1.0, 0.0 + (maxd / 0.5));
-	X = gain * (bx - ballX) / maxd;
-	Y = gain * (by - ballY) / maxd;
-	t = 0.55 * gain * (bb / M_PI);
-	velocityWalk(X, Y, t, f);
-}
-
-void Behavior::approachBallRoleDependent(double ballX, double ballY)
-{
-	//std::cout << ballX << "    " << ballY << "\n";
     if (orientation == 1)
 		side = -1;
 	else if (orientation == 3)
@@ -614,7 +513,7 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY)
 
 	if(role == ATTACKER)
 	{
-		approachBall(ballX, ballY);
+		approachBall();
 
 	}
 	else if(role == CENTER_FOR)
@@ -668,9 +567,6 @@ void Behavior::gotoPosition(float target_x, float target_y, float target_phi)
 		stopRobot();
 }
 
-
-
-
 /* Read Configuration Functions */
 
 bool Behavior::readConfiguration(const std::string& file_name)
@@ -709,7 +605,6 @@ bool Behavior::readRobotConfiguration(const std::string& file_name)
 		return false;
 	}
 
-	readRobotConf = true;
 	XML config(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 	NodeCont teamPositions, robotPosition ;
@@ -739,11 +634,11 @@ bool Behavior::readRobotConfiguration(const std::string& file_name)
 		if (!found)
 		{
 			Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Unable to find initial " + kickoff + " position for player number " + _toString(playerNumber) , Logger::Error);
-			readRobotConf = false;
+			return false;
 		}
 	}
 
-	return readRobotConf;
+	return true;
 }
 
 
@@ -834,13 +729,6 @@ void Behavior::generateFakeObstacles()
 	}
 }
 
-
-float Behavior::dist(float x1, float y1, float x2, float y2)
-{
-	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-}
-
-
 void Behavior::checkForPenaltyArea()
 {
 	float fakeDist = 0.0, fakeDir = 0.0;
@@ -851,14 +739,13 @@ void Behavior::checkForPenaltyArea()
 			continue;
 		else
 		{
-			fakeDist = dist(robot_x, robot_y, fakeObstacles[j][0], fakeObstacles[j][1]);
+			fakeDist = DISTANCE(robot_x, robot_y, fakeObstacles[j][0], fakeObstacles[j][1]);
 
 			if(fakeDist < MapRadius)
 			{
 				//send fake obstacle message
 				//               fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
 				fakeDir = 2 * M_PI - wrapTo0_2Pi(robot_phi) - atan2(fakeObstacles[j][1] - robot_y, fakeObstacles[j][0] - robot_x);
-				//std::cout << "fakeDir: " << fakeDir << std::endl;
 				fom->set_direction(fakeDir);
 				fom->set_distance(fakeDist);
 				fom->set_certainty(1);
@@ -866,10 +753,9 @@ void Behavior::checkForPenaltyArea()
 			}
 		}
 	}
-
-	//std::cout << "-------------" << std::endl;
 }
 
+/*------------------------------- GOALIE -------------------------------*/
 
 void Behavior::Goalie()
 {
@@ -922,21 +808,17 @@ int Behavior::toFallOrNotToFall()
 	
 	if(ubx < 0.0)
 	{
-		Logger::Instance().WriteMsg("toFallOrNotToFall", "ubx<0", Logger::Info);
+		//Logger::Instance().WriteMsg("toFallOrNotToFall", "ubx<0", Logger::Info);
 		dk = (ubx * y1 - uby * x1) / ubx ; // dk is the projection of the ball's route towards the robot/goalpost
-		Logger::Instance().WriteMsg("toFallOrNotToFall","DK:"+_toString(dk), Logger::Info);
+		//Logger::Instance().WriteMsg("toFallOrNotToFall","DK:"+_toString(dk), Logger::Info);
 		if(fabs(dk) <= 0.3) //if dk is shorter than the robot's foot can extend
-		{
-			Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 1", Logger::Info);
-			
+		{			
 			// ur old value 0.1 / 1.4
 			ub = sqrt(ubx * ubx + uby * uby);
-			Logger::Instance().WriteMsg("toFallOrNotToFall","UB:"+_toString(ub), Logger::Info);
-			Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(config.ur), Logger::Info);
+			//Logger::Instance().WriteMsg("toFallOrNotToFall","UB:"+_toString(ub), Logger::Info);
+			//Logger::Instance().WriteMsg("toFallOrNotToFall","UR:"+_toString(config.ur), Logger::Info);
 			if(fabs(ub) > config.ur)
-			{
-				Logger::Instance().WriteMsg("toFallOrNotToFall", "mpika 2", Logger::Info);
-			
+			{			
 				if(dk > 0)
 					return 1;  // left
 				else
@@ -947,109 +829,3 @@ int Behavior::toFallOrNotToFall()
 
 	return 0;
 }
-
-/* Test Function */
-
-/*
-void Behavior::test()
-{
-	// OPEN CHALLENGE 2011 - PROJECTION KICK - START
-	if(wim != 0)
-	{
-		if (wim->balls_size() > 0)
-		{
-			bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-			by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-			bd = sqrt(pow(bx, 2) + pow(by, 2));
-			bb = atan2(by, bx);
-		}
-		else
-		{
-			ballfound = 0;
-		}
-	}
-
-	if (bmsg != 0)
-	{
-		if (bmsg->radius() > 0)
-		{
-			MakeTrackBallAction();
-			lastball = microsec_clock::universal_time();
-			ballfound = 1;
-		}
-		else
-		{
-			if (lastball + seconds(3) < microsec_clock::universal_time())
-				ballfound = 0;
-		}
-	}
-
-	if (ballfound == 1)
-	{
-		Logger::Instance().WriteMsg("Behavior",  " timestamp " + to_simple_string(microsec_clock::universal_time()), Logger::Info);
-		float kickslope = -4;
-		float x1, y1;
-		float ubx, uby;
-		float x, y, slope, t;
-
-		if(wim != 0)
-		{
-			if (wim->balls_size() > 0)
-			{
-				x1 = wim->balls(0).relativex();	//the last b observation's x position
-				y1 = wim->balls(0).relativey();	//the last but one observation's y position
-				ubx = wim->balls(0).relativexspeed();
-				uby = wim->balls(0).relativeyspeed();
-				Logger::Instance().WriteMsg("Behavior",  "OP: x1 " + _toString(x1) + " y1 " + _toString(y1), Logger::Info);
-				Logger::Instance().WriteMsg("Behavior",  "OP: ubx " + _toString(ubx) + " uby " + _toString(uby), Logger::Info);
-
-				if (fabs(uby) < 0.001)
-					return;
-
-				slope = ubx / uby;
-
-				if ( fabs(kickslope - slope) < 0.001 )
-					return;
-
-				y = (x1 - y1 * slope) / (kickslope - slope);
-				x = kickslope * y;
-				t = fabs(x1 - x) / fabs(ubx);
-				Logger::Instance().WriteMsg("Behavior", "OP: x " + _toString(x) + " y " + _toString(y) + "TIME: " + _toString(t), Logger::Info);
-
-				if ( (x >= 0.03) && (x <= 0.17) )
-				{
-					if ( (t > 2.0) && (t < 5.0) )
-					{
-						Logger::Instance().WriteMsg("Behavior",  "OP: Openchallenge FTW!!!!!!!!!!!!!! ", Logger::Info);
-						amot->set_command("KickForwardRightFast.xar");
-						_blk.publishSignal(*amot, "motion");
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		HeadScanStepSmart();
-	}
-
-	/* OPEN CHALLENGE 2011 - PROJECTION KICK - END
-	//HeadScanStepIntelligent();
-	//if (om!=0) {
-	//Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
-	//if ( (om->direction(2) != 0) && (om->direction(0) == 0) ) {
-	//velocityWalk(0.0, 0.0, 1.0, 1.0);
-	//}
-	//else if ( (om->direction(0) != 0) && (om->direction(2) == 0) ) {
-	//velocityWalk(0.0, 0.0, -1.0, 1.0);
-	//}
-	//else if ( (om->direction(0) != 0) && (om->direction(2) != 0) ) {
-	//velocityWalk(0.0, 0.0, 0.0, 1.0);
-	//}
-	//else {
-	//velocityWalk(1.0, 0.0, 0.0, 1.0);
-	//}
-	//}
-	//else
-	//velocityWalk(1.0, 0.0, 0.0, 1.0);
-} */
