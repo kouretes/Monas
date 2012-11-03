@@ -442,7 +442,7 @@ int MotionController::Execute()
 			str.erase(0, pos + 1);
 			strKick.erase(pos, strKick.size());
 			sm.set_type(MotionStateMessage::ACTION);
-			sm.set_detail(str);
+			sm.set_detail(pam->command());
 			sm.set_lastaction(pam->command());
 			_blk.publishState(sm, "worldstate");
 
