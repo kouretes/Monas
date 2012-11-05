@@ -42,7 +42,7 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-	static const double closeToBall = 0.7;
+	static const double closeToBall = 1.0;
 	static const float headSpeed[3];/*{SOMEDAY, SLOW, BEAM_ME_UP}*/
 
 	enum{
@@ -91,13 +91,13 @@ private:
 	float oppGoalRightX, oppGoalRightY, ownGoalRightX, ownGoalRightY;
 
 	boost::posix_time::ptime lastball;
-	
+
 	/*Read messages from blackboard*/
 	void read_messages();
 
 	/*Read the position of the robot*/
 	void GetPosition();
-	
+
 	/*Check if vision observasion message has ball*/
 	void CheckForBall();
 
@@ -106,13 +106,13 @@ private:
 
 	/*Scan high for goalposts*/
 	void HeadScanStepHigh(float yaw_limit);
-	
+
 	/*Scan for the ball*/
 	void HeadScanStepSmart();
-	
+
 	/*Track the ball and search for goalposts*/
 	void HeadTrackIntelligent();
-	
+
 	float lookAtPointYaw(float x, float y);
 	float lookAtPointPitch(float x, float y);
 	float lookAtPointRelativeYaw(float x, float y);
