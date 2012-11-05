@@ -114,6 +114,8 @@ private:
 	 * @brief	
 	 */
 	struct {
+		int teamNumber, playerNumber, teamColor;
+		float initX[2], initY[2], initPhi[2];
 		float ur; // to find better name...
 	} config;
 	
@@ -133,7 +135,7 @@ private:
 	void gotoPosition(float target_x, float target_y, float target_phi);
 
 
-	bool readConfiguration(const std::string& file_name); 		//this function reads team's configuration info from XML file
+	//bool readConfiguration(const std::string& file_name); 		//this function reads team's configuration info from XML file
 	bool readRobotConfiguration(const std::string& file_name); 	//this function reads robot's initial position in the field from XML file
 	bool readGoalConfiguration(const std::string& file_name); 	//this function reads the position of the goals
 	//bool readBehaviorConfiguration(const std::string& file_name); // this function reads the behavior data
@@ -183,7 +185,7 @@ private:
 	int fall;	// variable for goalie role to check if he should fall or not.
 
 	bool kickoff;
-	float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
+	//float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
 	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 	double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 	double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
@@ -200,8 +202,8 @@ private:
 	double orientation;
 
 	int gameState;
-	int teamColor;
-	int playerNumber;
+	//int teamColor;
+	//int playerNumber;
 	int role;
 
 	bool readRobotConf;

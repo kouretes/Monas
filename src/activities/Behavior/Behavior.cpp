@@ -98,10 +98,12 @@ void Behavior::UserInit()
 	direction = 1;
 	orientation = 0;
 	gameState = PLAYER_INITIAL;
-	teamColor = TEAM_BLUE;
-	playerNumber = 1;
+	//teamColor = TEAM_BLUE;
+	//playerNumber = 1;
 	role = ATTACKER;
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
+	//readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
+	Reset();
+	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
 	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	// reads initX, initY, initPhi
 	readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");		// reads blueGoal*, yellowGoal*
 	srand(time(0));
@@ -112,9 +114,6 @@ void Behavior::UserInit()
 	lastpenalized = microsec_clock::universal_time();
 	ballseen = microsec_clock::universal_time();
 	//    generateFakeObstacles();
-	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
-	Reset();
-	
 }
 
 
@@ -124,8 +123,45 @@ void Behavior::UserInit()
 	default value??
 */
 void Behavior::Reset(){
+	
+	// read team configuration xml data
+	config.teamNumber = atoi(_xml.findValueForKey("team_config.team_number").front().c_str());
+	config.playerNumber = atoi(_xml.findValueForKey("team_config.player").front().c_str());
+	
+	std::string color;
+	color = _xml.findValueForKey("team_config.default_team_color").front().c_str();
+	if(color.compare("blue") == 0)
+		config.teamColor = TEAM_BLUE;
+	else if(color.compare("red") == 0)
+		config.teamColor == TEAM_RED;
+	else
+		Logger::Instance().WriteMsg("Behavior", "Behavior Reset: Team color not found!", Logger::Warning);
+	
+	// read behavior configuration xml data 
 	config.ur = atof(_xml.findValueForKey("behavior.ur").front().c_str());
-	Logger::Instance().WriteMsg("Behavior", "Reset done", Logger::Warning);
+
+	// read robot configuration xml data
+	if ( (config.playerNumber < 1) || (4 < config.playerNumber) )
+		Logger::Instance().WriteMsg("Behavior", "Behavior Reset: Invalid player number", Logger::Error);
+	
+	for(int i = 0 ; i < 2 ; i++)
+	{
+		std::string kickOff = (i == 0) "KickOff" ? "noKickOff";	// KICKOFF == 0, NOKICKOFF == 1
+
+		for(int r = 0 ; r < 4 ; r++) // for each robot on the node
+		{
+			if( atoi(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+r+".number")) == config.playerNumber )
+			{
+				config.initPhi[i] = 0.0;
+				config.initX[i] = atoi(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+r+".posx"));
+				config.initY[i] = atoi(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+r+".posy"));
+				Logger::Instance().WriteMsg("Behavior", "Behavior Reset: INIT X "+kickoff+" "+_toString(initX[i])+" INITY "+ _toString(initY[i])+" INITPHI "+ _toString(initPhi[i]), Logger::Info);
+				break;
+			}
+		}
+	}
+
+	Logger::Instance().WriteMsg("Behavior", "Reset done", Logger::Info);
 }
 
 
@@ -169,7 +205,7 @@ int Behavior::Execute()
 		//		checkForPenaltyArea();
 		readytokick = false;
 
-		if(playerNumber == 1 || role == GOALIE) { // goalie role if number 1
+		if(config.playerNumber == 1 || role == GOALIE) { // goalie role if number 1
 			Goalie();
 		}
 		else { // not goalie behavior
@@ -296,8 +332,8 @@ void Behavior::GetGameState()
 		//Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
 		int prevGameState = gameState;
 		gameState = gsm->player_state();
-		teamColor = gsm->team_color();
-		playerNumber = gsm->player_number();
+		config.teamColor = gsm->team_color();
+		config.playerNumber = gsm->player_number();
 
 		if (gameState == PLAYER_PLAYING)
 		{
@@ -506,7 +542,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	t = it;
 
 	/* BEGIN - Basic Obstacle Avoidance Code */
-	if ( (om != 0) && (playerNumber == 2) )
+	if ( (om != 0) && (config.playerNumber == 2) )
 	{
 		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) )
 		{
@@ -672,7 +708,7 @@ void Behavior::gotoPosition(float target_x, float target_y, float target_phi)
 
 
 /* Read Configuration Functions */
-
+/*
 bool Behavior::readConfiguration(const std::string& file_name)
 {
 	XMLConfig config(file_name);
@@ -698,19 +734,19 @@ bool Behavior::readConfiguration(const std::string& file_name)
 		Logger::Instance().WriteMsg("Behavior", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
 
 	return true;
-}
+}*/
 
 
 bool Behavior::readRobotConfiguration(const std::string& file_name)
 {
-	if ( (playerNumber < 1) || (4 < playerNumber) )
+	if ( (config.playerNumber < 1) || (4 < config.playerNumber) )
 	{
 		Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Invalid player number "  , Logger::Error);
 		return false;
 	}
 
 	readRobotConf = true;
-	XML config(file_name);
+	XML configxml(file_name);
 	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
 	NodeCont teamPositions, robotPosition ;
 	Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration "  , Logger::Info);
@@ -719,14 +755,14 @@ bool Behavior::readRobotConfiguration(const std::string& file_name)
 	{
 		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
 		bool found = false;
-		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
+		teamPositions = configxml.QueryElement<std::string, float, std::string>(kickoff);
 
 		if (teamPositions.size() != 0)
-			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
+			robotPosition = configxml.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
 
 		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++)
 		{
-			if (it->attrb["number"] == playerNumber)
+			if (it->attrb["number"] == config.playerNumber)
 			{
 				initPhi[i] = 0.0;
 				initX[i] = (it->attrb["posx"]);
@@ -738,7 +774,7 @@ bool Behavior::readRobotConfiguration(const std::string& file_name)
 
 		if (!found)
 		{
-			Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Unable to find initial " + kickoff + " position for player number " + _toString(playerNumber) , Logger::Error);
+			Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Unable to find initial " + kickoff + " position for player number " + _toString(config.playerNumber) , Logger::Error);
 			readRobotConf = false;
 		}
 	}
