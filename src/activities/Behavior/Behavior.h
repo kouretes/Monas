@@ -88,10 +88,29 @@ public:
 	 * @brief
 	 */
 	bool ClosestRobot();
+
+	/**
+	 * @fn void GetPosition()
+	 * @brief
+	 */
 	void GetPosition();
+	
+	/**
+	 * @fn void UpdateOrientation()
+	 * @brief
+	 */
 	void UpdateOrientation();
+	
+	/**
+	 * @fn void checkForPenaltyArea()
+	 * @brief
+	 */
 	void checkForPenaltyArea();
 
+	/**
+	 * @fn void Kick(int side)
+	 * @brief
+	 */
 	void Kick(int side);
 
 private:
@@ -102,38 +121,46 @@ private:
 	 */
 	enum ROLES
 	{
-	    ATTACKER = 0, CENTER_FOR, GOALIE
+	    ATTACKER = 0, CENTER_FOR = 1, GOALIE = 2
 	};
 
 	/**
-	 * @struct 
-	 * @brief	
+	 * @struct Kick
+	 * @brief Used to store all possible kicks. This struct is member of configuration struct.
+	 */
+	struct Kick {
+		std::string KickForwardLeft;
+		std::string KickForwardRight;
+		std::string KickSideLeft;
+		std::string KickSideRight;
+		std::string KickBackLeft;
+		std::string KickBackRight;
+	};
+
+	/**
+	 * @struct configiration
+	 * @brief Used to store and update all values that we read from the xml files. So everything
+	 *	that is read from an xml should be included in this list!
 	 */
 	struct {
-		int teamNumber, playerNumber, teamColor;
+
+		// values from the team_config xml file
+		int teamNumber, playerNumber, teamColor, maxPlayers;
+
+		// values from the robotConfig xml file, initial game positions on the field...
 		float initX[2], initY[2], initPhi[2];
-		float ur; // to find better name...
+
+		// values from the features xml file 
+		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
+		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
+		double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
+
+		// values from the behavior xml file	
+		float posx, posy, epsx, epsy;
+		struct Kick kicks;		
+		float ur; // used only by goalie
+		
 	} config;
-	
-	int toFallOrNotToFall();
-	void Goalie();
-
-	void velocityWalk(double ix, double iy, double it, double f);
-	void littleWalk(double x, double y, double th);
-	void approachBall();
-	void approachBallRoleDependent();
-
-	void stopRobot();
-	void generateFakeObstacles();
-	void pathPlanningRequestRelative(float target_x, float target_y, float target_phi);
-	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
-	void gotoPosition(float target_x, float target_y, float target_phi);
-
-	//bool readConfiguration(const std::string& file_name); 		//this function reads team's configuration info from XML file
-	bool readRobotConfiguration(const std::string& file_name); 	//this function reads robot's initial position in the field from XML file
-	bool readGoalConfiguration(const std::string& file_name); 	//this function reads the position of the goals
-	//bool readBehaviorConfiguration(const std::string& file_name); // this function reads the behavior data
-
 
 	/**
 	 * Incoming Messages 
@@ -154,33 +181,49 @@ private:
 	MotionActionMessage* amot;
 	LocalizationResetMessage* locReset;
 	PathPlanningRequestMessage* pprm;
-	ObstacleMessage* fom; // fake obstacle message!
+	ObstacleMessage* fom;	// fake obstacle message!
 
+	int toFallOrNotToFall();
+	void Goalie();
 
-	bool ballfound;
+	void velocityWalk(double ix, double iy, double it, double f);
+	void littleWalk(double x, double y, double th);
+	void approachBall();
+	void approachBallRoleDependent();
 
-	bool pathOK;	
+	void stopRobot();
+	void generateFakeObstacles();
+	void pathPlanningRequestRelative(float target_x, float target_y, float target_phi);
+	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
+	void gotoPosition(float target_x, float target_y, float target_phi);
+
+	bool ballfound;	// variable that is true if we see the ball, else false.
+
 	int fall;	// variable for goalie role to check if he should fall or not.
+	
+	int role;	// variable that holds the role number of the robot (see enum ROLES)...
+
+	bool pathOK;
 
 	bool kickoff;
-	//float initX[2], initY[2], initPhi[2]; // initial game position in the field!!!!
-	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
-	double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
-	double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
-	double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
+
 	float cX, cY, ct;
-	float bd, bb, bx, by, posx, posy;
+
+	float bd, bb, bx, by;
+
 	int side;
+
 	float robot_x, robot_y, robot_phi, robot_confidence;
 
 	bool readytokick;
+
 	int direction;
+
 	double orientation;
 
 	int gameState;
-	//int teamColor;
-	//int playerNumber;
-	int role;
+
+	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
 	boost::posix_time::ptime lastwalk, lastplay, lastpenalized;
 };
