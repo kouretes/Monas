@@ -44,11 +44,11 @@ void Behavior::UserInit()
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
-	bd = 0.0;
-	bb = 0.0;
-	bx = 0.0;
-	by = 0.0;
-	side = +1;
+	ball_dist = 0.0;
+	ball_bearing = 0.0;
+	ball_x = 0.0;
+	ball_y = 0.0;
+	side =+ 1;
 	robot_x = 0.0;
 	robot_y = 0.0;
 	robot_phi = 0.0;
@@ -194,11 +194,11 @@ int Behavior::Execute()
 			_blk.publishState(*hcontrol, "behavior");
 			if (ballfound == 1)
 			{
-				side = (bb > 0) ? 1 : -1;
+				side = (ball_bearing > 0) ? 1 : -1;
 				//posx = 0.1, posy = 0.03; // Desired ball position for kick
 				//double epsx = 0.025, epsy = 0.025; // Desired precision
 
-				if ( (fabs( bx - config.posx ) < config.epsx)  && (fabs( by - (side * config.posy) ) < config.epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
+				if ( (fabs( ball_x - config.posx ) < config.epsx)  && (fabs( ball_y - (side * config.posy) ) < config.epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
 				{
 					readytokick = true;
 					Kick(side);
@@ -288,10 +288,10 @@ void Behavior::read_messages()
 		{
             if (wim->balls_size() > 0)
             {
-                bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-                by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-                bd = sqrt(pow(bx, 2) + pow(by, 2));
-                bb = atan2(by, bx);
+                ball_x = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
+                ball_y = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
+                ball_dist = sqrt(pow(ball_x, 2) + pow(ball_y, 2));
+                ball_bearing = atan2(ball_y, ball_x);
             }
 		}
 	}
@@ -442,7 +442,7 @@ void Behavior::Kick(int side)
 	{
 		if (orientation == 0)
 		{
-			if (by > 0.0)
+			if (ball_y > 0.0)
 				amot->set_command(config.kicks.KickForwardLeft); // Left Kick
 			else
 				amot->set_command(config.kicks.KickForwardRight); // Right Kick
@@ -459,14 +459,14 @@ void Behavior::Kick(int side)
 		}
 		else if (orientation == 2)
 		{
-			if (by > 0.0)
+			if (ball_y > 0.0)
 				amot->set_command(config.kicks.KickSideLeft); // LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
 			else
 				amot->set_command(config.kicks.KickSideRight); // RightBackHigh_carpet KickBackRight KickBackRightPierris
 		}
 		else
 		{
-			if (by > 0.0)
+			if (ball_y > 0.0)
 				amot->set_command(config.kicks.KickSideLeft);
 			else
 				amot->set_command(config.kicks.KickSideRight);
@@ -561,10 +561,10 @@ void Behavior::littleWalk(double x, double y, double th)
 
 void Behavior::approachBall()
 {
-	if (bd > 0.3)
+	if (ball_dist > 0.3)
     {
-        int pathSide = (bb > 0) ? 1 : -1;
-        pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
+        int pathSide = (ball_bearing > 0) ? 1 : -1;
+        pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
     }
     else if(robot_phi > (float) (M_PI_4/2.0)){
         littleWalk(0.1, 0.55, (float)(-3*M_PI_4/2.0));
@@ -573,7 +573,7 @@ void Behavior::approachBall()
         littleWalk(0.1, -0.55, (float)(3*M_PI_4/2.0));
     }
     else
-        pathPlanningRequestAbsolute(bx - config.posx, by - side * config.posy, bb);
+        pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
 }
 
 void Behavior::approachBallRoleDependent()
@@ -590,10 +590,10 @@ void Behavior::approachBallRoleDependent()
 	}
 	else if(role == CENTER_FOR)
 	{
-		if (bd > 0.7)
+		if (ball_dist > 0.7)
 		{
-			int pathSide = (bb > 0) ? 1 : -1;
-			pathPlanningRequestAbsolute(bx - config.posx, by - side * config.posy, bb);
+			int pathSide = (ball_bearing > 0) ? 1 : -1;
+			pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
 		}
 		else
 			stopRobot();
@@ -709,7 +709,7 @@ void Behavior::Goalie()
 {
 	role = GOALIE;
 	if(ballfound == 1) {
-
+		
 		fall = toFallOrNotToFall();
 
 		if(fall == 1) // extend left foot
@@ -726,6 +726,19 @@ void Behavior::Goalie()
 		{
 			hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 			_blk.publishState(*hcontrol, "behavior");
+		}
+		
+		if(ball_dist < 0.65) // check if ball is to close to the goal post
+		{
+			pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
+			if ( (fabs(ball_x - config.posx) < config.epsx)  && (fabs( ball_y - (side * config.posy) ) < config.epsy) && (bmsg != 0) && (bmsg->radius() > 0) ) {
+				if (ball_y > 0.0)
+					amot->set_command(config.kicks.KickForwardLeft); // Left Kick			
+				else
+					amot->set_command(config.kicks.KickForwardRight); // Right Kick
+			
+				_blk.publishSignal(*amot, "motion");			
+			}
 		}
 
 	}

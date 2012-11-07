@@ -209,7 +209,7 @@ private:
 
 	float cX, cY, ct;
 
-	float bd, bb, bx, by;
+	float ball_dist, ball_bearing, ball_x, ball_y;
 
 	int side;
 
