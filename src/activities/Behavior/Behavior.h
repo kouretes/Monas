@@ -66,52 +66,9 @@ public:
 	
 	/**
 	 * @fn int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute()
-	 * @brief Agents execute function...
+	 * @brief Agents execute function, used to execute the activity...
 	 */
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
-	
-	/**
-	 * @fn void read_messages()
-	 * @brief read incoming messages from declared topics.
-	 */
-	void read_messages();
-	
-	/**
-	 * @fn void GetGameState()
-	 * @brief information gathering function, that reads the game state message
-	 * and assign the robot game state variables (gameState, teamColor, playerNumber...)
-	 */
-	void GetGameState();
-	
-	/**
-	 * @fn bool ClosestRobot()
-	 * @brief
-	 */
-	bool ClosestRobot();
-
-	/**
-	 * @fn void GetPosition()
-	 * @brief
-	 */
-	void GetPosition();
-	
-	/**
-	 * @fn void UpdateOrientation()
-	 * @brief
-	 */
-	void UpdateOrientation();
-	
-	/**
-	 * @fn void checkForPenaltyArea()
-	 * @brief
-	 */
-	void checkForPenaltyArea();
-
-	/**
-	 * @fn void Kick(int side)
-	 * @brief
-	 */
-	void Kick(int side);
 
 private:
 	
@@ -182,24 +139,125 @@ private:
 	LocalizationResetMessage* locReset;
 	PathPlanningRequestMessage* pprm;
 	ObstacleMessage* fom;	// fake obstacle message!
+	
+	/**
+	 * @fn void read_messages()
+	 * @brief read incoming messages from declared topics.
+	 */
+	void read_messages();
+	
+	/**
+	 * @fn void GetGameState()
+	 * @brief information gathering function, that reads the game state message
+	 * and assign the robot game state variables (gameState, teamColor, playerNumber...)
+	 */
+	void GetGameState();
 
+	/* --------------------------------- Goalie functions ---------------------------------- */
+
+	/**
+	 * @fn int toFallOrNotToFall()
+	 * @brief Function used by Goalie() function to determine when and where to extend foot 
+	 * for a ball save.
+	 */
 	int toFallOrNotToFall();
+
+	/**
+	 * @fn void Goalie()
+	 * @brief Function used by goalie basic behavior to decide when to fall for a ball save and
+ 	 * when to go on the ball and kick it away from the goal post.
+	 */
 	void Goalie();
 
+	/* ------------------------------------------------------------------------------------- */
+
+	/**
+	 * @fn bool ClosestRobot()
+	 * @brief (TODO)
+	 */
+	bool ClosestRobot();
+
+	/**
+	 * @fn void GetPosition()
+	 * @brief (TODO)
+	 */
+	void GetPosition();
+	
+	/**
+	 * @fn void UpdateOrientation()
+	 * @brief (TODO)
+	 */
+	void UpdateOrientation();
+	
+	/**
+	 * @fn void checkForPenaltyArea()
+	 * @brief (TODO)
+	 */
+	void checkForPenaltyArea();
+
+	/**
+	 * @fn void Kick(int side)
+	 * @brief (TODO)
+	 */
+	void Kick(int side);
+
+	/**
+	 * @fn void velocityWalk(double ix, double iy, double it, double f)
+	 * @brief (TODO)
+	 */
 	void velocityWalk(double ix, double iy, double it, double f);
+	
+	/**
+	 * @fn void littleWalk(double x, double y, double th)
+	 * @brief (TODO)
+	 */	
 	void littleWalk(double x, double y, double th);
+
+	/**
+	 * @fn void approachBall()
+	 * @brief (TODO)
+	 */	
 	void approachBall();
+
+	/**
+	 * @fn void approachBallRoleDependent()
+	 * @brief (TODO)
+	 */	
 	void approachBallRoleDependent();
 
+	/**
+	 * @fn void stopRobot()
+	 * @brief (TODO)
+	 */	
 	void stopRobot();
+	
+	/**
+	 * @fn void generateFakeObstacles()
+	 * @brief (TODO)
+	 */	
 	void generateFakeObstacles();
+
+	/**
+	 * @fn void pathPlanningRequestRelative(float target_x, float target_y, float target_phi)
+	 * @brief (TODO)
+	 */	
 	void pathPlanningRequestRelative(float target_x, float target_y, float target_phi);
+
+	/**
+	 * @fn void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi)
+	 * @brief (TODO)
+	 */	
 	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
+
+	/**
+	 * @fn void gotoPosition(float target_x, float target_y, float target_phi)
+	 * @brief (TODO)
+	 */	
 	void gotoPosition(float target_x, float target_y, float target_phi);
 
-	bool ballfound;	// variable that is true if we see the ball, else false.
+	bool ballfound;	// variable that is true if we see the ball.
 
-	int fall;	// variable for goalie role to check if he should fall or not.
+	int fall;	// variable for goalie role to check if he should fall or not and in which side.
 	
 	int role;	// variable that holds the role number of the robot (see enum ROLES)...
 

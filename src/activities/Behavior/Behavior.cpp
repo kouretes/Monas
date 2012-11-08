@@ -736,8 +736,7 @@ void Behavior::Goalie()
 					amot->set_command(config.kicks.KickForwardLeft); // Left Kick			
 				else
 					amot->set_command(config.kicks.KickForwardRight); // Right Kick
-			
-				_blk.publishSignal(*amot, "motion");			
+			_blk.publishSignal(*amot, "motion");			
 			}
 		}
 
