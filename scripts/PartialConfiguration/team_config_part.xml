@@ -1,9 +1,10 @@
 <?xml version="1.0" ?>
+
 <!-- team_number -->
 <team_number>10</team_number>
+
 <!-- player number -->
 <default_team_color>blue</default_team_color><!-- Color that the game starts ?-->
-<!-- gamecontroller port>
-<gm_port>3838</gm_port>-->
 
-
+<!-- default team max players -->
+<team_max_players>4</team_max_players>

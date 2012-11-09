@@ -9,10 +9,10 @@
 <epsy>0.025</epsy>
 
 <!-- Desired kicks -->
-<KickForwardLeft>KickForwardLeft.xar</KickForwardLeft>
-<KickForwardRight>KickForwardRight.xar</KickForwardRight>
-<KickSideLeft>KickSideLeftStable.xar</KickSideLeft>
-<KickSideRight>KickSideRightStable.xar</KickSideRight>
+<KickForwardLeft>KickForwardLeft2.xar</KickForwardLeft>
+<KickForwardRight>KickForwardRight2.xar</KickForwardRight>
+<KickSideLeft>KickSideLeftStable3.xar</KickSideLeft>
+<KickSideRight>KickSideRightStable3.xar</KickSideRight>
 <KickBackLeft>KickBackLeftED.xar</KickBackLeft>
 <KickBackRight>KickBackRightED.xar</KickBackRight>
 
