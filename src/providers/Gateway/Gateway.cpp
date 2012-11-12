@@ -14,7 +14,12 @@ PROVIDER_REGISTER(Gateway);
 
 void Gateway::UserInit()
 {
+#ifdef RUN_ON_NAO
+	_xml = XmlNode(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
+	               , KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID), true);
+#else
 	_xml = XmlNode(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi", true);
+#endif
 	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
 	localHostId = 0;
@@ -83,8 +88,8 @@ int Gateway::Execute()
 					
 					//Handshaking message
 					if(inmsg->handoffrequest() == true){
-						outmsg.mutable_handshaking()->set_headid("0");
-						outmsg.mutable_handshaking()->set_bodyid("0");
+						outmsg.mutable_handshaking()->set_headid(_xml.getHeadID());
+						outmsg.mutable_handshaking()->set_bodyid(_xml.getBodyID());
 						outmsg.mutable_handshaking()->set_checksum(_xml.getChecksum());
 					}
 				

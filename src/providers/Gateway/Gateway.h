@@ -13,6 +13,9 @@
 #include "messages/Network.pb.h"
 #include "messages/GUICommunication.pb.h"
 
+#ifdef RUN_ON_NAO
+#include "hal/robot/generic_nao/robot_consts.h"
+#endif
 
 
 PROVIDER_START

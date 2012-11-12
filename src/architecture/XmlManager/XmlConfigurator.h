@@ -30,6 +30,8 @@ public:
 private:
 	std::string headPath;
 	std::string bodyPath;
+	std::string headID;
+	std::string bodyID;
 	std::string directoryPath;
 	std::vector<std::string> allFiles;
 	bool root;
@@ -69,6 +71,8 @@ public:
 	XmlNode* findNodeForKey(std::string key);
 	std::string getHeadPath();
 	std::string getBodyPath();
+	std::string getHeadID();
+	std::string getBodyID();
 	unsigned int getChecksum();
 
 };
