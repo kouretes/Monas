@@ -399,7 +399,7 @@ void NaoCamera::initDefaultControlSettings()
   setControlSetting(V4L2_CID_CONTRAST, 96);
 
   setControlSetting(V4L2_CID_AWB_G_CHANNEL_GAIN,64);
-  setControlSetting(V4L2_CID_RED_BALANCE,128 );
+  setControlSetting(V4L2_CID_RED_BALANCE,96 ); //128
   setControlSetting(V4L2_CID_BLUE_BALANCE,128);
 
   usleep(300*1000);
