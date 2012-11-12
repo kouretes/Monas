@@ -9,6 +9,9 @@ add_subdirectory ( ./robocup/)
 
 # TODO
 
+if (RUN_ON_NAO)
+	add_definitions(" -DRUN_ON_NAO ")
+endif()
 
 if ( "${ActivityBuildType}" STREQUAL "MODULE" )
   add_definitions ( -DDLIB_FUNCTIONALITY )

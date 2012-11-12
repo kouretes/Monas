@@ -15,6 +15,8 @@ string convertInt(int number)
 XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrator)
 {
 	root = administrator;
+	headID = headId;
+	bodyID = bodyId;
 	fileType = 0;
 	headPath = "HEAD/";
 	headPath.append(headId);
@@ -642,7 +644,15 @@ unsigned int XmlNode::getChecksum(){
 string XmlNode::getHeadPath(){
 	return headPath;
 }
+
 string XmlNode::getBodyPath(){
 	return bodyPath;
 }
 
+string XmlNode::getHeadID(){
+	return headID;
+}
+
+string XmlNode::getBodyID(){
+	return bodyID;
+}

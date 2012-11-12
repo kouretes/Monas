@@ -25,21 +25,24 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 	functionName( "Stop", "mainModule" ,  "Method to stop Talws" );
 	BIND_METHOD( mainModule::Stop );
 	boost::shared_ptr<AL::ALMemoryProxy> memory;
-
+	KAlBroker::Instance().SetBroker ( broker );
 	try
 	{
-		memory = broker->getMemoryProxy();
-		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::BODY_ID, memory->getData("Device/DeviceList/ChestBoard/BodyNickName"));
-		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::HEAD_ID, memory->getData("RobotConfig/Head/HeadId"));
+		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
+		std::string bodyId = memory->getData("Device/DeviceList/ChestBoard/BodyId");
+		std::string headId = memory->getData("RobotConfig/Head/HeadId");
+		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::BODY_ID, bodyId.substr(16,19/*bodyId.size()-5, bodyId.size()-2*/)); //manually because aldebarab forgot to put a \0...
+		//std::cout << "-"  << bodyId.c_str() << "\0-" << std::endl;
+		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::HEAD_ID, headId/*.substr(headId.size()-4, headId.size())*/);
 	}
 	catch (AL::ALError& e)
 	{
 		Logger::Instance().WriteMsg("Sensors", "Error in getting memory proxy", Logger::FatalError);
+		std::cout << e.what() << std::endl;
 	}
-
-	std::cout << "KRobot - Found Body ID: '" << KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID) << "'" << std::endl;
 	std::cout << "KRobot - Found Head ID: '" << KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID) << "'" << std::endl;
-	KAlBroker::Instance().SetBroker ( broker );
+	//std::cout << "KRobot - Found Body ID: '" << _toString(KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID).size()) << "'" << std::endl;
+	std::cout << "KRobot - Found Body ID: '" << KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID) << "'" << std::endl;
 	tal = new Talws();
 }
 
