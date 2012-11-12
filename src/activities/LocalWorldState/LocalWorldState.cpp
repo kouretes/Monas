@@ -116,7 +116,6 @@ int LocalWorldState::Execute()
 	}
 	_blk.publishData(MyWorld, "worldstate");
 #ifdef NO_GAME
-	DebugDataForGUI.Clear();
 	LocalizationDataForGUI_Load();
 	_blk.publishSignal(DebugDataForGUI, "debug");
 #endif
@@ -486,14 +485,9 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 
 int LocalWorldState::LocalizationDataForGUI_Load()
 {
-	bool addnewptrs = false;
-
-	if ((unsigned int)  DebugDataForGUI.particles_size() < localizationWorld.SIRParticles.size)
-		addnewptrs = true;
-
 	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
-		if (addnewptrs)
+		if(DebugDataForGUI.particles_size() < (int)(i+1))
 			DebugDataForGUI.add_particles();
 		DebugDataForGUI.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
 		DebugDataForGUI.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
