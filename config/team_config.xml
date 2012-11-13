@@ -1,13 +1,9 @@
 <?xml version="1.0" ?>
-
 <!-- default team number -->
-<team_number>10</team_number>
-
+<team_number>4</team_number>
 <!-- default team color number -->
 <default_team_color>blue</default_team_color>
-
-<!-- default player number -->
-<player>2</player>
-
 <!-- default team max players -->
 <team_max_players>4</team_max_players>
+<!-- default player number -->
+<player>2</player>
