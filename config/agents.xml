@@ -15,10 +15,13 @@
 	<activity Enable=1>LocalWorldState</activity>
 	<activity Enable=0>KalmanWorldState</activity>
 	<activity Enable=1>SharedWorldModel</activity>
-	<activity Enable=1>HeadController</activity>
 	<activity Enable=1>Behavior</activity>
 </agent>
 
+<agent IsRealTime=1 Priority=1 ThreadFrequency=25 StatsCycle=50 Enable=1>
+	<name>head</name>
+		<activity Enable=1>HeadController</activity>
+</agent>
 
 <provider IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000 Enable=1>Sensors</provider>
 <provider IsRealTime=1 Priority=1 ThreadFrequency=10 StatsCycle=1000 Enable=1>Gateway</provider>
