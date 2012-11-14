@@ -571,11 +571,13 @@ void Behavior::approachBall()
     std::cout << oppgb << "\n";
 	if (ball_dist > 0.3){
         int pathSide = (ball_bearing > 0) ? 1 : -1;
-        pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
+//        pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
+//        velocityWalk(ball_x,ball_y,ball_bearing,1.0);
+        pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
     }
-//       if((ball_bearing > M_PI_4) || (ball_bearing < -M_PI_4)){
- //           littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
- //       }
+    else if((ball_bearing > M_PI_4) || (ball_bearing < -M_PI_4)){
+        littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
+    }
  //       else{
     else if(oppgb > (float) (M_PI_4)){
         velocityWalk(0.0, -0.7, (float)(M_PI_4/2),1.0);
