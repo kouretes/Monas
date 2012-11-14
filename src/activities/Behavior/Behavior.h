@@ -29,11 +29,11 @@
 #define numOfFakeObstacles 15
 
 /**
- * @brief Monas activity intented to determine the Behavior 
+ * @brief Monas activity intented to determine the Behavior
 	(Roles: Goalie, Attacker, Defender... ) for nao v3.3 robot.
 
  * @author 2012 kouretes team
- 	
+
  * \file Behavior.h
 */
 
@@ -45,25 +45,25 @@ class Behavior: public IActivity
 public:
 
 	ACTIVITY_CONSTRUCTOR(Behavior);
-	
+
 	/**
 	 * @fn std::string ACTIVITY_VISIBLE GetName()
 	 * @brief used get the name of the activity.
 	 */
 	std::string ACTIVITY_VISIBLE GetName() { return "Behavior"; }
-	
+
 	/**
 	 * @fn void ACTIVITY_VISIBLE  UserInit()
 	 * @brief Activity initialization...
 	 */
 	void ACTIVITY_VISIBLE UserInit();
-	
+
 	/**
 	 * @fn void ACTIVITY_VISIBLE  Reset()
 	 * @brief Activity reset capability. Reload xmls etc...
 	 */
 	void ACTIVITY_VISIBLE Reset();
-	
+
 	/**
 	 * @fn int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute()
 	 * @brief Agents execute function, used to execute the activity...
@@ -71,7 +71,7 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-	
+
 	/**
 	 * @enum ROLES
 	 * @brief enum to attach roles on the robot.
@@ -107,20 +107,20 @@ private:
 		// values from the robotConfig xml file, initial game positions on the field...
 		float initX[2], initY[2], initPhi[2];
 
-		// values from the features xml file 
+		// values from the features xml file
 		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
 		double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
 
-		// values from the behavior xml file	
+		// values from the behavior xml file
 		float posx, posy, epsx, epsy;
-		struct Kick kicks;		
+		struct Kick kicks;
 		float ur; // used only by goalie
-		
+
 	} config;
 
 	/**
-	 * Incoming Messages 
+	 * Incoming Messages
 	 */
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const BallTrackMessage>  bmsg;
@@ -130,8 +130,8 @@ private:
 	boost::shared_ptr<const SharedWorldInfo>  swim;
 	boost::shared_ptr<const BallFoundMessage>  bfm;
 
-	/** 
-	 * Outgoing Messages 
+	/**
+	 * Outgoing Messages
 	 */
 	HeadControlMessage* hcontrol;
 	MotionWalkMessage* wmot;
@@ -139,13 +139,13 @@ private:
 	LocalizationResetMessage* locReset;
 	PathPlanningRequestMessage* pprm;
 	ObstacleMessage* fom;	// fake obstacle message!
-	
+
 	/**
 	 * @fn void read_messages()
 	 * @brief read incoming messages from declared topics.
 	 */
 	void read_messages();
-	
+
 	/**
 	 * @fn void GetGameState()
 	 * @brief information gathering function, that reads the game state message
@@ -157,7 +157,7 @@ private:
 
 	/**
 	 * @fn int toFallOrNotToFall()
-	 * @brief Function used by Goalie() function to determine when and where to extend foot 
+	 * @brief Function used by Goalie() function to determine when and where to extend foot
 	 * for a ball save.
 	 */
 	int toFallOrNotToFall();
@@ -182,13 +182,13 @@ private:
 	 * @brief (TODO)
 	 */
 	void GetPosition();
-	
+
 	/**
 	 * @fn void UpdateOrientation()
 	 * @brief (TODO)
 	 */
 	void UpdateOrientation();
-	
+
 	/**
 	 * @fn void checkForPenaltyArea()
 	 * @brief (TODO)
@@ -196,69 +196,69 @@ private:
 	void checkForPenaltyArea();
 
 	/**
-	 * @fn void Kick(int side)
+	 * @fn void Kick()
 	 * @brief (TODO)
 	 */
-	void Kick(int side);
+	void Kick();
 
 	/**
 	 * @fn void velocityWalk(double ix, double iy, double it, double f)
 	 * @brief (TODO)
 	 */
 	void velocityWalk(double ix, double iy, double it, double f);
-	
+
 	/**
 	 * @fn void littleWalk(double x, double y, double th)
 	 * @brief (TODO)
-	 */	
+	 */
 	void littleWalk(double x, double y, double th);
 
 	/**
 	 * @fn void approachBall()
 	 * @brief (TODO)
-	 */	
+	 */
 	void approachBall();
 
 	/**
 	 * @fn void approachBallRoleDependent()
 	 * @brief (TODO)
-	 */	
+	 */
 	void approachBallRoleDependent();
 
 	/**
 	 * @fn void stopRobot()
 	 * @brief (TODO)
-	 */	
+	 */
 	void stopRobot();
-	
+
 	/**
 	 * @fn void generateFakeObstacles()
 	 * @brief (TODO)
-	 */	
+	 */
 	void generateFakeObstacles();
 
 	/**
 	 * @fn void pathPlanningRequestRelative(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
-	 */	
+	 */
 	void pathPlanningRequestRelative(float target_x, float target_y, float target_phi);
 
 	/**
 	 * @fn void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
-	 */	
+	 */
 	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
 
 	/**
 	 * @fn void gotoPosition(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
-	 */	
+	 */
 	void gotoPosition(float target_x, float target_y, float target_phi);
 
 	bool ballfound;	// variable that is true if we see the ball.
 
 	int fall;	// variable for goalie role to check if he should fall or not and in which side.
-	
+
 	int role;	// variable that holds the role number of the robot (see enum ROLES)...
 
 	bool pathOK;
