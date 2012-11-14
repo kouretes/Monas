@@ -46,6 +46,7 @@ void Behavior::UserInit()
 	ct = 0.0;
 	ball_dist = 0.0;
 	ball_bearing = 0.0;
+	goalieApproachStarted = false;
 	ball_x = 0.0;
 	ball_y = 0.0;
 	side =+ 1;
@@ -731,12 +732,14 @@ void Behavior::Goalie()
 		if(fall == 1) // extend left foot
 		{
 			amot->set_command("goalieLeftFootExtened.xar");
-			_blk.publishSignal(*amot, "motion");
+			_blk.publishSignal(*amot, "motion");	
+			return;
 		}
 		else if(fall == -1) // extend right foot
 		{
 			amot->set_command("goalieRightFootExtened.xar");
 			_blk.publishSignal(*amot, "motion");
+			return;
 		}
 		else // scan and track for ball
 		{
@@ -746,18 +749,27 @@ void Behavior::Goalie()
 
 		if(ball_dist < 0.65) // check if ball is to close to the goal post
 		{
+			goalieApproachStarted = true;
 			pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
 			if ( (fabs(ball_x - config.posx) < config.epsx)  && (fabs( ball_y - (side * config.posy) ) < config.epsy) && (bmsg != 0) && (bmsg->radius() > 0) ) {
 				if (ball_y > 0.0)
 					amot->set_command(config.kicks.KickForwardLeft); // Left Kick
 				else
 					amot->set_command(config.kicks.KickForwardRight); // Right Kick
-			_blk.publishSignal(*amot, "motion");
+
+				_blk.publishSignal(*amot, "motion");	
 			}
+		}else if(goalieApproachStarted == true){
+			stopRobot();
+			goalieApproachStarted = false;
 		}
 
 	}
 	else if(ballfound == 0) {
+		if(goalieApproachStarted == true){
+			stopRobot();
+			goalieApproachStarted = false;
+		}
 		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(*hcontrol, "behavior");
 	}
