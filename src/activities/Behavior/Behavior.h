@@ -283,6 +283,8 @@ private:
 
 	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
+	bool goalieApproachStarted;
+	
 	boost::posix_time::ptime lastwalk, lastplay, lastpenalized;
 };
 
