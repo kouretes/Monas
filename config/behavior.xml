@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
 <!-- Desired ball position for kick -->
-<posx>0.10</posx>
+<posx>0.08</posx>
 <posy>0.03</posy>
 <!-- Desired precision -->
-<epsx>0.03</epsx>
-<epsy>0.03</epsy>
+<epsx>0.025</epsx>
+<epsy>0.025</epsy>
 <!-- Desired kicks -->
 <KickForwardLeft>KickForwardLeft2.xar</KickForwardLeft>
 <KickForwardRight>KickForwardRight2.xar</KickForwardRight>
-<KickSideLeft>KickSideLeftStable3.xar</KickSideLeft>
-<KickSideRight>KickSideRightStable3.xar</KickSideRight>
+<KickSideLeft>KickForwardLeft2.xar</KickSideLeft>
+<KickSideRight>KickForwardRight2.xar</KickSideRight>
 <KickBackLeft>KickBackLeftED.xar</KickBackLeft>
 <KickBackRight>KickBackRightED.xar</KickBackRight>
 <!-- Goalie data-->
