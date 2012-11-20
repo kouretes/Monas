@@ -2,8 +2,8 @@
 <!-- Refresh Segmentation parameters based camera every : (millisec) -->
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>AUTcup.conf</SegmentationBottom>
-<SegmentationTop>AUTcup.conf</SegmentationTop>
+<SegmentationBottom>1-lab-322-seglBGYW.conf</SegmentationBottom>
+<SegmentationTop>1-lab-322-seglBGYW.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGamma>1.0</cameraGamma>
 <!-- Ball Detection -->
@@ -29,4 +29,4 @@
 <widthestimateotolerance>0.2</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>0</sensordelay>
-<pitchoffset>0.06</pitchoffset>
+<pitchoffset>0.07</pitchoffset>
