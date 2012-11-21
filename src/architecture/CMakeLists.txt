@@ -25,8 +25,8 @@ add_library ( MonasCore ${LibBuildType}
 			executables/agent.h
 			executables/agent.cpp
 			executables/agentTiming.h
-			XmlManager/XmlConfigurator.h
-			XmlManager/XmlConfigurator.cpp
+			XmlManager/XmlManager.h
+			XmlManager/XmlManager.cpp
 			IExecutable.h
 			talws.h
 			talws.cpp

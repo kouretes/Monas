@@ -35,7 +35,7 @@ class MotionController : public IActivity
 
 public:
 
-	MotionController(Blackboard &b, XmlNode &x);
+	MotionController(Blackboard &b, XmlManager &x);
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();

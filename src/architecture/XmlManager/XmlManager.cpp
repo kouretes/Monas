@@ -1,4 +1,4 @@
-#include "XmlConfigurator.h"
+#include "XmlManager.h"
 
 using namespace std;
 using namespace boost::filesystem;
@@ -12,7 +12,7 @@ string convertInt(int number)
 }
 
 /* Initilize the tree with the files from a directory */
-XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrator)
+XmlManager::XmlManager(string dirPath, string headId, string bodyId, bool administrator)
 {
 	root = administrator;
 	headID = headId;
@@ -55,7 +55,7 @@ XmlNode::XmlNode(string dirPath, string headId, string bodyId, bool administrato
 	computeAddler32();
 }
 
-void XmlNode::print(string pref)
+void XmlManager::print(string pref)
 {
 	//cout<<"Text:"<<endl;
 	cout << pref << endl;
@@ -72,11 +72,11 @@ void XmlNode::print(string pref)
 
 	//cout<<"Kids:"<<endl;
 
-	for(map<string, vector<XmlNode> >::iterator kit = kids.begin(); kit != kids.end(); ++kit)
+	for(map<string, vector<XmlManager> >::iterator kit = kids.begin(); kit != kids.end(); ++kit)
 	{
-		for(vector<XmlNode>::iterator tit = (*kit).second.begin(); tit != (*kit).second.end(); ++tit)
+		for(vector<XmlManager>::iterator tit = (*kit).second.begin(); tit != (*kit).second.end(); ++tit)
 		{
-			cout << pref + "+" << "XmlNode:" << (*kit).first << endl;
+			cout << pref + "+" << "XmlManager:" << (*kit).first << endl;
 			(*tit).print(pref + "+");
 		}
 	}
@@ -86,10 +86,10 @@ void XmlNode::print(string pref)
 /**
 * Delete all Nodes that much a given key
 **/
-void XmlNode::deleteNodesForKey(string key, int fileType)
+void XmlManager::deleteNodesForKey(string key, int fileType)
 {
 	queue<string> keys = findAllSubstring(key);
-	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
+	XmlManager * secondtolast = findSecondToLastNodeForKey(keys);
 	string lastkey = keys.front();
 	unsigned pos;
 	lastkey = extractNumber(lastkey, &pos);
@@ -104,12 +104,12 @@ void XmlNode::deleteNodesForKey(string key, int fileType)
 /**
 *Num of Nodes for a key
 **/
-int XmlNode::numberOfNodesForKey(string key)
+int XmlManager::numberOfNodesForKey(string key)
 {
 	queue<string> keys = findAllSubstring(key);
 	//return findNodeForKey(keys);
-	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
-	//Last processing, it must be a valid XmlNode, so repeat check one more time
+	XmlManager * secondtolast = findSecondToLastNodeForKey(keys);
+	//Last processing, it must be a valid XmlManager, so repeat check one more time
 
 	if(secondtolast == NULL)
 		return 0;
@@ -125,23 +125,23 @@ int XmlNode::numberOfNodesForKey(string key)
 }
 
 
-int XmlNode::numberOfChildrendsForKey(string key)
+int XmlManager::numberOfChildrendsForKey(string key)
 {
 	//return findNodeForKey(keys);
-	XmlNode * darthVader = findNodeForKey(key); //darthVader = father
+	XmlManager * darthVader = findNodeForKey(key); //darthVader = father
 
 	if(darthVader == NULL)
 		return 0;
 
 	int childrends = 0;
-	map<string,vector<XmlNode> >::iterator it;
+	map<string,vector<XmlManager> >::iterator it;
 	for(it = darthVader->kids.begin(); it != darthVader->kids.end(); it++){
 		childrends += (*it).second.size();
 	}
 	return childrends;
 }
-int XmlNode::numberOfUniqueChildrendsForKey(string key){
-	XmlNode * darthVader = findNodeForKey(key); //darthVader = father
+int XmlManager::numberOfUniqueChildrendsForKey(string key){
+	XmlManager * darthVader = findNodeForKey(key); //darthVader = father
 
 	if(darthVader == NULL)
 		return 0;
@@ -152,7 +152,7 @@ int XmlNode::numberOfUniqueChildrendsForKey(string key){
 /**
 * Updates a value to a file.
 **/
-bool XmlNode::updateFilesValue(string path, string value, int fileType)
+bool XmlManager::updateFilesValue(string path, string value, int fileType)
 {
 	unsigned filePos, textpos;
 	path = extractNumberText(path, &textpos);
@@ -260,7 +260,7 @@ bool XmlNode::updateFilesValue(string path, string value, int fileType)
 /**
  * Get the number of children Nodes
  **/
-unsigned XmlNode::getChildrenCount() const
+unsigned XmlManager::getChildrenCount() const
 {
 	return kids.size();
 }
@@ -268,12 +268,12 @@ unsigned XmlNode::getChildrenCount() const
 /**
 * Updates an attribute or a text to a given value.
 **/
-bool XmlNode::updateValueForKey(string key, string value)
+bool XmlManager::updateValueForKey(string key, string value)
 {
 	unsigned textpos;
 	key = extractNumberText(key, &textpos);
 	queue<string> keys = findAllSubstring(key);
-	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
+	XmlManager * secondtolast = findSecondToLastNodeForKey(keys);
 
 	if(secondtolast == NULL)
 		return false;
@@ -296,7 +296,7 @@ bool XmlNode::updateValueForKey(string key, string value)
 	}
 	else
 	{
-		XmlNode * lastNode = secondtolast->findNodeForKey(lastkey);
+		XmlManager * lastNode = secondtolast->findNodeForKey(lastkey);
 
 		if(lastNode == NULL)
 			return false;
@@ -314,7 +314,7 @@ bool XmlNode::updateValueForKey(string key, string value)
 /**
 * Update a set of keys,values at once
 **/
-bool XmlNode::burstWrite(vector<pair<string, string> > writeData)
+bool XmlManager::burstWrite(vector<pair<string, string> > writeData)
 {
 	bool allOk = true;
 	pair<string, string> tempPair;
@@ -332,10 +332,10 @@ bool XmlNode::burstWrite(vector<pair<string, string> > writeData)
 /**
 * Returns a vector of string(values) for the given key.
 **/
-vector<string> XmlNode::findValueForKey(string key)
+vector<string> XmlManager::findValueForKey(string key)
 {
 	queue<string> keys = findAllSubstring(key);
-	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
+	XmlManager * secondtolast = findSecondToLastNodeForKey(keys);
 
 	if(secondtolast == NULL)
 		return vector<string>();
@@ -363,7 +363,7 @@ vector<string> XmlNode::findValueForKey(string key)
 /**
 * Returns ..... Feel in the blanks
 **/
-vector<string> XmlNode::getText()
+vector<string> XmlManager::getText()
 {
 	return text;
 }
@@ -372,7 +372,7 @@ vector<string> XmlNode::getText()
 /**
 * Return the attribute for the given key
 **/
-vector<string> XmlNode::getAttribute(string & key)
+vector<string> XmlManager::getAttribute(string & key)
 {
 	unsigned pos;
 	string akey = extractNumber(key, &pos);
@@ -392,7 +392,7 @@ vector<string> XmlNode::getAttribute(string & key)
 * Break the given key in subkeys.
 * The DELIMITER are removed
 **/
-queue<string> XmlNode::findAllSubstring(string  key)
+queue<string> XmlManager::findAllSubstring(string  key)
 {
 	queue<string> allKeys;
 	size_t pos = key.find_first_of(DELIMITER, 0);
@@ -409,15 +409,15 @@ queue<string> XmlNode::findAllSubstring(string  key)
 }
 /**
  * Process the queue of strings and returns the second-to-last
- *  XmlNode in the queue, the last one can be tested as either an attribute
- * or as  XmlNode
+ *  XmlManager in the queue, the last one can be tested as either an attribute
+ * or as  XmlManager
  **/
-XmlNode* XmlNode::findNodeForKey(string key)
+XmlManager* XmlManager::findNodeForKey(string key)
 {
 	queue<string> keys = findAllSubstring(key);
 
-	XmlNode * secondtolast = findSecondToLastNodeForKey(keys);
-	//Last processing, it must be a valid XmlNode, so repeat check one more time
+	XmlManager * secondtolast = findSecondToLastNodeForKey(keys);
+	//Last processing, it must be a valid XmlManager, so repeat check one more time
 
 	if(secondtolast == NULL)
 		return NULL;
@@ -435,7 +435,7 @@ XmlNode* XmlNode::findNodeForKey(string key)
 	}
 }
 
-XmlNode* XmlNode::findSecondToLastNodeForKey(queue<string> & keys)
+XmlManager* XmlManager::findSecondToLastNodeForKey(queue<string> & keys)
 {
 	if(keys.size() > 1)
 	{
@@ -457,7 +457,7 @@ XmlNode* XmlNode::findSecondToLastNodeForKey(queue<string> & keys)
 * Extract the number from the given key and return
 * the key without the delimiter and number
 **/
-string  XmlNode::extractNumber(string & str, unsigned * num)
+string  XmlManager::extractNumber(string & str, unsigned * num)
 {
 	size_t pos = str.find_first_of(NUMBER_DELIMITER, 0);
 
@@ -485,7 +485,7 @@ string  XmlNode::extractNumber(string & str, unsigned * num)
 * Extract the number from the given key and return
 * the key without the delimiter and number
 **/
-string  XmlNode::extractNumberText(string & str, unsigned  * num)
+string  XmlManager::extractNumberText(string & str, unsigned  * num)
 {
 	size_t pos = str.find_last_of(TEXTNUMBER_DELIMITER, str.size());
 
@@ -517,7 +517,7 @@ string  XmlNode::extractNumberText(string & str, unsigned  * num)
 * Load the main file and search under BODY and HEAD directory
 * for the secondary files
 **/
-bool XmlNode::loadAllFiles(string filename)
+bool XmlManager::loadAllFiles(string filename)
 {
 	bool loadIsOk;
 
@@ -539,7 +539,7 @@ bool XmlNode::loadAllFiles(string filename)
 /**
 * Load the given file
 **/
-bool XmlNode::loadFile(string filename, int fileType)
+bool XmlManager::loadFile(string filename, int fileType)
 {
 	string key = filename.substr(0, filename.find_last_of("."));
 	key = key.substr(key.find_last_of("/") + 1, key.size() - 1);
@@ -570,7 +570,7 @@ bool XmlNode::loadFile(string filename, int fileType)
 	}
 	else
 	{
-		XmlNode baby ;
+		XmlManager baby ;
 
 		for(TiXmlNode* child = doc.FirstChild(); child; child = child->NextSibling())
 		{
@@ -582,10 +582,11 @@ bool XmlNode::loadFile(string filename, int fileType)
 		
 	return true;
 }
+
 /**
 * Insert recursive all the Nodes from the xml file to our tree
 **/
-void XmlNode::insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType)
+void XmlManager::insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType)
 {
 	//Todo what file type for this text subNode?
 	//Append text elements
@@ -600,7 +601,7 @@ void XmlNode::insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType)
 	if(element == NULL)
 		return;
 
-	XmlNode baby;
+	XmlManager baby;
 	baby.fileType = fileType; //Set fileType
 	TiXmlAttribute *attr = element->FirstAttribute();
 
@@ -620,7 +621,7 @@ void XmlNode::insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType)
 	kids[element->Value()].push_back(baby);
 }
 
-void XmlNode::computeAddler32(){
+void XmlManager::computeAddler32(){
 	adler = adler32(0, Z_NULL, 0); //Initialize checksum
 	if(root){
 		for(vector<string>::iterator iter = allFiles.begin(); iter != allFiles.end(); iter++){
@@ -636,23 +637,28 @@ void XmlNode::computeAddler32(){
 	}
 }
 
-//Get checksum of all files
-unsigned int XmlNode::getChecksum(){
+/**
+* Get checksum of all files
+**/
+unsigned int XmlManager::getChecksum(){
 	return adler;
 }
 
-string XmlNode::getHeadPath(){
+/**
+* Varius setters getters
+**/
+string XmlManager::getHeadPath(){
 	return headPath;
 }
 
-string XmlNode::getBodyPath(){
+string XmlManager::getBodyPath(){
 	return bodyPath;
 }
 
-string XmlNode::getHeadID(){
+string XmlManager::getHeadID(){
 	return headID;
 }
 
-string XmlNode::getBodyID(){
+string XmlManager::getBodyID(){
 	return bodyID;
 }

@@ -13,12 +13,11 @@ namespace statechart_engine
 		*_isRunning = 0;
 		_blk->attachTo(*_com->get_message_queue());
 #ifdef RUN_ON_NAO
-		_xmlnode = XmlNode(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
+		_xmlnode = XmlManager(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
 		                   , KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID),false);
 #else
-		_xmlnode = XmlNode(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi",false);
+		_xmlnode = XmlManager(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi",false);
 #endif
-		_xmlnode.print("");
 	}
 
 	Statechart::~Statechart ()

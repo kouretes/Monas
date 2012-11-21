@@ -13,8 +13,7 @@
 #include <zlib.h>
 
 #include "../external/tinyxml_2-5-3/tinyxml.h"
-
-class XmlNode
+class XmlManager
 {
 public:
 	static const char DELIMITER = '.';
@@ -26,7 +25,7 @@ public:
 	static const int HEAD_FILE = 2;
 	std::vector<std::string> text;
 	std::map<std::string, std::string > attributes;
-	std::map<std::string, std::vector<XmlNode> > kids;
+	std::map<std::string, std::vector<XmlManager> > kids;
 private:
 	std::string headPath;
 	std::string bodyPath;
@@ -41,22 +40,22 @@ private:
 
 	bool updateFilesValue(std::string path, std::string value, int fileType);
 	void deleteNodesForKey(std::string key, int fileType);
-	XmlNode * findSecondToLastNodeForKey(std::queue<std::string> & key);
+	XmlManager * findSecondToLastNodeForKey(std::queue<std::string> & key);
 	static std::string extractNumber(std::string & str, unsigned * num);//Get the ~ part
 	static std::string extractNumberText(std::string & str, unsigned * num);
 	static std::queue<std::string> findAllSubstring(std::string  key);
-	void insertRecursivePolicyAppend(TiXmlNode* xmlNode, int fileType);
+	void insertRecursivePolicyAppend(TiXmlNode* XmlNode, int fileType);
 	bool updateValueForKey(std::string key, std::string value);
 
 
 public:
-	XmlNode()
+	XmlManager()
 	{
 		fileType = 0;
 		root = false;
 	};
 	std::vector<std::string> getText();
-	XmlNode(std::string dirPath, std::string headId, std::string bodyId, bool administrator);
+	XmlManager(std::string dirPath, std::string headId, std::string bodyId, bool administrator);
 	void print(std::string pref);
 	void computeAddler32();
 	unsigned getChildrenCount() const;
@@ -68,7 +67,7 @@ public:
 	int numberOfNodesForKey(std::string key);
 	int numberOfChildrendsForKey(std::string key);
 	int numberOfUniqueChildrendsForKey(std::string key);
-	XmlNode* findNodeForKey(std::string key);
+	XmlManager* findNodeForKey(std::string key);
 	std::string getHeadPath();
 	std::string getBodyPath();
 	std::string getHeadID();
@@ -76,4 +75,7 @@ public:
 	unsigned int getChecksum();
 
 };
+
+typedef XmlManager XmlManagerNode;
+
 #endif // XML_MANAGER_H

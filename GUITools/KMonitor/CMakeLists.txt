@@ -20,8 +20,9 @@ SET( QT_USE_QTSVG TRUE )
 SET( KMonitor_SOURCES main.cpp KMonitor.cpp KGUIMessenger.cpp HostsComboBox.cpp 
 		KFieldScene.cpp GraphicalRobotElement.cpp LocalWorldController.cpp
 	    KMapScene.cpp KCamView.cpp GlobalWorldController.cpp
-		KccHandler.cpp KccLabel.cpp SensorsController.cpp XMLHandler.cpp KSonarsController.cpp
-		../../src/architecture/XmlManager/XmlConfigurator.cpp
+		KccHandler.cpp KccLabel.cpp SensorsController.cpp XMLHandler.cpp
+		KSonarsController.cpp
+		../../src/architecture/XmlManager/XmlManager.cpp
 		../../src/activities/Vision/KSegmentator.cpp
 		../../src/hal/generic_linux/syscall.cpp
 		../../src/messages/Network.pb.cc

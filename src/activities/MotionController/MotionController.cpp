@@ -26,7 +26,7 @@ ACTIVITY_REGISTER(MotionController);
 using namespace std;
 using namespace KDeviceLists;
 
-MotionController::MotionController(Blackboard &b, XmlNode &x) : IActivity(b, x)
+MotionController::MotionController(Blackboard &b, XmlManager &x) : IActivity(b, x)
 {
 	waitfor = microsec_clock::universal_time() - hours(1);
 }
@@ -812,9 +812,9 @@ void MotionController::readWalkParameters()
 	walkConfig.arraySetSize(7);
 
 	string filename = "walk_parameters";
-	XmlNode * walkPamNode = _xml.findNodeForKey(filename);
+	XmlManagerNode * walkPamNode = _xml.findNodeForKey(filename);
 	int itteration = 0;
-	for(map<string,vector<XmlNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){
+	for(map<string,vector<XmlManagerNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){
 
 		std::istringstream strs( (walkPamNode->findValueForKey((*it).first)).front() );
 		float value;

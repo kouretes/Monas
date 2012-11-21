@@ -8,7 +8,7 @@
 
 #include "architecture/executables/IProvider.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
-#include "architecture/XmlManager/XmlConfigurator.h"
+#include "architecture/XmlManager/XmlManager.h"
 
 #include "messages/Network.pb.h"
 #include "messages/GUICommunication.pb.h"
@@ -43,7 +43,7 @@ public:
 	int GetCrc32(const std::string& my_string);
 private:
 	Blackboard _blk;
-	XmlNode _xml;
+	XmlManager _xml;
 	GenericACK outmsg;
 	boost::shared_ptr<const KnownHosts> h;
 	uint32_t localHostId;

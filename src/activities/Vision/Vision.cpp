@@ -23,7 +23,7 @@ ACTIVITY_REGISTER(Vision);
 
 ACTIVITY_START
 
-Vision::Vision(Blackboard &b, XmlNode &x) :
+Vision::Vision(Blackboard &b, XmlManager &x) :
 	IActivity(b, x), vprof("Vision")
 {
 	;

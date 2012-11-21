@@ -68,8 +68,8 @@ XMLHandler::XMLHandler(QWidget *parent) :
 void XMLHandler::updateTreeStructure(string headID, string bodyID){
 	ui->mainTree->blockSignals(true);
 	ui->mainTree->clear();
-	xmlStructure = XmlNode("../../../config/", headID, bodyID, true);
-	for(map<string, vector<XmlNode> >::iterator kit = xmlStructure.kids.begin(); kit != xmlStructure.kids.end(); ++kit)
+	xmlStructure = XmlManager("../../../config/", headID, bodyID, true);
+	for(map<string, vector<XmlManager> >::iterator kit = xmlStructure.kids.begin(); kit != xmlStructure.kids.end(); ++kit)
 	{		
 		addChildsRecursive(ui->mainTree->invisibleRootItem(), QString((*kit).first.c_str()),QString(" "), &((*kit).second.front()), (*kit).first.c_str());		
 	}
@@ -79,7 +79,7 @@ void XMLHandler::updateTreeStructure(string headID, string bodyID){
 	ui->mainTree->blockSignals(false);
 }
 
-void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, XmlNode *currentNode, string currentKey){
+void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, XmlManagerNode *currentNode, string currentKey){
 	QTreeWidgetItem* item = new QTreeWidgetItem(parent);
 	item->setText(0, name);
 	item->setText(1, data);
@@ -91,9 +91,9 @@ void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QStri
 		tempKey.append(".$"+(*attr).first);
 		addAttributeChild(item, QString::fromStdString("$" + (*attr).first), QString::fromStdString((*attr).second), tempKey);
 	}
-	for(map<string, vector<XmlNode> >::iterator kit = currentNode->kids.begin(); kit != currentNode->kids.end(); ++kit){
+	for(map<string, vector<XmlManagerNode> >::iterator kit = currentNode->kids.begin(); kit != currentNode->kids.end(); ++kit){
 		int kidNum = 0;
-		for(vector<XmlNode>::iterator vit = (*kit).second.begin(); vit != (*kit).second.end(); ++vit){
+		for(vector<XmlManagerNode>::iterator vit = (*kit).second.begin(); vit != (*kit).second.end(); ++vit){
 			QString text = " ";
 			if((*vit).text.size() != 0){
 				text = QString::fromStdString((*vit).text.front());
@@ -179,6 +179,7 @@ void XMLHandler::genericAckReceived(GenericACK ack, QString hostid){
 				HandShake hs = ack.handshaking();
 				headid = hs.headid();
 				bodyid = hs.bodyid();
+				//cout << "Head ID = " << headid << " Body ID = " << bodyid << endl;
 				updateTreeStructure(headid,bodyid);
 				oldChecksum = xmlStructure.getChecksum();
 				if(oldChecksum == hs.checksum()){

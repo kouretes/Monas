@@ -8,7 +8,7 @@
 
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
-#include "architecture/XmlManager/XmlConfigurator.h"
+#include "architecture/XmlManager/XmlManager.h"
 #include "architecture/executables/IActivity.h"
 #include "architecture/periodicthread.h"
 
@@ -47,7 +47,7 @@ private:
 
 	Narukom & _com;
 	Blackboard _blk;
-	XmlNode _xml;
+	XmlManager _xml;
 
 	typedef std::vector<IActivity*> ActivList;
 
