@@ -103,6 +103,9 @@ private:
 	//Check if fall of the robot just began
 	bool fallBegan;
 
+	//Logger for all input and outputs for every execute cycle
+	void InputOutputLogger();
+	
 	//Time variables
 	boost::posix_time::ptime timeStart, timeStop;
 	boost::posix_time::ptime lastObservationTime;

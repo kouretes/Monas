@@ -555,3 +555,42 @@ void * LocalWorldState::StartServer(void * astring)
 
 	return NULL;
 }
+
+void LocalWorldState::InputOutputLogger(){
+	boost::posix_time::ptime currentExecute = boost::posix_time::microsec_clock::universal_time();
+	
+	string YellowLeft = "", YellowRight = "", Yellow = "", RobotPosition = "", RobotMovement = "";
+	
+	if(!robotmovement.freshData){
+		RobotMovement = "0 0 0 0";
+	}else{
+		RobotMovement = "1 " + _toString(robotmovement.Distance.val) + " " + _toString(robotmovement.Direction.val) + " " + _toString(robotmovement.Rotation.val);
+	}
+	
+	if(currentAmbiguousObservation.size() == 0){
+		Yellow = "0 0 0 0 0 0 0 0";
+	}else{
+		Yellow = "1 " + _toString(currentAmbiguousObservation[0].Feature.x) + " " + _toString(currentAmbiguousObservation[0].Feature.y) + " " +
+				 _toString(currentAmbiguousObservation[0].Distance.Emean) + " " + _toString(currentAmbiguousObservation[0].Distance.Edev) + " " +
+				 _toString(currentAmbiguousObservation[0].Distance.val) + " " + _toString(currentAmbiguousObservation[0].Bearing.Edev) + " " +
+				 _toString(currentAmbiguousObservation[0].Bearing.val);
+	}
+	
+	YellowLeft = "0 0 0 0 0 0 0 0";
+	YellowRight = "0 0 0 0 0 0 0 0";
+	for (unsigned int i = 0; i < currentObservation.size(); i++)
+	{
+		string temp;
+		temp = "1 " + _toString(currentObservation[i].Feature.x) + " " + _toString(currentObservation[i].Feature.y) + " " +
+				 _toString(currentObservation[i].Distance.Emean) + " " + _toString(currentObservation[i].Distance.Edev) + " " +
+				 _toString(currentObservation[i].Distance.val) + " " + _toString(currentObservation[i].Bearing.Edev) + " " +
+				 _toString(currentObservation[i].Bearing.val);
+		if(currentObservation[i].Feature.id.find("Left")!=string::npos)
+			YellowLeft = temp;
+		else
+			YellowRight = temp;
+	}
+	RobotPosition = _toString(AgentPosition.x) + " " + _toString(AgentPosition.y) + " " + _toString(AgentPosition.theta);
+
+	Logger::Instance().WriteMsg("LocalWorldStateLogger", _toString(currentExecute) + " " + RobotMovement + " " + Yellow + " " + YellowLeft + " " + YellowRight + " " + RobotPosition, Logger::ExtraExtraInfo);
+}
