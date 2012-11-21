@@ -1,5 +1,5 @@
-#ifndef TIMOUTACITON_H
-#define TIMOUTACITON_H 1
+#ifndef TIMEOUTACTION_H
+#define TIMEOUTACTION_H 1
 
 #include "IAction.h"
 
@@ -48,4 +48,4 @@ namespace statechart_engine
 
 }
 
-#endif // TIMOUTACITON_H
+#endif // TIMEOUTACTION_H

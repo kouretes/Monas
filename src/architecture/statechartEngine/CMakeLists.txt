@@ -23,7 +23,7 @@ add_library ( statechartEngine  ${LibBuildType}
                                 StartState.cpp
                                 State.cpp
                                 Statechart.cpp
-                                TimoutAciton.cpp
+                                TimeoutAction.cpp
                                 Transitions/ConditionConnector.cpp
                                 Transitions/TransitionConnector.cpp
 )
