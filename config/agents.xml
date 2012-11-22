@@ -19,7 +19,7 @@
 </agent>
 
 <agent IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="50" Enable="1">
-	<name>head</name>
+	<name>Head</name>
 		<activity Enable="1">HeadController</activity>
 </agent>
 

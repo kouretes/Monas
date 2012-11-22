@@ -339,52 +339,52 @@ void LocalWorldState::ReadFeatureConf()
     string ID;
 
     //YellowGoal
-    ID=_xml.findValueForKey("Features.ftr~0.$ID").front();
-    x= atof(_xml.findValueForKey("Features.ftr~0.$x").front().c_str());
-    y= atof(_xml.findValueForKey("Features.ftr~0.$y").front().c_str());
-    weight= atof(_xml.findValueForKey("Features.ftr~0.$weight").front().c_str());
+    ID=_xml.findValueForKey("Features.ftr~0.$ID");
+    x= atof(_xml.findValueForKey("Features.ftr~0.$x").c_str());
+    y= atof(_xml.findValueForKey("Features.ftr~0.$y").c_str());
+    weight= atof(_xml.findValueForKey("Features.ftr~0.$weight").c_str());
     temp.set(x, y, ID, weight);
     localizationWorld.KFeaturesmap[ID]=temp;
 
     //YellowLeft
-    ID=_xml.findValueForKey("Features.ftr~1.$ID").front();
-    x= atof(_xml.findValueForKey("Features.ftr~1.$x").front().c_str());
-    y= atof(_xml.findValueForKey("Features.ftr~1.$y").front().c_str());
-    weight= atof(_xml.findValueForKey("Features.ftr~1.$weight").front().c_str());
+    ID=_xml.findValueForKey("Features.ftr~1.$ID");
+    x= atof(_xml.findValueForKey("Features.ftr~1.$x").c_str());
+    y= atof(_xml.findValueForKey("Features.ftr~1.$y").c_str());
+    weight= atof(_xml.findValueForKey("Features.ftr~1.$weight").c_str());
     temp.set(x, y, ID, weight);
     localizationWorld.KFeaturesmap[ID]=temp;
 
     //YellowRight
-    ID=_xml.findValueForKey("Features.ftr~2.$ID").front();
-    x= atof(_xml.findValueForKey("Features.ftr~2.$x").front().c_str());
-    y= atof(_xml.findValueForKey("Features.ftr~2.$y").front().c_str());
-    weight= atof(_xml.findValueForKey("Features.ftr~2.$weight").front().c_str());
+    ID=_xml.findValueForKey("Features.ftr~2.$ID");
+    x= atof(_xml.findValueForKey("Features.ftr~2.$x").c_str());
+    y= atof(_xml.findValueForKey("Features.ftr~2.$y").c_str());
+    weight= atof(_xml.findValueForKey("Features.ftr~2.$weight").c_str());
     temp.set(x, y, ID, weight);
     localizationWorld.KFeaturesmap[ID]=temp;
 }
 
 void LocalWorldState::ReadLocConf()
 {
-    localizationWorld.robustmean=atoi(_xml.findValueForKey("Localizationconf.robustmean").front().c_str());
-    localizationWorld.partclsNum=atoi(_xml.findValueForKey("Localizationconf.partclsNum").front().c_str());
-    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("Localizationconf.SpreadParticlesDeviation").front().c_str());
-    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("Localizationconf.rotation_deviation").front().c_str());
-    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").front().c_str());
-    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").front().c_str());
-    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").front().c_str());
+    localizationWorld.robustmean=atoi(_xml.findValueForKey("Localizationconf.robustmean").c_str());
+    localizationWorld.partclsNum=atoi(_xml.findValueForKey("Localizationconf.partclsNum").c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("Localizationconf.SpreadParticlesDeviation").c_str());
+    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("Localizationconf.rotation_deviation").c_str());
+    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").c_str());
+    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").c_str());
+    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").c_str());
 }
 
 void LocalWorldState::ReadFieldConf()
 {
-    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").front().c_str());
-    localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").front().c_str());
-    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").front().c_str());
-    localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").front().c_str());
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").c_str());
 }
 
 void LocalWorldState::ReadTeamConf()
 {
-    localizationWorld.playerNumber=atoi(_xml.findValueForKey("team_config.player").front().c_str());
+    localizationWorld.playerNumber=atoi(_xml.findValueForKey("team_config.player").c_str());
 }
 
 

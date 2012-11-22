@@ -19,7 +19,6 @@
 #include "architecture/archConfig.h"
 #include "../../src/messages/GUICommunication.pb.h"
 
-#define MAX_RETRANSMITS 15
 namespace Ui {
     class XMLHandler;
 }
@@ -64,7 +63,9 @@ private:
 	void initializeActivitiesTree();
 	void updateTreeStructure(std::string headID, std::string bodyID);
 	void updateXMLFiles();
+	
 private:
+	static const int MAX_RETRANSMITS = 15;
 	
     HostsComboBox* availableXMLHosts;
 	Ui::XMLHandler *ui;

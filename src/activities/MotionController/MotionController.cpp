@@ -816,7 +816,7 @@ void MotionController::readWalkParameters()
 	int itteration = 0;
 	for(map<string,vector<XmlManagerNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){
 
-		std::istringstream strs( (walkPamNode->findValueForKey((*it).first)).front() );
+		std::istringstream strs( (walkPamNode->findValueForKey((*it).first)) );
 		float value;
 		strs>>value;
 		if((*it).first.compare("EnableFallManager")!=0){

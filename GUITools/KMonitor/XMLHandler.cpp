@@ -75,7 +75,7 @@ void XMLHandler::updateTreeStructure(string headID, string bodyID){
 	}
 	initializeActivitiesTree();
 	changes.clear();
-	ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom").front()));
+	ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom")));
 	ui->mainTree->blockSignals(false);
 }
 
@@ -96,7 +96,7 @@ void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QStri
 		for(vector<XmlManagerNode>::iterator vit = (*kit).second.begin(); vit != (*kit).second.end(); ++vit){
 			QString text = " ";
 			if((*vit).text.size() != 0){
-				text = QString::fromStdString((*vit).text.front());
+				text = QString::fromStdString((*vit).text);
 			}
 			string tempKey = currentKey;
 			tempKey.append(string(".")+string((*kit).first) + string("~") + _toString(kidNum));
@@ -119,31 +119,44 @@ void XMLHandler::initializeActivitiesTree(){
 	int numOfAgents = xmlStructure.numberOfNodesForKey("agents.agent");
 	ui->activitiesTree->clear();
 	for(int i = 0; i < numOfAgents; i++){
+		if(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + ".$Enable").compare("1") != 0){
+			continue;
+		}
 		QTreeWidgetItem* parent = new QTreeWidgetItem(ui->activitiesTree);
-		QString agentName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + ".name").front());
+		QString agentName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + ".name"));
 		parent->setText(0, agentName);
 		parent->setFlags(parent->flags() & ~Qt::ItemIsSelectable);
 		int numOfActivities = xmlStructure.numberOfNodesForKey(string("agents.agent~") + string(_toString(i)) + ".activity");
 		for(int j = 0; j < numOfActivities; j++){
-			QTreeWidgetItem* child = new QTreeWidgetItem(parent);
-			child->setFlags(child->flags() & ~Qt::ItemIsSelectable);
-			QString activityName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + string(".activity~") + _toString(j)).front());
-			child->setText(0, activityName);
-			child->setText(1, "0");
+			if(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + string(".activity~") + _toString(j) + ".$Enable").compare("1") == 0){
+				QTreeWidgetItem* child = new QTreeWidgetItem(parent);
+				child->setFlags(child->flags() & ~Qt::ItemIsSelectable);
+				QString activityName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + string(".activity~") + _toString(j)));
+				child->setText(0, activityName);
+				child->setText(1, "0");
+			}
 		}
 	}
 	int numOfStatecharts = xmlStructure.numberOfNodesForKey("agents.statechart");
 	if(numOfStatecharts != 0){
 		QTreeWidgetItem* parent = new QTreeWidgetItem(ui->activitiesTree);
-		QString agentName = "Statecharts";
-		parent->setText(0, agentName);
+		QString statechart = "Statecharts";
+		parent->setText(0, statechart);
 		parent->setFlags(parent->flags() & ~Qt::ItemIsSelectable);
+		int enableStates = 0;
 		for(int i = 0; i < numOfStatecharts; i++){
+			if(xmlStructure.findValueForKey(string("agents.statechart~") + _toString(i) + ".$Enable").compare("1") != 0){
+				continue;
+			}
+			enableStates++;
 			QTreeWidgetItem* child = new QTreeWidgetItem(parent);
 			child->setFlags(child->flags() & ~Qt::ItemIsSelectable);
-			QString statechartName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.statechart~") + _toString(i)).front());
+			QString statechartName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.statechart~") + _toString(i)));
 			child->setText(0, statechartName);
 			child->setText(1, "0");
+		}
+		if(enableStates == 0){
+			ui->activitiesTree->takeTopLevelItem(ui->activitiesTree->topLevelItemCount()-1);
 		}
 	}
 	
@@ -195,7 +208,7 @@ void XMLHandler::genericAckReceived(GenericACK ack, QString hostid){
 				ui->sendpb->setEnabled(true);
 			}
 			updateXMLFiles();
-			ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom").front()));
+			ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom")));
 		}else{
 			ui->status->setText("Locked owned by other GUI");
 			ui->status2->setText("Waiting for handoff");

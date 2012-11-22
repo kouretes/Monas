@@ -76,31 +76,29 @@ void Behavior::UserInit()
 void Behavior::Reset(){
 
 	// === read team configuration xml data from team_config.xml===
-	config.teamNumber = atoi(_xml.findValueForKey("team_config.team_number").front().c_str());
-	config.playerNumber = atoi(_xml.findValueForKey("team_config.player").front().c_str());
-	config.maxPlayers = atoi(_xml.findValueForKey("team_config.team_max_players").front().c_str());
+	config.teamNumber = atoi(_xml.findValueForKey("team_config.team_number").c_str());
+	config.playerNumber = atoi(_xml.findValueForKey("team_config.player").c_str());
+	config.maxPlayers = atoi(_xml.findValueForKey("team_config.team_max_players").c_str());
 
 	std::string color;
-	color = _xml.findValueForKey("team_config.default_team_color").front().c_str();
+	color = _xml.findValueForKey("team_config.default_team_color").c_str();
 	if(color.compare("blue") == 0)
 		config.teamColor = TEAM_BLUE;
-	else if(color.compare("red") == 0)
-		config.teamColor == TEAM_RED;
 	else
-		Logger::Instance().WriteMsg("Behavior", "Behavior Reset: Team color not found!", Logger::Warning);
+		config.teamColor == TEAM_RED;
 
 	// === read behavior configuration xml data from behavior.xml===
-	config.posx = atof(_xml.findValueForKey("behavior.posx").front().c_str());
-	config.posy = atof(_xml.findValueForKey("behavior.posy").front().c_str());
-	config.epsx = atof(_xml.findValueForKey("behavior.epsx").front().c_str());
-	config.epsy = atof(_xml.findValueForKey("behavior.epsy").front().c_str());
-	config.kicks.KickForwardLeft = _xml.findValueForKey("behavior.KickForwardLeft").front().c_str();
-	config.kicks.KickForwardRight = _xml.findValueForKey("behavior.KickForwardRight").front().c_str();
-	config.kicks.KickSideLeft = _xml.findValueForKey("behavior.KickSideLeft").front().c_str();
-	config.kicks.KickSideRight = _xml.findValueForKey("behavior.KickSideRight").front().c_str();
-	config.kicks.KickBackLeft = _xml.findValueForKey("behavior.KickBackLeft").front().c_str();
-	config.kicks.KickBackRight = _xml.findValueForKey("behavior.KickBackRight").front().c_str();
-	config.ur = atof(_xml.findValueForKey("behavior.ur").front().c_str());
+	config.posx = atof(_xml.findValueForKey("behavior.posx").c_str());
+	config.posy = atof(_xml.findValueForKey("behavior.posy").c_str());
+	config.epsx = atof(_xml.findValueForKey("behavior.epsx").c_str());
+	config.epsy = atof(_xml.findValueForKey("behavior.epsy").c_str());
+	config.kicks.KickForwardLeft = _xml.findValueForKey("behavior.KickForwardLeft").c_str();
+	config.kicks.KickForwardRight = _xml.findValueForKey("behavior.KickForwardRight").c_str();
+	config.kicks.KickSideLeft = _xml.findValueForKey("behavior.KickSideLeft").c_str();
+	config.kicks.KickSideRight = _xml.findValueForKey("behavior.KickSideRight").c_str();
+	config.kicks.KickBackLeft = _xml.findValueForKey("behavior.KickBackLeft").c_str();
+	config.kicks.KickBackRight = _xml.findValueForKey("behavior.KickBackRight").c_str();
+	config.ur = atof(_xml.findValueForKey("behavior.ur").c_str());
 
 	// === read robot configuration xml data from robotConfig.xml===
 	if ( (config.playerNumber < 1) || (config.playerNumber > config.maxPlayers) )
@@ -112,11 +110,11 @@ void Behavior::Reset(){
 
 		for(int r = 0 ; r < config.maxPlayers ; r++) // for each robot on the node
 		{
-			if( atoi(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+_toString(r)+".$number").front().c_str()) == config.playerNumber )
+			if( atoi(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+_toString(r)+".$number").c_str()) == config.playerNumber )
 			{
 				config.initPhi[i] = 0.0;
-				config.initX[i] = atof(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+_toString(r)+".$posx").front().c_str());
-				config.initY[i] = atof(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+_toString(r)+".$posy").front().c_str());
+				config.initX[i] = atof(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+_toString(r)+".$posx").c_str());
+				config.initY[i] = atof(_xml.findValueForKey("robotConfig."+kickOff+".robot~"+_toString(r)+".$posy").c_str());
 				break;
 			}
 		}
@@ -126,25 +124,25 @@ void Behavior::Reset(){
 	std::string ID;
 	for(int v = 0 ; v < 3 ; v++)
 	{
-		ID = _xml.findValueForKey("Features.ftr~"+_toString(v)+".$ID").front().c_str();
+		ID = _xml.findValueForKey("Features.ftr~"+_toString(v)+".$ID").c_str();
 		if(ID == "YellowGoal")
 		{
-			config.oppGoalX = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$x").front().c_str());
-			config.oppGoalY = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$y").front().c_str());
+			config.oppGoalX = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$x").c_str());
+			config.oppGoalY = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$y").c_str());
 			config.ownGoalX = -config.oppGoalX;
 			config.ownGoalY = -config.oppGoalY;
 		}
 		else if(ID == "YellowLeft")
 		{
-			config.oppGoalLeftX = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$x").front().c_str());
-			config.oppGoalLeftY = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$y").front().c_str());
+			config.oppGoalLeftX = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$x").c_str());
+			config.oppGoalLeftY = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$y").c_str());
 			config.ownGoalLeftX = -config.oppGoalLeftX;
 			config.ownGoalLeftY = -config.oppGoalLeftY;
 		}
 		else if(ID == "YellowRight")
 		{
-			config.oppGoalRightX = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$x").front().c_str());
-			config.oppGoalRightY = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$y").front().c_str());
+			config.oppGoalRightX = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$x").c_str());
+			config.oppGoalRightY = atof(_xml.findValueForKey("Features.ftr~"+_toString(v)+".$y").c_str());
 			config.ownGoalRightX = -config.oppGoalRightX;
 			config.ownGoalRightY = -config.oppGoalRightY;
 		}
