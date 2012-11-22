@@ -22,3 +22,5 @@
 -j
 #Attach a pointer or reference operator (* or &) to variable name (right)
 -k3
+#Dont create orig file
+-n
