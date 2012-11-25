@@ -87,21 +87,19 @@ void KLocalization::setParticlesPoseUniformly()
 	unsigned int particlesDown = partclsNum - particlesUp - resetParticles;
 
 	//Initialize top Particles
-	for (unsigned int i = 0; i < partclsNum; i++)
+	for (unsigned int i = 0; i < resetParticles; i++)
 	{
-		float x=0, y=0, phi = 0;
+		float x=0, y=0;
 
 		if(playerNumber == 1)
 		{
-			y = FieldMaxY;
-			x = -FieldMaxX;
-			phi = 0;
+			y = 0;
+			x = -2.7;
 		}
 		else if(playerNumber == 2)
 		{
-			y = -FieldMaxY;
-			x = 0;
-			phi = TO_RAD(180);
+			y = 1.2;
+			x = -2.4;
 		}
 		else if(playerNumber == 3)
 		{
@@ -116,34 +114,26 @@ void KLocalization::setParticlesPoseUniformly()
 
 		SIRParticles.x[i] = x;
 		SIRParticles.y[i] = y;
-		SIRParticles.phi[i] = phi;
+		SIRParticles.phi[i] = TO_RAD(0);
 		SIRParticles.Weight[i] = 1.0 / partclsNum;
 	}
-	/*if(playerNumber == 1){
-		for(unsigned int i = resetParticles; i < partclsNum; i++){
-			SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
-			SIRParticles.y[i] = FieldMaxY;
-			SIRParticles.phi[i] = TO_RAD(0);
-			SIRParticles.Weight[i] = 1.0 / partclsNum;
-		}
-	}else{
-		for (unsigned int i = resetParticles; i < particlesUp; i++)
-		{
-			SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
-			SIRParticles.y[i] = FieldMaxY;
-			SIRParticles.phi[i] = TO_RAD(270);
-			SIRParticles.Weight[i] = 1.0 / partclsNum;
-		}
-	
-		//Initialize down Particles
-		for (unsigned int i = particlesUp; i < partclsNum; i++)
-		{
-			SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
-			SIRParticles.y[i] = -FieldMaxY;
-			SIRParticles.phi[i] = TO_RAD(90);
-			SIRParticles.Weight[i] = 1.0 / partclsNum;
-		}
-	}*/
+
+	for (unsigned int i = resetParticles; i < particlesUp; i++)
+	{
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
+		SIRParticles.y[i] = FieldMaxY;
+		SIRParticles.phi[i] = TO_RAD(270);
+		SIRParticles.Weight[i] = 1.0 / partclsNum;
+	}
+
+	//Initialize down Particles
+	for (unsigned int i = particlesUp; i < partclsNum; i++)
+	{
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
+		SIRParticles.y[i] = -FieldMaxY;
+		SIRParticles.phi[i] = TO_RAD(90);
+		SIRParticles.Weight[i] = 1.0 / partclsNum;
+	}
 }
 
 void KLocalization::initializeParticles(int playerState, bool kickOff)
@@ -183,6 +173,7 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 
 		//Leave some particles to the current position in case of ready state after goal
 		int percentageOfParticle = partclsNum * 0.2;
+
 		for (unsigned int i = percentageOfParticle; i < partclsNum; i++)
 		{
 			if(i == maxWeightParticleIndex)
