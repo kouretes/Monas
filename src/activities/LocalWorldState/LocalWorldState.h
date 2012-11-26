@@ -58,9 +58,7 @@ private:
     void ReadFieldConf();
     void ReadFeatureConf();
     void ReadTeamConf();
-
-    //print
-    void PrintFeatureConf();
+    void ReadRobotConf();
 
 	//WorldInfo message
 	WorldInfo MyWorld;
