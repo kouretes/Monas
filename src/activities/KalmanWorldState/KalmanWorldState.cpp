@@ -36,6 +36,7 @@ void KalmanWorldState::UserInit()
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	localizationWorld.Initialize();
+	ReadFeatureConf();
 
 
 	//localizationWorld.setParticlesPoseUniformly();
@@ -347,4 +348,21 @@ void KalmanWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
 	//Logger::Instance().WriteMsg("KalmanWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
+}
+
+void KalmanWorldState::ReadFeatureConf()
+{
+    feature temp;
+    double x,y,weight;
+    string ID;
+	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
+		string key = "features.ftr~" + _toString(i) + ".";
+
+    	ID=_xml.findValueForKey(key + "ID");
+    	x= atof(_xml.findValueForKey(key + "x").c_str());
+    	y= atof(_xml.findValueForKey(key + "y").c_str());
+    	weight= atof(_xml.findValueForKey(key + "weight").c_str());
+    	temp.set(x, y, ID, weight);
+    	localizationWorld.KFeaturesmap[ID]=temp;
+    }
 }

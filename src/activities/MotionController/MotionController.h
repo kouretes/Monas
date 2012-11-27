@@ -79,6 +79,7 @@ private:
 	boost::shared_ptr<const  MotionWalkMessage> wm;
 	boost::shared_ptr<const  MotionHeadMessage> hm;
 	boost::shared_ptr<const  MotionActionMessage> am;
+	boost::shared_ptr<const  MotionStiffnessMessage> msm;
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const GameStateMessage>  gsm;

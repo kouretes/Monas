@@ -1,18 +1,24 @@
 #ifndef HeadController_H
 #define HeadController_H
 
-#include "architecture/executables/IActivity.h"
+#include <math.h>
 
+#include "architecture/executables/IActivity.h"
+#include "architecture/archConfig.h"
+
+#include "hal/robot/generic_nao/robot_consts.h"
 
 #include "messages/SensorsMessage.pb.h"
 #include "messages/motion.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "messages/VisionObservations.pb.h"
+#include "messages/RoboCupGameControlData.h"
 #include "messages/Kimage.pb.h"
 #include "messages/WorldInfo.pb.h"
-#include "tools/XML.h"
-#include "tools/XMLConfig.h"
-#include "architecture/archConfig.h"
+
+#include "tools/toString.h"
+#include "tools/logger.h"
+#include "tools/mathcommon.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -42,7 +48,7 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-	static const double closeToBall = 1.0;
+	static const double closeToBall = 4.0;
 	static const float headSpeed[3];/*{SOMEDAY, SLOW, BEAM_ME_UP}*/
 
 	enum{
@@ -57,7 +63,7 @@ private:
 		OWNG
 	};
 	INTELSTATE state;
-	bool readGoalConfiguration(const std::string& file_name);//this function reads the position of the goals
+	void readGoalConfiguration();//this function reads the position of the goals
 
 	/* Incoming Messages */
 	boost::shared_ptr<const HeadControlMessage> control;
@@ -84,7 +90,10 @@ private:
 
 	float bd, bb, bx, by;
 	float robot_x, robot_y, robot_phi, robot_confidence;
-
+	
+	//External speed controler (e.g. from KMonitor)
+	bool useExternalSpeed;
+	float externalSpeed;;
 	//POSITIONS OF THE GOALPOSTS ON THE FIELD, LOADED FROM XML
 	float oppGoalX, oppGoalY, ownGoalY, ownGoalX;
 	float oppGoalLeftX, oppGoalLeftY, ownGoalLeftX, ownGoalLeftY;

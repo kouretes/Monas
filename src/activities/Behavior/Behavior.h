@@ -19,8 +19,6 @@
 #include "tools/toString.h"
 #include "tools/mathcommon.h"
 #include "tools/obstacleConst.h"
-#include "tools/XML.h"
-#include "tools/XMLConfig.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -104,7 +102,7 @@ private:
 		// values from the team_config xml file
 		int teamNumber, playerNumber, teamColor, maxPlayers;
 
-		// values from the robotConfig xml file, initial game positions on the field...
+		// values from the playerConfig xml file, initial game positions on the field...
 		float initX[2], initY[2], initPhi[2];
 
 		// values from the features xml file
@@ -133,12 +131,12 @@ private:
 	/**
 	 * Outgoing Messages
 	 */
-	HeadControlMessage* hcontrol;
-	MotionWalkMessage* wmot;
-	MotionActionMessage* amot;
-	LocalizationResetMessage* locReset;
-	PathPlanningRequestMessage* pprm;
-	ObstacleMessage* fom;	// fake obstacle message!
+	HeadControlMessage hcontrol;
+	MotionWalkMessage wmot;
+	MotionActionMessage amot;
+	LocalizationResetMessage locReset;
+	PathPlanningRequestMessage pprm;
+	ObstacleMessage fom;	// fake obstacle message!
 
 	/**
 	 * @fn void read_messages()
@@ -279,13 +277,15 @@ private:
 
 	double orientation;
 
-	int gameState;
+	int gameState, prevGameState;
 
 	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
 	bool goalieApproachStarted;
 	
-	boost::posix_time::ptime lastwalk, lastplay, lastpenalized;
+	bool gameMode;
+
+	boost::posix_time::ptime lastwalk, lastplay, lastpenalised, penalisedStarted;
 };
 
 ACTIVITY_END

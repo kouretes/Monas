@@ -19,7 +19,7 @@ RobotController::RobotController(Blackboard &b, XmlManager &x) : IActivity(b, x)
 void RobotController::UserInit()
 {
 	//"Initialize Robot controller"
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/teamConfig.xml");
 	gm.connectTo(conf.port(), conf.team_number());
 	gm.setNonBlock(true);
 	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -43,7 +43,13 @@ int RobotController::Execute()
 		gm.SendAlive(conf.player_number() );
 		lastalive = now + milliseconds(ALIVEMS);
 	}
-
+	
+	//Check if the msg changes from the outer world
+	gsm = _blk.readState<GameStateMessage> ("worldstate");
+	if(gsm != 0){
+		gm_state.CopyFrom(*gsm);
+	}
+	
 	if (received && gm_state.override_state() == OVERRIDE_DISABLED)
 	{
 		//teams[0] one team

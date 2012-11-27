@@ -16,7 +16,7 @@ KFieldScene::KFieldScene(QGraphicsView* parent)
 	this->parent = parent;
 	this->RobotList.clear();
 
-	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/Field.xml");
+	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/field.xml");
 
 	setBackgroundBrush(QBrush(QColor(0,155,0)));
 
@@ -312,8 +312,8 @@ void KFieldScene::resizeFieldScene(int width, int height)
 
 	float radKickOffCircle = (height+width)/2 * config.radCenterCircle/config.totalCarpetAreaMean;
 	float radPost = (height+width)/2 * config.radPost/config.totalCarpetAreaMean;
-
 	setSceneRect(0,0,width,height);
+
 
 	LSide->setRect(wLLine,hTLine, wCentre - wLLine,hBLine - hTLine);
 	RSide->setRect(wCentre,hTLine,wRLine-wCentre,hBLine-hTLine);

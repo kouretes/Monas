@@ -229,7 +229,7 @@ void XMLHandler::retransmitMessage(){
 		ui->sendpb->setEnabled(false);
 		ui->status->setText("failed");
 		ui->status2->setText("hand off required");
-
+		lastMessageACKed = true;
 		timestamp = boost::posix_time::microsec_clock::universal_time();
 	}
 }
@@ -313,7 +313,7 @@ void XMLHandler::sendPressed(){
 		}
 	}
 	
-	if(outmsg.updatexml_size() != 0 || outmsg.resetactivities_size() != 0 || outmsg.has_file()){
+	if((outmsg.updatexml_size() != 0 || outmsg.resetactivities_size() != 0 || outmsg.has_file()) && lastMessageACKed){
 		//target host is be setting to the kguimessenger class
 		lastMessageACKed = false;
 		ui->sendpb->setEnabled(false);

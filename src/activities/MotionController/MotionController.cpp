@@ -168,6 +168,10 @@ int MotionController::Execute()
 	else
 		gameState = PLAYER_INITIAL;
 
+	if(msm != 0){
+		motion->setStiffnesses(msm->chain(), msm->value());
+	}
+	
 	if(gameState == currentstate)
 	{
 	}
@@ -511,7 +515,7 @@ int MotionController::Execute()
 			}
 		}
 	}
-
+	
 	return 0;
 }
 
@@ -521,6 +525,7 @@ void MotionController::read_messages()
 	hm = _blk.readSignal<MotionHeadMessage> ("motion");
 	wm = _blk.readSignal<MotionWalkMessage> ("motion");
 	am = _blk.readSignal<MotionActionMessage> ("motion");
+	msm = _blk.readSignal<MotionStiffnessMessage> ("motion");
 	/* Messages for Intertial Readings */
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	/* Messages from the Game Controller */
@@ -811,7 +816,7 @@ void MotionController::readWalkParameters()
 	//setMotionConfig is deprecated
 	walkConfig.arraySetSize(7);
 
-	string filename = "walk_parameters";
+	string filename = "walkParameters";
 	XmlManagerNode * walkPamNode = _xml.findNodeForKey(filename);
 	int itteration = 0;
 	for(map<string,vector<XmlManagerNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){

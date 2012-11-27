@@ -23,7 +23,7 @@ KKalmanLocalization::~KKalmanLocalization()
 int KKalmanLocalization::Initialize()
 {
 	XMLConfig * config = NULL;
-	string filename = ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml" ;
+	string filename = ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml" ;
 	config = new XMLConfig(filename);
 
 	if (config->IsLoadedSuccessfully())
@@ -51,7 +51,7 @@ int KKalmanLocalization::Initialize()
 		delete config;
 
 	config = NULL;
-	filename = ArchConfig::Instance().GetConfigPrefix() + "/Field.xml" ;
+	filename = ArchConfig::Instance().GetConfigPrefix() + "/field.xml" ;
 	config = new XMLConfig(filename);
 
 	if (config->IsLoadedSuccessfully())
@@ -90,10 +90,8 @@ int KKalmanLocalization::Initialize()
 	for(unsigned i=0;i<kalmanpoints.size();i++)
 		kalmanpoints[i].init(t);
 
-	// Loading features,
-	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
-	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/teamConfig.xml");
+	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/playerConfig.xml");
 	initParticles();
 	return 1;
 }
@@ -496,44 +494,6 @@ void KKalmanLocalization::Update_Ambiguous(vector<KObservationModel> &Observatio
 
 
 	}
-}
-
-
-
-
-//Load xml files
-int KKalmanLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap)
-{
-	TiXmlDocument doc2(filename.c_str());
-	bool loadOkay = doc2.LoadFile();
-
-	if (!loadOkay)
-	{
-		Logger::Instance().WriteMsg("KKalmanLocalization", "Feature loading failed!!!!", Logger::Error);
-		return -1;
-	}
-
-	TiXmlNode * Ftr;
-	TiXmlElement * Attr;
-	string ID;
-	double x, y, w;
-	feature temp;
-
-	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
-	{
-		if(Ftr->ToComment() == NULL)
-		{
-			Attr = Ftr->ToElement();
-			Attr->Attribute("x", &x);
-			Attr->Attribute("y", &y);
-			Attr->Attribute("weight", &w);
-			ID = Attr->Attribute("ID");
-			temp.set(x, y, ID, w);
-			KFeaturesmap[temp.id] = temp;
-		}
-	}
-
-	return 0;
 }
 
 int KKalmanLocalization::readConfiguration(const std::string& file_name)

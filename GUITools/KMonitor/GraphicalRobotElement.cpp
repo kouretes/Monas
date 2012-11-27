@@ -50,7 +50,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	QPen penForMotionCmdLine(Qt::darkRed);
 	penForMotionCmdLine.setWidth(2);
 
-	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
+	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
 	for(unsigned it=0; it<partclsNum; it++)
 	{
 		Particle *part = new GUIRobotPose();

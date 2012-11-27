@@ -1,16 +1,21 @@
 message MotionWalkMessage{
-	required string command 	= 6 	[default = ""];
-	repeated float  parameter   	= 7;
+	required string command 	= 1 	[default = ""];
+	repeated float  parameter   = 2;
 }
 
 message MotionHeadMessage{
-	required string command 	= 6 	[default = ""];
-	repeated float  parameter   	= 7;
+	required string command 	= 1 	[default = ""];
+	repeated float  parameter   = 2;
 }
 
 message MotionActionMessage{
-	required string command 	= 6 	[default = ""];
-	repeated float  parameter   	= 7;
+	required string command 	= 1 	[default = ""];
+	repeated float  paramete   	= 2;
+}
+
+message MotionStiffnessMessage{
+	required string chain 	= 1 	[default = ""];
+	required float  value   = 2;
 }
 
 message MotionStateMessage{

@@ -45,7 +45,7 @@ public:
 
 	void RobotPositionMotionModel(KMotionModel & MModel);
 	void calculate_ball_estimate(KMotionModel const & MModel);
-
+	void ReadFeatureConf();
 private:
 	//check if the first odometry data had come
 	bool firstOdometry;

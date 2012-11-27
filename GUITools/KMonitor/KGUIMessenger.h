@@ -52,9 +52,13 @@ public slots:
 	void LSRHUnsubscriptionHandler(QString);
 	
 	void XMLRHSubscriptionHandler(QString);
-	void XMLPublishMessage(ExternalConfig);
 	void XMLRHUnsubscriptionHandler(QString);
+	void XMLPublishMessage(ExternalConfig);
 
+	void CommandRHSubscriptionHandler(QString);
+	void CommandRHUnsubscriptionHandler(QString);
+	void CommandPublishMessage(ExternalCommand message);
+	
 	void tabChangeHandler(int);
 
 signals:
@@ -69,7 +73,7 @@ signals:
 	void rawImageUpdate(KRawImage, QString);
 	void KCCRawImageUpdate(KRawImage, QString);
 	void sensorsDataUpdate(AllSensorValuesMessage, QString);
-	void xmlGenericAckReceived(GenericACK, QString);
+	void GenericAckReceived(GenericACK, QString);
 	
 	void addHost(QString hostId, QString hostName);
 	void removeHost(QString hostId);
@@ -101,5 +105,6 @@ private:
 	QString myKccRequestedHost;
 	QString myLSRequestedHost;
 	QString myXMLRequestedHost;
+	QString myCommandRequestedHost;
 };
 #endif /* KGUIMESSENGER_H_ */

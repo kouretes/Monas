@@ -209,9 +209,12 @@ for	ip in robotsIP:
 		os.system(copy_cmd)
 
 		print ("Creating parameters for player " + player )
-		copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
+		copy_cmd = "cp " + partial_configuration_dir + "/teamConfig_part.xml " +  binaries_dir +"config/teamConfig.xml"
 		os.system(copy_cmd)
-		playerconf = open(binaries_dir +"config/team_config.xml", 'a')
+		playerconf = open(binaries_dir +"config/teamConfig.xml", 'a')
+		playerconf.write("<!-- Are we playing game or no -->")
+		playerconf.write("<game_mode>" + "1" + "</game_mode>")
+		playerconf.write("<!-- default player number -->")
 		playerconf.write("<player>"+ player+"</player>")
 		playerconf.close()
 
@@ -222,9 +225,12 @@ for	ip in robotsIP:
 			if(player <= 4 and player >=1):
 				print "Setting player number " + playerstr
 				print ("Creating parameters for player " + playerstr )
-				copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
+				copy_cmd = "cp " + partial_configuration_dir + "/teamConfig_part.xml " +  binaries_dir +"config/teamConfig.xml"
 				os.system(copy_cmd)
-				playerconf = open(binaries_dir +"config/team_config.xml", 'a')
+				playerconf = open(binaries_dir +"config/teamConfig.xml", 'a')
+				playerconf.write("<!-- Are we playing game or no -->")
+				playerconf.write("<game_mode>" + "0" + "</game_mode>")
+				playerconf.write("<!-- default player number -->")
 				playerconf.write("<player>"+ playerstr+"</player>")
 				playerconf.close()
 				break

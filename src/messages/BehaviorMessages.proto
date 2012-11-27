@@ -9,12 +9,13 @@ message ActionDescription{
 		BEAM_ME_UP=2;
 	}
 		
-	required uint32 action=1;
-	required uint32 urgency=2; 
-	required string description=3;
-	required float x=4;
-	required float y=5;
-	required float phi=6;
+	required uint32 action=1 [default = 0];
+	required uint32 urgency=2 [default = 0]; 
+	required string description=3 [default = ""];
+	required float x=4 [default = -1];
+	required float y=5 [default = -1];
+	required float phi=6 [default = -1];
+	required float speed=7 [default = -1];
 }
 message BodyControlMessage{
 	enum BODYACTIONS{

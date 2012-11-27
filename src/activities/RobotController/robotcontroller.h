@@ -79,8 +79,13 @@ private:
 	GameStateMessage new_gm_state;
 	boost::posix_time::ptime lastalive;
 	/**
-	 * @brief This message of type ConfigMessage holds the default values found in team_config.xml. If one or more values are
-	 * not specified in team_config.xml then it assumes the default value of the ConfigMessage definition in GameStateMessage.proto.
+	 * @brief Read the gsm from the blackboard and replase the local gm with that. This is usefull if the gateway changes the gsm message
+	 * from a gui command.
+	 */
+	boost::shared_ptr<const GameStateMessage>  gsm;
+	/**
+	 * @brief This message of type ConfigMessage holds the default values found in teamConfig.xml. If one or more values are
+	 * not specified in teamConfig.xml then it assumes the default value of the ConfigMessage definition in GameStateMessage.proto.
 	 */
 	ConfigMessage conf;
 };

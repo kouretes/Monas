@@ -44,17 +44,15 @@ void LocalWorldState::UserInit()
 	lastFilterTime = boost::posix_time::microsec_clock::universal_time();
 
     //read xml files..set parameters for localizationWorld
-    ReadLocConf();
+    Reset();
     ReadFieldConf();
     ReadFeatureConf();
     ReadTeamConf();
 	localizationWorld.Initialize();
-
-#ifdef NO_GAME
+	
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &LocalWorldState::StartServer, this);
 	pthread_detach(acceptthread);
-#endif
 
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
@@ -78,6 +76,7 @@ void LocalWorldState::UserInit()
 
 void LocalWorldState::Reset(){
     ReadLocConf();
+	gameMode = atoi(_xml.findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 }
 
 int LocalWorldState::Execute()
@@ -95,9 +94,9 @@ int LocalWorldState::Execute()
 		return 0;
 	}else
 		fallBegan = true;
-	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
+	if (lrm != 0){
 		timeStart = boost::posix_time::microsec_clock::universal_time();
-		localizationWorld.initializeParticles((int)lrm->type(),lrm->kickoff());
+		localizationWorld.initializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
 	}
 
 
@@ -108,17 +107,17 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_confidence(0.0);
 
 	calculate_ball_estimate(robotmovement);
-	///DEBUGMODE SEND RESULTS
-	if (debugmode)
-	{
-		LocalizationData_Load(currentObservation, robotmovement);
-		Send_LocalizationData();
-	}
 	_blk.publishData(MyWorld, "worldstate");
-#ifdef NO_GAME
-	LocalizationDataForGUI_Load();
-	_blk.publishSignal(DebugDataForGUI, "debug");
-#endif
+	if(gameMode == false){
+		LocalizationDataForGUI_Load();
+		_blk.publishSignal(DebugDataForGUI, "debug");
+		///DEBUGMODE SEND RESULTS
+		if (debugmode)
+		{
+			LocalizationData_Load(currentObservation, robotmovement);
+			Send_LocalizationData();
+		}
+	}
 	return 0;
 }
 
@@ -337,54 +336,40 @@ void LocalWorldState::ReadFeatureConf()
     feature temp;
     double x,y,weight;
     string ID;
+	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
+		string key = "features.ftr~" + _toString(i) + ".";
 
-    //YellowGoal
-    ID=_xml.findValueForKey("Features.ftr~0.$ID");
-    x= atof(_xml.findValueForKey("Features.ftr~0.$x").c_str());
-    y= atof(_xml.findValueForKey("Features.ftr~0.$y").c_str());
-    weight= atof(_xml.findValueForKey("Features.ftr~0.$weight").c_str());
-    temp.set(x, y, ID, weight);
-    localizationWorld.KFeaturesmap[ID]=temp;
-
-    //YellowLeft
-    ID=_xml.findValueForKey("Features.ftr~1.$ID");
-    x= atof(_xml.findValueForKey("Features.ftr~1.$x").c_str());
-    y= atof(_xml.findValueForKey("Features.ftr~1.$y").c_str());
-    weight= atof(_xml.findValueForKey("Features.ftr~1.$weight").c_str());
-    temp.set(x, y, ID, weight);
-    localizationWorld.KFeaturesmap[ID]=temp;
-
-    //YellowRight
-    ID=_xml.findValueForKey("Features.ftr~2.$ID");
-    x= atof(_xml.findValueForKey("Features.ftr~2.$x").c_str());
-    y= atof(_xml.findValueForKey("Features.ftr~2.$y").c_str());
-    weight= atof(_xml.findValueForKey("Features.ftr~2.$weight").c_str());
-    temp.set(x, y, ID, weight);
-    localizationWorld.KFeaturesmap[ID]=temp;
+    	ID=_xml.findValueForKey(key + "ID");
+    	x= atof(_xml.findValueForKey(key + "x").c_str());
+    	y= atof(_xml.findValueForKey(key + "y").c_str());
+    	weight= atof(_xml.findValueForKey(key + "weight").c_str());
+    	temp.set(x, y, ID, weight);
+    	localizationWorld.KFeaturesmap[ID]=temp;
+    }
 }
 
 void LocalWorldState::ReadLocConf()
 {
-    localizationWorld.robustmean=atoi(_xml.findValueForKey("Localizationconf.robustmean").c_str());
-    localizationWorld.partclsNum=atoi(_xml.findValueForKey("Localizationconf.partclsNum").c_str());
-    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("Localizationconf.SpreadParticlesDeviation").c_str());
-    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("Localizationconf.rotation_deviation").c_str());
-    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("Localizationconf.PercentParticlesSpread").c_str());
-    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("Localizationconf.RotationDeviationAfterFallInDeg").c_str());
-    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("Localizationconf.NumberOfParticlesSpreadAfterFall").c_str());
+    localizationWorld.robustmean=atoi(_xml.findValueForKey("localizationConfig.robustmean").c_str());
+    localizationWorld.partclsNum=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
+    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
+    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
+    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
+    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
 }
 
 void LocalWorldState::ReadFieldConf()
 {
-    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("Field.FieldMaxX").c_str());
-    localizationWorld.FieldMinX=atof(_xml.findValueForKey("Field.FieldMinX").c_str());
-    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("Field.FieldMaxY").c_str());
-    localizationWorld.FieldMinY=atof(_xml.findValueForKey("Field.FieldMinY").c_str());
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
 }
 
 void LocalWorldState::ReadTeamConf()
 {
-    localizationWorld.playerNumber=atoi(_xml.findValueForKey("team_config.player").c_str());
+    localizationWorld.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
 }
 
 
@@ -394,11 +379,11 @@ void LocalWorldState::PrintFeatureConf()
     typedef map<string,feature>::const_iterator MapIterator;
     for (MapIterator iter = localizationWorld.KFeaturesmap.begin(); iter != localizationWorld.KFeaturesmap.end(); iter++)
     {
-        cout << " Key: " << iter->first;
-        cout << " Value x: " << iter->second.x;
-        cout << " Value y: " << iter->second.y;
-        cout << " Value weight: " << iter->second.weight;
-        cout << " Value: " << iter->second.id << endl;
+		Logger::Instance().WriteMsg("LocalWorldState", "Key: " + _toString(iter->first), Logger::Info);
+		Logger::Instance().WriteMsg("LocalWorldState", "Value x: " + _toString(iter->second.x), Logger::Info);
+		Logger::Instance().WriteMsg("LocalWorldState", "Value y: " + _toString(iter->second.y), Logger::Info);
+		Logger::Instance().WriteMsg("LocalWorldState", "Value weight: " + _toString(iter->second.weight), Logger::Info);
+		Logger::Instance().WriteMsg("LocalWorldState", "Value: " + _toString(iter->second.id), Logger::Info);
     }
 }
 
@@ -500,7 +485,7 @@ int LocalWorldState::LocalizationDataForGUI_Load()
 
 void * LocalWorldState::StartServer(void * astring)
 {
-	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
+	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
 	bool found = false;
 	unsigned short port = 9001;
 	float temp = 0;
@@ -512,7 +497,7 @@ void * LocalWorldState::StartServer(void * astring)
 	if (found)
 		port = temp;
 	else
-		Logger::Instance().WriteMsg("LocalWorldState", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml", Logger::Warning);
+		Logger::Instance().WriteMsg("LocalWorldState", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml", Logger::Warning);
 
 	TCPServerSocket servSock(port);
 

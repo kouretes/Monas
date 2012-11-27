@@ -50,6 +50,7 @@ KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL)
 	myKccRequestedHost.clear();
 	myLSRequestedHost.clear();
 	myXMLRequestedHost.clear();
+	myCommandRequestedHost.clear();
 }
 
 KGUIMessenger::~KGUIMessenger()
@@ -187,12 +188,12 @@ void KGUIMessenger::allocateReceivedMessages()
 
 				emit sensorsDataUpdate(asvm, currentRHost);
 			}
-			else if (incomingMessages.at(i).msg->GetTypeName()=="GenericACK" && myXMLRequestedHost == currentRHost){
+			else if (incomingMessages.at(i).msg->GetTypeName()=="GenericACK" && (myXMLRequestedHost == currentRHost || myCommandRequestedHost == currentRHost)){
 				GenericACK gack;
 				gack.Clear();
 				gack.CopyFrom(*(incomingMessages.at(i).msg));
 				
-				emit xmlGenericAckReceived(gack, currentRHost);
+				emit GenericAckReceived(gack, currentRHost);
 			}
 
 		}
@@ -391,12 +392,10 @@ void KGUIMessenger::KCCRHUnsubscriptionHandler(QString hostId)
 	}
 }
 
-
 void KGUIMessenger::XMLRHSubscriptionHandler(QString hostId){
 		updateSubscription("external",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
 		myXMLRequestedHost = hostId;
 }
-
 
 void KGUIMessenger::XMLRHUnsubscriptionHandler(QString hostId)
 {
@@ -407,10 +406,37 @@ void KGUIMessenger::XMLRHUnsubscriptionHandler(QString hostId)
 	}
 }
 
+void KGUIMessenger::CommandRHSubscriptionHandler(QString hostId){
+		updateSubscription("external",msgentry::SUBSCRIBE_ON_TOPIC,hostId.toUInt());
+		myCommandRequestedHost = hostId;
+}
+
+void KGUIMessenger::CommandRHUnsubscriptionHandler(QString hostId)
+{
+	if((hostId.isEmpty() && !myCommandRequestedHost.isEmpty()) || (myXMLRequestedHost == hostId && !hostId.isEmpty()))
+	{
+		updateSubscription("external",msgentry::UNSUBSCRIBE_ON_TOPIC,myXMLRequestedHost.toUInt());
+		myCommandRequestedHost.clear();
+	}
+}
 
 void KGUIMessenger::XMLPublishMessage(ExternalConfig message)
 {
 	message.set_targethost(myXMLRequestedHost.toUInt());
+	
+	msgentry nmsg;
+	google::protobuf::Message * newptr = message.New();
+	newptr->CopyFrom(message);
+	nmsg.msg.reset(newptr);
+	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
+	nmsg.topic = Topics::Instance().getId("external");
+	nmsg.msgclass = msgentry::SIGNAL;
+	multicast->getReadBuffer()->add(nmsg);
+}
+
+void KGUIMessenger::CommandPublishMessage(ExternalCommand message)
+{
+	message.set_targethost(myCommandRequestedHost.toUInt());
 	
 	msgentry nmsg;
 	google::protobuf::Message * newptr = message.New();

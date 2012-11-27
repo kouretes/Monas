@@ -149,7 +149,6 @@ public:
 	int Initialize();
 
 	//Functions to read from xml files
-	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
 	int readConfiguration(const std::string& file_name);
 	bool readRobotConf(const std::string& file_name);
 

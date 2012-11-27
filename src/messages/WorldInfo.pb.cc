@@ -36,6 +36,7 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationResetMessage_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_RESET_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* LocalizationData_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationData_reflection_ = NULL;
@@ -166,9 +167,12 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(UnknownObjects));
   LocalizationResetMessage_descriptor_ = file->message_type(6);
-  static const int LocalizationResetMessage_offsets_[2] = {
+  static const int LocalizationResetMessage_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, kickoff_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, xpos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, ypos_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, phipos_),
   };
   LocalizationResetMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -181,6 +185,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationResetMessage));
+  LocalizationResetMessage_RESET_descriptor_ = LocalizationResetMessage_descriptor_->enum_type(0);
   LocalizationData_descriptor_ = file->message_type(7);
   static const int LocalizationData_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, world_),
@@ -319,15 +324,18 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "00000\022\032\n\trelativeY\030\002 \001(\002:\007-100000\022\027\n\006hei"
     "ght\030\003 \001(\002:\007-100000\022\037\n\016relativeXspeed\030\004 \001"
     "(\002:\007-100000\022\037\n\016relativeYspeed\030\005 \001(\002:\007-10"
-    "0000\"9\n\030LocalizationResetMessage\022\014\n\004type"
-    "\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\"\232\001\n\020Localization"
-    "Data\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tParti"
-    "cles\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPosition\030"
-    "\003 \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002(\0132"
-    "\023.ObservationMessage\"A\n\006header\022\033\n\017NextMs"
-    "gByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014"
-    ":\005Undef\"7\n\026LocalizationDataForGUI\022\035\n\tPar"
-    "ticles\030\001 \003(\0132\n.RobotPose", 1224);
+    "0000\"\263\001\n\030LocalizationResetMessage\022\014\n\004typ"
+    "e\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 \002(\002:\001"
+    "0\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:\0010\"C\n"
+    "\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003SET\020\002\022"
+    "\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020Localizat"
+    "ionData\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tPa"
+    "rticles\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPositi"
+    "on\030\003 \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002"
+    "(\0132\023.ObservationMessage\"A\n\006header\022\033\n\017Nex"
+    "tMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 "
+    "\002(\014:\005Undef\"7\n\026LocalizationDataForGUI\022\035\n\t"
+    "Particles\030\001 \003(\0132\n.RobotPose", 1347);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -2412,9 +2420,39 @@ void UnknownObjects::Swap(UnknownObjects* other) {
 
 // ===================================================================
 
+const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_RESET_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return LocalizationResetMessage_RESET_descriptor_;
+}
+bool LocalizationResetMessage_RESET_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const LocalizationResetMessage_RESET LocalizationResetMessage::UNIFORM;
+const LocalizationResetMessage_RESET LocalizationResetMessage::READY;
+const LocalizationResetMessage_RESET LocalizationResetMessage::SET;
+const LocalizationResetMessage_RESET LocalizationResetMessage::PENALISED;
+const LocalizationResetMessage_RESET LocalizationResetMessage::MANUAL;
+const LocalizationResetMessage_RESET LocalizationResetMessage::RESET_MIN;
+const LocalizationResetMessage_RESET LocalizationResetMessage::RESET_MAX;
+const int LocalizationResetMessage::RESET_ARRAYSIZE;
+#endif  // _MSC_VER
 #ifndef _MSC_VER
 const int LocalizationResetMessage::kTypeFieldNumber;
 const int LocalizationResetMessage::kKickOffFieldNumber;
+const int LocalizationResetMessage::kXPosFieldNumber;
+const int LocalizationResetMessage::kYPosFieldNumber;
+const int LocalizationResetMessage::kPhiPosFieldNumber;
 #endif  // !_MSC_VER
 
 LocalizationResetMessage::LocalizationResetMessage()
@@ -2435,6 +2473,9 @@ void LocalizationResetMessage::SharedCtor() {
   _cached_size_ = 0;
   type_ = 0;
   kickoff_ = false;
+  xpos_ = 0;
+  ypos_ = 0;
+  phipos_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2471,6 +2512,9 @@ void LocalizationResetMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     type_ = 0;
     kickoff_ = false;
+    xpos_ = 0;
+    ypos_ = 0;
+    phipos_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -2509,6 +2553,54 @@ bool LocalizationResetMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(29)) goto parse_xPos;
+        break;
+      }
+      
+      // required float xPos = 3 [default = 0];
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_xPos:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &xpos_)));
+          set_has_xpos();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(37)) goto parse_yPos;
+        break;
+      }
+      
+      // required float yPos = 4 [default = 0];
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_yPos:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &ypos_)));
+          set_has_ypos();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(45)) goto parse_phiPos;
+        break;
+      }
+      
+      // required float phiPos = 5 [default = 0];
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_phiPos:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &phipos_)));
+          set_has_phipos();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2541,6 +2633,21 @@ void LocalizationResetMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->kickoff(), output);
   }
   
+  // required float xPos = 3 [default = 0];
+  if (has_xpos()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->xpos(), output);
+  }
+  
+  // required float yPos = 4 [default = 0];
+  if (has_ypos()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->ypos(), output);
+  }
+  
+  // required float phiPos = 5 [default = 0];
+  if (has_phipos()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->phipos(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -2557,6 +2664,21 @@ void LocalizationResetMessage::SerializeWithCachedSizes(
   // required bool kickOff = 2;
   if (has_kickoff()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->kickoff(), target);
+  }
+  
+  // required float xPos = 3 [default = 0];
+  if (has_xpos()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->xpos(), target);
+  }
+  
+  // required float yPos = 4 [default = 0];
+  if (has_ypos()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->ypos(), target);
+  }
+  
+  // required float phiPos = 5 [default = 0];
+  if (has_phipos()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->phipos(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2580,6 +2702,21 @@ int LocalizationResetMessage::ByteSize() const {
     // required bool kickOff = 2;
     if (has_kickoff()) {
       total_size += 1 + 1;
+    }
+    
+    // required float xPos = 3 [default = 0];
+    if (has_xpos()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float yPos = 4 [default = 0];
+    if (has_ypos()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float phiPos = 5 [default = 0];
+    if (has_phipos()) {
+      total_size += 1 + 4;
     }
     
   }
@@ -2615,6 +2752,15 @@ void LocalizationResetMessage::MergeFrom(const LocalizationResetMessage& from) {
     if (from.has_kickoff()) {
       set_kickoff(from.kickoff());
     }
+    if (from.has_xpos()) {
+      set_xpos(from.xpos());
+    }
+    if (from.has_ypos()) {
+      set_ypos(from.ypos());
+    }
+    if (from.has_phipos()) {
+      set_phipos(from.phipos());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -2632,7 +2778,7 @@ void LocalizationResetMessage::CopyFrom(const LocalizationResetMessage& from) {
 }
 
 bool LocalizationResetMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
   
   return true;
 }
@@ -2641,6 +2787,9 @@ void LocalizationResetMessage::Swap(LocalizationResetMessage* other) {
   if (other != this) {
     std::swap(type_, other->type_);
     std::swap(kickoff_, other->kickoff_);
+    std::swap(xpos_, other->xpos_);
+    std::swap(ypos_, other->ypos_);
+    std::swap(phipos_, other->phipos_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

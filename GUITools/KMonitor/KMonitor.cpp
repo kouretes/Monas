@@ -111,8 +111,22 @@ KMonitor::KMonitor(QWidget *parent)
 	connect(ui->XMLTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(XMLRHUnsubscriptionHandler(QString)));
 
 	//messages signal/slots
-	connect(Messenger, SIGNAL(xmlGenericAckReceived(GenericACK, QString)), ui->XMLTab, SLOT(genericAckReceived(GenericACK, QString)));
+	connect(Messenger, SIGNAL(GenericAckReceived(GenericACK, QString)), ui->XMLTab, SLOT(genericAckReceived(GenericACK, QString)));
 	connect(ui->XMLTab, SIGNAL(sendConfigMessage(ExternalConfig)), Messenger, SLOT(XMLPublishMessage(ExternalConfig)));
+
+	/****************** Commands TAB ************************/
+	//Signal slot connections for XML
+	//Signal slot connections for XML ComboBox
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->ComTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->ComTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->ComTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
+
+	connect(ui->ComTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(CommandRHSubscriptionHandler(QString)));
+	connect(ui->ComTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(CommandRHUnsubscriptionHandler(QString)));
+
+	//messages signal/slots
+	connect(Messenger, SIGNAL(GenericAckReceived(GenericACK, QString)), ui->ComTab, SLOT(genericAckReceived(GenericACK, QString)));
+	connect(ui->ComTab, SIGNAL(sendExternalCommand(ExternalCommand)), Messenger, SLOT(CommandPublishMessage(ExternalCommand)));
 
 	/****************** GENERIC ************************/
 	//Signals-Slots for tab changes manipulation

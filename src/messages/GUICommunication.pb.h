@@ -34,10 +34,121 @@ class XmlUpdate;
 class HandShake;
 class FileTransfer;
 class ExternalConfig;
+class ExternalCommand;
 class GenericACK;
 class ResetMessage;
 class UpdateMessage;
 
+enum ExternalCommand_SIMPLE_ACTIONS {
+  ExternalCommand_SIMPLE_ACTIONS_SHUTDOWN = 0,
+  ExternalCommand_SIMPLE_ACTIONS_STIFFNESS_OFF = 1,
+  ExternalCommand_SIMPLE_ACTIONS_STOP_ROBOT = 2,
+  ExternalCommand_SIMPLE_ACTIONS_SIT = 3,
+  ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_SIZE = 4
+};
+bool ExternalCommand_SIMPLE_ACTIONS_IsValid(int value);
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_MIN = ExternalCommand_SIMPLE_ACTIONS_SHUTDOWN;
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_MAX = ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_SIZE;
+const int ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_ARRAYSIZE = ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ExternalCommand_SIMPLE_ACTIONS_descriptor();
+inline const ::std::string& ExternalCommand_SIMPLE_ACTIONS_Name(ExternalCommand_SIMPLE_ACTIONS value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ExternalCommand_SIMPLE_ACTIONS_descriptor(), value);
+}
+inline bool ExternalCommand_SIMPLE_ACTIONS_Parse(
+    const ::std::string& name, ExternalCommand_SIMPLE_ACTIONS* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ExternalCommand_SIMPLE_ACTIONS>(
+    ExternalCommand_SIMPLE_ACTIONS_descriptor(), name, value);
+}
+enum ExternalCommand_GAMECONTROLLER {
+  ExternalCommand_GAMECONTROLLER_INITIAL = 0,
+  ExternalCommand_GAMECONTROLLER_READY = 1,
+  ExternalCommand_GAMECONTROLLER_SET = 2,
+  ExternalCommand_GAMECONTROLLER_PLAY = 3,
+  ExternalCommand_GAMECONTROLLER_PENALISED = 4,
+  ExternalCommand_GAMECONTROLLER_FINISH = 5,
+  ExternalCommand_GAMECONTROLLER_OVERRIDE = 6,
+  ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_SIZE = 7
+};
+bool ExternalCommand_GAMECONTROLLER_IsValid(int value);
+const ExternalCommand_GAMECONTROLLER ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_MIN = ExternalCommand_GAMECONTROLLER_INITIAL;
+const ExternalCommand_GAMECONTROLLER ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_MAX = ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_SIZE;
+const int ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_ARRAYSIZE = ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ExternalCommand_GAMECONTROLLER_descriptor();
+inline const ::std::string& ExternalCommand_GAMECONTROLLER_Name(ExternalCommand_GAMECONTROLLER value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ExternalCommand_GAMECONTROLLER_descriptor(), value);
+}
+inline bool ExternalCommand_GAMECONTROLLER_Parse(
+    const ::std::string& name, ExternalCommand_GAMECONTROLLER* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ExternalCommand_GAMECONTROLLER>(
+    ExternalCommand_GAMECONTROLLER_descriptor(), name, value);
+}
+enum ExternalCommand_LOCALIZATION {
+  ExternalCommand_LOCALIZATION_INIT_PARTICLES = 0,
+  ExternalCommand_LOCALIZATION_LOCALIZATION_SIZE = 1
+};
+bool ExternalCommand_LOCALIZATION_IsValid(int value);
+const ExternalCommand_LOCALIZATION ExternalCommand_LOCALIZATION_LOCALIZATION_MIN = ExternalCommand_LOCALIZATION_INIT_PARTICLES;
+const ExternalCommand_LOCALIZATION ExternalCommand_LOCALIZATION_LOCALIZATION_MAX = ExternalCommand_LOCALIZATION_LOCALIZATION_SIZE;
+const int ExternalCommand_LOCALIZATION_LOCALIZATION_ARRAYSIZE = ExternalCommand_LOCALIZATION_LOCALIZATION_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ExternalCommand_LOCALIZATION_descriptor();
+inline const ::std::string& ExternalCommand_LOCALIZATION_Name(ExternalCommand_LOCALIZATION value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ExternalCommand_LOCALIZATION_descriptor(), value);
+}
+inline bool ExternalCommand_LOCALIZATION_Parse(
+    const ::std::string& name, ExternalCommand_LOCALIZATION* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ExternalCommand_LOCALIZATION>(
+    ExternalCommand_LOCALIZATION_descriptor(), name, value);
+}
+enum ExternalCommand_MOTION {
+  ExternalCommand_MOTION_EXECUTE_ACTION = 0,
+  ExternalCommand_MOTION_SET_STIFFNESS = 1,
+  ExternalCommand_MOTION_MOTION_SIZE = 2
+};
+bool ExternalCommand_MOTION_IsValid(int value);
+const ExternalCommand_MOTION ExternalCommand_MOTION_MOTION_MIN = ExternalCommand_MOTION_EXECUTE_ACTION;
+const ExternalCommand_MOTION ExternalCommand_MOTION_MOTION_MAX = ExternalCommand_MOTION_MOTION_SIZE;
+const int ExternalCommand_MOTION_MOTION_ARRAYSIZE = ExternalCommand_MOTION_MOTION_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ExternalCommand_MOTION_descriptor();
+inline const ::std::string& ExternalCommand_MOTION_Name(ExternalCommand_MOTION value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ExternalCommand_MOTION_descriptor(), value);
+}
+inline bool ExternalCommand_MOTION_Parse(
+    const ::std::string& name, ExternalCommand_MOTION* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ExternalCommand_MOTION>(
+    ExternalCommand_MOTION_descriptor(), name, value);
+}
+enum ExternalCommand_HEAD {
+  ExternalCommand_HEAD_NOTHING = 0,
+  ExternalCommand_HEAD_LOOK_DOWN = 1,
+  ExternalCommand_HEAD_SCAN_AND_TRACK = 2,
+  ExternalCommand_HEAD_LOCALIZE = 3,
+  ExternalCommand_HEAD_LOCALIZE_FAR = 4,
+  ExternalCommand_HEAD_SMART_SCAN = 5,
+  ExternalCommand_HEAD_HEAD_SIZE = 6
+};
+bool ExternalCommand_HEAD_IsValid(int value);
+const ExternalCommand_HEAD ExternalCommand_HEAD_HEAD_MIN = ExternalCommand_HEAD_NOTHING;
+const ExternalCommand_HEAD ExternalCommand_HEAD_HEAD_MAX = ExternalCommand_HEAD_HEAD_SIZE;
+const int ExternalCommand_HEAD_HEAD_ARRAYSIZE = ExternalCommand_HEAD_HEAD_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ExternalCommand_HEAD_descriptor();
+inline const ::std::string& ExternalCommand_HEAD_Name(ExternalCommand_HEAD value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ExternalCommand_HEAD_descriptor(), value);
+}
+inline bool ExternalCommand_HEAD_Parse(
+    const ::std::string& name, ExternalCommand_HEAD* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ExternalCommand_HEAD>(
+    ExternalCommand_HEAD_descriptor(), name, value);
+}
 // ===================================================================
 
 class XmlUpdate : public ::google::protobuf::Message {
@@ -494,6 +605,274 @@ class ExternalConfig : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static ExternalConfig* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ExternalCommand : public ::google::protobuf::Message {
+ public:
+  ExternalCommand();
+  virtual ~ExternalCommand();
+  
+  ExternalCommand(const ExternalCommand& from);
+  
+  inline ExternalCommand& operator=(const ExternalCommand& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ExternalCommand& default_instance();
+  
+  void Swap(ExternalCommand* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ExternalCommand* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ExternalCommand& from);
+  void MergeFrom(const ExternalCommand& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef ExternalCommand_SIMPLE_ACTIONS SIMPLE_ACTIONS;
+  static const SIMPLE_ACTIONS SHUTDOWN = ExternalCommand_SIMPLE_ACTIONS_SHUTDOWN;
+  static const SIMPLE_ACTIONS STIFFNESS_OFF = ExternalCommand_SIMPLE_ACTIONS_STIFFNESS_OFF;
+  static const SIMPLE_ACTIONS STOP_ROBOT = ExternalCommand_SIMPLE_ACTIONS_STOP_ROBOT;
+  static const SIMPLE_ACTIONS SIT = ExternalCommand_SIMPLE_ACTIONS_SIT;
+  static const SIMPLE_ACTIONS SIMPLE_ACTIONS_SIZE = ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_SIZE;
+  static inline bool SIMPLE_ACTIONS_IsValid(int value) {
+    return ExternalCommand_SIMPLE_ACTIONS_IsValid(value);
+  }
+  static const SIMPLE_ACTIONS SIMPLE_ACTIONS_MIN =
+    ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_MIN;
+  static const SIMPLE_ACTIONS SIMPLE_ACTIONS_MAX =
+    ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_MAX;
+  static const int SIMPLE_ACTIONS_ARRAYSIZE =
+    ExternalCommand_SIMPLE_ACTIONS_SIMPLE_ACTIONS_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  SIMPLE_ACTIONS_descriptor() {
+    return ExternalCommand_SIMPLE_ACTIONS_descriptor();
+  }
+  static inline const ::std::string& SIMPLE_ACTIONS_Name(SIMPLE_ACTIONS value) {
+    return ExternalCommand_SIMPLE_ACTIONS_Name(value);
+  }
+  static inline bool SIMPLE_ACTIONS_Parse(const ::std::string& name,
+      SIMPLE_ACTIONS* value) {
+    return ExternalCommand_SIMPLE_ACTIONS_Parse(name, value);
+  }
+  
+  typedef ExternalCommand_GAMECONTROLLER GAMECONTROLLER;
+  static const GAMECONTROLLER INITIAL = ExternalCommand_GAMECONTROLLER_INITIAL;
+  static const GAMECONTROLLER READY = ExternalCommand_GAMECONTROLLER_READY;
+  static const GAMECONTROLLER SET = ExternalCommand_GAMECONTROLLER_SET;
+  static const GAMECONTROLLER PLAY = ExternalCommand_GAMECONTROLLER_PLAY;
+  static const GAMECONTROLLER PENALISED = ExternalCommand_GAMECONTROLLER_PENALISED;
+  static const GAMECONTROLLER FINISH = ExternalCommand_GAMECONTROLLER_FINISH;
+  static const GAMECONTROLLER OVERRIDE = ExternalCommand_GAMECONTROLLER_OVERRIDE;
+  static const GAMECONTROLLER GAMECONTROLLER_SIZE = ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_SIZE;
+  static inline bool GAMECONTROLLER_IsValid(int value) {
+    return ExternalCommand_GAMECONTROLLER_IsValid(value);
+  }
+  static const GAMECONTROLLER GAMECONTROLLER_MIN =
+    ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_MIN;
+  static const GAMECONTROLLER GAMECONTROLLER_MAX =
+    ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_MAX;
+  static const int GAMECONTROLLER_ARRAYSIZE =
+    ExternalCommand_GAMECONTROLLER_GAMECONTROLLER_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  GAMECONTROLLER_descriptor() {
+    return ExternalCommand_GAMECONTROLLER_descriptor();
+  }
+  static inline const ::std::string& GAMECONTROLLER_Name(GAMECONTROLLER value) {
+    return ExternalCommand_GAMECONTROLLER_Name(value);
+  }
+  static inline bool GAMECONTROLLER_Parse(const ::std::string& name,
+      GAMECONTROLLER* value) {
+    return ExternalCommand_GAMECONTROLLER_Parse(name, value);
+  }
+  
+  typedef ExternalCommand_LOCALIZATION LOCALIZATION;
+  static const LOCALIZATION INIT_PARTICLES = ExternalCommand_LOCALIZATION_INIT_PARTICLES;
+  static const LOCALIZATION LOCALIZATION_SIZE = ExternalCommand_LOCALIZATION_LOCALIZATION_SIZE;
+  static inline bool LOCALIZATION_IsValid(int value) {
+    return ExternalCommand_LOCALIZATION_IsValid(value);
+  }
+  static const LOCALIZATION LOCALIZATION_MIN =
+    ExternalCommand_LOCALIZATION_LOCALIZATION_MIN;
+  static const LOCALIZATION LOCALIZATION_MAX =
+    ExternalCommand_LOCALIZATION_LOCALIZATION_MAX;
+  static const int LOCALIZATION_ARRAYSIZE =
+    ExternalCommand_LOCALIZATION_LOCALIZATION_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  LOCALIZATION_descriptor() {
+    return ExternalCommand_LOCALIZATION_descriptor();
+  }
+  static inline const ::std::string& LOCALIZATION_Name(LOCALIZATION value) {
+    return ExternalCommand_LOCALIZATION_Name(value);
+  }
+  static inline bool LOCALIZATION_Parse(const ::std::string& name,
+      LOCALIZATION* value) {
+    return ExternalCommand_LOCALIZATION_Parse(name, value);
+  }
+  
+  typedef ExternalCommand_MOTION MOTION;
+  static const MOTION EXECUTE_ACTION = ExternalCommand_MOTION_EXECUTE_ACTION;
+  static const MOTION SET_STIFFNESS = ExternalCommand_MOTION_SET_STIFFNESS;
+  static const MOTION MOTION_SIZE = ExternalCommand_MOTION_MOTION_SIZE;
+  static inline bool MOTION_IsValid(int value) {
+    return ExternalCommand_MOTION_IsValid(value);
+  }
+  static const MOTION MOTION_MIN =
+    ExternalCommand_MOTION_MOTION_MIN;
+  static const MOTION MOTION_MAX =
+    ExternalCommand_MOTION_MOTION_MAX;
+  static const int MOTION_ARRAYSIZE =
+    ExternalCommand_MOTION_MOTION_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  MOTION_descriptor() {
+    return ExternalCommand_MOTION_descriptor();
+  }
+  static inline const ::std::string& MOTION_Name(MOTION value) {
+    return ExternalCommand_MOTION_Name(value);
+  }
+  static inline bool MOTION_Parse(const ::std::string& name,
+      MOTION* value) {
+    return ExternalCommand_MOTION_Parse(name, value);
+  }
+  
+  typedef ExternalCommand_HEAD HEAD;
+  static const HEAD NOTHING = ExternalCommand_HEAD_NOTHING;
+  static const HEAD LOOK_DOWN = ExternalCommand_HEAD_LOOK_DOWN;
+  static const HEAD SCAN_AND_TRACK = ExternalCommand_HEAD_SCAN_AND_TRACK;
+  static const HEAD LOCALIZE = ExternalCommand_HEAD_LOCALIZE;
+  static const HEAD LOCALIZE_FAR = ExternalCommand_HEAD_LOCALIZE_FAR;
+  static const HEAD SMART_SCAN = ExternalCommand_HEAD_SMART_SCAN;
+  static const HEAD HEAD_SIZE = ExternalCommand_HEAD_HEAD_SIZE;
+  static inline bool HEAD_IsValid(int value) {
+    return ExternalCommand_HEAD_IsValid(value);
+  }
+  static const HEAD HEAD_MIN =
+    ExternalCommand_HEAD_HEAD_MIN;
+  static const HEAD HEAD_MAX =
+    ExternalCommand_HEAD_HEAD_MAX;
+  static const int HEAD_ARRAYSIZE =
+    ExternalCommand_HEAD_HEAD_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  HEAD_descriptor() {
+    return ExternalCommand_HEAD_descriptor();
+  }
+  static inline const ::std::string& HEAD_Name(HEAD value) {
+    return ExternalCommand_HEAD_Name(value);
+  }
+  static inline bool HEAD_Parse(const ::std::string& name,
+      HEAD* value) {
+    return ExternalCommand_HEAD_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // required string messageid = 1;
+  inline bool has_messageid() const;
+  inline void clear_messageid();
+  static const int kMessageidFieldNumber = 1;
+  inline const ::std::string& messageid() const;
+  inline void set_messageid(const ::std::string& value);
+  inline void set_messageid(const char* value);
+  inline void set_messageid(const char* value, size_t size);
+  inline ::std::string* mutable_messageid();
+  inline ::std::string* release_messageid();
+  
+  // required uint32 targethost = 2;
+  inline bool has_targethost() const;
+  inline void clear_targethost();
+  static const int kTargethostFieldNumber = 2;
+  inline ::google::protobuf::uint32 targethost() const;
+  inline void set_targethost(::google::protobuf::uint32 value);
+  
+  // required uint32 commandID = 3;
+  inline bool has_commandid() const;
+  inline void clear_commandid();
+  static const int kCommandIDFieldNumber = 3;
+  inline ::google::protobuf::uint32 commandid() const;
+  inline void set_commandid(::google::protobuf::uint32 value);
+  
+  // repeated float floatvars = 4;
+  inline int floatvars_size() const;
+  inline void clear_floatvars();
+  static const int kFloatvarsFieldNumber = 4;
+  inline float floatvars(int index) const;
+  inline void set_floatvars(int index, float value);
+  inline void add_floatvars(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      floatvars() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_floatvars();
+  
+  // optional string stringvars = 5;
+  inline bool has_stringvars() const;
+  inline void clear_stringvars();
+  static const int kStringvarsFieldNumber = 5;
+  inline const ::std::string& stringvars() const;
+  inline void set_stringvars(const ::std::string& value);
+  inline void set_stringvars(const char* value);
+  inline void set_stringvars(const char* value, size_t size);
+  inline ::std::string* mutable_stringvars();
+  inline ::std::string* release_stringvars();
+  
+  // @@protoc_insertion_point(class_scope:ExternalCommand)
+ private:
+  inline void set_has_messageid();
+  inline void clear_has_messageid();
+  inline void set_has_targethost();
+  inline void clear_has_targethost();
+  inline void set_has_commandid();
+  inline void clear_has_commandid();
+  inline void set_has_stringvars();
+  inline void clear_has_stringvars();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* messageid_;
+  ::google::protobuf::uint32 targethost_;
+  ::google::protobuf::uint32 commandid_;
+  ::google::protobuf::RepeatedField< float > floatvars_;
+  ::std::string* stringvars_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_GUICommunication_2eproto();
+  friend void protobuf_AssignDesc_GUICommunication_2eproto();
+  friend void protobuf_ShutdownFile_GUICommunication_2eproto();
+  
+  void InitAsDefaultInstance();
+  static ExternalCommand* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1377,6 +1756,195 @@ inline void ExternalConfig::set_handoffrequest(bool value) {
 
 // -------------------------------------------------------------------
 
+// ExternalCommand
+
+// required string messageid = 1;
+inline bool ExternalCommand::has_messageid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ExternalCommand::set_has_messageid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ExternalCommand::clear_has_messageid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ExternalCommand::clear_messageid() {
+  if (messageid_ != &::google::protobuf::internal::kEmptyString) {
+    messageid_->clear();
+  }
+  clear_has_messageid();
+}
+inline const ::std::string& ExternalCommand::messageid() const {
+  return *messageid_;
+}
+inline void ExternalCommand::set_messageid(const ::std::string& value) {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  messageid_->assign(value);
+}
+inline void ExternalCommand::set_messageid(const char* value) {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  messageid_->assign(value);
+}
+inline void ExternalCommand::set_messageid(const char* value, size_t size) {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  messageid_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ExternalCommand::mutable_messageid() {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  return messageid_;
+}
+inline ::std::string* ExternalCommand::release_messageid() {
+  clear_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = messageid_;
+    messageid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required uint32 targethost = 2;
+inline bool ExternalCommand::has_targethost() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ExternalCommand::set_has_targethost() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ExternalCommand::clear_has_targethost() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ExternalCommand::clear_targethost() {
+  targethost_ = 0u;
+  clear_has_targethost();
+}
+inline ::google::protobuf::uint32 ExternalCommand::targethost() const {
+  return targethost_;
+}
+inline void ExternalCommand::set_targethost(::google::protobuf::uint32 value) {
+  set_has_targethost();
+  targethost_ = value;
+}
+
+// required uint32 commandID = 3;
+inline bool ExternalCommand::has_commandid() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void ExternalCommand::set_has_commandid() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void ExternalCommand::clear_has_commandid() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void ExternalCommand::clear_commandid() {
+  commandid_ = 0u;
+  clear_has_commandid();
+}
+inline ::google::protobuf::uint32 ExternalCommand::commandid() const {
+  return commandid_;
+}
+inline void ExternalCommand::set_commandid(::google::protobuf::uint32 value) {
+  set_has_commandid();
+  commandid_ = value;
+}
+
+// repeated float floatvars = 4;
+inline int ExternalCommand::floatvars_size() const {
+  return floatvars_.size();
+}
+inline void ExternalCommand::clear_floatvars() {
+  floatvars_.Clear();
+}
+inline float ExternalCommand::floatvars(int index) const {
+  return floatvars_.Get(index);
+}
+inline void ExternalCommand::set_floatvars(int index, float value) {
+  floatvars_.Set(index, value);
+}
+inline void ExternalCommand::add_floatvars(float value) {
+  floatvars_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+ExternalCommand::floatvars() const {
+  return floatvars_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+ExternalCommand::mutable_floatvars() {
+  return &floatvars_;
+}
+
+// optional string stringvars = 5;
+inline bool ExternalCommand::has_stringvars() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void ExternalCommand::set_has_stringvars() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void ExternalCommand::clear_has_stringvars() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void ExternalCommand::clear_stringvars() {
+  if (stringvars_ != &::google::protobuf::internal::kEmptyString) {
+    stringvars_->clear();
+  }
+  clear_has_stringvars();
+}
+inline const ::std::string& ExternalCommand::stringvars() const {
+  return *stringvars_;
+}
+inline void ExternalCommand::set_stringvars(const ::std::string& value) {
+  set_has_stringvars();
+  if (stringvars_ == &::google::protobuf::internal::kEmptyString) {
+    stringvars_ = new ::std::string;
+  }
+  stringvars_->assign(value);
+}
+inline void ExternalCommand::set_stringvars(const char* value) {
+  set_has_stringvars();
+  if (stringvars_ == &::google::protobuf::internal::kEmptyString) {
+    stringvars_ = new ::std::string;
+  }
+  stringvars_->assign(value);
+}
+inline void ExternalCommand::set_stringvars(const char* value, size_t size) {
+  set_has_stringvars();
+  if (stringvars_ == &::google::protobuf::internal::kEmptyString) {
+    stringvars_ = new ::std::string;
+  }
+  stringvars_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* ExternalCommand::mutable_stringvars() {
+  set_has_stringvars();
+  if (stringvars_ == &::google::protobuf::internal::kEmptyString) {
+    stringvars_ = new ::std::string;
+  }
+  return stringvars_;
+}
+inline ::std::string* ExternalCommand::release_stringvars() {
+  clear_has_stringvars();
+  if (stringvars_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = stringvars_;
+    stringvars_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
 // GenericACK
 
 // required uint32 hostid = 1;
@@ -1594,6 +2162,26 @@ UpdateMessage::mutable_updatexml() {
 namespace google {
 namespace protobuf {
 
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ExternalCommand_SIMPLE_ACTIONS>() {
+  return ::ExternalCommand_SIMPLE_ACTIONS_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ExternalCommand_GAMECONTROLLER>() {
+  return ::ExternalCommand_GAMECONTROLLER_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ExternalCommand_LOCALIZATION>() {
+  return ::ExternalCommand_LOCALIZATION_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ExternalCommand_MOTION>() {
+  return ::ExternalCommand_MOTION_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ExternalCommand_HEAD>() {
+  return ::ExternalCommand_HEAD_descriptor();
+}
 
 }  // namespace google
 }  // namespace protobuf

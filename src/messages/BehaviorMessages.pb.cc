@@ -41,13 +41,14 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       "BehaviorMessages.proto");
   GOOGLE_CHECK(file != NULL);
   ActionDescription_descriptor_ = file->message_type(0);
-  static const int ActionDescription_offsets_[6] = {
+  static const int ActionDescription_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ActionDescription, action_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ActionDescription, urgency_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ActionDescription, description_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ActionDescription, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ActionDescription, y_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ActionDescription, phi_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ActionDescription, speed_),
   };
   ActionDescription_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -153,21 +154,22 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
   ::protobuf_AddDesc_WorldInfo_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\026BehaviorMessages.proto\032\030VisionObservat"
-    "ions.proto\032\017WorldInfo.proto\"\245\001\n\021ActionDe"
-    "scription\022\016\n\006action\030\001 \002(\r\022\017\n\007urgency\030\002 \002"
-    "(\r\022\023\n\013description\030\003 \002(\t\022\t\n\001x\030\004 \002(\002\022\t\n\001y\030"
-    "\005 \002(\002\022\013\n\003phi\030\006 \002(\002\"7\n\016URGENCY_LEVELS\022\013\n\007"
-    "SOMEDAY\020\000\022\010\n\004SLOW\020\001\022\016\n\nBEAM_ME_UP\020\002\"\253\001\n\022"
-    "BodyControlMessage\022 \n\004task\030\001 \002(\0132\022.Actio"
-    "nDescription\"s\n\013BODYACTIONS\022\013\n\007NOTHING\020\000"
-    "\022\t\n\005STAND\020\001\022\014\n\010DOACTION\020\002\022\020\n\014BALLAPPROAC"
-    "H\020\003\022\030\n\024BALLAPPROACH_SUPPORT\020\004\022\010\n\004GOTO\020\005\022"
-    "\010\n\004DEMO\020\006\"\254\001\n\022HeadControlMessage\022 \n\004task"
-    "\030\001 \002(\0132\022.ActionDescription\"t\n\013HEADACTION"
-    "S\022\013\n\007NOTHING\020\000\022\t\n\005FROWN\020\001\022\033\n\027SCAN_AND_TR"
-    "ACK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE"
-    "_FAR\020\004\022\020\n\014SMART_SELECT\020\005\"%\n\020BallFoundMes"
-    "sage\022\021\n\tballfound\030\001 \002(\010", 623);
+    "ions.proto\032\017WorldInfo.proto\"\314\001\n\021ActionDe"
+    "scription\022\021\n\006action\030\001 \002(\r:\0010\022\022\n\007urgency\030"
+    "\002 \002(\r:\0010\022\025\n\013description\030\003 \002(\t:\000\022\r\n\001x\030\004 \002"
+    "(\002:\002-1\022\r\n\001y\030\005 \002(\002:\002-1\022\017\n\003phi\030\006 \002(\002:\002-1\022\021"
+    "\n\005speed\030\007 \002(\002:\002-1\"7\n\016URGENCY_LEVELS\022\013\n\007S"
+    "OMEDAY\020\000\022\010\n\004SLOW\020\001\022\016\n\nBEAM_ME_UP\020\002\"\253\001\n\022B"
+    "odyControlMessage\022 \n\004task\030\001 \002(\0132\022.Action"
+    "Description\"s\n\013BODYACTIONS\022\013\n\007NOTHING\020\000\022"
+    "\t\n\005STAND\020\001\022\014\n\010DOACTION\020\002\022\020\n\014BALLAPPROACH"
+    "\020\003\022\030\n\024BALLAPPROACH_SUPPORT\020\004\022\010\n\004GOTO\020\005\022\010"
+    "\n\004DEMO\020\006\"\254\001\n\022HeadControlMessage\022 \n\004task\030"
+    "\001 \002(\0132\022.ActionDescription\"t\n\013HEADACTIONS"
+    "\022\013\n\007NOTHING\020\000\022\t\n\005FROWN\020\001\022\033\n\027SCAN_AND_TRA"
+    "CK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE_"
+    "FAR\020\004\022\020\n\014SMART_SELECT\020\005\"%\n\020BallFoundMess"
+    "age\022\021\n\tballfound\030\001 \002(\010", 662);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   ActionDescription::default_instance_ = new ActionDescription();
@@ -221,6 +223,7 @@ const int ActionDescription::kDescriptionFieldNumber;
 const int ActionDescription::kXFieldNumber;
 const int ActionDescription::kYFieldNumber;
 const int ActionDescription::kPhiFieldNumber;
+const int ActionDescription::kSpeedFieldNumber;
 #endif  // !_MSC_VER
 
 ActionDescription::ActionDescription()
@@ -242,9 +245,10 @@ void ActionDescription::SharedCtor() {
   action_ = 0u;
   urgency_ = 0u;
   description_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  x_ = 0;
-  y_ = 0;
-  phi_ = 0;
+  x_ = -1;
+  y_ = -1;
+  phi_ = -1;
+  speed_ = -1;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -289,9 +293,10 @@ void ActionDescription::Clear() {
         description_->clear();
       }
     }
-    x_ = 0;
-    y_ = 0;
-    phi_ = 0;
+    x_ = -1;
+    y_ = -1;
+    phi_ = -1;
+    speed_ = -1;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -303,7 +308,7 @@ bool ActionDescription::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required uint32 action = 1;
+      // required uint32 action = 1 [default = 0];
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -318,7 +323,7 @@ bool ActionDescription::MergePartialFromCodedStream(
         break;
       }
       
-      // required uint32 urgency = 2;
+      // required uint32 urgency = 2 [default = 0];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -334,7 +339,7 @@ bool ActionDescription::MergePartialFromCodedStream(
         break;
       }
       
-      // required string description = 3;
+      // required string description = 3 [default = ""];
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -351,7 +356,7 @@ bool ActionDescription::MergePartialFromCodedStream(
         break;
       }
       
-      // required float x = 4;
+      // required float x = 4 [default = -1];
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -367,7 +372,7 @@ bool ActionDescription::MergePartialFromCodedStream(
         break;
       }
       
-      // required float y = 5;
+      // required float y = 5 [default = -1];
       case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -383,7 +388,7 @@ bool ActionDescription::MergePartialFromCodedStream(
         break;
       }
       
-      // required float phi = 6;
+      // required float phi = 6 [default = -1];
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -392,6 +397,22 @@ bool ActionDescription::MergePartialFromCodedStream(
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, &phi_)));
           set_has_phi();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(61)) goto parse_speed;
+        break;
+      }
+      
+      // required float speed = 7 [default = -1];
+      case 7: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_speed:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &speed_)));
+          set_has_speed();
         } else {
           goto handle_uninterpreted;
         }
@@ -417,17 +438,17 @@ bool ActionDescription::MergePartialFromCodedStream(
 
 void ActionDescription::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required uint32 action = 1;
+  // required uint32 action = 1 [default = 0];
   if (has_action()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->action(), output);
   }
   
-  // required uint32 urgency = 2;
+  // required uint32 urgency = 2 [default = 0];
   if (has_urgency()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->urgency(), output);
   }
   
-  // required string description = 3;
+  // required string description = 3 [default = ""];
   if (has_description()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->description().data(), this->description().length(),
@@ -436,19 +457,24 @@ void ActionDescription::SerializeWithCachedSizes(
       3, this->description(), output);
   }
   
-  // required float x = 4;
+  // required float x = 4 [default = -1];
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->x(), output);
   }
   
-  // required float y = 5;
+  // required float y = 5 [default = -1];
   if (has_y()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->y(), output);
   }
   
-  // required float phi = 6;
+  // required float phi = 6 [default = -1];
   if (has_phi()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->phi(), output);
+  }
+  
+  // required float speed = 7 [default = -1];
+  if (has_speed()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->speed(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -459,17 +485,17 @@ void ActionDescription::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* ActionDescription::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required uint32 action = 1;
+  // required uint32 action = 1 [default = 0];
   if (has_action()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->action(), target);
   }
   
-  // required uint32 urgency = 2;
+  // required uint32 urgency = 2 [default = 0];
   if (has_urgency()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->urgency(), target);
   }
   
-  // required string description = 3;
+  // required string description = 3 [default = ""];
   if (has_description()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->description().data(), this->description().length(),
@@ -479,19 +505,24 @@ void ActionDescription::SerializeWithCachedSizes(
         3, this->description(), target);
   }
   
-  // required float x = 4;
+  // required float x = 4 [default = -1];
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->x(), target);
   }
   
-  // required float y = 5;
+  // required float y = 5 [default = -1];
   if (has_y()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->y(), target);
   }
   
-  // required float phi = 6;
+  // required float phi = 6 [default = -1];
   if (has_phi()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->phi(), target);
+  }
+  
+  // required float speed = 7 [default = -1];
+  if (has_speed()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->speed(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -505,39 +536,44 @@ int ActionDescription::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required uint32 action = 1;
+    // required uint32 action = 1 [default = 0];
     if (has_action()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->action());
     }
     
-    // required uint32 urgency = 2;
+    // required uint32 urgency = 2 [default = 0];
     if (has_urgency()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->urgency());
     }
     
-    // required string description = 3;
+    // required string description = 3 [default = ""];
     if (has_description()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->description());
     }
     
-    // required float x = 4;
+    // required float x = 4 [default = -1];
     if (has_x()) {
       total_size += 1 + 4;
     }
     
-    // required float y = 5;
+    // required float y = 5 [default = -1];
     if (has_y()) {
       total_size += 1 + 4;
     }
     
-    // required float phi = 6;
+    // required float phi = 6 [default = -1];
     if (has_phi()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float speed = 7 [default = -1];
+    if (has_speed()) {
       total_size += 1 + 4;
     }
     
@@ -586,6 +622,9 @@ void ActionDescription::MergeFrom(const ActionDescription& from) {
     if (from.has_phi()) {
       set_phi(from.phi());
     }
+    if (from.has_speed()) {
+      set_speed(from.speed());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -603,7 +642,7 @@ void ActionDescription::CopyFrom(const ActionDescription& from) {
 }
 
 bool ActionDescription::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
+  if ((_has_bits_[0] & 0x0000007f) != 0x0000007f) return false;
   
   return true;
 }
@@ -616,6 +655,7 @@ void ActionDescription::Swap(ActionDescription* other) {
     std::swap(x_, other->x_);
     std::swap(y_, other->y_);
     std::swap(phi_, other->phi_);
+    std::swap(speed_, other->speed_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

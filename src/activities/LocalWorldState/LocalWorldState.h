@@ -7,15 +7,19 @@
 #include <netinet/in.h>
 #include <math.h>
 #include <csignal>
+
 #include "architecture/executables/IActivity.h"
 #include "architecture/archConfig.h"
+
 #include "hal/robot/generic_nao/robot_consts.h"
+
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
+
 #include "BallFilter.h"
 #include "KLocalization.h"
 #include "PracticalSocket.h"
@@ -125,6 +129,7 @@ private:
 	int size;
 	char *data;
 
+	bool gameMode;
 };
 ACTIVITY_END
 #endif

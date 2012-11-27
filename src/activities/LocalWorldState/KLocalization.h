@@ -21,7 +21,9 @@
 #include "tools/mathcommon.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
+
 #include "messages/RoboCupPlayerData.h"
+#include "messages/WorldInfo.pb.h"
 
 using namespace std;
 
@@ -215,7 +217,7 @@ public:
 	//Initialize the particles of the filter
 	void initParticles();
 	void setParticlesPoseUniformly();
-	void initializeParticles(int playerState, bool kickOff);
+	void initializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi);
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();

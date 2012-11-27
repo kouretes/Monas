@@ -40,8 +40,8 @@ int KLocalization::Initialize()
 	srand(time(0));
 
 	// Loading features
-	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
-	initParticles();
+	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/playerConfig.xml");
+	initializeParticles(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
 	return 1;
 }
@@ -136,13 +136,13 @@ void KLocalization::setParticlesPoseUniformly()
 	}
 }
 
-void KLocalization::initializeParticles(int playerState, bool kickOff)
+void KLocalization::initializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi)
 {
-	if(playerState == PLAYER_PENALISED)
+	if(resetType == LocalizationResetMessage::PENALISED || resetType == LocalizationResetMessage::UNIFORM)
 	{
 		setParticlesPoseUniformly();
 	}
-	else if(playerState == PLAYER_READY)
+	else if(resetType == LocalizationResetMessage::READY)
 	{
 		float phi=0,x=0,y=0;
 
@@ -171,27 +171,29 @@ void KLocalization::initializeParticles(int playerState, bool kickOff)
 			phi = TO_RAD(270);
 		}
 
-		//Leave some particles to the current position in case of ready state after goal
-		int percentageOfParticle = partclsNum * 0.2;
-
-		for (unsigned int i = percentageOfParticle; i < partclsNum; i++)
+		for (unsigned int i = 0; i < partclsNum; i++)
 		{
-			if(i == maxWeightParticleIndex)
-				continue;
-
 			SIRParticles.x[i] = x;
 			SIRParticles.y[i] = y;
 			SIRParticles.phi[i] = phi;
 			SIRParticles.Weight[i] = 1.0 / partclsNum;
 		}
 	}
-	else if(playerState == PLAYER_SET)
+	else if(resetType == LocalizationResetMessage::SET)
 	{
 		for (unsigned int i = 0; i < partclsNum; i++)
 		{
 			SIRParticles.x[i] = initX[(kickOff) ? 0 : 1] + ((double)rand() / (double)RAND_MAX) * 0.2 - 0.1;
 			SIRParticles.y[i] = initY[(kickOff) ? 0 : 1] + ((double)rand() / (double)RAND_MAX) * 0.2 - 0.1;
 			SIRParticles.phi[i] = initPhi[(kickOff) ? 0 : 1];
+			SIRParticles.Weight[i] = 1.0 / partclsNum;
+		}
+	}else if(resetType == LocalizationResetMessage::MANUAL){
+		for (unsigned int i = 0; i < partclsNum; i++)
+		{
+			SIRParticles.x[i] = inX;
+			SIRParticles.y[i] = inY;
+			SIRParticles.phi[i] = inPhi;
 			SIRParticles.Weight[i] = 1.0 / partclsNum;
 		}
 	}

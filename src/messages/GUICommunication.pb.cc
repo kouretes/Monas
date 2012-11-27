@@ -27,6 +27,14 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* ExternalConfig_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ExternalConfig_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ExternalCommand_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ExternalCommand_reflection_ = NULL;
+const ::google::protobuf::EnumDescriptor* ExternalCommand_SIMPLE_ACTIONS_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* ExternalCommand_GAMECONTROLLER_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* ExternalCommand_LOCALIZATION_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* ExternalCommand_MOTION_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* ExternalCommand_HEAD_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* GenericACK_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   GenericACK_reflection_ = NULL;
@@ -115,7 +123,31 @@ void protobuf_AssignDesc_GUICommunication_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ExternalConfig));
-  GenericACK_descriptor_ = file->message_type(4);
+  ExternalCommand_descriptor_ = file->message_type(4);
+  static const int ExternalCommand_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalCommand, messageid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalCommand, targethost_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalCommand, commandid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalCommand, floatvars_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalCommand, stringvars_),
+  };
+  ExternalCommand_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      ExternalCommand_descriptor_,
+      ExternalCommand::default_instance_,
+      ExternalCommand_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalCommand, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ExternalCommand, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(ExternalCommand));
+  ExternalCommand_SIMPLE_ACTIONS_descriptor_ = ExternalCommand_descriptor_->enum_type(0);
+  ExternalCommand_GAMECONTROLLER_descriptor_ = ExternalCommand_descriptor_->enum_type(1);
+  ExternalCommand_LOCALIZATION_descriptor_ = ExternalCommand_descriptor_->enum_type(2);
+  ExternalCommand_MOTION_descriptor_ = ExternalCommand_descriptor_->enum_type(3);
+  ExternalCommand_HEAD_descriptor_ = ExternalCommand_descriptor_->enum_type(4);
+  GenericACK_descriptor_ = file->message_type(5);
   static const int GenericACK_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GenericACK, hostid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GenericACK, messageid_),
@@ -133,7 +165,7 @@ void protobuf_AssignDesc_GUICommunication_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(GenericACK));
-  ResetMessage_descriptor_ = file->message_type(5);
+  ResetMessage_descriptor_ = file->message_type(6);
   static const int ResetMessage_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ResetMessage, resetactivities_),
   };
@@ -148,7 +180,7 @@ void protobuf_AssignDesc_GUICommunication_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ResetMessage));
-  UpdateMessage_descriptor_ = file->message_type(6);
+  UpdateMessage_descriptor_ = file->message_type(7);
   static const int UpdateMessage_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UpdateMessage, updatexml_),
   };
@@ -184,6 +216,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ExternalConfig_descriptor_, &ExternalConfig::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    ExternalCommand_descriptor_, &ExternalCommand::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     GenericACK_descriptor_, &GenericACK::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ResetMessage_descriptor_, &ResetMessage::default_instance());
@@ -202,6 +236,8 @@ void protobuf_ShutdownFile_GUICommunication_2eproto() {
   delete FileTransfer_reflection_;
   delete ExternalConfig::default_instance_;
   delete ExternalConfig_reflection_;
+  delete ExternalCommand::default_instance_;
+  delete ExternalCommand_reflection_;
   delete GenericACK::default_instance_;
   delete GenericACK_reflection_;
   delete ResetMessage::default_instance_;
@@ -225,18 +261,34 @@ void protobuf_AddDesc_GUICommunication_2eproto() {
     "\021\n\tmessageid\030\001 \002(\t\022\022\n\ntargethost\030\002 \002(\r\022\035"
     "\n\tupdateXml\030\003 \003(\0132\n.XmlUpdate\022\027\n\017resetAc"
     "tivities\030\004 \003(\t\022\033\n\004file\030\005 \001(\0132\r.FileTrans"
-    "fer\022\026\n\016handOffRequest\030\006 \002(\010\"a\n\nGenericAC"
-    "K\022\016\n\006hostid\030\001 \002(\r\022\021\n\tmessageid\030\002 \002(\t\022\037\n\013"
-    "handshaking\030\003 \001(\0132\n.HandShake\022\017\n\007ownlock"
-    "\030\004 \002(\010\"\'\n\014ResetMessage\022\027\n\017resetActivitie"
-    "s\030\001 \003(\t\".\n\rUpdateMessage\022\035\n\tupdateXml\030\001 "
-    "\003(\0132\n.XmlUpdate", 535);
+    "fer\022\026\n\016handOffRequest\030\006 \002(\010\"\312\004\n\017External"
+    "Command\022\021\n\tmessageid\030\001 \002(\t\022\022\n\ntargethost"
+    "\030\002 \002(\r\022\021\n\tcommandID\030\003 \002(\r\022\021\n\tfloatvars\030\004"
+    " \003(\002\022\022\n\nstringvars\030\005 \001(\t\"c\n\016SIMPLE_ACTIO"
+    "NS\022\014\n\010SHUTDOWN\020\000\022\021\n\rSTIFFNESS_OFF\020\001\022\016\n\nS"
+    "TOP_ROBOT\020\002\022\007\n\003SIT\020\003\022\027\n\023SIMPLE_ACTIONS_S"
+    "IZE\020\004\"}\n\016GAMECONTROLLER\022\013\n\007INITIAL\020\000\022\t\n\005"
+    "READY\020\001\022\007\n\003SET\020\002\022\010\n\004PLAY\020\003\022\r\n\tPENALISED\020"
+    "\004\022\n\n\006FINISH\020\005\022\014\n\010OVERRIDE\020\006\022\027\n\023GAMECONTR"
+    "OLLER_SIZE\020\007\"9\n\014LOCALIZATION\022\022\n\016INIT_PAR"
+    "TICLES\020\000\022\025\n\021LOCALIZATION_SIZE\020\001\"@\n\006MOTIO"
+    "N\022\022\n\016EXECUTE_ACTION\020\000\022\021\n\rSET_STIFFNESS\020\001"
+    "\022\017\n\013MOTION_SIZE\020\002\"u\n\004HEAD\022\013\n\007NOTHING\020\000\022\r"
+    "\n\tLOOK_DOWN\020\001\022\022\n\016SCAN_AND_TRACK\020\002\022\014\n\010LOC"
+    "ALIZE\020\003\022\020\n\014LOCALIZE_FAR\020\004\022\016\n\nSMART_SCAN\020"
+    "\005\022\r\n\tHEAD_SIZE\020\006\"a\n\nGenericACK\022\016\n\006hostid"
+    "\030\001 \002(\r\022\021\n\tmessageid\030\002 \002(\t\022\037\n\013handshaking"
+    "\030\003 \001(\0132\n.HandShake\022\017\n\007ownlock\030\004 \002(\010\"\'\n\014R"
+    "esetMessage\022\027\n\017resetActivities\030\001 \003(\t\".\n\r"
+    "UpdateMessage\022\035\n\tupdateXml\030\001 \003(\0132\n.XmlUp"
+    "date", 1124);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GUICommunication.proto", &protobuf_RegisterTypes);
   XmlUpdate::default_instance_ = new XmlUpdate();
   HandShake::default_instance_ = new HandShake();
   FileTransfer::default_instance_ = new FileTransfer();
   ExternalConfig::default_instance_ = new ExternalConfig();
+  ExternalCommand::default_instance_ = new ExternalCommand();
   GenericACK::default_instance_ = new GenericACK();
   ResetMessage::default_instance_ = new ResetMessage();
   UpdateMessage::default_instance_ = new UpdateMessage();
@@ -244,6 +296,7 @@ void protobuf_AddDesc_GUICommunication_2eproto() {
   HandShake::default_instance_->InitAsDefaultInstance();
   FileTransfer::default_instance_->InitAsDefaultInstance();
   ExternalConfig::default_instance_->InitAsDefaultInstance();
+  ExternalCommand::default_instance_->InitAsDefaultInstance();
   GenericACK::default_instance_->InitAsDefaultInstance();
   ResetMessage::default_instance_->InitAsDefaultInstance();
   UpdateMessage::default_instance_->InitAsDefaultInstance();
@@ -1572,6 +1625,548 @@ void ExternalConfig::Swap(ExternalConfig* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ExternalConfig_descriptor_;
   metadata.reflection = ExternalConfig_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+const ::google::protobuf::EnumDescriptor* ExternalCommand_SIMPLE_ACTIONS_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ExternalCommand_SIMPLE_ACTIONS_descriptor_;
+}
+bool ExternalCommand_SIMPLE_ACTIONS_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand::SHUTDOWN;
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand::STIFFNESS_OFF;
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand::STOP_ROBOT;
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand::SIT;
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand::SIMPLE_ACTIONS_SIZE;
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand::SIMPLE_ACTIONS_MIN;
+const ExternalCommand_SIMPLE_ACTIONS ExternalCommand::SIMPLE_ACTIONS_MAX;
+const int ExternalCommand::SIMPLE_ACTIONS_ARRAYSIZE;
+#endif  // _MSC_VER
+const ::google::protobuf::EnumDescriptor* ExternalCommand_GAMECONTROLLER_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ExternalCommand_GAMECONTROLLER_descriptor_;
+}
+bool ExternalCommand_GAMECONTROLLER_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const ExternalCommand_GAMECONTROLLER ExternalCommand::INITIAL;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::READY;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::SET;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::PLAY;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::PENALISED;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::FINISH;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::OVERRIDE;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::GAMECONTROLLER_SIZE;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::GAMECONTROLLER_MIN;
+const ExternalCommand_GAMECONTROLLER ExternalCommand::GAMECONTROLLER_MAX;
+const int ExternalCommand::GAMECONTROLLER_ARRAYSIZE;
+#endif  // _MSC_VER
+const ::google::protobuf::EnumDescriptor* ExternalCommand_LOCALIZATION_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ExternalCommand_LOCALIZATION_descriptor_;
+}
+bool ExternalCommand_LOCALIZATION_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const ExternalCommand_LOCALIZATION ExternalCommand::INIT_PARTICLES;
+const ExternalCommand_LOCALIZATION ExternalCommand::LOCALIZATION_SIZE;
+const ExternalCommand_LOCALIZATION ExternalCommand::LOCALIZATION_MIN;
+const ExternalCommand_LOCALIZATION ExternalCommand::LOCALIZATION_MAX;
+const int ExternalCommand::LOCALIZATION_ARRAYSIZE;
+#endif  // _MSC_VER
+const ::google::protobuf::EnumDescriptor* ExternalCommand_MOTION_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ExternalCommand_MOTION_descriptor_;
+}
+bool ExternalCommand_MOTION_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const ExternalCommand_MOTION ExternalCommand::EXECUTE_ACTION;
+const ExternalCommand_MOTION ExternalCommand::SET_STIFFNESS;
+const ExternalCommand_MOTION ExternalCommand::MOTION_SIZE;
+const ExternalCommand_MOTION ExternalCommand::MOTION_MIN;
+const ExternalCommand_MOTION ExternalCommand::MOTION_MAX;
+const int ExternalCommand::MOTION_ARRAYSIZE;
+#endif  // _MSC_VER
+const ::google::protobuf::EnumDescriptor* ExternalCommand_HEAD_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ExternalCommand_HEAD_descriptor_;
+}
+bool ExternalCommand_HEAD_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const ExternalCommand_HEAD ExternalCommand::NOTHING;
+const ExternalCommand_HEAD ExternalCommand::LOOK_DOWN;
+const ExternalCommand_HEAD ExternalCommand::SCAN_AND_TRACK;
+const ExternalCommand_HEAD ExternalCommand::LOCALIZE;
+const ExternalCommand_HEAD ExternalCommand::LOCALIZE_FAR;
+const ExternalCommand_HEAD ExternalCommand::SMART_SCAN;
+const ExternalCommand_HEAD ExternalCommand::HEAD_SIZE;
+const ExternalCommand_HEAD ExternalCommand::HEAD_MIN;
+const ExternalCommand_HEAD ExternalCommand::HEAD_MAX;
+const int ExternalCommand::HEAD_ARRAYSIZE;
+#endif  // _MSC_VER
+#ifndef _MSC_VER
+const int ExternalCommand::kMessageidFieldNumber;
+const int ExternalCommand::kTargethostFieldNumber;
+const int ExternalCommand::kCommandIDFieldNumber;
+const int ExternalCommand::kFloatvarsFieldNumber;
+const int ExternalCommand::kStringvarsFieldNumber;
+#endif  // !_MSC_VER
+
+ExternalCommand::ExternalCommand()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void ExternalCommand::InitAsDefaultInstance() {
+}
+
+ExternalCommand::ExternalCommand(const ExternalCommand& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ExternalCommand::SharedCtor() {
+  _cached_size_ = 0;
+  messageid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  targethost_ = 0u;
+  commandid_ = 0u;
+  stringvars_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ExternalCommand::~ExternalCommand() {
+  SharedDtor();
+}
+
+void ExternalCommand::SharedDtor() {
+  if (messageid_ != &::google::protobuf::internal::kEmptyString) {
+    delete messageid_;
+  }
+  if (stringvars_ != &::google::protobuf::internal::kEmptyString) {
+    delete stringvars_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void ExternalCommand::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ExternalCommand::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ExternalCommand_descriptor_;
+}
+
+const ExternalCommand& ExternalCommand::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_GUICommunication_2eproto();  return *default_instance_;
+}
+
+ExternalCommand* ExternalCommand::default_instance_ = NULL;
+
+ExternalCommand* ExternalCommand::New() const {
+  return new ExternalCommand;
+}
+
+void ExternalCommand::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_messageid()) {
+      if (messageid_ != &::google::protobuf::internal::kEmptyString) {
+        messageid_->clear();
+      }
+    }
+    targethost_ = 0u;
+    commandid_ = 0u;
+    if (has_stringvars()) {
+      if (stringvars_ != &::google::protobuf::internal::kEmptyString) {
+        stringvars_->clear();
+      }
+    }
+  }
+  floatvars_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool ExternalCommand::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string messageid = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_messageid()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->messageid().data(), this->messageid().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_targethost;
+        break;
+      }
+      
+      // required uint32 targethost = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_targethost:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &targethost_)));
+          set_has_targethost();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_commandID;
+        break;
+      }
+      
+      // required uint32 commandID = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_commandID:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &commandid_)));
+          set_has_commandid();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(37)) goto parse_floatvars;
+        break;
+      }
+      
+      // repeated float floatvars = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_floatvars:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 37, input, this->mutable_floatvars())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_floatvars())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(37)) goto parse_floatvars;
+        if (input->ExpectTag(42)) goto parse_stringvars;
+        break;
+      }
+      
+      // optional string stringvars = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_stringvars:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_stringvars()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->stringvars().data(), this->stringvars().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ExternalCommand::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required string messageid = 1;
+  if (has_messageid()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->messageid().data(), this->messageid().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->messageid(), output);
+  }
+  
+  // required uint32 targethost = 2;
+  if (has_targethost()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->targethost(), output);
+  }
+  
+  // required uint32 commandID = 3;
+  if (has_commandid()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->commandid(), output);
+  }
+  
+  // repeated float floatvars = 4;
+  for (int i = 0; i < this->floatvars_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      4, this->floatvars(i), output);
+  }
+  
+  // optional string stringvars = 5;
+  if (has_stringvars()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->stringvars().data(), this->stringvars().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      5, this->stringvars(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* ExternalCommand::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required string messageid = 1;
+  if (has_messageid()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->messageid().data(), this->messageid().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->messageid(), target);
+  }
+  
+  // required uint32 targethost = 2;
+  if (has_targethost()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->targethost(), target);
+  }
+  
+  // required uint32 commandID = 3;
+  if (has_commandid()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->commandid(), target);
+  }
+  
+  // repeated float floatvars = 4;
+  for (int i = 0; i < this->floatvars_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(4, this->floatvars(i), target);
+  }
+  
+  // optional string stringvars = 5;
+  if (has_stringvars()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->stringvars().data(), this->stringvars().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->stringvars(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int ExternalCommand::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required string messageid = 1;
+    if (has_messageid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->messageid());
+    }
+    
+    // required uint32 targethost = 2;
+    if (has_targethost()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->targethost());
+    }
+    
+    // required uint32 commandID = 3;
+    if (has_commandid()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->commandid());
+    }
+    
+    // optional string stringvars = 5;
+    if (has_stringvars()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->stringvars());
+    }
+    
+  }
+  // repeated float floatvars = 4;
+  {
+    int data_size = 0;
+    data_size = 4 * this->floatvars_size();
+    total_size += 1 * this->floatvars_size() + data_size;
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ExternalCommand::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const ExternalCommand* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const ExternalCommand*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void ExternalCommand::MergeFrom(const ExternalCommand& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  floatvars_.MergeFrom(from.floatvars_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_messageid()) {
+      set_messageid(from.messageid());
+    }
+    if (from.has_targethost()) {
+      set_targethost(from.targethost());
+    }
+    if (from.has_commandid()) {
+      set_commandid(from.commandid());
+    }
+    if (from.has_stringvars()) {
+      set_stringvars(from.stringvars());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void ExternalCommand::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ExternalCommand::CopyFrom(const ExternalCommand& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ExternalCommand::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  
+  return true;
+}
+
+void ExternalCommand::Swap(ExternalCommand* other) {
+  if (other != this) {
+    std::swap(messageid_, other->messageid_);
+    std::swap(targethost_, other->targethost_);
+    std::swap(commandid_, other->commandid_);
+    floatvars_.Swap(&other->floatvars_);
+    std::swap(stringvars_, other->stringvars_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata ExternalCommand::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ExternalCommand_descriptor_;
+  metadata.reflection = ExternalCommand_reflection_;
   return metadata;
 }
 

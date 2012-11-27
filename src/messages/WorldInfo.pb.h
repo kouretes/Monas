@@ -42,6 +42,28 @@ class LocalizationData;
 class header;
 class LocalizationDataForGUI;
 
+enum LocalizationResetMessage_RESET {
+  LocalizationResetMessage_RESET_UNIFORM = 0,
+  LocalizationResetMessage_RESET_READY = 1,
+  LocalizationResetMessage_RESET_SET = 2,
+  LocalizationResetMessage_RESET_PENALISED = 3,
+  LocalizationResetMessage_RESET_MANUAL = 4
+};
+bool LocalizationResetMessage_RESET_IsValid(int value);
+const LocalizationResetMessage_RESET LocalizationResetMessage_RESET_RESET_MIN = LocalizationResetMessage_RESET_UNIFORM;
+const LocalizationResetMessage_RESET LocalizationResetMessage_RESET_RESET_MAX = LocalizationResetMessage_RESET_MANUAL;
+const int LocalizationResetMessage_RESET_RESET_ARRAYSIZE = LocalizationResetMessage_RESET_RESET_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_RESET_descriptor();
+inline const ::std::string& LocalizationResetMessage_RESET_Name(LocalizationResetMessage_RESET value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    LocalizationResetMessage_RESET_descriptor(), value);
+}
+inline bool LocalizationResetMessage_RESET_Parse(
+    const ::std::string& name, LocalizationResetMessage_RESET* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<LocalizationResetMessage_RESET>(
+    LocalizationResetMessage_RESET_descriptor(), name, value);
+}
 // ===================================================================
 
 class WorldInfo : public ::google::protobuf::Message {
@@ -806,6 +828,33 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
   
   // nested types ----------------------------------------------------
   
+  typedef LocalizationResetMessage_RESET RESET;
+  static const RESET UNIFORM = LocalizationResetMessage_RESET_UNIFORM;
+  static const RESET READY = LocalizationResetMessage_RESET_READY;
+  static const RESET SET = LocalizationResetMessage_RESET_SET;
+  static const RESET PENALISED = LocalizationResetMessage_RESET_PENALISED;
+  static const RESET MANUAL = LocalizationResetMessage_RESET_MANUAL;
+  static inline bool RESET_IsValid(int value) {
+    return LocalizationResetMessage_RESET_IsValid(value);
+  }
+  static const RESET RESET_MIN =
+    LocalizationResetMessage_RESET_RESET_MIN;
+  static const RESET RESET_MAX =
+    LocalizationResetMessage_RESET_RESET_MAX;
+  static const int RESET_ARRAYSIZE =
+    LocalizationResetMessage_RESET_RESET_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  RESET_descriptor() {
+    return LocalizationResetMessage_RESET_descriptor();
+  }
+  static inline const ::std::string& RESET_Name(RESET value) {
+    return LocalizationResetMessage_RESET_Name(value);
+  }
+  static inline bool RESET_Parse(const ::std::string& name,
+      RESET* value) {
+    return LocalizationResetMessage_RESET_Parse(name, value);
+  }
+  
   // accessors -------------------------------------------------------
   
   // required int32 type = 1;
@@ -822,20 +871,50 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
   inline bool kickoff() const;
   inline void set_kickoff(bool value);
   
+  // required float xPos = 3 [default = 0];
+  inline bool has_xpos() const;
+  inline void clear_xpos();
+  static const int kXPosFieldNumber = 3;
+  inline float xpos() const;
+  inline void set_xpos(float value);
+  
+  // required float yPos = 4 [default = 0];
+  inline bool has_ypos() const;
+  inline void clear_ypos();
+  static const int kYPosFieldNumber = 4;
+  inline float ypos() const;
+  inline void set_ypos(float value);
+  
+  // required float phiPos = 5 [default = 0];
+  inline bool has_phipos() const;
+  inline void clear_phipos();
+  static const int kPhiPosFieldNumber = 5;
+  inline float phipos() const;
+  inline void set_phipos(float value);
+  
   // @@protoc_insertion_point(class_scope:LocalizationResetMessage)
  private:
   inline void set_has_type();
   inline void clear_has_type();
   inline void set_has_kickoff();
   inline void clear_has_kickoff();
+  inline void set_has_xpos();
+  inline void clear_has_xpos();
+  inline void set_has_ypos();
+  inline void clear_has_ypos();
+  inline void set_has_phipos();
+  inline void clear_has_phipos();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::int32 type_;
   bool kickoff_;
+  float xpos_;
+  float ypos_;
+  float phipos_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1827,6 +1906,72 @@ inline void LocalizationResetMessage::set_kickoff(bool value) {
   kickoff_ = value;
 }
 
+// required float xPos = 3 [default = 0];
+inline bool LocalizationResetMessage::has_xpos() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void LocalizationResetMessage::set_has_xpos() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void LocalizationResetMessage::clear_has_xpos() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void LocalizationResetMessage::clear_xpos() {
+  xpos_ = 0;
+  clear_has_xpos();
+}
+inline float LocalizationResetMessage::xpos() const {
+  return xpos_;
+}
+inline void LocalizationResetMessage::set_xpos(float value) {
+  set_has_xpos();
+  xpos_ = value;
+}
+
+// required float yPos = 4 [default = 0];
+inline bool LocalizationResetMessage::has_ypos() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void LocalizationResetMessage::set_has_ypos() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void LocalizationResetMessage::clear_has_ypos() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void LocalizationResetMessage::clear_ypos() {
+  ypos_ = 0;
+  clear_has_ypos();
+}
+inline float LocalizationResetMessage::ypos() const {
+  return ypos_;
+}
+inline void LocalizationResetMessage::set_ypos(float value) {
+  set_has_ypos();
+  ypos_ = value;
+}
+
+// required float phiPos = 5 [default = 0];
+inline bool LocalizationResetMessage::has_phipos() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void LocalizationResetMessage::set_has_phipos() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void LocalizationResetMessage::clear_has_phipos() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void LocalizationResetMessage::clear_phipos() {
+  phipos_ = 0;
+  clear_has_phipos();
+}
+inline float LocalizationResetMessage::phipos() const {
+  return phipos_;
+}
+inline void LocalizationResetMessage::set_phipos(float value) {
+  set_has_phipos();
+  phipos_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // LocalizationData
@@ -2063,6 +2208,10 @@ LocalizationDataForGUI::mutable_particles() {
 namespace google {
 namespace protobuf {
 
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::LocalizationResetMessage_RESET>() {
+  return ::LocalizationResetMessage_RESET_descriptor();
+}
 
 }  // namespace google
 }  // namespace protobuf

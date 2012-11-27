@@ -1,11 +1,5 @@
 #include "HeadController.h"
 
-#include <math.h>
-#include "tools/logger.h"
-#include "tools/toString.h"
-#include "messages/RoboCupGameControlData.h"
-#include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/mathcommon.h"
 
 using namespace KMath;
 using namespace boost::posix_time;
@@ -33,6 +27,7 @@ void HeadController::UserInit()
 	seeballmessage = 0;
 	scanforball = false;
 	startscan = true;
+	useExternalSpeed = false;
 
 	state = BALL1;
 	
@@ -45,7 +40,7 @@ void HeadController::UserInit()
 	robot_phi = 0.0;
 	robot_confidence = 1.0;
 	
-	readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");		// reads blueGoal*, yellowGoal*
+	Reset();
 
 	lastball = microsec_clock::universal_time();
 
@@ -55,7 +50,7 @@ void HeadController::UserInit()
 
 
 void HeadController::Reset(){
-
+	readGoalConfiguration();
 }
 
 /* HeadController Main Execution Function */
@@ -70,10 +65,17 @@ int HeadController::Execute()
 		HeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH);
 	}
 	unsigned int whattodo;
-	if(control.get()==0)
-		whattodo=HeadControlMessage::SCAN_AND_TRACK_FOR_BALL;
-	else{
+	if(control.get()==0){
+		whattodo=HeadControlMessage::FROWN;
+		useExternalSpeed = false;
+	}else{
 		whattodo=control->task().action();
+		if(control->task().speed() != -1){
+			useExternalSpeed = true;
+			externalSpeed = control->task().speed();
+		}else{
+			useExternalSpeed = false;		
+		}
 	}
 
 
@@ -241,7 +243,11 @@ int HeadController::MakeHeadAction()
 	hmot.set_command("setHead");
 	hmot.set_parameter(0, targetYaw);
 	hmot.set_parameter(1, targetPitch);
-	hmot.set_parameter(2, targetSpeed);
+	if(useExternalSpeed == true){
+		hmot.set_parameter(2, externalSpeed);
+	}else{
+		hmot.set_parameter(2, targetSpeed);
+	}
 	_blk.publishSignal(hmot, "motion");
 	waiting=0;
 	return 1;
@@ -482,57 +488,34 @@ bool HeadController::reachedTargetHead()
 
 /* Read Configuration Functions */
 
-bool HeadController::readGoalConfiguration(const std::string& file_name)
+void HeadController::readGoalConfiguration()
 {
-	TiXmlDocument doc2(file_name.c_str());
-	bool loadOkay = doc2.LoadFile();
-
-	if (!loadOkay)
+	// === read goal configuration xml data from Fearures.xml ===
+	std::string ID;
+	for(int v = 0 ; v < _xml.numberOfNodesForKey("features.ftr") ; v++)
 	{
-		Logger::Instance().WriteMsg("HeadController",  " readGoalConfiguration: cannot read file " + file_name , Logger::Info);
-		return false;
-	}
-
-	TiXmlNode * Ftr;
-	TiXmlElement * Attr;
-	double x, y;
-	string ID;
-
-	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
-	{
-		if(Ftr->ToComment() == NULL)
+		ID = _xml.findValueForKey("features.ftr~"+_toString(v)+".ID").c_str();
+		if(ID == "YellowGoal")
 		{
-			Attr = Ftr->ToElement();
-			Attr->Attribute("x", &x);
-			Attr->Attribute("y", &y);
-			ID = Attr->Attribute("ID");
-
-			if (ID == "YellowGoal")
-			{
-				oppGoalX = x;
-				oppGoalY = y;
-				ownGoalX = -oppGoalX;
-				ownGoalY = -oppGoalY;
-			}
-
-			if (ID == "YellowLeft")
-			{
-				oppGoalLeftX = x;
-				oppGoalLeftY = y;
-				ownGoalLeftX = -oppGoalLeftX;
-				ownGoalLeftY = -oppGoalLeftY;
-			}
-
-			if (ID == "YellowRight")
-			{
-				oppGoalRightX = x;
-				oppGoalRightY = y;
-				ownGoalRightX = -oppGoalRightX;
-				ownGoalRightY = -oppGoalRightY;
-			}
+			oppGoalX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			oppGoalY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			ownGoalX = -oppGoalX;
+			ownGoalY = -oppGoalY;
+		}
+		else if(ID == "YellowLeft")
+		{
+			oppGoalLeftX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			oppGoalLeftY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			ownGoalLeftX = -oppGoalLeftX;
+			ownGoalLeftY = -oppGoalLeftY;
+		}
+		else if(ID == "YellowRight")
+		{
+			oppGoalRightX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			oppGoalRightY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			ownGoalRightX = -oppGoalRightX;
+			ownGoalRightY = -oppGoalRightY;
 		}
 	}
-
-	return true;
 }
 
