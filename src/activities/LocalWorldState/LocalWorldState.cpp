@@ -48,6 +48,7 @@ void LocalWorldState::UserInit()
     ReadFieldConf();
     ReadFeatureConf();
     ReadTeamConf();
+    ReadRobotConf();
 	localizationWorld.Initialize();
 	
 	sock = NULL;
@@ -328,7 +329,7 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	//Logger::Instance().WriteMsg("LocalWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
 
-//------------------------------------------------- xml read/print functions -----------------------------------------------------
+//------------------------------------------------- xml read functions -----------------------------------------------------
 
 
 void LocalWorldState::ReadFeatureConf()
@@ -372,18 +373,16 @@ void LocalWorldState::ReadTeamConf()
     localizationWorld.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
 }
 
-
-//check if values are correct
-void LocalWorldState::PrintFeatureConf()
+void LocalWorldState::ReadRobotConf()
 {
-    typedef map<string,feature>::const_iterator MapIterator;
-    for (MapIterator iter = localizationWorld.KFeaturesmap.begin(); iter != localizationWorld.KFeaturesmap.end(); iter++)
-    {
-		Logger::Instance().WriteMsg("LocalWorldState", "Key: " + _toString(iter->first), Logger::Info);
-		Logger::Instance().WriteMsg("LocalWorldState", "Value x: " + _toString(iter->second.x), Logger::Info);
-		Logger::Instance().WriteMsg("LocalWorldState", "Value y: " + _toString(iter->second.y), Logger::Info);
-		Logger::Instance().WriteMsg("LocalWorldState", "Value weight: " + _toString(iter->second.weight), Logger::Info);
-		Logger::Instance().WriteMsg("LocalWorldState", "Value: " + _toString(iter->second.id), Logger::Info);
+    //Xml index starts at 0 
+    int pNumber=localizationWorld.playerNumber-1;
+	for (int i = 0; i < 2; i++)
+	{
+		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
+        localizationWorld.initX[i]=atof(_xml.findValueForKey("robotConfig."+kickoff+".robot~"+_toString(pNumber)+".$posx").c_str());
+        localizationWorld.initY[i]=atof(_xml.findValueForKey("robotConfig."+kickoff+".robot~"+_toString(pNumber)+".$posy").c_str());
+        localizationWorld.initPhi[i]=0;
     }
 }
 

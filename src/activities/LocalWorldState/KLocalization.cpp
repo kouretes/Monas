@@ -39,9 +39,8 @@ int KLocalization::Initialize()
     generator.seed(static_cast<unsigned int> (std::time(0)));
 	srand(time(0));
 
-	// Loading features
-	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/playerConfig.xml");
 	initializeParticles(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
+
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
 	return 1;
 }
@@ -538,42 +537,4 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		ParticlePointBearingAngle = atan2(-Observation[0].Feature.y - SIRParticles.y[index], -Observation[0].Feature.x - SIRParticles.x[index]);
 		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 	}
-}
-
-bool KLocalization::readRobotConf(const std::string& file_name)
-{
-	XML config(file_name);
-	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont teamPositions, robotPosition ;
-	Logger::Instance().WriteMsg("Localization",  " readRobotConfiguration "  , Logger::Info);
-
-	for (int i = 0; i < 2; i++)
-	{
-		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
-		bool found = false;
-		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
-
-		if (teamPositions.size() != 0)
-			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
-
-		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++)
-		{
-			if (it->attrb["number"] == playerNumber)
-			{
-				initPhi[i] = 0.0;
-				initX[i] = (it->attrb["posx"]);
-				initY[i] = (it->attrb["posy"]);
-				found = true;
-				break;
-			}
-			else
-			{
-				initPhi[i] = 0.0;
-				initX[i] = 0.0;
-				initY[i] = 0.0;
-			}
-		}
-	}
-
-	return true;
 }
