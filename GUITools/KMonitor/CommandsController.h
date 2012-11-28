@@ -82,7 +82,7 @@ private slots:
 	void headTextChanged(QString);
 	
 private:
-	void addActionComboBoxItems(std::string xarPath);
+	void addActionComboBoxItems(std::string path);
 	void sendHeadMessage(int headCommandId);
 	void sendOutMsg();
 	

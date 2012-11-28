@@ -42,6 +42,7 @@ CommandsController::CommandsController(QWidget *parent) :
 	connect(ui->actionPb, SIGNAL(clicked()), this, SLOT(sendAction()));
 
 	addActionComboBoxItems(ArchConfig::Instance().GetConfigPrefix() + "xar");
+	addActionComboBoxItems(ArchConfig::Instance().GetConfigPrefix() + "kme");
 	
 	//STIFFNESS
 	connect(ui->stiffSlider, SIGNAL(valueChanged(int)), this, SLOT(stiffSliderMoved(int)));
@@ -305,8 +306,8 @@ void CommandsController::headSliderMoved(int value){
 	ui->headEdit->blockSignals(false);
 }
 
-void CommandsController::addActionComboBoxItems(string xarPath){
-	boost::filesystem::path p(xarPath);
+void CommandsController::addActionComboBoxItems(string path){
+	boost::filesystem::path p(path);
 
 	if (boost::filesystem::is_directory(p))
 	{
