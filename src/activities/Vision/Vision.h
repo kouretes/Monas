@@ -5,6 +5,7 @@
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>
+#include <memory>
 #include "KSegmentator.h"
 
 
@@ -23,10 +24,6 @@
 #include <iostream>
 //#define DEBUGVISION
 
-
-
-
-
 ACTIVITY_START
 
 class Vision: public IActivity
@@ -35,7 +32,7 @@ public:
 	/**
 	 * The only available constructor:
 	 */
-	ACTIVITY_VISIBLE Vision(Blackboard& b, XmlNode &x);
+	ACTIVITY_VISIBLE Vision(Blackboard& b, XmlManager &x);
 	ACTIVITY_VISIBLE ~Vision()
 	{
 		if(segtop == segbottom && segbottom != NULL)
@@ -47,7 +44,8 @@ public:
 	};
 
 
-	void ACTIVITY_VISIBLE  UserInit();
+	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	void fetchAndProcess();
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	std::string ACTIVITY_VISIBLE  GetName()
@@ -109,17 +107,15 @@ private:
 		int sensordelay;
 		float Dfov;
 		float cameraGamma;
-		std::string SegmentationBottom, SegmentationTop;
 		int scanV, scanH, minH, subsampling, bordersize, pixeltol;
 		float skipdistance, seedistance, obstacledistance;
 
 		float balltolerance, ballsize;
-		float goalheight, goaldist, goaldiam, goalslopetolerance, widthestimateotolerance;
+		float goalheight, goaldist, goaldiam, widthestimateotolerance;
 		float pitchoffset;
 
 	} config;
 
-	XMLConfig *xmlconfig;
 	BallTrackMessage trckmsg;
 	ObservationMessage obs;
 	LedChangeMessage leds;
@@ -150,8 +146,6 @@ private:
 	std::vector<KVecInt2> obstacles;
 	std::vector<KVecInt2> tobeshown;
 	KVecFloat2 Vup, Vdn, Vlt, Vrt;
-
-	void loadXMLConfig(std::string fname);
 
 	void gridScan(const KSegmentator::colormask_t color);
 
@@ -188,7 +182,7 @@ private:
 
 
 	KVecInt2 cameraToImage( KVecFloat2 const & c) const;
-	KMat::GenMatrix<float, 2, 2> simpleRot;
+	KMath::KMat::GenMatrix<float, 2, 2> simpleRot;
 
 	void fillGoalPostHeightMeasurments(goalpostdata_t & newpost) const;
 	void fillGoalPostWidthMeasurments(goalpostdata_t & newpost, KSegmentator::colormask_t c) const;

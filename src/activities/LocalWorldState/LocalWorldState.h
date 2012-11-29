@@ -1,5 +1,6 @@
 #ifndef LocalWorldState_H
 #define LocalWorldState_H
+
 #include <string>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <pthread.h>
@@ -9,7 +10,6 @@
 
 #include "architecture/executables/IActivity.h"
 #include "architecture/archConfig.h"
-
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -23,7 +23,6 @@
 #include "BallFilter.h"
 #include "KLocalization.h"
 #include "PracticalSocket.h"
-
 
 ACTIVITY_START
 class LocalWorldState: public IActivity
@@ -39,8 +38,11 @@ public:
 		delete sock;
 	}
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+
 	void ACTIVITY_VISIBLE UserInit();
-	void process_messages();
+	void ACTIVITY_VISIBLE Reset();
+	void ProcessMessages();
+
 	std::string ACTIVITY_VISIBLE GetName()
 	{
 		return "LocalWorldState";
@@ -48,12 +50,19 @@ public:
 
 	void RobotPositionMotionModel(KMotionModel & MModel);
 	void calculate_ball_estimate(KMotionModel const & MModel);
-	
+
 private:
 	//check if the first odometry data had come
 	bool firstOdometry;
 
 	int serverpid;
+
+    //read xml files
+    void ReadLocConf();
+    void ReadFieldConf();
+    void ReadFeatureConf();
+    void ReadTeamConf();
+    void ReadRobotConf();
 
 	//WorldInfo message
 	WorldInfo MyWorld;
@@ -96,10 +105,13 @@ private:
 	//Check if fall of the robot just began
 	bool fallBegan;
 
+	//Logger for all input and outputs for every execute cycle
+	void InputOutputLogger();
+	
 	//Time variables
 	boost::posix_time::ptime timeStart, timeStop;
-	boost::posix_time::ptime last_observation_time;
-	boost::posix_time::ptime last_filter_time;
+	boost::posix_time::ptime lastObservationTime;
+	boost::posix_time::ptime lastFilterTime;
 	boost::posix_time::ptime now;
 
 	//Usefull for gui tools
@@ -115,6 +127,7 @@ private:
 	int size;
 	char *data;
 
+	bool gameMode;
 };
 ACTIVITY_END
 #endif

@@ -43,19 +43,21 @@ option(KROBOT_IS_REMOTE
   OFF
 )
 
+option(RUN_ON_NAO
+  "run code on NAO?"
+  ON
+)
 
-if(Webots)
-  message ( STATUS " _..::: Configuring Webots :::.._ " )
-  add_definitions(" -DWEBOTS ")
-endif(Webots)
-
-
+if (KROBOT_IS_REMOTE)
+ 	add_definitions(" -DKROBOT_IS_REMOTE ")
+endif()
 
 function(Monas_Finalize)
 
 
 	message ( STATUS " _..::: Making Krobot Target :::.._ " )
 	#create_module( krobot )
+	
 	if (KROBOT_IS_REMOTE)
  		add_definitions(" -DKROBOT_IS_REMOTE ")
 		qi_create_bin(krobot ${KRobotTargetSources})

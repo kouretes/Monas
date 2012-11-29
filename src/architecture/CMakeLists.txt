@@ -9,6 +9,9 @@ add_subdirectory ( ./robocup/)
 
 # TODO
 
+if (RUN_ON_NAO)
+	add_definitions(" -DRUN_ON_NAO ")
+endif()
 
 if ( "${ActivityBuildType}" STREQUAL "MODULE" )
   add_definitions ( -DDLIB_FUNCTIONALITY )
@@ -22,8 +25,8 @@ add_library ( MonasCore ${LibBuildType}
 			executables/agent.h
 			executables/agent.cpp
 			executables/agentTiming.h
-			XmlManager/XmlConfigurator.h
-			XmlManager/XmlConfigurator.cpp
+			XmlManager/XmlManager.h
+			XmlManager/XmlManager.cpp
 			IExecutable.h
 			talws.h
 			talws.cpp

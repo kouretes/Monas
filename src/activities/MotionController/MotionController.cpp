@@ -16,8 +16,8 @@
 #define ANGLEHOR 1.6
 #define INTTIME 0.35 //angle integration time. Look ahead for so many seconds Too large valies mean large sensitivity, too small means too late reaction
 
-#define MAXHEADYAWSPEED 1.5
-#define MAXHEADPITCHSPEED 1.5
+//#define MAXHEADYAWSPEED 1.8
+//#define MAXHEADPITCHSPEED 1.8
 
 #define KME_ACTIONPID -1
 
@@ -26,18 +26,14 @@ ACTIVITY_REGISTER(MotionController);
 using namespace std;
 using namespace KDeviceLists;
 
-MotionController::MotionController(Blackboard &b, XmlNode &x) : IActivity(b, x)
+MotionController::MotionController(Blackboard &b, XmlManager &x) : IActivity(b, x)
 {
 	waitfor = microsec_clock::universal_time() - hours(1);
 }
 
 void MotionController::UserInit()
 {
-	//try {
-	//tts = KAlBroker::Instance().GetBroker()->getProxy("ALTextToSpeech");
-	//} catch (AL::ALError& e) {
-	//Logger::Instance().WriteMsg("MotionController","Error in getting TextToSpeech proxy",Logger::FatalError);
-	//}
+
 	try
 	{
 		dcm = new AL::DCMProxy(KAlBroker::Instance().GetBroker());
@@ -105,12 +101,8 @@ void MotionController::UserInit()
 		}
 	}
 	createDCMAlias();
-	//Stable walk for the lab ENABLE for robocup
-	//readWalkParameters();
+
 	motion->setWalkArmsEnable(true, true);
-	//TODO motion->setMotionConfig([["ENABLE_STIFFNESS_PROTECTION",true]]);
-	//motion->setMotionConfig(AL::ALValue::array(AL::ALValue::array("ENABLE_FOOT_CONTACT_PROTECTION", true)));
-	//motion->setMotionConfig(AL::ALValue::array(AL::ALValue::array("ENABLE_FALL_MANAGEMENT_PROTECTION", false)));
 	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
 	_blk.updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -125,7 +117,6 @@ void MotionController::UserInit()
 	headPID = 0;
 	actionPID = 0;
 	currentstate = 1000;
-	counter = 0;
 	pam = new MotionActionMessage();
 	pam->set_command("NULL");
 	sm.set_type(MotionStateMessage::IDLE);
@@ -133,47 +124,30 @@ void MotionController::UserInit()
 	sm.set_lastaction("");
 	standUpStartTime = boost::posix_time::microsec_clock::universal_time();
 	walkingWithVelocity = false;
-	//setStiffnessDCM(1);
-	BodyID = KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID);
-	Logger::Instance().WriteMsg("MotionController", "The Body ID is " + BodyID, Logger::Info);
+
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
+	
+	//Self Reset for initialization
+	Reset();
+}
+
+void MotionController::Reset(){
+	readWalkParameters();
 }
 
 int MotionController::Execute()
 {
-	//counter++;
-	//Logger::Instance().WriteMsg("MotionController","MotionController BEGIN execution "+_toString(counter),Logger::Info);
 	//testcommands();
 	//if(counter%100==0)
 	//	readWalkParameters();
 	read_messages();
-	mglrun();
-	//Logger::Instance().WriteMsg("MotionController","MotionController END   execution "+_toString(counter),Logger::Info);
-	return 0;
-}
-
-void MotionController::read_messages()
-{
-	/* Messages for Walk, Head, Action */
-	hm = _blk.readSignal<MotionHeadMessage> ("motion");
-	wm = _blk.readSignal<MotionWalkMessage> ("motion");
-	am = _blk.readSignal<MotionActionMessage> ("motion");
-	/* Messages for Intertial Readings */
-	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
-	/* Messages from the Game Controller */
-	gsm = _blk.readState<GameStateMessage> ("worldstate");
-	//Logger::Instance().WriteMsg("MotionController", "read_messages ", Logger::ExtraExtraInfo);
-}
-
-void MotionController::mglrun()
-{
 	vector<float> AangleTemp(22);
 	vector<float> KangleTemp(22);
 	vector<float> CangleTemp(22);
 
 	/* Return if waiting time has not expired yet */
 	if (waitfor > microsec_clock::universal_time())
-		return;
+		return 0;
 
 	if (allsm != NULL && allsm->sensordata_size() >= L_FSR)//Has Accelerometers
 	{
@@ -194,6 +168,10 @@ void MotionController::mglrun()
 	else
 		gameState = PLAYER_INITIAL;
 
+	if(msm != 0){
+		motion->setStiffnesses(msm->chain(), msm->value());
+	}
+	
 	if(gameState == currentstate)
 	{
 	}
@@ -248,7 +226,7 @@ void MotionController::mglrun()
 		}
 
 		waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
-		return;
+		return 0;
 	}
 
 	if (allsm != NULL)//Has Accelerometers
@@ -283,7 +261,7 @@ void MotionController::mglrun()
 				sm.set_detail("");
 				_blk.publishState(sm, "worldstate");
 				waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
-				return;
+				return 0;
 			}
 		}
 	}
@@ -300,7 +278,7 @@ void MotionController::mglrun()
 			else
 				actionPID = it->second->ExecutePost();
 
-			return;
+			return 0;
 		}
 
 		actionPID = 0;
@@ -319,16 +297,15 @@ void MotionController::mglrun()
 			robotUp = false;
 		}
 
-		Logger::Instance().WriteMsg("MotionController", "Action completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg("MotionController", "Action completed!", Logger::ExtraInfo);
 	}
 
 	if ((actionPID == 0) && !robotDown && !robotUp)
 	{
 		//Now execute an alstandupcross
 		motion->setStiffnesses("Body", 0.68);
-		//usleep(300000);
 		ALstandUpCross();
-		return;
+		return 0;
 	}
 
 	/* Check if the robot is down and stand up */
@@ -341,15 +318,13 @@ void MotionController::mglrun()
 			_blk.publishState(sm, "worldstate");
 		}
 
-		//	Logger::Instance().WriteMsg("MotionController", "Will stand up now ...", Logger::ExtraInfo);
 		motion->setStiffnesses("Body", FULLSTIFFNESS);
 		robotDown = true;
 		robotUp = false;
 		ALstandUp();
 		standUpStartTime = boost::posix_time::microsec_clock::universal_time();
 		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
-		//uŔ(7000000);
-		return;
+		return 0;
 	}
 
 	/* The robot is up and ready to execute motions */
@@ -359,14 +334,12 @@ void MotionController::mglrun()
 		if ((walkPID != 0) && !motion->isRunning(walkPID) && !motion->walkIsActive())
 		{
 			walkPID = 0;
-			//	Logger::Instance().WriteMsg("MotionController", "Walk completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 		}
 
 		/* Check if a Head command has been completed */
 		if ((headPID != 0) && !motion->isRunning(headPID))
 		{
 			headPID = 0;
-			//	Logger::Instance().WriteMsg("MotionController", "Head completed! Motion executed " + _toString(counter) + " times.", Logger::ExtraInfo);
 		}
 
 		/* Check if there is a command to execute */
@@ -387,7 +360,7 @@ void MotionController::mglrun()
 				walkParam3 = wm->parameter(2);
 				Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
 				                            + _toString(walkParam3), Logger::ExtraInfo);
-				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3);
+				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3, walkConfig);
 				Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
 			}
 			else if (wm->command() == "setWalkTargetVelocity")
@@ -403,17 +376,15 @@ void MotionController::mglrun()
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);
 				walkParam4 = wm->parameter(3);
-				//	Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
-				//			+ _toString(walkParam3) + " " + _toString(walkParam4), Logger::ExtraInfo);
-				motion->setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4);
+
+				motion->setWalkTargetVelocity(walkParam1, walkParam2, walkParam3, walkParam4, walkConfig);
 				walkingWithVelocity = true;
-				//Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
 			}
 			else
 				Logger::Instance().WriteMsg("MotionController", "Invalid Walk Command: " + wm->command(), Logger::ExtraInfo);
 		}
 
-		if (hm != NULL)
+		if (hm != NULL && allsm != NULL)
 		{
 			killHeadCommand();
 
@@ -421,8 +392,8 @@ void MotionController::mglrun()
 			{
 				float lastyaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW).sensorvalue();
 				float lastpitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH).sensorvalue();
-				float tyaw = fabs(hm->parameter(0) - lastyaw) / MAXHEADYAWSPEED;
-				float tpitch = fabs(hm->parameter(1) - lastpitch) / MAXHEADPITCHSPEED;
+				float tyaw = fabs(hm->parameter(0) - lastyaw) / hm->parameter(2);
+				float tpitch = fabs(hm->parameter(1) - lastpitch) / hm->parameter(2);
 				float t = tyaw > tpitch ? tyaw : tpitch;
 
 				for (int p = 0; p < HEAD_SIZE; p++)
@@ -475,7 +446,7 @@ void MotionController::mglrun()
 			str.erase(0, pos + 1);
 			strKick.erase(pos, strKick.size());
 			sm.set_type(MotionStateMessage::ACTION);
-			sm.set_detail(str);
+			sm.set_detail(pam->command());
 			sm.set_lastaction(pam->command());
 			_blk.publishState(sm, "worldstate");
 
@@ -506,13 +477,6 @@ void MotionController::mglrun()
 			}
 			else
 			{
-				//				if(	strKick.compare(0, 11, "KickForward") == 0 && str.compare("xar") == 0){
-				//					if (BodyID.compare(0,7,"Nao1673") == 0 || BodyID.compare(0,7,"Nao1675") == 0){
-				//						strKick+="Sit.xar";
-				//						pam->set_command(strKick);
-				//						//Logger::Instance().WriteMsg("MotionController", " THE SP ACTION IS NOW THE " + pam->command(), Logger::Info);
-				//					}
-				//				}
 				SpAssocCont::iterator it = SpActions.find(pam->command());
 
 				if (it == SpActions.end())
@@ -551,8 +515,21 @@ void MotionController::mglrun()
 			}
 		}
 	}
+	
+	return 0;
+}
 
-	return;
+void MotionController::read_messages()
+{
+	/* Messages for Walk, Head, Action */
+	hm = _blk.readSignal<MotionHeadMessage> ("motion");
+	wm = _blk.readSignal<MotionWalkMessage> ("motion");
+	am = _blk.readSignal<MotionActionMessage> ("motion");
+	msm = _blk.readSignal<MotionStiffnessMessage> ("motion");
+	/* Messages for Intertial Readings */
+	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
+	/* Messages from the Game Controller */
+	gsm = _blk.readState<GameStateMessage> ("worldstate");
 }
 
 void MotionController::killWalkCommand()
@@ -566,11 +543,10 @@ void MotionController::stopWalkCommand()
 {
 	if (walkingWithVelocity || walkPID != 0)
 	{
-		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 1.0); // stop walk
+		motion->setWalkTargetVelocity(0.0, 0.0, 0.0, 1.0, walkConfig); // stop walk
 		motion->waitUntilWalkIsFinished();
 		walkingWithVelocity = false;
 	}
-
 	walkPID = 0;
 }
 
@@ -780,73 +756,7 @@ void MotionController::createDCMAlias()
 		//commands[5][i][0] will be the new angle
 	}
 
-	//Logger::Instance().WriteMsg("MotionController"," Head PositionActuatorAlias created ",Logger::ExtraInfo);
-	/*
-	 //STiffness Commands
-	 vector<std::string> stiffnessactStrings = KDeviceLists::getHardnessActuatorKeys();
-	 jointAliasses.arraySetSize(2);
-	 jointAliasses[0] = std::string("AllHardnessActuators"); // Alias for all 25 joint actuators
-
-	 jointAliasses[1].arraySetSize(stiffnessactStrings.size());
-	 for(unsigned i=0;i<stiffnessactStrings.size();i++)
-	 jointAliasses[1][i]=stiffnessactStrings[i];
-	 try
-	 {
-	 dcm->createAlias(jointAliasses);
-	 } catch (const AL::ALError &e)
-	 {
-	 throw ALERROR("mainModule", "createPositionActuatorAlias()", "Error when creating Alias : " + e.toString());
-	 }
-
-	 stiffnessCommand.arraySetSize(6);
-	 stiffnessCommand[0] = std::string("AllHardnessActuators");
-	 stiffnessCommand[1] = std::string("ClearAll"); // Erase all previous commands
-	 stiffnessCommand[2] = std::string("time-separate");
-	 stiffnessCommand[3] = 0;
-
-	 stiffnessCommand[4].arraySetSize(1);
-	 //commands[4][0]  Will be the new time
-
-	 stiffnessCommand[5].arraySetSize(stiffnessactStrings.size()); // For all joints
-
-	 for (unsigned i = 0; i < stiffnessactStrings.size(); i++)
-	 {
-	 stiffnessCommand[5][i].arraySetSize(1);
-	 //commands[5][i][0] will be the new angle
-	 }
-	 cout << "  AllHardnessActuators  alias created " << endl;
-	 */
 }
-//
-//void MotionController::setStiffnessDCM(float s)
-//{
-//	motion->setStiffnesses("Body", s);
-//	/*for (int p = 0; p < NUMOFJOINTS; p++)
-//	 stiffnessCommand[5][(p)][0] = s;
-//
-//	 int DCMtime;
-//
-//	 try
-//	 { // Get time in 0 ms
-//	 DCMtime = dcm->getTime(0);
-//	 } catch (const AL::ALError &e)
-//	 {
-//	 throw ALERROR("mainModule", "execute_action()", "Error on DCM getTime : " + e.toString());
-//	 }
-//
-//	 stiffnessCommand[4][0] = DCMtime;
-//	 //Send command
-//	 try
-//	 {
-//	 dcm->setAlias(stiffnessCommand);
-//	 } catch (const AL::ALError &e)
-//	 {
-//	 throw ALERROR("mainModule", "execute_action", "Error when sending command to DCM : " + e.toString());
-//	 }
-//	 motion->setStiffnesses("Body", s);
-//	 */
-//}
-
 
 vector<int> MotionController::SpCutActionsManager()
 {
@@ -903,77 +813,25 @@ vector<float> MotionController::KGetAngles()
 
 void MotionController::readWalkParameters()
 {
-	std::string fname = ArchConfig::Instance().GetConfigPrefix() + "walk_parameters.xml";
-	TiXmlDocument d(fname);
+	//setMotionConfig is deprecated
+	walkConfig.arraySetSize(7);
 
-	if(!d.LoadFile())
-	{
-		Logger::Instance().WriteMsg("MotionController", "walk_parameters.xml cannot be parsed", Logger::Warning);
-		return;
+	string filename = "walkParameters";
+	XmlManagerNode * walkPamNode = _xml.findNodeForKey(filename);
+	int itteration = 0;
+	for(map<string,vector<XmlManagerNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){
+
+		std::istringstream strs( (walkPamNode->findValueForKey((*it).first)) );
+		float value;
+		strs>>value;
+		if((*it).first.compare("EnableFallManager")!=0){
+			walkConfig[itteration].arraySetSize(2);
+			walkConfig[itteration][0] = (*it).first;
+			walkConfig[itteration][1] = value;
+			itteration++;
+		}else{
+			motion->setFallManagerEnabled(value);
+		}
 	}
 
-	/*
-	AL::ALValue config;
-		config.arraySetSize(15);
-		for (int i = 0; i < 15; ++i)
-			config[i].arraySetSize(2);
-		config[0][0] = "ENABLE_FOOT_CONTACT_PROTECTION";
-		config[0][1] = true;
-		config[1][0] = "ENABLE_FALL_MANAGEMENT_PROTECTION";
-		config[1][1] = false;
-		config[2][0] = "WALK_MAX_TRAPEZOID";
-		config[2][1] = 2.5; // 4.5
-		config[3][0] = "WALK_MIN_TRAPEZOID";
-		config[3][1] = 1.65; // 3.5
-		config[4][0] = "WALK_STEP_MAX_PERIOD";
-		config[4][1] = 28; // 30
-		config[5][0] = "WALK_STEP_MIN_PERIOD";
-		config[5][1] = 18; // 21
-		config[6][0] = "WALK_MAX_STEP_X";
-		config[6][1] = 0.044; // 0.04
-		config[7][0] = "WALK_MAX_STEP_Y";
-		config[7][1] = 0.04; // 0.04
-		config[8][0] = "WALK_MAX_STEP_THETA";
-		config[8][1] = 30; // 20
-		config[9][0] = "WALK_STEP_HEIGHT";
-		config[9][1] = 0.01; // 0.015
-		config[10][0] = "WALK_FOOT_SEPARATION";
-		config[10][1] = 0.095; // 0.095
-		config[11][0] = "WALK_FOOT_ORIENTATION";
-		config[11][1] = 5.0;// 0
-		config[12][0] = "WALK_TORSO_HEIGHT";
-		config[12][1] = 0.316;
-		config[13][0] = "WALK_TORSO_ORIENTATION_X";
-		config[13][1] = 0.0; // 0
-		config[14][0] = "WALK_TORSO_ORIENTATION_Y";
-		config[14][1] = 0.0; // 0
-
-		motion->setMotionConfig(config);
-		*/
-	std::vector<std::string> names;
-	std::vector<float> values;
-	const TiXmlElement *c = d.FirstChildElement();
-
-	while(c)
-	{
-		names.push_back(c->Value());
-		std::istringstream strs( c->GetText() );
-		float v;
-		strs >> v;
-		values.push_back(v);
-		cout << c->Value() << ":" << v << endl;
-		c = c->NextSiblingElement();
-	}
-
-	AL::ALValue config;
-	config.arraySetSize(names.size());
-
-	for(unsigned i = 0; i < names.size(); i++)
-	{
-		config[i].arraySetSize(2);
-		config[i][0] = names[i];
-		config[i][1] = values[i];
-	}
-
-	motion->setMotionConfig(config);
 }

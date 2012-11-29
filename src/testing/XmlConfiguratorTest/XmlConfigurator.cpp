@@ -25,8 +25,8 @@ node::node(string dirPath, string headId, string bodyId)
 		{
 			if (is_regular_file(itr->status()))
 			{
-				if(!loadAllFiles(itr->path().filename()))
-					cout << "Failed to load xml file \"" << itr->path().filename()) << "\"" << endl;
+				if(!loadAllFiles(itr->path().filename().string()))
+					cout << "Failed to load xml file \"" << (itr->path().filename().string())<< "\"" << endl;
 				}
 		}
 	}

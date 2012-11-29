@@ -4,6 +4,7 @@
 // basic file operations
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 #include <time.h>
 #include "hal/robot/generic_nao/KImage.h"
@@ -40,6 +41,12 @@ public:
 	* are valid and produce a valid segmentation result
 	*/
 	KSegmentator(int yres, int ures, int vres);
+	/**
+	* destructor
+	**/
+	~KSegmentator(){
+		delete[] ctable;
+	}
 
 	void writeFile(std::ofstream &of, std::string const comment) const;
 	void attachToIplImage(KImageConst const& data);
@@ -93,21 +100,21 @@ public:
 		//Well, it does. Look for it
 		return * ctableAccess(V_SCALESUB[v], U_SCALESUB[u], Y_SCALESUB[y]);
 	}
+	colormask_t *ctable;
 private:
 
 	static const unsigned char LUTres = 2, LUTsize = 64; //Carefull. LUTSIZE=256>>LUTRES
 	//Pointer to attached IplImage data
 
+	int yres, ysize;
+	int ures, usize;
+	int vres, vsize;
 	const char  *dataPointer;
 	int widthmult2;//width*2 :D
 	int width;//:)
 	int height;
 	//Scale up Y component to compensate for exposure or lighting variations
 	float lumascale;
-	enum colorValues
-	{
-	    red_ = 1, blue_ = 2, green_ = 3, skyblue_ = 4, yellow_ = 5, orange_ = 6, white_ = 7, black_  = 8
-	};
 
 	struct SegHeader
 	{
@@ -139,11 +146,7 @@ private:
 	//Value transformation, scale by lumascale and subsampled
 	colormask_t Y_SCALESUB[256], U_SCALESUB[256], V_SCALESUB[256];
 
-	int yres, ysize;
-	int ures, usize;
-	int vres, vsize;
 
-	colormask_t *ctable;
 
 	//This does the job
 	inline colormask_t classifyWithPrecheck(unsigned char  y, unsigned char  u , unsigned  char   v, colormask_t const hint) const
@@ -156,9 +159,9 @@ private:
 		//segment.tv_nsec+=ttdiff(s,e).tv_nsec;
 
 		//Precheck... Does it SEEM at lest to contain needed values?
+
 		if(!( pYLUT[y >> LUTres]& pULUT[u >> LUTres]& pVLUT[v >> LUTres]&hint))
 			return 0;
-
 		//Well, it does. Look for it
 		return * ctableAccess(V_SCALESUB[v], U_SCALESUB[u], Y_SCALESUB[y]);
 	}

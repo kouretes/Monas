@@ -8,6 +8,7 @@
 #ifndef KLOCALIZATION_H_
 #define KLOCALIZATION_H_
 
+#include <boost/random.hpp>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -17,14 +18,12 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-
-#include "messages/RoboCupGameControlData.h"
-
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
+
+#include "messages/RoboCupPlayerData.h"
+#include "messages/WorldInfo.pb.h"
 
 using namespace std;
 
@@ -130,11 +129,16 @@ typedef struct blf
 	double weightconfidence;
 } belief;
 
+//random genetator
+typedef boost::mt19937 r_gen;
+
 class KLocalization
 {
 public:
 
-	//Random number generetors
+    //random generator
+    r_gen generator;
+
 
 	float NumberOfParticlesSpreadAfterFall;
 	unsigned int robustmean;
@@ -160,10 +164,12 @@ public:
 	float initX[2], initY[2], initPhi[2];
 	int playerNumber;
 	//Particle with the max weight
-	unsigned int max_weight_particle_index;
+	unsigned int maxWeightParticleIndex;
 
 	//The particles we are using
 	parts SIRParticles;
+    //particles average
+    partcl particlesAvg;
 	unsigned int partclsNum;
 
 	//map with all the features we read from an xml
@@ -172,12 +178,10 @@ public:
 	KLocalization();
 	virtual ~KLocalization();
 
-	//initialize localization
+    //initialize localization
 	int Initialize();
 
 	//Functions to read from xml files
-	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
-	int readConfiguration(const std::string& file_name);
 	bool readRobotConf(const std::string& file_name);
 
 	//The step of the localization SIR filter
@@ -208,12 +212,12 @@ public:
 	double normpdf(double diff, double dev);
 
 	//This function resamples the particles with the new weigths and reposition the particles given the new weights
-	void rouletteResample();
+	void rouletteResampleAndNormalize();
 
 	//Initialize the particles of the filter
 	void initParticles();
 	void setParticlesPoseUniformly();
-	void initializeParticles(int playerState, bool kickOff);
+	void initializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi);
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();

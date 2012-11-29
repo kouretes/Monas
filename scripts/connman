@@ -22,13 +22,13 @@ start() {
 }
 
 stop() {
-  killall -s TERM connman.sh
-  killall -s TERM connmand
+  killall -9 connman.sh
+  killall -9 connmand
 }
 
 restart() {
   stop
-  sleep 1
+  sleep 2
   start
 }
 

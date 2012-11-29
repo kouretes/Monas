@@ -8,13 +8,13 @@ libtinyxml-dev (only for BUILD)
 OpenCV+QT4 (only for TOOLS) [See https://help.ubuntu.com/community/OpenCV]
 
 
-BUILD (for remote execution)
+BUILD (for local execution)
 
-- Create a folder named build under Monas/make
+- Create a folder named local under Monas/make
 
-- Enter folder build
+- Enter folder local
 
-- Execute: cmake -D CMAKE_TOOLCHAIN_FILE=<your-path-to-naoqi-sdk>/toolchain-pc.cmake ../..
+- Execute: cmake ../..
 
 - Execute: ccmake .
 
@@ -22,24 +22,17 @@ BUILD (for remote execution)
 
 - Press c to configure
 
-- Check the values of KROBOT_IS_REMOTE, NaoQiVersion, RobotPlatform (if applicable)
-
-  KROBOT_IS_REMOTE can be OFF (a library is produced) or ON (an executable is produced) 
-  NaoQiVersion must be the latest NaoQi version, currently 1.10.XX 
-  RobotPlatform must be nao
-  
 - Press c to configure again, then g to generate and exit. 
 
 - Execute: make -jk install, where k is the number of cores in your system. 
 
-- Get a coffee and be patient ... 
+- Enter binaries/linux
 
-- Enter folder build/binaries/linux
+- Execute: port LD_LIBRARY_PATH=./lib 
 
-- Execute: export export LD_LIBRARY_PATH=./lib
+- Execute: ./bin/Monas to start Monas
 
-- Execute: ./bin/Monas
-
+--- Be carefull, remove from the agent.xml all the activities that don't compile when the target is linux (e.g. Vision, MotionController, etc)
 
 CROSSBUILD (for on-board execution)
 
@@ -68,6 +61,13 @@ CROSSBUILD (for on-board execution)
 - Execute: make -jk install, where k is the number of cores in your system. 
 
 - Get another coffee and be even more patient ... 
+
+
+COMPILE PROTO MESSAGE
+
+- Configure /external/protobuf (./configure)
+- make
+- /src/messages (./../../external/protobuf/src/protoc --cpp_out=. proto_name.proto)
 
 
 Use the python scripts in the script directory to upload the code to a robot.

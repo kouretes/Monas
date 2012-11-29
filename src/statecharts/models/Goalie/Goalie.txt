@@ -1,5 +1,0 @@
-Goalie
-goalie = Init.(playing | nonPlaying)+
-nonPlaying = NoPlay .[GoToPosition+]
-playing = Scan+ | ApproachBall+ | Kick | followBall
-followBall = Stare+.[SpecialAction]

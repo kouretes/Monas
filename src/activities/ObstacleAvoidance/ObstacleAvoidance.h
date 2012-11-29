@@ -22,10 +22,11 @@
 #include "architecture/archConfig.h"
 #include "architecture/executables/IActivity.h"
 
-#include "tools/MathFunctions.h"
+#include "tools/mathcommon.h"
+#include "tools/obstacleConst.h"
 
-#define ToMeters	0.1
 
+//IF SOME DEFINE CHANGE, YOU MUST CHANGE THE DEFINE IN /GUITools/KMonitos/KMapScene.h
 #define M 			10
 #define N 			18
 #define TotalRings	(1+M+1)
@@ -33,12 +34,9 @@
 #define OuterRing	(1+M)
 #define NEIGHBOURS 	8
 
-#define RobotRadius 	0.2
-#define MapRadius 		1.0
-#define ObstacleRadius 	0.15
 #define RingDistance 	( (MapRadius) / (M) )
 #define SectorAngleDeg 	(360.0/N) // deg
-#define SectorAngleRad 	(deg2rad(SectorAngleDeg))
+#define SectorAngleRad 	(TO_RAD(SectorAngleDeg))
 #define SectorShiftRad	( ( (N%4) == 0 ) ? 0.5*SectorAngleRad : 0.0 )
 
 #define FRONT 			(int(N/4))
@@ -46,25 +44,17 @@
 #define SIDE_RIGHT 		( ( (N%4) == 0 ) ? 0 :N-1 )
 
 
-#define SonarAngleShiftDeg	20.0 // deg
-#define SonarAngleShiftRad	(deg2rad(SonarAngleShiftDeg))
-#define SonarDistanceShift	0.065
-#define SonarAngleRangeDeg	45.0 // deg
-#define SonarAngleRangeRad 	(deg2rad(SonarAngleRangeDeg))
+#define SonarAngleShiftRad	(TO_RAD(SonarAngleShiftDeg))
+#define SonarAngleRangeRad 	(TO_RAD(SonarAngleRangeDeg))
 
 #define RotationAngle 		(360.0/(N))
-#define RotationAngleRad 	(deg2rad(RotationAngle))
+#define RotationAngleRad 	(TO_RAD(RotationAngle))
 
 #define RIGHT 			(int(FRONT - (SonarAngleShiftDeg/RotationAngle)))
 #define LEFT 			(int(FRONT + (SonarAngleShiftDeg/RotationAngle)))
 
-#define NoKnowledge 		0.5
 
-#define PathLength 			50
 
-#define distanceM 		(MapRadius*ToMeters)
-#define SOnARsNum 		KDeviceLists::US_SIZE
-#define EMPTY 				0.0
 #define NumOfTargetCoordinates 3
 
 
@@ -81,6 +71,7 @@ public:
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	void read_messages();
 	struct OpenListNode
 	{
@@ -116,17 +107,9 @@ private:
 	double cellCenterX[TotalRings][N],
 	       cellCenterY[TotalRings][N];
 
-
-	/*********** OpenCV Drawing ***********/
-	//int cvHighgui;
-	//IplImage *img;
-	//int gridImgH[TotalRings+1][N],
-	//gridImgV[TotalRings+1][N];
-	//int guiX[(M+4)][N], guiY[(M+4)][N];
-
 	/*********** Map Update ***********/
 
-	double Right[SOnARsNum], Left[SOnARsNum], empty[SOnARsNum];
+	double Right[KDeviceLists::US_SIZE], Left[KDeviceLists::US_SIZE], empty[KDeviceLists::US_SIZE];
 	double changed[TotalRings][N];
 	int SonarFailCounter;
 	int countLeft, countRight;
@@ -173,7 +156,7 @@ private:
 	float bd;
 
 	/*******variables used in messages***********/
-	SensorData RightValue[SOnARsNum], LeftValue[SOnARsNum];
+	SensorData RightValue[KDeviceLists::US_SIZE], LeftValue[KDeviceLists::US_SIZE];
 	SensorData PosX, PosY, Angle;
 	bool frontObstacle, rightObstacle, leftObstacle ;
 	double frontDist, rightDist, leftDist;
@@ -234,7 +217,6 @@ private:
 	void astar13Neighbours(int goalm, int goaln, int goalo);
 	void reconstructPath(int ring, int sector, int orientation);
 
-	void reset();
 	double myAngleDiff(double a1, double a2);
 	double myRound(double value);
 
@@ -249,6 +231,15 @@ private:
 	void velocityWalk(double ix, double iy, double it, double f);
 	void callVelocityWalk(double walkToX, double walkToY, double walkToT, double distance2Goal);
 	void motionController(double distance2Goal);
+	
+	//Only for internal use
+	int DtoR(double d);
+	int TtoS(double theta);
+	double RtoD(int r);
+	double StoT(int s);
+	int XYtoR(double x, double y);
+	int XYtoS(double x, double y);
+	int wrapTo(int n, int MAXN);
 
 };
 

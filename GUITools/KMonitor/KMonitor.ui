@@ -1,964 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>KMonitorClass</class>
- <widget class="QMainWindow" name="KMonitorClass">
+ <class>KMonitor</class>
+ <widget class="QMainWindow" name="KMonitor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1071</width>
-    <height>666</height>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>KMonitor</string>
+   <string>Kouretes Monitor Tool</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>7</number>
       </property>
-      <widget class="QWidget" name="GWSTab">
+      <widget class="GlobalWorldController" name="GWSTab">
        <attribute name="title">
         <string>Global World State</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="4,1">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="KGraphicsView" name="GWSGraphicsView"/>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <widget class="QTreeWidget" name="GWSTreeWidget">
-              <property name="mouseTracking">
-               <bool>false</bool>
-              </property>
-              <attribute name="headerCascadingSectionResizes">
-               <bool>true</bool>
-              </attribute>
-              <attribute name="headerCascadingSectionResizes">
-               <bool>true</bool>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>TEAM   HOST   TEAM#   PLAYER#   STATE</string>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Sans Serif</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="textAlignment">
-                <set>AlignHCenter|AlignVCenter|AlignCenter</set>
-               </property>
-              </column>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton">
-              <property name="text">
-               <string>SHARED WORLD MODEL : Estimated Ball</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout_6"/>
       </widget>
-      <widget class="QWidget" name="LWSTab">
+      <widget class="LocalWorldController" name="LWSTab">
        <attribute name="title">
         <string>Local World State</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="KGraphicsView" name="LWSGraphicsView"/>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <item>
-             <widget class="QComboBox" name="LWSComboBox"/>
-            </item>
-            <item>
-             <widget class="QTreeWidget" name="LWSTreeWidget">
-              <column>
-               <property name="text">
-                <string>Available Graphical Elements</string>
-               </property>
-              </column>
-              <item>
-               <property name="text">
-                <string>(Un) Check all</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Estimated Robot Pose</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Estimated Ball Position</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Ball Observation</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Landmark Observations</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Localization Particles</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Robot View Field Projection</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Robot Trace</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Walk Commands</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
       </widget>
-      <widget class="QWidget" name="LPMTab">
+      <widget class="KSonarsController" name="LSonarTab">
        <attribute name="title">
         <string>Local Polar Map</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="4,1">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="KMapView" name="LPMGraphicsView"/>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="spacing">
-             <number>3</number>
-            </property>
-            <item>
-             <widget class="QComboBox" name="LPMComboBox"/>
-            </item>
-            <item>
-             <widget class="QTreeWidget" name="LPMTreeWidget">
-              <column>
-               <property name="text">
-                <string>Available Graphical Elements</string>
-               </property>
-              </column>
-              <item>
-               <property name="text">
-                <string>(Un) Check all</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Obstacles</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Path</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Target Coordinates</string>
-                </property>
-                <property name="checkState">
-                 <enum>Checked</enum>
-                </property>
-               </item>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout_7"/>
       </widget>
-      <widget class="QWidget" name="LRVTab">
+      <widget class="KCamView" name="LCamTab">
        <attribute name="title">
         <string>Local Robot View</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="4,1">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="KLabel" name="LRVLabel">
-            <property name="text">
-             <string>                                        No Available Image View Yet</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
-             <widget class="QComboBox" name="LRVComboBox"/>
-            </item>
-            <item>
-             <widget class="QListWidget" name="LRVListWidget">
-              <item>
-               <property name="text">
-                <string>Display Raw Image View</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Display Segmented Image View</string>
-               </property>
-               <property name="checkState">
-                <enum>Checked</enum>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout_8"/>
       </widget>
-      <widget class="QWidget" name="LSDTab">
+      <widget class="SensorsController" name="LSDTab">
        <attribute name="title">
         <string>Local Sensors Data</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="1" column="0">
-         <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,1,1,1,2,1,1,1">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item row="5" column="1">
-           <widget class="QLabel" name="label">
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>RShoulderPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="5">
-           <widget class="QComboBox" name="AccYComboBox"/>
-          </item>
-          <item row="5" column="4">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>AccYvalue</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="5">
-           <widget class="QComboBox" name="HYComboBox"/>
-          </item>
-          <item row="2" column="5">
-           <widget class="QComboBox" name="HPComboBox"/>
-          </item>
-          <item row="4" column="5">
-           <widget class="QComboBox" name="AccXComboBox"/>
-          </item>
-          <item row="6" column="2">
-           <widget class="QComboBox" name="RSRComboBox"/>
-          </item>
-          <item row="6" column="5">
-           <widget class="QComboBox" name="AccZComboBox"/>
-          </item>
-          <item row="7" column="2">
-           <widget class="QComboBox" name="REYComboBox"/>
-          </item>
-          <item row="8" column="2">
-           <widget class="QComboBox" name="RERComboBox"/>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>RShoulderRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>RElbowYaw</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="1">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>RElbowRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="4">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>AccZvalue</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="4">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>angX</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="4">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>angY</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="5">
-           <widget class="QComboBox" name="AngXComboBox"/>
-          </item>
-          <item row="8" column="5">
-           <widget class="QComboBox" name="AngYComboBox"/>
-          </item>
-          <item row="4" column="4">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>AccXvalue</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <widget class="QLabel" name="label_14">
-            <property name="text">
-             <string>HeadYaw</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="4">
-           <widget class="QLabel" name="label_15">
-            <property name="text">
-             <string>HeadPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QComboBox" name="LSDComboBox"/>
-          </item>
-          <item row="3" column="5">
-           <widget class="QLabel" name="label_17">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QLabel" name="label_18">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="6">
-           <widget class="QLabel" name="label_19">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="3">
-           <widget class="QLabel" name="label_20">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="3">
-           <widget class="QLabel" name="label_21">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="3">
-           <widget class="QLabel" name="label_22">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="5">
-           <widget class="QLabel" name="label_23">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="3">
-           <widget class="QLabel" name="label_24">
-            <property name="text">
-             <string>RHipYawPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="4">
-           <widget class="QComboBox" name="RHYPComboBox"/>
-          </item>
-          <item row="3" column="4">
-           <widget class="QLabel" name="label_16">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QLabel" name="label_37">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="4">
-           <widget class="QLabel" name="label_38">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="label_40">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLabel" name="label_41">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_42">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_43">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_44">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="label_45">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="2">
-           <widget class="QLabel" name="label_46">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
-           <widget class="QLabel" name="label_47">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="6">
-           <widget class="QLabel" name="label_36">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="6">
-           <widget class="QLabel" name="label_39">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="6">
-           <widget class="QLabel" name="label_48">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="17" column="2">
-           <widget class="QLabel" name="label_49">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="8">
-           <widget class="QLabel" name="label_56">
-            <property name="text">
-             <string>LFsrFrontRight</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="8">
-           <widget class="QLabel" name="label_58">
-            <property name="text">
-             <string>LFsrRearRight</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="11" column="4">
-           <widget class="QComboBox" name="RHRComboBox"/>
-          </item>
-          <item row="11" column="3">
-           <widget class="QLabel" name="label_26">
-            <property name="text">
-             <string>RHipRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="4">
-           <widget class="QComboBox" name="RHPComboBox"/>
-          </item>
-          <item row="12" column="3">
-           <widget class="QLabel" name="label_27">
-            <property name="text">
-             <string>RHipPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="4">
-           <widget class="QComboBox" name="RKPComboBox"/>
-          </item>
-          <item row="14" column="3">
-           <widget class="QLabel" name="label_28">
-            <property name="text">
-             <string>RKneePitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="15" column="4">
-           <widget class="QComboBox" name="RAPComboBox"/>
-          </item>
-          <item row="15" column="3">
-           <widget class="QLabel" name="label_29">
-            <property name="text">
-             <string>RAnklePitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="16" column="4">
-           <widget class="QComboBox" name="RARComboBox"/>
-          </item>
-          <item row="16" column="3">
-           <widget class="QLabel" name="label_35">
-            <property name="text">
-             <string>RAnkleRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QComboBox" name="RSPComboBox"/>
-          </item>
-          <item row="10" column="6">
-           <widget class="QComboBox" name="LHYPComboBox"/>
-          </item>
-          <item row="11" column="6">
-           <widget class="QComboBox" name="LHRComboBox"/>
-          </item>
-          <item row="12" column="6">
-           <widget class="QComboBox" name="LHPComboBox"/>
-          </item>
-          <item row="14" column="6">
-           <widget class="QComboBox" name="LKPComboBox"/>
-          </item>
-          <item row="15" column="6">
-           <widget class="QComboBox" name="LAPComboBox"/>
-          </item>
-          <item row="16" column="6">
-           <widget class="QComboBox" name="LARComboBox"/>
-          </item>
-          <item row="10" column="7">
-           <widget class="QLabel" name="label_25">
-            <property name="text">
-             <string>LHipYawPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="11" column="7">
-           <widget class="QLabel" name="label_30">
-            <property name="text">
-             <string>LHipRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="12" column="7">
-           <widget class="QLabel" name="label_31">
-            <property name="text">
-             <string>LHipPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="7">
-           <widget class="QLabel" name="label_32">
-            <property name="text">
-             <string>LKneePitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="15" column="7">
-           <widget class="QLabel" name="label_33">
-            <property name="text">
-             <string>LAnklePitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="16" column="7">
-           <widget class="QLabel" name="label_34">
-            <property name="text">
-             <string>LAnkleRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="7">
-           <widget class="QComboBox" name="LSPComboBox"/>
-          </item>
-          <item row="6" column="7">
-           <widget class="QComboBox" name="LSRComboBox"/>
-          </item>
-          <item row="7" column="7">
-           <widget class="QComboBox" name="LEYComboBox"/>
-          </item>
-          <item row="8" column="7">
-           <widget class="QComboBox" name="LERComboBox"/>
-          </item>
-          <item row="5" column="8">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>LShoulderPitch</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="8">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>LShoulderRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="8">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>LElbowYaw</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="8">
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>LElbowRoll</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="5">
-           <widget class="QLabel" name="label_52">
-            <property name="text">
-             <string>RFsrFrontRight          LFsrFrontLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="6">
-           <widget class="QComboBox" name="LFsrFLComboBox"/>
-          </item>
-          <item row="18" column="4">
-           <widget class="QComboBox" name="RFsrFRComboBox"/>
-          </item>
-          <item row="19" column="4">
-           <widget class="QComboBox" name="RFsrRRComboBox"/>
-          </item>
-          <item row="19" column="5">
-           <widget class="QLabel" name="label_53">
-            <property name="text">
-             <string>RFsrRearRight           LFsrRearLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="6">
-           <widget class="QComboBox" name="LFsrRLComboBox"/>
-          </item>
-          <item row="18" column="3">
-           <widget class="QComboBox" name="RFsrFLComboBox"/>
-          </item>
-          <item row="19" column="3">
-           <widget class="QComboBox" name="RFsrRLComboBox"/>
-          </item>
-          <item row="18" column="2">
-           <widget class="QLabel" name="label_50">
-            <property name="text">
-             <string>RFsrFrontLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="2">
-           <widget class="QLabel" name="label_51">
-            <property name="text">
-             <string>RFsrRearLeft</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="7">
-           <widget class="QComboBox" name="LFsrFRComboBox"/>
-          </item>
-          <item row="19" column="7">
-           <widget class="QComboBox" name="LFsrRRComboBox"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
       <widget class="KccHandler" name="KCCTab">
        <attribute name="title">
         <string>KCC Beta</string>
+       </attribute>
+      </widget>
+      <widget class="XMLHandler" name="XMLTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="title">
+        <string>XML manager</string>
+       </attribute>
+      </widget>
+      <widget class="CommandsController" name="ComTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="title">
+        <string>Commands</string>
        </attribute>
       </widget>
      </widget>
@@ -1007,28 +117,55 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KLabel</class>
-   <extends>QLabel</extends>
-   <header location="global">../KLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KGraphicsView</class>
-   <extends>QGraphicsView</extends>
-   <header>../KGraphicsView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KMapView</class>
-   <extends>QGraphicsView</extends>
-   <header>../KMapView.h</header>
-  </customwidget>
-  <customwidget>
    <class>KccHandler</class>
    <extends>QWidget</extends>
    <header>../KccHandler.h</header>
   </customwidget>
+  <customwidget>
+   <class>XMLHandler</class>
+   <extends>QWidget</extends>
+   <header>../XMLHandler.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SensorsController</class>
+   <extends>QWidget</extends>
+   <header>../SensorsController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>KSonarsController</class>
+   <extends>QWidget</extends>
+   <header>../KSonarsController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>KCamView</class>
+   <extends>QWidget</extends>
+   <header>../KCamView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GlobalWorldController</class>
+   <extends>QWidget</extends>
+   <header>../GlobalWorldController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LocalWorldController</class>
+   <extends>QWidget</extends>
+   <header>../LocalWorldController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CommandsController</class>
+   <extends>QWidget</extends>
+   <header>../CommandsController.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="GuiResources.qrc"/>
+  <include location="KMonitorResources.qrc"/>
  </resources>
  <connections/>
 </ui>

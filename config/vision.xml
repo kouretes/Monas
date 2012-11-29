@@ -1,15 +1,14 @@
 <?xml version="1.0" ?>
 <!-- Refresh Segmentation parameters based camera every : (millisec) -->
 <camerarefreshmillisec>5000</camerarefreshmillisec>
-
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>3-lab-322-seglBGYW.conf</SegmentationBottom>
-<SegmentationTop>3-lab-322-seglBGYW.conf</SegmentationTop>
+<SegmentationBottom>1-lab-322-seglBGYW.conf</SegmentationBottom>
+<SegmentationTop>1-lab-322-seglBGYW.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
-<cameraGamma>0.42</cameraGamma>
+<cameraGamma>1.0</cameraGamma>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.2</balltolerance>
+<balltolerance>0.3</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.045</skipdistance>
 <seedistance>7.2</seedistance>
@@ -30,5 +29,4 @@
 <widthestimateotolerance>0.2</widthestimateotolerance>
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>0</sensordelay>
-
-<pitchoffset>0.06</pitchoffset>
+<pitchoffset>0.07</pitchoffset>

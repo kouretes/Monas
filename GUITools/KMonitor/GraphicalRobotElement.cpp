@@ -16,8 +16,10 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 {
 	this->parentScene = parent;
 	hostId = host;
+	teamColor = 1;
 
 	currentWIM.Clear();
+	currentSWIM.Clear();
 	currentObsm.Clear();
 	ParticlesList.clear();
 
@@ -27,6 +29,9 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	GWSRobotVisible = false;
 	GWSBallVisible = false;
 	GWSUnionistLineVisible = false;
+	LWSRobotVisible = false;
+	LWSBallVisible = false;
+	LWSUnionistLineVisible = false;
 	LWSVisionBallVisible = false;
 	LWSVisionYellowLeftPostVisible = false;
 	LWSVisionYellowRightPostVisible = false;
@@ -37,7 +42,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	LWSMWCmdVisible = false;
 
 	QPen penForUnionistLine(Qt::black);
-	penForUnionistLine.setWidth(2);
+	penForUnionistLine.setWidth(1);
 
 	QPen penForRobotDirection(Qt::black);
 	penForRobotDirection.setWidth(3);
@@ -45,7 +50,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	QPen penForMotionCmdLine(Qt::darkRed);
 	penForMotionCmdLine.setWidth(2);
 
-	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
+	loadXMLConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
 	for(unsigned it=0; it<partclsNum; it++)
 	{
 		Particle *part = new GUIRobotPose();
@@ -56,10 +61,24 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 
 	HFOVLines =this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkCyan),QBrush(Qt::Dense7Pattern));
 
+	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
+	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
+	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::transparent));
+
 	UnionistLine = this->parentScene->addLine(QLineF(),penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(),penForRobotDirection);
 	Robot = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
 	Ball = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::darkGray));
+	
+	Teammates[0] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::magenta));
+	Teammates[1] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::green));
+	Teammates[2] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::blue));
+	Teammates[3] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::red));
+	Teammates[4] = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::cyan));
+	
+	for(int i=0;i<numOfRobots;i++){
+		TeammateDirections[i] = this->parentScene->addLine(QLineF(),penForRobotDirection);
+	}
 
 	VisionBall = this->parentScene->addEllipse(QRect(),QPen(Qt::black),QBrush(Qt::white));
 
@@ -67,13 +86,8 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene* parent, QString host)
 	RightYellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 	YellowPost = this->parentScene->addEllipse(QRect(),QPen(Qt::yellow),QBrush(Qt::yellow));
 
-	GotoPositionLine = this->parentScene->addLine(QLineF(),penForMotionCmdLine);
-	GotoArrow = this->parentScene->addPolygon(QPolygonF(),QPen(Qt::darkRed),QBrush(Qt::darkRed));
-	zAxisArc = this->parentScene->addEllipse(QRect(),penForMotionCmdLine, QBrush(Qt::Dense7Pattern));
-
 	GREtimer = new QTimer();
 	connect(GREtimer, SIGNAL(timeout()), this, SLOT(clearVisionObservations()));
-	connect(parentScene->getParentGraphicsView(), SIGNAL(forceTimeOut()),this, SLOT(clearVisionObservations()));
 
 	MWCmdTimer = new QTimer();
 	connect(MWCmdTimer, SIGNAL(timeout()), this, SLOT(clearMotionWalkCommand()));
@@ -93,6 +107,13 @@ GraphicalRobotElement::~GraphicalRobotElement()
 
 	if(Robot)
 		delete Robot;
+	
+	for(int i=0;i<numOfRobots;i++){
+		if(Teammates[i])
+			delete Teammates[i];
+		if(TeammateDirections[i])
+			delete TeammateDirections[i];
+	}
 
 	if(Ball)
 		delete Ball;
@@ -156,8 +177,28 @@ void GraphicalRobotElement::loadXMLConfigParameters(std::string fname)
 
 void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim)
 {
+
 	currentWIM.Clear();
-	currentWIM = nwim;
+
+	if (teamColor == 1)
+	{
+		currentWIM = nwim;
+
+	}else
+	{
+		WorldInfo MyWorld;
+		MyWorld.Clear();
+		MyWorld.CopyFrom(nwim);
+
+		float value = (-1) * MyWorld.myposition().x();
+		MyWorld.mutable_myposition()->set_x(value);
+		value = (-1) * MyWorld.myposition().y();
+		MyWorld.mutable_myposition()->set_y(value);
+		value = MyWorld.myposition().phi() + Pi;
+		MyWorld.mutable_myposition()->set_phi(value);
+
+		currentWIM = MyWorld;
+	}
 
 	if(LWSTraceVisible){
 		setLWSTraceVisible(false);
@@ -168,6 +209,12 @@ void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim)
 		updateTraceRect();
 		setLWSTraceVisible(false);
 	}
+}
+
+void GraphicalRobotElement::setCurrentSWIM(SharedWorldInfo nswim)
+{
+	currentSWIM.Clear();
+	currentSWIM = nswim;
 }
 
 void GraphicalRobotElement::setCurrentGSM(GameStateMessage gsm)
@@ -181,11 +228,13 @@ void GraphicalRobotElement::setCurrentGSM(GameStateMessage gsm)
 	{
 		Robot->setBrush(Qt::blue);
 		Ball->setBrush(Qt::blue);
+		teamColor = 1;
 
 	}else if (gsm.team_color() == 1)
 	{
 		Robot->setBrush(Qt::red);
 		Ball->setBrush(Qt::red);
+		teamColor = -1;
 
 	}
 
@@ -212,18 +261,59 @@ void GraphicalRobotElement::setRobotVisible(bool visible)
 
 }
 
+void GraphicalRobotElement::setTeammatesVisible(bool visible)
+{
+	for(int i=0;i<numOfRobots;i++){
+		Teammates[i]->setVisible(visible);
+		TeammateDirections[i]->setVisible(visible);
+	}
+}
+
+void GraphicalRobotElement::setTeammateVisible(int idx, bool visible)
+{
+	if (visible == false)
+	{
+		Teammates[idx]->setVisible(false);
+		TeammateDirections[idx]->setVisible(false);
+
+	}else
+	{
+		Teammates[idx]->setVisible(true);
+		TeammateDirections[idx]->setVisible(true);
+	}
+
+}
+
 void GraphicalRobotElement::updateRobotRect()
 {
 	if(this->currentWIM.has_myposition())
 	{
-		Robot->setRect(this->parentScene->rectFromFC( this->currentWIM.myposition().x()*1000,
+		Robot->setRect(this->parentScene->rectFromFC(this->currentWIM.myposition().x()*1000,
 				this->currentWIM.myposition().y()*1000, 150, 150));
 		RobotDirection->setLine(this->parentScene->lineFromFCA(this->currentWIM.myposition().x()*1000,
-						this->currentWIM.myposition().y()*1000, this->currentWIM.myposition().phi(), 200));
+				this->currentWIM.myposition().y()*1000, this->currentWIM.myposition().phi(), 200));
 	}else
 	{
 		Robot->setRect( 0, 0, 0, 0);
 		RobotDirection->setLine(0, 0, 0, 0);
+	}
+}
+
+
+void GraphicalRobotElement::updateTeammatesRects()
+{
+	int idx;
+	if(currentSWIM.teammateposition_size() != 0){
+		//std::cout << currentSWIM.teammateposition_size() << "\n";
+		for(idx=0;idx<numOfRobots;idx++){
+			setTeammateVisible(idx,false);
+		}
+		for(idx=0;idx<currentSWIM.teammateposition_size();idx++){
+			//std::cout << this->currentSWIM.teammateposition(idx).pose().x() << " = x \n";
+			Teammates[idx]->setRect(this->parentScene->rectFromFC(this->currentSWIM.teammateposition(idx).pose().x()*1000, this->currentSWIM.teammateposition(idx).pose().y()*1000, 150, 150));
+			TeammateDirections[idx]->setLine(this->parentScene->lineFromFCA(this->currentSWIM.teammateposition(idx).pose().x()*1000, this->currentSWIM.teammateposition(idx).pose().y()*1000, this->currentSWIM.teammateposition(idx).pose().phi(), 200));
+			setTeammateVisible(idx,true);
+		}
 	}
 }
 
@@ -363,6 +453,7 @@ void GraphicalRobotElement::tagVisionObservations(QGraphicsEllipseItem* post,QRe
 
 void GraphicalRobotElement::clearVisionObservations()
 {
+	GREtimer->stop();
 	if (this->VisionBall->isVisible())
 	{
 		this->VisionBall->setVisible(false);
@@ -387,7 +478,6 @@ void GraphicalRobotElement::clearVisionObservations()
 		this->RightYellowPost->setRect(0, 0, 0, 0);
 	}
 
-	GREtimer->stop();
 }
 
 
@@ -417,10 +507,20 @@ void GraphicalRobotElement::updateParticlesRect(LocalizationDataForGUI debugGUI)
 
 		if(particle.has_x() && particle.has_y() && particle.has_phi())
 		{
-			ParticlesList.at(i)->Pose->setRect(this->parentScene->rectFromFC( particle.x(),
-					particle.y(), 50, 50));
-			ParticlesList.at(i)->Direction->setLine(this->parentScene->lineFromFCA(particle.x(),
-					particle.y(), particle.phi(), 200));
+			if (teamColor ==1)
+			{
+				ParticlesList.at(i)->Pose->setRect(this->parentScene->rectFromFC( particle.x(),
+						particle.y(), 50, 50));
+				ParticlesList.at(i)->Direction->setLine(this->parentScene->lineFromFCA(particle.x(),
+						particle.y(), particle.phi(), 200));
+			}else
+			{
+				ParticlesList.at(i)->Pose->setRect(this->parentScene->rectFromFC( teamColor*particle.x(),
+						teamColor*particle.y(), 50, 50));
+				ParticlesList.at(i)->Direction->setLine(this->parentScene->lineFromFCA(teamColor*particle.x(),
+						teamColor*particle.y(), particle.phi() + Pi, 200));
+			}
+
 		}else
 		{
 			ParticlesList.at(i)->Pose->setRect( 0, 0, 0, 0);
@@ -526,19 +626,21 @@ void GraphicalRobotElement::setMWCmdVisible(bool visible)
 		GotoPositionLine->setVisible(false);
 		GotoArrow->setVisible(false);
 		zAxisArc->setVisible(false);
+		//zAxisArcArrow->setVisible(false);
 	}
 	else
 	{
 		GotoPositionLine->setVisible(true);
 		GotoArrow->setVisible(true);
 		zAxisArc->setVisible(true);
+		//zAxisArcArrow->setVisible(true);
 	}
 
 }
 
 void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 {
-	QPolygonF arrowHead;
+	QPolygonF arrowHead, arrowHead1;
 	QLineF arrowLine;
 	double angleOrient;
 	double angleArrow;
@@ -551,6 +653,7 @@ void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 	std::cout << "f :: " << wmot.parameter(3) << std::endl;*/
 
 	arrowHead.clear();
+	arrowHead1.clear();
 	if(this->currentWIM.has_myposition())
 	{
 		arrowLine = this->parentScene->motionCmdRectFromFC(&currentWIM, wmot.parameter(0), wmot.parameter(1));
@@ -558,7 +661,8 @@ void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 		arrowHead = calculateArrowHeadPosition(arrowLine);
 
 		angleOrient = ToDegrees*currentWIM.myposition().phi();
-		angleArrow =  90*wmot.parameter(2);
+
+		angleArrow =  MAX_ROT_ARC_ANGLE_DEG*wmot.parameter(2);
 
 		startAngle = angleOrient * 16;
 		spanAngle = angleArrow * 16;
@@ -567,7 +671,7 @@ void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot)
 		GotoArrow->setPolygon(arrowHead);
 
 		zAxisArc->setRect(this->parentScene->rectFromFC( this->currentWIM.myposition().x()*1000,
-				this->currentWIM.myposition().y()*1000, 500, 500));
+				this->currentWIM.myposition().y()*1000, 1500, 1500));
 
 		zAxisArc->setStartAngle(startAngle);
 		zAxisArc->setSpanAngle(spanAngle);

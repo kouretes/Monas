@@ -12,20 +12,17 @@ using namespace std;
 
 KImageExtractor::~KImageExtractor()
 {
-	try
+	if(naocam!=NULL)
 	{
-		xCamProxy->unsubscribe(GVM_name);
-		//		c->callVoid( "unsubscribe", GVM_name );
-	}
-	catch (AL::ALError& e)
-	{
-		throw ALError("KImageExtractor", "Destruct", "Unable to unsubscribe GVM");
+		delete naocam;
+		naocam= NULL;
 	}
 }
 
-KImageExtractor::KImageExtractor() : GVM_name(VISION_GVMNAME), resolution(VISION_RESOLUTION), cSpace( VISION_CSPACE)
+KImageExtractor::KImageExtractor()
 {
-	lastcam = -1;
+	naocam=NULL;
+	naocam = new NaoCamera();
 }
 
 void KImageExtractor::Init(Blackboard *blk)
@@ -34,110 +31,37 @@ void KImageExtractor::Init(Blackboard *blk)
 	doneSubscribe = false;
 	refexpusec = MAXEXPUS;
 
-	try
-	{
-		xCamProxy = boost::shared_ptr<ALVideoDeviceProxy>( new ALVideoDeviceProxy(KAlBroker::Instance().GetBroker()));
-		//c = KAlBroker::Instance().GetBroker()->getProxy( "ALVideoDevice" );
-		//c->callVoid( "unsubscribe", GVM_name );
-		//xCamProxy->unsubscribe(GVM_name);
-		GVM_name = xCamProxy->subscribe(GVM_name, resolution, cSpace, VISON_FPS );
-		//		GVM_name = c->call<std::string>( "subscribe", GVM_name, resolution,
-		//										 cSpace,VISON_FPS );
-		refreshValues();
-		doneSubscribe = true;
-		//Calculate Roundtrip time
-	}
-	catch (AL::ALError& e)
-	{
-		cout << e.toString() << endl;
-		throw ALError("KImageExtractor", "Construct ", "Unable to create proxies and subscribe GVM");
-	}
-
+	refreshValues();
 	//_com->get_message_queue()->add_publisher(this);
 }
 
 
 void KImageExtractor::_releaseImage()
 {
-#ifdef KROBOT_IS_REMOTE
-	xCamProxy->releaseDirectRawImageRemote(GVM_name);
-#else
-	xCamProxy->releaseDirectRawImage(GVM_name);
-#endif
+	//Nil
 }
 
 /**
  * Fetch a new Image from the hardware, it automatically fixs IplImage and enclosed binary space when needed
  * Use Allocate Image for an initial allocation of an image
  */
-#ifdef KROBOT_IS_REMOTE
-boost::posix_time::ptime KImageExtractor::fetchImage(KImageDeepCopy &img)
-{
-	//cout<<"KImageExtractor::fetchimage():"<<endl;
-	boost::posix_time::ptime s = boost::posix_time::microsec_clock::universal_time();
-
-	if (doneSubscribe == false)
-	{
-		cout << "KImageExtractor: Warning! fetchImage()  called although GVM Subscription has failed!" << endl;
-		return boost::date_time::max_date_time;
-	}
-
-	// Now that you're done with the PREVIOUS  image, you have to release it from the V.I.M.
-	_releaseImage();
-	ALValue results;
-	results = xCamProxy->getDirectRawImageRemote(GVM_name);
-
-	if (results.getType() != ALValue::TypeArray && results.getSize() != 7)
-	{
-		throw ALError("KImageExtractor", "ImageRemote", "Invalid image returned.");
-	}
-
-	boost::posix_time::time_duration exp = boost::posix_time::microsec(getExpUs() / 2);
-	boost::posix_time::ptime stamp = time_t_epoch + (boost::posix_time::microsec((int)results[5]) + boost::posix_time::seconds((int) results[4]));
-	boost::posix_time::time_duration dur = s - (stamp - exp); //TODO:: rtt - round trip time
-	dur -= boost::posix_time::seconds(dur.total_seconds());
-	//cout<<boost::posix_time::to_simple_string(dur)<<endl;
-	s -= dur; //True Timestamp !! Yeah!
-	int width = (int) results[0];
-	int height = (int) results[1];
-	int nChannels = (int) results[2];
-	//int colorSpace = (int) results[3];
-	//int size =width*height*nChannels;
-	//cout<<time<<endl;//-((int) results[4]*1000)-(int)  results[5]<<endl;
-	//Change of image data size
-	img.copyFrom(results[6].GetBinary(), width, height, nChannels);
-	_releaseImage();
-	return s;
-};
-
-#else
-boost::posix_time::ptime KImageExtractor::fetchImage(KImageDeepCopy & img)
+boost::posix_time::ptime KImageExtractor::fetchImage(KImageConst & img)
 {
 	//cout << "Remote method off" << endl;
 	_releaseImage();
-	// Now you can get the pointer to the video structure.
-	ALImage* imageIn = (ALImage*)xCamProxy->getDirectRawImageLocal(GVM_name);
-	//	imageIn = (ALImage*) (c->call<int> ("getDirectRawImageLocal", GVM_name));
-	//cout << "GEt getDirectRawImageLocal " << endl;
-
-	if (!imageIn)
+	do
 	{
-		throw ALError("KImageExtractor", "saveImageLocal", "Invalid image returned.");
+		// Now you can get the pointer to the video structure.
+		if(naocam->captureNew()==false)
+		{
+			return boost::posix_time::ptime();
+		}
+		img.copyFrom(naocam->getImage(),NaoCamera::WIDTH,NaoCamera::HEIGHT,2);
 	}
+	while(naocam->getImage()==0);
 
-	//fLogProxy->info(getName(), imageIn->toString());
-	// You can get some image information that you may find usefull
-	const long long timeStamp = imageIn->getTimeStamp();
-	img.copyFrom(imageIn->getFrame(), imageIn->getWidth(), imageIn->getHeight(), imageIn->getNbLayers());
-	//apply correction factor to timestamp
-	//    std::cout<<"img:"<<timeStamp<<endl;
-	const long long secsonly = (timeStamp / 1000000LL);
-	const long long microsecsonly = timeStamp - (secsonly * 1000000LL);
-	//    cout<<"secsonly:"<<secsonly<<endl;
-	return time_t_epoch + boost::posix_time::seconds(secsonly) + boost::posix_time::microseconds(microsecsonly); //+boost::posix_time::milliseconds(33.3333)
-};
-#endif
-
+	return naocam->getTimeStamp();
+}
 
 //In 16ths
 
@@ -171,241 +95,81 @@ inline unsigned char encodeGain(unsigned int inValue)
 	return (((1 << y) - 1) << 4) | (inValue);
 }
 
+void KImageExtractor::setDefaultSettings()
+{
+/*
+	naocam->setControlSetting(V4L2_CID_AUTOEXPOSURE , 0);
+	naocam->setControlSetting(V4L2_CID_AUTO_WHITE_BALANCE, 0);
+	naocam->setControlSetting(V4L2_CID_AUTOGAIN, 0);
+	naocam->setControlSetting(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
+	naocam->setControlSetting(V4L2_CID_GAIN,0xF0);
+	naocam->setControlSetting(V4L2_CID_EXPOSURE,);
+	naocam->setControlSetting(V4L2_CID_RED_BALANCE,redchroma );
+	naocam->setControlSetting(V4L2_CID_BLUE_BALANCE,bluechroma);*/
+
+//	naocam->setControlSetting(V4L2_CID_SAT_AUTO, 0);
+//	naocam->setControlSetting(V4L2_CID_HUE_AUTO, 0);
+//	naocam->setControlSetting(V4L2_CID_HUE, 0);
+//	naocam->setControlSetting(V4L2_CID_SATURATION, 255);
+//	naocam->setControlSetting(V4L2_CID_BRIGHTNESS, 128);
+//	naocam->setControlSetting(V4L2_CID_CONTRAST, 96);
+}
+
+void KImageExtractor::setCalibrateSettings()
+{
+/*
+	naocam-> setControlSetting(V4L2_CID_AUTOEXPOSURE ,1);
+	naocam->setControlSetting(V4L2_CID_AUTO_WHITE_BALANCE, 1);
+	naocam-> setControlSetting(V4L2_CID_AUTOGAIN, 1);
+	naocam-> setControlSetting(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_AUTO);*/
+//	naocam->setControlSetting(V4L2_CID_HUE, 0);
+//	naocam->setControlSetting(V4L2_CID_SATURATION, 255);
+//	naocam->setControlSetting(V4L2_CID_BRIGHTNESS, 128);
+//	naocam->setControlSetting(V4L2_CID_CONTRAST, 96);
+
+}
+
 float KImageExtractor::calibrateCamera(int sleeptime, int exp)
 {
-#ifdef WEBOTS
-	return 1.0f;
-#endif
-	std:: vector <std::string> names;
-	std:: vector <float>pos;
-	int redchroma, bluechroma, gain, e;
-	int rchromaL, bchromaL, gainL, eL;
-	int rchromaR, bchromaR, gainR, eR;
-	//int expvalue=(e*510.8)/33.0;
-	MotionHeadMessage hmot;
-	hmot.add_parameter(0.0f);
-	hmot.add_parameter(0.0f);
-	hmot.set_command("setHeadInstant");
 	_releaseImage();
-	cout << "Calibrate Start:" << endl;
 
-	try
-	{
-		xCamProxy->setParam( kCameraSelectID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoGainID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		qi::os::msleep(5);
-		//xCamProxy->setParam( kCameraSelectID, 1);
-		//		c->callVoid( "setParam", kCameraSelectID, 1);
-		xCamProxy->setParam( kCameraExposureCorrectionID, 0);
-		//		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
-		qi::os::msleep(10);
-		xCamProxy->setParam( kCameraSelectID, 1);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoGainID, 1);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoExpositionID, 1);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 1);
-		qi::os::msleep(5);
-		//xCamProxy->setParam( kCameraSelectID, 1);
-		//		c->callVoid( "setParam", kCameraSelectID, 1);
-		xCamProxy->setParam( kCameraExposureCorrectionID, 0);
-		//		c->callVoid( "setParam", kCameraExposureCorrectionID,0);
-		qi::os::msleep(10);
-		//Move head to the left
-		hmot.set_parameter(0, 1.57);
-		hmot.set_parameter(1, 0.22);
-		_blk->publishSignal(hmot, "motion");
-		_blk->publish_all();
-		qi::os::msleep(100);
-		//Wait for autoconf
-		qi::os::msleep(sleeptime);
-		//Get Bottom camera settings
-		gainL = xCamProxy->getParam( kCameraGainID);
-		//		gainL=xCamProxy->getParam(kCameraGainID);
-		eL = xCamProxy->getParam(kCameraExposureID);
-		//		eL=xCamProxy->getParam(kCameraExposureID);
-		xCamProxy->setParam( kCameraAutoGainID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		qi::os::msleep(5);
-		//		c->callVoid( "setParam", kCameraAutoGainID, 0);
-		//		c->callVoid( "setParam", kCameraAutoExpositionID,0);
-		//		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,0);
-		cout << "Left settings:" << " " << gainL << endl;
-		hmot.set_parameter(0, -1.57);
-		hmot.set_parameter(1, 0.22);
-		_blk->publishSignal(hmot, "motion");
-		_blk->publish_all();
-		//m->callVoid("setAngles",names,pos,0.8);
-		qi::os::msleep(100);
-		//		c->callVoid( "setParam", kCameraAutoGainID, 1);
-		//		c->callVoid( "setParam", kCameraAutoExpositionID,1);
-		//		c->callVoid( "setParam", kCameraAutoWhiteBalanceID,1);
-		xCamProxy->setParam(  kCameraAutoGainID, 1);
-		qi::os::msleep(5);
-		xCamProxy->setParam(  kCameraAutoExpositionID, 1);
-		qi::os::msleep(5);
-		xCamProxy->setParam(  kCameraAutoWhiteBalanceID, 1);
-		//wait for autoconf
-		qi::os::msleep(sleeptime);
-		//GET BOTTOM CAMERA SETTINGS!!!
-		gainR = xCamProxy->getParam(kCameraGainID);
-		qi::os::msleep(5);
-		eR = xCamProxy->getParam(kCameraExposureID);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoGainID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		qi::os::msleep(5);
-		//Since now we`ll need again the wb correction, leave it on
-		//xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
-		cout << "Right settings:" << " " << gainR << endl;
-		//============================
-		// Final Exposure  settings!
-		//============================
-		e = (eL + eR) / 2;
-		refexpusec = e * MAXEXPUS / 510.0;
+	naocam->switchToUpper();
+	naocam->setControlSetting(V4L2_CID_EXPOSURE,exp*510.0f / 33.33333333f);
 
-		if ((exp * 510.0f) / 33.33333333f < e)
-		{
-			e = exp * 510.0f / 33.33333333f;
-		}
 
-		lastexpusec = e * MAXEXPUS / 510.0f;
-		cout << "Exposure Scaling:" << getScale() << ", from" << refexpusec << "usec to " << lastexpusec << "usec" << endl;
-		//cout<<"Scaling  exposure:"<<(exp*510)/33<<" "<<e<<endl;
-		gain = encodeGain((decodeGain(gainL) + decodeGain(gainR)) / 2);
-		//redchroma=128-((128.0-redchroma)*0.95);
-		//bluechroma=128-((128.0-bluechroma)*0.95);
-		//gain=((gain&31)/2)|(gain&32);
-		cout << "Final Exposure settings:" << "Exposure Value:" << e << " Gain Value:" << gain << endl;
-		//Start white balance calibration
-		//wait for autoconf
-		qi::os::msleep(sleeptime);
-		rchromaR = xCamProxy->getParam(kCameraRedChromaID);
-		qi::os::msleep(5);
-		bchromaR = xCamProxy->getParam(kCameraBlueChromaID);
-		qi::os::msleep(5);
-		//        xCamProxy->setParam( kCameraAutoWhiteBalanceID,0);
-		cout << "Right white balance settings:" << rchromaR << " " << bchromaR << endl;
-		//Move head to the left
-		hmot.set_parameter(0, 1.57);
-		hmot.set_parameter(1, 0.22);
-		_blk->publishSignal(hmot, "motion");
-		_blk->publish_all();
-		//wait for autoconf
-		qi::os::msleep(sleeptime);
-		rchromaL = xCamProxy->getParam(kCameraRedChromaID);
-		qi::os::msleep(5);
-		bchromaL = xCamProxy->getParam(kCameraBlueChromaID);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		qi::os::msleep(5);
-		cout << "Left white balance settings:" << rchromaL << " " << bchromaL << endl;
-		redchroma = (rchromaL + rchromaR) / 2;
-		bluechroma = (bchromaL + bchromaR) / 2;
-		cout << "Final White Balance Settings" << redchroma << " " << bluechroma;
-		xCamProxy->setParam( kCameraSelectID, 0);
-		qi::os::msleep(150);
-		//SET BOTTOM CAMERA SETTINGS
-		xCamProxy->setParam( kCameraAutoGainID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraBlueChromaID, bluechroma);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraRedChromaID, redchroma);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraGainID, gain);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraExposureID, e);
-		qi::os::msleep(5);
-		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
-		qi::os::msleep(150);
-		//c->callVoid( "setParam", kCameraSelectID, 0);
-		//qi::os::msleep(10);
-		xCamProxy->setParam( kCameraSelectID, 1);
-		qi::os::msleep(150);
-		//SET BOTTOM CAMERA SETTINGS
-		xCamProxy->setParam( kCameraAutoGainID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoExpositionID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraAutoWhiteBalanceID, 0);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraBlueChromaID, bluechroma);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraRedChromaID, redchroma);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraGainID, gain);
-		qi::os::msleep(5);
-		xCamProxy->setParam( kCameraExposureID, e);
-		//c->callVoid( "setParam", kCameraExposureCorrectionID,-6);
-		qi::os::msleep(150);
-		//Start with bottom cam
-		//xCamProxy->setParam( kCameraSelectID, 1);
-	}
-	catch (AL::ALError &e)
-	{
-		cout << "No Autosettings available ... ?!?" << endl;
-		std::cout << e.toString() << std::endl;
-		//exit(0);
-	}
+	naocam->switchToLower();
+	naocam->setControlSetting(V4L2_CID_EXPOSURE,exp*510.0f / 33.33333333f);
+	lastexpusec=exp;
+		return 1;
 
-	lastcam = 1;
-	cout << "done" << endl;
-	hmot.set_parameter(0, 0);
-	hmot.set_parameter(1, -0.1);
-	_blk->publishSignal(hmot, "motion");
-	_blk->publish_all();
-	return getScale();
+
 }
 void KImageExtractor::refreshValues()
 {
-	lastcam = xCamProxy->getParam(kCameraSelectID);
-#ifndef WEBOTS
-	int a = xCamProxy->getParam(kCameraExposureID);
+	int a= naocam->getControlSetting(V4L2_CID_EXPOSURE);
 	lastexpusec = a * MAXEXPUS / 510.0f;
-#endif
 }
-int KImageExtractor::getCamera() const
+int KImageExtractor::currentCameraIsBottom() const
 {
-	return lastcam;
+	return naocam->getCurrentCamera()==NAO_LOWER_CAMERA;
 }
 
-int KImageExtractor::swapCamera()
+  unsigned char KImageExtractor::swapCamera()
 {
-	int old = xCamProxy->getParam(kCameraSelectID);
-	old = (old == 1) ? 0 : 1;
-	xCamProxy->setParam( kCameraSelectID, old);
+
+	int old=naocam->getCurrentCamera();
+	old = (old == NAO_LOWER_CAMERA) ? NAO_UPPER_CAMERA : NAO_LOWER_CAMERA;
+	naocam->switchCamera(old);
 	return old;
 }
 
 float KImageExtractor::getExpUs() const
 {
-#ifdef WEBOTS
-	return 1.0f;
-#else
 	return lastexpusec;
-#endif
 }
 
 
 float KImageExtractor::getScale() const
 {
-#ifdef WEBOTS
 	return 1.0f;
-#else
-	return refexpusec / lastexpusec;
-#endif
 }

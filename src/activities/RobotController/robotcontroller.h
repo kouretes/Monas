@@ -35,7 +35,7 @@ public:
 	* @brief Does nothing
 	*/
 
-	ACTIVITY_VISIBLE RobotController(Blackboard &b, XmlNode &x);
+	ACTIVITY_VISIBLE RobotController(Blackboard &b, XmlManager &x);
 	/**
 	* @brief Activity's Execute function. Either reads new gamestate if available and checks if it is changed regarding the old one.
 	* Either read the button events ALmemory's values and changes the state.
@@ -48,6 +48,7 @@ public:
 	* Also AlMemmory proxy and event values are initialized
 	*/
 	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	std::string ACTIVITY_VISIBLE GetName()
 	{
 		return "RobotController";
@@ -78,8 +79,13 @@ private:
 	GameStateMessage new_gm_state;
 	boost::posix_time::ptime lastalive;
 	/**
-	 * @brief This message of type ConfigMessage holds the default values found in team_config.xml. If one or more values are
-	 * not specified in team_config.xml then it assumes the default value of the ConfigMessage definition in GameStateMessage.proto.
+	 * @brief Read the gsm from the blackboard and replase the local gm with that. This is usefull if the gateway changes the gsm message
+	 * from a gui command.
+	 */
+	boost::shared_ptr<const GameStateMessage>  gsm;
+	/**
+	 * @brief This message of type ConfigMessage holds the default values found in teamConfig.xml. If one or more values are
+	 * not specified in teamConfig.xml then it assumes the default value of the ConfigMessage definition in GameStateMessage.proto.
 	 */
 	ConfigMessage conf;
 };

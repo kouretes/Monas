@@ -1,3 +1,0 @@
-TestBehavior
-TestBehavior=(Play|NoPlay)+
-Play=SitDown|Scan

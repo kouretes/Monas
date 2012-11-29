@@ -27,9 +27,9 @@ namespace KNetwork
 		//hash time and produce string
 		boost::hash<std::string> h;
 		boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-		thishost = h(boost::posix_time::to_iso_string(now));
-		dep.setHost(thishost);
-		p.setHost(thishost );
+		thishost = h(boost::posix_time::to_iso_string(now)); //Generate random hostid from current time
+		dep.setHost(thishost); //My host id is used to reject loopback messages (if received==me, reject)
+		p.setHost(thishost );  //My host id is used to tag multicast messages
 		Logger::Instance().WriteMsg("Multicast", "Multicast hostid:" + _toString(thishost), Logger::Info);
 		//std::cout<<"Multicast hostid:"<<thishost<<std::endl;
 		//Initialize anyhost record;
@@ -52,7 +52,7 @@ namespace KNetwork
 			multireceive.open(rpoint.protocol());
 			multisend.open(rpoint.protocol());
 			multireceive.set_option(boost::asio::ip::udp::socket::reuse_address(true));
-			multireceive.set_option(boost::asio::ip::multicast::enable_loopback(false));
+			multireceive.set_option(boost::asio::ip::multicast::enable_loopback(true));
 			//remotesocket.set_option(boost::asio::ip::multicast::enable_loopback(false));
 			multireceive.bind(rpoint);
 			multiport = port;
@@ -70,6 +70,7 @@ namespace KNetwork
 			sendthread = boost::thread(boost::bind(&boost::asio::io_service::run, &sio)); //Start Send
 			this->StartThread(); //Start receive
 
+			//Attach callbackfunction to incoming messages buffer
 			if(getReadBuffer())
 				getReadBuffer()->setNotifier(boost::bind(&MulticastPoint::bufferCallback, this, _1));
 		}
@@ -232,7 +233,12 @@ namespace KNetwork
 				processOutGoing(m);
 			}
 			{
+				//Internal message, forwarded to localhost, keeps track of known hosts, and this host info.
 				KnownHosts *kn = KnownHosts::default_instance().New();
+				//Who am I?
+				kn->mutable_localhost()->set_hostid(thishost);
+				kn->mutable_localhost()->set_hostname(boost::asio::ip::host_name());
+
 				std::map<hostid, hostDescription>::const_iterator kit = otherHosts.begin();
 
 				for(; kit != otherHosts.end(); ++kit)
