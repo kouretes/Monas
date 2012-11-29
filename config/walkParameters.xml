@@ -4,11 +4,11 @@
 <!--the maximum translation along the X axis for one step-->
 <MaxStepY>0.160</MaxStepY>
 <!--the maximum translation along the Y axis for one step-->
-<MaxStepTheta>0.349</MaxStepTheta>
+<MaxStepTheta>0.4</MaxStepTheta>
 <!--the maximum rotation around the Z axis for one step-->
 <MaxStepFrequency>1.0</MaxStepFrequency>
 <!--the maximum step frequency (normalized between 0.0 and 1.0)-->
-<StepHeight>0.012</StepHeight>
+<StepHeight>0.02</StepHeight>
 <!--the fixed height of the step-->
 <TorsoWx>0.000</TorsoWx>
 <!--the translation of the torso along the X axis-->
