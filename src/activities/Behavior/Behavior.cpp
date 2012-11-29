@@ -167,7 +167,7 @@ int Behavior::Execute()
 		if(prevGameState == PLAYER_PENALISED){
 			lastpenalised = microsec_clock::universal_time();
 			//Check if the penalized was a wrong decision
-			if(microsec_clock::universal_time() - penalisedStarted > seconds(10) && gameMode){
+			if(microsec_clock::universal_time() - penalisedStarted > seconds(10) || !gameMode){
 				direction = 1;
 				locReset.set_type(LocalizationResetMessage::PENALISED);
 				locReset.set_kickoff(kickoff);
