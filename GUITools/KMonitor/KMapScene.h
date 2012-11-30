@@ -26,57 +26,26 @@
 #define OuterRing	(1+M)
 #define NEIGHBOURS 	8
 
-#define RobotRadius 	0.2
 #define MapRadius 		0.63  // prev Value 1.0
-#define ObstacleRadius 	0.15
 #define RingDistance 	( (MapRadius) / (M) )
 #define SectorAngleDeg 	(360.0/N) // deg
 #define SectorAngleRad 	(SectorAngleDeg*ToRad)
 #define SectorShiftRad	( ( (N%4) == 0 ) ? 0.5*SectorAngleRad : 0.0 )
 
-#define FRONT 			(int(N/4))
-#define SIDE_LEFT 		(int(N/2))
-#define SIDE_RIGHT 		0
-
-#define SonarAngleShiftDeg	20.0 // deg
-#define SonarAngleShiftRad	(SonarAngleShiftDeg*ToRad)
-#define SonarDistanceShift	0.065
-#define SonarAngleRangeDeg	45.0 // deg
-#define SonarAngleRangeRad 	(SonarAngleRangeDeg*ToRad)
-#define SonarDistanceRange 	1.0
-#define SonarMinReading		0.4
-#define SonarReadingsNum 	10
-
-#define NoKnowledge 			0.5
-#define AgeFactor 				0.8
-#define OccupancyDecreaseFactor 0.8
-#define OccupancyIncreaseFactor	1.5
-#define MinOccupancy 			0.08
-#define MaxOccupancy 			1.0
-
 #define PathLength 			50
-#define ObstacleThreshold	0.75
-#define ObstacleCostFactor	500.0
-#define RotationCostFactor	3.5
-#define SideStepCostFactor	5.0
-#define SemiSideCostFactor	4.0
 
 #include <QGraphicsScene>
 #include <QList>
-#include "KMapView.h"
-
-class KMapView;
 
 class KMapScene : public QGraphicsScene
 {
 
 public:
-	KMapScene(KMapView* parent, QString hostId);
+	KMapScene(QGraphicsView* parent);
 	~KMapScene();
 
 	void resizeMapScene(int size);
-	QString getCurrentHost(){ return currentHost; }
-	void resetKMapScene(QString hostId);
+	void resetKMapScene();
 
 	void setLPMObstaclesVisible(bool visible){ LPMObstaclesVisible = visible; setPMObstaclesVisible(visible);}
 	bool getLPMObstaclesVisible(){return LPMObstaclesVisible;}
@@ -103,8 +72,7 @@ private:
 	void initCoordinates();
 	void pathLineListRectReset();
 
-	KMapView* parent;
-	QString currentHost;
+	QGraphicsView* parent;
 
 	QList<QGraphicsPolygonItem*> staticCellsList;
 

@@ -5,219 +5,142 @@
 #include <QList>
 
 KMonitor::KMonitor(QWidget *parent)
-    : QMainWindow(parent), Messenger(NULL), availableGWHosts(NULL)
+    : QMainWindow(parent), Messenger(NULL),
+    ui(new Ui::KMonitor)
 {
-	setupUi(this);
+	ui->setupUi(this);
 
 	Messenger = new KGUIMessenger();
-	availableGWHosts = new GWRemoteHosts(this->GWSTreeWidget);
 
-	availableLWHosts = new LWRemoteHosts(this->LWSComboBox);
-	LWSElementTree = new LWElementTree(this->LWSTreeWidget);
-
-	availableLMHosts = new LWRemoteHosts(this->LPMComboBox);
-	LPMElementTree = new LMElementTree(this->LPMTreeWidget);
-
-	availableLVHosts = new LWRemoteHosts(this->LRVComboBox);
-	LRVElementList = new LVElementList(this->LRVListWidget);
-
-	availableLSHosts = new LWRemoteHosts(this->LSDComboBox);
-
-	LSDInitialization();
-
+	/****************** GLOBAL WORLD STATE TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR GLOBAL WORLD STATE
 	//Signal slot connections for Robot Position & Orientation, Ball Estimation
 
-	connect(Messenger, SIGNAL(knownHostsUpdate(KnownHosts)), availableGWHosts, SLOT(emergeAvailableHosts(KnownHosts)));
-	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), availableGWHosts, SLOT(setGWRHGameStateInfo(GameStateMessage, QString)));
-	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), this->GWSGraphicsView, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)));
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->GWSTab, SLOT(addNewItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->GWSTab, SLOT(removeOldItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->GWSTab, SLOT(updateGameState(QString, QString, QString)));
+	
+	connect(ui->GWSTab, SIGNAL(GWRHSubscriptionRequest(QString)), Messenger , SLOT(GWRHSubscriptionHandler(QString)));
+	connect(ui->GWSTab, SIGNAL(GWRHUnsubscriptionRequest(QString)), Messenger, SLOT(GWRHUnsubscriptionHandler(QString)));
 
-	connect(availableGWHosts, SIGNAL(GWRHSubscriptionRequest(QString)), Messenger , SLOT(GWRHSubscriptionHandler(QString)));
-	connect(availableGWHosts, SIGNAL(GWRHUnsubscriptionRequest(QString)), Messenger, SLOT(GWRHUnsubscriptionHandler(QString)));
+	//messages signal/slots
+	connect(Messenger, SIGNAL(worldInfoUpdate(WorldInfo, QString)), ui->GWSTab, SLOT(worldInfoUpdateHandler(WorldInfo, QString)));
+	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), ui->GWSTab, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)));
 
-	connect(Messenger, SIGNAL(worldInfoUpdate(WorldInfo, QString)), this->GWSGraphicsView, SLOT(worldInfoUpdateHandler(WorldInfo, QString)));
-
-	connect(availableGWHosts, SIGNAL(GWRHSetRobotVisible(QString, bool)), this->GWSGraphicsView, SLOT(GWSGVRobotVisible(QString, bool)));
-	connect(availableGWHosts, SIGNAL(GWRHSetBallVisible(QString, bool)), this->GWSGraphicsView, SLOT(GWSGVBallVisible(QString, bool)));
-	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->GWSGraphicsView, SLOT(removeGraphicalElement(QString)));
-
+	/****************** LOCAL WORLD STATE TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL WORLD STATE
 	//Signal slot connections for Local Remote Hosts ComboBox
 
-	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->availableLWHosts, SLOT(addComboBoxItem(QString, QString)));
-	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->availableLWHosts, SLOT(removeComboBoxItem(QString)));
-	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->availableLWHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->LWSTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->LWSTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->LWSTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
-	connect(availableLWHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LWRHSubscriptionHandler(QString)));
-	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LWRHUnsubscriptionHandler(QString)));
-
-	//Signal slot connections for Robot Position & Orientation, Ball Estimation
-	connect(availableLWHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LWSElementTree, SLOT(LWELSubscriptionHandler(QString)));
-	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LWSElementTree, SLOT(LWELUnsubscriptionHandler(QString)));
-	connect(availableLWHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LWSGraphicsView, SLOT(removeGraphicalElement(QString)));
-
-	connect(Messenger, SIGNAL(worldInfoUpdate(WorldInfo, QString)), LWSGraphicsView, SLOT(worldInfoUpdateHandler(WorldInfo, QString)));
-	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), LWSGraphicsView, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)));
-
-	connect(LWSElementTree, SIGNAL(LWRHSetRobotVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVRobotVisible(QString, bool)));
-	connect(LWSElementTree, SIGNAL(LWRHSetBallVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVBallVisible(QString, bool)));
-
-
-	//Signal slot connections for Vision Observations
-	connect(LWSElementTree, SIGNAL(LWRHSetVisionBallVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVVisionBallVisible(QString, bool)));
-	connect(LWSElementTree, SIGNAL(LWRHSetVisionGoalPostsVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVVisionGoalPostsVisible(QString, bool)));
-
-	connect(Messenger, SIGNAL(obsmsgUpdate(ObservationMessage, QString)), LWSGraphicsView, SLOT(observationMessageUpdateHandler(ObservationMessage, QString)));
-
-	//Signal slot connections for Particles of Localization
-	connect(LWSElementTree, SIGNAL(LWRHSetParticlesVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVParticlesVisible(QString, bool)));
-	connect(Messenger, SIGNAL(localizationDataUpdate(LocalizationDataForGUI, QString)), LWSGraphicsView, SLOT(localizationDataUpdateHandler(LocalizationDataForGUI, QString)));
-
-	//Signal slot connections for HFOV
-	connect(LWSElementTree, SIGNAL(LWRHSetHFOVVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVHFOVVisible(QString, bool)));
-
-	//Signal slot connections for Trace Of Estimated Robot Positions
-	connect(LWSElementTree, SIGNAL(LWRHSetTraceVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVTraceVisible(QString, bool)));
-
-	//Signal slot connections for Motion Walk Command
-	connect(LWSElementTree, SIGNAL(LWRHSetMWCmdVisible(QString, bool)), LWSGraphicsView, SLOT(LWSGVMWCmdVisible(QString, bool)));
-	connect(Messenger, SIGNAL(motionCommandUpdate(MotionWalkMessage, QString)), LWSGraphicsView, SLOT(motionCommandUpdateHandler(MotionWalkMessage, QString)));
-
+	connect(ui->LWSTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LWRHSubscriptionHandler(QString)));
+	connect(ui->LWSTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LWRHUnsubscriptionHandler(QString)));
+	
+	connect(Messenger, SIGNAL(worldInfoUpdate(WorldInfo, QString)), ui->LWSTab, SLOT(worldInfoUpdateHandler(WorldInfo, QString)));
+	connect(Messenger, SIGNAL(sharedWorldInfoUpdate(SharedWorldInfo, QString)), ui->LWSTab, SLOT(sharedWorldInfoUpdateHandler(SharedWorldInfo, QString)));
+	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), ui->LWSTab, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)));
+	connect(Messenger, SIGNAL(obsmsgUpdate(ObservationMessage, QString)), ui->LWSTab, SLOT(observationMessageUpdateHandler(ObservationMessage, QString)));
+	connect(Messenger, SIGNAL(localizationDataUpdate(LocalizationDataForGUI, QString)), ui->LWSTab, SLOT(localizationDataUpdateHandler(LocalizationDataForGUI, QString)));
+	connect(Messenger, SIGNAL(motionCommandUpdate(MotionWalkMessage, QString)), ui->LWSTab, SLOT(motionCommandUpdateHandler(MotionWalkMessage, QString)));
+	
+	/****************** SONARS TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL POLAR MAP
 	//Signal slot connections for Local Map Hosts ComboBox
 
-	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), availableLMHosts, SLOT(addComboBoxItem(QString, QString)));
-	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), availableLMHosts, SLOT(removeComboBoxItem(QString)));
-	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), availableLMHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->LSonarTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->LSonarTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->LSonarTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
-	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LMRHSubscriptionHandler(QString)));
-	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LMRHUnsubscriptionHandler(QString)));
+	connect(ui->LSonarTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LMRHSubscriptionHandler(QString)));
+	connect(ui->LSonarTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LMRHUnsubscriptionHandler(QString)));
 
-	//Signal slot connections for user's preferences
-	connect(availableLMHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LPMElementTree, SLOT(LMELSubscriptionHandler(QString)));
-	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMElementTree, SLOT(LMELUnsubscriptionHandler(QString)));
-	connect(availableLMHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LPMGraphicsView, SLOT(resetRobotMap(QString)));
+	//messages signal/slots
+	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), ui->LSonarTab, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
 
-	//Signal slot connections for Obstacles, Path, TargetCoordinates
-	connect(Messenger, SIGNAL(gridInfoUpdate(GridInfo, QString)), LPMGraphicsView, SLOT(gridInfoUpdateHandler(GridInfo, QString)));
-	connect(LPMElementTree, SIGNAL(LMRHSetObstaclesVisible(QString, bool)), LPMGraphicsView, SLOT(LMObstaclesVisible(QString, bool)));
-	connect(LPMElementTree, SIGNAL(LMRHSetPathVisible(QString, bool)), LPMGraphicsView, SLOT(LMPathVisible(QString, bool)));
-	connect(LPMElementTree, SIGNAL(LMRHSetTargCoordVisible(QString, bool)), LPMGraphicsView, SLOT(LMTargetCoordVisible(QString, bool)));
-
+	/****************** LOCAL ROBOT VIEW TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL ROBOT VIEW
 	//Signal slot connections for Robot View ComboBox
 
-	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), availableLVHosts, SLOT(addComboBoxItem(QString, QString)));
-	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), availableLVHosts, SLOT(removeComboBoxItem(QString)));
-	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), availableLVHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->LCamTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->LCamTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->LCamTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
-	connect(availableLVHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LVRHSubscriptionHandler(QString)));
-	connect(availableLVHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LVRHUnsubscriptionHandler(QString)));
+	connect(ui->LCamTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LVRHSubscriptionHandler(QString)));
+	connect(ui->LCamTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LVRHUnsubscriptionHandler(QString)));
 
-	//Signal slot connections for user's preferences
-	connect(availableLVHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LRVElementList, SLOT(LVELSubscriptionHandler(QString)));
-	connect(availableLVHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LRVElementList, SLOT(LVELUnsubscriptionHandler(QString)));
-	connect(availableLVHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), this->LRVLabel, SLOT(resetRobotView(QString)));
-
-	//Signal slot connections for dispaying Robot's Raw Image
-	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), LRVLabel, SLOT(kRawImageUpdateHandler(KRawImage, QString)));
-	connect(LRVElementList, SIGNAL(LVRHSetRawImageVisible(QString, bool)), LRVLabel, SLOT(LVRawImageVisible(QString, bool)));
-	connect(LRVElementList, SIGNAL(LVRHSetSegImageVisible(QString, bool)), LRVLabel, SLOT(LVSegImageVisible(QString, bool)));
-
-
+	//messages signal/slots
+	connect(Messenger, SIGNAL(rawImageUpdate(KRawImage, QString)), ui->LCamTab, SLOT(kRawImageUpdateHandler(KRawImage, QString)));
+	/****************** LOCAL SENSOR VIEW TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL SENSOR DATA
 	//Signal slot connections for Local Remote Hosts ComboBox
-	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->availableLSHosts, SLOT(addComboBoxItem(QString, QString)));
-	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->availableLSHosts, SLOT(removeComboBoxItem(QString)));
-	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->availableLSHosts, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->LSDTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->LSDTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->LSDTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
-	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LSRHSubscriptionHandler(QString)));
-	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LSRHUnsubscriptionHandler(QString)));
+	connect(ui->LSDTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(LSRHSubscriptionHandler(QString)));
+	connect(ui->LSDTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(LSRHUnsubscriptionHandler(QString)));
 
+	//messages signal/slots
+	connect(Messenger, SIGNAL(sensorsDataUpdate(AllSensorValuesMessage, QString)), ui->LSDTab, SLOT(sensorsDataUpdateHandler(AllSensorValuesMessage, QString)));
 
-	connect(availableLSHosts, SIGNAL(LWRHSubscriptionRequest(QString)), LSController, SLOT(LSCSubscriptionHandler(QString)));
-	connect(availableLSHosts, SIGNAL(LWRHUnsubscriptionRequest(QString)), LSController, SLOT(LSCUnsubscriptionHandler(QString)));
-
-	connect(Messenger, SIGNAL(sensorsDataUpdate(AllSensorValuesMessage, QString)), LSController, SLOT(sensorsDataUpdateHandler(AllSensorValuesMessage, QString)));
-
-
-
-
-
-	//SIGNAL SLOT CONNECTIONS FOR KCC Beta
+	/****************** KCC TAB ************************/
+	//SIGNAL SLOT CONNECTIONS FOR KCC
 	//Signal slot connections for KCC ComboBox
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->KCCTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->KCCTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->KCCTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
-	connect(availableGWHosts, SIGNAL(GWRHNewHostAdded(QString, QString)), this->KCCTab, SLOT(addComboBoxItem(QString, QString)));
-	connect(availableGWHosts, SIGNAL(GWRHOldHostRemoved(QString)), this->KCCTab, SLOT(removeComboBoxItem(QString)));
-	connect(availableGWHosts, SIGNAL(LWRHGameStateMsgUpdate(QIcon, QString, QString)), this->KCCTab, SLOT(setLWRHGameStateInfo(QIcon, QString, QString)));
+	connect(ui->KCCTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
+	connect(ui->KCCTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
 
-	connect(this->KCCTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(KCCRHSubscriptionHandler(QString)));
-	connect(this->KCCTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(KCCRHUnsubscriptionHandler(QString)));
+	//messages signal/slots
+	connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), ui->KCCTab, SLOT(changeImage(KRawImage, QString)));
 
-	connect(Messenger, SIGNAL(KCCRawImageUpdate(KRawImage, QString)), this->KCCTab, SLOT(changeImage(KRawImage, QString)));
+	/****************** XML TAB ************************/
+	//Signal slot connections for XML
+	//Signal slot connections for XML ComboBox
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->XMLTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->XMLTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->XMLTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
 
-	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
-	connect(action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
-	setWindowState(Qt::WindowMaximized);
+	connect(ui->XMLTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(XMLRHSubscriptionHandler(QString)));
+	connect(ui->XMLTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(XMLRHUnsubscriptionHandler(QString)));
 
+	//messages signal/slots
+	connect(Messenger, SIGNAL(GenericAckReceived(GenericACK, QString)), ui->XMLTab, SLOT(genericAckReceived(GenericACK, QString)));
+	connect(ui->XMLTab, SIGNAL(sendConfigMessage(ExternalConfig)), Messenger, SLOT(XMLPublishMessage(ExternalConfig)));
+
+	/****************** Commands TAB ************************/
+	//Signal slot connections for XML
+	//Signal slot connections for XML ComboBox
+	connect(Messenger, SIGNAL(addHost(QString, QString)), ui->ComTab, SLOT(addComboBoxItem(QString, QString)));
+	connect(Messenger, SIGNAL(removeHost(QString)), ui->ComTab, SLOT(removeComboBoxItem(QString)));
+	connect(Messenger, SIGNAL(updateGameState(QString, QString, QString)), ui->ComTab, SLOT(setLWRHGameStateInfo(QString, QString, QString)));
+
+	connect(ui->ComTab, SIGNAL(LWRHSubscriptionRequest(QString)), Messenger, SLOT(CommandRHSubscriptionHandler(QString)));
+	connect(ui->ComTab, SIGNAL(LWRHUnsubscriptionRequest(QString)), Messenger, SLOT(CommandRHUnsubscriptionHandler(QString)));
+
+	//messages signal/slots
+	connect(Messenger, SIGNAL(GenericAckReceived(GenericACK, QString)), ui->ComTab, SLOT(genericAckReceived(GenericACK, QString)));
+	connect(ui->ComTab, SIGNAL(sendExternalCommand(ExternalCommand)), Messenger, SLOT(CommandPublishMessage(ExternalCommand)));
+
+	/****************** GENERIC ************************/
 	//Signals-Slots for tab changes manipulation
-	connect(this->KMTabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
-	connect(this->KMTabWidget, SIGNAL(currentChanged(int)), Messenger, SLOT(tabChangeHandler(int)));
+	connect(ui->KMTabWidget, SIGNAL(currentChanged(int)), this, SLOT(printCurrentTab(int)));
+	connect(ui->KMTabWidget, SIGNAL(currentChanged(int)), Messenger, SLOT(tabChangeHandler(int)));
+	
+	
+	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
+	connect(ui->action_Quit, SIGNAL(triggered()), this, SLOT(quitKMonitor()));
+	setWindowState(Qt::WindowMaximized);
 }
 
 KMonitor::~KMonitor()
 {
-
-}
-
-void KMonitor::LSDInitialization()
-{
-	QList<QComboBox*> list;
-
-	list.append(HYComboBox);	//0-1
-	list.append(HPComboBox);
-
-	list.append(AccXComboBox);	//2-6
-	list.append(AccYComboBox);
-	list.append(AccZComboBox);
-	list.append(AngXComboBox);
-	list.append(AngYComboBox);
-
-	list.append(RSPComboBox);	//7-10
-	list.append(RSRComboBox);
-	list.append(REYComboBox);
-	list.append(RERComboBox);
-
-	list.append(LSPComboBox);	//11-14
-	list.append(LSRComboBox);
-	list.append(LEYComboBox);
-	list.append(LERComboBox);
-
-	list.append(RHYPComboBox);	//15-20
-	list.append(RHRComboBox);
-	list.append(RHPComboBox);
-	list.append(RKPComboBox);
-	list.append(RAPComboBox);
-	list.append(RARComboBox);
-
-	list.append(LHYPComboBox);  //21-26
-	list.append(LHRComboBox);
-	list.append(LHPComboBox);
-	list.append(LKPComboBox);
-	list.append(LAPComboBox);
-	list.append(LARComboBox);
-
-	list.append(RFsrFLComboBox);	//27-30
-	list.append(RFsrRLComboBox);
-	list.append(RFsrFRComboBox);
-	list.append(RFsrRRComboBox);
-
-	list.append(LFsrFLComboBox);	//31-34
-	list.append(LFsrRLComboBox);
-	list.append(LFsrFRComboBox);
-	list.append(LFsrRRComboBox);
-
-	LSController = new LSDController(list);
 
 }
 

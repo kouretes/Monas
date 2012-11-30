@@ -1,6 +1,8 @@
 #ifndef GRAPHICALROBOTELEMENT_H_
 #define GRAPHICALROBOTELEMENT_H_
 
+#define MAX_ROT_ARC_ANGLE_DEG  180
+
 #include <QGraphicsEllipseItem>
 #include <QGraphicsLineItem>
 #include <QGraphicsScene>
@@ -9,6 +11,7 @@
 #include <QPoint>
 #include <QTimer>
 #include <QList>
+#include <QPainter>
 
 #include <boost/circular_buffer.hpp>
 #include "messages/WorldInfo.pb.h"
@@ -37,21 +40,33 @@ public:
 	QString getHostId(){return hostId;}
 
 	void setCurrentWIM(WorldInfo nwim);
+	void setCurrentSWIM(SharedWorldInfo nswim);
 	void setCurrentGSM(GameStateMessage gsm);
 	void setcurrentOBSM(ObservationMessage obm);
 
 	void setGWSRobotVisible(bool visible){GWSRobotVisible = visible; setRobotVisible(visible);}
 	bool getGWSRobotVisible(){return GWSRobotVisible;}
+	void setLWSRobotVisible(bool visible){LWSRobotVisible = visible; setRobotVisible(visible);}
+	bool getLWSRobotVisible(){return LWSRobotVisible;}
+	void setLWSTeammatesVisible(bool visible){LWSTeammatesVisible = visible; setTeammatesVisible(visible);}
+	bool getLWSTeammatesVisible(){return LWSTeammatesVisible;}
 	void setRobotVisible(bool visible);
+	void setTeammateVisible(int idx, bool visible);
+	void setTeammatesVisible(bool visible);
 	void updateRobotRect();
+	void updateTeammatesRects();
 
 	void setGWSBallVisible(bool visible){GWSBallVisible = visible; setBallVisible(visible);}
 	bool getGWSBallVisible(){return GWSBallVisible;}
+	void setLWSBallVisible(bool visible){LWSBallVisible = visible; setBallVisible(visible);}
+	bool getLWSBallVisible(){return LWSBallVisible;}
 	void setBallVisible(bool visible);
 	void updateBallRect();
 
 	void setGWSUnionistLineVisible(bool visible){GWSUnionistLineVisible = visible; setUnionistLineVisible(visible);}
 	bool getGWSUnionistLineVisible(){return GWSUnionistLineVisible;}
+	void setLWSUnionistLineVisible(bool visible){LWSUnionistLineVisible = visible; setUnionistLineVisible(visible);}
+	bool getLWSUnionistLineVisible(){return LWSUnionistLineVisible;}
 	void setUnionistLineVisible(bool visible);
 	void updateUnionistLineRect();
 
@@ -101,8 +116,10 @@ public:
 	QTimer* getGREtimer(){return GREtimer;}
 	QTimer* getMWCmdTimer(){return MWCmdTimer;}
 
-private slots:
+public slots:
 	void clearVisionObservations();
+
+private slots:
 	void clearMotionWalkCommand();
 
 private:
@@ -115,17 +132,23 @@ private:
 	KFieldScene* parentScene;
 
 	QString hostId;
+	int teamColor;	//1 for blue, -1 for red
 
 	WorldInfo currentWIM;
+	SharedWorldInfo currentSWIM;
 
 	bool GWSRobotVisible;
-	QGraphicsEllipseItem* Robot;
-	QGraphicsLineItem* RobotDirection;
+	bool LWSRobotVisible, LWSTeammatesVisible;
+	static const int numOfRobots = 5;
+	QGraphicsEllipseItem* Robot, *Teammates[numOfRobots];
+	QGraphicsLineItem* RobotDirection, *TeammateDirections[numOfRobots];
 
 	bool GWSBallVisible;
+	bool LWSBallVisible;
 	QGraphicsEllipseItem* Ball;
 
 	bool GWSUnionistLineVisible;
+	bool LWSUnionistLineVisible;
 	QGraphicsLineItem* UnionistLine;
 
 	ObservationMessage currentObsm;
@@ -157,6 +180,7 @@ private:
 	QGraphicsLineItem* GotoPositionLine;
 	QGraphicsPolygonItem* GotoArrow;
 	QGraphicsEllipseItem* zAxisArc;
+	//QGraphicsPolygonItem* zAxisArcArrow;
 
 	QTimer* GREtimer;
 	QTimer* MWCmdTimer;

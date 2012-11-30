@@ -16,6 +16,7 @@ PROVIDER_REGISTER(ImageExtractor);
 void ImageExtractor::UserInit()
 {
 	imext.Init(&_blk);
+	firstRun = false;
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 }
 
@@ -24,46 +25,32 @@ void ImageExtractor::UserInit()
 int ImageExtractor::Execute()
 {
 	_blk.process_messages();
-	boost::shared_ptr<const KCalibrateCam> cal = _blk.readState<KCalibrateCam> ("vision");
 
-	if (cal.get() != NULL)
-	{
-		//		cout<<"=======Start calibration:"<<cal->status()<<endl;
-		if (cal->status() == 0)
-		{
-			//cout<<"Start calibration"<<endl;
-			KCalibrateCam res;
-			Logger::Instance().WriteMsg("ImageExtractor", "Start calibration", Logger::Info);
-			float scale = imext.calibrateCamera(cal->sleeptime(), cal->exp());
-			lastrefresh = boost::posix_time::microsec_clock::universal_time() - boost::posix_time::microseconds(camerarefreshmillisec + 10);
-			Logger::Instance().WriteMsg("ImageExtractor", "Calibration Done", Logger::Info);
-			//cout<<"Calibration Done!"<<endl;
-			res.set_status(1);
-			_blk.publishState(res, "vision");
-		}
+
+	if(!firstRun){
+		float scale = imext.calibrateCamera(1500, 13);
+		lastrefresh = boost::posix_time::microsec_clock::universal_time() - boost::posix_time::microseconds(camerarefreshmillisec + 10);
+		firstRun = true;
 	}
 
-	_blk.publish_all();
 	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
 	boost::posix_time::ptime  timestamp;
 
 	if(lastrefresh + boost::posix_time::millisec(camerarefreshmillisec) < now)
 	{
-		//cout<<"Refresh"<<endl;
 		imext.refreshValues();//Reload
 
-		if(imext.getCamera() != 1)
+		if(imext.currentCameraIsBottom() != 1)
 			imext.swapCamera();
 
 		outmsg.set_exposure_us(imext.getExpUs());
 
-		if(imext.getCamera() == 1)
+		if(imext.currentCameraIsBottom() == 1)
 			outmsg.set_active_camera(KRawImage::BOTTOM);
 		else
 			outmsg.set_active_camera(KRawImage::TOP);
 
 		outmsg.set_luminance_scale(imext.getScale());
-		//		cout<<"scale"<<imext.getScale()<<endl;
 		lastrefresh = now;
 	}
 
@@ -71,7 +58,7 @@ int ImageExtractor::Execute()
 	outmsg.set_width((imstore.width));
 	outmsg.set_height((imstore.height));
 	outmsg.set_bytes_per_pix(imstore.nChannels);
-
+	outmsg.set_luminance_scale(imext.getScale());
 	if(imstore.nChannels == 2)
 		outmsg.set_colorspace(KRawImage::YUYV);
 	else

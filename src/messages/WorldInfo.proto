@@ -10,6 +10,12 @@ message WorldInfo{
 
 message SharedWorldInfo{
 	required RobotPose playerClosestToBall = 1 ;
+	repeated TeammatePose teammatePosition = 2;
+}
+
+message TeammatePose{
+	required RobotPose pose = 1;
+	required uint32 robotId = 2;
 }
 
 message RobotPose{
@@ -40,8 +46,18 @@ message UnknownObjects{
 }
 
 message LocalizationResetMessage{
+	enum RESET{
+		UNIFORM=0;
+		READY=1;
+		SET=2;
+		PENALISED=3;
+		MANUAL=4; 
+	}
 	required int32 type = 1; // RoboCup GameController Data PLAYER_SET, PLAYER_READY, PLAYER_PENALISED
 	required bool kickOff = 2;
+	required float xPos = 3 [default = 0];
+	required float yPos = 4 [default = 0];
+	required float phiPos = 5 [default = 0];
 }
 
 message LocalizationData{

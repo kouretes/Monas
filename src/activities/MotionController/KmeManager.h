@@ -7,10 +7,6 @@
 #include "tools/logger.h"
 #include "tools/toString.h"
 
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
-
 
 class KmeManager
 {

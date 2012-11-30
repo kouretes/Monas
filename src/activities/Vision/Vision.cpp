@@ -4,12 +4,11 @@
 #include <cmath>
 #include "sys/stat.h"
 #include "tools/logger.h"
-#include "tools/XMLConfig.h"
 #include "tools/toString.h"
 #include "tools/KMat.h"
 #include "hal/syscall.h"
 #include <vector>
-//#include "messages/motion.pb.h"
+
 #include "hal/robot/generic_nao/robot_consts.h"
 
 #include <vector>
@@ -18,15 +17,79 @@
 
 #define trydelete(x) {if((x)!=NULL){delete (x);(x)=NULL;}}
 
-//using namespace AL;
 using namespace std;
-//using namespace boost::posix_time;
-
 
 ACTIVITY_REGISTER(Vision);
 
 ACTIVITY_START
 
+Vision::Vision(Blackboard &b, XmlManager &x) :
+	IActivity(b, x), vprof("Vision")
+{
+	;
+}
+
+void Vision::UserInit()
+{
+	kinext.Init();
+	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
+	//cout << "Vision():" ;//<< endl;
+	//rawImage = ext.allocateImage();
+	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
+	segbottom = NULL;
+	segtop = NULL;
+	Reset();
+}
+
+void Vision::Reset(){
+	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationBottom")).c_str());
+	if(segbottom != NULL){
+		delete segbottom;
+		segbottom = NULL;	
+	}
+	segbottom = new KSegmentator(*conffile);
+	conffile->close();
+	delete conffile;
+
+	if(_xml.findValueForKey("vision.SegmentationTop") == _xml.findValueForKey("vision.SegmentationBottom")) //Same file, do not load twice
+		segtop = segbottom;
+	else
+	{
+		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationTop")).c_str());
+		if(segtop != NULL){
+			delete segtop;
+			segtop = NULL;	
+		}
+		segtop = new KSegmentator(*conffile);
+		conffile->close();
+		delete conffile;
+	}
+
+	stamp = boost::posix_time::microsec_clock::universal_time();
+	seg = segbottom;
+	config.sensordelay =  atoi(_xml.findValueForKey("vision.sensordelay").c_str());
+	config.Dfov = atof(_xml.findValueForKey("vision.Dfov").c_str());
+	config.cameraGamma = atof(_xml.findValueForKey("vision.cameraGamma").c_str());
+	config.scanV = atoi(_xml.findValueForKey("vision.scanV").c_str());
+	config.scanH = atoi(_xml.findValueForKey("vision.scanH").c_str());
+	config.minH = atoi(_xml.findValueForKey("vision.minH").c_str());
+	config.bordersize =atoi( _xml.findValueForKey("vision.bordersize").c_str());
+	config.pixeltol = atoi(_xml.findValueForKey("vision.pixeltol").c_str());
+	config.subsampling = atoi(_xml.findValueForKey("vision.subsampling").c_str());
+	config.skipdistance = atof(_xml.findValueForKey("vision.skipdistance").c_str());
+	config.seedistance = atof(_xml.findValueForKey("vision.seedistance").c_str());
+	config.obstacledistance = atof(_xml.findValueForKey("vision.obstacledistance").c_str());
+	config.balltolerance = atof(_xml.findValueForKey("vision.balltolerance").c_str());
+	config.ballsize = atof(_xml.findValueForKey("vision.ballsize").c_str());
+	config.goalheight = atof(_xml.findValueForKey("vision.goalheight").c_str());
+	config.goaldist = atof(_xml.findValueForKey("vision.goaldist").c_str());
+	config.widthestimateotolerance = atof(_xml.findValueForKey("vision.widthestimateotolerance").c_str());
+	config.pitchoffset = atof(_xml.findValueForKey("vision.pitchoffset").c_str());
+	config.pixeltol = atof(_xml.findValueForKey("vision.pixeltol").c_str());
+	Logger::Instance().WriteMsg("Vision", "Reset done", Logger::Warning);
+}
 
 int  Vision::Execute()
 {
@@ -35,7 +98,7 @@ int  Vision::Execute()
 	{
 		fetchAndProcess();
 	}
-	catch(KMat::SingularMatrixInvertionException &e)
+	catch(KMath::KMat::SingularMatrixInvertionException &e)
 	{
 		Logger::Instance().WriteMsg("Vision", "Holy mother of jesus", Logger::Warning);
 		return 0;
@@ -47,21 +110,19 @@ int  Vision::Execute()
 	return 0;
 }
 
-
 void Vision::fetchAndProcess()
 {
 	leds.Clear();
 	obs.Clear();
-	//cout << "fetchImage" << endl;
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 	boost::posix_time::ptime oldstamp = stamp;
 	boost::shared_ptr<const KRawImage> img = _blk.readData<KRawImage> ("image", msgentry::HOST_ID_LOCAL_HOST, &stamp);
-
 	if(stamp <= oldstamp)
 		return ;
 
 	if(img.get() == 0)
 		return;
+//	cout << "haveimage" << endl;
 
 	//Remove constness, tricky stuff :/
 	rawImage.copyFrom(img->image_rawdata().data(),
@@ -75,7 +136,7 @@ void Vision::fetchAndProcess()
 	{
 		//Get Kinematics first!
 		std::vector<float> val = kinext.getKinematics("CameraBottom");
-		p.cameraPitch = (KMat::transformations::PI * 40.0) / 180.0;
+		p.cameraPitch = (KMath::KMat::transformations::PI * 40.0) / 180.0;
 		//cout<<"CameraPitch:"<<cameraPitch<<endl;
 		seg = segbottom;
 		p.cameraX = val[0];
@@ -94,11 +155,11 @@ void Vision::fetchAndProcess()
 	}
 
 	seg->setLumaScale(pow(img->luminance_scale(), config.cameraGamma) );
+	//std::cout<<img->luminance_scale()<<std::endl;
 	//cout<<"Attach to Image:"<<seg<<rawImage<<endl;
 	seg->attachToIplImage(rawImage);//Make segmentator aware of a new image
 	//saveFrame(rawImage);
 	//return;
-	//cout<<"Attached"<<endl;
 	asvmo = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timeo, &stamp, Blackboard::DATA_NEAREST_NOTNEWER);
 	asvmn = _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, &timen, &stamp, Blackboard::DATA_NEAREST_NOTOLDER);
 #ifdef DEBUGVISION
@@ -134,12 +195,12 @@ void Vision::fetchAndProcess()
 	//p.VangY = asvm->computeddata(KDeviceLists::ANGLE+KDeviceLists::AXIS_Y).sensorvaluediff();
 	//p.timediff = asvm->timediff();//Get time from headmessage
 #ifdef DEBUGVISION
-	cout << p.yaw << " " << p.pitch << " " << p.Vyaw << " "p.angX << " " << p.angY << imcomp << endl;
+	cout << p.yaw << " " << p.pitch << " " << p.angX << " " << p.angY << imcomp << endl;
 #endif
 	p.focallength = sqrt(sqrd(rawImage.width) + sqrd(rawImage.height) ) / (2 * tan(config.Dfov * TO_RAD / 2));
 	//Logger::Instance().WriteMsg("Vision", _toString("Focal Length ")+_toString(p.focallength), Logger::Error);
 	kinext.setPose(p);
-	KMat::transformations::makeRotation(simpleRot, -kinext.getRoll());
+	KMath::KMat::transformations::makeRotation(simpleRot, -kinext.getRoll());
 	//Now change y axis :)
 	simpleRot(0, 1) = -simpleRot(0, 1);
 	simpleRot(1, 1) = -simpleRot(1, 1);
@@ -326,74 +387,6 @@ void Vision::fetchAndProcess()
 	_blk.publishSignal(obs, "vision");
 }
 
-Vision::Vision(Blackboard &b, XmlNode &x) :
-	IActivity(b, x), xmlconfig(NULL), vprof("Vision")
-{
-	;
-}
-
-void Vision::UserInit()
-{
-	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/vision.xml");
-
-	if (xmlconfig->IsLoadedSuccessfully() == false)
-		Logger::Instance().WriteMsg("Vision", "vision.xml Not Found", Logger::FatalError);
-
-	kinext.Init();
-	//Logger::Instance().WriteMsg("Vision", "ext.allocateImage()", Logger::Info);
-	//cout << "Vision():" ;//<< endl;
-	//rawImage = ext.allocateImage();
-	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationBottom).c_str());
-	segbottom = new KSegmentator(*conffile);
-	conffile->close();
-	delete conffile;
-
-	if(config.SegmentationTop == config.SegmentationBottom) //Same file, do not load twice
-		segtop = segbottom;
-	else
-	{
-		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + config.SegmentationTop).c_str());
-		segtop = new KSegmentator(*conffile);
-		conffile->close();
-		delete conffile;
-	}
-
-	stamp = boost::posix_time::microsec_clock::universal_time();
-	seg = segbottom;
-	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
-}
-
-void Vision::loadXMLConfig(std::string fname)
-{
-	trydelete(xmlconfig);
-	xmlconfig = new XMLConfig(fname);//ArchConfig::Instance().GetConfigPrefix()+"/vision.xml");
-	xmlconfig->QueryElement("SegmentationBottom", config.SegmentationBottom);
-	xmlconfig->QueryElement("SegmentationTop", config.SegmentationTop);
-	xmlconfig->QueryElement("sensordelay", config.sensordelay);
-	xmlconfig->QueryElement("Dfov", config.Dfov);
-	xmlconfig->QueryElement("cameraGamma", config.cameraGamma);
-	//xmlconfig->QueryElement("scanstep",config.scanstep);
-	xmlconfig->QueryElement("scanV", config.scanV);
-	xmlconfig->QueryElement("scanH", config.scanH);
-	xmlconfig->QueryElement("minH", config.minH);
-	xmlconfig->QueryElement("skipdistance", config.skipdistance);
-	xmlconfig->QueryElement("bordersize", config.bordersize);
-	xmlconfig->QueryElement("subsampling", config.subsampling);
-	xmlconfig->QueryElement("seedistance", config.seedistance);
-	xmlconfig->QueryElement("obstacledistance", config.obstacledistance);
-	xmlconfig->QueryElement("balltolerance", config.balltolerance);
-	xmlconfig->QueryElement("ballsize", config.ballsize);
-	xmlconfig->QueryElement("pixeltol", config.pixeltol);
-	xmlconfig->QueryElement("goalheight", config.goalheight);
-	xmlconfig->QueryElement("goaldist", config.goaldist);
-	xmlconfig->QueryElement("goaldiam", config.goaldiam);
-	xmlconfig->QueryElement("goalslopetolerance", config.goalslopetolerance);
-	xmlconfig->QueryElement("widthestimateotolerance", config.widthestimateotolerance);
-	xmlconfig->QueryElement("pitchoffset", config.pitchoffset);
-}
-
 void Vision::publishObstacles(std::vector<KVecInt2> points) const
 {
 	static int period = 0;
@@ -444,9 +437,6 @@ KVecFloat2 Vision::simpleRotation(KVecInt2 const& i) const
 {
 	return simpleRot.slow_mult(KVecFloat2(i.x, i.y));
 }
-
-
-
 
 KVecFloat2 Vision::imageToCamera( KVecFloat2 const & imagep) const
 {

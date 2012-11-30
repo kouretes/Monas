@@ -8,10 +8,10 @@ Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, Narukom& c
 	_executions(0)
 {
 #ifdef RUN_ON_NAO
-	_xml = XmlNode(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
-	               , KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID));
+	_xml = XmlManager(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
+	               , KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID), false);
 #else
-	_xml = XmlNode(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi");
+	_xml = XmlManager(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi", false);
 #endif
 	_blk.attachTo(*com.get_message_queue());
 
@@ -21,6 +21,8 @@ Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, Narukom& c
 
 	for ( ActivList::iterator it = _activities.begin(); it != _activities.end(); ++it )
 		(*it)->UserInit();
+	
+	_blk.updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC);
 };
 
 Agent::~Agent ()
@@ -36,7 +38,32 @@ int Agent:: Execute ()
 	_executions++;
 	agentStats.StartAgentTiming();
 	_blk.process_messages();
-
+	
+	umsg = _blk.readSignal<UpdateMessage> ("external");
+	rmsg = _blk.readSignal<ResetMessage> ("external");
+	
+	if(umsg != 0){
+		std::vector<std::pair<std::string,std::string> > dataForWrite;
+		for(int i=0; i < umsg->updatexml_size(); i++){
+			std::pair<std::string,std::string> temp;
+			temp.first = umsg->updatexml(i).keyword();
+			temp.second = umsg->updatexml(i).value();
+			dataForWrite.push_back(temp);
+		}
+		_xml.burstWrite(dataForWrite);
+	}
+	if(rmsg != 0){
+		for ( ActivList::iterator it = _activities.begin(); it != _activities.end(); it++ )
+		{
+			std::string activityName = (*it)->GetName();
+			for(int i=0; i < rmsg->resetactivities_size(); i++){
+				if(activityName.compare(rmsg->resetactivities(i)) == 0){
+					(*it)->Reset();
+					break;
+				}
+			}
+		}
+	}
 	for ( ActivList::iterator it = _activities.begin(); it != _activities.end(); it++ )
 	{
 		agentStats.StartActivityTiming(*it);

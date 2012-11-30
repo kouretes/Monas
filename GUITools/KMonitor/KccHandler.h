@@ -16,7 +16,7 @@
 #include <QString>
 #include <fstream>
 #include "KccLabel.h"
-#include "LWRemoteHosts.h"
+#include "HostsComboBox.h"
 #include "messages/Kimage.pb.h"
 #include "activities/Vision/KSegmentator.h"
 using namespace std;
@@ -60,13 +60,13 @@ private:
 signals:
 	void NewHostAdded(QString,QString);
 	void OldHostRemoved(QString);
-	void GameStateMsgUpdate(QIcon,QString,QString);
+	void GameStateMsgUpdate(QString,QString,QString);
 	void LWRHSubscriptionRequest(QString);
 	void LWRHUnsubscriptionRequest(QString);
 public slots:
 	void addComboBoxItem(QString, QString);
 	void removeComboBoxItem(QString);
-	void setLWRHGameStateInfo(QIcon, QString, QString);
+	void setLWRHGameStateInfo(QString, QString, QString);
 	void SubscriptionHandler(QString);
 	void UnsubscriptionHandler(QString);
     void clickedImage(QMouseEvent* ev);
@@ -106,8 +106,10 @@ private:
 	vector<map<QYuv,unsigned char> > undoVector;
 	bool takeSnapshot;
     KccLabel* realImL,* segImL;
-    LWRemoteHosts* availableKCCHosts;
+    HostsComboBox* availableKCCHosts;
 	QScrollArea *scrollImage,*scrollSeg;
+	
+	QString colortablesPath;
 
 	double rScale,iScale;
 	double zoomInScale,zoomOutScale;

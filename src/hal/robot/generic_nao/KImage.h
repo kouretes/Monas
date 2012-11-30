@@ -3,6 +3,7 @@
 #include <string.h>
 #include <cmath>
 
+/*
 class KImageDeepCopy
 {
 public:
@@ -31,14 +32,28 @@ public:
 			imageData = (char *)new  long long [(int)ceil(((float)w * h * c) / (sizeof(long long)) )]; //Make allingment as good as possible
 		}
 
+
 		width = w;
 		height = h;
 		nChannels = c;
+		//imageData=(char *)data;
 		//imageData=( char *)data;
-		memcpy(imageData, data, height * width * nChannels);
+		for(int i=0;i<height;i++)
+		{
+			for(int j=0;j<width*nChannels/32;j++)
+			{
+				__builtin_prefetch(((char *)data)+i*width*nChannels+(j+2)*32);
+				//sleep(0);
+				memcpy(imageData+i*width*nChannels+j*32, ((char *)data)+i*width*nChannels+j*32, 32);
+			}
+//			sleep(0);
+		usleep(1);
+		}
+
+
 	}
 };
-
+*/
 
 
 class KImageConst

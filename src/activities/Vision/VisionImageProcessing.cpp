@@ -18,6 +18,7 @@ ACTIVITY_START
 
 
 using namespace std;
+using namespace KMath;
 inline measurement mWeightedMean(measurement m1, measurement m2)
 {
 	measurement res;
@@ -920,8 +921,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 		if(colorIsA(c, yellow))
 			name = "Yellow";
-		else
-			name = "Skyblue";
 
 		if(d1.leftOrRight == 1)
 			name += "Right";
@@ -989,8 +988,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 	if(colorIsA(c, yellow))
 		name = "Yellow";
-	else
-		name = "Skyblue";
 
 	name += "Left";
 	o->set_object_name(name);
@@ -1003,8 +1000,6 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	//name;
 	if(colorIsA(c, yellow))
 		name = "Yellow";
-	else
-		name = "Skyblue";
 
 	name += "Right";
 	o->set_object_name(name);
@@ -1394,7 +1389,7 @@ std:
 		//rest= rest*(0.5-w)/w + (config.ballsize/2.0*(w-0.5))/w;
 		if (abs( (rest * 2 - config.ballsize) / config.ballsize) > config.balltolerance) //Wrong diameter ball
 		{
-			Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed rest = " + _toString(rest), Logger::Info);
+			//Logger::Instance().WriteMsg("Vision", "Ball size estimation check failed rest = " + _toString(rest), Logger::Info);
 			banlist.push_back(newdata);
 			continue;
 		}

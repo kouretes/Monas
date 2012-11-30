@@ -1,0 +1,88 @@
+message XmlUpdate{
+	required string keyword = 1;
+	required string value = 2;
+}
+
+message HandShake{
+	required string headId = 1;
+	required string bodyId = 2;
+	required uint32 checksum = 3;
+}
+
+message FileTransfer{
+	required bytes file = 1;
+	required string filepath = 2;
+}
+
+message ExternalConfig{
+	required string messageid = 1;
+	required uint32 targethost = 2;
+	repeated XmlUpdate updateXml = 3;
+	repeated string resetActivities = 4;
+	optional FileTransfer file = 5;
+	required bool handOffRequest = 6;
+}
+
+message ExternalCommand{
+	enum SIMPLE_ACTIONS{
+		SHUTDOWN = 0;
+		STIFFNESS_OFF = 1;
+		STOP_ROBOT = 2;
+		SIT = 3;
+		SIMPLE_ACTIONS_SIZE = 4;
+	}
+	
+	enum GAMECONTROLLER{
+		INITIAL = 0;
+		READY = 1;
+		SET = 2;
+		PLAY = 3;
+		PENALISED = 4;
+		FINISH = 5;
+		OVERRIDE = 6;
+		GAMECONTROLLER_SIZE = 7;
+	}
+	
+	enum LOCALIZATION{
+		INIT_PARTICLES = 0;
+		LOCALIZATION_SIZE = 1;
+	}
+	
+	enum MOTION{
+		EXECUTE_ACTION = 0;
+		SET_STIFFNESS = 1;
+		MOTION_SIZE = 2;
+	}
+	
+	enum HEAD{
+		NOTHING = 0;
+		LOOK_DOWN = 1;
+		SCAN_AND_TRACK = 2;
+		LOCALIZE = 3;
+		LOCALIZE_FAR = 4;
+		SMART_SCAN = 5;
+		HEAD_SIZE = 6;
+	}
+
+	required string messageid = 1;
+	required uint32 targethost = 2;
+	required uint32 commandID = 3;
+	repeated float floatvars = 4;
+	optional string stringvars = 5;
+}
+
+message GenericACK{
+	required uint32 hostid = 1;
+	required string messageid = 2;
+	optional HandShake handshaking = 3;
+	required bool ownlock = 4;
+}
+
+message ResetMessage{
+	repeated string resetActivities = 1;
+}
+
+message UpdateMessage{
+	repeated XmlUpdate updateXml = 1;
+}
+

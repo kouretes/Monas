@@ -1,0 +1,26 @@
+#astyle options file
+#run astyle --options=astyleOptions your/path/to/code.cpp
+#Allman style formatting/indenting uses broken brackets.
+-A2
+#Indent using 4 tab characters.
+-t4
+#Add extra indentation to labels so they appear 1 indent less than the current indentation, rather than being flushed to the left (the default).
+-L
+#ndent multi-line preprocessor definitions ending with a backslash. Does a pretty good job, but cannot perform MIRACLES in obfuscated preprocessor definitions.
+-w
+#Indent C++ comments beginning in column one.
+-Y
+#Set the  maximum of # spaces to indent a continuation line.
+-M20
+#Pad empty lines around header blocks (e.g. 'if', 'for', 'while'...).
+-f
+#Insert space padding around operators. 
+-p
+#Delete empty lines within a function or method.
+-xd
+#Add brackets to unbracketed one line conditional statements (e.g. 'if', 'for', 'while'...).
+-j
+#Attach a pointer or reference operator (* or &) to variable name (right)
+-k3
+#Dont create orig file
+-n

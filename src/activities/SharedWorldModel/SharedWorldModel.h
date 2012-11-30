@@ -4,9 +4,8 @@
 #include "architecture/executables/IActivity.h"
 
 #include "messages/WorldInfo.pb.h"
+#include "messages/Gamecontroller.pb.h"
 #include "messages/Network.pb.h"
-
-#define numOfRobots 5
 
 ACTIVITY_START
 
@@ -19,18 +18,20 @@ public:
 	{
 		return "SharedWorldModel";
 	}
-	void ACTIVITY_VISIBLE  UserInit();
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	void ACTIVITY_VISIBLE UserInit();
+	void ACTIVITY_VISIBLE Reset();
 	boost::shared_ptr<const WorldInfo>  wim;
+	boost::shared_ptr<const GameStateMessage>  gsm;
 	boost::shared_ptr<const KnownHosts> h;
-
+	static const int numOfRobots = 5;
 private:
 	int findClosestRobot();
 
 	SharedWorldInfo swi;
 
 	int idx, count;
-	float robot_x[numOfRobots], robot_y[numOfRobots], bd[numOfRobots];
+	float robot_x[numOfRobots], robot_y[numOfRobots], robot_phi[numOfRobots], bd[numOfRobots];
 	float bx, by;
 
 };

@@ -1,2 +1,0 @@
-- Define the WEBOTS variable appropriatelly in the motion_controller.h file
-- Comment out the commands() function in run() to disable test commands

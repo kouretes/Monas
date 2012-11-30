@@ -6,6 +6,7 @@ add_library ( NaoQiDep  ${LibBuildType}
                         earLed.cpp
                         HeadAngleSensor.cpp
                         KImageExtractor.cpp
+			NaoCamera.cpp
 )
 
 qi_use_lib( NaoQiDep ALCOMMON BOOST)

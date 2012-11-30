@@ -12,20 +12,23 @@ using boost::posix_time::milliseconds;
 
 
 ACTIVITY_REGISTER(RobotController);
-RobotController::RobotController(Blackboard &b, XmlNode &x) : IActivity(b, x) , gm(game_data) //Initialize game controller with message pointer
+RobotController::RobotController(Blackboard &b, XmlManager &x) : IActivity(b, x) , gm(game_data) //Initialize game controller with message pointer
 {
 }
 
 void RobotController::UserInit()
 {
 	//"Initialize Robot controller"
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
+	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/teamConfig.xml");
 	gm.connectTo(conf.port(), conf.team_number());
 	gm.setNonBlock(true);
 	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.publishState(gm_state, "worldstate");
 	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);
 	lastalive = boost::posix_time::microsec_clock::universal_time();
+}
+
+void RobotController::Reset(){
 }
 
 int RobotController::Execute()
@@ -40,7 +43,13 @@ int RobotController::Execute()
 		gm.SendAlive(conf.player_number() );
 		lastalive = now + milliseconds(ALIVEMS);
 	}
-
+	
+	//Check if the msg changes from the outer world
+	gsm = _blk.readState<GameStateMessage> ("worldstate");
+	if(gsm != 0){
+		gm_state.CopyFrom(*gsm);
+	}
+	
 	if (received && gm_state.override_state() == OVERRIDE_DISABLED)
 	{
 		//teams[0] one team

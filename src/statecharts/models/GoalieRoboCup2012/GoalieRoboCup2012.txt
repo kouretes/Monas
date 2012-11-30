@@ -1,6 +1,0 @@
-GoalieRoboCup2012
-Goalie = (NonPlaying | Playing)+
-NonPlaying = NoPLay.[GoToPosition+]
-Playing = [Localize+].[GoToPosition+].MakeAction
-MakeAction =Scan+ | ApproachBall+ | Kick + | FollowBall
-FollowBall = Stare+.[SpecialAction]

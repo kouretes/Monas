@@ -9,10 +9,6 @@
 #include "config.h"
 #include "architecture/archConfig.h"
 
-#ifdef DLIB_FUNCTIONALITY
-#include "hal/dlib_fnc.h"
-#endif // DLIB_FUNCTIONALITY
-
 #include "activities/activityRegistry.h"
 #include "providers/providerRegistry.h"
 
@@ -39,48 +35,46 @@ Talws::Talws ()
 
 	for ( NodeCont::iterator it = AgentNodes.begin(); it != AgentNodes.end(); it++ )
 	{
-		NodeCont AgentNameNode = AgentXmlFile.QueryElement<std::string, float, std::string>("name", &(*it) );
-		std::string AgentName = AgentNameNode[0].value;
-		NodeCont ActivityNodes = AgentXmlFile.QueryElement<std::string, float, std::string>("activity", &(*it) );
-		std::vector<std::string> activities;
+		if(it->attrb["Enable"] == 1){
+			NodeCont AgentNameNode = AgentXmlFile.QueryElement<std::string, float, std::string>("name", &(*it) );
+			std::string AgentName = AgentNameNode[0].value;
+			NodeCont ActivityNodes = AgentXmlFile.QueryElement<std::string, float, std::string>("activity", &(*it) );
+			std::vector<std::string> activities;
 
-		for ( unsigned int i = 0; i < ActivityNodes.size(); i++ )
-		{
-#ifdef DLIB_FUNCTIONALITY
-			void* dlib_handler = DLibFnc::_open( ("lib" + ActivityNodes[i].value + ".so").c_str());
-
-			if ( ! dlib_handler )
-			{
-				Logger::Instance().WriteMsg("Talws", DLibFnc::_error(), Logger::Info );
+			for ( unsigned int i = 0; i < ActivityNodes.size(); i++ )
+			{	
+				if(ActivityNodes[i].attrb["Enable"] == 1){
+					activities.push_back( ActivityNodes[i].value );
+					Logger::Instance().WriteMsg("Talws", "Agent: " + AgentName + " Registering module: " + activities.back(), Logger::ExtraInfo );
+				}				
 			}
 
-#endif //DLIB_FUNCTIONALITY
-			activities.push_back( ActivityNodes[i].value );
-			Logger::Instance().WriteMsg("Talws", "Agent: " + AgentName + " Registering module: " + activities[i], Logger::ExtraInfo );
+			KSystem::ThreadConfig tcfg;
+			tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
+			tcfg.Priority = it->attrb["Priority"];
+			tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
+			int StatsCycle = it->attrb["StatsCycle"];
+			Agent *a = new Agent(AgentName, tcfg, StatsCycle, com, activities);
+			Agents.push_back( a );
+			std::ostringstream AgentInfo;
+			AgentInfo << AgentName
+				      << " Attrb: IsRealTime=" << (it->attrb["IsRealTime"])
+				      << " Priority=" << (it->attrb["Priority"])
+				      << " ThreadFrequency=" << (it->attrb["ThreadFrequency"])
+				      << " StatsCycle=" << (it->attrb["StatsCycle"]) << std::endl;
+			Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
 		}
-
-		KSystem::ThreadConfig tcfg;
-		tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
-		tcfg.Priority = it->attrb["Priority"];
-		tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
-		int StatsCycle = it->attrb["StatsCycle"];
-		Agent *a = new Agent(AgentName, tcfg, StatsCycle, com, activities);
-		Agents.push_back( a );
-		std::ostringstream AgentInfo;
-		AgentInfo << AgentName
-		          << " Attrb: IsRealTime=" << (it->attrb["IsRealTime"])
-		          << " Priority=" << (it->attrb["Priority"])
-		          << " ThreadFrequency=" << (it->attrb["ThreadFrequency"])
-		          << " StatsCycle=" << (it->attrb["StatsCycle"]) << std::endl;
-		Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
 	}
 
 	//======================= Start StateCharts  ===================================
 	NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
 	Logger::Instance().WriteMsg("Talws", "Found " + _toString(StatechartNodes.size()) + " statechart plan(s)", Logger::Info );
 
-	for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ )
-		StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
+	for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ ){
+		if(it->attrb["Enable"] == 1){
+			StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
+		}
+	}
 
 	//======================= Start Providers  ===================================
 	NodeCont ProviderNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "provider" );
@@ -88,11 +82,13 @@ Talws::Talws ()
 
 	for ( NodeCont::iterator it = ProviderNodes.begin(); it != ProviderNodes.end(); it++ )
 	{
-		KSystem::ThreadConfig tcfg;
-		tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
-		tcfg.Priority = it->attrb["Priority"];
-		tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
-		Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value ,  tcfg, com ) );
+		if(it->attrb["Enable"] == 1){
+			KSystem::ThreadConfig tcfg;
+			tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
+			tcfg.Priority = it->attrb["Priority"];
+			tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
+			Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value ,  tcfg, com ) );
+		}
 	}
 }
 

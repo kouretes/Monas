@@ -51,7 +51,7 @@ private:
 
 	AL::DCMProxy *dcm;
 	boost::shared_ptr<AL::ALMotionProxy> motion;
-	Kalman1D<float> angle[2];
+	KMath::Kalman1D<float> angle[2];
 	AL::ALValue commands;//,stiffnessCommand;
 	//	boost::shared_ptr<AL::ALMemoryFastAccess> MemoryFastAccess;
 

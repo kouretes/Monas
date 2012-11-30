@@ -1,5 +1,5 @@
-#ifndef SENSORS_H
-#define SENSORS_H
+#ifndef IMAGEEXTR_H
+#define IMAGEEXTR_H
 
 #include <vector>
 #include <map>
@@ -39,10 +39,11 @@ public:
 	{
 	}
 private:
+	bool firstRun;
 	Blackboard _blk;
 	KImageExtractor imext;
 	KSystem::smart_timer t;
-	KImageDeepCopy imstore;
+	KImageConst imstore;
 	KRawImage outmsg;
 	boost::posix_time::ptime lastrefresh;
 

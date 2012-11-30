@@ -33,6 +33,7 @@ void protobuf_ShutdownFile_WorldInfo_2eproto();
 
 class WorldInfo;
 class SharedWorldInfo;
+class TeammatePose;
 class RobotPose;
 class Ball;
 class UnknownObjects;
@@ -41,1064 +42,1186 @@ class LocalizationData;
 class header;
 class LocalizationDataForGUI;
 
+enum LocalizationResetMessage_RESET {
+  LocalizationResetMessage_RESET_UNIFORM = 0,
+  LocalizationResetMessage_RESET_READY = 1,
+  LocalizationResetMessage_RESET_SET = 2,
+  LocalizationResetMessage_RESET_PENALISED = 3,
+  LocalizationResetMessage_RESET_MANUAL = 4
+};
+bool LocalizationResetMessage_RESET_IsValid(int value);
+const LocalizationResetMessage_RESET LocalizationResetMessage_RESET_RESET_MIN = LocalizationResetMessage_RESET_UNIFORM;
+const LocalizationResetMessage_RESET LocalizationResetMessage_RESET_RESET_MAX = LocalizationResetMessage_RESET_MANUAL;
+const int LocalizationResetMessage_RESET_RESET_ARRAYSIZE = LocalizationResetMessage_RESET_RESET_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_RESET_descriptor();
+inline const ::std::string& LocalizationResetMessage_RESET_Name(LocalizationResetMessage_RESET value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    LocalizationResetMessage_RESET_descriptor(), value);
+}
+inline bool LocalizationResetMessage_RESET_Parse(
+    const ::std::string& name, LocalizationResetMessage_RESET* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<LocalizationResetMessage_RESET>(
+    LocalizationResetMessage_RESET_descriptor(), name, value);
+}
 // ===================================================================
 
-class WorldInfo : public ::google::protobuf::Message
-{
-public:
-	WorldInfo();
-	virtual ~WorldInfo();
-
-	WorldInfo(const WorldInfo& from);
-
-	inline WorldInfo& operator=(const WorldInfo& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const WorldInfo& default_instance();
-
-	void Swap(WorldInfo* other);
-
-	// implements Message ----------------------------------------------
-
-	WorldInfo* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const WorldInfo& from);
-	void MergeFrom(const WorldInfo& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// required .RobotPose myPosition = 1;
-	inline bool has_myposition() const;
-	inline void clear_myposition();
-	static const int kMyPositionFieldNumber = 1;
-	inline const ::RobotPose& myposition() const;
-	inline ::RobotPose* mutable_myposition();
-	inline ::RobotPose* release_myposition();
-
-	// repeated .Ball Balls = 2;
-	inline int balls_size() const;
-	inline void clear_balls();
-	static const int kBallsFieldNumber = 2;
-	inline const ::Ball& balls(int index) const;
-	inline ::Ball* mutable_balls(int index);
-	inline ::Ball* add_balls();
-	inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
-	balls() const;
-	inline ::google::protobuf::RepeatedPtrField< ::Ball >*
-	mutable_balls();
-
-	// repeated .RobotPose OtherRobots = 3;
-	inline int otherrobots_size() const;
-	inline void clear_otherrobots();
-	static const int kOtherRobotsFieldNumber = 3;
-	inline const ::RobotPose& otherrobots(int index) const;
-	inline ::RobotPose* mutable_otherrobots(int index);
-	inline ::RobotPose* add_otherrobots();
-	inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-	otherrobots() const;
-	inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-	mutable_otherrobots();
-
-	// repeated .UnknownObjects UFOs = 4;
-	inline int ufos_size() const;
-	inline void clear_ufos();
-	static const int kUFOsFieldNumber = 4;
-	inline const ::UnknownObjects& ufos(int index) const;
-	inline ::UnknownObjects* mutable_ufos(int index);
-	inline ::UnknownObjects* add_ufos();
-	inline const ::google::protobuf::RepeatedPtrField< ::UnknownObjects >&
-	ufos() const;
-	inline ::google::protobuf::RepeatedPtrField< ::UnknownObjects >*
-	mutable_ufos();
-
-	// repeated .Ball GlobBalls = 5;
-	inline int globballs_size() const;
-	inline void clear_globballs();
-	static const int kGlobBallsFieldNumber = 5;
-	inline const ::Ball& globballs(int index) const;
-	inline ::Ball* mutable_globballs(int index);
-	inline ::Ball* add_globballs();
-	inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
-	globballs() const;
-	inline ::google::protobuf::RepeatedPtrField< ::Ball >*
-	mutable_globballs();
-
-	// @@protoc_insertion_point(class_scope:WorldInfo)
-private:
-	inline void set_has_myposition();
-	inline void clear_has_myposition();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	::RobotPose* myposition_;
-	::google::protobuf::RepeatedPtrField< ::Ball > balls_;
-	::google::protobuf::RepeatedPtrField< ::RobotPose > otherrobots_;
-	::google::protobuf::RepeatedPtrField< ::UnknownObjects > ufos_;
-	::google::protobuf::RepeatedPtrField< ::Ball > globballs_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static WorldInfo* default_instance_;
+class WorldInfo : public ::google::protobuf::Message {
+ public:
+  WorldInfo();
+  virtual ~WorldInfo();
+  
+  WorldInfo(const WorldInfo& from);
+  
+  inline WorldInfo& operator=(const WorldInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const WorldInfo& default_instance();
+  
+  void Swap(WorldInfo* other);
+  
+  // implements Message ----------------------------------------------
+  
+  WorldInfo* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const WorldInfo& from);
+  void MergeFrom(const WorldInfo& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .RobotPose myPosition = 1;
+  inline bool has_myposition() const;
+  inline void clear_myposition();
+  static const int kMyPositionFieldNumber = 1;
+  inline const ::RobotPose& myposition() const;
+  inline ::RobotPose* mutable_myposition();
+  inline ::RobotPose* release_myposition();
+  
+  // repeated .Ball Balls = 2;
+  inline int balls_size() const;
+  inline void clear_balls();
+  static const int kBallsFieldNumber = 2;
+  inline const ::Ball& balls(int index) const;
+  inline ::Ball* mutable_balls(int index);
+  inline ::Ball* add_balls();
+  inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
+      balls() const;
+  inline ::google::protobuf::RepeatedPtrField< ::Ball >*
+      mutable_balls();
+  
+  // repeated .RobotPose OtherRobots = 3;
+  inline int otherrobots_size() const;
+  inline void clear_otherrobots();
+  static const int kOtherRobotsFieldNumber = 3;
+  inline const ::RobotPose& otherrobots(int index) const;
+  inline ::RobotPose* mutable_otherrobots(int index);
+  inline ::RobotPose* add_otherrobots();
+  inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
+      otherrobots() const;
+  inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
+      mutable_otherrobots();
+  
+  // repeated .UnknownObjects UFOs = 4;
+  inline int ufos_size() const;
+  inline void clear_ufos();
+  static const int kUFOsFieldNumber = 4;
+  inline const ::UnknownObjects& ufos(int index) const;
+  inline ::UnknownObjects* mutable_ufos(int index);
+  inline ::UnknownObjects* add_ufos();
+  inline const ::google::protobuf::RepeatedPtrField< ::UnknownObjects >&
+      ufos() const;
+  inline ::google::protobuf::RepeatedPtrField< ::UnknownObjects >*
+      mutable_ufos();
+  
+  // repeated .Ball GlobBalls = 5;
+  inline int globballs_size() const;
+  inline void clear_globballs();
+  static const int kGlobBallsFieldNumber = 5;
+  inline const ::Ball& globballs(int index) const;
+  inline ::Ball* mutable_globballs(int index);
+  inline ::Ball* add_globballs();
+  inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
+      globballs() const;
+  inline ::google::protobuf::RepeatedPtrField< ::Ball >*
+      mutable_globballs();
+  
+  // @@protoc_insertion_point(class_scope:WorldInfo)
+ private:
+  inline void set_has_myposition();
+  inline void clear_has_myposition();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::RobotPose* myposition_;
+  ::google::protobuf::RepeatedPtrField< ::Ball > balls_;
+  ::google::protobuf::RepeatedPtrField< ::RobotPose > otherrobots_;
+  ::google::protobuf::RepeatedPtrField< ::UnknownObjects > ufos_;
+  ::google::protobuf::RepeatedPtrField< ::Ball > globballs_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static WorldInfo* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class SharedWorldInfo : public ::google::protobuf::Message
-{
-public:
-	SharedWorldInfo();
-	virtual ~SharedWorldInfo();
-
-	SharedWorldInfo(const SharedWorldInfo& from);
-
-	inline SharedWorldInfo& operator=(const SharedWorldInfo& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const SharedWorldInfo& default_instance();
-
-	void Swap(SharedWorldInfo* other);
-
-	// implements Message ----------------------------------------------
-
-	SharedWorldInfo* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const SharedWorldInfo& from);
-	void MergeFrom(const SharedWorldInfo& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// required .RobotPose playerClosestToBall = 1;
-	inline bool has_playerclosesttoball() const;
-	inline void clear_playerclosesttoball();
-	static const int kPlayerClosestToBallFieldNumber = 1;
-	inline const ::RobotPose& playerclosesttoball() const;
-	inline ::RobotPose* mutable_playerclosesttoball();
-	inline ::RobotPose* release_playerclosesttoball();
-
-	// @@protoc_insertion_point(class_scope:SharedWorldInfo)
-private:
-	inline void set_has_playerclosesttoball();
-	inline void clear_has_playerclosesttoball();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	::RobotPose* playerclosesttoball_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static SharedWorldInfo* default_instance_;
+class SharedWorldInfo : public ::google::protobuf::Message {
+ public:
+  SharedWorldInfo();
+  virtual ~SharedWorldInfo();
+  
+  SharedWorldInfo(const SharedWorldInfo& from);
+  
+  inline SharedWorldInfo& operator=(const SharedWorldInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SharedWorldInfo& default_instance();
+  
+  void Swap(SharedWorldInfo* other);
+  
+  // implements Message ----------------------------------------------
+  
+  SharedWorldInfo* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const SharedWorldInfo& from);
+  void MergeFrom(const SharedWorldInfo& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .RobotPose playerClosestToBall = 1;
+  inline bool has_playerclosesttoball() const;
+  inline void clear_playerclosesttoball();
+  static const int kPlayerClosestToBallFieldNumber = 1;
+  inline const ::RobotPose& playerclosesttoball() const;
+  inline ::RobotPose* mutable_playerclosesttoball();
+  inline ::RobotPose* release_playerclosesttoball();
+  
+  // repeated .TeammatePose teammatePosition = 2;
+  inline int teammateposition_size() const;
+  inline void clear_teammateposition();
+  static const int kTeammatePositionFieldNumber = 2;
+  inline const ::TeammatePose& teammateposition(int index) const;
+  inline ::TeammatePose* mutable_teammateposition(int index);
+  inline ::TeammatePose* add_teammateposition();
+  inline const ::google::protobuf::RepeatedPtrField< ::TeammatePose >&
+      teammateposition() const;
+  inline ::google::protobuf::RepeatedPtrField< ::TeammatePose >*
+      mutable_teammateposition();
+  
+  // @@protoc_insertion_point(class_scope:SharedWorldInfo)
+ private:
+  inline void set_has_playerclosesttoball();
+  inline void clear_has_playerclosesttoball();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::RobotPose* playerclosesttoball_;
+  ::google::protobuf::RepeatedPtrField< ::TeammatePose > teammateposition_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static SharedWorldInfo* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class RobotPose : public ::google::protobuf::Message
-{
-public:
-	RobotPose();
-	virtual ~RobotPose();
-
-	RobotPose(const RobotPose& from);
-
-	inline RobotPose& operator=(const RobotPose& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const RobotPose& default_instance();
-
-	void Swap(RobotPose* other);
-
-	// implements Message ----------------------------------------------
-
-	RobotPose* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const RobotPose& from);
-	void MergeFrom(const RobotPose& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// required float X = 1 [default = -100000];
-	inline bool has_x() const;
-	inline void clear_x();
-	static const int kXFieldNumber = 1;
-	inline float x() const;
-	inline void set_x(float value);
-
-	// required float Y = 2 [default = -100000];
-	inline bool has_y() const;
-	inline void clear_y();
-	static const int kYFieldNumber = 2;
-	inline float y() const;
-	inline void set_y(float value);
-
-	// required float phi = 3 [default = -100000];
-	inline bool has_phi() const;
-	inline void clear_phi();
-	static const int kPhiFieldNumber = 3;
-	inline float phi() const;
-	inline void set_phi(float value);
-
-	// required float confidence = 4 [default = -100000];
-	inline bool has_confidence() const;
-	inline void clear_confidence();
-	static const int kConfidenceFieldNumber = 4;
-	inline float confidence() const;
-	inline void set_confidence(float value);
-
-	// @@protoc_insertion_point(class_scope:RobotPose)
-private:
-	inline void set_has_x();
-	inline void clear_has_x();
-	inline void set_has_y();
-	inline void clear_has_y();
-	inline void set_has_phi();
-	inline void clear_has_phi();
-	inline void set_has_confidence();
-	inline void clear_has_confidence();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	float x_;
-	float y_;
-	float phi_;
-	float confidence_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static RobotPose* default_instance_;
+class TeammatePose : public ::google::protobuf::Message {
+ public:
+  TeammatePose();
+  virtual ~TeammatePose();
+  
+  TeammatePose(const TeammatePose& from);
+  
+  inline TeammatePose& operator=(const TeammatePose& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TeammatePose& default_instance();
+  
+  void Swap(TeammatePose* other);
+  
+  // implements Message ----------------------------------------------
+  
+  TeammatePose* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const TeammatePose& from);
+  void MergeFrom(const TeammatePose& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .RobotPose pose = 1;
+  inline bool has_pose() const;
+  inline void clear_pose();
+  static const int kPoseFieldNumber = 1;
+  inline const ::RobotPose& pose() const;
+  inline ::RobotPose* mutable_pose();
+  inline ::RobotPose* release_pose();
+  
+  // required uint32 robotId = 2;
+  inline bool has_robotid() const;
+  inline void clear_robotid();
+  static const int kRobotIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 robotid() const;
+  inline void set_robotid(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:TeammatePose)
+ private:
+  inline void set_has_pose();
+  inline void clear_has_pose();
+  inline void set_has_robotid();
+  inline void clear_has_robotid();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::RobotPose* pose_;
+  ::google::protobuf::uint32 robotid_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static TeammatePose* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class Ball : public ::google::protobuf::Message
-{
-public:
-	Ball();
-	virtual ~Ball();
-
-	Ball(const Ball& from);
-
-	inline Ball& operator=(const Ball& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const Ball& default_instance();
-
-	void Swap(Ball* other);
-
-	// implements Message ----------------------------------------------
-
-	Ball* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const Ball& from);
-	void MergeFrom(const Ball& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// required float relativeX = 1 [default = -100000];
-	inline bool has_relativex() const;
-	inline void clear_relativex();
-	static const int kRelativeXFieldNumber = 1;
-	inline float relativex() const;
-	inline void set_relativex(float value);
-
-	// required float relativeY = 2 [default = -100000];
-	inline bool has_relativey() const;
-	inline void clear_relativey();
-	static const int kRelativeYFieldNumber = 2;
-	inline float relativey() const;
-	inline void set_relativey(float value);
-
-	// required float relativeXspeed = 3 [default = -100000];
-	inline bool has_relativexspeed() const;
-	inline void clear_relativexspeed();
-	static const int kRelativeXspeedFieldNumber = 3;
-	inline float relativexspeed() const;
-	inline void set_relativexspeed(float value);
-
-	// required float relativeYspeed = 4 [default = -100000];
-	inline bool has_relativeyspeed() const;
-	inline void clear_relativeyspeed();
-	static const int kRelativeYspeedFieldNumber = 4;
-	inline float relativeyspeed() const;
-	inline void set_relativeyspeed(float value);
-
-	// required float varianceX = 5 [default = -100000];
-	inline bool has_variancex() const;
-	inline void clear_variancex();
-	static const int kVarianceXFieldNumber = 5;
-	inline float variancex() const;
-	inline void set_variancex(float value);
-
-	// required float varianceY = 6 [default = -100000];
-	inline bool has_variancey() const;
-	inline void clear_variancey();
-	static const int kVarianceYFieldNumber = 6;
-	inline float variancey() const;
-	inline void set_variancey(float value);
-
-	// required float varianceXspeed = 7 [default = -100000];
-	inline bool has_variancexspeed() const;
-	inline void clear_variancexspeed();
-	static const int kVarianceXspeedFieldNumber = 7;
-	inline float variancexspeed() const;
-	inline void set_variancexspeed(float value);
-
-	// required float varianceYspeed = 8 [default = -100000];
-	inline bool has_varianceyspeed() const;
-	inline void clear_varianceyspeed();
-	static const int kVarianceYspeedFieldNumber = 8;
-	inline float varianceyspeed() const;
-	inline void set_varianceyspeed(float value);
-
-	// @@protoc_insertion_point(class_scope:Ball)
-private:
-	inline void set_has_relativex();
-	inline void clear_has_relativex();
-	inline void set_has_relativey();
-	inline void clear_has_relativey();
-	inline void set_has_relativexspeed();
-	inline void clear_has_relativexspeed();
-	inline void set_has_relativeyspeed();
-	inline void clear_has_relativeyspeed();
-	inline void set_has_variancex();
-	inline void clear_has_variancex();
-	inline void set_has_variancey();
-	inline void clear_has_variancey();
-	inline void set_has_variancexspeed();
-	inline void clear_has_variancexspeed();
-	inline void set_has_varianceyspeed();
-	inline void clear_has_varianceyspeed();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	float relativex_;
-	float relativey_;
-	float relativexspeed_;
-	float relativeyspeed_;
-	float variancex_;
-	float variancey_;
-	float variancexspeed_;
-	float varianceyspeed_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static Ball* default_instance_;
+class RobotPose : public ::google::protobuf::Message {
+ public:
+  RobotPose();
+  virtual ~RobotPose();
+  
+  RobotPose(const RobotPose& from);
+  
+  inline RobotPose& operator=(const RobotPose& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RobotPose& default_instance();
+  
+  void Swap(RobotPose* other);
+  
+  // implements Message ----------------------------------------------
+  
+  RobotPose* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RobotPose& from);
+  void MergeFrom(const RobotPose& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float X = 1 [default = -100000];
+  inline bool has_x() const;
+  inline void clear_x();
+  static const int kXFieldNumber = 1;
+  inline float x() const;
+  inline void set_x(float value);
+  
+  // required float Y = 2 [default = -100000];
+  inline bool has_y() const;
+  inline void clear_y();
+  static const int kYFieldNumber = 2;
+  inline float y() const;
+  inline void set_y(float value);
+  
+  // required float phi = 3 [default = -100000];
+  inline bool has_phi() const;
+  inline void clear_phi();
+  static const int kPhiFieldNumber = 3;
+  inline float phi() const;
+  inline void set_phi(float value);
+  
+  // required float confidence = 4 [default = -100000];
+  inline bool has_confidence() const;
+  inline void clear_confidence();
+  static const int kConfidenceFieldNumber = 4;
+  inline float confidence() const;
+  inline void set_confidence(float value);
+  
+  // @@protoc_insertion_point(class_scope:RobotPose)
+ private:
+  inline void set_has_x();
+  inline void clear_has_x();
+  inline void set_has_y();
+  inline void clear_has_y();
+  inline void set_has_phi();
+  inline void clear_has_phi();
+  inline void set_has_confidence();
+  inline void clear_has_confidence();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  float x_;
+  float y_;
+  float phi_;
+  float confidence_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static RobotPose* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class UnknownObjects : public ::google::protobuf::Message
-{
-public:
-	UnknownObjects();
-	virtual ~UnknownObjects();
-
-	UnknownObjects(const UnknownObjects& from);
-
-	inline UnknownObjects& operator=(const UnknownObjects& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const UnknownObjects& default_instance();
-
-	void Swap(UnknownObjects* other);
-
-	// implements Message ----------------------------------------------
-
-	UnknownObjects* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const UnknownObjects& from);
-	void MergeFrom(const UnknownObjects& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// optional float relativeX = 1 [default = -100000];
-	inline bool has_relativex() const;
-	inline void clear_relativex();
-	static const int kRelativeXFieldNumber = 1;
-	inline float relativex() const;
-	inline void set_relativex(float value);
-
-	// optional float relativeY = 2 [default = -100000];
-	inline bool has_relativey() const;
-	inline void clear_relativey();
-	static const int kRelativeYFieldNumber = 2;
-	inline float relativey() const;
-	inline void set_relativey(float value);
-
-	// optional float height = 3 [default = -100000];
-	inline bool has_height() const;
-	inline void clear_height();
-	static const int kHeightFieldNumber = 3;
-	inline float height() const;
-	inline void set_height(float value);
-
-	// optional float relativeXspeed = 4 [default = -100000];
-	inline bool has_relativexspeed() const;
-	inline void clear_relativexspeed();
-	static const int kRelativeXspeedFieldNumber = 4;
-	inline float relativexspeed() const;
-	inline void set_relativexspeed(float value);
-
-	// optional float relativeYspeed = 5 [default = -100000];
-	inline bool has_relativeyspeed() const;
-	inline void clear_relativeyspeed();
-	static const int kRelativeYspeedFieldNumber = 5;
-	inline float relativeyspeed() const;
-	inline void set_relativeyspeed(float value);
-
-	// @@protoc_insertion_point(class_scope:UnknownObjects)
-private:
-	inline void set_has_relativex();
-	inline void clear_has_relativex();
-	inline void set_has_relativey();
-	inline void clear_has_relativey();
-	inline void set_has_height();
-	inline void clear_has_height();
-	inline void set_has_relativexspeed();
-	inline void clear_has_relativexspeed();
-	inline void set_has_relativeyspeed();
-	inline void clear_has_relativeyspeed();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	float relativex_;
-	float relativey_;
-	float height_;
-	float relativexspeed_;
-	float relativeyspeed_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static UnknownObjects* default_instance_;
+class Ball : public ::google::protobuf::Message {
+ public:
+  Ball();
+  virtual ~Ball();
+  
+  Ball(const Ball& from);
+  
+  inline Ball& operator=(const Ball& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Ball& default_instance();
+  
+  void Swap(Ball* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Ball* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Ball& from);
+  void MergeFrom(const Ball& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float relativeX = 1 [default = -100000];
+  inline bool has_relativex() const;
+  inline void clear_relativex();
+  static const int kRelativeXFieldNumber = 1;
+  inline float relativex() const;
+  inline void set_relativex(float value);
+  
+  // required float relativeY = 2 [default = -100000];
+  inline bool has_relativey() const;
+  inline void clear_relativey();
+  static const int kRelativeYFieldNumber = 2;
+  inline float relativey() const;
+  inline void set_relativey(float value);
+  
+  // required float relativeXspeed = 3 [default = -100000];
+  inline bool has_relativexspeed() const;
+  inline void clear_relativexspeed();
+  static const int kRelativeXspeedFieldNumber = 3;
+  inline float relativexspeed() const;
+  inline void set_relativexspeed(float value);
+  
+  // required float relativeYspeed = 4 [default = -100000];
+  inline bool has_relativeyspeed() const;
+  inline void clear_relativeyspeed();
+  static const int kRelativeYspeedFieldNumber = 4;
+  inline float relativeyspeed() const;
+  inline void set_relativeyspeed(float value);
+  
+  // required float varianceX = 5 [default = -100000];
+  inline bool has_variancex() const;
+  inline void clear_variancex();
+  static const int kVarianceXFieldNumber = 5;
+  inline float variancex() const;
+  inline void set_variancex(float value);
+  
+  // required float varianceY = 6 [default = -100000];
+  inline bool has_variancey() const;
+  inline void clear_variancey();
+  static const int kVarianceYFieldNumber = 6;
+  inline float variancey() const;
+  inline void set_variancey(float value);
+  
+  // required float varianceXspeed = 7 [default = -100000];
+  inline bool has_variancexspeed() const;
+  inline void clear_variancexspeed();
+  static const int kVarianceXspeedFieldNumber = 7;
+  inline float variancexspeed() const;
+  inline void set_variancexspeed(float value);
+  
+  // required float varianceYspeed = 8 [default = -100000];
+  inline bool has_varianceyspeed() const;
+  inline void clear_varianceyspeed();
+  static const int kVarianceYspeedFieldNumber = 8;
+  inline float varianceyspeed() const;
+  inline void set_varianceyspeed(float value);
+  
+  // @@protoc_insertion_point(class_scope:Ball)
+ private:
+  inline void set_has_relativex();
+  inline void clear_has_relativex();
+  inline void set_has_relativey();
+  inline void clear_has_relativey();
+  inline void set_has_relativexspeed();
+  inline void clear_has_relativexspeed();
+  inline void set_has_relativeyspeed();
+  inline void clear_has_relativeyspeed();
+  inline void set_has_variancex();
+  inline void clear_has_variancex();
+  inline void set_has_variancey();
+  inline void clear_has_variancey();
+  inline void set_has_variancexspeed();
+  inline void clear_has_variancexspeed();
+  inline void set_has_varianceyspeed();
+  inline void clear_has_varianceyspeed();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  float relativex_;
+  float relativey_;
+  float relativexspeed_;
+  float relativeyspeed_;
+  float variancex_;
+  float variancey_;
+  float variancexspeed_;
+  float varianceyspeed_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Ball* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class LocalizationResetMessage : public ::google::protobuf::Message
-{
-public:
-	LocalizationResetMessage();
-	virtual ~LocalizationResetMessage();
-
-	LocalizationResetMessage(const LocalizationResetMessage& from);
-
-	inline LocalizationResetMessage& operator=(const LocalizationResetMessage& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const LocalizationResetMessage& default_instance();
-
-	void Swap(LocalizationResetMessage* other);
-
-	// implements Message ----------------------------------------------
-
-	LocalizationResetMessage* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const LocalizationResetMessage& from);
-	void MergeFrom(const LocalizationResetMessage& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// required int32 type = 1;
-	inline bool has_type() const;
-	inline void clear_type();
-	static const int kTypeFieldNumber = 1;
-	inline ::google::protobuf::int32 type() const;
-	inline void set_type(::google::protobuf::int32 value);
-
-	// required bool kickOff = 2;
-	inline bool has_kickoff() const;
-	inline void clear_kickoff();
-	static const int kKickOffFieldNumber = 2;
-	inline bool kickoff() const;
-	inline void set_kickoff(bool value);
-
-	// @@protoc_insertion_point(class_scope:LocalizationResetMessage)
-private:
-	inline void set_has_type();
-	inline void clear_has_type();
-	inline void set_has_kickoff();
-	inline void clear_has_kickoff();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	::google::protobuf::int32 type_;
-	bool kickoff_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static LocalizationResetMessage* default_instance_;
+class UnknownObjects : public ::google::protobuf::Message {
+ public:
+  UnknownObjects();
+  virtual ~UnknownObjects();
+  
+  UnknownObjects(const UnknownObjects& from);
+  
+  inline UnknownObjects& operator=(const UnknownObjects& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const UnknownObjects& default_instance();
+  
+  void Swap(UnknownObjects* other);
+  
+  // implements Message ----------------------------------------------
+  
+  UnknownObjects* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const UnknownObjects& from);
+  void MergeFrom(const UnknownObjects& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional float relativeX = 1 [default = -100000];
+  inline bool has_relativex() const;
+  inline void clear_relativex();
+  static const int kRelativeXFieldNumber = 1;
+  inline float relativex() const;
+  inline void set_relativex(float value);
+  
+  // optional float relativeY = 2 [default = -100000];
+  inline bool has_relativey() const;
+  inline void clear_relativey();
+  static const int kRelativeYFieldNumber = 2;
+  inline float relativey() const;
+  inline void set_relativey(float value);
+  
+  // optional float height = 3 [default = -100000];
+  inline bool has_height() const;
+  inline void clear_height();
+  static const int kHeightFieldNumber = 3;
+  inline float height() const;
+  inline void set_height(float value);
+  
+  // optional float relativeXspeed = 4 [default = -100000];
+  inline bool has_relativexspeed() const;
+  inline void clear_relativexspeed();
+  static const int kRelativeXspeedFieldNumber = 4;
+  inline float relativexspeed() const;
+  inline void set_relativexspeed(float value);
+  
+  // optional float relativeYspeed = 5 [default = -100000];
+  inline bool has_relativeyspeed() const;
+  inline void clear_relativeyspeed();
+  static const int kRelativeYspeedFieldNumber = 5;
+  inline float relativeyspeed() const;
+  inline void set_relativeyspeed(float value);
+  
+  // @@protoc_insertion_point(class_scope:UnknownObjects)
+ private:
+  inline void set_has_relativex();
+  inline void clear_has_relativex();
+  inline void set_has_relativey();
+  inline void clear_has_relativey();
+  inline void set_has_height();
+  inline void clear_has_height();
+  inline void set_has_relativexspeed();
+  inline void clear_has_relativexspeed();
+  inline void set_has_relativeyspeed();
+  inline void clear_has_relativeyspeed();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  float relativex_;
+  float relativey_;
+  float height_;
+  float relativexspeed_;
+  float relativeyspeed_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static UnknownObjects* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class LocalizationData : public ::google::protobuf::Message
-{
-public:
-	LocalizationData();
-	virtual ~LocalizationData();
-
-	LocalizationData(const LocalizationData& from);
-
-	inline LocalizationData& operator=(const LocalizationData& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const LocalizationData& default_instance();
-
-	void Swap(LocalizationData* other);
-
-	// implements Message ----------------------------------------------
-
-	LocalizationData* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const LocalizationData& from);
-	void MergeFrom(const LocalizationData& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// required .WorldInfo World = 1;
-	inline bool has_world() const;
-	inline void clear_world();
-	static const int kWorldFieldNumber = 1;
-	inline const ::WorldInfo& world() const;
-	inline ::WorldInfo* mutable_world();
-	inline ::WorldInfo* release_world();
-
-	// repeated .RobotPose Particles = 2;
-	inline int particles_size() const;
-	inline void clear_particles();
-	static const int kParticlesFieldNumber = 2;
-	inline const ::RobotPose& particles(int index) const;
-	inline ::RobotPose* mutable_particles(int index);
-	inline ::RobotPose* add_particles();
-	inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-	particles() const;
-	inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-	mutable_particles();
-
-	// required .RobotPose RobotPosition = 3;
-	inline bool has_robotposition() const;
-	inline void clear_robotposition();
-	static const int kRobotPositionFieldNumber = 3;
-	inline const ::RobotPose& robotposition() const;
-	inline ::RobotPose* mutable_robotposition();
-	inline ::RobotPose* release_robotposition();
-
-	// required .ObservationMessage Observations = 4;
-	inline bool has_observations() const;
-	inline void clear_observations();
-	static const int kObservationsFieldNumber = 4;
-	inline const ::ObservationMessage& observations() const;
-	inline ::ObservationMessage* mutable_observations();
-	inline ::ObservationMessage* release_observations();
-
-	// @@protoc_insertion_point(class_scope:LocalizationData)
-private:
-	inline void set_has_world();
-	inline void clear_has_world();
-	inline void set_has_robotposition();
-	inline void clear_has_robotposition();
-	inline void set_has_observations();
-	inline void clear_has_observations();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	::WorldInfo* world_;
-	::google::protobuf::RepeatedPtrField< ::RobotPose > particles_;
-	::RobotPose* robotposition_;
-	::ObservationMessage* observations_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static LocalizationData* default_instance_;
+class LocalizationResetMessage : public ::google::protobuf::Message {
+ public:
+  LocalizationResetMessage();
+  virtual ~LocalizationResetMessage();
+  
+  LocalizationResetMessage(const LocalizationResetMessage& from);
+  
+  inline LocalizationResetMessage& operator=(const LocalizationResetMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const LocalizationResetMessage& default_instance();
+  
+  void Swap(LocalizationResetMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  LocalizationResetMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const LocalizationResetMessage& from);
+  void MergeFrom(const LocalizationResetMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  typedef LocalizationResetMessage_RESET RESET;
+  static const RESET UNIFORM = LocalizationResetMessage_RESET_UNIFORM;
+  static const RESET READY = LocalizationResetMessage_RESET_READY;
+  static const RESET SET = LocalizationResetMessage_RESET_SET;
+  static const RESET PENALISED = LocalizationResetMessage_RESET_PENALISED;
+  static const RESET MANUAL = LocalizationResetMessage_RESET_MANUAL;
+  static inline bool RESET_IsValid(int value) {
+    return LocalizationResetMessage_RESET_IsValid(value);
+  }
+  static const RESET RESET_MIN =
+    LocalizationResetMessage_RESET_RESET_MIN;
+  static const RESET RESET_MAX =
+    LocalizationResetMessage_RESET_RESET_MAX;
+  static const int RESET_ARRAYSIZE =
+    LocalizationResetMessage_RESET_RESET_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  RESET_descriptor() {
+    return LocalizationResetMessage_RESET_descriptor();
+  }
+  static inline const ::std::string& RESET_Name(RESET value) {
+    return LocalizationResetMessage_RESET_Name(value);
+  }
+  static inline bool RESET_Parse(const ::std::string& name,
+      RESET* value) {
+    return LocalizationResetMessage_RESET_Parse(name, value);
+  }
+  
+  // accessors -------------------------------------------------------
+  
+  // required int32 type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline ::google::protobuf::int32 type() const;
+  inline void set_type(::google::protobuf::int32 value);
+  
+  // required bool kickOff = 2;
+  inline bool has_kickoff() const;
+  inline void clear_kickoff();
+  static const int kKickOffFieldNumber = 2;
+  inline bool kickoff() const;
+  inline void set_kickoff(bool value);
+  
+  // required float xPos = 3 [default = 0];
+  inline bool has_xpos() const;
+  inline void clear_xpos();
+  static const int kXPosFieldNumber = 3;
+  inline float xpos() const;
+  inline void set_xpos(float value);
+  
+  // required float yPos = 4 [default = 0];
+  inline bool has_ypos() const;
+  inline void clear_ypos();
+  static const int kYPosFieldNumber = 4;
+  inline float ypos() const;
+  inline void set_ypos(float value);
+  
+  // required float phiPos = 5 [default = 0];
+  inline bool has_phipos() const;
+  inline void clear_phipos();
+  static const int kPhiPosFieldNumber = 5;
+  inline float phipos() const;
+  inline void set_phipos(float value);
+  
+  // @@protoc_insertion_point(class_scope:LocalizationResetMessage)
+ private:
+  inline void set_has_type();
+  inline void clear_has_type();
+  inline void set_has_kickoff();
+  inline void clear_has_kickoff();
+  inline void set_has_xpos();
+  inline void clear_has_xpos();
+  inline void set_has_ypos();
+  inline void clear_has_ypos();
+  inline void set_has_phipos();
+  inline void clear_has_phipos();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::int32 type_;
+  bool kickoff_;
+  float xpos_;
+  float ypos_;
+  float phipos_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static LocalizationResetMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class header : public ::google::protobuf::Message
-{
-public:
-	header();
-	virtual ~header();
-
-	header(const header& from);
-
-	inline header& operator=(const header& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const header& default_instance();
-
-	void Swap(header* other);
-
-	// implements Message ----------------------------------------------
-
-	header* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const header& from);
-	void MergeFrom(const header& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// required sint32 NextMsgByteSize = 1 [default = -1];
-	inline bool has_nextmsgbytesize() const;
-	inline void clear_nextmsgbytesize();
-	static const int kNextMsgByteSizeFieldNumber = 1;
-	inline ::google::protobuf::int32 nextmsgbytesize() const;
-	inline void set_nextmsgbytesize(::google::protobuf::int32 value);
-
-	// required bytes NextMsgName = 3 [default = "Undef"];
-	inline bool has_nextmsgname() const;
-	inline void clear_nextmsgname();
-	static const int kNextMsgNameFieldNumber = 3;
-	inline const ::std::string& nextmsgname() const;
-	inline void set_nextmsgname(const ::std::string& value);
-	inline void set_nextmsgname(const char* value);
-	inline void set_nextmsgname(const void* value, size_t size);
-	inline ::std::string* mutable_nextmsgname();
-	inline ::std::string* release_nextmsgname();
-
-	// @@protoc_insertion_point(class_scope:header)
-private:
-	inline void set_has_nextmsgbytesize();
-	inline void clear_has_nextmsgbytesize();
-	inline void set_has_nextmsgname();
-	inline void clear_has_nextmsgname();
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	::std::string* nextmsgname_;
-	static const ::std::string _default_nextmsgname_;
-	::google::protobuf::int32 nextmsgbytesize_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static header* default_instance_;
+class LocalizationData : public ::google::protobuf::Message {
+ public:
+  LocalizationData();
+  virtual ~LocalizationData();
+  
+  LocalizationData(const LocalizationData& from);
+  
+  inline LocalizationData& operator=(const LocalizationData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const LocalizationData& default_instance();
+  
+  void Swap(LocalizationData* other);
+  
+  // implements Message ----------------------------------------------
+  
+  LocalizationData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const LocalizationData& from);
+  void MergeFrom(const LocalizationData& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .WorldInfo World = 1;
+  inline bool has_world() const;
+  inline void clear_world();
+  static const int kWorldFieldNumber = 1;
+  inline const ::WorldInfo& world() const;
+  inline ::WorldInfo* mutable_world();
+  inline ::WorldInfo* release_world();
+  
+  // repeated .RobotPose Particles = 2;
+  inline int particles_size() const;
+  inline void clear_particles();
+  static const int kParticlesFieldNumber = 2;
+  inline const ::RobotPose& particles(int index) const;
+  inline ::RobotPose* mutable_particles(int index);
+  inline ::RobotPose* add_particles();
+  inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
+      particles() const;
+  inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
+      mutable_particles();
+  
+  // required .RobotPose RobotPosition = 3;
+  inline bool has_robotposition() const;
+  inline void clear_robotposition();
+  static const int kRobotPositionFieldNumber = 3;
+  inline const ::RobotPose& robotposition() const;
+  inline ::RobotPose* mutable_robotposition();
+  inline ::RobotPose* release_robotposition();
+  
+  // required .ObservationMessage Observations = 4;
+  inline bool has_observations() const;
+  inline void clear_observations();
+  static const int kObservationsFieldNumber = 4;
+  inline const ::ObservationMessage& observations() const;
+  inline ::ObservationMessage* mutable_observations();
+  inline ::ObservationMessage* release_observations();
+  
+  // @@protoc_insertion_point(class_scope:LocalizationData)
+ private:
+  inline void set_has_world();
+  inline void clear_has_world();
+  inline void set_has_robotposition();
+  inline void clear_has_robotposition();
+  inline void set_has_observations();
+  inline void clear_has_observations();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::WorldInfo* world_;
+  ::google::protobuf::RepeatedPtrField< ::RobotPose > particles_;
+  ::RobotPose* robotposition_;
+  ::ObservationMessage* observations_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static LocalizationData* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class LocalizationDataForGUI : public ::google::protobuf::Message
-{
-public:
-	LocalizationDataForGUI();
-	virtual ~LocalizationDataForGUI();
+class header : public ::google::protobuf::Message {
+ public:
+  header();
+  virtual ~header();
+  
+  header(const header& from);
+  
+  inline header& operator=(const header& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const header& default_instance();
+  
+  void Swap(header* other);
+  
+  // implements Message ----------------------------------------------
+  
+  header* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const header& from);
+  void MergeFrom(const header& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required sint32 NextMsgByteSize = 1 [default = -1];
+  inline bool has_nextmsgbytesize() const;
+  inline void clear_nextmsgbytesize();
+  static const int kNextMsgByteSizeFieldNumber = 1;
+  inline ::google::protobuf::int32 nextmsgbytesize() const;
+  inline void set_nextmsgbytesize(::google::protobuf::int32 value);
+  
+  // required bytes NextMsgName = 3 [default = "Undef"];
+  inline bool has_nextmsgname() const;
+  inline void clear_nextmsgname();
+  static const int kNextMsgNameFieldNumber = 3;
+  inline const ::std::string& nextmsgname() const;
+  inline void set_nextmsgname(const ::std::string& value);
+  inline void set_nextmsgname(const char* value);
+  inline void set_nextmsgname(const void* value, size_t size);
+  inline ::std::string* mutable_nextmsgname();
+  inline ::std::string* release_nextmsgname();
+  
+  // @@protoc_insertion_point(class_scope:header)
+ private:
+  inline void set_has_nextmsgbytesize();
+  inline void clear_has_nextmsgbytesize();
+  inline void set_has_nextmsgname();
+  inline void clear_has_nextmsgname();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* nextmsgname_;
+  static const ::std::string _default_nextmsgname_;
+  ::google::protobuf::int32 nextmsgbytesize_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static header* default_instance_;
+};
+// -------------------------------------------------------------------
 
-	LocalizationDataForGUI(const LocalizationDataForGUI& from);
-
-	inline LocalizationDataForGUI& operator=(const LocalizationDataForGUI& from)
-	{
-		CopyFrom(from);
-		return *this;
-	}
-
-	inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-	{
-		return _unknown_fields_;
-	}
-
-	inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-	{
-		return &_unknown_fields_;
-	}
-
-	static const ::google::protobuf::Descriptor* descriptor();
-	static const LocalizationDataForGUI& default_instance();
-
-	void Swap(LocalizationDataForGUI* other);
-
-	// implements Message ----------------------------------------------
-
-	LocalizationDataForGUI* New() const;
-	void CopyFrom(const ::google::protobuf::Message& from);
-	void MergeFrom(const ::google::protobuf::Message& from);
-	void CopyFrom(const LocalizationDataForGUI& from);
-	void MergeFrom(const LocalizationDataForGUI& from);
-	void Clear();
-	bool IsInitialized() const;
-
-	int ByteSize() const;
-	bool MergePartialFromCodedStream(
-	    ::google::protobuf::io::CodedInputStream* input);
-	void SerializeWithCachedSizes(
-	    ::google::protobuf::io::CodedOutputStream* output) const;
-	::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-	int GetCachedSize() const
-	{
-		return _cached_size_;
-	}
-private:
-	void SharedCtor();
-	void SharedDtor();
-	void SetCachedSize(int size) const;
-public:
-
-	::google::protobuf::Metadata GetMetadata() const;
-
-	// nested types ----------------------------------------------------
-
-	// accessors -------------------------------------------------------
-
-	// repeated .RobotPose Particles = 1;
-	inline int particles_size() const;
-	inline void clear_particles();
-	static const int kParticlesFieldNumber = 1;
-	inline const ::RobotPose& particles(int index) const;
-	inline ::RobotPose* mutable_particles(int index);
-	inline ::RobotPose* add_particles();
-	inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-	particles() const;
-	inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-	mutable_particles();
-
-	// @@protoc_insertion_point(class_scope:LocalizationDataForGUI)
-private:
-
-	::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-	::google::protobuf::RepeatedPtrField< ::RobotPose > particles_;
-
-	mutable int _cached_size_;
-	::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-
-	friend void  protobuf_AddDesc_WorldInfo_2eproto();
-	friend void protobuf_AssignDesc_WorldInfo_2eproto();
-	friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-
-	void InitAsDefaultInstance();
-	static LocalizationDataForGUI* default_instance_;
+class LocalizationDataForGUI : public ::google::protobuf::Message {
+ public:
+  LocalizationDataForGUI();
+  virtual ~LocalizationDataForGUI();
+  
+  LocalizationDataForGUI(const LocalizationDataForGUI& from);
+  
+  inline LocalizationDataForGUI& operator=(const LocalizationDataForGUI& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const LocalizationDataForGUI& default_instance();
+  
+  void Swap(LocalizationDataForGUI* other);
+  
+  // implements Message ----------------------------------------------
+  
+  LocalizationDataForGUI* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const LocalizationDataForGUI& from);
+  void MergeFrom(const LocalizationDataForGUI& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .RobotPose Particles = 1;
+  inline int particles_size() const;
+  inline void clear_particles();
+  static const int kParticlesFieldNumber = 1;
+  inline const ::RobotPose& particles(int index) const;
+  inline ::RobotPose* mutable_particles(int index);
+  inline ::RobotPose* add_particles();
+  inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
+      particles() const;
+  inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
+      mutable_particles();
+  
+  // @@protoc_insertion_point(class_scope:LocalizationDataForGUI)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::RobotPose > particles_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static LocalizationDataForGUI* default_instance_;
 };
 // ===================================================================
 
@@ -1108,170 +1231,132 @@ private:
 // WorldInfo
 
 // required .RobotPose myPosition = 1;
-inline bool WorldInfo::has_myposition() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool WorldInfo::has_myposition() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void WorldInfo::set_has_myposition()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void WorldInfo::set_has_myposition() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void WorldInfo::clear_has_myposition()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void WorldInfo::clear_has_myposition() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void WorldInfo::clear_myposition()
-{
-	if (myposition_ != NULL) myposition_->::RobotPose::Clear();
-
-	clear_has_myposition();
+inline void WorldInfo::clear_myposition() {
+  if (myposition_ != NULL) myposition_->::RobotPose::Clear();
+  clear_has_myposition();
 }
-inline const ::RobotPose& WorldInfo::myposition() const
-{
-	return myposition_ != NULL ? *myposition_ : *default_instance_->myposition_;
+inline const ::RobotPose& WorldInfo::myposition() const {
+  return myposition_ != NULL ? *myposition_ : *default_instance_->myposition_;
 }
-inline ::RobotPose* WorldInfo::mutable_myposition()
-{
-	set_has_myposition();
-
-	if (myposition_ == NULL) myposition_ = new ::RobotPose;
-
-	return myposition_;
+inline ::RobotPose* WorldInfo::mutable_myposition() {
+  set_has_myposition();
+  if (myposition_ == NULL) myposition_ = new ::RobotPose;
+  return myposition_;
 }
-inline ::RobotPose* WorldInfo::release_myposition()
-{
-	clear_has_myposition();
-	::RobotPose* temp = myposition_;
-	myposition_ = NULL;
-	return temp;
+inline ::RobotPose* WorldInfo::release_myposition() {
+  clear_has_myposition();
+  ::RobotPose* temp = myposition_;
+  myposition_ = NULL;
+  return temp;
 }
 
 // repeated .Ball Balls = 2;
-inline int WorldInfo::balls_size() const
-{
-	return balls_.size();
+inline int WorldInfo::balls_size() const {
+  return balls_.size();
 }
-inline void WorldInfo::clear_balls()
-{
-	balls_.Clear();
+inline void WorldInfo::clear_balls() {
+  balls_.Clear();
 }
-inline const ::Ball& WorldInfo::balls(int index) const
-{
-	return balls_.Get(index);
+inline const ::Ball& WorldInfo::balls(int index) const {
+  return balls_.Get(index);
 }
-inline ::Ball* WorldInfo::mutable_balls(int index)
-{
-	return balls_.Mutable(index);
+inline ::Ball* WorldInfo::mutable_balls(int index) {
+  return balls_.Mutable(index);
 }
-inline ::Ball* WorldInfo::add_balls()
-{
-	return balls_.Add();
+inline ::Ball* WorldInfo::add_balls() {
+  return balls_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
-WorldInfo::balls() const
-{
-	return balls_;
+WorldInfo::balls() const {
+  return balls_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::Ball >*
-WorldInfo::mutable_balls()
-{
-	return &balls_;
+WorldInfo::mutable_balls() {
+  return &balls_;
 }
 
 // repeated .RobotPose OtherRobots = 3;
-inline int WorldInfo::otherrobots_size() const
-{
-	return otherrobots_.size();
+inline int WorldInfo::otherrobots_size() const {
+  return otherrobots_.size();
 }
-inline void WorldInfo::clear_otherrobots()
-{
-	otherrobots_.Clear();
+inline void WorldInfo::clear_otherrobots() {
+  otherrobots_.Clear();
 }
-inline const ::RobotPose& WorldInfo::otherrobots(int index) const
-{
-	return otherrobots_.Get(index);
+inline const ::RobotPose& WorldInfo::otherrobots(int index) const {
+  return otherrobots_.Get(index);
 }
-inline ::RobotPose* WorldInfo::mutable_otherrobots(int index)
-{
-	return otherrobots_.Mutable(index);
+inline ::RobotPose* WorldInfo::mutable_otherrobots(int index) {
+  return otherrobots_.Mutable(index);
 }
-inline ::RobotPose* WorldInfo::add_otherrobots()
-{
-	return otherrobots_.Add();
+inline ::RobotPose* WorldInfo::add_otherrobots() {
+  return otherrobots_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-WorldInfo::otherrobots() const
-{
-	return otherrobots_;
+WorldInfo::otherrobots() const {
+  return otherrobots_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-WorldInfo::mutable_otherrobots()
-{
-	return &otherrobots_;
+WorldInfo::mutable_otherrobots() {
+  return &otherrobots_;
 }
 
 // repeated .UnknownObjects UFOs = 4;
-inline int WorldInfo::ufos_size() const
-{
-	return ufos_.size();
+inline int WorldInfo::ufos_size() const {
+  return ufos_.size();
 }
-inline void WorldInfo::clear_ufos()
-{
-	ufos_.Clear();
+inline void WorldInfo::clear_ufos() {
+  ufos_.Clear();
 }
-inline const ::UnknownObjects& WorldInfo::ufos(int index) const
-{
-	return ufos_.Get(index);
+inline const ::UnknownObjects& WorldInfo::ufos(int index) const {
+  return ufos_.Get(index);
 }
-inline ::UnknownObjects* WorldInfo::mutable_ufos(int index)
-{
-	return ufos_.Mutable(index);
+inline ::UnknownObjects* WorldInfo::mutable_ufos(int index) {
+  return ufos_.Mutable(index);
 }
-inline ::UnknownObjects* WorldInfo::add_ufos()
-{
-	return ufos_.Add();
+inline ::UnknownObjects* WorldInfo::add_ufos() {
+  return ufos_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::UnknownObjects >&
-WorldInfo::ufos() const
-{
-	return ufos_;
+WorldInfo::ufos() const {
+  return ufos_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::UnknownObjects >*
-WorldInfo::mutable_ufos()
-{
-	return &ufos_;
+WorldInfo::mutable_ufos() {
+  return &ufos_;
 }
 
 // repeated .Ball GlobBalls = 5;
-inline int WorldInfo::globballs_size() const
-{
-	return globballs_.size();
+inline int WorldInfo::globballs_size() const {
+  return globballs_.size();
 }
-inline void WorldInfo::clear_globballs()
-{
-	globballs_.Clear();
+inline void WorldInfo::clear_globballs() {
+  globballs_.Clear();
 }
-inline const ::Ball& WorldInfo::globballs(int index) const
-{
-	return globballs_.Get(index);
+inline const ::Ball& WorldInfo::globballs(int index) const {
+  return globballs_.Get(index);
 }
-inline ::Ball* WorldInfo::mutable_globballs(int index)
-{
-	return globballs_.Mutable(index);
+inline ::Ball* WorldInfo::mutable_globballs(int index) {
+  return globballs_.Mutable(index);
 }
-inline ::Ball* WorldInfo::add_globballs()
-{
-	return globballs_.Add();
+inline ::Ball* WorldInfo::add_globballs() {
+  return globballs_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
-WorldInfo::globballs() const
-{
-	return globballs_;
+WorldInfo::globballs() const {
+  return globballs_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::Ball >*
-WorldInfo::mutable_globballs()
-{
-	return &globballs_;
+WorldInfo::mutable_globballs() {
+  return &globballs_;
 }
 
 // -------------------------------------------------------------------
@@ -1279,42 +1364,112 @@ WorldInfo::mutable_globballs()
 // SharedWorldInfo
 
 // required .RobotPose playerClosestToBall = 1;
-inline bool SharedWorldInfo::has_playerclosesttoball() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool SharedWorldInfo::has_playerclosesttoball() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void SharedWorldInfo::set_has_playerclosesttoball()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void SharedWorldInfo::set_has_playerclosesttoball() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void SharedWorldInfo::clear_has_playerclosesttoball()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void SharedWorldInfo::clear_has_playerclosesttoball() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void SharedWorldInfo::clear_playerclosesttoball()
-{
-	if (playerclosesttoball_ != NULL) playerclosesttoball_->::RobotPose::Clear();
+inline void SharedWorldInfo::clear_playerclosesttoball() {
+  if (playerclosesttoball_ != NULL) playerclosesttoball_->::RobotPose::Clear();
+  clear_has_playerclosesttoball();
+}
+inline const ::RobotPose& SharedWorldInfo::playerclosesttoball() const {
+  return playerclosesttoball_ != NULL ? *playerclosesttoball_ : *default_instance_->playerclosesttoball_;
+}
+inline ::RobotPose* SharedWorldInfo::mutable_playerclosesttoball() {
+  set_has_playerclosesttoball();
+  if (playerclosesttoball_ == NULL) playerclosesttoball_ = new ::RobotPose;
+  return playerclosesttoball_;
+}
+inline ::RobotPose* SharedWorldInfo::release_playerclosesttoball() {
+  clear_has_playerclosesttoball();
+  ::RobotPose* temp = playerclosesttoball_;
+  playerclosesttoball_ = NULL;
+  return temp;
+}
 
-	clear_has_playerclosesttoball();
+// repeated .TeammatePose teammatePosition = 2;
+inline int SharedWorldInfo::teammateposition_size() const {
+  return teammateposition_.size();
 }
-inline const ::RobotPose& SharedWorldInfo::playerclosesttoball() const
-{
-	return playerclosesttoball_ != NULL ? *playerclosesttoball_ : *default_instance_->playerclosesttoball_;
+inline void SharedWorldInfo::clear_teammateposition() {
+  teammateposition_.Clear();
 }
-inline ::RobotPose* SharedWorldInfo::mutable_playerclosesttoball()
-{
-	set_has_playerclosesttoball();
+inline const ::TeammatePose& SharedWorldInfo::teammateposition(int index) const {
+  return teammateposition_.Get(index);
+}
+inline ::TeammatePose* SharedWorldInfo::mutable_teammateposition(int index) {
+  return teammateposition_.Mutable(index);
+}
+inline ::TeammatePose* SharedWorldInfo::add_teammateposition() {
+  return teammateposition_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::TeammatePose >&
+SharedWorldInfo::teammateposition() const {
+  return teammateposition_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::TeammatePose >*
+SharedWorldInfo::mutable_teammateposition() {
+  return &teammateposition_;
+}
 
-	if (playerclosesttoball_ == NULL) playerclosesttoball_ = new ::RobotPose;
+// -------------------------------------------------------------------
 
-	return playerclosesttoball_;
+// TeammatePose
+
+// required .RobotPose pose = 1;
+inline bool TeammatePose::has_pose() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline ::RobotPose* SharedWorldInfo::release_playerclosesttoball()
-{
-	clear_has_playerclosesttoball();
-	::RobotPose* temp = playerclosesttoball_;
-	playerclosesttoball_ = NULL;
-	return temp;
+inline void TeammatePose::set_has_pose() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void TeammatePose::clear_has_pose() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void TeammatePose::clear_pose() {
+  if (pose_ != NULL) pose_->::RobotPose::Clear();
+  clear_has_pose();
+}
+inline const ::RobotPose& TeammatePose::pose() const {
+  return pose_ != NULL ? *pose_ : *default_instance_->pose_;
+}
+inline ::RobotPose* TeammatePose::mutable_pose() {
+  set_has_pose();
+  if (pose_ == NULL) pose_ = new ::RobotPose;
+  return pose_;
+}
+inline ::RobotPose* TeammatePose::release_pose() {
+  clear_has_pose();
+  ::RobotPose* temp = pose_;
+  pose_ = NULL;
+  return temp;
+}
+
+// required uint32 robotId = 2;
+inline bool TeammatePose::has_robotid() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void TeammatePose::set_has_robotid() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void TeammatePose::clear_has_robotid() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void TeammatePose::clear_robotid() {
+  robotid_ = 0u;
+  clear_has_robotid();
+}
+inline ::google::protobuf::uint32 TeammatePose::robotid() const {
+  return robotid_;
+}
+inline void TeammatePose::set_robotid(::google::protobuf::uint32 value) {
+  set_has_robotid();
+  robotid_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1322,115 +1477,91 @@ inline ::RobotPose* SharedWorldInfo::release_playerclosesttoball()
 // RobotPose
 
 // required float X = 1 [default = -100000];
-inline bool RobotPose::has_x() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool RobotPose::has_x() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void RobotPose::set_has_x()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void RobotPose::set_has_x() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void RobotPose::clear_has_x()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void RobotPose::clear_has_x() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void RobotPose::clear_x()
-{
-	x_ = -100000;
-	clear_has_x();
+inline void RobotPose::clear_x() {
+  x_ = -100000;
+  clear_has_x();
 }
-inline float RobotPose::x() const
-{
-	return x_;
+inline float RobotPose::x() const {
+  return x_;
 }
-inline void RobotPose::set_x(float value)
-{
-	set_has_x();
-	x_ = value;
+inline void RobotPose::set_x(float value) {
+  set_has_x();
+  x_ = value;
 }
 
 // required float Y = 2 [default = -100000];
-inline bool RobotPose::has_y() const
-{
-	return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool RobotPose::has_y() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void RobotPose::set_has_y()
-{
-	_has_bits_[0] |= 0x00000002u;
+inline void RobotPose::set_has_y() {
+  _has_bits_[0] |= 0x00000002u;
 }
-inline void RobotPose::clear_has_y()
-{
-	_has_bits_[0] &= ~0x00000002u;
+inline void RobotPose::clear_has_y() {
+  _has_bits_[0] &= ~0x00000002u;
 }
-inline void RobotPose::clear_y()
-{
-	y_ = -100000;
-	clear_has_y();
+inline void RobotPose::clear_y() {
+  y_ = -100000;
+  clear_has_y();
 }
-inline float RobotPose::y() const
-{
-	return y_;
+inline float RobotPose::y() const {
+  return y_;
 }
-inline void RobotPose::set_y(float value)
-{
-	set_has_y();
-	y_ = value;
+inline void RobotPose::set_y(float value) {
+  set_has_y();
+  y_ = value;
 }
 
 // required float phi = 3 [default = -100000];
-inline bool RobotPose::has_phi() const
-{
-	return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool RobotPose::has_phi() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void RobotPose::set_has_phi()
-{
-	_has_bits_[0] |= 0x00000004u;
+inline void RobotPose::set_has_phi() {
+  _has_bits_[0] |= 0x00000004u;
 }
-inline void RobotPose::clear_has_phi()
-{
-	_has_bits_[0] &= ~0x00000004u;
+inline void RobotPose::clear_has_phi() {
+  _has_bits_[0] &= ~0x00000004u;
 }
-inline void RobotPose::clear_phi()
-{
-	phi_ = -100000;
-	clear_has_phi();
+inline void RobotPose::clear_phi() {
+  phi_ = -100000;
+  clear_has_phi();
 }
-inline float RobotPose::phi() const
-{
-	return phi_;
+inline float RobotPose::phi() const {
+  return phi_;
 }
-inline void RobotPose::set_phi(float value)
-{
-	set_has_phi();
-	phi_ = value;
+inline void RobotPose::set_phi(float value) {
+  set_has_phi();
+  phi_ = value;
 }
 
 // required float confidence = 4 [default = -100000];
-inline bool RobotPose::has_confidence() const
-{
-	return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool RobotPose::has_confidence() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void RobotPose::set_has_confidence()
-{
-	_has_bits_[0] |= 0x00000008u;
+inline void RobotPose::set_has_confidence() {
+  _has_bits_[0] |= 0x00000008u;
 }
-inline void RobotPose::clear_has_confidence()
-{
-	_has_bits_[0] &= ~0x00000008u;
+inline void RobotPose::clear_has_confidence() {
+  _has_bits_[0] &= ~0x00000008u;
 }
-inline void RobotPose::clear_confidence()
-{
-	confidence_ = -100000;
-	clear_has_confidence();
+inline void RobotPose::clear_confidence() {
+  confidence_ = -100000;
+  clear_has_confidence();
 }
-inline float RobotPose::confidence() const
-{
-	return confidence_;
+inline float RobotPose::confidence() const {
+  return confidence_;
 }
-inline void RobotPose::set_confidence(float value)
-{
-	set_has_confidence();
-	confidence_ = value;
+inline void RobotPose::set_confidence(float value) {
+  set_has_confidence();
+  confidence_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1438,227 +1569,179 @@ inline void RobotPose::set_confidence(float value)
 // Ball
 
 // required float relativeX = 1 [default = -100000];
-inline bool Ball::has_relativex() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool Ball::has_relativex() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Ball::set_has_relativex()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void Ball::set_has_relativex() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void Ball::clear_has_relativex()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void Ball::clear_has_relativex() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void Ball::clear_relativex()
-{
-	relativex_ = -100000;
-	clear_has_relativex();
+inline void Ball::clear_relativex() {
+  relativex_ = -100000;
+  clear_has_relativex();
 }
-inline float Ball::relativex() const
-{
-	return relativex_;
+inline float Ball::relativex() const {
+  return relativex_;
 }
-inline void Ball::set_relativex(float value)
-{
-	set_has_relativex();
-	relativex_ = value;
+inline void Ball::set_relativex(float value) {
+  set_has_relativex();
+  relativex_ = value;
 }
 
 // required float relativeY = 2 [default = -100000];
-inline bool Ball::has_relativey() const
-{
-	return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool Ball::has_relativey() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Ball::set_has_relativey()
-{
-	_has_bits_[0] |= 0x00000002u;
+inline void Ball::set_has_relativey() {
+  _has_bits_[0] |= 0x00000002u;
 }
-inline void Ball::clear_has_relativey()
-{
-	_has_bits_[0] &= ~0x00000002u;
+inline void Ball::clear_has_relativey() {
+  _has_bits_[0] &= ~0x00000002u;
 }
-inline void Ball::clear_relativey()
-{
-	relativey_ = -100000;
-	clear_has_relativey();
+inline void Ball::clear_relativey() {
+  relativey_ = -100000;
+  clear_has_relativey();
 }
-inline float Ball::relativey() const
-{
-	return relativey_;
+inline float Ball::relativey() const {
+  return relativey_;
 }
-inline void Ball::set_relativey(float value)
-{
-	set_has_relativey();
-	relativey_ = value;
+inline void Ball::set_relativey(float value) {
+  set_has_relativey();
+  relativey_ = value;
 }
 
 // required float relativeXspeed = 3 [default = -100000];
-inline bool Ball::has_relativexspeed() const
-{
-	return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool Ball::has_relativexspeed() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Ball::set_has_relativexspeed()
-{
-	_has_bits_[0] |= 0x00000004u;
+inline void Ball::set_has_relativexspeed() {
+  _has_bits_[0] |= 0x00000004u;
 }
-inline void Ball::clear_has_relativexspeed()
-{
-	_has_bits_[0] &= ~0x00000004u;
+inline void Ball::clear_has_relativexspeed() {
+  _has_bits_[0] &= ~0x00000004u;
 }
-inline void Ball::clear_relativexspeed()
-{
-	relativexspeed_ = -100000;
-	clear_has_relativexspeed();
+inline void Ball::clear_relativexspeed() {
+  relativexspeed_ = -100000;
+  clear_has_relativexspeed();
 }
-inline float Ball::relativexspeed() const
-{
-	return relativexspeed_;
+inline float Ball::relativexspeed() const {
+  return relativexspeed_;
 }
-inline void Ball::set_relativexspeed(float value)
-{
-	set_has_relativexspeed();
-	relativexspeed_ = value;
+inline void Ball::set_relativexspeed(float value) {
+  set_has_relativexspeed();
+  relativexspeed_ = value;
 }
 
 // required float relativeYspeed = 4 [default = -100000];
-inline bool Ball::has_relativeyspeed() const
-{
-	return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool Ball::has_relativeyspeed() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void Ball::set_has_relativeyspeed()
-{
-	_has_bits_[0] |= 0x00000008u;
+inline void Ball::set_has_relativeyspeed() {
+  _has_bits_[0] |= 0x00000008u;
 }
-inline void Ball::clear_has_relativeyspeed()
-{
-	_has_bits_[0] &= ~0x00000008u;
+inline void Ball::clear_has_relativeyspeed() {
+  _has_bits_[0] &= ~0x00000008u;
 }
-inline void Ball::clear_relativeyspeed()
-{
-	relativeyspeed_ = -100000;
-	clear_has_relativeyspeed();
+inline void Ball::clear_relativeyspeed() {
+  relativeyspeed_ = -100000;
+  clear_has_relativeyspeed();
 }
-inline float Ball::relativeyspeed() const
-{
-	return relativeyspeed_;
+inline float Ball::relativeyspeed() const {
+  return relativeyspeed_;
 }
-inline void Ball::set_relativeyspeed(float value)
-{
-	set_has_relativeyspeed();
-	relativeyspeed_ = value;
+inline void Ball::set_relativeyspeed(float value) {
+  set_has_relativeyspeed();
+  relativeyspeed_ = value;
 }
 
 // required float varianceX = 5 [default = -100000];
-inline bool Ball::has_variancex() const
-{
-	return (_has_bits_[0] & 0x00000010u) != 0;
+inline bool Ball::has_variancex() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void Ball::set_has_variancex()
-{
-	_has_bits_[0] |= 0x00000010u;
+inline void Ball::set_has_variancex() {
+  _has_bits_[0] |= 0x00000010u;
 }
-inline void Ball::clear_has_variancex()
-{
-	_has_bits_[0] &= ~0x00000010u;
+inline void Ball::clear_has_variancex() {
+  _has_bits_[0] &= ~0x00000010u;
 }
-inline void Ball::clear_variancex()
-{
-	variancex_ = -100000;
-	clear_has_variancex();
+inline void Ball::clear_variancex() {
+  variancex_ = -100000;
+  clear_has_variancex();
 }
-inline float Ball::variancex() const
-{
-	return variancex_;
+inline float Ball::variancex() const {
+  return variancex_;
 }
-inline void Ball::set_variancex(float value)
-{
-	set_has_variancex();
-	variancex_ = value;
+inline void Ball::set_variancex(float value) {
+  set_has_variancex();
+  variancex_ = value;
 }
 
 // required float varianceY = 6 [default = -100000];
-inline bool Ball::has_variancey() const
-{
-	return (_has_bits_[0] & 0x00000020u) != 0;
+inline bool Ball::has_variancey() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
-inline void Ball::set_has_variancey()
-{
-	_has_bits_[0] |= 0x00000020u;
+inline void Ball::set_has_variancey() {
+  _has_bits_[0] |= 0x00000020u;
 }
-inline void Ball::clear_has_variancey()
-{
-	_has_bits_[0] &= ~0x00000020u;
+inline void Ball::clear_has_variancey() {
+  _has_bits_[0] &= ~0x00000020u;
 }
-inline void Ball::clear_variancey()
-{
-	variancey_ = -100000;
-	clear_has_variancey();
+inline void Ball::clear_variancey() {
+  variancey_ = -100000;
+  clear_has_variancey();
 }
-inline float Ball::variancey() const
-{
-	return variancey_;
+inline float Ball::variancey() const {
+  return variancey_;
 }
-inline void Ball::set_variancey(float value)
-{
-	set_has_variancey();
-	variancey_ = value;
+inline void Ball::set_variancey(float value) {
+  set_has_variancey();
+  variancey_ = value;
 }
 
 // required float varianceXspeed = 7 [default = -100000];
-inline bool Ball::has_variancexspeed() const
-{
-	return (_has_bits_[0] & 0x00000040u) != 0;
+inline bool Ball::has_variancexspeed() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
-inline void Ball::set_has_variancexspeed()
-{
-	_has_bits_[0] |= 0x00000040u;
+inline void Ball::set_has_variancexspeed() {
+  _has_bits_[0] |= 0x00000040u;
 }
-inline void Ball::clear_has_variancexspeed()
-{
-	_has_bits_[0] &= ~0x00000040u;
+inline void Ball::clear_has_variancexspeed() {
+  _has_bits_[0] &= ~0x00000040u;
 }
-inline void Ball::clear_variancexspeed()
-{
-	variancexspeed_ = -100000;
-	clear_has_variancexspeed();
+inline void Ball::clear_variancexspeed() {
+  variancexspeed_ = -100000;
+  clear_has_variancexspeed();
 }
-inline float Ball::variancexspeed() const
-{
-	return variancexspeed_;
+inline float Ball::variancexspeed() const {
+  return variancexspeed_;
 }
-inline void Ball::set_variancexspeed(float value)
-{
-	set_has_variancexspeed();
-	variancexspeed_ = value;
+inline void Ball::set_variancexspeed(float value) {
+  set_has_variancexspeed();
+  variancexspeed_ = value;
 }
 
 // required float varianceYspeed = 8 [default = -100000];
-inline bool Ball::has_varianceyspeed() const
-{
-	return (_has_bits_[0] & 0x00000080u) != 0;
+inline bool Ball::has_varianceyspeed() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
 }
-inline void Ball::set_has_varianceyspeed()
-{
-	_has_bits_[0] |= 0x00000080u;
+inline void Ball::set_has_varianceyspeed() {
+  _has_bits_[0] |= 0x00000080u;
 }
-inline void Ball::clear_has_varianceyspeed()
-{
-	_has_bits_[0] &= ~0x00000080u;
+inline void Ball::clear_has_varianceyspeed() {
+  _has_bits_[0] &= ~0x00000080u;
 }
-inline void Ball::clear_varianceyspeed()
-{
-	varianceyspeed_ = -100000;
-	clear_has_varianceyspeed();
+inline void Ball::clear_varianceyspeed() {
+  varianceyspeed_ = -100000;
+  clear_has_varianceyspeed();
 }
-inline float Ball::varianceyspeed() const
-{
-	return varianceyspeed_;
+inline float Ball::varianceyspeed() const {
+  return varianceyspeed_;
 }
-inline void Ball::set_varianceyspeed(float value)
-{
-	set_has_varianceyspeed();
-	varianceyspeed_ = value;
+inline void Ball::set_varianceyspeed(float value) {
+  set_has_varianceyspeed();
+  varianceyspeed_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1666,143 +1749,113 @@ inline void Ball::set_varianceyspeed(float value)
 // UnknownObjects
 
 // optional float relativeX = 1 [default = -100000];
-inline bool UnknownObjects::has_relativex() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool UnknownObjects::has_relativex() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void UnknownObjects::set_has_relativex()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void UnknownObjects::set_has_relativex() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void UnknownObjects::clear_has_relativex()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void UnknownObjects::clear_has_relativex() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void UnknownObjects::clear_relativex()
-{
-	relativex_ = -100000;
-	clear_has_relativex();
+inline void UnknownObjects::clear_relativex() {
+  relativex_ = -100000;
+  clear_has_relativex();
 }
-inline float UnknownObjects::relativex() const
-{
-	return relativex_;
+inline float UnknownObjects::relativex() const {
+  return relativex_;
 }
-inline void UnknownObjects::set_relativex(float value)
-{
-	set_has_relativex();
-	relativex_ = value;
+inline void UnknownObjects::set_relativex(float value) {
+  set_has_relativex();
+  relativex_ = value;
 }
 
 // optional float relativeY = 2 [default = -100000];
-inline bool UnknownObjects::has_relativey() const
-{
-	return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool UnknownObjects::has_relativey() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void UnknownObjects::set_has_relativey()
-{
-	_has_bits_[0] |= 0x00000002u;
+inline void UnknownObjects::set_has_relativey() {
+  _has_bits_[0] |= 0x00000002u;
 }
-inline void UnknownObjects::clear_has_relativey()
-{
-	_has_bits_[0] &= ~0x00000002u;
+inline void UnknownObjects::clear_has_relativey() {
+  _has_bits_[0] &= ~0x00000002u;
 }
-inline void UnknownObjects::clear_relativey()
-{
-	relativey_ = -100000;
-	clear_has_relativey();
+inline void UnknownObjects::clear_relativey() {
+  relativey_ = -100000;
+  clear_has_relativey();
 }
-inline float UnknownObjects::relativey() const
-{
-	return relativey_;
+inline float UnknownObjects::relativey() const {
+  return relativey_;
 }
-inline void UnknownObjects::set_relativey(float value)
-{
-	set_has_relativey();
-	relativey_ = value;
+inline void UnknownObjects::set_relativey(float value) {
+  set_has_relativey();
+  relativey_ = value;
 }
 
 // optional float height = 3 [default = -100000];
-inline bool UnknownObjects::has_height() const
-{
-	return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool UnknownObjects::has_height() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void UnknownObjects::set_has_height()
-{
-	_has_bits_[0] |= 0x00000004u;
+inline void UnknownObjects::set_has_height() {
+  _has_bits_[0] |= 0x00000004u;
 }
-inline void UnknownObjects::clear_has_height()
-{
-	_has_bits_[0] &= ~0x00000004u;
+inline void UnknownObjects::clear_has_height() {
+  _has_bits_[0] &= ~0x00000004u;
 }
-inline void UnknownObjects::clear_height()
-{
-	height_ = -100000;
-	clear_has_height();
+inline void UnknownObjects::clear_height() {
+  height_ = -100000;
+  clear_has_height();
 }
-inline float UnknownObjects::height() const
-{
-	return height_;
+inline float UnknownObjects::height() const {
+  return height_;
 }
-inline void UnknownObjects::set_height(float value)
-{
-	set_has_height();
-	height_ = value;
+inline void UnknownObjects::set_height(float value) {
+  set_has_height();
+  height_ = value;
 }
 
 // optional float relativeXspeed = 4 [default = -100000];
-inline bool UnknownObjects::has_relativexspeed() const
-{
-	return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool UnknownObjects::has_relativexspeed() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void UnknownObjects::set_has_relativexspeed()
-{
-	_has_bits_[0] |= 0x00000008u;
+inline void UnknownObjects::set_has_relativexspeed() {
+  _has_bits_[0] |= 0x00000008u;
 }
-inline void UnknownObjects::clear_has_relativexspeed()
-{
-	_has_bits_[0] &= ~0x00000008u;
+inline void UnknownObjects::clear_has_relativexspeed() {
+  _has_bits_[0] &= ~0x00000008u;
 }
-inline void UnknownObjects::clear_relativexspeed()
-{
-	relativexspeed_ = -100000;
-	clear_has_relativexspeed();
+inline void UnknownObjects::clear_relativexspeed() {
+  relativexspeed_ = -100000;
+  clear_has_relativexspeed();
 }
-inline float UnknownObjects::relativexspeed() const
-{
-	return relativexspeed_;
+inline float UnknownObjects::relativexspeed() const {
+  return relativexspeed_;
 }
-inline void UnknownObjects::set_relativexspeed(float value)
-{
-	set_has_relativexspeed();
-	relativexspeed_ = value;
+inline void UnknownObjects::set_relativexspeed(float value) {
+  set_has_relativexspeed();
+  relativexspeed_ = value;
 }
 
 // optional float relativeYspeed = 5 [default = -100000];
-inline bool UnknownObjects::has_relativeyspeed() const
-{
-	return (_has_bits_[0] & 0x00000010u) != 0;
+inline bool UnknownObjects::has_relativeyspeed() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void UnknownObjects::set_has_relativeyspeed()
-{
-	_has_bits_[0] |= 0x00000010u;
+inline void UnknownObjects::set_has_relativeyspeed() {
+  _has_bits_[0] |= 0x00000010u;
 }
-inline void UnknownObjects::clear_has_relativeyspeed()
-{
-	_has_bits_[0] &= ~0x00000010u;
+inline void UnknownObjects::clear_has_relativeyspeed() {
+  _has_bits_[0] &= ~0x00000010u;
 }
-inline void UnknownObjects::clear_relativeyspeed()
-{
-	relativeyspeed_ = -100000;
-	clear_has_relativeyspeed();
+inline void UnknownObjects::clear_relativeyspeed() {
+  relativeyspeed_ = -100000;
+  clear_has_relativeyspeed();
 }
-inline float UnknownObjects::relativeyspeed() const
-{
-	return relativeyspeed_;
+inline float UnknownObjects::relativeyspeed() const {
+  return relativeyspeed_;
 }
-inline void UnknownObjects::set_relativeyspeed(float value)
-{
-	set_has_relativeyspeed();
-	relativeyspeed_ = value;
+inline void UnknownObjects::set_relativeyspeed(float value) {
+  set_has_relativeyspeed();
+  relativeyspeed_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1810,59 +1863,113 @@ inline void UnknownObjects::set_relativeyspeed(float value)
 // LocalizationResetMessage
 
 // required int32 type = 1;
-inline bool LocalizationResetMessage::has_type() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool LocalizationResetMessage::has_type() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void LocalizationResetMessage::set_has_type()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void LocalizationResetMessage::set_has_type() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void LocalizationResetMessage::clear_has_type()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void LocalizationResetMessage::clear_has_type() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void LocalizationResetMessage::clear_type()
-{
-	type_ = 0;
-	clear_has_type();
+inline void LocalizationResetMessage::clear_type() {
+  type_ = 0;
+  clear_has_type();
 }
-inline ::google::protobuf::int32 LocalizationResetMessage::type() const
-{
-	return type_;
+inline ::google::protobuf::int32 LocalizationResetMessage::type() const {
+  return type_;
 }
-inline void LocalizationResetMessage::set_type(::google::protobuf::int32 value)
-{
-	set_has_type();
-	type_ = value;
+inline void LocalizationResetMessage::set_type(::google::protobuf::int32 value) {
+  set_has_type();
+  type_ = value;
 }
 
 // required bool kickOff = 2;
-inline bool LocalizationResetMessage::has_kickoff() const
-{
-	return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool LocalizationResetMessage::has_kickoff() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void LocalizationResetMessage::set_has_kickoff()
-{
-	_has_bits_[0] |= 0x00000002u;
+inline void LocalizationResetMessage::set_has_kickoff() {
+  _has_bits_[0] |= 0x00000002u;
 }
-inline void LocalizationResetMessage::clear_has_kickoff()
-{
-	_has_bits_[0] &= ~0x00000002u;
+inline void LocalizationResetMessage::clear_has_kickoff() {
+  _has_bits_[0] &= ~0x00000002u;
 }
-inline void LocalizationResetMessage::clear_kickoff()
-{
-	kickoff_ = false;
-	clear_has_kickoff();
+inline void LocalizationResetMessage::clear_kickoff() {
+  kickoff_ = false;
+  clear_has_kickoff();
 }
-inline bool LocalizationResetMessage::kickoff() const
-{
-	return kickoff_;
+inline bool LocalizationResetMessage::kickoff() const {
+  return kickoff_;
 }
-inline void LocalizationResetMessage::set_kickoff(bool value)
-{
-	set_has_kickoff();
-	kickoff_ = value;
+inline void LocalizationResetMessage::set_kickoff(bool value) {
+  set_has_kickoff();
+  kickoff_ = value;
+}
+
+// required float xPos = 3 [default = 0];
+inline bool LocalizationResetMessage::has_xpos() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void LocalizationResetMessage::set_has_xpos() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void LocalizationResetMessage::clear_has_xpos() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void LocalizationResetMessage::clear_xpos() {
+  xpos_ = 0;
+  clear_has_xpos();
+}
+inline float LocalizationResetMessage::xpos() const {
+  return xpos_;
+}
+inline void LocalizationResetMessage::set_xpos(float value) {
+  set_has_xpos();
+  xpos_ = value;
+}
+
+// required float yPos = 4 [default = 0];
+inline bool LocalizationResetMessage::has_ypos() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void LocalizationResetMessage::set_has_ypos() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void LocalizationResetMessage::clear_has_ypos() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void LocalizationResetMessage::clear_ypos() {
+  ypos_ = 0;
+  clear_has_ypos();
+}
+inline float LocalizationResetMessage::ypos() const {
+  return ypos_;
+}
+inline void LocalizationResetMessage::set_ypos(float value) {
+  set_has_ypos();
+  ypos_ = value;
+}
+
+// required float phiPos = 5 [default = 0];
+inline bool LocalizationResetMessage::has_phipos() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void LocalizationResetMessage::set_has_phipos() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void LocalizationResetMessage::clear_has_phipos() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void LocalizationResetMessage::clear_phipos() {
+  phipos_ = 0;
+  clear_has_phipos();
+}
+inline float LocalizationResetMessage::phipos() const {
+  return phipos_;
+}
+inline void LocalizationResetMessage::set_phipos(float value) {
+  set_has_phipos();
+  phipos_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1870,152 +1977,115 @@ inline void LocalizationResetMessage::set_kickoff(bool value)
 // LocalizationData
 
 // required .WorldInfo World = 1;
-inline bool LocalizationData::has_world() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool LocalizationData::has_world() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void LocalizationData::set_has_world()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void LocalizationData::set_has_world() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void LocalizationData::clear_has_world()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void LocalizationData::clear_has_world() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void LocalizationData::clear_world()
-{
-	if (world_ != NULL) world_->::WorldInfo::Clear();
-
-	clear_has_world();
+inline void LocalizationData::clear_world() {
+  if (world_ != NULL) world_->::WorldInfo::Clear();
+  clear_has_world();
 }
-inline const ::WorldInfo& LocalizationData::world() const
-{
-	return world_ != NULL ? *world_ : *default_instance_->world_;
+inline const ::WorldInfo& LocalizationData::world() const {
+  return world_ != NULL ? *world_ : *default_instance_->world_;
 }
-inline ::WorldInfo* LocalizationData::mutable_world()
-{
-	set_has_world();
-
-	if (world_ == NULL) world_ = new ::WorldInfo;
-
-	return world_;
+inline ::WorldInfo* LocalizationData::mutable_world() {
+  set_has_world();
+  if (world_ == NULL) world_ = new ::WorldInfo;
+  return world_;
 }
-inline ::WorldInfo* LocalizationData::release_world()
-{
-	clear_has_world();
-	::WorldInfo* temp = world_;
-	world_ = NULL;
-	return temp;
+inline ::WorldInfo* LocalizationData::release_world() {
+  clear_has_world();
+  ::WorldInfo* temp = world_;
+  world_ = NULL;
+  return temp;
 }
 
 // repeated .RobotPose Particles = 2;
-inline int LocalizationData::particles_size() const
-{
-	return particles_.size();
+inline int LocalizationData::particles_size() const {
+  return particles_.size();
 }
-inline void LocalizationData::clear_particles()
-{
-	particles_.Clear();
+inline void LocalizationData::clear_particles() {
+  particles_.Clear();
 }
-inline const ::RobotPose& LocalizationData::particles(int index) const
-{
-	return particles_.Get(index);
+inline const ::RobotPose& LocalizationData::particles(int index) const {
+  return particles_.Get(index);
 }
-inline ::RobotPose* LocalizationData::mutable_particles(int index)
-{
-	return particles_.Mutable(index);
+inline ::RobotPose* LocalizationData::mutable_particles(int index) {
+  return particles_.Mutable(index);
 }
-inline ::RobotPose* LocalizationData::add_particles()
-{
-	return particles_.Add();
+inline ::RobotPose* LocalizationData::add_particles() {
+  return particles_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-LocalizationData::particles() const
-{
-	return particles_;
+LocalizationData::particles() const {
+  return particles_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-LocalizationData::mutable_particles()
-{
-	return &particles_;
+LocalizationData::mutable_particles() {
+  return &particles_;
 }
 
 // required .RobotPose RobotPosition = 3;
-inline bool LocalizationData::has_robotposition() const
-{
-	return (_has_bits_[0] & 0x00000004u) != 0;
+inline bool LocalizationData::has_robotposition() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void LocalizationData::set_has_robotposition()
-{
-	_has_bits_[0] |= 0x00000004u;
+inline void LocalizationData::set_has_robotposition() {
+  _has_bits_[0] |= 0x00000004u;
 }
-inline void LocalizationData::clear_has_robotposition()
-{
-	_has_bits_[0] &= ~0x00000004u;
+inline void LocalizationData::clear_has_robotposition() {
+  _has_bits_[0] &= ~0x00000004u;
 }
-inline void LocalizationData::clear_robotposition()
-{
-	if (robotposition_ != NULL) robotposition_->::RobotPose::Clear();
-
-	clear_has_robotposition();
+inline void LocalizationData::clear_robotposition() {
+  if (robotposition_ != NULL) robotposition_->::RobotPose::Clear();
+  clear_has_robotposition();
 }
-inline const ::RobotPose& LocalizationData::robotposition() const
-{
-	return robotposition_ != NULL ? *robotposition_ : *default_instance_->robotposition_;
+inline const ::RobotPose& LocalizationData::robotposition() const {
+  return robotposition_ != NULL ? *robotposition_ : *default_instance_->robotposition_;
 }
-inline ::RobotPose* LocalizationData::mutable_robotposition()
-{
-	set_has_robotposition();
-
-	if (robotposition_ == NULL) robotposition_ = new ::RobotPose;
-
-	return robotposition_;
+inline ::RobotPose* LocalizationData::mutable_robotposition() {
+  set_has_robotposition();
+  if (robotposition_ == NULL) robotposition_ = new ::RobotPose;
+  return robotposition_;
 }
-inline ::RobotPose* LocalizationData::release_robotposition()
-{
-	clear_has_robotposition();
-	::RobotPose* temp = robotposition_;
-	robotposition_ = NULL;
-	return temp;
+inline ::RobotPose* LocalizationData::release_robotposition() {
+  clear_has_robotposition();
+  ::RobotPose* temp = robotposition_;
+  robotposition_ = NULL;
+  return temp;
 }
 
 // required .ObservationMessage Observations = 4;
-inline bool LocalizationData::has_observations() const
-{
-	return (_has_bits_[0] & 0x00000008u) != 0;
+inline bool LocalizationData::has_observations() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void LocalizationData::set_has_observations()
-{
-	_has_bits_[0] |= 0x00000008u;
+inline void LocalizationData::set_has_observations() {
+  _has_bits_[0] |= 0x00000008u;
 }
-inline void LocalizationData::clear_has_observations()
-{
-	_has_bits_[0] &= ~0x00000008u;
+inline void LocalizationData::clear_has_observations() {
+  _has_bits_[0] &= ~0x00000008u;
 }
-inline void LocalizationData::clear_observations()
-{
-	if (observations_ != NULL) observations_->::ObservationMessage::Clear();
-
-	clear_has_observations();
+inline void LocalizationData::clear_observations() {
+  if (observations_ != NULL) observations_->::ObservationMessage::Clear();
+  clear_has_observations();
 }
-inline const ::ObservationMessage& LocalizationData::observations() const
-{
-	return observations_ != NULL ? *observations_ : *default_instance_->observations_;
+inline const ::ObservationMessage& LocalizationData::observations() const {
+  return observations_ != NULL ? *observations_ : *default_instance_->observations_;
 }
-inline ::ObservationMessage* LocalizationData::mutable_observations()
-{
-	set_has_observations();
-
-	if (observations_ == NULL) observations_ = new ::ObservationMessage;
-
-	return observations_;
+inline ::ObservationMessage* LocalizationData::mutable_observations() {
+  set_has_observations();
+  if (observations_ == NULL) observations_ = new ::ObservationMessage;
+  return observations_;
 }
-inline ::ObservationMessage* LocalizationData::release_observations()
-{
-	clear_has_observations();
-	::ObservationMessage* temp = observations_;
-	observations_ = NULL;
-	return temp;
+inline ::ObservationMessage* LocalizationData::release_observations() {
+  clear_has_observations();
+  ::ObservationMessage* temp = observations_;
+  observations_ = NULL;
+  return temp;
 }
 
 // -------------------------------------------------------------------
@@ -2023,117 +2093,83 @@ inline ::ObservationMessage* LocalizationData::release_observations()
 // header
 
 // required sint32 NextMsgByteSize = 1 [default = -1];
-inline bool header::has_nextmsgbytesize() const
-{
-	return (_has_bits_[0] & 0x00000001u) != 0;
+inline bool header::has_nextmsgbytesize() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void header::set_has_nextmsgbytesize()
-{
-	_has_bits_[0] |= 0x00000001u;
+inline void header::set_has_nextmsgbytesize() {
+  _has_bits_[0] |= 0x00000001u;
 }
-inline void header::clear_has_nextmsgbytesize()
-{
-	_has_bits_[0] &= ~0x00000001u;
+inline void header::clear_has_nextmsgbytesize() {
+  _has_bits_[0] &= ~0x00000001u;
 }
-inline void header::clear_nextmsgbytesize()
-{
-	nextmsgbytesize_ = -1;
-	clear_has_nextmsgbytesize();
+inline void header::clear_nextmsgbytesize() {
+  nextmsgbytesize_ = -1;
+  clear_has_nextmsgbytesize();
 }
-inline ::google::protobuf::int32 header::nextmsgbytesize() const
-{
-	return nextmsgbytesize_;
+inline ::google::protobuf::int32 header::nextmsgbytesize() const {
+  return nextmsgbytesize_;
 }
-inline void header::set_nextmsgbytesize(::google::protobuf::int32 value)
-{
-	set_has_nextmsgbytesize();
-	nextmsgbytesize_ = value;
+inline void header::set_nextmsgbytesize(::google::protobuf::int32 value) {
+  set_has_nextmsgbytesize();
+  nextmsgbytesize_ = value;
 }
 
 // required bytes NextMsgName = 3 [default = "Undef"];
-inline bool header::has_nextmsgname() const
-{
-	return (_has_bits_[0] & 0x00000002u) != 0;
+inline bool header::has_nextmsgname() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void header::set_has_nextmsgname()
-{
-	_has_bits_[0] |= 0x00000002u;
+inline void header::set_has_nextmsgname() {
+  _has_bits_[0] |= 0x00000002u;
 }
-inline void header::clear_has_nextmsgname()
-{
-	_has_bits_[0] &= ~0x00000002u;
+inline void header::clear_has_nextmsgname() {
+  _has_bits_[0] &= ~0x00000002u;
 }
-inline void header::clear_nextmsgname()
-{
-	if (nextmsgname_ != &_default_nextmsgname_)
-	{
-		nextmsgname_->assign(_default_nextmsgname_);
-	}
-
-	clear_has_nextmsgname();
+inline void header::clear_nextmsgname() {
+  if (nextmsgname_ != &_default_nextmsgname_) {
+    nextmsgname_->assign(_default_nextmsgname_);
+  }
+  clear_has_nextmsgname();
 }
-inline const ::std::string& header::nextmsgname() const
-{
-	return *nextmsgname_;
+inline const ::std::string& header::nextmsgname() const {
+  return *nextmsgname_;
 }
-inline void header::set_nextmsgname(const ::std::string& value)
-{
-	set_has_nextmsgname();
-
-	if (nextmsgname_ == &_default_nextmsgname_)
-	{
-		nextmsgname_ = new ::std::string;
-	}
-
-	nextmsgname_->assign(value);
+inline void header::set_nextmsgname(const ::std::string& value) {
+  set_has_nextmsgname();
+  if (nextmsgname_ == &_default_nextmsgname_) {
+    nextmsgname_ = new ::std::string;
+  }
+  nextmsgname_->assign(value);
 }
-inline void header::set_nextmsgname(const char* value)
-{
-	set_has_nextmsgname();
-
-	if (nextmsgname_ == &_default_nextmsgname_)
-	{
-		nextmsgname_ = new ::std::string;
-	}
-
-	nextmsgname_->assign(value);
+inline void header::set_nextmsgname(const char* value) {
+  set_has_nextmsgname();
+  if (nextmsgname_ == &_default_nextmsgname_) {
+    nextmsgname_ = new ::std::string;
+  }
+  nextmsgname_->assign(value);
 }
-inline void header::set_nextmsgname(const void* value, size_t size)
-{
-	set_has_nextmsgname();
-
-	if (nextmsgname_ == &_default_nextmsgname_)
-	{
-		nextmsgname_ = new ::std::string;
-	}
-
-	nextmsgname_->assign(reinterpret_cast<const char*>(value), size);
+inline void header::set_nextmsgname(const void* value, size_t size) {
+  set_has_nextmsgname();
+  if (nextmsgname_ == &_default_nextmsgname_) {
+    nextmsgname_ = new ::std::string;
+  }
+  nextmsgname_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* header::mutable_nextmsgname()
-{
-	set_has_nextmsgname();
-
-	if (nextmsgname_ == &_default_nextmsgname_)
-	{
-		nextmsgname_ = new ::std::string(_default_nextmsgname_);
-	}
-
-	return nextmsgname_;
+inline ::std::string* header::mutable_nextmsgname() {
+  set_has_nextmsgname();
+  if (nextmsgname_ == &_default_nextmsgname_) {
+    nextmsgname_ = new ::std::string(_default_nextmsgname_);
+  }
+  return nextmsgname_;
 }
-inline ::std::string* header::release_nextmsgname()
-{
-	clear_has_nextmsgname();
-
-	if (nextmsgname_ == &_default_nextmsgname_)
-	{
-		return NULL;
-	}
-	else
-	{
-		::std::string* temp = nextmsgname_;
-		nextmsgname_ = const_cast< ::std::string*>(&_default_nextmsgname_);
-		return temp;
-	}
+inline ::std::string* header::release_nextmsgname() {
+  clear_has_nextmsgname();
+  if (nextmsgname_ == &_default_nextmsgname_) {
+    return NULL;
+  } else {
+    ::std::string* temp = nextmsgname_;
+    nextmsgname_ = const_cast< ::std::string*>(&_default_nextmsgname_);
+    return temp;
+  }
 }
 
 // -------------------------------------------------------------------
@@ -2141,48 +2177,43 @@ inline ::std::string* header::release_nextmsgname()
 // LocalizationDataForGUI
 
 // repeated .RobotPose Particles = 1;
-inline int LocalizationDataForGUI::particles_size() const
-{
-	return particles_.size();
+inline int LocalizationDataForGUI::particles_size() const {
+  return particles_.size();
 }
-inline void LocalizationDataForGUI::clear_particles()
-{
-	particles_.Clear();
+inline void LocalizationDataForGUI::clear_particles() {
+  particles_.Clear();
 }
-inline const ::RobotPose& LocalizationDataForGUI::particles(int index) const
-{
-	return particles_.Get(index);
+inline const ::RobotPose& LocalizationDataForGUI::particles(int index) const {
+  return particles_.Get(index);
 }
-inline ::RobotPose* LocalizationDataForGUI::mutable_particles(int index)
-{
-	return particles_.Mutable(index);
+inline ::RobotPose* LocalizationDataForGUI::mutable_particles(int index) {
+  return particles_.Mutable(index);
 }
-inline ::RobotPose* LocalizationDataForGUI::add_particles()
-{
-	return particles_.Add();
+inline ::RobotPose* LocalizationDataForGUI::add_particles() {
+  return particles_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-LocalizationDataForGUI::particles() const
-{
-	return particles_;
+LocalizationDataForGUI::particles() const {
+  return particles_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-LocalizationDataForGUI::mutable_particles()
-{
-	return &particles_;
+LocalizationDataForGUI::mutable_particles() {
+  return &particles_;
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 
 #ifndef SWIG
-namespace google
-{
-	namespace protobuf
-	{
+namespace google {
+namespace protobuf {
 
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::LocalizationResetMessage_RESET>() {
+  return ::LocalizationResetMessage_RESET_descriptor();
+}
 
-	}  // namespace google
+}  // namespace google
 }  // namespace protobuf
 #endif  // SWIG
 

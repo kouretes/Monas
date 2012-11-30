@@ -78,24 +78,24 @@ void Sensors::fillComputedData(unsigned int timediff)
 	// 	cout<<gyrX<<" "<<gyrY<<" "<<angX<<" "<<angY<<endl;
 	if(anglefilterreset)
 	{
-		angle[0].reset(angX, 0.1);
-		angle[1].reset(angY, 0.1);
+		angle[0].reset(angX, 0.12);
+		angle[1].reset(angY, 0.12);
 		anglefilterreset = false;
 	}
-
-	try
-	{
-		angle[0].updateWithVel(angX, 0.01 * sqrt(fabs(Interpret::GRAVITY_PULL - accnorm) / accnorm) + 0.003, gyrX, 0.01 * gyrX * gyrX + 0.003, timediff / 1000000000.0);
-		angle[1].updateWithVel(angY, 0.01 * sqrt(fabs(Interpret::GRAVITY_PULL - accnorm) / accnorm) + 0.003, gyrY, 0.01 * gyrY * gyrY + 0.003, timediff / 1000000000.0);
-	}
-	catch (...)
-	{
-		anglefilterreset = true;
-		Logger::Instance().WriteMsg("SENSORS", "Singular Matrix Exception on Kalman update", Logger::Error);
+	try{
+		angle[0].predict(timediff/1000000000.0);
+		angle[1].predict(timediff/1000000000.0);
+		angle[0].updateWithVel(angX,sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.001,gyrX,0.0001*gyrX*gyrX+0.01);
+		angle[1].updateWithVel(angY,sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.001,gyrY,0.0001*gyrY*gyrY+0.01);
+	} catch (...) {
+	   anglefilterreset=true;
+	  Logger::Instance().WriteMsg("SENSORS","Singular Matrix Exception on Kalman update",Logger::Error);
 	}
 
 	for(int i = 0; i < ANGLE_SIZE; i++)
 	{
+		//std::cout<<"true:"<<(angle[i].read())(0)<<std::endl;
+
 		ASM.mutable_computeddata(ANGLE + i)->set_sensorvalue((angle[i].read())(0));
 		ASM.mutable_computeddata(ANGLE + i)->set_sensorvaluediff((angle[i].read())(1)*timediff / 1000000000.0);
 	}

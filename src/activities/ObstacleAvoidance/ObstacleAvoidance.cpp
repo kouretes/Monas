@@ -24,55 +24,7 @@ ACTIVITY_REGISTER(ObstacleAvoidance);
 
 /*********** Math functions ***********/
 
-double angleDiff(double a1, double a2)
-{
-	return wrapToPi(wrapToPi(a1 + M_PI - a2) - M_PI);
-}
-
-
-int DtoR(double d)
-{
-	if (d < 0)
-		return InnerRing;
-	else
-		return int( d / RingDistance ) + 1; // +1 is used to skip the InnerRing
-}
-
-int TtoS(double theta)
-{
-	return int( wrapTo0_2Pi(theta + M_PI_2 + SectorShiftRad) / SectorAngleRad );
-}
-
-double RtoD(int r)
-{
-	if (r == InnerRing)
-		return 0.0;
-	else
-		return (r - 1) * RingDistance;
-}
-
-double StoT(int s)
-{
-	return wrapToPi(s * SectorAngleRad - M_PI_2 - SectorShiftRad);
-}
-
-int XYtoR(double x, double y)
-{
-	return DtoR( toPolarD(x, y) );
-}
-
-int XYtoS(double x, double y)
-{
-	return TtoS( toPolarT(x, y) );
-}
-
-int wrapTo(int n, int MAXN)
-{
-	while (n < 0) n += MAXN;
-
-	return (n % MAXN);
-}
-
+using namespace KMath;
 
 void ObstacleAvoidance::UserInit()
 {
@@ -103,8 +55,8 @@ void ObstacleAvoidance::UserInit()
 	debugModeCout = 0;
 
 	//boh8htikos pinakas gia update
-	for(int i = 0; i < SOnARsNum; i++)
-		empty[i] = EMPTY;
+	for(int i = 0; i < KDeviceLists::US_SIZE; i++)
+		empty[i] = 0.0;
 
 	/********* Messages *********/
 	frontObstacle = false;
@@ -161,34 +113,19 @@ void ObstacleAvoidance::UserInit()
 	}*/
 }
 
-void ObstacleAvoidance::chooseCloserObstacle()
-{
-	for(int i = 0; i < TotalRings; i++)
-	{
-		frontObstacle = PolarGrid[present][i][FRONT] > ObstacleThreshold ? true : false;
-		frontDist = frontObstacle == true ? ((i + 1) * distanceM) : 0.0;
-		frontCert = frontObstacle == true ? PolarGrid[present][i][FRONT] : 0.0;
-
-		if (frontObstacle) break;
-	}
-
-	for(int i = 0; i < TotalRings; i++)
-	{
-		rightObstacle = PolarGrid[present][i][RIGHT] > ObstacleThreshold ? true : false;
-		rightDist = rightObstacle == true ? ((i + 1) * distanceM ) : 0.0;
-		rightCert = rightObstacle == true ? PolarGrid[present][i][RIGHT] : 0.0;  // TODO: get the central ray
-
-		if (rightObstacle) break;
-	}
-
-	for(int i = 0; i < TotalRings; i++)
-	{
-		leftObstacle = PolarGrid[present][i][LEFT] > ObstacleThreshold ? true : false;
-		leftDist = leftObstacle == true ? ((i + 1) * distanceM) : 0.0;
-		leftCert = leftObstacle == true ? PolarGrid[present][i][LEFT] : 0.0;  // TODO: get the central ray
-
-		if (leftObstacle) break;
-	}
+void ObstacleAvoidance::Reset(){
+	originX = robotX;
+	originY = robotY;
+	originA = robotA;
+	relativeMode = 1;
+	targetX_0 = testPathX;
+	targetY_0 = testPathY;
+	targetA_0 = -M_PI_2;
+	double targetD_0 = sqrt((targetX_0) * (targetX_0) + (targetY_0) * (targetY_0));
+	double targetT_0 = atan2(targetY_0, targetX_0);
+	targetX_0 = targetD_0 * cos(targetT_0 + originA);
+	targetY_0 = targetD_0 * sin(targetT_0 + originA);
+	targetA_0 = wrapToPi(targetA_0 + originA);
 }
 
 int ObstacleAvoidance::Execute()
@@ -197,7 +134,7 @@ int ObstacleAvoidance::Execute()
 	//xrhsh gia elegxo ean to array me tis times twn sonars einai 0 = sfalma
 	countLeft = 0;
 	countRight = 0;
-	double Right[SOnARsNum], Left[SOnARsNum];
+	double Right[KDeviceLists::US_SIZE], Left[KDeviceLists::US_SIZE];
 	initPaths();
 
 	//(RobotPositionSensor Message) find current robot position
@@ -223,7 +160,7 @@ int ObstacleAvoidance::Execute()
 
 			if (debugRelativeMode == 1)
 			{
-				reset();
+				Reset();
 				pathPlanningRequestRelative(0.0, 0.0, 0.0);
 			}
 		}
@@ -234,7 +171,7 @@ int ObstacleAvoidance::Execute()
 	//update the grid with the new sonar values
 	if (asvm != 0)
 	{
-		for (int j = SOnARsNum - 1; j >= 0; j--)
+		for (int j = KDeviceLists::US_SIZE - 1; j >= 0; j--)
 		{
 			LeftValue[j] = asvm->sensordata(KDeviceLists::L_US + j);
 			Left[j] = LeftValue[j].sensorvalue();
@@ -265,7 +202,7 @@ int ObstacleAvoidance::Execute()
 	{
 		double walkToX, walkToY, walkToT, distance2Goal;
 		double targetZeroOrientation = 0.0;
-		double deltaRelative[3] = {EMPTY, EMPTY, EMPTY};
+		double deltaRelative[3] = {0.0, 0.0, 0.0};
 		double r, theta;
 		double deltaX, deltaY, deltaA, targetD, targetT;
 
@@ -305,7 +242,7 @@ int ObstacleAvoidance::Execute()
 			targetR = XYtoR(targetX, targetY);
 			targetS = XYtoS(targetX, targetY);
 			double targetZeroOrientation = wrapTo0_2Pi((targetS + 0.5) * SectorAngleRad - M_PI_2);
-			targetO = int( wrapTo0_2Pi( angleDiff(targetA, targetZeroOrientation) + 0.5 * M_PI_4 ) / M_PI_4 );
+			targetO = int( wrapTo0_2Pi( anglediff(targetA, targetZeroOrientation) + 0.5 * M_PI_4 ) / M_PI_4 );
 
 			if (targetR > OuterRing)
 			{
@@ -368,124 +305,86 @@ int ObstacleAvoidance::Execute()
 	return 0;
 }
 
+int ObstacleAvoidance::DtoR(double d)
+{
+	if (d < 0)
+		return InnerRing;
+	else
+		return int( d / RingDistance ) + 1; // +1 is used to skip the InnerRing
+}
+
+int ObstacleAvoidance::TtoS(double theta)
+{
+	return int( wrapTo0_2Pi(theta + M_PI_2 + SectorShiftRad) / SectorAngleRad );
+}
+
+double ObstacleAvoidance::RtoD(int r)
+{
+	if (r == InnerRing)
+		return 0.0;
+	else
+		return (r - 1) * RingDistance;
+}
+
+double ObstacleAvoidance::StoT(int s)
+{
+	return wrapToPi(s * SectorAngleRad - M_PI_2 - SectorShiftRad);
+}
+
+int ObstacleAvoidance::XYtoR(double x, double y)
+{
+	return DtoR( toPolarD(x, y) );
+}
+
+int ObstacleAvoidance::XYtoS(double x, double y)
+{
+	return TtoS( toPolarT(x, y) );
+}
+
+int ObstacleAvoidance::wrapTo(int n, int MAXN)
+{
+	while (n < 0) n += MAXN;
+
+	return (n % MAXN);
+}
+
+void ObstacleAvoidance::chooseCloserObstacle()
+{
+	for(int i = 0; i < TotalRings; i++)
+	{
+		frontObstacle = PolarGrid[present][i][FRONT] > ObstacleThreshold ? true : false;
+		frontDist = frontObstacle == true ? ((i + 1) * distanceM) : 0.0;
+		frontCert = frontObstacle == true ? PolarGrid[present][i][FRONT] : 0.0;
+
+		if (frontObstacle) break;
+	}
+
+	for(int i = 0; i < TotalRings; i++)
+	{
+		rightObstacle = PolarGrid[present][i][RIGHT] > ObstacleThreshold ? true : false;
+		rightDist = rightObstacle == true ? ((i + 1) * distanceM ) : 0.0;
+		rightCert = rightObstacle == true ? PolarGrid[present][i][RIGHT] : 0.0;  // TODO: get the central ray
+
+		if (rightObstacle) break;
+	}
+
+	for(int i = 0; i < TotalRings; i++)
+	{
+		leftObstacle = PolarGrid[present][i][LEFT] > ObstacleThreshold ? true : false;
+		leftDist = leftObstacle == true ? ((i + 1) * distanceM) : 0.0;
+		leftCert = leftObstacle == true ? PolarGrid[present][i][LEFT] : 0.0;  // TODO: get the central ray
+
+		if (leftObstacle) break;
+	}
+}
+
 void ObstacleAvoidance::printSonarValues()
 {
-	for(int i = 0; i < SOnARsNum; i++)
+	for(int i = 0; i < KDeviceLists::US_SIZE; i++)
 		Logger::Instance().WriteMsg("ObstacleAvoidance", "leftSensor: " + _toString(LeftValue[i].sensorvalue()) + " rightSensor: " + _toString(RightValue[i].sensorvalue()) , Logger::Info);
 
 	Logger::Instance().WriteMsg("ObstacleAvoidance", "debugCounter: " + _toString(debugCounter), Logger::Info);
 	debugCounter++;
-}
-
-/************** Initialization **************/
-
-void ObstacleAvoidance::Initialize()
-{
-	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/obstacle.xml");
-
-	if (config.IsLoadedSuccessfully())
-	{
-		bool found = true;
-		found &= config.QueryElement("FrontDeviation", FrontDeviation);
-		found &= config.QueryElement("SideDeviation", SideDeviation);
-		found &= config.QueryElement("ageTimerSeconds", ageTimerSeconds);
-		found &= config.QueryElement("debugModeCout", debugModeCout);
-		found &= config.QueryElement("debugRelativeMode", debugRelativeMode);
-		found &= config.QueryElement("testPathX", testPathX);
-		found &= config.QueryElement("testPathY", testPathY);
-		found &= config.QueryElement("testPathA", testPathA);
-		found &= config.QueryElement("AgeFactor", AgeFactor);
-		found &= config.QueryElement("OccupancyDecreaseFactor", OccupancyDecreaseFactor);
-		found &= config.QueryElement("OccupancyIncreaseFactor", OccupancyIncreaseFactor);
-		found &= config.QueryElement("MinOccupancy", MinOccupancy);
-		found &= config.QueryElement("MaxOccupancy", MaxOccupancy);
-		found &= config.QueryElement("ObstacleThreshold", ObstacleThreshold);
-		found &= config.QueryElement("ObstacleCostFactor", ObstacleCostFactor);
-		found &= config.QueryElement("RotationCostFactor", RotationCostFactor);
-		found &= config.QueryElement("RotationMoveFactor", RotationMoveFactor);
-		found &= config.QueryElement("SideStepCostFactor", SideStepCostFactor);
-		found &= config.QueryElement("SemiSideCostFactor", SemiSideCostFactor);
-		found &= config.QueryElement("SonarDistanceRange", SonarDistanceRange);
-		found &= config.QueryElement("SonarMinReading", SonarMinReading);
-		found &= config.QueryElement("CloseObstacleRadius", CloseObstacleRadius);
-		found &= config.QueryElement("CloseObstacleCenter", CloseObstacleCenter);
-		found &= config.QueryElement("GoalDistanceTolerance", GoalDistanceTolerance);
-		found &= config.QueryElement("GoalAngleTolerance", GoalAngleTolerance);
-		
-		
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "Initialize no knowledge: " + _toString(NoKnowledge) , Logger::ExtraExtraInfo);
-
-		if (found)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "All obstacle parameters loaded successfully" , Logger::ExtraExtraInfo);
-		else
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "Cant Find an attribute in the xml config file " , Logger::ExtraExtraInfo);
-	}
-	else
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "Cant Find xml config file ", Logger::ExtraExtraInfo);
-}
-
-void ObstacleAvoidance::initGrid()
-{
-	initCoordinates();
-	robotX = 0.0;
-	robotY = 0.0;
-	robotA = 0.0;
-	initPaths();
-	initPolarGrid();
-	initEuclidean();
-}
-
-void ObstacleAvoidance::initPaths()
-{
-	for (int i = 0; i < PathLength; i++)
-	{
-		pathR[i] = -1;
-		pathS[i] = -1;
-		pathO[i] = -1;
-	}
-}
-
-void ObstacleAvoidance::initPolarGrid()
-{
-	for (int k = 0; k < 2; k++)
-		for (int r = 0; r < TotalRings; r++)
-			for (int s = 0; s < N; s++)
-				if (r == InnerRing)
-					PolarGrid[k][r][s] = 0.0;
-				else
-					PolarGrid[k][r][s] = NoKnowledge;
-}
-
-void ObstacleAvoidance::initCoordinates()
-{
-	for (int r = 0; r < TotalRings; r++)
-		for (int s = 0; s < N; s++)
-			if (r == InnerRing)
-			{
-				cellCenterX[r][s] = 0.0;
-				cellCenterY[r][s] = 0.0;
-			}
-			else
-			{
-				cellCenterX[r][s] = toCartesianX( RtoD(r) + 0.5 * RingDistance, StoT(s) + 0.5 * SectorAngleRad );
-				cellCenterY[r][s] = toCartesianY( RtoD(r) + 0.5 * RingDistance, StoT(s) + 0.5 * SectorAngleRad );
-			}
-}
-
-void ObstacleAvoidance::initEuclidean()
-{
-	for (int i = 0; i < TotalRings; i++)
-		for (int k = 0; k < N; k++)
-			for (int j = 0; j < TotalRings; j++)
-				for (int l = 0; l < N; l++)
-					euclidean[i][k][j][l] = toPolarD( cellCenterX[j][l] - cellCenterX[i][k], cellCenterY[j][l] - cellCenterY[i][k] );
-}
-
-void ObstacleAvoidance::initChanged()
-{
-	for(int i = 0; i < M; i++)
-		for(int j = 0; j < N; j++)
-			changed[i][j] = 0;
 }
 
 /************** Map Update **************/
@@ -658,7 +557,7 @@ void ObstacleAvoidance::moveRobot()
 	//cout << "Odometry  : " << odometryX << " " << odometryY << " " << odometryA << endl;
 	diffX = odometryX - robotX;
 	diffY = odometryY - robotY;
-	diffA = angleDiff(odometryA, robotA);
+	diffA = anglediff(odometryA, robotA);
 	//cout << "DIFF: " << diffX << " " << diffY << " " << diffA << endl;
 	double diffD = sqrt(diffX * diffX + diffY * diffY);
 	double diffT = atan2(diffY, diffX);
@@ -802,7 +701,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 			next.sector = (current.ring == InnerRing) ? wrapTo(current.sector + 1, N) : current.sector;
 			next.orientation = (current.ring == InnerRing) ? current.orientation : wrapTo(current.orientation + 1, NEIGHBOURS);
 			next.angle = next.sector * SectorAngleRad + next.orientation * M_PI_4;
-			deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+			deltaTheta = fabs( anglediff(next.angle, current.angle) );
 			next.gn = current.gn;
 			next.gn += (current.ring == InnerRing) ? RotationCostFactor * SectorAngleRad / (2.0 * M_PI) : RotationCostFactor * deltaTheta / (2.0 * M_PI);
 			next.hn = euclidean[next.ring][next.sector][goalm][goaln];
@@ -814,7 +713,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 			next.sector = (current.ring == InnerRing) ? wrapTo(current.sector - 1, N) : current.sector;
 			next.orientation = (current.ring == InnerRing) ? current.orientation : wrapTo(current.orientation - 1, NEIGHBOURS);
 			next.angle = next.sector * SectorAngleRad + next.orientation * M_PI_4;
-			deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+			deltaTheta = fabs( anglediff(next.angle, current.angle) );
 			next.gn = current.gn;
 			next.gn += (current.ring == InnerRing) ? RotationCostFactor * SectorAngleRad / (2.0 * M_PI) : RotationCostFactor * deltaTheta / (2.0 * M_PI);
 			next.hn = euclidean[next.ring][next.sector][goalm][goaln];
@@ -845,7 +744,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 
 					sideCost = ( (next.orientation != j) && (j != current.orientation) ) ? SemiSideCostFactor : 1.0;
 					next.gn += sideCost * euclidean[current.ring][current.sector][next.ring][next.sector];
-					deltaTheta = fabs( angleDiff(next.angle, current.angle) );
+					deltaTheta = fabs( anglediff(next.angle, current.angle) );
 					next.gn += deltaTheta / (2.0 * M_PI);
 					next.hn =  euclidean[next.ring][next.sector][goalm][goaln];
 					next.fn = next.gn + next.hn;
@@ -888,7 +787,7 @@ void ObstacleAvoidance::astar13Neighbours(int goalm, int goaln, int goalo)
 
 				sideCost = SideStepCostFactor;
 				next.gn += sideCost * euclidean[current.ring][current.sector][next.ring][next.sector];
-				deltaTheta = fabs(angleDiff(next.angle, current.angle));
+				deltaTheta = fabs(anglediff(next.angle, current.angle));
 				next.gn += deltaTheta / (2.0 * M_PI);
 				next.hn =  euclidean[next.ring][next.sector][goalm][goaln];
 				next.fn = next.gn + next.hn;
@@ -1075,21 +974,116 @@ void ObstacleAvoidance::callVelocityWalk(double walkToX, double walkToY, double 
 	velocityWalk(X, Y, t, f);
 }
 
+/************** Initialization **************/
 
-void ObstacleAvoidance::reset()
+void ObstacleAvoidance::Initialize()
 {
-	originX = robotX;
-	originY = robotY;
-	originA = robotA;
-	relativeMode = 1;
-	targetX_0 = testPathX;
-	targetY_0 = testPathY;
-	targetA_0 = -M_PI_2;
-	double targetD_0 = sqrt((targetX_0) * (targetX_0) + (targetY_0) * (targetY_0));
-	double targetT_0 = atan2(targetY_0, targetX_0);
-	targetX_0 = targetD_0 * cos(targetT_0 + originA);
-	targetY_0 = targetD_0 * sin(targetT_0 + originA);
-	targetA_0 = wrapToPi(targetA_0 + originA);
-	//Logger::Instance().WriteMsg("ObstacleAvoidance", "origin X: " + _toString(originX)+ " Y: " + _toString(originY) + " A: "+_toString(originA) , Logger::ExtraExtraInfo);
+	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/obstacle.xml");
+
+	if (config.IsLoadedSuccessfully())
+	{
+		bool found = true;
+		found &= config.QueryElement("FrontDeviation", FrontDeviation);
+		found &= config.QueryElement("SideDeviation", SideDeviation);
+		found &= config.QueryElement("ageTimerSeconds", ageTimerSeconds);
+		found &= config.QueryElement("debugModeCout", debugModeCout);
+		found &= config.QueryElement("debugRelativeMode", debugRelativeMode);
+		found &= config.QueryElement("testPathX", testPathX);
+		found &= config.QueryElement("testPathY", testPathY);
+		found &= config.QueryElement("testPathA", testPathA);
+		found &= config.QueryElement("AgeFactor", AgeFactor);
+		found &= config.QueryElement("OccupancyDecreaseFactor", OccupancyDecreaseFactor);
+		found &= config.QueryElement("OccupancyIncreaseFactor", OccupancyIncreaseFactor);
+		found &= config.QueryElement("MinOccupancy", MinOccupancy);
+		found &= config.QueryElement("MaxOccupancy", MaxOccupancy);
+		found &= config.QueryElement("ObstacleThreshold", ObstacleThreshold);
+		found &= config.QueryElement("ObstacleCostFactor", ObstacleCostFactor);
+		found &= config.QueryElement("RotationCostFactor", RotationCostFactor);
+		found &= config.QueryElement("RotationMoveFactor", RotationMoveFactor);
+		found &= config.QueryElement("SideStepCostFactor", SideStepCostFactor);
+		found &= config.QueryElement("SemiSideCostFactor", SemiSideCostFactor);
+		found &= config.QueryElement("SonarDistanceRange", SonarDistanceRange);
+		found &= config.QueryElement("SonarMinReading", SonarMinReading);
+		found &= config.QueryElement("CloseObstacleRadius", CloseObstacleRadius);
+		found &= config.QueryElement("CloseObstacleCenter", CloseObstacleCenter);
+		found &= config.QueryElement("GoalDistanceTolerance", GoalDistanceTolerance);
+		found &= config.QueryElement("GoalAngleTolerance", GoalAngleTolerance);
+		
+		
+		Logger::Instance().WriteMsg("ObstacleAvoidance", "Initialize no knowledge: " + _toString(NoKnowledge) , Logger::ExtraExtraInfo);
+
+		if (found)
+			Logger::Instance().WriteMsg("ObstacleAvoidance", "All obstacle parameters loaded successfully" , Logger::ExtraExtraInfo);
+		else
+			Logger::Instance().WriteMsg("ObstacleAvoidance", "Cant Find an attribute in the xml config file " , Logger::ExtraExtraInfo);
+	}
+	else
+		Logger::Instance().WriteMsg("ObstacleAvoidance", "Cant Find xml config file ", Logger::ExtraExtraInfo);
 }
+
+void ObstacleAvoidance::initGrid()
+{
+	initCoordinates();
+	robotX = 0.0;
+	robotY = 0.0;
+	robotA = 0.0;
+	initPaths();
+	initPolarGrid();
+	initEuclidean();
+}
+
+void ObstacleAvoidance::initPaths()
+{
+	for (int i = 0; i < PathLength; i++)
+	{
+		pathR[i] = -1;
+		pathS[i] = -1;
+		pathO[i] = -1;
+	}
+}
+
+void ObstacleAvoidance::initPolarGrid()
+{
+	for (int k = 0; k < 2; k++)
+		for (int r = 0; r < TotalRings; r++)
+			for (int s = 0; s < N; s++)
+				if (r == InnerRing)
+					PolarGrid[k][r][s] = 0.0;
+				else
+					PolarGrid[k][r][s] = NoKnowledge;
+}
+
+void ObstacleAvoidance::initCoordinates()
+{
+	for (int r = 0; r < TotalRings; r++)
+		for (int s = 0; s < N; s++)
+			if (r == InnerRing)
+			{
+				cellCenterX[r][s] = 0.0;
+				cellCenterY[r][s] = 0.0;
+			}
+			else
+			{
+				cellCenterX[r][s] = toCartesianX( RtoD(r) + 0.5 * RingDistance, StoT(s) + 0.5 * SectorAngleRad );
+				cellCenterY[r][s] = toCartesianY( RtoD(r) + 0.5 * RingDistance, StoT(s) + 0.5 * SectorAngleRad );
+			}
+}
+
+void ObstacleAvoidance::initEuclidean()
+{
+	for (int i = 0; i < TotalRings; i++)
+		for (int k = 0; k < N; k++)
+			for (int j = 0; j < TotalRings; j++)
+				for (int l = 0; l < N; l++)
+					euclidean[i][k][j][l] = toPolarD( cellCenterX[j][l] - cellCenterX[i][k], cellCenterY[j][l] - cellCenterY[i][k] );
+}
+
+void ObstacleAvoidance::initChanged()
+{
+	for(int i = 0; i < M; i++)
+		for(int j = 0; j < N; j++)
+			changed[i][j] = 0;
+}
+
+
 
