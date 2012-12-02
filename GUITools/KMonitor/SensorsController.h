@@ -9,43 +9,41 @@
 #include "messages/SensorsMessage.pb.h"
 #include <boost/circular_buffer.hpp>
 
-namespace Ui{
-    class SensorsController;
+namespace Ui {
+class SensorsController;
 }
 
-class SensorsController : public QWidget
-{
+class SensorsController : public QWidget {
 	Q_OBJECT
 
 public:
-    explicit SensorsController(QWidget *parent = 0);
+	explicit SensorsController (QWidget *parent = 0);
 	~SensorsController();
-	
-    Ui::SensorsController* getLSDControllerUi() {return ui;}
-    
+
+	Ui::SensorsController *getLSDControllerUi() {
+		return ui;
+	}
+
 signals:
-	void NewHostAdded(QString,QString);
-	void OldHostRemoved(QString);
-	void GameStateMsgUpdate(QString,QString,QString);
-	void LWRHSubscriptionRequest(QString);
-	void LWRHUnsubscriptionRequest(QString);
+	void SubscriptionRequest (QString);
 public slots:
-	void addComboBoxItem(QString, QString);
-	void removeComboBoxItem(QString);
-	void setLWRHGameStateInfo(QString, QString, QString);
-	void SubscriptionHandler(QString);
-	void UnsubscriptionHandler(QString);
-	void sensorsDataUpdateHandler(AllSensorValuesMessage, QString);
-	
+	void addComboBoxItem (QString, QString);
+	void removeComboBoxItem (QString);
+	void setGameStateInfo (QString, QString, QString);
+	void changeToHost (QString);
+	void SubscriptionHandler (QString);
+
+	void sensorsDataUpdateHandler (AllSensorValuesMessage, QString);
+
 private:
 	void clearComboLists();
-	void updateHeadJointsBuffer(AllSensorValuesMessage);
-	void updateLArmJointsBuffer(AllSensorValuesMessage asvm);
-	void updateRArmJointsBuffer(AllSensorValuesMessage asvm);
-	void updateLLegJointsBuffer(AllSensorValuesMessage asvm);
-	void updateRLegJointsBuffer(AllSensorValuesMessage asvm);
-	void updateInertialBuffer(AllSensorValuesMessage asvm);
-	void updateFSRsBuffer(AllSensorValuesMessage asvm);
+	void updateHeadJointsBuffer (AllSensorValuesMessage);
+	void updateLArmJointsBuffer (AllSensorValuesMessage asvm);
+	void updateRArmJointsBuffer (AllSensorValuesMessage asvm);
+	void updateLLegJointsBuffer (AllSensorValuesMessage asvm);
+	void updateRLegJointsBuffer (AllSensorValuesMessage asvm);
+	void updateInertialBuffer (AllSensorValuesMessage asvm);
+	void updateFSRsBuffer (AllSensorValuesMessage asvm);
 	void updateHeadJointsTable();
 	void updateLArmJointsTable();
 	void updateRArmJointsTable();
@@ -55,26 +53,26 @@ private:
 	void updateFSRsTable();
 
 
-    HostsComboBox* availableLSDHosts;
+	HostsComboBox *availableLSDHosts;
 	Ui::SensorsController *ui;
 private:
-	typedef struct joints{
+	typedef struct joints {
 
 		QString yaw;
 		QString pitch;
 
-	}HeadJoints;
+	} HeadJoints;
 
-	typedef struct joints1{
+	typedef struct joints1 {
 
 		QString ShoulderPitch;
 		QString ShoulderRoll;
 		QString ElbowYaw;
 		QString ElbowRoll;
 
-	}ArmJoints;
+	} ArmJoints;
 
-	typedef struct joints2{
+	typedef struct joints2 {
 
 		QString HipYawPitch;
 		QString HipRoll;
@@ -83,9 +81,9 @@ private:
 		QString AnklePitch;
 		QString AnkleRoll;
 
-	}LegJoints;
+	} LegJoints;
 
-	typedef struct values{
+	typedef struct values {
 
 		QString AccZvalue;
 		QString AccXvalue;
@@ -93,9 +91,9 @@ private:
 		QString angX;
 		QString angY;
 
-	}InertialValues;
+	} InertialValues;
 
-	typedef struct morevalues{
+	typedef struct morevalues {
 
 		QString LFsrFL;
 		QString LFsrRL;
@@ -106,7 +104,7 @@ private:
 		QString RFsrFR;
 		QString RFsrRR;
 
-	}FSRValues;
+	} FSRValues;
 	boost::circular_buffer<HeadJoints> headJointsBuffer;
 	boost::circular_buffer<ArmJoints> LArmJointsBuffer;
 	boost::circular_buffer<ArmJoints> RArmJointsBuffer;

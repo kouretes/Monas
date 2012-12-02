@@ -14,66 +14,68 @@
 class GraphicalRobotElement;
 class KGraphicsView;
 
-class KFieldScene : public QGraphicsScene
-{
+class KFieldScene : public QGraphicsScene {
 public:
-	KFieldScene(QGraphicsView* parent);
+	KFieldScene (QGraphicsView *parent);
 	~KFieldScene();
 
-	void resizeFieldScene(int width, int height);
+	void resizeFieldScene (int width, int height);
 
 	void printRobotList();
-	GraphicalRobotElement* findGraphicalRobotItem(QString hostId );
-	GraphicalRobotElement* newGraphicalRobotItem(QString hostId);
-	void removeGraphicalRobotItem(QString hostId);
+	GraphicalRobotElement *findGraphicalRobotItem (QString hostId );
+	GraphicalRobotElement *newGraphicalRobotItem (QString hostId);
+	void removeGraphicalRobotItem (QString hostId);
 
-	QList<GraphicalRobotElement*> getRobotList (){return RobotList;}
-	QGraphicsView* getParentGraphicsView(){return parent;}
+	QList<GraphicalRobotElement *> getRobotList () {
+		return RobotList;
+	}
+	QGraphicsView *getParentGraphicsView() {
+		return parent;
+	}
 
-	QRectF rectFromFC(float xMiddle, float yMiddle, float width, float height);
-	QLineF lineFromFCA(float x,float y, float degAngle, float size);
-	QRectF ballRectFromFC(WorldInfo* wim, float width, float height);
-	QLineF lineRectFromFC(float x1,float y1, float x2,float y2);
-	QLineF unionistLineRectFromFC(WorldInfo* wim);
+	QRectF rectFromFC (float xMiddle, float yMiddle, float width, float height);
+	QLineF lineFromFCA (float x, float y, float degAngle, float size);
+	QRectF ballRectFromFC (WorldInfo *wim, float width, float height);
+	QLineF lineRectFromFC (float x1, float y1, float x2, float y2);
+	QLineF unionistLineRectFromFC (WorldInfo *wim);
 
-	QRectF visionBallRect( BallObject bob, WorldInfo wim);
-	QRectF goalPostRectFromOBM(NamedObject* nob, WorldInfo* wim);
-	QLineF motionCmdRectFromFC(WorldInfo* wim, float cx, float cy);
+	QRectF visionBallRect ( BallObject bob, WorldInfo wim);
+	QRectF goalPostRectFromOBM (NamedObject *nob, WorldInfo *wim);
+	QLineF motionCmdRectFromFC (WorldInfo *wim, float cx, float cy);
 
 private:
-	void loadXMLConfig(std::string fname);
+	void loadXMLConfig (std::string fname);
 	void setSvgItems();
 
-	QGraphicsRectItem* LSide;
-	QGraphicsRectItem* RSide;
-	QGraphicsRectItem* LSmallArea;
-	QGraphicsRectItem* RSmallArea;
-	QGraphicsRectItem* LGoalArea;
-	QGraphicsRectItem* RGoalArea;
+	QGraphicsRectItem *LSide;
+	QGraphicsRectItem *RSide;
+	QGraphicsRectItem *LSmallArea;
+	QGraphicsRectItem *RSmallArea;
+	QGraphicsRectItem *LGoalArea;
+	QGraphicsRectItem *RGoalArea;
 
-	QGraphicsEllipseItem* CCircle;
+	QGraphicsEllipseItem *CCircle;
 
-	QGraphicsLineItem* LCrossHPart;
-	QGraphicsLineItem* LCrossVPart;
-	QGraphicsLineItem* RCrossHPart;
-	QGraphicsLineItem* RCrossVPart;
-	QGraphicsLineItem* CCrossHPart;
+	QGraphicsLineItem *LCrossHPart;
+	QGraphicsLineItem *LCrossVPart;
+	QGraphicsLineItem *RCrossHPart;
+	QGraphicsLineItem *RCrossVPart;
+	QGraphicsLineItem *CCrossHPart;
 
-	QGraphicsEllipseItem* LTPostCircle;
-	QGraphicsEllipseItem* LBPostCircle;
-	QGraphicsEllipseItem* RTPostCircle;
-	QGraphicsEllipseItem* RBPostCircle;
+	QGraphicsEllipseItem *LTPostCircle;
+	QGraphicsEllipseItem *LBPostCircle;
+	QGraphicsEllipseItem *RTPostCircle;
+	QGraphicsEllipseItem *RBPostCircle;
 
-	QGraphicsLineItem* LPostVPart;
-	QGraphicsLineItem* RPostVPart;
+	QGraphicsLineItem *LPostVPart;
+	QGraphicsLineItem *RPostVPart;
 
-	QGraphicsItem* LTPost;
-	QGraphicsItem* LBPost;
-	QGraphicsItem* RTPost;
-	QGraphicsItem* RBPost;
+	QGraphicsItem *LTPost;
+	QGraphicsItem *LBPost;
+	QGraphicsItem *RTPost;
+	QGraphicsItem *RBPost;
 
-	struct
-	{
+	struct {
 		int totalCarpetAreaWidth;
 		int totalCarpetAreaHeight;
 		int totalCarpetAreaMean;
@@ -100,8 +102,8 @@ private:
 	} config;
 	XMLConfig *xmlconfig;
 
-	QGraphicsView* parent;
-	QList<GraphicalRobotElement*> RobotList;
+	QGraphicsView *parent;
+	QList<GraphicalRobotElement *> RobotList;
 };
 
 #endif // KFieldScene_H

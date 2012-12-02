@@ -8,25 +8,24 @@
 #include "ui_KMonitor.h"
 
 namespace Ui {
-    class KMonitor;
+class KMonitor;
 }
 
-class KMonitor : public QMainWindow
-{
-    Q_OBJECT
+class KMonitor : public QMainWindow {
+	Q_OBJECT
 
 public:
-    KMonitor(QWidget *parent = 0);
-    ~KMonitor();
+	KMonitor (QWidget *parent = 0);
+	~KMonitor();
 
 private slots:
 	void quitKMonitor();
-	void printCurrentTab(int index);
+	void printCurrentTab (int index);
 
 private:
 
 	Ui::KMonitor *ui;
-    KGUIMessenger* Messenger;
+	KGUIMessenger *Messenger;
 };
 
 #endif // KMONITOR_H

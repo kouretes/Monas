@@ -27,33 +27,28 @@
  * \file XMLHandler.h
 */
 namespace Ui {
-    class CommandsController;
+class CommandsController;
 }
 
-class CommandsController : public QWidget
-{
-    Q_OBJECT
+class CommandsController : public QWidget {
+	Q_OBJECT
 
 public:
-    explicit CommandsController(QWidget *parent = 0);
-    ~CommandsController();
+	explicit CommandsController (QWidget *parent = 0);
+	~CommandsController();
 
 signals:
-	void NewHostAdded(QString,QString);
-	void OldHostRemoved(QString);
-	void GameStateMsgUpdate(QString,QString,QString);
-	void LWRHSubscriptionRequest(QString);
-	void LWRHUnsubscriptionRequest(QString);
-	void sendExternalCommand(ExternalCommand msg);
-	
+	void SubscriptionRequest (QString);
+	void sendExternalCommand (ExternalCommand msg);
+
 public slots:
-	void addComboBoxItem(QString, QString);
-	void removeComboBoxItem(QString);
-	void setLWRHGameStateInfo(QString, QString, QString);
-	void SubscriptionHandler(QString);
-	void UnsubscriptionHandler(QString);
-	void genericAckReceived(GenericACK ack, QString hostid);
-	
+	void addComboBoxItem (QString, QString);
+	void removeComboBoxItem (QString);
+	void setGameStateInfo (QString, QString, QString);
+	void changeToHost (QString);
+	void SubscriptionHandler (QString);
+	void genericAckReceived (GenericACK ack, QString hostid);
+
 private slots:
 	void retransmitMessage();
 	void sendAction();
@@ -76,26 +71,26 @@ private slots:
 	void sendHeadLocalizeFar();
 	void sendHeadLookDown();
 	void sendHeadStop();
-	void stiffSliderMoved(int);
-	void stiffTextChanged(QString);
-	void headSliderMoved(int);
-	void headTextChanged(QString);
-	
+	void stiffSliderMoved (int);
+	void stiffTextChanged (QString);
+	void headSliderMoved (int);
+	void headTextChanged (QString);
+
 private:
-	void addActionComboBoxItems(std::string path);
-	void sendHeadMessage(int headCommandId);
+	void addActionComboBoxItems (std::string path);
+	void sendHeadMessage (int headCommandId);
 	void sendOutMsg();
-	
+
 private:
 	static const float maxHeadSpeed = 1.8;
 	static const float minHeadSpeed = 0.5;
 	static const int MAX_RETRANSMITS = 20;
-    Ui::CommandsController *ui;
+	Ui::CommandsController *ui;
 	QTimer *timer;
-    HostsComboBox* availableCommandHosts;
-    
+	HostsComboBox *availableCommandHosts;
+
 	ExternalCommand outmsg, lastmsg;
-	
+
 	//variables for the ack method
 	bool lastMessageACKed;
 	int numOfRetransmits;
