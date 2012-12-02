@@ -267,9 +267,9 @@ for	ip in robotsIP:
 			autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 			os.system(autoload_cmd)
 			print(autoload_cmd)
-			rsync_cmd = "rsync -av " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
+			rsync_cmd = "rsync -v " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 		else:
-			rsync_cmd = "rsync -av " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
+			rsync_cmd = "rsync -v " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
 
 	print("Preparing to copy robot from ", binaries_dir)
 	print ""
