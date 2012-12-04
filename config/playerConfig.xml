@@ -1,32 +1,94 @@
 <?xml version="1.0" ?>
 <!--noKickOff, team color is red, for blue team color multiply posx, posy with -1 -->
-
 <noKickOff>
-<!-- GoalKeeper-->
-	<robot number="1" posx="-2.7" posy="0.0">
-	</robot>
+	<!-- GoalKeeper-->
+	<player>
+		<number>1</number>
+		<x>-2.7</x>
+		<y>0.0</y>
+		<phi>0.0</phi>
+	</player>
 	<!-- Center-->
-	<robot number="2" posx="-1.5" posy="1.4">
-	</robot>
+	<player>
+		<number>2</number>
+		<x>-1.5</x>
+		<y>1.4</y>
+		<phi>0.0</phi>
+	</player>
 	<!-- Defender-->
-	<robot number="3" posx="-1.5" posy="-1.4">
-	</robot>
+	<player>
+		<number>3</number>
+		<x>-1.5</x>
+		<y>-1.4</y>
+		<phi>0.0</phi>
+	</player>
 	<!-- Attacker-->
-	<robot number="4" posx="-1.5" posy="0.2">
-	</robot>
+	<player>
+		<number>4</number>
+		<x>-1.5</x>
+		<y>0.2</y>
+		<phi>0.0</phi>
+	</player>
 </noKickOff>
-
 <!--KickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
 <KickOff>
-	<robot number="1" posx="-2.7" posy="0.0">
-	</robot>
+	<!-- GoalKeeper-->
+	<player>
+		<number>1</number>
+		<x>-2.7</x>
+		<y>0.0</y>
+		<phi>0.0</phi>
+	</player>
 	<!-- Center-->
-	<robot number="2" posx="-0.7" posy="0.7">
-	</robot>
+	<player>
+		<number>2</number>
+		<x>-0.7</x>
+		<y>0.7</y>
+		<phi>0.0</phi>
+	</player>
 	<!-- Defender-->
-	<robot number="3" posx="-0.7" posy="-0.7">
-	</robot>
+	<player>
+		<number>3</number>
+		<x>-0.7</x>
+		<y>0.7</y>
+		<phi>0.0</phi>
+	</player>
 	<!-- Attacker-->
-	<robot number="4" posx="-0.4" posy="0.0">
-	</robot>
+	<player>
+		<number>4</number>
+		<x>-0.4</x>
+		<y>0.0</y>
+		<phi>0.0</phi>
+	</player>
 </KickOff>
+<!--Ready positions-->
+<Ready>
+	<!-- GoalKeeper-->
+	<player>
+		<number>1</number>
+		<x>-2.4</x>
+		<y>-2.0</y>
+		<phi>90</phi>
+	</player>
+	<!-- Center-->
+	<player>
+		<number>2</number>
+		<x>-2.4</x>
+		<y>2.0</y>
+		<phi>270</phi>
+	</player>
+	<!-- Defender-->
+	<player>
+		<number>3</number>
+		<x>-1.2</x>
+		<y>-2.0</y>
+		<phi>90</phi>
+	</player>
+	<!-- Attacker-->
+	<player>
+		<number>4</number>
+		<x>-1.2</x>
+		<y>2.0</y>
+		<phi>270</phi>
+	</player>
+</Ready>

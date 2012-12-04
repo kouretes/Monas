@@ -17,8 +17,6 @@
 #include <queue>
 #include <map>
 #include "tools/mathcommon.h"
-#include "tools/XML.h"
-#include "tools/XMLConfig.h"
 #include "messages/RoboCupPlayerData.h"
 
 #include "KalmanParticle.h"
@@ -148,9 +146,6 @@ public:
 	//initialize localization
 	int Initialize();
 
-	//Functions to read from xml files
-	int readConfiguration(const std::string& file_name);
-	bool readRobotConf(const std::string& file_name);
 
 	//The step of the localization SIR filter
 	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt);

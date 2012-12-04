@@ -381,9 +381,9 @@ void LocalWorldState::ReadRobotConf()
 	for (int i = 0; i < 2; i++)
 	{
 		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
-        localizationWorld.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".robot~"+_toString(pNumber)+".$posx").c_str());
-        localizationWorld.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".robot~"+_toString(pNumber)+".$posy").c_str());
-        localizationWorld.initPhi[i]=0;
+        localizationWorld.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".x").c_str());
+        localizationWorld.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
+        localizationWorld.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
     }
 }
 

@@ -22,63 +22,6 @@ KKalmanLocalization::~KKalmanLocalization()
 
 int KKalmanLocalization::Initialize()
 {
-	XMLConfig * config = NULL;
-	string filename = ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml" ;
-	config = new XMLConfig(filename);
-
-	if (config->IsLoadedSuccessfully())
-	{
-		bool found = true;
-		float temp;
-
-		found &= config->QueryElement("partclsNum", maxparticles);
-		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
-		if (found)
-		{
-			Logger::Instance().WriteMsg("Localization", "All Localization parameters loaded successfully" , Logger::Info);
-		}
-		else
-		{
-			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the xml config file " , Logger::Error);
-		}
-	}
-	else
-	{
-		Logger::Instance().WriteMsg("Localization", "Cant Find xml config file " + filename , Logger::Error);
-	}
-
-	if(config)
-		delete config;
-
-	config = NULL;
-	filename = ArchConfig::Instance().GetConfigPrefix() + "/field.xml" ;
-	config = new XMLConfig(filename);
-
-	if (config->IsLoadedSuccessfully())
-	{
-		bool found = true;
-		found &= config->QueryElement("FieldMaxX", FieldMaxX);
-		found &= config->QueryElement("FieldMinX", FieldMinX);
-		found &= config->QueryElement("FieldMaxY", FieldMaxY);
-		found &= config->QueryElement("FieldMinY", FieldMinY);
-
-		if (found)
-		{
-			Logger::Instance().WriteMsg("Localization", "All Field parameters loaded successfully", Logger::Info);
-		}
-		else
-		{
-			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the Field xml config file ", Logger::Error);
-		}
-	}
-	else
-	{
-		Logger::Instance().WriteMsg("Localization", "Cant Find Field xml config file " + filename , Logger::Error);
-	}
-
-	if(config)
-		delete config;
-
 	//Initialize particles
 	kalmanpoints.resize(maxparticles);
 	current_particles=0;
@@ -90,8 +33,6 @@ int KKalmanLocalization::Initialize()
 	for(unsigned i=0;i<kalmanpoints.size();i++)
 		kalmanpoints[i].init(t);
 
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/teamConfig.xml");
-	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/playerConfig.xml");
 	initParticles();
 	return 1;
 }
@@ -495,56 +436,3 @@ void KKalmanLocalization::Update_Ambiguous(vector<KObservationModel> &Observatio
 
 	}
 }
-
-int KKalmanLocalization::readConfiguration(const std::string& file_name)
-{
-	XMLConfig config(file_name);
-
-	if (!config.QueryElement("player", playerNumber))
-	{
-		Logger::Instance().WriteMsg("KKalmanLocalization", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
-		playerNumber = 1;
-	}
-
-	return 1;
-}
-
-bool KKalmanLocalization::readRobotConf(const std::string& file_name)
-{
-	XML config(file_name);
-	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont teamPositions, robotPosition ;
-	Logger::Instance().WriteMsg("Localization",  " readRobotConfiguration "  , Logger::Info);
-
-	for (int i = 0; i < 2; i++)
-	{
-		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
-		bool found = false;
-		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
-
-		if (teamPositions.size() != 0)
-			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
-
-		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++)
-		{
-			if (it->attrb["number"] == playerNumber)
-			{
-				initPhi[i] = 0.0;
-				initX[i] = (it->attrb["posx"]);
-				initY[i] = (it->attrb["posy"]);
-				found = true;
-				break;
-			}
-			else
-			{
-				initPhi[i] = 0.0;
-				initX[i] = 0.0;
-				initY[i] = 0.0;
-			}
-		}
-	}
-
-	return true;
-}
-
-
