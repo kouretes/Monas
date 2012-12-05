@@ -16,7 +16,6 @@
 #include <math.h>
 #include <cstring>
 #include <algorithm>
-#include <queue>
 #include <map>
 #include "tools/mathcommon.h"
 #include "tools/XML.h"
@@ -30,11 +29,11 @@ using namespace std;
 //A structure used to store statistical data about a recognized feature
 typedef struct ftr
 {
-	double x;
-	double y;
+	float x;
+	float y;
 	string id;
-	double weight;
-	void set(double x_, double y_, string id_, double weight_)
+	float weight;
+	void set(float x_, float y_, string id_, float weight_)
 	{
 		id = id_;
 		x = x_;
@@ -47,10 +46,10 @@ typedef struct ftr
 //Special structure to keep the data of a particle
 typedef struct pvar
 {
-	double x;
-	double y;
-	double phi;
-	double Weight;
+	float x;
+	float y;
+	float phi;
+	float Weight;
 	pvar()
 	{
 		x = 0;
@@ -74,7 +73,7 @@ typedef struct var
 	double *phi;
 	double *Weight;
 	double WeightSum;
-	unsigned int size;
+    int size;
 	~var()
 	{
 		if (x != NULL)
@@ -122,11 +121,11 @@ typedef struct OM
 //Structure to store the belief of the robot about its position
 typedef struct blf
 {
-	double x;
-	double y;
-	double theta;
-	double confidence;
-	double weightconfidence;
+	float x;
+	float y;
+	float phi;
+	float confidence;
+	float weightconfidence;
 } belief;
 
 //random genetator
@@ -139,15 +138,12 @@ public:
     //random generator
     r_gen generator;
 
-
 	float NumberOfParticlesSpreadAfterFall;
-	unsigned int robustmean;
 
-
-	double rotation_deviation;
-	double SpreadParticlesDeviationAfterFall;
-	double SpreadParticlesDeviation;
-	double RotationDeviationAfterFallInDeg;
+	float rotation_deviation;
+	float SpreadParticlesDeviationAfterFall;
+	float SpreadParticlesDeviation;
+	float RotationDeviationAfterFallInDeg;
 	int PercentParticlesSpread;
 
 
@@ -164,13 +160,13 @@ public:
 	float initX[2], initY[2], initPhi[2];
 	int playerNumber;
 	//Particle with the max weight
-	unsigned int maxWeightParticleIndex;
+
+    int maxWeightParticleIndex;
 
 	//The particles we are using
 	parts SIRParticles;
-    //particles average
-    partcl particlesAvg;
-	unsigned int partclsNum;
+
+    int partclsNum;
 
 	//map with all the features we read from an xml
 	map<string, feature> KFeaturesmap;
@@ -200,16 +196,13 @@ public:
 	void ForceBearing(vector<KObservationModel> &Observation);
 
 	//Normilize the weights of the particles
-	void normalize(double *Weights, unsigned int *max_weight_index);
+	void normalize(float *Weights, unsigned int *max_weight_index);
 
 	//Find the mean angle from a set of angles
 	float circular_mean_angle(float *angles, unsigned int size);
 
-	//Returns the current position of the agent
-	belief getCurrentPosition();
-
 	//Return the propability of value from a normal pdf with deviation dev
-	double normpdf(double diff, double dev);
+	float normpdf(float diff, float dev);
 
 	//This function resamples the particles with the new weigths and reposition the particles given the new weights
 	void rouletteResampleAndNormalize();
@@ -221,6 +214,8 @@ public:
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();
+
+    belief calculateAvg();
 };
 
 #endif /* KLOCALIZATION_H_ */

@@ -10,6 +10,7 @@
 #include <google/protobuf/descriptor.h>
 #include <math.h>
 #include "architecture/archConfig.h"
+
 #define NO_GAME
 #define MAX_TIME_TO_RESET 15 //in seconds
 
@@ -100,11 +101,10 @@ int LocalWorldState::Execute()
 		localizationWorld.initializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
 	}
 
-
 	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
-	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
+	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 	MyWorld.mutable_myposition()->set_confidence(0.0);
 
 	calculate_ball_estimate(robotmovement);
@@ -247,12 +247,11 @@ void LocalWorldState::ProcessMessages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance();
 			tmpOM.Distance.Emean = 0.0;
-			tmpOM.Distance.Edev = 1.5+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
+			tmpOM.Distance.Edev = 1.5+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus float the precision of vision
 			//Bearing
 			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
-			tmpOM.Bearing.Edev = TO_RAD(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
-
+			tmpOM.Bearing.Edev = TO_RAD(45)+2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus float the precision of vision
 
 			if (localizationWorld.KFeaturesmap.count(id) != 0)
 			{
@@ -336,7 +335,7 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 void LocalWorldState::ReadFeatureConf()
 {
     feature temp;
-    double x,y,weight;
+    float x,y,weight;
     string ID;
 	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
 		string key = "features.ftr~" + _toString(i) + ".";
@@ -352,7 +351,6 @@ void LocalWorldState::ReadFeatureConf()
 
 void LocalWorldState::ReadLocConf()
 {
-    localizationWorld.robustmean=atoi(_xml.findValueForKey("localizationConfig.robustmean").c_str());
     localizationWorld.partclsNum=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
     localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
     localizationWorld.rotation_deviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
@@ -438,7 +436,7 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 
 	WI->mutable_myposition()->set_x(AgentPosition.x*1000);
 	WI->mutable_myposition()->set_y(AgentPosition.y*1000);
-	WI->mutable_myposition()->set_phi(AgentPosition.theta);
+	WI->mutable_myposition()->set_phi(AgentPosition.phi);
 	WI->mutable_myposition()->set_confidence(0.0);
 
 	WI->CopyFrom(MyWorld);
@@ -446,9 +444,9 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
 	RobotPose prtcl;
-	if ((unsigned int) DebugData.particles_size() < localizationWorld.SIRParticles.size)
+	if (DebugData.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
-	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
+	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
 		if (addnewptrs)
 			DebugData.add_particles();
@@ -470,7 +468,7 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 
 int LocalWorldState::LocalizationDataForGUI_Load()
 {
-	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
+	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
 		if(DebugDataForGUI.particles_size() < (int)(i+1))
 			DebugDataForGUI.add_particles();
@@ -575,7 +573,7 @@ void LocalWorldState::InputOutputLogger(){
 		else
 			YellowRight = temp;
 	}
-	RobotPosition = _toString(AgentPosition.x) + " " + _toString(AgentPosition.y) + " " + _toString(AgentPosition.theta);
+	RobotPosition = _toString(AgentPosition.x) + " " + _toString(AgentPosition.y) + " " + _toString(AgentPosition.phi);
 
 	Logger::Instance().WriteMsg("LocalWorldStateLogger", _toString(currentExecute) + " " + RobotMovement + " " + Yellow + " " + YellowLeft + " " + YellowRight + " " + RobotPosition, Logger::ExtraExtraInfo);
 }
