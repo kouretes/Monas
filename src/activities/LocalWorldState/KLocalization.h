@@ -68,11 +68,11 @@ typedef struct pvar
 //So in this structure a number of arrays store individually a property
 typedef struct var
 {
-	double *x;
-	double *y;
-	double *phi;
-	double *Weight;
-	double WeightSum;
+	float *x;
+	float *y;
+	float *phi;
+	float *Weight;
+	float WeightSum;
     int size;
 	~var()
 	{
@@ -93,11 +93,11 @@ typedef struct var
 //Random Variable
 typedef struct rvar
 {
-	double val;
-	double Emean;
-	double Edev;
-	double ratiomean;
-	double ratiodev;
+	float val;
+	float Emean;
+	float Edev;
+	float ratiomean;
+	float ratiodev;
 } randvar;
 
 //MotionModel

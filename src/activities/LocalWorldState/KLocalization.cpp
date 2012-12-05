@@ -29,10 +29,10 @@ int KLocalization::Initialize()
 {
 	//Initialize particles
 	SIRParticles.size = partclsNum;
-	SIRParticles.x = new double[partclsNum];
-	SIRParticles.y = new double[partclsNum];
-	SIRParticles.phi = new double[partclsNum];
-	SIRParticles.Weight = new double[partclsNum];
+	SIRParticles.x = new float[partclsNum];
+	SIRParticles.y = new float[partclsNum];
+	SIRParticles.phi = new float[partclsNum];
+	SIRParticles.Weight = new float[partclsNum];
 	maxWeightParticleIndex = 0;
 
     //set seed (current time)
@@ -252,7 +252,7 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 
 void KLocalization::Predict(KMotionModel & MotionModel)
 {
-	double tmpDist, tmpDir, tmpRot;
+	float tmpDist, tmpDir, tmpRot;
 	boost::normal_distribution<> norm_dist(0,1);
     boost::variate_generator<r_gen&, boost::normal_distribution<> > X(generator, norm_dist);
     
