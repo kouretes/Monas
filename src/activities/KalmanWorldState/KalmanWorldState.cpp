@@ -34,10 +34,12 @@ void KalmanWorldState::UserInit()
 
 	//MyWorld.add_balls();
 	currentRobotAction = MotionStateMessage::IDLE;
-
-	localizationWorld.Initialize();
+	Reset();
 	ReadFeatureConf();
-
+	ReadTeamConf();
+	ReadLocConf();
+	ReadFieldConf();
+	localizationWorld.Initialize();
 
 	//localizationWorld.setParticlesPoseUniformly();
 	timeStart = boost::posix_time::microsec_clock::universal_time();
@@ -66,6 +68,7 @@ void KalmanWorldState::UserInit()
 }
 
 void KalmanWorldState::Reset(){
+	ReadRobotConf();
 }
 
 int KalmanWorldState::Execute()
@@ -366,3 +369,36 @@ void KalmanWorldState::ReadFeatureConf()
     	localizationWorld.KFeaturesmap[ID]=temp;
     }
 }
+
+void KalmanWorldState::ReadRobotConf()
+{
+    //Xml index starts at 0 
+    int pNumber=localizationWorld.playerNumber-1;
+	for (int i = 0; i < 2; i++)
+	{
+		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
+        localizationWorld.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".x").c_str());
+        localizationWorld.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
+        localizationWorld.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
+    }
+}
+
+void KalmanWorldState::ReadTeamConf()
+{
+    localizationWorld.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
+}
+
+void KalmanWorldState::ReadLocConf()
+{
+    localizationWorld.maxparticles=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
+}
+
+void KalmanWorldState::ReadFieldConf()
+{
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+}
+

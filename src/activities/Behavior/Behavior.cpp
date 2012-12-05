@@ -106,11 +106,11 @@ void Behavior::Reset(){
 
 		for(int r = 0 ; r < config.maxPlayers ; r++) // for each robot on the node
 		{
-			if( atoi(_xml.findValueForKey("playerConfig."+kickOff+".robot~"+_toString(r)+".$number").c_str()) == config.playerNumber )
+			if( atoi(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".number").c_str()) == config.playerNumber )
 			{
-				config.initPhi[i] = 0.0;
-				config.initX[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".robot~"+_toString(r)+".$posx").c_str());
-				config.initY[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".robot~"+_toString(r)+".$posy").c_str());
+				config.initX[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".x").c_str());
+				config.initY[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".y").c_str());
+				config.initPhi[i] = TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".phi").c_str()));
 				break;
 			}
 		}

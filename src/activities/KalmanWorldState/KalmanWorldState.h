@@ -45,7 +45,6 @@ public:
 
 	void RobotPositionMotionModel(KMotionModel & MModel);
 	void calculate_ball_estimate(KMotionModel const & MModel);
-	void ReadFeatureConf();
 private:
 	//check if the first odometry data had come
 	bool firstOdometry;
@@ -87,7 +86,13 @@ private:
 
 	//Check if fall of the robot just began
 	bool fallBegan;
-
+	
+	//Read configurations
+    void ReadLocConf();
+    void ReadFieldConf();
+    void ReadFeatureConf();
+    void ReadTeamConf();
+    void ReadRobotConf();
 	//Time variables
 	boost::posix_time::ptime timeStart, timeStop;
 	boost::posix_time::ptime last_observation_time;
