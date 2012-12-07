@@ -7,7 +7,7 @@
 <epsy>0.025</epsy>
 <!-- Desired kicks -->
 <KickForwardLeft>KickForwardLeft2.xar</KickForwardLeft>
-<KickForwardRight>KickForwardRight2</KickForwardRight>
+<KickForwardRight>KickForwardRight2.xar</KickForwardRight>
 <KickSideLeft>KickForwardLeft2.xar</KickSideLeft>
 <KickSideRight>KickForwardRight2.xar</KickSideRight>
 <KickBackLeft>KickBackLeftED.xar</KickBackLeft>
