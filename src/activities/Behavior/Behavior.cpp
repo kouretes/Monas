@@ -408,7 +408,7 @@ void Behavior::Kick()
 	}
 	else
 	{
-        cout << "Kick orientation = " << orientation << "\n";
+        //cout << "Kick orientation = " << orientation << "\n";
 		if (orientation == 0)
 		{
 			if (ball_y > 0.0)
@@ -536,7 +536,7 @@ void Behavior::approachBall()
 	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-    std::cout << oppgb << "\n";
+    //std::cout << oppgb << "\n";
 	if (ball_dist > 0.3){
         int pathSide = (ball_bearing > 0) ? 1 : -1;
 //        pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
