@@ -13,300 +13,243 @@ SensorsController::SensorsController (QWidget *parent) :
 	ui->setupUi (this);
 	availableLSDHosts = new HostsComboBox (ui->LSDComboBox);
 	connect (availableLSDHosts, SIGNAL (SubscriptionRequest (QString) ), this, SLOT (SubscriptionHandler (QString) ) );
-	headJointsBuffer.set_capacity (10);
-	LArmJointsBuffer.set_capacity (10);
-	RArmJointsBuffer.set_capacity (10);
-	LLegJointsBuffer.set_capacity (10);
-	RLegJointsBuffer.set_capacity (10);
-	InertialBuffer.set_capacity (10);
-	FSRsBuffer.set_capacity (10);
+	
+	ui->HY->setStyleSheet("border: 1px solid");
+	ui->HP->setStyleSheet("border: 1px solid");
+	
+	ui->RHYP->setStyleSheet("border: 1px solid");
+	ui->RHR->setStyleSheet("border: 1px solid");
+	ui->RHP->setStyleSheet("border: 1px solid");
+	ui->RKP->setStyleSheet("border: 1px solid");
+	ui->RAP->setStyleSheet("border: 1px solid");
+	ui->RAR->setStyleSheet("border: 1px solid");
+	
+	ui->LHYP->setStyleSheet("border: 1px solid");
+	ui->LHR->setStyleSheet("border: 1px solid");
+	ui->LHP->setStyleSheet("border: 1px solid");
+	ui->LKP->setStyleSheet("border: 1px solid");
+	ui->LAP->setStyleSheet("border: 1px solid");
+	ui->LAR->setStyleSheet("border: 1px solid");
+	
+	ui->RSP->setStyleSheet("border: 1px solid");
+	ui->RSR->setStyleSheet("border: 1px solid");
+	ui->REY->setStyleSheet("border: 1px solid");
+	ui->RER->setStyleSheet("border: 1px solid");
+
+	ui->LSP->setStyleSheet("border: 1px solid");
+	ui->LSR->setStyleSheet("border: 1px solid");
+	ui->LEY->setStyleSheet("border: 1px solid");
+	ui->LER->setStyleSheet("border: 1px solid");
+
+	ui->AccX->setStyleSheet("border: 1px solid");
+	ui->AccY->setStyleSheet("border: 1px solid");
+	ui->AccZ->setStyleSheet("border: 1px solid");
+	
+	ui->LFsrFL->setStyleSheet("border: 1px solid");
+	ui->LFsrRL->setStyleSheet("border: 1px solid");
+	ui->LFsrFR->setStyleSheet("border: 1px solid");
+	ui->LFsrRR->setStyleSheet("border: 1px solid");
+	ui->RFsrFL->setStyleSheet("border: 1px solid");
+	ui->RFsrRL->setStyleSheet("border: 1px solid");
+	ui->RFsrFR->setStyleSheet("border: 1px solid");
+	ui->RFsrRR->setStyleSheet("border: 1px solid");
+	ui->SupportLeg->setStyleSheet("border: 1px solid");
 }
 
 void SensorsController::sensorsDataUpdateHandler (AllSensorValuesMessage asvm, QString hostId) {
-	clearComboLists();
-	updateHeadJointsBuffer (asvm);
-	updateLArmJointsBuffer (asvm);
-	updateRArmJointsBuffer (asvm);
-	updateLLegJointsBuffer (asvm);
-	updateRLegJointsBuffer (asvm);
-	updateInertialBuffer (asvm);
-	updateFSRsBuffer (asvm);
-	updateHeadJointsTable();
-	updateLArmJointsTable();
-	updateRArmJointsTable();
-	updateLLegJointsTable();
-	updateRLegJointsTable();
-	updateInertialTable();
-	updateFSRsTable();
+
+	updateHeadJointsTable(asvm);
+	updateLArmJointsTable(asvm);
+	updateRArmJointsTable(asvm);
+	updateLLegJointsTable(asvm);
+	updateRLegJointsTable(asvm);
+	updateInertialTable(asvm);
+	updateFSRsTable(asvm);
 }
 
-void SensorsController::updateHeadJointsBuffer (AllSensorValuesMessage asvm) {
+void SensorsController::updateHeadJointsTable(AllSensorValuesMessage asvm) {
+
 	SensorData HeadJoint;
-	HeadJoints hj;
+	QString temp;
 	HeadJoint.Clear();
 	HeadJoint = asvm.jointdata (KDeviceLists::HEAD + KDeviceLists::YAW);
-	hj.yaw = QString::fromStdString (_toString (HeadJoint.sensorvalue() ) );
+	ui->HY->setText(temp.setNum ( HeadJoint.sensorvalue(), 'g', 6));
+
 	HeadJoint.Clear();
 	HeadJoint = asvm.jointdata (KDeviceLists::HEAD + KDeviceLists::PITCH);
-	hj.pitch = QString::fromStdString (_toString (HeadJoint.sensorvalue() ) );
-	headJointsBuffer.push_front (hj);
+	ui->HP->setText(temp.setNum ( HeadJoint.sensorvalue(), 'g', 6));
 }
 
-void SensorsController::updateHeadJointsTable() {
-	boost::circular_buffer<HeadJoints>::iterator it;
-
-	for (it = headJointsBuffer.begin(); it != headJointsBuffer.end(); ++it) {
-		ui->HYComboBox->addItem ( (*it).yaw);
-		ui->HPComboBox->addItem ( (*it).pitch);
-	}
-}
-
-void SensorsController::updateLArmJointsBuffer (AllSensorValuesMessage asvm) {
+void SensorsController::updateLArmJointsTable(AllSensorValuesMessage asvm) {
 	SensorData ArmJoint;
-	ArmJoints aj;
+	QString temp;
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::L_ARM + KDeviceLists::ELBOW_ROLL);
-	aj.ElbowRoll = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
+	ui->LER->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
+
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::L_ARM + KDeviceLists::ELBOW_YAW);
-	aj.ElbowYaw = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
+	ui->LEY->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
+
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::L_ARM + KDeviceLists::SHOULDER_PITCH);
-	aj.ShoulderPitch = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
+	ui->LSP->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
+
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::L_ARM + KDeviceLists::SHOULDER_ROLL);
-	aj.ShoulderRoll = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
-	LArmJointsBuffer.push_front (aj);
+	ui->LSR->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
 }
 
-void SensorsController::updateLArmJointsTable() {
-	boost::circular_buffer<ArmJoints>::iterator it;
 
-	for (it = LArmJointsBuffer.begin(); it != LArmJointsBuffer.end(); ++it) {
-		ui->LSPComboBox->addItem ( (*it).ShoulderPitch);
-		ui->LSRComboBox->addItem ( (*it).ShoulderRoll);
-		ui->LEYComboBox->addItem ( (*it).ElbowYaw);
-		ui->LERComboBox->addItem ( (*it).ElbowRoll);
-	}
-}
-
-void SensorsController::updateRArmJointsBuffer (AllSensorValuesMessage asvm) {
+void SensorsController::updateRArmJointsTable(AllSensorValuesMessage asvm) {
 	SensorData ArmJoint;
-	ArmJoints aj;
+	QString temp;
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::R_ARM + KDeviceLists::ELBOW_ROLL);
-	aj.ElbowRoll = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
+	ui->RER->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
+
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::R_ARM + KDeviceLists::ELBOW_YAW);
-	aj.ElbowYaw = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
+	ui->REY->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
+
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::R_ARM + KDeviceLists::SHOULDER_PITCH);
-	aj.ShoulderPitch = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
+	ui->RSP->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
+
 	ArmJoint.Clear();
 	ArmJoint = asvm.jointdata (KDeviceLists::R_ARM + KDeviceLists::SHOULDER_ROLL);
-	aj.ShoulderRoll = QString::fromStdString (_toString (ArmJoint.sensorvalue() ) );
-	RArmJointsBuffer.push_front (aj);
+	ui->RSR->setText(temp.setNum ( ArmJoint.sensorvalue(), 'g', 6));
 }
 
-void SensorsController::updateRArmJointsTable() {
-	boost::circular_buffer<ArmJoints>::iterator it;
-
-	for (it = RArmJointsBuffer.begin(); it != RArmJointsBuffer.end(); ++it) {
-		ui->RSPComboBox->addItem ( (*it).ShoulderPitch);
-		ui->RSRComboBox->addItem ( (*it).ShoulderRoll);
-		ui->REYComboBox->addItem ( (*it).ElbowYaw);
-		ui->RERComboBox->addItem ( (*it).ElbowRoll);
-	}
-}
-
-void SensorsController::updateLLegJointsBuffer (AllSensorValuesMessage asvm) {
+void SensorsController::updateLLegJointsTable(AllSensorValuesMessage asvm) {
 	SensorData LegJoint;
-	LegJoints lj;
+	QString temp;
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::L_LEG + KDeviceLists::ANKLE_PITCH);
-	lj.AnklePitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->LAP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::L_LEG + KDeviceLists::ANKLE_ROLL);
-	lj.AnkleRoll = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->LAR->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::L_LEG + KDeviceLists::HIP_PITCH);
-	lj.HipPitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->LHP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::L_LEG + KDeviceLists::HIP_ROLL);
-	lj.HipRoll = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->LHR->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::L_LEG + KDeviceLists::HIP_YAW_PITCH);
-	lj.HipYawPitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->LHYP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::L_LEG + KDeviceLists::KNEE_PITCH);
-	lj.KneePitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
-	LLegJointsBuffer.push_front (lj);
+	ui->LKP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
 }
 
-void SensorsController::updateLLegJointsTable() {
-	boost::circular_buffer<LegJoints>::iterator it;
-
-	for (it = LLegJointsBuffer.begin(); it != LLegJointsBuffer.end(); ++it) {
-		ui->LHYPComboBox->addItem ( (*it).HipYawPitch);
-		ui->LHRComboBox->addItem ( (*it).HipRoll);
-		ui->LHPComboBox->addItem ( (*it).HipPitch);
-		ui->LKPComboBox->addItem ( (*it).KneePitch);
-		ui->LAPComboBox->addItem ( (*it).AnklePitch);
-		ui->LARComboBox->addItem ( (*it).AnkleRoll);
-	}
-}
-
-void SensorsController::updateRLegJointsBuffer (AllSensorValuesMessage asvm) {
+void SensorsController::updateRLegJointsTable(AllSensorValuesMessage asvm) {
 	SensorData LegJoint;
-	LegJoints lj;
+	QString temp;
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::R_LEG + KDeviceLists::ANKLE_PITCH);
-	lj.AnklePitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->RAP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::R_LEG + KDeviceLists::ANKLE_ROLL);
-	lj.AnkleRoll = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->RAR->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::R_LEG + KDeviceLists::HIP_PITCH);
-	lj.HipPitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->RHP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::R_LEG + KDeviceLists::HIP_ROLL);
-	lj.HipRoll = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->RHR->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::R_LEG + KDeviceLists::HIP_YAW_PITCH);
-	lj.HipYawPitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
+	ui->RHYP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
+
 	LegJoint.Clear();
 	LegJoint = asvm.jointdata (KDeviceLists::R_LEG + KDeviceLists::KNEE_PITCH);
-	lj.KneePitch = QString::fromStdString (_toString (LegJoint.sensorvalue() ) );
-	RLegJointsBuffer.push_front (lj);
+	ui->RKP->setText(temp.setNum ( LegJoint.sensorvalue(), 'g', 6));
 }
 
-void SensorsController::updateRLegJointsTable() {
-	boost::circular_buffer<LegJoints>::iterator it;
-
-	for (it = RLegJointsBuffer.begin(); it != RLegJointsBuffer.end(); ++it) {
-		ui->RHYPComboBox->addItem ( (*it).HipYawPitch);
-		ui->RHRComboBox->addItem ( (*it).HipRoll);
-		ui->RHPComboBox->addItem ( (*it).HipPitch);
-		ui->RKPComboBox->addItem ( (*it).KneePitch);
-		ui->RAPComboBox->addItem ( (*it).AnklePitch);
-		ui->RARComboBox->addItem ( (*it).AnkleRoll);
-	}
-}
-
-void SensorsController::updateInertialBuffer (AllSensorValuesMessage asvm) {
+void SensorsController::updateInertialTable(AllSensorValuesMessage asvm) {
 	SensorData Value;
-	InertialValues iv;
+	QString temp;
+
 	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::ACC + KDeviceLists::AXIS_X);
-	iv.AccXvalue = QString::fromStdString (_toString (Value.sensorvalue() ) );
+	Value = asvm.sensordata (KDeviceLists::ACC + KDeviceLists::AXIS_X);
+	ui->AccX->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
 	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::ACC + KDeviceLists::AXIS_Y);
-	iv.AccYvalue = QString::fromStdString (_toString (Value.sensorvalue() ) );
+	Value = asvm.sensordata (KDeviceLists::ACC + KDeviceLists::AXIS_Y);
+	ui->AccY->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
 	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::ACC + KDeviceLists::AXIS_Z);
-	iv.AccZvalue = QString::fromStdString (_toString (Value.sensorvalue() ) );
+	Value = asvm.sensordata (KDeviceLists::ACC + KDeviceLists::AXIS_Z);
+	ui->AccZ->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
 	Value.Clear();
 	Value = asvm.computeddata (KDeviceLists::ANGLE + KDeviceLists::AXIS_X);
-	iv.angX = QString::fromStdString (_toString (Value.sensorvalue() ) );
+	ui->AngX->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
 	Value.Clear();
 	Value = asvm.computeddata (KDeviceLists::ANGLE + KDeviceLists::AXIS_Y);
-	iv.angY = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	InertialBuffer.push_front (iv);
+	ui->AngY->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
 }
 
-void SensorsController::updateInertialTable() {
-	boost::circular_buffer<InertialValues>::iterator it;
-
-	for (it = InertialBuffer.begin(); it != InertialBuffer.end(); ++it) {
-		ui->AccXComboBox->addItem ( (*it).AccXvalue);
-		ui->AccYComboBox->addItem ( (*it).AccYvalue);
-		ui->AccZComboBox->addItem ( (*it).AccZvalue);
-		ui->AngXComboBox->addItem ( (*it).angX);
-		ui->AngYComboBox->addItem ( (*it).angY);
-	}
-}
-
-void SensorsController::updateFSRsBuffer (AllSensorValuesMessage asvm) {
+void SensorsController::updateFSRsTable(AllSensorValuesMessage asvm) {
 	SensorData Value;
-	FSRValues fv;
+	QString temp;
 	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::L_FSR + KDeviceLists::FSR_FL);
-	fv.LFsrFL = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::L_FSR + KDeviceLists::FSR_RL);
-	fv.LFsrRL = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::L_FSR + KDeviceLists::FSR_FR);
-	fv.LFsrFR = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::L_FSR + KDeviceLists::FSR_RR);
-	fv.LFsrRR = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::R_FSR + KDeviceLists::FSR_FL);
-	fv.RFsrFL = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::R_FSR + KDeviceLists::FSR_RL);
-	fv.RFsrRL = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::R_FSR + KDeviceLists::FSR_FR);
-	fv.RFsrFR = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	Value.Clear();
-	Value = asvm.jointdata (KDeviceLists::R_FSR + KDeviceLists::FSR_RR);
-	fv.RFsrRR = QString::fromStdString (_toString (Value.sensorvalue() ) );
-	FSRsBuffer.push_front (fv);
-}
+	Value = asvm.sensordata (KDeviceLists::L_FSR + KDeviceLists::FSR_FL);
+	ui->LFsrFL->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
 
-void SensorsController::updateFSRsTable() {
-	boost::circular_buffer<FSRValues>::iterator it;
+	Value.Clear();
+	Value = asvm.sensordata (KDeviceLists::L_FSR + KDeviceLists::FSR_RL);
+	ui->LFsrRL->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
 
-	for (it = FSRsBuffer.begin(); it != FSRsBuffer.end(); ++it) {
-		ui->RFsrFLComboBox->addItem ( (*it).RFsrFL);
-		ui->RFsrRLComboBox->addItem ( (*it).RFsrRL);
-		ui->RFsrFRComboBox->addItem ( (*it).RFsrFR);
-		ui->RFsrRRComboBox->addItem ( (*it).RFsrRR);
-		ui->LFsrFLComboBox->addItem ( (*it).LFsrFL);
-		ui->LFsrRLComboBox->addItem ( (*it).LFsrRL);
-		ui->LFsrFRComboBox->addItem ( (*it).LFsrFR);
-		ui->LFsrRRComboBox->addItem ( (*it).LFsrRR);
+	Value.Clear();
+	Value = asvm.sensordata (KDeviceLists::L_FSR + KDeviceLists::FSR_FR);
+	ui->LFsrFR->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
+	Value.Clear();
+	Value = asvm.sensordata (KDeviceLists::L_FSR + KDeviceLists::FSR_RR);
+	ui->LFsrRR->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
+	Value.Clear();
+	Value = asvm.sensordata (KDeviceLists::R_FSR + KDeviceLists::FSR_FL);
+	ui->RFsrFL->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
+	Value.Clear();
+	Value = asvm.sensordata (KDeviceLists::R_FSR + KDeviceLists::FSR_RL);
+	ui->RFsrRL->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
+	Value.Clear();
+	Value = asvm.sensordata (KDeviceLists::R_FSR + KDeviceLists::FSR_FR);
+	ui->RFsrFR->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
+	Value.Clear();
+	Value = asvm.sensordata (KDeviceLists::R_FSR + KDeviceLists::FSR_RR);
+	ui->RFsrRR->setText(temp.setNum ( Value.sensorvalue(), 'g', 6));
+
+	Value.Clear();
+	Value = asvm.computeddata (KDeviceLists::SUPPORT_LEG);
+
+	float fvalue = Value.sensorvalue();
+	if(fvalue == KDeviceLists::NONE){
+		ui->SupportLeg->setText("None");
+	}else if(fvalue == KDeviceLists::LEFT){
+		ui->SupportLeg->setText("Left");
+	}else if(fvalue == KDeviceLists::RIGHT){
+		ui->SupportLeg->setText("Right");
+	}else{
+		ui->SupportLeg->setText("Both");
 	}
-}
-
-void SensorsController::clearComboLists() {
-	ui->HYComboBox->clear();	//0-1
-	ui->HPComboBox->clear();
-	ui->AccXComboBox->clear();	//2-6
-	ui->AccYComboBox->clear();
-	ui->AccZComboBox->clear();
-	ui->AngXComboBox->clear();
-	ui->AngYComboBox->clear();
-	ui->RSPComboBox->clear();	//7-10
-	ui->RSRComboBox->clear();
-	ui->REYComboBox->clear();
-	ui->RERComboBox->clear();
-	ui->LSPComboBox->clear();	//11-14
-	ui->LSRComboBox->clear();
-	ui->LEYComboBox->clear();
-	ui->LERComboBox->clear();
-	ui->RHYPComboBox->clear();	//15-20
-	ui->RHRComboBox->clear();
-	ui->RHPComboBox->clear();
-	ui->RKPComboBox->clear();
-	ui->RAPComboBox->clear();
-	ui->RARComboBox->clear();
-	ui->LHYPComboBox->clear();  //21-26
-	ui->LHRComboBox->clear();
-	ui->LHPComboBox->clear();
-	ui->LKPComboBox->clear();
-	ui->LAPComboBox->clear();
-	ui->LARComboBox->clear();
-	ui->RFsrFLComboBox->clear();	//27-30
-	ui->RFsrRLComboBox->clear();
-	ui->RFsrFRComboBox->clear();
-	ui->RFsrRRComboBox->clear();
-	ui->LFsrFLComboBox->clear();	//31-34
-	ui->LFsrRLComboBox->clear();
-	ui->LFsrFRComboBox->clear();
-	ui->LFsrRRComboBox->clear();
 }
 
 void SensorsController::changeToHost (QString data1) {
