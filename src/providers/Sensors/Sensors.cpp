@@ -99,6 +99,29 @@ void Sensors::fillComputedData(unsigned int timediff)
 		ASM.mutable_computeddata(ANGLE + i)->set_sensorvalue((angle[i].read())(0));
 		ASM.mutable_computeddata(ANGLE + i)->set_sensorvaluediff((angle[i].read())(1)*timediff / 1000000000.0);
 	}
+
+	//Compute support leg
+	float L_FSR_FL = ASM.sensordata(L_FSR + FSR_FL).sensorvalue();
+	float L_FSR_FR = ASM.sensordata(L_FSR + FSR_FR).sensorvalue();
+	float L_FSR_RL = ASM.sensordata(L_FSR + FSR_RL).sensorvalue();
+	float L_FSR_RR = ASM.sensordata(L_FSR + FSR_RR).sensorvalue();
+	float R_FSR_FL = ASM.sensordata(R_FSR + FSR_FL).sensorvalue();
+	float R_FSR_FR = ASM.sensordata(R_FSR + FSR_FR).sensorvalue();
+	float R_FSR_RL = ASM.sensordata(R_FSR + FSR_RL).sensorvalue();
+	float R_FSR_RR = ASM.sensordata(R_FSR + FSR_RR).sensorvalue();
+	float threshold = 1;
+	
+	float lWeight = L_FSR_FL + L_FSR_FR + L_FSR_RL + L_FSR_RR;
+	float rWeight = R_FSR_FL + R_FSR_FR + R_FSR_RL + R_FSR_RR;
+	if(lWeight > threshold && rWeight > threshold){
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(BOTH);
+	}else if(lWeight > threshold){
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(LEFT);
+	}else if(rWeight > threshold){
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(RIGHT);
+	}else{
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(NONE);
+	}
 }
 
 
@@ -217,7 +240,6 @@ void Sensors::fetchValues()
 			ASM.mutable_sensordata(ACC + i)->set_sensorvaluediff(newval - oldval);
 		}
 
-		fillComputedData(timediff);
 	}
 
 	for(unsigned i = L_FSR; i < sensorValues.size(); i++)
@@ -227,7 +249,9 @@ void Sensors::fetchValues()
 		ASM.mutable_sensordata(i)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(i)->set_sensorvaluediff(newval - oldval);
 	}
-
+	if( isvalid){	
+		fillComputedData(timediff);
+	}
 	ASM.set_timediff(timediff);
 }
 
