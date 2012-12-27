@@ -216,6 +216,8 @@ public:
 	void spreadParticlesAfterFall();
 
     belief calculateAvg();
+
+    belief AgentPosition;
 };
 
 #endif /* KLOCALIZATION_H_ */

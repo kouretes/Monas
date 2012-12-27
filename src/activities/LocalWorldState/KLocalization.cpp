@@ -204,7 +204,7 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	//SIR Filter
 	//int index[partclsNum];
 	bool weightsChanged = false;
-	belief AgentPosition;
+
 
 	//Predict - Move particles according the Prediction Model
 	if(MotionModel.freshData)
@@ -386,6 +386,7 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 
 belief KLocalization::calculateAvg(){
     belief agentPos;
+    float aCos=0,aSin=0;
 
     agentPos.x=0;
     agentPos.y=0;
@@ -394,12 +395,13 @@ belief KLocalization::calculateAvg(){
 	for (int i = 0; i < SIRParticles.size; i++){
         agentPos.x+=SIRParticles.x[i];
         agentPos.y+=SIRParticles.y[i];
-        agentPos.phi+=SIRParticles.phi[i];
+        aSin+=sin(SIRParticles.phi[i]);
+        aCos+=cos(SIRParticles.phi[i]);
     }
 
     agentPos.x/=SIRParticles.size;
     agentPos.y/=SIRParticles.size;
-    agentPos.phi/=SIRParticles.size;
+    agentPos.phi=atan2( 1.0/SIRParticles.size * aSin , 1.0/SIRParticles.size * aCos);
 
     return agentPos;
 }
