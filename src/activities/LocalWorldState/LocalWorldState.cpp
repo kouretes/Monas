@@ -383,6 +383,14 @@ void LocalWorldState::ReadRobotConf()
         localizationWorld.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
         localizationWorld.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
     }
+
+    //read ready state positions
+    localizationWorld.readyX=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".x").c_str());
+    localizationWorld.readyY=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".y").c_str());
+    localizationWorld.readyPhi=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".phi").c_str());
 }
 
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------

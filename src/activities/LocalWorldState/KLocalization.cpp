@@ -143,38 +143,11 @@ void KLocalization::initializeParticles(int resetType, bool kickOff, float inX, 
 	}
 	else if(resetType == LocalizationResetMessage::READY)
 	{
-		float phi=0,x=0,y=0;
-
-		if(playerNumber == 1)
-		{
-			y = -FieldMaxY;
-			x = -2.4;
-			phi = TO_RAD(90);
-		}
-		else if(playerNumber == 2)
-		{
-			y = FieldMaxY;
-			x = -2.4;
-			phi = TO_RAD(270);
-		}
-		else if(playerNumber == 3)
-		{
-			y = -FieldMaxY;
-			x = -1.2;
-			phi = TO_RAD(90);
-		}
-		else if(playerNumber == 4)
-		{
-			y = FieldMaxY;
-			x = -1.2;
-			phi = TO_RAD(270);
-		}
-
 		for (int i = 0; i < SIRParticles.size; i++)
 		{
-			SIRParticles.x[i] = x;
-			SIRParticles.y[i] = y;
-			SIRParticles.phi[i] = phi;
+			SIRParticles.x[i] = readyX;
+			SIRParticles.y[i] = readyY;
+			SIRParticles.phi[i] = readyPhi;
 			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
 	}

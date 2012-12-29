@@ -158,6 +158,7 @@ public:
 	float FieldMinY;
 	//Team
 	float initX[2], initY[2], initPhi[2];
+    float readyX,readyY,readyPhi;
 	int playerNumber;
 	//Particle with the max weight
 
