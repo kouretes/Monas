@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+
+<action>
+    <x>0</x>
+    <y>0</y>
+    <phi>-0.35</>
+    <name>KickForwardLeft2.xar</name>
+</action>
+
+<action>
+    <x>0</x>
+    <y>0</y>
+    <phi>0.35</>
+    <name>KickForwardRight2.xar</name>
+</action>
+
+<action>
+    <x>0</x>
+    <y>0</y>
+    <phi>0</>
+    <name>KickForwardRightSmooth.xar</name>
+</action>
+
+<action>
+    <x>0</x>
+    <y>0</y>
+    <phi>0</>
+    <name>KickForwardLeftSmooth.xar</name>
+</action>
