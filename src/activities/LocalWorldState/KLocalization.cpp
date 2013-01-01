@@ -304,8 +304,8 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int NumofParticles)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
-	float OverallWeight, ParticlePointBearingAngle, ParticleBearing, Deviation;
-	float AdditiveWeightTotal = 0, AdditiveOwnField = 0, AdditiveEnemyField = 0;
+	float OverallWeight=0,WeightTotal=0, ParticlePointBearingAngle, ParticleBearing;
+	float Weight = 0;
 	float R;
 	float xPosOfFeature 	= Observation[0].Feature.x;
 	float yPosOfFeature 	= Observation[0].Feature.y;
@@ -315,45 +315,47 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 	float obsBearingEdev 	= Observation[0].Bearing.Edev;
 	float obsBearingValue 	= Observation[0].Bearing.val;
 
-	//Find the best candiate for the landmark
+	//Find the best candidate for the landmark
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		AdditiveWeightTotal = 0;
-		float oldWeight = SIRParticles.Weight[p];
-		AdditiveEnemyField = 1;
-		AdditiveOwnField = 1;
+        Weight=1;
 		//Enemy Left
 		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - yPosOfFeature);
-		AdditiveEnemyField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		Weight *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(yPosOfFeature - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveEnemyField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveEnemyField;
-		AdditiveEnemyField = 1;
+		Weight *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		OverallWeight = (OverallWeight>Weight) ? OverallWeight : Weight ;
+
+		Weight = 1;
 		//Enemy Right
 		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - (-yPosOfFeature));
-		AdditiveEnemyField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		Weight *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2((-yPosOfFeature) - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveEnemyField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveEnemyField;
+		Weight *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		OverallWeight = (OverallWeight>Weight) ? OverallWeight : Weight ;
+
+		Weight = 1;
 		//Own Left
 		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-yPosOfFeature));
-		AdditiveOwnField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		Weight *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-yPosOfFeature - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveOwnField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveOwnField;
-		AdditiveOwnField = 1;
+		Weight *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		OverallWeight = (OverallWeight>Weight) ? OverallWeight : Weight ;
+
+		Weight = 1;
 		//Own Right
 		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-(-yPosOfFeature)));
-		AdditiveOwnField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		Weight *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-(-yPosOfFeature) - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveOwnField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveOwnField;
-		AdditiveWeightTotal = (AdditiveWeightTotal < 0.0001) ? 0.0001 : AdditiveWeightTotal;
-		SIRParticles.Weight[p] = AdditiveWeightTotal;
+		Weight *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		OverallWeight = (OverallWeight>Weight) ? OverallWeight : Weight ;
+
+		WeightTotal = (OverallWeight < 0.0001) ? 0.0001 : OverallWeight;
+		SIRParticles.Weight[p] = WeightTotal;
 	}
 }
 
