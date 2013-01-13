@@ -219,6 +219,7 @@ public:
     belief calculateAvg();
 
     belief AgentPosition;
+    float actionOdError;
 };
 
 #endif /* KLOCALIZATION_H_ */

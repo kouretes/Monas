@@ -3,27 +3,27 @@
 <action>
     <x>0</x>
     <y>0</y>
-    <phi>-0.35</>
+    <phi>-0.55</phi>
     <name>KickForwardLeft2.xar</name>
 </action>
 
 <action>
     <x>0</x>
     <y>0</y>
-    <phi>0.35</>
+    <phi>0.55</phi>
     <name>KickForwardRight2.xar</name>
 </action>
 
 <action>
     <x>0</x>
     <y>0</y>
-    <phi>0</>
+    <phi>0</phi>
     <name>KickForwardRightSmooth.xar</name>
 </action>
 
 <action>
     <x>0</x>
     <y>0</y>
-    <phi>0</>
+    <phi>0</phi>
     <name>KickForwardLeftSmooth.xar</name>
 </action>

@@ -126,7 +126,7 @@ private:
 	header outgoingheader;
 	int size;
 	char *data;
-
+    bool actionKick;
 	bool gameMode;
 };
 ACTIVITY_END

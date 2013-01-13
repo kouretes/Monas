@@ -34,6 +34,7 @@ int KLocalization::Initialize()
 	SIRParticles.phi = new float[partclsNum];
 	SIRParticles.Weight = new float[partclsNum];
 	maxWeightParticleIndex = 0;
+    actionOdError=0.f;
 
     //set seed (current time)
     generator.seed(static_cast<unsigned int> (std::time(0)));
@@ -238,7 +239,7 @@ void KLocalization::Predict(KMotionModel & MotionModel)
 
         SIRParticles.x[i] = SIRParticles.x[i] + cos(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.y[i] = SIRParticles.y[i] + sin(tmpDir + SIRParticles.phi[i]) * tmpDist;
-		SIRParticles.phi[i] = SIRParticles.phi[i] + tmpRot;
+		SIRParticles.phi[i] = SIRParticles.phi[i] + tmpRot + actionOdError;
 	}
 }
 

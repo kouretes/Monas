@@ -29,6 +29,7 @@ void LocalWorldState::UserInit()
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
+    actionKick=false;
 	firstOdometry = true;
 	serverpid = -1;
 	debugmode = false;
@@ -326,6 +327,19 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPoint.x += DX;
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
+
+    //robot orientation change because of action (kick)
+    localizationWorld.actionOdError=0.f;
+    if (sm != 0){ 
+        if (currentRobotAction==MotionStateMessage::ACTION && actionKick==false){
+            actionKick=true;
+            localizationWorld.actionOdError=atof(_xml.findValueForKey(_xml.keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str());   
+             }
+        else if (currentRobotAction!=MotionStateMessage::ACTION){
+            actionKick=false;           
+        }        
+    }
+
 	//Logger::Instance().WriteMsg("LocalWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
 
