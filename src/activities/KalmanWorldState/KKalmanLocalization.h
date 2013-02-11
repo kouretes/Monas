@@ -24,6 +24,9 @@
 
 using namespace std;
 
+class KKalmanLocalization
+{
+public:
 
 //Special structure to keep the data of a particle
 typedef struct pvar
@@ -101,12 +104,6 @@ typedef struct blf
 	double confidence;
 	double weightconfidence;
 } belief;
-
-class KKalmanLocalization
-{
-public:
-
-
 
 	//Random number generetors
 

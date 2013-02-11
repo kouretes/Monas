@@ -111,7 +111,7 @@ private:
 		double ownGoalLeftX, ownGoalLeftY, ownGoalRightX, ownGoalRightY;
 
 		// values from the behavior xml file
-		float posx, posy, epsx, epsy;
+		float posX, posY, epsX, epsY;
 		struct Kick kicks;
 		float ur; // used only by goalie
 
@@ -239,21 +239,21 @@ private:
 	 * @fn void pathPlanningRequestRelative(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
 	 */
-	void pathPlanningRequestRelative(float target_x, float target_y, float target_phi);
+	void pathPlanningRequestRelative(float targetX, float targetY, float targetPhi);
 
 	/**
 	 * @fn void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
 	 */
-	void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi);
+	void pathPlanningRequestAbsolute(float targetX, float targetY, float targetPhi);
 
 	/**
 	 * @fn void gotoPosition(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
 	 */
-	void gotoPosition(float target_x, float target_y, float target_phi);
+	void gotoPosition(float targetX, float targetY, float targetPhi);
 
-	bool ballfound;	// variable that is true if we see the ball.
+	bool ballFound;	// variable that is true if we see the ball.
 
 	int fall;	// variable for goalie role to check if he should fall or not and in which side.
 
@@ -261,17 +261,17 @@ private:
 
 	bool pathOK;
 
-	bool kickoff;
+	bool kickOff;
 
 	float cX, cY, ct;
 
-	float ball_dist, ball_bearing, ball_x, ball_y;
+	float ballDist, ballBearing, ballX, ballY;
 
 	int side;
 
-	float robot_x, robot_y, robot_phi, robot_confidence;
+	float robotX, robotY, robotPhi, robotConfidence;
 
-	bool readytokick;
+	bool readyToKick;
 
 	int direction;
 
@@ -285,7 +285,7 @@ private:
 	
 	bool gameMode;
 
-	boost::posix_time::ptime lastwalk, lastplay, lastpenalised, penalisedStarted;
+	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted;
 };
 
 ACTIVITY_END

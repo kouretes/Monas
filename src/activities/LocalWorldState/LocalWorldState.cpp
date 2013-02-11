@@ -359,7 +359,7 @@ void LocalWorldState::ReadFeatureConf()
     	y= atof(_xml.findValueForKey(key + "y").c_str());
     	weight= atof(_xml.findValueForKey(key + "weight").c_str());
     	temp.set(x, y, ID, weight);
-    	localizationWorld.KFeaturesmap[ID]=temp;
+    	localizationWorld.KFeaturesmap[ID] = temp;
     }
 }
 

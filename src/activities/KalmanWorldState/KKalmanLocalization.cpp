@@ -170,7 +170,7 @@ void KKalmanLocalization::pruneParticles()
 }
 
 //Sequential Importance Resampling
-belief KKalmanLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt)
+KKalmanLocalization::belief KKalmanLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt)
 {
 	//SIR Filter
 	//int index[partclsNum];
@@ -241,7 +241,7 @@ belief KKalmanLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vect
 	return getCurrentPosition();
 ;
 }
-belief KKalmanLocalization::getCurrentPosition() const
+KKalmanLocalization::belief KKalmanLocalization::getCurrentPosition() const
 {
 	belief AgentPosition;
 	KalmanParticle::Pvector  mmseest=MMSE_belief();
