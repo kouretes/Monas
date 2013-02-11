@@ -10,7 +10,7 @@
 #include "messages/WorldInfo.pb.h"
 #include "tools/stat/kalman.h"
 #include "tools/KMat.h"
-#include "KLocalization.h"
+#include "KKalmanLocalization.h"
 
 /*
  *

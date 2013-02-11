@@ -24,10 +24,6 @@
 #include <iostream>
 //#define DEBUGVISION
 
-
-
-
-
 ACTIVITY_START
 
 class Vision: public IActivity
@@ -36,7 +32,7 @@ public:
 	/**
 	 * The only available constructor:
 	 */
-	ACTIVITY_VISIBLE Vision(Blackboard& b, XmlNode &x);
+	ACTIVITY_VISIBLE Vision(Blackboard& b, XmlManager &x);
 	ACTIVITY_VISIBLE ~Vision()
 	{
 		if(segtop == segbottom && segbottom != NULL)

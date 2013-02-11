@@ -9,7 +9,7 @@
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
-#include "architecture/XmlManager/XmlConfigurator.h"
+#include "architecture/XmlManager/XmlManager.h"
 
 #include "architecture/periodicthread.h"
 
@@ -55,7 +55,7 @@ namespace statechart_engine
 
 		Blackboard* GetBlackboard () const; //TODO add const
 
-		XmlNode* GetXmlNode () const; //TODO add const
+		XmlManager* GetXmlManager () const; //TODO add const
 
 		virtual volatile int* GetIsRunningRef () const;
 
@@ -83,7 +83,7 @@ namespace statechart_engine
 
 		Blackboard* _blk;
 
-		XmlNode* _xml;
+		XmlManager* _xml;
 
 	};
 

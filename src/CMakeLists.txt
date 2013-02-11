@@ -24,7 +24,6 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
   message ( FATAL_ERROR "LibBuildType should be one of the following: STATIC, SHARED or MODULE" )
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
-option ( Webots "Webots ..." )
 set ( NaoQiVersion 1.12.5 CACHE STRING "Set the NaoQi version" )
 
 

@@ -5,16 +5,14 @@
  *		Patched: eldr4d
  */
 #include <time.h>
-#include <boost/random.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <boost/math/distributions/normal.hpp>
 #include <math.h>
-#include "newran/newran.h"
 #include "KLocalization.h"
 #include <iomanip>
 #include <boost/lexical_cast.hpp>
 #include "architecture/archConfig.h"
-#include <boost/math/distributions/normal.hpp>
 #include "tools/logger.h"
 #include "tools/toString.h"
 using namespace boost;
@@ -29,130 +27,69 @@ KLocalization::~KLocalization()
 
 int KLocalization::Initialize()
 {
-	XMLConfig * config = NULL;
-	string filename = ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml" ;
-	config = new XMLConfig(filename);
-
-	if (config->IsLoadedSuccessfully())
-	{
-		bool found = true;
-		float temp;
-		///Parameters
-		found &= config->QueryElement("robustmean", robustmean);
-		found &= config->QueryElement("partclsNum", partclsNum);
-		found &= config->QueryElement("SpreadParticlesDeviation", SpreadParticlesDeviation);
-		found &= config->QueryElement("rotation_deviation", rotation_deviation);
-		found &= config->QueryElement("PercentParticlesSpread", PercentParticlesSpread);
-		found &= config->QueryElement("RotationDeviationAfterFallInDeg", RotationDeviationAfterFallInDeg);
-		found &= config->QueryElement("NumberOfParticlesSpreadAfterFall", NumberOfParticlesSpreadAfterFall);
-
-		if (found)
-		{
-			Logger::Instance().WriteMsg("Localization", "All Localization parameters loaded successfully" , Logger::Info);
-		}
-		else
-		{
-			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the xml config file " , Logger::Error);
-		}
-	}
-	else
-	{
-		Logger::Instance().WriteMsg("Localization", "Cant Find xml config file " + filename , Logger::Error);
-	}
-
-	if(config)
-		delete config;
-
-	config = NULL;
-	filename = ArchConfig::Instance().GetConfigPrefix() + "/Field.xml" ;
-	config = new XMLConfig(filename);
-
-	if (config->IsLoadedSuccessfully())
-	{
-		bool found = true;
-		found &= config->QueryElement("CarpetMaxX", CarpetMaxX);
-		found &= config->QueryElement("CarpetMinX", CarpetMinX);
-		found &= config->QueryElement("CarpetMaxY", CarpetMaxY);
-		found &= config->QueryElement("CarpetMinY", CarpetMinY);
-		found &= config->QueryElement("FieldMaxX", FieldMaxX);
-		found &= config->QueryElement("FieldMinX", FieldMinX);
-		found &= config->QueryElement("FieldMaxY", FieldMaxY);
-		found &= config->QueryElement("FieldMinY", FieldMinY);
-
-		if (found)
-		{
-			Logger::Instance().WriteMsg("Localization", "All Field parameters loaded successfully", Logger::Info);
-		}
-		else
-		{
-			Logger::Instance().WriteMsg("Localization", "Cant Find an attribute in the Field xml config file ", Logger::Error);
-		}
-	}
-	else
-	{
-		Logger::Instance().WriteMsg("Localization", "Cant Find Field xml config file " + filename , Logger::Error);
-	}
-
-	if(config)
-		delete config;
-
 	//Initialize particles
 	SIRParticles.size = partclsNum;
-	SIRParticles.x = new double[partclsNum];
-	SIRParticles.y = new double[partclsNum];
-	SIRParticles.phi = new double[partclsNum];
-	SIRParticles.Weight = new double[partclsNum];
-	max_weight_particle_index = 0;
-	double seed = (double) (time(NULL) % 100 / 100.0);
-	Random::Set(seed);
+	SIRParticles.x = new float[partclsNum];
+	SIRParticles.y = new float[partclsNum];
+	SIRParticles.phi = new float[partclsNum];
+	SIRParticles.Weight = new float[partclsNum];
+	maxWeightParticleIndex = 0;
+    actionOdError=0.f;
+
+    //set seed (current time)
+    generator.seed(static_cast<unsigned int> (std::time(0)));
 	srand(time(0));
-	// Loading features,
-	LoadFeaturesXML(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml", KFeaturesmap);
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
-	readRobotConf(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");
-	initParticles();
+
+	initializeParticles(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
+
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
 	return 1;
 }
 
 void KLocalization::initParticles()
 {
-	Uniform X, Y, P;
+	 //uniform [0,1)
+    boost::uniform_real<> uni_dist(0,1);
+    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+
 	float length = FieldMaxX * 2 / 3;
-	unsigned int particlesUp = partclsNum / 2;
-	unsigned int particlesDown = partclsNum - particlesUp;
+	int particlesUp = SIRParticles.size / 2;
+	int particlesDown = SIRParticles.size - particlesUp;
 
 	//Initialize top Particles
-	for (unsigned int i = 0; i < particlesUp; i++)
+	for (int i = 0; i < particlesUp; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(270);
-		SIRParticles.Weight[i] = 1.0 / partclsNum;
+		SIRParticles.phi[i] = TO_RAD(270);
+		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 
 	//Initialize down Particles
-	for (unsigned int i = particlesUp; i < partclsNum; i++)
+	for (int i = particlesUp; i < SIRParticles.size; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = -FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(90);
-		SIRParticles.Weight[i] = 1.0 / partclsNum;
+		SIRParticles.phi[i] = TO_RAD(90);
+		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 }
 
 void KLocalization::setParticlesPoseUniformly()
 {
-	Uniform X, Y, P;
+	//uniform [0,1)
+    boost::uniform_real<> uni_dist(0,1);
+    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+
 	float length = FieldMaxX * 2 / 3;
-	unsigned int resetParticles = 20;
-	unsigned int particlesUp = partclsNum / 2 - resetParticles / 2;
-	unsigned int particlesDown = partclsNum - particlesUp;
+	int resetParticles = 20;
+    int particlesUp = SIRParticles.size / 2 - resetParticles / 2;
+	int particlesDown = SIRParticles.size - particlesUp - resetParticles;
 
 	//Initialize top Particles
-	for (unsigned int i = 0; i < resetParticles; i++)
+	for (int i = 0; i < resetParticles; i++)
 	{
-		float x, y;
+		float x=0, y=0;
 
 		if(playerNumber == 1)
 		{
@@ -177,85 +114,60 @@ void KLocalization::setParticlesPoseUniformly()
 
 		SIRParticles.x[i] = x;
 		SIRParticles.y[i] = y;
-		SIRParticles.phi[i] = deg2rad(0);
-		SIRParticles.Weight[i] = 1.0 / partclsNum;
+		SIRParticles.phi[i] = TO_RAD(0);
+		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 
-	for (unsigned int i = resetParticles; i < particlesUp; i++)
+	for (int i = resetParticles; i < particlesUp; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(270);
-		SIRParticles.Weight[i] = 1.0 / partclsNum;
+		SIRParticles.phi[i] = TO_RAD(270);
+		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 
 	//Initialize down Particles
-	for (unsigned int i = particlesUp; i < partclsNum; i++)
+	for (int i = particlesUp; i < SIRParticles.size; i++)
 	{
-		SIRParticles.x[i] = X.Next() * length + FieldMinX + 0.5;
+		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
 		SIRParticles.y[i] = -FieldMaxY;
-		SIRParticles.phi[i] = deg2rad(90);
-		SIRParticles.Weight[i] = 1.0 / partclsNum;
+		SIRParticles.phi[i] = TO_RAD(90);
+		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 }
 
-void KLocalization::initializeParticles(int playerState, bool kickOff)
+void KLocalization::initializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi)
 {
-	if(playerState == PLAYER_PENALISED)
+	if(resetType == LocalizationResetMessage::PENALISED || resetType == LocalizationResetMessage::UNIFORM)
 	{
 		setParticlesPoseUniformly();
 	}
-	else if(playerState == PLAYER_READY)
+	else if(resetType == LocalizationResetMessage::READY)
 	{
-		float phi, x, y;
-
-		if(playerNumber == 1)
+		for (int i = 0; i < SIRParticles.size; i++)
 		{
-			y = -FieldMaxY;
-			x = -2.4;
-			phi = deg2rad(90);
-		}
-		else if(playerNumber == 2)
-		{
-			y = FieldMaxY;
-			x = -2.4;
-			phi = deg2rad(270);
-		}
-		else if(playerNumber == 3)
-		{
-			y = -FieldMaxY;
-			x = -1.2;
-			phi = deg2rad(90);
-		}
-		else if(playerNumber == 4)
-		{
-			y = FieldMaxY;
-			x = -1.2;
-			phi = deg2rad(270);
-		}
-
-		//Leave some particles to the current position in case of ready state after goal
-		int percentageOfParticle = partclsNum * 0.2;
-
-		for (unsigned int i = percentageOfParticle; i < partclsNum; i++)
-		{
-			if(i == max_weight_particle_index)
-				continue;
-
-			SIRParticles.x[i] = x;
-			SIRParticles.y[i] = y;
-			SIRParticles.phi[i] = phi;
-			SIRParticles.Weight[i] = 1.0 / partclsNum;
+			SIRParticles.x[i] = readyX;
+			SIRParticles.y[i] = readyY;
+			SIRParticles.phi[i] = readyPhi;
+			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
 	}
-	else if(playerState == PLAYER_SET)
+	else if(resetType == LocalizationResetMessage::SET)
 	{
-		for (unsigned int i = 0; i < partclsNum; i++)
+		for (int i = 0; i < SIRParticles.size; i++)
 		{
-			SIRParticles.x[i] = initX[(kickOff) ? 0 : 1] + ((double)rand() / (double)RAND_MAX) * 0.2 - 0.1;
-			SIRParticles.y[i] = initY[(kickOff) ? 0 : 1] + ((double)rand() / (double)RAND_MAX) * 0.2 - 0.1;
+			SIRParticles.x[i] = initX[(kickOff) ? 0 : 1] + ((float)rand() / (float)RAND_MAX) * 0.2 - 0.1;
+			SIRParticles.y[i] = initY[(kickOff) ? 0 : 1] + ((float)rand() / (float)RAND_MAX) * 0.2 - 0.1;
 			SIRParticles.phi[i] = initPhi[(kickOff) ? 0 : 1];
-			SIRParticles.Weight[i] = 1.0 / partclsNum;
+			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
+		}
+	}else if(resetType == LocalizationResetMessage::MANUAL){
+		for (int i = 0; i < SIRParticles.size; i++)
+		{
+			SIRParticles.x[i] = inX;
+			SIRParticles.y[i] = inY;
+			SIRParticles.phi[i] = inPhi;
+			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
 	}
 }
@@ -266,7 +178,7 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	//SIR Filter
 	//int index[partclsNum];
 	bool weightsChanged = false;
-	belief AgentPosition;
+
 
 	//Predict - Move particles according the Prediction Model
 	if(MotionModel.freshData)
@@ -275,32 +187,22 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	//Update - Using incoming observation
 	if(Observations.size() >= 1)
 	{
-		Update(Observations, partclsNum);
+		Update(Observations, SIRParticles.size);
 		weightsChanged = true;
 	}
 	else if(AmbiguousObservations.size() == 1)
 	{
-		Update_Ambiguous(AmbiguousObservations, partclsNum);
+		Update_Ambiguous(AmbiguousObservations, SIRParticles.size);
 		weightsChanged = true;
 	}
 
-	//Normalize Particles  Weight in order to Resample later
-	//Find the index of the max weight in the process
-	if(weightsChanged)
-		normalize(SIRParticles.Weight, &max_weight_particle_index);
-
-	//extract estimation
-	AgentPosition.x =  SIRParticles.x[max_weight_particle_index];// maxprtcl.x;
-	AgentPosition.y = SIRParticles.y[max_weight_particle_index];//maxprtcl.y;
-	AgentPosition.theta = SIRParticles.phi[max_weight_particle_index];//maxprtcl.phi;
-	//AgentPosition = RobustMean(SIRParticles, 10);
-	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = 0.0;
 
 	//Resample and propagate
+	//Normalize Particles after resampling
+	//Find the index of the max weight in the process
 	if(weightsChanged)
 	{
-		rouletteResample();
+		rouletteResampleAndNormalize();
 
 		if(Observations.size() >= 1)
 		{
@@ -308,57 +210,70 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 		}
 	}
 
+    if (weightsChanged || MotionModel.freshData){
+        AgentPosition=calculateAvg();
+    }
+    /* Avg-Max
+	AgentPosition.x = SIRParticles.x[maxWeightParticleIndex]  ;
+	AgentPosition.y = SIRParticles.y[maxWeightParticleIndex] ;
+	AgentPosition.phi = SIRParticles.phi[maxWeightParticleIndex];*/
+
+	//TODO only one value to determine confidance, Now its only distance confidence
+	AgentPosition.confidence = 0.0;
 	return AgentPosition;
 }
 
 
 void KLocalization::Predict(KMotionModel & MotionModel)
 {
-	double tmpDist, tmpDir, tmpRot;
-	Normal X, Y, P;
-
-	//Move the particles with noise
-	for (unsigned int i = 0; i < partclsNum; i++)
+	float tmpDist, tmpDir, tmpRot;
+	boost::normal_distribution<> norm_dist(0,1);
+    boost::variate_generator<r_gen&, boost::normal_distribution<> > X(generator, norm_dist);
+    
+    //Move the particles with noise
+	for (int i = 0; i < SIRParticles.size; i++)
 	{
-		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X.Next() * MotionModel.Distance.ratiodev);
-		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + Y.Next() * MotionModel.Direction.Edev;
-		tmpRot = MotionModel.Rotation.val * (MotionModel.Rotation.ratiomean + P.Next() * MotionModel.Rotation.ratiodev);
-		SIRParticles.x[i] = SIRParticles.x[i] + cos(tmpDir + SIRParticles.phi[i]) * tmpDist;
+		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X() * MotionModel.Distance.ratiodev);
+		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + X() * MotionModel.Direction.Edev;
+		tmpRot = MotionModel.Rotation.val * (MotionModel.Rotation.ratiomean + X() * MotionModel.Rotation.ratiodev);
+
+        SIRParticles.x[i] = SIRParticles.x[i] + cos(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.y[i] = SIRParticles.y[i] + sin(tmpDir + SIRParticles.phi[i]) * tmpDist;
-		SIRParticles.phi[i] = SIRParticles.phi[i] + tmpRot;
+		SIRParticles.phi[i] = SIRParticles.phi[i] + tmpRot + actionOdError;
 	}
 }
 
-double KLocalization::normpdf(double diff, double dev)
+float KLocalization::normpdf(float diff, float dev)
 {
-	boost::math::normal dist = boost::math::normal_distribution<double>(0, dev);
-	return boost::math::pdf(dist, diff);
+    float denominator = dev*sqrt(2*M_PI);
+	float exponential = exp(-((diff - 0)*(diff-0))/(2*dev*dev));
+	return exponential/denominator;
 }
 
 void KLocalization::spreadParticlesAfterFall()
 {
-	//Normal X, Y, P;
-	Random X, Y, P;
+	boost::uniform_real<> uni_dist(0,1);
+    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+
 	int step = round((float) SIRParticles.size / NumberOfParticlesSpreadAfterFall);
 
 	if (NumberOfParticlesSpreadAfterFall == 0)
 		return;
 
-	for (unsigned int i = 0; i < SIRParticles.size; i += step)
+	for (int i = 0; i < SIRParticles.size; i += step)
 	{
-		SIRParticles.x[i] += (X.Next() - 0.5) * SpreadParticlesDeviationAfterFall;
-		SIRParticles.y[i] += (Y.Next() - 0.5) * SpreadParticlesDeviationAfterFall;
-		SIRParticles.phi[i] += (P.Next() - 0.5) * deg2rad(RotationDeviationAfterFallInDeg);
+		SIRParticles.x[i] += (X() - 0.5) * SpreadParticlesDeviationAfterFall;
+		SIRParticles.y[i] += (X() - 0.5) * SpreadParticlesDeviationAfterFall;
+		SIRParticles.phi[i] += (X() - 0.5) * TO_RAD(RotationDeviationAfterFallInDeg);
 	}
 }
 
 void KLocalization::Update(vector<KObservationModel> &Observation, int NumofParticles)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
-	double OverallWeightOwnField, OverallWeightEnemyField, OverallWeightTotal;
-	double ParticlePointBearingAngle, ParticleBearing;
-	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double R;
+	float OverallWeightOwnField, OverallWeightEnemyField, OverallWeightTotal;
+	float ParticlePointBearingAngle, ParticleBearing;
+	float R;
 
 	for (int p = 0; p < NumofParticles; p++)
 	{
@@ -371,13 +286,13 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 			R = KMath::norm2(SIRParticles.x[p] - Observation[i].Feature.x, SIRParticles.y[p] - Observation[i].Feature.y);
 			OverallWeightEnemyField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2(Observation[i].Feature.y - SIRParticles.y[p], Observation[i].Feature.x - SIRParticles.x[p]);
-			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 			OverallWeightEnemyField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 			//we take the symetric yellow now, so we put a - to the x and y of the observation
 			R = KMath::norm2(SIRParticles.x[p] - (-Observation[i].Feature.x), SIRParticles.y[p] - (-Observation[i].Feature.y));
 			OverallWeightOwnField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2((-Observation[i].Feature.y) - SIRParticles.y[p], (-Observation[i].Feature.x) - SIRParticles.x[p]);
-			ParticleBearing = anglediff2(Observation[i].Bearing.val, SIRParticles.phi[p]);
+			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 			OverallWeightOwnField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 		}
 
@@ -390,10 +305,9 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int NumofParticles)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
-	double OverallWeight, ParticlePointBearingAngle, ParticleBearing, Deviation;
-	double DistanceFromPastBelief, DirectionFromPastBelief;
-	double AdditiveWeightTotal = 0, AdditiveOwnField = 0, AdditiveEnemyField = 0;
-	double R;
+	float OverallWeight, ParticlePointBearingAngle, ParticleBearing, Deviation;
+	float AdditiveWeightTotal = 0, AdditiveOwnField = 0, AdditiveEnemyField = 0;
+	float R;
 	float xPosOfFeature 	= Observation[0].Feature.x;
 	float yPosOfFeature 	= Observation[0].Feature.y;
 	float obsDistEmean	= Observation[0].Distance.Emean;
@@ -444,25 +358,61 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 	}
 }
 
+belief KLocalization::calculateAvg(){
+    belief agentPos;
+    float aCos=0,aSin=0;
 
-void KLocalization::rouletteResample()
+    agentPos.x=0;
+    agentPos.y=0;
+    agentPos.phi=0;
+
+	for (int i = 0; i < SIRParticles.size; i++){
+        agentPos.x+=SIRParticles.x[i];
+        agentPos.y+=SIRParticles.y[i];
+        aSin+=sin(SIRParticles.phi[i]);
+        aCos+=cos(SIRParticles.phi[i]);
+    }
+
+    agentPos.x/=SIRParticles.size;
+    agentPos.y/=SIRParticles.size;
+    agentPos.phi=atan2( 1.0/SIRParticles.size * aSin , 1.0/SIRParticles.size * aCos);
+
+    return agentPos;
+}
+
+
+void KLocalization::rouletteResampleAndNormalize()
 {
-	double r = rand() / ((double)RAND_MAX);
-	r = r / SIRParticles.size;
-	double cumSum = SIRParticles.Weight[0];
-	double step = 1 / ((double)SIRParticles.size);
-	unsigned int i = 0;
-	double tempX[SIRParticles.size];
-	double tempY[SIRParticles.size];
-	double tempPhi[SIRParticles.size];
 
-	for (unsigned int m = 0; m < SIRParticles.size; m++)
+	float sum = 0;
+	float max = -1;
+	for (int i = 0; i < SIRParticles.size; i++){
+		sum += SIRParticles.Weight[i];
+	}
+
+	float r = (rand() / ((float)RAND_MAX))*sum;
+	r = r / SIRParticles.size;
+	float cumSum = SIRParticles.Weight[0];
+	float step = sum / ((float)SIRParticles.size);
+	int i = 0;
+	float tempX[SIRParticles.size];
+	float tempY[SIRParticles.size];
+	float tempPhi[SIRParticles.size];
+
+	for (int m = 0; m < SIRParticles.size; m++)
 	{
-		//double u = r + 1.0*m/nsamples;
+		//float u = r + 1.0*m/nsamples;
 		while (r > cumSum)
 		{
 			i++;
 			cumSum += SIRParticles.Weight[i];
+		}
+
+        //find max weight particle index
+        if(SIRParticles.Weight[i] > max)
+		{
+			max = SIRParticles.Weight[i];
+			maxWeightParticleIndex = m;
 		}
 
 		r += step;
@@ -471,41 +421,17 @@ void KLocalization::rouletteResample()
 		tempPhi[m] = SIRParticles.phi[i];
 	}
 
+	float newWeight = 1.0 / SIRParticles.size;
+
 	// lets propagate them
-	for (i = 0; i < partclsNum; i++)
+	for (i = 0; i < SIRParticles.size; i++)
 	{
 		SIRParticles.phi[i] = tempPhi[i];
-		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
+		SIRParticles.Weight[i] = newWeight;
 		SIRParticles.x[i] = tempX[i];
 		SIRParticles.y[i] = tempY[i];
 	}
 }
-
-
-
-///Normalizes and Returns ESS effective Sample size;
-void KLocalization::normalize(double * Weights, unsigned int *max_weight_index)
-{
-	double sum = 0;
-
-	for (unsigned int i = 0; i < partclsNum; i++)
-		sum += Weights[i];
-
-	//normalize particles
-	double max = -1;
-
-	for (unsigned int i = 0; i < partclsNum; i++)
-	{
-		Weights[i] = Weights[i] / sum;
-
-		if(Weights[i] > max)
-		{
-			max = Weights[i];
-			*max_weight_index = i;
-		}
-	}
-}
-
 
 float KLocalization::circular_mean_angle(float *angles, unsigned int size)
 {
@@ -529,7 +455,7 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 	//Calculate the bearing from each particle from each Observation
 	//Force Bearing under some criteria
 	float ParticlePointBearingAngle;
-	unsigned int index;
+    int index;
 
 	if (Observation.size() > 1)
 	{
@@ -540,7 +466,7 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		for (unsigned int o = 0; o < Observation.size(); o++)
 		{
@@ -555,7 +481,7 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		for (unsigned int o = 0; o < Observation.size(); o++)
 		{
@@ -573,7 +499,7 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		ParticlePointBearingAngle = atan2(Observation[0].Feature.y - SIRParticles.y[index], Observation[0].Feature.x - SIRParticles.x[index]);
 		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
@@ -583,97 +509,9 @@ void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
 		{
 			index = rand() % SIRParticles.size;
 		}
-		while(index == max_weight_particle_index);
+		while(index == maxWeightParticleIndex);
 
 		ParticlePointBearingAngle = atan2(-Observation[0].Feature.y - SIRParticles.y[index], -Observation[0].Feature.x - SIRParticles.x[index]);
 		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 	}
 }
-
-//Load xml files
-int KLocalization::LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap)
-{
-	TiXmlDocument doc2(filename.c_str());
-	bool loadOkay = doc2.LoadFile();
-
-	if (!loadOkay)
-	{
-		Logger::Instance().WriteMsg("KLocalization", "Feature loading failed!!!!", Logger::Error);
-		return -1;
-	}
-
-	TiXmlNode * Ftr;
-	TiXmlElement * Attr;
-	string ID;
-	double x, y, w;
-	feature temp;
-
-	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
-	{
-		if(Ftr->ToComment() == NULL)
-		{
-			Attr = Ftr->ToElement();
-			Attr->Attribute("x", &x);
-			Attr->Attribute("y", &y);
-			Attr->Attribute("weight", &w);
-			ID = Attr->Attribute("ID");
-			temp.set(x, y, ID, w);
-			KFeaturesmap[temp.id] = temp;
-		}
-	}
-
-	return 0;
-}
-
-int KLocalization::readConfiguration(const std::string& file_name)
-{
-	XMLConfig config(file_name);
-
-	if (!config.QueryElement("player", playerNumber))
-	{
-		Logger::Instance().WriteMsg("KLocalization", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
-		playerNumber = 1;
-	}
-
-	return 1;
-}
-
-bool KLocalization::readRobotConf(const std::string& file_name)
-{
-	XML config(file_name);
-	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont teamPositions, robotPosition ;
-	Logger::Instance().WriteMsg("Localization",  " readRobotConfiguration "  , Logger::Info);
-
-	for (int i = 0; i < 2; i++)
-	{
-		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
-		bool found = false;
-		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
-
-		if (teamPositions.size() != 0)
-			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
-
-		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++)
-		{
-			if (it->attrb["number"] == playerNumber)
-			{
-				initPhi[i] = 0.0;
-				initX[i] = (it->attrb["posx"]);
-				initY[i] = (it->attrb["posy"]);
-				found = true;
-				break;
-			}
-			else
-			{
-				initPhi[i] = 0.0;
-				initX[i] = 0.0;
-				initY[i] = 0.0;
-			}
-		}
-	}
-
-	return true;
-}
-
-

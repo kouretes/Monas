@@ -8,6 +8,8 @@
 #define NAOCAMERA_H
 
 #include <linux/videodev2.h>
+#include "tools/logger.h"
+#include "tools/toString.h"
 
 #ifndef V4L2_CID_AUTOEXPOSURE
 #  define V4L2_CID_AUTOEXPOSURE     (V4L2_CID_BASE+32)
@@ -68,11 +70,10 @@
 
 #ifndef V4L2_CID_POWER_LINE_FREQUENCY
 #  define V4L2_CID_POWER_LINE_FREQUENCY  (V4L2_CID_BASE+24)
-enum v4l2_power_line_frequency
-{
-  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED  = 0,
-  V4L2_CID_POWER_LINE_FREQUENCY_50HZ  = 1,
-  V4L2_CID_POWER_LINE_FREQUENCY_60HZ  = 2,
+enum v4l2_power_line_frequency {
+	V4L2_CID_POWER_LINE_FREQUENCY_DISABLED  = 0,
+	V4L2_CID_POWER_LINE_FREQUENCY_50HZ  = 1,
+	V4L2_CID_POWER_LINE_FREQUENCY_60HZ  = 2,
 };
 
 
@@ -86,12 +87,11 @@ enum v4l2_power_line_frequency
 
 #define V4L2_CID_EXPOSURE_AUTO      (V4L2_CID_CAMERA_CLASS_BASE+1)
 
-enum  v4l2_exposure_auto_type
-{
-  V4L2_EXPOSURE_MANUAL = 0,
-  V4L2_EXPOSURE_AUTO = 1,
-  V4L2_EXPOSURE_SHUTTER_PRIORITY = 2,
-  V4L2_EXPOSURE_APERTURE_PRIORITY = 3
+enum  v4l2_exposure_auto_type {
+	V4L2_EXPOSURE_MANUAL = 0,
+	V4L2_EXPOSURE_AUTO = 1,
+	V4L2_EXPOSURE_SHUTTER_PRIORITY = 2,
+	V4L2_EXPOSURE_APERTURE_PRIORITY = 3
 };
 #define V4L2_CID_EXPOSURE_ABSOLUTE    (V4L2_CID_CAMERA_CLASS_BASE+2)
 #define V4L2_CID_EXPOSURE_AUTO_PRIORITY    (V4L2_CID_CAMERA_CLASS_BASE+3)
@@ -120,111 +120,111 @@ enum  v4l2_exposure_auto_type
 * \class NaoCamera
 * Interface class to the Nao camera.
 */
-class NaoCamera
-{
+class NaoCamera {
 public:
 
-  /** Constructor. */
-  NaoCamera();
+	/** Constructor. */
+	NaoCamera();
 
-  /** Destructor. */
-  ~NaoCamera();
+	/** Destructor. */
+	~NaoCamera();
 
-  /** Verify Nao version. Returns true if the Nao version is at least 3. */
-  bool verifyNaoVersion();
+	/** Verify Nao version. Returns true if the Nao version is at least 3. */
+	bool verifyNaoVersion();
 
-  /**
-  * The method blocks till a new image arrives.
-  * \return true (except a not manageable exception occurs)
-  */
-  bool captureNew();
+	/**
+	* The method blocks till a new image arrives.
+	* \return true (except a not manageable exception occurs)
+	*/
+	bool captureNew();
 
-  /**
-  * The last captured image.
-  * \return The image data buffer.
-  */
-  const unsigned char* getImage() const;
+	/**
+	* The last captured image.
+	* \return The image data buffer.
+	*/
+	const unsigned char *getImage() const;
 
-  /**
-  * Timestamp of the last captured image.
-  * \return The timestamp.
-  */
-  boost::posix_time::ptime getTimeStamp() const;
+	/**
+	* Timestamp of the last captured image.
+	* \return The timestamp.
+	*/
+	boost::posix_time::ptime getTimeStamp() const;
 
-  unsigned char  switchToUpper();
-  unsigned char switchToLower();
-  /**
-   * Switches the current camera.
-   *
-   * camera: The camera to switch to.
-   */
-  unsigned char switchCamera(unsigned char camera);
+	unsigned char  switchToUpper();
+	unsigned char switchToLower();
+	/**
+	 * Switches the current camera.
+	 *
+	 * camera: The camera to switch to.
+	 */
+	unsigned char switchCamera (unsigned char camera);
 
-  unsigned char getCurrentCamera() { return currentCamera; }
+	unsigned char getCurrentCamera() {
+		return currentCamera;
+	}
 
-  /**
-   * Asserts that the actual camera settings are correct.
-   */
-  void assertCameraSettings();
+	/**
+	 * Asserts that the actual camera settings are correct.
+	 */
+	void assertCameraSettings();
 
-  /**
-   * Unconditional write of the camera settings
-   */
-  void writeCameraSettings();
+	/**
+	 * Unconditional write of the camera settings
+	 */
+	void writeCameraSettings();
 
-  enum
-  {
-    frameBufferCount = 3, /**< Amount of available frame buffers. */
-    WIDTH = 640,
-    HEIGHT = 480,
-    SIZE = WIDTH * HEIGHT * 2
-  };
-    /**
-  * Requests the value of a camera control setting from camera.
-  * \param id The setting id.
-  * \return The value.
-  */
-  int getControlSetting(unsigned int id);
+	enum {
+		frameBufferCount = 3, /**< Amount of available frame buffers. */
+		WIDTH = 640,
+		HEIGHT = 480,
+		SIZE = WIDTH * HEIGHT * 2
+	};
+	/**
+	  * Requests the value of a camera control setting from camera.
+	  * \param id The setting id.
+	  * \return The value.
+	  */
+	int getControlSetting (unsigned int id);
 
-  /**
-  * Sets the value of a camera control setting to camera.
-  * \param id The setting id.
-  * \param value The value.
-  * \return True on success.
-  */
-  bool setControlSetting(unsigned int id, int value);
+	/**
+	* Sets the value of a camera control setting to camera.
+	* \param id The setting id.
+	* \param value The value.
+	* \return True on success.
+	*/
+	bool setControlSetting (unsigned int id, int value);
 private:
-  static NaoCamera* theInstance; /**< The only instance of this class. */
+	static NaoCamera *theInstance; /**< The only instance of this class. */
 
 
-  unsigned char currentCamera; /**< The current camera in use */
+	unsigned char currentCamera; /**< The current camera in use */
 
-  int fd; /**< The file descriptor for the video device. */
-  void* mem[frameBufferCount]; /**< Frame buffer addresses. */
-  int memLength[frameBufferCount]; /**< The length of each frame buffer. */
-  struct v4l2_buffer* buf; /**< Reusable parameter struct for some ioctl calls. */
-  struct v4l2_buffer* currentBuf; /**< The last dequeued frame buffer. */
-  boost::posix_time::ptime timeStamp; /**< Timestamp of the last captured image. */
-
-
+	int fd; /**< The file descriptor for the video device. */
+	void *mem[frameBufferCount]; /**< Frame buffer addresses. */
+	int memLength[frameBufferCount]; /**< The length of each frame buffer. */
+	struct v4l2_buffer *buf; /**< Reusable parameter struct for some ioctl calls. */
+	struct v4l2_buffer *currentBuf; /**< The last dequeued frame buffer. */
+	boost::posix_time::ptime timeStamp; /**< Timestamp of the last captured image. */
 
 
-  /** Open and connects to the i2c adapter device. */
-  int openI2CAdapter();
 
-  /** Closes the I2C adapter referenced by the file descriptor 'filedes' */
-  void closeI2CAdapter(int filedes);
 
-  void initSelectCamera(  unsigned char camera);
-  void initOpenVideoDevice();
-  void initSetCameraDefaults();
-  void initSetImageFormat();
-  void initSetFrameRate();
-  void initRequestAndMapBuffers();
-  void initQueueAllBuffers();
-  void initDefaultControlSettings();
-  void initResetCrop();
-  void startCapturing();
+	/** Open and connects to the i2c adapter device. */
+	int openI2CAdapter();
+
+	/** Closes the I2C adapter referenced by the file descriptor 'filedes' */
+	void closeI2CAdapter (int filedes);
+
+	void initSelectCamera (  unsigned char camera);
+	void initOpenVideoDevice();
+	void initSetCameraDefaults();
+	void initSetImageFormat();
+	void initSetFrameRate();
+	void initRequestAndMapBuffers();
+	void initQueueAllBuffers();
+	void initDefaultControlSettings();
+	void initResetCrop();
+	void startCapturing();
 };
 
 #endif

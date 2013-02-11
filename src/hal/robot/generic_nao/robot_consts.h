@@ -69,6 +69,10 @@ namespace KDeviceLists
 	    CHEST_BUTTON = 0, L_BUMPER_L, L_BUMPER_R, R_BUMPER_L, R_BUMPER_R, BUTTONS_SIZE, NUMOFBUTTONS = BUTTONS_SIZE
 	};
 
+	enum SupportLeg
+	{
+		NONE = 0, LEFT, RIGHT, BOTH, SUPPORTLEG_SIZE
+	};
 
 	enum SensorNames
 	{
@@ -84,7 +88,6 @@ namespace KDeviceLists
 	    L_US = R_FSR + FSR_SIZE,
 	    R_US = L_US + US_SIZE,
 	    //BUTTONS=BUTTONS_SIZE,
-
 	    NUMOFSENSORS = R_US + US_SIZE
 
 	};
@@ -92,7 +95,8 @@ namespace KDeviceLists
 	enum ComputedSensorsNames
 	{
 	    ANGLE = 0,
-	    NUMOFCOMPUTEDSENSORS = ANGLE_SIZE
+		SUPPORT_LEG = ANGLE + ANGLE_SIZE,
+	    NUMOFCOMPUTEDSENSORS = SUPPORT_LEG +1
 	};
 
 	struct Interpret

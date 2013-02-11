@@ -7,10 +7,8 @@
 #include <iomanip>
 #include <limits>
 #include <math.h>
-#include "tools/KMat.h"
 #include "hal/robot/generic_nao/KinematicsDefines.h"
-//#include "KinematicsDefines.h"
-//#include "KMat.h"
+#include "tools/KMat.h"
 
 /**
  * This is the code for the Forward and Inverse Kinematics for nao v3.3 robot.
@@ -86,7 +84,7 @@ private:
 public:
 	NAOKinematics()
 	{
-		PI = KMatTransf::PI;
+		PI = M_PI;
 		KMatTransf::makeTranslation(TBaseHead, 0.0f, 0.0f, NeckOffsetZ);
 		KMatTransf::makeRotationXYZ(RotHead, PI / 2, PI / 2, 0.0f);
 		KMatTransf::makeTranslation(TEndHead1, CameraBotomX, 0.0f, CameraBotomZ);
@@ -132,7 +130,7 @@ public:
 		KMatTransf::makeRotationXYZ(RotLLhipR, 0.0f, PI/2, 0.0f);
 		KMatTransf::makeRotationXYZ(RotLLallPitchs, 0.0f, PI/2, PI/2);
 		//Right leg
-		KMatTransf::makeRotationXYZ(RotRLhipYP, 0.0f, 3*PI/4, PI/2);
+		KMatTransf::makeRotationXYZ(RotRLhipYP, 0.0f, PI/4, PI/2);
 		KMatTransf::makeRotationXYZ(RotRLhipR, 0.0f, PI/2, 0.0f);
 		KMatTransf::makeRotationXYZ(RotRLallPitchs, 0.0f, PI/2, PI/2);
 	}
@@ -254,6 +252,7 @@ public:
 		Each solutions vector contains the angles with this order: HeadYaw,HeadPitch.
 	 * */
 	std::vector<std::vector<float> > inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera);
+	std::vector<std::vector<float> > inverseHead(kmatTable targetPoint, bool withAngles, bool topCamera);
 
 	/**
 	 * vector<vector<float> > inverseLeftHand(float px,float py,float pz, float rx, float ry, float rz)
@@ -268,6 +267,7 @@ public:
 		Each solutions vector contains the angles with this order: LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll
 	 * */
 	std::vector<std::vector<float> > inverseLeftHand(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseLeftHand(kmatTable targetPoint);
 
 	/**
 	 * vector<vector<float> > inverseRightHand(float px,float py,float pz, float rx, float ry, float rz)
@@ -282,6 +282,7 @@ public:
 		Each solutions vector contains the angles with this order: RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll
 	 * */
 	std::vector<std::vector<float> > inverseRightHand(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseRightHand(kmatTable targetPoint);
 	/**
 	 * vector<vector<float> > inverseLeftLeg(float px,float py,float pz, float rx, float ry, float rz)
 	 * @brief Inverse Kinematics for the left leg (DON'T try to understand the code, it's just maths)
@@ -295,6 +296,7 @@ public:
 		Each solutions vector contains the angles with this order: LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll
 	 * */
 	std::vector<std::vector<float> > inverseLeftLeg(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseLeftLeg(kmatTable targetPoint);
 
 	/**
 	 * vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz)
@@ -309,6 +311,7 @@ public:
 		Each solutions vector contains the angles with this order: RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll
 	 * */
 	std::vector<std::vector<float> > inverseRightLeg(float px, float py, float pz, float rx, float ry, float rz);
+	std::vector<std::vector<float> > inverseRightLeg(kmatTable targetPoint);
 
 };
 

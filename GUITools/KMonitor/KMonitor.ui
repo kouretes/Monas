@@ -11,14 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>KMonitor</string>
+   <string>Kouretes Monitor Tool</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>7</number>
       </property>
       <widget class="GlobalWorldController" name="GWSTab">
        <attribute name="title">
@@ -61,6 +61,14 @@
        </property>
        <attribute name="title">
         <string>XML manager</string>
+       </attribute>
+      </widget>
+      <widget class="CommandsController" name="ComTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="title">
+        <string>Commands</string>
        </attribute>
       </widget>
      </widget>
@@ -147,6 +155,12 @@
    <class>LocalWorldController</class>
    <extends>QWidget</extends>
    <header>../LocalWorldController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CommandsController</class>
+   <extends>QWidget</extends>
+   <header>../CommandsController.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

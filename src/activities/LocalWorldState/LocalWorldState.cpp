@@ -10,12 +10,13 @@
 #include <google/protobuf/descriptor.h>
 #include <math.h>
 #include "architecture/archConfig.h"
+
 #define NO_GAME
 #define MAX_TIME_TO_RESET 15 //in seconds
+
 using namespace std;
-
-
 using namespace KMath;
+
 ACTIVITY_REGISTER(LocalWorldState);
 
 bool LocalWorldState::debugmode = false;
@@ -28,28 +29,33 @@ void LocalWorldState::UserInit()
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 
-	Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
+    actionKick=false;
 	firstOdometry = true;
 	serverpid = -1;
 	debugmode = false;
+	fallBegan = true;
 
-	int max_bytedata_size = 100000;
+	int maxBytedataSize = 100000;
+	data = new char[maxBytedataSize]; //## TODO  FIX THIS BETTER
 
-	data = new char[max_bytedata_size]; //## TODO  FIX THIS BETTER
-	//MyWorld.add_balls();
 	currentRobotAction = MotionStateMessage::IDLE;
 
+	//time variables initialization
+    timeStart = boost::posix_time::microsec_clock::universal_time();
+	lastObservationTime = boost::posix_time::microsec_clock::universal_time();
+	lastFilterTime = boost::posix_time::microsec_clock::universal_time();
+
+    //read xml files..set parameters for localizationWorld
+    Reset();
+    ReadFieldConf();
+    ReadFeatureConf();
+    ReadTeamConf();
+    ReadRobotConf();
 	localizationWorld.Initialize();
-	//localizationWorld.setParticlesPoseUniformly();
-	timeStart = boost::posix_time::microsec_clock::universal_time();
-#ifdef NO_GAME
+	
 	sock = NULL;
 	serverpid = pthread_create(&acceptthread, NULL, &LocalWorldState::StartServer, this);
 	pthread_detach(acceptthread);
-#endif
-	fallBegan = true;
-	last_observation_time = boost::posix_time::microsec_clock::universal_time();
-	last_filter_time = boost::posix_time::microsec_clock::universal_time();
 
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
@@ -68,17 +74,19 @@ void LocalWorldState::UserInit()
 	robotmovement.Rotation.Emean = 0.0;// systematic error out
 	robotmovement.Rotation.Edev = 0.0;
 
+    Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
 }
 
 void LocalWorldState::Reset(){
-
+    ReadLocConf();
+	gameMode = atoi(_xml.findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 }
 
 int LocalWorldState::Execute()
 {
 	now = boost::posix_time::microsec_clock::universal_time();
 
-	process_messages();
+	ProcessMessages();
 
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
@@ -89,31 +97,30 @@ int LocalWorldState::Execute()
 		return 0;
 	}else
 		fallBegan = true;
-	if (lrm != 0){//TODO diaforetiko initialization gia otan einai gia placement kai allo gia penalty
+	if (lrm != 0){
 		timeStart = boost::posix_time::microsec_clock::universal_time();
-		localizationWorld.initializeParticles((int)lrm->type(),lrm->kickoff());
+		localizationWorld.initializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
 	}
-
 
 	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
-	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
+	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 	MyWorld.mutable_myposition()->set_confidence(0.0);
 
 	calculate_ball_estimate(robotmovement);
-	///DEBUGMODE SEND RESULTS
-	if (debugmode)
-	{
-		LocalizationData_Load(currentObservation, robotmovement);
-		Send_LocalizationData();
-	}
 	_blk.publishData(MyWorld, "worldstate");
-#ifdef NO_GAME
-	DebugDataForGUI.Clear();
-	LocalizationDataForGUI_Load();
-	_blk.publishSignal(DebugDataForGUI, "debug");
-#endif
+	if(gameMode == false){
+		LocalizationDataForGUI_Load();
+		_blk.publishSignal(DebugDataForGUI, "debug");
+		///DEBUGMODE SEND RESULTS
+		if (debugmode)
+		{
+			LocalizationData_Load(currentObservation, robotmovement);
+			Send_LocalizationData();
+		}
+	}
+
 	return 0;
 }
 
@@ -124,6 +131,7 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 	Ball nearest_filtered_ball, nearest_nofilter_ball;
 	float dt;
 	bool ballseen = false;
+
 	if (obsm.get())
 	{
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
@@ -136,6 +144,8 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 			BallObject aball = obsm->ball();
 			nearest_nofilter_ball.set_relativex(aball.dist() * cos(aball.bearing()));
 			nearest_nofilter_ball.set_relativey(aball.dist() * sin(aball.bearing()));
+			nearest_nofilter_ball.set_relativexspeed(0.0);
+			nearest_nofilter_ball.set_relativeyspeed(0.0);
 
 			if (MyWorld.balls_size() < 1)
 			{
@@ -143,13 +153,13 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				MyWorld.add_balls();
 				myBall.reset(aball.dist(), 0, aball.bearing(), 0);
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-				last_filter_time = now;
+				lastFilterTime = now;
 			} else
 			{
 				//Get estimate ball
 				//Update
-				duration = observation_time - last_filter_time;
-				last_filter_time = observation_time;
+				duration = observation_time - lastFilterTime;
+				lastFilterTime = observation_time;
 				dt = duration.total_microseconds() / 1000000.0f;
 
 				float dist_var = 1.10 - tanh(1.8 / aball.dist()); //observation ... deviation ... leme twra
@@ -157,8 +167,8 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				nearest_filtered_ball = myBall.get_updated_ball_estimate(aball.dist(), dist_var * dist_var, aball.bearing(), 0.03);
 
 				//Predict
-				duration = now - last_filter_time;
-				last_filter_time = now;
+				duration = now - lastFilterTime;
+				lastFilterTime = now;
 				dt = duration.total_microseconds() / 1000000.0f;
 				nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt, robotModel);
 
@@ -167,14 +177,14 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 				float distance = distance = KMath::norm2(dx,dy);
 
 				//Check if we must reset the ball
-				duration = observation_time - last_observation_time;
-				last_observation_time = observation_time;
+				duration = observation_time - lastObservationTime;
+				lastObservationTime = observation_time;
 				dt = duration.total_microseconds() / 1000000.0f;
 
 				if (dt > MAX_TIME_TO_RESET && distance > 0.5) //etc... dt > 5sec && distance > 2 m
 				{
 					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
-					last_filter_time = now;
+					lastFilterTime = now;
 					//RESET
 					//cout << "RESETING_BALL" << endl;
 					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
@@ -186,29 +196,31 @@ void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
 
 	if (!ballseen)
 	{
-		duration = now - last_observation_time;
+		duration = now - lastObservationTime;
 		dt = duration.total_microseconds() / 1000000.0f;
 		if (dt > MAX_TIME_TO_RESET)
 		{
 			//time = newtime;
-			last_observation_time = now; //So it wont try to delete already delete ball
-			if (MyWorld.balls_size() > 0)
+			lastObservationTime = now; //So it wont try to delete already delete ball
+			if (MyWorld.balls_size() > 0){
 				MyWorld.clear_balls();
+			}
 		} else
 		{
-			duration = now - last_filter_time;
-			last_filter_time = now;
+			duration = now - lastFilterTime;
+			lastFilterTime = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-			if(myBall.get_filter_variance()>4 && MyWorld.balls_size() > 0) //Std = 2m
+			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
+			}
 			if (MyWorld.balls_size() > 0)
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
 		}
 	}
 }
 
-void LocalWorldState::process_messages()
+void LocalWorldState::ProcessMessages()
 {
 	boost::posix_time::ptime observation_time;
 
@@ -236,15 +248,11 @@ void LocalWorldState::process_messages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance();
 			tmpOM.Distance.Emean = 0.0;
-			tmpOM.Distance.Edev = 1.5+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus double the precision of vision
+			tmpOM.Distance.Edev = 1.5+2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus float the precision of vision
 			//Bearing
 			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
-			tmpOM.Bearing.Edev = TO_RAD(45) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus double the precision of vision
-			/*Logger::Instance().WriteMsg("kofi", "---------------id = "+id+"-----------------------------------------------------------------------------------------------------", Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Distance: "+_toString(tmpOM.Distance.val) + " Distance Dev: " + _toString(tmpOM.Distance.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "Angle: "+_toString(tmpOM.Bearing.val) + " Angle Dev: " + _toString(tmpOM.Bearing.Edev), Logger::Info);
-			Logger::Instance().WriteMsg("kofi", "--------------------------------------------------------------------------------------------------------------------------", Logger::Info);*/
+			tmpOM.Bearing.Edev = TO_RAD(45)+2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus float the precision of vision
 
 			if (localizationWorld.KFeaturesmap.count(id) != 0)
 			{
@@ -285,7 +293,6 @@ void LocalWorldState::process_messages()
 
 }
 
-
 void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 {
 	if (firstOdometry)
@@ -320,7 +327,84 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPoint.x += DX;
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
+
+    //robot orientation change because of action (kick)
+    localizationWorld.actionOdError=0.f;
+    if (sm != 0){ 
+        if (currentRobotAction==MotionStateMessage::ACTION && actionKick==false){
+            actionKick=true;
+            localizationWorld.actionOdError=atof(_xml.findValueForKey(_xml.keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str());   
+             }
+        else if (currentRobotAction!=MotionStateMessage::ACTION){
+            actionKick=false;           
+        }        
+    }
+
 	//Logger::Instance().WriteMsg("LocalWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
+}
+
+//------------------------------------------------- xml read functions -----------------------------------------------------
+
+
+void LocalWorldState::ReadFeatureConf()
+{
+    feature temp;
+    float x,y,weight;
+    string ID;
+	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
+		string key = "features.ftr~" + _toString(i) + ".";
+
+    	ID=_xml.findValueForKey(key + "ID");
+    	x= atof(_xml.findValueForKey(key + "x").c_str());
+    	y= atof(_xml.findValueForKey(key + "y").c_str());
+    	weight= atof(_xml.findValueForKey(key + "weight").c_str());
+    	temp.set(x, y, ID, weight);
+    	localizationWorld.KFeaturesmap[ID]=temp;
+    }
+}
+
+void LocalWorldState::ReadLocConf()
+{
+    localizationWorld.partclsNum=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
+    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
+    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
+    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
+    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
+}
+
+void LocalWorldState::ReadFieldConf()
+{
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+}
+
+void LocalWorldState::ReadTeamConf()
+{
+    localizationWorld.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
+}
+
+void LocalWorldState::ReadRobotConf()
+{
+    //Xml index starts at 0 
+    int pNumber=localizationWorld.playerNumber-1;
+	for (int i = 0; i < 2; i++)
+	{
+		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
+        localizationWorld.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".x").c_str());
+        localizationWorld.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
+        localizationWorld.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
+    }
+
+    //read ready state positions
+    localizationWorld.readyX=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".x").c_str());
+    localizationWorld.readyY=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".y").c_str());
+    localizationWorld.readyPhi=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".phi").c_str());
 }
 
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
@@ -374,7 +458,7 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 
 	WI->mutable_myposition()->set_x(AgentPosition.x*1000);
 	WI->mutable_myposition()->set_y(AgentPosition.y*1000);
-	WI->mutable_myposition()->set_phi(AgentPosition.theta);
+	WI->mutable_myposition()->set_phi(AgentPosition.phi);
 	WI->mutable_myposition()->set_confidence(0.0);
 
 	WI->CopyFrom(MyWorld);
@@ -382,9 +466,9 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
 	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
 	RobotPose prtcl;
-	if ((unsigned int) DebugData.particles_size() < localizationWorld.SIRParticles.size)
+	if (DebugData.particles_size() < localizationWorld.SIRParticles.size)
 		addnewptrs = true;
-	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
+	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
 		if (addnewptrs)
 			DebugData.add_particles();
@@ -406,14 +490,9 @@ int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observatio
 
 int LocalWorldState::LocalizationDataForGUI_Load()
 {
-	bool addnewptrs = false;
-
-	if ((unsigned int)  DebugDataForGUI.particles_size() < localizationWorld.SIRParticles.size)
-		addnewptrs = true;
-
-	for (unsigned int i = 0; i < localizationWorld.SIRParticles.size; i++)
+	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{
-		if (addnewptrs)
+		if(DebugDataForGUI.particles_size() < (int)(i+1))
 			DebugDataForGUI.add_particles();
 		DebugDataForGUI.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
 		DebugDataForGUI.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
@@ -426,7 +505,7 @@ int LocalWorldState::LocalizationDataForGUI_Load()
 
 void * LocalWorldState::StartServer(void * astring)
 {
-	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml");
+	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
 	bool found = false;
 	unsigned short port = 9001;
 	float temp = 0;
@@ -438,7 +517,7 @@ void * LocalWorldState::StartServer(void * astring)
 	if (found)
 		port = temp;
 	else
-		Logger::Instance().WriteMsg("LocalWorldState", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/Localizationconf.xml", Logger::Warning);
+		Logger::Instance().WriteMsg("LocalWorldState", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml", Logger::Warning);
 
 	TCPServerSocket servSock(port);
 
@@ -480,4 +559,43 @@ void * LocalWorldState::StartServer(void * astring)
 	}
 
 	return NULL;
+}
+
+void LocalWorldState::InputOutputLogger(){
+	boost::posix_time::ptime currentExecute = boost::posix_time::microsec_clock::universal_time();
+	
+	string YellowLeft = "", YellowRight = "", Yellow = "", RobotPosition = "", RobotMovement = "";
+	
+	if(!robotmovement.freshData){
+		RobotMovement = "0 0 0 0";
+	}else{
+		RobotMovement = "1 " + _toString(robotmovement.Distance.val) + " " + _toString(robotmovement.Direction.val) + " " + _toString(robotmovement.Rotation.val);
+	}
+	
+	if(currentAmbiguousObservation.size() == 0){
+		Yellow = "0 0 0 0 0 0 0 0";
+	}else{
+		Yellow = "1 " + _toString(currentAmbiguousObservation[0].Feature.x) + " " + _toString(currentAmbiguousObservation[0].Feature.y) + " " +
+				 _toString(currentAmbiguousObservation[0].Distance.Emean) + " " + _toString(currentAmbiguousObservation[0].Distance.Edev) + " " +
+				 _toString(currentAmbiguousObservation[0].Distance.val) + " " + _toString(currentAmbiguousObservation[0].Bearing.Edev) + " " +
+				 _toString(currentAmbiguousObservation[0].Bearing.val);
+	}
+	
+	YellowLeft = "0 0 0 0 0 0 0 0";
+	YellowRight = "0 0 0 0 0 0 0 0";
+	for (unsigned int i = 0; i < currentObservation.size(); i++)
+	{
+		string temp;
+		temp = "1 " + _toString(currentObservation[i].Feature.x) + " " + _toString(currentObservation[i].Feature.y) + " " +
+				 _toString(currentObservation[i].Distance.Emean) + " " + _toString(currentObservation[i].Distance.Edev) + " " +
+				 _toString(currentObservation[i].Distance.val) + " " + _toString(currentObservation[i].Bearing.Edev) + " " +
+				 _toString(currentObservation[i].Bearing.val);
+		if(currentObservation[i].Feature.id.find("Left")!=string::npos)
+			YellowLeft = temp;
+		else
+			YellowRight = temp;
+	}
+	RobotPosition = _toString(AgentPosition.x) + " " + _toString(AgentPosition.y) + " " + _toString(AgentPosition.phi);
+
+	Logger::Instance().WriteMsg("LocalWorldStateLogger", _toString(currentExecute) + " " + RobotMovement + " " + Yellow + " " + YellowLeft + " " + YellowRight + " " + RobotPosition, Logger::ExtraExtraInfo);
 }

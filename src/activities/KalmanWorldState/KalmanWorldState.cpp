@@ -34,9 +34,12 @@ void KalmanWorldState::UserInit()
 
 	//MyWorld.add_balls();
 	currentRobotAction = MotionStateMessage::IDLE;
-
+	Reset();
+	ReadFeatureConf();
+	ReadTeamConf();
+	ReadLocConf();
+	ReadFieldConf();
 	localizationWorld.Initialize();
-
 
 	//localizationWorld.setParticlesPoseUniformly();
 	timeStart = boost::posix_time::microsec_clock::universal_time();
@@ -65,6 +68,7 @@ void KalmanWorldState::UserInit()
 }
 
 void KalmanWorldState::Reset(){
+	ReadRobotConf();
 }
 
 int KalmanWorldState::Execute()
@@ -87,8 +91,8 @@ int KalmanWorldState::Execute()
 		localizationWorld.initializeParticles((int)lrm->type(),lrm->kickoff());
 	}
 
-	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
-	cout<<AgentPosition.x<<" "<< AgentPosition.y << "  "<<AgentPosition.theta <<" "<<AgentPosition.confidence<<endl;
+	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation,0.04);
+	//cout<<AgentPosition.x<<" "<< AgentPosition.y << "  "<<AgentPosition.theta <<" "<<AgentPosition.confidence<<endl;
 	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.theta);
@@ -342,9 +346,59 @@ void KalmanWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 	TrackPointRobotPosition.x = XA;
 	TrackPointRobotPosition.y = YA;
 	TrackPointRobotPosition.phi = AA;
-	//If u want edev change the klocalization file
+	//If u want edev change the KKalmanLocalization file
 	TrackPoint.x += DX;
 	TrackPoint.y += DY;
 	TrackPoint.phi += DR;
 	//Logger::Instance().WriteMsg("KalmanWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
+
+void KalmanWorldState::ReadFeatureConf()
+{
+    feature temp;
+    double x,y,weight;
+    string ID;
+	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
+		string key = "features.ftr~" + _toString(i) + ".";
+
+    	ID=_xml.findValueForKey(key + "ID");
+    	x= atof(_xml.findValueForKey(key + "x").c_str());
+    	y= atof(_xml.findValueForKey(key + "y").c_str());
+    	weight= atof(_xml.findValueForKey(key + "weight").c_str());
+    	temp.set(x, y, ID, weight);
+    	localizationWorld.KFeaturesmap[ID]=temp;
+    }
+}
+
+void KalmanWorldState::ReadRobotConf()
+{
+    //Xml index starts at 0 
+    int pNumber=localizationWorld.playerNumber-1;
+	for (int i = 0; i < 2; i++)
+	{
+		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
+        localizationWorld.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".x").c_str());
+        localizationWorld.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
+        localizationWorld.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
+    }
+}
+
+void KalmanWorldState::ReadTeamConf()
+{
+    localizationWorld.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
+}
+
+void KalmanWorldState::ReadLocConf()
+{
+    localizationWorld.maxparticles=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
+    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
+}
+
+void KalmanWorldState::ReadFieldConf()
+{
+    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+    localizationWorld.FieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
+    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+    localizationWorld.FieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+}
+

@@ -1,11 +1,11 @@
 /*
- * KLocalization.h
+ * KKalmanLocalization.h
  *
  *      Author: vosk
  */
 
-#ifndef KLOCALIZATION_H_
-#define KLOCALIZATION_H_
+#ifndef KKalmanLocalization_H_
+#define KKalmanLocalization_H_
 
 #include <vector>
 #include <string>
@@ -17,8 +17,6 @@
 #include <queue>
 #include <map>
 #include "tools/mathcommon.h"
-#include "tools/XML.h"
-#include "tools/XMLConfig.h"
 #include "messages/RoboCupPlayerData.h"
 
 #include "KalmanParticle.h"
@@ -104,7 +102,7 @@ typedef struct blf
 	double weightconfidence;
 } belief;
 
-class KLocalization
+class KKalmanLocalization
 {
 public:
 
@@ -142,16 +140,12 @@ public:
 	//map with all the features we read from an xml
 	map<string, feature> KFeaturesmap;
 
-	KLocalization();
-	virtual ~KLocalization();
+	KKalmanLocalization();
+	virtual ~KKalmanLocalization();
 
 	//initialize localization
 	int Initialize();
 
-	//Functions to read from xml files
-	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
-	int readConfiguration(const std::string& file_name);
-	bool readRobotConf(const std::string& file_name);
 
 	//The step of the localization SIR filter
 	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations);
@@ -187,22 +181,6 @@ public:
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts decimal degrees to radians             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double deg2rad(double deg)
-	{
-		return (deg * M_PI / 180.0);
-	}
-
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts radians to decimal degrees             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double rad2deg(double rad)
-	{
-		return (rad * 180.0 / M_PI);
-	}
-
 };
 
-#endif /* KLOCALIZATION_H_ */
+#endif /* KKalmanLocalization_H_ */

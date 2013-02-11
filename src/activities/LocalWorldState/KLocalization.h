@@ -8,6 +8,7 @@
 #ifndef KLOCALIZATION_H_
 #define KLOCALIZATION_H_
 
+#include <boost/random.hpp>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -15,24 +16,24 @@
 #include <math.h>
 #include <cstring>
 #include <algorithm>
-#include <queue>
 #include <map>
 #include "tools/mathcommon.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
-#include "messages/RoboCupPlayerData.h"
 
+#include "messages/RoboCupPlayerData.h"
+#include "messages/WorldInfo.pb.h"
 
 using namespace std;
 
 //A structure used to store statistical data about a recognized feature
 typedef struct ftr
 {
-	double x;
-	double y;
+	float x;
+	float y;
 	string id;
-	double weight;
-	void set(double x_, double y_, string id_, double weight_)
+	float weight;
+	void set(float x_, float y_, string id_, float weight_)
 	{
 		id = id_;
 		x = x_;
@@ -45,10 +46,10 @@ typedef struct ftr
 //Special structure to keep the data of a particle
 typedef struct pvar
 {
-	double x;
-	double y;
-	double phi;
-	double Weight;
+	float x;
+	float y;
+	float phi;
+	float Weight;
 	pvar()
 	{
 		x = 0;
@@ -67,12 +68,12 @@ typedef struct pvar
 //So in this structure a number of arrays store individually a property
 typedef struct var
 {
-	double *x;
-	double *y;
-	double *phi;
-	double *Weight;
-	double WeightSum;
-	unsigned int size;
+	float *x;
+	float *y;
+	float *phi;
+	float *Weight;
+	float WeightSum;
+    int size;
 	~var()
 	{
 		if (x != NULL)
@@ -92,11 +93,11 @@ typedef struct var
 //Random Variable
 typedef struct rvar
 {
-	double val;
-	double Emean;
-	double Edev;
-	double ratiomean;
-	double ratiodev;
+	float val;
+	float Emean;
+	float Edev;
+	float ratiomean;
+	float ratiodev;
 } randvar;
 
 //MotionModel
@@ -120,27 +121,29 @@ typedef struct OM
 //Structure to store the belief of the robot about its position
 typedef struct blf
 {
-	double x;
-	double y;
-	double theta;
-	double confidence;
-	double weightconfidence;
+	float x;
+	float y;
+	float phi;
+	float confidence;
+	float weightconfidence;
 } belief;
+
+//random genetator
+typedef boost::mt19937 r_gen;
 
 class KLocalization
 {
 public:
 
-	//Random number generetors
+    //random generator
+    r_gen generator;
 
 	float NumberOfParticlesSpreadAfterFall;
-	unsigned int robustmean;
 
-
-	double rotation_deviation;
-	double SpreadParticlesDeviationAfterFall;
-	double SpreadParticlesDeviation;
-	double RotationDeviationAfterFallInDeg;
+	float rotation_deviation;
+	float SpreadParticlesDeviationAfterFall;
+	float SpreadParticlesDeviation;
+	float RotationDeviationAfterFallInDeg;
 	int PercentParticlesSpread;
 
 
@@ -155,13 +158,16 @@ public:
 	float FieldMinY;
 	//Team
 	float initX[2], initY[2], initPhi[2];
+    float readyX,readyY,readyPhi;
 	int playerNumber;
 	//Particle with the max weight
-	unsigned int max_weight_particle_index;
+
+    int maxWeightParticleIndex;
 
 	//The particles we are using
 	parts SIRParticles;
-	unsigned int partclsNum;
+
+    int partclsNum;
 
 	//map with all the features we read from an xml
 	map<string, feature> KFeaturesmap;
@@ -169,12 +175,10 @@ public:
 	KLocalization();
 	virtual ~KLocalization();
 
-	//initialize localization
+    //initialize localization
 	int Initialize();
 
 	//Functions to read from xml files
-	int LoadFeaturesXML(string filename, map<string, feature>& KFeaturesmap);
-	int readConfiguration(const std::string& file_name);
 	bool readRobotConf(const std::string& file_name);
 
 	//The step of the localization SIR filter
@@ -193,42 +197,29 @@ public:
 	void ForceBearing(vector<KObservationModel> &Observation);
 
 	//Normilize the weights of the particles
-	void normalize(double *Weights, unsigned int *max_weight_index);
+	void normalize(float *Weights, unsigned int *max_weight_index);
 
 	//Find the mean angle from a set of angles
 	float circular_mean_angle(float *angles, unsigned int size);
 
-	//Returns the current position of the agent
-	belief getCurrentPosition();
-
 	//Return the propability of value from a normal pdf with deviation dev
-	double normpdf(double diff, double dev);
+	float normpdf(float diff, float dev);
 
 	//This function resamples the particles with the new weigths and reposition the particles given the new weights
-	void rouletteResample();
+	void rouletteResampleAndNormalize();
 
 	//Initialize the particles of the filter
 	void initParticles();
 	void setParticlesPoseUniformly();
-	void initializeParticles(int playerState, bool kickOff);
+	void initializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi);
 
 	//Spread the particles after the fall of the robot (change the orientation)
 	void spreadParticlesAfterFall();
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts decimal degrees to radians             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double deg2rad(double deg)
-	{
-		return (deg * M_PI / 180.0);
-	}
 
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::  This function converts radians to decimal degrees             :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	double rad2deg(double rad)
-	{
-		return (rad * 180.0 / M_PI);
-	}
+    belief calculateAvg();
+
+    belief AgentPosition;
+    float actionOdError;
 };
 
 #endif /* KLOCALIZATION_H_ */

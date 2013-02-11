@@ -1,12 +1,7 @@
 #include "Behavior.h"
 
 #include <math.h>
-#include "tools/logger.h"
-#include "tools/toString.h"
-#include "messages/RoboCupGameControlData.h"
-#include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/mathcommon.h"
-#include "tools/obstacleConst.h"
+
 using namespace KMath;
 using namespace boost::posix_time;
 
@@ -14,108 +9,145 @@ ACTIVITY_REGISTER(Behavior);
 using namespace std;
 
 
-double mglRand()
+/**
+ *	Returns a double random number (0 - 100.0)
+ */
+double behaviorRand()
 {
-	//return rand() / double(RAND_MAX);
 	return (rand() % 100) / 100.0;
 }
 
-/* Behavior Initialization */
 
+/**
+ *	Behavior Initialization
+ */
 void Behavior::UserInit()
 {
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	wmot = new MotionWalkMessage();
-	wmot->add_parameter(0.0f);
-	wmot->add_parameter(0.0f);
-	wmot->add_parameter(0.0f);
-	wmot->add_parameter(0.0f);
-	hmot = new MotionHeadMessage();
-	hmot->set_command("setHead");
-	hmot->add_parameter(0.0f);
-	hmot->add_parameter(-0.66322512);
-	amot = new MotionActionMessage();
-	locReset = new LocalizationResetMessage();
-	pprm = new PathPlanningRequestMessage();
-	fom = new ObstacleMessage();
-	hcontrol = new HeadControlMessage();
-	readRobotConf = false;
-	leftright = 1;
-	headpos = 0;
-	ballfound = 0;
-	scanforball = true;
-	startscan = true;
-	//scanOK = true;
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+	wmot.add_parameter(0.0f);
+	ballfound = false;
 	pathOK = true;
-	calibrated = 0;
-	forball = 0;
-	forpost = 0;
 	kickoff = false;
-
-	for (int i = 0; i < 2; i++)  		// i: kick-off
-	{
-		initX[i] = 0.0;
-		initY[i] = 0.0;
-		initPhi[i] = 0.0;
-	}
-
-	ownGoalX = 0.0;
-	ownGoalY = 0.0;
-	oppGoalX = 0.0;
-	oppGoalY = 0.0;
-	ownGoalLeftX = 0.0;
-	ownGoalLeftY = 0.0;
-	ownGoalRightX = 0.0;
-	ownGoalRightY = 0.0;
-	oppGoalLeftX = 0.0;
-	oppGoalLeftY = 0.0;
-	oppGoalRightX = 0.0;
-	oppGoalRightY = 0.0;
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
-	bd = 0.0;
-	bb = 0.0;
-	bx = 0.0;
-	by = 0.0;
-	posx = 0.0;
-	posy = 0.0;
-	side = +1;
+	ball_dist = 0.0;
+	ball_bearing = 0.0;
+	goalieApproachStarted = false;
+	ball_x = 0.0;
+	ball_y = 0.0;
+	side =+ 1;
 	robot_x = 0.0;
 	robot_y = 0.0;
 	robot_phi = 0.0;
 	robot_confidence = 1.0;
 	readytokick = false;
-	back = 0;
 	direction = 1;
 	orientation = 0;
 	gameState = PLAYER_INITIAL;
-	teamColor = TEAM_BLUE;
-	playerNumber = 1;
 	role = ATTACKER;
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/team_config.xml");		// reads playerNumber, teamColor
-	readRobotConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/robotConfig.xml");	// reads initX, initY, initPhi
-	readGoalConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/Features.xml");		// reads blueGoal*, yellowGoal*
+	Reset();
+	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
 	srand(time(0));
-	lastmove = microsec_clock::universal_time();
-	lastball = microsec_clock::universal_time();
 	lastwalk = microsec_clock::universal_time();
 	lastplay = microsec_clock::universal_time();
-	lastpenalized = microsec_clock::universal_time();
-	ballseen = microsec_clock::universal_time();
-	//    generateFakeObstacles();
-	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(playerNumber) + " and my color is " + _toString(teamColor), Logger::Info);
+	lastpenalised = microsec_clock::universal_time();
+    hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
+    _blk.publishState(hcontrol, "behavior");
+	// generateFakeObstacles();
 }
 
 
+/**
+	Reset function that reads all xml configuration data and update the config struct
+	of behavior. All new xml reads MUST be added here, dont make other functions!
+*/
 void Behavior::Reset(){
 
+	// === read team configuration xml data from teamConfig.xml===
+	config.teamNumber = atoi(_xml.findValueForKey("teamConfig.team_number").c_str());
+	config.playerNumber = atoi(_xml.findValueForKey("teamConfig.player").c_str());
+	config.maxPlayers = atoi(_xml.findValueForKey("teamConfig.team_max_players").c_str());
+
+	std::string color;
+	color = _xml.findValueForKey("teamConfig.default_team_color").c_str();
+	if(color.compare("blue") == 0)
+		config.teamColor = TEAM_BLUE;
+	else
+		config.teamColor == TEAM_RED;
+
+	// === read behavior configuration xml data from behavior.xml===
+	config.posx = atof(_xml.findValueForKey("behavior.posx").c_str());
+	config.posy = atof(_xml.findValueForKey("behavior.posy").c_str());
+	config.epsx = atof(_xml.findValueForKey("behavior.epsx").c_str());
+	config.epsy = atof(_xml.findValueForKey("behavior.epsy").c_str());
+	config.kicks.KickForwardLeft = _xml.findValueForKey("behavior.KickForwardLeft").c_str();
+	config.kicks.KickForwardRight = _xml.findValueForKey("behavior.KickForwardRight").c_str();
+	config.kicks.KickSideLeft = _xml.findValueForKey("behavior.KickSideLeft").c_str();
+	config.kicks.KickSideRight = _xml.findValueForKey("behavior.KickSideRight").c_str();
+	config.kicks.KickBackLeft = _xml.findValueForKey("behavior.KickBackLeft").c_str();
+	config.kicks.KickBackRight = _xml.findValueForKey("behavior.KickBackRight").c_str();
+	config.ur = atof(_xml.findValueForKey("behavior.ur").c_str());
+
+	// === read robot configuration xml data from playerConfig.xml===
+	if ( (config.playerNumber < 1) || (config.playerNumber > config.maxPlayers) )
+		Logger::Instance().WriteMsg("Behavior", "Behavior Reset: Invalid player number", Logger::Error);
+
+	for(int i = 0 ; i < 2 ; i++)
+	{
+		std::string kickOff = (i == 0) ? "KickOff" : "noKickOff";	// KICKOFF == 0, NOKICKOFF == 1
+
+		for(int r = 0 ; r < config.maxPlayers ; r++) // for each robot on the node
+		{
+			if( atoi(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".number").c_str()) == config.playerNumber )
+			{
+				config.initX[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".x").c_str());
+				config.initY[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".y").c_str());
+				config.initPhi[i] = TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".phi").c_str()));
+				break;
+			}
+		}
+	}
+
+	// === read goal configuration xml data from Fearures.xml ===
+	std::string ID;
+	for(int v = 0 ; v < _xml.numberOfNodesForKey("features.ftr") ; v++)
+	{
+		ID = _xml.findValueForKey("features.ftr~"+_toString(v)+".ID").c_str();
+		if(ID == "YellowGoal")
+		{
+			config.oppGoalX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			config.oppGoalY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			config.ownGoalX = -config.oppGoalX;
+			config.ownGoalY = -config.oppGoalY;
+		}
+		else if(ID == "YellowLeft")
+		{
+			config.oppGoalLeftX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			config.oppGoalLeftY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			config.ownGoalLeftX = -config.oppGoalLeftX;
+			config.ownGoalLeftY = -config.oppGoalLeftY;
+		}
+		else if(ID == "YellowRight")
+		{
+			config.oppGoalRightX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			config.oppGoalRightY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			config.ownGoalRightX = -config.oppGoalRightX;
+			config.ownGoalRightY = -config.oppGoalRightY;
+		}
+	}
+	gameMode = atoi(_xml.findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
+	Logger::Instance().WriteMsg("Behavior", "Reset done", Logger::Info);
 }
+
+
 /* Behavior Main Execution Function */
 
 int Behavior::Execute()
@@ -124,119 +156,148 @@ int Behavior::Execute()
 	GetGameState();
 	GetPosition();
 
-	//if ( (gameState == PLAYER_READY) || (gameState == PLAYER_SET) || (gameState == PLAYER_INITIAL) )
-	//{
-
-	//}
-
     if (gameState == PLAYER_INITIAL){
-         hcontrol->mutable_task()->set_action(HeadControlMessage::NOTHING);
-        _blk.publishState(*hcontrol, "behavior");
+		if(prevGameState != PLAYER_INITIAL){
+        	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
+        	_blk.publishState(hcontrol, "behavior");
+		}
     }
 	else if (gameState == PLAYER_PLAYING)
 	{
-		if (lastpenalized + seconds(4) > microsec_clock::universal_time())
-		{
-			hcontrol->mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
-			_blk.publishState(*hcontrol, "behavior");
-			return 0;
-		}
-
-		// Publish message to head controller to run check for ball
-		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
-		_blk.publishState(*hcontrol, "behavior");
-
-		if(bfm != 0) {
-			if(bfm.get() != 0) {
-				ballfound = bfm->ballfound();
+		if(prevGameState == PLAYER_PENALISED){
+			lastpenalised = microsec_clock::universal_time();
+			//Check if the penalized was a wrong decision
+			if(microsec_clock::universal_time() - penalisedStarted > seconds(10) || !gameMode){
+				direction = 1;
+				locReset.set_type(LocalizationResetMessage::PENALISED);
+				locReset.set_kickoff(kickoff);
+				_blk.publishSignal(locReset, "worldstate");
 			}
 		}
 
-		UpdateOrientationPlus();
-		//		checkForPenaltyArea();
+		if (prevGameState == PLAYER_SET)
+		{
+			lastplay = microsec_clock::universal_time();
+		}
+
+		if(bfm != 0 && bfm.get() != 0) {
+			ballfound = bfm->ballfound();
+		}
+			
+		UpdateOrientation();
 		readytokick = false;
 
-		if (ballfound == 1)
-		{
-			side = (bb > 0) ? 1 : -1;
-			posx = 0.12, posy = 0.03; // Desired ball position for kick
-			double epsx = 0.025, epsy = 0.025; // Desired precision
+		if(config.playerNumber == 1 || role == GOALIE) { // goalie role if number 1
+			Goalie();
+		}
+		else { // not goalie behavior
 
-			if ( (fabs( bx - posx ) < epsx)  && (fabs( by - (side * posy) ) < epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
+			//TODO goalie must go to his position, not walk strait :P
+			if (lastpenalised + seconds(4) > microsec_clock::universal_time())
 			{
-				readytokick = true;
-				Kick(side);
-				direction = (side == +1) ? -1 : +1;
+				hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
+				_blk.publishState(hcontrol, "behavior");
+				return 0;
 			}
 
-			if (!readytokick)
+			// Publish message to head controller to run check for ball
+			hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
+			_blk.publishState(hcontrol, "behavior");
+			if (ballfound == 1)
 			{
-				//Define roles
-				if(ClosestRobot())
+				side = (ball_bearing > 0) ? 1 : -1;
+				//posx = 0.1, posy = 0.03; // Desired ball position for kick
+				//double epsx = 0.025, epsy = 0.025; // Desired precision
+
+				if ( (fabs( ball_x - config.posx ) < config.epsx)  && (fabs( ball_y - (side * config.posy) ) < config.epsy) && (bmsg != 0) && (bmsg->radius() > 0) )
 				{
-					role = ATTACKER;
+					readytokick = true;
+					Kick();
+					direction = (side == +1) ? -1 : +1;
 				}
+
+				if (!readytokick)
+				{
+					//Define roles
+					if(ClosestRobot())
+					{
+						role = ATTACKER;
+					}
+					else
+					{
+						role = CENTER_FOR;
+					}
+					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
+					approachBallRoleDependent();
+				}
+			}
+			if (ballfound == 0)
+			{
+				//walk straight for some seconds after the scan has ended (lastpenalised+seconds(12))
+				//and then start turning around to search for ball.
+				if (lastpenalised + seconds(14) > microsec_clock::universal_time())
+				{
+					pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+				}
+				else if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
+					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
 				else
-				{
-					role = CENTER_FOR;
-				}
-				//			    Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
-				approachBallRoleDependent(bx, by);
-
-				//if (scanOK)
-					//HeadScanStepIntelligent();
-
-				//					HeadScanStepSmart();
+					pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
 			}
-		}
 
-		if (ballfound == 0)
-		{
-			/* New exploration
-			if (!scanforball)
-			{
-				startscan = true;
-				scanforball = true;
-			}*/
-
-			//walk straight for some seconds after the scan has ended (lastpenalized+seconds(12))
-			//and then start turning around to search for ball.
-			if (lastpenalized + seconds(14) > microsec_clock::universal_time())
-			{
-				pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
-			}
-			else if ( (fabs(robot_x) < 2.0) && (fabs(robot_y) < 2.0) )
-				pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
-			else
-				pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
-
-			/* End of New Exploration */
-			//HeadScanStepSmart();
-		}
+		} // not goalie behavior end
 	}
 	else if (gameState == PLAYER_READY)
 	{
-		//HeadScanStepSmart();
-		hcontrol->mutable_task()->set_action(HeadControlMessage::LOCALIZE);
-		_blk.publishState(*hcontrol, "behavior");
+		if (gameState != prevGameState)
+		{
+			if(prevGameState != PLAYER_PLAYING){
+				locReset.set_type(LocalizationResetMessage::READY);
+				locReset.set_kickoff(kickoff);
+				_blk.publishSignal(locReset, "worldstate");
+				stopRobot();
+			}
+			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE);
+			_blk.publishState(hcontrol, "behavior");
+		}
 		int p = (kickoff) ? 0 : 1;
-		gotoPosition( initX[p], initY[p], initPhi[p] );
+		gotoPosition(config.initX[p], config.initY[p], config.initPhi[p] );
 		return 0;
 	}
 	else if (gameState == PLAYER_SET)
 	{
-		hcontrol->mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
-		_blk.publishState(*hcontrol, "behavior");
+		kickoff = gsm->kickoff();
 
-		//if (ballfound == 0)
-			//HeadScanStepSmart();
+		if (gameState != prevGameState){
+
+			//Reset Loc
+			locReset.set_type(LocalizationResetMessage::SET);
+			locReset.set_kickoff(kickoff);
+			_blk.publishSignal(locReset, "worldstate");
+
+			stopRobot();
+
+			hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+			_blk.publishState(hcontrol, "behavior");
+		}
+	}
+	else if(gameState == PLAYER_PENALISED)
+	{
+		kickoff = gsm->kickoff();
+		if (gameState != prevGameState){
+			penalisedStarted = microsec_clock::universal_time();
+			hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
+			_blk.publishState(hcontrol, "behavior");
+		}
 	}
 
 	return 0;
 }
 
 
-/* Read Incoming Messages */
+/**
+	Read Incoming Messages from declared topics...use Message objects to get the data.
+*/
 
 void Behavior::read_messages()
 {
@@ -246,14 +307,14 @@ void Behavior::read_messages()
 	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
-	bfm = _blk.readData<BallFoundMessage> ("behavior");
-	//Logger::Instance().WriteMsg("Behavior", "read_messages ", Logger::ExtraExtraInfo);
-	boost::shared_ptr<const KCalibrateCam> c = _blk.readState<KCalibrateCam> ("vision");
+	bfm = _blk.readState<BallFoundMessage> ("behavior");
 
-	if (c != NULL)
+	if(wim != 0 && wim.get() != 0 && wim->balls_size() > 0)
 	{
-		if (c->status() == 1)
-			calibrated = 2;
+		ball_x = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
+		ball_y = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
+		ball_dist = sqrt(pow(ball_x, 2) + pow(ball_y, 2));
+		ball_bearing = atan2(ball_y, ball_x);
 	}
 }
 
@@ -264,84 +325,26 @@ void Behavior::GetGameState()
 {
 	if (gsm != 0)
 	{
-		//Logger::Instance().WriteMsg("Behavior", " Player_state " + _toString(gsm->player_state()), Logger::ExtraExtraInfo);
-		int prevGameState = gameState;
+		prevGameState = gameState;
 		gameState = gsm->player_state();
-		teamColor = gsm->team_color();
-		playerNumber = gsm->player_number();
+		config.teamColor = gsm->team_color();
+		config.playerNumber = gsm->player_number();
 
-		if (gameState == PLAYER_PLAYING)
-		{
-			if (prevGameState == PLAYER_PENALISED)
-			{
-				direction = 1;
-				//			calibrated = 0;
-				lastpenalized = microsec_clock::universal_time();
-				locReset->set_type(PLAYER_PENALISED);
-				locReset->set_kickoff(kickoff);
-				_blk.publishSignal(*locReset, "worldstate");
-			}
-
-			if (prevGameState == PLAYER_SET)
-			{
-				lastplay = microsec_clock::universal_time();
-			}
-		}
-		else if (gameState == PLAYER_INITIAL)
-		{
-			//			if (gameState != prevGameState)
-			calibrated = 0;
-		}
-		else if (gameState == PLAYER_READY)
-		{
-			if (gameState != prevGameState)
-			{
-				stopRobot();
-				calibrated = 0;
-				locReset->set_type(PLAYER_READY);
-				locReset->set_kickoff(kickoff);
-				_blk.publishSignal(*locReset, "worldstate");
-			}
-		}
-		else if (gameState == PLAYER_SET)
-		{
-			kickoff = gsm->kickoff();
-			locReset->set_type(PLAYER_SET);
-			locReset->set_kickoff(kickoff);
-			_blk.publishSignal(*locReset, "worldstate");
-
-			if (gameState != prevGameState)
-				stopRobot();
-		}
-		else if (gameState == PLAYER_FINISHED)
-		{
-			;
-		}
-		else if (gameState == PLAYER_PENALISED)
-		{
-			kickoff = gsm->kickoff();
-		}
 	}
 }
 
 bool Behavior::ClosestRobot()
 {
-	double epsx = 0.005, epsy = 0.005; // Desired precision
-
-	if(swim != 0)
+	double robot_epsx = 0.005, robot_epsy = 0.005; // Desired precision
+	if(swim != 0 && swim.get() != 0)
 	{
-		if(swim.get() != 0)
-		{
-			//            Logger::Instance().WriteMsg("SharedWorldModel", "Closest robot x: " + _toString(swim->playerclosesttoball().x()) +
-			//                                " y: " + _toString(swim->playerclosesttoball().y()), Logger::Info);
-			double closest_robot_x = swim->playerclosesttoball().x();
-			double closest_robot_y = swim->playerclosesttoball().y();
+		double closest_robot_x = swim->playerclosesttoball().x();
+		double closest_robot_y = swim->playerclosesttoball().y();
 
-			if(((fabs(robot_x - closest_robot_x)) < epsx) && (fabsf(robot_y - closest_robot_y) < epsy))
-				return true;
-			else
-				return false;
-		}
+		if(((fabs(robot_x - closest_robot_x)) < robot_epsx) && (fabsf(robot_y - closest_robot_y) < robot_epsy))
+			return true;
+		else
+			return false;
 	}
 	else
 		return true;
@@ -349,23 +352,19 @@ bool Behavior::ClosestRobot()
 
 void Behavior::GetPosition()
 {
-	if(wim != 0)
-		if(wim.get() != 0)
-		{
-			robot_x = wim->myposition().x();
-			robot_y = wim->myposition().y();
-			robot_phi = wrapToPi( wim->myposition().phi() );
-			robot_confidence = wim->myposition().confidence();
-		}
-
-	return;
+	if(wim != 0 && wim.get() != 0){
+		robot_x = wim->myposition().x();
+		robot_y = wim->myposition().y();
+		robot_phi = wrapToPi( wim->myposition().phi() );
+		robot_confidence = wim->myposition().confidence();
+	}
 }
 
 
-void Behavior::UpdateOrientationPlus()
+void Behavior::UpdateOrientation()
 {
-	double loppgb = anglediff2(atan2(oppGoalLeftY - robot_y, oppGoalLeftX - robot_x), robot_phi);
-	double roppgb = anglediff2(atan2(oppGoalRightY - robot_y, oppGoalRightX - robot_x), robot_phi);
+	double loppgb = anglediff2(atan2(config.oppGoalLeftY - robot_y, config.oppGoalLeftX - robot_x), robot_phi);
+	double roppgb = anglediff2(atan2(config.oppGoalRightY - robot_y, config.oppGoalRightX - robot_x), robot_phi);
 	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
@@ -385,91 +384,66 @@ void Behavior::UpdateOrientationPlus()
 	{
 		orientation = 3;
 	}
-
-	//double lowngb = anglediff2(atan2(ownGoalLeftY - robot_y, ownGoalLeftX - robot_x), robot_phi);
-	//double rowngb = anglediff2(atan2(ownGoalRightY - robot_y, ownGoalRightX - robot_x), robot_phi);
-	//double owngb = wrapToPi( (wrapTo0_2Pi(lowngb) + wrapTo0_2Pi(rowngb)) / 2.0 );
 }
-
-
-int Behavior::MakeTrackBallAction()
-{
-	hmot->set_command("setHead");
-	hmot->set_parameter(0, bmsg->referenceyaw());
-	hmot->set_parameter(1,  bmsg->referencepitch());
-	_blk.publishSignal(*hmot, "motion");
-	return 1;
-}
-
-int Behavior::MakeTrackBallActionNoBmsg()
-{
-	hmot->set_command("setHead");
-	hmot->set_parameter(0, trackYaw);
-	hmot->set_parameter(1, trackPitch);
-	_blk.publishSignal(*hmot, "motion");
-	return 1;
-}
-
 
 /* Kicking */
 
-void Behavior::Kick(int side)
+void Behavior::Kick()
 {
-	//if ( kickoff && (microsec_clock::universal_time() <= lastplay+seconds(30)) && (sqrt(robot_x*robot_x + robot_y*robot_y) < 0.5) ) {
-	if ( kickoff && (microsec_clock::universal_time() <= lastplay + seconds(25)) )
+	if ( kickoff && (microsec_clock::universal_time() <= lastplay + seconds(0/*25*/)) )
 	{
-		if (mglRand() < 0.75)
+		if (behaviorRand() < 0.75)
 		{
 			littleWalk(0.2, 0.0, 0.0);
 		}
 		else
 		{
 			if (side == 1)
-				amot->set_command("KickSideLeftStable3.xar");
+				amot.set_command(config.kicks.KickSideLeft);
 			else
-				amot->set_command("KickSideRightStable3.xar");
+				amot.set_command(config.kicks.KickSideRight);
 
-			_blk.publishSignal(*amot, "motion");
+			_blk.publishSignal(amot, "motion");
 		}
 	}
 	else
 	{
+        //cout << "Kick orientation = " << orientation << "\n";
 		if (orientation == 0)
 		{
-			if (by > 0.0)
-				amot->set_command("KickForwardLeft2.xar"); //LeftKick
+			if (ball_y > 0.0)
+				amot.set_command(config.kicks.KickForwardLeft); // Left Kick
 			else
-				amot->set_command("KickForwardRight2.xar"); //RightKick
+				amot.set_command(config.kicks.KickForwardRight); // Right Kick
 		}
 		else if (orientation == 3)
 		{
-			amot->set_command("KickSideLeftStable3.xar"); //"HardLeftSideKick" KickSideLeftFast
+			amot.set_command(config.kicks.KickSideLeft); //  HardLeftSideKick KickSideLeftFast
 			direction = -1;
 		}
 		else if (orientation == 1)
 		{
-			amot->set_command("KickSideRightStable3.xar"); //"HardRightSideKick" KickSideRightFast
+			amot.set_command(config.kicks.KickSideRight); // HardRightSideKick  KickSideRightFast
 			direction = +1;
 		}
 		else if (orientation == 2)
 		{
-			if (by > 0.0)
-				amot->set_command("KickSideLeftStable3.xar"); //LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
+			if (ball_y > 0.0)
+				amot.set_command(config.kicks.KickSideLeft); // LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
 			else
-				amot->set_command("KickSideRightStable3.xar"); //RightBackHigh_carpet KickBackRight KickBackRightPierris
+				amot.set_command(config.kicks.KickSideRight); // RightBackHigh_carpet KickBackRight KickBackRightPierris
 		}
 		else
 		{
-			if (by > 0.0)
-				amot->set_command("KickSideLeftStable3.xar");
+			if (ball_y > 0.0)
+				amot.set_command(config.kicks.KickSideLeft);
 			else
-				amot->set_command("KickSideRightStable3.xar");
+				amot.set_command(config.kicks.KickSideRight);
 		}
 
-		_blk.publishSignal(*amot, "motion");
+		_blk.publishSignal(amot, "motion");
 	}
 }
-
 
 /* Locomotion Functions */
 
@@ -481,7 +455,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	t = it;
 
 	/* BEGIN - Basic Obstacle Avoidance Code */
-	if ( (om != 0) && (playerNumber == 2) )
+	if ( (om != 0) && (config.playerNumber == 2) )
 	{
 		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) )
 		{
@@ -512,7 +486,7 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 	}
 
 	/* END - Basic Obstacle Avoidance Code */
-	wmot->set_command("setWalkTargetVelocity");
+	wmot.set_command("setWalkTargetVelocity");
 
 	if ( (x == 0.0) && (y == 0.0) && (t == 0.0) )
 	{
@@ -536,67 +510,72 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 		ct = 0.25 * ct + 0.75 * t;
 	}
 
-	wmot->set_parameter(0, cX);
-	wmot->set_parameter(1, cY);
-	wmot->set_parameter(2, ct);
-	wmot->set_parameter(3, f);
-	_blk.publishSignal(*wmot, "motion");
+	wmot.set_parameter(0, cX);
+	wmot.set_parameter(1, cY);
+	wmot.set_parameter(2, ct);
+	wmot.set_parameter(3, f);
+	_blk.publishSignal(wmot, "motion");
 	lastwalk = microsec_clock::universal_time();
 }
 
 
 void Behavior::littleWalk(double x, double y, double th)
 {
-	wmot->set_command("walkTo");
-	wmot->set_parameter(0, x);
-	wmot->set_parameter(1, y);
-	wmot->set_parameter(2, th);
-	_blk.publishSignal(*wmot, "motion");
+	wmot.set_command("walkTo");
+	wmot.set_parameter(0, x);
+	wmot.set_parameter(1, y);
+	wmot.set_parameter(2, th);
+	_blk.publishSignal(wmot, "motion");
 }
 
-void Behavior::approachBall(double ballX, double ballY)
+void Behavior::approachBall()
 {
-	if (pathOK && bd > 0.2)
-    {
-        pathOK = false;
-        int pathSide = (bb > 0) ? 1 : -1;
-        pathPlanningRequestRelative(bx, by, pathSide * M_PI_2);
+
+    double loppgb = anglediff2(atan2(config.oppGoalLeftY - robot_y, config.oppGoalLeftX - robot_x), robot_phi);
+	double roppgb = anglediff2(atan2(config.oppGoalRightY - robot_y, config.oppGoalRightX - robot_x), robot_phi);
+	double cone = anglediff2(loppgb, roppgb);
+	double oppgb = wrapToPi(roppgb + cone / 2.0);
+
+    //std::cout << oppgb << "\n";
+	if (ball_dist > 0.3){
+        int pathSide = (ball_bearing > 0) ? 1 : -1;
+//        pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
+//        velocityWalk(ball_x,ball_y,ball_bearing,1.0);
+        pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
     }
-    else
-        pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
+    else if((ball_bearing > M_PI_4) || (ball_bearing < -M_PI_4)){
+        littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
+    }
+    else if(oppgb > (float) (M_PI_4)){
+        velocityWalk(0.0, -0.7, (float)(M_PI_4/2),1.0);
+    }
+    else if(oppgb < (float) (-M_PI_4)){
+        velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
+    }
+    else{
+        pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
+
+    }
 }
 
-
-void Behavior::approachBallNewWalk(double ballX, double ballY)
+void Behavior::approachBallRoleDependent()
 {
-	static double X = 0.0, Y = 0.0, t = 0.0, f = 1.0, gain = 1.0;
-	double maxd = fmaxf( fabs(bx - ballX), fabs(by - ballY) );
-	f    = fminf(1.0, 0.4 + (maxd / 0.5));
-	gain = fminf(1.0, 0.0 + (maxd / 0.5));
-	X = gain * (bx - ballX) / maxd;
-	Y = gain * (by - ballY) / maxd;
-	t = 0.55 * gain * (bb / M_PI);
-	velocityWalk(X, Y, t, f);
-}
-
-void Behavior::approachBallRoleDependent(double ballX, double ballY)
-{
-	if (orientation == 1)
+    if (orientation == 1)
 		side = -1;
 	else if (orientation == 3)
 		side = +1;
 
 	if(role == ATTACKER)
 	{
-		approachBall(ballX, ballY);
+		approachBall();
 
 	}
 	else if(role == CENTER_FOR)
 	{
-		if (bd > 0.5)
+		if (ball_dist > 0.7)
 		{
-			int pathSide = (bb > 0) ? 1 : -1;
-			pathPlanningRequestAbsolute(bx - posx, by - side * posy, bb);
+			int pathSide = (ball_bearing > 0) ? 1 : -1;
+			pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
 		}
 		else
 			stopRobot();
@@ -606,26 +585,26 @@ void Behavior::approachBallRoleDependent(double ballX, double ballY)
 void Behavior::stopRobot()
 {
 	//velocityWalk(0.0, 0.0, 0.0, 1.0);
-	amot->set_command("InitPose.xar");
-	_blk.publishSignal(*amot, "motion");
+	amot.set_command("InitPose.xar");
+	_blk.publishSignal(amot, "motion");
 }
 
 void Behavior::pathPlanningRequestRelative(float target_x, float target_y, float target_phi)
 {
-	pprm->set_gotox(target_x);
-	pprm->set_gotoy(target_y);
-	pprm->set_gotoangle(target_phi);
-	pprm->set_mode("relative");
-	_blk.publishSignal(*pprm, "obstacle");
+	pprm.set_gotox(target_x);
+	pprm.set_gotoy(target_y);
+	pprm.set_gotoangle(target_phi);
+	pprm.set_mode("relative");
+	_blk.publishSignal(pprm, "obstacle");
 }
 
 void Behavior::pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi)
 {
-	pprm->set_gotox(target_x);
-	pprm->set_gotoy(target_y);
-	pprm->set_gotoangle(target_phi);
-	pprm->set_mode("absolute");
-	_blk.publishSignal(*pprm, "obstacle");
+	pprm.set_gotox(target_x);
+	pprm.set_gotoy(target_y);
+	pprm.set_gotoangle(target_phi);
+	pprm.set_mode("absolute");
+	_blk.publishSignal(pprm, "obstacle");
 }
 
 void Behavior::gotoPosition(float target_x, float target_y, float target_phi)
@@ -642,147 +621,6 @@ void Behavior::gotoPosition(float target_x, float target_y, float target_phi)
 		stopRobot();
 }
 
-
-/* Vision Calibration */
-
-void Behavior::calibrate()
-{
-	KCalibrateCam v;
-	v.set_status(0);
-	_blk.publishState(v, "vision");
-	calibrated = 1;
-}
-
-
-/* Read Configuration Functions */
-
-bool Behavior::readConfiguration(const std::string& file_name)
-{
-	XMLConfig config(file_name);
-
-	if (!config.QueryElement("player", playerNumber))
-		Logger::Instance().WriteMsg("Behavior", "Configuration file has no player, setting to default value: " + _toString(playerNumber), Logger::Error);
-
-	std::string color;
-
-	if (teamColor == TEAM_BLUE)
-		color = "blue";
-	else if (teamColor == TEAM_RED)
-		color = "red";
-
-	if (!config.QueryElement("default_team_color", color))
-		Logger::Instance().WriteMsg("Behavior", "Configuration file has no team_color, setting to default value: " + color, Logger::Error);
-
-	if (color == "blue")
-		teamColor = TEAM_BLUE;
-	else if (color == "red")
-		teamColor = TEAM_RED;
-	else
-		Logger::Instance().WriteMsg("Behavior", "Undefined color in configuration, setting to default value: " + color, Logger::Error);
-
-	return true;
-}
-
-
-bool Behavior::readRobotConfiguration(const std::string& file_name)
-{
-	if ( (playerNumber < 1) || (4 < playerNumber) )
-	{
-		Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Invalid player number "  , Logger::Error);
-		return false;
-	}
-
-	readRobotConf = true;
-	XML config(file_name);
-	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont teamPositions, robotPosition ;
-	Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration "  , Logger::Info);
-
-	for (int i = 0; i < 2; i++)
-	{
-		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
-		bool found = false;
-		teamPositions = config.QueryElement<std::string, float, std::string>(kickoff);
-
-		if (teamPositions.size() != 0)
-			robotPosition = config.QueryElement<std::string, float, std::string>("robot", &(teamPositions[0]));
-
-		for (NodeCont::iterator it = robotPosition.begin(); it != robotPosition.end(); it++)
-		{
-			if (it->attrb["number"] == playerNumber)
-			{
-				initPhi[i] = 0.0;
-				initX[i] = (it->attrb["posx"]);
-				initY[i] = (it->attrb["posy"]);
-				Logger::Instance().WriteMsg("Behavior", " readConf INIT X " + kickoff + " " + _toString(initX[i]) + " INITY " + _toString(initY[i]) + " INITPHI " + _toString(initPhi[i]), Logger::Info);
-				found = true;
-			}
-		}
-
-		if (!found)
-		{
-			Logger::Instance().WriteMsg("Behavior",  " readRobotConfiguration: Unable to find initial " + kickoff + " position for player number " + _toString(playerNumber) , Logger::Error);
-			readRobotConf = false;
-		}
-	}
-
-	return readRobotConf;
-}
-
-
-bool Behavior::readGoalConfiguration(const std::string& file_name)
-{
-	TiXmlDocument doc2(file_name.c_str());
-	bool loadOkay = doc2.LoadFile();
-
-	if (!loadOkay)
-	{
-		Logger::Instance().WriteMsg("Behavior",  " readGoalConfiguration: cannot read file " + file_name , Logger::Info);
-		return false;
-	}
-
-	TiXmlNode * Ftr;
-	TiXmlElement * Attr;
-	double x, y;
-	string ID;
-
-	for (Ftr = doc2.FirstChild()->NextSibling(); Ftr != 0; Ftr = Ftr->NextSibling())
-	{
-		if(Ftr->ToComment() == NULL)
-		{
-			Attr = Ftr->ToElement();
-			Attr->Attribute("x", &x);
-			Attr->Attribute("y", &y);
-			ID = Attr->Attribute("ID");
-
-			if (ID == "YellowGoal")
-			{
-				oppGoalX = x;
-				oppGoalY = y;
-				ownGoalX = -oppGoalX;
-				ownGoalY = -oppGoalY;
-			}
-
-			if (ID == "YellowLeft")
-			{
-				oppGoalLeftX = x;
-				oppGoalLeftY = y;
-				ownGoalLeftX = -oppGoalLeftX;
-				ownGoalLeftY = -oppGoalLeftY;
-			}
-
-			if (ID == "YellowRight")
-			{
-				oppGoalRightX = x;
-				oppGoalRightY = y;
-				ownGoalRightX = -oppGoalRightX;
-				ownGoalRightY = -oppGoalRightY;
-			}
-		}
-	}
-
-	return true;
-}
 
 void Behavior::generateFakeObstacles()
 {
@@ -816,10 +654,8 @@ void Behavior::generateFakeObstacles()
 		i++;
 	}
 }
-float Behavior::dist(float x1, float y1, float x2, float y2)
-{
-	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-}
+
+//TODO not working
 void Behavior::checkForPenaltyArea()
 {
 	float fakeDist = 0.0, fakeDir = 0.0;
@@ -830,127 +666,120 @@ void Behavior::checkForPenaltyArea()
 			continue;
 		else
 		{
-			fakeDist = dist(robot_x, robot_y, fakeObstacles[j][0], fakeObstacles[j][1]);
+			fakeDist = DISTANCE(robot_x, robot_y, fakeObstacles[j][0], fakeObstacles[j][1]);
 
 			if(fakeDist < MapRadius)
 			{
 				//send fake obstacle message
-				//               fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
+				//fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
 				fakeDir = 2 * M_PI - wrapTo0_2Pi(robot_phi) - atan2(fakeObstacles[j][1] - robot_y, fakeObstacles[j][0] - robot_x);
-				std::cout << "fakeDir: " << fakeDir << std::endl;
-				fom->set_direction(fakeDir);
-				fom->set_distance(fakeDist);
-				fom->set_certainty(1);
-				_blk.publishSignal(*fom, "obstacle");
+				fom.set_direction(fakeDir);
+				fom.set_distance(fakeDist);
+				fom.set_certainty(1);
+				_blk.publishSignal(fom, "obstacle");
 			}
 		}
 	}
-
-	std::cout << "-------------" << std::endl;
 }
 
-/* Test Function */
+/*------------------------------------ GOALIE FUNCTIONS -----------------------------------------*/
 
-/*
-void Behavior::test()
+/**
+ * Function used by goalie basic behavior to decide when to fall for a ball save and
+ * when to go on the ball and kick it away from the goal post (TODO).
+ */
+void Behavior::Goalie()
 {
-	// OPEN CHALLENGE 2011 - PROJECTION KICK - START
-	if(wim != 0)
-	{
-		if (wim->balls_size() > 0)
+	role = GOALIE;
+	if(ballfound == 1) {
+
+		fall = toFallOrNotToFall();
+
+		if(fall == 1) // extend left foot
 		{
-			bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-			by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-			bd = sqrt(pow(bx, 2) + pow(by, 2));
-			bb = atan2(by, bx);
+			amot.set_command("goalieLeftFootExtened.xar");
+			_blk.publishSignal(amot, "motion");	
+			return;
 		}
-		else
+		else if(fall == -1) // extend right foot
 		{
-			ballfound = 0;
+			amot.set_command("goalieRightFootExtened.xar");
+			_blk.publishSignal(amot, "motion");
+			return;
 		}
+		else // scan and track for ball
+		{
+			hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+			_blk.publishState(hcontrol, "behavior");
+		}
+
+		if(ball_dist < 0.65) // check if ball is to close to the goal post
+		{
+			goalieApproachStarted = true;
+			pathPlanningRequestAbsolute(ball_x - config.posx, ball_y - side * config.posy, ball_bearing);
+			if ( (fabs(ball_x - config.posx) < config.epsx)  && (fabs( ball_y - (side * config.posy) ) < config.epsy) && (bmsg != 0) && (bmsg->radius() > 0) ) {
+				if (ball_y > 0.0)
+					amot.set_command(config.kicks.KickForwardLeft); // Left Kick
+				else
+					amot.set_command(config.kicks.KickForwardRight); // Right Kick
+
+				_blk.publishSignal(amot, "motion");	
+			}
+		}else if(goalieApproachStarted == true){
+			stopRobot();
+			goalieApproachStarted = false;
+		}
+
+	}
+	else if(ballfound == 0) {
+		if(goalieApproachStarted == true){
+			stopRobot();
+			goalieApproachStarted = false;
+		}
+		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+		_blk.publishState(hcontrol, "behavior");
 	}
 
-	if (bmsg != 0)
-	{
-		if (bmsg->radius() > 0)
-		{
-			MakeTrackBallAction();
-			lastball = microsec_clock::universal_time();
-			ballfound = 1;
-		}
-		else
-		{
-			if (lastball + seconds(3) < microsec_clock::universal_time())
-				ballfound = 0;
-		}
-	}
+	return;
+}
 
-	if (ballfound == 1)
-	{
-		Logger::Instance().WriteMsg("Behavior",  " timestamp " + to_simple_string(microsec_clock::universal_time()), Logger::Info);
-		float kickslope = -4;
-		float x1, y1;
-		float ubx, uby;
-		float x, y, slope, t;
+/**
+ * Function used by Goalie function above to determine when and where to extend robot foot
+ * for a ball save.
+ */
+int Behavior::toFallOrNotToFall()
+{
+	float x1, y1, dk, ubx, uby, ub;
 
-		if(wim != 0)
+	if(wim == 0)   // the two last observation messages
+		return 0;
+
+	if(wim->balls_size() == 0)
+		return 0;
+
+	// observation of (x,y) position of the ball and x,y speed
+	x1 = wim->balls(0).relativex();
+	y1 = wim->balls(0).relativey();
+	ubx = wim->balls(0).relativexspeed();
+	uby = wim->balls(0).relativeyspeed();
+
+	if(ubx < 0.0)
+	{
+		dk = (ubx * y1 - uby * x1) / ubx ; // dk is the projection of the ball's route towards the robot/goalpost
+
+		if(fabs(dk) <= 0.3) // if dk is shorter than the robot's foot can extend
 		{
-			if (wim->balls_size() > 0)
+			ub = sqrt(ubx * ubx + uby * uby);
+
+			if(fabs(ub) > config.ur)
 			{
-				x1 = wim->balls(0).relativex();	//the last b observation's x position
-				y1 = wim->balls(0).relativey();	//the last but one observation's y position
-				ubx = wim->balls(0).relativexspeed();
-				uby = wim->balls(0).relativeyspeed();
-				Logger::Instance().WriteMsg("Behavior",  "OP: x1 " + _toString(x1) + " y1 " + _toString(y1), Logger::Info);
-				Logger::Instance().WriteMsg("Behavior",  "OP: ubx " + _toString(ubx) + " uby " + _toString(uby), Logger::Info);
-
-				if (fabs(uby) < 0.001)
-					return;
-
-				slope = ubx / uby;
-
-				if ( fabs(kickslope - slope) < 0.001 )
-					return;
-
-				y = (x1 - y1 * slope) / (kickslope - slope);
-				x = kickslope * y;
-				t = fabs(x1 - x) / fabs(ubx);
-				Logger::Instance().WriteMsg("Behavior", "OP: x " + _toString(x) + " y " + _toString(y) + "TIME: " + _toString(t), Logger::Info);
-
-				if ( (x >= 0.03) && (x <= 0.17) )
-				{
-					if ( (t > 2.0) && (t < 5.0) )
-					{
-						Logger::Instance().WriteMsg("Behavior",  "OP: Openchallenge FTW!!!!!!!!!!!!!! ", Logger::Info);
-						amot->set_command("KickForwardRightFast.xar");
-						_blk.publishSignal(*amot, "motion");
-					}
-				}
+				if(dk > 0)
+					return 1;  // left
+				else
+					return -1;  // right
 			}
 		}
 	}
-	else
-	{
-		HeadScanStepSmart();
-	}
 
-	/* OPEN CHALLENGE 2011 - PROJECTION KICK - END
-	//HeadScanStepIntelligent();
-	//if (om!=0) {
-	//Logger::Instance().WriteMsg("Behavior", "L: " + _toString(om->direction(0)) + " C: " + _toString(om->direction(1)) + " R: " + _toString(om->direction(2)), Logger::Info);
-	//if ( (om->direction(2) != 0) && (om->direction(0) == 0) ) {
-	//velocityWalk(0.0, 0.0, 1.0, 1.0);
-	//}
-	//else if ( (om->direction(0) != 0) && (om->direction(2) == 0) ) {
-	//velocityWalk(0.0, 0.0, -1.0, 1.0);
-	//}
-	//else if ( (om->direction(0) != 0) && (om->direction(2) != 0) ) {
-	//velocityWalk(0.0, 0.0, 0.0, 1.0);
-	//}
-	//else {
-	//velocityWalk(1.0, 0.0, 0.0, 1.0);
-	//}
-	//}
-	//else
-	//velocityWalk(1.0, 0.0, 0.0, 1.0);
-} */
+	return 0;
+}

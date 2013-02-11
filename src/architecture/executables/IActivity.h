@@ -6,7 +6,7 @@
 #include "architecture/narukom/narukom.h"
 #include "architecture/narukom/pub_sub/blackboard.h"
 
-#include "architecture/XmlManager/XmlConfigurator.h"
+#include "architecture/XmlManager/XmlManager.h"
 
 #include "tools/genFactory.h"
 #include "tools/genRegistrar.h"
@@ -25,7 +25,7 @@
 #endif
 
 
-#define ACTIVITY_CONSTRUCTOR(x)  ACTIVITY_VISIBLE x(Blackboard&b,XmlNode&x): IActivity(b,x){   }
+#define ACTIVITY_CONSTRUCTOR(x)  ACTIVITY_VISIBLE x(Blackboard&b,XmlManager&x): IActivity(b,x){   }
 
 #define ACTIVITY_REGISTER(x) namespace { 	ACTIVITY_VISIBLE ActivityRegistrar<x>::Type temp##x(#x);  }
 
@@ -34,7 +34,7 @@ class IActivity : public IExecutable
 {
 
 public:
-	IActivity  ( Blackboard &,  XmlNode & );
+	IActivity  ( Blackboard &,  XmlManager & );
 	virtual ~IActivity() {};
 
 	virtual void UserInit () {};
@@ -45,17 +45,17 @@ public:
 protected:
 
 	Blackboard &  _blk;
-	XmlNode &  _xml;
+	XmlManager &  _xml;
 
 };
 
 //typedef GenericFactory < IActivity, std::string ,IActivity* (*)(Blackboard&),Blackboard&>  ActivityFactory;
-typedef GenericFactory < IActivity, std::string , IActivity* (*)(Blackboard&, XmlNode &), Blackboard&, XmlNode &>  ActivityFactory;
+typedef GenericFactory < IActivity, std::string , IActivity* (*)(Blackboard&, XmlManager &), Blackboard&, XmlManager &>  ActivityFactory;
 
 template<class T>
 struct ActivityRegistrar
 {
-	typedef Registrar<ActivityFactory, IActivity, std::string, T, Blackboard&, XmlNode&> Type;
+	typedef Registrar<ActivityFactory, IActivity, std::string, T, Blackboard&, XmlManager&> Type;
 };
 
 

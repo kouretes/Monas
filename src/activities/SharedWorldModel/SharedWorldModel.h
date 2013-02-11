@@ -4,6 +4,7 @@
 #include "architecture/executables/IActivity.h"
 
 #include "messages/WorldInfo.pb.h"
+#include "messages/Gamecontroller.pb.h"
 #include "messages/Network.pb.h"
 
 ACTIVITY_START
@@ -21,6 +22,7 @@ public:
 	void ACTIVITY_VISIBLE UserInit();
 	void ACTIVITY_VISIBLE Reset();
 	boost::shared_ptr<const WorldInfo>  wim;
+	boost::shared_ptr<const GameStateMessage>  gsm;
 	boost::shared_ptr<const KnownHosts> h;
 	static const int numOfRobots = 5;
 private:
@@ -29,7 +31,7 @@ private:
 	SharedWorldInfo swi;
 
 	int idx, count;
-	float robot_x[numOfRobots], robot_y[numOfRobots], bd[numOfRobots];
+	float robot_x[numOfRobots], robot_y[numOfRobots], robot_phi[numOfRobots], bd[numOfRobots];
 	float bx, by;
 
 };

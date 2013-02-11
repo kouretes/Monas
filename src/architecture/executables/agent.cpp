@@ -8,10 +8,10 @@ Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, Narukom& c
 	_executions(0)
 {
 #ifdef RUN_ON_NAO
-	_xml = XmlNode(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
+	_xml = XmlManager(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
 	               , KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID), false);
 #else
-	_xml = XmlNode(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi", false);
+	_xml = XmlManager(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi", false);
 #endif
 	_blk.attachTo(*com.get_message_queue());
 

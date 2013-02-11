@@ -209,22 +209,28 @@ for	ip in robotsIP:
 		os.system(copy_cmd)
 
 		print ("Creating parameters for player " + player )
-		copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
+		copy_cmd = "cp " + partial_configuration_dir + "/teamConfig_part.xml " +  binaries_dir +"config/teamConfig.xml"
 		os.system(copy_cmd)
-		playerconf = open(binaries_dir +"config/team_config.xml", 'a')
+		playerconf = open(binaries_dir +"config/teamConfig.xml", 'a')
+		playerconf.write("<!-- Are we playing game or no -->")
+		playerconf.write("<game_mode>" + "1" + "</game_mode>")
+		playerconf.write("<!-- default player number -->")
 		playerconf.write("<player>"+ player+"</player>")
 		playerconf.close()
 
 	if game == 0:
-		playerstr = raw_input("1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker \n Set player number or press enter to continue: ")
+		playerstr = raw_input("1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Attacker \n Set player number or press enter to continue (2 is the default): ")
 		while(playerstr != ""):
 			player = int(playerstr)
 			if(player <= 4 and player >=1):
 				print "Setting player number " + playerstr
 				print ("Creating parameters for player " + playerstr )
-				copy_cmd = "cp " + partial_configuration_dir + "/team_config_part.xml " +  binaries_dir +"config/team_config.xml"
+				copy_cmd = "cp " + partial_configuration_dir + "/teamConfig_part.xml " +  binaries_dir +"config/teamConfig.xml"
 				os.system(copy_cmd)
-				playerconf = open(binaries_dir +"config/team_config.xml", 'a')
+				playerconf = open(binaries_dir +"config/teamConfig.xml", 'a')
+				playerconf.write("<!-- Are we playing game or no -->")
+				playerconf.write("<game_mode>" + "0" + "</game_mode>")
+				playerconf.write("<!-- default player number -->")
 				playerconf.write("<player>"+ playerstr+"</player>")
 				playerconf.close()
 				break
@@ -247,23 +253,23 @@ for	ip in robotsIP:
   # rsync_cmd = "rync  --rsh=\"sshpass -p myPassword ssh -l t\" "
 	#exit(0)
 	if(game==1):
-		autoload_src = partial_configuration_dir + "autoload.ini_game"
+		autoload_src = partial_configuration_dir + "autoload.ini"
 		autoload_dest = binaries_dir +"preferences/autoload.ini"
 		autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 		os.system(autoload_cmd)
 		print(autoload_cmd)
-		rsync_cmd = "rsync -av " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
+		rsync_cmd = "rsync -avz --delete " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 	else:
 		if(raw_input("Enter y to upload a clean autoload.ini_work (no krobot) or press enter to continue:  ")=='y'):
 			print("Setting autoload.ini")
-			autoload_src = partial_configuration_dir + "autoload.ini_work"
+			autoload_src = partial_configuration_dir + "autoload.ini"
 			autoload_dest = binaries_dir +"preferences/autoload.ini"
 			autoload_cmd = "cp " + autoload_src +" "+ autoload_dest
 			os.system(autoload_cmd)
 			print(autoload_cmd)
-			rsync_cmd = "rsync -av " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
+			rsync_cmd = "rsync -avz --delete " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 		else:
-			rsync_cmd = "rsync -av " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
+			rsync_cmd = "rsync -avz --delete " + binaries_dir + "bin "+ binaries_dir	+"lib "+ binaries_dir +"config " + " nao@"+ip+ ":/home/nao/naoqi/"
 
 	print("Preparing to copy robot from ", binaries_dir)
 	print ""

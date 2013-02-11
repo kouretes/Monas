@@ -8,43 +8,38 @@
 
 class KMapScene;
 namespace Ui {
-    class KSonarsController;
+class KSonarsController;
 }
 
-class KSonarsController : public QWidget
-{
-    Q_OBJECT
+class KSonarsController : public QWidget {
+	Q_OBJECT
 
 public:
-    explicit KSonarsController(QWidget *parent = 0);
-    ~KSonarsController();
+	explicit KSonarsController (QWidget *parent = 0);
+	~KSonarsController();
 
 protected:
-    void changeEvent(QEvent *e);
-    
+	void changeEvent (QEvent *e);
+
 signals:
-	void NewHostAdded(QString,QString);
-	void OldHostRemoved(QString);
-	void GameStateMsgUpdate(QString,QString,QString);
-	void LWRHSubscriptionRequest(QString);
-	void LWRHUnsubscriptionRequest(QString);
+	void SubscriptionRequest (QString);
 public slots:
-	void addComboBoxItem(QString, QString);
-	void removeComboBoxItem(QString);
-	void setLWRHGameStateInfo(QString, QString, QString);
-	void SubscriptionHandler(QString);
-	void UnsubscriptionHandler(QString);
-	void gridInfoUpdateHandler(GridInfo, QString);
-	
+	void addComboBoxItem (QString, QString);
+	void removeComboBoxItem (QString);
+	void setGameStateInfo (QString, QString, QString);
+	void changeToHost (QString);
+	void SubscriptionHandler (QString);
+	void gridInfoUpdateHandler (GridInfo, QString);
+
 private slots:
-	void newTreeElementRequested(QTreeWidgetItem* item);
+	void newTreeElementRequested (QTreeWidgetItem *item);
 private:
-	void resizeEvent(QResizeEvent* event);
-	void un_checkAllTreeElements(Qt::CheckState state);
-    Ui::KSonarsController *ui;
-    
-	KMapScene* mapArea;
-    HostsComboBox* availableSonarsHosts;
+	void resizeEvent (QResizeEvent *event);
+	void un_checkAllTreeElements (Qt::CheckState state);
+	Ui::KSonarsController *ui;
+
+	KMapScene *mapArea;
+	HostsComboBox *availableSonarsHosts;
 };
 
 #endif // KSENSORSCONTROLLER_H

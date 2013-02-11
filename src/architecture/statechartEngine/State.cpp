@@ -20,7 +20,7 @@ namespace statechart_engine
 		if ( _parent )
 		{
 			_blk = _parent->AddChild ( this );
-			_xml = _parent->GetXmlNode();
+			_xml = _parent->GetXmlManager();
 			_isRunning = _parent->GetIsRunningRef();
 			*_isRunning = 0;
 			_com = _parent->GetCom();
@@ -142,7 +142,7 @@ namespace statechart_engine
 		return _blk;
 	}
 
-	XmlNode* State::GetXmlNode () const   //TODO
+	XmlManager* State::GetXmlManager () const   //TODO
 	{
 		return _xml;
 	}

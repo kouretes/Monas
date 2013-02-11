@@ -6,57 +6,53 @@
 
 
 
-class HostsComboBox : public QComboBox
-{
-    Q_OBJECT
+class HostsComboBox : public QComboBox {
+	Q_OBJECT
 
 public:
-    HostsComboBox(QComboBox *parent = 0);
-    ~HostsComboBox();
+	HostsComboBox (QComboBox *parent = 0);
+	~HostsComboBox();
 
-public slots:
-	void addComboBoxItem(QString hostId, QString hostName);
-	void removeComboBoxItem(QString hostId);
-	void setLWRHGameStateInfo(QString iconPath, QString gsm, QString hostId);
+public:
+	void addComboBoxItem (QString hostId, QString hostName);
+	void removeComboBoxItem (QString hostId);
+	void setGameStateInfo (QString iconPath, QString gsm, QString hostId);
+	void changeItem (QString hostId);
 
 signals:
-	void LWRHSubscriptionRequest(QString);
-	void LWRHUnsubscriptionRequest(QString);
+	void SubscriptionRequest (QString);
 
 private slots:
-	void newHostsComboBoxelected(int index);
+	void newHostsComboBoxSelected (int index);
 
 private:
-	typedef struct LWElements{
+	typedef struct Elements {
 
 		QString hostId;
 		QString hostName;
 		bool hostSelected;
 
 
-		LWElements()
-		{
-			hostId = QString("");
-			hostName = QString("");
+		Elements() {
+			hostId = QString ("");
+			hostName = QString ("");
 			hostSelected = false;
 		}
 
-		LWElements(QString host,QString name, bool selected)
-		{
+		Elements (QString host, QString name, bool selected) {
 			hostId = host;
 			hostName = name;
 			hostSelected = selected;
 		}
 
-	}requestedLWElements;
+	} requestedElements;
 
-	void printLWRequests();
-	int LWhostFinder(QString hostId);
+	void printRequests();
+	int HostFinder (QString hostId);
 
 
-    QComboBox* parentComboBox;
-    QList<requestedLWElements*> LWRequests;
-    QString myCurrentRequestedHost;
+	QComboBox *parentComboBox;
+	QList<requestedElements *> Requests;
 };
 
 #endif // HostsComboBox_H

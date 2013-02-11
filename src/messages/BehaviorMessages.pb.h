@@ -185,21 +185,21 @@ class ActionDescription : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required uint32 action = 1;
+  // required uint32 action = 1 [default = 0];
   inline bool has_action() const;
   inline void clear_action();
   static const int kActionFieldNumber = 1;
   inline ::google::protobuf::uint32 action() const;
   inline void set_action(::google::protobuf::uint32 value);
   
-  // required uint32 urgency = 2;
+  // required uint32 urgency = 2 [default = 0];
   inline bool has_urgency() const;
   inline void clear_urgency();
   static const int kUrgencyFieldNumber = 2;
   inline ::google::protobuf::uint32 urgency() const;
   inline void set_urgency(::google::protobuf::uint32 value);
   
-  // required string description = 3;
+  // required string description = 3 [default = ""];
   inline bool has_description() const;
   inline void clear_description();
   static const int kDescriptionFieldNumber = 3;
@@ -210,26 +210,33 @@ class ActionDescription : public ::google::protobuf::Message {
   inline ::std::string* mutable_description();
   inline ::std::string* release_description();
   
-  // required float x = 4;
+  // required float x = 4 [default = -1];
   inline bool has_x() const;
   inline void clear_x();
   static const int kXFieldNumber = 4;
   inline float x() const;
   inline void set_x(float value);
   
-  // required float y = 5;
+  // required float y = 5 [default = -1];
   inline bool has_y() const;
   inline void clear_y();
   static const int kYFieldNumber = 5;
   inline float y() const;
   inline void set_y(float value);
   
-  // required float phi = 6;
+  // required float phi = 6 [default = -1];
   inline bool has_phi() const;
   inline void clear_phi();
   static const int kPhiFieldNumber = 6;
   inline float phi() const;
   inline void set_phi(float value);
+  
+  // required float speed = 7 [default = -1];
+  inline bool has_speed() const;
+  inline void clear_speed();
+  static const int kSpeedFieldNumber = 7;
+  inline float speed() const;
+  inline void set_speed(float value);
   
   // @@protoc_insertion_point(class_scope:ActionDescription)
  private:
@@ -245,6 +252,8 @@ class ActionDescription : public ::google::protobuf::Message {
   inline void clear_has_y();
   inline void set_has_phi();
   inline void clear_has_phi();
+  inline void set_has_speed();
+  inline void clear_has_speed();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -254,9 +263,10 @@ class ActionDescription : public ::google::protobuf::Message {
   float x_;
   float y_;
   float phi_;
+  float speed_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
   
   friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
   friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
@@ -577,7 +587,7 @@ class BallFoundMessage : public ::google::protobuf::Message {
 
 // ActionDescription
 
-// required uint32 action = 1;
+// required uint32 action = 1 [default = 0];
 inline bool ActionDescription::has_action() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -599,7 +609,7 @@ inline void ActionDescription::set_action(::google::protobuf::uint32 value) {
   action_ = value;
 }
 
-// required uint32 urgency = 2;
+// required uint32 urgency = 2 [default = 0];
 inline bool ActionDescription::has_urgency() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -621,7 +631,7 @@ inline void ActionDescription::set_urgency(::google::protobuf::uint32 value) {
   urgency_ = value;
 }
 
-// required string description = 3;
+// required string description = 3 [default = ""];
 inline bool ActionDescription::has_description() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -679,7 +689,7 @@ inline ::std::string* ActionDescription::release_description() {
   }
 }
 
-// required float x = 4;
+// required float x = 4 [default = -1];
 inline bool ActionDescription::has_x() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
@@ -690,7 +700,7 @@ inline void ActionDescription::clear_has_x() {
   _has_bits_[0] &= ~0x00000008u;
 }
 inline void ActionDescription::clear_x() {
-  x_ = 0;
+  x_ = -1;
   clear_has_x();
 }
 inline float ActionDescription::x() const {
@@ -701,7 +711,7 @@ inline void ActionDescription::set_x(float value) {
   x_ = value;
 }
 
-// required float y = 5;
+// required float y = 5 [default = -1];
 inline bool ActionDescription::has_y() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
@@ -712,7 +722,7 @@ inline void ActionDescription::clear_has_y() {
   _has_bits_[0] &= ~0x00000010u;
 }
 inline void ActionDescription::clear_y() {
-  y_ = 0;
+  y_ = -1;
   clear_has_y();
 }
 inline float ActionDescription::y() const {
@@ -723,7 +733,7 @@ inline void ActionDescription::set_y(float value) {
   y_ = value;
 }
 
-// required float phi = 6;
+// required float phi = 6 [default = -1];
 inline bool ActionDescription::has_phi() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }
@@ -734,7 +744,7 @@ inline void ActionDescription::clear_has_phi() {
   _has_bits_[0] &= ~0x00000020u;
 }
 inline void ActionDescription::clear_phi() {
-  phi_ = 0;
+  phi_ = -1;
   clear_has_phi();
 }
 inline float ActionDescription::phi() const {
@@ -743,6 +753,28 @@ inline float ActionDescription::phi() const {
 inline void ActionDescription::set_phi(float value) {
   set_has_phi();
   phi_ = value;
+}
+
+// required float speed = 7 [default = -1];
+inline bool ActionDescription::has_speed() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void ActionDescription::set_has_speed() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void ActionDescription::clear_has_speed() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void ActionDescription::clear_speed() {
+  speed_ = -1;
+  clear_has_speed();
+}
+inline float ActionDescription::speed() const {
+  return speed_;
+}
+inline void ActionDescription::set_speed(float value) {
+  set_has_speed();
+  speed_ = value;
 }
 
 // -------------------------------------------------------------------

@@ -221,7 +221,6 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 {
 	kmatTable endTr1, endTr2, endTr3, endTr4, endTr5, endTr6, temp;
 	KMath::KMat::GenMatrix<float, 3, 1> lh1, lh2, lh3, lh4, rh1, rh2, rh3, rh4, ll1, ll2, ll3, ll4, ll5, ll6, rl1, rl2, rl3, rl4, rl5, rl6, h1, h2, t;
-	float PI = KMatTransf::PI;
 	
 	if(allJoints.size() != 22)
 		std::cout << "Kinematics CoM fatal: joints vector not equal to 22" << std::endl;
@@ -246,7 +245,6 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	h2 = temp.get_translation();
 	h2.scalar_mult(HeadPitchMass);
 	h1 += h2;
-
 	//Left Hand
 	KMatTransf::makeTranslation(endTr1, LShoulderPitchX, LShoulderPitchY, LShoulderPitchZ);
 	KMatTransf::makeTranslation(endTr2, LShoulderRollX, LShoulderRollY, LShoulderRollZ);
@@ -288,6 +286,7 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	lh1 += lh2;
 	lh1 += lh3;
 	lh1 += lh4;
+
 
 	//Left Leg
 	KMatTransf::makeTranslation(endTr1, LHipYawPitchX, LHipYawPitchY, LHipYawPitchZ);
@@ -350,7 +349,7 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	ll1 += ll4;
 	ll1 += ll5;
 	ll1 += ll6;
-
+	
 	//Right Leg
 	KMatTransf::makeTranslation(endTr1, RHipYawPitchX, RHipYawPitchY, RHipYawPitchZ);
 	KMatTransf::makeTranslation(endTr2, RHipRollX, RHipRollY, RHipRollZ);
@@ -418,7 +417,7 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	KMatTransf::makeTranslation(endTr2, RShoulderRollX, RShoulderRollY, RShoulderRollZ);
 	KMatTransf::makeTranslation(endTr3, RElbowYawX, RElbowYawY, RElbowYawZ);
 	KMatTransf::makeTranslation(endTr4, RElbowRollX, RElbowRollY, RElbowRollZ);
-	KMatTransf::makeTranslation(base, 0.0f, -(ShoulderOffsetY + ElbowOffsetY), allJoints.front());
+	KMatTransf::makeTranslation(base, 0.0f, -(ShoulderOffsetY + ElbowOffsetY), ShoulderOffsetZ);
 	KMatTransf::makeDHTransformation(T1, 0.0f, -PI / 2, 0.0f, allJoints.front());
 	allJoints.erase(allJoints.begin());
 	KMatTransf::makeDHTransformation(T2, 0.0f, PI / 2, 0.0f, allJoints.front() + PI / 2);
@@ -447,6 +446,7 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	rh3.scalar_mult(RElbowYawMass);
 	base *= T4;
 	temp = base;
+	//temp *= RotLArm;
 	temp *= RotRHelbowR;
 	temp *= endTr4;
 	rh4 = temp.get_translation();
@@ -477,43 +477,30 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	return FKVariables;
 }
 
-std::vector<std::vector<float> > NAOKinematics::inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera)
+std::vector<std::vector<float> > NAOKinematics::inverseHead(float px, float py, float pz, float rx, float ry, float rz, bool withAngles, bool topCamera){
+	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	return inverseHead(T, withAngles, topCamera);
+}
+
+std::vector<std::vector<float> > NAOKinematics::inverseHead(kmatTable targetPoint, bool withAngles, bool topCamera)
 {
 	std::vector<float> fc, empty;
 	std::vector<std::vector<float> > returnResult;
 	FKvars output;
-	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	T = targetPoint;
 	float theta1, theta2;
 
-	if(rx != 0.0f && withAngles)
+	if(T(0,3) != 0.0f && withAngles)
 		return returnResult;
 
 	if(withAngles)
 	{
-		theta1 = rz;
-		theta2 = ry;
-		//---------------------------Forward validation step--------------------------------------------------------------------------------------
-		fc.clear();
-		fc.push_back(theta1);
-		fc.push_back(theta2);
-
-		if(topCamera)
-			output = filterForwardFromTo("Torso", "CameraTop", empty, fc);
-		else
-			output = filterForwardFromTo("Torso", "CameraBot", empty, fc);
-
-		float x = output.pointX, y = output.pointY, z = output.pointZ, ax = output.angleX, ay = output.angleY, az = output.angleZ;
-
-		if(px - 1 <= x && x <= px + 1 && py - 1 <= y && y <= py + 1 && pz - 1 <= z && z <= pz + 1 && rx - 0.001 <= ax && rx + 0.001 >= ax && ry - 0.001 <= ay && ry + 0.001 >= ay && rz - 0.001 <= az && rz + 0.001 >= az)
-		{
-			returnResult.push_back(fc);
-		}
-
-		//------------------------------------------------------------------------------------------------------------------------------------------
+		theta1 = atan2(T(1,0), T(0,0));
+		theta2 = atan2(-T(2,0), sqrt(pow(T(2,1), 2) + pow(T(2,2), 2)));
 	}
 	else
 	{
-		float up = - pz + NeckOffsetZ;
+		float up = - T(2,3) + NeckOffsetZ;
 		float downt2, downt1, psi;
 
 		if(topCamera)
@@ -551,7 +538,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseHead(float px, float py, 
 			}
 
 			theta2 = theta2 + PI / 2;
-			theta1 = acos(px / downt1);
+			theta1 = acos(T(0,3) / downt1);
 
 			for(int i = 0; i < 2; i++)
 			{
@@ -578,7 +565,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseHead(float px, float py, 
 			float x = output.pointX, y = output.pointY, z = output.pointZ;
 
 			//Validate only the points
-			if(px - 1 <= x && x <= px + 1 && py - 1 <= y && y <= py + 1 && pz - 1 <= z && z <= pz + 1)
+			if(T(0,3) - 1 <= x && x <= T(0,3) + 1 && T(1,3) - 1 <= y && y <= T(1,3) + 1 && T(2,3) - 1 <= z && z <= T(2,3) + 1)
 			{
 				returnResult.push_back(fc);
 			}
@@ -592,9 +579,15 @@ std::vector<std::vector<float> > NAOKinematics::inverseHead(float px, float py, 
 
 std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(float px, float py, float pz, float rx, float ry, float rz)
 {
+	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	return inverseLeftHand(T);
+}
+
+std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(kmatTable targetPoint)
+{
 	std::vector<float> flh, empty;
 	std::vector<std::vector<float> > returnResult;
-	KMatTransf::makeTransformation(Tinit, px, py, pz, rx, ry, rz);
+	Tinit = targetPoint;
 	float startX = 0;
 	float startY = ShoulderOffsetY + ElbowOffsetY;
 	float startZ = ShoulderOffsetZ;
@@ -604,7 +597,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(float px, float 
 	float value2 = LowerArmLength + HandOffsetX; //113.7
 	float value3 = UpperArmLength; //to allo
 	//Calculate Theta 4
-	float distance = sqrt(pow(startX - px, 2) + pow(startY - py, 2) + pow(startZ - pz, 2));
+	float distance = sqrt(pow(startX - Tinit(0,3), 2) + pow(startY - Tinit(1,3), 2) + pow(startZ - Tinit(2,3), 2));
 	float theta4 = PI - acos((pow(side1, 2) + pow(side2, 2) - pow(distance, 2)) / (2 * side1 * side2));
 	theta4 = - theta4;
 
@@ -614,8 +607,8 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(float px, float 
 	float cth4 = cos(theta4);
 	float sth4 = sin(theta4);
 	//Calculate Theta 2
-	float equationForTheta2 = sin(rz) * sin(rx) * sin(ry) + cos(rz) * cos(rx);
-	float upForTheta2 = py - value1 - (equationForTheta2 * value2 * sth4) / cth4;
+	float equationForTheta2 = Tinit(1,1);
+	float upForTheta2 = T(1,3) - value1 - (equationForTheta2 * value2 * sth4) / cth4;
 	float downForTheta2 = value3 + value2 * cth4 + value2 * pow(sth4, 2) / cth4;
 	float theta2temp = acos(upForTheta2 / downForTheta2);
 
@@ -633,7 +626,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(float px, float 
 			theta2 = -theta2 + PI / 2;
 
 		//Calculate Theta 3
-		float equationForTheta3 = sin(rz) * sin(ry) * cos(rx) - cos(rz) * sin(rx);
+		float equationForTheta3 = Tinit(1,2);
 		float upForTheta3 = equationForTheta3;
 		float downForTheta3 = sin(theta2 - PI / 2);
 		float theta3temp = asin(upForTheta3 / downForTheta3);
@@ -651,8 +644,8 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(float px, float 
 				theta3 = posOrNegPI - theta3;
 
 			//Calculate Theta 1
-			float equation1ForTheta1 = cos(rz) * sin(ry) * cos(rx) + sin(rz) * sin(rx);
-			float equation2ForTheta1 = cos(ry) * cos(rx);
+			float equation1ForTheta1 = Tinit(0,2);
+			float equation2ForTheta1 = Tinit(2,2);
 			float theta1temp;
 
 			if(cos(theta3) == 0)
@@ -704,21 +697,20 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftHand(float px, float 
 	return returnResult;
 }
 
-
 std::vector<std::vector<float> > NAOKinematics::inverseRightHand(float px, float py, float pz, float rx, float ry, float rz)
+{
+	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	return inverseRightHand(T);
+}
+
+std::vector<std::vector<float> > NAOKinematics::inverseRightHand(kmatTable targetPoint)
 {
 	std::vector<float> frh, empty;
 	std::vector<std::vector<float> > returnResult;
 	//Rotate input to remvoe Rfix
-	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	T = targetPoint;
 	Tinit = T;
 	T *= RotRArmFixInv;
-	px = T(0, 3);
-	py = T(1, 3);
-	pz = T(2, 3);
-	rx = atan2(T(2, 1), T(2, 2));
-	ry = atan2(-T(2, 0), sqrt(pow(T(2, 1), 2) + pow(T(2, 2), 2)));
-	rz = atan2(T(1, 0), T(0, 0));
 	//continue with the rotated input
 	float startX = 0;
 	float startY = -ShoulderOffsetY - ElbowOffsetY;
@@ -729,7 +721,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightHand(float px, float
 	float value2 = LowerArmLength + HandOffsetX; //113.7
 	float value3 = UpperArmLength; //to allo
 	//Calculate Theta 4
-	float distance = sqrt(pow(startX - px, 2) + pow(startY - py, 2) + pow(startZ - pz, 2));
+	float distance = sqrt(pow(startX - T(0,3), 2) + pow(startY - T(1,3), 2) + pow(startZ - T(2,3), 2));
 	float theta4 = PI - acos((pow(side1, 2) + pow(side2, 2) - pow(distance, 2)) / (2 * side1 * side2));
 	theta4 = theta4;
 
@@ -739,8 +731,8 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightHand(float px, float
 	float cth4 = cos(theta4);
 	float sth4 = sin(theta4);
 	//Calculate Theta 2
-	float equationForTheta2 = sin(rz) * sin(rx) * sin(ry) + cos(rz) * cos(rx);
-	float upForTheta2 = - py - value1 - (equationForTheta2 * value2 * sth4) / cth4;
+	float equationForTheta2 = T(1,1);
+	float upForTheta2 = - T(1,3) - value1 - (equationForTheta2 * value2 * sth4) / cth4;
 	float downForTheta2 = value3 + value2 * cth4 + value2 * pow(sth4, 2) / cth4;
 	float theta2temp = acos(upForTheta2 / downForTheta2);
 
@@ -758,7 +750,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightHand(float px, float
 			theta2 = -theta2 - PI / 2;
 
 		//Calculate Theta 3
-		float equationForTheta3 = sin(rz) * sin(ry) * cos(rx) - cos(rz) * sin(rx);
+		float equationForTheta3 = T(1,2);
 		float upForTheta3 = equationForTheta3;
 		float downForTheta3 = sin(theta2 + PI / 2);
 		float theta3temp = asin(upForTheta3 / downForTheta3);
@@ -776,8 +768,8 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightHand(float px, float
 				theta3 = posOrNegPI - theta3;
 
 			//Calculate Theta 1
-			float equation1ForTheta1 = cos(rz) * sin(ry) * cos(rx) + sin(rz) * sin(rx);
-			float equation2ForTheta1 = cos(ry) * cos(rx);
+			float equation1ForTheta1 = T(0,2);
+			float equation2ForTheta1 = T(2,2);
 			float theta1temp;
 
 			if(cos(theta3) == 0)
@@ -832,9 +824,15 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightHand(float px, float
 
 std::vector<std::vector<float> > NAOKinematics::inverseLeftLeg(float px, float py, float pz, float rx, float ry, float rz)
 {
+	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	return inverseLeftLeg(T);
+}
+
+std::vector<std::vector<float> > NAOKinematics::inverseLeftLeg(kmatTable targetPoint)
+{
 	std::vector<float> fll, empty;
 	std::vector<std::vector<float> > returnResult;
-	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	T = targetPoint;
 	Tinit = T;
 	//Move the start point to the hipyawpitch point
 	base = TBaseLLegInv;
@@ -854,17 +852,14 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftLeg(float px, float p
 	float startZ = 0;
 	float side1 = ThighLength;
 	float side2 = TibiaLength;
-	float pxInvert = T(0, 3);
-	float pyInvert = T(1, 3);
-	float pzInvert = T(2, 3);
 	//Calculate Theta 4
-	float distance = sqrt(pow(startX - pxInvert, 2) + pow(startY - pyInvert, 2) + pow(startZ - pzInvert, 2));
+	float distance = sqrt(pow(startX -  T(0,3), 2) + pow(startY -  T(1,3), 2) + pow(startZ - T(2,3), 2));
 	float theta4 = PI - acos((pow(side1, 2) + pow(side2, 2) - pow(distance, 2)) / (2 * side1 * side2));
 
 	if(theta4 != theta4)
 		return returnResult;
 
-	float theta6 = atan(pyInvert / pzInvert);
+	float theta6 = atan(T(1,3) / T(2,3));
 
 	if(theta6 < LAnkleRollLow || theta6 > LAnkleRollHigh)
 		return returnResult;
@@ -1005,9 +1000,15 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftLeg(float px, float p
 
 std::vector<std::vector<float> > NAOKinematics::inverseRightLeg(float px, float py, float pz, float rx, float ry, float rz)
 {
+	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	return inverseRightLeg(T);
+}
+
+std::vector<std::vector<float> > NAOKinematics::inverseRightLeg(kmatTable targetPoint)
+{
 	std::vector<float> frl, empty;
 	std::vector<std::vector<float> > returnResult;
-	KMatTransf::makeTransformation(T, px, py, pz, rx, ry, rz);
+	T = targetPoint;
 	Tinit = T;
 	//Move the start point to the hipyawpitch point
 	base = TBaseRLegInv;
@@ -1027,17 +1028,14 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightLeg(float px, float 
 	float startZ = 0;
 	float side1 = ThighLength;
 	float side2 = TibiaLength;
-	float pxInvert = T(0, 3);
-	float pyInvert = T(1, 3);
-	float pzInvert = T(2, 3);
 	//Calculate Theta 4
-	float distance = sqrt(pow(startX - pxInvert, 2) + pow(startY - pyInvert, 2) + pow(startZ - pzInvert, 2));
+	float distance = sqrt(pow(startX - T(0,3), 2) + pow(startY - T(1,3), 2) + pow(startZ - T(2,3), 2));
 	float theta4 = PI - acos((pow(side1, 2) + pow(side2, 2) - pow(distance, 2)) / (2 * side1 * side2));
 
 	if(theta4 != theta4)
 		return returnResult;
 
-	float theta6 = atan(pyInvert / pzInvert);
+	float theta6 = atan(T(1,3) / T(2,3));
 
 	if(theta6 < RAnkleRollLow || theta6 > RAnkleRollHigh)
 		return returnResult;

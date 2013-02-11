@@ -42,7 +42,7 @@ namespace statechart_engine
 
 		Blackboard _blackboard;
 
-		XmlNode _xmlnode;
+		XmlManager _xmlnode;
 
 		ThreadPool _tp;
 

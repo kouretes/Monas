@@ -1,11 +1,14 @@
 #ifndef MOTION_CONTROLLER_H
 #define MOTION_CONTROLLER_H
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "architecture/executables/IActivity.h"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/Gamecontroller.pb.h"
+#include "messages/RoboCupGameControlData.h"
 
 #include "hal/robot/generic_nao/aldebaran-motion.h"
 
@@ -13,25 +16,18 @@
 #include <math.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
+
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "tools/XML.h"
-#include "tools/XMLConfig.h"
-#include "messages/RoboCupGameControlData.h"
-#include <vector>
+#include "tools/mathcommon.h"
+
 #include "ISpecialAction.h"
 #include "KmexManager.h"
 #include "KmexAction.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
-
-#ifndef TO_RAD
-#define TO_RAD 0.01745329f
-#endif
 
 using namespace boost::posix_time;
 using namespace std;
-//#define WEBOTS
-
 
 ACTIVITY_START
 class MotionController : public IActivity
@@ -39,7 +35,7 @@ class MotionController : public IActivity
 
 public:
 
-	MotionController(Blackboard &b, XmlNode &x);
+	MotionController(Blackboard &b, XmlManager &x);
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
@@ -83,16 +79,16 @@ private:
 	boost::shared_ptr<const  MotionWalkMessage> wm;
 	boost::shared_ptr<const  MotionHeadMessage> hm;
 	boost::shared_ptr<const  MotionActionMessage> am;
+	boost::shared_ptr<const  MotionStiffnessMessage> msm;
 
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const GameStateMessage>  gsm;
 
-	MotionActionMessage  * pam;
+	MotionActionMessage  *pam;
 	MotionStateMessage	sm;
-	AL::ALValue commands;//,stiffnessCommand;
+	AL::ALValue commands;
 
 	void testcommands();
-	void mglrun();
 	void read_messages();
 
 	void stopWalkCommand();
@@ -110,17 +106,16 @@ private:
 	vector<int> SpCutActionsManager();
 	vector<float> KGetAngles();
 	void createDCMAlias();
-	//void setStiffnessDCM(float s);
+
+
 	typedef std::map < std::string, boost::shared_ptr<ISpecialAction> > SpAssocCont;
 	typedef std::pair < std::string, boost::shared_ptr<ISpecialAction> > SpAsoocElement;
 	SpAssocCont SpActions;
-
 
 	typedef std::map < std::string, boost::shared_ptr<KmexAction> > SpCont;
 	typedef std::pair < std::string, boost::shared_ptr<KmexAction> > SpElement;
 	SpCont SpKmexActions;
 
-	std::string BodyID;
 	void readWalkParameters();
 	boost::posix_time::ptime standUpStartTime, timeLapsed;
 };

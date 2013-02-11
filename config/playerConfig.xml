@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<!--noKickOff, team color is red, for blue team color multiply posx, posy with -1 -->
+<noKickOff>
+	<!-- GoalKeeper-->
+	<player>
+		<number>1</number>
+		<x>-2.7</x>
+		<y>0.0</y>
+		<phi>0.0</phi>
+	</player>
+	<!-- Center-->
+	<player>
+		<number>2</number>
+		<x>-1.5</x>
+		<y>1.4</y>
+		<phi>0.0</phi>
+	</player>
+	<!-- Defender-->
+	<player>
+		<number>3</number>
+		<x>-1.5</x>
+		<y>-1.4</y>
+		<phi>0.0</phi>
+	</player>
+	<!-- Attacker-->
+	<player>
+		<number>4</number>
+		<x>-1.5</x>
+		<y>0.2</y>
+		<phi>0.0</phi>
+	</player>
+</noKickOff>
+<!--KickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
+<KickOff>
+	<!-- GoalKeeper-->
+	<player>
+		<number>1</number>
+		<x>-2.7</x>
+		<y>0.0</y>
+		<phi>0.0</phi>
+	</player>
+	<!-- Center-->
+	<player>
+		<number>2</number>
+		<x>-0.7</x>
+		<y>0.7</y>
+		<phi>0.0</phi>
+	</player>
+	<!-- Defender-->
+	<player>
+		<number>3</number>
+		<x>-0.7</x>
+		<y>0.7</y>
+		<phi>0.0</phi>
+	</player>
+	<!-- Attacker-->
+	<player>
+		<number>4</number>
+		<x>-0.4</x>
+		<y>0.0</y>
+		<phi>0.0</phi>
+	</player>
+</KickOff>
+<!--Ready positions-->
+<Ready>
+	<!-- GoalKeeper-->
+	<player>
+		<number>1</number>
+		<x>-2.4</x>
+		<y>-2.0</y>
+		<phi>90</phi>
+	</player>
+	<!-- Center-->
+	<player>
+		<number>2</number>
+		<x>-2.4</x>
+		<y>2.0</y>
+		<phi>270</phi>
+	</player>
+	<!-- Defender-->
+	<player>
+		<number>3</number>
+		<x>-1.2</x>
+		<y>-2.0</y>
+		<phi>90</phi>
+	</player>
+	<!-- Attacker-->
+	<player>
+		<number>4</number>
+		<x>-1.2</x>
+		<y>2.0</y>
+		<phi>270</phi>
+	</player>
+</Ready>

@@ -2,18 +2,17 @@
 #define KCCLABEL_H
 #include <QLabel>
 #include <QMouseEvent>
-class KccLabel : public QLabel
-{
+class KccLabel : public QLabel {
 	Q_OBJECT
 public:
-	KccLabel(QWidget *parent);
-	~KccLabel(){}
+	KccLabel (QWidget *parent);
+	~KccLabel() {}
 
 signals:
-	void clicked(QMouseEvent * event);
+	void clicked (QMouseEvent *event);
 
 protected:
-	void mousePressEvent ( QMouseEvent * event ) ;
+	void mousePressEvent ( QMouseEvent *event ) ;
 
 };
 #endif
