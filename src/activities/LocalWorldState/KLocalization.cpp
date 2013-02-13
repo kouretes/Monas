@@ -83,41 +83,18 @@ void KLocalization::setParticlesPoseUniformly()
 
 	float length = FieldMaxX * 2 / 3;
 	int resetParticles = 20;
-    int particlesUp = SIRParticles.size / 2 - resetParticles / 2;
-	int particlesDown = SIRParticles.size - particlesUp - resetParticles;
+  	int particlesUp = SIRParticles.size / 2 + resetParticles / 2 ;
+	int particlesDown = SIRParticles.size - particlesUp ;
 
-	//Initialize top Particles
-	for (int i = 0; i < resetParticles; i++)
-	{
-		float x=0, y=0;
-
-		if(playerNumber == 1)
-		{
-			y = 0;
-			x = -2.7;
-		}
-		else if(playerNumber == 2)
-		{
-			y = 1.2;
-			x = -2.4;
-		}
-		else if(playerNumber == 3)
-		{
-			y = -1.2;
-			x = -2.4;
-		}
-		else if(playerNumber == 4)
-		{
-			y = -0.4;
-			x = -2.4;
-		}
-
-		SIRParticles.x[i] = x;
-		SIRParticles.y[i] = y;
-		SIRParticles.phi[i] = TO_RAD(0);
+    //Initialize reset Particles
+	for (int i = 0; i < resetParticles; i++){
+		SIRParticles.x[i] = initX[1];
+		SIRParticles.y[i] = initY[1];
+		SIRParticles.phi[i] = initPhi[1];
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 
+	//Initialize top Particles
 	for (int i = resetParticles; i < particlesUp; i++)
 	{
 		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
