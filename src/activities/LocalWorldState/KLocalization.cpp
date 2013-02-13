@@ -34,54 +34,25 @@ int KLocalization::Initialize()
 	SIRParticles.phi = new float[partclsNum];
 	SIRParticles.Weight = new float[partclsNum];
 	maxWeightParticleIndex = 0;
-    actionOdError=0.f;
+    actionOdError = 0.0f;
 
     //set seed (current time)
     generator.seed(static_cast<unsigned int> (std::time(0)));
 	srand(time(0));
 
-	initializeParticles(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
+	InitializeParticles(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
 
 	cout << "\033[22;32m All Features Loaded \033[0m " << endl;
 	return 1;
 }
 
-void KLocalization::initParticles()
-{
-	 //uniform [0,1)
-    boost::uniform_real<> uni_dist(0,1);
-    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
-
-	float length = FieldMaxX * 2 / 3;
-	int particlesUp = SIRParticles.size / 2;
-	int particlesDown = SIRParticles.size - particlesUp;
-
-	//Initialize top Particles
-	for (int i = 0; i < particlesUp; i++)
-	{
-		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
-		SIRParticles.y[i] = FieldMaxY;
-		SIRParticles.phi[i] = TO_RAD(270);
-		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
-	}
-
-	//Initialize down Particles
-	for (int i = particlesUp; i < SIRParticles.size; i++)
-	{
-		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
-		SIRParticles.y[i] = -FieldMaxY;
-		SIRParticles.phi[i] = TO_RAD(90);
-		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
-	}
-}
-
-void KLocalization::setParticlesPoseUniformly()
+void KLocalization::SetParticlesPoseUniformly()
 {
 	//uniform [0,1)
-    boost::uniform_real<> uni_dist(0,1);
-    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+    boost::uniform_real<> uniDist(0,1);
+    boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
 
-	float length = FieldMaxX * 2 / 3;
+	float length = fieldMaxX * 2 / 3;
 	int resetParticles = 20;
   	int particlesUp = SIRParticles.size / 2 + resetParticles / 2 ;
 	int particlesDown = SIRParticles.size - particlesUp ;
@@ -97,8 +68,8 @@ void KLocalization::setParticlesPoseUniformly()
 	//Initialize top Particles
 	for (int i = resetParticles; i < particlesUp; i++)
 	{
-		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
-		SIRParticles.y[i] = FieldMaxY;
+		SIRParticles.x[i] = X() * length + fieldMinX + 0.5;
+		SIRParticles.y[i] = fieldMaxY;
 		SIRParticles.phi[i] = TO_RAD(270);
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
@@ -106,18 +77,18 @@ void KLocalization::setParticlesPoseUniformly()
 	//Initialize down Particles
 	for (int i = particlesUp; i < SIRParticles.size; i++)
 	{
-		SIRParticles.x[i] = X() * length + FieldMinX + 0.5;
-		SIRParticles.y[i] = -FieldMaxY;
+		SIRParticles.x[i] = X() * length + fieldMinX + 0.5;
+		SIRParticles.y[i] = -fieldMaxY;
 		SIRParticles.phi[i] = TO_RAD(90);
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 }
 
-void KLocalization::initializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi)
+void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi)
 {
 	if(resetType == LocalizationResetMessage::PENALISED || resetType == LocalizationResetMessage::UNIFORM)
 	{
-		setParticlesPoseUniformly();
+		SetParticlesPoseUniformly();
 	}
 	else if(resetType == LocalizationResetMessage::READY)
 	{
@@ -150,12 +121,10 @@ void KLocalization::initializeParticles(int resetType, bool kickOff, float inX, 
 }
 
 //Sequential Importance Resampling
-belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
+KLocalization::belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
 {
-	//SIR Filter
-	//int index[partclsNum];
-	bool weightsChanged = false;
 
+	bool weightsChanged = false;
 
 	//Predict - Move particles according the Prediction Model
 	if(MotionModel.freshData)
@@ -169,43 +138,37 @@ belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KOb
 	}
 	else if(AmbiguousObservations.size() == 1)
 	{
-		Update_Ambiguous(AmbiguousObservations, SIRParticles.size);
+		UpdateAmbiguous(AmbiguousObservations, SIRParticles.size);
 		weightsChanged = true;
 	}
-
 
 	//Resample and propagate
 	//Normalize Particles after resampling
 	//Find the index of the max weight in the process
 	if(weightsChanged)
 	{
-		rouletteResampleAndNormalize();
-
-		if(Observations.size() >= 1)
-		{
-			;//ForceBearing(SIRParticles,Observations);
-		}
+		RouletteResampleAndNormalize();
 	}
 
     if (weightsChanged || MotionModel.freshData){
-        AgentPosition=calculateAvg();
+        agentPosition=ComputeAvg();
     }
     /* Avg-Max
-	AgentPosition.x = SIRParticles.x[maxWeightParticleIndex]  ;
-	AgentPosition.y = SIRParticles.y[maxWeightParticleIndex] ;
-	AgentPosition.phi = SIRParticles.phi[maxWeightParticleIndex];*/
+	agentPosition.x = SIRParticles.x[maxWeightParticleIndex]  ;
+	agentPosition.y = SIRParticles.y[maxWeightParticleIndex] ;
+	agentPosition.phi = SIRParticles.phi[maxWeightParticleIndex];*/
 
 	//TODO only one value to determine confidance, Now its only distance confidence
-	AgentPosition.confidence = 0.0;
-	return AgentPosition;
+	agentPosition.confidence = 0.0;
+	return agentPosition;
 }
 
 
 void KLocalization::Predict(KMotionModel & MotionModel)
 {
 	float tmpDist, tmpDir, tmpRot;
-	boost::normal_distribution<> norm_dist(0,1);
-    boost::variate_generator<r_gen&, boost::normal_distribution<> > X(generator, norm_dist);
+	boost::normal_distribution<> normDist(0,1);
+    boost::variate_generator<randGen&, boost::normal_distribution<> > X(generator, normDist);
     
     //Move the particles with noise
 	for (int i = 0; i < SIRParticles.size; i++)
@@ -220,28 +183,28 @@ void KLocalization::Predict(KMotionModel & MotionModel)
 	}
 }
 
-float KLocalization::normpdf(float diff, float dev)
+float KLocalization::NormPdf(float diff, float dev)
 {
     float denominator = dev*sqrt(2*M_PI);
 	float exponential = exp(-((diff - 0)*(diff-0))/(2*dev*dev));
 	return exponential/denominator;
 }
 
-void KLocalization::spreadParticlesAfterFall()
+void KLocalization::SpreadParticlesAfterFall()
 {
-	boost::uniform_real<> uni_dist(0,1);
-    boost::variate_generator<r_gen&, boost::uniform_real<> > X(generator, uni_dist);
+	boost::uniform_real<> uniDist(0,1);
+    boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
 
-	int step = round((float) SIRParticles.size / NumberOfParticlesSpreadAfterFall);
+	int step = round((float) SIRParticles.size / numberOfParticlesSpreadAfterFall);
 
-	if (NumberOfParticlesSpreadAfterFall == 0)
+	if (numberOfParticlesSpreadAfterFall == 0)
 		return;
 
 	for (int i = 0; i < SIRParticles.size; i += step)
 	{
-		SIRParticles.x[i] += (X() - 0.5) * SpreadParticlesDeviationAfterFall;
-		SIRParticles.y[i] += (X() - 0.5) * SpreadParticlesDeviationAfterFall;
-		SIRParticles.phi[i] += (X() - 0.5) * TO_RAD(RotationDeviationAfterFallInDeg);
+		SIRParticles.x[i] += (X() - 0.5) * spreadParticlesDeviationAfterFall;
+		SIRParticles.y[i] += (X() - 0.5) * spreadParticlesDeviationAfterFall;
+		SIRParticles.phi[i] += (X() - 0.5) * TO_RAD(rotationDeviationAfterFallInDeg);
 	}
 }
 
@@ -261,28 +224,28 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 		for (unsigned int i = 0; i < Observation.size(); i++)
 		{
 			R = KMath::norm2(SIRParticles.x[p] - Observation[i].Feature.x, SIRParticles.y[p] - Observation[i].Feature.y);
-			OverallWeightEnemyField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
+			OverallWeightEnemyField *= NormPdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2(Observation[i].Feature.y - SIRParticles.y[p], Observation[i].Feature.x - SIRParticles.x[p]);
 			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-			OverallWeightEnemyField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
+			OverallWeightEnemyField *= NormPdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 			//we take the symetric yellow now, so we put a - to the x and y of the observation
 			R = KMath::norm2(SIRParticles.x[p] - (-Observation[i].Feature.x), SIRParticles.y[p] - (-Observation[i].Feature.y));
-			OverallWeightOwnField *= normpdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
+			OverallWeightOwnField *= NormPdf((Observation[i].Distance.val - Observation[i].Distance.Emean) - R, Observation[i].Distance.Edev);
 			ParticlePointBearingAngle = atan2((-Observation[i].Feature.y) - SIRParticles.y[p], (-Observation[i].Feature.x) - SIRParticles.x[p]);
 			ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-			OverallWeightOwnField *= normpdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
+			OverallWeightOwnField *= NormPdf(anglediff(Observation[i].Bearing.val, ParticleBearing), Observation[i].Bearing.Edev);
 		}
 
 		OverallWeightTotal = (OverallWeightOwnField > OverallWeightEnemyField) ? OverallWeightOwnField : OverallWeightEnemyField;
-		//totalWeight = OverallWeightYellowYellow + OverallWeight;
+
 		OverallWeightTotal = (OverallWeightTotal < 0.0001) ? 0.0001 : OverallWeightTotal;
 		SIRParticles.Weight[p] = OverallWeightTotal;
 	}
 }
-void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int NumofParticles)
+void KLocalization::UpdateAmbiguous(vector<KObservationModel> &Observation, int NumofParticles)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
-	float OverallWeight, ParticlePointBearingAngle, ParticleBearing, Deviation;
+	float ParticlePointBearingAngle, ParticleBearing;
 	float AdditiveWeightTotal = 0, AdditiveOwnField = 0, AdditiveEnemyField = 0;
 	float R;
 	float xPosOfFeature 	= Observation[0].Feature.x;
@@ -302,40 +265,40 @@ void KLocalization::Update_Ambiguous(vector<KObservationModel> &Observation, int
 		AdditiveOwnField = 1;
 		//Enemy Left
 		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - yPosOfFeature);
-		AdditiveEnemyField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		AdditiveEnemyField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(yPosOfFeature - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveEnemyField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		AdditiveEnemyField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
 		AdditiveWeightTotal += AdditiveEnemyField;
 		AdditiveEnemyField = 1;
 		//Enemy Right
 		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - (-yPosOfFeature));
-		AdditiveEnemyField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		AdditiveEnemyField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2((-yPosOfFeature) - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveEnemyField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		AdditiveEnemyField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
 		AdditiveWeightTotal += AdditiveEnemyField;
 		//Own Left
 		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-yPosOfFeature));
-		AdditiveOwnField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		AdditiveOwnField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-yPosOfFeature - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveOwnField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		AdditiveOwnField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
 		AdditiveWeightTotal += AdditiveOwnField;
 		AdditiveOwnField = 1;
 		//Own Right
 		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-(-yPosOfFeature)));
-		AdditiveOwnField *= normpdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		AdditiveOwnField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-(-yPosOfFeature) - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveOwnField *= normpdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		AdditiveOwnField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
 		AdditiveWeightTotal += AdditiveOwnField;
 		AdditiveWeightTotal = (AdditiveWeightTotal < 0.0001) ? 0.0001 : AdditiveWeightTotal;
 		SIRParticles.Weight[p] = AdditiveWeightTotal;
 	}
 }
 
-belief KLocalization::calculateAvg(){
+KLocalization::belief KLocalization::ComputeAvg(){
     belief agentPos;
     float aCos=0,aSin=0;
 
@@ -358,7 +321,7 @@ belief KLocalization::calculateAvg(){
 }
 
 
-void KLocalization::rouletteResampleAndNormalize()
+void KLocalization::RouletteResampleAndNormalize()
 {
 
 	float sum = 0;
@@ -407,88 +370,5 @@ void KLocalization::rouletteResampleAndNormalize()
 		SIRParticles.Weight[i] = newWeight;
 		SIRParticles.x[i] = tempX[i];
 		SIRParticles.y[i] = tempY[i];
-	}
-}
-
-float KLocalization::circular_mean_angle(float *angles, unsigned int size)
-{
-	float x = 0;
-	float y = 0;
-
-	for (unsigned int i = 0; i < size; i++)
-	{
-		x += cos(angles[i]);
-		y += sin(angles[i]);
-	}
-
-	x = x / (float) size;
-	y = y / (float) size;
-	return atan2(y, x);
-}
-
-//Bad idea for 2 yellow goals
-void KLocalization::ForceBearing(vector<KObservationModel> &Observation)
-{
-	//Calculate the bearing from each particle from each Observation
-	//Force Bearing under some criteria
-	float ParticlePointBearingAngle;
-    int index;
-
-	if (Observation.size() > 1)
-	{
-		float * angles = new float[Observation.size()];
-
-		//for the real one
-		do
-		{
-			index = rand() % SIRParticles.size;
-		}
-		while(index == maxWeightParticleIndex);
-
-		for (unsigned int o = 0; o < Observation.size(); o++)
-		{
-			ParticlePointBearingAngle = atan2(Observation[o].Feature.y - SIRParticles.y[index], Observation[o].Feature.x - SIRParticles.x[index]);
-			angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
-		}
-
-		SIRParticles.phi[index] = circular_mean_angle(angles, Observation.size());
-
-		//for the symetric one
-		do
-		{
-			index = rand() % SIRParticles.size;
-		}
-		while(index == maxWeightParticleIndex);
-
-		for (unsigned int o = 0; o < Observation.size(); o++)
-		{
-			ParticlePointBearingAngle = atan2(-Observation[o].Feature.y - SIRParticles.y[index], -Observation[o].Feature.x - SIRParticles.x[index]);
-			angles[o] = anglediff2(ParticlePointBearingAngle, Observation[o].Bearing.val);
-		}
-
-		SIRParticles.phi[index] = circular_mean_angle(angles, Observation.size());
-		delete angles;
-	}
-	else if (Observation.size() == 1)
-	{
-		//for the real one
-		do
-		{
-			index = rand() % SIRParticles.size;
-		}
-		while(index == maxWeightParticleIndex);
-
-		ParticlePointBearingAngle = atan2(Observation[0].Feature.y - SIRParticles.y[index], Observation[0].Feature.x - SIRParticles.x[index]);
-		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
-
-		//for the symetric one
-		do
-		{
-			index = rand() % SIRParticles.size;
-		}
-		while(index == maxWeightParticleIndex);
-
-		ParticlePointBearingAngle = atan2(-Observation[0].Feature.y - SIRParticles.y[index], -Observation[0].Feature.x - SIRParticles.x[index]);
-		SIRParticles.phi[index] = anglediff2(ParticlePointBearingAngle, Observation[0].Bearing.val);
 	}
 }

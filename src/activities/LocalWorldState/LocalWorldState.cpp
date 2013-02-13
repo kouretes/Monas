@@ -91,7 +91,7 @@ int LocalWorldState::Execute()
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
-			localizationWorld.spreadParticlesAfterFall();
+			localizationWorld.SpreadParticlesAfterFall();
 		}
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 		return 0;
@@ -99,7 +99,7 @@ int LocalWorldState::Execute()
 		fallBegan = true;
 	if (lrm != 0){
 		timeStart = boost::posix_time::microsec_clock::universal_time();
-		localizationWorld.initializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
+		localizationWorld.InitializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
 	}
 
 	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
@@ -124,7 +124,7 @@ int LocalWorldState::Execute()
 	return 0;
 }
 
-void LocalWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
+void LocalWorldState::calculate_ball_estimate(KLocalization::KMotionModel const & robotModel)
 {
 	boost::posix_time::time_duration duration;
 	boost::posix_time::ptime observation_time;
@@ -237,7 +237,7 @@ void LocalWorldState::ProcessMessages()
 	}
 	if (obsm != 0)
 	{
-		KObservationModel tmpOM;
+		KLocalization::KObservationModel tmpOM;
 		//Load observations
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
@@ -293,7 +293,7 @@ void LocalWorldState::ProcessMessages()
 
 }
 
-void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
+void LocalWorldState::RobotPositionMotionModel(KLocalization::KMotionModel & MModel)
 {
 	if (firstOdometry)
 	{
@@ -348,7 +348,7 @@ void LocalWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 
 void LocalWorldState::ReadFeatureConf()
 {
-    feature temp;
+    KLocalization::feature temp;
     float x,y,weight;
     string ID;
 	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
@@ -366,19 +366,19 @@ void LocalWorldState::ReadFeatureConf()
 void LocalWorldState::ReadLocConf()
 {
     localizationWorld.partclsNum=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
-    localizationWorld.SpreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
-    localizationWorld.rotation_deviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
-    localizationWorld.PercentParticlesSpread=atoi(_xml.findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
-    localizationWorld.RotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
-    localizationWorld.NumberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
+    localizationWorld.spreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
+    localizationWorld.rotationDeviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
+    localizationWorld.percentParticlesSpread=atoi(_xml.findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
+    localizationWorld.rotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
+    localizationWorld.numberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
 }
 
 void LocalWorldState::ReadFieldConf()
 {
-    localizationWorld.FieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
-    localizationWorld.FieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
-    localizationWorld.FieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
-    localizationWorld.FieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+    localizationWorld.fieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+    localizationWorld.fieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
+    localizationWorld.fieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+    localizationWorld.fieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
 }
 
 void LocalWorldState::ReadTeamConf()
@@ -450,7 +450,7 @@ void LocalWorldState::Send_LocalizationData()
 	}
 }
 
-int LocalWorldState::LocalizationData_Load(vector<KObservationModel>& Observation, KMotionModel & MotionModel)
+int LocalWorldState::LocalizationData_Load(vector<KLocalization::KObservationModel>& Observation,KLocalization::KMotionModel & MotionModel)
 {
 	bool addnewptrs = false;
 	//Fill the world with data!
