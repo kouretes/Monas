@@ -15,8 +15,11 @@
 #include "architecture/archConfig.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
+
 using namespace boost;
 using namespace KMath;
+using namespace boost::posix_time;
+
 KLocalization::KLocalization()
 {
 }
@@ -86,6 +89,16 @@ void KLocalization::SetParticlesPoseUniformly()
 
 void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi)
 {
+    //Initialize particle related parameters
+    boost::uniform_real<> uniDist(0,1);
+	boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
+	augMCL.firstUpdate==true;
+    augMCL.avgLikelihood=1;
+    augMCL.shortHist=1;
+    augMCL.longHist=1;
+	maxWeightParticleIndex = 0;
+
+
 	if(resetType == LocalizationResetMessage::PENALISED || resetType == LocalizationResetMessage::UNIFORM)
 	{
 		SetParticlesPoseUniformly();
@@ -104,8 +117,8 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
 	{
 		for (int i = 0; i < SIRParticles.size; i++)
 		{
-			SIRParticles.x[i] = initX[(kickOff) ? 0 : 1] + ((float)rand() / (float)RAND_MAX) * 0.2 - 0.1;
-			SIRParticles.y[i] = initY[(kickOff) ? 0 : 1] + ((float)rand() / (float)RAND_MAX) * 0.2 - 0.1;
+		    SIRParticles.x[i] = initX[(kickOff) ? 0 : 1] + X() * 0.1;
+			SIRParticles.y[i] = initY[(kickOff) ? 0 : 1] + X() * 0.1;
 			SIRParticles.phi[i] = initPhi[(kickOff) ? 0 : 1];
 			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
@@ -124,7 +137,7 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
 KLocalization::belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
 {
 
-	bool weightsChanged = false;
+	weightsChanged = false;
 
 	//Predict - Move particles according the Prediction Model
 	if(MotionModel.freshData)
@@ -134,21 +147,29 @@ KLocalization::belief KLocalization::LocalizationStepSIR(KMotionModel & MotionMo
 	if(Observations.size() >= 1)
 	{
 		Update(Observations, SIRParticles.size);
+        if (Observations.size()==1 && augMCL.enable == true){
+			windowObservations.push_back(Observations[0]);
+		}
 		weightsChanged = true;
 	}
 	else if(AmbiguousObservations.size() == 1)
 	{
 		UpdateAmbiguous(AmbiguousObservations, SIRParticles.size);
+        if (augMCL.enable == true){
+		    windowObservations.push_back(AmbiguousObservations[0]);
+        }
 		weightsChanged = true;
 	}
+
+    if (augMCL.enable == true)
+	    windowObservationsUpdate();
 
 	//Resample and propagate
 	//Normalize Particles after resampling
 	//Find the index of the max weight in the process
-	if(weightsChanged)
-	{
-		RouletteResampleAndNormalize();
-	}
+	if(weightsChanged){
+		RouletteResampleAndNormalize(Observations);
+ 	}
 
     if (weightsChanged || MotionModel.freshData){
         agentPosition=ComputeAvg();
@@ -163,6 +184,12 @@ KLocalization::belief KLocalization::LocalizationStepSIR(KMotionModel & MotionMo
 	return agentPosition;
 }
 
+void KLocalization::windowObservationsUpdate(){
+	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+
+    if (windowObservations.size()>0 && windowObservations.front().observationTime < now - seconds(augMCL.winDuration))
+        windowObservations.clear();
+}
 
 void KLocalization::Predict(KMotionModel & MotionModel)
 {
@@ -179,7 +206,7 @@ void KLocalization::Predict(KMotionModel & MotionModel)
 
         SIRParticles.x[i] = SIRParticles.x[i] + cos(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.y[i] = SIRParticles.y[i] + sin(tmpDir + SIRParticles.phi[i]) * tmpDist;
-		SIRParticles.phi[i] = SIRParticles.phi[i] + tmpRot + actionOdError;
+		SIRParticles.phi[i] =wrapTo2Pi(SIRParticles.phi[i] + tmpRot + actionOdError);
 	}
 }
 
@@ -214,6 +241,7 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 	float OverallWeightOwnField, OverallWeightEnemyField, OverallWeightTotal;
 	float ParticlePointBearingAngle, ParticleBearing;
 	float R;
+	float weightSum = 0.0f;
 
 	for (int p = 0; p < NumofParticles; p++)
 	{
@@ -238,15 +266,23 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 
 		OverallWeightTotal = (OverallWeightOwnField > OverallWeightEnemyField) ? OverallWeightOwnField : OverallWeightEnemyField;
 
+
+        if (Observation.size()==1){
+            weightSum+= (OverallWeightOwnField > OverallWeightEnemyField) ? OverallWeightOwnField : OverallWeightEnemyField ;
+        }
+
 		OverallWeightTotal = (OverallWeightTotal < 0.0001) ? 0.0001 : OverallWeightTotal;
 		SIRParticles.Weight[p] = OverallWeightTotal;
 	}
+
+    if (Observation.size()==1)
+	    updateLikelihoodHist(weightSum);
+
 }
 void KLocalization::UpdateAmbiguous(vector<KObservationModel> &Observation, int NumofParticles)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
 	float ParticlePointBearingAngle, ParticleBearing;
-	float AdditiveWeightTotal = 0, AdditiveOwnField = 0, AdditiveEnemyField = 0;
 	float R;
 	float xPosOfFeature 	= Observation[0].Feature.x;
 	float yPosOfFeature 	= Observation[0].Feature.y;
@@ -256,55 +292,66 @@ void KLocalization::UpdateAmbiguous(vector<KObservationModel> &Observation, int 
 	float obsBearingEdev 	= Observation[0].Bearing.Edev;
 	float obsBearingValue 	= Observation[0].Bearing.val;
 
+    float weightSum = 0.0f;
+    float overallWeight, weight;
+
 	//Find the best candiate for the landmark
 	for (int p = 0; p < NumofParticles; p++)
 	{
-		AdditiveWeightTotal = 0;
-		float oldWeight = SIRParticles.Weight[p];
-		AdditiveEnemyField = 1;
-		AdditiveOwnField = 1;
+		overallWeight = 1;
+
 		//Enemy Left
 		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - yPosOfFeature);
-		AdditiveEnemyField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		overallWeight *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(yPosOfFeature - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveEnemyField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveEnemyField;
-		AdditiveEnemyField = 1;
+		overallWeight *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+		weight = overallWeight;
+
+		overallWeight = 1;
 		//Enemy Right
 		R = norm2(SIRParticles.x[p] - xPosOfFeature, SIRParticles.y[p] - (-yPosOfFeature));
-		AdditiveEnemyField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		overallWeight *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2((-yPosOfFeature) - SIRParticles.y[p], xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveEnemyField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveEnemyField;
+		overallWeight *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+        weight = (overallWeight > weight ) ? overallWeight : weight;
+
+		overallWeight = 1;
 		//Own Left
 		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-yPosOfFeature));
-		AdditiveOwnField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		overallWeight *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-yPosOfFeature - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveOwnField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveOwnField;
-		AdditiveOwnField = 1;
+		overallWeight *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+        weight = (overallWeight > weight ) ? overallWeight : weight;
+
+		overallWeight = 1;
 		//Own Right
 		R = norm2(SIRParticles.x[p] - (-xPosOfFeature), SIRParticles.y[p] - (-(-yPosOfFeature)));
-		AdditiveOwnField *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
+		overallWeight *= NormPdf((obsDistValue - obsDistEmean) - R, obsDistEdev);
 		ParticlePointBearingAngle = atan2(-(-yPosOfFeature) - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
-		AdditiveOwnField *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-		AdditiveWeightTotal += AdditiveOwnField;
-		AdditiveWeightTotal = (AdditiveWeightTotal < 0.0001) ? 0.0001 : AdditiveWeightTotal;
-		SIRParticles.Weight[p] = AdditiveWeightTotal;
+		overallWeight *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
+        
+        weight = (overallWeight > weight ) ? overallWeight : weight;
+        weightSum+=weight;
+		
+        weight = (weight < 0.0001) ? 0.0001 : weight;
+		SIRParticles.Weight[p] = weight;
 	}
+
+    //augmented MCL update short and long likelihood
+	updateLikelihoodHist(weightSum);
 }
 
 KLocalization::belief KLocalization::ComputeAvg(){
     belief agentPos;
-    float aCos=0,aSin=0;
+    float aCos = 0.0f ,aSin = 0.0f;
 
-    agentPos.x=0;
-    agentPos.y=0;
-    agentPos.phi=0;
+    agentPos.x = 0.0f;
+    agentPos.y = 0.0f;
+    agentPos.phi = 0.0f;
 
 	for (int i = 0; i < SIRParticles.size; i++){
         agentPos.x+=SIRParticles.x[i];
@@ -320,17 +367,39 @@ KLocalization::belief KLocalization::ComputeAvg(){
     return agentPos;
 }
 
+void KLocalization::updateLikelihoodHist(float weightSum){
+	if (augMCL.enable == true){
+		if (augMCL.firstUpdate == true)
+		{
+			augMCL.firstUpdate = false;
+			augMCL.avgLikelihood = weightSum/SIRParticles.size;
+			augMCL.shortHist = augMCL.avgLikelihood;
+			augMCL.longHist = augMCL.avgLikelihood;
+		}
+		else{
+			augMCL.avgLikelihood = weightSum/SIRParticles.size;
+			augMCL.shortHist = augMCL.shortHist+augMCL.afast*(augMCL.avgLikelihood-augMCL.shortHist);
+			augMCL.longHist = augMCL.longHist+augMCL.aslow*(augMCL.avgLikelihood-augMCL.longHist);
+		}
+        //cout << "Long-Hisory average" << augMCL.longHist << endl;
+        //cout << "Short-Hisory average" << augMCL.shortHist << endl;
+	}
+}
 
-void KLocalization::RouletteResampleAndNormalize()
+void KLocalization::RouletteResampleAndNormalize(vector<KObservationModel>& Observations)
 {
+//uniform [0,1)
+    boost::uniform_real<> uniDist(0,1);
+    boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
 
-	float sum = 0;
-	float max = -1;
+	float preset;
+	float sum = 0.0f;
+	float maxWeight = -1;
 	for (int i = 0; i < SIRParticles.size; i++){
 		sum += SIRParticles.Weight[i];
 	}
 
-	float r = (rand() / ((float)RAND_MAX))*sum;
+	float r = X() * sum;
 	r = r / SIRParticles.size;
 	float cumSum = SIRParticles.Weight[0];
 	float step = sum / ((float)SIRParticles.size);
@@ -338,6 +407,15 @@ void KLocalization::RouletteResampleAndNormalize()
 	float tempX[SIRParticles.size];
 	float tempY[SIRParticles.size];
 	float tempPhi[SIRParticles.size];
+	partcl genParticle;
+
+	preset=max(0.0f, 0.5f * (1.0f - augMCL.shortHist/augMCL.longHist) );
+    if (Observations.size()==2 && augMCL.enable == true ){
+        genParticle = generateParticle( Observations);
+    }
+    else if (windowObservations.size()>1 && augMCL.enable == true ){
+        genParticle = generateParticleWindow(windowObservations);
+    }
 
 	for (int m = 0; m < SIRParticles.size; m++)
 	{
@@ -348,17 +426,32 @@ void KLocalization::RouletteResampleAndNormalize()
 			cumSum += SIRParticles.Weight[i];
 		}
 
-        //find max weight particle index
-        if(SIRParticles.Weight[i] > max)
+		//find max weight particle index
+		if(SIRParticles.Weight[i] > maxWeight)
 		{
-			max = SIRParticles.Weight[i];
+			maxWeight = SIRParticles.Weight[i];
 			maxWeightParticleIndex = m;
 		}
 
 		r += step;
-		tempX[m] = SIRParticles.x[i];
-		tempY[m] = SIRParticles.y[i];
-		tempPhi[m] = SIRParticles.phi[i];
+
+        if (Observations.size()==2  && X() < preset && augMCL.enable== true && genParticle.valid == true){
+            //cout << "Particle Generated from Unumbiguous Observation" << endl;
+            tempX[m] = genParticle.x + X() * 0.1;
+			tempY[m] = genParticle.y + X() * 0.1;
+			tempPhi[m] = genParticle.phi + X() * 0.1;
+        }
+        else if (windowObservations.size()>1 && X() < preset && augMCL.enable == true && genParticle.valid == true){
+            //cout << "Particle Generated from Umbiguous Observation" << endl;
+            tempX[m] = genParticle.x + X() * 0.1;
+			tempY[m] = genParticle.y + X() * 0.1;
+			tempPhi[m] = genParticle.phi + X() * 0.1;
+		}
+		else{
+			tempX[m] = SIRParticles.x[i];
+			tempY[m] = SIRParticles.y[i];
+			tempPhi[m] = SIRParticles.phi[i];
+		}
 	}
 
 	float newWeight = 1.0 / SIRParticles.size;
@@ -371,4 +464,213 @@ void KLocalization::RouletteResampleAndNormalize()
 		SIRParticles.x[i] = tempX[i];
 		SIRParticles.y[i] = tempY[i];
 	}
+}
+
+vector<float> KLocalization::circleIntersection (KObservationModel& obs1 , KObservationModel& obs2){
+	float p2x,p2y,p1x,p1y,p3x,p3y;
+    float bearing1,bearing2,radius1,radius2;
+	float h;
+
+    //Circles have two intersection points
+    vector<float> intersPoint1(2),intersPoint2(2);
+   
+    //Goal post size
+	float centreDist=fabs(obs1.Feature.y-obs2.Feature.y);
+   
+    //Circle radius
+    radius1 = obs1.Distance.val;
+	radius2 = obs2.Distance.val;
+
+    //Circle centre
+    p1x = obs1.Feature.x;
+    p1y = obs1.Feature.y;
+
+    //Circle centre
+    p2x = obs2.Feature.x;
+    p2y = obs2.Feature.y;
+
+    //Goal posts bearing
+    bearing1 = obs1.Bearing.val;
+    bearing2 = obs2.Bearing.val;
+
+    float alpha = ( pow(radius1,2) - pow(radius2,2) + pow(centreDist,2) ) / ( 2 * centreDist);
+	h = sqrt( pow(radius1,2) - pow(alpha,2) );
+	
+    p3x = p1x + alpha * (p2x - p1x) / centreDist;
+	p3y = p1y + alpha * (p2y - p1y) / centreDist;
+    
+    //x coordinate
+	intersPoint1[0] = p3x + h *(p2y - p1y) / centreDist;
+    //y coordinate
+	intersPoint1[1] = p3y - h *(p2x - p1x) / centreDist;
+
+    //x coordinate
+	intersPoint2[0] = p3x - h *(p2y - p1y) / centreDist;
+    //y coordinate
+	intersPoint2[1] = p3y + h *(p2x - p1x) / centreDist;
+
+    return (intersPoint1[0] > 0 && intersPoint1[0] < 3) ? intersPoint1 : intersPoint2;
+} 
+
+KLocalization::partcl KLocalization::generateParticle(vector<KObservationModel>& Observations){
+
+	partcl pEnemyField,pOwnField,result;
+	float R1,R2,Threshold = 1;
+    vector<float> intersPoint(2);
+
+	float centreDist = fabs(KFeaturesmap["YellowLeft"].y - KFeaturesmap["YellowRight"].y);
+
+    if (centreDist < fabs(Observations[0].Distance.val-Observations[1].Distance.val) ){
+        //No solution 
+        //cout<< "No solution..." << endl;
+	    result.valid = false;
+	    return result;
+    }
+		
+    //Position based on two observations
+    intersPoint = circleIntersection(Observations[0],Observations[1]);
+
+    //Possible robot position
+	pEnemyField.x = intersPoint[0];
+	pEnemyField.y = intersPoint[1];
+	pEnemyField.phi = anglediff2(atan2(Observations[0].Feature.y-pEnemyField.y,Observations[0].Feature.x-pEnemyField.x),Observations[0].Bearing.val);
+
+    //The symmetric one
+    pOwnField.x = -pEnemyField.x;
+  	pOwnField.y = -pEnemyField.y;
+	pOwnField.phi = pEnemyField.phi + TO_RAD(180);
+
+	//Compare with the current position
+	R1 = norm2(agentPosition.x-pEnemyField.x,agentPosition.y-pEnemyField.y);
+	R2 = norm2(agentPosition.x-pOwnField.x,agentPosition.y-pOwnField.y);
+    
+	if ( fabs(pOwnField.x)>fieldMaxX || fabs(pOwnField.y)>fieldMaxY ){
+		//No solution (Out of the Field)
+        //cout << "No solution (Out of the Field) ..." << endl;
+	    result.valid = false;
+		return result;
+	}
+    else if (R1 + Threshold < R2 ){
+        //cout<< "Looking at enemy's goalposts" << endl;
+		result = pEnemyField;
+	    result.valid = true;
+		return result;
+	}
+	else if (R2 + Threshold < R1){
+        //cout<< "Looking at our goalposts" << endl;
+		result = pOwnField;
+	    result.valid = true;
+		return result;
+	}
+	else{
+		//Failed to generate! Risky
+        //cout << "Failed to generate! Risky ..." << endl;
+	    result.valid = false;
+		return result;
+	}
+}
+
+
+KLocalization::partcl KLocalization::generateParticleWindow(vector<KObservationModel>& Observations){
+	boost::uniform_int<> uniInt(0,Observations.size()-1);
+	boost::variate_generator<randGen&, boost::uniform_int<> > Y(generator,uniInt);
+
+    vector<float> intersPoint(2);
+
+	KObservationModel goalPost1;
+	KObservationModel goalPost2;
+
+	int tries = 0;
+	float centreDist = fabs(KFeaturesmap["YellowLeft"].y - KFeaturesmap["YellowRight"].y);
+    //cout << "centreDist : " << centreDist << endl;
+	
+    float phi1,phi2;
+	partcl pEnemyField,pOwnField,result;
+	float R1,R2,Threshold = 2;
+
+	while ( tries < 3){
+        //cout << "Try number : " << tries << endl;
+   		goalPost1 = Observations[Y()];
+		goalPost2 = Observations[Y()];
+
+        if (centreDist > fabs(goalPost1.Distance.val-goalPost2.Distance.val) ){
+            //Pick two different goal posts
+		    while(goalPost1.observationTime==goalPost2.observationTime){
+			    goalPost2 =  Observations[Y()];
+                //cout << "Pick another pair " << endl;            
+            }
+
+		    //GoalPost1 is left
+		    if (wrapToPi(goalPost1.Bearing.val) > wrapToPi(goalPost2.Bearing.val)){
+                goalPost1.Feature.x = KFeaturesmap["YellowLeft"].x;
+			    goalPost1.Feature.y = KFeaturesmap["YellowLeft"].y;
+
+			    goalPost2.Feature.x = KFeaturesmap["YellowRight"].x;
+			    goalPost2.Feature.y = KFeaturesmap["YellowRight"].y;
+		    }
+		    //GoalPost1 is right
+		    else{
+			    goalPost1.Feature.x = KFeaturesmap["YellowRight"].x;
+			    goalPost1.Feature.y = KFeaturesmap["YellowRight"].y;
+
+                goalPost2.Feature.x = KFeaturesmap["YellowLeft"].x;
+			    goalPost2.Feature.y = KFeaturesmap["YellowLeft"].y;
+		    }
+
+            //Position based on two observations
+            intersPoint = circleIntersection(goalPost1,goalPost2);
+
+            //Possible robot position
+	        pEnemyField.x = intersPoint[0];
+	        pEnemyField.y = intersPoint[1];
+
+            //Check if position is consistent with observations
+            phi1 = anglediff2(atan2(goalPost1.Feature.y-pEnemyField.y,goalPost1.Feature.x-pEnemyField.x),goalPost1.Bearing.val);
+		    phi2 = anglediff2(atan2(goalPost2.Feature.y-pEnemyField.y,goalPost2.Feature.x-pEnemyField.x),goalPost2.Bearing.val);  
+
+		    if ( fabs(anglediff2(phi1,phi2)) < TO_RAD(5)){
+			    pEnemyField.phi=phi1;
+
+			    pOwnField.x = -pEnemyField.x;
+			    pOwnField.y = -pEnemyField.y;
+			    pOwnField.phi = pEnemyField.phi + TO_RAD(180);
+
+			    R1 = norm2(agentPosition.x-pEnemyField.x,agentPosition.y-pEnemyField.y);
+			    R2 = norm2(agentPosition.x-pOwnField.x,agentPosition.y-pOwnField.y);
+
+	            if ( fabs(pOwnField.x)>fieldMaxX || fabs(pOwnField.y)>fieldMaxY ){
+				    //No solution! (out of the field)
+                    //cout << "No solution (Out of the Field) ..." << endl;
+				    result.valid = false;
+				    return result;
+			    }
+			    else if (R1 + Threshold <R2 ){
+				    result.valid = true;
+				    result = pEnemyField;
+				    return result;
+			    }
+			    else if (R2 + Threshold <R1){
+                    //cout<< "Looking at our goalposts" << endl;
+				    result.valid = true;
+				    result = pOwnField;
+				    return result;
+			    }
+			    else{
+                    //cout << "No solution (Risky) ..." << endl;
+				    result.valid = false;
+				    return result;
+			    }
+		    }
+            else{
+                tries++;
+            }
+        }
+        else{
+            tries++;
+        }
+	}
+
+    //Failed to generate particle
+	result.valid = false;
+	return result;
 }

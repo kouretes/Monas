@@ -20,7 +20,7 @@
 #include "tools/mathcommon.h"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
-
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "messages/RoboCupPlayerData.h"
 #include "messages/WorldInfo.pb.h"
 
@@ -62,12 +62,15 @@ public:
 	    float y;
 	    float phi;
 	    float Weight;
+        bool valid;
+
 	    pvar()
 	    {
 		    x = 0;
 		    y = 0;
 		    phi = 0;
 		    Weight = 0;
+            valid=false;
 	    }
 	    bool operator<(const struct pvar &other) const
 	    {
@@ -140,8 +143,23 @@ public:
 	    feature Feature;
 	    randvar Distance;
 	    randvar Bearing;
+	    boost::posix_time::ptime observationTime;
     } KObservationModel;
 
+    //Augmented mcl
+    typedef struct AMCL{
+        float avgLikelihood;
+        float shortHist;
+        float longHist;
+
+        //Parameters to estimate the long-term, and short-term, averages respectively 
+        float aslow;
+        float afast;
+
+        int firstUpdate;
+        int enable;
+        int winDuration;
+    }AugMCL;
 
     /**
 	 * @struct blf
@@ -166,6 +184,7 @@ public:
     float actionOdError;
     randGen generator;
 
+    bool weightsChanged;
 
 	float numberOfParticlesSpreadAfterFall;
 	float rotationDeviation;
@@ -199,6 +218,10 @@ public:
 
 	//map with all the features we read from an xml
 	map<string, feature> KFeaturesmap;
+
+    AugMCL augMCL;
+
+    vector<KObservationModel> windowObservations;
 
 	KLocalization();
 	virtual ~KLocalization();
@@ -241,7 +264,7 @@ public:
     /**
 	 * @brief This function resamples the particles with the new weigths and reposition the particles given the new weights
 	 */
-	void RouletteResampleAndNormalize();
+	void RouletteResampleAndNormalize(vector<KObservationModel>& Observations);
 
     /**
 	 * @brief Sets the particles to the initial positions
@@ -262,6 +285,22 @@ public:
 	 * @brief Computes an average over the particles
 	 */
     belief ComputeAvg();
+
+    /**
+	 * @brief Generate particle from a single frame
+	 */
+    partcl generateParticle(vector<KObservationModel>& Observations);
+
+    /**
+	 * @brief Generate particle from single observations
+	 */
+    partcl generateParticleWindow(vector<KObservationModel>& Observations);
+
+	void updateLikelihoodHist(float weightSum);
+
+    vector<float> circleIntersection (KObservationModel& obs1 , KObservationModel& obs2);
+
+    void windowObservationsUpdate();
 };
 
 #endif /* KLOCALIZATION_H_ */

@@ -10,3 +10,40 @@
 <RotationDeviationAfterFallInDeg>25</RotationDeviationAfterFallInDeg>
 <NumberOfParticlesSpreadAfterFall>10</NumberOfParticlesSpreadAfterFall>
 <port>9001</port>
+
+<Resetting>
+    <!-- Parameters to estimate the long-term, and short-term, averages respectively -->
+    <aslow>0.2</aslow>
+    <afast>0.5</afast>
+    <!-- Enable or disable sensor resetting -->
+    <enable>1</enable>
+    <!-- Duration to collect single observations (seconds)-->
+    <winDuration>2</winDuration>
+</Resetting>
+
+<OdometryModel>
+    <Distance>
+        <!-- Systematic Error -->
+        <ratiomean>1</ratiomean>
+        <ratiodev>0.55</ratiodev>
+        <Emean>0</Emean>
+        <Edev>0</Edev>
+    </Distance>
+
+    <Direction>
+        <!-- Systematic Error -->
+        <ratiomean>1</ratiomean>
+        <ratiodev>0</ratiodev>
+        <Emean>0</Emean>
+        <!-- 10 degrees -->
+        <Edev>0.17</Edev>
+    </Direction>
+
+    <Rotation>
+        <!-- Systematic Error -->
+        <ratiomean>1</ratiomean>
+        <ratiodev>0.55</ratiodev>
+        <Emean>0</Emean>
+        <Edev>0</Edev>
+    </Rotation>
+</OdometryModel>
