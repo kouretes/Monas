@@ -55,10 +55,12 @@ void Behavior::UserInit()
 	role = ATTACKER;
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
+	fGen.Init(config.teamNumber);
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
 	lastPenalised = microsec_clock::universal_time();
+	lastFormation = microsec_clock::universal_time();
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
 	// generateFakeObstacles();
@@ -116,6 +118,26 @@ void Behavior::Reset(){
 		}
 	}
 
+	// === read field configuration xml data from field.xml used for formation generator
+	// update the Field struct on formation generator header
+	fGen.Field.MaxX = atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+	fGen.Field.MinX = atof(_xml.findValueForKey("field.FieldMinX").c_str());
+	fGen.Field.MaxY = atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+	fGen.Field.MinY = atof(_xml.findValueForKey("field.FieldMinY").c_str());
+
+	fGen.Field.LeftPenaltyAreaMaxX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
+	fGen.Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
+	fGen.Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
+	fGen.Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
+	
+	fGen.Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
+	fGen.Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
+	fGen.Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
+	fGen.Field.RightPenaltyAreaMinY = atof(_xml.findValueForKey("field.RightPenaltyAreaMinY").c_str());
+
+	fGen.Field.LeftGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMaxY").c_str());
+	fGen.Field.RightGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMinY").c_str());
+
 	// === read goal configuration xml data from Fearures.xml ===
 	std::string ID;
 	for(int v = 0 ; v < _xml.numberOfNodesForKey("features.ftr") ; v++)
@@ -155,6 +177,16 @@ int Behavior::Execute()
 	read_messages();
 	GetGameState();
 	GetPosition();
+	
+	/* DO NOT DELETE!!!
+	if(lastFormation + seconds(7) < microsec_clock::universal_time()) {
+		fGen.Generate(ballX, ballY);
+		cout << "BALLX: " << ballX << " BALLY: " << ballY << endl;
+		for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++)
+			cout << "ROLE: " << fGen.getFormation()->at(i).role <<" X: " << fGen.getFormation()->at(i).X << " Y: " << fGen.getFormation()->at(i).Y << endl;
+		lastFormation = microsec_clock::universal_time();
+	}
+	*/
 
     if (gameState == PLAYER_INITIAL){
 		if(prevGameState != PLAYER_INITIAL){

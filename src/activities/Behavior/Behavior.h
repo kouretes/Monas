@@ -22,6 +22,7 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "FormationGenerator.h"
 
 #define INIT_VALUE -111.0
 #define numOfFakeObstacles 15
@@ -91,7 +92,7 @@ private:
 		std::string KickBackLeft;
 		std::string KickBackRight;
 	};
-
+	
 	/**
 	 * @struct configiration
 	 * @brief Used to store and update all values that we read from the xml files. So everything
@@ -114,7 +115,7 @@ private:
 		float posX, posY, epsX, epsY;
 		struct Kick kicks;
 		float ur; // used only by goalie
-
+	
 	} config;
 
 	/**
@@ -285,7 +286,9 @@ private:
 	
 	bool gameMode;
 
-	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted;
+	FormationGenerator fGen; // object that create and update the team formation
+
+	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation;
 };
 
 ACTIVITY_END
