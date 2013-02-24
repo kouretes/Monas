@@ -1,14 +1,13 @@
 If you are reading these lines, it means that you have successfully created 
-a clone of the Kouretes 2012 code from the Monas repository. 
+a clone of the Kouretes 2013 code from the Monas repository. 
 
-
-REQUIRED PACKAGES
+REQUIRED PACKAGES:
 
 libtinyxml-dev (only for BUILD)
 OpenCV+QT4 (only for TOOLS) [See https://help.ubuntu.com/community/OpenCV]
 
 
-BUILD (for local execution)
+BUILD (for local execution):
 
 - Create a folder named local under Monas/make
 
@@ -34,7 +33,7 @@ BUILD (for local execution)
 
 --- Be carefull, remove from the agent.xml all the activities that don't compile when the target is linux (e.g. Vision, MotionController, etc)
 
-CROSSBUILD (for on-board execution)
+CROSSBUILD (for on-board execution):
 
 - Create a folder named crossbuild under Monas/make
 
@@ -63,7 +62,7 @@ CROSSBUILD (for on-board execution)
 - Get another coffee and be even more patient ... 
 
 
-COMPILE PROTO MESSAGE
+COMPILE PROTO MESSAGE:
 
 - Configure /external/protobuf (./configure)
 - make
@@ -75,4 +74,27 @@ To do so, you need a valid config directory in /home/nao/naoqi/ (on the robot)
 and a valid autoload.ini in /home/nao/naoqi/preferences/autoload.ini (again, on the robot)
 to start the krobot module.
 
-That's all! Enjoy! 
+FLASH DISK FORMAT:
+
+- open flasher (sudo)
+
+- select image geode
+
+- check factory reset settings
+
+- connect to nao locally (username: nao pass: nao) via browser
+
+- change name, volume and check deactivation
+
+- restart robot
+
+- use initializeScript.py from script folder path
+
+- create directory crossbuild on make file
+
+- use cmake-gui to make the project
+
+- use upload.py located on the script folder, from the crossbuild folder to upload code
+
+- check ssh connect
+
