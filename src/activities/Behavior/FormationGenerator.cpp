@@ -9,11 +9,14 @@ FormationGenerator::FormationGenerator() { }
 FormationGenerator::~FormationGenerator() { }
 
 void FormationGenerator::Init(int teamPlayers) {
+
 	positions = teamPlayers;
 	formation = new vector<posInfo>(teamPlayers);
 
 	for(unsigned int i = 0 ; i < formation->size() ; i++) {
+		
 		formation->at(i).role = (Role)i;
+		
 		if(i == GOALIE) { // GOALIE
 			formation->at(i).X  = Field.MinX;
 			formation->at(i).Y = 0;
@@ -75,6 +78,7 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 			else if(formation->at(i).role == SUPPORTER_L) {
 
 				if(positions == 5) {
+				
 					// we are inside the basic lane so follow the attacker
 					if(ballY >= MIDDLE_LANE_FACTOR*Field.MinY && ballY <= MIDDLE_LANE_FACTOR*Field.MaxY) { // ball is located inside the basic lane
 
@@ -102,6 +106,7 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					}
 				}
 				else if(positions == 4) {
+				
 					// we are inside the basic lane so follow the attacker
 					if(ballY >= MIDDLE_LANE_FACTOR*Field.MinY && ballY <= 0) { // when ball is located inside the basic lane : case 1
 						formation->at(i).X = ballX;
@@ -357,5 +362,4 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 }
 
 vector<FormationGenerator::posInfo>* FormationGenerator::getFormation() { return formation; }
-
 
