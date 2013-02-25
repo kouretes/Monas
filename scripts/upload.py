@@ -205,7 +205,7 @@ for	ip in robotsIP:
 		print("\nYou are going to create network files for player " + player +" (the " + playersdef[int(player)-1] + ") for the field " + SSID)
 
 		#Copy network configuration file to /config just for backup
-		copy_cmd = "cp " + partial_configuration_dir + "/FieldsWlanConnMan/" + SSID    + ".profile  " + binaries_dir +"config/connman.profile"
+		copy_cmd = "rsync -avz --delete " + partial_configuration_dir + "/FieldsWlanConnMan/" + SSID    + "/*  " + binaries_dir +"config/connman/"
 		os.system(copy_cmd)
 
 		print ("Creating parameters for player " + player )
@@ -260,7 +260,7 @@ for	ip in robotsIP:
 		print(autoload_cmd)
 		rsync_cmd = "rsync -avz --delete " + binaries_dir +"bin "+ binaries_dir	+"lib "+ binaries_dir +"config "+ binaries_dir +"preferences "  + " nao@"+ip+ ":/home/nao/naoqi/"
 	else:
-		if(raw_input("Enter y to upload a clean autoload.ini_work (no krobot) or press enter to continue:  ")=='y'):
+		if(raw_input("Enter y to upload a clean autoload.ini_work (with krobot) or press enter to continue:  ")=='y'):
 			print("Setting autoload.ini")
 			autoload_src = partial_configuration_dir + "autoload.ini"
 			autoload_dest = binaries_dir +"preferences/autoload.ini"
