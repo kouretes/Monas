@@ -104,7 +104,7 @@ int KalmanWorldState::Execute()
 	return 0;
 }
 
-void KalmanWorldState::calculate_ball_estimate(KMotionModel const & robotModel)
+void KalmanWorldState::calculate_ball_estimate(KKalmanLocalization::KMotionModel const & robotModel)
 {
 	boost::posix_time::time_duration duration;
 	boost::posix_time::ptime observation_time;
@@ -245,7 +245,7 @@ void KalmanWorldState::process_messages()
 	}
 	if (obsm != 0)
 	{
-		KObservationModel tmpOM;
+		KKalmanLocalization::KObservationModel tmpOM;
 		//Load observations
 		const ::google::protobuf::RepeatedPtrField<NamedObject>& Objects = obsm->regular_objects();
 		string id;
@@ -316,7 +316,7 @@ void KalmanWorldState::process_messages()
 }
 
 
-void KalmanWorldState::RobotPositionMotionModel(KMotionModel & MModel)
+void KalmanWorldState::RobotPositionMotionModel(KKalmanLocalization::KMotionModel & MModel)
 {
 	if (firstOdometry)
 	{
@@ -355,7 +355,7 @@ void KalmanWorldState::RobotPositionMotionModel(KMotionModel & MModel)
 
 void KalmanWorldState::ReadFeatureConf()
 {
-    feature temp;
+    KKalmanLocalization::feature temp;
     double x,y,weight;
     string ID;
 	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){

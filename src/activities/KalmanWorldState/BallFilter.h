@@ -31,7 +31,7 @@ class BallFilter
 		virtual ~BallFilter();
 
 		Ball get_updated_ball_estimate(float new_dist, float dist_variance, float new_dir, float dir_variance);
-		Ball get_predicted_ball_estimate(float dt, KMotionModel const & MM);
+		Ball get_predicted_ball_estimate(float dt, KKalmanLocalization::KMotionModel const & MM);
 		void reset(float new_dist, float dist_variance, float new_dir, float dif_variance);
 		float get_filter_variance() const;
 

@@ -43,8 +43,8 @@ public:
 		return "KalmanWorldState";
 	}
 
-	void RobotPositionMotionModel(KMotionModel & MModel);
-	void calculate_ball_estimate(KMotionModel const & MModel);
+	void RobotPositionMotionModel(KKalmanLocalization::KMotionModel & MModel);
+	void calculate_ball_estimate(KKalmanLocalization::KMotionModel const & MModel);
 private:
 	//check if the first odometry data had come
 	bool firstOdometry;
@@ -53,18 +53,18 @@ private:
 	WorldInfo MyWorld;
 
 	//Current agent position
-	belief AgentPosition;
+	KKalmanLocalization::belief AgentPosition;
 
 
 	KKalmanLocalization localizationWorld;
 	//Observations and odometry data to feed localization
-	vector<KObservationModel> currentObservation;
-	vector<KObservationModel> currentAmbiguousObservation;
-	KMotionModel robotmovement;
+	vector<KKalmanLocalization::KObservationModel> currentObservation;
+	vector<KKalmanLocalization::KObservationModel> currentAmbiguousObservation;
+	KKalmanLocalization::KMotionModel robotmovement;
 
 	//Use a particle to store the odometry data
-	partcl TrackPoint;
-	partcl TrackPointRobotPosition;
+	KKalmanLocalization::partcl TrackPoint;
+	KKalmanLocalization::partcl TrackPointRobotPosition;
 
 
 

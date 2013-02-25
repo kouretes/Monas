@@ -2,11 +2,13 @@
 #define MATHFUNCTIONS_H
 
 #include <math.h>
+#include <limits>
 
 //DO NOT USE DEFINES, USE THE BLOODY FUNCTIONS
 #define TO_RAD_SUPER_INTERNAL_DO_NOT_USE 0.01745329f
 namespace KMath{
 
+const float INF = std::numeric_limits<float>::infinity();
 
 inline static double TO_RAD(double X) { return X*TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
 inline static double TO_DEG(double X) { return X/TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
@@ -19,6 +21,18 @@ template<typename T> inline T norm2(T dx, T dy)
 {
 	return sqrt((dx) * (dx) + (dy) * (dy));
 }
+
+/**
+ * @fn template<typename T> inline T FUNC1ByX(T x)
+ * @brief function f(x)=1/x used to generate supporters positions.
+ * @return the result of 1/x or infinity number in case x = 0.
+ */
+template<typename T> inline T func1ByAbsX(T x) {
+	if (x == 0)
+		return INF;
+	return 1/fabs(x);
+}
+
 inline static double wrapToPi(double angle)
 {
 	while (angle > M_PI)

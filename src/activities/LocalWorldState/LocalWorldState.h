@@ -48,8 +48,8 @@ public:
 		return "LocalWorldState";
 	}
 
-	void RobotPositionMotionModel(KMotionModel & MModel);
-	void calculate_ball_estimate(KMotionModel const & MModel);
+	void RobotPositionMotionModel(KLocalization::KMotionModel & MModel);
+	void calculate_ball_estimate(KLocalization::KMotionModel const & MModel);
 
 private:
 	//check if the first odometry data had come
@@ -68,19 +68,19 @@ private:
 	WorldInfo MyWorld;
 
 	//Current agent position
-	belief AgentPosition;
+	KLocalization::belief AgentPosition;
 
 	//localization world
 	KLocalization localizationWorld;
 
 	//Observations and odometry data to feed localization
-	vector<KObservationModel> currentObservation;
-	vector<KObservationModel> currentAmbiguousObservation;
-	KMotionModel robotmovement;
+	vector<KLocalization::KObservationModel> currentObservation;
+	vector<KLocalization::KObservationModel> currentAmbiguousObservation;
+	KLocalization::KMotionModel robotmovement;
 
 	//Use a particle to store the odometry data
-	partcl TrackPoint;
-	partcl TrackPointRobotPosition;
+	KLocalization::partcl TrackPoint;
+	KLocalization::partcl TrackPointRobotPosition;
 
 	//Messages to feed the guis
 	LocalizationData DebugData;
@@ -118,7 +118,7 @@ private:
 	static void * StartServer(void * kati);
 	pthread_t acceptthread;
 	static TCPSocket *sock;
-	int LocalizationData_Load(vector<KObservationModel> & Observation, KMotionModel & MotionModel);
+	int LocalizationData_Load(vector<KLocalization::KObservationModel> & Observation, KLocalization::KMotionModel & MotionModel);
 	int LocalizationDataForGUI_Load();
 	void Send_LocalizationData();
 	static bool debugmode;
