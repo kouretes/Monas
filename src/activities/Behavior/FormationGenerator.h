@@ -18,10 +18,7 @@
 using std::vector;
 using std::string;
 
-class FormationGenerator {
-
-private:
-	
+namespace FormationConsts{
 	/* 
 	 * Factors to calculate positions regardless formation field dimensions, that way the
 	 * formation is generated dynamically.
@@ -41,6 +38,13 @@ private:
 	// defender roles factros
 	static const float DEFENDER_FACTOR = 0.78;
 	static const float DEFENDER_MOVEMENT = 0.2;
+};
+
+class FormationGenerator {
+
+private:
+	
+
 
 	/**
 	 * @enum Role
