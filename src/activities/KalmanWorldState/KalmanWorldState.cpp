@@ -1,5 +1,5 @@
 #include "KalmanWorldState.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "core/hal/robot/generic_nao/robot_consts.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "messages/RoboCupGameControlData.h"
@@ -9,7 +9,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 #include <math.h>
-#include "architecture/archConfig.h"
+//#include "architecture/archConfig.h"
 #define NO_GAME
 #define MAX_TIME_TO_RESET 15 //in seconds
 using namespace std;
@@ -372,7 +372,7 @@ void KalmanWorldState::ReadFeatureConf()
 
 void KalmanWorldState::ReadRobotConf()
 {
-    //Xml index starts at 0 
+    //Xml index starts at 0
     int pNumber=localizationWorld.playerNumber-1;
 	for (int i = 0; i < 2; i++)
 	{

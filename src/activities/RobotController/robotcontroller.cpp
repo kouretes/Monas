@@ -1,7 +1,6 @@
 #include "robotcontroller.h"
-#include "architecture/archConfig.h"
 #include "messages/SensorsMessage.pb.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "core/hal/robot/generic_nao/robot_consts.h"
 
 #include "tools/logger.h"
 #include "tools/toString.h"
@@ -43,13 +42,13 @@ int RobotController::Execute()
 		gm.SendAlive(conf.player_number() );
 		lastalive = now + milliseconds(ALIVEMS);
 	}
-	
+
 	//Check if the msg changes from the outer world
 	gsm = _blk.readState<GameStateMessage> ("worldstate");
 	if(gsm != 0){
 		gm_state.CopyFrom(*gsm);
 	}
-	
+
 	if (received && gm_state.override_state() == OVERRIDE_DISABLED)
 	{
 		//teams[0] one team

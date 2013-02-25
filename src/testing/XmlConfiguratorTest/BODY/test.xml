@@ -1,6 +1,0 @@
-<?xml version="1.0" ?>
-<agent time="lala" priority="8">
-    <module>myModule10</module>asfsa
-    <module>myModule20</module>sfasf
-    <module>myModule30</module>
-</agent>

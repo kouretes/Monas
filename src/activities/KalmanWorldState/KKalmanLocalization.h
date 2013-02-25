@@ -145,10 +145,10 @@ typedef struct blf
 
 
 	//The step of the localization SIR filter
-	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations);
+	belief LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations,float dt);
 
 	//Update particles with the data from the odometry
-	void Predict(KMotionModel & MotionModel);
+	void Predict(KMotionModel & MotionModel,float dt);
 
 	//Recalculate weights of the particles using the current observation
 	void Update(vector<KObservationModel> &Observation);

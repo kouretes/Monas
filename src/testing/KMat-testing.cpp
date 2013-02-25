@@ -2,7 +2,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace KMat;
+using namespace KMath::KMat;
 using namespace std;
 #include <list>
 #include <boost/math/distributions/normal.hpp>

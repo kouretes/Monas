@@ -1,7 +1,7 @@
 #include "SharedWorldModel.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "hal/robot/generic_nao/robot_consts.h"
+#include "core/hal/robot/generic_nao/robot_consts.h"
 
 #define INIT_VALUE -111.0f
 #define INF 100000000.0f
