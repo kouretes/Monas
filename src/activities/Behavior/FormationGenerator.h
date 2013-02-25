@@ -25,19 +25,19 @@ namespace FormationConsts{
 	 */
 
 	// on ball role offset from the ball. The on ball role has always an offset of 0.2 on x axis.
-	static const float ONBALL_OFFSET = -0.2;
+	const float ONBALL_OFFSET = -0.2;
 
 	// support roles factors
-	static const float SUPPORT_FACTOR_X = 0.22;
-	static const float SUPPORT_FACTOR_Y = 0.5;
-	static const float SUPPORT_FORWARDING_FACTOR = 0.33;
-	static const float SUPPORT_DEFENCE_FACTOR = 0.44;
-	static const float SUPPORT_BOUND = 0.5;
-	static const float MIDDLE_LANE_FACTOR = 0.268;
+	const float SUPPORT_FACTOR_X = 0.22;
+	const float SUPPORT_FACTOR_Y = 0.5;
+	const float SUPPORT_FORWARDING_FACTOR = 0.33;
+	const float SUPPORT_DEFENCE_FACTOR = 0.44;
+	const float SUPPORT_BOUND = 0.5;
+	const float MIDDLE_LANE_FACTOR = 0.268;
 
 	// defender roles factros
-	static const float DEFENDER_FACTOR = 0.78;
-	static const float DEFENDER_MOVEMENT = 0.2;
+	const float DEFENDER_FACTOR = 0.78;
+	const float DEFENDER_MOVEMENT = 0.2;
 };
 
 class FormationGenerator {
