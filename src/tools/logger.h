@@ -10,7 +10,7 @@
 #include "core/architecture/archConfig.h"
 #include "tools/XMLConfig.h"
 
-#include "tools/singleton.h"
+#include "core/elements/Singleton.hpp"
 
 
 //TODO mutex needed

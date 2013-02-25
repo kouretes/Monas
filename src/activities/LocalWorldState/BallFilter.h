@@ -9,7 +9,7 @@
 #define BALLFILTER_H_
 #include "messages/WorldInfo.pb.h"
 #include "tools/stat/kalman.h"
-#include "tools/KMat.h"
+#include "core/elements/math/KMat.hpp"
 #include "KLocalization.h"
 
 /*

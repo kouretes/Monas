@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 #include "hal/syscall.h"
-#include "logger.h"
+
 
 class AbErrPolicy
 {
@@ -38,20 +38,6 @@ public:
 
 	void Error( const std::string& er )
 	{
-		std::cerr << er << std::endl;
-		SysCall::_exit(1);
-	}
-
-};
-
-class LogErrAndExitPolicy: public AbErrPolicy
-{
-
-public:
-
-	void Error( const std::string& er )
-	{
-		Logger::Instance().WriteMsg("Factory", er, Logger::FatalError);
 		std::cerr << er << std::endl;
 		SysCall::_exit(1);
 	}

@@ -21,7 +21,7 @@
 #include <map>
 #include <set>
 #include <string>
-#include "tools/singleton.h"
+#include "core/elements/Singleton.hpp"
 
 class TopicTree: public StringRegistry
 {

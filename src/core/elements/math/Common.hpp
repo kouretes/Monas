@@ -1,5 +1,5 @@
-#ifndef MATHFUNCTIONS_H
-#define MATHFUNCTIONS_H
+#ifndef MATHCOMMON_H
+#define MATHCOMMON_H
 
 #include <math.h>
 #include <limits>
@@ -76,17 +76,17 @@ inline static double anglediff(double a1, double a2)
 	return fabs(wrapTo0_2Pi(a1 + M_PI - a2) - M_PI);
 }
 
-static double toPolarD(double x, double y)
+inline static double toPolarD(double x, double y)
 {
 	return sqrt(x * x + y * y);
 }
 
-static double toPolarT(double x, double y)
+inline static double toPolarT(double x, double y)
 {
 	return atan2(y, x);
 }
 
-static double toCartesianX(double d, double t)
+inline static double toCartesianX(double d, double t)
 {
 	return d * cos(t);
 }

@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 
-#include "tools/errorPolicies.h"
+#include "core/elements/factory/ErrPolicy.hpp"
 
 
 template
@@ -16,9 +16,9 @@ class Product,
       class ProductCreator = Product * (*)(),
       class T1 = bool,
       class T2 = bool,
-      class ErrorPolicy = LogErrAndExitPolicy
+      class ErrorPolicy = PrintErrAndExitPolicy
       >
-class GenericFactory
+class Factory
 	: public ErrorPolicy
 {
 
@@ -76,9 +76,9 @@ public:
 	}
 
 
-	static GenericFactory* Instance()
+	static Factory* Instance()
 	{
-		static GenericFactory G;
+		static Factory G;
 		return &G;
 	}
 
@@ -92,7 +92,7 @@ private:
 		return NULL;
 	}
 
-	GenericFactory()
+	Factory()
 	{
 		;
 	}

@@ -8,8 +8,8 @@
 
 #include "core/architecture/XmlManager/XmlManager.h"
 
-#include "tools/genFactory.h"
-#include "tools/genRegistrar.h"
+#include "core/elements/factory/Factory.hpp"
+#include "core/elements/factory/Registrar.hpp"
 
 #include <string>
 
@@ -49,8 +49,7 @@ protected:
 
 };
 
-//typedef GenericFactory < IActivity, std::string ,IActivity* (*)(Blackboard&),Blackboard&>  ActivityFactory;
-typedef GenericFactory < IActivity, std::string , IActivity* (*)(Blackboard&, XmlManager &), Blackboard&, XmlManager &>  ActivityFactory;
+typedef Factory < IActivity, std::string , IActivity* (*)(Blackboard&, XmlManager &), Blackboard&, XmlManager &>  ActivityFactory;
 
 template<class T>
 struct ActivityRegistrar
