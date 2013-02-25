@@ -6,9 +6,9 @@
 #include <string>
 #include <fstream>
 
-#include "architecture/executables/IProvider.h"
-#include "architecture/narukom/pub_sub/blackboard.h"
-#include "architecture/XmlManager/XmlManager.h"
+#include "core/architecture/executable/provider/IProvider.hpp"
+#include "core/architecture/messaging/Blackboard.hpp"
+#include "core/architecture/XmlManager/XmlManager.h"
 
 #include "messages/Gamecontroller.pb.h"
 #include "messages/RoboCupGameControlData.h"
@@ -18,7 +18,7 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 
-#ifdef RUN_ON_NAO
+#ifdef NAOQI
 #include "hal/robot/generic_nao/robot_consts.h"
 #endif
 
@@ -34,10 +34,10 @@ class Gateway:   public IProvider {
 public:
 	int PROVIDER_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
-	Gateway (KSystem::ThreadConfig &c, Narukom &n) :
+	Gateway (KSystem::ThreadConfig &c, MessageHub &n) :
 		EndPoint ("Gateway"),
 		IProvider ("Gateway", c, n), _blk ("GatewayBlackboard") {
-		_blk.attachTo (*n.get_message_queue() );
+		_blk.attachTo (n );
 		UserInit();
 	};
 	void PROVIDER_VISIBLE UserInit();
@@ -51,10 +51,10 @@ public:
 private:
 	Blackboard _blk;
 	XmlManager _xml;
-	
+
 	boost::shared_ptr<const KnownHosts> h;
 	boost::shared_ptr<const GameStateMessage>  gsm;
-	
+
 	uint32_t localHostId;
 	uint32_t lockId;
 	bool locked;
@@ -75,25 +75,25 @@ private:
 	 * @param incomingHostId: the id of the host that send us this message.
 	 * */
 	void processExternalConfig(uint32_t incomingHostId);
-	
+
 	/**
 	 * Process all command message. This functions only calls the appropriate function to proccess every command separately.
 	 * @param incomingHostId: the id of the host that send us this message.
 	 * */
 	void processExternalCommands(uint32_t incomingHostId);
-	
+
 	/**
 	 * Update the current game control message with the external state and send it back to blackboard.
 	 * @param commandID: the game command that has been send from the host
 	 * */
 	void processGameControllerCommand(int commandID);
-	
+
 	/**
 	 * Execute some simple commands like stiffness off, sit or shutdown
 	 * @param commandID: the corresponding simple action command id
 	 * */
 	void processSimpleActionsCommand(int commandID);
-	
+
 	/**
 	 * Varius motion commands like stiffness change's or action's executions
 	 * @param commandID: the corresponding simple action command id
@@ -101,12 +101,12 @@ private:
 	 * @param value: stiffness value
 	 * */
 	void processMotionCommand(int commandID, std::string svalue, float value);
-	
+
 	/**
 	 * Initialize localization particles to a given new point
 	 * */
 	void processLocalizationCommand(int commandID, float x, float y, float phi);
-	
+
 	/**
 	 * Send a head command to head controller like scan or localize
 	 * @param commandID: the corresponding head command id

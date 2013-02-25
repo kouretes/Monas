@@ -1,8 +1,8 @@
 #ifndef BEHAVIOR_H
 #define BEHAVIOR_H
 
-#include "architecture/executables/IActivity.h"
-#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
+
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -92,7 +92,7 @@ private:
 		std::string KickBackLeft;
 		std::string KickBackRight;
 	};
-	
+
 	/**
 	 * @struct configiration
 	 * @brief Used to store and update all values that we read from the xml files. So everything
@@ -115,11 +115,11 @@ private:
 		float posX, posY, epsX, epsY;
 		struct Kick kicks;
 		float ur; // used only by goalie. IF SOMEONE KNOWS WHAT ur IS, PLEASE CHANGE THAT NAME!
-	
+
 	} config;
 
 	/* --------------------------------- Messages and Functions ---------------------------------- */
-	
+
 	/**
 	 * Incoming Messages
 	 */
@@ -143,30 +143,30 @@ private:
 
 	/**
 	 * @fn void readMessages()
-	 * @brief Read all incoming messages from declared topics. Called each time the	
+	 * @brief Read all incoming messages from declared topics. Called each time the
 	 * activity is executed to update message objects.
 	 */
 	void readMessages();
-	
+
 	/**
 	 * @fn void GetBallData()
 	 * @brief Information gathering function, that reads the ball coordinates, bearing and distance.
 	 */
 	void getBallData();
-	
+
 	/**
 	 * @fn void GetGameState()
 	 * @brief Information gathering function, that reads the game state message
 	 * and assign the robot game state variables (gameState, teamColor, playerNumber...)
 	 */
 	void getGameState();
-	
+
 	/**
 	 * @fn void GetPosition()
 	 * @brief Information gathering function, that reads the position, angle and robot confidence.
 	 */
 	void getPosition();
-	
+
 	/* --------------------------------- Goalie functions ---------------------------------- */
 
 	/**
@@ -267,7 +267,7 @@ private:
 	 * @brief (TODO)
 	 */
 	void goToPosition(float targetX, float targetY, float targetPhi);
-	
+
 	/* --------------------------------- Behavior Variables ---------------------------------- */
 
 	bool ballFound;	// variable that is true if we see the ball.
@@ -299,7 +299,7 @@ private:
 	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
 	bool goalieApproachStarted;
-	
+
 	bool gameMode;
 
 	FormationGenerator fGen; // object that create and update the team formation

@@ -9,7 +9,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 #include <math.h>
-#include "architecture/archConfig.h"
+
 
 #define NO_GAME
 #define MAX_TIME_TO_RESET 15 //in seconds

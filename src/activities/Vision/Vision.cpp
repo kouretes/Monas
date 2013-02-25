@@ -1,12 +1,11 @@
 #include "Vision.h"
 
-#include "architecture/archConfig.h"
 #include <cmath>
 #include "sys/stat.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "tools/KMat.h"
-#include "hal/syscall.h"
+//#include "hal/syscall.h"
 #include <vector>
 
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -47,7 +46,7 @@ void Vision::Reset(){
 	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationBottom")).c_str());
 	if(segbottom != NULL){
 		delete segbottom;
-		segbottom = NULL;	
+		segbottom = NULL;
 	}
 	segbottom = new KSegmentator(*conffile);
 	conffile->close();
@@ -60,7 +59,7 @@ void Vision::Reset(){
 		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationTop")).c_str());
 		if(segtop != NULL){
 			delete segtop;
-			segtop = NULL;	
+			segtop = NULL;
 		}
 		segtop = new KSegmentator(*conffile);
 		conffile->close();

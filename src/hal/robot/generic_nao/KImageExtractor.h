@@ -5,7 +5,7 @@
 
 
 
-#include "architecture/narukom/pub_sub/blackboard.h"
+#include "core/include/Blackboard.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "NaoCamera.h"

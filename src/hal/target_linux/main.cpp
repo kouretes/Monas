@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "architecture/talws.h"
+#include "core/architecture/talws.h"
 
 
 

@@ -1,7 +1,7 @@
 #ifndef _thread_h_
 #define _thread_h_ 1
 
-#include "architecture/IExecutable.h"
+#include "core/architecture/executable/IExecutable.hpp"
 #include <boost/thread.hpp>
 
 

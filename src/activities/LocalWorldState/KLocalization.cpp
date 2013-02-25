@@ -11,8 +11,6 @@
 #include <math.h>
 #include "KLocalization.h"
 #include <iomanip>
-#include <boost/lexical_cast.hpp>
-#include "architecture/archConfig.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 

@@ -13,7 +13,7 @@ PROVIDER_REGISTER (Gateway);
 
 
 void Gateway::UserInit() {
-#ifdef RUN_ON_NAO
+#ifdef NAOQI
 	_xml = XmlManager (ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig (KDeviceLists::Interpret::HEAD_ID)
 	                   , KRobotConfig::Instance().getConfig (KDeviceLists::Interpret::BODY_ID), true);
 #else
@@ -186,17 +186,17 @@ void Gateway::processExternalCommands (uint32_t incomingHostId) {
 					int tempId = commandID;
 					processSimpleActionsCommand(tempId);
 				}else if(commandID < ExternalCommand::SIMPLE_ACTIONS_SIZE + ExternalCommand::GAMECONTROLLER_SIZE){
-				
+
 					int tempId = commandID - ExternalCommand::SIMPLE_ACTIONS_SIZE;
-					
+
 					processGameControllerCommand(tempId);
 				}else if(commandID < ExternalCommand::SIMPLE_ACTIONS_SIZE + ExternalCommand::GAMECONTROLLER_SIZE + ExternalCommand::LOCALIZATION_SIZE){
-				
+
 					int tempId = commandID - ExternalCommand::SIMPLE_ACTIONS_SIZE - ExternalCommand::GAMECONTROLLER_SIZE;
-					
+
 					processLocalizationCommand(tempId, commsg->floatvars(0), commsg->floatvars(1), commsg->floatvars(2));
 				}else if(commandID < ExternalCommand::SIMPLE_ACTIONS_SIZE + ExternalCommand::GAMECONTROLLER_SIZE + ExternalCommand::LOCALIZATION_SIZE + ExternalCommand::MOTION_SIZE){
-				
+
 					int tempId = commandID - ExternalCommand::SIMPLE_ACTIONS_SIZE - ExternalCommand::GAMECONTROLLER_SIZE - ExternalCommand::LOCALIZATION_SIZE;
 					string action = commsg->has_stringvars() ? commsg->stringvars() : "";
 					float value = commsg->floatvars_size() == 1 ? commsg->floatvars(0) : 0;
@@ -206,7 +206,7 @@ void Gateway::processExternalCommands (uint32_t incomingHostId) {
 					float value = commsg->floatvars_size() == 1 ? commsg->floatvars(0) : 0;
 					processHeadCommand(tempId, value);
 				}else{
-					Logger::Instance().WriteMsg ("Gateway", "Unknown External Command ID", Logger::Info);		
+					Logger::Instance().WriteMsg ("Gateway", "Unknown External Command ID", Logger::Info);
 				}
 			}
 		}

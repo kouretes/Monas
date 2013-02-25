@@ -3,7 +3,7 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "architecture/executables/IActivity.h"
+#include "core/include/IActivity.hpp"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"

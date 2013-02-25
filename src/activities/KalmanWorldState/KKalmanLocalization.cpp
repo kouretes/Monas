@@ -6,7 +6,7 @@
 #include <time.h>
 #include <math.h>
 #include "KKalmanLocalization.h"
-#include "architecture/archConfig.h"
+#include "core/architecture/archConfig.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 #include "tools/mathcommon.h"
@@ -310,7 +310,7 @@ void KKalmanLocalization::Predict(KMotionModel & MotionModel,float dt)
 		disp(1)= sin(tmpDir + kalmanpoints[i].x(2)) * tmpDist;
 		disp(2)=tmpRot;
 		//cout<<kalmanpoints[i].x(0)<<endl;
-		kalmanpoints[i].predict(disp,dvar,dt);
+		kalmanpoints[i].predict(disp,dvar);
 
 		//cout<<kalmanpoints[i].x(2)<<endl;
 

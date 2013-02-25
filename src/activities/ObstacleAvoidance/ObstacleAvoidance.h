@@ -19,8 +19,8 @@
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 
-#include "architecture/archConfig.h"
-#include "architecture/executables/IActivity.h"
+//#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
 
 #include "tools/mathcommon.h"
 #include "tools/obstacleConst.h"
@@ -231,7 +231,7 @@ private:
 	void velocityWalk(double ix, double iy, double it, double f);
 	void callVelocityWalk(double walkToX, double walkToY, double walkToT, double distance2Goal);
 	void motionController(double distance2Goal);
-	
+
 	//Only for internal use
 	int DtoR(double d);
 	int TtoS(double theta);

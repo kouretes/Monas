@@ -7,8 +7,8 @@
 #include <math.h>
 #include <csignal>
 
-#include "architecture/executables/IActivity.h"
-#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
+//#include "core/architecture/archConfig.h"
 
 
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -86,7 +86,7 @@ private:
 
 	//Check if fall of the robot just began
 	bool fallBegan;
-	
+
 	//Read configurations
     void ReadLocConf();
     void ReadFieldConf();

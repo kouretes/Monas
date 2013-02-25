@@ -16,3 +16,4 @@ endif ( "x${ExternalSrcsBldType}x" STREQUAL "xx" )
 
 
 add_subdirectory ( ./tinyxml_2-5-3/ )
+include_directories ( AFTER external/protobuf/src )

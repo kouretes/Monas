@@ -25,4 +25,4 @@ public:
 
 typedef Singleton<KAlBrokerClass> KAlBroker;
 
-#endif // _kalbroker_h_ 
+#endif // _kalbroker_h_

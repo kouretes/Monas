@@ -1,7 +1,7 @@
 #ifndef SHAREDWORLDMODEL_H
 #define SHAREDWORLDMODEL_H
 
-#include "architecture/executables/IActivity.h"
+#include "core/include/IActivity.hpp"
 
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"

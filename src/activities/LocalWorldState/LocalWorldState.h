@@ -8,8 +8,7 @@
 #include <math.h>
 #include <csignal>
 
-#include "architecture/executables/IActivity.h"
-#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 

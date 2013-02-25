@@ -10,7 +10,7 @@
 #include <boost/shared_ptr.hpp>
 #include <alcommon/almodule.h>
 
-#include "architecture/talws.h"
+#include "core/architecture/talws.h"
 
 namespace AL
 {
