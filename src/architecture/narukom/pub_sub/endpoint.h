@@ -20,6 +20,8 @@
 #include <vector>
 #include "msg.h"
 #include "message_queue.h"
+
+#include "messages/system/LogEntry.pb.h"
 //MessageBuffer forward Decl
 template<typename T>class Buffer;
 typedef  Buffer<msgentry> MessageBuffer;
@@ -36,6 +38,9 @@ public:
 	virtual void publishSignal(const google::protobuf::Message & msg, std::string const& topic);
 	virtual void publishState(const google::protobuf::Message &msg, std::string const& topic);
 
+	struct LogLevel{
+		enum Type { FatalError = 0, Error, Warning, Info, ExtraInfo, ExtraExtraInfo, Debug };
+	};
 
 	std::string const getEndPointName() const
 	{
@@ -53,7 +58,7 @@ public:
 	{
 		return read_buf;
 	}
-
+	
 	void updateSubscription(std::string const& topic , msgentry::msgclass_t where, std::size_t host = msgentry::HOST_ID_LOCAL_HOST);
 	template<typename M> void attachTo(M& m)
 	{
@@ -61,6 +66,13 @@ public:
 		write_buf = m.makeWriteBuffer(endpoint_name);
 	}
 
+	void log(LogLevel::Type type, std::string logString){
+		LogEntry log;
+		log.set_type(type);
+		log.set_log(logString);
+		this->publishData(log, "log");
+	}
+	
 private:
 	std::string endpoint_name;
 	MessageBuffer *write_buf, *read_buf;

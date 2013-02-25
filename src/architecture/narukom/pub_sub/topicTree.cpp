@@ -37,9 +37,10 @@ TopicTree::TopicTree(): stringRegistry()
 	addTopic(string("behavior"), string("global"));
 	addTopic(string("worldstate"), string("global"));
 	addTopic(string("communication"), string("global"));
-	addTopic(string("obstacle"), string("global"));
+	addTopic(string("pathplanning"), string("global"));
 	addTopic(string("debug"), string("global"));
 	addTopic(string("external"), string("global"));
+	addTopic(string("log"), string("global"));
 }
 
 
