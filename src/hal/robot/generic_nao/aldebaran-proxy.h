@@ -9,6 +9,7 @@
 #define ALDEBARAN_PROXY_H_
 
 #ifdef NAOQI_1_12_5
+
 #include <boost/shared_ptr.hpp>
 #include <alcommon/alproxy.h>
 #include <alcommon/albroker.h>

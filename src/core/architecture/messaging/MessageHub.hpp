@@ -27,10 +27,10 @@
 #include <vector>
 #include <set>
 
-#include "core/hal/mutex.h"
-#include "core/hal/condvar.h"
-#include "core/hal/thread.h"
-#include "core/hal/syscall.h"
+#include "hal/mutex.h"
+#include "hal/condvar.h"
+#include "hal/thread.h"
+#include "hal/syscall.h"
 
 
 #include "tools/statMovingAverage.h"

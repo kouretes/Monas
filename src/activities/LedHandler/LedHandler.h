@@ -4,7 +4,7 @@
 #include "hal/robot/generic_nao/aldebaran-proxy.h"
 #include <string>
 #include "messages/Gamecontroller.pb.h"
-#include "architecture/executables/IActivity.h"
+#include "core/include/IActivity.hpp"
 
 
 
@@ -97,7 +97,7 @@ public:
 	 * In addition chest button, l_foot, r_foot leds become on (white)
 	 */
 	void ACTIVITY_VISIBLE UserInit();
-	
+
 	/**
 	 * \brief Activity reset capability. Reload xmls etc
 	 */

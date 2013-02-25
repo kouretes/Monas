@@ -3,7 +3,7 @@
 
 #include "core/architecture/thread/agent/Agent.hpp"
 #include "core/architecture/executable/provider/IProvider.hpp"
-#include "core/hal/thread.h"
+#include "hal/thread.h"
 
 #include "core/architecture/statechartWrapper.h"
 

@@ -1,11 +1,8 @@
+
 message ( STATUS "" )
 message ( STATUS " _..::: Configuring Sources :::.._ " )
 message ( STATUS "" )
 
-
-#Clean linking
-set ( TargetLinkLibraries  CACHE INTERNAL "" )
-include_directories ( AFTER ./ )
 include_directories ( AFTER ../external/protobuf/src/ )
 
 
@@ -20,10 +17,6 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
          (NOT "${LibBuildType}" STREQUAL "MODULE") )
   message ( FATAL_ERROR "LibBuildType should be one of the following: STATIC, SHARED or MODULE" )
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
-
-#set ( NaoQiVersion 1.12.5 CACHE STRING "Set the NaoQi version" )
-
-
 
 add_subdirectory (./core/) #Monas Core
 add_subdirectory ( ./messages/ )

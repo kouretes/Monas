@@ -14,7 +14,7 @@
 
 #include "messages/GUICommunication.pb.h"
 
-#ifdef RUN_ON_NAO
+#ifdef NAOQI
 #include "hal/robot/generic_nao/robot_consts.h"
 #endif
 

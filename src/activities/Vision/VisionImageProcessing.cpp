@@ -1,6 +1,5 @@
 #include "Vision.h"
 
-#include "architecture/archConfig.h"
 #include <cmath>
 #include "sys/stat.h"
 #include "tools/logger.h"

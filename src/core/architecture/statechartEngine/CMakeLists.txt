@@ -30,15 +30,6 @@ add_library ( statechartEngine  ${LibBuildType}
 
 target_link_libraries ( statechartEngine MessageLib )
 
-# TODO
-if ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
-
-  message ( STATUS " _..::: Configuring Statechart Engine for Nao robot :::.._ " )
-
-  qi_use_lib(statechartEngine ALCOMMON ALVALUE ALMATH LIBCORE TOOLS BOOST  )
-
-endif ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
-
 
 
 

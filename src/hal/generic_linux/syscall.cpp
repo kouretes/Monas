@@ -1,4 +1,4 @@
-#include "core/hal/syscall.h"
+#include "hal/syscall.h"
 
 #include <unistd.h>
 #include <sys/time.h>

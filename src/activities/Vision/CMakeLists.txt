@@ -1,6 +1,6 @@
-if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
+if ( NOT ( ${TargetRobot} STREQUAL "nao" ) )
     return()
-endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
+endif ( NOT (${TargetRobot} STREQUAL "nao" ) )
 
 include_directories( ../../../external/PracticalSocket)
 
@@ -15,9 +15,6 @@ set ( ActivitySrcs  KSegmentator.cpp
 
 )
 include ( ../activTemplate.cmake )
-STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
-add_definitions(" -DNAOQI_${NaoQiVer} ")
 
 
-
-qi_use_lib(${ActivityName} ALCOMMON LIBVISION)
+qi_use_lib(${ActivityName} ALCOMMON ALVISION)

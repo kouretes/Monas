@@ -7,8 +7,8 @@
 
 
 
-#include "architecture/executables/IProvider.h"
-#include "architecture/narukom/pub_sub/blackboard.h"
+#include "core/include/IProvider.hpp"
+#include "core/include/Blackboard.hpp"
 #include "hal/robot/generic_nao/KImageExtractor.h"
 #include "hal/smart_timer.h"
 #include "messages/Kimage.pb.h"
@@ -20,11 +20,11 @@ class ImageExtractor:   public IProvider
 {
 public:
 	static const unsigned camerarefreshmillisec = 1000;
-	ImageExtractor(KSystem::ThreadConfig &c, Narukom&n):
+	ImageExtractor(KSystem::ThreadConfig &c, MessageHub&n):
 		EndPoint("ImageExtractor"),
 		IProvider("ImageExtractor", c, n), _blk("ImageExtractorBlackboard"), imext()
 	{
-		_blk.attachTo(*n.get_message_queue());
+		_blk.attachTo(n);
 		lastrefresh = boost::posix_time::microsec_clock::universal_time() - boost::posix_time::microseconds(camerarefreshmillisec + 10);
 		UserInit();
 	};

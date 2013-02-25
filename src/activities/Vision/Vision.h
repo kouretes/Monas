@@ -1,7 +1,7 @@
 #ifndef VISION_H
 #define VISION_H
 
-#include "architecture/executables/IActivity.h"
+#include "core/include/IActivity.hpp"
 #include "KCameraTransformation.h"
 
 #include <opencv/cv.h>

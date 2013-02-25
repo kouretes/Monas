@@ -1,8 +1,8 @@
 #ifndef _periodicthread_h_
 #define _periodicthread_h_ 1
 
-#include "core/hal/smart_timer.h"
-#include "core/hal/thread.h"
+#include "hal/smart_timer.h"
+#include "hal/thread.h"
 #include "tools/logger.h"
 
 

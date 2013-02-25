@@ -7,7 +7,7 @@
 
 #include "tools/XMLConfig.h"
 #include "config.h"
-#include "core/hal/syscall.h"
+#include "hal/syscall.h"
 
 #include "tools/singleton.h"
 

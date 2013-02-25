@@ -20,7 +20,7 @@
 
 #ifndef BUFFER_H
 #define BUFFER_H
-#include "core/hal/mutex.h"
+#include "hal/mutex.h"
 #include <boost/function.hpp>
 #include <vector>
 #include <list>

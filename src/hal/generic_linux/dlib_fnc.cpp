@@ -1,4 +1,4 @@
-#include "core/hal/dlib_fnc.h"
+#include "hal/dlib_fnc.h"
 
 #include <dlfcn.h>
 

@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
 
 using namespace std;
 using namespace KDeviceLists;

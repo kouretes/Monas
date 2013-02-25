@@ -60,7 +60,7 @@ public:
 		float angleX, angleY, angleZ;
 	};
 	typedef KMath::KMat::ATMatrix<float, 4> kmatTable;
-	
+
 private:
 	typedef KMath::KMat::transformations KMatTransf;
 	//Predifined tables

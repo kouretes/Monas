@@ -11,7 +11,7 @@
 //#include "core/architecture/archConfig.h"
 
 
-#include "core/hal/robot/generic_nao/robot_consts.h"
+#include "hal/robot/generic_nao/robot_consts.h"
 
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"

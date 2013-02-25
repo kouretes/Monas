@@ -2,16 +2,8 @@ message ( STATUS "" )
 message ( STATUS " _..::: Configuring Architecture :::.._ " )
 message ( STATUS "" )
 
-add_subdirectory ( ./executable/ )
 add_subdirectory ( ./messaging/ )
 add_subdirectory ( ./statechartEngine/ )
-
-
-# TODO
-
-if (RUN_ON_NAO)
-	add_definitions(" -DRUN_ON_NAO ")
-endif()
 
 if ( "${ActivityBuildType}" STREQUAL "MODULE" )
   add_definitions ( -DDLIB_FUNCTIONALITY )
@@ -31,10 +23,10 @@ add_library ( MonasCore ${LibBuildType}
 			thread/agent/AgentConfig.hpp
 			XmlManager/XmlManager.h
 			XmlManager/XmlManager.cpp
-			
+
 			talws.h
 			talws.cpp
-			config.h			
+			config.h
 			statechartWrapper.h
 			archConfig.h
 )

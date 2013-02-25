@@ -1,16 +1,12 @@
-if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
+if ( NOT ( ${TargetRobot} STREQUAL "nao" ) )
     return()
-endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" ) )
+endif ( NOT (${TargetRobot} STREQUAL "nao" ) )
 
 set ( ActivityName LedHandler )
 
 set ( ActivitySrcs LedHandler.cpp )
 
 include ( ../activTemplate.cmake )
-
-STRING(REPLACE "." "_" NaoQiVer ${NaoQiVersion})
-add_definitions(" -DNAOQI_${NaoQiVer} ")
-
 
 qi_use_lib(${ActivityName}  LIBCORE TOOLS LIBCORE ALCOMMON)
 

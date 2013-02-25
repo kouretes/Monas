@@ -2,7 +2,7 @@
 #include "Statechart.h"
 #include "core/architecture/messaging/msg.h"
 
-#include "core/hal/syscall.h"
+#include "hal/syscall.h"
 
 
 #include <boost/date_time/posix_time/posix_time.hpp>
