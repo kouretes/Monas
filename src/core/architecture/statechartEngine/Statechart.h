@@ -4,7 +4,7 @@
 #include "OrState.h"
 #include "core/include/MessageHub.hpp"
 #include "core/include/Blackboard.hpp"
-#include "hal/thread.h"
+#include "hal/Thread.hpp"
 #include "hal/threadPool.h"
 
 #include <boost/thread/condition_variable.hpp>

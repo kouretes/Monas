@@ -27,9 +27,9 @@
 #include <vector>
 #include <set>
 
-#include "hal/mutex.h"
+#include "hal/Mutex.hpp"
 #include "hal/condvar.h"
-#include "hal/thread.h"
+#include "hal/Thread.hpp"
 #include "hal/syscall.h"
 
 

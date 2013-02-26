@@ -2,7 +2,7 @@
 #define _periodicthread_h_ 1
 
 #include "hal/smart_timer.h"
-#include "hal/thread.h"
+#include "hal/Thread.hpp"
 #include "tools/logger.h"
 
 
