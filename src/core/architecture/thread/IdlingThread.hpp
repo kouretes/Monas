@@ -26,6 +26,7 @@ namespace KSystem
 		void wakeUpThread()
 		{
 			KSystem::Mutex::scoped_lock cvlock(mutexCondSleeponit);
+			running=true;
 			condSleeponit.notify_one();
 		}
 		void sleepTread()

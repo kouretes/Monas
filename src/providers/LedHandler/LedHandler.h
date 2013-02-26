@@ -4,13 +4,13 @@
 #include "hal/robot/generic_nao/aldebaran-proxy.h"
 #include <string>
 #include "messages/Gamecontroller.pb.h"
-#include "core/include/IActivity.hpp"
+#include "core/include/IProvider.hpp"
 
 
 
 
 using std::string;
-ACTIVITY_START
+PROVIDER_START
 /**
  * \class LedHandler
 
@@ -19,12 +19,12 @@ ACTIVITY_START
  * control the robot's LEDs (eye leds, ear leds, chest button leds, feet leds)
  */
 
-class LedHandler: public IActivity
+class LedHandler: public IProvider
 {
 
 public:
 
-	ACTIVITY_CONSTRUCTOR(LedHandler);
+	PROVIDER_CONSTRUCTOR(LedHandler);
 
 	/**
 	 * \brief setLed. Sets the device to a specified color.
@@ -76,10 +76,16 @@ public:
 	 */
 	void setIndividualEarColor(const string& device, const string& color);
 
+	inline void processBuffer( MessageBuffer  * m)
+	{
+		IdlingThread::wakeUpThread();
+	};
+
+
 	/**
 	 * \brief Agents execute function. This is where leds color is changed according to the incomming messages.
 	 * */
-	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+	int PROVIDER_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 	/**
 	 * \brief Reads the raw battery level and displays the level in left ear led. Full Battery: all leds off. Empty Battery: all leds on.
@@ -88,22 +94,17 @@ public:
 	void SetBatteryLevel();
 
 	/**
-	 * \brief This is where incoming messages are received. In the first execution all leds are set to off.
-	 */
-	void process_messages();
-
-	/**
 	 * \brief Activity initialization. Blackboard subscription, Leds proxy creation.
 	 * In addition chest button, l_foot, r_foot leds become on (white)
 	 */
-	void ACTIVITY_VISIBLE UserInit();
+	void PROVIDER_VISIBLE UserInit();
 
 	/**
 	 * \brief Activity reset capability. Reload xmls etc
 	 */
-	void ACTIVITY_VISIBLE Reset();
+	void PROVIDER_VISIBLE Reset();
 
-	string ACTIVITY_VISIBLE GetName()
+	const::string PROVIDER_VISIBLE GetName() const
 	{
 		return "LedHandler";
 	}
@@ -132,6 +133,6 @@ private:
 	std::map<string, int> colors; /// The map where the pairs of color and HEX RGB values are stored
 };
 
-ACTIVITY_END
+PROVIDER_END
 
 #endif // LED_HANDLER_H
