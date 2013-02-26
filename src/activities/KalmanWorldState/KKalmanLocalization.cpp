@@ -9,7 +9,7 @@
 #include "core/architecture/archConfig.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 using namespace boost;
 using namespace KMath;
 KKalmanLocalization::KKalmanLocalization()

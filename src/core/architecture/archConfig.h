@@ -9,7 +9,7 @@
 #include "config.h"
 #include "hal/syscall.h"
 
-#include "tools/singleton.h"
+#include "core/elements/Singleton.hpp"
 
 class ArchConfigClass
 {

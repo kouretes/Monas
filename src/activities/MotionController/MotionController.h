@@ -20,7 +20,7 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 
 #include "ISpecialAction.h"
 #include "KmexManager.h"

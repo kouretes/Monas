@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "tools/singleton.h"
+#include "core/elements/Singleton.hpp"
 
 class GlobalConfClass
 {

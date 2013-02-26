@@ -7,8 +7,8 @@
 #include "core/architecture/messaging/EndPoint.hpp"
 
 
-#include "tools/genFactory.h"
-#include "tools/genRegistrar.h"
+#include "core/elements/factory/Factory.hpp"
+#include "core/elements/factory/Registrar.hpp"
 
 #include <string>
 
@@ -48,7 +48,7 @@ protected:
 
 };
 
-typedef GenericFactory < IProvider, std::string,
+typedef Factory < IProvider, std::string,
         IProvider* (*)(KSystem::ThreadConfig &, MessageHub&),
         KSystem::ThreadConfig &, MessageHub& >  ProviderFactory;
 

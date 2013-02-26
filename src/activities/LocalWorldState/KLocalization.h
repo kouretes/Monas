@@ -17,7 +17,7 @@
 #include <cstring>
 #include <algorithm>
 #include <map>
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 #include "tools/XML.h"
 #include "tools/XMLConfig.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -152,7 +152,7 @@ public:
         float shortHist;
         float longHist;
 
-        //Parameters to estimate the long-term, and short-term, averages respectively 
+        //Parameters to estimate the long-term, and short-term, averages respectively
         float aslow;
         float afast;
 
@@ -179,8 +179,8 @@ public:
 
     //Agent's belief
     belief agentPosition;
-    
-    //Odomery error 
+
+    //Odomery error
     float actionOdError;
     randGen generator;
 
@@ -272,7 +272,7 @@ public:
 	void SetParticlesPoseUniformly();
 
      /**
-	 * @brief Initialize particles 
+	 * @brief Initialize particles
 	 */
 	void InitializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi);
 
@@ -280,7 +280,7 @@ public:
 	 * @brief Spreads the particles after the fall of the robot (change the orientation)
 	 */
 	void SpreadParticlesAfterFall();
-    
+
     /**
 	 * @brief Computes an average over the particles
 	 */

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 
 /**
  * @brief Formation Generator Interface used by the behavior to determine
@@ -19,7 +19,7 @@ using std::vector;
 using std::string;
 
 namespace FormationConsts{
-	/* 
+	/*
 	 * Factors to calculate positions regardless formation field dimensions, that way the
 	 * formation is generated dynamically.
 	 */
@@ -43,7 +43,7 @@ namespace FormationConsts{
 class FormationGenerator {
 
 private:
-	
+
 
 
 	/**
@@ -53,7 +53,7 @@ private:
 	enum Role {
 		GOALIE = 0, DEFENDER = 1, ONBALL = 2, SUPPORTER_L = 3, SUPPORTER_R = 4
 	};
-	
+
 	/**
 	 * @enum Type
 	 * @brief enum to determine the type of formation.
@@ -73,13 +73,13 @@ private:
 	};
 
 	int positions; // number of positions to be generated.
-	
+
 	vector<posInfo> *formation; // vector pointer that holds the formation positions.
-	
+
 	Type formationType; // enumeration variable used to hold the formation type.
-	
+
 public:
-	
+
 	/**
 	 * @struct field configiration
 	 * @brief Used to store all values that we read from the field xml file. Values
@@ -101,29 +101,29 @@ public:
 		float LeftGoalPost;
 		float RightGoalPost;
 	} Field;
-	
+
 	/**
 	 * @fn FormationGenerator()
 	 * @brief Empty Constructor.
 	 */
 	FormationGenerator();
-	
+
 	/**
 	 * @fn virtual ~FormationGenerator()
-	 * @brief Empty Destructor. 
+	 * @brief Empty Destructor.
 	 */
 	virtual ~FormationGenerator();
-	
+
 	/**
 	 * @fn void Init(int teamPlayers)
 	 * @brief Use to initialize the generator object and create the initial team
-	 * fotmation. MUST be called after each empty constructor! 
+	 * fotmation. MUST be called after each empty constructor!
 	 * Parameters:
 	 * @teamPlayers number of team players, used to determine the number of positions
 	 * needed to be produced on each formation generate.
 	 */
 	void Init(int teamPlayers);
-	
+
 	/**
 	 * @fn void Generate(float ballX, float ballY)
 	 * @brief Generate positions based on the ball coordinates (x,y). The ball
@@ -133,13 +133,13 @@ public:
 	 * @ballY ball y coordinate
 	 */
 	void Generate(float ballX, float ballY);
-	
+
 	/**
 	 * @fn vector<posInfo>* getFormation()
 	 * @brief Use to get a vector pointer of the last generated positions.
 	 */
 	vector<posInfo>* getFormation();
-	
+
 };
 
 #endif

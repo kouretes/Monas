@@ -22,7 +22,7 @@
 //#include "architecture/archConfig.h"
 #include "core/include/IActivity.hpp"
 
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 #include "tools/obstacleConst.h"
 
 

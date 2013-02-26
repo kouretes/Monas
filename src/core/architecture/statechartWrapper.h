@@ -2,6 +2,8 @@
 #define STATECHARTWRAPPER_H 1
 
 #include "core/architecture/statechartEngine/Statechart.h"
+#include "core/elements/factory/Factory.hpp"
+#include "core/elements/factory/Registrar.hpp"
 
 class StatechartWrapper
 {
@@ -19,7 +21,7 @@ public:
 
 };
 
-typedef GenericFactory < StatechartWrapper, std::string, StatechartWrapper* (*)(MessageHub*), MessageHub* >  StatechartFactory;
+typedef Factory < StatechartWrapper, std::string, StatechartWrapper* (*)(MessageHub*), MessageHub* >  StatechartFactory;
 
 template<class T>
 struct StatechartRegistrar

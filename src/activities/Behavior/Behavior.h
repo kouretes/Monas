@@ -17,7 +17,7 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 #include "tools/obstacleConst.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>

@@ -3,6 +3,16 @@ message ( STATUS " _..::: Configuring Hardware Abstraction Layer :::.._ " )
 message ( STATUS "" )
 
 
+set(HAL_SRCS
+      Thread.hpp
+      threadable.h
+      threadPool.h
+      Mutex.hpp
+      condvar.h
+)
+
+add_custom_target(Monas-hal SOURCES ${HAL_SRCS}  )
+
 set ( TargetPlatform "" CACHE STRING
         "select the targeted platform, available platforms are linux, windows" )
 

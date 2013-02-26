@@ -3,8 +3,8 @@
 #include <string>
 
 #include "core/architecture/messaging/EndPoint.hpp"
-#include "hal/thread.h"
-#include "hal/mutex.h"
+#include "hal/Thread.hpp"
+#include "hal/Mutex.hpp"
 #include <boost/asio.hpp>
 #include "boost/bind.hpp"
 #include "rawPacketDePacket.h"
