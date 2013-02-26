@@ -1,5 +1,6 @@
 #include "KccHandler.h"
 #include "ui_KccHandler.h"
+#include "core/architecture/archConfig.h"
 
 
 KccHandler::KccHandler (QWidget *parent) :
@@ -98,7 +99,7 @@ KccHandler::KccHandler (QWidget *parent) :
 	yuvColorTable = NULL;
 	yuvColorTableOld = new KSegmentator (3, 2, 2);
 	yuvColorTable = new KSegmentator (3, 2, 2);
-	colortablesPath = QDir::currentPath().append (string ("/../../../config/colortables").c_str() );
+	colortablesPath = QDir::currentPath().append (string (ArchConfig::Instance().GetConfigPrefix() + "colortables").c_str() );
 }
 
 void KccHandler::clickedImage (QMouseEvent *ev) {
@@ -133,15 +134,15 @@ void KccHandler::clickedImage (QMouseEvent *ev) {
 				for (int ty = -10; ty < 11; ty++) {
 					b.y = temp.y + ty;
 
-					if (b.y >= 0 && b.y < 256) {
+					if (temp.y + ty >= 0 && temp.y + ty < 256) {
 						for (int tu = -10; tu < 11; tu++) {
 							b.u = temp.u + tu;
 
-							if (b.u >= 0 && b.u < 256) {
+							if (temp.u + tu >= 0 && temp.u + tu < 256) {
 								for (int tv = -10; tv < 11; tv++) {
 									b.v = temp.v + tv;
 
-									if (b.v >= 0 && b.v < 256 && distance (temp, b) <= threshold) {
+									if (temp.v + tv >= 0 && temp.v + tv < 256 && distance (temp, b) <= threshold) {
 										undo[b] = * (yuvColorTableOld->ctableAccessDirect (b.v, b.u, b.y) );
 										* (yuvColorTable->ctableAccessDirect (b.v, b.u, b.y) ) = choosedColor;
 										//qDebug() << *(yuvColorTable->ctableAccess(b.v,b.u,b.y));
