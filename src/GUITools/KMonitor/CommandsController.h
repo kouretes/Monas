@@ -18,9 +18,9 @@
 
 #include "HostsComboBox.h"
 
-#include "../../src/messages/GUICommunication.pb.h"
+#include "messages/GUICommunication.pb.h"
 
-#include "architecture/archConfig.h"
+#include "core/architecture/archConfig.h"
 /**
  * This is the code for the commander handler GUI tab of KMonitor
  * @author <a href="mailto:nikofinas@gmail.com">Nikos Kofinas</a> aka eldr4d, 2012 kouretes team

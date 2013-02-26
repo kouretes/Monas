@@ -1,6 +1,6 @@
 #include "GraphicalRobotElement.h"
 
-#include "architecture/archConfig.h"
+#include "core/architecture/archConfig.h"
 #include "tools/toString.h"
 
 #include <math.h>

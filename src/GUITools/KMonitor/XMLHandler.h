@@ -15,9 +15,8 @@
 #include <QTreeWidgetItem>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "HostsComboBox.h"
-#include "architecture/XmlManager/XmlManager.h"
-#include "architecture/archConfig.h"
-#include "../../src/messages/GUICommunication.pb.h"
+#include "core/architecture/XmlManager/XmlManager.h"
+#include "messages/GUICommunication.pb.h"
 /**
  * This is the code for the xml handler GUI tab of KMonitor
  * @author <a href="mailto:nikofinas@gmail.com">Nikos Kofinas</a> aka eldr4d, 2012 kouretes team

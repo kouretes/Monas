@@ -119,48 +119,48 @@
   <customwidget>
    <class>KccHandler</class>
    <extends>QWidget</extends>
-   <header>../KccHandler.h</header>
+   <header>KccHandler.h</header>
   </customwidget>
   <customwidget>
    <class>XMLHandler</class>
    <extends>QWidget</extends>
-   <header>../XMLHandler.h</header>
+   <header>XMLHandler.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>SensorsController</class>
    <extends>QWidget</extends>
-   <header>../SensorsController.h</header>
+   <header>SensorsController.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>KSonarsController</class>
    <extends>QWidget</extends>
-   <header>../KSonarsController.h</header>
+   <header>KSonarsController.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>KCamView</class>
    <extends>QWidget</extends>
-   <header>../KCamView.h</header>
+   <header>KCamView.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>GlobalWorldController</class>
    <extends>QWidget</extends>
-   <header>../GlobalWorldController.h</header>
+   <header>GlobalWorldController.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>LocalWorldController</class>
    <extends>QWidget</extends>
-   <header>../LocalWorldController.h</header>
+   <header>LocalWorldController.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CommandsController</class>
    <extends>QWidget</extends>
-   <header>../CommandsController.h</header>
+   <header>CommandsController.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

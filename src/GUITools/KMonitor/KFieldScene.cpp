@@ -1,6 +1,6 @@
 #include "KFieldScene.h"
 
-#include "architecture/archConfig.h"
+#include "core/architecture/archConfig.h"
 
 #include <QtSvg/QGraphicsSvgItem>
 #include <QGraphicsItem>

@@ -1,7 +1,7 @@
 #include "Flooder.h"
 #include "messages/TestMessage.pb.h"
 #include "messages/WorldInfo.pb.h"
-#include "messages/Network.pb.h"
+#include "core/messages/Network.pb.h"
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
-#include "messages/Network.pb.h"
+#include "core/messages/Network.pb.h"
 
 ACTIVITY_START
 
