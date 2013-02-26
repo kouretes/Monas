@@ -2,11 +2,11 @@
 
 #include "tools/toString.h"
 #include "tools/XMLConfig.h"
-#include "architecture/archConfig.h"
+#include "core/architecture/archConfig.h"
 
-#include "architecture/narukom/network/multicastpoint.hpp"
-#include "architecture/narukom/pub_sub/message_buffer.h"
-#include "architecture/narukom/pub_sub/topicTree.h"
+#include "core/architecture/messaging/network/multicastpoint.hpp"
+#include "core/architecture/messaging/MessageBuffer.hpp"
+#include "core/architecture/messaging/TopicTree.hpp"
 #include "hal/robot/generic_nao/robot_consts.h"
 
 using std::string;
@@ -303,7 +303,7 @@ void KGUIMessenger::tabChangeHandler (int currentTab) {
 		break;
 		// Local Polar Map
 	case 2:
-		updateSubscription ("obstacle", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt() );
+		updateSubscription ("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt() );
 		break;
 		// Local Robot View
 	case 3:

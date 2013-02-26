@@ -3,7 +3,7 @@
 
 #include "IAction.h"
 
-#include "messages/timeout.pb.h"
+#include "core/messages/timeout.pb.h"
 
 namespace statechart_engine
 {

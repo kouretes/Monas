@@ -9,11 +9,11 @@
 #include "core/architecture/executable/provider/IProvider.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
 #include "core/architecture/XmlManager/XmlManager.h"
+#include "core/messages/Network.pb.h"
 
 #include "messages/Gamecontroller.pb.h"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/motion.pb.h"
-#include "messages/Network.pb.h"
 #include "messages/GUICommunication.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"

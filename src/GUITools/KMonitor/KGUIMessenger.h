@@ -5,10 +5,10 @@
 #include <QObject>
 #include <QTimer>
 
-#include "architecture/narukom/pub_sub/endpoint.h"
-#include "architecture/narukom/pub_sub/stringRegistry.h"
+#include "core/architecture/messaging/EndPoint.hpp"
+#include "core/elements/StringRegistry.hpp"
 
-#include "messages/Network.pb.h"
+#include "core/messages/Network.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/RoboCupPlayerData.h"
@@ -72,7 +72,7 @@ private:
 	void printKnownHosts (KnownHosts hosts);
 
 	EndPoint *multicast;
-	stringRegistry pubsubRegistry;
+	StringRegistry pubsubRegistry;
 
 	QTimer *timer;
 

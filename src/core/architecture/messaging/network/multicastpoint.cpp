@@ -6,7 +6,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <google/protobuf/descriptor.h>
-#include "messages/Network.pb.h"
+#include "core/messages/Network.pb.h"
 #include "core/architecture/messaging/MessageBuffer.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"
 

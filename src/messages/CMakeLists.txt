@@ -3,7 +3,6 @@ message ( STATUS " _..::: Configuring Messages :::.._ " )
 message ( STATUS "" )
 
 file ( GLOB MessageLibSrcs . *.cc )
-
 message ( STATUS "Messages detected:" )
 foreach ( msg ${MessageLibSrcs} )
     message ( STATUS "Message ${msg} detected." )

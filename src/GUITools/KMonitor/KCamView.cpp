@@ -1,6 +1,6 @@
 #include "KCamView.h"
 #include "ui_KCamView.h"
-#include "architecture/archConfig.h"
+#include "core/architecture/archConfig.h"
 #include "tools/toString.h"
 using namespace std;
 KCamView::KCamView (QWidget *parent) :

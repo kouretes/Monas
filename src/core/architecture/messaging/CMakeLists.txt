@@ -2,13 +2,6 @@ message ( STATUS "" )
 message ( STATUS " _..::: Configuring Messaging :::.._ " )
 message ( STATUS "" )
 
-
-#if no targetplatform has been set then the default is linux
-if ( "x${TargetPlatform}x" STREQUAL "xx")
-  set(TargetPlatform "linux" CACHE PATH "")
-endif( "x${TargetPlatform}x" STREQUAL "xx")
-
-
 SET(MESSAGING_SRCS
    Blackboard.hpp
    Blackboard.cpp
@@ -25,19 +18,12 @@ SET(MESSAGING_SRCS
 )
 
 set(NETWORK_SRCS
-
 	network/multicastpoint.hpp
 	network/multicastpoint.cpp
 	network/rawPacketDePacket.h
 	network/rawPacketDePacket.cpp
 	network/ptimeserialize.hpp
 	network/msgentryserialize.hpp
-
-	#${NarukomDir}/network/catalog.cpp
-	#${NarukomDir}/network/host.h
-	#${NarukomDir}/network/host.cpp
-
-
 )
 
 #setting default module path for cmake finding .cmake files

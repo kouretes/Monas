@@ -1,6 +1,7 @@
 #include "XMLHandler.h"
 #include "ui_XMLHandler.h"
-#include "../../src/tools/toString.h"
+#include "tools/toString.h"
+#include "core/architecture/archConfig.h"
 #include <sstream>
 
 using namespace std;
