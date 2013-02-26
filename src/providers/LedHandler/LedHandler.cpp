@@ -1,4 +1,5 @@
 #include "LedHandler.h"
+#include "core/architecture/messaging/MessageBuffer.hpp"
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "tools/toString.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -6,12 +7,16 @@
 using std::string;
 using namespace boost::posix_time;
 
-ACTIVITY_REGISTER(LedHandler);
+PROVIDER_REGISTER(LedHandler);
 
 void LedHandler::UserInit()
 {
 	//led_change = 0;
-	_blk.updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
+
+	updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
+	EndPoint::getReadBuffer()->setNotifier(boost::bind(&LedHandler::processBuffer, this, _1));
+
+
 
 	try
 	{
@@ -57,6 +62,7 @@ void LedHandler::UserInit()
 
 	leds->callVoid<string> ("off", "AllLeds");
 	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
+
 }
 
 void LedHandler::Reset(){
@@ -64,17 +70,26 @@ void LedHandler::Reset(){
 
 int LedHandler::Execute()
 {
-	process_messages();
 
-	if (led_change != 0)
+	std::vector<msgentry> msg = EndPoint::remove();
+	std::vector<msgentry>::iterator it = msg.begin();
+
+	for(; it != msg.end(); ++it)
 	{
-		for (int i = 0; i < led_change->leds_size(); i++)
+		if((*it).msg->GetTypeName()=="LedChangeMessage")
 		{
-			setLed(led_change->leds(i).chain(), led_change->leds(i).color());
+			led_change=boost::static_pointer_cast<const LedChangeMessage>( (*it).msg);
+
+			for (int i = 0; i < led_change->leds_size(); i++)
+			{
+				setLed(led_change->leds(i).chain(), led_change->leds(i).color());
+			}
 		}
+
 	}
 
 	SetBatteryLevel();
+	IdlingThread::sleepTread();
 	return 0;
 }
 
@@ -145,10 +160,6 @@ void LedHandler::SetBatteryLevel()
 }
 
 
-void LedHandler::process_messages()
-{
-	led_change = _blk.readSignal<LedChangeMessage> ("leds");
-}
 
 void LedHandler::setLed(const string& device, const string& color)
 {

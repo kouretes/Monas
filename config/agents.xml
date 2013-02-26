@@ -6,7 +6,6 @@
 	<name>KMC</name>
 	<activity Enable="1">MotionController</activity>
 	<activity Enable="1">RobotController</activity>
-	<activity Enable="1">LedHandler</activity>
 </agent>
 
 <agent IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="50" Enable="1">
@@ -26,8 +25,8 @@
 <provider IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="1000" Enable="1">Sensors</provider>
 <provider IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="1000" Enable="1">Gateway</provider>
 <provider IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="1000" Enable="1">ImageExtractor</provider>
-
-<agent IsRealTime="1" Priority="1" ThreadFrequency="4" StatsCycle="1000" Enable="1">
+<provider IsRealTime="1" Priority="1" ThreadFrequency="5" StatsCycle="1000" Enable="1">LedHandler</provider>
+	<agent IsRealTime="1" Priority="1" ThreadFrequency="4" StatsCycle="1000" Enable="1">
 	<name>ObstacleAvoidance</name>
 	<activity Enable="1">ObstacleAvoidance</activity>
 </agent>
