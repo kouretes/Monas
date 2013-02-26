@@ -1,0 +1,20 @@
+message HostEntry{
+	required uint32 hostid=1;
+	required string hostname=2;
+}
+message KnownHosts{
+	repeated HostEntry entrylist=1;
+	required HostEntry localhost=2;
+}
+
+message Subscription
+{
+	required uint32 host=1;
+	required uint32 topicid=2;
+}
+message HostSubscriptions{
+	repeated Subscription topics=1;
+	required string hostname=2;
+}
+
+
