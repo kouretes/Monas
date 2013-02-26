@@ -28,7 +28,7 @@
 #include <set>
 
 #include "hal/Mutex.hpp"
-#include "hal/condvar.h"
+#include "hal/CondVar.hpp"
 #include "hal/Thread.hpp"
 #include "hal/syscall.h"
 

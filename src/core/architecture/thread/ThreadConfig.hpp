@@ -20,4 +20,4 @@ namespace KSystem
 
 
 
-#endif  _THREADCONFIG_HPP_
+#endif  //_THREADCONFIG_HPP_

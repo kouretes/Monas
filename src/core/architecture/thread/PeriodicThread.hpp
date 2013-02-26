@@ -2,6 +2,7 @@
 #define _periodicthread_h_ 1
 
 #include "hal/smart_timer.h"
+#include "ThreadConfig.hpp"
 #include "hal/Thread.hpp"
 #include "tools/logger.h"
 
@@ -9,19 +10,6 @@
 
 namespace KSystem
 {
-
-	class ThreadConfig
-	{
-
-	public:
-
-		bool IsRealTime;
-
-		int Priority;
-
-		float ThreadPeriod;
-
-	};
 	class PeriodicThread : public Thread
 	{
 

@@ -1,5 +1,4 @@
 
-
 #ifndef _CONDVAR_H_
 #define _CONDVAR_H_ 1
 

@@ -16,6 +16,7 @@ add_library ( MonasCore ${LibBuildType}
 			executable/provider/IProvider.hpp
 			executable/provider/IProvider.cpp
 			thread/PeriodicThread.hpp
+			thread/IdlingThread.hpp
 			thread/ThreadConfig.hpp
 			thread/agent/Agent.hpp
 			thread/agent/Agent.cpp

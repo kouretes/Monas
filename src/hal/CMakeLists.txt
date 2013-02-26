@@ -8,7 +8,7 @@ set(HAL_SRCS
       threadable.h
       threadPool.h
       Mutex.hpp
-      condvar.h
+      CondVar.hpp
 )
 
 add_custom_target(Monas-hal SOURCES ${HAL_SRCS}  )

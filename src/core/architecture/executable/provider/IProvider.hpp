@@ -1,7 +1,7 @@
 #ifndef _IPROVIDER_H_
 #define _IPROVIDER_H_ 1
 
-#include "core/architecture/thread/PeriodicThread.hpp"
+#include "core/architecture/thread/IdlingThread.hpp"
 
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/messaging/EndPoint.hpp"
@@ -23,14 +23,14 @@
 #define PROVIDER_VISIBLE
 #endif
 
-#define PROVIDER_CONSTRUCTOR(x)  PROVIDER_VISIBLE x(KSystem::ThreadConfig &c, Narukom&n): \
+#define PROVIDER_CONSTRUCTOR(x)  PROVIDER_VISIBLE x(KSystem::ThreadConfig &c, MessageHub&n): \
                                 EndPoint(GetName()),IProvider(GetName(),c,n){ UserInit();  }
 
 #define PROVIDER_REGISTER(x) namespace { 	PROVIDER_VISIBLE ProviderRegistrar<x>::Type temp##x(#x);  }
 
 
 
-class IProvider : virtual public EndPoint , public KSystem::PeriodicThread
+class IProvider : virtual public EndPoint , public KSystem::IdlingThread
 {
 
 public:
