@@ -76,19 +76,17 @@ void KSonarsController::resizeEvent (QResizeEvent *event) {
 }
 
 void KSonarsController::gridInfoUpdateHandler (GridInfo gim, QString hostId) {
-	if(mapArea->cellsOfRadius != gim.cellsradius() || mapArea->cellsOfRing != gim.cellsring() || mapArea->pathLength != gim.pathlength()){
-		mapArea->setupGrid(gim.cellsradius(), gim.cellsring(), gim.realgridlength(), gim.pathlength());
-	}
-	for (int ring = 0; ring < mapArea->cellsOfRadius; ring++) {
-		for (int sector = 0; sector < mapArea->cellsOfRing; sector++) {
-			mapArea->PolarGrid[ring][sector] = gim.gridcells (ring * gim.cellsring() + sector);
+	for (int ring = 0; ring < TotalRings; ring++) {
+		for (int sector = 0; sector < N; sector++) {
+			mapArea->PolarGrid[0][ring][sector] = gim.gridcells (ring * N + sector);
 		}
 	}
 
-	mapArea->targetRing = gim.targetr ();
-	mapArea->targetCell = gim.targetc ();
-	mapArea->targetOrient = gim.targeto ();
-	for (int step = 0; step < mapArea->pathLength; step++) {
+	mapArea->targetX = gim.targetcoordinates (0);
+	mapArea->targetY = gim.targetcoordinates (1);
+	mapArea->targetA = gim.targetcoordinates (2);
+
+	for (int step = 0; step < PathLength; step++) {
 		mapArea->pathR[step] = gim.pathstepsring (step);
 		mapArea->pathS[step] = gim.pathstepssector (step);
 		mapArea->pathO[step] = gim.pathstepsorientation (step);
