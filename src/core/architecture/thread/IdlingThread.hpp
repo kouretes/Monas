@@ -13,9 +13,11 @@ namespace KSystem
 
 	public:
 
-		IdlingThread ( ThreadConfig &c, bool start = false ) : PeriodicThread(c,start)
+		IdlingThread ( ThreadConfig &c, bool start = false ) : PeriodicThread(c,start),idling(false)
 		{
 		}
+
+		void setIdling(bool id){idling=id;};
 
 		void StartThread()
 		{
@@ -29,7 +31,7 @@ namespace KSystem
 			running=true;
 			condSleeponit.notify_one();
 		}
-		void sleepTread()
+		void idleThread()
 		{
 			KSystem::Mutex::scoped_lock cvlock(mutexCondSleeponit);
 			running=false;
@@ -37,16 +39,24 @@ namespace KSystem
 	protected:
 		void startHelper ()
 		{
-			PeriodicThread::startHelper();
-			Mutex::scoped_lock cond_lock(mutexCondSleeponit);
-			while(running==false)
-				condSleeponit.wait(cond_lock);
+			while(idling)
+			{
+				PeriodicThread::startHelper();
+				Mutex::scoped_lock cond_lock(mutexCondSleeponit);
+				while(running==false)
+					condSleeponit.wait(cond_lock);
+
+			}
+			if(!idling) //Regular run
+				PeriodicThread::startHelper();
+
 
 
 		}
 		virtual const std::string GetName() const = 0;
 		CondVar condSleeponit;
 		Mutex   mutexCondSleeponit;
+		bool idling;
 
 
 	};

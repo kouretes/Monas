@@ -15,6 +15,7 @@ void LedHandler::UserInit()
 
 	updateSubscription("leds", msgentry::SUBSCRIBE_ON_TOPIC);
 	EndPoint::getReadBuffer()->setNotifier(boost::bind(&LedHandler::processBuffer, this, _1));
+	IdlingThread::setIdling(true);
 
 
 
@@ -89,7 +90,7 @@ int LedHandler::Execute()
 	}
 
 	SetBatteryLevel();
-	IdlingThread::sleepTread();
+	IdlingThread::idleThread();
 	return 0;
 }
 
