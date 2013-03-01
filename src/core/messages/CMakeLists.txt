@@ -2,7 +2,7 @@ message ( STATUS "" )
 message ( STATUS " _..::: Configuring Messages/System :::.._ " )
 message ( STATUS "" )
 
-file ( GLOB MessageSystemLibSrcs . *.cc )
+file ( GLOB MessageSystemLibSrcs . *.cc *.h)
 
 message ( STATUS "Messages/System detected:" )
 foreach ( msg ${MessageSystemLibSrcs} )
