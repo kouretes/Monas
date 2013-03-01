@@ -1,7 +1,7 @@
 #ifndef _CUMULATIVE_H_
 #define _CUMULATIVE_H_
 #include <cstddef>
-#include "tools/KMat.h"
+#include "core/elements/math/KMat.hpp"
 
 
 class sample_counter

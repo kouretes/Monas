@@ -1,6 +1,6 @@
-if ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${TargetRobot} STREQUAL "nao" ) )
+if ( NOT (${TargetRobot} STREQUAL "nao" ) )
     return()
-endif ( NOT ( ${TargetPlatform} STREQUAL "robot" AND ${TargetRobot} STREQUAL "nao" ) )
+endif ( NOT (${TargetRobot} STREQUAL "nao" ) )
 
 
 
