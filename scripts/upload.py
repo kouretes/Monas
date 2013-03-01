@@ -170,12 +170,12 @@ os.system('aplay -q '+ scripts_dir +'beep.wav &')
 #al_dir = os.environ["AL_DIR"]
 binaries_dir = ""
 #probable_binaries_path = "/binaries/robot/naoqi_1.6.0_cross/" #under make/buildfolder
-naoqi_cross_folder = "."#commands.getoutput("ls ./binaries/robot | grep naoqi")
-if(naoqi_cross_folder!=""):
-	binaries_dir = "./binaries/robot/" + naoqi_cross_folder +"/"
-else:
-	print "Can't find any folder naoqi under ./binaries/robot/ Quiting ..."
-	exit(-1)
+#naoqi_cross_folder = "."#commands.getoutput("ls ./binaries/robot | grep naoqi")
+#if(naoqi_cross_folder!=""):
+	binaries_dir = "./binaries/linux/" #+ naoqi_cross_folder +"/"
+#else:
+#	print "Can't find any folder naoqi under ./binaries/robot/ Quiting ..."
+#	exit(-1)
 
 os.system("mkdir -p " + binaries_dir + "/preferences")
 os.system("mkdir -p " + binaries_dir + "/bin")

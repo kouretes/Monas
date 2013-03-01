@@ -26,6 +26,9 @@ add_subdirectory ( ./activities/ )
 add_subdirectory ( ./providers/ )
 add_subdirectory ( ./statecharts/ )
 
+if( ${TargetRobot} STREQUAL "none")
+	add_subdirectory ( ./GUITools/ )
+endif( ${TargetRobot} STREQUAL "none")
 
 #Call function that must be defined somewhere inside hal for proper linking
 

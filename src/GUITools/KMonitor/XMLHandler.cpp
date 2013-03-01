@@ -55,7 +55,7 @@ XMLHandler::XMLHandler (QWidget *parent) :
 void XMLHandler::updateTreeStructure (string headID, string bodyID) {
 	ui->mainTree->blockSignals (true);
 	ui->mainTree->clear();
-	xmlStructure = XmlManager ("../../../config/", headID, bodyID, true);
+	xmlStructure = XmlManager (ArchConfig::Instance().GetConfigPrefix(), headID, bodyID, true);
 
 	for (map<string, vector<XmlManager> >::iterator kit = xmlStructure.kids.begin(); kit != xmlStructure.kids.end(); ++kit) {
 		addChildsRecursive (ui->mainTree->invisibleRootItem(), QString ( (*kit).first.c_str() ), QString (" "), & ( (*kit).second.front() ), (*kit).first.c_str() );
