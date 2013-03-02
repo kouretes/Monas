@@ -24,7 +24,7 @@ public:
 
 	std::string ConfigurationFileGUIAlter ()
 	{
-		return "../../../config/archconf.xml";
+		return "binaries/linux/config/archconf.xml";
 	}
 
 };
