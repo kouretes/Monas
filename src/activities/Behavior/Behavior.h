@@ -12,6 +12,7 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "messages/RoboCupGameControlData.h"
+#include "messages/Debug.pb.h"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -140,6 +141,7 @@ private:
 	LocalizationResetMessage locReset;
 	PathPlanningRequestMessage pprm;
 	ObstacleMessage fom;	// fake obstacle message!
+	FormationDataForGUI fdg;
 
 	/**
 	 * @fn void readMessages()
@@ -283,6 +285,8 @@ private:
 	float cX, cY, ct;
 
 	float ballDist, ballBearing, ballX, ballY; // ball data coming from world info message.
+	
+	float globalBallX, globalBallY; // transformation from relative robot ball x,y to relative field ball x,y USED UNTIL WE HAVE GLOBAL BALL ESTIMATION!!!
 
 	int side;
 

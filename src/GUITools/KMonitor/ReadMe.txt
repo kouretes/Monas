@@ -4,13 +4,16 @@ Requirements:
 	
 	
 Build:
-	mkdir build
-	cd build
-	cmake ..
-	make
+	- Enter local folder under Monas/make, if there is no folder create one (mkdir local).
+	- Use cmake gui for native compile.
+		- Change TargetPlatform to linux.
+		- Change TargetRobot to none.
+	- Execute make install -jk, where k is the number of cores in your system.
+	- Execute make KMonitor
 	
 Execution:
-	./KMonitor
+	- Enter folder binaries/linux
+	- Run ./KMonitor
 
 
 General instructions :
