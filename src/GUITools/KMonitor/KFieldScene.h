@@ -3,6 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QList>
+#include <QLabel>
 
 #include "tools/XMLConfig.h"
 #include "messages/WorldInfo.pb.h"
@@ -42,11 +43,15 @@ public:
 	QRectF visionBallRect ( BallObject bob, WorldInfo wim);
 	QRectF goalPostRectFromOBM (NamedObject *nob, WorldInfo *wim);
 	QLineF motionCmdRectFromFC (WorldInfo *wim, float cx, float cy);
+	
+	QLabel* getLabel() { return formationLabel; }
 
 private:
 	void loadXMLConfig (std::string fname);
 	void setSvgItems();
 
+	QLabel *formationLabel;
+	
 	QGraphicsRectItem *LSide;
 	QGraphicsRectItem *RSide;
 	QGraphicsRectItem *LSmallArea;

@@ -85,7 +85,6 @@ void KGUIMessenger::allocateReceivedMessages() {
 				KRawImage rawimg;
 				rawimg.Clear();
 				rawimg.CopyFrom (* (incomingMessages.at (i).msg) );
-
 				if (myKMonitorRequestedHost == currentRHost) {
 					emit rawImage (rawimg, currentRHost);
 				}
@@ -119,6 +118,11 @@ void KGUIMessenger::allocateReceivedMessages() {
 				debugGUI.Clear();
 				debugGUI.CopyFrom (* (incomingMessages.at (i).msg) );
 				emit localizationDataUpdate (debugGUI, currentRHost);
+			} else if (incomingMessages.at (i).msg->GetTypeName() == "FormationDataForGUI" && myKMonitorRequestedHost == currentRHost) {
+				FormationDataForGUI debugGUI;
+				debugGUI.Clear();
+				debugGUI.CopyFrom (* (incomingMessages.at (i).msg) );
+				emit formationDataUpdate (debugGUI, currentRHost);
 			} else if (incomingMessages.at (i).msg->GetTypeName() == "MotionWalkMessage" && myKMonitorRequestedHost == currentRHost) {
 				MotionWalkMessage mwm;
 				mwm.Clear();
