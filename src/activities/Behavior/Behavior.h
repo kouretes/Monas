@@ -169,6 +169,12 @@ private:
 	 */
 	void getPosition();
 
+	/**
+	 * @fn void sendDebugMessages()
+	 * @brief Send messages for debug.
+     */
+	void sendDebugMessages();
+
 	/* --------------------------------- Goalie functions ---------------------------------- */
 
 	/**

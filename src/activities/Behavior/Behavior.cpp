@@ -56,25 +56,7 @@ void Behavior::UserInit()
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
 	fGen.Init(config.teamNumber);
-	
-	/* DO NOT DELETE!
-	Logger::Instance().WriteMsg("Behavior", "BallX: "+_toString(globalBallX)+" BallY: "+_toString(globalBallY), Logger::Info);
-
-	for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
-
-		Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(fGen.getFormation()->at(i).role)+
-												" X: "+_toString(fGen.getFormation()->at(i).X)+
-												" Y: "+_toString(fGen.getFormation()->at(i).Y), Logger::Info);
-				
-		if(fdg.positions_size() < (int)(i+1))
-			fdg.add_positions();			
-		fdg.mutable_positions(i)->set_x(fGen.getFormation()->at(i).X);
-		fdg.mutable_positions(i)->set_y(fGen.getFormation()->at(i).Y);
-		fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);		
-	}
-	_blk.publishSignal(fdg, "debug");
-	*/
-	
+	sendDebugMessages();
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -210,21 +192,7 @@ int Behavior::Execute()
 		if(lastFormation + seconds(10) < microsec_clock::universal_time()) {
 		
 			fGen.Generate(globalBallX, globalBallY);
-			//Logger::Instance().WriteMsg("Behavior", "BallX: "+_toString(globalBallX)+" BallY: "+_toString(globalBallY), Logger::Info);
-
-			for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
-
-				//Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(fGen.getFormation()->at(i).role)+
-				//										" X: "+_toString(fGen.getFormation()->at(i).X)+
-				//										" Y: "+_toString(fGen.getFormation()->at(i).Y), Logger::Info);
-						
-				if(fdg.positions_size() < (int)(i+1))
-					fdg.add_positions();			
-				fdg.mutable_positions(i)->set_x(fGen.getFormation()->at(i).X);
-				fdg.mutable_positions(i)->set_y(fGen.getFormation()->at(i).Y);
-				fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);		
-			}
-			_blk.publishSignal(fdg, "debug");
+			sendDebugMessages();
 			lastFormation = microsec_clock::universal_time();
 		}
 		
@@ -409,6 +377,25 @@ void Behavior::getBallData() {
 		globalBallX = (wim->myposition().x() + wim->balls (0).relativex() * cos(wim->myposition().phi()) - wim->balls (0).relativey() * sin(wim->myposition().phi()));
 		globalBallY = (wim->myposition().y() + wim->balls (0).relativex() * sin(wim->myposition().phi()) + wim->balls (0).relativey() * cos(wim->myposition().phi()));
 	}
+}
+
+void Behavior::sendDebugMessages() {
+	
+	Logger::Instance().WriteMsg("Behavior", "BallX: "+_toString(globalBallX)+" BallY: "+_toString(globalBallY), Logger::Info);
+	
+	for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
+	
+		Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(fGen.getFormation()->at(i).role)+
+											" X: "+_toString(fGen.getFormation()->at(i).X)+
+											" Y: "+_toString(fGen.getFormation()->at(i).Y), Logger::Info);
+						
+		if(fdg.positions_size() < (int)(i+1))
+			fdg.add_positions();			
+		fdg.mutable_positions(i)->set_x(fGen.getFormation()->at(i).X);
+		fdg.mutable_positions(i)->set_y(fGen.getFormation()->at(i).Y);
+		fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);		
+	}
+	_blk.publishSignal(fdg, "debug");
 }
 
 /* -------------------------------------------------------------------------------------------------------------------- */
