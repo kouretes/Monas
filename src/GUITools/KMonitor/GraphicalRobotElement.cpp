@@ -521,21 +521,23 @@ void GraphicalRobotElement::updateFormationRects (FormationDataForGUI debugGUI) 
 		if (posInfo.has_x() && posInfo.has_y() && posInfo.has_role()) {
 
 			PositionsList.at (i)->setRect (this->parentScene->rectFromFC ( posInfo.x()*1000, posInfo.y()*1000, 150, 150) );
-			
-			if(posInfo.role() == 0) {
+			if(posInfo.role() == PositionInfo::GOALIE) {
 				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "G", Qt::green);	
 			}
-			if(posInfo.role() == 1) {			
+			else if(posInfo.role() == PositionInfo::DEFENDER) {			
 				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "D", Qt::blue);
 			}
-			if(posInfo.role() == 2) {			
+			else if(posInfo.role() == PositionInfo::ONBALL) {			
 				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "OB", Qt::red);
 			}
-			if(posInfo.role() == 3) {			
-				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "SL", Qt::yellow);
+			else if(posInfo.role() == PositionInfo::SUPPORTER_L && formationBallX >= 0) {			
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "LS", Qt::yellow);
 			}
-			if(posInfo.role() == 4) {
-				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "SR", Qt::yellow);
+			else if(posInfo.role() == PositionInfo::SUPPORTER_L && formationBallX < 0) {			
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "D", Qt::blue);
+			}
+			else if(posInfo.role() == PositionInfo::SUPPORTER_R) {
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "RS", Qt::yellow);
 			}
 		} 
 	}
