@@ -18,6 +18,7 @@
 #include "messages/GUICommunication.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 #include "messages/Kimage.pb.h"
+#include "messages/Debug.pb.h"
 
 #include <map>
 
@@ -50,6 +51,7 @@ signals:
 	void localizationDataUpdate (LocalizationDataForGUI, QString);
 	void obsmsgUpdate (ObservationMessage, QString);
 	void motionCommandUpdate (MotionWalkMessage, QString);
+	void formationDataUpdate (FormationDataForGUI, QString);
 	void gridInfoUpdate (GridInfo, QString);
 	void rawImage (KRawImage, QString);
 	void sensorsDataUpdate (AllSensorValuesMessage, QString);

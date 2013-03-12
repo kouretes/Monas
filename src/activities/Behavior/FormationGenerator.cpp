@@ -198,6 +198,11 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					formation->at(i).Y = DEFENDER_MOVEMENT;
 				}
 			}
+			else if(formation->at(i).role == GOALIE) {
+
+				formation->at(i).X  = Field.MinX;
+				formation->at(i).Y = 0;
+			}
 		}
 	}
 	else { // DEFENSIVE

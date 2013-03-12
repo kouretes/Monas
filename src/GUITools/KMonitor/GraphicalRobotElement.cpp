@@ -20,6 +20,7 @@ GraphicalRobotElement::GraphicalRobotElement (KFieldScene *parent, QString host)
 	currentSWIM.Clear();
 	currentObsm.Clear();
 	ParticlesList.clear();
+	PositionsList.clear();
 	RobotPositions.set_capacity (100);
 	UnionistLines.set_capacity (99);
 	GWSRobotVisible = false;
@@ -29,6 +30,7 @@ GraphicalRobotElement::GraphicalRobotElement (KFieldScene *parent, QString host)
 	LWSBallVisible = false;
 	LWSUnionistLineVisible = false;
 	LWSVisionBallVisible = false;
+	LWSFormationVisible = false;
 	LWSVisionYellowLeftPostVisible = false;
 	LWSVisionYellowRightPostVisible = false;
 	LWSVisionYellowPostVisible = false;
@@ -42,13 +44,20 @@ GraphicalRobotElement::GraphicalRobotElement (KFieldScene *parent, QString host)
 	penForRobotDirection.setWidth (3);
 	QPen penForMotionCmdLine (Qt::darkRed);
 	penForMotionCmdLine.setWidth (2);
-	loadXMLConfigParameters (ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
+	loadXMLlocalizationConfigParameters (ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
+	loadXMLteamConfigParameters (ArchConfig::Instance().GetConfigPrefix() + "/teamConfig.xml");
 
 	for (unsigned it = 0; it < partclsNum; it++) {
 		Particle *part = new GUIRobotPose();
 		part->Direction = this->parentScene->addLine (QLineF(), QPen (Qt::black) );
 		part->Pose = this->parentScene->addEllipse (QRect(), QPen (Qt::cyan), QBrush (Qt::cyan) );
 		ParticlesList.append (part);
+	}
+	
+	formationBall = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (QColor(255, 140, 0)) );
+	for (unsigned it = 0; it < numOfPlayers; it++) {
+		QGraphicsEllipseItem *pos = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::darkGray) );
+		PositionsList.append (pos);
 	}
 
 	HFOVLines = this->parentScene->addPolygon (QPolygonF(), QPen (Qt::darkCyan), QBrush (Qt::Dense7Pattern) );
@@ -153,6 +162,12 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 		}
 	}
 
+	for (unsigned i = 0; i < PositionsList.count(); i++) {
+		if (PositionsList.at (i) ) {
+			delete PositionsList.at (i);
+		}
+	}
+	
 	boost::circular_buffer<QGraphicsEllipseItem *>::iterator P_it;
 
 	for (P_it = RobotPositions.begin(); P_it != RobotPositions.end(); ++P_it) {
@@ -170,10 +185,16 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 	}
 }
 
-void GraphicalRobotElement::loadXMLConfigParameters (std::string fname) {
+void GraphicalRobotElement::loadXMLlocalizationConfigParameters (std::string fname) {
 	XMLConfig *xmlconfig = new XMLConfig (fname);
 	partclsNum = 0;
 	xmlconfig->QueryElement ("partclsNum", partclsNum);
+}
+
+void GraphicalRobotElement::loadXMLteamConfigParameters (std::string fname) {
+	XMLConfig *xmlconfig = new XMLConfig (fname);
+	numOfPlayers = 0;
+	xmlconfig->QueryElement ("team_number", numOfPlayers);
 }
 
 void GraphicalRobotElement::setCurrentWIM (WorldInfo nwim) {
@@ -299,6 +320,10 @@ void GraphicalRobotElement::setBallVisible (bool visible) {
 
 void GraphicalRobotElement::updateBallRect() {
 	if ( (this->currentWIM.balls_size() > 0) && this->currentWIM.has_myposition() ) {
+		float a = cos (currentWIM.myposition().phi() );
+		float b = sin (currentWIM.myposition().phi() );
+		formationBallX = (currentWIM.myposition().x() + currentWIM.balls (0).relativex() * a - currentWIM.balls (0).relativey() * b);
+		formationBallY = (currentWIM.myposition().y() + currentWIM.balls (0).relativex() * b + currentWIM.balls (0).relativey() * a);
 		Ball->setRect (this->parentScene->ballRectFromFC (&currentWIM, 75, 75) );
 	} else {
 		Ball->setRect (0, 0, 0, 0);
@@ -396,6 +421,16 @@ void GraphicalRobotElement::tagVisionObservations (QGraphicsEllipseItem *post, Q
 	post->setBrush (brush);
 }
 
+void GraphicalRobotElement::tagRoles (QGraphicsEllipseItem *post, QRectF rect, QString text, const QColor & color) {
+	QBrush brush;
+	QPixmap pix (700, 700);
+	pix.fill (color);
+	QPainter paint (&pix);
+	paint.drawText (rect, Qt::AlignCenter, text);
+	brush.setTexture (pix);
+	post->setBrush (brush);
+}
+
 void GraphicalRobotElement::clearVisionObservations() {
 	GREtimer->stop();
 
@@ -453,6 +488,58 @@ void GraphicalRobotElement::updateParticlesRect (LocalizationDataForGUI debugGUI
 			ParticlesList.at (i)->Pose->setRect ( 0, 0, 0, 0);
 			ParticlesList.at (i)->Direction->setLine (0, 0, 0, 0);
 		}
+	}
+}
+
+void GraphicalRobotElement::setFormationVisible (bool visible) {
+	if (visible == false) {
+		this->parentScene->getLabel()->setVisible(false);
+		formationBall->setVisible(false);
+	}
+	else {
+		this->parentScene->getLabel()->setVisible(true);
+		formationBall->setVisible(true);
+	}
+
+	for (unsigned i = 0; i < PositionsList.count(); i++) {
+		if (visible == false)
+			PositionsList.at (i)->setVisible (false);		
+		else
+			PositionsList.at (i)->setVisible (true);
+	}
+}
+
+void GraphicalRobotElement::updateFormationRects (FormationDataForGUI debugGUI) {
+	
+	formationBall->setRect(this->parentScene->rectFromFC ( formationBallX*1000, formationBallY*1000, 80, 80));
+	this->parentScene->getLabel()->setText("Ball Position:\n"+QString::fromStdString("X: ")+QString::number((formationBallX),'f',3)+QString::fromStdString("\nY: ")
+					+QString::number((formationBallY),'f',3)+"\n");
+	
+	for (unsigned i = 0; i < debugGUI.positions_size(); i++) {
+		PositionInfo posInfo = debugGUI.positions (i);
+
+		if (posInfo.has_x() && posInfo.has_y() && posInfo.has_role()) {
+
+			PositionsList.at (i)->setRect (this->parentScene->rectFromFC ( posInfo.x()*1000, posInfo.y()*1000, 150, 150) );
+			if(posInfo.role() == PositionInfo::GOALIE) {
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "G", Qt::green);	
+			}
+			else if(posInfo.role() == PositionInfo::DEFENDER) {			
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "D", Qt::blue);
+			}
+			else if(posInfo.role() == PositionInfo::ONBALL) {			
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "OB", Qt::red);
+			}
+			else if(posInfo.role() == PositionInfo::SUPPORTER_L && formationBallX >= 0) {			
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "LS", Qt::yellow);
+			}
+			else if(posInfo.role() == PositionInfo::SUPPORTER_L && formationBallX < 0) {			
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "D", Qt::blue);
+			}
+			else if(posInfo.role() == PositionInfo::SUPPORTER_R) {
+				tagRoles (PositionsList.at (i), PositionsList.at (i)->rect(), "RS", Qt::yellow);
+			}
+		} 
 	}
 }
 

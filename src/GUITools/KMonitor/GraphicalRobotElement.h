@@ -17,6 +17,7 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/motion.pb.h"
+#include "messages/Debug.pb.h"
 
 #include "KFieldScene.h"
 
@@ -66,11 +67,20 @@ public:
 	bool getLWSTeammatesVisible() {
 		return LWSTeammatesVisible;
 	}
+	void setLWSFormationVisible (bool visible) {
+		LWSFormationVisible = visible;
+		setFormationVisible (visible);
+	}
+	bool getLWSFormationVisible() {
+		return LWSFormationVisible;
+	}
 	void setRobotVisible (bool visible);
 	void setTeammateVisible (int idx, bool visible);
 	void setTeammatesVisible (bool visible);
+	void setFormationVisible (bool visible);
 	void updateRobotRect();
 	void updateTeammatesRects();
+	void updateFormationRects(FormationDataForGUI debugGUI);
 
 	void setGWSBallVisible (bool visible) {
 		GWSBallVisible = visible;
@@ -203,8 +213,10 @@ private slots:
 	void clearMotionWalkCommand();
 
 private:
-	void loadXMLConfigParameters (std::string fname);
+	void loadXMLlocalizationConfigParameters (std::string fname);
+	void loadXMLteamConfigParameters (std::string fname);
 	void tagVisionObservations (QGraphicsEllipseItem *post, QRectF rect, QString text);
+	void tagRoles (QGraphicsEllipseItem *post, QRectF rect, QString text, const QColor & color);
 	QPolygonF calculateArrowHeadPosition (QLineF aLine);
 	void updateTraceRect();
 
@@ -222,6 +234,13 @@ private:
 	static const int numOfRobots = 5;
 	QGraphicsEllipseItem *Robot, *Teammates[numOfRobots];
 	QGraphicsLineItem *RobotDirection, *TeammateDirections[numOfRobots];
+	
+	bool LWSFormationVisible;
+	QList<QGraphicsEllipseItem *> PositionsList;
+	QGraphicsEllipseItem *formationBall;
+	int numOfPlayers;
+	float formationBallX;
+	float formationBallY;
 
 	bool GWSBallVisible;
 	bool LWSBallVisible;
