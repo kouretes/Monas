@@ -45,6 +45,16 @@ KFieldScene::KFieldScene (QGraphicsView *parent) {
 	this->addItem (LBPost);
 	this->addItem (RTPost);
 	this->addItem (RBPost);
+	
+	formationLabel = new QLabel("Ball Position:\nX:\nY:\n");
+	this->addWidget(formationLabel);
+	formationLabel->setStyleSheet("border: 2px solid #ffffff");
+	formationLabel->adjustSize();
+	QPalette pal = formationLabel->palette();
+	pal.setColor(formationLabel->backgroundRole(), QColor(0,155,0));
+	pal.setColor(formationLabel->foregroundRole(), Qt::black);
+	formationLabel->setPalette(pal);
+	formationLabel->setVisible(false);
 }
 
 KFieldScene::~KFieldScene() {
@@ -299,6 +309,8 @@ void KFieldScene::resizeFieldScene (int width, int height) {
 	LTPost->setPos (wLLine - 24, hTGoalArea - 22);
 	RTPost->setPos (wRLine - 6, hTGoalArea - 22);
 	RBPost->setPos (wRLine - 6, hBGoalArea - 16);
+	
+	formationLabel->move(width + 23, -15);
 }
 
 QRectF KFieldScene::rectFromFC (float xMiddle, float yMiddle, float width, float height) {

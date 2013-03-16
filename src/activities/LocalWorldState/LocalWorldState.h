@@ -18,6 +18,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
+#include "messages/Debug.pb.h"
 
 #include "BallFilter.h"
 #include "KLocalization.h"

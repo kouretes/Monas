@@ -3,14 +3,15 @@
 
 
 #include "hal/robot/generic_nao/aldebaran-sensors.h"
+#include "hal/robot/generic_nao/robot_consts.h"
+
 #include "messages/SensorsMessage.pb.h"
 #include <vector>
 #include <map>
 #include <string>
 
-#include "architecture/executables/IProvider.h"
+#include "core/include/IProvider.hpp"
 #include "tools/stat/cumulative.h"
-#include "hal/robot/generic_nao/robot_consts.h"
 #include "tools/stat/kalman.h"
 
 #define DEBOUNCE_MILLISEC 20

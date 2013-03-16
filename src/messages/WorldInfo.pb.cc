@@ -43,9 +43,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* header_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   header_reflection_ = NULL;
-const ::google::protobuf::Descriptor* LocalizationDataForGUI_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  LocalizationDataForGUI_reflection_ = NULL;
 
 }  // namespace
 
@@ -220,21 +217,6 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(header));
-  LocalizationDataForGUI_descriptor_ = file->message_type(9);
-  static const int LocalizationDataForGUI_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationDataForGUI, particles_),
-  };
-  LocalizationDataForGUI_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      LocalizationDataForGUI_descriptor_,
-      LocalizationDataForGUI::default_instance_,
-      LocalizationDataForGUI_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationDataForGUI, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationDataForGUI, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(LocalizationDataForGUI));
 }
 
 namespace {
@@ -265,8 +247,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
     LocalizationData_descriptor_, &LocalizationData::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     header_descriptor_, &header::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    LocalizationDataForGUI_descriptor_, &LocalizationDataForGUI::default_instance());
 }
 
 }  // namespace
@@ -290,8 +270,6 @@ void protobuf_ShutdownFile_WorldInfo_2eproto() {
   delete LocalizationData_reflection_;
   delete header::default_instance_;
   delete header_reflection_;
-  delete LocalizationDataForGUI::default_instance_;
-  delete LocalizationDataForGUI_reflection_;
 }
 
 void protobuf_AddDesc_WorldInfo_2eproto() {
@@ -334,8 +312,7 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "on\030\003 \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002"
     "(\0132\023.ObservationMessage\"A\n\006header\022\033\n\017Nex"
     "tMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 "
-    "\002(\014:\005Undef\"7\n\026LocalizationDataForGUI\022\035\n\t"
-    "Particles\030\001 \003(\0132\n.RobotPose", 1347);
+    "\002(\014:\005Undef", 1290);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -347,7 +324,6 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
   LocalizationData::default_instance_ = new LocalizationData();
   header::default_instance_ = new header();
-  LocalizationDataForGUI::default_instance_ = new LocalizationDataForGUI();
   WorldInfo::default_instance_->InitAsDefaultInstance();
   SharedWorldInfo::default_instance_->InitAsDefaultInstance();
   TeammatePose::default_instance_->InitAsDefaultInstance();
@@ -357,7 +333,6 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
   LocalizationData::default_instance_->InitAsDefaultInstance();
   header::default_instance_->InitAsDefaultInstance();
-  LocalizationDataForGUI::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_WorldInfo_2eproto);
 }
 
@@ -3413,211 +3388,6 @@ void header::Swap(header* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = header_descriptor_;
   metadata.reflection = header_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int LocalizationDataForGUI::kParticlesFieldNumber;
-#endif  // !_MSC_VER
-
-LocalizationDataForGUI::LocalizationDataForGUI()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void LocalizationDataForGUI::InitAsDefaultInstance() {
-}
-
-LocalizationDataForGUI::LocalizationDataForGUI(const LocalizationDataForGUI& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void LocalizationDataForGUI::SharedCtor() {
-  _cached_size_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-LocalizationDataForGUI::~LocalizationDataForGUI() {
-  SharedDtor();
-}
-
-void LocalizationDataForGUI::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void LocalizationDataForGUI::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* LocalizationDataForGUI::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return LocalizationDataForGUI_descriptor_;
-}
-
-const LocalizationDataForGUI& LocalizationDataForGUI::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_WorldInfo_2eproto();  return *default_instance_;
-}
-
-LocalizationDataForGUI* LocalizationDataForGUI::default_instance_ = NULL;
-
-LocalizationDataForGUI* LocalizationDataForGUI::New() const {
-  return new LocalizationDataForGUI;
-}
-
-void LocalizationDataForGUI::Clear() {
-  particles_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool LocalizationDataForGUI::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .RobotPose Particles = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_Particles:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_particles()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(10)) goto parse_Particles;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void LocalizationDataForGUI::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .RobotPose Particles = 1;
-  for (int i = 0; i < this->particles_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->particles(i), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* LocalizationDataForGUI::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // repeated .RobotPose Particles = 1;
-  for (int i = 0; i < this->particles_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->particles(i), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int LocalizationDataForGUI::ByteSize() const {
-  int total_size = 0;
-  
-  // repeated .RobotPose Particles = 1;
-  total_size += 1 * this->particles_size();
-  for (int i = 0; i < this->particles_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->particles(i));
-  }
-  
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void LocalizationDataForGUI::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const LocalizationDataForGUI* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const LocalizationDataForGUI*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void LocalizationDataForGUI::MergeFrom(const LocalizationDataForGUI& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  particles_.MergeFrom(from.particles_);
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void LocalizationDataForGUI::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void LocalizationDataForGUI::CopyFrom(const LocalizationDataForGUI& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool LocalizationDataForGUI::IsInitialized() const {
-  
-  for (int i = 0; i < particles_size(); i++) {
-    if (!this->particles(i).IsInitialized()) return false;
-  }
-  return true;
-}
-
-void LocalizationDataForGUI::Swap(LocalizationDataForGUI* other) {
-  if (other != this) {
-    particles_.Swap(&other->particles_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata LocalizationDataForGUI::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = LocalizationDataForGUI_descriptor_;
-  metadata.reflection = LocalizationDataForGUI_reflection_;
   return metadata;
 }
 

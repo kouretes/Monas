@@ -13,8 +13,12 @@
 	<activity Enable="1">Vision</activity>
 	<activity Enable="1">LocalWorldState</activity>
 	<activity Enable="0">KalmanWorldState</activity>
-	<activity Enable="1">SharedWorldModel</activity>
 	<activity Enable="1">Behavior</activity>
+</agent>
+
+<agent IsRealTime="1" Priority="1" ThreadFrequency="2" StatsCycle="50" Enable="0">
+	<name>SWM</name>
+	<activity Enable="1">SharedWorldModel</activity>
 </agent>
 
 <agent IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="50" Enable="1">

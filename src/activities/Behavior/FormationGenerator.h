@@ -44,8 +44,6 @@ class FormationGenerator {
 
 private:
 
-
-
 	/**
 	 * @enum Role
 	 * @brief enum to attach roles on positions.

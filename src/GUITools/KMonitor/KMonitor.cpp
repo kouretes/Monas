@@ -38,6 +38,7 @@ KMonitor::KMonitor (QWidget *parent)
 	connect (Messenger, SIGNAL (obsmsgUpdate (ObservationMessage, QString) ), ui->LWSTab, SLOT (observationMessageUpdateHandler (ObservationMessage, QString) ) );
 	connect (Messenger, SIGNAL (localizationDataUpdate (LocalizationDataForGUI, QString) ), ui->LWSTab, SLOT (localizationDataUpdateHandler (LocalizationDataForGUI, QString) ) );
 	connect (Messenger, SIGNAL (motionCommandUpdate (MotionWalkMessage, QString) ), ui->LWSTab, SLOT (motionCommandUpdateHandler (MotionWalkMessage, QString) ) );
+	connect (Messenger, SIGNAL (formationDataUpdate (FormationDataForGUI, QString) ), ui->LWSTab, SLOT (formationDataUpdateHandler (FormationDataForGUI, QString) ) );
 	/****************** SONARS TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL POLAR MAP
 	//Signal slot connections for Local Map Hosts ComboBox

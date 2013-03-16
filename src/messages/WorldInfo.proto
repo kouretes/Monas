@@ -73,6 +73,3 @@ message header{
 	
 }
 
-message LocalizationDataForGUI{
-	repeated RobotPose Particles = 1;
-}

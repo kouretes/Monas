@@ -1,0 +1,22 @@
+import "WorldInfo.proto";
+
+message LocalizationDataForGUI{
+	repeated RobotPose Particles = 1;
+}
+
+message PositionInfo{
+	enum ROLE {
+		GOALIE = 0;
+		DEFENDER = 1;
+		ONBALL = 2;
+		SUPPORTER_L = 3;
+		SUPPORTER_R = 4;	
+	}
+	required float X = 1;
+	required float Y = 2;
+	required int32 role = 3;
+}
+
+message FormationDataForGUI{
+	repeated PositionInfo Positions = 1;
+}

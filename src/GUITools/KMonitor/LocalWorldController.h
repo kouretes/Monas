@@ -41,6 +41,7 @@ public slots:
 	void observationMessageUpdateHandler (ObservationMessage, QString);
 	void localizationDataUpdateHandler (LocalizationDataForGUI, QString);
 	void motionCommandUpdateHandler (MotionWalkMessage, QString);
+	void formationDataUpdateHandler (FormationDataForGUI, QString);
 
 
 private slots:
@@ -64,6 +65,7 @@ private:
 	void LWSGVTraceVisible (QString, bool);
 	void LWSGVMWCmdVisible (QString, bool);
 	void LWSGVTeammatesVisible (QString, bool);
+	void LWSGVFormationVisible (QString, bool);
 
 protected:
 	void resizeEvent (QResizeEvent *event);

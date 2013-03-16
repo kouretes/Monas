@@ -40,7 +40,6 @@ class UnknownObjects;
 class LocalizationResetMessage;
 class LocalizationData;
 class header;
-class LocalizationDataForGUI;
 
 enum LocalizationResetMessage_RESET {
   LocalizationResetMessage_RESET_UNIFORM = 0,
@@ -1138,91 +1137,6 @@ class header : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static header* default_instance_;
 };
-// -------------------------------------------------------------------
-
-class LocalizationDataForGUI : public ::google::protobuf::Message {
- public:
-  LocalizationDataForGUI();
-  virtual ~LocalizationDataForGUI();
-  
-  LocalizationDataForGUI(const LocalizationDataForGUI& from);
-  
-  inline LocalizationDataForGUI& operator=(const LocalizationDataForGUI& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const LocalizationDataForGUI& default_instance();
-  
-  void Swap(LocalizationDataForGUI* other);
-  
-  // implements Message ----------------------------------------------
-  
-  LocalizationDataForGUI* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const LocalizationDataForGUI& from);
-  void MergeFrom(const LocalizationDataForGUI& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .RobotPose Particles = 1;
-  inline int particles_size() const;
-  inline void clear_particles();
-  static const int kParticlesFieldNumber = 1;
-  inline const ::RobotPose& particles(int index) const;
-  inline ::RobotPose* mutable_particles(int index);
-  inline ::RobotPose* add_particles();
-  inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-      particles() const;
-  inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-      mutable_particles();
-  
-  // @@protoc_insertion_point(class_scope:LocalizationDataForGUI)
- private:
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::RepeatedPtrField< ::RobotPose > particles_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_WorldInfo_2eproto();
-  friend void protobuf_AssignDesc_WorldInfo_2eproto();
-  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-  
-  void InitAsDefaultInstance();
-  static LocalizationDataForGUI* default_instance_;
-};
 // ===================================================================
 
 
@@ -2170,35 +2084,6 @@ inline ::std::string* header::release_nextmsgname() {
     nextmsgname_ = const_cast< ::std::string*>(&_default_nextmsgname_);
     return temp;
   }
-}
-
-// -------------------------------------------------------------------
-
-// LocalizationDataForGUI
-
-// repeated .RobotPose Particles = 1;
-inline int LocalizationDataForGUI::particles_size() const {
-  return particles_.size();
-}
-inline void LocalizationDataForGUI::clear_particles() {
-  particles_.Clear();
-}
-inline const ::RobotPose& LocalizationDataForGUI::particles(int index) const {
-  return particles_.Get(index);
-}
-inline ::RobotPose* LocalizationDataForGUI::mutable_particles(int index) {
-  return particles_.Mutable(index);
-}
-inline ::RobotPose* LocalizationDataForGUI::add_particles() {
-  return particles_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-LocalizationDataForGUI::particles() const {
-  return particles_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-LocalizationDataForGUI::mutable_particles() {
-  return &particles_;
 }
 
 
