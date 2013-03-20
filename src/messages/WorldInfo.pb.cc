@@ -30,9 +30,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* Ball_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Ball_reflection_ = NULL;
-const ::google::protobuf::Descriptor* UnknownObjects_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  UnknownObjects_reflection_ = NULL;
 const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationResetMessage_reflection_ = NULL;
@@ -54,12 +51,9 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       "WorldInfo.proto");
   GOOGLE_CHECK(file != NULL);
   WorldInfo_descriptor_ = file->message_type(0);
-  static const int WorldInfo_offsets_[5] = {
+  static const int WorldInfo_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(WorldInfo, myposition_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(WorldInfo, balls_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(WorldInfo, otherrobots_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(WorldInfo, ufos_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(WorldInfo, globballs_),
   };
   WorldInfo_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -109,7 +103,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, y_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, phi_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, confidence_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, var_),
   };
   RobotPose_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -128,10 +122,10 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, relativey_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, relativexspeed_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, relativeyspeed_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, variancex_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, variancey_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, variancexspeed_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, varianceyspeed_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, absolutex_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, absolutey_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, absolutexspeed_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ball, absoluteyspeed_),
   };
   Ball_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -144,26 +138,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Ball));
-  UnknownObjects_descriptor_ = file->message_type(5);
-  static const int UnknownObjects_offsets_[5] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, relativex_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, relativey_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, height_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, relativexspeed_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, relativeyspeed_),
-  };
-  UnknownObjects_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      UnknownObjects_descriptor_,
-      UnknownObjects::default_instance_,
-      UnknownObjects_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnknownObjects, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(UnknownObjects));
-  LocalizationResetMessage_descriptor_ = file->message_type(6);
+  LocalizationResetMessage_descriptor_ = file->message_type(5);
   static const int LocalizationResetMessage_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, kickoff_),
@@ -183,7 +158,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationResetMessage));
   LocalizationResetMessage_RESET_descriptor_ = LocalizationResetMessage_descriptor_->enum_type(0);
-  LocalizationData_descriptor_ = file->message_type(7);
+  LocalizationData_descriptor_ = file->message_type(6);
   static const int LocalizationData_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, world_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, particles_),
@@ -201,7 +176,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationData));
-  header_descriptor_ = file->message_type(8);
+  header_descriptor_ = file->message_type(7);
   static const int header_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgbytesize_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgname_),
@@ -240,8 +215,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Ball_descriptor_, &Ball::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    UnknownObjects_descriptor_, &UnknownObjects::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationResetMessage_descriptor_, &LocalizationResetMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationData_descriptor_, &LocalizationData::default_instance());
@@ -262,8 +235,6 @@ void protobuf_ShutdownFile_WorldInfo_2eproto() {
   delete RobotPose_reflection_;
   delete Ball::default_instance_;
   delete Ball_reflection_;
-  delete UnknownObjects::default_instance_;
-  delete UnknownObjects_reflection_;
   delete LocalizationResetMessage::default_instance_;
   delete LocalizationResetMessage_reflection_;
   delete LocalizationData::default_instance_;
@@ -281,38 +252,31 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   ::protobuf_AddDesc_VisionObservations_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\017WorldInfo.proto\032\030VisionObservations.pr"
-    "oto\"\233\001\n\tWorldInfo\022\036\n\nmyPosition\030\001 \002(\0132\n."
-    "RobotPose\022\024\n\005Balls\030\002 \003(\0132\005.Ball\022\037\n\013Other"
-    "Robots\030\003 \003(\0132\n.RobotPose\022\035\n\004UFOs\030\004 \003(\0132\017"
-    ".UnknownObjects\022\030\n\tGlobBalls\030\005 \003(\0132\005.Bal"
-    "l\"c\n\017SharedWorldInfo\022\'\n\023playerClosestToB"
-    "all\030\001 \002(\0132\n.RobotPose\022\'\n\020teammatePositio"
-    "n\030\002 \003(\0132\r.TeammatePose\"9\n\014TeammatePose\022\030"
-    "\n\004pose\030\001 \002(\0132\n.RobotPose\022\017\n\007robotId\030\002 \002("
-    "\r\"f\n\tRobotPose\022\022\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030"
-    "\002 \002(\002:\007-100000\022\024\n\003phi\030\003 \002(\002:\007-100000\022\033\n\n"
-    "confidence\030\004 \002(\002:\007-100000\"\372\001\n\004Ball\022\032\n\tre"
-    "lativeX\030\001 \002(\002:\007-100000\022\032\n\trelativeY\030\002 \002("
-    "\002:\007-100000\022\037\n\016relativeXspeed\030\003 \002(\002:\007-100"
-    "000\022\037\n\016relativeYspeed\030\004 \002(\002:\007-100000\022\032\n\t"
-    "varianceX\030\005 \002(\002:\007-100000\022\032\n\tvarianceY\030\006 "
-    "\002(\002:\007-100000\022\037\n\016varianceXspeed\030\007 \002(\002:\007-1"
-    "00000\022\037\n\016varianceYspeed\030\010 \002(\002:\007-100000\"\243"
-    "\001\n\016UnknownObjects\022\032\n\trelativeX\030\001 \001(\002:\007-1"
-    "00000\022\032\n\trelativeY\030\002 \001(\002:\007-100000\022\027\n\006hei"
-    "ght\030\003 \001(\002:\007-100000\022\037\n\016relativeXspeed\030\004 \001"
-    "(\002:\007-100000\022\037\n\016relativeYspeed\030\005 \001(\002:\007-10"
-    "0000\"\263\001\n\030LocalizationResetMessage\022\014\n\004typ"
-    "e\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 \002(\002:\001"
-    "0\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:\0010\"C\n"
-    "\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003SET\020\002\022"
-    "\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020Localizat"
-    "ionData\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tPa"
-    "rticles\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPositi"
-    "on\030\003 \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002"
-    "(\0132\023.ObservationMessage\"A\n\006header\022\033\n\017Nex"
-    "tMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 "
-    "\002(\014:\005Undef", 1290);
+    "oto\"A\n\tWorldInfo\022\036\n\nmyPosition\030\001 \002(\0132\n.R"
+    "obotPose\022\024\n\005Balls\030\002 \003(\0132\005.Ball\"c\n\017Shared"
+    "WorldInfo\022\'\n\023playerClosestToBall\030\001 \002(\0132\n"
+    ".RobotPose\022\'\n\020teammatePosition\030\002 \003(\0132\r.T"
+    "eammatePose\"9\n\014TeammatePose\022\030\n\004pose\030\001 \002("
+    "\0132\n.RobotPose\022\017\n\007robotId\030\002 \002(\r\"V\n\tRobotP"
+    "ose\022\022\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030\002 \002(\002:\007-100"
+    "000\022\024\n\003phi\030\003 \002(\002:\007-100000\022\013\n\003var\030\004 \003(\002\"\372"
+    "\001\n\004Ball\022\032\n\trelativeX\030\001 \002(\002:\007-100000\022\032\n\tr"
+    "elativeY\030\002 \002(\002:\007-100000\022\037\n\016relativeXspee"
+    "d\030\003 \002(\002:\007-100000\022\037\n\016relativeYspeed\030\004 \002(\002"
+    ":\007-100000\022\032\n\tabsoluteX\030\005 \002(\002:\007-100000\022\032\n"
+    "\tabsoluteY\030\006 \002(\002:\007-100000\022\037\n\016absoluteXsp"
+    "eed\030\007 \002(\002:\007-100000\022\037\n\016absoluteYspeed\030\010 \002"
+    "(\002:\007-100000\"\263\001\n\030LocalizationResetMessage"
+    "\022\014\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030"
+    "\003 \002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002("
+    "\002:\0010\"C\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n"
+    "\003SET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020Lo"
+    "calizationData\022\031\n\005World\030\001 \002(\0132\n.WorldInf"
+    "o\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022!\n\rRobo"
+    "tPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Observati"
+    "ons\030\004 \002(\0132\023.ObservationMessage\"A\n\006header"
+    "\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsg"
+    "Name\030\003 \002(\014:\005Undef", 1017);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -320,7 +284,6 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   TeammatePose::default_instance_ = new TeammatePose();
   RobotPose::default_instance_ = new RobotPose();
   Ball::default_instance_ = new Ball();
-  UnknownObjects::default_instance_ = new UnknownObjects();
   LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
   LocalizationData::default_instance_ = new LocalizationData();
   header::default_instance_ = new header();
@@ -329,7 +292,6 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   TeammatePose::default_instance_->InitAsDefaultInstance();
   RobotPose::default_instance_->InitAsDefaultInstance();
   Ball::default_instance_->InitAsDefaultInstance();
-  UnknownObjects::default_instance_->InitAsDefaultInstance();
   LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
   LocalizationData::default_instance_->InitAsDefaultInstance();
   header::default_instance_->InitAsDefaultInstance();
@@ -349,9 +311,6 @@ struct StaticDescriptorInitializer_WorldInfo_2eproto {
 #ifndef _MSC_VER
 const int WorldInfo::kMyPositionFieldNumber;
 const int WorldInfo::kBallsFieldNumber;
-const int WorldInfo::kOtherRobotsFieldNumber;
-const int WorldInfo::kUFOsFieldNumber;
-const int WorldInfo::kGlobBallsFieldNumber;
 #endif  // !_MSC_VER
 
 WorldInfo::WorldInfo()
@@ -412,9 +371,6 @@ void WorldInfo::Clear() {
     }
   }
   balls_.Clear();
-  otherrobots_.Clear();
-  ufos_.Clear();
-  globballs_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -449,51 +405,6 @@ bool WorldInfo::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(18)) goto parse_Balls;
-        if (input->ExpectTag(26)) goto parse_OtherRobots;
-        break;
-      }
-      
-      // repeated .RobotPose OtherRobots = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_OtherRobots:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_otherrobots()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(26)) goto parse_OtherRobots;
-        if (input->ExpectTag(34)) goto parse_UFOs;
-        break;
-      }
-      
-      // repeated .UnknownObjects UFOs = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_UFOs:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_ufos()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(34)) goto parse_UFOs;
-        if (input->ExpectTag(42)) goto parse_GlobBalls;
-        break;
-      }
-      
-      // repeated .Ball GlobBalls = 5;
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_GlobBalls:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_globballs()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(42)) goto parse_GlobBalls;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -528,24 +439,6 @@ void WorldInfo::SerializeWithCachedSizes(
       2, this->balls(i), output);
   }
   
-  // repeated .RobotPose OtherRobots = 3;
-  for (int i = 0; i < this->otherrobots_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->otherrobots(i), output);
-  }
-  
-  // repeated .UnknownObjects UFOs = 4;
-  for (int i = 0; i < this->ufos_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->ufos(i), output);
-  }
-  
-  // repeated .Ball GlobBalls = 5;
-  for (int i = 0; i < this->globballs_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, this->globballs(i), output);
-  }
-  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -566,27 +459,6 @@ void WorldInfo::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, this->balls(i), target);
-  }
-  
-  // repeated .RobotPose OtherRobots = 3;
-  for (int i = 0; i < this->otherrobots_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        3, this->otherrobots(i), target);
-  }
-  
-  // repeated .UnknownObjects UFOs = 4;
-  for (int i = 0; i < this->ufos_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        4, this->ufos(i), target);
-  }
-  
-  // repeated .Ball GlobBalls = 5;
-  for (int i = 0; i < this->globballs_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        5, this->globballs(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -616,30 +488,6 @@ int WorldInfo::ByteSize() const {
         this->balls(i));
   }
   
-  // repeated .RobotPose OtherRobots = 3;
-  total_size += 1 * this->otherrobots_size();
-  for (int i = 0; i < this->otherrobots_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->otherrobots(i));
-  }
-  
-  // repeated .UnknownObjects UFOs = 4;
-  total_size += 1 * this->ufos_size();
-  for (int i = 0; i < this->ufos_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->ufos(i));
-  }
-  
-  // repeated .Ball GlobBalls = 5;
-  total_size += 1 * this->globballs_size();
-  for (int i = 0; i < this->globballs_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->globballs(i));
-  }
-  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -666,9 +514,6 @@ void WorldInfo::MergeFrom(const ::google::protobuf::Message& from) {
 void WorldInfo::MergeFrom(const WorldInfo& from) {
   GOOGLE_CHECK_NE(&from, this);
   balls_.MergeFrom(from.balls_);
-  otherrobots_.MergeFrom(from.otherrobots_);
-  ufos_.MergeFrom(from.ufos_);
-  globballs_.MergeFrom(from.globballs_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_myposition()) {
       mutable_myposition()->::RobotPose::MergeFrom(from.myposition());
@@ -698,12 +543,6 @@ bool WorldInfo::IsInitialized() const {
   for (int i = 0; i < balls_size(); i++) {
     if (!this->balls(i).IsInitialized()) return false;
   }
-  for (int i = 0; i < otherrobots_size(); i++) {
-    if (!this->otherrobots(i).IsInitialized()) return false;
-  }
-  for (int i = 0; i < globballs_size(); i++) {
-    if (!this->globballs(i).IsInitialized()) return false;
-  }
   return true;
 }
 
@@ -711,9 +550,6 @@ void WorldInfo::Swap(WorldInfo* other) {
   if (other != this) {
     std::swap(myposition_, other->myposition_);
     balls_.Swap(&other->balls_);
-    otherrobots_.Swap(&other->otherrobots_);
-    ufos_.Swap(&other->ufos_);
-    globballs_.Swap(&other->globballs_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1250,7 +1086,7 @@ void TeammatePose::Swap(TeammatePose* other) {
 const int RobotPose::kXFieldNumber;
 const int RobotPose::kYFieldNumber;
 const int RobotPose::kPhiFieldNumber;
-const int RobotPose::kConfidenceFieldNumber;
+const int RobotPose::kVarFieldNumber;
 #endif  // !_MSC_VER
 
 RobotPose::RobotPose()
@@ -1272,7 +1108,6 @@ void RobotPose::SharedCtor() {
   x_ = -100000;
   y_ = -100000;
   phi_ = -100000;
-  confidence_ = -100000;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1310,8 +1145,8 @@ void RobotPose::Clear() {
     x_ = -100000;
     y_ = -100000;
     phi_ = -100000;
-    confidence_ = -100000;
   }
+  var_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -1365,22 +1200,28 @@ bool RobotPose::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(37)) goto parse_confidence;
+        if (input->ExpectTag(37)) goto parse_var;
         break;
       }
       
-      // required float confidence = 4 [default = -100000];
+      // repeated float var = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_confidence:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+         parse_var:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &confidence_)));
-          set_has_confidence();
+                 1, 37, input, this->mutable_var())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_var())));
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(37)) goto parse_var;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1418,9 +1259,10 @@ void RobotPose::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->phi(), output);
   }
   
-  // required float confidence = 4 [default = -100000];
-  if (has_confidence()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->confidence(), output);
+  // repeated float var = 4;
+  for (int i = 0; i < this->var_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      4, this->var(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1446,9 +1288,10 @@ void RobotPose::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->phi(), target);
   }
   
-  // required float confidence = 4 [default = -100000];
-  if (has_confidence()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->confidence(), target);
+  // repeated float var = 4;
+  for (int i = 0; i < this->var_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(4, this->var(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1477,12 +1320,14 @@ int RobotPose::ByteSize() const {
       total_size += 1 + 4;
     }
     
-    // required float confidence = 4 [default = -100000];
-    if (has_confidence()) {
-      total_size += 1 + 4;
-    }
-    
   }
+  // repeated float var = 4;
+  {
+    int data_size = 0;
+    data_size = 4 * this->var_size();
+    total_size += 1 * this->var_size() + data_size;
+  }
+  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -1508,6 +1353,7 @@ void RobotPose::MergeFrom(const ::google::protobuf::Message& from) {
 
 void RobotPose::MergeFrom(const RobotPose& from) {
   GOOGLE_CHECK_NE(&from, this);
+  var_.MergeFrom(from.var_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_x()) {
       set_x(from.x());
@@ -1517,9 +1363,6 @@ void RobotPose::MergeFrom(const RobotPose& from) {
     }
     if (from.has_phi()) {
       set_phi(from.phi());
-    }
-    if (from.has_confidence()) {
-      set_confidence(from.confidence());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1538,7 +1381,7 @@ void RobotPose::CopyFrom(const RobotPose& from) {
 }
 
 bool RobotPose::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   
   return true;
 }
@@ -1548,7 +1391,7 @@ void RobotPose::Swap(RobotPose* other) {
     std::swap(x_, other->x_);
     std::swap(y_, other->y_);
     std::swap(phi_, other->phi_);
-    std::swap(confidence_, other->confidence_);
+    var_.Swap(&other->var_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1571,10 +1414,10 @@ const int Ball::kRelativeXFieldNumber;
 const int Ball::kRelativeYFieldNumber;
 const int Ball::kRelativeXspeedFieldNumber;
 const int Ball::kRelativeYspeedFieldNumber;
-const int Ball::kVarianceXFieldNumber;
-const int Ball::kVarianceYFieldNumber;
-const int Ball::kVarianceXspeedFieldNumber;
-const int Ball::kVarianceYspeedFieldNumber;
+const int Ball::kAbsoluteXFieldNumber;
+const int Ball::kAbsoluteYFieldNumber;
+const int Ball::kAbsoluteXspeedFieldNumber;
+const int Ball::kAbsoluteYspeedFieldNumber;
 #endif  // !_MSC_VER
 
 Ball::Ball()
@@ -1597,10 +1440,10 @@ void Ball::SharedCtor() {
   relativey_ = -100000;
   relativexspeed_ = -100000;
   relativeyspeed_ = -100000;
-  variancex_ = -100000;
-  variancey_ = -100000;
-  variancexspeed_ = -100000;
-  varianceyspeed_ = -100000;
+  absolutex_ = -100000;
+  absolutey_ = -100000;
+  absolutexspeed_ = -100000;
+  absoluteyspeed_ = -100000;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1639,10 +1482,10 @@ void Ball::Clear() {
     relativey_ = -100000;
     relativexspeed_ = -100000;
     relativeyspeed_ = -100000;
-    variancex_ = -100000;
-    variancey_ = -100000;
-    variancexspeed_ = -100000;
-    varianceyspeed_ = -100000;
+    absolutex_ = -100000;
+    absolutey_ = -100000;
+    absolutexspeed_ = -100000;
+    absoluteyspeed_ = -100000;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1713,67 +1556,67 @@ bool Ball::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(45)) goto parse_varianceX;
+        if (input->ExpectTag(45)) goto parse_absoluteX;
         break;
       }
       
-      // required float varianceX = 5 [default = -100000];
+      // required float absoluteX = 5 [default = -100000];
       case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_varianceX:
+         parse_absoluteX:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &variancex_)));
-          set_has_variancex();
+                 input, &absolutex_)));
+          set_has_absolutex();
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(53)) goto parse_varianceY;
+        if (input->ExpectTag(53)) goto parse_absoluteY;
         break;
       }
       
-      // required float varianceY = 6 [default = -100000];
+      // required float absoluteY = 6 [default = -100000];
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_varianceY:
+         parse_absoluteY:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &variancey_)));
-          set_has_variancey();
+                 input, &absolutey_)));
+          set_has_absolutey();
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(61)) goto parse_varianceXspeed;
+        if (input->ExpectTag(61)) goto parse_absoluteXspeed;
         break;
       }
       
-      // required float varianceXspeed = 7 [default = -100000];
+      // required float absoluteXspeed = 7 [default = -100000];
       case 7: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_varianceXspeed:
+         parse_absoluteXspeed:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &variancexspeed_)));
-          set_has_variancexspeed();
+                 input, &absolutexspeed_)));
+          set_has_absolutexspeed();
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(69)) goto parse_varianceYspeed;
+        if (input->ExpectTag(69)) goto parse_absoluteYspeed;
         break;
       }
       
-      // required float varianceYspeed = 8 [default = -100000];
+      // required float absoluteYspeed = 8 [default = -100000];
       case 8: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_varianceYspeed:
+         parse_absoluteYspeed:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &varianceyspeed_)));
-          set_has_varianceyspeed();
+                 input, &absoluteyspeed_)));
+          set_has_absoluteyspeed();
         } else {
           goto handle_uninterpreted;
         }
@@ -1819,24 +1662,24 @@ void Ball::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->relativeyspeed(), output);
   }
   
-  // required float varianceX = 5 [default = -100000];
-  if (has_variancex()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->variancex(), output);
+  // required float absoluteX = 5 [default = -100000];
+  if (has_absolutex()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->absolutex(), output);
   }
   
-  // required float varianceY = 6 [default = -100000];
-  if (has_variancey()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->variancey(), output);
+  // required float absoluteY = 6 [default = -100000];
+  if (has_absolutey()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->absolutey(), output);
   }
   
-  // required float varianceXspeed = 7 [default = -100000];
-  if (has_variancexspeed()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->variancexspeed(), output);
+  // required float absoluteXspeed = 7 [default = -100000];
+  if (has_absolutexspeed()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->absolutexspeed(), output);
   }
   
-  // required float varianceYspeed = 8 [default = -100000];
-  if (has_varianceyspeed()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->varianceyspeed(), output);
+  // required float absoluteYspeed = 8 [default = -100000];
+  if (has_absoluteyspeed()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->absoluteyspeed(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1867,24 +1710,24 @@ void Ball::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->relativeyspeed(), target);
   }
   
-  // required float varianceX = 5 [default = -100000];
-  if (has_variancex()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->variancex(), target);
+  // required float absoluteX = 5 [default = -100000];
+  if (has_absolutex()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->absolutex(), target);
   }
   
-  // required float varianceY = 6 [default = -100000];
-  if (has_variancey()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->variancey(), target);
+  // required float absoluteY = 6 [default = -100000];
+  if (has_absolutey()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->absolutey(), target);
   }
   
-  // required float varianceXspeed = 7 [default = -100000];
-  if (has_variancexspeed()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->variancexspeed(), target);
+  // required float absoluteXspeed = 7 [default = -100000];
+  if (has_absolutexspeed()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->absolutexspeed(), target);
   }
   
-  // required float varianceYspeed = 8 [default = -100000];
-  if (has_varianceyspeed()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->varianceyspeed(), target);
+  // required float absoluteYspeed = 8 [default = -100000];
+  if (has_absoluteyspeed()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->absoluteyspeed(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1918,23 +1761,23 @@ int Ball::ByteSize() const {
       total_size += 1 + 4;
     }
     
-    // required float varianceX = 5 [default = -100000];
-    if (has_variancex()) {
+    // required float absoluteX = 5 [default = -100000];
+    if (has_absolutex()) {
       total_size += 1 + 4;
     }
     
-    // required float varianceY = 6 [default = -100000];
-    if (has_variancey()) {
+    // required float absoluteY = 6 [default = -100000];
+    if (has_absolutey()) {
       total_size += 1 + 4;
     }
     
-    // required float varianceXspeed = 7 [default = -100000];
-    if (has_variancexspeed()) {
+    // required float absoluteXspeed = 7 [default = -100000];
+    if (has_absolutexspeed()) {
       total_size += 1 + 4;
     }
     
-    // required float varianceYspeed = 8 [default = -100000];
-    if (has_varianceyspeed()) {
+    // required float absoluteYspeed = 8 [default = -100000];
+    if (has_absoluteyspeed()) {
       total_size += 1 + 4;
     }
     
@@ -1977,17 +1820,17 @@ void Ball::MergeFrom(const Ball& from) {
     if (from.has_relativeyspeed()) {
       set_relativeyspeed(from.relativeyspeed());
     }
-    if (from.has_variancex()) {
-      set_variancex(from.variancex());
+    if (from.has_absolutex()) {
+      set_absolutex(from.absolutex());
     }
-    if (from.has_variancey()) {
-      set_variancey(from.variancey());
+    if (from.has_absolutey()) {
+      set_absolutey(from.absolutey());
     }
-    if (from.has_variancexspeed()) {
-      set_variancexspeed(from.variancexspeed());
+    if (from.has_absolutexspeed()) {
+      set_absolutexspeed(from.absolutexspeed());
     }
-    if (from.has_varianceyspeed()) {
-      set_varianceyspeed(from.varianceyspeed());
+    if (from.has_absoluteyspeed()) {
+      set_absoluteyspeed(from.absoluteyspeed());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -2017,10 +1860,10 @@ void Ball::Swap(Ball* other) {
     std::swap(relativey_, other->relativey_);
     std::swap(relativexspeed_, other->relativexspeed_);
     std::swap(relativeyspeed_, other->relativeyspeed_);
-    std::swap(variancex_, other->variancex_);
-    std::swap(variancey_, other->variancey_);
-    std::swap(variancexspeed_, other->variancexspeed_);
-    std::swap(varianceyspeed_, other->varianceyspeed_);
+    std::swap(absolutex_, other->absolutex_);
+    std::swap(absolutey_, other->absolutey_);
+    std::swap(absolutexspeed_, other->absolutexspeed_);
+    std::swap(absoluteyspeed_, other->absoluteyspeed_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -2032,363 +1875,6 @@ void Ball::Swap(Ball* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = Ball_descriptor_;
   metadata.reflection = Ball_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int UnknownObjects::kRelativeXFieldNumber;
-const int UnknownObjects::kRelativeYFieldNumber;
-const int UnknownObjects::kHeightFieldNumber;
-const int UnknownObjects::kRelativeXspeedFieldNumber;
-const int UnknownObjects::kRelativeYspeedFieldNumber;
-#endif  // !_MSC_VER
-
-UnknownObjects::UnknownObjects()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void UnknownObjects::InitAsDefaultInstance() {
-}
-
-UnknownObjects::UnknownObjects(const UnknownObjects& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void UnknownObjects::SharedCtor() {
-  _cached_size_ = 0;
-  relativex_ = -100000;
-  relativey_ = -100000;
-  height_ = -100000;
-  relativexspeed_ = -100000;
-  relativeyspeed_ = -100000;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-UnknownObjects::~UnknownObjects() {
-  SharedDtor();
-}
-
-void UnknownObjects::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void UnknownObjects::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* UnknownObjects::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return UnknownObjects_descriptor_;
-}
-
-const UnknownObjects& UnknownObjects::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_WorldInfo_2eproto();  return *default_instance_;
-}
-
-UnknownObjects* UnknownObjects::default_instance_ = NULL;
-
-UnknownObjects* UnknownObjects::New() const {
-  return new UnknownObjects;
-}
-
-void UnknownObjects::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    relativex_ = -100000;
-    relativey_ = -100000;
-    height_ = -100000;
-    relativexspeed_ = -100000;
-    relativeyspeed_ = -100000;
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool UnknownObjects::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional float relativeX = 1 [default = -100000];
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &relativex_)));
-          set_has_relativex();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(21)) goto parse_relativeY;
-        break;
-      }
-      
-      // optional float relativeY = 2 [default = -100000];
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_relativeY:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &relativey_)));
-          set_has_relativey();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(29)) goto parse_height;
-        break;
-      }
-      
-      // optional float height = 3 [default = -100000];
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_height:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &height_)));
-          set_has_height();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(37)) goto parse_relativeXspeed;
-        break;
-      }
-      
-      // optional float relativeXspeed = 4 [default = -100000];
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_relativeXspeed:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &relativexspeed_)));
-          set_has_relativexspeed();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(45)) goto parse_relativeYspeed;
-        break;
-      }
-      
-      // optional float relativeYspeed = 5 [default = -100000];
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_relativeYspeed:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &relativeyspeed_)));
-          set_has_relativeyspeed();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void UnknownObjects::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // optional float relativeX = 1 [default = -100000];
-  if (has_relativex()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->relativex(), output);
-  }
-  
-  // optional float relativeY = 2 [default = -100000];
-  if (has_relativey()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->relativey(), output);
-  }
-  
-  // optional float height = 3 [default = -100000];
-  if (has_height()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->height(), output);
-  }
-  
-  // optional float relativeXspeed = 4 [default = -100000];
-  if (has_relativexspeed()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->relativexspeed(), output);
-  }
-  
-  // optional float relativeYspeed = 5 [default = -100000];
-  if (has_relativeyspeed()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->relativeyspeed(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* UnknownObjects::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // optional float relativeX = 1 [default = -100000];
-  if (has_relativex()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->relativex(), target);
-  }
-  
-  // optional float relativeY = 2 [default = -100000];
-  if (has_relativey()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->relativey(), target);
-  }
-  
-  // optional float height = 3 [default = -100000];
-  if (has_height()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->height(), target);
-  }
-  
-  // optional float relativeXspeed = 4 [default = -100000];
-  if (has_relativexspeed()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->relativexspeed(), target);
-  }
-  
-  // optional float relativeYspeed = 5 [default = -100000];
-  if (has_relativeyspeed()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->relativeyspeed(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int UnknownObjects::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional float relativeX = 1 [default = -100000];
-    if (has_relativex()) {
-      total_size += 1 + 4;
-    }
-    
-    // optional float relativeY = 2 [default = -100000];
-    if (has_relativey()) {
-      total_size += 1 + 4;
-    }
-    
-    // optional float height = 3 [default = -100000];
-    if (has_height()) {
-      total_size += 1 + 4;
-    }
-    
-    // optional float relativeXspeed = 4 [default = -100000];
-    if (has_relativexspeed()) {
-      total_size += 1 + 4;
-    }
-    
-    // optional float relativeYspeed = 5 [default = -100000];
-    if (has_relativeyspeed()) {
-      total_size += 1 + 4;
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void UnknownObjects::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const UnknownObjects* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const UnknownObjects*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void UnknownObjects::MergeFrom(const UnknownObjects& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_relativex()) {
-      set_relativex(from.relativex());
-    }
-    if (from.has_relativey()) {
-      set_relativey(from.relativey());
-    }
-    if (from.has_height()) {
-      set_height(from.height());
-    }
-    if (from.has_relativexspeed()) {
-      set_relativexspeed(from.relativexspeed());
-    }
-    if (from.has_relativeyspeed()) {
-      set_relativeyspeed(from.relativeyspeed());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void UnknownObjects::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void UnknownObjects::CopyFrom(const UnknownObjects& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool UnknownObjects::IsInitialized() const {
-  
-  return true;
-}
-
-void UnknownObjects::Swap(UnknownObjects* other) {
-  if (other != this) {
-    std::swap(relativex_, other->relativex_);
-    std::swap(relativey_, other->relativey_);
-    std::swap(height_, other->height_);
-    std::swap(relativexspeed_, other->relativexspeed_);
-    std::swap(relativeyspeed_, other->relativeyspeed_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata UnknownObjects::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = UnknownObjects_descriptor_;
-  metadata.reflection = UnknownObjects_reflection_;
   return metadata;
 }
 
