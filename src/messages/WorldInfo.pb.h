@@ -424,10 +424,17 @@ class RobotPose : public ::google::protobuf::Message {
   inline float phi() const;
   inline void set_phi(float value);
   
-  // repeated float var = 4;
+  // required float confidence = 4 [default = -100000];
+  inline bool has_confidence() const;
+  inline void clear_confidence();
+  static const int kConfidenceFieldNumber = 4;
+  inline float confidence() const;
+  inline void set_confidence(float value);
+  
+  // repeated float var = 5;
   inline int var_size() const;
   inline void clear_var();
-  static const int kVarFieldNumber = 4;
+  static const int kVarFieldNumber = 5;
   inline float var(int index) const;
   inline void set_var(int index, float value);
   inline void add_var(float value);
@@ -444,16 +451,19 @@ class RobotPose : public ::google::protobuf::Message {
   inline void clear_has_y();
   inline void set_has_phi();
   inline void clear_has_phi();
+  inline void set_has_confidence();
+  inline void clear_has_confidence();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   float x_;
   float y_;
-  ::google::protobuf::RepeatedField< float > var_;
   float phi_;
+  float confidence_;
+  ::google::protobuf::RepeatedField< float > var_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1222,7 +1232,29 @@ inline void RobotPose::set_phi(float value) {
   phi_ = value;
 }
 
-// repeated float var = 4;
+// required float confidence = 4 [default = -100000];
+inline bool RobotPose::has_confidence() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void RobotPose::set_has_confidence() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void RobotPose::clear_has_confidence() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void RobotPose::clear_confidence() {
+  confidence_ = -100000;
+  clear_has_confidence();
+}
+inline float RobotPose::confidence() const {
+  return confidence_;
+}
+inline void RobotPose::set_confidence(float value) {
+  set_has_confidence();
+  confidence_ = value;
+}
+
+// repeated float var = 5;
 inline int RobotPose::var_size() const {
   return var_.size();
 }

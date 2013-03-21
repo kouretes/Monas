@@ -19,7 +19,8 @@ message RobotPose{
 	required float X = 1 [default = -100000];
 	required float Y = 2 [default = -100000];
 	required float phi = 3 [default = -100000];
-	repeated float var = 4;  //7x7 matrix showing the covariance of the player's pose and the observed ball
+	required float confidence = 4 [default = -100000];
+	repeated float var = 5;  //7x7 matrix showing the covariance of the player's pose and the observed ball
 }
 
 message Ball{

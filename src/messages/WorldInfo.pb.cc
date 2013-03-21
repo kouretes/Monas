@@ -99,10 +99,11 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(TeammatePose));
   RobotPose_descriptor_ = file->message_type(3);
-  static const int RobotPose_offsets_[4] = {
+  static const int RobotPose_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, y_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, phi_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, confidence_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RobotPose, var_),
   };
   RobotPose_reflection_ =
@@ -257,26 +258,27 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "WorldInfo\022\'\n\023playerClosestToBall\030\001 \002(\0132\n"
     ".RobotPose\022\'\n\020teammatePosition\030\002 \003(\0132\r.T"
     "eammatePose\"9\n\014TeammatePose\022\030\n\004pose\030\001 \002("
-    "\0132\n.RobotPose\022\017\n\007robotId\030\002 \002(\r\"V\n\tRobotP"
+    "\0132\n.RobotPose\022\017\n\007robotId\030\002 \002(\r\"s\n\tRobotP"
     "ose\022\022\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030\002 \002(\002:\007-100"
-    "000\022\024\n\003phi\030\003 \002(\002:\007-100000\022\013\n\003var\030\004 \003(\002\"\372"
-    "\001\n\004Ball\022\032\n\trelativeX\030\001 \002(\002:\007-100000\022\032\n\tr"
-    "elativeY\030\002 \002(\002:\007-100000\022\037\n\016relativeXspee"
-    "d\030\003 \002(\002:\007-100000\022\037\n\016relativeYspeed\030\004 \002(\002"
-    ":\007-100000\022\032\n\tabsoluteX\030\005 \002(\002:\007-100000\022\032\n"
-    "\tabsoluteY\030\006 \002(\002:\007-100000\022\037\n\016absoluteXsp"
-    "eed\030\007 \002(\002:\007-100000\022\037\n\016absoluteYspeed\030\010 \002"
-    "(\002:\007-100000\"\263\001\n\030LocalizationResetMessage"
-    "\022\014\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030"
-    "\003 \002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002("
-    "\002:\0010\"C\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n"
-    "\003SET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020Lo"
-    "calizationData\022\031\n\005World\030\001 \002(\0132\n.WorldInf"
-    "o\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022!\n\rRobo"
-    "tPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Observati"
-    "ons\030\004 \002(\0132\023.ObservationMessage\"A\n\006header"
-    "\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsg"
-    "Name\030\003 \002(\014:\005Undef", 1017);
+    "000\022\024\n\003phi\030\003 \002(\002:\007-100000\022\033\n\nconfidence\030"
+    "\004 \002(\002:\007-100000\022\013\n\003var\030\005 \003(\002\"\372\001\n\004Ball\022\032\n\t"
+    "relativeX\030\001 \002(\002:\007-100000\022\032\n\trelativeY\030\002 "
+    "\002(\002:\007-100000\022\037\n\016relativeXspeed\030\003 \002(\002:\007-1"
+    "00000\022\037\n\016relativeYspeed\030\004 \002(\002:\007-100000\022\032"
+    "\n\tabsoluteX\030\005 \002(\002:\007-100000\022\032\n\tabsoluteY\030"
+    "\006 \002(\002:\007-100000\022\037\n\016absoluteXspeed\030\007 \002(\002:\007"
+    "-100000\022\037\n\016absoluteYspeed\030\010 \002(\002:\007-100000"
+    "\"\263\001\n\030LocalizationResetMessage\022\014\n\004type\030\001 "
+    "\002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 \002(\002:\0010\022\017\n"
+    "\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:\0010\"C\n\005RES"
+    "ET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003SET\020\002\022\r\n\tP"
+    "ENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020LocalizationD"
+    "ata\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tPartic"
+    "les\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPosition\030\003"
+    " \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002(\0132\023"
+    ".ObservationMessage\"A\n\006header\022\033\n\017NextMsg"
+    "ByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014:"
+    "\005Undef", 1046);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -1086,6 +1088,7 @@ void TeammatePose::Swap(TeammatePose* other) {
 const int RobotPose::kXFieldNumber;
 const int RobotPose::kYFieldNumber;
 const int RobotPose::kPhiFieldNumber;
+const int RobotPose::kConfidenceFieldNumber;
 const int RobotPose::kVarFieldNumber;
 #endif  // !_MSC_VER
 
@@ -1108,6 +1111,7 @@ void RobotPose::SharedCtor() {
   x_ = -100000;
   y_ = -100000;
   phi_ = -100000;
+  confidence_ = -100000;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1145,6 +1149,7 @@ void RobotPose::Clear() {
     x_ = -100000;
     y_ = -100000;
     phi_ = -100000;
+    confidence_ = -100000;
   }
   var_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1200,18 +1205,34 @@ bool RobotPose::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(37)) goto parse_var;
+        if (input->ExpectTag(37)) goto parse_confidence;
         break;
       }
       
-      // repeated float var = 4;
+      // required float confidence = 4 [default = -100000];
       case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_confidence:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &confidence_)));
+          set_has_confidence();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(45)) goto parse_var;
+        break;
+      }
+      
+      // repeated float var = 5;
+      case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
          parse_var:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 37, input, this->mutable_var())));
+                 1, 45, input, this->mutable_var())));
         } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
                    == ::google::protobuf::internal::WireFormatLite::
                       WIRETYPE_LENGTH_DELIMITED) {
@@ -1221,7 +1242,7 @@ bool RobotPose::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(37)) goto parse_var;
+        if (input->ExpectTag(45)) goto parse_var;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1259,10 +1280,15 @@ void RobotPose::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->phi(), output);
   }
   
-  // repeated float var = 4;
+  // required float confidence = 4 [default = -100000];
+  if (has_confidence()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->confidence(), output);
+  }
+  
+  // repeated float var = 5;
   for (int i = 0; i < this->var_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(
-      4, this->var(i), output);
+      5, this->var(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1288,10 +1314,15 @@ void RobotPose::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->phi(), target);
   }
   
-  // repeated float var = 4;
+  // required float confidence = 4 [default = -100000];
+  if (has_confidence()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->confidence(), target);
+  }
+  
+  // repeated float var = 5;
   for (int i = 0; i < this->var_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatToArray(4, this->var(i), target);
+      WriteFloatToArray(5, this->var(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1320,8 +1351,13 @@ int RobotPose::ByteSize() const {
       total_size += 1 + 4;
     }
     
+    // required float confidence = 4 [default = -100000];
+    if (has_confidence()) {
+      total_size += 1 + 4;
+    }
+    
   }
-  // repeated float var = 4;
+  // repeated float var = 5;
   {
     int data_size = 0;
     data_size = 4 * this->var_size();
@@ -1364,6 +1400,9 @@ void RobotPose::MergeFrom(const RobotPose& from) {
     if (from.has_phi()) {
       set_phi(from.phi());
     }
+    if (from.has_confidence()) {
+      set_confidence(from.confidence());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1381,7 +1420,7 @@ void RobotPose::CopyFrom(const RobotPose& from) {
 }
 
 bool RobotPose::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
   
   return true;
 }
@@ -1391,6 +1430,7 @@ void RobotPose::Swap(RobotPose* other) {
     std::swap(x_, other->x_);
     std::swap(y_, other->y_);
     std::swap(phi_, other->phi_);
+    std::swap(confidence_, other->confidence_);
     var_.Swap(&other->var_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
