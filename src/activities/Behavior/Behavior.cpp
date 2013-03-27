@@ -130,7 +130,7 @@ void Behavior::Reset(){
 	fGen.Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
 	fGen.Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
 	fGen.Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
-	
+
 	fGen.Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
 	fGen.Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
 	fGen.Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
@@ -179,7 +179,7 @@ int Behavior::Execute()
 	getBallData();
 	getGameState();
 	getPosition();
-	
+
     if (gameState == PLAYER_INITIAL){
 		if(prevGameState != PLAYER_INITIAL){
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -188,14 +188,14 @@ int Behavior::Execute()
     }
 	else if (gameState == PLAYER_PLAYING)
 	{
-		
+
 		if(lastFormation + seconds(10) < microsec_clock::universal_time()) {
-		
+
 			fGen.Generate(globalBallX, globalBallY);
 			sendDebugMessages();
 			lastFormation = microsec_clock::universal_time();
 		}
-		
+
 		if(prevGameState == PLAYER_PENALISED){
 			lastPenalised = microsec_clock::universal_time();
 			//Check if the penalized was a wrong decision
@@ -215,7 +215,7 @@ int Behavior::Execute()
 		if(bfm != 0 && bfm.get() != 0) {
 			ballFound = bfm->ballfound();
 		}
-			
+
 		updateOrientation();
 		readyToKick = false;
 
@@ -251,14 +251,14 @@ int Behavior::Execute()
 				if (!readyToKick)
 				{
 					//Define roles
-					if(closestRobot())
-					{
+//					if(closestRobot())
+//					{
 						role = ATTACKER;
-					}
-					else
-					{
-						role = CENTER_FOR;
-					}
+//					}
+//					else
+//					{
+//						role = CENTER_FOR;
+//					}
 					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
 					approachBallRoleDependent();
 				}
@@ -365,14 +365,14 @@ void Behavior::getPosition() {
 }
 
 void Behavior::getBallData() {
-	
+
 	if(wim != 0 && wim.get() != 0 && wim->balls_size() > 0)
 	{
 		ballX = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
 		ballY = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
 		ballDist = sqrt(pow(ballX, 2) + pow(ballY, 2));
 		ballBearing = atan2(ballY, ballX);
-		
+
 		// global ball relative to robot
 		globalBallX = (wim->myposition().x() + wim->balls (0).relativex() * cos(wim->myposition().phi()) - wim->balls (0).relativey() * sin(wim->myposition().phi()));
 		globalBallY = (wim->myposition().y() + wim->balls (0).relativex() * sin(wim->myposition().phi()) + wim->balls (0).relativey() * cos(wim->myposition().phi()));
@@ -380,20 +380,20 @@ void Behavior::getBallData() {
 }
 
 void Behavior::sendDebugMessages() {
-	
+
 	Logger::Instance().WriteMsg("Behavior", "BallX: "+_toString(globalBallX)+" BallY: "+_toString(globalBallY), Logger::Info);
-	
+
 	for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
-	
+
 		Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(fGen.getFormation()->at(i).role)+
 											" X: "+_toString(fGen.getFormation()->at(i).X)+
 											" Y: "+_toString(fGen.getFormation()->at(i).Y), Logger::Info);
-						
+
 		if(fdg.positions_size() < (int)(i+1))
-			fdg.add_positions();			
+			fdg.add_positions();
 		fdg.mutable_positions(i)->set_x(fGen.getFormation()->at(i).X);
 		fdg.mutable_positions(i)->set_y(fGen.getFormation()->at(i).Y);
-		fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);		
+		fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);
 	}
 	_blk.publishSignal(fdg, "debug");
 }
@@ -403,7 +403,7 @@ void Behavior::sendDebugMessages() {
 bool Behavior::closestRobot() {
 
 	double robotEpsX = 0.005, robotEpsY = 0.005; // desired precision
-	
+
 	if(swim != 0 && swim.get() != 0) {
 		double closestRobotX = swim->playerclosesttoball().x();
 		double closestRobotY = swim->playerclosesttoball().y();
@@ -439,7 +439,7 @@ void Behavior::updateOrientation() {
 }
 
 /**
- * Function used for kicking the ball. 
+ * Function used for kicking the ball.
  */
 void Behavior::kick()
 {
@@ -457,7 +457,7 @@ void Behavior::kick()
 		}
 	}
 	else {
-        
+
 		if (orientation == 0) {
 			if (ballY > 0.0)
 				amot.set_command(config.kicks.KickForwardLeft); // Left Kick
@@ -493,7 +493,7 @@ void Behavior::kick()
  * Locomotion Functions
  */
 void Behavior::velocityWalk(double ix, double iy, double it, double f) {
-	
+
 	double x, y, t;
 	x = ix;
 	y = iy;
@@ -570,7 +570,7 @@ void Behavior::approachBall() {
 	double roppgb = anglediff2(atan2(config.oppGoalRightY - robotY, config.oppGoalRightX - robotX), robotPhi);
 	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
-    
+
 	if (ballDist > 0.3) {
         int pathSide = (ballBearing > 0) ? 1 : -1;
 		// pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
@@ -721,7 +721,7 @@ void Behavior::goalie() {
 
 		if(fall == 1) { // extend left foot
 			amot.set_command("goalieLeftFootExtened.xar");
-			_blk.publishSignal(amot, "motion");	
+			_blk.publishSignal(amot, "motion");
 			return;
 		}
 		else if(fall == -1) { // extend right foot
@@ -743,7 +743,7 @@ void Behavior::goalie() {
 				else
 					amot.set_command(config.kicks.KickForwardRight); // Right Kick
 
-				_blk.publishSignal(amot, "motion");	
+				_blk.publishSignal(amot, "motion");
 			}
 		}
 		else if(goalieApproachStarted == true) {
@@ -788,7 +788,7 @@ int Behavior::toFallOrNotToFall() {
 		dk = (ubx * y1 - uby * x1) / ubx ; // dk is the projection of the ball's route towards the robot/goalpost
 
 		if(fabs(dk) <= 0.3) { // if dk is shorter than the robot's foot can extend
-			
+
 			ub = sqrt(ubx * ubx + uby * uby);
 
 			if(fabs(ub) > config.ur) {

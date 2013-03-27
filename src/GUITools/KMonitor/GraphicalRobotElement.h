@@ -232,7 +232,7 @@ private:
 	bool GWSRobotVisible;
 	bool LWSRobotVisible, LWSTeammatesVisible;
 	static const int numOfRobots = 5;
-	QGraphicsEllipseItem *Robot, *Teammates[numOfRobots];
+	QGraphicsEllipseItem *Robot, *Teammates[numOfRobots], *TeamBall;
 	QGraphicsLineItem *RobotDirection, *TeammateDirections[numOfRobots];
 	
 	bool LWSFormationVisible;

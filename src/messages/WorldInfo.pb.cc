@@ -30,6 +30,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* Ball_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Ball_reflection_ = NULL;
+const ::google::protobuf::Descriptor* GlobalBall_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  GlobalBall_reflection_ = NULL;
 const ::google::protobuf::Descriptor* LocalizationResetMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationResetMessage_reflection_ = NULL;
@@ -67,9 +70,10 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(WorldInfo));
   SharedWorldInfo_descriptor_ = file->message_type(1);
-  static const int SharedWorldInfo_offsets_[2] = {
+  static const int SharedWorldInfo_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, playerclosesttoball_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, teammateposition_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, globalballs_),
   };
   SharedWorldInfo_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -139,7 +143,23 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Ball));
-  LocalizationResetMessage_descriptor_ = file->message_type(5);
+  GlobalBall_descriptor_ = file->message_type(5);
+  static const int GlobalBall_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GlobalBall, x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GlobalBall, y_),
+  };
+  GlobalBall_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      GlobalBall_descriptor_,
+      GlobalBall::default_instance_,
+      GlobalBall_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GlobalBall, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GlobalBall, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(GlobalBall));
+  LocalizationResetMessage_descriptor_ = file->message_type(6);
   static const int LocalizationResetMessage_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationResetMessage, kickoff_),
@@ -159,7 +179,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationResetMessage));
   LocalizationResetMessage_RESET_descriptor_ = LocalizationResetMessage_descriptor_->enum_type(0);
-  LocalizationData_descriptor_ = file->message_type(6);
+  LocalizationData_descriptor_ = file->message_type(7);
   static const int LocalizationData_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, world_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationData, particles_),
@@ -177,7 +197,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationData));
-  header_descriptor_ = file->message_type(7);
+  header_descriptor_ = file->message_type(8);
   static const int header_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgbytesize_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(header, nextmsgname_),
@@ -216,6 +236,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Ball_descriptor_, &Ball::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    GlobalBall_descriptor_, &GlobalBall::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationResetMessage_descriptor_, &LocalizationResetMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationData_descriptor_, &LocalizationData::default_instance());
@@ -236,6 +258,8 @@ void protobuf_ShutdownFile_WorldInfo_2eproto() {
   delete RobotPose_reflection_;
   delete Ball::default_instance_;
   delete Ball_reflection_;
+  delete GlobalBall::default_instance_;
+  delete GlobalBall_reflection_;
   delete LocalizationResetMessage::default_instance_;
   delete LocalizationResetMessage_reflection_;
   delete LocalizationData::default_instance_;
@@ -254,31 +278,33 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\017WorldInfo.proto\032\030VisionObservations.pr"
     "oto\"A\n\tWorldInfo\022\036\n\nmyPosition\030\001 \002(\0132\n.R"
-    "obotPose\022\024\n\005Balls\030\002 \003(\0132\005.Ball\"c\n\017Shared"
-    "WorldInfo\022\'\n\023playerClosestToBall\030\001 \002(\0132\n"
-    ".RobotPose\022\'\n\020teammatePosition\030\002 \003(\0132\r.T"
-    "eammatePose\"9\n\014TeammatePose\022\030\n\004pose\030\001 \002("
-    "\0132\n.RobotPose\022\017\n\007robotId\030\002 \002(\r\"s\n\tRobotP"
-    "ose\022\022\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030\002 \002(\002:\007-100"
-    "000\022\024\n\003phi\030\003 \002(\002:\007-100000\022\033\n\nconfidence\030"
-    "\004 \002(\002:\007-100000\022\013\n\003var\030\005 \003(\002\"\372\001\n\004Ball\022\032\n\t"
-    "relativeX\030\001 \002(\002:\007-100000\022\032\n\trelativeY\030\002 "
-    "\002(\002:\007-100000\022\037\n\016relativeXspeed\030\003 \002(\002:\007-1"
-    "00000\022\037\n\016relativeYspeed\030\004 \002(\002:\007-100000\022\032"
-    "\n\tabsoluteX\030\005 \002(\002:\007-100000\022\032\n\tabsoluteY\030"
-    "\006 \002(\002:\007-100000\022\037\n\016absoluteXspeed\030\007 \002(\002:\007"
-    "-100000\022\037\n\016absoluteYspeed\030\010 \002(\002:\007-100000"
-    "\"\263\001\n\030LocalizationResetMessage\022\014\n\004type\030\001 "
-    "\002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 \002(\002:\0010\022\017\n"
-    "\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:\0010\"C\n\005RES"
-    "ET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003SET\020\002\022\r\n\tP"
-    "ENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020LocalizationD"
-    "ata\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tPartic"
-    "les\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPosition\030\003"
-    " \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002(\0132\023"
-    ".ObservationMessage\"A\n\006header\022\033\n\017NextMsg"
-    "ByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014:"
-    "\005Undef", 1046);
+    "obotPose\022\024\n\005Balls\030\002 \003(\0132\005.Ball\"\205\001\n\017Share"
+    "dWorldInfo\022\'\n\023playerClosestToBall\030\001 \002(\0132"
+    "\n.RobotPose\022\'\n\020teammatePosition\030\002 \003(\0132\r."
+    "TeammatePose\022 \n\013GlobalBalls\030\003 \003(\0132\013.Glob"
+    "alBall\"9\n\014TeammatePose\022\030\n\004pose\030\001 \002(\0132\n.R"
+    "obotPose\022\017\n\007robotId\030\002 \002(\r\"s\n\tRobotPose\022\022"
+    "\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030\002 \002(\002:\007-100000\022\024"
+    "\n\003phi\030\003 \002(\002:\007-100000\022\033\n\nconfidence\030\004 \002(\002"
+    ":\007-100000\022\013\n\003var\030\005 \003(\002\"\372\001\n\004Ball\022\032\n\trelat"
+    "iveX\030\001 \002(\002:\007-100000\022\032\n\trelativeY\030\002 \002(\002:\007"
+    "-100000\022\037\n\016relativeXspeed\030\003 \002(\002:\007-100000"
+    "\022\037\n\016relativeYspeed\030\004 \002(\002:\007-100000\022\032\n\tabs"
+    "oluteX\030\005 \002(\002:\007-100000\022\032\n\tabsoluteY\030\006 \002(\002"
+    ":\007-100000\022\037\n\016absoluteXspeed\030\007 \002(\002:\007-1000"
+    "00\022\037\n\016absoluteYspeed\030\010 \002(\002:\007-100000\"4\n\nG"
+    "lobalBall\022\022\n\001x\030\001 \002(\002:\007-100000\022\022\n\001y\030\002 \002(\002"
+    ":\007-100000\"\263\001\n\030LocalizationResetMessage\022\014"
+    "\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 "
+    "\002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:"
+    "\0010\"C\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003S"
+    "ET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020Loca"
+    "lizationData\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022"
+    "\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022!\n\rRobotP"
+    "osition\030\003 \002(\0132\n.RobotPose\022)\n\014Observation"
+    "s\030\004 \002(\0132\023.ObservationMessage\"A\n\006header\022\033"
+    "\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgNa"
+    "me\030\003 \002(\014:\005Undef", 1135);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -286,6 +312,7 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   TeammatePose::default_instance_ = new TeammatePose();
   RobotPose::default_instance_ = new RobotPose();
   Ball::default_instance_ = new Ball();
+  GlobalBall::default_instance_ = new GlobalBall();
   LocalizationResetMessage::default_instance_ = new LocalizationResetMessage();
   LocalizationData::default_instance_ = new LocalizationData();
   header::default_instance_ = new header();
@@ -294,6 +321,7 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
   TeammatePose::default_instance_->InitAsDefaultInstance();
   RobotPose::default_instance_->InitAsDefaultInstance();
   Ball::default_instance_->InitAsDefaultInstance();
+  GlobalBall::default_instance_->InitAsDefaultInstance();
   LocalizationResetMessage::default_instance_->InitAsDefaultInstance();
   LocalizationData::default_instance_->InitAsDefaultInstance();
   header::default_instance_->InitAsDefaultInstance();
@@ -572,6 +600,7 @@ void WorldInfo::Swap(WorldInfo* other) {
 #ifndef _MSC_VER
 const int SharedWorldInfo::kPlayerClosestToBallFieldNumber;
 const int SharedWorldInfo::kTeammatePositionFieldNumber;
+const int SharedWorldInfo::kGlobalBallsFieldNumber;
 #endif  // !_MSC_VER
 
 SharedWorldInfo::SharedWorldInfo()
@@ -632,6 +661,7 @@ void SharedWorldInfo::Clear() {
     }
   }
   teammateposition_.Clear();
+  globalballs_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -666,6 +696,21 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(18)) goto parse_teammatePosition;
+        if (input->ExpectTag(26)) goto parse_GlobalBalls;
+        break;
+      }
+      
+      // repeated .GlobalBall GlobalBalls = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_GlobalBalls:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_globalballs()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_GlobalBalls;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -700,6 +745,12 @@ void SharedWorldInfo::SerializeWithCachedSizes(
       2, this->teammateposition(i), output);
   }
   
+  // repeated .GlobalBall GlobalBalls = 3;
+  for (int i = 0; i < this->globalballs_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->globalballs(i), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -720,6 +771,13 @@ void SharedWorldInfo::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
         2, this->teammateposition(i), target);
+  }
+  
+  // repeated .GlobalBall GlobalBalls = 3;
+  for (int i = 0; i < this->globalballs_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, this->globalballs(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -749,6 +807,14 @@ int SharedWorldInfo::ByteSize() const {
         this->teammateposition(i));
   }
   
+  // repeated .GlobalBall GlobalBalls = 3;
+  total_size += 1 * this->globalballs_size();
+  for (int i = 0; i < this->globalballs_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->globalballs(i));
+  }
+  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -775,6 +841,7 @@ void SharedWorldInfo::MergeFrom(const ::google::protobuf::Message& from) {
 void SharedWorldInfo::MergeFrom(const SharedWorldInfo& from) {
   GOOGLE_CHECK_NE(&from, this);
   teammateposition_.MergeFrom(from.teammateposition_);
+  globalballs_.MergeFrom(from.globalballs_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_playerclosesttoball()) {
       mutable_playerclosesttoball()->::RobotPose::MergeFrom(from.playerclosesttoball());
@@ -804,6 +871,9 @@ bool SharedWorldInfo::IsInitialized() const {
   for (int i = 0; i < teammateposition_size(); i++) {
     if (!this->teammateposition(i).IsInitialized()) return false;
   }
+  for (int i = 0; i < globalballs_size(); i++) {
+    if (!this->globalballs(i).IsInitialized()) return false;
+  }
   return true;
 }
 
@@ -811,6 +881,7 @@ void SharedWorldInfo::Swap(SharedWorldInfo* other) {
   if (other != this) {
     std::swap(playerclosesttoball_, other->playerclosesttoball_);
     teammateposition_.Swap(&other->teammateposition_);
+    globalballs_.Swap(&other->globalballs_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1915,6 +1986,250 @@ void Ball::Swap(Ball* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = Ball_descriptor_;
   metadata.reflection = Ball_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int GlobalBall::kXFieldNumber;
+const int GlobalBall::kYFieldNumber;
+#endif  // !_MSC_VER
+
+GlobalBall::GlobalBall()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void GlobalBall::InitAsDefaultInstance() {
+}
+
+GlobalBall::GlobalBall(const GlobalBall& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void GlobalBall::SharedCtor() {
+  _cached_size_ = 0;
+  x_ = -100000;
+  y_ = -100000;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+GlobalBall::~GlobalBall() {
+  SharedDtor();
+}
+
+void GlobalBall::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void GlobalBall::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* GlobalBall::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return GlobalBall_descriptor_;
+}
+
+const GlobalBall& GlobalBall::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_WorldInfo_2eproto();  return *default_instance_;
+}
+
+GlobalBall* GlobalBall::default_instance_ = NULL;
+
+GlobalBall* GlobalBall::New() const {
+  return new GlobalBall;
+}
+
+void GlobalBall::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    x_ = -100000;
+    y_ = -100000;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool GlobalBall::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required float x = 1 [default = -100000];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &x_)));
+          set_has_x();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_y;
+        break;
+      }
+      
+      // required float y = 2 [default = -100000];
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_y:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &y_)));
+          set_has_y();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void GlobalBall::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required float x = 1 [default = -100000];
+  if (has_x()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->x(), output);
+  }
+  
+  // required float y = 2 [default = -100000];
+  if (has_y()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->y(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* GlobalBall::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required float x = 1 [default = -100000];
+  if (has_x()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->x(), target);
+  }
+  
+  // required float y = 2 [default = -100000];
+  if (has_y()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->y(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int GlobalBall::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required float x = 1 [default = -100000];
+    if (has_x()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float y = 2 [default = -100000];
+    if (has_y()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void GlobalBall::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const GlobalBall* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const GlobalBall*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void GlobalBall::MergeFrom(const GlobalBall& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_x()) {
+      set_x(from.x());
+    }
+    if (from.has_y()) {
+      set_y(from.y());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void GlobalBall::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void GlobalBall::CopyFrom(const GlobalBall& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool GlobalBall::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  
+  return true;
+}
+
+void GlobalBall::Swap(GlobalBall* other) {
+  if (other != this) {
+    std::swap(x_, other->x_);
+    std::swap(y_, other->y_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata GlobalBall::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = GlobalBall_descriptor_;
+  metadata.reflection = GlobalBall_reflection_;
   return metadata;
 }
 

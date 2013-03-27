@@ -48,13 +48,6 @@
          </column>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="radioButton">
-         <property name="text">
-          <string>SHARED WORLD MODEL : Estimated Ball</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>

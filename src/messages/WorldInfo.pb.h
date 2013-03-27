@@ -36,6 +36,7 @@ class SharedWorldInfo;
 class TeammatePose;
 class RobotPose;
 class Ball;
+class GlobalBall;
 class LocalizationResetMessage;
 class LocalizationData;
 class header;
@@ -234,6 +235,18 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::TeammatePose >*
       mutable_teammateposition();
   
+  // repeated .GlobalBall GlobalBalls = 3;
+  inline int globalballs_size() const;
+  inline void clear_globalballs();
+  static const int kGlobalBallsFieldNumber = 3;
+  inline const ::GlobalBall& globalballs(int index) const;
+  inline ::GlobalBall* mutable_globalballs(int index);
+  inline ::GlobalBall* add_globalballs();
+  inline const ::google::protobuf::RepeatedPtrField< ::GlobalBall >&
+      globalballs() const;
+  inline ::google::protobuf::RepeatedPtrField< ::GlobalBall >*
+      mutable_globalballs();
+  
   // @@protoc_insertion_point(class_scope:SharedWorldInfo)
  private:
   inline void set_has_playerclosesttoball();
@@ -243,9 +256,10 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   
   ::RobotPose* playerclosesttoball_;
   ::google::protobuf::RepeatedPtrField< ::TeammatePose > teammateposition_;
+  ::google::protobuf::RepeatedPtrField< ::GlobalBall > globalballs_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -623,6 +637,98 @@ class Ball : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static Ball* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class GlobalBall : public ::google::protobuf::Message {
+ public:
+  GlobalBall();
+  virtual ~GlobalBall();
+  
+  GlobalBall(const GlobalBall& from);
+  
+  inline GlobalBall& operator=(const GlobalBall& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const GlobalBall& default_instance();
+  
+  void Swap(GlobalBall* other);
+  
+  // implements Message ----------------------------------------------
+  
+  GlobalBall* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const GlobalBall& from);
+  void MergeFrom(const GlobalBall& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float x = 1 [default = -100000];
+  inline bool has_x() const;
+  inline void clear_x();
+  static const int kXFieldNumber = 1;
+  inline float x() const;
+  inline void set_x(float value);
+  
+  // required float y = 2 [default = -100000];
+  inline bool has_y() const;
+  inline void clear_y();
+  static const int kYFieldNumber = 2;
+  inline float y() const;
+  inline void set_y(float value);
+  
+  // @@protoc_insertion_point(class_scope:GlobalBall)
+ private:
+  inline void set_has_x();
+  inline void clear_has_x();
+  inline void set_has_y();
+  inline void clear_has_y();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  float x_;
+  float y_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_WorldInfo_2eproto();
+  friend void protobuf_AssignDesc_WorldInfo_2eproto();
+  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
+  
+  void InitAsDefaultInstance();
+  static GlobalBall* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1107,6 +1213,31 @@ SharedWorldInfo::mutable_teammateposition() {
   return &teammateposition_;
 }
 
+// repeated .GlobalBall GlobalBalls = 3;
+inline int SharedWorldInfo::globalballs_size() const {
+  return globalballs_.size();
+}
+inline void SharedWorldInfo::clear_globalballs() {
+  globalballs_.Clear();
+}
+inline const ::GlobalBall& SharedWorldInfo::globalballs(int index) const {
+  return globalballs_.Get(index);
+}
+inline ::GlobalBall* SharedWorldInfo::mutable_globalballs(int index) {
+  return globalballs_.Mutable(index);
+}
+inline ::GlobalBall* SharedWorldInfo::add_globalballs() {
+  return globalballs_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::GlobalBall >&
+SharedWorldInfo::globalballs() const {
+  return globalballs_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::GlobalBall >*
+SharedWorldInfo::mutable_globalballs() {
+  return &globalballs_;
+}
+
 // -------------------------------------------------------------------
 
 // TeammatePose
@@ -1457,6 +1588,54 @@ inline float Ball::absoluteyspeed() const {
 inline void Ball::set_absoluteyspeed(float value) {
   set_has_absoluteyspeed();
   absoluteyspeed_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// GlobalBall
+
+// required float x = 1 [default = -100000];
+inline bool GlobalBall::has_x() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void GlobalBall::set_has_x() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void GlobalBall::clear_has_x() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void GlobalBall::clear_x() {
+  x_ = -100000;
+  clear_has_x();
+}
+inline float GlobalBall::x() const {
+  return x_;
+}
+inline void GlobalBall::set_x(float value) {
+  set_has_x();
+  x_ = value;
+}
+
+// required float y = 2 [default = -100000];
+inline bool GlobalBall::has_y() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void GlobalBall::set_has_y() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void GlobalBall::clear_has_y() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void GlobalBall::clear_y() {
+  y_ = -100000;
+  clear_has_y();
+}
+inline float GlobalBall::y() const {
+  return y_;
+}
+inline void GlobalBall::set_y(float value) {
+  set_has_y();
+  y_ = value;
 }
 
 // -------------------------------------------------------------------

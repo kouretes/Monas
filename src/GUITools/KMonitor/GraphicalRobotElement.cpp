@@ -73,6 +73,7 @@ GraphicalRobotElement::GraphicalRobotElement (KFieldScene *parent, QString host)
 	Teammates[2] = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::blue) );
 	Teammates[3] = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::red) );
 	Teammates[4] = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::cyan) );
+	TeamBall = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::magenta) );
 
 	for (int i = 0; i < numOfRobots; i++) {
 		TeammateDirections[i] = this->parentScene->addLine (QLineF(), penForRobotDirection);
@@ -114,6 +115,10 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 		if (TeammateDirections[i]) {
 			delete TeammateDirections[i];
 		}
+	}
+	
+	if (TeamBall){
+		delete TeamBall;
 	}
 
 	if (Ball) {
@@ -267,6 +272,7 @@ void GraphicalRobotElement::setTeammatesVisible (bool visible) {
 		Teammates[i]->setVisible (visible);
 		TeammateDirections[i]->setVisible (visible);
 	}
+	TeamBall->setVisible(visible);
 }
 
 void GraphicalRobotElement::setTeammateVisible (int idx, bool visible) {
@@ -300,12 +306,19 @@ void GraphicalRobotElement::updateTeammatesRects() {
 		for (idx = 0; idx < numOfRobots; idx++) {
 			setTeammateVisible (idx, false);
 		}
-
+		TeamBall->setVisible(false);
 		for (idx = 0; idx < currentSWIM.teammateposition_size(); idx++) {
 			//std::cout << this->currentSWIM.teammateposition(idx).pose().x() << " = x \n";
 			Teammates[idx]->setRect (this->parentScene->rectFromFC (this->currentSWIM.teammateposition (idx).pose().x() * 1000, this->currentSWIM.teammateposition (idx).pose().y() * 1000, 150, 150) );
 			TeammateDirections[idx]->setLine (this->parentScene->lineFromFCA (this->currentSWIM.teammateposition (idx).pose().x() * 1000, this->currentSWIM.teammateposition (idx).pose().y() * 1000, this->currentSWIM.teammateposition (idx).pose().phi(), 200) );
 			setTeammateVisible (idx, true);
+		}
+		if (currentSWIM.globalballs_size() != 0) {
+			TeamBall->setRect (this->parentScene->rectFromFC (this->currentSWIM.globalballs(0).x() * 1000, this->currentSWIM.globalballs(0).y() * 1000, 75, 75));
+			TeamBall->setVisible(true);
+		}
+		else{
+			TeamBall->setRect (0, 0, 0, 0);
 		}
 	}
 }
