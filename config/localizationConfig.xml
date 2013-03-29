@@ -11,6 +11,12 @@
 <NumberOfParticlesSpreadAfterFall>10</NumberOfParticlesSpreadAfterFall>
 <port>9001</port>
 
+
+<EkfMaxHypothesis>16</EkfMaxHypothesis>
+
+<!-- Enable/Disable Ekflocalization -->
+<EKFEnable>1</EKFEnable>
+
 <Resetting>
     <!-- Parameters to estimate the long-term, and short-term, averages respectively -->
     <aslow>0.2</aslow>
