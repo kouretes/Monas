@@ -119,7 +119,26 @@ void KGUIMessenger::allocateReceivedMessages() {
 				debugGUI.Clear();
 				debugGUI.CopyFrom (* (incomingMessages.at (i).msg) );
 				emit localizationDataUpdate (debugGUI, currentRHost);
-			} else if (incomingMessages.at (i).msg->GetTypeName() == "MotionWalkMessage" && myKMonitorRequestedHost == currentRHost) {
+			} 
+            else if (incomingMessages.at (i).msg->GetTypeName() == "EKFLocalizationMessage" && myKMonitorRequestedHost == currentRHost) {
+				EKFLocalizationMessage ekfm;
+				ekfm.Clear();
+				ekfm.CopyFrom (* (incomingMessages.at (i).msg) );
+				emit EKFLocalizationUpdate (ekfm, currentRHost);
+			} 
+            else if (incomingMessages.at (i).msg->GetTypeName() == "EKFMHypothesis" && myKMonitorRequestedHost == currentRHost) {
+				EKFMHypothesis ekfmHypothesisM;
+				ekfmHypothesisM.Clear();
+				ekfmHypothesisM.CopyFrom (* (incomingMessages.at (i).msg) );
+				emit EKFMHypothesisUpdate (ekfmHypothesisM, currentRHost);
+			}
+            else if (incomingMessages.at (i).msg->GetTypeName() == "OdometryInfoMessage" && myKMonitorRequestedHost == currentRHost) {
+				OdometryInfoMessage odometryM;
+				odometryM.Clear();
+				odometryM.CopyFrom (* (incomingMessages.at (i).msg) );
+				emit OdometryUpdate (odometryM, currentRHost);
+			}
+            else if (incomingMessages.at (i).msg->GetTypeName() == "MotionWalkMessage" && myKMonitorRequestedHost == currentRHost) {
 				MotionWalkMessage mwm;
 				mwm.Clear();
 				mwm.CopyFrom (* (incomingMessages.at (i).msg) );

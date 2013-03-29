@@ -48,13 +48,18 @@ signals:
 	void worldInfoUpdate (WorldInfo, QString);
 	void sharedWorldInfoUpdate (SharedWorldInfo, QString);
 	void localizationDataUpdate (LocalizationDataForGUI, QString);
+	void EKFLocalizationUpdate (EKFLocalizationMessage, QString);
+
+	void EKFMHypothesisUpdate (EKFMHypothesis, QString);
+	void OdometryUpdate (OdometryInfoMessage, QString);
+
 	void obsmsgUpdate (ObservationMessage, QString);
 	void motionCommandUpdate (MotionWalkMessage, QString);
 	void gridInfoUpdate (GridInfo, QString);
 	void rawImage (KRawImage, QString);
 	void sensorsDataUpdate (AllSensorValuesMessage, QString);
 	void GenericAckReceived (GenericACK, QString);
-
+   
 	void addHost (QString hostId, QString hostName);
 	void removeHost (QString hostId);
 	void updateGameState (QString iconPath, QString state, QString hostId);

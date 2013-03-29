@@ -38,7 +38,12 @@ KMonitor::KMonitor (QWidget *parent)
 	connect (Messenger, SIGNAL (obsmsgUpdate (ObservationMessage, QString) ), ui->LWSTab, SLOT (observationMessageUpdateHandler (ObservationMessage, QString) ) );
 	connect (Messenger, SIGNAL (localizationDataUpdate (LocalizationDataForGUI, QString) ), ui->LWSTab, SLOT (localizationDataUpdateHandler (LocalizationDataForGUI, QString) ) );
 	connect (Messenger, SIGNAL (motionCommandUpdate (MotionWalkMessage, QString) ), ui->LWSTab, SLOT (motionCommandUpdateHandler (MotionWalkMessage, QString) ) );
-	/****************** SONARS TAB ************************/
+    connect (Messenger, SIGNAL (EKFLocalizationUpdate (EKFLocalizationMessage, QString) ), ui->LWSTab, SLOT (EKFLocalizationUpdateHandler (EKFLocalizationMessage, QString) ) );
+
+    connect (Messenger, SIGNAL (EKFMHypothesisUpdate (EKFMHypothesis, QString) ), ui->LWSTab, SLOT (EKFMHypothesisUpdateHandler (EKFMHypothesis, QString) ) );
+
+    connect (Messenger, SIGNAL (OdometryUpdate (OdometryInfoMessage, QString) ), ui->LWSTab, SLOT (OdometryUpdateHandler (OdometryInfoMessage, QString) ) );	
+    /****************** SONARS TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL POLAR MAP
 	//Signal slot connections for Local Map Hosts ComboBox
 	//messages signal/slots

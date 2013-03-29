@@ -12,13 +12,14 @@
 #include <QTimer>
 #include <QList>
 #include <QPainter>
-
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/circular_buffer.hpp>
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/motion.pb.h"
-
+#include "tools/mathcommon.h"
 #include "KFieldScene.h"
+#include "messages/RoboCupGameControlData.h"
 
 class KFieldScene;
 
@@ -43,7 +44,10 @@ public:
 	void setCurrentWIM (WorldInfo nwim);
 	void setCurrentSWIM (SharedWorldInfo nswim);
 	void setCurrentGSM (GameStateMessage gsm);
-	void setcurrentOBSM (ObservationMessage obm);
+	void setCurrentOBSM (ObservationMessage obm);
+	void setCurrentEKFM (EKFLocalizationMessage ekfm);
+	void setCurrentEKFMHypothesisM (EKFMHypothesis ekfMHyp);
+    void setCurrentOdometryM (OdometryInfoMessage odometryM);
 
 	void setGWSRobotVisible (bool visible) {
 		GWSRobotVisible = visible;
@@ -71,6 +75,14 @@ public:
 	void setTeammatesVisible (bool visible);
 	void updateRobotRect();
 	void updateTeammatesRects();
+    void updatePoseUncertaintyRect();
+    void updateEkfMHypothesisRects();
+    void updateOdometryPolygon();
+
+    void setVarianceVisible (bool visible);
+    void setEkfMHypothesisVisible (bool visible);
+    void setOdometryVisible (bool visible);
+    void setRobotTraceVisible (bool visible);
 
 	void setGWSBallVisible (bool visible) {
 		GWSBallVisible = visible;
@@ -114,6 +126,45 @@ public:
 	bool getLWSVisionBallVisible() {
 		return LWSVisionBallVisible;
 	}
+
+    void setLWSVarianceVisible (bool visible) {
+		LWSVarianceVisible = visible;
+		setVarianceVisible (visible);
+	}
+
+    bool getLWSVarianceVisible(){
+		return LWSVarianceVisible;
+    }
+
+    void setLWSEkfMHypothesisVisible (bool visible) {
+		LWSEkfMhypothesisVisible = visible;
+		setEkfMHypothesisVisible (visible);
+	}
+
+    bool getLWSEkfMHypothesisVisible(){
+		return LWSEkfMhypothesisVisible;
+    }
+
+    void setLWSOdometryVisible (bool visible) {
+		LWSOdometryVisible = visible;
+		setOdometryVisible (visible);
+	}
+    
+    bool getLWSOdometryVisible(){
+		return LWSOdometryVisible;
+    }
+
+    void setLWSRobotTraceVisible (bool visible) {
+		LWSRobotTraceVisible = visible;
+		setRobotTraceVisible (visible);
+	}
+    
+    bool getLWSRobotTraceVisible(){
+		return LWSRobotTraceVisible;
+    }
+
+
+
 	void setVisionBallVisible (bool visible);
 	//void updateVisionBallRect();
 	void updateVisionBallRect (ObservationMessage obm);
@@ -168,15 +219,6 @@ public:
 	void setHFOVVisible (bool visible);
 	void updateHFOVRect();
 
-	// Trace
-	void setLWSTraceVisible (bool visible) {
-		LWSTraceVisible = visible;
-		setTraceVisible (visible);
-	}
-	bool getLWSTraceVisible() {
-		return LWSTraceVisible;
-	}
-	void setTraceVisible (bool visible);
 
 	// Motion Walk Command
 	void setLWSMWCmdVisible (bool visible) {
@@ -206,8 +248,10 @@ private:
 	void loadXMLConfigParameters (std::string fname);
 	void tagVisionObservations (QGraphicsEllipseItem *post, QRectF rect, QString text);
 	QPolygonF calculateArrowHeadPosition (QLineF aLine);
-	void updateTraceRect();
+	void updateRobotTracePolygon();
 
+
+	boost::posix_time::ptime robotTraceTime;
 
 	KFieldScene *parentScene;
 
@@ -216,17 +260,39 @@ private:
 
 	WorldInfo currentWIM;
 	SharedWorldInfo currentSWIM;
+    GameStateMessage currentGSM;
+    GameStateMessage prevGSM;
+    EKFLocalizationMessage currentEKFM;
+    EKFMHypothesis currentEKFMHypothesis;
+
+    OdometryInfoMessage currentOdometryM;
+    bool LWSVarianceVisible;
+    bool LWSOdometryVisible;
+    bool LWSRobotTraceVisible;
+    bool LWSEkfMhypothesisVisible;
 
 	bool GWSRobotVisible;
 	bool LWSRobotVisible, LWSTeammatesVisible;
 	static const int numOfRobots = 5;
-	QGraphicsEllipseItem *Robot, *Teammates[numOfRobots];
-	QGraphicsLineItem *RobotDirection, *TeammateDirections[numOfRobots];
+
+    int ekfMaxHypothesis;
+	QGraphicsEllipseItem *Robot,*AngleUncertainty,*PositionUncertainty,*Teammates[numOfRobots];
+
+    QGraphicsEllipseItem *PoseHypothesis;
+
+
+    QGraphicsPathItem* Odometry;
+    QPainterPath* OdometryPoints;
+
+    QGraphicsPathItem* RobotTrace;
+    QPainterPath* RobotTracePoints;
+      
+	QGraphicsLineItem *RobotDirection, *TeammateDirections[numOfRobots] ,*PoseHypothesisDirections;
 
 	bool GWSBallVisible;
 	bool LWSBallVisible;
 	QGraphicsEllipseItem *Ball;
-
+    int t;
 	bool GWSUnionistLineVisible;
 	bool LWSUnionistLineVisible;
 	QGraphicsLineItem *UnionistLine;
@@ -252,7 +318,7 @@ private:
 	bool LWSHFOVVisible;
 	QGraphicsPolygonItem *HFOVLines;
 
-	bool LWSTraceVisible;
+	bool LWSRobotTraceTraceVisible;
 	boost::circular_buffer<QGraphicsEllipseItem *> RobotPositions;
 	boost::circular_buffer<QGraphicsLineItem *> UnionistLines;
 

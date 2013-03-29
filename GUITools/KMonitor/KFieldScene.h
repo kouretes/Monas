@@ -38,7 +38,7 @@ public:
 	QRectF ballRectFromFC (WorldInfo *wim, float width, float height);
 	QLineF lineRectFromFC (float x1, float y1, float x2, float y2);
 	QLineF unionistLineRectFromFC (WorldInfo *wim);
-
+    QPointF pointFromFC(float x, float y);
 	QRectF visionBallRect ( BallObject bob, WorldInfo wim);
 	QRectF goalPostRectFromOBM (NamedObject *nob, WorldInfo *wim);
 	QLineF motionCmdRectFromFC (WorldInfo *wim, float cx, float cy);

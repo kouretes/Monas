@@ -34,9 +34,19 @@ GraphicalRobotElement::GraphicalRobotElement (KFieldScene *parent, QString host)
 	LWSVisionYellowPostVisible = false;
 	LWSParticlesVisible = false;
 	LWSHFOVVisible = false;
-	LWSTraceVisible = false;
+
 	LWSMWCmdVisible = false;
-	QPen penForUnionistLine (Qt::black);
+    LWSVarianceVisible = false;
+
+
+    LWSOdometryVisible = false;
+    LWSRobotTraceVisible = false;
+
+
+    LWSEkfMhypothesisVisible = false;
+	LWSTeammatesVisible = false;
+
+    QPen penForUnionistLine (Qt::black);
 	penForUnionistLine.setWidth (1);
 	QPen penForRobotDirection (Qt::black);
 	penForRobotDirection.setWidth (3);
@@ -65,7 +75,29 @@ GraphicalRobotElement::GraphicalRobotElement (KFieldScene *parent, QString host)
 	Teammates[3] = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::red) );
 	Teammates[4] = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::cyan) );
 
-	for (int i = 0; i < numOfRobots; i++) {
+    robotTraceTime = boost::posix_time::microsec_clock::universal_time();
+
+    PoseHypothesis = new QGraphicsEllipseItem[ekfMaxHypothesis];
+    PoseHypothesisDirections = new QGraphicsLineItem[ekfMaxHypothesis];
+
+	for (int it = 0; it < ekfMaxHypothesis; it++) {
+        PoseHypothesis[it] = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::magenta) );
+    }
+    for (int i = 0; i < ekfMaxHypothesis; i++) {
+		PoseHypothesisDirections[i] = this->parentScene->addLine (QLineF(), penForRobotDirection);
+	}
+
+    PositionUncertainty = this->parentScene->addEllipse(QRect(), QPen (Qt::red,3), QBrush (Qt::NoBrush));
+    AngleUncertainty = this->parentScene->addEllipse(QRect(), QPen (Qt::red,3), QBrush (Qt::red));
+
+    OdometryPoints = new QPainterPath();
+    Odometry = this->parentScene->addPath(*OdometryPoints, QPen (Qt::blue,1), QBrush (Qt::NoBrush)) ;
+
+	RobotTracePoints = new QPainterPath();
+    RobotTrace = this->parentScene->addPath(*RobotTracePoints, QPen (Qt::red,2), QBrush (Qt::NoBrush)) ;
+
+
+    for (int i = 0; i < numOfRobots; i++) {
 		TeammateDirections[i] = this->parentScene->addLine (QLineF(), penForRobotDirection);
 	}
 
@@ -168,41 +200,60 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 			delete (*L_it);
 		}
 	}
+
+    if (PositionUncertainty){
+        delete PositionUncertainty;    
+    }
+
+    if (AngleUncertainty){
+        delete AngleUncertainty;    
+    }
+
+    if (OdometryPoints){
+        delete OdometryPoints;    
+    }
+
+    if (Odometry){
+        delete Odometry;    
+    }
+
+    if (RobotTracePoints){
+        delete RobotTracePoints;    
+    }
+
+    if (RobotTrace){
+        delete RobotTrace;    
+    }
+
+	delete[] PoseHypothesis;
+		
+
+	delete[] PoseHypothesisDirections;
+		
+	
 }
 
 void GraphicalRobotElement::loadXMLConfigParameters (std::string fname) {
 	XMLConfig *xmlconfig = new XMLConfig (fname);
 	partclsNum = 0;
 	xmlconfig->QueryElement ("partclsNum", partclsNum);
+    xmlconfig->QueryElement ("EkfMaxHypothesis", ekfMaxHypothesis);
 }
 
 void GraphicalRobotElement::setCurrentWIM (WorldInfo nwim) {
 	currentWIM.Clear();
+    currentWIM = nwim;
 
-	if (teamColor == 1) {
-		currentWIM = nwim;
+    if (LWSRobotTraceVisible) {
+		setLWSRobotTraceVisible (false);
+		updateRobotTracePolygon();
+		setLWSRobotTraceVisible (true);
 	} else {
-		WorldInfo MyWorld;
-		MyWorld.Clear();
-		MyWorld.CopyFrom (nwim);
-		float value = (-1) * MyWorld.myposition().x();
-		MyWorld.mutable_myposition()->set_x (value);
-		value = (-1) * MyWorld.myposition().y();
-		MyWorld.mutable_myposition()->set_y (value);
-		value = MyWorld.myposition().phi() + Pi;
-		MyWorld.mutable_myposition()->set_phi (value);
-		currentWIM = MyWorld;
+		setLWSRobotTraceVisible (false);
+		updateRobotTracePolygon();
 	}
 
-	if (LWSTraceVisible) {
-		setLWSTraceVisible (false);
-		updateTraceRect();
-		setLWSTraceVisible (true);
-	} else {
-		setLWSTraceVisible (false);
-		updateTraceRect();
-		setLWSTraceVisible (false);
-	}
+
 }
 
 void GraphicalRobotElement::setCurrentSWIM (SharedWorldInfo nswim) {
@@ -215,6 +266,9 @@ void GraphicalRobotElement::setCurrentGSM (GameStateMessage gsm) {
 	playerNumber = QString::fromStdString (_toString ( (gsm.player_number() ) ) );
 	Robot->setToolTip (playerNumber);
 
+    currentGSM.Clear();
+    currentGSM = gsm;
+ 
 	if (gsm.team_color() == 0) {
 		Robot->setBrush (Qt::blue);
 		Ball->setBrush (Qt::blue);
@@ -226,9 +280,24 @@ void GraphicalRobotElement::setCurrentGSM (GameStateMessage gsm) {
 	}
 }
 
-void GraphicalRobotElement::setcurrentOBSM (ObservationMessage obm) {
+void GraphicalRobotElement::setCurrentOBSM (ObservationMessage obm) {
 	currentObsm.Clear();
 	currentObsm = obm;
+}
+
+void GraphicalRobotElement::setCurrentEKFM (EKFLocalizationMessage ekfm) {
+	currentEKFM.Clear();
+	currentEKFM = ekfm;
+}
+
+void GraphicalRobotElement::setCurrentEKFMHypothesisM (EKFMHypothesis ekfMHyp) {
+	currentEKFMHypothesis.Clear();
+	currentEKFMHypothesis = ekfMHyp;
+}
+
+void GraphicalRobotElement::setCurrentOdometryM (OdometryInfoMessage odometryM) {
+	currentOdometryM.Clear();
+	currentOdometryM = odometryM;
 }
 
 void GraphicalRobotElement::setRobotVisible (bool visible) {
@@ -260,8 +329,12 @@ void GraphicalRobotElement::setTeammateVisible (int idx, bool visible) {
 
 void GraphicalRobotElement::updateRobotRect() {
 	if (this->currentWIM.has_myposition() ) {
+
+       
 		Robot->setRect (this->parentScene->rectFromFC (this->currentWIM.myposition().x() * 1000,
 		                this->currentWIM.myposition().y() * 1000, 150, 150) );
+
+
 		RobotDirection->setLine (this->parentScene->lineFromFCA (this->currentWIM.myposition().x() * 1000,
 		        this->currentWIM.myposition().y() * 1000, this->currentWIM.myposition().phi(), 200) );
 	} else {
@@ -270,6 +343,88 @@ void GraphicalRobotElement::updateRobotRect() {
 	}
 }
 
+void GraphicalRobotElement::updatePoseUncertaintyRect() {
+	if (this->currentWIM.has_myposition() && this->currentEKFM.variance_size()!=0 ) {
+		PositionUncertainty->setRect (this->parentScene->rectFromFC (this->currentWIM.myposition().x() * 1000,
+		                this->currentWIM.myposition().y() * 1000, sqrt(this->currentEKFM.variance(0)) * 1000 , sqrt(this->currentEKFM.variance(1)) * 1000 ) );
+
+        AngleUncertainty->setRect (this->parentScene->rectFromFC (this->currentWIM.myposition().x() * 1000,
+		                this->currentWIM.myposition().y() * 1000, 150, 150) );
+      
+        AngleUncertainty->setStartAngle(KMath::TO_DEG(KMath::wrapTo2Pi(this->currentWIM.myposition().phi()) - sqrt(this->currentEKFM.variance(2)) ) * 16);
+        AngleUncertainty->setSpanAngle( 2 * KMath::TO_DEG( sqrt(this->currentEKFM.variance(2) ) ) * 16);
+
+	} else {
+		PositionUncertainty->setRect ( 0, 0, 0, 0);
+        AngleUncertainty->setRect( 0, 0, 0, 0);    
+    }
+}
+
+void GraphicalRobotElement::updateEkfMHypothesisRects(){
+
+    int idx;
+
+    //std::cout << "currentEKFMHypothesis size : " << currentEKFMHypothesis.size() << std::endl ;
+	if (currentEKFMHypothesis.size() != 0) {
+
+		
+		for (idx = 0; idx < currentEKFMHypothesis.size(); idx++) {
+    //std::cout << "x  : " << this->currentEKFMHypothesis.kmodel (idx).x() << std::endl ;
+    //std::cout << "y  : " << this->currentEKFMHypothesis.kmodel (idx).x() << std::endl ;
+
+			PoseHypothesis[idx]->setRect (this->parentScene->rectFromFC (this->currentEKFMHypothesis.kmodel (idx).x() * 1000, this->currentEKFMHypothesis.kmodel(idx).y() * 1000, 150, 150) );
+            
+			PoseHypothesisDirections[idx]->setLine (this->parentScene->lineFromFCA (this->currentEKFMHypothesis.kmodel (idx).x() * 1000, this->currentEKFMHypothesis.kmodel (idx).y() * 1000, this->currentEKFMHypothesis.kmodel (idx).phi(), 200) );
+
+		}
+        for (idx=currentEKFMHypothesis.size() ; idx<ekfMaxHypothesis;idx++){
+            PoseHypothesis[idx]->setRect (0,0,0,0);           
+			PoseHypothesisDirections[idx]->setLine (0,0,0,0);
+        }
+
+	} else{
+        for (int i = 0; i < ekfMaxHypothesis; i++) {
+		    PoseHypothesis[i]->setRect (0,0,0,0);           
+		    PoseHypothesisDirections[i]->setLine (0,0,0,0);
+	    }
+    }
+}
+
+
+void GraphicalRobotElement::setEkfMHypothesisVisible (bool visible) {
+	for (int i = 0; i < ekfMaxHypothesis; i++) {
+		PoseHypothesis[i]->setVisible (visible);
+		PoseHypothesisDirections[i]->setVisible (visible);
+	}
+}
+
+void GraphicalRobotElement::updateOdometryPolygon() {
+    QPointF trackPoint = this->parentScene->pointFromFC(this->currentOdometryM.trackpointx() * 1000,this->currentOdometryM.trackpointy() * 1000);
+
+	if ( currentGSM.player_state() == PLAYER_PENALISED ||  currentGSM.player_state() ==  PLAYER_INITIAL ) {
+        delete(OdometryPoints);
+        OdometryPoints = new QPainterPath(trackPoint);
+	}
+    else if ( this->currentOdometryM.reset() == false ){
+        OdometryPoints->lineTo(trackPoint);
+        Odometry->setPath(*OdometryPoints);
+    } 
+}
+
+void GraphicalRobotElement::updateRobotTracePolygon() {
+	
+    QPointF robotTracePoint = this->parentScene->pointFromFC(this->currentWIM.myposition().x() * 1000,this->currentWIM.myposition().y() * 1000);
+
+	if ( currentGSM.player_state() == PLAYER_PENALISED ||  currentGSM.player_state() ==  PLAYER_INITIAL) {
+        delete(RobotTracePoints);
+        RobotTracePoints = new QPainterPath(robotTracePoint);
+	}
+    else if (  boost::posix_time::microsec_clock::universal_time() >robotTraceTime + boost::posix_time::seconds(5) ){
+        RobotTracePoints->lineTo(robotTracePoint);
+        RobotTrace->setPath(*RobotTracePoints);
+        robotTraceTime =  boost::posix_time::microsec_clock::universal_time();
+    } 
+}
 
 void GraphicalRobotElement::updateTeammatesRects() {
 	int idx;
@@ -294,6 +449,32 @@ void GraphicalRobotElement::setBallVisible (bool visible) {
 		this->Ball->setVisible (false);
 	} else {
 		this->Ball->setVisible (true);
+	}
+}
+
+void GraphicalRobotElement::setVarianceVisible (bool visible) {
+	if (visible == false) {
+		this->PositionUncertainty->setVisible (false);
+		this->AngleUncertainty->setVisible (false);
+	} else {
+		this->PositionUncertainty->setVisible (true);
+		this->AngleUncertainty->setVisible (true);
+	}
+}
+
+void GraphicalRobotElement::setOdometryVisible (bool visible) {
+	if (visible == false) {
+		this->Odometry->setVisible (false);
+	} else {
+		this->Odometry->setVisible (true);
+	}
+}
+
+void GraphicalRobotElement::setRobotTraceVisible (bool visible) {
+	if (visible == false) {
+		this->RobotTrace->setVisible (false);
+	} else {
+		this->RobotTrace->setVisible (true);
 	}
 }
 
@@ -480,53 +661,6 @@ void GraphicalRobotElement::updateHFOVRect() {
 		}
 	} else {
 		HFOVLines->setPolygon (QPolygon() );
-	}
-}
-
-void GraphicalRobotElement::setTraceVisible (bool visible) {
-	boost::circular_buffer<QGraphicsEllipseItem *>::iterator P_it;
-	boost::circular_buffer<QGraphicsLineItem *>::iterator L_it;
-
-	for (P_it = RobotPositions.begin(); P_it != RobotPositions.end(); ++P_it) {
-		if (visible == false) {
-			(*P_it)->setVisible (false);
-		} else {
-			(*P_it)->setVisible (true);
-		}
-	}
-
-	for (L_it = UnionistLines.begin(); L_it != UnionistLines.end(); ++L_it) {
-		if (visible == false) {
-			(*L_it)->setVisible (false);
-		} else {
-			(*L_it)->setVisible (true);
-		}
-	}
-}
-
-void GraphicalRobotElement::updateTraceRect() {
-	QGraphicsEllipseItem *Position;
-	QGraphicsLineItem *UnLine;
-	int RobotPositionsSize;
-	QRectF rect0;
-	QRectF rect1;
-	QPen penForTraceLine (Qt::black);
-	penForTraceLine.setWidth (1);
-
-	if (currentWIM.has_myposition() ) {
-		Position = this->parentScene->addEllipse (QRect(), QPen (Qt::black), QBrush (Qt::magenta) );
-		Position->setRect (this->parentScene->rectFromFC ( currentWIM.myposition().x() * 1000,
-		                   currentWIM.myposition().y() * 1000, 40, 40) );
-		RobotPositions.push_back (Position);
-		RobotPositionsSize = RobotPositions.size();
-
-		if (RobotPositionsSize > 1) {
-			rect0 = RobotPositions[RobotPositionsSize-1]->rect();
-			rect1 = RobotPositions[RobotPositionsSize-2]->rect();
-			UnLine = this->parentScene->addLine (QLineF(), penForTraceLine);
-			UnLine->setLine (QLineF (rect0.x(), rect0.y(), rect1.x(), rect1.y() ) );
-			UnionistLines.push_back (UnLine);
-		}
 	}
 }
 
