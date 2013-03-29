@@ -60,7 +60,7 @@ Ball BallFilter::get_updated_ball_estimate(float new_dist, float dist_variance, 
 }
 
 //Predict the position without observations and robots Motion Model
-Ball BallFilter::get_predicted_ball_estimate(float dt, KLocalization::KMotionModel const & MM)
+Ball BallFilter::get_predicted_ball_estimate(float dt, Localization::KMotionModel const & MM)
 {
 
 	double tmpDist, tmpDir, tmpRot, speedX, speedY, newx, newy, newx2, newy2;

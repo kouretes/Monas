@@ -11,7 +11,7 @@
 #include "tools/stat/kalman.h"
 #include "tools/KMat.h"
 #include "KLocalization.h"
-
+#include "LocalizationStructs.h"
 /*
  *
  */
@@ -31,7 +31,7 @@ class BallFilter
 		virtual ~BallFilter();
 
 		Ball get_updated_ball_estimate(float new_dist, float dist_variance, float new_dir, float dir_variance);
-		Ball get_predicted_ball_estimate(float dt, KLocalization::KMotionModel const & MM);
+		Ball get_predicted_ball_estimate(float dt,Localization::KMotionModel const & MM);
 		void reset(float new_dist, float dist_variance, float new_dir, float dif_variance);
 		float get_filter_variance() const;
 

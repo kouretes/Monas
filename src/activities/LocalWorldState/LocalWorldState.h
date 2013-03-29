@@ -23,6 +23,8 @@
 #include "BallFilter.h"
 #include "KLocalization.h"
 #include "PracticalSocket.h"
+#include "EKFLocalization.h"
+#include "LocalizationStructs.h"
 
 ACTIVITY_START
 class LocalWorldState: public IActivity
@@ -48,8 +50,8 @@ public:
 		return "LocalWorldState";
 	}
 
-	void RobotPositionMotionModel(KLocalization::KMotionModel & MModel);
-	void calculate_ball_estimate(KLocalization::KMotionModel const & MModel);
+	void RobotPositionMotionModel(Localization::KMotionModel & MModel);
+	void calculate_ball_estimate(Localization::KMotionModel const & MModel);
 
 private:
 	//check if the first odometry data had come
@@ -66,21 +68,24 @@ private:
 
 	//WorldInfo message
 	WorldInfo MyWorld;
-
+    OdometryInfoMessage odometryInfoM;
+    EKFLocalizationMessage ekfLocalizationM;
+    EKFMHypothesis ekfMHypothesis;
 	//Current agent position
-	KLocalization::belief AgentPosition;
+	Localization::belief AgentPosition;
 
 	//localization world
 	KLocalization localizationWorld;
+    EKFLocalization ekfLocalization;
 
 	//Observations and odometry data to feed localization
-	vector<KLocalization::KObservationModel> currentObservation;
-	vector<KLocalization::KObservationModel> currentAmbiguousObservation;
-	KLocalization::KMotionModel robotmovement;
+	vector<Localization::KObservationModel> currentObservation;
+	vector<Localization::KObservationModel> currentAmbiguousObservation;
+	Localization::KMotionModel robotmovement;
 
 	//Use a particle to store the odometry data
-	KLocalization::partcl TrackPoint;
-	KLocalization::partcl TrackPointRobotPosition;
+	Localization::partcl TrackPoint;
+	Localization::partcl TrackPointRobotPosition;
 
 	//Messages to feed the guis
 	LocalizationData DebugData;
@@ -113,12 +118,13 @@ private:
 	boost::posix_time::ptime lastObservationTime;
 	boost::posix_time::ptime lastFilterTime;
 	boost::posix_time::ptime now;
-
+    boost::posix_time::ptime odometryMessageTime;
+    boost::posix_time::ptime debugMessageTime;
 	//Usefull for gui tools
-	static void * StartServer(void * kati);
+
 	pthread_t acceptthread;
 	static TCPSocket *sock;
-	int LocalizationData_Load(vector<KLocalization::KObservationModel> & Observation, KLocalization::KMotionModel & MotionModel);
+	int LocalizationData_Load(vector<Localization::KObservationModel> & Observation, Localization::KMotionModel & MotionModel);
 	int LocalizationDataForGUI_Load();
 	void Send_LocalizationData();
 	static bool debugmode;
@@ -127,7 +133,11 @@ private:
 	int size;
 	char *data;
     bool actionKick;
-	bool gameMode;
+	bool gameMode;  
+
+    // struct to store xml data
+    Localization::LocConfig locConfig;
+
 };
 ACTIVITY_END
 #endif

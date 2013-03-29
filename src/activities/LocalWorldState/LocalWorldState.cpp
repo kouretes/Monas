@@ -44,6 +44,8 @@ void LocalWorldState::UserInit()
     timeStart = boost::posix_time::microsec_clock::universal_time();
 	lastObservationTime = boost::posix_time::microsec_clock::universal_time();
 	lastFilterTime = boost::posix_time::microsec_clock::universal_time();
+    odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
+    debugMessageTime = boost::posix_time::microsec_clock::universal_time();
 
     //read xml files..set parameters for localizationWorld
     Reset();
@@ -51,15 +53,23 @@ void LocalWorldState::UserInit()
     ReadFeatureConf();
     ReadTeamConf();
     ReadRobotConf();
-	localizationWorld.Initialize();
-	
-	sock = NULL;
-	serverpid = pthread_create(&acceptthread, NULL, &LocalWorldState::StartServer, this);
-	pthread_detach(acceptthread);
 
+    ekfLocalization.locConfig = &locConfig;
+    localizationWorld.locConfig = &locConfig;
+
+    if (locConfig.ekfEnable == true){
+        ekfLocalization.Initialize();
+
+        for (int i = 0 ; i < 9 ; i++ ){
+            ekfLocalizationM.add_variance(i);
+        }
+    }
+    else{
+        localizationWorld.Initialize();
+    }
+   
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
-
     Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
 }
 
@@ -77,7 +87,12 @@ int LocalWorldState::Execute()
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
-			localizationWorld.SpreadParticlesAfterFall();
+            if (locConfig.ekfEnable == true){
+			    ekfLocalization.IncreaseUncertaintyAfterFall(); 
+            }
+            else{
+			    localizationWorld.SpreadParticlesAfterFall();
+            }
 		}
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 		return 0;
@@ -85,32 +100,75 @@ int LocalWorldState::Execute()
 		fallBegan = true;
 	if (lrm != 0){
 		timeStart = boost::posix_time::microsec_clock::universal_time();
-		localizationWorld.InitializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
-	}
 
-	AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
-	MyWorld.mutable_myposition()->set_x(AgentPosition.x);
+        if (locConfig.ekfEnable == true){
+            ekfLocalization.InitializeHypothesis((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
+            TrackPoint.x = ekfLocalization.kalmanModels[0].state(0,0);
+            TrackPoint.y = ekfLocalization.kalmanModels[0].state(1,0);
+            TrackPoint.phi = ekfLocalization.kalmanModels[0].state(2,0);
+            _blk.publishSignal(odometryInfoM, "debug");   
+        }
+        else{
+            localizationWorld.InitializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
+            TrackPoint.x = localizationWorld.agentPosition.x;
+            TrackPoint.y = localizationWorld.agentPosition.y;
+            TrackPoint.phi = localizationWorld.agentPosition.phi;
+            _blk.publishSignal(odometryInfoM, "debug");   
+        }       
+    }	
+       
+    if (locConfig.ekfEnable == true){
+        AgentPosition = ekfLocalization.LocalizationStep(robotmovement, currentObservation, currentAmbiguousObservation);
+
+        ekfLocalizationM.set_variance(0,ekfLocalization.var(0,0));
+        ekfLocalizationM.set_variance(1,ekfLocalization.var(1,1));
+        ekfLocalizationM.set_variance(2,ekfLocalization.var(2,2));
+        _blk.publishSignal(ekfLocalizationM, "debug");
+    }
+    else{
+        AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
+    }
+
+    MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
+
 	MyWorld.mutable_myposition()->set_confidence(0.0);
 
 	calculate_ball_estimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
-	if(gameMode == false){
-		LocalizationDataForGUI_Load();
-		_blk.publishSignal(DebugDataForGUI, "debug");
-		///DEBUGMODE SEND RESULTS
-		if (debugmode)
-		{
-			LocalizationData_Load(currentObservation, robotmovement);
-			Send_LocalizationData();
-		}
-	}
 
+	if(gameMode == false){
+        if (locConfig.ekfEnable == true){
+        
+            if ((boost::posix_time::microsec_clock::universal_time() > debugMessageTime + seconds(4)) || lrm != 0){
+
+                for (int i = 0; i < ekfLocalization.numberOfModels-1 ; i++)
+	            {
+		            if(ekfMHypothesis.kmodel_size() < (int)(i+1))
+			            ekfMHypothesis.add_kmodel();
+
+		            ekfMHypothesis.mutable_kmodel(i)->set_x(ekfLocalization.kalmanModels[i+1].state(0,0));
+		            ekfMHypothesis.mutable_kmodel(i)->set_y(ekfLocalization.kalmanModels[i+1].state(1,0));
+		            ekfMHypothesis.mutable_kmodel(i)->set_phi(ekfLocalization.kalmanModels[i+1].state(2,0));
+            
+	            }
+                ekfMHypothesis.set_size(ekfLocalization.numberOfModels-1);
+                _blk.publishSignal(ekfMHypothesis, "debug");
+                debugMessageTime = boost::posix_time::microsec_clock::universal_time();
+
+
+            }
+        }
+        else{
+		    LocalizationDataForGUI_Load();
+		    _blk.publishSignal(DebugDataForGUI, "debug");
+        }
+	}
 	return 0;
 }
 
-void LocalWorldState::calculate_ball_estimate(KLocalization::KMotionModel const & robotModel)
+void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const & robotModel)
 {
 	boost::posix_time::time_duration duration;
 	boost::posix_time::ptime observation_time;
@@ -215,15 +273,16 @@ void LocalWorldState::ProcessMessages()
 	lrm = _blk.readSignal<LocalizationResetMessage>("worldstate");
 	sm = _blk.readState<MotionStateMessage>("worldstate");
 
+   
 
 	currentObservation.clear();
 	currentAmbiguousObservation.clear();
 	if(gsm != 0){
-		localizationWorld.playerNumber = gsm->player_number();
+		locConfig.playerNumber = gsm->player_number();
 	}
 	if (obsm != 0)
 	{
-		KLocalization::KObservationModel tmpOM;
+		Localization::KObservationModel tmpOM;
 		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
 
 		//Load observations
@@ -243,18 +302,18 @@ void LocalWorldState::ProcessMessages()
 			tmpOM.Bearing.Edev = TO_RAD(20) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus float the precision of vision
 			tmpOM.observationTime=observation_time;
 
-			if (localizationWorld.KFeaturesmap.count(id) != 0)
+			if (locConfig.KFeaturesmap.count(id) != 0)
 			{
 				//Make the feature
 				if(id.find("Left")!=string::npos ||id.find("Right")!=string::npos)
 				{
-					tmpOM.Feature = localizationWorld.KFeaturesmap[id];
+					tmpOM.Feature = locConfig.KFeaturesmap[id];
 					currentObservation.push_back(tmpOM);
 				}
 			}else {
 
 				if( id.find("Yellow")!=string::npos){
-					tmpOM.Feature = localizationWorld.KFeaturesmap["YellowLeft"];
+					tmpOM.Feature = locConfig.KFeaturesmap["YellowLeft"];
 					currentAmbiguousObservation.push_back(tmpOM);
 				}
 
@@ -266,6 +325,7 @@ void LocalWorldState::ProcessMessages()
 		rpsm = _blk.readData<RobotPositionMessage>("sensors");
 	}
 
+    
 	if (rpsm != 0)
 	{
 		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
@@ -274,29 +334,29 @@ void LocalWorldState::ProcessMessages()
 		robotmovement.freshData = true;
 		RobotPositionMotionModel(robotmovement);
 	}else{
-		robotmovement.freshData = false;
+        robotmovement.freshData = false;
 	}
+    
 	if (sm != 0){
 		currentRobotAction = sm->type();
 	}
 
 }
 
-void LocalWorldState::RobotPositionMotionModel(KLocalization::KMotionModel & MModel)
+void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MModel)
 {
 	if (firstOdometry)
 	{
 		TrackPointRobotPosition.x = PosX.sensorvalue();
 		TrackPointRobotPosition.y = PosY.sensorvalue();
 		TrackPointRobotPosition.phi = Angle.sensorvalue();
-		TrackPoint = TrackPointRobotPosition;
 		firstOdometry=false;
 	}
 	float XA = PosX.sensorvalue();
 	float YA = PosY.sensorvalue();
 	float AA = Angle.sensorvalue();
 
-
+    
 	float DX = (XA - TrackPointRobotPosition.x);
 	float DY = (YA - TrackPointRobotPosition.y);
 	float DR = KMath::anglediff2(AA, TrackPointRobotPosition.phi);
@@ -312,23 +372,33 @@ void LocalWorldState::RobotPositionMotionModel(KLocalization::KMotionModel & MMo
 	TrackPointRobotPosition.x = XA;
 	TrackPointRobotPosition.y = YA;
 	TrackPointRobotPosition.phi = AA;
+
 	//If u want edev change the klocalization file
-	TrackPoint.x += DX;
-	TrackPoint.y += DY;
+    TrackPoint.x += cos(TrackPoint.phi + robot_dir) * robot_dist; 
+	TrackPoint.y += sin(TrackPoint.phi + robot_dir) * robot_dist; 
 	TrackPoint.phi += DR;
+
+    if ( microsec_clock::universal_time() > odometryMessageTime + seconds(5) ){
+        odometryInfoM.set_reset(false);
+        odometryInfoM.set_trackpointx(TrackPoint.x);
+        odometryInfoM.set_trackpointy(TrackPoint.y);
+        odometryInfoM.set_trackpointphi(TrackPoint.phi);
+        _blk.publishSignal(odometryInfoM, "debug");
+        odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
+    }
 
     //robot orientation change because of action (kick)
     localizationWorld.actionOdError=0.f;
     if (sm != 0){ 
         if (currentRobotAction==MotionStateMessage::ACTION && actionKick==false){
             actionKick=true;
-            localizationWorld.actionOdError=atof(_xml.findValueForKey(_xml.keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str());   
+            localizationWorld.actionOdError=TO_RAD(atof(_xml.findValueForKey(_xml.keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str()));   
              }
         else if (currentRobotAction!=MotionStateMessage::ACTION){
             actionKick=false;           
         }        
     }
-
+	
 	//Logger::Instance().WriteMsg("LocalWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
 
@@ -337,7 +407,7 @@ void LocalWorldState::RobotPositionMotionModel(KLocalization::KMotionModel & MMo
 
 void LocalWorldState::ReadFeatureConf()
 {
-    KLocalization::feature temp;
+    Localization::feature temp;
     float x,y,weight;
     string ID;
 	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
@@ -348,18 +418,21 @@ void LocalWorldState::ReadFeatureConf()
     	y= atof(_xml.findValueForKey(key + "y").c_str());
     	weight= atof(_xml.findValueForKey(key + "weight").c_str());
     	temp.set(x, y, ID, weight);
-    	localizationWorld.KFeaturesmap[ID] = temp;
+    	locConfig.KFeaturesmap[ID] = temp;
     }
 }
 
 void LocalWorldState::ReadLocConf()
 {
-    localizationWorld.partclsNum=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
-    localizationWorld.spreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
-    localizationWorld.rotationDeviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
-    localizationWorld.percentParticlesSpread=atoi(_xml.findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
-    localizationWorld.rotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
-    localizationWorld.numberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
+    locConfig.partclsNum=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
+    locConfig.spreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
+    locConfig.rotationDeviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
+    locConfig.percentParticlesSpread=atoi(_xml.findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
+    locConfig.spreadParticlesDeviationAfterFall=atoi(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviationAfterFall").c_str());
+    locConfig.rotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
+    locConfig.numberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
+
+    locConfig.ekfEnable = atof(_xml.findValueForKey("localizationConfig.EKFEnable").c_str());
 
     //Odometry motion model parameters
     robotmovement.Distance.ratiomean = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Distance.ratiomean").c_str());
@@ -382,86 +455,50 @@ void LocalWorldState::ReadLocConf()
     localizationWorld.augMCL.afast = atof(_xml.findValueForKey("localizationConfig.Resetting.afast").c_str());
     localizationWorld.augMCL.winDuration = atof(_xml.findValueForKey("localizationConfig.Resetting.winDuration").c_str());
     localizationWorld.augMCL.enable = atof(_xml.findValueForKey("localizationConfig.Resetting.enable").c_str());
+
+
 }
 
 void LocalWorldState::ReadFieldConf()
 {
-    localizationWorld.fieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
-    localizationWorld.fieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
-    localizationWorld.fieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
-    localizationWorld.fieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+    locConfig.fieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+    locConfig.fieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
+    locConfig.fieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+    locConfig.fieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+
+
 }
 
 void LocalWorldState::ReadTeamConf()
 {
-    localizationWorld.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
+    locConfig.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
 }
 
 void LocalWorldState::ReadRobotConf()
 {
     //Xml index starts at 0 
-    int pNumber=localizationWorld.playerNumber-1;
+    int pNumber=locConfig.playerNumber-1;
 	for (int i = 0; i < 2; i++)
 	{
 		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
-        localizationWorld.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".x").c_str());
-        localizationWorld.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
-        localizationWorld.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
+        locConfig.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".x").c_str());
+        locConfig.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
+        locConfig.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
     }
 
     //read ready state positions
-    localizationWorld.readyX=atof(_xml.findValueForKey(
+    locConfig.readyX=atof(_xml.findValueForKey(
 _xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".x").c_str());
-    localizationWorld.readyY=atof(_xml.findValueForKey(
+    locConfig.readyY=atof(_xml.findValueForKey(
 _xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".y").c_str());
-    localizationWorld.readyPhi=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".phi").c_str());
+    locConfig.readyPhi=TO_RAD(atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".phi").c_str()));
 }
 
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
-void LocalWorldState::Send_LocalizationData()
-{
-	outgoingheader.set_nextmsgbytesize(DebugData.ByteSize());
-	outgoingheader.set_nextmsgname(DebugData.GetTypeName());
 
-	int sendsize;
-	int rsize = 0;
-	int rs;
-	//send a header
-	sendsize = outgoingheader.ByteSize();
-	sendsize = htonl(sendsize);
 
-	try
-	{
-		sock->send(&sendsize, sizeof(uint32_t));
-		sendsize = outgoingheader.ByteSize();
-		outgoingheader.SerializeToArray(data, sendsize);
-		while (rsize < sendsize)
-		{
-			rs = sock->send(data + rsize, sendsize - rsize);
-			rsize += rs;
-		}
-		//send the image bytes
-		sendsize = DebugData.ByteSize();
-		std::string buf;
-		DebugData.SerializePartialToString(&buf);
-		sendsize = buf.length();
-
-		rsize = 0;
-
-		while (rsize < sendsize)
-		{
-			rs = sock->send((char *) buf.data() + rsize, sendsize - rsize);
-			rsize += rs;
-		}
-	} catch (SocketException &e)
-	{
-		cerr << e.what() << endl;
-		debugmode = false;
-	}
-}
-
-int LocalWorldState::LocalizationData_Load(vector<KLocalization::KObservationModel>& Observation,KLocalization::KMotionModel & MotionModel)
+int LocalWorldState::LocalizationData_Load(vector<Localization::KObservationModel>& Observation,Localization::KMotionModel & MotionModel)
 {
 	bool addnewptrs = false;
 	//Fill the world with data!
@@ -512,64 +549,6 @@ int LocalWorldState::LocalizationDataForGUI_Load()
 	}
 
 	return 1;
-}
-
-void * LocalWorldState::StartServer(void * astring)
-{
-	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
-	bool found = false;
-	unsigned short port = 9001;
-	float temp = 0;
-	if (config.IsLoadedSuccessfully())
-	{
-		found = true;
-		found &= config.QueryElement("port", temp);
-	}
-	if (found)
-		port = temp;
-	else
-		Logger::Instance().WriteMsg("LocalWorldState", " No port number in : " + ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml", Logger::Warning);
-
-	TCPServerSocket servSock(port);
-
-	Logger::Instance().WriteMsg("LocalWorldState", " LocalWorldState server is ready at port: " + _toString(port), Logger::Info);
-	while (true)
-	{
-		if (!debugmode)
-		{
-			if (sock != NULL)
-				delete sock;
-
-			if ((sock = servSock.accept()) < 0)
-			{
-				cout << " REturned null";
-				return NULL;
-			}
-			cout << "Handling client ";
-			try
-			{
-				cout << sock->getForeignAddress() << ":";
-			} catch (SocketException e)
-			{
-				cerr << "Unable to get foreign address" << endl;
-			}
-			try
-			{
-				cout << sock->getForeignPort();
-			} catch (SocketException e)
-			{
-				cerr << "Unable to get foreign port" << endl;
-			}
-			cout << endl;
-			debugmode = true;
-
-		} else
-		{
-			sleep(2);
-		}
-	}
-
-	return NULL;
 }
 
 void LocalWorldState::InputOutputLogger(){
