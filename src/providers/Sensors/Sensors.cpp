@@ -4,7 +4,7 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "architecture/narukom/pub_sub/topicTree.h"
+#include "core/architecture/messaging/TopicTree.hpp"
 
 using namespace AL;
 using namespace std;

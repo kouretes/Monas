@@ -1,7 +1,7 @@
 #ifndef THREADPOOL_H_
 #define THREADPOOL_H_ 1
 
-#include "architecture/IExecutable.h"
+#include "core/architecture/executable/IExecutable.hpp"
 
 
 #include "../external/threadpool-0_2_5-src/threadpool/boost/threadpool.hpp"

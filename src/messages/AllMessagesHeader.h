@@ -10,5 +10,6 @@
 #include "timeout.pb.h"
 #include "VisionObservations.pb.h"
 #include "WorldInfo.pb.h"
+#include "Debug.pb.h"
 
 #endif

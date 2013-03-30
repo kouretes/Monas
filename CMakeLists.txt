@@ -1,32 +1,30 @@
-find_package(qibuild)
-project( Monas )
-
 cmake_minimum_required( VERSION 2.6.4 )
+project( Monas )
+#Fancy cmake stuff to be put here:
+add_subdirectory(cmake)
+
+set ( MonasDefinitions "" CACHE INTERNAL "" )
+
+#Clean linking
+set ( TargetLinkLibraries  CACHE INTERNAL "" )
+
 
 message( STATUS "" )
 message( STATUS " _..::: Configuring Architecture :::.._ " )
 message( STATUS "" )
 
-#set( CMAKE_VERBOSE_MAKEFILE on )
 
+include_directories ( AFTER src/ )
+include_directories ( AFTER external/protobuf/src )
+
+add_subdirectory( src/hal/) #Configure system
 add_definitions ( -Wextra )
-
-set ( TargetPlatform robot CACHE STRING
-        "select the targeted platform, available platforms are linux, windows, and robot" )
-
-
-set ( RobotPlatform nao CACHE STRING
-        "Select robotic platform. Available platforms are nao and aibo" )
-
-if ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
-    add_definitions ( -m32 )
-endif ( ${TargetPlatform} STREQUAL "robot" AND ${RobotPlatform} STREQUAL "nao" )
-
-set ( CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/binaries/${TargetPlatform}" CACHE PATH "Select the install directory" FORCE )
-
-set(ExternalDir ./external)
-add_subdirectory( external )
+message(STATUS "DEFINITIONS:" ${MonasDefinitions})
+add_definitions (${MonasDefinitions})
 add_subdirectory( src )
+add_subdirectory( external )
+
+
 
 install ( DIRECTORY ./config
           DESTINATION .

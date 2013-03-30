@@ -8,7 +8,7 @@
 #include <limits>
 #include <math.h>
 #include "hal/robot/generic_nao/KinematicsDefines.h"
-#include "tools/KMat.h"
+#include "core/elements/math/KMat.hpp"
 
 /**
  * This is the code for the Forward and Inverse Kinematics for nao v3.3 robot.
@@ -60,7 +60,7 @@ public:
 		float angleX, angleY, angleZ;
 	};
 	typedef KMath::KMat::ATMatrix<float, 4> kmatTable;
-	
+
 private:
 	typedef KMath::KMat::transformations KMatTransf;
 	//Predifined tables

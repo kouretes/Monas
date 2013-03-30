@@ -1,15 +1,9 @@
+
 message ( STATUS "" )
 message ( STATUS " _..::: Configuring Sources :::.._ " )
 message ( STATUS "" )
 
-
-#Clean linking
-set ( TargetLinkLibraries  CACHE INTERNAL "" )
-include_directories ( AFTER ./ )
-
-
 include_directories ( AFTER ../external/protobuf/src/ )
-add_subdirectory ( ./messages/ )
 
 
 
@@ -24,15 +18,17 @@ elseif ( (NOT "${LibBuildType}" STREQUAL "STATIC") AND
   message ( FATAL_ERROR "LibBuildType should be one of the following: STATIC, SHARED or MODULE" )
 endif ( "x${LibBuildType}x" STREQUAL "xx" )
 
-set ( NaoQiVersion 1.12.5 CACHE STRING "Set the NaoQi version" )
-
-
-add_subdirectory ( ./hal/ )
-add_subdirectory ( ./architecture/ )
+add_subdirectory (./core/) #Monas Core
+add_subdirectory ( ./messages/ )
+add_subdirectory ( ./robocup/ )
+#User components
 add_subdirectory ( ./activities/ )
 add_subdirectory ( ./providers/ )
 add_subdirectory ( ./statecharts/ )
 
+if( ${TargetRobot} STREQUAL "none")
+	add_subdirectory ( ./GUITools/ )
+endif( ${TargetRobot} STREQUAL "none")
 
 #Call function that must be defined somewhere inside hal for proper linking
 

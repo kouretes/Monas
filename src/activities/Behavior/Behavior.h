@@ -1,8 +1,8 @@
 #ifndef BEHAVIOR_H
 #define BEHAVIOR_H
 
-#include "architecture/executables/IActivity.h"
-#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
+
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -12,28 +12,30 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "messages/RoboCupGameControlData.h"
+#include "messages/Debug.pb.h"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 #include "tools/obstacleConst.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "FormationGenerator.h"
 
 #define INIT_VALUE -111.0
 #define numOfFakeObstacles 15
 
 /**
- * @brief Monas activity intented to determine the Behavior
-	(Roles: Goalie, Attacker, Defender... ) for nao v3.3 robot.
-
- * @author 2012 kouretes team
-
+ * @brief Monas activity intented to determine the Behavior of the robot.
+ * (Roles: Goalie, Attacker, Defender... )
+ *
+ * @author 2012 Kouretes team
+ *
  * \file Behavior.h
-*/
+ */
 
 ACTIVITY_START
 
@@ -46,13 +48,13 @@ public:
 
 	/**
 	 * @fn std::string ACTIVITY_VISIBLE GetName()
-	 * @brief used get the name of the activity.
+	 * @brief Used to get the name of the activity.
 	 */
 	std::string ACTIVITY_VISIBLE GetName() { return "Behavior"; }
 
 	/**
 	 * @fn void ACTIVITY_VISIBLE  UserInit()
-	 * @brief Activity initialization...
+	 * @brief Activity initialization.
 	 */
 	void ACTIVITY_VISIBLE UserInit();
 
@@ -64,7 +66,7 @@ public:
 
 	/**
 	 * @fn int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute()
-	 * @brief Agents execute function, used to execute the activity...
+	 * @brief Agents execute function, used to execute the activity.
 	 */
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
@@ -72,7 +74,7 @@ private:
 
 	/**
 	 * @enum ROLES
-	 * @brief enum to attach roles on the robot.
+	 * @brief enum to attach roles on the robot and determine their behavior.
 	 */
 	enum ROLES
 	{
@@ -113,9 +115,11 @@ private:
 		// values from the behavior xml file
 		float posX, posY, epsX, epsY;
 		struct Kick kicks;
-		float ur; // used only by goalie
+		float ur; // used only by goalie. IF SOMEONE KNOWS WHAT ur IS, PLEASE CHANGE THAT NAME!
 
 	} config;
+
+	/* --------------------------------- Messages and Functions ---------------------------------- */
 
 	/**
 	 * Incoming Messages
@@ -137,19 +141,39 @@ private:
 	LocalizationResetMessage locReset;
 	PathPlanningRequestMessage pprm;
 	ObstacleMessage fom;	// fake obstacle message!
+	FormationDataForGUI fdg;
 
 	/**
-	 * @fn void read_messages()
-	 * @brief read incoming messages from declared topics.
+	 * @fn void readMessages()
+	 * @brief Read all incoming messages from declared topics. Called each time the
+	 * activity is executed to update message objects.
 	 */
-	void read_messages();
+	void readMessages();
+
+	/**
+	 * @fn void GetBallData()
+	 * @brief Information gathering function, that reads the ball coordinates, bearing and distance.
+	 */
+	void getBallData();
 
 	/**
 	 * @fn void GetGameState()
-	 * @brief information gathering function, that reads the game state message
+	 * @brief Information gathering function, that reads the game state message
 	 * and assign the robot game state variables (gameState, teamColor, playerNumber...)
 	 */
-	void GetGameState();
+	void getGameState();
+
+	/**
+	 * @fn void GetPosition()
+	 * @brief Information gathering function, that reads the position, angle and robot confidence.
+	 */
+	void getPosition();
+
+	/**
+	 * @fn void sendDebugMessages()
+	 * @brief Send messages for debug.
+     */
+	void sendDebugMessages();
 
 	/* --------------------------------- Goalie functions ---------------------------------- */
 
@@ -165,27 +189,23 @@ private:
 	 * @brief Function used by goalie basic behavior to decide when to fall for a ball save and
  	 * when to go on the ball and kick it away from the goal post.
 	 */
-	void Goalie();
+	void goalie();
 
 	/* ------------------------------------------------------------------------------------- */
 
 	/**
-	 * @fn bool ClosestRobot()
-	 * @brief (TODO)
+	 * @fn bool closestRobot()
+	 * @brief Use to determine if the robot is the one closest to the ball.
+	 * @return true if the robot is the closest or there is no shared world info message
+	 * to get information, else returns false.
 	 */
-	bool ClosestRobot();
+	bool closestRobot();
 
 	/**
-	 * @fn void GetPosition()
+	 * @fn void updateOrientation()
 	 * @brief (TODO)
 	 */
-	void GetPosition();
-
-	/**
-	 * @fn void UpdateOrientation()
-	 * @brief (TODO)
-	 */
-	void UpdateOrientation();
+	void updateOrientation();
 
 	/**
 	 * @fn void checkForPenaltyArea()
@@ -194,10 +214,11 @@ private:
 	void checkForPenaltyArea();
 
 	/**
-	 * @fn void Kick()
-	 * @brief (TODO)
+	 * @fn void kick()
+	 * @brief Use for approaching the ball on the right distance and kick the ball
+	 * using the appropriate kick motion.
 	 */
-	void Kick();
+	void kick();
 
 	/**
 	 * @fn void velocityWalk(double ix, double iy, double it, double f)
@@ -213,19 +234,21 @@ private:
 
 	/**
 	 * @fn void approachBall()
-	 * @brief (TODO)
+	 * @brief Use to approach the ball.
 	 */
 	void approachBall();
 
 	/**
 	 * @fn void approachBallRoleDependent()
-	 * @brief (TODO)
+	 * @brief Use to determine if the robot is the one that should approach the
+	 * the ball. Checks if the robot is the closest one to the ball and then
+	 * calls the approachBall() function if needed.
 	 */
 	void approachBallRoleDependent();
 
 	/**
 	 * @fn void stopRobot()
-	 * @brief (TODO)
+	 * @brief Stops the robot from moving.
 	 */
 	void stopRobot();
 
@@ -248,16 +271,18 @@ private:
 	void pathPlanningRequestAbsolute(float targetX, float targetY, float targetPhi);
 
 	/**
-	 * @fn void gotoPosition(float target_x, float target_y, float target_phi)
+	 * @fn void goToPosition(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
 	 */
-	void gotoPosition(float targetX, float targetY, float targetPhi);
+	void goToPosition(float targetX, float targetY, float targetPhi);
+
+	/* --------------------------------- Behavior Variables ---------------------------------- */
 
 	bool ballFound;	// variable that is true if we see the ball.
 
 	int fall;	// variable for goalie role to check if he should fall or not and in which side.
 
-	int role;	// variable that holds the role number of the robot (see enum ROLES)...
+	int role;	// variable that holds the role number of the robot (see enum ROLES).
 
 	bool pathOK;
 
@@ -265,11 +290,13 @@ private:
 
 	float cX, cY, ct;
 
-	float ballDist, ballBearing, ballX, ballY;
+	float ballDist, ballBearing, ballX, ballY; // ball data coming from world info message.
+	
+	float globalBallX, globalBallY; // transformation from relative robot ball x,y to relative field ball x,y USED UNTIL WE HAVE GLOBAL BALL ESTIMATION!!!
 
 	int side;
 
-	float robotX, robotY, robotPhi, robotConfidence;
+	float robotX, robotY, robotPhi, robotConfidence; // robot coordinates, angle and confidence.
 
 	bool readyToKick;
 
@@ -282,10 +309,12 @@ private:
 	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
 	bool goalieApproachStarted;
-	
+
 	bool gameMode;
 
-	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted;
+	FormationGenerator fGen; // object that create and update the team formation
+
+	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation; // timers.
 };
 
 ACTIVITY_END

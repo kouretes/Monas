@@ -36,11 +36,10 @@ class SharedWorldInfo;
 class TeammatePose;
 class RobotPose;
 class Ball;
-class UnknownObjects;
+class GlobalBall;
 class LocalizationResetMessage;
 class LocalizationData;
 class header;
-class LocalizationDataForGUI;
 
 enum LocalizationResetMessage_RESET {
   LocalizationResetMessage_RESET_UNIFORM = 0,
@@ -140,42 +139,6 @@ class WorldInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::Ball >*
       mutable_balls();
   
-  // repeated .RobotPose OtherRobots = 3;
-  inline int otherrobots_size() const;
-  inline void clear_otherrobots();
-  static const int kOtherRobotsFieldNumber = 3;
-  inline const ::RobotPose& otherrobots(int index) const;
-  inline ::RobotPose* mutable_otherrobots(int index);
-  inline ::RobotPose* add_otherrobots();
-  inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-      otherrobots() const;
-  inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-      mutable_otherrobots();
-  
-  // repeated .UnknownObjects UFOs = 4;
-  inline int ufos_size() const;
-  inline void clear_ufos();
-  static const int kUFOsFieldNumber = 4;
-  inline const ::UnknownObjects& ufos(int index) const;
-  inline ::UnknownObjects* mutable_ufos(int index);
-  inline ::UnknownObjects* add_ufos();
-  inline const ::google::protobuf::RepeatedPtrField< ::UnknownObjects >&
-      ufos() const;
-  inline ::google::protobuf::RepeatedPtrField< ::UnknownObjects >*
-      mutable_ufos();
-  
-  // repeated .Ball GlobBalls = 5;
-  inline int globballs_size() const;
-  inline void clear_globballs();
-  static const int kGlobBallsFieldNumber = 5;
-  inline const ::Ball& globballs(int index) const;
-  inline ::Ball* mutable_globballs(int index);
-  inline ::Ball* add_globballs();
-  inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
-      globballs() const;
-  inline ::google::protobuf::RepeatedPtrField< ::Ball >*
-      mutable_globballs();
-  
   // @@protoc_insertion_point(class_scope:WorldInfo)
  private:
   inline void set_has_myposition();
@@ -185,12 +148,9 @@ class WorldInfo : public ::google::protobuf::Message {
   
   ::RobotPose* myposition_;
   ::google::protobuf::RepeatedPtrField< ::Ball > balls_;
-  ::google::protobuf::RepeatedPtrField< ::RobotPose > otherrobots_;
-  ::google::protobuf::RepeatedPtrField< ::UnknownObjects > ufos_;
-  ::google::protobuf::RepeatedPtrField< ::Ball > globballs_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -275,6 +235,18 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::TeammatePose >*
       mutable_teammateposition();
   
+  // repeated .GlobalBall GlobalBalls = 3;
+  inline int globalballs_size() const;
+  inline void clear_globalballs();
+  static const int kGlobalBallsFieldNumber = 3;
+  inline const ::GlobalBall& globalballs(int index) const;
+  inline ::GlobalBall* mutable_globalballs(int index);
+  inline ::GlobalBall* add_globalballs();
+  inline const ::google::protobuf::RepeatedPtrField< ::GlobalBall >&
+      globalballs() const;
+  inline ::google::protobuf::RepeatedPtrField< ::GlobalBall >*
+      mutable_globalballs();
+  
   // @@protoc_insertion_point(class_scope:SharedWorldInfo)
  private:
   inline void set_has_playerclosesttoball();
@@ -284,9 +256,10 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   
   ::RobotPose* playerclosesttoball_;
   ::google::protobuf::RepeatedPtrField< ::TeammatePose > teammateposition_;
+  ::google::protobuf::RepeatedPtrField< ::GlobalBall > globalballs_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -472,6 +445,18 @@ class RobotPose : public ::google::protobuf::Message {
   inline float confidence() const;
   inline void set_confidence(float value);
   
+  // repeated float var = 5;
+  inline int var_size() const;
+  inline void clear_var();
+  static const int kVarFieldNumber = 5;
+  inline float var(int index) const;
+  inline void set_var(int index, float value);
+  inline void add_var(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      var() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_var();
+  
   // @@protoc_insertion_point(class_scope:RobotPose)
  private:
   inline void set_has_x();
@@ -489,9 +474,10 @@ class RobotPose : public ::google::protobuf::Message {
   float y_;
   float phi_;
   float confidence_;
+  ::google::protobuf::RepeatedField< float > var_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -584,33 +570,33 @@ class Ball : public ::google::protobuf::Message {
   inline float relativeyspeed() const;
   inline void set_relativeyspeed(float value);
   
-  // required float varianceX = 5 [default = -100000];
-  inline bool has_variancex() const;
-  inline void clear_variancex();
-  static const int kVarianceXFieldNumber = 5;
-  inline float variancex() const;
-  inline void set_variancex(float value);
+  // required float absoluteX = 5 [default = -100000];
+  inline bool has_absolutex() const;
+  inline void clear_absolutex();
+  static const int kAbsoluteXFieldNumber = 5;
+  inline float absolutex() const;
+  inline void set_absolutex(float value);
   
-  // required float varianceY = 6 [default = -100000];
-  inline bool has_variancey() const;
-  inline void clear_variancey();
-  static const int kVarianceYFieldNumber = 6;
-  inline float variancey() const;
-  inline void set_variancey(float value);
+  // required float absoluteY = 6 [default = -100000];
+  inline bool has_absolutey() const;
+  inline void clear_absolutey();
+  static const int kAbsoluteYFieldNumber = 6;
+  inline float absolutey() const;
+  inline void set_absolutey(float value);
   
-  // required float varianceXspeed = 7 [default = -100000];
-  inline bool has_variancexspeed() const;
-  inline void clear_variancexspeed();
-  static const int kVarianceXspeedFieldNumber = 7;
-  inline float variancexspeed() const;
-  inline void set_variancexspeed(float value);
+  // required float absoluteXspeed = 7 [default = -100000];
+  inline bool has_absolutexspeed() const;
+  inline void clear_absolutexspeed();
+  static const int kAbsoluteXspeedFieldNumber = 7;
+  inline float absolutexspeed() const;
+  inline void set_absolutexspeed(float value);
   
-  // required float varianceYspeed = 8 [default = -100000];
-  inline bool has_varianceyspeed() const;
-  inline void clear_varianceyspeed();
-  static const int kVarianceYspeedFieldNumber = 8;
-  inline float varianceyspeed() const;
-  inline void set_varianceyspeed(float value);
+  // required float absoluteYspeed = 8 [default = -100000];
+  inline bool has_absoluteyspeed() const;
+  inline void clear_absoluteyspeed();
+  static const int kAbsoluteYspeedFieldNumber = 8;
+  inline float absoluteyspeed() const;
+  inline void set_absoluteyspeed(float value);
   
   // @@protoc_insertion_point(class_scope:Ball)
  private:
@@ -622,14 +608,14 @@ class Ball : public ::google::protobuf::Message {
   inline void clear_has_relativexspeed();
   inline void set_has_relativeyspeed();
   inline void clear_has_relativeyspeed();
-  inline void set_has_variancex();
-  inline void clear_has_variancex();
-  inline void set_has_variancey();
-  inline void clear_has_variancey();
-  inline void set_has_variancexspeed();
-  inline void clear_has_variancexspeed();
-  inline void set_has_varianceyspeed();
-  inline void clear_has_varianceyspeed();
+  inline void set_has_absolutex();
+  inline void clear_has_absolutex();
+  inline void set_has_absolutey();
+  inline void clear_has_absolutey();
+  inline void set_has_absolutexspeed();
+  inline void clear_has_absolutexspeed();
+  inline void set_has_absoluteyspeed();
+  inline void clear_has_absoluteyspeed();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -637,10 +623,10 @@ class Ball : public ::google::protobuf::Message {
   float relativey_;
   float relativexspeed_;
   float relativeyspeed_;
-  float variancex_;
-  float variancey_;
-  float variancexspeed_;
-  float varianceyspeed_;
+  float absolutex_;
+  float absolutey_;
+  float absolutexspeed_;
+  float absoluteyspeed_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
@@ -654,14 +640,14 @@ class Ball : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class UnknownObjects : public ::google::protobuf::Message {
+class GlobalBall : public ::google::protobuf::Message {
  public:
-  UnknownObjects();
-  virtual ~UnknownObjects();
+  GlobalBall();
+  virtual ~GlobalBall();
   
-  UnknownObjects(const UnknownObjects& from);
+  GlobalBall(const GlobalBall& from);
   
-  inline UnknownObjects& operator=(const UnknownObjects& from) {
+  inline GlobalBall& operator=(const GlobalBall& from) {
     CopyFrom(from);
     return *this;
   }
@@ -675,17 +661,17 @@ class UnknownObjects : public ::google::protobuf::Message {
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const UnknownObjects& default_instance();
+  static const GlobalBall& default_instance();
   
-  void Swap(UnknownObjects* other);
+  void Swap(GlobalBall* other);
   
   // implements Message ----------------------------------------------
   
-  UnknownObjects* New() const;
+  GlobalBall* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const UnknownObjects& from);
-  void MergeFrom(const UnknownObjects& from);
+  void CopyFrom(const GlobalBall& from);
+  void MergeFrom(const GlobalBall& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -708,71 +694,41 @@ class UnknownObjects : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // optional float relativeX = 1 [default = -100000];
-  inline bool has_relativex() const;
-  inline void clear_relativex();
-  static const int kRelativeXFieldNumber = 1;
-  inline float relativex() const;
-  inline void set_relativex(float value);
+  // required float x = 1 [default = -100000];
+  inline bool has_x() const;
+  inline void clear_x();
+  static const int kXFieldNumber = 1;
+  inline float x() const;
+  inline void set_x(float value);
   
-  // optional float relativeY = 2 [default = -100000];
-  inline bool has_relativey() const;
-  inline void clear_relativey();
-  static const int kRelativeYFieldNumber = 2;
-  inline float relativey() const;
-  inline void set_relativey(float value);
+  // required float y = 2 [default = -100000];
+  inline bool has_y() const;
+  inline void clear_y();
+  static const int kYFieldNumber = 2;
+  inline float y() const;
+  inline void set_y(float value);
   
-  // optional float height = 3 [default = -100000];
-  inline bool has_height() const;
-  inline void clear_height();
-  static const int kHeightFieldNumber = 3;
-  inline float height() const;
-  inline void set_height(float value);
-  
-  // optional float relativeXspeed = 4 [default = -100000];
-  inline bool has_relativexspeed() const;
-  inline void clear_relativexspeed();
-  static const int kRelativeXspeedFieldNumber = 4;
-  inline float relativexspeed() const;
-  inline void set_relativexspeed(float value);
-  
-  // optional float relativeYspeed = 5 [default = -100000];
-  inline bool has_relativeyspeed() const;
-  inline void clear_relativeyspeed();
-  static const int kRelativeYspeedFieldNumber = 5;
-  inline float relativeyspeed() const;
-  inline void set_relativeyspeed(float value);
-  
-  // @@protoc_insertion_point(class_scope:UnknownObjects)
+  // @@protoc_insertion_point(class_scope:GlobalBall)
  private:
-  inline void set_has_relativex();
-  inline void clear_has_relativex();
-  inline void set_has_relativey();
-  inline void clear_has_relativey();
-  inline void set_has_height();
-  inline void clear_has_height();
-  inline void set_has_relativexspeed();
-  inline void clear_has_relativexspeed();
-  inline void set_has_relativeyspeed();
-  inline void clear_has_relativeyspeed();
+  inline void set_has_x();
+  inline void clear_has_x();
+  inline void set_has_y();
+  inline void clear_has_y();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  float relativex_;
-  float relativey_;
-  float height_;
-  float relativexspeed_;
-  float relativeyspeed_;
+  float x_;
+  float y_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
   friend void protobuf_ShutdownFile_WorldInfo_2eproto();
   
   void InitAsDefaultInstance();
-  static UnknownObjects* default_instance_;
+  static GlobalBall* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1138,91 +1094,6 @@ class header : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static header* default_instance_;
 };
-// -------------------------------------------------------------------
-
-class LocalizationDataForGUI : public ::google::protobuf::Message {
- public:
-  LocalizationDataForGUI();
-  virtual ~LocalizationDataForGUI();
-  
-  LocalizationDataForGUI(const LocalizationDataForGUI& from);
-  
-  inline LocalizationDataForGUI& operator=(const LocalizationDataForGUI& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const LocalizationDataForGUI& default_instance();
-  
-  void Swap(LocalizationDataForGUI* other);
-  
-  // implements Message ----------------------------------------------
-  
-  LocalizationDataForGUI* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const LocalizationDataForGUI& from);
-  void MergeFrom(const LocalizationDataForGUI& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // repeated .RobotPose Particles = 1;
-  inline int particles_size() const;
-  inline void clear_particles();
-  static const int kParticlesFieldNumber = 1;
-  inline const ::RobotPose& particles(int index) const;
-  inline ::RobotPose* mutable_particles(int index);
-  inline ::RobotPose* add_particles();
-  inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-      particles() const;
-  inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-      mutable_particles();
-  
-  // @@protoc_insertion_point(class_scope:LocalizationDataForGUI)
- private:
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::google::protobuf::RepeatedPtrField< ::RobotPose > particles_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_WorldInfo_2eproto();
-  friend void protobuf_AssignDesc_WorldInfo_2eproto();
-  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-  
-  void InitAsDefaultInstance();
-  static LocalizationDataForGUI* default_instance_;
-};
 // ===================================================================
 
 
@@ -1284,81 +1155,6 @@ WorldInfo::mutable_balls() {
   return &balls_;
 }
 
-// repeated .RobotPose OtherRobots = 3;
-inline int WorldInfo::otherrobots_size() const {
-  return otherrobots_.size();
-}
-inline void WorldInfo::clear_otherrobots() {
-  otherrobots_.Clear();
-}
-inline const ::RobotPose& WorldInfo::otherrobots(int index) const {
-  return otherrobots_.Get(index);
-}
-inline ::RobotPose* WorldInfo::mutable_otherrobots(int index) {
-  return otherrobots_.Mutable(index);
-}
-inline ::RobotPose* WorldInfo::add_otherrobots() {
-  return otherrobots_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-WorldInfo::otherrobots() const {
-  return otherrobots_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-WorldInfo::mutable_otherrobots() {
-  return &otherrobots_;
-}
-
-// repeated .UnknownObjects UFOs = 4;
-inline int WorldInfo::ufos_size() const {
-  return ufos_.size();
-}
-inline void WorldInfo::clear_ufos() {
-  ufos_.Clear();
-}
-inline const ::UnknownObjects& WorldInfo::ufos(int index) const {
-  return ufos_.Get(index);
-}
-inline ::UnknownObjects* WorldInfo::mutable_ufos(int index) {
-  return ufos_.Mutable(index);
-}
-inline ::UnknownObjects* WorldInfo::add_ufos() {
-  return ufos_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::UnknownObjects >&
-WorldInfo::ufos() const {
-  return ufos_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::UnknownObjects >*
-WorldInfo::mutable_ufos() {
-  return &ufos_;
-}
-
-// repeated .Ball GlobBalls = 5;
-inline int WorldInfo::globballs_size() const {
-  return globballs_.size();
-}
-inline void WorldInfo::clear_globballs() {
-  globballs_.Clear();
-}
-inline const ::Ball& WorldInfo::globballs(int index) const {
-  return globballs_.Get(index);
-}
-inline ::Ball* WorldInfo::mutable_globballs(int index) {
-  return globballs_.Mutable(index);
-}
-inline ::Ball* WorldInfo::add_globballs() {
-  return globballs_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::Ball >&
-WorldInfo::globballs() const {
-  return globballs_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::Ball >*
-WorldInfo::mutable_globballs() {
-  return &globballs_;
-}
-
 // -------------------------------------------------------------------
 
 // SharedWorldInfo
@@ -1415,6 +1211,31 @@ SharedWorldInfo::teammateposition() const {
 inline ::google::protobuf::RepeatedPtrField< ::TeammatePose >*
 SharedWorldInfo::mutable_teammateposition() {
   return &teammateposition_;
+}
+
+// repeated .GlobalBall GlobalBalls = 3;
+inline int SharedWorldInfo::globalballs_size() const {
+  return globalballs_.size();
+}
+inline void SharedWorldInfo::clear_globalballs() {
+  globalballs_.Clear();
+}
+inline const ::GlobalBall& SharedWorldInfo::globalballs(int index) const {
+  return globalballs_.Get(index);
+}
+inline ::GlobalBall* SharedWorldInfo::mutable_globalballs(int index) {
+  return globalballs_.Mutable(index);
+}
+inline ::GlobalBall* SharedWorldInfo::add_globalballs() {
+  return globalballs_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::GlobalBall >&
+SharedWorldInfo::globalballs() const {
+  return globalballs_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::GlobalBall >*
+SharedWorldInfo::mutable_globalballs() {
+  return &globalballs_;
 }
 
 // -------------------------------------------------------------------
@@ -1564,6 +1385,31 @@ inline void RobotPose::set_confidence(float value) {
   confidence_ = value;
 }
 
+// repeated float var = 5;
+inline int RobotPose::var_size() const {
+  return var_.size();
+}
+inline void RobotPose::clear_var() {
+  var_.Clear();
+}
+inline float RobotPose::var(int index) const {
+  return var_.Get(index);
+}
+inline void RobotPose::set_var(int index, float value) {
+  var_.Set(index, value);
+}
+inline void RobotPose::add_var(float value) {
+  var_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+RobotPose::var() const {
+  return var_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+RobotPose::mutable_var() {
+  return &var_;
+}
+
 // -------------------------------------------------------------------
 
 // Ball
@@ -1656,206 +1502,140 @@ inline void Ball::set_relativeyspeed(float value) {
   relativeyspeed_ = value;
 }
 
-// required float varianceX = 5 [default = -100000];
-inline bool Ball::has_variancex() const {
+// required float absoluteX = 5 [default = -100000];
+inline bool Ball::has_absolutex() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void Ball::set_has_variancex() {
+inline void Ball::set_has_absolutex() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void Ball::clear_has_variancex() {
+inline void Ball::clear_has_absolutex() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void Ball::clear_variancex() {
-  variancex_ = -100000;
-  clear_has_variancex();
+inline void Ball::clear_absolutex() {
+  absolutex_ = -100000;
+  clear_has_absolutex();
 }
-inline float Ball::variancex() const {
-  return variancex_;
+inline float Ball::absolutex() const {
+  return absolutex_;
 }
-inline void Ball::set_variancex(float value) {
-  set_has_variancex();
-  variancex_ = value;
+inline void Ball::set_absolutex(float value) {
+  set_has_absolutex();
+  absolutex_ = value;
 }
 
-// required float varianceY = 6 [default = -100000];
-inline bool Ball::has_variancey() const {
+// required float absoluteY = 6 [default = -100000];
+inline bool Ball::has_absolutey() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }
-inline void Ball::set_has_variancey() {
+inline void Ball::set_has_absolutey() {
   _has_bits_[0] |= 0x00000020u;
 }
-inline void Ball::clear_has_variancey() {
+inline void Ball::clear_has_absolutey() {
   _has_bits_[0] &= ~0x00000020u;
 }
-inline void Ball::clear_variancey() {
-  variancey_ = -100000;
-  clear_has_variancey();
+inline void Ball::clear_absolutey() {
+  absolutey_ = -100000;
+  clear_has_absolutey();
 }
-inline float Ball::variancey() const {
-  return variancey_;
+inline float Ball::absolutey() const {
+  return absolutey_;
 }
-inline void Ball::set_variancey(float value) {
-  set_has_variancey();
-  variancey_ = value;
+inline void Ball::set_absolutey(float value) {
+  set_has_absolutey();
+  absolutey_ = value;
 }
 
-// required float varianceXspeed = 7 [default = -100000];
-inline bool Ball::has_variancexspeed() const {
+// required float absoluteXspeed = 7 [default = -100000];
+inline bool Ball::has_absolutexspeed() const {
   return (_has_bits_[0] & 0x00000040u) != 0;
 }
-inline void Ball::set_has_variancexspeed() {
+inline void Ball::set_has_absolutexspeed() {
   _has_bits_[0] |= 0x00000040u;
 }
-inline void Ball::clear_has_variancexspeed() {
+inline void Ball::clear_has_absolutexspeed() {
   _has_bits_[0] &= ~0x00000040u;
 }
-inline void Ball::clear_variancexspeed() {
-  variancexspeed_ = -100000;
-  clear_has_variancexspeed();
+inline void Ball::clear_absolutexspeed() {
+  absolutexspeed_ = -100000;
+  clear_has_absolutexspeed();
 }
-inline float Ball::variancexspeed() const {
-  return variancexspeed_;
+inline float Ball::absolutexspeed() const {
+  return absolutexspeed_;
 }
-inline void Ball::set_variancexspeed(float value) {
-  set_has_variancexspeed();
-  variancexspeed_ = value;
+inline void Ball::set_absolutexspeed(float value) {
+  set_has_absolutexspeed();
+  absolutexspeed_ = value;
 }
 
-// required float varianceYspeed = 8 [default = -100000];
-inline bool Ball::has_varianceyspeed() const {
+// required float absoluteYspeed = 8 [default = -100000];
+inline bool Ball::has_absoluteyspeed() const {
   return (_has_bits_[0] & 0x00000080u) != 0;
 }
-inline void Ball::set_has_varianceyspeed() {
+inline void Ball::set_has_absoluteyspeed() {
   _has_bits_[0] |= 0x00000080u;
 }
-inline void Ball::clear_has_varianceyspeed() {
+inline void Ball::clear_has_absoluteyspeed() {
   _has_bits_[0] &= ~0x00000080u;
 }
-inline void Ball::clear_varianceyspeed() {
-  varianceyspeed_ = -100000;
-  clear_has_varianceyspeed();
+inline void Ball::clear_absoluteyspeed() {
+  absoluteyspeed_ = -100000;
+  clear_has_absoluteyspeed();
 }
-inline float Ball::varianceyspeed() const {
-  return varianceyspeed_;
+inline float Ball::absoluteyspeed() const {
+  return absoluteyspeed_;
 }
-inline void Ball::set_varianceyspeed(float value) {
-  set_has_varianceyspeed();
-  varianceyspeed_ = value;
+inline void Ball::set_absoluteyspeed(float value) {
+  set_has_absoluteyspeed();
+  absoluteyspeed_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// UnknownObjects
+// GlobalBall
 
-// optional float relativeX = 1 [default = -100000];
-inline bool UnknownObjects::has_relativex() const {
+// required float x = 1 [default = -100000];
+inline bool GlobalBall::has_x() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void UnknownObjects::set_has_relativex() {
+inline void GlobalBall::set_has_x() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void UnknownObjects::clear_has_relativex() {
+inline void GlobalBall::clear_has_x() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void UnknownObjects::clear_relativex() {
-  relativex_ = -100000;
-  clear_has_relativex();
+inline void GlobalBall::clear_x() {
+  x_ = -100000;
+  clear_has_x();
 }
-inline float UnknownObjects::relativex() const {
-  return relativex_;
+inline float GlobalBall::x() const {
+  return x_;
 }
-inline void UnknownObjects::set_relativex(float value) {
-  set_has_relativex();
-  relativex_ = value;
+inline void GlobalBall::set_x(float value) {
+  set_has_x();
+  x_ = value;
 }
 
-// optional float relativeY = 2 [default = -100000];
-inline bool UnknownObjects::has_relativey() const {
+// required float y = 2 [default = -100000];
+inline bool GlobalBall::has_y() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void UnknownObjects::set_has_relativey() {
+inline void GlobalBall::set_has_y() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void UnknownObjects::clear_has_relativey() {
+inline void GlobalBall::clear_has_y() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void UnknownObjects::clear_relativey() {
-  relativey_ = -100000;
-  clear_has_relativey();
+inline void GlobalBall::clear_y() {
+  y_ = -100000;
+  clear_has_y();
 }
-inline float UnknownObjects::relativey() const {
-  return relativey_;
+inline float GlobalBall::y() const {
+  return y_;
 }
-inline void UnknownObjects::set_relativey(float value) {
-  set_has_relativey();
-  relativey_ = value;
-}
-
-// optional float height = 3 [default = -100000];
-inline bool UnknownObjects::has_height() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void UnknownObjects::set_has_height() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void UnknownObjects::clear_has_height() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void UnknownObjects::clear_height() {
-  height_ = -100000;
-  clear_has_height();
-}
-inline float UnknownObjects::height() const {
-  return height_;
-}
-inline void UnknownObjects::set_height(float value) {
-  set_has_height();
-  height_ = value;
-}
-
-// optional float relativeXspeed = 4 [default = -100000];
-inline bool UnknownObjects::has_relativexspeed() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void UnknownObjects::set_has_relativexspeed() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void UnknownObjects::clear_has_relativexspeed() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void UnknownObjects::clear_relativexspeed() {
-  relativexspeed_ = -100000;
-  clear_has_relativexspeed();
-}
-inline float UnknownObjects::relativexspeed() const {
-  return relativexspeed_;
-}
-inline void UnknownObjects::set_relativexspeed(float value) {
-  set_has_relativexspeed();
-  relativexspeed_ = value;
-}
-
-// optional float relativeYspeed = 5 [default = -100000];
-inline bool UnknownObjects::has_relativeyspeed() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void UnknownObjects::set_has_relativeyspeed() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void UnknownObjects::clear_has_relativeyspeed() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void UnknownObjects::clear_relativeyspeed() {
-  relativeyspeed_ = -100000;
-  clear_has_relativeyspeed();
-}
-inline float UnknownObjects::relativeyspeed() const {
-  return relativeyspeed_;
-}
-inline void UnknownObjects::set_relativeyspeed(float value) {
-  set_has_relativeyspeed();
-  relativeyspeed_ = value;
+inline void GlobalBall::set_y(float value) {
+  set_has_y();
+  y_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -2170,35 +1950,6 @@ inline ::std::string* header::release_nextmsgname() {
     nextmsgname_ = const_cast< ::std::string*>(&_default_nextmsgname_);
     return temp;
   }
-}
-
-// -------------------------------------------------------------------
-
-// LocalizationDataForGUI
-
-// repeated .RobotPose Particles = 1;
-inline int LocalizationDataForGUI::particles_size() const {
-  return particles_.size();
-}
-inline void LocalizationDataForGUI::clear_particles() {
-  particles_.Clear();
-}
-inline const ::RobotPose& LocalizationDataForGUI::particles(int index) const {
-  return particles_.Get(index);
-}
-inline ::RobotPose* LocalizationDataForGUI::mutable_particles(int index) {
-  return particles_.Mutable(index);
-}
-inline ::RobotPose* LocalizationDataForGUI::add_particles() {
-  return particles_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
-LocalizationDataForGUI::particles() const {
-  return particles_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
-LocalizationDataForGUI::mutable_particles() {
-  return &particles_;
 }
 
 

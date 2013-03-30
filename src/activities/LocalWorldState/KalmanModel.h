@@ -1,8 +1,8 @@
 #ifndef KALMANMODEL_H_
 #define KALMANMODEL_H_
 
-#include "tools/KMat.h"
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
+#include "core/elements/math/KMat.hpp"
 #include "KLocalization.h"
 #include <boost/circular_buffer.hpp>
 

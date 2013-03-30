@@ -13,7 +13,7 @@ function(Monas_Finalize)
 
 	target_link_libraries( Monas    -Wl,--no-as-needed -lrt  -Wl,--no-as-needed ${ActivityLibraries}  ${ProviderLibraries} -Wl,--as-needed ${TargetLinkLibraries} -Wl,--as-needed ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} )
 
-
+	set_target_properties(Monas PROPERTIES BUILD_WITH_INSTALL_RPATH true)
 	install ( TARGETS Monas
 		    RUNTIME DESTINATION   bin
 		    LIBRARY DESTINATION   lib

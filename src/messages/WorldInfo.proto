@@ -3,14 +3,12 @@ import "VisionObservations.proto";
 message WorldInfo{
 	required RobotPose myPosition = 1 ;
 	repeated Ball Balls = 2;
-	repeated RobotPose OtherRobots = 3;
-	repeated UnknownObjects UFOs = 4 ;
-	repeated Ball GlobBalls = 5;
 }
 
 message SharedWorldInfo{
 	required RobotPose playerClosestToBall = 1 ;
 	repeated TeammatePose teammatePosition = 2;
+	repeated GlobalBall GlobalBalls = 3;
 }
 
 message TeammatePose{
@@ -23,6 +21,7 @@ message RobotPose{
 	required float Y = 2 [default = -100000];
 	required float phi = 3 [default = -100000];
 	required float confidence = 4 [default = -100000];
+	repeated float var = 5;  //7x7 matrix showing the covariance of the player's pose and the observed ball
 }
 
 message Ball{
@@ -30,19 +29,16 @@ message Ball{
 	required float relativeY = 2 [default = -100000];
 	required float relativeXspeed = 3 [default = -100000];
 	required float relativeYspeed = 4 [default = -100000];
-
-	required float varianceX = 5 [default = -100000];
-	required float varianceY = 6 [default = -100000];
-	required float varianceXspeed = 7 [default = -100000];
-	required float varianceYspeed = 8 [default = -100000];
+	
+	required float absoluteX = 5 [default = -100000];
+	required float absoluteY = 6 [default = -100000];
+	required float absoluteXspeed = 7 [default = -100000];
+	required float absoluteYspeed = 8 [default = -100000];
 }
 
-message UnknownObjects{
-	optional float relativeX = 1 [default = -100000];
-	optional float relativeY = 2 [default = -100000];
-	optional float height = 3 [default = -100000];
-	optional float relativeXspeed = 4 [default = -100000];
-	optional float relativeYspeed = 5 [default = -100000];
+message GlobalBall{	
+	required float x = 1 [default = -100000];
+	required float y = 2 [default = -100000];
 }
 
 message LocalizationResetMessage{
@@ -73,6 +69,3 @@ message header{
 	
 }
 
-message LocalizationDataForGUI{
-	repeated RobotPose Particles = 1;
-}

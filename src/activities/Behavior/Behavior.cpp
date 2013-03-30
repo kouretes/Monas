@@ -19,7 +19,7 @@ double behaviorRand()
 
 
 /**
- *	Behavior Initialization
+ * Behavior initialization function.
  */
 void Behavior::UserInit()
 {
@@ -55,10 +55,13 @@ void Behavior::UserInit()
 	role = ATTACKER;
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
+	fGen.Init(config.teamNumber);
+	sendDebugMessages();
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
 	lastPenalised = microsec_clock::universal_time();
+	lastFormation = microsec_clock::universal_time();
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
 	// generateFakeObstacles();
@@ -66,9 +69,9 @@ void Behavior::UserInit()
 
 
 /**
-	Reset function that reads all xml configuration data and update the config struct
-	of behavior. All new xml reads MUST be added here, dont make other functions!
-*/
+ * Reset function that reads all xml configuration data and update the config struct
+ * of behavior. All new xml reads MUST be added here, dont make other functions!
+ */
 void Behavior::Reset(){
 
 	// === read team configuration xml data from teamConfig.xml===
@@ -116,6 +119,26 @@ void Behavior::Reset(){
 		}
 	}
 
+	// === read field configuration xml data from field.xml used for formation generator ===
+	// update the Field struct on formation generator header
+	fGen.Field.MaxX = atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+	fGen.Field.MinX = atof(_xml.findValueForKey("field.FieldMinX").c_str());
+	fGen.Field.MaxY = atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+	fGen.Field.MinY = atof(_xml.findValueForKey("field.FieldMinY").c_str());
+
+	fGen.Field.LeftPenaltyAreaMaxX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
+	fGen.Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
+	fGen.Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
+	fGen.Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
+
+	fGen.Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
+	fGen.Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
+	fGen.Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
+	fGen.Field.RightPenaltyAreaMinY = atof(_xml.findValueForKey("field.RightPenaltyAreaMinY").c_str());
+
+	fGen.Field.LeftGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMaxY").c_str());
+	fGen.Field.RightGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMinY").c_str());
+
 	// === read goal configuration xml data from Fearures.xml ===
 	std::string ID;
 	for(int v = 0 ; v < _xml.numberOfNodesForKey("features.ftr") ; v++)
@@ -152,9 +175,10 @@ void Behavior::Reset(){
 
 int Behavior::Execute()
 {
-	read_messages();
-	GetGameState();
-	GetPosition();
+	readMessages();
+	getBallData();
+	getGameState();
+	getPosition();
 
     if (gameState == PLAYER_INITIAL){
 		if(prevGameState != PLAYER_INITIAL){
@@ -164,6 +188,14 @@ int Behavior::Execute()
     }
 	else if (gameState == PLAYER_PLAYING)
 	{
+
+		if(lastFormation + seconds(10) < microsec_clock::universal_time()) {
+
+			fGen.Generate(globalBallX, globalBallY);
+			sendDebugMessages();
+			lastFormation = microsec_clock::universal_time();
+		}
+
 		if(prevGameState == PLAYER_PENALISED){
 			lastPenalised = microsec_clock::universal_time();
 			//Check if the penalized was a wrong decision
@@ -183,12 +215,12 @@ int Behavior::Execute()
 		if(bfm != 0 && bfm.get() != 0) {
 			ballFound = bfm->ballfound();
 		}
-			
-		UpdateOrientation();
+
+		updateOrientation();
 		readyToKick = false;
 
 		if(config.playerNumber == 1 || role == GOALIE) { // goalie role if number 1
-			Goalie();
+			goalie();
 		}
 		else { // not goalie behavior
 
@@ -212,21 +244,21 @@ int Behavior::Execute()
 				if ( (fabs( ballX - config.posX ) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) )
 				{
 					readyToKick = true;
-					Kick();
+					kick();
 					direction = (side == +1) ? -1 : +1;
 				}
 
 				if (!readyToKick)
 				{
 					//Define roles
-					if(ClosestRobot())
-					{
+//					if(closestRobot())
+//					{
 						role = ATTACKER;
-					}
-					else
-					{
-						role = CENTER_FOR;
-					}
+//					}
+//					else
+//					{
+//						role = CENTER_FOR;
+//					}
 					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
 					approachBallRoleDependent();
 				}
@@ -261,7 +293,7 @@ int Behavior::Execute()
 			_blk.publishState(hcontrol, "behavior");
 		}
 		int p = (kickOff) ? 0 : 1;
-		gotoPosition(config.initX[p], config.initY[p], config.initPhi[p] );
+		goToPosition(config.initX[p], config.initY[p], config.initPhi[p] );
 		return 0;
 	}
 	else if (gameState == PLAYER_SET)
@@ -296,11 +328,10 @@ int Behavior::Execute()
 
 
 /**
-	Read Incoming Messages from declared topics...use Message objects to get the data.
-*/
+ * Read incoming messages from declared topics. Use message objects to get the data.
+ */
+void Behavior::readMessages() {
 
-void Behavior::read_messages()
-{
 	gsm  = _blk.readState<GameStateMessage> ("worldstate");
 	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
@@ -308,23 +339,13 @@ void Behavior::read_messages()
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
 	bfm = _blk.readState<BallFoundMessage> ("behavior");
-
-	if(wim != 0 && wim.get() != 0 && wim->balls_size() > 0)
-	{
-		ballX = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-		ballY = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-		ballDist = sqrt(pow(ballX, 2) + pow(ballY, 2));
-		ballBearing = atan2(ballY, ballX);
-	}
 }
 
+/* --------------------------------- Information gathering functions from messages ---------------------------------- */
 
-/* Information Gathering Functions */
+void Behavior::getGameState() {
 
-void Behavior::GetGameState()
-{
-	if (gsm != 0)
-	{
+	if (gsm != 0) {
 		prevGameState = gameState;
 		gameState = gsm->player_state();
 		config.teamColor = gsm->team_color();
@@ -333,11 +354,57 @@ void Behavior::GetGameState()
 	}
 }
 
-bool Behavior::ClosestRobot()
-{
-	double robotEpsX = 0.005, robotEpsY = 0.005; // Desired precision
-	if(swim != 0 && swim.get() != 0)
+void Behavior::getPosition() {
+
+	if(wim != 0 && wim.get() != 0) {
+		robotX = wim->myposition().x();
+		robotY = wim->myposition().y();
+		robotPhi = wrapToPi( wim->myposition().phi() );
+		robotConfidence = wim->myposition().confidence();
+	}
+}
+
+void Behavior::getBallData() {
+
+	if(wim != 0 && wim.get() != 0 && wim->balls_size() > 0)
 	{
+		ballX = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
+		ballY = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
+		ballDist = sqrt(pow(ballX, 2) + pow(ballY, 2));
+		ballBearing = atan2(ballY, ballX);
+
+		// global ball relative to robot
+		globalBallX = (wim->myposition().x() + wim->balls (0).relativex() * cos(wim->myposition().phi()) - wim->balls (0).relativey() * sin(wim->myposition().phi()));
+		globalBallY = (wim->myposition().y() + wim->balls (0).relativex() * sin(wim->myposition().phi()) + wim->balls (0).relativey() * cos(wim->myposition().phi()));
+	}
+}
+
+void Behavior::sendDebugMessages() {
+
+	Logger::Instance().WriteMsg("Behavior", "BallX: "+_toString(globalBallX)+" BallY: "+_toString(globalBallY), Logger::Info);
+
+	for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
+
+		Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(fGen.getFormation()->at(i).role)+
+											" X: "+_toString(fGen.getFormation()->at(i).X)+
+											" Y: "+_toString(fGen.getFormation()->at(i).Y), Logger::Info);
+
+		if(fdg.positions_size() < (int)(i+1))
+			fdg.add_positions();
+		fdg.mutable_positions(i)->set_x(fGen.getFormation()->at(i).X);
+		fdg.mutable_positions(i)->set_y(fGen.getFormation()->at(i).Y);
+		fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);
+	}
+	_blk.publishSignal(fdg, "debug");
+}
+
+/* -------------------------------------------------------------------------------------------------------------------- */
+
+bool Behavior::closestRobot() {
+
+	double robotEpsX = 0.005, robotEpsY = 0.005; // desired precision
+
+	if(swim != 0 && swim.get() != 0) {
 		double closestRobotX = swim->playerclosesttoball().x();
 		double closestRobotY = swim->playerclosesttoball().y();
 
@@ -350,54 +417,37 @@ bool Behavior::ClosestRobot()
 		return true;
 }
 
-void Behavior::GetPosition()
-{
-	if(wim != 0 && wim.get() != 0){
-		robotX = wim->myposition().x();
-		robotY = wim->myposition().y();
-		robotPhi = wrapToPi( wim->myposition().phi() );
-		robotConfidence = wim->myposition().confidence();
-	}
-}
+void Behavior::updateOrientation() {
 
-
-void Behavior::UpdateOrientation()
-{
 	double loppgb = anglediff2(atan2(config.oppGoalLeftY - robotY, config.oppGoalLeftX - robotX), robotPhi);
 	double roppgb = anglediff2(atan2(config.oppGoalRightY - robotY, config.oppGoalRightX - robotX), robotPhi);
 	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) )
-	{
+	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
 		orientation = 0;
 	}
-	else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI - M_PI_4) ) )
-	{
+	else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI - M_PI_4) ) ) {
 		orientation = 1;
 	}
-	else if ( (oppgb > (M_PI - M_PI_4) ) || (oppgb <= -(M_PI - M_PI_4) ) )
-	{
+	else if ( (oppgb > (M_PI - M_PI_4) ) || (oppgb <= -(M_PI - M_PI_4) ) ) {
 		orientation = 2;
 	}
-	else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI - M_PI_4) ) )
-	{
+	else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI - M_PI_4) ) ) {
 		orientation = 3;
 	}
 }
 
-/* Kicking */
-
-void Behavior::Kick()
+/**
+ * Function used for kicking the ball.
+ */
+void Behavior::kick()
 {
-	if ( kickOff && (microsec_clock::universal_time() <= lastPlay + seconds(0/*25*/)) )
-	{
-		if (behaviorRand() < 0.75)
-		{
+	if ( kickOff && (microsec_clock::universal_time() <= lastPlay + seconds(0/*25*/)) ) {
+		if (behaviorRand() < 0.75) {
 			littleWalk(0.2, 0.0, 0.0);
 		}
-		else
-		{
+		else {
 			if (side == 1)
 				amot.set_command(config.kicks.KickSideLeft);
 			else
@@ -406,35 +456,29 @@ void Behavior::Kick()
 			_blk.publishSignal(amot, "motion");
 		}
 	}
-	else
-	{
-        //cout << "Kick orientation = " << orientation << "\n";
-		if (orientation == 0)
-		{
+	else {
+
+		if (orientation == 0) {
 			if (ballY > 0.0)
 				amot.set_command(config.kicks.KickForwardLeft); // Left Kick
 			else
 				amot.set_command(config.kicks.KickForwardRight); // Right Kick
 		}
-		else if (orientation == 3)
-		{
+		else if (orientation == 3) {
 			amot.set_command(config.kicks.KickSideLeft); //  HardLeftSideKick KickSideLeftFast
 			direction = -1;
 		}
-		else if (orientation == 1)
-		{
-			amot.set_command(config.kicks.KickSideRight); // HardRightSideKick  KickSideRightFast
+		else if (orientation == 1) {
+			amot.set_command(config.kicks.KickSideRight); // HardRightSideKick KickSideRightFast
 			direction = +1;
 		}
-		else if (orientation == 2)
-		{
+		else if (orientation == 2) {
 			if (ballY > 0.0)
 				amot.set_command(config.kicks.KickSideLeft); // LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
 			else
 				amot.set_command(config.kicks.KickSideRight); // RightBackHigh_carpet KickBackRight KickBackRightPierris
 		}
-		else
-		{
+		else {
 			if (ballY > 0.0)
 				amot.set_command(config.kicks.KickSideLeft);
 			else
@@ -445,39 +489,33 @@ void Behavior::Kick()
 	}
 }
 
-/* Locomotion Functions */
+/**
+ * Locomotion Functions
+ */
+void Behavior::velocityWalk(double ix, double iy, double it, double f) {
 
-void Behavior::velocityWalk(double ix, double iy, double it, double f)
-{
 	double x, y, t;
 	x = ix;
 	y = iy;
 	t = it;
 
-	/* BEGIN - Basic Obstacle Avoidance Code */
-	if ( (om != 0) && (config.playerNumber == 2) )
-	{
-		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) )
-		{
-			if (x > 0.0)
-			{
+	// BEGIN - Basic Obstacle Avoidance Code
+	if ( (om != 0) && (config.playerNumber == 2) ) {
+		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) ) {
+			if (x > 0.0) {
 				x = 0.0;
 				t = 0.0;
 			}
 		}
-		else if (om->distance(2) <= 0.4)
-		{
-			if (x > 0.0)
-			{
+		else if (om->distance(2) <= 0.4) {
+			if (x > 0.0) {
 				x = 0.0;
 				y = 0.5;
 				t = 0.0;
 			}
 		}
-		else if (om->distance(0) <= 0.4)
-		{
-			if (x > 0.0)
-			{
+		else if (om->distance(0) <= 0.4) {
+			if (x > 0.0) {
 				x = 0.0;
 				y = -0.5;
 				t = 0.0;
@@ -485,17 +523,15 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 		}
 	}
 
-	/* END - Basic Obstacle Avoidance Code */
+	// END - Basic Obstacle Avoidance Code
 	wmot.set_command("setWalkTargetVelocity");
 
-	if ( (x == 0.0) && (y == 0.0) && (t == 0.0) )
-	{
+	if ( (x == 0.0) && (y == 0.0) && (t == 0.0) ) {
 		cX = 0.0;
 		cY = 0.0;
 		ct = 0.0;
 	}
-	else
-	{
+	else {
 		if( lastWalk + milliseconds(200) > microsec_clock::universal_time() )
 			return;
 
@@ -519,8 +555,8 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f)
 }
 
 
-void Behavior::littleWalk(double x, double y, double th)
-{
+void Behavior::littleWalk(double x, double y, double th) {
+
 	wmot.set_command("walkTo");
 	wmot.set_parameter(0, x);
 	wmot.set_parameter(1, y);
@@ -528,28 +564,26 @@ void Behavior::littleWalk(double x, double y, double th)
 	_blk.publishSignal(wmot, "motion");
 }
 
-void Behavior::approachBall()
-{
+void Behavior::approachBall() {
 
     double loppgb = anglediff2(atan2(config.oppGoalLeftY - robotY, config.oppGoalLeftX - robotX), robotPhi);
 	double roppgb = anglediff2(atan2(config.oppGoalRightY - robotY, config.oppGoalRightX - robotX), robotPhi);
 	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-    //std::cout << oppgb << "\n";
-	if (ballDist > 0.3){
+	if (ballDist > 0.3) {
         int pathSide = (ballBearing > 0) ? 1 : -1;
-//        pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
-//        velocityWalk(ball_x,ball_y,ball_bearing,1.0);
+		// pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
+		// velocityWalk(ball_x,ball_y,ball_bearing,1.0);
         pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
     }
-    else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)){
+    else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)) {
         littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
     }
-    else if(oppgb > (float) (M_PI_4)){
+    else if(oppgb > (float) (M_PI_4)) {
         velocityWalk(0.0, -0.7, (float)(M_PI_4/2),1.0);
     }
-    else if(oppgb < (float) (-M_PI_4)){
+    else if(oppgb < (float) (-M_PI_4)) {
         velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
     }
     else{
@@ -558,22 +592,18 @@ void Behavior::approachBall()
     }
 }
 
-void Behavior::approachBallRoleDependent()
-{
+void Behavior::approachBallRoleDependent() {
+
     if (orientation == 1)
 		side = -1;
 	else if (orientation == 3)
 		side = +1;
 
-	if(role == ATTACKER)
-	{
+	if(role == ATTACKER) {
 		approachBall();
-
 	}
-	else if(role == CENTER_FOR)
-	{
-		if (ballDist > 0.7)
-		{
+	else if(role == CENTER_FOR) {
+		if (ballDist > 0.7) {
 			int pathSide = (ballBearing > 0) ? 1 : -1;
 			pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
 		}
@@ -584,13 +614,13 @@ void Behavior::approachBallRoleDependent()
 
 void Behavior::stopRobot()
 {
-	//velocityWalk(0.0, 0.0, 0.0, 1.0);
+	// velocityWalk(0.0, 0.0, 0.0, 1.0);
 	amot.set_command("InitPose.xar");
 	_blk.publishSignal(amot, "motion");
 }
 
-void Behavior::pathPlanningRequestRelative(float targetX, float targetY, float targetPhi)
-{
+void Behavior::pathPlanningRequestRelative(float targetX, float targetY, float targetPhi) {
+
 	pprm.set_gotox(targetX);
 	pprm.set_gotoy(targetY);
 	pprm.set_gotoangle(targetPhi);
@@ -598,8 +628,8 @@ void Behavior::pathPlanningRequestRelative(float targetX, float targetY, float t
 	_blk.publishSignal(pprm, "obstacle");
 }
 
-void Behavior::pathPlanningRequestAbsolute(float targetX, float targetY, float targetPhi)
-{
+void Behavior::pathPlanningRequestAbsolute(float targetX, float targetY, float targetPhi) {
+
 	pprm.set_gotox(targetX);
 	pprm.set_gotoy(targetY);
 	pprm.set_gotoangle(targetPhi);
@@ -607,8 +637,8 @@ void Behavior::pathPlanningRequestAbsolute(float targetX, float targetY, float t
 	_blk.publishSignal(pprm, "obstacle");
 }
 
-void Behavior::gotoPosition(float targetX, float targetY, float targetPhi)
-{
+void Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
+
 	double targetDistance = sqrt((targetX - robotX) * (targetX - robotX) + (targetY - robotY) * (targetY - robotY));
 	double targetAngle = anglediff2(atan2(targetY - robotY, targetX - robotX), robotPhi);
 	double targetOrientation = anglediff2(targetPhi, robotPhi);
@@ -622,20 +652,18 @@ void Behavior::gotoPosition(float targetX, float targetY, float targetPhi)
 }
 
 
-void Behavior::generateFakeObstacles()
-{
+void Behavior::generateFakeObstacles() {
+
 	float tmpX = -3.0 + ObstacleRadius, tmpY = -1.1 + ObstacleRadius;
 
-	for(int j = 0; j < numOfFakeObstacles; j++)
-	{
+	for(int j = 0; j < numOfFakeObstacles; j++) {
 		fakeObstacles[j][0] = INIT_VALUE;
 		fakeObstacles[j][1] = INIT_VALUE;
 	}
 
 	int i = 0;
 
-	while(tmpX < -2.4)
-	{
+	while(tmpX < -2.4) {
 		fakeObstacles[i][0] = tmpX;
 		fakeObstacles[i][1] = tmpY;
 		fakeObstacles[i + 1][0] = tmpX;
@@ -646,8 +674,7 @@ void Behavior::generateFakeObstacles()
 
 	tmpX = -2.4 + ObstacleRadius;
 
-	while(tmpY < 1.1)
-	{
+	while(tmpY < 1.1) {
 		fakeObstacles[i][0] = tmpX;
 		fakeObstacles[i][1] = tmpY;
 		tmpY += 2 * ObstacleRadius + 0.02;
@@ -655,21 +682,18 @@ void Behavior::generateFakeObstacles()
 	}
 }
 
-//TODO not working
+// TODO not working
 void Behavior::checkForPenaltyArea()
 {
 	float fakeDist = 0.0, fakeDir = 0.0;
 
-	for(int j = 0; j < numOfFakeObstacles; j++)
-	{
+	for(int j = 0; j < numOfFakeObstacles; j++) {
 		if(fakeObstacles[j][0] == INIT_VALUE)
 			continue;
-		else
-		{
+		else {
 			fakeDist = DISTANCE(robotX, robotY, fakeObstacles[j][0], fakeObstacles[j][1]);
 
-			if(fakeDist < MapRadius)
-			{
+			if(fakeDist < MapRadius) {
 				//send fake obstacle message
 				//fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
 				fakeDir = 2 * M_PI - wrapTo0_2Pi(robotPhi) - atan2(fakeObstacles[j][1] - robotY, fakeObstacles[j][0] - robotX);
@@ -688,33 +712,29 @@ void Behavior::checkForPenaltyArea()
  * Function used by goalie basic behavior to decide when to fall for a ball save and
  * when to go on the ball and kick it away from the goal post (TODO).
  */
-void Behavior::Goalie()
-{
+void Behavior::goalie() {
+
 	role = GOALIE;
 	if(ballFound == 1) {
 
 		fall = toFallOrNotToFall();
 
-		if(fall == 1) // extend left foot
-		{
+		if(fall == 1) { // extend left foot
 			amot.set_command("goalieLeftFootExtened.xar");
-			_blk.publishSignal(amot, "motion");	
+			_blk.publishSignal(amot, "motion");
 			return;
 		}
-		else if(fall == -1) // extend right foot
-		{
+		else if(fall == -1) { // extend right foot
 			amot.set_command("goalieRightFootExtened.xar");
 			_blk.publishSignal(amot, "motion");
 			return;
 		}
-		else // scan and track for ball
-		{
+		else { // scan and track for ball
 			hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 			_blk.publishState(hcontrol, "behavior");
 		}
 
-		if(ballDist < 0.65) // check if ball is to close to the goal post
-		{
+		if(ballDist < 0.65) { // check if ball is to close to the goal post
 			goalieApproachStarted = true;
 			pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
 			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) ) {
@@ -723,9 +743,10 @@ void Behavior::Goalie()
 				else
 					amot.set_command(config.kicks.KickForwardRight); // Right Kick
 
-				_blk.publishSignal(amot, "motion");	
+				_blk.publishSignal(amot, "motion");
 			}
-		}else if(goalieApproachStarted == true){
+		}
+		else if(goalieApproachStarted == true) {
 			stopRobot();
 			goalieApproachStarted = false;
 		}
@@ -747,8 +768,8 @@ void Behavior::Goalie()
  * Function used by Goalie function above to determine when and where to extend robot foot
  * for a ball save.
  */
-int Behavior::toFallOrNotToFall()
-{
+int Behavior::toFallOrNotToFall() {
+
 	float x1, y1, dk, ubx, uby, ub;
 
 	if(wim == 0)   // the two last observation messages
@@ -763,16 +784,14 @@ int Behavior::toFallOrNotToFall()
 	ubx = wim->balls(0).relativexspeed();
 	uby = wim->balls(0).relativeyspeed();
 
-	if(ubx < 0.0)
-	{
+	if(ubx < 0.0) {
 		dk = (ubx * y1 - uby * x1) / ubx ; // dk is the projection of the ball's route towards the robot/goalpost
 
-		if(fabs(dk) <= 0.3) // if dk is shorter than the robot's foot can extend
-		{
+		if(fabs(dk) <= 0.3) { // if dk is shorter than the robot's foot can extend
+
 			ub = sqrt(ubx * ubx + uby * uby);
 
-			if(fabs(ub) > config.ur)
-			{
+			if(fabs(ub) > config.ur) {
 				if(dk > 0)
 					return 1;  // left
 				else

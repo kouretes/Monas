@@ -1,12 +1,11 @@
 #include "Vision.h"
 
-#include "architecture/archConfig.h"
 #include <cmath>
 #include "sys/stat.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "tools/KMat.h"
-#include "hal/syscall.h"
+#include "core/elements/math/KMat.hpp"
+//#include "hal/syscall.h"
 #include <vector>
 
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -47,7 +46,7 @@ void Vision::Reset(){
 	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationBottom")).c_str());
 	if(segbottom != NULL){
 		delete segbottom;
-		segbottom = NULL;	
+		segbottom = NULL;
 	}
 	segbottom = new KSegmentator(*conffile);
 	conffile->close();
@@ -60,7 +59,7 @@ void Vision::Reset(){
 		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationTop")).c_str());
 		if(segtop != NULL){
 			delete segtop;
-			segtop = NULL;	
+			segtop = NULL;
 		}
 		segtop = new KSegmentator(*conffile);
 		conffile->close();
@@ -350,27 +349,25 @@ void Vision::fetchAndProcess()
 
 	if (obs.regular_objects_size() > 0)
 	{
-		bool yellow = false, blue = false;
+		bool yellow = false;
 		::google::protobuf::RepeatedPtrField<const ::NamedObject>::const_iterator ptr = obs.regular_objects().begin();
 
 		while (ptr != obs.regular_objects().end())
 		{
 			if ((*ptr).object_name().c_str()[0] == 'Y')
 				yellow = true;
-			else if ((*ptr).object_name().c_str()[0] == 'S')
-				blue = true;
-
 			++ptr;
 		}
 
 		LedValues* l = leds.add_leds();
 		l->set_chain("r_eye");
 
-		if (obs.regular_objects_size() == 1)
+		if (obs.regular_objects_size() == 1 && obs.regular_objects(0).object_name().compare("Yellow")==0)
 		{
+			l->set_color("blue");
+		}else if(obs.regular_objects_size() == 1){
 			l->set_color("yellow");
-		}
-		else if (obs.regular_objects_size() == 2)
+		}else if (obs.regular_objects_size() == 2)
 		{
 			l->set_color("purple");
 		}
@@ -425,7 +422,7 @@ void Vision::publishObstacles(std::vector<KVecInt2> points) const
 		 */
 	}
 
-	_blk.publishSignal(result, "obstacle");
+	_blk.publishSignal(result, "pathplanning");
 }
 
 KVecFloat2 Vision::simpleRotation(KVecFloat2 const& i) const

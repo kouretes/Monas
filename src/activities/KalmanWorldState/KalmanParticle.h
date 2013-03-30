@@ -2,7 +2,7 @@
 #define KALMAN_PARTICLE_H
 
 
-#include "tools/KMat.h"
+#include "core/elements/math/KMat.hpp"
 
 class KalmanParticle
 
@@ -30,12 +30,12 @@ class KalmanParticle
 
 	}
 
-	void predict(Pvector displacement,Pvector dvar,float dt)
+	void predict(Pvector displacement,Pvector dvar)
 	{
 
 		//P.scalar_mult(2);
 		Pmatrix Qdt;
-		Qdt=makeQ(dt);
+		Qdt.zero();
 		Qdt(0,0)+=dvar(0);
 		Qdt(1,1)+=dvar(1);
 		Qdt(2,2)+=dvar(2);
@@ -43,17 +43,7 @@ class KalmanParticle
 		P+=Qdt;
 		x+=displacement;
 	}
-	Pmatrix makeQ(float dt)
-	{
-		Pmatrix Qdt;
-		Qdt.zero();
-		Qdt(0,0)=Qdiag(0)*dt*dt/2;
-		Qdt(1,1)=Qdiag(1)*dt*dt/2;
-		Qdt(2,2)=Qdiag(2)*dt*dt/2;
-		//std::cout<<"Q"<<std::endl;
-		//Qdt.prettyPrint();
-		return Qdt;
-	}
+
 
 
 	void update(float dist, float bear,float devdist, float devbear,float ox,float oy)

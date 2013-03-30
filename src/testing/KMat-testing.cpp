@@ -1,8 +1,8 @@
-#include "tools/KMat.h"
+#include "core/elements/math/KMat.hpp"
 #include <iostream>
 
 using namespace std;
-using namespace KMat;
+using namespace KMath::KMat;
 using namespace std;
 #include <list>
 #include <boost/math/distributions/normal.hpp>
@@ -131,6 +131,40 @@ int main ()
 	tracer_t t, t2;
 	t.init(0, 0);
 	t.initVelocity(0.5f, 0.5f);
+
+	GenMatrix<float, 20,20> large,tlarge,reslarge;
+	large.identity();
+	large.prettyPrint();
+	large.fast_invert();
+	large.prettyPrint();
+
+	for (int k=0;k<1000000;k++)
+	{
+		for(unsigned o=0;o<20;o++)
+		{
+			for(unsigned p=0;p<20;p++)
+			{
+				large(o,p)=(1.0*rand())/RAND_MAX -0.5;
+
+			}
+		}
+		tlarge=large;
+		large.fast_invert();
+		reslarge=tlarge*large;
+		//tlarge.prettyPrint();
+		//-assert(1==0);
+
+		if(abs(reslarge.norm2()-20)<10e-1)
+		{
+			large.prettyPrint();
+			tlarge.prettyPrint();
+			reslarge.prettyPrint();
+			printf("%f",tlarge.norm2()-20);
+
+			assert(1==0);
+		}
+
+	}
 
 	while(false)//true
 	{

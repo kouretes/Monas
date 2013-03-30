@@ -1,10 +1,10 @@
 #ifndef EKFLocalization_H_
 #define EKFLocalization_H_
 #include "tools/toString.h"
-#include "tools/KMat.h"
 #include <string>
 #include <vector>
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
+#include "core/elements/math/KMat.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "KLocalization.h"
 #include <math.h>

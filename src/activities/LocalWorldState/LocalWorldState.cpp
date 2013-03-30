@@ -9,7 +9,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 #include <math.h>
-#include "architecture/archConfig.h"
+
 
 #define NO_GAME
 #define MAX_TIME_TO_RESET 15 //in seconds
@@ -61,7 +61,7 @@ void LocalWorldState::UserInit()
         ekfLocalization.Initialize();
 
         for (int i = 0 ; i < 9 ; i++ ){
-            ekfLocalizationM.add_variance(i);
+            MyWorld.mutable_myposition()->add_var(i);
         }
     }
     else{
@@ -120,10 +120,11 @@ int LocalWorldState::Execute()
     if (locConfig.ekfEnable == true){
         AgentPosition = ekfLocalization.LocalizationStep(robotmovement, currentObservation, currentAmbiguousObservation);
 
-        ekfLocalizationM.set_variance(0,ekfLocalization.var(0,0));
-        ekfLocalizationM.set_variance(1,ekfLocalization.var(1,1));
-        ekfLocalizationM.set_variance(2,ekfLocalization.var(2,2));
-        _blk.publishSignal(ekfLocalizationM, "debug");
+        for (int i=0;i<3;i++){
+             for (int j=0;j<3;j++){
+                MyWorld.mutable_myposition()->set_var(i*3+j,ekfLocalization.var(i,j));
+            }
+        }
     }
     else{
         AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
@@ -379,7 +380,6 @@ void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MMod
 	TrackPoint.phi += DR;
 
     if ( microsec_clock::universal_time() > odometryMessageTime + seconds(5) ){
-        odometryInfoM.set_reset(false);
         odometryInfoM.set_trackpointx(TrackPoint.x);
         odometryInfoM.set_trackpointy(TrackPoint.y);
         odometryInfoM.set_trackpointphi(TrackPoint.phi);

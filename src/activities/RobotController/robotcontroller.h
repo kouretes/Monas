@@ -13,7 +13,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include <iostream>
 #include <string>
-#include <architecture/executables/IActivity.h>
+#include "core/include/IActivity.hpp"
 
 //Game Controller return data interval
 #define ALIVEMS 750

@@ -3,8 +3,7 @@
 
 #include <math.h>
 
-#include "architecture/executables/IActivity.h"
-#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -18,7 +17,7 @@
 
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -90,7 +89,7 @@ private:
 
 	float bd, bb, bx, by;
 	float robot_x, robot_y, robot_phi, robot_confidence;
-	
+
 	//External speed controler (e.g. from KMonitor)
 	bool useExternalSpeed;
 	float externalSpeed;;

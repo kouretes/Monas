@@ -1,8 +1,8 @@
 #ifndef _ISPECIALACTION_H_
 #define _ISPECIALACTION_H_ 1
 
-#include "tools/genFactory.h"
-#include "tools/genRegistrar.h"
+#include "core/elements/factory/Factory.hpp"
+#include "core/elements/factory/Registrar.hpp"
 
 #include <string>
 
@@ -17,7 +17,7 @@ public:
 
 };
 
-typedef GenericFactory < ISpecialAction, std::string >  SpecialActionFactory;
+typedef Factory < ISpecialAction, std::string >  SpecialActionFactory;
 
 template<class T>
 struct SpecialActionRegistrar

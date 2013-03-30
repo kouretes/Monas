@@ -2,8 +2,7 @@
 #include "tools/stat/kalman.h"
 
 using namespace std;
-
-
+using namespace KMath;
 int main()
 {
 	Kalman1D<float> test;

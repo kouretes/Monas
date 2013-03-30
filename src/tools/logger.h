@@ -7,10 +7,10 @@
 #include <cstdio>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "sys/stat.h"
-#include "architecture/archConfig.h"
+#include "core/architecture/archConfig.h"
 #include "tools/XMLConfig.h"
 
-#include "tools/singleton.h"
+#include "core/elements/Singleton.hpp"
 
 
 //TODO mutex needed

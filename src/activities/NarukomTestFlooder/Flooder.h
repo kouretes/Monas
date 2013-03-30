@@ -1,6 +1,6 @@
 #ifndef FLOODER_H
 #define FLOODER_H
-#include "architecture/executables/IActivity.h"
+#include "core/include/IActivity.hpp"
 #include "tools/profiler.hpp"
 
 ACTIVITY_START

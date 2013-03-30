@@ -11,8 +11,6 @@
 #include <math.h>
 #include "KLocalization.h"
 #include <iomanip>
-#include <boost/lexical_cast.hpp>
-#include "architecture/archConfig.h"
 #include "tools/logger.h"
 #include "tools/toString.h"
 
@@ -61,19 +59,18 @@ void KLocalization::SetParticlesPoseUniformly()
 	int particlesDown = SIRParticles.size - particlesUp ;
 
     //Initialize reset Particles
-	for (int i = 0; i < SIRParticles.size; i++){
-		SIRParticles.x[i] = -2;
-		SIRParticles.y[i] = -2;
-		SIRParticles.phi[i] = TO_RAD(90);
+	for (int i = 0; i < resetParticles; i++){
+		SIRParticles.x[i] = locConfig->initX[1];
+		SIRParticles.y[i] = locConfig->initY[1];
+		SIRParticles.phi[i] = locConfig->initPhi[1];
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 
 	//Initialize top Particles
-    /*
 	for (int i = resetParticles; i < particlesUp; i++)
 	{
-		SIRParticles.x[i] = X() * length + fieldMinX + 0.5;
-		SIRParticles.y[i] = fieldMaxY;
+		SIRParticles.x[i] = X() * length + locConfig->fieldMinX + 0.5;
+		SIRParticles.y[i] = locConfig->fieldMaxY;
 		SIRParticles.phi[i] = TO_RAD(270);
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
@@ -81,11 +78,11 @@ void KLocalization::SetParticlesPoseUniformly()
 	//Initialize down Particles
 	for (int i = particlesUp; i < SIRParticles.size; i++)
 	{
-		SIRParticles.x[i] = X() * length + fieldMinX + 0.5;
-		SIRParticles.y[i] = -fieldMaxY;
+		SIRParticles.x[i] = X() * length + locConfig->fieldMinX + 0.5;
+		SIRParticles.y[i] = -locConfig->fieldMaxY;
 		SIRParticles.phi[i] = TO_RAD(90);
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
-	}*/
+	}
 }
 
 void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, float inY, float inPhi)

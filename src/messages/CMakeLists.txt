@@ -2,8 +2,7 @@ message ( STATUS "" )
 message ( STATUS " _..::: Configuring Messages :::.._ " )
 message ( STATUS "" )
 
-file ( GLOB MessageLibSrcs . *.cc )
-
+file ( GLOB MessageLibSrcs . *.cc *.h )
 message ( STATUS "Messages detected:" )
 foreach ( msg ${MessageLibSrcs} )
     message ( STATUS "Message ${msg} detected." )
@@ -13,7 +12,7 @@ add_library ( MessageLib ${LibBuildType}
                          ${MessageLibSrcs}
 )
 
-target_link_libraries ( MessageLib narukom )
+target_link_libraries ( MessageLib messaging )
 #TODO link with protocol buffer lib instead of narukomlib
 
 install ( TARGETS MessageLib

@@ -3,7 +3,7 @@
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 #include "hal/robot/generic_nao/aldebaran-sensors.h"
-#include "architecture/archConfig.h"
+
 
 
 #include "ISpecialAction.h"
@@ -126,7 +126,7 @@ void MotionController::UserInit()
 	walkingWithVelocity = false;
 
 	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
-	
+
 	//Self Reset for initialization
 	Reset();
 }
@@ -171,7 +171,7 @@ int MotionController::Execute()
 	if(msm != 0){
 		motion->setStiffnesses(msm->chain(), msm->value());
 	}
-	
+
 	if(gameState == currentstate)
 	{
 	}
@@ -515,7 +515,7 @@ int MotionController::Execute()
 			}
 		}
 	}
-	
+
 	return 0;
 }
 

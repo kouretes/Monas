@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-#include "tools/mathcommon.h"
+#include "core/elements/math/Common.hpp"
 #include "messages/RoboCupPlayerData.h"
 
 #include "KalmanParticle.h"

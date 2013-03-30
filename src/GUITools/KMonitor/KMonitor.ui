@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KMonitor</class>
+ <widget class="QMainWindow" name="KMonitor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1071</width>
+    <height>669</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Kouretes Monitor Tool</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="KMTabWidget">
+      <property name="currentIndex">
+       <number>7</number>
+      </property>
+      <widget class="GlobalWorldController" name="GWSTab">
+       <attribute name="title">
+        <string>Global World State</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+      </widget>
+      <widget class="LocalWorldController" name="LWSTab">
+       <attribute name="title">
+        <string>Local World State</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+      </widget>
+      <widget class="KSonarsController" name="LSonarTab">
+       <attribute name="title">
+        <string>Local Polar Map</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_7"/>
+      </widget>
+      <widget class="KCamView" name="LCamTab">
+       <attribute name="title">
+        <string>Local Robot View</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_8"/>
+      </widget>
+      <widget class="SensorsController" name="LSDTab">
+       <attribute name="title">
+        <string>Local Sensors Data</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2"/>
+      </widget>
+      <widget class="KccHandler" name="KCCTab">
+       <attribute name="title">
+        <string>KCC Beta</string>
+       </attribute>
+      </widget>
+      <widget class="XMLHandler" name="XMLTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="title">
+        <string>XML manager</string>
+       </attribute>
+      </widget>
+      <widget class="CommandsController" name="ComTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <attribute name="title">
+        <string>Commands</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1071</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_Quit"/>
+   </widget>
+   <addaction name="menu_File"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionSkatoules">
+   <property name="text">
+    <string>skatoules</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KccHandler</class>
+   <extends>QWidget</extends>
+   <header>KccHandler.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XMLHandler</class>
+   <extends>QWidget</extends>
+   <header>XMLHandler.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SensorsController</class>
+   <extends>QWidget</extends>
+   <header>SensorsController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>KSonarsController</class>
+   <extends>QWidget</extends>
+   <header>KSonarsController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>KCamView</class>
+   <extends>QWidget</extends>
+   <header>KCamView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GlobalWorldController</class>
+   <extends>QWidget</extends>
+   <header>GlobalWorldController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LocalWorldController</class>
+   <extends>QWidget</extends>
+   <header>LocalWorldController.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CommandsController</class>
+   <extends>QWidget</extends>
+   <header>CommandsController.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="KMonitorResources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

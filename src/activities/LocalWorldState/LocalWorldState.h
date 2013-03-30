@@ -8,8 +8,7 @@
 #include <math.h>
 #include <csignal>
 
-#include "architecture/executables/IActivity.h"
-#include "architecture/archConfig.h"
+#include "core/include/IActivity.hpp"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -19,6 +18,7 @@
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/motion.pb.h"
+#include "messages/Debug.pb.h"
 
 #include "BallFilter.h"
 #include "KLocalization.h"
@@ -69,7 +69,6 @@ private:
 	//WorldInfo message
 	WorldInfo MyWorld;
     OdometryInfoMessage odometryInfoM;
-    EKFLocalizationMessage ekfLocalizationM;
     EKFMHypothesis ekfMHypothesis;
 	//Current agent position
 	Localization::belief AgentPosition;

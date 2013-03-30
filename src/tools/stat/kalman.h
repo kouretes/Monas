@@ -1,6 +1,6 @@
 #ifndef _KALMAN_H_
 #define _KALMAN_H_
-#include "tools/KMat.h"
+#include "core/elements/math/KMat.hpp"
 namespace KMath
 {
 
