@@ -37,6 +37,9 @@ void EKFLocalization::InitializeHypothesis(int resetType, bool kickOff, float in
 	}else if(resetType == LocalizationResetMessage::MANUAL){
         numberOfModels = 1;	
 		kalmanModels[0].Initialize(inX, inY, inPhi, e1, e2, e3, 1 , true );		
+	}else if(resetType == LocalizationResetMessage::PENALTY_MODE){
+        numberOfModels = 1;	
+		kalmanModels[0].Initialize(0, 0, 0, e1, e2, e3, 1 , true );		
 	}
 }
 

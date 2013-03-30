@@ -104,6 +104,8 @@ private:
 		// values from the team_config xml file
 		int teamNumber, playerNumber, teamColor, maxPlayers;
 
+		bool isPenaltyMode;
+
 		// values from the playerConfig xml file, initial game positions on the field...
 		float initX[2], initY[2], initPhi[2];
 
@@ -131,6 +133,7 @@ private:
 	boost::shared_ptr<const WorldInfo>  wim;
 	boost::shared_ptr<const SharedWorldInfo>  swim;
 	boost::shared_ptr<const BallFoundMessage>  bfm;
+	boost::shared_ptr<const MotionStateMessage> sm;
 
 	/**
 	 * Outgoing Messages
@@ -168,6 +171,12 @@ private:
 	 * @brief Information gathering function, that reads the position, angle and robot confidence.
 	 */
 	void getPosition();
+	
+	/**
+	 * @fn void GetMotionData()
+	 * @brief Information gathering function, that reads motion state of the robot.
+	 */
+	void getMotionData();
 
 	/**
 	 * @fn void sendDebugMessages()
@@ -310,7 +319,9 @@ private:
 
 	bool goalieApproachStarted;
 
-	bool gameMode;
+	bool gameMode, penaltyMode;
+
+	MotionStateMessage::ActionType currentRobotAction;
 
 	FormationGenerator fGen; // object that create and update the team formation
 

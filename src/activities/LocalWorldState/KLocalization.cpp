@@ -128,7 +128,16 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
 			SIRParticles.phi[i] = inPhi;
 			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
+	}else if(resetType == LocalizationResetMessage::PENALTY_MODE){
+		for (int i = 0; i < SIRParticles.size; i++)
+		{
+			SIRParticles.x[i] = 0;
+			SIRParticles.y[i] = 0;
+			SIRParticles.phi[i] = 0;
+			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
+		}
 	}
+	
 }
 
 //Sequential Importance Resampling
