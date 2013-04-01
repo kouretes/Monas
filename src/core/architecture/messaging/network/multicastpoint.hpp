@@ -73,6 +73,8 @@ namespace KNetwork
 		void processIncoming(const char * buff, size_t size);
 		void processOutGoing(msgentry m);
 
+		void cleanupLocalSubscriptions();
+
 
 		KSystem::Mutex  mut;
 

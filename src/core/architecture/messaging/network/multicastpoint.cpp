@@ -42,6 +42,40 @@ namespace KNetwork
 		this->JoinThread();
 	}
 
+	void MulticastPoint::cleanupLocalSubscriptions()
+	{
+
+		std::map<hostid, hostDescription>::iterator  hit = otherHosts.begin();
+
+		std::set<size_t>  remSub;
+		std::set<size_t>::iterator sit;
+		//Iterate all needed topics
+		remSub = localsubscriptions;
+		//std::cout<<"Unsubscribe:"<<std::endl;
+		for( hit = otherHosts.begin(); hit != otherHosts.end(); hit++)
+			for(sit = (*hit).second.needsTopics.begin(); sit != (*hit).second.needsTopics.end(); ++sit)
+				remSub.erase(*sit);
+
+		for(sit = remSub.begin(); sit != remSub.end(); ++sit)
+			localsubscriptions.erase(*sit);
+
+		std::vector<msgentry> newsubscriptions;
+		msgentry kh;
+		kh.msgclass = msgentry::UNSUBSCRIBE_ON_TOPIC;
+		kh.host = msgentry::HOST_ID_LOCAL_HOST;
+
+		for(sit = remSub.begin(); sit != remSub.end(); ++sit)
+		{
+			kh.topic = (*sit);
+			newsubscriptions.push_back(kh);
+			//std::cout<<"Unsubscribe from:"<<(*sit)<<std::endl;
+		}
+
+		publish(newsubscriptions);
+
+
+	}
+
 	bool MulticastPoint::startEndPoint(std::string const& multicast_ip, unsigned int port)
 	{
 		try
@@ -179,31 +213,9 @@ namespace KNetwork
 						hit++;
 				}
 
-				std::set<size_t>  remSub;
-				std::set<size_t>::iterator sit;
-				//Iterate all needed topics
-				remSub = localsubscriptions;
+				cleanupLocalSubscriptions();
 
-				for( hit = otherHosts.begin(); hit != otherHosts.end(); hit++)
-					for(sit = (*hit).second.needsTopics.begin(); sit != (*hit).second.needsTopics.end(); ++sit)
-						remSub.erase(*sit);
 
-				for(sit = remSub.begin(); sit != remSub.end(); ++sit)
-					localsubscriptions.erase(*sit);
-
-				std::vector<msgentry> newsubscriptions;
-				msgentry kh;
-				kh.msgclass = msgentry::UNSUBSCRIBE_ON_TOPIC;
-				kh.host = msgentry::HOST_ID_LOCAL_HOST;
-
-				for(sit = remSub.begin(); sit != remSub.end(); ++sit)
-				{
-					kh.topic = (*sit);
-					newsubscriptions.push_back(kh);
-					//std::cout<<"Unsubscribe from:"<<(*sit)<<std::endl;
-				}
-
-				publish(newsubscriptions);
 			}
 			{
 				HostSubscriptions *hs = HostSubscriptions::default_instance().New();
@@ -444,7 +456,7 @@ namespace KNetwork
 			hd.hostname = hs->hostname(); //Get HostName from the remote host
 			const ::google::protobuf::RepeatedPtrField< ::Subscription >& fptr = hs->topics();
 			::google::protobuf::RepeatedPtrField< ::Subscription >::const_iterator cit;
-
+			hd.needsTopics.clear();
 			for(cit = fptr.begin(); cit != fptr.end(); ++cit)
 			{
 				if((*cit).host() == thishost || (*cit).host() == msgentry::HOST_ID_ANY_HOST)
@@ -462,6 +474,7 @@ namespace KNetwork
 			}
 
 			publish(newsubscriptions);//Ask MessageQueue for these new subscriptions
+			cleanupLocalSubscriptions();
 		}
 
 		if(m.msg->GetTypeName() == "KnownHosts") //Who is that guy trying to pollute my host?
