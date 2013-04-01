@@ -43,11 +43,11 @@ public slots:
 	void motionCommandUpdateHandler (MotionWalkMessage, QString);
 	void formationDataUpdateHandler (FormationDataForGUI, QString);
 
+    void EKFMHypothesisUpdateHandler (EKFMHypothesis, QString);
+    void OdometryUpdateHandler(OdometryInfoMessage OdometryM, QString host);
 
 private slots:
 	void newTreeElementRequested (QTreeWidgetItem *item);
-
-
 
 private:
 	void LWSGVUnionistLineVisible (GraphicalRobotElement *robotElement);
@@ -62,11 +62,13 @@ private:
 	void LWSGVVisionGoalPostsVisible (QString, bool);
 	void LWSGVParticlesVisible (QString, bool);
 	void LWSGVHFOVVisible (QString, bool);
-	void LWSGVTraceVisible (QString, bool);
+	void LWSGVRobotTraceVisible (QString, bool);
 	void LWSGVMWCmdVisible (QString, bool);
 	void LWSGVTeammatesVisible (QString, bool);
+    void LWSGVVarianceVisible (QString, bool);
+    void LWSGVEkfMHypothesisVisible (QString, bool);
+    void LWSGVOdometryVisible (QString, bool);
 	void LWSGVFormationVisible (QString, bool);
-
 protected:
 	void resizeEvent (QResizeEvent *event);
 

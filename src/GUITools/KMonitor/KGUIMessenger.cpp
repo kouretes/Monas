@@ -118,7 +118,20 @@ void KGUIMessenger::allocateReceivedMessages() {
 				debugGUI.Clear();
 				debugGUI.CopyFrom (* (incomingMessages.at (i).msg) );
 				emit localizationDataUpdate (debugGUI, currentRHost);
-			} else if (incomingMessages.at (i).msg->GetTypeName() == "FormationDataForGUI" && myKMonitorRequestedHost == currentRHost) {
+			}  
+            else if (incomingMessages.at (i).msg->GetTypeName() == "EKFMHypothesis" && myKMonitorRequestedHost == currentRHost) {
+				EKFMHypothesis ekfmHypothesisM;
+				ekfmHypothesisM.Clear();
+				ekfmHypothesisM.CopyFrom (* (incomingMessages.at (i).msg) );
+				emit EKFMHypothesisUpdate (ekfmHypothesisM, currentRHost);
+			}
+            else if (incomingMessages.at (i).msg->GetTypeName() == "OdometryInfoMessage" && myKMonitorRequestedHost == currentRHost) {
+				OdometryInfoMessage odometryM;
+				odometryM.Clear();
+				odometryM.CopyFrom (* (incomingMessages.at (i).msg) );
+				emit OdometryUpdate (odometryM, currentRHost);
+			}
+			else if (incomingMessages.at (i).msg->GetTypeName() == "FormationDataForGUI" && myKMonitorRequestedHost == currentRHost) {
 				FormationDataForGUI debugGUI;
 				debugGUI.Clear();
 				debugGUI.CopyFrom (* (incomingMessages.at (i).msg) );

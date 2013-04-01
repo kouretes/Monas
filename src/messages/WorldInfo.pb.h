@@ -46,11 +46,12 @@ enum LocalizationResetMessage_RESET {
   LocalizationResetMessage_RESET_READY = 1,
   LocalizationResetMessage_RESET_SET = 2,
   LocalizationResetMessage_RESET_PENALISED = 3,
-  LocalizationResetMessage_RESET_MANUAL = 4
+  LocalizationResetMessage_RESET_MANUAL = 4,
+  LocalizationResetMessage_RESET_PENALTY_MODE = 5
 };
 bool LocalizationResetMessage_RESET_IsValid(int value);
 const LocalizationResetMessage_RESET LocalizationResetMessage_RESET_RESET_MIN = LocalizationResetMessage_RESET_UNIFORM;
-const LocalizationResetMessage_RESET LocalizationResetMessage_RESET_RESET_MAX = LocalizationResetMessage_RESET_MANUAL;
+const LocalizationResetMessage_RESET LocalizationResetMessage_RESET_RESET_MAX = LocalizationResetMessage_RESET_PENALTY_MODE;
 const int LocalizationResetMessage_RESET_RESET_ARRAYSIZE = LocalizationResetMessage_RESET_RESET_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* LocalizationResetMessage_RESET_descriptor();
@@ -790,6 +791,7 @@ class LocalizationResetMessage : public ::google::protobuf::Message {
   static const RESET SET = LocalizationResetMessage_RESET_SET;
   static const RESET PENALISED = LocalizationResetMessage_RESET_PENALISED;
   static const RESET MANUAL = LocalizationResetMessage_RESET_MANUAL;
+  static const RESET PENALTY_MODE = LocalizationResetMessage_RESET_PENALTY_MODE;
   static inline bool RESET_IsValid(int value) {
     return LocalizationResetMessage_RESET_IsValid(value);
   }

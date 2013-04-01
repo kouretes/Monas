@@ -3,14 +3,14 @@
 <action>
     <x>0</x>
     <y>0</y>
-    <phi>-0.55</phi>
+    <phi>-30</phi>
     <name>KickForwardLeft2.xar</name>
 </action>
 
 <action>
     <x>0</x>
     <y>0</y>
-    <phi>0.55</phi>
+    <phi>30</phi>
     <name>KickForwardRight2.xar</name>
 </action>
 

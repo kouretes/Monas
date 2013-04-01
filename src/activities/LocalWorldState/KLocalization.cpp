@@ -53,24 +53,24 @@ void KLocalization::SetParticlesPoseUniformly()
     boost::uniform_real<> uniDist(0,1);
     boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
 
-	float length = fieldMaxX * 2 / 3;
+	float length = locConfig->fieldMaxX * 2 / 3;
 	int resetParticles = 20;
   	int particlesUp = SIRParticles.size / 2 + resetParticles / 2 ;
 	int particlesDown = SIRParticles.size - particlesUp ;
 
     //Initialize reset Particles
 	for (int i = 0; i < resetParticles; i++){
-		SIRParticles.x[i] = initX[1];
-		SIRParticles.y[i] = initY[1];
-		SIRParticles.phi[i] = initPhi[1];
+		SIRParticles.x[i] = locConfig->initX[1];
+		SIRParticles.y[i] = locConfig->initY[1];
+		SIRParticles.phi[i] = locConfig->initPhi[1];
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
 
 	//Initialize top Particles
 	for (int i = resetParticles; i < particlesUp; i++)
 	{
-		SIRParticles.x[i] = X() * length + fieldMinX + 0.5;
-		SIRParticles.y[i] = fieldMaxY;
+		SIRParticles.x[i] = X() * length + locConfig->fieldMinX + 0.5;
+		SIRParticles.y[i] = locConfig->fieldMaxY;
 		SIRParticles.phi[i] = TO_RAD(270);
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
@@ -78,8 +78,8 @@ void KLocalization::SetParticlesPoseUniformly()
 	//Initialize down Particles
 	for (int i = particlesUp; i < SIRParticles.size; i++)
 	{
-		SIRParticles.x[i] = X() * length + fieldMinX + 0.5;
-		SIRParticles.y[i] = -fieldMaxY;
+		SIRParticles.x[i] = X() * length + locConfig->fieldMinX + 0.5;
+		SIRParticles.y[i] = -locConfig->fieldMaxY;
 		SIRParticles.phi[i] = TO_RAD(90);
 		SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 	}
@@ -105,9 +105,9 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
 	{
 		for (int i = 0; i < SIRParticles.size; i++)
 		{
-			SIRParticles.x[i] = readyX;
-			SIRParticles.y[i] = readyY;
-			SIRParticles.phi[i] = readyPhi;
+			SIRParticles.x[i] = locConfig->readyX;
+			SIRParticles.y[i] = locConfig->readyY;
+			SIRParticles.phi[i] = locConfig->readyPhi;
 			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
 	}
@@ -115,9 +115,9 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
 	{
 		for (int i = 0; i < SIRParticles.size; i++)
 		{
-		    SIRParticles.x[i] = initX[(kickOff) ? 0 : 1] + X() * 0.1;
-			SIRParticles.y[i] = initY[(kickOff) ? 0 : 1] + X() * 0.1;
-			SIRParticles.phi[i] = initPhi[(kickOff) ? 0 : 1];
+		    SIRParticles.x[i] = locConfig->initX[(kickOff) ? 0 : 1] + X() * 0.1;
+			SIRParticles.y[i] = locConfig->initY[(kickOff) ? 0 : 1] + X() * 0.1;
+			SIRParticles.phi[i] = locConfig->initPhi[(kickOff) ? 0 : 1];
 			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
 	}else if(resetType == LocalizationResetMessage::MANUAL){
@@ -128,11 +128,20 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
 			SIRParticles.phi[i] = inPhi;
 			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
+	}else if(resetType == LocalizationResetMessage::PENALTY_MODE){
+		for (int i = 0; i < SIRParticles.size; i++)
+		{
+			SIRParticles.x[i] = 0;
+			SIRParticles.y[i] = 0;
+			SIRParticles.phi[i] = 0;
+			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
+		}
 	}
+	
 }
 
 //Sequential Importance Resampling
-KLocalization::belief KLocalization::LocalizationStepSIR(KMotionModel & MotionModel, vector<KObservationModel>& Observations, vector<KObservationModel>& AmbiguousObservations)
+Localization::belief KLocalization::LocalizationStepSIR(Localization::KMotionModel & MotionModel, vector<Localization::KObservationModel>& Observations, vector<Localization::KObservationModel>& AmbiguousObservations)
 {
 
 	weightsChanged = false;
@@ -189,7 +198,7 @@ void KLocalization::windowObservationsUpdate(){
         windowObservations.clear();
 }
 
-void KLocalization::Predict(KMotionModel & MotionModel)
+void KLocalization::Predict(Localization::KMotionModel & MotionModel)
 {
 	float tmpDist, tmpDir, tmpRot;
 	boost::normal_distribution<> normDist(0,1);
@@ -198,13 +207,15 @@ void KLocalization::Predict(KMotionModel & MotionModel)
     //Move the particles with noise
 	for (int i = 0; i < SIRParticles.size; i++)
 	{
-		tmpDist = MotionModel.Distance.val * (MotionModel.Distance.ratiomean + X() * MotionModel.Distance.ratiodev);
-		tmpDir = MotionModel.Direction.val + MotionModel.Direction.Emean + X() * MotionModel.Direction.Edev;
-		tmpRot = MotionModel.Rotation.val * (MotionModel.Rotation.ratiomean + X() * MotionModel.Rotation.ratiodev);
+		tmpDist = MotionModel.Distance.val * ( 1.2 + X() * MotionModel.Distance.ratiodev);
+
+		tmpDir = MotionModel.Direction.val * ( 1 + X() * MotionModel.Direction.ratiodev);
+
+		tmpRot = MotionModel.Rotation.val  * ( 1 + X() * MotionModel.Rotation.ratiodev);
 
         SIRParticles.x[i] = SIRParticles.x[i] + cos(tmpDir + SIRParticles.phi[i]) * tmpDist;
 		SIRParticles.y[i] = SIRParticles.y[i] + sin(tmpDir + SIRParticles.phi[i]) * tmpDist;
-		SIRParticles.phi[i] =wrapTo2Pi(SIRParticles.phi[i] + tmpRot + actionOdError);
+		SIRParticles.phi[i] = wrapTo2Pi(SIRParticles.phi[i] + tmpRot + actionOdError);
 	}
 }
 
@@ -220,20 +231,20 @@ void KLocalization::SpreadParticlesAfterFall()
 	boost::uniform_real<> uniDist(0,1);
     boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
 
-	int step = round((float) SIRParticles.size / numberOfParticlesSpreadAfterFall);
+	int step = round((float) SIRParticles.size / locConfig->numberOfParticlesSpreadAfterFall);
 
-	if (numberOfParticlesSpreadAfterFall == 0)
+	if (locConfig->numberOfParticlesSpreadAfterFall == 0)
 		return;
 
 	for (int i = 0; i < SIRParticles.size; i += step)
 	{
-		SIRParticles.x[i] += (X() - 0.5) * spreadParticlesDeviationAfterFall;
-		SIRParticles.y[i] += (X() - 0.5) * spreadParticlesDeviationAfterFall;
-		SIRParticles.phi[i] += (X() - 0.5) * TO_RAD(rotationDeviationAfterFallInDeg);
+		SIRParticles.x[i] += (X() - 0.5) * locConfig->spreadParticlesDeviationAfterFall;
+		SIRParticles.y[i] += (X() - 0.5) * locConfig->spreadParticlesDeviationAfterFall;
+		SIRParticles.phi[i] += (X() - 0.5) * TO_RAD(locConfig->rotationDeviationAfterFallInDeg);
 	}
 }
 
-void KLocalization::Update(vector<KObservationModel> &Observation, int NumofParticles)
+void KLocalization::Update(vector<Localization::KObservationModel> &Observation, int NumofParticles)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
 	float OverallWeightOwnField, OverallWeightEnemyField, OverallWeightTotal;
@@ -277,7 +288,7 @@ void KLocalization::Update(vector<KObservationModel> &Observation, int NumofPart
 	    updateLikelihoodHist(weightSum);
 
 }
-void KLocalization::UpdateAmbiguous(vector<KObservationModel> &Observation, int NumofParticles)
+void KLocalization::UpdateAmbiguous(vector<Localization::KObservationModel> &Observation, int NumofParticles)
 {
 	//Function to update the weights of each particle regarding the ObservationDistance from an object and the direction
 	float ParticlePointBearingAngle, ParticleBearing;
@@ -343,8 +354,8 @@ void KLocalization::UpdateAmbiguous(vector<KObservationModel> &Observation, int 
 	updateLikelihoodHist(weightSum);
 }
 
-KLocalization::belief KLocalization::ComputeAvg(){
-    belief agentPos;
+Localization::belief KLocalization::ComputeAvg(){
+    Localization::belief agentPos;
     float aCos = 0.0f ,aSin = 0.0f;
 
     agentPos.x = 0.0f;
@@ -384,9 +395,9 @@ void KLocalization::updateLikelihoodHist(float weightSum){
 	}
 }
 
-void KLocalization::RouletteResampleAndNormalize(vector<KObservationModel>& Observations)
+void KLocalization::RouletteResampleAndNormalize(vector<Localization::KObservationModel>& Observations)
 {
-//uniform [0,1)
+    //uniform [0,1)
     boost::uniform_real<> uniDist(0,1);
     boost::variate_generator<randGen&, boost::uniform_real<> > X(generator, uniDist);
 
@@ -405,7 +416,7 @@ void KLocalization::RouletteResampleAndNormalize(vector<KObservationModel>& Obse
 	float tempX[SIRParticles.size];
 	float tempY[SIRParticles.size];
 	float tempPhi[SIRParticles.size];
-	partcl genParticle;
+	Localization::partcl genParticle;
 
 	preset=max(0.0f, 0.5f * (1.0f - augMCL.shortHist/augMCL.longHist) );
     if (Observations.size()==2 && augMCL.enable == true ){
@@ -464,7 +475,7 @@ void KLocalization::RouletteResampleAndNormalize(vector<KObservationModel>& Obse
 	}
 }
 
-vector<float> KLocalization::circleIntersection (KObservationModel& obs1 , KObservationModel& obs2){
+vector<float> KLocalization::circleIntersection (Localization::KObservationModel& obs1 ,Localization::KObservationModel& obs2){
 	float p2x,p2y,p1x,p1y,p3x,p3y;
     float bearing1,bearing2,radius1,radius2;
 	float h;
@@ -510,13 +521,13 @@ vector<float> KLocalization::circleIntersection (KObservationModel& obs1 , KObse
     return (intersPoint1[0] > 0 && intersPoint1[0] < 3) ? intersPoint1 : intersPoint2;
 } 
 
-KLocalization::partcl KLocalization::generateParticle(vector<KObservationModel>& Observations){
+Localization::partcl KLocalization::generateParticle(vector<Localization::KObservationModel>& Observations){
 
-	partcl pEnemyField,pOwnField,result;
+	Localization::partcl pEnemyField,pOwnField,result;
 	float R1,R2,Threshold = 1;
     vector<float> intersPoint(2);
 
-	float centreDist = fabs(KFeaturesmap["YellowLeft"].y - KFeaturesmap["YellowRight"].y);
+	float centreDist = fabs(locConfig->KFeaturesmap["YellowLeft"].y - locConfig->KFeaturesmap["YellowRight"].y);
 
     if (centreDist < fabs(Observations[0].Distance.val-Observations[1].Distance.val) ){
         //No solution 
@@ -542,7 +553,7 @@ KLocalization::partcl KLocalization::generateParticle(vector<KObservationModel>&
 	R1 = norm2(agentPosition.x-pEnemyField.x,agentPosition.y-pEnemyField.y);
 	R2 = norm2(agentPosition.x-pOwnField.x,agentPosition.y-pOwnField.y);
     
-	if ( fabs(pOwnField.x)>fieldMaxX || fabs(pOwnField.y)>fieldMaxY ){
+	if ( fabs(pOwnField.x)>locConfig->fieldMaxX || fabs(pOwnField.y)>locConfig->fieldMaxY ){
 		//No solution (Out of the Field)
         //cout << "No solution (Out of the Field) ..." << endl;
 	    result.valid = false;
@@ -569,21 +580,21 @@ KLocalization::partcl KLocalization::generateParticle(vector<KObservationModel>&
 }
 
 
-KLocalization::partcl KLocalization::generateParticleWindow(vector<KObservationModel>& Observations){
+Localization::partcl KLocalization::generateParticleWindow(vector<Localization::KObservationModel>& Observations){
 	boost::uniform_int<> uniInt(0,Observations.size()-1);
 	boost::variate_generator<randGen&, boost::uniform_int<> > Y(generator,uniInt);
 
     vector<float> intersPoint(2);
 
-	KObservationModel goalPost1;
-	KObservationModel goalPost2;
+	Localization::KObservationModel goalPost1;
+	Localization::KObservationModel goalPost2;
 
 	int tries = 0;
-	float centreDist = fabs(KFeaturesmap["YellowLeft"].y - KFeaturesmap["YellowRight"].y);
+	float centreDist = fabs(locConfig->KFeaturesmap["YellowLeft"].y - locConfig->KFeaturesmap["YellowRight"].y);
     //cout << "centreDist : " << centreDist << endl;
 	
     float phi1,phi2;
-	partcl pEnemyField,pOwnField,result;
+	Localization::partcl pEnemyField,pOwnField,result;
 	float R1,R2,Threshold = 2;
 
 	while ( tries < 3){
@@ -600,19 +611,19 @@ KLocalization::partcl KLocalization::generateParticleWindow(vector<KObservationM
 
 		    //GoalPost1 is left
 		    if (wrapToPi(goalPost1.Bearing.val) > wrapToPi(goalPost2.Bearing.val)){
-                goalPost1.Feature.x = KFeaturesmap["YellowLeft"].x;
-			    goalPost1.Feature.y = KFeaturesmap["YellowLeft"].y;
+                goalPost1.Feature.x = locConfig->KFeaturesmap["YellowLeft"].x;
+			    goalPost1.Feature.y = locConfig->KFeaturesmap["YellowLeft"].y;
 
-			    goalPost2.Feature.x = KFeaturesmap["YellowRight"].x;
-			    goalPost2.Feature.y = KFeaturesmap["YellowRight"].y;
+			    goalPost2.Feature.x = locConfig->KFeaturesmap["YellowRight"].x;
+			    goalPost2.Feature.y = locConfig->KFeaturesmap["YellowRight"].y;
 		    }
 		    //GoalPost1 is right
 		    else{
-			    goalPost1.Feature.x = KFeaturesmap["YellowRight"].x;
-			    goalPost1.Feature.y = KFeaturesmap["YellowRight"].y;
+			    goalPost1.Feature.x = locConfig->KFeaturesmap["YellowRight"].x;
+			    goalPost1.Feature.y = locConfig->KFeaturesmap["YellowRight"].y;
 
-                goalPost2.Feature.x = KFeaturesmap["YellowLeft"].x;
-			    goalPost2.Feature.y = KFeaturesmap["YellowLeft"].y;
+                goalPost2.Feature.x = locConfig->KFeaturesmap["YellowLeft"].x;
+			    goalPost2.Feature.y = locConfig->KFeaturesmap["YellowLeft"].y;
 		    }
 
             //Position based on two observations
@@ -636,7 +647,7 @@ KLocalization::partcl KLocalization::generateParticleWindow(vector<KObservationM
 			    R1 = norm2(agentPosition.x-pEnemyField.x,agentPosition.y-pEnemyField.y);
 			    R2 = norm2(agentPosition.x-pOwnField.x,agentPosition.y-pOwnField.y);
 
-	            if ( fabs(pOwnField.x)>fieldMaxX || fabs(pOwnField.y)>fieldMaxY ){
+	            if ( fabs(pOwnField.x)>locConfig->fieldMaxX || fabs(pOwnField.y)>locConfig->fieldMaxY ){
 				    //No solution! (out of the field)
                     //cout << "No solution (Out of the Field) ..." << endl;
 				    result.valid = false;

@@ -26,55 +26,76 @@ void LocalWorldController::newTreeElementRequested (QTreeWidgetItem *item) {
 		} else {
 			LWSGVRobotVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 1) {
+    }
+    else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 1 ) {
+		if (item->checkState (0) == 0) {
+			LWSGVVarianceVisible (myCurrentLWRequestedHost, false);
+		} else {
+			LWSGVVarianceVisible (myCurrentLWRequestedHost, true);
+		}
+    }
+    else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 2 ) {
+		if (item->checkState (0) == 0) {
+			LWSGVEkfMHypothesisVisible (myCurrentLWRequestedHost, false);
+		} else {
+			LWSGVEkfMHypothesisVisible (myCurrentLWRequestedHost, true);
+		}
+	}
+    else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 3 ) {
+		if (item->checkState (0) == 0) {
+			LWSGVOdometryVisible (myCurrentLWRequestedHost, false);
+		} else {
+			LWSGVOdometryVisible (myCurrentLWRequestedHost, true);
+        }
+    } else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 4 ) {
+		if (item->checkState (0) == 0) {
+			LWSGVRobotTraceVisible (myCurrentLWRequestedHost, false);
+		} else {
+			LWSGVRobotTraceVisible (myCurrentLWRequestedHost, true);
+		}
+	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 5) {
 		if (item->checkState (0) == 0) {
 			LWSGVBallVisible (myCurrentLWRequestedHost, false);
 		} else {
 			LWSGVBallVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 2 ) {
+	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 6 ) {
 		if (item->checkState (0) == 0) {
 			LWSGVVisionBallVisible (myCurrentLWRequestedHost, false);
 		} else {
 			LWSGVVisionBallVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 3 ) {
+	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 7 ) {
 		if (item->checkState (0) == 0) {
 			LWSGVVisionGoalPostsVisible (myCurrentLWRequestedHost, false);
 		} else {
 			LWSGVVisionGoalPostsVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 4 ) {
+	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 8 ) {
 		if (item->checkState (0) == 0) {
 			LWSGVParticlesVisible (myCurrentLWRequestedHost, false);
 		} else {
 			LWSGVParticlesVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 5 ) {
+	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 9 ) {
 		if (item->checkState (0) == 0) {
 			LWSGVHFOVVisible (myCurrentLWRequestedHost, false);
 		} else {
 			LWSGVHFOVVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 6 ) {
-		if (item->checkState (0) == 0) {
-			LWSGVTraceVisible (myCurrentLWRequestedHost, false);
-		} else {
-			LWSGVTraceVisible (myCurrentLWRequestedHost, true);
-		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 7 ) {
+	}  else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 10 ) {
 		if (item->checkState (0) == 0) {
 			LWSGVMWCmdVisible (myCurrentLWRequestedHost, false);
 		} else {
 			LWSGVMWCmdVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 8 ) {
+	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 11 ) {
 		if (item->checkState (0) == 0) {
 			LWSGVTeammatesVisible (myCurrentLWRequestedHost, false);
 		} else {
 			LWSGVTeammatesVisible (myCurrentLWRequestedHost, true);
 		}
-	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 9 ) {
+	} else if (ui->checkTree->itemAt (0, 0)->indexOfChild (item) == 12 ) {
 		if (item->checkState (0) == 0) {
 			LWSGVFormationVisible (myCurrentLWRequestedHost, false);
 		} else {
@@ -96,6 +117,30 @@ void LocalWorldController::setKGFCGameStateInfo (GameStateMessage gsm, QString h
 	if (element != NULL) {
 		element->setCurrentGSM (gsm);
 	}
+}
+
+void LocalWorldController::EKFMHypothesisUpdateHandler (EKFMHypothesis ekfMHypothesisM, QString host){
+    GraphicalRobotElement *element = paintArea->findGraphicalRobotItem (host);
+    if(element != NULL) {
+        element->setCurrentEKFMHypothesisM (ekfMHypothesisM);
+        if (element->getLWSEkfMHypothesisVisible() ) { 
+            element->setEkfMHypothesisVisible (false);
+            element->updateEkfMHypothesisRects();
+            element->setEkfMHypothesisVisible (true);
+        }
+    }
+}
+
+void LocalWorldController::OdometryUpdateHandler (OdometryInfoMessage odometryM, QString host){
+    GraphicalRobotElement *element = paintArea->findGraphicalRobotItem (host);
+    if(element != NULL) {
+        element->setCurrentOdometryM (odometryM);
+        if (element->getLWSOdometryVisible() ) { 
+            element->setOdometryVisible (false);
+            element->updateOdometryPolygon();
+            element->setOdometryVisible (true);
+        }
+    }
 }
 
 void LocalWorldController::worldInfoUpdateHandler (WorldInfo nwim, QString host) {
@@ -121,6 +166,12 @@ void LocalWorldController::worldInfoUpdateHandler (WorldInfo nwim, QString host)
 			element->updateUnionistLineRect();
 			element->setUnionistLineVisible (true);
 		}
+
+        if (element->getLWSVarianceVisible() ) { 
+            element->setVarianceVisible (false);
+            element->updatePoseUncertaintyRect();
+            element->setVarianceVisible (true);
+        }
 	}
 }
 
@@ -164,6 +215,42 @@ void LocalWorldController::LWSGVRobotVisible (QString host, bool visible) {
 		robotElement->setLWSRobotVisible (visible);
 		LWSGVUnionistLineVisible (robotElement);
 	}
+}
+
+ 	
+
+void LocalWorldController::LWSGVVarianceVisible (QString host, bool visible) {
+
+    GraphicalRobotElement *robotElement = NULL;
+    robotElement = paintArea->findGraphicalRobotItem ( host );
+
+    if (robotElement == NULL ) {
+        if (paintArea->getRobotList().count() != 0) {
+            removeGraphicalElement (paintArea->getRobotList().at (0)->getHostId() );
+        }
+        robotElement = paintArea->newGraphicalRobotItem (host);
+    }
+
+    if (robotElement != NULL) {
+        robotElement->setLWSVarianceVisible (visible);
+    }
+}
+
+void LocalWorldController::LWSGVOdometryVisible (QString host, bool visible) {
+
+    GraphicalRobotElement *robotElement = NULL;
+    robotElement = paintArea->findGraphicalRobotItem ( host );
+
+    if (robotElement == NULL ) {
+        if (paintArea->getRobotList().count() != 0) {
+            removeGraphicalElement (paintArea->getRobotList().at (0)->getHostId() );
+        }
+        robotElement = paintArea->newGraphicalRobotItem (host);
+    }
+
+    if (robotElement != NULL) {
+        robotElement->setLWSOdometryVisible (visible);
+    }
 }
 
 void LocalWorldController::LWSGVBallVisible (QString host, bool visible) {
@@ -228,7 +315,7 @@ void LocalWorldController::observationMessageUpdateHandler (ObservationMessage o
 			element->clearVisionObservations();
 		}
 
-		element->setcurrentOBSM (om);
+		element->setCurrentOBSM (om);
 
 		if (element->getLWSVisionBallVisible() ) {
 			element->setLWSVisionBallVisible (false);
@@ -313,7 +400,7 @@ void LocalWorldController::LWSGVHFOVVisible (QString host, bool visible) {
 	}
 }
 
-void LocalWorldController::LWSGVTraceVisible (QString host, bool visible) {
+void LocalWorldController::LWSGVRobotTraceVisible (QString host, bool visible) {
 	GraphicalRobotElement *robotElement = NULL;
 	robotElement = paintArea->findGraphicalRobotItem ( host );
 
@@ -326,7 +413,7 @@ void LocalWorldController::LWSGVTraceVisible (QString host, bool visible) {
 	}
 
 	if (robotElement != NULL) {
-		robotElement->setLWSTraceVisible (visible);
+		robotElement->setLWSRobotTraceVisible (visible);
 	}
 }
 
@@ -363,6 +450,23 @@ void LocalWorldController::LWSGVTeammatesVisible (QString host, bool visible) {
 
 	if (robotElement != NULL) {
 		robotElement->setLWSTeammatesVisible (visible);
+	}
+}
+
+void LocalWorldController::LWSGVEkfMHypothesisVisible (QString host, bool visible) {
+	GraphicalRobotElement *robotElement = NULL;
+	robotElement = paintArea->findGraphicalRobotItem ( host );
+
+	if (robotElement == NULL ) {
+		if (paintArea->getRobotList().count() != 0) {
+			removeGraphicalElement (paintArea->getRobotList().at (0)->getHostId() );
+		}
+
+		robotElement = paintArea->newGraphicalRobotItem (host);
+	}
+
+	if (robotElement != NULL) {
+		robotElement->setLWSEkfMHypothesisVisible (visible);
 	}
 }
 

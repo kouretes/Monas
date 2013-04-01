@@ -2,7 +2,6 @@
 #define KMONITOR_H
 
 #include <QtGui/QMainWindow>
-
 #include "KGUIMessenger.h"
 #include "HostsComboBox.h"
 #include "ui_KMonitor.h"

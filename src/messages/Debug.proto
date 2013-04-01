@@ -1,5 +1,17 @@
 import "WorldInfo.proto";
 
+message EKFMHypothesis{
+    required int32 size = 1;
+    repeated RobotPose KModel = 2;
+    repeated float KModelUncertainty = 3;
+}
+
+message OdometryInfoMessage{
+    required float trackPointX = 1;
+    required float trackPointY = 2 ;
+    required float trackPointPhi = 3 ;
+}
+
 message LocalizationDataForGUI{
 	repeated RobotPose Particles = 1;
 }

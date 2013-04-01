@@ -52,6 +52,38 @@
             <enum>Checked</enum>
            </property>
           </item>
+          <item>	
+           <property name="text">
+            <string>Robot Pose Uncertainty</string>
+           </property>
+           <property name="checkState">
+            <enum>Checked</enum>	
+           </property>
+          </item>
+          <item>	
+           <property name="text">
+            <string>Robot Pose Hypothesis</string>
+           </property>
+           <property name="checkState">
+            <enum>Checked</enum>	
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Odometry</string>
+           </property>
+           <property name="checkState">
+            <enum>Checked</enum>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Robot Trace</string>
+           </property>
+           <property name="checkState">
+            <enum>Checked</enum>
+           </property>
+          </item>
           <item>
            <property name="text">
             <string>Estimated Ball Position</string>
@@ -94,14 +126,6 @@
           </item>
           <item>
            <property name="text">
-            <string>Robot Trace</string>
-           </property>
-           <property name="checkState">
-            <enum>Checked</enum>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>Walk Commands</string>
            </property>
            <property name="checkState">
@@ -114,7 +138,7 @@
            </property>
            <property name="checkState">
             <enum>Checked</enum>
-           </property>
+           </property>     
           </item>
           <item>
            <property name="text">

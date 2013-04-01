@@ -31,6 +31,8 @@ void  protobuf_AddDesc_Debug_2eproto();
 void protobuf_AssignDesc_Debug_2eproto();
 void protobuf_ShutdownFile_Debug_2eproto();
 
+class EKFMHypothesis;
+class OdometryInfoMessage;
 class LocalizationDataForGUI;
 class PositionInfo;
 class FormationDataForGUI;
@@ -58,6 +60,216 @@ inline bool PositionInfo_ROLE_Parse(
     PositionInfo_ROLE_descriptor(), name, value);
 }
 // ===================================================================
+
+class EKFMHypothesis : public ::google::protobuf::Message {
+ public:
+  EKFMHypothesis();
+  virtual ~EKFMHypothesis();
+  
+  EKFMHypothesis(const EKFMHypothesis& from);
+  
+  inline EKFMHypothesis& operator=(const EKFMHypothesis& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const EKFMHypothesis& default_instance();
+  
+  void Swap(EKFMHypothesis* other);
+  
+  // implements Message ----------------------------------------------
+  
+  EKFMHypothesis* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const EKFMHypothesis& from);
+  void MergeFrom(const EKFMHypothesis& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required int32 size = 1;
+  inline bool has_size() const;
+  inline void clear_size();
+  static const int kSizeFieldNumber = 1;
+  inline ::google::protobuf::int32 size() const;
+  inline void set_size(::google::protobuf::int32 value);
+  
+  // repeated .RobotPose KModel = 2;
+  inline int kmodel_size() const;
+  inline void clear_kmodel();
+  static const int kKModelFieldNumber = 2;
+  inline const ::RobotPose& kmodel(int index) const;
+  inline ::RobotPose* mutable_kmodel(int index);
+  inline ::RobotPose* add_kmodel();
+  inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
+      kmodel() const;
+  inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
+      mutable_kmodel();
+  
+  // repeated float KModelUncertainty = 3;
+  inline int kmodeluncertainty_size() const;
+  inline void clear_kmodeluncertainty();
+  static const int kKModelUncertaintyFieldNumber = 3;
+  inline float kmodeluncertainty(int index) const;
+  inline void set_kmodeluncertainty(int index, float value);
+  inline void add_kmodeluncertainty(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      kmodeluncertainty() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_kmodeluncertainty();
+  
+  // @@protoc_insertion_point(class_scope:EKFMHypothesis)
+ private:
+  inline void set_has_size();
+  inline void clear_has_size();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::RobotPose > kmodel_;
+  ::google::protobuf::RepeatedField< float > kmodeluncertainty_;
+  ::google::protobuf::int32 size_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static EKFMHypothesis* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class OdometryInfoMessage : public ::google::protobuf::Message {
+ public:
+  OdometryInfoMessage();
+  virtual ~OdometryInfoMessage();
+  
+  OdometryInfoMessage(const OdometryInfoMessage& from);
+  
+  inline OdometryInfoMessage& operator=(const OdometryInfoMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const OdometryInfoMessage& default_instance();
+  
+  void Swap(OdometryInfoMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  OdometryInfoMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const OdometryInfoMessage& from);
+  void MergeFrom(const OdometryInfoMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required float trackPointX = 1;
+  inline bool has_trackpointx() const;
+  inline void clear_trackpointx();
+  static const int kTrackPointXFieldNumber = 1;
+  inline float trackpointx() const;
+  inline void set_trackpointx(float value);
+  
+  // required float trackPointY = 2;
+  inline bool has_trackpointy() const;
+  inline void clear_trackpointy();
+  static const int kTrackPointYFieldNumber = 2;
+  inline float trackpointy() const;
+  inline void set_trackpointy(float value);
+  
+  // required float trackPointPhi = 3;
+  inline bool has_trackpointphi() const;
+  inline void clear_trackpointphi();
+  static const int kTrackPointPhiFieldNumber = 3;
+  inline float trackpointphi() const;
+  inline void set_trackpointphi(float value);
+  
+  // @@protoc_insertion_point(class_scope:OdometryInfoMessage)
+ private:
+  inline void set_has_trackpointx();
+  inline void clear_has_trackpointx();
+  inline void set_has_trackpointy();
+  inline void clear_has_trackpointy();
+  inline void set_has_trackpointphi();
+  inline void clear_has_trackpointphi();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  float trackpointx_;
+  float trackpointy_;
+  float trackpointphi_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static OdometryInfoMessage* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class LocalizationDataForGUI : public ::google::protobuf::Message {
  public:
@@ -360,6 +572,152 @@ class FormationDataForGUI : public ::google::protobuf::Message {
 
 
 // ===================================================================
+
+// EKFMHypothesis
+
+// required int32 size = 1;
+inline bool EKFMHypothesis::has_size() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void EKFMHypothesis::set_has_size() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void EKFMHypothesis::clear_has_size() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void EKFMHypothesis::clear_size() {
+  size_ = 0;
+  clear_has_size();
+}
+inline ::google::protobuf::int32 EKFMHypothesis::size() const {
+  return size_;
+}
+inline void EKFMHypothesis::set_size(::google::protobuf::int32 value) {
+  set_has_size();
+  size_ = value;
+}
+
+// repeated .RobotPose KModel = 2;
+inline int EKFMHypothesis::kmodel_size() const {
+  return kmodel_.size();
+}
+inline void EKFMHypothesis::clear_kmodel() {
+  kmodel_.Clear();
+}
+inline const ::RobotPose& EKFMHypothesis::kmodel(int index) const {
+  return kmodel_.Get(index);
+}
+inline ::RobotPose* EKFMHypothesis::mutable_kmodel(int index) {
+  return kmodel_.Mutable(index);
+}
+inline ::RobotPose* EKFMHypothesis::add_kmodel() {
+  return kmodel_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::RobotPose >&
+EKFMHypothesis::kmodel() const {
+  return kmodel_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::RobotPose >*
+EKFMHypothesis::mutable_kmodel() {
+  return &kmodel_;
+}
+
+// repeated float KModelUncertainty = 3;
+inline int EKFMHypothesis::kmodeluncertainty_size() const {
+  return kmodeluncertainty_.size();
+}
+inline void EKFMHypothesis::clear_kmodeluncertainty() {
+  kmodeluncertainty_.Clear();
+}
+inline float EKFMHypothesis::kmodeluncertainty(int index) const {
+  return kmodeluncertainty_.Get(index);
+}
+inline void EKFMHypothesis::set_kmodeluncertainty(int index, float value) {
+  kmodeluncertainty_.Set(index, value);
+}
+inline void EKFMHypothesis::add_kmodeluncertainty(float value) {
+  kmodeluncertainty_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+EKFMHypothesis::kmodeluncertainty() const {
+  return kmodeluncertainty_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+EKFMHypothesis::mutable_kmodeluncertainty() {
+  return &kmodeluncertainty_;
+}
+
+// -------------------------------------------------------------------
+
+// OdometryInfoMessage
+
+// required float trackPointX = 1;
+inline bool OdometryInfoMessage::has_trackpointx() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void OdometryInfoMessage::set_has_trackpointx() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void OdometryInfoMessage::clear_has_trackpointx() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void OdometryInfoMessage::clear_trackpointx() {
+  trackpointx_ = 0;
+  clear_has_trackpointx();
+}
+inline float OdometryInfoMessage::trackpointx() const {
+  return trackpointx_;
+}
+inline void OdometryInfoMessage::set_trackpointx(float value) {
+  set_has_trackpointx();
+  trackpointx_ = value;
+}
+
+// required float trackPointY = 2;
+inline bool OdometryInfoMessage::has_trackpointy() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void OdometryInfoMessage::set_has_trackpointy() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void OdometryInfoMessage::clear_has_trackpointy() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void OdometryInfoMessage::clear_trackpointy() {
+  trackpointy_ = 0;
+  clear_has_trackpointy();
+}
+inline float OdometryInfoMessage::trackpointy() const {
+  return trackpointy_;
+}
+inline void OdometryInfoMessage::set_trackpointy(float value) {
+  set_has_trackpointy();
+  trackpointy_ = value;
+}
+
+// required float trackPointPhi = 3;
+inline bool OdometryInfoMessage::has_trackpointphi() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void OdometryInfoMessage::set_has_trackpointphi() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void OdometryInfoMessage::clear_has_trackpointphi() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void OdometryInfoMessage::clear_trackpointphi() {
+  trackpointphi_ = 0;
+  clear_has_trackpointphi();
+}
+inline float OdometryInfoMessage::trackpointphi() const {
+  return trackpointphi_;
+}
+inline void OdometryInfoMessage::set_trackpointphi(float value) {
+  set_has_trackpointphi();
+  trackpointphi_ = value;
+}
+
+// -------------------------------------------------------------------
 
 // LocalizationDataForGUI
 

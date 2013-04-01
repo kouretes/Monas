@@ -329,6 +329,14 @@ QLineF KFieldScene::lineFromFCA (float x, float y, float degAngle, float size) {
 	           sceneRect().height() - (sceneRect().height() * (config.yCentre + y) / config.totalCarpetAreaHeight + sceneRect().height() * size * sin (degAngle) / config.totalCarpetAreaHeight) );
 }
 
+QPointF KFieldScene::pointFromFC(float x, float y){
+    
+    return QPointF (
+       sceneRect().width() * (config.xCentre + x) / config.totalCarpetAreaWidth,
+	   sceneRect().height() - sceneRect().height() * (config.yCentre + y) / config.totalCarpetAreaHeight
+    );
+}
+
 QRectF KFieldScene::ballRectFromFC (WorldInfo *wim, float width, float height) {
 	float a = cos (wim->myposition().phi() );
 	float b = sin (wim->myposition().phi() );

@@ -15,6 +15,12 @@
 
 namespace {
 
+const ::google::protobuf::Descriptor* EKFMHypothesis_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  EKFMHypothesis_reflection_ = NULL;
+const ::google::protobuf::Descriptor* OdometryInfoMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  OdometryInfoMessage_reflection_ = NULL;
 const ::google::protobuf::Descriptor* LocalizationDataForGUI_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   LocalizationDataForGUI_reflection_ = NULL;
@@ -35,7 +41,41 @@ void protobuf_AssignDesc_Debug_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "Debug.proto");
   GOOGLE_CHECK(file != NULL);
-  LocalizationDataForGUI_descriptor_ = file->message_type(0);
+  EKFMHypothesis_descriptor_ = file->message_type(0);
+  static const int EKFMHypothesis_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EKFMHypothesis, size_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EKFMHypothesis, kmodel_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EKFMHypothesis, kmodeluncertainty_),
+  };
+  EKFMHypothesis_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      EKFMHypothesis_descriptor_,
+      EKFMHypothesis::default_instance_,
+      EKFMHypothesis_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EKFMHypothesis, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(EKFMHypothesis, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(EKFMHypothesis));
+  OdometryInfoMessage_descriptor_ = file->message_type(1);
+  static const int OdometryInfoMessage_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OdometryInfoMessage, trackpointx_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OdometryInfoMessage, trackpointy_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OdometryInfoMessage, trackpointphi_),
+  };
+  OdometryInfoMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      OdometryInfoMessage_descriptor_,
+      OdometryInfoMessage::default_instance_,
+      OdometryInfoMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OdometryInfoMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OdometryInfoMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(OdometryInfoMessage));
+  LocalizationDataForGUI_descriptor_ = file->message_type(2);
   static const int LocalizationDataForGUI_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LocalizationDataForGUI, particles_),
   };
@@ -50,7 +90,7 @@ void protobuf_AssignDesc_Debug_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LocalizationDataForGUI));
-  PositionInfo_descriptor_ = file->message_type(1);
+  PositionInfo_descriptor_ = file->message_type(3);
   static const int PositionInfo_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PositionInfo, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PositionInfo, y_),
@@ -68,7 +108,7 @@ void protobuf_AssignDesc_Debug_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PositionInfo));
   PositionInfo_ROLE_descriptor_ = PositionInfo_descriptor_->enum_type(0);
-  FormationDataForGUI_descriptor_ = file->message_type(2);
+  FormationDataForGUI_descriptor_ = file->message_type(4);
   static const int FormationDataForGUI_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FormationDataForGUI, positions_),
   };
@@ -96,6 +136,10 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    EKFMHypothesis_descriptor_, &EKFMHypothesis::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    OdometryInfoMessage_descriptor_, &OdometryInfoMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     LocalizationDataForGUI_descriptor_, &LocalizationDataForGUI::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     PositionInfo_descriptor_, &PositionInfo::default_instance());
@@ -106,6 +150,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_Debug_2eproto() {
+  delete EKFMHypothesis::default_instance_;
+  delete EKFMHypothesis_reflection_;
+  delete OdometryInfoMessage::default_instance_;
+  delete OdometryInfoMessage_reflection_;
   delete LocalizationDataForGUI::default_instance_;
   delete LocalizationDataForGUI_reflection_;
   delete PositionInfo::default_instance_;
@@ -122,18 +170,27 @@ void protobuf_AddDesc_Debug_2eproto() {
 
   ::protobuf_AddDesc_WorldInfo_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\013Debug.proto\032\017WorldInfo.proto\"7\n\026Locali"
-    "zationDataForGUI\022\035\n\tParticles\030\001 \003(\0132\n.Ro"
-    "botPose\"\202\001\n\014PositionInfo\022\t\n\001X\030\001 \002(\002\022\t\n\001Y"
-    "\030\002 \002(\002\022\014\n\004role\030\003 \002(\005\"N\n\004ROLE\022\n\n\006GOALIE\020\000"
-    "\022\014\n\010DEFENDER\020\001\022\n\n\006ONBALL\020\002\022\017\n\013SUPPORTER_"
-    "L\020\003\022\017\n\013SUPPORTER_R\020\004\"7\n\023FormationDataFor"
-    "GUI\022 \n\tPositions\030\001 \003(\0132\r.PositionInfo", 277);
+    "\n\013Debug.proto\032\017WorldInfo.proto\"U\n\016EKFMHy"
+    "pothesis\022\014\n\004size\030\001 \002(\005\022\032\n\006KModel\030\002 \003(\0132\n"
+    ".RobotPose\022\031\n\021KModelUncertainty\030\003 \003(\002\"V\n"
+    "\023OdometryInfoMessage\022\023\n\013trackPointX\030\001 \002("
+    "\002\022\023\n\013trackPointY\030\002 \002(\002\022\025\n\rtrackPointPhi\030"
+    "\003 \002(\002\"7\n\026LocalizationDataForGUI\022\035\n\tParti"
+    "cles\030\001 \003(\0132\n.RobotPose\"\202\001\n\014PositionInfo\022"
+    "\t\n\001X\030\001 \002(\002\022\t\n\001Y\030\002 \002(\002\022\014\n\004role\030\003 \002(\005\"N\n\004R"
+    "OLE\022\n\n\006GOALIE\020\000\022\014\n\010DEFENDER\020\001\022\n\n\006ONBALL\020"
+    "\002\022\017\n\013SUPPORTER_L\020\003\022\017\n\013SUPPORTER_R\020\004\"7\n\023F"
+    "ormationDataForGUI\022 \n\tPositions\030\001 \003(\0132\r."
+    "PositionInfo", 452);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Debug.proto", &protobuf_RegisterTypes);
+  EKFMHypothesis::default_instance_ = new EKFMHypothesis();
+  OdometryInfoMessage::default_instance_ = new OdometryInfoMessage();
   LocalizationDataForGUI::default_instance_ = new LocalizationDataForGUI();
   PositionInfo::default_instance_ = new PositionInfo();
   FormationDataForGUI::default_instance_ = new FormationDataForGUI();
+  EKFMHypothesis::default_instance_->InitAsDefaultInstance();
+  OdometryInfoMessage::default_instance_->InitAsDefaultInstance();
   LocalizationDataForGUI::default_instance_->InitAsDefaultInstance();
   PositionInfo::default_instance_->InitAsDefaultInstance();
   FormationDataForGUI::default_instance_->InitAsDefaultInstance();
@@ -146,6 +203,584 @@ struct StaticDescriptorInitializer_Debug_2eproto {
     protobuf_AddDesc_Debug_2eproto();
   }
 } static_descriptor_initializer_Debug_2eproto_;
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int EKFMHypothesis::kSizeFieldNumber;
+const int EKFMHypothesis::kKModelFieldNumber;
+const int EKFMHypothesis::kKModelUncertaintyFieldNumber;
+#endif  // !_MSC_VER
+
+EKFMHypothesis::EKFMHypothesis()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void EKFMHypothesis::InitAsDefaultInstance() {
+}
+
+EKFMHypothesis::EKFMHypothesis(const EKFMHypothesis& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void EKFMHypothesis::SharedCtor() {
+  _cached_size_ = 0;
+  size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+EKFMHypothesis::~EKFMHypothesis() {
+  SharedDtor();
+}
+
+void EKFMHypothesis::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void EKFMHypothesis::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* EKFMHypothesis::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return EKFMHypothesis_descriptor_;
+}
+
+const EKFMHypothesis& EKFMHypothesis::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_Debug_2eproto();  return *default_instance_;
+}
+
+EKFMHypothesis* EKFMHypothesis::default_instance_ = NULL;
+
+EKFMHypothesis* EKFMHypothesis::New() const {
+  return new EKFMHypothesis;
+}
+
+void EKFMHypothesis::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    size_ = 0;
+  }
+  kmodel_.Clear();
+  kmodeluncertainty_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool EKFMHypothesis::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required int32 size = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &size_)));
+          set_has_size();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_KModel;
+        break;
+      }
+      
+      // repeated .RobotPose KModel = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_KModel:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_kmodel()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_KModel;
+        if (input->ExpectTag(29)) goto parse_KModelUncertainty;
+        break;
+      }
+      
+      // repeated float KModelUncertainty = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_KModelUncertainty:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 29, input, this->mutable_kmodeluncertainty())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_kmodeluncertainty())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_KModelUncertainty;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void EKFMHypothesis::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required int32 size = 1;
+  if (has_size()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->size(), output);
+  }
+  
+  // repeated .RobotPose KModel = 2;
+  for (int i = 0; i < this->kmodel_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->kmodel(i), output);
+  }
+  
+  // repeated float KModelUncertainty = 3;
+  for (int i = 0; i < this->kmodeluncertainty_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      3, this->kmodeluncertainty(i), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* EKFMHypothesis::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required int32 size = 1;
+  if (has_size()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->size(), target);
+  }
+  
+  // repeated .RobotPose KModel = 2;
+  for (int i = 0; i < this->kmodel_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->kmodel(i), target);
+  }
+  
+  // repeated float KModelUncertainty = 3;
+  for (int i = 0; i < this->kmodeluncertainty_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(3, this->kmodeluncertainty(i), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int EKFMHypothesis::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required int32 size = 1;
+    if (has_size()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->size());
+    }
+    
+  }
+  // repeated .RobotPose KModel = 2;
+  total_size += 1 * this->kmodel_size();
+  for (int i = 0; i < this->kmodel_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->kmodel(i));
+  }
+  
+  // repeated float KModelUncertainty = 3;
+  {
+    int data_size = 0;
+    data_size = 4 * this->kmodeluncertainty_size();
+    total_size += 1 * this->kmodeluncertainty_size() + data_size;
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void EKFMHypothesis::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const EKFMHypothesis* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const EKFMHypothesis*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void EKFMHypothesis::MergeFrom(const EKFMHypothesis& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  kmodel_.MergeFrom(from.kmodel_);
+  kmodeluncertainty_.MergeFrom(from.kmodeluncertainty_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_size()) {
+      set_size(from.size());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void EKFMHypothesis::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void EKFMHypothesis::CopyFrom(const EKFMHypothesis& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool EKFMHypothesis::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  for (int i = 0; i < kmodel_size(); i++) {
+    if (!this->kmodel(i).IsInitialized()) return false;
+  }
+  return true;
+}
+
+void EKFMHypothesis::Swap(EKFMHypothesis* other) {
+  if (other != this) {
+    std::swap(size_, other->size_);
+    kmodel_.Swap(&other->kmodel_);
+    kmodeluncertainty_.Swap(&other->kmodeluncertainty_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata EKFMHypothesis::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = EKFMHypothesis_descriptor_;
+  metadata.reflection = EKFMHypothesis_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int OdometryInfoMessage::kTrackPointXFieldNumber;
+const int OdometryInfoMessage::kTrackPointYFieldNumber;
+const int OdometryInfoMessage::kTrackPointPhiFieldNumber;
+#endif  // !_MSC_VER
+
+OdometryInfoMessage::OdometryInfoMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void OdometryInfoMessage::InitAsDefaultInstance() {
+}
+
+OdometryInfoMessage::OdometryInfoMessage(const OdometryInfoMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void OdometryInfoMessage::SharedCtor() {
+  _cached_size_ = 0;
+  trackpointx_ = 0;
+  trackpointy_ = 0;
+  trackpointphi_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+OdometryInfoMessage::~OdometryInfoMessage() {
+  SharedDtor();
+}
+
+void OdometryInfoMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void OdometryInfoMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* OdometryInfoMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return OdometryInfoMessage_descriptor_;
+}
+
+const OdometryInfoMessage& OdometryInfoMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_Debug_2eproto();  return *default_instance_;
+}
+
+OdometryInfoMessage* OdometryInfoMessage::default_instance_ = NULL;
+
+OdometryInfoMessage* OdometryInfoMessage::New() const {
+  return new OdometryInfoMessage;
+}
+
+void OdometryInfoMessage::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    trackpointx_ = 0;
+    trackpointy_ = 0;
+    trackpointphi_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool OdometryInfoMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required float trackPointX = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &trackpointx_)));
+          set_has_trackpointx();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(21)) goto parse_trackPointY;
+        break;
+      }
+      
+      // required float trackPointY = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_trackPointY:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &trackpointy_)));
+          set_has_trackpointy();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(29)) goto parse_trackPointPhi;
+        break;
+      }
+      
+      // required float trackPointPhi = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_trackPointPhi:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &trackpointphi_)));
+          set_has_trackpointphi();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void OdometryInfoMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required float trackPointX = 1;
+  if (has_trackpointx()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->trackpointx(), output);
+  }
+  
+  // required float trackPointY = 2;
+  if (has_trackpointy()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->trackpointy(), output);
+  }
+  
+  // required float trackPointPhi = 3;
+  if (has_trackpointphi()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->trackpointphi(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* OdometryInfoMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required float trackPointX = 1;
+  if (has_trackpointx()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(1, this->trackpointx(), target);
+  }
+  
+  // required float trackPointY = 2;
+  if (has_trackpointy()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->trackpointy(), target);
+  }
+  
+  // required float trackPointPhi = 3;
+  if (has_trackpointphi()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->trackpointphi(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int OdometryInfoMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required float trackPointX = 1;
+    if (has_trackpointx()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float trackPointY = 2;
+    if (has_trackpointy()) {
+      total_size += 1 + 4;
+    }
+    
+    // required float trackPointPhi = 3;
+    if (has_trackpointphi()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void OdometryInfoMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const OdometryInfoMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const OdometryInfoMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void OdometryInfoMessage::MergeFrom(const OdometryInfoMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_trackpointx()) {
+      set_trackpointx(from.trackpointx());
+    }
+    if (from.has_trackpointy()) {
+      set_trackpointy(from.trackpointy());
+    }
+    if (from.has_trackpointphi()) {
+      set_trackpointphi(from.trackpointphi());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void OdometryInfoMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void OdometryInfoMessage::CopyFrom(const OdometryInfoMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OdometryInfoMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  
+  return true;
+}
+
+void OdometryInfoMessage::Swap(OdometryInfoMessage* other) {
+  if (other != this) {
+    std::swap(trackpointx_, other->trackpointx_);
+    std::swap(trackpointy_, other->trackpointy_);
+    std::swap(trackpointphi_, other->trackpointphi_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata OdometryInfoMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = OdometryInfoMessage_descriptor_;
+  metadata.reflection = OdometryInfoMessage_reflection_;
+  return metadata;
+}
 
 
 // ===================================================================
