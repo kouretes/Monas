@@ -7,62 +7,62 @@
 -->
 
 <!--CarpetArea X Dimension according to the length of the total carpet area -->
-<CarpetMaxX>3.7</CarpetMaxX>
-<CarpetMinX>-3.7</CarpetMinX>
+<CarpetMaxX>5.2</CarpetMaxX>
+<CarpetMinX>-5.2</CarpetMinX>
 
 <!--CarpetArea Y Dimension according to the width of the total carpet area -->
-<CarpetMaxY>2.7</CarpetMaxY>
-<CarpetMinY>-2.7</CarpetMinY>
+<CarpetMaxY>3.7</CarpetMaxY>
+<CarpetMinY>-3.7</CarpetMinY>
 
 <!--FieldArea X Dimension according to the length till the side end lines -->
-<FieldMaxX>3.0</FieldMaxX>
-<FieldMinX>-3.0</FieldMinX>
+<FieldMaxX>4.5</FieldMaxX>
+<FieldMinX>-4.5</FieldMinX>
 
 <!--FieldArea Y Dimension according to the width till the side end lines -->
-<FieldMaxY>2.0</FieldMaxY>
-<FieldMinY>-2.0</FieldMinY>
+<FieldMaxY>3.0</FieldMaxY>
+<FieldMinY>-3.0</FieldMinY>
 
 <!--LeftPenaltyArea X Dimension according to the length till the side end lines -->
-<LeftPenaltyAreaMaxX>-2.4</LeftPenaltyAreaMaxX>
-<LeftPenaltyAreaMinX>-3.0</LeftPenaltyAreaMinX>
+<LeftPenaltyAreaMaxX>-3.9</LeftPenaltyAreaMaxX>
+<LeftPenaltyAreaMinX>-4.5</LeftPenaltyAreaMinX>
 
 <!--LeftPenaltyArea Y Dimension according to the width till the side end lines -->
 <LeftPenaltyAreaMaxY>1.1</LeftPenaltyAreaMaxY>
 <LeftPenaltyAreaMinY>-1.1</LeftPenaltyAreaMinY>
 
 <!--RightPenaltyArea X Dimension according to the length till the side end lines -->
-<RightPenaltyAreaMaxX>3.0</RightPenaltyAreaMaxX>
-<RightPenaltyAreaMinX>2.4</RightPenaltyAreaMinX>
+<RightPenaltyAreaMaxX>4.5</RightPenaltyAreaMaxX>
+<RightPenaltyAreaMinX>3.9</RightPenaltyAreaMinX>
 
 <!--RightPenaltyArea Y Dimension according to the width till the side end lines -->
 <RightPenaltyAreaMaxY>1.1</RightPenaltyAreaMaxY>
 <RightPenaltyAreaMinY>-1.1</RightPenaltyAreaMinY>
 
 <!--LeftGoalArea X Dimension according to the length till the side end lines -->
-<LeftGoalAreaMaxX>-3.0</LeftGoalAreaMaxX>
-<LeftGoalAreaMinX>-3.4</LeftGoalAreaMinX>
+<LeftGoalAreaMaxX>-4.5</LeftGoalAreaMaxX>
+<LeftGoalAreaMinX>-4.9</LeftGoalAreaMinX>
 
 <!--LeftGoalArea Y Dimension according to the width till the side end lines -->
-<LeftGoalAreaMaxY>0.7</LeftGoalAreaMaxY>
-<LeftGoalAreaMinY>-0.7</LeftGoalAreaMinY>
+<LeftGoalAreaMaxY>0.8</LeftGoalAreaMaxY>
+<LeftGoalAreaMinY>-0.8</LeftGoalAreaMinY>
 
 <!--RightGoalArea X Dimension according to the length till the side end lines -->
-<RightGoalAreaMaxX>3.4</RightGoalAreaMaxX>
-<RightGoalAreaMinX>3.0</RightGoalAreaMinX>
+<RightGoalAreaMaxX>4.9</RightGoalAreaMaxX>
+<RightGoalAreaMinX>4.5</RightGoalAreaMinX>
 
 <!--RightGoalArea Y Dimension according to the width till the side end lines -->
-<RightGoalAreaMaxY>0.7</RightGoalAreaMaxY>
-<RightGoalAreaMinY>-0.7</RightGoalAreaMinY>
+<RightGoalAreaMaxY>0.8</RightGoalAreaMaxY>
+<RightGoalAreaMinY>-0.8</RightGoalAreaMinY>
 
 <!-- -->
-<LeftPenaltyMarkX>-1.2</LeftPenaltyMarkX>
+<LeftPenaltyMarkX>-2.7</LeftPenaltyMarkX>
 <LeftPenaltyMarkY>0.0</LeftPenaltyMarkY>
 
 <!-- -->
 <LeftPenaltyMarkSize>0.1</LeftPenaltyMarkSize>
 
 <!-- -->
-<RightPenaltyMarkX>1.2</RightPenaltyMarkX>
+<RightPenaltyMarkX>2.7</RightPenaltyMarkX>
 <RightPenaltyMarkY>0.0</RightPenaltyMarkY>
 
 <!-- -->
