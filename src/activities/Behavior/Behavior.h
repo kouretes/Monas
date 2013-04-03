@@ -302,6 +302,8 @@ private:
 	float ballDist, ballBearing, ballX, ballY; // ball data coming from world info message.
 	
 	float globalBallX, globalBallY; // transformation from relative robot ball x,y to relative field ball x,y USED UNTIL WE HAVE GLOBAL BALL ESTIMATION!!!
+	
+	float SharedGlobalBallX, SharedGlobalBallY; // global ball from shared world state!
 
 	int side;
 

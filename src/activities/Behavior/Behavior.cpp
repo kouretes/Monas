@@ -288,7 +288,8 @@ int Behavior::Execute()
 				//and then start turning around to search for ball.
 				if (lastPenalised + seconds(14) > microsec_clock::universal_time())
 				{
-					pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+					//pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+					goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
 				}
 				else if ( (fabs(robotX) < 2.0) && (fabs(robotY) < 2.0) )
 					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
@@ -399,6 +400,11 @@ void Behavior::getBallData() {
 		// global ball relative to robot
 		globalBallX = (wim->myposition().x() + wim->balls (0).relativex() * cos(wim->myposition().phi()) - wim->balls (0).relativey() * sin(wim->myposition().phi()));
 		globalBallY = (wim->myposition().y() + wim->balls (0).relativex() * sin(wim->myposition().phi()) + wim->balls (0).relativey() * cos(wim->myposition().phi()));
+	}
+	
+	if(swim != 0 && swim.get() != 0 && swim->globalballs_size() > 0) {
+		SharedGlobalBallX = swim->globalballs(0).x();
+		SharedGlobalBallY = swim->globalballs(0).y();
 	}
 }
 
@@ -672,7 +678,7 @@ void Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 	double targetAngle = anglediff2(atan2(targetY - robotY, targetX - robotX), robotPhi);
 	double targetOrientation = anglediff2(targetPhi, robotPhi);
 
-	if ( (targetDistance > 0.25) || (fabs(targetOrientation) > M_PI_4) )
+	if ( (targetDistance > 0.25) )//|| (fabs(targetOrientation) > M_PI_4) )
 		pathPlanningRequestAbsolute(toCartesianX(targetDistance, targetAngle),
 		                            toCartesianY(targetDistance, targetAngle),
 		                            targetOrientation);
