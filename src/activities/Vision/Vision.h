@@ -111,8 +111,8 @@ private:
 		float skipdistance, seedistance, obstacledistance;
 
 		float balltolerance, ballsize;
-		float goalheight, goaldist, goaldiam, widthestimateotolerance;
-		float pitchoffset,rolloffset;
+		float goalheight, goaldist, goaldiam, widthestimateotolerance, horizontalpostratio;
+		float pitchoffset, rolloffset;
 
 	} config;
 

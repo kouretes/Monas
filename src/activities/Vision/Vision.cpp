@@ -85,6 +85,7 @@ void Vision::Reset(){
 	config.goalheight = atof(_xml.findValueForKey("vision.goalheight").c_str());
 	config.goaldist = atof(_xml.findValueForKey("vision.goaldist").c_str());
 	config.widthestimateotolerance = atof(_xml.findValueForKey("vision.widthestimateotolerance").c_str());
+	config.horizontalpostratio = atof(_xml.findValueForKey("vision.horizontalpostratio").c_str());
 	config.pitchoffset = atof(_xml.findValueForKey("vision.pitchoffset").c_str());
 	config.rolloffset = atof(_xml.findValueForKey("vision.rolloffset").c_str());
 	config.pixeltol = atof(_xml.findValueForKey("vision.pixeltol").c_str());
@@ -282,7 +283,6 @@ void Vision::fetchAndProcess()
 	//startt=SysCall::_GetCurrentTimeInUSec();
 	ballpixels.clear();
 	ygoalpost.clear();
-	bgoalpost.clear();
 	obstacles.clear();
 	tobeshown.clear();
 	gridScan(orange);
@@ -296,7 +296,6 @@ void Vision::fetchAndProcess()
 	//cout<<"locateball takes:"<<endt<<endl;
 	//cout<<b.r<<endl;
 	locateGoalPost(ygoalpost, yellow);
-	//locateGoalPost(bgoalpost, skyblue);
 #ifdef DEBUGVISION
 	cout << "Ballpixelsize:" << ballpixels.size() << endl;
 	//cout << b.x << " " << b.y << " " << b.cr << endl;

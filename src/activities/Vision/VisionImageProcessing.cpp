@@ -576,7 +576,7 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 	tr = simpleRotation(goal.tr);
 
 	//i*1/8 of a width below ?
-	for (float i = 1.0; i > 0; i = i - 1.0 / 8.0)
+	for (float i = 1.0; i > 0; i = i - config.horizontalpostratio)//8.0)
 	{
 		s = tr;
 		s.y = s.y - (tr.x - tl.x) * i;
@@ -590,7 +590,7 @@ bool Vision::calculateValidGoalPostTop( goalpostdata_t & goal, KSegmentator::col
 		}
 	}
 
-	for (float i = 1.0; i > 0; i = i - 1.0 / 8.0)
+	for (float i = 1.0; i > 0; i = i - config.horizontalpostratio)//8.0)
 	{
 		s = tl;
 		s.y = s.y - (tr.x - tl.x) * i;
