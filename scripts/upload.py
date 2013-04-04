@@ -205,7 +205,7 @@ for	ip in robotsIP:
 		print("\nYou are going to create network files for player " + player +" (the " + playersdef[int(player)-1] + ") for the field " + SSID)
 
 		#Copy network configuration file to /config just for backup
-		copy_cmd = "rsync -avz --delete " + partial_configuration_dir + "/FieldsWlanConnMan/" + SSID    + "/*  " + binaries_dir +"config/connman/"
+		copy_cmd = "rsync -avz --delete " + partial_configuration_dir + "/FieldsWlanConnMan/" + SSID    + ".profile  " + binaries_dir +"config/connman/"
 		os.system(copy_cmd)
 
 		print ("Creating parameters for player " + player )
