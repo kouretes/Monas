@@ -3,8 +3,6 @@
 #include "tools/toString.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 
-#define INIT_VALUE -111.0f
-#define INF 100000000.0f
 
 ACTIVITY_REGISTER(SharedWorldModel);
 using namespace std;
@@ -15,11 +13,55 @@ void SharedWorldModel::UserInit()
 	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
 	idx = -1;
 
+    ReadFieldConf();
+
+    testCount = 0;
+    State.zero();
+    I.zero();
+    P.zero();
+    Q.zero();
+    F.zero();
+    temp.zero();
+    R1.zero();
+    R2.zero();
+    H1.zero();
+    H2.zero();
+
 	for(int i = 0; i < numOfRobots; i++)
 	{
 		bd[i] = INIT_VALUE;
 	}
+	for(int i = 0; i < dim; i++)
+	{
+		P.get(i,i) = 10.0;
+		I.get(i,i) = 1.0;
+		if(i<numOfRobots*3){
+            if(i%3==0){
+                Q.get(i,i) = QRdevx;
+                Q.get(i+1,i+1) = QRdevy;
+                Q.get(i+2,i+2) = QRdevtheta;
 
+                State.get(i,0) = INIT_VALUE;
+                State.get(i+1,0) = INIT_VALUE;
+            }
+		}
+	}
+
+    //testing
+    //
+
+    //end testing
+
+    R1.get(0,0) = Q.read(0,0);
+    R1.get(1,1) = Q.read(1,1);
+    R1.get(2,2) = Q.read(2,2);
+
+    R2.get(0,0) = Q.read(0,0);
+    R2.get(1,1) = Q.read(1,1);
+    R2.get(2,2) = Q.read(2,2);
+
+    now = boost::posix_time::microsec_clock::universal_time();
+    last_filter_time = now;
 	Logger::Instance().WriteMsg("SharedWorldModel", "Initialized", Logger::Info);
 }
 
@@ -36,11 +78,28 @@ int SharedWorldModel::Execute()
 		bd[i] = INIT_VALUE;
 		robot_x[i] = INIT_VALUE;
 		robot_y[i] = INIT_VALUE;
+		ball_x[i] = INIT_VALUE;
+		ball_y[i] = INIT_VALUE;
+		ball_speed_x[i] = INIT_VALUE;
+		ball_speed_y[i] = INIT_VALUE;
 	}
     swi.Clear();
-    swi.add_teammateposition(); //add position for self
 
-	//Other robots' WorldInfo and ball distances
+    predict();
+    int count = 0;
+    gsm  = _blk.readState<GameStateMessage> ("worldstate");
+    wim  = _blk.readData<WorldInfo> ("worldstate");
+
+    if(wim != 0 && gsm!=0)
+    {
+        if(wim.get() != 0)
+        {
+            gather_info(count);
+            count++;
+        }
+    }
+
+	//Robots' WorldInfo
 	if(!h.get() || (h && h->entrylist_size() == 0))
 	{
 		//		Logger::Instance().WriteMsg("SharedWorldModel", "No info from other robots", Logger::Info);
@@ -49,91 +108,218 @@ int SharedWorldModel::Execute()
 	{
 		const ::google::protobuf::RepeatedPtrField< HostEntry >& rf = h->entrylist();
 		::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
-		count = 1;
 
 		for(fit = rf.begin(); fit != rf.end(); ++fit)
 		{
-		    gsm  = _blk.readState<GameStateMessage> ("worldstate", (*fit).hostid());
-			wim  = _blk.readData<WorldInfo> ("worldstate", (*fit).hostid());
+            gsm  = _blk.readState<GameStateMessage> ("worldstate", (*fit).hostid());
+            wim  = _blk.readData<WorldInfo> ("worldstate", (*fit).hostid());
 
-			if(wim != 0)
-				if(wim.get() != 0)
-				{
-					//                   Logger::Instance().WriteMsg("SharedWorldModel", "Host Name: " + _toString((*fit).hostname()) + " \tRobot x: " + _toString(robot_x[count]) + " Robot y: " + _toString(robot_y[count]), Logger::Info);
-					robot_x[count] = wim->myposition().x();
-                    robot_y[count] = wim->myposition().y();
-                    robot_phi[count] = wim->myposition().phi();
+            if(wim != 0 && gsm!=0)
+            {
+                if(wim.get() != 0)
+                {
+                    //                   Logger::Instance().WriteMsg("SharedWorldModel", "Host Name: " + _toString((*fit).hostname()) + " \tRobot x: " + _toString(robot_x[id]) + " Robot y: " + _toString(robot_y[id]), Logger::Info);
+                    gather_info(count);
+                    count++;
+                }
 
-                    RobotPose rPose;
-                    rPose.set_x(robot_x[count]);
-                    rPose.set_y(robot_y[count]);
-                    rPose.set_phi(robot_phi[count]);
-
-                    TeammatePose tPose;
-                    tPose.mutable_pose()->CopyFrom(rPose);
-
-                    if(gsm!=0)
-                        tPose.set_robotid(gsm->player_number());
-
-                    swi.add_teammateposition();
-                    swi.mutable_teammateposition(count)->CopyFrom(tPose);
-
-                    if (wim->balls_size() > 0)
-					{
-						bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-						by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-						bd[count] = sqrt(pow(bx, 2) + pow(by, 2));
-						count++;
-					}
-				}
+		    }
 		}
 
 		//		Logger::Instance().WriteMsg("SharedWorldModel", "--------------------", Logger::Info);
+
+        //Find the robot which is closer to the ball and publish the corresponding message
+        idx = findClosestRobot();
+        //           Logger::Instance().WriteMsg("SharedWorldModel", "Idx " + _toString(idx), Logger::Info);
+        swi.mutable_playerclosesttoball()->set_x(robot_x[idx]);
+        swi.mutable_playerclosesttoball()->set_y(robot_y[idx]);
+
+        now = boost::posix_time::microsec_clock::universal_time();
+        duration = now - last_ball_update_time;
+        dtBall = duration.total_microseconds() / 1000000.0f;
+
+        if(State(dim-2)>fieldMinX-ballOffset && State(dim-2)<fieldMaxX+ballOffset && State(dim-1)>fieldMinY-ballOffset && State(dim-1)<fieldMaxY+ballOffset && dtBall<3.0f){
+            GlobalBall gb;
+            gb.set_x(State(dim-2));
+            gb.set_y(State(dim-1));
+
+            swi.add_globalballs();
+            swi.mutable_globalballs(0)->CopyFrom(gb);
+        }
+        _blk.publishData(swi, "worldstate");
 	}
 
-	//Local WorldInfo and ball distance
-	wim  = _blk.readData<WorldInfo> ("worldstate");
+}
 
-	if(wim != 0){
-		if(wim.get() != 0)
-		{
-			robot_x[0] = wim->myposition().x();
-			robot_y[0] = wim->myposition().y();
-			robot_phi[0] = wim->myposition().phi();
+void SharedWorldModel::gather_info(int count){
 
-			RobotPose rPose;
-            rPose.set_x(robot_x[0]);
-            rPose.set_y(robot_y[0]);
-            rPose.set_phi(robot_phi[0]);
+    int i,j=0;
 
-            TeammatePose tPose;
-            tPose.mutable_pose()->CopyFrom(rPose);
-            tPose.set_robotid(444); //test
+    id = gsm->player_number()-1;
+    robot_x[id] = wim->myposition().x();
+    robot_y[id] = wim->myposition().y();
+    robot_phi[id] = wim->myposition().phi();
+    RobotPose tempPose;
 
-            swi.mutable_teammateposition(0)->CopyFrom(tPose);
+    tempPose = wim->myposition();
 
-			//            Logger::Instance().WriteMsg("SharedWorldModel", "Local World info: Robot x: " + _toString(robot_x[0]) + " Robot y: " + _toString(robot_y[0]), Logger::Info);
-			if (wim->balls_size() > 0)
-			{
-				bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-				by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
-				bd[0] = sqrt(pow(bx, 2) + pow(by, 2));
-				//                Logger::Instance().WriteMsg("SharedWorldModel", "My bd " + _toString(bd[0]) + " bx " + _toString(bx) + " by " + _toString(by), Logger::Info);
-			}
+    //Read P from local filter
+    if(tempPose.var_size()>0){
+        for(i=0;i<3;i++){
+            for(j=0;j<3;j++){
+                R2(i,j) = tempPose.var(i*3+j);
+            }
+        }
+    }
 
-			//Find the robot which is closer to the ball and publish the corresponding message
-			idx = findClosestRobot();
-			//           Logger::Instance().WriteMsg("SharedWorldModel", "Idx " + _toString(idx), Logger::Info);
-			swi.mutable_playerclosesttoball()->set_x(robot_x[idx]);
-			swi.mutable_playerclosesttoball()->set_y(robot_y[idx]);
-			_blk.publishData(swi, "worldstate");
-		}
+
+    if (wim->balls_size() > 0)
+    {
+        ball_x[id] = wim->balls(0).relativex();// + wim->balls(0).relativexspeed() * 0.200;
+        ball_y[id] = wim->balls(0).relativey();// + wim->balls(0).relativeyspeed() * 0.200;
+        ball_speed_x[id] = wim->balls(0).relativexspeed();
+        ball_speed_y[id] = wim->balls(0).relativeyspeed();
+        bd[id] = sqrt(pow(ball_x[id], 2) + pow(ball_y[id], 2));
+        update(id);
+    }
+    else
+    {
+        updateNoObs(id);
+    }
+
+    RobotPose rPose;
+    rPose.set_x(State.read(id*3,0));
+    rPose.set_y(State.read(id*3+1,0));
+    rPose.set_phi(State.read(id*3+2,0));
+
+    TeammatePose tPose;
+    tPose.mutable_pose()->CopyFrom(rPose);
+    tPose.set_robotid(gsm->player_number());
+
+    swi.add_teammateposition();
+    swi.mutable_teammateposition(count)->CopyFrom(tPose);
+
+}
+
+void SharedWorldModel::predict()
+{
+    int i,j;
+    now = boost::posix_time::microsec_clock::universal_time();
+    duration = now - last_filter_time;
+    last_filter_time = now;
+    dt = duration.total_microseconds() / 1000000.0f;
+    dtsqrd = dt*dt;
+
+    for(int i = 0; i < numOfRobots*3; i++)
+	{
+        Q.get(i,i) = QRdevx*dtsqrd;
+        Q.get(i+1,i+1) = QRdevy*dtsqrd;
+        Q.get(i+2,i+2) = QRdevtheta*dtsqrd;
 	}
+
+    Q.get(dim-2,dim-2) = vara*dtsqrd*dtsqrd/4.0;
+    Q.get(dim-1,dim-1) = vara*dtsqrd*dtsqrd/4.0;
+
+    R2.get(3,3) = vara*dtsqrd*dtsqrd/4.0;
+    R2.get(4,4) = vara*dtsqrd*dtsqrd/4.0;
+
+    R2.prettyPrint();
+
+//    F.identity();
+//    P = F*P*(F.transp());
+    P += Q;
+
+    std::cout << testCount << "+dt = " << dt << "\n";
+    testCount++;
+    State.prettyPrint();
+}
+
+void SharedWorldModel::update(int rid)
+{
+    int i,j;
+    last_ball_update_time = boost::posix_time::microsec_clock::universal_time();
+    //convert ball to global
+//    float bx = robot_x[rid] + ball_x[rid] * cos(robot_phi[rid]) - ball_y[rid] * sin(robot_phi[rid]);
+//    float by = robot_y[rid] + ball_x[rid] * sin(robot_phi[rid]) + ball_y[rid] * cos(robot_phi[rid]);
+    float phi=State(rid*3+2);
+    float bx=State(dim-2);
+    float by=State(dim-1);
+    float rx=State(rid*3);
+    float ry=State(rid*3+1);
+
+    //std::cout << "gbx=" << globX << "\tgby=" << globY << std::endl;
+
+    y2.get(0,0) = robot_x[rid] ;//- State.read(rid*3,0);
+    y2.get(1,0) = robot_y[rid] ;//- State.read(rid*3+1,0);
+    y2.get(2,0) = robot_phi[rid] ;//- State.read(rid*3+2,0);
+    y2.get(3,0) = ball_x[rid] ;//- State.read(dim-4,0);
+    y2.get(4,0) = ball_y[rid];// - State.read(dim-2,0);
+
+std::cout << "ybx=" << y2.get(3,0) << "\tyby=" << y2.get(5,0) << " phi:"<<phi<<std::endl;
+
+    H2.zero();
+    H2.get(0,rid*3) = 1;
+    H2.get(1,rid*3+1) = 1;
+    H2.get(2,rid*3+2) = 1;
+
+    H2.get(3,rid*3) = -cos(-phi);
+    H2.get(3,rid*3+1) = sin(-phi);
+//    H2.get(3,rid*3+2) = (bx-rx)*sin(-phi)+(by-ry)*cos(-phi)/100;
+    H2.get(3,dim-2) = cos(-phi);
+    H2.get(3,dim-1) = -sin(-phi);
+
+    H2.get(4,rid*3) = -sin(-phi);
+    H2.get(4,rid*3+1) = -cos(-phi);
+//    H2.get(4,rid*3+2) = -(bx-rx)*cos(-phi)+(by-ry)*sin(-phi)/100;
+    H2.get(4,dim-2) = sin(-phi);
+    H2.get(4,dim-1) = cos(-phi);
+
+//    H2.prettyPrint();
+
+    y2-=H2*State;
+
+    S2.zero();
+    S2 = H2*P*(H2.transp());
+    S2 += R2;
+    S2 += R2;
+//    S2.prettyPrint();
+//    y2.prettyPrint();
+    S2.fast_invert();
+    K2 = P*(H2.transp())*S2;
+//    K2.prettyPrint();
+    State += K2*y2;
+    P -=K2*H2*P;
+//    P.prettyPrint();
+
+
+}
+
+void SharedWorldModel::updateNoObs(int rid)
+{
+    int i,j;
+
+//    std::cout << "\n" << robot_x[rid] << robot_y[rid] << robot_phi[rid] << "\n";
+    y1.get(0,0) = robot_x[rid] - State.read(rid*3,0);
+    y1.get(1,0) = robot_y[rid] - State.read(rid*3+1,0);
+    y1.get(2,0) = robot_phi[rid] - State.read(rid*3+2,0);
+
+    H1.zero();
+    H1.get(0,rid*3) = 1;
+    H1.get(1,rid*3+1) = 1;
+    H1.get(2,rid*3+2) = 1;
+
+    S1 = H1*P*(H1.transp());
+    S1 += R1;
+    K1 = P*(H1.transp())*invert_square_matrix(S1);
+    State += K1*y1;
+    temp = I;
+    temp -= K1*H1;
+    P = temp*P;
 }
 
 int SharedWorldModel::findClosestRobot()
 {
-	float min = INF;
+	float min = INFINITY;
 	int index = 0;
 
 	for(int i = 0; i < numOfRobots; i++)
@@ -146,4 +332,12 @@ int SharedWorldModel::findClosestRobot()
 	}
 
 	return index;
+}
+
+void SharedWorldModel::ReadFieldConf()
+{
+    fieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+    fieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
+    fieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+    fieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
 }

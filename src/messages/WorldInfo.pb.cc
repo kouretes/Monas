@@ -294,17 +294,17 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     ":\007-100000\022\037\n\016absoluteXspeed\030\007 \002(\002:\007-1000"
     "00\022\037\n\016absoluteYspeed\030\010 \002(\002:\007-100000\"4\n\nG"
     "lobalBall\022\022\n\001x\030\001 \002(\002:\007-100000\022\022\n\001y\030\002 \002(\002"
-    ":\007-100000\"\263\001\n\030LocalizationResetMessage\022\014"
+    ":\007-100000\"\305\001\n\030LocalizationResetMessage\022\014"
     "\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 "
     "\002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:"
-    "\0010\"C\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003S"
-    "ET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\"\232\001\n\020Loca"
-    "lizationData\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022"
-    "\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022!\n\rRobotP"
-    "osition\030\003 \002(\0132\n.RobotPose\022)\n\014Observation"
-    "s\030\004 \002(\0132\023.ObservationMessage\"A\n\006header\022\033"
-    "\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgNa"
-    "me\030\003 \002(\014:\005Undef", 1135);
+    "\0010\"U\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003S"
+    "ET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\022\020\n\014PENAL"
+    "TY_MODE\020\005\"\232\001\n\020LocalizationData\022\031\n\005World\030"
+    "\001 \002(\0132\n.WorldInfo\022\035\n\tParticles\030\002 \003(\0132\n.R"
+    "obotPose\022!\n\rRobotPosition\030\003 \002(\0132\n.RobotP"
+    "ose\022)\n\014Observations\030\004 \002(\0132\023.ObservationM"
+    "essage\"A\n\006header\022\033\n\017NextMsgByteSize\030\001 \002("
+    "\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014:\005Undef", 1153);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -2247,6 +2247,7 @@ bool LocalizationResetMessage_RESET_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -2259,6 +2260,7 @@ const LocalizationResetMessage_RESET LocalizationResetMessage::READY;
 const LocalizationResetMessage_RESET LocalizationResetMessage::SET;
 const LocalizationResetMessage_RESET LocalizationResetMessage::PENALISED;
 const LocalizationResetMessage_RESET LocalizationResetMessage::MANUAL;
+const LocalizationResetMessage_RESET LocalizationResetMessage::PENALTY_MODE;
 const LocalizationResetMessage_RESET LocalizationResetMessage::RESET_MIN;
 const LocalizationResetMessage_RESET LocalizationResetMessage::RESET_MAX;
 const int LocalizationResetMessage::RESET_ARRAYSIZE;
