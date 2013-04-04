@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<!--NAO 1.12 walk parameters-->
+<MaxStepX>0.050</MaxStepX>
+<!--the maximum translation along the X axis for one step-->
+<MaxStepY>0.140</MaxStepY>
+<!--the maximum translation along the Y axis for one step-->
+<MaxStepTheta>0.4</MaxStepTheta>
+<!--the maximum rotation around the Z axis for one step-->
+<MaxStepFrequency>1.0</MaxStepFrequency>
+<!--the maximum step frequency (normalized between 0.0 and 1.0)-->
+<StepHeight>0.016</StepHeight>
+<!--the fixed height of the step-->
+<TorsoWx>0.000</TorsoWx>
+<!--the translation of the torso along the X axis-->
+<TorsoWy>0.000</TorsoWy>
+<!--the translation of the torso along the Y axis-->
+<!--Custom-->
+<EnableFallManager>0.0</EnableFallManager>
