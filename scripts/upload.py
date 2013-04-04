@@ -210,11 +210,12 @@ for	ip in robotsIP:
 
 		print ("Creating parameters for player " + player )
 		copy_cmd = "cp " + partial_configuration_dir + "/teamConfig_part.xml " +  binaries_dir +"config/teamConfig.xml"
+		print(copy_cmd)
 		os.system(copy_cmd)
 		playerconf = open(binaries_dir +"config/teamConfig.xml", 'a')
-		playerconf.write("<!-- Are we playing game or no -->")
-		playerconf.write("<game_mode>" + "1" + "</game_mode>")
-		playerconf.write("<!-- default player number -->")
+		playerconf.write("<!-- Are we playing game or no -->\n")
+		playerconf.write("<game_mode>" + "1" + "</game_mode>\n")
+		playerconf.write("<!-- default player number -->\n")
 		playerconf.write("<player>"+ player+"</player>")
 		playerconf.close()
 

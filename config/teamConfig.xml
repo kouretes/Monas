@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <!-- default team number -->
-<team_number>4</team_number>
+<team_number>2</team_number>
 <!-- default team color number -->
 <default_team_color>blue</default_team_color>
 <!-- Are we on penalty mode or not (0 or 1)-->
 <penalty_mode>0</penalty_mode>
 <!-- default team max players -->
-<team_max_players>5</team_max_players>
+<team_max_players>4</team_max_players>
 <!-- Are we playing game or no -->
 <game_mode>0</game_mode>
 <!-- default player number -->
