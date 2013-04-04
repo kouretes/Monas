@@ -9,3 +9,5 @@
 <game_mode>0</game_mode>
 <!-- default player number -->
 <player>2</player>
+<!-- Are we on penalty mode or not (0 or 1)-->
+<penalty_mode>0</penalty_mode>

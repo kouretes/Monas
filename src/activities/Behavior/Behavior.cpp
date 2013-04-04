@@ -78,6 +78,7 @@ void Behavior::Reset(){
 	config.teamNumber = atoi(_xml.findValueForKey("teamConfig.team_number").c_str());
 	config.playerNumber = atoi(_xml.findValueForKey("teamConfig.player").c_str());
 	config.maxPlayers = atoi(_xml.findValueForKey("teamConfig.team_max_players").c_str());
+	config.isPenaltyMode = atoi(_xml.findValueForKey("teamConfig.penalty_mode").c_str()) == 1 ? true : false;
 
 	std::string color;
 	color = _xml.findValueForKey("teamConfig.default_team_color").c_str();
@@ -179,6 +180,7 @@ int Behavior::Execute()
 	getBallData();
 	getGameState();
 	getPosition();
+	getMotionData();
 
     if (gameState == PLAYER_INITIAL){
 		if(prevGameState != PLAYER_INITIAL){
@@ -203,6 +205,11 @@ int Behavior::Execute()
 				direction = 1;
 				locReset.set_type(LocalizationResetMessage::PENALISED);
 				locReset.set_kickoff(kickOff);
+				_blk.publishSignal(locReset, "worldstate");
+			}
+
+			if(penaltyMode) {
+				locReset.set_type(LocalizationResetMessage::PENALTY_MODE);
 				_blk.publishSignal(locReset, "worldstate");
 			}
 		}
@@ -235,17 +242,20 @@ int Behavior::Execute()
 			// Publish message to head controller to run check for ball
 			hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
 			_blk.publishState(hcontrol, "behavior");
+			
 			if (ballFound == 1)
-			{
+			{						
 				side = (ballBearing > 0) ? 1 : -1;
 				//posx = 0.1, posy = 0.03; // Desired ball position for kick
 				//double epsx = 0.025, epsy = 0.025; // Desired precision
 
 				if ( (fabs( ballX - config.posX ) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) )
 				{
-					readyToKick = true;
+					readyToKick = true;					
 					kick();
 					direction = (side == +1) ? -1 : +1;
+					//hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
+					//_blk.publishState(hcontrol, "behavior");
 				}
 
 				if (!readyToKick)
@@ -260,16 +270,26 @@ int Behavior::Execute()
 //						role = CENTER_FOR;
 //					}
 					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
-					approachBallRoleDependent();
+					if(penaltyMode) 
+						pathPlanningRequestAbsolute(ballX - (config.posX + 0.05), ballY - side * config.posY, ballBearing);	// 5cm offset from the ball!						
+					else
+						approachBallRoleDependent();
 				}
+				
 			}
 			if (ballFound == 0)
 			{
+				if(currentRobotAction == MotionStateMessage::WALKING) {
+					hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
+					_blk.publishState(hcontrol, "behavior");
+				}
+
 				//walk straight for some seconds after the scan has ended (lastpenalised+seconds(12))
 				//and then start turning around to search for ball.
 				if (lastPenalised + seconds(14) > microsec_clock::universal_time())
 				{
-					pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+					//pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+					goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
 				}
 				else if ( (fabs(robotX) < 2.0) && (fabs(robotY) < 2.0) )
 					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
@@ -350,7 +370,11 @@ void Behavior::getGameState() {
 		gameState = gsm->player_state();
 		config.teamColor = gsm->team_color();
 		config.playerNumber = gsm->player_number();
-
+		
+		if( gsm->penalty() || config.isPenaltyMode )
+			penaltyMode = true;
+		else
+			penaltyMode = false;
 	}
 }
 
@@ -376,6 +400,18 @@ void Behavior::getBallData() {
 		// global ball relative to robot
 		globalBallX = (wim->myposition().x() + wim->balls (0).relativex() * cos(wim->myposition().phi()) - wim->balls (0).relativey() * sin(wim->myposition().phi()));
 		globalBallY = (wim->myposition().y() + wim->balls (0).relativex() * sin(wim->myposition().phi()) + wim->balls (0).relativey() * cos(wim->myposition().phi()));
+	}
+	
+	if(swim != 0 && swim.get() != 0 && swim->globalballs_size() > 0) {
+		SharedGlobalBallX = swim->globalballs(0).x();
+		SharedGlobalBallY = swim->globalballs(0).y();
+	}
+}
+
+void Behavior::getMotionData() {
+	
+	if(sm != 0) {
+		currentRobotAction = sm->type();
 	}
 }
 
@@ -587,8 +623,7 @@ void Behavior::approachBall() {
         velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
     }
     else{
-        pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
-
+		pathPlanningRequestAbsolute(ballX - (config.posX + 0.05), ballY - side * config.posY, ballBearing); // 5cm offset from the ball!
     }
 }
 
@@ -643,7 +678,7 @@ void Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 	double targetAngle = anglediff2(atan2(targetY - robotY, targetX - robotX), robotPhi);
 	double targetOrientation = anglediff2(targetPhi, robotPhi);
 
-	if ( (targetDistance > 0.25) || (fabs(targetOrientation) > M_PI_4) )
+	if ( (targetDistance > 0.25) )//|| (fabs(targetOrientation) > M_PI_4) )
 		pathPlanningRequestAbsolute(toCartesianX(targetDistance, targetAngle),
 		                            toCartesianY(targetDistance, targetAngle),
 		                            targetOrientation);

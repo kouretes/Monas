@@ -4,29 +4,35 @@
 	<!-- GoalKeeper-->
 	<player>
 		<number>1</number>
-		<x>-2.7</x>
+		<x>-4.2</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Center-->
 	<player>
 		<number>2</number>
-		<x>-1.5</x>
-		<y>1.4</y>
+		<x>-3.7</x>
+		<y>2.7</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Defender-->
 	<player>
-		<number>3</number>
-		<x>-1.5</x>
-		<y>-1.4</y>
+		<number>4</number>
+		<x>-3.7</x>
+		<y>0.4</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Attacker-->
 	<player>
-		<number>4</number>
-		<x>-1.5</x>
-		<y>0.2</y>
+		<number>3</number>
+		<x>-3.7</x>
+		<y>-0.4</y>
+		<phi>0.0</phi>
+	</player>
+    <player>
+		<number>5</number>
+		<x>-3.7</x>
+		<y>-2.7</y>
 		<phi>0.0</phi>
 	</player>
 </noKickOff>
@@ -35,28 +41,34 @@
 	<!-- GoalKeeper-->
 	<player>
 		<number>1</number>
-		<x>-2.7</x>
+		<x>-4.2</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Center-->
 	<player>
 		<number>2</number>
-		<x>-0.7</x>
-		<y>0.7</y>
+		<x>-3.7</x>
+		<y>1.1</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Defender-->
 	<player>
 		<number>3</number>
-		<x>-0.7</x>
-		<y>0.7</y>
+		<x>-3.7</x>
+		<y>-1.1</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Attacker-->
 	<player>
 		<number>4</number>
-		<x>-0.4</x>
+		<x>-2.7</x>
+		<y>0.7</y>
+		<phi>0.0</phi>
+	</player>
+    <player>
+   		<number>5</number>
+		<x>-0.8</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
 	</player>
@@ -66,29 +78,29 @@
 	<!-- GoalKeeper-->
 	<player>
 		<number>1</number>
-		<x>-2.4</x>
-		<y>-2.0</y>
+		<x>-3.4</x>
+		<y>-3.0</y>
 		<phi>90</phi>
 	</player>
 	<!-- Center-->
 	<player>
 		<number>2</number>
-		<x>-2.4</x>
-		<y>2.0</y>
+		<x>-3.4</x>
+		<y>3.0</y>
 		<phi>270</phi>
 	</player>
 	<!-- Defender-->
 	<player>
 		<number>3</number>
-		<x>-1.2</x>
-		<y>-2.0</y>
+		<x>-2.2</x>
+		<y>-3.0</y>
 		<phi>90</phi>
 	</player>
 	<!-- Attacker-->
 	<player>
 		<number>4</number>
-		<x>-1.2</x>
-		<y>2.0</y>
+		<x>2.2</x>
+		<y>3.0</y>
 		<phi>270</phi>
 	</player>
 </Ready>

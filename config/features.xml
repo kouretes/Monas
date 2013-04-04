@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ftr>
 	<ID>YellowGoal</ID>
-	<x>3.0</x>
+	<x>4.5</x>
 	<y>0.0</y>
 	<weight>0</weight>
 </ftr>
 <ftr>
 	<ID>YellowLeft</ID>
-	<x>3.0</x>
-	<y>0.7</y>
+	<x>4.5</x>
+	<y>0.8</y>
 	<weight>0</weight>
 </ftr>
 <ftr>
 	<ID>YellowRight</ID>
-	<x>3.0</x>
-	<y>-0.7</y>
+	<x>4.5</x>
+	<y>-0.8</y>
 	<weight>0</weight>
 </ftr>
