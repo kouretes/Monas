@@ -86,6 +86,7 @@ void Vision::Reset(){
 	config.goaldist = atof(_xml.findValueForKey("vision.goaldist").c_str());
 	config.widthestimateotolerance = atof(_xml.findValueForKey("vision.widthestimateotolerance").c_str());
 	config.pitchoffset = atof(_xml.findValueForKey("vision.pitchoffset").c_str());
+	config.rolloffset = atof(_xml.findValueForKey("vision.rolloffset").c_str());
 	config.pixeltol = atof(_xml.findValueForKey("vision.pixeltol").c_str());
 	Logger::Instance().WriteMsg("Vision", "Reset done", Logger::Warning);
 }
@@ -187,6 +188,7 @@ void Vision::fetchAndProcess()
 	//p.Vpitch = asvmo->jointdata(KDeviceLists::HEAD+KDeviceLists::PITCH).sensorvaluediff();
 	p.angX = asvmo->computeddata(KDeviceLists::ANGLE + KDeviceLists::AXIS_X).sensorvalue();
 	p.angX += (asvmn->jointdata(KDeviceLists::HEAD + KDeviceLists::AXIS_X).sensorvalue() - p.angX) * imcomp;
+	p.angX += config.rolloffset;
 	p.angY = asvmo->computeddata(KDeviceLists::ANGLE + KDeviceLists::AXIS_Y).sensorvalue();
 	p.angY += (asvmn->jointdata(KDeviceLists::HEAD + KDeviceLists::AXIS_Y).sensorvalue() - p.angY) * imcomp;
 	p.angY += config.pitchoffset;

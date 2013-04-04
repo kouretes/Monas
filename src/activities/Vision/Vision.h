@@ -112,7 +112,7 @@ private:
 
 		float balltolerance, ballsize;
 		float goalheight, goaldist, goaldiam, widthestimateotolerance;
-		float pitchoffset;
+		float pitchoffset,rolloffset;
 
 	} config;
 
