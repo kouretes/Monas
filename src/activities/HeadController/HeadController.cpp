@@ -21,7 +21,7 @@ void HeadController::UserInit()
 	hmot.add_parameter(0.0f);
 	hmot.add_parameter(-0.66322512);
 	hmot.add_parameter(1.0f); //Head speed
-	
+
 	targetSpeed = headSpeed[NORMAL];
 	seeballtrust = 0;
 	seeballmessage = 0;
@@ -30,7 +30,7 @@ void HeadController::UserInit()
 	useExternalSpeed = false;
 
 	state = BALL1;
-	
+
 	bd = 0.0;
 	bb = 0.0;
 	bx = 0.0;
@@ -39,7 +39,7 @@ void HeadController::UserInit()
 	robot_y = 0.0;
 	robot_phi = 0.0;
 	robot_confidence = 1.0;
-	
+
 	Reset();
 
 	lastball = microsec_clock::universal_time();
@@ -74,7 +74,7 @@ int HeadController::Execute()
 			useExternalSpeed = true;
 			externalSpeed = control->task().speed();
 		}else{
-			useExternalSpeed = false;		
+			useExternalSpeed = false;
 		}
 	}
 
@@ -257,7 +257,7 @@ void HeadController::HeadScanStepHigh(float yaw_limit)
 {
 	static bool middle=true;
 	static int sign=1;
-	targetSpeed = headSpeed[FAST];
+	targetSpeed = headSpeed[SLOW];
 	if(startscan==true)
 	{
 		startscan=false;
@@ -307,8 +307,8 @@ void HeadController::HeadScanStepSmart()
 	red2p = -0.60;
 	static enum {BLUE, RED, GREEN} state = BLUE;
 	static enum {START, MIDDLE, END} phase = START;
-	
-	targetSpeed = headSpeed[FAST];
+
+	targetSpeed = headSpeed[SLOW];
 
 	if (startscan)
 	{
@@ -422,7 +422,7 @@ void HeadController::HeadTrackIntelligent()
     	            targetYaw = lookAtPointRelativeYaw(bx, by);
     	            targetPitch = lookAtPointRelativePitch(bx, by);
 				}
-				targetSpeed = headSpeed[FAST];
+				targetSpeed = headSpeed[SLOW];
 				break;
 
 			case OPPG:
@@ -444,7 +444,7 @@ void HeadController::HeadTrackIntelligent()
     	            targetYaw = lookAtPointRelativeYaw(bx, by);
     	            targetPitch = lookAtPointRelativePitch(bx, by);
 				}
-				targetSpeed = headSpeed[FAST];
+				targetSpeed = headSpeed[SLOW];
 
 				break;
 

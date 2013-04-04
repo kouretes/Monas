@@ -16,7 +16,7 @@
 	<activity Enable="1">Behavior</activity>
 </agent>
 
-<agent IsRealTime="1" Priority="1" ThreadFrequency="2" StatsCycle="50" Enable="0">
+<agent IsRealTime="1" Priority="1" ThreadFrequency="5" StatsCycle="50" Enable="1">
 	<name>SWM</name>
 	<activity Enable="1">SharedWorldModel</activity>
 </agent>

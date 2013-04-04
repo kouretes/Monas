@@ -286,25 +286,25 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "obotPose\022\017\n\007robotId\030\002 \002(\r\"s\n\tRobotPose\022\022"
     "\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030\002 \002(\002:\007-100000\022\024"
     "\n\003phi\030\003 \002(\002:\007-100000\022\033\n\nconfidence\030\004 \002(\002"
-    ":\007-100000\022\013\n\003var\030\005 \003(\002\"\372\001\n\004Ball\022\032\n\trelat"
+    ":\007-100000\022\013\n\003var\030\005 \003(\002\"\342\001\n\004Ball\022\032\n\trelat"
     "iveX\030\001 \002(\002:\007-100000\022\032\n\trelativeY\030\002 \002(\002:\007"
-    "-100000\022\037\n\016relativeXspeed\030\003 \002(\002:\007-100000"
-    "\022\037\n\016relativeYspeed\030\004 \002(\002:\007-100000\022\032\n\tabs"
-    "oluteX\030\005 \002(\002:\007-100000\022\032\n\tabsoluteY\030\006 \002(\002"
-    ":\007-100000\022\037\n\016absoluteXspeed\030\007 \002(\002:\007-1000"
-    "00\022\037\n\016absoluteYspeed\030\010 \002(\002:\007-100000\"4\n\nG"
-    "lobalBall\022\022\n\001x\030\001 \002(\002:\007-100000\022\022\n\001y\030\002 \002(\002"
-    ":\007-100000\"\305\001\n\030LocalizationResetMessage\022\014"
-    "\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 "
-    "\002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:"
-    "\0010\"U\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003S"
-    "ET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\022\020\n\014PENAL"
-    "TY_MODE\020\005\"\232\001\n\020LocalizationData\022\031\n\005World\030"
-    "\001 \002(\0132\n.WorldInfo\022\035\n\tParticles\030\002 \003(\0132\n.R"
-    "obotPose\022!\n\rRobotPosition\030\003 \002(\0132\n.RobotP"
-    "ose\022)\n\014Observations\030\004 \002(\0132\023.ObservationM"
-    "essage\"A\n\006header\022\033\n\017NextMsgByteSize\030\001 \002("
-    "\021:\002-1\022\032\n\013NextMsgName\030\003 \002(\014:\005Undef", 1153);
+    "-100000\022\031\n\016relativeXspeed\030\003 \002(\002:\0010\022\031\n\016re"
+    "lativeYspeed\030\004 \002(\002:\0010\022\032\n\tabsoluteX\030\005 \002(\002"
+    ":\007-100000\022\032\n\tabsoluteY\030\006 \002(\002:\007-100000\022\031\n"
+    "\016absoluteXspeed\030\007 \002(\002:\0010\022\031\n\016absoluteYspe"
+    "ed\030\010 \002(\002:\0010\"4\n\nGlobalBall\022\022\n\001x\030\001 \002(\002:\007-1"
+    "00000\022\022\n\001y\030\002 \002(\002:\007-100000\"\305\001\n\030Localizati"
+    "onResetMessage\022\014\n\004type\030\001 \002(\005\022\017\n\007kickOff\030"
+    "\002 \002(\010\022\017\n\004xPos\030\003 \002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022"
+    "\021\n\006phiPos\030\005 \002(\002:\0010\"U\n\005RESET\022\013\n\007UNIFORM\020\000"
+    "\022\t\n\005READY\020\001\022\007\n\003SET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006M"
+    "ANUAL\020\004\022\020\n\014PENALTY_MODE\020\005\"\232\001\n\020Localizati"
+    "onData\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tPar"
+    "ticles\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPositio"
+    "n\030\003 \002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002("
+    "\0132\023.ObservationMessage\"A\n\006header\022\033\n\017Next"
+    "MsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMsgName\030\003 \002"
+    "(\014:\005Undef", 1129);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -1549,12 +1549,12 @@ void Ball::SharedCtor() {
   _cached_size_ = 0;
   relativex_ = -100000;
   relativey_ = -100000;
-  relativexspeed_ = -100000;
-  relativeyspeed_ = -100000;
+  relativexspeed_ = 0;
+  relativeyspeed_ = 0;
   absolutex_ = -100000;
   absolutey_ = -100000;
-  absolutexspeed_ = -100000;
-  absoluteyspeed_ = -100000;
+  absolutexspeed_ = 0;
+  absoluteyspeed_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1591,12 +1591,12 @@ void Ball::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     relativex_ = -100000;
     relativey_ = -100000;
-    relativexspeed_ = -100000;
-    relativeyspeed_ = -100000;
+    relativexspeed_ = 0;
+    relativeyspeed_ = 0;
     absolutex_ = -100000;
     absolutey_ = -100000;
-    absolutexspeed_ = -100000;
-    absoluteyspeed_ = -100000;
+    absolutexspeed_ = 0;
+    absoluteyspeed_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1639,7 +1639,7 @@ bool Ball::MergePartialFromCodedStream(
         break;
       }
       
-      // required float relativeXspeed = 3 [default = -100000];
+      // required float relativeXspeed = 3 [default = 0];
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -1655,7 +1655,7 @@ bool Ball::MergePartialFromCodedStream(
         break;
       }
       
-      // required float relativeYspeed = 4 [default = -100000];
+      // required float relativeYspeed = 4 [default = 0];
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -1703,7 +1703,7 @@ bool Ball::MergePartialFromCodedStream(
         break;
       }
       
-      // required float absoluteXspeed = 7 [default = -100000];
+      // required float absoluteXspeed = 7 [default = 0];
       case 7: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -1719,7 +1719,7 @@ bool Ball::MergePartialFromCodedStream(
         break;
       }
       
-      // required float absoluteYspeed = 8 [default = -100000];
+      // required float absoluteYspeed = 8 [default = 0];
       case 8: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
@@ -1763,12 +1763,12 @@ void Ball::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->relativey(), output);
   }
   
-  // required float relativeXspeed = 3 [default = -100000];
+  // required float relativeXspeed = 3 [default = 0];
   if (has_relativexspeed()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->relativexspeed(), output);
   }
   
-  // required float relativeYspeed = 4 [default = -100000];
+  // required float relativeYspeed = 4 [default = 0];
   if (has_relativeyspeed()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->relativeyspeed(), output);
   }
@@ -1783,12 +1783,12 @@ void Ball::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->absolutey(), output);
   }
   
-  // required float absoluteXspeed = 7 [default = -100000];
+  // required float absoluteXspeed = 7 [default = 0];
   if (has_absolutexspeed()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->absolutexspeed(), output);
   }
   
-  // required float absoluteYspeed = 8 [default = -100000];
+  // required float absoluteYspeed = 8 [default = 0];
   if (has_absoluteyspeed()) {
     ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->absoluteyspeed(), output);
   }
@@ -1811,12 +1811,12 @@ void Ball::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->relativey(), target);
   }
   
-  // required float relativeXspeed = 3 [default = -100000];
+  // required float relativeXspeed = 3 [default = 0];
   if (has_relativexspeed()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->relativexspeed(), target);
   }
   
-  // required float relativeYspeed = 4 [default = -100000];
+  // required float relativeYspeed = 4 [default = 0];
   if (has_relativeyspeed()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->relativeyspeed(), target);
   }
@@ -1831,12 +1831,12 @@ void Ball::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->absolutey(), target);
   }
   
-  // required float absoluteXspeed = 7 [default = -100000];
+  // required float absoluteXspeed = 7 [default = 0];
   if (has_absolutexspeed()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->absolutexspeed(), target);
   }
   
-  // required float absoluteYspeed = 8 [default = -100000];
+  // required float absoluteYspeed = 8 [default = 0];
   if (has_absoluteyspeed()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->absoluteyspeed(), target);
   }
@@ -1862,12 +1862,12 @@ int Ball::ByteSize() const {
       total_size += 1 + 4;
     }
     
-    // required float relativeXspeed = 3 [default = -100000];
+    // required float relativeXspeed = 3 [default = 0];
     if (has_relativexspeed()) {
       total_size += 1 + 4;
     }
     
-    // required float relativeYspeed = 4 [default = -100000];
+    // required float relativeYspeed = 4 [default = 0];
     if (has_relativeyspeed()) {
       total_size += 1 + 4;
     }
@@ -1882,12 +1882,12 @@ int Ball::ByteSize() const {
       total_size += 1 + 4;
     }
     
-    // required float absoluteXspeed = 7 [default = -100000];
+    // required float absoluteXspeed = 7 [default = 0];
     if (has_absolutexspeed()) {
       total_size += 1 + 4;
     }
     
-    // required float absoluteYspeed = 8 [default = -100000];
+    // required float absoluteYspeed = 8 [default = 0];
     if (has_absoluteyspeed()) {
       total_size += 1 + 4;
     }
