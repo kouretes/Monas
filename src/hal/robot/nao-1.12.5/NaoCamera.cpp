@@ -405,7 +405,7 @@ void NaoCamera::initDefaultControlSettings()
 	setControlSetting (V4L2_CID_AUTO_WHITE_BALANCE, 0);
 	setControlSetting (V4L2_CID_AUTOGAIN, 0);
 	setControlSetting (V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
-	setControlSetting (V4L2_CID_GAIN, 0xF0);
+	setControlSetting (V4L2_CID_GAIN, 0xA0);
 	setControlSetting (V4L2_CID_BACKLIGHT_COMPENSATION, 0);
 	setControlSetting (V4L2_CID_SAT_AUTO, 0);
 	setControlSetting (V4L2_CID_HUE_AUTO, 0);
@@ -416,7 +416,7 @@ void NaoCamera::initDefaultControlSettings()
 	setControlSetting (V4L2_CID_BRIGHTNESS, 128);
 	setControlSetting (V4L2_CID_CONTRAST, 96);
 	setControlSetting (V4L2_CID_AWB_G_CHANNEL_GAIN, 64);
-	setControlSetting (V4L2_CID_RED_BALANCE, 128 ); //128
+	setControlSetting (V4L2_CID_RED_BALANCE, 64 ); //128
 	setControlSetting (V4L2_CID_BLUE_BALANCE, 128);
 	usleep (300 * 1000);
 }
