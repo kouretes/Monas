@@ -223,15 +223,15 @@ void SharedWorldModel::predict()
     R2.get(3,3) = vara*dtsqrd*dtsqrd/4.0;
     R2.get(4,4) = vara*dtsqrd*dtsqrd/4.0;
 
-    R2.prettyPrint();
+    //R2.prettyPrint();
 
 //    F.identity();
 //    P = F*P*(F.transp());
     P += Q;
 
-    std::cout << testCount << "+dt = " << dt << "\n";
+//    std::cout << testCount << "+dt = " << dt << "\n";
     testCount++;
-    State.prettyPrint();
+    //State.prettyPrint();
 }
 
 void SharedWorldModel::update(int rid)
@@ -255,7 +255,7 @@ void SharedWorldModel::update(int rid)
     y2.get(3,0) = ball_x[rid] ;//- State.read(dim-4,0);
     y2.get(4,0) = ball_y[rid];// - State.read(dim-2,0);
 
-std::cout << "ybx=" << y2.get(3,0) << "\tyby=" << y2.get(5,0) << " phi:"<<phi<<std::endl;
+//std::cout << "ybx=" << y2.get(3,0) << "\tyby=" << y2.get(5,0) << " phi:"<<phi<<std::endl;
 
     H2.zero();
     H2.get(0,rid*3) = 1;

@@ -289,7 +289,10 @@ int Behavior::Execute()
 				if (lastPenalised + seconds(14) > microsec_clock::universal_time())
 				{
 					//pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
-					goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
+                    if(swim!=0 && swim.get()!=0 && swim->globalballs_size()>0)
+					    goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
+                    else
+                        pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
 				}
 				else if ( (fabs(robotX) < 2.0) && (fabs(robotY) < 2.0) )
 					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
