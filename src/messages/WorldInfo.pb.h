@@ -557,14 +557,14 @@ class Ball : public ::google::protobuf::Message {
   inline float relativey() const;
   inline void set_relativey(float value);
   
-  // required float relativeXspeed = 3 [default = -100000];
+  // required float relativeXspeed = 3 [default = 0];
   inline bool has_relativexspeed() const;
   inline void clear_relativexspeed();
   static const int kRelativeXspeedFieldNumber = 3;
   inline float relativexspeed() const;
   inline void set_relativexspeed(float value);
   
-  // required float relativeYspeed = 4 [default = -100000];
+  // required float relativeYspeed = 4 [default = 0];
   inline bool has_relativeyspeed() const;
   inline void clear_relativeyspeed();
   static const int kRelativeYspeedFieldNumber = 4;
@@ -585,14 +585,14 @@ class Ball : public ::google::protobuf::Message {
   inline float absolutey() const;
   inline void set_absolutey(float value);
   
-  // required float absoluteXspeed = 7 [default = -100000];
+  // required float absoluteXspeed = 7 [default = 0];
   inline bool has_absolutexspeed() const;
   inline void clear_absolutexspeed();
   static const int kAbsoluteXspeedFieldNumber = 7;
   inline float absolutexspeed() const;
   inline void set_absolutexspeed(float value);
   
-  // required float absoluteYspeed = 8 [default = -100000];
+  // required float absoluteYspeed = 8 [default = 0];
   inline bool has_absoluteyspeed() const;
   inline void clear_absoluteyspeed();
   static const int kAbsoluteYspeedFieldNumber = 8;
@@ -1460,7 +1460,7 @@ inline void Ball::set_relativey(float value) {
   relativey_ = value;
 }
 
-// required float relativeXspeed = 3 [default = -100000];
+// required float relativeXspeed = 3 [default = 0];
 inline bool Ball::has_relativexspeed() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1471,7 +1471,7 @@ inline void Ball::clear_has_relativexspeed() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void Ball::clear_relativexspeed() {
-  relativexspeed_ = -100000;
+  relativexspeed_ = 0;
   clear_has_relativexspeed();
 }
 inline float Ball::relativexspeed() const {
@@ -1482,7 +1482,7 @@ inline void Ball::set_relativexspeed(float value) {
   relativexspeed_ = value;
 }
 
-// required float relativeYspeed = 4 [default = -100000];
+// required float relativeYspeed = 4 [default = 0];
 inline bool Ball::has_relativeyspeed() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
@@ -1493,7 +1493,7 @@ inline void Ball::clear_has_relativeyspeed() {
   _has_bits_[0] &= ~0x00000008u;
 }
 inline void Ball::clear_relativeyspeed() {
-  relativeyspeed_ = -100000;
+  relativeyspeed_ = 0;
   clear_has_relativeyspeed();
 }
 inline float Ball::relativeyspeed() const {
@@ -1548,7 +1548,7 @@ inline void Ball::set_absolutey(float value) {
   absolutey_ = value;
 }
 
-// required float absoluteXspeed = 7 [default = -100000];
+// required float absoluteXspeed = 7 [default = 0];
 inline bool Ball::has_absolutexspeed() const {
   return (_has_bits_[0] & 0x00000040u) != 0;
 }
@@ -1559,7 +1559,7 @@ inline void Ball::clear_has_absolutexspeed() {
   _has_bits_[0] &= ~0x00000040u;
 }
 inline void Ball::clear_absolutexspeed() {
-  absolutexspeed_ = -100000;
+  absolutexspeed_ = 0;
   clear_has_absolutexspeed();
 }
 inline float Ball::absolutexspeed() const {
@@ -1570,7 +1570,7 @@ inline void Ball::set_absolutexspeed(float value) {
   absolutexspeed_ = value;
 }
 
-// required float absoluteYspeed = 8 [default = -100000];
+// required float absoluteYspeed = 8 [default = 0];
 inline bool Ball::has_absoluteyspeed() const {
   return (_has_bits_[0] & 0x00000080u) != 0;
 }
@@ -1581,7 +1581,7 @@ inline void Ball::clear_has_absoluteyspeed() {
   _has_bits_[0] &= ~0x00000080u;
 }
 inline void Ball::clear_absoluteyspeed() {
-  absoluteyspeed_ = -100000;
+  absoluteyspeed_ = 0;
   clear_has_absoluteyspeed();
 }
 inline float Ball::absoluteyspeed() const {
