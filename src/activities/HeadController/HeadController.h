@@ -47,7 +47,7 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-	static const double closeToBall = 4.0;
+	static const double closeToBall = 1.5;
 	static const float headSpeed[3];/*{SOMEDAY, SLOW, BEAM_ME_UP}*/
 
 	enum{
