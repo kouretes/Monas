@@ -244,9 +244,9 @@ int Behavior::Execute()
 			// Publish message to head controller to run check for ball
 			hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
 			_blk.publishState(hcontrol, "behavior");
-			
+
 			if (ballFound == 1)
-			{						
+			{
 				side = (ballBearing > 0) ? 1 : -1;
 				//posx = 0.1, posy = 0.03; // Desired ball position for kick
 				//double epsx = 0.025, epsy = 0.025; // Desired precision
@@ -254,7 +254,7 @@ int Behavior::Execute()
 				if ( (fabs( ballX - config.posX ) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) )
 				{
 					readyToKick = true;
-					scanAfterKick = true;			
+					scanAfterKick = true;
 					kick();
 					direction = (side == +1) ? -1 : +1;
 					//hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
@@ -264,21 +264,21 @@ int Behavior::Execute()
 				if (!readyToKick)
 				{
 					//Define roles
-//					if(closestRobot())
-//					{
+					if(closestRobot())
+					{
 						role = ATTACKER;
-//					}
-//					else
-//					{
-//						role = CENTER_FOR;
-//					}
+					}
+					else
+					{
+						role = CENTER_FOR;
+					}
 					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
-					if(penaltyMode) 
-						pathPlanningRequestAbsolute(ballX - (config.posX + 0.05), ballY - side * config.posY, ballBearing);	// 5cm offset from the ball!						
+					if(penaltyMode)
+						pathPlanningRequestAbsolute(ballX - (config.posX + 0.05), ballY - side * config.posY, ballBearing);	// 5cm offset from the ball!
 					else
 						approachBallRoleDependent();
 				}
-				
+
 			}
 			if (ballFound == 0)
 			{
@@ -381,7 +381,7 @@ void Behavior::getGameState() {
 		gameState = gsm->player_state();
 		config.teamColor = gsm->team_color();
 		config.playerNumber = gsm->player_number();
-		
+
 		if( gsm->penalty() || config.isPenaltyMode )
 			penaltyMode = true;
 		else
@@ -412,7 +412,7 @@ void Behavior::getBallData() {
 		globalBallX = (wim->myposition().x() + wim->balls (0).relativex() * cos(wim->myposition().phi()) - wim->balls (0).relativey() * sin(wim->myposition().phi()));
 		globalBallY = (wim->myposition().y() + wim->balls (0).relativex() * sin(wim->myposition().phi()) + wim->balls (0).relativey() * cos(wim->myposition().phi()));
 	}
-	
+
 	if(swim != 0 && swim.get() != 0 && swim->globalballs_size() > 0) {
 		SharedGlobalBallX = swim->globalballs(0).x();
 		SharedGlobalBallY = swim->globalballs(0).y();
@@ -420,7 +420,7 @@ void Behavior::getBallData() {
 }
 
 void Behavior::getMotionData() {
-	
+
 	if(sm != 0) {
 		currentRobotAction = sm->type();
 	}
@@ -449,16 +449,14 @@ void Behavior::sendDebugMessages() {
 
 bool Behavior::closestRobot() {
 
-	double robotEpsX = 0.005, robotEpsY = 0.005; // desired precision
-
 	if(swim != 0 && swim.get() != 0) {
-		double closestRobotX = swim->playerclosesttoball().x();
-		double closestRobotY = swim->playerclosesttoball().y();
-
-		if(((fabs(robotX - closestRobotX)) < robotEpsX) && (fabsf(robotY - closestRobotY) < robotEpsY))
-			return true;
-		else
-			return false;
+        if(swim->playerclosesttoball()==config.playerNumber){
+            Logger::Instance().WriteMsg("Behavior", config.playerNumber, Logger::Info);
+            return true;
+        }
+        else{
+            return false;
+        }
 	}
 	else
 		return true;

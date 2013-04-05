@@ -280,32 +280,32 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "\n\017WorldInfo.proto\032\030VisionObservations.pr"
     "oto\"W\n\tWorldInfo\022\036\n\nmyPosition\030\001 \002(\0132\n.R"
     "obotPose\022\024\n\014playerNumber\030\002 \002(\r\022\024\n\005Balls\030"
-    "\003 \003(\0132\005.Ball\"\205\001\n\017SharedWorldInfo\022\'\n\023play"
-    "erClosestToBall\030\001 \002(\0132\n.RobotPose\022\'\n\020tea"
-    "mmatePosition\030\002 \003(\0132\r.TeammatePose\022 \n\013Gl"
-    "obalBalls\030\003 \003(\0132\013.GlobalBall\"9\n\014Teammate"
-    "Pose\022\030\n\004pose\030\001 \002(\0132\n.RobotPose\022\017\n\007robotI"
-    "d\030\002 \002(\r\"s\n\tRobotPose\022\022\n\001X\030\001 \002(\002:\007-100000"
-    "\022\022\n\001Y\030\002 \002(\002:\007-100000\022\024\n\003phi\030\003 \002(\002:\007-1000"
-    "00\022\033\n\nconfidence\030\004 \002(\002:\007-100000\022\013\n\003var\030\005"
-    " \003(\002\"\342\001\n\004Ball\022\032\n\trelativeX\030\001 \002(\002:\007-10000"
-    "0\022\032\n\trelativeY\030\002 \002(\002:\007-100000\022\031\n\016relativ"
-    "eXspeed\030\003 \002(\002:\0010\022\031\n\016relativeYspeed\030\004 \002(\002"
-    ":\0010\022\032\n\tabsoluteX\030\005 \002(\002:\007-100000\022\032\n\tabsol"
-    "uteY\030\006 \002(\002:\007-100000\022\031\n\016absoluteXspeed\030\007 "
-    "\002(\002:\0010\022\031\n\016absoluteYspeed\030\010 \002(\002:\0010\"4\n\nGlo"
-    "balBall\022\022\n\001x\030\001 \002(\002:\007-100000\022\022\n\001y\030\002 \002(\002:\007"
-    "-100000\"\305\001\n\030LocalizationResetMessage\022\014\n\004"
-    "type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 \002("
-    "\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:\0010"
-    "\"U\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003SET"
-    "\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\022\020\n\014PENALTY"
-    "_MODE\020\005\"\232\001\n\020LocalizationData\022\031\n\005World\030\001 "
-    "\002(\0132\n.WorldInfo\022\035\n\tParticles\030\002 \003(\0132\n.Rob"
-    "otPose\022!\n\rRobotPosition\030\003 \002(\0132\n.RobotPos"
-    "e\022)\n\014Observations\030\004 \002(\0132\023.ObservationMes"
-    "sage\"A\n\006header\022\033\n\017NextMsgByteSize\030\001 \002(\021:"
-    "\002-1\022\032\n\013NextMsgName\030\003 \002(\014:\005Undef", 1151);
+    "\003 \003(\0132\005.Ball\"y\n\017SharedWorldInfo\022\033\n\023playe"
+    "rClosestToBall\030\001 \002(\r\022\'\n\020teammatePosition"
+    "\030\002 \003(\0132\r.TeammatePose\022 \n\013GlobalBalls\030\003 \003"
+    "(\0132\013.GlobalBall\"9\n\014TeammatePose\022\030\n\004pose\030"
+    "\001 \002(\0132\n.RobotPose\022\017\n\007robotId\030\002 \002(\r\"s\n\tRo"
+    "botPose\022\022\n\001X\030\001 \002(\002:\007-100000\022\022\n\001Y\030\002 \002(\002:\007"
+    "-100000\022\024\n\003phi\030\003 \002(\002:\007-100000\022\033\n\nconfide"
+    "nce\030\004 \002(\002:\007-100000\022\013\n\003var\030\005 \003(\002\"\342\001\n\004Ball"
+    "\022\032\n\trelativeX\030\001 \002(\002:\007-100000\022\032\n\trelative"
+    "Y\030\002 \002(\002:\007-100000\022\031\n\016relativeXspeed\030\003 \002(\002"
+    ":\0010\022\031\n\016relativeYspeed\030\004 \002(\002:\0010\022\032\n\tabsolu"
+    "teX\030\005 \002(\002:\007-100000\022\032\n\tabsoluteY\030\006 \002(\002:\007-"
+    "100000\022\031\n\016absoluteXspeed\030\007 \002(\002:\0010\022\031\n\016abs"
+    "oluteYspeed\030\010 \002(\002:\0010\"4\n\nGlobalBall\022\022\n\001x\030"
+    "\001 \002(\002:\007-100000\022\022\n\001y\030\002 \002(\002:\007-100000\"\305\001\n\030L"
+    "ocalizationResetMessage\022\014\n\004type\030\001 \002(\005\022\017\n"
+    "\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003 \002(\002:\0010\022\017\n\004yPos\030"
+    "\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002:\0010\"U\n\005RESET\022\013\n\007"
+    "UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003SET\020\002\022\r\n\tPENALIS"
+    "ED\020\003\022\n\n\006MANUAL\020\004\022\020\n\014PENALTY_MODE\020\005\"\232\001\n\020L"
+    "ocalizationData\022\031\n\005World\030\001 \002(\0132\n.WorldIn"
+    "fo\022\035\n\tParticles\030\002 \003(\0132\n.RobotPose\022!\n\rRob"
+    "otPosition\030\003 \002(\0132\n.RobotPose\022)\n\014Observat"
+    "ions\030\004 \002(\0132\023.ObservationMessage\"A\n\006heade"
+    "r\022\033\n\017NextMsgByteSize\030\001 \002(\021:\002-1\022\032\n\013NextMs"
+    "gName\030\003 \002(\014:\005Undef", 1138);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -650,7 +650,6 @@ SharedWorldInfo::SharedWorldInfo()
 }
 
 void SharedWorldInfo::InitAsDefaultInstance() {
-  playerclosesttoball_ = const_cast< ::RobotPose*>(&::RobotPose::default_instance());
 }
 
 SharedWorldInfo::SharedWorldInfo(const SharedWorldInfo& from)
@@ -661,7 +660,7 @@ SharedWorldInfo::SharedWorldInfo(const SharedWorldInfo& from)
 
 void SharedWorldInfo::SharedCtor() {
   _cached_size_ = 0;
-  playerclosesttoball_ = NULL;
+  playerclosesttoball_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -671,7 +670,6 @@ SharedWorldInfo::~SharedWorldInfo() {
 
 void SharedWorldInfo::SharedDtor() {
   if (this != default_instance_) {
-    delete playerclosesttoball_;
   }
 }
 
@@ -697,9 +695,7 @@ SharedWorldInfo* SharedWorldInfo::New() const {
 
 void SharedWorldInfo::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_playerclosesttoball()) {
-      if (playerclosesttoball_ != NULL) playerclosesttoball_->::RobotPose::Clear();
-    }
+    playerclosesttoball_ = 0u;
   }
   teammateposition_.Clear();
   globalballs_.Clear();
@@ -713,12 +709,14 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .RobotPose playerClosestToBall = 1;
+      // required uint32 playerClosestToBall = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_playerclosesttoball()));
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &playerclosesttoball_)));
+          set_has_playerclosesttoball();
         } else {
           goto handle_uninterpreted;
         }
@@ -774,10 +772,9 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
 
 void SharedWorldInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required .RobotPose playerClosestToBall = 1;
+  // required uint32 playerClosestToBall = 1;
   if (has_playerclosesttoball()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, this->playerclosesttoball(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->playerclosesttoball(), output);
   }
   
   // repeated .TeammatePose teammatePosition = 2;
@@ -800,11 +797,9 @@ void SharedWorldInfo::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* SharedWorldInfo::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required .RobotPose playerClosestToBall = 1;
+  // required uint32 playerClosestToBall = 1;
   if (has_playerclosesttoball()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        1, this->playerclosesttoball(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->playerclosesttoball(), target);
   }
   
   // repeated .TeammatePose teammatePosition = 2;
@@ -832,10 +827,10 @@ int SharedWorldInfo::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .RobotPose playerClosestToBall = 1;
+    // required uint32 playerClosestToBall = 1;
     if (has_playerclosesttoball()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
           this->playerclosesttoball());
     }
     
@@ -885,7 +880,7 @@ void SharedWorldInfo::MergeFrom(const SharedWorldInfo& from) {
   globalballs_.MergeFrom(from.globalballs_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_playerclosesttoball()) {
-      mutable_playerclosesttoball()->::RobotPose::MergeFrom(from.playerclosesttoball());
+      set_playerclosesttoball(from.playerclosesttoball());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -906,9 +901,6 @@ void SharedWorldInfo::CopyFrom(const SharedWorldInfo& from) {
 bool SharedWorldInfo::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
-  if (has_playerclosesttoball()) {
-    if (!this->playerclosesttoball().IsInitialized()) return false;
-  }
   for (int i = 0; i < teammateposition_size(); i++) {
     if (!this->teammateposition(i).IsInitialized()) return false;
   }

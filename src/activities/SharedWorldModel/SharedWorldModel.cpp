@@ -129,8 +129,7 @@ int SharedWorldModel::Execute()
         //Find the robot which is closer to the ball and publish the corresponding message
         idx = findClosestRobot();
         //           Logger::Instance().WriteMsg("SharedWorldModel", "Idx " + _toString(idx), Logger::Info);
-        swi.mutable_playerclosesttoball()->set_x(robot_x[idx]);
-        swi.mutable_playerclosesttoball()->set_y(robot_y[idx]);
+        swi.set_playerclosesttoball(idx);
 
         now = boost::posix_time::microsec_clock::universal_time();
         duration = now - last_ball_update_time;
@@ -333,7 +332,7 @@ int SharedWorldModel::findClosestRobot()
 		}
 	}
 
-	return index;
+	return index+1;
 }
 
 void SharedWorldModel::ReadFieldConf()
