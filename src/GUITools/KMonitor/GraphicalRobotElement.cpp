@@ -263,7 +263,7 @@ void GraphicalRobotElement::loadXMLlocalizationConfigParameters (std::string fna
 void GraphicalRobotElement::loadXMLteamConfigParameters (std::string fname) {
 	XMLConfig *xmlconfig = new XMLConfig (fname);
 	numOfPlayers = 0;
-	xmlconfig->QueryElement ("team_number", numOfPlayers);
+	xmlconfig->QueryElement ("team_max_players", numOfPlayers);
 }
 
 void GraphicalRobotElement::setCurrentWIM (WorldInfo nwim) {

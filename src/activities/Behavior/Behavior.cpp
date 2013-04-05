@@ -57,7 +57,7 @@ void Behavior::UserInit()
 	role = ATTACKER;
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
-	fGen.Init(config.teamNumber);
+	fGen.Init(config.maxPlayers);
 	sendDebugMessages();
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
