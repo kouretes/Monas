@@ -62,7 +62,6 @@ private:
     KMath::KMat::GenMatrix<double,5,5> S2, R2;
     KMath::KMat::GenMatrix<double,3,1> y1;
     KMath::KMat::GenMatrix<double,5,1> y2;
-    KMath::KMat::GenMatrix<double,2,2> rot;
 
 /*
     static const float QBdevx = 0.45; //squared m^2/s^2... 3σ = 2 m/s => σ ~= 0.67 m/s

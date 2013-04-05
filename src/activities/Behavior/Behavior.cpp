@@ -253,7 +253,12 @@ int Behavior::Execute()
 				//posx = 0.1, posy = 0.03; // Desired ball position for kick
 				//double epsx = 0.025, epsy = 0.025; // Desired precision
 
-				if ( (fabs( ballX - config.posX ) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) )
+                double loppgb = anglediff2(atan2(config.oppGoalLeftY - robotY, config.oppGoalLeftX - robotX), robotPhi);
+                double roppgb = anglediff2(atan2(config.oppGoalRightY - robotY, config.oppGoalRightX - robotX), robotPhi);
+                double cone = anglediff2(loppgb, roppgb);
+                double oppgb = wrapToPi(roppgb + cone / 2.0);
+
+				if ( (fabs( ballX - config.posX ) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) && (oppgb < M_PI_4) && (oppgb > -M_PI_4) )
 				{
 					readyToKick = true;
 					scanAfterKick = true;
@@ -276,7 +281,7 @@ int Behavior::Execute()
 					}
 					//Logger::Instance().WriteMsg("BehaviorTest", "Role: " + _toString(role), Logger::Info);
 					if(penaltyMode)
-						pathPlanningRequestAbsolute(ballX - (config.posX + 0.05), ballY - side * config.posY, ballBearing);	// 5cm offset from the ball!
+						pathPlanningRequestAbsolute(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing);	// 2.5cm offset from the ball!
 					else
 						approachBallRoleDependent();
 				}
@@ -634,9 +639,9 @@ void Behavior::approachBall() {
 		// velocityWalk(ball_x,ball_y,ball_bearing,1.0);
         pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
     }
-    else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)) {
-        littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
-    }
+//    else if((ballBearing > M_PI_4/2.0f) || (ballBearing < -M_PI_4/2.0f)) {
+//        littleWalk(0.0, 0.0, (float)(-side*M_PI_4/2.0));
+//    }
     else if(oppgb > (float) (M_PI_4)) {
         velocityWalk(0.0, -0.7, (float)(M_PI_4/2),1.0);
     }
@@ -644,7 +649,7 @@ void Behavior::approachBall() {
         velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
     }
     else{
-		pathPlanningRequestAbsolute(ballX - (config.posX + 0.05), ballY - side * config.posY, ballBearing); // 5cm offset from the ball!
+		pathPlanningRequestAbsolute(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing); // 2.5cm offset from the ball!
     }
 }
 
