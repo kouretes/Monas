@@ -476,15 +476,22 @@ void LocalWorldState::ReadTeamConf()
 
 void LocalWorldState::ReadRobotConf()
 {
-    //Xml index starts at 0 
-    int pNumber=locConfig.playerNumber-1;
-	for (int i = 0; i < 2; i++)
-	{
-		string kickoff = (i == 0) ? "KickOff" : "noKickOff";	//KICKOFF==0, NOKICKOFF == 1
-        locConfig.initX[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".x").c_str());
-        locConfig.initY[i]=atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".y").c_str());
-        locConfig.initPhi[i]=TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickoff+".player~"+_toString(pNumber)+".phi").c_str()));
-    }
+   
+    int pNumber=locConfig.playerNumber;
+
+    locConfig.initX[0]=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".x").c_str());
+    locConfig.initY[0]=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".y").c_str());
+    locConfig.initPhi[0]=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".phi").c_str());
+
+    locConfig.initX[1]=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".x").c_str());
+    locConfig.initY[1]=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".y").c_str());
+    locConfig.initPhi[1]=atof(_xml.findValueForKey(
+_xml.keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".phi").c_str());
 
     //read ready state positions
     locConfig.readyX=atof(_xml.findValueForKey(
@@ -493,6 +500,7 @@ _xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumbe
 _xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".y").c_str());
     locConfig.readyPhi=TO_RAD(atof(_xml.findValueForKey(
 _xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".phi").c_str()));
+
 }
 
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
