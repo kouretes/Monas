@@ -48,6 +48,7 @@ private:
     static const double QRdevtheta = 0.49f; //squared rad^2/s^2...  max 0.7 rad/s ~ 40 deg/s;
 
     float dt, dtsqrd, dtBall;
+    int count;
 
     static const int dim = 3*numOfRobots + 2;
 

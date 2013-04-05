@@ -299,7 +299,16 @@ int Behavior::Execute()
                     else
                         pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
 				}
-				else if ( (fabs(robotX) < 2.0) && (fabs(robotY) < 2.0) )
+				/*
+				else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
+					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
+				else
+					pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+					*/
+
+                if(swim!=0 && swim.get()!=0 && swim->globalballs_size()>0)
+                    goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
+                else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
 					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
 				else
 					pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
@@ -451,7 +460,7 @@ bool Behavior::closestRobot() {
 
 	if(swim != 0 && swim.get() != 0) {
         if(swim->playerclosesttoball()==config.playerNumber){
-            Logger::Instance().WriteMsg("Behavior", config.playerNumber, Logger::Info);
+            //Logger::Instance().WriteMsg("Behavior", config.playerNumber, Logger::Info);
             return true;
         }
         else{
