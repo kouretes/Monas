@@ -12,7 +12,7 @@
 	<player>
 		<number>2</number>
 		<x>-3.7</x>
-		<y>2.7</y>
+		<y>0.7</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Defender-->
@@ -26,7 +26,7 @@
 	<player>
 		<number>3</number>
 		<x>-3.7</x>
-		<y>-0.4</y>
+		<y>-0.7</y>
 		<phi>0.0</phi>
 	</player>
     <player>
@@ -47,27 +47,27 @@
 	</player>
 	<!-- Center-->
 	<player>
-		<number>2</number>
+		<number>4</number>
 		<x>-3.7</x>
 		<y>1.1</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Defender-->
 	<player>
-		<number>3</number>
+		<number>5</number>
 		<x>-3.7</x>
 		<y>-1.1</y>
 		<phi>0.0</phi>
 	</player>
 	<!-- Attacker-->
 	<player>
-		<number>4</number>
-		<x>-2.7</x>
-		<y>0.7</y>
+		<number>2</number>
+		<x>-2.05</x>
+		<y>-1.2</y>
 		<phi>0.0</phi>
 	</player>
     <player>
-   		<number>5</number>
+   		<number>3</number>
 		<x>-0.8</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
