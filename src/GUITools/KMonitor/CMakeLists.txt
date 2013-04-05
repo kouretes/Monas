@@ -23,7 +23,6 @@ SET( KMonitor_SOURCES	main.cpp
 						GraphicalRobotElement.cpp
 						LocalWorldController.cpp
 						KMapScene.cpp
-						KCamView.cpp
 						GlobalWorldController.cpp
 						KccHandler.cpp
 						KccLabel.cpp
@@ -40,7 +39,6 @@ SET( KMonitor_HEADERS	KMonitor.h
 						HostsComboBox.h
 						GraphicalRobotElement.h
 						LocalWorldController.h
-						KCamView.h
 						GlobalWorldController.h
 						KccHandler.h
 						KccLabel.h
@@ -54,7 +52,6 @@ SET( KMonitor_FORMS KMonitor.ui
 					XMLHandler.ui
 					SensorsController.ui
 					KSonarsController.ui
-					KCamView.ui
 					GlobalWorldController.ui
 					LocalWorldController.ui
 					CommandsController.ui

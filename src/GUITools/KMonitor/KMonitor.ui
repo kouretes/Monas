@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="KMTabWidget">
       <property name="currentIndex">
-       <number>7</number>
+       <number>1</number>
       </property>
       <widget class="GlobalWorldController" name="GWSTab">
        <attribute name="title">
@@ -37,12 +37,6 @@
         <string>Local Polar Map</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_7"/>
-      </widget>
-      <widget class="KCamView" name="LCamTab">
-       <attribute name="title">
-        <string>Local Robot View</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_8"/>
       </widget>
       <widget class="SensorsController" name="LSDTab">
        <attribute name="title">
@@ -137,12 +131,6 @@
    <class>KSonarsController</class>
    <extends>QWidget</extends>
    <header>KSonarsController.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>KCamView</class>
-   <extends>QWidget</extends>
-   <header>KCamView.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

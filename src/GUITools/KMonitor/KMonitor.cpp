@@ -47,11 +47,6 @@ KMonitor::KMonitor (QWidget *parent)
 	//Signal slot connections for Local Map Hosts ComboBox
 	//messages signal/slots
 	connect (Messenger, SIGNAL (gridInfoUpdate (GridInfo, QString) ), ui->LSonarTab, SLOT (gridInfoUpdateHandler (GridInfo, QString) ) );
-	/****************** LOCAL ROBOT VIEW TAB ************************/
-	//SIGNAL SLOT CONNECTIONS FOR LOCAL ROBOT VIEW
-	//Signal slot connections for Robot View ComboBox
-	//messages signal/slots
-	connect (Messenger, SIGNAL (rawImage (KRawImage, QString) ), ui->LCamTab, SLOT (kRawImageUpdateHandler (KRawImage, QString) ) );
 	/****************** LOCAL SENSOR VIEW TAB ************************/
 	//SIGNAL SLOT CONNECTIONS FOR LOCAL SENSOR DATA
 	//Signal slot connections for Local Remote Hosts ComboBox
@@ -76,7 +71,7 @@ KMonitor::KMonitor (QWidget *parent)
 	/****************** GENERIC ************************/
 	//Signals-Slots for tab changes manipulation
 	connect (ui->KMTabWidget, SIGNAL (currentChanged (int) ), Messenger, SLOT (tabChangeHandler (int) ) );
-	ui->KMTabWidget->setCurrentIndex (2);
+	ui->KMTabWidget->setCurrentIndex (1);
 	//SIGNAL SLOT CONNECTIONS FOR MAIN WINDOW
 	connect (ui->action_Quit, SIGNAL (triggered() ), this, SLOT (quitKMonitor() ) );
 	setWindowState (Qt::WindowMaximized);
