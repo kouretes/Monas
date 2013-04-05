@@ -87,10 +87,9 @@ int SharedWorldModel::Execute()
 
     predict();
     int count = 0;
-    gsm  = _blk.readState<GameStateMessage> ("worldstate");
     wim  = _blk.readData<WorldInfo> ("worldstate");
 
-    if(wim != 0 && gsm!=0)
+    if(wim != 0)
     {
         if(wim.get() != 0)
         {
@@ -111,10 +110,9 @@ int SharedWorldModel::Execute()
 
 		for(fit = rf.begin(); fit != rf.end(); ++fit)
 		{
-            gsm  = _blk.readState<GameStateMessage> ("worldstate", (*fit).hostid());
             wim  = _blk.readData<WorldInfo> ("worldstate", (*fit).hostid());
 
-            if(wim != 0 && gsm!=0)
+            if(wim != 0)
             {
                 if(wim.get() != 0)
                 {
@@ -155,7 +153,11 @@ void SharedWorldModel::gather_info(int count){
 
     int i,j=0;
 
-    id = gsm->player_number()-1;
+    if(wim->has_playernumber())
+        id = wim->playernumber()-1;
+    else
+        return;
+
     robot_x[id] = wim->myposition().x();
     robot_y[id] = wim->myposition().y();
     robot_phi[id] = wim->myposition().phi();
@@ -194,7 +196,7 @@ void SharedWorldModel::gather_info(int count){
 
     TeammatePose tPose;
     tPose.mutable_pose()->CopyFrom(rPose);
-    tPose.set_robotid(gsm->player_number());
+    tPose.set_robotid(id+1);
 
     swi.add_teammateposition();
     swi.mutable_teammateposition(count)->CopyFrom(tPose);

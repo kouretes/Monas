@@ -128,10 +128,17 @@ class WorldInfo : public ::google::protobuf::Message {
   inline ::RobotPose* mutable_myposition();
   inline ::RobotPose* release_myposition();
   
-  // repeated .Ball Balls = 2;
+  // required uint32 playerNumber = 2;
+  inline bool has_playernumber() const;
+  inline void clear_playernumber();
+  static const int kPlayerNumberFieldNumber = 2;
+  inline ::google::protobuf::uint32 playernumber() const;
+  inline void set_playernumber(::google::protobuf::uint32 value);
+  
+  // repeated .Ball Balls = 3;
   inline int balls_size() const;
   inline void clear_balls();
-  static const int kBallsFieldNumber = 2;
+  static const int kBallsFieldNumber = 3;
   inline const ::Ball& balls(int index) const;
   inline ::Ball* mutable_balls(int index);
   inline ::Ball* add_balls();
@@ -144,14 +151,17 @@ class WorldInfo : public ::google::protobuf::Message {
  private:
   inline void set_has_myposition();
   inline void clear_has_myposition();
+  inline void set_has_playernumber();
+  inline void clear_has_playernumber();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::RobotPose* myposition_;
   ::google::protobuf::RepeatedPtrField< ::Ball > balls_;
+  ::google::protobuf::uint32 playernumber_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1132,7 +1142,29 @@ inline ::RobotPose* WorldInfo::release_myposition() {
   return temp;
 }
 
-// repeated .Ball Balls = 2;
+// required uint32 playerNumber = 2;
+inline bool WorldInfo::has_playernumber() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void WorldInfo::set_has_playernumber() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void WorldInfo::clear_has_playernumber() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void WorldInfo::clear_playernumber() {
+  playernumber_ = 0u;
+  clear_has_playernumber();
+}
+inline ::google::protobuf::uint32 WorldInfo::playernumber() const {
+  return playernumber_;
+}
+inline void WorldInfo::set_playernumber(::google::protobuf::uint32 value) {
+  set_has_playernumber();
+  playernumber_ = value;
+}
+
+// repeated .Ball Balls = 3;
 inline int WorldInfo::balls_size() const {
   return balls_.size();
 }
