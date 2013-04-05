@@ -39,20 +39,20 @@ public:
 		std::ifstream _testConfAlt (GlobalConf::Instance().ConfigurationFileAlter().c_str() );
 		std::ifstream _testConfGUIAlt (GlobalConf::Instance().ConfigurationFileGUIAlter().c_str() );
 
-		if ( _testConf.is_open() )
+		if ( _testConfGUIAlt.is_open() )
 		{
-			std::cout << "Configuration file found @ " << GlobalConf::Instance().ConfigurationFile() << std::endl;
-			ConfFilePrefix = GlobalConf::Instance().ConfigurationFile();
+			std::cout << "Configuration file found @ " << GlobalConf::Instance().ConfigurationFileGUIAlter() << std::endl;
+			ConfFilePrefix = GlobalConf::Instance().ConfigurationFileGUIAlter();
 		}
 		else if ( _testConfAlt.is_open() )
 		{
 			std::cout << "Configuration file found @ " << GlobalConf::Instance().ConfigurationFileAlter() << std::endl;
 			ConfFilePrefix = GlobalConf::Instance().ConfigurationFileAlter();
 		}
-		else if ( _testConfGUIAlt.is_open() )
+		else if ( _testConf.is_open() )
 		{
-			std::cout << "Configuration file found @ " << GlobalConf::Instance().ConfigurationFileGUIAlter() << std::endl;
-			ConfFilePrefix = GlobalConf::Instance().ConfigurationFileGUIAlter();
+			std::cout << "Configuration file found @ " << GlobalConf::Instance().ConfigurationFile() << std::endl;
+			ConfFilePrefix = GlobalConf::Instance().ConfigurationFile();
 		}
 		else
 		{
