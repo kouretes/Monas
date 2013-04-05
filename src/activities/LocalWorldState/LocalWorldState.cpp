@@ -67,7 +67,7 @@ void LocalWorldState::UserInit()
     else{
         localizationWorld.Initialize();
     }
-   
+
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
     Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
@@ -88,7 +88,7 @@ int LocalWorldState::Execute()
 		if(fallBegan == true){
 			fallBegan = false;
             if (locConfig.ekfEnable == true){
-			    ekfLocalization.IncreaseUncertaintyAfterFall(); 
+			    ekfLocalization.IncreaseUncertaintyAfterFall();
             }
             else{
 			    localizationWorld.SpreadParticlesAfterFall();
@@ -106,17 +106,17 @@ int LocalWorldState::Execute()
             TrackPoint.x = ekfLocalization.kalmanModels[0].state(0,0);
             TrackPoint.y = ekfLocalization.kalmanModels[0].state(1,0);
             TrackPoint.phi = ekfLocalization.kalmanModels[0].state(2,0);
-            _blk.publishSignal(odometryInfoM, "debug");   
+            _blk.publishSignal(odometryInfoM, "debug");
         }
         else{
             localizationWorld.InitializeParticles((int)lrm->type(), lrm->kickoff(), lrm->xpos(), lrm->ypos(), lrm->phipos());
             TrackPoint.x = localizationWorld.agentPosition.x;
             TrackPoint.y = localizationWorld.agentPosition.y;
             TrackPoint.phi = localizationWorld.agentPosition.phi;
-            _blk.publishSignal(odometryInfoM, "debug");   
-        }       
-    }	
-       
+            _blk.publishSignal(odometryInfoM, "debug");
+        }
+    }
+
     if (locConfig.ekfEnable == true){
         AgentPosition = ekfLocalization.LocalizationStep(robotmovement, currentObservation, currentAmbiguousObservation);
 
@@ -141,7 +141,7 @@ int LocalWorldState::Execute()
 
 	if(gameMode == false){
         if (locConfig.ekfEnable == true){
-        
+
             if ((boost::posix_time::microsec_clock::universal_time() > debugMessageTime + seconds(4)) || lrm != 0){
 
                 for (int i = 0; i < ekfLocalization.numberOfModels-1 ; i++)
@@ -152,7 +152,7 @@ int LocalWorldState::Execute()
 		            ekfMHypothesis.mutable_kmodel(i)->set_x(ekfLocalization.kalmanModels[i+1].state(0,0));
 		            ekfMHypothesis.mutable_kmodel(i)->set_y(ekfLocalization.kalmanModels[i+1].state(1,0));
 		            ekfMHypothesis.mutable_kmodel(i)->set_phi(ekfLocalization.kalmanModels[i+1].state(2,0));
-            
+
 	            }
                 ekfMHypothesis.set_size(ekfLocalization.numberOfModels-1);
                 _blk.publishSignal(ekfMHypothesis, "debug");
@@ -274,12 +274,13 @@ void LocalWorldState::ProcessMessages()
 	lrm = _blk.readSignal<LocalizationResetMessage>("worldstate");
 	sm = _blk.readState<MotionStateMessage>("worldstate");
 
-   
+
 
 	currentObservation.clear();
 	currentAmbiguousObservation.clear();
 	if(gsm != 0){
 		locConfig.playerNumber = gsm->player_number();
+		MyWorld.set_playernumber(gsm->player_number());
 	}
 	if (obsm != 0)
 	{
@@ -326,7 +327,7 @@ void LocalWorldState::ProcessMessages()
 		rpsm = _blk.readData<RobotPositionMessage>("sensors");
 	}
 
-    
+
 	if (rpsm != 0)
 	{
 		PosX = rpsm->sensordata(KDeviceLists::ROBOT_X);
@@ -337,7 +338,7 @@ void LocalWorldState::ProcessMessages()
 	}else{
         robotmovement.freshData = false;
 	}
-    
+
 	if (sm != 0){
 		currentRobotAction = sm->type();
 	}
@@ -357,7 +358,7 @@ void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MMod
 	float YA = PosY.sensorvalue();
 	float AA = Angle.sensorvalue();
 
-    
+
 	float DX = (XA - TrackPointRobotPosition.x);
 	float DY = (YA - TrackPointRobotPosition.y);
 	float DR = KMath::anglediff2(AA, TrackPointRobotPosition.phi);
@@ -375,8 +376,8 @@ void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MMod
 	TrackPointRobotPosition.phi = AA;
 
 	//If u want edev change the klocalization file
-    TrackPoint.x += cos(TrackPoint.phi + robot_dir) * robot_dist; 
-	TrackPoint.y += sin(TrackPoint.phi + robot_dir) * robot_dist; 
+    TrackPoint.x += cos(TrackPoint.phi + robot_dir) * robot_dist;
+	TrackPoint.y += sin(TrackPoint.phi + robot_dir) * robot_dist;
 	TrackPoint.phi += DR;
 
     if ( microsec_clock::universal_time() > odometryMessageTime + seconds(5) ){
@@ -389,16 +390,16 @@ void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MMod
 
     //robot orientation change because of action (kick)
     localizationWorld.actionOdError=0.f;
-    if (sm != 0){ 
+    if (sm != 0){
         if (currentRobotAction==MotionStateMessage::ACTION && actionKick==false){
             actionKick=true;
-            localizationWorld.actionOdError=TO_RAD(atof(_xml.findValueForKey(_xml.keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str()));   
+            localizationWorld.actionOdError=TO_RAD(atof(_xml.findValueForKey(_xml.keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str()));
              }
         else if (currentRobotAction!=MotionStateMessage::ACTION){
-            actionKick=false;           
-        }        
+            actionKick=false;
+        }
     }
-	
+
 	//Logger::Instance().WriteMsg("LocalWorldState", "Ald Direction =  "+_toString(Angle.sensorvalue()) + " Robot_dir = " + _toString(robot_dir) + " Robot_rot = " + _toString(robot_rot) + " edev at dir = " + _toString(MModel.Distance.ratiodev), Logger::Info);
 }
 
@@ -561,15 +562,15 @@ int LocalWorldState::LocalizationDataForGUI_Load()
 
 void LocalWorldState::InputOutputLogger(){
 	boost::posix_time::ptime currentExecute = boost::posix_time::microsec_clock::universal_time();
-	
+
 	string YellowLeft = "", YellowRight = "", Yellow = "", RobotPosition = "", RobotMovement = "";
-	
+
 	if(!robotmovement.freshData){
 		RobotMovement = "0 0 0 0";
 	}else{
 		RobotMovement = "1 " + _toString(robotmovement.Distance.val) + " " + _toString(robotmovement.Direction.val) + " " + _toString(robotmovement.Rotation.val);
 	}
-	
+
 	if(currentAmbiguousObservation.size() == 0){
 		Yellow = "0 0 0 0 0 0 0 0";
 	}else{
@@ -578,7 +579,7 @@ void LocalWorldState::InputOutputLogger(){
 				 _toString(currentAmbiguousObservation[0].Distance.val) + " " + _toString(currentAmbiguousObservation[0].Bearing.Edev) + " " +
 				 _toString(currentAmbiguousObservation[0].Bearing.val);
 	}
-	
+
 	YellowLeft = "0 0 0 0 0 0 0 0";
 	YellowRight = "0 0 0 0 0 0 0 0";
 	for (unsigned int i = 0; i < currentObservation.size(); i++)

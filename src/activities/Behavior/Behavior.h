@@ -324,6 +324,8 @@ private:
 	bool gameMode, penaltyMode;
 
 	MotionStateMessage::ActionType currentRobotAction;
+	
+	bool scanAfterKick;
 
 	FormationGenerator fGen; // object that create and update the team formation
 
