@@ -639,9 +639,9 @@ void Behavior::approachBall() {
 		// velocityWalk(ball_x,ball_y,ball_bearing,1.0);
         pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
     }
-//    else if((ballBearing > M_PI_4/2.0f) || (ballBearing < -M_PI_4/2.0f)) {
-//        littleWalk(0.0, 0.0, (float)(-side*M_PI_4/2.0));
-//    }
+    else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)) {
+        littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
+    }
     else if(oppgb > (float) (M_PI_4)) {
         velocityWalk(0.0, -0.7, (float)(M_PI_4/2),1.0);
     }
