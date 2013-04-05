@@ -49,9 +49,11 @@ void Behavior::UserInit()
 	robotPhi = 0.0;
 	robotConfidence = 1.0;
 	readyToKick = false;
+	scanAfterKick = false;
 	direction = 1;
 	orientation = 0;
 	gameState = PLAYER_INITIAL;
+	currentRobotAction = MotionStateMessage::IDLE;
 	role = ATTACKER;
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
@@ -231,7 +233,7 @@ int Behavior::Execute()
 		}
 		else { // not goalie behavior
 
-			//TODO goalie must go to his position, not walk strait :P
+			//TODO goalie must go to his positcurrention, not walk strait :P
 			if (lastPenalised + seconds(4) > microsec_clock::universal_time())
 			{
 				hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
@@ -251,7 +253,8 @@ int Behavior::Execute()
 
 				if ( (fabs( ballX - config.posX ) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) )
 				{
-					readyToKick = true;					
+					readyToKick = true;
+					scanAfterKick = true;			
 					kick();
 					direction = (side == +1) ? -1 : +1;
 					//hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
@@ -279,7 +282,9 @@ int Behavior::Execute()
 			}
 			if (ballFound == 0)
 			{
-				if(currentRobotAction == MotionStateMessage::WALKING) {
+				if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick) {
+					scanAfterKick = false;
+					stopRobot();
 					hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
 					_blk.publishState(hcontrol, "behavior");
 				}
@@ -304,7 +309,8 @@ int Behavior::Execute()
 	}
 	else if (gameState == PLAYER_READY)
 	{
-		if (gameState != prevGameState)
+	 	/*
+	 	if (gameState != prevGameState)
 		{
 			if(prevGameState != PLAYER_PLAYING){
 				locReset.set_type(LocalizationResetMessage::READY);
@@ -317,6 +323,7 @@ int Behavior::Execute()
 		}
 		int p = (kickOff) ? 0 : 1;
 		goToPosition(config.initX[p], config.initY[p], config.initPhi[p] );
+		*/
 		return 0;
 	}
 	else if (gameState == PLAYER_SET)
@@ -362,6 +369,7 @@ void Behavior::readMessages() {
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
 	bfm = _blk.readState<BallFoundMessage> ("behavior");
+	sm = _blk.readState<MotionStateMessage>("worldstate");
 }
 
 /* --------------------------------- Information gathering functions from messages ---------------------------------- */

@@ -487,16 +487,6 @@ int MotionController::Execute()
 				{
 					stopWalkCommand();
 
-					if (pam->command() == "LieDown")
-					{
-						killHeadCommand();
-					}
-					else if (pam->command() == "PuntKick")
-					{
-						killHeadCommand();
-						robotUp = false;
-					}
-
 					if (str.compare("kme") == 0)
 					{
 						boost::shared_ptr<ISpecialAction> ptr = it->second;
