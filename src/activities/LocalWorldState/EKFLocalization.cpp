@@ -30,7 +30,7 @@ void EKFLocalization::InitializeHypothesis(int resetType, bool kickOff, float in
 	else if(resetType == LocalizationResetMessage::SET){
         numberOfModels = 1;
         float setPositionX =  locConfig->initX[(kickOff) ? 0 : 1] ;
-        float setPositionY =  locConfig->initX[(kickOff) ? 0 : 1] ;
+        float setPositionY =  locConfig->initY[(kickOff) ? 0 : 1] ;
 	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];
 
 		kalmanModels[0].Initialize(setPositionX, setPositionY, setPositionPhi, e1, e2, e3, 1 , true );
