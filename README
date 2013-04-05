@@ -21,13 +21,15 @@ BUILD (for local execution):
 
 - Press c to configure
 
-- Press c to configure again, then g to generate and exit. 
+- Press c to configure again.
+
+- Execute: cmake ../..
 
 - Execute: make -jk install, where k is the number of cores in your system. 
 
 - Enter binaries/linux
 
-- Execute: port LD_LIBRARY_PATH=./lib 
+- Execute: export LD_LIBRARY_PATH=./lib 
 
 - Execute: ./bin/Monas to start Monas
 
@@ -47,11 +49,11 @@ CROSSBUILD (for on-board execution):
 
 - Press c to configure
 
-- Check the values of KROBOT_IS_REMOTE, NaoQiVersion, RobotPlatform 
+- Check the values of NaoQiVersion, RobotPlatform 
 
-  KROBOT_IS_REMOTE can be OFF (a library is produced) or ON (an executable is produced) 
-  NaoQiVersion must be the latest NaoQi version, currently 1.10.XX 
+  NaoQiVersion must be the latest NaoQi version, currently 1.12.5 
   RobotPlatform must be nao
+  TargetPlatform must be linux
 
 - Real-time execution for the nao requires the code to be compiled as a shared object at the moment.
 
