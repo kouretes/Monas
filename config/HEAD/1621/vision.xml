@@ -1,33 +1,3 @@
 <?xml version="1.0" ?>
-<!-- Refresh Segmentation parameters based camera every : (millisec) -->
-<camerarefreshmillisec>5000</camerarefreshmillisec>
-<!--  Configuration files for Segmentation-->
-<SegmentationBottom>3-Iran2013.conf</SegmentationBottom>
-<SegmentationTop>3-Iran2013.conf</SegmentationTop>
-<Dfov>54.85</Dfov>
-<cameraGamma>1.0</cameraGamma>
-<!-- Ball Detection -->
-<ballsize>0.06</ballsize>
-<balltolerance>0.3</balltolerance>
-<!--  Real World distance parameters -->
-<skipdistance>0.045</skipdistance>
-<seedistance>7.2</seedistance>
-<!-- Image Scanning parameters -->
-<scanV>48</scanV>
-<scanH>32</scanH>
-<minH>2</minH>
-<!--<scanstep>23</scanstep>-->
-<bordersize>6</bordersize>
-<pixeltol>5</pixeltol>
-<subsampling>4</subsampling>
-<!-- For obstacle avoidance -->
-<obstacledistance>1</obstacledistance>
-<!--- Goal posts --->
-<goalheight>0.87</goalheight>
-<goaldist>1.6</goaldist>
-<goaldiam>0.11</goaldiam>
-<widthestimateotolerance>0.2</widthestimateotolerance>
-<!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>0</sensordelay>
 <pitchoffset>0.10</pitchoffset>
 <rolloffset>0.05</rolloffset>

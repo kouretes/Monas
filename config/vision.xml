@@ -2,8 +2,8 @@
 <!-- Refresh Segmentation parameters based camera every : (millisec) -->
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>2-Iran2013.conf</SegmentationBottom>
-<SegmentationTop>2-Iran2013.conf</SegmentationTop>
+<SegmentationBottom>3-Iran2013.conf</SegmentationBottom>
+<SegmentationTop>3-Iran2013.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGamma>1.0</cameraGamma>
 <!-- Ball Detection -->
@@ -24,11 +24,11 @@
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
 <goalheight>0.870</goalheight>
-<goaldist>1.4</goaldist>
+<goaldist>1.6</goaldist>
 <goaldiam>0.11</goaldiam>
 <widthestimateotolerance>0.2</widthestimateotolerance>
 <horizontalpostratio>0.1428</horizontalpostratio>
 <!-- How many ms does it take the sensor module to publish a message? -->
-<sensordelay>0</sensordelay>rolloffset
+<sensordelay>0</sensordelay>
 <pitchoffset>0.07</pitchoffset>
 <rolloffset>0.0</rolloffset>
