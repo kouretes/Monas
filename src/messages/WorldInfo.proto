@@ -7,7 +7,7 @@ message WorldInfo{
 }
 
 message SharedWorldInfo{
-	required RobotPose playerClosestToBall = 1 ;
+	required uint32 playerClosestToBall = 1 ;
 	repeated TeammatePose teammatePosition = 2;
 	repeated GlobalBall GlobalBalls = 3;
 }

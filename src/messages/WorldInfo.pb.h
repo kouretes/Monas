@@ -226,13 +226,12 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required .RobotPose playerClosestToBall = 1;
+  // required uint32 playerClosestToBall = 1;
   inline bool has_playerclosesttoball() const;
   inline void clear_playerclosesttoball();
   static const int kPlayerClosestToBallFieldNumber = 1;
-  inline const ::RobotPose& playerclosesttoball() const;
-  inline ::RobotPose* mutable_playerclosesttoball();
-  inline ::RobotPose* release_playerclosesttoball();
+  inline ::google::protobuf::uint32 playerclosesttoball() const;
+  inline void set_playerclosesttoball(::google::protobuf::uint32 value);
   
   // repeated .TeammatePose teammatePosition = 2;
   inline int teammateposition_size() const;
@@ -265,9 +264,9 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::RobotPose* playerclosesttoball_;
   ::google::protobuf::RepeatedPtrField< ::TeammatePose > teammateposition_;
   ::google::protobuf::RepeatedPtrField< ::GlobalBall > globalballs_;
+  ::google::protobuf::uint32 playerclosesttoball_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
@@ -1193,7 +1192,7 @@ WorldInfo::mutable_balls() {
 
 // SharedWorldInfo
 
-// required .RobotPose playerClosestToBall = 1;
+// required uint32 playerClosestToBall = 1;
 inline bool SharedWorldInfo::has_playerclosesttoball() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1204,22 +1203,15 @@ inline void SharedWorldInfo::clear_has_playerclosesttoball() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void SharedWorldInfo::clear_playerclosesttoball() {
-  if (playerclosesttoball_ != NULL) playerclosesttoball_->::RobotPose::Clear();
+  playerclosesttoball_ = 0u;
   clear_has_playerclosesttoball();
 }
-inline const ::RobotPose& SharedWorldInfo::playerclosesttoball() const {
-  return playerclosesttoball_ != NULL ? *playerclosesttoball_ : *default_instance_->playerclosesttoball_;
-}
-inline ::RobotPose* SharedWorldInfo::mutable_playerclosesttoball() {
-  set_has_playerclosesttoball();
-  if (playerclosesttoball_ == NULL) playerclosesttoball_ = new ::RobotPose;
+inline ::google::protobuf::uint32 SharedWorldInfo::playerclosesttoball() const {
   return playerclosesttoball_;
 }
-inline ::RobotPose* SharedWorldInfo::release_playerclosesttoball() {
-  clear_has_playerclosesttoball();
-  ::RobotPose* temp = playerclosesttoball_;
-  playerclosesttoball_ = NULL;
-  return temp;
+inline void SharedWorldInfo::set_playerclosesttoball(::google::protobuf::uint32 value) {
+  set_has_playerclosesttoball();
+  playerclosesttoball_ = value;
 }
 
 // repeated .TeammatePose teammatePosition = 2;
