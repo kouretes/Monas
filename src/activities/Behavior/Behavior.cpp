@@ -196,7 +196,9 @@ int Behavior::Execute()
 		if(lastFormation + seconds(10) < microsec_clock::universal_time()) {
 
 			fGen.Generate(globalBallX, globalBallY);
-			sendDebugMessages();
+			if(!gameMode){
+				sendDebugMessages();
+			}
 			lastFormation = microsec_clock::universal_time();
 		}
 
@@ -333,6 +335,7 @@ int Behavior::Execute()
 		int p = (kickOff) ? 0 : 1;
 		goToPosition(config.initX[p], config.initY[p], config.initPhi[p] );
 		*/
+		stopRobot();
 		return 0;
 	}
 	else if (gameState == PLAYER_SET)
