@@ -282,7 +282,7 @@ int Behavior::Execute()
 			}
 			if (ballFound == 0)
 			{
-				if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick) {
+				if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
 					scanAfterKick = false;
 					stopRobot();
 					hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);

@@ -98,12 +98,12 @@ class MyClass(GeneratedClass):
                                     <ActuatorCurve name="value" actuator="LShoulderRoll" recordable="1" mute="0" alwaysVisible="0">
                                         <Key frame="12" value="16.2576" />
                                         <Key frame="20" value="18.1033" />
-                                        <Key frame="25" value="15.2029" />
-                                        <Key frame="30" value="15.2908" />
+                                        <Key frame="25" value="15.9" />
+                                        <Key frame="30" value="30.7" />
                                         <Key frame="36" value="17.2244" />
                                         <Key frame="37" value="15.2029" />
-                                        <Key frame="38" value="15.2029" />
-                                        <Key frame="39" value="14.7634" />
+                                        <Key frame="38" value="31.6" />
+                                        <Key frame="39" value="35.8" />
                                         <Key frame="43" value="16.6091" />
                                         <Key frame="49" value="17.7517" />
                                         <Key frame="56" value="18.4549" />
@@ -256,7 +256,7 @@ class MyClass(GeneratedClass):
                                         <Key frame="36" value="45.7892" />
                                         <Key frame="37" value="55.8967" />
                                         <Key frame="38" value="64.4222" />
-                                        <Key frame="39" value="50.6232" />
+                                        <Key frame="39" value="34.2228" />
                                         <Key frame="43" value="45.7892" />
                                         <Key frame="49" value="55.7209" />
                                         <Key frame="56" value="39.9883" />
@@ -270,12 +270,12 @@ class MyClass(GeneratedClass):
                                         <Key frame="30" value="-30.1493" />
                                         <Key frame="36" value="-33.0497" />
                                         <Key frame="37" value="-48.8702" />
-                                        <Key frame="38" value="-26.8094" />
-                                        <Key frame="39" value="5.58298">
+                                        <Key frame="38" value="-39.4026" />
+                                        <Key frame="39" value="14.076">
                                             <Tangent side="left" interpType="linear" abscissaParam="0" ordinateParam="0" />
                                             <Tangent side="right" interpType="linear" abscissaParam="0" ordinateParam="0" />
                                         </Key>
-                                        <Key frame="43" value="-33.7326" />
+                                        <Key frame="43" value="-33.1469" />
                                         <Key frame="49" value="-30.1493" />
                                         <Key frame="56" value="-19.9538" />
                                         <Key frame="60" value="-30.7645" />
