@@ -6,8 +6,8 @@
 <epsx>0.025</epsx>
 <epsy>0.025</epsy>
 <!-- Desired kicks -->
-<KickForwardLeft>KickBestLeft.xar</KickForwardLeft>
-<KickForwardRight>KickBestRight.xar</KickForwardRight>
+<KickForwardLeft>KickLeftBest.xar</KickForwardLeft>
+<KickForwardRight>KickRightBest.xar</KickForwardRight>
 <KickSideLeft>KickBestLeft.xar</KickSideLeft>
 <KickSideRight>KickBestRight.xar</KickSideRight>
 <KickBackLeft>KickBackLeftED.xar</KickBackLeft>
