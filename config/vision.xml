@@ -11,7 +11,7 @@
 <balltolerance>0.3</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.045</skipdistance>
-<seedistance>7.2</seedistance>
+<seedistance>9</seedistance>
 <!-- Image Scanning parameters -->
 <scanV>48</scanV>
 <scanH>32</scanH>
