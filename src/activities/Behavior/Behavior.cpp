@@ -779,9 +779,12 @@ void Behavior::goalie() {
 	role = GOALIE;
 		
 	if(ballFound == 1) {
+		
 		if(!goalieApproachStarted)
 			stopRobot();
-			
+		
+		littleWalk(0.0, 0.0, ballBearing);
+		
 		fall = toFallOrNotToFall();
 
 		if(fall == 1) { // extend left foot
@@ -818,7 +821,7 @@ void Behavior::goalie() {
 	
 	}
 	else if(ballFound == 0) {
-	
+		
 		if(goalieApproachStarted == true) {
 			stopRobot();
 			goalieApproachStarted = false;
