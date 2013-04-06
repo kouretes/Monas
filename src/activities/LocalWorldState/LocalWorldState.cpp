@@ -263,6 +263,24 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
 		}
 	}
+
+
+    if (MyWorld.balls_size() > 0 && fabs(MyWorld.mutable_myposition()->x())<4.5 && fabs(MyWorld.mutable_myposition()->y()<3) ){
+       
+        float relativeX = MyWorld.mutable_balls(0)->relativex();
+        float relativeY = MyWorld.mutable_balls(0)->relativey();
+
+        float gX = (AgentPosition.x + relativeX * cos(AgentPosition.phi) - relativeY * sin(AgentPosition.phi));
+		float gY = (AgentPosition.y + relativeX * sin(AgentPosition.phi) + relativeY * cos(AgentPosition.phi));
+
+        if (fabs(gX) > 6 || fabs(gY) > 4.5){
+            MyWorld.clear_balls();
+        }
+    }
+
+
+
+
 }
 
 void LocalWorldState::ProcessMessages()
