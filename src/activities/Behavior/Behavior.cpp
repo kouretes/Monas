@@ -305,20 +305,21 @@ int Behavior::Execute()
 					    goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
                     else
                         pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
-				}
-				/*
-				else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
-					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
-				else
-					pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
-					*/
+				}else{
+					/*
+					else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
+						pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
+					else
+						pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+						*/
 
-                if(swim!=0 && swim.get()!=0 && swim->globalballs_size()>0)
-                    goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
-                else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
-					pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
-				else
-					pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+		            if(swim!=0 && swim.get()!=0 && swim->globalballs_size()>0)
+		                goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
+		            else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
+						pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
+					else
+						pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+				}
 			}
 
 		} // not goalie behavior end
@@ -778,8 +779,8 @@ void Behavior::goalie() {
 	role = GOALIE;
 		
 	if(ballFound == 1) {
-	
-		stopRobot();
+		if(!goalieApproachStarted)
+			stopRobot();
 			
 		fall = toFallOrNotToFall();
 
@@ -798,7 +799,7 @@ void Behavior::goalie() {
 			_blk.publishState(hcontrol, "behavior");
 		}
 
-		if(ballDist < 0.65) { // check if ball is to close to the goal post
+		if(ballDist < 1.0f) { // check if ball is to close to the goal post
 			goalieApproachStarted = true;
 			pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
 			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) ) {

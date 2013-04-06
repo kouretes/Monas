@@ -133,6 +133,7 @@ void MotionController::UserInit()
 
 void MotionController::Reset(){
 	readWalkParameters();
+	gameMode = atoi(_xml.findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 }
 
 int MotionController::Execute()
@@ -233,35 +234,40 @@ int MotionController::Execute()
 	{
 		/* Check if the robot is falling and remove stiffness, kill all motions */
 		float normdist = (accnorm - KDeviceLists::Interpret::GRAVITY_PULL) / KDeviceLists::Interpret::GRAVITY_PULL;
-		if (
-		    (
-		        normdist < -0.65 || normdist > 0.65  ||
-		        ( fabs(angX + VangX * INTTIME) > ANGLEHOR && fabs(angX) < LEANTOOMUCH) ||
-		        ( fabs(angY + VangY * INTTIME) > ANGLEHOR && fabs(angY) < LEANTOOMUCH)
-		    )
-		    ||
-		    (robotUp && actionPID == 0 && (fabs(angX) > LEANTOOMUCH || fabs(angY) > LEANTOOMUCH))
-		)
+		if((gameState == PLAYER_PENALISED || gameState == PLAYER_SET) && gameMode)
 		{
-			Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
-			timeLapsed = boost::posix_time::microsec_clock::universal_time();
-
-			if(timeLapsed - standUpStartTime >= boost::posix_time::seconds(3.5))
+			;//avoid falling robot from the refs
+		}else{
+			if (
+				(
+				    normdist < -0.65 || normdist > 0.65  ||
+				    ( fabs(angX + VangX * INTTIME) > ANGLEHOR && fabs(angX) < LEANTOOMUCH) ||
+				    ( fabs(angY + VangY * INTTIME) > ANGLEHOR && fabs(angY) < LEANTOOMUCH)
+				)
+				||
+				(robotUp && actionPID == 0 && (fabs(angX) > LEANTOOMUCH || fabs(angY) > LEANTOOMUCH))
+			)
 			{
-				if(currentstate == PLAYER_PLAYING || currentstate == PLAYER_READY)
-				{
-					//Message edw
-					robotUp = false;
-					robotDown = false;
-					killCommands();
-				}
+				Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
+				timeLapsed = boost::posix_time::microsec_clock::universal_time();
 
-				motion->setStiffnesses("Body", 0.0);
-				sm.set_type(MotionStateMessage::FALL);
-				sm.set_detail("");
-				_blk.publishState(sm, "worldstate");
-				waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
-				return 0;
+				if(timeLapsed - standUpStartTime >= boost::posix_time::seconds(3.5))
+				{
+					if(currentstate == PLAYER_PLAYING || currentstate == PLAYER_READY)
+					{
+						//Message edw
+						robotUp = false;
+						robotDown = false;
+						killCommands();
+					}
+
+					motion->setStiffnesses("Body", 0.0);
+					sm.set_type(MotionStateMessage::FALL);
+					sm.set_detail("");
+					_blk.publishState(sm, "worldstate");
+					waitfor = microsec_clock::universal_time() + boost::posix_time::milliseconds(350);
+					return 0;
+				}
 			}
 		}
 	}

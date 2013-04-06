@@ -107,6 +107,7 @@ private:
 	vector<float> KGetAngles();
 	void createDCMAlias();
 
+	bool gameMode;
 
 	typedef std::map < std::string, boost::shared_ptr<ISpecialAction> > SpAssocCont;
 	typedef std::pair < std::string, boost::shared_ptr<ISpecialAction> > SpAsoocElement;
