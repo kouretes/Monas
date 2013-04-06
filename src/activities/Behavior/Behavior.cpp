@@ -776,8 +776,11 @@ void Behavior::checkForPenaltyArea()
 void Behavior::goalie() {
 
 	role = GOALIE;
+		
 	if(ballFound == 1) {
-
+	
+		stopRobot();
+			
 		fall = toFallOrNotToFall();
 
 		if(fall == 1) { // extend left foot
@@ -811,13 +814,18 @@ void Behavior::goalie() {
 			stopRobot();
 			goalieApproachStarted = false;
 		}
-
+	
 	}
 	else if(ballFound == 0) {
+	
 		if(goalieApproachStarted == true) {
 			stopRobot();
 			goalieApproachStarted = false;
 		}
+		
+		amot.set_command("PoseInitial.xar");
+		_blk.publishSignal(amot, "motion");
+		
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(hcontrol, "behavior");
 	}
