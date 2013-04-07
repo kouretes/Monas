@@ -171,7 +171,7 @@ private:
 	 * @brief Information gathering function, that reads the position, angle and robot confidence.
 	 */
 	void getPosition();
-	
+
 	/**
 	 * @fn void GetMotionData()
 	 * @brief Information gathering function, that reads motion state of the robot.
@@ -295,14 +295,14 @@ private:
 
 	bool pathOK;
 
-	bool kickOff;
+	bool kickOff, searchFlag;
 
 	float cX, cY, ct;
 
 	float ballDist, ballBearing, ballX, ballY; // ball data coming from world info message.
-	
+
 	float globalBallX, globalBallY; // transformation from relative robot ball x,y to relative field ball x,y USED UNTIL WE HAVE GLOBAL BALL ESTIMATION!!!
-	
+
 	float SharedGlobalBallX, SharedGlobalBallY; // global ball from shared world state!
 
 	int side;
@@ -324,12 +324,12 @@ private:
 	bool gameMode, penaltyMode;
 
 	MotionStateMessage::ActionType currentRobotAction;
-	
+
 	bool scanAfterKick;
 
 	FormationGenerator fGen; // object that create and update the team formation
 
-	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation; // timers.
+	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter; // timers.
 };
 
 ACTIVITY_END
