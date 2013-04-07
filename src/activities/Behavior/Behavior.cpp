@@ -64,6 +64,11 @@ void Behavior::UserInit()
 	lastPlay = microsec_clock::universal_time();
 	lastPenalised = microsec_clock::universal_time();
 	lastFormation = microsec_clock::universal_time();
+
+	lastGoToCenter = microsec_clock::universal_time()-seconds(10);
+	lastBallFound = microsec_clock::universal_time()-seconds(20);
+
+
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
 	// generateFakeObstacles();
@@ -249,6 +254,7 @@ int Behavior::Execute()
 
 			if (ballFound == 1)
 			{
+                lastBallFound = microsec_clock::universal_time();
 				side = (ballBearing > 0) ? 1 : -1;
 				//posx = 0.1, posy = 0.03; // Desired ball position for kick
 				//double epsx = 0.025, epsy = 0.025; // Desired precision
@@ -296,29 +302,38 @@ int Behavior::Execute()
 					_blk.publishState(hcontrol, "behavior");
 				}
 
-				//walk straight for some seconds after the scan has ended (lastpenalised+seconds(12))
+				//walk straight for some seconds after the scan has ended (lastpenalised+seconds(14))
 				//and then start turning around to search for ball.
-				if (lastPenalised + seconds(14) > microsec_clock::universal_time())
+				if (lastPenalised + seconds(20) > microsec_clock::universal_time())
 				{
-					//pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
-                    if(swim!=0 && swim.get()!=0 && swim->globalballs_size()>0)
-					    goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
-                    else
-                        pathPlanningRequestAbsolute(0.2, 0.0, 0.0);
+                    pathPlanningRequestAbsolute(3.0, 0.0, 0.0);
 				}else{
-					/*
-					else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
-						pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
-					else
-						pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
-						*/
-
 		            if(swim!=0 && swim.get()!=0 && swim->globalballs_size()>0)
 		                goToPosition(SharedGlobalBallX, SharedGlobalBallY, 0.0);
-		            else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
-						pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
-					else
-						pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+		            //else if ( (fabs(robotX) < 4.5f) && (fabs(robotY) < 3.0f) )
+					//	pathPlanningRequestAbsolute(0.45, 0.45 * direction, M_PI_4 * direction);
+					else{
+						//pathPlanningRequestAbsolute(0.1, 0.1 * direction, M_PI_4 * direction);
+						if (lastGoToCenter + seconds(10) > microsec_clock::universal_time()){
+                                if(robotX<0.0)
+                                    goToPosition(0.0, 0.0, 0.0);
+                                else
+                                    goToPosition(fGen.Field.MaxX/2.0f, 0.0, 0.0);
+						}
+                        else{
+                            if(searchFlag){
+                                lastBallFound = microsec_clock::universal_time();
+                                searchFlag = false;
+                            }
+
+                            if (lastBallFound + seconds(20) > microsec_clock::universal_time())
+                                littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
+                            else{
+                                lastGoToCenter = microsec_clock::universal_time();
+                                searchFlag = true;
+                            }
+                        }
+					}
 				}
 			}
 
@@ -468,6 +483,7 @@ void Behavior::sendDebugMessages() {
 bool Behavior::closestRobot() {
 
 	if(swim != 0 && swim.get() != 0) {
+//	    Logger::Instance().WriteMsg("Behavior", swim->playerclosesttoball(), Logger::Info);
         if(swim->playerclosesttoball()==config.playerNumber){
             //Logger::Instance().WriteMsg("Behavior", config.playerNumber, Logger::Info);
             return true;
@@ -777,11 +793,11 @@ void Behavior::checkForPenaltyArea()
 void Behavior::goalie() {
 
 	role = GOALIE;
-		
+
 	if(ballFound == 1) {
 		if(!goalieApproachStarted)
 			stopRobot();
-			
+
 		fall = toFallOrNotToFall();
 
 		if(fall == 1) { // extend left foot
@@ -815,18 +831,18 @@ void Behavior::goalie() {
 			stopRobot();
 			goalieApproachStarted = false;
 		}
-	
+
 	}
 	else if(ballFound == 0) {
-	
+
 		if(goalieApproachStarted == true) {
 			stopRobot();
 			goalieApproachStarted = false;
 		}
-		
+
 		amot.set_command("PoseInitial.xar");
 		_blk.publishSignal(amot, "motion");
-		
+
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(hcontrol, "behavior");
 	}
