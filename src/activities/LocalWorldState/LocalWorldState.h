@@ -98,6 +98,7 @@ private:
 	//Our ball filter
 	BallFilter myBall;
 
+    int gameState,prevGameState;
 	//Message we need to read
 	boost::shared_ptr<const GameStateMessage> gsm;
 	boost::shared_ptr<const ObservationMessage> obsm;
@@ -114,7 +115,7 @@ private:
 	
 	//Time variables
 	boost::posix_time::ptime timeStart, timeStop;
-	boost::posix_time::ptime lastObservationTime;
+	boost::posix_time::ptime lastObservationTime, gamePlaying;
 	boost::posix_time::ptime lastFilterTime;
 	boost::posix_time::ptime now;
     boost::posix_time::ptime odometryMessageTime;

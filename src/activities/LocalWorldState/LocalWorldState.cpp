@@ -34,7 +34,7 @@ void LocalWorldState::UserInit()
 	serverpid = -1;
 	debugmode = false;
 	fallBegan = true;
-
+	gameState = PLAYER_INITIAL;
 	int maxBytedataSize = 100000;
 	data = new char[maxBytedataSize]; //## TODO  FIX THIS BETTER
 
@@ -46,7 +46,7 @@ void LocalWorldState::UserInit()
 	lastFilterTime = boost::posix_time::microsec_clock::universal_time();
     odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
     debugMessageTime = boost::posix_time::microsec_clock::universal_time();
-
+    gamePlaying = boost::posix_time::microsec_clock::universal_time();
     //read xml files..set parameters for localizationWorld
     Reset();
     ReadFieldConf();
@@ -117,17 +117,22 @@ int LocalWorldState::Execute()
         }
     }
 
-    if (locConfig.ekfEnable == true){
-        AgentPosition = ekfLocalization.LocalizationStep(robotmovement, currentObservation, currentAmbiguousObservation);
+    if (gameState == PLAYER_PLAYING && (prevGameState == PLAYER_PENALISED || prevGameState == PLAYER_SET ))
+         gamePlaying = microsec_clock::universal_time();   
 
-        for (int i=0;i<3;i++){
-             for (int j=0;j<3;j++){
-                MyWorld.mutable_myposition()->set_var(i*3+j,ekfLocalization.var(i,j));
+    if ( gameState !=  PLAYER_SET ) {
+        if (locConfig.ekfEnable == true){
+            AgentPosition = ekfLocalization.LocalizationStep(robotmovement, currentObservation, currentAmbiguousObservation);
+
+            for (int i=0;i<3;i++){
+                 for (int j=0;j<3;j++){
+                    MyWorld.mutable_myposition()->set_var(i*3+j,ekfLocalization.var(i,j));
+                }
             }
         }
-    }
-    else{
-        AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
+        else{
+            AgentPosition = localizationWorld.LocalizationStepSIR(robotmovement, currentObservation, currentAmbiguousObservation);
+        }
     }
 
     MyWorld.mutable_myposition()->set_x(AgentPosition.x);
@@ -230,8 +235,6 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 				{
 					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
 					lastFilterTime = now;
-					//RESET
-					//cout << "RESETING_BALL" << endl;
 					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
 				} else
 					MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
@@ -256,7 +259,8 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 			lastFilterTime = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0){ //Std = 2m and wait for 80 ms before deleting
+          
+			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0 && (gamePlaying + seconds(8) < microsec_clock::universal_time())){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
 			}
 			if (MyWorld.balls_size() > 0)
@@ -299,6 +303,8 @@ void LocalWorldState::ProcessMessages()
 	if(gsm != 0){
 		locConfig.playerNumber = gsm->player_number();
 		MyWorld.set_playernumber(gsm->player_number());
+        prevGameState = gameState;
+		gameState = gsm->player_state();
 	}
 	if (obsm != 0)
 	{
