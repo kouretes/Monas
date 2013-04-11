@@ -16,40 +16,41 @@ class GraphicalRobotElement;
 class KGraphicsView;
 
 class KFieldScene : public QGraphicsScene {
+
 public:
-	KFieldScene (QGraphicsView *parent);
+	KFieldScene(QGraphicsView *parent);
 	~KFieldScene();
 
-	void resizeFieldScene (int width, int height);
-
-	void printRobotList();
-	GraphicalRobotElement *findGraphicalRobotItem (QString hostId );
-	GraphicalRobotElement *newGraphicalRobotItem (QString hostId);
-	void removeGraphicalRobotItem (QString hostId);
-
-	QList<GraphicalRobotElement *> getRobotList () {
+	QList<GraphicalRobotElement*> getRobotList() {
 		return RobotList;
 	}
-	QGraphicsView *getParentGraphicsView() {
+	
+	QGraphicsView* getParentGraphicsView() {
 		return parent;
 	}
-
-	QRectF rectFromFC (float xMiddle, float yMiddle, float width, float height);
-	QLineF lineFromFCA (float x, float y, float degAngle, float size);
-	QRectF ballRectFromFC (WorldInfo *wim, float width, float height);
-	QLineF lineRectFromFC (float x1, float y1, float x2, float y2);
-	QLineF unionistLineRectFromFC (WorldInfo *wim);
-    QPointF pointFromFC(float x, float y);
-	QRectF visionBallRect ( BallObject bob, WorldInfo wim);
-	QRectF goalPostRectFromOBM (NamedObject *nob, WorldInfo *wim);
-	QLineF motionCmdRectFromFC (WorldInfo *wim, float cx, float cy);
 	
-	QLabel* getLabel() { return formationLabel; }
+	QLabel* getLabel() { 
+		return formationLabel; 
+	}
+	
+	void resizeFieldScene(int width, int height);
 
+	void printRobotList();
+	GraphicalRobotElement* findGraphicalRobotItem(QString hostId );
+	GraphicalRobotElement* newGraphicalRobotItem(QString hostId);
+	void removeGraphicalRobotItem(QString hostId);
+
+	QRectF rectFromFC(float xMiddle, float yMiddle, float width, float height);
+	QLineF lineFromFCA(float x, float y, float degAngle, float size);
+	QRectF ballRectFromFC(WorldInfo *wim, float width, float height);
+	QLineF lineRectFromFC(float x1, float y1, float x2, float y2);
+	QLineF unionistLineRectFromFC(WorldInfo *wim);
+    QPointF pointFromFC(float x, float y);
+	QRectF visionBallRect( BallObject bob, WorldInfo wim);
+	QRectF goalPostRectFromOBM(NamedObject *nob, WorldInfo *wim);
+	QLineF motionCmdRectFromFC(WorldInfo *wim, float cx, float cy);
+	
 private:
-	void loadXMLConfig (std::string fname);
-	void setSvgItems();
-
 	QLabel *formationLabel;
 	
 	QGraphicsRectItem *LSide;
@@ -105,10 +106,14 @@ private:
 		int radCenterCircle;
 
 	} config;
+	
 	XMLConfig *xmlconfig;
 
 	QGraphicsView *parent;
-	QList<GraphicalRobotElement *> RobotList;
+	QList<GraphicalRobotElement*> RobotList;
+	
+	void loadXMLConfig(std::string fname);
+	void setSvgItems();
 };
 
 #endif // KFieldScene_H

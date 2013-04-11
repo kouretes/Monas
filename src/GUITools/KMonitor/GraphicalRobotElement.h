@@ -35,52 +35,60 @@ class GraphicalRobotElement : public QObject {
 	Q_OBJECT
 
 public:
-	GraphicalRobotElement (KFieldScene *parent, QString host);
+	GraphicalRobotElement(KFieldScene *parent, QString host);
 	~GraphicalRobotElement();
 
 	QString getHostId() {
 		return hostId;
 	}
 
-	void setCurrentWIM (WorldInfo nwim);
-	void setCurrentSWIM (SharedWorldInfo nswim);
-	void setCurrentGSM (GameStateMessage gsm);
-	void setCurrentOBSM (ObservationMessage obm);
-	void setCurrentEKFMHypothesisM (EKFMHypothesis ekfMHyp);
-    void setCurrentOdometryM (OdometryInfoMessage odometryM);
+	void setCurrentWIM(WorldInfo nwim);
+	void setCurrentSWIM(SharedWorldInfo nswim);
+	void setCurrentGSM(GameStateMessage gsm);
+	void setCurrentOBSM(ObservationMessage obm);
+	void setCurrentEKFMHypothesisM(EKFMHypothesis ekfMHyp);
+    void setCurrentOdometryM(OdometryInfoMessage odometryM);
 
-	void setGWSRobotVisible (bool visible) {
+	void setGWSRobotVisible(bool visible) {
 		GWSRobotVisible = visible;
-		setRobotVisible (visible);
+		setRobotVisible(visible);
 	}
+	
 	bool getGWSRobotVisible() {
 		return GWSRobotVisible;
 	}
-	void setLWSRobotVisible (bool visible) {
+	
+	void setLWSRobotVisible(bool visible) {
 		LWSRobotVisible = visible;
-		setRobotVisible (visible);
+		setRobotVisible(visible);
 	}
+	
 	bool getLWSRobotVisible() {
 		return LWSRobotVisible;
 	}
-	void setLWSTeammatesVisible (bool visible) {
+	
+	void setLWSTeammatesVisible(bool visible) {
 		LWSTeammatesVisible = visible;
-		setTeammatesVisible (visible);
+		setTeammatesVisible(visible);
 	}
+	
 	bool getLWSTeammatesVisible() {
 		return LWSTeammatesVisible;
 	}
-	void setLWSFormationVisible (bool visible) {
+	
+	void setLWSFormationVisible(bool visible) {
 		LWSFormationVisible = visible;
-		setFormationVisible (visible);
+		setFormationVisible(visible);
 	}
+	
 	bool getLWSFormationVisible() {
 		return LWSFormationVisible;
 	}
-	void setRobotVisible (bool visible);
-	void setTeammateVisible (int idx, bool visible);
-	void setTeammatesVisible (bool visible);
-	void setFormationVisible (bool visible);
+	
+	void setRobotVisible(bool visible);
+	void setTeammateVisible(int idx, bool visible);
+	void setTeammatesVisible(bool visible);
+	void setFormationVisible(bool visible);
 	void updateRobotRect();
 	void updateTeammatesRects();
 
@@ -88,164 +96,181 @@ public:
     void updateEkfMHypothesisRects();
     void updateOdometryPolygon();
 
-    void setVarianceVisible (bool visible);
-    void setEkfMHypothesisVisible (bool visible);
-    void setOdometryVisible (bool visible);
-    void setRobotTraceVisible (bool visible);
+    void setVarianceVisible(bool visible);
+    void setEkfMHypothesisVisible(bool visible);
+    void setOdometryVisible(bool visible);
+    void setRobotTraceVisible(bool visible);
 
 	void updateFormationRects(FormationDataForGUI debugGUI);
 
-
-	void setGWSBallVisible (bool visible) {
+	void setGWSBallVisible(bool visible) {
 		GWSBallVisible = visible;
-		setBallVisible (visible);
+		setBallVisible(visible);
 	}
+	
 	bool getGWSBallVisible() {
 		return GWSBallVisible;
 	}
-	void setLWSBallVisible (bool visible) {
+	
+	void setLWSBallVisible(bool visible) {
 		LWSBallVisible = visible;
-		setBallVisible (visible);
+		setBallVisible(visible);
 	}
+	
 	bool getLWSBallVisible() {
 		return LWSBallVisible;
 	}
-	void setBallVisible (bool visible);
+	
+	void setBallVisible(bool visible);
 	void updateBallRect();
 
-	void setGWSUnionistLineVisible (bool visible) {
+	void setGWSUnionistLineVisible(bool visible) {
 		GWSUnionistLineVisible = visible;
-		setUnionistLineVisible (visible);
+		setUnionistLineVisible(visible);
 	}
+	
 	bool getGWSUnionistLineVisible() {
 		return GWSUnionistLineVisible;
 	}
-	void setLWSUnionistLineVisible (bool visible) {
+	void setLWSUnionistLineVisible(bool visible) {
 		LWSUnionistLineVisible = visible;
-		setUnionistLineVisible (visible);
+		setUnionistLineVisible(visible);
 	}
+	
 	bool getLWSUnionistLineVisible() {
 		return LWSUnionistLineVisible;
 	}
-	void setUnionistLineVisible (bool visible);
+	
+	void setUnionistLineVisible(bool visible);
 	void updateUnionistLineRect();
 
 	// Vision observations
-	void setLWSVisionBallVisible (bool visible) {
+	void setLWSVisionBallVisible(bool visible) {
 		LWSVisionBallVisible = visible;
-		setVisionBallVisible (visible);
+		setVisionBallVisible(visible);
 	}
+	
 	bool getLWSVisionBallVisible() {
 		return LWSVisionBallVisible;
 	}
 
-    void setLWSVarianceVisible (bool visible) {
+    void setLWSVarianceVisible(bool visible) {
 		LWSVarianceVisible = visible;
-		setVarianceVisible (visible);
+		setVarianceVisible(visible);
 	}
 
     bool getLWSVarianceVisible(){
 		return LWSVarianceVisible;
     }
 
-    void setLWSEkfMHypothesisVisible (bool visible) {
+    void setLWSEkfMHypothesisVisible(bool visible) {
 		LWSEkfMhypothesisVisible = visible;
-		setEkfMHypothesisVisible (visible);
+		setEkfMHypothesisVisible(visible);
 	}
 
     bool getLWSEkfMHypothesisVisible(){
 		return LWSEkfMhypothesisVisible;
     }
 
-    void setLWSOdometryVisible (bool visible) {
+    void setLWSOdometryVisible(bool visible) {
 		LWSOdometryVisible = visible;
-		setOdometryVisible (visible);
+		setOdometryVisible(visible);
 	}
     
     bool getLWSOdometryVisible(){
 		return LWSOdometryVisible;
     }
 
-    void setLWSRobotTraceVisible (bool visible) {
+    void setLWSRobotTraceVisible(bool visible) {
 		LWSRobotTraceVisible = visible;
-		setRobotTraceVisible (visible);
+		setRobotTraceVisible(visible);
 	}
     
     bool getLWSRobotTraceVisible(){
 		return LWSRobotTraceVisible;
     }
 
-
-
-	void setVisionBallVisible (bool visible);
+	void setVisionBallVisible(bool visible);
 	//void updateVisionBallRect();
-	void updateVisionBallRect (ObservationMessage obm);
+	void updateVisionBallRect(ObservationMessage obm);
 
-	void setLWSYellowLeftPostVisible (bool visible) {
+	void setLWSYellowLeftPostVisible(bool visible) {
 		LWSVisionYellowLeftPostVisible = visible;
-		setYellowLeftPostVisible (visible);
+		setYellowLeftPostVisible(visible);
 	}
+	
 	bool getLWSYellowLeftPostVisible() {
 		return LWSVisionYellowLeftPostVisible;
 	}
-	void setYellowLeftPostVisible (bool visible);
+	
+	void setYellowLeftPostVisible(bool visible);
 	void updateGoalPostsRect();
 
-	void setLWSYellowRightPostVisible (bool visible) {
+	void setLWSYellowRightPostVisible(bool visible) {
 		LWSVisionYellowRightPostVisible = visible;
-		setYellowRightPostVisible (visible);
+		setYellowRightPostVisible(visible);
 	}
+	
 	bool getLWSYellowRightPostVisible() {
 		return LWSVisionYellowRightPostVisible;
 	}
-	void setYellowRightPostVisible (bool visible);
+	
+	void setYellowRightPostVisible(bool visible);
 
-	void setLWSYellowPostVisible (bool visible) {
+	void setLWSYellowPostVisible(bool visible) {
 		LWSVisionYellowPostVisible = visible;
-		setYellowPostVisible (visible);
+		setYellowPostVisible(visible);
 	}
+	
 	bool getLWSYellowPostVisible() {
 		return LWSVisionYellowPostVisible;
 	}
-	void setYellowPostVisible (bool visible);
+	
+	void setYellowPostVisible(bool visible);
 
 	// Particles of Localization
-	void setLWSParticlesVisible (bool visible) {
+	void setLWSParticlesVisible(bool visible) {
 		LWSParticlesVisible = visible;
-		setParticlesVisible (visible);
+		setParticlesVisible(visible);
 	}
+	
 	bool getLWSParticlesVisible() {
 		return LWSParticlesVisible;
 	}
-	void setParticlesVisible (bool visible);
-	void updateParticlesRect (LocalizationDataForGUI debugGUI);
+	
+	void setParticlesVisible(bool visible);
+	void updateParticlesRect(LocalizationDataForGUI debugGUI);
 
 	// HFOV
-	void setLWSHFOVVisible (bool visible) {
+	void setLWSHFOVVisible(bool visible) {
 		LWSHFOVVisible = visible;
-		setHFOVVisible (visible);
+		setHFOVVisible(visible);
 	}
+	
 	bool getLWSHFOVVisible() {
 		return LWSHFOVVisible;
 	}
-	void setHFOVVisible (bool visible);
+	void setHFOVVisible(bool visible);
 	void updateHFOVRect();
 
 
 	// Motion Walk Command
-	void setLWSMWCmdVisible (bool visible) {
+	void setLWSMWCmdVisible(bool visible) {
 		LWSMWCmdVisible = visible;
-		setMWCmdVisible (visible);
+		setMWCmdVisible(visible);
 	}
+	
 	bool getLWSMWCmdVisible() {
 		return LWSMWCmdVisible;
 	}
-	void setMWCmdVisible (bool visible);
-	void updateMWCmdRect (MotionWalkMessage wmot);
+	
+	void setMWCmdVisible(bool visible);
+	void updateMWCmdRect(MotionWalkMessage wmot);
 
 	QTimer *getGREtimer() {
 		return GREtimer;
 	}
+	
 	QTimer *getMWCmdTimer() {
 		return MWCmdTimer;
 	}
@@ -257,11 +282,11 @@ private slots:
 	void clearMotionWalkCommand();
 
 private:
-	void loadXMLlocalizationConfigParameters (std::string fname);
-	void loadXMLteamConfigParameters (std::string fname);
-	void tagVisionObservations (QGraphicsEllipseItem *post, QRectF rect, QString text);
-	void tagRoles (QGraphicsEllipseItem *post, QRectF rect, QString text, const QColor & color);
-	QPolygonF calculateArrowHeadPosition (QLineF aLine);
+	void loadXMLlocalizationConfigParameters(std::string fname);
+	void loadXMLteamConfigParameters(std::string fname);
+	void tagVisionObservations(QGraphicsEllipseItem *post, QRectF rect, QString text);
+	void tagRoles(QGraphicsEllipseItem *post, QRectF rect, QString text, const QColor & color);
+	QPolygonF calculateArrowHeadPosition(QLineF aLine);
 	void updateRobotTracePolygon();
 
 
@@ -270,7 +295,7 @@ private:
 	KFieldScene *parentScene;
 
 	QString hostId;
-	int teamColor;	//1 for blue, -1 for red
+	int teamColor;	// 1 for blue, -1 for red
 
 	WorldInfo currentWIM;
 	SharedWorldInfo currentSWIM;
@@ -287,7 +312,6 @@ private:
 	bool GWSRobotVisible;
 	bool LWSRobotVisible, LWSTeammatesVisible;
 	static const int numOfRobots = 5;
-
 
     int ekfMaxHypothesis;
 	QGraphicsEllipseItem *Robot, *AngleUncertainty,*PositionUncertainty,*Teammates[numOfRobots], *TeamBall;
@@ -344,9 +368,9 @@ private:
 	QGraphicsLineItem *GotoPositionLine;
 	QGraphicsPolygonItem *GotoArrow;
 	QGraphicsEllipseItem *zAxisArc;
-	//QGraphicsPolygonItem* zAxisArcArrow;
 
 	QTimer *GREtimer;
 	QTimer *MWCmdTimer;
 };
-#endif /* GRAPHICALROBOTELEMENT_H_ */
+
+#endif // GRAPHICALROBOTELEMENT_H_

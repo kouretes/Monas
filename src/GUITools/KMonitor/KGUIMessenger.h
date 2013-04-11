@@ -29,53 +29,53 @@ public:
 	KGUIMessenger();
 	~KGUIMessenger();
 
-	MessageBuffer *makeWriteBuffer (std::string const &s);
-	MessageBuffer *makeReadBuffer (std::string const &s);
+	MessageBuffer *makeWriteBuffer(std::string const &s);
+	MessageBuffer *makeReadBuffer(std::string const &s);
 
 public slots:
-	void GWSubscriptionHandler (QString);
-	void GWUnsubscriptionHandler (QString);
+	void GWSubscriptionHandler(QString);
+	void GWUnsubscriptionHandler(QString);
 
-	void SubscriptionHandler (QString);
+	void SubscriptionHandler(QString);
 
-	void XMLPublishMessage (ExternalConfig);
-	void CommandPublishMessage (ExternalCommand message);
+	void XMLPublishMessage(ExternalConfig);
+	void CommandPublishMessage(ExternalCommand message);
 
-	void tabChangeHandler (int);
+	void tabChangeHandler(int);
 
 signals:
-	void knownHostsUpdate (KnownHosts);
-	void gameStateMessageUpdate (GameStateMessage, QString);
-	void worldInfoUpdate (WorldInfo, QString);
-	void sharedWorldInfoUpdate (SharedWorldInfo, QString);
-	void localizationDataUpdate (LocalizationDataForGUI, QString);
+	void knownHostsUpdate(KnownHosts);
+	void gameStateMessageUpdate(GameStateMessage, QString);
+	void worldInfoUpdate(WorldInfo, QString);
+	void sharedWorldInfoUpdate(SharedWorldInfo, QString);
+	void localizationDataUpdate(LocalizationDataForGUI, QString);
 
-	void EKFMHypothesisUpdate (EKFMHypothesis, QString);
-	void OdometryUpdate (OdometryInfoMessage, QString);
+	void EKFMHypothesisUpdate(EKFMHypothesis, QString);
+	void OdometryUpdate(OdometryInfoMessage, QString);
 
-	void obsmsgUpdate (ObservationMessage, QString);
-	void motionCommandUpdate (MotionWalkMessage, QString);
-	void formationDataUpdate (FormationDataForGUI, QString);
-	void gridInfoUpdate (GridInfo, QString);
-	void rawImage (KRawImage, QString);
-	void sensorsDataUpdate (AllSensorValuesMessage, QString);
-	void GenericAckReceived (GenericACK, QString);
+	void obsmsgUpdate(ObservationMessage, QString);
+	void motionCommandUpdate(MotionWalkMessage, QString);
+	void formationDataUpdate(FormationDataForGUI, QString);
+	void gridInfoUpdate(GridInfo, QString);
+	void rawImage(KRawImage, QString);
+	void sensorsDataUpdate(AllSensorValuesMessage, QString);
+	void GenericAckReceived(GenericACK, QString);
    
-	void addHost (QString hostId, QString hostName);
-	void removeHost (QString hostId);
-	void updateGameState (QString iconPath, QString state, QString hostId);
+	void addHost(QString hostId, QString hostName);
+	void removeHost(QString hostId);
+	void updateGameState(QString iconPath, QString state, QString hostId);
 
-	void changeAllTabsToHost (QString hostId);
+	void changeAllTabsToHost(QString hostId);
 
 private slots:
 	void allocateReceivedMessages();
 
 private:
-	void updateSubscription (std::string const &topic , msgentry::msgclass_t where, std::size_t host);
-	void updateKnownHosts (KnownHosts myRemoteHosts);
-	void updateGameState (GameStateMessage gsm, QString hostId);
+	void updateSubscription(std::string const &topic , msgentry::msgclass_t where, std::size_t host);
+	void updateKnownHosts(KnownHosts myRemoteHosts);
+	void updateGameState(GameStateMessage gsm, QString hostId);
 
-	void printKnownHosts (KnownHosts hosts);
+	void printKnownHosts(KnownHosts hosts);
 
 	EndPoint *multicast;
 	StringRegistry pubsubRegistry;
@@ -90,4 +90,5 @@ private:
 	QStringList myGWRequestedHosts;
 	QString myKMonitorRequestedHost;
 };
-#endif /* KGUIMESSENGER_H_ */
+
+#endif // KGUIMESSENGER_H_

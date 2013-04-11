@@ -7,7 +7,7 @@
 #include "ui_KMonitor.h"
 
 namespace Ui {
-class KMonitor;
+	class KMonitor;
 }
 
 class KMonitor : public QMainWindow {
@@ -22,7 +22,6 @@ private slots:
 	void printCurrentTab (int index);
 
 private:
-
 	Ui::KMonitor *ui;
 	KGUIMessenger *Messenger;
 };

@@ -19,34 +19,37 @@
 #include "HostsComboBox.h"
 #include "messages/Kimage.pb.h"
 #include "activities/Vision/KSegmentator.h"
+
 using namespace std;
 
 namespace Ui {
-class KccHandler;
+	class KccHandler;
 }
 
 class KccHandler : public QWidget {
 	Q_OBJECT
+	
 	struct QYuv {
 		unsigned char y, u, v;
-		//Custom operator because is needed for the map<>
-		bool operator< (const QYuv &QYuv1) const {
-			return (int ( (y << 16) | (u << 8) | v) ) < (int ( (QYuv1.y << 16) | (QYuv1.u << 8) | QYuv1.v) );
+		
+		bool operator< (const QYuv &QYuv1) const { // Custom operator because is needed for the map<>
+			return(int((y << 16) |(u << 8) | v) ) <(int((QYuv1.y << 16) |(QYuv1.u << 8) | QYuv1.v) );
 		}
 	};
+	
 public:
 	static const unsigned int MAX_UNDO = 10;
 	static const float gammaExposure = 0.45;
-	unsigned char orangeColor;// = 'o';
-	unsigned char greenColor;// = 'g';
-	unsigned char yellowColor;// = 'y';
-	unsigned char whiteColor;// = 'w';
-	unsigned char redColor;// = 'r';
-	unsigned char blueColor;// = 'u';//From magic the gathering :P
-	unsigned char blackColor;// = 'b';
+	unsigned char orangeColor;	// = 'o';
+	unsigned char greenColor;	// = 'g';
+	unsigned char yellowColor;	// = 'y';
+	unsigned char whiteColor;	// = 'w';
+	unsigned char redColor;		// = 'r';
+	unsigned char blueColor;	// = 'u'; // from magic the gathering :P
+	unsigned char blackColor;	// = 'b';
 
 public:
-	explicit KccHandler (QWidget *parent = 0);
+	explicit KccHandler(QWidget *parent = 0);
 	~KccHandler();
 
 	Ui::KccHandler *getKccUi() {
@@ -54,21 +57,23 @@ public:
 	}
 
 private:
-	void adjustScrollBar (QScrollBar *scrollBar, double factor);
-	void transformYUVtoRGB (const char *yuvImage, QImage *rgbImage);
-	int distance (QYuv a, QYuv b);
-	unsigned char adjustY (unsigned char y);
-	unsigned char adjustU (unsigned char u);
-	unsigned char adjustV (unsigned char v);
+	void adjustScrollBar(QScrollBar *scrollBar, double factor);
+	void transformYUVtoRGB(const char *yuvImage, QImage *rgbImage);
+	int distance(QYuv a, QYuv b);
+	unsigned char adjustY(unsigned char y);
+	unsigned char adjustU(unsigned char u);
+	unsigned char adjustV(unsigned char v);
+	
 signals:
-	void SubscriptionRequest (QString);
+	void SubscriptionRequest(QString);
+	
 public slots:
-	void addComboBoxItem (QString, QString);
-	void removeComboBoxItem (QString);
-	void setGameStateInfo (QString, QString, QString);
-	void changeToHost (QString);
-	void SubscriptionHandler (QString);
-	void clickedImage (QMouseEvent *ev);
+	void addComboBoxItem(QString, QString);
+	void removeComboBoxItem(QString);
+	void setGameStateInfo(QString, QString, QString);
+	void changeToHost(QString);
+	void SubscriptionHandler(QString);
+	void clickedImage(QMouseEvent *ev);
 	void pbOrangePressed();
 	void pbGreenPressed();
 	void pbYellowPressed();
@@ -85,10 +90,9 @@ public slots:
 	void realZoomOut();
 	void segZoomIn();
 	void segZoomOut();
-	void changeImage (KRawImage rawImage, QString hostId);
+	void changeImage(KRawImage rawImage, QString hostId);
 
 private:
-
 	double A, B, C, D;
 	int widthInPixels;
 	int heightInPixels;
@@ -104,7 +108,7 @@ private:
 
 	vector<map<QYuv, unsigned char> > undoVector;
 	bool takeSnapshot;
-	KccLabel *realImL, * segImL;
+	KccLabel *realImL, *segImL;
 	HostsComboBox *availableKCCHosts;
 	QScrollArea *scrollImage, *scrollSeg;
 

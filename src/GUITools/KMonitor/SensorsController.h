@@ -10,30 +10,30 @@
 #include <boost/circular_buffer.hpp>
 
 namespace Ui {
-class SensorsController;
+	class SensorsController;
 }
 
 class SensorsController : public QWidget {
 	Q_OBJECT
 
 public:
-	explicit SensorsController (QWidget *parent = 0);
+	explicit SensorsController(QWidget *parent = 0);
 	~SensorsController();
 
-	Ui::SensorsController *getLSDControllerUi() {
+	Ui::SensorsController* getLSDControllerUi() {
 		return ui;
 	}
 
 signals:
-	void SubscriptionRequest (QString);
+	void SubscriptionRequest(QString);
+	
 public slots:
-	void addComboBoxItem (QString, QString);
-	void removeComboBoxItem (QString);
-	void setGameStateInfo (QString, QString, QString);
-	void changeToHost (QString);
-	void SubscriptionHandler (QString);
-
-	void sensorsDataUpdateHandler (AllSensorValuesMessage, QString);
+	void addComboBoxItem(QString, QString);
+	void removeComboBoxItem(QString);
+	void setGameStateInfo(QString, QString, QString);
+	void changeToHost(QString);
+	void SubscriptionHandler(QString);
+	void sensorsDataUpdateHandler(AllSensorValuesMessage, QString);
 
 private:
 	void updateHeadJointsTable(AllSensorValuesMessage asvm);
@@ -44,10 +44,9 @@ private:
 	void updateInertialTable(AllSensorValuesMessage asvm);
 	void updateFSRsTable(AllSensorValuesMessage asvm);
 
-
 	HostsComboBox *availableLSDHosts;
 	Ui::SensorsController *ui;
-private:
 
 };
-#endif /* SensorsController_H_ */
+
+#endif // SensorsController_H_

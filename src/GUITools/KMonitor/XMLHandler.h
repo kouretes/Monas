@@ -17,55 +17,56 @@
 #include "HostsComboBox.h"
 #include "core/architecture/XmlManager/XmlManager.h"
 #include "messages/GUICommunication.pb.h"
+
 /**
- * This is the code for the xml handler GUI tab of KMonitor
- * @author <a href="mailto:nikofinas@gmail.com">Nikos Kofinas</a> aka eldr4d, 2012 kouretes team
+ * Code for the xml handler GUI tab of KMonitor
+ * @author <a href="mailto:nikofinas@gmail.com">Nikos Kofinas</a> aka eldr4d, 2012 Kouretes Team
  * \file XMLHandler.h
-*/
+ */
+
 namespace Ui {
-class XMLHandler;
+	class XMLHandler;
 }
 
 class XMLHandler : public QWidget {
 	Q_OBJECT
 
 public:
-	explicit XMLHandler (QWidget *parent = 0);
+	explicit XMLHandler(QWidget *parent = 0);
 	~XMLHandler();
 
-	Ui::XMLHandler *getXMLUi() {
+	Ui::XMLHandler* getXMLUi() {
 		return ui;
 	}
 
 signals:
-	void SubscriptionRequest (QString);
-	void sendConfigMessage (ExternalConfig msg);
+	void SubscriptionRequest(QString);
+	void sendConfigMessage(ExternalConfig msg);
 
 public slots:
-	void addComboBoxItem (QString, QString);
-	void removeComboBoxItem (QString);
-	void setGameStateInfo (QString, QString, QString);
-	void changeToHost (QString);
-	void SubscriptionHandler (QString);
-
-	void genericAckReceived (GenericACK ack, QString hostid);
+	void addComboBoxItem(QString, QString);
+	void removeComboBoxItem(QString);
+	void setGameStateInfo(QString, QString, QString);
+	void changeToHost(QString);
+	void SubscriptionHandler(QString);
+	void genericAckReceived(GenericACK ack, QString hostid);
 
 private slots:
 	void retransmitMessage();
 	void pbHandOfPressed();
 	void sendPressed();
-	void editItemOrNot (QTreeWidgetItem *item, int col);
-	void itemChanged (QTreeWidgetItem *item, int col);
-	void selectActivities (QTreeWidgetItem *item, int col);
+	void editItemOrNot(QTreeWidgetItem *item, int col);
+	void itemChanged(QTreeWidgetItem *item, int col);
+	void selectActivities(QTreeWidgetItem *item, int col);
 	void changeCt();
+	
 private:
-	void addChildsRecursive (QTreeWidgetItem *parent, QString name, QString data, XmlManagerNode *currentNode, std::string currentKey);
-	void addAttributeChild (QTreeWidgetItem *parent, QString name, QString data, std::string currentKey);
+	void addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, XmlManagerNode *currentNode, std::string currentKey);
+	void addAttributeChild(QTreeWidgetItem *parent, QString name, QString data, std::string currentKey);
 	void initializeActivitiesTree();
-	void updateTreeStructure (std::string headID, std::string bodyID);
+	void updateTreeStructure(std::string headID, std::string bodyID);
 	void updateXMLFiles();
 
-private:
 	static const int MAX_RETRANSMITS = 15;
 
 	HostsComboBox *availableXMLHosts;
@@ -83,7 +84,7 @@ private:
 
 	ExternalConfig outmsg, lastmsg;
 
-	//variables for the ack method
+	// variables for the ack method
 	bool lastMessageACKed;
 	int numOfRetransmits;
 	boost::posix_time::ptime timestamp;

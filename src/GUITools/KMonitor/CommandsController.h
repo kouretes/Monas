@@ -21,33 +21,35 @@
 #include "messages/GUICommunication.pb.h"
 
 #include "core/architecture/archConfig.h"
+
 /**
- * This is the code for the commander handler GUI tab of KMonitor
+ * Code for the commander handler GUI tab of KMonitor
  * @author <a href="mailto:nikofinas@gmail.com">Nikos Kofinas</a> aka eldr4d, 2012 kouretes team
  * \file XMLHandler.h
 */
+
 namespace Ui {
-class CommandsController;
+	class CommandsController;
 }
 
 class CommandsController : public QWidget {
 	Q_OBJECT
 
 public:
-	explicit CommandsController (QWidget *parent = 0);
+	explicit CommandsController(QWidget *parent = 0);
 	~CommandsController();
 
 signals:
-	void SubscriptionRequest (QString);
-	void sendExternalCommand (ExternalCommand msg);
+	void SubscriptionRequest(QString);
+	void sendExternalCommand(ExternalCommand msg);
 
 public slots:
-	void addComboBoxItem (QString, QString);
-	void removeComboBoxItem (QString);
-	void setGameStateInfo (QString, QString, QString);
-	void changeToHost (QString);
-	void SubscriptionHandler (QString);
-	void genericAckReceived (GenericACK ack, QString hostid);
+	void addComboBoxItem(QString, QString);
+	void removeComboBoxItem(QString);
+	void setGameStateInfo(QString, QString, QString);
+	void changeToHost(QString);
+	void SubscriptionHandler(QString);
+	void genericAckReceived(GenericACK ack, QString hostid);
 
 private slots:
 	void retransmitMessage();
@@ -71,14 +73,14 @@ private slots:
 	void sendHeadLocalizeFar();
 	void sendHeadLookDown();
 	void sendHeadStop();
-	void stiffSliderMoved (int);
-	void stiffTextChanged (QString);
-	void headSliderMoved (int);
-	void headTextChanged (QString);
+	void stiffSliderMoved(int);
+	void stiffTextChanged(QString);
+	void headSliderMoved(int);
+	void headTextChanged(QString);
 
 private:
-	void addActionComboBoxItems (std::string path);
-	void sendHeadMessage (int headCommandId);
+	void addActionComboBoxItems(std::string path);
+	void sendHeadMessage(int headCommandId);
 	void sendOutMsg();
 
 private:
@@ -91,7 +93,7 @@ private:
 
 	ExternalCommand outmsg, lastmsg;
 
-	//variables for the ack method
+	// variables for the ack method
 	bool lastMessageACKed;
 	int numOfRetransmits;
 	boost::posix_time::ptime timestamp;
