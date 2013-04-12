@@ -217,9 +217,19 @@ GraphicalRobotElement::~GraphicalRobotElement() {
     if(RobotTrace)
         delete RobotTrace;    
 
-	delete[] PoseHypothesis;
-		
-	delete[] PoseHypothesisDirections;
+	if (PoseHypothesis){
+        for ( int i = 0; i <ekfMaxHypothesis; ++i){
+            delete PoseHypothesis[i];
+        }
+        delete PoseHypothesis;
+    }
+
+    if (PoseHypothesisDirections){
+        for ( int i = 0; i < ekfMaxHypothesis; ++i ){
+            delete PoseHypothesisDirections[i];
+        }
+        delete PoseHypothesisDirections;
+    }	
 		
 }
 
@@ -331,10 +341,6 @@ void GraphicalRobotElement::updateRobotRect() {
 
 		RobotDirection->setLine(this->parentScene->lineFromFCA(this->currentWIM.myposition().x()*1000,
 		        this->currentWIM.myposition().y()*1000, this->currentWIM.myposition().phi(), 200));
-
-        if(this->currentWIM.myposition().var_size()!=0)
-            updatePoseUncertaintyRect();
-            
 	} 
 	else {
 		Robot->setRect( 0, 0, 0, 0);

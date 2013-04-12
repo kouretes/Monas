@@ -43,12 +43,13 @@ KFieldScene::KFieldScene(QGraphicsView *parent) {
 	RBPostCircle = addEllipse(QRect(), QPen(Qt::yellow), QBrush(Qt::yellow));
 	LPostVPart = addLine(QLineF(), penForYellowPost);
 	RPostVPart = addLine(QLineF(), penForYellowPost);
+	setSvgItems();
 	this->addItem(LTPost);
 	this->addItem(LBPost);
 	this->addItem(RTPost);
 	this->addItem(RBPost);
 	
-	setSvgItems();
+
 	
 	formationLabel = new QLabel("Ball Position:\nX:\nY:\n");
 	this->addWidget(formationLabel);
