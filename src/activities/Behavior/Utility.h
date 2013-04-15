@@ -19,6 +19,47 @@ namespace Utility {
 	float sigmaX = 0.5f, sigmaY = 0.5f;
 	float xCenter1, yCenter1, xCenter2, yCenter2;
 	
+	class Mapping {
+		private:
+			float RobotX;
+			float RobotY;
+			float PosX;
+			float PosY;
+
+		public:	
+			void setRobotX(float X) {
+				RobotX = X;
+			}
+			
+			void setRobotY(float Y) {
+				RobotY = Y;
+			}
+			
+			void setPosX(float X) {
+				PosX = X;
+			}
+
+			void setPosY(float Y) {
+				PosX = Y;
+			}
+	
+			float getRobotX() {
+				return RobotX;
+			}
+			
+			float getRobotY() {
+				return RobotY;
+			}
+			
+			float getPosX() {
+				return PosX;
+			}
+
+			float getPosY() {
+				return PosY;
+			}	
+	};
+
 	/**
 	 * @fn float distance(xRobot, yRobot, xPos, yPos)
 	 * @brief Distance cost feature that calculates the distance between robot position and
