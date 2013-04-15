@@ -49,6 +49,9 @@ void FormationGenerator::Init(int teamPlayers) {
 
 void FormationGenerator::Generate(float ballX, float ballY) { // direction is ALWAYS on the negative axis
 
+	if(ballX > Field.MaxX || ballX < Field.MinX || ballY > Field.MaxY || ballY < Field.MinY) // in that case there is no use to generate a formation
+		return;
+
 	// determine if we are on offensive or defensive formation
 	if(ballX >= 0)
 		formationType = OFFENSIVE;
@@ -190,11 +193,11 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 			else if(formation->at(i).role == DEFENDER) {
 
 				if(ballY >= 0) {
-					formation->at(i).X = ballX + DEFENDER_FACTOR*Field.MinX;
+					formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
 					formation->at(i).Y = -DEFENDER_MOVEMENT;
 				}
 				else if(ballY < 0) {
-					formation->at(i).X = ballX + DEFENDER_FACTOR*Field.MinX;
+					formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
 					formation->at(i).Y = DEFENDER_MOVEMENT;
 				}
 			}
@@ -233,32 +236,20 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 			else if(formation->at(i).role == SUPPORTER_R) { // used only on 5 players team
 				
 				// if the player is between the left and right goal posts
-				if(ballY <= Field.LeftPenaltyAreaMaxY && ballY >= Field.LeftPenaltyAreaMinY && ballX > SUPPORT_BOUND*Field.MinX) {
-					formation->at(i).X = ballX + SUPPORT_FACTOR_X*Field.MinX;
+				if(ballY <= Field.LeftPenaltyAreaMaxY && ballY >= Field.LeftPenaltyAreaMinY) {
+					formation->at(i).X = ballX + SUPPORT_FORWARDING_FACTOR*Field.MaxX;
 					formation->at(i).Y = ballY;
 
 					// check if on ball position is on our penalty area
 					if(formation->at(i).X < Field.LeftPenaltyAreaMaxX && formation->at(i).Y < Field.LeftPenaltyAreaMaxY && formation->at(i).Y > Field.LeftPenaltyAreaMinX)
 						formation->at(i).X = Field.LeftPenaltyAreaMaxX;
 				}
-				else if(ballY <= Field.LeftPenaltyAreaMaxY && ballY >= Field.LeftPenaltyAreaMinY && ballX <= SUPPORT_BOUND*Field.MinX) {
-					formation->at(i).X = ballX + SUPPORT_DEFENCE_FACTOR*Field.MaxX;
-					formation->at(i).Y = ballY;
-				}
-				else if(ballY > Field.LeftPenaltyAreaMaxY && ballX > SUPPORT_BOUND*Field.MinX) { // if the player is above the left goal post, on the upper right corner
-					formation->at(i).X = ballX + SUPPORT_FACTOR_X*Field.MinX;
+				else if(ballY > Field.LeftPenaltyAreaMaxY) { // if the player is above the left goal post
+					formation->at(i).X = ballX + SUPPORT_FORWARDING_FACTOR*Field.MaxX;
 					formation->at(i).Y = Field.LeftPenaltyAreaMaxY;
 				}
-				else if(ballY > Field.LeftPenaltyAreaMaxY && ballX < SUPPORT_BOUND*Field.MinX) { // if the player is above the left goal post, on the upper left corner
-					formation->at(i).X = ballX + SUPPORT_DEFENCE_FACTOR*Field.MaxX;
-					formation->at(i).Y = Field.LeftPenaltyAreaMaxY;
-				}
-				else if(ballY < Field.LeftPenaltyAreaMinY && ballX > SUPPORT_BOUND*Field.MinX) {
-					formation->at(i).X = ballX + SUPPORT_FACTOR_X*Field.MinX;
-					formation->at(i).Y = Field.LeftPenaltyAreaMinY;
-				}
-				else if(ballY < Field.LeftPenaltyAreaMinY && ballX < SUPPORT_BOUND*Field.MinX) {
-					formation->at(i).X = ballX + SUPPORT_DEFENCE_FACTOR*Field.MaxX;
+				else if(ballY < Field.LeftPenaltyAreaMinY) { // if the player is below the right goal post
+					formation->at(i).X = ballX + SUPPORT_FORWARDING_FACTOR*Field.MaxX;
 					formation->at(i).Y = Field.LeftPenaltyAreaMinY;
 				}
 
@@ -276,22 +267,15 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 			}
 			else if(formation->at(i).role == SUPPORTER_L) { // SUPPORT LEFT TO DEFENDER
 
-				if(ballY > Field.LeftPenaltyAreaMaxY) {
-					if(ballX >= SUPPORT_BOUND*Field.MinX) { // ball is on the upper right corner
-						if(Field.MaxX >= 4.5)
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX - (ballY - Field.LeftPenaltyAreaMaxY)/10;
-						else
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
-						formation->at(i).Y = 0.55 - (ballY - Field.LeftPenaltyAreaMaxY)/(2*Field.MaxY/3);
-					}
-					else {
-						if(Field.MaxX >= 4.5)
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX + (Field.MinX + ballX)/25;
-						else
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
-						formation->at(i).Y = 0.55 - (ballY - Field.LeftPenaltyAreaMaxY)/(2*Field.MaxY-1);
-					}
+				if(ballY > Field.LeftPenaltyAreaMaxY) { // ball is above the left goal post
+					
+					if(Field.MaxX >= 4.5) // for bigger fields add an offset to X axis
+						formation->at(i).X = DEFENDER_FACTOR*Field.MinX - (ballY - Field.LeftPenaltyAreaMaxY)/25;
+					else
+						formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
 
+					formation->at(i).Y = 0.55 - (ballY - Field.LeftPenaltyAreaMaxY)/(2*Field.MaxY - 1);
+					
 					// check if on ball position is on our penalty area
 					if(formation->at(i).X < Field.LeftPenaltyAreaMaxX && formation->at(i).Y < Field.LeftPenaltyAreaMaxY && formation->at(i).Y > Field.LeftPenaltyAreaMinX)
 						formation->at(i).X = Field.LeftPenaltyAreaMaxX;
@@ -307,21 +291,14 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 			}
 			else if(formation->at(i).role == DEFENDER) {
 
-				if(ballY < Field.LeftPenaltyAreaMinY) {
-					if(ballX >= SUPPORT_BOUND*Field.MinX) { // ball is on the upper right corner
-						if(Field.MaxX >= 4.5)
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX + (ballY - Field.LeftPenaltyAreaMinY)/10;
-						else
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
-						formation->at(i).Y = -0.55 - (ballY - Field.LeftPenaltyAreaMinY)/(2*Field.MaxY/3);
-					}
-					else {
-						if(Field.MaxX >= 4.5)
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX + (Field.MinX + ballX)/25;
-						else
-							formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
-						formation->at(i).Y = -0.55 - (ballY - Field.LeftPenaltyAreaMinY)/(2*Field.MaxY-1);
-					}
+				if(ballY < Field.LeftPenaltyAreaMinY) { // ball is below the right goal post
+
+					if(Field.MaxX >= 4.5) // for bigger fields add an offset to X axis
+						formation->at(i).X = DEFENDER_FACTOR*Field.MinX + (ballY - Field.LeftPenaltyAreaMinY)/25;
+					else
+						formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
+
+					formation->at(i).Y = -0.55 - (ballY - Field.LeftPenaltyAreaMinY)/(2*Field.MaxY - 1);
 
 					// check if on ball position is on our penalty area
 					if(formation->at(i).X < Field.LeftPenaltyAreaMaxX && formation->at(i).Y < Field.LeftPenaltyAreaMaxY && formation->at(i).Y > Field.LeftPenaltyAreaMinX)

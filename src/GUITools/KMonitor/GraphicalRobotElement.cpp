@@ -169,6 +169,9 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 	if(zAxisArc)
 		delete zAxisArc;
 
+	if(formationBall)
+		delete formationBall;
+
 	for(int i = 0 ; i < ParticlesList.count() ; i++) {
 		if(ParticlesList.at(i)->Pose)
 			delete ParticlesList.at(i)->Pose;
@@ -685,7 +688,7 @@ void GraphicalRobotElement::updateFormationRects(FormationDataForGUI debugGUI) {
 
 		if(posInfo.has_x() && posInfo.has_y() && posInfo.has_role()) {
 
-			PositionsList.at(i)->setRect(this->parentScene->rectFromFC( posInfo.x()*1000, posInfo.y()*1000, 150, 150));
+			PositionsList.at(i)->setRect(this->parentScene->rectFromFC(posInfo.x()*1000, posInfo.y()*1000, 150, 150));
 			
 			if(posInfo.role() == PositionInfo::GOALIE) {
 				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "G", Qt::green);	

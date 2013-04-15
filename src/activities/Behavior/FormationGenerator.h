@@ -36,8 +36,31 @@ namespace FormationConsts{
 	const float MIDDLE_LANE_FACTOR = 0.268;
 
 	// defender roles factros
-	const float DEFENDER_FACTOR = 0.78;
+	const float DEFENDER_FACTOR = 0.75;
 	const float DEFENDER_MOVEMENT = 0.2;
+
+	/**
+	 * @struct field configiration
+	 * @brief Used to store all values that we read from the field xml file. Values
+	 * are updated by behavior Reset().
+	 */
+	struct FieldParameters {
+		float MaxX;
+		float MinX;
+		float MaxY;
+		float MinY;
+		float LeftPenaltyAreaMaxX;
+		float LeftPenaltyAreaMinX;
+		float LeftPenaltyAreaMaxY;
+		float LeftPenaltyAreaMinY;
+		float RightPenaltyAreaMaxX;
+		float RightPenaltyAreaMinX;
+		float RightPenaltyAreaMaxY;
+		float RightPenaltyAreaMinY;
+		float LeftGoalPost;
+		float RightGoalPost;
+	} static Field;
+
 };
 
 class FormationGenerator {
@@ -77,28 +100,6 @@ private:
 	Type formationType; // enumeration variable used to hold the formation type.
 
 public:
-
-	/**
-	 * @struct field configiration
-	 * @brief Used to store all values that we read from the field xml file. Values
-	 * are updated by behavior Reset().
-	 */
-	struct {
-		float MaxX;
-		float MinX;
-		float MaxY;
-		float MinY;
-		float LeftPenaltyAreaMaxX;
-		float LeftPenaltyAreaMinX;
-		float LeftPenaltyAreaMaxY;
-		float LeftPenaltyAreaMinY;
-		float RightPenaltyAreaMaxX;
-		float RightPenaltyAreaMinX;
-		float RightPenaltyAreaMaxY;
-		float RightPenaltyAreaMinY;
-		float LeftGoalPost;
-		float RightGoalPost;
-	} Field;
 
 	/**
 	 * @fn FormationGenerator()

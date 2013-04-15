@@ -13,13 +13,26 @@ const float INF = std::numeric_limits<float>::infinity();
 inline static double TO_RAD(double X) { return X*TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
 inline static double TO_DEG(double X) { return X/TO_RAD_SUPER_INTERNAL_DO_NOT_USE;}
 
-template<typename T> inline T DISTANCE(T x1, T x2, T y1, T y2){
+template<typename T> inline T DISTANCE(T x1, T x2, T y1, T y2) {
 	return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 }
 
-template<typename T> inline T norm2(T dx, T dy)
-{
+template<typename T> inline T norm2(T dx, T dy) {
 	return sqrt((dx) * (dx) + (dy) * (dy));
+}
+
+template<typename T> inline T Min(T value1, T value2) {
+	if(value1 <= value2)
+		return value1;
+	else
+		return value2;
+}
+
+template<typename T> inline T Max(T value1, T value2) {
+	if(value1 >= value2)
+		return value1;
+	else
+		return value2;
 }
 
 /**

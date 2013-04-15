@@ -4,10 +4,10 @@
 
 using namespace KMath;
 using namespace boost::posix_time;
+using namespace std;
+using namespace FormationConsts;
 
 ACTIVITY_REGISTER(Behavior);
-using namespace std;
-
 
 /**
  *	Returns a double random number (0 - 100.0)
@@ -129,23 +129,23 @@ void Behavior::Reset(){
 
 	// === read field configuration xml data from field.xml used for formation generator ===
 	// update the Field struct on formation generator header
-	fGen.Field.MaxX = atof(_xml.findValueForKey("field.FieldMaxX").c_str());
-	fGen.Field.MinX = atof(_xml.findValueForKey("field.FieldMinX").c_str());
-	fGen.Field.MaxY = atof(_xml.findValueForKey("field.FieldMaxY").c_str());
-	fGen.Field.MinY = atof(_xml.findValueForKey("field.FieldMinY").c_str());
+	Field.MaxX = atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+	Field.MinX = atof(_xml.findValueForKey("field.FieldMinX").c_str());
+	Field.MaxY = atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+	Field.MinY = atof(_xml.findValueForKey("field.FieldMinY").c_str());
 
-	fGen.Field.LeftPenaltyAreaMaxX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
-	fGen.Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
-	fGen.Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
-	fGen.Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
+	Field.LeftPenaltyAreaMaxX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
+	Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
+	Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
+	Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
 
-	fGen.Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
-	fGen.Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
-	fGen.Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
-	fGen.Field.RightPenaltyAreaMinY = atof(_xml.findValueForKey("field.RightPenaltyAreaMinY").c_str());
+	Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
+	Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
+	Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
+	Field.RightPenaltyAreaMinY = atof(_xml.findValueForKey("field.RightPenaltyAreaMinY").c_str());
 
-	fGen.Field.LeftGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMaxY").c_str());
-	fGen.Field.RightGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMinY").c_str());
+	Field.LeftGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMaxY").c_str());
+	Field.RightGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMinY").c_str());
 
 	// === read goal configuration xml data from Fearures.xml ===
 	std::string ID;
@@ -318,7 +318,7 @@ int Behavior::Execute()
                                 if(robotX<0.0)
                                     goToPosition(0.0, 0.0, 0.0);
                                 else
-                                    goToPosition(fGen.Field.MaxX/2.0f, 0.0, 0.0);
+                                    goToPosition(Field.MaxX/2.0f, 0.0, 0.0);
 						}
                         else{
                             if(searchFlag){
