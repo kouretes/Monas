@@ -21,18 +21,12 @@ template<typename T> inline T norm2(T dx, T dy) {
 	return sqrt((dx) * (dx) + (dy) * (dy));
 }
 
-template<typename T> inline T Min(T value1, T value2) {
-	if(value1 <= value2)
-		return value1;
-	else
-		return value2;
+template<typename T> inline T Min(T a, T b) {
+	return (a < b) ? a : b;
 }
 
-template<typename T> inline T Max(T value1, T value2) {
-	if(value1 >= value2)
-		return value1;
-	else
-		return value2;
+template<typename T> inline T Max(T a, T b) {
+	return (a > b) ? a : b;
 }
 
 /**
