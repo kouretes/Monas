@@ -176,12 +176,13 @@ void protobuf_AddDesc_Debug_2eproto() {
     "\023OdometryInfoMessage\022\023\n\013trackPointX\030\001 \002("
     "\002\022\023\n\013trackPointY\030\002 \002(\002\022\025\n\rtrackPointPhi\030"
     "\003 \002(\002\"7\n\026LocalizationDataForGUI\022\035\n\tParti"
-    "cles\030\001 \003(\0132\n.RobotPose\"\202\001\n\014PositionInfo\022"
-    "\t\n\001X\030\001 \002(\002\022\t\n\001Y\030\002 \002(\002\022\014\n\004role\030\003 \002(\005\"N\n\004R"
-    "OLE\022\n\n\006GOALIE\020\000\022\014\n\010DEFENDER\020\001\022\n\n\006ONBALL\020"
-    "\002\022\017\n\013SUPPORTER_L\020\003\022\017\n\013SUPPORTER_R\020\004\"7\n\023F"
-    "ormationDataForGUI\022 \n\tPositions\030\001 \003(\0132\r."
-    "PositionInfo", 452);
+    "cles\030\001 \003(\0132\n.RobotPose\"\261\001\n\014PositionInfo\022"
+    "\t\n\001X\030\001 \002(\002\022\t\n\001Y\030\002 \002(\002\022\014\n\004role\030\003 \002(\005\"}\n\004R"
+    "OLE\022\n\n\006GOALIE\020\000\022\014\n\010DEFENDER\020\001\022\016\n\nDEFENDE"
+    "R_R\020\002\022\016\n\nDEFENDER_L\020\003\022\n\n\006ONBALL\020\004\022\r\n\tSUP"
+    "PORTER\020\005\022\017\n\013SUPPORTER_L\020\006\022\017\n\013SUPPORTER_R"
+    "\020\007\"7\n\023FormationDataForGUI\022 \n\tPositions\030\001"
+    " \003(\0132\r.PositionInfo", 499);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Debug.proto", &protobuf_RegisterTypes);
   EKFMHypothesis::default_instance_ = new EKFMHypothesis();
@@ -1001,6 +1002,9 @@ bool PositionInfo_ROLE_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
+    case 6:
+    case 7:
       return true;
     default:
       return false;
@@ -1010,7 +1014,10 @@ bool PositionInfo_ROLE_IsValid(int value) {
 #ifndef _MSC_VER
 const PositionInfo_ROLE PositionInfo::GOALIE;
 const PositionInfo_ROLE PositionInfo::DEFENDER;
+const PositionInfo_ROLE PositionInfo::DEFENDER_R;
+const PositionInfo_ROLE PositionInfo::DEFENDER_L;
 const PositionInfo_ROLE PositionInfo::ONBALL;
+const PositionInfo_ROLE PositionInfo::SUPPORTER;
 const PositionInfo_ROLE PositionInfo::SUPPORTER_L;
 const PositionInfo_ROLE PositionInfo::SUPPORTER_R;
 const PositionInfo_ROLE PositionInfo::ROLE_MIN;

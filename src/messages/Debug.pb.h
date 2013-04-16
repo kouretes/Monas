@@ -40,9 +40,12 @@ class FormationDataForGUI;
 enum PositionInfo_ROLE {
   PositionInfo_ROLE_GOALIE = 0,
   PositionInfo_ROLE_DEFENDER = 1,
-  PositionInfo_ROLE_ONBALL = 2,
-  PositionInfo_ROLE_SUPPORTER_L = 3,
-  PositionInfo_ROLE_SUPPORTER_R = 4
+  PositionInfo_ROLE_DEFENDER_R = 2,
+  PositionInfo_ROLE_DEFENDER_L = 3,
+  PositionInfo_ROLE_ONBALL = 4,
+  PositionInfo_ROLE_SUPPORTER = 5,
+  PositionInfo_ROLE_SUPPORTER_L = 6,
+  PositionInfo_ROLE_SUPPORTER_R = 7
 };
 bool PositionInfo_ROLE_IsValid(int value);
 const PositionInfo_ROLE PositionInfo_ROLE_ROLE_MIN = PositionInfo_ROLE_GOALIE;
@@ -411,7 +414,10 @@ class PositionInfo : public ::google::protobuf::Message {
   typedef PositionInfo_ROLE ROLE;
   static const ROLE GOALIE = PositionInfo_ROLE_GOALIE;
   static const ROLE DEFENDER = PositionInfo_ROLE_DEFENDER;
+  static const ROLE DEFENDER_R = PositionInfo_ROLE_DEFENDER_R;
+  static const ROLE DEFENDER_L = PositionInfo_ROLE_DEFENDER_L;
   static const ROLE ONBALL = PositionInfo_ROLE_ONBALL;
+  static const ROLE SUPPORTER = PositionInfo_ROLE_SUPPORTER;
   static const ROLE SUPPORTER_L = PositionInfo_ROLE_SUPPORTER_L;
   static const ROLE SUPPORTER_R = PositionInfo_ROLE_SUPPORTER_R;
   static inline bool ROLE_IsValid(int value) {

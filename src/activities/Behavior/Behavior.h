@@ -333,4 +333,6 @@ private:
 };
 
 ACTIVITY_END
+
 #endif
+

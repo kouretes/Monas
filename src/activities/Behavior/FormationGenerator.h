@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include "core/elements/math/Common.hpp"
+#include "FormationParameters.h"
+#include "tools/toString.h"
 
 /**
  * @brief Formation Generator Interface used by the behavior to determine
@@ -17,8 +19,11 @@
 
 using std::vector;
 using std::string;
+using FormationParameters::Role;
+using FormationParameters::Type;
 
 namespace FormationConsts{
+
 	/*
 	 * Factors to calculate positions regardless formation field dimensions, that way the
 	 * formation is generated dynamically.
@@ -38,7 +43,33 @@ namespace FormationConsts{
 	// defender roles factros
 	const float DEFENDER_FACTOR = 0.75;
 	const float DEFENDER_MOVEMENT = 0.2;
+	const float LEFT_DEFENDER_OFFSET = 0.55;
+	const float RIGHT_DEFENDER_OFFSET = -0.55;
 
+};
+
+class FormationGenerator {
+
+private:
+
+	/**
+	 * @struct posInfo (position Information)
+	 * @brief Used to store information for each position that is generated.
+	 */
+	struct posInfo {
+		float X;
+		float Y;
+		Role role;
+	};
+
+	unsigned int positions; // number of positions to be generated.
+
+	vector<posInfo> *formation; // vector pointer that holds the formation positions.
+
+	Type formationType; // enumeration variable used to hold the formation type.
+
+public:
+	
 	/**
 	 * @struct field configiration
 	 * @brief Used to store all values that we read from the field xml file. Values
@@ -59,47 +90,8 @@ namespace FormationConsts{
 		float RightPenaltyAreaMinY;
 		float LeftGoalPost;
 		float RightGoalPost;
-	} static Field;
-
-};
-
-class FormationGenerator {
-
-private:
-
-	/**
-	 * @enum Role
-	 * @brief enum to attach roles on positions.
-	 */
-	enum Role {
-		GOALIE = 0, DEFENDER = 1, ONBALL = 2, SUPPORTER_L = 3, SUPPORTER_R = 4
-	};
-
-	/**
-	 * @enum Type
-	 * @brief enum to determine the type of formation.
-	 */
-	enum Type {
-		OFFENSIVE = 0, DEFENSIVE = 1
-	};
-
-	/**
-	 * @struct posInfo (position Information)
-	 * @brief Used to store information for each position that is generated.
-	 */
-	struct posInfo {
-		float X;
-		float Y;
-		Role role;
-	};
-
-	int positions; // number of positions to be generated.
-
-	vector<posInfo> *formation; // vector pointer that holds the formation positions.
-
-	Type formationType; // enumeration variable used to hold the formation type.
-
-public:
+		float DiameterCCircle;
+	} Field;
 
 	/**
 	 * @fn FormationGenerator()
@@ -121,7 +113,7 @@ public:
 	 * @teamPlayers number of team players, used to determine the number of positions
 	 * needed to be produced on each formation generate.
 	 */
-	void Init(int teamPlayers);
+	void Init(int teamPlayers, bool kickOff);
 
 	/**
 	 * @fn void Generate(float ballX, float ballY)
@@ -131,7 +123,7 @@ public:
 	 * @ballX ball x coordinate
 	 * @ballY ball y coordinate
 	 */
-	void Generate(float ballX, float ballY);
+	void Generate(float ballX, float ballY, bool ballFound);
 
 	/**
 	 * @fn vector<posInfo>* getFormation()

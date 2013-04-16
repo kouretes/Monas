@@ -5,15 +5,13 @@
 using namespace KMath;
 using namespace boost::posix_time;
 using namespace std;
-using namespace FormationConsts;
 
 ACTIVITY_REGISTER(Behavior);
 
 /**
  *	Returns a double random number (0 - 100.0)
  */
-double behaviorRand()
-{
+double behaviorRand() {
 	return (rand() % 100) / 100.0;
 }
 
@@ -21,8 +19,7 @@ double behaviorRand()
 /**
  * Behavior initialization function.
  */
-void Behavior::UserInit()
-{
+void Behavior::UserInit() {
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -57,7 +54,7 @@ void Behavior::UserInit()
 	role = ATTACKER;
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
-	fGen.Init(config.maxPlayers);
+	fGen.Init(config.maxPlayers, true);
 	sendDebugMessages();
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
@@ -129,23 +126,25 @@ void Behavior::Reset(){
 
 	// === read field configuration xml data from field.xml used for formation generator ===
 	// update the Field struct on formation generator header
-	Field.MaxX = atof(_xml.findValueForKey("field.FieldMaxX").c_str());
-	Field.MinX = atof(_xml.findValueForKey("field.FieldMinX").c_str());
-	Field.MaxY = atof(_xml.findValueForKey("field.FieldMaxY").c_str());
-	Field.MinY = atof(_xml.findValueForKey("field.FieldMinY").c_str());
+	fGen.Field.MaxX = atof(_xml.findValueForKey("field.FieldMaxX").c_str());
+	fGen.Field.MinX = atof(_xml.findValueForKey("field.FieldMinX").c_str());
+	fGen.Field.MaxY = atof(_xml.findValueForKey("field.FieldMaxY").c_str());
+	fGen.Field.MinY = atof(_xml.findValueForKey("field.FieldMinY").c_str());
 
-	Field.LeftPenaltyAreaMaxX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
-	Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
-	Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
-	Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
+	fGen.Field.LeftPenaltyAreaMaxX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
+	fGen.Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
+	fGen.Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
+	fGen.Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
 
-	Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
-	Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
-	Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
-	Field.RightPenaltyAreaMinY = atof(_xml.findValueForKey("field.RightPenaltyAreaMinY").c_str());
+	fGen.Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
+	fGen.Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
+	fGen.Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
+	fGen.Field.RightPenaltyAreaMinY = atof(_xml.findValueForKey("field.RightPenaltyAreaMinY").c_str());
 
-	Field.LeftGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMaxY").c_str());
-	Field.RightGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMinY").c_str());
+	fGen.Field.LeftGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMaxY").c_str());
+	fGen.Field.RightGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMinY").c_str());
+
+	fGen.Field.DiameterCCircle = atof(_xml.findValueForKey("field.DiameterCCircle").c_str());
 
 	// === read goal configuration xml data from Fearures.xml ===
 	std::string ID;
@@ -200,7 +199,7 @@ int Behavior::Execute()
 
 		if(lastFormation + seconds(10) < microsec_clock::universal_time()) {
 
-			fGen.Generate(globalBallX, globalBallY);
+			fGen.Generate(globalBallX, globalBallY, true);
 			if(!gameMode){
 				sendDebugMessages();
 			}
@@ -318,7 +317,7 @@ int Behavior::Execute()
                                 if(robotX<0.0)
                                     goToPosition(0.0, 0.0, 0.0);
                                 else
-                                    goToPosition(Field.MaxX/2.0f, 0.0, 0.0);
+                                    goToPosition(fGen.Field.MaxX/2.0f, 0.0, 0.0);
 						}
                         else{
                             if(searchFlag){
@@ -465,7 +464,7 @@ void Behavior::sendDebugMessages() {
 
 	for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
 
-		Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(fGen.getFormation()->at(i).role)+
+		Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(getRoleString(fGen.getFormation()->at(i).role))+
 											" X: "+_toString(fGen.getFormation()->at(i).X)+
 											" Y: "+_toString(fGen.getFormation()->at(i).Y), Logger::Info);
 

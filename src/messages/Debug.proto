@@ -20,9 +20,12 @@ message PositionInfo{
 	enum ROLE {
 		GOALIE = 0;
 		DEFENDER = 1;
-		ONBALL = 2;
-		SUPPORTER_L = 3;
-		SUPPORTER_R = 4;	
+		DEFENDER_R = 2;
+		DEFENDER_L = 3;
+		ONBALL = 4;
+		SUPPORTER = 5;
+		SUPPORTER_L = 6;
+		SUPPORTER_R = 7;	
 	}
 	required float X = 1;
 	required float Y = 2;

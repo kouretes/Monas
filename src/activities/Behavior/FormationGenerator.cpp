@@ -1,69 +1,107 @@
 #include "FormationGenerator.h"
 
-using std::cout;
-using std::endl;
 using KMath::func1ByAbsX;
 using namespace FormationConsts;
+using namespace FormationParameters;
 
-FormationGenerator::FormationGenerator() { }
+FormationGenerator::FormationGenerator() {
+}
 
-FormationGenerator::~FormationGenerator() { }
+FormationGenerator::~FormationGenerator() {
+}
 
-void FormationGenerator::Init(int teamPlayers) {
+void FormationGenerator::Init(int teamPlayers, bool kickOff) { // assuming ball is on the center of the field (0,0)
+
+	unsigned int pos = 0;
 
 	positions = teamPlayers;
 	formation = new vector<posInfo>(teamPlayers);
-
-	for(unsigned int i = 0 ; i < formation->size() ; i++) {
+	
+	for(unsigned int i = 0 ; i < roles() ; i++) {
 		
-		formation->at(i).role = (Role)i;
+		if(pos == positions)
+			break;
 		
 		if(i == GOALIE) { // GOALIE
-			formation->at(i).X  = Field.MinX;
-			formation->at(i).Y = 0;
+			formation->at(pos).X  = Field.MinX;
+			formation->at(pos).Y = 0;
+			formation->at(pos).role = (Role)i;
+			pos++;
 		}
-		else if(i == DEFENDER) { // DEFENDER
-			formation->at(i).X  = DEFENDER_FACTOR*Field.MinX;
-			formation->at(i).Y = 0;
+		else if(i == DEFENDER && kickOff) { // DEFENDER
+			formation->at(pos).X  = DEFENDER_FACTOR*Field.MinX;
+			formation->at(pos).Y = 0;
+			formation->at(pos).role = (Role)i;
+			pos++;
 		}
-		else if(i == SUPPORTER_L) { // SUPPORT LEFT
-			if(teamPlayers == 5) {
-				formation->at(i).X = ONBALL_OFFSET + Field.MinX*SUPPORT_FACTOR_X;
-				formation->at(i).Y = SUPPORT_FACTOR_Y*Field.MaxX;
-			}
-			else if(teamPlayers == 4) {
-				formation->at(i).X = ONBALL_OFFSET + Field.MinX*SUPPORT_FACTOR_X;
-				formation->at(i).Y = 0;
-			}
+		else if(i == DEFENDER_L && !kickOff) { // LEFT DEFENDER
+			formation->at(pos).X = DEFENDER_FACTOR*Field.MinX;
+			formation->at(pos).Y = LEFT_DEFENDER_OFFSET;
+			formation->at(pos).role = (Role)i;
+			pos++;
 		}
-		else if(i == SUPPORTER_R) { // SUPPORT RIGHT
-			formation->at(i).X = ONBALL_OFFSET + Field.MinX*SUPPORT_FACTOR_X;
-			formation->at(i).Y = SUPPORT_FACTOR_Y*Field.MinX;
+		else if(i == DEFENDER_R && !kickOff) { // RIGHT DEFENDER
+			formation->at(pos).X = DEFENDER_FACTOR*Field.MinX;
+			formation->at(pos).Y = RIGHT_DEFENDER_OFFSET;
+			formation->at(pos).role = (Role)i;
+			pos++;
 		}
-		else { // ON BALL
-			formation->at(i).X  = ONBALL_OFFSET;
-			formation->at(i).Y = 0;
+		else if(i == SUPPORTER && ((kickOff && teamPlayers == 4) || (!kickOff && teamPlayers == 5)) ) { // SUPPORT
+			formation->at(pos).X = (ONBALL_OFFSET - Field.DiameterCCircle) + Field.MinX*SUPPORT_FACTOR_X;
+			formation->at(pos).Y = 0;
+			formation->at(pos).role = (Role)i;
+			pos++;
+		}
+		else if(i == SUPPORTER_L && kickOff && teamPlayers == 5) { // LEFT SUPPORTER
+			formation->at(pos).X = ONBALL_OFFSET + Field.MinX*SUPPORT_FACTOR_X;
+			formation->at(pos).Y = SUPPORT_FACTOR_Y*Field.MaxX;
+			formation->at(pos).role = (Role)i;
+			pos++;
+		}
+		else if(i == SUPPORTER_R && kickOff && teamPlayers == 5) { // RIGHT SUPPORTER
+			formation->at(pos).X = ONBALL_OFFSET + Field.MinX*SUPPORT_FACTOR_X;
+			formation->at(pos).Y = SUPPORT_FACTOR_Y*Field.MinX;
+			formation->at(pos).role = (Role)i;
+			pos++;
+		}
+		else if(i == ONBALL && kickOff) { // ON BALL and Kick Off
+			formation->at(pos).X  = ONBALL_OFFSET;
+			formation->at(pos).Y = 0;
+			formation->at(pos).role = (Role)i;
+			pos++;
+		}
+		else if(i == ONBALL && !kickOff) { // ONBALL and no Kick Off
+			formation->at(pos).X  = ONBALL_OFFSET - Field.DiameterCCircle;
+			formation->at(pos).Y = 0;
+			formation->at(pos).role = (Role)i;
+			pos++;
 		}
 	}
 }
 
-void FormationGenerator::Generate(float ballX, float ballY) { // direction is ALWAYS on the negative axis
+void FormationGenerator::Generate(float ballX, float ballY, bool ballFound) { // direction is ALWAYS on the negative axis
+	
+	// determine if we are on offensive, defensive or static formation
+	if(ballFound == true) {
 
-	if(ballX > Field.MaxX || ballX < Field.MinX || ballY > Field.MaxY || ballY < Field.MinY) // in that case there is no use to generate a formation
-		return;
+		if(ballX > Field.MaxX || ballX < Field.MinX || ballY > Field.MaxY || ballY < Field.MinY) // in that case there is no use to generate a formation
+			return;
 
-	// determine if we are on offensive or defensive formation
-	if(ballX >= 0)
-		formationType = OFFENSIVE;
-	else if(ballX < 0)
-		formationType = DEFENSIVE;
+		if(ballX >= 0)
+			formationType = OFFENSIVE;
+		else if(ballX < 0)
+			formationType = DEFENSIVE;
+	}
+	else {
+		formationType = STATIC;
+	}
 
-	if(formationType == OFFENSIVE){ // OFFENSIVE
+	if(formationType == OFFENSIVE) { // OFFENSIVE FORMATION
 
 		for(unsigned int i = 0 ; i < formation->size() ; i++) {
-
+			
 			if(formation->at(i).role == ONBALL) {
-
+				
 				formation->at(i).X = ballX + ONBALL_OFFSET;
 				formation->at(i).Y = ballY;
 
@@ -77,12 +115,12 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					formation->at(i).Y = Field.MaxY - 0.1;
 				else if(formation->at(i).Y <= Field.MinY)
 					formation->at(i).Y = Field.MinY + 0.1;
-
 			}
-			else if(formation->at(i).role == SUPPORTER_L) {
+			else if(formation->at(i).role == SUPPORTER_L || (formation->at(i).role == SUPPORTER && positions == 4) || formation->at(i).role == DEFENDER_L) {
 
-				if(positions == 5) {
-				
+				if(positions == 5) {					
+					formation->at(i).role = SUPPORTER_L;
+
 					// we are inside the basic lane so follow the attacker
 					if(ballY >= MIDDLE_LANE_FACTOR*Field.MinY && ballY <= MIDDLE_LANE_FACTOR*Field.MaxY) { // ball is located inside the basic lane
 
@@ -110,7 +148,8 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					}
 				}
 				else if(positions == 4) {
-				
+					formation->at(i).role = SUPPORTER;
+
 					// we are inside the basic lane so follow the attacker
 					if(ballY >= MIDDLE_LANE_FACTOR*Field.MinY && ballY <= 0) { // when ball is located inside the basic lane : case 1
 						formation->at(i).X = ballX;
@@ -148,9 +187,11 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					formation->at(i).Y = Field.MaxY - 0.1;
 				else if(formation->at(i).Y <= Field.MinY)
 					formation->at(i).Y = Field.MinY + 0.1;
-
+				
 			}
-			else if(formation->at(i).role == SUPPORTER_R) {
+			else if((formation->at(i).role == SUPPORTER_R || formation->at(i).role == SUPPORTER) && positions == 5) {
+				
+				formation->at(i).role = SUPPORTER_R;
 
 				// we are inside the basic lane so follow the attacker
 				if(ballY >= MIDDLE_LANE_FACTOR*Field.MinY && ballY <= MIDDLE_LANE_FACTOR*Field.MaxY) { // ball is located inside the basic lane
@@ -188,9 +229,11 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					formation->at(i).Y = Field.MaxY - 0.1;
 				else if(formation->at(i).Y <= Field.MinY)
 					formation->at(i).Y = Field.MinY + 0.1;
-
+				
 			}
-			else if(formation->at(i).role == DEFENDER) {
+			else if(formation->at(i).role == DEFENDER || formation->at(i).role == DEFENDER_R) {
+				
+				formation->at(i).role = DEFENDER;
 
 				if(ballY >= 0) {
 					formation->at(i).X = DEFENDER_FACTOR*Field.MinX;
@@ -202,13 +245,13 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 				}
 			}
 			else if(formation->at(i).role == GOALIE) {
-
+				
 				formation->at(i).X  = Field.MinX;
-				formation->at(i).Y = 0;
+				formation->at(i).Y = 0;		
 			}
 		}
 	}
-	else { // DEFENSIVE
+	else if(formationType == DEFENSIVE) { // DEFENSIVE
 
 		for(unsigned int i = 0 ; i < formation->size() ; i++) {
 
@@ -233,8 +276,10 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					formation->at(i).Y = Field.MinY + 0.1;
 
 			}
-			else if(formation->at(i).role == SUPPORTER_R) { // used only on 5 players team
+			else if((formation->at(i).role == SUPPORTER_R || formation->at(i).role == SUPPORTER) && positions == 5) { // used only on 5 players team
 				
+				formation->at(i).role = SUPPORTER;
+
 				// if the player is between the left and right goal posts
 				if(ballY <= Field.LeftPenaltyAreaMaxY && ballY >= Field.LeftPenaltyAreaMinY) {
 					formation->at(i).X = ballX + SUPPORT_FORWARDING_FACTOR*Field.MaxX;
@@ -265,7 +310,9 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					formation->at(i).Y = Field.MinY + 0.1;
 
 			}
-			else if(formation->at(i).role == SUPPORTER_L) { // SUPPORT LEFT TO DEFENDER
+			else if(formation->at(i).role == SUPPORTER_L || (formation->at(i).role == SUPPORTER && positions == 4)|| formation->at(i).role == DEFENDER_L) { // LEFT DEFENDER
+				
+				formation->at(i).role = DEFENDER_L;
 
 				if(ballY > Field.LeftPenaltyAreaMaxY) { // ball is above the left goal post
 					
@@ -289,7 +336,9 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 					formation->at(i).Y = 0.55;
 				}
 			}
-			else if(formation->at(i).role == DEFENDER) {
+			else if(formation->at(i).role == DEFENDER || formation->at(i).role == DEFENDER_R) {
+				
+				formation->at(i).role = DEFENDER_R;
 
 				if(ballY < Field.LeftPenaltyAreaMinY) { // ball is below the right goal post
 
@@ -342,6 +391,9 @@ void FormationGenerator::Generate(float ballX, float ballY) { // direction is AL
 			}
 		}
 	}
+	else if(formationType == STATIC) { // TODO
+	}
+
 }
 
 vector<FormationGenerator::posInfo>* FormationGenerator::getFormation() { return formation; }

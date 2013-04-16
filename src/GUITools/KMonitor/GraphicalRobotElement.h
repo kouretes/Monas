@@ -285,7 +285,7 @@ private:
 	void loadXMLlocalizationConfigParameters(std::string fname);
 	void loadXMLteamConfigParameters(std::string fname);
 	void tagVisionObservations(QGraphicsEllipseItem *post, QRectF rect, QString text);
-	void tagRoles(QGraphicsEllipseItem *post, QRectF rect, QString text, const QColor & color);
+	void tagRoles(QGraphicsEllipseItem *post, QRectF rect, const QString& text, const QColor& color);
 	QPolygonF calculateArrowHeadPosition(QLineF aLine);
 	void updateRobotTracePolygon();
 

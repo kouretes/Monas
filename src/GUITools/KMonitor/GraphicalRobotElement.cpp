@@ -586,7 +586,7 @@ void GraphicalRobotElement::tagVisionObservations(QGraphicsEllipseItem *post, QR
 	post->setBrush(brush);
 }
 
-void GraphicalRobotElement::tagRoles(QGraphicsEllipseItem *post, QRectF rect, QString text, const QColor & color) {
+void GraphicalRobotElement::tagRoles(QGraphicsEllipseItem *post, QRectF rect, const QString& text, const QColor& color) {
 	QBrush brush;
 	QPixmap pix(700, 700);
 	pix.fill(color);
@@ -687,7 +687,7 @@ void GraphicalRobotElement::updateFormationRects(FormationDataForGUI debugGUI) {
 		PositionInfo posInfo = debugGUI.positions(i);
 
 		if(posInfo.has_x() && posInfo.has_y() && posInfo.has_role()) {
-
+			
 			PositionsList.at(i)->setRect(this->parentScene->rectFromFC(posInfo.x()*1000, posInfo.y()*1000, 150, 150));
 			
 			if(posInfo.role() == PositionInfo::GOALIE) {
@@ -696,14 +696,20 @@ void GraphicalRobotElement::updateFormationRects(FormationDataForGUI debugGUI) {
 			else if(posInfo.role() == PositionInfo::DEFENDER) {			
 				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "D", Qt::blue);
 			}
+			else if(posInfo.role() == PositionInfo::DEFENDER_L) {			
+				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "DL", Qt::blue);
+			}
+			else if(posInfo.role() == PositionInfo::DEFENDER_R) {			
+				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "DR", Qt::blue);
+			}
 			else if(posInfo.role() == PositionInfo::ONBALL) {			
 				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "OB", Qt::red);
 			}
-			else if(posInfo.role() == PositionInfo::SUPPORTER_L && formationBallX >= 0) {			
+			else if(posInfo.role() == PositionInfo::SUPPORTER_L) {			
 				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "LS", Qt::yellow);
 			}
-			else if(posInfo.role() == PositionInfo::SUPPORTER_L && formationBallX < 0) {			
-				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "D", Qt::blue);
+			else if(posInfo.role() == PositionInfo::SUPPORTER) {			
+				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "S", Qt::yellow);
 			}
 			else if(posInfo.role() == PositionInfo::SUPPORTER_R) {
 				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "RS", Qt::yellow);

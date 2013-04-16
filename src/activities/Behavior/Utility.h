@@ -2,9 +2,9 @@
 #define UTILITY_H
 
 #include "core/elements/math/Common.hpp"
-#include "FormationGenerator.h"
+#include "FormationParameters.h"
 
-using namespace FormationConsts;
+using namespace FormationParameters;
 
 namespace Utility {
 	
@@ -169,4 +169,4 @@ namespace Utility {
 
 };
 
-#endif UTILITY_H
+#endif
