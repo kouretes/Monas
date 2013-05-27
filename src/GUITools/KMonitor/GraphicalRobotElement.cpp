@@ -67,7 +67,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	formationBall = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(QColor(255, 140, 0)));
 	
 	for(int it = 0 ; it < numOfPlayers ; it++) {
-		QGraphicsEllipseItem *pos = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::darkGray));
+		QGraphicsEllipseItem *pos = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::gray));
 		PositionsList.append(pos);
 	}
 

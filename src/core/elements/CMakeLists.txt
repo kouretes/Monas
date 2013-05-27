@@ -9,6 +9,7 @@ set(ELEMENT_SRCS
       factory/Factory.hpp
       math/Common.hpp
       math/KMat.hpp
+      math/Specific.hpp
       StringRegistry.hpp
       Singleton.hpp
 )
