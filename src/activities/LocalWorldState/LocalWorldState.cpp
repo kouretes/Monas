@@ -124,7 +124,7 @@ int LocalWorldState::Execute()
     if (gameState == PLAYER_PENALISED && prevGameState == PLAYER_PLAYING)
          stability++;      
 
-    if ( gameState !=  PLAYER_SET ) {
+    if (gameState !=  PLAYER_SET ) {
         if (locConfig.ekfEnable == true){
             AgentPosition = ekfLocalization.LocalizationStep(robotmovement, currentObservation, currentAmbiguousObservation);
 
@@ -145,7 +145,6 @@ int LocalWorldState::Execute()
 
 	MyWorld.mutable_myposition()->set_confidence(0.0);
 	
-	std::cout << "STABILITY: " << stability << std::endl;
 	MyWorld.set_stability(stability);
 	
 	calculate_ball_estimate(robotmovement);
