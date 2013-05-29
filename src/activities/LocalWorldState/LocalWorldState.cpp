@@ -37,7 +37,7 @@ void LocalWorldState::UserInit()
 	gameState = PLAYER_INITIAL;
 	int maxBytedataSize = 100000;
 	data = new char[maxBytedataSize]; //## TODO  FIX THIS BETTER
-
+	stability = 0;
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	//time variables initialization
@@ -83,10 +83,11 @@ int LocalWorldState::Execute()
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	ProcessMessages();
-
+	
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
+			stability++;
             if (locConfig.ekfEnable == true){
 			    ekfLocalization.IncreaseUncertaintyAfterFall();
             }
@@ -118,7 +119,10 @@ int LocalWorldState::Execute()
     }
 
     if (gameState == PLAYER_PLAYING && (prevGameState == PLAYER_PENALISED || prevGameState == PLAYER_SET ))
-         gamePlaying = microsec_clock::universal_time();   
+         gamePlaying = microsec_clock::universal_time();
+         
+    if (gameState == PLAYER_PENALISED && prevGameState == PLAYER_PLAYING)
+         stability++;      
 
     if ( gameState !=  PLAYER_SET ) {
         if (locConfig.ekfEnable == true){
@@ -140,7 +144,10 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
 	MyWorld.mutable_myposition()->set_confidence(0.0);
-
+	
+	std::cout << "STABILITY: " << stability << std::endl;
+	MyWorld.set_stability(stability);
+	
 	calculate_ball_estimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 

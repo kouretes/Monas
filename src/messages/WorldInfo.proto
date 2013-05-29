@@ -3,7 +3,8 @@ import "VisionObservations.proto";
 message WorldInfo{
 	required RobotPose myPosition = 1 ;
 	required uint32 playerNumber = 2;
-	repeated Ball Balls = 3;
+	required uint32 stability = 3;
+	repeated Ball Balls = 4;
 }
 
 message SharedWorldInfo{
@@ -15,6 +16,7 @@ message SharedWorldInfo{
 message TeammatePose{
 	required RobotPose pose = 1;
 	required uint32 robotId = 2;
+	required uint32 stability = 3;
 }
 
 message RobotPose{

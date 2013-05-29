@@ -133,7 +133,8 @@ private:
 	int size;
 	char *data;
     bool actionKick;
-	bool gameMode;  
+	bool gameMode;
+	unsigned int stability;
 
     // struct to store xml data
     Localization::LocConfig locConfig;
