@@ -80,7 +80,7 @@ private:
 
 
     //End Kalman
-	int idx, id;
+	int idx, id, stab;
 	static const float INIT_VALUE = -111.0f;
 	float robot_x[numOfRobots], robot_y[numOfRobots], robot_phi[numOfRobots];
 	float ball_x[numOfRobots], ball_y[numOfRobots], ball_speed_x[numOfRobots], ball_speed_y[numOfRobots], bd[numOfRobots];

@@ -158,6 +158,7 @@ void SharedWorldModel::gather_info(int count){
     robot_x[id] = wim->myposition().x();
     robot_y[id] = wim->myposition().y();
     robot_phi[id] = wim->myposition().phi();
+    stab = wim->stability();
     RobotPose tempPose;
 
     tempPose = wim->myposition();
@@ -167,6 +168,7 @@ void SharedWorldModel::gather_info(int count){
         for(i=0;i<3;i++){
             for(j=0;j<3;j++){
                 R2(i,j) = tempPose.var(i*3+j);
+                R1(i,j) = tempPose.var(i*3+j);
             }
         }
     }
@@ -194,6 +196,7 @@ void SharedWorldModel::gather_info(int count){
     TeammatePose tPose;
     tPose.mutable_pose()->CopyFrom(rPose);
     tPose.set_robotid(id+1);
+    tPose.set_stability(stab);
 
     swi.add_teammateposition();
     swi.mutable_teammateposition(count)->CopyFrom(tPose);
@@ -279,7 +282,6 @@ void SharedWorldModel::update(int rid)
 
     S2.zero();
     S2 = H2*P*(H2.transp());
-    S2 += R2;
     S2 += R2;
 //    S2.prettyPrint();
 //    y2.prettyPrint();
