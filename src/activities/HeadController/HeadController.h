@@ -4,6 +4,8 @@
 #include <math.h>
 
 #include "core/include/IActivity.hpp"
+#include "core/elements/math/Common.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -17,7 +19,6 @@
 
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "core/elements/math/Common.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

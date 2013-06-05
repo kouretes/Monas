@@ -22,8 +22,8 @@ ACTIVITY_REGISTER(Vision);
 
 ACTIVITY_START
 
-Vision::Vision(Blackboard &b, XmlManager &x) :
-	IActivity(b, x), vprof("Vision")
+Vision::Vision(Blackboard &b) :
+	IActivity(b), vprof("Vision")
 {
 	;
 }
@@ -43,7 +43,7 @@ void Vision::UserInit()
 }
 
 void Vision::Reset(){
-	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationBottom")).c_str());
+	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + Configurator::Instance().findValueForKey("vision.SegmentationBottom")).c_str());
 	if(segbottom != NULL){
 		delete segbottom;
 		segbottom = NULL;
@@ -52,11 +52,11 @@ void Vision::Reset(){
 	conffile->close();
 	delete conffile;
 
-	if(_xml.findValueForKey("vision.SegmentationTop") == _xml.findValueForKey("vision.SegmentationBottom")) //Same file, do not load twice
+	if(Configurator::Instance().findValueForKey("vision.SegmentationTop") == Configurator::Instance().findValueForKey("vision.SegmentationBottom")) //Same file, do not load twice
 		segtop = segbottom;
 	else
 	{
-		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + _xml.findValueForKey("vision.SegmentationTop")).c_str());
+		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + Configurator::Instance().findValueForKey("vision.SegmentationTop")).c_str());
 		if(segtop != NULL){
 			delete segtop;
 			segtop = NULL;
@@ -68,27 +68,27 @@ void Vision::Reset(){
 
 	stamp = boost::posix_time::microsec_clock::universal_time();
 	seg = segbottom;
-	config.sensordelay =  atoi(_xml.findValueForKey("vision.sensordelay").c_str());
-	config.Dfov = atof(_xml.findValueForKey("vision.Dfov").c_str());
-	config.cameraGamma = atof(_xml.findValueForKey("vision.cameraGamma").c_str());
-	config.scanV = atoi(_xml.findValueForKey("vision.scanV").c_str());
-	config.scanH = atoi(_xml.findValueForKey("vision.scanH").c_str());
-	config.minH = atoi(_xml.findValueForKey("vision.minH").c_str());
-	config.bordersize =atoi( _xml.findValueForKey("vision.bordersize").c_str());
-	config.pixeltol = atoi(_xml.findValueForKey("vision.pixeltol").c_str());
-	config.subsampling = atoi(_xml.findValueForKey("vision.subsampling").c_str());
-	config.skipdistance = atof(_xml.findValueForKey("vision.skipdistance").c_str());
-	config.seedistance = atof(_xml.findValueForKey("vision.seedistance").c_str());
-	config.obstacledistance = atof(_xml.findValueForKey("vision.obstacledistance").c_str());
-	config.balltolerance = atof(_xml.findValueForKey("vision.balltolerance").c_str());
-	config.ballsize = atof(_xml.findValueForKey("vision.ballsize").c_str());
-	config.goalheight = atof(_xml.findValueForKey("vision.goalheight").c_str());
-	config.goaldist = atof(_xml.findValueForKey("vision.goaldist").c_str());
-	config.widthestimateotolerance = atof(_xml.findValueForKey("vision.widthestimateotolerance").c_str());
-	config.horizontalpostratio = atof(_xml.findValueForKey("vision.horizontalpostratio").c_str());
-	config.pitchoffset = atof(_xml.findValueForKey("vision.pitchoffset").c_str());
-	config.rolloffset = atof(_xml.findValueForKey("vision.rolloffset").c_str());
-	config.pixeltol = atof(_xml.findValueForKey("vision.pixeltol").c_str());
+	config.sensordelay =  atoi(Configurator::Instance().findValueForKey("vision.sensordelay").c_str());
+	config.Dfov = atof(Configurator::Instance().findValueForKey("vision.Dfov").c_str());
+	config.cameraGamma = atof(Configurator::Instance().findValueForKey("vision.cameraGamma").c_str());
+	config.scanV = atoi(Configurator::Instance().findValueForKey("vision.scanV").c_str());
+	config.scanH = atoi(Configurator::Instance().findValueForKey("vision.scanH").c_str());
+	config.minH = atoi(Configurator::Instance().findValueForKey("vision.minH").c_str());
+	config.bordersize =atoi( Configurator::Instance().findValueForKey("vision.bordersize").c_str());
+	config.pixeltol = atoi(Configurator::Instance().findValueForKey("vision.pixeltol").c_str());
+	config.subsampling = atoi(Configurator::Instance().findValueForKey("vision.subsampling").c_str());
+	config.skipdistance = atof(Configurator::Instance().findValueForKey("vision.skipdistance").c_str());
+	config.seedistance = atof(Configurator::Instance().findValueForKey("vision.seedistance").c_str());
+	config.obstacledistance = atof(Configurator::Instance().findValueForKey("vision.obstacledistance").c_str());
+	config.balltolerance = atof(Configurator::Instance().findValueForKey("vision.balltolerance").c_str());
+	config.ballsize = atof(Configurator::Instance().findValueForKey("vision.ballsize").c_str());
+	config.goalheight = atof(Configurator::Instance().findValueForKey("vision.goalheight").c_str());
+	config.goaldist = atof(Configurator::Instance().findValueForKey("vision.goaldist").c_str());
+	config.widthestimateotolerance = atof(Configurator::Instance().findValueForKey("vision.widthestimateotolerance").c_str());
+	config.horizontalpostratio = atof(Configurator::Instance().findValueForKey("vision.horizontalpostratio").c_str());
+	config.pitchoffset = atof(Configurator::Instance().findValueForKey("vision.pitchoffset").c_str());
+	config.rolloffset = atof(Configurator::Instance().findValueForKey("vision.rolloffset").c_str());
+	config.pixeltol = atof(Configurator::Instance().findValueForKey("vision.pixeltol").c_str());
 	Logger::Instance().WriteMsg("Vision", "Reset done", Logger::Warning);
 }
 

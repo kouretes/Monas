@@ -9,6 +9,7 @@
 #include <csignal>
 
 #include "core/include/IActivity.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 

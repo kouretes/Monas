@@ -8,7 +8,7 @@
 
 #include "core/architecture/executable/provider/IProvider.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
-#include "core/architecture/XmlManager/XmlManager.h"
+#include "core/architecture/configurator/Configurator.hpp"
 #include "core/messages/Network.pb.h"
 
 #include "messages/Gamecontroller.pb.h"
@@ -50,7 +50,6 @@ public:
 	int GetCrc32 (const std::string &my_string);
 private:
 	Blackboard _blk;
-	XmlManager _xml;
 
 	boost::shared_ptr<const KnownHosts> h;
 	boost::shared_ptr<const GameStateMessage>  gsm;

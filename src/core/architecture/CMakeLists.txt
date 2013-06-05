@@ -22,9 +22,10 @@ add_library ( MonasCore ${LibBuildType}
 			thread/agent/Agent.cpp
 			thread/agent/AgentTiming.hpp
 			thread/agent/AgentConfig.hpp
-			XmlManager/XmlManager.h
-			XmlManager/XmlManager.cpp
-
+			configurator/Configurator.hpp
+			configurator/Configurator.cpp
+			configurator/ConfigNode.hpp
+			configurator/ConfigNode.cpp
 			talws.h
 			talws.cpp
 			config.h

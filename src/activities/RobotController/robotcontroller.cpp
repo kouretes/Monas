@@ -11,7 +11,7 @@ using boost::posix_time::milliseconds;
 
 
 ACTIVITY_REGISTER(RobotController);
-RobotController::RobotController(Blackboard &b, XmlManager &x) : IActivity(b, x) , gm(game_data) //Initialize game controller with message pointer
+RobotController::RobotController(Blackboard &b) : IActivity(b) , gm(game_data) //Initialize game controller with message pointer
 {
 }
 

@@ -135,19 +135,4 @@ namespace KDeviceLists
 	//std::vector< std::string> ActuatorName;
 
 };
-
-class KRobotConfigClass
-{
-
-public:
-
-	void setConfig(const size_t key, std::string const& val);
-	std::string getConfig(const size_t key);
-
-private:
-
-	std::map<size_t, std::string> _dat;
-
-};
-typedef Singleton<KRobotConfigClass> KRobotConfig;
 #endif /* ROBOT_CONSTS_H_ */

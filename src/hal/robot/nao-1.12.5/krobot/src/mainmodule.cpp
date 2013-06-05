@@ -9,6 +9,9 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "hal/robot/generic_nao/robot_consts.h"
+
+#include "core/architecture/configurator/Configurator.hpp"
+
 #include <alproxies/almemoryproxy.h>
 #include <alvalue/alvalue.h>
 #include <alcommon/alproxy.h>
@@ -19,6 +22,7 @@
 //______________________________________________
 mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string& name ): AL::ALModule(broker, name )
 {
+	std::string bodyId, headId;
 	setModuleDescription( "This is the Kouretes Team root module " );
 	functionName( "Start", "mainModule" ,  "Method to start Talws" );
 	BIND_METHOD( mainModule::Start );
@@ -29,20 +33,20 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 	try
 	{
 		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
-		std::string bodyId = memory->getData("Device/DeviceList/ChestBoard/BodyId");
-		std::string headId = memory->getData("RobotConfig/Head/HeadId");
-		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::BODY_ID, bodyId.substr(16,19/*bodyId.size()-5, bodyId.size()-2*/)); //manually because aldebarab forgot to put a \0...
-		//std::cout << "-"  << bodyId.c_str() << "\0-" << std::endl;
-		KRobotConfig::Instance().setConfig(KDeviceLists::Interpret::HEAD_ID, headId/*.substr(headId.size()-4, headId.size())*/);
+		bodyId = std::string(memory->getData("Device/DeviceList/ChestBoard/BodyId"));
+		headId = std::string(memory->getData("RobotConfig/Head/HeadId"));
+		bodyId = bodyId.substr(16,19);/*bodyId.size()-5, bodyId.size()-2*/ //manually because aldebarab forgot to put a \0...
+
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("Sensors", "Error in getting memory proxy", Logger::FatalError);
+		Logger::Instance().WriteMsg("MainModule", "Error in getting memory proxy", Logger::FatalError);
 		std::cout << e.what() << std::endl;
 	}
-	std::cout << "KRobot - Found Head ID: '" << KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID) << "'" << std::endl;
+	std::cout << "KRobot - Found Head ID: '" << headId << "'" << std::endl;
 	//std::cout << "KRobot - Found Body ID: '" << _toString(KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID).size()) << "'" << std::endl;
-	std::cout << "KRobot - Found Body ID: '" << KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID) << "'" << std::endl;
+	std::cout << "KRobot - Found Body ID: '" << bodyId << "'" << std::endl;
+	Configurator::Instance().initConfigurator("/home/nao/naoqi/config/", headId, bodyId);
 	tal = new Talws();
 }
 

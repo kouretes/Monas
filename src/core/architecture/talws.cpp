@@ -14,7 +14,6 @@
 
 Talws::Talws ()
 {
-	ArchConfig::Instance();
 	Logger::Instance();
 	com.StartThread();
 	XML AgentXmlFile( ArchConfig::Instance().GetConfigPrefix() + ArchConfig::Instance().GetAgentCfgFile() );

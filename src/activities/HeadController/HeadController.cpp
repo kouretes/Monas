@@ -492,27 +492,27 @@ void HeadController::readGoalConfiguration()
 {
 	// === read goal configuration xml data from Fearures.xml ===
 	std::string ID;
-	for(int v = 0 ; v < _xml.numberOfNodesForKey("features.ftr") ; v++)
+	for(int v = 0 ; v < Configurator::Instance().numberOfNodesForKey("features.ftr") ; v++)
 	{
-		ID = _xml.findValueForKey("features.ftr~"+_toString(v)+".ID").c_str();
+		ID = Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".ID").c_str();
 		if(ID == "YellowGoal")
 		{
-			oppGoalX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
-			oppGoalY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			oppGoalX = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			oppGoalY = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
 			ownGoalX = -oppGoalX;
 			ownGoalY = -oppGoalY;
 		}
 		else if(ID == "YellowLeft")
 		{
-			oppGoalLeftX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
-			oppGoalLeftY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			oppGoalLeftX = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			oppGoalLeftY = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
 			ownGoalLeftX = -oppGoalLeftX;
 			ownGoalLeftY = -oppGoalLeftY;
 		}
 		else if(ID == "YellowRight")
 		{
-			oppGoalRightX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
-			oppGoalRightY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			oppGoalRightX = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			oppGoalRightY = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
 			ownGoalRightX = -oppGoalRightX;
 			ownGoalRightY = -oppGoalRightY;
 		}

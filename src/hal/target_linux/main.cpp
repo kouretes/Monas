@@ -3,7 +3,7 @@
 #include <string>
 
 #include "core/architecture/talws.h"
-
+#include "core/architecture/configurator/Configurator.hpp"
 
 
 //#include "../../hal/generic_linux/pthread.h"
@@ -19,6 +19,8 @@
 int main ()
 {
 	std::cout << "Main: Inst" << std::endl;
+	system("ls");
+	Configurator::Instance().initConfigurator("config","","");
 	Talws tal;
 	std::cout << "Main: Starting" << std::endl;
 	tal.Start();

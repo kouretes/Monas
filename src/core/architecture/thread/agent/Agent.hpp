@@ -8,7 +8,6 @@
 
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
-#include "core/architecture/XmlManager/XmlManager.h"
 #include "core/include/IActivity.hpp"
 #include "core/architecture/thread/PeriodicThread.hpp"
 
@@ -47,7 +46,6 @@ private:
 
 	MessageHub & _com;
 	Blackboard _blk;
-	XmlManager _xml;
 
 	typedef std::vector<IActivity*> ActivList;
 

@@ -2,12 +2,15 @@
 #define SHAREDWORLDMODEL_H
 
 #include "core/include/IActivity.hpp"
+#include "core/elements/math/KMat.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
+
 #include "core/messages/Network.pb.h"
+
 #include "math.h"
-#include "core/elements/math/KMat.hpp"
 
 
 ACTIVITY_START

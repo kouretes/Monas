@@ -4,6 +4,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "core/include/IActivity.hpp"
+#include "core/elements/math/Common.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #include "messages/motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -20,7 +22,6 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "core/elements/math/Common.hpp"
 
 #include "ISpecialAction.h"
 #include "KmexManager.h"
@@ -35,7 +36,7 @@ class MotionController : public IActivity
 
 public:
 
-	MotionController(Blackboard &b, XmlManager &x);
+	MotionController(Blackboard &b);
 
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
