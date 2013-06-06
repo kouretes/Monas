@@ -84,10 +84,10 @@ public:
 	/**
 	* Empty the node
 	**/
-	void emptyNode(){
+	void clearNode(){
 		text = "";
-		attributes.empty();
-		kids.empty();
+		attributes.clear();
+		kids.clear();
 	}
 	
 	/**

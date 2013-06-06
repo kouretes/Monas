@@ -46,7 +46,7 @@ Talws::Talws ()
 			KSystem::ThreadConfig tcfg;
 			tcfg.IsRealTime = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$IsRealTime").c_str()) == 0 ? false : true;
 			tcfg.Priority = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$Priority").c_str());
-			int threadFreq = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$ThreadFrequency").c_str());
+			float threadFreq = atof(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$ThreadFrequency").c_str());
 			tcfg.ThreadPeriod = threadFreq > 0 ? 1 / threadFreq  : 0;
 			int StatsCycle = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$StatsCycle").c_str());
 			Agent *a = new Agent(AgentName, tcfg, StatsCycle, com, activities);
@@ -84,8 +84,9 @@ Talws::Talws ()
 			KSystem::ThreadConfig tcfg;
 			tcfg.IsRealTime = atoi(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$IsRealTime").c_str()) == 0 ? false : true;
 			tcfg.Priority = atoi(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$Priority").c_str());
-			int threadFreq = atoi(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$ThreadFrequency").c_str());
+			float threadFreq = atof(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$ThreadFrequency").c_str());
 			tcfg.ThreadPeriod = threadFreq > 0 ? 1 / threadFreq  : 0;
+			Providers.push_back( ProviderFactory::Instance()->CreateObject(provider ,  tcfg, com ) );
 			Logger::Instance().WriteMsg("Talws", provider, Logger::ExtraInfo);
 		}
 	}

@@ -21,8 +21,8 @@ void ConfiguratorClass::initConfigurator(string dirPath, string headId, string b
 	bodyPath.append("/");
 	directoryPath = dirPath;
 	path p(dirPath);
-
-	root.emptyNode();
+	allFiles.clear();
+	root.clearNode();
 	if (is_directory(p))
 	{
 		vector<boost::filesystem::path> v;

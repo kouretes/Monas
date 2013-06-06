@@ -47,10 +47,10 @@ MessageHub::MessageHub() : Thread(false),
 	unsigned maxpayload = 0;
 	unsigned beacon_interval = 0;
 	
-    multicastip = atof(Configurator::Instance().findValueForKey("network.multicast_ip").c_str());
-	port = atof(Configurator::Instance().findValueForKey("network.multicast_port").c_str());
-    maxpayload = atof(Configurator::Instance().findValueForKey("network.maxpayload").c_str());
-    beacon_interval = atof(Configurator::Instance().findValueForKey("network.beacon_interval").c_str());
+    multicastip = Configurator::Instance().findValueForKey("network.multicast_ip");
+	port = atoi(Configurator::Instance().findValueForKey("network.multicast_port").c_str());
+    maxpayload = atoi(Configurator::Instance().findValueForKey("network.maxpayload").c_str());
+    beacon_interval = atoi(Configurator::Instance().findValueForKey("network.beacon_interval").c_str());
     cout << "Initiating multicast network at address: " << multicastip << ":" << port << std::endl;
 	KNetwork::MulticastPoint *m = new KNetwork::MulticastPoint(multicastip, maxpayload);
 	multicast = NULL;
