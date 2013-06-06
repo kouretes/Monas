@@ -1,7 +1,6 @@
 #include "Gateway.h"
 
 #include "tools/logger.h"
-#include "tools/toString.h"
 #include <boost/crc.hpp>
 
 #include <fstream>
@@ -123,7 +122,7 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 
 				if (ecmsg->has_file() ) {
 					ofstream fout;
-					fout.open ( (ArchConfig::Instance().GetConfigPrefix() + ecmsg->file().filepath() ).c_str(), ios::trunc | ios::out);
+					fout.open ( (Configurator::Instance().getDirectoryPath() + ecmsg->file().filepath() ).c_str(), ios::trunc | ios::out);
 
 					if (fout.is_open() ) {
 						fout.write (ecmsg->file().file().c_str(), ecmsg->file().file().size() );

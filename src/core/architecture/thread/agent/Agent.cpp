@@ -1,4 +1,5 @@
 #include "Agent.hpp"
+#include "tools/logger.h"
 Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, MessageHub& com, std::vector<std::string> activities ) :
 	PeriodicThread(cfg),
 	_statsCycle(stats),

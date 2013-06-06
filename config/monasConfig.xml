@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<!-- General Configuration of the Architecture-->
+<ThreadType>PThread</ThreadType>
+<!--Ad the filename without the extension!!!-->
+<AgentConfigurationFile>agents</AgentConfigurationFile>

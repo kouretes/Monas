@@ -14,9 +14,9 @@
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
 
-<Poses pose = "5"></Poses>
-<Poses pose = "7"></Poses>
-<Poses pose = "10"></Poses>
+<Poses>5</Poses>
+<Poses>7</Poses>
+<Poses>10</Poses>
 
 </Motion>
 
@@ -33,9 +33,9 @@
 <Joints>RAnklePitch</Joints>
 <Joints>RAnkleRoll</Joints>
 
-<Poses pose = "5"></Poses>
-<Poses pose = "9"></Poses>
-<Poses pose = "14"></Poses>
+<Poses>5</Poses>
+<Poses>9</Poses>
+<Poses>14</Poses>
 
 </Motion>
 
@@ -52,9 +52,9 @@
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
 
-<Poses pose = "4"></Poses>
-<Poses pose = "8"></Poses> 
-<Poses pose = "11"></Poses>
+<Poses>4</Poses>
+<Poses>8</Poses> 
+<Poses>11</Poses>
 </Motion>
 
 
@@ -70,9 +70,9 @@
 <Joints>RAnklePitch</Joints>
 <Joints>RAnkleRoll</Joints>
 
-<Poses pose = "4"></Poses>
-<Poses pose = "8"></Poses> 
-<Poses pose = "11"></Poses>
+<Poses>4</Poses>
+<Poses>8</Poses> 
+<Poses>11</Poses>
 </Motion>
 
 
@@ -86,9 +86,9 @@
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
 
-<Poses pose = "5"></Poses>
-<Poses pose = "7"></Poses>
-<Poses pose = "9"></Poses>
+<Poses>5</Poses>
+<Poses>7</Poses>
+<Poses>9</Poses>
 </Motion>
 
 
@@ -102,7 +102,7 @@
 <Joints>RHipPitch</Joints>
 <Joints>RKneePitch</Joints>
 
-<Poses pose = "7"></Poses>
-<Poses pose = "9"></Poses>
-<Poses pose = "11"></Poses>
+<Poses>7</Poses>
+<Poses>9</Poses>
+<Poses>11</Poses>
 </Motion>

@@ -28,9 +28,7 @@ add_library ( MonasCore ${LibBuildType}
 			configurator/ConfigNode.cpp
 			talws.h
 			talws.cpp
-			config.h
 			statechartWrapper.h
-			archConfig.h
 )
 
 target_link_libraries ( MonasCore M_tinyxml )

@@ -43,7 +43,7 @@ void Vision::UserInit()
 }
 
 void Vision::Reset(){
-	ifstream *conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + Configurator::Instance().findValueForKey("vision.SegmentationBottom")).c_str());
+	ifstream *conffile = new ifstream((Configurator::Instance().getDirectoryPath() + "colortables/" + Configurator::Instance().findValueForKey("vision.SegmentationBottom")).c_str());
 	if(segbottom != NULL){
 		delete segbottom;
 		segbottom = NULL;
@@ -56,7 +56,7 @@ void Vision::Reset(){
 		segtop = segbottom;
 	else
 	{
-		conffile = new ifstream((ArchConfig::Instance().GetConfigPrefix() + "colortables/" + Configurator::Instance().findValueForKey("vision.SegmentationTop")).c_str());
+		conffile = new ifstream((Configurator::Instance().getDirectoryPath() + "colortables/" + Configurator::Instance().findValueForKey("vision.SegmentationTop")).c_str());
 		if(segtop != NULL){
 			delete segtop;
 			segtop = NULL;

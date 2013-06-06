@@ -3,8 +3,6 @@
 #include <cmath>
 #include "sys/stat.h"
 #include "tools/logger.h"
-#include "tools/XMLConfig.h"
-#include "tools/toString.h"
 #include "hal/syscall.h"
 #include <vector>
 #include "messages/motion.pb.h"

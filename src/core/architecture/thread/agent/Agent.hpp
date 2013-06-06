@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-#include "tools/logger.h"
 
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"

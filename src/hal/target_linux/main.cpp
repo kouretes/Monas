@@ -19,7 +19,6 @@
 int main ()
 {
 	std::cout << "Main: Inst" << std::endl;
-	system("ls");
 	Configurator::Instance().initConfigurator("config","","");
 	Talws tal;
 	std::cout << "Main: Starting" << std::endl;

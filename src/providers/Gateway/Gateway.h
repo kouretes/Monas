@@ -18,6 +18,8 @@
 #include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 
+#include "hal/syscall.h"
+
 #ifdef NAOQI
 #include "hal/robot/generic_nao/robot_consts.h"
 #endif

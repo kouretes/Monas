@@ -9,7 +9,8 @@ void ConfiguratorClass::initConfigurator(string dirPath, string headId, string b
 {
 	boost::upgrade_lock<boost::shared_mutex> lock(mutexrw);
 	boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-  
+  	
+  	dirPath.append("/");
 	headID = headId;
 	bodyID = bodyId;
 	headPath = "HEAD/";
@@ -275,4 +276,9 @@ string ConfiguratorClass::getHeadID(){
 string ConfiguratorClass::getBodyID(){
 	boost::shared_lock<boost::shared_mutex> lock(mutexrw);
 	return bodyID;
+}
+
+string ConfiguratorClass::getDirectoryPath(){
+	boost::shared_lock<boost::shared_mutex> lock(mutexrw);
+	return directoryPath;
 }

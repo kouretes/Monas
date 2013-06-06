@@ -70,7 +70,7 @@ private:
 	*
 	* @returns true at the moment
 	*/
-	bool readConfiguration(const std::string& file_name);
+	bool readConfiguration();
 	GameController gm;
 	bool showover;
 	RoboCupGameControlData game_data;

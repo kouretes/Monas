@@ -92,7 +92,7 @@ void MotionController::UserInit()
 		}
 	}
 	{
-		std::vector<KmexAction*> kmexActions = KmexManager::LoadActionsXML(ArchConfig::Instance().GetConfigPrefix() + "specialActions.xml", SpActions);
+		std::vector<KmexAction*> kmexActions = KmexManager::LoadActionsXML("specialActions.xml", SpActions);
 		std::vector<KmexAction*>::const_iterator it;
 
 		for (it = kmexActions.begin(); it < kmexActions.end(); ++it)

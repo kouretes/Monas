@@ -141,6 +141,11 @@ public:
 	ConfigNode* findNodeForKey(std::string key);
 	
 	/**
+	* Return the path where the configuration files are stored
+	**/
+	std::string getDirectoryPath();
+	
+	/**
 	* Return the path where the head files are stored
 	**/
 	std::string getHeadPath();
