@@ -20,8 +20,6 @@
 
 #include "messages/GUICommunication.pb.h"
 
-#include "core/architecture/archConfig.h"
-
 /**
  * Code for the commander handler GUI tab of KMonitor
  * @author <a href="mailto:nikofinas@gmail.com">Nikos Kofinas</a> aka eldr4d, 2012 kouretes team

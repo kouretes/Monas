@@ -1,6 +1,7 @@
 #include "GraphicalRobotElement.h"
 
-#include "core/architecture/archConfig.h"
+#include "core/architecture/configurator/Configurator.hpp"
+
 #include "tools/toString.h"
 
 #include <math.h>
@@ -54,8 +55,8 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	penForRobotDirection.setWidth(3);
 	QPen penForMotionCmdLine(Qt::darkRed);
 	penForMotionCmdLine.setWidth(2);
-	loadXMLlocalizationConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/localizationConfig.xml");
-	loadXMLteamConfigParameters(ArchConfig::Instance().GetConfigPrefix() + "/teamConfig.xml");
+	loadXMLlocalizationConfigParameters();
+	loadXMLteamConfigParameters();
 
 	for(int it = 0 ; it < partclsNum ; it++) {
 		Particle *part = new GUIRobotPose();
@@ -236,17 +237,13 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 		
 }
 
-void GraphicalRobotElement::loadXMLlocalizationConfigParameters(std::string fname) {
-	XMLConfig *xmlconfig = new XMLConfig(fname);
-	partclsNum = 0;
-	xmlconfig->QueryElement("partclsNum", partclsNum);
-    xmlconfig->QueryElement("EkfMaxHypothesis", ekfMaxHypothesis);
+void GraphicalRobotElement::loadXMLlocalizationConfigParameters() {
+	partclsNum = atoi(Configurator::Instance().findValueForKey("localizationConfig.partclsNum").c_str());
+	ekfMaxHypothesis = atoi(Configurator::Instance().findValueForKey("localizationConfig.EkfMaxHypothesis").c_str());
 }
 
-void GraphicalRobotElement::loadXMLteamConfigParameters(std::string fname) {
-	XMLConfig *xmlconfig = new XMLConfig(fname);
-	numOfPlayers = 0;
-	xmlconfig->QueryElement("team_max_players", numOfPlayers);
+void GraphicalRobotElement::loadXMLteamConfigParameters() {
+	numOfPlayers = atoi(Configurator::Instance().findValueForKey("teamConfig.team_max_players").c_str());
 }
 
 void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim) {

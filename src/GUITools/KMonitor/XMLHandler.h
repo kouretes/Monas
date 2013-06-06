@@ -15,7 +15,7 @@
 #include <QTreeWidgetItem>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "HostsComboBox.h"
-#include "core/architecture/XmlManager/XmlManager.h"
+#include "core/architecture/configurator/Configurator.hpp"
 #include "messages/GUICommunication.pb.h"
 
 /**
@@ -61,7 +61,7 @@ private slots:
 	void changeCt();
 	
 private:
-	void addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, XmlManagerNode *currentNode, std::string currentKey);
+	void addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, ConfigNode *currentNode, std::string currentKey);
 	void addAttributeChild(QTreeWidgetItem *parent, QString name, QString data, std::string currentKey);
 	void initializeActivitiesTree();
 	void updateTreeStructure(std::string headID, std::string bodyID);
@@ -72,7 +72,6 @@ private:
 	HostsComboBox *availableXMLHosts;
 	Ui::XMLHandler *ui;
 	QTimer *timer;
-	XmlManager xmlStructure;
 
 	std::string headid;
 	std::string bodyid;

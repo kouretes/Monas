@@ -1,7 +1,6 @@
 #include "KccHandler.h"
 #include "ui_KccHandler.h"
-#include "core/architecture/archConfig.h"
-
+#include "core/architecture/configurator/Configurator.hpp"
 
 KccHandler::KccHandler(QWidget *parent) :
 	QWidget(parent),
@@ -101,7 +100,7 @@ KccHandler::KccHandler(QWidget *parent) :
 	yuvColorTableOld = new KSegmentator(3, 2, 2);
 	yuvColorTable = new KSegmentator(3, 2, 2);
 	// HARDCODED CARE IF YOU CHANGE THE KMONITOR INSTALL PATH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	colortablesPath = QDir::currentPath().append(string("/" + ArchConfig::Instance().GetConfigPrefix() + "colortables").c_str());
+	colortablesPath = QDir::currentPath().append(string("/" + Configurator::Instance().getDirectoryPath() + "colortables").c_str());
 }
 
 void KccHandler::clickedImage(QMouseEvent *ev) {

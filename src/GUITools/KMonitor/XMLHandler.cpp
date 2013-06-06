@@ -1,7 +1,6 @@
 #include "XMLHandler.h"
 #include "ui_XMLHandler.h"
 #include "tools/toString.h"
-#include "core/architecture/archConfig.h"
 #include <sstream>
 
 using namespace std;
@@ -42,7 +41,7 @@ XMLHandler::XMLHandler(QWidget *parent) :
 	connect(ui->activitiesTree, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(selectActivities(QTreeWidgetItem *, int)) );
 	ui->status->setText("");
 	ui->status2->setText("Waiting for handoff");
-	updateTreeStructure("lala", "lala");
+	updateTreeStructure("", "");
 	
 	// timer for the acks
 	timer = new QTimer();
@@ -58,19 +57,19 @@ XMLHandler::XMLHandler(QWidget *parent) :
 void XMLHandler::updateTreeStructure(string headID, string bodyID) {
 	ui->mainTree->blockSignals(true);
 	ui->mainTree->clear();
-	xmlStructure = XmlManager(ArchConfig::Instance().GetConfigPrefix(), headID, bodyID, true);
+	Configurator::Instance().initConfigurator("../../../../config", headID, bodyID);
 
-	for(map<string, vector<XmlManager> >::iterator kit = xmlStructure.kids.begin() ; kit != xmlStructure.kids.end() ; ++kit) {
+	for(map<string, vector<ConfigNode> >::iterator kit = Configurator::Instance().root.kids.begin() ; kit != Configurator::Instance().root.kids.end() ; ++kit) {
 		addChildsRecursive(ui->mainTree->invisibleRootItem(), QString((*kit).first.c_str()), QString(" "), &((*kit).second.front()), (*kit).first.c_str() );
 	}
 
 	initializeActivitiesTree();
 	changes.clear();
-	ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom")) );
+	ui->ctLabel->setText(QString::fromStdString(Configurator::Instance().findValueForKey("vision.SegmentationBottom")) );
 	ui->mainTree->blockSignals(false);
 }
 
-void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, XmlManagerNode *currentNode, string currentKey) {
+void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QString data, ConfigNode *currentNode, string currentKey) {
 	QTreeWidgetItem *item = new QTreeWidgetItem(parent);
 	item->setText(0, name);
 	item->setText(1, data);
@@ -83,10 +82,10 @@ void XMLHandler::addChildsRecursive(QTreeWidgetItem *parent, QString name, QStri
 		addAttributeChild(item, QString::fromStdString("$" +(*attr).first), QString::fromStdString((*attr).second), tempKey);
 	}
 
-	for(map<string, vector<XmlManagerNode> >::iterator kit = currentNode->kids.begin() ; kit != currentNode->kids.end() ; ++kit) {
+	for(map<string, vector<ConfigNode> >::iterator kit = currentNode->kids.begin() ; kit != currentNode->kids.end() ; ++kit) {
 		int kidNum = 0;
 
-		for(vector<XmlManagerNode>::iterator vit =(*kit).second.begin() ; vit !=(*kit).second.end() ; ++vit) {
+		for(vector<ConfigNode>::iterator vit =(*kit).second.begin() ; vit !=(*kit).second.end() ; ++vit) {
 			QString text = " ";
 
 			if((*vit).text.size() != 0) {
@@ -110,32 +109,32 @@ void XMLHandler::addAttributeChild(QTreeWidgetItem *parent, QString name, QStrin
 }
 
 void XMLHandler::initializeActivitiesTree() {
-	int numOfAgents = xmlStructure.numberOfNodesForKey("agents.agent");
+	int numOfAgents = Configurator::Instance().numberOfNodesForKey("agents.agent");
 	ui->activitiesTree->clear();
 
 	for(int i = 0 ; i < numOfAgents ; i++) {
-		if(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i) ) + ".$Enable").compare("1") != 0) {
+		if(Configurator::Instance().findValueForKey(string("agents.agent~") + string(_toString(i) ) + ".$Enable").compare("1") != 0) {
 			continue;
 		}
 
 		QTreeWidgetItem *parent = new QTreeWidgetItem(ui->activitiesTree);
-		QString agentName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + ".name"));
+		QString agentName = QString::fromStdString(Configurator::Instance().findValueForKey(string("agents.agent~") + string(_toString(i)) + ".name"));
 		parent->setText(0, agentName);
 		parent->setFlags(parent->flags() & ~Qt::ItemIsSelectable);
-		int numOfActivities = xmlStructure.numberOfNodesForKey(string("agents.agent~") + string(_toString(i) ) + ".activity");
+		int numOfActivities = Configurator::Instance().numberOfNodesForKey(string("agents.agent~") + string(_toString(i) ) + ".activity");
 
 		for(int j = 0 ; j < numOfActivities ; j++) {
-			if(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i) ) + string(".activity~") + _toString(j) + ".$Enable").compare("1") == 0) {
+			if(Configurator::Instance().findValueForKey(string("agents.agent~") + string(_toString(i) ) + string(".activity~") + _toString(j) + ".$Enable").compare("1") == 0) {
 				QTreeWidgetItem *child = new QTreeWidgetItem(parent);
 				child->setFlags(child->flags() & ~Qt::ItemIsSelectable);
-				QString activityName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.agent~") + string(_toString(i)) + string(".activity~") + _toString(j)));
+				QString activityName = QString::fromStdString(Configurator::Instance().findValueForKey(string("agents.agent~") + string(_toString(i)) + string(".activity~") + _toString(j)));
 				child->setText(0, activityName);
 				child->setText(1, "0");
 			}
 		}
 	}
 
-	int numOfStatecharts = xmlStructure.numberOfNodesForKey("agents.statechart");
+	int numOfStatecharts = Configurator::Instance().numberOfNodesForKey("agents.statechart");
 
 	if(numOfStatecharts != 0) {
 		QTreeWidgetItem *parent = new QTreeWidgetItem(ui->activitiesTree);
@@ -146,13 +145,13 @@ void XMLHandler::initializeActivitiesTree() {
 
 		for(int i = 0 ; i < numOfStatecharts ; i++) {
 		
-			if(xmlStructure.findValueForKey(string("agents.statechart~") + _toString(i) + ".$Enable").compare("1") != 0)
+			if(Configurator::Instance().findValueForKey(string("agents.statechart~") + _toString(i) + ".$Enable").compare("1") != 0)
 				continue;
 
 			enableStates++;
 			QTreeWidgetItem *child = new QTreeWidgetItem(parent);
 			child->setFlags(child->flags() & ~Qt::ItemIsSelectable);
-			QString statechartName = QString::fromStdString(xmlStructure.findValueForKey(string("agents.statechart~") + _toString(i)));
+			QString statechartName = QString::fromStdString(Configurator::Instance().findValueForKey(string("agents.statechart~") + _toString(i)));
 			child->setText(0, statechartName);
 			child->setText(1, "0");
 		}
@@ -196,7 +195,7 @@ void XMLHandler::genericAckReceived(GenericACK ack, QString hostid) {
 				headid = hs.headid();
 				bodyid = hs.bodyid();
 				updateTreeStructure(headid, bodyid);
-				oldChecksum = xmlStructure.getChecksum();
+				oldChecksum = Configurator::Instance().getChecksum();
 
 				if(oldChecksum == hs.checksum()) {
 					ui->status->setText("succeeded");
@@ -214,7 +213,7 @@ void XMLHandler::genericAckReceived(GenericACK ack, QString hostid) {
 			}
 
 			updateXMLFiles();
-			ui->ctLabel->setText(QString::fromStdString(xmlStructure.findValueForKey("vision.SegmentationBottom") ) );
+			ui->ctLabel->setText(QString::fromStdString(Configurator::Instance().findValueForKey("vision.SegmentationBottom") ) );
 		} 
 		else {
 			ui->status->setText("Locked owned by other GUI");
@@ -312,7 +311,7 @@ void XMLHandler::sendPressed() {
 	}
 
 	if(ui->ctCB->isChecked()) {
-		string path = ArchConfig::Instance().GetConfigPrefix() + "colortables/";
+		string path = Configurator::Instance().getDirectoryPath() + "colortables/";
 		path.append(ui->ctLabel->text().toStdString() );
 		string filepath = "colortables/" + ui->ctLabel->text().toStdString();
 		ifstream ctfile(path.c_str());
@@ -359,12 +358,12 @@ void XMLHandler::updateXMLFiles() {
 		}
 
 		changes.clear();
-		xmlStructure.burstWrite(dataForWrite);
+		Configurator::Instance().burstWrite(dataForWrite);
 	}
 }
 
 void XMLHandler::changeCt() {
-	string path = ArchConfig::Instance().GetConfigPrefix() + "colortables";
+	string path = Configurator::Instance().getDirectoryPath() + "colortables";
 	QString filename = QFileDialog::getOpenFileName(this, tr("Choose Segmentation File"), QString::fromStdString(path), tr("Segmentation Files(*.conf)"));
 
 	if(filename != "") {
