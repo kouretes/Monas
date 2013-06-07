@@ -18,7 +18,7 @@
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 #include "messages/Debug.pb.h"
 
 #include "BallFilter.h"

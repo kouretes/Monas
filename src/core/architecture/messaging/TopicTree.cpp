@@ -40,7 +40,7 @@ TopicTree::TopicTree(): StringRegistry()
 	addTopic(string("obstacle"), string("global"));
 	addTopic(string("debug"), string("global"));
 	addTopic(string("external"), string("global"));
-	addTopic(string("log"), string("global"));
+	addTopic(string("architecture"), string("global"));
 }
 
 

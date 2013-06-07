@@ -17,7 +17,7 @@ Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, MessageHub
 	for ( ActivList::iterator it = _activities.begin(); it != _activities.end(); ++it )
 		(*it)->UserInit();
 
-	_blk.updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("architecture", msgentry::SUBSCRIBE_ON_TOPIC);
 };
 
 Agent::~Agent ()
@@ -34,7 +34,7 @@ int Agent:: Execute ()
 	agentStats.StartAgentTiming();
 	_blk.process_messages();
 
-	rmsg = _blk.readSignal<ResetMessage> ("external");
+	rmsg = _blk.readSignal<ResetMessage> ("architecture");
 
 	if(rmsg != 0){
 		for ( ActivList::iterator it = _activities.begin(); it != _activities.end(); it++ )

@@ -5,7 +5,7 @@
 #include "core/elements/math/Common.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
 
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"

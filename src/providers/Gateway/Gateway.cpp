@@ -57,7 +57,7 @@ int Gateway::Execute() {
 		}
 
 		for (fit = rf.begin(); fit != rf.end(); ++fit) {
-			//XML PART
+			//Config PART
 			processExternalConfig ( (*fit).hostid() );
 			//Command part
 			processExternalCommands ( (*fit).hostid() );
@@ -82,7 +82,6 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 		}
 
 		if (lockOwner) {
-			updateXMLMsg.clear_updatexml();
 			resetActMsg.clear_resetactivities();
 			map<uint32_t, string>::iterator iter = ectimeouts.find (incomingHostId);
 			//We must always send back ack but we must do changes only if the message is new and not retrasmit
@@ -102,22 +101,17 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 			if (freshMessage) {
 				vector<pair<string, string> > dataForWrite;
 
-				for (int i = 0; i < ecmsg->updatexml_size(); i++) {
-					//Add to msg to informe the world about the changes
-					updateXMLMsg.add_updatexml();
-					updateXMLMsg.mutable_updatexml (i)->set_keyword (ecmsg->updatexml (i).keyword() );
-					updateXMLMsg.mutable_updatexml (i)->set_value (ecmsg->updatexml (i).value() );
+				for (int i = 0; i < ecmsg->updateconfig_size(); i++) {
 					//Prepare to write to files
 					pair<string, string> temp;
-					temp.first = ecmsg->updatexml (i).keyword();
-					temp.second = ecmsg->updatexml (i).value();
+					temp.first = ecmsg->updateconfig (i).keyword();
+					temp.second = ecmsg->updateconfig (i).value();
 					dataForWrite.push_back (temp);
 				}
 
 				//Write to the files and publish the message
-				if (updateXMLMsg.updatexml_size() != 0) {
+				if (dataForWrite.size() != 0) {
 					Configurator::Instance().burstWrite (dataForWrite);
-					publishSignal (updateXMLMsg, "external");
 				}
 
 				if (ecmsg->has_file() ) {
@@ -137,7 +131,7 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 				}
 
 				if (resetActMsg.resetactivities_size() != 0) {
-					publishSignal (resetActMsg, "external");
+					publishSignal (resetActMsg, "architecture");
 				}
 			}
 		}

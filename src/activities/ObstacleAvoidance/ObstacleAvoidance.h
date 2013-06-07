@@ -15,7 +15,7 @@
 #include "messages/TestMessage.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
 
 #include "hal/robot/generic_nao/robot_consts.h"

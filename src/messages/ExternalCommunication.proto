@@ -1,4 +1,4 @@
-message XmlUpdate{
+message ConfigUpdate{
 	required string keyword = 1;
 	required string value = 2;
 }
@@ -17,7 +17,7 @@ message FileTransfer{
 message ExternalConfig{
 	required string messageid = 1;
 	required uint32 targethost = 2;
-	repeated XmlUpdate updateXml = 3;
+	repeated ConfigUpdate updateConfig = 3;
 	repeated string resetActivities = 4;
 	optional FileTransfer file = 5;
 	required bool handOffRequest = 6;
@@ -77,12 +77,3 @@ message GenericACK{
 	optional HandShake handshaking = 3;
 	required bool ownlock = 4;
 }
-
-message ResetMessage{
-	repeated string resetActivities = 1;
-}
-
-message UpdateMessage{
-	repeated XmlUpdate updateXml = 1;
-}
-

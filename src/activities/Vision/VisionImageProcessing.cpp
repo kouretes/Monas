@@ -5,7 +5,6 @@
 #include "tools/logger.h"
 #include "hal/syscall.h"
 #include <vector>
-#include "messages/motion.pb.h"
 
 ACTIVITY_START
 

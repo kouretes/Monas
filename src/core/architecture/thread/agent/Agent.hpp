@@ -9,8 +9,7 @@
 #include "core/architecture/messaging/Blackboard.hpp"
 #include "core/include/IActivity.hpp"
 #include "core/architecture/thread/PeriodicThread.hpp"
-
-#include "messages/GUICommunication.pb.h"
+#include "core/messages/Architecture.pb.h"
 
 #ifdef NAOQI
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -58,7 +57,6 @@ private:
 
 	//Reset Messages
 	boost::shared_ptr<const ResetMessage> rmsg;
-	boost::shared_ptr<const UpdateMessage> umsg;
 
 };
 

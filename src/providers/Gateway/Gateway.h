@@ -10,11 +10,12 @@
 #include "core/architecture/messaging/Blackboard.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
 #include "core/messages/Network.pb.h"
+#include "core/messages/Architecture.pb.h"
 
 #include "messages/Gamecontroller.pb.h"
 #include "messages/RoboCupGameControlData.h"
-#include "messages/motion.pb.h"
-#include "messages/GUICommunication.pb.h"
+#include "messages/Motion.pb.h"
+#include "messages/ExternalCommunication.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 
@@ -28,7 +29,7 @@
  * The gateway that takes messages from the outer world (GUI: KMonitor) and forwards them inside Monas.
  * The basic functionality is to take a message, do the proper actions and then send back to the sender an acknowledgment.
  * @author <a href="mailto:nikofinas@gmail.com">Nikos Kofinas</a> aka eldr4d, 2012 kouretes team
- * \file XMLHandler.h
+ * \file Gateway.h
 */
 
 PROVIDER_START
@@ -62,7 +63,6 @@ private:
 	std::map<uint32_t, std::string> ectimeouts, comtimeouts;
 
 	ResetMessage resetActMsg;
-	UpdateMessage updateXMLMsg;
 	GenericACK outmsg;
 	GameStateMessage new_gsm;
 	MotionActionMessage amot;
@@ -71,8 +71,8 @@ private:
 	HeadControlMessage hcm;
 
 	/**
-	 * Process all the configurations message's (reset, xml update and file upload).
-	 * This functions forwards to blk a reset or an xmlupdate message and write's to files if necessary
+	 * Process all the configurations message's (reset, config update and file upload).
+	 * This functions forwards to blk a reset or an configuration update message and write's to files if necessary
 	 * @param incomingHostId: the id of the host that send us this message.
 	 * */
 	void processExternalConfig(uint32_t incomingHostId);
