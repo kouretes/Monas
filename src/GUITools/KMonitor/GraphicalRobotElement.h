@@ -21,7 +21,7 @@
 #include "messages/RoboCupGameControlData.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 
 #include "KFieldScene.h"
 

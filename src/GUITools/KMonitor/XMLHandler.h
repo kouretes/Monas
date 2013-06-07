@@ -16,7 +16,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "HostsComboBox.h"
 #include "core/architecture/configurator/Configurator.hpp"
-#include "messages/GUICommunication.pb.h"
+#include "messages/ExternalCommunication.pb.h"
 
 /**
  * Code for the xml handler GUI tab of KMonitor

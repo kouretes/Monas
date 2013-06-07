@@ -166,7 +166,7 @@ void XMLHandler::initializeActivitiesTree() {
 }
 
 void XMLHandler::pbHandOfPressed() {
-	outmsg.clear_updatexml();
+	outmsg.clear_updateconfig();
 	outmsg.clear_resetactivities();
 	outmsg.clear_file();
 	
@@ -287,15 +287,15 @@ void XMLHandler::itemChanged(QTreeWidgetItem *item, int col) {
 
 void XMLHandler::sendPressed() {
 
-	outmsg.clear_updatexml();
+	outmsg.clear_updateconfig();
 	outmsg.clear_resetactivities();
 	outmsg.clear_file();
 	int i = 0;
 
 	for(map<string, string>::iterator iter = changes.begin() ; iter != changes.end() ; iter++) {
-		outmsg.add_updatexml();
-		outmsg.mutable_updatexml(i)->set_keyword(iter->first);
-		outmsg.mutable_updatexml(i)->set_value(iter->second);
+		outmsg.add_updateconfig();
+		outmsg.mutable_updateconfig(i)->set_keyword(iter->first);
+		outmsg.mutable_updateconfig(i)->set_value(iter->second);
 		i++;
 	}
 
@@ -329,7 +329,7 @@ void XMLHandler::sendPressed() {
 		}
 	}
 
-	if((outmsg.updatexml_size() != 0 || outmsg.resetactivities_size() != 0 || outmsg.has_file() ) && lastMessageACKed) {
+	if((outmsg.updateconfig_size() != 0 || outmsg.resetactivities_size() != 0 || outmsg.has_file() ) && lastMessageACKed) {
 		
 		// target host is be setting to the KGuiMessenger class
 		lastMessageACKed = false;
