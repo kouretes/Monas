@@ -12,6 +12,7 @@ set(ELEMENT_SRCS
       math/Specific.hpp
       StringRegistry.hpp
       Singleton.hpp
+      KStandard.hpp
 )
 
 add_custom_target(Monas-Elements SOURCES ${ELEMENT_SRCS}  )

@@ -10,7 +10,7 @@ using std::string;
 namespace KStandard {
 
 	/**
-	 * @fn template <typename T> void print(vector<T> &toPrint)
+	 * @fn template <typename T> void print(vector<T> &toPrint, string topic)
 	 * @brief Print vector elements using logger. 
 	 */
 	template <typename T>
@@ -23,13 +23,27 @@ namespace KStandard {
 	}
 	
 	/**
-	 * @fn template <typename T> void print(vector< vector<T> > &toPrint)
+	 * @fn template <typename T> void print(vector<T> &toPrint, string topic, unsigned int index)
+	 * @brief Print vector elements using logger. 
+	 */
+	template <typename T>
+	void print(vector<T> &toPrint, string topic, unsigned int index) {
+		string msg;
+		msg = msg.append("["+_toString(index)+"] ");
+		for(unsigned int it = 0 ; it < toPrint.size() ; it++)
+			msg = msg.append(_toString(toPrint[it])+" ");
+			
+		Logger::Instance().WriteMsg(topic, msg, Logger::Info);
+	}
+	
+	/**
+	 * @fn template <typename T> void print(vector< vector<T> > &toPrint, string topic)
 	 * @brief Print elements of 2-dimensional vector using the above print function.
 	 */
 	template <typename T>
 	void print(vector< vector<T> > &toPrint, string topic) {
 		for(unsigned int it = 0 ; it < toPrint.size() ; it++) {
-			print(toPrint[it], topic);
+			print(toPrint[it], topic, it+1);
 		}
 	}
 	
