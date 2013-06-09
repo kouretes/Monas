@@ -5,7 +5,7 @@ using std::vector;
 using std::string;
 
 /**
- *
+ * Kouretes Standard library, used for general functions.
  */
 namespace KStandard {
 
