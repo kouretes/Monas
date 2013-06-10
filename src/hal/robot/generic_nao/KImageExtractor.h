@@ -38,7 +38,8 @@ public:
 	float getExpUs() const;
 	int currentCameraIsBottom() const;
 	float getScale() const;
-	  unsigned char swapCamera();
+	bool setCameraSetting (unsigned int id, int value);
+	unsigned char swapCamera();
 	void refreshValues();
 private:
 	NaoCamera * naocam;

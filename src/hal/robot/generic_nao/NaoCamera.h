@@ -123,6 +123,9 @@ enum  v4l2_exposure_auto_type {
 class NaoCamera {
 public:
 
+	typedef struct userPreferences{
+		char GAIN,HUE,BRIGHTNESS,CONTRAST,RED_BALANCE,BLUE_BALANCE;
+	}userPrefs;
 	/** Constructor. */
 	NaoCamera();
 
@@ -193,7 +196,9 @@ public:
 	* \return True on success.
 	*/
 	bool setControlSetting (unsigned int id, int value);
+	bool setUserSettings(userPrefs newPrefs);
 private:
+	userPrefs uPreferences;
 	static NaoCamera *theInstance; /**< The only instance of this class. */
 
 
@@ -223,6 +228,7 @@ private:
 	void initRequestAndMapBuffers();
 	void initQueueAllBuffers();
 	void initDefaultControlSettings();
+	void setUserControlSettings();
 	void initResetCrop();
 	void startCapturing();
 };
