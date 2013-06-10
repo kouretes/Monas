@@ -33,6 +33,15 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 	try
 	{
 		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
+	}
+	catch (AL::ALError& e)
+	{
+		Logger::Instance().WriteMsg("MainModule", "Error in getting memory proxy", Logger::FatalError);
+		std::cout << e.what() << std::endl;
+	}
+	
+	
+	try{
 		bodyId = std::string(memory->getData("Device/DeviceList/ChestBoard/BodyId"));
 		headId = std::string(memory->getData("RobotConfig/Head/HeadId"));
 		if(bodyId.size()>15){
@@ -43,13 +52,19 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MainModule", "Error in getting memory proxy", Logger::FatalError);
-		std::cout << e.what() << std::endl;
+		Logger::Instance().WriteMsg("MainModule", "Error in getting body and/or head id`s", Logger::Warning);
+		bodyId="";
+		headId="";
 	}
+	
 	std::cout << "KRobot - Found Head ID: '" << headId << "'" << std::endl;
 	//std::cout << "KRobot - Found Body ID: '" << _toString(KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID).size()) << "'" << std::endl;
 	std::cout << "KRobot - Found Body ID: '" << bodyId << "'" << std::endl;
+#ifndef KROBOT_IS_REMOTE	
 	Configurator::Instance().initConfigurator("/home/nao/naoqi/config/", headId, bodyId);
+#else
+	Configurator::Instance().initConfigurator("./config/", "", "");
+#endif
 	tal = new Talws();
 }
 
