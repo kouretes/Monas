@@ -1,6 +1,6 @@
-if ( NOT (${TargetRobot} STREQUAL "nao" ) )
+if ( NOT (${TargetRobot} STREQUAL "nao" )  OR KROBOT_IS_REMOTE)
     return()
-endif ( NOT (${TargetRobot} STREQUAL "nao" ) )
+endif ( NOT (${TargetRobot} STREQUAL "nao" ) OR KROBOT_IS_REMOTE)
 
 
 

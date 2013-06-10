@@ -29,13 +29,13 @@ SET ( KROBOT_SRCS
 
 set(KRobotTargetSources ${KROBOT_SRCS} CACHE INTERNAL "")
 
-#option(KROBOT_IS_REMOTE
-#  "is KROBOT remote?"
-#  OFF
-#)
+option(KROBOT_IS_REMOTE
+  "is KROBOT remote?"
+  OFF
+)
 
 if (KROBOT_IS_REMOTE)
- 	add_definitions(" -DKROBOT_IS_REMOTE ")
+ 	Monas_global_add_definitions(" -DKROBOT_IS_REMOTE ")
 endif()
 
 function(Monas_Finalize)
