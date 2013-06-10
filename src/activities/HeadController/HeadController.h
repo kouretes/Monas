@@ -4,11 +4,13 @@
 #include <math.h>
 
 #include "core/include/IActivity.hpp"
+#include "core/elements/math/Common.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
 #include "messages/SensorsMessage.pb.h"
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 #include "messages/BehaviorMessages.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/RoboCupGameControlData.h"
@@ -17,7 +19,6 @@
 
 #include "tools/toString.h"
 #include "tools/logger.h"
-#include "core/elements/math/Common.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

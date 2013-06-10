@@ -1,0 +1,3 @@
+message ResetMessage{
+	repeated string resetActivities = 1;
+}

@@ -41,8 +41,6 @@ namespace statechart_engine
 
 		Blackboard _blackboard;
 
-		XmlManager _xmlnode;
-
 		ThreadPool _tp;
 
 		ThreadPool _timeoutpool;

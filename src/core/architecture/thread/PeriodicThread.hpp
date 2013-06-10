@@ -1,9 +1,12 @@
 #ifndef _periodicthread_h_
 #define _periodicthread_h_ 1
 
-#include "hal/smart_timer.h"
 #include "ThreadConfig.hpp"
+
 #include "hal/Thread.hpp"
+#include "hal/syscall.h"
+#include "hal/smart_timer.h"
+
 #include "tools/logger.h"
 
 

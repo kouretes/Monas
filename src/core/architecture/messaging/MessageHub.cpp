@@ -21,10 +21,12 @@
 
 #include "MessageHub.hpp"
 #include "MessageBuffer.hpp"
-#include "network/multicastpoint.hpp"
 #include "TopicTree.hpp"
-#include "tools/XMLConfig.h"
-#include "core/architecture/archConfig.h"
+
+#include "network/multicastpoint.hpp"
+
+#include "core/architecture/configurator/Configurator.hpp"
+
 #include "tools/logger.h"
 
 
@@ -40,28 +42,25 @@ MessageHub::MessageHub() : Thread(false),
 	cond_mutex(), cond_publishers(), cond_publishers_queue(), cond(), agentStats()
 {
 	subscriptions.resize(Topics::Instance().size() + 1); //Force Generation of instance and resize subscription vector
-	XMLConfig xmlconfig(ArchConfig::Instance().GetConfigPrefix() + "/network.xml");
 	string multicastip = "";
 	unsigned int port = 0;
 	unsigned maxpayload = 0;
 	unsigned beacon_interval = 0;
+	
+    multicastip = Configurator::Instance().findValueForKey("network.multicast_ip");
+	port = atoi(Configurator::Instance().findValueForKey("network.multicast_port").c_str());
+    maxpayload = atoi(Configurator::Instance().findValueForKey("network.maxpayload").c_str());
+    beacon_interval = atoi(Configurator::Instance().findValueForKey("network.beacon_interval").c_str());
+    cout << "Initiating multicast network at address: " << multicastip << ":" << port << std::endl;
+	KNetwork::MulticastPoint *m = new KNetwork::MulticastPoint(multicastip, maxpayload);
+	multicast = NULL;
+	m->setCleanupAndBeacon(beacon_interval);
+	m->attachTo(*this);
 
-	if(xmlconfig.QueryElement("multicast_ip", multicastip) &&
-	        xmlconfig.QueryElement("multicast_port", port) &&
-	        xmlconfig.QueryElement("maxpayload", maxpayload) &&
-	        xmlconfig.QueryElement("beacon_interval", beacon_interval) )
-	{
-		cout << "Initiating multicast network at address: " << multicastip << ":" << port << std::endl;
-		KNetwork::MulticastPoint *m = new KNetwork::MulticastPoint(multicastip, maxpayload);
-		multicast = NULL;
-		m->setCleanupAndBeacon(beacon_interval);
-		m->attachTo(*this);
-
-		if(m->startEndPoint(multicastip, port) == false)
-			delete m;
-		else
-			multicast = m;
-	}
+	if(m->startEndPoint(multicastip, port) == false)
+		delete m;
+	else
+		multicast = m;
 }
 
 MessageHub::~MessageHub()

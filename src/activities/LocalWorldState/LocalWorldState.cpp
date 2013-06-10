@@ -37,7 +37,7 @@ void LocalWorldState::UserInit()
 	gameState = PLAYER_INITIAL;
 	int maxBytedataSize = 100000;
 	data = new char[maxBytedataSize]; //## TODO  FIX THIS BETTER
-
+	stability = 0;
 	currentRobotAction = MotionStateMessage::IDLE;
 
 	//time variables initialization
@@ -75,7 +75,7 @@ void LocalWorldState::UserInit()
 
 void LocalWorldState::Reset(){
     ReadLocConf();
-	gameMode = atoi(_xml.findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
+	gameMode = atoi(Configurator::Instance().findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 }
 
 int LocalWorldState::Execute()
@@ -83,10 +83,11 @@ int LocalWorldState::Execute()
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	ProcessMessages();
-
+	
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
+			stability++;
             if (locConfig.ekfEnable == true){
 			    ekfLocalization.IncreaseUncertaintyAfterFall();
             }
@@ -118,9 +119,12 @@ int LocalWorldState::Execute()
     }
 
     if (gameState == PLAYER_PLAYING && (prevGameState == PLAYER_PENALISED || prevGameState == PLAYER_SET ))
-         gamePlaying = microsec_clock::universal_time();   
+         gamePlaying = microsec_clock::universal_time();
+         
+    if (gameState == PLAYER_PENALISED && prevGameState == PLAYER_PLAYING)
+         stability++;      
 
-    if ( gameState !=  PLAYER_SET ) {
+    if (gameState !=  PLAYER_SET ) {
         if (locConfig.ekfEnable == true){
             AgentPosition = ekfLocalization.LocalizationStep(robotmovement, currentObservation, currentAmbiguousObservation);
 
@@ -140,7 +144,9 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
 	MyWorld.mutable_myposition()->set_confidence(0.0);
-
+	
+	MyWorld.set_stability(stability);
+	
 	calculate_ball_estimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
@@ -417,7 +423,7 @@ void LocalWorldState::RobotPositionMotionModel(Localization::KMotionModel & MMod
     if (sm != 0){
         if (currentRobotAction==MotionStateMessage::ACTION && actionKick==false){
             actionKick=true;
-            localizationWorld.actionOdError=TO_RAD(atof(_xml.findValueForKey(_xml.keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str()));
+            localizationWorld.actionOdError=TO_RAD(atof(Configurator::Instance().findValueForKey(Configurator::Instance().keyOfNodeForSubvalue("actionOdometry.action",".name",sm->detail())+".phi").c_str()));
              }
         else if (currentRobotAction!=MotionStateMessage::ACTION){
             actionKick=false;
@@ -435,13 +441,13 @@ void LocalWorldState::ReadFeatureConf()
     Localization::feature temp;
     float x,y,weight;
     string ID;
-	for(int i = 0; i < _xml.numberOfNodesForKey("features.ftr"); i++){
+	for(int i = 0; i < Configurator::Instance().numberOfNodesForKey("features.ftr"); i++){
 		string key = "features.ftr~" + _toString(i) + ".";
 
-    	ID=_xml.findValueForKey(key + "ID");
-    	x= atof(_xml.findValueForKey(key + "x").c_str());
-    	y= atof(_xml.findValueForKey(key + "y").c_str());
-    	weight= atof(_xml.findValueForKey(key + "weight").c_str());
+    	ID=Configurator::Instance().findValueForKey(key + "ID");
+    	x= atof(Configurator::Instance().findValueForKey(key + "x").c_str());
+    	y= atof(Configurator::Instance().findValueForKey(key + "y").c_str());
+    	weight= atof(Configurator::Instance().findValueForKey(key + "weight").c_str());
     	temp.set(x, y, ID, weight);
     	locConfig.KFeaturesmap[ID] = temp;
     }
@@ -449,54 +455,54 @@ void LocalWorldState::ReadFeatureConf()
 
 void LocalWorldState::ReadLocConf()
 {
-    locConfig.partclsNum=atoi(_xml.findValueForKey("localizationConfig.partclsNum").c_str());
-    locConfig.spreadParticlesDeviation=atof(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
-    locConfig.rotationDeviation=atof(_xml.findValueForKey("localizationConfig.rotation_deviation").c_str());
-    locConfig.percentParticlesSpread=atoi(_xml.findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
-    locConfig.spreadParticlesDeviationAfterFall=atoi(_xml.findValueForKey("localizationConfig.SpreadParticlesDeviationAfterFall").c_str());
-    locConfig.rotationDeviationAfterFallInDeg=atof(_xml.findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
-    locConfig.numberOfParticlesSpreadAfterFall=atof(_xml.findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
+    locConfig.partclsNum=atoi(Configurator::Instance().findValueForKey("localizationConfig.partclsNum").c_str());
+    locConfig.spreadParticlesDeviation=atof(Configurator::Instance().findValueForKey("localizationConfig.SpreadParticlesDeviation").c_str());
+    locConfig.rotationDeviation=atof(Configurator::Instance().findValueForKey("localizationConfig.rotation_deviation").c_str());
+    locConfig.percentParticlesSpread=atoi(Configurator::Instance().findValueForKey("localizationConfig.PercentParticlesSpread").c_str());
+    locConfig.spreadParticlesDeviationAfterFall=atoi(Configurator::Instance().findValueForKey("localizationConfig.SpreadParticlesDeviationAfterFall").c_str());
+    locConfig.rotationDeviationAfterFallInDeg=atof(Configurator::Instance().findValueForKey("localizationConfig.RotationDeviationAfterFallInDeg").c_str());
+    locConfig.numberOfParticlesSpreadAfterFall=atof(Configurator::Instance().findValueForKey("localizationConfig.NumberOfParticlesSpreadAfterFall").c_str());
 
-    locConfig.ekfEnable = atof(_xml.findValueForKey("localizationConfig.EKFEnable").c_str());
+    locConfig.ekfEnable = atof(Configurator::Instance().findValueForKey("localizationConfig.EKFEnable").c_str());
 
     //Odometry motion model parameters
-    robotmovement.Distance.ratiomean = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Distance.ratiomean").c_str());
-	robotmovement.Distance.ratiodev = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Distance.ratiodev").c_str());
-	robotmovement.Distance.Emean = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Distance.Emean").c_str());
-	robotmovement.Distance.Edev = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Distance.Edev").c_str());
+    robotmovement.Distance.ratiomean = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Distance.ratiomean").c_str());
+	robotmovement.Distance.ratiodev = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Distance.ratiodev").c_str());
+	robotmovement.Distance.Emean = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Distance.Emean").c_str());
+	robotmovement.Distance.Edev = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Distance.Edev").c_str());
 
-	robotmovement.Direction.ratiomean = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Direction.ratiomean").c_str());
-	robotmovement.Direction.ratiodev = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Direction.ratiodev").c_str());
-	robotmovement.Direction.Emean = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Direction.Emean").c_str());
-	robotmovement.Direction.Edev =atof(_xml.findValueForKey("localizationConfig.OdometryModel.Direction.Edev").c_str());
+	robotmovement.Direction.ratiomean = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Direction.ratiomean").c_str());
+	robotmovement.Direction.ratiodev = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Direction.ratiodev").c_str());
+	robotmovement.Direction.Emean = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Direction.Emean").c_str());
+	robotmovement.Direction.Edev =atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Direction.Edev").c_str());
 
-	robotmovement.Rotation.ratiomean = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Rotation.ratiomean").c_str());
-	robotmovement.Rotation.ratiodev = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Rotation.ratiodev").c_str());
-	robotmovement.Rotation.Emean = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Rotation.Emean").c_str());
-	robotmovement.Rotation.Edev = atof(_xml.findValueForKey("localizationConfig.OdometryModel.Rotation.Edev").c_str());
+	robotmovement.Rotation.ratiomean = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Rotation.ratiomean").c_str());
+	robotmovement.Rotation.ratiodev = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Rotation.ratiodev").c_str());
+	robotmovement.Rotation.Emean = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Rotation.Emean").c_str());
+	robotmovement.Rotation.Edev = atof(Configurator::Instance().findValueForKey("localizationConfig.OdometryModel.Rotation.Edev").c_str());
 
     //Sensor resetting
-    localizationWorld.augMCL.aslow = atof(_xml.findValueForKey("localizationConfig.Resetting.aslow").c_str());
-    localizationWorld.augMCL.afast = atof(_xml.findValueForKey("localizationConfig.Resetting.afast").c_str());
-    localizationWorld.augMCL.winDuration = atof(_xml.findValueForKey("localizationConfig.Resetting.winDuration").c_str());
-    localizationWorld.augMCL.enable = atof(_xml.findValueForKey("localizationConfig.Resetting.enable").c_str());
+    localizationWorld.augMCL.aslow = atof(Configurator::Instance().findValueForKey("localizationConfig.Resetting.aslow").c_str());
+    localizationWorld.augMCL.afast = atof(Configurator::Instance().findValueForKey("localizationConfig.Resetting.afast").c_str());
+    localizationWorld.augMCL.winDuration = atof(Configurator::Instance().findValueForKey("localizationConfig.Resetting.winDuration").c_str());
+    localizationWorld.augMCL.enable = atof(Configurator::Instance().findValueForKey("localizationConfig.Resetting.enable").c_str());
 
 
 }
 
 void LocalWorldState::ReadFieldConf()
 {
-    locConfig.fieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
-    locConfig.fieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
-    locConfig.fieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
-    locConfig.fieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+    locConfig.fieldMaxX=atof(Configurator::Instance().findValueForKey("field.FieldMaxX").c_str());
+    locConfig.fieldMinX=atof(Configurator::Instance().findValueForKey("field.FieldMinX").c_str());
+    locConfig.fieldMaxY=atof(Configurator::Instance().findValueForKey("field.FieldMaxY").c_str());
+    locConfig.fieldMinY=atof(Configurator::Instance().findValueForKey("field.FieldMinY").c_str());
 
 
 }
 
 void LocalWorldState::ReadTeamConf()
 {
-    locConfig.playerNumber=atoi(_xml.findValueForKey("teamConfig.player").c_str());
+    locConfig.playerNumber=atoi(Configurator::Instance().findValueForKey("teamConfig.player").c_str());
 }
 
 void LocalWorldState::ReadRobotConf()
@@ -504,27 +510,27 @@ void LocalWorldState::ReadRobotConf()
    
     int pNumber=locConfig.playerNumber;
 
-    locConfig.initX[0]=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".x").c_str());
-    locConfig.initY[0]=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".y").c_str());
-    locConfig.initPhi[0]=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".phi").c_str());
+    locConfig.initX[0]=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".x").c_str());
+    locConfig.initY[0]=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".y").c_str());
+    locConfig.initPhi[0]=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.KickOff.player",".number",_toString(pNumber))+".phi").c_str());
 
-    locConfig.initX[1]=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".x").c_str());
-    locConfig.initY[1]=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".y").c_str());
-    locConfig.initPhi[1]=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".phi").c_str());
+    locConfig.initX[1]=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".x").c_str());
+    locConfig.initY[1]=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".y").c_str());
+    locConfig.initPhi[1]=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.noKickOff.player",".number",_toString(pNumber))+".phi").c_str());
 
     //read ready state positions
-    locConfig.readyX=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".x").c_str());
-    locConfig.readyY=atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".y").c_str());
-    locConfig.readyPhi=TO_RAD(atof(_xml.findValueForKey(
-_xml.keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".phi").c_str()));
+    locConfig.readyX=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".x").c_str());
+    locConfig.readyY=atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".y").c_str());
+    locConfig.readyPhi=TO_RAD(atof(Configurator::Instance().findValueForKey(
+Configurator::Instance().keyOfNodeForSubvalue("playerConfig.Ready.player",".number",_toString(pNumber))+".phi").c_str()));
 
 }
 

@@ -9,8 +9,10 @@ set(ELEMENT_SRCS
       factory/Factory.hpp
       math/Common.hpp
       math/KMat.hpp
+      math/Specific.hpp
       StringRegistry.hpp
       Singleton.hpp
+      KStandard.hpp
 )
 
 add_custom_target(Monas-Elements SOURCES ${ELEMENT_SRCS}  )

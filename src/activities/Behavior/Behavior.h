@@ -2,9 +2,10 @@
 #define BEHAVIOR_H
 
 #include "core/include/IActivity.hpp"
+#include "core/elements/math/Common.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
-
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/Gamecontroller.pb.h"
@@ -18,7 +19,6 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "core/elements/math/Common.hpp"
 #include "tools/obstacleConst.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>

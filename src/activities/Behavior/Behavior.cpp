@@ -79,30 +79,30 @@ void Behavior::UserInit() {
 void Behavior::Reset(){
 
 	// === read team configuration xml data from teamConfig.xml===
-	config.teamNumber = atoi(_xml.findValueForKey("teamConfig.team_number").c_str());
-	config.playerNumber = atoi(_xml.findValueForKey("teamConfig.player").c_str());
-	config.maxPlayers = atoi(_xml.findValueForKey("teamConfig.team_max_players").c_str());
-	config.isPenaltyMode = atoi(_xml.findValueForKey("teamConfig.penalty_mode").c_str()) == 1 ? true : false;
+	config.teamNumber = atoi(Configurator::Instance().findValueForKey("teamConfig.team_number").c_str());
+	config.playerNumber = atoi(Configurator::Instance().findValueForKey("teamConfig.player").c_str());
+	config.maxPlayers = atoi(Configurator::Instance().findValueForKey("teamConfig.team_max_players").c_str());
+	config.isPenaltyMode = atoi(Configurator::Instance().findValueForKey("teamConfig.penalty_mode").c_str()) == 1 ? true : false;
 
 	std::string color;
-	color = _xml.findValueForKey("teamConfig.default_team_color").c_str();
+	color = Configurator::Instance().findValueForKey("teamConfig.default_team_color").c_str();
 	if(color.compare("blue") == 0)
 		config.teamColor = TEAM_BLUE;
 	else
 		config.teamColor == TEAM_RED;
 
 	// === read behavior configuration xml data from behavior.xml===
-	config.posX = atof(_xml.findValueForKey("behavior.posx").c_str());
-	config.posY = atof(_xml.findValueForKey("behavior.posy").c_str());
-	config.epsX = atof(_xml.findValueForKey("behavior.epsx").c_str());
-	config.epsY = atof(_xml.findValueForKey("behavior.epsy").c_str());
-	config.kicks.KickForwardLeft = _xml.findValueForKey("behavior.KickForwardLeft").c_str();
-	config.kicks.KickForwardRight = _xml.findValueForKey("behavior.KickForwardRight").c_str();
-	config.kicks.KickSideLeft = _xml.findValueForKey("behavior.KickSideLeft").c_str();
-	config.kicks.KickSideRight = _xml.findValueForKey("behavior.KickSideRight").c_str();
-	config.kicks.KickBackLeft = _xml.findValueForKey("behavior.KickBackLeft").c_str();
-	config.kicks.KickBackRight = _xml.findValueForKey("behavior.KickBackRight").c_str();
-	config.ur = atof(_xml.findValueForKey("behavior.ur").c_str());
+	config.posX = atof(Configurator::Instance().findValueForKey("behavior.posx").c_str());
+	config.posY = atof(Configurator::Instance().findValueForKey("behavior.posy").c_str());
+	config.epsX = atof(Configurator::Instance().findValueForKey("behavior.epsx").c_str());
+	config.epsY = atof(Configurator::Instance().findValueForKey("behavior.epsy").c_str());
+	config.kicks.KickForwardLeft = Configurator::Instance().findValueForKey("behavior.KickForwardLeft").c_str();
+	config.kicks.KickForwardRight = Configurator::Instance().findValueForKey("behavior.KickForwardRight").c_str();
+	config.kicks.KickSideLeft = Configurator::Instance().findValueForKey("behavior.KickSideLeft").c_str();
+	config.kicks.KickSideRight = Configurator::Instance().findValueForKey("behavior.KickSideRight").c_str();
+	config.kicks.KickBackLeft = Configurator::Instance().findValueForKey("behavior.KickBackLeft").c_str();
+	config.kicks.KickBackRight = Configurator::Instance().findValueForKey("behavior.KickBackRight").c_str();
+	config.ur = atof(Configurator::Instance().findValueForKey("behavior.ur").c_str());
 
 	// === read robot configuration xml data from playerConfig.xml===
 	if ( (config.playerNumber < 1) || (config.playerNumber > config.maxPlayers) )
@@ -114,11 +114,11 @@ void Behavior::Reset(){
 
 		for(int r = 0 ; r < config.maxPlayers ; r++) // for each robot on the node
 		{
-			if( atoi(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".number").c_str()) == config.playerNumber )
+			if( atoi(Configurator::Instance().findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".number").c_str()) == config.playerNumber )
 			{
-				config.initX[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".x").c_str());
-				config.initY[i] = atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".y").c_str());
-				config.initPhi[i] = TO_RAD(atof(_xml.findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".phi").c_str()));
+				config.initX[i] = atof(Configurator::Instance().findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".x").c_str());
+				config.initY[i] = atof(Configurator::Instance().findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".y").c_str());
+				config.initPhi[i] = TO_RAD(atof(Configurator::Instance().findValueForKey("playerConfig."+kickOff+".player~"+_toString(r)+".phi").c_str()));
 				break;
 			}
 		}
@@ -126,54 +126,54 @@ void Behavior::Reset(){
 
 	// === read field configuration xml data from field.xml used for formation generator ===
 	// update the Field struct on formation generator header
-	fGen.Field.MaxX = atof(_xml.findValueForKey("field.FieldMaxX").c_str());
-	fGen.Field.MinX = atof(_xml.findValueForKey("field.FieldMinX").c_str());
-	fGen.Field.MaxY = atof(_xml.findValueForKey("field.FieldMaxY").c_str());
-	fGen.Field.MinY = atof(_xml.findValueForKey("field.FieldMinY").c_str());
+	fGen.Field.MaxX = atof(Configurator::Instance().findValueForKey("field.FieldMaxX").c_str());
+	fGen.Field.MinX = atof(Configurator::Instance().findValueForKey("field.FieldMinX").c_str());
+	fGen.Field.MaxY = atof(Configurator::Instance().findValueForKey("field.FieldMaxY").c_str());
+	fGen.Field.MinY = atof(Configurator::Instance().findValueForKey("field.FieldMinY").c_str());
 
-	fGen.Field.LeftPenaltyAreaMaxX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
-	fGen.Field.LeftPenaltyAreaMinX = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinX").c_str());
-	fGen.Field.LeftPenaltyAreaMaxY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
-	fGen.Field.LeftPenaltyAreaMinY = atof(_xml.findValueForKey("field.LeftPenaltyAreaMinY").c_str());
+	fGen.Field.LeftPenaltyAreaMaxX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
+	fGen.Field.LeftPenaltyAreaMinX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMinX").c_str());
+	fGen.Field.LeftPenaltyAreaMaxY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
+	fGen.Field.LeftPenaltyAreaMinY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMinY").c_str());
 
-	fGen.Field.RightPenaltyAreaMaxX = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxX").c_str());
-	fGen.Field.RightPenaltyAreaMinX = atof(_xml.findValueForKey("field.RightPenaltyAreaMinX").c_str());
-	fGen.Field.RightPenaltyAreaMaxY = atof(_xml.findValueForKey("field.RightPenaltyAreaMaxY").c_str());
-	fGen.Field.RightPenaltyAreaMinY = atof(_xml.findValueForKey("field.RightPenaltyAreaMinY").c_str());
+	fGen.Field.RightPenaltyAreaMaxX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMaxX").c_str());
+	fGen.Field.RightPenaltyAreaMinX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMinX").c_str());
+	fGen.Field.RightPenaltyAreaMaxY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMaxY").c_str());
+	fGen.Field.RightPenaltyAreaMinY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMinY").c_str());
 
-	fGen.Field.LeftGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMaxY").c_str());
-	fGen.Field.RightGoalPost = atof(_xml.findValueForKey("field.LeftGoalAreaMinY").c_str());
+	fGen.Field.LeftGoalPost = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMaxY").c_str());
+	fGen.Field.RightGoalPost = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMinY").c_str());
 
-	fGen.Field.DiameterCCircle = atof(_xml.findValueForKey("field.DiameterCCircle").c_str());
+	fGen.Field.DiameterCCircle = atof(Configurator::Instance().findValueForKey("field.DiameterCCircle").c_str());
 
 	// === read goal configuration xml data from Fearures.xml ===
 	std::string ID;
-	for(int v = 0 ; v < _xml.numberOfNodesForKey("features.ftr") ; v++)
+	for(int v = 0 ; v < Configurator::Instance().numberOfNodesForKey("features.ftr") ; v++)
 	{
-		ID = _xml.findValueForKey("features.ftr~"+_toString(v)+".ID").c_str();
+		ID = Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".ID").c_str();
 		if(ID == "YellowGoal")
 		{
-			config.oppGoalX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
-			config.oppGoalY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			config.oppGoalX = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			config.oppGoalY = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
 			config.ownGoalX = -config.oppGoalX;
 			config.ownGoalY = -config.oppGoalY;
 		}
 		else if(ID == "YellowLeft")
 		{
-			config.oppGoalLeftX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
-			config.oppGoalLeftY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			config.oppGoalLeftX = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			config.oppGoalLeftY = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
 			config.ownGoalLeftX = -config.oppGoalLeftX;
 			config.ownGoalLeftY = -config.oppGoalLeftY;
 		}
 		else if(ID == "YellowRight")
 		{
-			config.oppGoalRightX = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
-			config.oppGoalRightY = atof(_xml.findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
+			config.oppGoalRightX = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".x").c_str());
+			config.oppGoalRightY = atof(Configurator::Instance().findValueForKey("features.ftr~"+_toString(v)+".y").c_str());
 			config.ownGoalRightX = -config.oppGoalRightX;
 			config.ownGoalRightY = -config.oppGoalRightY;
 		}
 	}
-	gameMode = atoi(_xml.findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
+	gameMode = atoi(Configurator::Instance().findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 	Logger::Instance().WriteMsg("Behavior", "Reset done", Logger::Info);
 }
 

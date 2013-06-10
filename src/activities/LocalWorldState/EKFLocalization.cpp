@@ -6,8 +6,8 @@ void EKFLocalization::Initialize(){
 
     // Error Parameters
     e1 = 1.2f;
-    e2 = 0.0f;
-    e3 = 1.0f;
+    e2 = 0.5f;
+    e3 = 0.8f;
 
     kalmanModels.resize(16);
 	InitializeHypothesis(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);

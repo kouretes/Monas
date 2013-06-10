@@ -1,6 +1,0 @@
-<?xml version="1.0" ?>
-<!-- General Configuration of the Architecture  -->
-
-<ThreadType>PThread</ThreadType>
-
-<AgentConfigurationFile>agents.xml</AgentConfigurationFile>

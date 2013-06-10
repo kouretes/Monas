@@ -1,6 +1,7 @@
 #ifndef FLOODER_H
 #define FLOODER_H
 #include "core/include/IActivity.hpp"
+
 #include "tools/profiler.hpp"
 
 ACTIVITY_START
@@ -8,7 +9,7 @@ ACTIVITY_START
 class Pipe: public IActivity
 {
 public:
-	Pipe(Blackboard&b, XmlManager&x) : IActivity(b, x), p("Pipe") {};
+	Pipe(Blackboard &b) : IActivity(b), p("Pipe") {};
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	KProfiling::profiler p;
 
@@ -25,7 +26,7 @@ ACTIVITY_START
 class Drain: public IActivity
 {
 public:
-	Drain(Blackboard&b, XmlManager&x) : IActivity(b, x), p("Drain") {}
+	Drain(Blackboard &b) : IActivity(b), p("Drain") {}
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	KProfiling::profiler p;
 	void ACTIVITY_VISIBLE UserInit();

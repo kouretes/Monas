@@ -1,6 +1,5 @@
 #include "ObstacleAvoidance.h"
 #include "tools/toString.h"
-#include "tools/XMLConfig.h"
 #include "tools/logger.h"
 #include <iostream>
 #include <string>
@@ -978,47 +977,31 @@ void ObstacleAvoidance::callVelocityWalk(double walkToX, double walkToY, double 
 
 void ObstacleAvoidance::Initialize()
 {
-	XMLConfig config(ArchConfig::Instance().GetConfigPrefix() + "/obstacle.xml");
-
-	if (config.IsLoadedSuccessfully())
-	{
-		bool found = true;
-		found &= config.QueryElement("FrontDeviation", FrontDeviation);
-		found &= config.QueryElement("SideDeviation", SideDeviation);
-		found &= config.QueryElement("ageTimerSeconds", ageTimerSeconds);
-		found &= config.QueryElement("debugModeCout", debugModeCout);
-		found &= config.QueryElement("debugRelativeMode", debugRelativeMode);
-		found &= config.QueryElement("testPathX", testPathX);
-		found &= config.QueryElement("testPathY", testPathY);
-		found &= config.QueryElement("testPathA", testPathA);
-		found &= config.QueryElement("AgeFactor", AgeFactor);
-		found &= config.QueryElement("OccupancyDecreaseFactor", OccupancyDecreaseFactor);
-		found &= config.QueryElement("OccupancyIncreaseFactor", OccupancyIncreaseFactor);
-		found &= config.QueryElement("MinOccupancy", MinOccupancy);
-		found &= config.QueryElement("MaxOccupancy", MaxOccupancy);
-		found &= config.QueryElement("ObstacleThreshold", ObstacleThreshold);
-		found &= config.QueryElement("ObstacleCostFactor", ObstacleCostFactor);
-		found &= config.QueryElement("RotationCostFactor", RotationCostFactor);
-		found &= config.QueryElement("RotationMoveFactor", RotationMoveFactor);
-		found &= config.QueryElement("SideStepCostFactor", SideStepCostFactor);
-		found &= config.QueryElement("SemiSideCostFactor", SemiSideCostFactor);
-		found &= config.QueryElement("SonarDistanceRange", SonarDistanceRange);
-		found &= config.QueryElement("SonarMinReading", SonarMinReading);
-		found &= config.QueryElement("CloseObstacleRadius", CloseObstacleRadius);
-		found &= config.QueryElement("CloseObstacleCenter", CloseObstacleCenter);
-		found &= config.QueryElement("GoalDistanceTolerance", GoalDistanceTolerance);
-		found &= config.QueryElement("GoalAngleTolerance", GoalAngleTolerance);
-		
-		
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "Initialize no knowledge: " + _toString(NoKnowledge) , Logger::ExtraExtraInfo);
-
-		if (found)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "All obstacle parameters loaded successfully" , Logger::ExtraExtraInfo);
-		else
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "Cant Find an attribute in the xml config file " , Logger::ExtraExtraInfo);
-	}
-	else
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "Cant Find xml config file ", Logger::ExtraExtraInfo);
+	FrontDeviation = atof(Configurator::Instance().findValueForKey("obstacle.FrontDeviation").c_str());
+	SideDeviation = atof(Configurator::Instance().findValueForKey("obstacle.SideDeviation").c_str());
+	ageTimerSeconds = atof(Configurator::Instance().findValueForKey("obstacle.ageTimerSeconds").c_str());
+	debugModeCout = atof(Configurator::Instance().findValueForKey("obstacle.debugModeCout").c_str());
+	debugRelativeMode = atof(Configurator::Instance().findValueForKey("obstacle.debugRelativeMode").c_str());
+	testPathX = atof(Configurator::Instance().findValueForKey("obstacle.testPathX").c_str());
+	testPathY = atof(Configurator::Instance().findValueForKey("obstacle.testPathY").c_str());
+	testPathA = atof(Configurator::Instance().findValueForKey("obstacle.testPathA").c_str());
+	AgeFactor = atof(Configurator::Instance().findValueForKey("obstacle.AgeFactor").c_str());
+	OccupancyDecreaseFactor = atof(Configurator::Instance().findValueForKey("obstacle.OccupancyDecreaseFactor").c_str());
+	OccupancyIncreaseFactor = atof(Configurator::Instance().findValueForKey("obstacle.OccupancyIncreaseFactor").c_str());
+	MinOccupancy = atof(Configurator::Instance().findValueForKey("obstacle.MinOccupancy").c_str());
+	MaxOccupancy = atof(Configurator::Instance().findValueForKey("obstacle.MaxOccupancy").c_str());
+	ObstacleThreshold = atof(Configurator::Instance().findValueForKey("obstacle.ObstacleThreshold").c_str());
+	ObstacleCostFactor = atof(Configurator::Instance().findValueForKey("obstacle.ObstacleCostFactor").c_str());
+	RotationCostFactor = atof(Configurator::Instance().findValueForKey("obstacle.RotationCostFactor").c_str());
+	RotationMoveFactor = atof(Configurator::Instance().findValueForKey("obstacle.RotationMoveFactor").c_str());
+	SideStepCostFactor = atof(Configurator::Instance().findValueForKey("obstacle.SideStepCostFactor").c_str());
+	SemiSideCostFactor = atof(Configurator::Instance().findValueForKey("obstacle.SemiSideCostFactor").c_str());
+	SonarDistanceRange = atof(Configurator::Instance().findValueForKey("obstacle.SonarDistanceRange").c_str());
+	SonarMinReading = atof(Configurator::Instance().findValueForKey("obstacle.SonarMinReading").c_str());
+	CloseObstacleRadius = atof(Configurator::Instance().findValueForKey("obstacle.CloseObstacleRadius").c_str());
+	CloseObstacleCenter = atof(Configurator::Instance().findValueForKey("obstacle.CloseObstacleCenter").c_str());
+	GoalDistanceTolerance = atof(Configurator::Instance().findValueForKey("obstacle.GoalDistanceTolerance").c_str());
+	GoalAngleTolerance = atof(Configurator::Instance().findValueForKey("obstacle.GoalAngleTolerance").c_str());
 }
 
 void ObstacleAvoidance::initGrid()

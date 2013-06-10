@@ -1,7 +1,7 @@
 #include "hal/robot/generic_nao/KImageExtractor.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include <qi/os.hpp>
-#include "messages/motion.pb.h"
+
 using boost::posix_time::ptime;
 static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970, 1, 1));
 

@@ -4,15 +4,12 @@
 #include <vector>
 #include <string>
 
-#include "tools/logger.h"
 
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
-#include "core/architecture/XmlManager/XmlManager.h"
 #include "core/include/IActivity.hpp"
 #include "core/architecture/thread/PeriodicThread.hpp"
-
-#include "messages/GUICommunication.pb.h"
+#include "core/messages/Architecture.pb.h"
 
 #ifdef NAOQI
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -47,7 +44,6 @@ private:
 
 	MessageHub & _com;
 	Blackboard _blk;
-	XmlManager _xml;
 
 	typedef std::vector<IActivity*> ActivList;
 
@@ -61,7 +57,6 @@ private:
 
 	//Reset Messages
 	boost::shared_ptr<const ResetMessage> rmsg;
-	boost::shared_ptr<const UpdateMessage> umsg;
 
 };
 

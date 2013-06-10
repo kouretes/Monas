@@ -9,7 +9,7 @@
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/messaging/Blackboard.hpp"
 
-#include "core/architecture/XmlManager/XmlManager.h"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #include "core/architecture/thread/PeriodicThread.hpp"
 
@@ -56,8 +56,6 @@ namespace statechart_engine
 
 		Blackboard* GetBlackboard () const; //TODO add const
 
-		XmlManager* GetXmlManager () const; //TODO add const
-
 		virtual volatile int* GetIsRunningRef () const;
 
 		virtual const std::string GetName () const;
@@ -83,8 +81,6 @@ namespace statechart_engine
 		MessageHub* _com;
 
 		Blackboard* _blk;
-
-		XmlManager* _xml;
 
 	};
 

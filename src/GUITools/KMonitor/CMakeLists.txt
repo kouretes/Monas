@@ -30,7 +30,8 @@ SET( KMonitor_SOURCES	main.cpp
 						XMLHandler.cpp
 						KSonarsController.cpp
 						CommandsController.cpp
-						../../core/architecture/XmlManager/XmlManager.cpp
+						../../core/architecture/configurator/Configurator.cpp
+						../../core/architecture/configurator/ConfigNode.cpp
 						../../activities/Vision/KSegmentator.cpp
 						../../hal/generic_linux/syscall.cpp
 	)

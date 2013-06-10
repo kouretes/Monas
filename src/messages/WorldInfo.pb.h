@@ -135,10 +135,17 @@ class WorldInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 playernumber() const;
   inline void set_playernumber(::google::protobuf::uint32 value);
   
-  // repeated .Ball Balls = 3;
+  // required uint32 stability = 3;
+  inline bool has_stability() const;
+  inline void clear_stability();
+  static const int kStabilityFieldNumber = 3;
+  inline ::google::protobuf::uint32 stability() const;
+  inline void set_stability(::google::protobuf::uint32 value);
+  
+  // repeated .Ball Balls = 4;
   inline int balls_size() const;
   inline void clear_balls();
-  static const int kBallsFieldNumber = 3;
+  static const int kBallsFieldNumber = 4;
   inline const ::Ball& balls(int index) const;
   inline ::Ball* mutable_balls(int index);
   inline ::Ball* add_balls();
@@ -153,15 +160,18 @@ class WorldInfo : public ::google::protobuf::Message {
   inline void clear_has_myposition();
   inline void set_has_playernumber();
   inline void clear_has_playernumber();
+  inline void set_has_stability();
+  inline void clear_has_stability();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::RobotPose* myposition_;
-  ::google::protobuf::RepeatedPtrField< ::Ball > balls_;
   ::google::protobuf::uint32 playernumber_;
+  ::google::protobuf::uint32 stability_;
+  ::google::protobuf::RepeatedPtrField< ::Ball > balls_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -349,20 +359,30 @@ class TeammatePose : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 robotid() const;
   inline void set_robotid(::google::protobuf::uint32 value);
   
+  // required uint32 stability = 3;
+  inline bool has_stability() const;
+  inline void clear_stability();
+  static const int kStabilityFieldNumber = 3;
+  inline ::google::protobuf::uint32 stability() const;
+  inline void set_stability(::google::protobuf::uint32 value);
+  
   // @@protoc_insertion_point(class_scope:TeammatePose)
  private:
   inline void set_has_pose();
   inline void clear_has_pose();
   inline void set_has_robotid();
   inline void clear_has_robotid();
+  inline void set_has_stability();
+  inline void clear_has_stability();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::RobotPose* pose_;
   ::google::protobuf::uint32 robotid_;
+  ::google::protobuf::uint32 stability_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1163,7 +1183,29 @@ inline void WorldInfo::set_playernumber(::google::protobuf::uint32 value) {
   playernumber_ = value;
 }
 
-// repeated .Ball Balls = 3;
+// required uint32 stability = 3;
+inline bool WorldInfo::has_stability() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void WorldInfo::set_has_stability() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void WorldInfo::clear_has_stability() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void WorldInfo::clear_stability() {
+  stability_ = 0u;
+  clear_has_stability();
+}
+inline ::google::protobuf::uint32 WorldInfo::stability() const {
+  return stability_;
+}
+inline void WorldInfo::set_stability(::google::protobuf::uint32 value) {
+  set_has_stability();
+  stability_ = value;
+}
+
+// repeated .Ball Balls = 4;
 inline int WorldInfo::balls_size() const {
   return balls_.size();
 }
@@ -1317,6 +1359,28 @@ inline ::google::protobuf::uint32 TeammatePose::robotid() const {
 inline void TeammatePose::set_robotid(::google::protobuf::uint32 value) {
   set_has_robotid();
   robotid_ = value;
+}
+
+// required uint32 stability = 3;
+inline bool TeammatePose::has_stability() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void TeammatePose::set_has_stability() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void TeammatePose::clear_has_stability() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void TeammatePose::clear_stability() {
+  stability_ = 0u;
+  clear_has_stability();
+}
+inline ::google::protobuf::uint32 TeammatePose::stability() const {
+  return stability_;
+}
+inline void TeammatePose::set_stability(::google::protobuf::uint32 value) {
+  set_has_stability();
+  stability_ = value;
 }
 
 // -------------------------------------------------------------------
