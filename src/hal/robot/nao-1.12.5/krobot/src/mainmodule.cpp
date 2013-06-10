@@ -35,8 +35,11 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 		memory = KAlBroker::Instance().GetBroker()->getMemoryProxy();
 		bodyId = std::string(memory->getData("Device/DeviceList/ChestBoard/BodyId"));
 		headId = std::string(memory->getData("RobotConfig/Head/HeadId"));
-		bodyId = bodyId.substr(16,19);/*bodyId.size()-5, bodyId.size()-2*/ //manually because aldebarab forgot to put a \0...
-
+		if(bodyId.size()>15){
+			bodyId = bodyId.substr(16,19);/*bodyId.size()-5, bodyId.size()-2*/ //manually because aldebarab forgot to put a \0...
+		}else{
+			bodyId = bodyId.substr(11,14);		
+		}
 	}
 	catch (AL::ALError& e)
 	{
