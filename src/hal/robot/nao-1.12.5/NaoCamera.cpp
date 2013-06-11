@@ -4,7 +4,7 @@
 * \author Colin Graf
 * \author Thomas Röfer
 */
-#ifdef KROBOT_IS_REMOTE
+#ifndef KROBOT_IS_REMOTE
 
 #ifdef NDEBUG
 #undef NDEBUG
