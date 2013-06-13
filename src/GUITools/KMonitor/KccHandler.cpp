@@ -85,6 +85,8 @@ KccHandler::KccHandler(QWidget *parent) :
 	connect(ui->pbZoutSeg, SIGNAL(clicked()), this, SLOT(segZoomOut()) );
 	connect(ui->pbZinReal, SIGNAL(clicked()), this, SLOT(realZoomIn()) );
 	connect(ui->pbZoutReal, SIGNAL(clicked()), this, SLOT(realZoomOut()) );
+	connect(ui->pbCalibration, SIGNAL(clicked()), this, SLOT(manualCalibration()) );
+	
 	connect(availableKCCHosts, SIGNAL(SubscriptionRequest(QString)), this, SLOT(SubscriptionHandler(QString)) );
 	basicSegColors[orangeColor] = qRgb(255, 140, 0);
 	basicSegColors[redColor] = qRgb(255, 0, 0);
@@ -101,6 +103,8 @@ KccHandler::KccHandler(QWidget *parent) :
 	yuvColorTable = new KSegmentator(3, 2, 2);
 	// HARDCODED CARE IF YOU CHANGE THE KMONITOR INSTALL PATH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	colortablesPath = QDir::currentPath().append(string("/" + Configurator::Instance().getDirectoryPath() + "colortables").c_str());
+	
+	calibrationWidget = NULL;
 }
 
 void KccHandler::clickedImage(QMouseEvent *ev) {
@@ -408,6 +412,16 @@ void KccHandler::segOpen() {
 	}
 }
 
+void KccHandler::manualCalibration(){
+	if(calibrationWidget == NULL){
+		calibrationWidget = new KccCameraSettings();
+	 	calibrationWidget->show();
+	}else{
+	 	calibrationWidget->raise();
+		calibrationWidget->activateWindow();
+	}
+}
+
 void KccHandler::pbOrangePressed() {
 	ui->SelectedColorLabel->setStyleSheet("* { background-color: rgb(255,140,0) }");
 	choosedColor = orangeColor;
@@ -476,6 +490,9 @@ void KccHandler::SubscriptionHandler(QString data1) {
 }
 
 KccHandler::~KccHandler() {
+	if(calibrationWidget != NULL){
+		calibrationWidget->close();
+	}
 	delete ui;
 }
 

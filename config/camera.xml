@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ID>YellowGoal</ID>
-<x>3.0</x>
-<y>0.0</y>
-<weight>0</weight>
+<Contrast>96</Contrast>
+<RedBalance>128</RedBalance>
+<BlueBalance>128</BlueBalance>
+<Gain>64</Gain>
+<GreenChannelGain>64</GreenChannelGain>

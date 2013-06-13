@@ -41,6 +41,7 @@ public:
 	bool setCameraSetting (unsigned int id, int value);
 	unsigned char swapCamera();
 	void refreshValues();
+	bool setNewUserPrefs();
 private:
 	NaoCamera * naocam;
 

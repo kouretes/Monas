@@ -30,6 +30,7 @@ SET( KMonitor_SOURCES	main.cpp
 						XMLHandler.cpp
 						KSonarsController.cpp
 						CommandsController.cpp
+						KccCameraSettings.cpp
 						../../core/architecture/configurator/Configurator.cpp
 						../../core/architecture/configurator/ConfigNode.cpp
 						../../activities/Vision/KSegmentator.cpp
@@ -47,6 +48,7 @@ SET( KMonitor_HEADERS	KMonitor.h
 						XMLHandler.h
 						KSonarsController.h
 						CommandsController.h
+						KccCameraSettings.h
 	) 
 SET( KMonitor_FORMS KMonitor.ui
 					KccHandler.ui
@@ -56,6 +58,7 @@ SET( KMonitor_FORMS KMonitor.ui
 					GlobalWorldController.ui
 					LocalWorldController.ui
 					CommandsController.ui
+					KccCameraSettings.ui
 	)
 SET( KMonitor_RESOURCES KMonitorResources.qrc )
 

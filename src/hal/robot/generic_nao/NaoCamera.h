@@ -9,7 +9,7 @@
 
 #include <linux/videodev2.h>
 #include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #ifndef V4L2_CID_AUTOEXPOSURE
 #  define V4L2_CID_AUTOEXPOSURE     (V4L2_CID_BASE+32)
@@ -124,10 +124,10 @@ class NaoCamera {
 public:
 
 	typedef struct userPreferences{
-		char GAIN,HUE,BRIGHTNESS,CONTRAST,RED_BALANCE,BLUE_BALANCE;
+		int GAIN,CONTRAST,GREEN_GAIN,RED_BALANCE,BLUE_BALANCE;
 	}userPrefs;
 	/** Constructor. */
-	NaoCamera();
+	NaoCamera(userPrefs newPrefs);
 
 	/** Destructor. */
 	~NaoCamera();
