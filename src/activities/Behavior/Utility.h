@@ -4,8 +4,13 @@
 #include "core/elements/math/Common.hpp"
 #include "FormationParameters.h"
 
+using namespace KMath;
 using namespace FormationParameters;
 
+/**
+ * Namespace that contains all the utility/cost function features for coordination
+ * algorithm. Any future features for this function should be included here!
+ */
 namespace Utility {
 	
 	const float THRESHOLD = 1.5f;
@@ -15,59 +20,25 @@ namespace Utility {
 	/*
 	 * Gaussian function parameters.
 	 */
-	float A1 = 100.0f, A2 = 65.0f;
-	float sigmaX = 0.5f, sigmaY = 0.5f;
-	float xCenter1, yCenter1, xCenter2, yCenter2;
+	const float A_onBall = 100.0f;
+	const float A_prDef = 65.0f;
+	const float A_secDef = 45.0f;
+	const float sigmaX = 0.5f;
+	const float sigmaY = 0.5f;
 	
-	class Mapping {
-		private:
-			float RobotX;
-			float RobotY;
-			float PosX;
-			float PosY;
-
-		public:	
-			void setRobotX(float X) {
-				RobotX = X;
-			}
-			
-			void setRobotY(float Y) {
-				RobotY = Y;
-			}
-			
-			void setPosX(float X) {
-				PosX = X;
-			}
-
-			void setPosY(float Y) {
-				PosX = Y;
-			}
+	/*
+	 * Specific roles information.
+	 */
+	posInfo onBall, defenderC, defenderL, defenderR;
 	
-			float getRobotX() {
-				return RobotX;
-			}
-			
-			float getRobotY() {
-				return RobotY;
-			}
-			
-			float getPosX() {
-				return PosX;
-			}
-
-			float getPosY() {
-				return PosY;
-			}	
-	};
-
 	/**
 	 * @fn float distance(xRobot, yRobot, xPos, yPos)
 	 * @brief Distance cost feature that calculates the distance between robot position and
 	 * a position on the field. The distance is normalized on [0,1] to represent the cost.
 	 * @returns a float value normalized on [0,1].
 	 */
-	float distance(xRobot, yRobot, xPos, yPos) {		
- 		return sqrt( pow(xRobot-xPos, 2) + pow(yRobot-yPos, 2) ) / sqrt( pow(2*Field.MaxX, 2) + pow(2*Field.MaxY, 2) );
+	float distance(float xRobot, float yRobot, float xPos, float yPos, float MaxX, float MaxY) {		
+ 		return sqrt( pow(xRobot-xPos, 2) + pow(yRobot-yPos, 2) ) / sqrt( pow(2*MaxX, 2) + pow(2*MaxY, 2) );
 	}
 	
 	/**
@@ -77,11 +48,11 @@ namespace Utility {
 	 * on [0,1] to represent the cost.
 	 * @returns a float value normalized on [0,1].
 	 */
-	float minRotation(xRobot, yRobot, xPos, yPos, thetaRobot) {
+	float minRotation(float xRobot, float yRobot, float xPos, float yPos, float thetaRobot) {
 		
-		float thetaRot = 0.0f;
+		float thetaRot = 0.0f, phi;
 
-		phi = atan( (yPos-yRobot)\(xPos-xRobot) );
+		phi = atan( (yPos-yRobot)/(xPos-xRobot) );
 		
 		if(xPos <= xRobot && yPos >= yRobot) {
 			if(xPos == xRobot && yPos == yRobot) {
@@ -93,7 +64,7 @@ namespace Utility {
 			}
 			else {
 				thetaRot = fabs(phi - thetaRobot);
-				return Min(thetaRot, fabs(2*M_PI - thetaRot))/M_PI;
+				return Min(thetaRot, (float)fabs(2*M_PI - thetaRot))/M_PI;
 			}
 		}
 		else if(xPos > xRobot && yPos < yRobot) {
@@ -103,7 +74,7 @@ namespace Utility {
 			}
 			else {
 				thetaRot = M_PI - fabs(phi - thetaRobot);
-				return Min(thetaRot, fabs(2*M_PI - thetaRot))/M_PI;			
+				return Min(thetaRot, (float)fabs(2*M_PI - thetaRot))/M_PI;			
 			}
 		}
 		else if(xPos >= xRobot && yPos >= yRobot) {
@@ -115,7 +86,7 @@ namespace Utility {
 			}
 			else {
 				thetaRot = fabs(phi - thetaRobot);
-				return Min(thetaRot, fabs(2*M_PI - thetaRot))/M_PI;
+				return Min(thetaRot, (float)fabs(2*M_PI - thetaRot))/M_PI;
 			}
 		}
 		else if(xPos < xRobot && yPos < yRobot) {
@@ -124,7 +95,7 @@ namespace Utility {
 			}		
 			else {
 				thetaRot = M_PI - fabs(phi - thetaRobot);
-				return Min(thetaRot, fabs(2*M_PI - thetaRot))/M_PI;
+				return Min(thetaRot, (float)fabs(2*M_PI - thetaRot))/M_PI;
 			}
 		}
 	}
@@ -138,8 +109,9 @@ namespace Utility {
 	 * is lower.
 	 * @returns a float value on [0,1].
 	 */
-	float checkCollisions(xRobot1, yRobot1, xRobot2, yRobot2, xPos1, yPos1, xPos2, yPos2) {
-		float a1, a2, b1, b2;
+	float checkCollisions(float xRobot1, float yRobot1, float xRobot2, float yRobot2, float xPos1, float yPos1, float xPos2, float yPos2) {
+		
+		float a1, a2, b1, b2, Px, Py, distanceRobot1, distanceRobot2, diff;
 		
 		// for the first trajectory (line).
 		a1 = (yRobot1 - yPos1)/(xRobot1 - xPos1);
@@ -156,8 +128,8 @@ namespace Utility {
 			return 0;		
 		}
 		
-		distanceRobot1 = distance(xRobot1, yRobot1, Px, Py);
-		distanceRobot2 = distance(xRobot2, yRobot2, Px, Py);
+		distanceRobot1 = DISTANCE(xRobot1, Px, yRobot1, Py);
+		distanceRobot2 = DISTANCE(xRobot2, Px, yRobot2, Py);
 		
 		diff = fabs(distanceRobot1 - distanceRobot2);
 		
@@ -166,7 +138,70 @@ namespace Utility {
 		else
 			return LOWER_PROB;
 	}
-
+	
+	/**
+	 * @fn float collisions(vector<FormationParameters::Role> &mapping, vector<Robot> &robots, FormationGenerator &fGen, unsigned int robotIndex, float robotX, float robotY)
+	 * @brief Collisions feature that checks for collisions between a given robot destination position and all other robots trajectories on a specific mapping.
+	 * TODO maybe we can make it simpler!!!
+	 */
+	float collisions(vector<FormationParameters::Role> &mapping, vector<Robot> &robots, FormationGenerator &fGen, unsigned int robotIndex, float robotX, float robotY) {
+        
+        float maxCost = 0.0f, cost = 0.0f;
+        posInfo otherRobotPos;
+        posInfo currentRobotPos = fGen.findRoleInfo(mapping[robotIndex]);
+        
+        for(unsigned int r = 0 ; r < robots.size() ; r++) {
+        	if(r != robotIndex) {
+        		otherRobotPos = fGen.findRoleInfo(mapping[r]);
+        		cost = checkCollisions(robotX, robotY, robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, otherRobotPos.X, otherRobotPos.Y);
+        		
+        		if(maxCost < cost)
+                   maxCost = cost;
+        	}
+        }
+        
+		return maxCost;
+	}
+	
+	/**
+	 * @fn float fieldUtility(float posX, float posY, float ballY, FormationGenerator &fGen, Type formationType)
+	 * @brief Field feature that calculates a value for a given position on the field and the formation type. The feature
+	 * is based on 2D gaussian functions that favors certain positions on the field.
+	 */
+	float fieldUtility(float posX, float posY, float ballY, FormationGenerator &fGen, Type formationType) {
+	   
+		if(formationType == OFFENSIVE) {
+			onBall = fGen.findRoleInfo(ONBALL);
+			defenderC = fGen.findRoleInfo(DEFENDER);
+			return gaussian2D(A_onBall, onBall.X, onBall.Y, sigmaX, sigmaY, posX, posY) + gaussian2D(A_prDef, defenderC.X, defenderC.Y, sigmaX, sigmaY, posX, posY);
+		}
+		else if(formationType == DEFENSIVE) {
+			onBall = fGen.findRoleInfo(ONBALL);
+			defenderL = fGen.findRoleInfo(DEFENDER_L);
+			defenderR = fGen.findRoleInfo(DEFENDER_R);
+			if(ballY <= 0) {
+				return gaussian2D(A_onBall, onBall.X, onBall.Y, sigmaX, sigmaY, posX, posY) + gaussian2D(A_prDef, defenderR.X, defenderR.Y, sigmaX, sigmaY, posX, posY) +
+						gaussian2D(A_secDef, defenderL.X, defenderL.Y, sigmaX, sigmaY, posX, posY);
+			}
+			else {
+				return gaussian2D(A_onBall, onBall.X, onBall.Y, sigmaX, sigmaY, posX, posY) + gaussian2D(A_prDef, defenderL.X, defenderL.Y, sigmaX, sigmaY, posX, posY) +
+						gaussian2D(A_secDef, defenderR.X, defenderR.Y, sigmaX, sigmaY, posX, posY);
+			}
+		}
+    }
+    
+    /**
+     * @fn float robotStability(unsigned int cnt)
+     * @brief Robot stability feature that calculates a cost for robot, depending
+     * on a number representing how many times the robot has fallen and has be penalized.
+     */
+    float robotStability(unsigned int cnt) {
+    	if(cnt <= 9)
+			return (cnt * 0.1);
+		else
+			return 1.0f;
+	}
+	
 };
 
 #endif
