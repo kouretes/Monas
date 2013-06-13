@@ -9,6 +9,7 @@
 #include <csignal>
 
 #include "core/include/IActivity.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -17,7 +18,7 @@
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 #include "messages/Debug.pb.h"
 
 #include "BallFilter.h"

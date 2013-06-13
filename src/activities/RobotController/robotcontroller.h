@@ -7,13 +7,18 @@
 
 #ifndef ROBOTCONTROLLER_H
 #define ROBOTCONTROLLER_H
+#include "core/include/IActivity.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
+
 #include "gamecontroller.h"
+
 #include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Gamecontroller.pb.h"
+
 #include <iostream>
 #include <string>
-#include "core/include/IActivity.hpp"
 
 //Game Controller return data interval
 #define ALIVEMS 750
@@ -35,7 +40,7 @@ public:
 	* @brief Does nothing
 	*/
 
-	ACTIVITY_VISIBLE RobotController(Blackboard &b, XmlManager &x);
+	ACTIVITY_VISIBLE RobotController(Blackboard &b);
 	/**
 	* @brief Activity's Execute function. Either reads new gamestate if available and checks if it is changed regarding the old one.
 	* Either read the button events ALmemory's values and changes the state.
@@ -65,7 +70,7 @@ private:
 	*
 	* @returns true at the moment
 	*/
-	bool readConfiguration(const std::string& file_name);
+	bool readConfiguration();
 	GameController gm;
 	bool showover;
 	RoboCupGameControlData game_data;

@@ -5,7 +5,6 @@
 #include <QList>
 #include <QLabel>
 
-#include "tools/XMLConfig.h"
 #include "messages/WorldInfo.pb.h"
 
 #include "GraphicalRobotElement.h"
@@ -109,12 +108,11 @@ private:
 
 	} config;
 	
-	XMLConfig *xmlconfig;
 
 	QGraphicsView *parent;
 	QList<GraphicalRobotElement*> RobotList;
 	
-	void loadXMLConfig(std::string fname);
+	void loadXMLConfig();
 	void setSvgItems();
 };
 

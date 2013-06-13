@@ -8,7 +8,7 @@ KMonitor::KMonitor(QWidget *parent) :
 	QMainWindow(parent),
 	Messenger(NULL),
 	ui(new Ui::KMonitor) {
-	  
+
 	ui->setupUi(this);
 	Messenger = new KGUIMessenger();
 

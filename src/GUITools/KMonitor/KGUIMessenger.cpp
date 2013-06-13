@@ -1,12 +1,12 @@
 #include "KGUIMessenger.h"
 
 #include "tools/toString.h"
-#include "tools/XMLConfig.h"
-#include "core/architecture/archConfig.h"
 
 #include "core/architecture/messaging/network/multicastpoint.hpp"
 #include "core/architecture/messaging/MessageBuffer.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
+
 #include "hal/robot/generic_nao/robot_consts.h"
 
 using std::string;
@@ -14,28 +14,27 @@ using namespace std;
 
 KGUIMessenger::KGUIMessenger() : multicast(NULL), timer(NULL) {
 
-	XMLConfig xmlconfig(ArchConfig::Instance().GetConfigPrefix() + "/network.xml");
 	string multicastip;
 	unsigned int port;
 	unsigned maxpayload;
 	unsigned beacon_interval;
 
-	if(xmlconfig.QueryElement("multicast_ip", multicastip) &&
-	        xmlconfig.QueryElement("multicast_port", port) &&
-	        xmlconfig.QueryElement("maxpayload", maxpayload) &&
-	        xmlconfig.QueryElement("beacon_interval", beacon_interval)) {
-		cout << "Initiating multicast network at address: " << multicastip << ":" << port << std::endl;
-		KNetwork::MulticastPoint *m = new KNetwork::MulticastPoint(multicastip, maxpayload);
-		m->setCleanupAndBeacon(beacon_interval);
-		m->attachTo(*this);
+	
+    multicastip = Configurator::Instance().findValueForKey("network.multicast_ip");
+	port = atoi(Configurator::Instance().findValueForKey("network.multicast_port").c_str());
+    maxpayload = atoi(Configurator::Instance().findValueForKey("network.maxpayload").c_str());
+    beacon_interval = atoi(Configurator::Instance().findValueForKey("network.beacon_interval").c_str());
+    cout << "Initiating multicast network at address: " << multicastip << ":" << port << std::endl;
+	KNetwork::MulticastPoint *m = new KNetwork::MulticastPoint(multicastip, maxpayload);
+	m->setCleanupAndBeacon(beacon_interval);
+	m->attachTo(*this);
 
-		if(m->startEndPoint(multicastip, port) == false) {
-			delete m;
-			_exit(-1);
-		}
-
-		multicast = m;
+	if(m->startEndPoint(multicastip, port) == false) {
+		delete m;
+		_exit(-1);
 	}
+
+	multicast = m;
 
 	timer = new QTimer();
 	timer->setInterval(50);

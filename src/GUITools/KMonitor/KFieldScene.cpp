@@ -1,13 +1,12 @@
 #include "KFieldScene.h"
 
-#include "core/architecture/archConfig.h"
-
 #include <QtSvg/QGraphicsSvgItem>
 #include <QGraphicsItem>
 #include <QString>
 #include <QFile>
-
 #include <math.h>
+
+#include "core/architecture/configurator/Configurator.hpp"
 
 using namespace std;
 
@@ -16,7 +15,7 @@ KFieldScene::KFieldScene(QGraphicsView *parent) {
 	this->parent = parent;
 	this->RobotList.clear();
 	
-	loadXMLConfig(ArchConfig::Instance().GetConfigPrefix() + "/field.xml");
+	loadXMLConfig();
 	setBackgroundBrush(QBrush(QColor(0, 155, 0)));
 	QPen penForWhiteLine(Qt::white);
 	penForWhiteLine.setWidth(4);
@@ -114,81 +113,49 @@ void KFieldScene::printRobotList() {
 	std::cout << "~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
 }
 
-void KFieldScene::loadXMLConfig(std::string fname) {
+void KFieldScene::loadXMLConfig() {
 
-	float CarpetMaxX = 0.f;
-	float CarpetMinX = 0.f;
-	float CarpetMaxY = 0.f;
-	float CarpetMinY = 0.f;
-	float FieldMaxX = 0.f;
-	float FieldMinX = 0.f;
-	float FieldMaxY = 0.f;
-	float FieldMinY = 0.f;
-	float LeftPenaltyAreaMaxX = 0.f;
-	float LeftPenaltyAreaMinX = 0.f;
-	float LeftPenaltyAreaMaxY = 0.f;
-	float LeftPenaltyAreaMinY = 0.f;
-	float RightPenaltyAreaMaxX = 0.f;
-	float RightPenaltyAreaMinX = 0.f;
-	float RightPenaltyAreaMaxY = 0.f;
-	float RightPenaltyAreaMinY = 0.f;
-	float LeftGoalAreaMaxX = 0.f;
-	float LeftGoalAreaMinX = 0.f;
-	float LeftGoalAreaMaxY = 0.f;
-	float LeftGoalAreaMinY = 0.f;
-	float RightGoalAreaMaxX = 0.f;
-	float RightGoalAreaMinX = 0.f;
-	float RightGoalAreaMaxY = 0.f;
-	float RightGoalAreaMinY = 0.f;
-	float LeftPenaltyMarkX = 0.f;
-	float LeftPenaltyMarkY = 0.f;
-	float LeftPenaltyMarkSize = 0.f;
-	float RightPenaltyMarkX = 0.f;
-	float RightPenaltyMarkY = 0.f;
-	float RightPenaltyMarkSize = 0.f;
-	float DiameterVPost = 0.f;
-	float DiameterCCircle = 0.f;
-	float LSmallArea = 0.f;
-	float HSmallArea = 0.f;
-	float LGoalArea = 0.f;
-	float HGoalArea = 0.f;
-	float LCross = 0.f;
-	float LCDistance = 0.f;
+	float CarpetMaxX = atof(Configurator::Instance().findValueForKey("field.CarpetMaxX").c_str());
+	float CarpetMinX = atof(Configurator::Instance().findValueForKey("field.CarpetMinX").c_str());
+	float CarpetMaxY = atof(Configurator::Instance().findValueForKey("field.CarpetMaxY").c_str());
+	float CarpetMinY = atof(Configurator::Instance().findValueForKey("field.CarpetMinY").c_str());
+	float FieldMaxX = atof(Configurator::Instance().findValueForKey("field.FieldMaxX").c_str());
+	float FieldMinX = atof(Configurator::Instance().findValueForKey("field.FieldMinX").c_str());
+	float FieldMaxY = atof(Configurator::Instance().findValueForKey("field.FieldMaxY").c_str());
+	float FieldMinY = atof(Configurator::Instance().findValueForKey("field.FieldMinY").c_str());
+	float LeftPenaltyAreaMaxX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
+	float LeftPenaltyAreaMinX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMinX").c_str());
+	float LeftPenaltyAreaMaxY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
+	float LeftPenaltyAreaMinY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMinY").c_str());
+	float RightPenaltyAreaMaxX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMaxX").c_str());
+	float RightPenaltyAreaMinX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMinX").c_str());
+	float RightPenaltyAreaMaxY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMaxY").c_str());
+	float RightPenaltyAreaMinY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMinY").c_str());
+	float LeftGoalAreaMaxX = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMaxX").c_str());
+	float LeftGoalAreaMinX = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMinX").c_str());
+	float LeftGoalAreaMaxY = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMaxY").c_str());
+	float LeftGoalAreaMinY = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMinY").c_str());
+	float RightGoalAreaMaxX = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMaxX").c_str());
+	float RightGoalAreaMinX = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMinX").c_str());
+	float RightGoalAreaMaxY = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMaxY").c_str());
+	float RightGoalAreaMinY = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMinY").c_str());
+	float LeftPenaltyMarkX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyMarkX").c_str());
+	float LeftPenaltyMarkY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyMarkY").c_str());
+	float LeftPenaltyMarkSize = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyMarkSize").c_str());
+	float RightPenaltyMarkX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyMarkX").c_str());
+	float RightPenaltyMarkY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyMarkY").c_str());
+	float RightPenaltyMarkSize = atof(Configurator::Instance().findValueForKey("field.RightPenaltyMarkSize").c_str());
+	float DiameterVPost = atof(Configurator::Instance().findValueForKey("field.DiameterVPost").c_str());
+	float DiameterCCircle = atof(Configurator::Instance().findValueForKey("field.DiameterCCircle").c_str());
 	
-	xmlconfig = new XMLConfig(fname);
+	float LSmallArea = 0.0f;
+	float HSmallArea = 0.0f;
+	float LGoalArea = 0.0f;
+	float HGoalArea = 0.0f;
+	float LCross = 0.0f;
+	float LCDistance = 0.0f;
 	
-	xmlconfig->QueryElement("CarpetMaxX", CarpetMaxX);
-	xmlconfig->QueryElement("CarpetMinX", CarpetMinX);
-	xmlconfig->QueryElement("CarpetMaxY", CarpetMaxY);
-	xmlconfig->QueryElement("CarpetMinY", CarpetMinY);
-	xmlconfig->QueryElement("FieldMaxX", FieldMaxX);
-	xmlconfig->QueryElement("FieldMinX", FieldMinX);
-	xmlconfig->QueryElement("FieldMaxY", FieldMaxY);
-	xmlconfig->QueryElement("FieldMinY", FieldMinY);
-	xmlconfig->QueryElement("LeftPenaltyAreaMaxX", LeftPenaltyAreaMaxX);
-	xmlconfig->QueryElement("LeftPenaltyAreaMinX", LeftPenaltyAreaMinX);
-	xmlconfig->QueryElement("LeftPenaltyAreaMaxY", LeftPenaltyAreaMaxY);
-	xmlconfig->QueryElement("LeftPenaltyAreaMinY", LeftPenaltyAreaMinY);
-	xmlconfig->QueryElement("RightPenaltyAreaMaxX", RightPenaltyAreaMaxX);
-	xmlconfig->QueryElement("RightPenaltyAreaMinX", RightPenaltyAreaMinX);
-	xmlconfig->QueryElement("RightPenaltyAreaMaxY", RightPenaltyAreaMaxY);
-	xmlconfig->QueryElement("RightPenaltyAreaMinY", RightPenaltyAreaMinY);
-	xmlconfig->QueryElement("LeftGoalAreaMaxX", LeftGoalAreaMaxX);
-	xmlconfig->QueryElement("LeftGoalAreaMinX", LeftGoalAreaMinX);
-	xmlconfig->QueryElement("LeftGoalAreaMaxY", LeftGoalAreaMaxY);
-	xmlconfig->QueryElement("LeftGoalAreaMinY", LeftGoalAreaMinY);
-	xmlconfig->QueryElement("RightGoalAreaMaxX", RightGoalAreaMaxX);
-	xmlconfig->QueryElement("RightGoalAreaMinX", RightGoalAreaMinX);
-	xmlconfig->QueryElement("RightGoalAreaMaxY", RightGoalAreaMaxY);
-	xmlconfig->QueryElement("RightGoalAreaMinY", RightGoalAreaMinY);
-	xmlconfig->QueryElement("LeftPenaltyMarkX", LeftPenaltyMarkX);
-	xmlconfig->QueryElement("LeftPenaltyMarkY", LeftPenaltyMarkY);
-	xmlconfig->QueryElement("LeftPenaltyMarkSize", LeftPenaltyMarkSize);
-	xmlconfig->QueryElement("RightPenaltyMarkX", RightPenaltyMarkX);
-	xmlconfig->QueryElement("RightPenaltyMarkY", RightPenaltyMarkY);
-	xmlconfig->QueryElement("RightPenaltyMarkSize", RightPenaltyMarkSize);
-	xmlconfig->QueryElement("DiameterVPost", DiameterVPost);
-	xmlconfig->QueryElement("DiameterCCircle", DiameterCCircle);
+	
 	
 	LSmallArea =(RightPenaltyAreaMaxX - RightPenaltyAreaMinX) * 1000;
 	HSmallArea =(LeftPenaltyAreaMaxY - LeftPenaltyAreaMinY ) * 1000;
@@ -219,29 +186,6 @@ void KFieldScene::loadXMLConfig(std::string fname) {
 	config.xRCross = config.xRLine - LCDistance;
 	config.radPost = DiameterVPost / 2;
 	config.radCenterCircle = DiameterCCircle / 2;
-	
-	/*std::cout <<"totalCarpetAreaWidth :: "<< config.totalCarpetAreaWidth << std::endl
-		<<"totalCarpetAreaHeight :: "<< config.totalCarpetAreaHeight << std::endl
-		<<"totalCarpetAreaMean :: "<< config.totalCarpetAreaMean << std::endl
-		<<"xCentre :: "<< config.xCentre << std::endl
-		<< "yCentre :: "<< config.yCentre << std::endl
-		<<"xLLine :: "<< config.xLLine << std::endl
-		<<"yTLine :: "<< config.yTLine << std::endl
-		<<"xRLine :: "<< config.xRLine << std::endl
-		<<"yBLine :: "<< config.yBLine << std::endl
-		<<"xLSmallArea :: "<< config.xLSmallArea << std::endl
-		<<"yTSmallArea :: "<< config.yTSmallArea << std::endl
-		<<"xRSmallArea :: "<< config.xRSmallArea << std::endl
-		<<"yBSmallArea :: "<< config.yBSmallArea << std::endl
-		<<"xLGoalArea :: "<< config.xLGoalArea << std::endl
-		<<"yTGoalArea :: "<< config.yTGoalArea << std::endl
-		<<"xRGoalArea :: "<< config.xRGoalArea << std::endl
-		<<"yBGoalArea :: "<< config.yBGoalArea << std::endl
-		<<"wQCross :: "<< config.wQCross << std::endl
-		<<"xLCross :: "<< config.xLCross << std::endl
-		<<"xRCross :: "<< config.xRCross << std::endl
-		<<"radPost :: "<< config.radPost << std::endl
-		<<"radCenterCircle :: "<< config.radCenterCircle << std::endl;*/
 }
 
 void KFieldScene::setSvgItems() {

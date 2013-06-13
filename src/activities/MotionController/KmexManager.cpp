@@ -9,46 +9,37 @@
 using namespace std;
 using namespace KDeviceLists;
 
-vector<KmexAction*> KmexManager::LoadActionsXML(const string& file_name,
+vector<KmexAction*> KmexManager::LoadActionsXML(const string& filename,
         map<string, boost::shared_ptr<ISpecialAction> > SpActions)
 {
-	XML config(file_name);
-	typedef vector<XMLNode<string, float, string> > NodeCont;
 	vector<KmexAction*> xmlResults;
 	std::map<std::string, int> jointIDs =  getJointIDs();
-	NodeCont motions = config.QueryElement<string, float, string>( "Motion" );
-	ostringstream motionsNum;
-	motionsNum << "Found " << motions.size() << " motion(s)";
-	Logger::Instance().WriteMsg("KmexManager", motionsNum.str(), Logger::Info );
+	
+	int numOfMotions = Configurator::Instance().numberOfNodesForKey(filename + ".Motion");
+	Logger::Instance().WriteMsg("KmexManager", "Found " + _toString(numOfMotions) + " motion(s)", Logger::Info );
 
-	for ( NodeCont::iterator it = motions.begin(); it != motions.end(); it++ )
+	for (int itter=0;itter<numOfMotions;itter++)
 	{
-		NodeCont MotionNameNode = config.QueryElement<string, float, string>("actionName", &(*it) );
-		string MotionName = MotionNameNode[0].value;
-		NodeCont jointsNodes = config.QueryElement<string, float, string>("Joints", &(*it) );
+		string MotionName = Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".actionName");
+		
+		int numOfPoses = atoi(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".$numOfPoses").c_str());
+		float threshold = atof(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".$threshold").c_str());
+		int numOfJoints = atoi(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".$numOfJoints").c_str());
+		
 		vector<string> jointsResults;
 
-		for ( unsigned int j = 0; j < jointsNodes.size(); j++ )
-		{
-			jointsResults.push_back( jointsNodes[j].value );
-		}
-
 		vector<int> jointNum;
-
-		for (unsigned int i = 0; i < jointsResults.size(); i++)
+		for (int i = 0; i < numOfJoints; i++ )
 		{
+			jointsResults.push_back(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".Joints~" + _toString(i)));
 			jointNum.push_back(jointIDs[jointsResults[i]]);
 		}
 
-		int numOfPoses = it->attrb["numOfPoses"];
-		float threshold = it->attrb["threshold"];
-		int numOfJoints = it->attrb["numOfJoints"];
+		
 		vector<int> posesResults;
-		NodeCont poses = config.QueryElement<string, float, string>( "Poses", &(*it));
-
-		for (  NodeCont::iterator itIn = poses.begin(); itIn != poses.end(); itIn++  )
+		for (int i = 0; i < numOfPoses; i++)
 		{
-			posesResults.push_back(itIn->attrb["pose"]);
+			posesResults.push_back(atoi(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".Poses~" + _toString(i)).c_str()));
 		}
 
 		SpAssocCont::iterator it = SpActions.find(MotionName);

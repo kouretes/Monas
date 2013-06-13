@@ -1,5 +1,6 @@
 #include "CommandsController.h"
 #include "ui_CommandsController.h"
+#include "core/architecture/configurator/Configurator.hpp"
 
 using namespace std;
 CommandsController::CommandsController(QWidget *parent) :
@@ -33,8 +34,8 @@ CommandsController::CommandsController(QWidget *parent) :
 	
 	// ACTIONS
 	connect(ui->actionPb, SIGNAL(clicked()), this, SLOT(sendAction()) );
-	addActionComboBoxItems(ArchConfig::Instance().GetConfigPrefix() + "xar");
-	addActionComboBoxItems(ArchConfig::Instance().GetConfigPrefix() + "kme");
+	addActionComboBoxItems(Configurator::Instance().getDirectoryPath() + "xar");
+	addActionComboBoxItems(Configurator::Instance().getDirectoryPath() + "kme");
 	
 	// STIFFNESS
 	connect(ui->stiffSlider, SIGNAL(valueChanged(int)), this, SLOT(stiffSliderMoved(int)) );

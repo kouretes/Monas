@@ -3,10 +3,10 @@
 
 #include "core/architecture/thread/agent/Agent.hpp"
 #include "core/architecture/executable/provider/IProvider.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 #include "hal/Thread.hpp"
 
 #include "core/architecture/statechartWrapper.h"
-
 #include <vector>
 
 class Talws

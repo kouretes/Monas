@@ -337,8 +337,8 @@ int SharedWorldModel::findClosestRobot()
 
 void SharedWorldModel::ReadFieldConf()
 {
-    fieldMaxX=atof(_xml.findValueForKey("field.FieldMaxX").c_str());
-    fieldMinX=atof(_xml.findValueForKey("field.FieldMinX").c_str());
-    fieldMaxY=atof(_xml.findValueForKey("field.FieldMaxY").c_str());
-    fieldMinY=atof(_xml.findValueForKey("field.FieldMinY").c_str());
+    fieldMaxX=atof(Configurator::Instance().findValueForKey("field.FieldMaxX").c_str());
+    fieldMinX=atof(Configurator::Instance().findValueForKey("field.FieldMinX").c_str());
+    fieldMaxY=atof(Configurator::Instance().findValueForKey("field.FieldMaxY").c_str());
+    fieldMinY=atof(Configurator::Instance().findValueForKey("field.FieldMinY").c_str());
 }

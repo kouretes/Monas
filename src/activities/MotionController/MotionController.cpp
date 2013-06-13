@@ -26,7 +26,7 @@ ACTIVITY_REGISTER(MotionController);
 using namespace std;
 using namespace KDeviceLists;
 
-MotionController::MotionController(Blackboard &b, XmlManager &x) : IActivity(b, x)
+MotionController::MotionController(Blackboard &b) : IActivity(b)
 {
 	waitfor = microsec_clock::universal_time() - hours(1);
 }
@@ -92,7 +92,7 @@ void MotionController::UserInit()
 		}
 	}
 	{
-		std::vector<KmexAction*> kmexActions = KmexManager::LoadActionsXML(ArchConfig::Instance().GetConfigPrefix() + "specialActions.xml", SpActions);
+		std::vector<KmexAction*> kmexActions = KmexManager::LoadActionsXML("specialActions.xml", SpActions);
 		std::vector<KmexAction*>::const_iterator it;
 
 		for (it = kmexActions.begin(); it < kmexActions.end(); ++it)
@@ -133,7 +133,7 @@ void MotionController::UserInit()
 
 void MotionController::Reset(){
 	readWalkParameters();
-	gameMode = atoi(_xml.findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
+	gameMode = atoi(Configurator::Instance().findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 }
 
 int MotionController::Execute()
@@ -812,22 +812,27 @@ void MotionController::readWalkParameters()
 	//setMotionConfig is deprecated
 	walkConfig.arraySetSize(7);
 
-	string filename = "walkParameters";
-	XmlManagerNode * walkPamNode = _xml.findNodeForKey(filename);
-	int itteration = 0;
-	for(map<string,vector<XmlManagerNode> >::iterator it = walkPamNode->kids.begin(); it != walkPamNode->kids.end(); it++){
+	walkConfig[0].arraySetSize(2);
+	walkConfig[0][0] = "MaxStepX";
+	walkConfig[0][1] = atof(Configurator::Instance().findValueForKey("walkParameters.MaxStepX").c_str());
+	walkConfig[1].arraySetSize(2);
+	walkConfig[1][0] = "MaxStepY";
+	walkConfig[1][1] = atof(Configurator::Instance().findValueForKey("walkParameters.MaxStepY").c_str());
+	walkConfig[2].arraySetSize(2);
+	walkConfig[2][0] = "MaxStepTheta";
+	walkConfig[2][1] = atof(Configurator::Instance().findValueForKey("walkParameters.MaxStepTheta").c_str());
+	walkConfig[3].arraySetSize(2);
+	walkConfig[3][0] = "MaxStepFrequency";
+	walkConfig[3][1] = atof(Configurator::Instance().findValueForKey("walkParameters.MaxStepFrequency").c_str());
+	walkConfig[4].arraySetSize(2);
+	walkConfig[4][0] = "StepHeight";
+	walkConfig[4][1] = atof(Configurator::Instance().findValueForKey("walkParameters.StepHeight").c_str());
+	walkConfig[5].arraySetSize(2);
+	walkConfig[5][0] = "TorsoWx";
+	walkConfig[5][1] = atof(Configurator::Instance().findValueForKey("walkParameters.TorsoWx").c_str());
+	walkConfig[6].arraySetSize(2);
+	walkConfig[6][0] = "TorsoWy";
+	walkConfig[6][1] = atof(Configurator::Instance().findValueForKey("walkParameters.TorsoWy").c_str());
 
-		std::istringstream strs( (walkPamNode->findValueForKey((*it).first)) );
-		float value;
-		strs>>value;
-		if((*it).first.compare("EnableFallManager")!=0){
-			walkConfig[itteration].arraySetSize(2);
-			walkConfig[itteration][0] = (*it).first;
-			walkConfig[itteration][1] = value;
-			itteration++;
-		}else{
-			motion->setFallManagerEnabled(value);
-		}
-	}
-
+	motion->setFallManagerEnabled(atof(Configurator::Instance().findValueForKey("walkParameters.EnableFallManager").c_str()));
 }

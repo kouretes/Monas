@@ -4,9 +4,6 @@
 #include <vector>
 #include <map>
 #include "ISpecialAction.h"
-#include "tools/XML.h"
-#include "tools/XMLConfig.h"
-#include "ISpecialAction.h"
 #include "KmexAction.h"
 #include "KmeAction.h"
 #include "hal/robot/generic_nao/robot_consts.h"
@@ -17,7 +14,7 @@ class KmexManager
 
 public:
 
-	static std::vector<KmexAction*> LoadActionsXML(const std::string& file_name, std::map < std::string,
+	static std::vector<KmexAction*> LoadActionsXML(const std::string& filename, std::map < std::string,
 	        boost::shared_ptr<ISpecialAction> > SpActions);
 
 

@@ -71,7 +71,7 @@ namespace KDeviceLists
 
 	enum SupportLeg
 	{
-		NONE = 0, LEFT, RIGHT, BOTH, SUPPORTLEG_SIZE
+		SUPPORT_LEG_NONE = 0, SUPPORT_LEG_LEFT, SUPPORT_LEG_RIGHT, SUPPORT_LEG_BOTH
 	};
 
 	enum SensorNames
@@ -111,8 +111,7 @@ namespace KDeviceLists
 
 		static const float BUTTON_PRESSED = 0.0; //Normally on switches
 		static const float BUTTON_RELEASED = 1.0; //Normally on switches
-		static const size_t BODY_ID = 0;
-		static const size_t HEAD_ID = 1;
+		static const float ROBOT_WEIGHT = 4.879f;
 	};
 	std::vector<std::string> const& getJointNames();
 
@@ -135,19 +134,4 @@ namespace KDeviceLists
 	//std::vector< std::string> ActuatorName;
 
 };
-
-class KRobotConfigClass
-{
-
-public:
-
-	void setConfig(const size_t key, std::string const& val);
-	std::string getConfig(const size_t key);
-
-private:
-
-	std::map<size_t, std::string> _dat;
-
-};
-typedef Singleton<KRobotConfigClass> KRobotConfig;
 #endif /* ROBOT_CONSTS_H_ */

@@ -18,9 +18,7 @@
 
 #include "HostsComboBox.h"
 
-#include "messages/GUICommunication.pb.h"
-
-#include "core/architecture/archConfig.h"
+#include "messages/ExternalCommunication.pb.h"
 
 /**
  * Code for the commander handler GUI tab of KMonitor

@@ -8,16 +8,9 @@ namespace statechart_engine
 	{
 		_com = com;
 		_blk = &_blackboard;
-		_xml = &_xmlnode;
 		_isRunning = new volatile int; //FIXME mem leak
 		*_isRunning = 0;
 		_blk->attachTo(*_com);
-#ifdef NAOQI
-		_xmlnode = XmlManager(ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::HEAD_ID)
-		                   , KRobotConfig::Instance().getConfig(KDeviceLists::Interpret::BODY_ID),false);
-#else
-		_xmlnode = XmlManager(ArchConfig::Instance().GetConfigPrefix(), "hi", "bi",false);
-#endif
 	}
 
 	Statechart::~Statechart ()

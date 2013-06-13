@@ -15,14 +15,16 @@
 #include "messages/TestMessage.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/BehaviorMessages.pb.h"
-#include "messages/motion.pb.h"
+#include "messages/Motion.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
+
 #include "hal/robot/generic_nao/robot_consts.h"
 
 //#include "architecture/archConfig.h"
 #include "core/include/IActivity.hpp"
-
 #include "core/elements/math/Common.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
+
 #include "tools/obstacleConst.h"
 
 

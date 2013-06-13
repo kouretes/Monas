@@ -4,6 +4,8 @@
 * \author Colin Graf
 * \author Thomas Röfer
 */
+#ifndef KROBOT_IS_REMOTE
+
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
@@ -485,3 +487,5 @@ bool NaoCamera::verifyNaoVersion()
 	closeI2CAdapter (i2cfd);
 	return versionok;
 }
+
+#endif

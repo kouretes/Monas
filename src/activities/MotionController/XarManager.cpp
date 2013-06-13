@@ -22,7 +22,7 @@ std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy 
 	unsigned int  i = 0;
 	int k;
 	string tempStr;
-	t = opendir((ArchConfig::Instance().GetConfigPrefix() + "xar").c_str());
+	t = opendir((Configurator::Instance().getDirectoryPath() + "xar").c_str());
 
 	if (t != 0)
 	{
@@ -37,7 +37,7 @@ std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy 
 			{
 				try
 				{
-					tempMot.identifier = frame->newBehaviorFromFile((ArchConfig::Instance().GetConfigPrefix() + "xar/" + fileName), "");
+					tempMot.identifier = frame->newBehaviorFromFile((Configurator::Instance().getDirectoryPath() + "xar/" + fileName), "");
 					cout << "Behavior ID " << tempMot.identifier << endl;
 				}
 				catch (AL::ALError& e)
@@ -47,7 +47,7 @@ std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy 
 				}
 
 				tempMot.name = fileName;
-				tempMot.filename = (ArchConfig::Instance().GetConfigPrefix() + "xar/" + fileName);
+				tempMot.filename = (Configurator::Instance().getDirectoryPath() + "xar/" + fileName);
 				spAct.push_back(tempMot);
 				actionMap[fileName] = i;
 				ISpecialAction* curAction = new XarAction(frame, tempMot.filename, tempMot.name, tempMot.identifier);
@@ -61,7 +61,7 @@ std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy 
 	}
 	else
 	{
-		Logger::Instance().WriteMsg("XARManager", "Error There is no such directory: " + ArchConfig::Instance().GetConfigPrefix() + "xar", Logger::FatalError);
+		Logger::Instance().WriteMsg("XARManager", "Error There is no such directory: " + Configurator::Instance().getDirectoryPath() + "xar", Logger::FatalError);
 	}
 
 	return XarActions;

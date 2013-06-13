@@ -1,7 +1,6 @@
 #include "Gateway.h"
 
 #include "tools/logger.h"
-#include "tools/toString.h"
 #include <boost/crc.hpp>
 
 #include <fstream>
@@ -13,12 +12,6 @@ PROVIDER_REGISTER (Gateway);
 
 
 void Gateway::UserInit() {
-#ifdef NAOQI
-	_xml = XmlManager (ArchConfig::Instance().GetConfigPrefix(), KRobotConfig::Instance().getConfig (KDeviceLists::Interpret::HEAD_ID)
-	                   , KRobotConfig::Instance().getConfig (KDeviceLists::Interpret::BODY_ID), true);
-#else
-	_xml = XmlManager (ArchConfig::Instance().GetConfigPrefix(), "hi", "bi", true);
-#endif
 	_blk.updateSubscription ("communication", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription ("external", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
 	_blk.updateSubscription ("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -64,7 +57,7 @@ int Gateway::Execute() {
 		}
 
 		for (fit = rf.begin(); fit != rf.end(); ++fit) {
-			//XML PART
+			//Config PART
 			processExternalConfig ( (*fit).hostid() );
 			//Command part
 			processExternalCommands ( (*fit).hostid() );
@@ -89,7 +82,6 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 		}
 
 		if (lockOwner) {
-			updateXMLMsg.clear_updatexml();
 			resetActMsg.clear_resetactivities();
 			map<uint32_t, string>::iterator iter = ectimeouts.find (incomingHostId);
 			//We must always send back ack but we must do changes only if the message is new and not retrasmit
@@ -101,35 +93,30 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 
 			//Handshaking message
 			if (ecmsg->handoffrequest() == true) {
-				outmsg.mutable_handshaking()->set_headid (_xml.getHeadID() );
-				outmsg.mutable_handshaking()->set_bodyid (_xml.getBodyID() );
-				outmsg.mutable_handshaking()->set_checksum (_xml.getChecksum() );
+				outmsg.mutable_handshaking()->set_headid (Configurator::Instance().getHeadID() );
+				outmsg.mutable_handshaking()->set_bodyid (Configurator::Instance().getBodyID() );
+				outmsg.mutable_handshaking()->set_checksum (Configurator::Instance().getChecksum() );
 			}
 
 			if (freshMessage) {
 				vector<pair<string, string> > dataForWrite;
 
-				for (int i = 0; i < ecmsg->updatexml_size(); i++) {
-					//Add to msg to informe the world about the changes
-					updateXMLMsg.add_updatexml();
-					updateXMLMsg.mutable_updatexml (i)->set_keyword (ecmsg->updatexml (i).keyword() );
-					updateXMLMsg.mutable_updatexml (i)->set_value (ecmsg->updatexml (i).value() );
+				for (int i = 0; i < ecmsg->updateconfig_size(); i++) {
 					//Prepare to write to files
 					pair<string, string> temp;
-					temp.first = ecmsg->updatexml (i).keyword();
-					temp.second = ecmsg->updatexml (i).value();
+					temp.first = ecmsg->updateconfig (i).keyword();
+					temp.second = ecmsg->updateconfig (i).value();
 					dataForWrite.push_back (temp);
 				}
 
 				//Write to the files and publish the message
-				if (updateXMLMsg.updatexml_size() != 0) {
-					_xml.burstWrite (dataForWrite);
-					publishSignal (updateXMLMsg, "external");
+				if (dataForWrite.size() != 0) {
+					Configurator::Instance().burstWrite (dataForWrite);
 				}
 
 				if (ecmsg->has_file() ) {
 					ofstream fout;
-					fout.open ( (ArchConfig::Instance().GetConfigPrefix() + ecmsg->file().filepath() ).c_str(), ios::trunc | ios::out);
+					fout.open ( (Configurator::Instance().getDirectoryPath() + ecmsg->file().filepath() ).c_str(), ios::trunc | ios::out);
 
 					if (fout.is_open() ) {
 						fout.write (ecmsg->file().file().c_str(), ecmsg->file().file().size() );
@@ -144,7 +131,7 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 				}
 
 				if (resetActMsg.resetactivities_size() != 0) {
-					publishSignal (resetActMsg, "external");
+					publishSignal (resetActMsg, "architecture");
 				}
 			}
 		}

@@ -1,94 +1,93 @@
 #include "talws.h"
 
 #include "core/architecture/messaging/MessageHub.hpp"
-
 #include "core/architecture/thread/agent/AgentConfig.hpp"
-#include "tools/XML.h"
-#include "tools/XMLConfig.h"
+
 #include "tools/logger.h"
-#include "config.h"
-#include "core/architecture/archConfig.h"
 
 #include "activities/activityRegistry.h"
 #include "providers/providerRegistry.h"
 
 Talws::Talws ()
 {
-	ArchConfig::Instance();
 	Logger::Instance();
 	com.StartThread();
-	XML AgentXmlFile( ArchConfig::Instance().GetConfigPrefix() + ArchConfig::Instance().GetAgentCfgFile() );
 
-	if ( ! AgentXmlFile.IsLoadedSuccessfully() )
+	std::string agentFile = Configurator::Instance().findValueForKey("monasConfig.AgentConfigurationFile");
+	if ( Configurator::Instance().numberOfNodesForKey(agentFile) != 1)
 	{
 		std::string msg("Can't read or parse agent configuration file @ ");
-		msg += ArchConfig::Instance().GetAgentCfgFile();
+		msg += Configurator::Instance().getDirectoryPath();
+		msg += Configurator::Instance().findValueForKey("monasConfig.AgentConfigurationFile");
 		Logger::Instance().WriteMsg(std::string("Talws"), msg, Logger::FatalError );
 		SysCall::_exit(1);
 	}
 
 	//======================= Start Agents  ===================================
-	typedef std::vector<XMLNode<std::string, float, std::string> > NodeCont;
-	NodeCont AgentNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "agent" );
-	std::ostringstream AgentNum;
-	AgentNum << "Found " << AgentNodes.size() << " agent(s)";
-	Logger::Instance().WriteMsg("Talws", AgentNum.str(), Logger::Info );
+	int numOfAgents = Configurator::Instance().numberOfNodesForKey(agentFile + ".agent");
+	Logger::Instance().WriteMsg("Talws", "Found " + _toString(numOfAgents) + " agent(s)", Logger::Info );
 
-	for ( NodeCont::iterator it = AgentNodes.begin(); it != AgentNodes.end(); it++ )
+	for (int i=0;i<numOfAgents;i++)
 	{
-		if(it->attrb["Enable"] == 1){
-			NodeCont AgentNameNode = AgentXmlFile.QueryElement<std::string, float, std::string>("name", &(*it) );
-			std::string AgentName = AgentNameNode[0].value;
-			NodeCont ActivityNodes = AgentXmlFile.QueryElement<std::string, float, std::string>("activity", &(*it) );
+		if(atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$Enable").c_str()) == 1){
+			std::string AgentName = Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i) + ".name");
+
+			int numOfActivities = Configurator::Instance().numberOfNodesForKey(agentFile + ".agent~" + _toString(i) + ".activity");
 			std::vector<std::string> activities;
 
-			for ( unsigned int i = 0; i < ActivityNodes.size(); i++ )
+			for (int j = 0; j < numOfActivities; j++ )
 			{
-				if(ActivityNodes[i].attrb["Enable"] == 1){
-					activities.push_back( ActivityNodes[i].value );
+				if(atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i) + ".activity~" + _toString(j) + ".$Enable").c_str()) == 1){
+					activities.push_back( Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i) + ".activity~" + _toString(j)) );
 					Logger::Instance().WriteMsg("Talws", "Agent: " + AgentName + " Registering module: " + activities.back(), Logger::ExtraInfo );
 				}
 			}
 
 			KSystem::ThreadConfig tcfg;
-			tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
-			tcfg.Priority = it->attrb["Priority"];
-			tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
-			int StatsCycle = it->attrb["StatsCycle"];
+			tcfg.IsRealTime = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$IsRealTime").c_str()) == 0 ? false : true;
+			tcfg.Priority = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$Priority").c_str());
+			float threadFreq = atof(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$ThreadFrequency").c_str());
+			tcfg.ThreadPeriod = threadFreq > 0 ? 1 / threadFreq  : 0;
+			int StatsCycle = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$StatsCycle").c_str());
 			Agent *a = new Agent(AgentName, tcfg, StatsCycle, com, activities);
 			Agents.push_back( a );
 			std::ostringstream AgentInfo;
 			AgentInfo << AgentName
-				      << " Attrb: IsRealTime=" << (it->attrb["IsRealTime"])
-				      << " Priority=" << (it->attrb["Priority"])
-				      << " ThreadFrequency=" << (it->attrb["ThreadFrequency"])
-				      << " StatsCycle=" << (it->attrb["StatsCycle"]) << std::endl;
+				      << " Attrb: IsRealTime=" << tcfg.IsRealTime
+				      << " Priority=" << tcfg.Priority
+				      << " ThreadFrequency=" << tcfg.ThreadPeriod
+				      << " StatsCycle=" << StatsCycle << std::endl;
 			Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
 		}
 	}
 
 	//======================= Start StateCharts  ===================================
-	NodeCont StatechartNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "statechart" );
-	Logger::Instance().WriteMsg("Talws", "Found " + _toString(StatechartNodes.size()) + " statechart plan(s)", Logger::Info );
+	int numOfStatecharts = Configurator::Instance().numberOfNodesForKey(agentFile + ".statechart");
+	Logger::Instance().WriteMsg("Talws", "Found " + _toString(numOfStatecharts) + " statechart plan(s)", Logger::Info );
 
-	for ( NodeCont::iterator it = StatechartNodes.begin(); it != StatechartNodes.end(); it++ ){
-		if(it->attrb["Enable"] == 1){
-			StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( (*it).value , &com ) );
+	for (int i=0;i<numOfStatecharts;i++){
+		if(atoi(Configurator::Instance().findValueForKey(agentFile + ".statechart~" + _toString(i)+".$Enable").c_str()) == 1){
+			std::string statechart = Configurator::Instance().findValueForKey(agentFile + ".statechart~" + _toString(i));
+			StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( statechart, &com ) );
+			Logger::Instance().WriteMsg("Talws", statechart, Logger::ExtraInfo);
 		}
 	}
 
 	//======================= Start Providers  ===================================
-	NodeCont ProviderNodes = AgentXmlFile.QueryElement<std::string, float, std::string>( "provider" );
-	Logger::Instance().WriteMsg("Talws", "Found " + _toString(ProviderNodes.size()) + " provider(s)", Logger::Info );
+	int numOfProviders = Configurator::Instance().numberOfNodesForKey(agentFile + ".provider");
+	Logger::Instance().WriteMsg("Talws", "Found " + _toString(numOfProviders) + " provider(s)", Logger::Info );
 
-	for ( NodeCont::iterator it = ProviderNodes.begin(); it != ProviderNodes.end(); it++ )
+	for (int i=0;i<numOfProviders;i++)
 	{
-		if(it->attrb["Enable"] == 1){
+		if(atoi(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$Enable").c_str()) == 1){
+			std::string provider = Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i));
 			KSystem::ThreadConfig tcfg;
-			tcfg.IsRealTime = it->attrb["IsRealTime"] == 0 ? false : true;
-			tcfg.Priority = it->attrb["Priority"];
-			tcfg.ThreadPeriod = it->attrb["ThreadFrequency"] > 0 ? 1 / it->attrb["ThreadFrequency"] : 0;
-			Providers.push_back( ProviderFactory::Instance()->CreateObject( (*it).value ,  tcfg, com ) );
+			tcfg.IsRealTime = atoi(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$IsRealTime").c_str()) == 0 ? false : true;
+			tcfg.Priority = atoi(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$Priority").c_str());
+			float threadFreq = atof(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$ThreadFrequency").c_str());
+			tcfg.ThreadPeriod = threadFreq > 0 ? 1 / threadFreq  : 0;
+			Providers.push_back( ProviderFactory::Instance()->CreateObject(provider ,  tcfg, com ) );
+			Logger::Instance().WriteMsg("Talws", provider, Logger::ExtraInfo);
 		}
 	}
 }

@@ -109,18 +109,18 @@ void Sensors::fillComputedData(unsigned int timediff)
 	float R_FSR_FR = ASM.sensordata(R_FSR + FSR_FR).sensorvalue();
 	float R_FSR_RL = ASM.sensordata(R_FSR + FSR_RL).sensorvalue();
 	float R_FSR_RR = ASM.sensordata(R_FSR + FSR_RR).sensorvalue();
-	float threshold = 1;
+	float threshold = Interpret::ROBOT_WEIGHT/4;
 	
 	float lWeight = L_FSR_FL + L_FSR_FR + L_FSR_RL + L_FSR_RR;
 	float rWeight = R_FSR_FL + R_FSR_FR + R_FSR_RL + R_FSR_RR;
 	if(lWeight > threshold && rWeight > threshold){
-		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(BOTH);
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(SUPPORT_LEG_BOTH);
 	}else if(lWeight > threshold){
-		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(LEFT);
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(SUPPORT_LEG_LEFT);
 	}else if(rWeight > threshold){
-		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(RIGHT);
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(SUPPORT_LEG_RIGHT);
 	}else{
-		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(NONE);
+		ASM.mutable_computeddata(SUPPORT_LEG)->set_sensorvalue(SUPPORT_LEG_NONE);
 	}
 }
 

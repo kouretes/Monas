@@ -5,13 +5,16 @@
 #include <fstream>
 #include <set>
 #include <cstdio>
+
 #include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "sys/stat.h"
-#include "core/architecture/archConfig.h"
-#include "tools/XMLConfig.h"
+#include "hal/syscall.h"
 
 #include "core/elements/Singleton.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
 
+#include "tools/toString.h"
 
 //TODO mutex needed
 //it's not thread safe but it is instantiated long before any thread creation
@@ -83,7 +86,7 @@ public:
 		lastConfRead = boost::posix_time::microsec_clock::universal_time();
 		struct stat stFileInfo;
 		std::string fullfilename ;
-		fullfilename = (ArchConfig::Instance().GetConfigPrefix() + MsgLogFile);
+		fullfilename = (Configurator::Instance().getDirectoryPath() + MsgLogFile);
 		int intStat = stat((fullfilename + ".0").c_str(), &stFileInfo);
 
 		if (intStat == 0)
@@ -92,7 +95,7 @@ public:
 				rename( (fullfilename + ".0").c_str() , (fullfilename + ".1").c_str() );
 			}
 
-		ErrorLog.open( ( ArchConfig::Instance().GetConfigPrefix() + MsgLogFile + ".0" ).c_str() );
+		ErrorLog.open( ( Configurator::Instance().getDirectoryPath() + MsgLogFile + ".0" ).c_str() );
 
 		if ( ! ErrorLog.is_open() )
 		{
@@ -112,78 +115,61 @@ private:
 
 	void ReadConfiguration ()
 	{
-		std::string ConfFileStr( ArchConfig::Instance().GetConfigPrefix() + "logger.xml" );
-		XMLConfig ConfFile( ConfFileStr );
-
-		if ( ! ConfFile.IsLoadedSuccessfully() )
-		{
-			std::cerr << "Can't parse logger configuration file @ " << ConfFileStr << std::endl;
-			SysCall::_exit( 1 );
-		}
-
-		if ( ! ConfFile.QueryElement( "MessageLogFile", MsgLogFile ) )
-		{
-			std::cerr << "MessageLogFile is not set" << std::endl;
-			std::cerr << "Defaulting to MonasLog.txt" << std::endl;
-			MsgLogFile = "MonasLog.txt";
-		}
-
-		if (! ConfFile.QueryElement( "LogFileVerbosityLevel", VerbosityLevel ) )
-			VerbosityLevel = 0;
-
+		std::string ConfFileStr( Configurator::Instance().getDirectoryPath() + "logger.xml" );
+		
+		MsgLogFile = Configurator::Instance().findValueForKey("logger.MessageLogFile");
+			
+		VerbosityLevel = atoi(Configurator::Instance().findValueForKey("logger.LogFileVerbosityLevel").c_str());
 		VerbosityLevel = VerbosityLevel < 0 ? 0 : VerbosityLevel;
 
-		if ( ! ConfFile.QueryElement( "MessageLogCerr", CerrEnabled ) )
-			CerrEnabled = false;
+		CerrEnabled = atoi(Configurator::Instance().findValueForKey("logger.MessageLogCerr").c_str());
 
-		if ( ! ConfFile.QueryElement( "PollingPeriod", reparsingPeriod ) )
-			reparsingPeriod = 2;
+		reparsingPeriod = atoi(Configurator::Instance().findValueForKey("logger.PollingPeriod").c_str());
 
-		std::vector<std::string> ActFilterStr;
-		ConfFile.QueryElement( "DebugFilter", ActFilterStr );
-
-		if ( ActFilterStr.size() == 0 )
+		int numOfDebug = Configurator::Instance().numberOfNodesForKey("logger.DebugFilter");
+		DebugFilter.clear();
+		if (numOfDebug == 0 )
 			DebuggingMode = false;
 		else
 		{
 			DebuggingMode = true;
 			DebugAll = false;
 
-			for ( std::vector<std::string>::const_iterator it = ActFilterStr.begin(); it != ActFilterStr.end(); it++ )
+			for (int i=0;i<numOfDebug;i++)
 			{
-				if ( (*it) == "all" )
+				std::string value = Configurator::Instance().findValueForKey("logger.DebugFilter~" + _toString(i));
+				if (value.compare("all")==0)
 				{
 					DebugAll = true;
 					break;
 				}
 
-				DebugFilter.insert( (*it) );
+				DebugFilter.insert(value);
 			}
 		}
 
-		ActFilterStr.clear();
-		ConfFile.QueryElement( "MessageLogFilter", ActFilterStr );
-
-		if ( ActFilterStr.size() == 0 )
+		int numOfActive = Configurator::Instance().numberOfNodesForKey("logger.MessageLogFilter");
+		ActivityFilter.clear();
+		if (numOfActive == 0)
 			ActivityFilterEnabled = false;
 		else
 		{
 			ActivityFilterEnabled = true;
 
-			for ( std::vector<std::string>::const_iterator it = ActFilterStr.begin(); it != ActFilterStr.end(); it++ )
+			for (int i=0;i<numOfActive;i++)
 			{
-				if ( (*it) == "all" )
+				std::string value = Configurator::Instance().findValueForKey("logger.MessageLogFilter~" + _toString(i));
+				if (value.compare("all")==0)
 				{
 					ActivityFilterEnabled = false;
 					break;
 				}
 
-				ActivityFilter.insert( (*it) );
+				ActivityFilter.insert(value);
 			}
 		}
-
-		if ( ! ConfFile.QueryElement( "MessageLogCerrColor", ColorEnabled) )
-			ColorEnabled = false;
+		
+		ColorEnabled = atoi(Configurator::Instance().findValueForKey("logger.MessageLogCerrColor").c_str());
 
 		lastConfRead = boost::posix_time::microsec_clock::universal_time();
 	}

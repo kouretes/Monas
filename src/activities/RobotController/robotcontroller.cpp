@@ -4,21 +4,18 @@
 
 #include "tools/logger.h"
 #include "tools/toString.h"
-#include "tools/XMLConfig.h"
-
 
 using boost::posix_time::milliseconds;
 
-
 ACTIVITY_REGISTER(RobotController);
-RobotController::RobotController(Blackboard &b, XmlManager &x) : IActivity(b, x) , gm(game_data) //Initialize game controller with message pointer
+RobotController::RobotController(Blackboard &b) : IActivity(b) , gm(game_data) //Initialize game controller with message pointer
 {
 }
 
 void RobotController::UserInit()
 {
 	//"Initialize Robot controller"
-	readConfiguration(ArchConfig::Instance().GetConfigPrefix() + "/teamConfig.xml");
+	readConfiguration();
 	gm.connectTo(conf.port(), conf.team_number());
 	gm.setNonBlock(true);
 	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -229,60 +226,39 @@ void RobotController::sendLedUpdate()
 	leds.clear_leds();
 }
 
-bool RobotController::readConfiguration(const std::string& file_name)
+bool RobotController::readConfiguration()
 {
-	XMLConfig config(file_name);
 	conf.Clear(); //Initialize with default values in .proto
 	gm_state.Clear(); //Initialize with default values in .proto
-	int value;
 	gm_state.set_player_number(conf.player_number());
-
-	if (!config.QueryElement("player", value))
-	{
-		Logger::Instance().WriteMsg("RobotController", "Configuration file has no player, setting to default value: " + _toString(conf.player_number()), Logger::Error);
-	}
-	else
-	{
-		conf.set_player_number(value);
-		gm_state.set_player_number(value);
-	}
+	
+	int value = atoi(Configurator::Instance().findValueForKey("teamConfig.player").c_str());
+	conf.set_player_number(value);
+	gm_state.set_player_number(value);
 
 	gm_state.set_team_number(conf.team_number());
 
-	if (!config.QueryElement("team_number", value))
-	{
-		Logger::Instance().WriteMsg("RobotController", "Configuration file has no team_number, setting to default value: " + _toString(conf.team_number()), Logger::Error);
-	}
-	else
-	{
-		conf.set_team_number(value);
-		gm_state.set_team_number(value);
-	}
+	value = atoi(Configurator::Instance().findValueForKey("teamConfig.team_number").c_str());
+	conf.set_team_number(value);
+	gm_state.set_team_number(value);
 
 	//If color is changed default configuration color does need to be changed
 	std::string color = "blue";
 	gm_state.set_team_color(conf.team_color());
 
-	if (!config.QueryElement("default_team_color", color))
-		Logger::Instance().WriteMsg("RobotController", "Configuration file has no team_color, setting to default value: " + _toString(gm_state.team_color()), Logger::Error);
-
-	if (color == "blue")
+	color = Configurator::Instance().findValueForKey("teamConfig.default_team_color");
+	if (color.compare("blue") == 0)
 	{
 		conf.set_team_color(TEAM_BLUE);
 		gm_state.set_team_color(TEAM_BLUE);
 	}
-	else if (color == "red")
+	else if (color.compare("red") == 0)
 	{
 		conf.set_team_color(TEAM_RED);
 		gm_state.set_team_color(TEAM_RED);
 	}
 	else
 		Logger::Instance().WriteMsg("RobotController", "undefined color in configuration, setting to default value: " + _toString(gm_state.team_color()), Logger::Error);
-
-	if (!config.QueryElement("gm_port", value))
-		Logger::Instance().WriteMsg("RobotController", "Configuration file has no gm_port, setting to default value: " + _toString(conf.port()), Logger::Error);
-	else
-		conf.set_port(value);
 
 	return true;
 }

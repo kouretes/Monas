@@ -14,13 +14,16 @@
 #include <QPainter>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/circular_buffer.hpp>
+
+#include "core/elements/math/Common.hpp"
+
+#include "messages/Debug.pb.h"
+#include "messages/RoboCupGameControlData.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
-#include "messages/motion.pb.h"
-#include "core/elements/math/Common.hpp"
-#include "messages/Debug.pb.h"
+#include "messages/Motion.pb.h"
+
 #include "KFieldScene.h"
-#include "messages/RoboCupGameControlData.h"
 
 class KFieldScene;
 
@@ -282,8 +285,8 @@ private slots:
 	void clearMotionWalkCommand();
 
 private:
-	void loadXMLlocalizationConfigParameters(std::string fname);
-	void loadXMLteamConfigParameters(std::string fname);
+	void loadXMLlocalizationConfigParameters();
+	void loadXMLteamConfigParameters();
 	void tagVisionObservations(QGraphicsEllipseItem *post, QRectF rect, QString text);
 	void tagRoles(QGraphicsEllipseItem *post, QRectF rect, const QString& text, const QColor& color);
 	QPolygonF calculateArrowHeadPosition(QLineF aLine);

@@ -243,11 +243,11 @@ void SensorsController::updateFSRsTable(AllSensorValuesMessage asvm) {
 
 	float fvalue = Value.sensorvalue();
 	
-	if(fvalue == KDeviceLists::NONE)
+	if(fvalue == KDeviceLists::SUPPORT_LEG_NONE)
 		ui->SupportLeg->setText("None");
-	else if(fvalue == KDeviceLists::LEFT)
+	else if(fvalue == KDeviceLists::SUPPORT_LEG_LEFT)
 		ui->SupportLeg->setText("Left");
-	else if(fvalue == KDeviceLists::RIGHT)
+	else if(fvalue == KDeviceLists::SUPPORT_LEG_RIGHT)
 		ui->SupportLeg->setText("Right");
 	else
 		ui->SupportLeg->setText("Both");

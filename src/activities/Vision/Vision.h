@@ -2,18 +2,17 @@
 #define VISION_H
 
 #include "core/include/IActivity.hpp"
-#include "KCameraTransformation.h"
+#include "core/architecture/configurator/Configurator.hpp"
 
-#include <opencv/cv.h>
 #include <memory>
-#include "KSegmentator.h"
 
+#include "KSegmentator.h"
+#include "KCameraTransformation.h"
 
 #include "messages/Kimage.pb.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/ObstacleAvoidanceMessage.pb.h"
-
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
 
@@ -32,7 +31,7 @@ public:
 	/**
 	 * The only available constructor:
 	 */
-	ACTIVITY_VISIBLE Vision(Blackboard& b, XmlManager &x);
+	ACTIVITY_VISIBLE Vision(Blackboard& b);
 	ACTIVITY_VISIBLE ~Vision()
 	{
 		if(segtop == segbottom && segbottom != NULL)

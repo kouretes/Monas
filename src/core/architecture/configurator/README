@@ -1,4 +1,4 @@
-An easy example of how to use XmlManager.
+An easy example of how to use configurator.
 For the example we will use the agent.xml file.
 
 First of all u must construct the key for the value that u want:
@@ -17,14 +17,14 @@ so with the key: agents.agent.$Priority, you querry the xmlmanager to return fro
 
 ------------------------------- Examples --------------------------------------------
 You can get the number of all the agent node in the file with the following command:
-_xml.numberOfNodesForKey("agents.agent")
+_cfg.numberOfNodesForKey("agents.agent")
 
 Now for a given agent node u can take the number of activities:
-_xml.numberOfNodesForKey("agents.agent~2.activity")
+_cfg.numberOfNodesForKey("agents.agent~2.activity")
 
 You can access the value of a specific activity node:
-_xml.findValueForKey("agents.agent~1.activity~2").at(0)
+_cfg.findValueForKey("agents.agent~1.activity~2").at(0)
 
 With the same function call u can get the value of attribute:
-_xml.findValueForKey("agents.agent~1.$Priority").at(0)
+_cfg.findValueForKey("agents.agent~1.$Priority").at(0)
 

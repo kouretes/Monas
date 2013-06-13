@@ -38,7 +38,7 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME()
 	unsigned int pos = 0, i = 0 ;
 	int k;
 	string tempStr;
-	t = opendir((ArchConfig::Instance().GetConfigPrefix() + "kme").c_str());
+	t = opendir((Configurator::Instance().getDirectoryPath() + "kme").c_str());
 	struct dirent * files = readdir(t);
 
 	while(files != NULL)
@@ -49,7 +49,7 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME()
 		if( k == 0 )
 		{
 			spAct.push_back(tempMotSeq);
-			fin.open((ArchConfig::Instance().GetConfigPrefix() + "kme/" + fileName).c_str(), ios::in);
+			fin.open((Configurator::Instance().getDirectoryPath() + "kme/" + fileName).c_str(), ios::in);
 
 			if ( fin.is_open() )
 			{

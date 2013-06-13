@@ -2,6 +2,10 @@ message ( STATUS "" )
 message ( STATUS " _..::: Configuring NaoQi ver 1.12.5 :::.._ " )
 message ( STATUS "" )
 
+
+add_subdirectory ( krobot )
+
+add_definitions (${MonasDefinitions}) #Work around: Monas definitions are added at root level. Meanwhile, add them here as well
 add_library ( NaoQiDep  ${LibBuildType}
                         earLed.cpp
                         HeadAngleSensor.cpp
@@ -18,4 +22,3 @@ install ( TARGETS NaoQiDep
         LIBRARY DESTINATION   lib
         ARCHIVE DESTINATION   lib/static )
 
-add_subdirectory ( krobot )
