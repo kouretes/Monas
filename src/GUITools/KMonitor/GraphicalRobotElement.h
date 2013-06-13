@@ -115,6 +115,15 @@ public:
 		return GWSBallVisible;
 	}
 	
+	void setGWSSharedBallVisible(bool visible) {
+		GWSSharedBallVisible = visible;
+		setSharedBallVisible(visible);
+	}
+	
+	bool getGWSSharedBallVisible() {
+		return GWSSharedBallVisible;
+	}
+	
 	void setLWSBallVisible(bool visible) {
 		LWSBallVisible = visible;
 		setBallVisible(visible);
@@ -126,7 +135,9 @@ public:
 	
 	void setBallVisible(bool visible);
 	void updateBallRect();
-
+	void setSharedBallVisible(bool visible);
+	void updateSharedBallRect();
+	
 	void setGWSUnionistLineVisible(bool visible) {
 		GWSUnionistLineVisible = visible;
 		setUnionistLineVisible(visible);
@@ -135,6 +146,16 @@ public:
 	bool getGWSUnionistLineVisible() {
 		return GWSUnionistLineVisible;
 	}
+	
+	void setGWSSharedUnionistLineVisible(bool visible) {
+		GWSSharedUnionistLineVisible = visible;
+		setSharedUnionistLineVisible(visible);
+	}
+	
+	bool getGWSSharedUnionistLineVisible() {
+		return GWSSharedUnionistLineVisible;
+	}
+	
 	void setLWSUnionistLineVisible(bool visible) {
 		LWSUnionistLineVisible = visible;
 		setUnionistLineVisible(visible);
@@ -146,7 +167,9 @@ public:
 	
 	void setUnionistLineVisible(bool visible);
 	void updateUnionistLineRect();
-
+	void setSharedUnionistLineVisible(bool visible);
+	void updateSharedUnionistLineRect();
+	
 	// Vision observations
 	void setLWSVisionBallVisible(bool visible) {
 		LWSVisionBallVisible = visible;
@@ -194,7 +217,6 @@ public:
     }
 
 	void setVisionBallVisible(bool visible);
-	//void updateVisionBallRect();
 	void updateVisionBallRect(ObservationMessage obm);
 
 	void setLWSYellowLeftPostVisible(bool visible) {
@@ -335,11 +357,13 @@ private:
 	float formationBallY;
 
 	bool GWSBallVisible;
+	bool GWSSharedBallVisible;
 	bool LWSBallVisible;
 	QGraphicsEllipseItem *Ball;
 	QGraphicsEllipseItem *sharedBall;
     int t;
 	bool GWSUnionistLineVisible;
+	bool GWSSharedUnionistLineVisible;
 	bool LWSUnionistLineVisible;
 	QGraphicsLineItem *UnionistLine;
 	QGraphicsLineItem *SharedUnionistLine;

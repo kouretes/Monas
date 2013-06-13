@@ -41,7 +41,6 @@ void GlobalWorldController::setKGFCGameStateInfo(GameStateMessage gsm, QString h
 }
 
 void GlobalWorldController::sharedWorldInfoUpdateHandler(SharedWorldInfo nswim, QString host) {
-	std::cout << "SHARED UPDATE" << std::endl;
 	GraphicalRobotElement *element = paintArea->findGraphicalRobotItem(host);
 
 	if(element != NULL) {
@@ -66,12 +65,25 @@ void GlobalWorldController::worldInfoUpdateHandler(WorldInfo nwim, QString host)
 			element->updateBallRect();
 			element->setBallVisible(true);
 		}
-
+		
 		if(element->getGWSUnionistLineVisible()) {
 			element->setUnionistLineVisible(false);
 			element->updateUnionistLineRect();
 			element->setUnionistLineVisible(true);
 		}
+		
+		if(element->getGWSSharedBallVisible()) {
+			element->setSharedBallVisible(false);
+			element->updateSharedBallRect();
+			element->setSharedBallVisible(true);
+		}
+		
+		if(element->getGWSSharedUnionistLineVisible()) {
+			element->setSharedUnionistLineVisible(false);
+			element->updateSharedUnionistLineRect();
+			element->setSharedUnionistLineVisible(true);
+		}
+		
 	} 
 	else {
 		//std::cout << "[67]GlobalWorldController::worldInfoUpdateHandler:: Host hasn't been requested!" << host.toStdString() <<std::endl;
@@ -104,7 +116,6 @@ void GlobalWorldController::GWSGVBallVisible(QString host, bool visible) {
 	if(robotElement != NULL) {
 		robotElement->setGWSBallVisible(visible);
 		GWSGVUnionistLineVisible(robotElement);
-		//paintArea->printRobotList();
 	} 
 	else
 		std::cout << "[99] GlobalWorldController::GWSGVBallVisible : Fatal !" << std::endl;
@@ -115,6 +126,28 @@ void GlobalWorldController::GWSGVUnionistLineVisible(GraphicalRobotElement *robo
 		robotElement->setGWSUnionistLineVisible(true);
 	else
 		robotElement->setGWSUnionistLineVisible(false);
+}
+
+void GlobalWorldController::GWSGVSharedBallVisible(QString host, bool visible) {
+	GraphicalRobotElement *robotElement = NULL;
+	robotElement = paintArea->findGraphicalRobotItem(host);
+
+	if(robotElement == NULL)
+		robotElement = paintArea->newGraphicalRobotItem(host);
+
+	if(robotElement != NULL) {
+		robotElement->setGWSSharedBallVisible(visible);
+		GWSGVSharedUnionistLineVisible(robotElement);
+	} 
+	else
+		std::cout << "[99] GlobalWorldController::GWSGVBallVisible : Fatal !" << std::endl;
+}
+
+void GlobalWorldController::GWSGVSharedUnionistLineVisible(GraphicalRobotElement *robotElement) {
+	if(robotElement->getGWSRobotVisible() && robotElement->getGWSSharedBallVisible())
+		robotElement->setGWSSharedUnionistLineVisible(true);
+	else
+		robotElement->setGWSSharedUnionistLineVisible(false);
 }
 
 void GlobalWorldController::removeOldItem(QString hostId) {
@@ -128,6 +161,9 @@ void GlobalWorldController::removeOldItem(QString hostId) {
 				GWRequests.removeAt(i);
 		}
 
+		if(item->child(2) != NULL)
+			delete(item->child(2));
+					
 		if(item->child(1) != NULL)
 			delete(item->child(1));
 
@@ -165,10 +201,12 @@ void GlobalWorldController::addNewItem(QString hostId, QString hostName) {
 	QTreeWidgetItem *item;
 	QTreeWidgetItem *subItem1;
 	QTreeWidgetItem *subItem2;
+	QTreeWidgetItem *subItem3;
 	int position = ui->hostTree->topLevelItemCount();
 	QCheckBox *checkBox;
 	QCheckBox *subCheckBox1;
 	QCheckBox *subCheckBox2;
+	QCheckBox *subCheckBox3;
 	QIcon icon;
 	QFont font;
 	icon.addFile(QString::fromUtf8(":/KnownHostsIcons/chore_robot_on.png"), QSize(), QIcon::Normal, QIcon::Off);
@@ -176,6 +214,7 @@ void GlobalWorldController::addNewItem(QString hostId, QString hostName) {
 	item = new QTreeWidgetItem(ui->hostTree);
 	subItem1 = new QTreeWidgetItem(item);
 	subItem2 = new QTreeWidgetItem(item);
+	subItem3 = new QTreeWidgetItem(item);
 	checkBox = new QCheckBox();
 	checkBox->setIcon(icon);
 	checkBox->setIconSize(QSize(48, 48));
@@ -190,13 +229,19 @@ void GlobalWorldController::addNewItem(QString hostId, QString hostName) {
 	subCheckBox2->setTristate(false);
 	subCheckBox2->setObjectName(tr("ball,") + hostId);
 	subCheckBox2->setText(tr("Estimated Ball Position"));
+	subCheckBox3 = new QCheckBox();
+	subCheckBox3->setTristate(false);
+	subCheckBox3->setObjectName(tr("sharedball,") + hostId);
+	subCheckBox3->setText(tr("Shared Ball Position"));
 	ui->hostTree->setItemWidget(ui->hostTree->topLevelItem(position), 0, checkBox);
 	ui->hostTree->setItemWidget(ui->hostTree->topLevelItem(position)->child(0), 0, subCheckBox1);
 	ui->hostTree->setItemWidget(ui->hostTree->topLevelItem(position)->child(1), 0, subCheckBox2);
+	ui->hostTree->setItemWidget(ui->hostTree->topLevelItem(position)->child(2), 0, subCheckBox3);
 	connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(mainCheckBoxHandler(int)) );
 	connect(subCheckBox1, SIGNAL(stateChanged(int)), this, SLOT(subCheckBox1Handler(int)) );
 	connect(subCheckBox2, SIGNAL(stateChanged(int)), this, SLOT(subCheckBox2Handler(int)) );
-	requestedElements *re = new Elements(hostId, hostName, false, false);
+	connect(subCheckBox3, SIGNAL(stateChanged(int)), this, SLOT(subCheckBox3Handler(int)) );
+	requestedElements *re = new Elements(hostId, hostName, false, false, false);
 	GWRequests.append(re);
 }
 
@@ -206,7 +251,7 @@ void GlobalWorldController::mainCheckBoxHandler(int state) {
 	QCheckBox *checkBox =(QCheckBox *) this->sender();
 	QTreeWidgetItem *item = this->GWhostFinder(checkBox->objectName());
 
-	for(int i = 0 ; i < 2 ; i++) {
+	for(int i = 0 ; i < 3 ; i++) {
 		subItem = item->child(i);
 		subCheckBox = (QCheckBox*)ui->hostTree->itemWidget(subItem, 0);
 
@@ -228,6 +273,9 @@ void GlobalWorldController::subCheckBox1Handler(int state) {
 				GWSGVRobotVisible(GWRequests.at(i)->hostId, false);
 
 				if(!(GWRequests.at(i)->requestedBall))
+					emit GWRHUnsubscriptionRequest(GWRequests.at(i)->hostId);
+				
+				if(!(GWRequests.at(i)->requestedSharedBall))
 					emit GWRHUnsubscriptionRequest(GWRequests.at(i)->hostId);
 			} 
 			else {
@@ -252,11 +300,40 @@ void GlobalWorldController::subCheckBox2Handler(int state) {
 
 				if(!(GWRequests.at(i)->requestedPosition))
 					emit GWRHUnsubscriptionRequest(GWRequests.at(i)->hostId);
+				
+				if(!(GWRequests.at(i)->requestedSharedBall))
+					emit GWRHUnsubscriptionRequest(GWRequests.at(i)->hostId);
 			} 
 			else {
 				GWRequests.at(i)->setBallRequest(true);
 				emit GWRHSubscriptionRequest(GWRequests.at(i)->hostId);
 				GWSGVBallVisible(GWRequests.at(i)->hostId, true);
+			}
+			break;
+		}
+	}
+}
+
+void GlobalWorldController::subCheckBox3Handler(int state) {
+	QCheckBox *checkBox = (QCheckBox*)this->sender();
+	QStringList list = checkBox->objectName().split(",");
+
+	for(int i = 0 ; i < GWRequests.count() ; i++) {
+		if(GWRequests.at(i)->hostId == list.at(1)) {
+			if(state == 0) {
+				GWRequests.at(i)->setSharedBallRequest(false);
+				GWSGVSharedBallVisible(GWRequests.at(i)->hostId, false);
+
+				if(!(GWRequests.at(i)->requestedPosition))
+					emit GWRHUnsubscriptionRequest(GWRequests.at(i)->hostId);
+				
+				if(!(GWRequests.at(i)->requestedBall))
+					emit GWRHUnsubscriptionRequest(GWRequests.at(i)->hostId);
+			} 
+			else {
+				GWRequests.at(i)->setSharedBallRequest(true);
+				emit GWRHSubscriptionRequest(GWRequests.at(i)->hostId);
+				GWSGVSharedBallVisible(GWRequests.at(i)->hostId, true);
 			}
 			break;
 		}

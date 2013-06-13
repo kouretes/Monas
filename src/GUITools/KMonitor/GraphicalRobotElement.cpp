@@ -26,7 +26,9 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	UnionistLines.set_capacity(99);
 	GWSRobotVisible = false;
 	GWSBallVisible = false;
+	GWSSharedBallVisible = false;
 	GWSUnionistLineVisible = false;
+	GWSSharedUnionistLineVisible = false;
 	LWSRobotVisible = false;
 	LWSBallVisible = false;
 	LWSUnionistLineVisible = false;
@@ -464,6 +466,10 @@ void GraphicalRobotElement::setBallVisible(bool visible) {
 	this->sharedBall->setVisible(visible);
 }
 
+void GraphicalRobotElement::setSharedBallVisible(bool visible) {
+	this->sharedBall->setVisible(visible);
+}
+
 void GraphicalRobotElement::setVarianceVisible(bool visible) {
 	if(visible == false) {
 		this->PositionUncertainty->setVisible(false);
@@ -499,17 +505,20 @@ void GraphicalRobotElement::updateBallRect() {
 	} 
 	else
 		Ball->setRect(0, 0, 0, 0);
-		
-	if((this->currentSWIM.globalballs_size() > 0)) {
-		std::cout << "MPIKA!" << std::endl;
+}
+
+void GraphicalRobotElement::updateSharedBallRect() {
+	if((this->currentSWIM.globalballs_size() > 0))
 		sharedBall->setRect(this->parentScene->ballRectFromFC(&currentSWIM, 75, 75));
-	}
 	else
 		sharedBall->setRect(0, 0, 0, 0);
 }
 
 void GraphicalRobotElement::setUnionistLineVisible(bool visible) {
 	this->UnionistLine->setVisible(visible);
+}
+
+void GraphicalRobotElement::setSharedUnionistLineVisible(bool visible) {
 	this->SharedUnionistLine->setVisible(visible);
 }
 
@@ -518,16 +527,17 @@ void GraphicalRobotElement::updateUnionistLineRect() {
 		UnionistLine->setLine(this->parentScene->unionistLineRectFromFC(&currentWIM));
 	else
 		UnionistLine->setLine(0, 0, 0, 0);
-		
+}
+
+void GraphicalRobotElement::updateSharedUnionistLineRect() {	
 	if((this->currentSWIM.globalballs_size() > 0) && this->currentWIM.has_myposition())
 		SharedUnionistLine->setLine(this->parentScene->unionistLineRectFromFC(&currentWIM, &currentSWIM));
+	else
+		SharedUnionistLine->setLine(0, 0, 0, 0);
 }
 
 void GraphicalRobotElement::setVisionBallVisible(bool visible) {
-	if(visible == false)
-		this->VisionBall->setVisible(false);
-	else
-		this->VisionBall->setVisible(true);
+		this->VisionBall->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateVisionBallRect(ObservationMessage obm) {

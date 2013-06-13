@@ -36,14 +36,17 @@ private slots:
 	void mainCheckBoxHandler(int state);
 	void subCheckBox1Handler(int state);
 	void subCheckBox2Handler(int state);
+	void subCheckBox3Handler(int state);
 
 private:
 	QString GWhostNameFinder(QString hostId);
 	QTreeWidgetItem *GWhostFinder(QString hostId);
 	void printGWRequests();
 	void GWSGVUnionistLineVisible(GraphicalRobotElement *robotElement);
+	void GWSGVSharedUnionistLineVisible(GraphicalRobotElement *robotElement);
 	void GWSGVRobotVisible(QString, bool);
 	void GWSGVBallVisible(QString, bool);
+	void GWSGVSharedBallVisible(QString, bool);
 	void removeGraphicalElement(QString);
 	
 protected:
@@ -60,19 +63,22 @@ private:
 		QString hostName;
 		bool requestedPosition;
 		bool requestedBall;
+		bool requestedSharedBall;
 
 		Elements() {
 			hostId = QString("");
 			hostName = QString("");
 			requestedPosition = false;
 			requestedBall = false;
+			requestedSharedBall = false;
 		}
 
-		Elements(QString host, QString name, bool position, bool ball) {
+		Elements(QString host, QString name, bool position, bool ball, bool sharedBall) {
 			hostId = host;
 			hostName = name;
 			requestedPosition = position;
 			requestedBall = ball;
+			requestedSharedBall = sharedBall;
 		}
 
 		void setPositionRequest(bool request) {
@@ -81,6 +87,10 @@ private:
 
 		void setBallRequest(bool request) {
 			requestedBall = request;
+		}
+		
+		void setSharedBallRequest(bool request) {
+			requestedSharedBall = request;
 		}
 
 	} requestedElements;

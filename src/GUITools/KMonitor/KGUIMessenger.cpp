@@ -98,7 +98,8 @@ void KGUIMessenger::allocateReceivedMessages() {
 				wim.CopyFrom(*(incomingMessages.at(i).msg));
 				emit worldInfoUpdate(wim, currentRHost);
 			} 
-			else if(incomingMessages.at(i).msg->GetTypeName() == "SharedWorldInfo" && (myGWRequestedHosts.contains(currentRHost) ||(myKMonitorRequestedHost == currentRHost))) {
+			else if(incomingMessages.at(i).msg->GetTypeName() == "SharedWorldInfo" && (myGWRequestedHosts.contains(currentRHost) 
+																								||(myKMonitorRequestedHost == currentRHost)) ) {
 				SharedWorldInfo swim;
 				swim.Clear();
 				swim.CopyFrom(*(incomingMessages.at(i).msg));
