@@ -93,13 +93,13 @@ void KGUIMessenger::allocateReceivedMessages() {
 				updateGameState(gsm, currentRHost);
 				emit gameStateMessageUpdate(gsm, currentRHost);
 			} 
-			else if(incomingMessages.at(i).msg->GetTypeName() == "WorldInfo" &&(myGWRequestedHosts.contains(currentRHost) ||(myKMonitorRequestedHost == currentRHost))) {
+			else if(incomingMessages.at(i).msg->GetTypeName() == "WorldInfo" && (myGWRequestedHosts.contains(currentRHost) ||(myKMonitorRequestedHost == currentRHost)) ) {
 				WorldInfo wim;
 				wim.Clear();
 				wim.CopyFrom(*(incomingMessages.at(i).msg));
 				emit worldInfoUpdate(wim, currentRHost);
 			} 
-			else if(incomingMessages.at(i).msg->GetTypeName() == "SharedWorldInfo" && myKMonitorRequestedHost == currentRHost) {
+			else if(incomingMessages.at(i).msg->GetTypeName() == "SharedWorldInfo" && (myGWRequestedHosts.contains(currentRHost) ||(myKMonitorRequestedHost == currentRHost))) {
 				SharedWorldInfo swim;
 				swim.Clear();
 				swim.CopyFrom(*(incomingMessages.at(i).msg));
@@ -336,14 +336,14 @@ void KGUIMessenger::tabChangeHandler(int currentTab) {
 
 void KGUIMessenger::printKnownHosts(KnownHosts hosts) {
 
-	std::cout <<  "#####KGUIMessenger::KNOWNHOSTS#######" << std::endl;
+	std::cout <<  "###### KGUIMessenger::KNOWNHOSTS ######" << std::endl;
 	const ::google::protobuf::RepeatedPtrField< HostEntry>& rf = hosts.entrylist();
 	::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
 
 	for(fit = rf.begin() ; fit != rf.end() ; ++fit) {
-		cout << "To hostid mou :: "  << (*fit).hostid() << endl;
-		cout << "To hostname mou :: "  << (*fit).hostname() << endl;
+		cout << "My host id :: "  << (*fit).hostid() << endl;
+		cout << "My hostname :: "  << (*fit).hostname() << endl;
 	}
 
-	std::cout <<  "###################" << std::endl << std::endl;
+	std::cout <<  "#######################################" << std::endl << std::endl;
 }

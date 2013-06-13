@@ -19,7 +19,7 @@ public:
 
 private slots:
 	void quitKMonitor();
-	void printCurrentTab (int index);
+	void printCurrentTab(int index);
 
 private:
 	Ui::KMonitor *ui;

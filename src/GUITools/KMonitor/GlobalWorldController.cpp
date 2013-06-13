@@ -21,7 +21,7 @@ GlobalWorldController::~GlobalWorldController() {
 }
 
 void GlobalWorldController::resizeEvent(QResizeEvent *event) {
-	//Keep the ratio
+	// keep the ratio
 	float width =(ui->graphicsView->width() - 40);
 	float height =(ui->graphicsView->width() - 40) / 1.5;
 
@@ -38,6 +38,15 @@ void GlobalWorldController::setKGFCGameStateInfo(GameStateMessage gsm, QString h
 
 	if(element != NULL)
 		element->setCurrentGSM(gsm);
+}
+
+void GlobalWorldController::sharedWorldInfoUpdateHandler(SharedWorldInfo nswim, QString host) {
+	std::cout << "SHARED UPDATE" << std::endl;
+	GraphicalRobotElement *element = paintArea->findGraphicalRobotItem(host);
+
+	if(element != NULL) {
+		element->setCurrentSWIM(nswim);
+	}
 }
 
 void GlobalWorldController::worldInfoUpdateHandler(WorldInfo nwim, QString host) {

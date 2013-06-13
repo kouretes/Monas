@@ -26,6 +26,7 @@ public slots:
 	void updateGameState(QString iconPath, QString stateMSG, QString hostId);
 	void setKGFCGameStateInfo(GameStateMessage, QString);
 	void worldInfoUpdateHandler(WorldInfo, QString);
+	void sharedWorldInfoUpdateHandler(SharedWorldInfo, QString);
 
 signals:
 	void GWRHSubscriptionRequest(QString);

@@ -49,8 +49,6 @@ KFieldScene::KFieldScene(QGraphicsView *parent) {
 	this->addItem(RTPost);
 	this->addItem(RBPost);
 	
-
-	
 	formationLabel = new QLabel("Ball Position:\nX:\nY:\n");
 	this->addWidget(formationLabel);
 	formationLabel->setStyleSheet("border: 2px solid #ffffff");
@@ -357,6 +355,17 @@ QRectF KFieldScene::ballRectFromFC(WorldInfo *wim, float width, float height) {
 	           sceneRect().height() * height / config.totalCarpetAreaHeight);
 }
 
+QRectF KFieldScene::ballRectFromFC(SharedWorldInfo *swim, float width, float height) {
+	float xMiddle = swim->globalballs(0).x() * 1000;
+	float yMiddle = swim->globalballs(0).y() * 1000;
+	
+	return QRectF(
+	           sceneRect().width() *(config.xCentre - width / 2 + xMiddle) / config.totalCarpetAreaWidth,
+	           sceneRect().height() - sceneRect().height() *(config.yCentre + height / 2 + yMiddle) / config.totalCarpetAreaHeight,
+	           sceneRect().width() * width / config.totalCarpetAreaWidth,
+	           sceneRect().height() * height / config.totalCarpetAreaHeight);
+}
+
 QLineF KFieldScene::unionistLineRectFromFC(WorldInfo *wim) {
 	float x = wim->myposition().x()*1000;
 	float y = wim->myposition().y()*1000;
@@ -364,6 +373,14 @@ QLineF KFieldScene::unionistLineRectFromFC(WorldInfo *wim) {
 	float b = sin(wim->myposition().phi());
 	float xMiddle =(wim->myposition().x() + wim->balls(0).relativex()*a - wim->balls(0).relativey()*b) * 1000;
 	float yMiddle =(wim->myposition().y() + wim->balls(0).relativex()*b + wim->balls(0).relativey()*a) * 1000;
+	return lineRectFromFC(x, y, xMiddle, yMiddle);
+}
+
+QLineF KFieldScene::unionistLineRectFromFC(WorldInfo *wim, SharedWorldInfo *swim) {
+	float x = wim->myposition().x() * 1000;
+	float y = wim->myposition().y() * 1000;
+	float xMiddle = swim->globalballs(0).x() * 1000;
+	float yMiddle = swim->globalballs(0).y() * 1000;
 	return lineRectFromFC(x, y, xMiddle, yMiddle);
 }
 

@@ -334,11 +334,13 @@ private:
 	bool GWSBallVisible;
 	bool LWSBallVisible;
 	QGraphicsEllipseItem *Ball;
+	QGraphicsEllipseItem *sharedBall;
     int t;
 	bool GWSUnionistLineVisible;
 	bool LWSUnionistLineVisible;
 	QGraphicsLineItem *UnionistLine;
-
+	QGraphicsLineItem *SharedUnionistLine;
+	
 	ObservationMessage currentObsm;
 
 	bool LWSVisionBallVisible;
