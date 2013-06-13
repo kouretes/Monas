@@ -12,15 +12,16 @@
 
 ACTIVITY_START
 
-class SharedWorldModel: public IActivity
-{
+class SharedWorldModel: public IActivity {
 
 public:
+
 	ACTIVITY_CONSTRUCTOR(SharedWorldModel);
-	std::string ACTIVITY_VISIBLE GetName()
-	{
+	
+	std::string ACTIVITY_VISIBLE GetName() {
 		return "SharedWorldModel";
 	}
+	
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
 	void ACTIVITY_VISIBLE Reset();
@@ -29,6 +30,7 @@ public:
 	boost::shared_ptr<const KnownHosts> h;
 
 private:
+
     void ReadFieldConf();
 	int findClosestRobot();
 	void gather_info(int count);

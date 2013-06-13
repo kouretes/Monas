@@ -94,13 +94,13 @@ int SharedWorldModel::Execute()
         if(wim.get() != 0)
         {
             gather_info(count);
+            count++;
         }
     }
 
-	//Robots' WorldInfo
-	if(!h.get() || (h && h->entrylist_size() == 0))
-	{
-		//		Logger::Instance().WriteMsg("SharedWorldModel", "No info from other robots", Logger::Info);
+
+	if(!h.get() || (h && h->entrylist_size() == 0)) {
+		Logger::Instance().WriteMsg("SharedWorldModel", "No info from other robots!", Logger::Info);
 	}
 	else
 	{
@@ -115,8 +115,9 @@ int SharedWorldModel::Execute()
             {
                 if(wim.get() != 0)
                 {
-                    //                   Logger::Instance().WriteMsg("SharedWorldModel", "Host Name: " + _toString((*fit).hostname()) + " \tRobot x: " + _toString(robot_x[id]) + " Robot y: " + _toString(robot_y[id]), Logger::Info);
+                    // Logger::Instance().WriteMsg("SharedWorldModel", "Host Name: " + _toString((*fit).hostname()) + " \tRobot x: " + _toString(robot_x[id]) + " Robot y: " + 							_toString(robot_y[id]), Logger::Info);
                     gather_info(count);
+                    count++;
                 }
 
 		    }
@@ -197,10 +198,9 @@ void SharedWorldModel::gather_info(int count){
     tPose.mutable_pose()->CopyFrom(rPose);
     tPose.set_robotid(id+1);
     tPose.set_stability(stab);
-
+	
     swi.add_teammateposition();
-    swi.mutable_teammateposition(count)->CopyFrom(tPose);
-    count++;
+    swi.mutable_teammateposition(count)->CopyFrom(tPose);   
 }
 
 void SharedWorldModel::predict()
