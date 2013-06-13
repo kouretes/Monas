@@ -64,13 +64,6 @@ void Behavior::UserInit() {
 	role = ATTACKER;
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
-	//fGen.Init(config.maxPlayers, false);
-	/*robots.resize(config.maxPlayers-3);
-	std::cout << "INITIAL FORMATION CALCULATED!" << std::endl; 
-	fGen.Init(config.maxPlayers, true);
-	currentRole = fGen.getFormation()->at(config.playerNumber - 1);
-	std::cout << "I CHOOSE TO BE: " << getRoleString(currentRole.role) << std::endl;
-	sendDebugMessages();*/
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -257,6 +250,7 @@ int Behavior::Execute() {
 	getMotionData();
 	getTeamPositions();
 	
+	/*
 	if(dispTimer + seconds(10) < microsec_clock::universal_time()) {
 		std::cout << "ROBOTS: "+_toString(numOfRobots) << std::endl;
 		std::cout << "==========================================" << std::endl;
@@ -270,37 +264,7 @@ int Behavior::Execute() {
 		}
 		dispTimer = microsec_clock::universal_time();
 	}
-	
-	//std::cout << "EXECUTE" << std::endl;
-	/*
-	generateFakeBalls();
-	if(sharedBallFound == true) {
-		//std::cout<<"UPARXEI SHARED BALL"<<std::endl;
-		if(lastFormation + seconds(10) < microsec_clock::universal_time()) {//|| DISTANCE(CurrentSharedBallX, SharedGlobalBallX, CurrentSharedBallY, SharedGlobalBallY) > 0.7) {
-			
-			//st = microsec_clock::universal_time();
-			//std::cout<<"NEW FORMATION"<<std::endl;
-			fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
-			if(!gameMode){
-				sendDebugMessages();
-			}
-			lastFormation = microsec_clock::universal_time();
-			
-			
-			if(config.playerNumber != 1)
-				Coordinate();
-			//et = microsec_clock::universal_time();
-			//boost::posix_time::time_duration duration = et - st;
-			//std::cout << "Duration by Boost posix: " << duration.total_microseconds() <<std::endl;
-			//std::cout << "Processing time is " << ((et - st) * 1000000 / initalizeFrequency()) << " microsec "<< std::endl;
-			//goToPositionFlag = false;
-			
-		}
-	}
-	//else
-		//std::cout<<"DEEEEEEEEEEEEEEEN"<<std::endl;
 	*/
-	
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -360,19 +324,13 @@ int Behavior::Execute() {
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
 			_blk.publishState(hcontrol, "behavior");
-			//dispTimer = microsec_clock::universal_time();
 			return 0;
 		}
 
 		// Publish message to head controller to run check for ball
-//		if(formationFlag == true) {
-//			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR); // SMART_SELECT
-//			_blk.publishState(hcontrol, "behavior");
-//		}
-//		else {
-			hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
-			_blk.publishState(hcontrol, "behavior");
-		//}
+		hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
+		_blk.publishState(hcontrol, "behavior");
+
 		
 		if(config.playerNumber == 1 || role == GOALIE) { // goalie role if number 1
 			
@@ -385,25 +343,11 @@ int Behavior::Execute() {
 			goalie();
 		}
 		else { // not goalie behavior
-			
-//			if(formationFlag == true) {
-//				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false) {
-//					//dispTimer = microsec_clock::universal_time();
-//					return 0;
-//				}
-//				else
-//					formationFlag = false;
-//			}
-			
+						
 			if(currentRole.role == FormationParameters::ONBALL) {
-				
-				//if(dispTimer + seconds(3) < microsec_clock::universal_time()) {
-				//	std::cout << "BEHAVIOR ATTACKER" << std::endl;
-				//}
-				
+
 				if(goToPositionFlag == false && ballFound == 0) {
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false) {
-						//dispTimer = microsec_clock::universal_time();
 						return 0;
 					}
 					else
@@ -477,14 +421,9 @@ int Behavior::Execute() {
 
 			}
 			else { // role is not attacker
-			
-				//if(dispTimer + seconds(3) < microsec_clock::universal_time()) {
-				//	std::cout << "BEHAVIOR OTHER" << std::endl;
-				//}
-				
+
 				if(goToPositionFlag == false) {
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false) {
-						//dispTimer = microsec_clock::universal_time();
 						return 0;
 					}
 					else
@@ -546,11 +485,11 @@ int Behavior::Execute() {
 		kickOff = gsm->kickoff();
 	
 		if(prevGameState == PLAYER_INITIAL) {
-			std::cout << "INITIAL FORMATION CALCULATED!" << std::endl; 
+			//std::cout << "INITIAL FORMATION CALCULATED!" << std::endl; 
 			fGen.Init(config.maxPlayers, true);
 			sendDebugMessages();
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
-			std::cout << "I CHOOSE TO BE: " << getRoleString(currentRole.role) << std::endl;
+			//std::cout << "I CHOOSE TO BE: " << getRoleString(currentRole.role) << std::endl;
 			lastFormation = microsec_clock::universal_time();
 			formationFlag = true;
 			goToPositionFlag = false;
@@ -562,8 +501,7 @@ int Behavior::Execute() {
 			_blk.publishState(hcontrol, "behavior");
 		}
 	}
-	
-	//dispTimer = microsec_clock::universal_time();
+
 	return 0;
 }
 
@@ -582,7 +520,7 @@ void Behavior::Coordinate() {
 		print(roles, "Behavior");
 		
 		mappings = permutationsOfCombinations(roles, numOfRobots);
-		std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
+		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
 		print(mappings, "Behavior");
 		roles.clear();
 		
@@ -609,15 +547,15 @@ void Behavior::Coordinate() {
 				maxU = mapCost;
 				index = map;
 			}
-			std::cout << "MAPPING: ";
+			//std::cout << "MAPPING: ";
 			print(mappings[map], "Behavior");
-			std::cout << "COST: " << _toString(mapCost) << std::endl;
+			//std::cout << "COST: " << _toString(mapCost) << std::endl;
 		}
 		
 		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
-		std::cout << "OPTIMAL MAP IS: ";
+		//std::cout << "OPTIMAL MAP IS: ";
 		print(mappings[index], "Behavior");
-		std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;	
+		//std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;	
 }
 
 /**
@@ -775,14 +713,14 @@ void Behavior::updateOrientation() {
 /**
  * Function used for kicking the ball.
  */
-void Behavior::kick()
-{
-	if ( kickOff && (microsec_clock::universal_time() <= lastPlay + seconds(0/*25*/)) ) {
+void Behavior::kick() {
+
+	if(kickOff && (microsec_clock::universal_time() <= lastPlay + seconds(0) ) ) {
 		if (behaviorRand() < 0.75) {
 			littleWalk(0.2, 0.0, 0.0);
 		}
 		else {
-			if (side == 1)
+			if(side == 1)
 				amot.set_command(config.kicks.KickSideLeft);
 			else
 				amot.set_command(config.kicks.KickSideRight);
@@ -792,33 +730,32 @@ void Behavior::kick()
 	}
 	else {
 
-		if (orientation == 0) {
-			if (ballY > 0.0)
+		if(orientation == 0) {
+			if(ballY > 0.0)
 				amot.set_command(config.kicks.KickForwardLeft); // Left Kick
 			else
 				amot.set_command(config.kicks.KickForwardRight); // Right Kick
 		}
-		else if (orientation == 3) {
-			amot.set_command(config.kicks.KickSideLeft); //  HardLeftSideKick KickSideLeftFast
+		else if(orientation == 3) {
+			amot.set_command(config.kicks.KickSideLeft);
 			direction = -1;
 		}
-		else if (orientation == 1) {
-			amot.set_command(config.kicks.KickSideRight); // HardRightSideKick KickSideRightFast
+		else if(orientation == 1) {
+			amot.set_command(config.kicks.KickSideRight);
 			direction = +1;
 		}
-		else if (orientation == 2) {
-			if (ballY > 0.0)
-				amot.set_command(config.kicks.KickSideLeft); // LeftBackHigh_carpet KickBackLeft KickBackLeftPierris
+		else if(orientation == 2) {
+			if(ballY > 0.0)
+				amot.set_command(config.kicks.KickSideLeft); 
 			else
-				amot.set_command(config.kicks.KickSideRight); // RightBackHigh_carpet KickBackRight KickBackRightPierris
+				amot.set_command(config.kicks.KickSideRight);
 		}
 		else {
-			if (ballY > 0.0)
+			if(ballY > 0.0)
 				amot.set_command(config.kicks.KickSideLeft);
 			else
 				amot.set_command(config.kicks.KickSideRight);
 		}
-
 		_blk.publishSignal(amot, "motion");
 	}
 }
@@ -889,12 +826,12 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f) {
 }
 
 
-void Behavior::littleWalk(double x, double y, double th) {
+void Behavior::littleWalk(double x, double y, double theta) {
 
 	wmot.set_command("walkTo");
 	wmot.set_parameter(0, x);
 	wmot.set_parameter(1, y);
-	wmot.set_parameter(2, th);
+	wmot.set_parameter(2, theta);
 	_blk.publishSignal(wmot, "motion");
 }
 

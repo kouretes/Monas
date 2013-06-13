@@ -243,7 +243,7 @@ private:
 	 * @fn void littleWalk(double x, double y, double th)
 	 * @brief (TODO)
 	 */
-	void littleWalk(double x, double y, double th);
+	void littleWalk(double x, double y, double theta);
 
 	/**
 	 * @fn void approachBall()
