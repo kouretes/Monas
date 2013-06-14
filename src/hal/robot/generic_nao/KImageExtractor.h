@@ -3,10 +3,6 @@
 
 #include <iostream>
 
-
-
-#include "core/include/Blackboard.hpp"
-
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "NaoCamera.h"
 
@@ -28,7 +24,7 @@ class KImageExtractor
 public:
 	KImageExtractor();
 
-	void Init(Blackboard *blk);
+	void Init();
 
 	~KImageExtractor();
 	//Get new Image from hardware
@@ -47,7 +43,6 @@ private:
 
 	bool doneSubscribe;//Initializations done?
 	float refexpusec, lastexpusec;
-	Blackboard *_blk;
 
 	void _releaseImage();
 	void setDefaultSettings();

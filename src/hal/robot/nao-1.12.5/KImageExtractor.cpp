@@ -31,9 +31,8 @@ KImageExtractor::KImageExtractor()
 	naocam = new NaoCamera(newPrefs);
 }
 
-void KImageExtractor::Init(Blackboard *blk)
+void KImageExtractor::Init()
 {
-	_blk = blk;
 	doneSubscribe = false;
 	refexpusec = MAXEXPUS;
 

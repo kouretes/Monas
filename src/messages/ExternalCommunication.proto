@@ -71,6 +71,16 @@ message ExternalCommand{
 	optional string stringvars = 5;
 }
 
+message CameraCalibration{
+	required string messageid = 1;
+	required uint32 targethost = 2;
+	required uint32 gain = 3;
+	required uint32 contrast = 4;
+	required uint32 redbalance = 5;
+	required uint32 bluebalance = 6;
+	required uint32 greengain = 7;
+}
+
 message GenericACK{
 	required uint32 hostid = 1;
 	required string messageid = 2;

@@ -61,6 +61,8 @@ int Gateway::Execute() {
 			processExternalConfig ( (*fit).hostid() );
 			//Command part
 			processExternalCommands ( (*fit).hostid() );
+			//Camera part
+			processCameraCalibration ( (*fit).hostid() );
 		}
 	}
 
@@ -317,4 +319,78 @@ void Gateway::processHeadCommand(int commandID, float value){
 		hcm.mutable_task()->set_action(HeadControlMessage::NOTHING);
 	}
 	publishState(hcm, "behavior");
+}
+
+void Gateway::processCameraCalibration (uint32_t incomingHostId) {
+	boost::shared_ptr<const CameraCalibration> eccmsg = _blk.readSignal<CameraCalibration> ("external", incomingHostId);
+
+	if (eccmsg.get() != NULL && eccmsg->targethost() == localHostId) {
+		bool lockOwner = true;
+
+		if (locked == false) {
+			lockId = incomingHostId;
+			locked = true;
+		} else if (lockId != incomingHostId) {
+			lockOwner = false; //Locked in other gui
+		}
+
+		if (lockOwner) {
+			map<uint32_t, string>::iterator iter = ecameratimeouts.find (incomingHostId);
+			//We must always send back ack but we must do changes only if the message is new and not retrasmit
+			bool freshMessage = false;
+
+			if (iter == ecameratimeouts.end() || (*iter).second.compare (eccmsg->messageid() ) != 0) {
+				freshMessage = true;
+			}
+
+			if (freshMessage) {
+				bool changes = false;
+				vector<pair<string, string> > dataForWrite;
+				pair<string, string> temp;
+				temp.first = "camera.Gain";
+				temp.second = _toString(eccmsg->gain());
+				if(eccmsg->gain() != (unsigned int)atoi(Configurator::Instance().findValueForKey("camera.Gain").c_str())){
+					changes = true;
+				}
+				dataForWrite.push_back(temp);
+				temp.first = "camera.Contrast";
+				temp.second = _toString(eccmsg->contrast());
+				if(eccmsg->contrast() != (unsigned int)atoi(Configurator::Instance().findValueForKey("camera.Contrast").c_str())){
+					changes = true;
+				}
+				dataForWrite.push_back(temp);
+				temp.first = "camera.GreenChannelGain";
+				temp.second = _toString(eccmsg->greengain());
+				if(eccmsg->greengain() != (unsigned int)atoi(Configurator::Instance().findValueForKey("camera.GreenChannelGain").c_str())){
+					changes = true;
+				}
+				dataForWrite.push_back(temp);
+				temp.first = "camera.RedBalance";
+				temp.second = _toString(eccmsg->redbalance());
+				if(eccmsg->redbalance() != (unsigned int)atoi(Configurator::Instance().findValueForKey("camera.RedBalance").c_str())){
+					changes = true;
+				}
+				dataForWrite.push_back(temp);
+				temp.first = "camera.BlueBalance";
+				temp.second = _toString(eccmsg->bluebalance());
+				if(eccmsg->bluebalance() != (unsigned int)atoi(Configurator::Instance().findValueForKey("camera.BlueBalance").c_str())){
+					changes = true;
+				}
+				dataForWrite.push_back(temp);
+		
+				if(changes){		
+					ccm.set_readconfiguration(true);
+					publishSignal(ccm, "image");
+					Configurator::Instance().burstWrite (dataForWrite);
+				}
+				
+			}
+		}
+
+		ecameratimeouts[incomingHostId] = eccmsg->messageid();
+		outmsg.set_hostid (incomingHostId);
+		outmsg.set_messageid (eccmsg->messageid() );
+		outmsg.set_ownlock (lockOwner);
+		publishSignal (outmsg, "external");
+	}
 }

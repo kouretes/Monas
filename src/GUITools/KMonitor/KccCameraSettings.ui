@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -126,7 +126,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="gainEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>50</horstretch>
@@ -250,7 +250,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_5">
+           <widget class="QLineEdit" name="contrastEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>50</horstretch>
@@ -374,7 +374,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_3">
+           <widget class="QLineEdit" name="redBalanceEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>50</horstretch>
@@ -498,7 +498,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_4">
+           <widget class="QLineEdit" name="blueBalanceEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>50</horstretch>
@@ -622,7 +622,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLineEdit" name="greenGainValue">
+           <widget class="QLineEdit" name="greenGainEdit">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -673,6 +673,13 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pbSend">
+        <property name="text">
+         <string>Send</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pbSave">

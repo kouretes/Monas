@@ -1,7 +1,11 @@
 #ifndef HOSTSCOMBOBOX_H
 #define HOSTSCOMBOBOX_H
 
+#ifdef QT_VERSION_5
+#include <QtWidgets/QComboBox>
+#else
 #include <QtGui/QComboBox>
+#endif
 #include <QString>
 
 

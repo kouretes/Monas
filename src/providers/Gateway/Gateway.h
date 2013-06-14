@@ -18,6 +18,7 @@
 #include "messages/ExternalCommunication.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/BehaviorMessages.pb.h"
+#include "messages/Kimage.pb.h"
 
 #include "hal/syscall.h"
 
@@ -60,7 +61,7 @@ private:
 	uint32_t localHostId;
 	uint32_t lockId;
 	bool locked;
-	std::map<uint32_t, std::string> ectimeouts, comtimeouts;
+	std::map<uint32_t, std::string> ectimeouts, comtimeouts, ecameratimeouts;
 
 	ResetMessage resetActMsg;
 	GenericACK outmsg;
@@ -69,13 +70,19 @@ private:
 	LocalizationResetMessage lrm;
 	MotionStiffnessMessage msm;
 	HeadControlMessage hcm;
-
+	CalibrateCamMessage ccm;
 	/**
 	 * Process all the configurations message's (reset, config update and file upload).
 	 * This functions forwards to blk a reset or an configuration update message and write's to files if necessary
 	 * @param incomingHostId: the id of the host that send us this message.
 	 * */
 	void processExternalConfig(uint32_t incomingHostId);
+	
+	/**
+	 * Send a message to the image provider to re-calibrate the camera
+	 * @param incomingHostId: the id of the host that send us this message.
+	 * */
+	void processCameraCalibration(uint32_t incomingHostId);
 
 	/**
 	 * Process all command message. This functions only calls the appropriate function to proccess every command separately.

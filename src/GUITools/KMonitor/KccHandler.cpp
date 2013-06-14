@@ -415,11 +415,20 @@ void KccHandler::segOpen() {
 void KccHandler::manualCalibration(){
 	if(calibrationWidget == NULL){
 		calibrationWidget = new KccCameraSettings();
+		
+		connect(calibrationWidget, SIGNAL(iAmClosing()), this, SLOT(calibrationDialogClosed()) );
+		connect(calibrationWidget, SIGNAL(sendCameraCalibrationMessage(CameraCalibration)), this, SLOT(catchForwardMsg(CameraCalibration)) );
+		connect(this, SIGNAL(forwardAck(GenericACK, QString)), calibrationWidget, SLOT(genericAckReceived(GenericACK, QString)) );
+		
 	 	calibrationWidget->show();
 	}else{
 	 	calibrationWidget->raise();
 		calibrationWidget->activateWindow();
 	}
+}
+
+void KccHandler::calibrationDialogClosed(){
+	calibrationWidget = NULL;
 }
 
 void KccHandler::pbOrangePressed() {
@@ -489,6 +498,13 @@ void KccHandler::SubscriptionHandler(QString data1) {
 	emit SubscriptionRequest(data1);
 }
 
+void KccHandler::genericAckReceived(GenericACK ack, QString hostid) {
+	emit forwardAck(ack, hostid);
+}
+
+void KccHandler::catchForwardMsg(CameraCalibration msg){
+	emit sendCameraCalibrationMessage(msg);
+}
 KccHandler::~KccHandler() {
 	if(calibrationWidget != NULL){
 		calibrationWidget->close();

@@ -64,7 +64,7 @@ CommandsController::CommandsController(QWidget *parent) :
 	ui->statusText->setText("Waiting");
 	// timer for the acks
 	timer = new QTimer();
-	timer->setInterval(200);
+	timer->setInterval(50);
 	connect(this->timer, SIGNAL(timeout()), this, SLOT(retransmitMessage()) );
 	lastMessageACKed = true;
 	numOfRetransmits = 0;

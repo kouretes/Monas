@@ -291,6 +291,18 @@ void KGUIMessenger::CommandPublishMessage(ExternalCommand message) {
 	multicast->getReadBuffer()->add(nmsg);
 }
 
+void KGUIMessenger::KccPublishMessage(CameraCalibration message) {
+	message.set_targethost(myKMonitorRequestedHost.toUInt() );
+	msgentry nmsg;
+	google::protobuf::Message *newptr = message.New();
+	newptr->CopyFrom(message);
+	nmsg.msg.reset(newptr);
+	nmsg.host = msgentry::HOST_ID_LOCAL_HOST;
+	nmsg.topic = Topics::Instance().getId("external");
+	nmsg.msgclass = msgentry::SIGNAL;
+	multicast->getReadBuffer()->add(nmsg);
+}
+
 void KGUIMessenger::tabChangeHandler(int currentTab) {
 	QString hostId;
 	currentKMonitorTab = currentTab;
@@ -324,6 +336,7 @@ void KGUIMessenger::tabChangeHandler(int currentTab) {
 		break;
 	case 5: // Kcc
 		updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 	case 6: // Xml
 		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;

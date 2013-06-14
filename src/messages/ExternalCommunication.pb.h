@@ -35,6 +35,7 @@ class HandShake;
 class FileTransfer;
 class ExternalConfig;
 class ExternalCommand;
+class CameraCalibration;
 class GenericACK;
 
 enum ExternalCommand_SIMPLE_ACTIONS {
@@ -871,6 +872,152 @@ class ExternalCommand : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static ExternalCommand* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CameraCalibration : public ::google::protobuf::Message {
+ public:
+  CameraCalibration();
+  virtual ~CameraCalibration();
+  
+  CameraCalibration(const CameraCalibration& from);
+  
+  inline CameraCalibration& operator=(const CameraCalibration& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CameraCalibration& default_instance();
+  
+  void Swap(CameraCalibration* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CameraCalibration* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CameraCalibration& from);
+  void MergeFrom(const CameraCalibration& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string messageid = 1;
+  inline bool has_messageid() const;
+  inline void clear_messageid();
+  static const int kMessageidFieldNumber = 1;
+  inline const ::std::string& messageid() const;
+  inline void set_messageid(const ::std::string& value);
+  inline void set_messageid(const char* value);
+  inline void set_messageid(const char* value, size_t size);
+  inline ::std::string* mutable_messageid();
+  inline ::std::string* release_messageid();
+  
+  // required uint32 targethost = 2;
+  inline bool has_targethost() const;
+  inline void clear_targethost();
+  static const int kTargethostFieldNumber = 2;
+  inline ::google::protobuf::uint32 targethost() const;
+  inline void set_targethost(::google::protobuf::uint32 value);
+  
+  // required uint32 gain = 3;
+  inline bool has_gain() const;
+  inline void clear_gain();
+  static const int kGainFieldNumber = 3;
+  inline ::google::protobuf::uint32 gain() const;
+  inline void set_gain(::google::protobuf::uint32 value);
+  
+  // required uint32 contrast = 4;
+  inline bool has_contrast() const;
+  inline void clear_contrast();
+  static const int kContrastFieldNumber = 4;
+  inline ::google::protobuf::uint32 contrast() const;
+  inline void set_contrast(::google::protobuf::uint32 value);
+  
+  // required uint32 redbalance = 5;
+  inline bool has_redbalance() const;
+  inline void clear_redbalance();
+  static const int kRedbalanceFieldNumber = 5;
+  inline ::google::protobuf::uint32 redbalance() const;
+  inline void set_redbalance(::google::protobuf::uint32 value);
+  
+  // required uint32 bluebalance = 6;
+  inline bool has_bluebalance() const;
+  inline void clear_bluebalance();
+  static const int kBluebalanceFieldNumber = 6;
+  inline ::google::protobuf::uint32 bluebalance() const;
+  inline void set_bluebalance(::google::protobuf::uint32 value);
+  
+  // required uint32 greengain = 7;
+  inline bool has_greengain() const;
+  inline void clear_greengain();
+  static const int kGreengainFieldNumber = 7;
+  inline ::google::protobuf::uint32 greengain() const;
+  inline void set_greengain(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:CameraCalibration)
+ private:
+  inline void set_has_messageid();
+  inline void clear_has_messageid();
+  inline void set_has_targethost();
+  inline void clear_has_targethost();
+  inline void set_has_gain();
+  inline void clear_has_gain();
+  inline void set_has_contrast();
+  inline void clear_has_contrast();
+  inline void set_has_redbalance();
+  inline void clear_has_redbalance();
+  inline void set_has_bluebalance();
+  inline void clear_has_bluebalance();
+  inline void set_has_greengain();
+  inline void clear_has_greengain();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* messageid_;
+  ::google::protobuf::uint32 targethost_;
+  ::google::protobuf::uint32 gain_;
+  ::google::protobuf::uint32 contrast_;
+  ::google::protobuf::uint32 redbalance_;
+  ::google::protobuf::uint32 bluebalance_;
+  ::google::protobuf::uint32 greengain_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_ExternalCommunication_2eproto();
+  friend void protobuf_AssignDesc_ExternalCommunication_2eproto();
+  friend void protobuf_ShutdownFile_ExternalCommunication_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CameraCalibration* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1765,6 +1912,200 @@ inline ::std::string* ExternalCommand::release_stringvars() {
     stringvars_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
+}
+
+// -------------------------------------------------------------------
+
+// CameraCalibration
+
+// required string messageid = 1;
+inline bool CameraCalibration::has_messageid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CameraCalibration::set_has_messageid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CameraCalibration::clear_has_messageid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CameraCalibration::clear_messageid() {
+  if (messageid_ != &::google::protobuf::internal::kEmptyString) {
+    messageid_->clear();
+  }
+  clear_has_messageid();
+}
+inline const ::std::string& CameraCalibration::messageid() const {
+  return *messageid_;
+}
+inline void CameraCalibration::set_messageid(const ::std::string& value) {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  messageid_->assign(value);
+}
+inline void CameraCalibration::set_messageid(const char* value) {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  messageid_->assign(value);
+}
+inline void CameraCalibration::set_messageid(const char* value, size_t size) {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  messageid_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CameraCalibration::mutable_messageid() {
+  set_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    messageid_ = new ::std::string;
+  }
+  return messageid_;
+}
+inline ::std::string* CameraCalibration::release_messageid() {
+  clear_has_messageid();
+  if (messageid_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = messageid_;
+    messageid_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required uint32 targethost = 2;
+inline bool CameraCalibration::has_targethost() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CameraCalibration::set_has_targethost() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CameraCalibration::clear_has_targethost() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CameraCalibration::clear_targethost() {
+  targethost_ = 0u;
+  clear_has_targethost();
+}
+inline ::google::protobuf::uint32 CameraCalibration::targethost() const {
+  return targethost_;
+}
+inline void CameraCalibration::set_targethost(::google::protobuf::uint32 value) {
+  set_has_targethost();
+  targethost_ = value;
+}
+
+// required uint32 gain = 3;
+inline bool CameraCalibration::has_gain() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CameraCalibration::set_has_gain() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CameraCalibration::clear_has_gain() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CameraCalibration::clear_gain() {
+  gain_ = 0u;
+  clear_has_gain();
+}
+inline ::google::protobuf::uint32 CameraCalibration::gain() const {
+  return gain_;
+}
+inline void CameraCalibration::set_gain(::google::protobuf::uint32 value) {
+  set_has_gain();
+  gain_ = value;
+}
+
+// required uint32 contrast = 4;
+inline bool CameraCalibration::has_contrast() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CameraCalibration::set_has_contrast() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CameraCalibration::clear_has_contrast() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CameraCalibration::clear_contrast() {
+  contrast_ = 0u;
+  clear_has_contrast();
+}
+inline ::google::protobuf::uint32 CameraCalibration::contrast() const {
+  return contrast_;
+}
+inline void CameraCalibration::set_contrast(::google::protobuf::uint32 value) {
+  set_has_contrast();
+  contrast_ = value;
+}
+
+// required uint32 redbalance = 5;
+inline bool CameraCalibration::has_redbalance() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CameraCalibration::set_has_redbalance() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CameraCalibration::clear_has_redbalance() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CameraCalibration::clear_redbalance() {
+  redbalance_ = 0u;
+  clear_has_redbalance();
+}
+inline ::google::protobuf::uint32 CameraCalibration::redbalance() const {
+  return redbalance_;
+}
+inline void CameraCalibration::set_redbalance(::google::protobuf::uint32 value) {
+  set_has_redbalance();
+  redbalance_ = value;
+}
+
+// required uint32 bluebalance = 6;
+inline bool CameraCalibration::has_bluebalance() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CameraCalibration::set_has_bluebalance() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CameraCalibration::clear_has_bluebalance() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CameraCalibration::clear_bluebalance() {
+  bluebalance_ = 0u;
+  clear_has_bluebalance();
+}
+inline ::google::protobuf::uint32 CameraCalibration::bluebalance() const {
+  return bluebalance_;
+}
+inline void CameraCalibration::set_bluebalance(::google::protobuf::uint32 value) {
+  set_has_bluebalance();
+  bluebalance_ = value;
+}
+
+// required uint32 greengain = 7;
+inline bool CameraCalibration::has_greengain() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CameraCalibration::set_has_greengain() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CameraCalibration::clear_has_greengain() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CameraCalibration::clear_greengain() {
+  greengain_ = 0u;
+  clear_has_greengain();
+}
+inline ::google::protobuf::uint32 CameraCalibration::greengain() const {
+  return greengain_;
+}
+inline void CameraCalibration::set_greengain(::google::protobuf::uint32 value) {
+  set_has_greengain();
+  greengain_ = value;
 }
 
 // -------------------------------------------------------------------

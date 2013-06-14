@@ -1,6 +1,7 @@
 #ifndef KMAPSCENE_H_
 #define KMAPSCENE_H_
 
+#include <QGraphicsScene>
 #include <iomanip>
 #include <string>
 #include <cstring>
@@ -34,7 +35,6 @@
 
 #define PathLength 			50
 
-#include <QGraphicsScene>
 #include <QList>
 
 class KMapScene : public QGraphicsScene {

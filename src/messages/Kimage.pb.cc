@@ -20,9 +20,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
   KRawImage_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* KRawImage_Colorspaces_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* KRawImage_Camera_descriptor_ = NULL;
-const ::google::protobuf::Descriptor* KCalibrateCam_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* CalibrateCamMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  KCalibrateCam_reflection_ = NULL;
+  CalibrateCamMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -57,24 +57,21 @@ void protobuf_AssignDesc_Kimage_2eproto() {
       sizeof(KRawImage));
   KRawImage_Colorspaces_descriptor_ = KRawImage_descriptor_->enum_type(0);
   KRawImage_Camera_descriptor_ = KRawImage_descriptor_->enum_type(1);
-  KCalibrateCam_descriptor_ = file->message_type(1);
-  static const int KCalibrateCam_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KCalibrateCam, status_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KCalibrateCam, sleeptime_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KCalibrateCam, exp_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KCalibrateCam, exposure_comp_),
+  CalibrateCamMessage_descriptor_ = file->message_type(1);
+  static const int CalibrateCamMessage_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCamMessage, readconfiguration_),
   };
-  KCalibrateCam_reflection_ =
+  CalibrateCamMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      KCalibrateCam_descriptor_,
-      KCalibrateCam::default_instance_,
-      KCalibrateCam_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KCalibrateCam, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(KCalibrateCam, _unknown_fields_),
+      CalibrateCamMessage_descriptor_,
+      CalibrateCamMessage::default_instance_,
+      CalibrateCamMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCamMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CalibrateCamMessage, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(KCalibrateCam));
+      sizeof(CalibrateCamMessage));
 }
 
 namespace {
@@ -90,7 +87,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     KRawImage_descriptor_, &KRawImage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    KCalibrateCam_descriptor_, &KCalibrateCam::default_instance());
+    CalibrateCamMessage_descriptor_, &CalibrateCamMessage::default_instance());
 }
 
 }  // namespace
@@ -98,8 +95,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_Kimage_2eproto() {
   delete KRawImage::default_instance_;
   delete KRawImage_reflection_;
-  delete KCalibrateCam::default_instance_;
-  delete KCalibrateCam_reflection_;
+  delete CalibrateCamMessage::default_instance_;
+  delete CalibrateCamMessage_reflection_;
 }
 
 void protobuf_AddDesc_Kimage_2eproto() {
@@ -116,16 +113,14 @@ void protobuf_AddDesc_Kimage_2eproto() {
     "xposure_us\030\006 \002(\005\022\027\n\017luminance_scale\030\007 \002("
     "\002\022(\n\ractive_camera\030\010 \002(\0162\021.KRawImage.Cam"
     "era\"\"\n\013Colorspaces\022\010\n\004YUYV\020\001\022\t\n\005OTHER\020\002\""
-    "\035\n\006Camera\022\007\n\003TOP\020\000\022\n\n\006BOTTOM\020\001\"c\n\rKCalib"
-    "rateCam\022\016\n\006status\030\001 \002(\005\022\027\n\tsleeptime\030\002 \002"
-    "(\005:\0041500\022\017\n\003exp\030\003 \002(\005:\00213\022\030\n\rexposure_co"
-    "mp\030\004 \002(\002:\0011", 411);
+    "\035\n\006Camera\022\007\n\003TOP\020\000\022\n\n\006BOTTOM\020\001\"0\n\023Calibr"
+    "ateCamMessage\022\031\n\021readConfiguration\030\001 \002(\010", 360);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Kimage.proto", &protobuf_RegisterTypes);
   KRawImage::default_instance_ = new KRawImage();
-  KCalibrateCam::default_instance_ = new KCalibrateCam();
+  CalibrateCamMessage::default_instance_ = new CalibrateCamMessage();
   KRawImage::default_instance_->InitAsDefaultInstance();
-  KCalibrateCam::default_instance_->InitAsDefaultInstance();
+  CalibrateCamMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_Kimage_2eproto);
 }
 
@@ -688,137 +683,80 @@ void KRawImage::Swap(KRawImage* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int KCalibrateCam::kStatusFieldNumber;
-const int KCalibrateCam::kSleeptimeFieldNumber;
-const int KCalibrateCam::kExpFieldNumber;
-const int KCalibrateCam::kExposureCompFieldNumber;
+const int CalibrateCamMessage::kReadConfigurationFieldNumber;
 #endif  // !_MSC_VER
 
-KCalibrateCam::KCalibrateCam()
+CalibrateCamMessage::CalibrateCamMessage()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void KCalibrateCam::InitAsDefaultInstance() {
+void CalibrateCamMessage::InitAsDefaultInstance() {
 }
 
-KCalibrateCam::KCalibrateCam(const KCalibrateCam& from)
+CalibrateCamMessage::CalibrateCamMessage(const CalibrateCamMessage& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void KCalibrateCam::SharedCtor() {
+void CalibrateCamMessage::SharedCtor() {
   _cached_size_ = 0;
-  status_ = 0;
-  sleeptime_ = 1500;
-  exp_ = 13;
-  exposure_comp_ = 1;
+  readconfiguration_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-KCalibrateCam::~KCalibrateCam() {
+CalibrateCamMessage::~CalibrateCamMessage() {
   SharedDtor();
 }
 
-void KCalibrateCam::SharedDtor() {
+void CalibrateCamMessage::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void KCalibrateCam::SetCachedSize(int size) const {
+void CalibrateCamMessage::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* KCalibrateCam::descriptor() {
+const ::google::protobuf::Descriptor* CalibrateCamMessage::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return KCalibrateCam_descriptor_;
+  return CalibrateCamMessage_descriptor_;
 }
 
-const KCalibrateCam& KCalibrateCam::default_instance() {
+const CalibrateCamMessage& CalibrateCamMessage::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_Kimage_2eproto();  return *default_instance_;
 }
 
-KCalibrateCam* KCalibrateCam::default_instance_ = NULL;
+CalibrateCamMessage* CalibrateCamMessage::default_instance_ = NULL;
 
-KCalibrateCam* KCalibrateCam::New() const {
-  return new KCalibrateCam;
+CalibrateCamMessage* CalibrateCamMessage::New() const {
+  return new CalibrateCamMessage;
 }
 
-void KCalibrateCam::Clear() {
+void CalibrateCamMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    status_ = 0;
-    sleeptime_ = 1500;
-    exp_ = 13;
-    exposure_comp_ = 1;
+    readconfiguration_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool KCalibrateCam::MergePartialFromCodedStream(
+bool CalibrateCamMessage::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 status = 1;
+      // required bool readConfiguration = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &status_)));
-          set_has_status();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(16)) goto parse_sleeptime;
-        break;
-      }
-      
-      // required int32 sleeptime = 2 [default = 1500];
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_sleeptime:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &sleeptime_)));
-          set_has_sleeptime();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(24)) goto parse_exp;
-        break;
-      }
-      
-      // required int32 exp = 3 [default = 13];
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_exp:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &exp_)));
-          set_has_exp();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(37)) goto parse_exposure_comp;
-        break;
-      }
-      
-      // required float exposure_comp = 4 [default = 1];
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_exposure_comp:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &exposure_comp_)));
-          set_has_exposure_comp();
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &readconfiguration_)));
+          set_has_readconfiguration();
         } else {
           goto handle_uninterpreted;
         }
@@ -842,26 +780,11 @@ bool KCalibrateCam::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void KCalibrateCam::SerializeWithCachedSizes(
+void CalibrateCamMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 status = 1;
-  if (has_status()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->status(), output);
-  }
-  
-  // required int32 sleeptime = 2 [default = 1500];
-  if (has_sleeptime()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->sleeptime(), output);
-  }
-  
-  // required int32 exp = 3 [default = 13];
-  if (has_exp()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->exp(), output);
-  }
-  
-  // required float exposure_comp = 4 [default = 1];
-  if (has_exposure_comp()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->exposure_comp(), output);
+  // required bool readConfiguration = 1;
+  if (has_readconfiguration()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->readconfiguration(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -870,26 +793,11 @@ void KCalibrateCam::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* KCalibrateCam::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* CalibrateCamMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required int32 status = 1;
-  if (has_status()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->status(), target);
-  }
-  
-  // required int32 sleeptime = 2 [default = 1500];
-  if (has_sleeptime()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->sleeptime(), target);
-  }
-  
-  // required int32 exp = 3 [default = 13];
-  if (has_exp()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->exp(), target);
-  }
-  
-  // required float exposure_comp = 4 [default = 1];
-  if (has_exposure_comp()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->exposure_comp(), target);
+  // required bool readConfiguration = 1;
+  if (has_readconfiguration()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->readconfiguration(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -899,34 +807,13 @@ void KCalibrateCam::SerializeWithCachedSizes(
   return target;
 }
 
-int KCalibrateCam::ByteSize() const {
+int CalibrateCamMessage::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 status = 1;
-    if (has_status()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->status());
-    }
-    
-    // required int32 sleeptime = 2 [default = 1500];
-    if (has_sleeptime()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->sleeptime());
-    }
-    
-    // required int32 exp = 3 [default = 13];
-    if (has_exp()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->exp());
-    }
-    
-    // required float exposure_comp = 4 [default = 1];
-    if (has_exposure_comp()) {
-      total_size += 1 + 4;
+    // required bool readConfiguration = 1;
+    if (has_readconfiguration()) {
+      total_size += 1 + 1;
     }
     
   }
@@ -941,10 +828,10 @@ int KCalibrateCam::ByteSize() const {
   return total_size;
 }
 
-void KCalibrateCam::MergeFrom(const ::google::protobuf::Message& from) {
+void CalibrateCamMessage::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const KCalibrateCam* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const KCalibrateCam*>(
+  const CalibrateCamMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CalibrateCamMessage*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -953,60 +840,48 @@ void KCalibrateCam::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void KCalibrateCam::MergeFrom(const KCalibrateCam& from) {
+void CalibrateCamMessage::MergeFrom(const CalibrateCamMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_status()) {
-      set_status(from.status());
-    }
-    if (from.has_sleeptime()) {
-      set_sleeptime(from.sleeptime());
-    }
-    if (from.has_exp()) {
-      set_exp(from.exp());
-    }
-    if (from.has_exposure_comp()) {
-      set_exposure_comp(from.exposure_comp());
+    if (from.has_readconfiguration()) {
+      set_readconfiguration(from.readconfiguration());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void KCalibrateCam::CopyFrom(const ::google::protobuf::Message& from) {
+void CalibrateCamMessage::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void KCalibrateCam::CopyFrom(const KCalibrateCam& from) {
+void CalibrateCamMessage::CopyFrom(const CalibrateCamMessage& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool KCalibrateCam::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+bool CalibrateCamMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   return true;
 }
 
-void KCalibrateCam::Swap(KCalibrateCam* other) {
+void CalibrateCamMessage::Swap(CalibrateCamMessage* other) {
   if (other != this) {
-    std::swap(status_, other->status_);
-    std::swap(sleeptime_, other->sleeptime_);
-    std::swap(exp_, other->exp_);
-    std::swap(exposure_comp_, other->exposure_comp_);
+    std::swap(readconfiguration_, other->readconfiguration_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata KCalibrateCam::GetMetadata() const {
+::google::protobuf::Metadata CalibrateCamMessage::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = KCalibrateCam_descriptor_;
-  metadata.reflection = KCalibrateCam_reflection_;
+  metadata.descriptor = CalibrateCamMessage_descriptor_;
+  metadata.reflection = CalibrateCamMessage_reflection_;
   return metadata;
 }
 
