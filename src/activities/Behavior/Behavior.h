@@ -5,6 +5,7 @@
 #include "core/elements/math/Common.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
 
+
 #include "messages/Motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
 #include "messages/VisionObservations.pb.h"
@@ -21,9 +22,14 @@
 #include "tools/toString.h"
 #include "tools/obstacleConst.h"
 
+#include "core/elements/math/Common.hpp"
+#include "core/elements/math/Specific.hpp"
+#include "core/elements/KStandard.hpp"
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "FormationGenerator.h"
+#include "Utility.h"
 
 #define INIT_VALUE -111.0
 #define numOfFakeObstacles 15
@@ -71,13 +77,12 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-
+	
 	/**
 	 * @enum ROLES
 	 * @brief enum to attach roles on the robot and determine their behavior.
 	 */
-	enum ROLES
-	{
+	enum ROLES {
 	    ATTACKER = 0, CENTER_FOR = 1, GOALIE = 2
 	};
 
@@ -102,13 +107,10 @@ private:
 	struct {
 
 		// values from the team_config xml file
-		int teamNumber, playerNumber, teamColor, maxPlayers;
+		unsigned int teamNumber, playerNumber, teamColor, maxPlayers;
 
 		bool isPenaltyMode;
-
-		// values from the playerConfig xml file, initial game positions on the field...
-		float initX[2], initY[2], initPhi[2];
-
+		
 		// values from the features xml file
 		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
@@ -171,6 +173,8 @@ private:
 	 * @brief Information gathering function, that reads the position, angle and robot confidence.
 	 */
 	void getPosition();
+	
+	void getTeamPositions();
 
 	/**
 	 * @fn void GetMotionData()
@@ -239,7 +243,7 @@ private:
 	 * @fn void littleWalk(double x, double y, double th)
 	 * @brief (TODO)
 	 */
-	void littleWalk(double x, double y, double th);
+	void littleWalk(double x, double y, double theta);
 
 	/**
 	 * @fn void approachBall()
@@ -283,11 +287,17 @@ private:
 	 * @fn void goToPosition(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
 	 */
-	void goToPosition(float targetX, float targetY, float targetPhi);
-
+	bool goToPosition(float targetX, float targetY, float targetPhi);
+	
+	void Coordinate();
+	
+	void generateFakeBalls();
+	
+	void generateFakeRobots();
+	
 	/* --------------------------------- Behavior Variables ---------------------------------- */
 
-	bool ballFound;	// variable that is true if we see the ball.
+	bool ballFound, sharedBallFound;	// variable that is true if we see the ball.
 
 	int fall;	// variable for goalie role to check if he should fall or not and in which side.
 
@@ -301,13 +311,15 @@ private:
 
 	float ballDist, ballBearing, ballX, ballY; // ball data coming from world info message.
 
-	float globalBallX, globalBallY; // transformation from relative robot ball x,y to relative field ball x,y USED UNTIL WE HAVE GLOBAL BALL ESTIMATION!!!
+	float relativeBallX, relativeBallY; // transformation from relative robot ball x,y to relative field ball x,y USED UNTIL WE HAVE GLOBAL BALL ESTIMATION!!!
 
-	float SharedGlobalBallX, SharedGlobalBallY; // global ball from shared world state!
+	float SharedGlobalBallX, SharedGlobalBallY, SharedBallBearing, CurrentSharedBallX, CurrentSharedBallY; // global ball from shared world state!
 
 	int side;
 
 	float robotX, robotY, robotPhi, robotConfidence; // robot coordinates, angle and confidence.
+	
+	std::vector<FormationParameters::Robot> robots; // team information.
 
 	bool readyToKick;
 
@@ -319,7 +331,7 @@ private:
 
 	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
-	bool goalieApproachStarted;
+	bool goalieApproachStarted, goToPositionFlag;
 
 	bool gameMode, penaltyMode;
 
@@ -329,7 +341,23 @@ private:
 
 	FormationGenerator fGen; // object that create and update the team formation
 
-	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter; // timers.
+	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, sharedBallTimer, dispTimer; //st, et; // timers.
+	
+	float mapCost, maxU;
+	
+	unsigned int index;
+	
+	FormationParameters::posInfo currentRobotPos;
+	
+	FormationParameters::posInfo currentRole;
+	
+	bool formationFlag;
+	
+	std::vector<FormationParameters::Role> roles;
+	
+	std::vector< std::vector<FormationParameters::Role> > mappings;
+	
+	unsigned int numOfRobots;
 };
 
 ACTIVITY_END

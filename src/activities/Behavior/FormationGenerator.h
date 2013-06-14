@@ -17,11 +17,6 @@
  * \file FormationGenerator.h
 */
 
-using std::vector;
-using std::string;
-using FormationParameters::Role;
-using FormationParameters::Type;
-
 namespace FormationConsts{
 
 	/*
@@ -52,21 +47,11 @@ class FormationGenerator {
 
 private:
 
-	/**
-	 * @struct posInfo (position Information)
-	 * @brief Used to store information for each position that is generated.
-	 */
-	struct posInfo {
-		float X;
-		float Y;
-		Role role;
-	};
-
 	unsigned int positions; // number of positions to be generated.
 
-	vector<posInfo> *formation; // vector pointer that holds the formation positions.
+	std::vector<FormationParameters::posInfo> *formation; // vector pointer that holds the formation positions.
 
-	Type formationType; // enumeration variable used to hold the formation type.
+	FormationParameters::Type formationType; // enumeration variable used to hold the formation type.
 
 public:
 	
@@ -124,13 +109,29 @@ public:
 	 * @ballY ball y coordinate
 	 */
 	void Generate(float ballX, float ballY, bool ballFound);
-
+	
+	/**
+	 * FormationParameters::posInfo find(FormationParameters::Role role)
+	 * @brief Use to a specific role information on the formation vector.
+	 */
+	FormationParameters::posInfo findRoleInfo(FormationParameters::Role role);
+	
 	/**
 	 * @fn vector<posInfo>* getFormation()
 	 * @brief Use to get a vector pointer of the last generated positions.
 	 */
-	vector<posInfo>* getFormation();
-
+	std::vector<FormationParameters::posInfo>* getFormation() {
+		return formation;
+	}
+	
+	/**
+	 * @fn FormationParameters::Type getFormationType()
+	 * @brief Use to get the type of the last generated formation.
+	 */
+	FormationParameters::Type getFormationType() {
+		return formationType;
+	}
+	
 };
 
 #endif

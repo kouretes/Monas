@@ -26,7 +26,9 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	UnionistLines.set_capacity(99);
 	GWSRobotVisible = false;
 	GWSBallVisible = false;
+	GWSSharedBallVisible = false;
 	GWSUnionistLineVisible = false;
+	GWSSharedUnionistLineVisible = false;
 	LWSRobotVisible = false;
 	LWSBallVisible = false;
 	LWSUnionistLineVisible = false;
@@ -77,9 +79,11 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	GotoArrow = this->parentScene->addPolygon(QPolygonF(), QPen(Qt::darkRed), QBrush(Qt::darkRed));
 	zAxisArc = this->parentScene->addEllipse(QRect(), penForMotionCmdLine, QBrush(Qt::transparent));
 	UnionistLine = this->parentScene->addLine(QLineF(), penForUnionistLine);
+	SharedUnionistLine = this->parentScene->addLine(QLineF(), penForUnionistLine);
 	RobotDirection = this->parentScene->addLine(QLineF(), penForRobotDirection);
 	Robot = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::darkGray));
 	Ball = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::darkGray));
+	sharedBall = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::cyan));
 	Teammates[0] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
 	Teammates[1] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::green));
 	Teammates[2] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::blue));
@@ -129,6 +133,9 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 	if(UnionistLine)
 		delete UnionistLine;
 
+	if(SharedUnionistLine)
+		delete SharedUnionistLine;
+		
 	if(RobotDirection)
 		delete RobotDirection;
 
@@ -148,6 +155,9 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 
 	if(Ball)
 		delete Ball;
+	
+	if(sharedBall)
+		delete sharedBall;
 
 	if(VisionBall)
 		delete VisionBall;
@@ -452,10 +462,12 @@ void GraphicalRobotElement::updateTeammatesRects() {
 }
 
 void GraphicalRobotElement::setBallVisible(bool visible) {
-	if(visible == false)
-		this->Ball->setVisible(false);
-	else
-		this->Ball->setVisible(true);
+	this->Ball->setVisible(visible);
+	this->sharedBall->setVisible(visible);
+}
+
+void GraphicalRobotElement::setSharedBallVisible(bool visible) {
+	this->sharedBall->setVisible(visible);
 }
 
 void GraphicalRobotElement::setVarianceVisible(bool visible) {
@@ -495,11 +507,19 @@ void GraphicalRobotElement::updateBallRect() {
 		Ball->setRect(0, 0, 0, 0);
 }
 
-void GraphicalRobotElement::setUnionistLineVisible(bool visible) {
-	if(visible == false)
-		this->UnionistLine->setVisible(false);
+void GraphicalRobotElement::updateSharedBallRect() {
+	if((this->currentSWIM.globalballs_size() > 0))
+		sharedBall->setRect(this->parentScene->ballRectFromFC(&currentSWIM, 75, 75));
 	else
-		this->UnionistLine->setVisible(true);
+		sharedBall->setRect(0, 0, 0, 0);
+}
+
+void GraphicalRobotElement::setUnionistLineVisible(bool visible) {
+	this->UnionistLine->setVisible(visible);
+}
+
+void GraphicalRobotElement::setSharedUnionistLineVisible(bool visible) {
+	this->SharedUnionistLine->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateUnionistLineRect() {
@@ -509,11 +529,15 @@ void GraphicalRobotElement::updateUnionistLineRect() {
 		UnionistLine->setLine(0, 0, 0, 0);
 }
 
-void GraphicalRobotElement::setVisionBallVisible(bool visible) {
-	if(visible == false)
-		this->VisionBall->setVisible(false);
+void GraphicalRobotElement::updateSharedUnionistLineRect() {	
+	if((this->currentSWIM.globalballs_size() > 0) && this->currentWIM.has_myposition())
+		SharedUnionistLine->setLine(this->parentScene->unionistLineRectFromFC(&currentWIM, &currentSWIM));
 	else
-		this->VisionBall->setVisible(true);
+		SharedUnionistLine->setLine(0, 0, 0, 0);
+}
+
+void GraphicalRobotElement::setVisionBallVisible(bool visible) {
+		this->VisionBall->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateVisionBallRect(ObservationMessage obm) {

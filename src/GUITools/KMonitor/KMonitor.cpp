@@ -38,6 +38,8 @@ KMonitor::KMonitor(QWidget *parent) :
 	// messages signal/slots
 	connect(Messenger, SIGNAL(worldInfoUpdate(WorldInfo, QString)), ui->GWSTab, SLOT(worldInfoUpdateHandler(WorldInfo, QString)) );
 	
+	connect(Messenger, SIGNAL(sharedWorldInfoUpdate(SharedWorldInfo, QString)), ui->GWSTab, SLOT(sharedWorldInfoUpdateHandler(SharedWorldInfo, QString)) );
+	
 	connect(Messenger, SIGNAL(gameStateMessageUpdate(GameStateMessage, QString)), ui->GWSTab, SLOT(setKGFCGameStateInfo(GameStateMessage, QString)) );
 	
 	/**
