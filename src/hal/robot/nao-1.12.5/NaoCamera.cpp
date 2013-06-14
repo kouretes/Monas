@@ -105,7 +105,7 @@ bool NaoCamera::captureNew()
 
 	struct pollfd pollfd = {fd, POLLIN | POLLPRI, 0};
 
-	int polled = poll (&pollfd, 1, 500); // Fail after missing 15 frames (0.5s)
+	int polled = poll (&pollfd, 1, 1000); // Fail after missing 30 frames (1.0s)
 
 	if (polled < 0)
 	{
@@ -114,7 +114,7 @@ bool NaoCamera::captureNew()
 	}
 	else if (polled == 0)
 	{
-		Logger::Instance().WriteMsg ("NaoCamera", "0.5 seconds passed and there's still no image to read from the camera. Terminating.", Logger::FatalError);
+		Logger::Instance().WriteMsg ("NaoCamera", "1.0 seconds passed and there's still no image to read from the camera. Terminating.", Logger::FatalError);
 		assert (false);
 	}
 	else if (pollfd.revents & (POLLERR | POLLNVAL) )

@@ -100,7 +100,7 @@ int SharedWorldModel::Execute()
 
 
 	if(!h.get() || (h && h->entrylist_size() == 0)) {
-		Logger::Instance().WriteMsg("SharedWorldModel", "No info from other robots!", Logger::Info);
+		;//Logger::Instance().WriteMsg("SharedWorldModel", "No info from other robots!", Logger::Info);
 	}
 	else
 	{
