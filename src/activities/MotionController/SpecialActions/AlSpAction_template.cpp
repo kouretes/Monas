@@ -1,6 +1,7 @@
 #include "THEALSP.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
+#include "tools/logger.h"
 
 namespace
 {
