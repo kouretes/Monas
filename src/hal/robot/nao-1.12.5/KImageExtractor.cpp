@@ -56,10 +56,27 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImageConst & img)
 	_releaseImage();
 	do
 	{
+		bool imageOk = false;
 		// Now you can get the pointer to the video structure.
-		if(naocam->captureNew()==false)
-		{
-			return boost::posix_time::ptime();
+		for(int i=0; i<20; i++){
+			if(naocam->captureNew()==false)
+			{
+				continue;
+			}else{
+				imageOk = true;		
+				break;	
+			}
+		}
+		if(!imageOk){
+			Logger::Instance().WriteMsg ("KImageExtractor", "Camera is dead, reinitializing NaoCamera", Logger::ExtraInfo);
+			delete naocam;
+			NaoCamera::userPrefs newPrefs;
+			newPrefs.GAIN = atoi(Configurator::Instance().findValueForKey("camera.Gain").c_str());
+			newPrefs.CONTRAST = atoi(Configurator::Instance().findValueForKey("camera.Contrast").c_str());
+			newPrefs.GREEN_GAIN = atoi(Configurator::Instance().findValueForKey("camera.GreenChannelGain").c_str());
+			newPrefs.RED_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.RedBalance").c_str());
+			newPrefs.BLUE_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.BlueBalance").c_str());
+			naocam = new NaoCamera(newPrefs);
 		}
 		img.copyFrom(naocam->getImage(),NaoCamera::WIDTH,NaoCamera::HEIGHT,2);
 	}
