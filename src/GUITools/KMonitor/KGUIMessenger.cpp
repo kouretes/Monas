@@ -264,6 +264,7 @@ void KGUIMessenger::GWUnsubscriptionHandler(QString hostId) {
 
 void KGUIMessenger::SubscriptionHandler(QString hostId) {
 	emit changeAllTabsToHost(hostId);
+	updateSubscription("global", msgentry::UNSUBSCRIBE_ALL_TOPIC, myKMonitorRequestedHost.toUInt());
 	myKMonitorRequestedHost = hostId;
 	tabChangeHandler(currentKMonitorTab);
 }
@@ -307,8 +308,8 @@ void KGUIMessenger::KccPublishMessage(CameraCalibration message) {
 void KGUIMessenger::tabChangeHandler(int currentTab) {
 	QString hostId;
 	currentKMonitorTab = currentTab;
-	updateSubscription("global", msgentry::UNSUBSCRIBE_ALL_TOPIC, msgentry::HOST_ID_ANY_HOST);
 
+	updateSubscription("global", msgentry::UNSUBSCRIBE_ALL_TOPIC, myKMonitorRequestedHost.toUInt());
 	if((myKMonitorRequestedHost.isEmpty() && currentTab != 0) ||(myGWRequestedHosts.isEmpty() && currentTab == 0))
 		return;
 
@@ -329,19 +330,16 @@ void KGUIMessenger::tabChangeHandler(int currentTab) {
 	case 2: // Local Polar Map
 		updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
-	case 3:	// Local Robot View
-		updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-		break;
-	case 4:	// Local Sensors Data
+	case 3:	// Local Sensors Data
 		updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
-	case 5: // Kcc
+	case 4: // Kcc
 		updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
-	case 6: // Xml
+	case 5: // Xml
 		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
-	case 7: // Commands
+	case 6: // Commands
 		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		break;
 	}

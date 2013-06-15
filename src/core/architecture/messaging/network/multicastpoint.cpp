@@ -55,7 +55,7 @@ namespace KNetwork
 		for( hit = otherHosts.begin(); hit != otherHosts.end(); hit++)
 			for(sit = (*hit).second.needsTopics.begin(); sit != (*hit).second.needsTopics.end(); ++sit)
 				remSub.erase(*sit);
-
+		
 		for(sit = remSub.begin(); sit != remSub.end(); ++sit)
 			localsubscriptions.erase(*sit);
 
