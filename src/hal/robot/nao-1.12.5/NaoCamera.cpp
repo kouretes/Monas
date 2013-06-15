@@ -103,7 +103,7 @@ bool NaoCamera::captureNew()
 		assert (ioctl (fd, VIDIOC_QBUF, currentBuf) != -1);
 	}
 
-	struct pollfd pollfd = {fd, POLLIN | POLLPRI, 0};
+	/*struct pollfd pollfd = {fd, POLLIN | POLLPRI, 0};
 
 	int polled = poll (&pollfd, 1, 1000); // Fail after missing 30 frames (1.0s)
 
@@ -121,20 +121,20 @@ bool NaoCamera::captureNew()
 	{
 		Logger::Instance().WriteMsg ("NaoCamera", "Polling failed.", Logger::FatalError);
 		assert (false);
-	}
+	}*/
 
 	// dequeue a frame buffer (this call blocks when there is no new image available) */
 	assert (ioctl (fd, VIDIOC_DQBUF, buf) != -1);
 	timeStamp = boost::posix_time::microsec_clock::universal_time();
 	assert (buf->bytesused == SIZE);
 	currentBuf = buf;
-	static bool shout = true;
+	//static bool shout = true;
 
-	if (shout)
-	{
-		shout = false;
-		Logger::Instance().WriteMsg ("NaoCamera", "Camera is working", Logger::ExtraInfo);
-	}
+	//if (shout)
+	//{
+	//	shout = false;
+		Logger::Instance().WriteMsg ("NaoCamera", "Camera is working " + _toString(timeStamp), Logger::ExtraInfo);
+	//}
 
 	return true;
 }
