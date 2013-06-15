@@ -88,7 +88,6 @@ public:
 		std::string fullfilename ;
 		fullfilename = (Configurator::Instance().getDirectoryPath() + MsgLogFile);
 		int intStat = stat((fullfilename + ".0").c_str(), &stFileInfo);
-
 		if (intStat == 0)
 			if(stFileInfo.st_size > 512)
 			{

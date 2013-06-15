@@ -1,6 +1,7 @@
 #include "ALstandUpCross2011.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
+#include "tools/logger.h"
 
 namespace
 {

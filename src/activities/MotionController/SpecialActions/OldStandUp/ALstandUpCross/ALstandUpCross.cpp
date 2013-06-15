@@ -1,6 +1,7 @@
 #include "ALstandUpCross.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
+#include "tools/logger.h"
 
 namespace
 {
@@ -14,7 +15,7 @@ ALstandUpCross::ALstandUpCross()
 
 	try
 	{
-		motion = KAlBroker::Instance().GetBroker()->getMotionProxy();
+		motion = new AL::ALMotionProxy(boost::shared_ptr<AL::ALBroker>(KAlBroker::Instance().GetBroker()));
 	}
 	catch (AL::ALError& e)
 	{
@@ -188,6 +189,6 @@ void ALstandUpCross::Initialize()
 
 int ALstandUpCross::ExecutePost()
 {
-	motion->angleInterpolation(jointCodes, angles, times, 1);
+	motion->post.angleInterpolation(jointCodes, angles, times, 1);
 	return 0;
 }

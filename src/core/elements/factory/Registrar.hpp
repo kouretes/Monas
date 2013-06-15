@@ -1,8 +1,8 @@
 #ifndef _genRegistrar_h_
 #define _genRegistrar_h_ 1
 
-#include "tools/logger.h"
-
+//#include "tools/logger.h"
+#include <iostream>
 template
 <
 class FactoryClass,
@@ -20,7 +20,7 @@ public:
 	Registrar ( FactoryID id )
 	{
 		if ( FactoryClass::Instance()->Register( id, NewProviderFunc ) )
-			Logger::Instance().WriteMsg("Registrar", id, Logger::ExtraInfo);
+			std::cout << "Registrar: " << id << std::endl;//Logger::Instance().WriteMsg("Registrar", id, Logger::ExtraInfo);
 	}
 
 	static AbstractProductClass * NewProviderFunc ()

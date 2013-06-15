@@ -8,7 +8,6 @@
 #include "mainmodule.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
-#include "hal/robot/generic_nao/robot_consts.h"
 
 #include "core/architecture/configurator/Configurator.hpp"
 
@@ -36,7 +35,7 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MainModule", "Error in getting memory proxy", Logger::FatalError);
+		std::cerr << "Error in getting memory proxy" << std::endl;
 		std::cout << e.what() << std::endl;
 	}
 	
@@ -52,7 +51,7 @@ mainModule::mainModule(boost::shared_ptr<AL::ALBroker> broker, const std::string
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MainModule", "Error in getting body and/or head id`s", Logger::Warning);
+		std::cerr << "Error in getting body and/or head id`s" << std::endl;
 		bodyId="";
 		headId="";
 	}

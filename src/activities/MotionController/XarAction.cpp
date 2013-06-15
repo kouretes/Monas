@@ -1,6 +1,7 @@
 #include "XarAction.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
+#include "tools/logger.h"
 
 using namespace std;
 
