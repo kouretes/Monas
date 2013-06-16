@@ -6,7 +6,7 @@
 
 // DO NOT USE DEFINES, USE THE BLOODY FUNCTIONS !!!
 
-#define TO_RAD_SUPER_INTERNAL_DO_NOT_USE 0.01745329f
+#define TO_RAD_SUPER_INTERNAL_DO_NOT_USE 0.01745329
 
 namespace KMath {
 
@@ -30,7 +30,7 @@ namespace KMath {
 	template<typename T> inline T Max(T a, T b) {
 		return (a > b) ? a : b;
 	}
-	
+
 	/**
 	 * @fn inline static unsigned int factorial(unsigned int x)
 	 * @brief The product of all positive integers less than or equal to x. Recursive calculation.
@@ -48,7 +48,7 @@ namespace KMath {
 	inline static unsigned int binomialCoefficient(unsigned int n, unsigned int k) {
 		return (factorial(n) / (factorial(k)*factorial(n-k)) );
 	}
-	
+
 	/**
 	 * @fn inline static float gaussian2D(float A, float xCenter, float yCenter, float sigmaX, float sigmaY, float x, float y)
 	 * @brief 2-Dimensional Gaussian function.

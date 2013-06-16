@@ -40,7 +40,7 @@ namespace KSystem
 			{
 				t.restart ();
 				this->Execute();
-				double el = t.elapsed();
+				float el = t.elapsed();
 
 				if ( el  > ThreadPeriod && ThreadPeriod > 0 )
 					Logger::Instance().WriteMsg(GetName(), "Decrease Freq!!!", Logger::ExtraInfo );
