@@ -84,7 +84,7 @@ int LocalWorldState::Execute()
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	ProcessMessages();
-	
+
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
@@ -121,9 +121,9 @@ int LocalWorldState::Execute()
 
     if (gameState == PLAYER_PLAYING && (prevGameState == PLAYER_PENALISED || prevGameState == PLAYER_SET ))
          gamePlaying = microsec_clock::universal_time();
-         
+
     if (gameState == PLAYER_PENALISED && prevGameState == PLAYER_PLAYING)
-         stability++;      
+         stability++;
 
     if (gameState !=  PLAYER_SET ) {
         if (locConfig.ekfEnable == true){
@@ -144,10 +144,8 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
-	MyWorld.mutable_myposition()->set_confidence(0.0);
-	
 	MyWorld.set_stability(stability);
-	
+
 	calculate_ball_estimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
@@ -265,7 +263,7 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 			lastFilterTime = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-          
+
 			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0 && (gamePlaying + seconds(8) < microsec_clock::universal_time())){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
 			}
@@ -276,7 +274,7 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 
 
     if (MyWorld.balls_size() > 0 && fabs(MyWorld.mutable_myposition()->x())<4.5 && fabs(MyWorld.mutable_myposition()->y()<3) ){
-       
+
         float relativeX = MyWorld.mutable_balls(0)->relativex();
         float relativeY = MyWorld.mutable_balls(0)->relativey();
 
@@ -507,7 +505,7 @@ void LocalWorldState::ReadTeamConf()
 
 void LocalWorldState::ReadRobotConf()
 {
-   
+
     int pNumber=locConfig.playerNumber;
 
     locConfig.initX[0]=atof(Configurator::Instance().findValueForKey(
@@ -546,7 +544,6 @@ int LocalWorldState::LocalizationDataForGUI_Load()
 		DebugDataForGUI.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
 		DebugDataForGUI.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
 		DebugDataForGUI.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
-		DebugDataForGUI.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
 	}
 
 	return 1;
