@@ -125,7 +125,7 @@ void KccHandler::clickedImage(QMouseEvent *ev) {
 	map<QYuv, unsigned char> undo;
 	lumaScale = 1 / yuvColorTable->getLumaScale();
 	qDebug() << lumaScale ;
-	QYuv b, temp2;
+	QYuv b;
 
 	for(int px = -pixNum ; px < pixNum + 1 ; px++) {
 		for(int py = -pixNum ; py < pixNum + 1 ; py++) {
@@ -190,7 +190,6 @@ void KccHandler::undoPressed() {
 			ui->pbUndo->setEnabled(false);
 
 		QYuv temp;
-		int size = undoList.size();
 
 		for(map<QYuv, unsigned char>::iterator iter = undoList.begin() ; iter != undoList.end() ; iter++) {
 			temp =(*iter).first;
@@ -211,7 +210,6 @@ void KccHandler::undoPressed() {
 
 void KccHandler::changeImage(KRawImage rawImage, QString hostId) {
 	int tempWidth = rawImage.width();
-	int tempHeight = rawImage.height();
 	int channels = rawImage.bytes_per_pix();
 
 	if((ui->rbLiveVideo->isChecked() || takeSnapshot) && tempWidth == widthInPixels && tempHeight == heightInPixels && channels == 2) {

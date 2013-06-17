@@ -120,30 +120,16 @@ void KFieldScene::loadXMLConfig() {
 	float CarpetMaxY = atof(Configurator::Instance().findValueForKey("field.CarpetMaxY").c_str());
 	float CarpetMinY = atof(Configurator::Instance().findValueForKey("field.CarpetMinY").c_str());
 	float FieldMaxX = atof(Configurator::Instance().findValueForKey("field.FieldMaxX").c_str());
-	float FieldMinX = atof(Configurator::Instance().findValueForKey("field.FieldMinX").c_str());
 	float FieldMaxY = atof(Configurator::Instance().findValueForKey("field.FieldMaxY").c_str());
-	float FieldMinY = atof(Configurator::Instance().findValueForKey("field.FieldMinY").c_str());
-	float LeftPenaltyAreaMaxX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMaxX").c_str());
-	float LeftPenaltyAreaMinX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMinX").c_str());
 	float LeftPenaltyAreaMaxY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMaxY").c_str());
 	float LeftPenaltyAreaMinY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyAreaMinY").c_str());
 	float RightPenaltyAreaMaxX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMaxX").c_str());
 	float RightPenaltyAreaMinX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMinX").c_str());
-	float RightPenaltyAreaMaxY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMaxY").c_str());
-	float RightPenaltyAreaMinY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyAreaMinY").c_str());
 	float LeftGoalAreaMaxX = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMaxX").c_str());
 	float LeftGoalAreaMinX = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMinX").c_str());
 	float LeftGoalAreaMaxY = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMaxY").c_str());
 	float LeftGoalAreaMinY = atof(Configurator::Instance().findValueForKey("field.LeftGoalAreaMinY").c_str());
-	float RightGoalAreaMaxX = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMaxX").c_str());
-	float RightGoalAreaMinX = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMinX").c_str());
-	float RightGoalAreaMaxY = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMaxY").c_str());
-	float RightGoalAreaMinY = atof(Configurator::Instance().findValueForKey("field.RightGoalAreaMinY").c_str());
-	float LeftPenaltyMarkX = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyMarkX").c_str());
-	float LeftPenaltyMarkY = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyMarkY").c_str());
-	float LeftPenaltyMarkSize = atof(Configurator::Instance().findValueForKey("field.LeftPenaltyMarkSize").c_str());
 	float RightPenaltyMarkX = atof(Configurator::Instance().findValueForKey("field.RightPenaltyMarkX").c_str());
-	float RightPenaltyMarkY = atof(Configurator::Instance().findValueForKey("field.RightPenaltyMarkY").c_str());
 	float RightPenaltyMarkSize = atof(Configurator::Instance().findValueForKey("field.RightPenaltyMarkSize").c_str());
 	float DiameterVPost = atof(Configurator::Instance().findValueForKey("field.DiameterVPost").c_str());
 	float DiameterCCircle = atof(Configurator::Instance().findValueForKey("field.DiameterCCircle").c_str());
@@ -152,7 +138,6 @@ void KFieldScene::loadXMLConfig() {
 	float HSmallArea = 0.0f;
 	float LGoalArea = 0.0f;
 	float HGoalArea = 0.0f;
-	float LCross = 0.0f;
 	float LCDistance = 0.0f;
 	
 	

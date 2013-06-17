@@ -447,7 +447,6 @@ int MotionController::Execute()
 			std::string str = pam->command();
 			std::string strKick = pam->command();
 			unsigned int pos = 0;
-			unsigned int posKick = 0;
 			pos = str.find_first_of(".");
 			str.erase(0, pos + 1);
 			strKick.erase(pos, strKick.size());
