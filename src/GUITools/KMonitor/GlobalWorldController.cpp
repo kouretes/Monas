@@ -199,9 +199,6 @@ QTreeWidgetItem *GlobalWorldController::GWhostFinder(QString hostId) {
 
 void GlobalWorldController::addNewItem(QString hostId, QString hostName) {
 	QTreeWidgetItem *item;
-	QTreeWidgetItem *subItem1;
-	QTreeWidgetItem *subItem2;
-	QTreeWidgetItem *subItem3;
 	int position = ui->hostTree->topLevelItemCount();
 	QCheckBox *checkBox;
 	QCheckBox *subCheckBox1;

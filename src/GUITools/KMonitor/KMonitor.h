@@ -25,7 +25,6 @@ public:
 private slots:
 	void quitKMonitor();
 
-	void printCurrentTab (int index);
 	void closeEvent(QCloseEvent *event);
 
 private:
