@@ -54,29 +54,28 @@ public:
 		{
 		case LogLevel::FatalError:
 		case LogLevel::Error:
-			WriteMsgToBuffers ( name, msg, "red" );
+			WriteMsgToBuffers ( name, msg, C_RED );
 			break;
 
 		case LogLevel::Warning:
-			WriteMsgToBuffers ( name, msg, "yellow" );
+			WriteMsgToBuffers ( name, msg, C_YELLOW );
 			break;
 
 		case LogLevel::Info:
 		case LogLevel::ExtraInfo:
 			if ( ! ActivityFilterEnabled || ActivityFilter.find(name) != ActivityFilter.end() )
-				WriteMsgToBuffers ( name, msg, "default" );
+				WriteMsgToBuffers ( name, msg, C_DEFAULT );
 			break;
 
 		case LogLevel::ExtraExtraInfo:
 			if ( ! ActivityFilterEnabled || ActivityFilter.find(name) != ActivityFilter.end() )
-				WriteMsgToBuffers ( name, msg, "blue" );
+				WriteMsgToBuffers ( name, msg, C_BLUE );
+			break;
 		case LogLevel::Debug:
 			if ( DebuggingMode )
 			{
-				if ( DebugAll )
-					WriteMsgToBuffers ( name, msg, "red" );
-				else if ( ActivityFilter.find(name) != ActivityFilter.end() )
-					WriteMsgToBuffers ( name, msg, "red" );
+				if ( DebugAll ||  ActivityFilter.find(name) != ActivityFilter.end() )
+					WriteMsgToBuffers ( name, msg, C_RED );
 			}
 		}
 	}
@@ -104,15 +103,16 @@ public:
 			SysCall::_exit(1);
 		}
 
-		ColorMap["red"]     = "\033[1;31m";
-		ColorMap["blue"]    = "\033[1;34m";
-		ColorMap["lBlue"]   = "\033[21;34m";
-		ColorMap["green"]   = "\033[1;32m";
-		ColorMap["yellow"]   = "\033[1;33m";
-		ColorMap["default"] = "\033[0m";
+		ColorMap[C_RED]     = "\033[1;31m";
+		ColorMap[C_BLUE]    = "\033[1;34m";
+		ColorMap[C_LBLUE]   = "\033[21;34m";
+		ColorMap[C_GREEN]   = "\033[1;32m";
+		ColorMap[C_YELLOW]   = "\033[1;33m";
+		ColorMap[C_DEFAULT] = "\033[0m";
 	}
 
 private:
+	enum LogColorsType { C_RED, C_BLUE,C_LBLUE,C_GREEN,C_YELLOW,C_DEFAULT};
 
 	void ReadConfiguration ()
 	{
@@ -176,14 +176,14 @@ private:
 	}
 
 	template< class T>
-	void WriteMsgToBuffers ( std::string name, const T& msg, std::string color )
+	void WriteMsgToBuffers ( std::string name, const T& msg, LogColorsType color )
 	{
 		ErrorLog << name << " : " << msg << std::endl;
 
 		if ( CerrEnabled )
 		{
 			if ( ColorEnabled )
-				std::cerr << ColorMap[color] << name << " : " << msg << ColorMap["default"] << std::endl;
+				std::cerr << ColorMap[color] << name << " : " << msg << ColorMap[C_DEFAULT] << std::endl;
 			else
 				std::cerr << name << " : " << msg << std::endl;
 		}
@@ -207,7 +207,7 @@ private:
 	bool DebuggingMode;
 	bool DebugAll;
 
-	std::map<std::string, std::string> ColorMap;
+	std::map<LogColorsType, std::string> ColorMap;
 
 	boost::posix_time::ptime lastConfRead;
 	float reparsingPeriod;
