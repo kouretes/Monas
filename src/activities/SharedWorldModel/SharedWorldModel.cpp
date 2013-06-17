@@ -41,6 +41,7 @@ void SharedWorldModel::UserInit()
                 Q.get(i+1,i+1) = QRdevy;
                 Q.get(i+2,i+2) = QRdevtheta;
 
+
                 State.get(i,0) = INIT_VALUE;
                 State.get(i+1,0) = INIT_VALUE;
             }
@@ -205,7 +206,6 @@ void SharedWorldModel::gather_info(int count){
 
 void SharedWorldModel::predict()
 {
-    int i,j;
     now = boost::posix_time::microsec_clock::universal_time();
     duration = now - last_filter_time;
     last_filter_time = now;
@@ -219,8 +219,8 @@ void SharedWorldModel::predict()
         Q.get(i+2,i+2) = QRdevtheta*dtsqrd;
 	}
 
-    Q.get(dim-2,dim-2) = vara*dtsqrd*dtsqrd/4.0;
-    Q.get(dim-1,dim-1) = vara*dtsqrd*dtsqrd/4.0;
+    Q.get(dim-2,dim-2) = (vara*dtsqrd*dtsqrd/4.0)/100;
+    Q.get(dim-1,dim-1) = (vara*dtsqrd*dtsqrd/4.0)/100;
 
     R2.get(3,3) = vara*dtsqrd*dtsqrd/4.0;
     R2.get(4,4) = vara*dtsqrd*dtsqrd/4.0;
@@ -238,16 +238,15 @@ void SharedWorldModel::predict()
 
 void SharedWorldModel::update(int rid)
 {
-    int i,j;
     last_ball_update_time = boost::posix_time::microsec_clock::universal_time();
     //convert ball to global
 //    float bx = robot_x[rid] + ball_x[rid] * cos(robot_phi[rid]) - ball_y[rid] * sin(robot_phi[rid]);
 //    float by = robot_y[rid] + ball_x[rid] * sin(robot_phi[rid]) + ball_y[rid] * cos(robot_phi[rid]);
     float phi=State(rid*3+2);
-    float bx=State(dim-2);
-    float by=State(dim-1);
-    float rx=State(rid*3);
-    float ry=State(rid*3+1);
+//    float bx=State(dim-2);
+//    float by=State(dim-1);
+//    float rx=State(rid*3);
+//    float ry=State(rid*3+1);
 
     //std::cout << "gbx=" << globX << "\tgby=" << globY << std::endl;
 
@@ -297,8 +296,6 @@ void SharedWorldModel::update(int rid)
 
 void SharedWorldModel::updateNoObs(int rid)
 {
-    int i,j;
-
 //    std::cout << "\n" << robot_x[rid] << robot_y[rid] << robot_phi[rid] << "\n";
     y1.get(0,0) = robot_x[rid] - State.read(rid*3,0);
     y1.get(1,0) = robot_y[rid] - State.read(rid*3+1,0);
