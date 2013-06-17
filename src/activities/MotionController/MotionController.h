@@ -20,8 +20,7 @@
 #include <fstream>
 #include <vector>
 
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
 
 #include "ISpecialAction.h"
 #include "KmexManager.h"

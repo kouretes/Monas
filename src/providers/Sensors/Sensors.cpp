@@ -2,8 +2,7 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
 #include "core/architecture/messaging/TopicTree.hpp"
 
 using namespace AL;
@@ -31,7 +30,7 @@ PROVIDER_REGISTER(Sensors);
 
 void Sensors::UserInit()
 {
-	Logger::Instance().WriteMsg("Sensors", "Sensors UserInit", Logger::Info);
+	LogEntry(LogLevel::Info,GetName())<< "Sensors UserInit";
 
 	try
 	{
@@ -39,7 +38,7 @@ void Sensors::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("Sensors", "Error in getting dcm proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName()) << "Error in getting dcm proxy";
 	}
 
 	try
@@ -48,7 +47,7 @@ void Sensors::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("Sensors", "Error in getting memory proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName()) << "Error in getting memory proxy";
 	}
 
 	try
@@ -57,11 +56,11 @@ void Sensors::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("Sensors", "Error in getting motion proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName()) << "Error in getting motion proxy";
 	}
 
 	initialization();
-	Logger::Instance().WriteMsg("Sensors", "Sensor Controller Initialized", Logger::Info);
+	LogEntry(LogLevel::Info,GetName()) <<  "Sensor Controller Initialized";
 }
 void Sensors::fillComputedData(unsigned int timediff)
 {
@@ -89,7 +88,7 @@ void Sensors::fillComputedData(unsigned int timediff)
 		angle[1].updateWithVel(angY,sqrt(fabs(Interpret::GRAVITY_PULL-accnorm)/accnorm)+0.001,gyrY,0.0001*gyrY*gyrY+0.01);
 	} catch (...) {
 	   anglefilterreset=true;
-	  Logger::Instance().WriteMsg("SENSORS","Singular Matrix Exception on Kalman update",Logger::Error);
+	   LogEntry(LogLevel::Error,GetName()) << "Singular Matrix Exception on Kalman update";
 	}
 
 	for(int i = 0; i < ANGLE_SIZE; i++)
@@ -110,7 +109,7 @@ void Sensors::fillComputedData(unsigned int timediff)
 	float R_FSR_RL = ASM.sensordata(R_FSR + FSR_RL).sensorvalue();
 	float R_FSR_RR = ASM.sensordata(R_FSR + FSR_RR).sensorvalue();
 	float threshold = Interpret::ROBOT_WEIGHT/4;
-	
+
 	float lWeight = L_FSR_FL + L_FSR_FR + L_FSR_RL + L_FSR_RR;
 	float rWeight = R_FSR_FL + R_FSR_FR + R_FSR_RL + R_FSR_RR;
 	if(lWeight > threshold && rWeight > threshold){
@@ -249,7 +248,7 @@ void Sensors::fetchValues()
 		ASM.mutable_sensordata(i)->set_sensorvalue(newval);
 		ASM.mutable_sensordata(i)->set_sensorvaluediff(newval - oldval);
 	}
-	if( isvalid){	
+	if( isvalid){
 		fillComputedData(timediff);
 	}
 	ASM.set_timediff(timediff);

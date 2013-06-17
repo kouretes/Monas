@@ -2,8 +2,7 @@
 
 #include <fstream>
 #include <dirent.h>
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
 #include "core/include/IActivity.hpp"
 
 using namespace std;
@@ -14,18 +13,19 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& filename,
 {
 	vector<KmexAction*> xmlResults;
 	std::map<std::string, int> jointIDs =  getJointIDs();
-	
+
 	int numOfMotions = Configurator::Instance().numberOfNodesForKey(filename + ".Motion");
-	Logger::Instance().WriteMsg("KmexManager", "Found " + _toString(numOfMotions) + " motion(s)", Logger::Info );
+	LogEntry(LogLevel::Info,"KmexManager")
+		<< "Found "  << (numOfMotions) << " motion(s)";
 
 	for (int itter=0;itter<numOfMotions;itter++)
 	{
 		string MotionName = Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".actionName");
-		
+
 		int numOfPoses = atoi(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".$numOfPoses").c_str());
 		float threshold = atof(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".$threshold").c_str());
 		int numOfJoints = atoi(Configurator::Instance().findValueForKey(filename + ".Motion~" + _toString(itter) + ".$numOfJoints").c_str());
-		
+
 		vector<string> jointsResults;
 
 		vector<int> jointNum;
@@ -35,7 +35,7 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& filename,
 			jointNum.push_back(jointIDs[jointsResults[i]]);
 		}
 
-		
+
 		vector<int> posesResults;
 		for (int i = 0; i < numOfPoses; i++)
 		{
@@ -45,7 +45,7 @@ vector<KmexAction*> KmexManager::LoadActionsXML(const string& filename,
 		SpAssocCont::iterator it = SpActions.find(MotionName);
 
 		if (it == SpActions.end())
-			Logger::Instance().WriteMsg("KmexManager", "SpAction " + MotionName + " not found!", Logger::Error);
+			LogEntry(LogLevel::Error,"KmexManager") <<"SpAction " << MotionName << " not found!";
 		else
 		{
 			boost::shared_ptr<ISpecialAction> ptr = it->second;

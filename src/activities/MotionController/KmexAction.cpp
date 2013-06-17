@@ -2,7 +2,7 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "hal/robot/generic_nao/robot_consts.h"
-
+#include "core/include/Logger.hpp"
 using namespace std;
 
 KmexAction::KmexAction( string name, int numberOfPoses, vector<int> poses, int totalPoses, float threshold, int numberOfJoints,
@@ -14,7 +14,7 @@ KmexAction::KmexAction( string name, int numberOfPoses, vector<int> poses, int t
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("KMEAction", "Error in getting motion proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"KmexAction") << "Error in getting motion proxy";
 	}
 
 	this->name = name;
@@ -84,7 +84,8 @@ vector<int> KmexAction::AngleCompare(boost::shared_ptr<const AllSensorValuesMess
 			ready = 1;
 		}
 		else
-			Logger::Instance().WriteMsg("KmexAction", "MPA ", Logger::ExtraInfo);
+
+			LogEntry(LogLevel::ExtraInfo,"KmexAction") << "MPA ";
 	}
 
 	if (ready == 1)

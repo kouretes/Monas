@@ -1,5 +1,5 @@
 #include "Agent.hpp"
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 Agent::Agent( std::string name, KSystem::ThreadConfig cfg, int stats, MessageHub& com, std::vector<std::string> activities ) :
 	PeriodicThread(cfg),
 	_statsCycle(stats),
@@ -68,15 +68,14 @@ int Agent:: Execute ()
 
 void Agent::PrintStatistics()
 {
-	std::string StatMessage( "Avg: " + _toString(agentStats.GetAgentAvgExecTime()) + " Var: " + _toString(agentStats.GetAgentVarExecTime()) + "\n"  );
+	LogEntry m(LogLevel::Info,_name);
+	m<<"Avg: "<<agentStats.GetAgentAvgExecTime()<<" Var: "<<agentStats.GetAgentVarExecTime()<<std::endl;
 
 	for (ActivList::const_iterator it = _activities.begin(); it != _activities.end(); it++ )
 	{
-		StatMessage += "Activity: " + (*it)->GetName() ;
-		StatMessage += " Avg: " + _toString( agentStats.GetActivityAvgExecTime( (*it) ));
-		StatMessage += " Var: " + _toString( agentStats.GetActivityVarExecTime( (*it) )) + "\n";
+		m<< "Activity: " << (*it)->GetName() ;
+		m<<" Avg: " << agentStats.GetActivityAvgExecTime( (*it) );
+		m<<  "Var: "<< agentStats.GetActivityVarExecTime( (*it) )<<std::endl;
 	}
-
-	Logger::Instance().WriteMsg( _name, StatMessage, Logger::Info );
 };
 

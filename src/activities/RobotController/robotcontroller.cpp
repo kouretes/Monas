@@ -2,7 +2,7 @@
 #include "messages/SensorsMessage.pb.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 #include "tools/toString.h"
 
 using boost::posix_time::milliseconds;
@@ -20,7 +20,7 @@ void RobotController::UserInit()
 	gm.setNonBlock(true);
 	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.publishState(gm_state, "worldstate");
-	Logger::Instance().WriteMsg("RobotController", "Robot Controller Initialized", Logger::Info);
+	LogEntry(LogLevel::Info,GetName()) << "Robot Controller Initialized" << std::endl;
 	lastalive = boost::posix_time::microsec_clock::universal_time();
 }
 
@@ -87,7 +87,7 @@ int RobotController::Execute()
 
 		if(chest == 4 || ((lbump + rbump) > 0 && chest == 2))
 		{
-			Logger::Instance().WriteMsg("SysCall", "Shutdown robot", LoggerClass::Info);
+			LogEntry(LogLevel::Info,GetName()) << "Shutdown robot" << std::endl;
 			gm_state.Clear();
 			gm_state.set_player_number(conf.player_number());
 			gm_state.set_team_number(conf.team_number());
@@ -231,7 +231,7 @@ bool RobotController::readConfiguration()
 	conf.Clear(); //Initialize with default values in .proto
 	gm_state.Clear(); //Initialize with default values in .proto
 	gm_state.set_player_number(conf.player_number());
-	
+
 	int value = atoi(Configurator::Instance().findValueForKey("teamConfig.player").c_str());
 	conf.set_player_number(value);
 	gm_state.set_player_number(value);
@@ -258,7 +258,8 @@ bool RobotController::readConfiguration()
 		gm_state.set_team_color(TEAM_RED);
 	}
 	else
-		Logger::Instance().WriteMsg("RobotController", "undefined color in configuration, setting to default value: " + _toString(gm_state.team_color()), Logger::Error);
+		LogEntry(LogLevel::Error,GetName()) << "undefined color in configuration, setting to default value: "
+													<<+gm_state.team_color() << std::endl;
 
 	return true;
 }

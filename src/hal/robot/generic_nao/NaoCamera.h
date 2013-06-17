@@ -8,7 +8,6 @@
 #define NAOCAMERA_H
 
 #include <linux/videodev2.h>
-#include "tools/logger.h"
 #include "core/architecture/configurator/Configurator.hpp"
 
 #ifndef V4L2_CID_AUTOEXPOSURE

@@ -17,8 +17,8 @@
 #include "messages/Kimage.pb.h"
 #include "messages/WorldInfo.pb.h"
 
-#include "tools/toString.h"
-#include "tools/logger.h"
+
+#include "core/include/Logger.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

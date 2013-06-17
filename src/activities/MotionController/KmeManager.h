@@ -4,8 +4,6 @@
 #include <vector>
 #include "ISpecialAction.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "tools/logger.h"
-#include "tools/toString.h"
 
 
 class KmeManager

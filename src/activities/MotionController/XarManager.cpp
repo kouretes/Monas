@@ -2,7 +2,8 @@
 
 #include <fstream>
 #include <dirent.h>
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
+
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "ISpecialAction.h"
 #include "XarAction.h"
@@ -42,7 +43,8 @@ std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy 
 				}
 				catch (AL::ALError& e)
 				{
-					Logger::Instance().WriteMsg("XARManager", "Error loading file: " + fileName + e.getDescription(), Logger::FatalError);
+					LogEntry(LogLevel::FatalError,"XARManager")
+						<< "Error loading file: " << fileName << e.getDescription();
 					continue;
 				}
 
@@ -52,7 +54,7 @@ std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy 
 				actionMap[fileName] = i;
 				ISpecialAction* curAction = new XarAction(frame, tempMot.filename, tempMot.name, tempMot.identifier);
 				XarActions.push_back(curAction);
-				Logger::Instance().WriteMsg("MotionController", "Special Action Successfully Loaded : " + fileName, Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo,"XARManager") << "Special Action Successfully Loaded : " << fileName;
 				i++;
 			}
 
@@ -61,7 +63,7 @@ std::vector<ISpecialAction*> XarManager::LoadActionsXAR(AL::ALFrameManagerProxy 
 	}
 	else
 	{
-		Logger::Instance().WriteMsg("XARManager", "Error There is no such directory: " + Configurator::Instance().getDirectoryPath() + "xar", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"XARManager") << "Error There is no such directory: " << Configurator::Instance().getDirectoryPath() << "xar";
 	}
 
 	return XarActions;

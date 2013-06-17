@@ -1,5 +1,5 @@
 #include "EKFLocalization.h"
-
+#include "core/include/Logger.hpp"
 
 void EKFLocalization::Initialize(){
     actionOdError=0.0f;
@@ -24,7 +24,7 @@ void EKFLocalization::InitializeHypothesis(int resetType, bool kickOff, float in
 
         float setPositionX =  locConfig->initX[(kickOff) ? 0 : 1] ;
         float setPositionY =  locConfig->initY[(kickOff) ? 0 : 1] ;
-	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];        
+	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];
 
         kalmanModels[2].Initialize(setPositionX,setPositionY,setPositionPhi, e1, e2, e3, 1 , true );
 	}
@@ -176,10 +176,15 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
     }
 
    if (boost::posix_time::microsec_clock::universal_time() > lastPrint + seconds(5)){
-       Logger::Instance().WriteMsg("EKFLocalization", "Distance scale factor : " + _toString(kalmanModels[0].state(3,0)) + " Drift :  " + _toString(kalmanModels[0].state(4,0)) + "Rotation scale factor : " + _toString(kalmanModels[0].state(5,0)), Logger::Info);
+	   LogEntry(LogLevel::Info,"EKFLocalization")
+				<<"Distance scale factor : " << (kalmanModels[0].state(3,0))
+				<<" Drift :  " << (kalmanModels[0].state(4,0))
+				<<"Rotation scale factor : " << (kalmanModels[0].state(5,0));
         lastPrint = boost::posix_time::microsec_clock::universal_time();
-
-        Logger::Instance().WriteMsg("EKFLocalization", "Distance scale factor variance : " + _toString(kalmanModels[0].var(3,3)) + " Drift variance:  " + _toString(kalmanModels[0].var(4,4)) + "Rotation scale factor variance: " + _toString(kalmanModels[0].var(5,5)), Logger::Info);
+		LogEntry(LogLevel::Info,"EKFLocalization")
+				<<"Distance scale factor variance : "<< (kalmanModels[0].var(3,3))
+				<<" Drift variance:  " << (kalmanModels[0].var(4,4))
+				<<"Rotation scale factor variance: " << (kalmanModels[0].var(5,5));
         lastPrint = boost::posix_time::microsec_clock::universal_time();
     }
 

@@ -2,8 +2,7 @@
 #define KMEXACTION_H
 
 #include "ISpecialAction.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
+
 #include <string>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "hal/robot/generic_nao/aldebaran-kme.h"

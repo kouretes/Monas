@@ -3,30 +3,31 @@
 #include "core/architecture/messaging/MessageHub.hpp"
 #include "core/architecture/thread/agent/AgentConfig.hpp"
 
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 
 #include "activities/activityRegistry.h"
 #include "providers/providerRegistry.h"
 
 Talws::Talws ()
 {
-	Logger::Instance();
+	LoggerSingleton::Instance();
 	com.StartThread();
 
 	std::string agentFile = Configurator::Instance().findValueForKey("monasConfig.AgentConfigurationFile");
 	if ( Configurator::Instance().numberOfNodesForKey(agentFile) != 1)
 	{
-		std::string msg("Can't read or parse agent configuration file @ ");
-		msg += Configurator::Instance().getDirectoryPath();
-		msg += Configurator::Instance().findValueForKey("monasConfig.AgentConfigurationFile");
-		Logger::Instance().WriteMsg(std::string("Talws"), msg, Logger::FatalError );
+		{ //Create different scope to ensure that m gets destructed and dispatched
+			LogEntry m(LogLevel::FatalError,"Talws");
+			m<<"Can't read or parse agent configuration file @ "
+			 << Configurator::Instance().getDirectoryPath()
+			 << Configurator::Instance().findValueForKey("monasConfig.AgentConfigurationFile");
+		}
 		SysCall::_exit(1);
 	}
 
 	//======================= Start Agents  ===================================
 	int numOfAgents = Configurator::Instance().numberOfNodesForKey(agentFile + ".agent");
-	Logger::Instance().WriteMsg("Talws", "Found " + _toString(numOfAgents) + " agent(s)", Logger::Info );
-
+	LogEntry(LogLevel::Info,"Talws")<<"Found "<< (numOfAgents) <<" agent(s)";
 	for (int i=0;i<numOfAgents;i++)
 	{
 		if(atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$Enable").c_str()) == 1){
@@ -39,7 +40,7 @@ Talws::Talws ()
 			{
 				if(atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i) + ".activity~" + _toString(j) + ".$Enable").c_str()) == 1){
 					activities.push_back( Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i) + ".activity~" + _toString(j)) );
-					Logger::Instance().WriteMsg("Talws", "Agent: " + AgentName + " Registering module: " + activities.back(), Logger::ExtraInfo );
+					LogEntry(LogLevel::ExtraInfo,"Talws")<<"Agent: " << AgentName << " Registering module: " + activities.back();
 				}
 			}
 
@@ -51,31 +52,30 @@ Talws::Talws ()
 			int StatsCycle = atoi(Configurator::Instance().findValueForKey(agentFile + ".agent~" + _toString(i)+".$StatsCycle").c_str());
 			Agent *a = new Agent(AgentName, tcfg, StatsCycle, com, activities);
 			Agents.push_back( a );
-			std::ostringstream AgentInfo;
-			AgentInfo << AgentName
+
+			LogEntry m(LogLevel::ExtraInfo,"Talws");
+			m		  << AgentName
 				      << " Attrb: IsRealTime=" << tcfg.IsRealTime
 				      << " Priority=" << tcfg.Priority
 				      << " ThreadFrequency=" << tcfg.ThreadPeriod
-				      << " StatsCycle=" << StatsCycle << std::endl;
-			Logger::Instance().WriteMsg("Talws", AgentInfo.str(), Logger::ExtraInfo);
+				      << " StatsCycle=" << StatsCycle ;
 		}
 	}
-
 	//======================= Start StateCharts  ===================================
 	int numOfStatecharts = Configurator::Instance().numberOfNodesForKey(agentFile + ".statechart");
-	Logger::Instance().WriteMsg("Talws", "Found " + _toString(numOfStatecharts) + " statechart plan(s)", Logger::Info );
+	LogEntry(LogLevel::Info,"Talws") << "Found " <<(numOfStatecharts) + " statechart plan(s)";
 
 	for (int i=0;i<numOfStatecharts;i++){
 		if(atoi(Configurator::Instance().findValueForKey(agentFile + ".statechart~" + _toString(i)+".$Enable").c_str()) == 1){
 			std::string statechart = Configurator::Instance().findValueForKey(agentFile + ".statechart~" + _toString(i));
 			StatechartPlans.push_back( StatechartFactory::Instance()->CreateObject( statechart, &com ) );
-			Logger::Instance().WriteMsg("Talws", statechart, Logger::ExtraInfo);
+			LogEntry(LogLevel::ExtraInfo,"Talws")<< statechart;
 		}
 	}
 
 	//======================= Start Providers  ===================================
 	int numOfProviders = Configurator::Instance().numberOfNodesForKey(agentFile + ".provider");
-	Logger::Instance().WriteMsg("Talws", "Found " + _toString(numOfProviders) + " provider(s)", Logger::Info );
+	LogEntry(LogLevel::Info,"Talws") << "Found " <<(numOfProviders) + " providers(s)";
 
 	for (int i=0;i<numOfProviders;i++)
 	{
@@ -87,7 +87,7 @@ Talws::Talws ()
 			float threadFreq = atof(Configurator::Instance().findValueForKey(agentFile + ".provider~" + _toString(i)+".$ThreadFrequency").c_str());
 			tcfg.ThreadPeriod = threadFreq > 0 ? 1 / threadFreq  : 0;
 			Providers.push_back( ProviderFactory::Instance()->CreateObject(provider ,  tcfg, com ) );
-			Logger::Instance().WriteMsg("Talws", provider, Logger::ExtraInfo);
+			LogEntry(LogLevel::ExtraInfo,"Talws")<< provider;
 		}
 	}
 }
@@ -123,22 +123,23 @@ void Talws::Start()
 void Talws::Stop()
 {
 	std::cout << "Talws: Stoping..." << std::endl; //TODO
-
 	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
 		(*it)->StopThread();
 
 	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
 		(*it)->StopThread();
 
-	SysCall::_usleep(100000);
-
-	//TODO stop somehow narukom
 	for ( std::vector<Agent*>::const_iterator it = Agents.begin(); it != Agents.end(); it++ )
 		(*it)->JoinThread();
 
 	for ( std::vector<IProvider*>::const_iterator it = Providers.begin(); it != Providers.end(); it++ )
 		(*it)->JoinThread();
 
-	//com.get_message_queue()->JoinThread();
+	for ( std::vector<StatechartWrapper*>::const_iterator it = StatechartPlans.begin(); it != StatechartPlans.end(); it++ )
+		(*it)->Stop();
+
+	com.StopThread();
+	com.requestMailMan(NULL); //Wake him
+	com.JoinThread();
 }
 

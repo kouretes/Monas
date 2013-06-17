@@ -1,7 +1,7 @@
 #include "LocalWorldState.h"
 #include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
+#include "messages/RoboCupGameControlData.h"
 #include "messages/RoboCupGameControlData.h"
 #include <pthread.h>
 #include <netinet/in.h>
@@ -70,7 +70,7 @@ void LocalWorldState::UserInit()
 
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
-    Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
+	LogEntry(LogLevel::Info,GetName())<< "Initialized" ;
 }
 
 void LocalWorldState::Reset(){
@@ -83,7 +83,7 @@ int LocalWorldState::Execute()
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	ProcessMessages();
-	
+
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
@@ -120,9 +120,9 @@ int LocalWorldState::Execute()
 
     if (gameState == PLAYER_PLAYING && (prevGameState == PLAYER_PENALISED || prevGameState == PLAYER_SET ))
          gamePlaying = microsec_clock::universal_time();
-         
+
     if (gameState == PLAYER_PENALISED && prevGameState == PLAYER_PLAYING)
-         stability++;      
+         stability++;
 
     if (gameState !=  PLAYER_SET ) {
         if (locConfig.ekfEnable == true){
@@ -144,9 +144,9 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
 	MyWorld.mutable_myposition()->set_confidence(0.0);
-	
+
 	MyWorld.set_stability(stability);
-	
+
 	calculate_ball_estimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
@@ -265,7 +265,7 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 			lastFilterTime = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-          
+
 			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0 && (gamePlaying + seconds(8) < microsec_clock::universal_time())){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
 			}
@@ -276,7 +276,7 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 
 
     if (MyWorld.balls_size() > 0 && fabs(MyWorld.mutable_myposition()->x())<4.5 && fabs(MyWorld.mutable_myposition()->y()<3) ){
-       
+
         float relativeX = MyWorld.mutable_balls(0)->relativex();
         float relativeY = MyWorld.mutable_balls(0)->relativey();
 
@@ -507,7 +507,7 @@ void LocalWorldState::ReadTeamConf()
 
 void LocalWorldState::ReadRobotConf()
 {
-   
+
     int pNumber=locConfig.playerNumber;
 
     locConfig.initX[0]=atof(Configurator::Instance().findValueForKey(
@@ -625,6 +625,8 @@ void LocalWorldState::InputOutputLogger(){
 			YellowRight = temp;
 	}
 	RobotPosition = _toString(AgentPosition.x) + " " + _toString(AgentPosition.y) + " " + _toString(AgentPosition.phi);
-
-	Logger::Instance().WriteMsg("LocalWorldStateLogger", _toString(currentExecute) + " " + RobotMovement + " " + Yellow + " " + YellowLeft + " " + YellowRight + " " + RobotPosition, Logger::ExtraExtraInfo);
+	LogEntry(LogLevel::ExtraExtraInfo,"LocalWorldStateLogger")
+			<<(currentExecute) << " " << RobotMovement << " "
+			<<  Yellow << " " << YellowLeft  << " " <<  YellowRight
+			<< " " <<  RobotPosition;
 }

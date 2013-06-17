@@ -11,6 +11,7 @@
 #endif
 #include "hal/robot/generic_nao/NaoCamera.h"
 
+#include "core/include/Logger.hpp"
 
 #include <assert.h>
 #include <cstring>
@@ -53,11 +54,11 @@ NaoCamera::NaoCamera(userPrefs newPrefs) :
 	unsigned char current = currentCamera;
 	unsigned char other = currentCamera == NAO_UPPER_CAMERA ?  NAO_LOWER_CAMERA : NAO_UPPER_CAMERA;
 	assert (verifyNaoVersion() == true);
-	Logger::Instance().WriteMsg ("NaoCamer", "Initialization Upper Camera", Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo,"NaoCamera")<< "Initializing Upper Camera";
 	initSelectCamera (NAO_UPPER_CAMERA);
 	initOpenVideoDevice();
 	initSetCameraDefaults();
-	Logger::Instance().WriteMsg ("NaoCamer", "Initialization Lower Camera", Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo,"NaoCamera")<< "Initializing Lower Camera";
 	initSelectCamera (NAO_LOWER_CAMERA);
 	initSetCameraDefaults();
 	initSelectCamera (other);
@@ -110,18 +111,16 @@ bool NaoCamera::captureNew()
 
 	if (polled < 0)
 	{
-		Logger::Instance().WriteMsg ("NaoCamera", "Cannot poll. Reason: " + _toString (strerror (errno) ), Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"NaoCamera") <<  "Cannot poll. Reason: " << strerror (errno);
 		assert (false);
 	}
 	else if (polled == 0)
 	{
 		return false;
-		Logger::Instance().WriteMsg ("NaoCamera", "1.0 seconds passed and there's still no image to read from the camera. Terminating.", Logger::FatalError);
-		assert (false);
 	}
 	else if (pollfd.revents & (POLLERR | POLLNVAL) )
 	{
-		Logger::Instance().WriteMsg ("NaoCamera", "Polling failed.", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"NaoCamera") <<  "Polling failed.";
 		assert (false);
 	}
 
@@ -135,7 +134,7 @@ bool NaoCamera::captureNew()
 	if (shout)
 	{
 		shout = false;
-		Logger::Instance().WriteMsg ("NaoCamera", "Camera is working " + _toString(timeStamp), Logger::ExtraInfo);
+		LogEntry(LogLevel::ExtraInfo,"NaoCamera") <<  "Camera is working " << (timeStamp);
 	}
 
 	return true;
@@ -291,7 +290,7 @@ void NaoCamera::initSelectCamera (  unsigned char camera)
 	unsigned char cmd[2] = {camera, 0};
 	int i2cfd = openI2CAdapter();
 	assert (i2c_smbus_write_block_data (i2cfd, 220, 1, cmd) != -1); // select camera
-	Logger::Instance().WriteMsg ("NaoCamera", "Going to Cam: " + _toString ( (int) camera), Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo,"NaoCamera") <<  "Going to Cam: " << ( (int) camera);
 	closeI2CAdapter (i2cfd);
 	currentCamera = camera;
 }

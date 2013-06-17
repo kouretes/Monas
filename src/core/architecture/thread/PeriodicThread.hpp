@@ -7,7 +7,7 @@
 #include "hal/syscall.h"
 #include "hal/smart_timer.h"
 
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 
 
 
@@ -43,7 +43,7 @@ namespace KSystem
 				float el = t.elapsed();
 
 				if ( el  > ThreadPeriod && ThreadPeriod > 0 )
-					Logger::Instance().WriteMsg(GetName(), "Decrease Freq!!!", Logger::ExtraInfo );
+					LogEntry(LogLevel::ExtraInfo,GetName())<< "Thread period cannot be achieved";
 				else
 					SysCall::_usleep( (ThreadPeriod - el) * 1000000L );
 			}

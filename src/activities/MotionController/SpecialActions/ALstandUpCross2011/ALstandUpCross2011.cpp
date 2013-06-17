@@ -1,7 +1,7 @@
 #include "ALstandUpCross2011.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 
 namespace
 {
@@ -11,7 +11,7 @@ namespace
 ALstandUpCross2011::ALstandUpCross2011()
 {
 	Initialize();
-	Logger::Instance().WriteMsg("SP:ALstandUpCross2011", "Initialized!", Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo,"SP:ALstandUpCross2011")<< "Initialized!";
 
 	try
 	{
@@ -19,7 +19,7 @@ ALstandUpCross2011::ALstandUpCross2011()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("SP:ALstandUpCross2011", "Error in getting motion proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"SP:ALstandUpCross2011")<<"Error in getting motion proxy";
 	}
 }
 

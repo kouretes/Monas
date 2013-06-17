@@ -27,9 +27,6 @@
 
 #include "core/architecture/configurator/Configurator.hpp"
 
-#include "tools/logger.h"
-
-
 
 
 using std::map;
@@ -46,7 +43,7 @@ MessageHub::MessageHub() : Thread(false),
 	unsigned int port = 0;
 	unsigned maxpayload = 0;
 	unsigned beacon_interval = 0;
-	
+
     multicastip = Configurator::Instance().findValueForKey("network.multicast_ip");
 	port = atoi(Configurator::Instance().findValueForKey("network.multicast_port").c_str());
     maxpayload = atoi(Configurator::Instance().findValueForKey("network.maxpayload").c_str());

@@ -25,7 +25,7 @@ void LedHandler::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("LedHandler", "Could not create ALLEds Proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName()) << "Could not create ALLEds Proxy";
 	}
 
 	try
@@ -34,7 +34,7 @@ void LedHandler::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("LedHandler", "Error in getting ALmemory proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName()) << "Error in getting ALmemory proxy";
 	}
 
 	initializeColorMap();
@@ -58,11 +58,11 @@ void LedHandler::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("LedHandler", "Error somewhere here", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName()) << "Error somewhere here";
 	}
 
 	leds->callVoid<string> ("off", "AllLeds");
-	Logger::Instance().WriteMsg("LedHandler", "Initialized", Logger::Info);
+	LogEntry(LogLevel::Info,GetName()) <<"Initialized";
 
 }
 
@@ -101,14 +101,14 @@ void LedHandler::SetBatteryLevel()
 
 	if (firstRun)
 	{
-		Logger::Instance().WriteMsg("LedHandler", "Real Battery level: " + _toString(battery_level), Logger::Info);
+		LogEntry(LogLevel::Info,GetName()) << "Real Battery level: " <<(battery_level);
 		//10 == empty , 0, == full
 		battery_level = rint((1 - battery_level) * left_ear_names.size()); //scale and reverse the real value
 
 		if(battery_level >= left_ear_names.size())
 			battery_level = left_ear_names.size() - 1;
 
-		Logger::Instance().WriteMsg("LedHandler", "Reversed Battery level: " + _toString(battery_level), Logger::Info);
+		LogEntry(LogLevel::Info,GetName()) << "Reversed Battery level: " << (battery_level);
 
 		for(unsigned int i = 0; i < left_ear_names.size(); i++)
 		{
@@ -117,7 +117,9 @@ void LedHandler::SetBatteryLevel()
 			else
 				leds->callVoid<string>("off", left_ear_names[i]);
 
-			Logger::Instance().WriteMsg("LedHandler", "Seting  Battery level: " + _toString(left_ear_names[i]) + " " + _toString((i <= battery_level) ? 1 : 0), Logger::Info);
+			LogEntry(LogLevel::Info,GetName())
+				<< "Seting  Battery level: " << (left_ear_names[i])
+				<< " " << ((i <= battery_level) ? 1 : 0);
 		}
 
 		firstRun = false;
@@ -135,7 +137,7 @@ void LedHandler::SetBatteryLevel()
 	if(new_battery_level > battery_level )
 	{
 		//Discharging so light up the next led
-		Logger::Instance().WriteMsg("LedHandler", "Discharging, Battery Level: " + _toString(new_battery_level), Logger::ExtraExtraInfo);
+		LogEntry(LogLevel::ExtraExtraInfo,GetName()) << "Discharging, Battery Level: " << (new_battery_level);
 		leds->callVoid<string>("on", left_ear_names[new_battery_level]);
 
 		if(battery_level > 0)
@@ -144,7 +146,7 @@ void LedHandler::SetBatteryLevel()
 	else if(new_battery_level < battery_level)
 	{
 		//Charging so light up the next led
-		Logger::Instance().WriteMsg("LedHandler", "Charging, Battery Level: " + _toString(new_battery_level), Logger::ExtraExtraInfo);
+		LogEntry(LogLevel::ExtraExtraInfo,GetName()) << "Charging, Battery Level: " << (new_battery_level);
 		leds->callVoid<string>("off", left_ear_names[battery_level]);
 	}
 

@@ -1,7 +1,7 @@
 
 #include "multicastpoint.hpp"
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
+
 #include "msgentryserialize.hpp"
 #include <boost/functional/hash.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -30,7 +30,7 @@ namespace KNetwork
 		thishost = h(boost::posix_time::to_iso_string(now)); //Generate random hostid from current time
 		dep.setHost(thishost); //My host id is used to reject loopback messages (if received==me, reject)
 		p.setHost(thishost );  //My host id is used to tag multicast messages
-		Logger::Instance().WriteMsg("Multicast", "Multicast hostid:" + _toString(thishost), Logger::Info);
+		LogEntry(LogLevel::Info,"Multicast")<< "Multicast hostid:" <<(thishost);
 		//std::cout<<"Multicast hostid:"<<thishost<<std::endl;
 		//Initialize anyhost record;
 		otherHosts[anyhost].lastseen = now;
@@ -38,6 +38,7 @@ namespace KNetwork
 
 	MulticastPoint::~MulticastPoint()
 	{
+		std::cout<<"Multicast shuting down"<<std::endl;
 		this->StopThread();
 		this->JoinThread();
 	}
@@ -55,7 +56,7 @@ namespace KNetwork
 		for( hit = otherHosts.begin(); hit != otherHosts.end(); hit++)
 			for(sit = (*hit).second.needsTopics.begin(); sit != (*hit).second.needsTopics.end(); ++sit)
 				remSub.erase(*sit);
-		
+
 		for(sit = remSub.begin(); sit != remSub.end(); ++sit)
 			localsubscriptions.erase(*sit);
 
@@ -110,7 +111,7 @@ namespace KNetwork
 		}
 		catch (boost::system::system_error e)
 		{
-			Logger::Instance().WriteMsg("Multicast", "Could not start multicastpoint!", Logger::Error);
+			LogEntry(LogLevel::Error,"Multicast")<< "Could not start multicast networking!";
 			return false;
 		}
 
@@ -163,7 +164,7 @@ namespace KNetwork
 			{
 				if(canWarn)//It is reset every beacon interval
 				{
-					Logger::Instance().WriteMsg("Multicast", "Possible Network Error", Logger::Warning);
+					LogEntry(LogLevel::Warning,"Multicast")<< "Possible Network Error";
 					canWarn = false; //Disable warnings again
 				}
 			}

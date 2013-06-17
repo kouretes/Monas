@@ -2,7 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <errno.h>
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 #include "tools/toString.h"
 
 using std::cout;
@@ -25,12 +25,12 @@ void GameController::connectTo(int port, int tn )
 {
 	team_number = tn;
 	//Initialize_data
-	Logger::Instance().WriteMsg("GameController", "Initialize GameController", Logger::Info);
+	LogEntry(LogLevel::Info,"GameController")<< "Initialize GameController" << std::endl;
 	socket_fd = socket(AF_INET, SOCK_DGRAM, 0); //socket creation
 
 	if (socket_fd == -1)
 	{
-		Logger::Instance().WriteMsg("GameController", "Cannot create Socket ", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"GameController")<< "Cannot create Socket " << std::endl;
 	}
 
 	{
@@ -38,7 +38,7 @@ void GameController::connectTo(int port, int tn )
 
 		if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, (char *) &reuse, sizeof(reuse)) < 0)
 		{
-			Logger::Instance().WriteMsg("GameController", "Setting SO_REUSEADDR error ", Logger::FatalError);
+			LogEntry(LogLevel::FatalError,"GameController")<< "Setting SO_REUSEADDR error " << std::endl;
 			close(socket_fd);
 		}
 	}
@@ -48,7 +48,7 @@ void GameController::connectTo(int port, int tn )
 
 		if (setsockopt(socket_fd, SOL_SOCKET, SO_BROADCAST, (char *) &reuse, sizeof(reuse)) < 0)
 		{
-			Logger::Instance().WriteMsg("GameController", "Setting SO_BROADCAST error ", Logger::FatalError);
+			LogEntry(LogLevel::FatalError,"GameController") << "Setting SO_BROADCAST error " << std::endl;
 			close(socket_fd);
 		}
 	}
@@ -61,7 +61,7 @@ void GameController::connectTo(int port, int tn )
 
 	if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) == -1)
 	{
-		Logger::Instance().WriteMsg("GameController", "Setting SO_RCVTIMEO error ", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"GameController") << "Setting SO_RCVTIMEO error " << std::endl;
 	}
 
 	bzero(&addr, sizeof(addr));
@@ -72,10 +72,10 @@ void GameController::connectTo(int port, int tn )
 	//binding
 	if ((bind(socket_fd, (struct sockaddr*) &addr, sizeof(addr))) != 0)
 	{
-		Logger::Instance().WriteMsg("GameController", "Cannot Bind  ", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"GameController") << "Cannot Bind  " << std::endl;
 	}
 
-	Logger::Instance().WriteMsg("GameController", " Game controller Initialized", Logger::Info);
+	LogEntry(LogLevel::Info,"GameController") << " Game controller Initialized" << std::endl;
 	addr.sin_addr.s_addr = INADDR_BROADCAST;
 }
 
@@ -100,7 +100,7 @@ bool GameController::poll()
 	{
 		if (runcnt++ % 5000 == 0)
 		{
-			Logger::Instance().WriteMsg("GameController", "Is Game Controller Running? Cant Listen", Logger::Error);
+			LogEntry(LogLevel::Error,"GameController") << "Is Game Controller Running? Cant Listen"  << std::endl;
 			runcnt = 1;
 		}
 	}
@@ -143,6 +143,6 @@ bool GameController::check_data_and_copy(char* bytes, int size)
 
 GameController::~GameController()
 {
-	Logger::Instance().WriteMsg("GameController", "Shutting down gamecontroller", Logger::Info);
+	LogEntry(LogLevel::Info,"GameController") << "Shutting down gamecontroller" << std::endl;
 	close(socket_fd);
 }

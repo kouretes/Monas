@@ -1,6 +1,6 @@
 #include "Gateway.h"
 
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 #include <boost/crc.hpp>
 
 #include <fstream>
@@ -18,7 +18,7 @@ void Gateway::UserInit() {
 	localHostId = 0;
 	lockId = 0;
 	locked = false;
-	Logger::Instance().WriteMsg ("Gateway", "Initialized", Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo,GetName())<< "Initialized";
 }
 
 
@@ -124,7 +124,7 @@ void Gateway::processExternalConfig (uint32_t incomingHostId) {
 						fout.write (ecmsg->file().file().c_str(), ecmsg->file().file().size() );
 						fout.close();
 					} else {
-						Logger::Instance().WriteMsg ("Gateway", "Wrong file path, Can't save external file", Logger::Info);
+						LogEntry(LogLevel::Info,GetName())<< "Wrong file path, Can't save external file";
 					}
 				}
 
@@ -195,7 +195,7 @@ void Gateway::processExternalCommands (uint32_t incomingHostId) {
 					float value = commsg->floatvars_size() == 1 ? commsg->floatvars(0) : 0;
 					processHeadCommand(tempId, value);
 				}else{
-					Logger::Instance().WriteMsg ("Gateway", "Unknown External Command ID", Logger::Info);
+					LogEntry(LogLevel::Info,GetName())<<  "Unknown External Command ID";
 				}
 			}
 		}
@@ -264,7 +264,7 @@ void Gateway::processGameControllerCommand(int commandID){
 
 void Gateway::processSimpleActionsCommand(int commandID){
 	if(commandID == ExternalCommand::SHUTDOWN){
-		Logger::Instance().WriteMsg("Gateway", "SysCall: Shutdown robot", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName())<< "SysCall: Shutdown robot";
 		SysCall::_Shutdown();
 	}else if(commandID == ExternalCommand::STIFFNESS_OFF){
 		new_gsm.CopyFrom(*gsm);
@@ -377,13 +377,13 @@ void Gateway::processCameraCalibration (uint32_t incomingHostId) {
 					changes = true;
 				}
 				dataForWrite.push_back(temp);
-		
-				if(changes){		
+
+				if(changes){
 					ccm.set_readconfiguration(true);
 					publishSignal(ccm, "image");
 					Configurator::Instance().burstWrite (dataForWrite);
 				}
-				
+
 			}
 		}
 

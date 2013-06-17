@@ -1,6 +1,6 @@
 #include "ObstacleAvoidance.h"
-#include "tools/toString.h"
-#include "tools/logger.h"
+//#include "tools/toString.h"
+#include "core/include/Logger.hpp"
 #include <iostream>
 #include <string>
 
@@ -144,7 +144,10 @@ int ObstacleAvoidance::Execute()
 		Angle = rpm->sensordata(KDeviceLists::ROBOT_ANGLE);
 
 		if(debugModeCout)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "PosX: " + _toString(PosX.sensorvalue()) + " PosY: " + _toString(PosY.sensorvalue()) + " Angle: " + _toString(Angle.sensorvalue()) , Logger::Info);
+			LogEntry(LogLevel::Info,GetName())
+				<<"PosX: "  <<(PosX.sensorvalue())
+				<<" PosY: " << (PosY.sensorvalue())
+				<<" Angle: "<<(Angle.sensorvalue());
 
 		odometryX = PosX.sensorvalue();
 		odometryY = PosY.sensorvalue();
@@ -188,7 +191,7 @@ int ObstacleAvoidance::Execute()
 			SonarFailCounter++;
 
 			if(SonarFailCounter > 10)
-				Logger::Instance().WriteMsg("ObstacleAvoidance", "sonars fail", Logger::Info);
+				LogEntry(LogLevel::Info,GetName())<< "sonars fail";
 		}
 		else
 			updateGrid(countLeft != 0 ? Left : empty, countRight != 0 ? Right : empty);
@@ -220,7 +223,12 @@ int ObstacleAvoidance::Execute()
 			targetX = targetD * cos(targetT);
 			targetY = targetD * sin(targetT);
 			targetA = anglediff2(targetA_0, deltaA + originA);
-			Logger::Instance().WriteMsg("ObstacleAvoidance", " delta X: " + _toString(deltaX) + " Y: " + _toString(deltaY) + " A: " + _toString(deltaA) + " D: " + _toString(deltaA) + " T: " + _toString(deltaA), Logger::Info );
+			LogEntry(LogLevel::Info,GetName())
+				<<" delta X: " << (deltaX)
+				<<" Y: " << (deltaY)
+				<<" A: " << (deltaA)
+				<<" D: " << (deltaA)
+				<<" T: " << (deltaA);
 			pathPlanningRequestRelative(0.0, 0.0, 0.0);
 		}
 		else
@@ -233,7 +241,10 @@ int ObstacleAvoidance::Execute()
 		distance2Goal = sqrt((targetX) * (targetX) + (targetY) * (targetY));
 
 		if(debugModeCout)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", " targetX: " + _toString(targetX) + " targetY: " + _toString(targetY) + " targetA: " + _toString(targetA), Logger::Info );
+			LogEntry(LogLevel::Info,GetName())
+				<< " targetX: " << (targetX)
+				<< " targetY: " << (targetY)
+				<< " targetA: " <<(targetA);
 
 		if( distance2Goal > GoalDistanceTolerance && fabs(anglediff2(targetA, robotA)) > GoalAngleTolerance)   //|| targetA > M_PI_4 ){
 		{
@@ -276,7 +287,9 @@ int ObstacleAvoidance::Execute()
 			}
 
 			if(debugModeCout)
-				Logger::Instance().WriteMsg("ObstacleAvoidance", "coord waypoint x: " + _toString(walkToX) + " y: " + _toString(walkToY) + " or: " + _toString(walkToT) , Logger::Info);
+				LogEntry(LogLevel::Info,GetName())
+					<< "coord waypoint x: " << (walkToX)
+					<< " y: " << (walkToY) <<  " or: " << (walkToT);
 
 			callVelocityWalk(walkToX, walkToY, walkToT, distance2Goal);
 		}
@@ -295,7 +308,7 @@ int ObstacleAvoidance::Execute()
 		lastAge = microsec_clock::universal_time();
 
 		if(debugModeCout)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "aging!!", Logger::Info);
+			LogEntry(LogLevel::Info,GetName()) << "aging!!";
 
 	}
 
@@ -380,9 +393,11 @@ void ObstacleAvoidance::chooseCloserObstacle()
 void ObstacleAvoidance::printSonarValues()
 {
 	for(int i = 0; i < KDeviceLists::US_SIZE; i++)
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "leftSensor: " + _toString(LeftValue[i].sensorvalue()) + " rightSensor: " + _toString(RightValue[i].sensorvalue()) , Logger::Info);
+		LogEntry(LogLevel::Info,GetName())
+			<< "leftSensor: " << (LeftValue[i].sensorvalue())
+			<<" rightSensor: " <<(RightValue[i].sensorvalue());
 
-	Logger::Instance().WriteMsg("ObstacleAvoidance", "debugCounter: " + _toString(debugCounter), Logger::Info);
+	LogEntry(LogLevel::Info,GetName()) << "debugCounter: " << (debugCounter);
 	debugCounter++;
 }
 
@@ -450,7 +465,7 @@ void ObstacleAvoidance::updateGrid(double* left, double* right)
 			mapFreeSpace( left[0] + SonarDistanceShift, +SonarAngleShiftRad );
 	}
 	else
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "left sonar fail", Logger::ExtraExtraInfo);
+		LogEntry(LogLevel::ExtraExtraInfo,GetName()) << "left sonar fail";
 
 	if (right[0] != 0)
 	{
@@ -466,7 +481,7 @@ void ObstacleAvoidance::updateGrid(double* left, double* right)
 			mapFreeSpace( right[0] + SonarDistanceShift, -SonarAngleShiftRad );
 	}
 	else
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "right sonar fail", Logger::ExtraExtraInfo);
+		LogEntry(LogLevel::ExtraExtraInfo,GetName()) << "right sonar fail";
 }
 
 void ObstacleAvoidance::ageGrid()
@@ -826,9 +841,17 @@ void ObstacleAvoidance::publishObstacleMessage()
 {
 	if(debugModeCout)
 	{
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "aristera: " + _toString(leftObstacle) + " dist: " + _toString(leftDist) + " cert: " + _toString(leftCert) , Logger::ExtraExtraInfo);
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "mprosta: " + _toString(frontObstacle) + " dist: " + _toString(frontDist) + " cert: " + _toString(frontCert) , Logger::ExtraExtraInfo);
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "dexia: " + _toString(rightObstacle) + " dist: " + _toString(rightDist) + " cert: " + _toString(rightCert) , Logger::ExtraExtraInfo);
+		LogEntry(LogLevel::ExtraExtraInfo,GetName())
+				<< "aristera: " << (leftObstacle)
+				<< " dist: "    << (leftDist)  << " cert: " << (leftCert) ;
+		LogEntry(LogLevel::ExtraExtraInfo,GetName())
+				<< "mprosta: " << (frontObstacle)
+				<< " dist: " << (frontDist)
+				<< " cert: " <<(frontCert) ;
+		LogEntry(LogLevel::ExtraExtraInfo,GetName())
+				<< "dexia: " << (rightObstacle)
+				<< " dist: " << (rightDist)
+				<< " cert: " << (rightCert);
 	}
 
 	obavm.set_direction(0, leftObstacle ? 1 : 0);
@@ -926,7 +949,7 @@ void ObstacleAvoidance::motionController(double distance2Goal)
 		}
 
 		if(debugModeCout)
-			Logger::Instance().WriteMsg("ObstacleAvoidance", "coord waypoint x: " + _toString(walkToX) + " y: " + _toString(walkToY) + " or: " + _toString(walkToT) , Logger::Info);
+			LogEntry(LogLevel::Info,GetName()) << "coord waypoint x: " << (walkToX) << " y: " << (walkToY) << " or: " <<(walkToT) ;
 
 		callVelocityWalk(walkToX, walkToY, walkToT, distance2Goal);
 	}
@@ -951,7 +974,7 @@ void ObstacleAvoidance::velocityWalk(double ix, double iy, double it, double f)
 	wmot->set_parameter(3, f);
 
 	if(debugModeCout)
-		Logger::Instance().WriteMsg("ObstacleAvoidance", "publish: cx " + _toString(cX) + " cy " + _toString(cY) + " ct " + _toString(ct) +  " f " + _toString(f)  , Logger::ExtraExtraInfo);
+		LogEntry(LogLevel::ExtraExtraInfo,GetName()) << "publish: cx " << (cX) << " cy " <<(cY) << " ct " <<(ct)  <<  " f " <<(f);
 
 	_blk.publishSignal(*wmot, "motion");
 	lastwalk = microsec_clock::universal_time();

@@ -1,7 +1,7 @@
 #include "XarAction.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 
 using namespace std;
 
@@ -40,7 +40,8 @@ int XarAction::ExecuteActionXAR()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("XARManager", "Error playing this->filename: " + this->filename + e.getDescription(), Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"XARManager")
+			<< "Error playing this->filename: " << this->filename << e.getDescription();
 		//	continue;
 	}
 
