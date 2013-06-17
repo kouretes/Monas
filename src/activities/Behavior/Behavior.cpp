@@ -40,6 +40,7 @@ void Behavior::UserInit() {
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
+	count = 0;
 	ballDist = 0.0;
 	ballBearing = 0.0;
 	goalieApproachStarted = false;
@@ -61,7 +62,6 @@ void Behavior::UserInit() {
 	numOfRobots = 0;
 	gameState = PLAYER_INITIAL;
 	currentRobotAction = MotionStateMessage::IDLE;
-	role = ATTACKER;
 	Reset();
 	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
 	srand(time(0));
@@ -79,7 +79,6 @@ void Behavior::UserInit() {
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
 	// generateFakeObstacles();
-	//generateFakeRobots();
 }
 
 /**
@@ -99,7 +98,7 @@ void Behavior::Reset(){
 	if(color.compare("blue") == 0)
 		config.teamColor = TEAM_BLUE;
 	else
-		config.teamColor == TEAM_RED;
+		config.teamColor = TEAM_RED;
 
 	// === read behavior configuration xml data from behavior.xml===
 	config.posX = atof(Configurator::Instance().findValueForKey("behavior.posx").c_str());
@@ -299,15 +298,12 @@ int Behavior::Execute() {
 
 		updateOrientation();
 		readyToKick = false;
-		
-		if(swim != 0 && swim.get() != 0 && swim->globalballs_size() > 0) {
-			CurrentSharedBallX = swim->globalballs(0).x();
-			CurrentSharedBallY = swim->globalballs(0).y();
-		}
-		
-		if(sharedBallFound == true) {
-			if(lastFormation + seconds(10) < microsec_clock::universal_time() || DISTANCE(CurrentSharedBallX, SharedGlobalBallX, CurrentSharedBallY, SharedGlobalBallY) > 0.7) {
 			
+		if(sharedBallFound == true) {
+			if(lastFormation + seconds(10) < microsec_clock::universal_time()) { // distance ???
+				
+				std::cout << "TIME: "+_toString(count++) << std::endl;
+				
 				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
 				if(!gameMode){
 					sendDebugMessages();
@@ -332,7 +328,7 @@ int Behavior::Execute() {
 		_blk.publishState(hcontrol, "behavior");
 
 		
-		if(config.playerNumber == 1 || role == GOALIE) { // goalie role if number 1
+		if(config.playerNumber == 1) { // goalie role if number 1
 			
 			if(formationFlag == true) {
 				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
@@ -431,11 +427,13 @@ int Behavior::Execute() {
 				}
 				else if(ballFound == 1) {
 					direction = (ballBearing > 0) ? 1 : -1;
-					littleWalk(0.0, 0.0, ballBearing);
+					if(fabs(ballBearing) > M_PI/6)
+						littleWalk(0.0, 0.0, ballBearing);
 				}
 				else if(sharedBallFound == 1) {
 					direction = (SharedBallBearing > 0) ? 1 : -1;
-					littleWalk(0.0, 0.0, SharedBallBearing);
+					if(fabs(SharedBallBearing) > M_PI/6)
+						littleWalk(0.0, 0.0, SharedBallBearing);
 				}
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
@@ -492,7 +490,7 @@ int Behavior::Execute() {
 			//std::cout << "I CHOOSE TO BE: " << getRoleString(currentRole.role) << std::endl;
 			lastFormation = microsec_clock::universal_time();
 			formationFlag = true;
-			goToPositionFlag = false;
+			goToPositionFlag = true;
 		}
 		
 		if (gameState != prevGameState) {
@@ -517,11 +515,11 @@ void Behavior::Coordinate() {
 			if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE)
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
 		}
-		print(roles, "Behavior");
+		//print(roles, "Behavior");
 		
 		mappings = permutationsOfCombinations(roles, numOfRobots);
 		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
-		print(mappings, "Behavior");
+		//print(mappings, "Behavior");
 		roles.clear();
 		
 		// search for optimal mapping
@@ -548,14 +546,14 @@ void Behavior::Coordinate() {
 				index = map;
 			}
 			//std::cout << "MAPPING: ";
-			print(mappings[map], "Behavior");
+			//print(mappings[map], "Behavior");
 			//std::cout << "COST: " << _toString(mapCost) << std::endl;
 		}
 		
 		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
-		//std::cout << "OPTIMAL MAP IS: ";
+		std::cout << "OPTIMAL MAP IS: ";
 		print(mappings[index], "Behavior");
-		//std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;	
+		std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;	
 }
 
 /**
@@ -862,26 +860,6 @@ void Behavior::approachBall() {
     }
 }
 
-void Behavior::approachBallRoleDependent() {
-
-    if (orientation == 1)
-		side = -1;
-	else if (orientation == 3)
-		side = +1;
-
-	if(role == ATTACKER) {
-		approachBall();
-	}
-	else if(role == CENTER_FOR) {
-		if (ballDist > 0.7) {
-			int pathSide = (ballBearing > 0) ? 1 : -1;
-			pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
-		}
-		else
-			stopRobot();
-	}
-}
-
 void Behavior::stopRobot()
 {
 	// velocityWalk(0.0, 0.0, 0.0, 1.0);
@@ -995,8 +973,6 @@ void Behavior::checkForPenaltyArea()
  * when to go on the ball and kick it away from the goal post (TODO).
  */
 void Behavior::goalie() {
-
-	role = GOALIE;
 
 	if(ballFound == 1) {
 
