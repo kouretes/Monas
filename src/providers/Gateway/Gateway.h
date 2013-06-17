@@ -113,7 +113,7 @@ private:
 	/**
 	 * Initialize localization particles to a given new point
 	 * */
-	void processLocalizationCommand(int commandID, float x, float y, float phi);
+	void processLocalizationCommand(float x, float y, float phi);
 
 	/**
 	 * Send a head command to head controller like scan or localize

@@ -1,3 +1,6 @@
+#ifndef KSTANDARD_H
+#define KSTANDARD_H
+
 #include "tools/toString.h"
 #include <string>
 
@@ -44,3 +47,5 @@ namespace KStandard {
 	}
 
 };
+
+#endif

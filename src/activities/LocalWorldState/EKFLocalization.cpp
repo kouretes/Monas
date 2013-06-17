@@ -9,24 +9,23 @@ void EKFLocalization::Initialize(){
     e2 = 0.5f;
     e3 = 0.8f;
 
-    kalmanModels.resize(16);
+    kalmanModels.resize(32);
 	InitializeHypothesis(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
     lastPrint = boost::posix_time::microsec_clock::universal_time();
 }
-
 
 void EKFLocalization::InitializeHypothesis(int resetType, bool kickOff, float inX, float inY, float inPhi)
 {
 	if(resetType == LocalizationResetMessage::PENALISED || resetType == LocalizationResetMessage::UNIFORM){
         numberOfModels = 3;
-        kalmanModels[0].Initialize(locConfig->fieldMinX/2, locConfig->fieldMinY, TO_RAD(90), e1, e2, e3, 1 , true );
-        kalmanModels[1].Initialize(locConfig->fieldMinX/2, locConfig->fieldMaxY, TO_RAD(270), e1, e2, e3, 1 , true );
+        kalmanModels[0].Initialize(locConfig->fieldMinX/2, locConfig->fieldMinY, TO_RAD(90), e1, e2, e3, 1.0/3 , true );
+        kalmanModels[1].Initialize(locConfig->fieldMinX/2, locConfig->fieldMaxY, TO_RAD(270), e1, e2, e3, 1.0/3 , true );
 
         float setPositionX =  locConfig->initX[(kickOff) ? 0 : 1] ;
         float setPositionY =  locConfig->initY[(kickOff) ? 0 : 1] ;
-	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];
+	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];        
 
-        kalmanModels[2].Initialize(setPositionX,setPositionY,setPositionPhi, e1, e2, e3, 1 , true );
+        kalmanModels[2].Initialize(setPositionX,setPositionY,setPositionPhi, e1, e2, e3, 1.0/3 , true );
 	}
 	else if(resetType == LocalizationResetMessage::READY){
         numberOfModels = 1;
@@ -68,7 +67,6 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
     {
 
         change = true;
-
         featureX = Observations[0].Feature.x;
         featureY =  Observations[0].Feature.y;
         distanceVal = Observations[0].Distance.val;
@@ -82,15 +80,6 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
 
             modelClone.Update(-featureX,-featureY,distanceVal,bearingVal,distanceDev,bearingDev);
             kalmanModels[i+numberOfModels] = modelClone;
-
-            if (Observations[0].Feature.id.compare("YellowLeft")==0){
-                kalmanModels[i].associationHistory.push_back(1);
-                kalmanModels[i+numberOfModels].associationHistory.push_back(4);
-            }
-            else{
-                kalmanModels[i].associationHistory.push_back(2);
-                kalmanModels[i+numberOfModels].associationHistory.push_back(3);
-            }
         }
 
         if (Observations.size() == 2){
@@ -104,16 +93,6 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
             for(int i=0; i<numberOfModels; i++) {
                 kalmanModels[i].Update(featureX,featureY,distanceVal,bearingVal,distanceDev,bearingDev);
                 kalmanModels[i+numberOfModels].Update(-featureX,-featureY,distanceVal,bearingVal,distanceDev,bearingDev);
-
-                if (Observations[1].Feature.id.compare("YellowLeft")==0){
-                    kalmanModels[i].associationHistory.push_back(1);
-                    kalmanModels[i+numberOfModels].associationHistory.push_back(4);
-                }
-                else{
-                    kalmanModels[i].associationHistory.push_back(2);
-                    kalmanModels[i+numberOfModels].associationHistory.push_back(3);
-                }
-
             }
         }
         numberOfModels *= 2;
@@ -127,7 +106,7 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
         featureY =  AmbiguousObservations[0].Feature.y;
         distanceVal = AmbiguousObservations[0].Distance.val;
         bearingVal = AmbiguousObservations[0].Bearing.val;
-        distanceDev = 2;
+        distanceDev = AmbiguousObservations[0].Distance.Edev;
         bearingDev = AmbiguousObservations[0].Bearing.Edev;
 
         for(int i=0; i<numberOfModels; i++) {
@@ -145,10 +124,6 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
             kalmanModels[numberOfModels + 3*i + 1] = modelClone2;
             kalmanModels[numberOfModels + 3*i + 2] = modelClone3;
 
-            kalmanModels[i].associationHistory.push_back(1);
-            kalmanModels[numberOfModels + 3*i].associationHistory.push_back(3);
-            kalmanModels[numberOfModels + 3*i + 1].associationHistory.push_back(2);
-            kalmanModels[numberOfModels + 3*i + 2].associationHistory.push_back(4);
         }
          numberOfModels *= 4 ;
     }
@@ -157,14 +132,7 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
 
         sort (kalmanModels.begin(), kalmanModels.begin()+numberOfModels);
 
-        // Merge hypothesis representing the same belief
-//        if (numberOfModels>1 && kalmanModels[0].associationHistory.size()==2)
-//           hypothesisMerging();
-
         float sumWeight = 0;
-
-        if ( numberOfModels > 4)
-            numberOfModels = 4;
 
         for(int i = 0;i<numberOfModels; i++) {
                 sumWeight += kalmanModels[i].mWeight;
@@ -173,9 +141,21 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
         for(int i = 0; i < numberOfModels; i++) {
             kalmanModels[i].mWeight /= sumWeight;
         }
+
+        // Merge hypothesis representing the same belief
+        double threshold = 0.7;
+        double dt = 0.5;
+        //cout << "new round" << endl;
+        while( numberOfModels > 8 ){
+            //cout << "step"<< endl;
+            hypothesisMerging(threshold);
+            //cout << "Number Of Models after merging : " << numberOfModels << endl;
+            threshold += dt;     
+        }
+
     }
 
-   if (boost::posix_time::microsec_clock::universal_time() > lastPrint + seconds(5)){
+   /*if (boost::posix_time::microsec_clock::universal_time() > lastPrint + seconds(5)){
 	   LogEntry(LogLevel::Info,"EKFLocalization")
 				<<"Distance scale factor : " << (kalmanModels[0].state(3,0))
 				<<" Drift :  " << (kalmanModels[0].state(4,0))
@@ -186,7 +166,7 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
 				<<" Drift variance:  " << (kalmanModels[0].var(4,4))
 				<<"Rotation scale factor variance: " << (kalmanModels[0].var(5,5));
         lastPrint = boost::posix_time::microsec_clock::universal_time();
-    }
+    }*/
 
     agentPosition.x = kalmanModels[0].state(0,0);
     agentPosition.y = kalmanModels[0].state(1,0);
@@ -206,28 +186,40 @@ void EKFLocalization::IncreaseUncertaintyAfterFall(){
     }
 }
 
-void EKFLocalization::hypothesisMerging(){
+void EKFLocalization::hypothesisMerging(float thres){
 
     vector<KalmanModel> kalmanTmp;
-    int count = 0;
-
-
+    int numberOfM = 0;
+    double k;
+    
+    KMath::KMat::GenMatrix<float,6,1> st1;
+    KMath::KMat::GenMatrix<float,6,1> st2;
+    KMath::KMat::GenMatrix<float,6,6> varInv;
+   
     for(int i=0; i<numberOfModels; i++) {
         if (kalmanModels[i].active==true){
             kalmanTmp.push_back(kalmanModels[i]);
-            count ++ ;
-            for(int j=i+1; j<numberOfModels; j++) {
-                if ( kalmanModels[j].active == true &&
-                        kalmanModels[i].associationHistory[0] == kalmanModels[j].associationHistory[0] &&
-                        kalmanModels[i].associationHistory[1] == kalmanModels[j].associationHistory[1]) {
+            numberOfM ++ ;
 
+            varInv = kalmanModels[i].var;
+            invert_square_matrix(varInv);
+
+            for(int j=i+1; j<numberOfModels; j++) {
+                
+                st1 = kalmanModels[i].state;
+                st2 = kalmanModels[j].state;
+
+                st1.sub(st2);
+                k = (kalmanModels[i].mWeight * kalmanModels[j].mWeight)/(kalmanModels[i].mWeight + kalmanModels[j].mWeight) * st1.transp().slow_mult(varInv).slow_mult(st1);
+
+                if ( k < 0.05 * thres ){
                     kalmanModels[j].active=false;
                     kalmanTmp.back().mWeight+=kalmanModels[j].mWeight;
                 }
             }
         }
     }
-    numberOfModels=count;
-    for (int i=0;i<count;i++)
+    numberOfModels=numberOfM;
+    for (int i=0;i<numberOfModels;i++)
         kalmanModels[i] = kalmanTmp[i];
 }

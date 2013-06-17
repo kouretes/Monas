@@ -23,8 +23,7 @@ message RobotPose{
 	required float X = 1 [default = -100000];
 	required float Y = 2 [default = -100000];
 	required float phi = 3 [default = -100000];
-	required float confidence = 4 [default = -100000];
-	repeated float var = 5;  //5x5 matrix showing the covariance of the player's pose and the observed ball
+	repeated float var = 4;  //3x3 matrix showing the covariance of the player's pose and the observed ball
 }
 
 message Ball{
@@ -32,11 +31,6 @@ message Ball{
 	required float relativeY = 2 [default = -100000];
 	required float relativeXspeed = 3 [default = 0];
 	required float relativeYspeed = 4 [default = 0];
-	
-	required float absoluteX = 5 [default = -100000];
-	required float absoluteY = 6 [default = -100000];
-	required float absoluteXspeed = 7 [default = 0];
-	required float absoluteYspeed = 8 [default = 0];
 }
 
 message GlobalBall{	

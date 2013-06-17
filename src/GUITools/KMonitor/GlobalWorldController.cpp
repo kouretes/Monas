@@ -199,9 +199,6 @@ QTreeWidgetItem *GlobalWorldController::GWhostFinder(QString hostId) {
 
 void GlobalWorldController::addNewItem(QString hostId, QString hostName) {
 	QTreeWidgetItem *item;
-	QTreeWidgetItem *subItem1;
-	QTreeWidgetItem *subItem2;
-	QTreeWidgetItem *subItem3;
 	int position = ui->hostTree->topLevelItemCount();
 	QCheckBox *checkBox;
 	QCheckBox *subCheckBox1;
@@ -212,9 +209,6 @@ void GlobalWorldController::addNewItem(QString hostId, QString hostName) {
 	icon.addFile(QString::fromUtf8(":/KnownHostsIcons/chore_robot_on.png"), QSize(), QIcon::Normal, QIcon::Off);
 	font.setPointSize(24);
 	item = new QTreeWidgetItem(ui->hostTree);
-	subItem1 = new QTreeWidgetItem(item);
-	subItem2 = new QTreeWidgetItem(item);
-	subItem3 = new QTreeWidgetItem(item);
 	checkBox = new QCheckBox();
 	checkBox->setIcon(icon);
 	checkBox->setIconSize(QSize(48, 48));

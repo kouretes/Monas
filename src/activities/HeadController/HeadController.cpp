@@ -193,7 +193,6 @@ void HeadController::GetPosition()
 			robot_x = wim->myposition().x();
 			robot_y = wim->myposition().y();
 			robot_phi = wrapToPi( wim->myposition().phi() );
-			robot_confidence = wim->myposition().confidence();
 		}
 	}
 }

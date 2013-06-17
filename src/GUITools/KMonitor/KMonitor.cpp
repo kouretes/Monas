@@ -135,7 +135,3 @@ void KMonitor::quitKMonitor() {
 	this->destroy();
 	exit(0);
 }
-
-void KMonitor::printCurrentTab(int index) {
-	//std::cout << "Allaksa kai eimai to :: " << index << std::endl;
-}

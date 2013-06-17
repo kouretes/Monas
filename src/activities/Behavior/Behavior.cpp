@@ -602,7 +602,6 @@ void Behavior::getPosition() {
 		robotX = wim->myposition().x();
 		robotY = wim->myposition().y();
 		robotPhi = wrapToPi( wim->myposition().phi() );
-		robotConfidence = wim->myposition().confidence();
 	}
 }
 
@@ -616,7 +615,6 @@ void Behavior::getTeamPositions() {
 			robots[i].robotX = swim->teammateposition(i).pose().x();
 			robots[i].robotY = swim->teammateposition(i).pose().y();
 			robots[i].robotPhi = wrapToPi(swim->teammateposition(i).pose().phi());
-			robots[i].robotConfidence = swim->teammateposition(i).pose().confidence();
 			robots[i].robotStability = swim->teammateposition(i).stability();
 		}
 		sortRobotsbyId(robots); // sorting robots by player number

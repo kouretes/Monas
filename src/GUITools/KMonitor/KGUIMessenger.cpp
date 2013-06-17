@@ -316,7 +316,7 @@ void KGUIMessenger::tabChangeHandler(int currentTab) {
 	switch(currentTab) {
 
 	case 0: // Global World State ((un-)sub to worldstate is absolutely defined by user's prefs)
-		for(unsigned i = 0 ; i < myGWRequestedHosts.count() ; i++ ) {
+		for(int i = 0 ; i < myGWRequestedHosts.count() ; i++ ) {
 			hostId = myGWRequestedHosts.at(i);
 			updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC, hostId.toUInt());
 		}

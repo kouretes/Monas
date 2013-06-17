@@ -181,9 +181,9 @@ void Gateway::processExternalCommands (uint32_t incomingHostId) {
 					processGameControllerCommand(tempId);
 				}else if(commandID < ExternalCommand::SIMPLE_ACTIONS_SIZE + ExternalCommand::GAMECONTROLLER_SIZE + ExternalCommand::LOCALIZATION_SIZE){
 
-					int tempId = commandID - ExternalCommand::SIMPLE_ACTIONS_SIZE - ExternalCommand::GAMECONTROLLER_SIZE;
+					//int tempId = commandID - ExternalCommand::SIMPLE_ACTIONS_SIZE - ExternalCommand::GAMECONTROLLER_SIZE;
 
-					processLocalizationCommand(tempId, commsg->floatvars(0), commsg->floatvars(1), commsg->floatvars(2));
+					processLocalizationCommand(commsg->floatvars(0), commsg->floatvars(1), commsg->floatvars(2));
 				}else if(commandID < ExternalCommand::SIMPLE_ACTIONS_SIZE + ExternalCommand::GAMECONTROLLER_SIZE + ExternalCommand::LOCALIZATION_SIZE + ExternalCommand::MOTION_SIZE){
 
 					int tempId = commandID - ExternalCommand::SIMPLE_ACTIONS_SIZE - ExternalCommand::GAMECONTROLLER_SIZE - ExternalCommand::LOCALIZATION_SIZE;
@@ -292,7 +292,7 @@ void Gateway::processMotionCommand(int commandID, string svalue, float value){
 	}
 }
 
-void Gateway::processLocalizationCommand(int commandID, float x, float y, float phi){
+void Gateway::processLocalizationCommand(float x, float y, float phi){
 	lrm.set_type(LocalizationResetMessage::MANUAL);
 	lrm.set_kickoff(false);
 	lrm.set_xpos(x);
