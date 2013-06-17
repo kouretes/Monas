@@ -3,9 +3,7 @@
 #include "core/include/Logger.hpp"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/RoboCupGameControlData.h"
-#include <pthread.h>
-#include <netinet/in.h>
-#include <csignal>
+
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 #include <math.h>
@@ -20,7 +18,6 @@ using namespace KMath;
 ACTIVITY_REGISTER(LocalWorldState);
 
 bool LocalWorldState::debugmode = false;
-TCPSocket * LocalWorldState::sock;
 
 void LocalWorldState::UserInit()
 {
@@ -31,7 +28,7 @@ void LocalWorldState::UserInit()
 
     actionKick=false;
 	firstOdometry = true;
-	serverpid = -1;
+
 	debugmode = false;
 	fallBegan = true;
 	gameState = PLAYER_INITIAL;
