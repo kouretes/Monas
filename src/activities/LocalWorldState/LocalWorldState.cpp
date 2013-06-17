@@ -47,6 +47,7 @@ void LocalWorldState::UserInit()
     odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
     debugMessageTime = boost::posix_time::microsec_clock::universal_time();
     gamePlaying = boost::posix_time::microsec_clock::universal_time();
+
     //read xml files..set parameters for localizationWorld
     Reset();
     ReadFieldConf();
@@ -83,7 +84,7 @@ int LocalWorldState::Execute()
 	now = boost::posix_time::microsec_clock::universal_time();
 
 	ProcessMessages();
-	
+
 	if(currentRobotAction == MotionStateMessage::FALL){
 		if(fallBegan == true){
 			fallBegan = false;
@@ -120,9 +121,9 @@ int LocalWorldState::Execute()
 
     if (gameState == PLAYER_PLAYING && (prevGameState == PLAYER_PENALISED || prevGameState == PLAYER_SET ))
          gamePlaying = microsec_clock::universal_time();
-         
+
     if (gameState == PLAYER_PENALISED && prevGameState == PLAYER_PLAYING)
-         stability++;      
+         stability++;
 
     if (gameState !=  PLAYER_SET ) {
         if (locConfig.ekfEnable == true){
@@ -143,16 +144,13 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
-	MyWorld.mutable_myposition()->set_confidence(0.0);
-	
 	MyWorld.set_stability(stability);
-	
+
 	calculate_ball_estimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
 	if(gameMode == false){
         if (locConfig.ekfEnable == true){
-
             if ((boost::posix_time::microsec_clock::universal_time() > debugMessageTime + seconds(4)) || lrm != 0){
 
                 for (int i = 0; i < ekfLocalization.numberOfModels-1 ; i++)
@@ -265,7 +263,7 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 			lastFilterTime = now;
 			dt = duration.total_microseconds() / 1000000.0f;
 			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
-          
+
 			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0 && (gamePlaying + seconds(8) < microsec_clock::universal_time())){ //Std = 2m and wait for 80 ms before deleting
 				MyWorld.clear_balls();
 			}
@@ -276,7 +274,7 @@ void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const &
 
 
     if (MyWorld.balls_size() > 0 && fabs(MyWorld.mutable_myposition()->x())<4.5 && fabs(MyWorld.mutable_myposition()->y()<3) ){
-       
+
         float relativeX = MyWorld.mutable_balls(0)->relativex();
         float relativeY = MyWorld.mutable_balls(0)->relativey();
 
@@ -507,7 +505,7 @@ void LocalWorldState::ReadTeamConf()
 
 void LocalWorldState::ReadRobotConf()
 {
-   
+
     int pNumber=locConfig.playerNumber;
 
     locConfig.initX[0]=atof(Configurator::Instance().findValueForKey(
@@ -537,44 +535,6 @@ Configurator::Instance().keyOfNodeForSubvalue("playerConfig.Ready.player",".numb
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
 
 
-int LocalWorldState::LocalizationData_Load(vector<Localization::KObservationModel>& Observation,Localization::KMotionModel & MotionModel)
-{
-	bool addnewptrs = false;
-	//Fill the world with data!
-	WorldInfo *WI = DebugData.mutable_world();
-
-	WI->mutable_myposition()->set_x(AgentPosition.x*1000);
-	WI->mutable_myposition()->set_y(AgentPosition.y*1000);
-	WI->mutable_myposition()->set_phi(AgentPosition.phi);
-	WI->mutable_myposition()->set_confidence(0.0);
-
-	WI->CopyFrom(MyWorld);
-	DebugData.mutable_robotposition()->set_x(TrackPoint.x*1000);
-	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
-	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
-	RobotPose prtcl;
-	if (DebugData.particles_size() < localizationWorld.SIRParticles.size)
-		addnewptrs = true;
-	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
-	{
-		if (addnewptrs)
-			DebugData.add_particles();
-		DebugData.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
-		DebugData.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
-		DebugData.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
-		DebugData.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
-	}
-
-	if (obsm != NULL)
-	{
-		(DebugData.mutable_observations())->CopyFrom(*obsm);
-	} else
-	{
-		DebugData.clear_observations();
-	}
-	return 1;
-}
-
 int LocalWorldState::LocalizationDataForGUI_Load()
 {
 	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
@@ -584,7 +544,6 @@ int LocalWorldState::LocalizationDataForGUI_Load()
 		DebugDataForGUI.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
 		DebugDataForGUI.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
 		DebugDataForGUI.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
-		DebugDataForGUI.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
 	}
 
 	return 1;

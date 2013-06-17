@@ -41,6 +41,7 @@ namespace KMath {
 			r*=i;
 		return r;
 	}
+	
 	/**
 	 * @fn inline static unsigned int decreasing_factorial(unsigned int x,unsigned int k)
 	 * @brief The product of all positive integers less than or equal to x. and greater than k.
@@ -49,6 +50,7 @@ namespace KMath {
 		unsigned int r=1;
 		for( unsigned int i=k;i<=x;i++)
 			r*=i;
+		return r;
 	}
 
 
@@ -59,7 +61,7 @@ namespace KMath {
 	 * formula.
 	 */
 	inline static unsigned int binomialCoefficient(unsigned int n, unsigned int k) {
-		return (decreasing_factorial(n-k+1,n) / factorial(k) );
+		return (decreasing_factorial(n-k+1,n) / factorial(k));
 	}
 
 	/**

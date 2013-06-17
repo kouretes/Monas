@@ -58,7 +58,7 @@ namespace KMath {
 			
 			vector<bool> binary(v.size());
 			fill(binary.end() - k, binary.end(), true);
-	
+			
 			do {
 			   for(unsigned int i = 0 ; i < v.size() ; i++) {
 				   if(binary[i])

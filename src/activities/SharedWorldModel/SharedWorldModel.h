@@ -2,6 +2,7 @@
 #define SHAREDWORLDMODEL_H
 
 #include "core/include/IActivity.hpp"
+#include "core/elements/math/Common.hpp"
 #include "core/elements/math/KMat.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
 
@@ -10,7 +11,6 @@
 
 #include "core/messages/Network.pb.h"
 
-#include "math.h"
 
 
 ACTIVITY_START
@@ -20,11 +20,11 @@ class SharedWorldModel: public IActivity {
 public:
 
 	ACTIVITY_CONSTRUCTOR(SharedWorldModel);
-	
+
 	std::string ACTIVITY_VISIBLE GetName() {
 		return "SharedWorldModel";
 	}
-	
+
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 	void ACTIVITY_VISIBLE UserInit();
 	void ACTIVITY_VISIBLE Reset();

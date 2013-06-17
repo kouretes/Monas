@@ -25,7 +25,7 @@ public :
 
     matrix6_6 var;
     matrix6_1 state ;
-    float mWeight;
+    double mWeight;
     bool active;
     boost::circular_buffer<int> associationHistory;
 
