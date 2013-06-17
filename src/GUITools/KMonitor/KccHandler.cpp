@@ -210,6 +210,7 @@ void KccHandler::undoPressed() {
 
 void KccHandler::changeImage(KRawImage rawImage, QString hostId) {
 	int tempWidth = rawImage.width();
+	int tempHeight = rawImage.height();
 	int channels = rawImage.bytes_per_pix();
 
 	if((ui->rbLiveVideo->isChecked() || takeSnapshot) && tempWidth == widthInPixels && tempHeight == heightInPixels && channels == 2) {
