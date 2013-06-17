@@ -19,14 +19,13 @@ include_directories ( AFTER external/protobuf/src )
 
 add_subdirectory( src/hal/) #Configure system
 add_definitions (	-Wextra 
-			-Wdouble-promotion
 			-Wformat
 			-Wunused
 			-Wmissing-braces
 			-Wmissing-include-dirs
 			-Wparentheses
 			-Wunused-parameter
-			-Wfloat-equal)
+			)
 message(STATUS "DEFINITIONS:" ${MonasDefinitions})
 add_definitions (${MonasDefinitions})
 add_subdirectory( src )
