@@ -33,7 +33,8 @@ SET( KMonitor_SOURCES	main.cpp
 						KccCameraSettings.cpp
 						../../core/architecture/configurator/Configurator.cpp
 						../../core/architecture/configurator/ConfigNode.cpp
-						../../activities/Vision/KSegmentator.cpp
+						../../robocup/vision/KSegmentator.cpp
+						../../robocup/vision/KSegmentator.hpp
 						../../hal/generic_linux/syscall.cpp
 	)
 SET( KMonitor_HEADERS	KMonitor.h

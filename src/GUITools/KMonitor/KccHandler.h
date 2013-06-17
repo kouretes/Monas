@@ -19,7 +19,7 @@
 #include "HostsComboBox.h"
 #include "KccCameraSettings.h"
 #include "messages/Kimage.pb.h"
-#include "activities/Vision/KSegmentator.h"
+#include "robocup/vision/KSegmentator.hpp"
 
 using namespace std;
 
