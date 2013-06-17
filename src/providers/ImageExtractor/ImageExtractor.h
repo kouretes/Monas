@@ -40,14 +40,19 @@ public:
 	}
 private:
 	bool firstRun;
+
 	Blackboard _blk;
+
 	KImageExtractor imext;
+
 	KSystem::smart_timer t;
+
 	KImageConst imstore;
 	KRawImage outmsg;
+	
+	boost::shared_ptr<const CalibrateCamMessage>  ccm;
+
 	boost::posix_time::ptime lastrefresh;
-
-
 };
 PROVIDER_END
 #endif

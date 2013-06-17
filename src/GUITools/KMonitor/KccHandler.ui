@@ -171,6 +171,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="pbCalibration">
+        <property name="text">
+         <string>Manual Calibration</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QLabel" name="label_2">

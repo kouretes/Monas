@@ -17,6 +17,7 @@
 #include <fstream>
 #include "KccLabel.h"
 #include "HostsComboBox.h"
+#include "KccCameraSettings.h"
 #include "messages/Kimage.pb.h"
 #include "activities/Vision/KSegmentator.h"
 
@@ -66,6 +67,8 @@ private:
 	
 signals:
 	void SubscriptionRequest(QString);
+	void sendCameraCalibrationMessage(CameraCalibration msg);
+	void forwardAck(GenericACK ack, QString hostid);
 	
 public slots:
 	void addComboBoxItem(QString, QString);
@@ -90,7 +93,11 @@ public slots:
 	void realZoomOut();
 	void segZoomIn();
 	void segZoomOut();
+	void manualCalibration();
+	void calibrationDialogClosed();
 	void changeImage(KRawImage rawImage, QString hostId);
+	void genericAckReceived(GenericACK ack, QString hostid);
+	void catchForwardMsg(CameraCalibration msg);
 
 private:
 	double A, B, C, D;
@@ -101,6 +108,8 @@ private:
 	float curLuminance;
 	KSegmentator *yuvColorTable, *yuvColorTableOld;
 
+	KccCameraSettings *calibrationWidget;
+	
 	QYuv yuvRealImage[480][640];
 	map<unsigned char, QRgb> basicSegColors;
 

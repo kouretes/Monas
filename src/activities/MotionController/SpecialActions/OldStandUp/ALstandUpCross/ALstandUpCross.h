@@ -22,7 +22,7 @@ private:
 
 	void Initialize();
 
-	boost::shared_ptr<AL::ALMotionProxy> motion;
+	AL::ALMotionProxy *motion;
 
 	AL::ALValue jointCodes, angles, times;
 

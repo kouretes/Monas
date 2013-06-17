@@ -55,7 +55,7 @@ namespace KNetwork
 		for( hit = otherHosts.begin(); hit != otherHosts.end(); hit++)
 			for(sit = (*hit).second.needsTopics.begin(); sit != (*hit).second.needsTopics.end(); ++sit)
 				remSub.erase(*sit);
-
+		
 		for(sit = remSub.begin(); sit != remSub.end(); ++sit)
 			localsubscriptions.erase(*sit);
 
@@ -157,7 +157,7 @@ namespace KNetwork
 		{
 			try
 			{
-				size_t r = multisend.send_to(boost::asio::buffer(p.buff, s), multicast_point_);
+				 multisend.send_to(boost::asio::buffer(p.buff, s), multicast_point_);
 			}
 			catch (boost::system::system_error &r)
 			{
@@ -361,7 +361,24 @@ namespace KNetwork
 
 			if(actionadd)
 				otherHosts[m.host].providesTopics.insert(topics.begin(), topics.end());
-			else
+			else if(m.host==msgentry::HOST_ID_ANY_HOST) //Unubscribe from ALL hosts
+			{
+
+				std::set<size_t>::iterator sit;
+
+				for(sit = topics.begin(); sit != topics.end(); ++sit)
+				{
+					std::map<hostid, hostDescription>::iterator  hit = otherHosts.begin();
+					for( hit = otherHosts.begin(); hit != otherHosts.end(); hit++)
+						(*hit).second.providesTopics.erase(*sit);
+
+				}
+
+
+
+
+			}
+			else //Unsubscribe from host
 			{
 				std::set<size_t>::iterator sit;
 
@@ -388,7 +405,7 @@ namespace KNetwork
 		//std::cout<<"checking:"<<m.msg->GetTypeName()<<std::endl;
 		if(minth < avgqueuesize)
 		{
-			float pb = ((avgqueuesize - minth) / (float(maxth - minth))) * ceil(((float)m.msg->ByteSize()) / MAX_UDP_PAYLOAD);
+			double pb = (( (double) (avgqueuesize - minth) )/ (maxth - minth))* ceil( ( (double)(m.msg->ByteSize()) ) / MAX_UDP_PAYLOAD) ;
 			pb = sqrt(pb);
 
 			//pb+=(size/(1024.0f*MAX_UDP_PAYLOAD))*(size/(4096.0f*MAX_UDP_PAYLOAD));

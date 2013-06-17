@@ -16,7 +16,6 @@ add_library ( GenericNao  ${LibBuildType}
 			kAlBroker.h
 			aldebaran-motion-extra.h
 			aldebaran-sensors.h
-			earLed.h
 			KImageExtractor.h
 			NaoCamera.h
 			aldebaran-motion.h
@@ -24,7 +23,6 @@ add_library ( GenericNao  ${LibBuildType}
 			NAOKinematics.h
 			NAOKinematics.cpp
 			KinematicsDefines.h
-			headAngleSensor.h
 			robot_consts.h
 			robot_consts.cpp
 			aldebaran-proxy.h

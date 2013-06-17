@@ -6,7 +6,7 @@
 
 // DO NOT USE DEFINES, USE THE BLOODY FUNCTIONS !!!
 
-#define TO_RAD_SUPER_INTERNAL_DO_NOT_USE 0.01745329f
+#define TO_RAD_SUPER_INTERNAL_DO_NOT_USE 0.01745329
 
 namespace KMath {
 
@@ -30,14 +30,27 @@ namespace KMath {
 	template<typename T> inline T Max(T a, T b) {
 		return (a > b) ? a : b;
 	}
-	
+
 	/**
 	 * @fn inline static unsigned int factorial(unsigned int x)
-	 * @brief The product of all positive integers less than or equal to x. Recursive calculation.
+	 * @brief The product of all positive integers less than or equal to x.
 	 */
 	inline static unsigned int factorial(unsigned int x) {
-		return (x == 1 ? x : x * factorial(x - 1));
+		unsigned int r=1;
+		for (unsigned int i=1;i<=x;i++)
+			r*=i;
+		return r;
 	}
+	/**
+	 * @fn inline static unsigned int decreasing_factorial(unsigned int x,unsigned int k)
+	 * @brief The product of all positive integers less than or equal to x. and greater than k.
+	 */
+	inline static unsigned int decreasing_factorial(unsigned int k,unsigned int x) {
+		unsigned int r=1;
+		for( unsigned int i=k;i<=x;i++)
+			r*=i;
+	}
+
 
 	/**
 	 * @fn inline static unsigned int binomialCoefficient(unsigned int n, unsigned int k)
@@ -46,9 +59,9 @@ namespace KMath {
 	 * formula.
 	 */
 	inline static unsigned int binomialCoefficient(unsigned int n, unsigned int k) {
-		return (factorial(n) / (factorial(k)*factorial(n-k)) );
+		return (decreasing_factorial(n-k+1,n) / factorial(k) );
 	}
-	
+
 	/**
 	 * @fn inline static float gaussian2D(float A, float xCenter, float yCenter, float sigmaX, float sigmaY, float x, float y)
 	 * @brief 2-Dimensional Gaussian function.

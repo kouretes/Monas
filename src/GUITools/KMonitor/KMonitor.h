@@ -1,7 +1,12 @@
 #ifndef KMONITOR_H
 #define KMONITOR_H
 
+#ifdef QT_VERSION_5
+#include <QtWidgets/QMainWindow>
+#else
 #include <QtGui/QMainWindow>
+#endif
+
 #include "KGUIMessenger.h"
 #include "HostsComboBox.h"
 #include "ui_KMonitor.h"
@@ -19,7 +24,9 @@ public:
 
 private slots:
 	void quitKMonitor();
-	void printCurrentTab(int index);
+
+	void printCurrentTab (int index);
+	void closeEvent(QCloseEvent *event);
 
 private:
 	Ui::KMonitor *ui;

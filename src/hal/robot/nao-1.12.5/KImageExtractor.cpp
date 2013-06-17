@@ -22,12 +22,17 @@ KImageExtractor::~KImageExtractor()
 KImageExtractor::KImageExtractor()
 {
 	naocam=NULL;
-	naocam = new NaoCamera();
+	NaoCamera::userPrefs newPrefs;
+	newPrefs.GAIN = atoi(Configurator::Instance().findValueForKey("camera.Gain").c_str());
+	newPrefs.CONTRAST = atoi(Configurator::Instance().findValueForKey("camera.Contrast").c_str());
+	newPrefs.GREEN_GAIN = atoi(Configurator::Instance().findValueForKey("camera.GreenChannelGain").c_str());
+	newPrefs.RED_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.RedBalance").c_str());
+	newPrefs.BLUE_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.BlueBalance").c_str());
+	naocam = new NaoCamera(newPrefs);
 }
 
-void KImageExtractor::Init(Blackboard *blk)
+void KImageExtractor::Init()
 {
-	_blk = blk;
 	doneSubscribe = false;
 	refexpusec = MAXEXPUS;
 
@@ -51,10 +56,27 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImageConst & img)
 	_releaseImage();
 	do
 	{
+		bool imageOk = false;
 		// Now you can get the pointer to the video structure.
-		if(naocam->captureNew()==false)
-		{
-			return boost::posix_time::ptime();
+		for(int i=0; i<20; i++){
+			if(naocam->captureNew()==false)
+			{
+				continue;
+			}else{
+				imageOk = true;		
+				break;	
+			}
+		}
+		if(!imageOk){
+			Logger::Instance().WriteMsg ("KImageExtractor", "Camera is dead, reinitializing NaoCamera", Logger::ExtraInfo);
+			delete naocam;
+			NaoCamera::userPrefs newPrefs;
+			newPrefs.GAIN = atoi(Configurator::Instance().findValueForKey("camera.Gain").c_str());
+			newPrefs.CONTRAST = atoi(Configurator::Instance().findValueForKey("camera.Contrast").c_str());
+			newPrefs.GREEN_GAIN = atoi(Configurator::Instance().findValueForKey("camera.GreenChannelGain").c_str());
+			newPrefs.RED_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.RedBalance").c_str());
+			newPrefs.BLUE_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.BlueBalance").c_str());
+			naocam = new NaoCamera(newPrefs);
 		}
 		img.copyFrom(naocam->getImage(),NaoCamera::WIDTH,NaoCamera::HEIGHT,2);
 	}
@@ -144,17 +166,29 @@ float KImageExtractor::calibrateCamera(int sleeptime, int exp)
 
 
 }
+
 void KImageExtractor::refreshValues()
 {
 	int a= naocam->getControlSetting(V4L2_CID_EXPOSURE);
 	lastexpusec = a * MAXEXPUS / 510.0f;
 }
+
+bool KImageExtractor::setNewUserPrefs(){
+	NaoCamera::userPrefs newPrefs;
+	newPrefs.GAIN = atoi(Configurator::Instance().findValueForKey("camera.Gain").c_str());
+	newPrefs.CONTRAST = atoi(Configurator::Instance().findValueForKey("camera.Contrast").c_str());
+	newPrefs.GREEN_GAIN = atoi(Configurator::Instance().findValueForKey("camera.GreenChannelGain").c_str());
+	newPrefs.RED_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.RedBalance").c_str());
+	newPrefs.BLUE_BALANCE = atoi(Configurator::Instance().findValueForKey("camera.BlueBalance").c_str());
+	return naocam->setUserSettings(newPrefs);
+}
+
 int KImageExtractor::currentCameraIsBottom() const
 {
 	return naocam->getCurrentCamera()==NAO_LOWER_CAMERA;
 }
 
-  unsigned char KImageExtractor::swapCamera()
+unsigned char KImageExtractor::swapCamera()
 {
 
 	int old=naocam->getCurrentCamera();
@@ -167,7 +201,6 @@ float KImageExtractor::getExpUs() const
 {
 	return lastexpusec;
 }
-
 
 float KImageExtractor::getScale() const
 {

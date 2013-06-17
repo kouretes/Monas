@@ -42,13 +42,14 @@
 
 NaoCamera *NaoCamera::theInstance = 0;
 
-NaoCamera::NaoCamera() :
+NaoCamera::NaoCamera(userPrefs newPrefs) :
 	currentCamera (NAO_LOWER_CAMERA), //Lower
 	currentBuf (0),
 	timeStamp()
 {
 	assert (theInstance == 0);
 	theInstance = this;
+	uPreferences = newPrefs;
 	unsigned char current = currentCamera;
 	unsigned char other = currentCamera == NAO_UPPER_CAMERA ?  NAO_LOWER_CAMERA : NAO_UPPER_CAMERA;
 	assert (verifyNaoVersion() == true);
@@ -100,11 +101,12 @@ bool NaoCamera::captureNew()
 	if (currentBuf)
 	{
 		assert (ioctl (fd, VIDIOC_QBUF, currentBuf) != -1);
+		currentBuf=NULL;
 	}
 
 	struct pollfd pollfd = {fd, POLLIN | POLLPRI, 0};
 
-	int polled = poll (&pollfd, 1, 500); // Fail after missing 15 frames (0.5s)
+	int polled = poll (&pollfd, 1, 5); // Fail after missing 30 frames (1.0s)
 
 	if (polled < 0)
 	{
@@ -113,7 +115,8 @@ bool NaoCamera::captureNew()
 	}
 	else if (polled == 0)
 	{
-		Logger::Instance().WriteMsg ("NaoCamera", "0.5 seconds passed and there's still no image to read from the camera. Terminating.", Logger::FatalError);
+		return false;
+		Logger::Instance().WriteMsg ("NaoCamera", "1.0 seconds passed and there's still no image to read from the camera. Terminating.", Logger::FatalError);
 		assert (false);
 	}
 	else if (pollfd.revents & (POLLERR | POLLNVAL) )
@@ -132,7 +135,7 @@ bool NaoCamera::captureNew()
 	if (shout)
 	{
 		shout = false;
-		Logger::Instance().WriteMsg ("NaoCamera", "Camera is working", Logger::ExtraInfo);
+		Logger::Instance().WriteMsg ("NaoCamera", "Camera is working " + _toString(timeStamp), Logger::ExtraInfo);
 	}
 
 	return true;
@@ -407,7 +410,6 @@ void NaoCamera::initDefaultControlSettings()
 	setControlSetting (V4L2_CID_AUTO_WHITE_BALANCE, 0);
 	setControlSetting (V4L2_CID_AUTOGAIN, 0);
 	setControlSetting (V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
-	setControlSetting (V4L2_CID_GAIN, 0xF0);
 	setControlSetting (V4L2_CID_BACKLIGHT_COMPENSATION, 0);
 	setControlSetting (V4L2_CID_SAT_AUTO, 0);
 	setControlSetting (V4L2_CID_HUE_AUTO, 0);
@@ -416,11 +418,38 @@ void NaoCamera::initDefaultControlSettings()
 	setControlSetting (V4L2_CID_HUE, 0);
 	setControlSetting (V4L2_CID_SATURATION, 255);
 	setControlSetting (V4L2_CID_BRIGHTNESS, 128);
-	setControlSetting (V4L2_CID_CONTRAST, 96);
-	setControlSetting (V4L2_CID_AWB_G_CHANNEL_GAIN, 64);
-	setControlSetting (V4L2_CID_RED_BALANCE, 128 ); //128
-	setControlSetting (V4L2_CID_BLUE_BALANCE, 128);
+
+	setControlSetting (V4L2_CID_AWB_G_CHANNEL_GAIN, uPreferences.GREEN_GAIN);
+	setControlSetting (V4L2_CID_CONTRAST, uPreferences.CONTRAST);
+	setControlSetting (V4L2_CID_RED_BALANCE, uPreferences.RED_BALANCE);
+	setControlSetting (V4L2_CID_BLUE_BALANCE, uPreferences.BLUE_BALANCE);
+	setControlSetting (V4L2_CID_GAIN, uPreferences.GAIN);
 	usleep (300 * 1000);
+}
+
+bool NaoCamera::setUserSettings(userPrefs newPrefs){
+	bool success = true;
+	if(newPrefs.GREEN_GAIN != uPreferences.GREEN_GAIN){
+		uPreferences.GREEN_GAIN = newPrefs.GREEN_GAIN;
+		success &= setControlSetting (V4L2_CID_AWB_G_CHANNEL_GAIN, uPreferences.GREEN_GAIN);
+	}
+	if(newPrefs.CONTRAST != uPreferences.CONTRAST){
+		uPreferences.CONTRAST = newPrefs.CONTRAST;
+		success &= setControlSetting (V4L2_CID_CONTRAST, uPreferences.CONTRAST);
+	}
+	if(newPrefs.RED_BALANCE != uPreferences.RED_BALANCE){
+		uPreferences.RED_BALANCE = newPrefs.RED_BALANCE;
+		success &= setControlSetting (V4L2_CID_RED_BALANCE, uPreferences.RED_BALANCE);
+	}
+	if(newPrefs.BLUE_BALANCE != uPreferences.BLUE_BALANCE){
+		uPreferences.BLUE_BALANCE = newPrefs.BLUE_BALANCE;
+		success &= setControlSetting (V4L2_CID_BLUE_BALANCE, uPreferences.BLUE_BALANCE);
+	}
+	if(newPrefs.GAIN != uPreferences.GAIN){
+		uPreferences.GAIN = newPrefs.GAIN;
+		success &= setControlSetting (V4L2_CID_GAIN, uPreferences.GAIN);
+	}
+	return success;
 }
 
 void NaoCamera::initResetCrop()

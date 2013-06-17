@@ -1,7 +1,7 @@
 #include "ALstandUpBack2011_2.h"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
-
+#include "tools/logger.h"
 namespace
 {
 	SpecialActionRegistrar<ALstandUpBack2011_2>::Type temp("ALstandUpBack2011_2");

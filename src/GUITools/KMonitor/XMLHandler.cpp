@@ -346,7 +346,6 @@ void XMLHandler::sendPressed() {
 }
 
 void XMLHandler::updateXMLFiles() {
-
 	if(changes.size() != 0) {
 		vector<pair<string, string> > dataForWrite;
 

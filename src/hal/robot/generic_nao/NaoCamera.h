@@ -9,7 +9,7 @@
 
 #include <linux/videodev2.h>
 #include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/architecture/configurator/Configurator.hpp"
 
 #ifndef V4L2_CID_AUTOEXPOSURE
 #  define V4L2_CID_AUTOEXPOSURE     (V4L2_CID_BASE+32)
@@ -123,8 +123,11 @@ enum  v4l2_exposure_auto_type {
 class NaoCamera {
 public:
 
+	typedef struct userPreferences{
+		int GAIN,CONTRAST,GREEN_GAIN,RED_BALANCE,BLUE_BALANCE;
+	}userPrefs;
 	/** Constructor. */
-	NaoCamera();
+	NaoCamera(userPrefs newPrefs);
 
 	/** Destructor. */
 	~NaoCamera();
@@ -193,7 +196,9 @@ public:
 	* \return True on success.
 	*/
 	bool setControlSetting (unsigned int id, int value);
+	bool setUserSettings(userPrefs newPrefs);
 private:
+	userPrefs uPreferences;
 	static NaoCamera *theInstance; /**< The only instance of this class. */
 
 
@@ -223,6 +228,7 @@ private:
 	void initRequestAndMapBuffers();
 	void initQueueAllBuffers();
 	void initDefaultControlSettings();
+	void setUserControlSettings();
 	void initResetCrop();
 	void startCapturing();
 };

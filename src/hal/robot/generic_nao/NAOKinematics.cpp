@@ -349,7 +349,7 @@ NAOKinematics::FKvars NAOKinematics::calculateCenterOfMass(std::vector<float> al
 	ll1 += ll4;
 	ll1 += ll5;
 	ll1 += ll6;
-	
+
 	//Right Leg
 	KMatTransf::makeTranslation(endTr1, RHipYawPitchX, RHipYawPitchY, RHipYawPitchZ);
 	KMatTransf::makeTranslation(endTr2, RHipRollX, RHipRollY, RHipRollZ);
@@ -774,7 +774,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightHand(kmatTable targe
 
 			if(cos(theta3) == 0)
 			{
-				theta1temp = acos(equation1ForTheta1 / cos(theta2 - PI / 2));
+				theta1temp = acos(equation1ForTheta1 / cos(theta2 + PI / 2));
 			}
 			else
 			{

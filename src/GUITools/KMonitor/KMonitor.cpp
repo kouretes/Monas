@@ -86,6 +86,10 @@ KMonitor::KMonitor(QWidget *parent) :
 	 */
 	connect(Messenger, SIGNAL(rawImage(KRawImage, QString)), ui->KCCTab, SLOT(changeImage(KRawImage, QString)) );
 	
+	connect(Messenger, SIGNAL(GenericAckReceived(GenericACK, QString)), ui->KCCTab, SLOT(genericAckReceived(GenericACK, QString)) );
+	
+	connect(ui->KCCTab, SIGNAL(sendCameraCalibrationMessage(CameraCalibration)), Messenger, SLOT(KccPublishMessage(CameraCalibration)) );
+	
 	/**
 	 * XML TAB
 	 * SIGNAL SLOT CONNECTIONS FOR XML
@@ -118,10 +122,18 @@ KMonitor::KMonitor(QWidget *parent) :
 
 KMonitor::~KMonitor() { }
 
+void KMonitor::closeEvent(QCloseEvent *event){
+	std::cout << "KMonitor::quitKMonitor()" << std::endl;
+	this->close();
+	this->destroy();
+	exit(0);
+}
+
 void KMonitor::quitKMonitor() {
 	std::cout << "KMonitor::quitKMonitor()" << std::endl;
 	this->close();
 	this->destroy();
+	exit(0);
 }
 
 void KMonitor::printCurrentTab(int index) {

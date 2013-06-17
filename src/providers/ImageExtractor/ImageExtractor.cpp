@@ -15,17 +15,14 @@ PROVIDER_REGISTER(ImageExtractor);
 
 void ImageExtractor::UserInit()
 {
-	imext.Init(&_blk);
+	imext.Init();
 	firstRun = false;
-	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC);
 }
-
-
 
 int ImageExtractor::Execute()
 {
 	_blk.process_messages();
-
 
 	if(!firstRun){
 		float scale = imext.calibrateCamera(1500, 13);
@@ -33,6 +30,14 @@ int ImageExtractor::Execute()
 		firstRun = true;
 	}
 
+	
+	ccm = _blk.readSignal<CalibrateCamMessage> ("image");	
+	if(ccm.get() != NULL){
+		if(!imext.setNewUserPrefs()){
+			Logger::Instance().WriteMsg ("ImageExtractor", "Failed to set the new preferences to camera", Logger::Error);
+		}
+	}
+	
 	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
 	boost::posix_time::ptime  timestamp;
 

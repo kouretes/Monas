@@ -40,7 +40,8 @@ public slots:
 
 	void XMLPublishMessage(ExternalConfig);
 	void CommandPublishMessage(ExternalCommand message);
-
+	void KccPublishMessage(CameraCalibration message);
+	
 	void tabChangeHandler(int);
 
 signals:

@@ -21,9 +21,6 @@ message KRawImage{
 }
 
 
-message KCalibrateCam{
-	required int32 status =1;
-	required int32 sleeptime =2 [default = 1500];
-	required int32 exp= 3 [default =13];
-	required float exposure_comp =4 [default=1];
+message CalibrateCamMessage{
+	required bool readConfiguration = 1;
 }
