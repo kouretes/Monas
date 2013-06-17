@@ -29,11 +29,11 @@ KLocalization::~KLocalization()
 int KLocalization::Initialize()
 {
 	//Initialize particles
-	SIRParticles.size = partclsNum;
-	SIRParticles.x = new float[partclsNum];
-	SIRParticles.y = new float[partclsNum];
-	SIRParticles.phi = new float[partclsNum];
-	SIRParticles.Weight = new float[partclsNum];
+	SIRParticles.size = locConfig->partclsNum;
+	SIRParticles.x = new float[locConfig->partclsNum];
+	SIRParticles.y = new float[locConfig->partclsNum];
+	SIRParticles.phi = new float[locConfig->partclsNum];
+	SIRParticles.Weight = new float[locConfig->partclsNum];
 	maxWeightParticleIndex = 0;
     actionOdError = 0.0f;
 

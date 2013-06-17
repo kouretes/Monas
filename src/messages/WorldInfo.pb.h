@@ -468,17 +468,10 @@ class RobotPose : public ::google::protobuf::Message {
   inline float phi() const;
   inline void set_phi(float value);
   
-  // required float confidence = 4 [default = -100000];
-  inline bool has_confidence() const;
-  inline void clear_confidence();
-  static const int kConfidenceFieldNumber = 4;
-  inline float confidence() const;
-  inline void set_confidence(float value);
-  
-  // repeated float var = 5;
+  // repeated float var = 4;
   inline int var_size() const;
   inline void clear_var();
-  static const int kVarFieldNumber = 5;
+  static const int kVarFieldNumber = 4;
   inline float var(int index) const;
   inline void set_var(int index, float value);
   inline void add_var(float value);
@@ -495,19 +488,16 @@ class RobotPose : public ::google::protobuf::Message {
   inline void clear_has_y();
   inline void set_has_phi();
   inline void clear_has_phi();
-  inline void set_has_confidence();
-  inline void clear_has_confidence();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   float x_;
   float y_;
-  float phi_;
-  float confidence_;
   ::google::protobuf::RepeatedField< float > var_;
+  float phi_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -600,34 +590,6 @@ class Ball : public ::google::protobuf::Message {
   inline float relativeyspeed() const;
   inline void set_relativeyspeed(float value);
   
-  // required float absoluteX = 5 [default = -100000];
-  inline bool has_absolutex() const;
-  inline void clear_absolutex();
-  static const int kAbsoluteXFieldNumber = 5;
-  inline float absolutex() const;
-  inline void set_absolutex(float value);
-  
-  // required float absoluteY = 6 [default = -100000];
-  inline bool has_absolutey() const;
-  inline void clear_absolutey();
-  static const int kAbsoluteYFieldNumber = 6;
-  inline float absolutey() const;
-  inline void set_absolutey(float value);
-  
-  // required float absoluteXspeed = 7 [default = 0];
-  inline bool has_absolutexspeed() const;
-  inline void clear_absolutexspeed();
-  static const int kAbsoluteXspeedFieldNumber = 7;
-  inline float absolutexspeed() const;
-  inline void set_absolutexspeed(float value);
-  
-  // required float absoluteYspeed = 8 [default = 0];
-  inline bool has_absoluteyspeed() const;
-  inline void clear_absoluteyspeed();
-  static const int kAbsoluteYspeedFieldNumber = 8;
-  inline float absoluteyspeed() const;
-  inline void set_absoluteyspeed(float value);
-  
   // @@protoc_insertion_point(class_scope:Ball)
  private:
   inline void set_has_relativex();
@@ -638,14 +600,6 @@ class Ball : public ::google::protobuf::Message {
   inline void clear_has_relativexspeed();
   inline void set_has_relativeyspeed();
   inline void clear_has_relativeyspeed();
-  inline void set_has_absolutex();
-  inline void clear_has_absolutex();
-  inline void set_has_absolutey();
-  inline void clear_has_absolutey();
-  inline void set_has_absolutexspeed();
-  inline void clear_has_absolutexspeed();
-  inline void set_has_absoluteyspeed();
-  inline void clear_has_absoluteyspeed();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -653,13 +607,9 @@ class Ball : public ::google::protobuf::Message {
   float relativey_;
   float relativexspeed_;
   float relativeyspeed_;
-  float absolutex_;
-  float absolutey_;
-  float absolutexspeed_;
-  float absoluteyspeed_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1453,29 +1403,7 @@ inline void RobotPose::set_phi(float value) {
   phi_ = value;
 }
 
-// required float confidence = 4 [default = -100000];
-inline bool RobotPose::has_confidence() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void RobotPose::set_has_confidence() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void RobotPose::clear_has_confidence() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void RobotPose::clear_confidence() {
-  confidence_ = -100000;
-  clear_has_confidence();
-}
-inline float RobotPose::confidence() const {
-  return confidence_;
-}
-inline void RobotPose::set_confidence(float value) {
-  set_has_confidence();
-  confidence_ = value;
-}
-
-// repeated float var = 5;
+// repeated float var = 4;
 inline int RobotPose::var_size() const {
   return var_.size();
 }
@@ -1590,94 +1518,6 @@ inline float Ball::relativeyspeed() const {
 inline void Ball::set_relativeyspeed(float value) {
   set_has_relativeyspeed();
   relativeyspeed_ = value;
-}
-
-// required float absoluteX = 5 [default = -100000];
-inline bool Ball::has_absolutex() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void Ball::set_has_absolutex() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void Ball::clear_has_absolutex() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void Ball::clear_absolutex() {
-  absolutex_ = -100000;
-  clear_has_absolutex();
-}
-inline float Ball::absolutex() const {
-  return absolutex_;
-}
-inline void Ball::set_absolutex(float value) {
-  set_has_absolutex();
-  absolutex_ = value;
-}
-
-// required float absoluteY = 6 [default = -100000];
-inline bool Ball::has_absolutey() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void Ball::set_has_absolutey() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void Ball::clear_has_absolutey() {
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline void Ball::clear_absolutey() {
-  absolutey_ = -100000;
-  clear_has_absolutey();
-}
-inline float Ball::absolutey() const {
-  return absolutey_;
-}
-inline void Ball::set_absolutey(float value) {
-  set_has_absolutey();
-  absolutey_ = value;
-}
-
-// required float absoluteXspeed = 7 [default = 0];
-inline bool Ball::has_absolutexspeed() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
-}
-inline void Ball::set_has_absolutexspeed() {
-  _has_bits_[0] |= 0x00000040u;
-}
-inline void Ball::clear_has_absolutexspeed() {
-  _has_bits_[0] &= ~0x00000040u;
-}
-inline void Ball::clear_absolutexspeed() {
-  absolutexspeed_ = 0;
-  clear_has_absolutexspeed();
-}
-inline float Ball::absolutexspeed() const {
-  return absolutexspeed_;
-}
-inline void Ball::set_absolutexspeed(float value) {
-  set_has_absolutexspeed();
-  absolutexspeed_ = value;
-}
-
-// required float absoluteYspeed = 8 [default = 0];
-inline bool Ball::has_absoluteyspeed() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
-}
-inline void Ball::set_has_absoluteyspeed() {
-  _has_bits_[0] |= 0x00000080u;
-}
-inline void Ball::clear_has_absoluteyspeed() {
-  _has_bits_[0] &= ~0x00000080u;
-}
-inline void Ball::clear_absoluteyspeed() {
-  absoluteyspeed_ = 0;
-  clear_has_absoluteyspeed();
-}
-inline float Ball::absoluteyspeed() const {
-  return absoluteyspeed_;
-}
-inline void Ball::set_absoluteyspeed(float value) {
-  set_has_absoluteyspeed();
-  absoluteyspeed_ = value;
 }
 
 // -------------------------------------------------------------------

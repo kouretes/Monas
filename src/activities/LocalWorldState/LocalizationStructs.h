@@ -138,14 +138,13 @@ namespace Localization{
 
         int ekfEnable;
 
-        float partclsNum;
+        int partclsNum;
         float spreadParticlesDeviation;
         float rotationDeviation;
         float percentParticlesSpread;
         float spreadParticlesDeviationAfterFall;
         float rotationDeviationAfterFallInDeg;
         float numberOfParticlesSpreadAfterFall;
-        KMotionModel robotmovement;
   
         // Field parameters
         float carpetMaxX;

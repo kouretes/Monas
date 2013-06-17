@@ -47,6 +47,7 @@ void LocalWorldState::UserInit()
     odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
     debugMessageTime = boost::posix_time::microsec_clock::universal_time();
     gamePlaying = boost::posix_time::microsec_clock::universal_time();
+
     //read xml files..set parameters for localizationWorld
     Reset();
     ReadFieldConf();
@@ -152,7 +153,6 @@ int LocalWorldState::Execute()
 
 	if(gameMode == false){
         if (locConfig.ekfEnable == true){
-
             if ((boost::posix_time::microsec_clock::universal_time() > debugMessageTime + seconds(4)) || lrm != 0){
 
                 for (int i = 0; i < ekfLocalization.numberOfModels-1 ; i++)
@@ -536,44 +536,6 @@ Configurator::Instance().keyOfNodeForSubvalue("playerConfig.Ready.player",".numb
 
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
 
-
-int LocalWorldState::LocalizationData_Load(vector<Localization::KObservationModel>& Observation,Localization::KMotionModel & MotionModel)
-{
-	bool addnewptrs = false;
-	//Fill the world with data!
-	WorldInfo *WI = DebugData.mutable_world();
-
-	WI->mutable_myposition()->set_x(AgentPosition.x*1000);
-	WI->mutable_myposition()->set_y(AgentPosition.y*1000);
-	WI->mutable_myposition()->set_phi(AgentPosition.phi);
-	WI->mutable_myposition()->set_confidence(0.0);
-
-	WI->CopyFrom(MyWorld);
-	DebugData.mutable_robotposition()->set_x(TrackPoint.x*1000);
-	DebugData.mutable_robotposition()->set_y(TrackPoint.y*1000);
-	DebugData.mutable_robotposition()->set_phi(TrackPoint.phi);
-	RobotPose prtcl;
-	if (DebugData.particles_size() < localizationWorld.SIRParticles.size)
-		addnewptrs = true;
-	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
-	{
-		if (addnewptrs)
-			DebugData.add_particles();
-		DebugData.mutable_particles(i)->set_x(localizationWorld.SIRParticles.x[i]*1000);
-		DebugData.mutable_particles(i)->set_y(localizationWorld.SIRParticles.y[i]*1000);
-		DebugData.mutable_particles(i)->set_phi(localizationWorld.SIRParticles.phi[i]);
-		DebugData.mutable_particles(i)->set_confidence(localizationWorld.SIRParticles.Weight[i]);
-	}
-
-	if (obsm != NULL)
-	{
-		(DebugData.mutable_observations())->CopyFrom(*obsm);
-	} else
-	{
-		DebugData.clear_observations();
-	}
-	return 1;
-}
 
 int LocalWorldState::LocalizationDataForGUI_Load()
 {
