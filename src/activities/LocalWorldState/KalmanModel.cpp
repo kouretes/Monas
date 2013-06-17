@@ -100,9 +100,9 @@ void KalmanModel::Predict(Localization::KMotionModel & MotionModel){
 
     //gt.prettyPrint();
 
-    mt(0,0) = tmpDist   * tmpDist *  0.3 ;
-    mt(1,1) = tmpDist   * tmpDist *  0.3 ;
-    mt(2,2) = tmpRot  * tmpRot * 0.2 +  tmpDist * tmpDist * 0.1 ;
+    mt(0,0) = tmpDist   * tmpDist *  0.3 *  0.3;
+    mt(1,1) = tmpDist   * tmpDist *  0.3 *  0.3 ;
+    mt(2,2) = tmpRot  * tmpRot * 0.3 * 0.3 +  tmpDist * tmpDist * 0.1 ;
 
     //mt.prettyPrint()
     vt(0,0) = - state(3,0) * tmpDist * sin(state(2,0) + tmpDir);
@@ -164,6 +164,7 @@ void KalmanModel::Update(float featureX,float featureY,float distanceVal,float b
     matrix2_1 meas;
     matrix2_1 diff;
 
+    stInv.zero();
     // Observation variance
     qt.zero();
     qt(0,0) = distanceDev * distanceDev;
@@ -230,7 +231,7 @@ void KalmanModel::Update(float featureX,float featureY,float distanceVal,float b
     state = state.add(kt.slow_mult(diff));
     var = ((identityM.identity().sub(kt.slow_mult(ht)))).slow_mult(var);
   
-    double w = 1.0/(2*M_PI) * 1/sqrt((st(0,0)*st(1,1)-st(0,1)*st(1,0))) * exp(-1.0/2 *(diff.transp()).slow_mult(stInv).slow_mult(diff));
+    double w = 1.0/(2*M_PI) * 1/sqrt((st(0,0) * st(1,1)-st(0,1)*st(1,0))) * exp(-1.0/2 *(diff.transp()).slow_mult(stInv).slow_mult(diff));
 
     mWeight *=  w;     
 }

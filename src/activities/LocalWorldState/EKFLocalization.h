@@ -17,9 +17,6 @@ using namespace KMath;
 using namespace boost::posix_time;
 class EKFLocalization{
 
-private :
-    
-
 public :
 
     float e1,e2,e3;
@@ -33,7 +30,7 @@ public :
     void InitializeHypothesis(int resetType, bool kickOff, float inX, float inY, float inPhi);
     void IncreaseUncertaintyAfterFall();
     void Reset();
-    void hypothesisMerging();
+    void hypothesisMerging(float thres);
 
     Localization::blf agentPosition;
     float actionOdError;
