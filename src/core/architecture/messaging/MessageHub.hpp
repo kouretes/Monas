@@ -70,7 +70,7 @@ public:
 	{
 		KSystem::Mutex::scoped_lock cvlock(cond_mutex);
 
-		if(cond_publishers.find(m) == cond_publishers.end())
+		if(m!=NULL && cond_publishers.find(m) == cond_publishers.end())
 		{
 			cond_publishers.insert(m);
 			cond_publishers_queue.push_back(m);
