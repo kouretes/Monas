@@ -198,9 +198,9 @@ void SharedWorldModel::gather_info(int count){
     tPose.mutable_pose()->CopyFrom(rPose);
     tPose.set_robotid(id+1);
     tPose.set_stability(stab);
-	
+
     swi.add_teammateposition();
-    swi.mutable_teammateposition(count)->CopyFrom(tPose);   
+    swi.mutable_teammateposition(count)->CopyFrom(tPose);
 }
 
 void SharedWorldModel::predict()
@@ -264,15 +264,15 @@ void SharedWorldModel::update(int rid)
     H2.get(1,rid*3+1) = 1;
     H2.get(2,rid*3+2) = 1;
 
-    H2.get(3,rid*3) = -cos(-phi);
-    H2.get(3,rid*3+1) = sin(-phi);
-//    H2.get(3,rid*3+2) = (bx-rx)*sin(-phi)+(by-ry)*cos(-phi)/100;
+    H2.get(3,rid*3) = -cos(phi);
+    H2.get(3,rid*3+1) = -sin(phi);
+//    H2.get(3,rid*3+2) = (rx-bx)*sin(phi)+(by-ry)*cos(phi);
     H2.get(3,dim-2) = cos(-phi);
     H2.get(3,dim-1) = -sin(-phi);
 
-    H2.get(4,rid*3) = -sin(-phi);
-    H2.get(4,rid*3+1) = -cos(-phi);
-//    H2.get(4,rid*3+2) = -(bx-rx)*cos(-phi)+(by-ry)*sin(-phi)/100;
+    H2.get(4,rid*3) = sin(phi);
+    H2.get(4,rid*3+1) = -cos(phi);
+//    H2.get(4,rid*3+2) = (rx-bx)*cos(phi)+(by-ry)*sin(phi);
     H2.get(4,dim-2) = sin(-phi);
     H2.get(4,dim-1) = cos(-phi);
 
