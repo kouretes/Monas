@@ -72,7 +72,7 @@ void Behavior::UserInit() {
 
 	dispTimer = microsec_clock::universal_time();
 	sharedBallTimer = microsec_clock::universal_time();
-	
+
 	lastGoToCenter = microsec_clock::universal_time() - seconds(10);
 	lastBallFound = microsec_clock::universal_time() - seconds(20);
 
@@ -199,7 +199,7 @@ void Behavior::generateFakeBalls() {
 }
 
 void Behavior::generateFakeRobots() {
-	
+
 	numOfRobots = robots.size();
 	std::cout<<_toString(numOfRobots)<<std::endl;
 	for(unsigned int r = 0 ; r < robots.size() ; r++) {
@@ -207,31 +207,31 @@ void Behavior::generateFakeRobots() {
 		if(r == 0) {
 			robots.at(r).robotX = -2.8f;
 			robots.at(r).robotY = 0.0f;
-			robots.at(r).robotPhi = M_PI/6.0f; 
+			robots.at(r).robotPhi = M_PI/6.0f;
 			robots.at(r).robotStability = 0;
 		}
 		else if(r == 1) {
 			robots.at(r).robotX = 2.0f;
 			robots.at(r).robotY = 0.5f;
-			robots.at(r).robotPhi = M_PI_2; 
+			robots.at(r).robotPhi = M_PI_2;
 			robots.at(r).robotStability = 0;
 		}
 		else if(r == 2) {
 			robots.at(r).robotX = 1.0f;
 			robots.at(r).robotY = 0.5;
-			robots.at(r).robotPhi = (7.0f*M_PI)/4.0f; 
+			robots.at(r).robotPhi = (7.0f*M_PI)/4.0f;
 			robots.at(r).robotStability = 0;
 		}
 		else if(r == 3) {
 			robots.at(r).robotX = 2.5f;
 			robots.at(r).robotY = 1.0f;
-			robots.at(r).robotPhi = (5.0f*M_PI)/4.0f; 
+			robots.at(r).robotPhi = (5.0f*M_PI)/4.0f;
 			robots.at(r).robotStability = 0;
 		}
 		else if(r == 4) {
 			robots.at(r).robotX = 1.5f;
 			robots.at(r).robotY = 1.2f;
-			robots.at(r).robotPhi = (3.0f*M_PI)/2.0f; 
+			robots.at(r).robotPhi = (3.0f*M_PI)/2.0f;
 			robots.at(r).robotStability = 0;
 		}
 	}
@@ -241,14 +241,14 @@ void Behavior::generateFakeRobots() {
 /* Behavior Main Execution Function */
 
 int Behavior::Execute() {
-	
+
 	readMessages();
 	getBallData();
 	getGameState();
 	getPosition();
 	getMotionData();
 	getTeamPositions();
-	
+
 	/*
 	if(dispTimer + seconds(10) < microsec_clock::universal_time()) {
 		std::cout << "ROBOTS: "+_toString(numOfRobots) << std::endl;
@@ -271,7 +271,7 @@ int Behavior::Execute() {
 		}
     }
 	else if (gameState == PLAYER_PLAYING) {
-	
+
 		if(prevGameState == PLAYER_PENALISED) {
 			lastPenalised = microsec_clock::universal_time();
 			//Check if the penalized was a wrong decision
@@ -300,23 +300,26 @@ int Behavior::Execute() {
 		readyToKick = false;
 			
 		if(sharedBallFound == true) {
-			if(lastFormation + seconds(10) < microsec_clock::universal_time()) { // distance ???
+			if( (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 0) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ) {
 				
+				if(gsm!=0)
+					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
+					
 				std::cout << "TIME: "+_toString(count++) << std::endl;
-				
+
 				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
 				if(!gameMode){
 					sendDebugMessages();
 				}
 				lastFormation = microsec_clock::universal_time();
-				
+
 				if(config.playerNumber != 1)
 					Coordinate();
-				
+
 				goToPositionFlag = false;
 			}
 		}
-		
+
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
 			_blk.publishState(hcontrol, "behavior");
@@ -326,10 +329,8 @@ int Behavior::Execute() {
 		// Publish message to head controller to run check for ball
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
 		_blk.publishState(hcontrol, "behavior");
-
 		
 		if(config.playerNumber == 1) { // goalie role if number 1
-			
 			if(formationFlag == true) {
 				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 					return 0;
@@ -339,7 +340,7 @@ int Behavior::Execute() {
 			goalie();
 		}
 		else { // not goalie behavior
-						
+
 			if(currentRole.role == FormationParameters::ONBALL) {
 
 				if(goToPositionFlag == false && ballFound == 0) {
@@ -350,7 +351,7 @@ int Behavior::Execute() {
 						goToPositionFlag = true;
 				}
 				else if(ballFound == 1) {
-				
+
 		            lastBallFound = microsec_clock::universal_time();
 					side = (ballBearing > 0) ? 1 : -1;
 
@@ -359,9 +360,9 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - (side*config.posY)) < config.epsY && bmsg != 0 && bmsg->radius() > 0 && oppgb < M_PI_4 && 
+					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - (side*config.posY)) < config.epsY && bmsg != 0 && bmsg->radius() > 0 && oppgb < M_PI_4 &&
 						oppgb > -M_PI_4) {
-						
+
 						readyToKick = true;
 						scanAfterKick = true;
 						kick();
@@ -376,14 +377,14 @@ int Behavior::Execute() {
 					}
 				}
 				else if(ballFound == 0) {
-					
+
 					if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
 						scanAfterKick = false;
 						stopRobot();
 						hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
 						_blk.publishState(hcontrol, "behavior");
 					}
-					
+
 					// walk straight for some seconds after the scan has ended and then start turning around to search for ball.
 					if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
                     	pathPlanningRequestAbsolute(3.0, 0.0, 0.0);
@@ -437,7 +438,7 @@ int Behavior::Execute() {
 				}
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
-				}			
+				}
 			}
 
 		} // not goalie behavior end
@@ -462,7 +463,7 @@ int Behavior::Execute() {
 		return 0;
 	}
 	else if (gameState == PLAYER_SET) {
-	
+
 		kickOff = gsm->kickoff();
 
 		if (gameState != prevGameState) {
@@ -479,11 +480,11 @@ int Behavior::Execute() {
 		}
 	}
 	else if(gameState == PLAYER_PENALISED) {
-	
+
 		kickOff = gsm->kickoff();
-	
+
 		if(prevGameState == PLAYER_INITIAL) {
-			//std::cout << "INITIAL FORMATION CALCULATED!" << std::endl; 
+			std::cout << "INITIAL FORMATION CALCULATED!" << std::endl;
 			fGen.Init(config.maxPlayers, true);
 			sendDebugMessages();
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
@@ -492,7 +493,7 @@ int Behavior::Execute() {
 			formationFlag = true;
 			goToPositionFlag = true;
 		}
-		
+
 		if (gameState != prevGameState) {
 			penalisedStarted = microsec_clock::universal_time();
 			hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -504,24 +505,24 @@ int Behavior::Execute() {
 }
 
 void Behavior::Coordinate() {
-	
+
 //		fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
 //		if(!gameMode){
 //			sendDebugMessages();
 //		}
 //		lastFormation = microsec_clock::universal_time();
-		
+
 		for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
 			if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE)
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
 		}
+
 		//print(roles, "Behavior");
-		
 		mappings = permutationsOfCombinations(roles, numOfRobots);
 		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
 		//print(mappings, "Behavior");
 		roles.clear();
-		
+
 		// search for optimal mapping
 		maxU = 0;
 		for(unsigned int map = 0 ; map < mappings.size() ; map++) {
@@ -529,18 +530,18 @@ void Behavior::Coordinate() {
 			for(unsigned int r = 0 ; r < numOfRobots ; r++) { // for all except goalie robots
 				currentRobotPos = fGen.findRoleInfo(mappings[map].at(r));
 				mapCost = mapCost + fieldUtility(currentRobotPos.X, currentRobotPos.Y, SharedGlobalBallY, fGen, fGen.getFormationType()) -
-				
+
 						distance(robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, fGen.Field.MaxX, fGen.Field.MaxY) -
-				  		
+
 				  		minRotation(robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, robots[r].robotPhi) -
-				  		
+
 				  		collisions(mappings[map], robots, fGen, r, robots[r].robotX, robots[r].robotY);
-				
-				if(currentRobotPos.role == FormationParameters::ONBALL) {	  		
+
+				if(currentRobotPos.role == FormationParameters::ONBALL) {
 					mapCost = mapCost - robotStability(robots[r].robotStability);
 				}
 			}
-		
+
 			if(Max(mapCost, maxU) == mapCost) {
 				maxU = mapCost;
 				index = map;
@@ -549,11 +550,11 @@ void Behavior::Coordinate() {
 			//print(mappings[map], "Behavior");
 			//std::cout << "COST: " << _toString(mapCost) << std::endl;
 		}
-		
+
 		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
 		std::cout << "OPTIMAL MAP IS: ";
 		print(mappings[index], "Behavior");
-		std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;	
+		std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
 }
 
 /**
@@ -596,12 +597,11 @@ void Behavior::getPosition() {
 		robotX = wim->myposition().x();
 		robotY = wim->myposition().y();
 		robotPhi = wrapToPi( wim->myposition().phi() );
-		robotConfidence = wim->myposition().confidence();
 	}
 }
 
 void Behavior::getTeamPositions() {
-	
+
 	if(swim != 0 && swim.get() != 0 && swim->teammateposition_size() > 0) {
 		robots.clear(); // MAYBE NOT HERE!!
 		robots.resize(swim->teammateposition_size());
@@ -610,7 +610,6 @@ void Behavior::getTeamPositions() {
 			robots[i].robotX = swim->teammateposition(i).pose().x();
 			robots[i].robotY = swim->teammateposition(i).pose().y();
 			robots[i].robotPhi = wrapToPi(swim->teammateposition(i).pose().phi());
-			robots[i].robotConfidence = swim->teammateposition(i).pose().confidence();
 			robots[i].robotStability = swim->teammateposition(i).stability();
 		}
 		sortRobotsbyId(robots); // sorting robots by player number
@@ -663,7 +662,7 @@ void Behavior::sendDebugMessages() {
 
 		if(fdg.positions_size() < (int)(i+1))
 			fdg.add_positions();
-			
+
 		fdg.mutable_positions(i)->set_x(fGen.getFormation()->at(i).X);
 		fdg.mutable_positions(i)->set_y(fGen.getFormation()->at(i).Y);
 		fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);
@@ -744,7 +743,7 @@ void Behavior::kick() {
 		}
 		else if(orientation == 2) {
 			if(ballY > 0.0)
-				amot.set_command(config.kicks.KickSideLeft); 
+				amot.set_command(config.kicks.KickSideLeft);
 			else
 				amot.set_command(config.kicks.KickSideRight);
 		}
