@@ -255,7 +255,15 @@ unsigned char NaoCamera::switchCamera (  unsigned char camera)
 	assert (ioctl (fd, VIDIOC_STREAMOFF, &type) != -1);
 	// switch camera
 	int i2cfd = openI2CAdapter();
-	assert (i2c_smbus_write_block_data (i2cfd, 220, 1, cmd) != -1);
+	bool success = false;
+	for(int i=0;i<10;i++){
+		if(i2c_smbus_write_block_data (i2cfd, 220, 1, cmd) != -1){
+			success = true;
+			break;
+		}
+	}
+	assert (success);
+
 	closeI2CAdapter (i2cfd);
 	setControlSetting (V4L2_CID_VFLIP, flip);
 	setControlSetting (V4L2_CID_HFLIP, flip);
