@@ -38,9 +38,14 @@ namespace KNetwork
 
 	MulticastPoint::~MulticastPoint()
 	{
-		std::cout<<"Multicast shuting down"<<std::endl;
+		LogEntry(LogLevel::Info,"Multicast")<<"Stopping Send Service";
+		sio.stop();
+		sendthread.join();
+		LogEntry(LogLevel::Info,"Multicast")<<"Stopping Receive Service";
+		rio.stop();
 		this->StopThread();
 		this->JoinThread();
+		LogEntry(LogLevel::Info,"Multicast")<<"All went well";
 	}
 
 	void MulticastPoint::cleanupLocalSubscriptions()
