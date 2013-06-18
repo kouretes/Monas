@@ -3,6 +3,8 @@
 #include <cmath>
 #include <vector>
 
+#include "core/include/Logger.hpp"
+
 ACTIVITY_START
 
 #define PREFETCH 2
@@ -938,14 +940,14 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		apoly->set_color(c);
 		apoly->set_confidence(1);*/
 #ifdef DEBUGVISION
-		Logger::Instance().WriteMsg("GM", "Di:" + _toString(d1.distance.mean) + " " + _toString(d1.distance.var), Logger::Info);
-		Logger::Instance().WriteMsg("GM", "Be:" + _toString(d1.bearing.mean) + " " + _toString(d1.bearing.var), Logger::Info);
+		LogEntry(LogLevel::Info,GetName())<<"Di:" <<(d1.distance.mean) << " "<<(d1.distance.var);
+		LogEntry(LogLevel::Info,GetName())<<"Be: " << (d1.bearing.mean) << " " << (d1.bearing.var);
 
 		if(d1.haveBot)
-			Logger::Instance().WriteMsg("GM", "DiB:" + _toString(d1.distBot.mean) + " " + _toString(d1.distBot.var), Logger::Info);
+			LogEntry(LogLevel::Info,GetName())<<"DiB: " << (d1.distBot.mean) << " " << (d1.distBot.var);
 
 		if(d1.haveHeight)
-			Logger::Instance().WriteMsg("GM", "DiH:" + _toString(d1.distHeight.mean) + " " + _toString(d1.distHeight.var), Logger::Info);
+			LogEntry(LogLevel::Info,GetName())<<"DiH: " << (d1.distHeight.mean) << " " << (d1.distHeight.var);
 
 #endif
 		return 1;
@@ -1435,9 +1437,9 @@ std:
 	//KVecFloat2 & w=camToRobot(o)
 	if(best.cr > 0)
 	{
-		Logger::Instance().WriteMsg("BallM", "Ball Distance:" + _toString(best.distance.mean) + " " + _toString(best.distance.var), Logger::Info);
-		Logger::Instance().WriteMsg("BallM", "Ball Bearing:" + _toString(best.bearing.mean) + " " + _toString(best.bearing.var), Logger::Info);
-		Logger::Instance().WriteMsg("BallM", "Ball Size:" + _toString(best.ballradius * 2.0), Logger::Info);
+		LogEntry(LogLevel::Info,GetName())<<"Ball Distance: " << (best.distance.mean) << " " << (best.distance.var);
+		LogEntry(LogLevel::Info,GetName())<<"Ball Bearing: " << (best.bearing.mean) << " " << (best.bearing.var);
+		LogEntry(LogLevel::Info,GetName())<<"Ball Size: " << (best.ballradius * 2.0);
 		KVecFloat2 c1(best.x, best.y);
 		c1 = imageToCamera(c1);
 		measurement* a = kinext.projectionDistance(c1, config.ballsize / 2.0);
@@ -1449,8 +1451,8 @@ std:
 		polar(0) = d2.mean;
 		polar(1) = bearing.mean;
 		KVecFloat2 robotpolar = camToRobot(polar);
-		Logger::Instance().WriteMsg("BallM", "Stupid Distance:" + _toString(robotpolar.x) + " " + _toString(d2.var), Logger::Info);
-		Logger::Instance().WriteMsg("BallM", "Stupid Bearing:" + _toString(robotpolar.y) + " " + _toString(bearing.var), Logger::Info);
+		LogEntry(LogLevel::Info,GetName())<<"Stupid Distance:" << (robotpolar.x) << " " << (d2.var);
+		LogEntry(LogLevel::Info,GetName())<<"Stupid Bearing:" << (robotpolar.y) << " " << (bearing.var);
 	}
 
 #endif
