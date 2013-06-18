@@ -1,4 +1,0 @@
-message LogEntry{
-	required uint32 type = 1;
-	required string log = 2;
-}

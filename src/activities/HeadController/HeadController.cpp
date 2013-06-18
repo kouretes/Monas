@@ -44,8 +44,7 @@ void HeadController::UserInit()
 
 	lastball = microsec_clock::universal_time();
 
-
-	Logger::Instance().WriteMsg("HeadController", "Head controller initialized!", Logger::Info);
+	LogEntry(LogLevel::Info,GetName())<< "Initialized" ;
 }
 
 

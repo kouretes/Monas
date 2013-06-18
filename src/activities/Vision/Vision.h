@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "KSegmentator.h"
+#include "robocup/vision/KSegmentator.hpp"
 #include "KCameraTransformation.h"
 
 #include "messages/Kimage.pb.h"

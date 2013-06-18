@@ -1,9 +1,6 @@
 #include "Vision.h"
 
 #include <cmath>
-#include "sys/stat.h"
-#include "tools/logger.h"
-#include "hal/syscall.h"
 #include <vector>
 
 ACTIVITY_START

@@ -1,7 +1,7 @@
-#ifndef _COOPERATIONACTIVITY_H
-#define _COOPERATIONACTIVITY_H
+#ifndef _COOPERATIONACTIVITY_HPP_
+#define _COOPERATIONACTIVITY_HPP_
 
-#include "architecture/narukom/pub_sub/blackboard.h"
+#include "core/include/Blackboard.hpp"
 
 
 
@@ -25,4 +25,4 @@ private:
 
 
 
-#endif // _COOPERATIONACTIVITY_H
+#endif // _COOPERATIONACTIVITY_HPP_

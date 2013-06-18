@@ -16,13 +16,8 @@
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
-#include "tools/logger.h"
-#include "tools/toString.h"
 #include "tools/obstacleConst.h"
 
-#include "core/elements/math/Common.hpp"
-#include "core/elements/math/Specific.hpp"
-#include "core/elements/KStandard.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -73,7 +68,7 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-	
+
 	/**
 	 * @struct Kick
 	 * @brief Used to store all possible kicks. This struct is member of configuration struct.
@@ -98,7 +93,7 @@ private:
 		unsigned int teamNumber, playerNumber, teamColor, maxPlayers;
 
 		bool isPenaltyMode;
-		
+
 		// values from the features xml file
 		double oppGoalX, oppGoalY, ownGoalX, ownGoalY;
 		double oppGoalLeftX, oppGoalLeftY, oppGoalRightX, oppGoalRightY;
@@ -161,7 +156,7 @@ private:
 	 * @brief Information gathering function, that reads the position, angle and robot confidence.
 	 */
 	void getPosition();
-	
+
 	void getTeamPositions();
 
 	/**
@@ -268,13 +263,13 @@ private:
 	 * @brief (TODO)
 	 */
 	bool goToPosition(float targetX, float targetY, float targetPhi);
-	
+
 	void Coordinate();
-	
+
 	void generateFakeBalls();
-	
+
 	void generateFakeRobots();
-	
+
 	/* --------------------------------- Behavior Variables ---------------------------------- */
 
 	bool ballFound, sharedBallFound;	// variable that is true if we see the ball.
@@ -296,7 +291,7 @@ private:
 	int side;
 
 	float robotX, robotY, robotPhi, robotConfidence; // robot coordinates, angle and confidence.
-	
+
 	std::vector<FormationParameters::Robot> robots; // team information.
 
 	bool readyToKick;
@@ -322,20 +317,21 @@ private:
 	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, sharedBallTimer, dispTimer; // timers.
 	
 	float mapCost, maxU;
-	
+
 	unsigned int index;
-	
+
 	FormationParameters::posInfo currentRobotPos;
-	
+
 	FormationParameters::posInfo currentRole;
-	
+
 	bool formationFlag;
-	
+
 	std::vector<FormationParameters::Role> roles;
-	
+
 	std::vector< std::vector<FormationParameters::Role> > mappings;
 	
 	unsigned int numOfRobots, count;
+
 };
 
 ACTIVITY_END

@@ -40,7 +40,7 @@ void MotionController::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MotionController", "Error in getting dcm proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName())<<  "Error in getting dcm proxy";
 	}
 
 	try
@@ -49,7 +49,7 @@ void MotionController::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MotionController", "Error in getting motion proxy" + e.getDescription(), Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName())<<  "Error in getting motion proxy" << e.getDescription();
 	}
 
 	try
@@ -60,10 +60,10 @@ void MotionController::UserInit()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("MotionController", "Error in getting frameManager proxy" + e.getDescription(), Logger::FatalError);
+		LogEntry(LogLevel::FatalError,GetName())<<  "Error in getting frameManager proxy" << e.getDescription();
 	}
 
-	Logger::Instance().WriteMsg("MotionController", "Loading special actions!", Logger::Info);
+	LogEntry(LogLevel::Info,GetName())<<   "Loading special actions!" ;
 	{
 		std::vector<std::string> registeredSpecialActions = SpecialActionFactory::Instance()->GetRegisteredProducts();
 		std::vector<std::string>::const_iterator it;
@@ -103,7 +103,8 @@ void MotionController::UserInit()
 	createDCMAlias();
 
 	motion->setWalkArmsEnable(true, true);
-	Logger::Instance().WriteMsg("MotionController", "Subcribing to topics", Logger::Info);
+
+	LogEntry(LogLevel::Info,GetName())<< "Subcribing to topics";
 	_blk.updateSubscription("motion", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -124,8 +125,7 @@ void MotionController::UserInit()
 	sm.set_lastaction("");
 	standUpStartTime = boost::posix_time::microsec_clock::universal_time();
 	walkingWithVelocity = false;
-
-	Logger::Instance().WriteMsg("MotionController", "Initialization Completed", Logger::Info);
+	LogEntry(LogLevel::Info,GetName())<<"Initialization Completed";
 
 	//Self Reset for initialization
 	Reset();
@@ -183,7 +183,7 @@ int MotionController::Execute()
 		SpAssocCont::iterator it = SpActions.find("PoseInitial.xar");
 
 		if (it == SpActions.end())
-			Logger::Instance().WriteMsg("MotionController", std::string("SpAction ") + "PoseInitial.xar" + " not found!", Logger::Error);
+			LogEntry(LogLevel::Error,GetName())<< "SpAction "<<  "PoseInitial.xar" << " not found!";
 		else
 			actionPID = it->second->ExecutePost();
 
@@ -200,7 +200,7 @@ int MotionController::Execute()
 		SpAssocCont::iterator it = SpActions.find("PenalizedZeroPos.xar");
 
 		if (it == SpActions.end())
-			Logger::Instance().WriteMsg("MotionController", std::string("SpAction ") + "PenalizedZeroPos.xar" + " not found!", Logger::Error);
+			LogEntry(LogLevel::Error,GetName())<< "SpAction "<<  "PenalizedZeroPos.xar" << " not found!";
 		else
 			actionPID = it->second->ExecutePost();
 
@@ -248,7 +248,7 @@ int MotionController::Execute()
 				(robotUp && actionPID == 0 && (fabs(angX) > LEANTOOMUCH || fabs(angY) > LEANTOOMUCH))
 			)
 			{
-				Logger::Instance().WriteMsg("MotionController", "Robot falling: Stiffness off", Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo,GetName()) <<"Robot falling: Stiffness off";
 				timeLapsed = boost::posix_time::microsec_clock::universal_time();
 
 				if(timeLapsed - standUpStartTime >= boost::posix_time::seconds(3.5))
@@ -280,7 +280,7 @@ int MotionController::Execute()
 			SpAssocCont::iterator it = SpActions.find("InitPose.xar");
 
 			if (it == SpActions.end())
-				Logger::Instance().WriteMsg("MotionController", std::string("SpAction ") + "InitPose.xar" + " not found!", Logger::Error);
+				LogEntry(LogLevel::Error,GetName()) <<"SpAction " <<"InitPose.xar" << " not found!";
 			else
 				actionPID = it->second->ExecutePost();
 
@@ -302,8 +302,7 @@ int MotionController::Execute()
 			robotDown = true;
 			robotUp = false;
 		}
-
-		Logger::Instance().WriteMsg("MotionController", "Action completed!", Logger::ExtraInfo);
+		LogEntry(LogLevel::ExtraInfo,GetName()) << "Action completed!";
 	}
 
 	if ((actionPID == 0) && !robotDown && !robotUp)
@@ -329,7 +328,7 @@ int MotionController::Execute()
 		robotUp = false;
 		ALstandUp();
 		standUpStartTime = boost::posix_time::microsec_clock::universal_time();
-		Logger::Instance().WriteMsg("MotionController", "StandUp ID: " + _toString(actionPID), Logger::ExtraInfo);
+		LogEntry(LogLevel::ExtraInfo,GetName()) << "StandUp ID: " << (actionPID);
 		return 0;
 	}
 
@@ -364,10 +363,11 @@ int MotionController::Execute()
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);
-				Logger::Instance().WriteMsg("MotionController", wm->command() + " with parameters " + _toString(walkParam1) + " " + _toString(walkParam2) + " "
-				                            + _toString(walkParam3), Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo,GetName())
+						<< wm->command() + " with parameters "
+						<<(walkParam1) << (walkParam2) << (walkParam3);
 				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3, walkConfig);
-				Logger::Instance().WriteMsg("MotionController", "Walk ID: " + _toString(walkPID), Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo,GetName()) << "Walk ID: "<< (walkPID);
 			}
 			else if (wm->command() == "setWalkTargetVelocity")
 			{
@@ -387,7 +387,7 @@ int MotionController::Execute()
 				walkingWithVelocity = true;
 			}
 			else
-				Logger::Instance().WriteMsg("MotionController", "Invalid Walk Command: " + wm->command(), Logger::ExtraInfo);
+			LogEntry(LogLevel::ExtraInfo,GetName()) << "Invalid Walk Command: " << wm->command();
 		}
 
 		if (hm != NULL && allsm != NULL)
@@ -433,14 +433,14 @@ int MotionController::Execute()
 				}
 			}
 			else
-				Logger::Instance().WriteMsg("MotionController", "Invalid Head Command: " + hm->command(), Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo,GetName()) << "Invalid Head Command: " << hm->command();
 		}
 
 		if ((actionPID == 0) && ((am != NULL) || (am == NULL && pam->command() != "NULL")) )
 		{
 			if (am != NULL)
 			{
-				Logger::Instance().WriteMsg("MotionController", "AM: " + am->command(), Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo,GetName()) << "AM: " << am->command();
 				pam->set_command(am->command());
 			}
 
@@ -466,13 +466,16 @@ int MotionController::Execute()
 					SpAssocCont::iterator it = SpActions.find(str2);
 
 					if (it == SpActions.end())
-						Logger::Instance().WriteMsg("MotionController", "SpAction " + str2 + " not found!", Logger::Error);
+						LogEntry(LogLevel::Error,GetName())
+						<< "SpAction " << str2 << " not found!";
 					else
 					{
 						killWalkCommand();
 						boost::shared_ptr<ISpecialAction> ptr = it->second;
 						KmeAction* ptrdcmkme = (KmeAction*) ptr.get();
-						Logger::Instance().WriteMsg("MotionController", "Frame start : " + _toString(frames.front()) + "  Frame end : " + _toString(frames.back()), Logger::ExtraInfo);
+						LogEntry(LogLevel::ExtraInfo,GetName())
+								<<"Frame start : " << (frames.front())
+								<<"  Frame end : " << (frames.back());
 						KmeManager::set_end_time(ptrdcmkme->ExecuteFrameDCM(frames.front(), frames.back()));
 						actionPID = KME_ACTIONPID;
 					}
@@ -486,7 +489,8 @@ int MotionController::Execute()
 
 				if (it == SpActions.end())
 				{
-					Logger::Instance().WriteMsg("MotionController", "SpAction " + pam->command() + " not found!", Logger::Error);
+					LogEntry(LogLevel::Error,GetName())
+							<<"SpAction " << pam->command() << " not found!";
 				}
 				else
 				{
@@ -505,7 +509,8 @@ int MotionController::Execute()
 					}
 
 					pam->set_command("NULL");
-					Logger::Instance().WriteMsg("MotionController", "  Action ID: " + _toString(actionPID), Logger::ExtraInfo);
+					LogEntry(LogLevel::ExtraInfo,GetName())
+						<<"  Action ID: " << (actionPID);
 				}
 			}
 		}
@@ -531,7 +536,7 @@ void MotionController::killWalkCommand()
 {
 	motion->killWalk();
 	walkingWithVelocity = false;
-	Logger::Instance().WriteMsg("MotionController", "Killed Walk Command", Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo,GetName())<<  "Killed Walk Command";
 }
 
 void MotionController::stopWalkCommand()
@@ -551,7 +556,7 @@ void MotionController::killHeadCommand()
 	{
 		motion->killTask(headPID);
 		headPID = 0;
-		Logger::Instance().WriteMsg("MotionController", "Killed Head Command", Logger::ExtraInfo);
+		LogEntry(LogLevel::ExtraInfo,GetName())<<  "Killed Head Command";
 	}
 }
 
@@ -561,7 +566,7 @@ void MotionController::killActionCommand()
 	{
 		motion->killTask(actionPID);
 		actionPID = 0;
-		Logger::Instance().WriteMsg("MotionController", "Killed Action Command", Logger::ExtraInfo);
+		LogEntry(LogLevel::ExtraInfo,GetName())<<  "Killed Action Command";
 	}
 }
 
@@ -572,25 +577,24 @@ void MotionController::killCommands()
 	walkPID = 0;
 	headPID = 0;
 	actionPID = 0;
-	Logger::Instance().WriteMsg("MotionController", "Killed All Commands", Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo,GetName())<<  "Killed All Command";
 }
 
 void MotionController::ALstandUp()
 {
-	Logger::Instance().WriteMsg("MotionController", "Choose standUp", Logger::ExtraInfo);
-
+	LogEntry(LogLevel::ExtraInfo,GetName())<<  "Choose standUp";
 	if (angY < 0.0)
 	{
 		// Robot
 		//tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Up!"));
 		ALstandUpBack();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up: From Back", Logger::ExtraInfo);
+		LogEntry(LogLevel::ExtraInfo,GetName())<< "Stand Up: From Back";
 	}
 	else
 	{
 		//              tts->pCall<AL::ALValue>(std::string("say"), std::string("Face Down!"));
 		ALstandUpFront();
-		Logger::Instance().WriteMsg("MotionController", "Stand Up: From Front", Logger::ExtraInfo);
+		LogEntry(LogLevel::ExtraInfo,GetName())<<  "Stand Up: From Front";
 	}
 
 	return;
@@ -601,7 +605,7 @@ void MotionController::ALstandUpCross()
 	SpAssocCont::iterator it = SpActions.find("ALstandUpCross2011");//"cross.xar");
 
 	if (it == SpActions.end())
-		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpCross not found!", Logger::Error);
+		LogEntry(LogLevel::Error,GetName())<< "SpAction ALstandUpCross not found!";
 	else
 		actionPID = it->second->ExecutePost();
 
@@ -613,7 +617,7 @@ void MotionController::ALstandUpBack()
 	SpAssocCont::iterator it = SpActions.find("StandUpFromBack.xar");
 
 	if (it == SpActions.end())
-		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpBack2010 not found!", Logger::Error);
+		LogEntry(LogLevel::Error,GetName())<< "SpAction ALstandUpBack2010 not found!";
 	else
 	{
 		actionPID = it->second->ExecutePost();
@@ -626,7 +630,7 @@ void MotionController::ALstandUpFront()
 	SpAssocCont::iterator it = SpActions.find("StandFromFrontMexico.xar");
 
 	if (it == SpActions.end())
-		Logger::Instance().WriteMsg("MotionController", "SpAction ALstandUpFront2011 not found!", Logger::Error);
+		LogEntry(LogLevel::Error,GetName())<< "SpAction ALstandUpFront2011 not found!";
 	else
 	{
 		actionPID = it->second->ExecutePost();
@@ -762,7 +766,7 @@ vector<int> MotionController::SpCutActionsManager()
 
 	//	Logger::Instance().WriteMsg("MotionController", "SpCutActionsManager - PAM: " + str, Logger::ExtraInfo);
 	if (it == SpKmexActions.end())
-		Logger::Instance().WriteMsg("MotionController", "SpKmexActions " + str + " not found!", Logger::Error);
+		LogEntry(LogLevel::Error,GetName())<< "SpKmexActions " << str << " not found!";
 	else
 	{
 		boost::shared_ptr<KmexAction> ptr = it->second;

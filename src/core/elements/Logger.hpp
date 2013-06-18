@@ -1,7 +1,8 @@
-#ifndef _logger_h_
-#define _logger_h_ 1
+#ifndef _LOGGER_HPP_
+#define _LOGGER_HPP_
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <set>
 #include <cstdio>
@@ -20,12 +21,18 @@
 //it's not thread safe but it is instantiated long before any thread creation
 
 
+class LogLevel
+{
+	public:
+	enum LogType { FatalError = 0, Error, Warning, Info, ExtraInfo, ExtraExtraInfo, Debug };
+};
+
 class LoggerClass
 {
 
 public:
 
-	enum MsgType { FatalError = 0, Error, Warning, Info, ExtraInfo, ExtraExtraInfo, Debug };
+
 
 	~LoggerClass ()
 	{
@@ -33,7 +40,7 @@ public:
 	}
 
 	template<class T>
-	void WriteMsg ( std::string name, const T & msg, MsgType type )
+	void WriteMsg ( std::string name, const T & msg, LogLevel::LogType type )
 	{
 		if ( lastConfRead + boost::posix_time::seconds(reparsingPeriod)
 		        < boost::posix_time::microsec_clock::universal_time() )
@@ -42,39 +49,33 @@ public:
 		if ( type > VerbosityLevel )
 			return;
 
+
 		switch (type)
 		{
-		case FatalError:
-		case Error:
-			WriteMsgToBuffers ( name, msg, "red" );
+		case LogLevel::FatalError:
+		case LogLevel::Error:
+			WriteMsgToBuffers ( name, msg, C_RED );
 			break;
 
-		case Warning:
-			WriteMsgToBuffers ( name, msg, "yellow" );
+		case LogLevel::Warning:
+			WriteMsgToBuffers ( name, msg, C_YELLOW );
 			break;
 
-		case Info:
-		case ExtraInfo:
-			if ( ! ActivityFilterEnabled )
-				WriteMsgToBuffers ( name, msg, "default" );
-			else if ( ActivityFilter.find(name) != ActivityFilter.end() )
-				WriteMsgToBuffers ( name, msg, "default" );
-
+		case LogLevel::Info:
+		case LogLevel::ExtraInfo:
+			if ( ! ActivityFilterEnabled || ActivityFilter.find(name) != ActivityFilter.end() )
+				WriteMsgToBuffers ( name, msg, C_DEFAULT );
 			break;
 
-		case ExtraExtraInfo:
-			if ( ! ActivityFilterEnabled )
-				WriteMsgToBuffers ( name, msg, "blue" );
-			else if ( ActivityFilter.find(name) != ActivityFilter.end() )
-				WriteMsgToBuffers ( name, msg, "blue" );
-
-		case Debug:
+		case LogLevel::ExtraExtraInfo:
+			if ( ! ActivityFilterEnabled || ActivityFilter.find(name) != ActivityFilter.end() )
+				WriteMsgToBuffers ( name, msg, C_BLUE );
+			break;
+		case LogLevel::Debug:
 			if ( DebuggingMode )
 			{
-				if ( DebugAll )
-					WriteMsgToBuffers ( name, msg, "red" );
-				else if ( ActivityFilter.find(name) != ActivityFilter.end() )
-					WriteMsgToBuffers ( name, msg, "red" );
+				if ( DebugAll ||  ActivityFilter.find(name) != ActivityFilter.end() )
+					WriteMsgToBuffers ( name, msg, C_RED );
 			}
 		}
 	}
@@ -102,22 +103,23 @@ public:
 			SysCall::_exit(1);
 		}
 
-		ColorMap["red"]     = "\033[1;31m";
-		ColorMap["blue"]    = "\033[1;34m";
-		ColorMap["lBlue"]   = "\033[21;34m";
-		ColorMap["green"]   = "\033[1;32m";
-		ColorMap["yellow"]   = "\033[1;33m";
-		ColorMap["default"] = "\033[0m";
+		ColorMap[C_RED]     = "\033[1;31m";
+		ColorMap[C_BLUE]    = "\033[1;34m";
+		ColorMap[C_LBLUE]   = "\033[21;34m";
+		ColorMap[C_GREEN]   = "\033[1;32m";
+		ColorMap[C_YELLOW]   = "\033[1;33m";
+		ColorMap[C_DEFAULT] = "\033[0m";
 	}
 
 private:
+	enum LogColorsType { C_RED, C_BLUE,C_LBLUE,C_GREEN,C_YELLOW,C_DEFAULT};
 
 	void ReadConfiguration ()
 	{
 		std::string ConfFileStr( Configurator::Instance().getDirectoryPath() + "logger.xml" );
-		
+
 		MsgLogFile = Configurator::Instance().findValueForKey("logger.MessageLogFile");
-			
+
 		VerbosityLevel = atoi(Configurator::Instance().findValueForKey("logger.LogFileVerbosityLevel").c_str());
 		VerbosityLevel = VerbosityLevel < 0 ? 0 : VerbosityLevel;
 
@@ -167,21 +169,21 @@ private:
 				ActivityFilter.insert(value);
 			}
 		}
-		
+
 		ColorEnabled = atoi(Configurator::Instance().findValueForKey("logger.MessageLogCerrColor").c_str());
 
 		lastConfRead = boost::posix_time::microsec_clock::universal_time();
 	}
 
 	template< class T>
-	void WriteMsgToBuffers ( std::string name, const T& msg, std::string color )
+	void WriteMsgToBuffers ( std::string name, const T& msg, LogColorsType color )
 	{
 		ErrorLog << name << " : " << msg << std::endl;
 
 		if ( CerrEnabled )
 		{
 			if ( ColorEnabled )
-				std::cerr << ColorMap[color] << name << " : " << msg << ColorMap["default"] << std::endl;
+				std::cerr << ColorMap[color] << name << " : " << msg << ColorMap[C_DEFAULT] << std::endl;
 			else
 				std::cerr << name << " : " << msg << std::endl;
 		}
@@ -205,13 +207,52 @@ private:
 	bool DebuggingMode;
 	bool DebugAll;
 
-	std::map<std::string, std::string> ColorMap;
+	std::map<LogColorsType, std::string> ColorMap;
 
 	boost::posix_time::ptime lastConfRead;
 	float reparsingPeriod;
 
 };
 
-typedef Singleton<LoggerClass> Logger;
+typedef Singleton<LoggerClass> LoggerSingleton;
 
-#endif // _logger_h_
+class LogEntry
+{
+	public:
+	LogEntry(LogLevel::LogType t,std::string n) : ss(),type(t), name(n)
+	{
+
+	};
+
+	~LogEntry()
+	{
+		LoggerSingleton::Instance().WriteMsg(name,ss.str(),type);
+	}
+	template<typename T>
+	std::ostream & operator<< (T t)
+	{
+		return ss<<t;
+	}
+
+	private:
+
+
+	LogEntry & operator=(const LogEntry &r)
+	{
+		type=r.type;
+		name=r.name;
+		ss<<r.ss.rdbuf();
+	};
+	LogEntry(const LogEntry &l) :ss(),type(l.type),name(l.name)
+	{
+
+	};
+
+	LogLevel::LogType type;
+	std::string name;
+	std::ostringstream ss;
+
+};
+
+
+#endif // _LOGGER_HPP_

@@ -1,6 +1,6 @@
-#include "CooperationHelper.h"
+#include "CooperationHelper.hpp"
 #include "messages/Gamecontroller.pb.h"
-#include "messages/Network.pb.h"
+#include "core/messages/Network.pb.h"
 
 std::size_t CooperationHelper::getHostByPlayerNum(std::size_t p)
 {

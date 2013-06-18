@@ -14,31 +14,27 @@ namespace KStandard {
 
 	/**
 	 * @fn template <typename T> void print(vector<T> &toPrint, string topic)
-	 * @brief Print vector elements using logger. 
+	 * @brief Print vector elements using logger.
 	 */
 	template <typename T>
 	void print(vector<T> &toPrint, string topic) {
-		string msg;
+		LogEntry msg(LogLevel::Info,topic);
 		for(unsigned int it = 0 ; it < toPrint.size() ; it++)
-			msg = msg.append(_toString(toPrint[it])+" ");
-			
-		Logger::Instance().WriteMsg(topic, msg, Logger::Info);
+			msg <<(toPrint[it]) <<" ";
 	}
-	
+
 	/**
 	 * @fn template <typename T> void print(vector<T> &toPrint, string topic, unsigned int index)
-	 * @brief Print vector elements using logger. 
+	 * @brief Print vector elements using logger.
 	 */
 	template <typename T>
 	void print(vector<T> &toPrint, string topic, unsigned int index) {
-		string msg;
-		msg = msg.append("["+_toString(index)+"] ");
+		LogEntry msg(LogLevel::Info,topic);
+		msg<< "[" << (index) << "] ";
 		for(unsigned int it = 0 ; it < toPrint.size() ; it++)
-			msg = msg.append(_toString(toPrint[it])+" ");
-			
-		Logger::Instance().WriteMsg(topic, msg, Logger::Info);
+			msg <<(toPrint[it]) <<" ";
 	}
-	
+
 	/**
 	 * @fn template <typename T> void print(vector< vector<T> > &toPrint, string topic)
 	 * @brief Print elements of 2-dimensional vector using the above print function.
@@ -49,7 +45,7 @@ namespace KStandard {
 			print(toPrint[it], topic, it+1);
 		}
 	}
-	
+
 };
 
 #endif

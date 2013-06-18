@@ -1,6 +1,7 @@
 #include "hal/robot/generic_nao/KImageExtractor.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include <qi/os.hpp>
+#include "core/include/Logger.hpp"
 
 using boost::posix_time::ptime;
 static const  boost::posix_time::ptime time_t_epoch( boost::gregorian::date(1970, 1, 1));
@@ -63,12 +64,12 @@ boost::posix_time::ptime KImageExtractor::fetchImage(KImageConst & img)
 			{
 				continue;
 			}else{
-				imageOk = true;		
-				break;	
+				imageOk = true;
+				break;
 			}
 		}
 		if(!imageOk){
-			Logger::Instance().WriteMsg ("KImageExtractor", "Camera is dead, reinitializing NaoCamera", Logger::ExtraInfo);
+			LogEntry(LogLevel::Warning,"KImageExtractor")<< "Camera is dead, reinitializing NaoCamera"<<std::endl;
 			delete naocam;
 			NaoCamera::userPrefs newPrefs;
 			newPrefs.GAIN = atoi(Configurator::Instance().findValueForKey("camera.Gain").c_str());

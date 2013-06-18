@@ -2,6 +2,7 @@
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "hal/robot/generic_nao/robot_consts.h"
+#include "core/include/Logger.hpp"
 
 using namespace std;
 
@@ -13,7 +14,7 @@ KmeAction::KmeAction(std::string name, AL::ALValue actionNames, AL::ALValue acti
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("KMEAction", "Error in getting motion proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError, "KMEAction") <<"Error in getting motion proxy";
 	}
 
 	try
@@ -22,7 +23,7 @@ KmeAction::KmeAction(std::string name, AL::ALValue actionNames, AL::ALValue acti
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("KMEAction", "Error in getting dcm proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError, "KMEAction") << "Error in getting dcm proxy";
 	}
 
 	this->name = name;
@@ -99,7 +100,7 @@ boost::posix_time::ptime KmeAction::ExecuteDCM()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("KMEAction", "Error when creating Alias", Logger::FatalError);
+		LogEntry(LogLevel::FatalError, "KMEAction") << "Error when creating Alias";
 	}
 
 	float max_time = actionTimes[0][(actionTimes[0].getSize()) - 1];
@@ -157,7 +158,7 @@ boost::posix_time::ptime KmeAction::ExecuteFrameDCM(unsigned int frameStart, uns
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("KMEAction", "Error when creating Alias", Logger::FatalError);
+		LogEntry(LogLevel::FatalError, "KMEAction") << "Error when creating Alias";
 	}
 
 	return boost::posix_time::microsec_clock::universal_time() + boost::posix_time::seconds(max_time);
@@ -171,7 +172,7 @@ int KmeAction::ExecutePost()
 
 int KmeAction::ExecuteActionKME()
 {
-	Logger::Instance().WriteMsg("KmeAction", "PRIN THN ANGLE INTERPOLATIONNNN", Logger::ExtraInfo);
+	LogEntry(LogLevel::ExtraInfo, "KMEAction") << "PRIN THN ANGLE INTERPOLATIONNNN";
 	return motion->post.angleInterpolation(actionNames, actionAngles, actionTimes, true);
 }
 

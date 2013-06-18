@@ -2,8 +2,7 @@
 
 #include <fstream>
 #include <dirent.h>
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
 
 #include "hal/robot/generic_nao/kAlBroker.h"
 #include "ISpecialAction.h"
@@ -24,7 +23,7 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME()
 	}
 	catch (AL::ALError& e)
 	{
-		Logger::Instance().WriteMsg("KMEManager", "Error in getting motion proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError, "KMEManager")<< "Error in getting motion proxy";
 	}
 
 	std::vector<motSequence> spAct;
@@ -76,7 +75,8 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME()
 
 				fin.close();
 				actionMap[spAct[i].seqName] = i;
-				Logger::Instance().WriteMsg("MotionController", "Special Action Succesfully Loaded : " + spAct[i].seqName, Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo, "KMEManager")
+						<<  "Special Action Succesfully Loaded : " <<  spAct[i].seqName;
 				std::vector<std::string> jointNames;
 				jointNames = motion->getJointNames("Body");
 				unsigned int joints = 22;
@@ -110,7 +110,8 @@ std::vector<ISpecialAction*> KmeManager::LoadActionsKME()
 			}
 			else
 			{
-				Logger::Instance().WriteMsg("MotionController", "Special Action Failed to Load : " + spAct[i].seqName, Logger::ExtraInfo);
+				LogEntry(LogLevel::ExtraInfo, "KMEManager")
+					<< "Special Action Failed to Load : " << spAct[i].seqName;
 			}
 		}
 

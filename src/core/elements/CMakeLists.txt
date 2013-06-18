@@ -13,6 +13,7 @@ set(ELEMENT_SRCS
       StringRegistry.hpp
       Singleton.hpp
       KStandard.hpp
+      Logger.hpp
 )
 
 add_custom_target(Monas-Elements SOURCES ${ELEMENT_SRCS}  )

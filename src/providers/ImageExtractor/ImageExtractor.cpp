@@ -1,8 +1,6 @@
 #include "ImageExtractor.h"
 
-#include "tools/logger.h"
-#include "tools/toString.h"
-
+#include "core/include/Logger.hpp"
 
 using namespace std;
 
@@ -30,14 +28,14 @@ int ImageExtractor::Execute()
 		firstRun = true;
 	}
 
-	
-	ccm = _blk.readSignal<CalibrateCamMessage> ("image");	
+
+	ccm = _blk.readSignal<CalibrateCamMessage> ("image");
 	if(ccm.get() != NULL){
 		if(!imext.setNewUserPrefs()){
-			Logger::Instance().WriteMsg ("ImageExtractor", "Failed to set the new preferences to camera", Logger::Error);
+			LogEntry(LogLevel::Error,GetName()) <<"Failed to set the new preferences to camera";
 		}
 	}
-	
+
 	boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
 	boost::posix_time::ptime  timestamp;
 

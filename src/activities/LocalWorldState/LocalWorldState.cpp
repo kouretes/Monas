@@ -1,11 +1,9 @@
 #include "LocalWorldState.h"
 #include "hal/robot/generic_nao/robot_consts.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
 #include "messages/RoboCupGameControlData.h"
-#include <pthread.h>
-#include <netinet/in.h>
-#include <csignal>
+#include "messages/RoboCupGameControlData.h"
+
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 #include <math.h>
@@ -20,7 +18,6 @@ using namespace KMath;
 ACTIVITY_REGISTER(LocalWorldState);
 
 bool LocalWorldState::debugmode = false;
-TCPSocket * LocalWorldState::sock;
 
 void LocalWorldState::UserInit()
 {
@@ -31,7 +28,7 @@ void LocalWorldState::UserInit()
 
     actionKick=false;
 	firstOdometry = true;
-	serverpid = -1;
+
 	debugmode = false;
 	fallBegan = true;
 	gameState = PLAYER_INITIAL;
@@ -47,7 +44,6 @@ void LocalWorldState::UserInit()
     odometryMessageTime = boost::posix_time::microsec_clock::universal_time();
     debugMessageTime = boost::posix_time::microsec_clock::universal_time();
     gamePlaying = boost::posix_time::microsec_clock::universal_time();
-
     //read xml files..set parameters for localizationWorld
     Reset();
     ReadFieldConf();
@@ -71,7 +67,7 @@ void LocalWorldState::UserInit()
 
 	robotmovement.type = "ratio";
 	robotmovement.freshData = false;
-    Logger::Instance().WriteMsg("LocalWorldState", "LocalWorldState Initialized", Logger::Info);
+	LogEntry(LogLevel::Info,GetName())<< "Initialized" ;
 }
 
 void LocalWorldState::Reset(){
@@ -144,6 +140,7 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
+
 	MyWorld.set_stability(stability);
 
 	calculate_ball_estimate(robotmovement);
@@ -151,6 +148,7 @@ int LocalWorldState::Execute()
 
 	if(gameMode == false){
         if (locConfig.ekfEnable == true){
+
             if ((boost::posix_time::microsec_clock::universal_time() > debugMessageTime + seconds(4)) || lrm != 0){
 
                 for (int i = 0; i < ekfLocalization.numberOfModels-1 ; i++)
@@ -584,6 +582,8 @@ void LocalWorldState::InputOutputLogger(){
 			YellowRight = temp;
 	}
 	RobotPosition = _toString(AgentPosition.x) + " " + _toString(AgentPosition.y) + " " + _toString(AgentPosition.phi);
-
-	Logger::Instance().WriteMsg("LocalWorldStateLogger", _toString(currentExecute) + " " + RobotMovement + " " + Yellow + " " + YellowLeft + " " + YellowRight + " " + RobotPosition, Logger::ExtraExtraInfo);
+	LogEntry(LogLevel::ExtraExtraInfo,"LocalWorldStateLogger")
+			<<(currentExecute) << " " << RobotMovement << " "
+			<<  Yellow << " " << YellowLeft  << " " <<  YellowRight
+			<< " " <<  RobotPosition;
 }

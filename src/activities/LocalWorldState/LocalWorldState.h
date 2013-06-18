@@ -23,7 +23,6 @@
 
 #include "BallFilter.h"
 #include "KLocalization.h"
-#include "PracticalSocket.h"
 #include "EKFLocalization.h"
 #include "LocalizationStructs.h"
 
@@ -35,10 +34,7 @@ public:
 	ACTIVITY_CONSTRUCTOR(LocalWorldState)
 	ACTIVITY_VISIBLE ~LocalWorldState()
 	{
-		if (serverpid != -1)
-			pthread_cancel(serverpid);
 
-		delete sock;
 	}
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
@@ -57,8 +53,6 @@ public:
 private:
 	//check if the first odometry data had come
 	bool firstOdometry;
-
-	int serverpid;
 
     //read xml files
     void ReadLocConf();
@@ -113,7 +107,7 @@ private:
 
 	//Logger for all input and outputs for every execute cycle
 	void InputOutputLogger();
-	
+
 	//Time variables
 	boost::posix_time::ptime timeStart, timeStop;
 	boost::posix_time::ptime lastObservationTime, gamePlaying;
@@ -123,8 +117,6 @@ private:
     boost::posix_time::ptime debugMessageTime;
 	//Usefull for gui tools
 
-	pthread_t acceptthread;
-	static TCPSocket *sock;
 	int LocalizationData_Load(vector<Localization::KObservationModel> & Observation, Localization::KMotionModel & MotionModel);
 	int LocalizationDataForGUI_Load();
 	void Send_LocalizationData();

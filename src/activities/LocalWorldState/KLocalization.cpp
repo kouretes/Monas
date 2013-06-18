@@ -11,8 +11,6 @@
 #include <math.h>
 #include "KLocalization.h"
 #include <iomanip>
-#include "tools/logger.h"
-#include "tools/toString.h"
 
 using namespace boost;
 using namespace KMath;
@@ -137,7 +135,7 @@ void KLocalization::InitializeParticles(int resetType, bool kickOff, float inX, 
 			SIRParticles.Weight[i] = 1.0 / SIRParticles.size;
 		}
 	}
-	
+
 }
 
 //Sequential Importance Resampling
@@ -203,7 +201,7 @@ void KLocalization::Predict(Localization::KMotionModel & MotionModel)
 	float tmpDist, tmpDir, tmpRot;
 	boost::normal_distribution<> normDist(0,1);
     boost::variate_generator<randGen&, boost::normal_distribution<> > X(generator, normDist);
-    
+
     //Move the particles with noise
 	for (int i = 0; i < SIRParticles.size; i++)
 	{
@@ -342,10 +340,10 @@ void KLocalization::UpdateAmbiguous(vector<Localization::KObservationModel> &Obs
 		ParticlePointBearingAngle = atan2(-(-yPosOfFeature) - SIRParticles.y[p], -xPosOfFeature - SIRParticles.x[p]);
 		ParticleBearing = anglediff2(ParticlePointBearingAngle, SIRParticles.phi[p]);
 		overallWeight *= NormPdf(anglediff(obsBearingValue, ParticleBearing), obsBearingEdev);
-        
+
         weight = (overallWeight > weight ) ? overallWeight : weight;
         weightSum+=weight;
-		
+
         weight = (weight < 0.0001) ? 0.0001 : weight;
 		SIRParticles.Weight[p] = weight;
 	}
@@ -482,10 +480,10 @@ vector<float> KLocalization::circleIntersection (Localization::KObservationModel
 
     //Circles have two intersection points
     vector<float> intersPoint1(2),intersPoint2(2);
-   
+
     //Goal post size
 	float centreDist=fabs(obs1.Feature.y-obs2.Feature.y);
-   
+
     //Circle radius
     radius1 = obs1.Distance.val;
 	radius2 = obs2.Distance.val;
@@ -504,10 +502,10 @@ vector<float> KLocalization::circleIntersection (Localization::KObservationModel
 
     float alpha = ( pow(radius1,2) - pow(radius2,2) + pow(centreDist,2) ) / ( 2 * centreDist);
 	h = sqrt( pow(radius1,2) - pow(alpha,2) );
-	
+
     p3x = p1x + alpha * (p2x - p1x) / centreDist;
 	p3y = p1y + alpha * (p2y - p1y) / centreDist;
-    
+
     //x coordinate
 	intersPoint1[0] = p3x + h *(p2y - p1y) / centreDist;
     //y coordinate
@@ -519,7 +517,7 @@ vector<float> KLocalization::circleIntersection (Localization::KObservationModel
 	intersPoint2[1] = p3y + h *(p2x - p1x) / centreDist;
 
     return (intersPoint1[0] > 0 && intersPoint1[0] < 3) ? intersPoint1 : intersPoint2;
-} 
+}
 
 Localization::partcl KLocalization::generateParticle(vector<Localization::KObservationModel>& Observations){
 
@@ -530,12 +528,12 @@ Localization::partcl KLocalization::generateParticle(vector<Localization::KObser
 	float centreDist = fabs(locConfig->KFeaturesmap["YellowLeft"].y - locConfig->KFeaturesmap["YellowRight"].y);
 
     if (centreDist < fabs(Observations[0].Distance.val-Observations[1].Distance.val) ){
-        //No solution 
+        //No solution
         //cout<< "No solution..." << endl;
 	    result.valid = false;
 	    return result;
     }
-		
+
     //Position based on two observations
     intersPoint = circleIntersection(Observations[0],Observations[1]);
 
@@ -552,7 +550,7 @@ Localization::partcl KLocalization::generateParticle(vector<Localization::KObser
 	//Compare with the current position
 	R1 = norm2(agentPosition.x-pEnemyField.x,agentPosition.y-pEnemyField.y);
 	R2 = norm2(agentPosition.x-pOwnField.x,agentPosition.y-pOwnField.y);
-    
+
 	if ( fabs(pOwnField.x)>locConfig->fieldMaxX || fabs(pOwnField.y)>locConfig->fieldMaxY ){
 		//No solution (Out of the Field)
         //cout << "No solution (Out of the Field) ..." << endl;
@@ -592,7 +590,7 @@ Localization::partcl KLocalization::generateParticleWindow(vector<Localization::
 	int tries = 0;
 	float centreDist = fabs(locConfig->KFeaturesmap["YellowLeft"].y - locConfig->KFeaturesmap["YellowRight"].y);
     //cout << "centreDist : " << centreDist << endl;
-	
+
     float phi1,phi2;
 	Localization::partcl pEnemyField,pOwnField,result;
 	float R1,R2,Threshold = 2;
@@ -606,7 +604,7 @@ Localization::partcl KLocalization::generateParticleWindow(vector<Localization::
             //Pick two different goal posts
 		    while(goalPost1.observationTime==goalPost2.observationTime){
 			    goalPost2 =  Observations[Y()];
-                //cout << "Pick another pair " << endl;            
+                //cout << "Pick another pair " << endl;
             }
 
 		    //GoalPost1 is left
@@ -635,7 +633,7 @@ Localization::partcl KLocalization::generateParticleWindow(vector<Localization::
 
             //Check if position is consistent with observations
             phi1 = anglediff2(atan2(goalPost1.Feature.y-pEnemyField.y,goalPost1.Feature.x-pEnemyField.x),goalPost1.Bearing.val);
-		    phi2 = anglediff2(atan2(goalPost2.Feature.y-pEnemyField.y,goalPost2.Feature.x-pEnemyField.x),goalPost2.Bearing.val);  
+		    phi2 = anglediff2(atan2(goalPost2.Feature.y-pEnemyField.y,goalPost2.Feature.x-pEnemyField.x),goalPost2.Bearing.val);
 
 		    if ( fabs(anglediff2(phi1,phi2)) < TO_RAD(5)){
 			    pEnemyField.phi=phi1;

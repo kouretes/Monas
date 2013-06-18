@@ -1,5 +1,9 @@
 #include "Behavior.h"
 
+#include "core/include/Logger.hpp"
+#include "core/elements/math/Common.hpp"
+#include "core/elements/math/Specific.hpp"
+#include "core/elements/KStandard.hpp"
 #include <math.h>
 
 using namespace KMath;
@@ -63,7 +67,7 @@ void Behavior::UserInit() {
 	gameState = PLAYER_INITIAL;
 	currentRobotAction = MotionStateMessage::IDLE;
 	Reset();
-	Logger::Instance().WriteMsg("Behavior", "Initialized: My number is " + _toString(config.playerNumber) + " and my color is " + _toString(config.teamColor), Logger::Info);
+	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -115,7 +119,7 @@ void Behavior::Reset(){
 
 	// === read robot configuration xml data from playerConfig.xml===
 	if ( (config.playerNumber < 1) || (config.playerNumber > config.maxPlayers) )
-		Logger::Instance().WriteMsg("Behavior", "Behavior Reset: Invalid player number", Logger::Error);
+		LogEntry(LogLevel::Error, GetName())<< "Behavior Reset: Invalid player number";
 
 	// === read field configuration xml data from field.xml used for formation generator ===
 	// update the Field struct on formation generator header
@@ -167,7 +171,7 @@ void Behavior::Reset(){
 		}
 	}
 	gameMode = atoi(Configurator::Instance().findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
-	Logger::Instance().WriteMsg("Behavior", "Reset done", Logger::Info);
+	LogEntry(LogLevel::Info, GetName())<<"Reset done";
 }
 
 
@@ -653,13 +657,16 @@ void Behavior::getMotionData() {
 
 void Behavior::sendDebugMessages() {
 
-	Logger::Instance().WriteMsg("Behavior", "BallX: "+_toString(SharedGlobalBallX)+" BallY: "+_toString(SharedGlobalBallY), Logger::Info);
+	LogEntry(LogLevel::Info, GetName())
+		<< "BallX: "  << (SharedGlobalBallX)
+		<< " BallY: " << (SharedGlobalBallY);
 
 	for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
 
-		Logger::Instance().WriteMsg("Behavior", "Role: "+_toString(getRoleString(fGen.getFormation()->at(i).role))+
-												" X: "+_toString(fGen.getFormation()->at(i).X)+
-												" Y: "+_toString(fGen.getFormation()->at(i).Y), Logger::Info);
+		LogEntry(LogLevel::Info, GetName())
+			<< "Role: " << (getRoleString(fGen.getFormation()->at(i).role))
+			<< " X: "   << (fGen.getFormation()->at(i).X)
+			<< " Y: "   <<  (fGen.getFormation()->at(i).Y);
 
 		if(fdg.positions_size() < (int)(i+1))
 			fdg.add_positions();

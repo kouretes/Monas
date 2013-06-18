@@ -2,8 +2,7 @@
 
 #include <cmath>
 #include "sys/stat.h"
-#include "tools/logger.h"
-#include "tools/toString.h"
+#include "core/include/Logger.hpp"
 #include "core/elements/math/KMat.hpp"
 //#include "hal/syscall.h"
 #include <vector>
@@ -89,7 +88,7 @@ void Vision::Reset(){
 	config.pitchoffset = atof(Configurator::Instance().findValueForKey("vision.pitchoffset").c_str());
 	config.rolloffset = atof(Configurator::Instance().findValueForKey("vision.rolloffset").c_str());
 	config.pixeltol = atof(Configurator::Instance().findValueForKey("vision.pixeltol").c_str());
-	Logger::Instance().WriteMsg("Vision", "Reset done", Logger::Warning);
+	LogEntry(LogLevel::Info,GetName()) << "Reset done";
 }
 
 int  Vision::Execute()
@@ -101,7 +100,7 @@ int  Vision::Execute()
 	}
 	catch(KMath::KMat::SingularMatrixInvertionException &e)
 	{
-		Logger::Instance().WriteMsg("Vision", "Holy mother of jesus", Logger::Warning);
+		LogEntry(LogLevel::Error,GetName()) <<  "Singular Matrix Inversion Exception somewhere...";
 		return 0;
 	}
 
@@ -174,7 +173,7 @@ void Vision::fetchAndProcess()
 
 	if (asvmn.get() == NULL || asvmo.get() == NULL) //No sensor data!
 	{
-		Logger::Instance().WriteMsg("Vision", "Warning!!! Vision has no head joint msg in all sensor (allsm) data!", Logger::Error);
+		LogEntry(LogLevel::Error,GetName()) << "Warning!!! Vision has no head joint msg in all sensor (allsm) data!";
 		return;
 	}
 

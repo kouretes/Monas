@@ -1,5 +1,5 @@
 #include "SharedWorldModel.h"
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 #include "tools/toString.h"
 #include "hal/robot/generic_nao/robot_consts.h"
 
@@ -63,7 +63,7 @@ void SharedWorldModel::UserInit()
 
     now = boost::posix_time::microsec_clock::universal_time();
     last_filter_time = now;
-	Logger::Instance().WriteMsg("SharedWorldModel", "Initialized", Logger::Info);
+    LogEntry(LogLevel::Info, GetName()) << "Initialized" ;
 }
 
 void SharedWorldModel::Reset(){

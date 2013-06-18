@@ -1,5 +1,5 @@
-#include "KSegmentator.h"
-#include "tools/logger.h"
+#include "KSegmentator.hpp"
+#include "core/include/Logger.hpp"
 #include <iostream>
 
 
@@ -95,7 +95,7 @@ void KSegmentator::setLumaScale(float s)
 		pULUT[i] = 0;
 		pVLUT[i] = 0;
 	}
-	
+
 
 	for(int i = 0; i < 256; i++)
 	{
@@ -200,14 +200,14 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 	if (set.ID[0] != 'K' || set.ID[1] != 'S')
 	{
 		cout << "KSegmentator(): Invalid configuration file" << endl;
-		Logger::Instance().WriteMsg("KSegmentator", "Invalid configuration file", Logger::Error);
+		LogEntry(LogLevel::Error,"KSegmentator")<< "Invalid configuration file";
 		return;
 	}
 
 	if (set.size - '0' > (int)sizeof(colormask_t))
 	{
 		cout << "KSegmentator(): Not enough length in colormask_t" << endl;
-		Logger::Instance().WriteMsg("KSegmentator", "Not enough length in colormask_t", Logger::Error);
+		LogEntry(LogLevel::Error,"KSegmentator")<< "Not enough length in colormask_t";
 		return;
 	}
 
@@ -224,7 +224,7 @@ KSegmentator::KSegmentator(std::ifstream &conf)
 		readRulefile(conf);
 	else if (set.ruletype == 'C')
 		readColorTable(conf);
-	
+
 	setLumaScale(1.0);
 
 
@@ -244,7 +244,7 @@ void KSegmentator::readComment(ifstream & conf)
 {
 	char com[1024];
 	conf.getline(com, 1024);
-	Logger::Instance().WriteMsg("KSegmentator", std::string(com), Logger::Info);
+	LogEntry(LogLevel::Error,"KSegmentator")<< "Color table comment:" << std::string(com);
 }
 
 void KSegmentator::readCalibration(ifstream & conf)

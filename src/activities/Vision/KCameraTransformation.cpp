@@ -1,6 +1,6 @@
 #include "KCameraTransformation.h"
 #include "hal/robot/generic_nao/kAlBroker.h"
-#include "tools/logger.h"
+#include "core/include/Logger.hpp"
 #include "tools/toString.h"
 
 #include <vector>
@@ -18,7 +18,7 @@ void KCameraTranformation::Init()
 	}
 	catch (AL::ALError &e)
 	{
-		Logger::Instance().WriteMsg("KCameraTransformation", "Error in getting motion proxy", Logger::FatalError);
+		LogEntry(LogLevel::FatalError,"KCameraTransformation") << "Error in getting motion proxy";
 	}
 }
 float  KCameraTranformation::cot(float theta) const

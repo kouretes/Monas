@@ -45,6 +45,8 @@ namespace statechart_engine
 	void Statechart::Stop ()
 	{
 		StopThread();
+		AtomicNotify();//Wakeup again
+		JoinThread();
 	}
 
 	int Statechart::Execute ()
