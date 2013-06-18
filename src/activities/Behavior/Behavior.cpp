@@ -300,7 +300,8 @@ int Behavior::Execute() {
 		readyToKick = false;
 			
 		if(sharedBallFound == true) {
-			if( (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 0) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ) {
+			std::cout << "SHARED FOUND" << std::endl;
+			if( (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ) {
 				
 				if(gsm!=0)
 					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
