@@ -31,9 +31,9 @@
 <provider IsRealTime="1" Priority="1" ThreadFrequency="25" StatsCycle="1000" Enable="1">ImageExtractor</provider>
 <provider IsRealTime="1" Priority="1" ThreadFrequency="5" StatsCycle="1000" Enable="1">LedHandler</provider>
 
-<agent IsRealTime="1" Priority="1" ThreadFrequency="4" StatsCycle="1000" Enable="1">
-	<name>ObstacleAvoidance</name>
-	<activity Enable="1">ObstacleAvoidance</activity>
+<agent IsRealTime="1" Priority="1" ThreadFrequency="10" StatsCycle="50" Enable="1">
+	<name>PathPlanning</name>
+	<activity Enable="1">PathPlanning</activity>
 </agent>
 
   

@@ -1,0 +1,41 @@
+message ObstacleMessage{
+	required int32 direction = 1 [default = -1];
+	required float distance = 2 [default = 0.0 ];
+	required float certainty = 3 [default = 0.0];
+	
+}
+
+message VisionObstacleMessage{
+	repeated ObstacleMessage obstacles =1 ;	
+}
+
+message ObstacleMessageArray{
+	repeated int32 direction = 1 ;
+	repeated float distance = 2 ;
+	repeated float certainty = 3 ;
+
+}
+
+message PathPlanningRequestMessage{
+	required float TargetX = 1;
+	required float TargetY = 2;
+	required float TargetOrientation = 3;
+	required bool UsePathPlanning = 4;
+}
+
+message GridInfo{
+	required float CellsRadius = 1;
+	required float CellsRing = 2;
+	required float RealGridLength = 3;
+	repeated float GridCells = 4; 
+	required float PathLength = 5;
+	repeated int32 PathStepsRing = 6;
+	repeated int32 PathStepsSector = 7;
+	repeated int32 PathStepsOrientation = 8;
+	optional int32 TargetRing = 9;
+	optional int32 TargetSector = 10;
+	optional float TargetOrientation = 11;
+	repeated int32 visitedRing = 12;
+	repeated int32 visitedSector = 13;
+	repeated int32 visitedOrientation = 14;
+}

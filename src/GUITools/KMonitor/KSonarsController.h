@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTreeWidgetItem>
 #include "HostsComboBox.h"
-#include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/PathPlanningMessages.pb.h"
 
 class KMapScene;
 

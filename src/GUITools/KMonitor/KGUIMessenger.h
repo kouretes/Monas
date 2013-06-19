@@ -14,9 +14,11 @@
 #include "messages/RoboCupPlayerData.h"
 #include "messages/VisionObservations.pb.h"
 #include "messages/SensorsMessage.pb.h"
+
 #include "messages/Motion.pb.h"
 #include "messages/ExternalCommunication.pb.h"
-#include "messages/ObstacleAvoidanceMessage.pb.h"
+#include "messages/PathPlanningMessages.pb.h"
+
 #include "messages/Kimage.pb.h"
 #include "messages/Debug.pb.h"
 

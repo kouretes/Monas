@@ -8,40 +8,176 @@ using namespace std;
 
 KMapScene::KMapScene(QGraphicsView *parent) {
 	this->parent = parent;
-	staticCellsList.clear();
 	cellsList.clear();
 	pathLineList.clear();
+	pathEllipseList.clear();
+	pathSmallLineList.clear();
 	LPMPathVisible = false;
 	LPMObstaclesVisible = false;
 	LPMTargetCoordVisible = false;
-	QPen penForGreenLine(Qt::green);
-	penForGreenLine.setWidth(3);
-	QPen penForBlueLine(Qt::blue);
-	penForBlueLine.setWidth(2);
 
-	for(int r = 0 ; r < TotalRings ; r++)
-		for(int s = 0 ; s < N ; s++) {
-			QGraphicsPolygonItem *cellIn = addPolygon(QPolygonF(QRectF()), QPen(Qt::white), QBrush(Qt::transparent));
-			QGraphicsPolygonItem *cell = addPolygon(QPolygonF(QRectF()), QPen(Qt::white), QBrush(Qt::transparent));
-			staticCellsList.append(cellIn);
-			cellsList.append(cell);
-		}
+	QPen penForBlackLine (Qt::black);
+	penForBlackLine.setWidth (3);
 
-	arrowBody = addLine(QLineF(), penForGreenLine);
-	arrowLside = addLine(QLineF(), penForGreenLine);
-	arrowRside = addLine(QLineF(), penForGreenLine);
+	cellsOfRadius = 0;
+	cellsOfRing = 0;
+	moveStepInMeters = 0;
+	turnStepInRads = 0;
+	pathLength = 0;
 
-	for(int ways = 0 ; ways < PathLength ; ways++) {
-		QGraphicsLineItem *path = addLine(QLineF(), penForBlueLine);
-		pathLineList.append(path);
-	}
+	arrowBody = addLine (QLineF(), penForBlackLine);
+	arrowLside = addLine (QLineF(), penForBlackLine);
+	arrowRside = addLine (QLineF(), penForBlackLine);
+	//arrowBody->setVisible (true);
+	//arrowLside->setVisible (true);
+	//arrowRside->setVisible (true);
 
-	targetBall = addEllipse(QRect(), QPen(Qt::red), QBrush(Qt::red));
-	targetLine = addLine(QLineF(), QPen(Qt::green));
-	setBackgroundBrush(QBrush(QColor(0, 155, 0)));
+	pathR = NULL;
+	pathS = NULL;
+	pathO = NULL;
+	cellCenterX = NULL;
+	cellCenterY = NULL;
+	PolarGrid = NULL;
+	gridImgH = NULL;
+	gridImgV = NULL;
+	targetBall = NULL;
+	targetLine = NULL;
+	
+	setBackgroundBrush (QBrush (QColor (0, 155, 0) ) );
+	
+	QPen penForGreenLine (Qt::green);
+	penForGreenLine.setWidth (2);
 }
 
-KMapScene::~KMapScene() { }
+KMapScene::~KMapScene() {
+}
+
+void KMapScene::setupGrid(int cellsRad, int cellsRing, float gridLength, int pathSize){
+	cellsOfRadius = cellsRad;
+	cellsOfRing = cellsRing;
+	
+	//864 is a refered number of pixel, dont mint why just use it 
+	moveStepInMeters = (((float)ImgSize/864))/(float)cellsOfRadius;
+	//turn step in meters = 2 * pi / number of cells in each circle
+	turnStepInRads = 2*M_PI/(float)cellsRing;
+	totalVisits = 0;
+	if(pathR != NULL){
+		delete pathR;
+		delete pathS;
+		delete pathO;
+		delete pathR2;
+		delete pathS2;
+		delete pathO2;
+		
+		for (int r = 0; r < cellsOfRadius; r++){
+			delete PolarGrid[r];
+			delete cellCenterY[r];
+			delete cellCenterX[r];
+		}
+		delete PolarGrid;
+		delete cellCenterX;
+		delete cellCenterY;
+		for (int r = 0; r < cellsOfRadius+1; r++){
+			delete gridImgH[r];
+			delete gridImgV[r];
+		}
+		delete gridImgV;
+		delete gridImgH;
+		delete targetBall;
+		delete targetLine;
+	}
+	
+	
+	pathR = new int[pathSize];
+	pathS = new int[pathSize];
+	pathO = new int[pathSize];
+	
+	pathR2 = new int[2000];
+	pathS2 = new int[2000];
+	pathO2 = new int[2000];
+	
+	pathLength = pathSize;
+
+	PolarGrid = new float*[cellsOfRadius];
+	cellCenterX = new float*[cellsOfRadius];
+	cellCenterY = new float*[cellsOfRadius];
+	for (int r = 0; r < cellsOfRadius; r++){
+		PolarGrid[r] = new float[cellsOfRing];
+		cellCenterX[r] = new float[cellsOfRing];
+		cellCenterY[r] = new float[cellsOfRing];
+	}
+	
+	gridImgH = new int*[cellsOfRadius+1];
+	gridImgV = new int*[cellsOfRadius+1];
+	for (int r = 0; r < cellsOfRadius+1; r++){
+		gridImgH[r] = new int[cellsOfRing];
+		gridImgV[r] = new int[cellsOfRing];
+	}
+	
+	for(int i = 0; i < cellsList.size(); i++){
+		delete cellsList.at(i);
+	}
+	for(int i = 0; i < pathLineList.size(); i++){
+		delete pathLineList.at(i);
+	}
+	for(int i = 0; i < pathEllipseList.size(); i++){
+		delete pathEllipseList.at(i);
+	}
+	for(int i = 0; i < pathSmallLineList.size(); i++){
+		delete pathSmallLineList.at(i);
+	}
+	for(int i = 0; i < visitedEllipseList.size(); i++){
+		delete visitedEllipseList.at(i);
+	}
+	for(int i = 0; i < visitedSmallLineList.size(); i++){
+		delete visitedSmallLineList.at(i);
+	}
+	
+	cellsList.clear();
+	pathLineList.clear();
+	pathEllipseList.clear();
+	pathSmallLineList.clear();
+	visitedEllipseList.clear();
+	visitedSmallLineList.clear();
+	
+	for (int r = 0; r < cellsOfRadius; r++){
+		for (int s = 0; s < cellsOfRing; s++) {
+			QGraphicsPolygonItem *cell = addPolygon (QPolygonF (QRectF() ), QPen (Qt::white), QBrush (Qt::transparent) );
+			cellsList.append (cell);
+		}
+	}
+	QPen penForBlueLine (Qt::blue);
+	penForBlueLine.setWidth (2);
+	//setup up in the background the path line and then in the foreground the robot positions
+	for (int ways = 0; ways < pathLength; ways++) {
+		QGraphicsLineItem *path = addLine (QLineF(), penForBlueLine);
+		pathLineList.append (path);
+	}
+	QPen penForGreenLine (Qt::green);
+	penForGreenLine.setWidth (4);
+	for (int ways = 0; ways < pathLength; ways++) {
+		QGraphicsEllipseItem *ellipse = addEllipse (QRect(), QPen (Qt::red), QBrush (Qt::blue) );
+		pathEllipseList.append(ellipse);
+		QGraphicsLineItem *smallLine = addLine (QLineF(), penForGreenLine );
+		pathSmallLineList.append(smallLine);
+	}
+	for (int ways = 0; ways < 2000; ways++) {
+		QGraphicsEllipseItem *ellipse = addEllipse (QRect(), QPen (Qt::green), QBrush (Qt::blue) );
+		visitedEllipseList.append(ellipse);
+	
+	QPen black (Qt::black);
+	black.setWidth (2);
+		QGraphicsLineItem *smallLine = addLine (QLineF(), black );
+		visitedSmallLineList.append(smallLine);
+	}
+	
+	initCoordinates();
+	initGrid();
+	targetBall = addEllipse (QRect(), QPen (Qt::red), QBrush (Qt::red) );
+	targetLine = addLine (QLineF(), penForGreenLine );
+	updateObstacles(true);
+}
+
 
 void KMapScene::resetKMapScene() {
 	setLPMObstaclesVisible(false);
@@ -49,75 +185,68 @@ void KMapScene::resetKMapScene() {
 	setLPMPathVisible(false);
 }
 
-void KMapScene::resizeMapScene(int size) {
-	present = 0;
+void KMapScene::resizeMapScene (int size) {
 	ImgSize = size;
 	ImgShift = (ImgSize / 2);
-	initGrid();
+	if(cellsOfRadius!=0){
+		moveStepInMeters = (((float)ImgSize/864))/(float)cellsOfRadius;
+	}
+
 	initCoordinates();
 	setSceneRect(0, 0, size, size);
 	this->updateObstacles(true);
 }
 
-void KMapScene::initGrid() { // initialize polar grid
-	present = 0;
-
-	for(int k = 0 ; k < 2 ; k++)
-		for(int r = 0 ; r < TotalRings ; r++)
-			for(int s = 0 ; s < N ; s++)
-				if(r == InnerRing)
-					PolarGrid[k][r][s] = 0.0;
-				else
-					PolarGrid[k][r][s] = 0.5;
+//initialize Polar grid
+void KMapScene::initGrid() {
+	for (int r = 0; r < cellsOfRadius; r++){
+		for (int s = 0; s < cellsOfRing; s++){
+			PolarGrid[r][s] = 0.5f;
+		}
+	}
 }
 
 void KMapScene::initCoordinates() {
-	for(int r = 0 ; r < TotalRings + 1 ; r++)
-		for(int s = 0 ; s < N ; s++)
-			if(r == InnerRing) {
+	for (int r = 0; r < cellsOfRadius + 1; r++){
+		for (int s = 0; s < cellsOfRing; s++){
+			if (r == -1) {
 				gridImgH[r][s] = ImgShift;
 				gridImgV[r][s] = ImgShift;
-			} 
-			else if(r == InnerRing + 1) {
-				gridImgV[r][s] = toGrid(toCartesianX(0.5 * RingDistance, StoT(s)));
-				gridImgH[r][s] = toGrid(toCartesianY(0.5 * RingDistance, StoT(s)));
-			} 
-			else {
-				gridImgV[r][s] = toGrid(toCartesianX(RtoD(r), StoT(s)));
-				gridImgH[r][s] = toGrid(toCartesianY(RtoD(r), StoT(s)));
+			} else {
+				//to movestepInmeters/2 mpenei dioti theloume na afisoume enan leuko kikllo sto kentro kai na ksekinaei to grid ligo meta opote epilegoume na einai toso
+				//If you want help with this line please send me an e-mail: nikofinas@gmail.com
+				gridImgH[r][s] = toGrid ( -KMath::toCartesianY ( ringToDistance (r) + moveStepInMeters/2, cellToTheta (s) - turnStepInRads/2 ));
+				gridImgV[r][s] = toGrid ( -KMath::toCartesianX ( ringToDistance (r) + moveStepInMeters/2, cellToTheta (s) - turnStepInRads/2 ));
 			}
+		}
+	}
 
-	for(int r = 0 ; r < TotalRings ; r++)
-		for(int s = 0 ; s < N ; s++)
-			if(r == InnerRing) {
+	for (int r = 0; r < cellsOfRadius; r++){
+		for (int s = 0; s < cellsOfRing; s++){
+			if (r == -1) {
 				cellCenterX[r][s] = 0.0;
 				cellCenterY[r][s] = 0.0;
-			} 
-			else {
-				cellCenterX[r][s] = toCartesianX(RtoD(r) + 0.5*RingDistance, StoT(s) + 0.5*SectorAngleRad);
-				cellCenterY[r][s] = toCartesianY(RtoD(r) + 0.5*RingDistance, StoT(s) + 0.5*SectorAngleRad);
+			} else {
+				//To kentro kathe cell vriskete sto movestepinmeters/2 alla afou exoume idi proxorisei ta kelia kata movestep/2 gia na afisoume ton kiklo to kentro vriskete kathe movestepinmeters:D
+				//If you want help with this line please send me an e-mail: nikofinas@gmail.com
+				cellCenterX[r][s] = toGrid (  -KMath::toCartesianY ( ringToDistance (r) + moveStepInMeters, cellToTheta (s)/* - turnStepInRads/2*/));
+				cellCenterY[r][s] = toGrid ( -KMath::toCartesianX ( ringToDistance (r) + moveStepInMeters, cellToTheta (s)/* - turnStepInRads/2*/));
 			}
+		}
+	}
 }
 
-void KMapScene::setPMObstaclesVisible(bool visible) {
 
-	for(unsigned i = 0 ; i < cellsList.count() ; i++) {
-		if(visible == false)
-			cellsList.at(i)->setVisible(false);
-		else
-			cellsList.at(i)->setVisible(true);
+void KMapScene::setPMObstaclesVisible (bool visible) {
+	for (int i = 0; i < cellsList.count(); i++) {
+		cellsList.at (i)->setVisible (visible);
 	}
-
-	if(visible == false) {
-		arrowBody->setVisible(false);
-		arrowLside->setVisible(false);
-		arrowRside->setVisible(false);
-	} 
-	else {
-		arrowBody->setVisible(true);
-		arrowLside->setVisible(true);
-		arrowRside->setVisible(true);
+	/*for(int i = 0; i < visitedEllipseList.count(); i++){
+		visitedEllipseList.at(i)->setVisible (false);
 	}
+	for(int i = 0; i < visitedSmallLineList.count(); i++){
+		visitedSmallLineList.at(i)->setVisible (false);
+	}*/
 }
 
 void KMapScene::updateObstacles(bool initialization) {
@@ -127,32 +256,71 @@ void KMapScene::updateObstacles(bool initialization) {
 	int colorValue = 0, cellNum = 0;
 	int r, s;
 
-	for(r = 0 ; r < TotalRings ; r++) {
-		for(s = 0 ; s < N ; s++) {
-			QPoint x0(gridImgH[r][s], gridImgV[r][s]);
-			QPoint x1(gridImgH[(r+1) ][s], gridImgV[(r+1)][s]);
-			QPoint x2(gridImgH[(r+1) ][wrapTo(s+1, N) ], gridImgV[(r+1)][wrapTo(s+1, N)]);
-			QPoint x3(gridImgH[r][wrapTo(s+1, N)], gridImgV[r][wrapTo(s+1, N)]);
+	for (r = 0; r < cellsOfRadius; r++) {
+		for (s = 0; s < cellsOfRing; s++) {
+			int sPlusOne = s==cellsOfRing-1 ? 0 : s+1;
+			QPoint x0 ( gridImgH[r][s], gridImgV[r][s]);
+			QPoint x1 ( gridImgH[r+1][s], gridImgV[r+1][s]);
+			QPoint x2 ( gridImgH[r+1][sPlusOne], gridImgV[r+1][sPlusOne]);
+			QPoint x3 ( gridImgH[r][sPlusOne], gridImgV[r][sPlusOne]);
+			
 			curve1.clear();
-			curve1.append(x0);
-			curve1.append(x1);
-			curve1.append(x2);
-			curve1.append(x3);
-			colorValue = ColorMax - PolarGrid[present][r][s]*ColorMax;
+			curve1.append (x0);
+			curve1.append (x1);
+			curve1.append (x2);
+			curve1.append (x3);
+			colorValue = ColorMax - PolarGrid[r][s] * ColorMax;
 
-			if(initialization)
-				cell = staticCellsList.at(cellNum);
-			else
-				cell = cellsList.at(cellNum);
+			
+			cell = cellsList.at (cellNum);
 
-			cell->setPolygon(QPolygon(curve1));
-
-			if(r == InnerRing )
-				cell->setBrush(QBrush(Qt::white));
-			else
-				cell->setBrush(QColor(colorValue, colorValue, colorValue));
+			cell->setPolygon (QPolygon (curve1) );
+			cell->setBrush (QColor (colorValue, colorValue, colorValue) );
 
 			cellNum++;
+		}
+	}
+	
+	QGraphicsEllipseItem *ellipse;
+	QGraphicsLineItem *smallLine;
+	QPoint toP (0, 0);
+	int o;
+
+	//setup up in the background the path line and then in the foreground the robot positions
+	for (int ways = 0; ways < totalVisits; ways++) {
+		r = pathR2[ways];
+		s = pathS2[ways];	
+
+		if(ways < totalVisits){
+		
+			ellipse = visitedEllipseList.at (ways);
+			visitedEllipseList.at (ways)->setVisible(true);
+			QPoint ellipseCenter;// ( cellCenterX[pathR[ways]][pathS[ways]] , cellCenterY[pathR[ways]][pathS[ways]] );
+			
+			if(r == 255 || s == 255){
+				ellipseCenter.setX(toGrid(0));
+				ellipseCenter.setY(toGrid(0));
+			}else{
+				ellipseCenter.setX(cellCenterX[r][s]);
+				ellipseCenter.setY(cellCenterY[r][s]);
+			}
+			ellipse->setRect (ellipseCenter.x() - 5, ellipseCenter.y() - 5, 10, 10);
+			//float color = 100.0f + 155.0f*((float)(ways+1)/(float)pathLength);
+			ellipse->setBrush (QColor (Qt::transparent));
+		
+			int pix = 7;
+			smallLine = visitedSmallLineList.at (ways);
+			visitedSmallLineList.at (ways)->setVisible(true);
+			int orientation = pathO2[ways];
+			//orientation = orientation*2*M_PI/8;
+			//cout << "Mpika " <<  toGrid (targetRing*moveStepInMeters)/2 << " " << toGrid (targetCell*moveStepInMeters)/2 << endl;
+			float angle = orientation*2*M_PI/8.0f;
+			int newX = -KMath::toCartesianY ( 10, angle);
+			int newY = -KMath::toCartesianX ( 10, angle);
+			toP.setX ( ellipseCenter.x() + newX);
+			toP.setY (ellipseCenter.y() + newY );
+			smallLine->setLine (ellipseCenter.x(), ellipseCenter.y(), toP.x(), toP.y() );
+			//cout << ways << " " << orientation << endl;
 		}
 	}
 }
@@ -168,146 +336,111 @@ void KMapScene::updateArrow() {
 	arrowRside->setLine(rightP.x(), rightP.y(), toP.x(), toP.y());
 }
 
-void KMapScene::setPMTargetCoordVisible(bool visible) {
-	if(visible == false) {
-		targetBall->setVisible(false);
-		targetLine->setVisible(false);
-	} 
-	else {
-		targetBall->setVisible(true);
-		targetLine->setVisible(true);
+
+void KMapScene::setPMTargetCoordVisible (bool visible) {
+	if(targetBall != NULL){
+		targetBall->setVisible (visible);
+		targetLine->setVisible (visible);
 	}
 }
 
 void KMapScene::updateTargetCoordinates() {
-	QPoint toP;
-	QPoint ball(toGrid(targetY), toGrid(targetX));
-	targetBall->setRect(ball.x() - 4, ball.y() - 4, 8, 8);
-	int pix = 5;
-
-	if(targetA > -(M_PI_4 / 2) && targetA <=(M_PI_4 / 2)) {
-		toP.setX(ball.x());
-		toP.setY(ball.y() - pix);
-	} 
-	else if(targetA >(M_PI_4 / 2) && targetA <= 3 *(M_PI_4 / 2)) {
-		toP.setX(ball.x() - pix);
-		toP.setY(ball.y() - pix);
-	} 
-	else if(targetA > 3 *(M_PI_4 / 2) && targetA <= 5 *(M_PI_4 / 2)) {
-		toP.setX(ball.x() - pix);
-		toP.setY(ball.y());
-	} 
-	else if(targetA > 5 *(M_PI_4 / 2) && targetA <= 7 *(M_PI_4 / 2)) {
-		toP.setX(ball.x() - pix);
-		toP.setY(ball.y() + pix);
-	} 
-	else if(targetA > -3 *(M_PI_4 / 2) && targetA <= -(M_PI_4 / 2)) {
-		toP.setX(ball.x() + pix);
-		toP.setY(ball.y() - pix);
-	} 
-	else if(targetA > -5 *(M_PI_4 / 2) && targetA <= -3 *(M_PI_4 / 2)) {
-		toP.setX(ball.x() + pix);
-		toP.setY(ball.y());
-	} 
-	else if(targetA > -7 *(M_PI_4 / 2) && targetA <= -5 *(M_PI_4 / 2)) {
-		toP.setX(ball.x() + pix);
-		toP.setY(ball.y() + pix);
-	} 
-	else {
-		toP.setX(ball.x());
-		toP.setY(ball.y() + pix);
+	if(targetRing == -1){
+		return;	
 	}
-
-	targetLine->setLine(ball.x(), ball.y(), toP.x(), toP.y());
+	QPoint toP;
+	QPoint ball ( cellCenterX[targetRing][targetCell] , cellCenterY[targetRing][targetCell] );
+	
+	targetBall->setRect(ball.x() - 5, ball.y() - 5, 10, 10);
+	//targetBall->setRect(toGrid(0) - 5, toGrid(1) - 5, 10, 10);
+	float angle = targetOrient;
+	int newX = -KMath::toCartesianY ( 10, angle );
+	int newY = -KMath::toCartesianX ( 10, angle );
+	toP.setX ( ball.x() + newX);
+	toP.setY (ball.y() + newY );
+	targetLine->setLine (ball.x(), ball.y(), toP.x(), toP.y() );
 }
 
-void KMapScene::setPMPathVisible(bool visible) {
-	for(unsigned i = 0 ; i < pathLineList.count() ; i++) {
-		if(visible == false)
-			pathLineList.at(i)->setVisible(false);
-		else
-			pathLineList.at(i)->setVisible(true);
+void KMapScene::setPMPathVisible (bool visible) {
+	for (int i = 0; i < pathLineList.count(); i++) {
+		pathLineList.at (i)->setVisible (visible);
+	}
+	for (int i = 0; i < pathEllipseList.count(); i++) {
+		pathEllipseList.at (i)->setVisible (visible);
+	}
+	for (int i = 0; i < pathSmallLineList.count(); i++) {
+		pathSmallLineList.at (i)->setVisible (visible);
 	}
 }
 
 void KMapScene::updatePath() {
-
+	if(pathLength == 0){
+		return;
+	}
 	QGraphicsLineItem *path;
-	QVector<QPoint> curve1(0);
-	QPoint toP(0, 0), fromP(0, 0);
-	int r, s;
+	QGraphicsEllipseItem *ellipse;
+	QGraphicsLineItem *smallLine;
+	QPoint toP (0, 0), fromP (0, 0);
+	int r, s, o;
 	pathLineListRectReset();
-
-	for(int ways = 0 ; ways < PathLength ; ways++) {
-	
-		if(pathR[ways] == -1 && pathS[ways] == -1)
+	//setup up in the background the path line and then in the foreground the robot positions
+	for (int ways = 0; ways < pathLength; ways++) {
+		if (pathR[ways] == -1 && pathS[ways] == -1)
 			break;
 
 		r = pathR[ways];
-		s = pathS[ways];
-
-		if(r == InnerRing + 1) {
-			fromP.setX(toGrid(toCartesianY(RtoD(r) + 0.75*RingDistance, StoT(s) + 0.5*SectorAngleRad)) );
-			fromP.setY(toGrid(toCartesianX(RtoD(r) + 0.75*RingDistance, StoT(s) + 0.5*SectorAngleRad)) );
-		} 
-		else {
-			fromP.setX(toGrid(cellCenterY[r][s]) );
-			fromP.setY(toGrid(cellCenterX[r][s]) );
+		s = pathS[ways];	
+		if(r == 255 || s == 255){
+			toP.setX (toGrid(0));
+			toP.setY (toGrid(0));
+		}else{
+			toP.setX (cellCenterX[r][s]);
+			toP.setY (cellCenterY[r][s]);
 		}
 
-		QPoint x0(gridImgH[r][s], gridImgV[r][s]);
-		QPoint x1(gridImgH[(r+1)][s], gridImgV[(r+1)][s]);
-		QPoint x2(gridImgH[(r+1)][wrapTo(s+1, N)], gridImgV[(r+1)][wrapTo(s+1, N)]);
-		QPoint x3(gridImgH[r][wrapTo(s+1, N)], gridImgV[r][wrapTo(s+1, N)]);
-		curve1.clear();
-		curve1.append(x0);
-		curve1.append(x1);
-		curve1.append(x2);
-		curve1.append(x3);
-
-		if(pathO[ways] == 0) {
-			toP.setX((curve1[1].x() + curve1[2].x()) / 2);
-			toP.setY((curve1[1].y() + curve1[2].y()) / 2);
-		} 
-		else if(pathO[ways] == 1) {
-			toP.setX( curve1[2].x());
-			toP.setY( curve1[2].y());
-		} 
-		else if(pathO[ways] == 2) {
-			toP.setX((curve1[2].x() + curve1[3].x()) / 2);
-			toP.setY((curve1[2].y() + curve1[3].y()) / 2);
-		} 
-		else if(pathO[ways] == 3) {
-			toP.setX(curve1[3].x());
-			toP.setY(curve1[3].y());
-		} 
-		else if(pathO[ways] == 4) {
-			toP.setX((curve1[0].x() + curve1[3].x()) / 2);
-			toP.setY((curve1[0].y() + curve1[3].y()) / 2);
-		} 
-		else if(pathO[ways] == 5) {
-			toP.setX( curve1[0].x());
-			toP.setY(curve1[0].y());
-		} 
-		else if(pathO[ways] == 6) {
-			toP.setX((curve1[1].x() + curve1[0].x()) / 2);
-			toP.setY((curve1[1].y() + curve1[0].y()) / 2);
-		} 
-		else if(pathO[ways] == 7) {
-			toP.setX(curve1[1].x());
-			toP.setY(curve1[1].y());
+		if(ways == 0 || ways == 1){
+			fromP.setX (toGrid(0));
+			fromP.setY (toGrid(0));
+		}else{
+			fromP.setX (cellCenterX[pathR[ways-1]][pathS[ways-1]]);
+			fromP.setY (cellCenterY[pathR[ways-1]][pathS[ways-1]]);
 		}
-
-		path = pathLineList.at(ways);
-		path->setLine(fromP.x(), fromP.y(), toP.x(), toP.y());
-		pathR[ways] = -1;
-		pathS[ways] = -1;
-		pathO[ways] = -1;
+		path = pathLineList.at (ways);
+		path->setLine (fromP.x(), fromP.y(), toP.x(), toP.y() );
+		if(ways < pathLength){
+		
+			ellipse = pathEllipseList.at (ways);
+			QPoint ellipseCenter;// ( cellCenterX[pathR[ways]][pathS[ways]] , cellCenterY[pathR[ways]][pathS[ways]] );
+			
+			if(r == 255 || s == 255){
+				ellipseCenter.setX(toGrid(0));
+				ellipseCenter.setY(toGrid(0));
+			}else{
+				ellipseCenter.setX(cellCenterX[r][s]);
+				ellipseCenter.setY(cellCenterY[r][s]);
+			}
+			ellipse->setRect (ellipseCenter.x() - 5, ellipseCenter.y() - 5, 10, 10);
+			float color = 100.0f + 155.0f*((float)(ways+1)/(float)pathLength);
+			ellipse->setBrush (QColor ((int) color, 0, 0) );
+		
+			int pix = 7;
+			smallLine = pathSmallLineList.at (ways);
+			int orientation = pathO[ways];
+			//orientation = orientation*2*M_PI/8;
+			//cout << "Mpika " <<  toGrid (targetRing*moveStepInMeters)/2 << " " << toGrid (targetCell*moveStepInMeters)/2 << endl;
+			float angle = orientation*2*M_PI/8.0f;
+			int newX = -KMath::toCartesianY ( 10, angle);
+			int newY = -KMath::toCartesianX ( 10, angle);
+			toP.setX ( ellipseCenter.x() + newX);
+			toP.setY (ellipseCenter.y() + newY );
+			smallLine->setLine (ellipseCenter.x(), ellipseCenter.y(), toP.x(), toP.y() );
+			//cout << ways << " " << orientation << endl;
+		}
 	}
 }
 
 void KMapScene::pathLineListRectReset() {
-	for(unsigned i = 0 ; i < pathLineList.count() ; i++)
+	for(int i = 0 ; i < pathLineList.count() ; i++)
 		pathLineList.at(i)->setLine(0, 0, 0, 0);
 }
 
@@ -315,85 +448,14 @@ void KMapScene::pathLineListRectReset() {
  * Math functions
  */
 
-double KMapScene::wrapToPi(double angle) {
-
-	while(angle < -M_PI)
-		angle += 2.0 * M_PI;
-
-	while(angle > M_PI)
-		angle -= 2.0 * M_PI;
-
-	return(angle);
+float KMapScene::ringToDistance (int r) {
+		return r * moveStepInMeters;
 }
 
-double KMapScene::wrapTo0_2Pi(double angle) {
-
-	while(angle >= 2.0 * M_PI)
-		angle -= 2.0 * M_PI;
-
-	while(angle < 0.0)
-		angle += 2.0 * M_PI;
-
-	return angle;
+float KMapScene::cellToTheta (int s) {
+	return KMath::wrapTo0_2Pi(s*turnStepInRads);
 }
 
-double KMapScene::angleDiff(double a1, double a2) {
-	return wrapToPi(wrapToPi(a1 + M_PI - a2) - M_PI);
-}
-
-double KMapScene::toPolarD(double x, double y) {
-	return sqrt(x*x + y*y);
-}
-
-double KMapScene::toPolarT(double x, double y) {
-	return atan2(y, x);
-}
-
-double KMapScene::toCartesianX(double d, double t) {
-	return d*cos(t);
-}
-
-double KMapScene::toCartesianY(double d, double t) {
-	return d*sin(t);
-}
-
-int KMapScene::DtoR(double d) {
-	if(d < 0)
-		return InnerRing;
-	else
-		return int(d / RingDistance) + 1;    // +1 is used to skip the InnerRing
-}
-
-int KMapScene::TtoS(double theta) {
-	return int(wrapTo0_2Pi(theta + M_PI_2 + SectorShiftRad) / SectorAngleRad);
-}
-
-double KMapScene::RtoD(int r) {
-	if(r == InnerRing)
-		return 0.0;
-	else
-		return(r - 1)*RingDistance;
-}
-
-double KMapScene::StoT(int s) {
-	return wrapToPi(s * SectorAngleRad - M_PI_2 - SectorShiftRad);
-}
-
-int KMapScene::XYtoR(double x, double y) {
-	return DtoR(toPolarD(x, y));
-}
-
-int KMapScene::XYtoS(double x, double y) {
-	return TtoS(toPolarT(x, y));
-}
-
-int KMapScene::toGrid(double x) {
-	return int(-round(ImgScale*x) + ImgShift);
-}
-
-int KMapScene::wrapTo(int n, int MAXN) {
-	while(n < 0)
-		n += MAXN;
-		
-	return(n % MAXN);
+int KMapScene::toGrid (float x) {
+	return int (round (ImgScale * x) + ImgShift);
 }

@@ -15,6 +15,10 @@ namespace KMath {
 	inline static double TO_RAD(double X) { return X * TO_RAD_SUPER_INTERNAL_DO_NOT_USE; }
 	inline static double TO_DEG(double X) { return X / TO_RAD_SUPER_INTERNAL_DO_NOT_USE; }
 
+	template <typename T> int sign(T val) {
+		return (T(0) < val) - (val < T(0));
+	}
+
 	template<typename T> inline T DISTANCE(T x1, T x2, T y1, T y2) {
 		return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 	}
@@ -140,5 +144,34 @@ namespace KMath {
 		return d * sin(t);
 	}
 
+	inline float fast_atan2f(const float y,const float x )
+	{
+		// |error| < 0.005
+		#define PI_FLOAT     3.14159265f
+		#define PIBY2_FLOAT  1.5707963f
+		if ( x == 0.0f )
+		{
+			if ( y > 0.0f ) return PIBY2_FLOAT;
+			if ( y == 0.0f ) return 0.0f;
+			return -PIBY2_FLOAT;
+		}
+		float atan;
+		float z = y/x;
+		if ( fabsf( z ) < 1.0f )
+		{
+			atan = z/(1.0f + 0.28f*z*z);
+			if ( x < 0.0f )
+			{
+				if ( y < 0.0f ) return atan - PI_FLOAT;
+				return atan + PI_FLOAT;
+			}
+		}
+		else
+		{
+			atan = PIBY2_FLOAT - z/(z*z + 0.28f);
+			if ( y < 0.0f ) return atan - PI_FLOAT;
+		}
+		return atan;
+	}
 }
 #endif
