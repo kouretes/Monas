@@ -304,13 +304,13 @@ int Behavior::Execute() {
 		readyToKick = false;
 		
 		if(sharedBallFound == true) {
-			std::cout << "SHARED FOUND" << std::endl;
+			//std::cout << "SHARED FOUND" << std::endl;
 			if( (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ) {
 				
-				if(gsm!=0)
-					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
+				//if(gsm!=0)
+					//std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
 					
-				std::cout << "TIME: "+_toString(count++) << std::endl;
+				//std::cout << "TIME: "+_toString(count++) << std::endl;
 
 				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
 				if(!gameMode){
@@ -465,7 +465,7 @@ int Behavior::Execute() {
 	 	if(gameState != prevGameState)
 		{
 			if(prevGameState != PLAYER_PLAYING) {
-				std::cout << "INITIAL FORMATION CALCULATED!" << std::endl;
+				//std::cout << "INITIAL FORMATION CALCULATED!" << std::endl;
 				fGen.Init(config.maxPlayers, true);
 				sendDebugMessages();
 				currentRole = fGen.getFormation()->at(config.playerNumber - 1);
@@ -571,9 +571,9 @@ void Behavior::Coordinate() {
 		}
 
 		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
-		std::cout << "OPTIMAL MAP IS: ";
+		//std::cout << "OPTIMAL MAP IS: ";
 		print(mappings[index], "Behavior");
-		std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
+		//std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
 }
 
 /**

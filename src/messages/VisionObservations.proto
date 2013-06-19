@@ -1,3 +1,4 @@
+
 message BallTrackMessage{
 	required float cx = 6 [default = 0.0];
 	required float cy = 7 [default = 0.0];
@@ -7,51 +8,50 @@ message BallTrackMessage{
 }
 
 message BallObject{
-	required float dist =1 [default = 0.0];
-	required float bearing =2  [default = 0.0];
-	optional float ball_diameter =3 [default = 0.0];
+	required float dist = 1 [default = 0.0];
+	required float bearing = 2  [default = 0.0];
+	optional float ball_diameter = 3 [default = 0.0];
 }
 
 /* IE RightBlueGoalPost - at 2.4m and 45 deg right*/
 message NamedObject {
-	required string object_name=1 [default =""];
-	required float bearing=2 [default=-1];
-	required float distance=3 [default=-1];
+	required string object_name = 1 [default =""];
+	required float bearing = 2 [default=-1];
+	required float distance = 3 [default=-1];
 	required float bearing_dev = 4 [default = -1];
 	required float distance_dev = 5 [default = -1];
 }
 
 /* IE BlueGoalPost - at 45 deg right*/
 message UnidentifiedObject {
-	required string object_type=1 [default =""];
-	required float bearing=2 [default=-1];
-	optional float distance=3 [default=-1];
+	required string object_type = 1 [default =""];
+	required float bearing = 2 [default=-1];
+	optional float distance = 3 [default=-1];
 }
 
 /* ie a single line that cannot be identified */
 message LineObject{
 
-	required float start_bearing=1 [default = 0];
-	required float start_distance=2 [default =0];
-	required float end_bearing=3 [default =0];
-	required float end_distance=4 [default =0];
+	required float start_bearing = 1 [default = 0];
+	required float start_distance = 2 [default =0];
+	required float end_bearing = 3 [default =0];
+	required float end_distance = 4 [default =0];
 
 }
 message PointObject{
-	required float distance =1;
-	required float bearing =2;
-
-
+	required float distance = 1;
+	required float bearing = 2;
 }
 
 /* ie what i can see in a given image */
 message ObservationMessage {
-	required string image_timestamp =1 [default=""];
-	optional BallObject ball=2;
-	repeated NamedObject regular_objects=3;
-	repeated UnidentifiedObject adhoc_objects=4;
-	repeated PointObject corner_objects=5;
-	repeated PointObject intersection_objects=6;
-	repeated LineObject line_objects=7;
-	repeated PointObject view_limit_points=11;
+	required string image_timestamp = 1 [default=""];
+	optional BallObject ball = 2;
+	repeated NamedObject regular_objects = 3;
+	repeated UnidentifiedObject adhoc_objects = 4;
+	repeated PointObject corner_objects = 5;
+	repeated PointObject intersection_objects = 6;
+	repeated LineObject line_objects = 7;
+	repeated PointObject view_limit_points = 8;
 }
+

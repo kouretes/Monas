@@ -19,7 +19,10 @@
 #include "HostsComboBox.h"
 #include "KccCameraSettings.h"
 #include "messages/Kimage.pb.h"
+#include "messages/Debug.pb.h"
+#include "messages/VisionObservations.pb.h"
 #include "robocup/vision/KSegmentator.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 using namespace std;
 
@@ -69,6 +72,7 @@ signals:
 	void SubscriptionRequest(QString);
 	void sendCameraCalibrationMessage(CameraCalibration msg);
 	void forwardAck(GenericACK ack, QString hostid);
+	void updateVisionDebugData(VisionDebugMessage vdm);
 	
 public slots:
 	void addComboBoxItem(QString, QString);
@@ -95,7 +99,8 @@ public slots:
 	void segZoomOut();
 	void manualCalibration();
 	void calibrationDialogClosed();
-	void changeImage(KRawImage rawImage, QString hostId);
+	void changeImage(KRawImage rawImage, QString hostId, boost::posix_time::ptime timestamp);
+	void visionDebugData(VisionDebugMessage vdm, QString hostid);
 	void genericAckReceived(GenericACK ack, QString hostid);
 	void catchForwardMsg(CameraCalibration msg);
 

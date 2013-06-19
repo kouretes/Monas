@@ -11,6 +11,8 @@
 #include "HostsComboBox.h"
 #include "ui_KMonitor.h"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 namespace Ui {
 	class KMonitor;
 }

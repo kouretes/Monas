@@ -36,6 +36,10 @@ class OdometryInfoMessage;
 class LocalizationDataForGUI;
 class PositionInfo;
 class FormationDataForGUI;
+class Point;
+class Polygon;
+class BallCircle;
+class VisionDebugMessage;
 
 enum PositionInfo_ROLE {
   PositionInfo_ROLE_GOALIE = 0,
@@ -574,6 +578,436 @@ class FormationDataForGUI : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static FormationDataForGUI* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class Point : public ::google::protobuf::Message {
+ public:
+  Point();
+  virtual ~Point();
+  
+  Point(const Point& from);
+  
+  inline Point& operator=(const Point& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Point& default_instance();
+  
+  void Swap(Point* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Point* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Point& from);
+  void MergeFrom(const Point& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required int32 x = 1 [default = -1];
+  inline bool has_x() const;
+  inline void clear_x();
+  static const int kXFieldNumber = 1;
+  inline ::google::protobuf::int32 x() const;
+  inline void set_x(::google::protobuf::int32 value);
+  
+  // required int32 y = 2 [default = -1];
+  inline bool has_y() const;
+  inline void clear_y();
+  static const int kYFieldNumber = 2;
+  inline ::google::protobuf::int32 y() const;
+  inline void set_y(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:Point)
+ private:
+  inline void set_has_x();
+  inline void clear_has_x();
+  inline void set_has_y();
+  inline void clear_has_y();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::int32 x_;
+  ::google::protobuf::int32 y_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Point* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Polygon : public ::google::protobuf::Message {
+ public:
+  Polygon();
+  virtual ~Polygon();
+  
+  Polygon(const Polygon& from);
+  
+  inline Polygon& operator=(const Polygon& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Polygon& default_instance();
+  
+  void Swap(Polygon* other);
+  
+  // implements Message ----------------------------------------------
+  
+  Polygon* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Polygon& from);
+  void MergeFrom(const Polygon& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .Point points = 1;
+  inline int points_size() const;
+  inline void clear_points();
+  static const int kPointsFieldNumber = 1;
+  inline const ::Point& points(int index) const;
+  inline ::Point* mutable_points(int index);
+  inline ::Point* add_points();
+  inline const ::google::protobuf::RepeatedPtrField< ::Point >&
+      points() const;
+  inline ::google::protobuf::RepeatedPtrField< ::Point >*
+      mutable_points();
+  
+  // required int32 color = 2 [default = -1];
+  inline bool has_color() const;
+  inline void clear_color();
+  static const int kColorFieldNumber = 2;
+  inline ::google::protobuf::int32 color() const;
+  inline void set_color(::google::protobuf::int32 value);
+  
+  // required float confidence = 3 [default = -1];
+  inline bool has_confidence() const;
+  inline void clear_confidence();
+  static const int kConfidenceFieldNumber = 3;
+  inline float confidence() const;
+  inline void set_confidence(float value);
+  
+  // @@protoc_insertion_point(class_scope:Polygon)
+ private:
+  inline void set_has_color();
+  inline void clear_has_color();
+  inline void set_has_confidence();
+  inline void clear_has_confidence();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::Point > points_;
+  ::google::protobuf::int32 color_;
+  float confidence_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static Polygon* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class BallCircle : public ::google::protobuf::Message {
+ public:
+  BallCircle();
+  virtual ~BallCircle();
+  
+  BallCircle(const BallCircle& from);
+  
+  inline BallCircle& operator=(const BallCircle& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const BallCircle& default_instance();
+  
+  void Swap(BallCircle* other);
+  
+  // implements Message ----------------------------------------------
+  
+  BallCircle* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const BallCircle& from);
+  void MergeFrom(const BallCircle& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required .Point center = 1;
+  inline bool has_center() const;
+  inline void clear_center();
+  static const int kCenterFieldNumber = 1;
+  inline const ::Point& center() const;
+  inline ::Point* mutable_center();
+  inline ::Point* release_center();
+  
+  // required int32 radius = 2 [default = -1];
+  inline bool has_radius() const;
+  inline void clear_radius();
+  static const int kRadiusFieldNumber = 2;
+  inline ::google::protobuf::int32 radius() const;
+  inline void set_radius(::google::protobuf::int32 value);
+  
+  // required int32 confidence = 3 [default = -1];
+  inline bool has_confidence() const;
+  inline void clear_confidence();
+  static const int kConfidenceFieldNumber = 3;
+  inline ::google::protobuf::int32 confidence() const;
+  inline void set_confidence(::google::protobuf::int32 value);
+  
+  // required bool valid = 4 [default = false];
+  inline bool has_valid() const;
+  inline void clear_valid();
+  static const int kValidFieldNumber = 4;
+  inline bool valid() const;
+  inline void set_valid(bool value);
+  
+  // optional int32 color = 5 [default = -1];
+  inline bool has_color() const;
+  inline void clear_color();
+  static const int kColorFieldNumber = 5;
+  inline ::google::protobuf::int32 color() const;
+  inline void set_color(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:BallCircle)
+ private:
+  inline void set_has_center();
+  inline void clear_has_center();
+  inline void set_has_radius();
+  inline void clear_has_radius();
+  inline void set_has_confidence();
+  inline void clear_has_confidence();
+  inline void set_has_valid();
+  inline void clear_has_valid();
+  inline void set_has_color();
+  inline void clear_has_color();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::Point* center_;
+  ::google::protobuf::int32 radius_;
+  ::google::protobuf::int32 confidence_;
+  bool valid_;
+  ::google::protobuf::int32 color_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static BallCircle* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class VisionDebugMessage : public ::google::protobuf::Message {
+ public:
+  VisionDebugMessage();
+  virtual ~VisionDebugMessage();
+  
+  VisionDebugMessage(const VisionDebugMessage& from);
+  
+  inline VisionDebugMessage& operator=(const VisionDebugMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const VisionDebugMessage& default_instance();
+  
+  void Swap(VisionDebugMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  VisionDebugMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const VisionDebugMessage& from);
+  void MergeFrom(const VisionDebugMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .Polygon polygon = 1;
+  inline int polygon_size() const;
+  inline void clear_polygon();
+  static const int kPolygonFieldNumber = 1;
+  inline const ::Polygon& polygon(int index) const;
+  inline ::Polygon* mutable_polygon(int index);
+  inline ::Polygon* add_polygon();
+  inline const ::google::protobuf::RepeatedPtrField< ::Polygon >&
+      polygon() const;
+  inline ::google::protobuf::RepeatedPtrField< ::Polygon >*
+      mutable_polygon();
+  
+  // required .BallCircle ball_circle = 2;
+  inline bool has_ball_circle() const;
+  inline void clear_ball_circle();
+  static const int kBallCircleFieldNumber = 2;
+  inline const ::BallCircle& ball_circle() const;
+  inline ::BallCircle* mutable_ball_circle();
+  inline ::BallCircle* release_ball_circle();
+  
+  // required string image_timestamp = 3 [default = ""];
+  inline bool has_image_timestamp() const;
+  inline void clear_image_timestamp();
+  static const int kImageTimestampFieldNumber = 3;
+  inline const ::std::string& image_timestamp() const;
+  inline void set_image_timestamp(const ::std::string& value);
+  inline void set_image_timestamp(const char* value);
+  inline void set_image_timestamp(const char* value, size_t size);
+  inline ::std::string* mutable_image_timestamp();
+  inline ::std::string* release_image_timestamp();
+  
+  // @@protoc_insertion_point(class_scope:VisionDebugMessage)
+ private:
+  inline void set_has_ball_circle();
+  inline void clear_has_ball_circle();
+  inline void set_has_image_timestamp();
+  inline void clear_has_image_timestamp();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::Polygon > polygon_;
+  ::BallCircle* ball_circle_;
+  ::std::string* image_timestamp_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static VisionDebugMessage* default_instance_;
+};
 // ===================================================================
 
 
@@ -849,6 +1283,364 @@ FormationDataForGUI::positions() const {
 inline ::google::protobuf::RepeatedPtrField< ::PositionInfo >*
 FormationDataForGUI::mutable_positions() {
   return &positions_;
+}
+
+// -------------------------------------------------------------------
+
+// Point
+
+// required int32 x = 1 [default = -1];
+inline bool Point::has_x() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Point::set_has_x() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Point::clear_has_x() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Point::clear_x() {
+  x_ = -1;
+  clear_has_x();
+}
+inline ::google::protobuf::int32 Point::x() const {
+  return x_;
+}
+inline void Point::set_x(::google::protobuf::int32 value) {
+  set_has_x();
+  x_ = value;
+}
+
+// required int32 y = 2 [default = -1];
+inline bool Point::has_y() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Point::set_has_y() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Point::clear_has_y() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Point::clear_y() {
+  y_ = -1;
+  clear_has_y();
+}
+inline ::google::protobuf::int32 Point::y() const {
+  return y_;
+}
+inline void Point::set_y(::google::protobuf::int32 value) {
+  set_has_y();
+  y_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// Polygon
+
+// repeated .Point points = 1;
+inline int Polygon::points_size() const {
+  return points_.size();
+}
+inline void Polygon::clear_points() {
+  points_.Clear();
+}
+inline const ::Point& Polygon::points(int index) const {
+  return points_.Get(index);
+}
+inline ::Point* Polygon::mutable_points(int index) {
+  return points_.Mutable(index);
+}
+inline ::Point* Polygon::add_points() {
+  return points_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Point >&
+Polygon::points() const {
+  return points_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::Point >*
+Polygon::mutable_points() {
+  return &points_;
+}
+
+// required int32 color = 2 [default = -1];
+inline bool Polygon::has_color() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Polygon::set_has_color() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Polygon::clear_has_color() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Polygon::clear_color() {
+  color_ = -1;
+  clear_has_color();
+}
+inline ::google::protobuf::int32 Polygon::color() const {
+  return color_;
+}
+inline void Polygon::set_color(::google::protobuf::int32 value) {
+  set_has_color();
+  color_ = value;
+}
+
+// required float confidence = 3 [default = -1];
+inline bool Polygon::has_confidence() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Polygon::set_has_confidence() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Polygon::clear_has_confidence() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Polygon::clear_confidence() {
+  confidence_ = -1;
+  clear_has_confidence();
+}
+inline float Polygon::confidence() const {
+  return confidence_;
+}
+inline void Polygon::set_confidence(float value) {
+  set_has_confidence();
+  confidence_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// BallCircle
+
+// required .Point center = 1;
+inline bool BallCircle::has_center() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void BallCircle::set_has_center() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void BallCircle::clear_has_center() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void BallCircle::clear_center() {
+  if (center_ != NULL) center_->::Point::Clear();
+  clear_has_center();
+}
+inline const ::Point& BallCircle::center() const {
+  return center_ != NULL ? *center_ : *default_instance_->center_;
+}
+inline ::Point* BallCircle::mutable_center() {
+  set_has_center();
+  if (center_ == NULL) center_ = new ::Point;
+  return center_;
+}
+inline ::Point* BallCircle::release_center() {
+  clear_has_center();
+  ::Point* temp = center_;
+  center_ = NULL;
+  return temp;
+}
+
+// required int32 radius = 2 [default = -1];
+inline bool BallCircle::has_radius() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void BallCircle::set_has_radius() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void BallCircle::clear_has_radius() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void BallCircle::clear_radius() {
+  radius_ = -1;
+  clear_has_radius();
+}
+inline ::google::protobuf::int32 BallCircle::radius() const {
+  return radius_;
+}
+inline void BallCircle::set_radius(::google::protobuf::int32 value) {
+  set_has_radius();
+  radius_ = value;
+}
+
+// required int32 confidence = 3 [default = -1];
+inline bool BallCircle::has_confidence() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void BallCircle::set_has_confidence() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void BallCircle::clear_has_confidence() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void BallCircle::clear_confidence() {
+  confidence_ = -1;
+  clear_has_confidence();
+}
+inline ::google::protobuf::int32 BallCircle::confidence() const {
+  return confidence_;
+}
+inline void BallCircle::set_confidence(::google::protobuf::int32 value) {
+  set_has_confidence();
+  confidence_ = value;
+}
+
+// required bool valid = 4 [default = false];
+inline bool BallCircle::has_valid() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void BallCircle::set_has_valid() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void BallCircle::clear_has_valid() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void BallCircle::clear_valid() {
+  valid_ = false;
+  clear_has_valid();
+}
+inline bool BallCircle::valid() const {
+  return valid_;
+}
+inline void BallCircle::set_valid(bool value) {
+  set_has_valid();
+  valid_ = value;
+}
+
+// optional int32 color = 5 [default = -1];
+inline bool BallCircle::has_color() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void BallCircle::set_has_color() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void BallCircle::clear_has_color() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void BallCircle::clear_color() {
+  color_ = -1;
+  clear_has_color();
+}
+inline ::google::protobuf::int32 BallCircle::color() const {
+  return color_;
+}
+inline void BallCircle::set_color(::google::protobuf::int32 value) {
+  set_has_color();
+  color_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// VisionDebugMessage
+
+// repeated .Polygon polygon = 1;
+inline int VisionDebugMessage::polygon_size() const {
+  return polygon_.size();
+}
+inline void VisionDebugMessage::clear_polygon() {
+  polygon_.Clear();
+}
+inline const ::Polygon& VisionDebugMessage::polygon(int index) const {
+  return polygon_.Get(index);
+}
+inline ::Polygon* VisionDebugMessage::mutable_polygon(int index) {
+  return polygon_.Mutable(index);
+}
+inline ::Polygon* VisionDebugMessage::add_polygon() {
+  return polygon_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Polygon >&
+VisionDebugMessage::polygon() const {
+  return polygon_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::Polygon >*
+VisionDebugMessage::mutable_polygon() {
+  return &polygon_;
+}
+
+// required .BallCircle ball_circle = 2;
+inline bool VisionDebugMessage::has_ball_circle() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void VisionDebugMessage::set_has_ball_circle() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void VisionDebugMessage::clear_has_ball_circle() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void VisionDebugMessage::clear_ball_circle() {
+  if (ball_circle_ != NULL) ball_circle_->::BallCircle::Clear();
+  clear_has_ball_circle();
+}
+inline const ::BallCircle& VisionDebugMessage::ball_circle() const {
+  return ball_circle_ != NULL ? *ball_circle_ : *default_instance_->ball_circle_;
+}
+inline ::BallCircle* VisionDebugMessage::mutable_ball_circle() {
+  set_has_ball_circle();
+  if (ball_circle_ == NULL) ball_circle_ = new ::BallCircle;
+  return ball_circle_;
+}
+inline ::BallCircle* VisionDebugMessage::release_ball_circle() {
+  clear_has_ball_circle();
+  ::BallCircle* temp = ball_circle_;
+  ball_circle_ = NULL;
+  return temp;
+}
+
+// required string image_timestamp = 3 [default = ""];
+inline bool VisionDebugMessage::has_image_timestamp() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void VisionDebugMessage::set_has_image_timestamp() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void VisionDebugMessage::clear_has_image_timestamp() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void VisionDebugMessage::clear_image_timestamp() {
+  if (image_timestamp_ != &::google::protobuf::internal::kEmptyString) {
+    image_timestamp_->clear();
+  }
+  clear_has_image_timestamp();
+}
+inline const ::std::string& VisionDebugMessage::image_timestamp() const {
+  return *image_timestamp_;
+}
+inline void VisionDebugMessage::set_image_timestamp(const ::std::string& value) {
+  set_has_image_timestamp();
+  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    image_timestamp_ = new ::std::string;
+  }
+  image_timestamp_->assign(value);
+}
+inline void VisionDebugMessage::set_image_timestamp(const char* value) {
+  set_has_image_timestamp();
+  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    image_timestamp_ = new ::std::string;
+  }
+  image_timestamp_->assign(value);
+}
+inline void VisionDebugMessage::set_image_timestamp(const char* value, size_t size) {
+  set_has_image_timestamp();
+  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    image_timestamp_ = new ::std::string;
+  }
+  image_timestamp_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* VisionDebugMessage::mutable_image_timestamp() {
+  set_has_image_timestamp();
+  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    image_timestamp_ = new ::std::string;
+  }
+  return image_timestamp_;
+}
+inline ::std::string* VisionDebugMessage::release_image_timestamp() {
+  clear_has_image_timestamp();
+  if (image_timestamp_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = image_timestamp_;
+    image_timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 

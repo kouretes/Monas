@@ -250,7 +250,7 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
     "ifiedObject\022$\n\016corner_objects\030\005 \003(\0132\014.Po"
     "intObject\022*\n\024intersection_objects\030\006 \003(\0132"
     "\014.PointObject\022!\n\014line_objects\030\007 \003(\0132\013.Li"
-    "neObject\022\'\n\021view_limit_points\030\013 \003(\0132\014.Po"
+    "neObject\022\'\n\021view_limit_points\030\010 \003(\0132\014.Po"
     "intObject", 929);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "VisionObservations.proto", &protobuf_RegisterTypes);
@@ -2357,12 +2357,12 @@ bool ObservationMessage::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(58)) goto parse_line_objects;
-        if (input->ExpectTag(90)) goto parse_view_limit_points;
+        if (input->ExpectTag(66)) goto parse_view_limit_points;
         break;
       }
       
-      // repeated .PointObject view_limit_points = 11;
-      case 11: {
+      // repeated .PointObject view_limit_points = 8;
+      case 8: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_view_limit_points:
@@ -2371,7 +2371,7 @@ bool ObservationMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(90)) goto parse_view_limit_points;
+        if (input->ExpectTag(66)) goto parse_view_limit_points;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2439,10 +2439,10 @@ void ObservationMessage::SerializeWithCachedSizes(
       7, this->line_objects(i), output);
   }
   
-  // repeated .PointObject view_limit_points = 11;
+  // repeated .PointObject view_limit_points = 8;
   for (int i = 0; i < this->view_limit_points_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      11, this->view_limit_points(i), output);
+      8, this->view_limit_points(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -2505,11 +2505,11 @@ void ObservationMessage::SerializeWithCachedSizes(
         7, this->line_objects(i), target);
   }
   
-  // repeated .PointObject view_limit_points = 11;
+  // repeated .PointObject view_limit_points = 8;
   for (int i = 0; i < this->view_limit_points_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        11, this->view_limit_points(i), target);
+        8, this->view_limit_points(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2578,7 +2578,7 @@ int ObservationMessage::ByteSize() const {
         this->line_objects(i));
   }
   
-  // repeated .PointObject view_limit_points = 11;
+  // repeated .PointObject view_limit_points = 8;
   total_size += 1 * this->view_limit_points_size();
   for (int i = 0; i < this->view_limit_points_size(); i++) {
     total_size +=

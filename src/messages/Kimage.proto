@@ -1,23 +1,25 @@
+
 message KRawImage{
+	
 	enum Colorspaces {
 		YUYV = 1;
 		OTHER  = 2;
 	}
+	
 	enum Camera{
 		TOP=0;
 		BOTTOM=1;
 		
 	}
 	
-
 	required uint32 bytes_per_pix = 1 ;
 	required uint32 width = 2 [default = 0];
 	required uint32 height = 3 [default = 0];
 	required Colorspaces colorspace = 4;
 	required bytes image_rawdata = 5;
-	required int32 exposure_us =6;
-	required float luminance_scale=7;
-	required Camera active_camera =8;
+	required int32 exposure_us = 6;
+	required float luminance_scale = 7;
+	required Camera active_camera = 8;
 }
 
 

@@ -84,7 +84,9 @@ KMonitor::KMonitor(QWidget *parent) :
 	 * SIGNAL SLOT CONNECTIONS FOR KCC
 	 * Signal slot connections for KCC ComboBox
 	 */
-	connect(Messenger, SIGNAL(rawImage(KRawImage, QString)), ui->KCCTab, SLOT(changeImage(KRawImage, QString)) );
+	connect(Messenger, SIGNAL(rawImage(KRawImage, QString, boost::posix_time::ptime)), ui->KCCTab, SLOT(changeImage(KRawImage, QString, boost::posix_time::ptime)) );
+	
+	connect(Messenger, SIGNAL(visionDebugData(VisionDebugMessage, QString)), ui->KCCTab, SLOT(visionDebugData(VisionDebugMessage, QString)) );
 	
 	connect(Messenger, SIGNAL(GenericAckReceived(GenericACK, QString)), ui->KCCTab, SLOT(genericAckReceived(GenericACK, QString)) );
 	

@@ -105,6 +105,9 @@ KccHandler::KccHandler(QWidget *parent) :
 	colortablesPath = QDir::currentPath().append(string("/" + Configurator::Instance().getDirectoryPath() + "colortables").c_str());
 	
 	calibrationWidget = NULL;
+	
+	connect(this, SIGNAL(updateVisionDebugData(VisionDebugMessage)), realImL, SLOT(updateLabel(VisionDebugMessage)) );
+	connect(this, SIGNAL(updateVisionDebugData(VisionDebugMessage)), segImL, SLOT(updateLabel(VisionDebugMessage)) );
 }
 
 void KccHandler::clickedImage(QMouseEvent *ev) {
@@ -208,7 +211,7 @@ void KccHandler::undoPressed() {
 	}
 }
 
-void KccHandler::changeImage(KRawImage rawImage, QString hostId) {
+void KccHandler::changeImage(KRawImage rawImage, QString hostId, boost::posix_time::ptime timestamp) {
 	int tempWidth = rawImage.width();
 	int tempHeight = rawImage.height();
 	int channels = rawImage.bytes_per_pix();
@@ -233,8 +236,12 @@ void KccHandler::changeImage(KRawImage rawImage, QString hostId) {
 		}
 
 		segImL->setPixmap(QPixmap::fromImage(segImage));
+		segImL->latestImgPix = QPixmap::fromImage(segImage);
+		segImL->latestTimestamp = timestamp;
 		segImL->show();
 		realImL->setPixmap(QPixmap::fromImage(realImage));
+		realImL->latestImgPix = QPixmap::fromImage(realImage);
+		realImL->latestTimestamp = timestamp;
 		realImL->show();
 	}
 }
@@ -504,6 +511,11 @@ void KccHandler::genericAckReceived(GenericACK ack, QString hostid) {
 void KccHandler::catchForwardMsg(CameraCalibration msg){
 	emit sendCameraCalibrationMessage(msg);
 }
+
+void KccHandler::visionDebugData(VisionDebugMessage vdm, QString hostid) {
+	emit updateVisionDebugData(vdm);
+}
+
 KccHandler::~KccHandler() {
 	if(calibrationWidget != NULL){
 		calibrationWidget->close();

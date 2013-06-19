@@ -121,7 +121,7 @@ bool GameController::check_data_and_copy(char* bytes, int size)
 	{
 		// Valid GameController packet
 		RoboCupGameControlData *c = (RoboCupGameControlData *)bytes;
-
+		
 		if (c->teams[0].teamNumber == team_number || c->teams[1].teamNumber == team_number)
 		{
 			//Packet is  for our team

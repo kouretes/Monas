@@ -22,7 +22,6 @@
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
-#include "tools/obstacleConst.h"
 
 //#define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
