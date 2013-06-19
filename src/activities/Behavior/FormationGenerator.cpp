@@ -8,6 +8,8 @@ FormationGenerator::FormationGenerator() {
 }
 
 FormationGenerator::~FormationGenerator() {
+	if(formation != NULL)
+		delete formation;
 }
 
 posInfo FormationGenerator::findRoleInfo(FormationParameters::Role role) {
@@ -17,12 +19,26 @@ posInfo FormationGenerator::findRoleInfo(FormationParameters::Role role) {
 	}
 }
 
-void FormationGenerator::Init(int teamPlayers, bool kickOff) { // assuming ball is on the center of the field (0,0)
+void FormationGenerator::InitXml(unsigned int teamPlayers, bool kickOff) {
+	
+	formation = new vector<posInfo>(teamPlayers);
+	positions = teamPlayers;
+	
+	std::string formationCase = (kickOff == true) ? "KickOff" : "noKickOff";
+
+	for(unsigned int r = 0 ; r < positions ; r++) { // for each robot on the node
+		formation->at(r).X = atof(Configurator::Instance().findValueForKey("playerConfig."+formationCase+".player~"+_toString(r)+".x").c_str());
+		formation->at(r).Y = atof(Configurator::Instance().findValueForKey("playerConfig."+formationCase+".player~"+_toString(r)+".y").c_str());
+		formation->at(r).role = (Role)atoi(Configurator::Instance().findValueForKey("playerConfig."+formationCase+".player~"+_toString(r)+".role").c_str());
+	}
+}
+
+void FormationGenerator::Init(unsigned int teamPlayers, bool kickOff) { // assuming ball is on the center of the field (0,0)
 
 	unsigned int pos = 0;
-
-	positions = teamPlayers;
+	
 	formation = new vector<posInfo>(teamPlayers);
+	positions = teamPlayers;
 	
 	for(unsigned int i = 0 ; i < roles() ; i++) {
 		

@@ -49,7 +49,6 @@ void Behavior::UserInit() {
 	ballDist = 0.0;
 	ballBearing = 0.0;
 	goalieApproachStarted = false;
-	formationFlag = false;
 	ballX = 0.0;
 	ballY = 0.0;
 	relativeBallX = 0.0;
@@ -268,6 +267,7 @@ int Behavior::Execute() {
 		dispTimer = microsec_clock::universal_time();
 	}
 	*/
+	
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -278,7 +278,7 @@ int Behavior::Execute() {
 
 		if(prevGameState == PLAYER_PENALISED) {
 			lastPenalised = microsec_clock::universal_time();
-			//Check if the penalized was a wrong decision
+			// Check if the penalized was a wrong decision
 			if(microsec_clock::universal_time() - penalisedStarted > seconds(10) || !gameMode){
 				direction = 1;
 				locReset.set_type(LocalizationResetMessage::PENALISED);
@@ -291,24 +291,28 @@ int Behavior::Execute() {
 				_blk.publishSignal(locReset, "worldstate");
 			}
 		}
-
-		if (prevGameState == PLAYER_SET) {
+		else if(prevGameState == PLAYER_SET) {
 			lastPlay = microsec_clock::universal_time();
 		}
 
 		if(bfm != 0 && bfm.get() != 0) {
 			ballFound = bfm->ballfound();
 		}
-
+		
+//		if(swim == 0) {
+//			std::cout << "DEN VRHSKW SWIM" << std::endl;
+//			currentRole.role = FormationParameters::ONBALL;
+//		}
+			
 		updateOrientation();
 		readyToKick = false;
 		
 		if(sharedBallFound == true) {
-			//std::cout << "SHARED FOUND" << std::endl;
+			std::cout << "SHARED FOUND" << std::endl;
 			if( (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ) {
 				
-				//if(gsm!=0)
-					//std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
+				if(gsm!=0)
+					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
 					
 				//std::cout << "TIME: "+_toString(count++) << std::endl;
 
@@ -336,11 +340,11 @@ int Behavior::Execute() {
 		_blk.publishState(hcontrol, "behavior");
 		
 		if(config.playerNumber == 1) { // goalie role if number 1
-			if(formationFlag == true) {
+			if(goToPositionFlag == false) {
 				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 					return 0;
 				else
-					formationFlag = false;
+					goToPositionFlag = true;
 			}
 			goalie();
 		}
@@ -423,12 +427,15 @@ int Behavior::Execute() {
 
 			}
 			else { // role is not attacker
-
+				std::cout << "DEN EIMAI ATTACKER" << std::endl;
 				if(goToPositionFlag == false) {
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 						return 0;
 					else
 						goToPositionFlag = true;
+				}
+				else if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
+                    	pathPlanningRequestRelative(3.0, 0.0, 0.0);
 				}
 				else if(ballFound == 1) {
 					direction = (ballBearing > 0) ? 1 : -1;
@@ -462,64 +469,54 @@ int Behavior::Execute() {
 	}
 	else if (gameState == PLAYER_READY) {
 	 	
-	 	if(gameState != prevGameState)
-		{
-			if(prevGameState != PLAYER_PLAYING) {
-				//std::cout << "INITIAL FORMATION CALCULATED!" << std::endl;
-				fGen.Init(config.maxPlayers, true);
+	 	std::cout << "READY" << std::endl;
+	 	
+	 	kickOff = gsm->kickoff();
+	 	
+	 	if(gameState != prevGameState) {	 	
+			fGen.InitXml(config.maxPlayers, kickOff);
+			if(!gameMode)
 				sendDebugMessages();
-				currentRole = fGen.getFormation()->at(config.playerNumber - 1);
-				//std::cout << "I CHOOSE TO BE: " << getRoleString(currentRole.role) << std::endl;
-				lastFormation = microsec_clock::universal_time();
-				formationFlag = true;
-				goToPositionFlag = true;
-				locReset.set_type(LocalizationResetMessage::READY);
-				locReset.set_kickoff(kickOff);
-				_blk.publishSignal(locReset, "worldstate");
-				stopRobot();
-			}
-			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE);
-			_blk.publishState(hcontrol, "behavior");
+			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
+			lastFormation = microsec_clock::universal_time();
+			locReset.set_type(LocalizationResetMessage::READY);
+			locReset.set_kickoff(kickOff);
+			_blk.publishSignal(locReset, "worldstate");
+			stopRobot();
 		}
-		//int p = (kickOff) ? 0 : 1;
-		//goToPosition(config.initX[p], config.initY[p], config.initPhi[p] );
-
+		
+		hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE);
+		_blk.publishState(hcontrol, "behavior");
+		
+		if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
+			return 0;
+		
 		stopRobot();
 		return 0;
 	}
 	else if (gameState == PLAYER_SET) {
-
+		
 		kickOff = gsm->kickoff();
+		
+		if(gameState != prevGameState) {
 
-		if (gameState != prevGameState) {
-
-			//Reset Loc
+			// Reset Loc
 			locReset.set_type(LocalizationResetMessage::SET);
 			locReset.set_kickoff(kickOff);
 			_blk.publishSignal(locReset, "worldstate");
 
 			stopRobot();
-
-			hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
-			_blk.publishState(hcontrol, "behavior");
 		}
+		
+		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
+		_blk.publishState(hcontrol, "behavior");
 	}
 	else if(gameState == PLAYER_PENALISED) {
-
-		kickOff = gsm->kickoff();
-
-		if(prevGameState == PLAYER_INITIAL) {
-			std::cout << "INITIAL FORMATION CALCULATED!" << std::endl;
-			fGen.Init(config.maxPlayers, true);
-			sendDebugMessages();
-			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
-			//std::cout << "I CHOOSE TO BE: " << getRoleString(currentRole.role) << std::endl;
-			lastFormation = microsec_clock::universal_time();
-			formationFlag = true;
-			goToPositionFlag = true;
-		}
-
-		if (gameState != prevGameState) {
+		
+		if(fGen.getFormation() == NULL)
+			fGen.InitXml(config.maxPlayers, kickOff);
+			
+		if(gameState != prevGameState) {
 			penalisedStarted = microsec_clock::universal_time();
 			hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
 			_blk.publishState(hcontrol, "behavior");
@@ -571,9 +568,9 @@ void Behavior::Coordinate() {
 		}
 
 		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
-		//std::cout << "OPTIMAL MAP IS: ";
+		std::cout << "OPTIMAL MAP IS: ";
 		print(mappings[index], "Behavior");
-		//std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
+		std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
 }
 
 /**
@@ -926,10 +923,8 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 			velocityWalk(0.0, 0.0, -0.3, 1);
 		return false;
 	}
-	else {
-		//stopRobot();
+	else
 		return true;
-	}
 }
 
 /*------------------------------------ GOALIE FUNCTIONS -----------------------------------------*/

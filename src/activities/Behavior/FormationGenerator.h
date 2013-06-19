@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include "core/architecture/configurator/Configurator.hpp"
 #include "core/elements/math/Common.hpp"
 #include "FormationParameters.h"
 #include "tools/toString.h"
@@ -91,14 +92,24 @@ public:
 	virtual ~FormationGenerator();
 
 	/**
-	 * @fn void Init(int teamPlayers)
+	 * @fn void Init(unsigned int teamPlayers, bool kickOff)
 	 * @brief Use to initialize the generator object and create the initial team
 	 * fotmation. MUST be called after each empty constructor!
 	 * Parameters:
 	 * @teamPlayers number of team players, used to determine the number of positions
 	 * needed to be produced on each formation generate.
 	 */
-	void Init(int teamPlayers, bool kickOff);
+	void Init(unsigned int teamPlayers, bool kickOff);
+	
+	/**
+	 * @fn void InitXml(unsigned int teamPlayers, bool kickOff)
+	 * @brief Use to initialize the generator object and create the initial team
+	 * fotmation using xml file. MUST be called after each empty constructor!
+	 * Parameters:
+	 * @teamPlayers number of team players, used to determine the number of positions
+	 * needed to be produced on each formation generate.
+	 */
+	void InitXml(unsigned int teamPlayers, bool kickOff);
 
 	/**
 	 * @fn void Generate(float ballX, float ballY)

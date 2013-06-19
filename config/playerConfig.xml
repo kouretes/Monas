@@ -1,4 +1,7 @@
 <?xml version="1.0" ?>
+
+<!-- ROLES ON XML IS BASED ON THE ENUM ROLES OF FORMATION PARAMETERS HEADER SO PLEASE CHECK IT!-->
+
 <!--noKickOff, team color is red, for blue team color multiply posx, posy with -1 -->
 <noKickOff>
 	<!-- GoalKeeper-->
@@ -7,20 +10,23 @@
 		<x>-2.7</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
-	</player>
-	<!-- Center-->
-	<player>
-		<number>2</number>
-		<x>-1.5</x>
-		<y>1.4</y>
-		<phi>0.0</phi>
+		<role>0</role>
 	</player>
 	<!-- Defender-->
 	<player>
-		<number>3</number>
+		<number>2</number>
 		<x>-1.5</x>
 		<y>-1.4</y>
 		<phi>0.0</phi>
+		<role>1</role>
+	</player>
+		<!-- Supporter-->
+	<player>
+		<number>3</number>
+		<x>-1.5</x>
+		<y>1.4</y>
+		<phi>0.0</phi>
+		<role>5</role>
 	</player>
 	<!-- Attacker-->
 	<player>
@@ -28,6 +34,7 @@
 		<x>-1.5</x>
 		<y>0.2</y>
 		<phi>0.0</phi>
+		<role>4</role>
 	</player>
 </noKickOff>
 <!--KickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
@@ -38,20 +45,23 @@
 		<x>-2.7</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
-	</player>
-	<!-- Center-->
-	<player>
-		<number>2</number>
-		<x>-0.7</x>
-		<y>0.7</y>
-		<phi>0.0</phi>
+		<role>0</role>
 	</player>
 	<!-- Defender-->
+	<player>
+		<number>2</number>
+		<x>-1.8</x>
+		<y>0.7</y>
+		<phi>0.0</phi>
+		<role>1</role>
+	</player>
+	<!-- Supporter-->
 	<player>
 		<number>3</number>
 		<x>-0.7</x>
 		<y>0.7</y>
 		<phi>0.0</phi>
+		<role>5</role>
 	</player>
 	<!-- Attacker-->
 	<player>
@@ -59,6 +69,7 @@
 		<x>-0.4</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
+		<role>4</role>
 	</player>
 </KickOff>
 <!--Ready positions-->
@@ -70,19 +81,19 @@
 		<y>-2.0</y>
 		<phi>90</phi>
 	</player>
-	<!-- Center-->
-	<player>
-		<number>2</number>
-		<x>-2.4</x>
-		<y>2.0</y>
-		<phi>270</phi>
-	</player>
 	<!-- Defender-->
 	<player>
-		<number>3</number>
+		<number>2</number>
 		<x>-1.2</x>
 		<y>-2.0</y>
 		<phi>90</phi>
+	</player>
+	<!-- Center-->
+	<player>
+		<number>3</number>
+		<x>-2.4</x>
+		<y>2.0</y>
+		<phi>270</phi>
 	</player>
 	<!-- Attacker-->
 	<player>

@@ -316,8 +316,6 @@ private:
 
 	FormationParameters::posInfo currentRole;
 
-	bool formationFlag;
-
 	std::vector<FormationParameters::Role> roles;
 
 	std::vector< std::vector<FormationParameters::Role> > mappings;
