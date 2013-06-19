@@ -18,7 +18,6 @@
 
 #include "tools/obstacleConst.h"
 
-
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "FormationGenerator.h"
@@ -304,7 +303,7 @@ private:
 
 	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
-	bool goalieApproachStarted, goToPositionFlag;
+	bool goalieApproachStarted, goToPositionFlag, robotStopped;
 
 	bool gameMode, penaltyMode;
 

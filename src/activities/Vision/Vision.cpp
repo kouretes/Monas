@@ -114,6 +114,7 @@ void Vision::fetchAndProcess()
 {
 	leds.Clear();
 	obs.Clear();
+	vdm.Clear();
 	//unsigned long startt = SysCall::_GetCurrentTimeInUSec();
 	boost::posix_time::ptime oldstamp = stamp;
 	boost::shared_ptr<const KRawImage> img = _blk.readData<KRawImage> ("image", msgentry::HOST_ID_LOCAL_HOST, &stamp);
@@ -128,6 +129,7 @@ void Vision::fetchAndProcess()
 	rawImage.copyFrom(img->image_rawdata().data(),
 	                  img->width(), img->height(), img->bytes_per_pix());
 	obs.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
+	vdm.set_image_timestamp(boost::posix_time::to_iso_string(stamp));
 	//unsigned long endt = SysCall::_GetCurrentTimeInUSec()-startt;
 	//cout<<"Fetch image takes:"<<endt<<endl;
 	stamp += boost::posix_time::millisec(config.sensordelay);
@@ -379,6 +381,7 @@ void Vision::fetchAndProcess()
 		l->set_color("black");
 	}
 
+	_blk.publishSignal(vdm, "debug");
 	_blk.publishSignal(trckmsg, "vision");
 	_blk.publishSignal(leds, "leds");
 	_blk.publishSignal(obs, "vision");

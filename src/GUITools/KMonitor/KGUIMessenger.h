@@ -8,6 +8,8 @@
 #include "core/architecture/messaging/EndPoint.hpp"
 #include "core/elements/StringRegistry.hpp"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "core/messages/Network.pb.h"
 #include "messages/WorldInfo.pb.h"
 #include "messages/Gamecontroller.pb.h"
@@ -57,8 +59,9 @@ signals:
 	void obsmsgUpdate(ObservationMessage, QString);
 	void motionCommandUpdate(MotionWalkMessage, QString);
 	void formationDataUpdate(FormationDataForGUI, QString);
+	void visionDebugData(VisionDebugMessage, QString);
 	void gridInfoUpdate(GridInfo, QString);
-	void rawImage(KRawImage, QString);
+	void rawImage(KRawImage, QString, boost::posix_time::ptime);
 	void sensorsDataUpdate(AllSensorValuesMessage, QString);
 	void GenericAckReceived(GenericACK, QString);
    
