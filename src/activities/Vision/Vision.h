@@ -15,6 +15,7 @@
 #include "messages/PathPlanningMessages.pb.h"
 #include "messages/Gamecontroller.pb.h"
 #include "messages/WorldInfo.pb.h"
+#include "messages/Debug.pb.h"
 
 //#define KPROFILING_ENABLED
 #include "tools/profiler.hpp"
@@ -118,6 +119,7 @@ private:
 	BallTrackMessage trckmsg;
 	ObservationMessage obs;
 	LedChangeMessage leds;
+	VisionDebugMessage vdm;
 	mutable KProfiling::profiler vprof;
 #ifdef DEBUGVISION
 	void nullCall();

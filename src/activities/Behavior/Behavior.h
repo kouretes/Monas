@@ -296,7 +296,7 @@ private:
 
 	int gameState, prevGameState;
 
-	bool goalieApproachStarted, goToPositionFlag;
+	bool goalieApproachStarted, goToPositionFlag, robotStopped;
 
 	bool gameMode, penaltyMode;
 

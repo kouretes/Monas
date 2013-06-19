@@ -83,7 +83,7 @@ void KGUIMessenger::allocateReceivedMessages() {
 				rawimg.Clear();
 				rawimg.CopyFrom(*(incomingMessages.at(i).msg));
 				if(myKMonitorRequestedHost == currentRHost)
-					emit rawImage(rawimg, currentRHost);
+					emit rawImage(rawimg, currentRHost, incomingMessages.at(i).timestamp);
 			} 
 			else if(incomingMessages.at(i).msg->GetTypeName() == "GameStateMessage") {
 				GameStateMessage gsm;
@@ -134,6 +134,12 @@ void KGUIMessenger::allocateReceivedMessages() {
 				debugGUI.Clear();
 				debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
 				emit formationDataUpdate(debugGUI, currentRHost);
+			}
+			else if(incomingMessages.at(i).msg->GetTypeName() == "VisionDebugMessage" && myKMonitorRequestedHost == currentRHost) {
+				VisionDebugMessage vdm;
+				vdm.Clear();
+				vdm.CopyFrom(*(incomingMessages.at(i).msg));
+				emit visionDebugData(vdm, currentRHost);
 			} 
 			else if(incomingMessages.at(i).msg->GetTypeName() == "MotionWalkMessage" && myKMonitorRequestedHost == currentRHost) {
 				MotionWalkMessage mwm;
@@ -335,6 +341,7 @@ void KGUIMessenger::tabChangeHandler(int currentTab) {
 		break;
 	case 4: // Kcc
 		updateSubscription("image", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
+		updateSubscription("debug", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());
 	case 5: // Xml
 		updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, myKMonitorRequestedHost.toUInt());

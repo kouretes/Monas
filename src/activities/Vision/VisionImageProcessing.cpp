@@ -11,9 +11,9 @@ ACTIVITY_START
 #define CvDist(pa,pb) sqrt(  ( ((pa).x-(pb).x )*((pa).x-(pb).x )  )+( ((pa).y-(pb).y )*((pa).y-(pb).y) )  )
 #define colorIsA(x,y) (((x)&(y))!=0)
 
-
 using namespace std;
 using namespace KMath;
+
 inline measurement mWeightedMean(measurement m1, measurement m2)
 {
 	measurement res;
@@ -923,22 +923,25 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			name += "Left";
 
 		o->set_object_name(name);
-		/*Polygon *apoly=img.add_p();
-		point *p;
-		p=apoly->add_points();
-		p->set_x(d1.tl.x);p->set_y(d1.tl.y);
-		p=apoly->add_points();
-		p->set_x(d1.top.x);p->set_y(d1.top.y);
-		p=apoly->add_points();
-		p->set_x(d1.tr.x);p->set_y(d1.tr.y);
-		p=apoly->add_points();
-		p->set_x(d1.lr.x);p->set_y(d1.lr.y);
-		p=apoly->add_points();
-		p->set_x(d1.bot.x);p->set_y(d1.bot.y);
-		p=apoly->add_points();
-		p->set_x(d1.ll.x);p->set_y(d1.ll.y);
+		
+		Polygon *apoly = vdm.add_polygon();
+		Point *p;
+		
+		p = apoly->add_points();
+		p->set_x(d1.tl.x); p->set_y(d1.tl.y);
+		p = apoly->add_points();
+		p->set_x(d1.top.x); p->set_y(d1.top.y);
+		p = apoly->add_points();
+		p->set_x(d1.tr.x); p->set_y(d1.tr.y);
+		p = apoly->add_points();
+		p->set_x(d1.lr.x); p->set_y(d1.lr.y);
+		p = apoly->add_points();
+		p->set_x(d1.bot.x); p->set_y(d1.bot.y);
+		p = apoly->add_points();
+		p->set_x(d1.ll.x); p->set_y(d1.ll.y);
 		apoly->set_color(c);
-		apoly->set_confidence(1);*/
+		apoly->set_confidence(1);
+				
 #ifdef DEBUGVISION
 		LogEntry(LogLevel::Info,GetName())<<"Di:" <<(d1.distance.mean) << " "<<(d1.distance.var);
 		LogEntry(LogLevel::Info,GetName())<<"Be: " << (d1.bearing.mean) << " " << (d1.bearing.var);
@@ -998,39 +1001,41 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 	name += "Right";
 	o->set_object_name(name);
-	/*
-		Polygon *apoly=img.add_p();
-		point *p;
-		p=apoly->add_points();
-		p->set_x(d1.tl.x);p->set_y(d1.tl.y);
-		p=apoly->add_points();
-		p->set_x(d1.top.x);p->set_y(d1.top.y);
-		p=apoly->add_points();
-		p->set_x(d1.tr.x);p->set_y(d1.tr.y);
-		p=apoly->add_points();
-		p->set_x(d1.lr.x);p->set_y(d1.lr.y);
-		p=apoly->add_points();
-		p->set_x(d1.bot.x);p->set_y(d1.bot.y);
-		p=apoly->add_points();
-		p->set_x(d1.ll.x);p->set_y(d1.ll.y);
-		apoly->set_color(c);
-		apoly->set_confidence(1);
+	
+	Polygon *apoly = vdm.add_polygon();
+	Point *p;
+	
+	p = apoly->add_points();
+	p->set_x(d1.tl.x); p->set_y(d1.tl.y);
+	p = apoly->add_points();
+	p->set_x(d1.top.x); p->set_y(d1.top.y);
+	p = apoly->add_points();
+	p->set_x(d1.tr.x); p->set_y(d1.tr.y);
+	p = apoly->add_points();
+	p->set_x(d1.lr.x); p->set_y(d1.lr.y);
+	p = apoly->add_points();
+	p->set_x(d1.bot.x); p->set_y(d1.bot.y);
+	p = apoly->add_points();
+	p->set_x(d1.ll.x); p->set_y(d1.ll.y);
+	apoly->set_color(c);
+	apoly->set_confidence(1);
+	
+	apoly = vdm.add_polygon();
+	p = apoly->add_points();
+	p->set_x(d2.tl.x); p->set_y(d2.tl.y);
+	p = apoly->add_points();
+	p->set_x(d2.top.x); p->set_y(d2.top.y);
+	p = apoly->add_points();
+	p->set_x(d2.tr.x); p->set_y(d2.tr.y);
+	p = apoly->add_points();
+	p->set_x(d2.lr.x); p->set_y(d2.lr.y);
+	p = apoly->add_points();
+	p->set_x(d2.bot.x); p->set_y(d2.bot.y);
+	p = apoly->add_points();
+	p->set_x(d2.ll.x); p->set_y(d2.ll.y);
+	apoly->set_color(c);
+	apoly->set_confidence(1);
 
-		apoly=img.add_p();
-		p=apoly->add_points();
-		p->set_x(d2.tl.x);p->set_y(d2.tl.y);
-		p=apoly->add_points();
-		p->set_x(d2.top.x);p->set_y(d2.top.y);
-		p=apoly->add_points();
-		p->set_x(d2.tr.x);p->set_y(d2.tr.y);
-		p=apoly->add_points();
-		p->set_x(d2.lr.x);p->set_y(d2.lr.y);
-		p=apoly->add_points();
-		p->set_x(d2.bot.x);p->set_y(d2.bot.y);
-		p=apoly->add_points();
-		p->set_x(d2.ll.x);p->set_y(d2.ll.y);
-		apoly->set_color(c);
-		apoly->set_confidence(1); */
 	return 2;
 }
 
@@ -1456,21 +1461,22 @@ std:
 	}
 
 #endif
-	/*
-	bd=history.begin();
-	while(bd!=history.end())
+	
+	bd = history.begin();
+	while(bd != history.end())
 	{
-		BallCircle *bc=img.add_ball();
+		BallCircle *bc = vdm.mutable_ball_circle();
 		bc->mutable_center()->set_x((*bd).x);
 		bc->mutable_center()->set_y((*bd).y);
 		bc->set_radius((*bd).cr);
-		bc->set_valid((*bd).distance.mean==best.distance.mean);
+		bc->set_valid((*bd).distance.mean == best.distance.mean);
 		bc->set_confidence(bc->valid());
-
 		bd++;
-	}*/
+	}
+	
 	return best;
 }
+
 KVecFloat2 Vision::centerOfCircle(KVecFloat2 l, KVecFloat2 m, KVecFloat2 r) const
 {
 	KPROF_SCOPE(vprof, "centerOfCircle");

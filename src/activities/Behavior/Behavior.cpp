@@ -39,6 +39,7 @@ void Behavior::UserInit() {
 	wmot.add_parameter(0.0f);
 	ballFound = false;
 	sharedBallFound = false;
+	robotStopped = false;
 	pathOK = true;
 	kickOff = false;
 	cX = 0.0;
@@ -301,15 +302,15 @@ int Behavior::Execute() {
 
 		updateOrientation();
 		readyToKick = false;
-			
+		
 		if(sharedBallFound == true) {
-			std::cout << "SHARED FOUND" << std::endl;
+			//std::cout << "SHARED FOUND" << std::endl;
 			if( (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ) {
 				
-				if(gsm!=0)
-					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
+				//if(gsm!=0)
+					//std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
 					
-				std::cout << "TIME: "+_toString(count++) << std::endl;
+				//std::cout << "TIME: "+_toString(count++) << std::endl;
 
 				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
 				if(!gameMode){
@@ -424,21 +425,33 @@ int Behavior::Execute() {
 			else { // role is not attacker
 
 				if(goToPositionFlag == false) {
-					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false) {
+					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 						return 0;
-					}
 					else
 						goToPositionFlag = true;
 				}
 				else if(ballFound == 1) {
 					direction = (ballBearing > 0) ? 1 : -1;
-					if(fabs(ballBearing) > M_PI/6)
+					if(fabs(ballBearing) > M_PI/6) {
 						littleWalk(0.0, 0.0, ballBearing);
+						robotStopped = false;
+					}
+					else if(!robotStopped) {
+						robotStopped = true;
+						stopRobot();
+					}
+						
 				}
 				else if(sharedBallFound == 1) {
 					direction = (SharedBallBearing > 0) ? 1 : -1;
-					if(fabs(SharedBallBearing) > M_PI/6)
+					if(fabs(SharedBallBearing) > M_PI/6) {
 						littleWalk(0.0, 0.0, SharedBallBearing);
+						robotStopped = false;
+					}
+					else if(!robotStopped) {
+						robotStopped = true;
+						stopRobot();
+					}
 				}
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
@@ -448,10 +461,18 @@ int Behavior::Execute() {
 		} // not goalie behavior end
 	}
 	else if (gameState == PLAYER_READY) {
-	 	/*
-	 	if (gameState != prevGameState)
+	 	
+	 	if(gameState != prevGameState)
 		{
-			if(prevGameState != PLAYER_PLAYING){
+			if(prevGameState != PLAYER_PLAYING) {
+				//std::cout << "INITIAL FORMATION CALCULATED!" << std::endl;
+				fGen.Init(config.maxPlayers, true);
+				sendDebugMessages();
+				currentRole = fGen.getFormation()->at(config.playerNumber - 1);
+				//std::cout << "I CHOOSE TO BE: " << getRoleString(currentRole.role) << std::endl;
+				lastFormation = microsec_clock::universal_time();
+				formationFlag = true;
+				goToPositionFlag = true;
 				locReset.set_type(LocalizationResetMessage::READY);
 				locReset.set_kickoff(kickOff);
 				_blk.publishSignal(locReset, "worldstate");
@@ -460,9 +481,9 @@ int Behavior::Execute() {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE);
 			_blk.publishState(hcontrol, "behavior");
 		}
-		int p = (kickOff) ? 0 : 1;
-		goToPosition(config.initX[p], config.initY[p], config.initPhi[p] );
-		*/
+		//int p = (kickOff) ? 0 : 1;
+		//goToPosition(config.initX[p], config.initY[p], config.initPhi[p] );
+
 		stopRobot();
 		return 0;
 	}
@@ -510,12 +531,6 @@ int Behavior::Execute() {
 
 void Behavior::Coordinate() {
 
-//		fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
-//		if(!gameMode){
-//			sendDebugMessages();
-//		}
-//		lastFormation = microsec_clock::universal_time();
-
 		for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
 			if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE)
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
@@ -556,9 +571,9 @@ void Behavior::Coordinate() {
 		}
 
 		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
-		std::cout << "OPTIMAL MAP IS: ";
+		//std::cout << "OPTIMAL MAP IS: ";
 		print(mappings[index], "Behavior");
-		std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
+		//std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
 }
 
 /**
