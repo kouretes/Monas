@@ -16,16 +16,10 @@
 
 #include "hal/robot/generic_nao/robot_consts.h"
 
-#include "tools/obstacleConst.h"
-
-
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "FormationGenerator.h"
 #include "Utility.h"
-
-#define INIT_VALUE -111.0
-#define numOfFakeObstacles 15
 
 /**
  * @brief Monas activity intented to determine the Behavior of the robot.
@@ -301,8 +295,6 @@ private:
 	double orientation;
 
 	int gameState, prevGameState;
-
-	float fakeObstacles[numOfFakeObstacles][2]; // fake obstacles to avoid entering the penalty area.
 
 	bool goalieApproachStarted, goToPositionFlag;
 
