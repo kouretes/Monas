@@ -74,7 +74,6 @@ void Vision::Reset(){
 	config.scanH = atoi(Configurator::Instance().findValueForKey("vision.scanH").c_str());
 	config.minH = atoi(Configurator::Instance().findValueForKey("vision.minH").c_str());
 	config.bordersize =atoi( Configurator::Instance().findValueForKey("vision.bordersize").c_str());
-	config.pixeltol = atoi(Configurator::Instance().findValueForKey("vision.pixeltol").c_str());
 	config.subsampling = atoi(Configurator::Instance().findValueForKey("vision.subsampling").c_str());
 	config.skipdistance = atof(Configurator::Instance().findValueForKey("vision.skipdistance").c_str());
 	config.seedistance = atof(Configurator::Instance().findValueForKey("vision.seedistance").c_str());
@@ -83,6 +82,7 @@ void Vision::Reset(){
 	config.ballsize = atof(Configurator::Instance().findValueForKey("vision.ballsize").c_str());
 	config.goalheight = atof(Configurator::Instance().findValueForKey("vision.goalheight").c_str());
 	config.goaldist = atof(Configurator::Instance().findValueForKey("vision.goaldist").c_str());
+	config.goaldiam = atof(Configurator::Instance().findValueForKey("vision.goaldiam").c_str());
 	config.widthestimateotolerance = atof(Configurator::Instance().findValueForKey("vision.widthestimateotolerance").c_str());
 	config.horizontalpostratio = atof(Configurator::Instance().findValueForKey("vision.horizontalpostratio").c_str());
 	config.pitchoffset = atof(Configurator::Instance().findValueForKey("vision.pitchoffset").c_str());
