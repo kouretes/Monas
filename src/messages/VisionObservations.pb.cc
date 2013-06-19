@@ -15,9 +15,6 @@
 
 namespace {
 
-const ::google::protobuf::Descriptor* BallTrackMessage_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  BallTrackMessage_reflection_ = NULL;
 const ::google::protobuf::Descriptor* BallObject_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   BallObject_reflection_ = NULL;
@@ -46,26 +43,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "VisionObservations.proto");
   GOOGLE_CHECK(file != NULL);
-  BallTrackMessage_descriptor_ = file->message_type(0);
-  static const int BallTrackMessage_offsets_[5] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, cx_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, cy_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, referenceyaw_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, referencepitch_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, radius_),
-  };
-  BallTrackMessage_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      BallTrackMessage_descriptor_,
-      BallTrackMessage::default_instance_,
-      BallTrackMessage_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallTrackMessage, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(BallTrackMessage));
-  BallObject_descriptor_ = file->message_type(1);
+  BallObject_descriptor_ = file->message_type(0);
   static const int BallObject_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallObject, dist_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallObject, bearing_),
@@ -82,7 +60,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(BallObject));
-  NamedObject_descriptor_ = file->message_type(2);
+  NamedObject_descriptor_ = file->message_type(1);
   static const int NamedObject_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, object_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NamedObject, bearing_),
@@ -101,7 +79,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(NamedObject));
-  UnidentifiedObject_descriptor_ = file->message_type(3);
+  UnidentifiedObject_descriptor_ = file->message_type(2);
   static const int UnidentifiedObject_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnidentifiedObject, object_type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UnidentifiedObject, bearing_),
@@ -118,7 +96,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(UnidentifiedObject));
-  LineObject_descriptor_ = file->message_type(4);
+  LineObject_descriptor_ = file->message_type(3);
   static const int LineObject_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LineObject, start_bearing_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LineObject, start_distance_),
@@ -136,7 +114,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(LineObject));
-  PointObject_descriptor_ = file->message_type(5);
+  PointObject_descriptor_ = file->message_type(4);
   static const int PointObject_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PointObject, distance_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PointObject, bearing_),
@@ -152,7 +130,7 @@ void protobuf_AssignDesc_VisionObservations_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PointObject));
-  ObservationMessage_descriptor_ = file->message_type(6);
+  ObservationMessage_descriptor_ = file->message_type(5);
   static const int ObservationMessage_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, image_timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ObservationMessage, ball_),
@@ -187,8 +165,6 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    BallTrackMessage_descriptor_, &BallTrackMessage::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     BallObject_descriptor_, &BallObject::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     NamedObject_descriptor_, &NamedObject::default_instance());
@@ -205,8 +181,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_VisionObservations_2eproto() {
-  delete BallTrackMessage::default_instance_;
-  delete BallTrackMessage_reflection_;
   delete BallObject::default_instance_;
   delete BallObject_reflection_;
   delete NamedObject::default_instance_;
@@ -228,40 +202,35 @@ void protobuf_AddDesc_VisionObservations_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\030VisionObservations.proto\"w\n\020BallTrackM"
-    "essage\022\r\n\002cx\030\006 \002(\002:\0010\022\r\n\002cy\030\007 \002(\002:\0010\022\027\n\014"
-    "referenceYaw\030\010 \002(\002:\0010\022\031\n\016referencePitch\030"
-    "\t \002(\002:\0010\022\021\n\006radius\030\n \002(\002:\0010\"K\n\nBallObjec"
-    "t\022\017\n\004dist\030\001 \002(\002:\0010\022\022\n\007bearing\030\002 \002(\002:\0010\022\030"
-    "\n\rball_diameter\030\003 \001(\002:\0010\"\202\001\n\013NamedObject"
-    "\022\025\n\013object_name\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002"
-    ":\002-1\022\024\n\010distance\030\003 \002(\002:\002-1\022\027\n\013bearing_de"
-    "v\030\004 \002(\002:\002-1\022\030\n\014distance_dev\030\005 \002(\002:\002-1\"V\n"
-    "\022UnidentifiedObject\022\025\n\013object_type\030\001 \002(\t"
-    ":\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \001("
-    "\002:\002-1\"r\n\nLineObject\022\030\n\rstart_bearing\030\001 \002"
-    "(\002:\0010\022\031\n\016start_distance\030\002 \002(\002:\0010\022\026\n\013end_"
-    "bearing\030\003 \002(\002:\0010\022\027\n\014end_distance\030\004 \002(\002:\001"
-    "0\"0\n\013PointObject\022\020\n\010distance\030\001 \002(\002\022\017\n\007be"
-    "aring\030\002 \002(\002\"\273\002\n\022ObservationMessage\022\031\n\017im"
-    "age_timestamp\030\001 \002(\t:\000\022\031\n\004ball\030\002 \001(\0132\013.Ba"
-    "llObject\022%\n\017regular_objects\030\003 \003(\0132\014.Name"
-    "dObject\022*\n\radhoc_objects\030\004 \003(\0132\023.Unident"
-    "ifiedObject\022$\n\016corner_objects\030\005 \003(\0132\014.Po"
-    "intObject\022*\n\024intersection_objects\030\006 \003(\0132"
-    "\014.PointObject\022!\n\014line_objects\030\007 \003(\0132\013.Li"
-    "neObject\022\'\n\021view_limit_points\030\010 \003(\0132\014.Po"
-    "intObject", 929);
+    "\n\030VisionObservations.proto\"K\n\nBallObject"
+    "\022\017\n\004dist\030\001 \002(\002:\0010\022\022\n\007bearing\030\002 \002(\002:\0010\022\030\n"
+    "\rball_diameter\030\003 \001(\002:\0010\"\202\001\n\013NamedObject\022"
+    "\025\n\013object_name\030\001 \002(\t:\000\022\023\n\007bearing\030\002 \002(\002:"
+    "\002-1\022\024\n\010distance\030\003 \002(\002:\002-1\022\027\n\013bearing_dev"
+    "\030\004 \002(\002:\002-1\022\030\n\014distance_dev\030\005 \002(\002:\002-1\"V\n\022"
+    "UnidentifiedObject\022\025\n\013object_type\030\001 \002(\t:"
+    "\000\022\023\n\007bearing\030\002 \002(\002:\002-1\022\024\n\010distance\030\003 \001(\002"
+    ":\002-1\"r\n\nLineObject\022\030\n\rstart_bearing\030\001 \002("
+    "\002:\0010\022\031\n\016start_distance\030\002 \002(\002:\0010\022\026\n\013end_b"
+    "earing\030\003 \002(\002:\0010\022\027\n\014end_distance\030\004 \002(\002:\0010"
+    "\"0\n\013PointObject\022\020\n\010distance\030\001 \002(\002\022\017\n\007bea"
+    "ring\030\002 \002(\002\"\273\002\n\022ObservationMessage\022\031\n\017ima"
+    "ge_timestamp\030\001 \002(\t:\000\022\031\n\004ball\030\002 \001(\0132\013.Bal"
+    "lObject\022%\n\017regular_objects\030\003 \003(\0132\014.Named"
+    "Object\022*\n\radhoc_objects\030\004 \003(\0132\023.Unidenti"
+    "fiedObject\022$\n\016corner_objects\030\005 \003(\0132\014.Poi"
+    "ntObject\022*\n\024intersection_objects\030\006 \003(\0132\014"
+    ".PointObject\022!\n\014line_objects\030\007 \003(\0132\013.Lin"
+    "eObject\022\'\n\021view_limit_points\030\010 \003(\0132\014.Poi"
+    "ntObject", 808);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "VisionObservations.proto", &protobuf_RegisterTypes);
-  BallTrackMessage::default_instance_ = new BallTrackMessage();
   BallObject::default_instance_ = new BallObject();
   NamedObject::default_instance_ = new NamedObject();
   UnidentifiedObject::default_instance_ = new UnidentifiedObject();
   LineObject::default_instance_ = new LineObject();
   PointObject::default_instance_ = new PointObject();
   ObservationMessage::default_instance_ = new ObservationMessage();
-  BallTrackMessage::default_instance_->InitAsDefaultInstance();
   BallObject::default_instance_->InitAsDefaultInstance();
   NamedObject::default_instance_->InitAsDefaultInstance();
   UnidentifiedObject::default_instance_->InitAsDefaultInstance();
@@ -277,364 +246,6 @@ struct StaticDescriptorInitializer_VisionObservations_2eproto {
     protobuf_AddDesc_VisionObservations_2eproto();
   }
 } static_descriptor_initializer_VisionObservations_2eproto_;
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int BallTrackMessage::kCxFieldNumber;
-const int BallTrackMessage::kCyFieldNumber;
-const int BallTrackMessage::kReferenceYawFieldNumber;
-const int BallTrackMessage::kReferencePitchFieldNumber;
-const int BallTrackMessage::kRadiusFieldNumber;
-#endif  // !_MSC_VER
-
-BallTrackMessage::BallTrackMessage()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void BallTrackMessage::InitAsDefaultInstance() {
-}
-
-BallTrackMessage::BallTrackMessage(const BallTrackMessage& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void BallTrackMessage::SharedCtor() {
-  _cached_size_ = 0;
-  cx_ = 0;
-  cy_ = 0;
-  referenceyaw_ = 0;
-  referencepitch_ = 0;
-  radius_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-BallTrackMessage::~BallTrackMessage() {
-  SharedDtor();
-}
-
-void BallTrackMessage::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void BallTrackMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* BallTrackMessage::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return BallTrackMessage_descriptor_;
-}
-
-const BallTrackMessage& BallTrackMessage::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_VisionObservations_2eproto();  return *default_instance_;
-}
-
-BallTrackMessage* BallTrackMessage::default_instance_ = NULL;
-
-BallTrackMessage* BallTrackMessage::New() const {
-  return new BallTrackMessage;
-}
-
-void BallTrackMessage::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    cx_ = 0;
-    cy_ = 0;
-    referenceyaw_ = 0;
-    referencepitch_ = 0;
-    radius_ = 0;
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool BallTrackMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required float cx = 6 [default = 0];
-      case 6: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &cx_)));
-          set_has_cx();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(61)) goto parse_cy;
-        break;
-      }
-      
-      // required float cy = 7 [default = 0];
-      case 7: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_cy:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &cy_)));
-          set_has_cy();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(69)) goto parse_referenceYaw;
-        break;
-      }
-      
-      // required float referenceYaw = 8 [default = 0];
-      case 8: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_referenceYaw:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &referenceyaw_)));
-          set_has_referenceyaw();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(77)) goto parse_referencePitch;
-        break;
-      }
-      
-      // required float referencePitch = 9 [default = 0];
-      case 9: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_referencePitch:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &referencepitch_)));
-          set_has_referencepitch();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(85)) goto parse_radius;
-        break;
-      }
-      
-      // required float radius = 10 [default = 0];
-      case 10: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
-         parse_radius:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, &radius_)));
-          set_has_radius();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-      
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void BallTrackMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required float cx = 6 [default = 0];
-  if (has_cx()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->cx(), output);
-  }
-  
-  // required float cy = 7 [default = 0];
-  if (has_cy()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->cy(), output);
-  }
-  
-  // required float referenceYaw = 8 [default = 0];
-  if (has_referenceyaw()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->referenceyaw(), output);
-  }
-  
-  // required float referencePitch = 9 [default = 0];
-  if (has_referencepitch()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->referencepitch(), output);
-  }
-  
-  // required float radius = 10 [default = 0];
-  if (has_radius()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->radius(), output);
-  }
-  
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* BallTrackMessage::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required float cx = 6 [default = 0];
-  if (has_cx()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->cx(), target);
-  }
-  
-  // required float cy = 7 [default = 0];
-  if (has_cy()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->cy(), target);
-  }
-  
-  // required float referenceYaw = 8 [default = 0];
-  if (has_referenceyaw()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->referenceyaw(), target);
-  }
-  
-  // required float referencePitch = 9 [default = 0];
-  if (has_referencepitch()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->referencepitch(), target);
-  }
-  
-  // required float radius = 10 [default = 0];
-  if (has_radius()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->radius(), target);
-  }
-  
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int BallTrackMessage::ByteSize() const {
-  int total_size = 0;
-  
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required float cx = 6 [default = 0];
-    if (has_cx()) {
-      total_size += 1 + 4;
-    }
-    
-    // required float cy = 7 [default = 0];
-    if (has_cy()) {
-      total_size += 1 + 4;
-    }
-    
-    // required float referenceYaw = 8 [default = 0];
-    if (has_referenceyaw()) {
-      total_size += 1 + 4;
-    }
-    
-    // required float referencePitch = 9 [default = 0];
-    if (has_referencepitch()) {
-      total_size += 1 + 4;
-    }
-    
-    // required float radius = 10 [default = 0];
-    if (has_radius()) {
-      total_size += 1 + 4;
-    }
-    
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void BallTrackMessage::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const BallTrackMessage* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const BallTrackMessage*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void BallTrackMessage::MergeFrom(const BallTrackMessage& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_cx()) {
-      set_cx(from.cx());
-    }
-    if (from.has_cy()) {
-      set_cy(from.cy());
-    }
-    if (from.has_referenceyaw()) {
-      set_referenceyaw(from.referenceyaw());
-    }
-    if (from.has_referencepitch()) {
-      set_referencepitch(from.referencepitch());
-    }
-    if (from.has_radius()) {
-      set_radius(from.radius());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void BallTrackMessage::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void BallTrackMessage::CopyFrom(const BallTrackMessage& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool BallTrackMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
-  
-  return true;
-}
-
-void BallTrackMessage::Swap(BallTrackMessage* other) {
-  if (other != this) {
-    std::swap(cx_, other->cx_);
-    std::swap(cy_, other->cy_);
-    std::swap(referenceyaw_, other->referenceyaw_);
-    std::swap(referencepitch_, other->referencepitch_);
-    std::swap(radius_, other->radius_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata BallTrackMessage::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = BallTrackMessage_descriptor_;
-  metadata.reflection = BallTrackMessage_reflection_;
-  return metadata;
-}
 
 
 // ===================================================================

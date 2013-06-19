@@ -308,8 +308,6 @@ void Vision::fetchAndProcess()
 	if (b.cr > 0)
 	{
 		//Fill message and publish
-		trckmsg.set_cx(0);
-		trckmsg.set_cy(0);
 		KVecFloat2 im;
 		im(0) = b.x;
 		im(1) = b.y;
@@ -325,10 +323,6 @@ void Vision::fetchAndProcess()
 		yaw = atan2(c3d(1), c3d(0));
 		float w = b.distance.mean * 3;
 		w = w > 1 ? 1 : w;
-		trckmsg.set_referenceyaw(yaw * w);
-		trckmsg.set_referencepitch(pitch - p.cameraPitch);
-		trckmsg.set_radius(b.cr);
-		//trckmsg.set_topic("vision");
 		BallObject ballpos;
 		ballpos.set_dist(b.distance.mean);
 		ballpos.set_bearing(b.bearing.mean);
@@ -340,10 +334,6 @@ void Vision::fetchAndProcess()
 	}
 	else
 	{
-		trckmsg.set_cx(b.x);
-		trckmsg.set_cy(b.y);
-		trckmsg.set_radius(-1);
-		//trckmsg.set_topic("vision");
 		LedValues* l = leds.add_leds();
 		l->set_chain("l_eye");
 		l->set_color("white");
@@ -382,7 +372,6 @@ void Vision::fetchAndProcess()
 	}
 
 	_blk.publishSignal(vdm, "debug");
-	_blk.publishSignal(trckmsg, "vision");
 	_blk.publishSignal(leds, "leds");
 	_blk.publishSignal(obs, "vision");
 }

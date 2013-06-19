@@ -116,7 +116,6 @@ private:
 
 	} config;
 
-	BallTrackMessage trckmsg;
 	ObservationMessage obs;
 	LedChangeMessage leds;
 	VisionDebugMessage vdm;

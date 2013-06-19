@@ -20,22 +20,22 @@ message TeammatePose{
 }
 
 message RobotPose{
-	required float X = 1 [default = -100000];
-	required float Y = 2 [default = -100000];
-	required float phi = 3 [default = -100000];
+	required float X = 1 [default = 0];
+	required float Y = 2 [default = 0];
+	required float phi = 3 [default = 0];
 	repeated float var = 4;  //3x3 matrix showing the covariance of the player's pose and the observed ball
 }
 
 message Ball{
-	required float relativeX = 1 [default = -100000];
-	required float relativeY = 2 [default = -100000];
+	required float relativeX = 1 [default = 0];
+	required float relativeY = 2 [default = 0];
 	required float relativeXspeed = 3 [default = 0];
 	required float relativeYspeed = 4 [default = 0];
 }
 
 message GlobalBall{	
-	required float x = 1 [default = -100000];
-	required float y = 2 [default = -100000];
+	required float x = 1 [default = 0];
+	required float y = 2 [default = 0];
 }
 
 message LocalizationResetMessage{
@@ -60,10 +60,3 @@ message LocalizationData{
 	required RobotPose RobotPosition = 3; //NaoqiRobotPosition
 	required ObservationMessage Observations = 4;
 }
-
-message header{
-	required sint32 NextMsgByteSize =1 [default = -1];
-	required bytes NextMsgName = 3 [default = "Undef" ];
-	
-}
-

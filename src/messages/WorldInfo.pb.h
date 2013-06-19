@@ -39,7 +39,6 @@ class Ball;
 class GlobalBall;
 class LocalizationResetMessage;
 class LocalizationData;
-class header;
 
 enum LocalizationResetMessage_RESET {
   LocalizationResetMessage_RESET_UNIFORM = 0,
@@ -447,21 +446,21 @@ class RobotPose : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required float X = 1 [default = -100000];
+  // required float X = 1 [default = 0];
   inline bool has_x() const;
   inline void clear_x();
   static const int kXFieldNumber = 1;
   inline float x() const;
   inline void set_x(float value);
   
-  // required float Y = 2 [default = -100000];
+  // required float Y = 2 [default = 0];
   inline bool has_y() const;
   inline void clear_y();
   static const int kYFieldNumber = 2;
   inline float y() const;
   inline void set_y(float value);
   
-  // required float phi = 3 [default = -100000];
+  // required float phi = 3 [default = 0];
   inline bool has_phi() const;
   inline void clear_phi();
   static const int kPhiFieldNumber = 3;
@@ -562,14 +561,14 @@ class Ball : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required float relativeX = 1 [default = -100000];
+  // required float relativeX = 1 [default = 0];
   inline bool has_relativex() const;
   inline void clear_relativex();
   static const int kRelativeXFieldNumber = 1;
   inline float relativex() const;
   inline void set_relativex(float value);
   
-  // required float relativeY = 2 [default = -100000];
+  // required float relativeY = 2 [default = 0];
   inline bool has_relativey() const;
   inline void clear_relativey();
   static const int kRelativeYFieldNumber = 2;
@@ -674,14 +673,14 @@ class GlobalBall : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required float x = 1 [default = -100000];
+  // required float x = 1 [default = 0];
   inline bool has_x() const;
   inline void clear_x();
   static const int kXFieldNumber = 1;
   inline float x() const;
   inline void set_x(float value);
   
-  // required float y = 2 [default = -100000];
+  // required float y = 2 [default = 0];
   inline bool has_y() const;
   inline void clear_y();
   static const int kYFieldNumber = 2;
@@ -978,103 +977,6 @@ class LocalizationData : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static LocalizationData* default_instance_;
 };
-// -------------------------------------------------------------------
-
-class header : public ::google::protobuf::Message {
- public:
-  header();
-  virtual ~header();
-  
-  header(const header& from);
-  
-  inline header& operator=(const header& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-  
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-  
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const header& default_instance();
-  
-  void Swap(header* other);
-  
-  // implements Message ----------------------------------------------
-  
-  header* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const header& from);
-  void MergeFrom(const header& from);
-  void Clear();
-  bool IsInitialized() const;
-  
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  
-  ::google::protobuf::Metadata GetMetadata() const;
-  
-  // nested types ----------------------------------------------------
-  
-  // accessors -------------------------------------------------------
-  
-  // required sint32 NextMsgByteSize = 1 [default = -1];
-  inline bool has_nextmsgbytesize() const;
-  inline void clear_nextmsgbytesize();
-  static const int kNextMsgByteSizeFieldNumber = 1;
-  inline ::google::protobuf::int32 nextmsgbytesize() const;
-  inline void set_nextmsgbytesize(::google::protobuf::int32 value);
-  
-  // required bytes NextMsgName = 3 [default = "Undef"];
-  inline bool has_nextmsgname() const;
-  inline void clear_nextmsgname();
-  static const int kNextMsgNameFieldNumber = 3;
-  inline const ::std::string& nextmsgname() const;
-  inline void set_nextmsgname(const ::std::string& value);
-  inline void set_nextmsgname(const char* value);
-  inline void set_nextmsgname(const void* value, size_t size);
-  inline ::std::string* mutable_nextmsgname();
-  inline ::std::string* release_nextmsgname();
-  
-  // @@protoc_insertion_point(class_scope:header)
- private:
-  inline void set_has_nextmsgbytesize();
-  inline void clear_has_nextmsgbytesize();
-  inline void set_has_nextmsgname();
-  inline void clear_has_nextmsgname();
-  
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-  
-  ::std::string* nextmsgname_;
-  static const ::std::string _default_nextmsgname_;
-  ::google::protobuf::int32 nextmsgbytesize_;
-  
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
-  
-  friend void  protobuf_AddDesc_WorldInfo_2eproto();
-  friend void protobuf_AssignDesc_WorldInfo_2eproto();
-  friend void protobuf_ShutdownFile_WorldInfo_2eproto();
-  
-  void InitAsDefaultInstance();
-  static header* default_instance_;
-};
 // ===================================================================
 
 
@@ -1337,7 +1239,7 @@ inline void TeammatePose::set_stability(::google::protobuf::uint32 value) {
 
 // RobotPose
 
-// required float X = 1 [default = -100000];
+// required float X = 1 [default = 0];
 inline bool RobotPose::has_x() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1348,7 +1250,7 @@ inline void RobotPose::clear_has_x() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void RobotPose::clear_x() {
-  x_ = -100000;
+  x_ = 0;
   clear_has_x();
 }
 inline float RobotPose::x() const {
@@ -1359,7 +1261,7 @@ inline void RobotPose::set_x(float value) {
   x_ = value;
 }
 
-// required float Y = 2 [default = -100000];
+// required float Y = 2 [default = 0];
 inline bool RobotPose::has_y() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1370,7 +1272,7 @@ inline void RobotPose::clear_has_y() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void RobotPose::clear_y() {
-  y_ = -100000;
+  y_ = 0;
   clear_has_y();
 }
 inline float RobotPose::y() const {
@@ -1381,7 +1283,7 @@ inline void RobotPose::set_y(float value) {
   y_ = value;
 }
 
-// required float phi = 3 [default = -100000];
+// required float phi = 3 [default = 0];
 inline bool RobotPose::has_phi() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1392,7 +1294,7 @@ inline void RobotPose::clear_has_phi() {
   _has_bits_[0] &= ~0x00000004u;
 }
 inline void RobotPose::clear_phi() {
-  phi_ = -100000;
+  phi_ = 0;
   clear_has_phi();
 }
 inline float RobotPose::phi() const {
@@ -1432,7 +1334,7 @@ RobotPose::mutable_var() {
 
 // Ball
 
-// required float relativeX = 1 [default = -100000];
+// required float relativeX = 1 [default = 0];
 inline bool Ball::has_relativex() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1443,7 +1345,7 @@ inline void Ball::clear_has_relativex() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void Ball::clear_relativex() {
-  relativex_ = -100000;
+  relativex_ = 0;
   clear_has_relativex();
 }
 inline float Ball::relativex() const {
@@ -1454,7 +1356,7 @@ inline void Ball::set_relativex(float value) {
   relativex_ = value;
 }
 
-// required float relativeY = 2 [default = -100000];
+// required float relativeY = 2 [default = 0];
 inline bool Ball::has_relativey() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1465,7 +1367,7 @@ inline void Ball::clear_has_relativey() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void Ball::clear_relativey() {
-  relativey_ = -100000;
+  relativey_ = 0;
   clear_has_relativey();
 }
 inline float Ball::relativey() const {
@@ -1524,7 +1426,7 @@ inline void Ball::set_relativeyspeed(float value) {
 
 // GlobalBall
 
-// required float x = 1 [default = -100000];
+// required float x = 1 [default = 0];
 inline bool GlobalBall::has_x() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -1535,7 +1437,7 @@ inline void GlobalBall::clear_has_x() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline void GlobalBall::clear_x() {
-  x_ = -100000;
+  x_ = 0;
   clear_has_x();
 }
 inline float GlobalBall::x() const {
@@ -1546,7 +1448,7 @@ inline void GlobalBall::set_x(float value) {
   x_ = value;
 }
 
-// required float y = 2 [default = -100000];
+// required float y = 2 [default = 0];
 inline bool GlobalBall::has_y() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1557,7 +1459,7 @@ inline void GlobalBall::clear_has_y() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void GlobalBall::clear_y() {
-  y_ = -100000;
+  y_ = 0;
   clear_has_y();
 }
 inline float GlobalBall::y() const {
@@ -1796,90 +1698,6 @@ inline ::ObservationMessage* LocalizationData::release_observations() {
   ::ObservationMessage* temp = observations_;
   observations_ = NULL;
   return temp;
-}
-
-// -------------------------------------------------------------------
-
-// header
-
-// required sint32 NextMsgByteSize = 1 [default = -1];
-inline bool header::has_nextmsgbytesize() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void header::set_has_nextmsgbytesize() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void header::clear_has_nextmsgbytesize() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void header::clear_nextmsgbytesize() {
-  nextmsgbytesize_ = -1;
-  clear_has_nextmsgbytesize();
-}
-inline ::google::protobuf::int32 header::nextmsgbytesize() const {
-  return nextmsgbytesize_;
-}
-inline void header::set_nextmsgbytesize(::google::protobuf::int32 value) {
-  set_has_nextmsgbytesize();
-  nextmsgbytesize_ = value;
-}
-
-// required bytes NextMsgName = 3 [default = "Undef"];
-inline bool header::has_nextmsgname() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void header::set_has_nextmsgname() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void header::clear_has_nextmsgname() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void header::clear_nextmsgname() {
-  if (nextmsgname_ != &_default_nextmsgname_) {
-    nextmsgname_->assign(_default_nextmsgname_);
-  }
-  clear_has_nextmsgname();
-}
-inline const ::std::string& header::nextmsgname() const {
-  return *nextmsgname_;
-}
-inline void header::set_nextmsgname(const ::std::string& value) {
-  set_has_nextmsgname();
-  if (nextmsgname_ == &_default_nextmsgname_) {
-    nextmsgname_ = new ::std::string;
-  }
-  nextmsgname_->assign(value);
-}
-inline void header::set_nextmsgname(const char* value) {
-  set_has_nextmsgname();
-  if (nextmsgname_ == &_default_nextmsgname_) {
-    nextmsgname_ = new ::std::string;
-  }
-  nextmsgname_->assign(value);
-}
-inline void header::set_nextmsgname(const void* value, size_t size) {
-  set_has_nextmsgname();
-  if (nextmsgname_ == &_default_nextmsgname_) {
-    nextmsgname_ = new ::std::string;
-  }
-  nextmsgname_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* header::mutable_nextmsgname() {
-  set_has_nextmsgname();
-  if (nextmsgname_ == &_default_nextmsgname_) {
-    nextmsgname_ = new ::std::string(_default_nextmsgname_);
-  }
-  return nextmsgname_;
-}
-inline ::std::string* header::release_nextmsgname() {
-  clear_has_nextmsgname();
-  if (nextmsgname_ == &_default_nextmsgname_) {
-    return NULL;
-  } else {
-    ::std::string* temp = nextmsgname_;
-    nextmsgname_ = const_cast< ::std::string*>(&_default_nextmsgname_);
-    return temp;
-  }
 }
 
 

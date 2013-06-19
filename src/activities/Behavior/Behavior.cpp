@@ -245,7 +245,6 @@ void Behavior::generateFakeRobots() {
 /* Behavior Main Execution Function */
 
 int Behavior::Execute() {
-
 	readMessages();
 	getBallData();
 	getGameState();
@@ -365,7 +364,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - (side*config.posY)) < config.epsY && bmsg != 0 && bmsg->radius() > 0 && oppgb < M_PI_4 &&
+					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - (side*config.posY)) < config.epsY && wim != 0 && wim->balls_size() > 0 && oppgb < M_PI_4 &&
 						oppgb > -M_PI_4) {
 
 						readyToKick = true;
@@ -582,7 +581,6 @@ void Behavior::Coordinate() {
 void Behavior::readMessages() {
 
 	gsm  = _blk.readState<GameStateMessage> ("worldstate");
-	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	om   = _blk.readState<ObstacleMessageArray> ("pathplanning");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
@@ -966,7 +964,7 @@ void Behavior::goalie() {
 		if(ballDist < 1.0f) { // check if ball is to close to the goal post
 			goalieApproachStarted = true;
 			pathPlanningRequestRelative(ballX - config.posX, ballY - side * config.posY, ballBearing);
-			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) ) {
+			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && wim != 0 && wim->balls_size() > 0 ) {
 				if (ballY > 0.0)
 					amot.set_command(config.kicks.KickForwardLeft); // Left Kick
 				else
