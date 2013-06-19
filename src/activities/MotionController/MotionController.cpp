@@ -363,11 +363,9 @@ int MotionController::Execute()
 				walkParam1 = wm->parameter(0);
 				walkParam2 = wm->parameter(1);
 				walkParam3 = wm->parameter(2);
-				LogEntry(LogLevel::ExtraInfo,GetName())
-						<< wm->command() + " with parameters "
-						<<(walkParam1) << (walkParam2) << (walkParam3);
+				//LogEntry(LogLevel::ExtraInfo,GetName())	<< wm->command() + " with parameters " << (walkParam1) << (walkParam2) << (walkParam3);
 				walkPID = motion->post.walkTo(walkParam1, walkParam2, walkParam3, walkConfig);
-				LogEntry(LogLevel::ExtraInfo,GetName()) << "Walk ID: "<< (walkPID);
+				//LogEntry(LogLevel::ExtraInfo,GetName()) << "Walk ID: "<< (walkPID);
 			}
 			else if (wm->command() == "setWalkTargetVelocity")
 			{
