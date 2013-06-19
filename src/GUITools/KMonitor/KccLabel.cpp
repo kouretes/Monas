@@ -42,7 +42,7 @@ void KccLabel::updateLabel(VisionDebugMessage vdm) {
 			QPen pen(Qt::blue);
 			pen.setWidth(5);
 			painter.setPen(pen);
-			painter.drawEllipse(vdm.ball_circle().center().x(), vdm.ball_circle().center().y(), vdm.ball_circle().radius(), vdm.ball_circle().radius());
+			painter.drawEllipse(vdm.ball_circle().center().x()-vdm.ball_circle().radius(), vdm.ball_circle().center().y()-vdm.ball_circle().radius(), 2*vdm.ball_circle().radius(), 2*vdm.ball_circle().radius());
 		}
 	
 		this->setPixmap(latestImgLinesPix);
