@@ -31,7 +31,7 @@ void Behavior::UserInit() {
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
-	_blk.updateSubscription("obstacle", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -83,7 +83,6 @@ void Behavior::UserInit() {
 
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
-	// generateFakeObstacles();
 }
 
 /**
@@ -377,7 +376,7 @@ int Behavior::Execute() {
 
 					if(!readyToKick) {
 						if(penaltyMode)
-							pathPlanningRequestAbsolute(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing);	// 2.5cm offset from the ball!
+							pathPlanningRequestRelative(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing);	// 2.5cm offset from the ball!
 						else
 							approachBall();
 					}
@@ -393,7 +392,7 @@ int Behavior::Execute() {
 
 					// walk straight for some seconds after the scan has ended and then start turning around to search for ball.
 					if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
-                    	pathPlanningRequestAbsolute(3.0, 0.0, 0.0);
+                    	pathPlanningRequestRelative(3.0, 0.0, 0.0);
 					}
 					else {
 		            	if(sharedBallFound == true)
@@ -585,7 +584,7 @@ void Behavior::readMessages() {
 	gsm  = _blk.readState<GameStateMessage> ("worldstate");
 	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
-	om   = _blk.readState<ObstacleMessageArray> ("obstacle");
+	om   = _blk.readState<ObstacleMessageArray> ("pathplanning");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
 	bfm = _blk.readState<BallFoundMessage> ("behavior");
@@ -866,7 +865,7 @@ void Behavior::approachBall() {
         int pathSide = (ballBearing > 0) ? 1 : -1;
 		// pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
 		// velocityWalk(ball_x,ball_y,ball_bearing,1.0);
-        pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
+        pathPlanningRequestRelative(ballX - config.posX, ballY - side * config.posY, ballBearing);
     }
     else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)) {
         littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
@@ -878,7 +877,7 @@ void Behavior::approachBall() {
         velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
     }
     else{
-		pathPlanningRequestAbsolute(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing); // 2.5cm offset from the ball!
+		pathPlanningRequestRelative(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing); // 2.5cm offset from the ball!
     }
 }
 
@@ -891,20 +890,20 @@ void Behavior::stopRobot()
 
 void Behavior::pathPlanningRequestRelative(float targetX, float targetY, float targetPhi) {
 
-	pprm.set_gotox(targetX);
-	pprm.set_gotoy(targetY);
-	pprm.set_gotoangle(targetPhi);
-	pprm.set_mode("relative");
-	_blk.publishSignal(pprm, "obstacle");
+	pprm.set_targetx(targetX);
+	pprm.set_targety(targetY);
+	pprm.set_targetorientation(targetPhi);
+	pprm.set_usepathplanning(true);
+	_blk.publishSignal(pprm, "pathplanning");
 }
 
 void Behavior::pathPlanningRequestAbsolute(float targetX, float targetY, float targetPhi) {
 
-	pprm.set_gotox(targetX);
-	pprm.set_gotoy(targetY);
-	pprm.set_gotoangle(targetPhi);
-	pprm.set_mode("absolute");
-	_blk.publishSignal(pprm, "obstacle");
+	pprm.set_targetx(targetX);
+	pprm.set_targety(targetY);
+	pprm.set_targetorientation(targetPhi);
+	pprm.set_usepathplanning(false);
+	_blk.publishSignal(pprm, "pathplanning");
 }
 
 bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
@@ -915,7 +914,7 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 
 	// TODO if the robot make it to position, stop checking for distance and check only orientation!
 	if(targetDistance > 0.25) {
-		pathPlanningRequestAbsolute(toCartesianX(targetDistance, targetAngle),
+		pathPlanningRequestRelative(toCartesianX(targetDistance, targetAngle),
 		                            toCartesianY(targetDistance, targetAngle),
 		                            targetOrientation);
 		return false;
@@ -930,61 +929,6 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 	else {
 		//stopRobot();
 		return true;
-	}
-}
-
-
-void Behavior::generateFakeObstacles() {
-
-	float tmpX = -3.0 + ObstacleRadius, tmpY = -1.1 + ObstacleRadius;
-
-	for(int j = 0; j < numOfFakeObstacles; j++) {
-		fakeObstacles[j][0] = INIT_VALUE;
-		fakeObstacles[j][1] = INIT_VALUE;
-	}
-
-	int i = 0;
-
-	while(tmpX < -2.4) {
-		fakeObstacles[i][0] = tmpX;
-		fakeObstacles[i][1] = tmpY;
-		fakeObstacles[i + 1][0] = tmpX;
-		fakeObstacles[i + 1][1] = -tmpY;
-		tmpX += 2 * ObstacleRadius;
-		i += 2;
-	}
-
-	tmpX = -2.4 + ObstacleRadius;
-
-	while(tmpY < 1.1) {
-		fakeObstacles[i][0] = tmpX;
-		fakeObstacles[i][1] = tmpY;
-		tmpY += 2 * ObstacleRadius + 0.02;
-		i++;
-	}
-}
-
-// TODO not working
-void Behavior::checkForPenaltyArea()
-{
-	float fakeDist = 0.0, fakeDir = 0.0;
-
-	for(int j = 0; j < numOfFakeObstacles; j++) {
-		if(fakeObstacles[j][0] == INIT_VALUE)
-			continue;
-		else {
-			fakeDist = DISTANCE(robotX, robotY, fakeObstacles[j][0], fakeObstacles[j][1]);
-
-			if(fakeDist < MapRadius) {
-				//send fake obstacle message
-				//fakeDir = anglediff2(atan2(fakeObstacles[j][1]-robot_y,fakeObstacles[j][0]-robot_x), robot_phi);
-				fakeDir = 2 * M_PI - wrapTo0_2Pi(robotPhi) - atan2(fakeObstacles[j][1] - robotY, fakeObstacles[j][0] - robotX);
-				fom.set_direction(fakeDir);
-				fom.set_distance(fakeDist);
-				fom.set_certainty(1);
-				_blk.publishSignal(fom, "obstacle");
-			}
-		}
 	}
 }
 
@@ -1021,7 +965,7 @@ void Behavior::goalie() {
 
 		if(ballDist < 1.0f) { // check if ball is to close to the goal post
 			goalieApproachStarted = true;
-			pathPlanningRequestAbsolute(ballX - config.posX, ballY - side * config.posY, ballBearing);
+			pathPlanningRequestRelative(ballX - config.posX, ballY - side * config.posY, ballBearing);
 			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - (side * config.posY) ) < config.epsY) && (bmsg != 0) && (bmsg->radius() > 0) ) {
 				if (ballY > 0.0)
 					amot.set_command(config.kicks.KickForwardLeft); // Left Kick

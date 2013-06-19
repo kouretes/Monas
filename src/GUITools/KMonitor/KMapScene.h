@@ -12,29 +12,14 @@
 #include <string>
 #include <cstdlib>
 #include <list>
- 
+
+#include "core/elements/math/Common.hpp"
+
 #define ImgScale	400
 #define ColorMax 	255
 #define ArrowOffset	10
 
-#define ToDegrees 	(180.0/M_PI)
-#define ToRad 		(M_PI/180.0)
-
-#define M 			10
-#define N 			18
-#define TotalRings	(1+M+1)
-#define InnerRing	(0)
-#define OuterRing	(1+M)
-#define NEIGHBOURS 	8
-
-#define MapRadius 		0.63  // prev Value 1.0
-#define RingDistance 	( (MapRadius) /(M) )
-#define SectorAngleDeg 	(360.0/N) // deg
-#define SectorAngleRad 	(SectorAngleDeg*ToRad)
-#define SectorShiftRad	( ((N%4) == 0 ) ? 0.5*SectorAngleRad : 0.0 )
-
-#define PathLength 			50
-
+#include <QGraphicsScene>
 #include <QList>
 
 class KMapScene : public QGraphicsScene {
@@ -83,10 +68,21 @@ public:
 	void setPMPathVisible(bool visible);
 	void updatePath();
 
-	double targetX, targetY, targetA;
-	int pathR[PathLength], pathS[PathLength], pathO[PathLength];
-	double PolarGrid[2][TotalRings][N];
+	int targetRing, targetCell;
+	float targetOrient;
+	int *pathR, *pathS, *pathO;
+	int *pathR2, *pathS2, *pathO2;
+	int totalVisits;
+	
+	float **PolarGrid;
 
+	void setupGrid(int cellsRad, int cellsRing, float gridLength, int pathSize);
+
+	int cellsOfRadius;
+	int cellsOfRing;
+	float moveStepInMeters;
+	float turnStepInRads;
+	int pathLength;
 private:
 	void initGrid();
 	void initCoordinates();
@@ -94,7 +90,6 @@ private:
 
 	QGraphicsView *parent;
 
-	QList<QGraphicsPolygonItem*> staticCellsList;
 
 	bool LPMObstaclesVisible;
 	QList<QGraphicsPolygonItem*> cellsList;
@@ -108,47 +103,36 @@ private:
 	QGraphicsLineItem *targetLine;
 
 	bool LPMPathVisible;
-	QList<QGraphicsLineItem*> pathLineList;
 
-	// Math functions headers
-	double wrapToPi(double angle);
-	double wrapTo0_2Pi(double angle);
-	double angleDiff(double a1, double a2);
-	double toPolarD(double x, double y);
-	double toPolarT(double x, double y);
-	double toCartesianX(double d, double t);
-	double toCartesianY(double d, double t);
-	int DtoR(double d);
-	int TtoS(double theta);
-	double RtoD(int r);
-	double StoT(int s);
-	int XYtoR(double x, double y);
-	int XYtoS(double x, double y);
-	int toGrid(double x);
-	int wrapTo(int n, int MAXN);
+	QList<QGraphicsLineItem *> pathLineList;
+	QList<QGraphicsEllipseItem *> pathEllipseList;
+	QList<QGraphicsLineItem *> pathSmallLineList;
 
-	// Iris variables
+
+	QList<QGraphicsEllipseItem *> visitedEllipseList;
+	QList<QGraphicsLineItem *> visitedSmallLineList;
+
+	float ringToDistance (int r);
+	float cellToTheta (int s);
+	int toGrid (float x);
+	int wrapTo (int n, int MAXN);
+
 	struct OpenListNode {
 		int ring;
 		int sector;
 		int orientation;
-		double angle;
-		double gn;
-		double hn;
-		double fn;
+		float angle;
+		float gn;
+		float hn;
+		float fn;
 	};
 
-	double cellCenterX[TotalRings][N], cellCenterY[TotalRings][N];
-	double euclidean[TotalRings][N][TotalRings][N];
+	float **cellCenterX, **cellCenterY;
 
-	int gridImgH[TotalRings+1][N], gridImgV[TotalRings+1][N];
+	int **gridImgH, **gridImgV;
 
-	int present;
 	int ImgSize;
 	int ImgShift;
-
-	int shiftGui;
-	int x[TotalRings+1][N], y[TotalRings+1][N];
 
 };
 

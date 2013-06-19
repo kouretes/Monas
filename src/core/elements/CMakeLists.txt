@@ -10,6 +10,8 @@ set(ELEMENT_SRCS
       math/Common.hpp
       math/KMat.hpp
       math/Specific.hpp
+      customTypes/K3DArray.hpp
+      customTypes/ReservaplePrioryQueue.hpp
       StringRegistry.hpp
       Singleton.hpp
       KStandard.hpp

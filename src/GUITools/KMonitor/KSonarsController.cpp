@@ -74,27 +74,41 @@ void KSonarsController::resizeEvent(QResizeEvent *event) {
 		mapArea->resizeMapScene(ui->graphicsView->width() - 10);
 }
 
-void KSonarsController::gridInfoUpdateHandler(GridInfo gim, QString hostId) {
-
-	for(int ring = 0 ; ring < TotalRings ; ring++) {
-		for(int sector = 0 ; sector < N ; sector++) {
-			mapArea->PolarGrid[0][ring][sector] = gim.gridcells(ring * N + sector);
+void KSonarsController::gridInfoUpdateHandler (GridInfo gim, QString hostId) {
+	if(mapArea->cellsOfRadius != gim.cellsradius() || mapArea->cellsOfRing != gim.cellsring() || mapArea->pathLength != gim.pathlength()){
+		mapArea->setupGrid(gim.cellsradius(), gim.cellsring(), gim.realgridlength(), gim.pathlength());
+	}
+	for (int ring = 0; ring < mapArea->cellsOfRadius; ring++) {
+		for (int sector = 0; sector < mapArea->cellsOfRing; sector++) {
+			mapArea->PolarGrid[ring][sector] = gim.gridcells (ring * gim.cellsring() + sector);
+		}
+	}
+	if(gim.has_targetring()){
+		mapArea->targetRing = gim.targetring ();
+		mapArea->targetCell = gim.targetsector ();
+		mapArea->targetOrient = gim.targetorientation ();
+	}else{
+		mapArea->targetRing = -1;
+		mapArea->targetCell = -1;
+		mapArea->targetOrient = -1;
+	}
+	if(mapArea->pathLength != 0){
+		for (int step = 0; step < mapArea->pathLength; step++) {
+			mapArea->pathR[step] = gim.pathstepsring (step);
+			mapArea->pathS[step] = gim.pathstepssector (step);
+			mapArea->pathO[step] = gim.pathstepsorientation (step);
 		}
 	}
 
-	mapArea->targetX = gim.targetcoordinates(0);
-	mapArea->targetY = gim.targetcoordinates(1);
-	mapArea->targetA = gim.targetcoordinates(2);
-
-	for(int step = 0 ; step < PathLength ; step++) {
-		mapArea->pathR[step] = gim.pathstepsring(step);
-		mapArea->pathS[step] = gim.pathstepssector(step);
-		mapArea->pathO[step] = gim.pathstepsorientation(step);
+	mapArea->totalVisits = gim.visitedring_size();
+	for (int step = 0; step < gim.visitedring_size(); step++) {
+		mapArea->pathR2[step] = gim.visitedring (step);
+		mapArea->pathS2[step] = gim.visitedsector (step);
+		mapArea->pathO2[step] = gim.visitedorientation (step);
 	}
-
-	if(mapArea->getLPMObstaclesVisible()) {
-		mapArea->setPMObstaclesVisible(false);
-		mapArea->updateObstacles(false);
+	if (mapArea->getLPMObstaclesVisible() ) {
+		mapArea->setPMObstaclesVisible (false);
+		mapArea->updateObstacles (false);
 		mapArea->updateArrow();
 		mapArea->setPMObstaclesVisible(true);
 	}
