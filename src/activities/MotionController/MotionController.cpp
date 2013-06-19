@@ -159,7 +159,7 @@ int MotionController::Execute()
 		angX = allsm->computeddata(ANGLE + AXIS_X).sensorvalue();
 		angY = allsm->computeddata(ANGLE + AXIS_Y).sensorvalue();
 		VangX = allsm->computeddata(ANGLE + AXIS_X).sensorvaluediff() * 1000000000.0 / allsm->timediff();
-		VangX = allsm->computeddata(ANGLE + AXIS_Y).sensorvaluediff() * 1000000000.0 / allsm->timediff();
+		VangY = allsm->computeddata(ANGLE + AXIS_Y).sensorvaluediff() * 1000000000.0 / allsm->timediff();
 	}
 
 	if (gsm != 0)
@@ -249,7 +249,6 @@ int MotionController::Execute()
 			)
 			{
 				LogEntry(LogLevel::ExtraInfo,GetName()) <<"Robot falling: Stiffness off";
-				LogEntry(LogLevel::ExtraInfo,GetName()) <<"normdist: " << normdist << endl << "fabs(angX + VangX * INTTIME): " << fabs(angX + VangX * INTTIME) << endl << "fabs(angY + VangY * INTTIME): " << fabs(angY + VangY * INTTIME) << endl << "ANGLEHOR: " << ANGLEHOR << endl << "fabs(angX): " << fabs(angX) << " fabs(angY): " << fabs(angY) << " LEANTOOMUCH: " << LEANTOOMUCH;
 				timeLapsed = boost::posix_time::microsec_clock::universal_time();
 
 				if(timeLapsed - standUpStartTime >= boost::posix_time::seconds(3.5))

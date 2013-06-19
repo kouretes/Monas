@@ -38,7 +38,7 @@ void protobuf_AssignDesc_Gamecontroller_2eproto() {
       "Gamecontroller.proto");
   GOOGLE_CHECK(file != NULL);
   GameStateMessage_descriptor_ = file->message_type(0);
-  static const int GameStateMessage_offsets_[14] = {
+  static const int GameStateMessage_offsets_[15] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, player_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, team_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, team_color_),
@@ -53,6 +53,7 @@ void protobuf_AssignDesc_Gamecontroller_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, otherteam_score_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, override_state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, previous_player_state_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GameStateMessage, secs_remaining_),
   };
   GameStateMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -156,7 +157,7 @@ void protobuf_AddDesc_Gamecontroller_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\024Gamecontroller.proto\"\364\002\n\020GameStateMess"
+    "\n\024Gamecontroller.proto\"\217\003\n\020GameStateMess"
     "age\022\030\n\rplayer_number\030\006 \002(\r:\0011\022\026\n\013team_nu"
     "mber\030\001 \002(\r:\0019\022\025\n\nteam_color\030\007 \002(\r:\0010\022\031\n\016"
     "own_goal_color\030\005 \002(\r:\0010\022\027\n\014player_state\030"
@@ -165,13 +166,13 @@ void protobuf_AddDesc_Gamecontroller_2eproto() {
     "rue\022\022\n\007penalty\030\r \002(\r:\0010\022\025\n\007kickoff\030\014 \002(\010"
     ":\004true\022\024\n\tour_score\030\016 \002(\r:\0010\022\032\n\017othertea"
     "m_score\030\017 \002(\r:\0010\022\031\n\016override_state\030\020 \002(\r"
-    ":\0010\022 \n\025previous_player_state\030\021 \002(\r:\0010\"0\n"
-    "\tLedValues\022\017\n\005chain\030\001 \002(\t:\000\022\022\n\005color\030\002 \002"
-    "(\t:\003off\",\n\020LedChangeMessage\022\030\n\004leds\030\006 \003("
-    "\0132\n.LedValues\"l\n\rConfigMessage\022\026\n\013team_n"
-    "umber\030\001 \002(\005:\0019\022\030\n\rplayer_number\030\002 \002(\005:\0011"
-    "\022\025\n\nteam_color\030\004 \002(\005:\0010\022\022\n\004port\030\003 \002(\005:\0043"
-    "838", 603);
+    ":\0010\022 \n\025previous_player_state\030\021 \002(\r:\0010\022\031\n"
+    "\016secs_remaining\030\002 \002(\r:\0010\"0\n\tLedValues\022\017\n"
+    "\005chain\030\001 \002(\t:\000\022\022\n\005color\030\002 \002(\t:\003off\",\n\020Le"
+    "dChangeMessage\022\030\n\004leds\030\006 \003(\0132\n.LedValues"
+    "\"l\n\rConfigMessage\022\026\n\013team_number\030\001 \002(\005:\001"
+    "9\022\030\n\rplayer_number\030\002 \002(\005:\0011\022\025\n\nteam_colo"
+    "r\030\004 \002(\005:\0010\022\022\n\004port\030\003 \002(\005:\0043838", 630);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Gamecontroller.proto", &protobuf_RegisterTypes);
   GameStateMessage::default_instance_ = new GameStateMessage();
@@ -210,6 +211,7 @@ const int GameStateMessage::kOurScoreFieldNumber;
 const int GameStateMessage::kOtherteamScoreFieldNumber;
 const int GameStateMessage::kOverrideStateFieldNumber;
 const int GameStateMessage::kPreviousPlayerStateFieldNumber;
+const int GameStateMessage::kSecsRemainingFieldNumber;
 #endif  // !_MSC_VER
 
 GameStateMessage::GameStateMessage()
@@ -242,6 +244,7 @@ void GameStateMessage::SharedCtor() {
   otherteam_score_ = 0u;
   override_state_ = 0u;
   previous_player_state_ = 0u;
+  secs_remaining_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -292,6 +295,7 @@ void GameStateMessage::Clear() {
     otherteam_score_ = 0u;
     override_state_ = 0u;
     previous_player_state_ = 0u;
+    secs_remaining_ = 0u;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -311,6 +315,22 @@ bool GameStateMessage::MergePartialFromCodedStream(
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &team_number_)));
           set_has_team_number();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_secs_remaining;
+        break;
+      }
+      
+      // required uint32 secs_remaining = 2 [default = 0];
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_secs_remaining:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &secs_remaining_)));
+          set_has_secs_remaining();
         } else {
           goto handle_uninterpreted;
         }
@@ -549,6 +569,11 @@ void GameStateMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->team_number(), output);
   }
   
+  // required uint32 secs_remaining = 2 [default = 0];
+  if (has_secs_remaining()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->secs_remaining(), output);
+  }
+  
   // required bool firstHalf = 3 [default = true];
   if (has_firsthalf()) {
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->firsthalf(), output);
@@ -625,6 +650,11 @@ void GameStateMessage::SerializeWithCachedSizes(
   // required uint32 team_number = 1 [default = 9];
   if (has_team_number()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->team_number(), target);
+  }
+  
+  // required uint32 secs_remaining = 2 [default = 0];
+  if (has_secs_remaining()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->secs_remaining(), target);
   }
   
   // required bool firstHalf = 3 [default = true];
@@ -799,6 +829,13 @@ int GameStateMessage::ByteSize() const {
           this->previous_player_state());
     }
     
+    // required uint32 secs_remaining = 2 [default = 0];
+    if (has_secs_remaining()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->secs_remaining());
+    }
+    
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -870,6 +907,9 @@ void GameStateMessage::MergeFrom(const GameStateMessage& from) {
     if (from.has_previous_player_state()) {
       set_previous_player_state(from.previous_player_state());
     }
+    if (from.has_secs_remaining()) {
+      set_secs_remaining(from.secs_remaining());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -887,7 +927,7 @@ void GameStateMessage::CopyFrom(const GameStateMessage& from) {
 }
 
 bool GameStateMessage::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00003fff) != 0x00003fff) return false;
+  if ((_has_bits_[0] & 0x00007fff) != 0x00007fff) return false;
   
   return true;
 }
@@ -908,6 +948,7 @@ void GameStateMessage::Swap(GameStateMessage* other) {
     std::swap(otherteam_score_, other->otherteam_score_);
     std::swap(override_state_, other->override_state_);
     std::swap(previous_player_state_, other->previous_player_state_);
+    std::swap(secs_remaining_, other->secs_remaining_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

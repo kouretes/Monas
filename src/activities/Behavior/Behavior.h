@@ -2,9 +2,7 @@
 #define BEHAVIOR_H
 
 #include "core/include/IActivity.hpp"
-#include "core/elements/math/Common.hpp"
 #include "core/architecture/configurator/Configurator.hpp"
-
 
 #include "messages/Motion.pb.h"
 #include "messages/SensorsMessage.pb.h"
@@ -31,17 +29,15 @@
 
 /**
  * @brief Monas activity intented to determine the Behavior of the robot.
- * (Roles: Goalie, Attacker, Defender... )
  *
- * @author 2012 Kouretes team
+ * @author 2012-2013 Kouretes Team
  *
  * \file Behavior.h
  */
 
 ACTIVITY_START
 
-class Behavior: public IActivity
-{
+class Behavior: public IActivity {
 
 public:
 
@@ -72,14 +68,6 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-
-	/**
-	 * @enum ROLES
-	 * @brief enum to attach roles on the robot and determine their behavior.
-	 */
-	enum ROLES {
-	    ATTACKER = 0, CENTER_FOR = 1, GOALIE = 2
-	};
 
 	/**
 	 * @struct Kick
@@ -247,14 +235,6 @@ private:
 	void approachBall();
 
 	/**
-	 * @fn void approachBallRoleDependent()
-	 * @brief Use to determine if the robot is the one that should approach the
-	 * the ball. Checks if the robot is the closest one to the ball and then
-	 * calls the approachBall() function if needed.
-	 */
-	void approachBallRoleDependent();
-
-	/**
 	 * @fn void stopRobot()
 	 * @brief Stops the robot from moving.
 	 */
@@ -296,8 +276,6 @@ private:
 
 	int fall;	// variable for goalie role to check if he should fall or not and in which side.
 
-	int role;	// variable that holds the role number of the robot (see enum ROLES).
-
 	bool pathOK;
 
 	bool kickOff, searchFlag;
@@ -336,8 +314,8 @@ private:
 
 	FormationGenerator fGen; // object that create and update the team formation
 
-	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, sharedBallTimer, dispTimer; //st, et; // timers.
-
+	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, sharedBallTimer, dispTimer; // timers.
+	
 	float mapCost, maxU;
 
 	unsigned int index;
@@ -351,8 +329,9 @@ private:
 	std::vector<FormationParameters::Role> roles;
 
 	std::vector< std::vector<FormationParameters::Role> > mappings;
+	
+	unsigned int numOfRobots, count;
 
-	unsigned int numOfRobots;
 };
 
 ACTIVITY_END

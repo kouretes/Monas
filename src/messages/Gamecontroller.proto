@@ -13,6 +13,7 @@ message GameStateMessage{
 	required uint32 otherteam_score = 15 [default = 0];
 	required uint32 override_state=16 [default = 0];
 	required uint32 previous_player_state=17 [default = 0];
+	required uint32 secs_remaining = 2 [default = 0];
 }
 
 message LedValues{

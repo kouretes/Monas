@@ -204,11 +204,19 @@ void GlobalWorldController::addNewItem(QString hostId, QString hostName) {
 	QCheckBox *subCheckBox1;
 	QCheckBox *subCheckBox2;
 	QCheckBox *subCheckBox3;
+    QTreeWidgetItem *subItem1;
+    QTreeWidgetItem *subItem2;
+    QTreeWidgetItem *subItem3;
+
 	QIcon icon;
 	QFont font;
 	icon.addFile(QString::fromUtf8(":/KnownHostsIcons/chore_robot_on.png"), QSize(), QIcon::Normal, QIcon::Off);
 	font.setPointSize(24);
 	item = new QTreeWidgetItem(ui->hostTree);
+    subItem1 = new QTreeWidgetItem(item);
+    subItem2 = new QTreeWidgetItem(item);
+    subItem3 = new QTreeWidgetItem(item);
+
 	checkBox = new QCheckBox();
 	checkBox->setIcon(icon);
 	checkBox->setIconSize(QSize(48, 48));
@@ -248,7 +256,6 @@ void GlobalWorldController::mainCheckBoxHandler(int state) {
 	for(int i = 0 ; i < 3 ; i++) {
 		subItem = item->child(i);
 		subCheckBox = (QCheckBox*)ui->hostTree->itemWidget(subItem, 0);
-
 		if(state == 0)
 			subCheckBox->setChecked(false);
 		else

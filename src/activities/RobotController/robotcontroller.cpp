@@ -63,6 +63,7 @@ int RobotController::Execute()
 		new_gm_state.set_kickoff(game_data.kickOffTeam == new_gm_state.team_color());
 		new_gm_state.set_penalty(game_data.teams[teamindx].players[conf.player_number() - 1].penalty);
 		new_gm_state.set_previous_player_state(gm_state.player_state());
+		new_gm_state.set_secs_remaining(game_data.secsRemaining);
 		//Depreciated PLAYER_PENALISED State does not exist any more!
 		new_gm_state.set_player_state((game_data.teams[teamindx].players[conf.player_number() - 1].penalty == 0) ? game_data.state : PLAYER_PENALISED);
 
