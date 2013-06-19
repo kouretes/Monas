@@ -17,8 +17,6 @@ using namespace KMath;
 
 ACTIVITY_REGISTER(LocalWorldState);
 
-bool LocalWorldState::debugmode = false;
-
 void LocalWorldState::UserInit()
 {
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -29,11 +27,9 @@ void LocalWorldState::UserInit()
     actionKick=false;
 	firstOdometry = true;
 
-	debugmode = false;
 	fallBegan = true;
 	gameState = PLAYER_INITIAL;
-	int maxBytedataSize = 100000;
-	data = new char[maxBytedataSize]; //## TODO  FIX THIS BETTER
+
 	stability = 0;
 	currentRobotAction = MotionStateMessage::IDLE;
 
@@ -169,7 +165,7 @@ int LocalWorldState::Execute()
             }
         }
         else{
-		    LocalizationDataForGUI_Load();
+		    LocalizationDataForGUILoad();
 		    _blk.publishSignal(DebugDataForGUI, "debug");
         }
 	}
@@ -533,7 +529,7 @@ Configurator::Instance().keyOfNodeForSubvalue("playerConfig.Ready.player",".numb
 //------------------------------------------------- Functions for the GUI-----------------------------------------------------
 
 
-int LocalWorldState::LocalizationDataForGUI_Load()
+int LocalWorldState::LocalizationDataForGUILoad()
 {
 	for (int i = 0; i < localizationWorld.SIRParticles.size; i++)
 	{

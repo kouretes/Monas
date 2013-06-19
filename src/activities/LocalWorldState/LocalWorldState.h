@@ -117,14 +117,8 @@ private:
     boost::posix_time::ptime debugMessageTime;
 	//Usefull for gui tools
 
-	int LocalizationData_Load(vector<Localization::KObservationModel> & Observation, Localization::KMotionModel & MotionModel);
-	int LocalizationDataForGUI_Load();
-	void Send_LocalizationData();
-	static bool debugmode;
-	header incommingheader;
-	header outgoingheader;
-	int size;
-	char *data;
+	int LocalizationDataForGUILoad();
+
     bool actionKick;
 	bool gameMode;
 	unsigned int stability;

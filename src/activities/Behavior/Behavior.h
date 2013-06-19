@@ -106,7 +106,6 @@ private:
 	 * Incoming Messages
 	 */
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
-	boost::shared_ptr<const BallTrackMessage>  bmsg;
 	boost::shared_ptr<const GameStateMessage>  gsm;
 	boost::shared_ptr<const ObstacleMessageArray>  om;
 	boost::shared_ptr<const WorldInfo>  wim;

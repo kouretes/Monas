@@ -30,7 +30,7 @@
 #define YAWSTEP 0.4
 
 #define OVERSH 0.1
-#define WAITFOR 15
+#define WAITFOR 18
 
 
 ACTIVITY_START
@@ -68,7 +68,6 @@ private:
 	/* Incoming Messages */
 	boost::shared_ptr<const HeadControlMessage> control;
 	boost::shared_ptr<const AllSensorValuesMessage>	allsm;
-	boost::shared_ptr<const BallTrackMessage> bmsg;
 	boost::shared_ptr<const WorldInfo> wim;
 	boost::shared_ptr<const SharedWorldInfo> swim;
 
@@ -76,7 +75,7 @@ private:
 	MotionHeadMessage hmot;
 	BallFoundMessage bfm;
 
-	short seeballmessage, seeballtrust;
+	bool ballFound;
 
 	bool scanforball;
 	bool startscan;
@@ -84,8 +83,8 @@ private:
 	float targetPitch;
 	float targetSpeed;
 	float ysign;
-	SensorData HeadYaw;
-	SensorData HeadPitch;
+	float currentHeadYaw, currentHeadPitch;
+
 	unsigned waiting;
 
 	float bd, bb, bx, by;
@@ -93,7 +92,7 @@ private:
 
 	//External speed controler (e.g. from KMonitor)
 	bool useExternalSpeed;
-	float externalSpeed;;
+	float externalSpeed;
 	//POSITIONS OF THE GOALPOSTS ON THE FIELD, LOADED FROM XML
 	float oppGoalX, oppGoalY, ownGoalY, ownGoalX;
 	float oppGoalLeftX, oppGoalLeftY, ownGoalLeftX, ownGoalLeftY;
@@ -102,7 +101,7 @@ private:
 	boost::posix_time::ptime lastball;
 
 	/*Read messages from blackboard*/
-	void read_messages();
+	void ReadMessages();
 
 	/*Read the position of the robot*/
 	void GetPosition();

@@ -1,12 +1,3 @@
-
-message BallTrackMessage{
-	required float cx = 6 [default = 0.0];
-	required float cy = 7 [default = 0.0];
-	required float referenceYaw  = 8 [default = 0.0];
-	required float referencePitch  = 9 [default = 0.0];
-	required float radius = 10 [default = 0.0];
-}
-
 message BallObject{
 	required float dist = 1 [default = 0.0];
 	required float bearing = 2  [default = 0.0];

@@ -23,11 +23,11 @@ void HeadController::UserInit()
 	hmot.add_parameter(1.0f); //Head speed
 
 	targetSpeed = headSpeed[NORMAL];
-	seeballtrust = 0;
-	seeballmessage = 0;
+
 	scanforball = false;
 	startscan = true;
 	useExternalSpeed = false;
+	ballFound = false;
 
 	state = BALL1;
 
@@ -56,13 +56,16 @@ void HeadController::Reset(){
 
 int HeadController::Execute()
 {
-	read_messages();
+	ReadMessages();
 	GetPosition();
+	CheckForBall();
+
 	if(allsm)
 	{
-		HeadYaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW);
-		HeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH);
+		currentHeadYaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW).sensorvalue();
+		currentHeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH).sensorvalue();
 	}
+
 	unsigned int whattodo;
 	if(control.get()==0){
 		whattodo=HeadControlMessage::FROWN;
@@ -90,11 +93,7 @@ int HeadController::Execute()
 			MakeHeadAction();
 			break;
 		case HeadControlMessage::LOCALIZE:
-			if(scanforball==false)
-			{
-				startscan=true;
-				scanforball=true;
-			}
+			scanforball=false;
 			HeadScanStepHigh(1.4);
 			break;
 		case HeadControlMessage::LOCALIZE_FAR:
@@ -103,17 +102,8 @@ int HeadController::Execute()
 			break;
 		case HeadControlMessage::SCAN_AND_TRACK_FOR_BALL:
 			CheckForBall();
-			if(seeballmessage) //Do we see the ball? then
+			if(ballFound) //Do we see the ball? then
 			{
-                targetYaw = bmsg->referenceyaw();
-                targetPitch =  bmsg->referencepitch();
-                MakeHeadAction();
-                scanforball=false;
-                bfm.set_ballfound(true);
-                _blk.publishState(bfm, "behavior");
-			}
-			else if(seeballtrust) // Try and look at where we expect the ball to be
-            {
                 targetYaw = lookAtPointRelativeYaw(bx, by);
                 targetPitch = lookAtPointRelativePitch(bx, by);
                 MakeHeadAction();
@@ -136,7 +126,7 @@ int HeadController::Execute()
 			break;
 		case HeadControlMessage::SMART_SELECT:
 			CheckForBall();
-			if(seeballmessage || seeballtrust) //Do we see the ball? then
+			if(ballFound) //Do we see the ball? then
 			{
 				HeadTrackIntelligent();
 				scanforball=false;
@@ -157,25 +147,14 @@ int HeadController::Execute()
 			}
 			break;
 	}
-	if(whattodo!=HeadControlMessage::NOTHING)
-	{
-		if(waiting>=WAITFOR)
-		{
-			MakeHeadAction();
-		}
-		if(!reachedTargetHead())
-		{
-			waiting++;
-		}
-	}
+	waiting++;
 	return 0;
 }
 
 /* Read Incoming Messages */
 
-void HeadController::read_messages()
+void HeadController::ReadMessages()
 {
-	bmsg = _blk.readSignal<BallTrackMessage> ("vision");
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	control = _blk.readState<HeadControlMessage> ("behavior");
@@ -199,39 +178,21 @@ void HeadController::GetPosition()
 
 void HeadController::CheckForBall()
 {
+	ballFound = false;
 	if(wim != 0)
 	{
 	    if(wim.get() != 0)
 		{
             if (wim->balls_size() > 0)
-            {
-                bx = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-                by = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
+            {	
+                bx = wim->balls(0).relativex();// + wim->balls(0).relativexspeed() * 0.200;
+                by = wim->balls(0).relativey();// + wim->balls(0).relativeyspeed() * 0.200;
                 bd = sqrt(pow(bx, 2) + pow(by, 2));
                 bb = atan2(by, bx);
+				ballFound = true;
             }
 		}
 	}
-
-	if (bmsg != 0)
-	{
-		if (bmsg->radius() > 0)
-		{
-			seeballmessage=1;
-			lastball = microsec_clock::universal_time();
-			seeballtrust = 1;
-		}
-		else
-		{
-			seeballmessage=0;
-			if (lastball + milliseconds(3000) < microsec_clock::universal_time())
-			{
-				seeballtrust = 0;
-			}
-		}
-	}
-	else
-		seeballmessage=0;
 
 	return;
 }
@@ -262,12 +223,13 @@ void HeadController::HeadScanStepHigh(float yaw_limit)
 		middle=true;
 		targetPitch=-0.55;
 		targetYaw=0;
-		sign = (HeadYaw.sensorvalue()>0?1:-1);
+		sign = (currentHeadYaw>0?1:-1);
 		MakeHeadAction();
 
 	}
 	if(reachedTargetHead())
 	{
+		
 		if(middle)
 		{
 			middle=false;
@@ -310,7 +272,7 @@ void HeadController::HeadScanStepSmart()
 
 	if (startscan)
 	{
-		ysign = HeadYaw.sensorvalue() > 0 ? +1 : -1; //Side
+		ysign = currentHeadYaw > 0 ? +1 : -1; //Side
 		targetYaw = blue1y * ysign;
 		targetPitch = blue1p;
 		state = BLUE;
@@ -395,8 +357,6 @@ void HeadController::HeadScanStepSmart()
 
 		MakeHeadAction();
 	}
-
-	return;
 }
 
 void HeadController::HeadTrackIntelligent()
@@ -409,16 +369,11 @@ void HeadController::HeadTrackIntelligent()
 		switch (state)
 		{
 			case BALL1:
-				if(seeballmessage) //Do we see the ball? then
+				if(ballFound) //Do we see the ball? then
 				{
-        	        targetYaw = bmsg->referenceyaw();
-        	        targetPitch =  bmsg->referencepitch();
-					state = OPPG;
-				}
-				else if(seeballtrust) // Try and look at where we expect the ball to be
-    	        {
     	            targetYaw = lookAtPointRelativeYaw(bx, by);
     	            targetPitch = lookAtPointRelativePitch(bx, by);
+					state = OPPG;
 				}
 				targetSpeed = headSpeed[SLOW];
 				break;
@@ -431,16 +386,11 @@ void HeadController::HeadTrackIntelligent()
 				break;
 
 			case BALL2:
-				if(seeballmessage) //Do we see the ball? then
+				if(ballFound) //Do we see the ball? then
 				{
-        	        targetYaw = bmsg->referenceyaw();
-        	        targetPitch =  bmsg->referencepitch();
-					state = OWNG;
-				}
-				else if(seeballtrust) // Try and look at where we expect the ball to be
-    	        {
     	            targetYaw = lookAtPointRelativeYaw(bx, by);
     	            targetPitch = lookAtPointRelativePitch(bx, by);
+					state = OWNG;
 				}
 				targetSpeed = headSpeed[SLOW];
 
@@ -479,9 +429,9 @@ float HeadController::lookAtPointRelativePitch(float x, float y)
 
 bool HeadController::reachedTargetHead()
 {
-	return  ((fabs(targetPitch - HeadPitch.sensorvalue()) <= OVERSH) && ((fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH))) ||
-			fabs(HeadYaw.sensorvalue())>YAWMAX ||
-			((HeadPitch.sensorvalue() <= PITCHMIN || HeadPitch.sensorvalue() >= PITCHMAX) && ((fabs(targetYaw - HeadYaw.sensorvalue()) <= OVERSH))); // fabs(HeadPitch.sensorvalue())>PITCHMAX);
+	return  waiting > WAITFOR || ((fabs(targetPitch - currentHeadPitch) <= OVERSH) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))) ||
+			fabs(currentHeadYaw)>YAWMAX ||
+			((currentHeadPitch <= PITCHMIN || currentHeadPitch >= PITCHMAX) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))); // fabs(currentHeadPitch)>PITCHMAX);
 }
 
 /* Read Configuration Functions */
