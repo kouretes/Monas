@@ -220,7 +220,7 @@ for	ip in robotsIP:
 		playerconf.close()
 
 	if game == 0:
-		playerstr = raw_input("1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Cente-for, 5-Attacker \n Set player number or press enter to continue (2 is the default): ")
+		playerstr = raw_input("1-Goalkeeper, 2-Defender, 3-Midfielder, 4-Cente-for, 5-Attacker \n Set player number or press enter to continue (3 is the default): ")
 		while(playerstr != ""):
 			player = int(playerstr)
 			if(player <= 5 and player >=1):
