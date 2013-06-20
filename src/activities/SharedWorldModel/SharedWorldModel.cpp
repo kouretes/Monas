@@ -282,7 +282,16 @@ void SharedWorldModel::update(int rid)
     S2 += R2;
 //    S2.prettyPrint();
 //    y2.prettyPrint();
-    S2.fast_invert();
+    try{
+        S2.fast_invert();
+    }
+    catch (int e){
+        cout << "Inversion of S failed in update:\n";
+        S2.prettyPrint();
+        S2.zero();
+        S2.identity();
+    }
+
     K2 = P*(H2.transp())*S2;
 //    K2.prettyPrint();
     State += K2*y2;
@@ -306,7 +315,16 @@ void SharedWorldModel::updateNoObs(int rid)
 
     S1 = H1*P*(H1.transp());
     S1 += R1;
-    K1 = P*(H1.transp())*invert_square_matrix(S1);
+    try{
+        S1.fast_invert();
+    }
+    catch (int e){
+        cout << "Inversion of S failed:\n";
+        S1.prettyPrint();
+        S1.zero();
+        S1.identity();
+    }
+    K1 = P*(H1.transp())*S1;
     State += K1*y1;
     temp = I;
     temp -= K1*H1;
