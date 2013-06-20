@@ -64,14 +64,16 @@ int RobotController::Execute()
 		new_gm_state.set_penalty(game_data.teams[teamindx].players[conf.player_number() - 1].penalty);
 		new_gm_state.set_previous_player_state(gm_state.player_state());
 		new_gm_state.set_secs_remaining(game_data.secsRemaining);
-		//Depreciated PLAYER_PENALISED State does not exist any more!
+		
+		// Depreciated PLAYER_PENALISED State does not exist any more!
 		new_gm_state.set_player_state((game_data.teams[teamindx].players[conf.player_number() - 1].penalty == 0) ? game_data.state : PLAYER_PENALISED);
 
 		//Check if changed
 		if (gm_state.game_state() != new_gm_state.game_state() || gm_state.team_color() != new_gm_state.team_color() || gm_state.own_goal_color() != new_gm_state.own_goal_color()
 		        || gm_state.penalty() != new_gm_state.penalty() || gm_state.player_state() != new_gm_state.player_state()
 		        || gm_state.sec_game_state() != new_gm_state.sec_game_state() || gm_state.our_score() != new_gm_state.our_score() || gm_state.otherteam_score()
-		        != new_gm_state.otherteam_score() || gm_state.firsthalf() != new_gm_state.firsthalf() || gm_state.kickoff() != new_gm_state.kickoff())
+		        != new_gm_state.otherteam_score() || gm_state.firsthalf() != new_gm_state.firsthalf() || gm_state.kickoff() != new_gm_state.kickoff()
+		        || gm_state.secs_remaining() != new_gm_state.secs_remaining())
 		{
 			changed = true;
 			gm_state.CopyFrom(new_gm_state);

@@ -8,8 +8,8 @@ FormationGenerator::FormationGenerator() {
 }
 
 FormationGenerator::~FormationGenerator() {
-	if(formation != NULL)
-		delete formation;
+	delete formation;
+	formation = 0;
 }
 
 posInfo FormationGenerator::findRoleInfo(FormationParameters::Role role) {
@@ -19,10 +19,12 @@ posInfo FormationGenerator::findRoleInfo(FormationParameters::Role role) {
 	}
 }
 
-void FormationGenerator::InitXml(unsigned int teamPlayers, bool kickOff) {
-	
-	formation = new vector<posInfo>(teamPlayers);
+void FormationGenerator::Init(unsigned int teamPlayers) {
 	positions = teamPlayers;
+	formation = new vector<posInfo>(teamPlayers);
+}
+
+void FormationGenerator::XmlInitFormation(bool kickOff) {
 	
 	std::string formationCase = (kickOff == true) ? "KickOff" : "noKickOff";
 
@@ -33,13 +35,10 @@ void FormationGenerator::InitXml(unsigned int teamPlayers, bool kickOff) {
 	}
 }
 
-void FormationGenerator::Init(unsigned int teamPlayers, bool kickOff) { // assuming ball is on the center of the field (0,0)
+void FormationGenerator::DynamicInitFormation(bool kickOff) { // assuming ball is on the center of the field (0,0)
 
 	unsigned int pos = 0;
-	
-	formation = new vector<posInfo>(teamPlayers);
-	positions = teamPlayers;
-	
+		
 	for(unsigned int i = 0 ; i < roles() ; i++) {
 		
 		if(pos == positions)
@@ -69,19 +68,19 @@ void FormationGenerator::Init(unsigned int teamPlayers, bool kickOff) { // assum
 			formation->at(pos).role = (Role)i;
 			pos++;
 		}
-		else if(i == SUPPORTER && ((kickOff && teamPlayers == 4) || (!kickOff && teamPlayers == 5)) ) { // SUPPORT
+		else if(i == SUPPORTER && ((kickOff && positions == 4) || (!kickOff && positions == 5)) ) { // SUPPORT
 			formation->at(pos).X = (ONBALL_OFFSET - Field.DiameterCCircle/2) + Field.MinX*SUPPORT_FACTOR_X;
 			formation->at(pos).Y = 0;
 			formation->at(pos).role = (Role)i;
 			pos++;
 		}
-		else if(i == SUPPORTER_L && kickOff && teamPlayers == 5) { // LEFT SUPPORTER
+		else if(i == SUPPORTER_L && kickOff && positions == 5) { // LEFT SUPPORTER
 			formation->at(pos).X = ONBALL_OFFSET + Field.MinX*SUPPORT_FACTOR_X;
 			formation->at(pos).Y = SUPPORT_FACTOR_Y*Field.MaxX;
 			formation->at(pos).role = (Role)i;
 			pos++;
 		}
-		else if(i == SUPPORTER_R && kickOff && teamPlayers == 5) { // RIGHT SUPPORTER
+		else if(i == SUPPORTER_R && kickOff && positions == 5) { // RIGHT SUPPORTER
 			formation->at(pos).X = ONBALL_OFFSET + Field.MinX*SUPPORT_FACTOR_X;
 			formation->at(pos).Y = SUPPORT_FACTOR_Y*Field.MinX;
 			formation->at(pos).role = (Role)i;
@@ -106,7 +105,7 @@ void FormationGenerator::Generate(float ballX, float ballY, bool ballFound) { //
 	
 	// determine if we are on offensive, defensive or static formation
 	if(ballFound == true) {
-
+		
 		if(ballX > Field.MaxX || ballX < Field.MinX || ballY > Field.MaxY || ballY < Field.MinY) { // in that case there is no use to generate a formation
 			return;
 		}
@@ -119,7 +118,7 @@ void FormationGenerator::Generate(float ballX, float ballY, bool ballFound) { //
 	else {
 		formationType = STATIC;
 	}
-
+	
 	if(formationType == OFFENSIVE) { // OFFENSIVE FORMATION
 
 		for(unsigned int i = 0 ; i < formation->size() ; i++) {

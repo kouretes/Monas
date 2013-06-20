@@ -277,9 +277,7 @@ private:
 
 	float ballDist, ballBearing, ballX, ballY; // ball data coming from world info message.
 
-	float relativeBallX, relativeBallY; // transformation from relative robot ball x,y to relative field ball x,y USED UNTIL WE HAVE GLOBAL BALL ESTIMATION!!!
-
-	float SharedGlobalBallX, SharedGlobalBallY, SharedBallBearing, CurrentSharedBallX, CurrentSharedBallY; // global ball from shared world state!
+	float SharedGlobalBallX, SharedGlobalBallY, SharedBallBearing, lastSharedBallX, lastSharedBallY; // global ball from shared world state!
 
 	int side;
 
@@ -287,7 +285,7 @@ private:
 
 	std::vector<FormationParameters::Robot> robots; // team information.
 
-	bool readyToKick;
+	bool readyToKick, scanAfterKick;
 
 	int direction;
 
@@ -301,8 +299,6 @@ private:
 
 	MotionStateMessage::ActionType currentRobotAction;
 
-	bool scanAfterKick;
-
 	FormationGenerator fGen; // object that create and update the team formation
 
 	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, sharedBallTimer, dispTimer; // timers.
@@ -310,7 +306,9 @@ private:
 	float mapCost, maxU;
 
 	unsigned int index;
-
+	
+	bool dist, gsmtime, gsmnext;
+	
 	FormationParameters::posInfo currentRobotPos;
 
 	FormationParameters::posInfo currentRole;
@@ -319,7 +317,7 @@ private:
 
 	std::vector< std::vector<FormationParameters::Role> > mappings;
 	
-	unsigned int numOfRobots, count;
+	unsigned int numOfRobots;
 
 };
 

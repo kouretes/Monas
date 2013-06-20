@@ -91,6 +91,8 @@ public:
 	 */
 	virtual ~FormationGenerator();
 
+	void Init(unsigned int teamPlayers);
+	
 	/**
 	 * @fn void Init(unsigned int teamPlayers, bool kickOff)
 	 * @brief Use to initialize the generator object and create the initial team
@@ -99,7 +101,7 @@ public:
 	 * @teamPlayers number of team players, used to determine the number of positions
 	 * needed to be produced on each formation generate.
 	 */
-	void Init(unsigned int teamPlayers, bool kickOff);
+	void DynamicInitFormation(bool kickOff);
 	
 	/**
 	 * @fn void InitXml(unsigned int teamPlayers, bool kickOff)
@@ -109,7 +111,7 @@ public:
 	 * @teamPlayers number of team players, used to determine the number of positions
 	 * needed to be produced on each formation generate.
 	 */
-	void InitXml(unsigned int teamPlayers, bool kickOff);
+	void XmlInitFormation(bool kickOff);
 
 	/**
 	 * @fn void Generate(float ballX, float ballY)

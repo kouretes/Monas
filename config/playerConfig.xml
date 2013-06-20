@@ -59,7 +59,7 @@
 	<player>
 		<number>3</number>
 		<x>-0.7</x>
-		<y>0.7</y>
+		<y>-0.7</y>
 		<phi>0.0</phi>
 		<role>5</role>
 	</player>
