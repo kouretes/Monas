@@ -95,7 +95,7 @@ int SharedWorldModel::Execute()
     {
         if(wim.get() != 0)
         {
-            gather_info(count);
+            gather_info();
             count++;
         }
     }
@@ -118,7 +118,7 @@ int SharedWorldModel::Execute()
                 if(wim.get() != 0)
                 {
                     // Logger::Instance().WriteMsg("SharedWorldModel", "Host Name: " + _toString((*fit).hostname()) + " \tRobot x: " + _toString(robot_x[id]) + " Robot y: " + 							_toString(robot_y[id]), Logger::Info);
-                    gather_info(count);
+                    gather_info();
                     count++;
                 }
 
@@ -144,14 +144,16 @@ int SharedWorldModel::Execute()
 
 }
 
-void SharedWorldModel::gather_info(int count){
+void SharedWorldModel::gather_info(){
 
     int i,j=0;
 
     if(wim->has_playernumber())
         id = wim->playernumber()-1;
-    else
+    else{
+        count--;
         return;
+    }
 
     gotObs = true;
 
@@ -199,6 +201,7 @@ void SharedWorldModel::gather_info(int count){
     tPose.set_stability(stab);
 
     swi.add_teammateposition();
+    LogEntry(LogLevel::Info, GetName()) << "Count: "  << (count);
     swi.mutable_teammateposition(count)->CopyFrom(tPose);
 }
 

@@ -36,7 +36,7 @@ private:
 
     void ReadFieldConf();
 	int findClosestRobot();
-	void gather_info(int count);
+	void gather_info();
 	void predict();
 	void update(int rid);
 	void updateNoObs(int rid);
