@@ -69,8 +69,7 @@ void protobuf_AssignDesc_WorldInfo_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(WorldInfo));
   SharedWorldInfo_descriptor_ = file->message_type(1);
-  static const int SharedWorldInfo_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, playerclosesttoball_),
+  static const int SharedWorldInfo_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, teammateposition_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SharedWorldInfo, globalballs_),
   };
@@ -254,27 +253,26 @@ void protobuf_AddDesc_WorldInfo_2eproto() {
     "\n\017WorldInfo.proto\032\030VisionObservations.pr"
     "oto\"j\n\tWorldInfo\022\036\n\nmyPosition\030\001 \002(\0132\n.R"
     "obotPose\022\024\n\014playerNumber\030\002 \002(\r\022\021\n\tstabil"
-    "ity\030\003 \002(\r\022\024\n\005Balls\030\004 \003(\0132\005.Ball\"y\n\017Share"
-    "dWorldInfo\022\033\n\023playerClosestToBall\030\001 \002(\r\022"
-    "\'\n\020teammatePosition\030\002 \003(\0132\r.TeammatePose"
-    "\022 \n\013GlobalBalls\030\003 \003(\0132\013.GlobalBall\"L\n\014Te"
-    "ammatePose\022\030\n\004pose\030\001 \002(\0132\n.RobotPose\022\017\n\007"
-    "robotId\030\002 \002(\r\022\021\n\tstability\030\003 \002(\r\"D\n\tRobo"
-    "tPose\022\014\n\001X\030\001 \002(\002:\0010\022\014\n\001Y\030\002 \002(\002:\0010\022\016\n\003phi"
-    "\030\003 \002(\002:\0010\022\013\n\003var\030\004 \003(\002\"h\n\004Ball\022\024\n\trelati"
-    "veX\030\001 \002(\002:\0010\022\024\n\trelativeY\030\002 \002(\002:\0010\022\031\n\016re"
-    "lativeXspeed\030\003 \002(\002:\0010\022\031\n\016relativeYspeed\030"
-    "\004 \002(\002:\0010\"(\n\nGlobalBall\022\014\n\001x\030\001 \002(\002:\0010\022\014\n\001"
-    "y\030\002 \002(\002:\0010\"\305\001\n\030LocalizationResetMessage\022"
-    "\014\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002(\010\022\017\n\004xPos\030\003"
-    " \002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006phiPos\030\005 \002(\002"
-    ":\0010\"U\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005READY\020\001\022\007\n\003"
-    "SET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUAL\020\004\022\020\n\014PENA"
-    "LTY_MODE\020\005\"\232\001\n\020LocalizationData\022\031\n\005World"
-    "\030\001 \002(\0132\n.WorldInfo\022\035\n\tParticles\030\002 \003(\0132\n."
-    "RobotPose\022!\n\rRobotPosition\030\003 \002(\0132\n.Robot"
-    "Pose\022)\n\014Observations\030\004 \002(\0132\023.Observation"
-    "Message", 927);
+    "ity\030\003 \002(\r\022\024\n\005Balls\030\004 \003(\0132\005.Ball\"\\\n\017Share"
+    "dWorldInfo\022\'\n\020teammatePosition\030\001 \003(\0132\r.T"
+    "eammatePose\022 \n\013GlobalBalls\030\002 \003(\0132\013.Globa"
+    "lBall\"L\n\014TeammatePose\022\030\n\004pose\030\001 \002(\0132\n.Ro"
+    "botPose\022\017\n\007robotId\030\002 \002(\r\022\021\n\tstability\030\003 "
+    "\002(\r\"D\n\tRobotPose\022\014\n\001X\030\001 \002(\002:\0010\022\014\n\001Y\030\002 \002("
+    "\002:\0010\022\016\n\003phi\030\003 \002(\002:\0010\022\013\n\003var\030\004 \003(\002\"h\n\004Bal"
+    "l\022\024\n\trelativeX\030\001 \002(\002:\0010\022\024\n\trelativeY\030\002 \002"
+    "(\002:\0010\022\031\n\016relativeXspeed\030\003 \002(\002:\0010\022\031\n\016rela"
+    "tiveYspeed\030\004 \002(\002:\0010\"(\n\nGlobalBall\022\014\n\001x\030\001"
+    " \002(\002:\0010\022\014\n\001y\030\002 \002(\002:\0010\"\305\001\n\030LocalizationRe"
+    "setMessage\022\014\n\004type\030\001 \002(\005\022\017\n\007kickOff\030\002 \002("
+    "\010\022\017\n\004xPos\030\003 \002(\002:\0010\022\017\n\004yPos\030\004 \002(\002:\0010\022\021\n\006p"
+    "hiPos\030\005 \002(\002:\0010\"U\n\005RESET\022\013\n\007UNIFORM\020\000\022\t\n\005"
+    "READY\020\001\022\007\n\003SET\020\002\022\r\n\tPENALISED\020\003\022\n\n\006MANUA"
+    "L\020\004\022\020\n\014PENALTY_MODE\020\005\"\232\001\n\020LocalizationDa"
+    "ta\022\031\n\005World\030\001 \002(\0132\n.WorldInfo\022\035\n\tParticl"
+    "es\030\002 \003(\0132\n.RobotPose\022!\n\rRobotPosition\030\003 "
+    "\002(\0132\n.RobotPose\022)\n\014Observations\030\004 \002(\0132\023."
+    "ObservationMessage", 898);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "WorldInfo.proto", &protobuf_RegisterTypes);
   WorldInfo::default_instance_ = new WorldInfo();
@@ -646,7 +644,6 @@ void WorldInfo::Swap(WorldInfo* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int SharedWorldInfo::kPlayerClosestToBallFieldNumber;
 const int SharedWorldInfo::kTeammatePositionFieldNumber;
 const int SharedWorldInfo::kGlobalBallsFieldNumber;
 #endif  // !_MSC_VER
@@ -667,7 +664,6 @@ SharedWorldInfo::SharedWorldInfo(const SharedWorldInfo& from)
 
 void SharedWorldInfo::SharedCtor() {
   _cached_size_ = 0;
-  playerclosesttoball_ = 0u;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -701,9 +697,6 @@ SharedWorldInfo* SharedWorldInfo::New() const {
 }
 
 void SharedWorldInfo::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    playerclosesttoball_ = 0u;
-  }
   teammateposition_.Clear();
   globalballs_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -716,23 +709,8 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required uint32 playerClosestToBall = 1;
+      // repeated .TeammatePose teammatePosition = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, &playerclosesttoball_)));
-          set_has_playerclosesttoball();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_teammatePosition;
-        break;
-      }
-      
-      // repeated .TeammatePose teammatePosition = 2;
-      case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_teammatePosition:
@@ -741,13 +719,13 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse_teammatePosition;
-        if (input->ExpectTag(26)) goto parse_GlobalBalls;
+        if (input->ExpectTag(10)) goto parse_teammatePosition;
+        if (input->ExpectTag(18)) goto parse_GlobalBalls;
         break;
       }
       
-      // repeated .GlobalBall GlobalBalls = 3;
-      case 3: {
+      // repeated .GlobalBall GlobalBalls = 2;
+      case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_GlobalBalls:
@@ -756,7 +734,7 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_GlobalBalls;
+        if (input->ExpectTag(18)) goto parse_GlobalBalls;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -779,21 +757,16 @@ bool SharedWorldInfo::MergePartialFromCodedStream(
 
 void SharedWorldInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required uint32 playerClosestToBall = 1;
-  if (has_playerclosesttoball()) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->playerclosesttoball(), output);
-  }
-  
-  // repeated .TeammatePose teammatePosition = 2;
+  // repeated .TeammatePose teammatePosition = 1;
   for (int i = 0; i < this->teammateposition_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->teammateposition(i), output);
+      1, this->teammateposition(i), output);
   }
   
-  // repeated .GlobalBall GlobalBalls = 3;
+  // repeated .GlobalBall GlobalBalls = 2;
   for (int i = 0; i < this->globalballs_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->globalballs(i), output);
+      2, this->globalballs(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -804,23 +777,18 @@ void SharedWorldInfo::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* SharedWorldInfo::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required uint32 playerClosestToBall = 1;
-  if (has_playerclosesttoball()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->playerclosesttoball(), target);
-  }
-  
-  // repeated .TeammatePose teammatePosition = 2;
+  // repeated .TeammatePose teammatePosition = 1;
   for (int i = 0; i < this->teammateposition_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        2, this->teammateposition(i), target);
+        1, this->teammateposition(i), target);
   }
   
-  // repeated .GlobalBall GlobalBalls = 3;
+  // repeated .GlobalBall GlobalBalls = 2;
   for (int i = 0; i < this->globalballs_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        3, this->globalballs(i), target);
+        2, this->globalballs(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -833,16 +801,7 @@ void SharedWorldInfo::SerializeWithCachedSizes(
 int SharedWorldInfo::ByteSize() const {
   int total_size = 0;
   
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required uint32 playerClosestToBall = 1;
-    if (has_playerclosesttoball()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::UInt32Size(
-          this->playerclosesttoball());
-    }
-    
-  }
-  // repeated .TeammatePose teammatePosition = 2;
+  // repeated .TeammatePose teammatePosition = 1;
   total_size += 1 * this->teammateposition_size();
   for (int i = 0; i < this->teammateposition_size(); i++) {
     total_size +=
@@ -850,7 +809,7 @@ int SharedWorldInfo::ByteSize() const {
         this->teammateposition(i));
   }
   
-  // repeated .GlobalBall GlobalBalls = 3;
+  // repeated .GlobalBall GlobalBalls = 2;
   total_size += 1 * this->globalballs_size();
   for (int i = 0; i < this->globalballs_size(); i++) {
     total_size +=
@@ -885,11 +844,6 @@ void SharedWorldInfo::MergeFrom(const SharedWorldInfo& from) {
   GOOGLE_CHECK_NE(&from, this);
   teammateposition_.MergeFrom(from.teammateposition_);
   globalballs_.MergeFrom(from.globalballs_);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_playerclosesttoball()) {
-      set_playerclosesttoball(from.playerclosesttoball());
-    }
-  }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
@@ -906,7 +860,6 @@ void SharedWorldInfo::CopyFrom(const SharedWorldInfo& from) {
 }
 
 bool SharedWorldInfo::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
   for (int i = 0; i < teammateposition_size(); i++) {
     if (!this->teammateposition(i).IsInitialized()) return false;
@@ -919,7 +872,6 @@ bool SharedWorldInfo::IsInitialized() const {
 
 void SharedWorldInfo::Swap(SharedWorldInfo* other) {
   if (other != this) {
-    std::swap(playerclosesttoball_, other->playerclosesttoball_);
     teammateposition_.Swap(&other->teammateposition_);
     globalballs_.Swap(&other->globalballs_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
