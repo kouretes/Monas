@@ -8,9 +8,8 @@ message WorldInfo{
 }
 
 message SharedWorldInfo{
-	required uint32 playerClosestToBall = 1 ;
-	repeated TeammatePose teammatePosition = 2;
-	repeated GlobalBall GlobalBalls = 3;
+	repeated TeammatePose teammatePosition = 1;
+	repeated GlobalBall GlobalBalls = 2;
 }
 
 message TeammatePose{

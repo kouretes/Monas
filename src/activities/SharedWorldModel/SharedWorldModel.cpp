@@ -85,6 +85,7 @@ int SharedWorldModel::Execute()
 		ball_speed_y[i] = INIT_VALUE;
 	}
     swi.Clear();
+    gotObs = false;
 
     predict();
     count = 0;
@@ -123,28 +124,23 @@ int SharedWorldModel::Execute()
 
 		    }
 		}
-
-		//		Logger::Instance().WriteMsg("SharedWorldModel", "--------------------", Logger::Info);
-
-        //Find the robot which is closer to the ball and publish the corresponding message
-        idx = findClosestRobot();
-        //           Logger::Instance().WriteMsg("SharedWorldModel", "Idx " + _toString(idx), Logger::Info);
-        swi.set_playerclosesttoball(idx);
-
-        now = boost::posix_time::microsec_clock::universal_time();
-        duration = now - last_ball_update_time;
-        dtBall = duration.total_microseconds() / 1000000.0f;
-
-        if(State(dim-2)>fieldMinX-ballOffset && State(dim-2)<fieldMaxX+ballOffset && State(dim-1)>fieldMinY-ballOffset && State(dim-1)<fieldMaxY+ballOffset && dtBall<3.0f){
-            GlobalBall gb;
-            gb.set_x(State(dim-2));
-            gb.set_y(State(dim-1));
-
-            swi.add_globalballs();
-            swi.mutable_globalballs(0)->CopyFrom(gb);
-        }
-        _blk.publishData(swi, "worldstate");
 	}
+
+	now = boost::posix_time::microsec_clock::universal_time();
+    duration = now - last_ball_update_time;
+    dtBall = duration.total_microseconds() / 1000000.0f;
+
+	if(State(dim-2)>fieldMinX-ballOffset && State(dim-2)<fieldMaxX+ballOffset && State(dim-1)>fieldMinY-ballOffset && State(dim-1)<fieldMaxY+ballOffset && dtBall<3.0f){
+        GlobalBall gb;
+        gb.set_x(State(dim-2));
+        gb.set_y(State(dim-1));
+
+        swi.add_globalballs();
+        swi.mutable_globalballs(0)->CopyFrom(gb);
+        _blk.publishData(swi, "worldstate");
+    }
+    else if(gotObs)
+        _blk.publishData(swi, "worldstate");
 
 }
 
@@ -156,6 +152,8 @@ void SharedWorldModel::gather_info(int count){
         id = wim->playernumber()-1;
     else
         return;
+
+    gotObs = true;
 
     robot_x[id] = wim->myposition().x();
     robot_y[id] = wim->myposition().y();
@@ -313,23 +311,6 @@ void SharedWorldModel::updateNoObs(int rid)
     temp = I;
     temp -= K1*H1;
     P = temp*P;
-}
-
-int SharedWorldModel::findClosestRobot()
-{
-	float min = INFINITY;
-	int index = 0;
-
-	for(int i = 0; i < numOfRobots; i++)
-	{
-		if(bd[i] < min && bd[i] != INIT_VALUE)
-		{
-			min = bd[i];
-			index = i;
-		}
-	}
-
-	return index+1;
 }
 
 void SharedWorldModel::ReadFieldConf()

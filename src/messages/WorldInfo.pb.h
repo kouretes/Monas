@@ -235,17 +235,10 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   
   // accessors -------------------------------------------------------
   
-  // required uint32 playerClosestToBall = 1;
-  inline bool has_playerclosesttoball() const;
-  inline void clear_playerclosesttoball();
-  static const int kPlayerClosestToBallFieldNumber = 1;
-  inline ::google::protobuf::uint32 playerclosesttoball() const;
-  inline void set_playerclosesttoball(::google::protobuf::uint32 value);
-  
-  // repeated .TeammatePose teammatePosition = 2;
+  // repeated .TeammatePose teammatePosition = 1;
   inline int teammateposition_size() const;
   inline void clear_teammateposition();
-  static const int kTeammatePositionFieldNumber = 2;
+  static const int kTeammatePositionFieldNumber = 1;
   inline const ::TeammatePose& teammateposition(int index) const;
   inline ::TeammatePose* mutable_teammateposition(int index);
   inline ::TeammatePose* add_teammateposition();
@@ -254,10 +247,10 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::TeammatePose >*
       mutable_teammateposition();
   
-  // repeated .GlobalBall GlobalBalls = 3;
+  // repeated .GlobalBall GlobalBalls = 2;
   inline int globalballs_size() const;
   inline void clear_globalballs();
-  static const int kGlobalBallsFieldNumber = 3;
+  static const int kGlobalBallsFieldNumber = 2;
   inline const ::GlobalBall& globalballs(int index) const;
   inline ::GlobalBall* mutable_globalballs(int index);
   inline ::GlobalBall* add_globalballs();
@@ -268,17 +261,14 @@ class SharedWorldInfo : public ::google::protobuf::Message {
   
   // @@protoc_insertion_point(class_scope:SharedWorldInfo)
  private:
-  inline void set_has_playerclosesttoball();
-  inline void clear_has_playerclosesttoball();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::RepeatedPtrField< ::TeammatePose > teammateposition_;
   ::google::protobuf::RepeatedPtrField< ::GlobalBall > globalballs_;
-  ::google::protobuf::uint32 playerclosesttoball_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   friend void  protobuf_AddDesc_WorldInfo_2eproto();
   friend void protobuf_AssignDesc_WorldInfo_2eproto();
@@ -1086,29 +1076,7 @@ WorldInfo::mutable_balls() {
 
 // SharedWorldInfo
 
-// required uint32 playerClosestToBall = 1;
-inline bool SharedWorldInfo::has_playerclosesttoball() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void SharedWorldInfo::set_has_playerclosesttoball() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void SharedWorldInfo::clear_has_playerclosesttoball() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void SharedWorldInfo::clear_playerclosesttoball() {
-  playerclosesttoball_ = 0u;
-  clear_has_playerclosesttoball();
-}
-inline ::google::protobuf::uint32 SharedWorldInfo::playerclosesttoball() const {
-  return playerclosesttoball_;
-}
-inline void SharedWorldInfo::set_playerclosesttoball(::google::protobuf::uint32 value) {
-  set_has_playerclosesttoball();
-  playerclosesttoball_ = value;
-}
-
-// repeated .TeammatePose teammatePosition = 2;
+// repeated .TeammatePose teammatePosition = 1;
 inline int SharedWorldInfo::teammateposition_size() const {
   return teammateposition_.size();
 }
@@ -1133,7 +1101,7 @@ SharedWorldInfo::mutable_teammateposition() {
   return &teammateposition_;
 }
 
-// repeated .GlobalBall GlobalBalls = 3;
+// repeated .GlobalBall GlobalBalls = 2;
 inline int SharedWorldInfo::globalballs_size() const {
   return globalballs_.size();
 }
