@@ -301,7 +301,7 @@ int Behavior::Execute() {
 		
 		if(swim == 0) {
 			currentRole.role = FormationParameters::ONBALL;
-			goToPosition = true;
+			goToPositionFlag = true;
 		}
 			
 		updateOrientation();
