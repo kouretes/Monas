@@ -311,6 +311,7 @@ int Behavior::Execute() {
 		if(sharedBallFound == true) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1)) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f )) ) {
+				
 				/*
 				if(dist) {
 					dist = false;
@@ -550,11 +551,11 @@ void Behavior::Coordinate() {
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
 		}
 
-		print(roles, "Behavior");
+		//print(roles, "Behavior");
 		mappings = permutationsOfCombinations(roles, numOfRobots);
 		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
 		//print(mappings, "Behavior");
-		//roles.clear();
+		roles.clear();
 
 		// search for optimal mapping
 		maxU = 0;
