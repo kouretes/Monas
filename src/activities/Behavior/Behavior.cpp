@@ -266,7 +266,8 @@ int Behavior::Execute() {
 			std::cout << "==========================================" << std::endl;
 		}
 		dispTimer = microsec_clock::universal_time();
-	}*/
+	}
+	*/
 	
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
@@ -306,15 +307,10 @@ int Behavior::Execute() {
 			
 		updateOrientation();
 		readyToKick = false;
-		
-		if(lastFormation + seconds(1) < microsec_clock::universal_time())
-			gsmnext = true;
 			
-		if(gsmnext) {
 		if(sharedBallFound == true) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1)) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f )) ) {
-				
 				/*
 				if(dist) {
 					dist = false;
@@ -322,12 +318,12 @@ int Behavior::Execute() {
 				}
 				else if(gsmtime) {
 					gsmtime = false;
-					//gsmnext = false;
 					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
 				}
 				else
 					std::cout << "LAST FORMATION TIMER" << std::endl;
 				*/
+				
 				lastSharedBallX = SharedGlobalBallX;
 				lastSharedBallY = SharedGlobalBallY;
 				
@@ -346,7 +342,7 @@ int Behavior::Execute() {
 				goToPositionFlag = false;
 			}
 		}
-		}
+		
 
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
@@ -554,11 +550,11 @@ void Behavior::Coordinate() {
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
 		}
 
-		//print(roles, "Behavior");
+		print(roles, "Behavior");
 		mappings = permutationsOfCombinations(roles, numOfRobots);
 		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
 		//print(mappings, "Behavior");
-		roles.clear();
+		//roles.clear();
 
 		// search for optimal mapping
 		maxU = 0;
