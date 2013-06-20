@@ -179,6 +179,7 @@ void KccHandler::clickedImage(QMouseEvent *ev) {
 		undoVector.erase(undoVector.begin());
 
 	segImL->setPixmap(QPixmap::fromImage(segImage));
+	segImL->latestImgPix = QPixmap::fromImage(segImage);
 	segImL->show();
 }
 
@@ -207,6 +208,7 @@ void KccHandler::undoPressed() {
 		}
 
 		segImL->setPixmap(QPixmap::fromImage(segImage));
+		segImL->latestImgPix = QPixmap::fromImage(segImage);
 		segImL->show();
 	}
 }
@@ -312,6 +314,7 @@ void KccHandler::clearColorTable() {
 	undoVector.clear();
 	segImage.fill(0);
 	segImL->setPixmap(QPixmap::fromImage(segImage));
+	segImL->latestImgPix = QPixmap::fromImage(segImage);
 	segImL->show();
 	ui->pbUndo->setEnabled(false);
 
@@ -409,6 +412,7 @@ void KccHandler::segOpen() {
 	}
 
 	segImL->setPixmap(QPixmap::fromImage(segImage));
+	segImL->latestImgPix = QPixmap::fromImage(segImage);
 	segImL->show();
 	myReadFile.close();
 
