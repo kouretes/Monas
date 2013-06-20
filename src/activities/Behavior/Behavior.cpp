@@ -252,7 +252,7 @@ int Behavior::Execute() {
 	getPosition();
 	getMotionData();
 	getTeamPositions();
-
+	
 	/*
 	if(dispTimer + seconds(10) < microsec_clock::universal_time()) {
 		std::cout << "ROBOTS: "+_toString(numOfRobots) << std::endl;
@@ -266,8 +266,7 @@ int Behavior::Execute() {
 			std::cout << "==========================================" << std::endl;
 		}
 		dispTimer = microsec_clock::universal_time();
-	}
-	*/
+	}*/
 	
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
@@ -307,9 +306,13 @@ int Behavior::Execute() {
 			
 		updateOrientation();
 		readyToKick = false;
+		
+		if(lastFormation + seconds(1) < microsec_clock::universal_time())
+			gsmtime = false;
 			
 		if(sharedBallFound == true) {
-			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1)) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ||
+			if( (gsmtime == false && (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1))) || 
+				(lastFormation + seconds(10) < microsec_clock::universal_time()) || 
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f )) ) {
 				
 				/*
@@ -318,13 +321,12 @@ int Behavior::Execute() {
 					std::cout << "APOSTASH" << std::endl;
 				}
 				else if(gsmtime) {
-					gsmtime = false;
+					//gsmtime = false;
 					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
 				}
 				else
 					std::cout << "LAST FORMATION TIMER" << std::endl;
 				*/
-				
 				lastSharedBallX = SharedGlobalBallX;
 				lastSharedBallY = SharedGlobalBallY;
 				
@@ -485,7 +487,8 @@ int Behavior::Execute() {
 	}
 	else if (gameState == PLAYER_READY) {
 	 	
-	 	kickOff = gsm->kickoff();
+	 	if(gsm != 0 && gsm.get() != 0)
+	 		kickOff = gsm->kickoff();
 	 	
 	 	if(gameState != prevGameState) {	 	
 			fGen.XmlInitFormation(kickOff);
@@ -510,7 +513,8 @@ int Behavior::Execute() {
 	}
 	else if (gameState == PLAYER_SET) {
 		
-		kickOff = gsm->kickoff();
+		if(gsm != 0 && gsm.get() != 0)
+			kickOff = gsm->kickoff();
 		
 		if(gameState != prevGameState) {
 
