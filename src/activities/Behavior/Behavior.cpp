@@ -251,7 +251,7 @@ int Behavior::Execute() {
 	getMotionData();
 	getTeamPositions();
 
-	/*
+	
 	if(dispTimer + seconds(10) < microsec_clock::universal_time()) {
 		std::cout << "ROBOTS: "+_toString(numOfRobots) << std::endl;
 		std::cout << "==========================================" << std::endl;
@@ -265,7 +265,6 @@ int Behavior::Execute() {
 		}
 		dispTimer = microsec_clock::universal_time();
 	}
-	*/
 	
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
@@ -298,10 +297,10 @@ int Behavior::Execute() {
 			ballFound = bfm->ballfound();
 		}
 		
-//		if(swim == 0) {
-//			std::cout << "DEN VRHSKW SWIM" << std::endl;
-//			currentRole.role = FormationParameters::ONBALL;
-//		}
+		if(swim == 0) {
+			std::cout << "DEN VRHSKW SWIM" << std::endl;
+			currentRole.role = FormationParameters::ONBALL;
+		}
 			
 		updateOrientation();
 		readyToKick = false;
@@ -426,7 +425,11 @@ int Behavior::Execute() {
 
 			}
 			else { // role is not attacker
-				std::cout << "DEN EIMAI ATTACKER" << std::endl;
+				if(dispTimer + seconds(10) < microsec_clock::universal_time()) {
+					std::cout << "DEN EIMAI ATTACKER" << std::endl;
+					dispTimer = microsec_clock::universal_time();
+				}
+			
 				if(goToPositionFlag == false) {
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 						return 0;
@@ -512,7 +515,7 @@ int Behavior::Execute() {
 	}
 	else if(gameState == PLAYER_PENALISED) {
 		
-		if(fGen.getFormation() == NULL)
+		if(fGen.getFormation() == 0)
 			fGen.InitXml(config.maxPlayers, kickOff);
 			
 		if(gameState != prevGameState) {
@@ -532,7 +535,7 @@ void Behavior::Coordinate() {
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
 		}
 
-		//print(roles, "Behavior");
+		print(roles, "Behavior");
 		mappings = permutationsOfCombinations(roles, numOfRobots);
 		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
 		//print(mappings, "Behavior");
@@ -648,6 +651,7 @@ void Behavior::getBallData() {
 	}
 
 	if(swim != 0 && swim.get() != 0 && swim->globalballs_size() > 0) {
+		std::cout << "MPIIIIIIIIIIIIIIIIIIIIIIIIKA!!!!!!!!!!" << std::endl;
 		SharedGlobalBallX = swim->globalballs(0).x();
 		SharedGlobalBallY = swim->globalballs(0).y();
 		SharedBallBearing = atan2(SharedGlobalBallY, SharedGlobalBallX);
@@ -784,31 +788,6 @@ void Behavior::velocityWalk(double ix, double iy, double it, double f) {
 	y = iy;
 	t = it;
 
-	// BEGIN - Basic Obstacle Avoidance Code
-	if ( (om != 0) && (config.playerNumber == 2) ) {
-		if ( (om->distance(2) <= 0.4) && (om->distance(0) <= 0.4) ) {
-			if (x > 0.0) {
-				x = 0.0;
-				t = 0.0;
-			}
-		}
-		else if (om->distance(2) <= 0.4) {
-			if (x > 0.0) {
-				x = 0.0;
-				y = 0.5;
-				t = 0.0;
-			}
-		}
-		else if (om->distance(0) <= 0.4) {
-			if (x > 0.0) {
-				x = 0.0;
-				y = -0.5;
-				t = 0.0;
-			}
-		}
-	}
-
-	// END - Basic Obstacle Avoidance Code
 	wmot.set_command("setWalkTargetVelocity");
 
 	if ( (x == 0.0) && (y == 0.0) && (t == 0.0) ) {
@@ -876,9 +855,7 @@ void Behavior::approachBall() {
     }
 }
 
-void Behavior::stopRobot()
-{
-	// velocityWalk(0.0, 0.0, 0.0, 1.0);
+void Behavior::stopRobot() {
 	amot.set_command("InitPose.xar");
 	_blk.publishSignal(amot, "motion");
 }
