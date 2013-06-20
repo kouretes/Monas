@@ -201,7 +201,6 @@ void SharedWorldModel::gather_info(){
     tPose.set_stability(stab);
 
     swi.add_teammateposition();
-    LogEntry(LogLevel::Info, GetName()) << "Count: "  << (count);
     swi.mutable_teammateposition(count)->CopyFrom(tPose);
 }
 
