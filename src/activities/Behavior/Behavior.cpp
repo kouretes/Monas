@@ -301,14 +301,14 @@ int Behavior::Execute() {
 
 		updateOrientation();
 		readyToKick = false;
-		
+
 		if(sharedBallFound == true) {
 			//std::cout << "SHARED FOUND" << std::endl;
 			if( (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1) || (lastFormation + seconds(10) < microsec_clock::universal_time()) ) {
-				
+
 				//if(gsm!=0)
 					//std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
-					
+
 				//std::cout << "TIME: "+_toString(count++) << std::endl;
 
 				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
@@ -333,7 +333,7 @@ int Behavior::Execute() {
 		// Publish message to head controller to run check for ball
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
 		_blk.publishState(hcontrol, "behavior");
-		
+
 		if(config.playerNumber == 1) { // goalie role if number 1
 			if(formationFlag == true) {
 				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
@@ -439,7 +439,7 @@ int Behavior::Execute() {
 						robotStopped = true;
 						stopRobot();
 					}
-						
+
 				}
 				else if(sharedBallFound == 1) {
 					direction = (SharedBallBearing > 0) ? 1 : -1;
@@ -460,7 +460,7 @@ int Behavior::Execute() {
 		} // not goalie behavior end
 	}
 	else if (gameState == PLAYER_READY) {
-	 	
+
 	 	if(gameState != prevGameState)
 		{
 			if(prevGameState != PLAYER_PLAYING) {
@@ -691,20 +691,6 @@ void Behavior::sendDebugMessages() {
 }
 
 /* -------------------------------------------------------------------------------------------------------------------- */
-
-bool Behavior::closestRobot() {
-
-	if(swim != 0 && swim.get() != 0) {
-        if(swim->playerclosesttoball() == config.playerNumber) {
-            return true;
-        }
-        else {
-            return false;
-        }
-	}
-	else
-		return true;
-}
 
 void Behavior::updateOrientation() {
 
