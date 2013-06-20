@@ -75,6 +75,7 @@ void PathPlanning::Reset() {
 	SonarsMaxDist = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.SonarsMaxDist").c_str());
 	SonarsConeInDegs = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.SonarsConeInDegs").c_str());
 	updateObstacles = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.ObstaclesUpdate").c_str()) == 1? true : false;
+	checkForReachableTarget = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.CheckForReachableTarget").c_str()) == 1? true : false;
 }
 
 int PathPlanning::Execute() {
@@ -366,7 +367,7 @@ void PathPlanning::aStar () {
 					newX = currentX + dx;
 				}
 				
-				if (newX < 0 || newX >= aStarRadiusCells || pathMap (newX, newY) > 0.3f) {
+				if (newX < 0 || newX >= aStarRadiusCells || (pathMap (newX, newY) > 0.3f && (checkForReachableTarget || newX != aStarTargetR || newY != aStarTargetC))){
 					continue;
 				}
 
@@ -484,12 +485,16 @@ inline void PathPlanning::updateH (node *n) {
 
 bool PathPlanning::targetReachable (int x, int y) {
 	//Apla elegxw se mia seira an einai reachable to target
-	int y_plus_one = (y + 1 == aStarCircleCells ) ? 0 : y + 1;
-	int y_minus_one = (y - 1 == -1) ? aStarCircleCells - 1 : y - 1;
-	LogEntry(LogLevel::Info, GetName()) << "x = " << x << " y = " << y << " y_plus = " << y_plus_one << " y_minus = " << y_minus_one;
-	return pathMap (x, y) <= 0.3f && ( (x < (pathMap.getRadiusCells() - 1) && (pathMap (x + 1, y) <= 0.3f || pathMap (x + 1, y_plus_one) <= 0.3f || pathMap (x + 1, y - 1) <= 0.3f) )
-	        || pathMap (x, y_plus_one) <= 0.3f
-	        || (x > 0 && (pathMap (x - 1, y_plus_one) <= 0.3f || pathMap (x - 1, y) <= 0.3f || (x < (pathMap.getRadiusCells() - 1) && pathMap (x + 1, y_minus_one) <= 0.3f)) )
-	        || pathMap (x, y_minus_one) <= 0.3f);
+	if(checkForReachableTarget == true){
+		int y_plus_one = (y + 1 == aStarCircleCells ) ? 0 : y + 1;
+		int y_minus_one = (y - 1 == -1) ? aStarCircleCells - 1 : y - 1;
+		LogEntry(LogLevel::Info, GetName()) << "x = " << x << " y = " << y << " y_plus = " << y_plus_one << " y_minus = " << y_minus_one;
+		return pathMap (x, y) <= 0.3f && ( (x < (pathMap.getRadiusCells() - 1) && (pathMap (x + 1, y) <= 0.3f || pathMap (x + 1, y_plus_one) <= 0.3f || pathMap (x + 1, y - 1) <= 0.3f) )
+			    || pathMap (x, y_plus_one) <= 0.3f
+			    || (x > 0 && (pathMap (x - 1, y_plus_one) <= 0.3f || pathMap (x - 1, y) <= 0.3f || (x < (pathMap.getRadiusCells() - 1) && pathMap (x + 1, y_minus_one) <= 0.3f)) )
+			    || pathMap (x, y_minus_one) <= 0.3f);
+	}else{
+		return true;
+	}
 }
 ACTIVITY_END

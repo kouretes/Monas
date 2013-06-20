@@ -103,7 +103,7 @@ private:
 	bool firstTime;
 	//Obstacles
 	bool updateObstacles;
-
+	bool checkForReachableTarget;
 	//Sonars preferences
 	float SonarsMinDist;
 	float SonarsMaxDist;
