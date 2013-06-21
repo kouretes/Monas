@@ -51,6 +51,16 @@ void LedHandler::UserInit()
 	left_ear_names.push_back("Ears/Led/Left/252Deg/Actuator/Value");
 	left_ear_names.push_back("Ears/Led/Left/288Deg/Actuator/Value");
 	left_ear_names.push_back("Ears/Led/Left/324Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/0Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/36Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/72Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/108Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/144Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/180Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/216Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/252Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/288Deg/Actuator/Value");
+	right_ear_names.push_back("Ears/Led/Right/324Deg/Actuator/Value");
 
 	try
 	{
@@ -71,7 +81,6 @@ void LedHandler::Reset(){
 
 int LedHandler::Execute()
 {
-
 	std::vector<msgentry> msg = EndPoint::remove();
 	std::vector<msgentry>::iterator it = msg.begin();
 
@@ -98,7 +107,6 @@ int LedHandler::Execute()
 void LedHandler::SetBatteryLevel()
 {
 	static bool firstRun = true;
-
 	if (firstRun)
 	{
 		LogEntry(LogLevel::Info,GetName()) << "Real Battery level: " <<(battery_level);
@@ -109,18 +117,6 @@ void LedHandler::SetBatteryLevel()
 			battery_level = left_ear_names.size() - 1;
 
 		LogEntry(LogLevel::Info,GetName()) << "Reversed Battery level: " << (battery_level);
-
-		for(unsigned int i = 0; i < left_ear_names.size(); i++)
-		{
-			if(i <= battery_level)
-				leds->callVoid<string>("on", left_ear_names[i]);
-			else
-				leds->callVoid<string>("off", left_ear_names[i]);
-
-			LogEntry(LogLevel::Info,GetName())
-				<< "Seting  Battery level: " << (left_ear_names[i])
-				<< " " << ((i <= battery_level) ? 1 : 0);
-		}
 
 		firstRun = false;
 	}
@@ -159,7 +155,16 @@ void LedHandler::SetBatteryLevel()
 	last_ledchange = microsec_clock::universal_time();
 	static bool ledonoff = false;
 	ledonoff = !ledonoff;
-	leds->callVoid<string>((ledonoff) ? "on" : "off", left_ear_names[battery_level]);
+	for(unsigned int i = 0; i < left_ear_names.size(); i++)
+	{
+		leds->callVoid<string>("off", right_ear_names[i]);
+		if(i < battery_level)
+			leds->callVoid<string>("on", left_ear_names[i]);
+		else if(i == battery_level)
+			leds->callVoid<string>( (ledonoff) ? "on" : "off", left_ear_names[i] );
+		else
+			leds->callVoid<string>("off", left_ear_names[i]);
+	}
 }
 
 

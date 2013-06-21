@@ -9,7 +9,7 @@
 <AStarQueueReservation>1200</AStarQueueReservation>
 <!--Obstacles-->
 <ObstaclesUpdate>1.0</ObstaclesUpdate>
-<CheckForReachableTarget>0.0f</CheckForReachableTarget>
+<CheckForReachableTarget>0.0</CheckForReachableTarget>
 <!--Sonars-->
 <SonarsMinDist>0.31</SonarsMinDist>
 <SonarsMaxDist>2.0</SonarsMaxDist>
