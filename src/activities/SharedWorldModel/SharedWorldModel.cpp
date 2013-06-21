@@ -263,13 +263,13 @@ void SharedWorldModel::update(int rid)
 
     H2.get(3,rid*3) = -cos(phi);
     H2.get(3,rid*3+1) = -sin(phi);
-    H2.get(3,rid*3+2) = (rx-bx)*sin(phi)+(by-ry)*cos(phi);
+//    H2.get(3,rid*3+2) = (rx-bx)*sin(phi)+(by-ry)*cos(phi);
     H2.get(3,dim-2) = cos(phi);
     H2.get(3,dim-1) = sin(phi);
 
     H2.get(4,rid*3) = sin(phi);
     H2.get(4,rid*3+1) = -cos(phi);
-    H2.get(4,rid*3+2) = (rx-bx)*cos(phi)-(by-ry)*sin(phi);
+//    H2.get(4,rid*3+2) = (rx-bx)*cos(phi)-(by-ry)*sin(phi);
     H2.get(4,dim-2) = -sin(phi);
     H2.get(4,dim-1) = cos(phi);
 
