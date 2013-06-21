@@ -285,7 +285,6 @@ int Behavior::Execute() {
 		}
 		
 		if(swim == 0) {
-			
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
 		}
@@ -294,8 +293,8 @@ int Behavior::Execute() {
 		readyToKick = false;
 	
 		if(sharedBallFound == true) {
-			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%2 == 1)) || 
-				(lastFormation + seconds(2) < microsec_clock::universal_time()) || 
+			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%60 == 1)) || 
+				(lastFormation + seconds(60) < microsec_clock::universal_time()) || 
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
 				
 				
@@ -327,12 +326,12 @@ int Behavior::Execute() {
 				if(!gameMode){
 					sendDebugMessages();
 				}
-				lastFormation = microsec_clock::universal_time();
 
 				if(config.playerNumber != 1)
 					Coordinate();
 
 				goToPositionFlag = false;
+				lastFormation = microsec_clock::universal_time();
 			}
 		}
 		
@@ -372,6 +371,8 @@ int Behavior::Execute() {
 					
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL FOUND";
 					
+					goToPosition = true;
+		            
 		            lastBallFound = microsec_clock::universal_time();
 					side = (ballBearing > 0) ? 1 : -1;
 
@@ -667,7 +668,7 @@ void Behavior::getBallData() {
 	if(swim != 0 && swim.get() != 0 && swim->globalballs_size() > 0) {
 		SharedGlobalBallX = swim->globalballs(0).x();
 		SharedGlobalBallY = swim->globalballs(0).y();
-		SharedBallBearing = atan2(SharedGlobalBallY, SharedGlobalBallX);
+		SharedBallBearing = atan2(SharedGlobalBallY - robotY, SharedGlobalBallX - robotX);
 		sharedBallFound = true;
 	}
 	else
