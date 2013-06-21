@@ -252,22 +252,7 @@ int Behavior::Execute() {
 	getPosition();
 	getMotionData();
 	getTeamPositions();
-	
-	/*
-	if(dispTimer + seconds(10) < microsec_clock::universal_time()) {
-		std::cout << "ROBOTS: "+_toString(numOfRobots) << std::endl;
-		std::cout << "==========================================" << std::endl;
-		for(int i = 0 ; i < robots.size() ; i++) {
-			std::cout << "Id: "+_toString(robots[i].robotId) << std::endl;
-			std::cout << "X: "+_toString(robots[i].robotX) << std::endl;
-			std::cout << "Y: "+_toString(robots[i].robotY) << std::endl;
-			std::cout << "Phi: "+_toString(robots[i].robotPhi) << std::endl;
-			std::cout << "Stab: "+_toString(robots[i].robotStability) << std::endl;
-			std::cout << "==========================================" << std::endl;
-		}
-		dispTimer = microsec_clock::universal_time();
-	}*/
-	
+
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -300,6 +285,7 @@ int Behavior::Execute() {
 		}
 		
 		if(swim == 0) {
+			
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
 		}
@@ -315,25 +301,32 @@ int Behavior::Execute() {
 				(lastFormation + seconds(10) < microsec_clock::universal_time()) || 
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f )) ) {
 				
-				/*
+				
 				if(dist) {
 					dist = false;
-					std::cout << "APOSTASH" << std::endl;
+					LogEntry(LogLevel::Info, GetName()) << "DISTANCE";
 				}
 				else if(gsmtime) {
-					//gsmtime = false;
-					std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
+					LogEntry(LogLevel::Info, GetName()) << "GSM SECS REMAINING: " << _toString(gsm->secs_remaining());
 				}
 				else
-					std::cout << "LAST FORMATION TIMER" << std::endl;
-				*/
+					LogEntry(LogLevel::Info, GetName()) << "LAST FORMATION TIMER";
+				
+				LogEntry(LogLevel::Info, GetName()) << "ROBOTS: "+_toString(numOfRobots);
+				LogEntry(LogLevel::Info, GetName()) << "==========================================";
+				for(int i = 0 ; i < robots.size() ; i++) {
+					LogEntry(LogLevel::Info, GetName()) << "Id: "+_toString(robots[i].robotId);
+					LogEntry(LogLevel::Info, GetName()) << "X: "+_toString(robots[i].robotX);
+					LogEntry(LogLevel::Info, GetName()) << "Y: "+_toString(robots[i].robotY);
+					LogEntry(LogLevel::Info, GetName()) << "Phi: "+_toString(robots[i].robotPhi);
+					LogEntry(LogLevel::Info, GetName()) << "Stab: "+_toString(robots[i].robotStability);
+					LogEntry(LogLevel::Info, GetName()) << "==========================================";
+				}
+				
 				lastSharedBallX = SharedGlobalBallX;
 				lastSharedBallY = SharedGlobalBallY;
 				
-				//if(gsm!=0)
-					//std::cout << "SECS REMAINING: " << _toString(gsm->secs_remaining()) << std::endl;
-
-				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true); // if shared world ball does not exist??? TODO
+				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true);
 				if(!gameMode){
 					sendDebugMessages();
 				}
@@ -369,8 +362,9 @@ int Behavior::Execute() {
 		else { // not goalie behavior
 
 			if(currentRole.role == FormationParameters::ONBALL) {
-
+				
 				if(goToPositionFlag == false && ballFound == 0) {
+					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: GO TO POSITION";
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false) {
 						return 0;
 					}
@@ -378,7 +372,9 @@ int Behavior::Execute() {
 						goToPositionFlag = true;
 				}
 				else if(ballFound == 1) {
-
+					
+					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL FOUND";
+					
 		            lastBallFound = microsec_clock::universal_time();
 					side = (ballBearing > 0) ? 1 : -1;
 
@@ -404,7 +400,9 @@ int Behavior::Execute() {
 					}
 				}
 				else if(ballFound == 0) {
-
+					
+					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL NOT FOUND";
+					
 					if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
 						scanAfterKick = false;
 						stopRobot();
@@ -445,8 +443,9 @@ int Behavior::Execute() {
 
 			}
 			else { // role is not attacker
-			
+				
 				if(goToPositionFlag == false) {
+					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: GO TO POSITION";
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 						return 0;
 					else
@@ -456,6 +455,7 @@ int Behavior::Execute() {
                     	pathPlanningRequestRelative(3.0, 0.0, 0.0);
 				}
 				else if(ballFound == 1) {
+					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: BALL FOUND";
 					direction = (ballBearing > 0) ? 1 : -1;
 					if(fabs(ballBearing) > M_PI/6) {
 						littleWalk(0.0, 0.0, ballBearing);
@@ -468,6 +468,7 @@ int Behavior::Execute() {
 
 				}
 				else if(sharedBallFound == 1) {
+					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: SHARED BALL FOUND";
 					direction = (SharedBallBearing > 0) ? 1 : -1;
 					if(fabs(SharedBallBearing) > M_PI/6) {
 						littleWalk(0.0, 0.0, SharedBallBearing);
@@ -479,6 +480,7 @@ int Behavior::Execute() {
 					}
 				}
 				else if(ballFound == 0 && sharedBallFound == 0) {
+					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 				}
 			}
@@ -517,17 +519,16 @@ int Behavior::Execute() {
 			kickOff = gsm->kickoff();
 		
 		if(gameState != prevGameState) {
-
 			// Reset Loc
 			locReset.set_type(LocalizationResetMessage::SET);
 			locReset.set_kickoff(kickOff);
 			_blk.publishSignal(locReset, "worldstate");
-
-			stopRobot();
 		}
 		
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(hcontrol, "behavior");
+		
+		stopRobot();
 	}
 	else if(gameState == PLAYER_PENALISED) {
 		
@@ -590,9 +591,9 @@ void Behavior::Coordinate() {
 		}
 
 		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
-		//std::cout << "OPTIMAL MAP IS: ";
-		//print(mappings[index], "Behavior");
-		//std::cout << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role) << std::endl;
+		LogEntry(LogLevel::Info, GetName()) << "OPTIMAL MAP IS: ";
+		print(mappings[index], "Behavior");
+		LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
 }
 
 /**
