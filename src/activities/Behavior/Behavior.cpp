@@ -371,7 +371,7 @@ int Behavior::Execute() {
 					
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL FOUND";
 					
-					goToPosition = true;
+					goToPositionFlag = true;
 		            
 		            lastBallFound = microsec_clock::universal_time();
 					side = (ballBearing > 0) ? 1 : -1;
