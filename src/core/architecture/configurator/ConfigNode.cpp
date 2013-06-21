@@ -140,7 +140,7 @@ string ConfigNode::findValueForKey(string key)
 	ConfigNode * secondtolast = findSecondToLastNodeForKey(keys);
 
 	if(secondtolast == NULL)
-		return "";
+		return "0.0";
 
 	//Last processing, is it an attribute?
 	string lastkey = keys.front();
@@ -157,7 +157,7 @@ string ConfigNode::findValueForKey(string key)
 
 	if(secondtolast->kids.find(lastkey) == secondtolast->kids.end() ||
 	        (*secondtolast->kids.find(lastkey)).second.size() <= pos)
-		return "";
+		return "0.0";
 	else
 		return (*secondtolast->kids.find(lastkey)).second[pos].text;
 }
