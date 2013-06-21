@@ -214,9 +214,9 @@ void SharedWorldModel::predict()
 
     for(int i = 0; i < numOfRobots*3; i++)
 	{
-        Q.get(i,i) = QRdevx*dtsqrd*10;
-        Q.get(i+1,i+1) = QRdevy*dtsqrd*10;
-        Q.get(i+2,i+2) = QRdevtheta*dtsqrd*10;
+        Q.get(i,i) = QRdevx*dtsqrd*100;
+        Q.get(i+1,i+1) = QRdevy*dtsqrd*100;
+        Q.get(i+2,i+2) = QRdevtheta*dtsqrd*100;
 	}
 
     Q.get(dim-2,dim-2) = (vara*dtsqrd*dtsqrd/4.0)/100;
