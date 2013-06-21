@@ -292,14 +292,11 @@ int Behavior::Execute() {
 			
 		updateOrientation();
 		readyToKick = false;
-		
-		if(lastFormation + seconds(1) < microsec_clock::universal_time())
-			gsmtime = false;
-			
+	
 		if(sharedBallFound == true) {
-			if( (gsmtime == false && (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%10 == 1))) || 
-				(lastFormation + seconds(10) < microsec_clock::universal_time()) || 
-				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f )) ) {
+			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%2 == 1)) || 
+				(lastFormation + seconds(2) < microsec_clock::universal_time()) || 
+				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
 				
 				
 				if(dist) {
@@ -888,6 +885,7 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 
 	// TODO if the robot make it to position, stop checking for distance and check only orientation!
 	if(targetDistance > 0.25) {
+		LogEntry(LogLevel::Info, GetName()) << "THELW NA PAW STH THESH: " << targetX << ", " << targetY;
 		pathPlanningRequestRelative(toCartesianX(targetDistance, targetAngle),
 		                            toCartesianY(targetDistance, targetAngle),
 		                            targetOrientation);

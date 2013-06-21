@@ -234,7 +234,7 @@ void PathPlanning::commitMovement(){
 	 
 	int lastElement = pathFromAStar.size()-1;
 	if(pathFromAStar.at(lastElement).z > aStarDirections/8 && pathFromAStar.at(lastElement).z < aStarDirections-aStarDirections/8 || pathFromAStar.size() == 1){
-		float phiSpeed = KMath::sign(KMath::wrapToPi(pathFromAStar.at(0).z*aStarTransformation)/M_PI);
+		float phiSpeed = KMath::sign(KMath::wrapToPi(pathFromAStar.at(lastElement).z*aStarTransformation)/M_PI);
 		velocityWalk(0.0f,0.0f,phiSpeed,1.0f);
 		LogEntry(LogLevel::Info, GetName()) << "PathPlanning Commit Move 1 phiSpeed = " << phiSpeed;
 	}else{
