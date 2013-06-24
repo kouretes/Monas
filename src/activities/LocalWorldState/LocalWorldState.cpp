@@ -140,7 +140,6 @@ int LocalWorldState::Execute()
 	    _blk.publishData(MyWorld, "external");
 
 	MyWorld.set_stability(stability);
-
 	calculateBallEstimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
@@ -192,10 +191,10 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
         dx = aball.dist() * cos(aball.bearing());
         dy = aball.dist() * sin(aball.bearing());
     
-        gx = agentPosition.x + dx * cos(agentPosition.phi) - dy * sin(agentPosition.phi);
-        gy = agentPosition.y + dx * sin(agentPosition.phi) + dy * cos(agentPosition.phi);
+        gx = AgentPosition.x + dx * cos(AgentPosition.phi) - dy * sin(AgentPosition.phi);
+        gy = AgentPosition.y + dx * sin(AgentPosition.phi) + dy * cos(AgentPosition.phi);
 
-        if ( fabs(gx) < locConfig.fieldMaxX + 3 && fabs(gy) < locConfig.fieldMaxY + 3) {
+        if ( fabs(gx) < locConfig.fieldMaxX + 2 && fabs(gy) < locConfig.fieldMaxY + 2) {
 		    ballseen = true;
             observationTime = now;
 		    if (MyWorld.balls_size() < 1)
