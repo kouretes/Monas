@@ -9,19 +9,8 @@
 
 BallFilter::BallFilter()
 {
-//	dist_filter.init(1.0f);
-//	dist_filter.reset(3, 10);
-//	dir_filter.init(KMat::transformations::PI);
-//	dir_filter.reset(0, KMat::transformations::PI);
-
-	x_filter.init(10.0f);
-	y_filter.init(10.0f);
-	x_filter.reset(3,4);
-	y_filter.reset(0,4);
-
-
-	filtered_ball.set_relativex(3);
-	filtered_ball.set_relativey(0);
+    state.zero();
+    var.zero();
 }
 
 BallFilter::~BallFilter()
@@ -30,104 +19,148 @@ BallFilter::~BallFilter()
 }
 
 //Update the position
-Ball BallFilter::get_updated_ball_estimate(float new_dist, float dist_variance, float new_dir, float dir_variance)
-{ 	//dt seconds
+void BallFilter::update(float distance, float distVariance, float bearing, float bearVariance)
+{ 	
+    matrix2_1 obs,diff;
+    matrix2_2 qt,st,stInv;
+    matrix4_2 kt;
+    matrix4_4 identityM;
+    matrix2_4 ht;
 
-	float new_x = new_dist * cos(new_dir);
-	float new_y = new_dist * sin(new_dir);
+    ht.zero();
+    obs.zero();
+    qt.zero();
+    st.zero();
+    diff.zero();
 
-	KMath::Kalman1D<float>::Xbar x_dist = x_filter.update(new_x, dist_variance);
-	KMath::Kalman1D<float>::Xbar y_dist = y_filter.update(new_y, dist_variance);
+    qt(0,0) = 0.2;
+    qt(1,1) = 0.1;
 
+    obs(0) = distance * cos(bearing);
+    obs(1) = distance * sin(bearing);
 
+    ht(0,0) = 1;
+    ht(0,1) = 0;
+    ht(0,2) = 0;
+    ht(0,3) = 0;
+  
+    ht(1,0) = 0;
+    ht(1,1) = 1;
+    ht(1,2) = 0;
+    ht(1,3) = 0;
 
-//	Kalman1D<float>::Xbar dist = dist_filter.update(new_dist, dist_variance, dt);
-//	Kalman1D<float>::Xbar dir = dir_filter.update(new_dir, dir_variance, dt);
+    st = ((ht.slow_mult(var)).slow_mult(ht.transp())).add(qt);
 
-//	filtered_ball.set_relativex(dist(0) * cos(dir(0)));
-//	filtered_ball.set_relativey(dist(0) * sin(dir(0)));
-//
-//	filtered_ball.set_relativexspeed((dist(0) + dist(1)) * cos(dir(0) + dir(1)) - filtered_ball.relativex());
-//	filtered_ball.set_relativeyspeed((dist(0) + dist(1)) * sin(dir(0) + dir(1)) - filtered_ball.relativey());
+    stInv = st;
+    invert_square_matrix(stInv);
 
-	filtered_ball.set_relativex(x_dist(0));
-	filtered_ball.set_relativey(y_dist(0));
+    diff(0,0) = obs(0,0) - state(0,0);
+    diff(1,0) = obs(1,0) - state(1,0);
+   
+    //diff.prettyPrint();
+    kt = (var.slow_mult(ht.transp())).slow_mult(stInv);
+    //kt.prettyPrint();
+    state = state.add(kt.slow_mult(diff));
+    var = ((identityM.identity().sub(kt.slow_mult(ht)))).slow_mult(var);
 
-	filtered_ball.set_relativexspeed(x_dist(1));
-	filtered_ball.set_relativeyspeed(y_dist(1));
-
-	return filtered_ball;
+    //state.prettyPrint();
 }
 
 //Predict the position without observations and robots Motion Model
-Ball BallFilter::get_predicted_ball_estimate(float dt, Localization::KMotionModel const & MM)
+void BallFilter::predict(float dt, Localization::KMotionModel const & MM)
 {
 
-	double tmpDist, tmpDir, tmpRot, speedX, speedY, newx, newy, newx2, newy2;
+	double tmpDist, tmpDir, tmpRot;
+    double acc = -0.15,vel;
 
-	tmpDist = MM.Distance.val * (MM.Distance.ratiomean);
-	tmpDist/=1000;
-	tmpDir = MM.Direction.val + MM.Direction.Emean;
-	tmpRot = - (MM.Rotation.val + MM.Rotation.Emean); //We turn on the other way the robot turns
+	tmpDist = MM.Distance.val;
+	tmpDir = MM.Direction.val;
+	tmpRot = MM.Rotation.val;
 
-	KMath::Kalman1D<float>::Xbar x_dist = x_filter.read();
-	KMath::Kalman1D<float>::Xbar y_dist = y_filter.read();
+    matrix4_4 gt;
+    matrix4_4 fict;
+    gt.zero();
+    fict.zero();
+
+    fict(0,0) = 0.1 * dt;
+    fict(1,1) = 0.1 * dt;
+    fict(2,2) = 0.01 * dt;
+    fict(3,3) = 0.01 * dt;
+
+    //Velocity_t-1
+    vel = sqrt(pow(state(2,0),2) + pow(state(3,0),2));
+
+    gt(0,0) = cos(tmpRot);
+    gt(0,1) = sin(tmpRot);
+    gt(0,2) = dt * cos(tmpRot);
+    gt(0,3) = dt * sin(tmpRot);
+
+    gt(1,0) = -sin(tmpRot);
+    gt(1,1) = cos(tmpRot);
+    gt(1,2) = -dt*sin(tmpRot);
+    gt(1,3) = dt*cos(tmpRot);
+
+
+    if (fabs(vel) > fabs(acc * dt)){
+        gt(2,2) = (1+acc*dt/vel)*cos(tmpRot) - (acc*dt*state(2,0)*(cos(tmpRot) * state(2,0) + sin(tmpRot)*state(3,0)))/pow(vel,3);
+        gt(2,3) = (1+acc*dt/vel)*sin(tmpRot) - (acc*dt*state(3,0)*(cos(tmpRot) * state(2,0) + sin(tmpRot)*state(3,0)))/pow(vel,3);
+    }else{
+        gt(2,2) = cos(tmpRot);
+        gt(2,3) = sin(tmpRot);
+    }
+
+    if (fabs(vel)  > fabs(acc * dt)){
+        gt(3,2) = -(1+acc*dt/vel)*sin(tmpRot) - (acc*dt*state(2,0)*(-sin(tmpRot) * state(2,0) + cos(tmpRot)*state(3,0)))/pow(vel,3);
+        gt(3,3) = (1+acc*dt/vel)*cos(tmpRot) - (acc*dt*state(3,0)*(-sin(tmpRot) * state(2,0) + cos(tmpRot)*state(3,0)))/pow(vel,3);
+    }else{
+        gt(3,2) = -sin(tmpRot);
+        gt(3,3) = cos(tmpRot);;
+    }
 
 	//Translation
-	newx = x_dist(0) - cos(tmpDir)*tmpDist;
-	newy = y_dist(0) - sin(tmpDir)*tmpDist;
+	state(0,0) = state(0,0) - cos(tmpDir)*tmpDist;
+	state(1,0) = state(1,0) - sin(tmpDir)*tmpDist;
 
-	//Rotate point
-	newx2 = newx*cos(tmpRot) - newy*sin(tmpRot);
-	newy2 = newx*sin(tmpRot) + newy*cos(tmpRot);
+	//Rotate position
+	state(0,0) = state(0,0)*cos(tmpRot) + state(1,0)*sin(tmpRot);
+	state(1,0) = -state(0,0)*sin(tmpRot) + state(1,0)*cos(tmpRot);
 
-	//Rotate speed vector
-	speedX = x_dist(1)*cos(tmpRot) - y_dist(1)*sin(tmpRot);
-	speedY = x_dist(1)*sin(tmpRot) + y_dist(1)*cos(tmpRot);
+	//Rotate speed 
+	state(2,0) = state(2,0)*cos(tmpRot) + state(3,0)*sin(tmpRot);
+	state(3,0) = -state(2,0)*sin(tmpRot) + state(3,0)*cos(tmpRot);
 
-	if(fabs(speedX)<0.02) speedX=0;//2cm per second is the threshold according to RAUL ROJAS, MARK SIMON
-    if(fabs(speedY)<0.02) speedY=0;//2cm per second is the threshold according to RAUL ROJAS, MARK SIMON
-
-
-	x_filter.set(newx2, speedX);
-	y_filter.set(newy2, speedY);
-    //Again -0.35m/s is the deceleration found by RAUL ROJAS, MARK SIMON
-	x_dist = x_filter.predict_with_decel(dt,0.35);
-	y_dist = y_filter.predict_with_decel(dt,0.35);
+    state(0,0) =  state(0,0) + state(2,0) * dt;
+    state(1,0) =  state(1,0) + state(3,0) * dt;
 
 
-//	Kalman1D<float>::Xbar dist = dist_filter.predict(dt);
-//	Kalman1D<float>::Xbar dir = dir_filter.predict(dt);
-//
-//	filtered_ball.set_relativex(dist(0) * cos(dir(0)));
-//	filtered_ball.set_relativey(dist(0) * sin(dir(0)));
-//
-//	filtered_ball.set_relativexspeed((dist(0) + dist(1)) * cos(dir(0) + dir(1)) - filtered_ball.relativex());
-//	filtered_ball.set_relativeyspeed((dist(0) + dist(1)) * sin(dir(0) + dir(1)) - filtered_ball.relativey());
+    if (fabs(state(2,0))  > fabs(acc * state(2,0)/vel *dt)){
+        state(2,0) =  state(2,0) + acc * state(2,0)/vel *dt;
+    }
+    else{
+        state(2,0) =  0;
+    }
 
-	filtered_ball.set_relativex(x_dist(0));
-	filtered_ball.set_relativey(y_dist(0));
+    if (fabs(state(3,0))  > fabs(acc * state(3,0)/vel *dt)){
+        state(3,0) =  state(3,0) + acc * state(3,0)/vel *dt;
+    }
+    else{
+        state(3,0) =  0;
+    }
 
-	filtered_ball.set_relativexspeed(x_dist(1));
-	filtered_ball.set_relativeyspeed(y_dist(1));
+    var =((gt.slow_mult(var)).slow_mult(gt.transp())).add(fict);
 
-	return filtered_ball;
 }
 
 //Reseting the ball to new position
-void BallFilter::reset(float new_dist, float dist_variance, float new_dir, float dir_variance)
+void BallFilter::reset(float distance, float distVariance, float bearing, float bearVariance)
 {
+    state.zero();
+    state(0,0) = distance * cos(bearing);
+    state(1,0) = distance * sin(bearing);
 
-	float new_x = new_dist * cos(new_dir);
-	float new_y = new_dist * sin(new_dir);
-	x_filter.reset(new_x,10);
-	y_filter.reset(new_y,10);
-
-//	dist_filter.reset(new_dist, 10); //dist , speed variance in (m/s)^2
-//	dir_filter.reset(new_dir, KMat::transformations::PI);
-}
-
-float BallFilter::get_filter_variance() const
-{
-	return max(x_filter.readVariance()(0),y_filter.readVariance()(0));
+    var.zero();
+    var(0,0) = 0.5;
+    var(1,1) = 0.5;
+    var(2,2) = 0.1;
+    var(3,3) = 0.1;	
 }

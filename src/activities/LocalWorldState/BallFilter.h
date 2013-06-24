@@ -8,7 +8,6 @@
 #ifndef BALLFILTER_H_
 #define BALLFILTER_H_
 #include "messages/WorldInfo.pb.h"
-#include "tools/stat/kalman.h"
 #include "core/elements/math/KMat.hpp"
 #include "KLocalization.h"
 #include "LocalizationStructs.h"
@@ -18,23 +17,26 @@
 class BallFilter
 {
 	private:
-		Ball filtered_ball;
-//		Kalman1D<float> dist_filter;
-//		Kalman1D<float> dir_filter;
 
-		KMath::Kalman1D<float> x_filter;
-		KMath::Kalman1D<float> y_filter;
-
+        typedef KMath::KMat::GenMatrix<float,4,1> matrix4_1;
+        typedef KMath::KMat::GenMatrix<float,4,2> matrix4_2;
+        typedef KMath::KMat::GenMatrix<float,4,4> matrix4_4;
+        typedef KMath::KMat::GenMatrix<float,2,1> matrix2_1;
+        typedef KMath::KMat::GenMatrix<float,2,2> matrix2_2;
+        typedef KMath::KMat::GenMatrix<float,2,4> matrix2_4;
 
 	public:
+
+        // x,y,x',y'
+        matrix4_1 state;
+        matrix4_4 var; 
+
 		BallFilter();
 		virtual ~BallFilter();
 
-		Ball get_updated_ball_estimate(float new_dist, float dist_variance, float new_dir, float dir_variance);
-		Ball get_predicted_ball_estimate(float dt,Localization::KMotionModel const & MM);
-		void reset(float new_dist, float dist_variance, float new_dir, float dif_variance);
-		float get_filter_variance() const;
-
+		void update(float new_dist, float dist_variance, float new_dir, float dir_variance);
+		void predict(float dt,Localization::KMotionModel const & MM);
+		void reset(float dist, float distVariance, float bearing, float bearVariance);
 };
 
 #endif /* BALLFILTER_H_ */

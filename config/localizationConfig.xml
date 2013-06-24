@@ -12,7 +12,7 @@
 <port>9001</port>
 
 
-<EkfMaxHypothesis>16</EkfMaxHypothesis>
+<EkfMaxHypothesis>32</EkfMaxHypothesis>
 
 <!-- Enable/Disable Ekflocalization -->
 <EKFEnable>1</EKFEnable>

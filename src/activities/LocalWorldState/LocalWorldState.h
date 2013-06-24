@@ -48,7 +48,7 @@ public:
 	}
 
 	void RobotPositionMotionModel(Localization::KMotionModel & MModel);
-	void calculate_ball_estimate(Localization::KMotionModel const & MModel);
+	void calculateBallEstimate(Localization::KMotionModel const & MModel);
 
 private:
 	//check if the first odometry data had come

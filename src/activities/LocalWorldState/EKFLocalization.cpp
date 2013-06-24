@@ -6,7 +6,7 @@ void EKFLocalization::Initialize(){
 
     // Error Parameters
     e1 = 1.2f;
-    e2 = 0.5f;
+    e2 = 0.2f;
     e3 = 0.8f;
 
     kalmanModels.resize(32);
