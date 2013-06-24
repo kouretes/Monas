@@ -10,7 +10,7 @@
 
 
 #define NO_GAME
-#define MAX_TIME_TO_RESET 15 //in seconds
+#define MAX_TIME_TO_RESET 3 //in seconds
 
 using namespace std;
 using namespace KMath;
@@ -135,19 +135,18 @@ int LocalWorldState::Execute()
     MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
-
+    cout << "agent position : " << AgentPosition.x  <<" , " << AgentPosition.y << endl;
 
 	MyWorld.set_stability(stability);
 
-	calculate_ball_estimate(robotmovement);
+	calculateBallEstimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
 	if(gameMode == false){
         if (locConfig.ekfEnable == true){
 
             if ((boost::posix_time::microsec_clock::universal_time() > debugMessageTime + seconds(4)) || lrm != 0){
-
-                for (int i = 0; i < ekfLocalization.numberOfModels-1 ; i++)
+                for (int i = 0; i < ekfLocalization.numberOfModels - 1 ; i++)
 	            {
 		            if(ekfMHypothesis.kmodel_size() < (int)(i+1))
 			            ekfMHypothesis.add_kmodel();
@@ -172,117 +171,95 @@ int LocalWorldState::Execute()
 	return 0;
 }
 
-void LocalWorldState::calculate_ball_estimate(Localization::KMotionModel const & robotModel)
+void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & robotModel)
 {
 	boost::posix_time::time_duration duration;
-	boost::posix_time::ptime observation_time;
-	Ball nearest_filtered_ball, nearest_nofilter_ball;
+	boost::posix_time::ptime observationTime;
+
 	float dt;
-	bool ballseen = false;
+	bool ballseen = false;	
 
-	if (obsm.get())
-	{
-		observation_time = boost::posix_time::from_iso_string(obsm->image_timestamp());
-		//used for removing the ball if exceeds a threshold
+    //cout << " Ball position estimation " << endl;
+	if (obsm.get() && obsm->has_ball())
+	{   
+        //cout << " Ball observation " << endl;
+	    //used for removing the ball if exceeds a threshold
+		BallObject aball = obsm->ball();
+        float x = aball.dist() * cos(aball.bearing());
+        float y = aball.dist() * sin(aball.bearing());
 
-		if (obsm->has_ball())
-		{
-			ballseen = true;
+        if ( fabs(x) < locConfig.fieldMaxX + 3 && fabs(y) < locConfig.fieldMaxY + 3) {
+		    ballseen = true;
+            observationTime = now;
+		    if (MyWorld.balls_size() < 1)
+		    {
+                //cout << " Inserting new ball " << endl;
+			    MyWorld.add_balls();
+			    myBall.reset(aball.dist(), 0, aball.bearing(), 0);
+			    lastObservationTime = now;
+		    } else
+		    {
+                //Predict
+                //cout << " Ball exists.. Predict + update " << endl;
+			    duration = observationTime - lastObservationTime;
+			    lastObservationTime = now;
+			    dt = duration.total_microseconds() / 1000000.0f;
 
-			BallObject aball = obsm->ball();
-			nearest_nofilter_ball.set_relativex(aball.dist() * cos(aball.bearing()));
-			nearest_nofilter_ball.set_relativey(aball.dist() * sin(aball.bearing()));
-			nearest_nofilter_ball.set_relativexspeed(0.0);
-			nearest_nofilter_ball.set_relativeyspeed(0.0);
+			    if (dt > MAX_TIME_TO_RESET)
+			    {
+				    myBall.reset(aball.dist(), 0, aball.bearing(), 0);
+			    }
+                else{
+                    duration = observationTime - lastFilterTime;
+			        dt = duration.total_microseconds() / 1000000.0f;
+			        myBall.update(aball.dist(), 0.25 , aball.bearing(), 0.03);			    
+                    myBall.predict(dt,robotModel);        
+                }
+		    }
 
-			if (MyWorld.balls_size() < 1)
-			{
-				//Inserting new ball
-				MyWorld.add_balls();
-				myBall.reset(aball.dist(), 0, aball.bearing(), 0);
-				MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-				lastFilterTime = now;
-			} else
-			{
-				//Get estimate ball
-				//Update
-				duration = observation_time - lastFilterTime;
-				lastFilterTime = observation_time;
-				dt = duration.total_microseconds() / 1000000.0f;
-
-				float dist_var = 1.10 - tanh(1.8 / aball.dist()); //observation ... deviation ... leme twra
-				myBall.get_predicted_ball_estimate(dt,robotModel);
-				nearest_filtered_ball = myBall.get_updated_ball_estimate(aball.dist(), dist_var * dist_var, aball.bearing(), 0.03);
-
-				//Predict
-				duration = now - lastFilterTime;
-				lastFilterTime = now;
-				dt = duration.total_microseconds() / 1000000.0f;
-				nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt, robotModel);
-
-				float dx = nearest_filtered_ball.relativex() - nearest_nofilter_ball.relativex();
-				float dy = nearest_filtered_ball.relativey() - nearest_nofilter_ball.relativey();
-				float distance = distance = KMath::norm2(dx,dy);
-
-				//Check if we must reset the ball
-				duration = observation_time - lastObservationTime;
-				lastObservationTime = observation_time;
-				dt = duration.total_microseconds() / 1000000.0f;
-
-				if (dt > MAX_TIME_TO_RESET && distance > 0.5) //etc... dt > 5sec && distance > 2 m
-				{
-					myBall.reset(aball.dist(), 0, aball.bearing(), 0);
-					lastFilterTime = now;
-					MyWorld.mutable_balls(0)->CopyFrom(nearest_nofilter_ball);
-				} else
-					MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
-			}
-		}
+            lastFilterTime = now;
+            //cout << " Sending ball position and velocity " << endl;
+            //Create message
+            MyWorld.mutable_balls(0)->set_relativex(myBall.state(0,0));
+            MyWorld.mutable_balls(0)->set_relativey(myBall.state(1,0));
+        	MyWorld.mutable_balls(0)->set_relativexspeed(myBall.state(2,0));
+            MyWorld.mutable_balls(0)->set_relativeyspeed(myBall.state(3,0));
+        }
 	}
+	
 
 	if (!ballseen)
 	{
+        //cout << " ball is not being seen " << endl;
 		duration = now - lastObservationTime;
 		dt = duration.total_microseconds() / 1000000.0f;
+
 		if (dt > MAX_TIME_TO_RESET)
 		{
-			//time = newtime;
-			lastObservationTime = now; //So it wont try to delete already delete ball
 			if (MyWorld.balls_size() > 0){
+                //cout << " Reseting ball " << endl;
+                myBall.reset(0, 0, 0, 0);
 				MyWorld.clear_balls();
 			}
 		} else
 		{
-			duration = now - lastFilterTime;
-			lastFilterTime = now;
-			dt = duration.total_microseconds() / 1000000.0f;
-			nearest_filtered_ball = myBall.get_predicted_ball_estimate(dt,robotModel);
+            duration = now - lastFilterTime;
+		    dt = duration.total_microseconds() / 1000000.0f;
 
-			if(dt > 0.080 && myBall.get_filter_variance() > 4 && MyWorld.balls_size() > 0 && (gamePlaying + seconds(8) < microsec_clock::universal_time())){ //Std = 2m and wait for 80 ms before deleting
-				MyWorld.clear_balls();
-			}
-			if (MyWorld.balls_size() > 0)
-				MyWorld.mutable_balls(0)->CopyFrom(nearest_filtered_ball);
+            if (MyWorld.balls_size() > 0){
+                //cout << " ball is not being seen .. predict movement" << endl;
+	            myBall.predict(dt,robotModel);   
+                MyWorld.mutable_balls(0)->set_relativex(myBall.state(0,0));
+                MyWorld.mutable_balls(0)->set_relativey(myBall.state(1,0));
+            	MyWorld.mutable_balls(0)->set_relativexspeed(myBall.state(2,0));
+                MyWorld.mutable_balls(0)->set_relativeyspeed(myBall.state(3,0));  
+            }   
 		}
+
+        lastFilterTime = now;
 	}
 
-
-    if (MyWorld.balls_size() > 0 && fabs(MyWorld.mutable_myposition()->x())<4.5 && fabs(MyWorld.mutable_myposition()->y()<3) ){
-
-        float relativeX = MyWorld.mutable_balls(0)->relativex();
-        float relativeY = MyWorld.mutable_balls(0)->relativey();
-
-        float gX = (AgentPosition.x + relativeX * cos(AgentPosition.phi) - relativeY * sin(AgentPosition.phi));
-		float gY = (AgentPosition.y + relativeX * sin(AgentPosition.phi) + relativeY * cos(AgentPosition.phi));
-
-        if (fabs(gX) > 6 || fabs(gY) > 4.5){
-            MyWorld.clear_balls();
-        }
-    }
-
-
-
-
+    //myBall.state.prettyPrint();
 }
 
 void LocalWorldState::ProcessMessages()

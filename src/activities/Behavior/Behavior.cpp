@@ -44,7 +44,6 @@ void Behavior::UserInit() {
 	kickOff = false;
 	dist = false;
 	gsmtime = false;
-	gsmnext = true;
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
@@ -851,7 +850,7 @@ void Behavior::approachBall() {
         velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
     }
     else{
-		pathPlanningRequestRelative(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing); // 2.5cm offset from the ball!
+        velocityWalk(ballX, ballY, 0.0 ,1.0);
     }
 }
 
