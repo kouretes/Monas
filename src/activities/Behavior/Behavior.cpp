@@ -68,6 +68,7 @@ void Behavior::UserInit() {
 	Reset();
 	fGen.Init(config.maxPlayers);
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
+	currentRole.role = FormationParameters::ONBALL;
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -292,8 +293,8 @@ int Behavior::Execute() {
 		readyToKick = false;
 	
 		if(sharedBallFound == true) {
-			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%60 == 1)) || 
-				(lastFormation + seconds(60) < microsec_clock::universal_time()) || 
+			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) || 
+				(lastFormation + seconds(20) < microsec_clock::universal_time()) || 
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
 				
 				
