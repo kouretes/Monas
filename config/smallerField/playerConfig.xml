@@ -4,127 +4,102 @@
 
 <!--noKickOff, team color is red, for blue team color multiply posx, posy with -1 -->
 <noKickOff>
-	<!-- GoalKeeper -->
+	<!-- GoalKeeper-->
 	<player>
 		<number>1</number>
-		<x>-4.2</x>
+		<x>-2.7</x>
 		<y>0.0</y>
 		<phi>0.0</phi>
 		<role>0</role>
 	</player>
-	<!-- Right Defender -->
+	<!-- Defender-->
 	<player>
 		<number>2</number>
-		<x>-3.5</x>
-		<y>-1.1</y>
-		<phi>0.0</phi>
-		<role>2</role>
-	</player>
-	<!-- Left Defender -->
-	<player>
-		<number>3</number>
-		<x>-3.5</x>
-		<y>1.1</y>
-		<phi>0.0</phi>
-		<role>3</role>
-	</player>
-	<!-- Attacker -->
-	<player>
-		<number>4</number>
 		<x>-1.5</x>
-		<y>0.0</y>
+		<y>-1.4</y>
 		<phi>0.0</phi>
-		<role>4</role>
+		<role>1</role>
 	</player>
-	<!-- Supporter -->
-    <player>
-		<number>5</number>
-		<x>-2.5</x>
-		<y>-1.1</y>
-		<phi>0.0</phi>
-		<role>5<role>
-	</player>
-</noKickOff>
-
-<!--KickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
-<KickOff>
-	<!-- GoalKeeper -->
-	<player>
-		<number>1</number>
-		<x>-4.2</x>
-		<y>0.0</y>
-		<phi>0.0</phi>
-		<role>0</role>
-	</player>
-	<!-- Defender -->
-	<player>
-		<number>2</number>
-		<x>-3.5</x>
-		<y>-0.5</y>
-		<phi>0.0</phi>
-		<role>2</role>
-	</player>
-	<!-- Left Supporter -->
+		<!-- Supporter-->
 	<player>
 		<number>3</number>
-		<x>-2.0</x>
-		<y>1.1</y>
+		<x>-1.5</x>
+		<y>1.4</y>
 		<phi>0.0</phi>
-		<role>6</role>
+		<role>5</role>
 	</player>
 	<!-- Attacker-->
 	<player>
 		<number>4</number>
-		<x>-0.8</x>
-		<y>0.0</y>
+		<x>-1.5</x>
+		<y>0.2</y>
 		<phi>0.0</phi>
 		<role>4</role>
 	</player>
-	<!-- Right Supporter -->
-    <player>
-   		<number>5</number>
-		<x>-2.0</x>
-		<y>-1.1</y>
-		<phi>0.0</phi>
-		<role>7</role>
-	</player>
-</KickOff>
-
-<!-- Ready positions -->
-<Ready>
-	<!-- GoalKeeper -->
+</noKickOff>
+<!--KickOffOn, team color is red, for blue team color multiply posx, posy with -1 -->
+<KickOff>
+	<!-- GoalKeeper-->
 	<player>
 		<number>1</number>
-		<x>-3.0</x>
-		<y>-3.0</y>
-		<phi>45</phi>
+		<x>-2.7</x>
+		<y>0.0</y>
+		<phi>0.0</phi>
+		<role>0</role>
 	</player>
-	<!-- Right Defender / Defender -->
+	<!-- Defender-->
 	<player>
 		<number>2</number>
-		<x>-2.3</x>
-		<y>-3.0</y>
-		<phi>45</phi>
+		<x>-1.8</x>
+		<y>0.7</y>
+		<phi>0.0</phi>
+		<role>1</role>
 	</player>
-	<!-- Left Defender / Left Supporter -->
+	<!-- Supporter-->
 	<player>
 		<number>3</number>
-		<x>-3.0</x>
-		<y>3.0</y>
-		<phi>225</phi>
+		<x>-1.0</x>
+		<y>-1.0</y>
+		<phi>0.0</phi>
+		<role>5</role>
 	</player>
-	<!-- Attacker -->
+	<!-- Attacker-->
 	<player>
 		<number>4</number>
+		<x>-0.7</x>
+		<y>0.2</y>
+		<phi>0.0</phi>
+		<role>4</role>
+	</player>
+</KickOff>
+<!--Ready positions-->
+<Ready>
+	<!-- GoalKeeper-->
+	<player>
+		<number>1</number>
+		<x>-2.4</x>
+		<y>-2.0</y>
+		<phi>90</phi>
+	</player>
+	<!-- Defender-->
+	<player>
+		<number>2</number>
 		<x>-1.8</x>
-		<y>3.0</y>
+		<y>2.0</y>
 		<phi>270</phi>
 	</player>
-	<!-- Supporter / Right Supporter -->
+	<!-- Center-->
 	<player>
-		<number>5</number>
-		<x>-2.3</x>
-		<y>3.0</y>
+		<number>3</number>
+		<x>-1.2</x>
+		<y>-2.0</y>
+		<phi>90</phi>
+	</player>
+	<!-- Attacker-->
+	<player>
+		<number>4</number>
+		<x>-1.2</x>
+		<y>2.0</y>
 		<phi>270</phi>
 	</player>
 </Ready>
