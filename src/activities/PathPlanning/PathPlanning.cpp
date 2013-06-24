@@ -75,7 +75,7 @@ void PathPlanning::Reset() {
 	SonarsMaxDist = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.SonarsMaxDist").c_str());
 	SonarsConeInDegs = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.SonarsConeInDegs").c_str());
 	updateObstacles = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.ObstaclesUpdate").c_str()) == 1? true : false;
-	checkForReachableTarget = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.CheckForReachableTarget").c_str()) == 1? true : false;
+	checkForTargetInObstacle = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.CheckForTargetInObstacle").c_str()) == 1? true : false;
 }
 
 int PathPlanning::Execute() {
@@ -88,11 +88,13 @@ int PathPlanning::Execute() {
 		pathMap.updateCells();
 		allsm =  _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
 
-		if (updateObstacles && allsm != 0) {
-			for (int j = 0; j < KDeviceLists::US_SIZE; j++) {
+		if (true){//updateObstacles && allsm != 0) {
+			/*for (int j = 0; j < KDeviceLists::US_SIZE; j++) {
 				leftSonars[j] = allsm->sensordata (KDeviceLists::L_US + j).sensorvalue();
 				rightSonars[j] = allsm->sensordata (KDeviceLists::R_US + j).sensorvalue();
-			}
+			}*/
+			leftSonars[0] = (static_cast<double>(rand())/static_cast<double>(RAND_MAX))*0.5+0.25;
+			rightSonars[0] = (static_cast<double>(rand())/static_cast<double>(RAND_MAX))*0.5+0.25;
 			//printSonarValues();
 			if (leftSonars[0] < SonarsMinDist) {
 				pathMap.updateGrid (0.15f, 0.4363f, KMath::TO_RAD (SonarsConeInDegs), false);
@@ -284,7 +286,7 @@ void PathPlanning::aStar () {
 		return;
 	}
 	LogEntry(LogLevel::Info, GetName()) << "Ring = " << aStarTargetR << " Cell = " << aStarTargetC << " phi = " << aStarTargetZ;
-	visited.clear();
+	//visited.clear();
 	currentValues.init();
 	directions.init();
 	
@@ -305,9 +307,7 @@ void PathPlanning::aStar () {
 		openNodes.push(popNode);
 	}
 
-	int mpika = 0;
 	while (openNodes.size() != 0) {
-		mpika++;
 		do{
 			popNode = openNodes.top();
 			openNodes.pop();
@@ -320,8 +320,7 @@ void PathPlanning::aStar () {
 		tcoords.x = popNode->x;
 		tcoords.y = popNode->y;
 		tcoords.z = popNode->z;
-		
-		visited.push_back(tcoords);
+		//visited.push_back(tcoords);
 		if (currentX != 255 && currentY != 255) {
 			currentValues.setElement (currentZ, currentX, currentY, infinity );
 		}
@@ -367,7 +366,7 @@ void PathPlanning::aStar () {
 					newX = currentX + dx;
 				}
 				
-				if (newX < 0 || newX >= aStarRadiusCells || (pathMap (newX, newY) > 0.3f && (checkForReachableTarget || newX != aStarTargetR || newY != aStarTargetC))){
+				if (newX < 0 || newX >= aStarRadiusCells || (pathMap (newX, newY) > 0.3f && (checkForTargetInObstacle || newX != aStarTargetR || newY != aStarTargetC))){
 					continue;
 				}
 
@@ -403,8 +402,6 @@ void PathPlanning::aStar () {
 
 		pool.free(popNode);
 	}
-
-	LogEntry(LogLevel::Info, GetName()) << "Astar ended";
 	pathFromAStar.clear();
 	if (openNodes.size() != 0) {
 		coords pathCoords;
@@ -485,16 +482,13 @@ inline void PathPlanning::updateH (node *n) {
 
 bool PathPlanning::targetReachable (int x, int y) {
 	//Apla elegxw se mia seira an einai reachable to target
-	if(checkForReachableTarget == true){
-		int y_plus_one = (y + 1 == aStarCircleCells ) ? 0 : y + 1;
-		int y_minus_one = (y - 1 == -1) ? aStarCircleCells - 1 : y - 1;
-		LogEntry(LogLevel::Info, GetName()) << "x = " << x << " y = " << y << " y_plus = " << y_plus_one << " y_minus = " << y_minus_one;
-		return pathMap (x, y) <= 0.3f && ( (x < (pathMap.getRadiusCells() - 1) && (pathMap (x + 1, y) <= 0.3f || pathMap (x + 1, y_plus_one) <= 0.3f || pathMap (x + 1, y - 1) <= 0.3f) )
-			    || pathMap (x, y_plus_one) <= 0.3f
-			    || (x > 0 && (pathMap (x - 1, y_plus_one) <= 0.3f || pathMap (x - 1, y) <= 0.3f || (x < (pathMap.getRadiusCells() - 1) && pathMap (x + 1, y_minus_one) <= 0.3f)) )
-			    || pathMap (x, y_minus_one) <= 0.3f);
-	}else{
-		return true;
-	}
+
+	int y_plus_one = (y + 1 == aStarCircleCells ) ? 0 : y + 1;
+	int y_minus_one = (y - 1 == -1) ? aStarCircleCells - 1 : y - 1;
+	return (pathMap (x, y) <= 0.3f || !checkForTargetInObstacle) && ( (x < (pathMap.getRadiusCells() - 1) && (pathMap (x + 1, y) <= 0.3f || pathMap (x + 1, y_plus_one) <= 0.3f || pathMap (x + 1, y - 1) <= 0.3f) )
+		    || pathMap (x, y_plus_one) <= 0.3f
+		    || (x > 0 && (pathMap (x - 1, y_plus_one) <= 0.3f || pathMap (x - 1, y) <= 0.3f || (x < (pathMap.getRadiusCells() - 1) && pathMap (x + 1, y_minus_one) <= 0.3f)) )
+		    || pathMap (x, y_minus_one) <= 0.3f);
+
 }
 ACTIVITY_END

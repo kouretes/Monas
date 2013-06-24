@@ -92,8 +92,8 @@ void KSonarsController::gridInfoUpdateHandler (GridInfo gim, QString hostId) {
 		mapArea->targetCell = -1;
 		mapArea->targetOrient = -1;
 	}
-	if(mapArea->pathLength != 0){
-		for (int step = 0; step < mapArea->pathLength; step++) {
+	if(gim.pathstepsring_size() != 0){
+		for (int step = 0; step < gim.pathstepsring_size(); step++) {
 			mapArea->pathR[step] = gim.pathstepsring (step);
 			mapArea->pathS[step] = gim.pathstepssector (step);
 			mapArea->pathO[step] = gim.pathstepsorientation (step);
@@ -101,10 +101,12 @@ void KSonarsController::gridInfoUpdateHandler (GridInfo gim, QString hostId) {
 	}
 
 	mapArea->totalVisits = gim.visitedring_size();
-	for (int step = 0; step < gim.visitedring_size(); step++) {
-		mapArea->pathR2[step] = gim.visitedring (step);
-		mapArea->pathS2[step] = gim.visitedsector (step);
-		mapArea->pathO2[step] = gim.visitedorientation (step);
+	if(gim.visitedring_size() != 0){
+		for (int step = 0; step < gim.visitedring_size(); step++) {
+			mapArea->pathR2[step] = gim.visitedring (step);
+			mapArea->pathS2[step] = gim.visitedsector (step);
+			mapArea->pathO2[step] = gim.visitedorientation (step);
+		}
 	}
 	if (mapArea->getLPMObstaclesVisible() ) {
 		mapArea->setPMObstaclesVisible (false);
