@@ -9,7 +9,7 @@ using namespace std;
 
 void SharedWorldModel::UserInit()
 {
-	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
+	_blk.updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST);
 	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
 	idx = -1;
 
@@ -89,7 +89,7 @@ int SharedWorldModel::Execute()
 
     predict();
     count = 0;
-    wim  = _blk.readData<WorldInfo> ("worldstate");
+    wim  = _blk.readData<WorldInfo> ("external");
 
     if(wim != 0)
     {
@@ -111,7 +111,7 @@ int SharedWorldModel::Execute()
 
 		for(fit = rf.begin(); fit != rf.end(); ++fit)
 		{
-            wim  = _blk.readData<WorldInfo> ("worldstate", (*fit).hostid());
+            wim  = _blk.readData<WorldInfo> ("external", (*fit).hostid());
 
             if(wim != 0)
             {
