@@ -135,10 +135,11 @@ int LocalWorldState::Execute()
     MyWorld.mutable_myposition()->set_x(AgentPosition.x);
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
-    cout << "agent position : " << AgentPosition.x  <<" , " << AgentPosition.y << endl;
+
+    if (gameState == PLAYER_PLAYING )
+	    _blk.publishData(MyWorld, "external");
 
 	MyWorld.set_stability(stability);
-
 	calculateBallEstimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
@@ -177,6 +178,7 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 	boost::posix_time::ptime observationTime;
 
 	float dt;
+    float dx,dy,gx,gy;
 	bool ballseen = false;	
 
     //cout << " Ball position estimation " << endl;
@@ -185,10 +187,14 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
         //cout << " Ball observation " << endl;
 	    //used for removing the ball if exceeds a threshold
 		BallObject aball = obsm->ball();
-        float x = aball.dist() * cos(aball.bearing());
-        float y = aball.dist() * sin(aball.bearing());
+        
+        dx = aball.dist() * cos(aball.bearing());
+        dy = aball.dist() * sin(aball.bearing());
+    
+        gx = AgentPosition.x + dx * cos(AgentPosition.phi) - dy * sin(AgentPosition.phi);
+        gy = AgentPosition.y + dx * sin(AgentPosition.phi) + dy * cos(AgentPosition.phi);
 
-        if ( fabs(x) < locConfig.fieldMaxX + 3 && fabs(y) < locConfig.fieldMaxY + 3) {
+        if ( fabs(gx) < locConfig.fieldMaxX + 2 && fabs(gy) < locConfig.fieldMaxY + 2) {
 		    ballseen = true;
             observationTime = now;
 		    if (MyWorld.balls_size() < 1)
@@ -317,7 +323,6 @@ void LocalWorldState::ProcessMessages()
 					tmpOM.Feature = locConfig.KFeaturesmap["YellowLeft"];
 					currentAmbiguousObservation.push_back(tmpOM);
 				}
-
 			}
 		}
 
