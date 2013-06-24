@@ -140,7 +140,7 @@ namespace KMath {
 		return d * cos(t);
 	}
 
-	static double toCartesianY(double d, double t) {
+	inline static double toCartesianY(double d, double t) {
 		return d * sin(t);
 	}
 
