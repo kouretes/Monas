@@ -25,6 +25,7 @@
 <!--- Goal posts --->
 <goalheight>0.9</goalheight>
 <goaldist>1.595</goaldist>
+<goaltopisrounded>1</goaltopisrounded>
 <goaldiam>0.1</goaldiam>
 <widthestimateotolerance>0.2</widthestimateotolerance>
 <horizontalpostratio>0.23</horizontalpostratio>

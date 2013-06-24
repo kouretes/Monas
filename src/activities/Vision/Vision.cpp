@@ -83,6 +83,7 @@ void Vision::Reset(){
 	config.goalheight = atof(Configurator::Instance().findValueForKey("vision.goalheight").c_str());
 	config.goaldist = atof(Configurator::Instance().findValueForKey("vision.goaldist").c_str());
 	config.goaldiam = atof(Configurator::Instance().findValueForKey("vision.goaldiam").c_str());
+	config.goaltopisrounded= atoi(Configurator::Instance().findValueForKey("vision.goaltopisrounded").c_str());
 	config.widthestimateotolerance = atof(Configurator::Instance().findValueForKey("vision.widthestimateotolerance").c_str());
 	config.horizontalpostratio = atof(Configurator::Instance().findValueForKey("vision.horizontalpostratio").c_str());
 	config.pitchoffset = atof(Configurator::Instance().findValueForKey("vision.pitchoffset").c_str());

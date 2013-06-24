@@ -517,13 +517,13 @@ bool Vision::calculateValidGoalPost(goalpostdata_t & goal, KSegmentator::colorma
 	ratio = (float (bd + 1)) / (ttl + 1);
 
 	//cout<<"Bad ratio:"<<ratio<<" "<<bd<< " "<< ttl <<endl;
-	if(ratio > 0.15)
+	if(ratio > 0.25)
 		return false;
 
 	ratio = (float (gd + 1)) / (ttl + 1);
 
 	//cout<<"Goodratio:"<<ratio<<endl;
-	if(ratio < 0.75)
+	if(ratio < 0.65)
 		return false;
 
 	//if((float (bd+1))/(float (gd+1)) > 0.35)
@@ -690,7 +690,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		lr.y = b.y;
 		ll.x = 0;
 		lr.x = 0;
-		at.init(newpost.bot.x + (newpost.top.x - newpost.bot.x) / 5, newpost.bot.y + (newpost.top.y - newpost.bot.y) / 5);
+		at.init(newpost.bot.x + (newpost.top.x - newpost.bot.x) / 3, newpost.bot.y + (newpost.top.y - newpost.bot.y) / 3);
 		at.initVelocity(newpost.top.x - newpost.bot.x, newpost.top.y - newpost.bot.y	);
 
 		//int suml=0,sumr=0;
@@ -730,7 +730,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		tr.y = t.y;
 		tl.x = 0;
 		tr.x = 0;
-		at.init(newpost.top.x + (newpost.bot.x - newpost.top.x) / 5, newpost.top.y + (newpost.bot.y - newpost.top.y) / 5);
+		at.init(newpost.top.x + (newpost.bot.x - newpost.top.x) / 3, newpost.top.y + (newpost.bot.y - newpost.top.y) / 3);
 		at.initVelocity(newpost.bot.x - newpost.top.x, newpost.bot.y - newpost.top.y	);
 
 		//suml=0,sumr=0;
@@ -800,7 +800,8 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		c3d = kinext.camera2dToGround(ci);
 		a = kinext.projectionDistance(ci, config.goalheight);
 		newpost.distTop = a[0];
-		newpost.distTop.mean += config.goaldiam / 2;
+		if(config.goaltopisrounded!=0)
+			newpost.distTop.mean += config.goaldiam / 2;
 		//cout<<"See top:"<<newpost.distTop.mean<<endl;
 		newpost.bTop = a[1];
 		delete[] a;
@@ -923,10 +924,10 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 			name += "Left";
 
 		o->set_object_name(name);
-		
+
 		Polygon *apoly = vdm.add_polygon();
 		Point *p;
-		
+
 		p = apoly->add_points();
 		p->set_x(d1.tl.x); p->set_y(d1.tl.y);
 		p = apoly->add_points();
@@ -941,7 +942,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 		p->set_x(d1.ll.x); p->set_y(d1.ll.y);
 		apoly->set_color(c);
 		apoly->set_confidence(1);
-				
+
 #ifdef DEBUGVISION
 		LogEntry(LogLevel::Info,GetName())<<"Di:" <<(d1.distance.mean) << " "<<(d1.distance.var);
 		LogEntry(LogLevel::Info,GetName())<<"Be: " << (d1.bearing.mean) << " " << (d1.bearing.var);
@@ -1001,10 +1002,10 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 
 	name += "Right";
 	o->set_object_name(name);
-	
+
 	Polygon *apoly = vdm.add_polygon();
 	Point *p;
-	
+
 	p = apoly->add_points();
 	p->set_x(d1.tl.x); p->set_y(d1.tl.y);
 	p = apoly->add_points();
@@ -1019,7 +1020,7 @@ int Vision::locateGoalPost(vector<KVecInt2> const& cand, KSegmentator::colormask
 	p->set_x(d1.ll.x); p->set_y(d1.ll.y);
 	apoly->set_color(c);
 	apoly->set_confidence(1);
-	
+
 	apoly = vdm.add_polygon();
 	p = apoly->add_points();
 	p->set_x(d2.tl.x); p->set_y(d2.tl.y);
@@ -1044,7 +1045,12 @@ void Vision::fillGoalPostHeightMeasurments(goalpostdata_t & newpost) const
 	KPROF_SCOPE(vprof, "fillGoalPostHeightMeasurments");
 	float t, g, h, dS, dL;
 	//Single solution of a  trionym
-	g = config.goalheight;
+	if(config.goaltopisrounded!=0) //If the goal post top is rounded, we observe a Hypotenuse
+	{
+		g=sqrt(conf.goalheight*conf.goalheight+conf.goaldiam*conf.goaldiam);
+	}
+	else
+		g = config.goalheight;
 	h = p.cameraZ;
 	KVecFloat2 c1, c2, i1, i2;
 	i1(0) = newpost.bot.x;
@@ -1461,7 +1467,7 @@ std:
 	}
 
 #endif
-	
+
 	bd = history.begin();
 	while(bd != history.end())
 	{
@@ -1473,7 +1479,7 @@ std:
 		bc->set_confidence(bc->valid());
 		bd++;
 	}
-	
+
 	return best;
 }
 
