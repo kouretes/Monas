@@ -21,7 +21,7 @@ void KalmanModel::Initialize(float x, float y, float phi, float e1, float e2, fl
     var.zero();
 
     var(0,0) = 0.4 * 0.4;
-    var(1,1) = 0.4 * 0.4;
+    var(1,1) = 0.1 * 0.1;
     var(2,2) = TO_RAD(10) * TO_RAD(10);
 
     var(3,3) = 0.025;
@@ -44,6 +44,9 @@ void KalmanModel::Predict(Localization::KMotionModel & MotionModel){
     fict.zero();
 
     // Small amount of noise for error parameters
+    fict(0,0) = 4e-6;
+    fict(1,1) = 4e-6;
+    fict(2,2) = 4e-6;
     fict(3,3) = tmpDist  * tmpDist * 0.02;
     fict(4,4) = tmpDist  * tmpDist * 0.02;
     fict(5,5) = tmpDist  * tmpDist * 0.002; 
@@ -100,8 +103,8 @@ void KalmanModel::Predict(Localization::KMotionModel & MotionModel){
 
     //gt.prettyPrint();
 
-    mt(0,0) = tmpDist   * tmpDist *  0.3 *  0.3;
-    mt(1,1) = tmpDist   * tmpDist *  0.3 *  0.3 ;
+    mt(0,0) = tmpDist   * tmpDist *  0.6 *  0.6;
+    mt(1,1) = tmpDist   * tmpDist *  0.6 *  0.6;
     mt(2,2) = tmpRot  * tmpRot * 0.3 * 0.3 +  tmpDist * tmpDist * 0.1 ;
 
     //mt.prettyPrint()

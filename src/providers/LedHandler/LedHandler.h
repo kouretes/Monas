@@ -114,6 +114,7 @@ private:
 	boost::shared_ptr<const LedChangeMessage> led_change;
 
 	std::vector<std::string> left_ear_names;
+	std::vector<std::string> right_ear_names;
 
 	/**
 	 * \brief Inside this function, HEX RGB colors are stored in a <hex color, color name> map

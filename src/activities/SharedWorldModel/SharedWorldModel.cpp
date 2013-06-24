@@ -214,9 +214,9 @@ void SharedWorldModel::predict()
 
     for(int i = 0; i < numOfRobots*3; i++)
 	{
-        Q.get(i,i) = QRdevx*dtsqrd*10;
-        Q.get(i+1,i+1) = QRdevy*dtsqrd*10;
-        Q.get(i+2,i+2) = QRdevtheta*dtsqrd*10;
+        Q.get(i,i) = QRdevx*dtsqrd*100;
+        Q.get(i+1,i+1) = QRdevy*dtsqrd*100;
+        Q.get(i+2,i+2) = QRdevtheta*dtsqrd*100;
 	}
 
     Q.get(dim-2,dim-2) = (vara*dtsqrd*dtsqrd/4.0)/100;
@@ -239,14 +239,12 @@ void SharedWorldModel::predict()
 void SharedWorldModel::update(int rid)
 {
     last_ball_update_time = boost::posix_time::microsec_clock::universal_time();
-    //convert ball to global
-//    float bx = robot_x[rid] + ball_x[rid] * cos(robot_phi[rid]) - ball_y[rid] * sin(robot_phi[rid]);
-//    float by = robot_y[rid] + ball_x[rid] * sin(robot_phi[rid]) + ball_y[rid] * cos(robot_phi[rid]);
+
     float phi=State(rid*3+2);
-//    float bx=State(dim-2);
-//    float by=State(dim-1);
-//    float rx=State(rid*3);
-//    float ry=State(rid*3+1);
+    float bx=State(dim-2);
+    float by=State(dim-1);
+    float rx=State(rid*3);
+    float ry=State(rid*3+1);
 
     //std::cout << "gbx=" << globX << "\tgby=" << globY << std::endl;
 
@@ -266,14 +264,14 @@ void SharedWorldModel::update(int rid)
     H2.get(3,rid*3) = -cos(phi);
     H2.get(3,rid*3+1) = -sin(phi);
 //    H2.get(3,rid*3+2) = (rx-bx)*sin(phi)+(by-ry)*cos(phi);
-    H2.get(3,dim-2) = cos(-phi);
-    H2.get(3,dim-1) = -sin(-phi);
+    H2.get(3,dim-2) = cos(phi);
+    H2.get(3,dim-1) = sin(phi);
 
     H2.get(4,rid*3) = sin(phi);
     H2.get(4,rid*3+1) = -cos(phi);
-//    H2.get(4,rid*3+2) = (rx-bx)*cos(phi)+(by-ry)*sin(phi);
-    H2.get(4,dim-2) = sin(-phi);
-    H2.get(4,dim-1) = cos(-phi);
+//    H2.get(4,rid*3+2) = (rx-bx)*cos(phi)-(by-ry)*sin(phi);
+    H2.get(4,dim-2) = -sin(phi);
+    H2.get(4,dim-1) = cos(phi);
 
 //    H2.prettyPrint();
 

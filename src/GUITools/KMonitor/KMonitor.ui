@@ -46,7 +46,7 @@
       </widget>
       <widget class="KccHandler" name="KCCTab">
        <attribute name="title">
-        <string>KCC Beta</string>
+        <string>KCC</string>
        </attribute>
       </widget>
       <widget class="XMLHandler" name="XMLTab">

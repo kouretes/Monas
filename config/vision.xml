@@ -2,13 +2,13 @@
 <!-- Refresh Segmentation parameters based camera every : (millisec) -->
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>1-lab-322-seglBGYW.conf</SegmentationBottom>
-<SegmentationTop>1-lab-322-seglBGYW.conf</SegmentationTop>
+<SegmentationBottom>roboCup2013.conf</SegmentationBottom>
+<SegmentationTop>roboCup2013.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGamma>1.0</cameraGamma>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.3</balltolerance>
+<balltolerance>0.15</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.045</skipdistance>
 <seedistance>7.2</seedistance>
@@ -23,12 +23,12 @@
 <!-- For obstacle avoidance -->
 <obstacledistance>1</obstacledistance>
 <!--- Goal posts --->
-<goalheight>0.810</goalheight>
-<goaldist>1.4</goaldist>
-<goaldiam>0.107</goaldiam>
+<goalheight>0.9</goalheight>
+<goaldist>1.595</goaldist>
+<goaldiam>0.1</goaldiam>
 <widthestimateotolerance>0.2</widthestimateotolerance>
 <horizontalpostratio>0.125</horizontalpostratio>
 <!-- How many ms does it take the sensor module to publish a message? -->
 <sensordelay>0</sensordelay>
 <pitchoffset>0.07</pitchoffset>
-<rolloffset>0.0</rolloffset>
+<rolloffset>0</rolloffset>
