@@ -140,7 +140,8 @@ int LocalWorldState::Execute()
 	    _blk.publishData(MyWorld, "external");
 
 	MyWorld.set_stability(stability);
-	calculateBallEstimate(robotmovement);
+    robotmovement.Rotation.val = ekfLocalization.kalmanModels[0].state(5,0)* robotmovement.Rotation.val + ekfLocalization.kalmanModels[0].state(4,0) * robotmovement.Distance.val; 	
+    calculateBallEstimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
 	if(gameMode == false){
@@ -191,8 +192,8 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
         dx = aball.dist() * cos(aball.bearing());
         dy = aball.dist() * sin(aball.bearing());
     
-        gx = AgentPosition.x + dx * cos(AgentPosition.phi) - dy * sin(AgentPosition.phi);
-        gy = AgentPosition.y + dx * sin(AgentPosition.phi) + dy * cos(AgentPosition.phi);
+        gx = AgentPosition.x + dx * cos(AgentPosition.phi) + dy * sin(AgentPosition.phi);
+        gy = - AgentPosition.y + dx * sin(AgentPosition.phi) + dy * cos(AgentPosition.phi);
 
         if ( fabs(gx) < locConfig.fieldMaxX + 2 && fabs(gy) < locConfig.fieldMaxY + 2) {
 		    ballseen = true;
@@ -302,11 +303,11 @@ void LocalWorldState::ProcessMessages()
 			//Distance
 			tmpOM.Distance.val = Objects.Get(i).distance();
 			tmpOM.Distance.Emean = 0.0;
-			tmpOM.Distance.Edev = 1.5 + 2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus float the precision of vision
+			tmpOM.Distance.Edev = 2 + 2.0*Objects.Get(i).distance_dev();//The deviation is 1.5 meter plus float the precision of vision
 			//Bearing
 			tmpOM.Bearing.val = KMath::wrapTo0_2Pi( Objects.Get(i).bearing());
 			tmpOM.Bearing.Emean = 0.0;
-			tmpOM.Bearing.Edev = TO_RAD(20) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus float the precision of vision
+			tmpOM.Bearing.Edev = TO_RAD(40) + 2.0*Objects.Get(i).bearing_dev();//The deviation is 45 degrees plus float the precision of vision
 			tmpOM.observationTime=observation_time;
 
 			if (locConfig.KFeaturesmap.count(id) != 0)
