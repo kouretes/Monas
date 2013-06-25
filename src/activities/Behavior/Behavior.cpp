@@ -55,9 +55,7 @@ void Behavior::UserInit() {
 	Reset();
 	fGen.Init(config.maxPlayers);
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
-	currentRole.role = FormationParameters::DEFENDER;
-	currentRole.X = -3.5;
-	currentRole.Y = 0.0;
+	currentRole.role = FormationParameters::ONBALL;
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -210,7 +208,6 @@ int Behavior::Execute() {
 		updateOrientation();
 		readyToKick = false;
 
-		/*
 		if(sharedBallFound == true) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
@@ -229,7 +226,7 @@ int Behavior::Execute() {
 
 				LogEntry(LogLevel::Info, GetName()) << "ROBOTS: "+_toString(numOfRobots);
 				LogEntry(LogLevel::Info, GetName()) << "==========================================";
-				for(int i = 0 ; i < robots.size() ; i++) {
+				for(unsigned int i = 0 ; i < robots.size() ; i++) {
 					LogEntry(LogLevel::Info, GetName()) << "Id: "+_toString(robots[i].robotId);
 					LogEntry(LogLevel::Info, GetName()) << "X: "+_toString(robots[i].robotX);
 					LogEntry(LogLevel::Info, GetName()) << "Y: "+_toString(robots[i].robotY);
@@ -253,7 +250,6 @@ int Behavior::Execute() {
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
-		*/
 
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
