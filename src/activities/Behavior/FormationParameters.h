@@ -79,12 +79,12 @@ namespace FormationParameters {
 		sort(robots.begin(), robots.end(), compareRobots);
 	}
 	
-	inline unsigned int getRobotIndex(vector<Robot> &robots, unsigned int robotId) {
+	inline int getRobotIndex(vector<Robot> &robots, unsigned int robotId) {
 		for(unsigned int r = 0 ; r < robots.size() ; r++) {
 			if(robots[r].robotId == robotId)
 				return r;
 		}
-		// THERE MUST BE AN ERROR RETURN VALUE OR EXCEPTION
+		return -1;
 	}
 	
 };

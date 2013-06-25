@@ -20,7 +20,7 @@ namespace KStandard {
 	void print(vector<T> &toPrint, string topic) {
 		LogEntry msg(LogLevel::Info,topic);
 		for(unsigned int it = 0 ; it < toPrint.size() ; it++)
-			msg <<(toPrint[it]) <<" ";
+			msg << (toPrint[it]) << " ";
 	}
 
 	/**
@@ -30,7 +30,7 @@ namespace KStandard {
 	template <typename T>
 	void print(vector<T> &toPrint, string topic, unsigned int index) {
 		LogEntry msg(LogLevel::Info,topic);
-		msg<< "[" << (index) << "] ";
+		msg << "[" << (index) << "] ";
 		for(unsigned int it = 0 ; it < toPrint.size() ; it++)
 			msg <<(toPrint[it]) <<" ";
 	}

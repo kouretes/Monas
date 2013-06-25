@@ -470,6 +470,8 @@ int Behavior::Execute() {
 
 void Behavior::Coordinate() {
 
+		int robotIndex = -1;
+		
 		for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
 			if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE)
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
@@ -509,10 +511,15 @@ void Behavior::Coordinate() {
 			}
 			//std::cout << "MAPPING: ";
 			//print(mappings[map], "Behavior");
-			//std::cout << "COST: " << _toString(mapCost) << std::endl;
+			LogEntry(LogLevel::Info, GetName()) << "COST: " << mapCost;
 		}
 
-		currentRole = fGen.findRoleInfo(mappings[index][getRobotIndex(robots, config.playerNumber)]);
+		robotIndex = getRobotIndex(robots, config.playerNumber);
+		LogEntry(LogLevel::Info, GetName()) << "INDEX IS : " << robotIndex;
+		if(robotIndex != -1)
+			currentRole = fGen.findRoleInfo(mappings[index][robotIndex]);
+		else
+			currentRole.role = FormationParameters::ONBALL;
 		LogEntry(LogLevel::Info, GetName()) << "OPTIMAL MAP IS: ";
 		print(mappings[index], "Behavior");
 		LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
