@@ -150,6 +150,9 @@ if(pwdfolders[-2] != "make"):
 
 print "Working directory: " + pwd
 
+binaries_dir = "./binaries/linux/"
+os.system('rm -rf ' + binaries_dir + "config")
+
 Ksystem("make install -j4", "Compilation", True)
 
 #if(ret!=0):

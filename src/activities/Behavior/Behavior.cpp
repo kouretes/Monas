@@ -26,14 +26,14 @@ void Behavior::UserInit() {
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	
+
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
-	
+
 	gameState = PLAYER_INITIAL;
-	
+
 	ballFound = false, sharedBallFound = false;
 	robotStopped = false;
 	kickOff = false;
@@ -296,8 +296,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - side*config.posY) < config.epsY && fabs(ballY > config.posY/2) 
-									&& oppgb < M_PI_4 && oppgb > -M_PI_4) {
+					if(ballX < config.posX && ((ballY < 3*config.posY/2 && ballY > config.posY/2) || (ballY < -3*config.posY/2 && ballY > -config.posY/2)) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -396,11 +395,11 @@ int Behavior::Execute() {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 				}
-				
-				if(currentRole.role == FormationParameters::DEFENDER || 
+
+				if(currentRole.role == FormationParameters::DEFENDER ||
 					currentRole.role == FormationParameters::DEFENDER_L ||
 					currentRole.role == FormationParameters::DEFENDER_R) {
-					
+
 					defender();
 				}
 			}
@@ -476,16 +475,19 @@ void Behavior::Coordinate() {
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
 		}
 
-		//print(roles, "Behavior");
+		print(roles, "Behavior");
 		mappings = permutationsOfCombinations(roles, numOfRobots);
-		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
-		//print(mappings, "Behavior");
+		LogEntry(LogLevel::Info, GetName()) << "ALL POSSIBLE MAPPINGS ARE: ";
+		print(mappings, "Behavior");
 		roles.clear();
-
+		
+		LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
+		
 		// search for optimal mapping
 		maxU = 0;
 		for(unsigned int map = 0 ; map < mappings.size() ; map++) {
 			mapCost = 0;
+			LogEntry(LogLevel::Info, GetName()) << "MAP: " << map;
 			for(unsigned int r = 0 ; r < numOfRobots ; r++) { // for all except goalie robots
 				currentRobotPos = fGen.findRoleInfo(mappings[map].at(r));
 				mapCost = mapCost + fieldUtility(currentRobotPos.X, currentRobotPos.Y, SharedGlobalBallY, fGen, fGen.getFormationType()) -
@@ -804,7 +806,7 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 }
 
 void Behavior::defender() {
-	
+
 }
 
 /*------------------------------------ GOALIE FUNCTIONS -----------------------------------------*/
