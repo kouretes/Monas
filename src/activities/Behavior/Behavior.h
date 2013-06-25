@@ -96,11 +96,11 @@ private:
 		// values from the behavior xml file
 		float posX, posY, epsX, epsY;
 		struct Kick kicks;
-		float ur; // used only by goalie. IF SOMEONE KNOWS WHAT ur IS, PLEASE CHANGE THAT NAME!
+		float ur; // used only by goalie
 
 	} config;
 
-	/* --------------------------------- Messages and Functions ---------------------------------- */
+	/* --------------------------------- Messages and Messaging Functions ---------------------------------- */
 
 	/**
 	 * Incoming Messages
@@ -150,7 +150,12 @@ private:
 	 */
 	void getPosition();
 
-	void getTeamPositions();
+	/**
+	 * @fn void getTeamPositions()
+	 * @brief Information gathering function, that reads all reachable teammate positions, orientation and
+	 * stability (including that robot).
+	 */
+	void getTeamInfo();
 
 	/**
 	 * @fn void GetMotionData()
@@ -164,7 +169,7 @@ private:
      */
 	void sendDebugMessages();
 
-	/* --------------------------------- Goalie functions ---------------------------------- */
+	/* --------------------------------- Roles functions ---------------------------------- */
 
 	/**
 	 * @fn int toFallOrNotToFall()
@@ -179,28 +184,20 @@ private:
  	 * when to go on the ball and kick it away from the goal post.
 	 */
 	void goalie();
+	
+	/**
+	 * @fn void defender()
+	 * @brief
+	 */
+	void defender();
 
 	/* ------------------------------------------------------------------------------------- */
 
 	/**
-	 * @fn bool closestRobot()
-	 * @brief Use to determine if the robot is the one closest to the ball.
-	 * @return true if the robot is the closest or there is no shared world info message
-	 * to get information, else returns false.
-	 */
-	bool closestRobot();
-
-	/**
 	 * @fn void updateOrientation()
-	 * @brief (TODO)
+	 * @brief Function used to determine which side the robot is facing.
 	 */
 	void updateOrientation();
-
-	/**
-	 * @fn void checkForPenaltyArea()
-	 * @brief (TODO)
-	 */
-	void checkForPenaltyArea();
 
 	/**
 	 * @fn void kick()
@@ -234,12 +231,6 @@ private:
 	void stopRobot();
 
 	/**
-	 * @fn void generateFakeObstacles()
-	 * @brief (TODO)
-	 */
-	void generateFakeObstacles();
-
-	/**
 	 * @fn void pathPlanningRequestRelative(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
 	 */
@@ -259,17 +250,12 @@ private:
 
 	void Coordinate();
 
-	void generateFakeBalls();
-
-	void generateFakeRobots();
 
 	/* --------------------------------- Behavior Variables ---------------------------------- */
 
-	bool ballFound, sharedBallFound;	// variable that is true if we see the ball.
+	bool ballFound, sharedBallFound;	// variables that is true if we see the ball.
 
 	int fall;	// variable for goalie role to check if he should fall or not and in which side.
-
-	bool pathOK;
 
 	bool kickOff, searchFlag;
 
@@ -289,7 +275,7 @@ private:
 
 	int direction;
 
-	double orientation;
+	unsigned int orientation;
 
 	int gameState, prevGameState;
 
@@ -301,17 +287,15 @@ private:
 
 	FormationGenerator fGen; // object that create and update the team formation
 
-	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, sharedBallTimer, dispTimer; // timers.
+	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, dispTimer; // timers
 	
 	float mapCost, maxU;
 
 	unsigned int index;
 	
-	bool dist, gsmtime, gsmnext;
+	bool dist, gsmtime;
 	
-	FormationParameters::posInfo currentRobotPos;
-
-	FormationParameters::posInfo currentRole;
+	FormationParameters::posInfo currentRobotPos, currentRole;
 
 	std::vector<FormationParameters::Role> roles;
 

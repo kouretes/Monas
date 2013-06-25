@@ -17,67 +17,53 @@ using KMath::Specific::permutationsOfCombinations;
 ACTIVITY_REGISTER(Behavior);
 
 /**
- *	Returns a double random number (0 - 100.0)
- */
-double behaviorRand() {
-	return (rand() % 100) / 100.0;
-}
-
-
-/**
  * Behavior initialization function.
  */
 void Behavior::UserInit() {
+
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
-	ballFound = false;
-	sharedBallFound = false;
+	
+	gameState = PLAYER_INITIAL;
+	
+	ballFound = false, sharedBallFound = false;
 	robotStopped = false;
-	pathOK = true;
 	kickOff = false;
 	dist = false;
 	gsmtime = false;
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
-	ballDist = 0.0;
-	ballBearing = 0.0;
+	ballX = 0.0, ballY = 0.0, ballDist = 0.0, ballBearing = 0.0;
 	goalieApproachStarted = false;
-	ballX = 0.0;
-	ballY = 0.0;
 	side =+ 1;
-	robotX = 0.0;
-	robotY = 0.0;
-	robotPhi = 0.0;
-	robotConfidence = 1.0;
-	readyToKick = false;
-	scanAfterKick = false;
-	goToPositionFlag = true;
+	robotX = 0.0, robotY = 0.0, robotPhi = 0.0, robotConfidence = 1.0;
+	readyToKick = false, scanAfterKick = false;
+	goToPositionFlag = false;
 	direction = 1;
 	orientation = 0;
 	numOfRobots = 0;
-	gameState = PLAYER_INITIAL;
 	currentRobotAction = MotionStateMessage::IDLE;
 	Reset();
 	fGen.Init(config.maxPlayers);
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
-	currentRole.role = FormationParameters::ONBALL;
+	currentRole.role = FormationParameters::DEFENDER;
+	currentRole.X = -3.5;
+	currentRole.Y = 0.0;
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
 	lastPenalised = microsec_clock::universal_time();
 	lastFormation = microsec_clock::universal_time();
-
 	dispTimer = microsec_clock::universal_time();
-	sharedBallTimer = microsec_clock::universal_time();
-
 	lastGoToCenter = microsec_clock::universal_time() - seconds(10);
 	lastBallFound = microsec_clock::universal_time() - seconds(20);
 
@@ -174,74 +160,6 @@ void Behavior::Reset(){
 	LogEntry(LogLevel::Info, GetName())<<"Reset done";
 }
 
-
-void Behavior::generateFakeBalls() {
-
-	if(sharedBallTimer + seconds(5) < microsec_clock::universal_time() && microsec_clock::universal_time() < sharedBallTimer + seconds(6)) {
-		SharedGlobalBallX = 0.639;
-		SharedGlobalBallY = -1.224;
-		sharedBallFound = true;
-	}
-	else if(sharedBallTimer + seconds(10) < microsec_clock::universal_time() && microsec_clock::universal_time() < sharedBallTimer + seconds(11)) {
-		SharedGlobalBallX = 2.089;
-		SharedGlobalBallY = -0.150;
-		sharedBallFound = true;
-	}
-	else if(sharedBallTimer + seconds(20) < microsec_clock::universal_time() && microsec_clock::universal_time() < sharedBallTimer + seconds(21)) {
-		SharedGlobalBallX = -1.219;
-		SharedGlobalBallY = 1.255;
-		sharedBallFound = true;
-	}
-	else if(sharedBallTimer + seconds(30) < microsec_clock::universal_time() && microsec_clock::universal_time() < sharedBallTimer + seconds(31)) {
-		SharedGlobalBallX = -1.083;
-		SharedGlobalBallY = 0.055;
-		sharedBallFound = true;
-	}
-	else {
-		sharedBallFound = false;
-	}
-}
-
-void Behavior::generateFakeRobots() {
-
-	numOfRobots = robots.size();
-	std::cout<<_toString(numOfRobots)<<std::endl;
-	for(unsigned int r = 0 ; r < robots.size() ; r++) {
-		robots.at(r).robotId = r + 1;
-		if(r == 0) {
-			robots.at(r).robotX = -2.8f;
-			robots.at(r).robotY = 0.0f;
-			robots.at(r).robotPhi = M_PI/6.0f;
-			robots.at(r).robotStability = 0;
-		}
-		else if(r == 1) {
-			robots.at(r).robotX = 2.0f;
-			robots.at(r).robotY = 0.5f;
-			robots.at(r).robotPhi = M_PI_2;
-			robots.at(r).robotStability = 0;
-		}
-		else if(r == 2) {
-			robots.at(r).robotX = 1.0f;
-			robots.at(r).robotY = 0.5;
-			robots.at(r).robotPhi = (7.0f*M_PI)/4.0f;
-			robots.at(r).robotStability = 0;
-		}
-		else if(r == 3) {
-			robots.at(r).robotX = 2.5f;
-			robots.at(r).robotY = 1.0f;
-			robots.at(r).robotPhi = (5.0f*M_PI)/4.0f;
-			robots.at(r).robotStability = 0;
-		}
-		else if(r == 4) {
-			robots.at(r).robotX = 1.5f;
-			robots.at(r).robotY = 1.2f;
-			robots.at(r).robotPhi = (3.0f*M_PI)/2.0f;
-			robots.at(r).robotStability = 0;
-		}
-	}
-	//sortRobotsbyId(robots);
-}
-
 /* Behavior Main Execution Function */
 
 int Behavior::Execute() {
@@ -251,7 +169,7 @@ int Behavior::Execute() {
 	getGameState();
 	getPosition();
 	getMotionData();
-	getTeamPositions();
+	getTeamInfo();
 
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
@@ -291,7 +209,8 @@ int Behavior::Execute() {
 			
 		updateOrientation();
 		readyToKick = false;
-	
+		
+		/*
 		if(sharedBallFound == true) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) || 
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) || 
@@ -334,6 +253,7 @@ int Behavior::Execute() {
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
+		*/
 		
 
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
@@ -480,6 +400,13 @@ int Behavior::Execute() {
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
+				}
+				
+				if(currentRole.role == FormationParameters::DEFENDER || 
+					currentRole.role == FormationParameters::DEFENDER_L ||
+					currentRole.role == FormationParameters::DEFENDER_R) {
+					
+					defender();
 				}
 			}
 
@@ -636,7 +563,7 @@ void Behavior::getPosition() {
 	}
 }
 
-void Behavior::getTeamPositions() {
+void Behavior::getTeamInfo() {
 
 	if(swim != 0 && swim.get() != 0 && swim->teammateposition_size() > 0) {
 		robots.clear(); // MAYBE NOT HERE!!
@@ -714,27 +641,24 @@ void Behavior::updateOrientation() {
 	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-	if ( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
+	if( (oppgb <= M_PI_4) && (oppgb > -M_PI_4) ) {
 		orientation = 0;
 	}
-	else if ( (oppgb > M_PI_4) && (oppgb <= (M_PI - M_PI_4) ) ) {
+	else if( (oppgb > M_PI_4) && (oppgb <= (M_PI - M_PI_4) ) ) {
 		orientation = 1;
 	}
-	else if ( (oppgb > (M_PI - M_PI_4) ) || (oppgb <= -(M_PI - M_PI_4) ) ) {
+	else if( (oppgb > (M_PI - M_PI_4) ) || (oppgb <= -(M_PI - M_PI_4) ) ) {
 		orientation = 2;
 	}
-	else if ( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI - M_PI_4) ) ) {
+	else if( (oppgb <= -M_PI_4 ) && (oppgb > -(M_PI - M_PI_4) ) ) {
 		orientation = 3;
 	}
 }
 
-/**
- * Function used for kicking the ball.
- */
 void Behavior::kick() {
 
 	if(kickOff && (microsec_clock::universal_time() <= lastPlay + seconds(0) ) ) {
-		if (behaviorRand() < 0.75) {
+		if( rand() % 100 < 0.75 ) {
 			littleWalk(0.2, 0.0, 0.0);
 		}
 		else {
@@ -778,9 +702,6 @@ void Behavior::kick() {
 	}
 }
 
-/**
- * Locomotion Functions
- */
 void Behavior::velocityWalk(double ix, double iy, double it, double f) {
 
 	double x, y, t;
@@ -836,9 +757,6 @@ void Behavior::approachBall() {
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
 	if (ballDist > 0.3) {
-        int pathSide = (ballBearing > 0) ? 1 : -1;
-		// pathPlanningRequestRelative(ball_x, ball_y, pathSide * M_PI_2);
-		// velocityWalk(ball_x,ball_y,ball_bearing,1.0);
         pathPlanningRequestRelative(ballX - config.posX, ballY - side * config.posY, ballBearing);
     }
     else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)) {
@@ -901,6 +819,10 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 	}
 	else
 		return true;
+}
+
+void Behavior::defender() {
+	
 }
 
 /*------------------------------------ GOALIE FUNCTIONS -----------------------------------------*/
@@ -968,35 +890,31 @@ void Behavior::goalie() {
 	return;
 }
 
-/**
- * Function used by Goalie function above to determine when and where to extend robot foot
- * for a ball save.
- */
 int Behavior::toFallOrNotToFall() {
 
-	float x1, y1, dk, ubx, uby, ub;
+	float x, y, ballProjection, uBall, uBallX, uBallY;
 
-	if(wim == 0)   // the two last observation messages
+	if(wim == 0)	// the two last observation messages
 		return 0;
 
 	if(wim->balls_size() == 0)
 		return 0;
 
 	// observation of (x,y) position of the ball and x,y speed
-	x1 = wim->balls(0).relativex();
-	y1 = wim->balls(0).relativey();
-	ubx = wim->balls(0).relativexspeed();
-	uby = wim->balls(0).relativeyspeed();
+	x = wim->balls(0).relativex();
+	y = wim->balls(0).relativey();
+	uBallX = wim->balls(0).relativexspeed();
+	uBallY = wim->balls(0).relativeyspeed();
 
-	if(ubx < 0.0) {
-		dk = (ubx * y1 - uby * x1) / ubx ; // dk is the projection of the ball's route towards the robot/goalpost
+	if(uBallX < 0.0) {
+		ballProjection = (uBallX * y - uBallX * x) / uBallX ; // dk is the projection of the ball's route towards the robot/goalpost
 
-		if(fabs(dk) <= 0.3) { // if dk is shorter than the robot's foot can extend
+		if(fabs(ballProjection) <= 0.3) { // if ball projection is shorter than the robot's foot can extend
 
-			ub = sqrt(ubx * ubx + uby * uby);
+			uBall = sqrt(uBallX * uBallX + uBallY * uBallY);
 
-			if(fabs(ub) > config.ur) {
-				if(dk > 0)
+			if(fabs(uBall) > config.ur) {
+				if(ballProjection > 0)
 					return 1;  // left
 				else
 					return -1;  // right
