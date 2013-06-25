@@ -374,6 +374,7 @@ void KMapScene::setPMPathVisible (bool visible) {
 }
 
 void KMapScene::updatePath() {
+
 	if(pathLength == 0){
 		return;
 	}
@@ -387,9 +388,8 @@ void KMapScene::updatePath() {
 	for (int ways = 0; ways < pathLength; ways++) {
 		if (pathR[ways] == -1 && pathS[ways] == -1)
 			break;
-
 		r = pathR[ways];
-		s = pathS[ways];	
+		s = pathS[ways];
 		if(r == 255 || s == 255){
 			toP.setX (toGrid(0));
 			toP.setY (toGrid(0));
@@ -405,10 +405,12 @@ void KMapScene::updatePath() {
 			fromP.setX (cellCenterX[pathR[ways-1]][pathS[ways-1]]);
 			fromP.setY (cellCenterY[pathR[ways-1]][pathS[ways-1]]);
 		}
+
 		path = pathLineList.at (ways);
 		path->setLine (fromP.x(), fromP.y(), toP.x(), toP.y() );
 		if(ways < pathLength){
 		
+	cout << 4 << endl;
 			ellipse = pathEllipseList.at (ways);
 			QPoint ellipseCenter;// ( cellCenterX[pathR[ways]][pathS[ways]] , cellCenterY[pathR[ways]][pathS[ways]] );
 			

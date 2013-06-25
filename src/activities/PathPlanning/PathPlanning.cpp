@@ -88,13 +88,11 @@ int PathPlanning::Execute() {
 		pathMap.updateCells();
 		allsm =  _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
 
-		if (true){//updateObstacles && allsm != 0) {
-			/*for (int j = 0; j < KDeviceLists::US_SIZE; j++) {
+		if (updateObstacles && allsm != 0) {
+			for (int j = 0; j < KDeviceLists::US_SIZE; j++) {
 				leftSonars[j] = allsm->sensordata (KDeviceLists::L_US + j).sensorvalue();
 				rightSonars[j] = allsm->sensordata (KDeviceLists::R_US + j).sensorvalue();
-			}*/
-			leftSonars[0] = (static_cast<double>(rand())/static_cast<double>(RAND_MAX))*0.5+0.25;
-			rightSonars[0] = (static_cast<double>(rand())/static_cast<double>(RAND_MAX))*0.5+0.25;
+			}
 			//printSonarValues();
 			if (leftSonars[0] < SonarsMinDist) {
 				pathMap.updateGrid (0.15f, 0.4363f, KMath::TO_RAD (SonarsConeInDegs), false);
@@ -176,7 +174,12 @@ void PathPlanning::publishGridInfo() {
 	gridInfoMessage.set_cellsradius (pathMap.getRadiusCells() );
 	gridInfoMessage.set_cellsring (pathMap.getRingCells() );
 	gridInfoMessage.set_realgridlength (pathMap.getRealMetters() );
-	gridInfoMessage.set_pathlength (pathFromAStar.size() );
+	
+	if(hasTarget){
+		gridInfoMessage.set_pathlength (pathFromAStar.size() );
+	}else{
+		gridInfoMessage.set_pathlength (0);
+	}
 
 	gridInfoMessage.clear_pathstepsring();
 	gridInfoMessage.clear_pathstepssector();
