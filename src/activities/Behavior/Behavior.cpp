@@ -56,7 +56,6 @@ void Behavior::UserInit() {
 	robotX = 0.0;
 	robotY = 0.0;
 	robotPhi = 0.0;
-	robotConfidence = 1.0;
 	readyToKick = false;
 	scanAfterKick = false;
 	goToPositionFlag = true;
@@ -381,7 +380,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - side*config.posY) < config.epsY && oppgb < M_PI_4 && oppgb > -M_PI_4) {
+					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - side*config.posY) < config.epsY && fabs(ballY > config.posY/2) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -846,7 +845,7 @@ void Behavior::approachBall() {
         velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
     }
     else{
-        velocityWalk(ballX, ballY, 0.0 ,1.0);
+        velocityWalk(ballX - config.posX, ballY - side * config.posY, 0.0 ,1.0);
     }
 }
 

@@ -281,7 +281,7 @@ private:
 
 	int side;
 
-	float robotX, robotY, robotPhi, robotConfidence; // robot coordinates, angle and confidence.
+	float robotX, robotY, robotPhi; // robot coordinates, angle.
 
 	std::vector<FormationParameters::Robot> robots; // team information.
 
@@ -302,13 +302,13 @@ private:
 	FormationGenerator fGen; // object that create and update the team formation
 
 	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, sharedBallTimer, dispTimer; // timers.
-	
+
 	float mapCost, maxU;
 
 	unsigned int index;
-	
+
 	bool dist, gsmtime, gsmnext;
-	
+
 	FormationParameters::posInfo currentRobotPos;
 
 	FormationParameters::posInfo currentRole;
@@ -316,7 +316,7 @@ private:
 	std::vector<FormationParameters::Role> roles;
 
 	std::vector< std::vector<FormationParameters::Role> > mappings;
-	
+
 	unsigned int numOfRobots;
 
 };
