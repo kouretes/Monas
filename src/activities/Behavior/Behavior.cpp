@@ -283,21 +283,21 @@ int Behavior::Execute() {
 		if(bfm != 0 && bfm.get() != 0) {
 			ballFound = bfm->ballfound();
 		}
-		
+
 		if(swim == 0) {
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
 		}
-			
+
 		updateOrientation();
 		readyToKick = false;
-	
+
 		if(sharedBallFound == true) {
-			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) || 
-				(lastFormation + seconds(20) < microsec_clock::universal_time()) || 
+			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
+				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
-				
-				
+
+
 				if(dist) {
 					dist = false;
 					LogEntry(LogLevel::Info, GetName()) << "DISTANCE";
@@ -307,7 +307,7 @@ int Behavior::Execute() {
 				}
 				else
 					LogEntry(LogLevel::Info, GetName()) << "LAST FORMATION TIMER";
-				
+
 				LogEntry(LogLevel::Info, GetName()) << "ROBOTS: "+_toString(numOfRobots);
 				LogEntry(LogLevel::Info, GetName()) << "==========================================";
 				for(int i = 0 ; i < robots.size() ; i++) {
@@ -318,10 +318,10 @@ int Behavior::Execute() {
 					LogEntry(LogLevel::Info, GetName()) << "Stab: "+_toString(robots[i].robotStability);
 					LogEntry(LogLevel::Info, GetName()) << "==========================================";
 				}
-				
+
 				lastSharedBallX = SharedGlobalBallX;
 				lastSharedBallY = SharedGlobalBallY;
-				
+
 				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true);
 				if(!gameMode){
 					sendDebugMessages();
@@ -334,7 +334,7 @@ int Behavior::Execute() {
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
-		
+
 
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
@@ -358,7 +358,7 @@ int Behavior::Execute() {
 		else { // not goalie behavior
 
 			if(currentRole.role == FormationParameters::ONBALL) {
-				
+
 				if(goToPositionFlag == false && ballFound == 0) {
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: GO TO POSITION";
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false) {
@@ -368,11 +368,11 @@ int Behavior::Execute() {
 						goToPositionFlag = true;
 				}
 				else if(ballFound == 1) {
-					
+
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL FOUND";
-					
+
 					goToPositionFlag = true;
-		            
+
 		            lastBallFound = microsec_clock::universal_time();
 					side = (ballBearing > 0) ? 1 : -1;
 
@@ -381,8 +381,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - (side*config.posY)) < config.epsY && wim != 0 && wim->balls_size() > 0 && oppgb < M_PI_4 &&
-						oppgb > -M_PI_4) {
+					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - config.posY) < config.epsY && oppgb < M_PI_4 && oppgb > -M_PI_4) {
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -398,9 +397,9 @@ int Behavior::Execute() {
 					}
 				}
 				else if(ballFound == 0) {
-					
+
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL NOT FOUND";
-					
+
 					if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
 						scanAfterKick = false;
 						stopRobot();
@@ -441,7 +440,7 @@ int Behavior::Execute() {
 
 			}
 			else { // role is not attacker
-				
+
 				if(goToPositionFlag == false) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: GO TO POSITION";
 					if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
@@ -486,11 +485,11 @@ int Behavior::Execute() {
 		} // not goalie behavior end
 	}
 	else if (gameState == PLAYER_READY) {
-	 	
+
 	 	if(gsm != 0 && gsm.get() != 0)
 	 		kickOff = gsm->kickoff();
-	 	
-	 	if(gameState != prevGameState) {	 	
+
+	 	if(gameState != prevGameState) {
 			fGen.XmlInitFormation(kickOff);
 			if(!gameMode)
 				sendDebugMessages();
@@ -501,42 +500,42 @@ int Behavior::Execute() {
 			_blk.publishSignal(locReset, "worldstate");
 			stopRobot();
 		}
-		
+
 		hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE);
 		_blk.publishState(hcontrol, "behavior");
-		
+
 		if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 			return 0;
-		
+
 		stopRobot();
 		return 0;
 	}
 	else if (gameState == PLAYER_SET) {
-		
+
 		if(gsm != 0 && gsm.get() != 0)
 			kickOff = gsm->kickoff();
-		
+
 		if(gameState != prevGameState) {
 			// Reset Loc
 			locReset.set_type(LocalizationResetMessage::SET);
 			locReset.set_kickoff(kickOff);
 			_blk.publishSignal(locReset, "worldstate");
 		}
-		
+
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(hcontrol, "behavior");
-		
+
 		stopRobot();
 	}
 	else if(gameState == PLAYER_PENALISED) {
-		
+
 		if(prevGameState == PLAYER_INITIAL) {
 			fGen.XmlInitFormation(kickOff);
 			if(!gameMode)
 				sendDebugMessages();
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
 		}
-		
+
 		if(gameState != prevGameState) {
 			penalisedStarted = microsec_clock::universal_time();
 			hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -734,17 +733,13 @@ void Behavior::updateOrientation() {
 void Behavior::kick() {
 
 	if(kickOff && (microsec_clock::universal_time() <= lastPlay + seconds(0) ) ) {
-		if (behaviorRand() < 0.75) {
-			littleWalk(0.2, 0.0, 0.0);
-		}
-		else {
-			if(side == 1)
-				amot.set_command(config.kicks.KickSideLeft);
-			else
-				amot.set_command(config.kicks.KickSideRight);
+		if(side == 1)
+            amot.set_command(config.kicks.KickSideLeft);
+        else
+            amot.set_command(config.kicks.KickSideRight);
 
-			_blk.publishSignal(amot, "motion");
-		}
+        _blk.publishSignal(amot, "motion");
+
 	}
 	else {
 
