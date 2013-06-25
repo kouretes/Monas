@@ -475,16 +475,19 @@ void Behavior::Coordinate() {
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
 		}
 
-		//print(roles, "Behavior");
+		print(roles, "Behavior");
 		mappings = permutationsOfCombinations(roles, numOfRobots);
 		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
 		//print(mappings, "Behavior");
 		roles.clear();
-
+		
+		LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
+		
 		// search for optimal mapping
 		maxU = 0;
 		for(unsigned int map = 0 ; map < mappings.size() ; map++) {
 			mapCost = 0;
+			LogEntry(LogLevel::Info, GetName()) << "MAP: " << map;
 			for(unsigned int r = 0 ; r < numOfRobots ; r++) { // for all except goalie robots
 				currentRobotPos = fGen.findRoleInfo(mappings[map].at(r));
 				mapCost = mapCost + fieldUtility(currentRobotPos.X, currentRobotPos.Y, SharedGlobalBallY, fGen, fGen.getFormationType()) -
