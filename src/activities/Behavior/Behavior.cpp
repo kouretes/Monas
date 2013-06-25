@@ -477,8 +477,8 @@ void Behavior::Coordinate() {
 
 		print(roles, "Behavior");
 		mappings = permutationsOfCombinations(roles, numOfRobots);
-		//std::cout << "ALL POSSIBLE MAPPINGS ARE: " << std::endl;
-		//print(mappings, "Behavior");
+		LogEntry(LogLevel::Info, GetName()) << "ALL POSSIBLE MAPPINGS ARE: ";
+		print(mappings, "Behavior");
 		roles.clear();
 		
 		LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
