@@ -84,8 +84,8 @@ void BallFilter::predict(float dt, Localization::KMotionModel const & MM)
 
     fict(0,0) = 0.1 * dt;
     fict(1,1) = 0.1 * dt;
-    fict(2,2) = 0.01 * dt;
-    fict(3,3) = 0.01 * dt;
+    fict(2,2) = 0.05 * dt;
+    fict(3,3) = 0.05 * dt;
 
     //Velocity_t-1
     vel = sqrt(pow(state(2,0),2) + pow(state(3,0),2));
