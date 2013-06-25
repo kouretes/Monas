@@ -1047,7 +1047,7 @@ void Vision::fillGoalPostHeightMeasurments(goalpostdata_t & newpost) const
 	//Single solution of a  trionym
 	if(config.goaltopisrounded!=0) //If the goal post top is rounded, we observe a Hypotenuse
 	{
-		g=sqrt(conf.goalheight*conf.goalheight+conf.goaldiam*conf.goaldiam);
+		g=sqrt(config.goalheight*config.goalheight+config.goaldiam*config.goaldiam);
 	}
 	else
 		g = config.goalheight;
