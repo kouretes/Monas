@@ -69,6 +69,7 @@ private:
     void LWSGVEkfMHypothesisVisible(QString, bool);
     void LWSGVOdometryVisible(QString, bool);
 	void LWSGVFormationVisible(QString, bool);
+	void LWSGVSharedBallVisible(QString, bool);
 	
 protected:
 	void resizeEvent(QResizeEvent *event);

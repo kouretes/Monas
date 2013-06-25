@@ -127,7 +127,6 @@ void KccHandler::clickedImage(QMouseEvent *ev) {
 	int pixNum = ui->pixelSpinBox->value() - 1;
 	map<QYuv, unsigned char> undo;
 	lumaScale = 1 / yuvColorTable->getLumaScale();
-	qDebug() << lumaScale ;
 	QYuv b;
 
 	for(int px = -pixNum ; px < pixNum + 1 ; px++) {

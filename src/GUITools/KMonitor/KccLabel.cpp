@@ -1,8 +1,8 @@
 #include "KccLabel.h"
 #include <iostream>
 
-KccLabel::KccLabel (QWidget *parent) : QLabel(parent) {
-	// connect( this, SIGNAL( clicked() ), this, SLOT( slotClicked() ) );
+KccLabel::KccLabel (QWidget *parent) : QLabel(parent) { 
+
 }
 
 void KccLabel::mousePressEvent(QMouseEvent *event) {
@@ -22,9 +22,9 @@ void KccLabel::updateLabel(VisionDebugMessage vdm) {
 	
 		Polygon *poly;
 		Point *p1, *p2;
-		for(unsigned int p = 0 ; p < vdm.polygon_size() ; p++) {
+		for(int p = 0 ; p < vdm.polygon_size() ; p++) {
 			poly = vdm.mutable_polygon(p);
-			for(unsigned int l = 0 ; l < poly->points_size() ; l++) {
+			for(int l = 0 ; l < poly->points_size() ; l++) {
 				if( (l+1) != poly->points_size() ) {
 					p1 = poly->mutable_points(l);
 					p2 = poly->mutable_points(l+1);
@@ -47,6 +47,7 @@ void KccLabel::updateLabel(VisionDebugMessage vdm) {
 		}
 	
 		this->setPixmap(latestImgLinesPix);
+		this->update();
 		this->show();
     }
 }

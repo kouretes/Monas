@@ -67,8 +67,6 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 		ParticlesList.append(part);
 	}
 	
-	formationBall = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(QColor(255, 140, 0)));
-	
 	for(int it = 0 ; it < numOfPlayers ; it++) {
 		QGraphicsEllipseItem *pos = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::gray));
 		PositionsList.append(pos);
@@ -83,13 +81,13 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	RobotDirection = this->parentScene->addLine(QLineF(), penForRobotDirection);
 	Robot = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::darkGray));
 	Ball = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::darkGray));
-	sharedBall = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::cyan));
 	Teammates[0] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
 	Teammates[1] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::green));
 	Teammates[2] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::blue));
 	Teammates[3] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::red));
 	Teammates[4] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::cyan));
-	TeamBall = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
+	LWSSharedBall = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
+	GWSSharedBall = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
 
     robotTraceTime = boost::posix_time::microsec_clock::universal_time();
 
@@ -97,7 +95,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
     PoseHypothesisDirections = new QGraphicsLineItem*[ekfMaxHypothesis];
 
 	for(int it = 0 ; it < ekfMaxHypothesis ; it++)
-        PoseHypothesis[it] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
+        PoseHypothesis[it] = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::black));
     
     for(int i = 0 ; i < ekfMaxHypothesis ; i++)
 		PoseHypothesisDirections[i] = this->parentScene->addLine(QLineF(), penForRobotDirection);
@@ -150,15 +148,15 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 			delete TeammateDirections[i];
 	}
 	
-	if(TeamBall)
-		delete TeamBall;
+	if(LWSSharedBall)
+		delete LWSSharedBall;
+	
+	if(GWSSharedBall)
+		delete GWSSharedBall;
 
 	if(Ball)
 		delete Ball;
-	
-	if(sharedBall)
-		delete sharedBall;
-
+		
 	if(VisionBall)
 		delete VisionBall;
 
@@ -179,9 +177,6 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 
 	if(zAxisArc)
 		delete zAxisArc;
-
-	if(formationBall)
-		delete formationBall;
 
 	for(int i = 0 ; i < ParticlesList.count() ; i++) {
 		if(ParticlesList.at(i)->Pose)
@@ -232,14 +227,14 @@ GraphicalRobotElement::~GraphicalRobotElement() {
         delete RobotTrace;    
 
 	if (PoseHypothesis){
-        for ( int i = 0; i <ekfMaxHypothesis; ++i){
+        for(int i = 0; i < ekfMaxHypothesis ; ++i){
             delete PoseHypothesis[i];
         }
         delete PoseHypothesis;
     }
 
     if (PoseHypothesisDirections){
-        for ( int i = 0; i < ekfMaxHypothesis; ++i ){
+        for(int i = 0 ; i < ekfMaxHypothesis ; ++i ){
             delete PoseHypothesisDirections[i];
         }
         delete PoseHypothesisDirections;
@@ -312,14 +307,8 @@ void GraphicalRobotElement::setCurrentOdometryM(OdometryInfoMessage odometryM) {
 }
 
 void GraphicalRobotElement::setRobotVisible(bool visible) {
-	if(visible == false) {
-		Robot->setVisible(false);
-		RobotDirection->setVisible(false);
-	} 
-	else {
-		Robot->setVisible(true);
-		RobotDirection->setVisible(true);
-	}
+	Robot->setVisible(visible);
+	RobotDirection->setVisible(visible);
 }
 
 void GraphicalRobotElement::setTeammatesVisible(bool visible) {
@@ -327,18 +316,11 @@ void GraphicalRobotElement::setTeammatesVisible(bool visible) {
 		Teammates[i]->setVisible(visible);
 		TeammateDirections[i]->setVisible(visible);
 	}
-	TeamBall->setVisible(visible);
 }
 
 void GraphicalRobotElement::setTeammateVisible(int idx, bool visible) {
-	if(visible == false) {
-		Teammates[idx]->setVisible(false);
-		TeammateDirections[idx]->setVisible(false);
-	} 
-	else {
-		Teammates[idx]->setVisible(true);
-		TeammateDirections[idx]->setVisible(true);
-	}
+	Teammates[idx]->setVisible(visible);
+	TeammateDirections[idx]->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateRobotRect() {
@@ -374,14 +356,15 @@ void GraphicalRobotElement::updateEkfMHypothesisRects(){
 
     int idx;
 
-    //std::cout << "currentEKFMHypothesis size : " << currentEKFMHypothesis.size() << std::endl ;
 	if(currentEKFMHypothesis.size() != 0) {
 
 		for(idx = 0 ; idx < currentEKFMHypothesis.size() ; idx++) {
 
-			PoseHypothesis[idx]->setRect(this->parentScene->rectFromFC(this->currentEKFMHypothesis.kmodel(idx).x()*1000, this->currentEKFMHypothesis.kmodel(idx).y()*1000, 150, 150));
+			PoseHypothesis[idx]->setRect(this->parentScene->rectFromFC(this->currentEKFMHypothesis.kmodel(idx).x()*1000,
+																	   this->currentEKFMHypothesis.kmodel(idx).y()*1000, 150, 150));
             
-			PoseHypothesisDirections[idx]->setLine(this->parentScene->lineFromFCA(this->currentEKFMHypothesis.kmodel(idx).x()*1000, this->currentEKFMHypothesis.kmodel(idx).y()* 1000, this->currentEKFMHypothesis.kmodel(idx).phi(), 200));
+			PoseHypothesisDirections[idx]->setLine(this->parentScene->lineFromFCA(this->currentEKFMHypothesis.kmodel(idx).x()*1000,
+																 this->currentEKFMHypothesis.kmodel(idx).y()* 1000, this->currentEKFMHypothesis.kmodel(idx).phi(), 200));
 
 		}
         for(idx=currentEKFMHypothesis.size() ; idx<ekfMaxHypothesis ; idx++){
@@ -397,7 +380,6 @@ void GraphicalRobotElement::updateEkfMHypothesisRects(){
 	    }
     }
 }
-
 
 void GraphicalRobotElement::setEkfMHypothesisVisible(bool visible) {
 	for(int i = 0 ; i < ekfMaxHypothesis ; i++) {
@@ -439,46 +421,36 @@ void GraphicalRobotElement::updateTeammatesRects() {
 	int idx;
 
 	if(currentSWIM.teammateposition_size() != 0) {
-		//std::cout << currentSWIM.teammateposition_size() << "\n";
 		for(idx = 0 ; idx < numOfRobots ; idx++)
 			setTeammateVisible(idx, false);
 
-		TeamBall->setVisible(false);
-		
 		for(idx = 0 ; idx < currentSWIM.teammateposition_size() ; idx++) {
-			//std::cout << this->currentSWIM.teammateposition(idx).pose().x() << " = x \n";
-			Teammates[idx]->setRect(this->parentScene->rectFromFC(this->currentSWIM.teammateposition(idx).pose().x()*1000, this->currentSWIM.teammateposition(idx).pose().y()* 1000, 150, 150));
-			TeammateDirections[idx]->setLine(this->parentScene->lineFromFCA(this->currentSWIM.teammateposition(idx).pose().x()*1000, this->currentSWIM.teammateposition(idx).pose().y()*1000, this->currentSWIM.teammateposition(idx).pose().phi(), 200));
+			Teammates[idx]->setRect(this->parentScene->rectFromFC(this->currentSWIM.teammateposition(idx).pose().x()*1000,
+																  this->currentSWIM.teammateposition(idx).pose().y()* 1000, 150, 150));
+			
+			TeammateDirections[idx]->setLine(this->parentScene->lineFromFCA(this->currentSWIM.teammateposition(idx).pose().x()*1000,
+																			this->currentSWIM.teammateposition(idx).pose().y()*1000,
+																			this->currentSWIM.teammateposition(idx).pose().phi(), 200));
 			setTeammateVisible(idx, true);
 		}
-		
-		if(currentSWIM.globalballs_size() != 0) {
-			TeamBall->setRect(this->parentScene->rectFromFC(this->currentSWIM.globalballs(0).x()*1000, this->currentSWIM.globalballs(0).y()*1000, 75, 75));
-			TeamBall->setVisible(true);
-		}
-		else
-			TeamBall->setRect(0, 0, 0, 0);
 	}
 }
 
 void GraphicalRobotElement::setBallVisible(bool visible) {
 	this->Ball->setVisible(visible);
-	this->sharedBall->setVisible(visible);
 }
 
-void GraphicalRobotElement::setSharedBallVisible(bool visible) {
-	this->sharedBall->setVisible(visible);
+void GraphicalRobotElement::setGlobalSharedBallVisible(bool visible) {
+	this->GWSSharedBall->setVisible(visible);
+}
+
+void GraphicalRobotElement::setLocalSharedBallVisible(bool visible) {
+	this->LWSSharedBall->setVisible(visible);
 }
 
 void GraphicalRobotElement::setVarianceVisible(bool visible) {
-	if(visible == false) {
-		this->PositionUncertainty->setVisible(false);
-		this->AngleUncertainty->setVisible(false);
-	} 
-	else {
-		this->PositionUncertainty->setVisible(true);
-		this->AngleUncertainty->setVisible(true);
-	}
+	this->PositionUncertainty->setVisible(visible);
+	this->AngleUncertainty->setVisible(visible);
 }
 
 void GraphicalRobotElement::setOdometryVisible(bool visible) {
@@ -496,22 +468,28 @@ void GraphicalRobotElement::setRobotTraceVisible(bool visible) {
 }
 
 void GraphicalRobotElement::updateBallRect() {
-	if((this->currentWIM.balls_size() > 0) && this->currentWIM.has_myposition()) {
-		float a = cos(currentWIM.myposition().phi());
-		float b = sin(currentWIM.myposition().phi());
-		formationBallX =(currentWIM.myposition().x() + currentWIM.balls(0).relativex()*a - currentWIM.balls(0).relativey()*b);
-		formationBallY =(currentWIM.myposition().y() + currentWIM.balls(0).relativex()*b + currentWIM.balls(0).relativey()*a);
+	if((this->currentWIM.balls_size() > 0) && this->currentWIM.has_myposition())
 		Ball->setRect(this->parentScene->ballRectFromFC(&currentWIM, 75, 75));
-	} 
 	else
 		Ball->setRect(0, 0, 0, 0);
 }
 
-void GraphicalRobotElement::updateSharedBallRect() {
-	if((this->currentSWIM.globalballs_size() > 0))
-		sharedBall->setRect(this->parentScene->ballRectFromFC(&currentSWIM, 75, 75));
+void GraphicalRobotElement::updateGWSSharedBallRect() {
+	if(currentSWIM.globalballs_size() != 0) {
+		GWSSharedBall->setRect(this->parentScene->rectFromFC(this->currentSWIM.globalballs(0).x()*1000, this->currentSWIM.globalballs(0).y()*1000, 75, 75));
+		GWSSharedBall->setVisible(true);
+	}
 	else
-		sharedBall->setRect(0, 0, 0, 0);
+		GWSSharedBall->setRect(0, 0, 0, 0);
+}
+
+void GraphicalRobotElement::updateLWSSharedBallRect() {
+	if(currentSWIM.globalballs_size() != 0) {
+		LWSSharedBall->setRect(this->parentScene->rectFromFC(this->currentSWIM.globalballs(0).x()*1000, this->currentSWIM.globalballs(0).y()*1000, 75, 75));
+		LWSSharedBall->setVisible(true);
+	}
+	else
+		LWSSharedBall->setRect(0, 0, 0, 0);
 }
 
 void GraphicalRobotElement::setUnionistLineVisible(bool visible) {
@@ -541,31 +519,22 @@ void GraphicalRobotElement::setVisionBallVisible(bool visible) {
 }
 
 void GraphicalRobotElement::updateVisionBallRect(ObservationMessage obm) {
-	if( obm.has_ball() && currentWIM.has_myposition())
+	if(obm.has_ball() && currentWIM.has_myposition())
 		VisionBall->setRect(this->parentScene->visionBallRect(obm.ball(), currentWIM));
 	else
 		VisionBall->setRect(0, 0, 0, 0);
 }
 
 void GraphicalRobotElement::setYellowLeftPostVisible(bool visible) {
-	if(visible == false)
-		this->LeftYellowPost->setVisible(false);
-	else
-		this->LeftYellowPost->setVisible(true);
+	this->LeftYellowPost->setVisible(visible);
 }
 
 void GraphicalRobotElement::setYellowRightPostVisible(bool visible) {
-	if(visible == false)
-		this->RightYellowPost->setVisible(false);
-	else
-		this->RightYellowPost->setVisible(true);
+	this->RightYellowPost->setVisible(visible);
 }
 
 void GraphicalRobotElement::setYellowPostVisible(bool visible) {
-	if(visible == false)
-		this->YellowPost->setVisible(false);
-	else
-		this->YellowPost->setVisible(true);
+	this->YellowPost->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateGoalPostsRect() {
@@ -644,14 +613,8 @@ void GraphicalRobotElement::clearVisionObservations() {
 
 void GraphicalRobotElement::setParticlesVisible(bool visible) {
 	for(int i = 0 ; i < ParticlesList.count() ; i++) {
-		if(visible == false) {
-			ParticlesList.at(i)->Pose->setVisible(false);
-			ParticlesList.at(i)->Direction->setVisible(false);
-		} 
-		else {
-			ParticlesList.at(i)->Pose->setVisible(true);
-			ParticlesList.at(i)->Direction->setVisible(true);
-		}
+		ParticlesList.at(i)->Pose->setVisible(visible);
+		ParticlesList.at(i)->Direction->setVisible(visible);
 	}
 }
 
@@ -681,29 +644,13 @@ void GraphicalRobotElement::updateParticlesRect(LocalizationDataForGUI debugGUI)
 }
 
 void GraphicalRobotElement::setFormationVisible(bool visible) {
-	if(visible == false) {
-		this->parentScene->getLabel()->setVisible(false);
-		formationBall->setVisible(false);
-	}
-	else {
-		this->parentScene->getLabel()->setVisible(true);
-		formationBall->setVisible(true);
-	}
-
 	for(int i = 0 ; i < PositionsList.count() ; i++) {
-		if(visible == false)
-			PositionsList.at(i)->setVisible(false);		
-		else
-			PositionsList.at(i)->setVisible(true);
+		PositionsList.at(i)->setVisible(visible);		
 	}
 }
 
 void GraphicalRobotElement::updateFormationRects(FormationDataForGUI debugGUI) {
-	
-	formationBall->setRect(this->parentScene->rectFromFC( formationBallX*1000, formationBallY*1000, 80, 80));
-	this->parentScene->getLabel()->setText("Ball Position:\n"+QString::fromStdString("X: ")+QString::number((formationBallX),'f',3)+QString::fromStdString("\nY: ")
-					+QString::number((formationBallY),'f',3)+"\n");
-	
+		
 	for(int i = 0 ; i < debugGUI.positions_size() ; i++) {
 		PositionInfo posInfo = debugGUI.positions(i);
 
@@ -740,10 +687,7 @@ void GraphicalRobotElement::updateFormationRects(FormationDataForGUI debugGUI) {
 }
 
 void GraphicalRobotElement::setHFOVVisible(bool visible) {
-	if(visible == false)
-		this->HFOVLines->setVisible(false);
-	else
-		this->HFOVLines->setVisible(true);
+	this->HFOVLines->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateHFOVRect() {
@@ -766,16 +710,9 @@ void GraphicalRobotElement::updateHFOVRect() {
 }
 
 void GraphicalRobotElement::setMWCmdVisible(bool visible) {
-	if(visible == false) {
-		GotoPositionLine->setVisible(false);
-		GotoArrow->setVisible(false);
-		zAxisArc->setVisible(false);
-	} 
-	else {
-		GotoPositionLine->setVisible(true);
-		GotoArrow->setVisible(true);
-		zAxisArc->setVisible(true);
-	}
+	GotoPositionLine->setVisible(visible);
+	GotoArrow->setVisible(visible);
+	zAxisArc->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot) {
@@ -785,10 +722,7 @@ void GraphicalRobotElement::updateMWCmdRect(MotionWalkMessage wmot) {
 	double angleArrow;
 	int startAngle;
 	int spanAngle;
-	/*	std::cout << "cx :: " << wmot.parameter(0) << std::endl;
-		std::cout << "cy :: " << wmot.parameter(1) << std::endl;
-		std::cout << "ct :: " << wmot.parameter(2) << std::endl;
-		std::cout << "f :: " << wmot.parameter(3) << std::endl;*/
+
 	arrowHead.clear();
 	arrowHead1.clear();
 

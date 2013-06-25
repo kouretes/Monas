@@ -284,17 +284,6 @@ QRectF KFieldScene::ballRectFromFC(WorldInfo *wim, float width, float height) {
 	           sceneRect().height() * height / config.totalCarpetAreaHeight);
 }
 
-QRectF KFieldScene::ballRectFromFC(SharedWorldInfo *swim, float width, float height) {
-	float xMiddle = swim->globalballs(0).x() * 1000;
-	float yMiddle = swim->globalballs(0).y() * 1000;
-	
-	return QRectF(
-	           sceneRect().width() *(config.xCentre - width / 2 + xMiddle) / config.totalCarpetAreaWidth,
-	           sceneRect().height() - sceneRect().height() *(config.yCentre + height / 2 + yMiddle) / config.totalCarpetAreaHeight,
-	           sceneRect().width() * width / config.totalCarpetAreaWidth,
-	           sceneRect().height() * height / config.totalCarpetAreaHeight);
-}
-
 QLineF KFieldScene::unionistLineRectFromFC(WorldInfo *wim) {
 	float x = wim->myposition().x()*1000;
 	float y = wim->myposition().y()*1000;

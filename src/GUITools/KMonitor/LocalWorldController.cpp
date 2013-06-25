@@ -93,8 +93,14 @@ void LocalWorldController::newTreeElementRequested(QTreeWidgetItem *item) {
 			LWSGVTeammatesVisible(myCurrentLWRequestedHost, false);
 		else
 			LWSGVTeammatesVisible(myCurrentLWRequestedHost, true);
-	} 
+	}
 	else if(ui->checkTree->itemAt(0, 0)->indexOfChild(item) == 12) {
+		if(item->checkState(0) == 0)
+			LWSGVSharedBallVisible(myCurrentLWRequestedHost, false);
+		else
+			LWSGVSharedBallVisible(myCurrentLWRequestedHost, true);
+	} 
+	else if(ui->checkTree->itemAt(0, 0)->indexOfChild(item) == 13) {
 		if(item->checkState(0) == 0)
 			LWSGVFormationVisible(myCurrentLWRequestedHost, false);
 		else
@@ -186,6 +192,8 @@ void LocalWorldController::sharedWorldInfoUpdateHandler(SharedWorldInfo nswim, Q
 		element->setCurrentSWIM(nswim);
 		if(element->getLWSTeammatesVisible()) 
 			element->updateTeammatesRects();
+		if(element->getLWSSharedBallVisible())
+			element->updateLWSSharedBallRect();
 	}
 }
 
@@ -448,6 +456,22 @@ void LocalWorldController::LWSGVTeammatesVisible(QString host, bool visible) {
 
 	if(robotElement != NULL)
 		robotElement->setLWSTeammatesVisible(visible);
+}
+
+void LocalWorldController::LWSGVSharedBallVisible(QString host, bool visible) {
+
+	GraphicalRobotElement *robotElement = NULL;
+	robotElement = paintArea->findGraphicalRobotItem(host);
+
+	if(robotElement == NULL) {
+		if(paintArea->getRobotList().count() != 0)
+			removeGraphicalElement(paintArea->getRobotList().at(0)->getHostId());
+
+		robotElement = paintArea->newGraphicalRobotItem(host);
+	}
+
+	if(robotElement != NULL)
+		robotElement->setLWSSharedBallVisible(visible);
 }
 
 void LocalWorldController::LWSGVEkfMHypothesisVisible(QString host, bool visible) {

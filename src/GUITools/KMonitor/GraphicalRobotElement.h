@@ -117,11 +117,20 @@ public:
 	
 	void setGWSSharedBallVisible(bool visible) {
 		GWSSharedBallVisible = visible;
-		setSharedBallVisible(visible);
+		setGlobalSharedBallVisible(visible);
+	}
+	
+	void setLWSSharedBallVisible(bool visible) {
+		LWSSharedBallVisible = visible;
+		setLocalSharedBallVisible(visible);
 	}
 	
 	bool getGWSSharedBallVisible() {
 		return GWSSharedBallVisible;
+	}
+	
+	bool getLWSSharedBallVisible() {
+		return LWSSharedBallVisible;
 	}
 	
 	void setLWSBallVisible(bool visible) {
@@ -135,8 +144,10 @@ public:
 	
 	void setBallVisible(bool visible);
 	void updateBallRect();
-	void setSharedBallVisible(bool visible);
-	void updateSharedBallRect();
+	void setGlobalSharedBallVisible(bool visible);
+	void setLocalSharedBallVisible(bool visible);
+	void updateLWSSharedBallRect();
+	void updateGWSSharedBallRect();
 	
 	void setGWSUnionistLineVisible(bool visible) {
 		GWSUnionistLineVisible = visible;
@@ -339,7 +350,7 @@ private:
 	static const int numOfRobots = 5;
 
     int ekfMaxHypothesis;
-	QGraphicsEllipseItem *Robot, *AngleUncertainty,*PositionUncertainty,*Teammates[numOfRobots], *TeamBall;
+	QGraphicsEllipseItem *Robot, *AngleUncertainty,*PositionUncertainty,*Teammates[numOfRobots], *GWSSharedBall, *LWSSharedBall;
 	QGraphicsLineItem *RobotDirection, *TeammateDirections[numOfRobots],**PoseHypothesisDirections;
     QGraphicsEllipseItem **PoseHypothesis;
 	
@@ -351,16 +362,13 @@ private:
 
     bool LWSFormationVisible;
 	QList<QGraphicsEllipseItem *> PositionsList;
-	QGraphicsEllipseItem *formationBall;
 	int numOfPlayers;
-	float formationBallX;
-	float formationBallY;
 
 	bool GWSBallVisible;
-	bool GWSSharedBallVisible;
+	bool GWSSharedBallVisible, LWSSharedBallVisible;
 	bool LWSBallVisible;
 	QGraphicsEllipseItem *Ball;
-	QGraphicsEllipseItem *sharedBall;
+
     int t;
 	bool GWSUnionistLineVisible;
 	bool GWSSharedUnionistLineVisible;

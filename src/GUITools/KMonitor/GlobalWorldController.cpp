@@ -73,9 +73,9 @@ void GlobalWorldController::worldInfoUpdateHandler(WorldInfo nwim, QString host)
 		}
 		
 		if(element->getGWSSharedBallVisible()) {
-			element->setSharedBallVisible(false);
-			element->updateSharedBallRect();
-			element->setSharedBallVisible(true);
+			element->setGWSSharedBallVisible(false);
+			element->updateGWSSharedBallRect();
+			element->setGWSSharedBallVisible(true);
 		}
 		
 		if(element->getGWSSharedUnionistLineVisible()) {
