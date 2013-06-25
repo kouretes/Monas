@@ -381,7 +381,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - config.posY) < config.epsY && oppgb < M_PI_4 && oppgb > -M_PI_4) {
+					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - side*config.posY) < config.epsY && oppgb < M_PI_4 && oppgb > -M_PI_4) {
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -932,7 +932,7 @@ void Behavior::goalie() {
 		if(ballDist < 1.0f) { // check if ball is to close to the goal post
 			goalieApproachStarted = true;
 			velocityWalk(ballX - config.posX, ballY - side * config.posY, ballBearing, 1);
-			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - config.posY ) < config.epsY)) {
+			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - side*config.posY ) < config.epsY)) {
 				if (ballY > 0.0)
 					amot.set_command(config.kicks.KickForwardLeft); // Left Kick
 				else
