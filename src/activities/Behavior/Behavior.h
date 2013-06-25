@@ -267,7 +267,7 @@ private:
 
 	int side;
 
-	float robotX, robotY, robotPhi, robotConfidence; // robot coordinates, angle and confidence.
+	float robotX, robotY, robotPhi; // robot coordinates, angle.
 
 	std::vector<FormationParameters::Robot> robots; // team information.
 
@@ -300,7 +300,7 @@ private:
 	std::vector<FormationParameters::Role> roles;
 
 	std::vector< std::vector<FormationParameters::Role> > mappings;
-	
+
 	unsigned int numOfRobots;
 
 };
