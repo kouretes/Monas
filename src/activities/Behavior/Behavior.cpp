@@ -26,14 +26,14 @@ void Behavior::UserInit() {
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
-	
+
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
-	
+
 	gameState = PLAYER_INITIAL;
-	
+
 	ballFound = false, sharedBallFound = false;
 	robotStopped = false;
 	kickOff = false;
@@ -296,8 +296,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(fabs(ballX - config.posX) < config.epsX && fabs(ballY - side*config.posY) < config.epsY && fabs(ballY > config.posY/2) 
-									&& oppgb < M_PI_4 && oppgb > -M_PI_4) {
+					if(ballX < config.posX && ((ballY < 3*config.posY/2 && ballY > config.posY/2) || (ballY < -3*config.posY/2 && ballY > -config.posY/2)) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -396,11 +395,11 @@ int Behavior::Execute() {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 				}
-				
-				if(currentRole.role == FormationParameters::DEFENDER || 
+
+				if(currentRole.role == FormationParameters::DEFENDER ||
 					currentRole.role == FormationParameters::DEFENDER_L ||
 					currentRole.role == FormationParameters::DEFENDER_R) {
-					
+
 					defender();
 				}
 			}
@@ -812,7 +811,7 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 }
 
 void Behavior::defender() {
-	
+
 }
 
 /*------------------------------------ GOALIE FUNCTIONS -----------------------------------------*/

@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!-- Desired ball position for kick -->
 <posx>0.08</posx>
-<posy>0.03</posy>
+<posy>0.05</posy>
 <!-- Desired precision -->
 <epsx>0.025</epsx>
 <epsy>0.025</epsy>
