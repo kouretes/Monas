@@ -19,31 +19,25 @@ void HeadController::UserInit()
 
 	hmot.set_command("setHead");
 	hmot.add_parameter(0.0f);
-	hmot.add_parameter(-0.66322512);
-	hmot.add_parameter(1.0f); //Head speed
+	hmot.add_parameter(0.0f);
+	hmot.add_parameter(0.0f); //Head speed
 
 	targetSpeed = headSpeed[NORMAL];
 
-	scanforball = false;
-	startscan = true;
 	useExternalSpeed = false;
-	ballFound = false;
 
-	state = BALL1;
-
-	bd = 0.0;
-	bb = 0.0;
-	bx = 0.0;
-	by = 0.0;
-	robot_x = 0.0;
-	robot_y = 0.0;
-	robot_phi = 0.0;
-	robot_confidence = 1.0;
+	robotX = 0.0;
+	robotY = 0.0;
+	robotPhi = 0.0;
 
 	Reset();
 
 	lastball = microsec_clock::universal_time();
-
+	actionStarted = microsec_clock::universal_time();
+	
+	currentCommand = HeadControlMessage::NOTHING;
+	previousCommand = HeadControlMessage::NOTHING;
+	
 	LogEntry(LogLevel::Info,GetName())<< "Initialized" ;
 }
 
@@ -65,13 +59,12 @@ int HeadController::Execute()
 		currentHeadYaw = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::YAW).sensorvalue();
 		currentHeadPitch = allsm->jointdata(KDeviceLists::HEAD + KDeviceLists::PITCH).sensorvalue();
 	}
-
-	unsigned int whattodo;
+	
 	if(control.get()==0){
-		whattodo=HeadControlMessage::FROWN;
+		currentCommand=HeadControlMessage::FROWN;
 		useExternalSpeed = false;
 	}else{
-		whattodo=control->task().action();
+		currentCommand=control->task().action();
 		if(control->task().speed() != -1){
 			useExternalSpeed = true;
 			externalSpeed = control->task().speed();
@@ -81,73 +74,74 @@ int HeadController::Execute()
 	}
 
 
-	switch(whattodo)
+	switch(currentCommand)
 	{
 		case HeadControlMessage::NOTHING:
-			scanforball=false;
+			targetYaw = currentHeadYaw;
+			targetPitch = currentHeadPitch;
 			break;
 		case HeadControlMessage::FROWN:
 			targetYaw = 0;
-			targetPitch =  0.05;
-			scanforball=false;
+			targetPitch = 0.05;
 			MakeHeadAction();
 			break;
 		case HeadControlMessage::LOCALIZE:
-			scanforball=false;
-			HeadScanStepHigh(1.4);
+			HeadScanStepHigh(1.4, -0.55);
 			break;
 		case HeadControlMessage::LOCALIZE_FAR:
-			scanforball=false;
-			HeadScanStepHigh(1.57);
+			HeadScanStepHigh(1.57, -0.55);
 			break;
 		case HeadControlMessage::SCAN_AND_TRACK_FOR_BALL:
-			CheckForBall();
-			if(ballFound) //Do we see the ball? then
+			if(currentCommand != previousCommand){
+				smartPhase = BLUE;
+				smartState = START;
+				ysign = currentHeadYaw > 0 ? +1 : -1;
+			}
+			if(CheckForBall()) //Do we see the ball? then
 			{
+				smartPhase = BLUE;
+				smartState = START;
                 targetYaw = lookAtPointRelativeYaw(bx, by);
                 targetPitch = lookAtPointRelativePitch(bx, by);
+				targetSpeed = headSpeed[FAST];
                 MakeHeadAction();
-                scanforball=false;
+				ysign = currentHeadYaw > 0 ? +1 : -1;
                 bfm.set_ballfound(true);
                 _blk.publishState(bfm, "behavior");
 			}
 			else
 			{
-				if(scanforball==false)
-				{
-					startscan=true;
-					scanforball=true;
-					state = BALL1;
-				}
-				HeadScanStepSmart();
+				HeadScanStepSmart(NORMAL);
 				bfm.set_ballfound(false);
                 _blk.publishState(bfm, "behavior");
 			}
 			break;
 		case HeadControlMessage::SMART_SELECT:
-			CheckForBall();
-			if(ballFound) //Do we see the ball? then
+			if(currentCommand != previousCommand){
+				smartPhase = BLUE;
+				smartState = START;
+                intelState = BALL1;
+				ysign = currentHeadYaw > 0 ? +1 : -1; //Side
+			}
+			if(CheckForBall()) //Do we see the ball? then
 			{
+				smartPhase = BLUE;
+				smartState = START;
 				HeadTrackIntelligent();
-				scanforball=false;
+				ysign = currentHeadYaw > 0 ? +1 : -1;
                 bfm.set_ballfound(true);
                 _blk.publishState(bfm, "behavior");
 			}
 			else
 			{
-				if(scanforball==false)
-				{
-					startscan=true;
-					scanforball=true;
-					state = BALL1;
-				}
-				HeadScanStepSmart();
+                intelState = BALL1;
+				HeadScanStepSmart(NORMAL);
 				bfm.set_ballfound(false);
                 _blk.publishState(bfm, "behavior");
 			}
 			break;
 	}
-	waiting++;
+	previousCommand = currentCommand;
 	return 0;
 }
 
@@ -165,39 +159,29 @@ void HeadController::ReadMessages()
 
 void HeadController::GetPosition()
 {
-	if(wim != 0)
+	if(wim != 0 && wim.get() != 0)
 	{
-		if(wim.get() != 0)
-		{
-			robot_x = wim->myposition().x();
-			robot_y = wim->myposition().y();
-			robot_phi = wrapToPi( wim->myposition().phi() );
-		}
+		robotX = wim->myposition().x();
+		robotY = wim->myposition().y();
+		robotPhi = wrapToPi( wim->myposition().phi() );
 	}
 }
 
-void HeadController::CheckForBall()
+bool HeadController::CheckForBall()
 {
-	ballFound = false;
-	if(wim != 0)
+	if(wim != 0 && wim.get() != 0 && wim->balls_size() > 0)
 	{
-	    if(wim.get() != 0)
-		{
-            if (wim->balls_size() > 0)
-            {	
-                bx = wim->balls(0).relativex();// + wim->balls(0).relativexspeed() * 0.200;
-                by = wim->balls(0).relativey();// + wim->balls(0).relativeyspeed() * 0.200;
-                bd = sqrt(pow(bx, 2) + pow(by, 2));
-                bb = atan2(by, bx);
-				ballFound = true;
-            }
-		}
+        bx = wim->balls(0).relativex();// + wim->balls(0).relativexspeed() * 0.200;
+        by = wim->balls(0).relativey();// + wim->balls(0).relativeyspeed() * 0.200;
+        bd = sqrt(pow(bx, 2) + pow(by, 2));
+        bb = atan2(by, bx);
+		return true;
 	}
 
-	return;
+	return false;
 }
 
-int HeadController::MakeHeadAction()
+void HeadController::MakeHeadAction()
 {
 	hmot.set_command("setHead");
 	hmot.set_parameter(0, targetYaw);
@@ -207,48 +191,47 @@ int HeadController::MakeHeadAction()
 	}else{
 		hmot.set_parameter(2, targetSpeed);
 	}
+	actionStarted = boost::posix_time::microsec_clock::universal_time();
 	_blk.publishSignal(hmot, "motion");
-	waiting=0;
-	return 1;
 }
 
-void HeadController::HeadScanStepHigh(float yaw_limit)
+void HeadController::HeadScanStepHigh(float yawLimit, float pitch)
 {
-	static bool middle=true;
-	static int sign=1;
-	targetSpeed = headSpeed[SLOW];
-	if(startscan==true)
+	//Go to middle
+	if(currentCommand!=previousCommand)
 	{
-		startscan=false;
-		middle=true;
-		targetPitch=-0.55;
-		targetYaw=0;
-		sign = (currentHeadYaw>0?1:-1);
-		MakeHeadAction();
-
+		goalScanState = GOALMIDDLE1;
 	}
 	if(reachedTargetHead())
 	{
-		
-		if(middle)
-		{
-			middle=false;
-			targetPitch=-0.35;
-			targetYaw=yaw_limit*sign;
-			sign=-sign;
-
+		if(goalScanState == GOALMIDDLE1)
+		{	
+			//GO LEFT
+			targetPitch = pitch;
+			targetYaw = 0.0f;
+			goalScanState = GOALLEFT;
 		}
-		else
+		else if(goalScanState == GOALLEFT)
 		{
-			middle=true;
-			targetPitch=-0.55;
-			targetYaw=0;
+			targetPitch = pitch;
+			targetYaw = yawLimit;
+			goalScanState = GOALMIDDLE2;
+		}else if(goalScanState == GOALMIDDLE2){
+			
+			targetPitch = pitch;
+			targetYaw = 0.0f;
+			goalScanState = GOALRIGHT;
+		}else{
+			//GO LEFT
+			targetPitch = pitch;
+			targetYaw = -yawLimit;
+			goalScanState = GOALMIDDLE1;
 		}
 		MakeHeadAction();
 	}
 }
 
-void HeadController::HeadScanStepSmart()
+void HeadController::HeadScanStepSmart(int speed)
 {
 	float  blue1y, blue1p, blue2y, blue2p;
 	blue1y = +0.75;
@@ -265,30 +248,16 @@ void HeadController::HeadScanStepSmart()
 	red1p = -0.39;
 	red2y = +0.00;
 	red2p = -0.60;
-	static enum {BLUE, RED, GREEN} state = BLUE;
-	static enum {START, MIDDLE, END} phase = START;
 
-	targetSpeed = headSpeed[SLOW];
+	targetSpeed = headSpeed[speed];
 
-	if (startscan)
+	if (reachedTargetHead())
 	{
-		ysign = currentHeadYaw > 0 ? +1 : -1; //Side
-		targetYaw = blue1y * ysign;
-		targetPitch = blue1p;
-		state = BLUE;
-		phase = START;
-		MakeHeadAction();
-		startscan = false;
-		return;
-	}
-
-	if ( ( reachedTargetHead() ) || (waiting >= WAITFOR) )
-	{
-		if (phase == START)
+		if (smartState == START)
 		{
-			phase = MIDDLE;
+			smartState = MIDDLE;
 
-			switch (state)
+			switch (smartPhase)
 			{
 			case BLUE:
 				targetYaw = blue2y;
@@ -306,12 +275,12 @@ void HeadController::HeadScanStepSmart()
 				break;
 			}
 		}
-		else if (phase == MIDDLE)
+		else if (smartState == MIDDLE)
 		{
 			ysign = -ysign;
-			phase = END;
+			smartState = END;
 
-			switch (state)
+			switch (smartPhase)
 			{
 			case BLUE:
 				targetYaw = blue1y * ysign;
@@ -331,90 +300,83 @@ void HeadController::HeadScanStepSmart()
 		}
 		else
 		{
-			phase = START;
+			smartState = START;
 
-			switch (state)
+			switch (smartPhase)
 			{
 			case BLUE:
-				state = GREEN;
+				smartPhase = GREEN;
 				targetYaw = green1y * ysign;
 				targetPitch = green1p;
 				break;
 
 			case GREEN:
-				state = RED;
+				smartPhase = RED;
 				targetYaw = red1y * ysign;
 				targetPitch = red1p;
 				break;
 
 			case RED:
-				state = BLUE;
+				smartPhase = BLUE;
 				targetYaw = blue1y * ysign;
 				targetPitch = blue1p;
 				break;
 			}
 		}
-
 		MakeHeadAction();
 	}
 }
 
 void HeadController::HeadTrackIntelligent()
 {
-	if (reachedTargetHead() || (waiting >= WAITFOR) )
+	if (reachedTargetHead())
 	{
 		if(bd < closeToBall){
-			state = BALL1; //Only track ball when we are close to the ball
+			intelState = BALL1; //Only track ball when we are close to the ball
 		}
-		switch (state)
+		switch (smartState)
 		{
 			case BALL1:
-				if(ballFound) //Do we see the ball? then
-				{
-    	            targetYaw = lookAtPointRelativeYaw(bx, by);
-    	            targetPitch = lookAtPointRelativePitch(bx, by);
-					state = OPPG;
-				}
-				targetSpeed = headSpeed[SLOW];
+	            targetYaw = lookAtPointRelativeYaw(bx, by);
+	            targetPitch = lookAtPointRelativePitch(bx, by);
+				intelState = OPPG;
+				targetSpeed = headSpeed[NORMAL];
 				break;
 
 			case OPPG:
-				targetYaw = KMath::anglediff2(lookAtPointRelativeYaw(oppGoalX - robot_x, oppGoalY - robot_y), robot_phi);
-				targetPitch = lookAtPointRelativePitch(oppGoalX - robot_x, oppGoalY - robot_y);
+				targetYaw = KMath::anglediff2(lookAtPointRelativeYaw(oppGoalX - robotX, oppGoalY - robotY), robotPhi);
+				targetPitch = lookAtPointRelativePitch(oppGoalX - robotX, oppGoalY - robotY);
 				targetSpeed = headSpeed[NORMAL];
-				state = BALL2;
+				intelState = BALL2;
 				break;
 
 			case BALL2:
-				if(ballFound) //Do we see the ball? then
-				{
-    	            targetYaw = lookAtPointRelativeYaw(bx, by);
-    	            targetPitch = lookAtPointRelativePitch(bx, by);
-					state = OWNG;
-				}
-				targetSpeed = headSpeed[SLOW];
+    	        targetYaw = lookAtPointRelativeYaw(bx, by);
+    	        targetPitch = lookAtPointRelativePitch(bx, by);
+				intelState = OWNG;
+				targetSpeed = headSpeed[NORMAL];
 
 				break;
 
 			case OWNG:
-				targetYaw = KMath::anglediff2(lookAtPointRelativeYaw(ownGoalX - robot_x, ownGoalY - robot_y), robot_phi);
-				targetPitch = lookAtPointRelativePitch(ownGoalX - robot_x, ownGoalY - robot_y);
+				targetYaw = KMath::anglediff2(lookAtPointRelativeYaw(ownGoalX - robotX, ownGoalY - robotY), robotPhi);
+				targetPitch = lookAtPointRelativePitch(ownGoalX - robotX, ownGoalY - robotY);
 				targetSpeed = headSpeed[NORMAL];
-				state = BALL1;
+				intelState = BALL1;
 				break;
-			}
+		}
 		MakeHeadAction();
 	}
 }
 
 float HeadController::lookAtPointYaw(float x, float y)
 {
-	return anglediff2(atan2(y - robot_y, x - robot_x), robot_phi);
+	return anglediff2(atan2(y - robotY, x - robotX), robotPhi);
 }
 
 float HeadController::lookAtPointPitch(float x, float y)
 {
-	return TO_RAD(50.0) - atan2f( sqrt((x - robot_x) * (x - robot_x) + (y - robot_y) * (y - robot_y)), 0.45 );
+	return TO_RAD(50.0) - atan2f( sqrt((x - robotX) * (x - robotX) + (y - robotY) * (y - robotY)), 0.45 );
 }
 
 float HeadController::lookAtPointRelativeYaw(float x, float y)
@@ -429,7 +391,9 @@ float HeadController::lookAtPointRelativePitch(float x, float y)
 
 bool HeadController::reachedTargetHead()
 {
-	return  waiting > WAITFOR || ((fabs(targetPitch - currentHeadPitch) <= OVERSH) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))) ||
+	return  boost::posix_time::microsec_clock::universal_time() - actionStarted > boost::posix_time::milliseconds(millisecondsToWait) ||
+			previousCommand != currentCommand ||
+			((fabs(targetPitch - currentHeadPitch) <= OVERSH) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))) ||
 			fabs(currentHeadYaw)>YAWMAX ||
 			((currentHeadPitch <= PITCHMIN || currentHeadPitch >= PITCHMAX) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))); // fabs(currentHeadPitch)>PITCHMAX);
 }
@@ -466,4 +430,3 @@ void HeadController::readGoalConfiguration()
 		}
 	}
 }
-

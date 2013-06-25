@@ -22,16 +22,6 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#define PITCHMIN -0.67
-#define	PITCHMAX 0.51
-#define YAWMIN 0.8
-#define YAWMAX 1.9
-#define PITCHSTEP 0.3
-#define YAWSTEP 0.4
-
-#define OVERSH 0.1
-#define WAITFOR 18
-
 
 ACTIVITY_START
 class HeadController: public IActivity
@@ -48,13 +38,28 @@ public:
 	int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
 
 private:
-	static const double closeToBall = 1.5;
+	static const double closeToBall = 1.5f;
 	static const float headSpeed[3];/*{SOMEDAY, SLOW, BEAM_ME_UP}*/
+	static const float PITCHMIN = -0.67f;
+	static const float PITCHMAX = 0.51f;
+	static const float YAWMIN = 0.8f;
+	static const float YAWMAX = 1.9f;
+	static const float PITCHSTEP = 0.3f;
+	static const float YAWSTEP = 0.4f;
+	static const float OVERSH = 0.1f;
+
+	unsigned int currentCommand, previousCommand;
 
 	enum{
 		SLOW = 0,
 		NORMAL = 1,
 		FAST = 2
+	};
+	enum GOALSCANSTATE{
+		GOALMIDDLE1 = 0,
+		GOALRIGHT = 1,
+		GOALMIDDLE2 = 2,
+		GOALLEFT
 	};
 	enum INTELSTATE{
 		BALL1 = 0,
@@ -62,7 +67,20 @@ private:
 		BALL2 = 2,
 		OWNG
 	};
-	INTELSTATE state;
+	enum SMARTPHASE{
+		BLUE = 0,
+		RED = 1,
+		GREEN
+	};
+	enum SMARTSTATE{
+		START = 0,
+		MIDDLE = 1,
+		END
+	};
+	INTELSTATE intelState;
+	SMARTSTATE smartState;
+	SMARTPHASE smartPhase;
+	GOALSCANSTATE goalScanState;
 	void readGoalConfiguration();//this function reads the position of the goals
 
 	/* Incoming Messages */
@@ -75,6 +93,8 @@ private:
 	MotionHeadMessage hmot;
 	BallFoundMessage bfm;
 
+		
+		
 	bool ballFound;
 
 	bool scanforball;
@@ -85,10 +105,11 @@ private:
 	float ysign;
 	float currentHeadYaw, currentHeadPitch;
 
-	unsigned waiting;
-
+	boost::posix_time::ptime actionStarted;
+	static const int millisecondsToWait = 900;
+	
 	float bd, bb, bx, by;
-	float robot_x, robot_y, robot_phi, robot_confidence;
+	float robotX, robotY, robotPhi, robot_confidence;
 
 	//External speed controler (e.g. from KMonitor)
 	bool useExternalSpeed;
@@ -107,16 +128,16 @@ private:
 	void GetPosition();
 
 	/*Check if vision observasion message has ball*/
-	void CheckForBall();
+	bool CheckForBall();
 
 	/*Send the message with the head action*/
-	int MakeHeadAction();
+	void MakeHeadAction();
 
 	/*Scan high for goalposts*/
-	void HeadScanStepHigh(float yaw_limit);
+	void HeadScanStepHigh(float yawLimit, float pitch);
 
 	/*Scan for the ball*/
-	void HeadScanStepSmart();
+	void HeadScanStepSmart(int speed);
 
 	/*Track the ball and search for goalposts*/
 	void HeadTrackIntelligent();
