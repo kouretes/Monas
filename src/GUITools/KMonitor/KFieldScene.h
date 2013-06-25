@@ -28,12 +28,8 @@ public:
 		return parent;
 	}
 	
-	QLabel* getLabel() { 
-		return formationLabel; 
-	}
-	
 	void resizeFieldScene(int width, int height);
-
+	
 	void printRobotList();
 	GraphicalRobotElement* findGraphicalRobotItem(QString hostId );
 	GraphicalRobotElement* newGraphicalRobotItem(QString hostId);
@@ -51,8 +47,6 @@ public:
 	QLineF motionCmdRectFromFC(WorldInfo *wim, float cx, float cy);
 	
 private:
-	QLabel *formationLabel;
-	
 	QGraphicsRectItem *LSide;
 	QGraphicsRectItem *RSide;
 	QGraphicsRectItem *LSmallArea;

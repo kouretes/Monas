@@ -21,12 +21,11 @@ class KMonitor : public QMainWindow {
 	Q_OBJECT
 
 public:
-	KMonitor (QWidget *parent = 0);
+	KMonitor(QWidget *parent = 0);
 	~KMonitor();
 
 private slots:
 	void quitKMonitor();
-
 	void closeEvent(QCloseEvent *event);
 
 private:
