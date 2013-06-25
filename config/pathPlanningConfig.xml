@@ -3,6 +3,8 @@
 <GridRadiusInMeters>1.5</GridRadiusInMeters>
 <GridRingsInRadius>15</GridRingsInRadius>
 <GridCellsInRing>20</GridCellsInRing>
+<UseSmallPathMap>1.0</UseSmallPathMap>
+<SmallGridRadiusInMeters>0.2</SmallGridRadiusInMeters>
 <!--A* Config-->
 <AStarDirections>8</AStarDirections>
 <AStarPathVectorReservation>30</AStarPathVectorReservation>

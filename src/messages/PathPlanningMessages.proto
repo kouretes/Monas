@@ -20,7 +20,7 @@ message PathPlanningRequestMessage{
 	required float TargetX = 1;
 	required float TargetY = 2;
 	required float TargetOrientation = 3;
-	required bool UsePathPlanning = 4;
+	required bool ForceUseOfSmallMap = 4;
 }
 
 message GridInfo{
@@ -28,14 +28,15 @@ message GridInfo{
 	required float CellsRing = 2;
 	required float RealGridLength = 3;
 	repeated float GridCells = 4; 
-	required float PathLength = 5;
-	repeated int32 PathStepsRing = 6;
-	repeated int32 PathStepsSector = 7;
-	repeated int32 PathStepsOrientation = 8;
-	optional int32 TargetRing = 9;
-	optional int32 TargetSector = 10;
-	optional float TargetOrientation = 11;
-	repeated int32 visitedRing = 12;
-	repeated int32 visitedSector = 13;
-	repeated int32 visitedOrientation = 14;
+	required bool UsingSmallMap = 5; 
+	required float PathLength = 6;
+	repeated int32 PathStepsRing = 7;
+	repeated int32 PathStepsSector = 8;
+	repeated int32 PathStepsOrientation = 9;
+	optional int32 TargetRing = 10;
+	optional int32 TargetSector = 11;
+	optional float TargetOrientation = 12;
+	repeated int32 visitedRing = 13;
+	repeated int32 visitedSector = 14;
+	repeated int32 visitedOrientation = 15;
 }

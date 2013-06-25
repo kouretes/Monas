@@ -80,7 +80,10 @@ public:
 private:
 
 	GridMap pathMap;
+	GridMap smallPathMap;
+	
 	GridInfo gridInfoMessage;
+	MotionWalkMessage wmot;
 	
 	boost::shared_ptr<const AllSensorValuesMessage> allsm;
 	boost::shared_ptr<const RobotPositionMessage> rpm;
@@ -94,9 +97,6 @@ private:
 	void printSonarValues();
 	void commitMovement();
 	void velocityWalk(float ix, float iy, float it, float f);
-
-	MotionWalkMessage wmot;
-
 		
 	mutable KProfiling::profiler vprof;
 	bool gameMode;
@@ -133,7 +133,7 @@ private:
 	int aStarTargetR;
 	int aStarTargetC;
 	int aStarTargetZ;
-	bool runAStar;
+	bool aStarUseSmallGrid;
 	float aStarRealTargetX;
 	float aStarRealTargetY;
 	int aStarDirections;

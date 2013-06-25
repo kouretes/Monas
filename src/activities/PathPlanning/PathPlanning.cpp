@@ -33,35 +33,41 @@ void PathPlanning::UserInit() {
 	_blk.updateSubscription ("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription ("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
 	
+	//Setup path map
 	int radiusRings = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.GridRingsInRadius").c_str());
 	int ringCells = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.GridRingsInRadius").c_str());
 	float realMetters = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.GridRadiusInMeters").c_str());
 	pathMap.setupGrid (radiusRings, ringCells, realMetters);
-
+	
+	//Setup small map
+	float smallRealMetters = atof(Configurator::Instance().findValueForKey("pathPlanningConfig.SmallGridRadiusInMeters").c_str());
+	smallPathMap.setupGrid (radiusRings, ringCells, smallRealMetters);
+	
+	//Setup sonars
 	leftSonars = new float[KDeviceLists::US_SIZE];
 	rightSonars = new float[KDeviceLists::US_SIZE];
 	
 	currentTime = boost::posix_time::microsec_clock::universal_time();
 
+	//Initialize astar properties
 	aStarDirections = atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.AStarDirections").c_str());
 	aStarTransformation = 2 * M_PI / (float) aStarDirections;
-
 	aStarCircleCells = pathMap.getRingCells();
 	aStarRadiusCells = pathMap.getRadiusCells();
-
+	//Allocate the 3d arrays for astar
 	currentValues.setup (aStarDirections, pathMap.getRadiusCells(), pathMap.getRingCells());
 	directions.setup (aStarDirections, pathMap.getRadiusCells(), pathMap.getRingCells());
 	openNodes.reserve (atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.AStarQueueReservation").c_str())*sizeof(node*));
 	pathFromAStar.reserve(atoi(Configurator::Instance().findValueForKey("pathPlanningConfig.AStarPathVectorReservation").c_str())*sizeof(coords));
 
-	hasTarget = false;
-	
-	firstOdometryData = true;
 	Reset();
 	LogEntry(LogLevel::Info, GetName()) << "PathPlanning Initialized";
 }
 
 void PathPlanning::Reset() {
+	hasTarget = false;	
+	firstOdometryData = true;
+	
 	gameMode = atoi(Configurator::Instance().findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 	if(!gameMode){	
 		for (int i = 0; i < pathMap.getRingCells(); i++){
@@ -116,26 +122,34 @@ int PathPlanning::Execute() {
 	
 	pprm = _blk.readSignal<PathPlanningRequestMessage> ("pathplanning");
 	
-	runAStar = false;
+
 	if(pprm != 0){
-		runAStar = pprm->usepathplanning();
-		aStarTargetR = (KMath::toPolarD(pprm->targetx(), pprm->targety())*pathMap.getRadiusCells())/pathMap.getRealMetters() - 1;
-		if(aStarTargetR >= pathMap.getRadiusCells()){
-			aStarTargetR = pathMap.getRadiusCells()-1;
+		aStarUseSmallGrid = pprm->forceuseofsmallmap();
+		if(pprm->targetx() <= smallPathMap.getRealMetters() && pprm->targety() <= smallPathMap.getRealMetters()){
+			aStarUseSmallGrid = true;
 		}
-		aStarTargetC = (KMath::wrapTo0_2Pi(KMath::toPolarT(pprm->targetx(), pprm->targety()))*pathMap.getRingCells())/(2*M_PI);
+		if(!aStarUseSmallGrid){
+			aStarTargetR = (KMath::toPolarD(pprm->targetx(), pprm->targety())*pathMap.getRadiusCells())/pathMap.getRealMetters() - 1;
+			if(aStarTargetR >= pathMap.getRadiusCells()){
+				aStarTargetR = pathMap.getRadiusCells()-1;
+			}
+			aStarTargetC = (KMath::wrapTo0_2Pi(KMath::toPolarT(pprm->targetx(), pprm->targety()))*pathMap.getRingCells())/(2*M_PI);
+		}else{
+			aStarTargetR = (KMath::toPolarD(pprm->targetx(), pprm->targety())*smallPathMap.getRadiusCells())/smallPathMap.getRealMetters() - 1;
+			if(aStarTargetR >= smallPathMap.getRadiusCells()){
+				aStarTargetR = smallPathMap.getRadiusCells()-1;
+			}
+			aStarTargetC = (KMath::wrapTo0_2Pi(KMath::toPolarT(pprm->targetx(), pprm->targety()))*smallPathMap.getRingCells())/(2*M_PI);
+		}
 		aStarTargetZ = KMath::wrapTo0_2Pi(pprm->targetorientation())/aStarTransformation;
 		hasTarget = true;
-		if(runAStar){
-			aStar();
-			commitMovement();
-		}else{
-			;//TODO
-		}
+
+		aStar();	
+		commitMovement();
 	}else{
 		hasTarget = false;
-		;//velocityWalk(0.0f,0.0f,0.0f,1.0f);
 	}
+	
 	if(!gameMode){
 		publishGridInfo();
 	}
@@ -161,6 +175,8 @@ void PathPlanning::processOdometryData(){
 			float diffZ = anglediff(newOdometryZ, oldOdometryZ);
 			pathMap.translateGrid(diffX,diffY);
 			pathMap.rotateGrid(diffZ);
+			smallPathMap.translateGrid(diffX,diffY);
+			smallPathMap.rotateGrid(diffZ);
 		}
 	}
 }
@@ -171,9 +187,16 @@ void PathPlanning::printSonarValues() {
 }
 
 void PathPlanning::publishGridInfo() {
-	gridInfoMessage.set_cellsradius (pathMap.getRadiusCells() );
-	gridInfoMessage.set_cellsring (pathMap.getRingCells() );
-	gridInfoMessage.set_realgridlength (pathMap.getRealMetters() );
+	if(!aStarUseSmallGrid){
+		gridInfoMessage.set_cellsradius (pathMap.getRadiusCells() );
+		gridInfoMessage.set_cellsring (pathMap.getRingCells() );
+		gridInfoMessage.set_realgridlength (pathMap.getRealMetters() );
+	}else{
+		gridInfoMessage.set_cellsradius (smallPathMap.getRadiusCells() );
+		gridInfoMessage.set_cellsring (smallPathMap.getRingCells() );
+		gridInfoMessage.set_realgridlength (smallPathMap.getRealMetters() );
+	}
+	gridInfoMessage.set_usingsmallmap(aStarUseSmallGrid);
 	
 	if(hasTarget){
 		gridInfoMessage.set_pathlength (pathFromAStar.size() );
@@ -189,9 +212,17 @@ void PathPlanning::publishGridInfo() {
 	gridInfoMessage.clear_targetsector();
 	gridInfoMessage.clear_targetorientation();
 
-	for (int i = 0; i < pathMap.getRadiusCells(); i++){
-		for (int j = 0; j < pathMap.getRingCells(); j++) {
-			gridInfoMessage.set_gridcells (i * pathMap.getRingCells() + j, (pathMap (i, j) + 1) / 2);
+	if(!aStarUseSmallGrid){
+		for (int i = 0; i < pathMap.getRadiusCells(); i++){
+			for (int j = 0; j < pathMap.getRingCells(); j++) {
+				gridInfoMessage.set_gridcells (i * pathMap.getRingCells() + j, (pathMap (i, j) + 1) / 2);
+			}
+		}
+	}else{
+		for (int i = 0; i < smallPathMap.getRadiusCells(); i++){
+			for (int j = 0; j < smallPathMap.getRingCells(); j++) {
+				gridInfoMessage.set_gridcells (i * smallPathMap.getRingCells() + j, (smallPathMap (i, j) + 1) / 2);
+			}
 		}
 	}
 
@@ -294,9 +325,16 @@ void PathPlanning::aStar () {
 	directions.init();
 	
 	int currentX, currentY, currentZ, newX, newY, newZ;
+	//Initialization just to be sure
+	currentX = currentY = currentZ = newX = newY = newZ = 255;
 	
-	aStarRealTargetX = pathMap.getRealX (aStarTargetR, aStarTargetC);
-	aStarRealTargetY = pathMap.getRealY (aStarTargetR, aStarTargetC);
+	if(!aStarUseSmallGrid){
+		aStarRealTargetX = pathMap.getRealX (aStarTargetR, aStarTargetC);
+		aStarRealTargetY = pathMap.getRealY (aStarTargetR, aStarTargetC);
+	}else{
+		aStarRealTargetX = smallPathMap.getRealX (aStarTargetR, aStarTargetC);
+		aStarRealTargetY = smallPathMap.getRealY (aStarTargetR, aStarTargetC);
+	}
 	float infinity = std::numeric_limits<float>::infinity();
 
 	node *popNode;
@@ -368,9 +406,14 @@ void PathPlanning::aStar () {
 				} else {
 					newX = currentX + dx;
 				}
-				
-				if (newX < 0 || newX >= aStarRadiusCells || (pathMap (newX, newY) > 0.3f && (checkForTargetInObstacle || newX != aStarTargetR || newY != aStarTargetC))){
-					continue;
+				if(!aStarUseSmallGrid){
+					if (newX < 0 || newX >= aStarRadiusCells || (pathMap (newX, newY) > 0.3f && (checkForTargetInObstacle || newX != aStarTargetR || newY != aStarTargetC))){
+						continue;
+					}
+				}else{
+					if (newX < 0 || newX >= aStarRadiusCells || (smallPathMap (newX, newY) > 0.3f && (checkForTargetInObstacle || newX != aStarTargetR || newY != aStarTargetC))){
+						continue;
+					}
 				}
 
 				for (int dz = -1; dz <= 1; dz++) {
@@ -444,8 +487,14 @@ inline void PathPlanning::setupNode (node *n, int x, int y, int z, float g) {
 inline void PathPlanning::updateG (node *n, int oldX, int oldY, int oldZ, int newX, int newY, int newZ) {
 	//KPROF_SCOPE(vprof, "updateG");
 	float tempValue = 0.0f;
-	float realXdiff = pathMap.getRealX (newX, newY) - pathMap.getRealX (oldX, oldY);
-	float realYdiff = pathMap.getRealY (newX, newY) - pathMap.getRealY (oldX, oldY);
+	float realXdiff, realYdiff;
+	if(!aStarUseSmallGrid){
+		realXdiff = pathMap.getRealX (newX, newY) - pathMap.getRealX (oldX, oldY);
+		realYdiff = pathMap.getRealY (newX, newY) - pathMap.getRealY (oldX, oldY);
+	}else{
+		realXdiff = smallPathMap.getRealX (newX, newY) - smallPathMap.getRealX (oldX, oldY);
+		realYdiff = smallPathMap.getRealY (newX, newY) - smallPathMap.getRealY (oldX, oldY);
+	}
 	int moved;
 	float dist;
 	if (oldX != newX || oldY != newY) {
@@ -468,9 +517,15 @@ inline void PathPlanning::updateG (node *n, int oldX, int oldY, int oldZ, int ne
 inline void PathPlanning::updateH (node *n) {
 	//KPROF_SCOPE(vprof, "updateH");
 	float tempValue = 0.0f;
-	float realXdiff = aStarRealTargetX - pathMap.getRealX (n->x, n->y);
-	float realYdiff = aStarRealTargetY - pathMap.getRealY (n->x, n->y);
-
+	float realXdiff;
+	float realYdiff;
+	if(!aStarUseSmallGrid){
+		realXdiff = aStarRealTargetX - pathMap.getRealX (n->x, n->y);
+		realYdiff = aStarRealTargetY - pathMap.getRealY (n->x, n->y);
+	}else{
+		realXdiff = aStarRealTargetX - smallPathMap.getRealX (n->x, n->y);
+		realYdiff = aStarRealTargetY - smallPathMap.getRealY (n->x, n->y);
+	}
 	if (n->x != aStarTargetR || n->y != aStarTargetC) {
 		float movingAngle = KMath::fast_atan2f (realYdiff, realXdiff);
 		float difference = fabs (KMath::wrapTo0_2Pi (movingAngle) / aStarTransformation - n->z);
@@ -484,8 +539,10 @@ inline void PathPlanning::updateH (node *n) {
 }
 
 bool PathPlanning::targetReachable (int x, int y) {
+	if(aStarUseSmallGrid){
+		return true;
+	}
 	//Apla elegxw se mia seira an einai reachable to target
-
 	int y_plus_one = (y + 1 == aStarCircleCells ) ? 0 : y + 1;
 	int y_minus_one = (y - 1 == -1) ? aStarCircleCells - 1 : y - 1;
 	return (pathMap (x, y) <= 0.3f || !checkForTargetInObstacle) && ( (x < (pathMap.getRadiusCells() - 1) && (pathMap (x + 1, y) <= 0.3f || pathMap (x + 1, y_plus_one) <= 0.3f || pathMap (x + 1, y - 1) <= 0.3f) )

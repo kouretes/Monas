@@ -52,10 +52,10 @@ KMapScene::KMapScene(QGraphicsView *parent) {
 KMapScene::~KMapScene() {
 }
 
-void KMapScene::setupGrid(int cellsRad, int cellsRing, float gridLength, int pathSize){
+void KMapScene::setupGrid(int cellsRad, int cellsRing, float gridLength, int pathSize, bool usingSmallMap){
 	cellsOfRadius = cellsRad;
 	cellsOfRing = cellsRing;
-	
+	smallMap = usingSmallMap;
 	//864 is a refered number of pixel, dont mint why just use it 
 	moveStepInMeters = (((float)ImgSize/864))/(float)cellsOfRadius;
 	//turn step in meters = 2 * pi / number of cells in each circle
@@ -269,7 +269,11 @@ void KMapScene::updateObstacles(bool initialization) {
 			curve1.append (x1);
 			curve1.append (x2);
 			curve1.append (x3);
-			colorValue = ColorMax - PolarGrid[r][s] * ColorMax;
+			if(!smallMap){
+				colorValue = ColorMax - PolarGrid[r][s] * ColorMax;
+			}else{
+				colorValue = ColorMax;
+			}
 
 			
 			cell = cellsList.at (cellNum);

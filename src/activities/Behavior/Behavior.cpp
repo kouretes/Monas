@@ -306,7 +306,7 @@ int Behavior::Execute() {
 
 					if(!readyToKick) {
 						if(penaltyMode)
-							pathPlanningRequestRelative(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing);	// 2.5cm offset from the ball!
+							pathPlanningRequest(ballX - (config.posX + 0.025), ballY - side * config.posY, ballBearing, false);	// 2.5cm offset from the ball!
 						else
 							approachBall();
 					}
@@ -324,7 +324,7 @@ int Behavior::Execute() {
 
 					// walk straight for some seconds after the scan has ended and then start turning around to search for ball.
 					if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
-                    	pathPlanningRequestRelative(3.0, 0.0, 0.0);
+                    	pathPlanningRequest(3.0, 0.0, 0.0, false);
 					}
 					else {
 		            	if(sharedBallFound == true)
@@ -364,7 +364,7 @@ int Behavior::Execute() {
 						goToPositionFlag = true;
 				}
 				else if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
-                    	pathPlanningRequestRelative(3.0, 0.0, 0.0);
+                    	pathPlanningRequest(3.0, 0.0, 0.0, false);
 				}
 				else if(ballFound == 1) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: BALL FOUND";
@@ -756,7 +756,7 @@ void Behavior::approachBall() {
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
 	if (ballDist > 0.3) {
-        pathPlanningRequestRelative(ballX - config.posX, ballY - side * config.posY, ballBearing);
+        pathPlanningRequest(ballX - config.posX, ballY - side * config.posY, ballBearing, false);
     }
     else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)) {
         littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
@@ -777,23 +777,15 @@ void Behavior::stopRobot() {
 	_blk.publishSignal(amot, "motion");
 }
 
-void Behavior::pathPlanningRequestRelative(float targetX, float targetY, float targetPhi) {
+void Behavior::pathPlanningRequest(float targetX, float targetY, float targetPhi, bool useSmallGrid) {
 
 	pprm.set_targetx(targetX);
 	pprm.set_targety(targetY);
 	pprm.set_targetorientation(targetPhi);
-	pprm.set_usepathplanning(true);
+	pprm.set_forceuseofsmallmap(useSmallGrid);
 	_blk.publishSignal(pprm, "pathplanning");
 }
 
-void Behavior::pathPlanningRequestAbsolute(float targetX, float targetY, float targetPhi) {
-
-	pprm.set_targetx(targetX);
-	pprm.set_targety(targetY);
-	pprm.set_targetorientation(targetPhi);
-	pprm.set_usepathplanning(false);
-	_blk.publishSignal(pprm, "pathplanning");
-}
 
 bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 
@@ -804,9 +796,9 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 	// TODO if the robot make it to position, stop checking for distance and check only orientation!
 	if(targetDistance > 0.25) {
 		LogEntry(LogLevel::Info, GetName()) << "THELW NA PAW STH THESH: " << targetX << ", " << targetY;
-		pathPlanningRequestRelative(toCartesianX(targetDistance, targetAngle),
+		pathPlanningRequest(toCartesianX(targetDistance, targetAngle),
 		                            toCartesianY(targetDistance, targetAngle),
-		                            targetOrientation);
+		                            targetOrientation, false);
 		return false;
 	}
 	else if(fabs(targetOrientation) > M_PI_4) {
