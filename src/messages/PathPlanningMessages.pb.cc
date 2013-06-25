@@ -94,7 +94,7 @@ void protobuf_AssignDesc_PathPlanningMessages_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, targetx_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, targety_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, targetorientation_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, usepathplanning_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PathPlanningRequestMessage, forceuseofsmallmap_),
   };
   PathPlanningRequestMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -108,11 +108,12 @@ void protobuf_AssignDesc_PathPlanningMessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PathPlanningRequestMessage));
   GridInfo_descriptor_ = file->message_type(4);
-  static const int GridInfo_offsets_[14] = {
+  static const int GridInfo_offsets_[15] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, cellsradius_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, cellsring_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, realgridlength_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, gridcells_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, usingsmallmap_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, pathlength_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, pathstepsring_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, pathstepssector_),
@@ -187,18 +188,19 @@ void protobuf_AddDesc_PathPlanningMessages_2eproto() {
     "ionObstacleMessage\022#\n\tobstacles\030\001 \003(\0132\020."
     "ObstacleMessage\"N\n\024ObstacleMessageArray\022"
     "\021\n\tdirection\030\001 \003(\005\022\020\n\010distance\030\002 \003(\002\022\021\n\t"
-    "certainty\030\003 \003(\002\"r\n\032PathPlanningRequestMe"
+    "certainty\030\003 \003(\002\"u\n\032PathPlanningRequestMe"
     "ssage\022\017\n\007TargetX\030\001 \002(\002\022\017\n\007TargetY\030\002 \002(\002\022"
-    "\031\n\021TargetOrientation\030\003 \002(\002\022\027\n\017UsePathPla"
-    "nning\030\004 \002(\010\"\314\002\n\010GridInfo\022\023\n\013CellsRadius\030"
-    "\001 \002(\002\022\021\n\tCellsRing\030\002 \002(\002\022\026\n\016RealGridLeng"
-    "th\030\003 \002(\002\022\021\n\tGridCells\030\004 \003(\002\022\022\n\nPathLengt"
-    "h\030\005 \002(\002\022\025\n\rPathStepsRing\030\006 \003(\005\022\027\n\017PathSt"
-    "epsSector\030\007 \003(\005\022\034\n\024PathStepsOrientation\030"
-    "\010 \003(\005\022\022\n\nTargetRing\030\t \001(\005\022\024\n\014TargetSecto"
-    "r\030\n \001(\005\022\031\n\021TargetOrientation\030\013 \001(\002\022\023\n\013vi"
-    "sitedRing\030\014 \003(\005\022\025\n\rvisitedSector\030\r \003(\005\022\032"
-    "\n\022visitedOrientation\030\016 \003(\005", 706);
+    "\031\n\021TargetOrientation\030\003 \002(\002\022\032\n\022ForceUseOf"
+    "SmallMap\030\004 \002(\010\"\343\002\n\010GridInfo\022\023\n\013CellsRadi"
+    "us\030\001 \002(\002\022\021\n\tCellsRing\030\002 \002(\002\022\026\n\016RealGridL"
+    "ength\030\003 \002(\002\022\021\n\tGridCells\030\004 \003(\002\022\025\n\rUsingS"
+    "mallMap\030\005 \002(\010\022\022\n\nPathLength\030\006 \002(\002\022\025\n\rPat"
+    "hStepsRing\030\007 \003(\005\022\027\n\017PathStepsSector\030\010 \003("
+    "\005\022\034\n\024PathStepsOrientation\030\t \003(\005\022\022\n\nTarge"
+    "tRing\030\n \001(\005\022\024\n\014TargetSector\030\013 \001(\005\022\031\n\021Tar"
+    "getOrientation\030\014 \001(\002\022\023\n\013visitedRing\030\r \003("
+    "\005\022\025\n\rvisitedSector\030\016 \003(\005\022\032\n\022visitedOrien"
+    "tation\030\017 \003(\005", 732);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "PathPlanningMessages.proto", &protobuf_RegisterTypes);
   ObstacleMessage::default_instance_ = new ObstacleMessage();
@@ -1017,7 +1019,7 @@ void ObstacleMessageArray::Swap(ObstacleMessageArray* other) {
 const int PathPlanningRequestMessage::kTargetXFieldNumber;
 const int PathPlanningRequestMessage::kTargetYFieldNumber;
 const int PathPlanningRequestMessage::kTargetOrientationFieldNumber;
-const int PathPlanningRequestMessage::kUsePathPlanningFieldNumber;
+const int PathPlanningRequestMessage::kForceUseOfSmallMapFieldNumber;
 #endif  // !_MSC_VER
 
 PathPlanningRequestMessage::PathPlanningRequestMessage()
@@ -1039,7 +1041,7 @@ void PathPlanningRequestMessage::SharedCtor() {
   targetx_ = 0;
   targety_ = 0;
   targetorientation_ = 0;
-  usepathplanning_ = false;
+  forceuseofsmallmap_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1077,7 +1079,7 @@ void PathPlanningRequestMessage::Clear() {
     targetx_ = 0;
     targety_ = 0;
     targetorientation_ = 0;
-    usepathplanning_ = false;
+    forceuseofsmallmap_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1132,19 +1134,19 @@ bool PathPlanningRequestMessage::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(32)) goto parse_UsePathPlanning;
+        if (input->ExpectTag(32)) goto parse_ForceUseOfSmallMap;
         break;
       }
       
-      // required bool UsePathPlanning = 4;
+      // required bool ForceUseOfSmallMap = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_UsePathPlanning:
+         parse_ForceUseOfSmallMap:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &usepathplanning_)));
-          set_has_usepathplanning();
+                 input, &forceuseofsmallmap_)));
+          set_has_forceuseofsmallmap();
         } else {
           goto handle_uninterpreted;
         }
@@ -1185,9 +1187,9 @@ void PathPlanningRequestMessage::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->targetorientation(), output);
   }
   
-  // required bool UsePathPlanning = 4;
-  if (has_usepathplanning()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->usepathplanning(), output);
+  // required bool ForceUseOfSmallMap = 4;
+  if (has_forceuseofsmallmap()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->forceuseofsmallmap(), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1213,9 +1215,9 @@ void PathPlanningRequestMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->targetorientation(), target);
   }
   
-  // required bool UsePathPlanning = 4;
-  if (has_usepathplanning()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->usepathplanning(), target);
+  // required bool ForceUseOfSmallMap = 4;
+  if (has_forceuseofsmallmap()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->forceuseofsmallmap(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1244,8 +1246,8 @@ int PathPlanningRequestMessage::ByteSize() const {
       total_size += 1 + 4;
     }
     
-    // required bool UsePathPlanning = 4;
-    if (has_usepathplanning()) {
+    // required bool ForceUseOfSmallMap = 4;
+    if (has_forceuseofsmallmap()) {
       total_size += 1 + 1;
     }
     
@@ -1285,8 +1287,8 @@ void PathPlanningRequestMessage::MergeFrom(const PathPlanningRequestMessage& fro
     if (from.has_targetorientation()) {
       set_targetorientation(from.targetorientation());
     }
-    if (from.has_usepathplanning()) {
-      set_usepathplanning(from.usepathplanning());
+    if (from.has_forceuseofsmallmap()) {
+      set_forceuseofsmallmap(from.forceuseofsmallmap());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1315,7 +1317,7 @@ void PathPlanningRequestMessage::Swap(PathPlanningRequestMessage* other) {
     std::swap(targetx_, other->targetx_);
     std::swap(targety_, other->targety_);
     std::swap(targetorientation_, other->targetorientation_);
-    std::swap(usepathplanning_, other->usepathplanning_);
+    std::swap(forceuseofsmallmap_, other->forceuseofsmallmap_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -1338,6 +1340,7 @@ const int GridInfo::kCellsRadiusFieldNumber;
 const int GridInfo::kCellsRingFieldNumber;
 const int GridInfo::kRealGridLengthFieldNumber;
 const int GridInfo::kGridCellsFieldNumber;
+const int GridInfo::kUsingSmallMapFieldNumber;
 const int GridInfo::kPathLengthFieldNumber;
 const int GridInfo::kPathStepsRingFieldNumber;
 const int GridInfo::kPathStepsSectorFieldNumber;
@@ -1369,6 +1372,7 @@ void GridInfo::SharedCtor() {
   cellsradius_ = 0;
   cellsring_ = 0;
   realgridlength_ = 0;
+  usingsmallmap_ = false;
   pathlength_ = 0;
   targetring_ = 0;
   targetsector_ = 0;
@@ -1410,9 +1414,10 @@ void GridInfo::Clear() {
     cellsradius_ = 0;
     cellsring_ = 0;
     realgridlength_ = 0;
+    usingsmallmap_ = false;
     pathlength_ = 0;
   }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+  if (_has_bits_[9 / 32] & (0xffu << (9 % 32))) {
     targetring_ = 0;
     targetsector_ = 0;
     targetorientation_ = 0;
@@ -1499,12 +1504,28 @@ bool GridInfo::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(37)) goto parse_GridCells;
-        if (input->ExpectTag(45)) goto parse_PathLength;
+        if (input->ExpectTag(40)) goto parse_UsingSmallMap;
         break;
       }
       
-      // required float PathLength = 5;
+      // required bool UsingSmallMap = 5;
       case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_UsingSmallMap:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &usingsmallmap_)));
+          set_has_usingsmallmap();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(53)) goto parse_PathLength;
+        break;
+      }
+      
+      // required float PathLength = 6;
+      case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
          parse_PathLength:
@@ -1515,18 +1536,18 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(48)) goto parse_PathStepsRing;
+        if (input->ExpectTag(56)) goto parse_PathStepsRing;
         break;
       }
       
-      // repeated int32 PathStepsRing = 6;
-      case 6: {
+      // repeated int32 PathStepsRing = 7;
+      case 7: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_PathStepsRing:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 48, input, this->mutable_pathstepsring())));
+                 1, 56, input, this->mutable_pathstepsring())));
         } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
                    == ::google::protobuf::internal::WireFormatLite::
                       WIRETYPE_LENGTH_DELIMITED) {
@@ -1536,19 +1557,19 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(48)) goto parse_PathStepsRing;
-        if (input->ExpectTag(56)) goto parse_PathStepsSector;
+        if (input->ExpectTag(56)) goto parse_PathStepsRing;
+        if (input->ExpectTag(64)) goto parse_PathStepsSector;
         break;
       }
       
-      // repeated int32 PathStepsSector = 7;
-      case 7: {
+      // repeated int32 PathStepsSector = 8;
+      case 8: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_PathStepsSector:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 56, input, this->mutable_pathstepssector())));
+                 1, 64, input, this->mutable_pathstepssector())));
         } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
                    == ::google::protobuf::internal::WireFormatLite::
                       WIRETYPE_LENGTH_DELIMITED) {
@@ -1558,19 +1579,19 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(56)) goto parse_PathStepsSector;
-        if (input->ExpectTag(64)) goto parse_PathStepsOrientation;
+        if (input->ExpectTag(64)) goto parse_PathStepsSector;
+        if (input->ExpectTag(72)) goto parse_PathStepsOrientation;
         break;
       }
       
-      // repeated int32 PathStepsOrientation = 8;
-      case 8: {
+      // repeated int32 PathStepsOrientation = 9;
+      case 9: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_PathStepsOrientation:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 64, input, this->mutable_pathstepsorientation())));
+                 1, 72, input, this->mutable_pathstepsorientation())));
         } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
                    == ::google::protobuf::internal::WireFormatLite::
                       WIRETYPE_LENGTH_DELIMITED) {
@@ -1580,13 +1601,13 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(64)) goto parse_PathStepsOrientation;
-        if (input->ExpectTag(72)) goto parse_TargetRing;
+        if (input->ExpectTag(72)) goto parse_PathStepsOrientation;
+        if (input->ExpectTag(80)) goto parse_TargetRing;
         break;
       }
       
-      // optional int32 TargetRing = 9;
-      case 9: {
+      // optional int32 TargetRing = 10;
+      case 10: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_TargetRing:
@@ -1597,12 +1618,12 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(80)) goto parse_TargetSector;
+        if (input->ExpectTag(88)) goto parse_TargetSector;
         break;
       }
       
-      // optional int32 TargetSector = 10;
-      case 10: {
+      // optional int32 TargetSector = 11;
+      case 11: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_TargetSector:
@@ -1613,12 +1634,12 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(93)) goto parse_TargetOrientation;
+        if (input->ExpectTag(101)) goto parse_TargetOrientation;
         break;
       }
       
-      // optional float TargetOrientation = 11;
-      case 11: {
+      // optional float TargetOrientation = 12;
+      case 12: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
          parse_TargetOrientation:
@@ -1629,18 +1650,18 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(96)) goto parse_visitedRing;
+        if (input->ExpectTag(104)) goto parse_visitedRing;
         break;
       }
       
-      // repeated int32 visitedRing = 12;
-      case 12: {
+      // repeated int32 visitedRing = 13;
+      case 13: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_visitedRing:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 96, input, this->mutable_visitedring())));
+                 1, 104, input, this->mutable_visitedring())));
         } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
                    == ::google::protobuf::internal::WireFormatLite::
                       WIRETYPE_LENGTH_DELIMITED) {
@@ -1650,19 +1671,19 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(96)) goto parse_visitedRing;
-        if (input->ExpectTag(104)) goto parse_visitedSector;
+        if (input->ExpectTag(104)) goto parse_visitedRing;
+        if (input->ExpectTag(112)) goto parse_visitedSector;
         break;
       }
       
-      // repeated int32 visitedSector = 13;
-      case 13: {
+      // repeated int32 visitedSector = 14;
+      case 14: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_visitedSector:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 104, input, this->mutable_visitedsector())));
+                 1, 112, input, this->mutable_visitedsector())));
         } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
                    == ::google::protobuf::internal::WireFormatLite::
                       WIRETYPE_LENGTH_DELIMITED) {
@@ -1672,19 +1693,19 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(104)) goto parse_visitedSector;
-        if (input->ExpectTag(112)) goto parse_visitedOrientation;
+        if (input->ExpectTag(112)) goto parse_visitedSector;
+        if (input->ExpectTag(120)) goto parse_visitedOrientation;
         break;
       }
       
-      // repeated int32 visitedOrientation = 14;
-      case 14: {
+      // repeated int32 visitedOrientation = 15;
+      case 15: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_visitedOrientation:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 112, input, this->mutable_visitedorientation())));
+                 1, 120, input, this->mutable_visitedorientation())));
         } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
                    == ::google::protobuf::internal::WireFormatLite::
                       WIRETYPE_LENGTH_DELIMITED) {
@@ -1694,7 +1715,7 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(112)) goto parse_visitedOrientation;
+        if (input->ExpectTag(120)) goto parse_visitedOrientation;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1738,60 +1759,65 @@ void GridInfo::SerializeWithCachedSizes(
       4, this->gridcells(i), output);
   }
   
-  // required float PathLength = 5;
-  if (has_pathlength()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->pathlength(), output);
+  // required bool UsingSmallMap = 5;
+  if (has_usingsmallmap()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->usingsmallmap(), output);
   }
   
-  // repeated int32 PathStepsRing = 6;
+  // required float PathLength = 6;
+  if (has_pathlength()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->pathlength(), output);
+  }
+  
+  // repeated int32 PathStepsRing = 7;
   for (int i = 0; i < this->pathstepsring_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      6, this->pathstepsring(i), output);
+      7, this->pathstepsring(i), output);
   }
   
-  // repeated int32 PathStepsSector = 7;
+  // repeated int32 PathStepsSector = 8;
   for (int i = 0; i < this->pathstepssector_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      7, this->pathstepssector(i), output);
+      8, this->pathstepssector(i), output);
   }
   
-  // repeated int32 PathStepsOrientation = 8;
+  // repeated int32 PathStepsOrientation = 9;
   for (int i = 0; i < this->pathstepsorientation_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      8, this->pathstepsorientation(i), output);
+      9, this->pathstepsorientation(i), output);
   }
   
-  // optional int32 TargetRing = 9;
+  // optional int32 TargetRing = 10;
   if (has_targetring()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(9, this->targetring(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->targetring(), output);
   }
   
-  // optional int32 TargetSector = 10;
+  // optional int32 TargetSector = 11;
   if (has_targetsector()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->targetsector(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(11, this->targetsector(), output);
   }
   
-  // optional float TargetOrientation = 11;
+  // optional float TargetOrientation = 12;
   if (has_targetorientation()) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloat(11, this->targetorientation(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(12, this->targetorientation(), output);
   }
   
-  // repeated int32 visitedRing = 12;
+  // repeated int32 visitedRing = 13;
   for (int i = 0; i < this->visitedring_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      12, this->visitedring(i), output);
+      13, this->visitedring(i), output);
   }
   
-  // repeated int32 visitedSector = 13;
+  // repeated int32 visitedSector = 14;
   for (int i = 0; i < this->visitedsector_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      13, this->visitedsector(i), output);
+      14, this->visitedsector(i), output);
   }
   
-  // repeated int32 visitedOrientation = 14;
+  // repeated int32 visitedOrientation = 15;
   for (int i = 0; i < this->visitedorientation_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      14, this->visitedorientation(i), output);
+      15, this->visitedorientation(i), output);
   }
   
   if (!unknown_fields().empty()) {
@@ -1823,60 +1849,65 @@ void GridInfo::SerializeWithCachedSizes(
       WriteFloatToArray(4, this->gridcells(i), target);
   }
   
-  // required float PathLength = 5;
-  if (has_pathlength()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->pathlength(), target);
+  // required bool UsingSmallMap = 5;
+  if (has_usingsmallmap()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->usingsmallmap(), target);
   }
   
-  // repeated int32 PathStepsRing = 6;
+  // required float PathLength = 6;
+  if (has_pathlength()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->pathlength(), target);
+  }
+  
+  // repeated int32 PathStepsRing = 7;
   for (int i = 0; i < this->pathstepsring_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(6, this->pathstepsring(i), target);
+      WriteInt32ToArray(7, this->pathstepsring(i), target);
   }
   
-  // repeated int32 PathStepsSector = 7;
+  // repeated int32 PathStepsSector = 8;
   for (int i = 0; i < this->pathstepssector_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(7, this->pathstepssector(i), target);
+      WriteInt32ToArray(8, this->pathstepssector(i), target);
   }
   
-  // repeated int32 PathStepsOrientation = 8;
+  // repeated int32 PathStepsOrientation = 9;
   for (int i = 0; i < this->pathstepsorientation_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(8, this->pathstepsorientation(i), target);
+      WriteInt32ToArray(9, this->pathstepsorientation(i), target);
   }
   
-  // optional int32 TargetRing = 9;
+  // optional int32 TargetRing = 10;
   if (has_targetring()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(9, this->targetring(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->targetring(), target);
   }
   
-  // optional int32 TargetSector = 10;
+  // optional int32 TargetSector = 11;
   if (has_targetsector()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->targetsector(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(11, this->targetsector(), target);
   }
   
-  // optional float TargetOrientation = 11;
+  // optional float TargetOrientation = 12;
   if (has_targetorientation()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(11, this->targetorientation(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(12, this->targetorientation(), target);
   }
   
-  // repeated int32 visitedRing = 12;
+  // repeated int32 visitedRing = 13;
   for (int i = 0; i < this->visitedring_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(12, this->visitedring(i), target);
+      WriteInt32ToArray(13, this->visitedring(i), target);
   }
   
-  // repeated int32 visitedSector = 13;
+  // repeated int32 visitedSector = 14;
   for (int i = 0; i < this->visitedsector_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(13, this->visitedsector(i), target);
+      WriteInt32ToArray(14, this->visitedsector(i), target);
   }
   
-  // repeated int32 visitedOrientation = 14;
+  // repeated int32 visitedOrientation = 15;
   for (int i = 0; i < this->visitedorientation_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(14, this->visitedorientation(i), target);
+      WriteInt32ToArray(15, this->visitedorientation(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -1905,28 +1936,33 @@ int GridInfo::ByteSize() const {
       total_size += 1 + 4;
     }
     
-    // required float PathLength = 5;
+    // required bool UsingSmallMap = 5;
+    if (has_usingsmallmap()) {
+      total_size += 1 + 1;
+    }
+    
+    // required float PathLength = 6;
     if (has_pathlength()) {
       total_size += 1 + 4;
     }
     
   }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    // optional int32 TargetRing = 9;
+  if (_has_bits_[9 / 32] & (0xffu << (9 % 32))) {
+    // optional int32 TargetRing = 10;
     if (has_targetring()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->targetring());
     }
     
-    // optional int32 TargetSector = 10;
+    // optional int32 TargetSector = 11;
     if (has_targetsector()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->targetsector());
     }
     
-    // optional float TargetOrientation = 11;
+    // optional float TargetOrientation = 12;
     if (has_targetorientation()) {
       total_size += 1 + 4;
     }
@@ -1939,7 +1975,7 @@ int GridInfo::ByteSize() const {
     total_size += 1 * this->gridcells_size() + data_size;
   }
   
-  // repeated int32 PathStepsRing = 6;
+  // repeated int32 PathStepsRing = 7;
   {
     int data_size = 0;
     for (int i = 0; i < this->pathstepsring_size(); i++) {
@@ -1949,7 +1985,7 @@ int GridInfo::ByteSize() const {
     total_size += 1 * this->pathstepsring_size() + data_size;
   }
   
-  // repeated int32 PathStepsSector = 7;
+  // repeated int32 PathStepsSector = 8;
   {
     int data_size = 0;
     for (int i = 0; i < this->pathstepssector_size(); i++) {
@@ -1959,7 +1995,7 @@ int GridInfo::ByteSize() const {
     total_size += 1 * this->pathstepssector_size() + data_size;
   }
   
-  // repeated int32 PathStepsOrientation = 8;
+  // repeated int32 PathStepsOrientation = 9;
   {
     int data_size = 0;
     for (int i = 0; i < this->pathstepsorientation_size(); i++) {
@@ -1969,7 +2005,7 @@ int GridInfo::ByteSize() const {
     total_size += 1 * this->pathstepsorientation_size() + data_size;
   }
   
-  // repeated int32 visitedRing = 12;
+  // repeated int32 visitedRing = 13;
   {
     int data_size = 0;
     for (int i = 0; i < this->visitedring_size(); i++) {
@@ -1979,7 +2015,7 @@ int GridInfo::ByteSize() const {
     total_size += 1 * this->visitedring_size() + data_size;
   }
   
-  // repeated int32 visitedSector = 13;
+  // repeated int32 visitedSector = 14;
   {
     int data_size = 0;
     for (int i = 0; i < this->visitedsector_size(); i++) {
@@ -1989,7 +2025,7 @@ int GridInfo::ByteSize() const {
     total_size += 1 * this->visitedsector_size() + data_size;
   }
   
-  // repeated int32 visitedOrientation = 14;
+  // repeated int32 visitedOrientation = 15;
   {
     int data_size = 0;
     for (int i = 0; i < this->visitedorientation_size(); i++) {
@@ -2041,11 +2077,14 @@ void GridInfo::MergeFrom(const GridInfo& from) {
     if (from.has_realgridlength()) {
       set_realgridlength(from.realgridlength());
     }
+    if (from.has_usingsmallmap()) {
+      set_usingsmallmap(from.usingsmallmap());
+    }
     if (from.has_pathlength()) {
       set_pathlength(from.pathlength());
     }
   }
-  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+  if (from._has_bits_[9 / 32] & (0xffu << (9 % 32))) {
     if (from.has_targetring()) {
       set_targetring(from.targetring());
     }
@@ -2072,7 +2111,7 @@ void GridInfo::CopyFrom(const GridInfo& from) {
 }
 
 bool GridInfo::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000017) != 0x00000017) return false;
+  if ((_has_bits_[0] & 0x00000037) != 0x00000037) return false;
   
   return true;
 }
@@ -2083,6 +2122,7 @@ void GridInfo::Swap(GridInfo* other) {
     std::swap(cellsring_, other->cellsring_);
     std::swap(realgridlength_, other->realgridlength_);
     gridcells_.Swap(&other->gridcells_);
+    std::swap(usingsmallmap_, other->usingsmallmap_);
     std::swap(pathlength_, other->pathlength_);
     pathstepsring_.Swap(&other->pathstepsring_);
     pathstepssector_.Swap(&other->pathstepssector_);

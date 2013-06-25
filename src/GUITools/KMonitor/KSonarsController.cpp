@@ -76,7 +76,7 @@ void KSonarsController::resizeEvent(QResizeEvent *event) {
 
 void KSonarsController::gridInfoUpdateHandler (GridInfo gim, QString hostId) {
 	if(mapArea->cellsOfRadius != gim.cellsradius() || mapArea->cellsOfRing != gim.cellsring() || mapArea->pathLength != gim.pathlength()){
-		mapArea->setupGrid(gim.cellsradius(), gim.cellsring(), gim.realgridlength(), gim.pathlength());
+		mapArea->setupGrid(gim.cellsradius(), gim.cellsring(), gim.realgridlength(), gim.pathlength(), gim.usingsmallmap());
 	}
 	for (int ring = 0; ring < mapArea->cellsOfRadius; ring++) {
 		for (int sector = 0; sector < mapArea->cellsOfRing; sector++) {

@@ -76,13 +76,14 @@ public:
 	
 	float **PolarGrid;
 
-	void setupGrid(int cellsRad, int cellsRing, float gridLength, int pathSize);
+	void setupGrid(int cellsRad, int cellsRing, float gridLength, int pathSize, bool usingSmallMap);
 
 	int cellsOfRadius;
 	int cellsOfRing;
 	float moveStepInMeters;
 	float turnStepInRads;
 	int pathLength;
+	bool smallMap;
 private:
 	void initGrid();
 	void initCoordinates();

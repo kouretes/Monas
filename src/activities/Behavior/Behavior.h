@@ -231,16 +231,10 @@ private:
 	void stopRobot();
 
 	/**
-	 * @fn void pathPlanningRequestRelative(float target_x, float target_y, float target_phi)
+	 * @fn void pathPlanningRequest(float target_x, float target_y, float target_phi)
 	 * @brief (TODO)
 	 */
-	void pathPlanningRequestRelative(float targetX, float targetY, float targetPhi);
-
-	/**
-	 * @fn void pathPlanningRequestAbsolute(float target_x, float target_y, float target_phi)
-	 * @brief (TODO)
-	 */
-	void pathPlanningRequestAbsolute(float targetX, float targetY, float targetPhi);
+	void pathPlanningRequest(float targetX, float targetY, float targetPhi, bool useSmallGrid);
 
 	/**
 	 * @fn void goToPosition(float target_x, float target_y, float target_phi)

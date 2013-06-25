@@ -411,12 +411,12 @@ class PathPlanningRequestMessage : public ::google::protobuf::Message {
   inline float targetorientation() const;
   inline void set_targetorientation(float value);
   
-  // required bool UsePathPlanning = 4;
-  inline bool has_usepathplanning() const;
-  inline void clear_usepathplanning();
-  static const int kUsePathPlanningFieldNumber = 4;
-  inline bool usepathplanning() const;
-  inline void set_usepathplanning(bool value);
+  // required bool ForceUseOfSmallMap = 4;
+  inline bool has_forceuseofsmallmap() const;
+  inline void clear_forceuseofsmallmap();
+  static const int kForceUseOfSmallMapFieldNumber = 4;
+  inline bool forceuseofsmallmap() const;
+  inline void set_forceuseofsmallmap(bool value);
   
   // @@protoc_insertion_point(class_scope:PathPlanningRequestMessage)
  private:
@@ -426,15 +426,15 @@ class PathPlanningRequestMessage : public ::google::protobuf::Message {
   inline void clear_has_targety();
   inline void set_has_targetorientation();
   inline void clear_has_targetorientation();
-  inline void set_has_usepathplanning();
-  inline void clear_has_usepathplanning();
+  inline void set_has_forceuseofsmallmap();
+  inline void clear_has_forceuseofsmallmap();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   float targetx_;
   float targety_;
   float targetorientation_;
-  bool usepathplanning_;
+  bool forceuseofsmallmap_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
@@ -535,17 +535,24 @@ class GridInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< float >*
       mutable_gridcells();
   
-  // required float PathLength = 5;
+  // required bool UsingSmallMap = 5;
+  inline bool has_usingsmallmap() const;
+  inline void clear_usingsmallmap();
+  static const int kUsingSmallMapFieldNumber = 5;
+  inline bool usingsmallmap() const;
+  inline void set_usingsmallmap(bool value);
+  
+  // required float PathLength = 6;
   inline bool has_pathlength() const;
   inline void clear_pathlength();
-  static const int kPathLengthFieldNumber = 5;
+  static const int kPathLengthFieldNumber = 6;
   inline float pathlength() const;
   inline void set_pathlength(float value);
   
-  // repeated int32 PathStepsRing = 6;
+  // repeated int32 PathStepsRing = 7;
   inline int pathstepsring_size() const;
   inline void clear_pathstepsring();
-  static const int kPathStepsRingFieldNumber = 6;
+  static const int kPathStepsRingFieldNumber = 7;
   inline ::google::protobuf::int32 pathstepsring(int index) const;
   inline void set_pathstepsring(int index, ::google::protobuf::int32 value);
   inline void add_pathstepsring(::google::protobuf::int32 value);
@@ -554,10 +561,10 @@ class GridInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_pathstepsring();
   
-  // repeated int32 PathStepsSector = 7;
+  // repeated int32 PathStepsSector = 8;
   inline int pathstepssector_size() const;
   inline void clear_pathstepssector();
-  static const int kPathStepsSectorFieldNumber = 7;
+  static const int kPathStepsSectorFieldNumber = 8;
   inline ::google::protobuf::int32 pathstepssector(int index) const;
   inline void set_pathstepssector(int index, ::google::protobuf::int32 value);
   inline void add_pathstepssector(::google::protobuf::int32 value);
@@ -566,10 +573,10 @@ class GridInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_pathstepssector();
   
-  // repeated int32 PathStepsOrientation = 8;
+  // repeated int32 PathStepsOrientation = 9;
   inline int pathstepsorientation_size() const;
   inline void clear_pathstepsorientation();
-  static const int kPathStepsOrientationFieldNumber = 8;
+  static const int kPathStepsOrientationFieldNumber = 9;
   inline ::google::protobuf::int32 pathstepsorientation(int index) const;
   inline void set_pathstepsorientation(int index, ::google::protobuf::int32 value);
   inline void add_pathstepsorientation(::google::protobuf::int32 value);
@@ -578,31 +585,31 @@ class GridInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_pathstepsorientation();
   
-  // optional int32 TargetRing = 9;
+  // optional int32 TargetRing = 10;
   inline bool has_targetring() const;
   inline void clear_targetring();
-  static const int kTargetRingFieldNumber = 9;
+  static const int kTargetRingFieldNumber = 10;
   inline ::google::protobuf::int32 targetring() const;
   inline void set_targetring(::google::protobuf::int32 value);
   
-  // optional int32 TargetSector = 10;
+  // optional int32 TargetSector = 11;
   inline bool has_targetsector() const;
   inline void clear_targetsector();
-  static const int kTargetSectorFieldNumber = 10;
+  static const int kTargetSectorFieldNumber = 11;
   inline ::google::protobuf::int32 targetsector() const;
   inline void set_targetsector(::google::protobuf::int32 value);
   
-  // optional float TargetOrientation = 11;
+  // optional float TargetOrientation = 12;
   inline bool has_targetorientation() const;
   inline void clear_targetorientation();
-  static const int kTargetOrientationFieldNumber = 11;
+  static const int kTargetOrientationFieldNumber = 12;
   inline float targetorientation() const;
   inline void set_targetorientation(float value);
   
-  // repeated int32 visitedRing = 12;
+  // repeated int32 visitedRing = 13;
   inline int visitedring_size() const;
   inline void clear_visitedring();
-  static const int kVisitedRingFieldNumber = 12;
+  static const int kVisitedRingFieldNumber = 13;
   inline ::google::protobuf::int32 visitedring(int index) const;
   inline void set_visitedring(int index, ::google::protobuf::int32 value);
   inline void add_visitedring(::google::protobuf::int32 value);
@@ -611,10 +618,10 @@ class GridInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_visitedring();
   
-  // repeated int32 visitedSector = 13;
+  // repeated int32 visitedSector = 14;
   inline int visitedsector_size() const;
   inline void clear_visitedsector();
-  static const int kVisitedSectorFieldNumber = 13;
+  static const int kVisitedSectorFieldNumber = 14;
   inline ::google::protobuf::int32 visitedsector(int index) const;
   inline void set_visitedsector(int index, ::google::protobuf::int32 value);
   inline void add_visitedsector(::google::protobuf::int32 value);
@@ -623,10 +630,10 @@ class GridInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_visitedsector();
   
-  // repeated int32 visitedOrientation = 14;
+  // repeated int32 visitedOrientation = 15;
   inline int visitedorientation_size() const;
   inline void clear_visitedorientation();
-  static const int kVisitedOrientationFieldNumber = 14;
+  static const int kVisitedOrientationFieldNumber = 15;
   inline ::google::protobuf::int32 visitedorientation(int index) const;
   inline void set_visitedorientation(int index, ::google::protobuf::int32 value);
   inline void add_visitedorientation(::google::protobuf::int32 value);
@@ -643,6 +650,8 @@ class GridInfo : public ::google::protobuf::Message {
   inline void clear_has_cellsring();
   inline void set_has_realgridlength();
   inline void clear_has_realgridlength();
+  inline void set_has_usingsmallmap();
+  inline void clear_has_usingsmallmap();
   inline void set_has_pathlength();
   inline void clear_has_pathlength();
   inline void set_has_targetring();
@@ -658,19 +667,20 @@ class GridInfo : public ::google::protobuf::Message {
   float cellsring_;
   ::google::protobuf::RepeatedField< float > gridcells_;
   float realgridlength_;
-  float pathlength_;
+  bool usingsmallmap_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsring_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepssector_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsorientation_;
+  float pathlength_;
   ::google::protobuf::int32 targetring_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsorientation_;
   ::google::protobuf::int32 targetsector_;
+  float targetorientation_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > visitedring_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > visitedsector_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > visitedorientation_;
-  float targetorientation_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(14 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(15 + 31) / 32];
   
   friend void  protobuf_AddDesc_PathPlanningMessages_2eproto();
   friend void protobuf_AssignDesc_PathPlanningMessages_2eproto();
@@ -930,26 +940,26 @@ inline void PathPlanningRequestMessage::set_targetorientation(float value) {
   targetorientation_ = value;
 }
 
-// required bool UsePathPlanning = 4;
-inline bool PathPlanningRequestMessage::has_usepathplanning() const {
+// required bool ForceUseOfSmallMap = 4;
+inline bool PathPlanningRequestMessage::has_forceuseofsmallmap() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void PathPlanningRequestMessage::set_has_usepathplanning() {
+inline void PathPlanningRequestMessage::set_has_forceuseofsmallmap() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void PathPlanningRequestMessage::clear_has_usepathplanning() {
+inline void PathPlanningRequestMessage::clear_has_forceuseofsmallmap() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void PathPlanningRequestMessage::clear_usepathplanning() {
-  usepathplanning_ = false;
-  clear_has_usepathplanning();
+inline void PathPlanningRequestMessage::clear_forceuseofsmallmap() {
+  forceuseofsmallmap_ = false;
+  clear_has_forceuseofsmallmap();
 }
-inline bool PathPlanningRequestMessage::usepathplanning() const {
-  return usepathplanning_;
+inline bool PathPlanningRequestMessage::forceuseofsmallmap() const {
+  return forceuseofsmallmap_;
 }
-inline void PathPlanningRequestMessage::set_usepathplanning(bool value) {
-  set_has_usepathplanning();
-  usepathplanning_ = value;
+inline void PathPlanningRequestMessage::set_forceuseofsmallmap(bool value) {
+  set_has_forceuseofsmallmap();
+  forceuseofsmallmap_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -1047,15 +1057,37 @@ GridInfo::mutable_gridcells() {
   return &gridcells_;
 }
 
-// required float PathLength = 5;
-inline bool GridInfo::has_pathlength() const {
+// required bool UsingSmallMap = 5;
+inline bool GridInfo::has_usingsmallmap() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void GridInfo::set_has_pathlength() {
+inline void GridInfo::set_has_usingsmallmap() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void GridInfo::clear_has_pathlength() {
+inline void GridInfo::clear_has_usingsmallmap() {
   _has_bits_[0] &= ~0x00000010u;
+}
+inline void GridInfo::clear_usingsmallmap() {
+  usingsmallmap_ = false;
+  clear_has_usingsmallmap();
+}
+inline bool GridInfo::usingsmallmap() const {
+  return usingsmallmap_;
+}
+inline void GridInfo::set_usingsmallmap(bool value) {
+  set_has_usingsmallmap();
+  usingsmallmap_ = value;
+}
+
+// required float PathLength = 6;
+inline bool GridInfo::has_pathlength() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void GridInfo::set_has_pathlength() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void GridInfo::clear_has_pathlength() {
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void GridInfo::clear_pathlength() {
   pathlength_ = 0;
@@ -1069,7 +1101,7 @@ inline void GridInfo::set_pathlength(float value) {
   pathlength_ = value;
 }
 
-// repeated int32 PathStepsRing = 6;
+// repeated int32 PathStepsRing = 7;
 inline int GridInfo::pathstepsring_size() const {
   return pathstepsring_.size();
 }
@@ -1094,7 +1126,7 @@ GridInfo::mutable_pathstepsring() {
   return &pathstepsring_;
 }
 
-// repeated int32 PathStepsSector = 7;
+// repeated int32 PathStepsSector = 8;
 inline int GridInfo::pathstepssector_size() const {
   return pathstepssector_.size();
 }
@@ -1119,7 +1151,7 @@ GridInfo::mutable_pathstepssector() {
   return &pathstepssector_;
 }
 
-// repeated int32 PathStepsOrientation = 8;
+// repeated int32 PathStepsOrientation = 9;
 inline int GridInfo::pathstepsorientation_size() const {
   return pathstepsorientation_.size();
 }
@@ -1144,15 +1176,15 @@ GridInfo::mutable_pathstepsorientation() {
   return &pathstepsorientation_;
 }
 
-// optional int32 TargetRing = 9;
+// optional int32 TargetRing = 10;
 inline bool GridInfo::has_targetring() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
+  return (_has_bits_[0] & 0x00000200u) != 0;
 }
 inline void GridInfo::set_has_targetring() {
-  _has_bits_[0] |= 0x00000100u;
+  _has_bits_[0] |= 0x00000200u;
 }
 inline void GridInfo::clear_has_targetring() {
-  _has_bits_[0] &= ~0x00000100u;
+  _has_bits_[0] &= ~0x00000200u;
 }
 inline void GridInfo::clear_targetring() {
   targetring_ = 0;
@@ -1166,15 +1198,15 @@ inline void GridInfo::set_targetring(::google::protobuf::int32 value) {
   targetring_ = value;
 }
 
-// optional int32 TargetSector = 10;
+// optional int32 TargetSector = 11;
 inline bool GridInfo::has_targetsector() const {
-  return (_has_bits_[0] & 0x00000200u) != 0;
+  return (_has_bits_[0] & 0x00000400u) != 0;
 }
 inline void GridInfo::set_has_targetsector() {
-  _has_bits_[0] |= 0x00000200u;
+  _has_bits_[0] |= 0x00000400u;
 }
 inline void GridInfo::clear_has_targetsector() {
-  _has_bits_[0] &= ~0x00000200u;
+  _has_bits_[0] &= ~0x00000400u;
 }
 inline void GridInfo::clear_targetsector() {
   targetsector_ = 0;
@@ -1188,15 +1220,15 @@ inline void GridInfo::set_targetsector(::google::protobuf::int32 value) {
   targetsector_ = value;
 }
 
-// optional float TargetOrientation = 11;
+// optional float TargetOrientation = 12;
 inline bool GridInfo::has_targetorientation() const {
-  return (_has_bits_[0] & 0x00000400u) != 0;
+  return (_has_bits_[0] & 0x00000800u) != 0;
 }
 inline void GridInfo::set_has_targetorientation() {
-  _has_bits_[0] |= 0x00000400u;
+  _has_bits_[0] |= 0x00000800u;
 }
 inline void GridInfo::clear_has_targetorientation() {
-  _has_bits_[0] &= ~0x00000400u;
+  _has_bits_[0] &= ~0x00000800u;
 }
 inline void GridInfo::clear_targetorientation() {
   targetorientation_ = 0;
@@ -1210,7 +1242,7 @@ inline void GridInfo::set_targetorientation(float value) {
   targetorientation_ = value;
 }
 
-// repeated int32 visitedRing = 12;
+// repeated int32 visitedRing = 13;
 inline int GridInfo::visitedring_size() const {
   return visitedring_.size();
 }
@@ -1235,7 +1267,7 @@ GridInfo::mutable_visitedring() {
   return &visitedring_;
 }
 
-// repeated int32 visitedSector = 13;
+// repeated int32 visitedSector = 14;
 inline int GridInfo::visitedsector_size() const {
   return visitedsector_.size();
 }
@@ -1260,7 +1292,7 @@ GridInfo::mutable_visitedsector() {
   return &visitedsector_;
 }
 
-// repeated int32 visitedOrientation = 14;
+// repeated int32 visitedOrientation = 15;
 inline int GridInfo::visitedorientation_size() const {
   return visitedorientation_.size();
 }
