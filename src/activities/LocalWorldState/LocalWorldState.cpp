@@ -203,9 +203,14 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
                 //cout << " Inserting new ball " << endl;
 			    MyWorld.add_balls();
 			    myBall.reset(aball.dist(), 0, aball.bearing(), 0);
+                ballTimeReset = 1;
 			    lastObservationTime = now;
 		    } else
 		    {
+
+                if (ballTimeReset < MAX_TIME_TO_RESET)
+                    ballTimeReset+= 0.5;
+
                 //Predict
                 //cout << " Ball exists.. Predict + update " << endl;
 			    duration = observationTime - lastObservationTime;
@@ -242,9 +247,10 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 		duration = now - lastObservationTime;
 		dt = duration.total_microseconds() / 1000000.0f;
 
-		if (dt > MAX_TIME_TO_RESET)
+		if (dt > ballTimeReset)
 		{
 			if (MyWorld.balls_size() > 0){
+                ballTimeReset = 0;
                 //cout << " Reseting ball " << endl;
                 myBall.reset(0, 0, 0, 0);
 				MyWorld.clear_balls();

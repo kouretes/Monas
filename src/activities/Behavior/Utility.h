@@ -188,6 +188,8 @@ namespace Utility {
 						gaussian2D(A_secDef, defenderR.X, defenderR.Y, sigmaX, sigmaY, posX, posY);
 			}
 		}
+		else
+			return -INF;
     }
     
     /**
