@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- default team number -->
-<team_number>2</team_number>
+<team_number>10</team_number>
 <!-- default team color number -->
 <default_team_color>blue</default_team_color>
 <!-- Are we on penalty mode or not (0 or 1)-->
