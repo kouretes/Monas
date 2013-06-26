@@ -41,6 +41,3 @@ message HeadControlMessage{
 	}
 	required ActionDescription task=1;
 }
-message BallFoundMessage{
-	required bool ballfound=1;
-}
