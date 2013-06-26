@@ -47,7 +47,7 @@ void Behavior::UserInit() {
 	side =+ 1;
 	robotX = 0.0, robotY = 0.0, robotPhi = 0.0;
 	readyToKick = false, scanAfterKick = false;
-	goToPositionFlag = false;
+	goToPositionFlag = true;
 	direction = 1;
 	orientation = 0;
 	numOfRobots = 0;
@@ -55,7 +55,9 @@ void Behavior::UserInit() {
 	Reset();
 	fGen.Init(config.maxPlayers);
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
-	currentRole.role = FormationParameters::ONBALL;
+	currentRole.role = FormationParameters::DEFENDER;
+	currentRole.X = -3.5f;
+	currentRole.Y = 0.0f;
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -64,7 +66,7 @@ void Behavior::UserInit() {
 	dispTimer = microsec_clock::universal_time();
 	lastGoToCenter = microsec_clock::universal_time() - seconds(10);
 	lastBallFound = microsec_clock::universal_time() - seconds(20);
-
+	lastScan = microsec_clock::universal_time() + seconds(3);
     hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
     _blk.publishState(hcontrol, "behavior");
 }
@@ -203,7 +205,8 @@ int Behavior::Execute() {
 
 		updateOrientation();
 		readyToKick = false;
-
+		
+		/*
 		if(sharedBallFound == true) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
@@ -246,7 +249,8 @@ int Behavior::Execute() {
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
-
+		*/
+		
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
 			_blk.publishState(hcontrol, "behavior");
@@ -389,14 +393,23 @@ int Behavior::Execute() {
 				}
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
+					
+					if(lastScan + seconds(2) > microsec_clock::universal_time() && lastScan + seconds(3) < microsec_clock::universal_time()) {
+						stopRobot();
+						return 0;
+					}
+					else if(lastScan + seconds(3) > microsec_clock::universal_time())
+						lastScan = microsec_clock::universal_time();
+						
 					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 				}
 
 				if(currentRole.role == FormationParameters::DEFENDER ||
 					currentRole.role == FormationParameters::DEFENDER_L ||
 					currentRole.role == FormationParameters::DEFENDER_R) {
-
-					defender();
+					
+					if(ballFound == 1 || sharedBallFound == 1)
+						defender();
 				}
 			}
 
@@ -811,6 +824,31 @@ bool Behavior::goToPosition(float targetX, float targetY, float targetPhi) {
 }
 
 void Behavior::defender() {
+
+	fall = toFallOrNotToFall();
+
+	if(fall == 1) { // extend left foot
+		amot.set_command("goalieLeftFootExtened.xar");
+		_blk.publishSignal(amot, "motion");
+		return;
+	}
+	else if(fall == -1) { // extend right foot
+		amot.set_command("goalieRightFootExtened.xar");
+		_blk.publishSignal(amot, "motion");
+		return;
+	}
+	
+	if(ballDist < 1.5f) { // check if ball is to close to the goal post
+		velocityWalk(ballX - config.posX, ballY - side * config.posY, ballBearing, 1);
+		if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - side*config.posY ) < config.epsY)) {
+			if (ballY > 0.0)
+				amot.set_command(config.kicks.KickForwardLeft); // Left Kick
+			else
+				amot.set_command(config.kicks.KickForwardRight); // Right Kick
+
+			_blk.publishSignal(amot, "motion");
+		}
+	}
 
 }
 
