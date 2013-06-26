@@ -8,7 +8,7 @@
 <cameraGamma>1.0</cameraGamma>
 <!-- Ball Detection -->
 <ballsize>0.065</ballsize>
-<balltolerance>0.15</balltolerance>
+<balltolerance>0.25</balltolerance>
 <!--  Real World distance parameters -->
 <skipdistance>0.045</skipdistance>
 <seedistance>10.82</seedistance>
