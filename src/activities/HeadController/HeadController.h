@@ -101,6 +101,8 @@ private:
 	boost::posix_time::ptime actionStarted;
 	static const int millisecondsToWait = 900;
 	
+	/* Force completition of all actions */
+	bool forceStopMotion;
 	/* Value to describe where to look with smart scan (or something like that) */
 	float ysign;
 	
@@ -143,7 +145,7 @@ private:
 	float lookAtPointPitch(float x, float y);
 	float lookAtPointRelativeYaw(float x, float y);
 	float lookAtPointRelativePitch(float x, float y);
-
+	
 	/*Target head possition reached*/
 	bool reachedTargetHead();
 };

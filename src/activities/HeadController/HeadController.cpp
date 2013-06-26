@@ -29,7 +29,8 @@ void HeadController::UserInit()
 	robotX = 0.0;
 	robotY = 0.0;
 	robotPhi = 0.0;
-
+	forceStopMotion = false;
+	
 	Reset();
 
 	actionStarted = microsec_clock::universal_time();
@@ -97,7 +98,8 @@ int HeadController::Execute()
 				ysign = currentHeadYaw > 0 ? +1 : -1;
 			}
 			if(CheckForBall()) //Do we see the ball? then
-			{
+			{	
+				forceStopMotion = true;
 				smartPhase = BLUE;
 				smartState = START;
                 targetYaw = lookAtPointRelativeYaw(bx, by);
@@ -119,6 +121,7 @@ int HeadController::Execute()
 			}
 			if(CheckForBall()) //Do we see the ball? then
 			{
+				forceStopMotion = true;
 				smartPhase = BLUE;
 				smartState = START;
 				HeadTrackIntelligent();
@@ -391,6 +394,10 @@ float HeadController::lookAtPointRelativePitch(float x, float y)
 
 bool HeadController::reachedTargetHead()
 {
+	if(forceStopMotion){
+		forceStopMotion = false;
+		return true;
+	}
 	return  boost::posix_time::microsec_clock::universal_time() - actionStarted > boost::posix_time::milliseconds(millisecondsToWait) ||
 			previousCommand != currentCommand ||
 			((fabs(targetPitch - currentHeadPitch) <= OVERSH) && ((fabs(targetYaw - currentHeadYaw) <= OVERSH))) ||
