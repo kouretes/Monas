@@ -140,7 +140,7 @@ int LocalWorldState::Execute()
 	    _blk.publishData(MyWorld, "external");
 
 	MyWorld.set_stability(stability);
-    robotmovement.Rotation.val = ekfLocalization.kalmanModels[0].state(5,0)* robotmovement.Rotation.val + ekfLocalization.kalmanModels[0].state(4,0) * robotmovement.Distance.val; 	
+    robotmovement.Rotation.val = ekfLocalization.kalmanModels[0].state(5,0)* robotmovement.Rotation.val + ekfLocalization.kalmanModels[0].state(4,0) * robotmovement.Distance.val;
     calculateBallEstimate(robotmovement);
 	_blk.publishData(MyWorld, "worldstate");
 
@@ -180,20 +180,20 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 
 	float dt;
     float dx,dy,gx,gy;
-	bool ballseen = false;	
+	bool ballseen = false;
 
     //cout << " Ball position estimation " << endl;
 	if (obsm.get() && obsm->has_ball())
-	{   
+	{
         //cout << " Ball observation " << endl;
 	    //used for removing the ball if exceeds a threshold
 		BallObject aball = obsm->ball();
-        
+
         dx = aball.dist() * cos(aball.bearing());
         dy = aball.dist() * sin(aball.bearing());
-    
+
         gx = AgentPosition.x + dx * cos(AgentPosition.phi) + dy * sin(AgentPosition.phi);
-        gy = - AgentPosition.y + dx * sin(AgentPosition.phi) + dy * cos(AgentPosition.phi);
+        gy = AgentPosition.y - dx * sin(AgentPosition.phi) + dy * cos(AgentPosition.phi);
 
         if ( fabs(gx) < locConfig.fieldMaxX + 2 && fabs(gy) < locConfig.fieldMaxY + 2) {
 		    ballseen = true;
@@ -219,8 +219,8 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
                 else{
                     duration = observationTime - lastFilterTime;
 			        dt = duration.total_microseconds() / 1000000.0f;
-			        myBall.update(aball.dist(), 0.25 , aball.bearing(), 0.03);			    
-                    myBall.predict(dt,robotModel);        
+			        myBall.update(aball.dist(), 0.25 , aball.bearing(), 0.03);
+                    myBall.predict(dt,robotModel);
                 }
 		    }
 
@@ -232,8 +232,9 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
         	MyWorld.mutable_balls(0)->set_relativexspeed(myBall.state(2,0));
             MyWorld.mutable_balls(0)->set_relativeyspeed(myBall.state(3,0));
         }
+
 	}
-	
+
 
 	if (!ballseen)
 	{
@@ -255,12 +256,12 @@ void LocalWorldState::calculateBallEstimate(Localization::KMotionModel const & r
 
             if (MyWorld.balls_size() > 0){
                 //cout << " ball is not being seen .. predict movement" << endl;
-	            myBall.predict(dt,robotModel);   
+	            myBall.predict(dt,robotModel);
                 MyWorld.mutable_balls(0)->set_relativex(myBall.state(0,0));
                 MyWorld.mutable_balls(0)->set_relativey(myBall.state(1,0));
             	MyWorld.mutable_balls(0)->set_relativexspeed(myBall.state(2,0));
-                MyWorld.mutable_balls(0)->set_relativeyspeed(myBall.state(3,0));  
-            }   
+                MyWorld.mutable_balls(0)->set_relativeyspeed(myBall.state(3,0));
+            }
 		}
 
         lastFilterTime = now;

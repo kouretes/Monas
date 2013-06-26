@@ -91,35 +91,32 @@ private:
 
 	/* Outgoing Messages */
 	MotionHeadMessage hmot;
-	BallFoundMessage bfm;
-
-		
-		
-	bool ballFound;
-
-	bool scanforball;
-	bool startscan;
-	float targetYaw;
-	float targetPitch;
-	float targetSpeed;
-	float ysign;
+	
+	/* Current joint values */
 	float currentHeadYaw, currentHeadPitch;
-
+	
+	/* Target joint values */
+	float targetYaw, targetPitch, targetSpeed;
+	/* Find out if an action take a lot of time to complete */
 	boost::posix_time::ptime actionStarted;
 	static const int millisecondsToWait = 900;
 	
+	/* Value to describe where to look with smart scan (or something like that) */
+	float ysign;
+	
+	/* Ball values from world info */
 	float bd, bb, bx, by;
+	
+	/* Robot values from world info */
 	float robotX, robotY, robotPhi, robot_confidence;
 
-	//External speed controler (e.g. from KMonitor)
+	/* External speed controler (e.g. from KMonitor) */
 	bool useExternalSpeed;
 	float externalSpeed;
-	//POSITIONS OF THE GOALPOSTS ON THE FIELD, LOADED FROM XML
+	/* Positions fo the GoalPosts on the field */
 	float oppGoalX, oppGoalY, ownGoalY, ownGoalX;
 	float oppGoalLeftX, oppGoalLeftY, ownGoalLeftX, ownGoalLeftY;
 	float oppGoalRightX, oppGoalRightY, ownGoalRightX, ownGoalRightY;
-
-	boost::posix_time::ptime lastball;
 
 	/*Read messages from blackboard*/
 	void ReadMessages();

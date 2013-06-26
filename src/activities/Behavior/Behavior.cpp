@@ -292,7 +292,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(ballX < config.posX && ((ballY < 3*config.posY/2 && ballY > config.posY/2) || (ballY < -3*config.posY/2 && ballY > -config.posY/2)) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
+					if(ballX < config.posX && ((ballY < 3*config.posY/2) || (ballY < -3*config.posY/2 )) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -467,7 +467,7 @@ int Behavior::Execute() {
 void Behavior::Coordinate() {
 
 		int robotIndex = -1;
-		
+
 		for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
 			if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE)
 				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
@@ -478,9 +478,9 @@ void Behavior::Coordinate() {
 		LogEntry(LogLevel::Info, GetName()) << "ALL POSSIBLE MAPPINGS ARE: ";
 		print(mappings, "Behavior");
 		roles.clear();
-		
+
 		LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
-		
+
 		// search for optimal mapping
 		maxU = 0;
 		for(unsigned int map = 0 ; map < mappings.size() ; map++) {
@@ -760,13 +760,13 @@ void Behavior::approachBall() {
         littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
     }
     else if(oppgb > (float) (M_PI_4)) {
-        velocityWalk(0.0, -0.7, (float)(M_PI_4/2),1.0);
+        velocityWalk(0.0, -1.0, (float)(M_PI_4/3.0),1.0);
     }
     else if(oppgb < (float) (-M_PI_4)) {
-        velocityWalk(0.0, 0.7, (float)(-M_PI_4/2),1.0);
+        velocityWalk(0.0, 1.0, (float)(-M_PI_4/3.0),1.0);
     }
     else{
-        velocityWalk(ballX - config.posX, ballY - side * config.posY, 0.0 ,1.0);
+        velocityWalk(ballX - config.posX+0.15,ballY - side * config.posY+side*0.15, 0.0 ,1.0);
     }
 }
 

@@ -20,7 +20,7 @@ BallFilter::~BallFilter()
 
 //Update the position
 void BallFilter::update(float distance, float distVariance, float bearing, float bearVariance)
-{ 	
+{
     matrix2_1 obs,diff;
     matrix2_2 qt,st,stInv;
     matrix4_2 kt;
@@ -33,8 +33,8 @@ void BallFilter::update(float distance, float distVariance, float bearing, float
     st.zero();
     diff.zero();
 
-    qt(0,0) = 0.2;
-    qt(1,1) = 0.1;
+    qt(0,0) = 0.05;
+    qt(1,1) = 0.05;
 
     obs(0) = distance * cos(bearing);
     obs(1) = distance * sin(bearing);
@@ -43,7 +43,7 @@ void BallFilter::update(float distance, float distVariance, float bearing, float
     ht(0,1) = 0;
     ht(0,2) = 0;
     ht(0,3) = 0;
-  
+
     ht(1,0) = 0;
     ht(1,1) = 1;
     ht(1,2) = 0;
@@ -56,7 +56,7 @@ void BallFilter::update(float distance, float distVariance, float bearing, float
 
     diff(0,0) = obs(0,0) - state(0,0);
     diff(1,0) = obs(1,0) - state(1,0);
-   
+
     //diff.prettyPrint();
     kt = (var.slow_mult(ht.transp())).slow_mult(stInv);
     //kt.prettyPrint();
@@ -82,8 +82,8 @@ void BallFilter::predict(float dt, Localization::KMotionModel const & MM)
     gt.zero();
     fict.zero();
 
-    fict(0,0) = 0.1 * dt;
-    fict(1,1) = 0.1 * dt;
+    fict(0,0) = 0.5 * dt;
+    fict(1,1) = 0.5 * dt;
     fict(2,2) = 0.05 * dt;
     fict(3,3) = 0.05 * dt;
 
@@ -125,7 +125,7 @@ void BallFilter::predict(float dt, Localization::KMotionModel const & MM)
 	state(0,0) = state(0,0)*cos(tmpRot) + state(1,0)*sin(tmpRot);
 	state(1,0) = -state(0,0)*sin(tmpRot) + state(1,0)*cos(tmpRot);
 
-	//Rotate speed 
+	//Rotate speed
 	state(2,0) = state(2,0)*cos(tmpRot) + state(3,0)*sin(tmpRot);
 	state(3,0) = -state(2,0)*sin(tmpRot) + state(3,0)*cos(tmpRot);
 
@@ -162,5 +162,5 @@ void BallFilter::reset(float distance, float distVariance, float bearing, float 
     var(0,0) = 0.5;
     var(1,1) = 0.5;
     var(2,2) = 0.1;
-    var(3,3) = 0.1;	
+    var(3,3) = 0.1;
 }
