@@ -121,9 +121,11 @@ int HeadController::Execute()
 			}
 			if(CheckForBall()) //Do we see the ball? then
 			{
-				forceStopMotion = true;
-				smartPhase = BLUE;
-				smartState = START;
+                if(smartPhase != BLUE && smartState != START){
+				    forceStopMotion = true;
+				    smartPhase = BLUE;
+				    smartState = START;
+                }
 				HeadTrackIntelligent();
 				ysign = currentHeadYaw > 0 ? +1 : -1;
 			}
@@ -337,7 +339,7 @@ void HeadController::HeadTrackIntelligent()
 		if(bd < closeToBall){
 			intelState = BALL1; //Only track ball when we are close to the ball
 		}
-		switch (smartState)
+		switch (intelState)
 		{
 			case BALL1:
 	            targetYaw = lookAtPointRelativeYaw(bx, by);
