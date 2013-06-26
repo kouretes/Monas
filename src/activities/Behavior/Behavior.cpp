@@ -196,10 +196,6 @@ int Behavior::Execute() {
 			lastPlay = microsec_clock::universal_time();
 		}
 
-		if(bfm != 0 && bfm.get() != 0) {
-			ballFound = bfm->ballfound();
-		}
-
 		if(swim == 0) {
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
@@ -535,7 +531,6 @@ void Behavior::readMessages() {
 	om   = _blk.readState<ObstacleMessageArray> ("pathplanning");
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
-	bfm = _blk.readState<BallFoundMessage> ("behavior");
 	sm = _blk.readState<MotionStateMessage>("worldstate");
 }
 
@@ -594,7 +589,10 @@ void Behavior::getBallData() {
 		ballY = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
 		ballDist = sqrt(pow(ballX, 2) + pow(ballY, 2));
 		ballBearing = atan2(ballY, ballX);
+		ballFound = true;
 	}
+	else
+		ballFound = false;
 
 	if(swim != 0 && swim.get() != 0 && swim->globalballs_size() > 0) {
 		SharedGlobalBallX = swim->globalballs(0).x();
