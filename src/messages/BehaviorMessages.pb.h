@@ -87,11 +87,12 @@ enum HeadControlMessage_HEADACTIONS {
   HeadControlMessage_HEADACTIONS_SCAN_AND_TRACK_FOR_BALL = 2,
   HeadControlMessage_HEADACTIONS_LOCALIZE = 3,
   HeadControlMessage_HEADACTIONS_LOCALIZE_FAR = 4,
-  HeadControlMessage_HEADACTIONS_SMART_SELECT = 5
+  HeadControlMessage_HEADACTIONS_SMART_SELECT = 5,
+  HeadControlMessage_HEADACTIONS_SCAN = 6
 };
 bool HeadControlMessage_HEADACTIONS_IsValid(int value);
 const HeadControlMessage_HEADACTIONS HeadControlMessage_HEADACTIONS_HEADACTIONS_MIN = HeadControlMessage_HEADACTIONS_NOTHING;
-const HeadControlMessage_HEADACTIONS HeadControlMessage_HEADACTIONS_HEADACTIONS_MAX = HeadControlMessage_HEADACTIONS_SMART_SELECT;
+const HeadControlMessage_HEADACTIONS HeadControlMessage_HEADACTIONS_HEADACTIONS_MAX = HeadControlMessage_HEADACTIONS_SCAN;
 const int HeadControlMessage_HEADACTIONS_HEADACTIONS_ARRAYSIZE = HeadControlMessage_HEADACTIONS_HEADACTIONS_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* HeadControlMessage_HEADACTIONS_descriptor();
@@ -448,6 +449,7 @@ class HeadControlMessage : public ::google::protobuf::Message {
   static const HEADACTIONS LOCALIZE = HeadControlMessage_HEADACTIONS_LOCALIZE;
   static const HEADACTIONS LOCALIZE_FAR = HeadControlMessage_HEADACTIONS_LOCALIZE_FAR;
   static const HEADACTIONS SMART_SELECT = HeadControlMessage_HEADACTIONS_SMART_SELECT;
+  static const HEADACTIONS SCAN = HeadControlMessage_HEADACTIONS_SCAN;
   static inline bool HEADACTIONS_IsValid(int value) {
     return HeadControlMessage_HEADACTIONS_IsValid(value);
   }

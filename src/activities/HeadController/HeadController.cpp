@@ -32,7 +32,6 @@ void HeadController::UserInit()
 
 	Reset();
 
-	lastball = microsec_clock::universal_time();
 	actionStarted = microsec_clock::universal_time();
 	
 	currentCommand = HeadControlMessage::NOTHING;
@@ -105,15 +104,10 @@ int HeadController::Execute()
                 targetPitch = lookAtPointRelativePitch(bx, by);
 				targetSpeed = headSpeed[FAST];
                 MakeHeadAction();
-				ysign = currentHeadYaw > 0 ? +1 : -1;
-                bfm.set_ballfound(true);
-                _blk.publishState(bfm, "behavior");
 			}
 			else
 			{
 				HeadScanStepSmart(NORMAL);
-				bfm.set_ballfound(false);
-                _blk.publishState(bfm, "behavior");
 			}
 			break;
 		case HeadControlMessage::SMART_SELECT:
@@ -129,17 +123,23 @@ int HeadController::Execute()
 				smartState = START;
 				HeadTrackIntelligent();
 				ysign = currentHeadYaw > 0 ? +1 : -1;
-                bfm.set_ballfound(true);
-                _blk.publishState(bfm, "behavior");
 			}
 			else
 			{
                 intelState = BALL1;
 				HeadScanStepSmart(NORMAL);
-				bfm.set_ballfound(false);
-                _blk.publishState(bfm, "behavior");
 			}
 			break;
+		case HeadControlMessage::SCAN:
+			if(currentCommand != previousCommand){
+				//First look down
+				smartPhase = BLUE;
+				smartState = MIDDLE;
+				ysign = currentHeadYaw > 0 ? +1 : -1; //Side
+			}
+			HeadScanStepSmart(NORMAL);
+            break;
+		
 	}
 	previousCommand = currentCommand;
 	return 0;
