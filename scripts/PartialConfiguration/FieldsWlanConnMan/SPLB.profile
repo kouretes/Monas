@@ -17,7 +17,8 @@ IPv6.netmask_prefixlen=0
 IPv4.method=manual
 IPv4.netmask_prefixlen=16
 IPv4.local_address=10.0.10.1
-IPv4.gateway=255.255.0.0
+IPv4.gateway=10.0.0.1
+Nameservers=10.0.0.1;
 Passphrase=1234567890
 AutoConnect=true
 
@@ -46,7 +47,8 @@ IPv6.netmask_prefixlen=0
 IPv4.method=manual
 IPv4.netmask_prefixlen=24
 IPv4.local_address=10.0.10.2
-IPv4.gateway=255.255.0.0
+IPv4.gateway=10.0.0.1
+Nameservers=10.0.0.1;
 Passphrase=1234567890
 AutoConnect=true
 
@@ -78,7 +80,8 @@ IPv6.netmask_prefixlen=0
 IPv4.method=manual
 IPv4.netmask_prefixlen=24
 IPv4.local_address=10.0.10.3
-IPv4.gateway=255.255.0.0
+IPv4.gateway=10.0.0.1
+Nameservers=10.0.0.1;
 Passphrase=1234567890
 AutoConnect=true
 
@@ -111,7 +114,8 @@ IPv6.netmask_prefixlen=0
 IPv4.method=manual
 IPv4.netmask_prefixlen=24
 IPv4.local_address=10.0.10.4
-IPv4.gateway=255.255.0.0
+IPv4.gateway=10.0.0.1
+Nameservers=10.0.0.1;
 Passphrase=1234567890
 AutoConnect=true
 
@@ -140,7 +144,8 @@ IPv6.netmask_prefixlen=0
 IPv4.method=manual
 IPv4.netmask_prefixlen=16
 IPv4.local_address=10.0.10.5
-IPv4.gateway=255.255.0.0
+IPv4.gateway=10.0.0.1
+Nameservers=10.0.0.1;
 Passphrase=1234567890
 AutoConnect=true
 
