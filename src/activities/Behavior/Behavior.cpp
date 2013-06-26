@@ -482,9 +482,9 @@ void Behavior::Coordinate() {
 		LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
 
 		// search for optimal mapping
-		maxU = 0;
+		maxU = -INF;
 		for(unsigned int map = 0 ; map < mappings.size() ; map++) {
-			mapCost = 0;
+			mapCost = 0.0f;
 			LogEntry(LogLevel::Info, GetName()) << "MAP: " << map;
 			for(unsigned int r = 0 ; r < numOfRobots ; r++) { // for all except goalie robots
 				currentRobotPos = fGen.findRoleInfo(mappings[map].at(r));

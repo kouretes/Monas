@@ -26,8 +26,13 @@ void FormationGenerator::Init(unsigned int teamPlayers) {
 
 void FormationGenerator::XmlInitFormation(bool kickOff) {
 	
+	if(kickOff)
+		formationType = OFFENSIVE;
+	else
+		formationType = DEFENSIVE;
+	
 	std::string formationCase = (kickOff == true) ? "KickOff" : "noKickOff";
-
+	
 	for(unsigned int r = 0 ; r < positions ; r++) { // for each robot on the node
 		formation->at(r).X = atof(Configurator::Instance().findValueForKey("playerConfig."+formationCase+".player~"+_toString(r)+".x").c_str());
 		formation->at(r).Y = atof(Configurator::Instance().findValueForKey("playerConfig."+formationCase+".player~"+_toString(r)+".y").c_str());
@@ -38,6 +43,11 @@ void FormationGenerator::XmlInitFormation(bool kickOff) {
 void FormationGenerator::DynamicInitFormation(bool kickOff) { // assuming ball is on the center of the field (0,0)
 
 	unsigned int pos = 0;
+		
+	if(kickOff)
+		formationType = OFFENSIVE;
+	else
+		formationType = DEFENSIVE;
 		
 	for(unsigned int i = 0 ; i < roles() ; i++) {
 		
