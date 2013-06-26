@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!-- Refresh Segmentation parameters based camera every : (millisec) -->
+<camerarefreshmillisec>5000</camerarefreshmillisec>
+<!--  Configuration files for Segmentation-->
+<SegmentationBottom>roboCup2013-1667.conf</SegmentationBottom>
+<SegmentationTop>roboCup2013-1667.conf</SegmentationTop>
+<Dfov>54.85</Dfov>
+<cameraGamma>1.0</cameraGamma>
+<!-- Ball Detection -->
+<ballsize>0.065</ballsize>
+<balltolerance>0.15</balltolerance>
+<!--  Real World distance parameters -->
+<skipdistance>0.045</skipdistance>
+<seedistance>10.82</seedistance>
+<!-- Image Scanning parameters -->
+<scanV>48</scanV>
+<scanH>32</scanH>
+<minH>2</minH>
+<!--<scanstep>23</scanstep>-->
+<bordersize>6</bordersize>
+<pixeltol>5</pixeltol>
+<subsampling>4</subsampling>
+<!-- For obstacle avoidance -->
+<obstacledistance>1</obstacledistance>
+<!--- Goal posts --->
+<goalheight>0.9</goalheight>
+<goaldist>1.595</goaldist>
+<goaltopisrounded>1</goaltopisrounded>
+<goaldiam>0.1</goaldiam>
+<widthestimateotolerance>0.2</widthestimateotolerance>
+<horizontalpostratio>0.23</horizontalpostratio>
+<!-- How many ms does it take the sensor module to publish a message? -->
+<sensordelay>0</sensordelay>
+<pitchoffset>0.07</pitchoffset>
+<rolloffset>0</rolloffset>
