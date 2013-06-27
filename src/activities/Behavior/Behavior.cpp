@@ -47,7 +47,7 @@ void Behavior::UserInit() {
 	side =+ 1;
 	robotX = 0.0, robotY = 0.0, robotPhi = 0.0;
 	readyToKick = false, scanAfterKick = false;
-	goToPositionFlag = true;
+	goToPositionFlag = false;
 	direction = 1;
 	orientation = 0;
 	numOfRobots = 0;
@@ -242,7 +242,11 @@ int Behavior::Execute() {
 
 				if(config.playerNumber != 1)
 					Coordinate();
-
+				else {
+					LogEntry(LogLevel::Info, GetName()) << "GOALIE: NO COORDINATION";
+					currentRole = fGen.findRoleInfo(FormationParameters::GOALIE);
+				}
+					
 				goToPositionFlag = false;
 				lastFormation = microsec_clock::universal_time();
 			}
@@ -269,6 +273,7 @@ int Behavior::Execute() {
 		_blk.publishState(hcontrol, "behavior");
 
 		if(config.playerNumber == 1) { // goalie role if number 1
+			LogEntry(LogLevel::Info, GetName()) << "GOALIE BEHAVIOR";
 			if(goToPositionFlag == false) {
 				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 					return 0;
