@@ -7,7 +7,7 @@ void EKFLocalization::Initialize(){
     // Error Parameters
     e1 = 1.2f;
     e2 = 0.2f;
-    e3 = 0.8f;
+    e3 = 1.f;
 
     kalmanModels.resize(32);
 	InitializeHypothesis(LocalizationResetMessage::UNIFORM, false, 0, 0, 0);
@@ -146,7 +146,7 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
         double threshold = 0.7;
         double dt = 0.5;
         //cout << "new round" << endl;
-        while( numberOfModels > 8 ){
+        while( numberOfModels > 4 ){
             //cout << "step"<< endl;
             hypothesisMerging(threshold);
             //cout << "Number Of Models after merging : " << numberOfModels << endl;
@@ -155,7 +155,8 @@ Localization::blf EKFLocalization::LocalizationStep(Localization::KMotionModel &
 
     }
 
-   /*if (boost::posix_time::microsec_clock::universal_time() > lastPrint + seconds(5)){
+    /*
+   if (boost::posix_time::microsec_clock::universal_time() > lastPrint + seconds(5)){
 	   LogEntry(LogLevel::Info,"EKFLocalization")
 				<<"Distance scale factor : " << (kalmanModels[0].state(3,0))
 				<<" Drift :  " << (kalmanModels[0].state(4,0))
@@ -212,7 +213,7 @@ void EKFLocalization::hypothesisMerging(float thres){
                 st1.sub(st2);
                 k = (kalmanModels[i].mWeight * kalmanModels[j].mWeight)/(kalmanModels[i].mWeight + kalmanModels[j].mWeight) * st1.transp().slow_mult(varInv).slow_mult(st1);
 
-                if ( k < 0.05 * thres ){
+                if ( k < 0.1 * thres ){
                     kalmanModels[j].active=false;
                     kalmanTmp.back().mWeight+=kalmanModels[j].mWeight;
                 }
