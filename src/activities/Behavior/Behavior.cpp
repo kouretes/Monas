@@ -55,7 +55,10 @@ void Behavior::UserInit() {
 	Reset();
 	fGen.Init(config.maxPlayers);
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
-	currentRole.role = FormationParameters::ONBALL; // default role
+	if(config.playerNumber != 1)
+		currentRole.role = FormationParameters::ONBALL; // default role
+	else
+		currentRole.role = FormationParameters::GOALIE;
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -197,7 +200,7 @@ int Behavior::Execute() {
 			lastPlay = microsec_clock::universal_time();
 		}
 		
-		if(swim == 0) {
+		if(swim == 0 && config.playerNumber != 1) {
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
 		}
