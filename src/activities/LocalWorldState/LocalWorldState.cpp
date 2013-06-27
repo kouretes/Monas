@@ -89,9 +89,24 @@ int LocalWorldState::Execute()
             }
 		}
 		timeStart = boost::posix_time::microsec_clock::universal_time();
-		return 0;
+        
+        MyWorld.mutable_myposition()->set_x(AgentPosition.x);
+	    MyWorld.mutable_myposition()->set_y(AgentPosition.y);
+	    MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
+
+        for (int i=0;i<3;i++){
+            for (int j=0;j<3;j++){
+                MyWorld.mutable_myposition()->set_var(i*3+j,ekfLocalization.var(i,j));
+            }
+        }
+
+	    _blk.publishData(MyWorld, "external");
+	    _blk.publishData(MyWorld, "worldstate");
+		
+        return 0;
 	}else
 		fallBegan = true;
+
 	if (lrm != 0){
 		timeStart = boost::posix_time::microsec_clock::universal_time();
 
@@ -136,8 +151,8 @@ int LocalWorldState::Execute()
 	MyWorld.mutable_myposition()->set_y(AgentPosition.y);
 	MyWorld.mutable_myposition()->set_phi(AgentPosition.phi);
 
-    if (gameState == PLAYER_PLAYING )
-	    _blk.publishData(MyWorld, "external");
+    
+    _blk.publishData(MyWorld, "external");
 
 	MyWorld.set_stability(stability);
     robotmovement.Rotation.val = ekfLocalization.kalmanModels[0].state(5,0)* robotmovement.Rotation.val + ekfLocalization.kalmanModels[0].state(4,0) * robotmovement.Distance.val;
