@@ -23,7 +23,7 @@ int ImageExtractor::Execute()
 	_blk.process_messages();
 
 	if(!firstRun){
-		float scale = imext.calibrateCamera(1500, 13);
+		float scale = imext.calibrateCamera(1500, 10);
 		lastrefresh = boost::posix_time::microsec_clock::universal_time() - boost::posix_time::microseconds(camerarefreshmillisec + 10);
 		firstRun = true;
 	}
