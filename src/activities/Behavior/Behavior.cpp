@@ -615,8 +615,8 @@ void Behavior::getBallData() {
 
 	if(wim != 0 && wim.get() != 0 && wim->balls_size() > 0)
 	{
-		ballX = wim->balls(0).relativex() + wim->balls(0).relativexspeed() * 0.200;
-		ballY = wim->balls(0).relativey() + wim->balls(0).relativeyspeed() * 0.200;
+		ballX = wim->balls(0).relativex();// + wim->balls(0).relativexspeed() * 0.200;
+		ballY = wim->balls(0).relativey();// + wim->balls(0).relativeyspeed() * 0.200;
 		ballDist = sqrt(pow(ballX, 2) + pow(ballY, 2));
 		ballBearing = atan2(ballY, ballX);
 		ballFound = true;
