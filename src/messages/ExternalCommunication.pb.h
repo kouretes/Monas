@@ -131,7 +131,9 @@ enum ExternalCommand_HEAD {
   ExternalCommand_HEAD_LOCALIZE = 3,
   ExternalCommand_HEAD_LOCALIZE_FAR = 4,
   ExternalCommand_HEAD_SMART_SCAN = 5,
-  ExternalCommand_HEAD_HEAD_SIZE = 6
+  ExternalCommand_HEAD_JUST_SCAN = 6,
+  ExternalCommand_HEAD_GOALIE_LOCALIZE = 7,
+  ExternalCommand_HEAD_HEAD_SIZE = 8
 };
 bool ExternalCommand_HEAD_IsValid(int value);
 const ExternalCommand_HEAD ExternalCommand_HEAD_HEAD_MIN = ExternalCommand_HEAD_NOTHING;
@@ -772,6 +774,8 @@ class ExternalCommand : public ::google::protobuf::Message {
   static const HEAD LOCALIZE = ExternalCommand_HEAD_LOCALIZE;
   static const HEAD LOCALIZE_FAR = ExternalCommand_HEAD_LOCALIZE_FAR;
   static const HEAD SMART_SCAN = ExternalCommand_HEAD_SMART_SCAN;
+  static const HEAD JUST_SCAN = ExternalCommand_HEAD_JUST_SCAN;
+  static const HEAD GOALIE_LOCALIZE = ExternalCommand_HEAD_GOALIE_LOCALIZE;
   static const HEAD HEAD_SIZE = ExternalCommand_HEAD_HEAD_SIZE;
   static inline bool HEAD_IsValid(int value) {
     return ExternalCommand_HEAD_IsValid(value);

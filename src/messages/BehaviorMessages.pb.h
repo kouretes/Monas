@@ -87,11 +87,12 @@ enum HeadControlMessage_HEADACTIONS {
   HeadControlMessage_HEADACTIONS_LOCALIZE = 3,
   HeadControlMessage_HEADACTIONS_LOCALIZE_FAR = 4,
   HeadControlMessage_HEADACTIONS_SMART_SELECT = 5,
-  HeadControlMessage_HEADACTIONS_SCAN = 6
+  HeadControlMessage_HEADACTIONS_SCAN = 6,
+  HeadControlMessage_HEADACTIONS_GOALIE_LOCALIZE_CLOSE = 7
 };
 bool HeadControlMessage_HEADACTIONS_IsValid(int value);
 const HeadControlMessage_HEADACTIONS HeadControlMessage_HEADACTIONS_HEADACTIONS_MIN = HeadControlMessage_HEADACTIONS_NOTHING;
-const HeadControlMessage_HEADACTIONS HeadControlMessage_HEADACTIONS_HEADACTIONS_MAX = HeadControlMessage_HEADACTIONS_SCAN;
+const HeadControlMessage_HEADACTIONS HeadControlMessage_HEADACTIONS_HEADACTIONS_MAX = HeadControlMessage_HEADACTIONS_GOALIE_LOCALIZE_CLOSE;
 const int HeadControlMessage_HEADACTIONS_HEADACTIONS_ARRAYSIZE = HeadControlMessage_HEADACTIONS_HEADACTIONS_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* HeadControlMessage_HEADACTIONS_descriptor();
@@ -449,6 +450,7 @@ class HeadControlMessage : public ::google::protobuf::Message {
   static const HEADACTIONS LOCALIZE_FAR = HeadControlMessage_HEADACTIONS_LOCALIZE_FAR;
   static const HEADACTIONS SMART_SELECT = HeadControlMessage_HEADACTIONS_SMART_SELECT;
   static const HEADACTIONS SCAN = HeadControlMessage_HEADACTIONS_SCAN;
+  static const HEADACTIONS GOALIE_LOCALIZE_CLOSE = HeadControlMessage_HEADACTIONS_GOALIE_LOCALIZE_CLOSE;
   static inline bool HEADACTIONS_IsValid(int value) {
     return HeadControlMessage_HEADACTIONS_IsValid(value);
   }

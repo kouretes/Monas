@@ -142,12 +142,12 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "Description\"s\n\013BODYACTIONS\022\013\n\007NOTHING\020\000\022"
     "\t\n\005STAND\020\001\022\014\n\010DOACTION\020\002\022\020\n\014BALLAPPROACH"
     "\020\003\022\030\n\024BALLAPPROACH_SUPPORT\020\004\022\010\n\004GOTO\020\005\022\010"
-    "\n\004DEMO\020\006\"\266\001\n\022HeadControlMessage\022 \n\004task\030"
-    "\001 \002(\0132\022.ActionDescription\"~\n\013HEADACTIONS"
-    "\022\013\n\007NOTHING\020\000\022\t\n\005FROWN\020\001\022\033\n\027SCAN_AND_TRA"
-    "CK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE_"
-    "FAR\020\004\022\020\n\014SMART_SELECT\020\005\022\010\n\004SCAN\020\006\"%\n\020Bal"
-    "lFoundMessage\022\021\n\tballfound\030\001 \002(\010", 672);
+    "\n\004DEMO\020\006\"\322\001\n\022HeadControlMessage\022 \n\004task\030"
+    "\001 \002(\0132\022.ActionDescription\"\231\001\n\013HEADACTION"
+    "S\022\013\n\007NOTHING\020\000\022\t\n\005FROWN\020\001\022\033\n\027SCAN_AND_TR"
+    "ACK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE"
+    "_FAR\020\004\022\020\n\014SMART_SELECT\020\005\022\010\n\004SCAN\020\006\022\031\n\025GO"
+    "ALIE_LOCALIZE_CLOSE\020\007", 661);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   ActionDescription::default_instance_ = new ActionDescription();
@@ -909,6 +909,7 @@ bool HeadControlMessage_HEADACTIONS_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
       return true;
     default:
       return false;
@@ -923,6 +924,7 @@ const HeadControlMessage_HEADACTIONS HeadControlMessage::LOCALIZE;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::LOCALIZE_FAR;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::SMART_SELECT;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::SCAN;
+const HeadControlMessage_HEADACTIONS HeadControlMessage::GOALIE_LOCALIZE_CLOSE;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::HEADACTIONS_MIN;
 const HeadControlMessage_HEADACTIONS HeadControlMessage::HEADACTIONS_MAX;
 const int HeadControlMessage::HEADACTIONS_ARRAYSIZE;

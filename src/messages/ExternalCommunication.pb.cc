@@ -246,7 +246,7 @@ void protobuf_AddDesc_ExternalCommunication_2eproto() {
     "\030\002 \002(\r\022#\n\014updateConfig\030\003 \003(\0132\r.ConfigUpd"
     "ate\022\027\n\017resetActivities\030\004 \003(\t\022\033\n\004file\030\005 \001"
     "(\0132\r.FileTransfer\022\026\n\016handOffRequest\030\006 \002("
-    "\010\"\312\004\n\017ExternalCommand\022\021\n\tmessageid\030\001 \002(\t"
+    "\010\"\357\004\n\017ExternalCommand\022\021\n\tmessageid\030\001 \002(\t"
     "\022\022\n\ntargethost\030\002 \002(\r\022\021\n\tcommandID\030\003 \002(\r\022"
     "\021\n\tfloatvars\030\004 \003(\002\022\022\n\nstringvars\030\005 \001(\t\"c"
     "\n\016SIMPLE_ACTIONS\022\014\n\010SHUTDOWN\020\000\022\021\n\rSTIFFN"
@@ -257,17 +257,17 @@ void protobuf_AddDesc_ExternalCommunication_2eproto() {
     "\006\022\027\n\023GAMECONTROLLER_SIZE\020\007\"9\n\014LOCALIZATI"
     "ON\022\022\n\016INIT_PARTICLES\020\000\022\025\n\021LOCALIZATION_S"
     "IZE\020\001\"@\n\006MOTION\022\022\n\016EXECUTE_ACTION\020\000\022\021\n\rS"
-    "ET_STIFFNESS\020\001\022\017\n\013MOTION_SIZE\020\002\"u\n\004HEAD\022"
-    "\013\n\007NOTHING\020\000\022\r\n\tLOOK_DOWN\020\001\022\022\n\016SCAN_AND_"
-    "TRACK\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE_FAR\020\004\022"
-    "\016\n\nSMART_SCAN\020\005\022\r\n\tHEAD_SIZE\020\006\"\226\001\n\021Camer"
-    "aCalibration\022\021\n\tmessageid\030\001 \002(\t\022\022\n\ntarge"
-    "thost\030\002 \002(\r\022\014\n\004gain\030\003 \002(\r\022\020\n\010contrast\030\004 "
-    "\002(\r\022\022\n\nredbalance\030\005 \002(\r\022\023\n\013bluebalance\030\006"
-    " \002(\r\022\021\n\tgreengain\030\007 \002(\r\"a\n\nGenericACK\022\016\n"
-    "\006hostid\030\001 \002(\r\022\021\n\tmessageid\030\002 \002(\t\022\037\n\013hand"
-    "shaking\030\003 \001(\0132\n.HandShake\022\017\n\007ownlock\030\004 \002"
-    "(\010", 1202);
+    "ET_STIFFNESS\020\001\022\017\n\013MOTION_SIZE\020\002\"\231\001\n\004HEAD"
+    "\022\013\n\007NOTHING\020\000\022\r\n\tLOOK_DOWN\020\001\022\022\n\016SCAN_AND"
+    "_TRACK\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE_FAR\020\004"
+    "\022\016\n\nSMART_SCAN\020\005\022\r\n\tJUST_SCAN\020\006\022\023\n\017GOALI"
+    "E_LOCALIZE\020\007\022\r\n\tHEAD_SIZE\020\010\"\226\001\n\021CameraCa"
+    "libration\022\021\n\tmessageid\030\001 \002(\t\022\022\n\ntargetho"
+    "st\030\002 \002(\r\022\014\n\004gain\030\003 \002(\r\022\020\n\010contrast\030\004 \002(\r"
+    "\022\022\n\nredbalance\030\005 \002(\r\022\023\n\013bluebalance\030\006 \002("
+    "\r\022\021\n\tgreengain\030\007 \002(\r\"a\n\nGenericACK\022\016\n\006ho"
+    "stid\030\001 \002(\r\022\021\n\tmessageid\030\002 \002(\t\022\037\n\013handsha"
+    "king\030\003 \001(\0132\n.HandShake\022\017\n\007ownlock\030\004 \002(\010", 1239);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ExternalCommunication.proto", &protobuf_RegisterTypes);
   ConfigUpdate::default_instance_ = new ConfigUpdate();
@@ -1732,6 +1732,8 @@ bool ExternalCommand_HEAD_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
+    case 8:
       return true;
     default:
       return false;
@@ -1745,6 +1747,8 @@ const ExternalCommand_HEAD ExternalCommand::SCAN_AND_TRACK;
 const ExternalCommand_HEAD ExternalCommand::LOCALIZE;
 const ExternalCommand_HEAD ExternalCommand::LOCALIZE_FAR;
 const ExternalCommand_HEAD ExternalCommand::SMART_SCAN;
+const ExternalCommand_HEAD ExternalCommand::JUST_SCAN;
+const ExternalCommand_HEAD ExternalCommand::GOALIE_LOCALIZE;
 const ExternalCommand_HEAD ExternalCommand::HEAD_SIZE;
 const ExternalCommand_HEAD ExternalCommand::HEAD_MIN;
 const ExternalCommand_HEAD ExternalCommand::HEAD_MAX;

@@ -70,6 +70,8 @@ private slots:
 	void sendHeadLocalize();
 	void sendHeadLocalizeFar();
 	void sendHeadLookDown();
+	void sendHeadJustScan();
+	void sendHeadGoalieLocalize();
 	void sendHeadStop();
 	void stiffSliderMoved(int);
 	void stiffTextChanged(QString);

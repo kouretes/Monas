@@ -51,6 +51,9 @@ CommandsController::CommandsController(QWidget *parent) :
 	connect(ui->lookdownheadPb, SIGNAL(clicked()), this, SLOT(sendHeadLookDown()) );
 	connect(ui->localizeheadPb, SIGNAL(clicked()), this, SLOT(sendHeadLocalize()) );
 	connect(ui->localizafarheadPb, SIGNAL(clicked()), this, SLOT(sendHeadLocalizeFar()) );
+	connect(ui->justScanPb, SIGNAL(clicked()), this, SLOT(sendHeadJustScan()) );
+	connect(ui->goalieLocalizeHeadPb, SIGNAL(clicked()), this, SLOT(sendHeadGoalieLocalize()) );
+	
 	connect(ui->headSlider, SIGNAL(valueChanged(int)), this, SLOT(headSliderMoved(int)) );
 	connect(ui->headEdit, SIGNAL(textChanged(QString)), this, SLOT(headTextChanged(QString)) );
 	//connect(ui->stiffSend, SIGNAL(clicked()), this, SLOT(sendStiffness()));
@@ -217,12 +220,20 @@ void CommandsController::sendHeadLocalizeFar() {
 	sendHeadMessage(ExternalCommand::LOCALIZE_FAR);
 }
 
-void CommandsController::sendHeadLookDown() {
-	sendHeadMessage(ExternalCommand::LOOK_DOWN);
-}
-
 void CommandsController::sendHeadStop() {
 	sendHeadMessage(ExternalCommand::NOTHING);
+}
+
+void CommandsController::sendHeadJustScan() {
+	sendHeadMessage(ExternalCommand::JUST_SCAN);
+}
+
+void CommandsController::sendHeadGoalieLocalize() {
+	sendHeadMessage(ExternalCommand::GOALIE_LOCALIZE );
+}
+
+void CommandsController::sendHeadLookDown() {
+	sendHeadMessage(ExternalCommand::LOOK_DOWN );
 }
 
 void CommandsController::sendHeadMessage(int headCommandId) {

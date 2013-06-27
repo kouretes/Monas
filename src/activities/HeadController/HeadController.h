@@ -42,10 +42,7 @@ private:
 	static const float headSpeed[3];/*{SOMEDAY, SLOW, BEAM_ME_UP}*/
 	static const float PITCHMIN = -0.67f;
 	static const float PITCHMAX = 0.51f;
-	static const float YAWMIN = 0.8f;
-	static const float YAWMAX = 1.9f;
-	static const float PITCHSTEP = 0.3f;
-	static const float YAWSTEP = 0.4f;
+	static const float YAWMAX = 2.086f;
 	static const float OVERSH = 0.1f;
 
 	unsigned int currentCommand, previousCommand;
@@ -99,8 +96,11 @@ private:
 	float targetYaw, targetPitch, targetSpeed;
 	/* Find out if an action take a lot of time to complete */
 	boost::posix_time::ptime actionStarted;
-	static const int millisecondsToWait = 900;
+	static const int millisecondsToWait = 1500;
 	
+	/* Sleep time just to stay to a location */
+	boost::posix_time::ptime sleepTime;
+	bool stay;
 	/* Force completition of all actions */
 	bool forceStopMotion;
 	/* Value to describe where to look with smart scan (or something like that) */
@@ -133,7 +133,7 @@ private:
 	void MakeHeadAction();
 
 	/*Scan high for goalposts*/
-	void HeadScanStepHigh(float yawLimit, float pitch);
+	void HeadScanStepHigh(float yawLimit, float pitch, int speed, int millesecStat);
 
 	/*Scan for the ball*/
 	void HeadScanStepSmart(int speed);

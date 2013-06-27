@@ -61,7 +61,9 @@ message ExternalCommand{
 		LOCALIZE = 3;
 		LOCALIZE_FAR = 4;
 		SMART_SCAN = 5;
-		HEAD_SIZE = 6;
+		JUST_SCAN = 6;
+		GOALIE_LOCALIZE = 7;
+		HEAD_SIZE = 8;
 	}
 
 	required string messageid = 1;

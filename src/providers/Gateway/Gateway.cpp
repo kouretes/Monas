@@ -315,6 +315,10 @@ void Gateway::processHeadCommand(int commandID, float value){
 		hcm.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
 	}else if(commandID == ExternalCommand::SMART_SCAN){
 		hcm.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
+	}else if(commandID == ExternalCommand::JUST_SCAN){
+		hcm.mutable_task()->set_action(HeadControlMessage::SCAN);
+	}else if(commandID == ExternalCommand::GOALIE_LOCALIZE){
+		hcm.mutable_task()->set_action(HeadControlMessage::GOALIE_LOCALIZE_CLOSE);
 	}else{
 		hcm.mutable_task()->set_action(HeadControlMessage::NOTHING);
 	}

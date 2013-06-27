@@ -467,6 +467,13 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="justScanPb">
+                  <property name="text">
+                   <string>Scan</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="scanheadPb">
                   <property name="text">
                    <string>Scan and Track</string>
@@ -498,6 +505,13 @@
                  <widget class="QPushButton" name="smartscanheadPb">
                   <property name="text">
                    <string>Smart Scan and Track</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="goalieLocalizeHeadPb">
+                  <property name="text">
+                   <string>Goalie Localize Close</string>
                   </property>
                  </widget>
                 </item>

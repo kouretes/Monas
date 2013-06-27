@@ -7,7 +7,7 @@ using namespace boost::posix_time;
 ACTIVITY_REGISTER(HeadController);
 using namespace std;
 
-const float HeadController::headSpeed[3] = {1.4f, 1.6f, 1.8f}; /*{SOMEDAY, SLOW, BEAM_ME_UP}*/
+const float HeadController::headSpeed[3] = {1.4f, 1.6f, 1.9f}; /*{SOMEDAY, SLOW, BEAM_ME_UP}*/
 /* HeadController Initialization */
 
 void HeadController::UserInit()
@@ -37,7 +37,7 @@ void HeadController::UserInit()
 	
 	currentCommand = HeadControlMessage::NOTHING;
 	previousCommand = HeadControlMessage::NOTHING;
-	
+	stay = false;
 	LogEntry(LogLevel::Info,GetName())<< "Initialized" ;
 }
 
@@ -86,10 +86,10 @@ int HeadController::Execute()
 			MakeHeadAction();
 			break;
 		case HeadControlMessage::LOCALIZE:
-			HeadScanStepHigh(1.4, -0.55);
+			HeadScanStepHigh(1.4, -0.55, SLOW, 0);
 			break;
 		case HeadControlMessage::LOCALIZE_FAR:
-			HeadScanStepHigh(1.57, -0.55);
+			HeadScanStepHigh(1.57, -0.55, SLOW, 0);
 			break;
 		case HeadControlMessage::SCAN_AND_TRACK_FOR_BALL:
 			if(currentCommand != previousCommand){
@@ -104,7 +104,15 @@ int HeadController::Execute()
 				smartState = START;
                 targetYaw = lookAtPointRelativeYaw(bx, by);
                 targetPitch = lookAtPointRelativePitch(bx, by);
-				targetSpeed = headSpeed[FAST];
+                if(targetPitch > 0.2){
+                	if(targetYaw > 0.8){
+                		targetYaw = 0.8;
+                	}
+                	if(targetYaw < -0.8){
+                		targetYaw = -0.8;
+                	}
+                }
+				targetSpeed = headSpeed[NORMAL];
                 MakeHeadAction();
 			}
 			else
@@ -144,6 +152,9 @@ int HeadController::Execute()
 			}
 			HeadScanStepSmart(NORMAL);
             break;
+        case HeadControlMessage::GOALIE_LOCALIZE_CLOSE:
+			HeadScanStepHigh(2.085f, 0.0f, FAST, 100);
+			break;
 		
 	}
 	previousCommand = currentCommand;
@@ -200,15 +211,23 @@ void HeadController::MakeHeadAction()
 	_blk.publishSignal(hmot, "motion");
 }
 
-void HeadController::HeadScanStepHigh(float yawLimit, float pitch)
+void HeadController::HeadScanStepHigh(float yawLimit, float pitch, int speed, int millesecStay)
 {
 	//Go to middle
+	targetSpeed = headSpeed[speed];
 	if(currentCommand!=previousCommand)
 	{
 		goalScanState = GOALMIDDLE1;
 	}
 	if(reachedTargetHead())
 	{
+		if(stay){
+			sleepTime = boost::posix_time::microsec_clock::universal_time();
+			stay = false;
+		}
+		if(boost::posix_time::microsec_clock::universal_time() - sleepTime < boost::posix_time::milliseconds(millesecStay)){
+			return;
+		}
 		if(goalScanState == GOALMIDDLE1)
 		{	
 			//GO LEFT
@@ -221,6 +240,7 @@ void HeadController::HeadScanStepHigh(float yawLimit, float pitch)
 			targetPitch = pitch;
 			targetYaw = yawLimit;
 			goalScanState = GOALMIDDLE2;
+			stay = true;
 		}else if(goalScanState == GOALMIDDLE2){
 			
 			targetPitch = pitch;
@@ -231,6 +251,7 @@ void HeadController::HeadScanStepHigh(float yawLimit, float pitch)
 			targetPitch = pitch;
 			targetYaw = -yawLimit;
 			goalScanState = GOALMIDDLE1;
+			stay = true;
 		}
 		MakeHeadAction();
 	}
@@ -351,6 +372,14 @@ void HeadController::HeadTrackIntelligent()
 			case OPPG:
 				targetYaw = KMath::anglediff2(lookAtPointRelativeYaw(oppGoalX - robotX, oppGoalY - robotY), robotPhi);
 				targetPitch = lookAtPointRelativePitch(oppGoalX - robotX, oppGoalY - robotY);
+                if(targetPitch > 0.2){
+                	if(targetYaw > 0.8){
+                		targetYaw = 0.8;
+                	}
+                	if(targetYaw < -0.8){
+                		targetYaw = -0.8;
+                	}
+                }
 				targetSpeed = headSpeed[NORMAL];
 				intelState = BALL2;
 				break;
@@ -366,6 +395,14 @@ void HeadController::HeadTrackIntelligent()
 			case OWNG:
 				targetYaw = KMath::anglediff2(lookAtPointRelativeYaw(ownGoalX - robotX, ownGoalY - robotY), robotPhi);
 				targetPitch = lookAtPointRelativePitch(ownGoalX - robotX, ownGoalY - robotY);
+                if(targetPitch > 0.2){
+                	if(targetYaw > 0.8){
+                		targetYaw = 0.8;
+                	}
+                	if(targetYaw < -0.8){
+                		targetYaw = -0.8;
+                	}
+                }
 				targetSpeed = headSpeed[NORMAL];
 				intelState = BALL1;
 				break;
