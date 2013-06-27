@@ -6,10 +6,10 @@
 <epsx>0.025</epsx>
 <epsy>0.025</epsy>
 <!-- Desired kicks -->
-<KickForwardLeft>KickLeftBest2013.xar</KickForwardLeft>
-<KickForwardRight>KickRightBest2013.xar</KickForwardRight>
-<KickSideLeft>KickLeftBest2013.xar</KickSideLeft>
-<KickSideRight>KickRightBest2013.xar</KickSideRight>
+<KickForwardLeft>KickLeftBest.xar</KickForwardLeft>
+<KickForwardRight>KickRightBest.xar</KickForwardRight>
+<KickSideLeft>KickLeftBest.xar</KickSideLeft>
+<KickSideRight>KickRightBest.xar</KickSideRight>
 <KickBackLeft>KickBackLeftED.xar</KickBackLeft>
 <KickBackRight>KickBackRightED.xar</KickBackRight>
 <!-- Goalie data-->
