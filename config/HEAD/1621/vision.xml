@@ -1,4 +1,4 @@
 <?xml version="1.0" ?>
-<SegmentationBottom>roboCup2013-1621.conf</SegmentationBottom>
-<SegmentationTop>roboCup2013-1621.conf</SegmentationTop>
+<SegmentationBottom>roboCup2013-1621-C.conf</SegmentationBottom>
+<SegmentationTop>roboCup2013-1621-C.conf</SegmentationTop>
 <pitchoffset>0.05</pitchoffset>
