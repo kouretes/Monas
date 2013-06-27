@@ -47,7 +47,6 @@ void Behavior::UserInit() {
 	side =+ 1;
 	robotX = 0.0, robotY = 0.0, robotPhi = 0.0;
 	readyToKick = false, scanAfterKick = false;
-	goToPositionFlag = false;
 	direction = 1;
 	orientation = 0;
 	numOfRobots = 0;
@@ -55,10 +54,17 @@ void Behavior::UserInit() {
 	Reset();
 	fGen.Init(config.maxPlayers);
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
+	
 	if(config.playerNumber != 1)
 		currentRole.role = FormationParameters::ONBALL; // default role
 	else
 		currentRole.role = FormationParameters::GOALIE;
+		
+	if(penaltyMode)
+		goToPositionFlag = true;
+	else
+		goToPositionFlag = false;
+		
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -208,7 +214,7 @@ int Behavior::Execute() {
 		updateOrientation();
 		readyToKick = false;
 
-		if(sharedBallFound == true) {
+		if(sharedBallFound == true && !penaltyMode) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
@@ -330,13 +336,6 @@ int Behavior::Execute() {
 				else if(ballFound == 0) {
 
 					LogEntry(LogLevel::Info, GetName()) << "ATTACKER BEHAVIOR: BALL NOT FOUND";
-
-					if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
-						scanAfterKick = false;
-						stopRobot();
-						hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
-						_blk.publishState(hcontrol, "behavior");
-					}
 
 					// walk straight for some seconds after the scan has ended and then start turning around to search for ball.
 					if(lastPenalised + seconds(20) > microsec_clock::universal_time()) {
