@@ -55,9 +55,7 @@ void Behavior::UserInit() {
 	Reset();
 	fGen.Init(config.maxPlayers);
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
-	currentRole.role = FormationParameters::DEFENDER;
-	currentRole.X = -3.5f;
-	currentRole.Y = 0.0f;
+	currentRole.role = FormationParameters::ONBALL; // default role
 	srand(time(0));
 	lastWalk = microsec_clock::universal_time();
 	lastPlay = microsec_clock::universal_time();
@@ -198,16 +196,15 @@ int Behavior::Execute() {
 		else if(prevGameState == PLAYER_SET) {
 			lastPlay = microsec_clock::universal_time();
 		}
-
+		
 		if(swim == 0) {
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
 		}
-
+		
 		updateOrientation();
 		readyToKick = false;
 		
-		/*
 		if(sharedBallFound == true) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
@@ -250,7 +247,6 @@ int Behavior::Execute() {
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
-		*/
 		
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
@@ -406,14 +402,15 @@ int Behavior::Execute() {
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
 					
-					if(lastScan + seconds(2) > microsec_clock::universal_time() && lastScan + seconds(3) < microsec_clock::universal_time()) {
-						stopRobot();
+					if(lastScan + seconds(3) < microsec_clock::universal_time() && lastScan + seconds(8) > microsec_clock::universal_time()) {
+						littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 						return 0;
 					}
-					else if(lastScan + seconds(3) > microsec_clock::universal_time())
+					else if(lastScan + seconds(8) < microsec_clock::universal_time()) {
 						lastScan = microsec_clock::universal_time();
-						
-					littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
+					}
+					
+					stopRobot();
 				}
 
 				if(currentRole.role == FormationParameters::DEFENDER ||
