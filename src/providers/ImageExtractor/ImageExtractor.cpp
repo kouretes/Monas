@@ -42,6 +42,7 @@ int ImageExtractor::Execute()
 	if(lastrefresh + boost::posix_time::millisec(camerarefreshmillisec) < now)
 	{
 		imext.refreshValues();//Reload
+		imext.setNewUserPrefs();
 
 		if(imext.currentCameraIsBottom() != 1)
 			imext.swapCamera();
