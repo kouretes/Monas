@@ -347,7 +347,7 @@ int Behavior::Execute() {
 						else {
 							if(lastGoToCenter + seconds(10) > microsec_clock::universal_time()) {
 		                            if(robotX < 0.0)
-		                                goToPosition(0.0, 0.0, 0.0);
+		                                goToPosition(-fGen.Field.MaxX/2.0f, 0.0, 0.0);
 		                            else
 		                                goToPosition(fGen.Field.MaxX/2.0f, 0.0, 0.0);
 							}

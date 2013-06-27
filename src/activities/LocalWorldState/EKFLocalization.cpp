@@ -18,14 +18,14 @@ void EKFLocalization::InitializeHypothesis(int resetType, bool kickOff, float in
 {
 	if(resetType == LocalizationResetMessage::PENALISED || resetType == LocalizationResetMessage::UNIFORM){
         numberOfModels = 3;
-        kalmanModels[0].Initialize(locConfig->fieldMinX/2, locConfig->fieldMinY, TO_RAD(90), e1, e2, e3, 1.0/3 , true );
-        kalmanModels[1].Initialize(locConfig->fieldMinX/2, locConfig->fieldMaxY, TO_RAD(270), e1, e2, e3, 1.0/3 , true );
+        kalmanModels[1].Initialize(locConfig->fieldMinX/2, locConfig->fieldMinY, TO_RAD(90), e1, e2, e3, 1.0/3 , true );
+        kalmanModels[2].Initialize(locConfig->fieldMinX/2, locConfig->fieldMaxY, TO_RAD(270), e1, e2, e3, 1.0/3 , true );
 
         float setPositionX =  locConfig->initX[(kickOff) ? 0 : 1] ;
         float setPositionY =  locConfig->initY[(kickOff) ? 0 : 1] ;
 	    float setPositionPhi = locConfig->initPhi[(kickOff) ? 0 : 1];        
 
-        kalmanModels[2].Initialize(setPositionX,setPositionY,setPositionPhi, e1, e2, e3, 1.0/3 , true );
+        kalmanModels[0].Initialize(setPositionX,setPositionY,setPositionPhi, e1, e2, e3, 1.0/3 , true );
 	}
 	else if(resetType == LocalizationResetMessage::READY){
         numberOfModels = 1;
