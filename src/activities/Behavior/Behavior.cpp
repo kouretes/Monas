@@ -199,15 +199,15 @@ int Behavior::Execute() {
 		else if(prevGameState == PLAYER_SET) {
 			lastPlay = microsec_clock::universal_time();
 		}
-		
+
 		if(swim == 0 && config.playerNumber != 1) {
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
 		}
-		
+
 		updateOrientation();
 		readyToKick = false;
-		
+
 		if(sharedBallFound == true) {
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
@@ -249,22 +249,22 @@ int Behavior::Execute() {
 					LogEntry(LogLevel::Info, GetName()) << "GOALIE: NO COORDINATION";
 					currentRole = fGen.findRoleInfo(FormationParameters::GOALIE);
 				}
-					
+
 				goToPositionFlag = false;
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
-		
+
 		if (lastPenalised + seconds(4) > microsec_clock::universal_time()) {
 			hcontrol.mutable_task()->set_action(HeadControlMessage::LOCALIZE_FAR);
 			_blk.publishState(hcontrol, "behavior");
 			return 0;
 		}
-        
+
         if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
             if (scanKickTime + seconds(2) < microsec_clock::universal_time())
 			    scanAfterKick = false;
-			
+
             stopRobot();
 			hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN);
 			_blk.publishState(hcontrol, "behavior");
@@ -311,7 +311,7 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(ballX < config.posX && ((ballY < 3*config.posY/2) || (ballY < -3*config.posY/2 )) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
+					if(ballX < config.posX && ((ballY < config.posY) || (ballY < -config.posY)) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
 
 						readyToKick = true;
 						scanAfterKick = true;
@@ -409,7 +409,7 @@ int Behavior::Execute() {
 				}
 				else if(ballFound == 0 && sharedBallFound == 0) {
 					LogEntry(LogLevel::Info, GetName()) << "OTHER BEHAVIOR: DEN VLEPW TIPOTA";
-					
+
 					if(lastScan + seconds(3) < microsec_clock::universal_time() && lastScan + seconds(8) > microsec_clock::universal_time()) {
 						littleWalk(0.0, 0.0, (float)(-direction*M_PI_4/2.0));
 						return 0;
@@ -417,14 +417,14 @@ int Behavior::Execute() {
 					else if(lastScan + seconds(8) < microsec_clock::universal_time()) {
 						lastScan = microsec_clock::universal_time();
 					}
-					
+
 					stopRobot();
 				}
 
 				if(currentRole.role == FormationParameters::DEFENDER ||
 					currentRole.role == FormationParameters::DEFENDER_L ||
 					currentRole.role == FormationParameters::DEFENDER_R) {
-					
+
 					if(ballFound == 1 || sharedBallFound == 1)
 						defender();
 				}
@@ -790,13 +790,13 @@ void Behavior::approachBall() {
         littleWalk(0.0, 0.0, (float)(side*M_PI_4/2.0));
     }
     else if(oppgb > (float) (M_PI_4)) {
-        velocityWalk(0.0, -1.0, (float)(M_PI_4/3.0),1.0);
+        velocityWalk(0.0, -1.0, (float)(M_PI_4/2.0),1.0);
     }
     else if(oppgb < (float) (-M_PI_4)) {
-        velocityWalk(0.0, 1.0, (float)(-M_PI_4/3.0),1.0);
+        velocityWalk(0.0, 1.0, (float)(-M_PI_4/2.0),1.0);
     }
     else{
-        velocityWalk(ballX - config.posX+0.15,ballY - side * config.posY+side*0.15, 0.0 ,1.0);
+        velocityWalk(ballX - config.posX+0.08,ballY - side * config.posY, 0.0 ,1.0);
     }
 }
 
@@ -854,7 +854,7 @@ void Behavior::defender() {
 		_blk.publishSignal(amot, "motion");
 		return;
 	}
-	
+
 	if(ballDist < 1.5f) { // check if ball is to close to the goal post
 		velocityWalk(ballX - config.posX, ballY - side * config.posY, ballBearing, 1);
 		if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - side*config.posY ) < config.epsY)) {
