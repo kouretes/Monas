@@ -878,11 +878,7 @@ void Behavior::defender() {
 void Behavior::goalie() {
 
 	if(ballFound == 1) {
-
-		if(!goalieApproachStarted)
-			stopRobot();
-
-		littleWalk(0.0, 0.0, ballBearing);
+	
 		fall = toFallOrNotToFall();
 
 		if(fall == 1) { // extend left foot
@@ -901,7 +897,6 @@ void Behavior::goalie() {
 		}
 
 		if(ballDist < 1.0f) { // check if ball is to close to the goal post
-			goalieApproachStarted = true;
 			velocityWalk(ballX - config.posX, ballY - side * config.posY, ballBearing, 1);
 			if ( (fabs(ballX - config.posX) < config.epsX)  && (fabs( ballY - side*config.posY ) < config.epsY)) {
 				if (ballY > 0.0)
@@ -912,20 +907,17 @@ void Behavior::goalie() {
 				_blk.publishSignal(amot, "motion");
 			}
 		}
-		else if(goalieApproachStarted == true) {
-			stopRobot();
-			goalieApproachStarted = false;
+		else {
+			littleWalk(0.0, 0.0, ballBearing);
 		}
 
 	}
-	else if(ballFound == 0) {
-		if(goalieApproachStarted == true) {
-			stopRobot();
-			goalieApproachStarted = false;
-		}
-
-		amot.set_command("PoseInitial.xar");
-		_blk.publishSignal(amot, "motion");
+	else if(sharedBallFound == 1) {
+		littleWalk(0.0, 0.0, SharedBallBearing);
+	}
+	else if(ballFound == 0 && sharedBallFound == 0) {
+	
+		stopRobot();
 
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
 		_blk.publishState(hcontrol, "behavior");
