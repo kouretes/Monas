@@ -280,7 +280,7 @@ private:
 
 	FormationGenerator fGen; // object that create and update the team formation
 
-	boost::posix_time::ptime lastWalk, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, lastScan, dispTimer; // timers
+	boost::posix_time::ptime lastWalk, scanKickTime, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, lastScan, dispTimer; // timers
 	
 	float mapCost, maxU;
 

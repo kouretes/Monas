@@ -122,7 +122,7 @@ private:
     bool actionKick;
 	bool gameMode;
 	unsigned int stability;
-
+    int ballTimeReset;
     // struct to store xml data
     Localization::LocConfig locConfig;
 

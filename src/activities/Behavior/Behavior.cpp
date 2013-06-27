@@ -64,6 +64,7 @@ void Behavior::UserInit() {
 	lastPenalised = microsec_clock::universal_time();
 	lastFormation = microsec_clock::universal_time();
 	dispTimer = microsec_clock::universal_time();
+    scanKickTime = microsec_clock::universal_time();
 	lastGoToCenter = microsec_clock::universal_time() - seconds(10);
 	lastBallFound = microsec_clock::universal_time() - seconds(20);
 	lastScan = microsec_clock::universal_time() + seconds(3);
@@ -256,6 +257,16 @@ int Behavior::Execute() {
 			_blk.publishState(hcontrol, "behavior");
 			return 0;
 		}
+        
+        if(currentRobotAction == MotionStateMessage::WALKING && scanAfterKick == true) {
+            if (scanKickTime + seconds(2) < microsec_clock::universal_time())
+			    scanAfterKick = false;
+			
+            stopRobot();
+			hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN);
+			_blk.publishState(hcontrol, "behavior");
+            return 0;
+		}
 
 		// Publish message to head controller to run check for ball
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SMART_SELECT);
@@ -300,6 +311,7 @@ int Behavior::Execute() {
 
 						readyToKick = true;
 						scanAfterKick = true;
+                        scanKickTime = microsec_clock::universal_time();
 						kick();
 						direction = (side == +1) ? -1 : +1;
 					}
