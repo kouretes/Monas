@@ -312,7 +312,10 @@ int Behavior::Execute() {
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
 					if(ballX < config.posX && ((ballY < config.posY) || (ballY < -config.posY)) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
-
+						if(fabs(ballY) < config.epsX){
+							littleWalk(0.0, side, 0.0);
+							return 0;
+						}
 						readyToKick = true;
 						scanAfterKick = true;
                         scanKickTime = microsec_clock::universal_time();
@@ -783,7 +786,7 @@ void Behavior::approachBall() {
 	double cone = anglediff2(loppgb, roppgb);
 	double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-	if (ballDist > 0.3) {
+	if (ballDist > 0.5) {
         pathPlanningRequest(ballX - config.posX, ballY - side * config.posY, ballBearing, false);
     }
     else if((ballBearing > M_PI_4) || (ballBearing < -M_PI_4)) {
