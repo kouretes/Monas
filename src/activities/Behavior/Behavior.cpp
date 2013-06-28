@@ -572,10 +572,12 @@ void Behavior::readMessages() {
 
 /* --------------------------------- Information gathering functions from messages ---------------------------------- */
 void Behavior::checkIfBumperPressed(){
-	int lbump = bm->data(KDeviceLists::L_BUMPER_L) + bm->data(KDeviceLists::L_BUMPER_R);
-	int rbump = bm->data(KDeviceLists::R_BUMPER_L) + bm->data(KDeviceLists::R_BUMPER_R);
-	if(lbump == 1 || rbump == 1){
-		lastBumperPressed = microsec_clock::universal_time();
+	if(bm != 0){
+		int lbump = bm->data(KDeviceLists::L_BUMPER_L) + bm->data(KDeviceLists::L_BUMPER_R);
+		int rbump = bm->data(KDeviceLists::R_BUMPER_L) + bm->data(KDeviceLists::R_BUMPER_R);
+		if(lbump == 1 || rbump == 1){
+			lastBumperPressed = microsec_clock::universal_time();
+		}
 	}
 }
 
