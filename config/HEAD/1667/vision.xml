@@ -2,8 +2,8 @@
 <!-- Refresh Segmentation parameters based camera every : (millisec) -->
 <camerarefreshmillisec>5000</camerarefreshmillisec>
 <!--  Configuration files for Segmentation-->
-<SegmentationBottom>roboCup2013-1667-C.conf</SegmentationBottom>
-<SegmentationTop>roboCup2013-1667-C.conf</SegmentationTop>
+<SegmentationBottom>roboCup2013-1667.conf</SegmentationBottom>
+<SegmentationTop>roboCup2013-1667.conf</SegmentationTop>
 <Dfov>54.85</Dfov>
 <cameraGamma>1.0</cameraGamma>
 <!-- Ball Detection -->
