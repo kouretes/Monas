@@ -181,7 +181,7 @@ int Behavior::Execute() {
 	getMotionData();
 	getTeamInfo();
 	checkIfBumperPressed();
-	
+
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -816,7 +816,7 @@ void Behavior::approachBall() {
         velocityWalk(0.0, 1.0, (float)(-M_PI_4/2.0),1.0);
     }
     else{
-        velocityWalk(ballX - config.posX+0.08,ballY - side * config.posY, 0.0 ,1.0);
+        velocityWalk(2*(ballX - config.posX)+0.03,ballY - side * config.posY, 0.0 ,1.0);
     }
 }
 
@@ -898,7 +898,7 @@ void Behavior::defender() {
 void Behavior::goalie() {
 
 	if(ballFound == 1) {
-	
+
 		fall = toFallOrNotToFall();
 
 		if(fall == 1) { // extend left foot
@@ -936,7 +936,7 @@ void Behavior::goalie() {
 		littleWalk(0.0, 0.0, SharedBallBearing);
 	}
 	else if(ballFound == 0 && sharedBallFound == 0) {
-	
+
 		stopRobot();
 
 		hcontrol.mutable_task()->set_action(HeadControlMessage::SCAN_AND_TRACK_FOR_BALL);
