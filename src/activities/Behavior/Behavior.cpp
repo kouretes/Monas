@@ -26,6 +26,7 @@ void Behavior::UserInit() {
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -66,6 +67,7 @@ void Behavior::UserInit() {
 	lastFormation = microsec_clock::universal_time();
 	dispTimer = microsec_clock::universal_time();
     scanKickTime = microsec_clock::universal_time();
+    lastBumperPressed = microsec_clock::universal_time();
 	lastGoToCenter = microsec_clock::universal_time() - seconds(10);
 	lastBallFound = microsec_clock::universal_time() - seconds(20);
 	lastScan = microsec_clock::universal_time() + seconds(3);
@@ -172,7 +174,8 @@ int Behavior::Execute() {
 	getPosition();
 	getMotionData();
 	getTeamInfo();
-
+	checkIfBumperPressed();
+	
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -311,11 +314,17 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-					if(ballX < config.posX && ((ballY < config.posY) || (ballY < -config.posY)) && oppgb < M_PI_4 && oppgb > -M_PI_4) {
+
 						if(fabs(ballY) < config.epsX){
 							littleWalk(0.0, side, 0.0);
 							return 0;
 						}
+
+					if(ballX < config.posX && ((ballY < config.posY) || (ballY < -config.posY))
+						&& oppgb < M_PI_4
+						&& oppgb > -M_PI_4
+						&& lastBumperPressed + milliseconds(700) < microsec_clock::universal_time()){
+
 						readyToKick = true;
 						scanAfterKick = true;
                         scanKickTime = microsec_clock::universal_time();
@@ -558,7 +567,7 @@ void Behavior::Coordinate() {
  * Read incoming messages from declared topics. Use message objects to get the data.
  */
 void Behavior::readMessages() {
-
+	bm = _blk.readSignal<ButtonMessage>("buttonevents");
 	gsm  = _blk.readState<GameStateMessage> ("worldstate");
 	allsm = _blk.readData<AllSensorValuesMessage> ("sensors");
 	om   = _blk.readState<ObstacleMessageArray> ("pathplanning");
@@ -568,6 +577,15 @@ void Behavior::readMessages() {
 }
 
 /* --------------------------------- Information gathering functions from messages ---------------------------------- */
+void Behavior::checkIfBumperPressed(){
+	if(bm != 0){
+		int lbump = bm->data(KDeviceLists::L_BUMPER_L) + bm->data(KDeviceLists::L_BUMPER_R);
+		int rbump = bm->data(KDeviceLists::R_BUMPER_L) + bm->data(KDeviceLists::R_BUMPER_R);
+		if(lbump == 1 || rbump == 1){
+			lastBumperPressed = microsec_clock::universal_time();
+		}
+	}
+}
 
 void Behavior::getGameState() {
 

@@ -111,6 +111,7 @@ private:
 	boost::shared_ptr<const WorldInfo>  wim;
 	boost::shared_ptr<const SharedWorldInfo>  swim;
 	boost::shared_ptr<const MotionStateMessage> sm;
+	boost::shared_ptr<const ButtonMessage> bm;
 
 	/**
 	 * Outgoing Messages
@@ -243,7 +244,7 @@ private:
 
 	void Coordinate();
 
-
+	void checkIfBumperPressed();
 	/* --------------------------------- Behavior Variables ---------------------------------- */
 
 	bool ballFound, sharedBallFound;	// variables that is true if we see the ball.
@@ -281,6 +282,7 @@ private:
 	FormationGenerator fGen; // object that create and update the team formation
 
 	boost::posix_time::ptime lastWalk, scanKickTime, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, lastScan, dispTimer; // timers
+	boost::posix_time::ptime lastBumperPressed; //moretimes
 	
 	float mapCost, maxU;
 
