@@ -286,12 +286,12 @@ int Behavior::Execute() {
 
 		if(config.playerNumber == 1) { // goalie role if number 1
 			LogEntry(LogLevel::Info, GetName()) << "GOALIE BEHAVIOR";
-			if(goToPositionFlag == false) {
+			/*if(goToPositionFlag == false) {
 				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 					return 0;
 				else
 					goToPositionFlag = true;
-			}
+			}*/
 			goalie();
 		}
 		else { // not goalie behavior
@@ -932,10 +932,10 @@ void Behavior::goalie() {
 		}
 
 	}
-	else if(sharedBallFound == 1) {
+	/*else if(sharedBallFound == 1) {
 		littleWalk(0.0, 0.0, SharedBallBearing);
-	}
-	else if(ballFound == 0 && sharedBallFound == 0) {
+	}*/
+	else if(ballFound == 0/* && sharedBallFound == 0*/) {
 
 		stopRobot();
 
