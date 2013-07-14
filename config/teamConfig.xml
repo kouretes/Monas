@@ -6,7 +6,7 @@
 <!-- Are we on penalty mode or not (0 or 1)-->
 <penalty_mode>0</penalty_mode>
 <!-- default team max players -->
-<team_max_players>5</team_max_players>
+<team_max_players>4</team_max_players>
 <!-- Are we playing game or no -->
 <game_mode>0</game_mode>
 <!-- default player number -->

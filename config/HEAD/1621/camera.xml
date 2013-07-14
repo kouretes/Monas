@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Contrast>86</Contrast>
-<RedBalance>64</RedBalance>
-<BlueBalance>111</BlueBalance>
-<Gain>18</Gain>
-<GreenChannelGain>50</GreenChannelGain>
+<Contrast>100</Contrast>
+<RedBalance>110</RedBalance>
+<BlueBalance>110</BlueBalance>
+<Gain>160</Gain>
+<GreenChannelGain>60</GreenChannelGain>
