@@ -1,10 +1,13 @@
 <?xml version="1.0" ?>
+
 <!-- Desired ball position for kick -->
 <posx>0.10</posx>
 <posy>0.05</posy>
+
 <!-- Desired precision -->
 <epsx>0.025</epsx>
 <epsy>0.025</epsy>
+
 <!-- Desired kicks -->
 <KickForwardLeft>KickLeftBest2013.xar</KickForwardLeft>
 <KickForwardRight>KickRightBest2013.xar</KickForwardRight>
@@ -12,5 +15,9 @@
 <KickSideRight>KickRightBest2013.xar</KickSideRight>
 <KickBackLeft>KickBackLeftED.xar</KickBackLeft>
 <KickBackRight>KickBackRightED.xar</KickBackRight>
+
 <!-- Goalie data-->
 <ur>0.55</ur>
+
+<!-- Number of positions to be generated -->
+<positions>16</positions>
