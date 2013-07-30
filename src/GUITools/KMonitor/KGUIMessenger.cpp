@@ -135,6 +135,12 @@ void KGUIMessenger::allocateReceivedMessages() {
 				debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
 				emit formationDataUpdate(debugGUI, currentRHost);
 			}
+			else if(incomingMessages.at(i).msg->GetTypeName() == "PSODataForGUI" && myKMonitorRequestedHost == currentRHost) {
+				PSODataForGUI debugGUI;
+				debugGUI.Clear();
+				debugGUI.CopyFrom(*(incomingMessages.at(i).msg));
+				emit PSODataUpdate(debugGUI, currentRHost);
+			}
 			else if(incomingMessages.at(i).msg->GetTypeName() == "VisionDebugMessage" && myKMonitorRequestedHost == currentRHost) {
 				VisionDebugMessage vdm;
 				vdm.Clear();

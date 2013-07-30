@@ -61,6 +61,7 @@ signals:
 	void obsmsgUpdate(ObservationMessage, QString);
 	void motionCommandUpdate(MotionWalkMessage, QString);
 	void formationDataUpdate(FormationDataForGUI, QString);
+	void PSODataUpdate(PSODataForGUI, QString);
 	void visionDebugData(VisionDebugMessage, QString);
 	void gridInfoUpdate(GridInfo, QString);
 	void rawImage(KRawImage, QString, boost::posix_time::ptime);

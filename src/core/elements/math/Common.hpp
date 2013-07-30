@@ -40,9 +40,9 @@ namespace KMath {
 	 * @brief The product of all positive integers less than or equal to x.
 	 */
 	inline static unsigned int factorial(unsigned int x) {
-		unsigned int r=1;
-		for (unsigned int i=1;i<=x;i++)
-			r*=i;
+		unsigned int r = 1;
+		for (unsigned int i = 1 ; i <= x ; i++)
+			r *= i;
 		return r;
 	}
 	
@@ -51,9 +51,9 @@ namespace KMath {
 	 * @brief The product of all positive integers less than or equal to x. and greater than k.
 	 */
 	inline static unsigned int decreasing_factorial(unsigned int k,unsigned int x) {
-		unsigned int r=1;
-		for( unsigned int i=k;i<=x;i++)
-			r*=i;
+		unsigned int r = 1;
+		for( unsigned int i = k ; i <= x ; i++)
+			r *= i;
 		return r;
 	}
 
@@ -65,7 +65,7 @@ namespace KMath {
 	 * formula.
 	 */
 	inline static unsigned int binomialCoefficient(unsigned int n, unsigned int k) {
-		return (decreasing_factorial(n-k+1,n) / factorial(k));
+		return (decreasing_factorial(n - k + 1, n) / factorial(k));
 	}
 
 	/**

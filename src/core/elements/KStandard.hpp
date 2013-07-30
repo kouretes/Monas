@@ -2,6 +2,7 @@
 #define KSTANDARD_H
 
 #include "tools/toString.h"
+#include "Logger.hpp"
 #include <string>
 
 using std::vector;

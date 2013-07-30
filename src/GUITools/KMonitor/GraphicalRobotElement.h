@@ -88,10 +88,20 @@ public:
 		return LWSFormationVisible;
 	}
 	
+	void setLWSPSOPositionsVisible(bool visible) {
+		LWSPSOPositionsVisible = visible;
+		setPSOPositionsVisible(visible);
+	}
+	
+	bool getLWSPSOPositionsVisible() {
+		return LWSPSOPositionsVisible;
+	}
+	
 	void setRobotVisible(bool visible);
 	void setTeammateVisible(int idx, bool visible);
 	void setTeammatesVisible(bool visible);
 	void setFormationVisible(bool visible);
+	void setPSOPositionsVisible(bool visible);
 	void updateRobotRect();
 	void updateTeammatesRects();
 
@@ -105,7 +115,8 @@ public:
     void setRobotTraceVisible(bool visible);
 
 	void updateFormationRects(FormationDataForGUI debugGUI);
-
+	void updatePSOPositionsRects(PSODataForGUI debugGUI);
+	
 	void setGWSBallVisible(bool visible) {
 		GWSBallVisible = visible;
 		setBallVisible(visible);
@@ -360,9 +371,10 @@ private:
     QGraphicsPathItem* RobotTrace;
     QPainterPath* RobotTracePoints;
 
-    bool LWSFormationVisible;
+    bool LWSFormationVisible, LWSPSOPositionsVisible;
 	QList<QGraphicsEllipseItem *> PositionsList;
-	int numOfPlayers;
+	QList<QGraphicsEllipseItem *> PSOPositionsList;
+	int numOfPositions;
 
 	bool GWSBallVisible;
 	bool GWSSharedBallVisible, LWSSharedBallVisible;

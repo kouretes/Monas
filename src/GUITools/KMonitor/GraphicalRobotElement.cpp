@@ -67,9 +67,14 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 		ParticlesList.append(part);
 	}
 	
-	for(int it = 0 ; it < numOfPlayers ; it++) {
+	for(int it = 0 ; it < numOfPositions ; it++) {
 		QGraphicsEllipseItem *pos = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::gray));
 		PositionsList.append(pos);
+	}
+	
+	for(int it = 0 ; it < numOfRobots ; it++) {
+		QGraphicsEllipseItem *pos = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
+		PSOPositionsList.append(pos);
 	}
 
 	HFOVLines = this->parentScene->addPolygon(QPolygonF(), QPen(Qt::darkCyan), QBrush(Qt::Dense7Pattern));
@@ -194,6 +199,11 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 			delete PositionsList.at(i);
 	}
 	
+	for(int i = 0 ; i < PSOPositionsList.count() ; i++) {
+		if(PSOPositionsList.at(i))
+			delete PSOPositionsList.at(i);
+	}
+	
 	boost::circular_buffer<QGraphicsEllipseItem*>::iterator P_it;
 
 	for(P_it = RobotPositions.begin() ; P_it != RobotPositions.end() ; ++P_it) {
@@ -248,7 +258,7 @@ void GraphicalRobotElement::loadXMLlocalizationConfigParameters() {
 }
 
 void GraphicalRobotElement::loadXMLteamConfigParameters() {
-	numOfPlayers = atoi(Configurator::Instance().findValueForKey("teamConfig.team_max_players").c_str());
+	numOfPositions = atoi(Configurator::Instance().findValueForKey("behavior.positions").c_str());
 }
 
 void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim) {
@@ -643,6 +653,23 @@ void GraphicalRobotElement::updateParticlesRect(LocalizationDataForGUI debugGUI)
 	}
 }
 
+void GraphicalRobotElement::setPSOPositionsVisible(bool visible) {
+	for(int i = 0 ; i < PSOPositionsList.count() ; i++) {
+		PSOPositionsList.at(i)->setVisible(visible);		
+	}
+}
+
+void GraphicalRobotElement::updatePSOPositionsRects(PSODataForGUI debugGUI) {
+		
+	for(int i = 0 ; i < debugGUI.positionspso_size() ; i++) {
+		PositionInfo posInfo = debugGUI.positionspso(i);
+
+		if(posInfo.has_x() && posInfo.has_y()) {
+			PSOPositionsList.at(i)->setRect(this->parentScene->rectFromFC(posInfo.x()*1000, posInfo.y()*1000, 80, 80));
+		} 
+	}
+}
+
 void GraphicalRobotElement::setFormationVisible(bool visible) {
 	for(int i = 0 ; i < PositionsList.count() ; i++) {
 		PositionsList.at(i)->setVisible(visible);		
@@ -656,7 +683,7 @@ void GraphicalRobotElement::updateFormationRects(FormationDataForGUI debugGUI) {
 
 		if(posInfo.has_x() && posInfo.has_y() && posInfo.has_role()) {
 			
-			PositionsList.at(i)->setRect(this->parentScene->rectFromFC(posInfo.x()*1000, posInfo.y()*1000, 150, 150));
+			PositionsList.at(i)->setRect(this->parentScene->rectFromFC(posInfo.x()*1000, posInfo.y()*1000, 120, 120));
 			
 			if(posInfo.role() == PositionInfo::GOALIE) {
 				tagRoles(PositionsList.at(i), PositionsList.at(i)->rect(), "G", Qt::green);	

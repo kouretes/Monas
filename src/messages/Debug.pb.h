@@ -36,6 +36,7 @@ class OdometryInfoMessage;
 class LocalizationDataForGUI;
 class PositionInfo;
 class FormationDataForGUI;
+class PSODataForGUI;
 class Point;
 class Polygon;
 class BallCircle;
@@ -577,6 +578,91 @@ class FormationDataForGUI : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static FormationDataForGUI* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class PSODataForGUI : public ::google::protobuf::Message {
+ public:
+  PSODataForGUI();
+  virtual ~PSODataForGUI();
+  
+  PSODataForGUI(const PSODataForGUI& from);
+  
+  inline PSODataForGUI& operator=(const PSODataForGUI& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PSODataForGUI& default_instance();
+  
+  void Swap(PSODataForGUI* other);
+  
+  // implements Message ----------------------------------------------
+  
+  PSODataForGUI* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PSODataForGUI& from);
+  void MergeFrom(const PSODataForGUI& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .PositionInfo PositionsPSO = 1;
+  inline int positionspso_size() const;
+  inline void clear_positionspso();
+  static const int kPositionsPSOFieldNumber = 1;
+  inline const ::PositionInfo& positionspso(int index) const;
+  inline ::PositionInfo* mutable_positionspso(int index);
+  inline ::PositionInfo* add_positionspso();
+  inline const ::google::protobuf::RepeatedPtrField< ::PositionInfo >&
+      positionspso() const;
+  inline ::google::protobuf::RepeatedPtrField< ::PositionInfo >*
+      mutable_positionspso();
+  
+  // @@protoc_insertion_point(class_scope:PSODataForGUI)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::PositionInfo > positionspso_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static PSODataForGUI* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1283,6 +1369,35 @@ FormationDataForGUI::positions() const {
 inline ::google::protobuf::RepeatedPtrField< ::PositionInfo >*
 FormationDataForGUI::mutable_positions() {
   return &positions_;
+}
+
+// -------------------------------------------------------------------
+
+// PSODataForGUI
+
+// repeated .PositionInfo PositionsPSO = 1;
+inline int PSODataForGUI::positionspso_size() const {
+  return positionspso_.size();
+}
+inline void PSODataForGUI::clear_positionspso() {
+  positionspso_.Clear();
+}
+inline const ::PositionInfo& PSODataForGUI::positionspso(int index) const {
+  return positionspso_.Get(index);
+}
+inline ::PositionInfo* PSODataForGUI::mutable_positionspso(int index) {
+  return positionspso_.Mutable(index);
+}
+inline ::PositionInfo* PSODataForGUI::add_positionspso() {
+  return positionspso_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::PositionInfo >&
+PSODataForGUI::positionspso() const {
+  return positionspso_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::PositionInfo >*
+PSODataForGUI::mutable_positionspso() {
+  return &positionspso_;
 }
 
 // -------------------------------------------------------------------

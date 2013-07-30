@@ -1,22 +1,22 @@
 import "WorldInfo.proto";
 
-message EKFMHypothesis{
+message EKFMHypothesis {
     required int32 size = 1;
     repeated RobotPose KModel = 2;
     repeated float KModelUncertainty = 3;
 }
 
-message OdometryInfoMessage{
+message OdometryInfoMessage {
     required float trackPointX = 1;
     required float trackPointY = 2 ;
     required float trackPointPhi = 3 ;
 }
 
-message LocalizationDataForGUI{
+message LocalizationDataForGUI {
 	repeated RobotPose Particles = 1;
 }
 
-message PositionInfo{
+message PositionInfo {
 	enum ROLE {
 		GOALIE = 0;
 		DEFENDER = 1;
@@ -32,8 +32,12 @@ message PositionInfo{
 	required int32 role = 3;
 }
 
-message FormationDataForGUI{
+message FormationDataForGUI {
 	repeated PositionInfo Positions = 1;
+}
+
+message PSODataForGUI {
+	repeated PositionInfo PositionsPSO = 1;
 }
 
 message Point {

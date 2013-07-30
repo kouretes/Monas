@@ -42,6 +42,7 @@ public slots:
 	void localizationDataUpdateHandler(LocalizationDataForGUI, QString);
 	void motionCommandUpdateHandler(MotionWalkMessage, QString);
 	void formationDataUpdateHandler(FormationDataForGUI, QString);
+	void PSODataUpdateHandler(PSODataForGUI, QString);
 
     void EKFMHypothesisUpdateHandler(EKFMHypothesis, QString);
     void OdometryUpdateHandler(OdometryInfoMessage OdometryM, QString host);
@@ -70,6 +71,7 @@ private:
     void LWSGVOdometryVisible(QString, bool);
 	void LWSGVFormationVisible(QString, bool);
 	void LWSGVSharedBallVisible(QString, bool);
+	void LWSGVPSOPositionsVisible(QString, bool);
 	
 protected:
 	void resizeEvent(QResizeEvent *event);
