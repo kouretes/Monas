@@ -12,15 +12,22 @@ using namespace boost::posix_time;
 using namespace std;
 using namespace FormationParameters;
 using namespace Utility;
+using namespace PSO;
 using KMath::Specific::permutationsOfCombinations;
 
 ACTIVITY_REGISTER(Behavior);
+
+Behavior::Behavior(Blackboard &b) :
+	IActivity(b), prf("Behavior")
+{
+	;
+}
 
 /**
  * Behavior initialization function.
  */
 void Behavior::UserInit() {
-
+	 
 	_blk.updateSubscription("vision", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("sensors", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("worldstate", msgentry::SUBSCRIBE_ON_TOPIC);
@@ -48,12 +55,14 @@ void Behavior::UserInit() {
 	side =+ 1;
 	robotX = 0.0, robotY = 0.0, robotPhi = 0.0;
 	readyToKick = false, scanAfterKick = false;
+	PSOflag = false;
 	direction = 1;
 	orientation = 0;
 	numOfRobots = 0;
 	currentRobotAction = MotionStateMessage::IDLE;
 	Reset();
-	fGen.Init(config.maxPlayers);
+	fGen.Init(config.positions);
+			
 	LogEntry(LogLevel::Info, GetName())<<"Initialized: My number is " << (config.playerNumber) << " and my color is " <<(config.teamColor);
 	
 	if(config.playerNumber != 1)
@@ -112,7 +121,8 @@ void Behavior::Reset(){
 	config.kicks.KickBackLeft = Configurator::Instance().findValueForKey("behavior.KickBackLeft").c_str();
 	config.kicks.KickBackRight = Configurator::Instance().findValueForKey("behavior.KickBackRight").c_str();
 	config.ur = atof(Configurator::Instance().findValueForKey("behavior.ur").c_str());
-
+	config.positions = (unsigned int)atoi(Configurator::Instance().findValueForKey("behavior.positions").c_str());
+	
 	// === read robot configuration xml data from playerConfig.xml===
 	if ( (config.playerNumber < 1) || (config.playerNumber > config.maxPlayers) )
 		LogEntry(LogLevel::Error, GetName())<< "Behavior Reset: Invalid player number";
@@ -173,7 +183,9 @@ void Behavior::Reset(){
 /* Behavior Main Execution Function */
 
 int Behavior::Execute() {
-
+	
+	KPROF_SCOPE(prf, "Execute");
+	
 	readMessages();
 	getBallData();
 	getGameState();
@@ -181,7 +193,7 @@ int Behavior::Execute() {
 	getMotionData();
 	getTeamInfo();
 	checkIfBumperPressed();
-
+	
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -246,19 +258,21 @@ int Behavior::Execute() {
 
 				lastSharedBallX = SharedGlobalBallX;
 				lastSharedBallY = SharedGlobalBallY;
-
-				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY, true);
+								
+				fGen.Generate(SharedGlobalBallX, SharedGlobalBallY);
+				
 				if(!gameMode){
-					sendDebugMessages();
+					sendFormationDebugMessages();
 				}
 
-				if(config.playerNumber != 1)
+				if(config.playerNumber != 1) {
 					Coordinate();
+				}
 				else {
 					LogEntry(LogLevel::Info, GetName()) << "GOALIE: NO COORDINATION";
 					currentRole = fGen.findRoleInfo(FormationParameters::GOALIE);
 				}
-
+					
 				goToPositionFlag = false;
 				lastFormation = microsec_clock::universal_time();
 			}
@@ -286,12 +300,12 @@ int Behavior::Execute() {
 
 		if(config.playerNumber == 1) { // goalie role if number 1
 			LogEntry(LogLevel::Info, GetName()) << "GOALIE BEHAVIOR";
-			/*if(goToPositionFlag == false) {
+			if(goToPositionFlag == false) {
 				if(goToPosition(currentRole.X, currentRole.Y, 0.0) == false)
 					return 0;
 				else
 					goToPositionFlag = true;
-			}*/
+			}
 			goalie();
 		}
 		else { // not goalie behavior
@@ -320,20 +334,21 @@ int Behavior::Execute() {
 		            double cone = anglediff2(loppgb, roppgb);
 		            double oppgb = wrapToPi(roppgb + cone / 2.0);
 
-
-						if(fabs(ballY) < config.epsX){
-							littleWalk(0.0, side, 0.0);
-							return 0;
-						}
+					/*
+					if(fabs(ballY) < config.epsX){
+						littleWalk(0.0, side, 0.0);
+						return 0;
+					}*/
 
 					if(ballX < config.posX && ((ballY < config.posY) || (ballY < -config.posY))
 						&& oppgb < M_PI_4
 						&& oppgb > -M_PI_4
 						&& lastBumperPressed + milliseconds(700) < microsec_clock::universal_time()){
-
+						
 						readyToKick = true;
 						scanAfterKick = true;
                         scanKickTime = microsec_clock::universal_time();
+						return 0; // do nothing!!!
 						kick();
 						direction = (side == +1) ? -1 : +1;
 					}
@@ -451,7 +466,7 @@ int Behavior::Execute() {
 	 	if(gameState != prevGameState) {
 			fGen.XmlInitFormation(kickOff);
 			if(!gameMode)
-				sendDebugMessages();
+				sendFormationDebugMessages();
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
 			lastFormation = microsec_clock::universal_time();
 			locReset.set_type(LocalizationResetMessage::READY);
@@ -469,7 +484,7 @@ int Behavior::Execute() {
 		stopRobot();
 		return 0;
 	}
-	else if (gameState == PLAYER_SET) {
+	else if (gameState == PLAYER_SET) { // TODO generate initial formation here!
 
 		if(gsm != 0 && gsm.get() != 0)
 			kickOff = gsm->kickoff();
@@ -490,8 +505,9 @@ int Behavior::Execute() {
 
 		if(prevGameState == PLAYER_INITIAL) {
 			fGen.XmlInitFormation(kickOff);
+			//fGen.DynamicInitFormation(kickOff);
 			if(!gameMode)
-				sendDebugMessages();
+				sendFormationDebugMessages();
 			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
 		}
 
@@ -501,65 +517,107 @@ int Behavior::Execute() {
 			_blk.publishState(hcontrol, "behavior");
 		}
 	}
+	
+	#ifdef KPROFILING_ENABLED
+		prf.generate_report(1);
+	#endif
 
 	return 0;
 }
 
 void Behavior::Coordinate() {
-
+		KPROF_SCOPE(prf, "Coordinate");
+		
 		int robotIndex = -1;
-
-		for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
-			if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE)
-				roles.insert(roles.end(), fGen.getFormation()->at(i).role);
+		
+		if(PSOflag == true) {
+			
+			vector<float> bestParticle;
+			float d = 0.0f, minD = INF;
+			
+			bestParticle = runPSO(10, 10, fGen, robots, SharedGlobalBallY);
+			
+			robotIndex = getRobotIndex(robots, config.playerNumber);
+			currentRole.X = bestParticle[2*robotIndex];
+			currentRole.Y = bestParticle[2*robotIndex + 1];
+			
+			for(unsigned int i = 1 ; i < fGen.getFormation()->size() ; i++) {
+				d = DISTANCE(currentRole.X, fGen.getFormation()->at(i).X, currentRole.Y, fGen.getFormation()->at(i).Y);
+				if(Min(d, minD) == d) {
+					minD = d;
+					index = i;
+				}
+			}
+			currentRole.role = fGen.getFormation()->at(index).role;
+			LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
+			if(!gameMode) {
+				sendPSODebugMessages(bestParticle);
+			}
 		}
-
-		print(roles, "Behavior");
-		mappings = permutationsOfCombinations(roles, numOfRobots);
-		LogEntry(LogLevel::Info, GetName()) << "ALL POSSIBLE MAPPINGS ARE: ";
-		print(mappings, "Behavior");
-		roles.clear();
-
-		LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
-
-		// search for optimal mapping
-		maxU = -INF;
-		for(unsigned int map = 0 ; map < mappings.size() ; map++) {
-			mapCost = 0.0f;
-			LogEntry(LogLevel::Info, GetName()) << "MAP: " << map;
-			for(unsigned int r = 0 ; r < numOfRobots ; r++) { // for all except goalie robots
-				currentRobotPos = fGen.findRoleInfo(mappings[map].at(r));
-				mapCost = mapCost + fieldUtility(currentRobotPos.X, currentRobotPos.Y, SharedGlobalBallY, fGen, fGen.getFormationType()) -
-
-						distance(robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, fGen.Field.MaxX, fGen.Field.MaxY) -
-
-				  		minRotation(robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, robots[r].robotPhi) -
-
-				  		collisions(mappings[map], robots, fGen, r, robots[r].robotX, robots[r].robotY);
-
-				if(currentRobotPos.role == FormationParameters::ONBALL) {
-					mapCost = mapCost - robotStability(robots[r].robotStability);
+		else {
+			
+			std::string complexRole;
+			
+			for(unsigned int i = 0 ; i < fGen.getFormation()->size() ; i++) {
+				if(fGen.getFormation()->at(i).role != FormationParameters::GOALIE) {
+					complexRole = _toString(fGen.getFormation()->at(i).role);
+					complexRole = complexRole + _toString(fGen.getFormation()->at(i).id);
+					roles.insert(roles.end(), atoi(complexRole.c_str()));
 				}
 			}
 
-			if(Max(mapCost, maxU) == mapCost) {
-				maxU = mapCost;
-				index = map;
-			}
-			//std::cout << "MAPPING: ";
-			//print(mappings[map], "Behavior");
-			LogEntry(LogLevel::Info, GetName()) << "COST: " << mapCost;
-		}
+			print(roles, "Behavior");
+			mappings = permutationsOfCombinations(roles, numOfRobots);
+			LogEntry(LogLevel::Info, GetName()) << "ALL POSSIBLE MAPPINGS ARE: ";
+			print(mappings, "Behavior");
+			
+			roles.clear();
 
-		robotIndex = getRobotIndex(robots, config.playerNumber);
-		LogEntry(LogLevel::Info, GetName()) << "INDEX IS : " << robotIndex;
-		if(robotIndex != -1)
-			currentRole = fGen.findRoleInfo(mappings[index][robotIndex]);
-		else
-			currentRole.role = FormationParameters::ONBALL;
-		LogEntry(LogLevel::Info, GetName()) << "OPTIMAL MAP IS: ";
-		print(mappings[index], "Behavior");
-		LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
+			LogEntry(LogLevel::Info, GetName()) << "CHECKING MAPPINGS... (" << mappings.size() << ")";
+
+			// search for optimal mapping
+			maxU = -INF;
+			for(unsigned int map = 0 ; map < mappings.size() ; map++) {
+				mapCost = 0.0f;
+				LogEntry(LogLevel::Info, GetName()) << "MAP: " << map;
+				for(unsigned int r = 0 ; r < numOfRobots ; r++) { // for all except goalie robots
+					currentRobotPos = fGen.findRoleInfo(mappings[map].at(r));
+					mapCost = mapCost + fieldUtility(currentRobotPos.X, currentRobotPos.Y, SharedGlobalBallY, fGen) -
+
+							distance(robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, fGen.Field.MaxX, fGen.Field.MaxY) -
+
+					  		minRotation(robots[r].robotX, robots[r].robotY, currentRobotPos.X, currentRobotPos.Y, robots[r].robotPhi) -
+
+					  		collisions(mappings[map], robots, fGen, r) -
+					  		
+					  		sparse(mappings[map], numOfRobots, fGen, r);
+
+					if(currentRobotPos.role == FormationParameters::ONBALL) {
+						mapCost = mapCost - robotStability(robots[r].robotStability);
+					}
+				}
+
+				if(Max(mapCost, maxU) == mapCost) {
+					maxU = mapCost;
+					index = map;
+				}
+				print(mappings[map], "Behavior");
+				LogEntry(LogLevel::Info, GetName()) << "COST: " << mapCost;
+			}
+
+			robotIndex = getRobotIndex(robots, config.playerNumber);
+			LogEntry(LogLevel::Info, GetName()) << "INDEX IS : " << robotIndex;
+			
+			if(robotIndex != -1)
+				currentRole = fGen.findRoleInfo(mappings[index][robotIndex]);
+			else
+				currentRole.role = FormationParameters::ONBALL;
+			
+			LogEntry(LogLevel::Info, GetName()) << "OPTIMAL MAP IS: ";
+			print(mappings[index], "Behavior");
+			LogEntry(LogLevel::Info, GetName()) << "OPTIMAL COST IS: " << maxU;
+			LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
+		}
 }
 
 /**
@@ -661,8 +719,8 @@ void Behavior::getMotionData() {
 	}
 }
 
-void Behavior::sendDebugMessages() {
-
+void Behavior::sendFormationDebugMessages() {
+	
 	LogEntry(LogLevel::Info, GetName())
 		<< "BallX: "  << (SharedGlobalBallX)
 		<< " BallY: " << (SharedGlobalBallY);
@@ -682,6 +740,22 @@ void Behavior::sendDebugMessages() {
 		fdg.mutable_positions(i)->set_role(fGen.getFormation()->at(i).role);
 	}
 	_blk.publishSignal(fdg, "debug");
+}
+
+void Behavior::sendPSODebugMessages(vector<float> &positions) {
+	
+	unsigned int nextPos = 0;
+		
+	for(unsigned int i = 0 ; i < numOfRobots ; i++) {
+
+		if(psodg.positionspso_size() < (int)(i+1))
+			psodg.add_positionspso();
+
+		psodg.mutable_positionspso(i)->set_x(positions[nextPos]);
+		psodg.mutable_positionspso(i)->set_y(positions[nextPos + 1]);
+		nextPos += 2;
+	}
+	_blk.publishSignal(psodg, "debug");
 }
 
 /* -------------------------------------------------------------------------------------------------------------------- */

@@ -7,6 +7,7 @@ set ( ActivitySrcs  Behavior.h
 					FormationGenerator.cpp
 					FormationParameters.h
 					Utility.h
+					PSO.h
 )
 
 include ( ../activTemplate.cmake )

@@ -22,9 +22,9 @@
 
 #ifdef KPROFILING_ENABLED
 
+#include "core/include/Logger.hpp"
 #include <vector>
 #include "hal/smart_timer.h"
-#include "tools/logger.h"
 #include "toString.h"
 #include <sstream>
 
@@ -49,25 +49,20 @@ namespace KProfiling
 	};
 #ifdef KPROFILING_ENABLED
 
-
 	struct cerr_logging_policy
 	{
 		static void on_start(string name)
 		{
-			Logger::Instance().WriteMsg("KProf:", "starting profile " + name, Logger::ExtraInfo);
+	        LogEntry(LogLevel::ExtraInfo,"KProf:") << "starting profile " << name;
 		}
 		static void on_stop(string name, double sec, bool underflow)
 		{
-			Logger::Instance().WriteMsg("KProf:", "stopping profile " + name, Logger::ExtraInfo);
-			Logger::Instance().WriteMsg("KProf:", "time profile " + _toString(sec), Logger::ExtraInfo);
+	        LogEntry(LogLevel::ExtraInfo,"KProf:") << "stopping profile " << name;
+	        LogEntry(LogLevel::ExtraInfo,"KProf:") << "time profile "  << _toString(sec);
 
-			if (underflow) Logger::Instance().WriteMsg("KProf:", "Underflow Occured", Logger::Warning);
+			if (underflow) LogEntry(LogLevel::Warning,"KProf:") << "Underflow Occured ";       
 		}
 	};
-
-
-
-
 
 	struct counted_sum : pair<int, double>
 	{
@@ -79,10 +74,6 @@ namespace KProfiling
 			second += x;
 		}
 	};
-
-
-
-
 
 	class default_stats_policy
 	{
@@ -146,7 +137,8 @@ namespace KProfiling
 				        << setw(14) << dAvg << setw(4) << AUnits << endl;
 			}
 
-			Logger::Instance().WriteMsg("KProf:", s.str(), Logger::ExtraInfo);
+	        LogEntry(LogLevel::ExtraInfo,"KProf:") << s.str();
+
 		}
 		void on_clear()
 		{
@@ -207,8 +199,10 @@ namespace KProfiling
 			if(every > repcount)
 				return;
 
+	        LogEntry(LogLevel::ExtraInfo,"KProf:") << "-- Profiler Report: " + name + " --";
+
 			repcount = 0;
-			Logger::Instance().WriteMsg("KProf:", "-- Profiler Report: " + name + " --", Logger::ExtraInfo);
+
 			stats_policy::on_report();
 			clear();
 		}
@@ -237,6 +231,7 @@ namespace KProfiling
 	typedef basic_profiling_scope<profiler> profiling_scope;
 
 #else
+
 	struct nulltimer {};
 	template<typename logging_policy, typename stats_policy, typename timer_t>
 	class basic_profiler
@@ -245,7 +240,7 @@ namespace KProfiling
 		basic_profiler(char const* UNUSED(s) ) { }
 		static void push(char const* UNUSED(s)) { }
 		static void pop() { }
-		static void generate_report(int UNUSED(i) = 0) { }
+		static void generate_report(int UNUSED(i) = 0) {   }
 		static void clear() {}
 	};
 
