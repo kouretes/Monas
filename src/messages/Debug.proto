@@ -40,6 +40,10 @@ message PSODataForGUI {
 	repeated PositionInfo PositionsPSO = 1;
 }
 
+message MappingDataForGUI {
+	repeated PositionInfo Mapping = 1;
+}
+
 message Point {
 	required int32 x = 1 [default=-1];
 	required int32 y = 2 [default=-1];

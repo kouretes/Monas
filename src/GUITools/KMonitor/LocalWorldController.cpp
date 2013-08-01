@@ -111,6 +111,12 @@ void LocalWorldController::newTreeElementRequested(QTreeWidgetItem *item) {
 			LWSGVPSOPositionsVisible(myCurrentLWRequestedHost, false);
 		else
 			LWSGVPSOPositionsVisible(myCurrentLWRequestedHost, true);
+	}
+	else if(ui->checkTree->itemAt(0, 0)->indexOfChild(item) == 15) {
+		if(item->checkState(0) == 0)
+			LWSGVMappingBFVisible(myCurrentLWRequestedHost, false);
+		else
+			LWSGVMappingBFVisible(myCurrentLWRequestedHost, true);
 	} 
 	else {
 		if(item->checkState(0) == 0)
@@ -398,6 +404,20 @@ void LocalWorldController::formationDataUpdateHandler(FormationDataForGUI debugD
 	}
 }
 
+void LocalWorldController::MappingDataUpdateHandler(MappingDataForGUI debugData, QString host) {
+
+	GraphicalRobotElement *element = paintArea->findGraphicalRobotItem(host);
+	
+	if(element != NULL) {
+		element->setCurrentMDG(debugData);
+		if(element->getLWSMappingVisible()) { 
+			element->setMappingVisible(false);
+			element->updateMappingLines(debugData);
+			element->setMappingVisible(true);
+		}
+	}
+}
+
 void LocalWorldController::PSODataUpdateHandler(PSODataForGUI debugData, QString host) {
 
 	GraphicalRobotElement *element = paintArea->findGraphicalRobotItem(host);
@@ -524,6 +544,22 @@ void LocalWorldController::LWSGVFormationVisible(QString host, bool visible) {
 
 	if(robotElement != NULL)
 		robotElement->setLWSFormationVisible(visible);
+}
+
+void LocalWorldController::LWSGVMappingBFVisible(QString host, bool visible) {
+
+	GraphicalRobotElement *robotElement = NULL;
+	robotElement = paintArea->findGraphicalRobotItem(host);
+	
+	if(robotElement == NULL ) {
+		if(paintArea->getRobotList().count() != 0)
+			removeGraphicalElement(paintArea->getRobotList().at(0)->getHostId());
+
+		robotElement = paintArea->newGraphicalRobotItem(host);
+	}
+
+	if(robotElement != NULL)
+		robotElement->setLWSMappingVisible(visible);
 }
 
 void LocalWorldController::LWSGVPSOPositionsVisible(QString host, bool visible) {

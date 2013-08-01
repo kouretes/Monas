@@ -134,6 +134,7 @@ private:
 	ObstacleMessage fom;	// fake obstacle message!
 	FormationDataForGUI fdg;
 	PSODataForGUI psodg;
+	MappingDataForGUI mdg;
 	
 	/**
 	 * @fn void readMessages()
@@ -181,6 +182,8 @@ private:
 	void sendFormationDebugMessages();
 	
 	void sendPSODebugMessages(vector<float> &positions);
+	
+	void sendBFDebugMessages(vector<unsigned int> optimalMapping);
 
 	/* --------------------------------- Roles functions ---------------------------------- */
 

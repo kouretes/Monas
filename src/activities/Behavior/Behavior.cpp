@@ -617,6 +617,10 @@ void Behavior::Coordinate() {
 			print(mappings[index], "Behavior");
 			LogEntry(LogLevel::Info, GetName()) << "OPTIMAL COST IS: " << maxU;
 			LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
+			
+			if(!gameMode) {
+				sendBFDebugMessages(mappings[index]);
+			}
 		}
 }
 
@@ -756,6 +760,24 @@ void Behavior::sendPSODebugMessages(vector<float> &positions) {
 		nextPos += 2;
 	}
 	_blk.publishSignal(psodg, "debug");
+}
+
+void Behavior::sendBFDebugMessages(vector<unsigned int> optimalMapping) {
+	
+	posInfo nextPos;
+	
+	for(unsigned int i = 0 ; i < optimalMapping.size() ; i++) {
+		nextPos = fGen.findRoleInfo(optimalMapping[i]);
+		
+		if(mdg.mapping_size() < (int)(i+1))
+			mdg.add_mapping();
+		
+		mdg.mutable_mapping(i)->set_x(nextPos.X);
+		mdg.mutable_mapping(i)->set_y(nextPos.Y);
+		mdg.mutable_mapping(i)->set_role(nextPos.role);
+		
+	}
+	_blk.publishSignal(mdg, "debug");
 }
 
 /* -------------------------------------------------------------------------------------------------------------------- */

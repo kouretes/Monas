@@ -34,6 +34,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PSODataForGUI_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PSODataForGUI_reflection_ = NULL;
+const ::google::protobuf::Descriptor* MappingDataForGUI_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  MappingDataForGUI_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Point_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Point_reflection_ = NULL;
@@ -153,7 +156,22 @@ void protobuf_AssignDesc_Debug_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PSODataForGUI));
-  Point_descriptor_ = file->message_type(6);
+  MappingDataForGUI_descriptor_ = file->message_type(6);
+  static const int MappingDataForGUI_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MappingDataForGUI, mapping_),
+  };
+  MappingDataForGUI_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      MappingDataForGUI_descriptor_,
+      MappingDataForGUI::default_instance_,
+      MappingDataForGUI_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MappingDataForGUI, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MappingDataForGUI, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(MappingDataForGUI));
+  Point_descriptor_ = file->message_type(7);
   static const int Point_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Point, y_),
@@ -169,7 +187,7 @@ void protobuf_AssignDesc_Debug_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Point));
-  Polygon_descriptor_ = file->message_type(7);
+  Polygon_descriptor_ = file->message_type(8);
   static const int Polygon_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, points_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Polygon, color_),
@@ -186,7 +204,7 @@ void protobuf_AssignDesc_Debug_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Polygon));
-  BallCircle_descriptor_ = file->message_type(8);
+  BallCircle_descriptor_ = file->message_type(9);
   static const int BallCircle_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallCircle, center_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(BallCircle, radius_),
@@ -205,7 +223,7 @@ void protobuf_AssignDesc_Debug_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(BallCircle));
-  VisionDebugMessage_descriptor_ = file->message_type(9);
+  VisionDebugMessage_descriptor_ = file->message_type(10);
   static const int VisionDebugMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VisionDebugMessage, polygon_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(VisionDebugMessage, ball_circle_),
@@ -247,6 +265,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     PSODataForGUI_descriptor_, &PSODataForGUI::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    MappingDataForGUI_descriptor_, &MappingDataForGUI::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Point_descriptor_, &Point::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Polygon_descriptor_, &Polygon::default_instance());
@@ -271,6 +291,8 @@ void protobuf_ShutdownFile_Debug_2eproto() {
   delete FormationDataForGUI_reflection_;
   delete PSODataForGUI::default_instance_;
   delete PSODataForGUI_reflection_;
+  delete MappingDataForGUI::default_instance_;
+  delete MappingDataForGUI_reflection_;
   delete Point::default_instance_;
   delete Point_reflection_;
   delete Polygon::default_instance_;
@@ -302,16 +324,17 @@ void protobuf_AddDesc_Debug_2eproto() {
     "PORTER\020\005\022\017\n\013SUPPORTER_L\020\006\022\017\n\013SUPPORTER_R"
     "\020\007\"7\n\023FormationDataForGUI\022 \n\tPositions\030\001"
     " \003(\0132\r.PositionInfo\"4\n\rPSODataForGUI\022#\n\014"
-    "PositionsPSO\030\001 \003(\0132\r.PositionInfo\"%\n\005Poi"
-    "nt\022\r\n\001x\030\001 \002(\005:\002-1\022\r\n\001y\030\002 \002(\005:\002-1\"L\n\007Poly"
-    "gon\022\026\n\006points\030\001 \003(\0132\006.Point\022\021\n\005color\030\002 \002"
-    "(\005:\002-1\022\026\n\nconfidence\030\003 \002(\002:\002-1\"y\n\nBallCi"
-    "rcle\022\026\n\006center\030\001 \002(\0132\006.Point\022\022\n\006radius\030\002"
-    " \002(\005:\002-1\022\026\n\nconfidence\030\003 \002(\005:\002-1\022\024\n\005vali"
-    "d\030\004 \002(\010:\005false\022\021\n\005color\030\005 \001(\005:\002-1\"l\n\022Vis"
-    "ionDebugMessage\022\031\n\007polygon\030\001 \003(\0132\010.Polyg"
-    "on\022 \n\013ball_circle\030\002 \002(\0132\013.BallCircle\022\031\n\017"
-    "image_timestamp\030\003 \002(\t:\000", 903);
+    "PositionsPSO\030\001 \003(\0132\r.PositionInfo\"3\n\021Map"
+    "pingDataForGUI\022\036\n\007Mapping\030\001 \003(\0132\r.Positi"
+    "onInfo\"%\n\005Point\022\r\n\001x\030\001 \002(\005:\002-1\022\r\n\001y\030\002 \002("
+    "\005:\002-1\"L\n\007Polygon\022\026\n\006points\030\001 \003(\0132\006.Point"
+    "\022\021\n\005color\030\002 \002(\005:\002-1\022\026\n\nconfidence\030\003 \002(\002:"
+    "\002-1\"y\n\nBallCircle\022\026\n\006center\030\001 \002(\0132\006.Poin"
+    "t\022\022\n\006radius\030\002 \002(\005:\002-1\022\026\n\nconfidence\030\003 \002("
+    "\005:\002-1\022\024\n\005valid\030\004 \002(\010:\005false\022\021\n\005color\030\005 \001"
+    "(\005:\002-1\"l\n\022VisionDebugMessage\022\031\n\007polygon\030"
+    "\001 \003(\0132\010.Polygon\022 \n\013ball_circle\030\002 \002(\0132\013.B"
+    "allCircle\022\031\n\017image_timestamp\030\003 \002(\t:\000", 956);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "Debug.proto", &protobuf_RegisterTypes);
   EKFMHypothesis::default_instance_ = new EKFMHypothesis();
@@ -320,6 +343,7 @@ void protobuf_AddDesc_Debug_2eproto() {
   PositionInfo::default_instance_ = new PositionInfo();
   FormationDataForGUI::default_instance_ = new FormationDataForGUI();
   PSODataForGUI::default_instance_ = new PSODataForGUI();
+  MappingDataForGUI::default_instance_ = new MappingDataForGUI();
   Point::default_instance_ = new Point();
   Polygon::default_instance_ = new Polygon();
   BallCircle::default_instance_ = new BallCircle();
@@ -330,6 +354,7 @@ void protobuf_AddDesc_Debug_2eproto() {
   PositionInfo::default_instance_->InitAsDefaultInstance();
   FormationDataForGUI::default_instance_->InitAsDefaultInstance();
   PSODataForGUI::default_instance_->InitAsDefaultInstance();
+  MappingDataForGUI::default_instance_->InitAsDefaultInstance();
   Point::default_instance_->InitAsDefaultInstance();
   Polygon::default_instance_->InitAsDefaultInstance();
   BallCircle::default_instance_->InitAsDefaultInstance();
@@ -1851,6 +1876,211 @@ void PSODataForGUI::Swap(PSODataForGUI* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = PSODataForGUI_descriptor_;
   metadata.reflection = PSODataForGUI_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int MappingDataForGUI::kMappingFieldNumber;
+#endif  // !_MSC_VER
+
+MappingDataForGUI::MappingDataForGUI()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void MappingDataForGUI::InitAsDefaultInstance() {
+}
+
+MappingDataForGUI::MappingDataForGUI(const MappingDataForGUI& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void MappingDataForGUI::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+MappingDataForGUI::~MappingDataForGUI() {
+  SharedDtor();
+}
+
+void MappingDataForGUI::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void MappingDataForGUI::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* MappingDataForGUI::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MappingDataForGUI_descriptor_;
+}
+
+const MappingDataForGUI& MappingDataForGUI::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_Debug_2eproto();  return *default_instance_;
+}
+
+MappingDataForGUI* MappingDataForGUI::default_instance_ = NULL;
+
+MappingDataForGUI* MappingDataForGUI::New() const {
+  return new MappingDataForGUI;
+}
+
+void MappingDataForGUI::Clear() {
+  mapping_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool MappingDataForGUI::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .PositionInfo Mapping = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_Mapping:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_mapping()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(10)) goto parse_Mapping;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void MappingDataForGUI::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // repeated .PositionInfo Mapping = 1;
+  for (int i = 0; i < this->mapping_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->mapping(i), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* MappingDataForGUI::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // repeated .PositionInfo Mapping = 1;
+  for (int i = 0; i < this->mapping_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->mapping(i), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int MappingDataForGUI::ByteSize() const {
+  int total_size = 0;
+  
+  // repeated .PositionInfo Mapping = 1;
+  total_size += 1 * this->mapping_size();
+  for (int i = 0; i < this->mapping_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->mapping(i));
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void MappingDataForGUI::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const MappingDataForGUI* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const MappingDataForGUI*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void MappingDataForGUI::MergeFrom(const MappingDataForGUI& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  mapping_.MergeFrom(from.mapping_);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void MappingDataForGUI::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void MappingDataForGUI::CopyFrom(const MappingDataForGUI& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MappingDataForGUI::IsInitialized() const {
+  
+  for (int i = 0; i < mapping_size(); i++) {
+    if (!this->mapping(i).IsInitialized()) return false;
+  }
+  return true;
+}
+
+void MappingDataForGUI::Swap(MappingDataForGUI* other) {
+  if (other != this) {
+    mapping_.Swap(&other->mapping_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata MappingDataForGUI::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = MappingDataForGUI_descriptor_;
+  metadata.reflection = MappingDataForGUI_reflection_;
   return metadata;
 }
 

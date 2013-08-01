@@ -37,6 +37,7 @@ class LocalizationDataForGUI;
 class PositionInfo;
 class FormationDataForGUI;
 class PSODataForGUI;
+class MappingDataForGUI;
 class Point;
 class Polygon;
 class BallCircle;
@@ -663,6 +664,91 @@ class PSODataForGUI : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static PSODataForGUI* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class MappingDataForGUI : public ::google::protobuf::Message {
+ public:
+  MappingDataForGUI();
+  virtual ~MappingDataForGUI();
+  
+  MappingDataForGUI(const MappingDataForGUI& from);
+  
+  inline MappingDataForGUI& operator=(const MappingDataForGUI& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MappingDataForGUI& default_instance();
+  
+  void Swap(MappingDataForGUI* other);
+  
+  // implements Message ----------------------------------------------
+  
+  MappingDataForGUI* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MappingDataForGUI& from);
+  void MergeFrom(const MappingDataForGUI& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .PositionInfo Mapping = 1;
+  inline int mapping_size() const;
+  inline void clear_mapping();
+  static const int kMappingFieldNumber = 1;
+  inline const ::PositionInfo& mapping(int index) const;
+  inline ::PositionInfo* mutable_mapping(int index);
+  inline ::PositionInfo* add_mapping();
+  inline const ::google::protobuf::RepeatedPtrField< ::PositionInfo >&
+      mapping() const;
+  inline ::google::protobuf::RepeatedPtrField< ::PositionInfo >*
+      mutable_mapping();
+  
+  // @@protoc_insertion_point(class_scope:MappingDataForGUI)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::PositionInfo > mapping_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_Debug_2eproto();
+  friend void protobuf_AssignDesc_Debug_2eproto();
+  friend void protobuf_ShutdownFile_Debug_2eproto();
+  
+  void InitAsDefaultInstance();
+  static MappingDataForGUI* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1398,6 +1484,35 @@ PSODataForGUI::positionspso() const {
 inline ::google::protobuf::RepeatedPtrField< ::PositionInfo >*
 PSODataForGUI::mutable_positionspso() {
   return &positionspso_;
+}
+
+// -------------------------------------------------------------------
+
+// MappingDataForGUI
+
+// repeated .PositionInfo Mapping = 1;
+inline int MappingDataForGUI::mapping_size() const {
+  return mapping_.size();
+}
+inline void MappingDataForGUI::clear_mapping() {
+  mapping_.Clear();
+}
+inline const ::PositionInfo& MappingDataForGUI::mapping(int index) const {
+  return mapping_.Get(index);
+}
+inline ::PositionInfo* MappingDataForGUI::mutable_mapping(int index) {
+  return mapping_.Mutable(index);
+}
+inline ::PositionInfo* MappingDataForGUI::add_mapping() {
+  return mapping_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::PositionInfo >&
+MappingDataForGUI::mapping() const {
+  return mapping_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::PositionInfo >*
+MappingDataForGUI::mutable_mapping() {
+  return &mapping_;
 }
 
 // -------------------------------------------------------------------

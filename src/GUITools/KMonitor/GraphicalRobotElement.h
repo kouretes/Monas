@@ -17,6 +17,9 @@
 
 #include "core/elements/math/Common.hpp"
 
+#include <algorithm>
+#include <vector>
+
 #include "messages/Debug.pb.h"
 #include "messages/RoboCupGameControlData.h"
 #include "messages/WorldInfo.pb.h"
@@ -24,6 +27,8 @@
 #include "messages/Motion.pb.h"
 
 #include "KFieldScene.h"
+
+using std::vector;
 
 class KFieldScene;
 
@@ -51,7 +56,8 @@ public:
 	void setCurrentOBSM(ObservationMessage obm);
 	void setCurrentEKFMHypothesisM(EKFMHypothesis ekfMHyp);
     void setCurrentOdometryM(OdometryInfoMessage odometryM);
-
+	void setCurrentMDG(MappingDataForGUI nmdg);
+	
 	void setGWSRobotVisible(bool visible) {
 		GWSRobotVisible = visible;
 		setRobotVisible(visible);
@@ -97,11 +103,21 @@ public:
 		return LWSPSOPositionsVisible;
 	}
 	
+	void setLWSMappingVisible(bool visible) {
+		LWSMappingVisible = visible;
+		setMappingVisible(visible);
+	}
+	
+	bool getLWSMappingVisible() {
+		return LWSMappingVisible;
+	}
+	
 	void setRobotVisible(bool visible);
 	void setTeammateVisible(int idx, bool visible);
 	void setTeammatesVisible(bool visible);
 	void setFormationVisible(bool visible);
 	void setPSOPositionsVisible(bool visible);
+	void setMappingVisible(bool visible);
 	void updateRobotRect();
 	void updateTeammatesRects();
 
@@ -116,6 +132,7 @@ public:
 
 	void updateFormationRects(FormationDataForGUI debugGUI);
 	void updatePSOPositionsRects(PSODataForGUI debugGUI);
+	void updateMappingLines(MappingDataForGUI debugGUI);
 	
 	void setGWSBallVisible(bool visible) {
 		GWSBallVisible = visible;
@@ -336,7 +353,14 @@ private:
 	QPolygonF calculateArrowHeadPosition(QLineF aLine);
 	void updateRobotTracePolygon();
 
-
+	inline static bool comparator(const TeammatePose &robot1, const TeammatePose &robot2) {
+		return (robot1.robotid() < robot2.robotid());
+	}
+	
+	inline void sortRobotsbyId(vector<TeammatePose> &robots) {
+		std::sort(robots.begin(), robots.end(), comparator);
+	}
+	
 	boost::posix_time::ptime robotTraceTime;
 
 	KFieldScene *parentScene;
@@ -349,6 +373,7 @@ private:
     GameStateMessage currentGSM;
     GameStateMessage prevGSM;
     EKFMHypothesis currentEKFMHypothesis;
+    MappingDataForGUI currentMDG;
 
     OdometryInfoMessage currentOdometryM;
     bool LWSVarianceVisible;
@@ -371,9 +396,10 @@ private:
     QGraphicsPathItem* RobotTrace;
     QPainterPath* RobotTracePoints;
 
-    bool LWSFormationVisible, LWSPSOPositionsVisible;
+    bool LWSFormationVisible, LWSPSOPositionsVisible, LWSMappingVisible;
 	QList<QGraphicsEllipseItem *> PositionsList;
 	QList<QGraphicsEllipseItem *> PSOPositionsList;
+	QList<QGraphicsLineItem *> MappingLinesList;
 	int numOfPositions;
 
 	bool GWSBallVisible;

@@ -22,6 +22,8 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	currentObsm.Clear();
 	ParticlesList.clear();
 	PositionsList.clear();
+	PSOPositionsList.clear();
+	MappingLinesList.clear();
 	RobotPositions.set_capacity(100);
 	UnionistLines.set_capacity(99);
 	GWSRobotVisible = false;
@@ -34,6 +36,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	LWSUnionistLineVisible = false;
 	LWSVisionBallVisible = false;
 	LWSFormationVisible = false;
+	LWSMappingVisible = false;
 	LWSVisionYellowLeftPostVisible = false;
 	LWSVisionYellowRightPostVisible = false;
 	LWSVisionYellowPostVisible = false;
@@ -76,7 +79,12 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 		QGraphicsEllipseItem *pos = this->parentScene->addEllipse(QRect(), QPen(Qt::black), QBrush(Qt::magenta));
 		PSOPositionsList.append(pos);
 	}
-
+	
+	for(int it = 0 ; it < numOfRobots ; it++) {
+		QGraphicsLineItem *line = this->parentScene->addLine(QLineF(), QPen(Qt::black));
+		MappingLinesList.append(line);
+	}
+	
 	HFOVLines = this->parentScene->addPolygon(QPolygonF(), QPen(Qt::darkCyan), QBrush(Qt::Dense7Pattern));
 	GotoPositionLine = this->parentScene->addLine(QLineF(), penForMotionCmdLine);
 	GotoArrow = this->parentScene->addPolygon(QPolygonF(), QPen(Qt::darkRed), QBrush(Qt::darkRed));
@@ -204,6 +212,11 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 			delete PSOPositionsList.at(i);
 	}
 	
+	for(int i = 0 ; i < MappingLinesList.count() ; i++) {
+		if(MappingLinesList.at(i))
+			delete MappingLinesList.at(i);
+	}
+	
 	boost::circular_buffer<QGraphicsEllipseItem*>::iterator P_it;
 
 	for(P_it = RobotPositions.begin() ; P_it != RobotPositions.end() ; ++P_it) {
@@ -259,6 +272,11 @@ void GraphicalRobotElement::loadXMLlocalizationConfigParameters() {
 
 void GraphicalRobotElement::loadXMLteamConfigParameters() {
 	numOfPositions = atoi(Configurator::Instance().findValueForKey("behavior.positions").c_str());
+}
+
+void GraphicalRobotElement::setCurrentMDG(MappingDataForGUI nmdg) {
+	currentMDG.Clear();
+    currentMDG = nmdg;
 }
 
 void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim) {
@@ -325,12 +343,14 @@ void GraphicalRobotElement::setTeammatesVisible(bool visible) {
 	for(int i = 0 ; i < numOfRobots ; i++) {
 		Teammates[i]->setVisible(visible);
 		TeammateDirections[i]->setVisible(visible);
+		MappingLinesList.at(i)->setVisible(visible);
 	}
 }
 
 void GraphicalRobotElement::setTeammateVisible(int idx, bool visible) {
 	Teammates[idx]->setVisible(visible);
 	TeammateDirections[idx]->setVisible(visible);
+	MappingLinesList.at(idx)->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateRobotRect() {
@@ -443,6 +463,9 @@ void GraphicalRobotElement::updateTeammatesRects() {
 																			this->currentSWIM.teammateposition(idx).pose().phi(), 200));
 			setTeammateVisible(idx, true);
 		}
+		
+		if(LWSMappingVisible)
+			updateMappingLines(currentMDG);
 	}
 }
 
@@ -666,6 +689,35 @@ void GraphicalRobotElement::updatePSOPositionsRects(PSODataForGUI debugGUI) {
 
 		if(posInfo.has_x() && posInfo.has_y()) {
 			PSOPositionsList.at(i)->setRect(this->parentScene->rectFromFC(posInfo.x()*1000, posInfo.y()*1000, 80, 80));
+		} 
+	}
+}
+
+void GraphicalRobotElement::setMappingVisible(bool visible) {
+	if(LWSFormationVisible && LWSTeammatesVisible) {
+		for(int i = 0 ; i < MappingLinesList.count() ; i++) {
+			MappingLinesList.at(i)->setVisible(visible);		
+		}
+	}
+}
+
+void GraphicalRobotElement::updateMappingLines(MappingDataForGUI debugGUI) {
+	
+	vector<TeammatePose> robots;
+	for(int i = 0 ; i < this->currentSWIM.teammateposition_size() ; i++) {
+		robots.insert(robots.end(), this->currentSWIM.teammateposition(i));
+	}
+	sortRobotsbyId(robots);
+	
+	if(robots[0].robotid() == 1)
+			robots.erase(robots.begin());
+			
+	for(int i = 0 ; i < debugGUI.mapping_size() ; i++) {
+		PositionInfo posInfo = debugGUI.mapping(i);
+
+		if(posInfo.has_x() && posInfo.has_y()) {
+			MappingLinesList.at(i + 1)->setLine(this->parentScene->lineRectFromFC(posInfo.x()*1000, posInfo.y()*1000,
+								robots[i].pose().x()*1000, robots[i].pose().y()*1000));
 		} 
 	}
 }

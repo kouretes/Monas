@@ -66,6 +66,8 @@ KMonitor::KMonitor(QWidget *parent) :
     connect(Messenger, SIGNAL(formationDataUpdate(FormationDataForGUI, QString)), ui->LWSTab, SLOT(formationDataUpdateHandler(FormationDataForGUI, QString)) );
     
     connect(Messenger, SIGNAL(PSODataUpdate(PSODataForGUI, QString)), ui->LWSTab, SLOT(PSODataUpdateHandler(PSODataForGUI, QString)) );
+    
+    connect(Messenger, SIGNAL(MappingDataUpdate(MappingDataForGUI, QString)), ui->LWSTab, SLOT(MappingDataUpdateHandler(MappingDataForGUI, QString)) );
 	
 	/**
 	 * LOCAL POLAR MAP TAB

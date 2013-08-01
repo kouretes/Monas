@@ -164,6 +164,14 @@
             <enum>Checked</enum>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Mapping BF</string>
+           </property>
+           <property name="checkState">
+            <enum>Checked</enum>
+           </property>
+          </item>
          </item>
         </widget>
        </item>
