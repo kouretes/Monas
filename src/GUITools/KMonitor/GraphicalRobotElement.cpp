@@ -343,14 +343,14 @@ void GraphicalRobotElement::setTeammatesVisible(bool visible) {
 	for(int i = 0 ; i < numOfRobots ; i++) {
 		Teammates[i]->setVisible(visible);
 		TeammateDirections[i]->setVisible(visible);
-		MappingLinesList.at(i)->setVisible(visible);
+		if(LWSMappingVisible)
+			MappingLinesList.at(i)->setVisible(visible);
 	}
 }
 
 void GraphicalRobotElement::setTeammateVisible(int idx, bool visible) {
 	Teammates[idx]->setVisible(visible);
 	TeammateDirections[idx]->setVisible(visible);
-	MappingLinesList.at(idx)->setVisible(visible);
 }
 
 void GraphicalRobotElement::updateRobotRect() {
@@ -724,7 +724,9 @@ void GraphicalRobotElement::updateMappingLines(MappingDataForGUI debugGUI) {
 
 void GraphicalRobotElement::setFormationVisible(bool visible) {
 	for(int i = 0 ; i < PositionsList.count() ; i++) {
-		PositionsList.at(i)->setVisible(visible);		
+		PositionsList.at(i)->setVisible(visible);
+		if(LWSMappingVisible)
+			MappingLinesList.at(i)->setVisible(visible);
 	}
 }
 
