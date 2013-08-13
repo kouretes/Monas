@@ -186,11 +186,11 @@ namespace KMat
 		template <template<typename , unsigned , unsigned > class	D, typename T, unsigned M, unsigned N>
 		friend class BaseMatrix;
 
-		inline AT & data(unsigned i, unsigned  UNUSED(j) )
+		inline AT & data(unsigned UNUSED(i), unsigned  UNUSED(j) )
 		{
 			return x;
 		};
-		inline AT * data(unsigned i)
+		inline AT * data(unsigned UNUSED(i))
 		{
 			return &x;
 		};
@@ -1002,13 +1002,13 @@ namespace KMat
 		{
 			//Find pivot
 			unsigned pvt=k;
-			A pvtmx=abs(athis.read(k,k));
+			A pvtmx=(athis.read(k,k)>=0?athis.read(k,k):-athis.read(k,k));
 			for (unsigned l=k+1;l<S;l++)
 			{
-				if(pvtmx<abs(athis(l,k)))
+				if(pvtmx<(athis(l,k)>=0?athis(l,k):-athis(l,k)))
 				{
 					pvt=l;
-					pvtmx=abs(athis(l,k));
+					pvtmx=(athis(l,k)>=0?athis(l,k):-athis(l,k));
 				}
 			}
 			//Pivot
