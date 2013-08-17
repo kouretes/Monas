@@ -108,7 +108,7 @@ void protobuf_AssignDesc_PathPlanningMessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(PathPlanningRequestMessage));
   GridInfo_descriptor_ = file->message_type(4);
-  static const int GridInfo_offsets_[15] = {
+  static const int GridInfo_offsets_[12] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, cellsradius_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, cellsring_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, realgridlength_),
@@ -121,9 +121,6 @@ void protobuf_AssignDesc_PathPlanningMessages_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, targetring_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, targetsector_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, targetorientation_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, visitedring_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, visitedsector_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GridInfo, visitedorientation_),
   };
   GridInfo_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -191,16 +188,14 @@ void protobuf_AddDesc_PathPlanningMessages_2eproto() {
     "certainty\030\003 \003(\002\"u\n\032PathPlanningRequestMe"
     "ssage\022\017\n\007TargetX\030\001 \002(\002\022\017\n\007TargetY\030\002 \002(\002\022"
     "\031\n\021TargetOrientation\030\003 \002(\002\022\032\n\022ForceUseOf"
-    "SmallMap\030\004 \002(\010\"\343\002\n\010GridInfo\022\023\n\013CellsRadi"
+    "SmallMap\030\004 \002(\010\"\233\002\n\010GridInfo\022\023\n\013CellsRadi"
     "us\030\001 \002(\002\022\021\n\tCellsRing\030\002 \002(\002\022\026\n\016RealGridL"
     "ength\030\003 \002(\002\022\021\n\tGridCells\030\004 \003(\002\022\025\n\rUsingS"
     "mallMap\030\005 \002(\010\022\022\n\nPathLength\030\006 \002(\002\022\025\n\rPat"
     "hStepsRing\030\007 \003(\005\022\027\n\017PathStepsSector\030\010 \003("
     "\005\022\034\n\024PathStepsOrientation\030\t \003(\005\022\022\n\nTarge"
     "tRing\030\n \001(\005\022\024\n\014TargetSector\030\013 \001(\005\022\031\n\021Tar"
-    "getOrientation\030\014 \001(\002\022\023\n\013visitedRing\030\r \003("
-    "\005\022\025\n\rvisitedSector\030\016 \003(\005\022\032\n\022visitedOrien"
-    "tation\030\017 \003(\005", 732);
+    "getOrientation\030\014 \001(\002", 660);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "PathPlanningMessages.proto", &protobuf_RegisterTypes);
   ObstacleMessage::default_instance_ = new ObstacleMessage();
@@ -1348,9 +1343,6 @@ const int GridInfo::kPathStepsOrientationFieldNumber;
 const int GridInfo::kTargetRingFieldNumber;
 const int GridInfo::kTargetSectorFieldNumber;
 const int GridInfo::kTargetOrientationFieldNumber;
-const int GridInfo::kVisitedRingFieldNumber;
-const int GridInfo::kVisitedSectorFieldNumber;
-const int GridInfo::kVisitedOrientationFieldNumber;
 #endif  // !_MSC_VER
 
 GridInfo::GridInfo()
@@ -1426,9 +1418,6 @@ void GridInfo::Clear() {
   pathstepsring_.Clear();
   pathstepssector_.Clear();
   pathstepsorientation_.Clear();
-  visitedring_.Clear();
-  visitedsector_.Clear();
-  visitedorientation_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -1650,72 +1639,6 @@ bool GridInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(104)) goto parse_visitedRing;
-        break;
-      }
-      
-      // repeated int32 visitedRing = 13;
-      case 13: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_visitedRing:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 104, input, this->mutable_visitedring())));
-        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
-                   == ::google::protobuf::internal::WireFormatLite::
-                      WIRETYPE_LENGTH_DELIMITED) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, this->mutable_visitedring())));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(104)) goto parse_visitedRing;
-        if (input->ExpectTag(112)) goto parse_visitedSector;
-        break;
-      }
-      
-      // repeated int32 visitedSector = 14;
-      case 14: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_visitedSector:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 112, input, this->mutable_visitedsector())));
-        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
-                   == ::google::protobuf::internal::WireFormatLite::
-                      WIRETYPE_LENGTH_DELIMITED) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, this->mutable_visitedsector())));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(112)) goto parse_visitedSector;
-        if (input->ExpectTag(120)) goto parse_visitedOrientation;
-        break;
-      }
-      
-      // repeated int32 visitedOrientation = 15;
-      case 15: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_visitedOrientation:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 120, input, this->mutable_visitedorientation())));
-        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
-                   == ::google::protobuf::internal::WireFormatLite::
-                      WIRETYPE_LENGTH_DELIMITED) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, this->mutable_visitedorientation())));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(120)) goto parse_visitedOrientation;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1802,24 +1725,6 @@ void GridInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(12, this->targetorientation(), output);
   }
   
-  // repeated int32 visitedRing = 13;
-  for (int i = 0; i < this->visitedring_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      13, this->visitedring(i), output);
-  }
-  
-  // repeated int32 visitedSector = 14;
-  for (int i = 0; i < this->visitedsector_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      14, this->visitedsector(i), output);
-  }
-  
-  // repeated int32 visitedOrientation = 15;
-  for (int i = 0; i < this->visitedorientation_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(
-      15, this->visitedorientation(i), output);
-  }
-  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1890,24 +1795,6 @@ void GridInfo::SerializeWithCachedSizes(
   // optional float TargetOrientation = 12;
   if (has_targetorientation()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(12, this->targetorientation(), target);
-  }
-  
-  // repeated int32 visitedRing = 13;
-  for (int i = 0; i < this->visitedring_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(13, this->visitedring(i), target);
-  }
-  
-  // repeated int32 visitedSector = 14;
-  for (int i = 0; i < this->visitedsector_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(14, this->visitedsector(i), target);
-  }
-  
-  // repeated int32 visitedOrientation = 15;
-  for (int i = 0; i < this->visitedorientation_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32ToArray(15, this->visitedorientation(i), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -2005,36 +1892,6 @@ int GridInfo::ByteSize() const {
     total_size += 1 * this->pathstepsorientation_size() + data_size;
   }
   
-  // repeated int32 visitedRing = 13;
-  {
-    int data_size = 0;
-    for (int i = 0; i < this->visitedring_size(); i++) {
-      data_size += ::google::protobuf::internal::WireFormatLite::
-        Int32Size(this->visitedring(i));
-    }
-    total_size += 1 * this->visitedring_size() + data_size;
-  }
-  
-  // repeated int32 visitedSector = 14;
-  {
-    int data_size = 0;
-    for (int i = 0; i < this->visitedsector_size(); i++) {
-      data_size += ::google::protobuf::internal::WireFormatLite::
-        Int32Size(this->visitedsector(i));
-    }
-    total_size += 1 * this->visitedsector_size() + data_size;
-  }
-  
-  // repeated int32 visitedOrientation = 15;
-  {
-    int data_size = 0;
-    for (int i = 0; i < this->visitedorientation_size(); i++) {
-      data_size += ::google::protobuf::internal::WireFormatLite::
-        Int32Size(this->visitedorientation(i));
-    }
-    total_size += 1 * this->visitedorientation_size() + data_size;
-  }
-  
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -2064,9 +1921,6 @@ void GridInfo::MergeFrom(const GridInfo& from) {
   pathstepsring_.MergeFrom(from.pathstepsring_);
   pathstepssector_.MergeFrom(from.pathstepssector_);
   pathstepsorientation_.MergeFrom(from.pathstepsorientation_);
-  visitedring_.MergeFrom(from.visitedring_);
-  visitedsector_.MergeFrom(from.visitedsector_);
-  visitedorientation_.MergeFrom(from.visitedorientation_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_cellsradius()) {
       set_cellsradius(from.cellsradius());
@@ -2130,9 +1984,6 @@ void GridInfo::Swap(GridInfo* other) {
     std::swap(targetring_, other->targetring_);
     std::swap(targetsector_, other->targetsector_);
     std::swap(targetorientation_, other->targetorientation_);
-    visitedring_.Swap(&other->visitedring_);
-    visitedsector_.Swap(&other->visitedsector_);
-    visitedorientation_.Swap(&other->visitedorientation_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

@@ -36,7 +36,4 @@ message GridInfo{
 	optional int32 TargetRing = 10;
 	optional int32 TargetSector = 11;
 	optional float TargetOrientation = 12;
-	repeated int32 visitedRing = 13;
-	repeated int32 visitedSector = 14;
-	repeated int32 visitedOrientation = 15;
 }

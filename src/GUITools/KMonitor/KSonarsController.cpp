@@ -75,7 +75,7 @@ void KSonarsController::resizeEvent(QResizeEvent *event) {
 }
 
 void KSonarsController::gridInfoUpdateHandler (GridInfo gim, QString hostId) {
-	if(mapArea->cellsOfRadius != gim.cellsradius() || mapArea->cellsOfRing != gim.cellsring() || mapArea->pathLength != gim.pathlength()){
+	if(mapArea->cellsOfRadius != gim.cellsradius() || mapArea->cellsOfRing != gim.cellsring() || mapArea->pathLength != gim.pathlength() || mapArea->smallMap != gim.usingsmallmap()){
 		mapArea->setupGrid(gim.cellsradius(), gim.cellsring(), gim.realgridlength(), gim.pathlength(), gim.usingsmallmap());
 	}
 	for (int ring = 0; ring < mapArea->cellsOfRadius; ring++) {
@@ -100,17 +100,9 @@ void KSonarsController::gridInfoUpdateHandler (GridInfo gim, QString hostId) {
 		}
 	}
 
-	mapArea->totalVisits = gim.visitedring_size();
-	if(gim.visitedring_size() != 0){
-		for (int step = 0; step < gim.visitedring_size(); step++) {
-			mapArea->pathR2[step] = gim.visitedring (step);
-			mapArea->pathS2[step] = gim.visitedsector (step);
-			mapArea->pathO2[step] = gim.visitedorientation (step);
-		}
-	}
 	if (mapArea->getLPMObstaclesVisible() ) {
 		mapArea->setPMObstaclesVisible (false);
-		mapArea->updateObstacles (false);
+		mapArea->updateObstacles ();
 		mapArea->updateArrow();
 		mapArea->setPMObstaclesVisible(true);
 	}

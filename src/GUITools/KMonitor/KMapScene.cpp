@@ -44,9 +44,6 @@ KMapScene::KMapScene(QGraphicsView *parent) {
 	targetLine = NULL;
 	
 	setBackgroundBrush (QBrush (QColor (0, 155, 0) ) );
-	
-	QPen penForGreenLine (Qt::green);
-	penForGreenLine.setWidth (2);
 }
 
 KMapScene::~KMapScene() {
@@ -115,6 +112,7 @@ void KMapScene::setupGrid(int cellsRad, int cellsRing, float gridLength, int pat
 	}
 	
 	for(int i = 0; i < cellsList.size(); i++){
+		cellsList.at(i)->setVisible(false);
 		delete cellsList.at(i);
 	}
 	for(int i = 0; i < pathLineList.size(); i++){
@@ -126,19 +124,13 @@ void KMapScene::setupGrid(int cellsRad, int cellsRing, float gridLength, int pat
 	for(int i = 0; i < pathSmallLineList.size(); i++){
 		delete pathSmallLineList.at(i);
 	}
-	for(int i = 0; i < visitedEllipseList.size(); i++){
-		delete visitedEllipseList.at(i);
-	}
-	for(int i = 0; i < visitedSmallLineList.size(); i++){
-		delete visitedSmallLineList.at(i);
-	}
 	
 	cellsList.clear();
 	pathLineList.clear();
 	pathEllipseList.clear();
 	pathSmallLineList.clear();
-	visitedEllipseList.clear();
-	visitedSmallLineList.clear();
+
+
 	
 	for (int r = 0; r < cellsOfRadius; r++){
 		for (int s = 0; s < cellsOfRing; s++) {
@@ -161,21 +153,12 @@ void KMapScene::setupGrid(int cellsRad, int cellsRing, float gridLength, int pat
 		QGraphicsLineItem *smallLine = addLine (QLineF(), penForGreenLine );
 		pathSmallLineList.append(smallLine);
 	}
-	for (int ways = 0; ways < 2000; ways++) {
-		QGraphicsEllipseItem *ellipse = addEllipse (QRect(), QPen (Qt::green), QBrush (Qt::blue) );
-		visitedEllipseList.append(ellipse);
-	
-	QPen black (Qt::black);
-	black.setWidth (2);
-		QGraphicsLineItem *smallLine = addLine (QLineF(), black );
-		visitedSmallLineList.append(smallLine);
-	}
 	
 	initCoordinates();
 	initGrid();
 	targetBall = addEllipse (QRect(), QPen (Qt::red), QBrush (Qt::red) );
 	targetLine = addLine (QLineF(), penForGreenLine );
-	updateObstacles(true);
+	updateObstacles();
 }
 
 
@@ -194,7 +177,7 @@ void KMapScene::resizeMapScene (int size) {
 
 	initCoordinates();
 	setSceneRect(0, 0, size, size);
-	this->updateObstacles(true);
+	this->updateObstacles();
 }
 
 //initialize Polar grid
@@ -241,21 +224,16 @@ void KMapScene::setPMObstaclesVisible (bool visible) {
 	for (int i = 0; i < cellsList.count(); i++) {
 		cellsList.at (i)->setVisible (visible);
 	}
-	/*for(int i = 0; i < visitedEllipseList.count(); i++){
-		visitedEllipseList.at(i)->setVisible (false);
-	}
-	for(int i = 0; i < visitedSmallLineList.count(); i++){
-		visitedSmallLineList.at(i)->setVisible (false);
-	}*/
 }
 
-void KMapScene::updateObstacles(bool initialization) {
+void KMapScene::updateObstacles() {
 
 	QGraphicsPolygonItem *cell;
 	QVector<QPoint> curve1(0);
 	int colorValue = 0, cellNum = 0;
 	int r, s;
-
+	QPen penForBlackLine (Qt::black);
+	penForBlackLine.setWidth (2);
 	for (r = 0; r < cellsOfRadius; r++) {
 		for (s = 0; s < cellsOfRing; s++) {
 			int sPlusOne = s==cellsOfRing-1 ? 0 : s+1;
@@ -269,64 +247,22 @@ void KMapScene::updateObstacles(bool initialization) {
 			curve1.append (x1);
 			curve1.append (x2);
 			curve1.append (x3);
-			if(!smallMap){
-				colorValue = ColorMax - PolarGrid[r][s] * ColorMax;
-			}else{
-				colorValue = ColorMax;
-			}
-
 			
 			cell = cellsList.at (cellNum);
-
 			cell->setPolygon (QPolygon (curve1) );
-			cell->setBrush (QColor (colorValue, colorValue, colorValue) );
+			cell->setPen(penForBlackLine);
+			if(!smallMap){
+				colorValue = ColorMax - PolarGrid[r][s] * ColorMax;
+				cell->setBrush (QColor (colorValue, colorValue, colorValue) );
+			}else{
+				colorValue = ColorMax - PolarGrid[r][s] * ColorMax;
+				cell->setBrush (QColor (0, 0, colorValue) );
+			}
 
 			cellNum++;
 		}
 	}
-	
-	QGraphicsEllipseItem *ellipse;
-	QGraphicsLineItem *smallLine;
-	QPoint toP (0, 0);
-	int o;
-
-	//setup up in the background the path line and then in the foreground the robot positions
-	for (int ways = 0; ways < totalVisits; ways++) {
-		r = pathR2[ways];
-		s = pathS2[ways];	
-
-		if(ways < totalVisits){
-		
-			ellipse = visitedEllipseList.at (ways);
-			visitedEllipseList.at (ways)->setVisible(true);
-			QPoint ellipseCenter;// ( cellCenterX[pathR[ways]][pathS[ways]] , cellCenterY[pathR[ways]][pathS[ways]] );
-			
-			if(r == 255 || s == 255){
-				ellipseCenter.setX(toGrid(0));
-				ellipseCenter.setY(toGrid(0));
-			}else{
-				ellipseCenter.setX(cellCenterX[r][s]);
-				ellipseCenter.setY(cellCenterY[r][s]);
-			}
-			ellipse->setRect (ellipseCenter.x() - 5, ellipseCenter.y() - 5, 10, 10);
-			//float color = 100.0f + 155.0f*((float)(ways+1)/(float)pathLength);
-			ellipse->setBrush (QColor (Qt::transparent));
-		
-			int pix = 7;
-			smallLine = visitedSmallLineList.at (ways);
-			visitedSmallLineList.at (ways)->setVisible(true);
-			int orientation = pathO2[ways];
-			//orientation = orientation*2*M_PI/8;
-			//cout << "Mpika " <<  toGrid (targetRing*moveStepInMeters)/2 << " " << toGrid (targetCell*moveStepInMeters)/2 << endl;
-			float angle = orientation*2*M_PI/8.0f;
-			int newX = -KMath::toCartesianY ( 10, angle);
-			int newY = -KMath::toCartesianX ( 10, angle);
-			toP.setX ( ellipseCenter.x() + newX);
-			toP.setY (ellipseCenter.y() + newY );
-			smallLine->setLine (ellipseCenter.x(), ellipseCenter.y(), toP.x(), toP.y() );
-			//cout << ways << " " << orientation << endl;
-		}
-	}
+			cout << smallMap << endl;
 }
 
 void KMapScene::updateArrow() {
@@ -413,8 +349,6 @@ void KMapScene::updatePath() {
 		path = pathLineList.at (ways);
 		path->setLine (fromP.x(), fromP.y(), toP.x(), toP.y() );
 		if(ways < pathLength){
-		
-	cout << 4 << endl;
 			ellipse = pathEllipseList.at (ways);
 			QPoint ellipseCenter;// ( cellCenterX[pathR[ways]][pathS[ways]] , cellCenterY[pathR[ways]][pathS[ways]] );
 			

@@ -122,7 +122,6 @@ private:
 	//aStar global values
 	boost::object_pool<node> pool;
 	std::vector<coords> pathFromAStar;
-	std::vector<coords> visited;
 
 	//std::vector<temp> openNodes;
 	reservable_priority_queue<node *,std::vector<node*>, mycomparison > openNodes;
