@@ -41,7 +41,7 @@ public:
 	}
 	
 	void setPMObstaclesVisible(bool visible);
-	void updateObstacles(bool initialization);
+	void updateObstacles();
 	void updateArrow();
 
 	void setLPMTargetCoordVisible(bool visible) {
@@ -108,10 +108,6 @@ private:
 	QList<QGraphicsLineItem *> pathLineList;
 	QList<QGraphicsEllipseItem *> pathEllipseList;
 	QList<QGraphicsLineItem *> pathSmallLineList;
-
-
-	QList<QGraphicsEllipseItem *> visitedEllipseList;
-	QList<QGraphicsLineItem *> visitedSmallLineList;
 
 	float ringToDistance (int r);
 	float cellToTheta (int s);

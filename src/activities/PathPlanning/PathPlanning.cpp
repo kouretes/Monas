@@ -89,7 +89,7 @@ int PathPlanning::Execute() {
 	//update the grid with the new sonar values
 	while(currentTime < boost::posix_time::microsec_clock::universal_time()){
 		currentTime = currentTime + boost::posix_time::milliseconds(100);
-		rpm =  _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
+		rpm = _blk.readData<RobotPositionMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
 		processOdometryData();
 		pathMap.updateCells();
 		allsm =  _blk.readData<AllSensorValuesMessage> ("sensors", msgentry::HOST_ID_LOCAL_HOST, NULL, &currentTime);
@@ -127,8 +127,14 @@ int PathPlanning::Execute() {
 		aStarUseSmallGrid = pprm->forceuseofsmallmap();
 		if(pprm->targetx() <= smallPathMap.getRealMetters() && pprm->targety() <= smallPathMap.getRealMetters()){
 			aStarUseSmallGrid = true;
+		}else{
+			aStarUseSmallGrid = false;
 		}
-		if(!aStarUseSmallGrid){
+		
+		if(pprm->targetx()==0 && pprm->targety()==0){
+			aStarTargetR = 255;
+			aStarTargetC = 255;
+		}else if(!aStarUseSmallGrid){
 			aStarTargetR = (KMath::toPolarD(pprm->targetx(), pprm->targety())*pathMap.getRadiusCells())/pathMap.getRealMetters() - 1;
 			if(aStarTargetR >= pathMap.getRadiusCells()){
 				aStarTargetR = pathMap.getRadiusCells()-1;
@@ -231,7 +237,7 @@ void PathPlanning::publishGridInfo() {
 		gridInfoMessage.set_targetsector (aStarTargetC);
 		gridInfoMessage.set_targetorientation (aStarTargetZ * aStarTransformation);
 		int i=0;
-		for(int j = 0; j<pathFromAStar.size(); j++){
+		for(unsigned int j = 0; j<pathFromAStar.size(); j++){
 			gridInfoMessage.add_pathstepsring (0.0f);
 			gridInfoMessage.add_pathstepssector (0.0f);
 			gridInfoMessage.add_pathstepsorientation (0.0f);
@@ -244,19 +250,6 @@ void PathPlanning::publishGridInfo() {
 		}
 	}
 
-	
-	gridInfoMessage.clear_visitedring();
-	gridInfoMessage.clear_visitedsector();
-	gridInfoMessage.clear_visitedorientation();
-	int i = 0;
-	while(visited.size()!=0){
-		gridInfoMessage.add_visitedring (visited.back().x);
-		gridInfoMessage.add_visitedsector (visited.back().y);
-		gridInfoMessage.add_visitedorientation (visited.back().z);
-		i++;
-		visited.pop_back();
-	}
-
 	_blk.publishSignal (gridInfoMessage, "pathplanning");
 }
 
@@ -267,16 +260,28 @@ void PathPlanning::commitMovement(){
 		LogEntry(LogLevel::Info, GetName()) << "PathPlanning Commit return";
 		return;
 	}
-	 
+	
 	int lastElement = pathFromAStar.size()-1;
-	if(pathFromAStar.at(lastElement).z > aStarDirections/8 && pathFromAStar.at(lastElement).z < aStarDirections-aStarDirections/8 || pathFromAStar.size() == 1){
-		float phiSpeed = KMath::sign(KMath::wrapToPi(pathFromAStar.at(lastElement-1).z*aStarTransformation)/M_PI);
+	if((pathFromAStar.at(lastElement).z > aStarDirections/8 && pathFromAStar.at(lastElement).z < aStarDirections-aStarDirections/8) || pathFromAStar.size() == 1){
+		float phiSpeed;
+		if(pathFromAStar.size()==1){
+			phiSpeed = KMath::sign(KMath::wrapToPi(pathFromAStar.at(lastElement).z*aStarTransformation)/M_PI);
+		}else{
+			phiSpeed = KMath::sign(KMath::wrapToPi(pathFromAStar.at(lastElement-1).z*aStarTransformation)/M_PI);
+		}
 		velocityWalk(0.0f,0.0f,phiSpeed,1.0f);
 		LogEntry(LogLevel::Info, GetName()) << "PathPlanning Commit Move 1 phiSpeed = " << phiSpeed;
 	}else{
 		//Take the second step and calculate the movement base on that
-		float cartX = KMath::toCartesianX (pathFromAStar.at(lastElement-1).x * pathMap.getMoveSteps() + pathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * pathMap.getTurnsteps());
-		float cartY = KMath::toCartesianY (pathFromAStar.at(lastElement-1).x * pathMap.getMoveSteps() + pathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * pathMap.getTurnsteps());
+		float cartX, cartY;
+		if(!aStarUseSmallGrid){
+			cartX = KMath::toCartesianX (pathFromAStar.at(lastElement-1).x * pathMap.getMoveSteps() + pathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * pathMap.getTurnsteps());
+			cartY = KMath::toCartesianY (pathFromAStar.at(lastElement-1).x * pathMap.getMoveSteps() + pathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * pathMap.getTurnsteps());
+		}else{
+			cartX = KMath::toCartesianX (pathFromAStar.at(lastElement-1).x * smallPathMap.getMoveSteps() + smallPathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * smallPathMap.getTurnsteps());
+			cartY = KMath::toCartesianY (pathFromAStar.at(lastElement-1).x * smallPathMap.getMoveSteps() + smallPathMap.getMoveSteps() / 2, pathFromAStar.at(lastElement-1).y * smallPathMap.getTurnsteps());
+		}
+		
 		float xSpeed, ySpeed, phiSpeed;
 		float factor = 1.0f;
 		if(pathFromAStar.size() < 3){
@@ -290,12 +295,15 @@ void PathPlanning::commitMovement(){
 			xSpeed = KMath::sign(cartX)*fabs(cartX/cartY);
 		}
 		phiSpeed = KMath::sign(KMath::wrapToPi(pathFromAStar.at(lastElement-1).z*aStarTransformation)/M_PI);
-		
+		if(aStarUseSmallGrid){
+			factor = (float)pathFromAStar.size()/(float)smallPathMap.getRadiusCells();
+			factor = factor > 1 ? 1 : factor;
+		}
 		xSpeed *= factor;
 		ySpeed *= factor;	
 		
 		velocityWalk(xSpeed,ySpeed,phiSpeed/3,1.0f);
-		LogEntry(LogLevel::Info, GetName()) << "PathPlanning Commit Move 2 xSpeed = " << xSpeed << " ySpeed = " << ySpeed << " phiSpeed = " << phiSpeed;
+		LogEntry(LogLevel::Info, GetName()) << "PathPlanning Commit Move 2 factor = " << factor << " xSpeed = " << xSpeed << " ySpeed = " << ySpeed << " phiSpeed = " << phiSpeed << " smallGrid = " << aStarUseSmallGrid;
 	}
 }
 
@@ -320,7 +328,7 @@ void PathPlanning::aStar () {
 		return;
 	}
 	LogEntry(LogLevel::Info, GetName()) << "Ring = " << aStarTargetR << " Cell = " << aStarTargetC << " phi = " << aStarTargetZ;
-	//visited.clear();
+
 	currentValues.init();
 	directions.init();
 	
@@ -357,11 +365,7 @@ void PathPlanning::aStar () {
 			currentZ = popNode->z;
 			//cout << currentX << " " << currentY << " " << currentZ << " " << popNode->h <<  endl;
 		}while(currentX != 255 && currentValues.getElement(currentZ, currentX, currentY) == infinity);
-		coords tcoords;
-		tcoords.x = popNode->x;
-		tcoords.y = popNode->y;
-		tcoords.z = popNode->z;
-		//visited.push_back(tcoords);
+
 		if (currentX != 255 && currentY != 255) {
 			currentValues.setElement (currentZ, currentX, currentY, infinity );
 		}
@@ -495,17 +499,15 @@ inline void PathPlanning::updateG (node *n, int oldX, int oldY, int oldZ, int ne
 		realXdiff = smallPathMap.getRealX (newX, newY) - smallPathMap.getRealX (oldX, oldY);
 		realYdiff = smallPathMap.getRealY (newX, newY) - smallPathMap.getRealY (oldX, oldY);
 	}
-	int moved;
+
 	float dist;
 	if (oldX != newX || oldY != newY) {
-		moved = 1;
 		float movingAngle = KMath::fast_atan2f (realYdiff, realXdiff);
 		float difference = fabs (KMath::wrapTo0_2Pi (movingAngle)/aStarTransformation - oldZ);
 		difference = difference > aStarDirections / 2 ? aStarDirections - difference : difference;
 		tempValue = difference;
 		dist = sqrtf(realXdiff*realXdiff + realYdiff*realYdiff);
 	}else{
-		moved = 0.5;
 		dist = 0;
 	}
 

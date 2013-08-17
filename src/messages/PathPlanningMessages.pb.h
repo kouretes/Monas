@@ -606,42 +606,6 @@ class GridInfo : public ::google::protobuf::Message {
   inline float targetorientation() const;
   inline void set_targetorientation(float value);
   
-  // repeated int32 visitedRing = 13;
-  inline int visitedring_size() const;
-  inline void clear_visitedring();
-  static const int kVisitedRingFieldNumber = 13;
-  inline ::google::protobuf::int32 visitedring(int index) const;
-  inline void set_visitedring(int index, ::google::protobuf::int32 value);
-  inline void add_visitedring(::google::protobuf::int32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      visitedring() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_visitedring();
-  
-  // repeated int32 visitedSector = 14;
-  inline int visitedsector_size() const;
-  inline void clear_visitedsector();
-  static const int kVisitedSectorFieldNumber = 14;
-  inline ::google::protobuf::int32 visitedsector(int index) const;
-  inline void set_visitedsector(int index, ::google::protobuf::int32 value);
-  inline void add_visitedsector(::google::protobuf::int32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      visitedsector() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_visitedsector();
-  
-  // repeated int32 visitedOrientation = 15;
-  inline int visitedorientation_size() const;
-  inline void clear_visitedorientation();
-  static const int kVisitedOrientationFieldNumber = 15;
-  inline ::google::protobuf::int32 visitedorientation(int index) const;
-  inline void set_visitedorientation(int index, ::google::protobuf::int32 value);
-  inline void add_visitedorientation(::google::protobuf::int32 value);
-  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      visitedorientation() const;
-  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_visitedorientation();
-  
   // @@protoc_insertion_point(class_scope:GridInfo)
  private:
   inline void set_has_cellsradius();
@@ -675,12 +639,9 @@ class GridInfo : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > pathstepsorientation_;
   ::google::protobuf::int32 targetsector_;
   float targetorientation_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > visitedring_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > visitedsector_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > visitedorientation_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(15 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(12 + 31) / 32];
   
   friend void  protobuf_AddDesc_PathPlanningMessages_2eproto();
   friend void protobuf_AssignDesc_PathPlanningMessages_2eproto();
@@ -1240,81 +1201,6 @@ inline float GridInfo::targetorientation() const {
 inline void GridInfo::set_targetorientation(float value) {
   set_has_targetorientation();
   targetorientation_ = value;
-}
-
-// repeated int32 visitedRing = 13;
-inline int GridInfo::visitedring_size() const {
-  return visitedring_.size();
-}
-inline void GridInfo::clear_visitedring() {
-  visitedring_.Clear();
-}
-inline ::google::protobuf::int32 GridInfo::visitedring(int index) const {
-  return visitedring_.Get(index);
-}
-inline void GridInfo::set_visitedring(int index, ::google::protobuf::int32 value) {
-  visitedring_.Set(index, value);
-}
-inline void GridInfo::add_visitedring(::google::protobuf::int32 value) {
-  visitedring_.Add(value);
-}
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GridInfo::visitedring() const {
-  return visitedring_;
-}
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GridInfo::mutable_visitedring() {
-  return &visitedring_;
-}
-
-// repeated int32 visitedSector = 14;
-inline int GridInfo::visitedsector_size() const {
-  return visitedsector_.size();
-}
-inline void GridInfo::clear_visitedsector() {
-  visitedsector_.Clear();
-}
-inline ::google::protobuf::int32 GridInfo::visitedsector(int index) const {
-  return visitedsector_.Get(index);
-}
-inline void GridInfo::set_visitedsector(int index, ::google::protobuf::int32 value) {
-  visitedsector_.Set(index, value);
-}
-inline void GridInfo::add_visitedsector(::google::protobuf::int32 value) {
-  visitedsector_.Add(value);
-}
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GridInfo::visitedsector() const {
-  return visitedsector_;
-}
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GridInfo::mutable_visitedsector() {
-  return &visitedsector_;
-}
-
-// repeated int32 visitedOrientation = 15;
-inline int GridInfo::visitedorientation_size() const {
-  return visitedorientation_.size();
-}
-inline void GridInfo::clear_visitedorientation() {
-  visitedorientation_.Clear();
-}
-inline ::google::protobuf::int32 GridInfo::visitedorientation(int index) const {
-  return visitedorientation_.Get(index);
-}
-inline void GridInfo::set_visitedorientation(int index, ::google::protobuf::int32 value) {
-  visitedorientation_.Set(index, value);
-}
-inline void GridInfo::add_visitedorientation(::google::protobuf::int32 value) {
-  visitedorientation_.Add(value);
-}
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-GridInfo::visitedorientation() const {
-  return visitedorientation_;
-}
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-GridInfo::mutable_visitedorientation() {
-  return &visitedorientation_;
 }
 
 

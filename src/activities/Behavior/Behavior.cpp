@@ -178,6 +178,10 @@ void Behavior::Reset(){
 	}
 	gameMode = atoi(Configurator::Instance().findValueForKey("teamConfig.game_mode").c_str()) == 1 ? true : false;
 	LogEntry(LogLevel::Info, GetName())<<"Reset done";
+	times = 380;
+	x=0;
+	y=0;
+	phi=0;
 }
 
 /* Behavior Main Execution Function */
@@ -187,6 +191,35 @@ int Behavior::Execute() {
 	KPROF_SCOPE(prf, "Execute");
 	
 	readMessages();
+	times++;
+	times = 400;
+	if(times == 100){
+	x=0.1;
+	y=1.0;
+	phi=M_PI/2;
+
+	}else if(times == 200){
+	x=1.1;
+	y=0.2;
+	phi= M_PI/4;
+
+	}else if(times == 300){
+	x=-0.4;
+	y=0.5;
+	phi=-M_PI/3;
+
+	}else if(times == 400){
+	x=0.1;
+	y=-0.15;
+	phi=-M_PI/8;
+	}else if(times == 500){
+	x=-0.14;
+	y=0.1;
+	phi=-M_PI/2;
+		times = 0;
+	}
+	pathPlanningRequest(x, y, phi, false);
+	return 0;
 	getBallData();
 	getGameState();
 	getPosition();
