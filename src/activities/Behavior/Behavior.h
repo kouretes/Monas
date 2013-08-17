@@ -38,7 +38,8 @@ ACTIVITY_START
 class Behavior: public IActivity {
 
 public:
-
+int times;
+	float x, y, phi;
 	//ACTIVITY_CONSTRUCTOR(Behavior);
 	
 	ACTIVITY_VISIBLE Behavior(Blackboard& b);
