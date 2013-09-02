@@ -2,6 +2,9 @@
 
 <!-- ROLES ON XML IS BASED ON THE ENUM ROLES OF FORMATION PARAMETERS HEADER SO PLEASE CHECK IT!-->
 
+<!-- Number of positions to be generated NOTE: IF THIS NUMBER DOES NOT CORRESPOND TO THE NUMBER OF GIVEN POSES ABOVE, THE CODE WOULD PROBABLY EXPLODE!-->
+<positions>4</positions>
+
 <!--noKickOff, team color is red, for blue team color multiply posx, posy with -1 -->
 <noKickOff>
 	<!-- GoalKeeper-->

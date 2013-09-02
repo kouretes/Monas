@@ -14,6 +14,8 @@
 #include "messages/RoboCupGameControlData.h"
 #include "messages/Debug.pb.h"
 
+#include "core/messages/Network.pb.h"
+
 #include "hal/robot/generic_nao/robot_consts.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -108,7 +110,7 @@ private:
 		struct Kick kicks;
 
 	} config;
-
+		
 	/* --------------------------------- Messages and Messaging Functions ---------------------------------- */
 
 	/**
@@ -121,7 +123,9 @@ private:
 	boost::shared_ptr<const SharedWorldInfo>  swim;
 	boost::shared_ptr<const MotionStateMessage> sm;
 	boost::shared_ptr<const ButtonMessage> bm;
-
+	boost::shared_ptr<const gBestMessage> gbm;
+	boost::shared_ptr<const KnownHosts> h;
+	
 	/**
 	 * Outgoing Messages
 	 */
@@ -130,6 +134,7 @@ private:
 	MotionActionMessage amot;
 	LocalizationResetMessage locReset;
 	PathPlanningRequestMessage pprm;
+	gBestMessage gBestm;
 	ObstacleMessage fom;	// fake obstacle message!
 	FormationDataForGUI fdg;
 	PSODataForGUI psodg;
@@ -173,7 +178,11 @@ private:
 	 * @brief Information gathering function, that reads motion state of the robot.
 	 */
 	void getMotionData();
-
+	
+	void getPSOData();
+	
+	void sendGlobalBest(PSO::particle &bestParticle, float gBestCost);
+	
 	/**
 	 * @fn void sendDebugMessages()
 	 * @brief Send messages for debug.
@@ -260,6 +269,7 @@ private:
 	void Coordinate();
 
 	void checkIfBumperPressed();
+	
 	/* --------------------------------- Behavior Variables ---------------------------------- */
 
 	bool ballFound, sharedBallFound;	// variables that is true if we see the ball.
@@ -288,7 +298,7 @@ private:
 
 	int gameState, prevGameState;
 
-	bool goalieApproachStarted, goToPositionFlag, robotStopped, PSOflag;
+	bool goalieApproachStarted, goToPositionFlag, robotStopped, PSOflag, PSOhasRun;
 
 	bool gameMode, penaltyMode;
 
@@ -297,7 +307,11 @@ private:
 	FormationGenerator fGen; // object that create and update the team formation
 
 	boost::posix_time::ptime lastWalk, scanKickTime, lastPlay, lastPenalised, penalisedStarted, lastFormation, lastBallFound, lastGoToCenter, lastScan, dispTimer; // timers
-	boost::posix_time::ptime lastBumperPressed, tic, toc; //moretimes
+	boost::posix_time::ptime lastBumperPressed; //more times
+	
+	bool synchronization;
+	
+	unsigned int coordinationCycle;
 	
 	float mapCost, maxU;
 

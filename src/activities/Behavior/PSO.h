@@ -9,10 +9,25 @@ namespace PSO {
 	
 	typedef vector<float> particle;	// particle type
 	
+	struct PSOData{
+		particle gBest;
+		float value;
+		unsigned int cycle;
+	};
+	
+	inline bool comparePSOData(const PSOData &data1, const PSOData &data2) {
+    	return (data1.value > data2.value);
+	}
+	
+	inline void sortPSOData(vector<PSOData> &mappings) {
+		sort(mappings.begin(), mappings.end(), comparePSOData);
+	}
+	
 	const unsigned int DIM = 2; // dimensions of each robot (x, y)
 	const float omega = 0.5f;
 	
 	unsigned int unfIndex;
+  	float gBestCost;
   	
   	/**
   	 * @fn vector<float> uniformVector(unsigned int size)
@@ -38,6 +53,8 @@ namespace PSO {
 		
 		float Ux = 0.0f, Uxbest = 0.0f, UgStar = 0.0f;
 		
+		gBestCost = 0.0f;
+		
 		vector<particle> swarmX(swarmSize);
 		vector<particle> swarmV(swarmSize);
 		vector<particle> swarmXbest(swarmSize);
@@ -45,8 +62,6 @@ namespace PSO {
 
 		vector<posInfo> temp;
 		
-		particle test(DIM*robots.size());
-
 		for(unsigned int p = 0 ; p < swarmSize ; p++) {
 			
 			temp.resize(fGen.getFormation()->size() - 1);
@@ -73,8 +88,10 @@ namespace PSO {
 			Uxbest = U(swarmXbest[p], ballY, fGen, robots);
 			UgStar = U(gStar, ballY, fGen, robots);
 
-            if( Uxbest > UgStar )
+            if( Uxbest > UgStar ) {
             	gStar = swarmXbest[p];
+				gBestCost = Uxbest;
+			}
             	
             temp.clear();
 		}
@@ -99,8 +116,10 @@ namespace PSO {
                  
                 if(Ux > Uxbest) {
                     swarmXbest[p] = swarmX[p];
-                    if(Uxbest > UgStar)
+                    if(Uxbest > UgStar) {
                         gStar = swarmXbest[p];
+    					gBestCost = Uxbest;
+                    }
              	}
 			}
 		}

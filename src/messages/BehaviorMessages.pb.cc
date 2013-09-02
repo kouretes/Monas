@@ -27,6 +27,9 @@ const ::google::protobuf::Descriptor* HeadControlMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   HeadControlMessage_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* HeadControlMessage_HEADACTIONS_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* gBestMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  gBestMessage_reflection_ = NULL;
 
 }  // namespace
 
@@ -91,6 +94,22 @@ void protobuf_AssignDesc_BehaviorMessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(HeadControlMessage));
   HeadControlMessage_HEADACTIONS_descriptor_ = HeadControlMessage_descriptor_->enum_type(0);
+  gBestMessage_descriptor_ = file->message_type(3);
+  static const int gBestMessage_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(gBestMessage, gstarparticle_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(gBestMessage, value_),
+  };
+  gBestMessage_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      gBestMessage_descriptor_,
+      gBestMessage::default_instance_,
+      gBestMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(gBestMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(gBestMessage, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(gBestMessage));
 }
 
 namespace {
@@ -109,6 +128,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     BodyControlMessage_descriptor_, &BodyControlMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     HeadControlMessage_descriptor_, &HeadControlMessage::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    gBestMessage_descriptor_, &gBestMessage::default_instance());
 }
 
 }  // namespace
@@ -120,6 +141,8 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto() {
   delete BodyControlMessage_reflection_;
   delete HeadControlMessage::default_instance_;
   delete HeadControlMessage_reflection_;
+  delete gBestMessage::default_instance_;
+  delete gBestMessage_reflection_;
 }
 
 void protobuf_AddDesc_BehaviorMessages_2eproto() {
@@ -147,15 +170,18 @@ void protobuf_AddDesc_BehaviorMessages_2eproto() {
     "S\022\013\n\007NOTHING\020\000\022\t\n\005FROWN\020\001\022\033\n\027SCAN_AND_TR"
     "ACK_FOR_BALL\020\002\022\014\n\010LOCALIZE\020\003\022\020\n\014LOCALIZE"
     "_FAR\020\004\022\020\n\014SMART_SELECT\020\005\022\010\n\004SCAN\020\006\022\031\n\025GO"
-    "ALIE_LOCALIZE_CLOSE\020\007", 661);
+    "ALIE_LOCALIZE_CLOSE\020\007\"4\n\014gBestMessage\022\025\n"
+    "\rgStarParticle\030\001 \003(\002\022\r\n\005value\030\002 \002(\002", 715);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "BehaviorMessages.proto", &protobuf_RegisterTypes);
   ActionDescription::default_instance_ = new ActionDescription();
   BodyControlMessage::default_instance_ = new BodyControlMessage();
   HeadControlMessage::default_instance_ = new HeadControlMessage();
+  gBestMessage::default_instance_ = new gBestMessage();
   ActionDescription::default_instance_->InitAsDefaultInstance();
   BodyControlMessage::default_instance_->InitAsDefaultInstance();
   HeadControlMessage::default_instance_->InitAsDefaultInstance();
+  gBestMessage::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_BehaviorMessages_2eproto);
 }
 
@@ -1139,6 +1165,258 @@ void HeadControlMessage::Swap(HeadControlMessage* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = HeadControlMessage_descriptor_;
   metadata.reflection = HeadControlMessage_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int gBestMessage::kGStarParticleFieldNumber;
+const int gBestMessage::kValueFieldNumber;
+#endif  // !_MSC_VER
+
+gBestMessage::gBestMessage()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void gBestMessage::InitAsDefaultInstance() {
+}
+
+gBestMessage::gBestMessage(const gBestMessage& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void gBestMessage::SharedCtor() {
+  _cached_size_ = 0;
+  value_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+gBestMessage::~gBestMessage() {
+  SharedDtor();
+}
+
+void gBestMessage::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void gBestMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* gBestMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return gBestMessage_descriptor_;
+}
+
+const gBestMessage& gBestMessage::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_BehaviorMessages_2eproto();  return *default_instance_;
+}
+
+gBestMessage* gBestMessage::default_instance_ = NULL;
+
+gBestMessage* gBestMessage::New() const {
+  return new gBestMessage;
+}
+
+void gBestMessage::Clear() {
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    value_ = 0;
+  }
+  gstarparticle_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool gBestMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated float gStarParticle = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_gStarParticle:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 13, input, this->mutable_gstarparticle())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_gstarparticle())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(13)) goto parse_gStarParticle;
+        if (input->ExpectTag(21)) goto parse_value;
+        break;
+      }
+      
+      // required float value = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+         parse_value:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &value_)));
+          set_has_value();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void gBestMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // repeated float gStarParticle = 1;
+  for (int i = 0; i < this->gstarparticle_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(
+      1, this->gstarparticle(i), output);
+  }
+  
+  // required float value = 2;
+  if (has_value()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->value(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* gBestMessage::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // repeated float gStarParticle = 1;
+  for (int i = 0; i < this->gstarparticle_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatToArray(1, this->gstarparticle(i), target);
+  }
+  
+  // required float value = 2;
+  if (has_value()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->value(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int gBestMessage::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    // required float value = 2;
+    if (has_value()) {
+      total_size += 1 + 4;
+    }
+    
+  }
+  // repeated float gStarParticle = 1;
+  {
+    int data_size = 0;
+    data_size = 4 * this->gstarparticle_size();
+    total_size += 1 * this->gstarparticle_size() + data_size;
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void gBestMessage::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const gBestMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const gBestMessage*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void gBestMessage::MergeFrom(const gBestMessage& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  gstarparticle_.MergeFrom(from.gstarparticle_);
+  if (from._has_bits_[1 / 32] & (0xffu << (1 % 32))) {
+    if (from.has_value()) {
+      set_value(from.value());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void gBestMessage::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void gBestMessage::CopyFrom(const gBestMessage& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool gBestMessage::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000002) != 0x00000002) return false;
+  
+  return true;
+}
+
+void gBestMessage::Swap(gBestMessage* other) {
+  if (other != this) {
+    gstarparticle_.Swap(&other->gstarparticle_);
+    std::swap(value_, other->value_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata gBestMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = gBestMessage_descriptor_;
+  metadata.reflection = gBestMessage_reflection_;
   return metadata;
 }
 

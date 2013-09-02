@@ -1,7 +1,6 @@
 import "VisionObservations.proto";
 import "WorldInfo.proto";
 
-
 message ActionDescription{
 	enum URGENCY_LEVELS{
 		SOMEDAY=0;
@@ -17,6 +16,7 @@ message ActionDescription{
 	required float phi=6 [default = -1];
 	required float speed=7 [default = -1];
 }
+
 message BodyControlMessage{
 	enum BODYACTIONS{
 		NOTHING=0;
@@ -29,6 +29,7 @@ message BodyControlMessage{
 	}
 	required ActionDescription task=1;
 }
+
 message HeadControlMessage{
 	enum HEADACTIONS{
 		NOTHING=0;
@@ -42,3 +43,9 @@ message HeadControlMessage{
 	}
 	required ActionDescription task=1;
 }
+
+message gBestMessage { // used for the PSO algorithm
+	repeated float gStarParticle = 1;
+	required float value = 2;
+}
+

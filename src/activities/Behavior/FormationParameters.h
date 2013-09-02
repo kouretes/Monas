@@ -8,7 +8,7 @@ using std::vector;
 using std::sort;
 
 namespace FormationParameters {
-		
+	
 	/**
 	 * @enum Role
 	 * @brief enum to attach roles on positions.

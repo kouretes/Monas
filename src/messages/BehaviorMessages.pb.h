@@ -35,6 +35,7 @@ void protobuf_ShutdownFile_BehaviorMessages_2eproto();
 class ActionDescription;
 class BodyControlMessage;
 class HeadControlMessage;
+class gBestMessage;
 
 enum ActionDescription_URGENCY_LEVELS {
   ActionDescription_URGENCY_LEVELS_SOMEDAY = 0,
@@ -501,6 +502,101 @@ class HeadControlMessage : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static HeadControlMessage* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class gBestMessage : public ::google::protobuf::Message {
+ public:
+  gBestMessage();
+  virtual ~gBestMessage();
+  
+  gBestMessage(const gBestMessage& from);
+  
+  inline gBestMessage& operator=(const gBestMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const gBestMessage& default_instance();
+  
+  void Swap(gBestMessage* other);
+  
+  // implements Message ----------------------------------------------
+  
+  gBestMessage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const gBestMessage& from);
+  void MergeFrom(const gBestMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated float gStarParticle = 1;
+  inline int gstarparticle_size() const;
+  inline void clear_gstarparticle();
+  static const int kGStarParticleFieldNumber = 1;
+  inline float gstarparticle(int index) const;
+  inline void set_gstarparticle(int index, float value);
+  inline void add_gstarparticle(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      gstarparticle() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_gstarparticle();
+  
+  // required float value = 2;
+  inline bool has_value() const;
+  inline void clear_value();
+  static const int kValueFieldNumber = 2;
+  inline float value() const;
+  inline void set_value(float value);
+  
+  // @@protoc_insertion_point(class_scope:gBestMessage)
+ private:
+  inline void set_has_value();
+  inline void clear_has_value();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedField< float > gstarparticle_;
+  float value_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_BehaviorMessages_2eproto();
+  friend void protobuf_AssignDesc_BehaviorMessages_2eproto();
+  friend void protobuf_ShutdownFile_BehaviorMessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static gBestMessage* default_instance_;
+};
 // ===================================================================
 
 
@@ -762,6 +858,57 @@ inline ::ActionDescription* HeadControlMessage::release_task() {
   ::ActionDescription* temp = task_;
   task_ = NULL;
   return temp;
+}
+
+// -------------------------------------------------------------------
+
+// gBestMessage
+
+// repeated float gStarParticle = 1;
+inline int gBestMessage::gstarparticle_size() const {
+  return gstarparticle_.size();
+}
+inline void gBestMessage::clear_gstarparticle() {
+  gstarparticle_.Clear();
+}
+inline float gBestMessage::gstarparticle(int index) const {
+  return gstarparticle_.Get(index);
+}
+inline void gBestMessage::set_gstarparticle(int index, float value) {
+  gstarparticle_.Set(index, value);
+}
+inline void gBestMessage::add_gstarparticle(float value) {
+  gstarparticle_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+gBestMessage::gstarparticle() const {
+  return gstarparticle_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+gBestMessage::mutable_gstarparticle() {
+  return &gstarparticle_;
+}
+
+// required float value = 2;
+inline bool gBestMessage::has_value() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void gBestMessage::set_has_value() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void gBestMessage::clear_has_value() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void gBestMessage::clear_value() {
+  value_ = 0;
+  clear_has_value();
+}
+inline float gBestMessage::value() const {
+  return value_;
+}
+inline void gBestMessage::set_value(float value) {
+  set_has_value();
+  value_ = value;
 }
 
 

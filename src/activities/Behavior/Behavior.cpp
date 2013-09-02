@@ -34,6 +34,8 @@ void Behavior::UserInit() {
 	_blk.updateSubscription("pathplanning", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("behavior", msgentry::SUBSCRIBE_ON_TOPIC);
 	_blk.updateSubscription("buttonevents", msgentry::SUBSCRIBE_ON_TOPIC);
+	_blk.updateSubscription("external", msgentry::SUBSCRIBE_ON_TOPIC, msgentry::HOST_ID_ANY_HOST); // used for PSO synchronization
+	_blk.updateSubscription("communication", msgentry::SUBSCRIBE_ON_TOPIC);
 
 	wmot.add_parameter(0.0f);
 	wmot.add_parameter(0.0f);
@@ -47,15 +49,18 @@ void Behavior::UserInit() {
 	kickOff = false;
 	dist = false;
 	gsmtime = false;
+	synchronization = true;
 	cX = 0.0;
 	cY = 0.0;
 	ct = 0.0;
+	coordinationCycle = 0;
 	ballX = 0.0, ballY = 0.0, ballDist = 0.0, ballBearing = 0.0;
+	SharedGlobalBallX = 0.0, SharedGlobalBallY = 0.0, lastSharedBallX = 0.0, lastSharedBallY = 0.0;
 	goalieApproachStarted = false;
 	side =+ 1;
 	robotX = 0.0, robotY = 0.0, robotPhi = 0.0;
 	readyToKick = false, scanAfterKick = false;
-	PSOflag = false;
+	PSOflag = false, PSOhasRun = false;
 	direction = 1;
 	orientation = 0;
 	numOfRobots = 0;
@@ -121,7 +126,8 @@ void Behavior::Reset(){
 	config.kicks.KickBackLeft = Configurator::Instance().findValueForKey("behavior.KickBackLeft").c_str();
 	config.kicks.KickBackRight = Configurator::Instance().findValueForKey("behavior.KickBackRight").c_str();
 	config.ur = atof(Configurator::Instance().findValueForKey("behavior.ur").c_str());
-	config.positions = (unsigned int)atoi(Configurator::Instance().findValueForKey("behavior.positions").c_str());
+	
+	config.positions = (unsigned int)atoi(Configurator::Instance().findValueForKey("playerConfig.positions").c_str());
 	
 	// === read robot configuration xml data from playerConfig.xml===
 	if ( (config.playerNumber < 1) || (config.playerNumber > config.maxPlayers) )
@@ -186,6 +192,8 @@ int Behavior::Execute() {
 	
 	KPROF_SCOPE(prf, "Execute");
 	
+	gBestm.Clear();
+	
 	readMessages();
 	getBallData();
 	getGameState();
@@ -194,6 +202,10 @@ int Behavior::Execute() {
 	getTeamInfo();
 	checkIfBumperPressed();
 	
+	if(PSOflag == true && PSOhasRun == true) {
+		getPSOData();
+	}
+		
     if (gameState == PLAYER_INITIAL) {
 		if(prevGameState != PLAYER_INITIAL) {
         	hcontrol.mutable_task()->set_action(HeadControlMessage::FROWN);
@@ -222,6 +234,7 @@ int Behavior::Execute() {
 		}
 
 		if(swim == 0 && config.playerNumber != 1) {
+			LogEntry(LogLevel::Info, GetName()) << "NO SWI";
 			currentRole.role = FormationParameters::ONBALL;
 			goToPositionFlag = true;
 		}
@@ -230,11 +243,13 @@ int Behavior::Execute() {
 		readyToKick = false;
 
 		if(sharedBallFound == true && !penaltyMode) {
+		LogEntry(LogLevel::Info, GetName()) << "SHARED BALL";
 			if( (gsmtime = (gsm != 0 && gsm.get() != 0 && gsm->secs_remaining()%20 == 19)) ||
 				(lastFormation + seconds(20) < microsec_clock::universal_time()) ||
 				(dist = (DISTANCE(SharedGlobalBallX, lastSharedBallX, SharedGlobalBallY, lastSharedBallY) >= 0.7f)) ) {
-
-
+				
+				coordinationCycle++;
+				
 				if(dist) {
 					dist = false;
 					LogEntry(LogLevel::Info, GetName()) << "DISTANCE";
@@ -271,9 +286,9 @@ int Behavior::Execute() {
 				else {
 					LogEntry(LogLevel::Info, GetName()) << "GOALIE: NO COORDINATION";
 					currentRole = fGen.findRoleInfo(FormationParameters::GOALIE);
+					goToPositionFlag = false;
 				}
 					
-				goToPositionFlag = false;
 				lastFormation = microsec_clock::universal_time();
 			}
 		}
@@ -309,7 +324,7 @@ int Behavior::Execute() {
 			goalie();
 		}
 		else { // not goalie behavior
-
+			
 			if(currentRole.role == FormationParameters::ONBALL) {
 
 				if(goToPositionFlag == false && ballFound == 0) {
@@ -348,7 +363,7 @@ int Behavior::Execute() {
 						readyToKick = true;
 						scanAfterKick = true;
                         scanKickTime = microsec_clock::universal_time();
-						return 0; // do nothing!!!
+						//return 0; // do nothing!!!
 						kick();
 						direction = (side == +1) ? -1 : +1;
 					}
@@ -484,11 +499,19 @@ int Behavior::Execute() {
 		stopRobot();
 		return 0;
 	}
-	else if (gameState == PLAYER_SET) { // TODO generate initial formation here!
+	else if (gameState == PLAYER_SET) {
 
 		if(gsm != 0 && gsm.get() != 0)
 			kickOff = gsm->kickoff();
-
+		
+		if(prevGameState != PLAYER_READY) {
+			fGen.XmlInitFormation(kickOff);
+			if(!gameMode)
+				sendFormationDebugMessages();
+			currentRole = fGen.getFormation()->at(config.playerNumber - 1);
+			lastFormation = microsec_clock::universal_time();
+		}
+		
 		if(gameState != prevGameState) {
 			// Reset Loc
 			locReset.set_type(LocalizationResetMessage::SET);
@@ -532,27 +555,16 @@ void Behavior::Coordinate() {
 		
 		if(PSOflag == true) {
 			
-			vector<float> bestParticle;
-			float d = 0.0f, minD = INF;
+			particle bestParticle;
 			
 			bestParticle = runPSO(10, 10, fGen, robots, SharedGlobalBallY);
+				
+			sendGlobalBest(bestParticle, gBestCost);
 			
-			robotIndex = getRobotIndex(robots, config.playerNumber);
-			currentRole.X = bestParticle[2*robotIndex];
-			currentRole.Y = bestParticle[2*robotIndex + 1];
-			
-			for(unsigned int i = 1 ; i < fGen.getFormation()->size() ; i++) {
-				d = DISTANCE(currentRole.X, fGen.getFormation()->at(i).X, currentRole.Y, fGen.getFormation()->at(i).Y);
-				if(Min(d, minD) == d) {
-					minD = d;
-					index = i;
-				}
-			}
-			currentRole.role = fGen.getFormation()->at(index).role;
-			LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
 			if(!gameMode) {
 				sendPSODebugMessages(bestParticle);
 			}
+			PSOhasRun = true;
 		}
 		else {
 			
@@ -621,6 +633,8 @@ void Behavior::Coordinate() {
 			if(!gameMode) {
 				sendBFDebugMessages(mappings[index]);
 			}
+			
+			goToPositionFlag = false;
 		}
 }
 
@@ -635,6 +649,7 @@ void Behavior::readMessages() {
 	wim  = _blk.readData<WorldInfo> ("worldstate");
 	swim = _blk.readData<SharedWorldInfo> ("worldstate");
 	sm = _blk.readState<MotionStateMessage>("worldstate");
+	h = _blk.readState<KnownHosts>("communication");
 }
 
 /* --------------------------------- Information gathering functions from messages ---------------------------------- */
@@ -645,6 +660,93 @@ void Behavior::checkIfBumperPressed(){
 		if(lbump == 1 || rbump == 1){
 			lastBumperPressed = microsec_clock::universal_time();
 		}
+	}
+}
+
+void Behavior::getPSOData() {
+	
+	int robotIndex = -1;
+	float d = 0.0f, minD = INF;
+	vector<PSOData> mappings;
+	
+	gbm = _blk.readData<gBestMessage>("external", msgentry::HOST_ID_LOCAL_HOST);
+		
+	if(gbm != 0 && gbm.get() != 0) {
+		PSOData newData;
+		for(int i = 0 ; i < gbm->gstarparticle_size()-1 ; i++)
+			newData.gBest.insert(newData.gBest.end(), gbm->gstarparticle(i));
+		newData.value = gbm->value();
+		newData.cycle = gbm->gstarparticle(gbm->gstarparticle_size()-1);
+		mappings.insert(mappings.end(), newData);
+    }
+		
+	if(!h.get() || (h && h->entrylist_size() == 0)) {
+		;
+	}
+	else {
+		const ::google::protobuf::RepeatedPtrField< HostEntry >& rf = h->entrylist();
+		::google::protobuf::RepeatedPtrField< HostEntry >::const_iterator fit;
+
+		for(fit = rf.begin(); fit != rf.end(); ++fit) {
+	        gbm  = _blk.readData<gBestMessage>("external", (*fit).hostid());
+
+	        if(gbm != 0 && gbm.get() != 0) {
+	        	PSOData newData;
+	       		for(int i = 0 ; i < gbm->gstarparticle_size()-1 ; i++)
+					newData.gBest.insert(newData.gBest.end(), gbm->gstarparticle(i));
+				newData.value = gbm->value();
+				newData.cycle = gbm->gstarparticle(gbm->gstarparticle_size()-1);
+				mappings.insert(mappings.end(), newData);
+			}
+		}
+	}
+	
+	/*
+	LogEntry(LogLevel::Info, GetName()) << "MAPPINGS RECEIVED: " << mappings.size();
+	for(int k = 0 ; k < mappings.size() ; k++) {
+		for(int l = 0 ; l < mappings[k].gBest.size() ; l++) {
+			std::cout << mappings[k].gBest[l] << " ";
+		}
+		LogEntry(LogLevel::Info, GetName()) << "U_VALUE:" << mappings[k].value;
+		LogEntry(LogLevel::Info, GetName()) << "TIMESTAMP:" << mappings[k].time;
+	}*/
+				
+	for(unsigned int r = 0 ; r < mappings.size() ; r++) {
+		if(r+1 < mappings.size()) {
+			if(/*mappings[r].stamp - mappings[r+1].stamp).total_seconds() > 5*/ mappings[r].cycle != mappings[r+1].cycle 
+				&& lastFormation + seconds(4) > microsec_clock::universal_time()) {
+				synchronization = false;
+				break;
+			}
+			else
+				synchronization = true;
+		}
+	}
+	
+	if(synchronization == true) {
+		sortPSOData(mappings);
+	
+		LogEntry(LogLevel::Info, GetName()) << "BEST PSO MAPPING:" << mappings[0].value;
+	
+		robotIndex = getRobotIndex(robots, config.playerNumber);
+		currentRole.X = mappings[0].gBest[2*robotIndex];
+		currentRole.Y = mappings[0].gBest[2*robotIndex + 1];
+	
+		for(unsigned int i = 1 ; i < fGen.getFormation()->size() ; i++) {
+			d = DISTANCE(currentRole.X, fGen.getFormation()->at(i).X, currentRole.Y, fGen.getFormation()->at(i).Y);
+			if(Min(d, minD) == d) {
+				minD = d;
+				index = i;
+			}
+		}
+		currentRole.role = fGen.getFormation()->at(index).role;
+		LogEntry(LogLevel::Info, GetName()) << "MY OPTIMAL ROLE IS: " << getRoleString(currentRole.role);
+		if(!gameMode) {
+			sendPSODebugMessages(mappings[0].gBest);
+		}
+		
+		PSOhasRun = false;
+		goToPositionFlag = false;
 	}
 }
 
@@ -721,6 +823,16 @@ void Behavior::getMotionData() {
 	if(sm != 0) {
 		currentRobotAction = sm->type();
 	}
+}
+
+void Behavior::sendGlobalBest(PSO::particle &bestParticle, float gBestCost) {
+	
+	for(unsigned int i = 0 ; i < bestParticle.size() ; i++)
+		gBestm.add_gstarparticle(bestParticle[i]);
+
+	gBestm.set_value(gBestCost);
+	gBestm.add_gstarparticle(coordinationCycle);
+	_blk.publishData(gBestm, "external");
 }
 
 void Behavior::sendFormationDebugMessages() {
