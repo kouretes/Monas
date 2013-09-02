@@ -423,6 +423,7 @@ void LocalWorldController::PSODataUpdateHandler(PSODataForGUI debugData, QString
 	GraphicalRobotElement *element = paintArea->findGraphicalRobotItem(host);
 	
 	if(element != NULL) {
+		element->setCurrentPSODG(debugData);
 		if(element->getLWSPSOPositionsVisible()) { 
 			element->setPSOPositionsVisible(false);
 			element->updatePSOPositionsRects(debugData);

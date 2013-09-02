@@ -57,6 +57,7 @@ public:
 	void setCurrentEKFMHypothesisM(EKFMHypothesis ekfMHyp);
     void setCurrentOdometryM(OdometryInfoMessage odometryM);
 	void setCurrentMDG(MappingDataForGUI nmdg);
+	void setCurrentPSODG(PSODataForGUI psodg);
 	
 	void setGWSRobotVisible(bool visible) {
 		GWSRobotVisible = visible;
@@ -374,6 +375,7 @@ private:
     GameStateMessage prevGSM;
     EKFMHypothesis currentEKFMHypothesis;
     MappingDataForGUI currentMDG;
+    PSODataForGUI currentPSODG;
 
     OdometryInfoMessage currentOdometryM;
     bool LWSVarianceVisible;
@@ -400,6 +402,7 @@ private:
 	QList<QGraphicsEllipseItem *> PositionsList;
 	QList<QGraphicsEllipseItem *> PSOPositionsList;
 	QList<QGraphicsLineItem *> MappingLinesList;
+	QList<QGraphicsLineItem *> PSOLinesList;
 	int numOfPositions;
 
 	bool GWSBallVisible;

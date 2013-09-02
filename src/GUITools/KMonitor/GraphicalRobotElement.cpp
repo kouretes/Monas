@@ -23,6 +23,7 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	ParticlesList.clear();
 	PositionsList.clear();
 	PSOPositionsList.clear();
+	PSOLinesList.clear();
 	MappingLinesList.clear();
 	RobotPositions.set_capacity(100);
 	UnionistLines.set_capacity(99);
@@ -83,6 +84,11 @@ GraphicalRobotElement::GraphicalRobotElement(KFieldScene *parent, QString host) 
 	for(int it = 0 ; it < numOfRobots ; it++) {
 		QGraphicsLineItem *line = this->parentScene->addLine(QLineF(), QPen(Qt::black));
 		MappingLinesList.append(line);
+	}
+	
+	for(int it = 0 ; it < numOfRobots ; it++) {
+		QGraphicsLineItem *line = this->parentScene->addLine(QLineF(), QPen(Qt::black));
+		PSOLinesList.append(line);
 	}
 	
 	HFOVLines = this->parentScene->addPolygon(QPolygonF(), QPen(Qt::darkCyan), QBrush(Qt::Dense7Pattern));
@@ -217,6 +223,11 @@ GraphicalRobotElement::~GraphicalRobotElement() {
 			delete MappingLinesList.at(i);
 	}
 	
+	for(int i = 0 ; i < PSOLinesList.count() ; i++) {
+		if(PSOLinesList.at(i))
+			delete PSOLinesList.at(i);
+	}
+	
 	boost::circular_buffer<QGraphicsEllipseItem*>::iterator P_it;
 
 	for(P_it = RobotPositions.begin() ; P_it != RobotPositions.end() ; ++P_it) {
@@ -277,6 +288,11 @@ void GraphicalRobotElement::loadXMLteamConfigParameters() {
 void GraphicalRobotElement::setCurrentMDG(MappingDataForGUI nmdg) {
 	currentMDG.Clear();
     currentMDG = nmdg;
+}
+
+void GraphicalRobotElement::setCurrentPSODG(PSODataForGUI psodg) {
+	currentPSODG.Clear();
+    currentPSODG = psodg;
 }
 
 void GraphicalRobotElement::setCurrentWIM(WorldInfo nwim) {
@@ -345,6 +361,8 @@ void GraphicalRobotElement::setTeammatesVisible(bool visible) {
 		TeammateDirections[i]->setVisible(visible);
 		if(LWSMappingVisible)
 			MappingLinesList.at(i)->setVisible(visible);
+		else if(LWSPSOPositionsVisible)
+			PSOLinesList.at(i)->setVisible(visible);
 	}
 }
 
@@ -466,6 +484,9 @@ void GraphicalRobotElement::updateTeammatesRects() {
 		
 		if(LWSMappingVisible)
 			updateMappingLines(currentMDG);
+		
+		if(LWSPSOPositionsVisible)
+			updatePSOPositionsRects(currentPSODG);
 	}
 }
 
@@ -680,15 +701,32 @@ void GraphicalRobotElement::setPSOPositionsVisible(bool visible) {
 	for(int i = 0 ; i < PSOPositionsList.count() ; i++) {
 		PSOPositionsList.at(i)->setVisible(visible);		
 	}
+	
+	if(LWSTeammatesVisible) {
+		for(int i = 0 ; i < PSOLinesList.count() ; i++) {
+			PSOLinesList.at(i)->setVisible(visible);		
+		}
+	}
 }
 
 void GraphicalRobotElement::updatePSOPositionsRects(PSODataForGUI debugGUI) {
-		
+	
+	vector<TeammatePose> robots;
+	for(int i = 0 ; i < this->currentSWIM.teammateposition_size() ; i++) {
+		robots.insert(robots.end(), this->currentSWIM.teammateposition(i));
+	}
+	sortRobotsbyId(robots);
+	
+	if(robots[0].robotid() == 1)
+			robots.erase(robots.begin());
+				
 	for(int i = 0 ; i < debugGUI.positionspso_size() ; i++) {
 		PositionInfo posInfo = debugGUI.positionspso(i);
 
 		if(posInfo.has_x() && posInfo.has_y()) {
 			PSOPositionsList.at(i)->setRect(this->parentScene->rectFromFC(posInfo.x()*1000, posInfo.y()*1000, 80, 80));
+			PSOLinesList.at(i + 1)->setLine(this->parentScene->lineRectFromFC(posInfo.x()*1000, posInfo.y()*1000,
+								robots[i].pose().x()*1000, robots[i].pose().y()*1000));
 		} 
 	}
 }
