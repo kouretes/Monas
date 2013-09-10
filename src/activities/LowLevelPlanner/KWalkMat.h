@@ -30,7 +30,9 @@ public:
 
     }
     void CubicBezierInterpolation(std::vector<float> &vec ,float start ,float end,float Ts,float Tss)
-    {		/** float H=0.020 for max height 0.015m **/
+    {		/**
+            float H=0.020 for max stepping height 0.015m
+            **/
 
                 float H=0.027,P0=start,P1=start+H,P2=end+H,P3=end;
                 for(float t=0;t<=1;t=t+Ts/Tss)
@@ -62,10 +64,10 @@ public:
        -4*((zdotf[j]-zdoti[j])/pow(T,2)-zddoti[j]/T)
        +(1/2)*((zddotf[j]-zddoti[j])/T);
 
-w5[j]=-15*((zf[j]-zi[j])/pow(T,4) - zdoti[j]/pow(T,3) -zddoti[j]/(2*pow(T,2)))
+    w5[j]=-15*((zf[j]-zi[j])/pow(T,4) - zdoti[j]/pow(T,3) -zddoti[j]/(2*pow(T,2)))
         +7*((zdotf[j]-zdoti[j])/pow(T,3) -zddoti[j]/pow(T,2))
         -((zddotf[j]-zddoti[j])/pow(T,2));
-w6[j]=6*((zf[j]-zi[j])/pow(T,5) - zdoti[j]/pow(T,4) -zddoti[j]/pow(T,3))
+    w6[j]=6*((zf[j]-zi[j])/pow(T,5) - zdoti[j]/pow(T,4) -zddoti[j]/pow(T,3))
       -3*((zdotf[j]-zdoti[j])/pow(T,4)-zddoti[j]/pow(T,3))
       +(1/2)*((zddotf[j]-zddoti[j])/pow(T,3));
 	}

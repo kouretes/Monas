@@ -123,7 +123,7 @@ class LowLevelPlanner: public IActivity
 		/** Prepare Command ALValue to send command to actuator **/
 		void prepareJointsPositionActuatorCommand();
 
-		/** Set one hardness value to all joint **/
+		/** Set one hardness value to all Body joints **/
 		void setStiffness(const float &stiffnessValue);
 
         /** Computation of the Target Center of Mass wrt the inertial frame **/

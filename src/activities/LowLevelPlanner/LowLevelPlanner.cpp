@@ -21,6 +21,7 @@ void LowLevelPlanner::UserInit()
     /**
     Initializing instances need by the Walk Engine
     **/
+
 	NaoPlanner.initialize(NaoRobot);
 	NaoZmpTrajectoryPlanner.ZMPTrajectoryInitialize(&NaoPlanner, NaoRobot, KWalkMath);
 	NaoFootTrajectoryPlanner.FootTrajectoryInitialize(&NaoPlanner, NaoRobot, KWalkMath);
@@ -79,6 +80,8 @@ int LowLevelPlanner::Execute()
 		delete wmot;
 	}
 	counter++;
+
+
 	/**
 	 Message GetSpeed from high level
 
@@ -106,16 +109,21 @@ int LowLevelPlanner::Execute()
 	speed.push_back(wm->parameter(2));
 
 	if (speed.size() < 3)
+        std::cerr<<"Not Enought Speed Values"<<std::endl;
 		return 0;
 	if (finalStep)
 	{
 
-		/** Plan a step and make another so
-		 both Feet come parallel **/
+		/**
+         Plan a step and make another FINAL so
+		 both Feet come parallel
+		 **/
 		NaoPlanner.oneStep(speed);
 		NaoPlanner.finalStep();
 	} else
-	{
+	{   /**
+	     Plan two concecutive Steps with the Predifined Speed
+	    **/
 		NaoPlanner.oneStep(speed);
 		NaoPlanner.oneStep(speed);
 		//NaoPlanner.afterStep();
@@ -183,20 +191,6 @@ void LowLevelPlanner::Calculate_Desired_COM()
 
 	NaoLIPMx->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPX);
 	NaoLIPMy->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPY);
-
-	//NaoLIPMx->COM.end();
-	//NaoLIPMy->COM.end();
-
-	//Printint the COM
-//	for (int k = 0; k < NaoLIPMx->COM.size(); k++)
-//	{
-//		cout << "x \t" << NaoLIPMx->COM[k] << "\t " << NaoLIPMx->COM.size() << endl;
-//	}
-//
-//	for (int k = 0; k < NaoLIPMy->COM.size(); k++)
-//	{
-//		cout << "y \t" << NaoLIPMy->COM[k] << "\t " << NaoLIPMy->COM.size() << endl;
-//	}
 
 }
 
