@@ -184,6 +184,18 @@ public:
 		KMatTransf::makeTransformation(T, s.p(0), s.p(1), s.p(2), s.a(0), s.a(1), s.a(2));
 		return T;
 	}
+	static void mirrorTransformation(kmatTable & targetPoint)
+	{
+		//This can be proved by the analytical construction of a rotation matrix from axis-angle rotation
+		targetPoint(0,1)=-targetPoint(0,1);
+		//targetPoint(0,2)=-targetPoint(0,2);
+		targetPoint(1,0)=-targetPoint(1,0);
+		targetPoint(1,2)=-targetPoint(1,2);
+		//targetPoint(2,0)=-targetPoint(2,0);
+		targetPoint(2,1)=-targetPoint(2,1);
+		//Mirror Y translation
+		targetPoint(1,3)=-targetPoint(1,3);
+	}
 };
 
 #endif

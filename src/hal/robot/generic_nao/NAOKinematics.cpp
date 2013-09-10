@@ -340,7 +340,14 @@ NAOKinematics::AngleContainer NAOKinematics::inverseLeftHand(kmatTable targetPoi
 	Temp*=Tinit;
 	Temp *= T[FR_BASE_T+CHAIN_L_ARM];
 	Torig=Temp;
-	Torig.fast_invert();
+	try
+	{
+		Torig.fast_invert();
+	}
+	catch(KMath::KMat::SingularMatrixInvertionException d)
+	{
+		return returnResult;
+	}
 	double theta3temp = asin(Temp(2,3)/ElbowOffsetY);
 	if(theta3temp != theta3temp && Temp(2,3)/ElbowOffsetY < 0){
 		theta3temp = -PI / 2;
@@ -367,7 +374,15 @@ NAOKinematics::AngleContainer NAOKinematics::inverseLeftHand(kmatTable targetPoi
 			theta4 = acos(top/bottom);
 		}
 		KMatTransf::makeDHTransformation(T3, ElbowOffsetY, PI / 2, UpperArmLength,  theta3);
-		T3.fast_invert();
+		try
+		{
+			T3.fast_invert();
+		}
+		catch(KMath::KMat::SingularMatrixInvertionException d)
+		{
+			continue;
+		}
+
 		for(int j=0; j<2; j++){
 			Temp = Torig;
 			if(j == 0 && (theta4 > LElbowRollHigh || theta4 < LElbowRollLow)){
@@ -377,10 +392,26 @@ NAOKinematics::AngleContainer NAOKinematics::inverseLeftHand(kmatTable targetPoi
 			}else if(j == 1){
 				theta4 = -theta4;			}
 			KMatTransf::makeDHTransformation(T4, 0.0, -PI / 2, 0.0,  theta4);
-			T4.fast_invert();
+
+			try
+			{
+				T4.fast_invert();
+			}
+			catch(KMath::KMat::SingularMatrixInvertionException d)
+			{
+				continue;
+			}
 			Temp *= T4;
 			Temp *= T3;
-			Temp.fast_invert();
+
+			try
+			{
+				Temp.fast_invert();
+			}
+			catch(KMath::KMat::SingularMatrixInvertionException d)
+			{
+				continue;
+			}
 			theta2 = atan2(Temp(0,1),Temp(1,1)) - PI/2;
 			if(theta2 < LShoulderRollLow || theta2 > LShoulderRollHigh){
 				continue;
@@ -423,15 +454,8 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightHand(const FKvars s)
 
 std::vector<std::vector<float> > NAOKinematics::inverseRightHand(kmatTable targetPoint)
 {
-	//Mirror problem to other arm
-	targetPoint(0,1)=-targetPoint(0,1);
-	targetPoint(0,2)=-targetPoint(0,2);
-	targetPoint(1,0)=-targetPoint(1,0);
-	targetPoint(1,2)=-targetPoint(1,2);
-	targetPoint(2,0)=-targetPoint(2,0);
-	targetPoint(2,1)=-targetPoint(2,1);
-	targetPoint(1,3)=-targetPoint(1,3);
 
+	mirrorTransformation(targetPoint);
 
 	std::vector<std::vector<float> > res=inverseLeftHand(targetPoint);
 	for(unsigned i=0;i<res.size();i++)
@@ -610,7 +634,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseLeftLeg(kmatTable targetP
 						joints[L_LEG+KNEE_PITCH]=theta4;
 						joints[L_LEG+ANKLE_PITCH]=theta5;
 						joints[L_LEG+ANKLE_ROLL]=theta6;
-
+						//std::cout << "Test!!\nTheta 1 = " << theta1 << "\nTheta 2 = " << theta2 << "\nTheta 3 = " << theta3 << "\nTheta 4 = " << theta4  << "\nTheta 5 = " << theta5 << "\nTheta 6 = " << theta6 << std::endl;
 						prepareForward(CHAIN_L_LEG);
 						kmatTable test=getForwardEffector((Effectors)CHAIN_L_LEG);
 
@@ -645,15 +669,7 @@ std::vector<std::vector<float> > NAOKinematics::inverseRightLeg(const FKvars s)
 std::vector<std::vector<float> > NAOKinematics::inverseRightLeg(kmatTable targetPoint)
 {
 
-	//Mirror problem to other foot
-	targetPoint(0,1)=-targetPoint(0,1);
-	targetPoint(0,2)=-targetPoint(0,2);
-	targetPoint(1,0)=-targetPoint(1,0);
-	targetPoint(1,2)=-targetPoint(1,2);
-	targetPoint(2,0)=-targetPoint(2,0);
-	targetPoint(2,1)=-targetPoint(2,1);
-	targetPoint(1,3)=-targetPoint(1,3);
-
+	mirrorTransformation(targetPoint);
 
 	std::vector<std::vector<float> > res=inverseLeftLeg(targetPoint);
 	for(unsigned i=0;i<res.size();i++)
