@@ -3,11 +3,12 @@
 
 //Define for the lengths of the arms foots etc
 #define ShoulderOffsetY 	98.0f
+#define ShoulderOffsetZ		100.0f
 #define ElbowOffsetY		15.0f
 #define UpperArmLength		105.0f
-#define ShoulderOffsetZ		100.0f
 #define LowerArmLength		57.75f
 #define HandOffsetX			55.95f
+#define HandOffsetZ			12.81f
 #define HipOffsetZ			85.0f
 #define HipOffsetY			50.0f
 #define ThighLength			100.0f

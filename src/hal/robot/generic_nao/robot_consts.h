@@ -54,6 +54,10 @@ namespace KDeviceLists
 	{
 	    ROBOT_X = 0, ROBOT_Y, ROBOT_ANGLE, ROBOTPOSITION_SIZE
 	};
+	enum ChainsNames
+	{
+		CHAIN_HEAD=0, CHAIN_L_ARM, CHAIN_L_LEG, CHAIN_R_LEG,CHAIN_R_ARM, CHAINS_SIZE
+	};
 
 	enum JointNames
 	{
