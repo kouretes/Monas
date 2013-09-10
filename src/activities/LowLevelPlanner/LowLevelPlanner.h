@@ -1,0 +1,138 @@
+/*! \file LowLevelPlanner.h
+ *	\brief A Monas Activity that first plans the trajectories needed by the Walk Engine
+    and executes the desired walking gait!
+ *
+ */
+
+#ifndef LOWLEVELPLANNER_H
+#define LOWLEVELPLANNER_H
+#include "core/include/IActivity.hpp"
+#include "core/architecture/configurator/Configurator.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include "messages/Motion.pb.h"
+
+#include <iostream>
+#include <string>
+#include "Stepplanner.h"
+#include "ControlThread.h"
+#include "FootTrajectoryPlanner.h"
+#include "ZMPTrajectoryPlanner.h"
+
+#include "hal/robot/generic_nao/NAOKinematics.h"
+#include "core/elements/math/KMat.hpp"
+#include "hal/robot/generic_nao/aldebaran-motion.h"
+
+/**
+Useful NameSpace
+**/
+namespace LEG
+{
+	enum
+	{
+		LEFT_LEG = 0, RIGHT_LEG
+	};
+}
+;
+
+enum
+{
+	ANKL_ROLL = 0, ANKL_PITCH, ANKL_CTRL_CHAIN_SIZE
+};
+
+enum
+{
+	HIP_RLL = 0, HIP_PTCH, HIP_CTRL_CHAIN_SIZE
+};
+
+/**
+ * \class LowLevelPlanner
+ *
+ * \file LowLevelPlanner.h
+ **/
+
+ACTIVITY_START
+class LowLevelPlanner: public IActivity
+{
+	public:
+		/**
+		 * @brief Does nothing
+		 */
+
+		ACTIVITY_CONSTRUCTOR(LowLevelPlanner);
+		/**
+		 * @brief
+		 * @return 0
+		 */
+		int ACTIVITY_VISIBLE IEX_DIRECTIVE_HOT Execute();
+		/**
+		 * @brief Here the Activity initializes.
+		 */
+		void ACTIVITY_VISIBLE UserInit();
+		void ACTIVITY_VISIBLE Reset();
+		std::string ACTIVITY_VISIBLE GetName()
+		{
+			return "LowLevelPlanner";
+		}
+		private:
+		/**
+		Message providing Torso Velocity
+		 */
+        boost::shared_ptr<const MotionWalkMessage> wm;
+
+        /**
+        From High LVL
+        **/
+		std::vector<float> speed;
+
+		/**
+            Main object instances used by KWalk
+		**/
+		RobotParameters NaoRobot;
+		ZMPTrajectoryPlanner NaoZmpTrajectoryPlanner;
+		FootTrajectoryPlanner NaoFootTrajectoryPlanner;
+		Stepplanner NaoPlanner;
+		PlanePoint foot;
+		GroundPoint zmp;
+		KWalkMat KWalkMath;
+        bool finalStep;
+
+		/**
+		Used by DCM callbacks
+		**/
+        std::vector<float *> jointPtr, sensorPtr;
+		boost::shared_ptr<AL::ALMemoryProxy> memory;
+		AL::ALMotionProxy *motion;
+		AL::DCMProxy *dcm;
+		NAOKinematics *nkin;
+		std::vector<float> alljoints;
+		AL::ALValue commands;
+		/****/
+		float fsr_position[4][2][2];
+
+		long dcm_counter;
+
+		/** Initialise the DCM part **/
+		void initialise_devices();
+
+        /** function bound to the DCM **/
+        int DCMcallback();
+
+		/** Create DCM Position Actuator Alias **/
+		void createJointsPositionActuatorAlias();
+
+		/** Prepare Command ALValue to send command to actuator **/
+		void prepareJointsPositionActuatorCommand();
+
+		/** Set one hardness value to all joint **/
+		void setStiffness(const float &stiffnessValue);
+
+        /** Computation of the Target Center of Mass wrt the inertial frame **/
+		void Calculate_Desired_COM();
+		std::vector<float> Calculate_IK();
+
+        /** Leg Controllers **/
+        LIPMPreviewController * NaoLIPMx ,*NaoLIPMy;
+
+	};
+	ACTIVITY_END
+#endif
