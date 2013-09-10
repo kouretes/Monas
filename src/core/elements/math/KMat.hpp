@@ -105,7 +105,7 @@ namespace KMat
 		C & p;
 		const int i, j;
 	};
-	
+
 	template<typename C> class COWRef<double, C>
 	{
 		//template <typename AT, typename AC>	friend class COWRef;
@@ -408,6 +408,8 @@ namespace KMat
 	template<typename T> class RefHandle<DataContainer<T, 1, 1> > : public LoopBackHandle<DataContainer<T, 1, 1> >
 {};
 	template<typename T> class RefHandle<DataContainer<T, 2, 1> > : public LoopBackHandle<DataContainer<T, 2, 1> >
+{};
+template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackHandle<DataContainer<T, 3, 1> >
 {};
 	/*
 	 * Base class, utilizes the CRTP idiom to provide a nice way of implementing static polymorphism
@@ -1030,6 +1032,31 @@ namespace KMat
 		};
 	};
 
+	template <typename T> class GenMatrix<T, 3, 1> : public BaseMatrix<GenMatrix, T, 3, 1>
+	{
+		//Add single dimentionall acess operator
+	public:
+		using BaseMatrix<KMat::GenMatrix , T, 3, 1>::read;
+		using BaseMatrix<KMat::GenMatrix , T, 3, 1>::operator();
+		using BaseMatrix<KMat::GenMatrix , T, 3, 1>::operator=;
+		GenMatrix<T, 3, 1>() : BaseMatrix<KMat::GenMatrix, T, 3, 1>() {};
+		explicit GenMatrix<T, 3, 1>(T ax, T ay,T az) : BaseMatrix<KMat::GenMatrix, T, 3, 1>()
+		{
+			this->get(0, 0) = ax;
+			this->get(1, 0) = ay;
+			this->get(2, 0) = az;
+		};
+		COWRef<T, GenMatrix<T, 3, 1> > operator() (unsigned i)
+		{
+			return COWRef<T, GenMatrix<T, 3, 1> > (   (*this), i, 0);
+		};
+		const T operator() (unsigned i) const
+		{
+			return read(i, 0);
+		};
+	};
+
+
 
 
 	// Matrix inversion	function, in-place gauss-jordan elimination with partial pivoting
@@ -1263,13 +1290,21 @@ namespace KMat
 
 			return *this;
 		}
-		GenMatrix < T, S - 1, 1 > get_translation()
+		GenMatrix < T, S - 1, 1 > getTranslation() const
 		{
 			return B;
 		}
-		GenMatrix < T, S - 1, S - 1 > get_rotation()
+		GenMatrix < T, S - 1, S - 1 > getRotation() const
 		{
 			return A;
+		}
+		GenMatrix < T, S - 1, 1 > getEulerAngles() const
+		{
+			GenMatrix < T, S - 1, 1 > r;
+			r(0) = atan2(A(2, 1), A(2, 2));
+			r(1) = atan2(-A(2, 0), sqrt(pow(A(2, 1), 2) + pow(A(2, 2), 2)));
+			r(2) = atan2(A(1, 0), A(0, 0));
+			return r;
 		}
 		//Project a point !
 		GenMatrix < T, S - 1, 1 > transform(GenMatrix < T, S - 1, 1 > const & c, T hom = 1) const
@@ -1333,16 +1368,15 @@ namespace KMat
 			return *this;
 		}
 
-		bool almostEqualTo(ATMatrix<T, S> const & other)const
+		bool almostEqualTo(ATMatrix<T, S> const & other, T tol=0.5)const
 		{
-			ATMatrix<T, S> temp = other;
-			temp.fast_invert();
-			temp *= (*this);
-			T rs = temp.A.norm2() + temp.B.norm2() - (S - 1);
-			rs = rs > 0 ? rs : -rs;
-			//std::cout<<rs<<std::endl;
-			//std::cout<<std::numeric_limits<T>::epsilon()<<std::endl;
-			return rs < (std::numeric_limits<T>::epsilon() * 10e6);
+			GenMatrix < T, S - 1, 1 > t,r;
+			t=getTranslation();
+			r=getEulerAngles();
+			t-=other.getTranslation();
+			r-=other.getEulerAngles();
+
+			return sqrt(t.norm2())+sqrt(r.norm2())<tol;
 		}
 
 		ATMatrix<T, S>& identity()
@@ -1396,6 +1430,8 @@ namespace KMat
 		}
 		COWRef<T, ATMatrix<T, S> > operator() (unsigned i, unsigned j)
 		{
+			AisIdentity=false;
+			BisZero=false;
 			return  COWRef<T, ATMatrix<T, S> >(*this, i, j);
 		}
 
