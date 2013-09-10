@@ -64,17 +64,20 @@ public:
 	*/
 	struct FKvars
 	{
-		KVecFloat3 p;
-		KVecFloat3 a;
+		KVecDouble3 p;
+		KVecDouble3 a;
 	};
-	typedef KMath::KMat::ATMatrix<float, 4> kmatTable;
+	typedef KMath::KMat::ATMatrix<double, 4> kmatTable;
+	typedef float AngleType;
+	typedef std::vector<std::vector<AngleType> > AngleContainer ;
 private:
 
 	std::vector<kmatTable> T;
-	std::vector<float> joints;
+
+	std::vector<AngleType> joints;
 	std::vector<KVecFloat3> coms;
 
-	kmatTable RotRArmFixInv, //RARM
+	kmatTable  LArmEndT, //RARM
 			   TBaseLLegInv, //LLEG
 			   TEndLLegInv,
 			   RotFixLLeg,
@@ -84,6 +87,8 @@ private:
 			   TEndRLegInv;
 
 	typedef KMath::KMat::transformations KMatTransf;
+
+
 
 
 	/**
@@ -100,7 +105,7 @@ public:
 	 * @fn void setJoints(std::vector<float> joints)
 	 * @brief Set Joint values
 	 * */
-	bool setJoints(std::vector<float> jointsset);
+	bool setJoints(std::vector<AngleType> jointsset);
 
 
 
@@ -124,7 +129,7 @@ public:
 	 * @fn KVecFloat3 calculateCenterOfMass()
 	 * @brief Calculate the center of mass of the robot
 	 * */
-	KVecFloat3 calculateCenterOfMass();
+	KVecDouble3 calculateCenterOfMass();
 
 	/**
 	 * vector<vector<float> > inverseHead(FKvars s, bool withAngles, bool topCamera)
@@ -134,8 +139,8 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: HeadYaw,HeadPitch.
 	 * */
-	std::vector<std::vector<float> > inverseHead(const FKvars s, bool withAngles, bool topCamera);
-	std::vector<std::vector<float> > inverseHead(kmatTable targetPoint, bool withAngles, bool topCamera);
+	AngleContainer  inverseHead(const FKvars s, bool withAngles, bool topCamera);
+	AngleContainer inverseHead(kmatTable targetPoint, bool withAngles, bool topCamera);
 
 	/**
 	 * vector<vector<float> > inverseLeftHand(const FKvars s);
@@ -143,8 +148,8 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll
 	 * */
-	std::vector<std::vector<float> > inverseLeftHand(const FKvars s);
-	std::vector<std::vector<float> > inverseLeftHand(kmatTable targetPoint);
+	AngleContainer inverseLeftHand(const FKvars s);
+	AngleContainer inverseLeftHand(kmatTable targetPoint);
 
 	/**
 	 * vector<vector<float> > inverseRightHand(const FKvars s)
@@ -152,16 +157,16 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll
 	 * */
-	std::vector<std::vector<float> > inverseRightHand(const FKvars s);
-	std::vector<std::vector<float> > inverseRightHand(kmatTable targetPoint);
+	AngleContainer inverseRightHand(const FKvars s);
+	AngleContainer inverseRightHand(kmatTable targetPoint);
 	/**
 	 * vector<vector<float> > inverseLeftLeg(const FKvars s)
 	 * @brief Inverse Kinematics for the left leg (DON'T try to understand the code, it's just maths)
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll
 	 * */
-	std::vector<std::vector<float> > inverseLeftLeg(const FKvars s);
-	std::vector<std::vector<float> > inverseLeftLeg(kmatTable targetPoint);
+	AngleContainer  inverseLeftLeg(const FKvars s);
+	AngleContainer inverseLeftLeg(kmatTable targetPoint);
 
 	/**
 	 * vector<vector<float> > inverseRightLeg(float px,float py,float pz, float rx, float ry, float rz)
@@ -169,8 +174,8 @@ public:
 	 * @returns vector<vector<float> >. It returns n vectors of float where n is the number of solutions (almost every time it's 0 or 1).
 		Each solutions vector contains the angles with this order: RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll
 	 * */
-	std::vector<std::vector<float> > inverseRightLeg(const FKvars s);
-	std::vector<std::vector<float> > inverseRightLeg(kmatTable targetPoint);
+	AngleContainer inverseRightLeg(const FKvars s);
+	AngleContainer inverseRightLeg(kmatTable targetPoint);
 
 
 	static kmatTable getTransformation(const FKvars s)
