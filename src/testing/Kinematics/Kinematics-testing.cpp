@@ -13,8 +13,8 @@ int main ()
 
 	NAOKinematics kin;
 	std::vector<float> joints(NUMOFJOINTS);
-	joints[R_ARM+ELBOW_YAW]=0;//-M_PI/2-0.001;
-	joints[L_ARM+ELBOW_YAW]=0;//M_PI/2-0.001;
+	joints[R_ARM+ELBOW_YAW]=M_PI/2;//-M_PI/2-0.001;
+	joints[L_ARM+ELBOW_YAW]=M_PI/2;//M_PI/2-0.001;
 	kin.setJoints(joints);
 	Table l,r,t;
 	l=kin.getForwardEffector((NAOKinematics::Effectors)CHAIN_L_ARM);
@@ -32,7 +32,7 @@ int main ()
 		{
 			std::cout<<std::endl;
 			for(unsigned j=0;j<res[i].size();j++)
-				std::cout<<(res[i])[j]*180/M_PI<<" ";
+				std::cout<<(res[i])[j]*180.0/M_PI<<" ";
 			std::cout<<std::endl;
 		}
 
@@ -49,14 +49,13 @@ int main ()
 		{
 			std::cout<<std::endl;
 			for(unsigned j=0;j<res[i].size();j++)
-				std::cout<<(res[i])[j]*180/M_PI<<" ";
+				std::cout<<(res[i])[j]*180.0/M_PI<<" ";
 			std::cout<<std::endl;
 		}
 
 
 
     }
-
 	for (int k=0;k<10;k++)
 	{
 		    cout<<k<<"============================================================="<<std::endl;
