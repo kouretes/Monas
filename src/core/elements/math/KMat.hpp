@@ -1375,7 +1375,6 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			r=getEulerAngles();
 			t-=other.getTranslation();
 			r-=other.getEulerAngles();
-
 			return sqrt(t.norm2())+sqrt(r.norm2())<tol;
 		}
 
@@ -1636,6 +1635,8 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 };
 
 //Short Definitions :)
+typedef KMath::KMat::Vector<double, 2>::type KVecDouble2;
+typedef KMath::KMat::Vector<double, 3>::type KVecDouble3;
 typedef KMath::KMat::Vector<float, 2>::type KVecFloat2;
 typedef KMath::KMat::Vector<float, 3>::type KVecFloat3;
 typedef KMath::KMat::Vector<int, 2>::type KVecInt2;
