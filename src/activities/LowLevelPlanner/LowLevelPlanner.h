@@ -1,6 +1,6 @@
 /*! \file LowLevelPlanner.h
  *	\brief A Monas Activity that first plans the trajectories needed by the Walk Engine
-    and executes the desired walking gait!
+ and executes the desired walking gait!
  *
  */
 
@@ -22,9 +22,10 @@
 #include "core/elements/math/KMat.hpp"
 #include "hal/robot/generic_nao/aldebaran-motion.h"
 
+
 /**
-Useful NameSpace
-**/
+ Useful NameSpace
+ **/
 namespace LEG
 {
 	enum
@@ -33,6 +34,10 @@ namespace LEG
 	};
 }
 ;
+
+enum {
+	DO_NOTHING =0, INIT_WALK, DO_STEPS, FINAL_STEP, WAIT_TO_FINISH
+};
 
 enum
 {
@@ -75,18 +80,18 @@ class LowLevelPlanner: public IActivity
 		}
 		private:
 		/**
-		Message providing Torso Velocity
+		 Message providing Torso Velocity
 		 */
-        boost::shared_ptr<const MotionWalkMessage> wm;
+		boost::shared_ptr<const MotionWalkMessage> wm;
 
-        /**
-        From High LVL
-        **/
+		/**
+		 From High LVL
+		 **/
 		std::vector<float> speed;
 
 		/**
-            Main object instances used by KWalk
-		**/
+		 Main object instances used by KWalk
+		 **/
 		RobotParameters NaoRobot;
 		ZMPTrajectoryPlanner NaoZmpTrajectoryPlanner;
 		FootTrajectoryPlanner NaoFootTrajectoryPlanner;
@@ -94,12 +99,21 @@ class LowLevelPlanner: public IActivity
 		PlanePoint foot;
 		GroundPoint zmp;
 		KWalkMat KWalkMath;
-        bool finalStep;
+		bool finalStep;
+
+		float FeetTrajectory[2][3][2][MAX_TRAJECTORY_LENGTH];
+		float ZmpTrajectory[2][2][MAX_TRAJECTORY_LENGTH];
+		CircularBuffer<float> *ZmpBuffer[2];
+		int dcm_counters[2];
+		int dcm_length[2];
+		int next_2B_inserted,last,current_buffer;
+
+		//Zmp
 
 		/**
-		Used by DCM callbacks
-		**/
-        std::vector<float *> jointPtr, sensorPtr;
+		 Used by DCM callbacks
+		 **/
+		std::vector<float *> jointPtr, sensorPtr;
 		boost::shared_ptr<AL::ALMemoryProxy> memory;
 		AL::ALMotionProxy *motion;
 		AL::DCMProxy *dcm;
@@ -109,13 +123,13 @@ class LowLevelPlanner: public IActivity
 		/****/
 		float fsr_position[4][2][2];
 
-		long dcm_counter;
+		unsigned int dcm_counter;
 
 		/** Initialise the DCM part **/
 		void initialise_devices();
 
-        /** function bound to the DCM **/
-        int DCMcallback();
+		/** function bound to the DCM **/
+		int DCMcallback();
 
 		/** Create DCM Position Actuator Alias **/
 		void createJointsPositionActuatorAlias();
@@ -126,12 +140,14 @@ class LowLevelPlanner: public IActivity
 		/** Set one hardness value to all Body joints **/
 		void setStiffness(const float &stiffnessValue);
 
-        /** Computation of the Target Center of Mass wrt the inertial frame **/
+		/** Computation of the Target Center of Mass wrt the inertial frame **/
 		void Calculate_Desired_COM();
 		std::vector<float> Calculate_IK();
+		void Calculate_Tragectories();
+		/** Leg Controllers **/
+		LIPMPreviewController * NaoLIPMx ,*NaoLIPMy;
 
-        /** Leg Controllers **/
-        LIPMPreviewController * NaoLIPMx ,*NaoLIPMy;
+		int state;
 
 	};
 	ACTIVITY_END

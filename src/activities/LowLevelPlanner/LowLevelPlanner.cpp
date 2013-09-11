@@ -18,40 +18,65 @@ ACTIVITY_REGISTER(LowLevelPlanner)
 
 void LowLevelPlanner::UserInit()
 {
-    /**
-    Initializing instances need by the Walk Engine
-    **/
+	/**
+	 Initializing instances need by the Walk Engine
+	 **/
 
 	NaoPlanner.initialize(NaoRobot);
 	NaoZmpTrajectoryPlanner.ZMPTrajectoryInitialize(&NaoPlanner, NaoRobot, KWalkMath);
 	NaoFootTrajectoryPlanner.FootTrajectoryInitialize(&NaoPlanner, NaoRobot, KWalkMath);
+
 	NaoLIPMx = new LIPMPreviewController(NaoRobot);
 	NaoLIPMy = new LIPMPreviewController(NaoRobot);
 
-    /**
-    Initializing DCM
-    **/
+	/**
+	 Initializing DCM
+	 **/
 	initialise_devices();
+	ZmpBuffer[X] = new CircularBuffer<float>(51);
+	ZmpBuffer[Y] = new CircularBuffer<float>(51);
+
+	next_2B_inserted = 0;
 
 	std::cout << "Walk Engine Initialized" << std::endl;
-	dcm_counter=0;//dcm_counter = -1;
-	//Reset(); ??????
+	dcm_counter = 0; //dcm_counter = -1;
+	/**
+	 Set Body Stiffness
+	 **/
+	//setStiffness(0.75f);
+	state = DO_NOTHING;
+	Reset();
 }
 
 void LowLevelPlanner::Reset()
 {
-	NaoPlanner.clear();
-	NaoFootTrajectoryPlanner.FootTrajectoryClear();
-	NaoZmpTrajectoryPlanner.ZMPTrajectoryClear();
-	std::cout << "Walk Engine Reseted" << std::endl;
+	memset(FeetTrajectory, 0, sizeof(float) * (2 * 3 * 2 * MAX_TRAJECTORY_LENGTH));
+	memset(ZmpTrajectory, 0, sizeof(float) * (2 * 2 * MAX_TRAJECTORY_LENGTH));
+	//NaoPlanner.clear();
+	//NaoFootTrajectoryPlanner.FootTrajectoryClear();
+	//NaoZmpTrajectoryPlanner.ZMPTrajectoryClear();
+
 	dcm_counter = 0;
+	dcm_length[0] = 0;
+	dcm_length[1] = 0;
+
+	current_buffer = 0;
+
+	std::cout << "Walk Engine Reseted" << std::endl;
 }
 
 int LowLevelPlanner::Execute()
 {
+	static bool firstrun = true;
+
+	if (firstrun) //Initializer atPreProcess call back so the DCMcallback function will be executed every 10 ms
+	{
+		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPreProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
+		firstrun = false;
+	}
 
 
-	static int counter = 0;
+	static int counter = 0; //just for testing
 
 	if ((counter % 1 == 0))
 	{
@@ -64,7 +89,7 @@ int LowLevelPlanner::Execute()
 		z = (z - 0.5);
 		float s = rand() / ((float) RAND_MAX);
 
-		x = 4.2;//3.4;
+		x = 4.2;	//3.4;
 		y = 0;
 		z = 0;
 		s = 0;
@@ -81,7 +106,6 @@ int LowLevelPlanner::Execute()
 	}
 	counter++;
 
-
 	/**
 	 Message GetSpeed from high level
 
@@ -95,7 +119,10 @@ int LowLevelPlanner::Execute()
 	{
 		if (wm->command() == "setWalkTargetVelocity")
 		{
-			;
+			if(state == DO_NOTHING){
+				state = INIT_WALK;
+				std::cout << "Message arrived should initialize walk" <<std::endl;
+			}
 		} else
 		{
 			return 0;
@@ -108,37 +135,76 @@ int LowLevelPlanner::Execute()
 	speed.push_back(wm->parameter(1));
 	speed.push_back(wm->parameter(2));
 
-	if (speed.size() < 3)
-        std::cerr<<"Not Enought Speed Values"<<std::endl;
+	if (current_buffer == next_2B_inserted) //Buffers are full
 		return 0;
-	if (finalStep)
+	if(dcm_length[next_2B_inserted]!=0)
+		return 0;
+
+
+	if (speed.size() < 3)
+		std::cerr << "Not Enought Speed Values" << std::endl;
+
+	if(speed[0]==0  && speed[1] == 0 && speed[2] == 0)
+		state = FINAL_STEP;
+
+
+	switch (state)
 	{
+		case DO_NOTHING:
+			return 0;
+			break;
 
-		/**
-         Plan a step and make another FINAL so
-		 both Feet come parallel
-		 **/
-		NaoPlanner.oneStep(speed);
-		NaoPlanner.finalStep();
-	} else
-	{   /**
-	     Plan two concecutive Steps with the Predifined Speed
-	    **/
-		NaoPlanner.oneStep(speed);
-		NaoPlanner.oneStep(speed);
-		//NaoPlanner.afterStep();
+		case INIT_WALK:
+			//initialize
+			NaoZmpTrajectoryPlanner.ZMPTrajectoryInitStep(ZmpTrajectory[next_2B_inserted]);
+			dcm_length[next_2B_inserted] = NaoFootTrajectoryPlanner.FootTrajectoryInitStep(FeetTrajectory[next_2B_inserted]);
+
+			for (int i = 0; i < dcm_length[next_2B_inserted] || i < 51; i++)
+			{
+				ZmpBuffer[X]->cbPush(ZmpTrajectory[next_2B_inserted][X][i]);
+				ZmpBuffer[Y]->cbPush(ZmpTrajectory[next_2B_inserted][Y][i]);
+			}
+			state = DO_STEPS;
+			dcm_counter=0;
+			std::cout << "Walk Engine is Executed Walk should start" << std::endl;
+
+			break;
+
+		case DO_STEPS:
+			/*Plan two consecutive Steps with the Predefined Speed
+			 **/
+			NaoPlanner.oneStep(speed);
+			NaoPlanner.oneStep(speed);
+			Calculate_Tragectories();
+			break;
+
+		case FINAL_STEP:
+			/**
+			 Plan a step and make another FINAL so
+			 both Feet come parallel
+			 **/
+			NaoPlanner.oneStep(speed);
+			NaoPlanner.finalStep();
+			Calculate_Tragectories();
+			state = WAIT_TO_FINISH;
+			break;
+		case WAIT_TO_FINISH:
+			return 0;
+			break; // nothing to do
+
+		default:
+			break;
 	}
-	/**
-	 Update the Foot Trajectory Planner
-	 instance with the new planned points
-	 **/
-	NaoFootTrajectoryPlanner.FootTrajectoryUpdate(&NaoPlanner);
-	/**
-	 Update the ZMP Trajectory Planner
-	 instance with the new planned points
-	 **/
-	NaoZmpTrajectoryPlanner.ZMPTrajectoryUpdate(&NaoPlanner);
 
+	last = next_2B_inserted;
+	next_2B_inserted++;
+	next_2B_inserted %= 2;
+
+	return 0;
+}
+
+void LowLevelPlanner::Calculate_Tragectories()
+{
 	for (unsigned int i = 0; i < 2; i++)
 	{
 		/**
@@ -151,7 +217,8 @@ int LowLevelPlanner::Execute()
 		 Feet Trajectory computation
 		 **/
 
-		NaoFootTrajectoryPlanner.FootTrajectoryInterpolate();
+		//NaoFootTrajectoryPlanner.FootTrajectoryInterpolate();
+		NaoFootTrajectoryPlanner.FootTrajectoryInterpolate(FeetTrajectory[next_2B_inserted], i);
 
 		/**
 		 Calculate the Next ZMP Points to Interpolate
@@ -163,53 +230,93 @@ int LowLevelPlanner::Execute()
 		 ZMP Trajectory computation
 		 **/
 
-		NaoZmpTrajectoryPlanner.ZMPTrajectoryInterpolate();
+		dcm_length[next_2B_inserted] = NaoZmpTrajectoryPlanner.ZMPTrajectoryInterpolate(ZmpTrajectory[next_2B_inserted], i);
 	}
-
-	std::cout << "Walk Engine is Executed Walk should start" << std::endl;
-
-	/**
-	Set Body Stiffness
-	**/
-	setStiffness(0.75f);
-	std::cout << "Pray !" << std::endl;
-
-	static bool firstrun = true;
-	if (firstrun)
-	{
-		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPreProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
-		//		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPostProcess(KALBIND(&Zmp::DCMcallback , this));
-
-		firstrun = false;
-	}
-
-	return 0;
 }
 
 void LowLevelPlanner::Calculate_Desired_COM()
 {
 
-	NaoLIPMx->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPX);
-	NaoLIPMy->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPY);
+	if (dcm_length[current_buffer] > (dcm_counter + PredictionHorizon))
+	{
+		ZmpBuffer[X]->cbPush(ZmpTrajectory[current_buffer][X][dcm_counter + PredictionHorizon]);
+		ZmpBuffer[Y]->cbPush(ZmpTrajectory[current_buffer][Y][dcm_counter + PredictionHorizon]);
+	} else
+	{
+		//buffer at the end must load from the other buffer
+		int other_buffer = (current_buffer + 1) % 2;
+		if (dcm_length[other_buffer] > 0)
+		{ //the other buffer is ready to read
 
+			if (!ZmpBuffer[X]->cbIsFull()) /// must fill now
+			{
+				int p = 0;
+//				while(!ZmpBuffer[X]->cbIsFull()){
+//					ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][p]);
+//					ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][p]);
+//					p++;
+//				}
+				int pos = dcm_counter + PredictionHorizon - dcm_length[current_buffer]; //we need more
+				for (p = 0; p < pos; p++)
+				{
+					ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][p]);
+					ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][p]);
+				}
+			} else
+			{ //just load the next from the other ready buffer
+				int pos = dcm_counter + PredictionHorizon - dcm_length[current_buffer];
+				ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][pos]);
+				ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][pos]);
+			}
+		} else
+		{
+			//oups the other buffer is not ready, emptying
+			ZmpBuffer[X]->pop();
+			ZmpBuffer[Y]->pop();
+		}
+		ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][dcm_counter]);
+		ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][dcm_counter]);
+	}
+
+	//NaoLIPMx->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPX);
+	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X]);
+	//NaoLIPMy->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPY);
+	NaoLIPMy->LIPMComPredictor(*ZmpBuffer[Y]);
 }
 
 int LowLevelPlanner::DCMcallback()
 {
-	if (dcm_counter < 0) return 0;
+	if (state == DO_NOTHING) //Nothing to execute
+		return 0;
+
+
+	if(dcm_counter >= dcm_length[current_buffer]) //buffer end;
+	{
+		int next_buffer = (current_buffer+1)%2;
+		if(dcm_length[next_buffer]>0){ //ready to switch buffers
+			dcm_length[current_buffer]=0;
+			current_buffer = next_buffer;
+			dcm_counter=0;
+		}else{
+			//provlima i telos mallon telos
+			std::cout << "Hm we have a serious problem or just stopping " <<std::endl;
+			state=DO_NOTHING;
+			dcm_counter=0;
+			return 0;
+		}
+	}
 
 	Calculate_Desired_COM();
 	std::vector<float> joints_action = Calculate_IK();
 	if (joints_action.size() != 12)
 	{
-		std::cerr << "Not enough joint values" <<std::endl;
+		std::cerr << "Not enough joint values" << std::endl;
 		return 0;
 	}
 
 	for (int p = 0; p < KDeviceLists::LEG_SIZE * 2; p++)
 		commands[5][(p)][0] = (float) joints_action[p];
 
-	//commands[5][(KDeviceLists::ANKLE_ROLL)][0] = -joints_action[KDeviceLists::ANKLE_ROLL];
 	//Send command
 	try
 	{
@@ -267,7 +374,7 @@ void LowLevelPlanner::initialise_devices()
 		else if (leg == LEG::RIGHT_LEG)
 			idx = KDeviceLists::R_FSR;
 		else
-			std::cerr << "The robot has 2 legs only leg :" << leg << " unrecognized.!! " <<std::endl;
+			std::cerr << "The robot has 2 legs only leg :" << leg << " unrecognized.!! " << std::endl;
 
 		std::string supportleg_prefix = (leg == LEG::LEFT_LEG) ? "L" : "R";
 		for (int i = 0; i < 2; i++)
@@ -280,14 +387,14 @@ void LowLevelPlanner::initialise_devices()
 			fsr_position[3][i][leg] = ((i == 0) ? -1 : 1) * (float) memory->getData("Device/SubDeviceList/" + supportleg_prefix + "Foot/FSR/RearRight/Sensor/" + axis + "Position");
 
 			for (int j = 0; j < 4; j++)
-				std::cout << "FSR pos axis " << axis << " " << j << " " << (float) fsr_position[j][i][leg] <<std::endl;
+				std::cout << "FSR pos axis " << axis << " " << j << " " << (float) fsr_position[j][i][leg] << std::endl;
 		}
 
 		for (int i = idx; i < (idx + 4/* KDeviceLists::FSR_SIZE*/); i++)
 		{
 			device_string = sensorKeys[i];
 			sensorPtr.push_back((float *) memory->getDataPtr(device_string));
-			std::cout << "sensorKeys[" << i - idx << "]:  " << device_string <<std::endl;
+			std::cout << "sensorKeys[" << i - idx << "]:  " << device_string << std::endl;
 
 		}
 	}
@@ -295,9 +402,9 @@ void LowLevelPlanner::initialise_devices()
 	for (int i = 0; i < KDeviceLists::GYR_SIZE; i++)
 	{
 		sensorPtr.push_back((float *) memory->getDataPtr(sensorKeys[KDeviceLists::GYR + i]));
-		std::cout << "sensorKeys[end]:  " << sensorKeys[KDeviceLists::GYR + i] <<std::endl;
-		//cout << "Value[" << i << "]: " << *(sensorPtr.end()) << endl;
-		std::cout << "sensorPtr[" << sensorPtr.size() - 1 << "]: " << sensorKeys[KDeviceLists::GYR + i] <<std::endl;
+		std::cout << "sensorKeys[end]:  " << sensorKeys[KDeviceLists::GYR + i] << std::endl;
+		//cout << "Value[" << i << "]: " << *(sensorPtr.end()) <<std::endl;
+		std::cout << "sensorPtr[" << sensorPtr.size() - 1 << "]: " << sensorKeys[KDeviceLists::GYR + i] << std::endl;
 
 	}
 	std::cout << "sensorPtr.size" << sensorPtr.size();
@@ -305,7 +412,7 @@ void LowLevelPlanner::initialise_devices()
 	{
 		sensorPtr.push_back((float *) memory->getDataPtr(sensorKeys[KDeviceLists::ACC + i]));
 
-		std::cout << "sensorPtr[" << sensorPtr.size() - 1 << "]: " << sensorKeys[KDeviceLists::ACC + i] <<std::endl;
+		std::cout << "sensorPtr[" << sensorPtr.size() - 1 << "]: " << sensorKeys[KDeviceLists::ACC + i] << std::endl;
 
 	}
 
@@ -314,12 +421,12 @@ void LowLevelPlanner::initialise_devices()
 	{
 
 		jointPtr[i] = (float *) memory->getDataPtr(jointKeys[i]);
-		std::cout << jointKeys[i] << i << " " << jointPtr[i] <<std::endl;
+		std::cout << jointKeys[i] << i << " " << jointPtr[i] << std::endl;
 		//sleep(1);
 
 	}
 
-	std::cout << " Number of position joints " << jointPtr.size() <<std::endl;
+	std::cout << " Number of position joints " << jointPtr.size() << std::endl;
 	createJointsPositionActuatorAlias();
 	prepareJointsPositionActuatorCommand();
 
@@ -372,14 +479,14 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 	{
 		actuatorname = jointActuatorKeys[KDeviceLists::L_LEG + j];
 		jointAliasses[1][l] = actuatorname;
-		std::cout << " Joint Name " << actuatorname << " " <<std::endl;
+		std::cout << " Joint Name " << actuatorname << " " << std::endl;
 	}
 
 	for (int j = KDeviceLists::HIP_YAW_PITCH; j < KDeviceLists::LEG_SIZE; j++, l++)
 	{
 		actuatorname = jointActuatorKeys[KDeviceLists::R_LEG + j];
 		jointAliasses[1][l] = actuatorname;
-		std::cout << " Joint Name " << actuatorname << " " <<std::endl;
+		std::cout << " Joint Name " << actuatorname << " " << std::endl;
 	}
 
 ///*Create Joint Alias*
@@ -392,24 +499,22 @@ void LowLevelPlanner::createJointsPositionActuatorAlias()
 		LogEntry(LogLevel::FatalError, GetName()) << "Error when creating Alias : " << e.getDescription();
 	}
 
-	std::cout << " Ankles PositionActuatorAlias created " <<std::endl;
+	std::cout << " Ankles PositionActuatorAlias created " << std::endl;
 }
 
 void LowLevelPlanner::setStiffness(const float& stiffnessValue)
 {
-
 	motion->setStiffnesses("Body", stiffnessValue);
-
 }
 
 std::vector<float> LowLevelPlanner::Calculate_IK()
 {
 	float NewL[3], NewR[3];
-	float yawL,yawR;
+	float yawL, yawR;
 	std::vector<float> ret;
 	if (NaoFootTrajectoryPlanner.Xl.size() < dcm_counter)
 	{
-		std::cout << " Empty plan !" <<std::endl;
+		std::cout << " Empty plan !" << std::endl;
 		return ret;
 	}
 
@@ -418,46 +523,36 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		alljoints[j] = *jointPtr[i];
 
 	/** Calculate COM
-	//NAOKinematics::FKvars calc_com = nkin->calculateCenterOfMass(alljoints);
-    **/
+	 //NAOKinematics::FKvars calc_com = nkin->calculateCenterOfMass(alljoints);
+	 **/
 
-	NewL[0] = 1000 * (NaoFootTrajectoryPlanner.Xl[dcm_counter] - NaoLIPMx->COM[dcm_counter])+ 18.18 -30 ;
-	NewL[1] = 1000 * (NaoFootTrajectoryPlanner.Yl[dcm_counter] - NaoLIPMy->COM[dcm_counter])- 0.0726;
-	NewL[2] = 1000 * (NaoFootTrajectoryPlanner.Zl[dcm_counter] - NaoRobot.getRobotParameter("ComZ") )- 46.76;
+	NewL[0] = 1000 * (NaoFootTrajectoryPlanner.Xl[dcm_counter] - NaoLIPMx->Com) + 18.18;
+	NewL[1] = 1000 * (NaoFootTrajectoryPlanner.Yl[dcm_counter] - NaoLIPMy->Com) - 0.0726;
+	NewL[2] = 1000 * (NaoFootTrajectoryPlanner.Zl[dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
 
-    NewR[0] = 1000 * (NaoFootTrajectoryPlanner.Xr[dcm_counter] - NaoLIPMx->COM[dcm_counter])+ 18.18 -30; //+ calc_com.pointX;
-	NewR[1] = 1000 * (NaoFootTrajectoryPlanner.Yr[dcm_counter] - NaoLIPMy->COM[dcm_counter])- 0.0726;// + calc_com.pointY;
-	NewR[2] = 1000 * (NaoFootTrajectoryPlanner.Zr[dcm_counter] - NaoRobot.getRobotParameter("ComZ")- 46.76e-3);// + calc_com.pointZ;
+	NewR[0] = 1000 * (NaoFootTrajectoryPlanner.Xr[dcm_counter] - NaoLIPMx->Com) + 18.18; //+ calc_com.pointX;
+	NewR[1] = 1000 * (NaoFootTrajectoryPlanner.Yr[dcm_counter] - NaoLIPMy->Com) - 0.0726; // + calc_com.pointY;
+	NewR[2] = 1000 * (NaoFootTrajectoryPlanner.Zr[dcm_counter] - NaoRobot.getWalkParameter(ComZ) - 46.76e-3); // + calc_com.pointZ;
 
 	dcm_counter++;
 
 	//std::cout << "Left(end+1,:) = [\t" << NewL[0] << " " << NewL[1] << " " << NewL[2] << "]; \tRight(end+1,:)= [ " << NewR[0] << " " << NewR[1] << " " << NewR[2] << "];" <<std::endl;
 
-	yawL=0;
-	yawR=0;
+	yawL = 0;
+	yawR = 0;
 	/*if(dcm_counter>0){
-	   yawL=NaoFootTrajectoryPlanner.Thl[dcm_counter]-NaoFootTrajectoryPlanner.Thl[dcm_counter-1];
-	   yawR=NaoFootTrajectoryPlanner.Thr[dcm_counter]-NaoFootTrajectoryPlanner.Thr[dcm_counter-1];
-        }
-	else
-	{
-	   yawL=NaoFootTrajectoryPlanner.Thl[dcm_counter];
-	   yawR=NaoFootTrajectoryPlanner.Thr[dcm_counter];
-	}*/
+	 yawL=NaoFootTrajectoryPlanner.Thl[dcm_counter]-NaoFootTrajectoryPlanner.Thl[dcm_counter-1];
+	 yawR=NaoFootTrajectoryPlanner.Thr[dcm_counter]-NaoFootTrajectoryPlanner.Thr[dcm_counter-1];
+	 }
+	 else
+	 {
+	 yawL=NaoFootTrajectoryPlanner.Thl[dcm_counter];
+	 yawR=NaoFootTrajectoryPlanner.Thr[dcm_counter];
+	 }*/
 	std::vector<std::vector<float> > resultR, resultL;
-	/**std::vector<float> empty, controlled_leg_l, controlled_leg_r;
 
-	controlled_leg_l.resize(6);
-	controlled_leg_r.resize(6);
-
-	for (int i = KDeviceLists::HIP_YAW_PITCH, j = 0; i < KDeviceLists::LEG_SIZE; i++, j++)
-	{
-		controlled_leg_l[j] = *jointPtr[KDeviceLists::L_LEG + i];
-		controlled_leg_r[j] = *jointPtr[KDeviceLists::R_LEG + i];
-	}
-    **/
 	resultL = nkin->inverseLeftLeg(NewL[0], NewL[1], NewL[2], 0, 0, yawL);
-	resultR = nkin->inverseRightLeg(NewR[0], NewR[1], NewR[2], 0, 0,yawR);
+	resultR = nkin->inverseRightLeg(NewR[0], NewR[1], NewR[2], 0, 0, yawR);
 
 	if (!resultL.empty())
 	{
@@ -465,11 +560,12 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 		if (!resultR.empty())
 			ret.insert(ret.end(), resultR.at(0).begin(), resultR.at(0).end());
 		else
-			std::cerr << "Right Leg EMPTY VECTOR " <<std::endl;
+			std::cerr << "Right Leg EMPTY VECTOR " << std::endl;
 	} else
-		std::cerr << "Left Leg EMPTY VECTOR " <<std::endl;
+		std::cerr << "Left Leg EMPTY VECTOR " << std::endl;
 
 	//std::cout << " Number of joint values : " << ret.size() <<std::endl;
 
 	return ret;
 }
+

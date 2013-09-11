@@ -10,19 +10,20 @@
 #include <iostream>
 LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
 {
+
     OurRobot=robot;
     //Defining the System Dynamics Augmented with the Observer Structure
     Ad(0,0)=1.0000;
-    Ad(0,1)=OurRobot.getRobotParameter("Ts");
+    Ad(0,1)=OurRobot.getWalkParameter(Ts);
     Ad(0,2)=0;
-    Ad(1,0)=(OurRobot.getRobotParameter("g")/OurRobot.getRobotParameter("ComZ"))*OurRobot.getRobotParameter("Ts");
+    Ad(1,0)=(OurRobot.getWalkParameter(g)/OurRobot.getWalkParameter(ComZ))*OurRobot.getWalkParameter(Ts);
     Ad(1,1)=1.0000;
     Ad(1,2)=-Ad(1,0);
     Ad(2,0)=0.0000;
     Ad(2,1)=0.0000;
     Ad(2,2)=1.0000;
     Aobs(0,0)=1.0000;
-    Aobs(0,1)=OurRobot.getRobotParameter("Ts");
+    Aobs(0,1)=OurRobot.getWalkParameter(Ts);
     Aobs(0,2)=-0.0374;
     Aobs(1,0)=0.4088;
     Aobs(1,1)=1.0000;
@@ -32,7 +33,7 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     Aobs(2,2)=1.5055;
     Bd(0)=0;
     Bd(1)=0;
-    Bd(2)=OurRobot.getRobotParameter("Ts");
+    Bd(2)=OurRobot.getWalkParameter(Ts);
     Cd(0)=0;
     Cd(1)=0;
     Cd(2)=1;
@@ -111,6 +112,51 @@ LIPMPreviewController::LIPMPreviewController(RobotParameters robot)
     counter=0;
 }
 
+
+void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer)
+{
+    //Setting the Reference Signal
+    unsigned int l=0;
+    for (unsigned int i=counter;i<=counter+50;i++,l++)
+    {
+        if (i<=ZmpBuffer.size())
+           ZMPReference(l)=ZmpBuffer[i];
+        else
+           ZMPReference(l)=ZmpBuffer[ZmpBuffer.size()-1];
+
+    }
+    counter++;
+
+    ZMPMeasured=State(2);
+
+    //State Feedback Computation
+    Statefb=0;
+    Statefb=Gx*State;
+
+    //Updating the Integral Feedback
+    Integrationfb+=Gi*(ZMPMeasured-ZMPReference(0));
+    //Predicted Feedback Computation
+    Predictionfb=0;
+    unsigned  int z=0;
+    for (unsigned int i=0;i<50;i++)
+    {
+        Predictionfb+=Gd(z)*ZMPReference(i+1);
+        z++;
+    }
+    //Optimal Preview Control
+    u=-Statefb-Integrationfb-Predictionfb;
+
+    //Updating the Dynamics
+    State=Aobs*State;
+    temp=L;
+    temp.scalar_mult(ZMPMeasured);
+    State+=temp;
+    temp=Bd;
+    temp.scalar_mult(u);
+    State+=temp;
+    //Estimated COM position
+    Com=State(0);
+}
 
 
 void LIPMPreviewController::LIPMComPredictor(std::vector<float> ZMP)

@@ -9,8 +9,8 @@
 
 Stepplanner::Stepplanner()
 {
-    ;
-	
+   Time=0;
+   stepcounter=0;
 }
 
 void Stepplanner::initialize(RobotParameters OurRobot)
@@ -25,7 +25,7 @@ void Stepplanner::initialize(RobotParameters OurRobot)
 	for (stepcounter = 1; stepcounter < 3; stepcounter++)
 	{
 		Step.x=0;
-		Step.y= pow(-1, (stepcounter + 1)) * Robot.getRobotParameter("H0");
+		Step.y= pow(-1, (stepcounter + 1)) * Robot.getWalkParameter(H0);
 		Step.theta=0;
 		FootQ.push(Step);
         
@@ -40,11 +40,11 @@ void Stepplanner::oneStep(std::vector<float> v)
 	float temp0,temp1;
 
 
-	Time = Time + Robot.getRobotParameter("Tstep");
+	Time = Time + Robot.getWalkParameter(Tstep);
 	//Predicted Pelvis Position
-	Pelvis.x = Pelvis.x + v[0] * Robot.getRobotParameter("Tstep")* Robot.getRobotParameter("MaxStepX");
-	Pelvis.y = Pelvis.y + v[1] * Robot.getRobotParameter("Tstep")* Robot.getRobotParameter("MaxStepY");
-    Pelvis.theta = Pelvis.theta + 0.5* v[2] * Robot.getRobotParameter("Tstep")* Robot.getRobotParameter("MaxStepTheta");
+	Pelvis.x = Pelvis.x + v[0] * Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepX);
+	Pelvis.y = Pelvis.y + v[1] * Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepY);
+    Pelvis.theta = Pelvis.theta + 0.5* v[2] * Robot.getWalkParameter(Tstep)* Robot.getWalkParameter(MaxStepTheta);
 	
     ZMP.x=Step.x;
 	ZMP.y=Step.y;
@@ -54,9 +54,9 @@ void Stepplanner::oneStep(std::vector<float> v)
 	temp0=Step.x;
 	temp1=Step.y;
     stepcounter = stepcounter + 1;
-	Step.x = Pelvis.x  + 0.5 * v[0] * Robot.getRobotParameter("Tstep") * Robot.getRobotParameter("MaxStepX");
-	Step.y = Pelvis.y  + 0.5 * v[1] * Robot.getRobotParameter("Tstep") * Robot.getRobotParameter("MaxStepY")+pow(-1, stepcounter + 1) * Robot.getRobotParameter("H0");
-	Step.theta = Pelvis.theta  + 0.5* v[2] * Robot.getRobotParameter("Tstep") * Robot.getRobotParameter("MaxStepTheta");
+	Step.x = Pelvis.x  + 0.5 * v[0] * Robot.getWalkParameter(Tstep) * Robot.getWalkParameter(MaxStepX);
+	Step.y = Pelvis.y  + 0.5 * v[1] * Robot.getWalkParameter(Tstep) * Robot.getWalkParameter(MaxStepY)+pow(-1, stepcounter + 1) * Robot.getWalkParameter(H0);
+	Step.theta = Pelvis.theta  + 0.5* v[2] * Robot.getWalkParameter(Tstep) * Robot.getWalkParameter(MaxStepTheta);
     FootQ.push(Step);
 
 	
@@ -71,11 +71,11 @@ void Stepplanner::afterStep()
 	//Next Foot
     float temp;
     temp=Step.y;
-	Time = Time + Robot.getRobotParameter("Tstep");
+	Time = Time + Robot.getWalkParameter(Tstep);
 	stepcounter = stepcounter + 1;
-	Step.y =Step.y+2*pow(-1, stepcounter + 1) * Robot.getRobotParameter("H0");
+	Step.y =Step.y+2*pow(-1, stepcounter + 1) * Robot.getWalkParameter(H0);
     FootQ.push(Step);
-    Pelvis.y=Step.y+pow(-1,stepcounter+1)*Robot.getRobotParameter("H0");
+    Pelvis.y=Step.y+pow(-1,stepcounter+1)*Robot.getWalkParameter(H0);
     Pelvis.x=Step.x;
     Pelvis.theta=Step.theta;
     
@@ -88,11 +88,11 @@ void Stepplanner::finalStep()
     
 	float temp;
     temp=Step.y;
-	Time = Time + Robot.getRobotParameter("Tstep");
+	Time = Time + Robot.getWalkParameter(Tstep);
 	stepcounter = stepcounter + 1;
-	Step.y =Step.y+2*pow(-1, stepcounter + 1) * Robot.getRobotParameter("H0");
+	Step.y =Step.y+2*pow(-1, stepcounter + 1) * Robot.getWalkParameter(H0);
     FootQ.push(Step);
-    Pelvis.y=Step.y+pow(-1,stepcounter+1)*Robot.getRobotParameter("H0");
+    Pelvis.y=Step.y+pow(-1,stepcounter+1)*Robot.getWalkParameter(H0);
     Pelvis.x=Step.x;
     Pelvis.theta=Step.theta;
     
