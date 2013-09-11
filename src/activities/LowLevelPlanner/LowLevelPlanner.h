@@ -36,8 +36,10 @@ namespace LEG
 ;
 
 enum {
-	DO_NOTHING =0, INIT_WALK, DO_STEPS, FINAL_STEP, WAIT_TO_FINISH
+	DO_NOTHING =0, INIT_WALK, DO_STEPS, FINAL_STEP, WAIT_TO_FINISH, DCM_RUN, DCM_STOP
 };
+
+
 
 enum
 {
@@ -147,7 +149,7 @@ class LowLevelPlanner: public IActivity
 		/** Leg Controllers **/
 		LIPMPreviewController * NaoLIPMx ,*NaoLIPMy;
 
-		int state;
+		int state, dcm_state;
 
 	};
 	ACTIVITY_END

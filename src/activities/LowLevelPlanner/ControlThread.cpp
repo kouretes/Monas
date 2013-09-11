@@ -117,7 +117,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer)
 {
     //Setting the Reference Signal
     unsigned int l=0;
-    for (unsigned int i=counter;i<=counter+50;i++,l++)
+    for (unsigned int i=0;i<=50;i++,l++)
     {
         if (i<=ZmpBuffer.size())
            ZMPReference(l)=ZmpBuffer[i];
@@ -125,7 +125,7 @@ void LIPMPreviewController::LIPMComPredictor(CircularBuffer<float> & ZmpBuffer)
            ZMPReference(l)=ZmpBuffer[ZmpBuffer.size()-1];
 
     }
-    counter++;
+    //counter++;
 
     ZMPMeasured=State(2);
 

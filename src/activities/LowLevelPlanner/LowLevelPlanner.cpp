@@ -45,6 +45,7 @@ void LowLevelPlanner::UserInit()
 	 **/
 	//setStiffness(0.75f);
 	state = DO_NOTHING;
+	dcm_state = DCM_STOP;
 	Reset();
 }
 
@@ -74,7 +75,6 @@ int LowLevelPlanner::Execute()
 		KAlBroker::Instance().GetBroker()->getProxy("DCM")->getModule()->atPreProcess(KALBIND(&LowLevelPlanner::DCMcallback, this));
 		firstrun = false;
 	}
-
 
 	static int counter = 0; //just for testing
 
@@ -119,9 +119,10 @@ int LowLevelPlanner::Execute()
 	{
 		if (wm->command() == "setWalkTargetVelocity")
 		{
-			if(state == DO_NOTHING){
+			if (state == DO_NOTHING)
+			{
 				state = INIT_WALK;
-				std::cout << "Message arrived should initialize walk" <<std::endl;
+				std::cout << "Message arrived should initialize walk" << std::endl;
 			}
 		} else
 		{
@@ -135,18 +136,21 @@ int LowLevelPlanner::Execute()
 	speed.push_back(wm->parameter(1));
 	speed.push_back(wm->parameter(2));
 
-	if (current_buffer == next_2B_inserted) //Buffers are full
+	//if (current_buffer == next_2B_inserted) //Buffers are full
+	//	return 0;
+	if (dcm_length[next_2B_inserted] != 0)
+	{
+		std::cout << "Buffers are full" << std::endl;
 		return 0;
-	if(dcm_length[next_2B_inserted]!=0)
-		return 0;
-
+	}
 
 	if (speed.size() < 3)
 		std::cerr << "Not Enought Speed Values" << std::endl;
 
-	if(speed[0]==0  && speed[1] == 0 && speed[2] == 0)
+	if (speed[0] == 0 && speed[1] == 0 && speed[2] == 0)
 		state = FINAL_STEP;
 
+	std::cout << " State " << state << std::endl;
 
 	switch (state)
 	{
@@ -165,7 +169,8 @@ int LowLevelPlanner::Execute()
 				ZmpBuffer[Y]->cbPush(ZmpTrajectory[next_2B_inserted][Y][i]);
 			}
 			state = DO_STEPS;
-			dcm_counter=0;
+			dcm_counter = 0;
+			dcm_state = DCM_RUN;
 			std::cout << "Walk Engine is Executed Walk should start" << std::endl;
 
 			break;
@@ -277,7 +282,7 @@ void LowLevelPlanner::Calculate_Desired_COM()
 		ZmpBuffer[X]->cbPush(ZmpTrajectory[other_buffer][X][dcm_counter]);
 		ZmpBuffer[Y]->cbPush(ZmpTrajectory[other_buffer][Y][dcm_counter]);
 	}
-
+	std::cout << " ZmpBuffer " <<
 	//NaoLIPMx->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPX);
 	NaoLIPMx->LIPMComPredictor(*ZmpBuffer[X]);
 	//NaoLIPMy->LIPMComPredictor(NaoZmpTrajectoryPlanner.ZMPY);
@@ -286,22 +291,26 @@ void LowLevelPlanner::Calculate_Desired_COM()
 
 int LowLevelPlanner::DCMcallback()
 {
-	if (state == DO_NOTHING) //Nothing to execute
+	if (dcm_state == DCM_STOP) //Nothing to execute
 		return 0;
 
-
-	if(dcm_counter >= dcm_length[current_buffer]) //buffer end;
+	std::cout << dcm_counter << " " << current_buffer << " " << dcm_length[current_buffer] << std::endl;
+	if (dcm_counter >= dcm_length[current_buffer]) //buffer end;
 	{
-		int next_buffer = (current_buffer+1)%2;
-		if(dcm_length[next_buffer]>0){ //ready to switch buffers
-			dcm_length[current_buffer]=0;
+		std::cout << "Switch" << std::endl;
+		int next_buffer = (current_buffer + 1) % 2;
+		if (dcm_length[next_buffer] > 0)
+		{ //ready to switch buffers
+			dcm_length[current_buffer] = 0;
 			current_buffer = next_buffer;
-			dcm_counter=0;
-		}else{
+			dcm_counter = 0;
+		} else
+		{
 			//provlima i telos mallon telos
-			std::cout << "Hm we have a serious problem or just stopping " <<std::endl;
-			state=DO_NOTHING;
-			dcm_counter=0;
+			std::cout << "Hm we have a serious problem or just stopping " << std::endl;
+			state = DO_NOTHING;
+			dcm_state = DCM_STOP;
+			dcm_counter = 0;
 			return 0;
 		}
 	}
@@ -519,20 +528,20 @@ std::vector<float> LowLevelPlanner::Calculate_IK()
 	}
 
 	/** Read Values of joints **/
-	for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
-		alljoints[j] = *jointPtr[i];
+	//for (int j = 0, i = 0; i < KDeviceLists::NUMOFJOINTS; i++, j++)
+	//	alljoints[j] = *jointPtr[i];
 
 	/** Calculate COM
 	 //NAOKinematics::FKvars calc_com = nkin->calculateCenterOfMass(alljoints);
 	 **/
 
-	NewL[0] = 1000 * (NaoFootTrajectoryPlanner.Xl[dcm_counter] - NaoLIPMx->Com) + 18.18;
-	NewL[1] = 1000 * (NaoFootTrajectoryPlanner.Yl[dcm_counter] - NaoLIPMy->Com) - 0.0726;
-	NewL[2] = 1000 * (NaoFootTrajectoryPlanner.Zl[dcm_counter] - NaoRobot.getWalkParameter(ComZ)) - 46.76;
+	NewL[0] = 1000 * (FeetTrajectory[current_buffer][X][LEFT][dcm_counter] - NaoLIPMx->Com) + 18.18;
+	NewL[1] = 1000 * (FeetTrajectory[current_buffer][Y][LEFT][dcm_counter]  - NaoLIPMy->Com) - 0.0726;
+	NewL[2] = 1000 * (FeetTrajectory[current_buffer][Z][LEFT][dcm_counter]  - NaoRobot.getWalkParameter(ComZ)) - 46.76;
 
-	NewR[0] = 1000 * (NaoFootTrajectoryPlanner.Xr[dcm_counter] - NaoLIPMx->Com) + 18.18; //+ calc_com.pointX;
-	NewR[1] = 1000 * (NaoFootTrajectoryPlanner.Yr[dcm_counter] - NaoLIPMy->Com) - 0.0726; // + calc_com.pointY;
-	NewR[2] = 1000 * (NaoFootTrajectoryPlanner.Zr[dcm_counter] - NaoRobot.getWalkParameter(ComZ) - 46.76e-3); // + calc_com.pointZ;
+	NewR[0] = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter]  - NaoLIPMx->Com) + 18.18; //+ calc_com.pointX;
+	NewR[1] = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter]  - NaoLIPMy->Com) - 0.0726; // + calc_com.pointY;
+	NewR[2] = 1000 * (FeetTrajectory[current_buffer][X][RIGHT][dcm_counter]  - NaoRobot.getWalkParameter(ComZ) - 46.76e-3); // + calc_com.pointZ;
 
 	dcm_counter++;
 
