@@ -460,6 +460,14 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 			return static_cast< D<T, M, N> &> (*this);
 		};
 
+		D<T, M, N> operator+( BaseMatrix<D, T, M, N> const& rop)
+		{
+			D<T, M, N> res;
+			res=(*this);
+			res+=rop;
+			return res;
+		}
+
 		/**
 		 *	In place add another matrix to this, column wise add
 		 **/
@@ -705,6 +713,19 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 					h->data(i, j) *= scalar;
 
 			return static_cast< D<T, M, N> &> (*this);
+		};
+
+
+
+		/**
+		 * Multiply with	a scalar
+		 */
+		D<T, M, N> operator* (const	T scalar)
+		{
+			D<T, M, N> res;
+			res=(*this);
+            res.scalar_mult(scalar);
+            return res;
 		};
 
 		/**
@@ -1260,6 +1281,18 @@ template<typename T> class RefHandle<DataContainer<T, 3, 1> > : public LoopBackH
 
 			return *this;
 		};
+		ATMatrix<T, S>  operator* (ATMatrix<T, S> const& rop) const
+		{
+			return mult(rop);
+		}
+
+		ATMatrix<T, S>   mult (ATMatrix<T, S> const& rop) const
+		{
+			ATMatrix<T, S> res;
+			res=(*this);
+			res*=rop;
+			return res;
+		}
 
 		//Multiplication, optimized for HTMatrices!!
 		ATMatrix<T, S> & operator *= (ATMatrix<T, S> const& rop)
